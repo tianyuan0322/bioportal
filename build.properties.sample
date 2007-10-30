@@ -23,3 +23,13 @@ bioportal.jdbc.url=jdbc:mysql://localhost:3306/bioportal
 bioportal.jdbc.driver=com.mysql.jdbc.Driver
 bioportal.jdbc.username=mydbusername
 bioportal.jdbc.password=mydbpassword
+
+# Encryption key
+bioportal.encryption.key=myencryptionkey
+
+# Users by username query used for authentication
+bioportal.usersbyusername.query=SELECT username, password, 1 AS enabled FROM myusertable WHERE username = ?
+
+# Authorities by username query used for authorization
+bioportal.authoritiesbyusername.query=SELECT username, authority FROM myauthoritytable WHERE username = ?
+
