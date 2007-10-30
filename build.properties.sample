@@ -1,0 +1,25 @@
+# App server properties
+appserver.home=/apps/Tomcat5.5
+appserver.lib=${appserver.home}/common/lib
+deploy.path=${appserver.home}/webapps
+
+#appserver.home=/apps/jboss-4.0.5.GA
+#appserver.lib=${appserver.home}/server/default/lib
+#deploy.path=${appserver.home}/server/default/deploy
+
+# Log4j properties
+bioportal.app.log.deflevel=ERROR
+bioportal.app.log.bioportallevel=DEBUG
+bioportal.app.logfilepath=${appserver.home}/logs/bioportal.log
+
+# Data Source properties
+bioportal.datasource.name=jdbc/BioPortalDataSource
+bioportal.datasource=java:comp/env/${bioportal.datasource.name}
+
+# JDBC connection that should only be used during local development.
+# Local development can also be done using a datasource simply by configuring
+# a tomcat datasource.
+bioportal.jdbc.url=jdbc:mysql://localhost:3306/bioportal
+bioportal.jdbc.driver=com.mysql.jdbc.Driver
+bioportal.jdbc.username=mydbusername
+bioportal.jdbc.password=mydbpassword
