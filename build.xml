@@ -84,6 +84,15 @@
 				<filter token="bioportaljdbcpassword" value="${bioportal.jdbc.password}"/> 
 			</filterset> 
 		</copy>
+	
+		<copy file="${tmpl.dir}/applicationContext-security.xml.tmpl" 
+				tofile="${conf.dir}/applicationContext-security.xml" overwrite="true">
+			<filterset> 
+				<filter token="encryptionkey" value="${bioportal.encryption.key}"/> 
+				<filter token="usersbyusernamequery" value="${bioportal.usersbyusername.query}"/> 
+				<filter token="authoritiesbyusernamequery" value="${bioportal.authoritiesbyusername.query}"/> 
+			</filterset> 
+		</copy>
 	</target>
 	
     <target name="build" depends="prepare" description="Compile main source tree java files">
