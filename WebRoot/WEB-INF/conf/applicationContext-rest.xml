@@ -1,0 +1,36 @@
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:aop="http://www.springframework.org/schema/aop"
+	xmlns:tx="http://www.springframework.org/schema/tx"
+	xsi:schemaLocation="
+       http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.0.xsd
+       http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-2.0.xsd
+       http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-2.0.xsd">
+
+	<!-- Wire all restlets -->
+  	<bean id="ontologyRestlet" class="org.ncbo.stanford.view.rest.restlet.OntologyRestlet">
+		<property name="ontologyService">
+			<ref bean="ontologyService" />
+		</property>
+  	</bean>
+
+  	<bean id="userRestlet" class="org.ncbo.stanford.view.rest.restlet.UserRestlet">
+		<property name="userService">
+			<ref bean="userService" />
+		</property>
+  	</bean>
+
+	<!-- All mappings: -->
+	<bean id="restManager" class="org.ncbo.stanford.view.rest.base.RestManager">
+		<property name="resourceMappings">
+			<bean class="java.util.HashMap">
+				<constructor-arg>
+					<map>
+                  		<entry key="/ontologies"><ref local="ontologyRestlet" /></entry>
+                  		<entry key="/user/{user}"><ref local="userRestlet" /></entry>
+					</map>
+				</constructor-arg>
+			</bean>
+		</property>
+	</bean>
+</beans>
