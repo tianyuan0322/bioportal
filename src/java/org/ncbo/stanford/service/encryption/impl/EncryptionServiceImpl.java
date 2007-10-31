@@ -8,9 +8,9 @@ import java.util.HashMap;
 import org.acegisecurity.providers.encoding.PasswordEncoder;
 import org.jasypt.encryption.pbe.StandardPBEStringEncryptor;
 import org.ncbo.stanford.service.encryption.EncryptionService;
+import org.ncbo.stanford.util.MessageUtils;
 import org.ncbo.stanford.util.RequestUtils;
 import org.ncbo.stanford.util.constants.ApplicationConstants;
-
 
 /**
  * Implementation of Encryption service
@@ -24,62 +24,68 @@ public class EncryptionServiceImpl implements EncryptionService {
 
 	/*
 	 * (non-Javadoc)
+	 * 
 	 * @see tsn.encryption.service.EncryptionService#encodePassword(java.lang.String)
 	 */
 	public String encodePassword(String password) {
-		return passwordEncoder.encodePassword(
-				password, null);
+		return passwordEncoder.encodePassword(password, null);
 	}
-	
+
 	/*
 	 * (non-Javadoc)
+	 * 
 	 * @see tsn.encryption.service.EncryptionService#encrypt(java.lang.String)
 	 */
 	public String encrypt(String decrypted) {
 		return stringEncryptor.encrypt(decrypted);
 	}
-	
+
 	/*
 	 * (non-Javadoc)
+	 * 
 	 * @see tsn.encryption.service.EncryptionService#decrypt(java.lang.String)
 	 */
 	public String decrypt(String encrypted) {
 		return stringEncryptor.decrypt(encrypted);
 	}
-	
+
 	/*
 	 * (non-Javadoc)
+	 * 
 	 * @see tsn.encryption.service.EncryptionService#decryptQueryString(java.lang.String)
 	 */
-	public String decryptQueryString(
-			String encrypted) throws UnsupportedEncodingException {
-		return decrypt(URLDecoder.decode(
-				encrypted, ApplicationConstants.DEFAULT_ENCODING));
+	public String decryptQueryString(String encrypted)
+			throws UnsupportedEncodingException {
+		return decrypt(URLDecoder.decode(encrypted, MessageUtils
+				.getMessage(ApplicationConstants.DEFAULT_ENCODING_KEY)));
 	}
 
 	/*
 	 * (non-Javadoc)
+	 * 
 	 * @see tsn.encryption.service.EncryptionService#encryptQueryString(java.lang.String)
 	 */
-	public String encryptQueryString(
-			String queryString) throws UnsupportedEncodingException {
-		return URLEncoder.encode(encrypt(queryString), 
-				ApplicationConstants.DEFAULT_ENCODING);
+	public String encryptQueryString(String queryString)
+			throws UnsupportedEncodingException {
+		return URLEncoder.encode(encrypt(queryString), MessageUtils
+				.getMessage(ApplicationConstants.DEFAULT_ENCODING_KEY));
 	}
-	
+
 	/*
 	 * (non-Javadoc)
-	 * @see tsn.encryption.service.EncryptionService#getParamFromEncryptedQueryString(java.lang.String, java.lang.String)
+	 * 
+	 * @see tsn.encryption.service.EncryptionService#getParamFromEncryptedQueryString(java.lang.String,
+	 *      java.lang.String)
 	 */
-	public String getParamFromEncryptedQueryString(
-			String encrypted, String paramName) throws UnsupportedEncodingException {
-		String decrypted = decryptQueryString(encrypted);		
-		HashMap<String, String> params = 
-			RequestUtils.parseQueryString(decrypted);
-		
+	public String getParamFromEncryptedQueryString(String encrypted,
+			String paramName) throws UnsupportedEncodingException {
+		String decrypted = decryptQueryString(encrypted);
+		HashMap<String, String> params = RequestUtils
+				.parseQueryString(decrypted);
+
 		return params.get(paramName);
 	}
-	
+
 	/**
 	 * @return the passwordEncoder
 	 */
