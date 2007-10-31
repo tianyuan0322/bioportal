@@ -177,13 +177,16 @@
 	</bean>
 	
 	<!-- Message bundle -->
-	<bean id="messageUtils"
-		class="org.ncbo.stanford.util.MessageUtils" >
-		<property name="basename">
+	<bean id="messageBundleName" class="java.lang.String">
+		<constructor-arg>
 			<value>message</value>
-		</property>
+		</constructor-arg>
 	</bean>
 
+	<bean id="messageUtils"
+		class="org.ncbo.stanford.util.MessageUtils" >
+		<constructor-arg ref="messageBundleName" index="0" />
+	</bean>
 
 	<!-- Application Services -->
 	<bean id="userService" class="org.ncbo.stanford.service.user.impl.UserServiceImpl">
