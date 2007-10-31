@@ -44,20 +44,20 @@
 
 	<!-- All servlets -->
 	<servlet>
-		<servlet-name>RestServlet</servlet-name>
+		<servlet-name>ServerServlet</servlet-name>
 		<servlet-class>
 			com.noelios.restlet.ext.servlet.ServerServlet
 		</servlet-class>
+		<load-on-startup>1</load-on-startup>
 	</servlet>
 
     <!-- Catch all requests -->
 	<servlet-mapping>
-		<servlet-name>RestServlet</servlet-name>
+		<servlet-name>ServerServlet</servlet-name>
 		<url-pattern>/rest/*</url-pattern>
 	</servlet-mapping>
 
 	<!-- All filters -->
- 
 	<filter>
 		<description>
 			Spring hibernate interceptor filter for lazy initialization
