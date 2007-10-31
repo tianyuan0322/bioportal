@@ -1,161 +1,168 @@
 <?xml version="1.0"?>
 
 <project name="bioportal" basedir="." default="usage">
-    <property file="build.properties"/>
+	<property file="build.properties" />
 
-    <property name="src.dir" value="src/java"/>
-	<property name="dist.dir" value="dist"/>
-	<property name="web.dir" value="WebRoot"/>
-	<property name="meta-inf.dir" value="${web.dir}/META-INF"/>
-	<property name="lib.dir" value="${web.dir}/WEB-INF/lib"/>
-    <property name="classes.dir" value="${web.dir}/WEB-INF/classes"/>
-    <property name="conf.dir" value="${web.dir}/WEB-INF/conf"/>
-    <property name="tmpl.dir" value="tmpl"/>
+	<property name="src.dir" value="src/java" />
+	<property name="dist.dir" value="dist" />
+	<property name="web.dir" value="WebRoot" />
+	<property name="meta-inf.dir" value="${web.dir}/META-INF" />
+	<property name="lib.dir" value="${web.dir}/WEB-INF/lib" />
+	<property name="classes.dir" value="${web.dir}/WEB-INF/classes" />
+	<property name="conf.dir" value="${web.dir}/WEB-INF/conf" />
+	<property name="conf.dir.generated" value="${conf.dir}/generated" />
+	<property name="tmpl.dir" value="tmpl" />
 
-    <path id="master-classpath">
-        <fileset dir="${web.dir}/WEB-INF/lib">
-            <include name="*.jar"/>
-        </fileset>
-        
-        <fileset dir="${appserver.lib}">
-            <include name="servlet*.jar"/>
-        </fileset>
-        <pathelement path="${classes.dir}"/>
-    </path>
-	
-    <target name="usage">
-        <echo message=""/>
-        <echo message="${ant.project.name} build file"/>
-        <echo message="-----------------------------------"/>
-        <echo message=""/>
-        <echo message="Available targets are:"/>
-        <echo message=""/>
-        <echo message="clean     --> Remove build directories"/>
-        <echo message="build     --> Build the application"/>
-        <echo message="deploy    --> Deploy application as directory"/>
-        <echo message="createwar --> Create a WAR file but don't deploy it to the server"/>
-        <echo message="deploywar --> Deploy application as a WAR file"/>
-        <echo message=""/>
-    </target>
-	
+	<path id="master-classpath">
+		<fileset dir="${lib.dir}">
+			<include name="*.jar" />
+		</fileset>
+
+		<fileset dir="${appserver.lib}">
+			<include name="servlet*.jar" />
+		</fileset>
+
+		<pathelement path="${classes.dir}" />
+	</path>
+
+	<target name="usage">
+		<echo message="" />
+		<echo message="${ant.project.name} build file" />
+		<echo message="-----------------------------------" />
+		<echo message="" />
+		<echo message="Available targets are:" />
+		<echo message="" />
+		<echo message="clean     --> Remove build directories" />
+		<echo message="build     --> Build the application" />
+		<echo message="deploy    --> Deploy application as directory" />
+		<echo message="createwar --> Create a WAR file but don't deploy it to the server" />
+		<echo message="deploywar --> Deploy application as a WAR file" />
+		<echo message="" />
+	</target>
+
 	<target name="clean">
-        <delete>
-            <fileset dir="${classes.dir}">
-                <include name="**/*.class"/>
-                <include name="**/*.properties"/>
-                <include name="**/*.xml"/>
-            </fileset>
-        </delete>		
+		<delete>
+			<fileset dir="${classes.dir}">
+				<include name="**/*.class" />
+				<include name="**/*.properties" />
+				<include name="**/*.xml" />
+			</fileset>
+		</delete>
 		<delete file="${dist.dir}/${ant.project.name}.war" />
-	  	<delete dir="${deploy.path}/${ant.project.name}" />
+		<delete dir="${conf.dir.generated}" />
+		<delete dir="${deploy.path}/${ant.project.name}" />
 		<delete file="${deploy.path}/${ant.project.name}.war" />
 	</target>
 
 	<target name="prepare" description="Create configuration files using templates">
-		<echo message="log4j path: = ${bioportal.app.logfilepath}"/>
-		
-		<copy file="${tmpl.dir}/log4j.xml.tmpl" 
-			 	tofile="${conf.dir}/log4j.xml" overwrite="true">
-			<filterset> 
-				<filter token="logfilepath" value="${bioportal.app.logfilepath}"/> 
-				<filter token="bioportallevel" value="${bioportal.app.log.bioportallevel}"/> 
-				<filter token="deflevel" value="${bioportal.app.log.deflevel}"/> 
-			</filterset> 
-		</copy>
+		<echo message="log4j path: = ${bioportal.app.logfilepath}" />
 
-  		<copy file="${tmpl.dir}/context.xml.tmpl" 
-				tofile="${meta-inf.dir}/context.xml" overwrite="true">
-			<filterset> 
-				<filter token="bioportaldatasourcename" value="${bioportal.datasource.name}"/> 
-				<filter token="bioportaljdbcdriver" value="${bioportal.jdbc.driver}"/> 
-				<filter token="bioportaljdbcurl" value="${bioportal.jdbc.url}"/> 
-				<filter token="bioportaljdbcusername" value="${bioportal.jdbc.username}"/> 
-				<filter token="bioportaljdbcpassword" value="${bioportal.jdbc.password}"/> 
-			</filterset> 
-		</copy>
-
-		<copy file="${tmpl.dir}/applicationContext-datasources.xml.tmpl" 
-				tofile="${conf.dir}/applicationContext-datasources.xml" overwrite="true">
-			<filterset> 
-				<filter token="bioportaldatasource" value="${bioportal.datasource}"/> 
-				<filter token="bioportaljdbcdriver" value="${bioportal.jdbc.driver}"/> 
-				<filter token="bioportaljdbcurl" value="${bioportal.jdbc.url}"/> 
-				<filter token="bioportaljdbcusername" value="${bioportal.jdbc.username}"/> 
-				<filter token="bioportaljdbcpassword" value="${bioportal.jdbc.password}"/> 
-			</filterset> 
-		</copy>
-	
-		<copy file="${tmpl.dir}/applicationContext-security.xml.tmpl" 
-				tofile="${conf.dir}/applicationContext-security.xml" overwrite="true">
-			<filterset> 
-				<filter token="encryptionkey" value="${bioportal.encryption.key}"/> 
-				<filter token="usersbyusernamequery" value="${bioportal.usersbyusername.query}"/> 
-				<filter token="authoritiesbyusernamequery" value="${bioportal.authoritiesbyusername.query}"/> 
-			</filterset> 
-		</copy>
-
-		<copy file="${tmpl.dir}/applicationContext-services.xml.tmpl" 
-				tofile="${conf.dir}/applicationContext-services.xml" overwrite="true">
-			<filterset> 
-				<filter token="messagebundle" value="${bioportal.messagebundle}"/> 
-			</filterset> 
-		</copy>
-
-		<copy file="${tmpl.dir}/applicationContext-rest.xml.tmpl" 
-				tofile="${conf.dir}/applicationContext-rest.xml" overwrite="true">
+		<copy file="${tmpl.dir}/log4j.xml.tmpl" tofile="${conf.dir.generated}/log4j.xml" overwrite="true">
 			<filterset>
-			</filterset> 
+				<filter token="logfilepath" value="${bioportal.app.logfilepath}" />
+				<filter token="bioportallevel" value="${bioportal.app.log.bioportallevel}" />
+				<filter token="deflevel" value="${bioportal.app.log.deflevel}" />
+			</filterset>
+		</copy>
+
+		<copy file="${tmpl.dir}/log4j.dtd" tofile="${conf.dir.generated}/log4j.dtd" overwrite="true" />
+
+		<copy file="${tmpl.dir}/context.xml.tmpl" tofile="${meta-inf.dir}/context.xml" overwrite="true">
+			<filterset>
+				<filter token="bioportaldatasourcename" value="${bioportal.datasource.name}" />
+				<filter token="bioportaljdbcdriver" value="${bioportal.jdbc.driver}" />
+				<filter token="bioportaljdbcurl" value="${bioportal.jdbc.url}" />
+				<filter token="bioportaljdbcusername" value="${bioportal.jdbc.username}" />
+				<filter token="bioportaljdbcpassword" value="${bioportal.jdbc.password}" />
+			</filterset>
+		</copy>
+
+		<copy file="${tmpl.dir}/applicationContext-datasources.xml.tmpl" tofile="${conf.dir.generated}/applicationContext-datasources.xml" overwrite="true">
+			<filterset>
+				<filter token="bioportaldatasource" value="${bioportal.datasource}" />
+				<filter token="bioportaljdbcdriver" value="${bioportal.jdbc.driver}" />
+				<filter token="bioportaljdbcurl" value="${bioportal.jdbc.url}" />
+				<filter token="bioportaljdbcusername" value="${bioportal.jdbc.username}" />
+				<filter token="bioportaljdbcpassword" value="${bioportal.jdbc.password}" />
+			</filterset>
+		</copy>
+
+		<copy file="${tmpl.dir}/applicationContext-security.xml.tmpl" tofile="${conf.dir.generated}/applicationContext-security.xml" overwrite="true">
+			<filterset>
+				<filter token="encryptionkey" value="${bioportal.encryption.key}" />
+				<filter token="usersbyusernamequery" value="${bioportal.usersbyusername.query}" />
+				<filter token="authoritiesbyusernamequery" value="${bioportal.authoritiesbyusername.query}" />
+			</filterset>
+		</copy>
+
+		<copy file="${tmpl.dir}/applicationContext-services.xml.tmpl" tofile="${conf.dir.generated}/applicationContext-services.xml" overwrite="true">
+			<filterset>
+				<filter token="messagebundle" value="${bioportal.messagebundle}" />
+			</filterset>
+		</copy>
+
+		<copy file="${tmpl.dir}/applicationContext-rest.xml.tmpl" tofile="${conf.dir.generated}/applicationContext-rest.xml" overwrite="true">
+			<filterset>
+			</filterset>
 		</copy>
 	</target>
-	
-    <target name="build" depends="prepare" description="Compile main source tree java files">
-        <mkdir dir="${classes.dir}"/>
-        <javac destdir="${classes.dir}" debug="true"
-               deprecation="false" optimize="false" failonerror="true">
-            <src path="${src.dir}"/>
-            <classpath refid="master-classpath"/>
-        </javac>
 
-    	<copy todir="${classes.dir}">
+	<target name="build" depends="prepare" description="Compile main source tree java files">
+		<mkdir dir="${classes.dir}" />
+		<mkdir dir="${conf.dir.generated}" />
+
+		<javac destdir="${classes.dir}" debug="true" deprecation="false" optimize="false" failonerror="true">
+			<src path="${src.dir}" />
+			<classpath refid="master-classpath" />
+		</javac>
+
+		<copy todir="${classes.dir}">
 			<fileset dir="${src.dir}">
 				<include name="**/*.properties" />
 				<include name="**/*.xml" />
 				<exclude name="**/*.java" />
 			</fileset>
 
-			<fileset dir="${web.dir}/WEB-INF/conf">
-				<include name="*.properties" />				
+			<fileset dir="${conf.dir}">
+				<include name="*.properties" />
 				<include name="*.xml" />
-			</fileset>			
+				<include name="*.dtd" />
+			</fileset>
+
+			<fileset dir="${conf.dir.generated}">
+				<include name="*.properties" />
+				<include name="*.xml" />
+				<include name="*.dtd" />
+			</fileset>
 		</copy>
-    </target>
+	</target>
 
 	<target name="deploy" depends="build" description="Deploy application">
-        <copy todir="${deploy.path}/${ant.project.name}" preservelastmodified="true">
-            <fileset dir="${web.dir}">
-                <include name="**/*.*"/>
-            </fileset>
-        </copy>
-    </target>
+		<copy todir="${deploy.path}/${ant.project.name}" preservelastmodified="true">
+			<fileset dir="${web.dir}">
+				<include name="**/*.*" />
+			</fileset>
+		</copy>
+	</target>
 
-    <target name="createwar" depends="build" description="Create a WAR file">
-        <war destfile="${dist.dir}/${ant.project.name}.war" webxml="${web.dir}/WEB-INF/web.xml">
-            <fileset dir="${web.dir}">
-                <include name="**/*.*"/>
+	<target name="createwar" depends="build" description="Create a WAR file">
+		<war destfile="${dist.dir}/${ant.project.name}.war" webxml="${web.dir}/WEB-INF/web.xml">
+			<fileset dir="${web.dir}">
+				<include name="**/*.*" />
 				<exclude name="**/web.xml" />
-            	<!-- These jars are already in server classpath -->
+				<!-- These jars are already in server classpath -->
 				<exclude name="**/javax.servlet.jar" />
 				<exclude name="**/javax.servlet.jsp.jar" />
 				<exclude name="**/servlet-api.jar" />
-            </fileset>
-        </war>
-    </target>
+			</fileset>
+		</war>
+	</target>
 
-    <target name="deploywar" depends="createwar" description="Deploy WAR file to app server">
-        <copy todir="${deploy.path}" preservelastmodified="true">
-            <fileset dir="${dist.dir}">
-                <include name="*.war"/>
-            </fileset>
-        </copy>
-    </target>
+	<target name="deploywar" depends="createwar" description="Deploy WAR file to app server">
+		<copy todir="${deploy.path}" preservelastmodified="true">
+			<fileset dir="${dist.dir}">
+				<include name="*.war" />
+			</fileset>
+		</copy>
+	</target>
 </project>
