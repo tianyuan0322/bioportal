@@ -33,3 +33,5 @@ bioportal.usersbyusername.query=SELECT username, password, 1 AS enabled FROM myu
 # Authorities by username query used for authorization
 bioportal.authoritiesbyusername.query=SELECT username, authority FROM myauthoritytable WHERE username = ?
 
+# Message bundle
+bioportal.messagebundle=message
