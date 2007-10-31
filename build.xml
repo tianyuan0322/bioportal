@@ -93,6 +93,19 @@
 				<filter token="authoritiesbyusernamequery" value="${bioportal.authoritiesbyusername.query}"/> 
 			</filterset> 
 		</copy>
+
+		<copy file="${tmpl.dir}/applicationContext-services.xml.tmpl" 
+				tofile="${conf.dir}/applicationContext-services.xml" overwrite="true">
+			<filterset> 
+				<filter token="messagebundle" value="${bioportal.messagebundle}"/> 
+			</filterset> 
+		</copy>
+
+		<copy file="${tmpl.dir}/applicationContext-rest.xml.tmpl" 
+				tofile="${conf.dir}/applicationContext-rest.xml" overwrite="true">
+			<filterset>
+			</filterset> 
+		</copy>
 	</target>
 	
     <target name="build" depends="prepare" description="Compile main source tree java files">
