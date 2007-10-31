@@ -1,5 +1,7 @@
 package org.ncbo.stanford.util;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.ncbo.stanford.util.messages.Messages;
 
 /**
@@ -11,14 +13,17 @@ import org.ncbo.stanford.util.messages.Messages;
  */
 public class MessageUtils {
 
-	private String basename;
+	private static final Log log = LogFactory.getLog(MessageUtils.class);
+
 	private static Messages messages;
 	
 	/**
 	 * Initializes the messages bundle
 	 */
-	public MessageUtils() {
-		messages = new Messages(basename); 		
+	public MessageUtils(String basename) {
+		if (messages == null) {
+			messages = new Messages(basename); 		
+		}
 	}
 
 	/**
@@ -42,19 +47,5 @@ public class MessageUtils {
 	 */
 	public static String getMessage(String msgKey) {
 		return messages.getMessage(msgKey);
-	}
-
-	/**
-	 * @return the basename
-	 */
-	public String getBasename() {
-		return basename;
-	}
-
-	/**
-	 * @param basename the basename to set
-	 */
-	public void setBasename(String basename) {
-		this.basename = basename;
 	}
 }
