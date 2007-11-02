@@ -25,7 +25,7 @@
 		<property name="mappingResources">
 			<list>
 				<value>
-					org/ncbo/stanford/domain/generated/NcboOntology.hbm.xml
+					org/ncbo/stanford/domain/generated/NcboOntologyVersion.hbm.xml
 				</value>
 				<value>
 					org/ncbo/stanford/domain/generated/NcboOntologyFile.hbm.xml
@@ -53,6 +53,9 @@
 				</value>
 				<value>
 					org/ncbo/stanford/domain/generated/NcboLRole.hbm.xml
+				</value>
+				<value>
+					org/ncbo/stanford/domain/generated/NcboSeqOntologyId.hbm.xml
 				</value>
 			</list>
 		</property>
@@ -137,8 +140,8 @@
 		</property>
 	</bean>
 
-	<bean id="NcboOntologyDAO"
-		class="org.ncbo.stanford.domain.custom.CustomNcboOntologyDAO">
+	<bean id="NcboOntologyVersionDAO"
+		class="org.ncbo.stanford.domain.custom.CustomNcboOntologyVersionDAO">
 		<property name="hibernateTemplate">
 			<ref bean="hibernateTemplate" />
 		</property>
@@ -186,6 +189,13 @@
 		</property>
 	</bean>
 	
+	<bean id="NcboSeqOntologyIdDAO"
+		class="org.ncbo.stanford.domain.generated.NcboSeqOntologyIdDAO">
+		<property name="hibernateTemplate">
+			<ref bean="hibernateTemplate" />
+		</property>
+	</bean>
+
 	<!-- Message bundle -->
 	<bean id="messageBundleName" class="java.lang.String">
 		<constructor-arg>
