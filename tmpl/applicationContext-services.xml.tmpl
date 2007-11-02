@@ -28,6 +28,9 @@
 					org/ncbo/stanford/domain/generated/NcboOntology.hbm.xml
 				</value>
 				<value>
+					org/ncbo/stanford/domain/generated/NcboOntologyFile.hbm.xml
+				</value>
+				<value>
 					org/ncbo/stanford/domain/generated/NcboOntologyMetadata.hbm.xml
 				</value>
 				<value>
@@ -136,6 +139,13 @@
 
 	<bean id="NcboOntologyDAO"
 		class="org.ncbo.stanford.domain.custom.CustomNcboOntologyDAO">
+		<property name="hibernateTemplate">
+			<ref bean="hibernateTemplate" />
+		</property>
+	</bean>
+
+	<bean id="NcboOntologyFileDAO"
+		class="org.ncbo.stanford.domain.custom.CustomNcboOntologyFileDAO">
 		<property name="hibernateTemplate">
 			<ref bean="hibernateTemplate" />
 		</property>
