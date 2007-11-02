@@ -16,6 +16,13 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.util.StringUtils;
 
+/**
+ * Overrides Acegi's FilterDefinitionSource class to allow resource
+ * authorization based on an http method (i.e. GET, PUT, DELETE, POST).
+ * 
+ * @author Michael Dorf
+ * 
+ */
 public class RESTfulDefinitionSource implements
 		FilterInvocationDefinitionSource {
 
@@ -97,11 +104,11 @@ public class RESTfulDefinitionSource implements
 		int counter = 0;
 		String line;
 
-		List mappings = new ArrayList();
+		List<RESTfulDefinitionSourceMapping> mappings = new ArrayList<RESTfulDefinitionSourceMapping>();
 
 		while (true) {
 			counter++;
-			
+
 			try {
 				line = br.readLine();
 			} catch (IOException ioe) {
@@ -147,7 +154,7 @@ public class RESTfulDefinitionSource implements
 			String methods = null;
 
 			int firstColonIndex = name.indexOf(":");
-			
+
 			if (log.isDebugEnabled())
 				log.debug("~~~~~~~~~~ name= " + name + " firstColonIndex= "
 						+ firstColonIndex);
@@ -156,27 +163,27 @@ public class RESTfulDefinitionSource implements
 				antPath = name.substring(0, firstColonIndex);
 				methods = name.substring((firstColonIndex + 1), name.length());
 			}
-			
+
 			if (log.isDebugEnabled())
 				log.debug("~~~~~~~~~~ name= " + name + " antPath= " + antPath
 						+ " methods= " + methods);
 
 			String[] methodList = null;
-			
+
 			if (methods != null) {
 				methodList = methods.split(",");
 
 				// Verify methodList is valid
 				for (int ii = 0; ii < methodList.length; ii++) {
 					boolean matched = false;
-					
+
 					for (int jj = 0; jj < validMethodNames.length; jj++) {
 						if (methodList[ii].equals(validMethodNames[jj])) {
 							matched = true;
 							break;
 						}
 					}
-					
+
 					if (!matched) {
 						throw new IllegalArgumentException(
 								"The HTTP Method Name ("
@@ -185,10 +192,10 @@ public class RESTfulDefinitionSource implements
 					}
 				}
 			}
-			
+
 			if (log.isDebugEnabled()) {
 				log.debug("methodList = " + methodList);
-				
+
 				if (methodList != null) {
 					for (int ii = 0; ii < methodList.length; ii++)
 						log.debug("method[" + ii + "]: " + methodList[ii]);
@@ -199,6 +206,7 @@ public class RESTfulDefinitionSource implements
 			// We only do this for Ant (regexp have control chars)
 			for (int i = 0; i < antPath.length(); i++) {
 				String character = antPath.substring(i, i + 1);
+
 				if (!character.toLowerCase().equals(character)) {
 					throw new IllegalArgumentException(
 							"You are using Ant Paths, yet you have specified an uppercase character in line: "
@@ -216,7 +224,7 @@ public class RESTfulDefinitionSource implements
 			for (int i = 0; i < tokens.length; i++) {
 				mapping.addConfigAttribute(tokens[i].trim());
 			}
-			
+
 			mappings.add(mapping);
 		}
 
@@ -227,21 +235,22 @@ public class RESTfulDefinitionSource implements
 		setMappings(mappings);
 	}
 
-	public void setMappings(List mappings) {
-		Iterator it = mappings.iterator();
-		
+	public void setMappings(List<RESTfulDefinitionSourceMapping> mappings) {
+		Iterator<RESTfulDefinitionSourceMapping> it = mappings.iterator();
+
 		while (it.hasNext()) {
-			RESTfulDefinitionSourceMapping mapping = (RESTfulDefinitionSourceMapping) it
+			RESTfulDefinitionSourceMapping mapping = it
 					.next();
 			ConfigAttributeDefinition configDefinition = new ConfigAttributeDefinition();
 
-			Iterator configAttributesIt = mapping.getConfigAttributes()
+			Iterator<String> configAttributesIt = mapping.getConfigAttributes()
 					.iterator();
+
 			while (configAttributesIt.hasNext()) {
-				String s = (String) configAttributesIt.next();
+				String s = configAttributesIt.next();
 				configDefinition.addConfigAttribute(new SecurityConfig(s));
 			}
-			
+
 			delegate.addSecureUrl(mapping.getUrl(), mapping.getHttpMethods(),
 					configDefinition);
 		}
@@ -250,7 +259,7 @@ public class RESTfulDefinitionSource implements
 	// ++++++++++++++++++++++++
 	static public class RESTfulDefinitionSourceMapping {
 		private String url = null;
-		private List configAttributes = new ArrayList();
+		private List<String> configAttributes = new ArrayList<String>();
 		private String[] httpMethods = null;
 
 		public void setHttpMethods(String[] httpMethods) {
@@ -272,11 +281,11 @@ public class RESTfulDefinitionSource implements
 			return url;
 		}
 
-		public void setConfigAttributes(List roles) {
+		public void setConfigAttributes(List<String> roles) {
 			this.configAttributes = roles;
 		}
 
-		public List getConfigAttributes() {
+		public List<String> getConfigAttributes() {
 			return configAttributes;
 		}
 

@@ -15,6 +15,14 @@ import org.apache.commons.logging.LogFactory;
 import org.springframework.util.AntPathMatcher;
 import org.springframework.util.PathMatcher;
 
+/**
+ * Extends Acegi's AbstractFilterInvocationDefinitionSource
+ * to allow resource authorization based on an http method 
+ * (i.e. GET, PUT, DELETE, POST).
+ * 
+ * @author Michael Dorf
+ *
+ */
 public class RESTfulPathBasedFilterInvocationDefinitionMap extends
 		AbstractFilterInvocationDefinitionSource implements
 		FilterInvocationDefinition {
@@ -25,7 +33,7 @@ public class RESTfulPathBasedFilterInvocationDefinitionMap extends
 	// ~ Instance fields
 	// ================================================================================================
 
-	private List requestMap = new Vector();
+	private List<EntryHolder> requestMap = new Vector<EntryHolder>();
 	private PathMatcher pathMatcher = new AntPathMatcher();
 	private boolean convertUrlToLowercaseBeforeComparison = false;
 
@@ -39,6 +47,7 @@ public class RESTfulPathBasedFilterInvocationDefinitionMap extends
 		if (log.isDebugEnabled()) {
 			log.debug("Added Ant path: " + antPath + "; attributes: " + attr
 					+ ", httpMethods: " + httpMethods);
+			
 			if (httpMethods != null) {
 				for (int ii = 0; ii < httpMethods.length; ii++)
 					log.debug("httpMethods[" + ii + "]: " + httpMethods[ii]);
@@ -51,12 +60,12 @@ public class RESTfulPathBasedFilterInvocationDefinitionMap extends
 				"addSecureUrl(String, ConfigAttributeDefinition) is INVALID for RESTfulDefinitionSource");
 	}
 
-	public Iterator getConfigAttributeDefinitions() {
-		Set set = new HashSet();
-		Iterator iter = requestMap.iterator();
+	public Iterator<ConfigAttributeDefinition> getConfigAttributeDefinitions() {
+		Set<ConfigAttributeDefinition> set = new HashSet<ConfigAttributeDefinition>();
+		Iterator<EntryHolder> iter = requestMap.iterator();
 
 		while (iter.hasNext()) {
-			EntryHolder entryHolder = (EntryHolder) iter.next();
+			EntryHolder entryHolder = iter.next();
 			set.add(entryHolder.getConfigAttributeDefinition());
 		}
 		
@@ -112,23 +121,24 @@ public class RESTfulPathBasedFilterInvocationDefinitionMap extends
 			url = url.toLowerCase();
 
 			if (log.isDebugEnabled()) {
-				log
-						.debug("Converted URL to lowercase, from: '" + url
+				log.debug("Converted URL to lowercase, from: '" + url
 								+ "'; to: '" + url + "'  and httpMethod= "
 								+ httpMethod);
 			}
 		}
 
-		Iterator iter = requestMap.iterator();
+		Iterator<EntryHolder> iter = requestMap.iterator();
 
 		while (iter.hasNext()) {
-			EntryHolder entryHolder = (EntryHolder) iter.next();
+			EntryHolder entryHolder = iter.next();
 
 			String antPath = entryHolder.getAntPath();
 			String[] methodList = entryHolder.getHttpMethodList();
+			
 			if (log.isDebugEnabled()) {
 				log.debug("~~~~~~~~~~ antPath= " + antPath + " methodList= "
 						+ methodList);
+				
 				if (methodList != null) {
 					for (int ii = 0; ii < methodList.length; ii++)
 						log.debug("method[" + ii + "]: " + methodList[ii]);
@@ -137,8 +147,10 @@ public class RESTfulPathBasedFilterInvocationDefinitionMap extends
 
 			boolean matchedPath = pathMatcher.match(antPath, url);
 			boolean matchedMethods = true;
+			
 			if (methodList != null) {
 				matchedMethods = false;
+				
 				for (int ii = 0; ii < methodList.length; ii++) {
 					if (methodList[ii].equals(httpMethod)) {
 						matchedMethods = true;
@@ -146,15 +158,18 @@ public class RESTfulPathBasedFilterInvocationDefinitionMap extends
 					}
 				}
 			}
-			if (log.isDebugEnabled())
+			
+			if (log.isDebugEnabled()) {
 				log.debug("Candidate is: '" + url + "'; antPath is " + antPath
 						+ "; matchedPath=" + matchedPath + "; matchedMethods="
 						+ matchedMethods);
-
+			}
+			
 			if (matchedPath && matchedMethods) {
 				return entryHolder.getConfigAttributeDefinition();
 			}
 		}
+		
 		return null;
 	}
 
