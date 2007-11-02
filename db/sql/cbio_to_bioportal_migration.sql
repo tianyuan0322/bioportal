@@ -16,7 +16,7 @@ from ncbouserrole;
 
 SET FOREIGN_KEY_CHECKS = 0;
 
-insert into cbio.ncbo_ontology 
+insert into cbio.ncbo_ontology_version 
 	(id, parent_id, user_id, internal_version_number, version_number, version_status, file_path, is_current, is_remote, is_reviewed, date_released, date_created)
 select 	
 	f.id, 
@@ -38,12 +38,12 @@ from
 
 SET FOREIGN_KEY_CHECKS = 1;
 
-insert into ncbo_ontology_category (id, ontology_id, category_id)
+insert into ncbo_ontology_category (id, ontology_version_id, category_id)
 select 	fc.id, o.id, fc.categoryid 
-from ncbofilecategory fc, ncbo_ontology o
+from ncbofilecategory fc, ncbo_ontology_version o
 where o.id = fc.ncbofileid;
 
-insert into cbio.ncbo_ontology_metadata (ontology_id, display_label, format, contact_name, contact_email, homepage, documentation, publication, urn, is_foundry)
+insert into cbio.ncbo_ontology_metadata (ontology_version_id, display_label, format, contact_name, contact_email, homepage, documentation, publication, urn, is_foundry)
 select
 	o.id,
 	fm.displaylabel,
@@ -59,10 +59,10 @@ select
 		when 'N' then 0
 	end as is_foundry
 from 
-	ncbo_ontology o 
+	ncbo_ontology_version o 
 	inner join ncbofile f on o.id = f.id
 	inner join ncbofilemetadatainfo fm on f.metadadatainfoid = fm.id;
 
-insert into bioportal.ncbo_ontology_file (id, ontology_id, filename)
+insert into bioportal.ncbo_ontology_file (id, ontology_version_id, filename)
 select fn.id, o.id, fn.filename
-from ncbo_ontology o inner join ncbofilenames fn on o.id = fn.ncbofile;
+from ncbo_ontology_version o inner join ncbofilenames fn on o.id = fn.ncbofile;
