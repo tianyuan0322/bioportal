@@ -5,10 +5,9 @@
 
 	<property name="src.dir" value="src/java" />
 	<property name="dist.dir" value="dist" />
-	<property name="web.dir" value="WebRoot" />
 	<property name="meta-inf.dir" value="${web.dir}/META-INF" />
-	<property name="lib.dir" value="${web.dir}/WEB-INF/lib" />
 	<property name="classes.dir" value="${web.dir}/WEB-INF/classes" />
+	<property name="lib.dir" value="${web.dir}/WEB-INF/lib" />
 	<property name="conf.dir" value="${web.dir}/WEB-INF/conf" />
 	<property name="conf.dir.generated" value="${conf.dir}/generated" />
 	<property name="tmpl.dir" value="tmpl" />
@@ -103,6 +102,34 @@
 
 		<copy file="${tmpl.dir}/applicationContext-rest.xml.tmpl" tofile="${conf.dir.generated}/applicationContext-rest.xml" overwrite="true">
 			<filterset>
+			</filterset>
+		</copy>
+		
+		<copy file="${tmpl.dir}/lexgrid.props.tmpl" tofile="${lexgrid.config.path}/config.props" overwrite="true">
+			<filterset>
+				<filter token="lexgridbasepath" value="${lexgrid.base.path}" />
+				<filter token="lexgridjarfilelocation" value="${lexgrid.jarfile.location}" />
+				<filter token="lexgridregistryfile" value="${lexgrid.registry.file}" />
+				<filter token="lexgridindexlocation" value="${lexgrid.index.location}" />
+				<filter token="lexgridmaxconnectionsperdb" value="${lexgrid.max.connections.per.db}" />
+				<filter token="lexgridcachesize" value="${lexgrid.cache.size}" />
+				<filter token="lexgriditeratoridletime" value="${lexgrid.iterator.idle.time}" />
+				<filter token="lexgridmaxresultsize" value="${lexgrid.max.result.size}" />
+				<filter token="lexgridsingledbmode" value="${lexgrid.single.db.mode}" />
+				<filter token="lexgriddburl" value="${lexgrid.db.url}" />
+				<filter token="lexgriddbprefix" value="${lexgrid.db.prefix}" />
+				<filter token="lexgriddbparam" value="${lexgrid.db.param}" />
+				<filter token="lexgriddbdriver" value="${lexgrid.db.driver}" />
+				<filter token="lexgriddbuser" value="${lexgrid.db.user}" />
+				<filter token="lexgriddbpassword" value="${lexgrid.db.password}" />
+				<filter token="lexgridlogfilelocation" value="${lexgrid.log.file.location}" />
+				<filter token="lexgridapilogenabled" value="${lexgrid.api.log.enabled}" />
+				<filter token="lexgriddebugenabled" value="${lexgrid.debug.enabled}" />
+				<filter token="lexgridlogchange" value="${lexgrid.log.change}" />
+				<filter token="lexgrideraselogsafter" value="${lexgrid.erase.logs.after}" />
+				<filter token="lexgridemailerrors" value="${lexgrid.email.errors}" />
+				<filter token="lexgridsmtpserver" value="${lexgrid.smtp.server}" />
+				<filter token="lexgridemailto" value="${lexgrid.email.to}" />
 			</filterset>
 		</copy>
 	</target>
