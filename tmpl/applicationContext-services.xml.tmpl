@@ -25,6 +25,15 @@
 		<property name="mappingResources">
 			<list>
 				<value>
+					org/ncbo/stanford/domain/custom/NcboOntology.hbm.xml
+				</value>
+				<value>
+					org/ncbo/stanford/domain/custom/NcboOntologyQuery.hbm.xml
+				</value>
+				<value>
+					org/ncbo/stanford/domain/custom/NcboTypeDef.hbm.xml
+				</value>
+				<value>
 					org/ncbo/stanford/domain/generated/NcboOntologyVersion.hbm.xml
 				</value>
 				<value>
@@ -120,70 +129,70 @@
 		DAO bean declaration if you have created a custom DAO 
 		that extends the orginial DAO -->
 	<bean id="NcboOntologyCategoryDAO"
-		class="org.ncbo.stanford.domain.custom.CustomNcboOntologyCategoryDAO">
+		class="org.ncbo.stanford.domain.custom.dao.CustomNcboOntologyCategoryDAO">
 		<property name="hibernateTemplate">
 			<ref bean="hibernateTemplate" />
 		</property>
 	</bean>
 
 	<bean id="NcboOntologyAdditionalMetadataDAO"
-		class="org.ncbo.stanford.domain.custom.CustomNcboOntologyAdditionalMetadataDAO">
+		class="org.ncbo.stanford.domain.custom.dao.CustomNcboOntologyAdditionalMetadataDAO">
 		<property name="hibernateTemplate">
 			<ref bean="hibernateTemplate" />
 		</property>
 	</bean>
 
 	<bean id="NcboOntologyMetadataDAO"
-		class="org.ncbo.stanford.domain.custom.CustomNcboOntologyMetadataDAO">
+		class="org.ncbo.stanford.domain.custom.dao.CustomNcboOntologyMetadataDAO">
 		<property name="hibernateTemplate">
 			<ref bean="hibernateTemplate" />
 		</property>
 	</bean>
 
 	<bean id="NcboOntologyVersionDAO"
-		class="org.ncbo.stanford.domain.custom.CustomNcboOntologyVersionDAO">
+		class="org.ncbo.stanford.domain.custom.dao.CustomNcboOntologyVersionDAO">
 		<property name="hibernateTemplate">
 			<ref bean="hibernateTemplate" />
 		</property>
 	</bean>
 
 	<bean id="NcboOntologyFileDAO"
-		class="org.ncbo.stanford.domain.custom.CustomNcboOntologyFileDAO">
+		class="org.ncbo.stanford.domain.custom.dao.CustomNcboOntologyFileDAO">
 		<property name="hibernateTemplate">
 			<ref bean="hibernateTemplate" />
 		</property>
 	</bean>
 
 	<bean id="NcboUserRoleDAO"
-		class="org.ncbo.stanford.domain.custom.CustomNcboUserRoleDAO">
+		class="org.ncbo.stanford.domain.custom.dao.CustomNcboUserRoleDAO">
 		<property name="hibernateTemplate">
 			<ref bean="hibernateTemplate" />
 		</property>
 	</bean>
 
 	<bean id="NcboUserDAO"
-		class="org.ncbo.stanford.domain.custom.CustomNcboUserDAO">
+		class="org.ncbo.stanford.domain.custom.dao.CustomNcboUserDAO">
 		<property name="hibernateTemplate">
 			<ref bean="hibernateTemplate" />
 		</property>
 	</bean>
 
 	<bean id="NcboLRoleDAO"
-		class="org.ncbo.stanford.domain.custom.CustomNcboLRoleDAO">
+		class="org.ncbo.stanford.domain.custom.dao.CustomNcboLRoleDAO">
 		<property name="hibernateTemplate">
 			<ref bean="hibernateTemplate" />
 		</property>
 	</bean>
 
 	<bean id="NcboLAdditionalMetadataDAO"
-		class="org.ncbo.stanford.domain.custom.CustomNcboLAdditionalMetadataDAO">
+		class="org.ncbo.stanford.domain.custom.dao.CustomNcboLAdditionalMetadataDAO">
 		<property name="hibernateTemplate">
 			<ref bean="hibernateTemplate" />
 		</property>
 	</bean>
 
 	<bean id="NcboLCategoryDAO"
-		class="org.ncbo.stanford.domain.custom.CustomNcboLCategoryDAO">
+		class="org.ncbo.stanford.domain.custom.dao.CustomNcboLCategoryDAO">
 		<property name="hibernateTemplate">
 			<ref bean="hibernateTemplate" />
 		</property>
@@ -216,6 +225,8 @@
 	</bean>
 
 	<bean id="ontologyService" class="org.ncbo.stanford.service.ontology.impl.OntologyServiceImpl">
-	
+		<property name="ncboOntologyVersionDAO">
+			<ref bean="NcboOntologyVersionDAO" />
+		</property>	
 	</bean>
 </beans>
