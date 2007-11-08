@@ -11,6 +11,9 @@ import org.restlet.data.MediaType;
 import org.restlet.data.Request;
 import org.restlet.data.Response;
 
+import com.thoughtworks.xstream.XStream;
+import com.thoughtworks.xstream.io.xml.DomDriver;
+
 public class OntologyRestlet extends Restlet {
 
 	private static final Log log = LogFactory.getLog(OntologyRestlet.class);
@@ -19,11 +22,10 @@ public class OntologyRestlet extends Restlet {
 
 	@Override
 	public void handle(Request request, Response response) {
-		List<OntologyBean> ontList = ontologyService.getAllOntologies();
-		
-		log.debug("list len: " + ontList.size());
-		
-		response.setEntity(ontList.get(0).getDisplayLabel(), MediaType.TEXT_PLAIN);
+		List<OntologyBean> ontList = ontologyService.findLatestOntologyVersions();
+		XStream xstream = new XStream(new DomDriver());
+//		xstream.alias("UserBean", UserBean.class);
+		response.setEntity(xstream.toXML(ontList), MediaType.APPLICATION_XML);
 	}
 
 	/**
