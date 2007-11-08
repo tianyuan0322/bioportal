@@ -1,7 +1,7 @@
 package org.ncbo.stanford.service.user.impl;
 
 import org.ncbo.stanford.bean.UserBean;
-import org.ncbo.stanford.domain.custom.CustomNcboUserDAO;
+import org.ncbo.stanford.domain.custom.dao.CustomNcboUserDAO;
 import org.ncbo.stanford.domain.generated.NcboUser;
 import org.ncbo.stanford.service.user.UserService;
 
