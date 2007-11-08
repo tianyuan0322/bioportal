@@ -5,15 +5,16 @@ import java.util.Date;
 public class OntologyBean {
 
 	private Integer id;
-	private Integer userId;
-	private String version;
+	private Integer ontologyId;
+	private Integer internalVersionNumber;
+	private String versionNumber;
+	private String versionStatus;
 	private String filePath;
-	private String filename;
 	private Byte isCurrent;
 	private Byte isRemote;
 	private Byte isReviewed;
-	private Date dateReleased;
 	private Date dateCreated;
+	private Date dateReleased;
 	private String displayLabel;
 	private String format;
 	private String contactName;
@@ -21,6 +22,7 @@ public class OntologyBean {
 	private String homepage;
 	private String documentation;
 	private String publication;
+	private String urn;
 	private Byte isFoundry;
 
 	/**
@@ -39,33 +41,63 @@ public class OntologyBean {
 	}
 
 	/**
-	 * @return the userId
+	 * @return the ontologyId
 	 */
-	public Integer getUserId() {
-		return userId;
+	public Integer getOntologyId() {
+		return ontologyId;
 	}
 
 	/**
-	 * @param userId
-	 *            the userId to set
+	 * @param ontologyId
+	 *            the ontologyId to set
 	 */
-	public void setUserId(Integer userId) {
-		this.userId = userId;
+	public void setOntologyId(Integer ontologyId) {
+		this.ontologyId = ontologyId;
 	}
 
 	/**
-	 * @return the version
+	 * @return the internalVersionNumber
 	 */
-	public String getVersion() {
-		return version;
+	public Integer getInternalVersionNumber() {
+		return internalVersionNumber;
 	}
 
 	/**
-	 * @param version
-	 *            the version to set
+	 * @param internalVersionNumber
+	 *            the internalVersionNumber to set
 	 */
-	public void setVersion(String version) {
-		this.version = version;
+	public void setInternalVersionNumber(Integer internalVersionNumber) {
+		this.internalVersionNumber = internalVersionNumber;
+	}
+
+	/**
+	 * @return the versionNumber
+	 */
+	public String getVersionNumber() {
+		return versionNumber;
+	}
+
+	/**
+	 * @param versionNumber
+	 *            the versionNumber to set
+	 */
+	public void setVersionNumber(String versionNumber) {
+		this.versionNumber = versionNumber;
+	}
+
+	/**
+	 * @return the versionStatus
+	 */
+	public String getVersionStatus() {
+		return versionStatus;
+	}
+
+	/**
+	 * @param versionStatus
+	 *            the versionStatus to set
+	 */
+	public void setVersionStatus(String versionStatus) {
+		this.versionStatus = versionStatus;
 	}
 
 	/**
@@ -81,21 +113,6 @@ public class OntologyBean {
 	 */
 	public void setFilePath(String filePath) {
 		this.filePath = filePath;
-	}
-
-	/**
-	 * @return the filename
-	 */
-	public String getFilename() {
-		return filename;
-	}
-
-	/**
-	 * @param filename
-	 *            the filename to set
-	 */
-	public void setFilename(String filename) {
-		this.filename = filename;
 	}
 
 	/**
@@ -156,21 +173,6 @@ public class OntologyBean {
 	 */
 	public void setDateReleased(Date dateReleased) {
 		this.dateReleased = dateReleased;
-	}
-
-	/**
-	 * @return the dateCreated
-	 */
-	public Date getDateCreated() {
-		return dateCreated;
-	}
-
-	/**
-	 * @param dateCreated
-	 *            the dateCreated to set
-	 */
-	public void setDateCreated(Date dateCreated) {
-		this.dateCreated = dateCreated;
 	}
 
 	/**
@@ -279,6 +281,21 @@ public class OntologyBean {
 	}
 
 	/**
+	 * @return the urn
+	 */
+	public String getUrn() {
+		return urn;
+	}
+
+	/**
+	 * @param urn
+	 *            the urn to set
+	 */
+	public void setUrn(String urn) {
+		this.urn = urn;
+	}
+
+	/**
 	 * @return the isFoundry
 	 */
 	public Byte getIsFoundry() {
@@ -291,5 +308,19 @@ public class OntologyBean {
 	 */
 	public void setIsFoundry(Byte isFoundry) {
 		this.isFoundry = isFoundry;
+	}
+
+	/**
+	 * @return the dateCreated
+	 */
+	public Date getDateCreated() {
+		return dateCreated;
+	}
+
+	/**
+	 * @param dateCreated the dateCreated to set
+	 */
+	public void setDateCreated(Date dateCreated) {
+		this.dateCreated = dateCreated;
 	}
 }
