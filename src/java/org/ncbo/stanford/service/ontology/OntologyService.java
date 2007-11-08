@@ -5,5 +5,8 @@ import java.util.List;
 import org.ncbo.stanford.bean.OntologyBean;
 
 public interface OntologyService {
-	List<OntologyBean> getAllOntologies();
+	List<OntologyBean> findLatestOntologyVersions();
 }
+
+
+
