@@ -34,11 +34,11 @@
         <property name="isReviewed" type="java.lang.Byte">
             <column name="is_reviewed" not-null="true" />
         </property>
-        <property name="dateReleased" type="java.util.Date">
-            <column name="date_released" length="0" not-null="true" />
-        </property>
         <property name="dateCreated" type="java.util.Date">
             <column name="date_created" length="0" not-null="true" />
+        </property>
+        <property name="dateReleased" type="java.util.Date">
+            <column name="date_released" length="0" not-null="true" />
         </property>
         <property name="displayLabel" type="java.lang.String">
             <column name="display_label" length="128" not-null="true" />

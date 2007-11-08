@@ -14,6 +14,7 @@
      		<return-property name="filePath" column="file_path" />
      		<return-property name="isCurrent" column="is_current" />
      		<return-property name="isRemote" column="is_remote" />
+     		<return-property name="isReviewed" column="is_reviewed" />
      		<return-property name="dateCreated" column="date_created" />
      		<return-property name="dateReleased" column="date_released" />
      		<return-property name="displayLabel" column="display_label" />
@@ -37,6 +38,7 @@
 				ov.file_path,
 				ov.is_current,
 				ov.is_remote,
+				ov.is_reviewed,
 				ov.date_created,
 				ov.date_released,
 				om.display_label,
