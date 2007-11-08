@@ -25,6 +25,7 @@ public class NcboOntology {
 	private String urn;
 	private Byte isFoundry;
 
+	
 	/**
 	 * @return the id
 	 */
