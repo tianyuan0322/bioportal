@@ -208,7 +208,7 @@
 	<!-- Message bundle -->
 	<bean id="messageBundleName" class="java.lang.String">
 		<constructor-arg>
-			<value>message</value>
+			<value>@messagebundle@</value>
 		</constructor-arg>
 	</bean>
 
@@ -228,5 +228,28 @@
 		<property name="ncboOntologyVersionDAO">
 			<ref bean="NcboOntologyVersionDAO" />
 		</property>	
+	</bean>
+
+	<!-- Session Management -->	
+	<bean id="sessionExpirationHandler" 
+		class="org.ncbo.stanford.view.session.expiration.handler.impl.SimpleExpirationHandler" />
+		
+	<bean id="hashbeltContainerFactory" 
+		class="org.ncbo.stanford.view.session.container.impl.HashlistBasedHashbeltContainerFactory" />
+
+	<bean id="sessionExpirationSystem"
+		class="org.ncbo.stanford.view.session.expiration.system.impl.SessionExpirationSystem">
+ 		<constructor-arg index="0">
+			<value>@bioportalsessionnumcontainers@</value>
+		</constructor-arg>  
+ 		<constructor-arg index="1">
+			<value>@bioportalsessiontimeout@</value>
+		</constructor-arg>  
+ 		<constructor-arg index="2">
+			<ref bean="sessionExpirationHandler" />
+		</constructor-arg>  	
+ 		<constructor-arg index="3">
+			<ref bean="hashbeltContainerFactory" />
+		</constructor-arg>  	
 	</bean>
 </beans>
