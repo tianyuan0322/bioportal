@@ -24,7 +24,7 @@ public class OntologyRestlet extends Restlet {
 	public void handle(Request request, Response response) {
 		List<OntologyBean> ontList = ontologyService.findLatestOntologyVersions();
 		XStream xstream = new XStream(new DomDriver());
-//		xstream.alias("UserBean", UserBean.class);
+		xstream.alias("OntologyBean", OntologyBean.class);
 		response.setEntity(xstream.toXML(ontList), MediaType.APPLICATION_XML);
 	}
 
