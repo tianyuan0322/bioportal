@@ -14,6 +14,13 @@ deploy.path=${appserver.home}/webapps
 #appserver.logs=${appserver.home}/server/default/log
 #deploy.path=${appserver.home}/server/default/deploy
 
+# Session properties
+#
+# Timeout for inactive sessions (in milliseconds)
+bioportal.session.timeout=5000
+# Number of "buckets" to allocate for session storage
+bioportal.session.numcontainers=5
+
 # Logging properties
 bioportal.app.log.deflevel=ERROR
 bioportal.app.log.bioportallevel=DEBUG

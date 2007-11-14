@@ -96,7 +96,9 @@
 
 		<copy file="${tmpl.dir}/applicationContext-services.xml.tmpl" tofile="${conf.dir.generated}/applicationContext-services.xml" overwrite="true">
 			<filterset>
-				<filter token="messagebundle" value="${bioportal.messagebundle}" />
+				<filter token="messagebundle" value="${bioportal.messagebundle}" />				
+				<filter token="bioportalsessionnumcontainers" value="${bioportal.session.numcontainers}" />
+				<filter token="bioportalsessiontimeout" value="${bioportal.session.timeout}" />
 			</filterset>
 		</copy>
 
