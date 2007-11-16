@@ -1,9 +1,9 @@
 package org.ncbo.stanford.view.session.expiration.system.impl;
 
-import org.ncbo.stanford.view.session.Session;
+import org.ncbo.stanford.view.session.RESTSession;
+import org.ncbo.stanford.view.session.SessionKey;
 import org.ncbo.stanford.view.session.container.HashbeltContainerFactory;
 import org.ncbo.stanford.view.session.expiration.handler.ExpirationHandler;
-import org.ncbo.stanford.view.session.util.SessionKey;
 
 /**
  * Extends UpdatingHashbeltExpirationSystem so that active sessions get their
@@ -12,7 +12,7 @@ import org.ncbo.stanford.view.session.util.SessionKey;
  * @author Michael Dorf
  */
 public class SessionExpirationSystem extends
-		UpdatingHashbeltExpirationSystem<SessionKey, Session> {
+		UpdatingHashbeltExpirationSystem<SessionKey, RESTSession> {
 
 	// public static SessionExpirationSystem ses = null;
 	//
@@ -35,21 +35,25 @@ public class SessionExpirationSystem extends
 	}
 
 	public SessionExpirationSystem(
-			ExpirationHandler<SessionKey, Session> handler,
-			HashbeltContainerFactory<SessionKey, Session> hashbeltContainerFactory) {
+			ExpirationHandler<SessionKey, RESTSession> handler,
+			HashbeltContainerFactory<SessionKey, RESTSession> hashbeltContainerFactory) {
 		super(handler, hashbeltContainerFactory);
 	}
 
 	public SessionExpirationSystem(
 			int numberOfContainers,
 			long rotationTime,
-			ExpirationHandler<SessionKey, Session> expirationHandler,
-			HashbeltContainerFactory<SessionKey, Session> hashbeltContainerFactory) {
+			ExpirationHandler<SessionKey, RESTSession> expirationHandler,
+			HashbeltContainerFactory<SessionKey, RESTSession> hashbeltContainerFactory) {
 		super(numberOfContainers, rotationTime, expirationHandler,
 				hashbeltContainerFactory);
 	}
 
 	public SessionExpirationSystem(int numberOfContainers, long rotationTime) {
 		super(numberOfContainers, rotationTime);
+	}
+	
+	public RESTSession getNewSession() {
+		return new RESTSession();
 	}
 }
