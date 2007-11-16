@@ -1,4 +1,4 @@
-package org.ncbo.stanford.view.session.util;
+package org.ncbo.stanford.view.session;
 
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
