@@ -8,26 +8,46 @@
        http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-2.0.xsd">
 
 	<!-- Wire all restlets -->
-  	<bean id="ontologyRestlet" class="org.ncbo.stanford.view.rest.restlet.OntologyRestlet">
+	<bean id="authenticationRestlet"
+		class="org.ncbo.stanford.view.rest.authentication.AuthenticationRestlet">
+		<property name="authenticationManager">
+			<ref bean="authenticationManager" />
+		</property>
+		<property name="sessionExpirationSystem">
+			<ref bean="sessionExpirationSystem" />
+		</property>
+	</bean>
+
+	<bean id="ontologyRestlet"
+		class="org.ncbo.stanford.view.rest.restlet.OntologyRestlet">
 		<property name="ontologyService">
 			<ref bean="ontologyService" />
 		</property>
-  	</bean>
+	</bean>
 
-  	<bean id="userRestlet" class="org.ncbo.stanford.view.rest.restlet.UserRestlet">
+	<bean id="userRestlet"
+		class="org.ncbo.stanford.view.rest.restlet.UserRestlet">
 		<property name="userService">
 			<ref bean="userService" />
 		</property>
-  	</bean>
+	</bean>
 
 	<!-- All mappings: -->
-	<bean id="restManager" class="org.ncbo.stanford.view.rest.base.RestManager">
+	<bean id="restManager"
+		class="org.ncbo.stanford.view.rest.base.RestManager">
 		<property name="resourceMappings">
 			<bean class="java.util.HashMap">
 				<constructor-arg>
 					<map>
-                  		<entry key="/ontologies"><ref local="ontologyRestlet" /></entry>
-                  		<entry key="/user/{user}"><ref local="userRestlet" /></entry>
+						<entry key="/auth">
+							<ref local="authenticationRestlet" />
+						</entry>
+						<entry key="/ontologies">
+							<ref local="ontologyRestlet" />
+						</entry>
+						<entry key="/user/{user}">
+							<ref local="userRestlet" />
+						</entry>
 					</map>
 				</constructor-arg>
 			</bean>
