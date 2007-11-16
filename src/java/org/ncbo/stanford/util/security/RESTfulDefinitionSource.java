@@ -257,7 +257,7 @@ public class RESTfulDefinitionSource implements
 	}
 
 	// ++++++++++++++++++++++++
-	static public class RESTfulDefinitionSourceMapping {
+	public static class RESTfulDefinitionSourceMapping {
 		private String url = null;
 		private List<String> configAttributes = new ArrayList<String>();
 		private String[] httpMethods = null;
