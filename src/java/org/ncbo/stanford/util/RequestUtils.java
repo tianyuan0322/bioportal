@@ -8,6 +8,11 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.ncbo.stanford.util.helper.StringHelper;
+import org.restlet.data.Request;
+
+import com.noelios.restlet.ext.servlet.ServletCall;
+import com.noelios.restlet.http.HttpCall;
+import com.noelios.restlet.http.HttpRequest;
 
 
 public class RequestUtils {
@@ -68,4 +73,18 @@ public class RequestUtils {
 		
 		return parsed;
 	}
+	
+	public static HttpServletRequest getHttpServletRequest(Request req) {
+		if (req instanceof HttpRequest) {
+			HttpRequest httpRequest = (HttpRequest) req;
+			HttpCall httpCall = httpRequest.getHttpCall();
+			
+			if (httpCall instanceof ServletCall) {
+				HttpServletRequest httpServletRequest = ((ServletCall) httpCall)
+						.getRequest();
+				return httpServletRequest;
+			}
+		}
+		return null;
+	}  	
 }
