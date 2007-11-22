@@ -1,6 +1,6 @@
 package org.ncbo.stanford.view.session.expiration.system.impl;
 
-import org.ncbo.stanford.view.session.RESTSession;
+import org.ncbo.stanford.view.session.RESTfulSession;
 import org.ncbo.stanford.view.session.SessionKey;
 import org.ncbo.stanford.view.session.container.HashbeltContainerFactory;
 import org.ncbo.stanford.view.session.expiration.handler.ExpirationHandler;
@@ -12,7 +12,7 @@ import org.ncbo.stanford.view.session.expiration.handler.ExpirationHandler;
  * @author Michael Dorf
  */
 public class SessionExpirationSystem extends
-		UpdatingHashbeltExpirationSystem<SessionKey, RESTSession> {
+		UpdatingHashbeltExpirationSystem<String, RESTfulSession> {
 
 	// public static SessionExpirationSystem ses = null;
 	//
@@ -35,16 +35,16 @@ public class SessionExpirationSystem extends
 	}
 
 	public SessionExpirationSystem(
-			ExpirationHandler<SessionKey, RESTSession> handler,
-			HashbeltContainerFactory<SessionKey, RESTSession> hashbeltContainerFactory) {
+			ExpirationHandler<String, RESTfulSession> handler,
+			HashbeltContainerFactory<String, RESTfulSession> hashbeltContainerFactory) {
 		super(handler, hashbeltContainerFactory);
 	}
 
 	public SessionExpirationSystem(
 			int numberOfContainers,
 			long rotationTime,
-			ExpirationHandler<SessionKey, RESTSession> expirationHandler,
-			HashbeltContainerFactory<SessionKey, RESTSession> hashbeltContainerFactory) {
+			ExpirationHandler<String, RESTfulSession> expirationHandler,
+			HashbeltContainerFactory<String, RESTfulSession> hashbeltContainerFactory) {
 		super(numberOfContainers, rotationTime, expirationHandler,
 				hashbeltContainerFactory);
 	}
@@ -53,7 +53,13 @@ public class SessionExpirationSystem extends
 		super(numberOfContainers, rotationTime);
 	}
 	
-	public RESTSession getNewSession() {
-		return new RESTSession();
+	public RESTfulSession createNewSession() {
+		RESTfulSession ses = new RESTfulSession();
+		String key = new SessionKey().getKey();
+		ses.setId(key);
+		ses.setValid(true);
+		put(key, ses);
+		
+		return ses;
 	}
 }
