@@ -89,6 +89,7 @@
 		<copy file="${tmpl.dir}/applicationContext-security.xml.tmpl" tofile="${conf.dir.generated}/applicationContext-security.xml" overwrite="true">
 			<filterset>
 				<filter token="encryptionkey" value="${bioportal.encryption.key}" />
+				<filter token="applicationbyapplicationidquery" value="${bioportal.applicationbyapplicationid.query}" />
 				<filter token="usersbyusernamequery" value="${bioportal.usersbyusername.query}" />
 				<filter token="authoritiesbyusernamequery" value="${bioportal.authoritiesbyusername.query}" />
 			</filterset>
