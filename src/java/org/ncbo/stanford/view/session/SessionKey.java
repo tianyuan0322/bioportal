@@ -46,6 +46,10 @@ public class SessionKey {
 		return uniqueKey.equals(otherSessionKey.uniqueKey);
 	}
 
+	public String toString() {
+		return uniqueKey;
+	}
+	
 	private static String generateUniqueString() {
 		String randomNum = new Integer(randomNumberGenerator.nextInt())
 				.toString();

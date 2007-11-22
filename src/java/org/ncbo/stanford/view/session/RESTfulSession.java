@@ -17,14 +17,14 @@ import org.acegisecurity.ui.savedrequest.Enumerator;
  * 
  * @author Michael Dorf
  */
-public class RESTSession {
+public class RESTfulSession {
 
 	// ----------------------------------------------------------- Constructors
 
 	/**
 	 * Construct a new Session
 	 */
-	public RESTSession() {
+	public RESTfulSession() {
 	}
 
 	// ----------------------------------------------------- Instance Variables
@@ -53,6 +53,11 @@ public class RESTSession {
 	 * The session identifier of this Session.
 	 */
 	private String id = null;
+
+	/**
+	 * The application identifier of this Session.
+	 */
+	private String applicationId = null;
 
 	/**
 	 * The last accessed time for this Session.
@@ -104,6 +109,20 @@ public class RESTSession {
 	 */
 	public void setId(String id) {
 		this.id = id;
+	}
+
+	/**
+	 * @return the applicationId
+	 */
+	public String getApplicationId() {
+		return applicationId;
+	}
+
+	/**
+	 * @param applicationId the applicationId to set
+	 */
+	public void setApplicationId(String applicationId) {
+		this.applicationId = applicationId;
 	}
 
 	/**
