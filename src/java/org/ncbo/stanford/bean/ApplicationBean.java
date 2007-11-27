@@ -1,10 +1,30 @@
 package org.ncbo.stanford.bean;
 
-public class ApplicationBean {
+import java.io.Serializable;
 
+import org.ncbo.stanford.domain.generated.NcboAdminApplication;
+
+public class ApplicationBean implements Serializable {
+
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+	
 	private String applicationId;
 	private String name;
 	private String description;
+
+	/**
+	 * Populates this instance with data from an entity bean
+	 */
+	public void populateFromEntity(NcboAdminApplication app) {
+		if (app != null) {
+			setApplicationId(app.getApplicationId());
+			setName(app.getApplicationName());
+			setDescription(app.getApplicationDescription());
+		}
+	}
 
 	/**
 	 * @return the applicationId
