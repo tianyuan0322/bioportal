@@ -41,6 +41,12 @@ public final class AuthenticationRestlet extends Restlet {
 		authenticate(request, response);
 	}
 
+	/**
+	 * Authenticates the user and stores the security context inside the session
+	 * 
+	 * @param request
+	 * @param response
+	 */
 	private void authenticate(Request request, Response response) {
 		try {
 			HttpServletRequest httpServletRequest = RequestUtils
