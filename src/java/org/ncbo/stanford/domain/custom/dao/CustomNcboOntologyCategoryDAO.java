@@ -15,7 +15,7 @@ public class CustomNcboOntologyCategoryDAO extends NcboOntologyCategoryDAO {
 	 * 
 	 */
 	public CustomNcboOntologyCategoryDAO() {
-		// TODO Auto-generated constructor stub
+		super();
 	}
 
 }

@@ -16,7 +16,7 @@ public class CustomNcboOntologyAdditionalMetadataDAO extends
 	 * 
 	 */
 	public CustomNcboOntologyAdditionalMetadataDAO() {
-		// TODO Auto-generated constructor stub
+		super();
 	}
 
 }

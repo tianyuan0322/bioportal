@@ -15,7 +15,7 @@ public class CustomNcboLRoleDAO extends NcboLRoleDAO {
 	 * 
 	 */
 	public CustomNcboLRoleDAO() {
-		// TODO Auto-generated constructor stub
+		super();
 	}
 
 }

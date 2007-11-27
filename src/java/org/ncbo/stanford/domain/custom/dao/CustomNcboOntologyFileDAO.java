@@ -15,7 +15,7 @@ public class CustomNcboOntologyFileDAO extends NcboOntologyFileDAO {
 	 * 
 	 */
 	public CustomNcboOntologyFileDAO() {
-		// TODO Auto-generated constructor stub
+		super();
 	}
 
 }

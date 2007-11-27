@@ -15,7 +15,7 @@ public class CustomNcboLCategoryDAO extends NcboLCategoryDAO {
 	 * 
 	 */
 	public CustomNcboLCategoryDAO() {
-		// TODO Auto-generated constructor stub
+		super();
 	}
 
 }
