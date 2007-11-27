@@ -93,14 +93,6 @@
 
 
 
-
-
-
-
-
-
-
-
 	<bean id="authenticationProcessingFilter"
 		class="org.acegisecurity.ui.webapp.AuthenticationProcessingFilter">
 		<property name="authenticationManager"
@@ -111,6 +103,10 @@
 		<property name="filterProcessesUrl"
 			value="/j_acegi_security_check" />
 	</bean>
+
+
+
+
 
 	<bean id="exceptionTranslationFilter"
 		class="org.ncbo.stanford.util.security.ui.RESTfulExceptionTranslationFilter">
@@ -186,82 +182,25 @@
 		</constructor-arg>
 	</bean>
 
-
-
 	<bean id="authenticationManager"
 		class="org.acegisecurity.providers.ProviderManager">
 		<property name="providers">
 			<list>
 				<ref local="daoAuthenticationProvider" />
-				<ref local="applicationAuthenticationProvider" />
 			</list>
 		</property>
 	</bean>
 
-
 	<bean id="daoAuthenticationProvider"
-		class="org.acegisecurity.providers.dao.DaoAuthenticationProvider">
+		class="org.ncbo.stanford.util.security.providers.dao.RESTfulDaoAuthenticationProvider">
 		<property name="userDetailsService">
 			<ref local="jdbcDaoImpl" />
 		</property>
-		<property name="userCache">
-			<ref local="userCache" />
+		<property name="applicationDetailsService">
+			<ref local="jdbcApplicationDaoImpl" />
 		</property>
-	</bean>
-
-
-
-
-
-
-	<bean id="applicationAuthenticationProvider"
-		class="org.ncbo.stanford.util.security.providers.ApplicationAuthenticationProvider">
-		<property name="dataSource">
-			<ref bean="dataSource" />
-		</property>
-		<property name="applicationByApplicationIdQuery">
-			<value>@applicationbyapplicationidquery@</value>
-		</property>
-	</bean>
-
-
-
-
-
-	<bean id="anonymousProcessingFilter"
-		class="org.acegisecurity.providers.anonymous.AnonymousProcessingFilter">
-		<property name="key">
-			<value>SomeKey_MUST_CHANGE</value>
-		</property>
-		<property name="userAttribute">
-			<value>anonymousUser,ROLE_ANONYMOUS</value>
-		</property>
-	</bean>
-
-
-
-
-
-
-
-
-	<bean id="cacheManager"
-		class="org.springframework.cache.ehcache.EhCacheManagerFactoryBean" />
-
-	<bean id="userCacheBackend"
-		class="org.springframework.cache.ehcache.EhCacheFactoryBean">
-		<property name="cacheManager">
-			<ref local="cacheManager" />
-		</property>
-		<property name="cacheName">
-			<value>userCache</value>
-		</property>
-	</bean>
-
-	<bean id="userCache"
-		class="org.acegisecurity.providers.dao.cache.EhCacheBasedUserCache">
-		<property name="cache">
-			<ref local="userCacheBackend" />
+		<property name="userApplicationCache">
+			<ref local="userApplicationCache" />
 		</property>
 	</bean>
 
@@ -275,6 +214,46 @@
 		</property>
 		<property name="authoritiesByUsernameQuery">
 			<value>@authoritiesbyusernamequery@</value>
+		</property>
+	</bean>
+
+	<bean id="jdbcApplicationDaoImpl"
+		class="org.ncbo.stanford.util.security.userdetails.jdbc.JdbcApplicationDaoImpl">
+		<property name="dataSource">
+			<ref bean="dataSource" />
+		</property>
+		<property name="applicationByApplicationIdQuery">
+			<value>@applicationbyapplicationidquery@</value>
+		</property>
+	</bean>
+
+	<bean id="anonymousProcessingFilter"
+		class="org.acegisecurity.providers.anonymous.AnonymousProcessingFilter">
+		<property name="key">
+			<value>@encryptionkey@</value>
+		</property>
+		<property name="userAttribute">
+			<value>anonymousUser,ROLE_ANONYMOUS</value>
+		</property>
+	</bean>
+
+	<bean id="cacheManager"
+		class="org.springframework.cache.ehcache.EhCacheManagerFactoryBean" />
+
+	<bean id="userCacheBackend"
+		class="org.springframework.cache.ehcache.EhCacheFactoryBean">
+		<property name="cacheManager">
+			<ref local="cacheManager" />
+		</property>
+		<property name="cacheName">
+			<value>userApplicationCache</value>
+		</property>
+	</bean>
+
+	<bean id="userApplicationCache"
+		class="org.ncbo.stanford.util.security.providers.dao.cache.EhCacheBasedUserApplicationCache">
+		<property name="cache">
+			<ref local="userCacheBackend" />
 		</property>
 	</bean>
 
