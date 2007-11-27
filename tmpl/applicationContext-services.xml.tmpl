@@ -66,6 +66,9 @@
 				<value>
 					org/ncbo/stanford/domain/generated/NcboSeqOntologyId.hbm.xml
 				</value>
+				<value>
+					org/ncbo/stanford/domain/generated/NcboAdminApplication.hbm.xml
+				</value>
 			</list>
 		</property>
 	</bean>
@@ -199,7 +202,14 @@
 	</bean>
 	
 	<bean id="NcboSeqOntologyIdDAO"
-		class="org.ncbo.stanford.domain.generated.NcboSeqOntologyIdDAO">
+		class="org.ncbo.stanford.domain.custom.dao.CustomNcboSeqOntologyIdDAO">
+		<property name="hibernateTemplate">
+			<ref bean="hibernateTemplate" />
+		</property>
+	</bean>
+
+	<bean id="NcboAdminApplicationDAO"
+		class="org.ncbo.stanford.domain.custom.dao.CustomNcboAdminApplicationDAO">
 		<property name="hibernateTemplate">
 			<ref bean="hibernateTemplate" />
 		</property>
