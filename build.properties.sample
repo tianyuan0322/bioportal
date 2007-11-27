@@ -48,7 +48,7 @@ bioportal.encryption.key=myencryptionkey
 bioportal.usersbyusername.query=SELECT username, password, 1 AS enabled FROM myusertable WHERE username = ?
 
 # Application by application id query used for authentication
-bioportal.applicationbyapplicationid.query=SELECT application_id, application_name FROM ncbo_admin_application WHERE application_id = ?
+bioportal.applicationbyapplicationid.query=SELECT applicationid, applicationname FROM myapplicationtable WHERE applicationid = ?
 
 # Authorities by username query used for authorization
 bioportal.authoritiesbyusername.query=SELECT username, authority FROM myauthoritytable WHERE username = ?
