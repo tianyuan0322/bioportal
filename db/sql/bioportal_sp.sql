@@ -8,13 +8,13 @@ CREATE DEFINER=`root`@`localhost` PROCEDURE `sp_update_app_text_record`(
 	p_strDescription VARCHAR(512),
 	p_strLastModifier VARCHAR(128),
 	p_strDatatypeCode CHAR(3),
-	p_txtContent TEXT,
-	OUT message VARCHAR(20)
+	OUT p_strMessage VARCHAR(20),
+	p_txtContent TEXT
 )
 BEGIN
 	DECLARE exit handler for sqlexception ROLLBACK; 
 	DECLARE exit handler for sqlwarning ROLLBACK;
-	SET message := "ERROR"; 
+	SET p_strMessage := "ERROR"; 
 
 	START TRANSACTION;
 
@@ -51,18 +51,19 @@ BEGIN
 
 		DELETE 
 		FROM 
-			ncbo_app_text_revision
+			ncbo_app_text_revision 
 		WHERE 
 			date_revised = (
-				SELECT 
-					MAX(date_revised) 
-				FROM 
-					ncbo_app_text_revision
-			);
+				SELECT date_revised FROM (
+					SELECT MAX(date_revised) AS date_revised 
+					FROM ncbo_app_text_revision
+				) as x
+
+		);
 	END IF;
 
 	COMMIT;
-	SET message := "SUCCESS"; 
+	SET p_strMessage := "SUCCESS"; 
 END$$
 
 DELIMITER ;
@@ -76,20 +77,20 @@ CREATE DEFINER=`root`@`localhost` PROCEDURE `sp_insert_app_text_record`(
 	p_strDescription VARCHAR(512),
 	p_strLastModifier VARCHAR(128),
 	p_strDatatypeCode CHAR(3),
-	p_txtContent TEXT,
-	OUT message VARCHAR(20)
+	OUT p_strMessage VARCHAR(20),
+	p_txtContent TEXT
 )
 BEGIN
 	DECLARE exit handler for sqlexception ROLLBACK; 
 	DECLARE exit handler for sqlwarning ROLLBACK;
-	SET message := "ERROR"; 
+	SET p_strMessage := "ERROR"; 
 
 	START TRANSACTION;
 	
 	IF p_strDatatypeCode IS NULL THEN
 		INSERT
 		INTO 
-			tsn_app_text (
+			ncbo_app_text (
 				identifier,
 				description,
 				last_modifier,
@@ -107,7 +108,7 @@ BEGIN
 	ELSE
 		INSERT
 		INTO 
-			tsn_app_text (
+			ncbo_app_text (
 				identifier,
 				description,
 				last_modifier,
@@ -127,7 +128,7 @@ BEGIN
 	END IF;	
 
 	COMMIT;
-	SET message := "SUCCESS"; 
+	SET p_strMessage := "SUCCESS"; 
 END$$
 
 DELIMITER ;
@@ -142,9 +143,9 @@ CREATE DEFINER=`root`@`localhost` PROCEDURE `sp_insert_update_app_text_record`(
 	p_strDescription VARCHAR(512),
 	p_strLastModifier VARCHAR(128),
 	p_strDatatypeCode CHAR(3),
-	p_txtContent TEXT,
 	OUT p_strExecType VARCHAR(6),
-	OUT message VARCHAR(20)
+	OUT p_strMessage VARCHAR(20),
+	p_txtContent TEXT
 )
 BEGIN
 	DECLARE count_recs INT; 
@@ -163,7 +164,7 @@ BEGIN
 			p_strLastModifier,
 			p_strDatatypeCode,
 			p_txtContent,
-			message
+			p_strMessage
 		);
 		
 		SET p_strExecType = "Update";
@@ -174,7 +175,7 @@ BEGIN
 			p_strLastModifier,
 			p_strDatatypeCode,	
 			p_txtContent,
-			message
+			p_strMessage
 		);
 
 		SET p_strExecType = "Insert";
