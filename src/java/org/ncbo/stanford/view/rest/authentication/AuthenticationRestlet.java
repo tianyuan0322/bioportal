@@ -20,6 +20,7 @@ import org.restlet.Restlet;
 import org.restlet.data.MediaType;
 import org.restlet.data.Request;
 import org.restlet.data.Response;
+import org.restlet.data.Status;
 
 /**
  * Handles Acegi form based authentication. Simulates the the Acegi's
@@ -84,6 +85,7 @@ public final class AuthenticationRestlet extends Restlet {
 							HttpSessionContextIntegrationFilter.ACEGI_SECURITY_CONTEXT_KEY,
 							secCtx);
 
+			response.setStatus(Status.SUCCESS_OK);
 			response.setEntity("Success: " + session.getId(),
 					MediaType.TEXT_PLAIN);
 
@@ -92,6 +94,7 @@ public final class AuthenticationRestlet extends Restlet {
 			log.error(e);
 			SecurityContextHolder.getContext().setAuthentication(null);
 
+			response.setStatus(Status.CLIENT_ERROR_FORBIDDEN);
 			response.setEntity("Failure", MediaType.TEXT_PLAIN);
 		}
 	}
