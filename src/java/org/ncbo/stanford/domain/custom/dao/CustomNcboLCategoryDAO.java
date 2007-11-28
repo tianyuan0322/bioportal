@@ -17,5 +17,4 @@ public class CustomNcboLCategoryDAO extends NcboLCategoryDAO {
 	public CustomNcboLCategoryDAO() {
 		super();
 	}
-
 }
