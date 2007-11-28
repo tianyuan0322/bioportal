@@ -15,7 +15,6 @@
 
 package org.ncbo.stanford.util.security.ui;
 
-
 import java.io.IOException;
 import java.util.Map;
 
@@ -23,6 +22,7 @@ import javax.servlet.Filter;
 import javax.servlet.FilterChain;
 import javax.servlet.FilterConfig;
 import javax.servlet.ServletException;
+import javax.servlet.ServletOutputStream;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
@@ -33,7 +33,6 @@ import org.acegisecurity.AcegiSecurityException;
 import org.acegisecurity.AuthenticationException;
 import org.acegisecurity.AuthenticationTrustResolver;
 import org.acegisecurity.AuthenticationTrustResolverImpl;
-import org.acegisecurity.InsufficientAuthenticationException;
 import org.acegisecurity.context.SecurityContextHolder;
 import org.acegisecurity.ui.AbstractProcessingFilter;
 import org.acegisecurity.ui.AccessDeniedHandler;
@@ -44,6 +43,8 @@ import org.acegisecurity.util.PortResolver;
 import org.acegisecurity.util.PortResolverImpl;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.ncbo.stanford.util.RequestUtils;
+import org.restlet.Restlet;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.context.ApplicationContext;
 import org.springframework.util.Assert;
@@ -90,13 +91,15 @@ import org.springframework.util.Assert;
  * @author Ben Alex
  * @author colin sampaleanu
  * @version $Id: ExceptionTranslationFilter.java 1496 2006-05-23 13:38:33Z
- * benalex $
+ *          benalex $
  */
-public class RESTfulExceptionTranslationFilter implements Filter, InitializingBean {
+public class RESTfulExceptionTranslationFilter extends Restlet implements
+		Filter, InitializingBean {
 	// ~ Static fields/initializers
 	// =====================================================================================
 
-	private static final Log logger = LogFactory.getLog(RESTfulExceptionTranslationFilter.class);
+	private static final Log logger = LogFactory
+			.getLog(RESTfulExceptionTranslationFilter.class);
 
 	// ~ Instance fields
 	// ================================================================================================
@@ -115,9 +118,11 @@ public class RESTfulExceptionTranslationFilter implements Filter, InitializingBe
 	// ========================================================================================================
 
 	public void afterPropertiesSet() throws Exception {
-		Assert.notNull(authenticationEntryPoint, "authenticationEntryPoint must be specified");
+		Assert.notNull(authenticationEntryPoint,
+				"authenticationEntryPoint must be specified");
 		Assert.notNull(portResolver, "portResolver must be specified");
-		Assert.notNull(authenticationTrustResolver, "authenticationTrustResolver must be specified");
+		Assert.notNull(authenticationTrustResolver,
+				"authenticationTrustResolver must be specified");
 	}
 
 	/**
@@ -128,20 +133,21 @@ public class RESTfulExceptionTranslationFilter implements Filter, InitializingBe
 	 * parameter. If more than one instance of <code>AccessDeniedHandler</code>
 	 * is found, the method throws <code>IllegalStateException</code>.
 	 * 
-	 * @param applicationContext to locate the instance
+	 * @param applicationContext
+	 *            to locate the instance
 	 */
-	private void autoDetectAnyAccessDeniedHandlerAndUseIt(ApplicationContext applicationContext) {
+	private void autoDetectAnyAccessDeniedHandlerAndUseIt(
+			ApplicationContext applicationContext) {
 		Map map = applicationContext.getBeansOfType(AccessDeniedHandler.class);
 		if (map.size() > 1) {
 			throw new IllegalArgumentException(
 					"More than one AccessDeniedHandler beans detected please refer to the one using "
 							+ " [ accessDeniedBeanRef  ] " + "attribute");
-		}
-		else if (map.size() == 1) {
-			AccessDeniedHandler handler = (AccessDeniedHandlerImpl) map.values().iterator().next();
+		} else if (map.size() == 1) {
+			AccessDeniedHandler handler = (AccessDeniedHandlerImpl) map
+					.values().iterator().next();
 			setAccessDeniedHandler(handler);
-		}
-		else {
+		} else {
 			// create and use the default one specified as an instance variable.
 			accessDeniedHandler = new AccessDeniedHandlerImpl();
 		}
@@ -151,8 +157,8 @@ public class RESTfulExceptionTranslationFilter implements Filter, InitializingBe
 	public void destroy() {
 	}
 
-	public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException,
-			ServletException {
+	public void doFilter(ServletRequest request, ServletResponse response,
+			FilterChain chain) throws IOException, ServletException {
 		if (!(request instanceof HttpServletRequest)) {
 			throw new ServletException("HttpServletRequest required");
 		}
@@ -167,23 +173,19 @@ public class RESTfulExceptionTranslationFilter implements Filter, InitializingBe
 			if (logger.isDebugEnabled()) {
 				logger.debug("Chain processed normally");
 			}
-		}
-		catch (AuthenticationException ex) {
+		} catch (AuthenticationException ex) {
 			handleException(request, response, chain, ex);
-		}
-		catch (AccessDeniedException ex) {
+		} catch (AccessDeniedException ex) {
 			handleException(request, response, chain, ex);
-		}
-		catch (ServletException ex) {
+		} catch (ServletException ex) {
 			if (ex.getRootCause() instanceof AuthenticationException
 					|| ex.getRootCause() instanceof AccessDeniedException) {
-				handleException(request, response, chain, (AcegiSecurityException) ex.getRootCause());
-			}
-			else {
+				handleException(request, response, chain,
+						(AcegiSecurityException) ex.getRootCause());
+			} else {
 				throw ex;
 			}
-		}
-		catch (IOException ex) {
+		} catch (IOException ex) {
 			throw ex;
 		}
 	}
@@ -200,32 +202,59 @@ public class RESTfulExceptionTranslationFilter implements Filter, InitializingBe
 		return portResolver;
 	}
 
-	private void handleException(ServletRequest request, ServletResponse response, FilterChain chain,
-			AcegiSecurityException exception) throws IOException, ServletException {
+	private void handleException(ServletRequest request,
+			ServletResponse response, FilterChain chain,
+			AcegiSecurityException exception) throws IOException,
+			ServletException {
 		if (exception instanceof AuthenticationException) {
 			if (logger.isDebugEnabled()) {
-				logger.debug("Authentication exception occurred; redirecting to authentication entry point", exception);
+				logger
+						.debug(
+								"Authentication exception occurred; redirecting to authentication entry point",
+								exception);
 			}
 
-			sendStartAuthentication(request, response, chain, (AuthenticationException) exception);
-		}
-		else if (exception instanceof AccessDeniedException) {
-			if (authenticationTrustResolver.isAnonymous(SecurityContextHolder.getContext().getAuthentication())) {
+			RequestUtils.setHttpServletResponse(
+					(HttpServletResponse) response,
+					HttpServletResponse.SC_FORBIDDEN,
+					"hello world - authentication exception");
+
+			// sendStartAuthentication(request, response, chain,
+			// (AuthenticationException) exception);
+		} else if (exception instanceof AccessDeniedException) {
+			if (authenticationTrustResolver.isAnonymous(SecurityContextHolder
+					.getContext().getAuthentication())) {
 				if (logger.isDebugEnabled()) {
-					logger.debug("Access is denied (user is anonymous); redirecting to authentication entry point",
-							exception);
+					logger
+							.debug(
+									"Access is denied (user is anonymous); redirecting to authentication entry point",
+									exception);
 				}
 
-				sendStartAuthentication(request, response, chain, new InsufficientAuthenticationException(
-						"Full authentication is required to access this resource"));
-			}
-			else {
+				RequestUtils.setHttpServletResponse(
+						(HttpServletResponse) response,
+						HttpServletResponse.SC_FORBIDDEN,
+						"hello world - access denied exception");
+
+				// sendStartAuthentication(request, response, chain, new
+				// InsufficientAuthenticationException(
+				// "Full authentication is required to access this resource"));
+			} else {
 				if (logger.isDebugEnabled()) {
-					logger.debug("Access is denied (user is not anonymous); delegating to AccessDeniedHandler",
-							exception);
+					logger
+							.debug(
+									"Access is denied (user is not anonymous); delegating to AccessDeniedHandler",
+									exception);
 				}
 
-				accessDeniedHandler.handle(request, response, (AccessDeniedException) exception);
+				RequestUtils.setHttpServletResponse(
+						(HttpServletResponse) response,
+						HttpServletResponse.SC_FORBIDDEN,
+						"hello world - access denied exception");
+				
+				
+//				accessDeniedHandler.handle(request, response,
+//						(AccessDeniedException) exception);
 			}
 		}
 	}
@@ -245,34 +274,42 @@ public class RESTfulExceptionTranslationFilter implements Filter, InitializingBe
 	 * to <code>false</code> if you set this property to <code>false</code>.
 	 * 
 	 * @return <code>true</code> if the <code>HttpSession</code> will be
-	 * used to store information about the failed request, <code>false</code>
-	 * if the <code>HttpSession</code> will not be used
+	 *         used to store information about the failed request,
+	 *         <code>false</code> if the <code>HttpSession</code> will not
+	 *         be used
 	 */
 	public boolean isCreateSessionAllowed() {
 		return createSessionAllowed;
 	}
 
-	protected void sendStartAuthentication(ServletRequest request, ServletResponse response, FilterChain chain,
-			AuthenticationException reason) throws ServletException, IOException {
+	protected void sendStartAuthentication(ServletRequest request,
+			ServletResponse response, FilterChain chain,
+			AuthenticationException reason) throws ServletException,
+			IOException {
 		HttpServletRequest httpRequest = (HttpServletRequest) request;
 
 		SavedRequest savedRequest = new SavedRequest(httpRequest, portResolver);
 
 		if (logger.isDebugEnabled()) {
-			logger.debug("Authentication entry point being called; SavedRequest added to Session: " + savedRequest);
+			logger
+					.debug("Authentication entry point being called; SavedRequest added to Session: "
+							+ savedRequest);
 		}
 
 		if (createSessionAllowed) {
 			// Store the HTTP request itself. Used by AbstractProcessingFilter
 			// for redirection after successful authentication (SEC-29)
-			httpRequest.getSession().setAttribute(AbstractProcessingFilter.ACEGI_SAVED_REQUEST_KEY, savedRequest);
+			httpRequest.getSession().setAttribute(
+					AbstractProcessingFilter.ACEGI_SAVED_REQUEST_KEY,
+					savedRequest);
 		}
 
 		// SEC-112: Clear the SecurityContextHolder's Authentication, as the
 		// existing Authentication is no longer considered valid
 		SecurityContextHolder.getContext().setAuthentication(null);
 
-		authenticationEntryPoint.commence(httpRequest, (HttpServletResponse) response, reason);
+		authenticationEntryPoint.commence(httpRequest,
+				(HttpServletResponse) response, reason);
 	}
 
 	public void setAccessDeniedHandler(AccessDeniedHandler accessDeniedHandler) {
@@ -280,11 +317,13 @@ public class RESTfulExceptionTranslationFilter implements Filter, InitializingBe
 		this.accessDeniedHandler = accessDeniedHandler;
 	}
 
-	public void setAuthenticationEntryPoint(AuthenticationEntryPoint authenticationEntryPoint) {
+	public void setAuthenticationEntryPoint(
+			AuthenticationEntryPoint authenticationEntryPoint) {
 		this.authenticationEntryPoint = authenticationEntryPoint;
 	}
 
-	public void setAuthenticationTrustResolver(AuthenticationTrustResolver authenticationTrustResolver) {
+	public void setAuthenticationTrustResolver(
+			AuthenticationTrustResolver authenticationTrustResolver) {
 		this.authenticationTrustResolver = authenticationTrustResolver;
 	}
 
