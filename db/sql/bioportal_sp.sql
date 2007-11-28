@@ -163,8 +163,8 @@ BEGIN
 			p_strDescription,
 			p_strLastModifier,
 			p_strDatatypeCode,
-			p_txtContent,
-			p_strMessage
+			p_strMessage,
+			p_txtContent
 		);
 		
 		SET p_strExecType = "Update";
@@ -174,8 +174,8 @@ BEGIN
 			p_strDescription, 
 			p_strLastModifier,
 			p_strDatatypeCode,	
-			p_txtContent,
-			p_strMessage
+			p_strMessage,
+			p_txtContent
 		);
 
 		SET p_strExecType = "Insert";
