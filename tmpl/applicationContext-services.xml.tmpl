@@ -68,7 +68,13 @@
 				</value>
 				<value>
 					org/ncbo/stanford/domain/generated/NcboAdminApplication.hbm.xml
+				</value>				
+				<value>
+					org/ncbo/stanford/domain/generated/NcboLAppTextDatatype.hbm.xml
 				</value>
+				<value>
+					org/ncbo/stanford/domain/generated/NcboAppText.hbm.xml
+				</value>				
 			</list>
 		</property>
 	</bean>
@@ -215,6 +221,20 @@
 		</property>
 	</bean>
 
+	<bean id="NcboLAppTextDatatypeDAO"
+		class="org.ncbo.stanford.domain.custom.dao.CustomNcboLAppTextDatatypeDAO">
+		<property name="hibernateTemplate">
+			<ref bean="hibernateTemplate" />
+		</property>
+	</bean>
+	
+	<bean id="NcboAppTextDAO"
+		class="org.ncbo.stanford.domain.custom.dao.CustomNcboAppTextDAO">
+		<property name="hibernateTemplate">
+			<ref bean="hibernateTemplate" />
+		</property>
+	</bean>
+
 	<!-- Message bundle -->
 	<bean id="messageBundleName" class="java.lang.String">
 		<constructor-arg>
@@ -262,4 +282,11 @@
 			<ref bean="hashbeltContainerFactory" />
 		</constructor-arg>  	
 	</bean>
+	
+	<bean id="textManager"
+		class="org.ncbo.stanford.util.textmanager.service.impl.TextManagerImpl">
+		<property name="ncboAppTextDAO">
+			<ref bean="NcboAppTextDAO" />
+		</property>
+	</bean>	
 </beans>
