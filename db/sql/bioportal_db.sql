@@ -45,6 +45,39 @@ CREATE TABLE `ncbo_app_text` (
   CONSTRAINT `FK_ncbo_app_text_datatype` FOREIGN KEY (`datatype_code`) REFERENCES `ncbo_l_app_text_datatype` (`datatype_code`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
+/*Trigger structure for table `ncbo_app_text` */
+
+DELIMITER $$
+
+/*!50003 DROP TRIGGER*//*!50032 IF EXISTS */ /*!50003 `trg_create_ncbo_app_text_revision_after_insert` */$$
+
+/*!50003 CREATE TRIGGER `trg_create_ncbo_app_text_revision_after_insert` AFTER INSERT ON `ncbo_app_text` FOR EACH ROW BEGIN
+	INSERT INTO ncbo_app_text_revision (
+		identifier, description, text_content, datatype_code, date_revised)
+	SELECT NEW.identifier, NEW.description, NEW.text_content, NEW.datatype_code, CURRENT_TIMESTAMP;
+END */$$
+
+
+/*!50003 DROP TRIGGER*//*!50032 IF EXISTS */ /*!50003 `trg_create_ncbo_app_text_revision_after_update` */$$
+
+/*!50003 CREATE TRIGGER `trg_create_ncbo_app_text_revision_after_update` AFTER UPDATE ON `ncbo_app_text` FOR EACH ROW BEGIN
+	DECLARE strNewTextIdent VARCHAR(128);
+	DECLARE strOldTextIdent VARCHAR(128);	
+	SELECT LOWER(NEW.identifier) INTO strNewTextIdent;
+	SELECT LOWER(OLD.identifier) INTO strOldTextIdent;
+	IF strNewTextIdent != strOldTextIdent THEN
+		UPDATE ncbo_app_text_revision
+		SET identifier = strNewTextIdent
+		WHERE LOWER(identifier) = strOldTextIdent;
+	END IF;
+	INSERT INTO ncbo_app_text_revision (
+		identifier, description, text_content, datatype_code, date_revised)
+	SELECT strNewTextIdent, NEW.description, NEW.text_content, NEW.datatype_code, CURRENT_TIMESTAMP;
+END */$$
+
+
+DELIMITER ;
+
 /*Table structure for table `ncbo_app_text_revision` */
 
 DROP TABLE IF EXISTS `ncbo_app_text_revision`;
@@ -247,19 +280,19 @@ DELIMITER $$
 	p_strDescription VARCHAR(512),
 	p_strLastModifier VARCHAR(128),
 	p_strDatatypeCode CHAR(3),
-	p_txtContent TEXT,
-	OUT message VARCHAR(20)
+	OUT p_strMessage VARCHAR(20),
+	p_txtContent TEXT
 )
 BEGIN
 	DECLARE exit handler for sqlexception ROLLBACK; 
 	DECLARE exit handler for sqlwarning ROLLBACK;
-	SET message := "ERROR"; 
+	SET p_strMessage := "ERROR"; 
 	START TRANSACTION;
 	
 	IF p_strDatatypeCode IS NULL THEN
 		INSERT
 		INTO 
-			tsn_app_text (
+			ncbo_app_text (
 				identifier,
 				description,
 				last_modifier,
@@ -277,7 +310,7 @@ BEGIN
 	ELSE
 		INSERT
 		INTO 
-			tsn_app_text (
+			ncbo_app_text (
 				identifier,
 				description,
 				last_modifier,
@@ -296,7 +329,7 @@ BEGIN
 			);
 	END IF;	
 	COMMIT;
-	SET message := "SUCCESS"; 
+	SET p_strMessage := "SUCCESS"; 
 END */$$
 DELIMITER ;
 
@@ -312,9 +345,9 @@ DELIMITER $$
 	p_strDescription VARCHAR(512),
 	p_strLastModifier VARCHAR(128),
 	p_strDatatypeCode CHAR(3),
-	p_txtContent TEXT,
 	OUT p_strExecType VARCHAR(6),
-	OUT message VARCHAR(20)
+	OUT p_strMessage VARCHAR(20),
+	p_txtContent TEXT
 )
 BEGIN
 	DECLARE count_recs INT; 
@@ -331,8 +364,8 @@ BEGIN
 			p_strDescription,
 			p_strLastModifier,
 			p_strDatatypeCode,
-			p_txtContent,
-			message
+			p_strMessage,
+			p_txtContent
 		);
 		
 		SET p_strExecType = "Update";
@@ -342,8 +375,8 @@ BEGIN
 			p_strDescription, 
 			p_strLastModifier,
 			p_strDatatypeCode,	
-			p_txtContent,
-			message
+			p_strMessage,
+			p_txtContent
 		);
 		SET p_strExecType = "Insert";
 	END IF;	
@@ -362,13 +395,13 @@ DELIMITER $$
 	p_strDescription VARCHAR(512),
 	p_strLastModifier VARCHAR(128),
 	p_strDatatypeCode CHAR(3),
-	p_txtContent TEXT,
-	OUT message VARCHAR(20)
+	OUT p_strMessage VARCHAR(20),
+	p_txtContent TEXT
 )
 BEGIN
 	DECLARE exit handler for sqlexception ROLLBACK; 
 	DECLARE exit handler for sqlwarning ROLLBACK;
-	SET message := "ERROR"; 
+	SET p_strMessage := "ERROR"; 
 	START TRANSACTION;
 	IF p_strDatatypeCode IS NULL THEN
 		UPDATE 
@@ -401,17 +434,17 @@ BEGIN
 			LOWER(identifier) = LOWER(p_strOldTextIdent);
 		DELETE 
 		FROM 
-			ncbo_app_text_revision
+			ncbo_app_text_revision 
 		WHERE 
 			date_revised = (
-				SELECT 
-					MAX(date_revised) 
-				FROM 
-					ncbo_app_text_revision
-			);
+				SELECT date_revised FROM (
+					SELECT MAX(date_revised) AS date_revised 
+					FROM ncbo_app_text_revision
+				) as x
+		);
 	END IF;
 	COMMIT;
-	SET message := "SUCCESS"; 
+	SET p_strMessage := "SUCCESS"; 
 END */$$
 DELIMITER ;
 
