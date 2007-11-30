@@ -18,8 +18,8 @@ import org.acegisecurity.context.SecurityContextHolder;
 import org.acegisecurity.context.SecurityContextImpl;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.ncbo.stanford.view.session.RESTfulSession;
-import org.ncbo.stanford.view.session.expiration.system.impl.SessionExpirationSystem;
+import org.ncbo.stanford.service.session.RESTfulSession;
+import org.ncbo.stanford.service.session.SessionService;
 import org.ncbo.stanford.view.util.constants.RequestParamConstants;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.util.Assert;
@@ -100,7 +100,7 @@ public class RESTfulContextIntegrationFilter implements InitializingBean,
 
 	private Class context = SecurityContextImpl.class;
 	private Object contextObject;
-	private SessionExpirationSystem sessionExpirationSystem;
+	private SessionService sessionService;
 
 	/**
 	 * Indicates if this filter can create a <code>HttpSession</code> if
@@ -200,7 +200,7 @@ public class RESTfulContextIntegrationFilter implements InitializingBean,
 			logger.debug("sessionid: " + sessionId);
 		}
 
-		RESTfulSession session = sessionExpirationSystem.get(sessionId);
+		RESTfulSession session = sessionService.get(sessionId);
 
 		boolean httpSessionExistedAtStartOfRequest = session != null;
 
@@ -540,18 +540,16 @@ public class RESTfulContextIntegrationFilter implements InitializingBean,
 	}
 
 	/**
-	 * @return the sessionExpirationSystem
+	 * @return the sessionService
 	 */
-	public SessionExpirationSystem getSessionExpirationSystem() {
-		return sessionExpirationSystem;
+	public SessionService getSessionService() {
+		return sessionService;
 	}
 
 	/**
-	 * @param sessionExpirationSystem
-	 *            the sessionExpirationSystem to set
+	 * @param sessionService the sessionService to set
 	 */
-	public void setSessionExpirationSystem(
-			SessionExpirationSystem sessionExpirationSystem) {
-		this.sessionExpirationSystem = sessionExpirationSystem;
+	public void setSessionService(SessionService sessionService) {
+		this.sessionService = sessionService;
 	}
 }
