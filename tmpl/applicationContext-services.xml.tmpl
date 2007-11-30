@@ -261,14 +261,14 @@
 	</bean>
 
 	<!-- Session Management -->	
-	<bean id="sessionExpirationHandler" 
-		class="org.ncbo.stanford.view.session.expiration.handler.impl.SimpleExpirationHandler" />
+	<bean id="expirationHandler" 
+		class="org.ncbo.stanford.util.cache.expiration.handler.impl.SimpleExpirationHandler" />
 		
 	<bean id="hashbeltContainerFactory" 
-		class="org.ncbo.stanford.view.session.container.impl.HashlistBasedHashbeltContainerFactory" />
+		class="org.ncbo.stanford.util.cache.container.impl.HashlistBasedHashbeltContainerFactory" />
 
-	<bean id="sessionExpirationSystem"
-		class="org.ncbo.stanford.view.session.expiration.system.impl.SessionExpirationSystem">
+	<bean id="sessionService"
+		class="org.ncbo.stanford.service.session.impl.SessionServiceImpl">
  		<constructor-arg index="0">
 			<value>@bioportalsessionnumcontainers@</value>
 		</constructor-arg>  
@@ -276,7 +276,7 @@
 			<value>@bioportalsessiontimeout@</value>
 		</constructor-arg>  
  		<constructor-arg index="2">
-			<ref bean="sessionExpirationHandler" />
+			<ref bean="expirationHandler" />
 		</constructor-arg>  	
  		<constructor-arg index="3">
 			<ref bean="hashbeltContainerFactory" />
@@ -288,5 +288,24 @@
 		<property name="ncboAppTextDAO">
 			<ref bean="NcboAppTextDAO" />
 		</property>
-	</bean>	
+	</bean>
+	
+	
+	
+	
+	<bean id="xmlSerializationService" 
+		class="org.ncbo.stanford.service.xml.impl.XMLSerializationServiceImpl">	
+	</bean>
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
 </beans>

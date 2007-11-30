@@ -70,18 +70,13 @@
 		class="org.ncbo.stanford.util.security.context.RESTfulContextIntegrationFilter">
 		<property name="context"
 			value="org.acegisecurity.context.SecurityContextImpl" />
- 
-		<property name="sessionExpirationSystem">
-			<ref bean="sessionExpirationSystem" />
+		<property name="sessionService">
+			<ref bean="sessionService" />
 		</property>
-
-
 		<property name="allowSessionCreation">
 			<value>false</value>
 		</property>
-
 	</bean>
-
 
 	<bean id="securityContextHolderAwareRequestFilter"
 		class="org.acegisecurity.wrapper.SecurityContextHolderAwareRequestFilter">
