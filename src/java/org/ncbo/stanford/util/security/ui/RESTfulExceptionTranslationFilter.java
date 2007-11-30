@@ -53,15 +53,7 @@ import org.springframework.util.Assert;
  * Handles any <code>AccessDeniedException</code> and
  * <code>AuthenticationException</code> thrown within the filter chain.
  * <p>
- * This filter is necessary because it provides the bridge between Java
- * exceptions and HTTP responses. It is solely concerned with maintaining the
- * user interface. This filter does not do any actual security enforcement.
- * </p>
- * <p>
- * If an {@link AuthenticationException} is detected, the filter will launch the
- * <code>authenticationEntryPoint</code>. This allows common handling of
- * authentication failures originating from any subclass of
- * {@link org.acegisecurity.intercept.AbstractSecurityInterceptor}.
+ * This implementation modifies the default Acegi implementation and is designed to handle RESTful calls.
  * </p>
  * <p>
  * If an {@link AccessDeniedException} is detected, the filter will determine
@@ -75,23 +67,11 @@ import org.springframework.util.Assert;
  * To use this filter, it is necessary to specify the following properties:
  * </p>
  * <ul>
- * <li><code>authenticationEntryPoint</code> indicates the handler that
- * should commence the authentication process if an
- * <code>AuthenticationException</code> is detected. Note that this may also
- * switch the current protocol from http to https for an SSL login.</li>
  * <li><code>portResolver</code> is used to determine the "real" port that a
  * request was received on.</li>
  * </ul>
- * <P>
- * <B>Do not use this class directly.</B> Instead configure
- * <code>web.xml</code> to use the {@link
- * org.acegisecurity.util.FilterToBeanProxy}.
- * </p>
  * 
- * @author Ben Alex
- * @author colin sampaleanu
- * @version $Id: ExceptionTranslationFilter.java 1496 2006-05-23 13:38:33Z
- *          benalex $
+ * @author Michael Dorf
  */
 public class RESTfulExceptionTranslationFilter extends Restlet implements
 		Filter, InitializingBean {
