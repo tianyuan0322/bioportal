@@ -11,10 +11,10 @@ import org.acegisecurity.providers.UsernamePasswordAuthenticationToken;
 import org.acegisecurity.ui.webapp.AuthenticationProcessingFilter;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.ncbo.stanford.service.session.RESTfulSession;
+import org.ncbo.stanford.service.session.SessionService;
 import org.ncbo.stanford.util.RequestUtils;
 import org.ncbo.stanford.util.security.ui.ApplicationAuthenticationDetails;
-import org.ncbo.stanford.view.session.RESTfulSession;
-import org.ncbo.stanford.view.session.expiration.system.impl.SessionExpirationSystem;
 import org.ncbo.stanford.view.util.constants.RequestParamConstants;
 import org.restlet.Restlet;
 import org.restlet.data.MediaType;
@@ -35,7 +35,7 @@ public final class AuthenticationRestlet extends Restlet {
 			.getLog(AuthenticationRestlet.class);
 
 	private AuthenticationManager authenticationManager;
-	private SessionExpirationSystem sessionExpirationSystem;
+	private SessionService sessionService;
 
 	@Override
 	public void handle(Request request, Response response) {
@@ -68,8 +68,7 @@ public final class AuthenticationRestlet extends Restlet {
 			final Authentication auth = getAuthenticationManager()
 					.authenticate(authReq);
 
-			final RESTfulSession session = sessionExpirationSystem
-					.createNewSession();
+			final RESTfulSession session = sessionService.createNewSession();
 			session.setApplicationId(applicationId);
 			session
 					.setAttribute(
@@ -146,18 +145,17 @@ public final class AuthenticationRestlet extends Restlet {
 	}
 
 	/**
-	 * @return the sessionExpirationSystem
+	 * @return the sessionService
 	 */
-	public SessionExpirationSystem getSessionExpirationSystem() {
-		return sessionExpirationSystem;
+	public SessionService getSessionService() {
+		return sessionService;
 	}
 
 	/**
-	 * @param sessionExpirationSystem
-	 *            the sessionExpirationSystem to set
+	 * @param sessionService
+	 *            the sessionService to set
 	 */
-	public void setSessionExpirationSystem(
-			SessionExpirationSystem sessionExpirationSystem) {
-		this.sessionExpirationSystem = sessionExpirationSystem;
+	public void setSessionService(SessionService sessionService) {
+		this.sessionService = sessionService;
 	}
 }
