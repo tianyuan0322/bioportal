@@ -3,7 +3,7 @@ package org.ncbo.stanford.service.xml.impl;
 import org.apache.commons.validator.GenericValidator;
 import org.ncbo.stanford.bean.response.ErrorBean;
 import org.ncbo.stanford.bean.response.SuccessBean;
-import org.ncbo.stanford.enumeration.ErrorType;
+import org.ncbo.stanford.enumeration.ErrorTypeEnum;
 import org.ncbo.stanford.service.xml.XMLSerializationService;
 import org.ncbo.stanford.util.constants.ApplicationConstants;
 
@@ -17,7 +17,7 @@ public class XMLSerializationServiceImpl implements XMLSerializationService {
 	 * @param errorType
 	 * @return
 	 */
-	public String getErrorAsXML(ErrorType errorType, String accessedResource) {
+	public String getErrorAsXML(ErrorTypeEnum errorType, String accessedResource) {
 		String xmlResult = ApplicationConstants.XML_DECLARATION + "\n";
 		
 		XStream xstream = new XStream();
