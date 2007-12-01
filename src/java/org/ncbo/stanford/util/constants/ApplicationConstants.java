@@ -36,4 +36,18 @@ public interface ApplicationConstants {
 	// Content retrieval constants
 	public static final int FROM_DB = 1200;
 	public static final int FROM_CACHE = 1201;
+	
+	/**
+	 * XML declaration
+	 */
+	public static final String XML_DECLARATION = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>";
+
+	/**
+	 * The name of the root tag of all xml error response messages
+	 */
+	public static final String ERROR_XML_TAG_NAME = "Error";
+	/**
+	 * The name of the root tag of success xml response message
+	 */
+	public static final String SUCCESS_XML_TAG_NAME = "Success";
 }
