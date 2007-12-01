@@ -22,37 +22,43 @@ public class EncryptionServiceImpl implements EncryptionService {
 	private StandardPBEStringEncryptor stringEncryptor = null;
 	private PasswordEncoder passwordEncoder = null;
 
-	/*
-	 * (non-Javadoc)
+	/**
+	 * Encodes passwords using a one-way
+	 * encryption algorithm
 	 * 
-	 * @see tsn.encryption.service.EncryptionService#encodePassword(java.lang.String)
+	 * @param password
+	 * @return
 	 */
 	public String encodePassword(String password) {
 		return passwordEncoder.encodePassword(password, null);
 	}
 
-	/*
-	 * (non-Javadoc)
+	/**
+	 * Encrypts a specified string
 	 * 
-	 * @see tsn.encryption.service.EncryptionService#encrypt(java.lang.String)
+	 * @param decrypted
+	 * @return
 	 */
 	public String encrypt(String decrypted) {
 		return stringEncryptor.encrypt(decrypted);
 	}
 
-	/*
-	 * (non-Javadoc)
+	/**
+	 * Decrypts a specified string
 	 * 
-	 * @see tsn.encryption.service.EncryptionService#decrypt(java.lang.String)
+	 * @param encrypted
+	 * @return
 	 */
 	public String decrypt(String encrypted) {
 		return stringEncryptor.decrypt(encrypted);
 	}
 
-	/*
-	 * (non-Javadoc)
+	/**
+	 * Returns a decrypted query string from an encrypted one
 	 * 
-	 * @see tsn.encryption.service.EncryptionService#decryptQueryString(java.lang.String)
+	 * @param encrypted
+	 * @return
+	 * @throws UnsupportedEncodingException 
 	 */
 	public String decryptQueryString(String encrypted)
 			throws UnsupportedEncodingException {
@@ -60,10 +66,12 @@ public class EncryptionServiceImpl implements EncryptionService {
 				.getMessage(ApplicationConstants.DEFAULT_ENCODING_KEY)));
 	}
 
-	/*
-	 * (non-Javadoc)
+	/**
+	 * Encrypts and URLEncodes a given query string
 	 * 
-	 * @see tsn.encryption.service.EncryptionService#encryptQueryString(java.lang.String)
+	 * @param queryString
+	 * @return
+	 * @throws UnsupportedEncodingException
 	 */
 	public String encryptQueryString(String queryString)
 			throws UnsupportedEncodingException {
@@ -71,11 +79,14 @@ public class EncryptionServiceImpl implements EncryptionService {
 				.getMessage(ApplicationConstants.DEFAULT_ENCODING_KEY));
 	}
 
-	/*
-	 * (non-Javadoc)
+	/**
+	 * Returns parameter value based on its name from
+	 * the encrypted query string
 	 * 
-	 * @see tsn.encryption.service.EncryptionService#getParamFromEncryptedQueryString(java.lang.String,
-	 *      java.lang.String)
+	 * @param encrypted
+	 * @param paramName
+	 * @return
+	 * @throws UnsupportedEncodingException
 	 */
 	public String getParamFromEncryptedQueryString(String encrypted,
 			String paramName) throws UnsupportedEncodingException {
