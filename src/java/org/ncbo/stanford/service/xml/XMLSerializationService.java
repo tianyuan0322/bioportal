@@ -1,6 +1,6 @@
 package org.ncbo.stanford.service.xml;
 
-import org.ncbo.stanford.enumeration.ErrorType;
+import org.ncbo.stanford.enumeration.ErrorTypeEnum;
 
 public interface XMLSerializationService {
 
@@ -10,7 +10,7 @@ public interface XMLSerializationService {
 	 * @param errorType
 	 * @return
 	 */
-	public String getErrorAsXML(ErrorType errorType, String accessedResource);
+	public String getErrorAsXML(ErrorTypeEnum errorType, String accessedResource);
 
 	/**
 	 * Generate an XML representation of a successfully processed request. This
