@@ -9,7 +9,10 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.ncbo.stanford.util.helper.StringHelper;
+import org.restlet.data.MediaType;
 import org.restlet.data.Request;
+import org.restlet.data.Response;
+import org.restlet.data.Status;
 
 import com.noelios.restlet.ext.servlet.ServletCall;
 import com.noelios.restlet.http.HttpCall;
@@ -114,5 +117,20 @@ public class RequestUtils {
 		response.setStatus(statusCode);
 		ServletOutputStream sos = response.getOutputStream();
 		sos.print(content);
+	}
+
+	/**
+	 * Sets the content of an http response usring Restlet response object
+	 * 
+	 * @param response
+	 *            restlet response
+	 * @param statusCode
+	 * @param content
+	 * @throws IOException
+	 */
+	public static void setHttpServletResponse(Response response,
+			Status statusCode, MediaType mediaType, String content) {
+		response.setStatus(statusCode);
+		response.setEntity(content, mediaType);
 	}
 }
