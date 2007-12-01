@@ -32,21 +32,6 @@ import org.springframework.util.Assert;
  * This implementation modifies the default Acegi implementation and is designed
  * to handle RESTful calls.
  * </p>
- * <p>
- * If an {@link AccessDeniedException} is detected, the filter will determine
- * whether or not the user is an anonymous user. If they are an anonymous user,
- * the <code>authenticationEntryPoint</code> will be launched. If they are not
- * an anonymous user, the filter will delegate to the
- * {@link org.acegisecurity.ui.AccessDeniedHandler}. By default the filter will
- * use {@link org.acegisecurity.ui.AccessDeniedHandlerImpl}.
- * </p>
- * <p>
- * To use this filter, it is necessary to specify the following properties:
- * </p>
- * <ul>
- * <li><code>portResolver</code> is used to determine the "real" port that a
- * request was received on.</li>
- * </ul>
  * 
  * @author Michael Dorf
  */
@@ -179,5 +164,4 @@ public class RESTfulExceptionTranslationFilter extends Restlet implements
 			XMLSerializationService xmlSerializationService) {
 		this.xmlSerializationService = xmlSerializationService;
 	}
-
 }
