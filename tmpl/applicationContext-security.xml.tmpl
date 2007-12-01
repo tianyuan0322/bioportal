@@ -8,32 +8,6 @@
        http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-2.0.xsd
        http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-2.0.xsd">
 
-	<!-- 
-		<bean id="acegiFilterChainProxy"
-		class="org.acegisecurity.util.FilterChainProxy">
-		<property name="filterInvocationDefinitionSource">
-		<value>
-		CONVERT_URL_TO_LOWERCASE_BEFORE_COMPARISON
-		PATTERN_TYPE_APACHE_ANT
-		/**=httpSessionContextIntegrationFilter,basicProcessingFilter,securityContextHolderAwareRequestFilter,exceptionTranslationFilter,filterSecurityInterceptor
-		</value>
-		</property>
-		</bean>
-	-->
-
-	<!-- 
-		<bean id="acegiFilterChainProxy"
-		class="org.acegisecurity.util.FilterChainProxy">
-		<property name="filterInvocationDefinitionSource">
-		<value>
-		CONVERT_URL_TO_LOWERCASE_BEFORE_COMPARISON
-		PATTERN_TYPE_APACHE_ANT
-		/**=restfulContextIntegrationFilter,authenticationProcessingFilter,securityContextHolderAwareRequestFilter,exceptionTranslationFilter,filterSecurityInterceptor
-		</value>
-		</property>
-		</bean>
-	-->
-
 	<bean id="acegiFilterChainProxy"
 		class="org.acegisecurity.util.FilterChainProxy">
 		<property name="filterInvocationDefinitionSource">
@@ -44,27 +18,6 @@
 			</value>
 		</property>
 	</bean>
-
-
-
-	<!-- 
-		<bean id="basicProcessingFilter"
-		class="org.acegisecurity.ui.basicauth.BasicProcessingFilter">
-		<property name="authenticationManager"
-		ref="authenticationManager" />
-		<property name="authenticationEntryPoint"
-		ref="authenticationEntryPoint" />
-		</bean>
-	-->
-
-
-
-
-
-
-
-
-
 
 	<bean id="restfulContextIntegrationFilter"
 		class="org.ncbo.stanford.util.security.context.RESTfulContextIntegrationFilter">
@@ -84,62 +37,12 @@
 			value="org.acegisecurity.wrapper.SecurityContextHolderAwareRequestWrapper" />
 	</bean>
 
-
-
-
-
-	<bean id="authenticationProcessingFilter"
-		class="org.acegisecurity.ui.webapp.AuthenticationProcessingFilter">
-		<property name="authenticationManager"
-			ref="authenticationManager" />
-		<property name="authenticationFailureUrl"
-			value="/acegilogin.html" />
-		<property name="defaultTargetUrl" value="/" />
-		<property name="filterProcessesUrl"
-			value="/j_acegi_security_check" />
-	</bean>
-
-
-
-
-
 	<bean id="exceptionTranslationFilter"
 		class="org.ncbo.stanford.util.security.ui.RESTfulExceptionTranslationFilter">
-		<property name="authenticationEntryPoint">
-			<bean
-				class="org.acegisecurity.ui.webapp.AuthenticationProcessingFilterEntryPoint">
-				<property name="loginFormUrl" value="/acegilogin.html" />
-				<property name="forceHttps" value="false" />
-			</bean>
-		</property>
-		<property name="accessDeniedHandler">
-			<bean
-				class="org.acegisecurity.ui.AccessDeniedHandlerImpl">
-				<property name="errorPage" value="/accessDenied.jsp" />
-			</bean>
-		</property>
+		<property name="xmlSerializationService">
+			<ref bean="xmlSerializationService" />
+		</property>		
 	</bean>
-
-
-
-	<!-- 	
-		<bean id="exceptionTranslationFilter"
-		class="org.acegisecurity.ui.ExceptionTranslationFilter">
-		<property name="authenticationEntryPoint" ref="authenticationEntryPoint"/>
-		</bean>
-		
-		<bean id="authenticationEntryPoint"
-		class="org.acegisecurity.ui.basicauth.BasicProcessingFilterEntryPoint">
-		<property name="realmName" value="BioPortal" />
-		</bean>
-	-->
-
-
-
-
-
-
-
 
 	<!-- filter responsible for access decisions. What urlrequests may be
 		processed by which roles -->
@@ -153,19 +56,6 @@
 		<property name="objectDefinitionSource"
 			ref="filterDefinitionMap" />
 	</bean>
-
-
-	<!-- 
-		<bean id="filterDefinitionMap"
-		class="org.ncbo.stanford.util.security.RESTfulDefinitionSource">
-		<constructor-arg type="java.lang.String">
-		<value>
-		/rest/**:GET=ROLE_DEVELOPER
-		/rest/**:PUT,DELETE,POST=ROLE_ADMINISTRATOR
-		</value>
-		</constructor-arg>
-		</bean>
-	-->
 	
 	<bean id="filterDefinitionMap"
 		class="org.ncbo.stanford.util.security.intercept.web.RESTfulDefinitionSource">
