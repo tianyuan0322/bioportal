@@ -12,7 +12,7 @@ import org.acegisecurity.providers.UsernamePasswordAuthenticationToken;
 import org.acegisecurity.ui.webapp.AuthenticationProcessingFilter;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.ncbo.stanford.enumeration.ErrorType;
+import org.ncbo.stanford.enumeration.ErrorTypeEnum;
 import org.ncbo.stanford.service.session.RESTfulSession;
 import org.ncbo.stanford.service.session.SessionService;
 import org.ncbo.stanford.service.xml.XMLSerializationService;
@@ -100,7 +100,7 @@ public final class AuthenticationRestlet extends Restlet {
 			RequestUtils.setHttpServletResponse(response,
 					Status.CLIENT_ERROR_FORBIDDEN, MediaType.TEXT_XML,
 					xmlSerializationService.getErrorAsXML(
-							ErrorType.INVALID_CREDENTIALS, accessedResource));
+							ErrorTypeEnum.INVALID_CREDENTIALS, accessedResource));
 		} catch (Exception e) {
 			e.printStackTrace();
 			log.error(e);
@@ -109,7 +109,7 @@ public final class AuthenticationRestlet extends Restlet {
 			RequestUtils.setHttpServletResponse(response,
 					Status.SERVER_ERROR_INTERNAL, MediaType.TEXT_XML,
 					xmlSerializationService.getErrorAsXML(
-							ErrorType.RUNTIME_ERROR, accessedResource));
+							ErrorTypeEnum.RUNTIME_ERROR, accessedResource));
 		}
 	}
 

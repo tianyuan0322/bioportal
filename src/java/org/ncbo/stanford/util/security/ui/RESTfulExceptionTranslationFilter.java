@@ -18,7 +18,7 @@ import org.acegisecurity.AuthenticationTrustResolverImpl;
 import org.acegisecurity.context.SecurityContextHolder;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.ncbo.stanford.enumeration.ErrorType;
+import org.ncbo.stanford.enumeration.ErrorTypeEnum;
 import org.ncbo.stanford.service.xml.XMLSerializationService;
 import org.ncbo.stanford.util.RequestUtils;
 import org.restlet.Restlet;
@@ -87,7 +87,7 @@ public class RESTfulExceptionTranslationFilter extends Restlet implements
 
 			RequestUtils.setHttpServletResponse((HttpServletResponse) response,
 					HttpServletResponse.SC_FORBIDDEN, xmlSerializationService
-							.getErrorAsXML(ErrorType.AUTHENTICATION_REQUIRED,
+							.getErrorAsXML(ErrorTypeEnum.AUTHENTICATION_REQUIRED,
 									pathInfo));
 		} catch (AccessDeniedException ex) {
 			if (authenticationTrustResolver.isAnonymous(SecurityContextHolder
@@ -100,7 +100,7 @@ public class RESTfulExceptionTranslationFilter extends Restlet implements
 						(HttpServletResponse) response,
 						HttpServletResponse.SC_FORBIDDEN,
 						xmlSerializationService.getErrorAsXML(
-								ErrorType.AUTHENTICATION_REQUIRED, pathInfo));
+								ErrorTypeEnum.AUTHENTICATION_REQUIRED, pathInfo));
 			} else {
 				if (logger.isDebugEnabled()) {
 					logger
@@ -112,7 +112,7 @@ public class RESTfulExceptionTranslationFilter extends Restlet implements
 						(HttpServletResponse) response,
 						HttpServletResponse.SC_FORBIDDEN,
 						xmlSerializationService.getErrorAsXML(
-								ErrorType.ACCESS_DENIED, pathInfo));
+								ErrorTypeEnum.ACCESS_DENIED, pathInfo));
 			}
 		} catch (ServletException ex) {
 			if (ex.getRootCause() instanceof AuthenticationException
@@ -121,19 +121,19 @@ public class RESTfulExceptionTranslationFilter extends Restlet implements
 						(HttpServletResponse) response,
 						HttpServletResponse.SC_FORBIDDEN,
 						xmlSerializationService.getErrorAsXML(
-								ErrorType.ACCESS_DENIED, pathInfo));
+								ErrorTypeEnum.ACCESS_DENIED, pathInfo));
 			} else {
 				RequestUtils.setHttpServletResponse(
 						(HttpServletResponse) response,
 						HttpServletResponse.SC_INTERNAL_SERVER_ERROR,
 						xmlSerializationService.getErrorAsXML(
-								ErrorType.RUNTIME_ERROR, pathInfo));
+								ErrorTypeEnum.RUNTIME_ERROR, pathInfo));
 			}
 		} catch (IOException ex) {
 			RequestUtils.setHttpServletResponse((HttpServletResponse) response,
 					HttpServletResponse.SC_INTERNAL_SERVER_ERROR,
 					xmlSerializationService.getErrorAsXML(
-							ErrorType.RUNTIME_ERROR, pathInfo));
+							ErrorTypeEnum.RUNTIME_ERROR, pathInfo));
 		}
 	}
 
