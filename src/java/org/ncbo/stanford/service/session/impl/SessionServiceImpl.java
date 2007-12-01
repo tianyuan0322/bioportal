@@ -60,6 +60,11 @@ public class SessionServiceImpl extends
 		super(numberOfContainers, rotationTime);
 	}
 
+	/**
+	 * Creates and returns a new session instance
+	 * 
+	 * @return new session
+	 */
 	public RESTfulSession createNewSession() {
 		RESTfulSession ses = new RESTfulSession();
 		String key = new SessionKey().getKey();
