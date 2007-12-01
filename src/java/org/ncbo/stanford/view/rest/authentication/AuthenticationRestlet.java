@@ -3,6 +3,7 @@ package org.ncbo.stanford.view.rest.authentication;
 import javax.servlet.http.HttpServletRequest;
 
 import org.acegisecurity.Authentication;
+import org.acegisecurity.AuthenticationException;
 import org.acegisecurity.AuthenticationManager;
 import org.acegisecurity.context.HttpSessionContextIntegrationFilter;
 import org.acegisecurity.context.SecurityContext;
@@ -11,8 +12,10 @@ import org.acegisecurity.providers.UsernamePasswordAuthenticationToken;
 import org.acegisecurity.ui.webapp.AuthenticationProcessingFilter;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.ncbo.stanford.enumeration.ErrorType;
 import org.ncbo.stanford.service.session.RESTfulSession;
 import org.ncbo.stanford.service.session.SessionService;
+import org.ncbo.stanford.service.xml.XMLSerializationService;
 import org.ncbo.stanford.util.RequestUtils;
 import org.ncbo.stanford.util.security.ui.ApplicationAuthenticationDetails;
 import org.ncbo.stanford.view.util.constants.RequestParamConstants;
@@ -36,6 +39,7 @@ public final class AuthenticationRestlet extends Restlet {
 
 	private AuthenticationManager authenticationManager;
 	private SessionService sessionService;
+	private XMLSerializationService xmlSerializationService;
 
 	@Override
 	public void handle(Request request, Response response) {
@@ -49,6 +53,8 @@ public final class AuthenticationRestlet extends Restlet {
 	 * @param response
 	 */
 	private void authenticate(Request request, Response response) {
+		String accessedResource = request.getResourceRef().getPath();
+
 		try {
 			HttpServletRequest httpServletRequest = RequestUtils
 					.getHttpServletRequest(request);
@@ -83,38 +89,29 @@ public final class AuthenticationRestlet extends Restlet {
 					.setAttribute(
 							HttpSessionContextIntegrationFilter.ACEGI_SECURITY_CONTEXT_KEY,
 							secCtx);
+			RequestUtils
+					.setHttpServletResponse(response, Status.SUCCESS_OK,
+							MediaType.TEXT_XML, xmlSerializationService
+									.getSuccessAsXML(session.getId(),
+											accessedResource));
+		} catch (AuthenticationException ex) {
+			SecurityContextHolder.getContext().setAuthentication(null);
 
-			response.setStatus(Status.SUCCESS_OK);
-			response.setEntity("Success: " + session.getId(),
-					MediaType.TEXT_PLAIN);
-
+			RequestUtils.setHttpServletResponse(response,
+					Status.CLIENT_ERROR_FORBIDDEN, MediaType.TEXT_XML,
+					xmlSerializationService.getErrorAsXML(
+							ErrorType.INVALID_CREDENTIALS, accessedResource));
 		} catch (Exception e) {
 			e.printStackTrace();
 			log.error(e);
 			SecurityContextHolder.getContext().setAuthentication(null);
 
-			response.setStatus(Status.CLIENT_ERROR_FORBIDDEN);
-			response.setEntity("Failure", MediaType.TEXT_PLAIN);
+			RequestUtils.setHttpServletResponse(response,
+					Status.SERVER_ERROR_INTERNAL, MediaType.TEXT_XML,
+					xmlSerializationService.getErrorAsXML(
+							ErrorType.RUNTIME_ERROR, accessedResource));
 		}
 	}
-
-	// public void logout(ActionEvent e) {
-	// final HttpServletRequest request = RequestUtils.getServletRequest();
-	// request.getSession(false).removeAttribute(
-	// HttpSessionContextIntegrationFilter.ACEGI_SECURITY_CONTEXT_KEY);
-	//
-	// /* simulate the SecurityContextLogoutHandler
-	// */
-	// SecurityContextHolder.clearContext();
-	// request.getSession(false).invalidate();
-	// loggedInUserBean.logout();
-	// }
-	//	
-	// public String obtainFullRequestUrl() {
-	// return AbstractProcessingFilter.obtainFullRequestUrl(
-	// RequestUtils.getServletRequest());
-	// }
-	//
 
 	protected String obtainPassword(HttpServletRequest req) {
 		return req.getParameter(RequestParamConstants.PARAM_PASSWORD);
@@ -157,5 +154,21 @@ public final class AuthenticationRestlet extends Restlet {
 	 */
 	public void setSessionService(SessionService sessionService) {
 		this.sessionService = sessionService;
+	}
+
+	/**
+	 * @return the xmlSerializationService
+	 */
+	public XMLSerializationService getXmlSerializationService() {
+		return xmlSerializationService;
+	}
+
+	/**
+	 * @param xmlSerializationService
+	 *            the xmlSerializationService to set
+	 */
+	public void setXmlSerializationService(
+			XMLSerializationService xmlSerializationService) {
+		this.xmlSerializationService = xmlSerializationService;
 	}
 }
