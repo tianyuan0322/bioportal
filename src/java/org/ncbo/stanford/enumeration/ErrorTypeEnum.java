@@ -6,7 +6,7 @@ package org.ncbo.stanford.enumeration;
  * @author Michael Dorf
  *
  */
-public enum ErrorType {
+public enum ErrorTypeEnum {
 	
 	AUTHENTICATION_REQUIRED(
 			"AUTHENTICATION_REQUIRED", 
@@ -24,7 +24,7 @@ public enum ErrorType {
     private final String errorCode;
     private final String defErrorMessage;
 	
-	private ErrorType(String errCode, String defErrMessage) {
+	private ErrorTypeEnum(String errCode, String defErrMessage) {
 		errorCode = errCode;
 		defErrorMessage = defErrMessage;
 	}

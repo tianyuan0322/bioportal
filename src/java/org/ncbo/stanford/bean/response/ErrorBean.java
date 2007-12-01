@@ -1,6 +1,6 @@
 package org.ncbo.stanford.bean.response;
 
-import org.ncbo.stanford.enumeration.ErrorType;
+import org.ncbo.stanford.enumeration.ErrorTypeEnum;
 
 /**
  * Error container for RESTful error responses
@@ -10,7 +10,7 @@ import org.ncbo.stanford.enumeration.ErrorType;
  */
 public class ErrorBean extends AbstractResponseBean {
 
-	private ErrorType errorType;
+	private ErrorTypeEnum errorType;
 	private String errorCode;
 
 	/**
@@ -27,7 +27,7 @@ public class ErrorBean extends AbstractResponseBean {
 	 */
 	public ErrorBean(Exception e) {
 		super();
-		this.errorType = ErrorType.RUNTIME_ERROR;
+		this.errorType = ErrorTypeEnum.RUNTIME_ERROR;
 		this.errorCode = this.errorType.getErrorCode();
 		setShortMessage(e.getLocalizedMessage());
 		setLongMessage(e.getMessage());
@@ -38,7 +38,7 @@ public class ErrorBean extends AbstractResponseBean {
 	 * 
 	 * @param errorType
 	 */
-	public ErrorBean(ErrorType errorType) {
+	public ErrorBean(ErrorTypeEnum errorType) {
 		super();
 		this.errorType = errorType;
 		this.errorCode = errorType.getErrorCode();
@@ -48,7 +48,7 @@ public class ErrorBean extends AbstractResponseBean {
 	/**
 	 * @return the errorType
 	 */
-	public ErrorType getErrorType() {
+	public ErrorTypeEnum getErrorType() {
 		return errorType;
 	}
 
@@ -56,7 +56,7 @@ public class ErrorBean extends AbstractResponseBean {
 	 * @param errorType
 	 *            the errorType to set
 	 */
-	public void setErrorType(ErrorType errorType) {
+	public void setErrorType(ErrorTypeEnum errorType) {
 		this.errorType = errorType;
 	}
 
