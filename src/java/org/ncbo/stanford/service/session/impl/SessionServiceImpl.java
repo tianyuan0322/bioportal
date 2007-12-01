@@ -17,22 +17,6 @@ public class SessionServiceImpl extends
 		UpdatingHashbeltExpirationSystem<String, RESTfulSession> implements
 		SessionService {
 
-	// public static SessionExpirationSystem ses = null;
-	//
-	// public static SessionExpirationSystem getInstance(
-	// int numberOfContainers,
-	// long rotationTime,
-	// ExpirationHandler<SessionKey, Session> expirationHandler,
-	// HashbeltContainerFactory<SessionKey, Session> hashbeltContainerFactory) {
-	//
-	// if (ses == null) {
-	// ses = new SessionExpirationSystem(numberOfContainers, rotationTime,
-	// expirationHandler, hashbeltContainerFactory);
-	// }
-	//
-	// return ses;
-	// }
-
 	public SessionServiceImpl() {
 		super();
 	}
