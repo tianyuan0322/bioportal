@@ -5,6 +5,7 @@ import javax.servlet.http.HttpServletRequest;
 import org.acegisecurity.Authentication;
 import org.acegisecurity.AuthenticationException;
 import org.acegisecurity.AuthenticationManager;
+import org.acegisecurity.AuthenticationServiceException;
 import org.acegisecurity.context.HttpSessionContextIntegrationFilter;
 import org.acegisecurity.context.SecurityContext;
 import org.acegisecurity.context.SecurityContextHolder;
@@ -94,6 +95,15 @@ public final class AuthenticationRestlet extends Restlet {
 							MediaType.TEXT_XML, xmlSerializationService
 									.getSuccessAsXML(session.getId(),
 											accessedResource));
+		} catch (AuthenticationServiceException e) {
+			e.printStackTrace();
+			log.error(e);
+			SecurityContextHolder.getContext().setAuthentication(null);
+
+			RequestUtils.setHttpServletResponse(response,
+					Status.SERVER_ERROR_INTERNAL, MediaType.TEXT_XML,
+					xmlSerializationService.getErrorAsXML(
+							ErrorTypeEnum.RUNTIME_ERROR, accessedResource));
 		} catch (AuthenticationException ex) {
 			SecurityContextHolder.getContext().setAuthentication(null);
 
