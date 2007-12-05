@@ -1,9 +1,18 @@
 package org.ncbo.stanford.bean.response;
 
+/**
+ * Success response container for RESTful responses
+ * 
+ * @author Michael Dorf
+ * 
+ */
 public class SuccessBean extends AbstractResponseBean {
 
 	private String sessionId;
 
+	/**
+	 * Default constructor
+	 */
 	public SuccessBean() {
 		super();
 	}
