@@ -15,7 +15,23 @@ public class OntologyServiceImpl implements OntologyService {
 	private static final Log log = LogFactory.getLog(OntologyServiceImpl.class);
 
 	private CustomNcboOntologyVersionDAO ncboOntologyVersionDAO;
-
+	
+	public OntologyBean findOntology(int id,String version){
+		return new OntologyBean();
+	}
+	
+	public List<OntologyBean> findOntologyVersions(int id){
+		return new ArrayList();
+	}
+	
+	public List<String> findProperties(int id){
+		return new ArrayList();
+	}
+	
+	public void createOntology(OntologyBean ontology){
+		
+	}
+	
 	public List<OntologyBean> findLatestOntologyVersions() {
 		ArrayList<OntologyBean> ontBeanList = new ArrayList<OntologyBean>(1);
 		List<NcboOntology> ontEntityList = ncboOntologyVersionDAO
@@ -23,28 +39,7 @@ public class OntologyServiceImpl implements OntologyService {
 
 		for (NcboOntology ncboOntology : ontEntityList) {
 			OntologyBean ontologyBean = new OntologyBean();
-
-			ontologyBean.setId(ncboOntology.getId());
-			ontologyBean.setOntologyId(ncboOntology.getOntologyId());
-			ontologyBean.setInternalVersionNumber(ncboOntology
-					.getInternalVersionNumber());
-			ontologyBean.setVersionNumber(ncboOntology.getVersionNumber());
-			ontologyBean.setVersionStatus(ncboOntology.getVersionStatus());
-			ontologyBean.setFilePath(ncboOntology.getFilePath());
-			ontologyBean.setIsCurrent(ncboOntology.getIsCurrent());
-			ontologyBean.setIsRemote(ncboOntology.getIsRemote());
-			ontologyBean.setIsReviewed(ncboOntology.getIsReviewed());
-			ontologyBean.setDateCreated(ncboOntology.getDateCreated());
-			ontologyBean.setDateReleased(ncboOntology.getDateReleased());
-			ontologyBean.setDisplayLabel(ncboOntology.getDisplayLabel());
-			ontologyBean.setFormat(ncboOntology.getFormat());
-			ontologyBean.setContactName(ncboOntology.getContactName());
-			ontologyBean.setContactEmail(ncboOntology.getContactEmail());
-			ontologyBean.setHomepage(ncboOntology.getHomepage());
-			ontologyBean.setDocumentation(ncboOntology.getDocumentation());
-			ontologyBean.setPublication(ncboOntology.getPublication());
-			ontologyBean.setUrn(ncboOntology.getUrn());
-			ontologyBean.setIsFoundry(ncboOntology.getIsFoundry());
+			ontologyBean.populateFromEntity(ncboOntology);
 			ontBeanList.add(ontologyBean);
 		}
 

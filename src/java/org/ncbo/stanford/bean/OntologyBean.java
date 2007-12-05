@@ -1,6 +1,9 @@
+
 package org.ncbo.stanford.bean;
 
 import java.util.Date;
+
+import org.ncbo.stanford.domain.custom.entity.NcboOntology;
 
 public class OntologyBean {
 
@@ -24,6 +27,32 @@ public class OntologyBean {
 	private String publication;
 	private String urn;
 	private Byte isFoundry;
+	
+	public void populateFromEntity(NcboOntology ncboOntology) {
+
+		this.setId(ncboOntology.getId());
+		this.setOntologyId(ncboOntology.getOntologyId());
+		this.setInternalVersionNumber(ncboOntology
+				.getInternalVersionNumber());
+		this.setVersionNumber(ncboOntology.getVersionNumber());
+		this.setVersionStatus(ncboOntology.getVersionStatus());
+		this.setFilePath(ncboOntology.getFilePath());
+		this.setIsCurrent(ncboOntology.getIsCurrent());
+		this.setIsRemote(ncboOntology.getIsRemote());
+		this.setIsReviewed(ncboOntology.getIsReviewed());
+		this.setDateCreated(ncboOntology.getDateCreated());
+		this.setDateReleased(ncboOntology.getDateReleased());
+		this.setDisplayLabel(ncboOntology.getDisplayLabel());
+		this.setFormat(ncboOntology.getFormat());
+		this.setContactName(ncboOntology.getContactName());
+		this.setContactEmail(ncboOntology.getContactEmail());
+		this.setHomepage(ncboOntology.getHomepage());
+		this.setDocumentation(ncboOntology.getDocumentation());
+		this.setPublication(ncboOntology.getPublication());
+		this.setUrn(ncboOntology.getUrn());
+		this.setIsFoundry(ncboOntology.getIsFoundry());
+		
+	}
 
 	/**
 	 * @return the id
