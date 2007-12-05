@@ -176,6 +176,7 @@
 	</target>
 
 	<target name="createwar" depends="build" description="Create a WAR file">
+		<mkdir dir="${dist.dir}" />	
 		<war destfile="${dist.dir}/${ant.project.name}.war" webxml="${web.dir}/WEB-INF/web.xml">
 			<fileset dir="${web.dir}">
 				<include name="**/*.*" />
