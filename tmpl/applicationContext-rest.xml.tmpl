@@ -22,14 +22,21 @@
 	</bean>
 
 	<bean id="ontologyRestlet"
-		class="org.ncbo.stanford.view.rest.restlet.OntologyRestlet">
+		class="org.ncbo.stanford.view.rest.restlet.ontology.OntologyRestlet">
+		<property name="ontologyService">
+			<ref bean="ontologyService" />
+		</property>
+	</bean>
+	
+	<bean id="ontologiesRestlet"
+		class="org.ncbo.stanford.view.rest.restlet.ontologyOntologiesRestlet">
 		<property name="ontologyService">
 			<ref bean="ontologyService" />
 		</property>
 	</bean>
 
 	<bean id="userRestlet"
-		class="org.ncbo.stanford.view.rest.restlet.UserRestlet">
+		class="org.ncbo.stanford.view.rest.restlet.user.UserRestlet">
 		<property name="userService">
 			<ref bean="userService" />
 		</property>
@@ -46,6 +53,9 @@
 							<ref local="authenticationRestlet" />
 						</entry>
 						<entry key="/ontologies">
+							<ref local="ontologiesRestlet" />
+						</entry>
+						<entry key="/ontologies/{ontology}">
 							<ref local="ontologyRestlet" />
 						</entry>
 						<entry key="/user/{user}">
