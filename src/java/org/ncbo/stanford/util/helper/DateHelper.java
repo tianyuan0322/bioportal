@@ -74,7 +74,7 @@ public class DateHelper {
 						java.util.Calendar cal = java.util.Calendar
 								.getInstance();
 						cal.setTime(d);
-						if (cal.get(cal.YEAR) < 100) {
+						if (cal.get(Calendar.YEAR) < 100) {
 							continue; // don't recognize the date string.
 						}
 					}
