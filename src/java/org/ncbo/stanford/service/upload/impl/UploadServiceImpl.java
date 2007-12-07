@@ -75,4 +75,62 @@ public class UploadServiceImpl implements UploadService{
 		
 	}
 
+	/**
+	 * @return the ncboOntologyVersionDAO
+	 */
+	public CustomNcboOntologyVersionDAO getNcboOntologyVersionDAO() {
+		return ncboOntologyVersionDAO;
+	}
+
+	/**
+	 * @param ncboOntologyVersionDAO the ncboOntologyVersionDAO to set
+	 */
+	public void setNcboOntologyVersionDAO(
+			CustomNcboOntologyVersionDAO ncboOntologyVersionDAO) {
+		this.ncboOntologyVersionDAO = ncboOntologyVersionDAO;
+	}
+
+	/**
+	 * @return the ncboOntologyMetadataDAO
+	 */
+	public CustomNcboOntologyMetadataDAO getNcboOntologyMetadataDAO() {
+		return ncboOntologyMetadataDAO;
+	}
+
+	/**
+	 * @param ncboOntologyMetadataDAO the ncboOntologyMetadataDAO to set
+	 */
+	public void setNcboOntologyMetadataDAO(
+			CustomNcboOntologyMetadataDAO ncboOntologyMetadataDAO) {
+		this.ncboOntologyMetadataDAO = ncboOntologyMetadataDAO;
+	}
+
+	/**
+	 * @return the ncboOntologyFileDAO
+	 */
+	public CustomNcboOntologyFileDAO getNcboOntologyFileDAO() {
+		return ncboOntologyFileDAO;
+	}
+
+	/**
+	 * @param ncboOntologyFileDAO the ncboOntologyFileDAO to set
+	 */
+	public void setNcboOntologyFileDAO(CustomNcboOntologyFileDAO ncboOntologyFileDAO) {
+		this.ncboOntologyFileDAO = ncboOntologyFileDAO;
+	}
+
+	/**
+	 * @return the ncboSeqOntologyIdDAO
+	 */
+	public CustomNcboSeqOntologyIdDAO getNcboSeqOntologyIdDAO() {
+		return ncboSeqOntologyIdDAO;
+	}
+
+	/**
+	 * @param ncboSeqOntologyIdDAO the ncboSeqOntologyIdDAO to set
+	 */
+	public void setNcboSeqOntologyIdDAO(
+			CustomNcboSeqOntologyIdDAO ncboSeqOntologyIdDAO) {
+		this.ncboSeqOntologyIdDAO = ncboSeqOntologyIdDAO;
+	}
 }
