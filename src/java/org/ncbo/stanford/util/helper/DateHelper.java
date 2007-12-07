@@ -1,13 +1,12 @@
 package org.ncbo.stanford.util.helper;
 
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 
 /**
  * Convenience and helper methods relating to the {@link Date} class.
- * 
- * @author David Hoag
  */
 public class DateHelper {
 
@@ -71,9 +70,9 @@ public class DateHelper {
 					// look for this and correct it here.
 					//
 					if (dateFormats[i].indexOf("yyyy") > -1) {
-						java.util.Calendar cal = java.util.Calendar
-								.getInstance();
+						Calendar cal = Calendar.getInstance();
 						cal.setTime(d);
+
 						if (cal.get(Calendar.YEAR) < 100) {
 							continue; // don't recognize the date string.
 						}
@@ -81,7 +80,7 @@ public class DateHelper {
 
 					return d;
 				}
-			} catch (java.text.ParseException e) {
+			} catch (ParseException e) {
 			}
 		}
 
