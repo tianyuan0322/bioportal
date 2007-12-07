@@ -266,6 +266,21 @@
 			<ref bean="ontologyAndConceptManager" />
 		</property>	
 	</bean>
+	<bean id="uploadService" class="org.ncbo.stanford.service.upload.impl.UploadServiceImpl">
+		<property name="ncboOntologyVersionDAO">
+			<ref bean="NcboOntologyVersionDAO" />
+		</property>	
+		<property name="ncboOntologyMetadataDAO">
+			<ref bean="NcboOntologyMetadataDAO" />
+		</property>	
+		<property name="ncboOntologyFileDAO">
+			<ref bean="NcboOntologyFileDAO" />
+		</property>
+		<property name="ncboSeqOntologyIdDAO">
+			<ref bean="NcboSeqOntologyIdDAO" />
+		</property>		
+	</bean>
+	
 
 	<!-- Session Management -->	
 	<bean id="expirationHandler" 
@@ -300,4 +315,11 @@
 	<bean id="xmlSerializationService" 
 		class="org.ncbo.stanford.service.xml.impl.XMLSerializationServiceImpl">	
 	</bean>	
+	
+	<bean id="ontologyFilePath" class="java.lang.String">
+		<constructor-arg>
+			<value>@bioportalontologyfilepath@</value>
+		</constructor-arg>
+	</bean>
+
 </beans>
