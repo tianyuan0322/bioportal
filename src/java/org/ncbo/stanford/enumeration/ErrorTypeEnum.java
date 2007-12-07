@@ -19,7 +19,10 @@ public enum ErrorTypeEnum {
 			"You do not possess sufficient privileges to access this resource"),
 	RUNTIME_ERROR(
 			"RUNTIME_ERROR", 
-			"A runtime error has occurred");
+			"A runtime error has occurred"),
+	INVALID_FILE(
+			"INVALID_FILE",
+			"The uploaded file is invalid");
 	
     private final String errorCode;
     private final String defErrorMessage;

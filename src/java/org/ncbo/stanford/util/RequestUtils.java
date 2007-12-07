@@ -9,6 +9,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.ncbo.stanford.util.helper.StringHelper;
+import org.ncbo.stanford.view.util.constants.RequestParamConstants;
 import org.restlet.data.MediaType;
 import org.restlet.data.Request;
 import org.restlet.data.Response;
@@ -133,4 +134,32 @@ public class RequestUtils {
 		response.setStatus(statusCode);
 		response.setEntity(content, mediaType);
 	}
+	
+	/**
+	 * Returns the Session ID from a request
+	 * @param request
+	 * @return
+	 */
+	public static String getSessionId(Request request){
+		return getHttpServletRequest(request).getParameter(RequestParamConstants.PARAM_SESSIONID);
+	}
+	
+	/**
+	 * Returns the user name from a request
+	 * @param request
+	 * @return
+	 */
+	public static String getUserName(Request request){
+		return getHttpServletRequest(request).getParameter(RequestParamConstants.PARAM_USERNAME);
+	}
+	
+	/**
+	 * Returns the applicationId from a request
+	 * @param request
+	 * @return
+	 */
+	public static String getApplicationId(Request request){
+		return getHttpServletRequest(request).getParameter(RequestParamConstants.PARAM_APPLICATIONID);
+	}
+	
 }

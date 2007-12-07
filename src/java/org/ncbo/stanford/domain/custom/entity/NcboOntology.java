@@ -2,6 +2,8 @@ package org.ncbo.stanford.domain.custom.entity;
 
 import java.util.Date;
 
+import org.ncbo.stanford.bean.OntologyBean;
+
 public class NcboOntology {
 
 	private Integer id;
@@ -23,8 +25,7 @@ public class NcboOntology {
 	private String documentation;
 	private String publication;
 	private String urn;
-	private Byte isFoundry;
-
+	private Byte isFoundry;	
 	
 	/**
 	 * @return the id

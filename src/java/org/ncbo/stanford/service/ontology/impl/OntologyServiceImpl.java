@@ -6,12 +6,22 @@ import java.util.List;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.ncbo.stanford.bean.OntologyBean;
+import org.ncbo.stanford.domain.custom.dao.CustomNcboOntologyFileDAO;
+import org.ncbo.stanford.domain.custom.dao.CustomNcboOntologyMetadataDAO;
+import org.ncbo.stanford.domain.custom.dao.CustomNcboOntologyVersionDAO;
+import org.ncbo.stanford.domain.custom.entity.NcboOntology;
 import org.ncbo.stanford.manager.OntologyAndConceptManager;
 import org.ncbo.stanford.service.ontology.OntologyService;
 
 public class OntologyServiceImpl implements OntologyService {
 
 	private static final Log log = LogFactory.getLog(OntologyServiceImpl.class);
+
+
+	private CustomNcboOntologyVersionDAO ncboOntologyVersionDAO;
+	private CustomNcboOntologyMetadataDAO ncboOntologyMetadataDAO;
+	private CustomNcboOntologyFileDAO ncboOntologyFileDAO;
+	
 
 	private OntologyAndConceptManager ontologyAndConceptManager;
 
@@ -26,6 +36,7 @@ public class OntologyServiceImpl implements OntologyService {
 	}
 
 	public OntologyBean findOntology(int id, String version) {
+
 		return new OntologyBean();
 	}
 

@@ -28,6 +28,11 @@ public class OntologyBean {
 	private String urn;
 	private Byte isFoundry;
 	
+	/**
+	 * Populates the OntologyBean with data from a NcboOntology
+	 * @param ncboOntology
+	 */
+	
 	public void populateFromEntity(NcboOntology ncboOntology) {
 
 		this.setId(ncboOntology.getId());

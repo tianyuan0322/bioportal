@@ -17,6 +17,7 @@ public class CustomNcboSeqOntologyIdDAO extends NcboSeqOntologyIdDAO {
 	public CustomNcboSeqOntologyIdDAO() {
 		super();
 	}
+
 	
 	/**
 	 * Generates a new ontology id (the same for all versions of a unique ontology)
@@ -32,4 +33,5 @@ public class CustomNcboSeqOntologyIdDAO extends NcboSeqOntologyIdDAO {
 		
 		return null;
 	}
+
 }

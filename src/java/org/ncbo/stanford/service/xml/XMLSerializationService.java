@@ -21,4 +21,5 @@ public interface XMLSerializationService {
 	 * @return
 	 */
 	public String getSuccessAsXML(String sessionId, String accessedResource);
+	
 }
