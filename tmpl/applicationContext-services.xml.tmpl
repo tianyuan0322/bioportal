@@ -247,6 +247,13 @@
 		<constructor-arg ref="messageBundleName" index="0" />
 	</bean>
 
+	<!-- Managers -->	
+	<bean id="ontologyAndConceptManager" class="org.ncbo.stanford.manager.impl.OntologyAndConceptManagerImpl">
+		<property name="ncboOntologyVersionDAO">
+			<ref bean="NcboOntologyVersionDAO" />
+		</property>	
+	</bean>	
+	
 	<!-- Application Services -->
 	<bean id="userService" class="org.ncbo.stanford.service.user.impl.UserServiceImpl">
 		<property name="ncboUserDAO">
@@ -255,8 +262,8 @@
 	</bean>
 
 	<bean id="ontologyService" class="org.ncbo.stanford.service.ontology.impl.OntologyServiceImpl">
-		<property name="ncboOntologyVersionDAO">
-			<ref bean="NcboOntologyVersionDAO" />
+		<property name="ontologyAndConceptManager">
+			<ref bean="ontologyAndConceptManager" />
 		</property>	
 	</bean>
 
