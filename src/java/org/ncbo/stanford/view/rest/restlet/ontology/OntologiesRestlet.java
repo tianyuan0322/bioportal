@@ -19,9 +19,6 @@ import org.restlet.data.Response;
 import org.restlet.data.Status;
 import org.restlet.ext.fileupload.RestletFileUpload;
 
-import com.thoughtworks.xstream.XStream;
-import com.thoughtworks.xstream.io.xml.DomDriver;
-
 public class OntologiesRestlet extends Restlet {
 
 	private static final Log log = LogFactory.getLog(OntologiesRestlet.class);
@@ -32,20 +29,18 @@ public class OntologiesRestlet extends Restlet {
 
 	@Override
 	public void handle(Request request, Response response) {
-
 		if (request.getMethod().equals(Method.GET)) {
 			getRequest(request, response);
 		} else if (request.getMethod().equals(Method.POST)) {
 			postRequest(request, response);
 		}
-
 	}
 
 	/**
 	 * Handle GET calls here
 	 */
 	private void getRequest(Request request, Response response) {
-		listOntologies(response);
+		listOntologies(request, response);
 	}
 
 	/**
@@ -75,12 +70,13 @@ public class OntologiesRestlet extends Restlet {
 	 * 
 	 * @param response
 	 */
-	private void listOntologies(Response response) {
+	private void listOntologies(Request request, Response response) {
 		List<OntologyBean> ontList = ontologyService
 				.findLatestOntologyVersions();
-		XStream xstream = new XStream(new DomDriver());
-		xstream.alias("OntologyBean", OntologyBean.class);
-		response.setEntity(xstream.toXML(ontList), MediaType.APPLICATION_XML);
+		RequestUtils.setHttpServletResponse(response, Status.SUCCESS_OK,
+				MediaType.TEXT_XML, xmlSerializationService.getSuccessAsXML(
+						RequestUtils.getSessionId(request), request
+								.getResourceRef().getPath(), ontList));
 	}
 
 	/**
