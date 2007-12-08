@@ -22,4 +22,7 @@ public interface XMLSerializationService {
 	 */
 	public String getSuccessAsXML(String sessionId, String accessedResource);
 	
+
+	
+	public String getSuccessAsXML(String sessionId, String accessedResource, Object data);
 }
