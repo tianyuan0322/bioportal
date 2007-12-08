@@ -45,9 +45,15 @@ public interface ApplicationConstants {
 	/**
 	 * The name of the root tag of all xml error response messages
 	 */
-	public static final String ERROR_XML_TAG_NAME = "Error";
+	public static final String ERROR_XML_TAG_NAME = "error";
+
 	/**
 	 * The name of the root tag of success xml response message
 	 */
-	public static final String SUCCESS_XML_TAG_NAME = "Success";
+	public static final String SUCCESS_XML_TAG_NAME = "success";
+
+	/**
+	 * The name of the root tag of response xml response message
+	 */
+	public static final String RESPONSE_XML_TAG_NAME = "response";
 }
