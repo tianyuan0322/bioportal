@@ -1,6 +1,8 @@
 package org.ncbo.stanford.service.xml.impl;
 
 import org.apache.commons.validator.GenericValidator;
+import org.ncbo.stanford.bean.OntologyBean;
+import org.ncbo.stanford.bean.UserBean;
 import org.ncbo.stanford.bean.response.ErrorBean;
 import org.ncbo.stanford.bean.response.SuccessBean;
 import org.ncbo.stanford.enumeration.ErrorTypeEnum;
@@ -55,4 +57,67 @@ public class XMLSerializationServiceImpl implements XMLSerializationService {
 		
 		return xmlResult + xstream.toXML(successBean);
 	}
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	/**
+	 * Generate an XML representation of a successfully processed request. This
+	 * should only be used when no other XML response is expected (i.e.
+	 * authentication).
+	 * 
+	 * @param errorType
+	 * @return
+	 */
+	public String getSuccessAsXML(String sessionId, String accessedResource, Object data) {
+		String xmlResult = ApplicationConstants.XML_DECLARATION + "\n";
+		XStream xstream = new XStream();
+//		xstream.alias(ApplicationConstants.RESPONSE_XML_TAG_NAME, SuccessBean.class);
+
+		setXStreamAliases(xstream);		
+		
+		SuccessBean successBean = new SuccessBean();
+		successBean.setSessionId(sessionId);		
+		successBean.setData(data);
+		
+		
+		if (!GenericValidator.isBlankOrNull(accessedResource)) {
+			successBean.setAccessedResource(accessedResource);
+		}
+		
+		return xmlResult + xstream.toXML(successBean);
+	}
+	
+	
+	
+	
+	
+	private void setXStreamAliases(XStream xstream) {
+		xstream.alias("ontology", OntologyBean.class);
+		xstream.alias("user", UserBean.class);
+		xstream.alias(ApplicationConstants.RESPONSE_XML_TAG_NAME, SuccessBean.class);
+		xstream.alias(ApplicationConstants.ERROR_XML_TAG_NAME, ErrorBean.class);			
+	}
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
 }
