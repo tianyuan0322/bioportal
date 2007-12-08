@@ -9,6 +9,7 @@ package org.ncbo.stanford.bean.response;
 public class SuccessBean extends AbstractResponseBean {
 
 	private String sessionId;
+	private Object data;
 
 	/**
 	 * Default constructor
@@ -30,5 +31,19 @@ public class SuccessBean extends AbstractResponseBean {
 	 */
 	public void setSessionId(String sessionId) {
 		this.sessionId = sessionId;
+	}
+	
+	/**
+	 * @return the data
+	 */
+	public Object getData() {
+		return data;
+	}
+
+	/**
+	 * @param data the data to set
+	 */
+	public void setData(Object data) {
+		this.data = data;
 	}
 }
