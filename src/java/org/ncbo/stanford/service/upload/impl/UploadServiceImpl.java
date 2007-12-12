@@ -6,6 +6,7 @@ package org.ncbo.stanford.service.upload.impl;
 import java.io.File;
 import java.util.Date;
 
+import org.apache.commons.fileupload.FileItem;
 import org.ncbo.stanford.bean.OntologyBean;
 import org.ncbo.stanford.domain.custom.dao.CustomNcboOntologyFileDAO;
 import org.ncbo.stanford.domain.custom.dao.CustomNcboOntologyMetadataDAO;
@@ -28,13 +29,15 @@ public class UploadServiceImpl implements UploadService{
 	private CustomNcboOntologyFileDAO ncboOntologyFileDAO;
 	private CustomNcboSeqOntologyIdDAO ncboSeqOntologyIdDAO;
 	
+	private String ontologyFilePath;
+	
 	/**
 	 * Takes a file and creates the database records for the newly uploaded ontology.
 	 * Must provide a populated OntologyBean for the metadata.
 	 * 
 	 */
 	
-	public void uploadOntology(File file, OntologyBean ontology){
+	public void uploadOntology(FileItem file, OntologyBean ontology) throws Exception{
 		
 		
 		NcboOntologyVersion versionInfo = new NcboOntologyVersion();
@@ -49,6 +52,8 @@ public class UploadServiceImpl implements UploadService{
 		versionInfo.setFilePath("/"+versionInfo.getOntologyId()+"/"+versionInfo.getInternalVersionNumber());
 		ncboOntologyVersionDAO.save(versionInfo);
 		
+		File outputFile = new File(ontologyFilePath+versionInfo.getFilePath());
+		file.write(outputFile);
 		
 		NcboOntologyMetadata metadata = new NcboOntologyMetadata();
 		metadata.setContactEmail(ontology.getContactEmail());
@@ -74,6 +79,22 @@ public class UploadServiceImpl implements UploadService{
 	public void parseOntology(File file){
 		
 	}
+
+	/**
+	 * @return the ontologyFilePath
+	 */
+	public String getOntologyFilePath() {
+		return ontologyFilePath;
+	}
+
+	/**
+	 * @param ontologyFilePath the ontologyFilePath to set
+	 */
+	public void setOntologyFilePath(String ontologyFilePath) {
+		this.ontologyFilePath = ontologyFilePath;
+	}
+	
+	
 
 	/**
 	 * @return the ncboOntologyVersionDAO
@@ -134,3 +155,4 @@ public class UploadServiceImpl implements UploadService{
 		this.ncboSeqOntologyIdDAO = ncboSeqOntologyIdDAO;
 	}
 }
+

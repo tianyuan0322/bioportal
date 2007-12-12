@@ -11,7 +11,7 @@ import org.ncbo.stanford.service.ontology.OntologyService;
 
 public class OntologyServiceImpl implements OntologyService {
 
-	private static final Log log = LogFactory.getLog(OntologyServiceImpl.class);
+	private static final Log log = LogFactory.getLog(OntologyServiceImpl.class);	
 
 	private OntologyAndConceptManager ontologyAndConceptManager;
 

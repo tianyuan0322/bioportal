@@ -5,6 +5,7 @@ package org.ncbo.stanford.service.upload;
 
 import java.io.File;
 
+import org.apache.commons.fileupload.FileItem;
 import org.ncbo.stanford.bean.OntologyBean;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -15,7 +16,7 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional
 public interface UploadService {
 	
-	void uploadOntology(File file, OntologyBean ontology);
+	void uploadOntology(FileItem file, OntologyBean ontology) throws Exception;
 	
 	void parseOntology(File file);
 	

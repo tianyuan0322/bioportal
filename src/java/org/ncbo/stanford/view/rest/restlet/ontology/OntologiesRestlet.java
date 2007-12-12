@@ -1,8 +1,11 @@
 package org.ncbo.stanford.view.rest.restlet.ontology;
 
 import java.util.List;
+import java.util.Set;
 
-import org.apache.commons.fileupload.FileUploadException;
+import org.apache.commons.fileupload.FileItem;
+import org.apache.commons.fileupload.disk.DiskFileItemFactory;
+import org.apache.commons.fileupload.servlet.ServletFileUpload;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.ncbo.stanford.bean.OntologyBean;
@@ -12,6 +15,7 @@ import org.ncbo.stanford.service.upload.UploadService;
 import org.ncbo.stanford.service.xml.XMLSerializationService;
 import org.ncbo.stanford.util.RequestUtils;
 import org.restlet.Restlet;
+import org.restlet.data.Form;
 import org.restlet.data.MediaType;
 import org.restlet.data.Method;
 import org.restlet.data.Request;
@@ -22,52 +26,75 @@ import org.restlet.ext.fileupload.RestletFileUpload;
 public class OntologiesRestlet extends Restlet {
 
 	private static final Log log = LogFactory.getLog(OntologiesRestlet.class);
-
+	
 	private UploadService uploadService;
 	private OntologyService ontologyService;
 	private XMLSerializationService xmlSerializationService;
 
 	@Override
 	public void handle(Request request, Response response) {
-		if (request.getMethod().equals(Method.GET)) {
+		
+		if(request.getMethod().equals(Method.GET)){
 			getRequest(request, response);
-		} else if (request.getMethod().equals(Method.POST)) {
+		}else if(request.getMethod().equals(Method.POST)){
 			postRequest(request, response);
 		}
+		
 	}
-
+	
+	
 	/**
 	 * Handle GET calls here
 	 */
-	private void getRequest(Request request, Response response) {
-		listOntologies(request, response);
+	private void getRequest(Request request,Response response){
+		listOntologies(request,response);	
 	}
-
+	
+	
 	/**
 	 * Handle POST calls here
-	 * 
 	 * @param request
 	 * @param response
 	 */
-	private void postRequest(Request request, Response response) {
-		RestletFileUpload rfu = new RestletFileUpload();
-		try {
-			List files = rfu.parseRequest(request);
-		} catch (FileUploadException fue) {
+	private void postRequest(Request request,Response response){
+		//Form form = request.getResourceRef().getQueryAsForm();
+
+		// 1/ Create a factory for disk-based file items
+        DiskFileItemFactory factory = new DiskFileItemFactory();
+        factory.setSizeThreshold(1000240);
+		
+		
+		RestletFileUpload rfu = new RestletFileUpload(factory);
+		rfu.setSizeMax(10000000);
+		System.out.println("Parsing File in the POST");
+		try{		
+		
+		List<FileItem> files = 	rfu.parseRepresentation(request.getEntity());
+		System.out.println("---------------------------");
+		//System.out.println(files.get(0).getOutputStream());
+		System.out.println("File Uploaded");
+		//uploadService.uploadOntology(files.get(0), buildBeanFromForm(form));
+		
+		} catch (Exception e) {
 			RequestUtils.setHttpServletResponse(response,
 					Status.CLIENT_ERROR_BAD_REQUEST, MediaType.TEXT_XML,
 					xmlSerializationService.getErrorAsXML(
-							ErrorTypeEnum.INVALID_FILE, null));
+							ErrorTypeEnum.INVALID_FILE,null));
+			e.printStackTrace();
 			return;
 		}
+		
+		
+		
+		
 		RequestUtils.setHttpServletResponse(response, Status.SUCCESS_OK,
-				MediaType.TEXT_XML, xmlSerializationService.getSuccessAsXML(
-						RequestUtils.getSessionId(request), null));
+				MediaType.TEXT_XML, xmlSerializationService
+						.getSuccessAsXML(RequestUtils.getSessionId(request),
+								null));
 	}
-
+	
 	/**
 	 * Return to the response a listing of ontologies
-	 * 
 	 * @param response
 	 */
 	private void listOntologies(Request request, Response response) {
@@ -78,6 +105,27 @@ public class OntologiesRestlet extends Restlet {
 						RequestUtils.getSessionId(request), request
 								.getResourceRef().getPath(), ontList));
 	}
+	
+	
+	private OntologyBean buildBeanFromForm(Form form){
+		OntologyBean bean = new OntologyBean();
+		Set<String> names = form.getNames();
+		bean.setContactEmail(form.getValues("contactEmail"));
+		bean.setContactName(form.getValues("contactName"));
+		//bean.setDateCreated(form.getValues("dateCreated"));
+		//bean.setDateReleased(form.getValues("dateReleased"));
+		bean.setDisplayLabel(form.getValues("displayLabel"));
+		bean.setDocumentation(form.getValues("documentation"));
+		bean.setFormat(form.getValues("format"));
+		bean.setHomepage(form.getValues("homepage"));
+		bean.setIsFoundry(Byte.parseByte(form.getValues("isFoundry")));
+		bean.setPublication(form.getValues("publication"));
+		bean.setUrn(form.getValues("urn"));
+		bean.setVersionNumber(form.getValues("versionNumber"));
+		bean.setVersionStatus(form.getValues("versionStatus"));
+		return bean;
+	}
+	
 
 	/**
 	 * @return the ontologyService
@@ -93,7 +141,7 @@ public class OntologiesRestlet extends Restlet {
 	public void setOntologyService(OntologyService ontologyService) {
 		this.ontologyService = ontologyService;
 	}
-
+	
 	/**
 	 * @return the uploadService
 	 */
