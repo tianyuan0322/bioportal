@@ -14,6 +14,7 @@ import org.ncbo.stanford.service.ontology.OntologyService;
 import org.ncbo.stanford.service.upload.UploadService;
 import org.ncbo.stanford.service.xml.XMLSerializationService;
 import org.ncbo.stanford.util.RequestUtils;
+import org.ncbo.stanford.util.helper.DateHelper;
 import org.restlet.Restlet;
 import org.restlet.data.Form;
 import org.restlet.data.MediaType;
@@ -57,23 +58,19 @@ public class OntologiesRestlet extends Restlet {
 	 * @param response
 	 */
 	private void postRequest(Request request,Response response){
-		//Form form = request.getResourceRef().getQueryAsForm();
+		Form form = request.getEntityAsForm();
 
 		// 1/ Create a factory for disk-based file items
         DiskFileItemFactory factory = new DiskFileItemFactory();
-        factory.setSizeThreshold(1000240);
+        factory.setSizeThreshold(10002400);
 		
 		
 		RestletFileUpload rfu = new RestletFileUpload(factory);
 		rfu.setSizeMax(10000000);
-		System.out.println("Parsing File in the POST");
 		try{		
 		
 		List<FileItem> files = 	rfu.parseRepresentation(request.getEntity());
-		System.out.println("---------------------------");
-		//System.out.println(files.get(0).getOutputStream());
-		System.out.println("File Uploaded");
-		//uploadService.uploadOntology(files.get(0), buildBeanFromForm(form));
+		uploadService.uploadOntology(files.get(0), buildBeanFromForm(form));
 		
 		} catch (Exception e) {
 			RequestUtils.setHttpServletResponse(response,
@@ -112,8 +109,8 @@ public class OntologiesRestlet extends Restlet {
 		Set<String> names = form.getNames();
 		bean.setContactEmail(form.getValues("contactEmail"));
 		bean.setContactName(form.getValues("contactName"));
-		//bean.setDateCreated(form.getValues("dateCreated"));
-		//bean.setDateReleased(form.getValues("dateReleased"));
+		bean.setDateCreated(DateHelper.getDateFrom(form.getValues("dateCreated")));
+		bean.setDateReleased(DateHelper.getDateFrom(form.getValues("dateReleased")));
 		bean.setDisplayLabel(form.getValues("displayLabel"));
 		bean.setDocumentation(form.getValues("documentation"));
 		bean.setFormat(form.getValues("format"));

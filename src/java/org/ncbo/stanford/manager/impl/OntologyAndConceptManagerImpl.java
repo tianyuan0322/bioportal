@@ -41,6 +41,16 @@ public class OntologyAndConceptManagerImpl implements OntologyAndConceptManager 
 
 		return ontBeanList;
 	}
+	
+	/**
+	 * Returns the specified ontology
+	 * @param id
+	 * @return
+	 */
+	
+	public OntologyBean findOntology(Integer id){
+		return null;
+	}
 
 	/**
 	 * @return the ncboOntologyVersionDAO

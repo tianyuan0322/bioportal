@@ -100,6 +100,7 @@
 				<filter token="messagebundle" value="${bioportal.messagebundle}" />				
 				<filter token="bioportalsessionnumcontainers" value="${bioportal.session.numcontainers}" />
 				<filter token="bioportalsessiontimeout" value="${bioportal.session.timeout}" />
+				<filter token="bioportalontologyfilepath" value="${bioportal.ontology.filepath}" />
 			</filterset>
 		</copy>
 

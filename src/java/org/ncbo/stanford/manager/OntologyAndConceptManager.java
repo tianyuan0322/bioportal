@@ -23,5 +23,7 @@ public interface OntologyAndConceptManager {
 	 * @return
 	 */
 	public List<OntologyBean> findLatestOntologyVersions();
+	
+	public OntologyBean findOntology(Integer id);
 
 }
