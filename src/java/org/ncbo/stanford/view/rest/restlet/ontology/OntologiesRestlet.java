@@ -70,7 +70,7 @@ public class OntologiesRestlet extends Restlet {
 		try{		
 		
 		List<FileItem> files = 	rfu.parseRepresentation(request.getEntity());
-		uploadService.uploadOntology(files.get(0), buildBeanFromForm(form));
+		uploadService.uploadOntology(files.get(0).getInputStream(), buildBeanFromForm(form));
 		
 		} catch (Exception e) {
 			RequestUtils.setHttpServletResponse(response,

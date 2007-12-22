@@ -58,6 +58,10 @@ public class OntologyBean {
 		this.setIsFoundry(ncboOntology.getIsFoundry());
 		
 	}
+	
+	public String toString(){
+		return "ID:"+getId()+" Name:"+getDisplayLabel()+ " Ver:"+getInternalVersionNumber();		
+	}
 
 	/**
 	 * @return the id

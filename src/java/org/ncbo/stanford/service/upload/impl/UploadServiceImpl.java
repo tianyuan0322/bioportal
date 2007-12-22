@@ -4,6 +4,9 @@
 package org.ncbo.stanford.service.upload.impl;
 
 import java.io.File;
+import java.io.FileOutputStream;
+import java.io.InputStream;
+import java.io.ObjectOutputStream;
 import java.util.Date;
 
 import org.apache.commons.fileupload.FileItem;
@@ -12,11 +15,15 @@ import org.ncbo.stanford.domain.custom.dao.CustomNcboOntologyFileDAO;
 import org.ncbo.stanford.domain.custom.dao.CustomNcboOntologyMetadataDAO;
 import org.ncbo.stanford.domain.custom.dao.CustomNcboOntologyVersionDAO;
 import org.ncbo.stanford.domain.custom.dao.CustomNcboSeqOntologyIdDAO;
+import org.ncbo.stanford.domain.custom.dao.CustomNcboUserDAO;
 import org.ncbo.stanford.domain.generated.NcboOntologyFile;
 import org.ncbo.stanford.domain.generated.NcboOntologyMetadata;
 import org.ncbo.stanford.domain.generated.NcboOntologyVersion;
+import org.ncbo.stanford.domain.generated.NcboUser;
 import org.ncbo.stanford.manager.OntologyAndConceptManager;
 import org.ncbo.stanford.service.upload.UploadService;
+
+import com.ibm.icu.util.VersionInfo;
 
 /**
  * @author Nick Griffith
@@ -29,6 +36,7 @@ public class UploadServiceImpl implements UploadService {
 	private CustomNcboOntologyFileDAO ncboOntologyFileDAO;
 	private CustomNcboSeqOntologyIdDAO ncboSeqOntologyIdDAO;
 	private OntologyAndConceptManager ontologyAndConceptManager;
+	private CustomNcboUserDAO ncboUserDAO;
 
 	private String ontologyFilePath;
 
@@ -38,7 +46,7 @@ public class UploadServiceImpl implements UploadService {
 	 * 
 	 */
 
-	public void uploadOntology(FileItem file, OntologyBean ontology)
+	public void uploadOntology(InputStream inputStream, OntologyBean ontology)
 			throws Exception {
 
 		if(ontology.getId()!=null){
@@ -48,7 +56,14 @@ public class UploadServiceImpl implements UploadService {
 		NcboOntologyVersion versionInfo = new NcboOntologyVersion();
 		versionInfo.setDateCreated(ontology.getDateCreated());
 		versionInfo.setDateReleased(ontology.getDateReleased());
-
+		versionInfo.setNcboUser(ncboUserDAO.getUserByUsername("admin"));
+		versionInfo.setVersionNumber(ontology.getVersionNumber());
+		versionInfo.setIsCurrent(ontology.getIsCurrent());
+		versionInfo.setIsRemote(ontology.getIsRemote());
+		versionInfo.setIsReviewed(ontology.getIsReviewed());
+		
+		
+		
 		if (ontology.getInternalVersionNumber() == null) {
 			versionInfo.setInternalVersionNumber(0);
 		} else {
@@ -56,18 +71,34 @@ public class UploadServiceImpl implements UploadService {
 					.getInternalVersionNumber() + 1);
 		}
 
+		
 		if (ontology.getId() == null || ontology.getId() < 1) {
 			versionInfo.setOntologyId(ncboSeqOntologyIdDAO
 					.generateNewOntologyId());
 		} else {
 			versionInfo.setOntologyId(ontology.getId());
 		}
+		
 		versionInfo.setFilePath("/" + versionInfo.getOntologyId() + "/"
 				+ versionInfo.getInternalVersionNumber());
 		ncboOntologyVersionDAO.save(versionInfo);
+		
+		
+		File outputFile = new File(ontologyFilePath + versionInfo.getFilePath()+"/file.txt");
+		outputFile.mkdirs();
+		outputFile.createNewFile();
+		
+		
+		FileOutputStream outputStream = new FileOutputStream(outputFile);
+		
+		int c;
+        while ((c = inputStream.read()) != -1) 
+        {
+        	outputStream.write(c);
+        }
 
-		File outputFile = new File(ontologyFilePath + versionInfo.getFilePath());
-		file.write(outputFile);
+        inputStream.close();
+        outputStream.close();
 
 		NcboOntologyMetadata metadata = new NcboOntologyMetadata();
 		metadata.setContactEmail(ontology.getContactEmail());
@@ -80,11 +111,11 @@ public class UploadServiceImpl implements UploadService {
 		metadata.setPublication(ontology.getPublication());
 		metadata.setUrn(ontology.getUrn());
 		metadata.setNcboOntologyVersion(versionInfo);
-
+		
 		ncboOntologyMetadataDAO.save(metadata);
 
 		NcboOntologyFile ontologyFile = new NcboOntologyFile();
-		ontologyFile.setFilename(file.getName());
+		ontologyFile.setFilename(outputFile.getName());
 		ontologyFile.setNcboOntologyVersion(versionInfo);
 		ncboOntologyFileDAO.save(ontologyFile);
 
@@ -92,6 +123,26 @@ public class UploadServiceImpl implements UploadService {
 
 	public void parseOntology(File file) {
 
+	}
+
+	
+	
+	
+	
+	
+	
+	/**
+	 * @return the ncboUserDAO
+	 */
+	public CustomNcboUserDAO getNcboUserDAO() {
+		return ncboUserDAO;
+	}
+
+	/**
+	 * @param ncboUserDAO the ncboUserDAO to set
+	 */
+	public void setNcboUserDAO(CustomNcboUserDAO ncboUserDAO) {
+		this.ncboUserDAO = ncboUserDAO;
 	}
 
 	/**
