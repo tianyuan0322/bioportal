@@ -4,6 +4,7 @@
 	<property file="build.properties" />
 
 	<property name="src.dir" value="src/java" />
+	<property name="test.dir" value="src/test"/>
 	<property name="dist.dir" value="dist" />
 	<property name="meta-inf.dir" value="${web.dir}/META-INF" />
 	<property name="classes.dir" value="${web.dir}/WEB-INF/classes" />
@@ -146,6 +147,11 @@
 			<src path="${src.dir}" />
 			<classpath refid="master-classpath" />
 		</javac>
+		<javac destdir="${classes.dir}" debug="true" deprecation="false" optimize="false" failonerror="true">
+			<src path="${test.dir}" />
+			<classpath refid="master-classpath" />
+		</javac>
+		
 
 		<copy todir="${classes.dir}">
 			<fileset dir="${src.dir}">
