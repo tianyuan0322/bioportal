@@ -10,6 +10,8 @@ import java.io.ObjectOutputStream;
 import java.util.Date;
 
 import org.apache.commons.fileupload.FileItem;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.ncbo.stanford.bean.OntologyBean;
 import org.ncbo.stanford.domain.custom.dao.CustomNcboOntologyFileDAO;
 import org.ncbo.stanford.domain.custom.dao.CustomNcboOntologyMetadataDAO;
@@ -21,6 +23,7 @@ import org.ncbo.stanford.domain.generated.NcboOntologyMetadata;
 import org.ncbo.stanford.domain.generated.NcboOntologyVersion;
 import org.ncbo.stanford.domain.generated.NcboUser;
 import org.ncbo.stanford.manager.OntologyAndConceptManager;
+import org.ncbo.stanford.service.ontology.impl.OntologyServiceImpl;
 import org.ncbo.stanford.service.upload.UploadService;
 
 import com.ibm.icu.util.VersionInfo;
@@ -31,6 +34,8 @@ import com.ibm.icu.util.VersionInfo;
  */
 public class UploadServiceImpl implements UploadService {
 
+	private static final Log log = LogFactory.getLog(UploadServiceImpl.class);
+	
 	private CustomNcboOntologyVersionDAO ncboOntologyVersionDAO;
 	private CustomNcboOntologyMetadataDAO ncboOntologyMetadataDAO;
 	private CustomNcboOntologyFileDAO ncboOntologyFileDAO;
@@ -83,10 +88,12 @@ public class UploadServiceImpl implements UploadService {
 				+ versionInfo.getInternalVersionNumber());
 		ncboOntologyVersionDAO.save(versionInfo);
 		
+		File outputDirectories = new File(ontologyFilePath + versionInfo.getFilePath());		
+		outputDirectories.mkdirs();
 		
 		File outputFile = new File(ontologyFilePath + versionInfo.getFilePath()+"/file.txt");
-		outputFile.mkdirs();
 		outputFile.createNewFile();
+		
 		
 		
 		FileOutputStream outputStream = new FileOutputStream(outputFile);
