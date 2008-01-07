@@ -28,18 +28,26 @@ public class OntologyLoaderProtegeImplTest extends TestCase {
     private final static String JDBC_DRIVER = "com.mysql.jdbc.Driver";
     private final static String DB_URL = "jdbc:mysql://localhost/protege";
     
-    private final static String TABLE_STREAM = "pizza_table_stream";
-    private final static String TABLE_NONSTREAM = "pizza_table_nonstream";
-
     private final static String PROTEGE_USER = "protege_user";
     private final static String PROTEGE_PASSWORD = "protege_user$123";
+
+    // Pizza sample data
+    private final static String TABLE_STREAM = "pizza_table_stream";
+    private final static String TABLE_NONSTREAM = "pizza_table_nonstream";
 
     private final static String SOURCE_OWL_URI = "file:///c:/pizza.owl";
     private final static String ERRORS_URI = "file:///c:/pizza_errors.txt";
     
+    // FMA sample data
+    private final static String SOURCE_FMAOWL_URI = "file:///c:/OMV_v2.3.owl";
+    private final static String ERRORS_FMA_URI = "file:///c:/OMV_errors.txt";
+    
+    private final static String TABLE_FMA_NONSTREAM = "fma_table_nonstream";
+    
     /**
      * Streaming load for large OWL ontologies.  Note that this is very slow.
      */
+    /*
 	public void testBasicPizzaStreamingLoad(){
 			try {
 			
@@ -73,7 +81,8 @@ public class OntologyLoaderProtegeImplTest extends TestCase {
 				fail("Invalid ontology file URI: " + SOURCE_OWL_URI);
 			}
 	}
-	
+	*/
+    
 	// Fast load
 	public void testBasicPizzaNonStreamingLoad(){
 		try {
@@ -125,6 +134,56 @@ public class OntologyLoaderProtegeImplTest extends TestCase {
 		}
 	}
 	
+	// Fast load of compelex ontology FMA.
+	public void testComplexNonStreamingLoad(){
+		try {
+		     OWLModel fileModel = ProtegeOWL.createJenaOWLModelFromURI(SOURCE_FMAOWL_URI);
+		     
+		     List errors = new ArrayList();
+		        Project fileProject = fileModel.getProject();
+		        OWLDatabaseKnowledgeBaseFactory factory = new OWLDatabaseKnowledgeBaseFactory();
+		        PropertyList sources = PropertyList.create(fileProject.getInternalProjectKnowledgeBase());
+		     
+		        DatabaseKnowledgeBaseFactory.setSources(sources, JDBC_DRIVER, DB_URL, TABLE_FMA_NONSTREAM, PROTEGE_USER, PROTEGE_PASSWORD);
+		        factory.saveKnowledgeBase(fileModel, sources, errors);
+
+		        // next lines of code are not needed - just testing the import
+		        OWLModel om = (OWLModel) fileProject.getKnowledgeBase();
+
+		        OWLNamedClass licenseModel = om.getOWLNamedClass("LicenseModel");
+		        for (Object o : licenseModel.getInstances(true)) {
+		            System.out.println("" + o + " is an instance of LicenseModel");
+		        }
+ 
+		        // Optional error dump of load
+		        displayErrors(errors); //optional
+		        if (!errors.isEmpty()) {
+		        	fail("There were errors: " + errors.size());
+		        	return;
+		        }
+
+/*
+		        Project dbProject = Project.createNewProject(factory, errors);
+		        DatabaseKnowledgeBaseFactory.setSources(dbProject.getSources(), JDBC_DRIVER, DB_URL, TABLE_FMA_NONSTREAM, PROTEGE_USER, PROTEGE_PASSWORD);
+
+		        dbProject.createDomainKnowledgeBase(factory, errors, true);
+		        dbProject.setProjectURI(URIUtilities.createURI(ERRORS_FMA_URI));
+		        dbProject.save(errors);
+
+		        displayErrors(errors);  //optional
+		       // return (OWLModel) dbProject.getKnowledgeBase();
+		        */
+		        
+
+	    }
+		catch (URISyntaxException exc) {
+			fail("Invalid ontology file URI: " + SOURCE_FMAOWL_URI);
+		}
+		catch (Exception exc) {
+			exc.printStackTrace();
+			fail("General exception: " + exc.getMessage());
+		}
+	}
 	//
 	// Private methods
 	//
