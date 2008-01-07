@@ -47,7 +47,7 @@ public class OntologyLoaderProtegeImplTest extends TestCase {
     /**
      * Streaming load for large OWL ontologies.  Note that this is very slow.
      */
-    /*
+
 	public void testBasicPizzaStreamingLoad(){
 			try {
 			
@@ -81,7 +81,7 @@ public class OntologyLoaderProtegeImplTest extends TestCase {
 				fail("Invalid ontology file URI: " + SOURCE_OWL_URI);
 			}
 	}
-	*/
+
     
 	// Fast load
 	public void testBasicPizzaNonStreamingLoad(){
