@@ -2,6 +2,7 @@ package org.ncbo.stanford.manager.impl;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.ncbo.stanford.bean.OntologyBean;
 import org.ncbo.stanford.manager.OntologyLoader;
 import org.ncbo.stanford.service.ontology.impl.OntologyServiceImpl;
 
@@ -54,6 +55,21 @@ public class OntologyLoaderProtegeImpl implements OntologyLoader {
 	private final static String PROTEGE_PASSWORD = "protege_user$123";
 
 	/**
+	 * Loads the specified ontology into the BioPortal repository.  If the ontology is missing is source file and identifier, an exception 
+	 * will be thrown.
+	 * 
+	 * @param ontology	the ontology to load.
+	 * 
+	 * @exception	FileNotFoundException	the ontology file to be loaded was not found.
+	 * @exception	Exception catch all for all other ontlogy file load errors.
+	 */
+	public void loadOntology(OntologyBean ontology) throws FileNotFoundException, Exception {
+		File ontologyFile = new File(ontology.getFilePath());
+		
+		loadOntology(ontology.getId(), ontologyFile);
+	}
+	
+	/**
 	 * Loads the specified ontology into the BioPortal repository. If the
 	 * specified ontology identifier already exists, overwrite the ontology with
 	 * the new ontology file.
@@ -68,7 +84,7 @@ public class OntologyLoaderProtegeImpl implements OntologyLoader {
 	 * @exception Exception
 	 *                catch all for all other ontlogy file load errors.
 	 */
-	public void loadOntlogy(int ontologyID, File ontologyFile)
+	public void loadOntology(Integer ontologyID, File ontologyFile)
 			throws FileNotFoundException, Exception {
 
 		if (ontologyFile == null) {
