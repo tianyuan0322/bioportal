@@ -1,8 +1,6 @@
 package org.ncbo.stanford.manager.impl;
 
-import java.util.Iterator;
-import java.util.List;
-
+import org.ncbo.stanford.manager.OntologyLoader;
 import junit.framework.TestCase;
 import edu.stanford.smi.protegex.owl.database.CreateOWLDatabaseFromFileProjectPlugin;
 import edu.stanford.smi.protegex.owl.database.OWLDatabaseKnowledgeBaseFactory;
@@ -11,9 +9,12 @@ import edu.stanford.smi.protegex.owl.model.OWLModel;
 import edu.stanford.smi.protegex.owl.model.OWLNamedClass;
 import edu.stanford.smi.protege.storage.database.*;
 
+import java.io.File;
+import java.util.Iterator;
+import java.util.List;
 import java.net.*;
 import java.util.ArrayList;
-import junit.framework.TestCase;
+
 import edu.stanford.smi.protegex.owl.ProtegeOWL;
 import edu.stanford.smi.protege.util.PropertyList;
 import edu.stanford.smi.protege.util.URIUtilities;
@@ -35,6 +36,8 @@ public class OntologyLoaderProtegeImplTest extends TestCase {
     // Pizza sample data
     private final static String TABLE_STREAM = "pizza_table_stream";
     private final static String TABLE_NONSTREAM = "pizza_table_nonstream";
+
+    private final static String TEST_OWL_URI = "test/sample_data/pizza.owl";
 
     private final static String SOURCE_OWL_URI = "file:///c:/pizza.owl";
     private final static String ERRORS_URI = "file:///c:/pizza_errors.txt";
@@ -89,9 +92,23 @@ public class OntologyLoaderProtegeImplTest extends TestCase {
 */
     
 	// Fast load
+	public void testPizzaLoad(){
+		OntologyLoader ontLoader = new OntologyLoaderProtegeImpl();
+		
+		File ontFile = new File(TEST_OWL_URI);
+		
+		try {
+			ontLoader.loadOntlogy(10000, ontFile);
+		}
+		catch (Exception exc) {
+			fail("Pizza load failed: " + exc.getMessage());
+			exc.printStackTrace();
+		}
+	}
+	
+	// Fast load
 	public void testBasicPizzaNonStreamingLoad(){
 		try {
-		
 		     System.out.println("In Convert to Database Project");
 		     OWLModel fileModel = ProtegeOWL.createJenaOWLModelFromURI(SOURCE_OWL_URI);
 		     
