@@ -15,8 +15,7 @@ import edu.stanford.smi.protege.storage.database.*;
 import java.net.*;
 import java.util.ArrayList;
 import edu.stanford.smi.protegex.owl.ProtegeOWL;
-import edu.stanford.smi.protege.util.PropertyList;
-//import edu.stanford.smi.protege.util.URIUtilities;
+import edu.stanford.smi.protege.util.PropertyList; //import edu.stanford.smi.protege.util.URIUtilities;
 //import edu.stanford.smi.protegex.owl.model.ProtegeCls;
 
 import java.util.ArrayList;
@@ -38,25 +37,29 @@ public class OntologyLoaderProtegeImpl implements OntologyLoader {
 	private static final Log log = LogFactory
 			.getLog(OntologyLoaderProtegeImpl.class);
 
-	private final static int BIG_PROTEGE_FILE = 500000; // Threshold in bytes indicating
-														// a big ontology file.
-														// This should be in a
-														// configuration file.
+	private final static int BIG_PROTEGE_FILE = 500000; // Threshold in bytes
+														// indicating
+	// a big ontology file.
+	// This should be in a
+	// configuration file.
 	private final static String SPACE = " ";
 	private final static String TABLE_SUFFIX = "_table";
-	
-	// Hard-coded!  Sample data for development - TODO - refactor to configuration file and appropriate settings
-    private final static String JDBC_DRIVER = "com.mysql.jdbc.Driver";
-    private final static String DB_URL = "jdbc:mysql://localhost/protege";
-    
-    private final static String PROTEGE_USER = "protege_user";
-    private final static String PROTEGE_PASSWORD = "protege_user$123";
+
+	// Hard-coded! Sample data for development - TODO - refactor to
+	// configuration file and appropriate settings
+	private final static String JDBC_DRIVER = "com.mysql.jdbc.Driver";
+	private final static String DB_URL = "jdbc:mysql://localhost/protege";
+
+	private final static String PROTEGE_USER = "protege_user";
+	private final static String PROTEGE_PASSWORD = "protege_user$123";
 
 	/**
-	 * Loads the specified ontology into the BioPortal repository.  If the specified ontology 
-	 * identifier already exists, overwrite the ontology with the new ontology file.
-	 *
- 	 * @param ontologyID	the ontology id for the specified ontology file.
+	 * Loads the specified ontology into the BioPortal repository. If the
+	 * specified ontology identifier already exists, overwrite the ontology with
+	 * the new ontology file.
+	 * 
+	 * @param ontologyID
+	 *            the ontology id for the specified ontology file.
 	 * @param ontologyFile
 	 *            the file containing the ontlogy to be loaded.
 	 * 
@@ -65,80 +68,77 @@ public class OntologyLoaderProtegeImpl implements OntologyLoader {
 	 * @exception Exception
 	 *                catch all for all other ontlogy file load errors.
 	 */
-	public void loadOntlogy(int ontologyID, File ontologyFile) throws FileNotFoundException, Exception {
-		
+	public void loadOntlogy(int ontologyID, File ontologyFile)
+			throws FileNotFoundException, Exception {
+
 		if (ontologyFile == null) {
 			log.error("Missing ontlogy file to load.");
-			throw(new FileNotFoundException("Missing ontology file to load"));
+			throw (new FileNotFoundException("Missing ontology file to load"));
 		}
-		
+
 		// Setup ontology URI and table name
 		URI ontologyURI = ontologyFile.toURI();
 		String tableName = Integer.toString(ontologyID) + TABLE_SUFFIX;
-		
+
 		if (log.isDebugEnabled()) {
-			log.debug("Loading ontology file: " + ontologyFile.getAbsoluteFile()
-								+ " size: " + ontologyFile.length());
+			log.debug("Loading ontology file: "
+					+ ontologyFile.getAbsoluteFile() + " size: "
+					+ ontologyFile.length());
 			log.debug("URI: " + ontologyURI.toString());
 			log.debug("Ontology table name: " + tableName);
 		}
-		
-		// If the ontology file is small, use the fast non-streaming Protege load code.
+
+		// If the ontology file is small, use the fast non-streaming Protege
+		// load code.
 		if (ontologyFile.length() < BIG_PROTEGE_FILE) {
-			if (log.isDebugEnabled())  
-				log.debug("Loading small ontology file: " + ontologyFile.getName());
-				
-			
-			OWLModel fileModel = ProtegeOWL.createJenaOWLModelFromURI(ontologyURI.toString());
-		     
-		    List errors = new ArrayList();
-		    Project fileProject = fileModel.getProject();
-		        OWLDatabaseKnowledgeBaseFactory factory = new OWLDatabaseKnowledgeBaseFactory();
-		        PropertyList sources = PropertyList.create(fileProject.getInternalProjectKnowledgeBase());
-		     
-		        DatabaseKnowledgeBaseFactory.setSources(sources, JDBC_DRIVER, DB_URL, tableName, PROTEGE_USER, PROTEGE_PASSWORD);
-		        factory.saveKnowledgeBase(fileModel, sources, errors);
+			if (log.isDebugEnabled())
+				log.debug("Loading small ontology file: "
+						+ ontologyFile.getName());
 
-		        // next lines of code are not needed - just testing the import
-		        OWLModel om = (OWLModel) fileProject.getKnowledgeBase();
+			OWLModel fileModel = ProtegeOWL
+					.createJenaOWLModelFromURI(ontologyURI.toString());
 
-		        OWLNamedClass country = om.getOWLNamedClass("Country");
-		        for (Object o : country.getInstances(true)) {
-		        	System.out.println("" + o + " is an instance of Country");
-		        }
-		        
-		    //    System.out.println("Parents of Country");
-		      //  for (Iterator it = country.getSuperclasses(true).iterator(); it.hasNext(); ) {
-		        //	System.out.println("parent> " + it.next());		        	
-		        //}
-		}
-		else {
-			// If the ontology file is big, use the streaming Protege load approach.
-			
-			if (log.isDebugEnabled())  
-				log.debug("Loading big ontology file: " + ontologyFile.getName());
-			
-	
-			try {
-			    CreateOWLDatabaseFromFileProjectPlugin creator = new CreateOWLDatabaseFromFileProjectPlugin();
-		        creator.setKnowledgeBaseFactory(new	OWLDatabaseKnowledgeBaseFactory());
-		        creator.setDriver(JDBC_DRIVER);
-		        creator.setURL(DB_URL);
-		        creator.setTable(TABLE_STREAM);
-		        creator.setUsername(PROTEGE_USER);
-		        creator.setPassword(PROTEGE_PASSWORD);
-		        
-		        System.out.println("path: " + ontologyURI.getPath());
-		        creator.setOntologyFileURI(ontologyURI);
-		        
-		        creator.setUseExistingSources(true);
+			List errors = new ArrayList();
+			Project fileProject = fileModel.getProject();
+			OWLDatabaseKnowledgeBaseFactory factory = new OWLDatabaseKnowledgeBaseFactory();
+			PropertyList sources = PropertyList.create(fileProject
+					.getInternalProjectKnowledgeBase());
 
-		        Project p = creator.createProject();
-		    }
-			catch (URISyntaxException exc) {
-				fail("Invalid ontology file URI: " + ontologyURI);
+			DatabaseKnowledgeBaseFactory.setSources(sources, JDBC_DRIVER,
+					DB_URL, tableName, PROTEGE_USER, PROTEGE_PASSWORD);
+			factory.saveKnowledgeBase(fileModel, sources, errors);
+
+			// next lines of code are not needed - just testing the import
+			OWLModel om = (OWLModel) fileProject.getKnowledgeBase();
+
+			OWLNamedClass country = om.getOWLNamedClass("Country");
+			for (Object o : country.getInstances(true)) {
+				System.out.println("" + o + " is an instance of Country");
 			}
+
+		} else {
+			// If the ontology file is big, use the streaming Protege load
+			// approach.
+
+			if (log.isDebugEnabled())
+				log.debug("Loading big ontology file: "
+						+ ontologyFile.getName());
+
+			CreateOWLDatabaseFromFileProjectPlugin creator = new CreateOWLDatabaseFromFileProjectPlugin();
+			creator.setKnowledgeBaseFactory(new OWLDatabaseKnowledgeBaseFactory());
+			creator.setDriver(JDBC_DRIVER);
+			creator.setURL(DB_URL);
+			creator.setTable(tableName);
+			creator.setUsername(PROTEGE_USER);
+			creator.setPassword(PROTEGE_PASSWORD);
+
+			System.out.println("path: " + ontologyURI.getPath());
+			creator.setOntologyFileURI(ontologyURI);
+
+			creator.setUseExistingSources(true);
+
+			Project p = creator.createProject();
+
 		}
-				}
 	}
 }
