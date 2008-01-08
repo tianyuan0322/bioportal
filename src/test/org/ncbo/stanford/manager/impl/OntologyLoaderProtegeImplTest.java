@@ -17,6 +17,7 @@ import junit.framework.TestCase;
 import edu.stanford.smi.protegex.owl.ProtegeOWL;
 import edu.stanford.smi.protege.util.PropertyList;
 import edu.stanford.smi.protege.util.URIUtilities;
+import edu.stanford.smi.protegex.owl.model.ProtegeCls;
 
 /**
  * Tests loading ontologies into Protege using the OntologyLoaderProtegeImpl
@@ -38,16 +39,20 @@ public class OntologyLoaderProtegeImplTest extends TestCase {
     private final static String SOURCE_OWL_URI = "file:///c:/pizza.owl";
     private final static String ERRORS_URI = "file:///c:/pizza_errors.txt";
     
+    // OMV sample data
+    private final static String SOURCE_OMVOWL_URI = "file:///c:/OMV_v2.3.owl";
+    private final static String ERRORS_OMV_URI = "file:///c:/OMV_errors.txt";
+    private final static String TABLE_OMV_NONSTREAM = "omv_table_nonstream";
+
     // FMA sample data
-    private final static String SOURCE_FMAOWL_URI = "file:///c:/OMV_v2.3.owl";
-    private final static String ERRORS_FMA_URI = "file:///c:/OMV_errors.txt";
-    
+    private final static String SOURCE_FMAOWL_URI = "file:///c:/fmaOwlDlComponent_2_0.owl";
+    private final static String ERRORS_FMA_URI = "file:///c:/FMA_errors.txt";
     private final static String TABLE_FMA_NONSTREAM = "fma_table_nonstream";
-    
+
     /**
      * Streaming load for large OWL ontologies.  Note that this is very slow.
      */
-
+/*
 	public void testBasicPizzaStreamingLoad(){
 			try {
 			
@@ -81,7 +86,7 @@ public class OntologyLoaderProtegeImplTest extends TestCase {
 				fail("Invalid ontology file URI: " + SOURCE_OWL_URI);
 			}
 	}
-
+*/
     
 	// Fast load
 	public void testBasicPizzaNonStreamingLoad(){
@@ -103,8 +108,14 @@ public class OntologyLoaderProtegeImplTest extends TestCase {
 
 		        OWLNamedClass country = om.getOWLNamedClass("Country");
 		        for (Object o : country.getInstances(true)) {
-		            System.out.println("" + o + " is an instance of Country");
+		        	System.out.println("" + o + " is an instance of Country");
 		        }
+		        
+		        System.out.println("Parents of Country");
+		        for (Iterator it = country.getSuperclasses(true).iterator(); it.hasNext(); ) {
+		        	System.out.println("parent> " + it.next());		        	
+		        }
+		        
  
 		        // Optional error dump of load
 		        displayErrors(errors); //optional
@@ -134,7 +145,63 @@ public class OntologyLoaderProtegeImplTest extends TestCase {
 		}
 	}
 	
-	// Fast load of compelex ontology FMA.
+	// Fast load of medium complexity ontology OMV.
+	public void testMediumNonStreamingLoad(){
+		try {
+		     OWLModel fileModel = ProtegeOWL.createJenaOWLModelFromURI(SOURCE_OMVOWL_URI);
+		     
+		     List errors = new ArrayList();
+		        Project fileProject = fileModel.getProject();
+		        OWLDatabaseKnowledgeBaseFactory factory = new OWLDatabaseKnowledgeBaseFactory();
+		        PropertyList sources = PropertyList.create(fileProject.getInternalProjectKnowledgeBase());
+		     
+		        DatabaseKnowledgeBaseFactory.setSources(sources, JDBC_DRIVER, DB_URL, TABLE_OMV_NONSTREAM, PROTEGE_USER, PROTEGE_PASSWORD);
+		        factory.saveKnowledgeBase(fileModel, sources, errors);
+
+		        // next lines of code are not needed - just testing the import
+		        OWLModel om = (OWLModel) fileProject.getKnowledgeBase();
+
+		        OWLNamedClass licenseModel = om.getOWLNamedClass("LicenseModel");
+		        for (Object o : licenseModel.getInstances(true)) {
+		            System.out.println("" + o + " is an instance of LicenseModel");
+		        }
+		        
+		        System.out.println("Parents of LicenseModel");
+		        for (Iterator it = licenseModel.getSuperclasses(true).iterator(); it.hasNext(); ) {
+		        	System.out.println("parent> " + it.next());		        	
+		        }
+
+		        // Optional error dump of load
+		        displayErrors(errors); //optional
+		        if (!errors.isEmpty()) {
+		        	fail("There were errors: " + errors.size());
+		        	return;
+		        }
+
+/*
+		        Project dbProject = Project.createNewProject(factory, errors);
+		        DatabaseKnowledgeBaseFactory.setSources(dbProject.getSources(), JDBC_DRIVER, DB_URL, TABLE_OMV_NONSTREAM, PROTEGE_USER, PROTEGE_PASSWORD);
+
+		        dbProject.createDomainKnowledgeBase(factory, errors, true);
+		        dbProject.setProjectURI(URIUtilities.createURI(ERRORS_OMV_URI));
+		        dbProject.save(errors);
+
+		        displayErrors(errors);  //optional
+		       // return (OWLModel) dbProject.getKnowledgeBase();
+		        */
+		        
+
+	    }
+		catch (URISyntaxException exc) {
+			fail("Invalid ontology file URI: " + SOURCE_OMVOWL_URI);
+		}
+		catch (Exception exc) {
+			exc.printStackTrace();
+			fail("General exception: " + exc.getMessage());
+		}
+	}
+/*	
+	// Fast load of medium complexity ontology FMA
 	public void testComplexNonStreamingLoad(){
 		try {
 		     OWLModel fileModel = ProtegeOWL.createJenaOWLModelFromURI(SOURCE_FMAOWL_URI);
@@ -147,14 +214,6 @@ public class OntologyLoaderProtegeImplTest extends TestCase {
 		        DatabaseKnowledgeBaseFactory.setSources(sources, JDBC_DRIVER, DB_URL, TABLE_FMA_NONSTREAM, PROTEGE_USER, PROTEGE_PASSWORD);
 		        factory.saveKnowledgeBase(fileModel, sources, errors);
 
-		        // next lines of code are not needed - just testing the import
-		        OWLModel om = (OWLModel) fileProject.getKnowledgeBase();
-
-		        OWLNamedClass licenseModel = om.getOWLNamedClass("LicenseModel");
-		        for (Object o : licenseModel.getInstances(true)) {
-		            System.out.println("" + o + " is an instance of LicenseModel");
-		        }
- 
 		        // Optional error dump of load
 		        displayErrors(errors); //optional
 		        if (!errors.isEmpty()) {
@@ -162,17 +221,7 @@ public class OntologyLoaderProtegeImplTest extends TestCase {
 		        	return;
 		        }
 
-/*
-		        Project dbProject = Project.createNewProject(factory, errors);
-		        DatabaseKnowledgeBaseFactory.setSources(dbProject.getSources(), JDBC_DRIVER, DB_URL, TABLE_FMA_NONSTREAM, PROTEGE_USER, PROTEGE_PASSWORD);
-
-		        dbProject.createDomainKnowledgeBase(factory, errors, true);
-		        dbProject.setProjectURI(URIUtilities.createURI(ERRORS_FMA_URI));
-		        dbProject.save(errors);
-
-		        displayErrors(errors);  //optional
-		       // return (OWLModel) dbProject.getKnowledgeBase();
-		        */
+  
 		        
 
 	    }
@@ -184,6 +233,7 @@ public class OntologyLoaderProtegeImplTest extends TestCase {
 			fail("General exception: " + exc.getMessage());
 		}
 	}
+	*/
 	//
 	// Private methods
 	//
