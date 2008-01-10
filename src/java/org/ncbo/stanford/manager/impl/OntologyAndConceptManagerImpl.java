@@ -5,6 +5,7 @@ import java.util.List;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.ncbo.stanford.bean.ConceptBean;
 import org.ncbo.stanford.bean.OntologyBean;
 import org.ncbo.stanford.domain.custom.dao.CustomNcboOntologyVersionDAO;
 import org.ncbo.stanford.domain.custom.entity.NcboOntology;
@@ -18,6 +19,10 @@ import org.ncbo.stanford.service.ontology.impl.OntologyServiceImpl;
  * implementation (i.e. LexGrid, Protege etc.). Do not use this class directly
  * in upper layers.
  * 
+ * NOTE(bdai):  It appears that all ontology and concept methods should be included int this
+ * class. However, it may be worth it to refactor into two classes if it becomes
+ * too big.
+ *  
  * @author Michael Dorf
  * 
  */
@@ -26,6 +31,7 @@ public class OntologyAndConceptManagerImpl implements OntologyAndConceptManager 
 
 	private CustomNcboOntologyVersionDAO ncboOntologyVersionDAO;
 	
+	// TODO:  This could be dynamically set by Spring (if desired).
 	private OntologyLoaderProtegeImpl	protegeLoader = null;
 //	private OntologyLoaderLexGridImpl	lexGridLoader = null;
 
@@ -64,11 +70,20 @@ public class OntologyAndConceptManagerImpl implements OntologyAndConceptManager 
 	public OntologyBean findOntology(Integer id){
 		return null;
 	}
+	
+	public OntologyBean findOntology(int id, String version) {
+		return null;
+	}
+	
+	public List<OntologyBean> findOntologyVersions(int id) {
+		return new ArrayList();
+	}
 
+	public List<String> findProperties(int id) {
+		return new ArrayList();
+	}
 	/**
 	 * Loads the specified ontology into the BioPortal repository.
-	 * 
-	 * 
 	 */
 	public void loadOntology(OntologyBean ontology) {
 		try {
@@ -85,6 +100,58 @@ public class OntologyAndConceptManagerImpl implements OntologyAndConceptManager 
 		}
 	}
 	
+	//
+	// Concept methods
+	//
+	public ConceptBean findConcept(String id, int ontologyId) {
+		return new ConceptBean();
+	}
+
+	public ArrayList<ConceptBean> findPathToRoot(String id, int ontologyId) {
+		return new ArrayList();
+	}
+
+	public ConceptBean findParent(String id, int ontologyId) {
+		return new ConceptBean();
+	}
+
+	public ArrayList<ConceptBean> findChildren(String id, int ontologyId) {
+		return new ArrayList();
+	}
+
+	public ArrayList<ConceptBean> findConceptNameExact(String query,
+			ArrayList<Integer> ontologyIds) {
+		return new ArrayList();
+	}
+
+	public ArrayList<ConceptBean> findConceptNameStartsWith(String query,
+			ArrayList<Integer> ontologyIds) {
+		return new ArrayList();
+	}
+
+	public ArrayList<ConceptBean> findConceptNameContains(String query,
+			ArrayList<Integer> ontologyIds) {
+		return new ArrayList();
+	}
+
+	public ArrayList<ConceptBean> findConceptPropertyExact(String property,
+			String query, ArrayList<Integer> ontologyIds) {
+		return new ArrayList();
+	}
+
+	public ArrayList<ConceptBean> findConceptPropertyStartsWith(
+			String property, String query, ArrayList<Integer> ontologyIds) {
+		return new ArrayList();
+	}
+
+	public ArrayList<ConceptBean> findConceptPropertyContains(String property,
+			String query, ArrayList<Integer> ontologyIds) {
+		return new ArrayList();
+	}
+
+	//
+	// Non interface methods 
+	//
 	/**
 	 * @return the ncboOntologyVersionDAO
 	 */

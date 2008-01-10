@@ -1,7 +1,9 @@
 package org.ncbo.stanford.manager;
 
+import java.util.ArrayList;
 import java.util.List;
 
+import org.ncbo.stanford.bean.ConceptBean;
 import org.ncbo.stanford.bean.OntologyBean;
 
 /**
@@ -11,11 +13,18 @@ import org.ncbo.stanford.bean.OntologyBean;
  * interface should be used by internal services and should not be exposed to
  * upper layers.
  * 
+ * NOTE(bdai):  It appears that all ontology and concept methods should be included int this
+ * class. However, it may be worth it to refactor into two classes if it becomes
+ * too big. 
+ * 
  * @author Michael Dorf
  * 
  */
 public interface OntologyAndConceptManager {
 
+	//
+	// Ontology methods
+	//
 	/**
 	 * Returns a single record for each ontology in the system. If more than one
 	 * version of ontology exists, return the latest version.
@@ -23,8 +32,46 @@ public interface OntologyAndConceptManager {
 	 * @return
 	 */
 	public List<OntologyBean> findLatestOntologyVersions();
-	
+
 	public OntologyBean findOntology(Integer id);
 
+	public List<OntologyBean> findOntologyVersions(int id);
+
+	public OntologyBean findOntology(int id, String version);
+
+	public List<String> findProperties(int id);
+
+	/**
+	 * Loads the specified ontology into the BioPortal repository.
+	 */
 	public void loadOntology(OntologyBean ontology);
+
+	// 
+	// Concept methods
+	//
+	public ConceptBean findConcept(String id, int ontologyId);
+
+	public ArrayList<ConceptBean> findPathToRoot(String id, int ontologyId);
+
+	public ConceptBean findParent(String id, int ontologyId);
+
+	public ArrayList<ConceptBean> findChildren(String id, int ontologyId);
+
+	public ArrayList<ConceptBean> findConceptNameExact(String query,
+			ArrayList<Integer> ontologyIds);
+
+	public ArrayList<ConceptBean> findConceptNameStartsWith(String query,
+			ArrayList<Integer> ontologyIds);
+
+	public ArrayList<ConceptBean> findConceptNameContains(String query,
+			ArrayList<Integer> ontologyIds);
+
+	public ArrayList<ConceptBean> findConceptPropertyExact(String property,
+			String query, ArrayList<Integer> ontologyIds);
+
+	public ArrayList<ConceptBean> findConceptPropertyStartsWith(
+			String property, String query, ArrayList<Integer> ontologyIds);
+
+	public ArrayList<ConceptBean> findConceptPropertyContains(String property,
+			String query, ArrayList<Integer> ontologyIds);
 }

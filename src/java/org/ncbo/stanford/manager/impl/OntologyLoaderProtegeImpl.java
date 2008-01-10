@@ -69,6 +69,18 @@ public class OntologyLoaderProtegeImpl implements OntologyLoader {
 		loadOntology(ontology.getId(), ontologyFile);
 	}
 	
+	public OntologyBean findOntology(int id, String version) {
+		return new OntologyBean();
+	}
+
+	public List<OntologyBean> findOntologyVersions(int id) {
+		return new ArrayList();
+	}
+
+	public List<String> findProperties(int id) {
+		return new ArrayList();
+	}
+	
 	/**
 	 * Loads the specified ontology into the BioPortal repository. If the
 	 * specified ontology identifier already exists, overwrite the ontology with
