@@ -55,7 +55,7 @@ public class OntologyLoaderProtegeImpl implements OntologyLoader {
 	private final static String PROTEGE_PASSWORD = "protege_user$123";
 
 	/**
-	 * Loads the specified ontology into the BioPortal repository.  If the ontology is missing is source file and identifier, an exception 
+	 * Loads the specified ontology into the BioPortal repository.  If the ontology is missing it's source file and identifier, an exception 
 	 * will be thrown.
 	 * 
 	 * @param ontology	the ontology to load.

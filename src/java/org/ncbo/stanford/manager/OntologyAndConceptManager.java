@@ -26,4 +26,5 @@ public interface OntologyAndConceptManager {
 	
 	public OntologyBean findOntology(Integer id);
 
+	public void loadOntology(OntologyBean ontology);
 }
