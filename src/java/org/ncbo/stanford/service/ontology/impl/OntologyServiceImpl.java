@@ -27,15 +27,15 @@ public class OntologyServiceImpl implements OntologyService {
 	}
 
 	public OntologyBean findOntology(int id, String version) {
-		return new OntologyBean();
+		return ontologyAndConceptManager.findOntology(id, version);
 	}
 
 	public List<OntologyBean> findOntologyVersions(int id) {
-		return new ArrayList();
+		return ontologyAndConceptManager.findOntologyVersions(id);
 	}
 
 	public List<String> findProperties(int id) {
-		return new ArrayList();
+		return ontologyAndConceptManager.findProperties(id);
 	}
 
 	/**
