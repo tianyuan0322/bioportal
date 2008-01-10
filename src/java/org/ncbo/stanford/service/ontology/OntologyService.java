@@ -5,9 +5,6 @@ import java.util.List;
 import org.ncbo.stanford.bean.OntologyBean;
 import org.springframework.transaction.annotation.Transactional;
 
-
-
-
 /**
  * Exposes services that provide read and write operations on ontologies
  * 
@@ -16,7 +13,6 @@ import org.springframework.transaction.annotation.Transactional;
  */
 @Transactional
 public interface OntologyService {
-
 
 	/**
 	 * Returns a single record for each ontology in the system. If more than one
@@ -32,5 +28,13 @@ public interface OntologyService {
 
 	public List<String> findProperties(int id);
 
-	public void createOntology(OntologyBean ontology);
+	/**
+	 * Loads the specified ontology into the BioPortal repository. The minimum
+	 * requirement is that the ontology file/uri exists and is in the right
+	 * format. If the ontology id already exists, the invocation assumes
+	 * overwrite of the existing ontology.
+	 * 
+	 * @param ontology
+	 */
+	public void loadOntology(OntologyBean ontology);
 }
