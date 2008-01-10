@@ -15,7 +15,6 @@ public class OntologyServiceImpl implements OntologyService {
 	private static final Log log = LogFactory.getLog(OntologyServiceImpl.class);
 
 	private OntologyAndConceptManager ontologyAndConceptManager = null;
-	private OntologyLoader ontologyLoader = null;
 
 	/**
 	 * Returns a single record for each ontology in the system. If more than one
@@ -40,22 +39,11 @@ public class OntologyServiceImpl implements OntologyService {
 	}
 
 	/**
-	 * Assumption here is that creat ontology loads the specified ontology into
-	 * the BioPortal repository.
+	 * Load the specified ontology into the BioPortal repository.  At minimum, the ontology bean contain the 
+	 * ontology file/uri reference.
 	 */
-	public void createOntology(OntologyBean ontology) {
-		try {
-			ontologyLoader.loadOntology(ontology);
-		} 
-		catch (Exception exc) {
-			// This is where one would set the code to indicate a failed ontology load...
-			
-			// TODO: There needs to be a better mechanism to handle exceptions
-			// during ontology loads (e.g. this method could throw an exception
-			log.error("Unable load specified ontology: "
-					+ ontology.getDisplayLabel());
-			exc.printStackTrace();
-		}
+	public void loadOntology(OntologyBean ontology) {
+		ontologyAndConceptManager.loadOntology(ontology);
 	}
 
 	/**
@@ -72,20 +60,5 @@ public class OntologyServiceImpl implements OntologyService {
 	public void setOntologyAndConceptManager(
 			OntologyAndConceptManager ontologyAndConceptManager) {
 		this.ontologyAndConceptManager = ontologyAndConceptManager;
-	}
-	
-	/**
-	 * @return the ontologyLoader
-	 */
-	public OntologyLoader getOntologyLoader() {
-		return ontologyLoader;
-	}
-	
-	/**
-	 * @param ontologyLoader
-	 *            the ontologyLoader to set
-	 */
-	public void setOntologyLoader(OntologyLoader ontologyLoader) {
-		this.ontologyLoader = ontologyLoader;
 	}
 }
