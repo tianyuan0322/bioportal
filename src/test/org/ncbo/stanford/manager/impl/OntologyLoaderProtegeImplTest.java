@@ -98,7 +98,7 @@ public class OntologyLoaderProtegeImplTest extends TestCase {
 		File ontFile = new File(TEST_OWL_URI);
 		
 		try {
-			ontLoader.loadOntlogy(10000, ontFile);
+			ontLoader.loadOntology(10000, ontFile);
 		}
 		catch (Exception exc) {
 			fail("Pizza load failed: " + exc.getMessage());
