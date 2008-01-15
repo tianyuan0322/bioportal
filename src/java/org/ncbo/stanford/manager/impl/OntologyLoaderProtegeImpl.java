@@ -54,6 +54,17 @@ public class OntologyLoaderProtegeImpl implements OntologyLoader {
 	private final static String PROTEGE_USER = "protege_user";
 	private final static String PROTEGE_PASSWORD = "protege_user$123";
 
+//
+// Public static methods
+//
+	
+	/**
+	 * Gets the table name associated with an protege ontology id.
+	 */
+	public static String getTableName(int ontologyID) {
+		return Integer.toString(ontologyID) + TABLE_SUFFIX;
+	}
+
 	/**
 	 * Loads the specified ontology into the BioPortal repository.  If the ontology is missing it's source file and identifier, an exception 
 	 * will be thrown.
@@ -106,8 +117,8 @@ public class OntologyLoaderProtegeImpl implements OntologyLoader {
 
 		// Setup ontology URI and table name
 		URI ontologyURI = ontologyFile.toURI();
-		String tableName = Integer.toString(ontologyID) + TABLE_SUFFIX;
-
+		String tableName = getTableName(ontologyID);
+		
 		if (log.isDebugEnabled()) {
 			log.debug("Loading ontology file: "
 					+ ontologyFile.getAbsoluteFile() + " size: "
@@ -169,4 +180,5 @@ public class OntologyLoaderProtegeImpl implements OntologyLoader {
 
 		}
 	}
+	
 }

@@ -49,6 +49,8 @@ public interface OntologyAndConceptManager {
 	// 
 	// Concept methods
 	//
+	public ConceptBean getRootConcept(int ontologyId);
+	
 	public ConceptBean findConcept(String id, int ontologyId);
 
 	public ArrayList<ConceptBean> findPathToRoot(String id, int ontologyId);
