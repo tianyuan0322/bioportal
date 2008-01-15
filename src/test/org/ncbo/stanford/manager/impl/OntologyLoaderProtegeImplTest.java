@@ -33,6 +33,9 @@ public class OntologyLoaderProtegeImplTest extends TestCase {
     private final static String PROTEGE_USER = "protege_user";
     private final static String PROTEGE_PASSWORD = "protege_user$123";
 
+    // Ontology load sample data
+    private final static int TEST_ONT_ID = 10000;
+    
     // Pizza sample data
     private final static String TABLE_STREAM = "pizza_table_stream";
     private final static String TABLE_NONSTREAM = "pizza_table_nonstream";
@@ -98,7 +101,7 @@ public class OntologyLoaderProtegeImplTest extends TestCase {
 		File ontFile = new File(TEST_OWL_URI);
 		
 		try {
-			ontLoader.loadOntology(10000, ontFile);
+			ontLoader.loadOntology(TEST_ONT_ID, ontFile);
 		}
 		catch (Exception exc) {
 			fail("Pizza load failed: " + exc.getMessage());
