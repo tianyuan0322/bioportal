@@ -41,15 +41,21 @@ public class OntologyAndConceptManagerProtegeTest extends TestCase {
     	outputConcept(conceptBean);
 
     	int i = 0;
+    	
+    	List children = conceptBean.getChildren();
+
+    	this.assertEquals(children.size(), 2);
+    	
     	System.out.println("CHILDREN");
-    	for (Iterator it = conceptBean.getChildren().iterator(); it.hasNext(); ) {
+    	for (Iterator it = children.iterator(); it.hasNext(); ) {
     		ConceptBean child = (ConceptBean)it.next();
      		System.out.println("Child "+ (++i));
      		outputConcept(child);
     	}
+    	
     }
     
-	public void testGetConcept() {
+	public void testPizzaConcept() {
       	System.out.println("Starting testGetConcept");
 		OntologyAndConceptManagerProtege ocMgr = new OntologyAndConceptManagerProtege();
     	ConceptBean conceptBean = ocMgr.findConcept(TEST_CONCEPT_NAME, TEST_ONT_ID);
@@ -57,17 +63,52 @@ public class OntologyAndConceptManagerProtegeTest extends TestCase {
         
     	outputConcept(conceptBean);
 
+    	List children = conceptBean.getChildren();
+    	this.assertEquals(children.size(), 11);
+
     	int i = 0;
-    	for (Iterator it = conceptBean.getChildren().iterator(); it.hasNext(); ) {
+    	for (Iterator it = children.iterator(); it.hasNext(); ) {
     		ConceptBean child = (ConceptBean)it.next();
     		System.out.println("Child "+ (++i));
     		outputConcept(child);
     	}
 
+    	
     	System.out.println("Parents of " + TEST_CONCEPT_NAME);
 
     	i = 0;
     	for (Iterator it = conceptBean.getParents().iterator(); it.hasNext(); ) {
+    		ConceptBean parent = (ConceptBean)it.next();
+    		System.out.println("Parent "+ (++i));
+    		outputConcept(parent);
+    	}
+    }
+
+	public void testCheeseyVegetablePizzaConcept() {
+      	System.out.println("Starting cheesyvegetablepizza concept");
+		OntologyAndConceptManagerProtege ocMgr = new OntologyAndConceptManagerProtege();
+    	ConceptBean conceptBean = ocMgr.findConcept("CheeseyVegetableTopping", TEST_ONT_ID);
+  
+        
+    	outputConcept(conceptBean);
+
+    	List children = conceptBean.getChildren();
+    	this.assertEquals(children.size(), 0);
+
+    	int i = 0;
+    	for (Iterator it = children.iterator(); it.hasNext(); ) {
+    		ConceptBean child = (ConceptBean)it.next();
+    		System.out.println("Child "+ (++i));
+    		outputConcept(child);
+    	}
+
+    	
+    	System.out.println("Parents of " + TEST_CONCEPT_NAME);
+
+    	i = 0;
+    	List parents = conceptBean.getParents();
+    	this.assertEquals(parents.size(), 2);
+    	for (Iterator it = parents.iterator(); it.hasNext(); ) {
     		ConceptBean parent = (ConceptBean)it.next();
     		System.out.println("Parent "+ (++i));
     		outputConcept(parent);
