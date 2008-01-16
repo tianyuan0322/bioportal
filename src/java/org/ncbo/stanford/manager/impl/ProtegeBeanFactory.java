@@ -80,9 +80,9 @@ public class ProtegeBeanFactory extends BioPortalBeanFactory {
 		for (Iterator it = pConcept.getNamedSuperclasses().iterator(); it
 				.hasNext();) {
 			OWLNamedClass pParent = (OWLNamedClass) it.next();
-			concept.setParent(createSimpleConceptBean(pParent,ontologyID));
-			break;
+			parents.add(createSimpleConceptBean(pParent,ontologyID));
 		}
+		concept.setParents(parents);
 		
 		return concept;
 	}

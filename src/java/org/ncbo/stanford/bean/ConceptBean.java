@@ -17,23 +17,36 @@ public class ConceptBean {
 	private int ontologyId;
 	private HashMap<String, String> properties;
 	private List<ConceptBean> children;
-	private ConceptBean parent;
+	private List<ConceptBean> parents = null;
 
 	/**
+	 * Gets the first parent in the parents list.
+	 * 
 	 * @return the parent
 	 */
 	public ConceptBean getParent() {
-		return parent;
+		if (parents != null) {
+			if (parents.size() != 0)
+				return (ConceptBean)parents.get(0);
+		}
+		
+		return null;
 	}
-
 	/**
-	 * @param parent
-	 *            the parent to set
+	 * @return the parent
 	 */
-	public void setParent(ConceptBean parent) {
-		this.parent = parent;
+	public List getParents() {
+		return parents;
 	}
-
+	
+	/**
+	 * @param parents
+	 *            the set of all parents
+	 */
+	public void setParents(List<ConceptBean> parents) {
+		this.parents = parents;
+	}
+	
 	/**
 	 * @return the id
 	 */
