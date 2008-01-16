@@ -63,11 +63,15 @@ public class OntologyAndConceptManagerProtegeTest extends TestCase {
     		System.out.println("Child "+ (++i));
     		outputConcept(child);
     	}
-    	
-    	System.out.println("Parent of " + TEST_CONCEPT_NAME);
-    	ConceptBean parent = conceptBean.getParent();
-    	outputConcept(parent);
 
+    	System.out.println("Parents of " + TEST_CONCEPT_NAME);
+
+    	i = 0;
+    	for (Iterator it = conceptBean.getParents().iterator(); it.hasNext(); ) {
+    		ConceptBean parent = (ConceptBean)it.next();
+    		System.out.println("Parent "+ (++i));
+    		outputConcept(parent);
+    	}
     }
 
     
