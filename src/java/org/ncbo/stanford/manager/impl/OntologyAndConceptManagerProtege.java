@@ -94,15 +94,15 @@ public class OntologyAndConceptManagerProtege implements OntologyAndConceptManag
 		return null;
 	}
 
-	public OntologyBean findOntology(int id, String version) {
+	public OntologyBean findOntology(Integer id, String version) {
 		return null;
 	}
 
-	public List<OntologyBean> findOntologyVersions(int id) {
+	public List<OntologyBean> findOntologyVersions(Integer id) {
 		return new ArrayList();
 	}
 
-	public List<String> findProperties(int id) {
+	public List<String> findProperties(Integer id) {
 		return new ArrayList();
 	}
 
@@ -134,7 +134,7 @@ public class OntologyAndConceptManagerProtege implements OntologyAndConceptManag
 	/**
 	 * Get the root concept for the specified ontology.
 	 */
-	public ConceptBean getRootConcept(int ontologyId) {
+	public ConceptBean getRootConcept(Integer ontologyId) {
 		OWLModel owlModel = this.getOWLModel(ontologyId);
 		
 		// Get all root nodes associated with this ontology. Then iterate
@@ -163,7 +163,7 @@ public class OntologyAndConceptManagerProtege implements OntologyAndConceptManag
 
 	
 
-	public ConceptBean findConcept(String conceptID, int ontologyId) {
+	public ConceptBean findConcept(String conceptID, Integer ontologyId) {
 		OWLModel owlModel = this.getOWLModel(ontologyId);
 
 		String conceptName = owlModel.getResourceNameForURI(conceptID);
@@ -182,7 +182,7 @@ public class OntologyAndConceptManagerProtege implements OntologyAndConceptManag
 			return null;
 	}
 
-	public ArrayList<ConceptBean> findPathToRoot(String id, int ontologyId) {
+	public ArrayList<ConceptBean> findPathToRoot(String id, Integer ontologyId) {
 		/**
 		 * OWLModel om = (OWLModel) fileProject.getKnowledgeBase();
 		 * 
@@ -192,11 +192,11 @@ public class OntologyAndConceptManagerProtege implements OntologyAndConceptManag
 		return new ArrayList();
 	}
 
-	public ConceptBean findParent(String id, int ontologyId) {
+	public ConceptBean findParent(String id, Integer ontologyId) {
 		return new ConceptBean();
 	}
 
-	public ArrayList<ConceptBean> findChildren(String id, int ontologyId) {
+	public ArrayList<ConceptBean> findChildren(String id, Integer ontologyId) {
 		return new ArrayList();
 	}
 

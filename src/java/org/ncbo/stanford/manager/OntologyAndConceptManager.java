@@ -35,11 +35,11 @@ public interface OntologyAndConceptManager {
 
 	public OntologyBean findOntology(Integer id);
 
-	public List<OntologyBean> findOntologyVersions(int id);
+	public List<OntologyBean> findOntologyVersions(Integer id);
 
-	public OntologyBean findOntology(int id, String version);
+	public OntologyBean findOntology(Integer id, String version);
 
-	public List<String> findProperties(int id);
+	public List<String> findProperties(Integer id);
 
 	/**
 	 * Loads the specified ontology into the BioPortal repository.
@@ -49,15 +49,15 @@ public interface OntologyAndConceptManager {
 	// 
 	// Concept methods
 	//
-	public ConceptBean getRootConcept(int ontologyId);
+	public ConceptBean getRootConcept(Integer ontologyId);
 	
-	public ConceptBean findConcept(String id, int ontologyId);
+	public ConceptBean findConcept(String id, Integer ontologyId);
 
-	public ArrayList<ConceptBean> findPathToRoot(String id, int ontologyId);
+	public ArrayList<ConceptBean> findPathToRoot(String id, Integer ontologyId);
 
-	public ConceptBean findParent(String id, int ontologyId);
+	public ConceptBean findParent(String id, Integer ontologyId);
 
-	public ArrayList<ConceptBean> findChildren(String id, int ontologyId);
+	public ArrayList<ConceptBean> findChildren(String id, Integer ontologyId);
 
 	public ArrayList<ConceptBean> findConceptNameExact(String query,
 			ArrayList<Integer> ontologyIds);

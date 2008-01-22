@@ -66,15 +66,15 @@ public class OntologyAndConceptManagerLexGrid implements OntologyAndConceptManag
 		return null;
 	}
 
-	public OntologyBean findOntology(int id, String version) {
+	public OntologyBean findOntology(Integer id, String version) {
 		return null;
 	}
 
-	public List<OntologyBean> findOntologyVersions(int id) {
+	public List<OntologyBean> findOntologyVersions(Integer id) {
 		return new ArrayList();
 	}
 
-	public List<String> findProperties(int id) {
+	public List<String> findProperties(Integer id) {
 		return new ArrayList();
 	}
 
@@ -91,25 +91,25 @@ public class OntologyAndConceptManagerLexGrid implements OntologyAndConceptManag
 	/**
 	 * Get the root concept for the specified ontology.
 	 */
-	public ConceptBean getRootConcept(int ontologyId) {
+	public ConceptBean getRootConcept(Integer ontologyId) {
 		return new ConceptBean();
 	}
 
 	
 
-	public ConceptBean findConcept(String conceptID, int ontologyId) {
+	public ConceptBean findConcept(String conceptID, Integer ontologyId) {
 		return new ConceptBean();
 	}
 
-	public ArrayList<ConceptBean> findPathToRoot(String id, int ontologyId) {
+	public ArrayList<ConceptBean> findPathToRoot(String id, Integer ontologyId) {
 		return new ArrayList();
 	}
 
-	public ConceptBean findParent(String id, int ontologyId) {
+	public ConceptBean findParent(String id, Integer ontologyId) {
 		return new ConceptBean();
 	}
 
-	public ArrayList<ConceptBean> findChildren(String id, int ontologyId) {
+	public ArrayList<ConceptBean> findChildren(String id, Integer ontologyId) {
 		return new ArrayList();
 	}
 
