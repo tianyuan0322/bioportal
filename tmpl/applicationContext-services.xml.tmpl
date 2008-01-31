@@ -68,13 +68,13 @@
 				</value>
 				<value>
 					org/ncbo/stanford/domain/generated/NcboAdminApplication.hbm.xml
-				</value>				
+				</value>
 				<value>
 					org/ncbo/stanford/domain/generated/NcboLAppTextDatatype.hbm.xml
 				</value>
 				<value>
 					org/ncbo/stanford/domain/generated/NcboAppText.hbm.xml
-				</value>				
+				</value>
 			</list>
 		</property>
 	</bean>
@@ -206,7 +206,7 @@
 			<ref bean="hibernateTemplate" />
 		</property>
 	</bean>
-	
+
 	<bean id="NcboSeqOntologyIdDAO"
 		class="org.ncbo.stanford.domain.custom.dao.CustomNcboSeqOntologyIdDAO">
 		<property name="hibernateTemplate">
@@ -227,7 +227,7 @@
 			<ref bean="hibernateTemplate" />
 		</property>
 	</bean>
-	
+
 	<bean id="NcboAppTextDAO"
 		class="org.ncbo.stanford.domain.custom.dao.CustomNcboAppTextDAO">
 		<property name="hibernateTemplate">
@@ -243,36 +243,74 @@
 	</bean>
 
 	<bean id="messageUtils"
-		class="org.ncbo.stanford.util.MessageUtils" >
+		class="org.ncbo.stanford.util.MessageUtils">
 		<constructor-arg ref="messageBundleName" index="0" />
 	</bean>
 
-	<!-- Managers -->	
-	<bean id="ontologyAndConceptManager" class="org.ncbo.stanford.manager.impl.OntologyAndConceptManagerImpl">
-		<property name="ncboOntologyVersionDAO">
-			<ref bean="NcboOntologyVersionDAO" />
-		</property>	
-	</bean>	
-	
-	<!-- Application Services -->
-	<bean id="userService" class="org.ncbo.stanford.service.user.impl.UserServiceImpl">
-		<property name="ncboUserDAO">
-			<ref bean="NcboUserDAO" />
-		</property>	
+	<!-- Managers -->
+	<bean id="ontologyAndConceptManager"
+		class="org.ncbo.stanford.manager.impl.OntologyAndConceptManagerImpl">
+		<property name="ontologyAndConceptManagerWrapperLexGrid">
+			<ref bean="ontologyAndConceptManagerWrapperLexGrid" />
+		</property>		
+		<property name="ontologyAndConceptManagerWrapperProtege">
+			<ref bean="ontologyAndConceptManagerWrapperProtege" />
+		</property>
 	</bean>
 
-	<bean id="ontologyService" class="org.ncbo.stanford.service.ontology.impl.OntologyServiceImpl">
-		<property name="ontologyAndConceptManager">
-			<ref bean="ontologyAndConceptManager" />
-		</property>	
-	</bean>
-	<bean id="uploadService" class="org.ncbo.stanford.service.upload.impl.UploadServiceImpl">
+	<bean id="ontologyAndConceptManagerWrapper"
+		class="org.ncbo.stanford.manager.wrapper.OntologyAndConceptManagerWrapper"
+		abstract="true">
 		<property name="ncboOntologyVersionDAO">
 			<ref bean="NcboOntologyVersionDAO" />
-		</property>	
+		</property>
+	</bean>
+
+	<bean id="ontologyAndConceptManagerWrapperLexGrid"
+		class="org.ncbo.stanford.manager.wrapper.impl.OntologyAndConceptManagerWrapperLexGridImpl"
+		parent="ontologyAndConceptManagerWrapper">
+	</bean>
+
+	<bean id="ontologyAndConceptManagerWrapperProtege"
+		class="org.ncbo.stanford.manager.wrapper.impl.OntologyAndConceptManagerWrapperProtegeImpl"
+		parent="ontologyAndConceptManagerWrapper">		
+		<property name="protegeJdbcUrl">
+			<ref bean="protegeJdbcUrl" />
+		</property>
+		<property name="protegeJdbcDriver">
+			<ref bean="protegeJdbcDriver" />
+		</property>
+		<property name="protegeJdbcUsername">
+			<ref bean="protegeJdbcUsername" />
+		</property>
+		<property name="protegeJdbcPassword">
+			<ref bean="protegeJdbcPassword" />
+		</property>
+	</bean>
+
+	<!-- Application Services -->
+	<bean id="userService"
+		class="org.ncbo.stanford.service.user.impl.UserServiceImpl">
+		<property name="ncboUserDAO">
+			<ref bean="NcboUserDAO" />
+		</property>
+	</bean>
+
+	<bean id="ontologyService"
+		class="org.ncbo.stanford.service.ontology.impl.OntologyServiceImpl">
+		<property name="ontologyAndConceptManager">
+			<ref bean="ontologyAndConceptManager" />
+		</property>
+	</bean>
+
+	<bean id="uploadService"
+		class="org.ncbo.stanford.service.upload.impl.UploadServiceImpl">
+		<property name="ncboOntologyVersionDAO">
+			<ref bean="NcboOntologyVersionDAO" />
+		</property>
 		<property name="ncboOntologyMetadataDAO">
 			<ref bean="NcboOntologyMetadataDAO" />
-		</property>	
+		</property>
 		<property name="ncboOntologyFileDAO">
 			<ref bean="NcboOntologyFileDAO" />
 		</property>
@@ -284,51 +322,76 @@
 		</property>
 		<property name="ontologyFilePath">
 			<ref bean="ontologyFilePath" />
-		</property>		
+		</property>
 		<property name="ncboUserDAO">
-			<ref bean="NcboUserDAO"/>
+			<ref bean="NcboUserDAO" />
 		</property>
 	</bean>
-	
 
-	<!-- Session Management -->	
-	<bean id="expirationHandler" 
+
+	<!-- Session Management -->
+	<bean id="expirationHandler"
 		class="org.ncbo.stanford.util.cache.expiration.handler.impl.SimpleExpirationHandler" />
-		
-	<bean id="hashbeltContainerFactory" 
+
+	<bean id="hashbeltContainerFactory"
 		class="org.ncbo.stanford.util.cache.container.impl.HashlistBasedHashbeltContainerFactory" />
 
 	<bean id="sessionService"
 		class="org.ncbo.stanford.service.session.impl.SessionServiceImpl">
- 		<constructor-arg index="0">
+		<constructor-arg index="0">
 			<value>@bioportalsessionnumcontainers@</value>
-		</constructor-arg>  
- 		<constructor-arg index="1">
+		</constructor-arg>
+		<constructor-arg index="1">
 			<value>@bioportalsessiontimeout@</value>
-		</constructor-arg>  
- 		<constructor-arg index="2">
+		</constructor-arg>
+		<constructor-arg index="2">
 			<ref bean="expirationHandler" />
-		</constructor-arg>  	
- 		<constructor-arg index="3">
+		</constructor-arg>
+		<constructor-arg index="3">
 			<ref bean="hashbeltContainerFactory" />
-		</constructor-arg>  	
+		</constructor-arg>
 	</bean>
-	
+
 	<bean id="textManager"
 		class="org.ncbo.stanford.util.textmanager.service.impl.TextManagerImpl">
 		<property name="ncboAppTextDAO">
 			<ref bean="NcboAppTextDAO" />
 		</property>
 	</bean>
-	
-	<bean id="xmlSerializationService" 
-		class="org.ncbo.stanford.service.xml.impl.XMLSerializationServiceImpl">	
-	</bean>	
-	
+
+	<bean id="xmlSerializationService"
+		class="org.ncbo.stanford.service.xml.impl.XMLSerializationServiceImpl">
+	</bean>
+
 	<bean id="ontologyFilePath" class="java.lang.String">
 		<constructor-arg>
 			<value>@bioportalontologyfilepath@</value>
 		</constructor-arg>
 	</bean>
 
+	<!-- Protege DB Configuation -->
+
+	<bean id="protegeJdbcUrl" class="java.lang.String">
+		<constructor-arg>
+			<value>@protegejdbcurl@</value>
+		</constructor-arg>
+	</bean>
+
+	<bean id="protegeJdbcDriver" class="java.lang.String">
+		<constructor-arg>
+			<value>@protegejdbcdriver@</value>
+		</constructor-arg>
+	</bean>
+
+	<bean id="protegeJdbcUsername" class="java.lang.String">
+		<constructor-arg>
+			<value>@protegejdbcusername@</value>
+		</constructor-arg>
+	</bean>
+
+	<bean id="protegeJdbcPassword" class="java.lang.String">
+		<constructor-arg>
+			<value>@protegejdbcpassword@</value>
+		</constructor-arg>
+	</bean>
 </beans>
