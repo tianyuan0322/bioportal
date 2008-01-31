@@ -19,6 +19,21 @@ public interface ApplicationConstants {
 	public static final Byte TRUE = 1;
 	public static final Byte FALSE = 0;
 	
+
+	/**
+	 * Ontology formats
+	 */
+	public static final String FORMAT_OWL_DL = "OWL-DL";
+	public static final String FORMAT_OWL_FULL = "OWL-FULL";
+	public static final String FORMAT_PROTEGE = "PROTEGE";
+	public static final String FORMAT_OBO = "OBO";
+	
+	/**
+	 * Ontology format handlers
+	 */
+	public static final String FORMAT_HANDLER_PROTEGE = "protege";
+	public static final String FORMAT_HANDLER_LEXGRID = "lexgrid";
+	
 	/**
 	 * TextManager constants
 	 */ 
