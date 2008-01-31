@@ -6,9 +6,9 @@ import java.util.List;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.ncbo.stanford.bean.OntologyBean;
+import org.ncbo.stanford.loader.OntologyLoader;
 import org.ncbo.stanford.manager.OntologyAndConceptManager;
 import org.ncbo.stanford.service.ontology.OntologyService;
-import org.ncbo.stanford.manager.OntologyLoader;
 
 public class OntologyServiceImpl implements OntologyService {
 
