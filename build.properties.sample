@@ -56,9 +56,15 @@ bioportal.authoritiesbyusername.query=SELECT username, authority FROM myauthorit
 # Message bundle
 bioportal.messagebundle=message
 
-
 # Uploaded Files
 bioportal.ontology.filepath=/apps/uploads
+
+################## Protege Configuration ##################
+
+protege.jdbc.url=jdbc:mysql://localhost/bioportal_protege
+protege.jdbc.driver=com.mysql.jdbc.Driver
+protege.jdbc.username=mydbusername
+protege.jdbc.password=mydbpassword
 
 ################## LexGrid Configuration ##################
 
