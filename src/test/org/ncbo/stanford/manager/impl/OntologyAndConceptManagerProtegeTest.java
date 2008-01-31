@@ -1,6 +1,8 @@
 package org.ncbo.stanford.manager.impl;
 
-import org.ncbo.stanford.manager.OntologyLoader;
+import org.ncbo.stanford.loader.OntologyLoader;
+import org.ncbo.stanford.manager.wrapper.impl.OntologyAndConceptManagerWrapperProtegeImpl;
+
 import junit.framework.TestCase;
 import edu.stanford.smi.protegex.owl.database.CreateOWLDatabaseFromFileProjectPlugin;
 import edu.stanford.smi.protegex.owl.database.OWLDatabaseKnowledgeBaseFactory;
@@ -33,7 +35,7 @@ public class OntologyAndConceptManagerProtegeTest extends TestCase {
 	private final static String TEST_CONCEPT_NAME = "http://www.co-ode.org/ontologies/pizza/2005/10/18/pizza.owl#Pizza";
 
 	public void testGetRootNode() {
-    	OntologyAndConceptManagerProtege ocMgr = new OntologyAndConceptManagerProtege();
+    	OntologyAndConceptManagerWrapperProtegeImpl ocMgr = new OntologyAndConceptManagerWrapperProtegeImpl();
     	ConceptBean conceptBean = ocMgr.getRootConcept(TEST_ONT_ID);
   
       	System.out.println("ROOT");
@@ -57,7 +59,7 @@ public class OntologyAndConceptManagerProtegeTest extends TestCase {
     
 	public void testPizzaConcept() {
       	System.out.println("Starting testGetConcept");
-		OntologyAndConceptManagerProtege ocMgr = new OntologyAndConceptManagerProtege();
+		OntologyAndConceptManagerWrapperProtegeImpl ocMgr = new OntologyAndConceptManagerWrapperProtegeImpl();
     	ConceptBean conceptBean = ocMgr.findConcept(TEST_CONCEPT_NAME, TEST_ONT_ID);
   
         
@@ -86,7 +88,7 @@ public class OntologyAndConceptManagerProtegeTest extends TestCase {
 
 	public void testCheeseyVegetablePizzaConcept() {
       	System.out.println("Starting cheesyvegetablepizza concept");
-		OntologyAndConceptManagerProtege ocMgr = new OntologyAndConceptManagerProtege();
+		OntologyAndConceptManagerWrapperProtegeImpl ocMgr = new OntologyAndConceptManagerWrapperProtegeImpl();
     	ConceptBean conceptBean = ocMgr.findConcept("CheeseyVegetableTopping", TEST_ONT_ID);
   
         
