@@ -1,6 +1,8 @@
 package org.ncbo.stanford.manager.impl;
 
-import org.ncbo.stanford.manager.OntologyLoader;
+import org.ncbo.stanford.loader.OntologyLoader;
+import org.ncbo.stanford.loader.impl.OntologyLoaderProtegeImpl;
+
 import junit.framework.TestCase;
 import edu.stanford.smi.protegex.owl.database.CreateOWLDatabaseFromFileProjectPlugin;
 import edu.stanford.smi.protegex.owl.database.OWLDatabaseKnowledgeBaseFactory;
