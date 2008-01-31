@@ -1,7 +1,6 @@
 package org.ncbo.stanford.manager.impl;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
 import org.apache.commons.logging.Log;
@@ -11,16 +10,7 @@ import org.ncbo.stanford.bean.OntologyBean;
 import org.ncbo.stanford.domain.custom.dao.CustomNcboOntologyVersionDAO;
 import org.ncbo.stanford.domain.custom.entity.NcboOntology;
 import org.ncbo.stanford.manager.OntologyAndConceptManager;
-import org.ncbo.stanford.service.ontology.impl.OntologyServiceImpl;
-
-import edu.stanford.smi.protege.model.Project;
-import edu.stanford.smi.protege.storage.database.DatabaseKnowledgeBaseFactory;
-import edu.stanford.smi.protege.util.PropertyList;
-import edu.stanford.smi.protegex.owl.ProtegeOWL;
-import edu.stanford.smi.protegex.owl.database.OWLDatabaseKnowledgeBaseFactory;
-import edu.stanford.smi.protegex.owl.model.OWLModel;
-import edu.stanford.smi.protegex.owl.model.OWLOntology;
-import edu.stanford.smi.protegex.owl.model.OWLNamedClass;
+import org.ncbo.stanford.manager.wrapper.OntologyAndConceptManagerWrapper;
 
 /**
  * A default implementation to OntologyAndConceptManager interface designed to
@@ -29,21 +19,24 @@ import edu.stanford.smi.protegex.owl.model.OWLNamedClass;
  * implementation (i.e. LexGrid, Protege etc.). Do not use this class directly
  * in upper layers.
  * 
- * NOTE(bdai): This class with all the ontology and concept methods seems to be
- * a bit bloated. Will refactor if it becomes a problem.
-
- * 
- * @author Benjamin Dai
+ * @author Michael Dorf
  * 
  */
-public class OntologyAndConceptManagerLexGrid implements OntologyAndConceptManager {
+public class OntologyAndConceptManagerImpl implements OntologyAndConceptManager {
 
 	private static final Log log = LogFactory
-			.getLog(OntologyAndConceptManagerLexGrid.class);
+			.getLog(OntologyAndConceptManagerImpl.class);
 
 	private CustomNcboOntologyVersionDAO ncboOntologyVersionDAO;
+	private OntologyAndConceptManagerWrapper ontologyAndConceptManagerWrapperLexGrid;
+	private OntologyAndConceptManagerWrapper ontologyAndConceptManagerWrapperProtege;	
 
-	// private OntologyLoaderLexGridImpl lexGridLoader = null;
+	
+	/**
+	 * Default Constructor
+	 */
+	public OntologyAndConceptManagerImpl() {
+	}
 
 	/**
 	 * Returns a single record for each ontology in the system. If more than one
@@ -52,20 +45,48 @@ public class OntologyAndConceptManagerLexGrid implements OntologyAndConceptManag
 	 * @return
 	 */
 	public List<OntologyBean> findLatestOntologyVersions() {
-		return new ArrayList();
+		ArrayList<OntologyBean> ontBeanList = new ArrayList<OntologyBean>(1);
+		List<NcboOntology> ontEntityList = ncboOntologyVersionDAO
+				.findLatestOntologyVersions();
+
+		for (NcboOntology ncboOntology : ontEntityList) {
+			OntologyBean ontologyBean = new OntologyBean();
+			ontologyBean.populateFromEntity(ncboOntology);
+			ontBeanList.add(ontologyBean);
+		}
+
+		return ontBeanList;
 	}
 
+	
+	
+	
+	
+	
+	
 	/**
-	 * Returns the specified ontology TODO: Implement this first - bdai.
+	 * Returns the specified ontology.
 	 * 
 	 * @param id
 	 * @return
 	 */
-
 	public OntologyBean findOntology(Integer id) {
 		return null;
 	}
 
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
 	public OntologyBean findOntology(Integer id, String version) {
 		return null;
 	}
@@ -92,13 +113,11 @@ public class OntologyAndConceptManagerLexGrid implements OntologyAndConceptManag
 	 * Get the root concept for the specified ontology.
 	 */
 	public ConceptBean getRootConcept(Integer ontologyId) {
-		return new ConceptBean();
+		return null;
 	}
 
-	
-
 	public ConceptBean findConcept(String conceptID, Integer ontologyId) {
-		return new ConceptBean();
+		return null;
 	}
 
 	public ArrayList<ConceptBean> findPathToRoot(String id, Integer ontologyId) {
@@ -162,4 +181,67 @@ public class OntologyAndConceptManagerLexGrid implements OntologyAndConceptManag
 		this.ncboOntologyVersionDAO = ncboOntologyVersionDAO;
 	}
 
+	/**
+	 * @return the ontologyAndConceptManagerWrapperLexGrid
+	 */
+	public OntologyAndConceptManagerWrapper getOntologyAndConceptManagerWrapperLexGrid() {
+		return ontologyAndConceptManagerWrapperLexGrid;
+	}
+
+	/**
+	 * @param ontologyAndConceptManagerWrapperLexGrid the ontologyAndConceptManagerWrapperLexGrid to set
+	 */
+	public void setOntologyAndConceptManagerWrapperLexGrid(
+			OntologyAndConceptManagerWrapper ontologyAndConceptManagerWrapperLexGrid) {
+		this.ontologyAndConceptManagerWrapperLexGrid = ontologyAndConceptManagerWrapperLexGrid;
+	}
+
+	/**
+	 * @return the ontologyAndConceptManagerWrapperProtege
+	 */
+	public OntologyAndConceptManagerWrapper getOntologyAndConceptManagerWrapperProtege() {
+		return ontologyAndConceptManagerWrapperProtege;
+	}
+
+	/**
+	 * @param ontologyAndConceptManagerWrapperProtege the ontologyAndConceptManagerWrapperProtege to set
+	 */
+	public void setOntologyAndConceptManagerWrapperProtege(
+			OntologyAndConceptManagerWrapper ontologyAndConceptManagerWrapperProtege) {
+		this.ontologyAndConceptManagerWrapperProtege = ontologyAndConceptManagerWrapperProtege;
+	}
+
+	//
+	// Private methods
+	//
+
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
 }
