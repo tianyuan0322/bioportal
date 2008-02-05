@@ -20,7 +20,7 @@ import org.ncbo.stanford.bean.OntologyBean;
  * @author Michael Dorf
  * 
  */
-public interface OntologyAndConceptManager {
+public interface OntologyRetrievalManager {
 
 	//
 	// Ontology methods
@@ -40,11 +40,6 @@ public interface OntologyAndConceptManager {
 	public OntologyBean findOntology(Integer id, String version);
 
 	public List<String> findProperties(Integer id);
-
-	/**
-	 * Loads the specified ontology into the BioPortal repository.
-	 */
-	public void loadOntology(OntologyBean ontology);
 
 	// 
 	// Concept methods
