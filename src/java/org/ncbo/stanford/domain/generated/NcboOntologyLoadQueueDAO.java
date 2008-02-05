@@ -1,7 +1,7 @@
 package org.ncbo.stanford.domain.generated;
 
+import java.util.Date;
 import java.util.List;
-import java.util.Set;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.hibernate.LockMode;
@@ -10,28 +10,28 @@ import org.springframework.orm.hibernate3.support.HibernateDaoSupport;
 
 /**
  * A data access object (DAO) providing persistence and search support for
- * NcboLAppTextDatatype entities. Transaction control of the save(), update()
+ * NcboOntologyLoadQueue entities. Transaction control of the save(), update()
  * and delete() operations can directly support Spring container-managed
  * transactions or they can be augmented to handle user-managed Spring
  * transactions. Each of these methods provides additional information for how
  * to configure it for the desired type of transaction control.
  * 
- * @see org.ncbo.stanford.domain.generated.NcboLAppTextDatatype
+ * @see org.ncbo.stanford.domain.generated.NcboOntologyLoadQueue
  * @author MyEclipse Persistence Tools
  */
 
-public class NcboLAppTextDatatypeDAO extends HibernateDaoSupport {
+public class NcboOntologyLoadQueueDAO extends HibernateDaoSupport {
 	private static final Log log = LogFactory
-			.getLog(NcboLAppTextDatatypeDAO.class);
+			.getLog(NcboOntologyLoadQueueDAO.class);
 	// property constants
-	public static final String DATATYPE = "datatype";
+	public static final String ERROR_MESSAGE = "errorMessage";
 
 	protected void initDao() {
 		// do nothing
 	}
 
-	public void save(NcboLAppTextDatatype transientInstance) {
-		log.debug("saving NcboLAppTextDatatype instance");
+	public void save(NcboOntologyLoadQueue transientInstance) {
+		log.debug("saving NcboOntologyLoadQueue instance");
 		try {
 			getHibernateTemplate().save(transientInstance);
 			log.debug("save successful");
@@ -41,8 +41,8 @@ public class NcboLAppTextDatatypeDAO extends HibernateDaoSupport {
 		}
 	}
 
-	public void delete(NcboLAppTextDatatype persistentInstance) {
-		log.debug("deleting NcboLAppTextDatatype instance");
+	public void delete(NcboOntologyLoadQueue persistentInstance) {
+		log.debug("deleting NcboOntologyLoadQueue instance");
 		try {
 			getHibernateTemplate().delete(persistentInstance);
 			log.debug("delete successful");
@@ -52,12 +52,12 @@ public class NcboLAppTextDatatypeDAO extends HibernateDaoSupport {
 		}
 	}
 
-	public NcboLAppTextDatatype findById(java.lang.String id) {
-		log.debug("getting NcboLAppTextDatatype instance with id: " + id);
+	public NcboOntologyLoadQueue findById(java.lang.Integer id) {
+		log.debug("getting NcboOntologyLoadQueue instance with id: " + id);
 		try {
-			NcboLAppTextDatatype instance = (NcboLAppTextDatatype) getHibernateTemplate()
+			NcboOntologyLoadQueue instance = (NcboOntologyLoadQueue) getHibernateTemplate()
 					.get(
-							"org.ncbo.stanford.domain.generated.NcboLAppTextDatatype",
+							"org.ncbo.stanford.domain.generated.NcboOntologyLoadQueue",
 							id);
 			return instance;
 		} catch (RuntimeException re) {
@@ -66,8 +66,8 @@ public class NcboLAppTextDatatypeDAO extends HibernateDaoSupport {
 		}
 	}
 
-	public List findByExample(NcboLAppTextDatatype instance) {
-		log.debug("finding NcboLAppTextDatatype instance by example");
+	public List findByExample(NcboOntologyLoadQueue instance) {
+		log.debug("finding NcboOntologyLoadQueue instance by example");
 		try {
 			List results = getHibernateTemplate().findByExample(instance);
 			log.debug("find by example successful, result size: "
@@ -80,10 +80,10 @@ public class NcboLAppTextDatatypeDAO extends HibernateDaoSupport {
 	}
 
 	public List findByProperty(String propertyName, Object value) {
-		log.debug("finding NcboLAppTextDatatype instance with property: "
+		log.debug("finding NcboOntologyLoadQueue instance with property: "
 				+ propertyName + ", value: " + value);
 		try {
-			String queryString = "from NcboLAppTextDatatype as model where model."
+			String queryString = "from NcboOntologyLoadQueue as model where model."
 					+ propertyName + "= ?";
 			return getHibernateTemplate().find(queryString, value);
 		} catch (RuntimeException re) {
@@ -92,14 +92,14 @@ public class NcboLAppTextDatatypeDAO extends HibernateDaoSupport {
 		}
 	}
 
-	public List findByDatatype(Object datatype) {
-		return findByProperty(DATATYPE, datatype);
+	public List findByErrorMessage(Object errorMessage) {
+		return findByProperty(ERROR_MESSAGE, errorMessage);
 	}
 
 	public List findAll() {
-		log.debug("finding all NcboLAppTextDatatype instances");
+		log.debug("finding all NcboOntologyLoadQueue instances");
 		try {
-			String queryString = "from NcboLAppTextDatatype";
+			String queryString = "from NcboOntologyLoadQueue";
 			return getHibernateTemplate().find(queryString);
 		} catch (RuntimeException re) {
 			log.error("find all failed", re);
@@ -107,10 +107,10 @@ public class NcboLAppTextDatatypeDAO extends HibernateDaoSupport {
 		}
 	}
 
-	public NcboLAppTextDatatype merge(NcboLAppTextDatatype detachedInstance) {
-		log.debug("merging NcboLAppTextDatatype instance");
+	public NcboOntologyLoadQueue merge(NcboOntologyLoadQueue detachedInstance) {
+		log.debug("merging NcboOntologyLoadQueue instance");
 		try {
-			NcboLAppTextDatatype result = (NcboLAppTextDatatype) getHibernateTemplate()
+			NcboOntologyLoadQueue result = (NcboOntologyLoadQueue) getHibernateTemplate()
 					.merge(detachedInstance);
 			log.debug("merge successful");
 			return result;
@@ -120,8 +120,8 @@ public class NcboLAppTextDatatypeDAO extends HibernateDaoSupport {
 		}
 	}
 
-	public void attachDirty(NcboLAppTextDatatype instance) {
-		log.debug("attaching dirty NcboLAppTextDatatype instance");
+	public void attachDirty(NcboOntologyLoadQueue instance) {
+		log.debug("attaching dirty NcboOntologyLoadQueue instance");
 		try {
 			getHibernateTemplate().saveOrUpdate(instance);
 			log.debug("attach successful");
@@ -131,8 +131,8 @@ public class NcboLAppTextDatatypeDAO extends HibernateDaoSupport {
 		}
 	}
 
-	public void attachClean(NcboLAppTextDatatype instance) {
-		log.debug("attaching clean NcboLAppTextDatatype instance");
+	public void attachClean(NcboOntologyLoadQueue instance) {
+		log.debug("attaching clean NcboOntologyLoadQueue instance");
 		try {
 			getHibernateTemplate().lock(instance, LockMode.NONE);
 			log.debug("attach successful");
@@ -142,8 +142,9 @@ public class NcboLAppTextDatatypeDAO extends HibernateDaoSupport {
 		}
 	}
 
-	public static NcboLAppTextDatatypeDAO getFromApplicationContext(
+	public static NcboOntologyLoadQueueDAO getFromApplicationContext(
 			ApplicationContext ctx) {
-		return (NcboLAppTextDatatypeDAO) ctx.getBean("NcboLAppTextDatatypeDAO");
+		return (NcboOntologyLoadQueueDAO) ctx
+				.getBean("NcboOntologyLoadQueueDAO");
 	}
 }

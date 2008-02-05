@@ -10,28 +10,28 @@ import org.springframework.orm.hibernate3.support.HibernateDaoSupport;
 
 /**
  * A data access object (DAO) providing persistence and search support for
- * NcboLRole entities. Transaction control of the save(), update() and delete()
- * operations can directly support Spring container-managed transactions or they
- * can be augmented to handle user-managed Spring transactions. Each of these
- * methods provides additional information for how to configure it for the
- * desired type of transaction control.
+ * NcboLStatus entities. Transaction control of the save(), update() and
+ * delete() operations can directly support Spring container-managed
+ * transactions or they can be augmented to handle user-managed Spring
+ * transactions. Each of these methods provides additional information for how
+ * to configure it for the desired type of transaction control.
  * 
- * @see org.ncbo.stanford.domain.generated.NcboLRole
+ * @see org.ncbo.stanford.domain.generated.NcboLStatus
  * @author MyEclipse Persistence Tools
  */
 
-public class NcboLRoleDAO extends HibernateDaoSupport {
-	private static final Log log = LogFactory.getLog(NcboLRoleDAO.class);
+public class NcboLStatusDAO extends HibernateDaoSupport {
+	private static final Log log = LogFactory.getLog(NcboLStatusDAO.class);
 	// property constants
-	public static final String NAME = "name";
+	public static final String STATUS = "status";
 	public static final String DESCRIPTION = "description";
 
 	protected void initDao() {
 		// do nothing
 	}
 
-	public void save(NcboLRole transientInstance) {
-		log.debug("saving NcboLRole instance");
+	public void save(NcboLStatus transientInstance) {
+		log.debug("saving NcboLStatus instance");
 		try {
 			getHibernateTemplate().save(transientInstance);
 			log.debug("save successful");
@@ -41,8 +41,8 @@ public class NcboLRoleDAO extends HibernateDaoSupport {
 		}
 	}
 
-	public void delete(NcboLRole persistentInstance) {
-		log.debug("deleting NcboLRole instance");
+	public void delete(NcboLStatus persistentInstance) {
+		log.debug("deleting NcboLStatus instance");
 		try {
 			getHibernateTemplate().delete(persistentInstance);
 			log.debug("delete successful");
@@ -52,11 +52,11 @@ public class NcboLRoleDAO extends HibernateDaoSupport {
 		}
 	}
 
-	public NcboLRole findById(java.lang.Integer id) {
-		log.debug("getting NcboLRole instance with id: " + id);
+	public NcboLStatus findById(java.lang.Integer id) {
+		log.debug("getting NcboLStatus instance with id: " + id);
 		try {
-			NcboLRole instance = (NcboLRole) getHibernateTemplate().get(
-					"org.ncbo.stanford.domain.generated.NcboLRole", id);
+			NcboLStatus instance = (NcboLStatus) getHibernateTemplate().get(
+					"org.ncbo.stanford.domain.generated.NcboLStatus", id);
 			return instance;
 		} catch (RuntimeException re) {
 			log.error("get failed", re);
@@ -64,8 +64,8 @@ public class NcboLRoleDAO extends HibernateDaoSupport {
 		}
 	}
 
-	public List findByExample(NcboLRole instance) {
-		log.debug("finding NcboLRole instance by example");
+	public List findByExample(NcboLStatus instance) {
+		log.debug("finding NcboLStatus instance by example");
 		try {
 			List results = getHibernateTemplate().findByExample(instance);
 			log.debug("find by example successful, result size: "
@@ -78,10 +78,10 @@ public class NcboLRoleDAO extends HibernateDaoSupport {
 	}
 
 	public List findByProperty(String propertyName, Object value) {
-		log.debug("finding NcboLRole instance with property: " + propertyName
+		log.debug("finding NcboLStatus instance with property: " + propertyName
 				+ ", value: " + value);
 		try {
-			String queryString = "from NcboLRole as model where model."
+			String queryString = "from NcboLStatus as model where model."
 					+ propertyName + "= ?";
 			return getHibernateTemplate().find(queryString, value);
 		} catch (RuntimeException re) {
@@ -90,8 +90,8 @@ public class NcboLRoleDAO extends HibernateDaoSupport {
 		}
 	}
 
-	public List findByName(Object name) {
-		return findByProperty(NAME, name);
+	public List findByStatus(Object status) {
+		return findByProperty(STATUS, status);
 	}
 
 	public List findByDescription(Object description) {
@@ -99,9 +99,9 @@ public class NcboLRoleDAO extends HibernateDaoSupport {
 	}
 
 	public List findAll() {
-		log.debug("finding all NcboLRole instances");
+		log.debug("finding all NcboLStatus instances");
 		try {
-			String queryString = "from NcboLRole";
+			String queryString = "from NcboLStatus";
 			return getHibernateTemplate().find(queryString);
 		} catch (RuntimeException re) {
 			log.error("find all failed", re);
@@ -109,10 +109,10 @@ public class NcboLRoleDAO extends HibernateDaoSupport {
 		}
 	}
 
-	public NcboLRole merge(NcboLRole detachedInstance) {
-		log.debug("merging NcboLRole instance");
+	public NcboLStatus merge(NcboLStatus detachedInstance) {
+		log.debug("merging NcboLStatus instance");
 		try {
-			NcboLRole result = (NcboLRole) getHibernateTemplate().merge(
+			NcboLStatus result = (NcboLStatus) getHibernateTemplate().merge(
 					detachedInstance);
 			log.debug("merge successful");
 			return result;
@@ -122,8 +122,8 @@ public class NcboLRoleDAO extends HibernateDaoSupport {
 		}
 	}
 
-	public void attachDirty(NcboLRole instance) {
-		log.debug("attaching dirty NcboLRole instance");
+	public void attachDirty(NcboLStatus instance) {
+		log.debug("attaching dirty NcboLStatus instance");
 		try {
 			getHibernateTemplate().saveOrUpdate(instance);
 			log.debug("attach successful");
@@ -133,8 +133,8 @@ public class NcboLRoleDAO extends HibernateDaoSupport {
 		}
 	}
 
-	public void attachClean(NcboLRole instance) {
-		log.debug("attaching clean NcboLRole instance");
+	public void attachClean(NcboLStatus instance) {
+		log.debug("attaching clean NcboLStatus instance");
 		try {
 			getHibernateTemplate().lock(instance, LockMode.NONE);
 			log.debug("attach successful");
@@ -144,7 +144,8 @@ public class NcboLRoleDAO extends HibernateDaoSupport {
 		}
 	}
 
-	public static NcboLRoleDAO getFromApplicationContext(ApplicationContext ctx) {
-		return (NcboLRoleDAO) ctx.getBean("NcboLRoleDAO");
+	public static NcboLStatusDAO getFromApplicationContext(
+			ApplicationContext ctx) {
+		return (NcboLStatusDAO) ctx.getBean("NcboLStatusDAO");
 	}
 }
