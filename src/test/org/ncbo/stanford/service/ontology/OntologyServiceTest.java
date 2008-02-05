@@ -5,14 +5,7 @@ package org.ncbo.stanford.service.ontology;
 
 import java.util.List;
 
-import junit.framework.TestCase;
-
 import org.ncbo.stanford.bean.OntologyBean;
-import org.ncbo.stanford.domain.custom.dao.CustomNcboOntologyVersionDAO;
-import org.ncbo.stanford.domain.generated.NcboOntologyVersionDAO;
-import org.ncbo.stanford.manager.impl.OntologyAndConceptManagerImpl;
-import org.ncbo.stanford.service.ontology.impl.OntologyServiceImpl;
-import org.springframework.context.ApplicationContext;
 import org.springframework.test.AbstractDependencyInjectionSpringContextTests;
 
 
