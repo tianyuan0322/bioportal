@@ -6,10 +6,7 @@ package org.ncbo.stanford.service.upload.impl;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.InputStream;
-import java.io.ObjectOutputStream;
-import java.util.Date;
 
-import org.apache.commons.fileupload.FileItem;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.ncbo.stanford.bean.OntologyBean;
@@ -21,12 +18,8 @@ import org.ncbo.stanford.domain.custom.dao.CustomNcboUserDAO;
 import org.ncbo.stanford.domain.generated.NcboOntologyFile;
 import org.ncbo.stanford.domain.generated.NcboOntologyMetadata;
 import org.ncbo.stanford.domain.generated.NcboOntologyVersion;
-import org.ncbo.stanford.domain.generated.NcboUser;
-import org.ncbo.stanford.manager.OntologyAndConceptManager;
-import org.ncbo.stanford.service.ontology.impl.OntologyServiceImpl;
+import org.ncbo.stanford.manager.OntologyRetrievalManager;
 import org.ncbo.stanford.service.upload.UploadService;
-
-import com.ibm.icu.util.VersionInfo;
 
 /**
  * @author Nick Griffith
@@ -40,7 +33,7 @@ public class UploadServiceImpl implements UploadService {
 	private CustomNcboOntologyMetadataDAO ncboOntologyMetadataDAO;
 	private CustomNcboOntologyFileDAO ncboOntologyFileDAO;
 	private CustomNcboSeqOntologyIdDAO ncboSeqOntologyIdDAO;
-	private OntologyAndConceptManager ontologyAndConceptManager;
+	private OntologyRetrievalManager ontologyRetrievalManager;
 	private CustomNcboUserDAO ncboUserDAO;
 
 	private String ontologyFilePath;
@@ -55,7 +48,7 @@ public class UploadServiceImpl implements UploadService {
 			throws Exception {
 
 		if(ontology.getId()!=null){
-			ontology = ontologyAndConceptManager.findOntology(ontology.getId());
+			ontology = ontologyRetrievalManager.findOntology(ontology.getId());
 		}
 
 		NcboOntologyVersion versionInfo = new NcboOntologyVersion();
@@ -131,12 +124,6 @@ public class UploadServiceImpl implements UploadService {
 	public void parseOntology(File file) {
 
 	}
-
-	
-	
-	
-	
-	
 	
 	/**
 	 * @return the ncboUserDAO
@@ -150,22 +137,6 @@ public class UploadServiceImpl implements UploadService {
 	 */
 	public void setNcboUserDAO(CustomNcboUserDAO ncboUserDAO) {
 		this.ncboUserDAO = ncboUserDAO;
-	}
-
-	/**
-	 * @return the ontologyAndConceptManager
-	 */
-	public OntologyAndConceptManager getOntologyAndConceptManager() {
-		return ontologyAndConceptManager;
-	}
-
-	/**
-	 * @param ontologyAndConceptManager
-	 *            the ontologyAndConceptManager to set
-	 */
-	public void setOntologyAndConceptManager(
-			OntologyAndConceptManager ontologyAndConceptManager) {
-		this.ontologyAndConceptManager = ontologyAndConceptManager;
 	}
 
 	/**
@@ -245,5 +216,20 @@ public class UploadServiceImpl implements UploadService {
 	public void setNcboSeqOntologyIdDAO(
 			CustomNcboSeqOntologyIdDAO ncboSeqOntologyIdDAO) {
 		this.ncboSeqOntologyIdDAO = ncboSeqOntologyIdDAO;
+	}
+
+	/**
+	 * @return the ontologyRetrievalManager
+	 */
+	public OntologyRetrievalManager getOntologyRetrievalManager() {
+		return ontologyRetrievalManager;
+	}
+
+	/**
+	 * @param ontologyRetrievalManager the ontologyRetrievalManager to set
+	 */
+	public void setOntologyRetrievalManager(
+			OntologyRetrievalManager ontologyRetrievalManager) {
+		this.ontologyRetrievalManager = ontologyRetrievalManager;
 	}
 }

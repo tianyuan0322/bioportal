@@ -8,7 +8,7 @@ import java.util.ArrayList;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.ncbo.stanford.bean.ConceptBean;
-import org.ncbo.stanford.manager.OntologyAndConceptManager;
+import org.ncbo.stanford.manager.OntologyRetrievalManager;
 import org.ncbo.stanford.service.concept.ConceptService;
 
 /**
@@ -17,69 +17,70 @@ import org.ncbo.stanford.service.concept.ConceptService;
  * 
  */
 public class ConceptServiceImpl implements ConceptService {
+	
 	private static final Log log = LogFactory.getLog(ConceptServiceImpl.class);
 	
-	private OntologyAndConceptManager ontConceptMgr = null;
+	private OntologyRetrievalManager ontologyRetrievalManager;
+	
 	
 	public ConceptBean findConcept(String id, int ontologyId) {
-		return ontConceptMgr.findConcept(id, ontologyId);
+		return ontologyRetrievalManager.findConcept(id, ontologyId);
 	}
 
 	public ArrayList<ConceptBean> findPathToRoot(String id, int ontologyId) {
-		return ontConceptMgr.findPathToRoot(id, ontologyId);
+		return ontologyRetrievalManager.findPathToRoot(id, ontologyId);
 	}
 
 	public ConceptBean findParent(String id, int ontologyId) {
-		return ontConceptMgr.findParent(id, ontologyId);
+		return ontologyRetrievalManager.findParent(id, ontologyId);
 	}
 
 	public ArrayList<ConceptBean> findChildren(String id, int ontologyId) {
-		return ontConceptMgr.findChildren(id, ontologyId);
+		return ontologyRetrievalManager.findChildren(id, ontologyId);
 	}
 
 	public ArrayList<ConceptBean> findConceptNameExact(String query,
 			ArrayList<Integer> ontologyIds) {
-		return ontConceptMgr.findConceptNameExact(query, ontologyIds);
+		return ontologyRetrievalManager.findConceptNameExact(query, ontologyIds);
 	}
 
 	public ArrayList<ConceptBean> findConceptNameStartsWith(String query,
 			ArrayList<Integer> ontologyIds) {
-		return ontConceptMgr.findConceptNameStartsWith(query, ontologyIds);
+		return ontologyRetrievalManager.findConceptNameStartsWith(query, ontologyIds);
 	}
 
 	public ArrayList<ConceptBean> findConceptNameContains(String query,
 			ArrayList<Integer> ontologyIds) {
-		return ontConceptMgr.findConceptNameContains(query, ontologyIds);
+		return ontologyRetrievalManager.findConceptNameContains(query, ontologyIds);
 	}
 
 	public ArrayList<ConceptBean> findConceptPropertyExact(String property,
 			String query, ArrayList<Integer> ontologyIds) {
-		return ontConceptMgr.findConceptPropertyExact(property, query, ontologyIds);
+		return ontologyRetrievalManager.findConceptPropertyExact(property, query, ontologyIds);
 	}
 
 	public ArrayList<ConceptBean> findConceptPropertyStartsWith(
 			String property, String query, ArrayList<Integer> ontologyIds) {
-		return ontConceptMgr.findConceptPropertyStartsWith(property, query, ontologyIds);
+		return ontologyRetrievalManager.findConceptPropertyStartsWith(property, query, ontologyIds);
 	}
 
 	public ArrayList<ConceptBean> findConceptPropertyContains(String property,
 			String query, ArrayList<Integer> ontologyIds) {
-		return ontConceptMgr.findConceptPropertyContains(property, query, ontologyIds);
+		return ontologyRetrievalManager.findConceptPropertyContains(property, query, ontologyIds);
 	}
 
 	/**
-	 * @return the ontologyAndConceptManager
+	 * @return the ontologyRetrievalManager
 	 */
-	public OntologyAndConceptManager getOntologyAndConceptManager() {
-		return ontConceptMgr;
+	public OntologyRetrievalManager getOntologyRetrievalManager() {
+		return ontologyRetrievalManager;
 	}
 
 	/**
-	 * @param ontologyAndConceptManager
-	 *            the ontologyAndConceptManager to set
+	 * @param ontologyRetrievalManager the ontologyRetrievalManager to set
 	 */
-	public void setOntologyAndConceptManager(
-			OntologyAndConceptManager ontologyAndConceptManager) {
-		this.ontConceptMgr = ontologyAndConceptManager;
+	public void setOntologyRetrievalManager(
+			OntologyRetrievalManager ontologyRetrievalManager) {
+		this.ontologyRetrievalManager = ontologyRetrievalManager;
 	}
 }
