@@ -75,6 +75,12 @@
 				<value>
 					org/ncbo/stanford/domain/generated/NcboAppText.hbm.xml
 				</value>
+				<value>
+					org/ncbo/stanford/domain/generated/NcboOntologyLoadQueue.hbm.xml
+				</value>
+				<value>
+					org/ncbo/stanford/domain/generated/NcboLStatus.hbm.xml
+				</value>
 			</list>
 		</property>
 	</bean>
@@ -235,6 +241,20 @@
 		</property>
 	</bean>
 
+	<bean id="NcboOntologyLoadQueueDAO"
+		class="org.ncbo.stanford.domain.custom.dao.CustomNcboOntologyLoadQueueDAO">
+		<property name="hibernateTemplate">
+			<ref bean="hibernateTemplate" />
+		</property>
+	</bean>
+
+	<bean id="NcboLStatusDAO"
+		class="org.ncbo.stanford.domain.custom.dao.CustomNcboLStatusDAO">
+		<property name="hibernateTemplate">
+			<ref bean="hibernateTemplate" />
+		</property>
+	</bean>
+
 	<!-- Message bundle -->
 	<bean id="messageBundleName" class="java.lang.String">
 		<constructor-arg>
@@ -248,32 +268,38 @@
 	</bean>
 
 	<!-- Managers -->
-	<bean id="ontologyAndConceptManager"
-		class="org.ncbo.stanford.manager.impl.OntologyAndConceptManagerImpl">
-		<property name="ontologyAndConceptManagerWrapperLexGrid">
-			<ref bean="ontologyAndConceptManagerWrapperLexGrid" />
-		</property>		
-		<property name="ontologyAndConceptManagerWrapperProtege">
-			<ref bean="ontologyAndConceptManagerWrapperProtege" />
-		</property>
-	</bean>
-
-	<bean id="ontologyAndConceptManagerWrapper"
-		class="org.ncbo.stanford.manager.wrapper.OntologyAndConceptManagerWrapper"
-		abstract="true">
+	<bean id="ontologyRetrievalManager"
+		class="org.ncbo.stanford.manager.impl.OntologyRetrievalManagerImpl">
 		<property name="ncboOntologyVersionDAO">
 			<ref bean="NcboOntologyVersionDAO" />
 		</property>
+		<property name="ontologyRetrievalManagerWrapperLexGrid">
+			<ref bean="ontologyRetrievalManagerWrapperLexGrid" />
+		</property>
+		<property name="ontologyRetrievalManagerWrapperProtege">
+			<ref bean="ontologyRetrievalManagerWrapperProtege" />
+		</property>
 	</bean>
 
-	<bean id="ontologyAndConceptManagerWrapperLexGrid"
-		class="org.ncbo.stanford.manager.wrapper.impl.OntologyAndConceptManagerWrapperLexGridImpl"
-		parent="ontologyAndConceptManagerWrapper">
+	<bean id="ontologyLoadManager"
+		class="org.ncbo.stanford.manager.impl.OntologyLoadManagerImpl">
+		<property name="ontologyLoadManagerWrapperLexGrid">
+			<ref bean="ontologyLoadManagerWrapperLexGrid" />
+		</property>
+		<property name="ontologyLoadManagerWrapperProtege">
+			<ref bean="ontologyLoadManagerWrapperProtege" />
+		</property>
 	</bean>
 
-	<bean id="ontologyAndConceptManagerWrapperProtege"
-		class="org.ncbo.stanford.manager.wrapper.impl.OntologyAndConceptManagerWrapperProtegeImpl"
-		parent="ontologyAndConceptManagerWrapper">		
+	<!-- Manager Wrappers -->
+	<bean id="abstractOntologyManagerWrapperLexGrid"
+		class="org.ncbo.stanford.manager.wrapper.AbstractOntologyManagerWrapperLexGrid"
+		abstract="true">
+	</bean>
+
+	<bean id="abstractOntologyManagerWrapperProtege"
+		class="org.ncbo.stanford.manager.wrapper.AbstractOntologyManagerWrapperProtege"
+		abstract="true">
 		<property name="protegeJdbcUrl">
 			<ref bean="protegeJdbcUrl" />
 		</property>
@@ -286,6 +312,35 @@
 		<property name="protegeJdbcPassword">
 			<ref bean="protegeJdbcPassword" />
 		</property>
+		<property name="protegeTablePrefix">
+			<ref bean="protegeTablePrefix" />
+		</property>
+		<property name="protegeTableSuffix">
+			<ref bean="protegeTableSuffix" />
+		</property>
+		<property name="protegeBigFileThreshold">
+			<ref bean="protegeBigFileThreshold" />
+		</property>
+	</bean>
+
+	<bean id="ontologyRetrievalManagerWrapperLexGrid"
+		class="org.ncbo.stanford.manager.wrapper.impl.OntologyRetrievalManagerWrapperLexGridImpl"
+		parent="abstractOntologyManagerWrapperLexGrid">
+	</bean>
+
+	<bean id="ontologyRetrievalManagerWrapperProtege"
+		class="org.ncbo.stanford.manager.wrapper.impl.OntologyRetrievalManagerWrapperProtegeImpl"
+		parent="abstractOntologyManagerWrapperProtege">
+	</bean>
+
+	<bean id="ontologyLoadManagerWrapperLexGrid"
+		class="org.ncbo.stanford.manager.wrapper.impl.OntologyLoadManagerWrapperLexGridImpl"
+		parent="abstractOntologyManagerWrapperLexGrid">
+	</bean>
+
+	<bean id="ontologyLoadManagerWrapperProtege"
+		class="org.ncbo.stanford.manager.wrapper.impl.OntologyLoadManagerWrapperProtegeImpl"
+		parent="abstractOntologyManagerWrapperProtege">
 	</bean>
 
 	<!-- Application Services -->
@@ -296,10 +351,20 @@
 		</property>
 	</bean>
 
+	<bean id="conceptService"
+		class="org.ncbo.stanford.service.concept.impl.ConceptServiceImpl">
+		<property name="ontologyRetrievalManager">
+			<ref bean="ontologyRetrievalManager" />
+		</property>
+	</bean>
+
 	<bean id="ontologyService"
 		class="org.ncbo.stanford.service.ontology.impl.OntologyServiceImpl">
-		<property name="ontologyAndConceptManager">
-			<ref bean="ontologyAndConceptManager" />
+		<property name="ontologyRetrievalManager">
+			<ref bean="ontologyRetrievalManager" />
+		</property>
+		<property name="ontologyLoadManager">
+			<ref bean="ontologyLoadManager" />
 		</property>
 	</bean>
 
@@ -317,8 +382,8 @@
 		<property name="ncboSeqOntologyIdDAO">
 			<ref bean="NcboSeqOntologyIdDAO" />
 		</property>
-		<property name="ontologyAndConceptManager">
-			<ref bean="ontologyAndConceptManager" />
+		<property name="ontologyRetrievalManager">
+			<ref bean="ontologyRetrievalManager" />
 		</property>
 		<property name="ontologyFilePath">
 			<ref bean="ontologyFilePath" />
@@ -327,7 +392,6 @@
 			<ref bean="NcboUserDAO" />
 		</property>
 	</bean>
-
 
 	<!-- Session Management -->
 	<bean id="expirationHandler"
@@ -370,7 +434,6 @@
 	</bean>
 
 	<!-- Protege DB Configuation -->
-
 	<bean id="protegeJdbcUrl" class="java.lang.String">
 		<constructor-arg>
 			<value>@protegejdbcurl@</value>
@@ -392,6 +455,24 @@
 	<bean id="protegeJdbcPassword" class="java.lang.String">
 		<constructor-arg>
 			<value>@protegejdbcpassword@</value>
+		</constructor-arg>
+	</bean>
+
+	<bean id="protegeTablePrefix" class="java.lang.String">
+		<constructor-arg>
+			<value>@protegetableprefix@</value>
+		</constructor-arg>
+	</bean>
+
+	<bean id="protegeTableSuffix" class="java.lang.String">
+		<constructor-arg>
+			<value>@protegetablesuffix@</value>
+		</constructor-arg>
+	</bean>
+
+	<bean id="protegeBigFileThreshold" class="java.lang.Integer">
+		<constructor-arg>
+			<value>@protegebigfilethreshold@</value>
 		</constructor-arg>
 	</bean>
 </beans>
