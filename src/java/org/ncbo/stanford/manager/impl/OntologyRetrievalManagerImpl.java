@@ -9,8 +9,9 @@ import org.ncbo.stanford.bean.ConceptBean;
 import org.ncbo.stanford.bean.OntologyBean;
 import org.ncbo.stanford.domain.custom.dao.CustomNcboOntologyVersionDAO;
 import org.ncbo.stanford.domain.custom.entity.NcboOntology;
-import org.ncbo.stanford.manager.OntologyAndConceptManager;
-import org.ncbo.stanford.manager.wrapper.OntologyAndConceptManagerWrapper;
+import org.ncbo.stanford.manager.OntologyRetrievalManager;
+import org.ncbo.stanford.manager.wrapper.AbstractOntologyManagerWrapperLexGrid;
+import org.ncbo.stanford.manager.wrapper.AbstractOntologyManagerWrapperProtege;
 
 /**
  * A default implementation to OntologyAndConceptManager interface designed to
@@ -22,20 +23,20 @@ import org.ncbo.stanford.manager.wrapper.OntologyAndConceptManagerWrapper;
  * @author Michael Dorf
  * 
  */
-public class OntologyAndConceptManagerImpl implements OntologyAndConceptManager {
+public class OntologyRetrievalManagerImpl implements OntologyRetrievalManager {
 
 	private static final Log log = LogFactory
-			.getLog(OntologyAndConceptManagerImpl.class);
+			.getLog(OntologyRetrievalManagerImpl.class);
 
 	private CustomNcboOntologyVersionDAO ncboOntologyVersionDAO;
-	private OntologyAndConceptManagerWrapper ontologyAndConceptManagerWrapperLexGrid;
-	private OntologyAndConceptManagerWrapper ontologyAndConceptManagerWrapperProtege;	
+	private AbstractOntologyManagerWrapperLexGrid ontologyRetrievalManagerWrapperLexGrid;
+	private AbstractOntologyManagerWrapperProtege ontologyRetrievalManagerWrapperProtege;	
 
 	
 	/**
 	 * Default Constructor
 	 */
-	public OntologyAndConceptManagerImpl() {
+	public OntologyRetrievalManagerImpl() {
 	}
 
 	/**
@@ -99,11 +100,6 @@ public class OntologyAndConceptManagerImpl implements OntologyAndConceptManager 
 		return new ArrayList();
 	}
 
-	/**
-	 * Loads the specified ontology into the BioPortal repository.
-	 */
-	public void loadOntology(OntologyBean ontology) {
-	}
 
 	//
 	// Concept methods
@@ -182,66 +178,36 @@ public class OntologyAndConceptManagerImpl implements OntologyAndConceptManager 
 	}
 
 	/**
-	 * @return the ontologyAndConceptManagerWrapperLexGrid
+	 * @return the ontologyRetrievalManagerWrapperLexGrid
 	 */
-	public OntologyAndConceptManagerWrapper getOntologyAndConceptManagerWrapperLexGrid() {
-		return ontologyAndConceptManagerWrapperLexGrid;
+	public AbstractOntologyManagerWrapperLexGrid getOntologyRetrievalManagerWrapperLexGrid() {
+		return ontologyRetrievalManagerWrapperLexGrid;
 	}
 
 	/**
-	 * @param ontologyAndConceptManagerWrapperLexGrid the ontologyAndConceptManagerWrapperLexGrid to set
+	 * @param ontologyRetrievalManagerWrapperLexGrid the ontologyRetrievalManagerWrapperLexGrid to set
 	 */
-	public void setOntologyAndConceptManagerWrapperLexGrid(
-			OntologyAndConceptManagerWrapper ontologyAndConceptManagerWrapperLexGrid) {
-		this.ontologyAndConceptManagerWrapperLexGrid = ontologyAndConceptManagerWrapperLexGrid;
+	public void setOntologyRetrievalManagerWrapperLexGrid(
+			AbstractOntologyManagerWrapperLexGrid ontologyRetrievalManagerWrapperLexGrid) {
+		this.ontologyRetrievalManagerWrapperLexGrid = ontologyRetrievalManagerWrapperLexGrid;
 	}
 
 	/**
-	 * @return the ontologyAndConceptManagerWrapperProtege
+	 * @return the ontologyRetrievalManagerWrapperProtege
 	 */
-	public OntologyAndConceptManagerWrapper getOntologyAndConceptManagerWrapperProtege() {
-		return ontologyAndConceptManagerWrapperProtege;
+	public AbstractOntologyManagerWrapperProtege getOntologyRetrievalManagerWrapperProtege() {
+		return ontologyRetrievalManagerWrapperProtege;
 	}
 
 	/**
-	 * @param ontologyAndConceptManagerWrapperProtege the ontologyAndConceptManagerWrapperProtege to set
+	 * @param ontologyRetrievalManagerWrapperProtege the ontologyRetrievalManagerWrapperProtege to set
 	 */
-	public void setOntologyAndConceptManagerWrapperProtege(
-			OntologyAndConceptManagerWrapper ontologyAndConceptManagerWrapperProtege) {
-		this.ontologyAndConceptManagerWrapperProtege = ontologyAndConceptManagerWrapperProtege;
+	public void setOntologyRetrievalManagerWrapperProtege(
+			AbstractOntologyManagerWrapperProtege ontologyRetrievalManagerWrapperProtege) {
+		this.ontologyRetrievalManagerWrapperProtege = ontologyRetrievalManagerWrapperProtege;
 	}
 
 	//
 	// Private methods
 	//
-
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
 }
