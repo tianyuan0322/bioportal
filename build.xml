@@ -106,6 +106,9 @@
 				<filter token="protegejdbcdriver" value="${protege.jdbc.driver}" />
 				<filter token="protegejdbcusername" value="${protege.jdbc.username}" />
 				<filter token="protegejdbcpassword" value="${protege.jdbc.password}" />
+				<filter token="protegetableprefix" value="${protege.table.prefix}" />
+				<filter token="protegetablesuffix" value="${protege.table.suffix}" />				
+				<filter token="protegebigfilethreshold" value="${protege.big.file.threshold}" />
 			</filterset>
 		</copy>
 

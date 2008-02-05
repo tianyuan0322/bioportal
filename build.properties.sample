@@ -61,10 +61,18 @@ bioportal.ontology.filepath=/apps/uploads
 
 ################## Protege Configuration ##################
 
+# db connection
 protege.jdbc.url=jdbc:mysql://localhost/bioportal_protege
 protege.jdbc.driver=com.mysql.jdbc.Driver
 protege.jdbc.username=mydbusername
 protege.jdbc.password=mydbpassword
+
+# table name prefix/suffix
+protege.table.prefix=tbl_
+protege.table.suffix=
+
+# threshold in bytes
+protege.big.file.threshold=500000
 
 ################## LexGrid Configuration ##################
 
