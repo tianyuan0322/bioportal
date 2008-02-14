@@ -1,0 +1,8 @@
+package org.ncbo.stanford.bean.concept;
+
+public class PropertyBean extends AbstractConceptBean {
+
+	public String toString() {
+		return "Type: PropertyBean " + super.toString();
+	}
+}
