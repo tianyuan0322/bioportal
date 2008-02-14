@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.net.URI;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 import org.apache.commons.logging.Log;
@@ -83,6 +84,7 @@ public class OntologyLoadManagerWrapperProtegeImpl extends
 					+ ontologyFile.length());
 			log.debug("URI: " + ontologyURI.toString());
 			log.debug("Ontology table name: " + tableName);
+			log.debug("JDBC name: " + protegeJdbcDriver + " url: " + protegeJdbcUrl);
 		}
 
 		// If the ontology file is small, use the fast non-streaming Protege
@@ -106,6 +108,11 @@ public class OntologyLoadManagerWrapperProtegeImpl extends
 					protegeJdbcPassword);
 			factory.saveKnowledgeBase(fileModel, sources, errors);
 
+			// If errors are found during the load, log the errors and throw an exception.
+			if (errors.size() > 0) {
+				logErrors(errors);
+				throw new Exception("Error during load of: " + ontologyFile.getName());
+			}
 			// next lines of code are not needed - just testing the import
 //			OWLModel om = (OWLModel) fileProject.getKnowledgeBase();
 //
@@ -139,4 +146,18 @@ public class OntologyLoadManagerWrapperProtegeImpl extends
 			Project p = creator.createProject();
 		}
 	}
+	
+	//
+	// Private methods
+	//
+	/**
+	 * Outputs text representations of the specified List.
+	 */
+	private void logErrors(List list) {
+		int i = 0;
+		for (Iterator it = list.iterator(); it.hasNext();) {
+			log.error(++i + ") " + it.next());
+		}
+	}
+
 }
