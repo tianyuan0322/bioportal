@@ -107,13 +107,13 @@ public class OntologyLoadManagerWrapperProtegeImpl extends
 			factory.saveKnowledgeBase(fileModel, sources, errors);
 
 			// next lines of code are not needed - just testing the import
-			OWLModel om = (OWLModel) fileProject.getKnowledgeBase();
-
-			OWLNamedClass country = om.getOWLNamedClass("Country");
-
-			for (Object o : country.getInstances(true)) {
-				System.out.println("" + o + " is an instance of Country");
-			}
+//			OWLModel om = (OWLModel) fileProject.getKnowledgeBase();
+//
+//			OWLNamedClass country = om.getOWLNamedClass("Country");
+//
+//			for (Object o : country.getInstances(true)) {
+//				System.out.println("" + o + " is an instance of Country");
+//			}
 		} else {
 			// If the ontology file is big, use the streaming Protege load
 			// approach.
