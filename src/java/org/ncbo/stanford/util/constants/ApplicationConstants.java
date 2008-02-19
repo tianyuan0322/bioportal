@@ -27,6 +27,8 @@ public interface ApplicationConstants {
 	public static final String FORMAT_OWL_FULL = "OWL-FULL";
 	public static final String FORMAT_PROTEGE = "PROTEGE";
 	public static final String FORMAT_OBO = "OBO";
+	public static final String FORMAT_UMLS_RRF = "UMLS-RRF";
+	public static final String FORMAT_LEXGRID_XML = "LEXGRID-XML";
 	
 	/**
 	 * Ontology format handlers

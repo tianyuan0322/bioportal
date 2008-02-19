@@ -4,19 +4,18 @@ import org.ncbo.stanford.util.constants.ApplicationConstants;
 
 public enum OntologyFormatEnum {
 
-	OWL_DL(ApplicationConstants.FORMAT_OWL_DL,
-			ApplicationConstants.FORMAT_HANDLER_PROTEGE), OWL_FULL(
-			ApplicationConstants.FORMAT_OWL_FULL,
-			ApplicationConstants.FORMAT_HANDLER_PROTEGE), PROTEGE(
-			ApplicationConstants.FORMAT_PROTEGE,
-			ApplicationConstants.FORMAT_HANDLER_PROTEGE), OBO(
-			ApplicationConstants.FORMAT_OBO,
-			ApplicationConstants.FORMAT_HANDLER_LEXGRID);
+	OWL_DL(ApplicationConstants.FORMAT_OWL_DL, ApplicationConstants.FORMAT_HANDLER_PROTEGE), OWL_FULL(
+			ApplicationConstants.FORMAT_OWL_FULL, ApplicationConstants.FORMAT_HANDLER_PROTEGE), PROTEGE(
+			ApplicationConstants.FORMAT_PROTEGE, ApplicationConstants.FORMAT_HANDLER_PROTEGE), OBO(
+			ApplicationConstants.FORMAT_OBO, ApplicationConstants.FORMAT_HANDLER_LEXGRID), UMLS_RRF(
+			ApplicationConstants.FORMAT_UMLS_RRF, ApplicationConstants.FORMAT_HANDLER_LEXGRID), LEXGRID_XML(
+			ApplicationConstants.FORMAT_LEXGRID_XML, ApplicationConstants.FORMAT_HANDLER_LEXGRID);
 
 	private final String format;
 	private final String formatHandler;
 
-	private OntologyFormatEnum(String fmt, String fmtHandler) {
+	private OntologyFormatEnum(String fmt, String fmtHandler)
+	{
 		format = fmt;
 		formatHandler = fmtHandler;
 	}
@@ -25,7 +24,9 @@ public enum OntologyFormatEnum {
 		return fmt.equalsIgnoreCase(ApplicationConstants.FORMAT_OWL_DL) ? OWL_DL : fmt
 				.equalsIgnoreCase(ApplicationConstants.FORMAT_OWL_FULL) ? OWL_FULL : fmt
 				.equalsIgnoreCase(ApplicationConstants.FORMAT_PROTEGE) ? PROTEGE : fmt
-				.equalsIgnoreCase(ApplicationConstants.FORMAT_OBO) ? OBO : null;
+				.equalsIgnoreCase(ApplicationConstants.FORMAT_OBO) ? OBO : fmt
+				.equalsIgnoreCase(ApplicationConstants.FORMAT_UMLS_RRF) ? UMLS_RRF : fmt
+				.equalsIgnoreCase(ApplicationConstants.FORMAT_LEXGRID_XML) ? LEXGRID_XML : null;
 	}
 
 	public boolean equals(String fmt) {
