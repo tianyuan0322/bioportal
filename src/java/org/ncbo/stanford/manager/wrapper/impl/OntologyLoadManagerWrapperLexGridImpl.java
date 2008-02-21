@@ -37,7 +37,6 @@ import org.LexGrid.LexBIG.Impl.LexBIGServiceImpl;
 import org.LexGrid.LexBIG.LexBIGService.LexBIGService;
 import org.LexGrid.LexBIG.LexBIGService.LexBIGServiceManager;
 import org.LexGrid.LexBIG.Utility.Constructors;
-import org.LexGrid.codingSchemes.CodingScheme;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.ncbo.stanford.bean.OntologyBean;
@@ -84,7 +83,7 @@ public class OntologyLoadManagerWrapperLexGridImpl extends AbstractOntologyManag
 
 		// remove existing scheme if it exists before parsing...
 
-		CodingScheme csr = getCodingScheme(lbs, ontology_bean.getUrn());
+		
 		CodingSchemeRendering csRendering = getCodingSchemeRendering(ontology_bean.getUrn());
 		if (csRendering != null)
 		{
@@ -125,7 +124,7 @@ public class OntologyLoadManagerWrapperLexGridImpl extends AbstractOntologyManag
 			loader = lbsm.getLoader(org.LexGrid.LexBIG.Impl.loaders.OWLLoaderImpl.name);
 
 			// Load only NCI Thesaurus for now.
-			if (ontology_bean.getFilePath().indexOf("Thesaurus") >= 0)
+			if (ontology_bean.getFilePath() != null && ontology_bean.getFilePath().indexOf("Thesaurus") >= 0)
 			{
 				((OWL_Loader) loader).loadNCIThes(source, null, stopOnErrors, async);
 			} else
