@@ -137,6 +137,17 @@ CREATE TABLE `ncbo_l_role` (
   UNIQUE KEY `name` (`name`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
+/*Table structure for table `ncbo_l_status` */
+
+DROP TABLE IF EXISTS `ncbo_l_status`;
+
+CREATE TABLE `ncbo_l_status` (
+  `id` int(11) NOT NULL,
+  `status` varchar(32) NOT NULL,
+  `description` varchar(256) default NULL,
+  PRIMARY KEY  (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
 /*Table structure for table `ncbo_ontology_additional_metadata` */
 
 DROP TABLE IF EXISTS `ncbo_ontology_additional_metadata`;
@@ -160,14 +171,14 @@ DROP TABLE IF EXISTS `ncbo_ontology_category`;
 
 CREATE TABLE `ncbo_ontology_category` (
   `id` int(11) NOT NULL auto_increment,
-  `ontology_version_d` int(11) NOT NULL,
+  `ontology_version_id` int(11) NOT NULL,
   `category_id` int(11) NOT NULL,
   PRIMARY KEY  (`id`),
-  UNIQUE KEY `IND_ontology_id_category_id` (`ontology_version_d`,`category_id`),
+  UNIQUE KEY `IND_ontology_id_category_id` (`ontology_version_id`,`category_id`),
   KEY `category_id` (`category_id`),
-  KEY `ontology_id` (`ontology_version_d`),
-  CONSTRAINT `FK_ncbo_ontology_category_ncbo_l_category_new` FOREIGN KEY (`category_id`) REFERENCES `ncbo_l_category` (`id`),
-  CONSTRAINT `FK_ncbo_ontology_category_ncbo_ontology_version` FOREIGN KEY (`ontology_version_d`) REFERENCES `ncbo_ontology_version` (`id`)
+  KEY `ontology_id` (`ontology_version_id`),
+  CONSTRAINT `FK_ncbo_ontology_category` FOREIGN KEY (`ontology_version_id`) REFERENCES `ncbo_ontology_version` (`id`),
+  CONSTRAINT `FK_ncbo_ontology_category_ncbo_l_category_new` FOREIGN KEY (`category_id`) REFERENCES `ncbo_l_category` (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=15821 DEFAULT CHARSET=latin1 CHECKSUM=1 DELAY_KEY_WRITE=1 ROW_FORMAT=DYNAMIC;
 
 /*Table structure for table `ncbo_ontology_file` */
@@ -183,6 +194,24 @@ CREATE TABLE `ncbo_ontology_file` (
   KEY `ontology_id_2` (`ontology_version_id`),
   CONSTRAINT `FK_ncbo_ontology_file_ncbo_ontology_version` FOREIGN KEY (`ontology_version_id`) REFERENCES `ncbo_ontology_version` (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=15818 DEFAULT CHARSET=latin1;
+
+/*Table structure for table `ncbo_ontology_load_queue` */
+
+DROP TABLE IF EXISTS `ncbo_ontology_load_queue`;
+
+CREATE TABLE `ncbo_ontology_load_queue` (
+  `id` int(11) NOT NULL auto_increment,
+  `ontology_version_id` int(11) NOT NULL,
+  `status_id` int(11) NOT NULL,
+  `error_message` varchar(1024) default NULL,
+  `date_created` timestamp NOT NULL default CURRENT_TIMESTAMP,
+  `date_processed` datetime default NULL,
+  PRIMARY KEY  (`id`),
+  KEY `FK_ncbo_ontology_load_queue_ontology_version_id` (`ontology_version_id`),
+  KEY `FK_ncbo_ontology_load_queue_status_id` (`status_id`),
+  CONSTRAINT `FK_ncbo_ontology_load_queue_ontology_version_id` FOREIGN KEY (`ontology_version_id`) REFERENCES `ncbo_ontology_version` (`id`),
+  CONSTRAINT `FK_ncbo_ontology_load_queue_status_id` FOREIGN KEY (`status_id`) REFERENCES `ncbo_l_status` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 /*Table structure for table `ncbo_ontology_metadata` */
 
@@ -223,6 +252,7 @@ CREATE TABLE `ncbo_ontology_version` (
   `is_reviewed` tinyint(1) NOT NULL default '0',
   `date_released` datetime NOT NULL,
   `date_created` timestamp NOT NULL default CURRENT_TIMESTAMP,
+  `status_id` int(11) NOT NULL,
   PRIMARY KEY  (`id`),
   KEY `parent_id` (`parent_id`),
   KEY `ncbo_ontology_fk_new` (`user_id`),
