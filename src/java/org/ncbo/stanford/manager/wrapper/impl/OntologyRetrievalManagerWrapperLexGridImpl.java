@@ -5,8 +5,8 @@ import java.util.List;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.ncbo.stanford.bean.ConceptBean;
 import org.ncbo.stanford.bean.OntologyBean;
+import org.ncbo.stanford.bean.concept.ClassBean;
 import org.ncbo.stanford.manager.wrapper.AbstractOntologyManagerWrapperLexGrid;
 
 /**
@@ -74,54 +74,54 @@ public class OntologyRetrievalManagerWrapperLexGridImpl extends AbstractOntology
 	/**
 	 * Get the root concept for the specified ontology.
 	 */
-	public ConceptBean getRootConcept(Integer ontologyId) {
-		return new ConceptBean();
+	public ClassBean getRootConcept(Integer ontologyId) {
+		return new ClassBean();
 	}
 
 	
 
-	public ConceptBean findConcept(String conceptID, Integer ontologyId) {
-		return new ConceptBean();
+	public ClassBean findConcept(String conceptID, Integer ontologyId) {
+		return new ClassBean();
 	}
 
-	public ArrayList<ConceptBean> findPathToRoot(String id, Integer ontologyId) {
+	public ArrayList<ClassBean> findPathToRoot(String id, Integer ontologyId) {
 		return new ArrayList();
 	}
 
-	public ConceptBean findParent(String id, Integer ontologyId) {
-		return new ConceptBean();
+	public ClassBean findParent(String id, Integer ontologyId) {
+		return new ClassBean();
 	}
 
-	public ArrayList<ConceptBean> findChildren(String id, Integer ontologyId) {
+	public ArrayList<ClassBean> findChildren(String id, Integer ontologyId) {
 		return new ArrayList();
 	}
 
-	public ArrayList<ConceptBean> findConceptNameExact(String query,
+	public ArrayList<ClassBean> findConceptNameExact(String query,
 			ArrayList<Integer> ontologyIds) {
 		return new ArrayList();
 	}
 
-	public ArrayList<ConceptBean> findConceptNameStartsWith(String query,
+	public ArrayList<ClassBean> findConceptNameStartsWith(String query,
 			ArrayList<Integer> ontologyIds) {
 		return new ArrayList();
 	}
 
-	public ArrayList<ConceptBean> findConceptNameContains(String query,
+	public ArrayList<ClassBean> findConceptNameContains(String query,
 			ArrayList<Integer> ontologyIds) {
 		return new ArrayList();
 	}
 
-	public ArrayList<ConceptBean> findConceptPropertyExact(String property,
+	public ArrayList<ClassBean> findConceptPropertyExact(String property,
 			String query, ArrayList<Integer> ontologyIds) {
 		return new ArrayList();
 	}
 
-	public ArrayList<ConceptBean> findConceptPropertyStartsWith(
+	public ArrayList<ClassBean> findConceptPropertyStartsWith(
 			String property, String query, ArrayList<Integer> ontologyIds) {
 		return new ArrayList();
 	}
 
-	public ArrayList<ConceptBean> findConceptPropertyContains(String property,
+	public ArrayList<ClassBean> findConceptPropertyContains(String property,
 			String query, ArrayList<Integer> ontologyIds) {
 		return new ArrayList();
 	}
