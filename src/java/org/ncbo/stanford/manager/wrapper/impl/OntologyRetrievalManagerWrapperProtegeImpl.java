@@ -1,37 +1,34 @@
 package org.ncbo.stanford.manager.wrapper.impl;
 
 import java.util.ArrayList;
-import java.util.Iterator;
+import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.ncbo.stanford.bean.ConceptBean;
 import org.ncbo.stanford.bean.OntologyBean;
+import org.ncbo.stanford.bean.concept.ClassBean;
 import org.ncbo.stanford.manager.wrapper.AbstractOntologyManagerWrapperProtege;
+import org.ncbo.stanford.util.constants.ApplicationConstants;
 
+import edu.stanford.smi.protege.model.Cls;
 import edu.stanford.smi.protege.model.Project;
+import edu.stanford.smi.protege.model.Slot;
 import edu.stanford.smi.protegex.owl.database.OWLDatabaseKnowledgeBaseFactory;
 import edu.stanford.smi.protegex.owl.model.OWLModel;
 import edu.stanford.smi.protegex.owl.model.OWLNamedClass;
 import edu.stanford.smi.protegex.owl.model.OWLOntology;
-import edu.stanford.smi.protegex.owl.model.impl.DefaultRDFSNamedClass;
 
 /**
- * A default implementation to OntologyAndConceptManager interface designed to
- * provide an abstraction layer to ontology and concept operations. The service
- * layer will consume this interface instead of directly calling a specific
- * implementation (i.e. LexGrid, Protege etc.). Do not use this class directly
- * in upper layers.
+ * A default implementation to OntologyRetrievalManagerWrapper interface
+ * designed to provide an abstraction layer to ontology and concept retrieval
+ * operations. The service layer will consume this interface instead of directly
+ * calling a specific implementation (i.e. LexGrid, Protege etc.). Do not use
+ * this class directly in upper layers.
  * 
- * NOTE(bdai): This class with all the ontology and concept methods seems to be
- * a bit bloated. Will refactor if it becomes a problem.
  * 
- * TODO: This class is currently Protege specific. Refactoring required so that
- * it can support both LexGrid and Protege.
- * 
- * @author Benjamin Dai
- * 
+ * @author Michael Dorf
  */
 public class OntologyRetrievalManagerWrapperProtegeImpl extends
 		AbstractOntologyManagerWrapperProtege {
@@ -41,7 +38,6 @@ public class OntologyRetrievalManagerWrapperProtegeImpl extends
 
 	private static final Log log = LogFactory
 			.getLog(OntologyRetrievalManagerWrapperProtegeImpl.class);
-
 
 	/**
 	 * Default Constructor
@@ -79,7 +75,7 @@ public class OntologyRetrievalManagerWrapperProtegeImpl extends
 	/**
 	 * Get the root concept for the specified ontology.
 	 */
-	public ConceptBean getRootConcept(Integer ontologyId) {
+	public ClassBean getRootConcept(Integer ontologyId) {
 		OWLModel owlModel = this.getOWLModel(ontologyId);
 
 		// Get all root nodes associated with this ontology. Then iterate
@@ -98,13 +94,14 @@ public class OntologyRetrievalManagerWrapperProtegeImpl extends
 		 * 
 		 * break; }
 		 */
-		if (oThing != null)
-			return createConceptBean(oThing, ontologyId);
-		else
-			return null;
+		if (oThing != null) {
+			return createClassBean(oThing);
+		}
+
+		return null;
 	}
 
-	public ConceptBean findConcept(String conceptId, Integer ontologyId) {
+	public ClassBean findConcept(String conceptId, Integer ontologyId) {
 		OWLModel owlModel = this.getOWLModel(ontologyId);
 
 		String conceptName = owlModel.getResourceNameForURI(conceptId);
@@ -115,13 +112,14 @@ public class OntologyRetrievalManagerWrapperProtegeImpl extends
 
 		OWLNamedClass owlClass = owlModel.getOWLNamedClass(conceptName);
 
-		if (owlClass != null)
-			return createConceptBean(owlClass, ontologyId);
-		else
-			return null;
+		if (owlClass != null) {
+			return createClassBean(owlClass);
+		}
+
+		return null;
 	}
 
-	public ArrayList<ConceptBean> findPathToRoot(String id, Integer ontologyId) {
+	public ArrayList<ClassBean> findPathToRoot(String id, Integer ontologyId) {
 		/**
 		 * OWLModel om = (OWLModel) fileProject.getKnowledgeBase();
 		 * 
@@ -131,40 +129,40 @@ public class OntologyRetrievalManagerWrapperProtegeImpl extends
 		return new ArrayList();
 	}
 
-	public ConceptBean findParent(String id, Integer ontologyId) {
-		return new ConceptBean();
+	public ClassBean findParent(String id, Integer ontologyId) {
+		return new ClassBean();
 	}
 
-	public ArrayList<ConceptBean> findChildren(String id, Integer ontologyId) {
+	public ArrayList<ClassBean> findChildren(String id, Integer ontologyId) {
 		return new ArrayList();
 	}
 
-	public ArrayList<ConceptBean> findConceptNameExact(String query,
+	public ArrayList<ClassBean> findConceptNameExact(String query,
 			ArrayList<Integer> ontologyIds) {
 		return new ArrayList();
 	}
 
-	public ArrayList<ConceptBean> findConceptNameStartsWith(String query,
+	public ArrayList<ClassBean> findConceptNameStartsWith(String query,
 			ArrayList<Integer> ontologyIds) {
 		return new ArrayList();
 	}
 
-	public ArrayList<ConceptBean> findConceptNameContains(String query,
+	public ArrayList<ClassBean> findConceptNameContains(String query,
 			ArrayList<Integer> ontologyIds) {
 		return new ArrayList();
 	}
 
-	public ArrayList<ConceptBean> findConceptPropertyExact(String property,
+	public ArrayList<ClassBean> findConceptPropertyExact(String property,
 			String query, ArrayList<Integer> ontologyIds) {
 		return new ArrayList();
 	}
 
-	public ArrayList<ConceptBean> findConceptPropertyStartsWith(
+	public ArrayList<ClassBean> findConceptPropertyStartsWith(
 			String property, String query, ArrayList<Integer> ontologyIds) {
 		return new ArrayList();
 	}
 
-	public ArrayList<ConceptBean> findConceptPropertyContains(String property,
+	public ArrayList<ClassBean> findConceptPropertyContains(String property,
 			String query, ArrayList<Integer> ontologyIds) {
 		return new ArrayList();
 	}
@@ -203,67 +201,146 @@ public class OntologyRetrievalManagerWrapperProtegeImpl extends
 		return owlModel;
 	}
 
-	/**
-	 * Creates a ConceptBean from a Protege concept class.
-	 */
-	private static ConceptBean createConceptBean(OWLNamedClass pConcept,
-			int ontologyId) {
+	// /**
+	// * Creates a ConceptBean from a Protege concept class.
+	// */
+	// private static ConceptBean createConceptBean(OWLNamedClass pConcept,
+	// int ontologyId) {
+	//
+	// // Populate the target concept
+	// ConceptBean concept = createSimpleConceptBean(pConcept, ontologyId);
+	//
+	// // Copy sub class concepts
+	// ArrayList<ConceptBean> children = new ArrayList();
+	//
+	// for (Iterator it = pConcept.getNamedSubclasses().iterator(); it
+	// .hasNext();) {
+	//
+	// // TODO: There must be a more efficient way to filter out all
+	// // OWLNamedClasses
+	// DefaultRDFSNamedClass pChild = (DefaultRDFSNamedClass) it.next();
+	//
+	// if (pChild instanceof OWLNamedClass) {
+	//
+	// if (!pChild.isSystem()) {
+	// children.add(createSimpleConceptBean(
+	// (OWLNamedClass) pChild, ontologyId));
+	// }
+	// }
+	// }
+	// concept.setChildren(children);
+	//
+	// // Copy super class concepts;
+	// // TODO: BioPortal makes a funky assumption that a concept has only one
+	// // parent; May want to consider this more.
+	// ArrayList<ConceptBean> parents = new ArrayList();
+	// for (Iterator it = pConcept.getNamedSuperclasses().iterator(); it
+	// .hasNext();) {
+	// OWLNamedClass pParent = (OWLNamedClass) it.next();
+	// parents.add(createSimpleConceptBean(pParent, ontologyId));
+	// }
+	// concept.setParents(parents);
+	//
+	// return concept;
+	// }
+	//
 
-		// Populate the target concept
-		ConceptBean concept = createSimpleConceptBean(pConcept, ontologyId);
+	private ClassBean createClassBean(Cls pConcept) {
+		ClassBean classBean = new ClassBean();
+		classBean.setId(pConcept.getName());
+		classBean.setLabel(pConcept.getName());
 
-		// Copy sub class concepts
-		ArrayList<ConceptBean> children = new ArrayList();
+		// add properties
+		Collection<Slot> slots = pConcept.getOwnSlots();
+		classBean.addRelations(convertProperties(slots));
 
-		for (Iterator it = pConcept.getNamedSubclasses().iterator(); it
-				.hasNext();) {
+		// add subclasses
+		// if OWLNamedClass, then use getNamedSubclasses/Superclasses,
+		// else use getDirectSubclasses/Superclasses (cast to Collection<Cls>)
+		Collection<Cls> subclasses;
+		Collection<Cls> superclasses;
 
-			// TODO: There must be a more efficient way to filter out all
-			// OWLNamedClasses
-			DefaultRDFSNamedClass pChild = (DefaultRDFSNamedClass) it.next();
-
-			if (pChild instanceof OWLNamedClass) {
-
-				if (!pChild.isSystem()) {
-					children.add(createSimpleConceptBean(
-							(OWLNamedClass) pChild, ontologyId));
-				}
-			}
+		if (pConcept instanceof OWLNamedClass) {
+			subclasses = ((OWLNamedClass) pConcept).getNamedSubclasses(false);
+		} else {
+			subclasses = pConcept.getDirectSubclasses();
 		}
-		concept.setChildren(children);
 
-		// Copy super class concepts;
-		// TODO: BioPortal makes a funky assumption that a concept has only one
-		// parent; May want to consider this more.
-		ArrayList<ConceptBean> parents = new ArrayList();
-		for (Iterator it = pConcept.getNamedSuperclasses().iterator(); it
-				.hasNext();) {
-			OWLNamedClass pParent = (OWLNamedClass) it.next();
-			parents.add(createSimpleConceptBean(pParent, ontologyId));
+		classBean.addRelation(ApplicationConstants.SUB_CLASS, subclasses);
+
+		// add superclasses
+		if (pConcept instanceof OWLNamedClass) {
+			superclasses = ((OWLNamedClass) pConcept)
+					.getNamedSuperclasses(false);
+		} else {
+			superclasses = pConcept.getDirectSuperclasses();
 		}
-		concept.setParents(parents);
 
-		return concept;
+		classBean.addRelation(ApplicationConstants.SUPER_CLASS, superclasses);
+
+		// add RDF type
+		if (pConcept instanceof OWLNamedClass) {
+			classBean.addRelation(ApplicationConstants.RDF_TYPE,
+					convertClasses(((OWLNamedClass) pConcept).getRDFTypes()));
+		}
+
+		return classBean;
 	}
 
 	/**
-	 * Only copies the protege class into the protege class. Subclasses and
-	 * superclasses are ignored.
+	 * Converts collection of classes into a list of class bean objects
+	 * 
+	 * @param prClasses
+	 * @return
 	 */
-	private static ConceptBean createSimpleConceptBean(OWLNamedClass pConcept,
-			int ontologyId) {
-		// System.out.println("OWLNamedClass: " + pConcept);
-		// System.out.println("icon name: " + pConcept.getIconName());
-		// System.out.println("browser text: " + pConcept.getBrowserText());
-		// System.out.println("browser text: " + pConcept.getNamespace());
-		// System.out.println("browser text: " + pConcept.getNamespacePrefix());
+	private ArrayList<ClassBean> convertClasses(Collection<Cls> prClasses) {
+		ArrayList<ClassBean> bpClasses = new ArrayList<ClassBean>();
 
-		ConceptBean concept = new ConceptBean();
-		concept.setId(pConcept.getName());
-		concept.setDisplayLabel(pConcept.getName());
-		concept.setOntologyId(ontologyId);
+		for (Cls prSubclass : prClasses) {
+			ClassBean bpSubclass = new ClassBean();
+			String name;
 
-		return concept;
+			// if instanceof OWLNamedClass (check w Tanya getLocalName vs
+			// getQualifiedName)
+			if (prSubclass instanceof OWLNamedClass) {
+				name = ((OWLNamedClass) prSubclass).getLocalName();
+			} else {
+				name = prSubclass.getName();
+			}
+
+			bpSubclass.setId(name);
+
+			// if instanceof RDFResource, use getLabel(). If null, use getName()
+			bpSubclass.setLabel(prSubclass.getName());
+			bpClasses.add(bpSubclass);
+		}
+
+		return bpClasses;
+	}
+
+	/**
+	 * Converts collection of slots into a string representation of values
+	 * 
+	 * @param slots
+	 * @return
+	 */
+	private HashMap<String, List<String>> convertProperties(
+			Collection<Slot> slots) {
+		HashMap<String, List<String>> bpProps = new HashMap<String, List<String>>();
+		ArrayList<String> bpPropVals = new ArrayList<String>();
+
+		// add properties
+		for (Slot obj : slots) {
+			Collection<Object> vals = obj.getOwnSlotValues(obj);
+
+			for (Object val : vals) {
+				bpPropVals.add(val.toString());
+			}
+
+			bpProps.put(obj.getName(), bpPropVals);
+		}
+
+		return bpProps;
 	}
 
 	/**
