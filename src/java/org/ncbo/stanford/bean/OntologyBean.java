@@ -1,7 +1,7 @@
-
 package org.ncbo.stanford.bean;
 
 import java.util.Date;
+import java.util.List;
 
 import org.ncbo.stanford.domain.custom.entity.NcboOntology;
 
@@ -10,6 +10,8 @@ public class OntologyBean {
 	private Integer id;
 	private Integer ontologyId;
 	private Integer internalVersionNumber;
+	private Integer parentId;
+	private Integer userId;
 	private String versionNumber;
 	private String versionStatus;
 	private String filePath;
@@ -27,18 +29,19 @@ public class OntologyBean {
 	private String publication;
 	private String urn;
 	private Byte isFoundry;
-	
+	private List<Integer> categoryIds;
+
 	/**
 	 * Populates the OntologyBean with data from a NcboOntology
+	 * 
 	 * @param ncboOntology
 	 */
-	
 	public void populateFromEntity(NcboOntology ncboOntology) {
-
 		this.setId(ncboOntology.getId());
 		this.setOntologyId(ncboOntology.getOntologyId());
-		this.setInternalVersionNumber(ncboOntology
-				.getInternalVersionNumber());
+		this.setParentId(ncboOntology.getParentId());
+		this.setUserId(ncboOntology.getUserId());
+		this.setInternalVersionNumber(ncboOntology.getInternalVersionNumber());
 		this.setVersionNumber(ncboOntology.getVersionNumber());
 		this.setVersionStatus(ncboOntology.getVersionStatus());
 		this.setFilePath(ncboOntology.getFilePath());
@@ -56,11 +59,11 @@ public class OntologyBean {
 		this.setPublication(ncboOntology.getPublication());
 		this.setUrn(ncboOntology.getUrn());
 		this.setIsFoundry(ncboOntology.getIsFoundry());
-		
 	}
-	
-	public String toString(){
-		return "ID:"+getId()+" Name:"+getDisplayLabel()+ " Ver:"+getInternalVersionNumber();		
+
+	public String toString() {
+		return "Id: " + getId() + " Name: " + getDisplayLabel() + " Ver: "
+				+ getInternalVersionNumber();
 	}
 
 	/**
@@ -356,9 +359,63 @@ public class OntologyBean {
 	}
 
 	/**
-	 * @param dateCreated the dateCreated to set
+	 * @param dateCreated
+	 *            the dateCreated to set
 	 */
 	public void setDateCreated(Date dateCreated) {
 		this.dateCreated = dateCreated;
+	}
+
+	/**
+	 * @return the parentId
+	 */
+	public Integer getParentId() {
+		return parentId;
+	}
+
+	/**
+	 * @param parentId
+	 *            the parentId to set
+	 */
+	public void setParentId(Integer parentId) {
+		this.parentId = parentId;
+	}
+
+	/**
+	 * @return the userId
+	 */
+	public Integer getUserId() {
+		return userId;
+	}
+
+	/**
+	 * @param userId
+	 *            the userId to set
+	 */
+	public void setUserId(Integer userId) {
+		this.userId = userId;
+	}
+
+	/**
+	 * @return the categoryIds
+	 */
+	public List<Integer> getCategoryIds() {
+		return categoryIds;
+	}
+
+	/**
+	 * @param categoryIds the categoryIds to set
+	 */
+	public void setCategoryIds(List<Integer> categoryIds) {
+		this.categoryIds = categoryIds;
+	}
+
+	/**
+	 * @param arg0
+	 * @return
+	 * @see java.util.List#add(java.lang.Object)
+	 */
+	public boolean addCategory(Integer arg0) {
+		return categoryIds.add(arg0);
 	}
 }
