@@ -7,7 +7,9 @@
 	<sql-query name="NcboOntologyVersionDAO.GET_LATEST_ONTOLOGY_VERSIONS_QUERY">	
 		<return class="org.ncbo.stanford.domain.custom.entity.NcboOntology">
      		<return-property name="id" column="id" />
-     		<return-property name="ontologyId" column="ontology_id" />
+     		<return-property name="ontologyId" column="ontology_id" />     		
+     		<return-property name="parentId" column="parent_id" />
+     		<return-property name="userId" column="user_id" />
      		<return-property name="internalVersionNumber" column="internal_version_number" />
      		<return-property name="versionNumber" column="version_number" />
      		<return-property name="versionStatus" column="version_status" />
@@ -31,7 +33,9 @@
 		<![CDATA[
 			select 
 				ov.id,
-				ov.ontology_id,
+				ov.ontology_id,				
+				ov.parent_id,
+				ov.user_id,
 				ov.internal_version_number,
 				ov.version_number,
 				ov.version_status,

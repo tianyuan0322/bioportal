@@ -2,12 +2,12 @@ package org.ncbo.stanford.domain.custom.entity;
 
 import java.util.Date;
 
-import org.ncbo.stanford.bean.OntologyBean;
-
 public class NcboOntology {
 
 	private Integer id;
 	private Integer ontologyId;
+	private Integer parentId;	
+	private Integer userId;
 	private Integer internalVersionNumber;
 	private String versionNumber;
 	private String versionStatus;
@@ -324,5 +324,33 @@ public class NcboOntology {
 	 */
 	public void setDateCreated(Date dateCreated) {
 		this.dateCreated = dateCreated;
+	}
+
+	/**
+	 * @return the parentId
+	 */
+	public Integer getParentId() {
+		return parentId;
+	}
+
+	/**
+	 * @param parentId the parentId to set
+	 */
+	public void setParentId(Integer parentId) {
+		this.parentId = parentId;
+	}
+
+	/**
+	 * @return the userId
+	 */
+	public Integer getUserId() {
+		return userId;
+	}
+
+	/**
+	 * @param userId the userId to set
+	 */
+	public void setUserId(Integer userId) {
+		this.userId = userId;
 	}
 }
