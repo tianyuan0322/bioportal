@@ -367,30 +367,35 @@
 			<ref bean="ontologyLoadManager" />
 		</property>
 	</bean>
-
-	<bean id="uploadService"
-		class="org.ncbo.stanford.service.upload.impl.UploadServiceImpl">
-		<property name="ncboOntologyVersionDAO">
-			<ref bean="NcboOntologyVersionDAO" />
-		</property>
+	
+	<bean id="ontologyLoadProcessorService"
+		class="org.ncbo.stanford.service.loader.processor.impl.OntologyLoadProcessorServiceImpl">
 		<property name="ncboOntologyMetadataDAO">
 			<ref bean="NcboOntologyMetadataDAO" />
 		</property>
+		<property name="ncboOntologyVersionDAO">
+			<ref bean="NcboOntologyVersionDAO" />
+		</property>
+		<property name="ncboOntologyCategoryDAO">
+			<ref bean="NcboOntologyCategoryDAO" />
+		</property>
+		<property name="ncboOntologyLoadQueueDAO">
+			<ref bean="NcboOntologyLoadQueueDAO" />
+		</property>	
 		<property name="ncboOntologyFileDAO">
 			<ref bean="NcboOntologyFileDAO" />
 		</property>
 		<property name="ncboSeqOntologyIdDAO">
 			<ref bean="NcboSeqOntologyIdDAO" />
 		</property>
-		<property name="ontologyRetrievalManager">
-			<ref bean="ontologyRetrievalManager" />
-		</property>
 		<property name="ontologyFilePath">
 			<ref bean="ontologyFilePath" />
-		</property>
-		<property name="ncboUserDAO">
-			<ref bean="NcboUserDAO" />
-		</property>
+		</property>		
+	</bean>
+	
+	<bean id="ontologyLoadSchedulerService"
+		class="org.ncbo.stanford.service.loader.scheduler.impl.OntologyLoadSchedulerServiceImpl">	
+		
 	</bean>
 
 	<!-- Session Management -->
