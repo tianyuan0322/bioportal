@@ -31,6 +31,13 @@ public interface ApplicationConstants {
 	public static final String FORMAT_LEXGRID_XML = "LEXGRID-XML";
 	
 	/**
+	 * Hierarchy types
+	 */
+	public static final String SUB_CLASS = "SubClass";
+	public static final String SUPER_CLASS = "SuperClass";
+	public static final String RDF_TYPE = "RdfType";	
+	
+	/**
 	 * Ontology format handlers
 	 */
 	public static final String FORMAT_HANDLER_PROTEGE = "protege";
