@@ -1,5 +1,7 @@
 package org.ncbo.stanford.enumeration;
 
+import org.ncbo.stanford.util.MessageUtils;
+
 /**
  * An Enum to store site-wide status codes (corresponds to ncbo_l_status table
  * values)
@@ -8,10 +10,14 @@ package org.ncbo.stanford.enumeration;
  * 
  */
 public enum StatusEnum {
-	STATUS_WAITING(1), STATUS_READY(2), STATUS_PARSING(3), STATUS_ERROR(4);
-	
-    private final Integer status;
-	
+
+	STATUS_WAITING(new Integer(MessageUtils.getMessage("ncbo.status.waiting"))), STATUS_READY(
+			new Integer(MessageUtils.getMessage("ncbo.status.ready"))), STATUS_PARSING(
+			new Integer(MessageUtils.getMessage("ncbo.status.parsing"))), STATUS_ERROR(
+			new Integer(MessageUtils.getMessage("ncbo.status.error")));
+
+	private final Integer status;
+
 	private StatusEnum(Integer sts) {
 		status = sts;
 	}
