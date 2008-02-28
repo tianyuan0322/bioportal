@@ -1,7 +1,9 @@
 package org.ncbo.stanford.manager.impl;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -10,8 +12,7 @@ import org.ncbo.stanford.bean.concept.ClassBean;
 import org.ncbo.stanford.domain.custom.dao.CustomNcboOntologyVersionDAO;
 import org.ncbo.stanford.domain.custom.entity.NcboOntology;
 import org.ncbo.stanford.manager.OntologyRetrievalManager;
-import org.ncbo.stanford.manager.wrapper.AbstractOntologyManagerWrapperLexGrid;
-import org.ncbo.stanford.manager.wrapper.AbstractOntologyManagerWrapperProtege;
+import org.ncbo.stanford.manager.wrapper.OntologyRetrievalManagerWrapper;
 
 /**
  * A default implementation to OntologyAndConceptManager interface designed to
@@ -29,10 +30,8 @@ public class OntologyRetrievalManagerImpl implements OntologyRetrievalManager {
 			.getLog(OntologyRetrievalManagerImpl.class);
 
 	private CustomNcboOntologyVersionDAO ncboOntologyVersionDAO;
-	private AbstractOntologyManagerWrapperLexGrid ontologyRetrievalManagerWrapperLexGrid;
-	private AbstractOntologyManagerWrapperProtege ontologyRetrievalManagerWrapperProtege;	
+	private Map<String, OntologyRetrievalManagerWrapper> ontologyRetrievalHandlerMap = new HashMap<String, OntologyRetrievalManagerWrapper>();
 
-	
 	/**
 	 * Default Constructor
 	 */
@@ -59,12 +58,6 @@ public class OntologyRetrievalManagerImpl implements OntologyRetrievalManager {
 		return ontBeanList;
 	}
 
-	
-	
-	
-	
-	
-	
 	/**
 	 * Returns the specified ontology.
 	 * 
@@ -75,19 +68,6 @@ public class OntologyRetrievalManagerImpl implements OntologyRetrievalManager {
 		return null;
 	}
 
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
 	public OntologyBean findOntology(Integer id, String version) {
 		return null;
 	}
@@ -99,7 +79,6 @@ public class OntologyRetrievalManagerImpl implements OntologyRetrievalManager {
 	public List<String> findProperties(Integer id) {
 		return new ArrayList();
 	}
-
 
 	//
 	// Concept methods
@@ -148,8 +127,8 @@ public class OntologyRetrievalManagerImpl implements OntologyRetrievalManager {
 		return new ArrayList();
 	}
 
-	public ArrayList<ClassBean> findConceptPropertyStartsWith(
-			String property, String query, ArrayList<Integer> ontologyIds) {
+	public ArrayList<ClassBean> findConceptPropertyStartsWith(String property,
+			String query, ArrayList<Integer> ontologyIds) {
 		return new ArrayList();
 	}
 
@@ -178,33 +157,18 @@ public class OntologyRetrievalManagerImpl implements OntologyRetrievalManager {
 	}
 
 	/**
-	 * @return the ontologyRetrievalManagerWrapperLexGrid
+	 * @return the ontologyRetrievalHandlerMap
 	 */
-	public AbstractOntologyManagerWrapperLexGrid getOntologyRetrievalManagerWrapperLexGrid() {
-		return ontologyRetrievalManagerWrapperLexGrid;
+	public Map<String, OntologyRetrievalManagerWrapper> getOntologyRetrievalHandlerMap() {
+		return ontologyRetrievalHandlerMap;
 	}
 
 	/**
-	 * @param ontologyRetrievalManagerWrapperLexGrid the ontologyRetrievalManagerWrapperLexGrid to set
+	 * @param ontologyRetrievalHandlerMap the ontologyRetrievalHandlerMap to set
 	 */
-	public void setOntologyRetrievalManagerWrapperLexGrid(
-			AbstractOntologyManagerWrapperLexGrid ontologyRetrievalManagerWrapperLexGrid) {
-		this.ontologyRetrievalManagerWrapperLexGrid = ontologyRetrievalManagerWrapperLexGrid;
-	}
-
-	/**
-	 * @return the ontologyRetrievalManagerWrapperProtege
-	 */
-	public AbstractOntologyManagerWrapperProtege getOntologyRetrievalManagerWrapperProtege() {
-		return ontologyRetrievalManagerWrapperProtege;
-	}
-
-	/**
-	 * @param ontologyRetrievalManagerWrapperProtege the ontologyRetrievalManagerWrapperProtege to set
-	 */
-	public void setOntologyRetrievalManagerWrapperProtege(
-			AbstractOntologyManagerWrapperProtege ontologyRetrievalManagerWrapperProtege) {
-		this.ontologyRetrievalManagerWrapperProtege = ontologyRetrievalManagerWrapperProtege;
+	public void setOntologyRetrievalHandlerMap(
+			Map<String, OntologyRetrievalManagerWrapper> ontologyRetrievalHandlerMap) {
+		this.ontologyRetrievalHandlerMap = ontologyRetrievalHandlerMap;
 	}
 
 	//
