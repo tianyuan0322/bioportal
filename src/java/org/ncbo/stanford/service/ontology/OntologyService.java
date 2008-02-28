@@ -27,14 +27,4 @@ public interface OntologyService {
 	public List<OntologyBean> findOntologyVersions(int id);
 
 	public List<String> findProperties(int id);
-
-	/**
-	 * Loads the specified ontology into the BioPortal repository. The minimum
-	 * requirement is that the ontology file/uri exists and is in the right
-	 * format. If the ontology id already exists, the invocation assumes
-	 * overwrite of the existing ontology.
-	 * 
-	 * @param ontology
-	 */
-	public void loadOntology(OntologyBean ontology);
 }
