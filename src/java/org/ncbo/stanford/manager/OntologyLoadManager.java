@@ -6,6 +6,6 @@ public interface OntologyLoadManager {
 	/**
 	 * Loads the specified ontology into the BioPortal repository.
 	 */
-	public void loadOntology(OntologyBean ontology);
+	public void loadOntology(OntologyBean ontologyBean) throws Exception;
 
 }
