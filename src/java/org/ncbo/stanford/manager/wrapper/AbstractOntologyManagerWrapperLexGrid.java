@@ -10,14 +10,11 @@ import org.LexGrid.LexBIG.Impl.LexBIGServiceImpl;
 import org.LexGrid.LexBIG.LexBIGService.LexBIGService;
 import org.LexGrid.codingSchemes.CodingScheme;
 
+public abstract class AbstractOntologyManagerWrapperLexGrid {
 
-
-public abstract class AbstractOntologyManagerWrapperLexGrid
-{
-
-	protected CodingSchemeRendering getCodingSchemeRendering(String urnAndVersion) throws Exception {
-		if (urnAndVersion == null)
-		{
+	protected CodingSchemeRendering getCodingSchemeRendering(
+			String urnAndVersion) throws Exception {
+		if (urnAndVersion == null) {
 			return null;
 		}
 
@@ -29,16 +26,13 @@ public abstract class AbstractOntologyManagerWrapperLexGrid
 		CodingSchemeRenderingList schemes = lbs.getSupportedCodingSchemes();
 		CodingSchemeSummary css = null;
 
-		for (CodingSchemeRendering csr : schemes.getCodingSchemeRendering())
-		{
+		for (CodingSchemeRendering csr : schemes.getCodingSchemeRendering()) {
 			css = csr.getCodingSchemeSummary();
 			String version = css.getRepresentsVersion();
 			String urn = css.getCodingSchemeURN();
 
-			if (urn != null && urn.equals(fileUrn))
-			{
-				if (version != null && version.equals(ver))
-				{
+			if (urn != null && urn.equals(fileUrn)) {
+				if (version != null && version.equals(ver)) {
 					return csr;
 				}
 			}
@@ -47,9 +41,9 @@ public abstract class AbstractOntologyManagerWrapperLexGrid
 		return null;
 	}
 
-	protected CodingScheme getCodingScheme(LexBIGService lbs, String urnAndVersion) throws Exception {
-		if (urnAndVersion == null)
-		{
+	protected CodingScheme getCodingScheme(LexBIGService lbs,
+			String urnAndVersion) throws Exception {
+		if (urnAndVersion == null) {
 			return null;
 		}
 
