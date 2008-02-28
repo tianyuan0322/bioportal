@@ -41,37 +41,41 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.ncbo.stanford.bean.OntologyBean;
 import org.ncbo.stanford.manager.wrapper.AbstractOntologyManagerWrapperLexGrid;
+import org.ncbo.stanford.manager.wrapper.OntologyLoadManagerWrapper;
 import org.ncbo.stanford.util.constants.ApplicationConstants;
 
-public class OntologyLoadManagerWrapperLexGridImpl extends AbstractOntologyManagerWrapperLexGrid
-{
-	private static final Log log = LogFactory.getLog(OntologyLoadManagerWrapperLexGridImpl.class);
+public class OntologyLoadManagerWrapperLexGridImpl extends
+		AbstractOntologyManagerWrapperLexGrid implements
+		OntologyLoadManagerWrapper {
+	private static final Log log = LogFactory
+			.getLog(OntologyLoadManagerWrapperLexGridImpl.class);
 
 	private String targetTerminologies;
 
 	/**
 	 * A comma delimited list of UMLS terminologies to load. If null, all
-	 * available terminologies will be loaded. The terminology name should be the
-	 * SAB name of the terminology - or values from the RSAB column of the MRSAB
-	 * file.
+	 * available terminologies will be loaded. The terminology name should be
+	 * the SAB name of the terminology - or values from the RSAB column of the
+	 * MRSAB file.
 	 */
 
 	/**
-	 * Loads the specified ontology into the LexGrid repository. If the specified
-	 * ontology identifier already exists, overwrite.
+	 * Loads the specified ontology into the LexGrid repository. If the
+	 * specified ontology identifier already exists, overwrite.
 	 * 
 	 * @param ontologyId
-	 *           the ontology id for the specified ontology file.
+	 *            the ontology id for the specified ontology file.
 	 * @param ontologyUri
-	 *           the uri of the ontology to be loaded.
+	 *            the uri of the ontology to be loaded.
 	 * @param ontology_bean
-	 *           the ontology_bean that contains the metadata information of the
-	 *           ontology to be loaded.
+	 *            the ontology_bean that contains the metadata information of
+	 *            the ontology to be loaded.
 	 * 
 	 * @exception Exception
-	 *               catch all for all other ontology file load errors.
+	 *                catch all for all other ontology file load errors.
 	 */
-	public void loadOntology(URI ontologyUri, OntologyBean ontology_bean) throws Exception {
+	public void loadOntology(URI ontologyUri, OntologyBean ontology_bean)
+			throws Exception {
 		boolean stopOnErrors = false;
 		boolean async = false;
 
@@ -83,12 +87,12 @@ public class OntologyLoadManagerWrapperLexGridImpl extends AbstractOntologyManag
 
 		// remove existing scheme if it exists before parsing...
 
-		
-		CodingSchemeRendering csRendering = getCodingSchemeRendering(ontology_bean.getUrn());
-		if (csRendering != null)
-		{
+		CodingSchemeRendering csRendering = getCodingSchemeRendering(ontology_bean
+				.getUrn());
+		if (csRendering != null) {
 			AbsoluteCodingSchemeVersionReference acsvr = Constructors
-					.createAbsoluteCodingSchemeVersionReference(csRendering.getCodingSchemeSummary());
+					.createAbsoluteCodingSchemeVersionReference(csRendering
+							.getCodingSchemeSummary());
 			lbsm.deactivateCodingSchemeVersion(acsvr, null);
 
 			lbsm.removeCodingSchemeVersion(acsvr);
@@ -96,43 +100,48 @@ public class OntologyLoadManagerWrapperLexGridImpl extends AbstractOntologyManag
 
 		}
 		Loader loader = null;
-		//Load OBO
-		if (ontology_bean.getFormat().equalsIgnoreCase(ApplicationConstants.FORMAT_OBO))
-		{
-			loader = lbsm.getLoader(org.LexGrid.LexBIG.Impl.loaders.OBOLoaderImpl.name);
+		// Load OBO
+		if (ontology_bean.getFormat().equalsIgnoreCase(
+				ApplicationConstants.FORMAT_OBO)) {
+			loader = lbsm
+					.getLoader(org.LexGrid.LexBIG.Impl.loaders.OBOLoaderImpl.name);
 			((OBO_Loader) loader).load(source, null, stopOnErrors, async);
 		}
-		//Load UMLS
-		if (ontology_bean.getFormat().equalsIgnoreCase(ApplicationConstants.FORMAT_UMLS_RRF))
-		{
-			loader = lbsm.getLoader(org.LexGrid.LexBIG.Impl.loaders.UMLSLoaderImpl.name);
+		// Load UMLS
+		if (ontology_bean.getFormat().equalsIgnoreCase(
+				ApplicationConstants.FORMAT_UMLS_RRF)) {
+			loader = lbsm
+					.getLoader(org.LexGrid.LexBIG.Impl.loaders.UMLSLoaderImpl.name);
 			LocalNameList lnl = getLocalNameListFromTargetTerminologies();
 			((UMLS_Loader) loader).load(source, lnl, stopOnErrors, async);
 
 		}
-		//Load LEXGRID XML
-		if (ontology_bean.getFormat().equalsIgnoreCase(ApplicationConstants.FORMAT_LEXGRID_XML))
-		{
-			loader = lbsm.getLoader(org.LexGrid.LexBIG.Impl.loaders.LexGridLoaderImpl.name);
+		// Load LEXGRID XML
+		if (ontology_bean.getFormat().equalsIgnoreCase(
+				ApplicationConstants.FORMAT_LEXGRID_XML)) {
+			loader = lbsm
+					.getLoader(org.LexGrid.LexBIG.Impl.loaders.LexGridLoaderImpl.name);
 			((LexGrid_Loader) loader).load(source, stopOnErrors, async);
 
 		}
-		//Load OWL
-		if (ontology_bean.getFormat().equalsIgnoreCase(ApplicationConstants.FORMAT_OWL_DL)
-				|| ontology_bean.getFormat().equalsIgnoreCase(ApplicationConstants.FORMAT_OWL_FULL))
-		{
-			loader = lbsm.getLoader(org.LexGrid.LexBIG.Impl.loaders.OWLLoaderImpl.name);
+		// Load OWL
+		if (ontology_bean.getFormat().equalsIgnoreCase(
+				ApplicationConstants.FORMAT_OWL_DL)
+				|| ontology_bean.getFormat().equalsIgnoreCase(
+						ApplicationConstants.FORMAT_OWL_FULL)) {
+			loader = lbsm
+					.getLoader(org.LexGrid.LexBIG.Impl.loaders.OWLLoaderImpl.name);
 
 			// Load only NCI Thesaurus for now.
-			if (ontology_bean.getFilePath() != null && ontology_bean.getFilePath().indexOf("Thesaurus") >= 0)
-			{
-				((OWL_Loader) loader).loadNCIThes(source, null, stopOnErrors, async);
+			if (ontology_bean.getFilePath() != null
+					&& ontology_bean.getFilePath().indexOf("Thesaurus") >= 0) {
+				((OWL_Loader) loader).loadNCIThes(source, null, stopOnErrors,
+						async);
 			} else
 				((OWL_Loader) loader).load(source, null, stopOnErrors, async);
 		}
-      // No Loader could be found for the format
-		if (loader == null)
-		{
+		// No Loader could be found for the format
+		if (loader == null) {
 			String error_msg = "No LexBIG loader could be found to load the ontology format '"
 					+ ontology_bean.getFormat() + "'";
 			log.error(error_msg);
@@ -140,14 +149,13 @@ public class OntologyLoadManagerWrapperLexGridImpl extends AbstractOntologyManag
 		}
 
 		LoadStatus status = loader.getStatus();
-		if (status.getState().getType() == ProcessState.COMPLETED_TYPE)
-		{
+		if (status.getState().getType() == ProcessState.COMPLETED_TYPE) {
 			// Activate the newly loaded scheme(s) ...
-			AbsoluteCodingSchemeVersionReference[] refs = loader.getCodingSchemeReferences();
+			AbsoluteCodingSchemeVersionReference[] refs = loader
+					.getCodingSchemeReferences();
 			String urn = null;
 			String version = null;
-			for (int i = 0; i < refs.length; i++)
-			{
+			for (int i = 0; i < refs.length; i++) {
 				AbsoluteCodingSchemeVersionReference ref = refs[i];
 				lbsm.activateCodingSchemeVersion(ref);
 				urn = ref.getCodingSchemeURN();
@@ -155,13 +163,12 @@ public class OntologyLoadManagerWrapperLexGridImpl extends AbstractOntologyManag
 			}
 			ontology_bean.setUrn(urn + "|" + version);
 
-		} else
-		{
-			if (status.getErrorsLogged().booleanValue())
-			{
+		} else {
+			if (status.getErrorsLogged().booleanValue()) {
 				String error_message = "";
 				if (status.getMessage() != null)
-					error_message = "LexBIG Ontology load failed with message= " + status.getMessage();
+					error_message = "LexBIG Ontology load failed with message= "
+							+ status.getMessage();
 				else
 					error_message = "LexBIG Ontology load failed. Check the LexBIG load logs for details.";
 				log.error(error_message);
@@ -181,13 +188,11 @@ public class OntologyLoadManagerWrapperLexGridImpl extends AbstractOntologyManag
 	public LocalNameList getLocalNameListFromTargetTerminologies() {
 		LocalNameList lnl = null;
 
-		if (targetTerminologies != null)
-		{
+		if (targetTerminologies != null) {
 			lnl = new LocalNameList();
 			String[] terminologies = targetTerminologies.split(",");
 
-			for (int i = 0; i < terminologies.length; i++)
-			{
+			for (int i = 0; i < terminologies.length; i++) {
 				lnl.addEntry(terminologies[i]);
 			}
 		}

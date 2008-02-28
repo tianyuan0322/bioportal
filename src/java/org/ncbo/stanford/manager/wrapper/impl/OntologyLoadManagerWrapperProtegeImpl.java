@@ -11,6 +11,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.ncbo.stanford.bean.OntologyBean;
 import org.ncbo.stanford.manager.wrapper.AbstractOntologyManagerWrapperProtege;
+import org.ncbo.stanford.manager.wrapper.OntologyLoadManagerWrapper;
 
 import edu.stanford.smi.protege.model.Project;
 import edu.stanford.smi.protege.storage.database.DatabaseKnowledgeBaseFactory;
@@ -19,10 +20,10 @@ import edu.stanford.smi.protegex.owl.ProtegeOWL;
 import edu.stanford.smi.protegex.owl.database.CreateOWLDatabaseFromFileProjectPlugin;
 import edu.stanford.smi.protegex.owl.database.OWLDatabaseKnowledgeBaseFactory;
 import edu.stanford.smi.protegex.owl.model.OWLModel;
-import edu.stanford.smi.protegex.owl.model.OWLNamedClass;
 
 public class OntologyLoadManagerWrapperProtegeImpl extends
-		AbstractOntologyManagerWrapperProtege {
+		AbstractOntologyManagerWrapperProtege implements
+		OntologyLoadManagerWrapper {
 
 	private static final Log log = LogFactory
 			.getLog(OntologyLoadManagerWrapperProtegeImpl.class);
@@ -44,7 +45,7 @@ public class OntologyLoadManagerWrapperProtegeImpl extends
 	 * @exception Exception
 	 *                catch all for all other ontlogy file load errors.
 	 */
-	public void loadOntology(OntologyBean ontology)
+	public void loadOntology(URI ontologyUri, OntologyBean ontology)
 			throws FileNotFoundException, Exception {
 		File ontologyFile = new File(ontology.getFilePath());
 
@@ -74,8 +75,16 @@ public class OntologyLoadManagerWrapperProtegeImpl extends
 			throw (new FileNotFoundException("Missing ontology file to load"));
 		}
 
+		
+		
 		// Setup ontology URI and table name
 		URI ontologyURI = ontologyFile.toURI();
+		
+		
+		
+		
+		
+		
 		String tableName = getTableName(ontologyId);
 
 		if (log.isDebugEnabled()) {
@@ -84,7 +93,8 @@ public class OntologyLoadManagerWrapperProtegeImpl extends
 					+ ontologyFile.length());
 			log.debug("URI: " + ontologyURI.toString());
 			log.debug("Ontology table name: " + tableName);
-			log.debug("JDBC name: " + protegeJdbcDriver + " url: " + protegeJdbcUrl);
+			log.debug("JDBC name: " + protegeJdbcDriver + " url: "
+					+ protegeJdbcUrl);
 		}
 
 		// If the ontology file is small, use the fast non-streaming Protege
@@ -108,19 +118,21 @@ public class OntologyLoadManagerWrapperProtegeImpl extends
 					protegeJdbcPassword);
 			factory.saveKnowledgeBase(fileModel, sources, errors);
 
-			// If errors are found during the load, log the errors and throw an exception.
+			// If errors are found during the load, log the errors and throw an
+			// exception.
 			if (errors.size() > 0) {
 				logErrors(errors);
-				throw new Exception("Error during load of: " + ontologyFile.getName());
+				throw new Exception("Error during load of: "
+						+ ontologyFile.getName());
 			}
 			// next lines of code are not needed - just testing the import
-//			OWLModel om = (OWLModel) fileProject.getKnowledgeBase();
-//
-//			OWLNamedClass country = om.getOWLNamedClass("Country");
-//
-//			for (Object o : country.getInstances(true)) {
-//				System.out.println("" + o + " is an instance of Country");
-//			}
+			// OWLModel om = (OWLModel) fileProject.getKnowledgeBase();
+			//
+			// OWLNamedClass country = om.getOWLNamedClass("Country");
+			//
+			// for (Object o : country.getInstances(true)) {
+			// System.out.println("" + o + " is an instance of Country");
+			// }
 		} else {
 			// If the ontology file is big, use the streaming Protege load
 			// approach.
@@ -146,7 +158,7 @@ public class OntologyLoadManagerWrapperProtegeImpl extends
 			Project p = creator.createProject();
 		}
 	}
-	
+
 	//
 	// Private methods
 	//
