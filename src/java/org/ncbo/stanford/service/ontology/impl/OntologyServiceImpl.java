@@ -14,7 +14,6 @@ public class OntologyServiceImpl implements OntologyService {
 	private static final Log log = LogFactory.getLog(OntologyServiceImpl.class);
 
 	private OntologyRetrievalManager ontologyRetrievalManager;
-	private OntologyLoadManager ontologyLoadManager;
 
 	/**
 	 * Returns a single record for each ontology in the system. If more than one
@@ -39,14 +38,6 @@ public class OntologyServiceImpl implements OntologyService {
 	}
 
 	/**
-	 * Load the specified ontology into the BioPortal repository.  At minimum, the ontology bean contain the 
-	 * ontology file/uri reference.
-	 */
-	public void loadOntology(OntologyBean ontology) {
-		ontologyLoadManager.loadOntology(ontology);
-	}
-
-	/**
 	 * @return the ontologyRetrievalManager
 	 */
 	public OntologyRetrievalManager getOntologyRetrievalManager() {
@@ -59,19 +50,5 @@ public class OntologyServiceImpl implements OntologyService {
 	public void setOntologyRetrievalManager(
 			OntologyRetrievalManager ontologyRetrievalManager) {
 		this.ontologyRetrievalManager = ontologyRetrievalManager;
-	}
-
-	/**
-	 * @return the ontologyLoadManager
-	 */
-	public OntologyLoadManager getOntologyLoadManager() {
-		return ontologyLoadManager;
-	}
-
-	/**
-	 * @param ontologyLoadManager the ontologyLoadManager to set
-	 */
-	public void setOntologyLoadManager(OntologyLoadManager ontologyLoadManager) {
-		this.ontologyLoadManager = ontologyLoadManager;
 	}
 }
