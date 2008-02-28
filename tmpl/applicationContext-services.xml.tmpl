@@ -1,10 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <beans xmlns="http://www.springframework.org/schema/beans"
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:util="http://www.springframework.org/schema/util"
 	xmlns:aop="http://www.springframework.org/schema/aop"
 	xmlns:tx="http://www.springframework.org/schema/tx"
 	xsi:schemaLocation="
        http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.0.xsd
+       http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-2.0.xsd
        http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-2.0.xsd
        http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-2.0.xsd">
 
@@ -273,23 +275,110 @@
 		<property name="ncboOntologyVersionDAO">
 			<ref bean="NcboOntologyVersionDAO" />
 		</property>
-		<property name="ontologyRetrievalManagerWrapperLexGrid">
-			<ref bean="ontologyRetrievalManagerWrapperLexGrid" />
-		</property>
-		<property name="ontologyRetrievalManagerWrapperProtege">
-			<ref bean="ontologyRetrievalManagerWrapperProtege" />
+		<property name="ontologyRetrievalHandlerMap">
+			<ref local="ontologyRetrievalHandlerMap" />
 		</property>
 	</bean>
 
 	<bean id="ontologyLoadManager"
-		class="org.ncbo.stanford.manager.impl.OntologyLoadManagerImpl">
-		<property name="ontologyLoadManagerWrapperLexGrid">
-			<ref bean="ontologyLoadManagerWrapperLexGrid" />
+		class="org.ncbo.stanford.manager.impl.OntologyLoadManagerImpl">		
+		<property name="ontologyFormatHandlerMap">
+			<ref local="ontologyFormatHandlerMap" />
 		</property>
-		<property name="ontologyLoadManagerWrapperProtege">
-			<ref bean="ontologyLoadManagerWrapperProtege" />
+		<property name="ontologyLoadHandlerMap">
+			<ref local="ontologyLoadHandlerMap" />
 		</property>
 	</bean>
+
+	<!-- Ontology format handler map -->
+	<util:map id="ontologyFormatHandlerMap"
+		map-class="java.util.HashMap">
+		<entry>
+			<key>
+				<util:constant
+					static-field="org.ncbo.stanford.util.constants.ApplicationConstants.FORMAT_OWL_DL" />
+			</key>
+			<util:constant
+				static-field="org.ncbo.stanford.util.constants.ApplicationConstants.FORMAT_HANDLER_PROTEGE" />
+		</entry>
+		<entry>
+			<key>
+				<util:constant
+					static-field="org.ncbo.stanford.util.constants.ApplicationConstants.FORMAT_OWL_FULL" />
+			</key>
+			<util:constant
+				static-field="org.ncbo.stanford.util.constants.ApplicationConstants.FORMAT_HANDLER_PROTEGE" />
+		</entry>
+		<entry>
+			<key>
+				<util:constant
+					static-field="org.ncbo.stanford.util.constants.ApplicationConstants.FORMAT_PROTEGE" />
+			</key>
+			<util:constant
+				static-field="org.ncbo.stanford.util.constants.ApplicationConstants.FORMAT_HANDLER_PROTEGE" />
+		</entry>
+		<entry>
+			<key>
+				<util:constant
+					static-field="org.ncbo.stanford.util.constants.ApplicationConstants.FORMAT_OBO" />
+			</key>
+			<util:constant
+				static-field="org.ncbo.stanford.util.constants.ApplicationConstants.FORMAT_HANDLER_LEXGRID" />
+		</entry>
+		<entry>
+			<key>
+				<util:constant
+					static-field="org.ncbo.stanford.util.constants.ApplicationConstants.FORMAT_UMLS_RRF" />
+			</key>
+			<util:constant
+				static-field="org.ncbo.stanford.util.constants.ApplicationConstants.FORMAT_HANDLER_LEXGRID" />
+		</entry>
+		<entry>
+			<key>
+				<util:constant
+					static-field="org.ncbo.stanford.util.constants.ApplicationConstants.FORMAT_LEXGRID_XML" />
+			</key>
+			<util:constant
+				static-field="org.ncbo.stanford.util.constants.ApplicationConstants.FORMAT_HANDLER_LEXGRID" />
+		</entry>
+	</util:map>
+
+	<!-- Ontology handler maps -->
+	<util:map id="ontologyLoadHandlerMap"
+		map-class="java.util.HashMap">
+		<entry>
+			<key>
+				<util:constant
+					static-field="org.ncbo.stanford.util.constants.ApplicationConstants.FORMAT_HANDLER_LEXGRID" />
+			</key>
+			<ref local="ontologyLoadManagerWrapperLexGrid" />
+		</entry>
+		<entry>
+			<key>
+				<util:constant
+					static-field="org.ncbo.stanford.util.constants.ApplicationConstants.FORMAT_HANDLER_PROTEGE" />
+			</key>
+			<ref local="ontologyLoadManagerWrapperProtege" />
+		</entry>
+	</util:map>
+
+	<util:map id="ontologyRetrievalHandlerMap"
+		map-class="java.util.HashMap">
+		<entry>
+			<key>
+				<util:constant
+					static-field="org.ncbo.stanford.util.constants.ApplicationConstants.FORMAT_HANDLER_LEXGRID" />
+			</key>
+			<ref local="ontologyRetrievalManagerWrapperLexGrid" />
+		</entry>
+		<entry>
+			<key>
+				<util:constant
+					static-field="org.ncbo.stanford.util.constants.ApplicationConstants.FORMAT_HANDLER_PROTEGE" />
+			</key>
+			<ref local="ontologyRetrievalManagerWrapperProtege" />
+		</entry>
+	</util:map>
 
 	<!-- Manager Wrappers -->
 	<bean id="abstractOntologyManagerWrapperLexGrid"
@@ -363,11 +452,8 @@
 		<property name="ontologyRetrievalManager">
 			<ref bean="ontologyRetrievalManager" />
 		</property>
-		<property name="ontologyLoadManager">
-			<ref bean="ontologyLoadManager" />
-		</property>
 	</bean>
-	
+
 	<bean id="ontologyLoadProcessorService"
 		class="org.ncbo.stanford.service.loader.processor.impl.OntologyLoadProcessorServiceImpl">
 		<property name="ncboOntologyMetadataDAO">
@@ -381,7 +467,7 @@
 		</property>
 		<property name="ncboOntologyLoadQueueDAO">
 			<ref bean="NcboOntologyLoadQueueDAO" />
-		</property>	
+		</property>
 		<property name="ncboOntologyFileDAO">
 			<ref bean="NcboOntologyFileDAO" />
 		</property>
@@ -390,12 +476,18 @@
 		</property>
 		<property name="ontologyFilePath">
 			<ref bean="ontologyFilePath" />
-		</property>		
+		</property>
 	</bean>
-	
+
 	<bean id="ontologyLoadSchedulerService"
-		class="org.ncbo.stanford.service.loader.scheduler.impl.OntologyLoadSchedulerServiceImpl">	
-		
+		class="org.ncbo.stanford.service.loader.scheduler.impl.OntologyLoadSchedulerServiceImpl">
+		<property name="ncboOntologyLoadQueueDAO">
+			<ref bean="NcboOntologyLoadQueueDAO" />
+		</property>
+		<property name="ontologyLoadManager">
+			<ref bean="ontologyLoadManager" />
+		</property>
+
 	</bean>
 
 	<!-- Session Management -->
