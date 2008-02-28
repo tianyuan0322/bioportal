@@ -1,54 +1,72 @@
 package org.ncbo.stanford.manager.impl;
 
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.util.HashMap;
+import java.util.Map;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.ncbo.stanford.bean.OntologyBean;
 import org.ncbo.stanford.manager.OntologyLoadManager;
-import org.ncbo.stanford.manager.wrapper.AbstractOntologyManagerWrapperLexGrid;
-import org.ncbo.stanford.manager.wrapper.AbstractOntologyManagerWrapperProtege;
+import org.ncbo.stanford.manager.wrapper.OntologyLoadManagerWrapper;
 
 public class OntologyLoadManagerImpl implements OntologyLoadManager {
 
 	private static final Log log = LogFactory
 			.getLog(OntologyLoadManagerImpl.class);
 
-	private AbstractOntologyManagerWrapperLexGrid ontologyLoadManagerWrapperLexGrid;
-	private AbstractOntologyManagerWrapperProtege ontologyLoadManagerWrapperProtege;
+	private Map<String, String> ontologyFormatHandlerMap = new HashMap<String, String>();
+	private Map<String, OntologyLoadManagerWrapper> ontologyLoadHandlerMap = new HashMap<String, OntologyLoadManagerWrapper>();
 
-	public void loadOntology(OntologyBean ontology) {
-		// TODO Auto-generated method stub
-
+	/**
+	 * Loads the specified ontology into the BioPortal repository. The minimum
+	 * requirement is that the ontology file/uri exists and is in the right
+	 * format. If the ontology id already exists, the invocation assumes
+	 * overwrite of the existing ontology.
+	 * 
+	 * @param ontologyBean
+	 *            bean
+	 * @throws URISyntaxException
+	 */
+	public void loadOntology(OntologyBean ontologyBean) throws Exception {
+		String formatHandler = ontologyFormatHandlerMap.get(ontologyBean
+				.getFormat());
+		OntologyLoadManagerWrapper loadManager = ontologyLoadHandlerMap
+				.get(formatHandler);
+		loadManager.loadOntology(new URI(ontologyBean.getFilePath()),
+				ontologyBean);
 	}
 
 	/**
-	 * @return the ontologyLoadManagerWrapperLexGrid
+	 * @return the ontologyLoadHandlerMap
 	 */
-	public AbstractOntologyManagerWrapperLexGrid getOntologyLoadManagerWrapperLexGrid() {
-		return ontologyLoadManagerWrapperLexGrid;
+	public Map<String, OntologyLoadManagerWrapper> getOntologyLoadHandlerMap() {
+		return ontologyLoadHandlerMap;
 	}
 
 	/**
-	 * @param ontologyLoadManagerWrapperLexGrid
-	 *            the ontologyLoadManagerWrapperLexGrid to set
+	 * @param ontologyLoadHandlerMap
+	 *            the ontologyLoadHandlerMap to set
 	 */
-	public void setOntologyLoadManagerWrapperLexGrid(
-			AbstractOntologyManagerWrapperLexGrid ontologyLoadManagerWrapperLexGrid) {
-		this.ontologyLoadManagerWrapperLexGrid = ontologyLoadManagerWrapperLexGrid;
+	public void setOntologyLoadHandlerMap(
+			Map<String, OntologyLoadManagerWrapper> ontologyLoadHandlerMap) {
+		this.ontologyLoadHandlerMap = ontologyLoadHandlerMap;
 	}
 
 	/**
-	 * @return the ontologyLoadManagerWrapperProtege
+	 * @return the ontologyFormatHandlerMap
 	 */
-	public AbstractOntologyManagerWrapperProtege getOntologyLoadManagerWrapperProtege() {
-		return ontologyLoadManagerWrapperProtege;
+	public Map<String, String> getOntologyFormatHandlerMap() {
+		return ontologyFormatHandlerMap;
 	}
 
 	/**
-	 * @param ontologyLoadManagerWrapperProtege
-	 *            the ontologyLoadManagerWrapperProtege to set
+	 * @param ontologyFormatHandlerMap
+	 *            the ontologyFormatHandlerMap to set
 	 */
-	public void setOntologyLoadManagerWrapperProtege(
-			AbstractOntologyManagerWrapperProtege ontologyLoadManagerWrapperProtege) {
-		this.ontologyLoadManagerWrapperProtege = ontologyLoadManagerWrapperProtege;
+	public void setOntologyFormatHandlerMap(
+			Map<String, String> ontologyFormatHandlerMap) {
+		this.ontologyFormatHandlerMap = ontologyFormatHandlerMap;
 	}
 }
