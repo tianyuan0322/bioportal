@@ -1,5 +1,6 @@
 package org.ncbo.stanford.manager.wrapper;
 
+
 public abstract class AbstractOntologyManagerWrapperProtege {
 
 	protected String protegeJdbcUrl;
@@ -10,7 +11,6 @@ public abstract class AbstractOntologyManagerWrapperProtege {
 	protected String protegeTableSuffix;
 	protected Integer protegeBigFileThreshold;
 
-	
 	/**
 	 * Gets the table name associated with an protege ontology id.
 	 */
