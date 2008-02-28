@@ -3,13 +3,23 @@
  */
 package org.ncbo.stanford.domain.custom.dao;
 
+import java.util.List;
+
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.hibernate.criterion.Expression;
+import org.ncbo.stanford.domain.generated.NcboOntologyLoadQueue;
 import org.ncbo.stanford.domain.generated.NcboOntologyLoadQueueDAO;
+import org.ncbo.stanford.enumeration.StatusEnum;
 
 /**
  * @author Michael Dorf
- *
+ * 
  */
 public class CustomNcboOntologyLoadQueueDAO extends NcboOntologyLoadQueueDAO {
+
+	private static final Log log = LogFactory
+			.getLog(CustomNcboOntologyLoadQueueDAO.class);
 
 	/**
 	 * 
@@ -18,4 +28,33 @@ public class CustomNcboOntologyLoadQueueDAO extends NcboOntologyLoadQueueDAO {
 		super();
 	}
 
+	/**
+	 * 
+	 * Retuns a list of ontologies to be loaded and parsed
+	 * 
+	 * @return List of NcboOntologyLoadQueue
+	 */
+	@SuppressWarnings("unchecked")
+	public List<NcboOntologyLoadQueue> getOntologiesToLoad() {
+		return getSession().createCriteria(
+				"org.ncbo.stanford.domain.generated.NcboOntologyLoadQueue")
+				.add(
+						Expression.eq("ncboLStatus.id",
+								StatusEnum.STATUS_WAITING.getStatus())).list();
+	}
+
+	/**
+	 * @param transientInstance
+	 * @return
+	 */
+	public NcboOntologyLoadQueue saveNcboOntologyLoadQueue(
+			NcboOntologyLoadQueue transientInstance) {
+		try {
+			return this.findById((Integer) getHibernateTemplate().save(
+					transientInstance));
+		} catch (RuntimeException re) {
+			log.error("save failed", re);
+			throw re;
+		}
+	}
 }
