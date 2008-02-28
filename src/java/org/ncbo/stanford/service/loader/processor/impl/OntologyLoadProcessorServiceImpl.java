@@ -6,6 +6,8 @@ import java.io.IOException;
 import java.io.InputStream;
 
 import org.apache.commons.fileupload.FileItem;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.ncbo.stanford.bean.OntologyBean;
 import org.ncbo.stanford.domain.custom.dao.CustomNcboOntologyCategoryDAO;
 import org.ncbo.stanford.domain.custom.dao.CustomNcboOntologyFileDAO;
@@ -26,6 +28,8 @@ import org.ncbo.stanford.service.loader.processor.OntologyLoadProcessorService;
 
 public class OntologyLoadProcessorServiceImpl implements
 		OntologyLoadProcessorService {
+
+	private static final Log log = LogFactory.getLog(OntologyLoadProcessorServiceImpl.class);
 
 	private CustomNcboOntologyMetadataDAO ncboOntologyMetadataDAO;
 	private CustomNcboOntologyVersionDAO ncboOntologyVersionDAO;
