@@ -10,6 +10,7 @@ import org.apache.commons.logging.LogFactory;
 import org.ncbo.stanford.bean.OntologyBean;
 import org.ncbo.stanford.bean.concept.ClassBean;
 import org.ncbo.stanford.manager.wrapper.AbstractOntologyManagerWrapperProtege;
+import org.ncbo.stanford.manager.wrapper.OntologyRetrievalManagerWrapper;
 import org.ncbo.stanford.util.constants.ApplicationConstants;
 
 import edu.stanford.smi.protege.model.Cls;
@@ -31,7 +32,8 @@ import edu.stanford.smi.protegex.owl.model.OWLOntology;
  * @author Michael Dorf
  */
 public class OntologyRetrievalManagerWrapperProtegeImpl extends
-		AbstractOntologyManagerWrapperProtege {
+		AbstractOntologyManagerWrapperProtege implements
+		OntologyRetrievalManagerWrapper {
 
 	// Hack for development testing
 	private final static String TEST_OWL_URI = "test/sample_data/pizza.owl";
@@ -157,8 +159,8 @@ public class OntologyRetrievalManagerWrapperProtegeImpl extends
 		return new ArrayList();
 	}
 
-	public ArrayList<ClassBean> findConceptPropertyStartsWith(
-			String property, String query, ArrayList<Integer> ontologyIds) {
+	public ArrayList<ClassBean> findConceptPropertyStartsWith(String property,
+			String query, ArrayList<Integer> ontologyIds) {
 		return new ArrayList();
 	}
 

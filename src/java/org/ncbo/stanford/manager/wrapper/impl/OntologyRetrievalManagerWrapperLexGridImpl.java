@@ -8,6 +8,7 @@ import org.apache.commons.logging.LogFactory;
 import org.ncbo.stanford.bean.OntologyBean;
 import org.ncbo.stanford.bean.concept.ClassBean;
 import org.ncbo.stanford.manager.wrapper.AbstractOntologyManagerWrapperLexGrid;
+import org.ncbo.stanford.manager.wrapper.OntologyRetrievalManagerWrapper;
 
 /**
  * A default implementation to OntologyAndConceptManager interface designed to
@@ -18,12 +19,14 @@ import org.ncbo.stanford.manager.wrapper.AbstractOntologyManagerWrapperLexGrid;
  * 
  * NOTE(bdai): This class with all the ontology and concept methods seems to be
  * a bit bloated. Will refactor if it becomes a problem.
-
+ * 
  * 
  * @author Benjamin Dai
  * 
  */
-public class OntologyRetrievalManagerWrapperLexGridImpl extends AbstractOntologyManagerWrapperLexGrid {
+public class OntologyRetrievalManagerWrapperLexGridImpl extends
+		AbstractOntologyManagerWrapperLexGrid implements
+		OntologyRetrievalManagerWrapper {
 
 	private static final Log log = LogFactory
 			.getLog(OntologyRetrievalManagerWrapperLexGridImpl.class);
@@ -78,8 +81,6 @@ public class OntologyRetrievalManagerWrapperLexGridImpl extends AbstractOntology
 		return new ClassBean();
 	}
 
-	
-
 	public ClassBean findConcept(String conceptID, Integer ontologyId) {
 		return new ClassBean();
 	}
@@ -116,8 +117,8 @@ public class OntologyRetrievalManagerWrapperLexGridImpl extends AbstractOntology
 		return new ArrayList();
 	}
 
-	public ArrayList<ClassBean> findConceptPropertyStartsWith(
-			String property, String query, ArrayList<Integer> ontologyIds) {
+	public ArrayList<ClassBean> findConceptPropertyStartsWith(String property,
+			String query, ArrayList<Integer> ontologyIds) {
 		return new ArrayList();
 	}
 
