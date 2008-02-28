@@ -10,7 +10,7 @@ public class InvalidMethodCallException extends RuntimeException {
 	 * 
 	 */
 	public InvalidMethodCallException() {
-		super();
+		super(DEFAULT_MESSAGE);
 	}
 
 	/**
