@@ -3,6 +3,7 @@ package org.ncbo.stanford.manager.impl;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.logging.Log;
@@ -32,10 +33,14 @@ public class OntologyLoadManagerImpl implements OntologyLoadManager {
 	public void loadOntology(OntologyBean ontologyBean) throws Exception {
 		String formatHandler = ontologyFormatHandlerMap.get(ontologyBean
 				.getFormat());
-		OntologyLoadManagerWrapper loadManager = ontologyLoadHandlerMap
+		OntologyLoadManagerWrapper loadManagerWrapper = ontologyLoadHandlerMap
 				.get(formatHandler);
-		loadManager.loadOntology(new URI(ontologyBean.getFilePath()),
-				ontologyBean);
+		List<String> filenames = ontologyBean.getFilenames();
+
+		for (String filename : filenames) {
+			loadManagerWrapper.loadOntology(new URI(ontologyBean.getFilePath()
+					+ "/" + filename), ontologyBean);
+		}
 	}
 
 	/**
