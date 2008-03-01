@@ -1,6 +1,9 @@
 package org.ncbo.stanford.domain.custom.entity;
 
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Date;
+import java.util.List;
 
 public class NcboOntology {
 
@@ -25,7 +28,9 @@ public class NcboOntology {
 	private String documentation;
 	private String publication;
 	private String urn;
-	private Byte isFoundry;	
+	private String codingScheme;
+	private Byte isFoundry;
+	private List<String> filenames = new ArrayList<String>(0);
 	
 	/**
 	 * @return the id
@@ -352,5 +357,51 @@ public class NcboOntology {
 	 */
 	public void setUserId(Integer userId) {
 		this.userId = userId;
+	}
+
+	/**
+	 * @return the codingScheme
+	 */
+	public String getCodingScheme() {
+		return codingScheme;
+	}
+
+	/**
+	 * @param codingScheme the codingScheme to set
+	 */
+	public void setCodingScheme(String codingScheme) {
+		this.codingScheme = codingScheme;
+	}
+
+	/**
+	 * @param arg0
+	 * @return
+	 * @see java.util.List#add(java.lang.Object)
+	 */
+	public boolean addFilename(String filename) {
+		return filenames.add(filename);
+	}
+
+	/**
+	 * @param c
+	 * @return
+	 * @see java.util.List#addAll(java.util.Collection)
+	 */
+	public boolean addFilenames(Collection<? extends String> c) {
+		return filenames.addAll(c);
+	}
+
+	/**
+	 * @return the filenames
+	 */
+	public List<String> getFilenames() {
+		return filenames;
+	}
+
+	/**
+	 * @param filenames the filenames to set
+	 */
+	public void setFilenames(List<String> filenames) {
+		this.filenames = filenames;
 	}
 }
