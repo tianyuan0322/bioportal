@@ -4,7 +4,7 @@
 
 <hibernate-mapping>
 
-	<sql-query name="NcboOntologyVersionDAO.GET_LATEST_ONTOLOGY_VERSIONS_QUERY">	
+	<sql-query name="NcboOntologyVersionDAO.GET_ONTOLOGY_VERSION_QUERY">	
 		<return class="org.ncbo.stanford.domain.custom.entity.NcboOntology">
      		<return-property name="id" column="id" />
      		<return-property name="ontologyId" column="ontology_id" />     		
@@ -27,6 +27,7 @@
      		<return-property name="documentation" column="documentation" />
      		<return-property name="publication" column="publication" />
      		<return-property name="urn" column="urn" />
+     		<return-property name="codingScheme" column="coding_scheme" />
      		<return-property name="isFoundry" column="is_foundry" />
 		</return>
 	
@@ -53,6 +54,67 @@
 				om.documentation,
 				om.publication,
 				om.urn,
+				om.coding_scheme,
+				om.is_foundry
+			from
+				ncbo_ontology_version ov 
+				inner join ncbo_ontology_metadata om on ov.id = om.ontology_version_id
+			where 
+				ov.id = :ontologyVersionId
+		]]>
+	</sql-query>
+
+	<sql-query name="NcboOntologyVersionDAO.GET_LATEST_ONTOLOGY_VERSIONS_QUERY">	
+		<return class="org.ncbo.stanford.domain.custom.entity.NcboOntology">
+     		<return-property name="id" column="id" />
+     		<return-property name="ontologyId" column="ontology_id" />     		
+     		<return-property name="parentId" column="parent_id" />
+     		<return-property name="userId" column="user_id" />
+     		<return-property name="internalVersionNumber" column="internal_version_number" />
+     		<return-property name="versionNumber" column="version_number" />
+     		<return-property name="versionStatus" column="version_status" />
+     		<return-property name="filePath" column="file_path" />
+     		<return-property name="isCurrent" column="is_current" />
+     		<return-property name="isRemote" column="is_remote" />
+     		<return-property name="isReviewed" column="is_reviewed" />
+     		<return-property name="dateCreated" column="date_created" />
+     		<return-property name="dateReleased" column="date_released" />
+     		<return-property name="displayLabel" column="display_label" />
+     		<return-property name="format" column="format" />
+     		<return-property name="contactName" column="contact_name" />     		
+     		<return-property name="contactEmail" column="contact_email" />
+     		<return-property name="homepage" column="homepage" />
+     		<return-property name="documentation" column="documentation" />
+     		<return-property name="publication" column="publication" />
+     		<return-property name="urn" column="urn" />
+     		<return-property name="codingScheme" column="coding_scheme" />
+     		<return-property name="isFoundry" column="is_foundry" />
+		</return>
+	
+		<![CDATA[
+			select 
+				ov.id,
+				ov.ontology_id,				
+				ov.parent_id,
+				ov.user_id,
+				ov.internal_version_number,
+				ov.version_number,
+				ov.version_status,
+				ov.file_path,
+				ov.is_current,
+				ov.is_remote,
+				ov.is_reviewed,
+				ov.date_created,
+				ov.date_released,
+				om.display_label,
+				om.format,
+				om.contact_name,
+				om.contact_email,
+				om.homepage,
+				om.documentation,
+				om.publication,
+				om.urn,
+				om.coding_scheme,
 				om.is_foundry
 			from
 				ncbo_ontology_version ov 
