@@ -73,6 +73,10 @@ public class OntologyLoadProcessorServiceImpl implements
 		ontologyVersion.setDateCreated(ontologyBean.getDateCreated());
 		ontologyVersion.setDateReleased(ontologyBean.getDateReleased());
 		ontologyVersion.setFilePath(getOntologyDirPath(ontologyVersion));
+		
+		NcboLStatus status = new NcboLStatus();
+		status.setId(StatusEnum.STATUS_WAITING.getStatus());
+		ontologyVersion.setNcboLStatus(status);
 		NcboOntologyVersion newOntologyVersion = ncboOntologyVersionDAO
 				.saveOntologyVersion(ontologyVersion);
 
@@ -108,9 +112,6 @@ public class OntologyLoadProcessorServiceImpl implements
 
 		NcboOntologyLoadQueue loadQueue = new NcboOntologyLoadQueue();
 		loadQueue.setNcboOntologyVersion(newOntologyVersion);
-
-		NcboLStatus status = new NcboLStatus();
-		status.setId(StatusEnum.STATUS_WAITING.getStatus());
 		loadQueue.setNcboLStatus(status);
 		ncboOntologyLoadQueueDAO.save(loadQueue);
 	}
