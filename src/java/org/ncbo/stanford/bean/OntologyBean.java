@@ -1,5 +1,7 @@
 package org.ncbo.stanford.bean;
 
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 
@@ -29,7 +31,9 @@ public class OntologyBean {
 	private String publication;
 	private String urn;
 	private Byte isFoundry;
-	private List<Integer> categoryIds;
+	private List<Integer> categoryIds = new ArrayList<Integer>(0);
+	private List<String> filenames = new ArrayList<String>(0);
+	
 
 	/**
 	 * Populates the OntologyBean with data from a NcboOntology
@@ -59,6 +63,8 @@ public class OntologyBean {
 		this.setPublication(ncboOntology.getPublication());
 		this.setUrn(ncboOntology.getUrn());
 		this.setIsFoundry(ncboOntology.getIsFoundry());
+		
+		addFilenames(ncboOntology.getFilenames());		
 	}
 
 	public String toString() {
@@ -417,5 +423,37 @@ public class OntologyBean {
 	 */
 	public boolean addCategory(Integer arg0) {
 		return categoryIds.add(arg0);
+	}
+
+	/**
+	 * @param o
+	 * @return
+	 * @see java.util.List#add(java.lang.Object)
+	 */
+	public boolean addFilename(String filename) {
+		return filenames.add(filename);
+	}
+
+	/**
+	 * @param c
+	 * @return
+	 * @see java.util.List#addAll(java.util.Collection)
+	 */
+	public boolean addFilenames(Collection<? extends String> c) {
+		return filenames.addAll(c);
+	}
+
+	/**
+	 * @return the filenames
+	 */
+	public List<String> getFilenames() {
+		return filenames;
+	}
+
+	/**
+	 * @param filenames the filenames to set
+	 */
+	public void setFilenames(List<String> filenames) {
+		this.filenames = filenames;
 	}
 }

@@ -64,6 +64,9 @@
         <property name="urn" type="java.lang.String">
             <column name="urn" length="512" />
         </property>
+        <property name="codingScheme" type="java.lang.String">
+            <column name="coding_scheme" length="256" />
+        </property>
         <property name="isFoundry" type="java.lang.Byte">
             <column name="is_foundry" not-null="true" />
         </property>
