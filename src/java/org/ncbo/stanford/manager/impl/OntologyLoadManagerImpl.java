@@ -12,6 +12,13 @@ import org.ncbo.stanford.bean.OntologyBean;
 import org.ncbo.stanford.manager.OntologyLoadManager;
 import org.ncbo.stanford.manager.wrapper.OntologyLoadManagerWrapper;
 
+/**
+ * Implementation of the load manager. Reads the ontology format from the input
+ * bean (OntologyBean) and sends it to the appropriate load handler
+ * 
+ * @author Michael Dorf
+ * 
+ */
 public class OntologyLoadManagerImpl implements OntologyLoadManager {
 
 	private static final Log log = LogFactory
