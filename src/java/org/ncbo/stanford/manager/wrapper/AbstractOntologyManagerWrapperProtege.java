@@ -1,6 +1,12 @@
 package org.ncbo.stanford.manager.wrapper;
 
-
+/**
+ * Abstract class to incorporate functionality common between Protege loader and
+ * retrieval manager classes
+ * 
+ * @author Michael Dorf
+ * 
+ */
 public abstract class AbstractOntologyManagerWrapperProtege {
 
 	protected String protegeJdbcUrl;

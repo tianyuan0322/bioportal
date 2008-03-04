@@ -10,6 +10,14 @@ import org.LexGrid.LexBIG.Impl.LexBIGServiceImpl;
 import org.LexGrid.LexBIG.LexBIGService.LexBIGService;
 import org.LexGrid.codingSchemes.CodingScheme;
 
+/**
+ * Abstract class to encapsulate functionality common for both LexGrid loader and
+ * retrieval manager classes
+ * 
+ * @author Michael Dorf
+ * @author Pradip Kanjamala
+ * 
+ */
 public abstract class AbstractOntologyManagerWrapperLexGrid {
 
 	protected CodingSchemeRendering getCodingSchemeRendering(
