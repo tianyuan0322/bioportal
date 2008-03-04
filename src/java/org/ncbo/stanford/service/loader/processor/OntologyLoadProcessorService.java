@@ -6,9 +6,22 @@ import org.apache.commons.fileupload.FileItem;
 import org.ncbo.stanford.bean.OntologyBean;
 import org.springframework.transaction.annotation.Transactional;
 
+/**
+ * Interface to load an ontology into BioPortal.
+ * 
+ * @author Michael Dorf
+ *
+ */
 @Transactional
 public interface OntologyLoadProcessorService {
 
+	/**
+	 * Load an ontology into BioPortal and populate the load queue
+	 * 
+	 * @param ontologyFile
+	 * @param ontologyBean
+	 * @throws IOException
+	 */
 	public void processOntologyLoad(FileItem ontologyFile,
 			OntologyBean ontologyBean) throws IOException;
 }

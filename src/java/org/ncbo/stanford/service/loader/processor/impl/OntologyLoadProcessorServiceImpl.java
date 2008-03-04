@@ -26,10 +26,19 @@ import org.ncbo.stanford.domain.generated.NcboUser;
 import org.ncbo.stanford.enumeration.StatusEnum;
 import org.ncbo.stanford.service.loader.processor.OntologyLoadProcessorService;
 
+/**
+ * Class to handle ontology uploads. Adds/updates all appropriate records in the
+ * BioPortal database, copies ontology file(s) to the appropriate location and
+ * populates the load queue for later parsing by the load scheduler
+ * 
+ * @author Michael Dorf
+ * 
+ */
 public class OntologyLoadProcessorServiceImpl implements
 		OntologyLoadProcessorService {
 
-	private static final Log log = LogFactory.getLog(OntologyLoadProcessorServiceImpl.class);
+	private static final Log log = LogFactory
+			.getLog(OntologyLoadProcessorServiceImpl.class);
 
 	private CustomNcboOntologyMetadataDAO ncboOntologyMetadataDAO;
 	private CustomNcboOntologyVersionDAO ncboOntologyVersionDAO;
@@ -39,6 +48,13 @@ public class OntologyLoadProcessorServiceImpl implements
 	private CustomNcboSeqOntologyIdDAO ncboSeqOntologyIdDAO;
 	private String ontologyFilePath;
 
+	/**
+	 * Extract an ontology from a file and populate all the necessary db tables
+	 * 
+	 * @param ontologyFile
+	 * @param ontologyBean
+	 * @throws IOException
+	 */
 	public void processOntologyLoad(FileItem ontologyFile,
 			OntologyBean ontologyBean) throws IOException {
 		NcboOntologyVersion ontologyVersion = new NcboOntologyVersion();
@@ -73,7 +89,7 @@ public class OntologyLoadProcessorServiceImpl implements
 		ontologyVersion.setDateCreated(ontologyBean.getDateCreated());
 		ontologyVersion.setDateReleased(ontologyBean.getDateReleased());
 		ontologyVersion.setFilePath(getOntologyDirPath(ontologyVersion));
-		
+
 		NcboLStatus status = new NcboLStatus();
 		status.setId(StatusEnum.STATUS_WAITING.getStatus());
 		ontologyVersion.setNcboLStatus(status);
@@ -94,17 +110,17 @@ public class OntologyLoadProcessorServiceImpl implements
 		metadata.setUrn(ontologyBean.getUrn());
 		metadata.setNcboOntologyVersion(newOntologyVersion);
 		ncboOntologyMetadataDAO.save(metadata);
-		
+
 		for (Integer categoryId : ontologyBean.getCategoryIds()) {
 			NcboOntologyCategory ontologyCategory = new NcboOntologyCategory();
 			ontologyCategory.setNcboOntologyVersion(newOntologyVersion);
-			
+
 			NcboLCategory cat = new NcboLCategory();
 			cat.setId(categoryId);
 			ontologyCategory.setNcboLCategory(cat);
 			ncboOntologyCategoryDAO.save(ontologyCategory);
 		}
-		
+
 		NcboOntologyFile ontologyFileRec = new NcboOntologyFile();
 		ontologyFileRec.setFilename(ontologyFile.getName());
 		ontologyFileRec.setNcboOntologyVersion(ontologyVersion);
@@ -250,7 +266,8 @@ public class OntologyLoadProcessorServiceImpl implements
 	}
 
 	/**
-	 * @param ncboSeqOntologyIdDAO the ncboSeqOntologyIdDAO to set
+	 * @param ncboSeqOntologyIdDAO
+	 *            the ncboSeqOntologyIdDAO to set
 	 */
 	public void setNcboSeqOntologyIdDAO(
 			CustomNcboSeqOntologyIdDAO ncboSeqOntologyIdDAO) {
