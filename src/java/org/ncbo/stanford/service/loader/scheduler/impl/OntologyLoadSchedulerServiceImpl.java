@@ -1,7 +1,6 @@
 package org.ncbo.stanford.service.loader.scheduler.impl;
 
 import java.util.List;
-import java.util.Set;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -10,31 +9,44 @@ import org.ncbo.stanford.domain.custom.dao.CustomNcboOntologyLoadQueueDAO;
 import org.ncbo.stanford.domain.custom.dao.CustomNcboOntologyVersionDAO;
 import org.ncbo.stanford.domain.custom.entity.NcboOntology;
 import org.ncbo.stanford.domain.generated.NcboLStatus;
-import org.ncbo.stanford.domain.generated.NcboOntologyFile;
 import org.ncbo.stanford.domain.generated.NcboOntologyLoadQueue;
 import org.ncbo.stanford.domain.generated.NcboOntologyVersion;
 import org.ncbo.stanford.enumeration.StatusEnum;
 import org.ncbo.stanford.manager.OntologyLoadManager;
 import org.ncbo.stanford.service.loader.scheduler.OntologyLoadSchedulerService;
 
-public class OntologyLoadSchedulerServiceImpl implements OntologyLoadSchedulerService {
+/**
+ * Implementation of the scheduler service that runs periodically, checking for
+ * new ontologies that have been loaded into the system but not yet parsed by
+ * the API.
+ * 
+ * @author Michael Dorf
+ * 
+ */
+public class OntologyLoadSchedulerServiceImpl implements
+		OntologyLoadSchedulerService {
 
-	private static final Log log = LogFactory.getLog(OntologyLoadSchedulerServiceImpl.class);
+	private static final Log log = LogFactory
+			.getLog(OntologyLoadSchedulerServiceImpl.class);
 
 	private CustomNcboOntologyLoadQueueDAO ncboOntologyLoadQueueDAO;
 	private CustomNcboOntologyVersionDAO ncboOntologyVersionDAO;
 	private OntologyLoadManager ontologyLoadManager;
-	
-	
+
+	/**
+	 * Gets the list of ontologies that need to be loaded and process each using
+	 * the appropriate loader API.
+	 * 
+	 * @throws Exception
+	 */
 	public void processOntologyLoad() throws Exception {
-		List<NcboOntologyLoadQueue> ontologiesToLoad = 
-			ncboOntologyLoadQueueDAO.getOntologiesToLoad();
-		
+		List<NcboOntologyLoadQueue> ontologiesToLoad = ncboOntologyLoadQueueDAO
+				.getOntologiesToLoad();
+
 		for (NcboOntologyLoadQueue rec : ontologiesToLoad) {
 			NcboOntologyVersion ver = rec.getNcboOntologyVersion();
-			String filePath = ver.getFilePath();
-			Set<NcboOntologyFile> files = ver.getNcboOntologyFiles();
-			NcboOntology ontology = ncboOntologyVersionDAO.findOntologyVersion(ver.getId());
+			NcboOntology ontology = ncboOntologyVersionDAO
+					.findOntologyVersion(ver.getId());
 			OntologyBean ontologyBean = new OntologyBean();
 			ontologyBean.populateFromEntity(ontology);
 
@@ -45,16 +57,16 @@ public class OntologyLoadSchedulerServiceImpl implements OntologyLoadSchedulerSe
 			ncboOntologyVersionDAO.save(ver);
 			ncboOntologyLoadQueueDAO.save(rec);
 
-			for (NcboOntologyFile file : files) {
-				String fullPath = filePath + "/" + file.getFilename();				
-				ontologyLoadManager.loadOntology(ontologyBean);
-			}
+			ontologyLoadManager.loadOntology(ontologyBean);
 
-		
-		
+			status.setId(StatusEnum.STATUS_READY.getStatus());
+			ver.setNcboLStatus(status);
+			rec.setNcboLStatus(status);
+			ncboOntologyVersionDAO.save(ver);
+			ncboOntologyLoadQueueDAO.save(rec);
 		}
 	}
-	
+
 	/**
 	 * @return the ncboOntologyLoadQueueDAO
 	 */
@@ -63,7 +75,8 @@ public class OntologyLoadSchedulerServiceImpl implements OntologyLoadSchedulerSe
 	}
 
 	/**
-	 * @param ncboOntologyLoadQueueDAO the ncboOntologyLoadQueueDAO to set
+	 * @param ncboOntologyLoadQueueDAO
+	 *            the ncboOntologyLoadQueueDAO to set
 	 */
 	public void setNcboOntologyLoadQueueDAO(
 			CustomNcboOntologyLoadQueueDAO ncboOntologyLoadQueueDAO) {
@@ -78,7 +91,8 @@ public class OntologyLoadSchedulerServiceImpl implements OntologyLoadSchedulerSe
 	}
 
 	/**
-	 * @param ontologyLoadManager the ontologyLoadManager to set
+	 * @param ontologyLoadManager
+	 *            the ontologyLoadManager to set
 	 */
 	public void setOntologyLoadManager(OntologyLoadManager ontologyLoadManager) {
 		this.ontologyLoadManager = ontologyLoadManager;
@@ -92,7 +106,8 @@ public class OntologyLoadSchedulerServiceImpl implements OntologyLoadSchedulerSe
 	}
 
 	/**
-	 * @param ncboOntologyVersionDAO the ncboOntologyVersionDAO to set
+	 * @param ncboOntologyVersionDAO
+	 *            the ncboOntologyVersionDAO to set
 	 */
 	public void setNcboOntologyVersionDAO(
 			CustomNcboOntologyVersionDAO ncboOntologyVersionDAO) {
