@@ -1,9 +1,15 @@
 package org.ncbo.stanford.manager.impl;
 
+import java.util.ArrayList;
+
 import junit.framework.TestCase;
 
+import org.hsqldb.lib.Collection;
 import org.ncbo.stanford.bean.concept.ClassBean;
 import org.ncbo.stanford.manager.wrapper.impl.OntologyRetrievalManagerWrapperProtegeImpl;
+import org.ncbo.stanford.util.constants.ApplicationConstants;
+
+import edu.stanford.smi.protege.model.Cls;
 
 /**
  * Tests loading ontologies into Protege using the OntologyLoaderProtegeImpl
@@ -21,23 +27,46 @@ public class OntologyRetrievalManagerProtegeTest extends TestCase {
   
       	System.out.println("ROOT");
         
-    	outputConcept(conceptBean);
+    	//outputConcept(conceptBean);
+    	
+    	System.out.println("Subclasses");
+    	ArrayList<ClassBean> subclasses = (ArrayList<ClassBean>) conceptBean.getRelations().get(ApplicationConstants.SUB_CLASS);
+    	System.out.println("Size:"+subclasses.size());
+    	for (ClassBean subclass : subclasses) {
+    		System.out.println(subclass.getLabel()+ " "+subclass.getId());
+    	}
+    	
+    	
+    	
     }
     
-	public void testPizzaConcept() {
+	public void PizzaConcept() {
       	System.out.println("Starting testGetConcept");
     	OntologyRetrievalManagerWrapperProtegeImpl ocMgr = new OntologyRetrievalManagerWrapperProtegeImpl();
     	ClassBean conceptBean = ocMgr.findConcept(TEST_CONCEPT_NAME, TEST_ONT_ID);
       
     	outputConcept(conceptBean);
+    	
+    	System.out.println("Subclasses");
+    	ArrayList<ClassBean> subclasses = (ArrayList<ClassBean>) conceptBean.getRelations().get(ApplicationConstants.SUB_CLASS);
+    	System.out.println("Size:"+subclasses.size());
+    	for (ClassBean subclass : subclasses) {
+    		System.out.println(subclass.getLabel()+ " "+subclass.getId());
+    	}
+    	
+    	
     }
 
-	public void testCheeseyVegetablePizzaConcept() {
+	public void CheeseyVegetablePizzaConcept() {
       	System.out.println("Starting cheesyvegetablepizza concept");
     	OntologyRetrievalManagerWrapperProtegeImpl ocMgr = new OntologyRetrievalManagerWrapperProtegeImpl();
     	ClassBean classBean = ocMgr.findConcept("CheeseyVegetableTopping", TEST_ONT_ID);
         
     	outputConcept(classBean);
+    	
+    	
+    	
+    	
     }
 
     

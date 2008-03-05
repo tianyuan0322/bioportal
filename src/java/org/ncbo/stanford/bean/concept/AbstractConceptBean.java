@@ -55,7 +55,7 @@ public abstract class AbstractConceptBean {
 			str += "\nKEY: ";
 
 			if (key instanceof AbstractConceptBean) {
-				str += ((AbstractConceptBean) key).toString();
+				str += "  "+((AbstractConceptBean) key).toString();
 			} else if (key instanceof String) {
 				str += ((String) key).toString();
 			} else {
@@ -65,7 +65,7 @@ public abstract class AbstractConceptBean {
 			str += "\nVALUE: ";
 
 			if (value instanceof AbstractConceptBean) {
-				str += ((AbstractConceptBean) value).toString();
+				str += "  "+((AbstractConceptBean) value).toString();
 			} else if (value instanceof String) {
 				str += ((String) value).toString();
 			} else {
@@ -93,4 +93,11 @@ public abstract class AbstractConceptBean {
 	public void addRelations(Map<? extends Object, ? extends Object> m) {
 		relations.putAll(m);
 	}
+
+	public HashMap<Object, Object> getRelations() {
+		return relations;
+	}
+	
+	
+	
 }

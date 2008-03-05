@@ -36,7 +36,7 @@ public class OntologyRetrievalManagerWrapperProtegeImpl extends
 		OntologyRetrievalManagerWrapper {
 
 	// Hack for development testing
-	private final static String TEST_OWL_URI = "test/sample_data/pizza.owl";
+	private final static String TEST_OWL_URI = "test/sample_data/pizza.owl.pprj";
 
 	private static final Log log = LogFactory
 			.getLog(OntologyRetrievalManagerWrapperProtegeImpl.class);
@@ -97,7 +97,7 @@ public class OntologyRetrievalManagerWrapperProtegeImpl extends
 		 * break; }
 		 */
 		if (oThing != null) {
-			return createClassBean(oThing);
+			return createClassBean(oThing,true);
 		}
 
 		return null;
@@ -115,7 +115,7 @@ public class OntologyRetrievalManagerWrapperProtegeImpl extends
 		OWLNamedClass owlClass = owlModel.getOWLNamedClass(conceptName);
 
 		if (owlClass != null) {
-			return createClassBean(owlClass);
+			return createClassBean(owlClass,true);
 		}
 
 		return null;
@@ -192,12 +192,15 @@ public class OntologyRetrievalManagerWrapperProtegeImpl extends
 		OWLDatabaseKnowledgeBaseFactory factory = new OWLDatabaseKnowledgeBaseFactory();
 		List errors = new ArrayList();
 
-		Project prj = Project.createNewProject(factory, errors);
+	/*	Project prj = Project.createNewProject(factory, errors);
 		OWLDatabaseKnowledgeBaseFactory.setSources(prj.getSources(),
 				protegeJdbcDriver, protegeJdbcUrl, getTableName(ontologyId),
 				protegeJdbcUsername, protegeJdbcPassword);
 		prj.createDomainKnowledgeBase(factory, errors, true);
-
+	*/
+		
+		Project prj = Project.loadProjectFromFile(TEST_OWL_URI, new ArrayList());
+		
 		OWLModel owlModel = (OWLModel) prj.getKnowledgeBase();
 
 		return owlModel;
@@ -247,7 +250,19 @@ public class OntologyRetrievalManagerWrapperProtegeImpl extends
 	// }
 	//
 
-	private ClassBean createClassBean(Cls pConcept) {
+	
+	private Collection<ClassBean> convertClasses(Collection<Cls> clsbeans,boolean recursive){
+		
+		Collection<ClassBean> beans = new ArrayList<ClassBean>();
+		
+		for (Cls cls : clsbeans) {
+			beans.add(createClassBean(cls,recursive));
+		}
+		return beans;
+		
+	}
+	
+	private ClassBean createClassBean(Cls pConcept,boolean recursive) {
 		ClassBean classBean = new ClassBean();
 		classBean.setId(pConcept.getName());
 		classBean.setLabel(pConcept.getName());
@@ -256,70 +271,43 @@ public class OntologyRetrievalManagerWrapperProtegeImpl extends
 		Collection<Slot> slots = pConcept.getOwnSlots();
 		classBean.addRelations(convertProperties(slots));
 
-		// add subclasses
-		// if OWLNamedClass, then use getNamedSubclasses/Superclasses,
-		// else use getDirectSubclasses/Superclasses (cast to Collection<Cls>)
-		Collection<Cls> subclasses;
-		Collection<Cls> superclasses;
+		
+		if(recursive){
+			// add subclasses
+			// if OWLNamedClass, then use getNamedSubclasses/Superclasses,
+			// else use getDirectSubclasses/Superclasses (cast to Collection<Cls>)
+			Collection<Cls> subclasses;
+			Collection<Cls> superclasses;
+	
+			if (pConcept instanceof OWLNamedClass) {
+				subclasses = ((OWLNamedClass) pConcept).getNamedSubclasses(false);
+			} else {
+				subclasses = pConcept.getDirectSubclasses();
+			}
+			
+			classBean.addRelation(ApplicationConstants.SUB_CLASS, convertClasses(subclasses,false));
+	
+			// add superclasses
+			if (pConcept instanceof OWLNamedClass) {
+				superclasses = ((OWLNamedClass) pConcept)
+						.getNamedSuperclasses(false);
+			} else {
+				superclasses = pConcept.getDirectSuperclasses();
+			}
+	
+			classBean.addRelation(ApplicationConstants.SUPER_CLASS, convertClasses(superclasses,false));
 
-		if (pConcept instanceof OWLNamedClass) {
-			subclasses = ((OWLNamedClass) pConcept).getNamedSubclasses(false);
-		} else {
-			subclasses = pConcept.getDirectSubclasses();
 		}
-
-		classBean.addRelation(ApplicationConstants.SUB_CLASS, subclasses);
-
-		// add superclasses
-		if (pConcept instanceof OWLNamedClass) {
-			superclasses = ((OWLNamedClass) pConcept)
-					.getNamedSuperclasses(false);
-		} else {
-			superclasses = pConcept.getDirectSuperclasses();
-		}
-
-		classBean.addRelation(ApplicationConstants.SUPER_CLASS, superclasses);
-
 		// add RDF type
 		if (pConcept instanceof OWLNamedClass) {
 			classBean.addRelation(ApplicationConstants.RDF_TYPE,
-					convertClasses(((OWLNamedClass) pConcept).getRDFTypes()));
+					convertClasses(((OWLNamedClass) pConcept).getRDFTypes(),false));
 		}
 
 		return classBean;
 	}
 
-	/**
-	 * Converts collection of classes into a list of class bean objects
-	 * 
-	 * @param prClasses
-	 * @return
-	 */
-	private ArrayList<ClassBean> convertClasses(Collection<Cls> prClasses) {
-		ArrayList<ClassBean> bpClasses = new ArrayList<ClassBean>();
-
-		for (Cls prSubclass : prClasses) {
-			ClassBean bpSubclass = new ClassBean();
-			String name;
-
-			// if instanceof OWLNamedClass (check w Tanya getLocalName vs
-			// getQualifiedName)
-			if (prSubclass instanceof OWLNamedClass) {
-				name = ((OWLNamedClass) prSubclass).getLocalName();
-			} else {
-				name = prSubclass.getName();
-			}
-
-			bpSubclass.setId(name);
-
-			// if instanceof RDFResource, use getLabel(). If null, use getName()
-			bpSubclass.setLabel(prSubclass.getName());
-			bpClasses.add(bpSubclass);
-		}
-
-		return bpClasses;
-	}
-
+	
 	/**
 	 * Converts collection of slots into a string representation of values
 	 * 
