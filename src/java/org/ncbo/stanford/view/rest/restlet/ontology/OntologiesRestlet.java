@@ -64,8 +64,14 @@ public class OntologiesRestlet extends Restlet {
 		rfu.setSizeMax(10000000);
 		try {
 			List<FileItem> files = rfu.parseRepresentation(request.getEntity());
-			ontologyLoadProcessorService.processOntologyLoad(files.get(0),
-					buildBeanFromForm(form));
+
+			
+			
+			
+//			ontologyLoadProcessorService.processOntologyLoad(files.get(0),
+//					buildBeanFromForm(form));
+			
+			
 		} catch (Exception e) {
 			RequestUtils.setHttpServletResponse(response,
 					Status.CLIENT_ERROR_BAD_REQUEST, MediaType.TEXT_XML,
