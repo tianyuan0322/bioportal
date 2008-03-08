@@ -228,6 +228,7 @@ CREATE TABLE `ncbo_ontology_metadata` (
   `documentation` varchar(2048) default NULL,
   `publication` varchar(2048) default NULL,
   `urn` varchar(512) default NULL,
+  `coding_scheme` varchar(256) default NULL,
   `is_foundry` tinyint(1) NOT NULL,
   PRIMARY KEY  (`id`),
   KEY `ontology_id` (`ontology_version_id`),
@@ -256,9 +257,11 @@ CREATE TABLE `ncbo_ontology_version` (
   PRIMARY KEY  (`id`),
   KEY `parent_id` (`parent_id`),
   KEY `ncbo_ontology_fk_new` (`user_id`),
+  KEY `FK_ncbo_ontology_version_status_id` (`status_id`),
   CONSTRAINT `FK_ncbo_ontology_ncbo_ontology_new` FOREIGN KEY (`parent_id`) REFERENCES `ncbo_ontology_version` (`id`),
-  CONSTRAINT `FK_ncbo_ontology_ncbo_user` FOREIGN KEY (`user_id`) REFERENCES `ncbo_user` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=15817 DEFAULT CHARSET=latin1 CHECKSUM=1 DELAY_KEY_WRITE=1 ROW_FORMAT=DYNAMIC;
+  CONSTRAINT `FK_ncbo_ontology_ncbo_user` FOREIGN KEY (`user_id`) REFERENCES `ncbo_user` (`id`),
+  CONSTRAINT `FK_ncbo_ontology_version_status_id` FOREIGN KEY (`status_id`) REFERENCES `ncbo_l_status` (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=15826 DEFAULT CHARSET=latin1 CHECKSUM=1 DELAY_KEY_WRITE=1 ROW_FORMAT=DYNAMIC;
 
 /*Table structure for table `ncbo_seq_ontology_id` */
 
