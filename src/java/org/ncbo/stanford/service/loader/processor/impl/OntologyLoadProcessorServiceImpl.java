@@ -1,11 +1,7 @@
 package org.ncbo.stanford.service.loader.processor.impl;
 
-import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
 
-import org.apache.commons.fileupload.FileItem;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.ncbo.stanford.bean.OntologyBean;
@@ -25,6 +21,7 @@ import org.ncbo.stanford.domain.generated.NcboOntologyVersion;
 import org.ncbo.stanford.domain.generated.NcboUser;
 import org.ncbo.stanford.enumeration.StatusEnum;
 import org.ncbo.stanford.service.loader.processor.OntologyLoadProcessorService;
+import org.ncbo.stanford.util.filehandler.FileHandler;
 
 /**
  * Class to handle ontology uploads. Adds/updates all appropriate records in the
@@ -55,8 +52,8 @@ public class OntologyLoadProcessorServiceImpl implements
 	 * @param ontologyBean
 	 * @throws IOException
 	 */
-	public void processOntologyLoad(FileItem ontologyFile,
-			OntologyBean ontologyBean) throws IOException {
+	public void processOntologyLoad(FileHandler ontologyFile,
+			OntologyBean ontologyBean) throws Exception {
 		NcboOntologyVersion ontologyVersion = new NcboOntologyVersion();
 		Integer ontologyId = ontologyBean.getId();
 
@@ -67,9 +64,13 @@ public class OntologyLoadProcessorServiceImpl implements
 			ontologyVersion.setOntologyId(ontologyId);
 		}
 
-		NcboOntologyVersion parentOntology = new NcboOntologyVersion();
-		parentOntology.setId(ontologyBean.getParentId());
-		ontologyVersion.setNcboOntologyVersion(parentOntology);
+		Integer parentId = ontologyBean.getParentId();
+
+		if (parentId != null) {
+			NcboOntologyVersion parentOntology = new NcboOntologyVersion();
+			parentOntology.setId(parentId);
+			ontologyVersion.setNcboOntologyVersion(parentOntology);
+		}
 
 		NcboUser ncboUser = new NcboUser();
 		ncboUser.setId(ontologyBean.getUserId());
@@ -88,7 +89,8 @@ public class OntologyLoadProcessorServiceImpl implements
 		ontologyVersion.setIsReviewed(ontologyBean.getIsReviewed());
 		ontologyVersion.setDateCreated(ontologyBean.getDateCreated());
 		ontologyVersion.setDateReleased(ontologyBean.getDateReleased());
-		ontologyVersion.setFilePath(getOntologyDirPath(ontologyVersion));
+		ontologyVersion.setFilePath(ontologyFile.getOntologyDirPath(
+				ontologyFilePath, ontologyVersion));
 
 		NcboLStatus status = new NcboLStatus();
 		status.setId(StatusEnum.STATUS_WAITING.getStatus());
@@ -96,7 +98,7 @@ public class OntologyLoadProcessorServiceImpl implements
 		NcboOntologyVersion newOntologyVersion = ncboOntologyVersionDAO
 				.saveOntologyVersion(ontologyVersion);
 
-		processOntologyFileUpload(ontologyVersion, ontologyFile);
+		ontologyFile.processOntologyFileUpload(ontologyFilePath, ontologyVersion);
 
 		NcboOntologyMetadata metadata = new NcboOntologyMetadata();
 		metadata.setContactEmail(ontologyBean.getContactEmail());
@@ -130,37 +132,6 @@ public class OntologyLoadProcessorServiceImpl implements
 		loadQueue.setNcboOntologyVersion(newOntologyVersion);
 		loadQueue.setNcboLStatus(status);
 		ncboOntologyLoadQueueDAO.save(loadQueue);
-	}
-
-	private void processOntologyFileUpload(NcboOntologyVersion ontologyVersion,
-			FileItem ontologyFile) throws IOException {
-		File outputDirectories = new File(getOntologyDirPath(ontologyVersion));
-		outputDirectories.mkdirs();
-
-		File outputFile = new File(getOntologyFilePath(ontologyVersion,
-				ontologyFile.getName()));
-		outputFile.createNewFile();
-
-		FileOutputStream outputStream = new FileOutputStream(outputFile);
-		InputStream inputStream = ontologyFile.getInputStream();
-		int c;
-
-		while ((c = inputStream.read()) != -1) {
-			outputStream.write(c);
-		}
-
-		inputStream.close();
-		outputStream.close();
-	}
-
-	private String getOntologyFilePath(NcboOntologyVersion ontologyVersion,
-			String filename) {
-		return getOntologyDirPath(ontologyVersion) + "/" + filename;
-	}
-
-	private String getOntologyDirPath(NcboOntologyVersion ontologyVersion) {
-		return ontologyFilePath + "/" + ontologyVersion.getOntologyId() + "/"
-				+ ontologyVersion.getInternalVersionNumber();
 	}
 
 	/**
