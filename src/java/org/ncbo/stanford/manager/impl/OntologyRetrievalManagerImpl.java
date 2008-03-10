@@ -12,6 +12,7 @@ import org.ncbo.stanford.bean.concept.ClassBean;
 import org.ncbo.stanford.domain.custom.dao.CustomNcboOntologyVersionDAO;
 import org.ncbo.stanford.domain.custom.entity.NcboOntology;
 import org.ncbo.stanford.manager.OntologyRetrievalManager;
+import org.ncbo.stanford.manager.wrapper.OntologyLoadManagerWrapper;
 import org.ncbo.stanford.manager.wrapper.OntologyRetrievalManagerWrapper;
 
 /**
@@ -30,6 +31,7 @@ public class OntologyRetrievalManagerImpl implements OntologyRetrievalManager {
 			.getLog(OntologyRetrievalManagerImpl.class);
 
 	private CustomNcboOntologyVersionDAO ncboOntologyVersionDAO;
+	private Map<String, String> ontologyFormatHandlerMap = new HashMap<String, String>();
 	private Map<String, OntologyRetrievalManagerWrapper> ontologyRetrievalHandlerMap = new HashMap<String, OntologyRetrievalManagerWrapper>();
 
 	/**
@@ -87,12 +89,18 @@ public class OntologyRetrievalManagerImpl implements OntologyRetrievalManager {
 	/**
 	 * Get the root concept for the specified ontology.
 	 */
-	public ClassBean getRootConcept(Integer ontologyId) {
-		return null;
+	public ClassBean findRootConcept(Integer ontologyId) {
+		
+		NcboOntology ontology = ncboOntologyVersionDAO.findOntologyVersion(ontologyId);
+		String formatHandler = ontologyFormatHandlerMap.get(ontology.getFormat());		
+		OntologyRetrievalManagerWrapper wrapper = ontologyRetrievalHandlerMap.get(formatHandler);
+		return wrapper.findRootConcept(ontologyId);		
 	}
 
 	public ClassBean findConcept(String conceptID, Integer ontologyId) {
-		return null;
+		NcboOntology ontology = ncboOntologyVersionDAO.findOntologyVersion(ontologyId);
+		OntologyRetrievalManagerWrapper wrapper = ontologyRetrievalHandlerMap.get(ontology.getFormat());
+		return wrapper.findConcept(conceptID,ontologyId);	
 	}
 
 	public ArrayList<ClassBean> findPathToRoot(String id, Integer ontologyId) {
@@ -169,6 +177,22 @@ public class OntologyRetrievalManagerImpl implements OntologyRetrievalManager {
 	public void setOntologyRetrievalHandlerMap(
 			Map<String, OntologyRetrievalManagerWrapper> ontologyRetrievalHandlerMap) {
 		this.ontologyRetrievalHandlerMap = ontologyRetrievalHandlerMap;
+	}
+	
+	/**
+	 * @return the ontologyFormatHandlerMap
+	 */
+	public Map<String, String> getOntologyFormatHandlerMap() {
+		return ontologyFormatHandlerMap;
+	}
+
+	/**
+	 * @param ontologyFormatHandlerMap
+	 *            the ontologyFormatHandlerMap to set
+	 */
+	public void setOntologyFormatHandlerMap(
+			Map<String, String> ontologyFormatHandlerMap) {
+		this.ontologyFormatHandlerMap = ontologyFormatHandlerMap;
 	}
 
 	//

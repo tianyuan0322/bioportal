@@ -21,7 +21,7 @@ public interface ConceptService {
 	
 	
 	
-	
+	public ClassBean findRoot(int ontologyId);
 	
 	
 	public ClassBean findConcept(String id, int ontologyId);

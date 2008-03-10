@@ -77,7 +77,7 @@ public class OntologyRetrievalManagerWrapperLexGridImpl extends
 	/**
 	 * Get the root concept for the specified ontology.
 	 */
-	public ClassBean getRootConcept(Integer ontologyId) {
+	public ClassBean findRootConcept(Integer ontologyId) {
 		return new ClassBean();
 	}
 

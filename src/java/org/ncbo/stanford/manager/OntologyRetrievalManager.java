@@ -44,7 +44,7 @@ public interface OntologyRetrievalManager {
 	// 
 	// Concept methods
 	//
-	public ClassBean getRootConcept(Integer ontologyId);
+	public ClassBean findRootConcept(Integer ontologyId);
 	
 	public ClassBean findConcept(String id, Integer ontologyId);
 

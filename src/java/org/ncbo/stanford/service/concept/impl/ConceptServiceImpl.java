@@ -47,6 +47,9 @@ public class ConceptServiceImpl implements ConceptService {
 		return cb;
 	}
 	
+	public ClassBean findRoot(int ontologyId){
+		return ontologyRetrievalManager.findRootConcept(ontologyId);
+	}
 	
 	
 	

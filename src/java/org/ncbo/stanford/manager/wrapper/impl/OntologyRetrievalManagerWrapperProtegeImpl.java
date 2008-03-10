@@ -77,7 +77,7 @@ public class OntologyRetrievalManagerWrapperProtegeImpl extends
 	/**
 	 * Get the root concept for the specified ontology.
 	 */
-	public ClassBean getRootConcept(Integer ontologyId) {
+	public ClassBean findRootConcept(Integer ontologyId) {
 		OWLModel owlModel = this.getOWLModel(ontologyId);
 
 		// Get all root nodes associated with this ontology. Then iterate
