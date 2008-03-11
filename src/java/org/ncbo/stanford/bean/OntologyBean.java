@@ -30,6 +30,7 @@ public class OntologyBean {
 	private String documentation;
 	private String publication;
 	private String urn;
+	private String codingScheme;
 	private Byte isFoundry;
 	private List<Integer> categoryIds = new ArrayList<Integer>(0);
 	private List<String> filenames = new ArrayList<String>(0);
@@ -62,6 +63,7 @@ public class OntologyBean {
 		this.setDocumentation(ncboOntology.getDocumentation());
 		this.setPublication(ncboOntology.getPublication());
 		this.setUrn(ncboOntology.getUrn());
+		this.setCodingScheme(ncboOntology.getCodingScheme());
 		this.setIsFoundry(ncboOntology.getIsFoundry());
 		
 		addFilenames(ncboOntology.getFilenames());		
@@ -456,4 +458,20 @@ public class OntologyBean {
 	public void setFilenames(List<String> filenames) {
 		this.filenames = filenames;
 	}
+
+	/**
+	 * @return the codingScheme
+	 */
+	public String getCodingScheme() {
+		return codingScheme;
+	}
+
+	/**
+	 * @param codingScheme the codingScheme to set
+	 */
+	public void setCodingScheme(String codingScheme) {
+		this.codingScheme = codingScheme;
+	}
+
+
 }

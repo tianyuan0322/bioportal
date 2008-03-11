@@ -384,6 +384,9 @@
 	<bean id="abstractOntologyManagerWrapperLexGrid"
 		class="org.ncbo.stanford.manager.wrapper.AbstractOntologyManagerWrapperLexGrid"
 		abstract="true">
+		<property name="ncboOntologyVersionDAO">
+			<ref bean="NcboOntologyVersionDAO" />
+		</property>
 	</bean>
 
 	<bean id="abstractOntologyManagerWrapperProtege"
@@ -425,6 +428,9 @@
 	<bean id="ontologyLoadManagerWrapperLexGrid"
 		class="org.ncbo.stanford.manager.wrapper.impl.OntologyLoadManagerWrapperLexGridImpl"
 		parent="abstractOntologyManagerWrapperLexGrid">
+		<property name="ncboOntologyMetadataDAO">
+			<ref bean="NcboOntologyMetadataDAO" />
+		</property>
 	</bean>
 
 	<bean id="ontologyLoadManagerWrapperProtege"

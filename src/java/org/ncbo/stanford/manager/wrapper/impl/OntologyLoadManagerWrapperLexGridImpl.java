@@ -40,6 +40,11 @@ import org.LexGrid.LexBIG.Utility.Constructors;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.ncbo.stanford.bean.OntologyBean;
+import org.ncbo.stanford.domain.custom.dao.CustomNcboOntologyMetadataDAO;
+import org.ncbo.stanford.domain.custom.dao.CustomNcboOntologyVersionDAO;
+import org.ncbo.stanford.domain.custom.entity.NcboOntology;
+import org.ncbo.stanford.domain.generated.NcboOntologyMetadata;
+import org.ncbo.stanford.domain.generated.NcboOntologyVersion;
 import org.ncbo.stanford.manager.wrapper.AbstractOntologyManagerWrapperLexGrid;
 import org.ncbo.stanford.manager.wrapper.OntologyLoadManagerWrapper;
 import org.ncbo.stanford.util.constants.ApplicationConstants;
@@ -51,6 +56,9 @@ public class OntologyLoadManagerWrapperLexGridImpl extends
 			.getLog(OntologyLoadManagerWrapperLexGridImpl.class);
 
 	private String targetTerminologies;
+	
+	private CustomNcboOntologyMetadataDAO ncboOntologyMetadataDAO;	
+	
 
 	/**
 	 * A comma delimited list of UMLS terminologies to load. If null, all
@@ -81,14 +89,14 @@ public class OntologyLoadManagerWrapperLexGridImpl extends
 
 		URI source = ontologyUri;
 
-		// Find the registered extension handling this type of load ...
-		LexBIGService lbs = new LexBIGServiceImpl();
+		// Get the LexBIGService
+		LexBIGService lbs = LexBIGServiceImpl.defaultInstance();
 		LexBIGServiceManager lbsm = lbs.getServiceManager(null);
 
 		// remove existing scheme if it exists before parsing...
 
-		CodingSchemeRendering csRendering = getCodingSchemeRendering(ontology_bean
-				.getUrn());
+		CodingSchemeRendering csRendering = getCodingSchemeRendering(lbs, ontology_bean
+				.getCodingScheme());
 		if (csRendering != null) {
 			AbsoluteCodingSchemeVersionReference acsvr = Constructors
 					.createAbsoluteCodingSchemeVersionReference(csRendering
@@ -96,7 +104,10 @@ public class OntologyLoadManagerWrapperLexGridImpl extends
 			lbsm.deactivateCodingSchemeVersion(acsvr, null);
 
 			lbsm.removeCodingSchemeVersion(acsvr);
-			ontology_bean.setUrn(null);
+			ontology_bean.setCodingScheme(null);
+			NcboOntologyMetadata ncboMetadata=  ncboOntologyMetadataDAO.findById(ontology_bean.getId());
+			ncboMetadata.setCodingScheme(null);
+			ncboOntologyMetadataDAO.save(ncboMetadata);
 
 		}
 		Loader loader = null;
@@ -135,7 +146,7 @@ public class OntologyLoadManagerWrapperLexGridImpl extends
 			// Load only NCI Thesaurus for now.
 			if (ontology_bean.getFilePath() != null
 					&& ontology_bean.getFilePath().indexOf("Thesaurus") >= 0) {
-				((OWL_Loader) loader).loadNCIThes(source, null, stopOnErrors,
+				((OWL_Loader) loader).loadNCI(source, null, false, stopOnErrors,
 						async);
 			} else
 				((OWL_Loader) loader).load(source, null, stopOnErrors, async);
@@ -161,7 +172,11 @@ public class OntologyLoadManagerWrapperLexGridImpl extends
 				urn = ref.getCodingSchemeURN();
 				version = ref.getCodingSchemeVersion();
 			}
-			ontology_bean.setUrn(urn + "|" + version);
+			
+			//Update the NCBO Metadata table with the unique LexGrid url and version for the ontology
+			NcboOntologyMetadata ncboMetadata=  ncboOntologyMetadataDAO.findById(ontology_bean.getId());
+			ncboMetadata.setCodingScheme(urn + "|" + version);
+			ncboOntologyMetadataDAO.save(ncboMetadata);
 
 		} else {
 			if (status.getErrorsLogged().booleanValue()) {
@@ -198,6 +213,20 @@ public class OntologyLoadManagerWrapperLexGridImpl extends
 		}
 
 		return lnl;
+	}
+
+	/**
+	 * @return the ncboOntologyMetadataDAO
+	 */
+	public CustomNcboOntologyMetadataDAO getNcboOntologyMetadataDAO() {
+		return ncboOntologyMetadataDAO;
+	}
+
+	/**
+	 * @param ncboOntologyMetadataDAO the ncboOntologyMetadataDAO to set
+	 */
+	public void setNcboOntologyMetadataDAO(CustomNcboOntologyMetadataDAO ncboOntologyMetadataDAO) {
+		this.ncboOntologyMetadataDAO = ncboOntologyMetadataDAO;
 	}
 
 }
