@@ -6,8 +6,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-import junit.framework.TestCase;
-
+import org.ncbo.stanford.AbstractBioPortalTest;
 import org.ncbo.stanford.manager.wrapper.impl.OntologyLoadManagerWrapperProtegeImpl;
 
 import edu.stanford.smi.protege.model.Project;
@@ -20,11 +19,12 @@ import edu.stanford.smi.protegex.owl.model.OWLModel;
 import edu.stanford.smi.protegex.owl.model.OWLNamedClass;
 
 /**
- * Tests loading ontologies into Protege using the OntologyLoadManagerWrapperProtegeImpl
+ * Tests loading ontologies into Protege using the
+ * OntologyLoadManagerWrapperProtegeImpl
  * 
  * @author Benjamin Dai
  */
-public class OntologyLoaderProtegeImplTest extends TestCase {
+public class OntologyLoaderProtegeImplTest extends AbstractBioPortalTest {
 
 	private final static String JDBC_DRIVER = "com.mysql.jdbc.Driver";
 	private final static String DB_URL = "jdbc:mysql://localhost/protege";
@@ -70,13 +70,12 @@ public class OntologyLoaderProtegeImplTest extends TestCase {
 		File ontFile = new File(TEST_OWL_URI);
 		ontLoader.setProtegeTablePrefix("protegetest");
 		ontLoader.setProtegeTableSuffix("pizza");
-		
 
 		ontLoader.setProtegeJdbcDriver(JDBC_DRIVER);
 		ontLoader.setProtegeJdbcUrl(DB_URL);
 		ontLoader.setProtegeJdbcUsername(PROTEGE_USER);
 		ontLoader.setProtegeJdbcPassword(PROTEGE_PASSWORD);
-		
+
 		ontLoader.setProtegeBigFileThreshold(TEST_NOT_STREAM_SIZE);
 
 		try {
@@ -88,7 +87,7 @@ public class OntologyLoaderProtegeImplTest extends TestCase {
 		}
 	}
 
-	// Streaming  load of Pizza Ontology - Much slower than the non-streaming
+	// Streaming load of Pizza Ontology - Much slower than the non-streaming
 
 	public void testStreamPizzaLoad() {
 		System.out.println("Starting testStreamPizzaLoad");
@@ -102,7 +101,7 @@ public class OntologyLoaderProtegeImplTest extends TestCase {
 		ontLoader.setProtegeJdbcUrl(DB_URL);
 		ontLoader.setProtegeJdbcUsername(PROTEGE_USER);
 		ontLoader.setProtegeJdbcPassword(PROTEGE_PASSWORD);
-		
+
 		// Set a size that causes the loader to use streaming load
 		ontLoader.setProtegeBigFileThreshold(TEST_STREAM_SIZE);
 
@@ -114,7 +113,6 @@ public class OntologyLoaderProtegeImplTest extends TestCase {
 			fail("Pizza load failed: " + exc.getMessage());
 		}
 	}
-
 
 	// Testing Protege api with ontology queries to verify validity.
 	public void testBasicPizzaNonStreamingLoad() {

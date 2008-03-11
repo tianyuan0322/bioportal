@@ -2,19 +2,18 @@ package org.ncbo.stanford.manager.impl;
 
 import java.io.File;
 
-import junit.framework.TestCase;
-
+import org.ncbo.stanford.AbstractBioPortalTest;
 import org.ncbo.stanford.bean.OntologyBean;
 import org.ncbo.stanford.manager.wrapper.impl.OntologyLoadManagerWrapperLexGridImpl;
 import org.ncbo.stanford.util.constants.ApplicationConstants;
 
 /**
- * Tests loading ontologies into LexGrid using the OntologyLoadManagerWrapperLexGridImpl
+ * Tests loading ontologies into LexGrid using the
+ * OntologyLoadManagerWrapperLexGridImpl
  * 
  * @author Pradip Kanjamala
  */
-public class OntologyLoaderLexGridImplTest extends TestCase {
-
+public class OntologyLoaderLexGridImplTest extends AbstractBioPortalTest {
 
 	// Test ontology URIs
 	private final static String TEST_OWL_PATHNAME = "test/sample_data/pizza.owl";
@@ -26,51 +25,46 @@ public class OntologyLoaderLexGridImplTest extends TestCase {
 	private final static String TEST_UMLS_PATHNAME = "test/sample_data/sampleUMLS-AIR";
 	private final static String TEST_UMLS_URN_VERSION = "urn:oid:2.16.840.1.113883.6.110|1993.bvt";
 
-	OntologyLoadManagerWrapperLexGridImpl loadManagerLexGrid= new OntologyLoadManagerWrapperLexGridImpl();
-   
- 
-   public void testLoadObo() throws Exception
-   {
-       OntologyBean ontology_bean = new OntologyBean();
-       ontology_bean.setFormat(ApplicationConstants.FORMAT_OBO);
-       ontology_bean.setUrn(TEST_OBO_URN_VERSION);
-       loadManagerLexGrid.loadOntology(new File(TEST_OBO_PATHNAME).toURI(), ontology_bean);
-       assertTrue(ontology_bean.getUrn()!= null);
-   }    
-   
- 
-   
-   public void testLoadGenericOwl() throws  Exception
-   {
-      OntologyBean ontology_bean = new OntologyBean();
-      ontology_bean.setFormat(ApplicationConstants.FORMAT_OWL_DL);
-      ontology_bean.setUrn(TEST_OWL_URN_VERSION);
-      loadManagerLexGrid.loadOntology(new File(TEST_OWL_PATHNAME).toURI(), ontology_bean);
-      assertTrue(ontology_bean.getUrn()!= null);
+	OntologyLoadManagerWrapperLexGridImpl loadManagerLexGrid = new OntologyLoadManagerWrapperLexGridImpl();
 
-   }
-   
- 
-   public void testLoadLexGridXML() throws  Exception
-   {
-      OntologyBean ontology_bean = new OntologyBean();
-      ontology_bean.setFormat(ApplicationConstants.FORMAT_LEXGRID_XML);
-      ontology_bean.setUrn(TEST_LEXGRID_XML_URN_VERSION);
-      loadManagerLexGrid.loadOntology(new File(TEST_LEXGRID_XML_PATHNAME).toURI(), ontology_bean);
-      assertTrue(ontology_bean.getUrn()!= null);
+	public void testLoadObo() throws Exception {
+		OntologyBean ontology_bean = new OntologyBean();
+		ontology_bean.setFormat(ApplicationConstants.FORMAT_OBO);
+		ontology_bean.setUrn(TEST_OBO_URN_VERSION);
+		loadManagerLexGrid.loadOntology(new File(TEST_OBO_PATHNAME).toURI(),
+				ontology_bean);
+		assertTrue(ontology_bean.getUrn() != null);
+	}
 
-   }
-   
-   public void testLoadUMLS() throws Exception
-   {
-         OntologyBean ontology_bean = new OntologyBean();
-         ontology_bean.setFormat(ApplicationConstants.FORMAT_UMLS_RRF);
-         ontology_bean.setUrn(TEST_UMLS_URN_VERSION);
-         loadManagerLexGrid.setTargetTerminologies("AIR");
-         loadManagerLexGrid.loadOntology(new File(TEST_UMLS_PATHNAME).toURI(), ontology_bean);
-         assertTrue(ontology_bean.getUrn()!= null);
+	public void testLoadGenericOwl() throws Exception {
+		OntologyBean ontology_bean = new OntologyBean();
+		ontology_bean.setFormat(ApplicationConstants.FORMAT_OWL_DL);
+		ontology_bean.setUrn(TEST_OWL_URN_VERSION);
+		loadManagerLexGrid.loadOntology(new File(TEST_OWL_PATHNAME).toURI(),
+				ontology_bean);
+		assertTrue(ontology_bean.getUrn() != null);
 
-   }
+	}
 
+	public void testLoadLexGridXML() throws Exception {
+		OntologyBean ontology_bean = new OntologyBean();
+		ontology_bean.setFormat(ApplicationConstants.FORMAT_LEXGRID_XML);
+		ontology_bean.setUrn(TEST_LEXGRID_XML_URN_VERSION);
+		loadManagerLexGrid.loadOntology(new File(TEST_LEXGRID_XML_PATHNAME)
+				.toURI(), ontology_bean);
+		assertTrue(ontology_bean.getUrn() != null);
+
+	}
+
+	public void testLoadUMLS() throws Exception {
+		OntologyBean ontology_bean = new OntologyBean();
+		ontology_bean.setFormat(ApplicationConstants.FORMAT_UMLS_RRF);
+		ontology_bean.setUrn(TEST_UMLS_URN_VERSION);
+		loadManagerLexGrid.setTargetTerminologies("AIR");
+		loadManagerLexGrid.loadOntology(new File(TEST_UMLS_PATHNAME).toURI(),
+				ontology_bean);
+		assertTrue(ontology_bean.getUrn() != null);
+
+	}
 
 }
