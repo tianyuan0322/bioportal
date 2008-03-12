@@ -193,7 +193,7 @@ CREATE TABLE `ncbo_ontology_file` (
   UNIQUE KEY `ind_ontology_id_filename` (`ontology_version_id`,`filename`),
   KEY `ontology_id_2` (`ontology_version_id`),
   CONSTRAINT `FK_ncbo_ontology_file_ncbo_ontology_version` FOREIGN KEY (`ontology_version_id`) REFERENCES `ncbo_ontology_version` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=15818 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=15819 DEFAULT CHARSET=latin1;
 
 /*Table structure for table `ncbo_ontology_load_queue` */
 
@@ -211,7 +211,7 @@ CREATE TABLE `ncbo_ontology_load_queue` (
   KEY `FK_ncbo_ontology_load_queue_status_id` (`status_id`),
   CONSTRAINT `FK_ncbo_ontology_load_queue_ontology_version_id` FOREIGN KEY (`ontology_version_id`) REFERENCES `ncbo_ontology_version` (`id`),
   CONSTRAINT `FK_ncbo_ontology_load_queue_status_id` FOREIGN KEY (`status_id`) REFERENCES `ncbo_l_status` (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=latin1;
 
 /*Table structure for table `ncbo_ontology_metadata` */
 
@@ -230,10 +230,11 @@ CREATE TABLE `ncbo_ontology_metadata` (
   `urn` varchar(512) default NULL,
   `coding_scheme` varchar(256) default NULL,
   `is_foundry` tinyint(1) NOT NULL,
+  `target_terminologies` varchar(256) default NULL,
   PRIMARY KEY  (`id`),
   KEY `ontology_id` (`ontology_version_id`),
   CONSTRAINT `FK_ncbo_ontology_metadata_ncbo_ontology_version` FOREIGN KEY (`ontology_version_id`) REFERENCES `ncbo_ontology_version` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=172 DEFAULT CHARSET=latin1 CHECKSUM=1 DELAY_KEY_WRITE=1 ROW_FORMAT=DYNAMIC;
+) ENGINE=InnoDB AUTO_INCREMENT=173 DEFAULT CHARSET=latin1 CHECKSUM=1 DELAY_KEY_WRITE=1 ROW_FORMAT=DYNAMIC;
 
 /*Table structure for table `ncbo_ontology_version` */
 
@@ -261,7 +262,7 @@ CREATE TABLE `ncbo_ontology_version` (
   CONSTRAINT `FK_ncbo_ontology_ncbo_ontology_new` FOREIGN KEY (`parent_id`) REFERENCES `ncbo_ontology_version` (`id`),
   CONSTRAINT `FK_ncbo_ontology_ncbo_user` FOREIGN KEY (`user_id`) REFERENCES `ncbo_user` (`id`),
   CONSTRAINT `FK_ncbo_ontology_version_status_id` FOREIGN KEY (`status_id`) REFERENCES `ncbo_l_status` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=15826 DEFAULT CHARSET=latin1 CHECKSUM=1 DELAY_KEY_WRITE=1 ROW_FORMAT=DYNAMIC;
+) ENGINE=InnoDB AUTO_INCREMENT=15831 DEFAULT CHARSET=latin1 CHECKSUM=1 DELAY_KEY_WRITE=1 ROW_FORMAT=DYNAMIC;
 
 /*Table structure for table `ncbo_seq_ontology_id` */
 
