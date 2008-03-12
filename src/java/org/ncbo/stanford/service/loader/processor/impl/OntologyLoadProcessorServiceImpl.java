@@ -1,6 +1,7 @@
 package org.ncbo.stanford.service.loader.processor.impl;
 
 import java.io.IOException;
+import java.util.Calendar;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -22,6 +23,7 @@ import org.ncbo.stanford.domain.generated.NcboUser;
 import org.ncbo.stanford.enumeration.StatusEnum;
 import org.ncbo.stanford.service.loader.processor.OntologyLoadProcessorService;
 import org.ncbo.stanford.util.filehandler.FileHandler;
+import org.springframework.transaction.annotation.Transactional;
 
 /**
  * Class to handle ontology uploads. Adds/updates all appropriate records in the
@@ -31,6 +33,7 @@ import org.ncbo.stanford.util.filehandler.FileHandler;
  * @author Michael Dorf
  * 
  */
+@Transactional
 public class OntologyLoadProcessorServiceImpl implements
 		OntologyLoadProcessorService {
 
@@ -52,6 +55,7 @@ public class OntologyLoadProcessorServiceImpl implements
 	 * @param ontologyBean
 	 * @throws IOException
 	 */
+	@Transactional (rollbackFor = IOException.class)
 	public void processOntologyLoad(FileHandler ontologyFile,
 			OntologyBean ontologyBean) throws Exception {
 		NcboOntologyVersion ontologyVersion = new NcboOntologyVersion();
@@ -89,8 +93,9 @@ public class OntologyLoadProcessorServiceImpl implements
 		ontologyVersion.setIsReviewed(ontologyBean.getIsReviewed());
 		ontologyVersion.setDateCreated(ontologyBean.getDateCreated());
 		ontologyVersion.setDateReleased(ontologyBean.getDateReleased());
-		ontologyVersion.setFilePath(ontologyFile.getOntologyDirPath(
-				ontologyFilePath, ontologyVersion));
+
+		ontologyVersion.setFilePath(ontologyFile
+				.getOntologyDirPath(ontologyVersion));
 
 		NcboLStatus status = new NcboLStatus();
 		status.setId(StatusEnum.STATUS_WAITING.getStatus());
@@ -98,7 +103,8 @@ public class OntologyLoadProcessorServiceImpl implements
 		NcboOntologyVersion newOntologyVersion = ncboOntologyVersionDAO
 				.saveOntologyVersion(ontologyVersion);
 
-		ontologyFile.processOntologyFileUpload(ontologyFilePath, ontologyVersion);
+		ontologyFile.processOntologyFileUpload(ontologyFilePath,
+				ontologyVersion);
 
 		NcboOntologyMetadata metadata = new NcboOntologyMetadata();
 		metadata.setContactEmail(ontologyBean.getContactEmail());
@@ -131,6 +137,7 @@ public class OntologyLoadProcessorServiceImpl implements
 		NcboOntologyLoadQueue loadQueue = new NcboOntologyLoadQueue();
 		loadQueue.setNcboOntologyVersion(newOntologyVersion);
 		loadQueue.setNcboLStatus(status);
+		loadQueue.setDateCreated(Calendar.getInstance().getTime());
 		ncboOntologyLoadQueueDAO.save(loadQueue);
 	}
 
