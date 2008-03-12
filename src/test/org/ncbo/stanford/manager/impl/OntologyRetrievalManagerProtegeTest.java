@@ -22,7 +22,7 @@ public class OntologyRetrievalManagerProtegeTest extends AbstractBioPortalTest {
 				.getBean("ontologyRetrievalManagerWrapperProtege",
 						OntologyRetrievalManagerWrapper.class);
 
-		ClassBean conceptBean = ocMgr.findRootConcept(TEST_ONT_ID);
+		ClassBean conceptBean = ocMgr.findRootConcept(TEST_ONT_ID).get(0);
 
 		System.out.println("ROOT");
 
@@ -43,8 +43,7 @@ public class OntologyRetrievalManagerProtegeTest extends AbstractBioPortalTest {
 		OntologyRetrievalManagerWrapper ocMgr = (OntologyRetrievalManagerWrapper) applicationContext
 				.getBean("ontologyRetrievalManagerWrapperProtege",
 						OntologyRetrievalManagerWrapper.class);
-		ClassBean conceptBean = ocMgr.findConcept(TEST_CONCEPT_NAME,
-				TEST_ONT_ID);
+		ClassBean conceptBean = ocMgr.findConcept(TEST_ONT_ID, TEST_CONCEPT_NAME);
 
 		outputConcept(conceptBean);
 
@@ -63,8 +62,8 @@ public class OntologyRetrievalManagerProtegeTest extends AbstractBioPortalTest {
 		OntologyRetrievalManagerWrapper ocMgr = (OntologyRetrievalManagerWrapper) applicationContext
 				.getBean("ontologyRetrievalManagerWrapperProtege",
 						OntologyRetrievalManagerWrapper.class);
-		ClassBean classBean = ocMgr.findConcept("CheeseyVegetableTopping",
-				TEST_ONT_ID);
+		ClassBean classBean = ocMgr.findConcept(TEST_ONT_ID, "CheeseyVegetableTopping"
+				);
 
 		outputConcept(classBean);
 

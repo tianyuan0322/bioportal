@@ -11,7 +11,7 @@ public class ConceptServiceTest extends AbstractBioPortalTest {
 	public void testfindRoot() {
 		ConceptService service = (ConceptService) applicationContext.getBean(
 				"conceptService", ConceptService.class);
-		ClassBean root = service.findRoot(2854);
+		ClassBean root = service.findRoot(2854).get(0);
 
 		System.out.println("Subclasses");
 		ArrayList<ClassBean> subclasses = (ArrayList<ClassBean>) root
