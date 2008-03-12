@@ -2,17 +2,27 @@ package org.ncbo.stanford.util.filehandler;
 
 import org.ncbo.stanford.domain.generated.NcboOntologyVersion;
 
+/**
+ * An abstract class to contain common functionality for all file handlers
+ * 
+ * @author Michael Dorf
+ * 
+ */
 public abstract class AbstractFileHandler implements FileHandler {
 
 	public String getOntologyFilePath(String ontologyFilePath,
 			NcboOntologyVersion ontologyVersion, String filename) {
-		return getOntologyDirPath(ontologyFilePath, ontologyVersion) + "/"
+		return getFullOntologyDirPath(ontologyFilePath, ontologyVersion) + "/"
 				+ filename;
 	}
 
-	public String getOntologyDirPath(String ontologyFilePath,
+	public String getFullOntologyDirPath(String ontologyFilePath,
 			NcboOntologyVersion ontologyVersion) {
-		return ontologyFilePath + "/" + ontologyVersion.getOntologyId() + "/"
+		return ontologyFilePath + getOntologyDirPath(ontologyVersion);
+	}
+
+	public String getOntologyDirPath(NcboOntologyVersion ontologyVersion) {
+		return "/" + ontologyVersion.getOntologyId() + "/"
 				+ ontologyVersion.getInternalVersionNumber();
 	}
 }
