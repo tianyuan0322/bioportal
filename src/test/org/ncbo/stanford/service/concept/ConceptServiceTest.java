@@ -8,7 +8,7 @@ import org.ncbo.stanford.util.constants.ApplicationConstants;
 
 public class ConceptServiceTest extends AbstractBioPortalTest {
 
-	public void testfindRoot() {
+	public void testfindRoot() throws Exception {
 		ConceptService service = (ConceptService) applicationContext.getBean(
 				"conceptService", ConceptService.class);
 		ClassBean root = service.findRoot(2854).get(0);

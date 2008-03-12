@@ -17,7 +17,7 @@ public class OntologyRetrievalManagerProtegeTest extends AbstractBioPortalTest {
 	private final static String TEST_CONCEPT_ID = "http://www.w3.org/2002/07/owl#Class";
 	private final static String TEST_CONCEPT_NAME = "http://www.co-ode.org/ontologies/pizza/2005/10/18/pizza.owl#Pizza";
 
-	public void testGetRootNode() {
+	public void testGetRootNode() throws Exception {
 		OntologyRetrievalManagerWrapper ocMgr = (OntologyRetrievalManagerWrapper) applicationContext
 				.getBean("ontologyRetrievalManagerWrapperProtege",
 						OntologyRetrievalManagerWrapper.class);
@@ -38,7 +38,7 @@ public class OntologyRetrievalManagerProtegeTest extends AbstractBioPortalTest {
 		}
 	}
 
-	public void PizzaConcept() {
+	public void PizzaConcept() throws Exception {
 		System.out.println("Starting testGetConcept");
 		OntologyRetrievalManagerWrapper ocMgr = (OntologyRetrievalManagerWrapper) applicationContext
 				.getBean("ontologyRetrievalManagerWrapperProtege",
@@ -57,7 +57,7 @@ public class OntologyRetrievalManagerProtegeTest extends AbstractBioPortalTest {
 
 	}
 
-	public void CheeseyVegetablePizzaConcept() {
+	public void CheeseyVegetablePizzaConcept() throws Exception {
 		System.out.println("Starting cheesyvegetablepizza concept");
 		OntologyRetrievalManagerWrapper ocMgr = (OntologyRetrievalManagerWrapper) applicationContext
 				.getBean("ontologyRetrievalManagerWrapperProtege",
