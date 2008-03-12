@@ -3,7 +3,6 @@ package org.ncbo.stanford.service.ontology;
 import java.util.List;
 
 import org.ncbo.stanford.bean.OntologyBean;
-import org.springframework.transaction.annotation.Transactional;
 
 /**
  * Exposes services that provide read and write operations on ontologies
@@ -11,7 +10,6 @@ import org.springframework.transaction.annotation.Transactional;
  * @author Michael Dorf
  * @author Nick Griffith
  */
-@Transactional
 public interface OntologyService {
 
 	/**
