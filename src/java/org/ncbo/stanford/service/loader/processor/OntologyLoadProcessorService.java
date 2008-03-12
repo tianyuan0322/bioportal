@@ -2,10 +2,8 @@ package org.ncbo.stanford.service.loader.processor;
 
 import java.io.IOException;
 
-import org.apache.commons.fileupload.FileItem;
 import org.ncbo.stanford.bean.OntologyBean;
 import org.ncbo.stanford.util.filehandler.FileHandler;
-import org.springframework.transaction.annotation.Transactional;
 
 /**
  * Interface to load an ontology into BioPortal.
@@ -13,7 +11,6 @@ import org.springframework.transaction.annotation.Transactional;
  * @author Michael Dorf
  * 
  */
-@Transactional
 public interface OntologyLoadProcessorService {
 
 	/**
