@@ -5,7 +5,6 @@ import java.util.List;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.ncbo.stanford.bean.OntologyBean;
-import org.ncbo.stanford.manager.OntologyLoadManager;
 import org.ncbo.stanford.manager.OntologyRetrievalManager;
 import org.ncbo.stanford.service.ontology.OntologyService;
 
