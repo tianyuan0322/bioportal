@@ -7,10 +7,15 @@ import java.io.InputStream;
 
 import org.ncbo.stanford.domain.generated.NcboOntologyVersion;
 import org.ncbo.stanford.util.filehandler.AbstractFileHandler;
-import org.ncbo.stanford.util.filehandler.FileHandler;
 
-public class PhysicalDirectoryFileHandler extends AbstractFileHandler implements
-		FileHandler {
+/**
+ * An implementation of FileHandler interface, where the ontology is uploaded
+ * from a given physical directory (useful for testing)
+ * 
+ * @author Michael Dorf
+ * 
+ */
+public class PhysicalDirectoryFileHandler extends AbstractFileHandler {
 
 	private File file;
 
@@ -18,10 +23,16 @@ public class PhysicalDirectoryFileHandler extends AbstractFileHandler implements
 		this.file = file;
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.ncbo.stanford.util.filehandler.FileHandler#processOntologyFileUpload(java.lang.String,
+	 *      org.ncbo.stanford.domain.generated.NcboOntologyVersion)
+	 */
 	public void processOntologyFileUpload(String ontologyFilePath,
 			NcboOntologyVersion ontologyVersion) throws Exception {
-		File outputDirectories = new File(getOntologyDirPath(ontologyFilePath,
-				ontologyVersion));
+		File outputDirectories = new File(getFullOntologyDirPath(
+				ontologyFilePath, ontologyVersion));
 		outputDirectories.mkdirs();
 
 		File outputFile = new File(getOntologyFilePath(ontologyFilePath,
@@ -41,6 +52,11 @@ public class PhysicalDirectoryFileHandler extends AbstractFileHandler implements
 		outputStream.close();
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.ncbo.stanford.util.filehandler.FileHandler#getName()
+	 */
 	public String getName() {
 		return file.getName();
 	}
