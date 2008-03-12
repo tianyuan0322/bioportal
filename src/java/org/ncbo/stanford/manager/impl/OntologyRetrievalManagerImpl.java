@@ -89,7 +89,7 @@ public class OntologyRetrievalManagerImpl implements OntologyRetrievalManager {
 	/**
 	 * Get the root concept for the specified ontology.
 	 */
-	public ClassBean findRootConcept(Integer ontologyId) {
+	public ArrayList<ClassBean> findRootConcept(Integer ontologyId) throws Exception {
 		
 		NcboOntology ontology = ncboOntologyVersionDAO.findOntologyVersion(ontologyId);
 		String formatHandler = ontologyFormatHandlerMap.get(ontology.getFormat());		
@@ -97,51 +97,51 @@ public class OntologyRetrievalManagerImpl implements OntologyRetrievalManager {
 		return wrapper.findRootConcept(ontologyId);		
 	}
 
-	public ClassBean findConcept(String conceptID, Integer ontologyId) {
+	public ClassBean findConcept(Integer ontologyId, String conceptId) throws Exception {
 		NcboOntology ontology = ncboOntologyVersionDAO.findOntologyVersion(ontologyId);
 		OntologyRetrievalManagerWrapper wrapper = ontologyRetrievalHandlerMap.get(ontology.getFormat());
-		return wrapper.findConcept(conceptID,ontologyId);	
+		return wrapper.findConcept(ontologyId, conceptId);	
 	}
 
-	public ArrayList<ClassBean> findPathToRoot(String id, Integer ontologyId) {
+	public ArrayList<ClassBean> findPathToRoot(Integer ontologyId, String conceptId) throws Exception {
 		return new ArrayList();
 	}
 
-	public ClassBean findParent(String id, Integer ontologyId) {
-		return new ClassBean();
-	}
-
-	public ArrayList<ClassBean> findChildren(String id, Integer ontologyId) {
+	public ArrayList<ClassBean> findParent(Integer ontologyId, String conceptId) throws Exception {
 		return new ArrayList();
 	}
 
-	public ArrayList<ClassBean> findConceptNameExact(String query,
-			ArrayList<Integer> ontologyIds) {
+	public ArrayList<ClassBean> findChildren(Integer ontologyId, String conceptId) throws Exception {
 		return new ArrayList();
 	}
 
-	public ArrayList<ClassBean> findConceptNameStartsWith(String query,
-			ArrayList<Integer> ontologyIds) {
+	public ArrayList<ClassBean> findConceptNameExact(ArrayList<Integer> ontologyIds, String query
+			) {
 		return new ArrayList();
 	}
 
-	public ArrayList<ClassBean> findConceptNameContains(String query,
-			ArrayList<Integer> ontologyIds) {
+	public ArrayList<ClassBean> findConceptNameStartsWith(ArrayList<Integer> ontologyIds, String query
+			) {
 		return new ArrayList();
 	}
 
-	public ArrayList<ClassBean> findConceptPropertyExact(String property,
-			String query, ArrayList<Integer> ontologyIds) {
+	public ArrayList<ClassBean> findConceptNameContains(ArrayList<Integer> ontologyIds, String query
+	) {
 		return new ArrayList();
 	}
 
-	public ArrayList<ClassBean> findConceptPropertyStartsWith(String property,
-			String query, ArrayList<Integer> ontologyIds) {
+	public ArrayList<ClassBean> findConceptPropertyExact(ArrayList<Integer> ontologyIds, String property,
+			String query) {
 		return new ArrayList();
 	}
 
-	public ArrayList<ClassBean> findConceptPropertyContains(String property,
-			String query, ArrayList<Integer> ontologyIds) {
+	public ArrayList<ClassBean> findConceptPropertyStartsWith(ArrayList<Integer> ontologyIds, String property,
+	String query) {
+		return new ArrayList();
+	}
+
+	public ArrayList<ClassBean> findConceptPropertyContains(ArrayList<Integer> ontologyIds, String property,
+			String query) {
 		return new ArrayList();
 	}
 

@@ -77,7 +77,7 @@ public class OntologyRetrievalManagerWrapperProtegeImpl extends
 	/**
 	 * Get the root concept for the specified ontology.
 	 */
-	public ClassBean findRootConcept(Integer ontologyId) {
+	public ArrayList<ClassBean> findRootConcept(Integer ontologyId) {
 		OWLModel owlModel = this.getOWLModel(ontologyId);
 
 		// Get all root nodes associated with this ontology. Then iterate
@@ -97,13 +97,15 @@ public class OntologyRetrievalManagerWrapperProtegeImpl extends
 		 * break; }
 		 */
 		if (oThing != null) {
-			return createClassBean(oThing,true);
+			ArrayList<ClassBean> array= new ArrayList<ClassBean>();
+			array.add(createClassBean(oThing,true));
+			return array;
 		}
 
 		return null;
 	}
 
-	public ClassBean findConcept(String conceptId, Integer ontologyId) {
+	public ClassBean findConcept(Integer ontologyId, String conceptId) {
 		OWLModel owlModel = this.getOWLModel(ontologyId);
 
 		String conceptName = owlModel.getResourceNameForURI(conceptId);

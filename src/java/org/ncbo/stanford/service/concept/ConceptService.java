@@ -21,26 +21,26 @@ public interface ConceptService {
 	
 	
 	
-	public ClassBean findRoot(int ontologyId);
+	public ArrayList<ClassBean> findRoot(int ontologyId) throws Exception;
 	
 	
-	public ClassBean findConcept(String id, int ontologyId);
+	public ClassBean findConcept(int ontologyId, String id) throws Exception;
 	
-	public ArrayList<ClassBean> findPathToRoot(String id, int ontologyId);
+	public ArrayList<ClassBean> findPathToRoot(int ontologyId, String id) throws Exception;
 	
-	public ClassBean findParent(String id, int ontologyId);
+	public ArrayList<ClassBean> findParent(int ontologyId, String id) throws Exception;
 	
-	public ArrayList<ClassBean> findChildren(String id, int ontologyId);
+	public ArrayList<ClassBean> findChildren(int ontologyId, String id) throws Exception;
 	
-	public ArrayList<ClassBean> findConceptNameExact(String query, ArrayList<Integer> ontologyIds);
+	public ArrayList<ClassBean> findConceptNameExact(ArrayList<Integer> ontologyIds, String query);
 	
-	public ArrayList<ClassBean> findConceptNameStartsWith(String query, ArrayList<Integer> ontologyIds);
+	public ArrayList<ClassBean> findConceptNameStartsWith(ArrayList<Integer> ontologyIds, String query);
 	
-	public ArrayList<ClassBean> findConceptNameContains(String query, ArrayList<Integer> ontologyIds);
+	public ArrayList<ClassBean> findConceptNameContains(ArrayList<Integer> ontologyIds, String query);
 	
-	public ArrayList<ClassBean> findConceptPropertyExact(String property, String query, ArrayList<Integer> ontologyIds);
+	public ArrayList<ClassBean> findConceptPropertyExact(ArrayList<Integer> ontologyIds, String property, String query);
 	
-	public ArrayList<ClassBean> findConceptPropertyStartsWith(String property, String query, ArrayList<Integer> ontologyIds);
+	public ArrayList<ClassBean> findConceptPropertyStartsWith(ArrayList<Integer> ontologyIds, String property, String query);
 	
-	public ArrayList<ClassBean> findConceptPropertyContains(String property, String query, ArrayList<Integer> ontologyIds);
+	public ArrayList<ClassBean> findConceptPropertyContains(ArrayList<Integer> ontologyIds, String property, String query);
 }
