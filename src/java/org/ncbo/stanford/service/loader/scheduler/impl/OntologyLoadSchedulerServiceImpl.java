@@ -14,6 +14,7 @@ import org.ncbo.stanford.domain.generated.NcboOntologyVersion;
 import org.ncbo.stanford.enumeration.StatusEnum;
 import org.ncbo.stanford.manager.OntologyLoadManager;
 import org.ncbo.stanford.service.loader.scheduler.OntologyLoadSchedulerService;
+import org.springframework.transaction.annotation.Transactional;
 
 /**
  * Implementation of the scheduler service that runs periodically, checking for
@@ -23,6 +24,7 @@ import org.ncbo.stanford.service.loader.scheduler.OntologyLoadSchedulerService;
  * @author Michael Dorf
  * 
  */
+@Transactional
 public class OntologyLoadSchedulerServiceImpl implements
 		OntologyLoadSchedulerService {
 
