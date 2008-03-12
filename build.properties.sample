@@ -4,6 +4,10 @@ web.dir=WebRoot
 # Application full path
 bioportal.path=/apps/bmir.apps/bioportal
 
+# Path to store resources (cvs downloads, ontologies, test files etc.)
+# outside of the project structure
+bioportal.resource.path=/apps/bmir.apps/bioportal_resources
+
 # App server properties
 appserver.home=/apps/Tomcat5.5
 appserver.lib=${appserver.home}/common/lib
@@ -19,7 +23,7 @@ deploy.path=${appserver.home}/webapps
 # Timeout for inactive sessions (in milliseconds)
 bioportal.session.timeout=5000
 # Number of "buckets" to allocate for session storage
-bioportal.session.numcontainers=5
+bioportal.session.numcontainers=11
 
 # Logging properties
 bioportal.app.log.deflevel=ERROR
@@ -27,7 +31,7 @@ bioportal.app.log.bioportallevel=DEBUG
 bioportal.app.logfilepath=${appserver.logs}/bioportal.log
 
 # SMTP Server
-bioportal.smtp.server=your.smtp.server
+bioportal.smtp.server=yoursmtpserver
 
 # Data Source properties
 bioportal.datasource.name=jdbc/BioPortalDataSource
@@ -38,34 +42,34 @@ bioportal.datasource=java:comp/env/${bioportal.datasource.name}
 # datasource simply by configuring a Tomcat datasource.
 bioportal.jdbc.url=jdbc:mysql://localhost:3306/bioportal
 bioportal.jdbc.driver=com.mysql.jdbc.Driver
-bioportal.jdbc.username=mydbusername
-bioportal.jdbc.password=mydbpassword
+bioportal.jdbc.username=yourbioportaldbuser
+bioportal.jdbc.password=yourbioportaldbpassword
 
 # Encryption key for string encoding/decoding
-bioportal.encryption.key=myencryptionkey
+bioportal.encryption.key=yourencryptionkey
 
 # Users by username query used for authentication
-bioportal.usersbyusername.query=SELECT username, password, 1 AS enabled FROM myusertable WHERE username = ?
+bioportal.usersbyusername.query=SELECT username, password, 1 AS enabled FROM yourusertable WHERE username = ?
 
 # Application by application id query used for authentication
-bioportal.applicationbyapplicationid.query=SELECT applicationid, applicationname FROM myapplicationtable WHERE applicationid = ?
+bioportal.applicationbyapplicationid.query=SELECT applicationid, applicationname FROM youradminapplicationtable WHERE applicationid = ?
 
 # Authorities by username query used for authorization
-bioportal.authoritiesbyusername.query=SELECT username, authority FROM myauthoritytable WHERE username = ?
+bioportal.authoritiesbyusername.query=SELECT username, authority FROM yourauthoritytable WHERE username = ?
 
 # Message bundle
-bioportal.messagebundle=message
+bioportal.messagebundle=org.ncbo.stanford.resource.message
 
 # Uploaded Files
-bioportal.ontology.filepath=/apps/uploads
+bioportal.ontology.filepath=${bioportal.resource.path}/uploads
 
 ################## Protege Configuration ##################
 
 # db connection
 protege.jdbc.url=jdbc:mysql://localhost/bioportal_protege
 protege.jdbc.driver=com.mysql.jdbc.Driver
-protege.jdbc.username=mydbusername
-protege.jdbc.password=mydbpassword
+protege.jdbc.username=yourprotegedbuser
+protege.jdbc.password=yourprotegedbpassword
 
 # table name prefix/suffix
 protege.table.prefix=tbl_
@@ -109,7 +113,7 @@ lexgrid.registry.file=${bioportal.path}/lexgrid/registry/registry.xml
 # The folder that will hold all of the generated system indexes.  
 # This path can be relative to the location of lexgrid.base.path
 # or absolute.
-lexgrid.index.location=${bioportal.path}/lexgrid/lbIndex
+lexgrid.index.location=${bioportal.resource.path}/lexgrid/lbIndex
 #
 # The maximum number of SQL connections to open (and pool) per 
 # database. 
@@ -169,7 +173,7 @@ lexgrid.single.db.mode=true
 # lexgrid.db.url=jdbc:postgresql://bmidev/LexGrid
 # lexgrid.db.url=jdbc:hsqldb:file:C:/temp/LexGrid
 # lexgrid.db.url=jdbc:odbc:Driver={Microsoft Access Driver (*.mdb)};DBQ=C:/temp/LexBIG.mdb
-lexgrid.db.url=jdbc:mysql://localhost/lexgrid
+lexgrid.db.url=jdbc:mysql://localhost/bioportal_lexgrid
 #
 # The prefix to use on created tables or database names.  
 # If 'lexgrid.single.db.mode=true', this prefix will be used on 
@@ -215,14 +219,14 @@ lexgrid.db.driver=${bioportal.jdbc.driver}
 # If lexgrid.single.db.mode is set to true, the specified account 
 # MUST HAVE permission to create and remove tables, indexes, and 
 # foreign keys in the database environment.
-lexgrid.db.user=mylexgriduser
-lexgrid.db.password=mylexgridpassword
+lexgrid.db.user=yourlexgriddbuser
+lexgrid.db.password=yourlexgriddbpassword
 #
 ############# Logging Configuration
 # Location of the log files. This path can be relative to the 
 # location of lexgrid.base.path or absolute.  This name should 
 # be a directory, which will be created if not present.
-lexgrid.log.file.location=${appserver.logs}/lexgrid.log
+lexgrid.log.file.location=${appserver.logs}/lexgrid
 #
 # API Call Logging - enabling API call logging will cause every 
 # method call to be printed to the log file.
