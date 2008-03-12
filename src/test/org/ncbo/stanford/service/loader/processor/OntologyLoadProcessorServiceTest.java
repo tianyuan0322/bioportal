@@ -15,37 +15,17 @@ import org.ncbo.stanford.util.filehandler.impl.PhysicalDirectoryFileHandler;
 public class OntologyLoadProcessorServiceTest extends AbstractBioPortalTest {
 
 	public void testUploadOntology() throws Exception {
-
 		OntologyLoadProcessorService service = (OntologyLoadProcessorService) applicationContext
 				.getBean("ontologyLoadProcessorService",
 						OntologyLoadProcessorService.class);
 
-		File inputFile = new File("/apps/bmir.apps/bioportal/files/test.obo");
+		File inputFile = new File("/apps/bmir.apps/bioportal_resources/files/adult_mouse_anatomy.obo");
 		FileHandler ontologyFile = new PhysicalDirectoryFileHandler(inputFile);
-
-		// DiskFileItemFactory factory = new DiskFileItemFactory(
-		// DiskFileItemFactory.DEFAULT_SIZE_THRESHOLD, inputFile);
-		// ServletFileUpload upload = new ServletFileUpload(factory);
-		// FileItem ontologyFile = factory.createItem("file1", null, false,
-		// "test.obo");
-
-		// DiskFileItem fileItem = new DiskFileItem("file1", null, true,
-		// "test.obo", 22, new File("/hello"));
-
-		// inputFile = new File("/Users/nickgriffith/Documents/GWT.txt");
-
-		// FileInputStream inputStream = new FileInputStream(inputFile);
-
 		service.processOntologyLoad(ontologyFile, createTestBean());
-		//		
-		//		
-		//		uploadOntology(inputStream, createTestBean());
-
 	}
 
 	private OntologyBean createTestBean() {
 		OntologyBean bean = new OntologyBean();
-
 		bean.setUserId(12564);
 		bean.setVersionNumber("5");
 		bean.setIsCurrent(new Byte("1"));
