@@ -26,6 +26,7 @@ public class OntologyLoadManagerImpl implements OntologyLoadManager {
 
 	private Map<String, String> ontologyFormatHandlerMap = new HashMap<String, String>();
 	private Map<String, OntologyLoadManagerWrapper> ontologyLoadHandlerMap = new HashMap<String, OntologyLoadManagerWrapper>();
+	private String ontologyFilePath;
 
 	/**
 	 * Loads the specified ontology into the BioPortal repository. The minimum
@@ -45,8 +46,9 @@ public class OntologyLoadManagerImpl implements OntologyLoadManager {
 		List<String> filenames = ontologyBean.getFilenames();
 
 		for (String filename : filenames) {
-			loadManagerWrapper.loadOntology(new URI(ontologyBean.getFilePath()
-					+ "/" + filename), ontologyBean);
+			loadManagerWrapper.loadOntology(new URI(ontologyFilePath
+					+ ontologyBean.getFilePath() + "/" + filename),
+					ontologyBean);
 		}
 	}
 
@@ -80,5 +82,20 @@ public class OntologyLoadManagerImpl implements OntologyLoadManager {
 	public void setOntologyFormatHandlerMap(
 			Map<String, String> ontologyFormatHandlerMap) {
 		this.ontologyFormatHandlerMap = ontologyFormatHandlerMap;
+	}
+
+	/**
+	 * @return the ontologyFilePath
+	 */
+	public String getOntologyFilePath() {
+		return ontologyFilePath;
+	}
+
+	/**
+	 * @param ontologyFilePath
+	 *            the ontologyFilePath to set
+	 */
+	public void setOntologyFilePath(String ontologyFilePath) {
+		this.ontologyFilePath = ontologyFilePath;
 	}
 }
