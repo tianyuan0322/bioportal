@@ -1,8 +1,7 @@
 package org.ncbo.stanford.manager.wrapper;
 
-import java.util.ArrayList;
-
 import org.ncbo.stanford.bean.concept.ClassBean;
+import org.ncbo.stanford.domain.custom.entity.NcboOntology;
 
 public interface OntologyRetrievalManagerWrapper {
 
@@ -10,8 +9,8 @@ public interface OntologyRetrievalManagerWrapper {
 	
 	
 	
-	public ClassBean findConcept(Integer ontologyVersionId, String conceptID) throws Exception;
+	public ClassBean findConcept(NcboOntology ontologyVersion, String conceptID) throws Exception;
 	
-	public ClassBean findRootConcept(Integer ontologyVersionId) throws Exception;
+	public ClassBean findRootConcept(NcboOntology ontologyVersion) throws Exception;
 	
 }

@@ -44,15 +44,15 @@ public interface OntologyRetrievalManager {
 	// 
 	// Concept methods
 	//
-	public ClassBean findRootConcept(Integer ontologyId) throws Exception;
+	public ClassBean findRootConcept(Integer ontologyVersionId) throws Exception;
 	
-	public ClassBean findConcept(Integer ontologyId, String id) throws Exception;
+	public ClassBean findConcept(Integer ontologyVersionId, String id) throws Exception;
 
 	public ArrayList<ClassBean> findPathToRoot(Integer ontologyId, String conceptId) throws Exception;
 
-	public ArrayList<ClassBean> findParent(Integer ontologyId, String conceptId) throws Exception;
+	//public ArrayList<ClassBean> findParent(Integer ontologyId, String conceptId) throws Exception;
 
-	public ArrayList<ClassBean> findChildren(Integer ontologyId, String conceptId) throws Exception;
+	//public ArrayList<ClassBean> findChildren(Integer ontologyId, String conceptId) throws Exception;
 
 	public ArrayList<ClassBean> findConceptNameExact(ArrayList<Integer> ontologyIds, String query
 			) ;

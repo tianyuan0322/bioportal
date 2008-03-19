@@ -41,13 +41,14 @@ public class ConceptServiceImpl implements ConceptService {
 		return ontologyRetrievalManager.findPathToRoot(ontologyId, id);
 	}
 
+	/*
 	public ArrayList<ClassBean> findParent(int ontologyId, String id) throws Exception {
 		return ontologyRetrievalManager.findParent(ontologyId, id);
 	}
 
 	public ArrayList<ClassBean> findChildren(int ontologyId, String id ) throws Exception {
 		return ontologyRetrievalManager.findChildren(ontologyId, id);
-	}
+	}*/
 
 	public ArrayList<ClassBean> findConceptNameExact(ArrayList<Integer> ontologyIds, String query
 	) {

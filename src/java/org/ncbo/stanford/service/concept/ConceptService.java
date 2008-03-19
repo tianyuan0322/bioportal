@@ -24,9 +24,9 @@ public interface ConceptService {
 	
 	public ArrayList<ClassBean> findPathToRoot(int ontologyId, String id) throws Exception;
 	
-	public ArrayList<ClassBean> findParent(int ontologyId, String id) throws Exception;
+	//public ArrayList<ClassBean> findParent(int ontologyId, String id) throws Exception;
 	
-	public ArrayList<ClassBean> findChildren(int ontologyId, String id) throws Exception;
+	//public ArrayList<ClassBean> findChildren(int ontologyId, String id) throws Exception;
 	
 	public ArrayList<ClassBean> findConceptNameExact(ArrayList<Integer> ontologyIds, String query);
 	

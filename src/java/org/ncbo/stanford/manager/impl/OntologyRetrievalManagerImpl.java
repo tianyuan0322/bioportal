@@ -96,14 +96,14 @@ public class OntologyRetrievalManagerImpl implements OntologyRetrievalManager {
 		String formatHandler = ontologyFormatHandlerMap.get(ontology.getFormat());		
 		System.out.println(formatHandler);
 		OntologyRetrievalManagerWrapper wrapper = ontologyRetrievalHandlerMap.get(formatHandler);
-		return wrapper.findRootConcept(ontologyId);		
+		return wrapper.findRootConcept(ontology);		
 	}
 
 	public ClassBean findConcept(Integer ontologyId, String conceptId) throws Exception {
 		NcboOntology ontology = ncboOntologyVersionDAO.findOntologyVersion(ontologyId);
 		String formatHandler = ontologyFormatHandlerMap.get(ontology.getFormat());		
 		OntologyRetrievalManagerWrapper wrapper = ontologyRetrievalHandlerMap.get(formatHandler);
-		return wrapper.findConcept(ontologyId,conceptId);	
+		return wrapper.findConcept(ontology,conceptId);	
 	}
 
 	public ArrayList<ClassBean> findPathToRoot(Integer ontologyId, String conceptId) throws Exception {

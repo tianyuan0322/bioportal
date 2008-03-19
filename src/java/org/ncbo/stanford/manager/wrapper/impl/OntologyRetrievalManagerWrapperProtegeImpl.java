@@ -10,6 +10,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.ncbo.stanford.bean.OntologyBean;
 import org.ncbo.stanford.bean.concept.ClassBean;
+import org.ncbo.stanford.domain.custom.entity.NcboOntology;
 import org.ncbo.stanford.manager.wrapper.AbstractOntologyManagerWrapperProtege;
 import org.ncbo.stanford.manager.wrapper.OntologyRetrievalManagerWrapper;
 import org.ncbo.stanford.util.constants.ApplicationConstants;
@@ -82,15 +83,15 @@ public class OntologyRetrievalManagerWrapperProtegeImpl extends
 	/**
 	 * Get the root concept for the specified ontology.
 	 */
-	public ClassBean findRootConcept(Integer ontologyVersionId) {
-		KnowledgeBase kb = getKnowledgeBase(ontologyVersionId);
+	public ClassBean findRootConcept(NcboOntology ontologyVersion) {
+		KnowledgeBase kb = getKnowledgeBase(ontologyVersion);
 
 		// Get all root nodes associated with this ontology. Then iterate
 		// through the collection, returning the first one.
 		Cls oThing = kb.getRootCls();
 
 		if (log.isDebugEnabled())
-			log.debug("Searching for root node for ontology id: " + ontologyVersionId);
+			log.debug("Searching for root node for ontology id: " + ontologyVersion.getId());
 		
 		if (oThing != null) {
 			return createClassBean(oThing,true);
@@ -100,8 +101,8 @@ public class OntologyRetrievalManagerWrapperProtegeImpl extends
 	}
 
 	@SuppressWarnings("deprecation")
-	public ClassBean findConcept(Integer ontologyVersionId, String conceptId) {
-		KnowledgeBase kb = this.getKnowledgeBase(ontologyVersionId);
+	public ClassBean findConcept(NcboOntology ontologyVersion, String conceptId) {
+		KnowledgeBase kb = getKnowledgeBase(ontologyVersion);
 
 		//String conceptName = owlModel.getResourceNameForURI(conceptId);
 
@@ -178,13 +179,19 @@ public class OntologyRetrievalManagerWrapperProtegeImpl extends
 	/**
 	 * Gets the Protege ontology associated with the specified ontology id.
 	 */
-	private KnowledgeBase getKnowledgeBase(int ontologyVersionId) {
-		DatabaseKnowledgeBaseFactory factory = new OWLDatabaseKnowledgeBaseFactory();
+	private KnowledgeBase getKnowledgeBase(NcboOntology ontologyVersion) {
+		DatabaseKnowledgeBaseFactory factory = null;
+		
+		if(ontologyVersion.getFormat().equalsIgnoreCase("OWL")){
+			factory = new OWLDatabaseKnowledgeBaseFactory();
+		}else{
+			factory = new DatabaseKnowledgeBaseFactory();
+		}
 		List errors = new ArrayList();
 
 		Project prj = Project.createNewProject(factory, errors);
 		DatabaseKnowledgeBaseFactory.setSources(prj.getSources(),
-				protegeJdbcDriver, protegeJdbcUrl, getTableName(ontologyVersionId),
+				protegeJdbcDriver, protegeJdbcUrl, getTableName(ontologyVersion.getId()),
 				protegeJdbcUsername, protegeJdbcPassword);
 		prj.createDomainKnowledgeBase(factory, errors, true);
 	
