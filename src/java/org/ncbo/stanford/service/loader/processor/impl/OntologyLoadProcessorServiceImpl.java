@@ -59,7 +59,7 @@ public class OntologyLoadProcessorServiceImpl implements
 	public void processOntologyLoad(FileHandler ontologyFile,
 			OntologyBean ontologyBean) throws Exception {
 		NcboOntologyVersion ontologyVersion = new NcboOntologyVersion();
-		Integer ontologyId = ontologyBean.getId();
+		Integer ontologyId = ontologyBean.getOntologyId();
 
 		if (ontologyId == null || ontologyId < 1) {
 			ontologyVersion.setOntologyId(ncboSeqOntologyIdDAO
