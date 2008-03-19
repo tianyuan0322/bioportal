@@ -33,8 +33,13 @@ public class OntologyLoaderLexGridImplTest extends AbstractBioPortalTest {
 	OntologyLoadManagerWrapperLexGridImpl loadManagerLexGrid;
 	OntologyLoadProcessorService service;
 	
-	public OntologyLoaderLexGridImplTest() {
-		super();
+//	public OntologyLoaderLexGridImplTest() {
+//		super();
+//
+//		 
+//	}
+
+	public void testLoadObo() throws Exception {
 		service = (OntologyLoadProcessorService) applicationContext
 		.getBean("ontologyLoadProcessorService",
 				OntologyLoadProcessorService.class);
@@ -42,10 +47,6 @@ public class OntologyLoaderLexGridImplTest extends AbstractBioPortalTest {
 		loadManagerLexGrid= (OntologyLoadManagerWrapperLexGridImpl) applicationContext
 		.getBean("ontologyLoadManagerWrapperLexGrid",
 				OntologyLoadManagerWrapperLexGridImpl.class);
-		 
-	}
-
-	public void testLoadObo() throws Exception {
 		//Populate Ontology Bean 
 		OntologyBean ontology_bean = new OntologyBean();
 		ontology_bean.setFormat(ApplicationConstants.FORMAT_OBO);
@@ -60,7 +61,8 @@ public class OntologyLoaderLexGridImplTest extends AbstractBioPortalTest {
 		ontology_bean.setDateReleased(new Date());
 		ontology_bean.setContactEmail("obo@email.com");
 		ontology_bean.setContactName("OBO Name");
-		ontology_bean.setOntologyId(3000);
+		ontology_bean.setId(3000);
+		ontology_bean.setIsFoundry(new Byte("0"));
 		File inputFile = new File(TEST_OBO_PATHNAME);
 		FileHandler ontologyFile = new PhysicalDirectoryFileHandler(inputFile);
 
@@ -91,6 +93,7 @@ public class OntologyLoaderLexGridImplTest extends AbstractBioPortalTest {
 		ontology_bean.setContactEmail("owl@email.com");
 		ontology_bean.setContactName("Owl Name");
 		ontology_bean.setOntologyId(3001);
+		ontology_bean.setIsFoundry(new Byte("0"));
 		File inputFile = new File(TEST_OWL_PATHNAME);
 		FileHandler ontologyFile = new PhysicalDirectoryFileHandler(inputFile);
 
@@ -120,6 +123,7 @@ public class OntologyLoaderLexGridImplTest extends AbstractBioPortalTest {
 		ontology_bean.setContactEmail("lexgrid@email.com");
 		ontology_bean.setContactName("Lexgrid Name");
 		ontology_bean.setOntologyId(3002);
+		ontology_bean.setIsFoundry(new Byte("0"));
 		File inputFile = new File(TEST_LEXGRID_XML_PATHNAME);
 		FileHandler ontologyFile = new PhysicalDirectoryFileHandler(inputFile);
 
@@ -151,6 +155,7 @@ public class OntologyLoaderLexGridImplTest extends AbstractBioPortalTest {
 		ontology_bean.setContactEmail("umls@email.com");
 		ontology_bean.setContactName("Umls Name");
 		ontology_bean.setOntologyId(3003);
+		ontology_bean.setIsFoundry(new Byte("0"));
 		File inputFile = new File(TEST_UMLS_PATHNAME);
 		FileHandler ontologyFile = new PhysicalDirectoryFileHandler(inputFile);
 		service = (OntologyLoadProcessorService) applicationContext

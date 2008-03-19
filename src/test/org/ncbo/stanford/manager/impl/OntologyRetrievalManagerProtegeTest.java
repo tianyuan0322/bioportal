@@ -22,7 +22,7 @@ public class OntologyRetrievalManagerProtegeTest extends AbstractBioPortalTest {
 				.getBean("ontologyRetrievalManagerWrapperProtege",
 						OntologyRetrievalManagerWrapper.class);
 
-		ClassBean conceptBean = ocMgr.findRootConcept(TEST_ONT_ID).get(0);
+		ClassBean conceptBean = ocMgr.findRootConcept(TEST_ONT_ID);
 
 		System.out.println("ROOT");
 

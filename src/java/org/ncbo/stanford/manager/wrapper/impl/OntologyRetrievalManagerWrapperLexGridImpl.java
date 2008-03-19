@@ -6,10 +6,12 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 
+import org.LexGrid.LexBIG.DataModel.Collections.AssociatedConceptList;
 import org.LexGrid.LexBIG.DataModel.Collections.AssociationList;
 import org.LexGrid.LexBIG.DataModel.Collections.ConceptReferenceList;
 import org.LexGrid.LexBIG.DataModel.Collections.ResolvedConceptReferenceList;
 import org.LexGrid.LexBIG.DataModel.Collections.SortOptionList;
+import org.LexGrid.LexBIG.DataModel.Core.AssociatedConcept;
 import org.LexGrid.LexBIG.DataModel.Core.Association;
 import org.LexGrid.LexBIG.DataModel.Core.CodingSchemeVersionOrTag;
 import org.LexGrid.LexBIG.DataModel.Core.ResolvedConceptReference;
@@ -141,11 +143,9 @@ public class OntologyRetrievalManagerWrapperLexGridImpl extends AbstractOntology
 		}
 		AssociationList associations = lbscm.getHierarchyPathToRoot(urnVersionArray[0], csvt, hierarchyId, conceptId, false,
 				LexBIGServiceConvenienceMethods.HierarchyPathResolveOption.ALL, null);
-		ArrayList<ClassBean> classBeans= new ArrayList<ClassBean>();
-		for (int j = 0; j < associations.getAssociationCount(); j++) {
-				Association association = associations.getAssociation(j);
-				createClassBeanArray(association, classBeans);
-		}
+		ClassBean conceptClass= findConcept(ontologyId, conceptId);
+		ArrayList<ClassBean> classBeans= createClassBeanArray(associations, conceptClass);
+		
 			
 		return classBeans;
 	}
@@ -166,7 +166,10 @@ public class OntologyRetrievalManagerWrapperLexGridImpl extends AbstractOntology
 		
 		AssociationList associations = lbscm.getHierarchyLevelPrev(urnVersionArray[0], csvt, hierarchyId, conceptId, false, null);
 		
-		return createClassBeanArray(associations);
+		ClassBean conceptClass= findConcept(ontologyId, conceptId);
+		ArrayList<ClassBean> classBeans= createClassBeanArray(associations, conceptClass);
+
+		return classBeans;
 	}
 
 	public ArrayList<ClassBean> findChildren(Integer ontologyId, String conceptId) throws Exception {
@@ -185,7 +188,10 @@ public class OntologyRetrievalManagerWrapperLexGridImpl extends AbstractOntology
 		
 		AssociationList associations = lbscm.getHierarchyLevelNext(urnVersionArray[0], csvt, hierarchyId, conceptId, false, null);
 		
-		return createClassBeanArray(associations);
+		ClassBean conceptClass= findConcept(ontologyId, conceptId);
+		ArrayList<ClassBean> classBeans= createClassBeanArray(associations, conceptClass);
+
+		return classBeans;
 	}
 
 	public ArrayList<SearchResultBean> findConceptNameExact(ArrayList<Integer> ontologyIds, List<String> query,
@@ -607,23 +613,54 @@ public class OntologyRetrievalManagerWrapperLexGridImpl extends AbstractOntology
 
 	}
 
-	private ArrayList<ClassBean> createClassBeanArray(AssociationList list) {
+	private ArrayList<ClassBean> createClassBeanArray(AssociationList list, ClassBean current_classBean) {
 		ArrayList<ClassBean> classBeans = new ArrayList<ClassBean>();
 		Enumeration<Association> assocEnum = list.enumerateAssociation();
 		Association association = null;
 		while (assocEnum.hasMoreElements())
 		{
 			association = (Association) assocEnum.nextElement();
-			classBeans= createClassBeanArray(association, classBeans);
+			createClassBeanArray(association, current_classBean);
+//			AssociatedConceptList concepts = association.getAssociatedConcepts();
+//			for (int i = 0; i < concepts.getAssociatedConceptCount(); i++) {
+//				AssociatedConcept concept= concepts.getAssociatedConcept(i);
+//				if (concept !=null) {
+//				ClassBean classBean = createClassBean(concept);
+//				classBeans.add(classBean);
+//				}
+//			}
 			
 
 		}
+		classBeans.add(current_classBean);
 		return classBeans;
 
 	}
 	
-	private ArrayList<ClassBean> createClassBeanArray(Association association, ArrayList<ClassBean> classBeanList) {
-		return classBeanList;
+	private void createClassBeanArray(Association association, ClassBean current_classBean) {
+		AssociatedConceptList concepts = association.getAssociatedConcepts();
+		ArrayList<ClassBean> classBeans = new ArrayList<ClassBean>();
+		for (int i = 0; i < concepts.getAssociatedConceptCount(); i++) {
+			AssociatedConcept concept= concepts.getAssociatedConcept(i);
+			if (concept !=null) {
+			ClassBean classBean = createClassBean(concept);
+			classBeans.add(classBean);
+		   // Find and recurse printing for next batch ...
+			AssociationList nextLevel = concept.getSourceOf();
+			if (nextLevel != null && nextLevel.getAssociationCount() != 0)
+				for (int j = 0; j < nextLevel.getAssociationCount(); j++)
+					createClassBeanArray(nextLevel.getAssociation(j), classBean);
+			
+		// Find and recurse printing for previous batch ...
+			AssociationList prevLevel = concept.getTargetOf();
+			if (prevLevel != null && prevLevel.getAssociationCount() != 0)
+				for (int j = 0; j < prevLevel.getAssociationCount(); j++)
+					createClassBeanArray(prevLevel.getAssociation(j), classBean);
+			}
+			
+		}
+		current_classBean.addRelation(association.getDirectionalName(), classBeans);
+		
 	}
 	
 }
