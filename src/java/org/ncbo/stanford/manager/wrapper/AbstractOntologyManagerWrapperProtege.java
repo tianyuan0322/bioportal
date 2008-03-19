@@ -20,8 +20,8 @@ public abstract class AbstractOntologyManagerWrapperProtege {
 	/**
 	 * Gets the table name associated with an protege ontology id.
 	 */
-	protected String getTableName(Integer ontologyId) {
-		return protegeTablePrefix + ontologyId + protegeTableSuffix;
+	protected String getTableName(Integer ontologyVersionId) {
+		return protegeTablePrefix + ontologyVersionId + protegeTableSuffix;
 	}
 
 	/**

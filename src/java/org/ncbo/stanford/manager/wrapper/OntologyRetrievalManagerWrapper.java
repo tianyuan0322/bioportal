@@ -10,8 +10,8 @@ public interface OntologyRetrievalManagerWrapper {
 	
 	
 	
-	public ClassBean findConcept(Integer ontologyId, String conceptID) throws Exception;
+	public ClassBean findConcept(Integer ontologyVersionId, String conceptID) throws Exception;
 	
-	public ArrayList<ClassBean> findRootConcept(Integer ontologyId) throws Exception;
+	public ClassBean findRootConcept(Integer ontologyVersionId) throws Exception;
 	
 }

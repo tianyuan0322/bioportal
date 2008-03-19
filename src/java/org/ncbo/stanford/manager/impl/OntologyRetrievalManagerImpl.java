@@ -89,18 +89,21 @@ public class OntologyRetrievalManagerImpl implements OntologyRetrievalManager {
 	/**
 	 * Get the root concept for the specified ontology.
 	 */
-	public ArrayList<ClassBean> findRootConcept(Integer ontologyId) throws Exception {
+	public ClassBean findRootConcept(Integer ontologyId) throws Exception{
 		
 		NcboOntology ontology = ncboOntologyVersionDAO.findOntologyVersion(ontologyId);
+		System.out.println(ontology.getDisplayLabel());
 		String formatHandler = ontologyFormatHandlerMap.get(ontology.getFormat());		
+		System.out.println(formatHandler);
 		OntologyRetrievalManagerWrapper wrapper = ontologyRetrievalHandlerMap.get(formatHandler);
 		return wrapper.findRootConcept(ontologyId);		
 	}
 
 	public ClassBean findConcept(Integer ontologyId, String conceptId) throws Exception {
 		NcboOntology ontology = ncboOntologyVersionDAO.findOntologyVersion(ontologyId);
-		OntologyRetrievalManagerWrapper wrapper = ontologyRetrievalHandlerMap.get(ontology.getFormat());
-		return wrapper.findConcept(ontologyId, conceptId);	
+		String formatHandler = ontologyFormatHandlerMap.get(ontology.getFormat());		
+		OntologyRetrievalManagerWrapper wrapper = ontologyRetrievalHandlerMap.get(formatHandler);
+		return wrapper.findConcept(ontologyId,conceptId);	
 	}
 
 	public ArrayList<ClassBean> findPathToRoot(Integer ontologyId, String conceptId) throws Exception {

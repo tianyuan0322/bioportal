@@ -44,7 +44,7 @@ public interface OntologyRetrievalManager {
 	// 
 	// Concept methods
 	//
-	public ArrayList<ClassBean> findRootConcept(Integer ontologyId) throws Exception;
+	public ClassBean findRootConcept(Integer ontologyId) throws Exception;
 	
 	public ClassBean findConcept(Integer ontologyId, String id) throws Exception;
 

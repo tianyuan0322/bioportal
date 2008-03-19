@@ -13,6 +13,8 @@ public interface RequestParamConstants {
 	public static final String PARAM_PASSWORD = "password";
 	public static final String PARAM_APPLICATIONID = "applicationid";
 	public static final String PARAM_SESSIONID = "sessionid";
+	
+	public static final String PARAM_ROOT_CONCEPT = "root";
 
 	/**
 	 * A mandatory parmeter required to be included in all encrypted

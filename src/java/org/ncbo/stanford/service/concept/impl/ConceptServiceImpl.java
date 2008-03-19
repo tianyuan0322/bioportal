@@ -25,29 +25,9 @@ public class ConceptServiceImpl implements ConceptService {
 	
 
 	
+		
 	
-	public AbstractConceptBean findConcept() {
-		
-		ClassBean cb = new ClassBean();
-//		cb.setId(5);
-//		cb.setLabel("SAMPLECONCEPT");
-//		
-//		PropertyBean pb = new PropertyBean();
-//		pb.setId(2);
-//		pb.setLabel("Definition");
-//		
-//		cb.addRelation(pb, "this is a concept A");
-		
-		
-		
-		
-		
-		
-		
-		return cb;
-	}
-	
-	public ArrayList<ClassBean> findRoot(int ontologyId) throws Exception {
+	public ClassBean findRoot(int ontologyId) throws Exception {
 		return ontologyRetrievalManager.findRootConcept(ontologyId);
 	}
 	

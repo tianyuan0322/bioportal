@@ -15,13 +15,9 @@ import org.ncbo.stanford.bean.concept.ClassBean;
 public interface ConceptService {
 	
 	
+		
 	
-	
-	public AbstractConceptBean findConcept();
-	
-	
-	
-	public ArrayList<ClassBean> findRoot(int ontologyId) throws Exception;
+	public ClassBean findRoot(int ontologyId) throws Exception;
 	
 	
 	public ClassBean findConcept(int ontologyId, String id) throws Exception;

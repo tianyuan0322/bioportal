@@ -79,7 +79,7 @@ public class OntologyRetrievalManagerWrapperLexGridImpl extends AbstractOntology
 	/**
 	 * Get the root concept for the specified ontology.
 	 */
-	public ArrayList<ClassBean> findRootConcept(Integer ontologyId) throws Exception {
+	public ClassBean findRootConcept(Integer ontologyId) throws Exception {
 		LexBIGServiceConvenienceMethods lbscm = (LexBIGServiceConvenienceMethods) lbs
 				.getGenericExtension("LexBIGServiceConvenienceMethods");
 
@@ -95,7 +95,8 @@ public class OntologyRetrievalManagerWrapperLexGridImpl extends AbstractOntology
 				hierarchyId = hierarchy;
 		}
 		ResolvedConceptReferenceList rcrl = lbscm.getHierarchyRoots(urnVersionArray[0], csvt, hierarchyId);
-		return createClassBeanArray(rcrl);
+		//return createClassBeanArray(rcrl);
+		return null;
 	}
 
 	public ClassBean findConcept(Integer ontologyId, String conceptID) throws Exception {
