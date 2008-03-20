@@ -35,6 +35,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.ncbo.stanford.bean.concept.ClassBean;
 import org.ncbo.stanford.bean.search.SearchResultBean;
+import org.ncbo.stanford.domain.custom.entity.NcboOntology;
 import org.ncbo.stanford.manager.wrapper.AbstractOntologyManagerWrapperLexGrid;
 import org.ncbo.stanford.manager.wrapper.OntologyRetrievalManagerWrapper;
 
@@ -46,11 +47,12 @@ import org.ncbo.stanford.manager.wrapper.OntologyRetrievalManagerWrapper;
  * @author Pradip Kanjamala
  * 
  */
-public class OntologyRetrievalManagerWrapperLexGridImpl extends AbstractOntologyManagerWrapperLexGrid implements
-		OntologyRetrievalManagerWrapper
-{
+public class OntologyRetrievalManagerWrapperLexGridImpl extends
+		AbstractOntologyManagerWrapperLexGrid implements
+		OntologyRetrievalManagerWrapper {
 
-	private static final Log log = LogFactory.getLog(OntologyRetrievalManagerWrapperLexGridImpl.class);
+	private static final Log log = LogFactory
+			.getLog(OntologyRetrievalManagerWrapperLexGridImpl.class);
 
 	private enum Match_Types {
 		SEARCH_STARTS_WITH, SEARCH_ENDS_WITH, SEARCH_CONTAINS, SEARCH_EXACT_MATCH
@@ -58,20 +60,32 @@ public class OntologyRetrievalManagerWrapperLexGridImpl extends AbstractOntology
 
 	private LexBIGService lbs;
 
-	OntologyRetrievalManagerWrapperLexGridImpl() throws Exception
-	{
+	OntologyRetrievalManagerWrapperLexGridImpl() throws Exception {
 		lbs = LexBIGServiceImpl.defaultInstance();
+	}
+
+	public ClassBean findConcept(NcboOntology ontologyVersion, String conceptID)
+			throws Exception {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	public ClassBean findRootConcept(NcboOntology ontologyVersion)
+			throws Exception {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 	public List<String> findProperties(Integer id) throws Exception {
 		CodingScheme cs = getCodingScheme(lbs, id);
 		ArrayList<String> list = new ArrayList<String>();
 		SupportedProperty[] sp = cs.getMappings().getSupportedProperty();
-		for (int i = 0; i < sp.length; i++)
-		{
+		for (int i = 0; i < sp.length; i++) {
 			SupportedProperty prop = sp[i];
-			if (prop != null && prop.getLocalId() != null && !prop.getLocalId().equalsIgnoreCase("textualPresentation"))
-			{
+			if (prop != null
+					&& prop.getLocalId() != null
+					&& !prop.getLocalId().equalsIgnoreCase(
+							"textualPresentation")) {
 				list.add(prop.getLocalId());
 			}
 		}
@@ -88,184 +102,205 @@ public class OntologyRetrievalManagerWrapperLexGridImpl extends AbstractOntology
 		String urnAndVersion = getLexGridUrnAndVersion(ontologyId);
 		String urnVersionArray[] = splitUrnAndVersion(urnAndVersion);
 		// Iterate through all hierarchies ...
-		CodingSchemeVersionOrTag csvt = Constructors.createCodingSchemeVersionOrTagFromVersion(urnVersionArray[1]);
+		CodingSchemeVersionOrTag csvt = Constructors
+				.createCodingSchemeVersionOrTagFromVersion(urnVersionArray[1]);
 		String[] hierarchyIDs = lbscm.getHierarchyIDs(urnVersionArray[0], csvt);
 		String hierarchyId = (hierarchyIDs.length > 0) ? hierarchyIDs[0] : null;
-		for (String hierarchy : hierarchyIDs)
-		{
+		for (String hierarchy : hierarchyIDs) {
 			if (hierarchy.equalsIgnoreCase("IS_A"))
 				hierarchyId = hierarchy;
 		}
-		ResolvedConceptReferenceList rcrl = lbscm.getHierarchyRoots(urnVersionArray[0], csvt, hierarchyId);
-		//return createClassBeanArray(rcrl);
+		ResolvedConceptReferenceList rcrl = lbscm.getHierarchyRoots(
+				urnVersionArray[0], csvt, hierarchyId);
+		// return createClassBeanArray(rcrl);
 		return null;
 	}
 
-	public ClassBean findConcept(Integer ontologyId, String conceptID) throws Exception {
+	public ClassBean findConcept(Integer ontologyId, String conceptID)
+			throws Exception {
 		String urnAndVersion = getLexGridUrnAndVersion(ontologyId);
 		String urnVersionArray[] = splitUrnAndVersion(urnAndVersion);
-		CodingSchemeVersionOrTag csvt = Constructors.createCodingSchemeVersionOrTagFromVersion(urnVersionArray[1]);
+		CodingSchemeVersionOrTag csvt = Constructors
+				.createCodingSchemeVersionOrTagFromVersion(urnVersionArray[1]);
 
 		// Perform the query ...
-		ConceptReferenceList crefs = ConvenienceMethods.createConceptReferenceList(new String[] { conceptID },
-				urnVersionArray[0]);
+		ConceptReferenceList crefs = ConvenienceMethods
+				.createConceptReferenceList(new String[] { conceptID },
+						urnVersionArray[0]);
 
-		ResolvedConceptReferenceList matches = lbs.getCodingSchemeConcepts(urnVersionArray[0], csvt).restrictToStatus(
-				ActiveOption.ALL, null).restrictToCodes(crefs).resolveToList(null, null, null, 1);
+		ResolvedConceptReferenceList matches = lbs.getCodingSchemeConcepts(
+				urnVersionArray[0], csvt).restrictToStatus(ActiveOption.ALL,
+				null).restrictToCodes(crefs).resolveToList(null, null, null, 1);
 
 		// Analyze the result ...
-		if (matches.getResolvedConceptReferenceCount() > 0)
-		{
-			ResolvedConceptReference ref = (ResolvedConceptReference) matches.enumerateResolvedConceptReference()
-					.nextElement();
+		if (matches.getResolvedConceptReferenceCount() > 0) {
+			ResolvedConceptReference ref = (ResolvedConceptReference) matches
+					.enumerateResolvedConceptReference().nextElement();
 
 			return createClassBean(ref);
 
-		} else
-		{
+		} else {
 
 			return null;
 		}
 	}
 
-	public ArrayList<ClassBean> findPathToRoot(Integer ontologyId, String conceptId) throws Exception {
+	public ArrayList<ClassBean> findPathToRoot(Integer ontologyId,
+			String conceptId) throws Exception {
 		String urnAndVersion = getLexGridUrnAndVersion(ontologyId);
 		String urnVersionArray[] = splitUrnAndVersion(urnAndVersion);
-		CodingSchemeVersionOrTag csvt = Constructors.createCodingSchemeVersionOrTagFromVersion(urnVersionArray[1]);
-		LexBIGServiceConvenienceMethods lbscm = (LexBIGServiceConvenienceMethods) lbs.getGenericExtension("LexBIGServiceConvenienceMethods");
+		CodingSchemeVersionOrTag csvt = Constructors
+				.createCodingSchemeVersionOrTagFromVersion(urnVersionArray[1]);
+		LexBIGServiceConvenienceMethods lbscm = (LexBIGServiceConvenienceMethods) lbs
+				.getGenericExtension("LexBIGServiceConvenienceMethods");
 
 		String[] hierarchyIDs = lbscm.getHierarchyIDs(urnVersionArray[0], csvt);
 		String hierarchyId = (hierarchyIDs.length > 0) ? hierarchyIDs[0] : null;
-		for (String hierarchy : hierarchyIDs)
-		{
+		for (String hierarchy : hierarchyIDs) {
 			if (hierarchy.equalsIgnoreCase("IS_A"))
 				hierarchyId = hierarchy;
 		}
-		AssociationList associations = lbscm.getHierarchyPathToRoot(urnVersionArray[0], csvt, hierarchyId, conceptId, false,
-				LexBIGServiceConvenienceMethods.HierarchyPathResolveOption.ALL, null);
-		ClassBean conceptClass= findConcept(ontologyId, conceptId);
-		ArrayList<ClassBean> classBeans= createClassBeanArray(associations, conceptClass);
-		
-			
-		return classBeans;
-	}
-
-	public ArrayList<ClassBean> findParent(Integer ontologyId, String conceptId) throws Exception {
-		String urnAndVersion = getLexGridUrnAndVersion(ontologyId);
-		String urnVersionArray[] = splitUrnAndVersion(urnAndVersion);
-		CodingSchemeVersionOrTag csvt = Constructors.createCodingSchemeVersionOrTagFromVersion(urnVersionArray[1]);
-		LexBIGServiceConvenienceMethods lbscm = (LexBIGServiceConvenienceMethods) lbs.getGenericExtension("LexBIGServiceConvenienceMethods");
-
-		String[] hierarchyIDs = lbscm.getHierarchyIDs(urnVersionArray[0], csvt);
-		String hierarchyId = (hierarchyIDs.length > 0) ? hierarchyIDs[0] : null;
-		for (String hierarchy : hierarchyIDs)
-		{
-			if (hierarchy.equalsIgnoreCase("IS_A"))
-				hierarchyId = hierarchy;
-		}
-		
-		AssociationList associations = lbscm.getHierarchyLevelPrev(urnVersionArray[0], csvt, hierarchyId, conceptId, false, null);
-		
-		ClassBean conceptClass= findConcept(ontologyId, conceptId);
-		ArrayList<ClassBean> classBeans= createClassBeanArray(associations, conceptClass);
+		AssociationList associations = lbscm.getHierarchyPathToRoot(
+				urnVersionArray[0], csvt, hierarchyId, conceptId, false,
+				LexBIGServiceConvenienceMethods.HierarchyPathResolveOption.ALL,
+				null);
+		ClassBean conceptClass = findConcept(ontologyId, conceptId);
+		ArrayList<ClassBean> classBeans = createClassBeanArray(associations,
+				conceptClass);
 
 		return classBeans;
 	}
 
-	public ArrayList<ClassBean> findChildren(Integer ontologyId, String conceptId) throws Exception {
+	public ArrayList<ClassBean> findParent(Integer ontologyId, String conceptId)
+			throws Exception {
 		String urnAndVersion = getLexGridUrnAndVersion(ontologyId);
 		String urnVersionArray[] = splitUrnAndVersion(urnAndVersion);
-		CodingSchemeVersionOrTag csvt = Constructors.createCodingSchemeVersionOrTagFromVersion(urnVersionArray[1]);
-		LexBIGServiceConvenienceMethods lbscm = (LexBIGServiceConvenienceMethods) lbs.getGenericExtension("LexBIGServiceConvenienceMethods");
+		CodingSchemeVersionOrTag csvt = Constructors
+				.createCodingSchemeVersionOrTagFromVersion(urnVersionArray[1]);
+		LexBIGServiceConvenienceMethods lbscm = (LexBIGServiceConvenienceMethods) lbs
+				.getGenericExtension("LexBIGServiceConvenienceMethods");
 
 		String[] hierarchyIDs = lbscm.getHierarchyIDs(urnVersionArray[0], csvt);
 		String hierarchyId = (hierarchyIDs.length > 0) ? hierarchyIDs[0] : null;
-		for (String hierarchy : hierarchyIDs)
-		{
+		for (String hierarchy : hierarchyIDs) {
 			if (hierarchy.equalsIgnoreCase("IS_A"))
 				hierarchyId = hierarchy;
 		}
-		
-		AssociationList associations = lbscm.getHierarchyLevelNext(urnVersionArray[0], csvt, hierarchyId, conceptId, false, null);
-		
-		ClassBean conceptClass= findConcept(ontologyId, conceptId);
-		ArrayList<ClassBean> classBeans= createClassBeanArray(associations, conceptClass);
+
+		AssociationList associations = lbscm.getHierarchyLevelPrev(
+				urnVersionArray[0], csvt, hierarchyId, conceptId, false, null);
+
+		ClassBean conceptClass = findConcept(ontologyId, conceptId);
+		ArrayList<ClassBean> classBeans = createClassBeanArray(associations,
+				conceptClass);
 
 		return classBeans;
 	}
 
-	public ArrayList<SearchResultBean> findConceptNameExact(ArrayList<Integer> ontologyIds, List<String> query,
+	public ArrayList<ClassBean> findChildren(Integer ontologyId,
+			String conceptId) throws Exception {
+		String urnAndVersion = getLexGridUrnAndVersion(ontologyId);
+		String urnVersionArray[] = splitUrnAndVersion(urnAndVersion);
+		CodingSchemeVersionOrTag csvt = Constructors
+				.createCodingSchemeVersionOrTagFromVersion(urnVersionArray[1]);
+		LexBIGServiceConvenienceMethods lbscm = (LexBIGServiceConvenienceMethods) lbs
+				.getGenericExtension("LexBIGServiceConvenienceMethods");
+
+		String[] hierarchyIDs = lbscm.getHierarchyIDs(urnVersionArray[0], csvt);
+		String hierarchyId = (hierarchyIDs.length > 0) ? hierarchyIDs[0] : null;
+		for (String hierarchy : hierarchyIDs) {
+			if (hierarchy.equalsIgnoreCase("IS_A"))
+				hierarchyId = hierarchy;
+		}
+
+		AssociationList associations = lbscm.getHierarchyLevelNext(
+				urnVersionArray[0], csvt, hierarchyId, conceptId, false, null);
+
+		ClassBean conceptClass = findConcept(ontologyId, conceptId);
+		ArrayList<ClassBean> classBeans = createClassBeanArray(associations,
+				conceptClass);
+
+		return classBeans;
+	}
+
+	public ArrayList<SearchResultBean> findConceptNameExact(
+			ArrayList<Integer> ontologyIds, List<String> query,
 			boolean includeObsolete, int maxToReturn) {
 		ArrayList<SearchResultBean> results = new ArrayList<SearchResultBean>();
-		for (Integer ontologyId : ontologyIds)
-		{
-			SearchResultBean result = searchNodesForName(ontologyId, query, maxToReturn, Match_Types.SEARCH_EXACT_MATCH,
-					false, includeObsolete);
+		for (Integer ontologyId : ontologyIds) {
+			SearchResultBean result = searchNodesForName(ontologyId, query,
+					maxToReturn, Match_Types.SEARCH_EXACT_MATCH, false,
+					includeObsolete);
 			results.add(result);
 		}
 
 		return results;
 	}
 
-	public ArrayList<SearchResultBean> findConceptNameStartsWith(ArrayList<Integer> ontologyIds, List<String> query,
+	public ArrayList<SearchResultBean> findConceptNameStartsWith(
+			ArrayList<Integer> ontologyIds, List<String> query,
 			boolean includeObsolete, int maxToReturn) {
 		ArrayList<SearchResultBean> results = new ArrayList<SearchResultBean>();
-		for (Integer ontologyId : ontologyIds)
-		{
-			SearchResultBean result = searchNodesForName(ontologyId, query, maxToReturn, Match_Types.SEARCH_STARTS_WITH,
-					false, includeObsolete);
+		for (Integer ontologyId : ontologyIds) {
+			SearchResultBean result = searchNodesForName(ontologyId, query,
+					maxToReturn, Match_Types.SEARCH_STARTS_WITH, false,
+					includeObsolete);
 			results.add(result);
 		}
 
 		return results;
 	}
 
-	public ArrayList<SearchResultBean> findConceptNameContains(ArrayList<Integer> ontologyIds, List<String> query,
+	public ArrayList<SearchResultBean> findConceptNameContains(
+			ArrayList<Integer> ontologyIds, List<String> query,
 			boolean includeObsolete, int maxToReturn) {
 		ArrayList<SearchResultBean> results = new ArrayList<SearchResultBean>();
-		for (Integer ontologyId : ontologyIds)
-		{
-			SearchResultBean result = searchNodesForName(ontologyId, query, maxToReturn, Match_Types.SEARCH_CONTAINS,
-					false, includeObsolete);
+		for (Integer ontologyId : ontologyIds) {
+			SearchResultBean result = searchNodesForName(ontologyId, query,
+					maxToReturn, Match_Types.SEARCH_CONTAINS, false,
+					includeObsolete);
 			results.add(result);
 		}
 
 		return results;
 	}
 
-	public ArrayList<SearchResultBean> findConceptPropertyExact(ArrayList<Integer> ontologyIds, List<String> query,
+	public ArrayList<SearchResultBean> findConceptPropertyExact(
+			ArrayList<Integer> ontologyIds, List<String> query,
 			String properties[], boolean includeObsolete, int maxToReturn) {
 		ArrayList<SearchResultBean> results = new ArrayList<SearchResultBean>();
-		for (Integer ontologyId : ontologyIds)
-		{
-			SearchResultBean result = searchNodesForProperties(ontologyId, query, properties, false, includeObsolete,
-					maxToReturn, Match_Types.SEARCH_EXACT_MATCH);
+		for (Integer ontologyId : ontologyIds) {
+			SearchResultBean result = searchNodesForProperties(ontologyId,
+					query, properties, false, includeObsolete, maxToReturn,
+					Match_Types.SEARCH_EXACT_MATCH);
 			results.add(result);
 		}
 
 		return results;
 	}
 
-	public ArrayList<SearchResultBean> findConceptPropertyStartsWith(ArrayList<Integer> ontologyIds, List<String> query,
+	public ArrayList<SearchResultBean> findConceptPropertyStartsWith(
+			ArrayList<Integer> ontologyIds, List<String> query,
 			String properties[], boolean includeObsolete, int maxToReturn) {
 		ArrayList<SearchResultBean> results = new ArrayList<SearchResultBean>();
-		for (Integer ontologyId : ontologyIds)
-		{
-			SearchResultBean result = searchNodesForProperties(ontologyId, query, properties, false, includeObsolete,
-					maxToReturn, Match_Types.SEARCH_STARTS_WITH);
+		for (Integer ontologyId : ontologyIds) {
+			SearchResultBean result = searchNodesForProperties(ontologyId,
+					query, properties, false, includeObsolete, maxToReturn,
+					Match_Types.SEARCH_STARTS_WITH);
 			results.add(result);
 		}
 
 		return results;
 	}
 
-	public ArrayList<SearchResultBean> findConceptPropertyContains(ArrayList<Integer> ontologyIds, List<String> query,
+	public ArrayList<SearchResultBean> findConceptPropertyContains(
+			ArrayList<Integer> ontologyIds, List<String> query,
 			String properties[], boolean includeObsolete, int maxToReturn) {
 		ArrayList<SearchResultBean> results = new ArrayList<SearchResultBean>();
-		for (Integer ontologyId : ontologyIds)
-		{
-			SearchResultBean result = searchNodesForProperties(ontologyId, query, properties, false, includeObsolete,
-					maxToReturn, Match_Types.SEARCH_CONTAINS);
+		for (Integer ontologyId : ontologyIds) {
+			SearchResultBean result = searchNodesForProperties(ontologyId,
+					query, properties, false, includeObsolete, maxToReturn,
+					Match_Types.SEARCH_CONTAINS);
 			results.add(result);
 		}
 
@@ -276,8 +311,7 @@ public class OntologyRetrievalManagerWrapperLexGridImpl extends AbstractOntology
 		String temp = "";
 		if (s.indexOf(".") < 0)
 			return s;
-		while (s.indexOf(".") >= 0)
-		{
+		while (s.indexOf(".") >= 0) {
 			temp = temp + s.substring(0, s.indexOf(".")) + "\\.";
 			s = s.substring(s.indexOf(".") + 1);
 		}
@@ -285,29 +319,31 @@ public class OntologyRetrievalManagerWrapperLexGridImpl extends AbstractOntology
 		return temp;
 	}
 
-	private SearchResultBean searchNodesForProperties(Integer ontologyId, List<String> names, String[] properties,
-			boolean soundsLike, boolean includeObsolete, int maxToReturn, Match_Types algorithm) {
-		try
-		{
+	private SearchResultBean searchNodesForProperties(Integer ontologyId,
+			List<String> names, String[] properties, boolean soundsLike,
+			boolean includeObsolete, int maxToReturn, Match_Types algorithm) {
+		try {
 
 			String urnAndVersion = getLexGridUrnAndVersion(ontologyId);
 			String urnVersionArray[] = splitUrnAndVersion(urnAndVersion);
-			CodedNodeSet nodes = lbs.getCodingSchemeConcepts(urnVersionArray[0], Constructors
-					.createCodingSchemeVersionOrTagFromVersion(urnVersionArray[1]));
+			CodedNodeSet nodes = lbs
+					.getCodingSchemeConcepts(
+							urnVersionArray[0],
+							Constructors
+									.createCodingSchemeVersionOrTagFromVersion(urnVersionArray[1]));
 
 			String name = null;
 			Iterator<String> namesIte = names.iterator();
 			String[] propList = properties;
 			String matchAlgorithm = "RegExp";
 			if (soundsLike)
-				matchAlgorithm = MatchAlgorithms.DoubleMetaphoneLuceneQuery.name();
+				matchAlgorithm = MatchAlgorithms.DoubleMetaphoneLuceneQuery
+						.name();
 
-			while (namesIte.hasNext())
-			{
+			while (namesIte.hasNext()) {
 				name = (String) namesIte.next();
 				name = name.toLowerCase();
-				if (!soundsLike)
-				{
+				if (!soundsLike) {
 					name = replacePeriod(name);
 					switch (algorithm) {
 					case SEARCH_STARTS_WITH:
@@ -326,30 +362,29 @@ public class OntologyRetrievalManagerWrapperLexGridImpl extends AbstractOntology
 					matchAlgorithm = "RegExp";
 				}
 
-				if (properties != null && properties.length > 0)
-				{
-					nodes = nodes.restrictToMatchingProperties(Constructors.createLocalNameList(propList), null, name,
+				if (properties != null && properties.length > 0) {
+					nodes = nodes.restrictToMatchingProperties(Constructors
+							.createLocalNameList(propList), null, name,
 							matchAlgorithm, null);
 				}
 
 			}
-			if (includeObsolete)
-			{
+			if (includeObsolete) {
 				nodes = nodes.restrictToStatus(ActiveOption.ALL, null);
-			} else
-			{
+			} else {
 				nodes = nodes.restrictToStatus(ActiveOption.ACTIVE_ONLY, null);
 			}
 
-			SortOptionList sortCriteria = Constructors.createSortOptionList(new String[] { "matchToQuery", "code" });
-			ResolvedConceptReferencesIterator matchIterator = nodes.resolve(sortCriteria, null, null);
+			SortOptionList sortCriteria = Constructors
+					.createSortOptionList(new String[] { "matchToQuery", "code" });
+			ResolvedConceptReferencesIterator matchIterator = nodes.resolve(
+					sortCriteria, null, null);
 
 			ResolvedConceptReferenceList lst = matchIterator.next(maxToReturn);
 			SearchResultBean srb = new SearchResultBean();
 			srb.setOntologyId(ontologyId);
 			srb.setPropertyValueSearchResult(createClassBeanArray(lst));
-		} catch (Exception e)
-		{
+		} catch (Exception e) {
 			e.printStackTrace();
 			log.error(e.getMessage());
 
@@ -358,29 +393,31 @@ public class OntologyRetrievalManagerWrapperLexGridImpl extends AbstractOntology
 
 	}
 
-	private SearchResultBean searchNodesForName(Integer ontologyId, List<String> names, int maxToReturn,
-			Match_Types algorithm, boolean soundsLike, boolean includeObsolete) {
-		try
-		{
+	private SearchResultBean searchNodesForName(Integer ontologyId,
+			List<String> names, int maxToReturn, Match_Types algorithm,
+			boolean soundsLike, boolean includeObsolete) {
+		try {
 			String urnAndVersion = getLexGridUrnAndVersion(ontologyId);
 			String urnVersionArray[] = splitUrnAndVersion(urnAndVersion);
-			CodedNodeSet nodes = lbs.getCodingSchemeConcepts(urnVersionArray[0], Constructors
-					.createCodingSchemeVersionOrTagFromVersion(urnVersionArray[1]));
+			CodedNodeSet nodes = lbs
+					.getCodingSchemeConcepts(
+							urnVersionArray[0],
+							Constructors
+									.createCodingSchemeVersionOrTagFromVersion(urnVersionArray[1]));
 			String name = "";
 			Iterator<String> namesIte = names.iterator();
 
 			String matchAlgorithm = "RegExp";
 
 			if (soundsLike)
-				matchAlgorithm = MatchAlgorithms.DoubleMetaphoneLuceneQuery.name();
+				matchAlgorithm = MatchAlgorithms.DoubleMetaphoneLuceneQuery
+						.name();
 
-			while (namesIte.hasNext())
-			{
+			while (namesIte.hasNext()) {
 				name = (String) namesIte.next();
 				name = name.toLowerCase();
 
-				if (!soundsLike)
-				{
+				if (!soundsLike) {
 					name = replacePeriod(name);
 					switch (algorithm) {
 					case SEARCH_STARTS_WITH:
@@ -399,22 +436,24 @@ public class OntologyRetrievalManagerWrapperLexGridImpl extends AbstractOntology
 					matchAlgorithm = "RegExp";
 				}
 
-				nodes = nodes.restrictToMatchingDesignations(name, SearchDesignationOption.PREFERRED_ONLY, matchAlgorithm,
+				nodes = nodes.restrictToMatchingDesignations(name,
+						SearchDesignationOption.PREFERRED_ONLY, matchAlgorithm,
 						null);
 
 			}
 
 			// Sort by search engine recommendation & code ...
-			SortOptionList sortCriteria = Constructors.createSortOptionList(new String[] { "matchToQuery", "code" });
+			SortOptionList sortCriteria = Constructors
+					.createSortOptionList(new String[] { "matchToQuery", "code" });
 			// Analyze the result ...
-			ResolvedConceptReferencesIterator matchIterator = nodes.resolve(sortCriteria, null, null);
+			ResolvedConceptReferencesIterator matchIterator = nodes.resolve(
+					sortCriteria, null, null);
 			ResolvedConceptReferenceList lst = matchIterator.next(maxToReturn);
 			SearchResultBean srb = new SearchResultBean();
 			srb.setOntologyId(ontologyId);
 			srb.setNameSearchResult(createClassBeanArray(lst));
 			return srb;
-		} catch (Exception e)
-		{
+		} catch (Exception e) {
 			e.printStackTrace();
 			log.error(e.getMessage());
 
@@ -428,16 +467,13 @@ public class OntologyRetrievalManagerWrapperLexGridImpl extends AbstractOntology
 		CodedEntry entry = rcr.getReferencedEntry();
 
 		if (entry != null
-				&& (entry.getIsAnonymous() == null || (entry.getIsAnonymous() != null && !entry.getIsAnonymous()
-						.booleanValue())))
-		{
+				&& (entry.getIsAnonymous() == null || (entry.getIsAnonymous() != null && !entry
+						.getIsAnonymous().booleanValue()))) {
 			bean = new ClassBean();
 			bean.setId(rcr.getConceptCode());
-			if (rcr.getEntityDescription().getContent() != null)
-			{
+			if (rcr.getEntityDescription().getContent() != null) {
 				bean.setLabel(rcr.getEntityDescription().getContent());
-			} else
-			{
+			} else {
 				bean.setLabel(getPreferredPresentation(entry));
 			}
 			bean.addRelation("definition", getDefinition(entry));
@@ -447,12 +483,13 @@ public class OntologyRetrievalManagerWrapperLexGridImpl extends AbstractOntology
 		return bean;
 	}
 
-	private ArrayList<ClassBean> createClassBeanArray(ResolvedConceptReferenceList list) {
+	private ArrayList<ClassBean> createClassBeanArray(
+			ResolvedConceptReferenceList list) {
 		ArrayList<ClassBean> classBeans = new ArrayList<ClassBean>();
-		Enumeration<ResolvedConceptReference> refEnum = list.enumerateResolvedConceptReference();
+		Enumeration<ResolvedConceptReference> refEnum = list
+				.enumerateResolvedConceptReference();
 		ResolvedConceptReference ref = null;
-		while (refEnum.hasMoreElements())
-		{
+		while (refEnum.hasMoreElements()) {
 			ref = (ResolvedConceptReference) refEnum.nextElement();
 			ClassBean bean = createClassBean(ref);
 			if (bean != null)
@@ -467,8 +504,7 @@ public class OntologyRetrievalManagerWrapperLexGridImpl extends AbstractOntology
 		// Presentation[] presentation = entry.getPresentation();
 		Definition p = null;
 		int count = entry.getDefinitionCount();
-		for (int i = 0; i < count; i++)
-		{
+		for (int i = 0; i < count; i++) {
 			p = entry.getDefinition(i);
 			// if(p.getIsPreferred().booleanValue())
 			return p.getText().getContent();
@@ -479,8 +515,7 @@ public class OntologyRetrievalManagerWrapperLexGridImpl extends AbstractOntology
 
 	private static String getPreferredPresentation(CodedEntry entry) {
 		Presentation[] presentations = entry.getPresentation();
-		for (int i = 0; i < presentations.length; i++)
-		{
+		for (int i = 0; i < presentations.length; i++) {
 			if (presentations[i].getIsPreferred().booleanValue())
 
 				return presentations[i].getText().getContent();
@@ -490,59 +525,49 @@ public class OntologyRetrievalManagerWrapperLexGridImpl extends AbstractOntology
 	}
 
 	@SuppressWarnings("unchecked")
-	private static void addCodedEntryPropertyValue(CodedEntry entry, ClassBean bean) {
+	private static void addCodedEntryPropertyValue(CodedEntry entry,
+			ClassBean bean) {
 		// Presentation[] presentation = entry.getPresentation();
 		HashMap<Object, Object> map = bean.getRelations();
 		Presentation p = null;
 		int count = entry.getPresentationCount();
 		List<Object> list = null;
 
-		for (int i = 0; i < count; i++)
-		{
+		for (int i = 0; i < count; i++) {
 			p = entry.getPresentation(i);
 
-			if (!p.getIsPreferred().booleanValue())
-			{
-				if (p.getDegreeOfFidelity() != null && !p.getDegreeOfFidelity().equals(""))
-				{
+			if (!p.getIsPreferred().booleanValue()) {
+				if (p.getDegreeOfFidelity() != null
+						&& !p.getDegreeOfFidelity().equals("")) {
 					list = (List) map.get(p.getDegreeOfFidelity() + " SYNONYM");
 
-					if (list == null)
-					{
+					if (list == null) {
 						list = new ArrayList<Object>();
 					}
 
-					if (p.getText() != null)
-					{
+					if (p.getText() != null) {
 						list.add(p.getText().getContent());
 						map.put(p.getDegreeOfFidelity() + " SYNONYM", list);
 					}
-				} else
-				{
+				} else {
 
-					if (p.getRepresentationalForm() != null)
-					{
+					if (p.getRepresentationalForm() != null) {
 						list = (List) map.get(p.getRepresentationalForm());
-						if (list == null)
-						{
+						if (list == null) {
 							list = new ArrayList<Object>();
 						}
-						if (p.getText() != null)
-						{
+						if (p.getText() != null) {
 							list.add(p.getText().getContent());
 							map.put(p.getRepresentationalForm(), list);
 
 						}
-					} else
-					{
+					} else {
 
 						list = (List) map.get("SYNONYM");
-						if (list == null)
-						{
+						if (list == null) {
 							list = new ArrayList<Object>();
 						}
-						if (p.getText() != null)
-						{
+						if (p.getText() != null) {
 							list.add(p.getText().getContent());
 							map.put("SYNONYM", list);
 
@@ -556,16 +581,13 @@ public class OntologyRetrievalManagerWrapperLexGridImpl extends AbstractOntology
 		// handle comment
 		Comment c = null;
 		count = entry.getCommentCount();
-		for (int i = 0; i < count; i++)
-		{
+		for (int i = 0; i < count; i++) {
 			c = entry.getComment(i);
 			list = (List) map.get("Comment");
-			if (list == null)
-			{
+			if (list == null) {
 				list = new ArrayList<Object>();
 			}
-			if (c.getText() != null)
-			{
+			if (c.getText() != null) {
 				list.add(c.getText().getContent());
 				map.put("Comment", list);
 			}
@@ -574,16 +596,13 @@ public class OntologyRetrievalManagerWrapperLexGridImpl extends AbstractOntology
 		// handle definiton as now definiton is bundled into property
 		Definition d = null;
 		count = entry.getDefinitionCount();
-		for (int i = 0; i < count; i++)
-		{
+		for (int i = 0; i < count; i++) {
 			d = entry.getDefinition(i);
 			list = (List) map.get("Definition");
-			if (list == null)
-			{
+			if (list == null) {
 				list = new ArrayList<Object>();
 			}
-			if (d.getText() != null)
-			{
+			if (d.getText() != null) {
 				list.add(d.getText().getContent());
 				map.put("Definition", list);
 			}
@@ -591,20 +610,16 @@ public class OntologyRetrievalManagerWrapperLexGridImpl extends AbstractOntology
 
 		org.LexGrid.commonTypes.Property prop = null;
 		count = entry.getConceptPropertyCount();
-		for (int i = 0; i < count; i++)
-		{
+		for (int i = 0; i < count; i++) {
 			prop = entry.getConceptProperty(i);
-			if (!(prop instanceof Presentation) && !(prop instanceof Comment))
-			{
+			if (!(prop instanceof Presentation) && !(prop instanceof Comment)) {
 
 				list = (List) map.get(prop.getProperty());
-				if (list == null)
-				{
+				if (list == null) {
 					list = new ArrayList<Object>();
 				}
 				prop = entry.getConceptProperty(i);
-				if (prop.getText() != null)
-				{
+				if (prop.getText() != null) {
 					list.add(prop.getText().getContent());
 					map.put(prop.getProperty(), list);
 				}
@@ -613,54 +628,57 @@ public class OntologyRetrievalManagerWrapperLexGridImpl extends AbstractOntology
 
 	}
 
-	private ArrayList<ClassBean> createClassBeanArray(AssociationList list, ClassBean current_classBean) {
+	private ArrayList<ClassBean> createClassBeanArray(AssociationList list,
+			ClassBean current_classBean) {
 		ArrayList<ClassBean> classBeans = new ArrayList<ClassBean>();
 		Enumeration<Association> assocEnum = list.enumerateAssociation();
 		Association association = null;
-		while (assocEnum.hasMoreElements())
-		{
+		while (assocEnum.hasMoreElements()) {
 			association = (Association) assocEnum.nextElement();
 			createClassBeanArray(association, current_classBean);
-//			AssociatedConceptList concepts = association.getAssociatedConcepts();
-//			for (int i = 0; i < concepts.getAssociatedConceptCount(); i++) {
-//				AssociatedConcept concept= concepts.getAssociatedConcept(i);
-//				if (concept !=null) {
-//				ClassBean classBean = createClassBean(concept);
-//				classBeans.add(classBean);
-//				}
-//			}
-			
+			// AssociatedConceptList concepts =
+			// association.getAssociatedConcepts();
+			// for (int i = 0; i < concepts.getAssociatedConceptCount(); i++) {
+			// AssociatedConcept concept= concepts.getAssociatedConcept(i);
+			// if (concept !=null) {
+			// ClassBean classBean = createClassBean(concept);
+			// classBeans.add(classBean);
+			// }
+			// }
 
 		}
 		classBeans.add(current_classBean);
 		return classBeans;
 
 	}
-	
-	private void createClassBeanArray(Association association, ClassBean current_classBean) {
+
+	private void createClassBeanArray(Association association,
+			ClassBean current_classBean) {
 		AssociatedConceptList concepts = association.getAssociatedConcepts();
 		ArrayList<ClassBean> classBeans = new ArrayList<ClassBean>();
 		for (int i = 0; i < concepts.getAssociatedConceptCount(); i++) {
-			AssociatedConcept concept= concepts.getAssociatedConcept(i);
-			if (concept !=null) {
-			ClassBean classBean = createClassBean(concept);
-			classBeans.add(classBean);
-		   // Find and recurse printing for next batch ...
-			AssociationList nextLevel = concept.getSourceOf();
-			if (nextLevel != null && nextLevel.getAssociationCount() != 0)
-				for (int j = 0; j < nextLevel.getAssociationCount(); j++)
-					createClassBeanArray(nextLevel.getAssociation(j), classBean);
-			
-		// Find and recurse printing for previous batch ...
-			AssociationList prevLevel = concept.getTargetOf();
-			if (prevLevel != null && prevLevel.getAssociationCount() != 0)
-				for (int j = 0; j < prevLevel.getAssociationCount(); j++)
-					createClassBeanArray(prevLevel.getAssociation(j), classBean);
+			AssociatedConcept concept = concepts.getAssociatedConcept(i);
+			if (concept != null) {
+				ClassBean classBean = createClassBean(concept);
+				classBeans.add(classBean);
+				// Find and recurse printing for next batch ...
+				AssociationList nextLevel = concept.getSourceOf();
+				if (nextLevel != null && nextLevel.getAssociationCount() != 0)
+					for (int j = 0; j < nextLevel.getAssociationCount(); j++)
+						createClassBeanArray(nextLevel.getAssociation(j),
+								classBean);
+
+				// Find and recurse printing for previous batch ...
+				AssociationList prevLevel = concept.getTargetOf();
+				if (prevLevel != null && prevLevel.getAssociationCount() != 0)
+					for (int j = 0; j < prevLevel.getAssociationCount(); j++)
+						createClassBeanArray(prevLevel.getAssociation(j),
+								classBean);
 			}
-			
+
 		}
-		current_classBean.addRelation(association.getDirectionalName(), classBeans);
-		
+		current_classBean.addRelation(association.getDirectionalName(),
+				classBeans);
+
 	}
-	
 }
