@@ -31,6 +31,13 @@
 		</property>
 	</bean>
 	
+	<bean id="conceptRestlet"
+		class="org.ncbo.stanford.view.rest.restlet.concept.ConceptRestlet">
+		<property name="conceptService">
+			<ref bean="conceptService" />
+		</property>
+	</bean>
+	
 	<bean id="ontologiesRestlet"
 		class="org.ncbo.stanford.view.rest.restlet.ontology.OntologiesRestlet">
 		<property name="ontologyService">
@@ -66,6 +73,9 @@
 						</entry>
 						<entry key="/ontologies/{ontology}">
 							<ref local="ontologyRestlet" />
+						</entry>
+						<entry key="/concept/{ontology}/{concept}">
+							<ref local="conceptRestlet" />
 						</entry>
 						<entry key="/user/{user}">
 							<ref local="userRestlet" />
