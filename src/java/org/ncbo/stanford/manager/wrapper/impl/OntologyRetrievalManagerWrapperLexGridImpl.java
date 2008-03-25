@@ -150,7 +150,6 @@ public class OntologyRetrievalManagerWrapperLexGridImpl extends
 				LexBIGServiceConvenienceMethods.HierarchyPathResolveOption.ALL, null);
 		ClassBean conceptClass = findConcept(ncboOntology, conceptId);
 		ArrayList<ClassBean> classBeans = createClassBeanArray(associations, conceptClass);
-
 		return classBeans;
 	}
 
@@ -488,7 +487,6 @@ public class OntologyRetrievalManagerWrapperLexGridImpl extends
 
 		for (int i = 0; i < count; i++) {
 			p = entry.getPresentation(i);
-
 			if (!p.getIsPreferred().booleanValue()) {
 				if (p.getDegreeOfFidelity() != null && !p.getDegreeOfFidelity().equals("")) {
 					list = (List) map.get(p.getDegreeOfFidelity() + " SYNONYM");
@@ -588,16 +586,6 @@ public class OntologyRetrievalManagerWrapperLexGridImpl extends
 		while (assocEnum.hasMoreElements()) {
 			association = (Association) assocEnum.nextElement();
 			createClassBeanArray(association, current_classBean);
-			// AssociatedConceptList concepts =
-			// association.getAssociatedConcepts();
-			// for (int i = 0; i < concepts.getAssociatedConceptCount(); i++) {
-			// AssociatedConcept concept= concepts.getAssociatedConcept(i);
-			// if (concept !=null) {
-			// ClassBean classBean = createClassBean(concept);
-			// classBeans.add(classBean);
-			// }
-			// }
-
 		}
 		classBeans.add(current_classBean);
 		return classBeans;

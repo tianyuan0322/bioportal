@@ -61,7 +61,7 @@ public class OntologyLoaderLexGridImplTest extends AbstractBioPortalTest {
 		ontology_bean.setDateReleased(new Date());
 		ontology_bean.setContactEmail("obo@email.com");
 		ontology_bean.setContactName("OBO Name");
-		ontology_bean.setId(3000);
+		ontology_bean.setOntologyId(3000);
 		ontology_bean.setIsFoundry(new Byte("0"));
 		File inputFile = new File(TEST_OBO_PATHNAME);
 		FileHandler ontologyFile = new PhysicalDirectoryFileHandler(inputFile);
