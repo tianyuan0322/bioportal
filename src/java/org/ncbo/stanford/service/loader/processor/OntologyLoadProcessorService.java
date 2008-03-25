@@ -3,6 +3,7 @@ package org.ncbo.stanford.service.loader.processor;
 import java.io.IOException;
 
 import org.ncbo.stanford.bean.OntologyBean;
+import org.ncbo.stanford.domain.generated.NcboOntologyVersion;
 import org.ncbo.stanford.util.filehandler.FileHandler;
 
 /**
@@ -20,6 +21,6 @@ public interface OntologyLoadProcessorService {
 	 * @param ontologyBean
 	 * @throws IOException
 	 */
-	public void processOntologyLoad(FileHandler ontologyFile,
+	public NcboOntologyVersion processOntologyLoad(FileHandler ontologyFile,
 			OntologyBean ontologyBean) throws Exception;
 }

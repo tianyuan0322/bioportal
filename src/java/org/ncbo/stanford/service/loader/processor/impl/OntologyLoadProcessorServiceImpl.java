@@ -56,7 +56,7 @@ public class OntologyLoadProcessorServiceImpl implements
 	 * @throws IOException
 	 */
 	@Transactional (rollbackFor = IOException.class)
-	public void processOntologyLoad(FileHandler ontologyFile,
+	public NcboOntologyVersion processOntologyLoad(FileHandler ontologyFile,
 			OntologyBean ontologyBean) throws Exception {
 		NcboOntologyVersion ontologyVersion = new NcboOntologyVersion();
 		Integer ontologyId = ontologyBean.getOntologyId();
@@ -139,6 +139,7 @@ public class OntologyLoadProcessorServiceImpl implements
 		loadQueue.setNcboLStatus(status);
 		loadQueue.setDateCreated(Calendar.getInstance().getTime());
 		ncboOntologyLoadQueueDAO.save(loadQueue);
+		return newOntologyVersion;
 	}
 
 	/**
