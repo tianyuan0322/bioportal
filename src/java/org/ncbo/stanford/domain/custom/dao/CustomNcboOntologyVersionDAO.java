@@ -14,6 +14,7 @@ import org.hibernate.Query;
 import org.hibernate.Session;
 import org.ncbo.stanford.domain.custom.entity.NcboOntology;
 import org.ncbo.stanford.domain.generated.NcboOntologyFile;
+import org.ncbo.stanford.domain.generated.NcboOntologyMetadata;
 import org.ncbo.stanford.domain.generated.NcboOntologyVersion;
 import org.ncbo.stanford.domain.generated.NcboOntologyVersionDAO;
 import org.ncbo.stanford.util.constants.ApplicationConstants;
@@ -99,4 +100,12 @@ public class CustomNcboOntologyVersionDAO extends NcboOntologyVersionDAO {
 		}
 	}
 
+	public NcboOntologyMetadata findOntologyMetadataById(final Integer Id) {
+		 NcboOntologyVersion ncboOntologyVersion= findById(Id);
+		 NcboOntologyMetadata[] metadataArray= ( NcboOntologyMetadata[]) ncboOntologyVersion.getNcboOntologyMetadatas().toArray(new NcboOntologyMetadata[0]);
+		 if (metadataArray!= null &&  metadataArray.length > 0 )
+			 return metadataArray[0];
+		 else
+			 return null;
+	}
 }

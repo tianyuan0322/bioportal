@@ -53,6 +53,7 @@ public class OntologyLoadManagerWrapperLexGridImpl extends AbstractOntologyManag
 
 	private String targetTerminologies;
 
+
 	private CustomNcboOntologyMetadataDAO ncboOntologyMetadataDAO;
 
 	/**
@@ -98,8 +99,8 @@ public class OntologyLoadManagerWrapperLexGridImpl extends AbstractOntologyManag
 
 			lbsm.removeCodingSchemeVersion(acsvr);
 			ontology_bean.setCodingScheme(null);
-			NcboOntologyMetadata ncboMetadata = ncboOntologyMetadataDAO
-					.findById(ontology_bean.getId());
+			NcboOntologyMetadata ncboMetadata = ncboOntologyVersionDAO
+					.findOntologyMetadataById(ontology_bean.getId());
 			if (ncboMetadata != null) {
 				ncboMetadata.setCodingScheme(null);
 				ncboOntologyMetadataDAO.save(ncboMetadata);
@@ -160,11 +161,13 @@ public class OntologyLoadManagerWrapperLexGridImpl extends AbstractOntologyManag
 
 			// Update the NCBO Metadata table with the unique LexGrid url and
 			// version for the ontology
-			NcboOntologyMetadata ncboMetadata = ncboOntologyMetadataDAO
-					.findById(ontology_bean.getId());
+			NcboOntologyMetadata ncboMetadata = ncboOntologyVersionDAO
+					.findOntologyMetadataById(ontology_bean.getId());
 			if (ncboMetadata != null) {
-				ncboMetadata.setCodingScheme(urn + "|" + version);
+				String urnAndVersion= urn + "|" + version;
+				ncboMetadata.setCodingScheme(urnAndVersion);
 				ncboOntologyMetadataDAO.save(ncboMetadata);
+				ontology_bean.setCodingScheme(urnAndVersion);
 			}
 
 		} else {
@@ -203,6 +206,8 @@ public class OntologyLoadManagerWrapperLexGridImpl extends AbstractOntologyManag
 		return lnl;
 	}
 
+
+
 	/**
 	 * @return the ncboOntologyMetadataDAO
 	 */
@@ -211,8 +216,7 @@ public class OntologyLoadManagerWrapperLexGridImpl extends AbstractOntologyManag
 	}
 
 	/**
-	 * @param ncboOntologyMetadataDAO
-	 *           the ncboOntologyMetadataDAO to set
+	 * @param ncboOntologyMetadataDAO the ncboOntologyMetadataDAO to set
 	 */
 	public void setNcboOntologyMetadataDAO(CustomNcboOntologyMetadataDAO ncboOntologyMetadataDAO) {
 		this.ncboOntologyMetadataDAO = ncboOntologyMetadataDAO;

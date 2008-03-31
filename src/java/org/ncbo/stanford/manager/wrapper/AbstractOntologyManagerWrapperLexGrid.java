@@ -22,7 +22,7 @@ import org.ncbo.stanford.domain.custom.entity.NcboOntology;
 public  abstract class AbstractOntologyManagerWrapperLexGrid
 {
 
-	private CustomNcboOntologyVersionDAO ncboOntologyVersionDAO;
+	protected CustomNcboOntologyVersionDAO ncboOntologyVersionDAO;
 	
 	
 	public CustomNcboOntologyVersionDAO getNcboOntologyVersionDAO() {
