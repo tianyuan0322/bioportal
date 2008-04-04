@@ -6,7 +6,6 @@ import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
-
 import org.LexGrid.LexBIG.DataModel.Collections.AssociatedConceptList;
 import org.LexGrid.LexBIG.DataModel.Collections.AssociationList;
 import org.LexGrid.LexBIG.DataModel.Collections.ConceptReferenceList;
@@ -55,8 +54,7 @@ import org.ncbo.stanford.manager.wrapper.OntologyRetrievalManagerWrapper;
  * 
  */
 public class OntologyRetrievalManagerWrapperLexGridImpl extends
-		AbstractOntologyManagerWrapperLexGrid implements OntologyRetrievalManagerWrapper
-{
+		AbstractOntologyManagerWrapperLexGrid implements OntologyRetrievalManagerWrapper {
 
 	private static final Log log = LogFactory
 			.getLog(OntologyRetrievalManagerWrapperLexGridImpl.class);
@@ -67,8 +65,7 @@ public class OntologyRetrievalManagerWrapperLexGridImpl extends
 
 	private LexBIGService lbs;
 
-	OntologyRetrievalManagerWrapperLexGridImpl() throws Exception
-	{
+	OntologyRetrievalManagerWrapperLexGridImpl() throws Exception {
 		lbs = LexBIGServiceImpl.defaultInstance();
 	}
 
@@ -106,8 +103,7 @@ public class OntologyRetrievalManagerWrapperLexGridImpl extends
 		}
 		ResolvedConceptReferenceList rcrl = lbscm.getHierarchyRoots(urnVersionArray[0], csvt,
 				hierarchyId);
-		// return createClassBeanArray(rcrl);
-		return null;
+		return createThingClassBean(rcrl);
 	}
 
 	public ClassBean findConcept(NcboOntology ncboOntology, String conceptID) throws Exception {
@@ -409,27 +405,26 @@ public class OntologyRetrievalManagerWrapperLexGridImpl extends
 	}
 
 	private PropertyBean createPropertyBean(Source source) {
-		PropertyBean bean= new PropertyBean();
+		PropertyBean bean = new PropertyBean();
 		bean.setId("source");
 		bean.setLabel(source.getContent());
 		HashMap<Object, Object> map = bean.getRelations();
 		addStringToHashMap(map, "Role", source.getRole());
-		addStringToHashMap(map, "SubRef", source.getSubRef());		
+		addStringToHashMap(map, "SubRef", source.getSubRef());
 		return bean;
 	}
-	
+
 	private PropertyBean createPropertyBean(PropertyQualifier qualifier) {
-		PropertyBean bean= new PropertyBean();
+		PropertyBean bean = new PropertyBean();
 		bean.setId(qualifier.getPropertyQualifierId());
 		bean.setLabel(qualifier.getContent());
 		HashMap<Object, Object> map = bean.getRelations();
 		addArrayToHashMap(map, "AnyObject", qualifier.getAnyObject());
 		return bean;
 	}
-	
 
 	private PropertyBean createPropertyBean(Property prop) {
-		PropertyBean bean= new PropertyBean();
+		PropertyBean bean = new PropertyBean();
 		bean.setId(prop.getProperty());
 		bean.setLabel(prop.getText().getContent());
 		HashMap<Object, Object> map = bean.getRelations();
@@ -439,19 +434,19 @@ public class OntologyRetrievalManagerWrapperLexGridImpl extends
 		addArrayToHashMap(map, "PropertyQualifier", prop.getPropertyQualifier());
 		addArrayToHashMap(map, "Source", prop.getSource());
 		if (prop instanceof Presentation) {
-			Presentation presentation= (Presentation) prop;
+			Presentation presentation = (Presentation) prop;
 			addStringToHashMap(map, "DegreeOfFidelity", presentation.getDegreeOfFidelity());
 			addStringToHashMap(map, "IsPreferred", presentation.getIsPreferred().toString());
 			addStringToHashMap(map, "RepresentationalForm", presentation.getRepresentationalForm());
 		}
-		
+
 		if (prop instanceof Definition) {
-			Definition definition= (Definition) prop;
+			Definition definition = (Definition) prop;
 			addStringToHashMap(map, "IsPreferred", definition.getIsPreferred().toString());
 		}
 		return bean;
 	}
-	
+
 	private ClassBean createClassBean(ResolvedConceptReference rcr) {
 		ClassBean bean = null;
 		CodedEntry entry = rcr.getReferencedEntry();
@@ -471,6 +466,15 @@ public class OntologyRetrievalManagerWrapperLexGridImpl extends
 		return bean;
 	}
 
+	private ClassBean createThingClassBean(ResolvedConceptReferenceList list) {
+		ClassBean classBean = new ClassBean();
+		classBean.setId("THING");
+		classBean.setLabel("THING");
+		ArrayList<ClassBean> classBeans = createClassBeanArray(list);
+		classBean.addRelation("hasSubType", classBeans);
+		return classBean;
+	}
+
 	private ArrayList<ClassBean> createClassBeanArray(ResolvedConceptReferenceList list) {
 		ArrayList<ClassBean> classBeans = new ArrayList<ClassBean>();
 		Enumeration<ResolvedConceptReference> refEnum = list.enumerateResolvedConceptReference();
@@ -486,13 +490,12 @@ public class OntologyRetrievalManagerWrapperLexGridImpl extends
 	}
 
 	private String getDefinition(CodedEntry entry) {
-		// Presentation[] presentation = entry.getPresentation();
-		Definition p = null;
+		Definition d = null;
 		int count = entry.getDefinitionCount();
 		for (int i = 0; i < count; i++) {
-			p = entry.getDefinition(i);
-			// if(p.getIsPreferred().booleanValue())
-			return p.getText().getContent();
+			d = entry.getDefinition(i);
+			if(d.getIsPreferred().booleanValue())
+			  return d.getText().getContent();
 		}
 		return "";
 	}
@@ -508,7 +511,8 @@ public class OntologyRetrievalManagerWrapperLexGridImpl extends
 	}
 
 	@SuppressWarnings("unchecked")
-	private static void addStringToHashMapsArrayList(HashMap<Object, Object> map, String key, String value) {
+	private static void addStringToHashMapsArrayList(HashMap<Object, Object> map, String key,
+			String value) {
 		List list = (List) map.get(key);
 		if (list == null) {
 			list = new ArrayList<Object>();
@@ -519,55 +523,55 @@ public class OntologyRetrievalManagerWrapperLexGridImpl extends
 		}
 	}
 
-
 	private static void addStringToHashMap(HashMap<Object, Object> map, String key, String value) {
 		if (StringUtils.isNotBlank(key) && StringUtils.isNotBlank(value)) {
 			map.put(key, value);
 		}
 	}
-	
+
 	private void addArrayToHashMap(HashMap<Object, Object> map, String key, Property[] properties) {
-		if (StringUtils.isNotBlank(key) && properties!= null && properties.length > 0 ) {
-			ArrayList<PropertyBean> beans= new ArrayList<PropertyBean>();
-			for (int i=0; i < properties.length; i++) {
-				PropertyBean bean= createPropertyBean(properties[i]);
-				beans.add(bean);
-			}
-			map.put(key, beans);
-		}
-	}	
-	
-	private void addArrayToHashMap(HashMap<Object, Object> map, String key, Source[] sources) {
-		if (StringUtils.isNotBlank(key) && sources!= null && sources.length > 0 ) {
-			ArrayList<PropertyBean> beans= new ArrayList<PropertyBean>();
-			for (int i=0; i < sources.length; i++) {
-				PropertyBean bean= createPropertyBean(sources[i]);
+		if (StringUtils.isNotBlank(key) && properties != null && properties.length > 0) {
+			ArrayList<PropertyBean> beans = new ArrayList<PropertyBean>();
+			for (int i = 0; i < properties.length; i++) {
+				PropertyBean bean = createPropertyBean(properties[i]);
 				beans.add(bean);
 			}
 			map.put(key, beans);
 		}
 	}
-	
-	private void addArrayToHashMap(HashMap<Object, Object> map, String key, PropertyQualifier[] qualifiers) {
-		if (StringUtils.isNotBlank(key) && qualifiers!= null && qualifiers.length > 0 ) {
-			ArrayList<PropertyBean> beans= new ArrayList<PropertyBean>();
-			for (int i=0; i < qualifiers.length; i++) {
-				PropertyBean bean= createPropertyBean(qualifiers[i]);
+
+	private void addArrayToHashMap(HashMap<Object, Object> map, String key, Source[] sources) {
+		if (StringUtils.isNotBlank(key) && sources != null && sources.length > 0) {
+			ArrayList<PropertyBean> beans = new ArrayList<PropertyBean>();
+			for (int i = 0; i < sources.length; i++) {
+				PropertyBean bean = createPropertyBean(sources[i]);
 				beans.add(bean);
 			}
 			map.put(key, beans);
 		}
-	}	
-	
+	}
+
+	private void addArrayToHashMap(HashMap<Object, Object> map, String key,
+			PropertyQualifier[] qualifiers) {
+		if (StringUtils.isNotBlank(key) && qualifiers != null && qualifiers.length > 0) {
+			ArrayList<PropertyBean> beans = new ArrayList<PropertyBean>();
+			for (int i = 0; i < qualifiers.length; i++) {
+				PropertyBean bean = createPropertyBean(qualifiers[i]);
+				beans.add(bean);
+			}
+			map.put(key, beans);
+		}
+	}
+
 	private void addArrayToHashMap(HashMap<Object, Object> map, String key, Object[] values) {
-		if (StringUtils.isNotBlank(key) && values!= null && values.length > 0 ) {
+		if (StringUtils.isNotBlank(key) && values != null && values.length > 0) {
 			map.put(key, Arrays.asList(values));
 		}
 	}
-	
-	
+
 	/**
 	 * Populate the ClassBean's map with the CodedEntry's properties
+	 * 
 	 * @param entry
 	 * @param bean
 	 */
@@ -577,15 +581,15 @@ public class OntologyRetrievalManagerWrapperLexGridImpl extends
 		addArrayToHashMap(map, "Definition", entry.getDefinition());
 		addArrayToHashMap(map, "Instruction", entry.getInstruction());
 		addArrayToHashMap(map, "Comment", entry.getComment());
-		addArrayToHashMap(map, "ConceptProperty", entry.getConceptProperty());		
+		addArrayToHashMap(map, "ConceptProperty", entry.getConceptProperty());
 	}
-	
+
 	private void addCodedEntryPropertyValueOld(CodedEntry entry, ClassBean bean) {
 		// Presentation[] presentation = entry.getPresentation();
 		HashMap<Object, Object> map = bean.getRelations();
 		Presentation p = null;
 		int count = entry.getPresentationCount();
-		
+
 		for (int i = 0; i < count; i++) {
 			p = entry.getPresentation(i);
 			if (!p.getIsPreferred().booleanValue()) {

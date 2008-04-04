@@ -47,14 +47,11 @@ import org.ncbo.stanford.manager.wrapper.OntologyLoadManagerWrapper;
 import org.ncbo.stanford.util.constants.ApplicationConstants;
 
 public class OntologyLoadManagerWrapperLexGridImpl extends AbstractOntologyManagerWrapperLexGrid
-		implements OntologyLoadManagerWrapper
-{
+		implements OntologyLoadManagerWrapper {
+	
 	private static final Log log = LogFactory.getLog(OntologyLoadManagerWrapperLexGridImpl.class);
-
 	private String targetTerminologies;
 
-
-	private CustomNcboOntologyMetadataDAO ncboOntologyMetadataDAO;
 
 	/**
 	 * A comma delimited list of UMLS terminologies to load. If null, all
@@ -81,9 +78,7 @@ public class OntologyLoadManagerWrapperLexGridImpl extends AbstractOntologyManag
 	public void loadOntology(URI ontologyUri, OntologyBean ontology_bean) throws Exception {
 		boolean stopOnErrors = false;
 		boolean async = false;
-
 		URI source = ontologyUri;
-
 		// Get the LexBIGService
 		LexBIGService lbs = LexBIGServiceImpl.defaultInstance();
 		LexBIGServiceManager lbsm = lbs.getServiceManager(null);
@@ -164,7 +159,7 @@ public class OntologyLoadManagerWrapperLexGridImpl extends AbstractOntologyManag
 			NcboOntologyMetadata ncboMetadata = ncboOntologyVersionDAO
 					.findOntologyMetadataById(ontology_bean.getId());
 			if (ncboMetadata != null) {
-				String urnAndVersion= urn + "|" + version;
+				String urnAndVersion = urn + "|" + version;
 				ncboMetadata.setCodingScheme(urnAndVersion);
 				ncboOntologyMetadataDAO.save(ncboMetadata);
 				ontology_bean.setCodingScheme(urnAndVersion);
@@ -207,19 +202,5 @@ public class OntologyLoadManagerWrapperLexGridImpl extends AbstractOntologyManag
 	}
 
 
-
-	/**
-	 * @return the ncboOntologyMetadataDAO
-	 */
-	public CustomNcboOntologyMetadataDAO getNcboOntologyMetadataDAO() {
-		return ncboOntologyMetadataDAO;
-	}
-
-	/**
-	 * @param ncboOntologyMetadataDAO the ncboOntologyMetadataDAO to set
-	 */
-	public void setNcboOntologyMetadataDAO(CustomNcboOntologyMetadataDAO ncboOntologyMetadataDAO) {
-		this.ncboOntologyMetadataDAO = ncboOntologyMetadataDAO;
-	}
 
 }

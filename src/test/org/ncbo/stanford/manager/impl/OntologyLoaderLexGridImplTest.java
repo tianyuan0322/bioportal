@@ -27,7 +27,7 @@ public class OntologyLoaderLexGridImplTest extends AbstractBioPortalTest {
 	private final static String TEST_OBO_URN_VERSION = "urn:lsid:bioontology.org:cell|UNASSIGNED";
 	private final static String TEST_LEXGRID_XML_PATHNAME = "test/sample_data/Automobiles.xml";
 	private final static String TEST_LEXGRID_XML_URN_VERSION = "urn:oid:11.11.0.1|1.0";
-	private final static String TEST_UMLS_PATHNAME = "test/sample_data/sampleUMLS-AIR";
+	private final static String TEST_UMLS_PATHNAME = "test/sample_data/sampleUMLS-AIR/";
 	private final static String TEST_UMLS_URN_VERSION = "urn:oid:2.16.840.1.113883.6.110|1993.bvt";
 
 //	OntologyLoadManagerWrapperLexGridImpl loadManagerLexGrid = new OntologyLoadManagerWrapperLexGridImpl();

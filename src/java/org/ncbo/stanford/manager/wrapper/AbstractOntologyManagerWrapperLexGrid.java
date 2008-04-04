@@ -9,6 +9,7 @@ import org.LexGrid.LexBIG.DataModel.InterfaceElements.CodingSchemeRendering;
 import org.LexGrid.LexBIG.LexBIGService.LexBIGService;
 import org.LexGrid.codingSchemes.CodingScheme;
 import org.apache.commons.lang.StringUtils;
+import org.ncbo.stanford.domain.custom.dao.CustomNcboOntologyMetadataDAO;
 import org.ncbo.stanford.domain.custom.dao.CustomNcboOntologyVersionDAO;
 import org.ncbo.stanford.domain.custom.entity.NcboOntology;
 
@@ -23,8 +24,23 @@ public  abstract class AbstractOntologyManagerWrapperLexGrid
 {
 
 	protected CustomNcboOntologyVersionDAO ncboOntologyVersionDAO;
+	protected CustomNcboOntologyMetadataDAO ncboOntologyMetadataDAO;
 	
 	
+	/**
+	 * @return the ncboOntologyMetadataDAO
+	 */
+	public CustomNcboOntologyMetadataDAO getNcboOntologyMetadataDAO() {
+		return ncboOntologyMetadataDAO;
+	}
+
+	/**
+	 * @param ncboOntologyMetadataDAO the ncboOntologyMetadataDAO to set
+	 */
+	public void setNcboOntologyMetadataDAO(CustomNcboOntologyMetadataDAO ncboOntologyMetadataDAO) {
+		this.ncboOntologyMetadataDAO = ncboOntologyMetadataDAO;
+	}
+
 	public CustomNcboOntologyVersionDAO getNcboOntologyVersionDAO() {
 		return ncboOntologyVersionDAO;
 	}
@@ -90,6 +106,19 @@ public  abstract class AbstractOntologyManagerWrapperLexGrid
 	
 
 	}
+	
+	/**
+	 * @param ontologyId
+	 * @return
+	 */
+	public NcboOntology getNcboOntology(Integer ontologyId) {
+		return ncboOntologyVersionDAO.findOntologyVersion(ontologyId);
+	}
+
+//	public NcboOntology getNcboOntology(String codingScheme) {
+//		ncboOntologyMetadataDAO.findByCodingScheme(codingScheme);
+//		return null;
+//	}
 
 	/**
 	 * 
