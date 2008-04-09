@@ -86,6 +86,35 @@ public class CustomNcboOntologyVersionDAO extends NcboOntologyVersionDAO {
 	}
 
 	/**
+	 * Find all unique latest current versions of ontologies
+	 * 
+	 * @return list of ontologies
+	 */
+	public NcboOntology findLatestOntologyVersion(final Integer ontology_id) {
+		NcboOntology ontology = (NcboOntology) getHibernateTemplate().execute(
+				new HibernateCallback() {
+					public Object doInHibernate(Session session)
+							throws HibernateException, SQLException {
+						Query query = session
+								.getNamedQuery("NcboOntologyVersionDAO.GET_LATEST_ONTOLOGY_VERSION_FOR_ONTOLOGY_ID_QUERY");
+						query.setInteger("ontologyId", ontology_id);
+						query.setByte("isCurrent", ApplicationConstants.TRUE);
+
+						return query.uniqueResult();
+					}
+				});
+		
+		NcboOntologyVersion ontologyVer = findById(ontology.getId());
+		Set<NcboOntologyFile> files = ontologyVer.getNcboOntologyFiles();
+		
+		for (NcboOntologyFile file : files) {
+			ontology.addFilename(file.getFilename());
+		}
+
+		return ontology;
+	}
+
+	/**
 	 * @param transientInstance
 	 * @return
 	 */

@@ -30,25 +30,20 @@ public class OntologyLoaderLexGridImplTest extends AbstractBioPortalTest {
 	private final static String TEST_UMLS_PATHNAME = "test/sample_data/sampleUMLS-AIR/";
 	private final static String TEST_UMLS_URN_VERSION = "urn:oid:2.16.840.1.113883.6.110|1993.bvt";
 
-//	OntologyLoadManagerWrapperLexGridImpl loadManagerLexGrid = new OntologyLoadManagerWrapperLexGridImpl();
+	// OntologyLoadManagerWrapperLexGridImpl loadManagerLexGrid = new
+	// OntologyLoadManagerWrapperLexGridImpl();
 	OntologyLoadManagerWrapperLexGridImpl loadManagerLexGrid;
 	OntologyLoadProcessorService service;
-	
-//	public OntologyLoaderLexGridImplTest() {
-//		super();
-//
-//		 
-//	}
+
 
 	public void testLoadObo() throws Exception {
-		service = (OntologyLoadProcessorService) applicationContext
-		.getBean("ontologyLoadProcessorService",
-				OntologyLoadProcessorService.class);
-		
-		loadManagerLexGrid= (OntologyLoadManagerWrapperLexGridImpl) applicationContext
-		.getBean("ontologyLoadManagerWrapperLexGrid",
-				OntologyLoadManagerWrapperLexGridImpl.class);
-		//Populate Ontology Bean 
+		service = (OntologyLoadProcessorService) applicationContext.getBean(
+				"ontologyLoadProcessorService", OntologyLoadProcessorService.class);
+
+		loadManagerLexGrid = (OntologyLoadManagerWrapperLexGridImpl) applicationContext.getBean(
+				"ontologyLoadManagerWrapperLexGrid", OntologyLoadManagerWrapperLexGridImpl.class);
+
+		// Populate Ontology Bean
 		OntologyBean ontology_bean = new OntologyBean();
 		ontology_bean.setFormat(ApplicationConstants.FORMAT_OBO);
 		ontology_bean.setCodingScheme(TEST_OBO_URN_VERSION);
@@ -67,24 +62,21 @@ public class OntologyLoaderLexGridImplTest extends AbstractBioPortalTest {
 		File inputFile = new File(TEST_OBO_PATHNAME);
 		FileHandler ontologyFile = new PhysicalDirectoryFileHandler(inputFile);
 
-		NcboOntologyVersion ncboOntologyVersion= service.processOntologyLoad(ontologyFile, ontology_bean);
-		ontology_bean.setId(ncboOntologyVersion.getId());
-		
-		
-		loadManagerLexGrid.loadOntology(new File(TEST_OBO_PATHNAME).toURI(),
+		NcboOntologyVersion ncboOntologyVersion = service.processOntologyLoad(ontologyFile,
 				ontology_bean);
+		ontology_bean.setId(ncboOntologyVersion.getId());
+
+		loadManagerLexGrid.loadOntology(new File(TEST_OBO_PATHNAME).toURI(), ontology_bean);
 		assertTrue(ontology_bean.getCodingScheme() != null);
 	}
 
 	public void testLoadGenericOwl() throws Exception {
-		service = (OntologyLoadProcessorService) applicationContext
-		.getBean("ontologyLoadProcessorService",
-				OntologyLoadProcessorService.class);
-		
-		loadManagerLexGrid= (OntologyLoadManagerWrapperLexGridImpl) applicationContext
-		.getBean("ontologyLoadManagerWrapperLexGrid",
-				OntologyLoadManagerWrapperLexGridImpl.class);
-		
+		service = (OntologyLoadProcessorService) applicationContext.getBean(
+				"ontologyLoadProcessorService", OntologyLoadProcessorService.class);
+
+		loadManagerLexGrid = (OntologyLoadManagerWrapperLexGridImpl) applicationContext.getBean(
+				"ontologyLoadManagerWrapperLexGrid", OntologyLoadManagerWrapperLexGridImpl.class);
+
 		OntologyBean ontology_bean = new OntologyBean();
 		ontology_bean.setFormat(ApplicationConstants.FORMAT_OWL_DL);
 		ontology_bean.setCodingScheme(TEST_OWL_URN_VERSION);
@@ -103,24 +95,22 @@ public class OntologyLoaderLexGridImplTest extends AbstractBioPortalTest {
 		File inputFile = new File(TEST_OWL_PATHNAME);
 		FileHandler ontologyFile = new PhysicalDirectoryFileHandler(inputFile);
 
-		NcboOntologyVersion ncboOntologyVersion= service.processOntologyLoad(ontologyFile, ontology_bean);
-		ontology_bean.setId(ncboOntologyVersion.getId());
-		
-		loadManagerLexGrid.loadOntology(new File(TEST_OWL_PATHNAME).toURI(),
+		NcboOntologyVersion ncboOntologyVersion = service.processOntologyLoad(ontologyFile,
 				ontology_bean);
+		ontology_bean.setId(ncboOntologyVersion.getId());
+
+		loadManagerLexGrid.loadOntology(new File(TEST_OWL_PATHNAME).toURI(), ontology_bean);
 		assertTrue(ontology_bean.getCodingScheme() != null);
 
 	}
 
 	public void testLoadLexGridXML() throws Exception {
-		service = (OntologyLoadProcessorService) applicationContext
-		.getBean("ontologyLoadProcessorService",
-				OntologyLoadProcessorService.class);
-		
-		loadManagerLexGrid= (OntologyLoadManagerWrapperLexGridImpl) applicationContext
-		.getBean("ontologyLoadManagerWrapperLexGrid",
-				OntologyLoadManagerWrapperLexGridImpl.class);
-		
+		service = (OntologyLoadProcessorService) applicationContext.getBean(
+				"ontologyLoadProcessorService", OntologyLoadProcessorService.class);
+
+		loadManagerLexGrid = (OntologyLoadManagerWrapperLexGridImpl) applicationContext.getBean(
+				"ontologyLoadManagerWrapperLexGrid", OntologyLoadManagerWrapperLexGridImpl.class);
+
 		OntologyBean ontology_bean = new OntologyBean();
 		ontology_bean.setFormat(ApplicationConstants.FORMAT_LEXGRID_XML);
 		ontology_bean.setCodingScheme(TEST_LEXGRID_XML_URN_VERSION);
@@ -139,27 +129,22 @@ public class OntologyLoaderLexGridImplTest extends AbstractBioPortalTest {
 		File inputFile = new File(TEST_LEXGRID_XML_PATHNAME);
 		FileHandler ontologyFile = new PhysicalDirectoryFileHandler(inputFile);
 
-		
-		NcboOntologyVersion ncboOntologyVersion= service.processOntologyLoad(ontologyFile, ontology_bean);
+		NcboOntologyVersion ncboOntologyVersion = service.processOntologyLoad(ontologyFile,
+				ontology_bean);
 		ontology_bean.setId(ncboOntologyVersion.getId());
-		
-		
-		
-		loadManagerLexGrid.loadOntology(new File(TEST_LEXGRID_XML_PATHNAME)
-				.toURI(), ontology_bean);
+
+		loadManagerLexGrid.loadOntology(new File(TEST_LEXGRID_XML_PATHNAME).toURI(), ontology_bean);
 		assertTrue(ontology_bean.getCodingScheme() != null);
 
 	}
 
 	public void testLoadUMLS() throws Exception {
-		service = (OntologyLoadProcessorService) applicationContext
-		.getBean("ontologyLoadProcessorService",
-				OntologyLoadProcessorService.class);
-		
-		loadManagerLexGrid= (OntologyLoadManagerWrapperLexGridImpl) applicationContext
-		.getBean("ontologyLoadManagerWrapperLexGrid",
-				OntologyLoadManagerWrapperLexGridImpl.class);
-		
+		service = (OntologyLoadProcessorService) applicationContext.getBean(
+				"ontologyLoadProcessorService", OntologyLoadProcessorService.class);
+
+		loadManagerLexGrid = (OntologyLoadManagerWrapperLexGridImpl) applicationContext.getBean(
+				"ontologyLoadManagerWrapperLexGrid", OntologyLoadManagerWrapperLexGridImpl.class);
+
 		OntologyBean ontology_bean = new OntologyBean();
 		ontology_bean.setFormat(ApplicationConstants.FORMAT_UMLS_RRF);
 		ontology_bean.setCodingScheme(TEST_UMLS_URN_VERSION);
@@ -177,13 +162,13 @@ public class OntologyLoaderLexGridImplTest extends AbstractBioPortalTest {
 		ontology_bean.setIsFoundry(new Byte("0"));
 		File inputFile = new File(TEST_UMLS_PATHNAME);
 		FileHandler ontologyFile = new PhysicalDirectoryFileHandler(inputFile);
-	
-		NcboOntologyVersion ncboOntologyVersion= service.processOntologyLoad(ontologyFile, ontology_bean);
-		ontology_bean.setId(ncboOntologyVersion.getId());
-		
-		loadManagerLexGrid.setTargetTerminologies("AIR");
-		loadManagerLexGrid.loadOntology(new File(TEST_UMLS_PATHNAME).toURI(),
+
+		NcboOntologyVersion ncboOntologyVersion = service.processOntologyLoad(ontologyFile,
 				ontology_bean);
+		ontology_bean.setId(ncboOntologyVersion.getId());
+
+		loadManagerLexGrid.setTargetTerminologies("AIR");
+		loadManagerLexGrid.loadOntology(new File(TEST_UMLS_PATHNAME).toURI(), ontology_bean);
 		assertTrue(ontology_bean.getCodingScheme() != null);
 
 	}

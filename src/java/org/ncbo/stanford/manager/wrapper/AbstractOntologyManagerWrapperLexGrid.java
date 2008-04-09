@@ -111,8 +111,8 @@ public  abstract class AbstractOntologyManagerWrapperLexGrid
 	 * @param ontologyId
 	 * @return
 	 */
-	public NcboOntology getNcboOntology(Integer ontologyId) {
-		return ncboOntologyVersionDAO.findOntologyVersion(ontologyId);
+	public NcboOntology getLatestNcboOntology(Integer ontology_id) {
+		return ncboOntologyVersionDAO.findLatestOntologyVersion(ontology_id);
 	}
 
 //	public NcboOntology getNcboOntology(String codingScheme) {
