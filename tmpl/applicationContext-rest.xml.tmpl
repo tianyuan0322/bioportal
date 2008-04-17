@@ -51,6 +51,16 @@
 		</property>
 	</bean>
 
+	<bean id="usersRestlet"
+		class="org.ncbo.stanford.view.rest.restlet.user.UsersRestlet">
+		<property name="userService">
+			<ref bean="userService" />
+		</property>
+		<property name="xmlSerializationService">
+			<ref bean="xmlSerializationService" />
+		</property>
+	</bean>
+
 	<bean id="userRestlet"
 		class="org.ncbo.stanford.view.rest.restlet.user.UserRestlet">
 		<property name="userService">
@@ -76,6 +86,9 @@
 						</entry>
 						<entry key="/concept/{ontology}/{concept}">
 							<ref local="conceptRestlet" />
+						</entry>
+						<entry key="/users">
+							<ref local="usersRestlet" />
 						</entry>
 						<entry key="/user/{user}">
 							<ref local="userRestlet" />
