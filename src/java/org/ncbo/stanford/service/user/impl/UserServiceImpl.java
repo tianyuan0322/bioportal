@@ -1,5 +1,10 @@
 package org.ncbo.stanford.service.user.impl;
 
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+
+import org.ncbo.stanford.bean.OntologyBean;
 import org.ncbo.stanford.bean.UserBean;
 import org.ncbo.stanford.domain.custom.dao.CustomNcboUserDAO;
 import org.ncbo.stanford.domain.generated.NcboUser;
@@ -15,6 +20,23 @@ public class UserServiceImpl implements UserService {
 
 	public UserBean getUser(String username) {
 		return populateUser(ncboUserDAO.getUserByUsername(username));
+	}
+	
+	/**
+	 * @return List<UserBean>
+	 * 			added by cyoun
+	 */
+	public List<UserBean> findUsers() {
+		
+		List<NcboUser> ncboUserList = ncboUserDAO.findAll();
+		List<UserBean> userBeanList = new ArrayList<UserBean>();
+		
+		// populate the query result to UserBean
+		for ( Iterator<NcboUser> iter  = ncboUserList.iterator(); iter.hasNext(); ) {
+			userBeanList.add(populateUser( (NcboUser)iter.next()));
+		}
+		
+		return userBeanList;
 	}
 
 	/**
