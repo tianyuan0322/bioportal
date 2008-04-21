@@ -53,7 +53,6 @@ public class UsersRestlet extends Restlet {
 	}
 
 	
-	//TODO verify if this is obsolete
 	/**
 	 * Handle POST calls here
 	 * 
