@@ -1,12 +1,13 @@
 package org.ncbo.stanford.manager.impl;
 
-import java.io.File;
+import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
 import org.ncbo.stanford.AbstractBioPortalTest;
+import org.ncbo.stanford.bean.OntologyBean;
 import org.ncbo.stanford.manager.wrapper.impl.OntologyLoadManagerWrapperProtegeImpl;
 
 import edu.stanford.smi.protege.model.Project;
@@ -29,8 +30,6 @@ public class OntologyLoaderProtegeImplTest extends AbstractBioPortalTest {
 	private final static String JDBC_DRIVER = "com.mysql.jdbc.Driver";
 	private final static String DB_URL = "jdbc:mysql://localhost/protege";
 
-	private final static String PROTEGE = "protege_";
-	private final static String PIZZA = "_pizza";
 	private final static String PROTEGE_USER = "protege_user";
 	private final static String PROTEGE_PASSWORD = "protege_user$123";
 
@@ -42,10 +41,9 @@ public class OntologyLoaderProtegeImplTest extends AbstractBioPortalTest {
 	private final static Integer TEST_NOT_STREAM_ID = 200000;
 
 	// Test ontology URIs
-	private final static String TEST_OWL_URI = "test/sample_data/pizza.owl";
+	private final static String TEST_OWL_URI = "/apps/bmir.apps/bioportal_resources/files/pizza.owl";
 
 	// Pizza sample data
-	private final static String TABLE_STREAM = "pizza_table_stream2";
 	private final static String TABLE_NONSTREAM = "pizza_table_nonstream2";
 
 	private final static String SOURCE_OWL_URI = "file:///c:/pizza.owl";
@@ -53,33 +51,25 @@ public class OntologyLoaderProtegeImplTest extends AbstractBioPortalTest {
 
 	// OMV sample data
 	private final static String SOURCE_OMVOWL_URI = "file:///c:/OMV_v2.3.owl";
-	private final static String ERRORS_OMV_URI = "file:///c:/OMV_errors.txt";
 	private final static String TABLE_OMV_NONSTREAM = "omv_table_nonstream2";
-
-	// FMA sample data
-	private final static String SOURCE_FMAOWL_URI = "file:///c:/fmaOwlDlComponent_2_0.owl";
-	private final static String ERRORS_FMA_URI = "file:///c:/FMA_errors.txt";
-	private final static String TABLE_FMA_NONSTREAM = "fma_table_nonstream";
 
 	//
 	// Non-Streaming Fast load
 	public void testNoStreamPizzaLoad() {
 		System.out.println("Starting testNoStreamPizzaLoad");
 
-		OntologyLoadManagerWrapperProtegeImpl ontLoader = new OntologyLoadManagerWrapperProtegeImpl();
-		File ontFile = new File(TEST_OWL_URI);
-		ontLoader.setProtegeTablePrefix("protegetest");
-		ontLoader.setProtegeTableSuffix("pizza");
+		OntologyLoadManagerWrapperProtegeImpl loadManagerProtege = (OntologyLoadManagerWrapperProtegeImpl) applicationContext
+				.getBean("ontologyLoadManagerWrapperProtege",
+						OntologyLoadManagerWrapperProtegeImpl.class);
 
-		ontLoader.setProtegeJdbcDriver(JDBC_DRIVER);
-		ontLoader.setProtegeJdbcUrl(DB_URL);
-		ontLoader.setProtegeJdbcUsername(PROTEGE_USER);
-		ontLoader.setProtegeJdbcPassword(PROTEGE_PASSWORD);
+		loadManagerProtege.setProtegeBigFileThreshold(TEST_NOT_STREAM_SIZE);
 
-		ontLoader.setProtegeBigFileThreshold(TEST_NOT_STREAM_SIZE);
+		OntologyBean ontologyBean = new OntologyBean();
+		ontologyBean.setId(TEST_NOT_STREAM_ID);
 
 		try {
-			ontLoader.loadOntology(TEST_NOT_STREAM_ID, ontFile);
+			loadManagerProtege
+					.loadOntology(new URI(TEST_OWL_URI), ontologyBean);
 		} catch (Exception exc) {
 			System.out.println("Exception: " + exc.getMessage());
 			exc.printStackTrace();
@@ -92,21 +82,18 @@ public class OntologyLoaderProtegeImplTest extends AbstractBioPortalTest {
 	public void testStreamPizzaLoad() {
 		System.out.println("Starting testStreamPizzaLoad");
 
-		OntologyLoadManagerWrapperProtegeImpl ontLoader = new OntologyLoadManagerWrapperProtegeImpl();
-		File ontFile = new File(TEST_OWL_URI);
-		ontLoader.setProtegeTablePrefix("protegetest");
-		ontLoader.setProtegeTableSuffix("pizza");
+		OntologyLoadManagerWrapperProtegeImpl loadManagerProtege = (OntologyLoadManagerWrapperProtegeImpl) applicationContext
+				.getBean("ontologyLoadManagerWrapperProtege",
+						OntologyLoadManagerWrapperProtegeImpl.class);
 
-		ontLoader.setProtegeJdbcDriver(JDBC_DRIVER);
-		ontLoader.setProtegeJdbcUrl(DB_URL);
-		ontLoader.setProtegeJdbcUsername(PROTEGE_USER);
-		ontLoader.setProtegeJdbcPassword(PROTEGE_PASSWORD);
+		loadManagerProtege.setProtegeBigFileThreshold(TEST_STREAM_SIZE);
 
-		// Set a size that causes the loader to use streaming load
-		ontLoader.setProtegeBigFileThreshold(TEST_STREAM_SIZE);
+		OntologyBean ontologyBean = new OntologyBean();
+		ontologyBean.setId(TEST_STREAM_ID);
 
 		try {
-			ontLoader.loadOntology(TEST_STREAM_ID, ontFile);
+			loadManagerProtege
+					.loadOntology(new URI(TEST_OWL_URI), ontologyBean);
 		} catch (Exception exc) {
 			System.out.println("Exception: " + exc.getMessage());
 			exc.printStackTrace();
@@ -263,5 +250,4 @@ public class OntologyLoaderProtegeImplTest extends AbstractBioPortalTest {
 			System.out.println("ERROR: " + ++i + ") " + it.next());
 		}
 	}
-
 }
