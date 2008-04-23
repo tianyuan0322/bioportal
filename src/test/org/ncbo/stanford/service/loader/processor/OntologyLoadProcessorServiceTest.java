@@ -19,7 +19,7 @@ public class OntologyLoadProcessorServiceTest extends AbstractBioPortalTest {
 				.getBean("ontologyLoadProcessorService",
 						OntologyLoadProcessorService.class);
 
-		File inputFile = new File("/apps/bmir.apps/bioportal_resources/files/adult_mouse_anatomy.obo");
+		File inputFile = new File("/apps/bmir.apps/bioportal_resources/files/pizza.owl");
 		FileHandler ontologyFile = new PhysicalDirectoryFileHandler(inputFile);
 		service.processOntologyLoad(ontologyFile, createTestBean());
 	}
@@ -35,11 +35,10 @@ public class OntologyLoadProcessorServiceTest extends AbstractBioPortalTest {
 		bean.setDateReleased(new Date());
 		bean.setContactEmail("email@email.com");
 		bean.setContactName("Name");
-		bean.setDisplayLabel("Testing Loading Ontology");
-		bean.setFormat("OBO");
+		bean.setDisplayLabel("Pizza Ontology");
+		bean.setFormat("OWL-DL");
 		bean.setIsFoundry(new Byte("0"));
 
 		return bean;
 	}
-
 }
