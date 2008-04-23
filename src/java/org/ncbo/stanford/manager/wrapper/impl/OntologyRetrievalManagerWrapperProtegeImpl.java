@@ -23,7 +23,6 @@ import edu.stanford.smi.protege.storage.database.DatabaseKnowledgeBaseFactory;
 import edu.stanford.smi.protegex.owl.database.OWLDatabaseKnowledgeBaseFactory;
 import edu.stanford.smi.protegex.owl.model.OWLModel;
 import edu.stanford.smi.protegex.owl.model.OWLNamedClass;
-import edu.stanford.smi.protegex.owl.model.OWLNames;
 import edu.stanford.smi.protegex.owl.model.OWLOntology;
 import edu.stanford.smi.protegex.owl.model.RDFSNamedClass;
 
@@ -182,7 +181,7 @@ public class OntologyRetrievalManagerWrapperProtegeImpl extends
 	private KnowledgeBase getKnowledgeBase(NcboOntology ontologyVersion) {
 		DatabaseKnowledgeBaseFactory factory = null;
 		
-		if(ontologyVersion.getFormat().equalsIgnoreCase("OWL")){
+		if(ontologyVersion.getFormat().contains("OWL")){
 			factory = new OWLDatabaseKnowledgeBaseFactory();
 		}else{
 			factory = new DatabaseKnowledgeBaseFactory();
