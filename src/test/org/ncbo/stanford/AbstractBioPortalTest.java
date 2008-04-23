@@ -16,9 +16,9 @@ import org.springframework.transaction.support.TransactionSynchronizationManager
 public class AbstractBioPortalTest extends
 		AbstractDependencyInjectionSpringContextTests {
 
-	protected SessionFactory sessionFactory;
-	private Session session;
-
+	private SessionFactory sessionFactory;
+	protected Session session;
+	
 	protected void onSetUp() {
 		session = SessionFactoryUtils.getSession(this.sessionFactory, true);
 		TransactionSynchronizationManager.bindResource(this.sessionFactory,
@@ -35,13 +35,6 @@ public class AbstractBioPortalTest extends
 				"classpath:applicationContext-services.xml",
 				"classpath:applicationContext-rest.xml",
 				"classpath:applicationContext-security.xml" };
-	}
-
-	/**
-	 * @return the sessionFactory
-	 */
-	public SessionFactory getSessionFactory() {
-		return sessionFactory;
 	}
 
 	/**
