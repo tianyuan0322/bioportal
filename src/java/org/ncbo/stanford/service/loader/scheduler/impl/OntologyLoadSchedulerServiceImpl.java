@@ -1,5 +1,6 @@
 package org.ncbo.stanford.service.loader.scheduler.impl;
 
+import java.io.IOException;
 import java.util.List;
 
 import org.apache.commons.logging.Log;
@@ -41,6 +42,7 @@ public class OntologyLoadSchedulerServiceImpl implements
 	 * 
 	 * @throws Exception
 	 */
+	@Transactional (rollbackFor = IOException.class)	
 	public void processOntologyLoad() throws Exception {
 		List<NcboOntologyLoadQueue> ontologiesToLoad = ncboOntologyLoadQueueDAO
 				.getOntologiesToLoad();
