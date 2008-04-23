@@ -9,7 +9,7 @@ import org.ncbo.stanford.util.constants.ApplicationConstants;
 
 public class ConceptServiceTest extends AbstractBioPortalTest {
 
-	private final static int TEST_ONT_ID = 2868;
+	private final static int TEST_ONT_ID = 15817;
 	private final static String TEST_CONCEPT_ID = "http://www.w3.org/2002/07/owl#Class";
 	private final static String TEST_CONCEPT_NAME = "obo_annot:EnumerationClass";
 	
@@ -40,7 +40,7 @@ public class ConceptServiceTest extends AbstractBioPortalTest {
 
 	}
 	
-	public void testFindConcept() throws Exception{
+	public void FindConcept() throws Exception{
       	
 		ConceptService service = (ConceptService) applicationContext.getBean(
 				"conceptService", ConceptService.class);
