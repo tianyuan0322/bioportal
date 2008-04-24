@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-import org.ncbo.stanford.bean.OntologyBean;
 import org.ncbo.stanford.bean.UserBean;
 import org.ncbo.stanford.domain.custom.dao.CustomNcboUserDAO;
 import org.ncbo.stanford.domain.generated.NcboUser;
@@ -39,6 +38,17 @@ public class UserServiceImpl implements UserService {
 		return userBeanList;
 	}
 
+	public void saveUser(NcboUser ncboUser) {
+		
+		ncboUserDAO.save(ncboUser);
+	}
+
+
+	public void deleteUser(NcboUser ncboUser) {
+		
+		ncboUserDAO.delete(ncboUser);
+	}
+	
 	/**
 	 * @return the ncboUserDAO
 	 */
@@ -55,23 +65,46 @@ public class UserServiceImpl implements UserService {
 	}
 
 	/**
-	 * Populate the return user bean
+	 * Convert NcboUser to UserBean
 	 * 
-	 * @param sourceUser
+	 * @param NcboUser
 	 */
-	private UserBean populateUser(NcboUser sourceUser) {
-		UserBean targetUser = null;
+	public UserBean populateUser(NcboUser ncboUser) {
+		UserBean userBean = null;
 
-		if (sourceUser != null) {
-			targetUser = new UserBean();
-			targetUser.setUsername(sourceUser.getUsername());
-			targetUser.setEmail(sourceUser.getEmail());
-			targetUser.setFirstname(sourceUser.getFirstname());
-			targetUser.setLastname(sourceUser.getLastname());
-			targetUser.setPhone(sourceUser.getPhone());
-			targetUser.setDateCreated(sourceUser.getDateCreated());
+		if (ncboUser != null) {
+			userBean = new UserBean();
+			userBean.setUsername(ncboUser.getUsername());
+			userBean.setPassword(ncboUser.getPassword());
+			userBean.setEmail(ncboUser.getEmail());
+			userBean.setFirstname(ncboUser.getFirstname());
+			userBean.setLastname(ncboUser.getLastname());
+			userBean.setPhone(ncboUser.getPhone());
+			userBean.setDateCreated(ncboUser.getDateCreated());
 		}
 
-		return targetUser;
+		return userBean;
+	}
+	
+	/**
+	 * Convert UserBean to NcboUser
+	 * 
+	 * @param UserBean
+	 */
+	public NcboUser populateUser(UserBean userBean) {
+		NcboUser ncboUser = null;
+
+		if (userBean != null) {
+			ncboUser = new NcboUser();
+			ncboUser.setUsername(userBean.getUsername());
+			ncboUser.setPassword(userBean.getPassword());
+			ncboUser.setEmail(userBean.getEmail());
+			ncboUser.setFirstname(userBean.getFirstname());
+			ncboUser.setLastname(userBean.getLastname());
+			ncboUser.setPhone(userBean.getPhone());
+			ncboUser.setDateCreated(userBean.getDateCreated());
+		}
+
+		return ncboUser;
 	}
 }
