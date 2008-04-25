@@ -6,12 +6,13 @@ import org.ncbo.stanford.bean.UserBean;
 import org.ncbo.stanford.domain.generated.NcboUser;
 
 public interface UserService {
-	public UserBean getUser(Integer userId);
-	public UserBean getUser(String username);
+	public UserBean findUser(Integer userId);
+	public UserBean findUser(String username);
 	public List<UserBean> findUsers();
-	public void saveUser(NcboUser ncboUser);
-	public void deleteUser(NcboUser ncboUser);
-	public NcboUser populateUser(UserBean userBean);
+	public void createUser(UserBean userBean);
+	public void updateUser(UserBean userBean);
+	public void deleteUser(UserBean userBean);
+	public NcboUser populateNcboUser(UserBean userBean, NcboUser ncboUser);
 	public UserBean populateUser(NcboUser ncboUser);
 	
 }
