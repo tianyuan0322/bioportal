@@ -67,45 +67,11 @@ public class UsersRestlet extends Restlet {
 	 */
 	private void postRequest(Request request, Response response) {
 
-		createUser(request, response);
+		System.out.println("+++++++++++++++++++++++++++++++++++++");
+		System.out.println("           POST call");
+		System.out.println("+++++++++++++++++++++++++++++++++++++");
 		
-		/*   
-		 * ??? cyoun
-		 *  
-		Form form = request.getEntityAsForm();
-		
-		// 1/ Create a factory for disk-based file items
-		DiskFileItemFactory factory = new DiskFileItemFactory();
-		factory.setSizeThreshold(10002400);
-
-		
-		RestletFileUpload rfu = new RestletFileUpload(factory);
-		rfu.setSizeMax(10000000);
-		
-		
-		
-		try {
-		
-	
-			List<FileItem> files = rfu.parseRepresentation(request.getEntity());
-
-				
-			
-//			ontologyLoadProcessorService.processOntologyLoad(files.get(0),
-//					buildBeanFromForm(form));
-		
-			
-			
-		} catch (Exception e) {
-			RequestUtils.setHttpServletResponse(response,
-					Status.CLIENT_ERROR_BAD_REQUEST, MediaType.TEXT_XML,
-					xmlSerializationService.getErrorAsXML(
-							ErrorTypeEnum.INVALID_FILE, null));
-			e.printStackTrace();
-			return;
-		}
-
-		 */
+		createUser(request, response);		
 		
 		RequestUtils.setHttpServletResponse(response, Status.SUCCESS_OK,
 				MediaType.TEXT_XML, xmlSerializationService.getSuccessAsXML(
@@ -137,7 +103,7 @@ public class UsersRestlet extends Restlet {
 		
 		
 		
-
+/*
 		Form form = request.getResourceRef().getQueryAsForm();
 
 		System.out.println(" Form as entity from = " + form);
@@ -153,19 +119,24 @@ public class UsersRestlet extends Restlet {
 					+ p.getValue());
 
 		}
-
-		         
+*/
 		
-		/*
-		 * Form form = request.getEntityAsForm();
-		 *  // error handling?
-		 * 
-		 * if (form != null) {
-		 * 
-		 * 
-		 * String username = form.getFirstValue("username"); String password =
-		 * form.getFirstValue("password"); String firstname =
-		 * form.getFirstValue("firstname"); String lastname =
+		Form form = request.getEntityAsForm();
+		
+
+		 if (form != null) {
+		  
+
+			 String username = form.getFirstValue("username");
+			 String password = form.getFirstValue("password");
+			String firstname = form.getFirstValue("firstname");
+
+			System.out.println("username = " + username);
+			System.out.println("firstname = " + firstname);
+		 }
+		 
+		 /*
+		 *String lastname =
 		 * form.getFirstValue("lastname"); String email =
 		 * form.getFirstValue("email"); Date dateCreated =
 		 * DateHelper.getDateFrom(form .getFirstValue("dateCreated"));
@@ -175,9 +146,9 @@ public class UsersRestlet extends Restlet {
 		 * 
 		 * NcboUser ncboUser = new NcboUser(username, password, email,
 		 * firstname, lastname, dateCreated);
-		 * 
-		 * System.out.println("+++++++++++++++++++++++++"); System.out.println("
-		 * createUser() : NCBO USER created "); System.out.println(username);
+		 
+		 *System.out.println("+++++++++++++++++++++++++"); 
+		 *System.out.println("createUser() : NCBO USER created "); System.out.println(username);
 		 * System.out.println(password); System.out.println(email);
 		 * System.out.println("----");
 		 * System.out.println(ncboUser.getUsername());
