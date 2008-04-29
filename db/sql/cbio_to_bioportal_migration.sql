@@ -66,3 +66,8 @@ from
 insert into bioportal.ncbo_ontology_file (id, ontology_version_id, filename)
 select fn.id, o.id, fn.filename
 from ncbo_ontology_version o inner join ncbofilenames fn on o.id = fn.ncbofile;
+
+update bioportal.ncbo_ontology_version set internal_version_number = 1 where internal_version_number = 0;
+
+update ncbo_ontology_version set file_path = CONCAT("/", ontology_id, "/", internal_version_number)
+where is_remote = 0;
