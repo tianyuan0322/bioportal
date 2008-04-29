@@ -7,11 +7,11 @@ import java.util.Date;
 import java.util.List;
 
 import org.ncbo.stanford.AbstractBioPortalTest;
-import org.ncbo.stanford.bean.OntologyBean;
 import org.ncbo.stanford.bean.UserBean;
-import org.ncbo.stanford.util.helper.DateHelper;
 
 /**
+ * Test create/find/findAll/update/delete 
+ * 
  * @author cyoun
  * 
  */
@@ -93,7 +93,7 @@ public class UserServiceTest extends AbstractBioPortalTest {
 		UserBean userBean = getUserService().findUser("myusername");
 		
 		if ( userBean != null ) {
-			//getUserService().deleteUser(getUserService().populateUser(userBean));
+
 			getUserService().deleteUser(userBean);
 			
 		} else {
@@ -103,7 +103,7 @@ public class UserServiceTest extends AbstractBioPortalTest {
 		System.out.println ("UserServiceTest: testDeleteUser().........................DONE");
 		
 	}
-	*/
+	
 	
 	private UserBean createTestBean() {
 		
