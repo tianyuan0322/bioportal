@@ -6,13 +6,15 @@ package org.ncbo.stanford.service.user;
 import java.io.IOException;
 
 import org.restlet.Client;
+//import org.restlet.data.MediaType;
 import org.restlet.data.Form;
 import org.restlet.data.Method;
 import org.restlet.data.Protocol;
 import org.restlet.data.Request;
 import org.restlet.data.Response;
-import org.restlet.resource.InputRepresentation;
 import org.restlet.resource.Representation;
+//import org.restlet.resource.Variant;
+
 
 import org.ncbo.stanford.AbstractBioPortalTest;
 import org.ncbo.stanford.bean.UserBean;
@@ -76,22 +78,18 @@ public class UserHTTPClientTest extends AbstractBioPortalTest {
 	
 	public void testHttpClientPOST() {
 
-		// Prepare HTTP client connector.
-		Client client = new Client(Protocol.HTTP);
-
+		System.out
+				.println("UserHTTPClientTest: testHttpClientPOSTUser().......................BEGIN");
+		
 		Request request = new Request();
 		request.setMethod(Method.POST);
 		
 		// Target resource.
 		request.setResourceRef("http://localhost:8080/bioportal/rest/users");
 
-		
-		Representation representation = new 
-		client.put("http://localhost:8080/bioportal/rest/users", representation);
-
+		Form form = new Form();
 		// Action: create
 		
-		Form form = new Form();
 		form.add("username", "user111");
 		form.add("password", "password111");
 		form.add("firstname", "firstname111");
@@ -107,22 +105,22 @@ public class UserHTTPClientTest extends AbstractBioPortalTest {
 		form.add("email", "email111@email.com");
 
 		request.setEntity(form.getWebRepresentation());
-
-		// Make the call.
-		Response response = client.handle(request);
-
+		
+		// create representation object
+		Representation representation = request.getEntity(); 
+		
+		// Prepare HTTP client connector
+		Client client = new Client(Protocol.HTTP);
+		
+		// Make the call
+		//Response response = client.put("http://localhost:8080/bioportal/rest/users", request.getEntity());
+		Response response = client.post("http://localhost:8080/bioportal/rest/users", representation);	
+		
 		try {
+			
 			String xml = response.getEntity().getText();
-			System.out.println(xml);
-
-			
-//			 if (response.getStatus().isSuccess()) {
-			 
-//			 String xml = response.getEntity().getText();
-//			 System.out.println(xml); } else {
-	//		 System.out.println(response.getStatus().getDescription());
-		//	 fail("client: failure!");
-			
+			xml = response.getEntity().getText();
+			System.out.println(xml);			
 
 		} catch (IOException ioe) {
 			System.out
@@ -131,9 +129,12 @@ public class UserHTTPClientTest extends AbstractBioPortalTest {
 
 		System.out
 				.println("UserServiceTest: testfindUsers().........................DONE");
+		
+		System.out.println ("UserHTTPClientTest: testHttpClientPOSTUser().........................DONE");
 
 	}
 	
+
 
 	/*
 	 * public void post(Representation representation) {
