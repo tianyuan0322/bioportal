@@ -1,22 +1,24 @@
+use bioportal;
+
 insert into ncbo_user (id, username, password, email, firstname, lastname, phone)
 select id, login, password, email, firstname, lastname, phone 
-from ncbouser;
+from cbio.ncbouser;
 
 insert into ncbo_l_category (id, name, parent_category_id)
 select id, name, parentcategoryid 
-from ncbocategories;
+from cbio.ncbocategories;
 
 insert into ncbo_l_role (id, name, description)
 select id, name, description 
-from ncborole;
+from cbio.ncborole;
 
 insert into ncbo_user_role (id, user_id, role_id) 
 select id, userid, roleid 
-from ncbouserrole;
+from cbio.ncbouserrole;
 
 SET FOREIGN_KEY_CHECKS = 0;
 
-insert into cbio.ncbo_ontology_version 
+insert into ncbo_ontology_version 
 	(id, parent_id, user_id, internal_version_number, version_number, version_status, file_path, is_current, is_remote, is_reviewed, date_released, date_created)
 select 	
 	f.id, 
@@ -32,18 +34,18 @@ select
 	f.releasedate, 
 	f.creationdate
 from 
-	ncbofile f 
-	inner join ncbofileversioninfo fvi on f.id = fvi.id
-	inner join ncbofilemetadatainfo fm on f.metadadatainfoid = fm.id;
+	cbio.ncbofile f 
+	inner join cbio.ncbofileversioninfo fvi on f.id = fvi.id
+	inner join cbio.ncbofilemetadatainfo fm on f.metadadatainfoid = fm.id;
 
 SET FOREIGN_KEY_CHECKS = 1;
 
 insert into ncbo_ontology_category (id, ontology_version_id, category_id)
 select 	fc.id, o.id, fc.categoryid 
-from ncbofilecategory fc, ncbo_ontology_version o
+from cbio.ncbofilecategory fc, ncbo_ontology_version o
 where o.id = fc.ncbofileid;
 
-insert into cbio.ncbo_ontology_metadata (ontology_version_id, display_label, format, contact_name, contact_email, homepage, documentation, publication, urn, is_foundry)
+insert into ncbo_ontology_metadata (ontology_version_id, display_label, format, contact_name, contact_email, homepage, documentation, publication, urn, is_foundry)
 select
 	o.id,
 	fm.displaylabel,
@@ -60,14 +62,47 @@ select
 	end as is_foundry
 from 
 	ncbo_ontology_version o 
-	inner join ncbofile f on o.id = f.id
-	inner join ncbofilemetadatainfo fm on f.metadadatainfoid = fm.id;
+	inner join cbio.ncbofile f on o.id = f.id
+	inner join cbio.ncbofilemetadatainfo fm on f.metadadatainfoid = fm.id;
 
-insert into bioportal.ncbo_ontology_file (id, ontology_version_id, filename)
+insert into ncbo_ontology_file (id, ontology_version_id, filename)
 select fn.id, o.id, fn.filename
-from ncbo_ontology_version o inner join ncbofilenames fn on o.id = fn.ncbofile;
+from ncbo_ontology_version o inner join cbio.ncbofilenames fn on o.id = fn.ncbofile;
 
-update bioportal.ncbo_ontology_version set internal_version_number = 1 where internal_version_number = 0;
+update ncbo_ontology_version set internal_version_number = 1 where internal_version_number = 0;
+
+insert into ncbo_seq_ontology_id (id) values (1000);
+
+DELIMITER $$
+
+DROP PROCEDURE IF EXISTS `sp_update_ontology_id`$$
+
+CREATE DEFINER=`root`@`localhost` PROCEDURE `sp_update_ontology_id`()
+BEGIN
+		DECLARE dl VARCHAR(128);
+		DECLARE done INT DEFAULT 0;
+		DECLARE cur1 CURSOR FOR select distinct display_label from ncbo_ontology_metadata order by display_label;
+		
+		OPEN cur1;
+  
+		REPEAT
+			FETCH cur1 INTO dl;
+			IF NOT done THEN
+				update ncbo_seq_ontology_id set id = last_insert_id(id + 1);
+				update ncbo_ontology_version set ontology_id = last_insert_id() where id in (select ontology_version_id from ncbo_ontology_metadata where display_label = dl);
+			END IF;
+		UNTIL done END REPEAT;
+		CLOSE cur1;
+	END$$
+
+DELIMITER ;
+
+CALL sp_update_ontology_id();
+
+DROP PROCEDURE IF EXISTS `sp_update_ontology_id`;
 
 update ncbo_ontology_version set file_path = CONCAT("/", ontology_id, "/", internal_version_number)
 where is_remote = 0;
+
+
+
