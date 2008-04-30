@@ -25,6 +25,9 @@ import org.restlet.data.Status;
 import org.restlet.ext.fileupload.RestletFileUpload;
 
 // cyoun
+
+import org.restlet.resource.Representation;
+
 import org.ncbo.stanford.domain.generated.NcboUser;
 
 
@@ -50,6 +53,9 @@ public class UsersRestlet extends Restlet {
 			postRequest(request, response);
 		}
 	}
+	
+
+	
 
 	/**
 	 * Handle GET calls here
