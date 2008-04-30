@@ -115,19 +115,15 @@ public  abstract class AbstractOntologyManagerWrapperLexGrid
 		return ncboOntologyVersionDAO.findLatestOntologyVersion(ontology_id);
 	}
 
-//	public NcboOntology getNcboOntology(String codingScheme) {
-//		ncboOntologyMetadataDAO.findByCodingScheme(codingScheme);
-//		return null;
-//	}
 
 	/**
 	 * 
-	 * @param ontologyId
+	 * @param ontologyVersionId
 	 * @return The LexGrid urn and version information that is stored by concatenating the urn, "|" and version
 	 */
-	protected String getLexGridUrnAndVersion(Integer ontologyId) {
+	protected String getLexGridUrnAndVersion(Integer ontologyVersionId) {
 	
-		NcboOntology ncboOntology = ncboOntologyVersionDAO.findOntologyVersion(ontologyId);
+		NcboOntology ncboOntology = ncboOntologyVersionDAO.findOntologyVersion(ontologyVersionId);
 		if (ncboOntology != null)
 			return (ncboOntology.getCodingScheme());
 		else

@@ -3,9 +3,8 @@
  */
 package org.ncbo.stanford.service.concept;
 
-import java.util.ArrayList;
+import java.util.List;
 
-import org.ncbo.stanford.bean.concept.AbstractConceptBean;
 import org.ncbo.stanford.bean.concept.ClassBean;
 
 /**
@@ -22,21 +21,21 @@ public interface ConceptService {
 	
 	public ClassBean findConcept(int ontologyId, String id) throws Exception;
 	
-	public ArrayList<ClassBean> findPathToRoot(int ontologyId, String id) throws Exception;
+	public List<ClassBean> findPathToRoot(int ontologyId, String id) throws Exception;
 	
-	//public ArrayList<ClassBean> findParent(int ontologyId, String id) throws Exception;
+	//public List<ClassBean> findParent(int ontologyId, String id) throws Exception;
 	
-	//public ArrayList<ClassBean> findChildren(int ontologyId, String id) throws Exception;
+	//public List<ClassBean> findChildren(int ontologyId, String id) throws Exception;
 	
-	public ArrayList<ClassBean> findConceptNameExact(ArrayList<Integer> ontologyIds, String query);
+	public List<ClassBean> findConceptNameExact(List<Integer> ontologyIds, String query);
 	
-	public ArrayList<ClassBean> findConceptNameStartsWith(ArrayList<Integer> ontologyIds, String query);
+	public List<ClassBean> findConceptNameStartsWith(List<Integer> ontologyIds, String query);
 	
-	public ArrayList<ClassBean> findConceptNameContains(ArrayList<Integer> ontologyIds, String query);
+	public List<ClassBean> findConceptNameContains(List<Integer> ontologyIds, String query);
 	
-	public ArrayList<ClassBean> findConceptPropertyExact(ArrayList<Integer> ontologyIds, String property, String query);
+	public List<ClassBean> findConceptPropertyExact(List<Integer> ontologyIds, String property, String query);
 	
-	public ArrayList<ClassBean> findConceptPropertyStartsWith(ArrayList<Integer> ontologyIds, String property, String query);
+	public List<ClassBean> findConceptPropertyStartsWith(List<Integer> ontologyIds, String property, String query);
 	
-	public ArrayList<ClassBean> findConceptPropertyContains(ArrayList<Integer> ontologyIds, String property, String query);
+	public List<ClassBean> findConceptPropertyContains(List<Integer> ontologyIds, String property, String query);
 }

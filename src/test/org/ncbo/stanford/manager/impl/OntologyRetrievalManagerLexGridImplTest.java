@@ -103,8 +103,8 @@ public class OntologyRetrievalManagerLexGridImplTest extends AbstractBioPortalTe
 		retrievalManagerLexGrid = (OntologyRetrievalManagerWrapperLexGridImpl) applicationContext
 				.getBean("ontologyRetrievalManagerWrapperLexGrid",
 						OntologyRetrievalManagerWrapperLexGridImpl.class);
-
-		List<String> properties = retrievalManagerLexGrid.findProperties(3000);
+		NcboOntology ncboOntology = retrievalManagerLexGrid.getLatestNcboOntology(3000);
+		List<String> properties = retrievalManagerLexGrid.findProperties(ncboOntology);
 		System.out.println("Properties for cell ontology are :");
 		for (String str : properties) {
 			System.out.println(str);
@@ -135,7 +135,7 @@ public class OntologyRetrievalManagerLexGridImplTest extends AbstractBioPortalTe
 
 		NcboOntology ncboOntology = retrievalManagerLexGrid.getLatestNcboOntology(3000);
 		String conceptID = "CL:0000255";
-		ArrayList<ClassBean> classBeans = retrievalManagerLexGrid.findChildren(ncboOntology,
+		List<ClassBean> classBeans = retrievalManagerLexGrid.findChildren(ncboOntology,
 				conceptID);
 		System.out.println("Children of concept " + conceptID + " of cell ontology are :");
 		for (ClassBean classBean : classBeans) {
@@ -153,7 +153,7 @@ public class OntologyRetrievalManagerLexGridImplTest extends AbstractBioPortalTe
 
 		NcboOntology ncboOntology = retrievalManagerLexGrid.getLatestNcboOntology(3000);
 		String conceptID = "CL:0000255";
-		ArrayList<ClassBean> classBeans = retrievalManagerLexGrid.findParent(ncboOntology,
+		List<ClassBean> classBeans = retrievalManagerLexGrid.findParent(ncboOntology,
 				conceptID);
 		System.out.println("Parent of concept " + conceptID + " of cell ontology are :");
 		for (ClassBean classBean : classBeans) {
@@ -171,7 +171,7 @@ public class OntologyRetrievalManagerLexGridImplTest extends AbstractBioPortalTe
 
 		NcboOntology ncboOntology = retrievalManagerLexGrid.getLatestNcboOntology(3000);
 		String conceptID = "CL:0000255";
-		ArrayList<ClassBean> classBeans = retrievalManagerLexGrid.findPathToRoot(ncboOntology,
+		List<ClassBean> classBeans = retrievalManagerLexGrid.findPathToRoot(ncboOntology,
 				conceptID);
 		System.out.println("Paths to root for concept " + conceptID + " of cell ontology are :");
 		for (ClassBean classBean : classBeans) {
@@ -186,11 +186,11 @@ public class OntologyRetrievalManagerLexGridImplTest extends AbstractBioPortalTe
 		retrievalManagerLexGrid = (OntologyRetrievalManagerWrapperLexGridImpl) applicationContext
 				.getBean("ontologyRetrievalManagerWrapperLexGrid",
 						OntologyRetrievalManagerWrapperLexGridImpl.class);
-
-		ArrayList<Integer> ontologyIds = (ArrayList<Integer>) Arrays.asList(3000);
-		ArrayList<String> query = (ArrayList<String>) Arrays.asList("eukaryotic");
-		ArrayList<SearchResultBean> searchResultBeans = retrievalManagerLexGrid
-				.findConceptNameContains(ontologyIds, query, false, 100);
+		NcboOntology ncboOntology = retrievalManagerLexGrid.getLatestNcboOntology(3000);
+		List<Integer> ontologyVersionIds = (List<Integer>) Arrays.asList(ncboOntology.getId());
+		List<String> query = (List<String>) Arrays.asList("eukaryotic");
+		List<SearchResultBean> searchResultBeans = retrievalManagerLexGrid
+				.findConceptNameContains(ontologyVersionIds, query, false, 100);
 
 		System.out.println("Results of searching for 'eukaryotic' in the cell ontology is :");
 		for (SearchResultBean srb : searchResultBeans) {
@@ -209,10 +209,11 @@ public class OntologyRetrievalManagerLexGridImplTest extends AbstractBioPortalTe
 				.getBean("ontologyRetrievalManagerWrapperLexGrid",
 						OntologyRetrievalManagerWrapperLexGridImpl.class);
 
-		ArrayList<Integer> ontologyIds = (ArrayList<Integer>) Arrays.asList(3000);
-		ArrayList<String> query = (ArrayList<String>) Arrays.asList("eukaryotic cell");
-		ArrayList<SearchResultBean> searchResultBeans = retrievalManagerLexGrid
-				.findConceptNameExact(ontologyIds, query, false, 100);
+		NcboOntology ncboOntology = retrievalManagerLexGrid.getLatestNcboOntology(3000);
+		List<Integer> ontologyVersionIds = (List<Integer>) Arrays.asList(ncboOntology.getId());
+		List<String> query =  Arrays.asList("eukaryotic cell");
+		List<SearchResultBean> searchResultBeans = retrievalManagerLexGrid
+				.findConceptNameExact(ontologyVersionIds, query, false, 100);
 
 		System.out.println("Results of searching for 'eukaryotic cell' in the cell ontology is :");
 		for (SearchResultBean srb : searchResultBeans) {
@@ -230,11 +231,12 @@ public class OntologyRetrievalManagerLexGridImplTest extends AbstractBioPortalTe
 				.getBean("ontologyRetrievalManagerWrapperLexGrid",
 						OntologyRetrievalManagerWrapperLexGridImpl.class);
 
-		ArrayList<Integer> ontologyIds = (ArrayList<Integer>) Arrays.asList(3000);
-		ArrayList<String> query = (ArrayList<String>) Arrays.asList("beta cell");
+		NcboOntology ncboOntology = retrievalManagerLexGrid.getLatestNcboOntology(3000);
+		List<Integer> ontologyVersionIds = (List<Integer>) Arrays.asList(ncboOntology.getId());
+		List<String> query = Arrays.asList("beta cell");
 		String[] properties= {"synonym"};
-		ArrayList<SearchResultBean> searchResultBeans = retrievalManagerLexGrid
-				.findConceptPropertyContains(ontologyIds, query, properties, false, 100);
+		List<SearchResultBean> searchResultBeans = retrievalManagerLexGrid
+				.findConceptPropertyContains(ontologyVersionIds, query, properties, false, 100);
 
 		System.out.println("Results of searching for 'beta cell' in the cell ontology is :");
 		for (SearchResultBean srb : searchResultBeans) {

@@ -106,44 +106,44 @@ public class OntologyRetrievalManagerImpl implements OntologyRetrievalManager {
 		return wrapper.findConcept(ontology,conceptId);	
 	}
 
-	public ArrayList<ClassBean> findPathToRoot(Integer ontologyId, String conceptId) throws Exception {
+	public List<ClassBean> findPathToRoot(Integer ontologyId, String conceptId) throws Exception {
 		return new ArrayList();
 	}
 
-	public ArrayList<ClassBean> findParent(Integer ontologyId, String conceptId) throws Exception {
+	public List<ClassBean> findParent(Integer ontologyId, String conceptId) throws Exception {
 		return new ArrayList();
 	}
 
-	public ArrayList<ClassBean> findChildren(Integer ontologyId, String conceptId) throws Exception {
+	public List<ClassBean> findChildren(Integer ontologyId, String conceptId) throws Exception {
 		return new ArrayList();
 	}
 
-	public ArrayList<ClassBean> findConceptNameExact(ArrayList<Integer> ontologyIds, String query
+	public List<ClassBean> findConceptNameExact(List<Integer> ontologyIds, String query
 			) {
 		return new ArrayList();
 	}
 
-	public ArrayList<ClassBean> findConceptNameStartsWith(ArrayList<Integer> ontologyIds, String query
+	public List<ClassBean> findConceptNameStartsWith(List<Integer> ontologyIds, String query
 			) {
 		return new ArrayList();
 	}
 
-	public ArrayList<ClassBean> findConceptNameContains(ArrayList<Integer> ontologyIds, String query
+	public List<ClassBean> findConceptNameContains(List<Integer> ontologyIds, String query
 	) {
 		return new ArrayList();
 	}
 
-	public ArrayList<ClassBean> findConceptPropertyExact(ArrayList<Integer> ontologyIds, String property,
+	public List<ClassBean> findConceptPropertyExact(List<Integer> ontologyIds, String property,
 			String query) {
 		return new ArrayList();
 	}
 
-	public ArrayList<ClassBean> findConceptPropertyStartsWith(ArrayList<Integer> ontologyIds, String property,
+	public List<ClassBean> findConceptPropertyStartsWith(List<Integer> ontologyIds, String property,
 	String query) {
 		return new ArrayList();
 	}
 
-	public ArrayList<ClassBean> findConceptPropertyContains(ArrayList<Integer> ontologyIds, String property,
+	public List<ClassBean> findConceptPropertyContains(List<Integer> ontologyIds, String property,
 			String query) {
 		return new ArrayList();
 	}

@@ -48,10 +48,9 @@ import org.ncbo.stanford.util.constants.ApplicationConstants;
 
 public class OntologyLoadManagerWrapperLexGridImpl extends AbstractOntologyManagerWrapperLexGrid
 		implements OntologyLoadManagerWrapper {
-	
+
 	private static final Log log = LogFactory.getLog(OntologyLoadManagerWrapperLexGridImpl.class);
 	private String targetTerminologies;
-
 
 	/**
 	 * A comma delimited list of UMLS terminologies to load. If null, all
@@ -161,8 +160,15 @@ public class OntologyLoadManagerWrapperLexGridImpl extends AbstractOntologyManag
 			if (ncboMetadata != null) {
 				String urnAndVersion = urn + "|" + version;
 				ncboMetadata.setCodingScheme(urnAndVersion);
-				ncboOntologyMetadataDAO.save(ncboMetadata);
+				log.debug("Updating the NcboOntologyMetadata with the codingScheme name="+ urnAndVersion);
+				ncboOntologyMetadataDAO.getHibernateTemplate().update(ncboMetadata);
+				ncboOntologyMetadataDAO.getSessionFactory().getCurrentSession().flush();
 				ontology_bean.setCodingScheme(urnAndVersion);
+			} else {
+				String message = "Could not update the codingScheme informtion into NcboOntologyMetadata for ontologyversionid="
+						+ ontology_bean.getId();
+				log.warn(message);
+				System.out.println(message);
 			}
 
 		} else {
@@ -200,7 +206,5 @@ public class OntologyLoadManagerWrapperLexGridImpl extends AbstractOntologyManag
 
 		return lnl;
 	}
-
-
 
 }

@@ -48,25 +48,25 @@ public interface OntologyRetrievalManager {
 	
 	public ClassBean findConcept(Integer ontologyVersionId, String id) throws Exception;
 
-	public ArrayList<ClassBean> findPathToRoot(Integer ontologyId, String conceptId) throws Exception;
+	public List<ClassBean> findPathToRoot(Integer ontologyId, String conceptId) throws Exception;
 
-	//public ArrayList<ClassBean> findParent(Integer ontologyId, String conceptId) throws Exception;
+	//public List<ClassBean> findParent(Integer ontologyId, String conceptId) throws Exception;
 
-	//public ArrayList<ClassBean> findChildren(Integer ontologyId, String conceptId) throws Exception;
+	//public List<ClassBean> findChildren(Integer ontologyId, String conceptId) throws Exception;
 
-	public ArrayList<ClassBean> findConceptNameExact(ArrayList<Integer> ontologyIds, String query
+	public List<ClassBean> findConceptNameExact(List<Integer> ontologyIds, String query
 			) ;
 
-	public ArrayList<ClassBean> findConceptNameStartsWith(ArrayList<Integer> ontologyIds, String query) ;
+	public List<ClassBean> findConceptNameStartsWith(List<Integer> ontologyIds, String query) ;
 
-	public ArrayList<ClassBean> findConceptNameContains(ArrayList<Integer> ontologyIds, String query);
+	public List<ClassBean> findConceptNameContains(List<Integer> ontologyIds, String query);
 
-	public ArrayList<ClassBean> findConceptPropertyExact(ArrayList<Integer> ontologyIds, String property,
+	public List<ClassBean> findConceptPropertyExact(List<Integer> ontologyIds, String property,
 			String query) ;
 
-	public ArrayList<ClassBean> findConceptPropertyStartsWith(ArrayList<Integer> ontologyIds,
+	public List<ClassBean> findConceptPropertyStartsWith(List<Integer> ontologyIds,
 			String property, String query) ;
 
-	public ArrayList<ClassBean> findConceptPropertyContains(ArrayList<Integer> ontologyIds, String property,
+	public List<ClassBean> findConceptPropertyContains(List<Integer> ontologyIds, String property,
 			String query);
 }
