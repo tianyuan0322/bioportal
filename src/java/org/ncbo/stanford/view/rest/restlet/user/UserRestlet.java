@@ -52,7 +52,7 @@ public class UserRestlet extends Restlet {
 
 		try {
 			Integer intId = Integer.parseInt(id);
-			usr = userService.getUser(intId);
+			usr = userService.findUser(intId);
 
 			if (usr == null) {
 				resp.setStatus(Status.CLIENT_ERROR_NOT_FOUND, "User not found");
