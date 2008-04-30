@@ -33,12 +33,10 @@ public class OntologyFileCopier {
 	}
 
 	public static void main(String[] args) {
+		Connection conn = null;
+
 		try {
-			Connection conn = connect();
-			Statement stmt = conn.createStatement();
-			ResultSet rs = stmt.executeQuery("SELECT id, file_path "
-					+ "FROM ncbo_ontology_version WHERE is_remote = 0 "
-					+ "ORDER BY ontology_id, internal_version_number");
+			ResultSet rs = getOntologies(conn);
 
 			String resourcePath = properties
 					.getProperty("bioportal.resource.path");
@@ -73,17 +71,24 @@ public class OntologyFileCopier {
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
+		} finally {
+			try {
+				if (conn != null && !conn.isClosed()) {
+					conn.close();
+				}
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
 		}
 	}
 
-	private static ResultSet getOntologies() throws SQLException,
+	private static ResultSet getOntologies(Connection conn) throws SQLException,
 			ClassNotFoundException, IOException {
-		Connection conn = connect();
+		conn = connect();
 		Statement stmt = conn.createStatement();
 		ResultSet rs = stmt.executeQuery("SELECT id, file_path "
 				+ "FROM ncbo_ontology_version WHERE is_remote = 0 "
 				+ "ORDER BY ontology_id, internal_version_number");
-		conn.close();
 		
 		return rs;
 	}
