@@ -104,5 +104,7 @@ DROP PROCEDURE IF EXISTS `sp_update_ontology_id`;
 update ncbo_ontology_version set file_path = CONCAT("/", ontology_id, "/", internal_version_number)
 where is_remote = 0;
 
-
+update ncbo_l_role set name = 'ROLE_DEVELOPER' where id = 2822;
+update ncbo_l_role set name = 'ROLE_LIBRARIAN' where id = 2823;
+update ncbo_l_role set name = 'ROLE_ADMINISTRATOR' where id = 2824;
 
