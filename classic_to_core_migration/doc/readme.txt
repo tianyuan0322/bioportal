@@ -1,3 +1,8 @@
+***********************************************************************************
+***** Instructions on migrating data from BioPortal Classic to BioPortal Core *****
+*****                        Michael Dorf, 04/30/2008                         *****
+***********************************************************************************
+
 1.  Create a new empty MySQL database called "cbio".
 2.  Run MySQL Migration toolkit. Specify the Oracle production database as the source and MySQL "cbio" database as the destination.
 3.  Export the following tables (including data) from Oracle to MySQL "cbio" database using identical table names:
