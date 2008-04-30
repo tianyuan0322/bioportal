@@ -10,7 +10,7 @@ public class SearchResultBean {
 		SEARCH_DEFINITION, SEARCH_NAME_CODE, SEARCH_PROPERTY_VALUE, SEARCH_METADATA
 	};
 
-	HashMap<SearchCategory, List<ClassBean>> map;
+	HashMap<SearchCategory, List<ClassBean>> map= new HashMap<SearchCategory, List<ClassBean>>();
 	Integer ontologyId;
 
 	public List<ClassBean> getSearchResultBean(SearchCategory category) {
