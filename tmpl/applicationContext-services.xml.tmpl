@@ -538,6 +538,47 @@
 		class="org.ncbo.stanford.service.xml.impl.XMLSerializationServiceImpl">
 	</bean>
 
+	<!-- Ontology load scheduler begins here -->	
+	<bean id="schedulerJobDetailBean" 
+		class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+		<property name="targetObject" ref="ontologyLoadSchedulerService" />
+		<property name="targetMethod" value="processOntologyLoad" />
+		<property name="concurrent" value="false" />
+	</bean>
+
+	<bean id="coreSimpleTrigger" class="org.springframework.scheduling.quartz.SimpleTriggerBean">
+		<property name="jobDetail">
+			<ref bean="schedulerJobDetailBean" />
+		</property>
+		<property name="startDelay">
+			<ref bean="startDelay" />
+		</property>
+		<property name="repeatInterval">
+			<ref bean="repeatInterval" />
+		</property>
+	</bean>
+
+	<bean id="startDelay" class="java.lang.Long">
+		<constructor-arg>
+			<value>@ontologyloadstartdelay@</value>
+		</constructor-arg>
+	</bean>
+
+	<bean id="repeatInterval" class="java.lang.Long">
+		<constructor-arg>
+			<value>@ontologyloadrepeatinterval@</value>
+		</constructor-arg>
+	</bean>
+	
+	<bean class="org.springframework.scheduling.quartz.SchedulerFactoryBean">
+		<property name="triggers">
+			<list>
+				<ref bean="coreSimpleTrigger" />
+			</list>
+		</property>
+	</bean>	
+
+	<!-- Constants -->
 	<bean id="ontologyFilePath" class="java.lang.String">
 		<constructor-arg>
 			<value>@bioportalontologyfilepath@</value>
