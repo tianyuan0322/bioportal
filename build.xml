@@ -101,6 +101,8 @@
 				<filter token="messagebundle" value="${bioportal.messagebundle}" />				
 				<filter token="bioportalsessionnumcontainers" value="${bioportal.session.numcontainers}" />
 				<filter token="bioportalsessiontimeout" value="${bioportal.session.timeout}" />
+				<filter token="ontologyloadstartdelay" value="${ontology.load.startdelay}" />
+				<filter token="ontologyloadrepeatinterval" value="${ontology.load.repeatinterval}" />
 				<filter token="bioportalontologyfilepath" value="${bioportal.ontology.filepath}" />
 				<filter token="protegejdbcurl" value="${protege.jdbc.url}" />
 				<filter token="protegejdbcdriver" value="${protege.jdbc.driver}" />
