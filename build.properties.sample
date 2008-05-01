@@ -63,6 +63,12 @@ bioportal.messagebundle=org.ncbo.stanford.resource.message
 # Uploaded Files
 bioportal.ontology.filepath=${bioportal.resource.path}/uploads
 
+# Ontology Load Scheduler properties
+# Delay before first scheduler execution (in milliseconds)
+ontology.load.startdelay=28800000
+# Scheduler repeat interval (in milliseconds)
+ontology.load.repeatinterval=86400000
+
 ################## Protege Configuration ##################
 
 # db connection
