@@ -4,16 +4,13 @@ import java.util.Date;
 import java.util.List;
 import java.util.Set;
 
+import javax.servlet.http.HttpServletRequest;
+
 import org.apache.commons.fileupload.FileItem;
 import org.apache.commons.fileupload.disk.DiskFileItemFactory;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.ncbo.stanford.bean.UserBean;
-import org.ncbo.stanford.enumeration.ErrorTypeEnum;
-import org.ncbo.stanford.service.user.UserService;
-import org.ncbo.stanford.service.xml.XMLSerializationService;
-import org.ncbo.stanford.util.RequestUtils;
-import org.ncbo.stanford.util.helper.DateHelper;
+
 import org.restlet.Restlet;
 import org.restlet.data.Form;
 import org.restlet.data.Parameter;
@@ -22,17 +19,21 @@ import org.restlet.data.Method;
 import org.restlet.data.Request;
 import org.restlet.data.Response;
 import org.restlet.data.Status;
+import org.restlet.resource.Representation;
+import org.restlet.resource.Variant;
 import org.restlet.ext.fileupload.RestletFileUpload;
 
-// cyoun
-
-import org.restlet.resource.Representation;
-
+import org.ncbo.stanford.bean.UserBean;
 import org.ncbo.stanford.domain.generated.NcboUser;
+import org.ncbo.stanford.enumeration.ErrorTypeEnum;
+import org.ncbo.stanford.service.user.UserService;
+import org.ncbo.stanford.service.xml.XMLSerializationService;
+import org.ncbo.stanford.util.RequestUtils;
+import org.ncbo.stanford.util.helper.DateHelper;
 
 
 /**
- * Question : the naming convention - when to use "find" or "get"?
+ * 
  * @author cyoun
  *
  */
@@ -46,15 +47,14 @@ public class UsersRestlet extends Restlet {
 
 	@Override
 	public void handle(Request request, Response response) {
+		
 		if (request.getMethod().equals(Method.GET)) {
 			getRequest(request, response);
 	
 		} else if (request.getMethod().equals(Method.POST)) {
 			postRequest(request, response);
-		}
+		} 		
 	}
-	
-
 	
 
 	/**
@@ -76,6 +76,7 @@ public class UsersRestlet extends Restlet {
 		System.out.println("+++++++++++++++++++++++++++++++++++++");
 		System.out.println("           POST call");
 		System.out.println("+++++++++++++++++++++++++++++++++++++");
+
 		
 		createUser(request, response);		
 		
@@ -91,6 +92,7 @@ public class UsersRestlet extends Restlet {
 	 * @param response
 	 */
 	private void listUsers(Request request, Response response) {
+		
 		List<UserBean> userList = getUserService().findUsers();
 
 		RequestUtils.setHttpServletResponse(response, Status.SUCCESS_OK,
@@ -106,75 +108,61 @@ public class UsersRestlet extends Restlet {
 	 * @param request response
 	 */
 	private void createUser(Request request, Response response) {
+			
 		
+		try {
+			HttpServletRequest httpServletRequest = RequestUtils
+					.getHttpServletRequest(request);
+			
+			// TODO code clean up later. Use constants
+			String username = httpServletRequest.getParameter("username");
+			String password = httpServletRequest.getParameter("password");
+			String firstname = httpServletRequest.getParameter("firstname");
+			String lastname = httpServletRequest.getParameter("lastname");
+			String email = httpServletRequest.getParameter("email");
+			Date dateCreated = DateHelper.getDateFrom(httpServletRequest.getParameter("dateCreated"));
 		
-		
-/*
-		Form form = request.getResourceRef().getQueryAsForm();
-
-		System.out.println(" Form as entity from = " + form);
-
-		System.out.println(" Form as query String = " + form.getQueryString());
-		
-
-		System.out.println("Trying to getParameters...");
-		//StringBuffer sb = new StringBuffer("foo");
-		for (Parameter p : form) {
-			// System.out.println(p);
-			System.out.println("field name = " + p.getName() + "  value = "
-					+ p.getValue());
-
+			NcboUser ncboUser = new NcboUser(username, password, email,
+					firstname, lastname, dateCreated);
+			
+			/*
+			System.out.println("**************************");
+			System.out.println("NCBO username = " + ncboUser.getUsername());
+			System.out.println(ncboUser.getPassword());
+			System.out.println(ncboUser.getFirstname());
+			System.out.println(ncboUser.getLastname());
+			System.out.println(ncboUser.getEmail());
+			System.out.println(ncboUser.getDateCreated());
+			System.out.println("**************************");
+			*/
+			
+			// create UserBean from NcboUser and save it
+			getUserService().createUser(getUserService().populateUser(ncboUser));
+			
+		} catch (Exception e) {
+			e.printStackTrace();
+			log.error(e);
 		}
-*/
-		
-		Form form = request.getEntityAsForm();
-		
 
-		 if (form != null) {
-		  
-
-			 String username = form.getFirstValue("username");
-			 String password = form.getFirstValue("password");
+		/*		
+		    // OBSOLETE CODE
+			// BUG in Restlet API
+			// Make sure Entity is consumed first time here, otherwise it gets emptied out after first usage
+			Form form = request.getEntityAsForm();
+	
+			String username = form.getFirstValue("username");
+			String password = form.getFirstValue("password");
 			String firstname = form.getFirstValue("firstname");
+			String lastname = form.getFirstValue("lastname");
+			String email = form.getFirstValue("email");
+			Date dateCreated = DateHelper.getDateFrom(form.getFirstValue("dateCreated"));
 
-			System.out.println("username = " + username);
-			System.out.println("firstname = " + firstname);
-		 }
-		 
-		 /*
-		 *String lastname =
-		 * form.getFirstValue("lastname"); String email =
-		 * form.getFirstValue("email"); Date dateCreated =
-		 * DateHelper.getDateFrom(form .getFirstValue("dateCreated"));
-		 * 
-		 * 
-		 * 
-		 * 
-		 * NcboUser ncboUser = new NcboUser(username, password, email,
-		 * firstname, lastname, dateCreated);
-		 
-		 *System.out.println("+++++++++++++++++++++++++"); 
-		 *System.out.println("createUser() : NCBO USER created "); System.out.println(username);
-		 * System.out.println(password); System.out.println(email);
-		 * System.out.println("----");
-		 * System.out.println(ncboUser.getUsername());
-		 * System.out.println(ncboUser.getPassword());
-		 * System.out.println(ncboUser.getEmail());
-		 * System.out.println("+++++++++++++++++++++++++");
-		 * 
-		 *  // getUserService().saveUser(ncboUser);
-		 *  }
-		 * 
-		 */
-		
-		/*
-		List<UserBean> userList = getUserService().findUsers();
-
-		RequestUtils.setHttpServletResponse(response, Status.SUCCESS_OK,
-				MediaType.TEXT_XML, xmlSerializationService.getSuccessAsXML(
-						RequestUtils.getSessionId(request), request
-								.getResourceRef().getPath(), userList));
+			System.out.println("1. username = " + username);
+			System.out.println("2. firstname = " + firstname);
 		*/
+			
+
+		 
 	}
 
 	/**
