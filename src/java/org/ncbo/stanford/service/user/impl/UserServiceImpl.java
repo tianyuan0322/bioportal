@@ -4,11 +4,13 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+import org.springframework.transaction.annotation.Transactional;
+
 import org.ncbo.stanford.bean.UserBean;
 import org.ncbo.stanford.domain.custom.dao.CustomNcboUserDAO;
 import org.ncbo.stanford.domain.generated.NcboUser;
 import org.ncbo.stanford.service.user.UserService;
-import org.springframework.transaction.annotation.Transactional;
+
 
 @Transactional
 public class UserServiceImpl implements UserService {
@@ -16,13 +18,25 @@ public class UserServiceImpl implements UserService {
 	private CustomNcboUserDAO ncboUserDAO = null;
 
 	public UserBean findUser(Integer userId) {
-		return populateUser(ncboUserDAO.findById(userId));
+		
+		// populate userBean from ncbuUser with matched userId
+		UserBean userBean = new UserBean();
+		userBean.populateFromEntity(ncboUserDAO.findById(userId));
+			
+		return userBean;
 	}
 	
 
+	
 	public UserBean findUser(String username) {
-		return populateUser(ncboUserDAO.getUserByUsername(username));
+		
+		// populate userBean from ncbuUser with matched username
+		UserBean userBean = new UserBean();
+		userBean.populateFromEntity(ncboUserDAO.getUserByUsername(username));
+		
+		return userBean;
 	}
+	
 	
 	/**
 	 * @return List<UserBean>
@@ -31,10 +45,14 @@ public class UserServiceImpl implements UserService {
 		
 		List<NcboUser> ncboUserList = ncboUserDAO.findAll();
 		List<UserBean> userBeanList = new ArrayList<UserBean>();
+		UserBean userBean = new UserBean();
 		
 		// populate the query result to UserBean
 		for ( Iterator<NcboUser> iter  = ncboUserList.iterator(); iter.hasNext(); ) {
-			userBeanList.add(populateUser( (NcboUser)iter.next()));
+						
+			userBean.populateFromEntity((NcboUser)iter.next());
+			userBeanList.add(userBean);
+			
 		}
 		
 		return userBeanList;
@@ -42,8 +60,13 @@ public class UserServiceImpl implements UserService {
 	
 	
 	public void createUser(UserBean userBean) {
-				
-		ncboUserDAO.save(populateUser(userBean));
+		
+		// populate NcboUser from userBean
+		NcboUser ncboUser = new NcboUser();
+		userBean.populateToEntity(ncboUser);
+		
+		ncboUserDAO.save (ncboUser);
+
 	}
 	
 	
@@ -52,8 +75,8 @@ public class UserServiceImpl implements UserService {
 		// get ncboUser DAO instance using user_id
 		NcboUser ncboUser = ncboUserDAO.findById(userBean.getId());
 		
-		// update the DAO instance
-		populateNcboUser(userBean, ncboUser);
+		// populate NcboUser from userBean
+		userBean.populateToEntity(ncboUser);
 				
 		ncboUserDAO.save(ncboUser);
 	}
@@ -85,74 +108,5 @@ public class UserServiceImpl implements UserService {
 	}
 
 	
-	
-	/**
-	 * populate NcboUser instance from UserBean instance
-	 * source: UserBean, destination: NcboUser
-	 * 
-	 * @param UserBean, NcboUser
-	 */
-	public NcboUser populateNcboUser(UserBean userBean, NcboUser ncboUser) {
 
-		if (userBean != null) {
-			
-			ncboUser.setId(userBean.getId());
-			ncboUser.setUsername(userBean.getUsername());
-			ncboUser.setPassword(userBean.getPassword());
-			ncboUser.setEmail(userBean.getEmail());
-			ncboUser.setFirstname(userBean.getFirstname());
-			ncboUser.setLastname(userBean.getLastname());
-			ncboUser.setPhone(userBean.getPhone());
-			ncboUser.setDateCreated(userBean.getDateCreated());
-		}
-
-		return ncboUser;
-	}
-	
-	
-	/**
-	 * Convert NcboUser to UserBean
-	 * 
-	 * @param NcboUser
-	 */
-	public UserBean populateUser(NcboUser ncboUser) {
-		UserBean userBean = null;
-
-		if (ncboUser != null) {
-			userBean = new UserBean();
-			userBean.setId(ncboUser.getId());
-			userBean.setUsername(ncboUser.getUsername());
-			userBean.setPassword(ncboUser.getPassword());
-			userBean.setEmail(ncboUser.getEmail());
-			userBean.setFirstname(ncboUser.getFirstname());
-			userBean.setLastname(ncboUser.getLastname());
-			userBean.setPhone(ncboUser.getPhone());
-			userBean.setDateCreated(ncboUser.getDateCreated());
-		}
-
-		return userBean;
-	}
-	
-	/**
-	 * Convert UserBean to NcboUser
-	 * 
-	 * @param UserBean
-	 */
-	public NcboUser populateUser(UserBean userBean) {
-		NcboUser ncboUser = null;
-
-		if (userBean != null) {
-			ncboUser = new NcboUser();
-			ncboUser.setId(userBean.getId());
-			ncboUser.setUsername(userBean.getUsername());
-			ncboUser.setPassword(userBean.getPassword());
-			ncboUser.setEmail(userBean.getEmail());
-			ncboUser.setFirstname(userBean.getFirstname());
-			ncboUser.setLastname(userBean.getLastname());
-			ncboUser.setPhone(userBean.getPhone());
-			ncboUser.setDateCreated(userBean.getDateCreated());
-		}
-
-		return ncboUser;
-	}
 }
