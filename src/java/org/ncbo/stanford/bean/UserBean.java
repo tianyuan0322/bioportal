@@ -2,7 +2,6 @@ package org.ncbo.stanford.bean;
 
 import java.util.Date;
 
-import org.ncbo.stanford.domain.custom.entity.NcboOntology;
 import org.ncbo.stanford.domain.generated.NcboUser;
 
 public class UserBean {
@@ -34,6 +33,25 @@ public class UserBean {
 		this.setDateCreated(ncboUser.getDateCreated());
 	
 	}
+	
+	/**
+	 * Populates the OntologyBean with data from a NcboOntology
+	 * 
+	 * @param ncboOntology
+	 */
+	public void populateToEntity(NcboUser ncboUser) {
+		
+		ncboUser.setId(this.getId());
+		ncboUser.setUsername(this.getUsername());
+		ncboUser.setPassword(this.getPassword());
+		ncboUser.setEmail(this.getEmail());
+		ncboUser.setFirstname(this.getFirstname());
+		ncboUser.setLastname(this.getLastname());
+		ncboUser.setPhone(this.getPhone());
+		ncboUser.setDateCreated(this.getDateCreated());
+	
+	}
+	
 	
 	/**
 	 * @return the id
