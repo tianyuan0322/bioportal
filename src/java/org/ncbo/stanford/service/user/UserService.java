@@ -12,7 +12,5 @@ public interface UserService {
 	public void createUser(UserBean userBean);
 	public void updateUser(UserBean userBean);
 	public void deleteUser(UserBean userBean);
-	public NcboUser populateNcboUser(UserBean userBean, NcboUser ncboUser);
-	public UserBean populateUser(NcboUser ncboUser);
 	
 }
