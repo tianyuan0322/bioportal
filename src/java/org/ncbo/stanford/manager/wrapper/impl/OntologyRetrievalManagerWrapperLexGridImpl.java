@@ -145,15 +145,14 @@ public class OntologyRetrievalManagerWrapperLexGridImpl extends
 				hierarchyId = hierarchy;
 		}
 		AssociationList associations = lbscm.getHierarchyPathToRoot(urnVersionArray[0], csvt,
-				hierarchyId, conceptId, false,
+				hierarchyId, conceptId, true,
 				LexBIGServiceConvenienceMethods.HierarchyPathResolveOption.ALL, null);
 		ClassBean conceptClass = findConcept(ncboOntology, conceptId);
 		ArrayList<ClassBean> classBeans = createClassBeanArray(associations, conceptClass);
 		return classBeans;
 	}
 
-	public List<ClassBean> findParent(NcboOntology ncboOntology, String conceptId)
-			throws Exception {
+	public List<ClassBean> findParent(NcboOntology ncboOntology, String conceptId) throws Exception {
 		String urnAndVersion = ncboOntology.getCodingScheme();
 		String urnVersionArray[] = splitUrnAndVersion(urnAndVersion);
 		CodingSchemeVersionOrTag csvt = Constructors
@@ -169,7 +168,7 @@ public class OntologyRetrievalManagerWrapperLexGridImpl extends
 		}
 
 		AssociationList associations = lbscm.getHierarchyLevelPrev(urnVersionArray[0], csvt,
-				hierarchyId, conceptId, false, null);
+				hierarchyId, conceptId, true, null);
 		ClassBean conceptClass = findConcept(ncboOntology, conceptId);
 		ArrayList<ClassBean> classBeans = createClassBeanArray(associations, conceptClass);
 		return classBeans;
@@ -192,7 +191,7 @@ public class OntologyRetrievalManagerWrapperLexGridImpl extends
 		}
 
 		AssociationList associations = lbscm.getHierarchyLevelNext(urnVersionArray[0], csvt,
-				hierarchyId, conceptId, false, null);
+				hierarchyId, conceptId, true, null);
 		ClassBean conceptClass = findConcept(ncboOntology, conceptId);
 		ArrayList<ClassBean> classBeans = createClassBeanArray(associations, conceptClass);
 		return classBeans;
@@ -235,8 +234,8 @@ public class OntologyRetrievalManagerWrapperLexGridImpl extends
 			List<String> query, String properties[], boolean includeObsolete, int maxToReturn) {
 		ArrayList<SearchResultBean> results = new ArrayList<SearchResultBean>();
 		for (Integer ontologyVersionId : ontologyVersionIds) {
-			SearchResultBean result = searchNodesForProperties(ontologyVersionId, query, properties, false,
-					includeObsolete, maxToReturn, Match_Types.SEARCH_EXACT_MATCH);
+			SearchResultBean result = searchNodesForProperties(ontologyVersionId, query, properties,
+					false, includeObsolete, maxToReturn, Match_Types.SEARCH_EXACT_MATCH);
 			results.add(result);
 		}
 		return results;
@@ -246,8 +245,8 @@ public class OntologyRetrievalManagerWrapperLexGridImpl extends
 			List<String> query, String properties[], boolean includeObsolete, int maxToReturn) {
 		ArrayList<SearchResultBean> results = new ArrayList<SearchResultBean>();
 		for (Integer ontologyVersionId : ontologyVersionIds) {
-			SearchResultBean result = searchNodesForProperties(ontologyVersionId, query, properties, false,
-					includeObsolete, maxToReturn, Match_Types.SEARCH_STARTS_WITH);
+			SearchResultBean result = searchNodesForProperties(ontologyVersionId, query, properties,
+					false, includeObsolete, maxToReturn, Match_Types.SEARCH_STARTS_WITH);
 			results.add(result);
 		}
 		return results;
@@ -257,8 +256,8 @@ public class OntologyRetrievalManagerWrapperLexGridImpl extends
 			List<String> query, String properties[], boolean includeObsolete, int maxToReturn) {
 		ArrayList<SearchResultBean> results = new ArrayList<SearchResultBean>();
 		for (Integer ontologyVersionId : ontologyVersionIds) {
-			SearchResultBean result = searchNodesForProperties(ontologyVersionId, query, properties, false,
-					includeObsolete, maxToReturn, Match_Types.SEARCH_CONTAINS);
+			SearchResultBean result = searchNodesForProperties(ontologyVersionId, query, properties,
+					false, includeObsolete, maxToReturn, Match_Types.SEARCH_CONTAINS);
 			results.add(result);
 		}
 		return results;
@@ -450,20 +449,20 @@ public class OntologyRetrievalManagerWrapperLexGridImpl extends
 	}
 
 	private ClassBean createClassBean(ResolvedConceptReference rcr) {
-		ClassBean bean = null;
-		CodedEntry entry = rcr.getReferencedEntry();
+		ClassBean bean = new ClassBean();
 
-		if (entry != null
-				&& (entry.getIsAnonymous() == null || (entry.getIsAnonymous() != null && !entry
-						.getIsAnonymous().booleanValue()))) {
-			bean = new ClassBean();
-			bean.setId(rcr.getConceptCode());
-			if (rcr.getEntityDescription().getContent() != null) {
-				bean.setLabel(rcr.getEntityDescription().getContent());
-			} else {
+		bean.setId(rcr.getConceptCode());
+		bean.setLabel(rcr.getEntityDescription().getContent());
+		CodedEntry entry = rcr.getReferencedEntry();
+		if (entry == null) {
+			bean.setLight(true);
+		} else if (entry.getIsAnonymous() == null
+				|| (entry.getIsAnonymous() != null && !entry.getIsAnonymous().booleanValue())) {
+			addCodedEntryPropertyValue(entry, bean);
+			if (StringUtils.isBlank(bean.getLabel())) {
 				bean.setLabel(getPreferredPresentation(entry));
 			}
-			addCodedEntryPropertyValue(entry, bean);
+			
 		}
 		return bean;
 	}
@@ -484,9 +483,7 @@ public class OntologyRetrievalManagerWrapperLexGridImpl extends
 		while (refEnum.hasMoreElements()) {
 			ref = (ResolvedConceptReference) refEnum.nextElement();
 			ClassBean bean = createClassBean(ref);
-			if (bean != null)
-				classBeans.add(bean);
-
+			classBeans.add(bean);
 		}
 		return classBeans;
 	}
@@ -496,8 +493,8 @@ public class OntologyRetrievalManagerWrapperLexGridImpl extends
 		int count = entry.getDefinitionCount();
 		for (int i = 0; i < count; i++) {
 			d = entry.getDefinition(i);
-			if(d.getIsPreferred().booleanValue())
-			  return d.getText().getContent();
+			if (d.getIsPreferred().booleanValue())
+				return d.getText().getContent();
 		}
 		return "";
 	}
@@ -650,21 +647,20 @@ public class OntologyRetrievalManagerWrapperLexGridImpl extends
 	}
 
 	private void createClassBeanArray(Association association, ClassBean current_classBean) {
-		AssociatedConceptList concepts = association.getAssociatedConcepts();
+		AssociatedConceptList assocConceptList = association.getAssociatedConcepts();
 		ArrayList<ClassBean> classBeans = new ArrayList<ClassBean>();
-		for (int i = 0; i < concepts.getAssociatedConceptCount(); i++) {
-			AssociatedConcept concept = concepts.getAssociatedConcept(i);
-			if (concept != null) {
-				ClassBean classBean = createClassBean(concept);
-				classBeans.add(classBean);
+		for (int i = 0; i < assocConceptList.getAssociatedConceptCount(); i++) {
+			AssociatedConcept assocConcept = assocConceptList.getAssociatedConcept(i);
+			if (assocConcept != null) {
+				ClassBean classBean = createClassBean(assocConcept);
 				// Find and recurse printing for next batch ...
-				AssociationList nextLevel = concept.getSourceOf();
+				AssociationList nextLevel = assocConcept.getSourceOf();
 				if (nextLevel != null && nextLevel.getAssociationCount() != 0)
 					for (int j = 0; j < nextLevel.getAssociationCount(); j++)
 						createClassBeanArray(nextLevel.getAssociation(j), classBean);
 
 				// Find and recurse printing for previous batch ...
-				AssociationList prevLevel = concept.getTargetOf();
+				AssociationList prevLevel = assocConcept.getTargetOf();
 				if (prevLevel != null && prevLevel.getAssociationCount() != 0)
 					for (int j = 0; j < prevLevel.getAssociationCount(); j++)
 						createClassBeanArray(prevLevel.getAssociation(j), classBean);
