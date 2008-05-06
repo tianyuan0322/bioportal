@@ -455,7 +455,7 @@ public class OntologyRetrievalManagerWrapperLexGridImpl extends
 		bean.setLabel(rcr.getEntityDescription().getContent());
 		CodedEntry entry = rcr.getReferencedEntry();
 		if (entry == null) {
-			bean.setLight(true);
+			bean.setLightWeight(true);
 		} else if (entry.getIsAnonymous() == null
 				|| (entry.getIsAnonymous() != null && !entry.getIsAnonymous().booleanValue())) {
 			addCodedEntryPropertyValue(entry, bean);
@@ -653,6 +653,7 @@ public class OntologyRetrievalManagerWrapperLexGridImpl extends
 			AssociatedConcept assocConcept = assocConceptList.getAssociatedConcept(i);
 			if (assocConcept != null) {
 				ClassBean classBean = createClassBean(assocConcept);
+				classBeans.add(classBean);
 				// Find and recurse printing for next batch ...
 				AssociationList nextLevel = assocConcept.getSourceOf();
 				if (nextLevel != null && nextLevel.getAssociationCount() != 0)

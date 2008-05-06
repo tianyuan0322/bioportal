@@ -1,6 +1,8 @@
 package org.ncbo.stanford.bean.concept;
 
 import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -46,36 +48,65 @@ public abstract class AbstractConceptBean {
 	}
 
 	public String toString() {
-		String str = "Id: " + id + " Label: " + label;
-		str += "\nRelations:";
+		return toString("");
+	}
+
+	public String toString(String indent) {
+		String spacer="   ";
+		String str =  "Id: " + id + " Label: " + label+"\n";
+		str += indent+"Relations:\n";
 
 		for (Object key : relations.keySet()) {
 			Object value = relations.get(key);
 
-			str += "\nKEY: ";
+			str += indent+ "KEY: ";
 
 			if (key instanceof AbstractConceptBean) {
-				str += "  "+((AbstractConceptBean) key).toString();
-			} else if (key instanceof String) {
-				str += ((String) key).toString();
-			} else {
-				str += key.toString();
+				str += ((AbstractConceptBean) key).toString(spacer);
+			}  else {
+				str += key;
 			}
 
-			str += "\nVALUE: ";
+			str += "  VALUE: ";
 
 			if (value instanceof AbstractConceptBean) {
-				str += "  "+((AbstractConceptBean) value).toString();
-			} else if (value instanceof String) {
-				str += ((String) value).toString();
-			} else {
-				str += value.toString();
+				str += ((AbstractConceptBean) value).toString(spacer);
+			} else if (value instanceof List) {
+				str+= toString((List)value,  indent+spacer);
+			}else {
+				str+= value;
 			}
+			str+= "\n";
 		}
 
 		return str;
-	}
+	}	
+	
+	public String toString(List list, String indent) {
+		StringBuffer buf = new StringBuffer();
+		buf.append("[");
 
+	        Iterator i = list.iterator();
+	        boolean hasNext = i.hasNext();
+	        while (hasNext) {
+	      	  Object o = i.next();
+	      	  if (o instanceof AbstractConceptBean) {
+	      		  AbstractConceptBean acb= (AbstractConceptBean) o;	      	  
+	              buf.append(acb.toString(indent));
+	      	  } else {
+	      		  buf.append(String.valueOf(o));
+	      	  }
+	            
+	            hasNext = i.hasNext();
+	            if (hasNext)
+	                buf.append(", ");
+	        }
+
+		buf.append(indent).append("]");
+		return buf.toString();
+	    
+	}
+	
 	/**
 	 * @param arg0
 	 * @param arg1
