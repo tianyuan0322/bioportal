@@ -56,10 +56,10 @@ public class CustomNcboOntologyVersionDAO extends NcboOntologyVersionDAO {
 						return query.uniqueResult();
 					}
 				});
-		
+
 		NcboOntologyVersion ontologyVer = findById(ontologyVersionId);
 		Set<NcboOntologyFile> files = ontologyVer.getNcboOntologyFiles();
-		
+
 		for (NcboOntologyFile file : files) {
 			ontology.addFilename(file.getFilename());
 		}
@@ -121,20 +121,31 @@ public class CustomNcboOntologyVersionDAO extends NcboOntologyVersionDAO {
 	public NcboOntologyVersion saveOntologyVersion(
 			NcboOntologyVersion transientInstance) {
 		try {
-			return this.findById((Integer) getHibernateTemplate().save(
-					transientInstance));
+			Integer newId = (Integer) getHibernateTemplate().save(
+					transientInstance);			
+			getHibernateTemplate().flush();
+			
+			return this.findById(newId);
 		} catch (RuntimeException re) {
 			log.error("save failed", re);
 			throw re;
 		}
 	}
 
-	public NcboOntologyMetadata findOntologyMetadataById(final Integer Id) {
-		 NcboOntologyVersion ncboOntologyVersion= findById(Id);
-		 NcboOntologyMetadata[] metadataArray= ( NcboOntologyMetadata[]) ncboOntologyVersion.getNcboOntologyMetadatas().toArray(new NcboOntologyMetadata[0]);
-		 if (metadataArray!= null &&  metadataArray.length > 0 )
-			 return metadataArray[0];
-		 else
-			 return null;
+	/**
+	 * Returns the metadata record for a given ontology version
+	 * 
+	 * @param ontologyVersionId
+	 * @return
+	 */
+	public NcboOntologyMetadata findOntologyMetadataById(
+			final Integer ontologyVersionId) {
+		NcboOntologyVersion ncboOntologyVersion = findById(ontologyVersionId);
+		Set<NcboOntologyMetadata> metadataSet = ncboOntologyVersion.getNcboOntologyMetadatas();
+		
+		Object[] metadataArr = metadataSet.toArray();
+		NcboOntologyMetadata ncboMetadata = (NcboOntologyMetadata) metadataArr[0];
+		
+		return ncboMetadata;
 	}
 }

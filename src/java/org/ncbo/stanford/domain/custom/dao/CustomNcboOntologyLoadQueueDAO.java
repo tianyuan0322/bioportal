@@ -50,8 +50,11 @@ public class CustomNcboOntologyLoadQueueDAO extends NcboOntologyLoadQueueDAO {
 	public NcboOntologyLoadQueue saveNcboOntologyLoadQueue(
 			NcboOntologyLoadQueue transientInstance) {
 		try {
-			return this.findById((Integer) getHibernateTemplate().save(
-					transientInstance));
+			Integer newId = (Integer) getHibernateTemplate().save(
+					transientInstance);			
+			getHibernateTemplate().flush();
+			
+			return this.findById(newId);
 		} catch (RuntimeException re) {
 			log.error("save failed", re);
 			throw re;
