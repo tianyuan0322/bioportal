@@ -1,6 +1,7 @@
 package org.ncbo.stanford.service.xml;
 
 import org.ncbo.stanford.enumeration.ErrorTypeEnum;
+import org.restlet.data.Status;
 
 /**
  * An interface that allows predefined structure of XML responses
@@ -41,4 +42,18 @@ public interface XMLSerializationService {
 	 */
 	public String getSuccessAsXML(String sessionId, String accessedResource,
 			Object data);
+	
+	
+	/**
+	 * Generate Error XML from status object.
+	 * Note that ErrorStatusBean is used instead of ErrorBean. 
+	 * Status object is passed around instead of in-house ErrorTypeEnum object
+	 * 
+	 * cyoun
+	 * 
+	 * @param status
+	 * @param accessedResource
+	 * @return
+	 */
+	public String getErrorAsXML (Status status, String accessedResource);
 }
