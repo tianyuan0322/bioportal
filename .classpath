@@ -88,5 +88,7 @@
 	<classpathentry kind="lib" path="WebRoot/WEB-INF/lib/spring-mock.jar"/>
 	<classpathentry kind="lib" path="WebRoot/WEB-INF/lib/hsqldb-1.8.0_8.jar"/>
 	<classpathentry kind="lib" path="WebRoot/WEB-INF/lib/quartz-1.6.0.jar"/>
+	<classpathentry kind="lib" path="WebRoot/WEB-INF/lib/aspectjrt.jar"/>
+	<classpathentry kind="lib" path="WebRoot/WEB-INF/lib/aspectjweaver.jar"/>
 	<classpathentry kind="output" path="WebRoot/WEB-INF/classes"/>
 </classpath>
