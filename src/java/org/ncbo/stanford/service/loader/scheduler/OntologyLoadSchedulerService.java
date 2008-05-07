@@ -12,8 +12,6 @@ public interface OntologyLoadSchedulerService {
 	/**
 	 * Retrieve all ontologies that need to be parsed and send them through the
 	 * vendor API
-	 * 
-	 * @throws Exception
 	 */
-	public void processOntologyLoad() throws Exception;
+	public void processOntologyLoad();
 }
