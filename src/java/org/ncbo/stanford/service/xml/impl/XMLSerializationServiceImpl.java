@@ -1,9 +1,13 @@
 package org.ncbo.stanford.service.xml.impl;
 
 import org.apache.commons.validator.GenericValidator;
+
+import org.restlet.data.Status;
+
 import org.ncbo.stanford.bean.OntologyBean;
 import org.ncbo.stanford.bean.UserBean;
 import org.ncbo.stanford.bean.response.ErrorBean;
+import org.ncbo.stanford.bean.response.ErrorStatusBean;
 import org.ncbo.stanford.bean.response.SuccessBean;
 import org.ncbo.stanford.enumeration.ErrorTypeEnum;
 import org.ncbo.stanford.service.xml.XMLSerializationService;
@@ -115,8 +119,33 @@ public class XMLSerializationServiceImpl implements XMLSerializationService {
 	
 	
 	
-	
-	
+	/**
+	 * Generate Error XML from status object.
+	 * Note that ErrorStatusBean is used instead of ErrorBean. 
+	 * Status object is passed around instead of in-house ErrorTypeEnum object.
+	 * 
+	 * cyoun
+	 * 
+	 * @param status
+	 * @param accessedResource
+	 * @return
+	 */
+	public String getErrorAsXML (Status status, String accessedResource) {
+				
+		String xmlResult = ApplicationConstants.XML_DECLARATION + "\n";
+		
+		XStream xstream = new XStream();
+		xstream.alias(ApplicationConstants.ERROR_XML_TAG_NAME, ErrorStatusBean.class);
+
+		ErrorStatusBean errorStatusBean = new ErrorStatusBean(status);
+		
+		if (!GenericValidator.isBlankOrNull(accessedResource)) {
+			errorStatusBean.setAccessedResource(accessedResource);
+		}	
+		
+		return xmlResult + xstream.toXML(errorStatusBean);
+		
+	}
 	
 	
 	
