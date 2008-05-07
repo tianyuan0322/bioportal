@@ -13,6 +13,15 @@ import org.ncbo.stanford.util.helper.DateHelper;
 
 public class UserHelper {
 		
+
+	
+	/**
+	 * Creates UserBean object and populate from Request object
+	 * 
+	 * source: request, destination: userBean
+	 * 
+	 * @param Request
+	 */
 	public static UserBean populateUserBeanFromRequest (Request request) {
 		
 
@@ -38,7 +47,7 @@ public class UserHelper {
 		userBean.setDateCreated(dateCreated);
 	
 		
-		// DEBUG
+		// DEBUG STATETMENT - to be removed later
 		System.out.println("**************************");
 		System.out.println("username = " + userBean.getUsername());
 		System.out.println("password = " + userBean.getPassword());
@@ -48,9 +57,7 @@ public class UserHelper {
 		System.out.println("dateCreated = " + userBean.getDateCreated());
 		System.out.println("**************************");
 		
-		
 		return userBean;
-
 	}
 
 }
