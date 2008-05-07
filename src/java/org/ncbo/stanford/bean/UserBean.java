@@ -23,15 +23,18 @@ public class UserBean {
 	 */
 	public void populateFromEntity(NcboUser ncboUser) {
 		
-		this.setId(ncboUser.getId());
-		this.setUsername(ncboUser.getUsername());
-		this.setPassword(ncboUser.getPassword());
-		this.setEmail(ncboUser.getEmail());
-		this.setFirstname(ncboUser.getFirstname());
-		this.setLastname(ncboUser.getLastname());
-		this.setPhone(ncboUser.getPhone());
-		this.setDateCreated(ncboUser.getDateCreated());
-	
+		if (ncboUser != null) {
+
+			this.setId(ncboUser.getId());
+			this.setUsername(ncboUser.getUsername());
+			this.setPassword(ncboUser.getPassword());
+			this.setEmail(ncboUser.getEmail());
+			this.setFirstname(ncboUser.getFirstname());
+			this.setLastname(ncboUser.getLastname());
+			this.setPhone(ncboUser.getPhone());
+			this.setDateCreated(ncboUser.getDateCreated());
+		} 
+		
 	}
 	
 	/**
