@@ -4,11 +4,20 @@ import java.util.Date;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.restlet.data.MediaType;
 import org.restlet.data.Request;
+import org.restlet.data.Response;
+import org.restlet.data.Status;
 
 import org.ncbo.stanford.bean.UserBean;
+//import org.ncbo.stanford.enumeration.ErrorTypeEnum;
+import org.ncbo.stanford.service.xml.XMLSerializationService;
 import org.ncbo.stanford.util.RequestUtils;
 import org.ncbo.stanford.util.helper.DateHelper;
+
+
+import com.thoughtworks.xstream.XStream;
+import com.thoughtworks.xstream.io.xml.DomDriver;
 
 
 public class UserHelper {
@@ -60,5 +69,7 @@ public class UserHelper {
 		return userBean;
 	}
 
+
+	
 }
 
