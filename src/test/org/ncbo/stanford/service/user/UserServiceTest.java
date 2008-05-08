@@ -8,6 +8,7 @@ import java.util.List;
 
 import org.ncbo.stanford.AbstractBioPortalTest;
 import org.ncbo.stanford.bean.UserBean;
+import org.ncbo.stanford.exception.DatabaseException;
 
 /**
  * Test create/find/findAll/update/delete 
@@ -18,7 +19,7 @@ import org.ncbo.stanford.bean.UserBean;
 public class UserServiceTest extends AbstractBioPortalTest {
 
 	
-	public void testFindUsers() {
+	public void testFindUsers() throws DatabaseException{
 
 		List<UserBean> users = getUserService().findUsers();
 
@@ -34,7 +35,7 @@ public class UserServiceTest extends AbstractBioPortalTest {
 	}
 	
 
-	public void testCreateUser() {
+	public void testCreateUser() throws DatabaseException{
 		
 		System.out.println ("UserServiceTest: testCreateUser()........................BEGIN");
 			
@@ -45,7 +46,7 @@ public class UserServiceTest extends AbstractBioPortalTest {
 	}
 	
 	
-	public void testFindUser() {
+	public void testFindUser() throws DatabaseException{
 		
 		System.out.println ("UserServiceTest: testFindUser()..........................BEGIN");
 		
@@ -62,7 +63,7 @@ public class UserServiceTest extends AbstractBioPortalTest {
 	
 	
 
-	public void testUpdateUser() {
+	public void testUpdateUser() throws DatabaseException{
 		
 		System.out.println ("UserServiceTest: testUpdateUsers().......................BEGIN");
 		
@@ -85,7 +86,7 @@ public class UserServiceTest extends AbstractBioPortalTest {
 	
 	
 	
-	public void testDeleteUser() {
+	public void testDeleteUser() throws DatabaseException{
 		
 		System.out.println ("UserServiceTest: testDeleteUser()........................BEGIN");
 		
