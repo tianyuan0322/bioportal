@@ -10,29 +10,41 @@ import org.ncbo.stanford.bean.UserBean;
 import org.ncbo.stanford.domain.custom.dao.CustomNcboUserDAO;
 import org.ncbo.stanford.domain.generated.NcboUser;
 import org.ncbo.stanford.service.user.UserService;
-
+import org.ncbo.stanford.exception.DatabaseException;
 
 @Transactional
 public class UserServiceImpl implements UserService {
 
 	private CustomNcboUserDAO ncboUserDAO = null;
 
-	public UserBean findUser(Integer userId) {
+	public UserBean findUser(Integer userId) throws DatabaseException {
 		
 		// populate userBean from ncbuUser with matched userId
 		UserBean userBean = new UserBean();
-		userBean.populateFromEntity(ncboUserDAO.findById(userId));
+		try {
+			userBean.populateFromEntity(ncboUserDAO.findById(userId));
 			
+		} catch (Exception e)
+        {
+            throw new DatabaseException(e);
+        }
 		return userBean;
 	}
 	
 
 	
-	public UserBean findUser(String username) {
+	public UserBean findUser(String username) throws DatabaseException{
 		
 		// populate userBean from ncbuUser with matched username
 		UserBean userBean = new UserBean();
-		userBean.populateFromEntity(ncboUserDAO.getUserByUsername(username));
+		
+		try {
+			userBean.populateFromEntity(ncboUserDAO.getUserByUsername(username));
+		
+		} catch (Exception e)
+        {
+            throw new DatabaseException(e);
+        }
 		
 		return userBean;
 	}
@@ -41,7 +53,7 @@ public class UserServiceImpl implements UserService {
 	/**
 	 * @return List<UserBean>
 	 */
-	public List<UserBean> findUsers() {
+	public List<UserBean> findUsers() throws DatabaseException{
 		
 		List<NcboUser> ncboUserList = ncboUserDAO.findAll();
 		List<UserBean> userBeanList = new ArrayList<UserBean>();
@@ -49,9 +61,15 @@ public class UserServiceImpl implements UserService {
 		
 		// populate the query result to UserBean
 		for ( Iterator<NcboUser> iter  = ncboUserList.iterator(); iter.hasNext(); ) {
-						
-			userBean.populateFromEntity((NcboUser)iter.next());
-			userBeanList.add(userBean);
+				
+			try {
+				userBean.populateFromEntity((NcboUser)iter.next());
+				userBeanList.add(userBean);
+				
+			} catch (Exception e)
+	        {
+	            throw new DatabaseException(e);
+	        }
 			
 		}
 		
@@ -59,36 +77,56 @@ public class UserServiceImpl implements UserService {
 	}
 	
 	
-	public void createUser(UserBean userBean) {
+	public void createUser(UserBean userBean) throws DatabaseException{
 		
 		// populate NcboUser from userBean
 		NcboUser ncboUser = new NcboUser();
-		userBean.populateToEntity(ncboUser);
 		
-		ncboUserDAO.save (ncboUser);
+		try {
+			userBean.populateToEntity(ncboUser);
+			
+			ncboUserDAO.save (ncboUser);
+			
+		} catch (Exception e)
+        {
+            throw new DatabaseException(e);
+        }
+		
+
 
 	}
 	
 	
-	public void updateUser(UserBean userBean) {
+	public void updateUser(UserBean userBean) throws DatabaseException{
 				
-		// get ncboUser DAO instance using user_id
-		NcboUser ncboUser = ncboUserDAO.findById(userBean.getId());
-		
-		// populate NcboUser from userBean
-		userBean.populateToEntity(ncboUser);
-				
-		ncboUserDAO.save(ncboUser);
+		try {
+			// get ncboUser DAO instance using user_id
+			NcboUser ncboUser = ncboUserDAO.findById(userBean.getId());
+
+			// populate NcboUser from userBean
+			userBean.populateToEntity(ncboUser);
+
+			ncboUserDAO.save(ncboUser);
+
+		} catch (Exception e) {
+			throw new DatabaseException(e);
+		}
 	}
 	
 
 
-	public void deleteUser(UserBean userBean) {
+	public void deleteUser(UserBean userBean) throws DatabaseException{
 		
-		// get ncboUser DAO instance using user_id
-		NcboUser ncboUser = ncboUserDAO.findById(userBean.getId());
-		
-		ncboUserDAO.delete(ncboUser);
+		try {
+			// get ncboUser DAO instance using user_id
+			NcboUser ncboUser = ncboUserDAO.findById(userBean.getId());
+
+			ncboUserDAO.delete(ncboUser);
+
+
+		} catch (Exception e) {
+			throw new DatabaseException(e);
+		}
 	}
 	
 	
