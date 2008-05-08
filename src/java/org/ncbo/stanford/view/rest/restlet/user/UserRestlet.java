@@ -16,12 +16,11 @@ import com.thoughtworks.xstream.XStream;
 import com.thoughtworks.xstream.io.xml.DomDriver;
 
 import org.ncbo.stanford.bean.UserBean;
-import org.ncbo.stanford.enumeration.ErrorTypeEnum;
 import org.ncbo.stanford.service.user.UserService;
 import org.ncbo.stanford.service.xml.XMLSerializationService;
 import org.ncbo.stanford.util.helper.UserHelper;
 import org.ncbo.stanford.util.RequestUtils;
-
+import org.ncbo.stanford.exception.DatabaseException;
 
 public class UserRestlet extends Restlet {
 
@@ -59,7 +58,6 @@ public class UserRestlet extends Restlet {
 
 				} else if (method.equalsIgnoreCase("DELETE")) {
 
-
 					// Handle DELETE calls here
 					System.out.println("+++++++++++++++++++++++++++++++++++++");
 					System.out.println("           DELETE call");
@@ -69,8 +67,6 @@ public class UserRestlet extends Restlet {
 				}
 			}
 		}
-		
-		
 	}
 	
 	
@@ -81,15 +77,12 @@ public class UserRestlet extends Restlet {
 	 */
 	private void findUser(Request request, Response response) {
 		
-		// find the UserBean by UserID
+		// find the UserBean from request
 		UserBean userBean = findUserBean(request, response);
 
-		// prepare the response
-		if (userBean != null && !response.getStatus().isError()) {
-			XStream xstream = new XStream(new DomDriver());
-			xstream.alias("UserBean", UserBean.class);
-			response.setEntity(xstream.toXML(userBean), MediaType.APPLICATION_XML);
-		}
+		// generate response XML
+		generateUserXMLResponse (request, response, userBean);
+		
 	}
 	
 
@@ -100,15 +93,14 @@ public class UserRestlet extends Restlet {
 	 */
 	private void updateUser(Request request, Response response) {
 
-		
-		String accessedResource = request.getResourceRef().getPath();
-		
+				
 		// find the UserBean from request
 		UserBean userBean = findUserBean(request, response);
 
+		// if "find" was successful, proceed to update
+		//if ( userBean != null && userBean.getId() != null) {
+		if (!response.getStatus().isError()) {	
 		
-		if ( userBean != null) {
-			
 			// save the id for later
 			Integer id = userBean.getId();
 			
@@ -118,45 +110,28 @@ public class UserRestlet extends Restlet {
 			
 			// set the id
 			userBean.setId(id);
-			
+		
 			// now update the user
-			getUserService().updateUser(userBean);
+			try {
+				getUserService().updateUser(userBean);
 
-			// prepare the response
-			if (!response.getStatus().isError()) {
+			} catch (DatabaseException dbe) {
 
-				RequestUtils.setHttpServletResponse(response, Status.SUCCESS_OK,
-						MediaType.TEXT_XML, xmlSerializationService.getSuccessAsXML(
-								RequestUtils.getSessionId(request), null));
-				
-				/*
+				response.setStatus(Status.SERVER_ERROR_INTERNAL,
+				"DatabaseException occured.");
+				dbe.printStackTrace();
+				log.error(dbe);
 
-				RequestUtils.setHttpServletResponse(response,
-						Status.SUCCESS_OK, MediaType.TEXT_XML,
-						xmlSerializationService.getSuccessAsXML(RequestUtils
-								.getSessionId(request), accessedResource));
-				*/
-
-			} else {
-
-				// TODO
-				// 1. determine where to set the response. where the error
-				// occurred or at the end.
-				// 2. sync response status and runtime error ?
-				RequestUtils.setHttpServletResponse(response, response
-						.getStatus(), MediaType.TEXT_XML,
-						xmlSerializationService.getErrorAsXML(
-								ErrorTypeEnum.RUNTIME_ERROR, accessedResource));
-
-				/*
-				 * RequestUtils.setHttpServletResponse(response,
-				 * Status.SERVER_ERROR_INTERNAL, MediaType.TEXT_XML,
-				 * xmlSerializationService.getErrorAsXML(
-				 * ErrorTypeEnum.RUNTIME_ERROR, accessedResource));
-				 */
-
+			} catch (Exception e) {
+				response.setStatus(Status.SERVER_ERROR_INTERNAL, e.getMessage());
+				e.printStackTrace();
+				log.error(e);
 			}
+
 		}
+
+		// generate response XML
+		generateUserXMLResponse (request, response, userBean);
 		
 	}
 	
@@ -172,14 +147,38 @@ public class UserRestlet extends Restlet {
 		// find the UserBean by UserID
 		UserBean userBean = findUserBean(request, response);
 
-		// now delete the user
-		getUserService().deleteUser(userBean);
+		// if "find" was successful, proceed to update
+		if (!response.getStatus().isError()) {	
 		
-		if (userBean != null && !response.getStatus().isError()) {
-			XStream xstream = new XStream(new DomDriver());
-			xstream.alias("UserBean", UserBean.class);
-			response.setEntity(xstream.toXML(userBean), MediaType.APPLICATION_XML);
+			// now delete the user
+			try {
+
+				getUserService().deleteUser(userBean);
+			
+			} catch (DatabaseException dbe) {
+
+				response.setStatus(Status.SERVER_ERROR_INTERNAL,
+				"DatabaseException occured.");
+				dbe.printStackTrace();
+				log.error(dbe);
+
+			} catch (Exception e) {
+				response.setStatus(Status.SERVER_ERROR_INTERNAL, e.getMessage());
+				e.printStackTrace();
+				log.error(e);
+			}
+			
+			generateUserXMLResponse (request, response, userBean);
 		}
+
+		// generate response XML
+		// display success XML when successful, otherwise call generateUserXMLResponse
+		if (!response.getStatus().isError()) {
+			generateStatusXMLResponse (request, response);
+		} else {
+			generateUserXMLResponse (request, response, userBean);
+		}
+
 	}
 	
 	
@@ -189,7 +188,7 @@ public class UserRestlet extends Restlet {
 	 * 
 	 * 
 	 * @param request
-	 * @param resp
+	 * @param response
 	 */
 	private UserBean findUserBean(Request request, Response response) {
 		
@@ -200,13 +199,33 @@ public class UserRestlet extends Restlet {
 			Integer intId = Integer.parseInt(id);
 			userBean = userService.findUser(intId);
 
-			if (userBean == null) {
-				response.setStatus(Status.CLIENT_ERROR_NOT_FOUND, "User not found");
+			response.setStatus(Status.SUCCESS_OK);
+			
+			// if user is not found, set Error in the Status object
+			if (userBean == null || userBean.getId() == null) {
+	
+				response.setStatus(Status.CLIENT_ERROR_NOT_FOUND, "User Not found");
 			}
+		
 		} catch (NumberFormatException nfe) {
+			
 			response.setStatus(Status.CLIENT_ERROR_BAD_REQUEST, nfe.getMessage());
-		}
+			nfe.printStackTrace();
+			log.error(nfe);	
+			
+		} catch (DatabaseException dbe) {
 
+			response.setStatus(Status.SERVER_ERROR_INTERNAL,
+			"DatabaseException occured.");
+			dbe.printStackTrace();
+			log.error(dbe);
+
+		} catch (Exception e) {
+			response.setStatus(Status.SERVER_ERROR_INTERNAL, e.getMessage());
+			e.printStackTrace();
+			log.error(e);
+		}
+				
 		return userBean;
 	}
 	
@@ -238,4 +257,69 @@ public class UserRestlet extends Restlet {
 	}
 	
 	
+	
+	
+	/*
+	 * REFACTORING!
+	 * 
+	 */	
+	
+	
+	/**
+	 * Generates Generic XML response which contains status info 
+	 * whether success or fail.  session id and access resource info is included.
+	 * 
+	 * @param request response
+	 *            the userService to set
+	 */
+	private void generateStatusXMLResponse (Request request, Response response) {
+		
+		String accessedResource = request.getResourceRef().getPath();
+		
+		if (!response.getStatus().isError()) {
+		
+			RequestUtils.setHttpServletResponse(response, Status.SUCCESS_OK,
+					MediaType.TEXT_XML, xmlSerializationService.getSuccessAsXML(
+						RequestUtils.getSessionId(request), accessedResource));
+			
+		
+		} else {
+
+			RequestUtils.setHttpServletResponse(response, response.getStatus(),
+					MediaType.TEXT_XML, xmlSerializationService.getErrorAsXML(
+							response.getStatus(), accessedResource));
+
+		}
+			
+		
+	}
+		
+	
+	/**
+	 * Generates User Specific XML response which contains status info 
+	 * If success, user info is included.
+	 * 
+	 * @param request response
+	 *            the userService to set
+	 */
+	private void generateUserXMLResponse(Request request, Response response,
+			UserBean userBean) {
+
+		//if (userBean != null && response.getStatus().isSuccess()) {
+		if (!response.getStatus().isError()) {
+			
+			XStream xstream = new XStream(new DomDriver());
+			xstream.alias("UserBean", UserBean.class);
+			response.setEntity(xstream.toXML(userBean),
+					MediaType.APPLICATION_XML);
+
+		} else {
+			
+			generateStatusXMLResponse (request, response);
+
+			
+		}
+	}
+			
+		
 }
