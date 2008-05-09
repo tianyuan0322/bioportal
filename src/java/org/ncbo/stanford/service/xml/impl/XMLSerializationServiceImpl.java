@@ -18,9 +18,9 @@ import org.ncbo.stanford.enumeration.ErrorTypeEnum;
 import org.ncbo.stanford.service.xml.XMLSerializationService;
 import org.ncbo.stanford.util.RequestUtils;
 import org.ncbo.stanford.util.constants.ApplicationConstants;
+import org.ncbo.stanford.view.util.constants.RequestParamConstants;
 
 import com.thoughtworks.xstream.XStream;
-import com.thoughtworks.xstream.io.xml.DomDriver;
 
 public class XMLSerializationServiceImpl implements XMLSerializationService {
 
@@ -99,8 +99,9 @@ public class XMLSerializationServiceImpl implements XMLSerializationService {
 	}
 
 	private void setXStreamAliases(XStream xstream) {
-		xstream.alias("ontology", OntologyBean.class);
-		xstream.alias("user", UserBean.class);
+		
+		xstream.alias(RequestParamConstants.ENTITY_ONTOLOGY, OntologyBean.class);
+		xstream.alias(RequestParamConstants.ENTITY_USER, UserBean.class);
 		xstream.alias(ApplicationConstants.RESPONSE_XML_TAG_NAME,
 				SuccessBean.class);
 		xstream.alias(ApplicationConstants.ERROR_XML_TAG_NAME, ErrorBean.class);
@@ -178,7 +179,7 @@ public class XMLSerializationServiceImpl implements XMLSerializationService {
 		String sessionId = RequestUtils.getSessionId(request);
 		String accessedResource = request.getResourceRef().getPath();
 		
-		// if SUCCESS
+		// if SUCCESS, include the bean info
 		if (!response.getStatus().isError()) {
 		
 			/*
@@ -196,7 +197,7 @@ public class XMLSerializationServiceImpl implements XMLSerializationService {
 			RequestUtils.setHttpServletResponse(response, Status.SUCCESS_OK,
 					MediaType.TEXT_XML, getSuccessAsXML(sessionId, accessedResource, data));
 		
-		// if ERROR
+		// if ERROR, just status, no bean info
 		} else {
 
 			generateStatusXMLResponse(request, response);
@@ -276,8 +277,8 @@ public class XMLSerializationServiceImpl implements XMLSerializationService {
 		XStream xstream = new XStream();
 		
 		// register entities here
-		xstream.alias("ontology", OntologyBean.class);
-		xstream.alias("user", UserBean.class);
+		xstream.alias(RequestParamConstants.ENTITY_ONTOLOGY, OntologyBean.class);
+		xstream.alias(RequestParamConstants.ENTITY_USER, UserBean.class);
 		xstream.alias(ApplicationConstants.RESPONSE_XML_TAG_NAME,
 				SuccessBean.class);
 		xstream.alias(ApplicationConstants.ERROR_XML_TAG_NAME, ErrorStatusBean.class);

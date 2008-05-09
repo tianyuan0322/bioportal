@@ -228,7 +228,7 @@ public class UserRestlet extends Restlet {
 	private UserBean findUserBean(Request request, Response response) {
 		
 		UserBean userBean = null;
-		String id = (String) request.getAttributes().get("user");
+		String id = (String) request.getAttributes().get(RequestParamConstants.ENTITY_USER);
 
 		try {
 			Integer intId = Integer.parseInt(id);

@@ -21,7 +21,7 @@ public interface RequestParamConstants {
 	public static final String PARAM_ROOT_CONCEPT = "root";
 
 	/**
-	 * A mandatory parmeter required to be included in all encrypted
+	 * A mandatory parameter required to be included in all encrypted
 	 * URL query strings
 	 */
 	public static final String PARAM_ENCRYPTED_MANDATORY = "owmvurhsllhheeddtgkxx";
@@ -38,6 +38,8 @@ public interface RequestParamConstants {
 	public static final String HTTP_DELETE = "DELETE";
 	
 	
+	public static final String ENTITY_USER = "user";
+	public static final String ENTITY_ONTOLOGY = "ontology";
 	
 	
 	/**
