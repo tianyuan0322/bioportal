@@ -6,14 +6,10 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import org.restlet.Restlet;
-import org.restlet.data.MediaType;
 import org.restlet.data.Method;
 import org.restlet.data.Request;
 import org.restlet.data.Response;
 import org.restlet.data.Status;
-
-import com.thoughtworks.xstream.XStream;
-import com.thoughtworks.xstream.io.xml.DomDriver;
 
 import org.ncbo.stanford.bean.UserBean;
 import org.ncbo.stanford.service.user.UserService;
@@ -81,7 +77,7 @@ public class UserRestlet extends Restlet {
 		UserBean userBean = findUserBean(request, response);
 
 		// generate response XML
-		generateUserXMLResponse (request, response, userBean);
+		getXmlSerializationService().generateXMLResponse (request, response, userBean);
 		
 	}
 	
@@ -131,7 +127,7 @@ public class UserRestlet extends Restlet {
 		}
 
 		// generate response XML
-		generateUserXMLResponse (request, response, userBean);
+		getXmlSerializationService().generateXMLResponse (request, response, userBean);
 		
 	}
 	
@@ -168,15 +164,15 @@ public class UserRestlet extends Restlet {
 				log.error(e);
 			}
 			
-			generateUserXMLResponse (request, response, userBean);
+			getXmlSerializationService().generateXMLResponse (request, response, userBean);
 		}
 
 		// generate response XML
 		// display success XML when successful, otherwise call generateUserXMLResponse
 		if (!response.getStatus().isError()) {
-			generateStatusXMLResponse (request, response);
+			getXmlSerializationService().generateStatusXMLResponse (request, response);
 		} else {
-			generateUserXMLResponse (request, response, userBean);
+			getXmlSerializationService().generateXMLResponse (request, response, userBean);
 		}
 
 	}
@@ -215,12 +211,12 @@ public class UserRestlet extends Restlet {
 			
 		} catch (DatabaseException dbe) {
 
-			response.setStatus(Status.SERVER_ERROR_INTERNAL,
-			"DatabaseException occured.");
+			response.setStatus(Status.SERVER_ERROR_INTERNAL, "DatabaseException occured.");
 			dbe.printStackTrace();
 			log.error(dbe);
 
 		} catch (Exception e) {
+			
 			response.setStatus(Status.SERVER_ERROR_INTERNAL, e.getMessage());
 			e.printStackTrace();
 			log.error(e);
@@ -239,7 +235,7 @@ public class UserRestlet extends Restlet {
 
 	/**
 	 * @param userService
-	 *            the userService to set
+	 *           
 	 */
 	public void setUserService(UserService userService) {
 		this.userService = userService;
@@ -254,71 +250,6 @@ public class UserRestlet extends Restlet {
 	public void setXmlSerializationService(
 			XMLSerializationService xmlSerializationService) {
 		this.xmlSerializationService = xmlSerializationService;
-	}
-	
-	
-	
-	
-	/*
-	 * REFACTORING!
-	 * 
-	 */	
-	
-	
-	/**
-	 * Generates Generic XML response which contains status info 
-	 * whether success or fail.  session id and access resource info is included.
-	 * 
-	 * @param request response
-	 *            the userService to set
-	 */
-	private void generateStatusXMLResponse (Request request, Response response) {
-		
-		String accessedResource = request.getResourceRef().getPath();
-		
-		if (!response.getStatus().isError()) {
-		
-			RequestUtils.setHttpServletResponse(response, Status.SUCCESS_OK,
-					MediaType.TEXT_XML, xmlSerializationService.getSuccessAsXML(
-						RequestUtils.getSessionId(request), accessedResource));
-			
-		
-		} else {
-
-			RequestUtils.setHttpServletResponse(response, response.getStatus(),
-					MediaType.TEXT_XML, xmlSerializationService.getErrorAsXML(
-							response.getStatus(), accessedResource));
-
-		}
-			
-		
-	}
-		
-	
-	/**
-	 * Generates User Specific XML response which contains status info 
-	 * If success, user info is included.
-	 * 
-	 * @param request response
-	 *            the userService to set
-	 */
-	private void generateUserXMLResponse(Request request, Response response,
-			UserBean userBean) {
-
-		//if (userBean != null && response.getStatus().isSuccess()) {
-		if (!response.getStatus().isError()) {
-			
-			XStream xstream = new XStream(new DomDriver());
-			xstream.alias("UserBean", UserBean.class);
-			response.setEntity(xstream.toXML(userBean),
-					MediaType.APPLICATION_XML);
-
-		} else {
-			
-			generateStatusXMLResponse (request, response);
-
-			
-		}
 	}
 			
 		
