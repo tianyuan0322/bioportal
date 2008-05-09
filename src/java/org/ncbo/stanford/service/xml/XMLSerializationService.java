@@ -57,7 +57,7 @@ public interface XMLSerializationService {
 	 * Note that ErrorStatusBean is used instead of ErrorBean. 
 	 * Status object is passed around instead of in-house ErrorTypeEnum object
 	 * 
-	 * cyoun
+	 * @author cyoun
 	 * 
 	 * @param status
 	 * @param accessedResource
