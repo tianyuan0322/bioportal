@@ -19,6 +19,7 @@ public class UserServiceImpl implements UserService {
 
 	public UserBean findUser(Integer userId) throws DatabaseException {
 		
+		
 		// populate userBean from ncbuUser with matched userId
 		UserBean userBean = new UserBean();
 		try {
