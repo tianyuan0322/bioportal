@@ -31,16 +31,19 @@ public interface RequestParamConstants {
 	 */
 	public static final String PARAM_VALUE_TRUE = "true";
 	
-	
 	/** The constants to identify HTTP call
 	 */
 	public static final String PARAM_METHOD = "method";	
 	public static final String HTTP_PUT = "PUT";	
 	public static final String HTTP_DELETE = "DELETE";
 	
+	
+	
+	
 	/**
 	 * ------------------------------------------------------------
 	 * Not Shared Constants goes here
+	 * 	e.g. form specific parameters
 	 */	
 	// User Constants
 	public static final String FORM_USERNAME = "username";
