@@ -1,7 +1,15 @@
 package org.ncbo.stanford.service.xml;
 
+import java.util.List;
+
 import org.ncbo.stanford.enumeration.ErrorTypeEnum;
+import org.restlet.data.Request;
+import org.restlet.data.Response;
 import org.restlet.data.Status;
+
+import org.ncbo.stanford.bean.UserBean;
+
+import com.thoughtworks.xstream.XStream;
 
 /**
  * An interface that allows predefined structure of XML responses
@@ -56,4 +64,16 @@ public interface XMLSerializationService {
 	 * @return
 	 */
 	public String getErrorAsXML (Status status, String accessedResource);
+	
+	
+	
+	public void generateXMLResponse(Request request, Response response,
+			Object data);
+	
+	//public void generateUserXMLResponse(Request request, Response response,	UserBean userBean);
+	public void generateStatusXMLResponse (Request request, Response response) ;
+	public void generateUserListXMLResponse(Request request, Response response,
+			List<UserBean> userList);
+	
+
 }
