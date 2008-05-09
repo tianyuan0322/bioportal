@@ -3,12 +3,16 @@ package org.ncbo.stanford.manager.impl;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 
 import org.ncbo.stanford.AbstractBioPortalTest;
 import org.ncbo.stanford.bean.OntologyBean;
 import org.ncbo.stanford.manager.wrapper.impl.OntologyLoadManagerWrapperProtegeImpl;
+import org.ncbo.stanford.util.constants.ApplicationConstants;
+import org.ncbo.stanford.util.filehandler.FileHandler;
+import org.ncbo.stanford.util.filehandler.impl.PhysicalDirectoryFileHandler;
 
 import edu.stanford.smi.protege.model.Project;
 import edu.stanford.smi.protege.storage.database.DatabaseKnowledgeBaseFactory;
@@ -55,7 +59,7 @@ public class OntologyLoaderProtegeImplTest extends AbstractBioPortalTest {
 
 	//
 	// Non-Streaming Fast load
-	public void testNoStreamPizzaLoad() {
+public void testNoStreamPizzaLoad() {
 		System.out.println("Starting testNoStreamPizzaLoad");
 
 		OntologyLoadManagerWrapperProtegeImpl loadManagerProtege = (OntologyLoadManagerWrapperProtegeImpl) applicationContext
@@ -77,9 +81,10 @@ public class OntologyLoaderProtegeImplTest extends AbstractBioPortalTest {
 		}
 	}
 
+
 	// Streaming load of Pizza Ontology - Much slower than the non-streaming
 
-	public void testStreamPizzaLoad() {
+	public void StreamPizzaLoad() {
 		System.out.println("Starting testStreamPizzaLoad");
 
 		OntologyLoadManagerWrapperProtegeImpl loadManagerProtege = (OntologyLoadManagerWrapperProtegeImpl) applicationContext
@@ -102,7 +107,7 @@ public class OntologyLoaderProtegeImplTest extends AbstractBioPortalTest {
 	}
 
 	// Testing Protege api with ontology queries to verify validity.
-	public void testBasicPizzaNonStreamingLoad() {
+	public void BasicPizzaNonStreamingLoad() {
 		try {
 			System.out.println("Starting testBasicPizzaNonStreamingLoad");
 			OWLModel fileModel = ProtegeOWL
@@ -160,7 +165,7 @@ public class OntologyLoaderProtegeImplTest extends AbstractBioPortalTest {
 	}
 
 	// Fast load of medium complexity ontology OMV.
-	public void testMediumNonStreamingLoad() {
+	public void MediumNonStreamingLoad() {
 		try {
 			OWLModel fileModel = ProtegeOWL
 					.createJenaOWLModelFromURI(SOURCE_OMVOWL_URI);

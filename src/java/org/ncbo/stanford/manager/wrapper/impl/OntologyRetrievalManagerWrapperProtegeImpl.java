@@ -10,13 +10,16 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.ncbo.stanford.bean.OntologyBean;
 import org.ncbo.stanford.bean.concept.ClassBean;
+import org.ncbo.stanford.bean.search.SearchResultBean;
 import org.ncbo.stanford.domain.custom.entity.NcboOntology;
 import org.ncbo.stanford.manager.wrapper.AbstractOntologyManagerWrapperProtege;
 import org.ncbo.stanford.manager.wrapper.OntologyRetrievalManagerWrapper;
 import org.ncbo.stanford.util.constants.ApplicationConstants;
 
 import edu.stanford.smi.protege.model.Cls;
+import edu.stanford.smi.protege.model.Frame;
 import edu.stanford.smi.protege.model.KnowledgeBase;
+import edu.stanford.smi.protege.model.ModelUtilities;
 import edu.stanford.smi.protege.model.Project;
 import edu.stanford.smi.protege.model.Slot;
 import edu.stanford.smi.protege.storage.database.DatabaseKnowledgeBaseFactory;
@@ -90,10 +93,11 @@ public class OntologyRetrievalManagerWrapperProtegeImpl extends
 		Cls oThing = kb.getRootCls();
 
 		if (log.isDebugEnabled())
-			log.debug("Searching for root node for ontology id: " + ontologyVersion.getId());
-		
+			log.debug("Searching for root node for ontology id: "
+					+ ontologyVersion.getId());
+
 		if (oThing != null) {
-			return createClassBean(oThing,true);
+			return createClassBean(oThing, true);
 		}
 
 		return null;
@@ -103,7 +107,7 @@ public class OntologyRetrievalManagerWrapperProtegeImpl extends
 	public ClassBean findConcept(NcboOntology ontologyVersion, String conceptId) {
 		KnowledgeBase kb = getKnowledgeBase(ontologyVersion);
 
-		//String conceptName = owlModel.getResourceNameForURI(conceptId);
+		// String conceptName = owlModel.getResourceNameForURI(conceptId);
 
 		if (log.isDebugEnabled()) {
 			log.debug("Getting concept id: " + conceptId);
@@ -112,43 +116,136 @@ public class OntologyRetrievalManagerWrapperProtegeImpl extends
 		Cls owlClass = kb.getCls(conceptId);
 
 		if (owlClass != null) {
-			return createClassBean(owlClass,true);
+			return createClassBean(owlClass, true);
 		}
 
 		return null;
 	}
 
-	public ArrayList<ClassBean> findPathToRoot(String id, Integer ontologyVersionId) {
-		/**
-		 * OWLModel om = (OWLModel) fileProject.getKnowledgeBase();
-		 * 
-		 * for (Iterator it = country.getSuperclasses(true).iterator(); it
-		 * .hasNext();) { System.out.println("parent> " + it.next()); }
-		 */
-		return new ArrayList();
+	public ClassBean findPathToRoot(String conceptId,
+			NcboOntology ontologyVersion) {
+		
+		KnowledgeBase kb = getKnowledgeBase(ontologyVersion);
+		
+		Cls cls = kb.getCls(conceptId);
+		Collection nodes = ModelUtilities.getPathToRoot(cls);
+				
+		
+		return buildPath(nodes);
+		
 	}
 
 	public ClassBean findParent(String id, Integer ontologyVersionId) {
 		return new ClassBean();
 	}
 
-	public ArrayList<ClassBean> findChildren(String id, Integer ontologyVersionId) {
+	public ArrayList<ClassBean> findChildren(String id,
+			Integer ontologyVersionId) {
 		return new ArrayList();
 	}
 
-	public ArrayList<ClassBean> findConceptNameExact(String query,
-			ArrayList<Integer> ontologyVersionIds) {
-		return new ArrayList();
+	public List<SearchResultBean> findConceptNameExact(List<NcboOntology> ontologyVersions,
+			String query, boolean includeObsolete, int maxToReturn) {
+		ArrayList<SearchResultBean> results = new ArrayList<SearchResultBean>();
+		for (NcboOntology ontologyVersion : ontologyVersions) {
+
+			SearchResultBean srb = new SearchResultBean();
+			srb.setOntologyVersionId(ontologyVersion.getId());
+			KnowledgeBase kb = getKnowledgeBase(ontologyVersion);
+			Collection<Frame> frames = new ArrayList<Frame>();
+			if (kb instanceof OWLModel) {
+				frames = kb.getFramesWithValue(((OWLModel) kb).getRDFSLabelProperty(),
+						null, false, query);
+				if(frames.size()<1){
+					frames = kb.getFramesWithValue(((OWLModel) kb).getRDFSLabelProperty(),
+							null, false, "@en "+query);
+				}
+				
+			}else{
+			  frames = kb.getFramesWithValue(kb.getNameSlot(),
+					null, false, query);
+			}
+			if (frames != null) {
+				for (Frame frame : frames) {
+					if (frame instanceof Cls) {
+						Cls owlClass = (Cls) frame;
+						srb.getNames().add(createLightBean(owlClass));
+					}
+
+				}
+
+			}
+			results.add(srb);
+		}
+
+		return results;
 	}
 
-	public ArrayList<ClassBean> findConceptNameStartsWith(String query,
-			ArrayList<Integer> ontologyVersionIds) {
-		return new ArrayList();
+	public List<SearchResultBean> findConceptNameStartsWith(List<NcboOntology> ontologyVersions,
+			String query, boolean includeObsolete, int maxToReturn) {
+		ArrayList<SearchResultBean> results = new ArrayList<SearchResultBean>();
+		for (NcboOntology ontologyVersion : ontologyVersions) {
+			SearchResultBean srb = new SearchResultBean();
+			srb.setOntologyVersionId(ontologyVersion.getId());
+			KnowledgeBase kb = getKnowledgeBase(ontologyVersion);
+			Collection<Frame> frames = null;
+			if (kb instanceof OWLModel) {
+				frames = kb.getMatchingFrames(((OWLModel) kb).getRDFSLabelProperty(),
+						null, false, "@en "+query+"*", -1);
+				
+			}else{
+			  frames =  kb.getMatchingFrames(kb.getNameSlot(),
+						null, false, query+"*", -1);
+			}
+			
+
+			if (frames != null) {
+				for (Frame frame : frames) {
+					if (frame instanceof Cls) {
+						Cls owlClass = (Cls) frame;
+						srb.getNames().add(createLightBean(owlClass));
+					}
+
+				}
+
+			}
+			results.add(srb);
+		}
+		return results;
 	}
 
-	public ArrayList<ClassBean> findConceptNameContains(String query,
-			ArrayList<Integer> ontologyVersionIds) {
-		return new ArrayList();
+	public List<SearchResultBean> findConceptNameContains(List<NcboOntology> ontologyVersions,
+			String query, boolean includeObsolete, int maxToReturn) {
+		ArrayList<SearchResultBean> results = new ArrayList<SearchResultBean>();
+		for (NcboOntology ontologyVersion : ontologyVersions) {
+			SearchResultBean srb = new SearchResultBean();
+			srb.setOntologyVersionId(ontologyVersion.getId());
+			KnowledgeBase kb = getKnowledgeBase(ontologyVersion);
+			Collection<Frame> frames = null;
+			if (kb instanceof OWLModel) {
+				frames = kb.getMatchingFrames(((OWLModel) kb).getRDFSLabelProperty(),
+						null, false, "*"+query+"*", -1);
+				
+			}else{
+			  frames =  kb.getMatchingFrames(kb.getNameSlot(),
+						null, false, "*"+query+"*", -1);
+			}
+			
+
+			if (frames != null) {
+				for (Frame frame : frames) {
+					if (frame instanceof Cls) {
+						Cls owlClass = (Cls) frame;
+						srb.getNames().add(createLightBean(owlClass
+								));
+					}
+
+				}
+
+			}
+			results.add(srb);
+		}
+		return results;
 	}
 
 	public ArrayList<ClassBean> findConceptPropertyExact(String property,
@@ -174,29 +271,28 @@ public class OntologyRetrievalManagerWrapperProtegeImpl extends
 	// Private methods
 	//
 
-	
 	/**
 	 * Gets the Protege ontology associated with the specified ontology id.
 	 */
 	private KnowledgeBase getKnowledgeBase(NcboOntology ontologyVersion) {
 		DatabaseKnowledgeBaseFactory factory = null;
-		
-		if(ontologyVersion.getFormat().contains("OWL")){
+
+		if (ontologyVersion.getFormat().contains("OWL")) {
 			factory = new OWLDatabaseKnowledgeBaseFactory();
-		}else{
+		} else {
 			factory = new DatabaseKnowledgeBaseFactory();
 		}
 		List errors = new ArrayList();
 
 		Project prj = Project.createNewProject(factory, errors);
 		DatabaseKnowledgeBaseFactory.setSources(prj.getSources(),
-				protegeJdbcDriver, protegeJdbcUrl, getTableName(ontologyVersion.getId()),
-				protegeJdbcUsername, protegeJdbcPassword);
+				protegeJdbcDriver, protegeJdbcUrl, getTableName(ontologyVersion
+						.getId()), protegeJdbcUsername, protegeJdbcPassword);
 		prj.createDomainKnowledgeBase(factory, errors, true);
-	
-		
-	//	Project prj = Project.loadProjectFromFile(TEST_OWL_URI, new ArrayList());
-		
+
+		// Project prj = Project.loadProjectFromFile(TEST_OWL_URI, new
+		// ArrayList());
+
 		return prj.getKnowledgeBase();
 	}
 
@@ -245,18 +341,41 @@ public class OntologyRetrievalManagerWrapperProtegeImpl extends
 	//
 
 	
-	private Collection<ClassBean> convertClasses(Collection<Cls> protegeClses,boolean recursive){
+	
+	private ClassBean buildPath(Collection nodes){
 		
-		Collection<ClassBean> beans = new ArrayList<ClassBean>();
+		ClassBean clsBean = new ClassBean();
 		
-		for (Cls cls : protegeClses) {
-			beans.add(createClassBean(cls,recursive));
+		for(Object nodeObj :nodes){
+			Cls node = (Cls) nodeObj;
+			clsBean.setId(node.getName());
 		}
-		return beans;
+		
+		return new ClassBean();
+	}
+	
+	private ClassBean createLightBean(Cls cls){
+		ClassBean bean = new ClassBean();
+		
+		bean.setId(cls.getName());
+		bean.setLabel(cls.getName());
+		return bean;
 		
 	}
 	
-	private ClassBean createClassBean(Cls pConcept,boolean recursive) {
+	private Collection<ClassBean> convertClasses(Collection<Cls> protegeClses,
+			boolean recursive) {
+
+		Collection<ClassBean> beans = new ArrayList<ClassBean>();
+
+		for (Cls cls : protegeClses) {
+			beans.add(createClassBean(cls, recursive));
+		}
+		return beans;
+
+	}
+
+	private ClassBean createClassBean(Cls pConcept, boolean recursive) {
 		boolean isOwl = pConcept.getKnowledgeBase() instanceof OWLModel;
 		ClassBean classBean = new ClassBean();
 		classBean.setId(pConcept.getName());
@@ -264,23 +383,24 @@ public class OntologyRetrievalManagerWrapperProtegeImpl extends
 
 		// add properties
 		Collection<Slot> slots;
-		if (isOwl && pConcept instanceof RDFSNamedClass)  {
+		if (isOwl && pConcept instanceof RDFSNamedClass) {
 			slots = ((RDFSNamedClass) pConcept).getPossibleRDFProperties();
 		} else {
 			slots = pConcept.getOwnSlots();
 		}
 		classBean.addRelations(convertProperties(pConcept, slots));
 
-		
-		if(recursive){
+		if (recursive) {
 			// add subclasses
 			// if OWLNamedClass, then use getNamedSubclasses/Superclasses,
-			// else use getDirectSubclasses/Superclasses (cast to Collection<Cls>)
+			// else use getDirectSubclasses/Superclasses (cast to
+			// Collection<Cls>)
 			Collection<Cls> subclasses;
 			Collection<Cls> superclasses;
-	
+
 			if (pConcept instanceof OWLNamedClass) {
-				subclasses = ((OWLNamedClass) pConcept).getNamedSubclasses(false);
+				subclasses = ((OWLNamedClass) pConcept)
+						.getNamedSubclasses(false);
 				OWLModel owlModel = (OWLModel) pConcept.getKnowledgeBase();
 				if (pConcept.equals(owlModel.getOWLThingClass())) {
 					Iterator<Cls> it = subclasses.iterator();
@@ -294,9 +414,10 @@ public class OntologyRetrievalManagerWrapperProtegeImpl extends
 			} else {
 				subclasses = pConcept.getDirectSubclasses();
 			}
-			
-			classBean.addRelation(ApplicationConstants.SUB_CLASS, convertClasses(subclasses,false));
-	
+
+			classBean.addRelation(ApplicationConstants.SUB_CLASS,
+					convertClasses(subclasses, false));
+
 			// add superclasses
 			if (pConcept instanceof OWLNamedClass) {
 				superclasses = ((OWLNamedClass) pConcept)
@@ -304,27 +425,29 @@ public class OntologyRetrievalManagerWrapperProtegeImpl extends
 			} else {
 				superclasses = pConcept.getDirectSuperclasses();
 			}
-	
-			classBean.addRelation(ApplicationConstants.SUPER_CLASS, convertClasses(superclasses,false));
+
+			classBean.addRelation(ApplicationConstants.SUPER_CLASS,
+					convertClasses(superclasses, false));
 
 		}
 		// add RDF type
 		if (pConcept instanceof OWLNamedClass) {
 			classBean.addRelation(ApplicationConstants.RDF_TYPE,
-					convertClasses(((OWLNamedClass) pConcept).getRDFTypes(),false));
+					convertClasses(((OWLNamedClass) pConcept).getRDFTypes(),
+							false));
 		}
 
 		return classBean;
 	}
 
-	
 	/**
 	 * Converts collection of slots into a string representation of values
 	 * 
 	 * @param slots
 	 * @return
 	 */
-	private HashMap<String, List<String>> convertProperties(Cls concept, Collection<Slot> slots) {
+	private HashMap<String, List<String>> convertProperties(Cls concept,
+			Collection<Slot> slots) {
 		HashMap<String, List<String>> bpProps = new HashMap<String, List<String>>();
 		ArrayList<String> bpPropVals = new ArrayList<String>();
 

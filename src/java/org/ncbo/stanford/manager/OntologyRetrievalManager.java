@@ -5,6 +5,7 @@ import java.util.List;
 
 import org.ncbo.stanford.bean.OntologyBean;
 import org.ncbo.stanford.bean.concept.ClassBean;
+import org.ncbo.stanford.bean.search.SearchResultBean;
 
 /**
  * An interface designed to provide an abstraction layer to ontology and concept
@@ -48,25 +49,25 @@ public interface OntologyRetrievalManager {
 	
 	public ClassBean findConcept(Integer ontologyVersionId, String id) throws Exception;
 
-	public List<ClassBean> findPathToRoot(Integer ontologyId, String conceptId) throws Exception;
+	public ClassBean findPathToRoot(Integer ontologyId, String conceptId) throws Exception;
 
 	//public List<ClassBean> findParent(Integer ontologyId, String conceptId) throws Exception;
 
 	//public List<ClassBean> findChildren(Integer ontologyId, String conceptId) throws Exception;
 
-	public List<ClassBean> findConceptNameExact(List<Integer> ontologyIds, String query
+	public List<SearchResultBean> findConceptNameExact(List<Integer> ontologyIds, String query
 			) ;
 
-	public List<ClassBean> findConceptNameStartsWith(List<Integer> ontologyIds, String query) ;
+	public List<SearchResultBean> findConceptNameStartsWith(List<Integer> ontologyIds, String query) ;
 
-	public List<ClassBean> findConceptNameContains(List<Integer> ontologyIds, String query);
+	public List<SearchResultBean> findConceptNameContains(List<Integer> ontologyIds, String query);
 
-	public List<ClassBean> findConceptPropertyExact(List<Integer> ontologyIds, String property,
+	public List<SearchResultBean> findConceptPropertyExact(List<Integer> ontologyIds, String property,
 			String query) ;
 
-	public List<ClassBean> findConceptPropertyStartsWith(List<Integer> ontologyIds,
+	public List<SearchResultBean> findConceptPropertyStartsWith(List<Integer> ontologyIds,
 			String property, String query) ;
 
-	public List<ClassBean> findConceptPropertyContains(List<Integer> ontologyIds, String property,
+	public List<SearchResultBean> findConceptPropertyContains(List<Integer> ontologyIds, String property,
 			String query);
 }

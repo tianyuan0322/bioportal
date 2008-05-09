@@ -8,6 +8,7 @@ import java.util.List;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.ncbo.stanford.bean.concept.ClassBean;
+import org.ncbo.stanford.bean.search.SearchResultBean;
 import org.ncbo.stanford.manager.OntologyRetrievalManager;
 import org.ncbo.stanford.service.concept.ConceptService;
 
@@ -36,7 +37,7 @@ public class ConceptServiceImpl implements ConceptService {
 		return ontologyRetrievalManager.findConcept(ontologyId, id);
 	}
 
-	public List<ClassBean> findPathToRoot(int ontologyId, String id) throws Exception {
+	public ClassBean findPathToRoot(int ontologyId, String id) throws Exception {
 		return ontologyRetrievalManager.findPathToRoot(ontologyId, id);
 	}
 
@@ -49,32 +50,32 @@ public class ConceptServiceImpl implements ConceptService {
 		return ontologyRetrievalManager.findChildren(ontologyId, id);
 	}*/
 
-	public List<ClassBean> findConceptNameExact(List<Integer> ontologyIds, String query
+	public List<SearchResultBean> findConceptNameExact(List<Integer> ontologyIds, String query
 	) {
 		return ontologyRetrievalManager.findConceptNameExact(ontologyIds, query );
 	}
 
-	public List<ClassBean> findConceptNameStartsWith(List<Integer> ontologyIds, String query
+	public List<SearchResultBean> findConceptNameStartsWith(List<Integer> ontologyIds, String query
 	) {
 		return ontologyRetrievalManager.findConceptNameStartsWith(ontologyIds, query);
 	}
 
-	public List<ClassBean> findConceptNameContains(List<Integer> ontologyIds, String query
+	public List<SearchResultBean> findConceptNameContains(List<Integer> ontologyIds, String query
 			) {
 		return ontologyRetrievalManager.findConceptNameContains(ontologyIds, query );
 	}
 
-	public List<ClassBean> findConceptPropertyExact(List<Integer> ontologyIds, String property,
+	public List<SearchResultBean> findConceptPropertyExact(List<Integer> ontologyIds, String property,
 			String query) {
 		return ontologyRetrievalManager.findConceptPropertyExact(ontologyIds, property, query );
 	}
 
-	public List<ClassBean> findConceptPropertyStartsWith(List<Integer> ontologyIds, String property,
+	public List<SearchResultBean> findConceptPropertyStartsWith(List<Integer> ontologyIds, String property,
 			String query) {
 		return ontologyRetrievalManager.findConceptPropertyStartsWith(ontologyIds, property, query);
 	}
 
-	public List<ClassBean> findConceptPropertyContains(List<Integer> ontologyIds, String property,
+	public List<SearchResultBean> findConceptPropertyContains(List<Integer> ontologyIds, String property,
 			String query) {
 		return ontologyRetrievalManager.findConceptPropertyContains(ontologyIds, property, query);
 	}

@@ -1,9 +1,14 @@
 package org.ncbo.stanford.manager.impl;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import org.ncbo.stanford.AbstractBioPortalTest;
 import org.ncbo.stanford.bean.concept.ClassBean;
+import org.ncbo.stanford.bean.search.SearchResultBean;
+import org.ncbo.stanford.domain.custom.dao.CustomNcboOntologyVersionDAO;
+import org.ncbo.stanford.domain.custom.entity.NcboOntology;
+import org.ncbo.stanford.domain.generated.NcboOntologyVersion;
 import org.ncbo.stanford.manager.wrapper.OntologyRetrievalManagerWrapper;
 import org.ncbo.stanford.util.constants.ApplicationConstants;
 
@@ -13,10 +18,36 @@ import org.ncbo.stanford.util.constants.ApplicationConstants;
  * @author Benjamin Dai
  */
 public class OntologyRetrievalManagerProtegeTest extends AbstractBioPortalTest {
-	private final static int TEST_ONT_ID = 2868;
+	private final static int TEST_ONT_ID = 15831;
 	private final static String TEST_CONCEPT_ID = "http://www.w3.org/2002/07/owl#Class";
 	private final static String TEST_CONCEPT_NAME = "http://www.co-ode.org/ontologies/pizza/2005/10/18/pizza.owl#Pizza";
 
+	
+	
+	public void testSearch() throws Exception{
+		OntologyRetrievalManagerWrapper ocMgr = (OntologyRetrievalManagerWrapper) applicationContext
+		.getBean("ontologyRetrievalManagerWrapperProtege",
+				OntologyRetrievalManagerWrapper.class);
+		
+		 CustomNcboOntologyVersionDAO ncboOntologyVersionDAO=(CustomNcboOntologyVersionDAO) applicationContext
+			.getBean("NcboOntologyVersionDAO",
+					CustomNcboOntologyVersionDAO.class);
+		
+		 NcboOntology version = ncboOntologyVersionDAO.findOntologyVersion(TEST_ONT_ID);
+		 ArrayList<NcboOntology> versions = new ArrayList<NcboOntology>();
+		 versions.add(version);
+		 
+		 List<SearchResultBean> results = ocMgr.findConceptNameContains(versions,"*Pizza*",true,100);
+	System.out.println("Size:" + results.size());
+
+	for (SearchResultBean result : results) {
+		for(ClassBean item : result.getNames()){
+			System.out.println(item.getId() + " : "+item.getLabel());
+		}
+	}
+		
+	}
+	
 	public void testGetRootNode() throws Exception {
 		OntologyRetrievalManagerWrapper ocMgr = (OntologyRetrievalManagerWrapper) applicationContext
 				.getBean("ontologyRetrievalManagerWrapperProtege",

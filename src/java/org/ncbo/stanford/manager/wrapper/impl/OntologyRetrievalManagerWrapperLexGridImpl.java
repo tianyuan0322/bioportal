@@ -197,66 +197,66 @@ public class OntologyRetrievalManagerWrapperLexGridImpl extends
 		return classBeans;
 	}
 
-	public ArrayList<SearchResultBean> findConceptNameExact(List<Integer> ontologyVersionIds,
-			List<String> query, boolean includeObsolete, int maxToReturn) {
+	public ArrayList<SearchResultBean> findConceptNameExact(List<NcboOntology> ontologyVersions,
+			String query, boolean includeObsolete, int maxToReturn) {
 		ArrayList<SearchResultBean> results = new ArrayList<SearchResultBean>();
-		for (Integer ontologyVersionId : ontologyVersionIds) {
-			SearchResultBean result = searchNodesForName(ontologyVersionId, query, maxToReturn,
+		for (NcboOntology ontologyVersion : ontologyVersions) {
+			SearchResultBean result = searchNodesForName(ontologyVersion, query, maxToReturn,
 					Match_Types.SEARCH_EXACT_MATCH, false, includeObsolete);
 			results.add(result);
 		}
 		return results;
 	}
 
-	public List<SearchResultBean> findConceptNameStartsWith(List<Integer> ontologyVersionIds,
-			List<String> query, boolean includeObsolete, int maxToReturn) {
+	public List<SearchResultBean> findConceptNameStartsWith(List<NcboOntology> ontologyVersions,
+			String query, boolean includeObsolete, int maxToReturn) {
 		ArrayList<SearchResultBean> results = new ArrayList<SearchResultBean>();
-		for (Integer ontologyVersionId : ontologyVersionIds) {
-			SearchResultBean result = searchNodesForName(ontologyVersionId, query, maxToReturn,
+		for (NcboOntology ontologyVersion : ontologyVersions) {
+			SearchResultBean result = searchNodesForName(ontologyVersion, query, maxToReturn,
 					Match_Types.SEARCH_STARTS_WITH, false, includeObsolete);
 			results.add(result);
 		}
 		return results;
 	}
 
-	public List<SearchResultBean> findConceptNameContains(List<Integer> ontologyVersionIds,
-			List<String> query, boolean includeObsolete, int maxToReturn) {
+	public List<SearchResultBean> findConceptNameContains(List<NcboOntology> ontologyVersions,
+			String query, boolean includeObsolete, int maxToReturn) {
 		ArrayList<SearchResultBean> results = new ArrayList<SearchResultBean>();
-		for (Integer ontologyVersionId : ontologyVersionIds) {
-			SearchResultBean result = searchNodesForName(ontologyVersionId, query, maxToReturn,
+		for (NcboOntology ontologyVersion : ontologyVersions) {
+			SearchResultBean result = searchNodesForName(ontologyVersion, query, maxToReturn,
 					Match_Types.SEARCH_CONTAINS, false, includeObsolete);
 			results.add(result);
 		}
 		return results;
 	}
 
-	public List<SearchResultBean> findConceptPropertyExact(List<Integer> ontologyVersionIds,
-			List<String> query, String properties[], boolean includeObsolete, int maxToReturn) {
+	public List<SearchResultBean> findConceptPropertyExact(List<NcboOntology> ontologyVersions,
+			String query, String properties[], boolean includeObsolete, int maxToReturn) {
 		ArrayList<SearchResultBean> results = new ArrayList<SearchResultBean>();
-		for (Integer ontologyVersionId : ontologyVersionIds) {
-			SearchResultBean result = searchNodesForProperties(ontologyVersionId, query, properties,
+		for (NcboOntology ontologyVersion : ontologyVersions) {
+			SearchResultBean result = searchNodesForProperties(ontologyVersion, query, properties,
 					false, includeObsolete, maxToReturn, Match_Types.SEARCH_EXACT_MATCH);
 			results.add(result);
 		}
 		return results;
 	}
 
-	public List<SearchResultBean> findConceptPropertyStartsWith(List<Integer> ontologyVersionIds,
-			List<String> query, String properties[], boolean includeObsolete, int maxToReturn) {
+	public List<SearchResultBean> findConceptPropertyStartsWith(List<NcboOntology> ontologyVersions,
+			String query, String properties[], boolean includeObsolete, int maxToReturn) {
 		ArrayList<SearchResultBean> results = new ArrayList<SearchResultBean>();
-		for (Integer ontologyVersionId : ontologyVersionIds) {
-			SearchResultBean result = searchNodesForProperties(ontologyVersionId, query, properties,
+		for (NcboOntology ontologyVersion : ontologyVersions) {
+			SearchResultBean result = searchNodesForProperties(ontologyVersion, query, properties,
 					false, includeObsolete, maxToReturn, Match_Types.SEARCH_STARTS_WITH);
 			results.add(result);
 		}
 		return results;
 	}
 
-	public List<SearchResultBean> findConceptPropertyContains(List<Integer> ontologyVersionIds,
-			List<String> query, String properties[], boolean includeObsolete, int maxToReturn) {
+	public List<SearchResultBean> findConceptPropertyContains(List<NcboOntology> ontologyVersions,
+			String query, String properties[], boolean includeObsolete, int maxToReturn) {
 		ArrayList<SearchResultBean> results = new ArrayList<SearchResultBean>();
-		for (Integer ontologyVersionId : ontologyVersionIds) {
-			SearchResultBean result = searchNodesForProperties(ontologyVersionId, query, properties,
+		for (NcboOntology ontologyVersion : ontologyVersions) {
+			SearchResultBean result = searchNodesForProperties(ontologyVersion, query, properties,
 					false, includeObsolete, maxToReturn, Match_Types.SEARCH_CONTAINS);
 			results.add(result);
 		}
@@ -275,24 +275,23 @@ public class OntologyRetrievalManagerWrapperLexGridImpl extends
 		return temp;
 	}
 
-	private SearchResultBean searchNodesForProperties(Integer ontologyVersionId, List<String> names,
+	private SearchResultBean searchNodesForProperties(NcboOntology ontologyVersion, String name,
 			String[] properties, boolean soundsLike, boolean includeObsolete, int maxToReturn,
 			Match_Types algorithm) {
 		try {
 
-			String urnAndVersion = getLexGridUrnAndVersion(ontologyVersionId);
+			String urnAndVersion = ontologyVersion.getCodingScheme();
 			String urnVersionArray[] = splitUrnAndVersion(urnAndVersion);
 			CodedNodeSet nodes = lbs.getCodingSchemeConcepts(urnVersionArray[0], Constructors
 					.createCodingSchemeVersionOrTagFromVersion(urnVersionArray[1]));
 
-			String name = null;
-			Iterator<String> namesIte = names.iterator();
+			
+			
 			String[] propList = properties;
 			String matchAlgorithm = "RegExp";
 			if (soundsLike)
 				matchAlgorithm = MatchAlgorithms.DoubleMetaphoneLuceneQuery.name();
-			while (namesIte.hasNext()) {
-				name = (String) namesIte.next();
+							
 				name = name.toLowerCase();
 				if (!soundsLike) {
 					name = replacePeriod(name);
@@ -318,7 +317,7 @@ public class OntologyRetrievalManagerWrapperLexGridImpl extends
 							.createLocalNameList(propList), null, name, matchAlgorithm, null);
 				}
 
-			}
+			
 			if (includeObsolete) {
 				nodes = nodes.restrictToStatus(ActiveOption.ALL, null);
 			} else {
@@ -331,8 +330,8 @@ public class OntologyRetrievalManagerWrapperLexGridImpl extends
 
 			ResolvedConceptReferenceList lst = matchIterator.next(maxToReturn);
 			SearchResultBean srb = new SearchResultBean();
-			srb.setOntologyId(ontologyVersionId);
-			srb.setPropertyValueSearchResult(createClassBeanArray(lst));
+			srb.setOntologyVersionId(ontologyVersion.getId());
+			srb.setProperties(createClassBeanArray(lst));
 			return srb;
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -343,23 +342,21 @@ public class OntologyRetrievalManagerWrapperLexGridImpl extends
 
 	}
 
-	private SearchResultBean searchNodesForName(Integer ontologyVersionId, List<String> names,
+	private SearchResultBean searchNodesForName(NcboOntology ontologyVersion, String name,
 			int maxToReturn, Match_Types algorithm, boolean soundsLike, boolean includeObsolete) {
 		try {
-			String urnAndVersion = getLexGridUrnAndVersion(ontologyVersionId);
+			String urnAndVersion = ontologyVersion.getCodingScheme();
 			String urnVersionArray[] = splitUrnAndVersion(urnAndVersion);
 			CodedNodeSet nodes = lbs.getCodingSchemeConcepts(urnVersionArray[0], Constructors
 					.createCodingSchemeVersionOrTagFromVersion(urnVersionArray[1]));
-			String name = "";
-			Iterator<String> namesIte = names.iterator();
+			
 
 			String matchAlgorithm = "RegExp";
 
 			if (soundsLike)
 				matchAlgorithm = MatchAlgorithms.DoubleMetaphoneLuceneQuery.name();
 
-			while (namesIte.hasNext()) {
-				name = (String) namesIte.next();
+			
 				name = name.toLowerCase();
 
 				if (!soundsLike) {
@@ -384,7 +381,7 @@ public class OntologyRetrievalManagerWrapperLexGridImpl extends
 				nodes = nodes.restrictToMatchingDesignations(name,
 						SearchDesignationOption.PREFERRED_ONLY, matchAlgorithm, null);
 
-			}
+			
 
 			// Sort by search engine recommendation & code ...
 			SortOptionList sortCriteria = Constructors.createSortOptionList(new String[] {
@@ -393,8 +390,8 @@ public class OntologyRetrievalManagerWrapperLexGridImpl extends
 			ResolvedConceptReferencesIterator matchIterator = nodes.resolve(sortCriteria, null, null);
 			ResolvedConceptReferenceList lst = matchIterator.next(maxToReturn);
 			SearchResultBean srb = new SearchResultBean();
-			srb.setOntologyId(ontologyVersionId);
-			srb.setNameSearchResult(createClassBeanArray(lst));
+			srb.setOntologyVersionId(ontologyVersion.getId());
+			srb.setNames(createClassBeanArray(lst));
 			return srb;
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -455,7 +452,7 @@ public class OntologyRetrievalManagerWrapperLexGridImpl extends
 		bean.setLabel(rcr.getEntityDescription().getContent());
 		CodedEntry entry = rcr.getReferencedEntry();
 		if (entry == null) {
-			bean.setLightWeight(true);
+			//bean.setLight(true);
 		} else if (entry.getIsAnonymous() == null
 				|| (entry.getIsAnonymous() != null && !entry.getIsAnonymous().booleanValue())) {
 			addCodedEntryPropertyValue(entry, bean);
@@ -653,7 +650,6 @@ public class OntologyRetrievalManagerWrapperLexGridImpl extends
 			AssociatedConcept assocConcept = assocConceptList.getAssociatedConcept(i);
 			if (assocConcept != null) {
 				ClassBean classBean = createClassBean(assocConcept);
-				classBeans.add(classBean);
 				// Find and recurse printing for next batch ...
 				AssociationList nextLevel = assocConcept.getSourceOf();
 				if (nextLevel != null && nextLevel.getAssociationCount() != 0)

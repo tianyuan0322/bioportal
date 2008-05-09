@@ -9,6 +9,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.ncbo.stanford.bean.OntologyBean;
 import org.ncbo.stanford.bean.concept.ClassBean;
+import org.ncbo.stanford.bean.search.SearchResultBean;
 import org.ncbo.stanford.domain.custom.dao.CustomNcboOntologyVersionDAO;
 import org.ncbo.stanford.domain.custom.entity.NcboOntology;
 import org.ncbo.stanford.manager.OntologyRetrievalManager;
@@ -29,6 +30,8 @@ public class OntologyRetrievalManagerImpl implements OntologyRetrievalManager {
 
 	private static final Log log = LogFactory
 			.getLog(OntologyRetrievalManagerImpl.class);
+	
+	private static int MAX_RESULTS = 100;
 
 	private CustomNcboOntologyVersionDAO ncboOntologyVersionDAO;
 	private Map<String, String> ontologyFormatHandlerMap = new HashMap<String, String>();
@@ -106,8 +109,8 @@ public class OntologyRetrievalManagerImpl implements OntologyRetrievalManager {
 		return wrapper.findConcept(ontology,conceptId);	
 	}
 
-	public List<ClassBean> findPathToRoot(Integer ontologyId, String conceptId) throws Exception {
-		return new ArrayList();
+	public ClassBean findPathToRoot(Integer ontologyId, String conceptId) throws Exception {
+		return new ClassBean();
 	}
 
 	public List<ClassBean> findParent(Integer ontologyId, String conceptId) throws Exception {
@@ -118,32 +121,50 @@ public class OntologyRetrievalManagerImpl implements OntologyRetrievalManager {
 		return new ArrayList();
 	}
 
-	public List<ClassBean> findConceptNameExact(List<Integer> ontologyIds, String query
+	public List<SearchResultBean> findConceptNameExact(List<Integer> ontologyIds, String query
 			) {
 		return new ArrayList();
 	}
 
-	public List<ClassBean> findConceptNameStartsWith(List<Integer> ontologyIds, String query
+	public List<SearchResultBean> findConceptNameStartsWith(List<Integer> ontologyIds, String query
 			) {
 		return new ArrayList();
 	}
 
-	public List<ClassBean> findConceptNameContains(List<Integer> ontologyIds, String query
+	public List<SearchResultBean> findConceptNameContains(List<Integer> ontologyIds, String query
 	) {
-		return new ArrayList();
+		
+		List<SearchResultBean> searchResults = new ArrayList<SearchResultBean>();
+		HashMap<String,List<NcboOntology>> formatLists = new HashMap<String,List<NcboOntology>>();
+		for(String key : ontologyFormatHandlerMap.keySet()){
+			formatLists.put(key, new ArrayList<NcboOntology>());
+		}
+		
+		for(Integer ontologyId : ontologyIds){
+			NcboOntology ontology = ncboOntologyVersionDAO.findOntologyVersion(ontologyId);
+			String formatHandler = ontologyFormatHandlerMap.get(ontology.getFormat());
+			((List<NcboOntology>) formatLists.get(formatHandler)).add(ontology);
+		}
+		
+		for(String formatHandler : formatLists.keySet()){
+		OntologyRetrievalManagerWrapper wrapper = ontologyRetrievalHandlerMap.get(formatHandler);
+		searchResults.addAll(wrapper.findConceptNameContains(formatLists.get(formatHandler),
+				 query, true, MAX_RESULTS));
+		}
+		return searchResults;
 	}
 
-	public List<ClassBean> findConceptPropertyExact(List<Integer> ontologyIds, String property,
+	public List<SearchResultBean> findConceptPropertyExact(List<Integer> ontologyIds, String property,
 			String query) {
 		return new ArrayList();
 	}
 
-	public List<ClassBean> findConceptPropertyStartsWith(List<Integer> ontologyIds, String property,
+	public List<SearchResultBean> findConceptPropertyStartsWith(List<Integer> ontologyIds, String property,
 	String query) {
 		return new ArrayList();
 	}
 
-	public List<ClassBean> findConceptPropertyContains(List<Integer> ontologyIds, String property,
+	public List<SearchResultBean> findConceptPropertyContains(List<Integer> ontologyIds, String property,
 			String query) {
 		return new ArrayList();
 	}

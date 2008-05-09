@@ -1,71 +1,65 @@
 package org.ncbo.stanford.bean.search;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
 import org.ncbo.stanford.bean.concept.ClassBean;
 
-public class SearchResultBean {
-	public enum SearchCategory {
-		SEARCH_DEFINITION, SEARCH_NAME_CODE, SEARCH_PROPERTY_VALUE, SEARCH_METADATA
-	};
 
-	HashMap<SearchCategory, List<ClassBean>> map= new HashMap<SearchCategory, List<ClassBean>>();
-	Integer ontologyId;
 
-	public List<ClassBean> getSearchResultBean(SearchCategory category) {
-		switch (category) {
-		case SEARCH_DEFINITION:
-			return getDefinitionSearchResult();
-		case SEARCH_NAME_CODE:
-			return getNameSearchResult();
-		case SEARCH_PROPERTY_VALUE:
-			return getPropertyValueSearchResult();
-		case SEARCH_METADATA:
-			return getMetadataSearchResult();
-		default:
-			return null;
-		}
+public class SearchResultBean
+{
+    private Integer ontologyVersionId;
+
+	private List<ClassBean> definitions = new ArrayList<ClassBean>();
+	private List<ClassBean> names = new ArrayList<ClassBean>();
+	private List<ClassBean> properties = new ArrayList<ClassBean>();
+	private List<String> metadata = new ArrayList<String>();
+	
+	
+	
+	
+	
+	public List<ClassBean> getDefinitions() {
+		return definitions;
 	}
 
-	public List<ClassBean> getDefinitionSearchResult() {
-		return map.get(SearchCategory.SEARCH_DEFINITION);
+	public void setDefinitions(List<ClassBean> definitions) {
+		this.definitions = definitions;
 	}
 
-	public List<ClassBean> getNameSearchResult() {
-		return map.get(SearchCategory.SEARCH_NAME_CODE);
+	public List<ClassBean> getNames() {
+		return names;
 	}
 
-	public List<ClassBean> getPropertyValueSearchResult() {
-		return map.get(SearchCategory.SEARCH_PROPERTY_VALUE);
+	public void setNames(List<ClassBean> names) {
+		this.names = names;
 	}
 
-	public List<ClassBean> getMetadataSearchResult() {
-		return map.get(SearchCategory.SEARCH_METADATA);
+	public List<ClassBean> getProperties() {
+		return properties;
 	}
 
-	public void setDefinitionSearchResult(List<ClassBean> beans) {
-		map.put(SearchCategory.SEARCH_DEFINITION, beans);
+	public void setProperties(List<ClassBean> properties) {
+		this.properties = properties;
 	}
 
-	public void setNameSearchResult(List<ClassBean> beans) {
-		map.put(SearchCategory.SEARCH_NAME_CODE, beans);
+	public List<String> getMetadata() {
+		return metadata;
 	}
 
-	public void setPropertyValueSearchResult(List<ClassBean> beans) {
-		map.put(SearchCategory.SEARCH_PROPERTY_VALUE, beans);
+	public void setMetadata(List<String> metadata) {
+		this.metadata = metadata;
 	}
 
-	public void setMetadataSearchResult(List<ClassBean> beans) {
-		map.put(SearchCategory.SEARCH_METADATA, beans);
+	public Integer getOntologyVersionId() {
+		return ontologyVersionId;
 	}
 
-	public Integer getOntologyId() {
-		return ontologyId;
+	public void setOntologyVersionId(Integer ontologyVersionId) {
+		this.ontologyVersionId = ontologyVersionId;
 	}
 
-	public void setOntologyId(Integer ontologyId) {
-		this.ontologyId = ontologyId;
-	}
 
 }

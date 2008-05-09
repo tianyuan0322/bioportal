@@ -13,13 +13,15 @@ import org.ncbo.stanford.util.filehandler.impl.PhysicalDirectoryFileHandler;
  * 
  */
 public class OntologyLoadProcessorServiceTest extends AbstractBioPortalTest {
+	
+	public static String OWL="/Users/nickgriffith/projects/smi.apps/BioPortalCore/test/sample_data/pizza.owl";
 
 	public void testUploadOntology() throws Exception {
 		OntologyLoadProcessorService service = (OntologyLoadProcessorService) applicationContext
 				.getBean("ontologyLoadProcessorService",
 						OntologyLoadProcessorService.class);
 
-		File inputFile = new File("/apps/bmir.apps/bioportal_resources/files/pizza.owl");
+		File inputFile = new File(OWL);
 		FileHandler ontologyFile = new PhysicalDirectoryFileHandler(inputFile);
 		service.processOntologyLoad(ontologyFile, createTestBean());
 	}
@@ -35,10 +37,11 @@ public class OntologyLoadProcessorServiceTest extends AbstractBioPortalTest {
 		bean.setDateReleased(new Date());
 		bean.setContactEmail("email@email.com");
 		bean.setContactName("Name");
-		bean.setDisplayLabel("Pizza Ontology");
-		bean.setFormat("OWL-DL");
+		bean.setDisplayLabel("Testing Loading Ontology");
+		bean.setFormat("OWL");
 		bean.setIsFoundry(new Byte("0"));
 
 		return bean;
 	}
+
 }
