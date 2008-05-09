@@ -16,7 +16,8 @@ import org.ncbo.stanford.service.user.UserService;
 import org.ncbo.stanford.service.xml.XMLSerializationService;
 import org.ncbo.stanford.util.helper.UserHelper;
 import org.ncbo.stanford.util.RequestUtils;
-import org.ncbo.stanford.exception.DatabaseException;
+import org.ncbo.stanford.view.util.constants.RequestParamConstants;
+
 
 public class UserRestlet extends Restlet {
 
@@ -25,49 +26,101 @@ public class UserRestlet extends Restlet {
 	private UserService userService;
 	private XMLSerializationService xmlSerializationService;
 
+	
 	@Override
 	public void handle(Request request, Response response) {
-				
+									
 		if(request.getMethod().equals(Method.GET)){
-			
-			// Handle GET calls here
-			findUser(request, response);
-		
+				getRequest(request, response);	
+						
 		} else if(request.getMethod().equals(Method.POST)){
 			
-			
 			HttpServletRequest httpServletRequest = RequestUtils.getHttpServletRequest(request);
-			
-			// TODO move string values to Constants
-			String method = httpServletRequest.getParameter("method");
+			String method = httpServletRequest.getParameter(RequestParamConstants.PARAM_METHOD);
 
 			if (method != null) {
-				
-				if (method.equalsIgnoreCase("PUT")) {
 
-					// Handle PUT calls here
-					System.out.println("+++++++++++++++++++++++++++++++++++++");
-					System.out.println("           PUT call");
-					System.out.println("+++++++++++++++++++++++++++++++++++++");
+				if (method.equalsIgnoreCase(RequestParamConstants.HTTP_PUT)) {
 
-					updateUser(request, response);
+					putRequest(request, response);
 
-				} else if (method.equalsIgnoreCase("DELETE")) {
+				} else if (method.equalsIgnoreCase(RequestParamConstants.HTTP_DELETE)) {
 
-					// Handle DELETE calls here
-					System.out.println("+++++++++++++++++++++++++++++++++++++");
-					System.out.println("           DELETE call");
-					System.out.println("+++++++++++++++++++++++++++++++++++++");
-
-					deleteUser(request, response);
+					deleteRequest(request, response);
 				}
 			}
-		}
+			
+		}  else if(request.getMethod().equals(Method.PUT)){
+			
+			putRequest(request, response);
+			
+		}  else if(request.getMethod().equals(Method.DELETE)){
+			
+			deleteRequest(request, response);
+
+		}  
+		
 	}
+
+
+	/**
+	 * Handle GET calls here
+	 * 
+	 * @param request
+	 * @param response
+	 */
+	private void getRequest(Request request, Response response) {
+
+		// Handle GET calls here
+		System.out.println("+++++++++++++++++++++++++++++++++++++");
+		System.out.println("           GET call");
+		System.out.println("+++++++++++++++++++++++++++++++++++++");
+
+		findUser(request, response);
+
+	}	
 	
 	
 	/**
+	 * Handle PUT calls here
+	 * 
+	 * @param request
+	 * @param response
+	 */
+	private void putRequest(Request request, Response response) {
+
+		// Handle PUT calls here
+		System.out.println("+++++++++++++++++++++++++++++++++++++");
+		System.out.println("           PUT call");
+		System.out.println("+++++++++++++++++++++++++++++++++++++");
+
+		updateUser(request, response);
+
+	}
+	
+	
+	
+	/**
+	 * Handle DELETE calls here
+	 * 
+	 * @param request
+	 * @param response
+	 */
+	private void deleteRequest(Request request, Response response) {
+
+		// Handle DELETE calls here
+		System.out.println("+++++++++++++++++++++++++++++++++++++");
+		System.out.println("           DELETE call");
+		System.out.println("+++++++++++++++++++++++++++++++++++++");
+
+		//deleteRequest(request, response);
+		deleteUser(request, response);
+
+	}
+	
+	/**
 	 * Returns a specified UserBean to the response
+	 * 
 	 * @param request
 	 * @param resp
 	 */
@@ -111,13 +164,6 @@ public class UserRestlet extends Restlet {
 			try {
 				getUserService().updateUser(userBean);
 
-			} catch (DatabaseException dbe) {
-
-				response.setStatus(Status.SERVER_ERROR_INTERNAL,
-				"DatabaseException occured.");
-				dbe.printStackTrace();
-				log.error(dbe);
-
 			} catch (Exception e) {
 				response.setStatus(Status.SERVER_ERROR_INTERNAL, e.getMessage());
 				e.printStackTrace();
@@ -150,13 +196,6 @@ public class UserRestlet extends Restlet {
 			try {
 
 				getUserService().deleteUser(userBean);
-			
-			} catch (DatabaseException dbe) {
-
-				response.setStatus(Status.SERVER_ERROR_INTERNAL,
-				"DatabaseException occured.");
-				dbe.printStackTrace();
-				log.error(dbe);
 
 			} catch (Exception e) {
 				response.setStatus(Status.SERVER_ERROR_INTERNAL, e.getMessage());
@@ -208,12 +247,6 @@ public class UserRestlet extends Restlet {
 			response.setStatus(Status.CLIENT_ERROR_BAD_REQUEST, nfe.getMessage());
 			nfe.printStackTrace();
 			log.error(nfe);	
-			
-		} catch (DatabaseException dbe) {
-
-			response.setStatus(Status.SERVER_ERROR_INTERNAL, "DatabaseException occured.");
-			dbe.printStackTrace();
-			log.error(dbe);
 
 		} catch (Exception e) {
 			

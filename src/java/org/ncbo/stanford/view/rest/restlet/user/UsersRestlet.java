@@ -12,7 +12,6 @@ import org.restlet.data.Response;
 import org.restlet.data.Status;
 
 import org.ncbo.stanford.bean.UserBean;
-import org.ncbo.stanford.exception.DatabaseException;
 import org.ncbo.stanford.service.user.UserService;
 import org.ncbo.stanford.service.xml.XMLSerializationService;
 import org.ncbo.stanford.util.helper.UserHelper;
@@ -69,13 +68,6 @@ public class UsersRestlet extends Restlet {
 		try {
 			userList = getUserService().findUsers();
 
-		} catch (DatabaseException dbe) {
-
-			response.setStatus(Status.SERVER_ERROR_INTERNAL,
-					"DatabaseException occured.");
-			dbe.printStackTrace();
-			log.error(dbe);
-
 		} catch (Exception e) {
 			response.setStatus(Status.SERVER_ERROR_INTERNAL, e.getMessage());
 			e.printStackTrace();
@@ -104,12 +96,6 @@ public class UsersRestlet extends Restlet {
 		// create the user
 		try {
 			getUserService().createUser(userBean);
-
-		} catch (DatabaseException dbe) {
-
-			response.setStatus(Status.SERVER_ERROR_INTERNAL, "DatabaseException occured.");
-			dbe.printStackTrace();
-			log.error(dbe);
 
 		} catch (Exception e) {
 			response.setStatus(Status.SERVER_ERROR_INTERNAL, e.getMessage());
