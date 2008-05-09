@@ -4,25 +4,16 @@ import java.util.Date;
 
 import javax.servlet.http.HttpServletRequest;
 
-import org.restlet.data.MediaType;
 import org.restlet.data.Request;
-import org.restlet.data.Response;
-import org.restlet.data.Status;
 
 import org.ncbo.stanford.bean.UserBean;
-//import org.ncbo.stanford.enumeration.ErrorTypeEnum;
-import org.ncbo.stanford.service.xml.XMLSerializationService;
 import org.ncbo.stanford.util.RequestUtils;
 import org.ncbo.stanford.util.helper.DateHelper;
-
-
-import com.thoughtworks.xstream.XStream;
-import com.thoughtworks.xstream.io.xml.DomDriver;
+import org.ncbo.stanford.view.util.constants.RequestParamConstants;
 
 
 public class UserHelper {
 		
-
 	
 	/**
 	 * Creates UserBean object and populate from Request object
@@ -37,7 +28,7 @@ public class UserHelper {
 		HttpServletRequest httpServletRequest = RequestUtils
 				.getHttpServletRequest(request);
 		
-		// TODO code clean up later. Use constants!
+		/*
 		String username = httpServletRequest.getParameter("username");
 		String password = httpServletRequest.getParameter("password");
 		String firstname = httpServletRequest.getParameter("firstname");
@@ -45,7 +36,16 @@ public class UserHelper {
 		String email = httpServletRequest.getParameter("email");
 		String phone = httpServletRequest.getParameter("phone");
 		Date dateCreated = DateHelper.getDateFrom(httpServletRequest.getParameter("dateCreated"));
-	
+	*/
+		
+		String username = httpServletRequest.getParameter(RequestParamConstants.FORM_USERNAME);
+		String password = httpServletRequest.getParameter(RequestParamConstants.FORM_PASSWORD);
+		String firstname = httpServletRequest.getParameter(RequestParamConstants.FORM_FIRSTNAME);
+		String lastname = httpServletRequest.getParameter(RequestParamConstants.FORM_LASTNAME);
+		String email = httpServletRequest.getParameter(RequestParamConstants.FORM_EMAIL);
+		String phone = httpServletRequest.getParameter(RequestParamConstants.FORM_PHONE);
+		Date dateCreated = DateHelper.getDateFrom(httpServletRequest.getParameter(RequestParamConstants.FORM_DATECREATED));
+				
 		UserBean userBean = new UserBean();
 		userBean.setUsername(username);
 		userBean.setPassword(password);
@@ -55,7 +55,6 @@ public class UserHelper {
 		userBean.setPhone(phone);
 		userBean.setDateCreated(dateCreated);
 	
-		
 		// DEBUG STATETMENT - to be removed later
 		System.out.println("**************************");
 		System.out.println("username = " + userBean.getUsername());
