@@ -58,11 +58,11 @@ public class OntologyRestlet extends Restlet {
 	 */
 	private void findOntology(Request request, Response resp) {
 		OntologyBean ontology = null;
-		String id = (String) request.getAttributes().get("ontology");
+		String ontologyVersionId = (String) request.getAttributes().get("ontology");
 
 		try {
-			Integer intId = Integer.parseInt(id);
-			ontology = ontologyService.findOntology(intId, "");
+			Integer intId = Integer.parseInt(ontologyVersionId);
+			ontology = ontologyService.findOntology(intId);
 
 			if (ontology == null) {
 				resp.setStatus(Status.CLIENT_ERROR_NOT_FOUND, "Ontology not found");
