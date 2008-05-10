@@ -20,9 +20,35 @@ public interface OntologyService {
 	 */
 	public List<OntologyBean> findLatestOntologyVersions();
 
-	public OntologyBean findOntology(int id, String version);
+	/**
+	 * Returns a single ontology version record
+	 * 
+	 * @param ontologyVersionId
+	 * @return
+	 */
+	public OntologyBean findOntology(Integer ontologyVersionId);
 
-	public List<OntologyBean> findOntologyVersions(int id);
+	/**
+	 * Finds the latest version of a given ontology
+	 * 
+	 * @param ontologyId
+	 * @return
+	 */
+	public OntologyBean findLatestOntologyVersion(Integer ontologyId);
+	
+	/**
+	 * Find all versions of the given ontology in the system
+	 * 
+	 * @param ontologyId
+	 * @return
+	 */
+	public List<OntologyBean> findAllOntologyVersions(Integer ontologyId);
 
-	public List<String> findProperties(int id);
+	/**
+	 * Find ontology properties, such as "definition", "synonyms", "cui"...
+	 * 
+	 * @param ontologyVersionId
+	 * @return
+	 */
+	public List<String> findProperties(Integer ontologyVersionId);
 }
