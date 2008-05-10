@@ -50,4 +50,24 @@ public class OntologyServiceImpl implements OntologyService {
 			OntologyRetrievalManager ontologyRetrievalManager) {
 		this.ontologyRetrievalManager = ontologyRetrievalManager;
 	}
+
+	public List<OntologyBean> findAllOntologyVersions(Integer ontologyId) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	public OntologyBean findLatestOntologyVersion(Integer ontologyId) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	public OntologyBean findOntology(Integer ontologyVersionId) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	public List<String> findProperties(Integer ontologyVersionId) {
+		// TODO Auto-generated method stub
+		return null;
+	}
 }
