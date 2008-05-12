@@ -4,198 +4,41 @@
 
 <hibernate-mapping>
 
-	<sql-query name="NcboOntologyVersionDAO.GET_ONTOLOGY_VERSION_QUERY">	
-		<return class="org.ncbo.stanford.domain.custom.entity.NcboOntology">
-     		<return-property name="id" column="id" />
-     		<return-property name="ontologyId" column="ontology_id" />     		
-     		<return-property name="parentId" column="parent_id" />
-     		<return-property name="userId" column="user_id" />
-     		<return-property name="internalVersionNumber" column="internal_version_number" />
-     		<return-property name="versionNumber" column="version_number" />
-     		<return-property name="versionStatus" column="version_status" />
-     		<return-property name="filePath" column="file_path" />
-     		<return-property name="isCurrent" column="is_current" />
-     		<return-property name="isRemote" column="is_remote" />
-     		<return-property name="isReviewed" column="is_reviewed" />
-     		<return-property name="dateCreated" column="date_created" />
-     		<return-property name="dateReleased" column="date_released" />
-     		<return-property name="displayLabel" column="display_label" />
-     		<return-property name="format" column="format" />
-     		<return-property name="contactName" column="contact_name" />     		
-     		<return-property name="contactEmail" column="contact_email" />
-     		<return-property name="homepage" column="homepage" />
-     		<return-property name="documentation" column="documentation" />
-     		<return-property name="publication" column="publication" />
-     		<return-property name="urn" column="urn" />
-     		<return-property name="codingScheme" column="coding_scheme" />
-     		<return-property name="isFoundry" column="is_foundry" />
-		</return>
-	
-		<![CDATA[
-			select 
-				ov.id,
-				ov.ontology_id,				
-				ov.parent_id,
-				ov.user_id,
-				ov.internal_version_number,
-				ov.version_number,
-				ov.version_status,
-				ov.file_path,
-				ov.is_current,
-				ov.is_remote,
-				ov.is_reviewed,
-				ov.date_created,
-				ov.date_released,
-				om.display_label,
-				om.format,
-				om.contact_name,
-				om.contact_email,
-				om.homepage,
-				om.documentation,
-				om.publication,
-				om.urn,
-				om.coding_scheme,
-				om.is_foundry
-			from
-				ncbo_ontology_version ov 
-				inner join ncbo_ontology_metadata om on ov.id = om.ontology_version_id
-			where 
-				ov.id = :ontologyVersionId
-		]]>
-	</sql-query>
-
 	<sql-query name="NcboOntologyVersionDAO.GET_LATEST_ONTOLOGY_VERSIONS_QUERY">	
-		<return class="org.ncbo.stanford.domain.custom.entity.NcboOntology">
-     		<return-property name="id" column="id" />
-     		<return-property name="ontologyId" column="ontology_id" />     		
-     		<return-property name="parentId" column="parent_id" />
-     		<return-property name="userId" column="user_id" />
-     		<return-property name="internalVersionNumber" column="internal_version_number" />
-     		<return-property name="versionNumber" column="version_number" />
-     		<return-property name="versionStatus" column="version_status" />
-     		<return-property name="filePath" column="file_path" />
-     		<return-property name="isCurrent" column="is_current" />
-     		<return-property name="isRemote" column="is_remote" />
-     		<return-property name="isReviewed" column="is_reviewed" />
-     		<return-property name="dateCreated" column="date_created" />
-     		<return-property name="dateReleased" column="date_released" />
-     		<return-property name="displayLabel" column="display_label" />
-     		<return-property name="format" column="format" />
-     		<return-property name="contactName" column="contact_name" />     		
-     		<return-property name="contactEmail" column="contact_email" />
-     		<return-property name="homepage" column="homepage" />
-     		<return-property name="documentation" column="documentation" />
-     		<return-property name="publication" column="publication" />
-     		<return-property name="urn" column="urn" />
-     		<return-property name="codingScheme" column="coding_scheme" />
-     		<return-property name="isFoundry" column="is_foundry" />
-		</return>
+		<return alias="vo" class="org.ncbo.stanford.domain.generated.VNcboOntology" />
 	
 		<![CDATA[
-			select 
-				ov.id,
-				ov.ontology_id,				
-				ov.parent_id,
-				ov.user_id,
-				ov.internal_version_number,
-				ov.version_number,
-				ov.version_status,
-				ov.file_path,
-				ov.is_current,
-				ov.is_remote,
-				ov.is_reviewed,
-				ov.date_created,
-				ov.date_released,
-				om.display_label,
-				om.format,
-				om.contact_name,
-				om.contact_email,
-				om.homepage,
-				om.documentation,
-				om.publication,
-				om.urn,
-				om.coding_scheme,
-				om.is_foundry
-			from
-				ncbo_ontology_version ov 
-				inner join ncbo_ontology_metadata om on ov.id = om.ontology_version_id
-				inner join (
-					select ontology_id, max(internal_version_number) as internal_version_number
-					from 
+			SELECT {vo.*}
+			FORM
+				v_ncbo_ontology {vo}
+				INNER JOIN (
+					SELECT ontology_id, MAX(internal_version_number) AS internal_version_number
+					FROM
 						ncbo_ontology_version
-					where is_current = :isCurrent
-					group by ontology_id
-				) a on ov.ontology_id = a.ontology_id and ov.internal_version_number = a.internal_version_number
-			order by 
-				om.display_label
+					WHERE is_current = :isCurrent
+					GROUP BY ontology_id
+				) a ON vo.ontology_id = a.ontology_id AND vo.internal_version_number = a.internal_version_number
+			ORDER BY
+				vo.display_label
 		]]>
 	</sql-query>
 
 	<sql-query name="NcboOntologyVersionDAO.GET_LATEST_ONTOLOGY_VERSION_FOR_ONTOLOGY_ID_QUERY">	
-		<return class="org.ncbo.stanford.domain.custom.entity.NcboOntology">
-     		<return-property name="id" column="id" />
-     		<return-property name="ontologyId" column="ontology_id" />     		
-     		<return-property name="parentId" column="parent_id" />
-     		<return-property name="userId" column="user_id" />
-     		<return-property name="internalVersionNumber" column="internal_version_number" />
-     		<return-property name="versionNumber" column="version_number" />
-     		<return-property name="versionStatus" column="version_status" />
-     		<return-property name="filePath" column="file_path" />
-     		<return-property name="isCurrent" column="is_current" />
-     		<return-property name="isRemote" column="is_remote" />
-     		<return-property name="isReviewed" column="is_reviewed" />
-     		<return-property name="dateCreated" column="date_created" />
-     		<return-property name="dateReleased" column="date_released" />
-     		<return-property name="displayLabel" column="display_label" />
-     		<return-property name="format" column="format" />
-     		<return-property name="contactName" column="contact_name" />     		
-     		<return-property name="contactEmail" column="contact_email" />
-     		<return-property name="homepage" column="homepage" />
-     		<return-property name="documentation" column="documentation" />
-     		<return-property name="publication" column="publication" />
-     		<return-property name="urn" column="urn" />
-     		<return-property name="codingScheme" column="coding_scheme" />
-     		<return-property name="isFoundry" column="is_foundry" />
-		</return>
+		<return alias="vo" class="org.ncbo.stanford.domain.generated.VNcboOntology" />
 	
 		<![CDATA[
-			select 
-				ov.id,
-				ov.ontology_id,				
-				ov.parent_id,
-				ov.user_id,
-				ov.internal_version_number,
-				ov.version_number,
-				ov.version_status,
-				ov.file_path,
-				ov.is_current,
-				ov.is_remote,
-				ov.is_reviewed,
-				ov.date_created,
-				ov.date_released,
-				om.display_label,
-				om.format,
-				om.contact_name,
-				om.contact_email,
-				om.homepage,
-				om.documentation,
-				om.publication,
-				om.urn,
-				om.coding_scheme,
-				om.is_foundry
-			from
-				ncbo_ontology_version ov
-				inner join ncbo_ontology_metadata om on ov.id = om.ontology_version_id
-				inner join (
-					select max(id) as id
-					from 
+			SELECT {vo.*}
+			FORM
+				v_ncbo_ontology {vo}
+				INNER JOIN (
+					SELECT MAX(id) AS id
+					FROM 
 					    ncbo_ontology_version
-					where is_current = :isCurrent AND
-					ontology_id= :ontologyId
-					group by internal_version_number
-					having internal_version_number= max(internal_version_number)
-				) a on ov.id = a.id
-			
+					WHERE is_current = :isCurrent AND
+						ontology_id= :ontologyId
+					GROUP BY internal_version_number
+					HAVING internal_version_number = MAX(internal_version_number)
+				) a ON vo.id = a.id
 		]]>
 	</sql-query>
 </hibernate-mapping>

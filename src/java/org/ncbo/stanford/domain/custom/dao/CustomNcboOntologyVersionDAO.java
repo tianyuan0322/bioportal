@@ -104,7 +104,7 @@ public class CustomNcboOntologyVersionDAO extends NcboOntologyVersionDAO {
 					}
 				});
 		
-		NcboOntologyVersion ontologyVer = findById(ontology.getId());
+		NcboOntologyVersion ontologyVer = findById(ontology.getId().getId());
 		Set<NcboOntologyFile> files = ontologyVer.getNcboOntologyFiles();
 		
 		for (NcboOntologyFile file : files) {
