@@ -20,13 +20,11 @@ import org.ncbo.stanford.domain.custom.entity.NcboOntology;
  * @author Pradip Kanjamala
  * 
  */
-public  abstract class AbstractOntologyManagerWrapperLexGrid
-{
+public abstract class AbstractOntologyManagerWrapperLexGrid {
 
 	protected CustomNcboOntologyVersionDAO ncboOntologyVersionDAO;
 	protected CustomNcboOntologyMetadataDAO ncboOntologyMetadataDAO;
-	
-	
+
 	/**
 	 * @return the ncboOntologyMetadataDAO
 	 */
@@ -35,9 +33,11 @@ public  abstract class AbstractOntologyManagerWrapperLexGrid
 	}
 
 	/**
-	 * @param ncboOntologyMetadataDAO the ncboOntologyMetadataDAO to set
+	 * @param ncboOntologyMetadataDAO
+	 *            the ncboOntologyMetadataDAO to set
 	 */
-	public void setNcboOntologyMetadataDAO(CustomNcboOntologyMetadataDAO ncboOntologyMetadataDAO) {
+	public void setNcboOntologyMetadataDAO(
+			CustomNcboOntologyMetadataDAO ncboOntologyMetadataDAO) {
 		this.ncboOntologyMetadataDAO = ncboOntologyMetadataDAO;
 	}
 
@@ -45,13 +45,14 @@ public  abstract class AbstractOntologyManagerWrapperLexGrid
 		return ncboOntologyVersionDAO;
 	}
 
-	public void setNcboOntologyVersionDAO(CustomNcboOntologyVersionDAO ncboOntologyVersionDAO) {
+	public void setNcboOntologyVersionDAO(
+			CustomNcboOntologyVersionDAO ncboOntologyVersionDAO) {
 		this.ncboOntologyVersionDAO = ncboOntologyVersionDAO;
 	}
 
-	protected CodingSchemeRendering getCodingSchemeRendering(LexBIGService lbs, String urnAndVersion) throws Exception {
-		if (urnAndVersion == null)
-		{
+	protected CodingSchemeRendering getCodingSchemeRendering(LexBIGService lbs,
+			String urnAndVersion) throws Exception {
+		if (urnAndVersion == null) {
 			return null;
 		}
 
@@ -61,16 +62,13 @@ public  abstract class AbstractOntologyManagerWrapperLexGrid
 		CodingSchemeRenderingList schemes = lbs.getSupportedCodingSchemes();
 		CodingSchemeSummary css = null;
 
-		for (CodingSchemeRendering csr : schemes.getCodingSchemeRendering())
-		{
+		for (CodingSchemeRendering csr : schemes.getCodingSchemeRendering()) {
 			css = csr.getCodingSchemeSummary();
 			String version = css.getRepresentsVersion();
 			String urn = css.getCodingSchemeURN();
 
-			if (urn != null && urn.equals(fileUrn))
-			{
-				if (version != null && version.equals(ver))
-				{
+			if (urn != null && urn.equals(fileUrn)) {
+				if (version != null && version.equals(ver)) {
 					return csr;
 				}
 			}
@@ -79,34 +77,36 @@ public  abstract class AbstractOntologyManagerWrapperLexGrid
 		return null;
 	}
 
-	protected CodingSchemeRendering getCodingSchemeRendering(LexBIGService lbs, Integer ontologyId) throws Exception {
-		return getCodingSchemeRendering(lbs, getLexGridUrnAndVersion(ontologyId));
+	protected CodingSchemeRendering getCodingSchemeRendering(LexBIGService lbs,
+			Integer ontologyId) throws Exception {
+		return getCodingSchemeRendering(lbs,
+				getLexGridUrnAndVersion(ontologyId));
 	}
 
-	protected CodingScheme getCodingScheme(LexBIGService lbs, String urn, String version) throws Exception {
-		if (StringUtils.isEmpty(urn))
-		{
+	protected CodingScheme getCodingScheme(LexBIGService lbs, String urn,
+			String version) throws Exception {
+		if (StringUtils.isEmpty(urn)) {
 			return null;
 		}
 
 		CodingSchemeVersionOrTag csvt = new CodingSchemeVersionOrTag();
 		csvt.setVersion(version);
+
 		return lbs.resolveCodingScheme(urn, csvt);
 	}
 
-	protected CodingScheme getCodingScheme(LexBIGService lbs, Integer id) throws Exception {
-		if (id == null || lbs == null)
-		{
+	protected CodingScheme getCodingScheme(LexBIGService lbs, Integer id)
+			throws Exception {
+		if (id == null || lbs == null) {
 			return null;
 		}
-		
-		String urnAndVersion= getLexGridUrnAndVersion(id);
-		String array[]= splitUrnAndVersion(urnAndVersion);
-		return getCodingScheme(lbs, array[0], array[1]);
-	
 
+		String urnAndVersion = getLexGridUrnAndVersion(id);
+		String array[] = splitUrnAndVersion(urnAndVersion);
+
+		return getCodingScheme(lbs, array[0], array[1]);
 	}
-	
+
 	/**
 	 * @param ontologyId
 	 * @return
@@ -115,44 +115,45 @@ public  abstract class AbstractOntologyManagerWrapperLexGrid
 		return ncboOntologyVersionDAO.findLatestOntologyVersion(ontology_id);
 	}
 
-
 	/**
 	 * 
 	 * @param ontologyVersionId
-	 * @return The LexGrid urn and version information that is stored by concatenating the urn, "|" and version
+	 * @return The LexGrid urn and version information that is stored by
+	 *         concatenating the urn, "|" and version
 	 */
 	protected String getLexGridUrnAndVersion(Integer ontologyVersionId) {
-	
-		NcboOntology ncboOntology = ncboOntologyVersionDAO.findOntologyVersion(ontologyVersionId);
-		if (ncboOntology != null)
-			return (ncboOntology.getCodingScheme());
-		else
-			return null;
+		NcboOntology ncboOntology = ncboOntologyVersionDAO
+				.findOntologyVersion(ontologyVersionId);
 
+		if (ncboOntology != null) {
+			return (ncboOntology.getId().getCodingScheme());
+		}
+
+		return null;
 	}
-	
+
 	/**
 	 * 
 	 * @param urnAndVersion
-	 * @return A string array of length 2, with the first element holding the urn information and 
-	 * the second element holding the version
+	 * @return A string array of length 2, with the first element holding the
+	 *         urn information and the second element holding the version
 	 */
 	protected String[] splitUrnAndVersion(String urnAndVersion) {
-		if (StringUtils.isEmpty(urnAndVersion )){
+		if (StringUtils.isEmpty(urnAndVersion)) {
 			return null;
 		}
-		String array[]= {"",""};
+		
+		String array[] = { "", "" };
 		StringTokenizer st = new StringTokenizer(urnAndVersion, "|");
+		
 		if (st.hasMoreTokens()) {
-			array[0]= st.nextToken();
+			array[0] = st.nextToken();
 		}
+		
 		if (st.hasMoreTokens()) {
-			array[1]= st.nextToken();
+			array[1] = st.nextToken();
 		}
-		return array;	
+		
+		return array;
 	}
-	
-
-
-
 }
