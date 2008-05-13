@@ -14,9 +14,9 @@ import org.restlet.data.Status;
 import org.ncbo.stanford.bean.UserBean;
 import org.ncbo.stanford.service.user.UserService;
 import org.ncbo.stanford.service.xml.XMLSerializationService;
-import org.ncbo.stanford.util.helper.UserHelper;
+import org.ncbo.stanford.util.helper.BeanHelper;
 import org.ncbo.stanford.util.RequestUtils;
-import org.ncbo.stanford.view.util.constants.RequestParamConstants;
+import org.ncbo.stanford.util.MessageUtils;
 
 
 public class UserRestlet extends Restlet {
@@ -36,25 +36,26 @@ public class UserRestlet extends Restlet {
 		} else if(request.getMethod().equals(Method.POST)){
 			
 			HttpServletRequest httpServletRequest = RequestUtils.getHttpServletRequest(request);
-			String method = httpServletRequest.getParameter(RequestParamConstants.PARAM_METHOD);
+			//String method = httpServletRequest.getParameter(RequestParamConstants.PARAM_METHOD);
+			String method = httpServletRequest.getParameter( MessageUtils.getMessage("http.param.method"));
 
 			if (method != null) {
 
-				if (method.equalsIgnoreCase(RequestParamConstants.HTTP_PUT)) {
+				if (method.equalsIgnoreCase(MessageUtils.getMessage("http.put"))) {
 
 					putRequest(request, response);
 
-				} else if (method.equalsIgnoreCase(RequestParamConstants.HTTP_DELETE)) {
+				} else if (method.equalsIgnoreCase(MessageUtils.getMessage("http.delete"))) {
 
 					deleteRequest(request, response);
 				}
 			}
 			
-		}  else if(request.getMethod().equals(Method.PUT)){
+		}  else if(request.getMethod().equals(MessageUtils.getMessage("http.put"))){
 			
 			putRequest(request, response);
 			
-		}  else if(request.getMethod().equals(Method.DELETE)){
+		}  else if(request.getMethod().equals(MessageUtils.getMessage("http.delete"))){
 			
 			deleteRequest(request, response);
 
@@ -155,7 +156,7 @@ public class UserRestlet extends Restlet {
 			
 			// populate UserBean from Request object
 			// currently id is not provided in the request object
-			userBean = UserHelper.populateUserBeanFromRequest(request);
+			userBean = BeanHelper.populateUserBeanFromRequest(request);
 			
 			// set the id
 			userBean.setId(id);
@@ -228,7 +229,7 @@ public class UserRestlet extends Restlet {
 	private UserBean findUserBean(Request request, Response response) {
 		
 		UserBean userBean = null;
-		String id = (String) request.getAttributes().get(RequestParamConstants.ENTITY_USER);
+		String id = (String) request.getAttributes().get(MessageUtils.getMessage("entity.user"));
 
 		try {
 			Integer intId = Integer.parseInt(id);
@@ -236,10 +237,11 @@ public class UserRestlet extends Restlet {
 
 			response.setStatus(Status.SUCCESS_OK);
 			
+			// TODO - which Constants file does this error msg go?
 			// if user is not found, set Error in the Status object
 			if (userBean == null || userBean.getId() == null) {
 	
-				response.setStatus(Status.CLIENT_ERROR_NOT_FOUND, "User Not found");
+				response.setStatus(Status.CLIENT_ERROR_NOT_FOUND, MessageUtils.getMessage("msg.error.userNotFound"));
 			}
 		
 		} catch (NumberFormatException nfe) {

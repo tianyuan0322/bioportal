@@ -14,7 +14,7 @@ import org.restlet.data.Status;
 import org.ncbo.stanford.bean.UserBean;
 import org.ncbo.stanford.service.user.UserService;
 import org.ncbo.stanford.service.xml.XMLSerializationService;
-import org.ncbo.stanford.util.helper.UserHelper;
+import org.ncbo.stanford.util.helper.BeanHelper;
 
 
 public class UsersRestlet extends Restlet {
@@ -91,7 +91,7 @@ public class UsersRestlet extends Restlet {
 	 */
 	private void createUser(Request request, Response response) {
 				
-		UserBean userBean = UserHelper.populateUserBeanFromRequest(request);
+		UserBean userBean = BeanHelper.populateUserBeanFromRequest(request);
 		
 		// create the user
 		try {
