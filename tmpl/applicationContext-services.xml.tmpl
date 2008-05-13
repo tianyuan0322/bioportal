@@ -83,6 +83,9 @@
 				<value>
 					org/ncbo/stanford/domain/generated/NcboLStatus.hbm.xml
 				</value>
+				<value>
+					org/ncbo/stanford/domain/generated/VNcboOntology.hbm.xml
+				</value>
 			</list>
 		</property>
 	</bean>
@@ -283,6 +286,13 @@
 
 	<bean id="NcboLStatusDAO"
 		class="org.ncbo.stanford.domain.custom.dao.CustomNcboLStatusDAO">
+		<property name="hibernateTemplate">
+			<ref bean="hibernateTemplate" />
+		</property>
+	</bean>
+
+	<bean id="VNcboOntologyDAO"
+		class="org.ncbo.stanford.domain.custom.dao.CustomVNcboOntologyDAO">
 		<property name="hibernateTemplate">
 			<ref bean="hibernateTemplate" />
 		</property>
