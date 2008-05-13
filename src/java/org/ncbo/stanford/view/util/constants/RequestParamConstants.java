@@ -31,8 +31,13 @@ public interface RequestParamConstants {
 	 */
 	public static final String PARAM_VALUE_TRUE = "true";
 	
-	/** The constants to identify HTTP call
-	 */
+	
+	// THE FOLLOWING IS OBSOLETE -
+	// MOVED TO message.properties.
+	// THE ENTIRE FILE WILL BE MIGRATED TO THE SAME FILE.
+	
+	/*
+	//The constants to identify HTTP call
 	public static final String PARAM_METHOD = "method";	
 	public static final String HTTP_PUT = "PUT";	
 	public static final String HTTP_DELETE = "DELETE";
@@ -42,11 +47,6 @@ public interface RequestParamConstants {
 	public static final String ENTITY_ONTOLOGY = "ontology";
 	
 	
-	/**
-	 * ------------------------------------------------------------
-	 * Not Shared Constants goes here
-	 * 	e.g. form specific parameters
-	 */	
 	// User Constants
 	public static final String FORM_USERNAME = "username";
 	public static final String FORM_PASSWORD = "password";
@@ -57,4 +57,6 @@ public interface RequestParamConstants {
 	public static final String FORM_DATECREATED = "dateCreated";
 		
 	// Ontology Constants
+
+	*/
 }
