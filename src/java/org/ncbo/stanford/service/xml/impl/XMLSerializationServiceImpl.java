@@ -16,6 +16,7 @@ import org.ncbo.stanford.bean.response.ErrorStatusBean;
 import org.ncbo.stanford.bean.response.SuccessBean;
 import org.ncbo.stanford.enumeration.ErrorTypeEnum;
 import org.ncbo.stanford.service.xml.XMLSerializationService;
+import org.ncbo.stanford.util.MessageUtils;
 import org.ncbo.stanford.util.RequestUtils;
 import org.ncbo.stanford.util.constants.ApplicationConstants;
 import org.ncbo.stanford.view.util.constants.RequestParamConstants;
@@ -100,8 +101,10 @@ public class XMLSerializationServiceImpl implements XMLSerializationService {
 
 	private void setXStreamAliases(XStream xstream) {
 		
-		xstream.alias(RequestParamConstants.ENTITY_ONTOLOGY, OntologyBean.class);
-		xstream.alias(RequestParamConstants.ENTITY_USER, UserBean.class);
+		//xstream.alias(RequestParamConstants.ENTITY_ONTOLOGY, OntologyBean.class);
+		//xstream.alias(RequestParamConstants.ENTITY_USER, UserBean.class);
+		xstream.alias(MessageUtils.getMessage("entity.ontology"), OntologyBean.class);
+		xstream.alias(MessageUtils.getMessage("entity.user"), UserBean.class);
 		xstream.alias(ApplicationConstants.RESPONSE_XML_TAG_NAME,
 				SuccessBean.class);
 		xstream.alias(ApplicationConstants.ERROR_XML_TAG_NAME, ErrorBean.class);
