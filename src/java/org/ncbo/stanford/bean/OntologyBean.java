@@ -6,7 +6,6 @@ import java.util.Date;
 import java.util.List;
 
 import org.ncbo.stanford.domain.custom.entity.NcboOntology;
-import org.ncbo.stanford.domain.generated.VNcboOntologyId;
 
 public class OntologyBean {
 
@@ -43,31 +42,29 @@ public class OntologyBean {
 	 * @param ncboOntology
 	 */
 	public void populateFromEntity(NcboOntology ncboOntology) {
-		VNcboOntologyId ontologyView = ncboOntology.getId();
-		
-		this.setId(ontologyView.getId());
-		this.setOntologyId(ontologyView.getOntologyId());
-		this.setParentId(ontologyView.getParentId());
-		this.setUserId(ontologyView.getUserId());
-		this.setInternalVersionNumber(ontologyView.getInternalVersionNumber());
-		this.setVersionNumber(ontologyView.getVersionNumber());
-		this.setVersionStatus(ontologyView.getVersionStatus());
-		this.setFilePath(ontologyView.getFilePath());
-		this.setIsCurrent(ontologyView.getIsCurrent());
-		this.setIsRemote(ontologyView.getIsRemote());
-		this.setIsReviewed(ontologyView.getIsReviewed());
-		this.setDateCreated(ontologyView.getDateCreated());
-		this.setDateReleased(ontologyView.getDateReleased());
-		this.setDisplayLabel(ontologyView.getDisplayLabel());
-		this.setFormat(ontologyView.getFormat());
-		this.setContactName(ontologyView.getContactName());
-		this.setContactEmail(ontologyView.getContactEmail());
-		this.setHomepage(ontologyView.getHomepage());
-		this.setDocumentation(ontologyView.getDocumentation());
-		this.setPublication(ontologyView.getPublication());
-		this.setUrn(ontologyView.getUrn());
-		this.setCodingScheme(ontologyView.getCodingScheme());
-		this.setIsFoundry(ontologyView.getIsFoundry());
+		this.setId(ncboOntology.getId());
+		this.setOntologyId(ncboOntology.getOntologyId());
+		this.setParentId(ncboOntology.getParentId());
+		this.setUserId(ncboOntology.getUserId());
+		this.setInternalVersionNumber(ncboOntology.getInternalVersionNumber());
+		this.setVersionNumber(ncboOntology.getVersionNumber());
+		this.setVersionStatus(ncboOntology.getVersionStatus());
+		this.setFilePath(ncboOntology.getFilePath());
+		this.setIsCurrent(ncboOntology.getIsCurrent());
+		this.setIsRemote(ncboOntology.getIsRemote());
+		this.setIsReviewed(ncboOntology.getIsReviewed());
+		this.setDateCreated(ncboOntology.getDateCreated());
+		this.setDateReleased(ncboOntology.getDateReleased());
+		this.setDisplayLabel(ncboOntology.getDisplayLabel());
+		this.setFormat(ncboOntology.getFormat());
+		this.setContactName(ncboOntology.getContactName());
+		this.setContactEmail(ncboOntology.getContactEmail());
+		this.setHomepage(ncboOntology.getHomepage());
+		this.setDocumentation(ncboOntology.getDocumentation());
+		this.setPublication(ncboOntology.getPublication());
+		this.setUrn(ncboOntology.getUrn());
+		this.setCodingScheme(ncboOntology.getCodingScheme());
+		this.setIsFoundry(ncboOntology.getIsFoundry());
 		
 		addFilenames(ncboOntology.getFilenames());		
 	}
