@@ -94,7 +94,7 @@ public class OntologyRetrievalManagerImpl implements OntologyRetrievalManager {
 	public ClassBean findRootConcept(Integer ontologyId) throws Exception {
 		NcboOntology ontology = ncboOntologyVersionDAO
 				.findOntologyVersion(ontologyId);
-		String formatHandler = ontologyFormatHandlerMap.get(ontology.getId()
+		String formatHandler = ontologyFormatHandlerMap.get(ontology
 				.getFormat());
 		OntologyRetrievalManagerWrapper wrapper = ontologyRetrievalHandlerMap
 				.get(formatHandler);
@@ -106,7 +106,7 @@ public class OntologyRetrievalManagerImpl implements OntologyRetrievalManager {
 			throws Exception {
 		NcboOntology ontology = ncboOntologyVersionDAO
 				.findOntologyVersion(ontologyId);
-		String formatHandler = ontologyFormatHandlerMap.get(ontology.getId()
+		String formatHandler = ontologyFormatHandlerMap.get(ontology
 				.getFormat());
 		OntologyRetrievalManagerWrapper wrapper = ontologyRetrievalHandlerMap
 				.get(formatHandler);
@@ -153,7 +153,7 @@ public class OntologyRetrievalManagerImpl implements OntologyRetrievalManager {
 			NcboOntology ontology = ncboOntologyVersionDAO
 					.findOntologyVersion(ontologyId);
 			String formatHandler = ontologyFormatHandlerMap.get(ontology
-					.getId().getFormat());
+					.getFormat());
 			((List<NcboOntology>) formatLists.get(formatHandler)).add(ontology);
 		}
 
