@@ -10,14 +10,11 @@ import java.util.Map;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.ncbo.stanford.bean.OntologyBean;
 import org.ncbo.stanford.bean.concept.ClassBean;
 import org.ncbo.stanford.bean.search.SearchResultBean;
 import org.ncbo.stanford.domain.custom.dao.CustomNcboOntologyVersionDAO;
 import org.ncbo.stanford.domain.custom.entity.NcboOntology;
-//import org.ncbo.stanford.manager.OntologyRetrievalManager;
 import org.ncbo.stanford.manager.wrapper.OntologyRetrievalManagerWrapper;
-
 import org.ncbo.stanford.service.concept.ConceptService;
 
 /**
