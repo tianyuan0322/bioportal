@@ -125,8 +125,8 @@ public abstract class AbstractOntologyManagerWrapperLexGrid {
 		NcboOntology ncboOntology = ncboOntologyVersionDAO
 				.findOntologyVersion(ontologyVersionId);
 
-		if (ncboOntology != null) {
-			return (ncboOntology.getId().getCodingScheme());
+		if (ncboOntology != null) {			
+			return (ncboOntology.getCodingScheme());
 		}
 
 		return null;
