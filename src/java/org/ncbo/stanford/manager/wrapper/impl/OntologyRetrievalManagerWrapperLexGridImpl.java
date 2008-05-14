@@ -72,7 +72,7 @@ public class OntologyRetrievalManagerWrapperLexGridImpl extends
 
 	public List<String> findProperties(NcboOntology ncboOntology)
 			throws Exception {
-		String urnAndVersion = ncboOntology.getId().getCodingScheme();
+		String urnAndVersion = ncboOntology.getCodingScheme();
 		String urnVersionArray[] = splitUrnAndVersion(urnAndVersion);
 		CodingScheme cs = getCodingScheme(lbs, urnVersionArray[0],
 				urnVersionArray[1]);
@@ -98,7 +98,7 @@ public class OntologyRetrievalManagerWrapperLexGridImpl extends
 		LexBIGServiceConvenienceMethods lbscm = (LexBIGServiceConvenienceMethods) lbs
 				.getGenericExtension("LexBIGServiceConvenienceMethods");
 
-		String urnAndVersion = ncboOntology.getId().getCodingScheme();
+		String urnAndVersion = ncboOntology.getCodingScheme();
 		String urnVersionArray[] = splitUrnAndVersion(urnAndVersion);
 		// Iterate through all hierarchies ...
 		CodingSchemeVersionOrTag csvt = Constructors
@@ -119,7 +119,7 @@ public class OntologyRetrievalManagerWrapperLexGridImpl extends
 
 	public ClassBean findConcept(NcboOntology ncboOntology, String conceptID)
 			throws Exception {
-		String urnAndVersion = ncboOntology.getId().getCodingScheme();
+		String urnAndVersion = ncboOntology.getCodingScheme();
 		String urnVersionArray[] = splitUrnAndVersion(urnAndVersion);
 		CodingSchemeVersionOrTag csvt = Constructors
 				.createCodingSchemeVersionOrTagFromVersion(urnVersionArray[1]);
@@ -143,7 +143,7 @@ public class OntologyRetrievalManagerWrapperLexGridImpl extends
 
 	public List<ClassBean> findPathToRoot(NcboOntology ncboOntology,
 			String conceptId) throws Exception {
-		String urnAndVersion = ncboOntology.getId().getCodingScheme();
+		String urnAndVersion = ncboOntology.getCodingScheme();
 		String urnVersionArray[] = splitUrnAndVersion(urnAndVersion);
 		CodingSchemeVersionOrTag csvt = Constructors
 				.createCodingSchemeVersionOrTagFromVersion(urnVersionArray[1]);
@@ -169,7 +169,7 @@ public class OntologyRetrievalManagerWrapperLexGridImpl extends
 
 	public List<ClassBean> findParent(NcboOntology ncboOntology,
 			String conceptId) throws Exception {
-		String urnAndVersion = ncboOntology.getId().getCodingScheme();
+		String urnAndVersion = ncboOntology.getCodingScheme();
 		String urnVersionArray[] = splitUrnAndVersion(urnAndVersion);
 		CodingSchemeVersionOrTag csvt = Constructors
 				.createCodingSchemeVersionOrTagFromVersion(urnVersionArray[1]);
@@ -194,7 +194,7 @@ public class OntologyRetrievalManagerWrapperLexGridImpl extends
 
 	public List<ClassBean> findChildren(NcboOntology ncboOntology,
 			String conceptId) throws Exception {
-		String urnAndVersion = ncboOntology.getId().getCodingScheme();
+		String urnAndVersion = ncboOntology.getCodingScheme();
 		String urnVersionArray[] = splitUrnAndVersion(urnAndVersion);
 		CodingSchemeVersionOrTag csvt = Constructors
 				.createCodingSchemeVersionOrTagFromVersion(urnVersionArray[1]);
@@ -330,7 +330,7 @@ public class OntologyRetrievalManagerWrapperLexGridImpl extends
 			boolean soundsLike, boolean includeObsolete, int maxToReturn,
 			Match_Types algorithm) {
 		try {
-			String urnAndVersion = ncboOntology.getId().getCodingScheme();
+			String urnAndVersion = ncboOntology.getCodingScheme();
 			String urnVersionArray[] = splitUrnAndVersion(urnAndVersion);
 			CodedNodeSet nodes = lbs
 					.getCodingSchemeConcepts(
@@ -384,7 +384,7 @@ public class OntologyRetrievalManagerWrapperLexGridImpl extends
 
 			ResolvedConceptReferenceList lst = matchIterator.next(maxToReturn);
 			SearchResultBean srb = new SearchResultBean();
-			srb.setOntologyVersionId(ncboOntology.getId().getId());
+			srb.setOntologyVersionId(ncboOntology.getId());
 			srb.setProperties(createClassBeanArray(lst));
 
 			return srb;
@@ -401,7 +401,7 @@ public class OntologyRetrievalManagerWrapperLexGridImpl extends
 			String name, int maxToReturn, Match_Types algorithm,
 			boolean soundsLike, boolean includeObsolete) {
 		try {
-			String urnAndVersion = ncboOntology.getId().getCodingScheme();
+			String urnAndVersion = ncboOntology.getCodingScheme();
 			String urnVersionArray[] = splitUrnAndVersion(urnAndVersion);
 			CodedNodeSet nodes = lbs
 					.getCodingSchemeConcepts(
@@ -448,7 +448,7 @@ public class OntologyRetrievalManagerWrapperLexGridImpl extends
 					sortCriteria, null, null);
 			ResolvedConceptReferenceList lst = matchIterator.next(maxToReturn);
 			SearchResultBean srb = new SearchResultBean();
-			srb.setOntologyVersionId(ncboOntology.getId().getId());
+			srb.setOntologyVersionId(ncboOntology.getId());
 			srb.setNames(createClassBeanArray(lst));
 
 			return srb;

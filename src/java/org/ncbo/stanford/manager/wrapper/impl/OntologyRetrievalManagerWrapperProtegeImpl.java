@@ -150,7 +150,7 @@ public class OntologyRetrievalManagerWrapperProtegeImpl extends
 
 		for (NcboOntology ontologyVersion : ontologyVersions) {
 			SearchResultBean srb = new SearchResultBean();
-			srb.setOntologyVersionId(ontologyVersion.getId().getId());
+			srb.setOntologyVersionId(ontologyVersion.getId());
 			KnowledgeBase kb = getKnowledgeBase(ontologyVersion);
 			Collection<Frame> frames = new ArrayList<Frame>();
 
@@ -188,7 +188,7 @@ public class OntologyRetrievalManagerWrapperProtegeImpl extends
 		ArrayList<SearchResultBean> results = new ArrayList<SearchResultBean>();
 		for (NcboOntology ontologyVersion : ontologyVersions) {
 			SearchResultBean srb = new SearchResultBean();
-			srb.setOntologyVersionId(ontologyVersion.getId().getId());
+			srb.setOntologyVersionId(ontologyVersion.getId());
 			KnowledgeBase kb = getKnowledgeBase(ontologyVersion);
 			Collection<Frame> frames = null;
 			if (kb instanceof OWLModel) {
@@ -224,7 +224,7 @@ public class OntologyRetrievalManagerWrapperProtegeImpl extends
 
 		for (NcboOntology ontologyVersion : ontologyVersions) {
 			SearchResultBean srb = new SearchResultBean();
-			srb.setOntologyVersionId(ontologyVersion.getId().getId());
+			srb.setOntologyVersionId(ontologyVersion.getId());
 			KnowledgeBase kb = getKnowledgeBase(ontologyVersion);
 			Collection<Frame> frames = null;
 
@@ -282,7 +282,7 @@ public class OntologyRetrievalManagerWrapperProtegeImpl extends
 	private KnowledgeBase getKnowledgeBase(NcboOntology ontologyVersion) {
 		DatabaseKnowledgeBaseFactory factory = null;
 
-		if (ontologyVersion.getId().getFormat().contains("OWL")) {
+		if (ontologyVersion.getFormat().contains("OWL")) {
 			factory = new OWLDatabaseKnowledgeBaseFactory();
 		} else {
 			factory = new DatabaseKnowledgeBaseFactory();
@@ -293,7 +293,7 @@ public class OntologyRetrievalManagerWrapperProtegeImpl extends
 		Project prj = Project.createNewProject(factory, errors);
 		DatabaseKnowledgeBaseFactory.setSources(prj.getSources(),
 				protegeJdbcDriver, protegeJdbcUrl, getTableName(ontologyVersion
-						.getId().getId()), protegeJdbcUsername,
+						.getId()), protegeJdbcUsername,
 				protegeJdbcPassword);
 		prj.createDomainKnowledgeBase(factory, errors, true);
 
