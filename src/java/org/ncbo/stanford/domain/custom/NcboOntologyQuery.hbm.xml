@@ -3,33 +3,32 @@
 "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
 
 <hibernate-mapping>
-
-	<sql-query name="NcboOntologyVersionDAO.GET_LATEST_ONTOLOGY_VERSIONS_QUERY">	
-		<return alias="vo" class="org.ncbo.stanford.domain.generated.VNcboOntology" />
+ 	<sql-query name="VNcboOntologyVersionDAO.GET_LATEST_ONTOLOGY_VERSIONS_QUERY">	
+		<return alias="ont" class="org.ncbo.stanford.domain.custom.entity.NcboOntology" />
 	
 		<![CDATA[
-			SELECT {vo.*}
-			FORM
-				v_ncbo_ontology {vo}
+			SELECT {ont.*}
+			FROM
+				v_ncbo_ontology {ont}
 				INNER JOIN (
 					SELECT ontology_id, MAX(internal_version_number) AS internal_version_number
 					FROM
 						ncbo_ontology_version
 					WHERE is_current = :isCurrent
 					GROUP BY ontology_id
-				) a ON vo.ontology_id = a.ontology_id AND vo.internal_version_number = a.internal_version_number
+				) a ON ont.ontology_id = a.ontology_id AND ont.internal_version_number = a.internal_version_number
 			ORDER BY
-				vo.display_label
+				ont.display_label
 		]]>
 	</sql-query>
 
-	<sql-query name="NcboOntologyVersionDAO.GET_LATEST_ONTOLOGY_VERSION_FOR_ONTOLOGY_ID_QUERY">	
-		<return alias="vo" class="org.ncbo.stanford.domain.generated.VNcboOntology" />
+	<sql-query name="VNcboOntologyVersionDAO.GET_LATEST_ONTOLOGY_VERSION_FOR_ONTOLOGY_ID_QUERY">	
+		<return alias="ont" class="org.ncbo.stanford.domain.custom.entity.NcboOntology" />
 	
 		<![CDATA[
-			SELECT {vo.*}
-			FORM
-				v_ncbo_ontology {vo}
+			SELECT {ont.*}
+			FROM
+				v_ncbo_ontology {ont}
 				INNER JOIN (
 					SELECT MAX(id) AS id
 					FROM 
@@ -38,7 +37,7 @@
 						ontology_id= :ontologyId
 					GROUP BY internal_version_number
 					HAVING internal_version_number = MAX(internal_version_number)
-				) a ON vo.id = a.id
+				) a ON ont.id = a.id
 		]]>
 	</sql-query>
 </hibernate-mapping>
