@@ -17,12 +17,12 @@ public interface ConceptService {
 	
 		
 	
-	public ClassBean findRoot(int ontologyId) throws Exception;
+	public ClassBean findRoot(Integer ontologyId) throws Exception;
 	
 	
-	public ClassBean findConcept(int ontologyId, String id) throws Exception;
+	public ClassBean findConcept(Integer ontologyId, String conceptId) throws Exception;
 	
-	public ClassBean findPathToRoot(int ontologyId, String id) throws Exception;
+	public ClassBean findPathToRoot(Integer ontologyId, String conceptId) throws Exception;
 	
 	//public List<ClassBean> findParent(int ontologyId, String id) throws Exception;
 	
