@@ -117,7 +117,7 @@ public class OntologyRetrievalManagerLexGridImpl extends
 		return createThingClassBean(rcrl);
 	}
 
-	public ClassBean findConcept(NcboOntology ncboOntology, String conceptID)
+	public ClassBean findConcept(NcboOntology ncboOntology, String conceptId)
 			throws Exception {
 		String urnAndVersion = ncboOntology.getCodingScheme();
 		String urnVersionArray[] = splitUrnAndVersion(urnAndVersion);
@@ -126,7 +126,7 @@ public class OntologyRetrievalManagerLexGridImpl extends
 
 		// Perform the query ...
 		ConceptReferenceList crefs = ConvenienceMethods
-				.createConceptReferenceList(new String[] { conceptID },
+				.createConceptReferenceList(new String[] { conceptId },
 						urnVersionArray[0]);
 		ResolvedConceptReferenceList matches = lbs.getCodingSchemeConcepts(
 				urnVersionArray[0], csvt).restrictToStatus(ActiveOption.ALL,
