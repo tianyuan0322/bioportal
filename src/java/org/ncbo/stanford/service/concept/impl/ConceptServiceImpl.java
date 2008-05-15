@@ -14,7 +14,7 @@ import org.ncbo.stanford.bean.concept.ClassBean;
 import org.ncbo.stanford.bean.search.SearchResultBean;
 import org.ncbo.stanford.domain.custom.dao.CustomNcboOntologyVersionDAO;
 import org.ncbo.stanford.domain.custom.entity.NcboOntology;
-import org.ncbo.stanford.manager.wrapper.OntologyRetrievalManagerWrapper;
+import org.ncbo.stanford.manager.OntologyRetrievalManager;
 import org.ncbo.stanford.service.concept.ConceptService;
 
 /**
@@ -30,7 +30,7 @@ public class ConceptServiceImpl implements ConceptService {
 
 	private CustomNcboOntologyVersionDAO ncboOntologyVersionDAO;
 	private Map<String, String> ontologyFormatHandlerMap = new HashMap<String, String>();
-	private Map<String, OntologyRetrievalManagerWrapper> ontologyRetrievalHandlerMap = new HashMap<String, OntologyRetrievalManagerWrapper>();
+	private Map<String, OntologyRetrievalManager> ontologyRetrievalHandlerMap = new HashMap<String, OntologyRetrievalManager>();
 	
 	//private OntologyRetrievalManager ontologyRetrievalManager;
 	
@@ -49,10 +49,10 @@ public class ConceptServiceImpl implements ConceptService {
 				.findOntologyVersion(ontologyId);
 		String formatHandler = ontologyFormatHandlerMap.get(ontology
 				.getFormat());
-		OntologyRetrievalManagerWrapper wrapper = ontologyRetrievalHandlerMap
+		OntologyRetrievalManager manager = ontologyRetrievalHandlerMap
 				.get(formatHandler);
 
-		return wrapper.findRootConcept(ontology);
+		return manager.findRootConcept(ontology);
 	}
 
 	
@@ -62,10 +62,10 @@ public class ConceptServiceImpl implements ConceptService {
 				.findOntologyVersion(ontologyId);
 		String formatHandler = ontologyFormatHandlerMap.get(ontology
 				.getFormat());
-		OntologyRetrievalManagerWrapper wrapper = ontologyRetrievalHandlerMap
+		OntologyRetrievalManager manager = ontologyRetrievalHandlerMap
 				.get(formatHandler);
 
-		return wrapper.findConcept(ontology, conceptId);
+		return manager.findConcept(ontology, conceptId);
 	}
 
 	public ClassBean findPathToRoot(Integer ontologyId, String conceptId)
@@ -114,9 +114,9 @@ public class ConceptServiceImpl implements ConceptService {
 		}
 
 		for (String formatHandler : formatLists.keySet()) {
-			OntologyRetrievalManagerWrapper wrapper = ontologyRetrievalHandlerMap
+			OntologyRetrievalManager manager = ontologyRetrievalHandlerMap
 					.get(formatHandler);
-			searchResults.addAll(wrapper.findConceptNameContains(formatLists
+			searchResults.addAll(manager.findConceptNameContains(formatLists
 					.get(formatHandler), query, true, MAX_RESULTS));
 		}
 		
@@ -160,7 +160,7 @@ public class ConceptServiceImpl implements ConceptService {
 	/**
 	 * @return the ontologyRetrievalHandlerMap
 	 */
-	public Map<String, OntologyRetrievalManagerWrapper> getOntologyRetrievalHandlerMap() {
+	public Map<String, OntologyRetrievalManager> getOntologyRetrievalHandlerMap() {
 		return ontologyRetrievalHandlerMap;
 	}
 
@@ -169,7 +169,7 @@ public class ConceptServiceImpl implements ConceptService {
 	 *            the ontologyRetrievalHandlerMap to set
 	 */
 	public void setOntologyRetrievalHandlerMap(
-			Map<String, OntologyRetrievalManagerWrapper> ontologyRetrievalHandlerMap) {
+			Map<String, OntologyRetrievalManager> ontologyRetrievalHandlerMap) {
 		this.ontologyRetrievalHandlerMap = ontologyRetrievalHandlerMap;
 	}
 

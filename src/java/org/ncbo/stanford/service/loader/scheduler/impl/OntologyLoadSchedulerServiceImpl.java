@@ -16,7 +16,7 @@ import org.ncbo.stanford.domain.generated.NcboLStatus;
 import org.ncbo.stanford.domain.generated.NcboOntologyLoadQueue;
 import org.ncbo.stanford.domain.generated.NcboOntologyVersion;
 import org.ncbo.stanford.enumeration.StatusEnum;
-import org.ncbo.stanford.manager.wrapper.OntologyLoadManagerWrapper;
+import org.ncbo.stanford.manager.OntologyLoadManager;
 import org.ncbo.stanford.service.loader.scheduler.OntologyLoadSchedulerService;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
@@ -39,7 +39,7 @@ public class OntologyLoadSchedulerServiceImpl implements
 	private CustomNcboOntologyLoadQueueDAO ncboOntologyLoadQueueDAO;
 	private CustomNcboOntologyVersionDAO ncboOntologyVersionDAO;
 	private Map<String, String> ontologyFormatHandlerMap = new HashMap<String, String>();
-	private Map<String, OntologyLoadManagerWrapper> ontologyLoadHandlerMap = new HashMap<String, OntologyLoadManagerWrapper>();
+	private Map<String, OntologyLoadManager> ontologyLoadHandlerMap = new HashMap<String, OntologyLoadManager>();
 	private String ontologyFilePath;
 
 	/**
@@ -102,12 +102,12 @@ public class OntologyLoadSchedulerServiceImpl implements
 	public void loadOntology(OntologyBean ontologyBean) throws Exception {
 		String formatHandler = ontologyFormatHandlerMap.get(ontologyBean
 				.getFormat());
-		OntologyLoadManagerWrapper loadManagerWrapper = ontologyLoadHandlerMap
+		OntologyLoadManager loadManager = ontologyLoadHandlerMap
 				.get(formatHandler);
 		List<String> filenames = ontologyBean.getFilenames();
 
 		for (String filename : filenames) {
-			loadManagerWrapper.loadOntology(new URI(ontologyFilePath
+			loadManager.loadOntology(new URI(ontologyFilePath
 					+ ontologyBean.getFilePath() + "/" + filename),
 					ontologyBean);
 		}
@@ -148,7 +148,7 @@ public class OntologyLoadSchedulerServiceImpl implements
 	/**
 	 * @return the ontologyLoadHandlerMap
 	 */
-	public Map<String, OntologyLoadManagerWrapper> getOntologyLoadHandlerMap() {
+	public Map<String, OntologyLoadManager> getOntologyLoadHandlerMap() {
 		return ontologyLoadHandlerMap;
 	}
 
@@ -157,7 +157,7 @@ public class OntologyLoadSchedulerServiceImpl implements
 	 *            the ontologyLoadHandlerMap to set
 	 */
 	public void setOntologyLoadHandlerMap(
-			Map<String, OntologyLoadManagerWrapper> ontologyLoadHandlerMap) {
+			Map<String, OntologyLoadManager> ontologyLoadHandlerMap) {
 		this.ontologyLoadHandlerMap = ontologyLoadHandlerMap;
 	}
 
