@@ -21,7 +21,7 @@ import org.ncbo.stanford.domain.custom.entity.NcboOntology;
  * 
  */
 public interface OntologyRetrievalManager {
-	public ClassBean findConcept(NcboOntology ontologyVersion, String conceptID)
+	public ClassBean findConcept(NcboOntology ontologyVersion, String conceptId)
 			throws Exception;
 
 	public ClassBean findRootConcept(NcboOntology ontologyVersion)
