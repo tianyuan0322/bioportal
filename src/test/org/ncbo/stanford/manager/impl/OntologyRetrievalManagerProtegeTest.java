@@ -9,7 +9,7 @@ import org.ncbo.stanford.bean.search.SearchResultBean;
 import org.ncbo.stanford.domain.custom.dao.CustomNcboOntologyVersionDAO;
 import org.ncbo.stanford.domain.custom.entity.NcboOntology;
 import org.ncbo.stanford.domain.generated.NcboOntologyVersion;
-import org.ncbo.stanford.manager.wrapper.OntologyRetrievalManagerWrapper;
+import org.ncbo.stanford.manager.OntologyRetrievalManager;
 import org.ncbo.stanford.util.constants.ApplicationConstants;
 
 /**
@@ -25,9 +25,9 @@ public class OntologyRetrievalManagerProtegeTest extends AbstractBioPortalTest {
 	
 	
 	public void testSearch() throws Exception{
-		OntologyRetrievalManagerWrapper ocMgr = (OntologyRetrievalManagerWrapper) applicationContext
-		.getBean("ontologyRetrievalManagerWrapperProtege",
-				OntologyRetrievalManagerWrapper.class);
+		OntologyRetrievalManager ocMgr = (OntologyRetrievalManager) applicationContext
+		.getBean("ontologyRetrievalManagerProtege",
+				OntologyRetrievalManager.class);
 		
 		 CustomNcboOntologyVersionDAO ncboOntologyVersionDAO=(CustomNcboOntologyVersionDAO) applicationContext
 			.getBean("NcboOntologyVersionDAO",
@@ -49,9 +49,9 @@ public class OntologyRetrievalManagerProtegeTest extends AbstractBioPortalTest {
 	}
 	
 	public void testGetRootNode() throws Exception {
-		OntologyRetrievalManagerWrapper ocMgr = (OntologyRetrievalManagerWrapper) applicationContext
-				.getBean("ontologyRetrievalManagerWrapperProtege",
-						OntologyRetrievalManagerWrapper.class);
+		OntologyRetrievalManager ocMgr = (OntologyRetrievalManager) applicationContext
+				.getBean("ontologyRetrievalManagerProtege",
+						OntologyRetrievalManager.class);
 
 		ClassBean conceptBean = null; //ocMgr.findRootConcept(TEST_ONT_ID);
 
@@ -71,9 +71,9 @@ public class OntologyRetrievalManagerProtegeTest extends AbstractBioPortalTest {
 
 	public void PizzaConcept() throws Exception {
 		System.out.println("Starting testGetConcept");
-		OntologyRetrievalManagerWrapper ocMgr = (OntologyRetrievalManagerWrapper) applicationContext
-				.getBean("ontologyRetrievalManagerWrapperProtege",
-						OntologyRetrievalManagerWrapper.class);
+		OntologyRetrievalManager ocMgr = (OntologyRetrievalManager) applicationContext
+				.getBean("ontologyRetrievalManagerProtege",
+						OntologyRetrievalManager.class);
 		ClassBean conceptBean = null ; //ocMgr.findConcept(TEST_ONT_ID, TEST_CONCEPT_NAME);
 
 		outputConcept(conceptBean);
@@ -90,9 +90,9 @@ public class OntologyRetrievalManagerProtegeTest extends AbstractBioPortalTest {
 
 	public void CheeseyVegetablePizzaConcept() throws Exception {
 		System.out.println("Starting cheesyvegetablepizza concept");
-		OntologyRetrievalManagerWrapper ocMgr = (OntologyRetrievalManagerWrapper) applicationContext
-				.getBean("ontologyRetrievalManagerWrapperProtege",
-						OntologyRetrievalManagerWrapper.class);
+		OntologyRetrievalManager ocMgr = (OntologyRetrievalManager) applicationContext
+				.getBean("ontologyRetrievalManagerProtege",
+						OntologyRetrievalManager.class);
 		ClassBean classBean = null; //ocMgr.findConcept(TEST_ONT_ID, "CheeseyVegetableTopping");
 
 		outputConcept(classBean);

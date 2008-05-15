@@ -9,7 +9,7 @@ import java.util.List;
 
 import org.ncbo.stanford.AbstractBioPortalTest;
 import org.ncbo.stanford.bean.OntologyBean;
-import org.ncbo.stanford.manager.wrapper.impl.OntologyLoadManagerWrapperProtegeImpl;
+import org.ncbo.stanford.manager.impl.OntologyLoadManagerProtegeImpl;
 import org.ncbo.stanford.util.constants.ApplicationConstants;
 import org.ncbo.stanford.util.filehandler.FileHandler;
 import org.ncbo.stanford.util.filehandler.impl.PhysicalDirectoryFileHandler;
@@ -25,7 +25,7 @@ import edu.stanford.smi.protegex.owl.model.OWLNamedClass;
 
 /**
  * Tests loading ontologies into Protege using the
- * OntologyLoadManagerWrapperProtegeImpl
+ * OntologyLoadManagerProtegeImpl
  * 
  * @author Benjamin Dai
  */
@@ -62,9 +62,9 @@ public class OntologyLoaderProtegeImplTest extends AbstractBioPortalTest {
 public void testNoStreamPizzaLoad() {
 		System.out.println("Starting testNoStreamPizzaLoad");
 
-		OntologyLoadManagerWrapperProtegeImpl loadManagerProtege = (OntologyLoadManagerWrapperProtegeImpl) applicationContext
-				.getBean("ontologyLoadManagerWrapperProtege",
-						OntologyLoadManagerWrapperProtegeImpl.class);
+		OntologyLoadManagerProtegeImpl loadManagerProtege = (OntologyLoadManagerProtegeImpl) applicationContext
+				.getBean("ontologyLoadManagerProtege",
+						OntologyLoadManagerProtegeImpl.class);
 
 		loadManagerProtege.setProtegeBigFileThreshold(TEST_NOT_STREAM_SIZE);
 
@@ -87,9 +87,9 @@ public void testNoStreamPizzaLoad() {
 	public void StreamPizzaLoad() {
 		System.out.println("Starting testStreamPizzaLoad");
 
-		OntologyLoadManagerWrapperProtegeImpl loadManagerProtege = (OntologyLoadManagerWrapperProtegeImpl) applicationContext
-				.getBean("ontologyLoadManagerWrapperProtege",
-						OntologyLoadManagerWrapperProtegeImpl.class);
+		OntologyLoadManagerProtegeImpl loadManagerProtege = (OntologyLoadManagerProtegeImpl) applicationContext
+				.getBean("ontologyLoadManagerProtege",
+						OntologyLoadManagerProtegeImpl.class);
 
 		loadManagerProtege.setProtegeBigFileThreshold(TEST_STREAM_SIZE);
 

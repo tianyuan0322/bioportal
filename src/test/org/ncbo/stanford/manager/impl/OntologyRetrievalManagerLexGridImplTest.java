@@ -8,7 +8,7 @@ import org.ncbo.stanford.AbstractBioPortalTest;
 import org.ncbo.stanford.bean.concept.ClassBean;
 import org.ncbo.stanford.bean.search.SearchResultBean;
 import org.ncbo.stanford.domain.custom.entity.NcboOntology;
-import org.ncbo.stanford.manager.wrapper.impl.OntologyRetrievalManagerWrapperLexGridImpl;
+import org.ncbo.stanford.manager.impl.OntologyRetrievalManagerLexGridImpl;
 import org.ncbo.stanford.service.loader.processor.OntologyLoadProcessorService;
 
 /**
@@ -29,7 +29,7 @@ public class OntologyRetrievalManagerLexGridImplTest extends AbstractBioPortalTe
 	private final static String TEST_UMLS_PATHNAME = "test/sample_data/sampleUMLS-AIR";
 	private final static String TEST_UMLS_URN_VERSION = "urn:oid:2.16.840.1.113883.6.110|1993.bvt";
 
-	OntologyRetrievalManagerWrapperLexGridImpl retrievalManagerLexGrid;
+	OntologyRetrievalManagerLexGridImpl retrievalManagerLexGrid;
 	OntologyLoadProcessorService service;
 
 	// public OntologyLoaderLexGridImplTest() {
@@ -39,9 +39,9 @@ public class OntologyRetrievalManagerLexGridImplTest extends AbstractBioPortalTe
 	// }
 
 	public void testInitialize() {
-		retrievalManagerLexGrid = (OntologyRetrievalManagerWrapperLexGridImpl) applicationContext
-		.getBean("ontologyRetrievalManagerWrapperLexGrid",
-				OntologyRetrievalManagerWrapperLexGridImpl.class);
+		retrievalManagerLexGrid = (OntologyRetrievalManagerLexGridImpl) applicationContext
+		.getBean("ontologyRetrievalManagerLexGrid",
+				OntologyRetrievalManagerLexGridImpl.class);
 
 		System.out.println("Initializing retrievalManagerLexGrid");
 
@@ -49,9 +49,9 @@ public class OntologyRetrievalManagerLexGridImplTest extends AbstractBioPortalTe
 	
 	public void testFindOBORootConcept() throws Exception {
 		System.out.println("testFindOBORootConcept()");
-		retrievalManagerLexGrid = (OntologyRetrievalManagerWrapperLexGridImpl) applicationContext
-				.getBean("ontologyRetrievalManagerWrapperLexGrid",
-						OntologyRetrievalManagerWrapperLexGridImpl.class);
+		retrievalManagerLexGrid = (OntologyRetrievalManagerLexGridImpl) applicationContext
+				.getBean("ontologyRetrievalManagerLexGrid",
+						OntologyRetrievalManagerLexGridImpl.class);
 
 		NcboOntology ncboOntology = retrievalManagerLexGrid.getLatestNcboOntology(3000);
 		ClassBean classBean = retrievalManagerLexGrid.findRootConcept(ncboOntology);
@@ -62,9 +62,9 @@ public class OntologyRetrievalManagerLexGridImplTest extends AbstractBioPortalTe
 
 	public void testFindGenericOwlRootConcept() throws Exception {
 		System.out.println("testFindGenericOwlRootConcept()");
-		retrievalManagerLexGrid = (OntologyRetrievalManagerWrapperLexGridImpl) applicationContext
-				.getBean("ontologyRetrievalManagerWrapperLexGrid",
-						OntologyRetrievalManagerWrapperLexGridImpl.class);
+		retrievalManagerLexGrid = (OntologyRetrievalManagerLexGridImpl) applicationContext
+				.getBean("ontologyRetrievalManagerLexGrid",
+						OntologyRetrievalManagerLexGridImpl.class);
 		NcboOntology ncboOntology = retrievalManagerLexGrid.getLatestNcboOntology(3001);
 		ClassBean classBean = retrievalManagerLexGrid.findRootConcept(ncboOntology);
 		System.out.println("Root concept is " + classBean);
@@ -75,9 +75,9 @@ public class OntologyRetrievalManagerLexGridImplTest extends AbstractBioPortalTe
 
 	public void testFindLexGridXMLRootConcept() throws Exception {
 		System.out.println("testFindLexGridXMLRootConcept()");
-		retrievalManagerLexGrid = (OntologyRetrievalManagerWrapperLexGridImpl) applicationContext
-				.getBean("ontologyRetrievalManagerWrapperLexGrid",
-						OntologyRetrievalManagerWrapperLexGridImpl.class);
+		retrievalManagerLexGrid = (OntologyRetrievalManagerLexGridImpl) applicationContext
+				.getBean("ontologyRetrievalManagerLexGrid",
+						OntologyRetrievalManagerLexGridImpl.class);
 		NcboOntology ncboOntology = retrievalManagerLexGrid.getLatestNcboOntology(3002);
 		ClassBean classBean = retrievalManagerLexGrid.findRootConcept(ncboOntology);
 		System.out.println("Root concept is " + classBean);
@@ -87,9 +87,9 @@ public class OntologyRetrievalManagerLexGridImplTest extends AbstractBioPortalTe
 
 	public void testFindUMLSRootConcept() throws Exception {
 		System.out.println("testFindUMLSRootConcept()");
-		retrievalManagerLexGrid = (OntologyRetrievalManagerWrapperLexGridImpl) applicationContext
-				.getBean("ontologyRetrievalManagerWrapperLexGrid",
-						OntologyRetrievalManagerWrapperLexGridImpl.class);
+		retrievalManagerLexGrid = (OntologyRetrievalManagerLexGridImpl) applicationContext
+				.getBean("ontologyRetrievalManagerLexGrid",
+						OntologyRetrievalManagerLexGridImpl.class);
 		NcboOntology ncboOntology = retrievalManagerLexGrid.getLatestNcboOntology(3003);
 		ClassBean classBean = retrievalManagerLexGrid.findRootConcept(ncboOntology);
 		System.out.println("Root concept is " + classBean);
@@ -100,9 +100,9 @@ public class OntologyRetrievalManagerLexGridImplTest extends AbstractBioPortalTe
 
 	public void testFindOBOProperties() throws Exception {
 		System.out.println("testFindOBOProperties()");
-		retrievalManagerLexGrid = (OntologyRetrievalManagerWrapperLexGridImpl) applicationContext
-				.getBean("ontologyRetrievalManagerWrapperLexGrid",
-						OntologyRetrievalManagerWrapperLexGridImpl.class);
+		retrievalManagerLexGrid = (OntologyRetrievalManagerLexGridImpl) applicationContext
+				.getBean("ontologyRetrievalManagerLexGrid",
+						OntologyRetrievalManagerLexGridImpl.class);
 		NcboOntology ncboOntology = retrievalManagerLexGrid.getLatestNcboOntology(3000);
 		List<String> properties = retrievalManagerLexGrid.findProperties(ncboOntology);
 		System.out.println("Properties for cell ontology are :");
@@ -115,9 +115,9 @@ public class OntologyRetrievalManagerLexGridImplTest extends AbstractBioPortalTe
 
 	public void testOBOFindConcept() throws Exception {
 		System.out.println("testOBOFindConcept()");
-		retrievalManagerLexGrid = (OntologyRetrievalManagerWrapperLexGridImpl) applicationContext
-				.getBean("ontologyRetrievalManagerWrapperLexGrid",
-						OntologyRetrievalManagerWrapperLexGridImpl.class);
+		retrievalManagerLexGrid = (OntologyRetrievalManagerLexGridImpl) applicationContext
+				.getBean("ontologyRetrievalManagerLexGrid",
+						OntologyRetrievalManagerLexGridImpl.class);
 
 		NcboOntology ncboOntology = retrievalManagerLexGrid.getLatestNcboOntology(3000);
 		String conceptID = "CL:0000255";
@@ -129,9 +129,9 @@ public class OntologyRetrievalManagerLexGridImplTest extends AbstractBioPortalTe
 
 	public void testOBOFindChildren() throws Exception {
 		System.out.println("testOBOFindChildren()");
-		retrievalManagerLexGrid = (OntologyRetrievalManagerWrapperLexGridImpl) applicationContext
-				.getBean("ontologyRetrievalManagerWrapperLexGrid",
-						OntologyRetrievalManagerWrapperLexGridImpl.class);
+		retrievalManagerLexGrid = (OntologyRetrievalManagerLexGridImpl) applicationContext
+				.getBean("ontologyRetrievalManagerLexGrid",
+						OntologyRetrievalManagerLexGridImpl.class);
 
 		NcboOntology ncboOntology = retrievalManagerLexGrid.getLatestNcboOntology(3000);
 		String conceptID = "CL:0000255";
@@ -147,9 +147,9 @@ public class OntologyRetrievalManagerLexGridImplTest extends AbstractBioPortalTe
 	
 	public void testOBOFindParent() throws Exception {
 		System.out.println("testOBOFindParent()");
-		retrievalManagerLexGrid = (OntologyRetrievalManagerWrapperLexGridImpl) applicationContext
-				.getBean("ontologyRetrievalManagerWrapperLexGrid",
-						OntologyRetrievalManagerWrapperLexGridImpl.class);
+		retrievalManagerLexGrid = (OntologyRetrievalManagerLexGridImpl) applicationContext
+				.getBean("ontologyRetrievalManagerLexGrid",
+						OntologyRetrievalManagerLexGridImpl.class);
 
 		NcboOntology ncboOntology = retrievalManagerLexGrid.getLatestNcboOntology(3000);
 		String conceptID = "CL:0000255";
@@ -165,9 +165,9 @@ public class OntologyRetrievalManagerLexGridImplTest extends AbstractBioPortalTe
 
 	public void testOBOFindPathToRoot() throws Exception {
 		System.out.println("testOBOFindPathToRoot()");
-		retrievalManagerLexGrid = (OntologyRetrievalManagerWrapperLexGridImpl) applicationContext
-				.getBean("ontologyRetrievalManagerWrapperLexGrid",
-						OntologyRetrievalManagerWrapperLexGridImpl.class);
+		retrievalManagerLexGrid = (OntologyRetrievalManagerLexGridImpl) applicationContext
+				.getBean("ontologyRetrievalManagerLexGrid",
+						OntologyRetrievalManagerLexGridImpl.class);
 
 		NcboOntology ncboOntology = retrievalManagerLexGrid.getLatestNcboOntology(3000);
 		String conceptID = "CL:0000255";
@@ -183,9 +183,9 @@ public class OntologyRetrievalManagerLexGridImplTest extends AbstractBioPortalTe
 	
 	public void testFindConceptNameContains() throws Exception {
 		System.out.println("testFindConceptNameContains()");
-		retrievalManagerLexGrid = (OntologyRetrievalManagerWrapperLexGridImpl) applicationContext
-				.getBean("ontologyRetrievalManagerWrapperLexGrid",
-						OntologyRetrievalManagerWrapperLexGridImpl.class);
+		retrievalManagerLexGrid = (OntologyRetrievalManagerLexGridImpl) applicationContext
+				.getBean("ontologyRetrievalManagerLexGrid",
+						OntologyRetrievalManagerLexGridImpl.class);
 		NcboOntology ncboOntology = retrievalManagerLexGrid.getLatestNcboOntology(3000);
 		List<NcboOntology> ontologyVersionIds = (List<NcboOntology>) Arrays.asList(ncboOntology);
 		String query = "eukaryotic";
@@ -205,9 +205,9 @@ public class OntologyRetrievalManagerLexGridImplTest extends AbstractBioPortalTe
 
 	public void testFindConceptNameExact() throws Exception {
 		System.out.println("testFindConceptNameExact()");
-		retrievalManagerLexGrid = (OntologyRetrievalManagerWrapperLexGridImpl) applicationContext
-				.getBean("ontologyRetrievalManagerWrapperLexGrid",
-						OntologyRetrievalManagerWrapperLexGridImpl.class);
+		retrievalManagerLexGrid = (OntologyRetrievalManagerLexGridImpl) applicationContext
+				.getBean("ontologyRetrievalManagerLexGrid",
+						OntologyRetrievalManagerLexGridImpl.class);
 
 		NcboOntology ncboOntology = retrievalManagerLexGrid.getLatestNcboOntology(3000);
 		List<NcboOntology> ontologyVersionIds = (List<NcboOntology>) Arrays.asList(ncboOntology);
@@ -227,9 +227,9 @@ public class OntologyRetrievalManagerLexGridImplTest extends AbstractBioPortalTe
 	
 	public void testFindConceptPropertyContains() throws Exception {
 		System.out.println("testFindConceptPropertyContains()");
-		retrievalManagerLexGrid = (OntologyRetrievalManagerWrapperLexGridImpl) applicationContext
-				.getBean("ontologyRetrievalManagerWrapperLexGrid",
-						OntologyRetrievalManagerWrapperLexGridImpl.class);
+		retrievalManagerLexGrid = (OntologyRetrievalManagerLexGridImpl) applicationContext
+				.getBean("ontologyRetrievalManagerLexGrid",
+						OntologyRetrievalManagerLexGridImpl.class);
 
 		NcboOntology ncboOntology = retrievalManagerLexGrid.getLatestNcboOntology(3000);
 		List<NcboOntology> ontologyVersionIds = (List<NcboOntology>) Arrays.asList(ncboOntology);
