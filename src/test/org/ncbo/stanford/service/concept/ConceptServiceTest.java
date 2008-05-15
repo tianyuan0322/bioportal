@@ -4,7 +4,7 @@ import java.util.ArrayList;
 
 import org.ncbo.stanford.AbstractBioPortalTest;
 import org.ncbo.stanford.bean.concept.ClassBean;
-import org.ncbo.stanford.manager.wrapper.OntologyRetrievalManagerWrapper;
+import org.ncbo.stanford.manager.OntologyRetrievalManager;
 import org.ncbo.stanford.util.constants.ApplicationConstants;
 
 public class ConceptServiceTest extends AbstractBioPortalTest {
