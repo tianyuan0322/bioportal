@@ -346,14 +346,14 @@
 				<util:constant
 					static-field="org.ncbo.stanford.util.constants.ApplicationConstants.FORMAT_HANDLER_LEXGRID" />
 			</key>
-			<ref local="ontologyLoadManagerWrapperLexGrid" />
+			<ref local="ontologyLoadManagerLexGrid" />
 		</entry>
 		<entry>
 			<key>
 				<util:constant
 					static-field="org.ncbo.stanford.util.constants.ApplicationConstants.FORMAT_HANDLER_PROTEGE" />
 			</key>
-			<ref local="ontologyLoadManagerWrapperProtege" />
+			<ref local="ontologyLoadManagerProtege" />
 		</entry>
 	</util:map>
 
@@ -364,20 +364,20 @@
 				<util:constant
 					static-field="org.ncbo.stanford.util.constants.ApplicationConstants.FORMAT_HANDLER_LEXGRID" />
 			</key>
-			<ref local="ontologyRetrievalManagerWrapperLexGrid" />
+			<ref local="ontologyRetrievalManagerLexGrid" />
 		</entry>
 		<entry>
 			<key>
 				<util:constant
 					static-field="org.ncbo.stanford.util.constants.ApplicationConstants.FORMAT_HANDLER_PROTEGE" />
 			</key>
-			<ref local="ontologyRetrievalManagerWrapperProtege" />
+			<ref local="ontologyRetrievalManagerProtege" />
 		</entry>
 	</util:map>
 
 	<!-- Manager Wrappers -->
-	<bean id="abstractOntologyManagerWrapperLexGrid"
-		class="org.ncbo.stanford.manager.wrapper.AbstractOntologyManagerWrapperLexGrid"
+	<bean id="abstractOntologyManagerLexGrid"
+		class="org.ncbo.stanford.manager.AbstractOntologyManagerLexGrid"
 		abstract="true">
 		<property name="ncboOntologyVersionDAO">
 			<ref bean="NcboOntologyVersionDAO" />
@@ -387,8 +387,8 @@
 		</property>
 	</bean>
 
-	<bean id="abstractOntologyManagerWrapperProtege"
-		class="org.ncbo.stanford.manager.wrapper.AbstractOntologyManagerWrapperProtege"
+	<bean id="abstractOntologyManagerProtege"
+		class="org.ncbo.stanford.manager.AbstractOntologyManagerProtege"
 		abstract="true">
 		<property name="protegeJdbcUrl">
 			<ref bean="protegeJdbcUrl" />
@@ -413,24 +413,24 @@
 		</property>
 	</bean>
 
-	<bean id="ontologyRetrievalManagerWrapperLexGrid"
-		class="org.ncbo.stanford.manager.wrapper.impl.OntologyRetrievalManagerWrapperLexGridImpl"
-		parent="abstractOntologyManagerWrapperLexGrid">
+	<bean id="ontologyRetrievalManagerLexGrid"
+		class="org.ncbo.stanford.manager.impl.OntologyRetrievalManagerLexGridImpl"
+		parent="abstractOntologyManagerLexGrid">
 	</bean>
 
-	<bean id="ontologyRetrievalManagerWrapperProtege"
-		class="org.ncbo.stanford.manager.wrapper.impl.OntologyRetrievalManagerWrapperProtegeImpl"
-		parent="abstractOntologyManagerWrapperProtege">
+	<bean id="ontologyRetrievalManagerProtege"
+		class="org.ncbo.stanford.manager.impl.OntologyRetrievalManagerProtegeImpl"
+		parent="abstractOntologyManagerProtege">
 	</bean>
 
-	<bean id="ontologyLoadManagerWrapperLexGrid"
-		class="org.ncbo.stanford.manager.wrapper.impl.OntologyLoadManagerWrapperLexGridImpl"
-		parent="abstractOntologyManagerWrapperLexGrid">
+	<bean id="ontologyLoadManagerLexGrid"
+		class="org.ncbo.stanford.manager.impl.OntologyLoadManagerLexGridImpl"
+		parent="abstractOntologyManagerLexGrid">
 	</bean>
 
-	<bean id="ontologyLoadManagerWrapperProtege"
-		class="org.ncbo.stanford.manager.wrapper.impl.OntologyLoadManagerWrapperProtegeImpl"
-		parent="abstractOntologyManagerWrapperProtege">
+	<bean id="ontologyLoadManagerProtege"
+		class="org.ncbo.stanford.manager.impl.OntologyLoadManagerProtegeImpl"
+		parent="abstractOntologyManagerProtege">
 	</bean>
 
 	<!-- Application Services -->
