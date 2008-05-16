@@ -10,4 +10,4 @@ insert  into `ncbo_l_app_text_datatype`(`datatype_code`,`datatype`) values ('DAT
 
 /*Data for the table `ncbo_l_status` */
 
-insert  into `ncbo_l_status`(`id`,`status`,`description`) values (1,'Waiting','The action has not been taken'),(2,'Parsing','The action is in progress'),(3,'Ready','The action has completed successfully'),(4,'Error','The action has encountered an error while executing');
+insert  into `ncbo_l_status`(`id`,`status`,`description`) values (1,'Waiting','The action has not been taken'),(2,'Parsing','The action is in progress'),(3,'Ready','The action has completed successfully'),(4,'Error','The action has encountered an error while executing'),(5,'Not Applicable','The action does not apply to this record');
