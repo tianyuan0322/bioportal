@@ -14,7 +14,8 @@ public enum StatusEnum {
 	STATUS_WAITING(new Integer(MessageUtils.getMessage("ncbo.status.waiting"))), STATUS_READY(
 			new Integer(MessageUtils.getMessage("ncbo.status.ready"))), STATUS_PARSING(
 			new Integer(MessageUtils.getMessage("ncbo.status.parsing"))), STATUS_ERROR(
-			new Integer(MessageUtils.getMessage("ncbo.status.error")));
+			new Integer(MessageUtils.getMessage("ncbo.status.error"))), STATUS_NOTAPPLICABLE(
+			new Integer(MessageUtils.getMessage("ncbo.status.notapplicable")));
 
 	private final Integer status;
 
