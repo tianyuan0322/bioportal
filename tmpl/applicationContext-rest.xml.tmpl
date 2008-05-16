@@ -29,6 +29,9 @@
 		<property name="ontologyService">
 			<ref bean="ontologyService" />
 		</property>
+		<property name="xmlSerializationService">
+			<ref bean="xmlSerializationService" />
+		</property>
 	</bean>
 	
 	<bean id="conceptRestlet"
@@ -84,7 +87,7 @@
 						<entry key="/ontologies">
 							<ref local="ontologiesRestlet" />
 						</entry>
-						<entry key="/ontologies/{ontology}">
+						<entry key="/ontology/{ontology}">
 							<ref local="ontologyRestlet" />
 						</entry>
 						<entry key="/concept/{ontology}/{concept}">
