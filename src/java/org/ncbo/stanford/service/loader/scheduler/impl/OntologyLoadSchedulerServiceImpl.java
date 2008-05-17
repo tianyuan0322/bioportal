@@ -1,6 +1,6 @@
 package org.ncbo.stanford.service.loader.scheduler.impl;
 
-import java.net.URI;
+import java.io.File;
 import java.net.URISyntaxException;
 import java.util.HashMap;
 import java.util.List;
@@ -61,27 +61,30 @@ public class OntologyLoadSchedulerServiceImpl implements
 	private void processRecord(NcboOntologyLoadQueue rec) {
 		NcboLStatus status = new NcboLStatus();
 		NcboOntologyVersion ver = rec.getNcboOntologyVersion();
-
+		
 		try {
 			NcboOntology ontology = ncboOntologyVersionDAO
 					.findOntologyVersion(ver.getId());
 			OntologyBean ontologyBean = new OntologyBean();
 			ontologyBean.populateFromEntity(ontology);
-			status.setId(StatusEnum.STATUS_PARSING.getStatus());
-
+			
+			status.setId(StatusEnum.STATUS_PARSING.getStatus());			
 			ver.setNcboLStatus(status);
 			ncboOntologyVersionDAO.saveOntologyVersion(ver);
-
 			rec.setNcboLStatus(status);
 			ncboOntologyLoadQueueDAO.saveNcboOntologyLoadQueue(rec);
+			
 			loadOntology(ontologyBean);
+
+			status = new NcboLStatus();
 			status.setId(StatusEnum.STATUS_READY.getStatus());
 		} catch (Exception e) {
+			status = new NcboLStatus();
 			status.setId(StatusEnum.STATUS_ERROR.getStatus());
 			log.error(e);
 			e.printStackTrace();
 		}
-
+		
 		ver.setNcboLStatus(status);
 		ncboOntologyVersionDAO.saveOntologyVersion(ver);
 
@@ -99,18 +102,43 @@ public class OntologyLoadSchedulerServiceImpl implements
 	 *            bean
 	 * @throws URISyntaxException
 	 */
-	public void loadOntology(OntologyBean ontologyBean) throws Exception {
+	private void loadOntology(OntologyBean ontologyBean) throws Exception {
 		String formatHandler = ontologyFormatHandlerMap.get(ontologyBean
 				.getFormat());
 		OntologyLoadManager loadManager = ontologyLoadHandlerMap
 				.get(formatHandler);
 		List<String> filenames = ontologyBean.getFilenames();
 
+		
+		
+		
+		
+		
+	
+		// for UMLS, zip file, untar it, pass dir to LexGrid		
+		// pass zip to LexGrid
+		// looping through the files 
+		
 		for (String filename : filenames) {
-			loadManager.loadOntology(new URI(ontologyFilePath
-					+ ontologyBean.getFilePath() + "/" + filename),
-					ontologyBean);
+			File file = new File(ontologyFilePath + ontologyBean.getFilePath()
+					+ "/" + filename);
+			loadManager.loadOntology(file.toURI(), ontologyBean);
 		}
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
 	}
 
 	/**
