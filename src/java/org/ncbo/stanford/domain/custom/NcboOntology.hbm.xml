@@ -39,6 +39,9 @@
 		<property name="isReviewed" type="java.lang.Byte">
 		    <column name="is_reviewed" />
 		</property>
+		<property name="statusId" type="java.lang.Integer">
+		    <column name="status_id" />
+		</property>
 		<property name="dateCreated" type="java.util.Date">
 		    <column name="date_created" length="0" />
 		</property>

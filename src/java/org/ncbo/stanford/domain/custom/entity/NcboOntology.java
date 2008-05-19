@@ -27,6 +27,7 @@ public class NcboOntology {
 	private Byte isCurrent;
 	private Byte isRemote;
 	private Byte isReviewed;
+	private Integer statusId;
 	private Date dateCreated;
 	private Date dateReleased;
 	private String displayLabel;
@@ -207,6 +208,20 @@ public class NcboOntology {
 	 */
 	public void setIsReviewed(Byte isReviewed) {
 		this.isReviewed = isReviewed;
+	}
+
+	/**
+	 * @return the statusId
+	 */
+	public Integer getStatusId() {
+		return statusId;
+	}
+
+	/**
+	 * @param statusId the statusId to set
+	 */
+	public void setStatusId(Integer statusId) {
+		this.statusId = statusId;
 	}
 
 	/**
