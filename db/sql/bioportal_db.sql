@@ -211,7 +211,7 @@ CREATE TABLE `ncbo_ontology_load_queue` (
   KEY `FK_ncbo_ontology_load_queue_status_id` (`status_id`),
   CONSTRAINT `FK_ncbo_ontology_load_queue_ontology_version_id` FOREIGN KEY (`ontology_version_id`) REFERENCES `ncbo_ontology_version` (`id`),
   CONSTRAINT `FK_ncbo_ontology_load_queue_status_id` FOREIGN KEY (`status_id`) REFERENCES `ncbo_l_status` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=574 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=1124 DEFAULT CHARSET=latin1;
 
 /*Table structure for table `ncbo_ontology_metadata` */
 
@@ -322,6 +322,7 @@ DROP TABLE IF EXISTS `v_ncbo_ontology`;
   `is_current` tinyint(1) NOT NULL,
   `is_remote` tinyint(1) NOT NULL,
   `is_reviewed` tinyint(1) NOT NULL default '0',
+  `status_id` int(11) NOT NULL,
   `date_created` timestamp NOT NULL default '0000-00-00 00:00:00',
   `date_released` datetime NOT NULL,
   `display_label` varchar(128) NOT NULL,
@@ -341,7 +342,7 @@ DROP TABLE IF EXISTS `v_ncbo_ontology`;
 /*!50001 DROP TABLE IF EXISTS `v_ncbo_ontology` */;
 /*!50001 DROP VIEW IF EXISTS `v_ncbo_ontology` */;
 
-/*!50001 CREATE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` SQL SECURITY DEFINER VIEW `v_ncbo_ontology` AS select `ov`.`id` AS `id`,`ov`.`ontology_id` AS `ontology_id`,`ov`.`parent_id` AS `parent_id`,`ov`.`user_id` AS `user_id`,`ov`.`internal_version_number` AS `internal_version_number`,`ov`.`version_number` AS `version_number`,`ov`.`version_status` AS `version_status`,`ov`.`file_path` AS `file_path`,`ov`.`is_current` AS `is_current`,`ov`.`is_remote` AS `is_remote`,`ov`.`is_reviewed` AS `is_reviewed`,`ov`.`date_created` AS `date_created`,`ov`.`date_released` AS `date_released`,`om`.`display_label` AS `display_label`,`om`.`format` AS `format`,`om`.`contact_name` AS `contact_name`,`om`.`contact_email` AS `contact_email`,`om`.`homepage` AS `homepage`,`om`.`documentation` AS `documentation`,`om`.`publication` AS `publication`,`om`.`urn` AS `urn`,`om`.`coding_scheme` AS `coding_scheme`,`om`.`is_foundry` AS `is_foundry` from (`ncbo_ontology_version` `ov` join `ncbo_ontology_metadata` `om` on((`ov`.`id` = `om`.`ontology_version_id`))) */;
+/*!50001 CREATE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` SQL SECURITY DEFINER VIEW `v_ncbo_ontology` AS select `ov`.`id` AS `id`,`ov`.`ontology_id` AS `ontology_id`,`ov`.`parent_id` AS `parent_id`,`ov`.`user_id` AS `user_id`,`ov`.`internal_version_number` AS `internal_version_number`,`ov`.`version_number` AS `version_number`,`ov`.`version_status` AS `version_status`,`ov`.`file_path` AS `file_path`,`ov`.`is_current` AS `is_current`,`ov`.`is_remote` AS `is_remote`,`ov`.`is_reviewed` AS `is_reviewed`,`ov`.`status_id` AS `status_id`,`ov`.`date_created` AS `date_created`,`ov`.`date_released` AS `date_released`,`om`.`display_label` AS `display_label`,`om`.`format` AS `format`,`om`.`contact_name` AS `contact_name`,`om`.`contact_email` AS `contact_email`,`om`.`homepage` AS `homepage`,`om`.`documentation` AS `documentation`,`om`.`publication` AS `publication`,`om`.`urn` AS `urn`,`om`.`coding_scheme` AS `coding_scheme`,`om`.`is_foundry` AS `is_foundry` from (`ncbo_ontology_version` `ov` join `ncbo_ontology_metadata` `om` on((`ov`.`id` = `om`.`ontology_version_id`))) */;
 
 /* Procedure structure for procedure `sp_insert_app_text_record` */
 

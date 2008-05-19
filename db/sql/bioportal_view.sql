@@ -11,6 +11,7 @@ SELECT
 	ov.is_current,
 	ov.is_remote,
 	ov.is_reviewed,
+	ov.status_id,
 	ov.date_created,
 	ov.date_released,
 	om.display_label,
@@ -26,5 +27,3 @@ SELECT
 FROM
 	ncbo_ontology_version ov 
 	INNER JOIN ncbo_ontology_metadata om ON ov.id = om.ontology_version_id;
-
-
