@@ -37,17 +37,20 @@ import org.LexGrid.LexBIG.Impl.LexBIGServiceImpl;
 import org.LexGrid.LexBIG.LexBIGService.LexBIGService;
 import org.LexGrid.LexBIG.LexBIGService.LexBIGServiceManager;
 import org.LexGrid.LexBIG.Utility.Constructors;
+import org.LexGrid.LexOnt.CodingSchemeManifest;
+import org.LexGrid.LexOnt.CsmfFormalName;
+import org.LexGrid.LexOnt.CsmfRegisteredName;
+import org.LexGrid.LexOnt.CsmfVersion;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.ncbo.stanford.bean.OntologyBean;
-import org.ncbo.stanford.domain.custom.dao.CustomNcboOntologyMetadataDAO;
 import org.ncbo.stanford.domain.generated.NcboOntologyMetadata;
 import org.ncbo.stanford.manager.AbstractOntologyManagerLexGrid;
 import org.ncbo.stanford.manager.OntologyLoadManager;
 import org.ncbo.stanford.util.constants.ApplicationConstants;
 
-public class OntologyLoadManagerLexGridImpl extends AbstractOntologyManagerLexGrid
-		implements OntologyLoadManager {
+public class OntologyLoadManagerLexGridImpl extends AbstractOntologyManagerLexGrid implements
+		OntologyLoadManager {
 
 	private static final Log log = LogFactory.getLog(OntologyLoadManagerLexGridImpl.class);
 	private String targetTerminologies;
@@ -160,7 +163,8 @@ public class OntologyLoadManagerLexGridImpl extends AbstractOntologyManagerLexGr
 			if (ncboMetadata != null) {
 				String urnAndVersion = urn + "|" + version;
 				ncboMetadata.setCodingScheme(urnAndVersion);
-				log.debug("Updating the NcboOntologyMetadata with the codingScheme name="+ urnAndVersion);
+				log.debug("Updating the NcboOntologyMetadata with the codingScheme name="
+						+ urnAndVersion);
 				ncboOntologyMetadataDAO.getHibernateTemplate().update(ncboMetadata);
 				ncboOntologyMetadataDAO.getSessionFactory().getCurrentSession().flush();
 				ontology_bean.setCodingScheme(urnAndVersion);
@@ -205,6 +209,33 @@ public class OntologyLoadManagerLexGridImpl extends AbstractOntologyManagerLexGr
 		}
 
 		return lnl;
+	}
+
+	public CodingSchemeManifest createCodingSchemeManifest(OntologyBean ontology_bean) {
+		CodingSchemeManifest csm = new CodingSchemeManifest();
+		if (ontology_bean.getFormat().equalsIgnoreCase(ApplicationConstants.FORMAT_OBO)
+				|| ontology_bean.getFormat().equalsIgnoreCase(ApplicationConstants.FORMAT_OWL_DL)
+				|| ontology_bean.getFormat().equalsIgnoreCase(ApplicationConstants.FORMAT_OWL_FULL)) {
+			// Override registered name using metadata from the ontology bean
+			String registeredName = ontology_bean.getOntologyId().toString() + "/"
+					+ ontology_bean.getVersionNumber().toString() + "/"
+					+ ontology_bean.getDisplayLabel();
+			CsmfRegisteredName csmfRegisteredName = new CsmfRegisteredName();
+			csmfRegisteredName.setContent(registeredName);
+			csm.setRegisteredName(csmfRegisteredName);
+			// Override version using metadata from the ontology bean
+			CsmfVersion csmfVersion = new CsmfVersion();
+			csmfVersion.setContent(ontology_bean.getVersionNumber());
+			csm.setRepresentsVersion(csmfVersion);
+			// Override formal name using metadata from the ontology bean
+			CsmfFormalName csmfFormalName = new CsmfFormalName();
+			csmfFormalName.setContent(ontology_bean.getDisplayLabel());
+			csm.setFormalName(csmfFormalName);
+
+		}
+
+		return csm;
+
 	}
 
 }
