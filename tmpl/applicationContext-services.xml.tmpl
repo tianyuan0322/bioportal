@@ -577,7 +577,16 @@
 				<ref bean="coreSimpleTrigger" />
 			</list>
 		</property>
+		<property name="autoStartup">
+			<ref bean="triggerAutoStartup" />
+		</property>
 	</bean>	
+
+	<bean id="triggerAutoStartup" class="java.lang.Boolean">
+		<constructor-arg>
+			<value>@ontologyloadenabled@</value>
+		</constructor-arg>
+	</bean>
 
 	<!-- Constants -->
 	<bean id="ontologyFilePath" class="java.lang.String">
