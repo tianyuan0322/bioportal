@@ -8,6 +8,8 @@ import org.apache.commons.logging.LogFactory;
 import org.ncbo.stanford.bean.OntologyBean;
 import org.ncbo.stanford.domain.custom.dao.CustomNcboOntologyVersionDAO;
 import org.ncbo.stanford.domain.custom.entity.NcboOntology;
+import org.ncbo.stanford.domain.generated.NcboOntologyVersion;
+import org.ncbo.stanford.domain.custom.dao.CustomNcboOntologyVersionDAO;
 import org.ncbo.stanford.service.ontology.OntologyService;
 
 public class OntologyServiceImpl implements OntologyService {
@@ -43,7 +45,13 @@ public class OntologyServiceImpl implements OntologyService {
 	 * @return
 	 */
 	public OntologyBean findOntology(Integer ontologyVersionId) {
-		return null;
+		
+		NcboOntology ontology = ncboOntologyVersionDAO.findOntologyVersion(ontologyVersionId);
+		OntologyBean ontologyBean = new OntologyBean();
+		ontologyBean.populateFromEntity(ontology);
+		
+		return ontologyBean;
+		
 	}
 
 	/**
