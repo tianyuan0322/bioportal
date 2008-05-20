@@ -326,7 +326,7 @@ public class OntologyRetrievalManagerLexGridImpl extends
 	}
 
 	private SearchResultBean searchNodesForProperties(
-			NcboOntology ncboOntology, String name, String[] properties,
+			NcboOntology ncboOntology, String search_string, String[] properties,
 			boolean soundsLike, boolean includeObsolete, int maxToReturn,
 			Match_Types algorithm) {
 		try {
@@ -344,19 +344,19 @@ public class OntologyRetrievalManagerLexGridImpl extends
 			if (soundsLike)
 				matchAlgorithm = MatchAlgorithms.DoubleMetaphoneLuceneQuery
 						.name();
-			name = name.toLowerCase();
+			search_string = search_string.toLowerCase();
 
 			if (!soundsLike) {
-				name = replacePeriod(name);
+				search_string = replacePeriod(search_string);
 				switch (algorithm) {
 				case SEARCH_STARTS_WITH:
-					name = name + ".*";
+					search_string = search_string + ".*";
 					break;
 				case SEARCH_ENDS_WITH:
-					name = ".*" + name;
+					search_string = ".*" + search_string;
 					break;
 				case SEARCH_CONTAINS:
-					name = ".*" + name + ".*";
+					search_string = ".*" + search_string + ".*";
 					break;
 				case SEARCH_EXACT_MATCH:
 					break;
@@ -367,7 +367,7 @@ public class OntologyRetrievalManagerLexGridImpl extends
 
 			if (properties != null && properties.length > 0) {
 				nodes = nodes.restrictToMatchingProperties(Constructors
-						.createLocalNameList(propList), null, name,
+						.createLocalNameList(propList), null, search_string,
 						matchAlgorithm, null);
 			}
 
@@ -398,7 +398,7 @@ public class OntologyRetrievalManagerLexGridImpl extends
 	}
 
 	private SearchResultBean searchNodesForName(NcboOntology ncboOntology,
-			String name, int maxToReturn, Match_Types algorithm,
+			String search_string, int maxToReturn, Match_Types algorithm,
 			boolean soundsLike, boolean includeObsolete) {
 		try {
 			String urnAndVersion = ncboOntology.getCodingScheme();
@@ -415,19 +415,19 @@ public class OntologyRetrievalManagerLexGridImpl extends
 				matchAlgorithm = MatchAlgorithms.DoubleMetaphoneLuceneQuery
 						.name();
 
-			name = name.toLowerCase();
+			search_string = search_string.toLowerCase();
 
 			if (!soundsLike) {
-				name = replacePeriod(name);
+				search_string = replacePeriod(search_string);
 				switch (algorithm) {
 				case SEARCH_STARTS_WITH:
-					name = name + ".*";
+					search_string = search_string + ".*";
 					break;
 				case SEARCH_ENDS_WITH:
-					name = ".*" + name;
+					search_string = ".*" + search_string;
 					break;
 				case SEARCH_CONTAINS:
-					name = ".*" + name + ".*";
+					search_string = ".*" + search_string + ".*";
 					break;
 				case SEARCH_EXACT_MATCH:
 					break;
@@ -436,7 +436,7 @@ public class OntologyRetrievalManagerLexGridImpl extends
 				matchAlgorithm = "RegExp";
 			}
 
-			nodes = nodes.restrictToMatchingDesignations(name,
+			nodes = nodes.restrictToMatchingDesignations(search_string,
 					SearchDesignationOption.PREFERRED_ONLY, matchAlgorithm,
 					null);
 
