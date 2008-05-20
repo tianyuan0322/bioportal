@@ -64,6 +64,8 @@ bioportal.messagebundle=org.ncbo.stanford.resource.message
 bioportal.ontology.filepath=${bioportal.resource.path}/uploads
 
 # Ontology Load Scheduler properties
+# Enable/Disable scheduler service flag
+ontology.load.enabled=true
 # Delay before first scheduler execution (in milliseconds)
 ontology.load.startdelay=28800000
 # Scheduler repeat interval (in milliseconds)
