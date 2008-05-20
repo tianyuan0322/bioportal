@@ -1,5 +1,6 @@
 package org.ncbo.stanford.util.filehandler;
 
+import org.ncbo.stanford.bean.OntologyBean;
 import org.ncbo.stanford.domain.generated.NcboOntologyVersion;
 
 /**
@@ -24,5 +25,10 @@ public abstract class AbstractFileHandler implements FileHandler {
 	public String getOntologyDirPath(NcboOntologyVersion ontologyVersion) {
 		return "/" + ontologyVersion.getOntologyId() + "/"
 				+ ontologyVersion.getInternalVersionNumber();
+	}
+	
+	public String getOntologyBeanDirPath(OntologyBean ontologyBean) {
+		return "/" + ontologyBean.getOntologyId() + "/"
+				+ ontologyBean.getInternalVersionNumber();
 	}
 }

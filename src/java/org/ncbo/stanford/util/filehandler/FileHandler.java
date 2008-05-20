@@ -1,5 +1,6 @@
 package org.ncbo.stanford.util.filehandler;
 
+import org.ncbo.stanford.bean.OntologyBean;
 import org.ncbo.stanford.domain.generated.NcboOntologyVersion;
 
 /**
@@ -57,4 +58,12 @@ public interface FileHandler {
 	 * @return
 	 */
 	public String getOntologyDirPath(NcboOntologyVersion ontologyVersion);
+	
+	/**
+	 * Return the partial ontology directory path (without prefix directory)
+	 * 
+	 * @param ontologyBean
+	 * @return
+	 */
+	public String getOntologyBeanDirPath(OntologyBean ontologyBean);
 }
