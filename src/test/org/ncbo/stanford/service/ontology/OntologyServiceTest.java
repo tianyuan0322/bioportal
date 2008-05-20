@@ -3,12 +3,18 @@
  */
 package org.ncbo.stanford.service.ontology;
 
+import java.io.File;
 import java.util.Date;
 import java.util.List;
 
 import org.ncbo.stanford.AbstractBioPortalTest;
 import org.ncbo.stanford.bean.OntologyBean;
+import org.ncbo.stanford.domain.generated.NcboLStatus;
+import org.ncbo.stanford.domain.generated.NcboOntologyVersion;
+import org.ncbo.stanford.enumeration.StatusEnum;
 import org.ncbo.stanford.service.ontology.OntologyService;
+import org.ncbo.stanford.util.filehandler.FileHandler;
+import org.ncbo.stanford.util.filehandler.impl.PhysicalDirectoryFileHandler;
 
 /**
  * @author nickgriffith
@@ -38,18 +44,21 @@ public class OntologyServiceTest extends AbstractBioPortalTest {
 		
 		System.out.println ("OntologyServiceTest: testFindOntology()..........................BEGIN");
 		
-		OntologyBean ontologyBean = getOntologyService().findOntology(4519);
+		OntologyBean ontologyBean = getOntologyService().findOntology(new Integer(3905));
 		
 		if (ontologyBean != null) {
-			System.out.println ("...getContactEmail is " +  ontologyBean.getContactEmail());
-			System.out.println ("...getContactName is " +  ontologyBean.getContactName());
+			
+			System.out.println (".....ContactEmail: " +  ontologyBean.getContactEmail());
+			System.out.println (".....ContactName: " +  ontologyBean.getContactName());
 		}
 		
 		System.out.println ("UserServiceTest: testFindUser()...........................DONE");
 		
 	}
 	
-	public void testUploadOntologies() {
+	public void testUpdateOntologies() {
+		
+
 
 	}
 		
@@ -63,23 +72,30 @@ public class OntologyServiceTest extends AbstractBioPortalTest {
 		
 		System.out.println ("OntologyServiceTest: testCreateOntology().........................DONE");
 	}
-		
+*/		
 
-	public void testUpdateUser() {
+	public void testUpdateOntology() {
 		
 		System.out.println ("UserServiceTest: testUpdateUsers().......................BEGIN");
 		
-		UserBean userBean = getUserService().findUser("myusername");
-				
-		if (userBean != null) {
+		OntologyBean ontologyBean = getOntologyService().findOntology(new Integer(3905));
+	
+		// set inputFilePath
+//		String inputFileStr="/Users/nickgriffith/projects/smi.apps/BioPortalCore/test/sample_data/pizza.owl";
+//		ontologyBean.setFilePath(inputFileStr);	
+	
+		if (ontologyBean != null) {
 			
-			System.out.println (".....Updating phone number to 111-222-3333");
+			System.out.println (".....Updating Ontology contact email to testemail_111@test.edu");
 			
-			userBean.setPhone("333-222-3333");
-			getUserService().updateUser(userBean);
+			ontologyBean.setContactEmail("testemail_111@test.edu");
+			System.out.println (".....ContactEmail: " +  ontologyBean.getContactEmail());
+			//System.out.println (".....ContactName: " +  ontologyBean.getContactName());
+			
+			getOntologyService().updateOntology(ontologyBean);
 		}
 		else {
-			System.out.println (".....No matching record!");
+			System.out.println (".....No matching record found!");
 		}
 		
 		System.out.println ("UserServiceTest: testUpdateUsers()........................DONE");
@@ -87,20 +103,23 @@ public class OntologyServiceTest extends AbstractBioPortalTest {
 	}
 	
 	
-	
+/*	
 	public void testDeleteUser() {
 		
 		System.out.println ("UserServiceTest: testDeleteUser()........................BEGIN");
 		
-		// "getUser" by username does not work if duplicate is allowed in DB.
-		UserBean userBean = getUserService().findUser("myusername");
-		
-		if ( userBean != null ) {
-
-			getUserService().deleteUser(userBean);
+		OntologyBean ontologyBean = getOntologyService().findOntology(new Integer(3905));
+				
+		if (ontologyBean != null) {
 			
-		} else {
-			System.out.println (".....No matching record!");
+			System.out.println (".....Updating Ontology contact email to testemail_111@test.edu");
+			
+			ontologyBean.setContactEmail("testemail_111@test.edu")
+			
+			//getOntologyService().deleteOntology(ontologyBean);
+		}
+		else {
+			System.out.println (".....No matching record found!");
 		}
 		
 		System.out.println ("UserServiceTest: testDeleteUser().........................DONE");
