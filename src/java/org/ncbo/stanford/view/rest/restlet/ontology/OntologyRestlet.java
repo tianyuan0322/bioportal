@@ -7,6 +7,7 @@ import org.apache.commons.logging.LogFactory;
 import org.ncbo.stanford.bean.OntologyBean;
 import org.ncbo.stanford.bean.UserBean;
 import org.ncbo.stanford.service.ontology.OntologyService;
+import org.ncbo.stanford.service.xml.XMLSerializationService;
 import org.restlet.Restlet;
 import org.restlet.data.MediaType;
 import org.restlet.data.Method;
@@ -21,8 +22,8 @@ import com.thoughtworks.xstream.io.xml.DomDriver;
 public class OntologyRestlet extends Restlet {
 
 	private static final Log log = LogFactory.getLog(OntologyRestlet.class);
-	
 	private OntologyService ontologyService;
+	private XMLSerializationService xmlSerializationService;
 
 	@Override
 	public void handle(Request request, Response response) {
@@ -33,51 +34,70 @@ public class OntologyRestlet extends Restlet {
 		
 	}
 	
-	
+
 	/**
 	 * Handle GET calls here
-	 */
-	private void getRequest(Request request,Response response){		
-		findOntology(request,response);			
-	}
-	
-	
-	/**
-	 * Handle POST calls here
+	 * 
 	 * @param request
 	 * @param response
 	 */
-	private void postRequest(Request request,Response response){
-		
-	}
+	private void getRequest(Request request, Response response) {
+
+		// Handle GET calls here
+		findOntology(request, response);
+
+	}	
+	
 	
 	/**
-	 * Return to the response an individual ontology
-	 * @param ref
+	 * Handle PUT calls here
+	 * 
+	 * @param request
+	 * @param response
+	 */
+	private void putRequest(Request request, Response response) {
+
+		// Handle PUT calls here
+		System.out.println("+++++++++++++++++++++++++++++++++++++");
+		System.out.println("           PUT call");
+		System.out.println("+++++++++++++++++++++++++++++++++++++");
+
+		//updateOntology(request, response);
+
+	}	
+
+	
+	
+	/**
+	 * Returns a specified UserBean to the response
+	 * 
+	 * @param request
 	 * @param resp
 	 */
-	private void findOntology(Request request, Response resp) {
-		OntologyBean ontology = null;
-		String ontologyVersionId = (String) request.getAttributes().get("ontology");
+	private void findOntology(Request request, Response response) {
+		
+		// find the UserBean from request
+		//UserBean userBean = findUserBean(request, response);
 
+		OntologyBean ontologyBean = null;
+		String ontologyVersionId = (String) request.getAttributes().get("ontology");
 		try {
 			Integer intId = Integer.parseInt(ontologyVersionId);
-			ontology = ontologyService.findOntology(intId);
+			ontologyBean = ontologyService.findOntology(intId);
 
-			if (ontology == null) {
-				resp.setStatus(Status.CLIENT_ERROR_NOT_FOUND, "Ontology not found");
+			if (ontologyBean == null) {
+				response.setStatus(Status.CLIENT_ERROR_NOT_FOUND, "Ontology not found");
 			}
 		} catch (NumberFormatException nfe) {
-			resp.setStatus(Status.CLIENT_ERROR_BAD_REQUEST, nfe.getMessage());
+			response.setStatus(Status.CLIENT_ERROR_BAD_REQUEST, nfe.getMessage());
 		}
-
-		if (ontology != null && !resp.getStatus().isError()) {
-			XStream xstream = new XStream(new DomDriver());
-			xstream.alias("OntologyBean", OntologyBean.class);
-			resp.setEntity(xstream.toXML(ontology), MediaType.APPLICATION_XML);
-		}
+		
+		// generate response XML
+		getXmlSerializationService().generateXMLResponse (request, response, ontologyBean);
+				
 	}
-
+	
+	
 	/**
 	 * @return the ontologyService
 	 */
@@ -91,5 +111,15 @@ public class OntologyRestlet extends Restlet {
 	 */
 	public void setOntologyService(OntologyService ontologyService) {
 		this.ontologyService = ontologyService;
+	}
+	
+	public XMLSerializationService getXmlSerializationService() {
+		return xmlSerializationService;
+	}
+
+
+	public void setXmlSerializationService(
+			XMLSerializationService xmlSerializationService) {
+		this.xmlSerializationService = xmlSerializationService;
 	}
 }
