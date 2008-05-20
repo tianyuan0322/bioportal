@@ -5,6 +5,7 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.InputStream;
 
+import org.ncbo.stanford.bean.OntologyBean;
 import org.ncbo.stanford.domain.generated.NcboOntologyVersion;
 import org.ncbo.stanford.util.filehandler.AbstractFileHandler;
 
@@ -52,6 +53,33 @@ public class PhysicalDirectoryFileHandler extends AbstractFileHandler {
 		outputStream.close();
 	}
 
+	// added by cyoun
+	public void processOntologyFileUpload(String ontologyFilePath,
+			OntologyBean ontologyBean) throws Exception {
+		
+		File outputDirectories = new File(getFullOntologyDirPath(
+				ontologyFilePath, ontologyBean));
+		outputDirectories.mkdirs();
+
+		File outputFile = new File(getOntologyFilePath(ontologyFilePath,
+				ontologyBean, file.getName()));
+		outputFile.createNewFile();
+
+		FileOutputStream outputStream = new FileOutputStream(outputFile);
+		InputStream inputStream = new FileInputStream(file);
+
+		int c;
+
+		while ((c = inputStream.read()) != -1) {
+			outputStream.write(c);
+		}
+
+		inputStream.close();
+		outputStream.close();	
+		
+	}
+	
+	
 	/*
 	 * (non-Javadoc)
 	 * 

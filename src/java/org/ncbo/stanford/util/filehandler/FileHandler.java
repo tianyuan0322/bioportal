@@ -23,6 +23,10 @@ public interface FileHandler {
 	public void processOntologyFileUpload(String ontologyFilePath,
 			NcboOntologyVersion ontologyVersion) throws Exception;
 
+	// added by cyoun
+	public void processOntologyFileUpload(String ontologyFilePath,
+			OntologyBean ontologyBean) throws Exception;
+	
 	/**
 	 * Get the name of the file
 	 * 
@@ -41,6 +45,10 @@ public interface FileHandler {
 	public String getOntologyFilePath(String ontologyFilePath,
 			NcboOntologyVersion ontologyVersion, String filename);
 
+	// added by cyoun
+	public String getOntologyFilePath(String ontologyFilePath,
+			OntologyBean ontologyBean, String filename);
+	
 	/**
 	 * Return the full ontology directory path (including prefix directory)
 	 * 
@@ -51,6 +59,10 @@ public interface FileHandler {
 	public String getFullOntologyDirPath(String ontologyFilePath,
 			NcboOntologyVersion ontologyVersion);
 
+	// added by cyoun
+	public String getFullOntologyDirPath(String ontologyFilePath,
+			OntologyBean ontologyBean);
+	
 	/**
 	 * Return the partial ontology directory path (without prefix directory)
 	 * 
@@ -59,11 +71,6 @@ public interface FileHandler {
 	 */
 	public String getOntologyDirPath(NcboOntologyVersion ontologyVersion);
 	
-	/**
-	 * Return the partial ontology directory path (without prefix directory)
-	 * 
-	 * @param ontologyBean
-	 * @return
-	 */
-	public String getOntologyBeanDirPath(OntologyBean ontologyBean);
+	// added by cyoun
+	public String getOntologyDirPath(OntologyBean ontologyBean);
 }

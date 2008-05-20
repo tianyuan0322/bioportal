@@ -3,6 +3,7 @@ package org.ncbo.stanford.service.ontology;
 import java.util.List;
 
 import org.ncbo.stanford.bean.OntologyBean;
+import org.ncbo.stanford.bean.UserBean;
 
 /**
  * Exposes services that provide read and write operations on ontologies
@@ -51,4 +52,28 @@ public interface OntologyService {
 	 * @return
 	 */
 	public List<String> findProperties(Integer ontologyVersionId);
+	
+	/**	
+	 * Create an ontology 
+	 * 	  
+	 * @param ontologyBean
+	 * @return
+	 */
+	public void createOntology(OntologyBean ontologyBean);
+	
+	/**	
+	 * Update an ontology 
+	 * 	  
+	 * @param ontologyBean
+	 * @return
+	 */
+	public void updateOntology(OntologyBean ontologyBean);
+	
+	/**	
+	 * Delete an ontology 
+	 * 	  
+	 * @param ontologyBean
+	 * @return
+	 */
+	public void deleteOntology(OntologyBean ontologyBean);
 }

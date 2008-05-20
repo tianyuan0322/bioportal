@@ -3,6 +3,8 @@ package org.ncbo.stanford.util.filehandler.impl;
 import java.io.File;
 
 import org.apache.commons.fileupload.FileItem;
+
+import org.ncbo.stanford.bean.OntologyBean;
 import org.ncbo.stanford.domain.generated.NcboOntologyVersion;
 import org.ncbo.stanford.util.filehandler.AbstractFileHandler;
 
@@ -39,6 +41,20 @@ public class CommonsFileUploadFileHandler extends AbstractFileHandler {
 		file.write(outputFile);
 	}
 
+	// added by cyoun
+	public void processOntologyFileUpload(String ontologyFilePath,
+			OntologyBean ontologyBean) throws Exception {
+		File outputDirectories = new File(getFullOntologyDirPath(
+				ontologyFilePath, ontologyBean));
+		outputDirectories.mkdirs();
+
+		File outputFile = new File(getOntologyFilePath(ontologyFilePath,
+				ontologyBean, file.getName()));
+		outputFile.createNewFile();
+		file.write(outputFile);
+	}
+
+	
 	/*
 	 * (non-Javadoc)
 	 * 

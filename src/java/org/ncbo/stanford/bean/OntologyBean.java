@@ -7,9 +7,11 @@ import java.util.List;
 
 import org.ncbo.stanford.domain.custom.entity.NcboOntology;
 import org.ncbo.stanford.domain.generated.NcboLStatus;
+import org.ncbo.stanford.domain.generated.NcboOntologyFile;
 import org.ncbo.stanford.domain.generated.NcboOntologyMetadata;
 import org.ncbo.stanford.domain.generated.NcboOntologyVersion;
 import org.ncbo.stanford.domain.generated.NcboUser;
+import org.ncbo.stanford.util.filehandler.FileHandler;
 
 public class OntologyBean {
 
@@ -76,12 +78,12 @@ public class OntologyBean {
 
 
 	/**
-	 * Populates the OntologyBean to a NcboOntologyVersion DAO
+	 * Populates the OntologyBean to a NcboOntologyVersion Entity
 	 * 
 	 * @param ncboOntology
 	 */
 	public void populateToEntity(NcboOntologyVersion ontologyVersion) {
-		
+
 		// all the business logic regarding OntologyVersionId and OntologyId is in OntologyBean layer
 		ontologyVersion.setId(this.getId());
 		ontologyVersion.setOntologyId(this.getOntologyId());
@@ -118,7 +120,7 @@ public class OntologyBean {
 	}
 	
 	/**
-	 * Populates the OntologyBean to a NcboOntologyMetadata DAO
+	 * Populates the OntologyBean to a NcboOntologyMetadata Entity
 	 * 
 	 * @param ncboOntology
 	 */
@@ -139,6 +141,36 @@ public class OntologyBean {
 		metadata.setUrn(this.getUrn());
 		
 	}
+	
+	/**
+	 * Populates the OntologyBean to a NcboOntologyFile Entity
+	 * 
+	 * @param ncboOntology
+	 */
+	public void populateToEntity(List<NcboOntologyFile> ontologyFileList) {
+				
+		
+		List<String> fileNameList = this.getFilenames();
+
+
+		for (String fileName : fileNameList) {
+			
+			NcboOntologyFile ontologyFile = new NcboOntologyFile();
+			ontologyFile.setFilename(fileName);
+			
+			// TODO - validate this!!!
+			NcboOntologyVersion ontologyVersion = new NcboOntologyVersion();
+			this.populateToEntity(ontologyVersion);
+			ontologyFile.setNcboOntologyVersion(ontologyVersion);
+			
+			ontologyFileList.add(ontologyFile);
+
+		}
+		
+	}
+	
+	// TODO - populate to Category - NcboOntologyCategory
+	// TODO - populate to loadQueue - NcboOntologyLoadQueue
 	
 	public String toString() {
 		return "Id: " + getId() + " Name: " + getDisplayLabel() + " Ver: "
