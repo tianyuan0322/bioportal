@@ -6,6 +6,10 @@ import java.util.Date;
 import java.util.List;
 
 import org.ncbo.stanford.domain.custom.entity.NcboOntology;
+import org.ncbo.stanford.domain.generated.NcboLStatus;
+import org.ncbo.stanford.domain.generated.NcboOntologyMetadata;
+import org.ncbo.stanford.domain.generated.NcboOntologyVersion;
+import org.ncbo.stanford.domain.generated.NcboUser;
 
 public class OntologyBean {
 
@@ -20,6 +24,7 @@ public class OntologyBean {
 	private Byte isCurrent;
 	private Byte isRemote;
 	private Byte isReviewed;
+	private Integer statusId;
 	private Date dateCreated;
 	private Date dateReleased;
 	private String displayLabel;
@@ -37,7 +42,7 @@ public class OntologyBean {
 	
 
 	/**
-	 * Populates the OntologyBean with data from a NcboOntology
+	 * Populates the OntologyBean with data from a NcboOntology View
 	 * 
 	 * @param ncboOntology
 	 */
@@ -69,6 +74,72 @@ public class OntologyBean {
 		addFilenames(ncboOntology.getFilenames());		
 	}
 
+
+	/**
+	 * Populates the OntologyBean to a NcboOntologyVersion DAO
+	 * 
+	 * @param ncboOntology
+	 */
+	public void populateToEntity(NcboOntologyVersion ontologyVersion) {
+		
+		// all the business logic regarding OntologyVersionId and OntologyId is in OntologyBean layer
+		ontologyVersion.setId(this.getId());
+		ontologyVersion.setOntologyId(this.getOntologyId());
+		
+		// Set Parent Object
+		Integer parentId = this.getParentId();
+
+		if (parentId != null) {
+			NcboOntologyVersion parentOntology = new NcboOntologyVersion();
+			parentOntology.setId(parentId);
+			
+			ontologyVersion.setNcboOntologyVersion(parentOntology);
+		}
+		
+		// Set User Object
+		NcboUser ncboUser = new NcboUser();
+		ncboUser.setId(this.getUserId());
+		ontologyVersion.setNcboUser(ncboUser);
+
+		ontologyVersion.setVersionNumber(this.getVersionNumber());
+		ontologyVersion.setIsCurrent(this.getIsCurrent());
+		ontologyVersion.setIsRemote(this.getIsRemote());
+		ontologyVersion.setIsReviewed(this.getIsReviewed());
+		ontologyVersion.setDateCreated(this.getDateCreated());
+		ontologyVersion.setDateReleased(this.getDateReleased());
+	
+		// NcboStatus Object
+		NcboLStatus status = new NcboLStatus();
+		status.setId(this.getStatusId());
+		ontologyVersion.setNcboLStatus(status);
+	
+		ontologyVersion.setFilePath(this.getFilePath());
+			
+	}
+	
+	/**
+	 * Populates the OntologyBean to a NcboOntologyMetadata DAO
+	 * 
+	 * @param ncboOntology
+	 */
+	public void populateToEntity(NcboOntologyMetadata metadata) {
+				
+		NcboOntologyVersion ncboOntologyVersion = new NcboOntologyVersion();
+		ncboOntologyVersion.setInternalVersionNumber(this.getInternalVersionNumber());
+		metadata.setNcboOntologyVersion(ncboOntologyVersion);
+		
+		metadata.setContactEmail(this.getContactEmail());
+		metadata.setContactName(this.getContactName());
+		metadata.setDisplayLabel(this.getDisplayLabel());
+		metadata.setDocumentation(this.getDocumentation());
+		metadata.setFormat(this.getFormat());
+		metadata.setHomepage(this.getHomepage());
+		metadata.setIsFoundry(this.getIsFoundry());
+		metadata.setPublication(this.getPublication());
+		metadata.setUrn(this.getUrn());
+		
+	}
+	
 	public String toString() {
 		return "Id: " + getId() + " Name: " + getDisplayLabel() + " Ver: "
 				+ getInternalVersionNumber();
@@ -471,6 +542,16 @@ public class OntologyBean {
 	 */
 	public void setCodingScheme(String codingScheme) {
 		this.codingScheme = codingScheme;
+	}
+
+
+	public Integer getStatusId() {
+		return statusId;
+	}
+
+
+	public void setStatusId(Integer statusId) {
+		this.statusId = statusId;
 	}
 
 
