@@ -13,5 +13,12 @@ public interface OntologyLoadSchedulerService {
 	 * Retrieve all ontologies that need to be parsed and send them through the
 	 * vendor API
 	 */
-	public void processOntologyLoad();
+	public void parseOntologies();
+	
+	/**
+	 * Parses a single ontology
+	 * 
+	 * @param ontologyVersionId
+	 */
+	public void parseOntology(Integer ontologyVersionId);
 }
