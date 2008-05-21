@@ -62,6 +62,7 @@ public class OntologyBean {
 		this.setIsCurrent(ncboOntology.getIsCurrent());
 		this.setIsRemote(ncboOntology.getIsRemote());
 		this.setIsReviewed(ncboOntology.getIsReviewed());
+		this.setStatusId(ncboOntology.getStatusId());
 		this.setDateCreated(ncboOntology.getDateCreated());
 		this.setDateReleased(ncboOntology.getDateReleased());
 		this.setDisplayLabel(ncboOntology.getDisplayLabel());
