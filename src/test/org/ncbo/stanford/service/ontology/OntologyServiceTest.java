@@ -68,6 +68,12 @@ public class OntologyServiceTest extends AbstractBioPortalTest {
 		System.out.println ("OntologyServiceTest: testCreateOntology()........................BEGIN");
 			
 		OntologyBean ontologyBean = createOntolgyBean();
+		
+			
+		// set inputFilePath
+//		String inputFileStr="/Users/nickgriffith/projects/smi.apps/BioPortalCore/test/sample_data/pizza.owl";
+//		ontologyBean.setFilePath(inputFileStr);	
+		
 		getOntologyService().createOntology(ontologyBean);
 		
 		System.out.println ("OntologyServiceTest: testCreateOntology().........................DONE");
@@ -80,17 +86,17 @@ public class OntologyServiceTest extends AbstractBioPortalTest {
 		
 		OntologyBean ontologyBean = getOntologyService().findOntology(new Integer(3905));
 	
-		// set inputFilePath
-//		String inputFileStr="/Users/nickgriffith/projects/smi.apps/BioPortalCore/test/sample_data/pizza.owl";
-//		ontologyBean.setFilePath(inputFileStr);	
-	
+		// test updating some properties
 		if (ontologyBean != null) {
 			
-			System.out.println (".....Updating Ontology contact email to testemail_111@test.edu");
+			System.out.println (".....Updating Ontology Bean - Version number to 2.222");
+			ontologyBean.setVersionNumber("2.222");
 			
+			System.out.println (".....Updating Ontology Bean - Metadata ");
 			ontologyBean.setContactEmail("testemail_111@test.edu");
+			ontologyBean.setContactName("NewFirstname NewLastname");
 			System.out.println (".....ContactEmail: " +  ontologyBean.getContactEmail());
-			//System.out.println (".....ContactName: " +  ontologyBean.getContactName());
+			System.out.println (".....ContactName: " +  ontologyBean.getContactName());
 			
 			getOntologyService().updateOntology(ontologyBean);
 		}
