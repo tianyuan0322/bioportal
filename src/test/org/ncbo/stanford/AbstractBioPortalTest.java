@@ -1,5 +1,6 @@
 package org.ncbo.stanford;
 
+import org.hibernate.FlushMode;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.springframework.orm.hibernate3.SessionFactoryUtils;
@@ -21,6 +22,7 @@ public class AbstractBioPortalTest extends
 	
 	protected void onSetUp() {
 		session = SessionFactoryUtils.getSession(this.sessionFactory, true);
+		session.setFlushMode(FlushMode.AUTO);
 		TransactionSynchronizationManager.bindResource(this.sessionFactory,
 				new SessionHolder(session));
 	}
