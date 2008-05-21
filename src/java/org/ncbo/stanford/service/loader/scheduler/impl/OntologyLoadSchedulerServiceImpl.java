@@ -17,6 +17,7 @@ import org.ncbo.stanford.domain.generated.NcboOntologyLoadQueue;
 import org.ncbo.stanford.domain.generated.NcboOntologyVersion;
 import org.ncbo.stanford.enumeration.StatusEnum;
 import org.ncbo.stanford.manager.OntologyLoadManager;
+import org.ncbo.stanford.manager.impl.OntologyLoadManagerProtegeImpl;
 import org.ncbo.stanford.service.loader.scheduler.OntologyLoadSchedulerService;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
@@ -49,7 +50,7 @@ public class OntologyLoadSchedulerServiceImpl implements
 	 * @throws Exception
 	 */
 	@Transactional(propagation = Propagation.NEVER)
-	public void processOntologyLoad() {
+	public void parseOntologies() {
 		List<NcboOntologyLoadQueue> ontologiesToLoad = ncboOntologyLoadQueueDAO
 				.getOntologiesToLoad();
 
@@ -58,22 +59,25 @@ public class OntologyLoadSchedulerServiceImpl implements
 		}
 	}
 
-	private void processRecord(NcboOntologyLoadQueue rec) {
+	/**
+	 * Parses a single ontology
+	 * 
+	 * @param ontologyVersionId
+	 */
+	public void parseOntology(Integer ontologyVersionId) {
 		NcboLStatus status = new NcboLStatus();
-		NcboOntologyVersion ver = rec.getNcboOntologyVersion();
-		
+
+		NcboOntology ontology = ncboOntologyVersionDAO
+				.findOntologyVersion(ontologyVersionId);
+		NcboOntologyVersion ver = ncboOntologyVersionDAO
+				.findById(ontologyVersionId);
+		OntologyBean ontologyBean = new OntologyBean();
+		ontologyBean.populateFromEntity(ontology);
+
+		status.setId(StatusEnum.STATUS_PARSING.getStatus());
+		ver.setNcboLStatus(status);
+
 		try {
-			NcboOntology ontology = ncboOntologyVersionDAO
-					.findOntologyVersion(ver.getId());
-			OntologyBean ontologyBean = new OntologyBean();
-			ontologyBean.populateFromEntity(ontology);
-			
-			status.setId(StatusEnum.STATUS_PARSING.getStatus());			
-			ver.setNcboLStatus(status);
-			ncboOntologyVersionDAO.saveOntologyVersion(ver);
-			rec.setNcboLStatus(status);
-			ncboOntologyLoadQueueDAO.saveNcboOntologyLoadQueue(rec);
-			
 			loadOntology(ontologyBean);
 
 			status = new NcboLStatus();
@@ -84,12 +88,86 @@ public class OntologyLoadSchedulerServiceImpl implements
 			log.error(e);
 			e.printStackTrace();
 		}
-		
+
 		ver.setNcboLStatus(status);
 		ncboOntologyVersionDAO.saveOntologyVersion(ver);
+	}
 
-		rec.setNcboLStatus(status);
-		ncboOntologyLoadQueueDAO.saveNcboOntologyLoadQueue(rec);
+	/**
+	 * Parse a single record from the ontology load queue
+	 * 
+	 * @param rec
+	 */
+	private void processRecord(NcboOntologyLoadQueue rec) {
+		NcboLStatus status = new NcboLStatus();
+		NcboOntologyVersion ver = rec.getNcboOntologyVersion();
+
+		NcboOntology ontology = ncboOntologyVersionDAO.findOntologyVersion(ver
+				.getId());
+		OntologyBean ontologyBean = new OntologyBean();
+		ontologyBean.populateFromEntity(ontology);
+
+		String formatHandler = ontologyFormatHandlerMap.get(ontologyBean
+				.getFormat());
+		OntologyLoadManager loadManager = ontologyLoadHandlerMap
+				.get(formatHandler);
+
+		
+		//TODO: remove this if statement
+		if (loadManager instanceof OntologyLoadManagerProtegeImpl) {
+
+			
+			
+			
+			
+			try {
+
+				
+				
+				
+				//TODO: remove this if block
+				if (rec.getNcboOntologyVersion().getId() == 3145
+						|| rec.getNcboOntologyVersion().getId() == 4886
+						|| rec.getNcboOntologyVersion().getId() == 13578) {
+					return;
+				}
+
+				
+				
+				
+				status.setId(StatusEnum.STATUS_PARSING.getStatus());
+				ver.setNcboLStatus(status);
+				ncboOntologyVersionDAO.saveOntologyVersion(ver);
+				rec.setNcboLStatus(status);
+				ncboOntologyLoadQueueDAO.saveNcboOntologyLoadQueue(rec);
+
+				loadOntology(ontologyBean);
+
+				status = new NcboLStatus();
+				status.setId(StatusEnum.STATUS_READY.getStatus());
+
+			} catch (Exception e) {
+				status = new NcboLStatus();
+				status.setId(StatusEnum.STATUS_ERROR.getStatus());
+				log.error(e);
+				e.printStackTrace();
+			}
+
+			ver.setNcboLStatus(status);
+			ncboOntologyVersionDAO.saveOntologyVersion(ver);
+
+			rec.setNcboLStatus(status);
+			ncboOntologyLoadQueueDAO.saveNcboOntologyLoadQueue(rec);
+
+			
+			
+			
+			
+			
+			
+			
+			
+		}
 	}
 
 	/**
@@ -109,36 +187,15 @@ public class OntologyLoadSchedulerServiceImpl implements
 				.get(formatHandler);
 		List<String> filenames = ontologyBean.getFilenames();
 
-		
-		
-		
-		
-		
-	
-		// for UMLS, zip file, untar it, pass dir to LexGrid		
+		// for UMLS, zip file, untar it, pass dir to LexGrid
 		// pass zip to LexGrid
-		// looping through the files 
-		
+		// looping through the files
+
 		for (String filename : filenames) {
 			File file = new File(ontologyFilePath + ontologyBean.getFilePath()
 					+ "/" + filename);
 			loadManager.loadOntology(file.toURI(), ontologyBean);
 		}
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
 	}
 
 	/**
