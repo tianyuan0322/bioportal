@@ -98,12 +98,13 @@ public class OntologyServiceImpl implements OntologyService {
 
 	public void createOntology(OntologyBean ontologyBean) {
 				
+		//TODO
 		/* 
 		 * move this to processorService later
 		 * 
 		 * e.g. processorService.create()
 		 */ 
-		// assign new Ontology Id if null.
+		// assign new Ontology Id for new instance
 		generateNextOntologyId(ontologyBean);
 		
 		// assign internal version ID
@@ -115,22 +116,20 @@ public class OntologyServiceImpl implements OntologyService {
 		//generateOutputFilePath(ontologyBean);
 		
 		// upload ontology file
-		uploadOntologyFile(ontologyBean);
+		//uploadOntologyFile(ontologyBean);
 		
 		// create NcboOntologyVersion and NcboOntologyMetadata instance and save it
 		NcboOntologyVersion ontologyVersion = new NcboOntologyVersion();
 		NcboOntologyMetadata ontologyMetadata = new NcboOntologyMetadata();
+				
+		// ncboOntologyVersionDAO.save(ontologyVersion);
+		// populate and save NcboOntologyVersion - get the new instance with OntologyVersionId populated
+		ontologyBean.populateToEntity(ontologyVersion);
+		NcboOntologyVersion newOntologyVersion = ncboOntologyVersionDAO.saveOntologyVersion(ontologyVersion);
 		
-		// populate NcboOntologyVersion and NcboOntologyMetadata instance and save it
-		//ontologyBean.populateToEntity(ontologyVersion);
-		//ontologyBean.populateToEntity(ontologyMetadata);
-		ontologyBean.populateToEntity(ontologyVersion, ontologyMetadata);
-		ncboOntologyVersionDAO.save(ontologyVersion);
-		ncboOntologyMetadataDAO.save(ontologyMetadata);
-		
-		//ncboOntologyVersionDAO.getHibernateTemplate().flush();
-		
-		
+		// populate and save ontologyMetadata
+		ontologyBean.populateToEntity(newOntologyVersion, ontologyMetadata);
+		ncboOntologyMetadataDAO.save(ontologyMetadata);		
 
 	}
 
@@ -146,34 +145,26 @@ public class OntologyServiceImpl implements OntologyService {
 		// upload ontology file
 		uploadOntologyFile(ontologyBean);
 		
-		// get the corresponding NcboOntologyVersion instance using OntologyVersionId 
+		// get the NcboOntologyVersion instance using OntologyVersionId 
 		NcboOntologyVersion ontologyVersion = ncboOntologyVersionDAO.findById(ontologyBean.getId());
 		
-		// findById thing
-		NcboOntologyMetadata ontologyMetadata = (NcboOntologyMetadata) ontologyVersion.getNcboOntologyMetadatas().toArray()[0];//new NcboOntologyMetadata();
+		// get NcboOntologyMetadata instance from ontologyVersion
+		// since it is one-to-one, there is only one ontologyMetadata record per ontologyVersion record
+		NcboOntologyMetadata ontologyMetadata = (NcboOntologyMetadata) ontologyVersion.getNcboOntologyMetadatas().toArray()[0];
 		
-		// if [update] 
-		// Get NcboOntologyMetadata instance from ontologyVersion instance
-		/*
-		Set <NcboOntologyMetadata> ontologyMetadataSet = ontologyVersion.getNcboOntologyMetadatas();
-		        Iterator <NcboOntologyMetadata> iterator = ontologyMetadataSet.iterator();
-		
-		// since it is one-to-one, there is only one metadata record per ontologyversion record
-        if (iterator.hasNext()) {
-        	ontologyMetadata = (NcboOntologyMetadata)iterator.next();        	
-        }
-		*/
-		// update NcboOntologyVersion and NcboOntologyMetadata instance and save it
+		// populate NcboOntologyVersion and NcboOntologyMetadata instance 
 		if (ontologyVersion != null && ontologyMetadata != null) {
-			ontologyBean.populateToEntity(ontologyVersion);
-//			NcboOntologyVersion newVersion = ncboOntologyVersionDAO.saveOntologyVersion(ontologyVersion);
 			
+			// populate ontologyVersion
+			ontologyBean.populateToEntity(ontologyVersion);
+			
+			// populate ontologyMetadata
 			ontologyBean.populateToEntity(ontologyVersion, ontologyMetadata);
 			
+			// save
 			ncboOntologyVersionDAO.save(ontologyVersion);
 			ncboOntologyMetadataDAO.save(ontologyMetadata);
 			
-			//else System.out.println("************ontologyMetadata obj is NULL. ontologyBean.getId()=" + ontologyBean.getId());
 		}
 		else System.out.println("************ontologyVersion obj or Metadata obj is NULL. ontologyBean.getId()=" + ontologyBean.getId());
 		

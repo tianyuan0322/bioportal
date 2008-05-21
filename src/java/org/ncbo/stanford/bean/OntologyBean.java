@@ -122,18 +122,6 @@ public class OntologyBean {
 */		
 		// --------------------------------------------------------------------------------
 		// now populate NcboOntologyMetadata
-		// if [create]
-		if (metadata == null) {
-			metadata = new NcboOntologyMetadata();
-			/*
-			// TODO - verify this...
-			NcboOntologyVersion ncboOntologyVersion = new NcboOntologyVersion();
-			ncboOntologyVersion.setInternalVersionNumber(this.getInternalVersionNumber());
-			metadata.setNcboOntologyVersion(ncboOntologyVersion);
-			*/
-			
-		}        
-        // [update]
         if (metadata != null) {
 
         	metadata.setNcboOntologyVersion(ontologyVersion);
@@ -148,8 +136,6 @@ public class OntologyBean {
     		metadata.setPublication(this.getPublication());
     		metadata.setUrn(this.getUrn());
         }
-        
-        //ontologyVersion.getNcboOntologyMetadatas().add(metadata);
 		
 	}	
 	
@@ -182,6 +168,7 @@ public class OntologyBean {
 		ontologyVersion.setNcboUser(ncboUser);
 
 		ontologyVersion.setVersionNumber(this.getVersionNumber());
+		ontologyVersion.setInternalVersionNumber(this.getInternalVersionNumber());
 		ontologyVersion.setIsCurrent(this.getIsCurrent());
 		ontologyVersion.setIsRemote(this.getIsRemote());
 		ontologyVersion.setIsReviewed(this.getIsReviewed());
@@ -194,43 +181,10 @@ public class OntologyBean {
 		ontologyVersion.setNcboLStatus(status);
 	
 		ontologyVersion.setFilePath(this.getFilePath());
-		
-		System.out.println("***ontologyVersion = " + ontologyVersion.getVersionNumber());
-		
-		//Set <NcboOntologyMetadata> ontologyMetadataSet = ontologyVersion.getNcboOntologyMetadatas();
-			
+					
 	}
 	
 	
-	/**
-	 * Populates the OntologyBean to a NcboOntologyMetadata Entity
-	 * 
-	 * @param ncboOntology
-	 */
-	/*
-	public void populateToEntity(NcboOntologyMetadata metadata) {
-				
-		
-		// TODO - verify this...
-		NcboOntologyVersion ncboOntologyVersion = new NcboOntologyVersion();
-		ncboOntologyVersion.setInternalVersionNumber(this.getInternalVersionNumber());
-		metadata.setNcboOntologyVersion(ncboOntologyVersion);
-		
-		metadata.setContactEmail(this.getContactEmail());
-		metadata.setContactName(this.getContactName());
-		metadata.setDisplayLabel(this.getDisplayLabel());
-		metadata.setDocumentation(this.getDocumentation());
-		metadata.setFormat(this.getFormat());
-		metadata.setHomepage(this.getHomepage());
-		metadata.setIsFoundry(this.getIsFoundry());
-		metadata.setPublication(this.getPublication());
-		metadata.setUrn(this.getUrn());
-		
-		
-		System.out.println("***metadata ContactEmail = " + metadata.getContactEmail());
-		System.out.println("***metadata ContactName = " + metadata.getContactName());
-	}
-	*/
 	
 	/**
 	 * Populates the OntologyBean to a NcboOntologyFile Entity

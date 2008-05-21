@@ -62,7 +62,7 @@ public class OntologyServiceTest extends AbstractBioPortalTest {
 
 	}
 		
-/*
+
 	public void testCreateOntology() {
 		
 		System.out.println ("OntologyServiceTest: testCreateOntology()........................BEGIN");
@@ -78,8 +78,8 @@ public class OntologyServiceTest extends AbstractBioPortalTest {
 		
 		System.out.println ("OntologyServiceTest: testCreateOntology().........................DONE");
 	}
-*/		
-
+		
+/*
 	public void testUpdateOntology() {
 		
 		System.out.println ("UserServiceTest: testUpdateUsers().......................BEGIN");
@@ -107,7 +107,7 @@ public class OntologyServiceTest extends AbstractBioPortalTest {
 		System.out.println ("UserServiceTest: testUpdateUsers()........................DONE");
 		
 	}
-	
+*/	
 	
 /*	
 	public void testDeleteUser() {
@@ -139,16 +139,47 @@ public class OntologyServiceTest extends AbstractBioPortalTest {
 		
 		bean.setUserId(12564);
 		bean.setVersionNumber("5");
+		bean.setInternalVersionNumber(new Integer(1));
+		bean.setStatusId(new Integer(1));
+		//bean.setVersionStatus("waiting");
 		bean.setIsCurrent(new Byte("1"));
 		bean.setIsRemote(new Byte("0"));
 		bean.setIsReviewed(new Byte("1"));
 		bean.setDateCreated(new Date());
 		bean.setDateReleased(new Date());
-		bean.setContactEmail("email@email.com");
-		bean.setContactName("Name");
+		bean.setContactEmail("test111@email.com");
+		bean.setContactName("TesterFirst TesterLastName");
 		bean.setDisplayLabel("Pizza Ontology");
 		bean.setFormat("OWL-DL");
 		bean.setIsFoundry(new Byte("0"));
+		
+		/*
+		this.setId(ncboOntology.getId());
+		this.setOntologyId(ncboOntology.getOntologyId());
+		this.setParentId(ncboOntology.getParentId());
+		this.setUserId(ncboOntology.getUserId());
+		this.setInternalVersionNumber(ncboOntology.getInternalVersionNumber());
+		this.setVersionNumber(ncboOntology.getVersionNumber());
+		this.setVersionStatus(ncboOntology.getVersionStatus());
+		this.setFilePath(ncboOntology.getFilePath());
+		this.setIsCurrent(ncboOntology.getIsCurrent());
+		this.setIsRemote(ncboOntology.getIsRemote());
+		this.setIsReviewed(ncboOntology.getIsReviewed());
+		this.setStatusId(ncboOntology.getStatusId());
+		this.setDateCreated(ncboOntology.getDateCreated());
+		this.setDateReleased(ncboOntology.getDateReleased());
+		this.setDisplayLabel(ncboOntology.getDisplayLabel());
+		this.setFormat(ncboOntology.getFormat());
+		this.setContactName(ncboOntology.getContactName());
+		this.setContactEmail(ncboOntology.getContactEmail());
+		this.setHomepage(ncboOntology.getHomepage());
+		this.setDocumentation(ncboOntology.getDocumentation());
+		this.setPublication(ncboOntology.getPublication());
+		this.setUrn(ncboOntology.getUrn());
+		this.setCodingScheme(ncboOntology.getCodingScheme());
+		this.setIsFoundry(ncboOntology.getIsFoundry());
+		*/
+		
 		
 		return bean;
 	}
