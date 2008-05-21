@@ -151,7 +151,7 @@
 
   <tx:advice id="txAdvice" transaction-manager="transactionManager">
     <tx:attributes>
-      <tx:method name="processOntologyLoad" propagation="NOT_SUPPORTED"/>
+      <tx:method name="parseOntologies" propagation="NOT_SUPPORTED"/>
       <tx:method name="processRecord" propagation="REQUIRES_NEW"/>
     </tx:attributes>
   </tx:advice>
@@ -549,7 +549,7 @@
 	<bean id="schedulerJobDetailBean" 
 		class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
 		<property name="targetObject" ref="ontologyLoadSchedulerService" />
-		<property name="targetMethod" value="processOntologyLoad" />
+		<property name="targetMethod" value="parseOntologies" />
 		<property name="concurrent" value="false" />
 	</bean>
 
