@@ -4,10 +4,17 @@ import org.ncbo.stanford.AbstractBioPortalTest;
 
 public class OntologyLoadSchedulerServiceTest extends AbstractBioPortalTest {
 
-	public void testProcessOntologyLoad() throws Exception {
+	public void testParseOntology() throws Exception {
 		OntologyLoadSchedulerService service = (OntologyLoadSchedulerService) applicationContext
 				.getBean("ontologyLoadSchedulerService",
 						OntologyLoadSchedulerService.class);
-		service.processOntologyLoad();
+		service.parseOntology(4571);
+	}
+
+	public void testParseOntologies() throws Exception {
+		OntologyLoadSchedulerService service = (OntologyLoadSchedulerService) applicationContext
+				.getBean("ontologyLoadSchedulerService",
+						OntologyLoadSchedulerService.class);
+		service.parseOntologies();
 	}
 }
