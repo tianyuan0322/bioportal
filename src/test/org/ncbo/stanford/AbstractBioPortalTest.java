@@ -29,6 +29,7 @@ public class AbstractBioPortalTest extends
 
 	protected void onTearDown() {
 		TransactionSynchronizationManager.unbindResource(sessionFactory);
+		session.flush();
 		SessionFactoryUtils.releaseSession(session, sessionFactory);
 	}
 
