@@ -29,8 +29,7 @@ import edu.stanford.smi.protegex.owl.model.OWLModel;
  * 
  */
 public class OntologyLoadManagerProtegeImpl extends
-		AbstractOntologyManagerProtege implements
-		OntologyLoadManager {
+		AbstractOntologyManagerProtege implements OntologyLoadManager {
 
 	private static final Log log = LogFactory
 			.getLog(OntologyLoadManagerProtegeImpl.class);
@@ -55,8 +54,8 @@ public class OntologyLoadManagerProtegeImpl extends
 	 *                catch all for all other ontlogy file load errors.
 	 */
 	public void loadOntology(URI ontologyUri, OntologyBean ontology)
-			throws FileNotFoundException, Exception {
-		File ontologyFile = new File(ontologyUri.toString());
+			throws Exception {
+		File ontologyFile = new File(ontologyUri.getPath());
 
 		if (ontologyFile == null) {
 			log.error("Missing ontology file to load.");
