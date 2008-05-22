@@ -55,6 +55,7 @@ public class OntologyLoadProcessorServiceImpl implements
 	 * @param ontologyBean
 	 * @throws IOException
 	 */
+	@SuppressWarnings("unchecked")
 	@Transactional (rollbackFor = IOException.class)
 	public NcboOntologyVersion processOntologyLoad(FileHandler ontologyFile,
 			OntologyBean ontologyBean) throws Exception {
@@ -118,10 +119,8 @@ public class OntologyLoadProcessorServiceImpl implements
 		metadata.setUrn(ontologyBean.getUrn());
 		metadata.setNcboOntologyVersion(newOntologyVersion);
 		
-		
 		newOntologyVersion.getNcboOntologyMetadatas().add(metadata);
-		ncboOntologyMetadataDAO.save(metadata);
-		
+		ncboOntologyMetadataDAO.save(metadata);	
 
 		for (Integer categoryId : ontologyBean.getCategoryIds()) {
 			NcboOntologyCategory ontologyCategory = new NcboOntologyCategory();
@@ -144,9 +143,10 @@ public class OntologyLoadProcessorServiceImpl implements
 		loadQueue.setNcboOntologyVersion(newOntologyVersion);
 		loadQueue.setNcboLStatus(status);
 		loadQueue.setDateCreated(Calendar.getInstance().getTime());
+		
 		ncboOntologyLoadQueueDAO.save(loadQueue);
 		newOntologyVersion.getNcboOntologyLoadQueues().add(loadQueue);
-		ncboOntologyMetadataDAO.getSessionFactory().getCurrentSession().flush();
+		
 		return newOntologyVersion;
 	}
 
