@@ -41,6 +41,13 @@
 		</property>
 	</bean>
 	
+	<bean id="pathRestlet"
+		class="org.ncbo.stanford.view.rest.restlet.path.PathRestlet">
+		<property name="conceptService">
+			<ref bean="conceptService" />
+		</property>
+	</bean>
+	
 	<bean id="ontologiesRestlet"
 		class="org.ncbo.stanford.view.rest.restlet.ontology.OntologiesRestlet">
 		<property name="ontologyService">
@@ -98,6 +105,9 @@
 						</entry>
 						<entry key="/user/{user}">
 							<ref local="userRestlet" />
+						</entry>
+						<entry key="/path/{ontologyVersionId}/{source}/{target}">
+							<ref local="pathRestlet" />
 						</entry>
 					</map>
 				</constructor-arg>
