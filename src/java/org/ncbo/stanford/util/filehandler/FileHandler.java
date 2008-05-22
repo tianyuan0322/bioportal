@@ -21,10 +21,6 @@ public interface FileHandler {
 	 * @throws Exception
 	 */
 	public void processOntologyFileUpload(String ontologyFilePath,
-			NcboOntologyVersion ontologyVersion) throws Exception;
-
-	// added by cyoun
-	public void processOntologyFileUpload(String ontologyFilePath,
 			OntologyBean ontologyBean) throws Exception;
 	
 	/**
@@ -43,10 +39,6 @@ public interface FileHandler {
 	 * @return
 	 */
 	public String getOntologyFilePath(String ontologyFilePath,
-			NcboOntologyVersion ontologyVersion, String filename);
-
-	// added by cyoun
-	public String getOntologyFilePath(String ontologyFilePath,
 			OntologyBean ontologyBean, String filename);
 	
 	/**
@@ -57,10 +49,6 @@ public interface FileHandler {
 	 * @return
 	 */
 	public String getFullOntologyDirPath(String ontologyFilePath,
-			NcboOntologyVersion ontologyVersion);
-
-	// added by cyoun
-	public String getFullOntologyDirPath(String ontologyFilePath,
 			OntologyBean ontologyBean);
 	
 	/**
@@ -69,8 +57,5 @@ public interface FileHandler {
 	 * @param ontologyVersion
 	 * @return
 	 */
-	public String getOntologyDirPath(NcboOntologyVersion ontologyVersion);
-	
-	// added by cyoun
 	public String getOntologyDirPath(OntologyBean ontologyBean);
 }
