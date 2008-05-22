@@ -70,7 +70,14 @@ public class ConceptServiceImpl implements ConceptService {
 
 	public ClassBean findPathToRoot(Integer ontologyId, String conceptId)
 			throws Exception {
-		return new ClassBean();
+		NcboOntology ontology = ncboOntologyVersionDAO
+		.findOntologyVersion(ontologyId);
+		String formatHandler = ontologyFormatHandlerMap.get(ontology
+			.getFormat());
+		OntologyRetrievalManager manager = ontologyRetrievalHandlerMap
+			.get(formatHandler);
+
+		return manager.findPathToRoot(conceptId,ontology);
 	}
 
 	/*

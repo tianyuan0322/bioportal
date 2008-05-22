@@ -38,4 +38,7 @@ public interface OntologyRetrievalManager {
 	public List<SearchResultBean> findConceptNameStartsWith(
 			List<NcboOntology> ontologyVersions, String query,
 			boolean includeObsolete, int maxToReturn);
+	
+	public ClassBean findPathToRoot(String conceptId,
+			NcboOntology ontologyVersion);
 }

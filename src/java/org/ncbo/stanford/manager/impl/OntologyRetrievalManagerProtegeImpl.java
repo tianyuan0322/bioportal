@@ -347,25 +347,33 @@ public class OntologyRetrievalManagerProtegeImpl extends
 	// }
 	//
 
-	private ClassBean buildPath(Collection nodes) {
-
-		ClassBean clsBean = new ClassBean();
-
-		for (Object nodeObj : nodes) {
+	private ClassBean buildPath(Collection nodes){
+		
+		ClassBean rootBean = null;
+		ClassBean currentBean = null;
+		for(Object nodeObj :nodes){
+			ClassBean clsBean = new ClassBean();
 			Cls node = (Cls) nodeObj;
 			clsBean.setId(node.getName());
+			clsBean.setLabel(node.getBrowserText());
+			if(currentBean!=null){
+				currentBean.addRelation(ApplicationConstants.SUB_CLASS, clsBean);
+			}else{
+				rootBean=clsBean;
+			}
+			currentBean=clsBean;
 		}
-
-		return new ClassBean();
+		
+		return rootBean;
 	}
-
-	private ClassBean createLightBean(Cls cls) {
+	
+	private ClassBean createLightBean(Cls cls){
 		ClassBean bean = new ClassBean();
-
+		
 		bean.setId(cls.getName());
-		bean.setLabel(cls.getName());
+		bean.setLabel(cls.getBrowserText());
 		return bean;
-
+		
 	}
 
 	private Collection<ClassBean> convertClasses(Collection<Cls> protegeClses,
@@ -384,7 +392,7 @@ public class OntologyRetrievalManagerProtegeImpl extends
 		boolean isOwl = pConcept.getKnowledgeBase() instanceof OWLModel;
 		ClassBean classBean = new ClassBean();
 		classBean.setId(pConcept.getName());
-		classBean.setLabel(pConcept.getName());
+		classBean.setLabel(pConcept.getBrowserText());
 
 		// add properties
 		Collection<Slot> slots;
