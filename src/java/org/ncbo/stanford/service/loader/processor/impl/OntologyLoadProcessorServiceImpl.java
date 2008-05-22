@@ -56,7 +56,7 @@ public class OntologyLoadProcessorServiceImpl implements
 	 * @throws IOException
 	 */
 	@SuppressWarnings("unchecked")
-	@Transactional (rollbackFor = IOException.class)
+	@Transactional(rollbackFor = IOException.class)
 	public NcboOntologyVersion processOntologyLoad(FileHandler ontologyFile,
 			OntologyBean ontologyBean) throws Exception {
 		NcboOntologyVersion ontologyVersion = new NcboOntologyVersion();
@@ -96,7 +96,7 @@ public class OntologyLoadProcessorServiceImpl implements
 		ontologyVersion.setDateReleased(ontologyBean.getDateReleased());
 
 		ontologyVersion.setFilePath(ontologyFile
-				.getOntologyDirPath(ontologyVersion));
+				.getOntologyDirPath(ontologyBean));
 
 		NcboLStatus status = new NcboLStatus();
 		status.setId(StatusEnum.STATUS_WAITING.getStatus());
@@ -104,8 +104,7 @@ public class OntologyLoadProcessorServiceImpl implements
 		NcboOntologyVersion newOntologyVersion = ncboOntologyVersionDAO
 				.saveOntologyVersion(ontologyVersion);
 
-		ontologyFile.processOntologyFileUpload(ontologyFilePath,
-				ontologyVersion);
+		ontologyFile.processOntologyFileUpload(ontologyFilePath, ontologyBean);
 
 		NcboOntologyMetadata metadata = new NcboOntologyMetadata();
 		metadata.setContactEmail(ontologyBean.getContactEmail());
@@ -118,9 +117,9 @@ public class OntologyLoadProcessorServiceImpl implements
 		metadata.setPublication(ontologyBean.getPublication());
 		metadata.setUrn(ontologyBean.getUrn());
 		metadata.setNcboOntologyVersion(newOntologyVersion);
-		
+
 		newOntologyVersion.getNcboOntologyMetadatas().add(metadata);
-		ncboOntologyMetadataDAO.save(metadata);	
+		ncboOntologyMetadataDAO.save(metadata);
 
 		for (Integer categoryId : ontologyBean.getCategoryIds()) {
 			NcboOntologyCategory ontologyCategory = new NcboOntologyCategory();
@@ -130,9 +129,10 @@ public class OntologyLoadProcessorServiceImpl implements
 			cat.setId(categoryId);
 			ontologyCategory.setNcboLCategory(cat);
 			ncboOntologyCategoryDAO.save(ontologyCategory);
-			newOntologyVersion.getNcboOntologyCategories().add(ontologyCategory);
+			newOntologyVersion.getNcboOntologyCategories()
+					.add(ontologyCategory);
 		}
-      
+
 		NcboOntologyFile ontologyFileRec = new NcboOntologyFile();
 		ontologyFileRec.setFilename(ontologyFile.getName());
 		ontologyFileRec.setNcboOntologyVersion(ontologyVersion);
@@ -143,10 +143,10 @@ public class OntologyLoadProcessorServiceImpl implements
 		loadQueue.setNcboOntologyVersion(newOntologyVersion);
 		loadQueue.setNcboLStatus(status);
 		loadQueue.setDateCreated(Calendar.getInstance().getTime());
-		
+
 		ncboOntologyLoadQueueDAO.save(loadQueue);
 		newOntologyVersion.getNcboOntologyLoadQueues().add(loadQueue);
-		
+
 		return newOntologyVersion;
 	}
 
