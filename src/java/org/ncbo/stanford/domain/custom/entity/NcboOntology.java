@@ -42,6 +42,7 @@ public class NcboOntology {
 	private Byte isFoundry;
 
 	private List<String> filenames = new ArrayList<String>(0);
+	private List<Integer> categoryIds = new ArrayList<Integer>(0);
 
 	// Property accessors
 
@@ -618,5 +619,37 @@ public class NcboOntology {
 	 */
 	public void setFilenames(List<String> filenames) {
 		this.filenames = filenames;
+	}
+
+	/**
+	 * @return the categoryIds
+	 */
+	public List<Integer> getCategoryIds() {
+		return categoryIds;
+	}
+
+	/**
+	 * @param categoryIds the categoryIds to set
+	 */
+	public void setCategoryIds(List<Integer> categoryIds) {
+		this.categoryIds = categoryIds;
+	}
+	
+	/**
+	 * @param arg0
+	 * @return
+	 * @see java.util.List#add(java.lang.Object)
+	 */
+	public boolean addCategoryId(Integer categoryId) {
+		return categoryIds.add(categoryId);
+	}
+
+	/**
+	 * @param c
+	 * @return
+	 * @see java.util.List#addAll(java.util.Collection)
+	 */
+	public boolean addcategoryIds(Collection<? extends Integer> c) {
+		return categoryIds.addAll(c);
 	}
 }

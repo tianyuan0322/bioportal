@@ -76,7 +76,8 @@ public class OntologyBean {
 		this.setCodingScheme(ncboOntology.getCodingScheme());
 		this.setIsFoundry(ncboOntology.getIsFoundry());
 		
-		addFilenames(ncboOntology.getFilenames());		
+		addFilenames(ncboOntology.getFilenames());	
+		addCategoryIds(ncboOntology.getCategoryIds());
 	}
 
 	/**
@@ -572,10 +573,19 @@ public class OntologyBean {
 	 * @return
 	 * @see java.util.List#add(java.lang.Object)
 	 */
-	public boolean addCategory(Integer arg0) {
+	public boolean addCategoryId(Integer arg0) {
 		return categoryIds.add(arg0);
 	}
 
+	/**
+	 * @param c
+	 * @return
+	 * @see java.util.List#addAll(java.util.Collection)
+	 */
+	public boolean addCategoryIds(Collection<? extends Integer> c) {
+		return categoryIds.addAll(c);
+	}	
+	
 	/**
 	 * @param o
 	 * @return
