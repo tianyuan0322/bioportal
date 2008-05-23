@@ -77,7 +77,7 @@ public class ConceptServiceImpl implements ConceptService {
 		OntologyRetrievalManager manager = ontologyRetrievalHandlerMap
 			.get(formatHandler);
 
-		return manager.findPathToRoot(conceptId,ontology);
+		return manager.findPathToRoot(ontology, conceptId);
 	}
 
 	/*

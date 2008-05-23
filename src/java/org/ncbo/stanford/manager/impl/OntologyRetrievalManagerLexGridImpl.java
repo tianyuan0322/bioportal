@@ -141,7 +141,7 @@ public class OntologyRetrievalManagerLexGridImpl extends
 		return null;
 	}
 
-	public List<ClassBean> findPathToRoot(NcboOntology ncboOntology,
+	public ClassBean findPathToRoot(NcboOntology ncboOntology,
 			String conceptId) throws Exception {
 		String urnAndVersion = ncboOntology.getCodingScheme();
 		String urnVersionArray[] = splitUrnAndVersion(urnAndVersion);
@@ -163,8 +163,7 @@ public class OntologyRetrievalManagerLexGridImpl extends
 		ClassBean conceptClass = findConcept(ncboOntology, conceptId);
 		ArrayList<ClassBean> classBeans = createClassBeanArray(associations,
 				conceptClass);
-
-		return classBeans;
+		return createThingClassBean(classBeans);
 	}
 
 	public List<ClassBean> findParent(NcboOntology ncboOntology,
@@ -540,10 +539,17 @@ public class OntologyRetrievalManagerLexGridImpl extends
 		classBean.setLabel("THING");
 		ArrayList<ClassBean> classBeans = createClassBeanArray(list);
 		classBean.addRelation("hasSubType", classBeans);
-
 		return classBean;
 	}
 
+	private ClassBean createThingClassBean(ArrayList<ClassBean> classBeans) {
+		ClassBean classBean = new ClassBean();
+		classBean.setId("THING");
+		classBean.setLabel("THING");
+		classBean.addRelation("hasSubType", classBeans);
+		return classBean;
+	}
+	
 	private ArrayList<ClassBean> createClassBeanArray(
 			ResolvedConceptReferenceList list) {
 		ArrayList<ClassBean> classBeans = new ArrayList<ClassBean>();
@@ -741,6 +747,7 @@ public class OntologyRetrievalManagerLexGridImpl extends
 					.getAssociatedConcept(i);
 			if (assocConcept != null) {
 				ClassBean classBean = createClassBean(assocConcept);
+				classBeans.add(classBean);
 				// Find and recurse printing for next batch ...
 				AssociationList nextLevel = assocConcept.getSourceOf();
 				if (nextLevel != null && nextLevel.getAssociationCount() != 0)
