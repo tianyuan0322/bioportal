@@ -4,8 +4,12 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
 import java.util.List;
+import java.util.HashSet;
 
 import org.ncbo.stanford.domain.custom.entity.NcboOntology;
+import org.ncbo.stanford.domain.generated.NcboLCategory;
+import org.ncbo.stanford.domain.generated.NcboOntologyCategory;
+import org.ncbo.stanford.domain.generated.NcboOntologyFile;
 import org.ncbo.stanford.domain.generated.NcboLStatus;
 import org.ncbo.stanford.domain.generated.NcboOntologyMetadata;
 import org.ncbo.stanford.domain.generated.NcboOntologyVersion;
@@ -38,8 +42,7 @@ public class OntologyBean {
 	private String codingScheme;
 	private Byte isFoundry;
 	private List<Integer> categoryIds = new ArrayList<Integer>(0);
-	private List<String> filenames = new ArrayList<String>(0);
-	
+	private List<String> filenames = new ArrayList<String>(0);	
 
 	/**
 	 * Populates the OntologyBean with data from a NcboOntology View
@@ -77,48 +80,14 @@ public class OntologyBean {
 	}
 
 	/**
-	 * Populates the OntologyBean to a NcboOntologyVersion Entity
+	 * Populates a NcboOntologyMetadata Entity from this ontologyBean.
+	 * OntologyVersion should have been populated from OntologyBean before making this call.
 	 * 
 	 * @param ontologyVersion
 	 */
 
-	public void populateToEntity(NcboOntologyVersion ontologyVersion, NcboOntologyMetadata metadata) {
-/*
-		// all the business logic regarding OntologyVersionId and OntologyId is in OntologyBean layer
-		ontologyVersion.setId(this.getId());
-		ontologyVersion.setOntologyId(this.getOntologyId());
-		
-		// Set Parent Object
-		Integer parentId = this.getParentId();
+	public void populateToMetadataEntity(NcboOntologyMetadata metadata, NcboOntologyVersion ontologyVersion) {
 
-		if (parentId != null) {
-			NcboOntologyVersion parentOntology = new NcboOntologyVersion();
-			parentOntology.setId(parentId);
-			
-			ontologyVersion.setNcboOntologyVersion(parentOntology);
-		}
-		
-		// Set User Object
-		NcboUser ncboUser = new NcboUser();
-		ncboUser.setId(this.getUserId());
-		ontologyVersion.setNcboUser(ncboUser);
-
-		ontologyVersion.setVersionNumber(this.getVersionNumber());
-		ontologyVersion.setIsCurrent(this.getIsCurrent());
-		ontologyVersion.setIsRemote(this.getIsRemote());
-		ontologyVersion.setIsReviewed(this.getIsReviewed());
-		ontologyVersion.setDateCreated(this.getDateCreated());
-		ontologyVersion.setDateReleased(this.getDateReleased());
-	
-		// NcboStatus Object
-		NcboLStatus status = new NcboLStatus();
-		status.setId(this.getStatusId());
-		ontologyVersion.setNcboLStatus(status);
-		
-		ontologyVersion.setFilePath(this.getFilePath());
-*/		
-		// --------------------------------------------------------------------------------
-		// now populate NcboOntologyMetadata
         if (metadata != null) {
 
         	metadata.setNcboOntologyVersion(ontologyVersion);
@@ -138,12 +107,12 @@ public class OntologyBean {
 	
 
 	/**
-	 * Populates the OntologyBean to a NcboOntologyVersion Entity
+	 * Populates NcboOntologyVersion Entity from this OntologyBean
 	 * 
 	 * @param ncboOntology
 	 */
 	
-	public void populateToEntity(NcboOntologyVersion ontologyVersion) {
+	public void populateToVersionEntity(NcboOntologyVersion ontologyVersion) {
 
 		// all the business logic regarding OntologyVersionId and OntologyId is in OntologyBean layer
 		ontologyVersion.setId(this.getId());
@@ -177,43 +146,71 @@ public class OntologyBean {
 		status.setId(this.getStatusId());
 		ontologyVersion.setNcboLStatus(status);
 	
+		// Set FilePath
 		ontologyVersion.setFilePath(this.getFilePath());
-					
+		
+		
+//		TODO - remove this???
+		/*
+		// Set FileNames
+		ontologyVersion.setNcboOntologyFiles( new HashSet<String>(this.getFilenames()));
+		
+		// Set Categories
+		ontologyVersion.setNcboOntologyCategories(new HashSet<Integer>(this.getCategoryIds()));
+		*/
+				
 	}
 	
 	
 	
 	/**
-	 * Populates the OntologyBean to a NcboOntologyFile Entity
+	 * Populates the OntologyBean to a NcboOntologyFile Entity.
+	 * OntologyVersion should have been populated from OntologyBean before making this call.
 	 * 
 	 * @param ncboOntology
 	 */
-	/*
-	public void populateToEntity(List<NcboOntologyFile> ontologyFileList) {
+	
+	public void populateToFileEntity(List<NcboOntologyFile> ontologyFileList, NcboOntologyVersion ontologyVersion) {
 				
-		
 		List<String> fileNameList = this.getFilenames();
-
-
 		for (String fileName : fileNameList) {
 			
 			NcboOntologyFile ontologyFile = new NcboOntologyFile();
 			ontologyFile.setFilename(fileName);
-			
-			// TODO - validate this!!!
-			NcboOntologyVersion ontologyVersion = new NcboOntologyVersion();
-			this.populateToEntity(ontologyVersion);
 			ontologyFile.setNcboOntologyVersion(ontologyVersion);
 			
 			ontologyFileList.add(ontologyFile);
-
 		}
 		
 	}
-	*/
 	
-	// TODO - populate to Category - NcboOntologyCategory
+	
+	/**
+	 * Populates the OntologyBean to a NcboOntologyCategory Entity.
+	 * OntologyVersion should have been populated from OntologyBean before making this call.
+	 * 
+	 * @param ncboOntology
+	 */
+	
+	public void populateToCategoryEntity(List<NcboOntologyCategory> ontologyCategoryList, NcboOntologyVersion ontologyVersion) {
+				
+		List<Integer> categoryIdList = this.getCategoryIds();
+		for (Integer categoryId : categoryIdList) {
+			
+			NcboOntologyCategory ontologyCategory = new NcboOntologyCategory();
+			
+			NcboLCategory ncboLCategory = new NcboLCategory();
+			ncboLCategory.setId(categoryId);
+			ontologyCategory.setNcboLCategory(ncboLCategory);
+			ontologyCategory.setNcboOntologyVersion(ontologyVersion);
+			
+			ontologyCategoryList.add(ontologyCategory);
+		}
+		
+	}
+	
 	// TODO - populate to loadQueue - NcboOntologyLoadQueue
+	
 	
 	public String toString() {
 		return "Id: " + getId() + " Name: " + getDisplayLabel() + " Ver: "
@@ -637,6 +634,5 @@ public class OntologyBean {
 	public void setStatusId(Integer statusId) {
 		this.statusId = statusId;
 	}
-
 
 }

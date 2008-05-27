@@ -9,10 +9,15 @@ import java.util.Set;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.ncbo.stanford.bean.OntologyBean;
+import org.ncbo.stanford.domain.custom.dao.CustomNcboOntologyCategoryDAO;
+import org.ncbo.stanford.domain.custom.dao.CustomNcboOntologyFileDAO;
 import org.ncbo.stanford.domain.custom.dao.CustomNcboOntologyMetadataDAO;
 import org.ncbo.stanford.domain.custom.dao.CustomNcboOntologyVersionDAO;
 import org.ncbo.stanford.domain.custom.dao.CustomNcboSeqOntologyIdDAO;
 import org.ncbo.stanford.domain.custom.entity.NcboOntology;
+import org.ncbo.stanford.domain.generated.NcboLCategory;
+import org.ncbo.stanford.domain.generated.NcboOntologyFile;
+import org.ncbo.stanford.domain.generated.NcboOntologyCategory;
 import org.ncbo.stanford.domain.generated.NcboOntologyMetadata;
 import org.ncbo.stanford.domain.generated.NcboOntologyVersion;
 import org.ncbo.stanford.service.ontology.OntologyService;
@@ -25,6 +30,8 @@ public class OntologyServiceImpl implements OntologyService {
 
 	private static final Log log = LogFactory.getLog(OntologyServiceImpl.class);
 
+	private CustomNcboOntologyCategoryDAO ncboOntologyCategoryDAO;
+	private CustomNcboOntologyFileDAO ncboOntologyFileDAO;
 	private CustomNcboOntologyMetadataDAO ncboOntologyMetadataDAO;
 	private CustomNcboOntologyVersionDAO ncboOntologyVersionDAO;
 	private CustomNcboSeqOntologyIdDAO ncboSeqOntologyIdDAO;
@@ -97,39 +104,55 @@ public class OntologyServiceImpl implements OntologyService {
 	}
 
 	public void createOntology(OntologyBean ontologyBean) {
-				
-		//TODO
-		/* 
+
+		// TODO
+		/*
 		 * move this to processorService later
 		 * 
 		 * e.g. processorService.create()
-		 */ 
+		 */
 		// assign new Ontology Id for new instance
 		generateNextOntologyId(ontologyBean);
-		
+
 		// assign internal version ID
 		generateInternalVersionNumber(ontologyBean);
-		
-		
+
 		// obsolete - moved inside uploadOntologyFile()
 		// assign output file path
-		//generateOutputFilePath(ontologyBean);
-		
+		// generateOutputFilePath(ontologyBean);
+
 		// upload ontology file
-		//uploadOntologyFile(ontologyBean);
-		
-		// create NcboOntologyVersion and NcboOntologyMetadata instance and save it
+		uploadOntologyFile(ontologyBean);
+
+		// create new instances
 		NcboOntologyVersion ontologyVersion = new NcboOntologyVersion();
 		NcboOntologyMetadata ontologyMetadata = new NcboOntologyMetadata();
-				
-		// ncboOntologyVersionDAO.save(ontologyVersion);
-		// populate and save NcboOntologyVersion - get the new instance with OntologyVersionId populated
-		ontologyBean.populateToEntity(ontologyVersion);
-		NcboOntologyVersion newOntologyVersion = ncboOntologyVersionDAO.saveOntologyVersion(ontologyVersion);
-		
-		// populate and save ontologyMetadata
-		ontologyBean.populateToEntity(newOntologyVersion, ontologyMetadata);
-		ncboOntologyMetadataDAO.save(ontologyMetadata);		
+		ArrayList<NcboOntologyFile> ontologyFileList = new ArrayList<NcboOntologyFile>();
+		ArrayList<NcboOntologyCategory> ontologyCategoryList = new ArrayList<NcboOntologyCategory>();
+
+		// 1. <ontologyVersion> - populate and save : get the new instance with
+		// OntologyVersionId populated
+		ontologyBean.populateToVersionEntity(ontologyVersion);
+		NcboOntologyVersion newOntologyVersion = ncboOntologyVersionDAO
+				.saveOntologyVersion(ontologyVersion);
+
+		// 2. ontologyMetadata - populate and save
+		ontologyBean.populateToMetadataEntity(ontologyMetadata,
+				newOntologyVersion);
+		ncboOntologyMetadataDAO.save(ontologyMetadata);
+
+		// 3. <ontologyFile> - populate and save
+		ontologyBean.populateToFileEntity(ontologyFileList, newOntologyVersion);
+		for (NcboOntologyFile ontologyFile : ontologyFileList) {
+			ncboOntologyFileDAO.save(ontologyFile);
+		}
+
+		// 4. <ontologyCategory> - populate and save
+		ontologyBean.populateToCategoryEntity(ontologyCategoryList,
+				newOntologyVersion);
+		for (NcboOntologyCategory ontologyCategory : ontologyCategoryList) {
+			ncboOntologyCategoryDAO.save(ontologyCategory);
+		}
 
 	}
 
@@ -141,33 +164,48 @@ public class OntologyServiceImpl implements OntologyService {
 	 * @return
 	 */
 	public void updateOntology(OntologyBean ontologyBean) {
-		
+
 		// upload ontology file
 		uploadOntologyFile(ontologyBean);
-		
-		// get the NcboOntologyVersion instance using OntologyVersionId 
-		NcboOntologyVersion ontologyVersion = ncboOntologyVersionDAO.findById(ontologyBean.getId());
-		
+
+		// get the NcboOntologyVersion instance using OntologyVersionId
+		NcboOntologyVersion ontologyVersion = ncboOntologyVersionDAO
+				.findById(ontologyBean.getId());
+
 		// get NcboOntologyMetadata instance from ontologyVersion
-		// since it is one-to-one, there is only one ontologyMetadata record per ontologyVersion record
-		NcboOntologyMetadata ontologyMetadata = (NcboOntologyMetadata) ontologyVersion.getNcboOntologyMetadatas().toArray()[0];
-		
-		// populate NcboOntologyVersion and NcboOntologyMetadata instance 
-		if (ontologyVersion != null && ontologyMetadata != null) {
-			
-			// populate ontologyVersion
-			ontologyBean.populateToEntity(ontologyVersion);
-			
-			// populate ontologyMetadata
-			ontologyBean.populateToEntity(ontologyVersion, ontologyMetadata);
-			
-			// save
-			ncboOntologyVersionDAO.save(ontologyVersion);
-			ncboOntologyMetadataDAO.save(ontologyMetadata);
-			
+		// since it is one-to-one, there is only one ontologyMetadata record per
+		// ontologyVersion record
+		NcboOntologyMetadata ontologyMetadata = (NcboOntologyMetadata) ontologyVersion
+				.getNcboOntologyMetadatas().toArray()[0];
+
+		ArrayList<NcboOntologyFile> ontologyFileList = new ArrayList<NcboOntologyFile>();
+		ArrayList<NcboOntologyCategory> ontologyCategoryList = new ArrayList<NcboOntologyCategory>();
+
+		if (ontologyVersion == null || ontologyMetadata == null)
+			return;
+
+		// 1. <ontologyVersion> - populate and save
+		ontologyBean.populateToVersionEntity(ontologyVersion);
+		ncboOntologyVersionDAO.save(ontologyVersion);
+
+		// 2. <ontologyMetadata> - populate and save
+		ontologyBean
+				.populateToMetadataEntity(ontologyMetadata, ontologyVersion);
+		ncboOntologyMetadataDAO.save(ontologyMetadata);
+
+		// 3. <ontologyFile> - populate and save
+		ontologyBean.populateToFileEntity(ontologyFileList, ontologyVersion);
+		for (NcboOntologyFile ontologyFile : ontologyFileList) {
+			ncboOntologyFileDAO.save(ontologyFile);
 		}
-		else System.out.println("************ontologyVersion obj or Metadata obj is NULL. ontologyBean.getId()=" + ontologyBean.getId());
-		
+
+		// 4. <ontologyCategory> - populate and save
+		ontologyBean.populateToCategoryEntity(ontologyCategoryList,
+				ontologyVersion);
+		for (NcboOntologyCategory ontologyCategory : ontologyCategoryList) {
+			ncboOntologyCategoryDAO.save(ontologyCategory);
+		}
+
 	}
 
 	public void deleteOntology(OntologyBean ontologyBean) {
@@ -190,7 +228,6 @@ public class OntologyServiceImpl implements OntologyService {
 		this.ncboOntologyVersionDAO = ncboOntologyVersionDAO;
 	}
 
-	
 	/**
 	 * @return the ncboOntologyMetadataDAO
 	 */
@@ -206,8 +243,7 @@ public class OntologyServiceImpl implements OntologyService {
 			CustomNcboOntologyMetadataDAO ncboOntologyMetadataDAO) {
 		this.ncboOntologyMetadataDAO = ncboOntologyMetadataDAO;
 	}
-	
-	
+
 	/**
 	 * @return the ncboSeqOntologyIdDAO
 	 */
@@ -216,13 +252,14 @@ public class OntologyServiceImpl implements OntologyService {
 	}
 
 	/**
-	 * @param ncboSeqOntologyIdDAO the ncboSeqOntologyIdDAO to set
+	 * @param ncboSeqOntologyIdDAO
+	 *            the ncboSeqOntologyIdDAO to set
 	 */
 	public void setNcboSeqOntologyIdDAO(
 			CustomNcboSeqOntologyIdDAO ncboSeqOntologyIdDAO) {
 		this.ncboSeqOntologyIdDAO = ncboSeqOntologyIdDAO;
-	}	
-	
+	}
+
 	/**
 	 * Get next Ontology Id from Id Sequence DAO and assign it to ontologyBean.
 	 * No effect if Ontology Id already exist.
@@ -265,16 +302,13 @@ public class OntologyServiceImpl implements OntologyService {
 	 *            ontologyBean
 	 */
 	/*
-	private void generateOutputFilePath(OntologyBean ontologyBean) {
+	 * private void generateOutputFilePath(OntologyBean ontologyBean) {
+	 *  // set target location for input file to be parsed File inputFile = new
+	 * File(ontologyBean.getFilePath()); FileHandler ontologyFile = new
+	 * PhysicalDirectoryFileHandler(inputFile);
+	 * ontologyBean.setFilePath(ontologyFile .getOntologyDirPath(ontologyBean)); }
+	 */
 
-		// set target location for input file to be parsed
-		File inputFile = new File(ontologyBean.getFilePath());
-		FileHandler ontologyFile = new PhysicalDirectoryFileHandler(inputFile);
-		ontologyBean.setFilePath(ontologyFile
-				.getOntologyDirPath(ontologyBean));
-	}
-	*/
-	
 	/**
 	 * Generate output file path from ontologyBean. Since the output file path
 	 * is determined from ontologyBean Id and version number, make sure these
@@ -285,28 +319,68 @@ public class OntologyServiceImpl implements OntologyService {
 	 */
 	private void uploadOntologyFile(OntologyBean ontologyBean) {
 
+		String filePathStr = ontologyBean.getFilePath();
+
+		if (filePathStr == null)
+			return;
+
+		// if (filePathStr != null) {
 		// create a fileHandler instance
 		File inputFile = new File(ontologyBean.getFilePath());
 		FileHandler ontologyFile = new PhysicalDirectoryFileHandler(inputFile);
 
-		
 		// TODO - test the copy process and uncomment this out
-		
+
 		// upload the file
 		try {
-			//ontologyFile.processOntologyFileUpload(ontologyBean.getFilePath(), ontologyBean);
+			ontologyFile.processOntologyFileUpload(ontologyBean.getFilePath(),
+					ontologyBean);
+			System.out.println("ontologyBean.getFilePath() = "
+					+ ontologyBean.getFilePath());
+
 		} catch (Exception e) {
-			
+
 			// log to error
-			System.out.println("Error in OntologyService:loadOntologyFile()");
+			System.out
+					.println("Error in OntologyService:loadOntologyFile()!!!");
 			e.printStackTrace();
 		}
-		
+
 		// now update the file path
-		ontologyBean.setFilePath(ontologyFile
-				.getOntologyDirPath(ontologyBean));
+		ontologyBean.setFilePath(ontologyFile.getOntologyDirPath(ontologyBean));
+
 	}
 
+	/**
+	 * @return the ncboOntologyCategoryDAO
+	 */
+	public CustomNcboOntologyCategoryDAO getNcboOntologyCategoryDAO() {
+		return ncboOntologyCategoryDAO;
+	}
 
+	/**
+	 * @param ncboOntologyCategoryDAO
+	 *            the ncboOntologyCategoryDAO to set
+	 */
+	public void setNcboOntologyCategoryDAO(
+			CustomNcboOntologyCategoryDAO ncboOntologyCategoryDAO) {
+		this.ncboOntologyCategoryDAO = ncboOntologyCategoryDAO;
+	}
+
+	/**
+	 * @return the ncboOntologyFileDAO
+	 */
+	public CustomNcboOntologyFileDAO getNcboOntologyFileDAO() {
+		return ncboOntologyFileDAO;
+	}
+
+	/**
+	 * @param ncboOntologyFileDAO
+	 *            the ncboOntologyFileDAO to set
+	 */
+	public void setNcboOntologyFileDAO(
+			CustomNcboOntologyFileDAO ncboOntologyFileDAO) {
+		this.ncboOntologyFileDAO = ncboOntologyFileDAO;
+	}
 
 }
