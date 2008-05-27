@@ -14,6 +14,7 @@ import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.criterion.Expression;
 import org.ncbo.stanford.domain.custom.entity.NcboOntology;
+import org.ncbo.stanford.domain.generated.NcboOntologyCategory;
 import org.ncbo.stanford.domain.generated.NcboOntologyFile;
 import org.ncbo.stanford.domain.generated.NcboOntologyMetadata;
 import org.ncbo.stanford.domain.generated.NcboOntologyVersion;
@@ -51,11 +52,16 @@ public class CustomNcboOntologyVersionDAO extends NcboOntologyVersionDAO {
 		
 		NcboOntologyVersion ontologyVer = findById(ontologyVersionId);
 		Set<NcboOntologyFile> files = ontologyVer.getNcboOntologyFiles();
+		Set<NcboOntologyCategory> categories = ontologyVer.getNcboOntologyCategories();
 
 		for (NcboOntologyFile file : files) {
 			ontology.addFilename(file.getFilename());
 		}
 
+		for (NcboOntologyCategory cat : categories) {
+			ontology.addCategoryId(cat.getId());
+		}
+		
 		return ontology;
 	}	
 	
