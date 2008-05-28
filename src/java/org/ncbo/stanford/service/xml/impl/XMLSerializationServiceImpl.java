@@ -3,12 +3,6 @@ package org.ncbo.stanford.service.xml.impl;
 import java.util.List;
 
 import org.apache.commons.validator.GenericValidator;
-
-import org.restlet.data.MediaType;
-import org.restlet.data.Request;
-import org.restlet.data.Response;
-import org.restlet.data.Status;
-
 import org.ncbo.stanford.bean.OntologyBean;
 import org.ncbo.stanford.bean.UserBean;
 import org.ncbo.stanford.bean.response.ErrorBean;
@@ -19,7 +13,10 @@ import org.ncbo.stanford.service.xml.XMLSerializationService;
 import org.ncbo.stanford.util.MessageUtils;
 import org.ncbo.stanford.util.RequestUtils;
 import org.ncbo.stanford.util.constants.ApplicationConstants;
-import org.ncbo.stanford.view.util.constants.RequestParamConstants;
+import org.restlet.data.MediaType;
+import org.restlet.data.Request;
+import org.restlet.data.Response;
+import org.restlet.data.Status;
 
 import com.thoughtworks.xstream.XStream;
 
