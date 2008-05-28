@@ -2,14 +2,11 @@ package org.ncbo.stanford.service.xml;
 
 import java.util.List;
 
+import org.ncbo.stanford.bean.UserBean;
 import org.ncbo.stanford.enumeration.ErrorTypeEnum;
 import org.restlet.data.Request;
 import org.restlet.data.Response;
 import org.restlet.data.Status;
-
-import org.ncbo.stanford.bean.UserBean;
-
-import com.thoughtworks.xstream.XStream;
 
 /**
  * An interface that allows predefined structure of XML responses
