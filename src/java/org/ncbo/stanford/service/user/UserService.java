@@ -3,7 +3,6 @@ package org.ncbo.stanford.service.user;
 import java.util.List;
 
 import org.ncbo.stanford.bean.UserBean;
-import org.ncbo.stanford.domain.generated.NcboUser;
 
 public interface UserService {
 	public UserBean findUser(Integer userId);
