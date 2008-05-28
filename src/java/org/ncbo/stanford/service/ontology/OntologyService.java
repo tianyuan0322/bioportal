@@ -3,7 +3,6 @@ package org.ncbo.stanford.service.ontology;
 import java.util.List;
 
 import org.ncbo.stanford.bean.OntologyBean;
-import org.ncbo.stanford.bean.UserBean;
 
 /**
  * Exposes services that provide read and write operations on ontologies
@@ -27,9 +26,7 @@ public interface OntologyService {
 	 * 
 	 * @return list of Ontology beans
 	 */
-	public List<OntologyBean> searchOntologyMetadata(String query);
-	
-	
+	public List<OntologyBean> searchOntologyMetadata(String query);	
 
 	/**
 	 * Returns a single ontology version record
