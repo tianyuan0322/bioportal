@@ -105,14 +105,19 @@ public class BeanHelper {
 		String codingScheme = httpServletRequest.getParameter(MessageUtils.getMessage("form.ontology.codingScheme"));
 		String isFoundry = httpServletRequest.getParameter(MessageUtils.getMessage("form.ontology.isFoundry"));
 		
+		System.out.println("REQUEST: isCurrent = " + isCurrent);
+		System.out.println("REQUEST: contactName = " + contactName);
+		System.out.println("REQUEST: contactEmail = " + contactEmail);
+		System.out.println("REQUEST: isFoundry = " + isFoundry);
+		
 		OntologyBean bean = new OntologyBean();
 		bean.setVersionNumber(versionNumber);
 		bean.setVersionStatus(versionStatus);
 		bean.setFilePath(filePath);
-		bean.setIsCurrent(Byte.parseByte(isCurrent));
-		bean.setIsRemote(Byte.parseByte(isRemote));
-		bean.setIsReviewed(Byte.parseByte(isReviewed));
-		bean.setStatusId(Integer.parseInt(statusId));
+		if ( isCurrent != null) bean.setIsCurrent(Byte.parseByte(isCurrent));
+		if ( isRemote != null) bean.setIsRemote(Byte.parseByte(isRemote));
+		if ( isReviewed != null) bean.setIsReviewed(Byte.parseByte(isReviewed));
+		if ( statusId != null) bean.setStatusId(Integer.parseInt(statusId));
 		bean.setDateCreated(DateHelper.getDateFrom(dateCreated));
 		bean.setDateReleased(DateHelper.getDateFrom(dateReleased));
 		bean.setDisplayLabel(displayLabel);
@@ -125,7 +130,7 @@ public class BeanHelper {
 		bean.setPublication(publication);
 		bean.setUrn(urn);
 		bean.setCodingScheme(codingScheme);
-		bean.setIsFoundry(Byte.parseByte(isFoundry));
+		if ( isFoundry != null) bean.setIsFoundry(Byte.parseByte(isFoundry));
 		
 		return bean;
 
