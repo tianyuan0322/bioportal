@@ -1,26 +1,18 @@
 package org.ncbo.stanford.bean.search;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 
 import org.ncbo.stanford.bean.concept.ClassBean;
 
-
-
-public class SearchResultBean
-{
-    private Integer ontologyVersionId;
+public class SearchResultBean {
+	private Integer ontologyVersionId;
 
 	private List<ClassBean> definitions = new ArrayList<ClassBean>();
 	private List<ClassBean> names = new ArrayList<ClassBean>();
 	private List<ClassBean> properties = new ArrayList<ClassBean>();
 	private List<String> metadata = new ArrayList<String>();
-	
-	
-	
-	
-	
+
 	public List<ClassBean> getDefinitions() {
 		return definitions;
 	}
@@ -60,6 +52,5 @@ public class SearchResultBean
 	public void setOntologyVersionId(Integer ontologyVersionId) {
 		this.ontologyVersionId = ontologyVersionId;
 	}
-
 
 }
