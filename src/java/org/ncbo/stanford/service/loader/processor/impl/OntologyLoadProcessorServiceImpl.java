@@ -2,6 +2,7 @@ package org.ncbo.stanford.service.loader.processor.impl;
 
 import java.io.IOException;
 import java.util.Calendar;
+import java.util.List;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -22,7 +23,7 @@ import org.ncbo.stanford.domain.generated.NcboOntologyVersion;
 import org.ncbo.stanford.domain.generated.NcboUser;
 import org.ncbo.stanford.enumeration.StatusEnum;
 import org.ncbo.stanford.service.loader.processor.OntologyLoadProcessorService;
-import org.ncbo.stanford.util.filehandler.FileHandler;
+import org.ncbo.stanford.util.ontologyfile.pathhandler.FilePathHandler;
 import org.springframework.transaction.annotation.Transactional;
 
 /**
@@ -51,14 +52,15 @@ public class OntologyLoadProcessorServiceImpl implements
 	/**
 	 * Extract an ontology from a file and populate all the necessary db tables
 	 * 
-	 * @param ontologyFile
+	 * @param filePathHandler
 	 * @param ontologyBean
 	 * @throws IOException
 	 */
 	@SuppressWarnings("unchecked")
 	@Transactional(rollbackFor = IOException.class)
-	public NcboOntologyVersion processOntologyLoad(FileHandler ontologyFile,
-			OntologyBean ontologyBean) throws Exception {
+	public NcboOntologyVersion processOntologyLoad(
+			FilePathHandler filePathHandler, OntologyBean ontologyBean)
+			throws Exception {
 		NcboOntologyVersion ontologyVersion = new NcboOntologyVersion();
 		Integer ontologyId = ontologyBean.getOntologyId();
 
@@ -95,7 +97,7 @@ public class OntologyLoadProcessorServiceImpl implements
 		ontologyVersion.setDateCreated(ontologyBean.getDateCreated());
 		ontologyVersion.setDateReleased(ontologyBean.getDateReleased());
 
-		ontologyVersion.setFilePath(ontologyFile
+		ontologyVersion.setFilePath(filePathHandler
 				.getOntologyDirPath(ontologyBean));
 
 		NcboLStatus status = new NcboLStatus();
@@ -104,7 +106,16 @@ public class OntologyLoadProcessorServiceImpl implements
 		NcboOntologyVersion newOntologyVersion = ncboOntologyVersionDAO
 				.saveOntologyVersion(ontologyVersion);
 
-		ontologyFile.processOntologyFileUpload(ontologyFilePath, ontologyBean);
+		List<String> relevantFiles = filePathHandler.processOntologyFileUpload(
+				ontologyFilePath, ontologyBean);
+
+		for (String filename : relevantFiles) {
+			NcboOntologyFile ontologyFileRec = new NcboOntologyFile();
+			ontologyFileRec.setFilename(filename);
+			ontologyFileRec.setNcboOntologyVersion(ontologyVersion);
+			ncboOntologyFileDAO.save(ontologyFileRec);
+			newOntologyVersion.getNcboOntologyFiles().add(ontologyFileRec);
+		}
 
 		NcboOntologyMetadata metadata = new NcboOntologyMetadata();
 		metadata.setContactEmail(ontologyBean.getContactEmail());
@@ -132,12 +143,6 @@ public class OntologyLoadProcessorServiceImpl implements
 			newOntologyVersion.getNcboOntologyCategories()
 					.add(ontologyCategory);
 		}
-
-		NcboOntologyFile ontologyFileRec = new NcboOntologyFile();
-		ontologyFileRec.setFilename(ontologyFile.getName());
-		ontologyFileRec.setNcboOntologyVersion(ontologyVersion);
-		ncboOntologyFileDAO.save(ontologyFileRec);
-		newOntologyVersion.getNcboOntologyFiles().add(ontologyFileRec);
 
 		NcboOntologyLoadQueue loadQueue = new NcboOntologyLoadQueue();
 		loadQueue.setNcboOntologyVersion(newOntologyVersion);
