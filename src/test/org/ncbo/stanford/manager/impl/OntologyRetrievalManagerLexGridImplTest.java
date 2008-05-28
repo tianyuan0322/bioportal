@@ -1,6 +1,5 @@
 package org.ncbo.stanford.manager.impl;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -8,7 +7,6 @@ import org.ncbo.stanford.AbstractBioPortalTest;
 import org.ncbo.stanford.bean.concept.ClassBean;
 import org.ncbo.stanford.bean.search.SearchResultBean;
 import org.ncbo.stanford.domain.custom.entity.NcboOntology;
-import org.ncbo.stanford.manager.impl.OntologyRetrievalManagerLexGridImpl;
 import org.ncbo.stanford.service.loader.processor.OntologyLoadProcessorService;
 
 /**

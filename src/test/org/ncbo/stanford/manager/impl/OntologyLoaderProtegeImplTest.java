@@ -3,16 +3,11 @@ package org.ncbo.stanford.manager.impl;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 
 import org.ncbo.stanford.AbstractBioPortalTest;
 import org.ncbo.stanford.bean.OntologyBean;
-import org.ncbo.stanford.manager.impl.OntologyLoadManagerProtegeImpl;
-import org.ncbo.stanford.util.constants.ApplicationConstants;
-import org.ncbo.stanford.util.filehandler.FileHandler;
-import org.ncbo.stanford.util.filehandler.impl.PhysicalDirectoryFileHandler;
 
 import edu.stanford.smi.protege.model.Project;
 import edu.stanford.smi.protege.storage.database.DatabaseKnowledgeBaseFactory;

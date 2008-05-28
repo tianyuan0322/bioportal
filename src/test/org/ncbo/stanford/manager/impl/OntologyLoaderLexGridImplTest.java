@@ -8,11 +8,11 @@ import org.ncbo.stanford.bean.OntologyBean;
 import org.ncbo.stanford.domain.custom.dao.CustomNcboOntologyVersionDAO;
 import org.ncbo.stanford.domain.generated.NcboOntologyMetadata;
 import org.ncbo.stanford.domain.generated.NcboOntologyVersion;
-import org.ncbo.stanford.manager.impl.OntologyLoadManagerLexGridImpl;
 import org.ncbo.stanford.service.loader.processor.OntologyLoadProcessorService;
 import org.ncbo.stanford.util.constants.ApplicationConstants;
-import org.ncbo.stanford.util.filehandler.FileHandler;
-import org.ncbo.stanford.util.filehandler.impl.PhysicalDirectoryFileHandler;
+import org.ncbo.stanford.util.ontologyfile.compressedfilehandler.impl.CompressedFileHandlerFactory;
+import org.ncbo.stanford.util.ontologyfile.pathhandler.FilePathHandler;
+import org.ncbo.stanford.util.ontologyfile.pathhandler.impl.PhysicalDirectoryFilePathHandlerImpl;
 
 /**
  * Tests loading ontologies into LexGrid using the
@@ -36,24 +36,26 @@ public class OntologyLoaderLexGridImplTest extends AbstractBioPortalTest {
 	// OntologyLoadManagerLexGridImpl();
 	OntologyLoadManagerLexGridImpl loadManagerLexGrid;
 	OntologyLoadProcessorService service;
-	
-	public void testSimpleMetadataLookup() throws Exception  {
-		CustomNcboOntologyVersionDAO ncboOntologyVersionDAO = (CustomNcboOntologyVersionDAO) applicationContext.getBean(
-				"NcboOntologyVersionDAO", CustomNcboOntologyVersionDAO.class);
+
+	public void testSimpleMetadataLookup() throws Exception {
+		CustomNcboOntologyVersionDAO ncboOntologyVersionDAO = (CustomNcboOntologyVersionDAO) applicationContext
+				.getBean("NcboOntologyVersionDAO",
+						CustomNcboOntologyVersionDAO.class);
 		NcboOntologyMetadata ncboMetadata = ncboOntologyVersionDAO
-		.findOntologyMetadataById(15910);
+				.findOntologyMetadataById(15910);
 		assertTrue(ncboMetadata != null);
 
 	}
 
-
 	public void testLoadObo() throws Exception {
 		System.out.println("Running testLoadObo");
 		service = (OntologyLoadProcessorService) applicationContext.getBean(
-				"ontologyLoadProcessorService", OntologyLoadProcessorService.class);
+				"ontologyLoadProcessorService",
+				OntologyLoadProcessorService.class);
 
-		loadManagerLexGrid = (OntologyLoadManagerLexGridImpl) applicationContext.getBean(
-				"ontologyLoadManagerLexGrid", OntologyLoadManagerLexGridImpl.class);
+		loadManagerLexGrid = (OntologyLoadManagerLexGridImpl) applicationContext
+				.getBean("ontologyLoadManagerLexGrid",
+						OntologyLoadManagerLexGridImpl.class);
 
 		// Populate Ontology Bean
 		OntologyBean ontology_bean = new OntologyBean();
@@ -72,21 +74,32 @@ public class OntologyLoaderLexGridImplTest extends AbstractBioPortalTest {
 		ontology_bean.setOntologyId(3000);
 		ontology_bean.setIsFoundry(new Byte("0"));
 		File inputFile = new File(TEST_OBO_PATHNAME);
-		FileHandler ontologyFile = new PhysicalDirectoryFileHandler(inputFile);
 
-		NcboOntologyVersion ncboOntologyVersion = service.processOntologyLoad(ontologyFile,
-				ontology_bean);
-		System.out.println("Created NcboOntologyVersion with id="+ncboOntologyVersion.getId());
+		FilePathHandler ontologyFile = new PhysicalDirectoryFilePathHandlerImpl(
+				CompressedFileHandlerFactory
+						.createFileHandler(ApplicationConstants.FORMAT_OBO),
+				inputFile);
+
+		NcboOntologyVersion ncboOntologyVersion = service.processOntologyLoad(
+				ontologyFile, ontology_bean);
+		System.out.println("Created NcboOntologyVersion with id="
+				+ ncboOntologyVersion.getId());
 		ontology_bean.setId(ncboOntologyVersion.getId());
-				
-		if (ncboOntologyVersion.getId() == null) System.out.println("ncboOntologyVersion ID++++++++++++++++ NULL +++++++++++++++");
-		else System.out.println("OBO+++++++++++++++ncboOntologyVersion ID " + ncboOntologyVersion.getId() + "++++++++++++++++++");
 
-		loadManagerLexGrid.loadOntology(new File(TEST_OBO_PATHNAME).toURI(), ontology_bean);
-		System.out.println("Loaded OBO ontology="+TEST_OBO_PATHNAME);
+		if (ncboOntologyVersion.getId() == null)
+			System.out
+					.println("ncboOntologyVersion ID++++++++++++++++ NULL +++++++++++++++");
+		else
+			System.out.println("OBO+++++++++++++++ncboOntologyVersion ID "
+					+ ncboOntologyVersion.getId() + "++++++++++++++++++");
+
+		loadManagerLexGrid.loadOntology(new File(TEST_OBO_PATHNAME).toURI(),
+				ontology_bean);
+		System.out.println("Loaded OBO ontology=" + TEST_OBO_PATHNAME);
 		assertTrue(ontology_bean.getCodingScheme() != null);
 	}
-/*
+
+	/*
 	public void testLoadGenericOwl() throws Exception {
 		service = (OntologyLoadProcessorService) applicationContext.getBean(
 				"ontologyLoadProcessorService", OntologyLoadProcessorService.class);
@@ -123,7 +136,6 @@ public class OntologyLoaderLexGridImplTest extends AbstractBioPortalTest {
 
 	}
 
-	
 	public void testLoadLexGridXML() throws Exception {
 		service = (OntologyLoadProcessorService) applicationContext.getBean(
 				"ontologyLoadProcessorService", OntologyLoadProcessorService.class);
