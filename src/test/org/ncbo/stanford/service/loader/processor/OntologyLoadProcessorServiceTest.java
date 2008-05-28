@@ -5,24 +5,29 @@ import java.util.Date;
 
 import org.ncbo.stanford.AbstractBioPortalTest;
 import org.ncbo.stanford.bean.OntologyBean;
-import org.ncbo.stanford.util.filehandler.FileHandler;
-import org.ncbo.stanford.util.filehandler.impl.PhysicalDirectoryFileHandler;
+import org.ncbo.stanford.util.constants.ApplicationConstants;
+import org.ncbo.stanford.util.ontologyfile.compressedfilehandler.impl.CompressedFileHandlerFactory;
+import org.ncbo.stanford.util.ontologyfile.pathhandler.FilePathHandler;
+import org.ncbo.stanford.util.ontologyfile.pathhandler.impl.PhysicalDirectoryFilePathHandlerImpl;
 
 /**
  * @author Michael Dorf
  * 
  */
 public class OntologyLoadProcessorServiceTest extends AbstractBioPortalTest {
-	
-	public static String OWL="/Users/nickgriffith/projects/smi.apps/BioPortalCore/test/sample_data/pizza.owl";
+
+	public static String OWL_FILE = "/Users/nickgriffith/projects/smi.apps/BioPortalCore/test/sample_data/pizza.owl";
 
 	public void testUploadOntology() throws Exception {
 		OntologyLoadProcessorService service = (OntologyLoadProcessorService) applicationContext
 				.getBean("ontologyLoadProcessorService",
 						OntologyLoadProcessorService.class);
 
-		File inputFile = new File(OWL);
-		FileHandler ontologyFile = new PhysicalDirectoryFileHandler(inputFile);
+		File inputFile = new File(OWL_FILE);
+		FilePathHandler ontologyFile = new PhysicalDirectoryFilePathHandlerImpl(
+				CompressedFileHandlerFactory
+						.createFileHandler(ApplicationConstants.FORMAT_OWL_DL),
+				inputFile);
 		service.processOntologyLoad(ontologyFile, createTestBean());
 	}
 
