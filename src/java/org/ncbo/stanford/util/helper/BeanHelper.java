@@ -63,91 +63,73 @@ public class BeanHelper {
 	
 	
 	/**
-	 * Creates UserBean object and populate from Request object
+	 * Creates OntologyBean object and populate from Request object.
 	 * 
-	 * source: request, destination: userBean
+	 * 		<ontology Id>, <internal_version_number> - will be determined at ontology creation time
+	 * 		<parent_id> - soon to be OBSOLETE
+	 * 
+	 * The following attributes are only for System or Admin. 
+	 * 		<statusId>, <codingScheme> - updated by Scheduler
+	 * 		<isReviewed> - updated by Admin
+	 * 
+	 * source: request, destination: ontologyBean
 	 * 
 	 * @param Request
 	 */
 	public static OntologyBean populateOntologyBeanFromRequest (Request request) {
 		
-
+		//TODO <userId> - retrieve user obj from session
+		
 		HttpServletRequest httpServletRequest = RequestUtils
 				.getHttpServletRequest(request);
 		
-/*		
-		<ontology>
-		<id>4519</id>
-		<ontologyId>1001</ontologyId>
-		<internalVersionNumber>0</internalVersionNumber>
-		<versionNumber>1.2</versionNumber>
-		<versionStatus>production</versionStatus>
-		<filePath>/4519</filePath>
-		<isCurrent>1</isCurrent>
-		<isRemote>0</isRemote>
-		<isReviewed>1</isReviewed>
-		<dateCreated class="sql-timestamp">2007-01-16 13:51:11.0</dateCreated>
-		<dateReleased class="sql-timestamp">2007-01-10 00:00:00.0</dateReleased>
-		<displayLabel>Amino Acid</displayLabel>
-		<format>OWL-FULL</format>
-*/		
-		
-		//Set<String> names = httpServletRequest.getAttributeNames()
-		String contactEmail = httpServletRequest.getParameter(MessageUtils.getMessage("form.user.contactEmail"));
-		String contactName = httpServletRequest.getParameter(MessageUtils.getMessage("form.user.contactName"));
-		String dateCreated = httpServletRequest.getParameter(MessageUtils.getMessage("form.user.dateCreated"));
-		String dateReleased = httpServletRequest.getParameter(MessageUtils.getMessage("form.user.dateReleased"));		
-		String displayLabel = httpServletRequest.getParameter(MessageUtils.getMessage("form.user.displayLabel"));
-		String documentation = httpServletRequest.getParameter(MessageUtils.getMessage("form.user.documentation"));
-		String format = httpServletRequest.getParameter(MessageUtils.getMessage("form.user.format"));
-		String homepage = httpServletRequest.getParameter(MessageUtils.getMessage("form.user.homepage"));
-		String isFoundry = httpServletRequest.getParameter(MessageUtils.getMessage("form.user.isFoundry"));
-		String publication = httpServletRequest.getParameter(MessageUtils.getMessage("form.user.publication"));
-		String urn = httpServletRequest.getParameter(MessageUtils.getMessage("form.user.urn"));
-		String versionNumber = httpServletRequest.getParameter(MessageUtils.getMessage("form.user.versionNumber"));
-		String versionStatus = httpServletRequest.getParameter(MessageUtils.getMessage("form.user.versionStatus"));
+		String versionNumber = httpServletRequest.getParameter(MessageUtils.getMessage("form.ontology.versionNumber"));
+		String versionStatus = httpServletRequest.getParameter(MessageUtils.getMessage("form.ontology.versionStatus"));
+		String filePath = httpServletRequest.getParameter(MessageUtils.getMessage("form.ontology.filePath"));
+		String isCurrent = httpServletRequest.getParameter(MessageUtils.getMessage("form.ontology.isCurrent"));
+		String isRemote = httpServletRequest.getParameter(MessageUtils.getMessage("form.ontology.isRemote"));
+		String isReviewed = httpServletRequest.getParameter(MessageUtils.getMessage("form.ontology.isReviewed"));
+
+		String statusId = httpServletRequest.getParameter(MessageUtils.getMessage("form.ontology.statusId"));
+		String dateCreated = httpServletRequest.getParameter(MessageUtils.getMessage("form.ontology.dateCreated"));
+		String dateReleased = httpServletRequest.getParameter(MessageUtils.getMessage("form.ontology.dateReleased"));
+		String displayLabel = httpServletRequest.getParameter(MessageUtils.getMessage("form.ontology.displayLabel"));
+		String format = httpServletRequest.getParameter(MessageUtils.getMessage("form.ontology.format"));
+
+		String contactName = httpServletRequest.getParameter(MessageUtils.getMessage("form.ontology.contactName"));
+		String contactEmail = httpServletRequest.getParameter(MessageUtils.getMessage("form.ontology.contactEmail"));
+		String homepage = httpServletRequest.getParameter(MessageUtils.getMessage("form.ontology.homepage"));
+		String documentation = httpServletRequest.getParameter(MessageUtils.getMessage("form.ontology.documentation"));
+		String publication = httpServletRequest.getParameter(MessageUtils.getMessage("form.ontology.publication"));
+		String urn = httpServletRequest.getParameter(MessageUtils.getMessage("form.ontology.urn"));
+		String codingScheme = httpServletRequest.getParameter(MessageUtils.getMessage("form.ontology.codingScheme"));
+		String isFoundry = httpServletRequest.getParameter(MessageUtils.getMessage("form.ontology.isFoundry"));
 		
 		OntologyBean bean = new OntologyBean();
-		bean.setContactEmail(contactEmail);
-		bean.setContactName(contactName);
+		bean.setVersionNumber(versionNumber);
+		bean.setVersionStatus(versionStatus);
+		bean.setFilePath(filePath);
+		bean.setIsCurrent(Byte.parseByte(isCurrent));
+		bean.setIsRemote(Byte.parseByte(isRemote));
+		bean.setIsReviewed(Byte.parseByte(isReviewed));
+		bean.setStatusId(Integer.parseInt(statusId));
 		bean.setDateCreated(DateHelper.getDateFrom(dateCreated));
 		bean.setDateReleased(DateHelper.getDateFrom(dateReleased));
 		bean.setDisplayLabel(displayLabel);
-		bean.setDocumentation(documentation);
 		bean.setFormat(format);
+
+		bean.setContactName(contactName);
+		bean.setContactEmail(contactEmail);
 		bean.setHomepage(homepage);
-		bean.setIsFoundry(Byte.parseByte(isFoundry));
+		bean.setDocumentation(documentation);
 		bean.setPublication(publication);
 		bean.setUrn(urn);
-		bean.setVersionNumber(versionNumber);
-		bean.setVersionStatus(versionStatus);
+		bean.setCodingScheme(codingScheme);
+		bean.setIsFoundry(Byte.parseByte(isFoundry));
 		
 		return bean;
 
 	}
-	
-	/*
-	private OntologyBean buildBeanFromForm(Form form) {
-		OntologyBean bean = new OntologyBean();
-		Set<String> names = form.getNames();
-		bean.setContactEmail(form.getValues("contactEmail"));
-		bean.setContactName(form.getValues("contactName"));
-		bean.setDateCreated(DateHelper.getDateFrom(form
-				.getValues("dateCreated")));
-		bean.setDateReleased(DateHelper.getDateFrom(form
-				.getValues("dateReleased")));
-		bean.setDisplayLabel(form.getValues("displayLabel"));
-		bean.setDocumentation(form.getValues("documentation"));
-		bean.setFormat(form.getValues("format"));
-		bean.setHomepage(form.getValues("homepage"));
-		bean.setIsFoundry(Byte.parseByte(form.getValues("isFoundry")));
-		bean.setPublication(form.getValues("publication"));
-		bean.setUrn(form.getValues("urn"));
-		bean.setVersionNumber(form.getValues("versionNumber"));
-		bean.setVersionStatus(form.getValues("versionStatus"));
-		return bean;
-	}
-	*/
 	
 }
 
