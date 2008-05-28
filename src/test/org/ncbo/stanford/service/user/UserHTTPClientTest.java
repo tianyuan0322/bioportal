@@ -5,20 +5,10 @@ package org.ncbo.stanford.service.user;
 
 import java.io.IOException;
 
-import org.restlet.Client;
-//import org.restlet.data.MediaType;
-import org.restlet.data.Form;
-import org.restlet.data.MediaType;
-import org.restlet.data.Method;
-import org.restlet.data.Protocol;
-import org.restlet.data.Request;
-import org.restlet.data.Response;
-import org.restlet.resource.Representation;
-import org.restlet.resource.Variant;
-
-
 import org.ncbo.stanford.AbstractBioPortalTest;
-import org.ncbo.stanford.bean.UserBean;
+import org.restlet.Client;
+import org.restlet.data.Protocol;
+import org.restlet.data.Response;
 
 /**
  * @author cyoun
