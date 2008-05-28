@@ -19,6 +19,15 @@ public interface ApplicationConstants {
 	public static final Byte TRUE = 1;
 	public static final Byte FALSE = 0;
 	
+	/**
+	 * Composite filename used for joining multiple ontologies into a single file
+	 */
+	public static final String COMPOSITE_FILENAME = "joined";
+	
+	/**
+	 * Buffer size for compressed files
+	 */
+	public static final Integer BUFFER_SIZE = 2048;
 
 	/**
 	 * Ontology formats
