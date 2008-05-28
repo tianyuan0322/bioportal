@@ -4,12 +4,11 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-import org.springframework.transaction.annotation.Transactional;
-
 import org.ncbo.stanford.bean.UserBean;
 import org.ncbo.stanford.domain.custom.dao.CustomNcboUserDAO;
 import org.ncbo.stanford.domain.generated.NcboUser;
 import org.ncbo.stanford.service.user.UserService;
+import org.springframework.transaction.annotation.Transactional;
 
 
 @Transactional
