@@ -4,13 +4,12 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
 import java.util.List;
-import java.util.HashSet;
 
 import org.ncbo.stanford.domain.custom.entity.NcboOntology;
 import org.ncbo.stanford.domain.generated.NcboLCategory;
+import org.ncbo.stanford.domain.generated.NcboLStatus;
 import org.ncbo.stanford.domain.generated.NcboOntologyCategory;
 import org.ncbo.stanford.domain.generated.NcboOntologyFile;
-import org.ncbo.stanford.domain.generated.NcboLStatus;
 import org.ncbo.stanford.domain.generated.NcboOntologyMetadata;
 import org.ncbo.stanford.domain.generated.NcboOntologyVersion;
 import org.ncbo.stanford.domain.generated.NcboUser;
@@ -170,9 +169,10 @@ public class OntologyBean {
 	 * @param ncboOntology
 	 */
 	
-	public void populateToFileEntity(List<NcboOntologyFile> ontologyFileList, NcboOntologyVersion ontologyVersion) {
-				
+	public void populateToFileEntity(List<NcboOntologyFile> ontologyFileList, NcboOntologyVersion ontologyVersion) {		
+		
 		List<String> fileNameList = this.getFilenames();
+		
 		for (String fileName : fileNameList) {
 			
 			NcboOntologyFile ontologyFile = new NcboOntologyFile();
@@ -180,8 +180,7 @@ public class OntologyBean {
 			ontologyFile.setNcboOntologyVersion(ontologyVersion);
 			
 			ontologyFileList.add(ontologyFile);
-		}
-		
+		}	
 	}
 	
 	
