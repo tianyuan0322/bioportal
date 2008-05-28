@@ -2,9 +2,7 @@ package org.ncbo.stanford.service.ontology.impl;
 
 import java.io.File;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
-import java.util.Set;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -15,14 +13,14 @@ import org.ncbo.stanford.domain.custom.dao.CustomNcboOntologyMetadataDAO;
 import org.ncbo.stanford.domain.custom.dao.CustomNcboOntologyVersionDAO;
 import org.ncbo.stanford.domain.custom.dao.CustomNcboSeqOntologyIdDAO;
 import org.ncbo.stanford.domain.custom.entity.NcboOntology;
-import org.ncbo.stanford.domain.generated.NcboLCategory;
-import org.ncbo.stanford.domain.generated.NcboOntologyFile;
 import org.ncbo.stanford.domain.generated.NcboOntologyCategory;
+import org.ncbo.stanford.domain.generated.NcboOntologyFile;
 import org.ncbo.stanford.domain.generated.NcboOntologyMetadata;
 import org.ncbo.stanford.domain.generated.NcboOntologyVersion;
 import org.ncbo.stanford.service.ontology.OntologyService;
-import org.ncbo.stanford.util.filehandler.FileHandler;
-import org.ncbo.stanford.util.filehandler.impl.PhysicalDirectoryFileHandler;
+import org.ncbo.stanford.util.ontologyfile.compressedfilehandler.impl.CompressedFileHandlerFactory;
+import org.ncbo.stanford.util.ontologyfile.pathhandler.FilePathHandler;
+import org.ncbo.stanford.util.ontologyfile.pathhandler.impl.PhysicalDirectoryFilePathHandlerImpl;
 import org.springframework.transaction.annotation.Transactional;
 
 @Transactional
@@ -56,11 +54,10 @@ public class OntologyServiceImpl implements OntologyService {
 		return ontBeanList;
 	}
 
-	
-	public List<OntologyBean> searchOntologyMetadata(String query){
-		List<OntologyBean> ontBeanList = new ArrayList<OntologyBean>(); 
+	public List<OntologyBean> searchOntologyMetadata(String query) {
+		List<OntologyBean> ontBeanList = new ArrayList<OntologyBean>();
 		List<NcboOntology> ontEntityList = ncboOntologyVersionDAO
-		.searchOntologyMetadata(query);
+				.searchOntologyMetadata(query);
 
 		for (NcboOntology ncboOntology : ontEntityList) {
 			OntologyBean ontologyBean = new OntologyBean();
@@ -69,9 +66,8 @@ public class OntologyServiceImpl implements OntologyService {
 		}
 
 		return ontBeanList;
-		
 	}
-	
+
 	/**
 	 * Returns a single ontology version record
 	 * 
@@ -133,13 +129,6 @@ public class OntologyServiceImpl implements OntologyService {
 		// assign internal version ID
 		generateInternalVersionNumber(ontologyBean);
 
-		// obsolete - moved inside uploadOntologyFile()
-		// assign output file path
-		// generateOutputFilePath(ontologyBean);
-
-		// upload ontology file
-		uploadOntologyFile(ontologyBean);
-
 		// create new instances
 		NcboOntologyVersion ontologyVersion = new NcboOntologyVersion();
 		NcboOntologyMetadata ontologyMetadata = new NcboOntologyMetadata();
@@ -156,6 +145,9 @@ public class OntologyServiceImpl implements OntologyService {
 		ontologyBean.populateToMetadataEntity(ontologyMetadata,
 				newOntologyVersion);
 		ncboOntologyMetadataDAO.save(ontologyMetadata);
+
+		// upload ontology file and save filePath and fileNames
+		uploadOntologyFile(ontologyBean);
 
 		// 3. <ontologyFile> - populate and save
 		ontologyBean.populateToFileEntity(ontologyFileList, newOntologyVersion);
@@ -181,9 +173,6 @@ public class OntologyServiceImpl implements OntologyService {
 	 */
 	public void updateOntology(OntologyBean ontologyBean) {
 
-		// upload ontology file
-		uploadOntologyFile(ontologyBean);
-
 		// get the NcboOntologyVersion instance using OntologyVersionId
 		NcboOntologyVersion ontologyVersion = ncboOntologyVersionDAO
 				.findById(ontologyBean.getId());
@@ -194,7 +183,6 @@ public class OntologyServiceImpl implements OntologyService {
 		NcboOntologyMetadata ontologyMetadata = (NcboOntologyMetadata) ontologyVersion
 				.getNcboOntologyMetadatas().toArray()[0];
 
-		ArrayList<NcboOntologyFile> ontologyFileList = new ArrayList<NcboOntologyFile>();
 		ArrayList<NcboOntologyCategory> ontologyCategoryList = new ArrayList<NcboOntologyCategory>();
 
 		if (ontologyVersion == null || ontologyMetadata == null)
@@ -209,13 +197,7 @@ public class OntologyServiceImpl implements OntologyService {
 				.populateToMetadataEntity(ontologyMetadata, ontologyVersion);
 		ncboOntologyMetadataDAO.save(ontologyMetadata);
 
-		// 3. <ontologyFile> - populate and save
-		ontologyBean.populateToFileEntity(ontologyFileList, ontologyVersion);
-		for (NcboOntologyFile ontologyFile : ontologyFileList) {
-			ncboOntologyFileDAO.save(ontologyFile);
-		}
-
-		// 4. <ontologyCategory> - populate and save
+		// 3. <ontologyCategory> - populate and save
 		ontologyBean.populateToCategoryEntity(ontologyCategoryList,
 				ontologyVersion);
 		for (NcboOntologyCategory ontologyCategory : ontologyCategoryList) {
@@ -318,8 +300,8 @@ public class OntologyServiceImpl implements OntologyService {
 	 *            ontologyBean
 	 */
 	/*
-	 * private void generateOutputFilePath(OntologyBean ontologyBean) {
-	 *  // set target location for input file to be parsed File inputFile = new
+	 * private void generateOutputFilePath(OntologyBean ontologyBean) { // set
+	 * target location for input file to be parsed File inputFile = new
 	 * File(ontologyBean.getFilePath()); FileHandler ontologyFile = new
 	 * PhysicalDirectoryFileHandler(inputFile);
 	 * ontologyBean.setFilePath(ontologyFile .getOntologyDirPath(ontologyBean)); }
@@ -336,34 +318,36 @@ public class OntologyServiceImpl implements OntologyService {
 	private void uploadOntologyFile(OntologyBean ontologyBean) {
 
 		String filePathStr = ontologyBean.getFilePath();
+		List<String> filenames = new ArrayList<String>(1);
 
-		if (filePathStr == null)
-			return;
+		if (filePathStr != null) {
+			// TODO - test this!!!
+			// create a fileHandler instance
+			File inputFile = new File(ontologyBean.getFilePath());
 
-		// if (filePathStr != null) {
-		// create a fileHandler instance
-		File inputFile = new File(ontologyBean.getFilePath());
-		FileHandler ontologyFile = new PhysicalDirectoryFileHandler(inputFile);
+			FilePathHandler ontologyFile = new PhysicalDirectoryFilePathHandlerImpl(
+					CompressedFileHandlerFactory.createFileHandler(ontologyBean
+							.getFormat()), inputFile);
 
-		// TODO - test the copy process and uncomment this out
+			// upload the file
+			try {
+				filenames = ontologyFile.processOntologyFileUpload(ontologyBean
+						.getFilePath(), ontologyBean);
+				System.out.println("ontologyBean.getFilePath() = "
+						+ ontologyBean.getFilePath());
 
-		// upload the file
-		try {
-			ontologyFile.processOntologyFileUpload(ontologyBean.getFilePath(),
-					ontologyBean);
-			System.out.println("ontologyBean.getFilePath() = "
-					+ ontologyBean.getFilePath());
+			} catch (Exception e) {
+				// log to error
+				System.out
+						.println("Error in OntologyService:loadOntologyFile()!!!");
+				e.printStackTrace();
+			}
 
-		} catch (Exception e) {
-
-			// log to error
-			System.out
-					.println("Error in OntologyService:loadOntologyFile()!!!");
-			e.printStackTrace();
+			// now update the file path
+			ontologyBean.setFilePath(ontologyFile
+					.getOntologyDirPath(ontologyBean));
+			ontologyBean.setFilenames(filenames);
 		}
-
-		// now update the file path
-		ontologyBean.setFilePath(ontologyFile.getOntologyDirPath(ontologyBean));
 
 	}
 
