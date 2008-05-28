@@ -4,19 +4,17 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-
+import org.ncbo.stanford.bean.UserBean;
+import org.ncbo.stanford.service.user.UserService;
+import org.ncbo.stanford.service.xml.XMLSerializationService;
+import org.ncbo.stanford.util.MessageUtils;
+import org.ncbo.stanford.util.RequestUtils;
+import org.ncbo.stanford.util.helper.BeanHelper;
 import org.restlet.Restlet;
 import org.restlet.data.Method;
 import org.restlet.data.Request;
 import org.restlet.data.Response;
 import org.restlet.data.Status;
-
-import org.ncbo.stanford.bean.UserBean;
-import org.ncbo.stanford.service.user.UserService;
-import org.ncbo.stanford.service.xml.XMLSerializationService;
-import org.ncbo.stanford.util.helper.BeanHelper;
-import org.ncbo.stanford.util.RequestUtils;
-import org.ncbo.stanford.util.MessageUtils;
 
 
 public class UserRestlet extends Restlet {
