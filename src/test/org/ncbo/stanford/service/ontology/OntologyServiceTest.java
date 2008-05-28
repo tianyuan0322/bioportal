@@ -3,18 +3,11 @@
  */
 package org.ncbo.stanford.service.ontology;
 
-import java.io.File;
 import java.util.Date;
 import java.util.List;
 
 import org.ncbo.stanford.AbstractBioPortalTest;
 import org.ncbo.stanford.bean.OntologyBean;
-import org.ncbo.stanford.domain.generated.NcboLStatus;
-import org.ncbo.stanford.domain.generated.NcboOntologyVersion;
-import org.ncbo.stanford.enumeration.StatusEnum;
-import org.ncbo.stanford.service.ontology.OntologyService;
-import org.ncbo.stanford.util.filehandler.FileHandler;
-import org.ncbo.stanford.util.filehandler.impl.PhysicalDirectoryFileHandler;
 
 /**
  * @author nickgriffith
@@ -41,17 +34,13 @@ public class OntologyServiceTest extends AbstractBioPortalTest {
 */
 	
 	
-	public void testSearchOntologyMetadata(){
-		
-		
-		
+	public void testSearchOntologyMetadata(){	
 		List<OntologyBean> ontologies = getOntologyService().searchOntologyMetadata("Mouse");
 
 		for (OntologyBean ontology : ontologies) {
 
 			System.out.println(ontology.toString());
-		}
-		
+		}		
 	}
 	
 	public void testFindOntology() {
