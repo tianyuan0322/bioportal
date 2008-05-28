@@ -94,12 +94,71 @@ public class ConceptServiceImpl implements ConceptService {
 
 	public List<SearchResultBean> findConceptNameExact(
 			List<Integer> ontologyIds, String query) {
-		return new ArrayList();
+		List<SearchResultBean> searchResults = new ArrayList<SearchResultBean>();
+		HashMap<String, List<NcboOntology>> formatLists = new HashMap<String, List<NcboOntology>>();
+		
+		for (String key : ontologyFormatHandlerMap.keySet()) {
+			formatLists.put(key, new ArrayList<NcboOntology>());
+		}
+		
+		List<NcboOntology> ontologies = new ArrayList<NcboOntology>();
+		
+		if(ontologyIds.isEmpty()){
+			ontologies = ncboOntologyVersionDAO.findLatestOntologyVersions();
+		}else{
+			ontologies = ncboOntologyVersionDAO
+		.findOntologyVersions(ontologyIds);
+		}
+		
+		for (NcboOntology ontology : ontologies) {
+			
+			String formatHandler = ontologyFormatHandlerMap.get(ontology
+					.getFormat());
+			((List<NcboOntology>) formatLists.get(formatHandler)).add(ontology);
+		}
+
+		for (String formatHandler : formatLists.keySet()) {
+			OntologyRetrievalManager manager = ontologyRetrievalHandlerMap
+					.get(formatHandler);
+			searchResults.addAll(manager.findConceptNameExact(formatLists
+					.get(formatHandler), query, true, MAX_RESULTS));
+		}
+		
+		return searchResults;
 	}
 
 	public List<SearchResultBean> findConceptNameStartsWith(
 			List<Integer> ontologyIds, String query) {
-		return new ArrayList();
+		List<SearchResultBean> searchResults = new ArrayList<SearchResultBean>();
+		HashMap<String, List<NcboOntology>> formatLists = new HashMap<String, List<NcboOntology>>();
+		
+		for (String key : ontologyFormatHandlerMap.keySet()) {
+			formatLists.put(key, new ArrayList<NcboOntology>());
+		}
+		
+		List<NcboOntology> ontologies = new ArrayList<NcboOntology>();
+		
+		if(ontologyIds.isEmpty()){
+			ontologies = ncboOntologyVersionDAO.findLatestOntologyVersions();
+		}else{
+			ontologies = ncboOntologyVersionDAO
+		.findOntologyVersions(ontologyIds);
+		}
+		for (NcboOntology ontology : ontologies) {
+			
+			String formatHandler = ontologyFormatHandlerMap.get(ontology
+					.getFormat());
+			((List<NcboOntology>) formatLists.get(formatHandler)).add(ontology);
+		}
+
+		for (String formatHandler : formatLists.keySet()) {
+			OntologyRetrievalManager manager = ontologyRetrievalHandlerMap
+					.get(formatHandler);
+			searchResults.addAll(manager.findConceptNameStartsWith(formatLists
+					.get(formatHandler), query, true, MAX_RESULTS));
+		}
+		
+		return searchResults;
 	}
 
 	public List<SearchResultBean> findConceptNameContains(
@@ -112,9 +171,17 @@ public class ConceptServiceImpl implements ConceptService {
 			formatLists.put(key, new ArrayList<NcboOntology>());
 		}
 
-		for (Integer ontologyId : ontologyIds) {
-			NcboOntology ontology = ncboOntologyVersionDAO
-					.findOntologyVersion(ontologyId);
+		List<NcboOntology> ontologies = new ArrayList<NcboOntology>();
+		
+		if(ontologyIds.isEmpty()){
+			ontologies = ncboOntologyVersionDAO.findLatestOntologyVersions();
+		}else{
+			ontologies = ncboOntologyVersionDAO
+		.findOntologyVersions(ontologyIds);
+		}
+		
+		for (NcboOntology ontology : ontologies) {
+			
 			String formatHandler = ontologyFormatHandlerMap.get(ontology
 					.getFormat());
 			((List<NcboOntology>) formatLists.get(formatHandler)).add(ontology);

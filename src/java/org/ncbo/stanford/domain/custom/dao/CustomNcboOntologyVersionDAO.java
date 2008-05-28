@@ -65,6 +65,41 @@ public class CustomNcboOntologyVersionDAO extends NcboOntologyVersionDAO {
 		return ontology;
 	}	
 	
+
+	/**
+	 * Search Ontology metadata
+	 * 
+	 * @return List of ontology objects
+	 */
+	public List<NcboOntology> searchOntologyMetadata(String query) {
+		List<NcboOntology> ontologies =   getSession().createCriteria(
+				NcboOntology.class)
+					.add(Expression.or(Expression.like("publication", "%"+query+"%"),
+							Expression.or(Expression.like("homepage", "%"+query+"%"),
+									Expression.or(Expression.like("contactEmail", "%"+query+"%"),
+											Expression.or(Expression.like("contactName", "%"+query+"%"),
+													Expression.or(Expression.like("displayLabel", "%"+query+"%"),
+															Expression.like("format", "%"+query+"%"))))))).list();		
+		
+		return ontologies;
+	}
+	
+	
+	
+	/**
+	 * Finds a given set of ontology versions
+	 * 
+	 * @return List of ontology objects
+	 */
+	public List<NcboOntology> findOntologyVersions(List<Integer> versionIds) {
+		List<NcboOntology> ontologies =   getSession().createCriteria(
+				NcboOntology.class)
+					.add(Expression.in("id", versionIds))
+					.list();		
+		
+		return ontologies;
+	}	
+	
 	/**
 	 * Find all unique latest current versions of ontologies
 	 * 

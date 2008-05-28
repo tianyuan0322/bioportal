@@ -19,6 +19,8 @@ public interface RequestParamConstants {
 	public static final String PARAM_SESSIONID = "sessionid";
 	
 	public static final String PARAM_ROOT_CONCEPT = "root";
+	
+	public static final String PARAM_ALL_ONTOLOGIES="0";
 
 	/**
 	 * A mandatory parameter required to be included in all encrypted

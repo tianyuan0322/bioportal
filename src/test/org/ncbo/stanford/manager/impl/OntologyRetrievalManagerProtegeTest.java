@@ -48,12 +48,43 @@ public class OntologyRetrievalManagerProtegeTest extends AbstractBioPortalTest {
 		
 	}
 	
+	public void testPathToRoot() throws Exception{
+		OntologyRetrievalManager ocMgr = (OntologyRetrievalManager) applicationContext
+				.getBean("ontologyRetrievalManagerProtege",
+						OntologyRetrievalManager.class);
+
+ CustomNcboOntologyVersionDAO ncboOntologyVersionDAO=(CustomNcboOntologyVersionDAO) applicationContext
+	.getBean("NcboOntologyVersionDAO",
+			CustomNcboOntologyVersionDAO.class);
+
+NcboOntology version = ncboOntologyVersionDAO.findOntologyVersion(TEST_ONT_ID);
+ClassBean conceptBean = ocMgr.findPathToRoot( version,"SpicyPizza");
+
+System.out.println("Path");
+
+// outputConcept(conceptBean);
+
+System.out.println("Subclasses");
+ClassBean subclass = (ClassBean) conceptBean.getRelations().get(ApplicationConstants.SUB_CLASS);
+
+while (subclass!=null){
+		System.out.println(subclass.getLabel() + " : "+subclass.getId());
+		subclass = (ClassBean) subclass.getRelations().get(ApplicationConstants.SUB_CLASS);
+}
+	}
+	
+	
 	public void testGetRootNode() throws Exception {
 		OntologyRetrievalManager ocMgr = (OntologyRetrievalManager) applicationContext
 				.getBean("ontologyRetrievalManagerProtege",
 						OntologyRetrievalManager.class);
 
-		ClassBean conceptBean = null; //ocMgr.findRootConcept(TEST_ONT_ID);
+		 CustomNcboOntologyVersionDAO ncboOntologyVersionDAO=(CustomNcboOntologyVersionDAO) applicationContext
+			.getBean("NcboOntologyVersionDAO",
+					CustomNcboOntologyVersionDAO.class);
+		
+		NcboOntology version = ncboOntologyVersionDAO.findOntologyVersion(TEST_ONT_ID);
+		ClassBean conceptBean = ocMgr.findRootConcept(version);
 
 		System.out.println("ROOT");
 

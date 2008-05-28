@@ -34,10 +34,33 @@
 		</property>
 	</bean>
 	
+	<bean id="metaDataSearchRestlet"
+		class="org.ncbo.stanford.view.rest.restlet.search.MetaDataSearchRestlet">
+		<property name="ontologyService">
+			<ref bean="ontologyService" />
+		</property>
+		<property name="xmlSerializationService">
+			<ref bean="xmlSerializationService" />
+		</property>
+	</bean>
+	
 	<bean id="conceptRestlet"
 		class="org.ncbo.stanford.view.rest.restlet.concept.ConceptRestlet">
 		<property name="conceptService">
 			<ref bean="conceptService" />
+		</property>
+		<property name="xmlSerializationService">
+			<ref bean="xmlSerializationService" />
+		</property>
+	</bean>
+	
+	<bean id="conceptSearchRestlet"
+		class="org.ncbo.stanford.view.rest.restlet.search.ConceptSearchRestlet">
+		<property name="conceptService">
+			<ref bean="conceptService" />
+		</property>
+		<property name="xmlSerializationService">
+			<ref bean="xmlSerializationService" />
 		</property>
 	</bean>
 	
@@ -45,6 +68,9 @@
 		class="org.ncbo.stanford.view.rest.restlet.path.PathRestlet">
 		<property name="conceptService">
 			<ref bean="conceptService" />
+		</property>
+		<property name="xmlSerializationService">
+			<ref bean="xmlSerializationService" />
 		</property>
 	</bean>
 	
@@ -108,6 +134,12 @@
 						</entry>
 						<entry key="/path/{ontologyVersionId}/{source}/{target}">
 							<ref local="pathRestlet" />
+						</entry>
+						<entry key="/search/concept/{query}">
+							<ref local="conceptSearchRestlet" />
+						</entry>
+						<entry key="/search/meta/{query}">
+							<ref local="metaDataSearchRestlet" />
 						</entry>
 					</map>
 				</constructor-arg>

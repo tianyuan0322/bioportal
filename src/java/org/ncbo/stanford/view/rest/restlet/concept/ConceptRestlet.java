@@ -9,6 +9,7 @@ import org.ncbo.stanford.bean.UserBean;
 import org.ncbo.stanford.bean.concept.ClassBean;
 import org.ncbo.stanford.service.concept.ConceptService;
 import org.ncbo.stanford.service.ontology.OntologyService;
+import org.ncbo.stanford.service.xml.XMLSerializationService;
 import org.ncbo.stanford.view.util.constants.RequestParamConstants;
 import org.restlet.Restlet;
 import org.restlet.data.MediaType;
@@ -26,6 +27,7 @@ public class ConceptRestlet extends Restlet {
 	private static final Log log = LogFactory.getLog(ConceptRestlet.class);
 	
 	private ConceptService conceptService;
+	private XMLSerializationService xmlSerializationService;
 
 	@Override
 	public void handle(Request request, Response response) {
@@ -84,11 +86,8 @@ public class ConceptRestlet extends Restlet {
 			resp.setStatus(Status.CLIENT_ERROR_BAD_REQUEST, e.getMessage());
 		}
 
-		if (concept != null && !resp.getStatus().isError()) {
-			XStream xstream = new XStream(new DomDriver());
-			xstream.alias("ClassBean", ClassBean.class);
-			resp.setEntity(xstream.toXML(concept), MediaType.APPLICATION_XML);
-		}
+		getXmlSerializationService().generateXMLResponse (request, resp, concept);
+		
 	}
 
 	/**
@@ -105,4 +104,16 @@ public class ConceptRestlet extends Restlet {
 	public void setConceptService(ConceptService conceptService) {
 		this.conceptService = conceptService;
 	}
+
+
+	public XMLSerializationService getXmlSerializationService() {
+		return xmlSerializationService;
+	}
+
+
+	public void setXmlSerializationService(
+			XMLSerializationService xmlSerializationService) {
+		this.xmlSerializationService = xmlSerializationService;
+	}
+	
 }

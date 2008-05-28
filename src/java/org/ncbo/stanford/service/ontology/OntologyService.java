@@ -20,6 +20,16 @@ public interface OntologyService {
 	 * @return list of Ontology beans
 	 */
 	public List<OntologyBean> findLatestOntologyVersions();
+	
+	/**
+	 * Searches Ontology Metadata
+	 * 
+	 * 
+	 * @return list of Ontology beans
+	 */
+	public List<OntologyBean> searchOntologyMetadata(String query);
+	
+	
 
 	/**
 	 * Returns a single ontology version record

@@ -40,6 +40,20 @@ public class OntologyServiceTest extends AbstractBioPortalTest {
 	}
 */
 	
+	
+	public void testSearchOntologyMetadata(){
+		
+		
+		
+		List<OntologyBean> ontologies = getOntologyService().searchOntologyMetadata("Mouse");
+
+		for (OntologyBean ontology : ontologies) {
+
+			System.out.println(ontology.toString());
+		}
+		
+	}
+	
 	public void testFindOntology() {
 		
 		System.out.println ("OntologyServiceTest: testFindOntology()..........................BEGIN");
