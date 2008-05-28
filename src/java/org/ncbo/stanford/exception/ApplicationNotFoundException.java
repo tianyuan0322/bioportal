@@ -1,6 +1,7 @@
 package org.ncbo.stanford.exception;
 
 import org.acegisecurity.BadCredentialsException;
+import org.acegisecurity.userdetails.UserDetailsService;
 
 
 /**

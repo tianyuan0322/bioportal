@@ -1,7 +1,5 @@
 package org.ncbo.stanford.exception;
 
-import java.lang.Exception;
-import java.lang.Throwable;
 
 /**
  * Thrown in case of database error.
@@ -11,7 +9,12 @@ import java.lang.Throwable;
 public class DatabaseException extends Exception {
 
 
-    public DatabaseException(String msg) {
+    /**
+	 * 
+	 */
+	private static final long serialVersionUID = 4976135600117962702L;
+
+	public DatabaseException(String msg) {
         super(msg);
     }
 
