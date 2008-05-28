@@ -29,6 +29,21 @@ public class CustomNcboOntologyLoadQueueDAO extends NcboOntologyLoadQueueDAO {
 	}
 
 	/**
+	 * Finds a record in the queue corresponding to a given ontology version
+	 * 
+	 * @param ontologyVersionId
+	 * @return
+	 */
+	public NcboOntologyLoadQueue findByOntologyVersionId(
+			Integer ontologyVersionId) {
+		return (NcboOntologyLoadQueue) getSession()
+				.createCriteria(
+						"org.ncbo.stanford.domain.generated.NcboOntologyLoadQueue")
+				.add(Expression.eq("ncboOntologyVersion.id", ontologyVersionId))
+				.uniqueResult();
+	}
+
+	/**
 	 * 
 	 * Retuns a list of ontologies to be loaded and parsed
 	 * 
@@ -51,9 +66,9 @@ public class CustomNcboOntologyLoadQueueDAO extends NcboOntologyLoadQueueDAO {
 			NcboOntologyLoadQueue transientInstance) {
 		try {
 			Integer newId = (Integer) getHibernateTemplate().save(
-					transientInstance);			
+					transientInstance);
 			getHibernateTemplate().flush();
-			
+
 			return this.findById(newId);
 		} catch (RuntimeException re) {
 			log.error("save failed", re);
