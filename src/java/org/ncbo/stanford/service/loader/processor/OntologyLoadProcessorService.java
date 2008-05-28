@@ -4,7 +4,7 @@ import java.io.IOException;
 
 import org.ncbo.stanford.bean.OntologyBean;
 import org.ncbo.stanford.domain.generated.NcboOntologyVersion;
-import org.ncbo.stanford.util.filehandler.FileHandler;
+import org.ncbo.stanford.util.ontologyfile.pathhandler.FilePathHandler;
 
 /**
  * Interface to load an ontology into BioPortal.
@@ -21,6 +21,6 @@ public interface OntologyLoadProcessorService {
 	 * @param ontologyBean
 	 * @throws IOException
 	 */
-	public NcboOntologyVersion processOntologyLoad(FileHandler ontologyFile,
+	public NcboOntologyVersion processOntologyLoad(FilePathHandler ontologyFile,
 			OntologyBean ontologyBean) throws Exception;
 }
