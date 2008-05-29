@@ -88,9 +88,6 @@ public class BeanHelper {
 		String filePath = httpServletRequest.getParameter(MessageUtils.getMessage("form.ontology.filePath"));
 		String isCurrent = httpServletRequest.getParameter(MessageUtils.getMessage("form.ontology.isCurrent"));
 		String isRemote = httpServletRequest.getParameter(MessageUtils.getMessage("form.ontology.isRemote"));
-		String isReviewed = httpServletRequest.getParameter(MessageUtils.getMessage("form.ontology.isReviewed"));
-
-		String statusId = httpServletRequest.getParameter(MessageUtils.getMessage("form.ontology.statusId"));
 		String dateCreated = httpServletRequest.getParameter(MessageUtils.getMessage("form.ontology.dateCreated"));
 		String dateReleased = httpServletRequest.getParameter(MessageUtils.getMessage("form.ontology.dateReleased"));
 		String displayLabel = httpServletRequest.getParameter(MessageUtils.getMessage("form.ontology.displayLabel"));
@@ -102,13 +99,26 @@ public class BeanHelper {
 		String documentation = httpServletRequest.getParameter(MessageUtils.getMessage("form.ontology.documentation"));
 		String publication = httpServletRequest.getParameter(MessageUtils.getMessage("form.ontology.publication"));
 		String urn = httpServletRequest.getParameter(MessageUtils.getMessage("form.ontology.urn"));
-		String codingScheme = httpServletRequest.getParameter(MessageUtils.getMessage("form.ontology.codingScheme"));
 		String isFoundry = httpServletRequest.getParameter(MessageUtils.getMessage("form.ontology.isFoundry"));
 		
-		System.out.println("REQUEST: isCurrent = " + isCurrent);
-		System.out.println("REQUEST: contactName = " + contactName);
-		System.out.println("REQUEST: contactEmail = " + contactEmail);
-		System.out.println("REQUEST: isFoundry = " + isFoundry);
+		// only accessible by admin
+		String isReviewed = httpServletRequest.getParameter(MessageUtils.getMessage("form.ontology.isReviewed"));
+
+		// only accessible by scheduler (system)
+		String statusId = httpServletRequest.getParameter(MessageUtils.getMessage("form.ontology.statusId"));
+		String codingScheme = httpServletRequest.getParameter(MessageUtils.getMessage("form.ontology.codingScheme"));
+		
+		
+		// DEBUG STATETMENT - to be removed later
+		System.out.println("**************************");
+		System.out.println("REQUEST");
+		System.out.println("versionNumber = " + versionNumber);
+		System.out.println("filePath = " + filePath);
+		System.out.println("contactName = " + contactName);
+		System.out.println("contactEmail = " + contactEmail);
+		System.out.println("**************************");
+		
+		//TODO categoryIds
 		
 		OntologyBean bean = new OntologyBean();
 		bean.setVersionNumber(versionNumber);
@@ -118,8 +128,8 @@ public class BeanHelper {
 		if ( isRemote != null) bean.setIsRemote(Byte.parseByte(isRemote));
 		if ( isReviewed != null) bean.setIsReviewed(Byte.parseByte(isReviewed));
 		if ( statusId != null) bean.setStatusId(Integer.parseInt(statusId));
-		bean.setDateCreated(DateHelper.getDateFrom(dateCreated));
-		bean.setDateReleased(DateHelper.getDateFrom(dateReleased));
+		if ( dateCreated != null) bean.setDateCreated(DateHelper.getDateFrom(dateCreated));
+		if ( dateReleased != null) bean.setDateCreated(DateHelper.getDateFrom(dateReleased));
 		bean.setDisplayLabel(displayLabel);
 		bean.setFormat(format);
 
