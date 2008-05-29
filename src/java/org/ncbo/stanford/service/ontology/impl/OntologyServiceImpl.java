@@ -117,12 +117,6 @@ public class OntologyServiceImpl implements OntologyService {
 
 	public void createOntology(OntologyBean ontologyBean) {
 
-		// TODO
-		/*
-		 * move this to processorService later
-		 * 
-		 * e.g. processorService.create()
-		 */
 		// assign new Ontology Id for new instance
 		generateNextOntologyId(ontologyBean);
 
@@ -141,7 +135,7 @@ public class OntologyServiceImpl implements OntologyService {
 		NcboOntologyVersion newOntologyVersion = ncboOntologyVersionDAO
 				.saveOntologyVersion(ontologyVersion);
 
-		// 2. ontologyMetadata - populate and save
+		// 2. <ontologyMetadata> - populate and save
 		ontologyBean.populateToMetadataEntity(ontologyMetadata,
 				newOntologyVersion);
 		ncboOntologyMetadataDAO.save(ontologyMetadata);
@@ -161,6 +155,8 @@ public class OntologyServiceImpl implements OntologyService {
 		for (NcboOntologyCategory ontologyCategory : ontologyCategoryList) {
 			ncboOntologyCategoryDAO.save(ontologyCategory);
 		}
+		
+		//TODO 5. <ontologyQueue>
 
 	}
 
@@ -183,8 +179,6 @@ public class OntologyServiceImpl implements OntologyService {
 		NcboOntologyMetadata ontologyMetadata = (NcboOntologyMetadata) ontologyVersion
 				.getNcboOntologyMetadatas().toArray()[0];
 
-		ArrayList<NcboOntologyCategory> ontologyCategoryList = new ArrayList<NcboOntologyCategory>();
-
 		if (ontologyVersion == null || ontologyMetadata == null)
 			return;
 
@@ -198,6 +192,7 @@ public class OntologyServiceImpl implements OntologyService {
 		ncboOntologyMetadataDAO.save(ontologyMetadata);
 
 		// 3. <ontologyCategory> - populate and save
+		ArrayList<NcboOntologyCategory> ontologyCategoryList = new ArrayList<NcboOntologyCategory>();
 		ontologyBean.populateToCategoryEntity(ontologyCategoryList,
 				ontologyVersion);
 		for (NcboOntologyCategory ontologyCategory : ontologyCategoryList) {
@@ -291,21 +286,6 @@ public class OntologyServiceImpl implements OntologyService {
 		}
 	}
 
-	/**
-	 * Generate output file path from ontologyBean. Since the output file path
-	 * is determined from ontologyBean Id and version number, make sure these
-	 * values are present when you invoke this method.
-	 * 
-	 * @param OntologyBean
-	 *            ontologyBean
-	 */
-	/*
-	 * private void generateOutputFilePath(OntologyBean ontologyBean) { // set
-	 * target location for input file to be parsed File inputFile = new
-	 * File(ontologyBean.getFilePath()); FileHandler ontologyFile = new
-	 * PhysicalDirectoryFileHandler(inputFile);
-	 * ontologyBean.setFilePath(ontologyFile .getOntologyDirPath(ontologyBean)); }
-	 */
 
 	/**
 	 * Generate output file path from ontologyBean. Since the output file path
