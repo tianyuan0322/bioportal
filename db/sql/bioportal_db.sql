@@ -232,6 +232,7 @@ CREATE TABLE `ncbo_ontology_metadata` (
   `is_foundry` tinyint(1) NOT NULL,
   `target_terminologies` varchar(256) default NULL,
   PRIMARY KEY  (`id`),
+  UNIQUE KEY `ontology_version_id` (`ontology_version_id`),
   KEY `ontology_id` (`ontology_version_id`),
   CONSTRAINT `FK_ncbo_ontology_metadata_ncbo_ontology_version` FOREIGN KEY (`ontology_version_id`) REFERENCES `ncbo_ontology_version` (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=745 DEFAULT CHARSET=latin1 CHECKSUM=1 DELAY_KEY_WRITE=1 ROW_FORMAT=DYNAMIC;
