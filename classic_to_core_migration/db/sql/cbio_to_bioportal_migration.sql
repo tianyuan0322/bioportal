@@ -108,3 +108,6 @@ update ncbo_l_role set name = 'ROLE_DEVELOPER' where id = 2822;
 update ncbo_l_role set name = 'ROLE_LIBRARIAN' where id = 2823;
 update ncbo_l_role set name = 'ROLE_ADMINISTRATOR' where id = 2824;
 
+-- alter table ncbo_ontology_version drop foreign key FK_ncbo_ontology_ncbo_ontology_new;
+-- alter table ncbo_ontology_version drop column parent_id;
+
