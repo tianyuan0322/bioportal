@@ -31,8 +31,7 @@ public class OBOCompressedFileHandlerImpl extends AbstractCompressedFileHandler 
 			throws FileNotFoundException, IOException {
 		String filePath = outputFile.getPath();
 		String filename = outputFile.getName();
-		List<String> relevantFiles = new ArrayList<String>(1);
-		relevantFiles.add(filename);
+		List<String> relevantFiles = super.handle(outputFile, ontologyBean);
 
 		if (filename.endsWith("zip") || filename.endsWith("jar")
 				|| filename.endsWith("tar")) {
