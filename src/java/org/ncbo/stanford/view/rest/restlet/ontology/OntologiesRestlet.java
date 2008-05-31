@@ -86,7 +86,7 @@ public class OntologiesRestlet extends Restlet {
 	 * @param request response
 	 */
 	private void createOntology(Request request, Response response) {
-				
+		
 		OntologyBean ontologyBean = BeanHelper.populateOntologyBeanFromRequest(request);
 		
 		// create the ontology

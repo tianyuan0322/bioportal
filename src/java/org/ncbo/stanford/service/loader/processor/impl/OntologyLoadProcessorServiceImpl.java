@@ -23,6 +23,7 @@ import org.ncbo.stanford.domain.generated.NcboOntologyVersion;
 import org.ncbo.stanford.domain.generated.NcboUser;
 import org.ncbo.stanford.enumeration.StatusEnum;
 import org.ncbo.stanford.service.loader.processor.OntologyLoadProcessorService;
+import org.ncbo.stanford.util.MessageUtils;
 import org.ncbo.stanford.util.ontologyfile.pathhandler.FilePathHandler;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -84,7 +85,7 @@ public class OntologyLoadProcessorServiceImpl implements
 		ontologyVersion.setNcboUser(ncboUser);
 
 		if (ontologyBean.getInternalVersionNumber() == null) {
-			ontologyVersion.setInternalVersionNumber(0);
+			ontologyVersion.setInternalVersionNumber(Integer.parseInt(MessageUtils.getMessage("internalVersionNumberStart")));
 		} else {
 			ontologyVersion.setInternalVersionNumber(ontologyBean
 					.getInternalVersionNumber() + 1);

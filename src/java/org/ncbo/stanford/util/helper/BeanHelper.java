@@ -1,18 +1,15 @@
 package org.ncbo.stanford.util.helper;
 
-import java.util.Date;
-import java.util.Set;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 
-import org.restlet.data.Request;
-
 import org.ncbo.stanford.bean.OntologyBean;
 import org.ncbo.stanford.bean.UserBean;
-import org.ncbo.stanford.util.RequestUtils;
-import org.ncbo.stanford.util.helper.DateHelper;
-//import org.ncbo.stanford.view.util.constants.RequestParamConstants;
 import org.ncbo.stanford.util.MessageUtils;
+import org.ncbo.stanford.util.RequestUtils;
+import org.restlet.data.Request;
 
 public class BeanHelper {
 		
@@ -78,7 +75,8 @@ public class BeanHelper {
 	 */
 	public static OntologyBean populateOntologyBeanFromRequest (Request request) {
 		
-		//TODO <userId> - retrieve user obj from session
+		//TODO <userId> - retrieve user obj from session. 
+		//populate OntologyBean userId field here? or in OntologyBean "populate"?
 		
 		HttpServletRequest httpServletRequest = RequestUtils
 				.getHttpServletRequest(request);
@@ -100,39 +98,37 @@ public class BeanHelper {
 		String publication = httpServletRequest.getParameter(MessageUtils.getMessage("form.ontology.publication"));
 		String urn = httpServletRequest.getParameter(MessageUtils.getMessage("form.ontology.urn"));
 		String isFoundry = httpServletRequest.getParameter(MessageUtils.getMessage("form.ontology.isFoundry"));
+
+		List <Integer> categoryIds = new ArrayList<Integer>();
 		
-		// only accessible by admin
+		String[] categoryIdsStr = httpServletRequest.getParameterValues(MessageUtils.getMessage("form.ontology.categoryId"));
+		if (categoryIdsStr != null) {
+			for (String categoryIdStr : categoryIdsStr) {
+				categoryIds.add(Integer.parseInt(categoryIdStr));
+			}
+		}
+		
+		// only accessible by Admin
 		String isReviewed = httpServletRequest.getParameter(MessageUtils.getMessage("form.ontology.isReviewed"));
 
-		// only accessible by scheduler (system)
+		// only accessible by Scheduler (system)
 		String statusId = httpServletRequest.getParameter(MessageUtils.getMessage("form.ontology.statusId"));
 		String codingScheme = httpServletRequest.getParameter(MessageUtils.getMessage("form.ontology.codingScheme"));
-		
-		
-		// DEBUG STATETMENT - to be removed later
-		System.out.println("**************************");
-		System.out.println("REQUEST");
-		System.out.println("versionNumber = " + versionNumber);
-		System.out.println("filePath = " + filePath);
-		System.out.println("contactName = " + contactName);
-		System.out.println("contactEmail = " + contactEmail);
-		System.out.println("**************************");
-		
-		//TODO categoryIds
-		
+				
 		OntologyBean bean = new OntologyBean();
 		bean.setVersionNumber(versionNumber);
 		bean.setVersionStatus(versionStatus);
 		bean.setFilePath(filePath);
+		
 		if ( isCurrent != null) bean.setIsCurrent(Byte.parseByte(isCurrent));
 		if ( isRemote != null) bean.setIsRemote(Byte.parseByte(isRemote));
 		if ( isReviewed != null) bean.setIsReviewed(Byte.parseByte(isReviewed));
 		if ( statusId != null) bean.setStatusId(Integer.parseInt(statusId));
 		if ( dateCreated != null) bean.setDateCreated(DateHelper.getDateFrom(dateCreated));
-		if ( dateReleased != null) bean.setDateCreated(DateHelper.getDateFrom(dateReleased));
+		if ( dateReleased != null) bean.setDateReleased(DateHelper.getDateFrom(dateReleased));
+		
 		bean.setDisplayLabel(displayLabel);
 		bean.setFormat(format);
-
 		bean.setContactName(contactName);
 		bean.setContactEmail(contactEmail);
 		bean.setHomepage(homepage);
@@ -140,7 +136,20 @@ public class BeanHelper {
 		bean.setPublication(publication);
 		bean.setUrn(urn);
 		bean.setCodingScheme(codingScheme);
+		
 		if ( isFoundry != null) bean.setIsFoundry(Byte.parseByte(isFoundry));
+		
+		if (categoryIds.size() > 0) bean.setCategoryIds(categoryIds);
+		
+		
+		// DEBUG STATETMENT - to be removed later
+		System.out.println("**************************");
+		System.out.println("HTTP REQUEST CONTENT:");
+		System.out.println("versionNumber = " + bean.getVersionNumber());
+		System.out.println("filePath = " + bean.getFilePath());
+		System.out.println("contactName = " + bean.getContactName());
+		System.out.println("contactEmail = " + bean.getContactEmail());
+		System.out.println("**************************");
 		
 		return bean;
 

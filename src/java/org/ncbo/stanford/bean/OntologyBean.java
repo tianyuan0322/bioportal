@@ -1,6 +1,7 @@
 package org.ncbo.stanford.bean;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Collection;
 import java.util.Date;
 import java.util.List;
@@ -10,6 +11,7 @@ import org.ncbo.stanford.domain.generated.NcboLCategory;
 import org.ncbo.stanford.domain.generated.NcboLStatus;
 import org.ncbo.stanford.domain.generated.NcboOntologyCategory;
 import org.ncbo.stanford.domain.generated.NcboOntologyFile;
+import org.ncbo.stanford.domain.generated.NcboOntologyLoadQueue;
 import org.ncbo.stanford.domain.generated.NcboOntologyMetadata;
 import org.ncbo.stanford.domain.generated.NcboOntologyVersion;
 import org.ncbo.stanford.domain.generated.NcboUser;
@@ -128,8 +130,24 @@ public class OntologyBean {
 		}
 		
 		// Set User Object
+		
 		NcboUser ncboUser = new NcboUser();
-		ncboUser.setId(this.getUserId());
+		// ncboUser.setId(this.getUserId());
+		// -----------------------------------------------------------------------
+		// TODO - this is temporary code until UserBean is avail from the Session
+		UserBean bean = new UserBean();
+		bean.setId(Integer.parseInt("2850"));
+		bean.setUsername("myusername");
+		bean.setPassword("mypassword");
+		bean.setEmail("myemail@stanford.edu");
+		bean.setFirstname("myfirstname");
+		bean.setLastname("mylastname");
+		bean.setPhone("123-456-7890");
+		bean.setDateCreated(new Date());
+		// -----------------------------------------------------------------------
+		// Retrieve User Object from the session
+		bean.populateToEntity(ncboUser);
+		
 		ontologyVersion.setNcboUser(ncboUser);
 
 		ontologyVersion.setVersionNumber(this.getVersionNumber());
@@ -145,9 +163,11 @@ public class OntologyBean {
 		status.setId(this.getStatusId());
 		ontologyVersion.setNcboLStatus(status);
 	
-		// Set FilePath
+		// Set filePath
 		ontologyVersion.setFilePath(this.getFilePath());
 		
+		// Set dateCreated
+		ontologyVersion.setDateCreated(Calendar.getInstance().getTime());
 		
 //		TODO - remove this???
 		/*
@@ -157,6 +177,15 @@ public class OntologyBean {
 		// Set Categories
 		ontologyVersion.setNcboOntologyCategories(new HashSet<Integer>(this.getCategoryIds()));
 		*/
+		
+		// DEBUG STATETMENT - to be removed later
+		System.out.println("**************************");
+		System.out.println("HTTP REQUEST");
+		System.out.println("versionNumber = " + versionNumber);
+		System.out.println("filePath = " + filePath);
+		System.out.println("contactName = " + contactName);
+		System.out.println("contactEmail = " + contactEmail);
+		System.out.println("**************************");
 				
 	}
 	
@@ -209,7 +238,29 @@ public class OntologyBean {
 	}
 	
 	// TODO - populate to loadQueue - NcboOntologyLoadQueue
-	
+	/**
+	 * Populates a NcboOntologyLoadQueue Entity from this ontologyBean.
+	 * OntologyVersion should have been populated from OntologyBean before making this call.
+	 * 
+	 * @param NcboOntologyLoadQueue, NcboOntologyVersion
+	 */
+
+	public void populateToLoadQueueEntity(NcboOntologyLoadQueue loadQueue, NcboOntologyVersion ontologyVersion) {
+
+        if (loadQueue != null) {
+
+        	// OntologyVersion object
+    		loadQueue.setNcboOntologyVersion(ontologyVersion);
+        	        	
+    		// NcboStatus Object
+    		NcboLStatus status = new NcboLStatus();
+    		status.setId(this.getStatusId());
+    		loadQueue.setNcboLStatus(status);
+    		
+    		loadQueue.setDateCreated(Calendar.getInstance().getTime());
+        }
+		
+	}
 	
 	public String toString() {
 		return "Id: " + getId() + " Name: " + getDisplayLabel() + " Ver: "
@@ -632,6 +683,11 @@ public class OntologyBean {
 
 	public void setStatusId(Integer statusId) {
 		this.statusId = statusId;
+	}
+	
+	public String getOntologyDirPath() {
+		return "/" + this.getOntologyId() + "/"
+				+ this.getInternalVersionNumber();
 	}
 
 }
