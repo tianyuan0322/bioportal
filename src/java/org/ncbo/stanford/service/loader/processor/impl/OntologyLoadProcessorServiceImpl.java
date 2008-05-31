@@ -98,8 +98,9 @@ public class OntologyLoadProcessorServiceImpl implements
 		ontologyVersion.setDateCreated(ontologyBean.getDateCreated());
 		ontologyVersion.setDateReleased(ontologyBean.getDateReleased());
 
-		ontologyVersion.setFilePath(filePathHandler
-				.getOntologyDirPath(ontologyBean));
+		ontologyVersion.setFilePath(ontologyBean.getOntologyDirPath());
+//		ontologyVersion.setFilePath(filePathHandler
+//				.getOntologyDirPath(ontologyBean));
 
 		NcboLStatus status = new NcboLStatus();
 		status.setId(StatusEnum.STATUS_WAITING.getStatus());

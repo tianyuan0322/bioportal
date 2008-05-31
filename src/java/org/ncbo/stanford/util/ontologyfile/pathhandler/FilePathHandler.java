@@ -63,5 +63,5 @@ public interface FilePathHandler {
 	 * @param ontologyBean
 	 * @return
 	 */
-	public String getOntologyDirPath(OntologyBean ontologyBean);
+//	public String getOntologyDirPath(OntologyBean ontologyBean);
 }

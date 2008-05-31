@@ -25,11 +25,16 @@ public abstract class AbstractFilePathHandler implements FilePathHandler {
 
 	public String getFullOntologyDirPath(String ontologyFilePath,
 			OntologyBean ontologyBean) {
+		return ontologyFilePath + ontologyBean.getOntologyDirPath();
+	}
+	
+/*	public String getFullOntologyDirPath(String ontologyFilePath,
+			OntologyBean ontologyBean) {
 		return ontologyFilePath + getOntologyDirPath(ontologyBean);
 	}
 
 	public String getOntologyDirPath(OntologyBean ontologyBean) {
 		return "/" + ontologyBean.getOntologyId() + "/"
 				+ ontologyBean.getInternalVersionNumber();
-	}
+	}*/
 }
