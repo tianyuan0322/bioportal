@@ -1,0 +1,89 @@
+
+
+
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+  <head>
+  
+  <STYLE TYPE="text/css">
+
+.indented
+   {
+   padding-left: 50pt;
+   padding-right: 50pt;
+   }
+
+</STYLE>
+  
+    <title>test_put_ontology.html</title>
+
+    <meta http-equiv="keywords" content="keyword1,keyword2,keyword3">
+    <meta http-equiv="description" content="this is my page">
+    <meta http-equiv="content-type" content="text/html; charset=ISO-8859-1">
+
+  </head>
+
+  <body>
+   
+    <h3> Test PUT (Update) for Ontology  </h3>  
+
+<DIV CLASS="indented">
+
+    <form name="testForm" method="post" action="http://localhost:8080/bioportal/rest/ontologies">
+
+
+		<b>System/Admin/Scheduler attributes </b><br />
+    	UserId: <input type="text" id="userId" name="userId" value="12564" /><br />
+    	StatusId: <input type="text" id="statusId" name="statusId" value="1" /><br />
+    	IsReviewed: <input type="text" id="isReviewed" name="isReviewed" value="1" /><br />
+    	CodingScheme: <input type="text" id="isReviewed" name="codingScheme" value="1" /><br />
+    	<br /><br />
+    	     	
+    	<b>User input </b><br />
+    	
+    	VersionNumber: <input type="text" id="versionNumber" name="versionNumber" value="1.0" /><br />
+    	VersionStatus: <input type="text" id="versionStatus" name="versionStatus" value="pre-production" /><br />
+    	IsCurrent: <input type="text" id="isCurrent" name="isCurrent" value="1" /><br />
+    	IsRemote: <input type="text" id="isRemote" name="isRemote" value="0" /><br />
+		
+		DateCreated:  N/A for PUT (Update) <br />
+    	DateReleased: <input type="text" id="dateReleased" name="dateReleased" value="05/1/2008" /><br />
+    	
+    	<br /><br />
+    	ContactEmail: <input type="text" id="contactEmail" name="contactEmail" size=50 value="email111@email.com" /><br />
+    	ContactName: <input type="text" id="contactName" name="contactName" size=50 value="TesterFirst TesterLastName" /><br />
+    	DisplayLabel: <input type="text" id="displayLabel" name="displayLabel" value="Pizza Ontology" /><br />
+    	Format: <input type="text" id="format" name="format" value="OWL-DL" /><br />
+    	IsFoundry: <input type="text" id="isFoundry" name="isFoundry" value="0" /><br />
+    	
+    	<br /><br />
+    	FilePath: N/A for PUT (Update) <br />
+    	FileName: N/A for PUT (Update) <br />
+    	<!--  N/A for Update
+    	FilePath: <input type="text" id="filePath" name="filePath" size=100 value="/dev/cyoun/workspace/bioportal_resources/uploads/3000/0/pizza.owl" /><br />
+    	FileName: <input type="text" id="fileNames" name="fileName" value="testFileName1.OWL" /><br />
+    	-->
+    	
+    	CategoryIds: (multiple selection)
+    	<SELECT id="categoryId" name="categoryId" size=7 multiple>
+			<OPTION value="2801">2801</OPTION>
+			<OPTION value="2802">2802</OPTION>
+			<OPTION value="2803">2803</OPTION>
+			<OPTION value="2804">2804</OPTION>
+			<OPTION value="2805">2805</OPTION>
+			<OPTION value="2806">2806</OPTION>
+			<OPTION value="2807">2807</OPTION>
+			<OPTION value="2808">2808</OPTION>
+			<OPTION value="2809">2809</OPTION>
+			<OPTION value="2810">2810</OPTION>
+			<OPTION selected value="2812">2812</OPTION>
+		</SELECT>	
+
+   		<input type="hidden" name="sessionid" value="9c188a9b8de0fe0c21b9322b72255fb939a68bb2" />  
+    	<!--  <input type="hidden" name="applicationid" value="4ea81d74-8960-4525-810b-fa1baab576ff" /> -->
+    	<br /><br />
+    	<input type="submit" value="Post" />
+    </form>
+</DIV>
+  </body>
+</html>
