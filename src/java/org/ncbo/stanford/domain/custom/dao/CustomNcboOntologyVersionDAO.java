@@ -59,7 +59,7 @@ public class CustomNcboOntologyVersionDAO extends NcboOntologyVersionDAO {
 		}
 
 		for (NcboOntologyCategory cat : categories) {
-			ontology.addCategoryId(cat.getId());
+			ontology.addCategoryId(cat.getNcboLCategory().getId());
 		}
 		
 		return ontology;
