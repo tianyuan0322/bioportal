@@ -21,41 +21,69 @@ import com.ice.tar.TarInputStream;
 
 public class CompressionUtils {
 
-	public List<String> unZip(String zipFilePath, String zipFileName)
+	private static final String ZIP_EXTENSION = "zip";
+	private static final String JAR_EXTENSION = "jar";
+	private static final String TAR_EXTENSION = "tar";
+
+	private CompressionUtils() {
+	}
+
+	private static class CompressionUtilsHolder {
+		private final static CompressionUtils instance = new CompressionUtils();
+	}
+
+	public static CompressionUtils getInstance() {
+		return CompressionUtilsHolder.instance;
+	}
+
+	public List<String> uncompress(String filePath, String filename)
+			throws FileNotFoundException, IOException {
+		List<String> allFiles = new ArrayList<String>(1);
+
+		if (isZip(filename)) {
+			allFiles = unzip(filePath, filename);
+		} else if (isJar(filename)) {
+			allFiles = unjar(filePath, filename);
+		} else if (isTar(filename)) {
+			allFiles = untar(filePath, filename);
+		}
+
+		return allFiles;
+	}
+
+	public List<String> unzip(String zipFilePath, String zipFileName)
 			throws FileNotFoundException, IOException {
 		FileInputStream fis = new FileInputStream(zipFilePath + File.separator
 				+ zipFileName);
 
-		return unCompress(new ZipCompressedInputStream(fis), zipFilePath,
+		return extractFiles(new ZipCompressedInputStream(fis), zipFilePath,
 				zipFileName);
 	}
 
-	public List<String> unTar(String tarFilePath, String tarFileName)
+	public List<String> untar(String tarFilePath, String tarFileName)
 			throws FileNotFoundException, IOException {
 		FileInputStream fis = new FileInputStream(tarFilePath + File.separator
 				+ tarFileName);
 
-		return unCompress(new TarCompressedInputStream(fis), tarFilePath,
+		return extractFiles(new TarCompressedInputStream(fis), tarFilePath,
 				tarFileName);
 	}
 
-	public List<String> unJar(String jarFilePath, String jarFileName)
+	public List<String> unjar(String jarFilePath, String jarFileName)
 			throws FileNotFoundException, IOException {
 		FileInputStream fis = new FileInputStream(jarFilePath + File.separator
 				+ jarFileName);
 
-		return unCompress(new JarCompressedInputStream(fis), jarFilePath,
+		return extractFiles(new JarCompressedInputStream(fis), jarFilePath,
 				jarFileName);
 	}
 
-	private List<String> unCompress(CompressedInputStream cis,
+	private List<String> extractFiles(CompressedInputStream cis,
 			String compressedFilePath, String compressedFilename)
 			throws FileNotFoundException, IOException {
 		ArrayList<String> lst = new ArrayList<String>(1);
 		BufferedOutputStream dest = null;
 		CompressedEntry entry;
-
-		lst.add(compressedFilename);
 
 		while ((entry = cis.getNextEntry()) != null) {
 			int count;
@@ -80,6 +108,22 @@ public class CompressionUtils {
 		cis.close();
 
 		return lst;
+	}
+
+	public static boolean isZip(String filename) {
+		return filename.endsWith(ZIP_EXTENSION);
+	}
+
+	public static boolean isJar(String filename) {
+		return filename.endsWith(JAR_EXTENSION);
+	}
+
+	public static boolean isTar(String filename) {
+		return filename.endsWith(TAR_EXTENSION);
+	}
+
+	public static boolean isCompressed(String filename) {
+		return isZip(filename) || isJar(filename) || isTar(filename);
 	}
 
 	public static String getOnlyFileName(String name) {
