@@ -9,7 +9,6 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
 
 import org.ncbo.stanford.bean.OntologyBean;
@@ -22,8 +21,7 @@ import org.ncbo.stanford.util.ontologyfile.compressedfilehandler.AbstractCompres
  * 
  */
 public class OBOCompressedFileHandlerImpl extends AbstractCompressedFileHandler {
-	
-	
+
 	protected OBOCompressedFileHandlerImpl() {
 	}
 
@@ -35,20 +33,8 @@ public class OBOCompressedFileHandlerImpl extends AbstractCompressedFileHandler 
 
 		if (filename.endsWith("zip") || filename.endsWith("jar")
 				|| filename.endsWith("tar")) {
-			CompressionUtils compressionUtils = new CompressionUtils();
-			List<String> allFiles = new ArrayList<String>(1);
-
-			if (filename.endsWith("zip")) {
-				allFiles = compressionUtils.unZip(filePath, filename);
-			} else if (filename.endsWith("jar")) {
-				allFiles = compressionUtils.unJar(outputFile.getPath(),
-						filename);
-			} else if (filename.endsWith("tar")) {
-				allFiles = compressionUtils.unTar(outputFile.getPath(),
-						filename);
-			}
-
-			String joinFile = createCompositeFile(filePath, filename, allFiles);
+			String joinFile = createCompositeFile(filePath, filename,
+					uncompressedFilenames);
 			relevantFiles.add(joinFile);
 		}
 
