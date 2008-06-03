@@ -145,11 +145,11 @@ public class OntologyLoadSchedulerServiceImpl implements
 		try {
 
 			// TODO: remove this if block
-			if (rec.getNcboOntologyVersion().getId() == 3145
-					|| rec.getNcboOntologyVersion().getId() == 4886
-					|| rec.getNcboOntologyVersion().getId() == 13578) {
-				return;
-			}
+//			if (rec.getNcboOntologyVersion().getId() == 3145
+//					|| rec.getNcboOntologyVersion().getId() == 4886
+//					|| rec.getNcboOntologyVersion().getId() == 13578) {
+//				return;
+//			}
 
 			status.setId(StatusEnum.STATUS_PARSING.getStatus());
 			ver.setNcboLStatus(status);
