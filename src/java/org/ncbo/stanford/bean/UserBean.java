@@ -44,15 +44,17 @@ public class UserBean {
 	 */
 	public void populateToEntity(NcboUser ncboUser) {
 		
-		ncboUser.setId(this.getId());
-		ncboUser.setUsername(this.getUsername());
-		ncboUser.setPassword(this.getPassword());
-		ncboUser.setEmail(this.getEmail());
-		ncboUser.setFirstname(this.getFirstname());
-		ncboUser.setLastname(this.getLastname());
-		ncboUser.setPhone(this.getPhone());
-		ncboUser.setDateCreated(this.getDateCreated());
-	
+		if (ncboUser != null) {
+			
+			ncboUser.setId(this.getId());
+			ncboUser.setUsername(this.getUsername());
+			ncboUser.setPassword(this.getPassword());
+			ncboUser.setEmail(this.getEmail());
+			ncboUser.setFirstname(this.getFirstname());
+			ncboUser.setLastname(this.getLastname());
+			ncboUser.setPhone(this.getPhone());
+			ncboUser.setDateCreated(this.getDateCreated());
+		}
 	}
 	
 	

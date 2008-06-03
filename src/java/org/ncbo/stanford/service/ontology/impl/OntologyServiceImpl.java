@@ -3,7 +3,6 @@ package org.ncbo.stanford.service.ontology.impl;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.List;
 
 import org.apache.commons.logging.Log;
@@ -16,6 +15,7 @@ import org.ncbo.stanford.domain.custom.dao.CustomNcboOntologyMetadataDAO;
 import org.ncbo.stanford.domain.custom.dao.CustomNcboOntologyVersionDAO;
 import org.ncbo.stanford.domain.custom.dao.CustomNcboSeqOntologyIdDAO;
 import org.ncbo.stanford.domain.custom.entity.NcboOntology;
+import org.ncbo.stanford.domain.generated.NcboLCategory;
 import org.ncbo.stanford.domain.generated.NcboOntologyCategory;
 import org.ncbo.stanford.domain.generated.NcboOntologyFile;
 import org.ncbo.stanford.domain.generated.NcboOntologyLoadQueue;
@@ -82,10 +82,8 @@ public class OntologyServiceImpl implements OntologyService {
 	 */
 	public OntologyBean findOntology(Integer ontologyVersionId) {
 
-		NcboOntology ontology = ncboOntologyVersionDAO
-				.findOntologyVersion(ontologyVersionId);
 		OntologyBean ontologyBean = new OntologyBean();
-		ontologyBean.populateFromEntity(ontology);
+		ontologyBean.populateFromEntity(ncboOntologyVersionDAO.findOntologyVersion(ontologyVersionId));
 
 		return ontologyBean;
 
@@ -192,6 +190,8 @@ public class OntologyServiceImpl implements OntologyService {
 
 	}
 
+	
+	
 	/**
 	 * Update Ontology. Execute the business logic with the OntologyBean first,
 	 * then populate OntologyVersion object
@@ -213,7 +213,7 @@ public class OntologyServiceImpl implements OntologyService {
 
 		if (ontologyVersion == null || ontologyMetadata == null)
 			return;
-
+		
 		// 1. <ontologyVersion> - populate and save
 		ontologyBean.populateToVersionEntity(ontologyVersion);
 		ncboOntologyVersionDAO.save(ontologyVersion);
@@ -224,6 +224,8 @@ public class OntologyServiceImpl implements OntologyService {
 		ncboOntologyMetadataDAO.save(ontologyMetadata);
 
 		// 3. <ontologyCategory> - populate and save
+		// remove all corresponding categories associated with given ontologyVersionId
+		// and add new categories
 		ArrayList<NcboOntologyCategory> ontologyCategoryList = new ArrayList<NcboOntologyCategory>();
 		ontologyBean.populateToCategoryEntity(ontologyCategoryList,
 				ontologyVersion);
@@ -232,6 +234,42 @@ public class OntologyServiceImpl implements OntologyService {
 		}
 
 	}
+	
+	
+	/**
+	 * Update Ontology Category. Execute the business logic with the OntologyBean first,
+	 * then populate OntologyVersion object
+	 * 
+	 * @param ontologyBean
+	 * @return
+	 */
+	public void cleanupOntologyCategory(OntologyBean ontologyBean, List<Integer> oldCategoryIds) {
+		
+		// get the NcboOntologyVersion instance using OntologyVersionId
+		NcboOntologyVersion ontologyVersion = ncboOntologyVersionDAO
+				.findById(ontologyBean.getId());
+		
+		ArrayList<NcboOntologyCategory> ontologyCategoryList = new ArrayList<NcboOntologyCategory>();
+		
+		for (Integer categoryId : oldCategoryIds) {
+			
+			NcboOntologyCategory ontologyCategory = new NcboOntologyCategory();
+			
+			NcboLCategory ncboLCategory = new NcboLCategory();
+			
+			System.out.println("*****************deleting categoryId................" + categoryId);
+			ncboLCategory.setId(categoryId);
+			ontologyCategory.setNcboLCategory(ncboLCategory);
+			ontologyCategory.setNcboOntologyVersion(ontologyVersion);
+			ontologyCategoryList.add(ontologyCategory);
+		
+		}
+		
+		for (NcboOntologyCategory ontologyCategory : ontologyCategoryList) {
+			ncboOntologyCategoryDAO.delete(ontologyCategory);
+		}
+	}
+	
 
 	public void deleteOntology(OntologyBean ontologyBean) {
 		// TODO

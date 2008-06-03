@@ -42,16 +42,6 @@ public class BeanHelper {
 		userBean.setLastname(lastname);
 		userBean.setPhone(phone);
 		userBean.setDateCreated(DateHelper.getDateFrom(dateCreated));
-	
-		// DEBUG STATETMENT - to be removed later
-		System.out.println("**************************");
-		System.out.println("username = " + userBean.getUsername());
-		System.out.println("password = " + userBean.getPassword());
-		System.out.println("first name = " + userBean.getFirstname());
-		System.out.println("last name = " + userBean.getLastname());
-		System.out.println("email = " + userBean.getEmail());
-		System.out.println("dateCreated = " + userBean.getDateCreated());
-		System.out.println("**************************");
 		
 		return userBean;
 	}
@@ -115,6 +105,8 @@ public class BeanHelper {
 		String statusId = httpServletRequest.getParameter(MessageUtils.getMessage("form.ontology.statusId"));
 		String codingScheme = httpServletRequest.getParameter(MessageUtils.getMessage("form.ontology.codingScheme"));
 				
+		
+		// now populate the OntologyBean
 		OntologyBean bean = new OntologyBean();
 		bean.setVersionNumber(versionNumber);
 		bean.setVersionStatus(versionStatus);
@@ -140,16 +132,6 @@ public class BeanHelper {
 		if ( isFoundry != null) bean.setIsFoundry(Byte.parseByte(isFoundry));
 		
 		if (categoryIds.size() > 0) bean.setCategoryIds(categoryIds);
-		
-		
-		// DEBUG STATETMENT - to be removed later
-		System.out.println("**************************");
-		System.out.println("HTTP REQUEST CONTENT:");
-		System.out.println("versionNumber = " + bean.getVersionNumber());
-		System.out.println("filePath = " + bean.getFilePath());
-		System.out.println("contactName = " + bean.getContactName());
-		System.out.println("contactEmail = " + bean.getContactEmail());
-		System.out.println("**************************");
 		
 		return bean;
 

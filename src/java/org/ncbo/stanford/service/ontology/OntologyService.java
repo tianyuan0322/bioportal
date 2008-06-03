@@ -77,6 +77,14 @@ public interface OntologyService {
 	public void updateOntology(OntologyBean ontologyBean);
 	
 	/**	
+	 * Update an ontology Category
+	 * 	  
+	 * @param ontologyBean
+	 * @return
+	 */
+	public void cleanupOntologyCategory(OntologyBean ontologyBean, List<Integer> oldCategoryIds);
+	
+	/**	
 	 * Delete an ontology 
 	 * 	  
 	 * @param ontologyBean

@@ -235,7 +235,6 @@ public class UserRestlet extends Restlet {
 
 			response.setStatus(Status.SUCCESS_OK);
 			
-			// TODO - which Constants file does this error msg go?
 			// if user is not found, set Error in the Status object
 			if (userBean == null || userBean.getId() == null) {
 	
