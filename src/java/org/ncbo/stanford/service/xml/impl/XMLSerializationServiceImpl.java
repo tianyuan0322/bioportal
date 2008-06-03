@@ -3,8 +3,17 @@ package org.ncbo.stanford.service.xml.impl;
 import java.util.List;
 
 import org.apache.commons.validator.GenericValidator;
+
+import org.restlet.data.MediaType;
+import org.restlet.data.Request;
+import org.restlet.data.Response;
+import org.restlet.data.Status;
+
 import org.ncbo.stanford.bean.OntologyBean;
 import org.ncbo.stanford.bean.UserBean;
+import org.ncbo.stanford.bean.concept.ClassBean;
+import org.ncbo.stanford.bean.concept.InstanceBean;
+import org.ncbo.stanford.bean.concept.PropertyBean;
 import org.ncbo.stanford.bean.response.ErrorBean;
 import org.ncbo.stanford.bean.response.ErrorStatusBean;
 import org.ncbo.stanford.bean.response.SuccessBean;
@@ -13,10 +22,7 @@ import org.ncbo.stanford.service.xml.XMLSerializationService;
 import org.ncbo.stanford.util.MessageUtils;
 import org.ncbo.stanford.util.RequestUtils;
 import org.ncbo.stanford.util.constants.ApplicationConstants;
-import org.restlet.data.MediaType;
-import org.restlet.data.Request;
-import org.restlet.data.Response;
-import org.restlet.data.Status;
+import org.ncbo.stanford.view.util.constants.RequestParamConstants;
 
 import com.thoughtworks.xstream.XStream;
 
@@ -87,7 +93,7 @@ public class XMLSerializationServiceImpl implements XMLSerializationService {
 
 		SuccessBean successBean = new SuccessBean();
 		successBean.setSessionId(sessionId);
-		successBean.setData(data);
+		successBean.getData().add(data);
 
 		if (!GenericValidator.isBlankOrNull(accessedResource)) {
 			successBean.setAccessedResource(accessedResource);
@@ -102,6 +108,9 @@ public class XMLSerializationServiceImpl implements XMLSerializationService {
 		//xstream.alias(RequestParamConstants.ENTITY_USER, UserBean.class);
 		xstream.alias(MessageUtils.getMessage("entity.ontology"), OntologyBean.class);
 		xstream.alias(MessageUtils.getMessage("entity.user"), UserBean.class);
+		xstream.alias(MessageUtils.getMessage("entity.classbean"), ClassBean.class);
+		xstream.alias(MessageUtils.getMessage("entity.propertybean"), PropertyBean.class);
+		xstream.alias(MessageUtils.getMessage("entity.instancebean"),InstanceBean.class);
 		xstream.alias(ApplicationConstants.RESPONSE_XML_TAG_NAME,
 				SuccessBean.class);
 		xstream.alias(ApplicationConstants.ERROR_XML_TAG_NAME, ErrorBean.class);

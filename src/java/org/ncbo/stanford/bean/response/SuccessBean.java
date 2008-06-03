@@ -1,5 +1,8 @@
 package org.ncbo.stanford.bean.response;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * Success response container for RESTful responses
  * 
@@ -9,7 +12,7 @@ package org.ncbo.stanford.bean.response;
 public class SuccessBean extends AbstractResponseBean {
 
 	private String sessionId;
-	private Object data;
+	private List<Object> data = new ArrayList<Object>();
 
 	/**
 	 * Default constructor
@@ -36,14 +39,14 @@ public class SuccessBean extends AbstractResponseBean {
 	/**
 	 * @return the data
 	 */
-	public Object getData() {
+	public List<Object> getData() {
 		return data;
 	}
 
 	/**
 	 * @param data the data to set
 	 */
-	public void setData(Object data) {
+	public void setData(List<Object> data) {
 		this.data = data;
 	}
 }
