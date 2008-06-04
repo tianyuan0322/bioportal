@@ -285,6 +285,13 @@
 		<constructor-arg ref="messageBundleName" index="0" />
 	</bean>
 
+	<bean id="configUtils"
+		class="org.ncbo.stanford.util.ConfigUtils">
+		<property name="ontologyFilePath">
+			<ref bean="ontologyFilePath" />
+		</property>		
+	</bean>
+
 	<!-- Ontology format handler map -->
 	<util:map id="ontologyFormatHandlerMap"
 		map-class="java.util.HashMap">
@@ -496,9 +503,6 @@
 		<property name="ncboSeqOntologyIdDAO">
 			<ref bean="NcboSeqOntologyIdDAO" />
 		</property>
-		<property name="ontologyFilePath">
-			<ref bean="ontologyFilePath" />
-		</property>
 	</bean>
 
 	<bean id="ontologyLoadSchedulerService"
@@ -515,9 +519,6 @@
 		<property name="ontologyLoadHandlerMap">
 			<ref local="ontologyLoadHandlerMap" />
 		</property>
-		<property name="ontologyFilePath">
-			<ref bean="ontologyFilePath" />
-		</property>		
 	</bean>
 
 	<!-- Session Management -->
