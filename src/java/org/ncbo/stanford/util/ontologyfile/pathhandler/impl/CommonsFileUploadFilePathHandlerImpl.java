@@ -31,45 +31,20 @@ public class CommonsFileUploadFilePathHandlerImpl extends
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.ncbo.stanford.util.ontologyfile.pathhandler.FilePathHandler#processOntologyFileUpload(java.lang.String,
-	 *      org.ncbo.stanford.bean.OntologyBean)
+	 * @see org.ncbo.stanford.util.ontologyfile.pathhandler.FilePathHandler#processOntologyFileUpload(org.ncbo.stanford.bean.OntologyBean)
 	 */
-	public List<String> processOntologyFileUpload(
-			OntologyBean ontologyBean) throws FileNotFoundException,
-			IOException, Exception {
-			
-		String filePath = ontologyBean.getFilePath();
+	public List<String> processOntologyFileUpload(OntologyBean ontologyBean)
+			throws FileNotFoundException, IOException, Exception {
+
+		String filePath = AbstractFilePathHandler
+				.getFullOntologyDirPath(ontologyBean);
 		String fileName = ontologyBean.getFileItem().getName();
+
 		File outputDirectories = new File(filePath);
 		outputDirectories.mkdirs();
 
 		File outputFile = new File(filePath, fileName);
-		outputFile.createNewFile();
-		file.write(outputFile);
 
-		return compressedFileHandler.handle(outputFile, ontologyBean);
-	}	
-
-	//TODO - clean up the DUPLICATE
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.ncbo.stanford.util.ontologyfile.pathhandler.FilePathHandler#processOntologyFileUpload(java.lang.String,
-	 *      org.ncbo.stanford.bean.OntologyBean)
-	 */
-	public List<String> processOntologyFileUpload(String ontologyFilePath,
-			OntologyBean ontologyBean) throws FileNotFoundException,
-			IOException, Exception {
-				
-		
-		File outputDirectories = new File(getFullOntologyDirPath(
-				ontologyFilePath, ontologyBean));
-		outputDirectories.mkdirs();
-			
-		
-		File outputFile = new File(getOntologyFilePath(ontologyFilePath,
-				ontologyBean, file.getName()));
-		outputFile.createNewFile();
 		file.write(outputFile);
 
 		return compressedFileHandler.handle(outputFile, ontologyBean);
