@@ -48,7 +48,6 @@ public class OntologyLoadProcessorServiceImpl implements
 	private CustomNcboOntologyFileDAO ncboOntologyFileDAO;
 	private CustomNcboOntologyLoadQueueDAO ncboOntologyLoadQueueDAO;
 	private CustomNcboSeqOntologyIdDAO ncboSeqOntologyIdDAO;
-	private String ontologyFilePath;
 
 	/**
 	 * Extract an ontology from a file and populate all the necessary db tables
@@ -108,8 +107,7 @@ public class OntologyLoadProcessorServiceImpl implements
 		NcboOntologyVersion newOntologyVersion = ncboOntologyVersionDAO
 				.saveOntologyVersion(ontologyVersion);
 
-		List<String> relevantFiles = filePathHandler.processOntologyFileUpload(
-				ontologyFilePath, ontologyBean);
+		List<String> relevantFiles = filePathHandler.processOntologyFileUpload(ontologyBean);
 
 		for (String filename : relevantFiles) {
 			NcboOntologyFile ontologyFileRec = new NcboOntologyFile();
@@ -219,21 +217,6 @@ public class OntologyLoadProcessorServiceImpl implements
 	public void setNcboOntologyLoadQueueDAO(
 			CustomNcboOntologyLoadQueueDAO ncboOntologyLoadQueueDAO) {
 		this.ncboOntologyLoadQueueDAO = ncboOntologyLoadQueueDAO;
-	}
-
-	/**
-	 * @return the ontologyFilePath
-	 */
-	public String getOntologyFilePath() {
-		return ontologyFilePath;
-	}
-
-	/**
-	 * @param ontologyFilePath
-	 *            the ontologyFilePath to set
-	 */
-	public void setOntologyFilePath(String ontologyFilePath) {
-		this.ontologyFilePath = ontologyFilePath;
 	}
 
 	/**

@@ -18,6 +18,7 @@ import org.ncbo.stanford.domain.generated.NcboOntologyVersion;
 import org.ncbo.stanford.enumeration.StatusEnum;
 import org.ncbo.stanford.manager.OntologyLoadManager;
 import org.ncbo.stanford.service.loader.scheduler.OntologyLoadSchedulerService;
+import org.ncbo.stanford.util.ontologyfile.pathhandler.AbstractFilePathHandler;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -40,7 +41,6 @@ public class OntologyLoadSchedulerServiceImpl implements
 	private CustomNcboOntologyVersionDAO ncboOntologyVersionDAO;
 	private Map<String, String> ontologyFormatHandlerMap = new HashMap<String, String>();
 	private Map<String, OntologyLoadManager> ontologyLoadHandlerMap = new HashMap<String, OntologyLoadManager>();
-	private String ontologyFilePath;
 
 	/**
 	 * Gets the list of ontologies that need to be loaded and process each using
@@ -124,20 +124,11 @@ public class OntologyLoadSchedulerServiceImpl implements
 		OntologyBean ontologyBean = new OntologyBean();
 		ontologyBean.populateFromEntity(ontology);
 
-		
-		
-		
-		
-		
-		
-		
-		
-		
 		// TODO: remove this
-//		String formatHandler = ontologyFormatHandlerMap.get(ontologyBean
-//				.getFormat());
-//		OntologyLoadManager loadManager = ontologyLoadHandlerMap
-//				.get(formatHandler);
+		// String formatHandler = ontologyFormatHandlerMap.get(ontologyBean
+		// .getFormat());
+		// OntologyLoadManager loadManager = ontologyLoadHandlerMap
+		// .get(formatHandler);
 
 		// TODO: remove this if statement
 		// if (loadManager instanceof OntologyLoadManagerProtegeImpl) {
@@ -145,11 +136,11 @@ public class OntologyLoadSchedulerServiceImpl implements
 		try {
 
 			// TODO: remove this if block
-//			if (rec.getNcboOntologyVersion().getId() == 3145
-//					|| rec.getNcboOntologyVersion().getId() == 4886
-//					|| rec.getNcboOntologyVersion().getId() == 13578) {
-//				return;
-//			}
+			// if (rec.getNcboOntologyVersion().getId() == 3145
+			// || rec.getNcboOntologyVersion().getId() == 4886
+			// || rec.getNcboOntologyVersion().getId() == 13578) {
+			// return;
+			// }
 
 			status.setId(StatusEnum.STATUS_PARSING.getStatus());
 			ver.setNcboLStatus(status);
@@ -202,8 +193,8 @@ public class OntologyLoadSchedulerServiceImpl implements
 		// looping through the files
 
 		for (String filename : filenames) {
-			File file = new File(ontologyFilePath + ontologyBean.getFilePath()
-					+ "/" + filename);
+			File file = new File(AbstractFilePathHandler.getOntologyFilePath(
+					ontologyBean, filename));
 			loadManager.loadOntology(file.toURI(), ontologyBean);
 		}
 	}
@@ -270,20 +261,5 @@ public class OntologyLoadSchedulerServiceImpl implements
 	public void setOntologyFormatHandlerMap(
 			Map<String, String> ontologyFormatHandlerMap) {
 		this.ontologyFormatHandlerMap = ontologyFormatHandlerMap;
-	}
-
-	/**
-	 * @return the ontologyFilePath
-	 */
-	public String getOntologyFilePath() {
-		return ontologyFilePath;
-	}
-
-	/**
-	 * @param ontologyFilePath
-	 *            the ontologyFilePath to set
-	 */
-	public void setOntologyFilePath(String ontologyFilePath) {
-		this.ontologyFilePath = ontologyFilePath;
 	}
 }

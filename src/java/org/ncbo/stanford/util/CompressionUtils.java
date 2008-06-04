@@ -81,7 +81,7 @@ public class CompressionUtils {
 		BufferedOutputStream dest = null;
 		CompressedEntry entry;
 
-		while ((entry = cis.getNextEntry()) != null) {
+		while ((entry = cis.getNextEntry()) != null && entry.getName() != null) {
 			int count;
 			byte data[] = new byte[ApplicationConstants.BUFFER_SIZE];
 			String str = getOnlyFileName(entry.getName());
@@ -158,7 +158,7 @@ public class CompressionUtils {
 		}
 
 		public String getName() {
-			return entry.getName();
+			return (entry == null) ? null : entry.getName();
 		}
 	}
 
@@ -194,7 +194,7 @@ public class CompressionUtils {
 		}
 
 		public String getName() {
-			return entry.getName();
+			return (entry == null) ? null : entry.getName();
 		}
 	}
 
@@ -230,7 +230,7 @@ public class CompressionUtils {
 		}
 
 		public String getName() {
-			return entry.getName();
+			return (entry == null) ? null : entry.getName();
 		}
 	}
 

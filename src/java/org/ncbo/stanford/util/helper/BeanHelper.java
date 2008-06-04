@@ -1,18 +1,11 @@
 package org.ncbo.stanford.util.helper;
 
-import java.io.File;
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.fileupload.FileItem;
-import org.apache.commons.fileupload.FileUploadException;
-import org.apache.commons.fileupload.disk.DiskFileItemFactory;
-import org.apache.commons.fileupload.servlet.ServletFileUpload;
 import org.ncbo.stanford.bean.OntologyBean;
 import org.ncbo.stanford.bean.UserBean;
 import org.ncbo.stanford.util.MessageUtils;
@@ -151,57 +144,6 @@ public class BeanHelper {
 		return bean;
 
 	}
-	
-	/*
-	public static FileItem getFileItem(HttpServletRequest httpRequest) {
-		
-		String tempDirStr = "C:\temp";
-		File tempDirectory = new File (tempDirStr);
-		
-		List<FileItem> validateItems = new ArrayList<FileItem>(0);
-		
-		boolean isMultipart = ServletFileUpload.isMultipartContent(httpRequest);
-		
-		if (isMultipart) {
-
-			// Create a factory for disk-based file items
-			DiskFileItemFactory factory = new DiskFileItemFactory();
-
-			// Set factory constraints
-			//factory.setSizeThreshold(maxMemorySize);
-			//factory.setRepository(tempDirectory);;
-			
-			// Create a new file upload handler
-			ServletFileUpload upload = new ServletFileUpload(factory);
-
-			// Parse the request
-			// and return the first non-null fileItem
-			try {
-				List<FileItem> items = upload.parseRequest(httpRequest);
-
-				FileItem fileItem0 = (FileItem) items.toArray()[0];
-							
-				Iterator iterator = items.iterator();
-
-				while (iterator.hasNext()) {
-					FileItem fileItem = (FileItem) iterator.next();
-
-					if (fileItem.getName() != null) {
-
-						return fileItem;
-					}
-
-				}
-			
-			
-			} catch (FileUploadException e) {
-				e.printStackTrace();
-			}
-		}
-			
-		return null;
-	}
-	*/
 	
 }
 

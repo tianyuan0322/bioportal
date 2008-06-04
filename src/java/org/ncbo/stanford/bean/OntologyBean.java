@@ -210,13 +210,13 @@ public class OntologyBean {
 		List<String> fileNameList = this.getFilenames();
 		
 		for (String fileName : fileNameList) {
-			
+
 			NcboOntologyFile ontologyFile = new NcboOntologyFile();
 			ontologyFile.setFilename(fileName);
 			ontologyFile.setNcboOntologyVersion(ontologyVersion);
-			
+
 			ontologyFileList.add(ontologyFile);
-		}	
+		}
 	}
 	
 	
