@@ -21,10 +21,6 @@ import com.ice.tar.TarInputStream;
 
 public class CompressionUtils {
 
-	private static final String ZIP_EXTENSION = "zip";
-	private static final String JAR_EXTENSION = "jar";
-	private static final String TAR_EXTENSION = "tar";
-
 	private CompressionUtils() {
 	}
 
@@ -111,15 +107,18 @@ public class CompressionUtils {
 	}
 
 	public static boolean isZip(String filename) {
-		return filename.endsWith(ZIP_EXTENSION);
+		return filename.toLowerCase().endsWith(
+				ApplicationConstants.ZIP_EXTENSION);
 	}
 
 	public static boolean isJar(String filename) {
-		return filename.endsWith(JAR_EXTENSION);
+		return filename.toLowerCase().endsWith(
+				ApplicationConstants.JAR_EXTENSION);
 	}
 
 	public static boolean isTar(String filename) {
-		return filename.endsWith(TAR_EXTENSION);
+		return filename.toLowerCase().endsWith(
+				ApplicationConstants.TAR_EXTENSION);
 	}
 
 	public static boolean isCompressed(String filename) {
