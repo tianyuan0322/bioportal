@@ -6,6 +6,7 @@ import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 
+import org.apache.commons.fileupload.FileItem;
 import org.ncbo.stanford.domain.custom.entity.NcboOntology;
 import org.ncbo.stanford.domain.generated.NcboLCategory;
 import org.ncbo.stanford.domain.generated.NcboLStatus;
@@ -25,7 +26,7 @@ public class OntologyBean {
 	private Integer userId;
 	private String versionNumber;
 	private String versionStatus;
-	private String filePath;
+
 	private Byte isCurrent;
 	private Byte isRemote;
 	private Byte isReviewed;
@@ -42,9 +43,19 @@ public class OntologyBean {
 	private String urn;
 	private String codingScheme;
 	private Byte isFoundry;
+	
 	private List<Integer> categoryIds = new ArrayList<Integer>(0);
+	
+	// file name(s)
 	private List<String> filenames = new ArrayList<String>(0);	
+	
+	// source fileItem
+	private FileItem fileItem;
+	
+	// destination directory
+	private String filePath;
 
+	
 	/**
 	 * Populates the OntologyBean with data from a NcboOntology View
 	 * 
@@ -176,7 +187,7 @@ public class OntologyBean {
 		// DEBUG STATETMENT - to be removed later
 		System.out.println("******************************");
 		System.out.println("HTTP REQUEST: OntologyVersion");
-		System.out.println("HTTP REQUEST" + this.getId());
+		System.out.println("versionId = " + this.getId());
 		System.out.println("versionNumber = " + this.getVersionNumber());
 		System.out.println("filePath = " + this.getFilePath());
 		System.out.println("contactName = " + this.getContactName());
@@ -716,4 +727,20 @@ public class OntologyBean {
 		
 		return ncboUser;
 	}
+
+
+	/**
+	 * @return the fileItem
+	 */
+	public FileItem getFileItem() {
+		return fileItem;
+	}
+
+	/**
+	 * @param fileItem the fileItem to set
+	 */
+	public void setFileItem(FileItem fileItem) {
+		this.fileItem = fileItem;
+	}	
+
 }
