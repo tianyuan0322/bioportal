@@ -56,6 +56,7 @@ public interface ApplicationConstants {
 	public static final String SUB_CLASS = "SubClass";
 	public static final String SUPER_CLASS = "SuperClass";
 	public static final String RDF_TYPE = "RdfType";	
+	public static final String CHILD_COUNT = "ChildCount";
 	
 	/**
 	 * Ontology format handlers

@@ -371,6 +371,7 @@ public class OntologyRetrievalManagerProtegeImpl extends
 		
 		bean.setId(cls.getName());
 		bean.setLabel(cls.getBrowserText());
+		bean.addRelation(ApplicationConstants.CHILD_COUNT, cls.getDirectSubclasses().size());
 		return bean;
 		
 	}
@@ -429,7 +430,8 @@ public class OntologyRetrievalManagerProtegeImpl extends
 
 			classBean.addRelation(ApplicationConstants.SUB_CLASS,
 					convertClasses(subclasses, false));
-
+			classBean.addRelation(ApplicationConstants.CHILD_COUNT, subclasses.size());
+			
 			// add superclasses
 			if (pConcept instanceof OWLNamedClass) {
 				superclasses = ((OWLNamedClass) pConcept)
