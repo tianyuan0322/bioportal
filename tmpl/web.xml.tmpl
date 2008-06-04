@@ -1,0 +1,146 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<web-app version="2.5" xmlns="http://java.sun.com/xml/ns/javaee"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://java.sun.com/xml/ns/javaee 
+	http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd">
+
+	<!-- Spring configuration files -->
+	<context-param>
+		<param-name>contextConfigLocation</param-name>
+		<param-value>
+			classpath:applicationContext-datasources.xml,
+			classpath:applicationContext-services.xml,
+			classpath:applicationContext-rest.xml,
+			classpath:applicationContext-security.xml
+		</param-value>
+	</context-param>
+
+	<!-- Points to the log4j context -->
+	<context-param>
+		<param-name>log4jConfigLocation</param-name>
+		<param-value>classpath:log4j.xml</param-value>
+	</context-param>
+	
+	<!-- Restlet base application -->
+	<context-param>
+		<param-name>org.restlet.application</param-name>
+		<param-value>
+			org.ncbo.stanford.view.rest.base.RestApplication
+		</param-value>
+	</context-param>
+
+	<!-- All Listeners -->
+	<listener>
+		<listener-class>
+			org.springframework.web.util.Log4jConfigListener
+		</listener-class>
+	</listener>
+
+	<listener>
+		<listener-class>
+			org.springframework.web.context.ContextLoaderListener
+		</listener-class>
+	</listener>
+
+	<!-- All servlets -->
+	<servlet>
+		<servlet-name>ServerServlet</servlet-name>
+		<servlet-class>
+			com.noelios.restlet.ext.servlet.ServerServlet
+		</servlet-class>
+		<load-on-startup>1</load-on-startup>
+	</servlet>
+
+	<!-- Catch all requests -->
+	<servlet-mapping>
+		<servlet-name>ServerServlet</servlet-name>
+		<url-pattern>/rest/*</url-pattern>
+	</servlet-mapping>
+
+	<!-- All filters -->
+	
+<!-- 	
+	<filter>
+		<description>
+			Spring hibernate interceptor filter for lazy initialization
+		</description>
+		<filter-name>applicationSessionFilter</filter-name>
+		<filter-class>
+			org.springframework.orm.hibernate3.support.OpenSessionInViewFilter		
+		</filter-class>
+	</filter>
+	
+	<filter-mapping>
+		<filter-name>applicationSessionFilter</filter-name>
+		<url-pattern>/*</url-pattern>
+	</filter-mapping>
+-->
+	<filter>
+		<description>
+			Spring hibernate interceptor filter for lazy initialization
+		</description>
+		<filter-name>applicationSessionFilter</filter-name>
+		<filter-class>
+			org.ncbo.stanford.view.filter.ApplicationSessionFilter
+		</filter-class>
+	</filter>
+	
+	<filter-mapping>
+		<filter-name>applicationSessionFilter</filter-name>
+		<url-pattern>/*</url-pattern>
+	</filter-mapping>
+
+	<!-- Acegi security filter --> 
+	<filter>
+		<filter-name>Acegi Filter Chain Proxy</filter-name>
+		<filter-class>
+			org.acegisecurity.util.FilterToBeanProxy
+		</filter-class>
+		<init-param>
+			<param-name>targetBean</param-name>
+			<param-value>acegiFilterChainProxy</param-value>
+		</init-param>
+	</filter>
+
+  	<filter-mapping>
+  		<filter-name>Acegi Filter Chain Proxy</filter-name>
+  		<url-pattern>/*</url-pattern>
+  	</filter-mapping>
+ 
+ 	<!-- Multipart HttpServletRequests wrapper --> 
+	<filter>
+		<description>
+			Check for multipart HttpServletRequests and parse the
+			multipart form data so that all regular form fields are
+			available in the parameterMap of the HttpServletRequest and
+			that all form file fields are available as attribute of the
+			HttpServletRequest. The attribute value of a form file field
+			can be an instance of FileItem or FileUploadException.
+		</description>
+		<filter-name>multipartFilter</filter-name>
+		<filter-class>
+			org.ncbo.stanford.view.filter.MultipartFilter
+		</filter-class>
+		<init-param>
+			<description>
+				Sets the maximum file size of the uploaded file in
+				bytes. Set to 0 to indicate an unlimited file size. The
+				example value of 1048576 indicates a maximum file size
+				of 1MB. This parameter is not required and can be
+				removed safely.
+			</description>
+			<param-name>maxFileSize</param-name>
+			<param-value>@maxfilesize@</param-value>
+		</init-param>
+	</filter>
+	
+	<filter-mapping>
+		<filter-name>multipartFilter</filter-name>
+		<url-pattern>/rest/ontologies/*</url-pattern>
+	</filter-mapping>
+ 
+	<mime-mapping>
+		<extension>ico</extension>
+		<mime-type>image/x-icon</mime-type>
+	</mime-mapping>
+</web-app>
