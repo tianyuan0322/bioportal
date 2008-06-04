@@ -31,26 +31,24 @@ public class OBOCompressedFileHandlerImpl extends AbstractCompressedFileHandler 
 		String filename = outputFile.getName();
 		List<String> relevantFiles = super.handle(outputFile, ontologyBean);
 
-		if (filename.endsWith("zip") || filename.endsWith("jar")
-				|| filename.endsWith("tar")) {
-			String joinFile = createCompositeFile(filePath, filename,
-					uncompressedFilenames);
+		if (CompressionUtils.isCompressed(filename)) {
+			String joinFile = createCompositeFile(filePath, filename);
 			relevantFiles.add(joinFile);
 		}
 
 		return relevantFiles;
 	}
 
-	public String createCompositeFile(String compressedFilePath,
-			String compressedFilename, List<String> allFiles)
-			throws FileNotFoundException, IOException {
+	private String createCompositeFile(String compressedFilePath,
+			String compressedFilename) throws FileNotFoundException,
+			IOException {
 		BufferedWriter joinOut = null;
 
 		File del = new File(getCompositeFilePath(compressedFilePath,
 				compressedFilename));
 		del.delete();
 
-		for (String filename : allFiles) {
+		for (String filename : uncompressedFilenames) {
 			byte data[] = new byte[ApplicationConstants.BUFFER_SIZE];
 			String str = CompressionUtils.getOnlyFileName(filename);
 
