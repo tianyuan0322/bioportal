@@ -17,22 +17,6 @@ import org.ncbo.stanford.bean.OntologyBean;
 public interface FilePathHandler {
 
 	
-	//TODO - this is DUPLICATE. Clean up 
-	/**
-	 * Handle the ontology file upload
-	 * 
-	 * @param ontologyFilePath
-	 * @param ontologyBean
-	 * @throws FileNotFoundException
-	 * @throws IOException
-	 * @throws Exception 
-	 */
-	
-	public List<String> processOntologyFileUpload(String ontologyFilePath,
-			OntologyBean ontologyBean) throws FileNotFoundException,
-			IOException, Exception;
-
-	
 	/**
 	 * Handle the ontology file upload
 	 * 
@@ -50,27 +34,4 @@ public interface FilePathHandler {
 	 * @return filename
 	 */
 	public String getName();
-
-	/**
-	 * Return the full path to the ontology file
-	 * 
-	 * @param ontologyFilePath
-	 * @param ontologyBean
-	 * @param filename
-	 * @return
-	 */
-	public String getOntologyFilePath(String ontologyFilePath,
-			OntologyBean ontologyBean, String filename);
-
-	/**
-	 * Return the full ontology directory path (including prefix directory)
-	 * 
-	 * @param ontologyFilePath
-	 * @param ontologyBean
-	 * @return
-	 */
-	public String getFullOntologyDirPath(String ontologyFilePath,
-			OntologyBean ontologyBean);
-
-
 }

@@ -12,6 +12,7 @@ import java.util.List;
 import org.ncbo.stanford.bean.OntologyBean;
 import org.ncbo.stanford.util.CompressionUtils;
 import org.ncbo.stanford.util.constants.ApplicationConstants;
+import org.ncbo.stanford.util.ontologyfile.pathhandler.AbstractFilePathHandler;
 
 /**
  * @author Michael Dorf
@@ -25,12 +26,13 @@ public abstract class AbstractCompressedFileHandler implements
 	public List<String> handle(File outputFile, OntologyBean ontologyBean)
 			throws FileNotFoundException, IOException {
 		List<String> relevantFiles = new ArrayList<String>(1);
-		String filePath = outputFile.getPath();
-		String filename = outputFile.getName();
-
+		
+		String filePath = AbstractFilePathHandler.getFullOntologyDirPath(ontologyBean);
+		String fileName = ontologyBean.getFileItem().getName();
+		
 		relevantFiles.add(outputFile.getName());
 		uncompressedFilenames = CompressionUtils.getInstance().uncompress(
-				filePath, filename);
+				filePath, fileName);
 
 		return relevantFiles;
 	}
