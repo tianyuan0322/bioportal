@@ -71,6 +71,9 @@ ontology.load.startdelay=28800000
 # Scheduler repeat interval (in milliseconds)
 ontology.load.repeatinterval=86400000
 
+# Max upload file size
+bioportal.upload.maxfilesize=1048576
+
 ################## Protege Configuration ##################
 
 # db connection

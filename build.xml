@@ -56,7 +56,13 @@
 
 	<target name="prepare" description="Create configuration files using templates">
 		<echo message="log4j path: = ${bioportal.app.logfilepath}" />
-
+		
+		<copy file="${tmpl.dir}/web.xml.tmpl" tofile="${web.dir}/WEB-INF/web.xml" overwrite="true">
+			<filterset>
+				<filter token="maxfilesize" value="${bioportal.upload.maxfilesize}" />
+			</filterset>
+		</copy>
+		
 		<copy file="${tmpl.dir}/log4j.xml.tmpl" tofile="${conf.dir.generated}/log4j.xml" overwrite="true">
 			<filterset>
 				<filter token="logfilepath" value="${bioportal.app.logfilepath}" />
