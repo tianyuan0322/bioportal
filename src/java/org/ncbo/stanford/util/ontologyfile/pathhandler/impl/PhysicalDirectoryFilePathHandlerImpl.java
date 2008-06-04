@@ -30,6 +30,35 @@ public class PhysicalDirectoryFilePathHandlerImpl extends
 		this.file = file;
 	}
 
+	
+	public List<String> processOntologyFileUpload(OntologyBean ontologyBean) throws FileNotFoundException,
+			IOException, Exception {
+
+		File outputDirectories = new File(getFullOntologyDirPath(
+				ontologyBean.getFilePath(), ontologyBean));
+		outputDirectories.mkdirs();
+
+		File outputFile = new File(getOntologyFilePath(ontologyBean.getFilePath(),
+				ontologyBean, file.getName()));
+		outputFile.createNewFile();
+
+		FileOutputStream outputStream = new FileOutputStream(outputFile);
+		InputStream inputStream = new FileInputStream(file);
+
+		int c;
+
+		while ((c = inputStream.read()) != -1) {
+			outputStream.write(c);
+		}
+
+		inputStream.close();
+		outputStream.close();
+
+		return compressedFileHandler.handle(outputFile, ontologyBean);
+	}	
+	
+	
+	//TODO - clean up the DUPLICATE
 	/*
 	 * (non-Javadoc)
 	 * 

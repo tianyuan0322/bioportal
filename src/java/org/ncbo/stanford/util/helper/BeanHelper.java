@@ -1,15 +1,24 @@
 package org.ncbo.stanford.util.helper;
 
+import java.io.File;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.apache.commons.fileupload.FileItem;
+import org.apache.commons.fileupload.FileUploadException;
+import org.apache.commons.fileupload.disk.DiskFileItemFactory;
+import org.apache.commons.fileupload.servlet.ServletFileUpload;
 import org.ncbo.stanford.bean.OntologyBean;
 import org.ncbo.stanford.bean.UserBean;
 import org.ncbo.stanford.util.MessageUtils;
 import org.ncbo.stanford.util.RequestUtils;
 import org.restlet.data.Request;
+
 
 public class BeanHelper {
 		
@@ -66,14 +75,14 @@ public class BeanHelper {
 	public static OntologyBean populateOntologyBeanFromRequest (Request request) {
 		
 		//TODO <userId> - retrieve user obj from session. 
-		//populate OntologyBean userId field here? or in OntologyBean "populate"?
+		//[OPTIONS] populate OntologyBean userId field here? or in OntologyBean "populate"?
+		
 		
 		HttpServletRequest httpServletRequest = RequestUtils
 				.getHttpServletRequest(request);
 		
 		String versionNumber = httpServletRequest.getParameter(MessageUtils.getMessage("form.ontology.versionNumber"));
 		String versionStatus = httpServletRequest.getParameter(MessageUtils.getMessage("form.ontology.versionStatus"));
-		String filePath = httpServletRequest.getParameter(MessageUtils.getMessage("form.ontology.filePath"));
 		String isCurrent = httpServletRequest.getParameter(MessageUtils.getMessage("form.ontology.isCurrent"));
 		String isRemote = httpServletRequest.getParameter(MessageUtils.getMessage("form.ontology.isRemote"));
 		String dateCreated = httpServletRequest.getParameter(MessageUtils.getMessage("form.ontology.dateCreated"));
@@ -83,6 +92,7 @@ public class BeanHelper {
 
 		String contactName = httpServletRequest.getParameter(MessageUtils.getMessage("form.ontology.contactName"));
 		String contactEmail = httpServletRequest.getParameter(MessageUtils.getMessage("form.ontology.contactEmail"));
+		
 		String homepage = httpServletRequest.getParameter(MessageUtils.getMessage("form.ontology.homepage"));
 		String documentation = httpServletRequest.getParameter(MessageUtils.getMessage("form.ontology.documentation"));
 		String publication = httpServletRequest.getParameter(MessageUtils.getMessage("form.ontology.publication"));
@@ -110,7 +120,6 @@ public class BeanHelper {
 		OntologyBean bean = new OntologyBean();
 		bean.setVersionNumber(versionNumber);
 		bean.setVersionStatus(versionStatus);
-		bean.setFilePath(filePath);
 		
 		if ( isCurrent != null) bean.setIsCurrent(Byte.parseByte(isCurrent));
 		if ( isRemote != null) bean.setIsRemote(Byte.parseByte(isRemote));
@@ -133,9 +142,66 @@ public class BeanHelper {
 		
 		if (categoryIds.size() > 0) bean.setCategoryIds(categoryIds);
 		
+		// set file attribute in ontologyBean
+		FileItem fileItem = (FileItem) httpServletRequest.getAttribute(MessageUtils.getMessage("form.ontology.filePath"));
+        if (fileItem != null ) {
+        	bean.setFileItem(fileItem);
+        } 
+				
 		return bean;
 
 	}
+	
+	/*
+	public static FileItem getFileItem(HttpServletRequest httpRequest) {
+		
+		String tempDirStr = "C:\temp";
+		File tempDirectory = new File (tempDirStr);
+		
+		List<FileItem> validateItems = new ArrayList<FileItem>(0);
+		
+		boolean isMultipart = ServletFileUpload.isMultipartContent(httpRequest);
+		
+		if (isMultipart) {
+
+			// Create a factory for disk-based file items
+			DiskFileItemFactory factory = new DiskFileItemFactory();
+
+			// Set factory constraints
+			//factory.setSizeThreshold(maxMemorySize);
+			//factory.setRepository(tempDirectory);;
+			
+			// Create a new file upload handler
+			ServletFileUpload upload = new ServletFileUpload(factory);
+
+			// Parse the request
+			// and return the first non-null fileItem
+			try {
+				List<FileItem> items = upload.parseRequest(httpRequest);
+
+				FileItem fileItem0 = (FileItem) items.toArray()[0];
+							
+				Iterator iterator = items.iterator();
+
+				while (iterator.hasNext()) {
+					FileItem fileItem = (FileItem) iterator.next();
+
+					if (fileItem.getName() != null) {
+
+						return fileItem;
+					}
+
+				}
+			
+			
+			} catch (FileUploadException e) {
+				e.printStackTrace();
+			}
+		}
+			
+		return null;
+	}
+	*/
 	
 }
 

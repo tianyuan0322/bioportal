@@ -85,7 +85,7 @@ public class OntologyLoadProcessorServiceImpl implements
 		ontologyVersion.setNcboUser(ncboUser);
 
 		if (ontologyBean.getInternalVersionNumber() == null) {
-			ontologyVersion.setInternalVersionNumber(Integer.parseInt(MessageUtils.getMessage("internalVersionNumberStart")));
+			ontologyVersion.setInternalVersionNumber(Integer.parseInt(MessageUtils.getMessage("config.db.ontology.internalVersionNumberStart")));
 		} else {
 			ontologyVersion.setInternalVersionNumber(ontologyBean
 					.getInternalVersionNumber() + 1);

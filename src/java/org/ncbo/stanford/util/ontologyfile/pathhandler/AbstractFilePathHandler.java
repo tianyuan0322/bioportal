@@ -17,6 +17,15 @@ public abstract class AbstractFilePathHandler implements FilePathHandler {
 		this.compressedFileHandler = compressedFileHandler;
 	}
 
+	public String getOntologyFilePath(OntologyBean ontologyBean, String filename) {
+		return getFullOntologyDirPath(ontologyBean.getFilePath(), ontologyBean) + "/"
+				+ filename;
+	}
+
+	public String getFullOntologyDirPath(OntologyBean ontologyBean) {
+		return ontologyBean.getFilePath() + ontologyBean.getOntologyDirPath();
+	}	
+	
 	public String getOntologyFilePath(String ontologyFilePath,
 			OntologyBean ontologyBean, String filename) {
 		return getFullOntologyDirPath(ontologyFilePath, ontologyBean) + "/"
@@ -28,13 +37,5 @@ public abstract class AbstractFilePathHandler implements FilePathHandler {
 		return ontologyFilePath + ontologyBean.getOntologyDirPath();
 	}
 	
-/*	public String getFullOntologyDirPath(String ontologyFilePath,
-			OntologyBean ontologyBean) {
-		return ontologyFilePath + getOntologyDirPath(ontologyBean);
-	}
 
-	public String getOntologyDirPath(OntologyBean ontologyBean) {
-		return "/" + ontologyBean.getOntologyId() + "/"
-				+ ontologyBean.getInternalVersionNumber();
-	}*/
 }
