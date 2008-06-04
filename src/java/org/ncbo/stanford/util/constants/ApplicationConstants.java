@@ -20,6 +20,17 @@ public interface ApplicationConstants {
 	public static final Byte FALSE = 0;
 	
 	/**
+	 * File extensions
+	 */
+	public static final String OBO_EXTENSION = "obo";
+	public static final String PROTEGE_EXTENSION = "pprj";
+	public static final String OWL_EXTENSION = "owl";
+	public static final String XML_EXTENSION = "xml";
+	public static final String ZIP_EXTENSION = "zip";
+	public static final String JAR_EXTENSION = "jar";
+	public static final String TAR_EXTENSION = "tar";
+	
+	/**
 	 * Composite filename used for joining multiple ontologies into a single file
 	 */
 	public static final String COMPOSITE_FILENAME = "joined";
