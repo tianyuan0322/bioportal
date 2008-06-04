@@ -3,6 +3,7 @@
  */
 package org.ncbo.stanford.service.ontology;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -55,37 +56,48 @@ public class OntologyServiceTest extends AbstractBioPortalTest {
 			System.out.println (".....ContactName: " +  ontologyBean.getContactName());
 		}
 		
-		System.out.println ("UserServiceTest: testFindUser()...........................DONE");
+		System.out.println ("OntologyServiceTest: testFindOntology()...........................DONE");
 		
 	}
-	
-	public void testUpdateOntologies() {
 		
-
-
-	}
-		
-
+	/*
 	public void testCreateOntology() {
 		
 		System.out.println ("OntologyServiceTest: testCreateOntology()........................BEGIN");
 			
 		OntologyBean ontologyBean = createOntolgyBean();
 		
-			
-		// set inputFilePath
-//		String inputFileStr="/Users/nickgriffith/projects/smi.apps/BioPortalCore/test/sample_data/pizza.owl";
-//		ontologyBean.setFilePath(inputFileStr);	
-		
 		getOntologyService().createOntology(ontologyBean);
 		
 		System.out.println ("OntologyServiceTest: testCreateOntology().........................DONE");
 	}
+	*/
+	
+	
+	/*
+	public void testCleanupOntologyCategory() {
 		
+		System.out.println ("OntologyServiceTest: testCleanupOntologyCategory()........................BEGIN");
+		
+		OntologyBean ontologyBean = getOntologyService().findOntology(new Integer(34280));
+		
+		if (ontologyBean != null) {
+
+			getOntologyService().cleanupOntologyCategory(ontologyBean,
+					ontologyBean.getCategoryIds());
+
+			System.out
+					.println("OntologyServiceTest: testCleanupOntologyCategory().........................DONE");
+		}
+	
+	}
+	*/
+	
+	
 /*
 	public void testUpdateOntology() {
 		
-		System.out.println ("UserServiceTest: testUpdateUsers().......................BEGIN");
+		System.out.println ("OntologyServiceTest: testUpdateOntology().......................BEGIN");
 		
 		OntologyBean ontologyBean = getOntologyService().findOntology(new Integer(3905));
 	
@@ -107,44 +119,44 @@ public class OntologyServiceTest extends AbstractBioPortalTest {
 			System.out.println (".....No matching record found!");
 		}
 		
-		System.out.println ("UserServiceTest: testUpdateUsers()........................DONE");
+		System.out.println ("OntologyServiceTest: testUpdateOntology()........................DONE");
 		
 	}
 */	
+
 	
-/*	
-	public void testDeleteUser() {
+	
+	public void testDeleteOntology() {
 		
-		System.out.println ("UserServiceTest: testDeleteUser()........................BEGIN");
+		System.out.println ("OntologyServiceTest: testDeleteOntology()........................BEGIN");
 		
-		OntologyBean ontologyBean = getOntologyService().findOntology(new Integer(3905));
+		OntologyBean ontologyBean = getOntologyService().findOntology(new Integer(34321));
 				
 		if (ontologyBean != null) {
 			
-			System.out.println (".....Updating Ontology contact email to testemail_111@test.edu");
+			System.out.println (".....Deleting Ontology where internal ID = 34321");
 			
-			ontologyBean.setContactEmail("testemail_111@test.edu")
-			
-			//getOntologyService().deleteOntology(ontologyBean);
+			getOntologyService().deleteOntology(ontologyBean);
 		}
 		else {
 			System.out.println (".....No matching record found!");
 		}
 		
-		System.out.println ("UserServiceTest: testDeleteUser().........................DONE");
+		System.out.println ("OntologyServiceTest: testDeleteOntology().........................DONE");
 		
 	}
-	*/
+	
+	
+
 	
 	private OntologyBean createOntolgyBean() {
 		
 		OntologyBean bean = new OntologyBean();
 		
 		bean.setUserId(12564);
-		bean.setVersionNumber("5");
-		bean.setInternalVersionNumber(new Integer(1));
+		bean.setVersionNumber("1.0");
 		bean.setStatusId(new Integer(1));
-		//bean.setVersionStatus("waiting");
+		bean.setVersionStatus("waiting");
 		bean.setIsCurrent(new Byte("1"));
 		bean.setIsRemote(new Byte("0"));
 		bean.setIsReviewed(new Byte("1"));
@@ -155,32 +167,27 @@ public class OntologyServiceTest extends AbstractBioPortalTest {
 		bean.setDisplayLabel("Pizza Ontology");
 		bean.setFormat("OWL-DL");
 		bean.setIsFoundry(new Byte("0"));
+				
+		ArrayList<Integer> categoryIds = new ArrayList<Integer>();
+		categoryIds.add(2807);
+		categoryIds.add(2821);
+		bean.setCategoryIds(categoryIds);
 		
+		// set inputFilePath
+		//String inputFileStr = "/Users/nickgriffith/projects/smi.apps/BioPortalCore/test/sample_data/pizza.owl";
+		
+		String inputFileStr = "/dev/cyoun/workspace/bioportal_resources/uploads/3000/0/pizza.owl";
+		bean.setFilePath(inputFileStr);
+		
+//		ArrayList<String> fileNames = new ArrayList<String>();
+//		fileNames.add("pizza.owl");
+//		//fileNames.add("testFileName2.OWL");
+//		bean.setFilenames(fileNames);
+				
 		/*
-		this.setId(ncboOntology.getId());
-		this.setOntologyId(ncboOntology.getOntologyId());
-		this.setParentId(ncboOntology.getParentId());
-		this.setUserId(ncboOntology.getUserId());
-		this.setInternalVersionNumber(ncboOntology.getInternalVersionNumber());
-		this.setVersionNumber(ncboOntology.getVersionNumber());
-		this.setVersionStatus(ncboOntology.getVersionStatus());
-		this.setFilePath(ncboOntology.getFilePath());
-		this.setIsCurrent(ncboOntology.getIsCurrent());
-		this.setIsRemote(ncboOntology.getIsRemote());
-		this.setIsReviewed(ncboOntology.getIsReviewed());
-		this.setStatusId(ncboOntology.getStatusId());
-		this.setDateCreated(ncboOntology.getDateCreated());
-		this.setDateReleased(ncboOntology.getDateReleased());
-		this.setDisplayLabel(ncboOntology.getDisplayLabel());
-		this.setFormat(ncboOntology.getFormat());
-		this.setContactName(ncboOntology.getContactName());
-		this.setContactEmail(ncboOntology.getContactEmail());
-		this.setHomepage(ncboOntology.getHomepage());
-		this.setDocumentation(ncboOntology.getDocumentation());
-		this.setPublication(ncboOntology.getPublication());
-		this.setUrn(ncboOntology.getUrn());
-		this.setCodingScheme(ncboOntology.getCodingScheme());
-		this.setIsFoundry(ncboOntology.getIsFoundry());
+		bean.setPublication(ncboOntology.getPublication());
+		bean.setUrn(ncboOntology.getUrn());
+		bean.setCodingScheme(ncboOntology.getCodingScheme());
 		*/
 		
 		

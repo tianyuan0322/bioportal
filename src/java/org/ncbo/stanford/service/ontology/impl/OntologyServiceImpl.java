@@ -1,8 +1,8 @@
 package org.ncbo.stanford.service.ontology.impl;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 import org.apache.commons.fileupload.FileItem;
 import org.apache.commons.logging.Log;
@@ -128,9 +128,10 @@ public class OntologyServiceImpl implements OntologyService {
 	 * 
 	 * @param ontologyBean
 	 * @return
+	 * @throws Exception 
 	 */
-	@Transactional(rollbackFor = IOException.class)
-	public void createOntology(OntologyBean ontologyBean) {
+	@Transactional(rollbackFor = Exception.class)
+	public void createOntology(OntologyBean ontologyBean) throws Exception {
 
 		// assign new Ontology Id for new instance
 		generateNextOntologyId(ontologyBean);
@@ -242,26 +243,10 @@ public class OntologyServiceImpl implements OntologyService {
 		// get the NcboOntologyVersion instance using OntologyVersionId
 		NcboOntologyVersion ontologyVersion = ncboOntologyVersionDAO
 				.findById(ontologyBean.getId());
-
-		ArrayList<NcboOntologyCategory> ontologyCategoryList = new ArrayList<NcboOntologyCategory>();
-
-		for (Integer categoryId : oldCategoryIds) {
-
-			NcboOntologyCategory ontologyCategory = new NcboOntologyCategory();
-
-			NcboLCategory ncboLCategory = new NcboLCategory();
-
-			System.out
-					.println("*****************deleting categoryId................"
-							+ categoryId);
-			ncboLCategory.setId(categoryId);
-			ontologyCategory.setNcboLCategory(ncboLCategory);
-			ontologyCategory.setNcboOntologyVersion(ontologyVersion);
-			ontologyCategoryList.add(ontologyCategory);
-
-		}
-
-		for (NcboOntologyCategory ontologyCategory : ontologyCategoryList) {
+		
+		Set<NcboOntologyCategory> categories = ontologyVersion.getNcboOntologyCategories();
+		
+		for (NcboOntologyCategory ontologyCategory : categories) {
 			ncboOntologyCategoryDAO.delete(ontologyCategory);
 		}
 	}
@@ -273,45 +258,34 @@ public class OntologyServiceImpl implements OntologyService {
 				.findById(ontologyBean.getId());
 
 		if (ontologyVersion == null) {
-			System.out.println("ontologyVersion is NULL");
 			return;
 		}
 
-		// 2. <ontologyMetadata>
-		NcboOntologyMetadata ontologyMetadata = new NcboOntologyMetadata();
-		ontologyBean
-				.populateToMetadataEntity(ontologyMetadata, ontologyVersion);
+		// 2. <ontologyMetadata>		
+		Set<NcboOntologyMetadata> ontologyMetadataSet = ontologyVersion.getNcboOntologyMetadatas();
+		for (NcboOntologyMetadata ontologyMetadata : ontologyMetadataSet) {			
+			ncboOntologyMetadataDAO.delete(ontologyMetadata);
+		}
 
-		System.out.println("3. NcboOntologyCategory ==============");
-		// 3. <ontologyCategory> - populate and save
-		ArrayList<NcboOntologyCategory> ontologyCategoryList = new ArrayList<NcboOntologyCategory>();
-		ontologyBean.populateToCategoryEntity(ontologyCategoryList,
-				ontologyVersion);
-
-		for (NcboOntologyCategory ontologyCategory : ontologyCategoryList) {
+		// 3. <ontologyCategory>
+		Set<NcboOntologyCategory> ontologyCategorySet = ontologyVersion.getNcboOntologyCategories();
+		for (NcboOntologyCategory ontologyCategory : ontologyCategorySet) {			
 			ncboOntologyCategoryDAO.delete(ontologyCategory);
 		}
 
-		System.out.println("4. ontologyFile ==============");
-		// 4. <ontologyFile> - populate and save
-		ArrayList<NcboOntologyFile> ontologyFileList = new ArrayList<NcboOntologyFile>();
-		ontologyBean.populateToFileEntity(ontologyFileList, ontologyVersion);
-
-		for (NcboOntologyFile ontologyFile : ontologyFileList) {
+		// 4. <ontologyFile>		
+		Set<NcboOntologyFile> ontologyFileSet = ontologyVersion.getNcboOntologyFiles();
+		for (NcboOntologyFile ontologyFile : ontologyFileSet) {			
 			ncboOntologyFileDAO.delete(ontologyFile);
 		}
 
-		System.out.println("5. NcboOntologyLoadQueue ==============");
-		// 5. <ontologyQueue> - populate and save
-		NcboOntologyLoadQueue loadQueue = new NcboOntologyLoadQueue();
-		ontologyBean.populateToLoadQueueEntity(loadQueue, ontologyVersion);
-
-		ncboOntologyLoadQueueDAO.delete(loadQueue);
-
-		System.out.println("2. ontologyMetadata ==============");
-		ncboOntologyMetadataDAO.delete(ontologyMetadata);
-
-		System.out.println("ontologyVersion ==============");
+		// 5. <ontologyQueue>
+		Set<NcboOntologyLoadQueue> ontologyLoadQueueSet = ontologyVersion.getNcboOntologyLoadQueues();
+		for (NcboOntologyLoadQueue ontologyLoadQueue : ontologyLoadQueueSet) {			
+			ncboOntologyLoadQueueDAO.delete(ontologyLoadQueue);
+		}
+		
+		// now all the dependency is removed and ontologyVersion can be deleted
 		ncboOntologyVersionDAO.delete(ontologyVersion);
 
 	}
@@ -400,7 +374,8 @@ public class OntologyServiceImpl implements OntologyService {
 		}
 	}
 
-	private List<String> uploadOntologyFileItem(OntologyBean ontologyBean) {
+	private List<String> uploadOntologyFileItem(OntologyBean ontologyBean)
+			throws Exception {
 
 		FileItem fileItem = ontologyBean.getFileItem();
 		List<String> fileNames = new ArrayList<String>(1);
@@ -416,17 +391,16 @@ public class OntologyServiceImpl implements OntologyService {
 						.processOntologyFileUpload(ontologyBean);
 			} catch (Exception e) {
 				// log to error
-				System.out
-						.println("Error in OntologyService:uploadOntologyFileItem()!!!");
-				log
-						.error("Error in OntologyService:uploadOntologyFileItem()!!!");
+
+				log.error("Error in OntologyService:uploadOntologyFileItem()!"
+						+ e.getMessage());
 				e.printStackTrace();
+				throw e;
 			}
 		}
 
 		return fileNames;
 	}
-
 
 	/**
 	 * @return the ncboOntologyCategoryDAO

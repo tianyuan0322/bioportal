@@ -50,16 +50,21 @@ public class CustomNcboOntologyVersionDAO extends NcboOntologyVersionDAO {
 					.add(Expression.eq("id", ontologyVersionId))
 					.uniqueResult();		
 		
-		NcboOntologyVersion ontologyVer = findById(ontologyVersionId);
-		Set<NcboOntologyFile> files = ontologyVer.getNcboOntologyFiles();
-		Set<NcboOntologyCategory> categories = ontologyVer.getNcboOntologyCategories();
+		NcboOntologyVersion ontologyVersion = findById(ontologyVersionId);
+		
+		if (ontologyVersion != null) {
+			Set<NcboOntologyFile> files = ontologyVersion
+					.getNcboOntologyFiles();
+			Set<NcboOntologyCategory> categories = ontologyVersion
+					.getNcboOntologyCategories();
 
-		for (NcboOntologyFile file : files) {
-			ontology.addFilename(file.getFilename());
-		}
+			for (NcboOntologyFile file : files) {
+				ontology.addFilename(file.getFilename());
+			}
 
-		for (NcboOntologyCategory cat : categories) {
-			ontology.addCategoryId(cat.getNcboLCategory().getId());
+			for (NcboOntologyCategory cat : categories) {
+				ontology.addCategoryId(cat.getNcboLCategory().getId());
+			}
 		}
 		
 		return ontology;

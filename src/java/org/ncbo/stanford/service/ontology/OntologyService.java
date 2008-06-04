@@ -66,7 +66,7 @@ public interface OntologyService {
 	 * @param ontologyBean
 	 * @return
 	 */
-	public void createOntology(OntologyBean ontologyBean);
+	public void createOntology(OntologyBean ontologyBean) throws Exception;
 	
 	/**	
 	 * Update an ontology 
