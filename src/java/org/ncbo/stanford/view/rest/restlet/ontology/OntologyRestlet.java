@@ -94,7 +94,7 @@ public class OntologyRestlet extends Restlet {
 	 * @param response
 	 */
 	private void deleteRequest(Request request, Response response) {
-
+		
 		// Handle DELETE calls here
 		deleteOntology(request, response);
 
@@ -137,11 +137,6 @@ public class OntologyRestlet extends Restlet {
 			Integer ontologyId = ontologyBean.getOntologyId();
 			Integer internalVersionNumber = ontologyBean.getInternalVersionNumber();
 			
-			// save current categoryIds for cleanup
-			// 1) delete current categoryIds then 2) insert new categoryIds  
-			List<Integer> oldCategoryIdList = ontologyBean.getCategoryIds();
-			
-
 			// 2. populate OntologyBean from Request object
 			ontologyBean = BeanHelper.populateOntologyBeanFromRequest(request);
 			
@@ -154,7 +149,7 @@ public class OntologyRestlet extends Restlet {
 			// 4. now update the ontology
 			try {
 				
-				getOntologyService().cleanupOntologyCategory(ontologyBean, oldCategoryIdList);
+				getOntologyService().cleanupOntologyCategory(ontologyBean);
 				getOntologyService().updateOntology(ontologyBean);
 				
 

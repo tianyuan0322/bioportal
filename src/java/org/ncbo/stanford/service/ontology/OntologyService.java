@@ -82,7 +82,7 @@ public interface OntologyService {
 	 * @param ontologyBean
 	 * @return
 	 */
-	public void cleanupOntologyCategory(OntologyBean ontologyBean, List<Integer> oldCategoryIds);
+	public void cleanupOntologyCategory(OntologyBean ontologyBean);
 	
 	/**	
 	 * Delete an ontology 

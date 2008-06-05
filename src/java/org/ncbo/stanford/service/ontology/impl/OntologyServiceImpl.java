@@ -237,15 +237,13 @@ public class OntologyServiceImpl implements OntologyService {
 	 * @param ontologyBean
 	 * @return
 	 */
-	public void cleanupOntologyCategory(OntologyBean ontologyBean,
-			List<Integer> oldCategoryIds) {
+	public void cleanupOntologyCategory(OntologyBean ontologyBean) {
 
 		// get the NcboOntologyVersion instance using OntologyVersionId
 		NcboOntologyVersion ontologyVersion = ncboOntologyVersionDAO
 				.findById(ontologyBean.getId());
 		
 		Set<NcboOntologyCategory> categories = ontologyVersion.getNcboOntologyCategories();
-		
 		for (NcboOntologyCategory ontologyCategory : categories) {
 			ncboOntologyCategoryDAO.delete(ontologyCategory);
 		}
