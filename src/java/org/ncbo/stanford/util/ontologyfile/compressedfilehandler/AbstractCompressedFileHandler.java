@@ -28,7 +28,14 @@ public abstract class AbstractCompressedFileHandler implements
 		List<String> relevantFiles = new ArrayList<String>(1);
 		
 		String filePath = AbstractFilePathHandler.getFullOntologyDirPath(ontologyBean);
-		String fileName = ontologyBean.getFileItem().getName();
+		String fileName;
+		// HTTP upload 
+		if (ontologyBean.getFileItem() != null) {
+			fileName = ontologyBean.getFileItem().getName();
+		// local upload
+		} else {
+			fileName = outputFile.getName();
+		}
 		
 		relevantFiles.add(outputFile.getName());
 		uncompressedFilenames = CompressionUtils.getInstance().uncompress(

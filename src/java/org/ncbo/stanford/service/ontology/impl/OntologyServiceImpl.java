@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
-import org.apache.commons.fileupload.FileItem;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.ncbo.stanford.bean.OntologyBean;
@@ -15,7 +14,6 @@ import org.ncbo.stanford.domain.custom.dao.CustomNcboOntologyMetadataDAO;
 import org.ncbo.stanford.domain.custom.dao.CustomNcboOntologyVersionDAO;
 import org.ncbo.stanford.domain.custom.dao.CustomNcboSeqOntologyIdDAO;
 import org.ncbo.stanford.domain.custom.entity.NcboOntology;
-import org.ncbo.stanford.domain.generated.NcboLCategory;
 import org.ncbo.stanford.domain.generated.NcboOntologyCategory;
 import org.ncbo.stanford.domain.generated.NcboOntologyFile;
 import org.ncbo.stanford.domain.generated.NcboOntologyLoadQueue;
@@ -23,9 +21,7 @@ import org.ncbo.stanford.domain.generated.NcboOntologyMetadata;
 import org.ncbo.stanford.domain.generated.NcboOntologyVersion;
 import org.ncbo.stanford.service.ontology.OntologyService;
 import org.ncbo.stanford.util.MessageUtils;
-import org.ncbo.stanford.util.ontologyfile.compressedfilehandler.impl.CompressedFileHandlerFactory;
 import org.ncbo.stanford.util.ontologyfile.pathhandler.FilePathHandler;
-import org.ncbo.stanford.util.ontologyfile.pathhandler.impl.CommonsFileUploadFilePathHandlerImpl;
 import org.springframework.transaction.annotation.Transactional;
 
 @Transactional
@@ -131,7 +127,7 @@ public class OntologyServiceImpl implements OntologyService {
 	 * @throws Exception 
 	 */
 	@Transactional(rollbackFor = Exception.class)
-	public void createOntology(OntologyBean ontologyBean) throws Exception {
+	public void createOntology(OntologyBean ontologyBean, FilePathHandler filePathHander) throws Exception {
 
 		// assign new Ontology Id for new instance
 		generateNextOntologyId(ontologyBean);
@@ -151,17 +147,17 @@ public class OntologyServiceImpl implements OntologyService {
 		ontologyBean.populateToVersionEntity(ontologyVersion);
 		NcboOntologyVersion newOntologyVersion = ncboOntologyVersionDAO
 				.saveOntologyVersion(ontologyVersion);
-
+		ontologyBean.setId(newOntologyVersion.getId());
+		
 		// 2. <ontologyMetadata> - populate and save
 		ontologyBean.populateToMetadataEntity(ontologyMetadata,
 				newOntologyVersion);
 		ncboOntologyMetadataDAO.save(ontologyMetadata);
 
-		// get the targetFilePath and upload the fileItem
-		ontologyBean.setFilePath(ontologyBean.getOntologyDirPath());
-		List<String> fileNames = uploadOntologyFileItem(ontologyBean);
-
+		// upload the fileItem
+		List<String> fileNames = uploadOntologyFile(ontologyBean, filePathHander);
 		ontologyBean.setFilenames(fileNames);
+		ontologyBean.setFilePath(ontologyBean.getOntologyDirPath());
 
 		// 3. <ontologyCategory> - populate and save
 		ontologyBean.populateToCategoryEntity(ontologyCategoryList,
@@ -178,11 +174,7 @@ public class OntologyServiceImpl implements OntologyService {
 
 		// 5. <ontologyQueue> - populate and save
 		ontologyBean.populateToLoadQueueEntity(loadQueue, newOntologyVersion);
-
 		ncboOntologyLoadQueueDAO.save(loadQueue);
-
-		// TODO - verify this - do we need this?
-		// newOntologyVersion.getNcboOntologyLoadQueues().add(loadQueue);
 
 	}
 
@@ -372,31 +364,23 @@ public class OntologyServiceImpl implements OntologyService {
 		}
 	}
 
-	private List<String> uploadOntologyFileItem(OntologyBean ontologyBean)
+	private List<String> uploadOntologyFile(OntologyBean ontologyBean, FilePathHandler filePathHandler)
 			throws Exception {
 
-		FileItem fileItem = ontologyBean.getFileItem();
 		List<String> fileNames = new ArrayList<String>(1);
 
-		if (fileItem != null) {
-
-			FilePathHandler filePathHandler = new CommonsFileUploadFilePathHandlerImpl(
-					CompressedFileHandlerFactory.createFileHandler(ontologyBean
-							.getFormat()), fileItem);
-
+		if (filePathHandler != null) {
 			try {
 				fileNames = filePathHandler
 						.processOntologyFileUpload(ontologyBean);
 			} catch (Exception e) {
 				// log to error
-
-				log.error("Error in OntologyService:uploadOntologyFileItem()!"
-						+ e.getMessage());
+				log.error("Error in OntologyService:uploadOntologyFile()! - remote file (fileItem) "
+								+ e.getMessage());
 				e.printStackTrace();
 				throw e;
 			}
 		}
-
 		return fileNames;
 	}
 

@@ -3,6 +3,7 @@ package org.ncbo.stanford.service.ontology;
 import java.util.List;
 
 import org.ncbo.stanford.bean.OntologyBean;
+import org.ncbo.stanford.util.ontologyfile.pathhandler.FilePathHandler;
 
 /**
  * Exposes services that provide read and write operations on ontologies
@@ -66,7 +67,7 @@ public interface OntologyService {
 	 * @param ontologyBean
 	 * @return
 	 */
-	public void createOntology(OntologyBean ontologyBean) throws Exception;
+	public void createOntology(OntologyBean ontologyBean,  FilePathHandler filePathHander) throws Exception;
 	
 	/**	
 	 * Update an ontology 

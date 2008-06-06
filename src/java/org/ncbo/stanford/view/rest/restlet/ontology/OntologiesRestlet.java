@@ -15,6 +15,9 @@ import org.ncbo.stanford.bean.OntologyBean;
 import org.ncbo.stanford.service.ontology.OntologyService;
 import org.ncbo.stanford.service.xml.XMLSerializationService;
 import org.ncbo.stanford.util.helper.BeanHelper;
+import org.ncbo.stanford.util.ontologyfile.compressedfilehandler.impl.CompressedFileHandlerFactory;
+import org.ncbo.stanford.util.ontologyfile.pathhandler.FilePathHandler;
+import org.ncbo.stanford.util.ontologyfile.pathhandler.impl.CommonsFileUploadFilePathHandlerImpl;
 
 public class OntologiesRestlet extends Restlet {
 
@@ -91,7 +94,12 @@ public class OntologiesRestlet extends Restlet {
 		
 		// create the ontology
 		try {
-			getOntologyService().createOntology(ontologyBean);
+			
+			FilePathHandler filePathHandler = new CommonsFileUploadFilePathHandlerImpl(
+					CompressedFileHandlerFactory.createFileHandler(ontologyBean
+							.getFormat()), ontologyBean.getFileItem());
+
+			getOntologyService().createOntology(ontologyBean, filePathHandler);
 
 		} catch (Exception e) {
 			response.setStatus(Status.SERVER_ERROR_INTERNAL, e.getMessage());

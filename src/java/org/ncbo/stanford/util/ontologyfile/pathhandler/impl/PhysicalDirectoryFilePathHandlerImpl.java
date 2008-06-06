@@ -6,6 +6,7 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.ncbo.stanford.bean.OntologyBean;
@@ -33,12 +34,18 @@ public class PhysicalDirectoryFilePathHandlerImpl extends
 	public List<String> processOntologyFileUpload(OntologyBean ontologyBean)
 			throws FileNotFoundException, IOException, Exception {
 
-		File outputDirectories = new File(getFullOntologyDirPath(ontologyBean));
+		String filePath = AbstractFilePathHandler.getFullOntologyDirPath(ontologyBean);
+		String fileName = file.getName();
+		
+		//TODO - remove this DEBUG stmt
+		// DEBUG
+		System.out.println("*** outputfilePath = " + filePath);
+		System.out.println("*** outputfileName = " + fileName);
+		
+		File outputDirectories = new File(filePath);
 		outputDirectories.mkdirs();
 
-		File outputFile = new File(getOntologyFilePath(ontologyBean, file
-				.getName()));
-		outputFile.createNewFile();
+		File outputFile = new File(filePath, fileName);
 
 		FileOutputStream outputStream = new FileOutputStream(outputFile);
 		InputStream inputStream = new FileInputStream(file);
@@ -51,8 +58,14 @@ public class PhysicalDirectoryFilePathHandlerImpl extends
 
 		inputStream.close();
 		outputStream.close();
-
-		return compressedFileHandler.handle(outputFile, ontologyBean);
+		
+		List<String> fileNames = new ArrayList<String>(1);
+		if(outputFile.exists()) {
+		
+			fileNames = compressedFileHandler.handle(outputFile, ontologyBean);
+		}
+		
+		return fileNames;
 	}
 
 	/*

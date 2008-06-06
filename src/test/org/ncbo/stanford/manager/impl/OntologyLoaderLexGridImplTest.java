@@ -7,8 +7,8 @@ import org.ncbo.stanford.AbstractBioPortalTest;
 import org.ncbo.stanford.bean.OntologyBean;
 import org.ncbo.stanford.domain.custom.dao.CustomNcboOntologyVersionDAO;
 import org.ncbo.stanford.domain.generated.NcboOntologyMetadata;
-import org.ncbo.stanford.domain.generated.NcboOntologyVersion;
-import org.ncbo.stanford.service.loader.processor.OntologyLoadProcessorService;
+import org.ncbo.stanford.enumeration.StatusEnum;
+import org.ncbo.stanford.service.ontology.OntologyService;
 import org.ncbo.stanford.util.constants.ApplicationConstants;
 import org.ncbo.stanford.util.ontologyfile.compressedfilehandler.impl.CompressedFileHandlerFactory;
 import org.ncbo.stanford.util.ontologyfile.pathhandler.FilePathHandler;
@@ -32,10 +32,8 @@ public class OntologyLoaderLexGridImplTest extends AbstractBioPortalTest {
 	private final static String TEST_UMLS_PATHNAME = "test/sample_data/sampleUMLS-AIR/";
 	private final static String TEST_UMLS_URN_VERSION = "urn:oid:2.16.840.1.113883.6.110|1993.bvt";
 
-	// OntologyLoadManagerLexGridImpl loadManagerLexGrid = new
-	// OntologyLoadManagerLexGridImpl();
 	OntologyLoadManagerLexGridImpl loadManagerLexGrid;
-	OntologyLoadProcessorService service;
+
 
 	public void testSimpleMetadataLookup() throws Exception {
 		CustomNcboOntologyVersionDAO ncboOntologyVersionDAO = (CustomNcboOntologyVersionDAO) applicationContext
@@ -48,165 +46,226 @@ public class OntologyLoaderLexGridImplTest extends AbstractBioPortalTest {
 	}
 
 	public void testLoadObo() throws Exception {
-		System.out.println("Running testLoadObo");
-		service = (OntologyLoadProcessorService) applicationContext.getBean(
-				"ontologyLoadProcessorService",
-				OntologyLoadProcessorService.class);
 
-		loadManagerLexGrid = (OntologyLoadManagerLexGridImpl) applicationContext
-				.getBean("ontologyLoadManagerLexGrid",
-						OntologyLoadManagerLexGridImpl.class);
+		System.out.println("OntologyLoaderLexGridImplTest: testLoadObo().................. BEGIN");
 
-		// Populate Ontology Bean
-		OntologyBean ontology_bean = new OntologyBean();
-		ontology_bean.setFormat(ApplicationConstants.FORMAT_OBO);
-		ontology_bean.setCodingScheme(TEST_OBO_URN_VERSION);
-		ontology_bean.setDisplayLabel("cell");
-		ontology_bean.setUserId(12564);
-		ontology_bean.setVersionNumber("1.0");
-		ontology_bean.setIsCurrent(new Byte("1"));
-		ontology_bean.setIsRemote(new Byte("0"));
-		ontology_bean.setIsReviewed(new Byte("1"));
-		ontology_bean.setDateCreated(new Date());
-		ontology_bean.setDateReleased(new Date());
-		ontology_bean.setContactEmail("obo@email.com");
-		ontology_bean.setContactName("OBO Name");
-		ontology_bean.setOntologyId(3000);
-		ontology_bean.setIsFoundry(new Byte("0"));
-		File inputFile = new File(TEST_OBO_PATHNAME);
-
-		FilePathHandler ontologyFile = new PhysicalDirectoryFilePathHandlerImpl(
-				CompressedFileHandlerFactory
-						.createFileHandler(ApplicationConstants.FORMAT_OBO),
-				inputFile);
-
-		NcboOntologyVersion ncboOntologyVersion = service.processOntologyLoad(
-				ontologyFile, ontology_bean);
-		System.out.println("Created NcboOntologyVersion with id="
-				+ ncboOntologyVersion.getId());
-		ontology_bean.setId(ncboOntologyVersion.getId());
-
-		if (ncboOntologyVersion.getId() == null)
-			System.out
-					.println("ncboOntologyVersion ID++++++++++++++++ NULL +++++++++++++++");
-		else
-			System.out.println("OBO+++++++++++++++ncboOntologyVersion ID "
-					+ ncboOntologyVersion.getId() + "++++++++++++++++++");
-
-		loadManagerLexGrid.loadOntology(new File(TEST_OBO_PATHNAME).toURI(),
-				ontology_bean);
-		System.out.println("Loaded OBO ontology=" + TEST_OBO_PATHNAME);
-		assertTrue(ontology_bean.getCodingScheme() != null);
+		OntologyBean ontologyBean = this.createOntolgyBeanOBO();
+		
+		// populate file field in ontologyBean
+		ontologyBean.setFilePath(TEST_OBO_PATHNAME);
+		
+		// create - pass FileHandler
+		getOntologyService().createOntology(ontologyBean, this.getFilePathHandler(ontologyBean));
+		
+		if (ontologyBean != null)
+			System.out.println("Created OntologyBean with ID = " + ontologyBean.getId());
+		
+		// load
+		loadOntology(ontologyBean, TEST_OBO_PATHNAME);
+				
+		assertTrue(ontologyBean.getCodingScheme() != null);
+		
+		System.out.println("OntologyLoaderLexGridImplTest: testLoadObo().................... END");
 	}
 
-	/*
+
 	public void testLoadGenericOwl() throws Exception {
-		service = (OntologyLoadProcessorService) applicationContext.getBean(
-				"ontologyLoadProcessorService", OntologyLoadProcessorService.class);
 
-		loadManagerLexGrid = (OntologyLoadManagerLexGridImpl) applicationContext.getBean(
-				"ontologyLoadManagerLexGrid", OntologyLoadManagerLexGridImpl.class);
-		System.out.println("Running testLoadGenericOwl");
-		OntologyBean ontology_bean = new OntologyBean();
-		ontology_bean.setFormat(ApplicationConstants.FORMAT_OWL_DL);
-		ontology_bean.setCodingScheme(TEST_OWL_URN_VERSION);
-		ontology_bean.setDisplayLabel("pizza.owl");
-		ontology_bean.setUserId(12564);
-		ontology_bean.setVersionNumber("1.0");
-		ontology_bean.setIsCurrent(new Byte("1"));
-		ontology_bean.setIsRemote(new Byte("0"));
-		ontology_bean.setIsReviewed(new Byte("1"));
-		ontology_bean.setDateCreated(new Date());
-		ontology_bean.setDateReleased(new Date());
-		ontology_bean.setContactEmail("owl@email.com");
-		ontology_bean.setContactName("Owl Name");
-		ontology_bean.setOntologyId(3001);
-		ontology_bean.setIsFoundry(new Byte("0"));
-		File inputFile = new File(TEST_OWL_PATHNAME);
-		FileHandler ontologyFile = new PhysicalDirectoryFileHandler(inputFile);
+		System.out.println("OntologyLoaderLexGridImplTest: testLoadGenericOwl().................. BEGIN");
 
-		NcboOntologyVersion ncboOntologyVersion = service.processOntologyLoad(ontologyFile,
-				ontology_bean);
-		System.out.println("Created NcboOntologyVersion with id="+ncboOntologyVersion.getId());
-		ontology_bean.setId(ncboOntologyVersion.getId());
+		OntologyBean ontologyBean = this.createOntolgyBeanGenericOWL();
+		
+		// populate file related field in ontologyBean
+		ontologyBean.setFilePath(TEST_OWL_PATHNAME);
+		
+		// create - pass FileHandler
+		getOntologyService().createOntology(ontologyBean, this.getFilePathHandler(ontologyBean));
+		
+		if (ontologyBean != null)
+			System.out.println("Created OntologyBean with ID = " + ontologyBean.getId());
+		
+		// load
+		loadOntology(ontologyBean, TEST_OWL_PATHNAME);
+		
+		System.out.println("OntologyLoaderLexGridImplTest: testLoadGenericOwl().................... END");
 
-		loadManagerLexGrid.loadOntology(new File(TEST_OWL_PATHNAME).toURI(), ontology_bean);
-		System.out.println("Loaded OBO ontology="+TEST_OWL_PATHNAME);
-		assertTrue(ontology_bean.getCodingScheme() != null);
+		assertTrue(ontologyBean.getCodingScheme() != null);
 
 	}
-
+	
+	
 	public void testLoadLexGridXML() throws Exception {
-		service = (OntologyLoadProcessorService) applicationContext.getBean(
-				"ontologyLoadProcessorService", OntologyLoadProcessorService.class);
+		
+		System.out.println("OntologyLoaderLexGridImplTest: testLoadLexGridXML().................. BEGIN");
 
-		loadManagerLexGrid = (OntologyLoadManagerLexGridImpl) applicationContext.getBean(
-				"ontologyLoadManagerLexGrid", OntologyLoadManagerLexGridImpl.class);
-		System.out.println("Running testLoadLexGridXML");
-		OntologyBean ontology_bean = new OntologyBean();
-		ontology_bean.setFormat(ApplicationConstants.FORMAT_LEXGRID_XML);
-		ontology_bean.setCodingScheme(TEST_LEXGRID_XML_URN_VERSION);
-		ontology_bean.setDisplayLabel("Automobiles.xml");
-		ontology_bean.setUserId(12564);
-		ontology_bean.setVersionNumber("1.0");
-		ontology_bean.setIsCurrent(new Byte("1"));
-		ontology_bean.setIsRemote(new Byte("0"));
-		ontology_bean.setIsReviewed(new Byte("1"));
-		ontology_bean.setDateCreated(new Date());
-		ontology_bean.setDateReleased(new Date());
-		ontology_bean.setContactEmail("lexgrid@email.com");
-		ontology_bean.setContactName("Lexgrid Name");
-		ontology_bean.setOntologyId(3002);
-		ontology_bean.setIsFoundry(new Byte("0"));
-		File inputFile = new File(TEST_LEXGRID_XML_PATHNAME);
-		FileHandler ontologyFile = new PhysicalDirectoryFileHandler(inputFile);
-
-		NcboOntologyVersion ncboOntologyVersion = service.processOntologyLoad(ontologyFile,
-				ontology_bean);
-		System.out.println("Created NcboOntologyVersion with id="+ncboOntologyVersion.getId());
-		ontology_bean.setId(ncboOntologyVersion.getId());
-
-		loadManagerLexGrid.loadOntology(new File(TEST_LEXGRID_XML_PATHNAME).toURI(), ontology_bean);
-		System.out.println("Loaded ontology="+TEST_LEXGRID_XML_PATHNAME);
-		assertTrue(ontology_bean.getCodingScheme() != null);
-
+		OntologyBean ontologyBean = this.createOntolgyBeanLexgridXML();
+		
+		// populate file related field in ontologyBean
+		ontologyBean.setFilePath(TEST_LEXGRID_XML_PATHNAME);
+		
+		// create - pass FileHandler
+		getOntologyService().createOntology(ontologyBean, this.getFilePathHandler(ontologyBean));
+		
+		if (ontologyBean != null)
+			System.out.println("Created OntologyBean with ID = " + ontologyBean.getId());
+		
+		// load
+		loadOntology(ontologyBean, TEST_LEXGRID_XML_PATHNAME);
+		
+		assertTrue(ontologyBean.getCodingScheme() != null);
+		
+		System.out.println("OntologyLoaderLexGridImplTest: testLoadLexGridXML().................... END");
+		
 	}
 
 	public void testLoadUMLS() throws Exception {
-		service = (OntologyLoadProcessorService) applicationContext.getBean(
-				"ontologyLoadProcessorService", OntologyLoadProcessorService.class);
 
-		loadManagerLexGrid = (OntologyLoadManagerLexGridImpl) applicationContext.getBean(
-				"ontologyLoadManagerLexGrid", OntologyLoadManagerLexGridImpl.class);
-		System.out.println("Running testLoadUMLS");
-		OntologyBean ontology_bean = new OntologyBean();
-		ontology_bean.setFormat(ApplicationConstants.FORMAT_UMLS_RRF);
-		ontology_bean.setCodingScheme(TEST_UMLS_URN_VERSION);
-		ontology_bean.setDisplayLabel("AIR");
-		ontology_bean.setUserId(12564);
-		ontology_bean.setVersionNumber("1.0");
-		ontology_bean.setIsCurrent(new Byte("1"));
-		ontology_bean.setIsRemote(new Byte("0"));
-		ontology_bean.setIsReviewed(new Byte("1"));
-		ontology_bean.setDateCreated(new Date());
-		ontology_bean.setDateReleased(new Date());
-		ontology_bean.setContactEmail("umls@email.com");
-		ontology_bean.setContactName("Umls Name");
-		ontology_bean.setOntologyId(3003);
-		ontology_bean.setIsFoundry(new Byte("0"));
-		File inputFile = new File(TEST_UMLS_PATHNAME+"sampleUMLS-AIR.zip");
-		FileHandler ontologyFile = new PhysicalDirectoryFileHandler(inputFile);
+		System.out.println("OntologyLoaderLexGridImplTest: testLoadUMLS().................. BEGIN");
 
-		NcboOntologyVersion ncboOntologyVersion = service.processOntologyLoad(ontologyFile,
-				ontology_bean);
-		System.out.println("Created NcboOntologyVersion with id="+ncboOntologyVersion.getId());
-		ontology_bean.setId(ncboOntologyVersion.getId());
+		OntologyBean ontologyBean = this.createOntolgyBeanLexgridXML();
+		
+		// populate file related field in ontologyBean
+		ontologyBean.setFilePath(TEST_UMLS_PATHNAME + "sampleUMLS-AIR.zip");
+		
+		// create - pass FileHandler
+		getOntologyService().createOntology(ontologyBean, this.getFilePathHandler(ontologyBean));
+		
+		if (ontologyBean != null)
+			System.out.println("Created OntologyBean with ID = " + ontologyBean.getId());
+		
+		// load
+		loadOntology(ontologyBean, TEST_LEXGRID_XML_PATHNAME);
+		// do we need this ?
+		//loadManagerLexGrid.setTargetTerminologies("AIR");
 
-		loadManagerLexGrid.setTargetTerminologies("AIR");
-		loadManagerLexGrid.loadOntology(new File(TEST_UMLS_PATHNAME).toURI(), ontology_bean);
-		System.out.println("Loaded UMLS ontology="+TEST_UMLS_PATHNAME);
-		assertTrue(ontology_bean.getCodingScheme() != null);
+		assertTrue(ontologyBean.getCodingScheme() != null);
+		
+		System.out.println("OntologyLoaderLexGridImplTest: testLoadUMLS().................... END");
 
 	}
-*/
+	
+	
+	private OntologyBean createOntolgyBeanOBO() {
+		
+		OntologyBean bean = createOntolgyBeanBase();
+		
+		bean.setFormat(ApplicationConstants.FORMAT_OBO);
+		bean.setCodingScheme(TEST_OBO_URN_VERSION);
+		bean.setDisplayLabel("cell");
+		bean.setContactEmail("obo@email.com");
+		bean.setContactName("OBO Name");
+				
+		return bean;
+	}
+	
+	private OntologyBean createOntolgyBeanGenericOWL() {
+		
+		OntologyBean bean = createOntolgyBeanBase();
+		
+		bean.setFormat(ApplicationConstants.FORMAT_OWL_DL);
+		bean.setCodingScheme(TEST_OWL_URN_VERSION);
+		bean.setDisplayLabel("pizza.owl");
+		bean.setContactEmail("owl@email.com");
+		bean.setContactName("Owl Name");
+						
+		return bean;
+	}
+	
+	private OntologyBean createOntolgyBeanLexgridXML() {
+		
+		OntologyBean bean = createOntolgyBeanBase();
+		
+		bean.setFormat(ApplicationConstants.FORMAT_LEXGRID_XML);
+		bean.setCodingScheme(TEST_LEXGRID_XML_URN_VERSION);
+		bean.setDisplayLabel("Automobiles.xml");
+		bean.setContactEmail("lexgrid@email.com");
+		bean.setContactName("Lexgrid Name");
+						
+		return bean;
+	}
+
+	private OntologyBean createOntolgyBeanUMLS() {
+		
+		OntologyBean bean = createOntolgyBeanBase();
+		
+		bean.setFormat(ApplicationConstants.FORMAT_UMLS_RRF);
+		bean.setCodingScheme(TEST_UMLS_URN_VERSION);
+		bean.setDisplayLabel("AIR");
+		bean.setContactEmail("umls@email.com");
+		bean.setContactName("Umls Name");
+						
+		return bean;
+	}
+		
+	
+	private OntologyBean createOntolgyBeanBase() {
+		
+		OntologyBean bean = new OntologyBean();
+		
+		//bean.setOntologyId(3000);
+		// OntologyId gets automatically generated.
+		bean.setFormat(ApplicationConstants.FORMAT_OBO);
+		bean.setCodingScheme(TEST_OBO_URN_VERSION);
+		bean.setDisplayLabel("cell");
+		bean.setUserId(12564);
+		bean.setVersionNumber("1.0");
+		bean.setStatusId(StatusEnum.STATUS_WAITING.getStatus());
+		bean.setVersionStatus("pre-production");
+		bean.setIsCurrent(new Byte("1"));
+		bean.setIsRemote(new Byte("0"));
+		bean.setIsReviewed(new Byte("1"));
+		bean.setDateCreated(new Date());
+		bean.setDateReleased(new Date());
+		bean.setContactEmail("obo@email.com");
+		bean.setContactName("OBO Name");
+		bean.setIsFoundry(new Byte("0"));
+				
+		return bean;
+	}
+	
+	
+	private OntologyService getOntologyService() {
+		
+		OntologyService service = (OntologyService) applicationContext.getBean(
+				"ontologyService", OntologyService.class);
+	
+		return service;
+	}
+		
+	
+
+	private FilePathHandler getFilePathHandler(OntologyBean ontologyBean) throws Exception {
+		
+		File inputFile = new File(ontologyBean.getFilePath());
+		System.out.println("Testcase() - inputfilepath = "
+				+ ontologyBean.getFilePath());
+
+		
+		if (!inputFile.exists()) {
+			System.out.println("Error! InputFile Not Found. Could not create filePathHanlder for input file.");
+			throw new Exception("Error! InputFile Not Found. Could not create filePathHanlder for input file.");
+		}
+
+		FilePathHandler filePathHandler = new PhysicalDirectoryFilePathHandlerImpl(
+				CompressedFileHandlerFactory.createFileHandler(ontologyBean
+						.getFormat()), inputFile);
+		
+		return filePathHandler;
+
+	}
+	
+	private void loadOntology( OntologyBean ontologyBean, String filePath) throws Exception {
+	
+		
+		loadManagerLexGrid = (OntologyLoadManagerLexGridImpl) applicationContext.getBean(
+				"ontologyLoadManagerLexGrid", OntologyLoadManagerLexGridImpl.class);
+		
+		System.out.println("___Loading Ontology....... BEGIN : " + filePath);
+		
+		loadManagerLexGrid.loadOntology(new File(filePath).toURI(), ontologyBean);
+		
+		System.out.println("___Loading Ontology........ END : " + filePath);
+	}
+	
+
 }
