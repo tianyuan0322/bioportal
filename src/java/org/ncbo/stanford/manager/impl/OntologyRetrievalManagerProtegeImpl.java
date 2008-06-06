@@ -403,7 +403,7 @@ public class OntologyRetrievalManagerProtegeImpl extends
 		}
 		classBean.addRelations(convertProperties(pConcept, slots));
 
-		if (recursive) {
+		
 			// add subclasses
 			// if OWLNamedClass, then use getNamedSubclasses/Superclasses,
 			// else use getDirectSubclasses/Superclasses (cast to
@@ -427,10 +427,11 @@ public class OntologyRetrievalManagerProtegeImpl extends
 			} else {
 				subclasses = pConcept.getDirectSubclasses();
 			}
-
+			classBean.addRelation(ApplicationConstants.CHILD_COUNT, subclasses.size());
+		if (recursive) {
 			classBean.addRelation(ApplicationConstants.SUB_CLASS,
 					convertClasses(subclasses, false));
-			classBean.addRelation(ApplicationConstants.CHILD_COUNT, subclasses.size());
+			
 			
 			// add superclasses
 			if (pConcept instanceof OWLNamedClass) {
@@ -439,7 +440,7 @@ public class OntologyRetrievalManagerProtegeImpl extends
 			} else {
 				superclasses = pConcept.getDirectSuperclasses();
 			}
-
+			
 			classBean.addRelation(ApplicationConstants.SUPER_CLASS,
 					convertClasses(superclasses, false));
 
