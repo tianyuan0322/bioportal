@@ -350,19 +350,24 @@ public class OntologyRetrievalManagerProtegeImpl extends
 		
 		ClassBean rootBean = null;
 		ClassBean currentBean = null;
+		Cls previousNode=null;
 		for(Object nodeObj :nodes){
 			ClassBean clsBean = new ClassBean();
 			Cls node = (Cls) nodeObj;
 			clsBean.setId(node.getName());
 			clsBean.setLabel(node.getBrowserText());
 			if(currentBean!=null){
-				if(light)
-					currentBean.addRelation(ApplicationConstants.SUB_CLASS, clsBean);
-				else{
-					Collection<ClassBean> siblings = convertClasses(node.getDirectSubclasses(),false);
+				if(light){
+					List beanList = new ArrayList();
+					beanList.add(clsBean);
+					currentBean.addRelation(ApplicationConstants.SUB_CLASS, beanList);
+				
+				}else{
+					Collection<ClassBean> siblings = convertClasses(previousNode.getDirectSubclasses(),false);
 					for(ClassBean sibling: siblings){
-						if(sibling.getId()==clsBean.getId())
+						if(sibling.getId().equals(clsBean.getId())){
 							clsBean = sibling;
+						}
 					}
 					currentBean.addRelation(ApplicationConstants.SUB_CLASS, siblings);
 				}
@@ -370,6 +375,7 @@ public class OntologyRetrievalManagerProtegeImpl extends
 			}else{
 				rootBean=clsBean;
 			}
+			previousNode=node;
 			currentBean=clsBean;
 		}
 		
