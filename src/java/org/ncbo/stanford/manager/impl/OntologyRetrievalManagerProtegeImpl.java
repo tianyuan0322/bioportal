@@ -363,7 +363,7 @@ public class OntologyRetrievalManagerProtegeImpl extends
 					currentBean.addRelation(ApplicationConstants.SUB_CLASS, beanList);
 				
 				}else{
-					Collection<ClassBean> siblings = convertClasses(previousNode.getDirectSubclasses(),false);
+					Collection<ClassBean> siblings = convertLightBeans(previousNode.getDirectSubclasses());
 					for(ClassBean sibling: siblings){
 						if(sibling.getId().equals(clsBean.getId())){
 							clsBean = sibling;
@@ -380,6 +380,17 @@ public class OntologyRetrievalManagerProtegeImpl extends
 		}
 		
 		return rootBean;
+	}
+	
+	private Collection<ClassBean> convertLightBeans(Collection<Cls> protegeClses) {
+
+		Collection<ClassBean> beans = new ArrayList<ClassBean>();
+
+		for (Cls cls : protegeClses) {
+			beans.add(createLightBean(cls));
+		}
+		return beans;
+
 	}
 	
 	private ClassBean createLightBean(Cls cls){
