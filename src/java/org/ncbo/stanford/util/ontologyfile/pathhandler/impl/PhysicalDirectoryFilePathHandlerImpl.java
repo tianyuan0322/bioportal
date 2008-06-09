@@ -36,12 +36,7 @@ public class PhysicalDirectoryFilePathHandlerImpl extends
 
 		String filePath = AbstractFilePathHandler.getFullOntologyDirPath(ontologyBean);
 		String fileName = file.getName();
-		
-		//TODO - remove this DEBUG stmt
-		// DEBUG
-		System.out.println("*** outputfilePath = " + filePath);
-		System.out.println("*** outputfileName = " + fileName);
-		
+				
 		File outputDirectories = new File(filePath);
 		outputDirectories.mkdirs();
 
@@ -60,10 +55,12 @@ public class PhysicalDirectoryFilePathHandlerImpl extends
 		outputStream.close();
 		
 		List<String> fileNames = new ArrayList<String>(1);
-		if(outputFile.exists()) {
-		
-			fileNames = compressedFileHandler.handle(outputFile, ontologyBean);
+		if ( filePath!= null && !outputFile.exists() ) {
+			throw new FileNotFoundException(
+					"Error! - PhysicalDirectoryFilePathHandlerImpl(): processOntologyFileUpload - could not create output file : "
+							+ filePath + fileName);
 		}
+		fileNames = compressedFileHandler.handle(outputFile, ontologyBean);
 		
 		return fileNames;
 	}

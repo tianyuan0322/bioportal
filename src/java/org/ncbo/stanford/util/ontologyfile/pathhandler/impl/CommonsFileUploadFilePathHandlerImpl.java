@@ -3,10 +3,12 @@ package org.ncbo.stanford.util.ontologyfile.pathhandler.impl;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.fileupload.FileItem;
 import org.ncbo.stanford.bean.OntologyBean;
+import org.ncbo.stanford.util.MessageUtils;
 import org.ncbo.stanford.util.ontologyfile.compressedfilehandler.CompressedFileHandler;
 import org.ncbo.stanford.util.ontologyfile.pathhandler.AbstractFilePathHandler;
 
@@ -36,18 +38,47 @@ public class CommonsFileUploadFilePathHandlerImpl extends
 	public List<String> processOntologyFileUpload(OntologyBean ontologyBean)
 			throws FileNotFoundException, IOException, Exception {
 
-		String filePath = AbstractFilePathHandler
-				.getFullOntologyDirPath(ontologyBean);
-		String fileName = ontologyBean.getFileItem().getName();
+		// place holder for return object
+		List<String> fileNames = new ArrayList<String>(1);
+		
+		// continue only if there is input fileItem to upload
+		FileItem fileItem = ontologyBean.getFileItem();
+		if (fileItem != null) {
+			
+			String filePath = AbstractFilePathHandler
+					.getFullOntologyDirPath(ontologyBean);
+			String fileName = fileItem.getName();
 
-		File outputDirectories = new File(filePath);
-		outputDirectories.mkdirs();
+			// validate input file		
+			if ( file.getSize() == 0) {
+				String errorMsg = MessageUtils.getMessage("msg.error.file.inputFileNotFoundError")
+						+ " fileName =  " + fileName;	
+				
+				throw new FileNotFoundException(
+						"Error! - CommonsFileUploadFilePathHandlerImpl(): processOntologyFileUpload - "  
+								+ errorMsg);
+			}
 
-		File outputFile = new File(filePath, fileName);
+			// now create output file
+			File outputDirectories = new File(filePath);
+			outputDirectories.mkdirs();
+			File outputFile = new File(filePath, fileName);
+			file.write(outputFile);
+			
+			// validate output file
+			if (!outputFile.exists()) {				
+				String errorMsg = MessageUtils.getMessage("msg.error.file.outputFileCreationError")
+						+ " filePath =  " + filePath 
+						+ " fileName =  " + fileName;
+				
+				throw new FileNotFoundException(
+						"Error! - CommonsFileUploadFilePathHandlerImpl(): processOntologyFileUpload - "  
+								+ errorMsg);	
+			}
 
-		file.write(outputFile);
-
-		return compressedFileHandler.handle(outputFile, ontologyBean);
+			fileNames = compressedFileHandler.handle(outputFile, ontologyBean);
+		}
+		return fileNames;
 	}
 
 	/*
