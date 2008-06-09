@@ -134,9 +134,8 @@ public class OntologyLoaderLexGridImplTest extends AbstractBioPortalTest {
 			System.out.println("Created OntologyBean with ID = " + ontologyBean.getId());
 		
 		// load
-		loadOntology(ontologyBean, TEST_LEXGRID_XML_PATHNAME);
-		// do we need this ?
-		//loadManagerLexGrid.setTargetTerminologies("AIR");
+		loadUMLSOntology(ontologyBean, TEST_LEXGRID_XML_PATHNAME);
+
 
 		assertTrue(ontologyBean.getCodingScheme() != null);
 		
@@ -266,6 +265,20 @@ public class OntologyLoaderLexGridImplTest extends AbstractBioPortalTest {
 		
 		System.out.println("___Loading Ontology........ END : " + filePath);
 	}
+
+	private void loadUMLSOntology( OntologyBean ontologyBean, String filePath) throws Exception {
 	
+		
+		loadManagerLexGrid = (OntologyLoadManagerLexGridImpl) applicationContext.getBean(
+				"ontologyLoadManagerLexGrid", OntologyLoadManagerLexGridImpl.class);
+		
+		System.out.println("___Loading Ontology....... BEGIN : " + filePath);
+		
+		// UMLS ONLY
+		loadManagerLexGrid.setTargetTerminologies("AIR");
+		loadManagerLexGrid.loadOntology(new File(filePath).toURI(), ontologyBean);
+		
+		System.out.println("___Loading Ontology........ END : " + filePath);
+	}
 
 }
