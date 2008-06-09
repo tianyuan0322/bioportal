@@ -154,10 +154,6 @@ public class OntologyServiceImpl implements OntologyService {
 				newOntologyVersion);
 		ncboOntologyMetadataDAO.save(ontologyMetadata);
 
-		// upload the fileItem
-		List<String> fileNames = uploadOntologyFile(ontologyBean, filePathHander);
-		ontologyBean.setFilenames(fileNames);
-		ontologyBean.setFilePath(ontologyBean.getOntologyDirPath());
 
 		// 3. <ontologyCategory> - populate and save
 		ontologyBean.populateToCategoryEntity(ontologyCategoryList,
@@ -166,6 +162,11 @@ public class OntologyServiceImpl implements OntologyService {
 			ncboOntologyCategoryDAO.save(ontologyCategory);
 		}
 
+		// upload the fileItem
+		List<String> fileNames = uploadOntologyFile(ontologyBean, filePathHander);
+		ontologyBean.setFilenames(fileNames);
+		ontologyBean.setFilePath(ontologyBean.getOntologyDirPath());
+		
 		// 4. <ontologyFile> - populate and save
 		ontologyBean.populateToFileEntity(ontologyFileList, newOntologyVersion);
 		for (NcboOntologyFile ontologyFile : ontologyFileList) {
