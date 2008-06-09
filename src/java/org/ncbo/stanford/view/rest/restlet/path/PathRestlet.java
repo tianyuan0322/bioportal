@@ -56,9 +56,9 @@ public class PathRestlet extends Restlet {
 		String source = (String) request.getAttributes().get("source");
 		String target = (String) request.getAttributes().get("target");
 		String light_string = (String) request.getAttributes().get("light");
-		boolean light=false;
-		if(light_string!=null)
-			light = true;
+		boolean light=true;
+		if(light_string!=null && light_string.equalsIgnoreCase("false"))
+			light = false;
 		
 		String ontologyVersion = (String) request.getAttributes().get(
 				"ontologyVersionId");
