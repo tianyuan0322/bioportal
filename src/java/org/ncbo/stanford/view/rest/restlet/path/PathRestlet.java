@@ -1,10 +1,13 @@
 package org.ncbo.stanford.view.rest.restlet.path;
 
+import javax.servlet.http.HttpServletRequest;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.ncbo.stanford.bean.concept.ClassBean;
 import org.ncbo.stanford.service.concept.ConceptService;
 import org.ncbo.stanford.service.xml.XMLSerializationService;
+import org.ncbo.stanford.util.RequestUtils;
 import org.ncbo.stanford.view.util.constants.RequestParamConstants;
 import org.restlet.Restlet;
 import org.restlet.data.Method;
@@ -55,7 +58,8 @@ public class PathRestlet extends Restlet {
 		ClassBean concept = null;
 		String source = (String) request.getAttributes().get("source");
 		String target = (String) request.getAttributes().get("target");
-		String light_string = (String) request.getAttributes().get("light");
+		HttpServletRequest httpRequest = RequestUtils.getHttpServletRequest(request);
+		String light_string = (String) httpRequest.getParameter("light");
 		boolean light=true;
 		if(light_string!=null && light_string.equalsIgnoreCase("false"))
 			light = false;
