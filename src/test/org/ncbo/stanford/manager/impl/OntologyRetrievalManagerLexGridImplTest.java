@@ -7,7 +7,7 @@ import org.ncbo.stanford.AbstractBioPortalTest;
 import org.ncbo.stanford.bean.concept.ClassBean;
 import org.ncbo.stanford.bean.search.SearchResultBean;
 import org.ncbo.stanford.domain.custom.entity.NcboOntology;
-import org.ncbo.stanford.service.loader.processor.OntologyLoadProcessorService;
+
 
 /**
  * Ensure that the OntologyLoaderLexGridImplTest testcase which is used to load
@@ -28,7 +28,7 @@ public class OntologyRetrievalManagerLexGridImplTest extends AbstractBioPortalTe
 	private final static String TEST_UMLS_URN_VERSION = "urn:oid:2.16.840.1.113883.6.110|1993.bvt";
 
 	OntologyRetrievalManagerLexGridImpl retrievalManagerLexGrid;
-	OntologyLoadProcessorService service;
+	//OntologyLoadProcessorService service;
 
 	// public OntologyLoaderLexGridImplTest() {
 	// super();
@@ -170,7 +170,7 @@ public class OntologyRetrievalManagerLexGridImplTest extends AbstractBioPortalTe
 		NcboOntology ncboOntology = retrievalManagerLexGrid.getLatestNcboOntology(3000);
 		String conceptID = "CL:0000255";
 		ClassBean pathBean = retrievalManagerLexGrid.findPathToRoot(ncboOntology,
-				conceptID);
+				conceptID,true);
 		System.out.println("Paths to root for concept " + conceptID + " of cell ontology are :");
 		System.out.println(pathBean);
 		System.out.println("\n");
