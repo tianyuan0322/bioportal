@@ -68,7 +68,7 @@ public class ConceptServiceImpl implements ConceptService {
 		return manager.findConcept(ontology, conceptId);
 	}
 
-	public ClassBean findPathToRoot(Integer ontologyId, String conceptId)
+	public ClassBean findPathToRoot(Integer ontologyId, String conceptId,boolean light)
 			throws Exception {
 		NcboOntology ontology = ncboOntologyVersionDAO
 		.findOntologyVersion(ontologyId);
@@ -77,7 +77,7 @@ public class ConceptServiceImpl implements ConceptService {
 		OntologyRetrievalManager manager = ontologyRetrievalHandlerMap
 			.get(formatHandler);
 
-		return manager.findPathToRoot(ontology, conceptId);
+		return manager.findPathToRoot(ontology, conceptId,light);
 	}
 
 	/*

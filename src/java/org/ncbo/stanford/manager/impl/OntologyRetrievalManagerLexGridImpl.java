@@ -142,7 +142,7 @@ public class OntologyRetrievalManagerLexGridImpl extends
 	}
 
 	public ClassBean findPathToRoot(NcboOntology ncboOntology,
-			String conceptId) throws Exception {
+			String conceptId,boolean light) throws Exception {
 		String urnAndVersion = ncboOntology.getCodingScheme();
 		String urnVersionArray[] = splitUrnAndVersion(urnAndVersion);
 		CodingSchemeVersionOrTag csvt = Constructors

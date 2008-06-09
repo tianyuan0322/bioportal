@@ -122,14 +122,14 @@ public class OntologyRetrievalManagerProtegeImpl extends
 		return null;
 	}
 
-	public ClassBean findPathToRoot(NcboOntology ontologyVersion, String conceptId) {
+	public ClassBean findPathToRoot(NcboOntology ontologyVersion, String conceptId,boolean light) {
 
 		KnowledgeBase kb = getKnowledgeBase(ontologyVersion);
 
 		Cls cls = kb.getCls(conceptId);
 		Collection nodes = ModelUtilities.getPathToRoot(cls);
 
-		return buildPath(nodes);
+		return buildPath(nodes,light);
 
 	}
 
@@ -346,7 +346,7 @@ public class OntologyRetrievalManagerProtegeImpl extends
 	// }
 	//
 
-	private ClassBean buildPath(Collection nodes){
+	private ClassBean buildPath(Collection nodes,boolean light){
 		
 		ClassBean rootBean = null;
 		ClassBean currentBean = null;
@@ -356,7 +356,10 @@ public class OntologyRetrievalManagerProtegeImpl extends
 			clsBean.setId(node.getName());
 			clsBean.setLabel(node.getBrowserText());
 			if(currentBean!=null){
-				currentBean.addRelation(ApplicationConstants.SUB_CLASS, clsBean);
+				if(light)
+					currentBean.addRelation(ApplicationConstants.SUB_CLASS, clsBean);
+				else
+					currentBean.addRelation(ApplicationConstants.SUB_CLASS, convertClasses(node.getDirectSubclasses(),false));
 			}else{
 				rootBean=clsBean;
 			}

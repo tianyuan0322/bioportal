@@ -55,6 +55,11 @@ public class PathRestlet extends Restlet {
 		ClassBean concept = null;
 		String source = (String) request.getAttributes().get("source");
 		String target = (String) request.getAttributes().get("target");
+		String light_string = (String) request.getAttributes().get("light");
+		boolean light=false;
+		if(light_string!=null)
+			light = true;
+		
 		String ontologyVersion = (String) request.getAttributes().get(
 				"ontologyVersionId");
 		System.out.println("ontology:" + ontologyVersion);
@@ -62,7 +67,7 @@ public class PathRestlet extends Restlet {
 			Integer ontId = Integer.parseInt(ontologyVersion);
 			if (target
 					.equalsIgnoreCase(RequestParamConstants.PARAM_ROOT_CONCEPT)) {
-				concept = conceptService.findPathToRoot(ontId, source);
+				concept = conceptService.findPathToRoot(ontId, source,light);
 			} else {
 				// This is for when you are finding path from source to target--
 				// Not Implemented Yet
