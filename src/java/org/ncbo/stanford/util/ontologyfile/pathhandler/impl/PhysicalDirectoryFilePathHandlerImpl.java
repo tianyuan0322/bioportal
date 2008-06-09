@@ -10,6 +10,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.ncbo.stanford.bean.OntologyBean;
+import org.ncbo.stanford.util.MessageUtils;
 import org.ncbo.stanford.util.ontologyfile.compressedfilehandler.CompressedFileHandler;
 import org.ncbo.stanford.util.ontologyfile.pathhandler.AbstractFilePathHandler;
 
@@ -34,33 +35,50 @@ public class PhysicalDirectoryFilePathHandlerImpl extends
 	public List<String> processOntologyFileUpload(OntologyBean ontologyBean)
 			throws FileNotFoundException, IOException, Exception {
 
-		String filePath = AbstractFilePathHandler.getFullOntologyDirPath(ontologyBean);
-		String fileName = file.getName();
-				
-		File outputDirectories = new File(filePath);
-		outputDirectories.mkdirs();
-
-		File outputFile = new File(filePath, fileName);
-
-		FileOutputStream outputStream = new FileOutputStream(outputFile);
-		InputStream inputStream = new FileInputStream(file);
-
-		int c;
-
-		while ((c = inputStream.read()) != -1) {
-			outputStream.write(c);
-		}
-
-		inputStream.close();
-		outputStream.close();
-		
+		// place holder for return object
 		List<String> fileNames = new ArrayList<String>(1);
-		if ( filePath!= null && !outputFile.exists() ) {
-			throw new FileNotFoundException(
-					"Error! - PhysicalDirectoryFilePathHandlerImpl(): processOntologyFileUpload - could not create output file : "
-							+ filePath + fileName);
+		
+		// validate inputfile
+		String filePath = AbstractFilePathHandler
+				.getFullOntologyDirPath(ontologyBean);
+		String fileName = file.getName();
+
+		// continue only if there is input file
+		if (filePath != null && fileName != null) {
+
+			// now create output file
+			File outputDirectories = new File(filePath);
+			outputDirectories.mkdirs();
+
+			File outputFile = new File(filePath, fileName);
+
+			FileOutputStream outputStream = new FileOutputStream(outputFile);
+			InputStream inputStream = new FileInputStream(file);
+
+			int c;
+			while ((c = inputStream.read()) != -1) {
+				outputStream.write(c);
+			}
+			inputStream.close();
+			outputStream.close();
+
+			// validate output file
+			if (!outputFile.exists()) {
+				
+					String errorMsg = MessageUtils
+							.getMessage("msg.error.file.outputFileCreationError")
+							+ " filePath =  "
+							+ filePath
+							+ " fileName =  "
+							+ fileName;
+
+					throw new FileNotFoundException(
+							"Error! - PhysicalDirectoryFilePathHandlerImpl(): processOntologyFileUpload - "
+									+ errorMsg);
+			}
+
+			fileNames = compressedFileHandler.handle(outputFile, ontologyBean);
 		}
-		fileNames = compressedFileHandler.handle(outputFile, ontologyBean);
 		
 		return fileNames;
 	}
