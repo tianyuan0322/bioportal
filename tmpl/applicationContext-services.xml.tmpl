@@ -483,27 +483,6 @@
 		</property>
 	</bean>
 
-	<bean id="ontologyLoadProcessorService"
-		class="org.ncbo.stanford.service.loader.processor.impl.OntologyLoadProcessorServiceImpl">
-		<property name="ncboOntologyMetadataDAO">
-			<ref bean="NcboOntologyMetadataDAO" />
-		</property>
-		<property name="ncboOntologyVersionDAO">
-			<ref bean="NcboOntologyVersionDAO" />
-		</property>
-		<property name="ncboOntologyCategoryDAO">
-			<ref bean="NcboOntologyCategoryDAO" />
-		</property>
-		<property name="ncboOntologyLoadQueueDAO">
-			<ref bean="NcboOntologyLoadQueueDAO" />
-		</property>
-		<property name="ncboOntologyFileDAO">
-			<ref bean="NcboOntologyFileDAO" />
-		</property>
-		<property name="ncboSeqOntologyIdDAO">
-			<ref bean="NcboSeqOntologyIdDAO" />
-		</property>
-	</bean>
 
 	<bean id="ontologyLoadSchedulerService"
 		class="org.ncbo.stanford.service.loader.scheduler.impl.OntologyLoadSchedulerServiceImpl">
