@@ -387,6 +387,7 @@ public class OntologyRetrievalManagerProtegeImpl extends
 		Collection<ClassBean> beans = new ArrayList<ClassBean>();
 
 		for (Cls cls : protegeClses) {
+			if(cls.isVisible())
 			beans.add(createLightBean(cls));
 		}
 		return beans;
@@ -394,8 +395,11 @@ public class OntologyRetrievalManagerProtegeImpl extends
 	}
 	
 	private ClassBean createLightBean(Cls cls){
-		ClassBean bean = new ClassBean();
 		
+		if(!cls.isVisible())
+			return null;
+		
+		ClassBean bean = new ClassBean();
 		bean.setId(cls.getName());
 		bean.setLabel(cls.getBrowserText());
 		bean.addRelation(ApplicationConstants.CHILD_COUNT, cls.getDirectSubclasses().size());
@@ -409,6 +413,7 @@ public class OntologyRetrievalManagerProtegeImpl extends
 		Collection<ClassBean> beans = new ArrayList<ClassBean>();
 
 		for (Cls cls : protegeClses) {
+			if(cls.isVisible())
 			beans.add(createClassBean(cls, recursive));
 		}
 		return beans;
@@ -417,6 +422,8 @@ public class OntologyRetrievalManagerProtegeImpl extends
 
 	private ClassBean createClassBean(Cls pConcept, boolean recursive) {
 		boolean isOwl = pConcept.getKnowledgeBase() instanceof OWLModel;
+		
+		
 		ClassBean classBean = new ClassBean();
 		classBean.setId(pConcept.getName());
 		classBean.setLabel(pConcept.getBrowserText());
