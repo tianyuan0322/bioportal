@@ -358,8 +358,15 @@ public class OntologyRetrievalManagerProtegeImpl extends
 			if(currentBean!=null){
 				if(light)
 					currentBean.addRelation(ApplicationConstants.SUB_CLASS, clsBean);
-				else
-					currentBean.addRelation(ApplicationConstants.SUB_CLASS, convertClasses(node.getDirectSubclasses(),false));
+				else{
+					Collection<ClassBean> siblings = convertClasses(node.getDirectSubclasses(),false);
+					for(ClassBean sibling: siblings){
+						if(sibling.getId()==clsBean.getId())
+							clsBean = sibling;
+					}
+					currentBean.addRelation(ApplicationConstants.SUB_CLASS, siblings);
+				}
+					
 			}else{
 				rootBean=clsBean;
 			}
