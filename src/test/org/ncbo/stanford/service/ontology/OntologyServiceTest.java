@@ -3,12 +3,16 @@
  */
 package org.ncbo.stanford.service.ontology;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
 import org.ncbo.stanford.AbstractBioPortalTest;
 import org.ncbo.stanford.bean.OntologyBean;
+import org.ncbo.stanford.util.ontologyfile.compressedfilehandler.impl.CompressedFileHandlerFactory;
+import org.ncbo.stanford.util.ontologyfile.pathhandler.FilePathHandler;
+import org.ncbo.stanford.util.ontologyfile.pathhandler.impl.PhysicalDirectoryFilePathHandlerImpl;
 
 /**
  * @author nickgriffith
@@ -17,8 +21,8 @@ import org.ncbo.stanford.bean.OntologyBean;
 
 public class OntologyServiceTest extends AbstractBioPortalTest {
 
-	/*
-	public void testfindLatestOntologyVersions() {
+	
+/*	public void testfindLatestOntologyVersions() {
 
 		System.out.println ("OntologyServiceTest: testfindLatestOntologyVersions().......................BEGIN");
 		
@@ -31,11 +35,26 @@ public class OntologyServiceTest extends AbstractBioPortalTest {
 		
 		System.out.println ("OntologyServiceTest: testfindLatestOntologyVersions().........................DONE");
 
+	}*/
+	
+	public void testfindAllOntologyVersionsForAnOntology() {
+
+		System.out.println ("OntologyServiceTest: testfindLatestOntologyVersions().......................BEGIN");
+		
+		List<OntologyBean> ontologies = getOntologyService().findAllOntologyVersionsByOntologyId(new Integer(1001));
+
+		for (OntologyBean ontology : ontologies) {
+
+			System.out.println(ontology.toString());
+		}
+		
+		System.out.println ("OntologyServiceTest: testfindAllOntologyVersionsForAnOntology().........................DONE");
+
 	}
-*/
+
 	
 	
-	public void testSearchOntologyMetadata(){	
+/*	public void testSearchOntologyMetadata(){	
 		List<OntologyBean> ontologies = getOntologyService().searchOntologyMetadata("Mouse");
 
 		for (OntologyBean ontology : ontologies) {
@@ -60,21 +79,22 @@ public class OntologyServiceTest extends AbstractBioPortalTest {
 		
 	}
 		
-	/*
-	public void testCreateOntology() {
+
+	public void testCreateOntology() throws Exception {
 		
 		System.out.println ("OntologyServiceTest: testCreateOntology()........................BEGIN");
 			
 		OntologyBean ontologyBean = createOntolgyBean();
 		
-		getOntologyService().createOntology(ontologyBean);
+		
+		getOntologyService().createOntology(ontologyBean, OntologyServiceTest.getFilePathHandler(ontologyBean));
 		
 		System.out.println ("OntologyServiceTest: testCreateOntology().........................DONE");
 	}
-	*/
+
 	
 	
-	/*
+
 	public void testCleanupOntologyCategory() {
 		
 		System.out.println ("OntologyServiceTest: testCleanupOntologyCategory()........................BEGIN");
@@ -83,18 +103,17 @@ public class OntologyServiceTest extends AbstractBioPortalTest {
 		
 		if (ontologyBean != null) {
 
-			getOntologyService().cleanupOntologyCategory(ontologyBean,
-					ontologyBean.getCategoryIds());
+			getOntologyService().cleanupOntologyCategory(ontologyBean);
 
 			System.out
 					.println("OntologyServiceTest: testCleanupOntologyCategory().........................DONE");
 		}
 	
 	}
-	*/
 	
 	
-/*
+	
+
 	public void testUpdateOntology() {
 		
 		System.out.println ("OntologyServiceTest: testUpdateOntology().......................BEGIN");
@@ -122,7 +141,7 @@ public class OntologyServiceTest extends AbstractBioPortalTest {
 		System.out.println ("OntologyServiceTest: testUpdateOntology()........................DONE");
 		
 	}
-*/	
+	
 
 	
 	
@@ -146,7 +165,7 @@ public class OntologyServiceTest extends AbstractBioPortalTest {
 		
 	}
 	
-	
+*/	
 
 	
 	private OntologyBean createOntolgyBean() {
@@ -174,23 +193,9 @@ public class OntologyServiceTest extends AbstractBioPortalTest {
 		bean.setCategoryIds(categoryIds);
 		
 		// set inputFilePath
-		//String inputFileStr = "/Users/nickgriffith/projects/smi.apps/BioPortalCore/test/sample_data/pizza.owl";
-		
 		String inputFileStr = "/dev/cyoun/workspace/bioportal_resources/uploads/3000/0/pizza.owl";
 		bean.setFilePath(inputFileStr);
-		
-//		ArrayList<String> fileNames = new ArrayList<String>();
-//		fileNames.add("pizza.owl");
-//		//fileNames.add("testFileName2.OWL");
-//		bean.setFilenames(fileNames);
 				
-		/*
-		bean.setPublication(ncboOntology.getPublication());
-		bean.setUrn(ncboOntology.getUrn());
-		bean.setCodingScheme(ncboOntology.getCodingScheme());
-		*/
-		
-		
 		return bean;
 	}
 	
@@ -201,6 +206,25 @@ public class OntologyServiceTest extends AbstractBioPortalTest {
 				"ontologyService", OntologyService.class);
 	
 		return service;
+	}
+	
+	public static FilePathHandler getFilePathHandler(OntologyBean ontologyBean) throws Exception {
+		
+		File inputFile = new File(ontologyBean.getFilePath());
+		System.out.println("Testcase: getFilePathHandler() - inputfilepath = "
+				+ ontologyBean.getFilePath());
+		
+		if (!inputFile.exists()) {
+			System.out.println("Error! InputFile Not Found. Could not create filePathHanlder for input file.");
+			throw new Exception("Error! InputFile Not Found. Could not create filePathHanlder for input file.");
+		}
+
+		FilePathHandler filePathHandler = new PhysicalDirectoryFilePathHandlerImpl(
+				CompressedFileHandlerFactory.createFileHandler(ontologyBean
+						.getFormat()), inputFile);
+		
+		return filePathHandler;
+
 	}
 
 }
