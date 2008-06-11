@@ -1,7 +1,5 @@
 package org.ncbo.stanford.view.rest.restlet.ontology;
 
-import java.util.List;
-
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.logging.Log;
@@ -192,11 +190,11 @@ public class OntologyRestlet extends Restlet {
 				log.error(e);
 			}
 			
-			getXmlSerializationService().generateXMLResponse (request, response, ontologyBean);
+			//getXmlSerializationService().generateXMLResponse (request, response, ontologyBean);
 		}
 
 		// generate response XML
-		// display success XML when successful, otherwise call generateUserXMLResponse
+		// display success XML when successful, otherwise display bean XML
 		if (!response.getStatus().isError()) {
 			getXmlSerializationService().generateStatusXMLResponse (request, response);
 		} else {
