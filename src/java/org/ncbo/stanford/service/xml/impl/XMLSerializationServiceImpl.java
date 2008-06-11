@@ -1,14 +1,20 @@
 package org.ncbo.stanford.service.xml.impl;
 
-import java.util.List;
+import java.io.File;
+import java.io.StringWriter;
+import java.io.Writer;
+import java.util.Arrays;
+import java.util.HashMap;
 
+import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerException;
+import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.stream.StreamResult;
+import javax.xml.transform.stream.StreamSource;
+
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.apache.commons.validator.GenericValidator;
-
-import org.restlet.data.MediaType;
-import org.restlet.data.Request;
-import org.restlet.data.Response;
-import org.restlet.data.Status;
-
 import org.ncbo.stanford.bean.OntologyBean;
 import org.ncbo.stanford.bean.UserBean;
 import org.ncbo.stanford.bean.concept.ClassBean;
@@ -18,134 +24,184 @@ import org.ncbo.stanford.bean.response.ErrorBean;
 import org.ncbo.stanford.bean.response.ErrorStatusBean;
 import org.ncbo.stanford.bean.response.SuccessBean;
 import org.ncbo.stanford.enumeration.ErrorTypeEnum;
+import org.ncbo.stanford.service.ontology.impl.OntologyServiceImpl;
 import org.ncbo.stanford.service.xml.XMLSerializationService;
 import org.ncbo.stanford.util.MessageUtils;
 import org.ncbo.stanford.util.RequestUtils;
 import org.ncbo.stanford.util.constants.ApplicationConstants;
-import org.ncbo.stanford.view.util.constants.RequestParamConstants;
+import org.restlet.data.MediaType;
+import org.restlet.data.Request;
+import org.restlet.data.Response;
+import org.restlet.data.Status;
 
 import com.thoughtworks.xstream.XStream;
+import com.thoughtworks.xstream.io.xml.TraxSource;
 
 public class XMLSerializationServiceImpl implements XMLSerializationService {
+	
+	private static final Log log = LogFactory.getLog(OntologyServiceImpl.class);
+
+	private static HashMap<String, Transformer> transformers = new HashMap<String, Transformer>();
+	private static XStream xstream = null;
 
 	/**
 	 * Generate an XML representation of a specific error
+	 * This is going to retire when ErrorTypeEnum is replaced with Restlet.Status object - cyoun
 	 * 
 	 * @param errorType
 	 * @return
 	 */
 	public String getErrorAsXML(ErrorTypeEnum errorType, String accessedResource) {
-		String xmlResult = ApplicationConstants.XML_DECLARATION + "\n";
-
-		XStream xstream = new XStream();
-		xstream.alias(ApplicationConstants.ERROR_XML_TAG_NAME, ErrorBean.class);
-		xstream.omitField(ErrorBean.class, "errorType");
+		String xmlHeader = ApplicationConstants.XML_DECLARATION + "\n";
+		
+		getXStreamInstance().omitField(ErrorBean.class, "errorType");
 		ErrorBean errorBean = new ErrorBean(errorType);
 
 		if (!GenericValidator.isBlankOrNull(accessedResource)) {
 			errorBean.setAccessedResource(accessedResource);
 		}
 
-		return xmlResult + xstream.toXML(errorBean);
+		return xmlHeader + getXStreamInstance().toXML(errorBean);
 	}
 
 	/**
-	 * Generate an XML representation of a successfully processed request. This
-	 * should only be used when no other XML response is expected (i.e.
-	 * authentication).
+	 * Generate an XML representation of a specific error.
 	 * 
-	 * @param errorType
+	 * @param request
+	 * @param response
 	 * @return
 	 */
-	public String getSuccessAsXML(String sessionId, String accessedResource) {
-		String xmlResult = ApplicationConstants.XML_DECLARATION + "\n";
+	public String getErrorAsXML(Request request, Response response) {
 
-		XStream xstream = new XStream();
-		xstream.alias(ApplicationConstants.SUCCESS_XML_TAG_NAME,
-				SuccessBean.class);
+		String xmlHeader = ApplicationConstants.XML_DECLARATION + "\n";
 
-		SuccessBean successBean = new SuccessBean();
-		successBean.setSessionId(sessionId);
-
-		if (!GenericValidator.isBlankOrNull(accessedResource)) {
-			successBean.setAccessedResource(accessedResource);
-		}
-
-		return xmlResult + xstream.toXML(successBean);
-	}
-
-	/**
-	 * Generate an XML representation of a successfully processed request. This
-	 * should only be used when no other XML response is expected (i.e.
-	 * authentication).
-	 * 
-	 * @param errorType
-	 * @return
-	 */
-	public String getSuccessAsXML(String sessionId, String accessedResource,
-			Object data) {
-		String xmlResult = ApplicationConstants.XML_DECLARATION + "\n";
-		XStream xstream = new XStream();
-		// xstream.alias(ApplicationConstants.RESPONSE_XML_TAG_NAME,
-		// SuccessBean.class);
-
-		setXStreamAliases(xstream);
-
-		SuccessBean successBean = new SuccessBean();
-		successBean.setSessionId(sessionId);
-		successBean.getData().add(data);
-
-		if (!GenericValidator.isBlankOrNull(accessedResource)) {
-			successBean.setAccessedResource(accessedResource);
-		}
-
-		return xmlResult + xstream.toXML(successBean);
-	}
-
-	private void setXStreamAliases(XStream xstream) {
+		String accessedResource = request.getResourceRef().getPath();
 		
-		//xstream.alias(RequestParamConstants.ENTITY_ONTOLOGY, OntologyBean.class);
-		//xstream.alias(RequestParamConstants.ENTITY_USER, UserBean.class);
-		xstream.alias(MessageUtils.getMessage("entity.ontology"), OntologyBean.class);
-		xstream.alias(MessageUtils.getMessage("entity.user"), UserBean.class);
-		xstream.alias(MessageUtils.getMessage("entity.classbean"), ClassBean.class);
-		xstream.alias(MessageUtils.getMessage("entity.propertybean"), PropertyBean.class);
-		xstream.alias(MessageUtils.getMessage("entity.instancebean"),InstanceBean.class);
-		xstream.alias(ApplicationConstants.RESPONSE_XML_TAG_NAME,
-				SuccessBean.class);
-		xstream.alias(ApplicationConstants.ERROR_XML_TAG_NAME, ErrorBean.class);
-	}
-
-	
-	/**
-	 * Generate Error XML from status object. Note that ErrorStatusBean is used
-	 * instead of ErrorBean. Status object is passed around instead of in-house
-	 * ErrorTypeEnum object.
-	 * 
-	 * @author cyoun
-	 * 
-	 * @param status
-	 * @param accessedResource
-	 * @return
-	 */
-	public String getErrorAsXML(Status status, String accessedResource) {
-
-		String xmlResult = ApplicationConstants.XML_DECLARATION + "\n";
-
-		XStream xstream = new XStream();
-		xstream.alias(ApplicationConstants.ERROR_XML_TAG_NAME,
-				ErrorStatusBean.class);
-
-		ErrorStatusBean errorStatusBean = new ErrorStatusBean(status);
+		ErrorStatusBean errorStatusBean = new ErrorStatusBean(response.getStatus());
 
 		if (!GenericValidator.isBlankOrNull(accessedResource)) {
 			errorStatusBean.setAccessedResource(accessedResource);
 		}
 
-		return xmlResult + xstream.toXML(errorStatusBean);
+		return xmlHeader + getXStreamInstance().toXML(errorStatusBean);
 
+	}			
+	
+	
+	/**
+	 * Generate an XML representation of a successfully processed request. This
+	 * should only be used when no other XML response is expected (i.e.
+	 * authentication).
+	 * 
+	 * @param successBean
+	 * @return String
+	 */
+	public String getErrorAsXML(ErrorStatusBean errorStatusBean) {
+		
+		String xmlHeader = ApplicationConstants.XML_DECLARATION + "\n";
+		
+		return xmlHeader + getXStreamInstance().toXML(errorStatusBean);
+		
 	}
+	
 
+	/**
+	 * Generate an XML representation of a successfully processed request. This
+	 * should only be used when no other XML response is expected (i.e.
+	 * authentication).
+	 * 
+	 * @param successBean
+	 * @return String
+	 */
+	public String getSuccessAsXML(SuccessBean successBean) {
+		
+		String xmlHeader = ApplicationConstants.XML_DECLARATION + "\n";
+		
+		return xmlHeader + getXStreamInstance().toXML(successBean);
+		
+	}
+	
+	
+	/**
+	 * returns SuccessBean with sessionId, accessedResource populated
+	 */	
+	public ErrorStatusBean getErrorBean(Request request, Response response) {
+		
+		String accessedResource = request.getResourceRef().getPath();
+		ErrorStatusBean errorStatusBean = new ErrorStatusBean(response.getStatus());
+
+		if (!GenericValidator.isBlankOrNull(accessedResource)) {
+			errorStatusBean.setAccessedResource(accessedResource);
+		}
+
+		
+		return errorStatusBean;
+	}
+	
+	
+	/**
+	 * returns SuccessBean with sessionId, accessedResource populated
+	 */	
+	public SuccessBean getSuccessBean(Request request) {
+		
+		String sessionId = RequestUtils.getSessionId(request);
+		String accessedResource = request.getResourceRef().getPath();
+
+		SuccessBean successBean = new SuccessBean();
+		successBean.setSessionId(sessionId);
+
+		if (!GenericValidator.isBlankOrNull(accessedResource)) {
+			successBean.setAccessedResource(accessedResource);
+		}
+		
+		return successBean;
+	}
+	
+	/**
+	 * returns SuccessBean with sessionId, accessedResource and data populated
+	 */
+	public SuccessBean getSuccessBean(Request request, Object data) {
+		
+		SuccessBean successBean = getSuccessBean(request);
+		
+		if (data != null) {
+			successBean.getData().add(data);
+		}		
+		return successBean;
+	}
+	
+	
+	/**
+	 * Generate an XML representation of a successfully processed request with
+	 * XSL Transformation. This should only be used when no other XML response
+	 * is expected (i.e. authentication).
+	 * 
+	 * @param data
+	 * @param xsltFile
+	 * @return String
+	 * @throws TransformerException
+	 */
+	public String applyXSL( Object data, String xsltFile) throws TransformerException {
+
+		//	SuccessBean is not being used in findAll type of restlet requests....	 - cyoun
+
+		// create source
+		TraxSource traxSource = new TraxSource(data, getXStreamInstance());
+		traxSource.setSourceAsList(Arrays.asList(data));
+		
+		// create buffer for XML output
+		Writer buffer = new StringWriter();
+		
+		getTransformerInstance(xsltFile).transform(traxSource, new StreamResult(buffer));
+		
+		//TODO - remove this later
+		System.out.println("++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++");
+		System.out.println(buffer.toString());
+		System.out.println("++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++");
+		
+		return buffer.toString();
+	}	
+	
 	
 	/**
 	 * Generates Generic XML response which contains status info whether success
@@ -156,19 +212,15 @@ public class XMLSerializationServiceImpl implements XMLSerializationService {
 	 */
 	public void generateStatusXMLResponse(Request request, Response response) {
 
-		String accessedResource = request.getResourceRef().getPath();
-
 		if (!response.getStatus().isError()) {
 
 			RequestUtils.setHttpServletResponse(response, Status.SUCCESS_OK,
-					MediaType.TEXT_XML, getSuccessAsXML(RequestUtils
-							.getSessionId(request), accessedResource));
+					MediaType.TEXT_XML, getSuccessAsXML(getSuccessBean(request)));
 
 		} else {
 
 			RequestUtils.setHttpServletResponse(response, response.getStatus(),
-					MediaType.TEXT_XML, getErrorAsXML(response.getStatus(),
-							accessedResource));
+					MediaType.TEXT_XML, getErrorAsXML(getErrorBean(request, response)));
 
 		}
 
@@ -185,115 +237,98 @@ public class XMLSerializationServiceImpl implements XMLSerializationService {
 	public void generateXMLResponse(Request request, Response response,
 			Object data) {
 		
-		String sessionId = RequestUtils.getSessionId(request);
-		String accessedResource = request.getResourceRef().getPath();
-		
+		// SUCCESS, include the bean info
+		if (!response.getStatus().isError()) {
+
+			RequestUtils.setHttpServletResponse(response, Status.SUCCESS_OK,
+					MediaType.TEXT_XML, getSuccessAsXML(getSuccessBean(request, data)));
+
+			// if ERROR, just status, no bean info
+		} else {
+			generateStatusXMLResponse(request, response);
+		}	
+	}
+	
+	/**
+	 * Generates XML response then apply XSL transformation.
+	 * This is useful to filter huge XML response such as findAll() Ontologies.
+	 * 
+	 * If SUCCESS - Entity info is displayed.
+	 * else - Error info is displayed.
+	 * 
+	 * @param request response data 
+	 */
+	
+	public void generateXMLResponse(Request request, Response response,
+			Object data, String xsltFile) {
+						
 		// if SUCCESS, include the bean info
 		if (!response.getStatus().isError()) {
-		
-			/*
-			// prepare SuccessBean which contains sessionId and Data
-			getSuccessBean(request, response, data);
 			
-			// prepare XML from SuccessBean.
-			// note that SuccessBean and DataBean has be to registered with XStream
-			String xmlResult = ApplicationConstants.XML_DECLARATION + "\n";
-			String xmlResponse = xmlResult + getXStream().toXML(data);
-			
-			response.setEntity(xmlResponse, MediaType.APPLICATION_XML);
-			*/
-			
-			RequestUtils.setHttpServletResponse(response, Status.SUCCESS_OK,
-					MediaType.TEXT_XML, getSuccessAsXML(sessionId, accessedResource, data));
+			try {
+				RequestUtils.setHttpServletResponse(response, Status.SUCCESS_OK,
+						MediaType.TEXT_XML, applyXSL(data, xsltFile));
+			} catch (TransformerException e) {
+				// XML parse ERROR
+				response.setStatus(Status.SERVER_ERROR_INTERNAL, e.getMessage());				
+				generateStatusXMLResponse(request, response);
+				e.printStackTrace();
+				log.error(e);
+			}
 		
 		// if ERROR, just status, no bean info
 		} else {
-
 			generateStatusXMLResponse(request, response);
-
-		}
-
-		
+		}	
 	}
+		
 	
-
 	/**
-	 * Generates User Specific XML response which contains status info If
-	 * success, user info is included.
-	 * 
-	 * @param request
-	 *            response the userService to set
+	 * returns a singleton transformer instance for a XSL file specified.
+	 * do not use synchronized since it is expensive.
 	 */
-	// TODO - make this generic
-	
-	public void generateUserListXMLResponse(Request request, Response response,
-			List<UserBean> userList) {
-
-		String sessionId = RequestUtils.getSessionId(request);
-		String accessedResource = request.getResourceRef().getPath();
-		
-		if (userList.size() > 0) {
-						
-			RequestUtils.setHttpServletResponse(response, Status.SUCCESS_OK,
-					MediaType.TEXT_XML, getSuccessAsXML(sessionId, accessedResource, userList));
-					
-			
-			
-		} else {
-
-			response.setStatus(Status.CLIENT_ERROR_NOT_FOUND, "User Not found");
-			generateStatusXMLResponse(request, response);
-		}		
-	}
-	
-	
-	/*
-	private SuccessBean getSuccessBean(Request request, Response response) {
-		
-		String sessionId = RequestUtils.getSessionId(request);
-		String accessedResource = request.getResourceRef().getPath();
-
-		SuccessBean successBean = new SuccessBean();
-		successBean.setSessionId(sessionId);
-
-		if (!GenericValidator.isBlankOrNull(accessedResource)) {
-			successBean.setAccessedResource(accessedResource);
+    public static Transformer getTransformerInstance(String xslFile) throws TransformerException{
+ 	
+    	Transformer transformer = (Transformer) transformers.get(xslFile);
+		if (transformer == null) {
+			File ontologyXSLT = new File(xslFile);
+			transformer = TransformerFactory.newInstance().newTransformer(
+					new StreamSource(ontologyXSLT));
+			transformers.put(xslFile, transformer);
 		}
-		
-		return successBean;
-	}
+		return transformer;    		
+    }
 	
-	
-	private SuccessBean getSuccessBean(Request request, Response response, Object data) {
-		
-		String sessionId = RequestUtils.getSessionId(request);
-		String accessedResource = request.getResourceRef().getPath();
-
-		SuccessBean successBean = new SuccessBean();
-		successBean.setSessionId(sessionId);
-		successBean.setData(data);
-
-		if (!GenericValidator.isBlankOrNull(accessedResource)) {
-			successBean.setAccessedResource(accessedResource);
+	/**
+	 * returns a singleton XStream instance.
+	 * do not use synchronized since it is expensive.
+	 */
+    public static XStream getXStreamInstance(){
+     	
+		if (xstream == null) {
+			xstream = new XStream();
+			
+			setXStreamAliases(xstream);
 		}
+		return xstream;    		
+    }
+    
+	/**
+	 * set aliases for XStream
+	 */
+	private static void setXStreamAliases(XStream xstream) {
 		
-		return successBean;
-	}
-	
-	//TODO - use Constants, not String
-	private XStream getXStream() {
-		
-		XStream xstream = new XStream();
-		
-		// register entities here
-		xstream.alias(RequestParamConstants.ENTITY_ONTOLOGY, OntologyBean.class);
-		xstream.alias(RequestParamConstants.ENTITY_USER, UserBean.class);
+		xstream.alias(MessageUtils.getMessage("entity.ontology"), OntologyBean.class);
+		xstream.alias(MessageUtils.getMessage("entity.user"), UserBean.class);
+		xstream.alias(MessageUtils.getMessage("entity.classbean"), ClassBean.class);
+		xstream.alias(MessageUtils.getMessage("entity.propertybean"), PropertyBean.class);
+		xstream.alias(MessageUtils.getMessage("entity.instancebean"),InstanceBean.class);
 		xstream.alias(ApplicationConstants.RESPONSE_XML_TAG_NAME,
 				SuccessBean.class);
-		xstream.alias(ApplicationConstants.ERROR_XML_TAG_NAME, ErrorStatusBean.class);
+		xstream.alias(ApplicationConstants.ERROR_XML_TAG_NAME, ErrorBean.class);
+		xstream.alias(ApplicationConstants.SUCCESS_XML_TAG_NAME,
+				SuccessBean.class);
 		
-		return xstream;
 	}
-	*/
 
 }

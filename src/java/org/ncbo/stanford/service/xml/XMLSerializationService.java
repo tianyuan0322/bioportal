@@ -2,7 +2,10 @@ package org.ncbo.stanford.service.xml;
 
 import java.util.List;
 
+import javax.xml.transform.TransformerException;
+
 import org.ncbo.stanford.bean.UserBean;
+import org.ncbo.stanford.bean.response.SuccessBean;
 import org.ncbo.stanford.enumeration.ErrorTypeEnum;
 import org.restlet.data.Request;
 import org.restlet.data.Response;
@@ -25,52 +28,42 @@ public interface XMLSerializationService {
 	public String getErrorAsXML(ErrorTypeEnum errorType, String accessedResource);
 
 	/**
-	 * Generate an XML representation of a successfully processed request. This
-	 * should only be used when no other XML response is expected (i.e.
-	 * authentication).
+	 * Generate an XML representation of a specific error.
 	 * 
-	 * @param sessionId
-	 * @param accessedResource
+	 * @param request
+	 * @param response
 	 * @return
 	 */
-	public String getSuccessAsXML(String sessionId, String accessedResource);
-
+	public String getErrorAsXML(Request request, Response response);
+	
+	public String getSuccessAsXML(SuccessBean successBean);
+	
+	public SuccessBean getSuccessBean(Request request);
+	
+	public SuccessBean getSuccessBean(Request request, Object data);
+	
+	
 	/**
-	 * Generate an XML representation of a successfully processed request. This
-	 * should only be used when no other XML response is expected (i.e.
-	 * authentication).
+	 * Generate an XML representation of a successfully processed request with
+	 * XSL Transformation. This should only be used when no other XML response
+	 * is expected (i.e. authentication).
 	 * 
 	 * @param sessionId
 	 * @param accessedResource
 	 * @param data
-	 * @return
+	 * @param xsltFile
+	 * @return String
+	 * @throws TransformerException
 	 */
-	public String getSuccessAsXML(String sessionId, String accessedResource,
-			Object data);
-	
-	
-	/**
-	 * Generate Error XML from status object.
-	 * Note that ErrorStatusBean is used instead of ErrorBean. 
-	 * Status object is passed around instead of in-house ErrorTypeEnum object
-	 * 
-	 * @author cyoun
-	 * 
-	 * @param status
-	 * @param accessedResource
-	 * @return
-	 */
-	public String getErrorAsXML (Status status, String accessedResource);
-	
-	
+	public String applyXSL(Object data, String xsltFile) throws TransformerException;
 	
 	public void generateXMLResponse(Request request, Response response,
 			Object data);
 	
-	//public void generateUserXMLResponse(Request request, Response response,	UserBean userBean);
+	public void generateXMLResponse(Request request, Response response,
+			Object data, String xsltFile);	
+
 	public void generateStatusXMLResponse (Request request, Response response) ;
-	public void generateUserListXMLResponse(Request request, Response response,
-			List<UserBean> userList);
 	
 
 }

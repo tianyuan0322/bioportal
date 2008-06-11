@@ -55,6 +55,20 @@ public class OntologyServiceImpl implements OntologyService {
 
 		return ontBeanList;
 	}
+	
+	public List<OntologyBean> findAllOntologyVersionsByOntologyId(Integer ontologyId) {
+		ArrayList<OntologyBean> ontBeanList = new ArrayList<OntologyBean>(1);
+		List<NcboOntology> ontEntityList = ncboOntologyVersionDAO
+				.findByOntologyId(ontologyId);
+
+		for (NcboOntology ncboOntology : ontEntityList) {
+			OntologyBean ontologyBean = new OntologyBean();
+			ontologyBean.populateFromEntity(ncboOntology);
+			ontBeanList.add(ontologyBean);
+		}
+
+		return ontBeanList;
+	}
 
 	public List<OntologyBean> searchOntologyMetadata(String query) {
 		List<OntologyBean> ontBeanList = new ArrayList<OntologyBean>();

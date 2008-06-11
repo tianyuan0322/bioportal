@@ -14,10 +14,12 @@ import org.restlet.data.Status;
 import org.ncbo.stanford.bean.OntologyBean;
 import org.ncbo.stanford.service.ontology.OntologyService;
 import org.ncbo.stanford.service.xml.XMLSerializationService;
+import org.ncbo.stanford.util.MessageUtils;
 import org.ncbo.stanford.util.helper.BeanHelper;
 import org.ncbo.stanford.util.ontologyfile.compressedfilehandler.impl.CompressedFileHandlerFactory;
 import org.ncbo.stanford.util.ontologyfile.pathhandler.FilePathHandler;
 import org.ncbo.stanford.util.ontologyfile.pathhandler.impl.CommonsFileUploadFilePathHandlerImpl;
+
 
 public class OntologiesRestlet extends Restlet {
 
@@ -74,10 +76,10 @@ public class OntologiesRestlet extends Restlet {
 			log.error(e);
 			
 		} finally {
-									
-			// generate response XML
-			getXmlSerializationService().generateXMLResponse (request, response, ontologyList);
-			
+					
+			// generate response XML with XSL
+			String xslFile = MessageUtils.getMessage("xsl.ontology.findAll");
+			getXmlSerializationService().generateXMLResponse (request, response, ontologyList, xslFile);
 		}
 
 	}
