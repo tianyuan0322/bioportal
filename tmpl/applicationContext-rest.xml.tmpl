@@ -84,6 +84,16 @@
 		</property>
 	</bean>
 
+	<bean id="ontologyVersionsRestlet"
+		class="org.ncbo.stanford.view.rest.restlet.ontology.OntologyVersionsRestlet">
+		<property name="ontologyService">
+			<ref bean="ontologyService" />
+		</property>
+		<property name="xmlSerializationService">
+			<ref bean="xmlSerializationService" />
+		</property>
+	</bean>
+
 	<bean id="usersRestlet"
 		class="org.ncbo.stanford.view.rest.restlet.user.UsersRestlet">
 		<property name="userService">
@@ -119,6 +129,9 @@
 						</entry>
 						<entry key="/ontology/{ontology}">
 							<ref local="ontologyRestlet" />
+						</entry>
+						<entry key="/ontology/versions/{ontology}">
+							<ref local="ontologyVersionsRestlet" />
 						</entry>
 						<entry key="/concept/{ontology}/{concept}">
 							<ref local="conceptRestlet" />
