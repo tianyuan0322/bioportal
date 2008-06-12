@@ -56,17 +56,42 @@ public class OntologyServiceImpl implements OntologyService {
 		return ontBeanList;
 	}
 	
+	/**
+	 * Returns all versions for given ontology.
+	 * Two steps :
+	 * 1. Get list of OntologyVersions to get  the list of ontologyVersionId. 
+	 * 2. Get list of NcboOntology entity from the list of ontVersionId.
+	 * 
+	 * @return list of Ontology beans
+	 */
 	public List<OntologyBean> findAllOntologyVersionsByOntologyId(Integer ontologyId) {
-		ArrayList<OntologyBean> ontBeanList = new ArrayList<OntologyBean>(1);
-		List<NcboOntology> ontEntityList = ncboOntologyVersionDAO
-				.findByOntologyId(ontologyId);
 
+		ArrayList<OntologyBean> ontBeanList = new ArrayList<OntologyBean>(1);
+		
+		// 1. get version IDs
+		List<NcboOntologyVersion> ontVersionList = ncboOntologyVersionDAO
+				.findByOntologyId(ontologyId);
+		List<Integer> versionIds = new ArrayList<Integer>(1);
+		
+		for (NcboOntologyVersion ncboOntologyVersion : ontVersionList) {
+			System.out.println("id = "  + ncboOntologyVersion.getId());
+			versionIds.add(new Integer(ncboOntologyVersion.getId()));
+		}	
+			
+		// check if the list is empty before executing next query
+		if ( ontVersionList.size() == 0 ) { 
+			return ontBeanList;
+		}
+		
+		// 2. get NcboOntology entities to get OntologyBeans
+
+		List<NcboOntology> ontEntityList = ncboOntologyVersionDAO.findOntologyVersions(versionIds);
 		for (NcboOntology ncboOntology : ontEntityList) {
 			OntologyBean ontologyBean = new OntologyBean();
 			ontologyBean.populateFromEntity(ncboOntology);
 			ontBeanList.add(ontologyBean);
-		}
-
+		}	
+		
 		return ontBeanList;
 	}
 

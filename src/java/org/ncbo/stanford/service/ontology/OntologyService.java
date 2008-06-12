@@ -24,6 +24,9 @@ public interface OntologyService {
 	
 	/**
 	 * Returns all versions for given ontology.
+	 * Two steps :
+	 * 1. Get list of OntologyVersions to get  the list of ontologyVersionId. 
+	 * 2. Get list of NcboOntology entity from the list of ontVersionId.
 	 * 
 	 * @return list of Ontology beans
 	 */
