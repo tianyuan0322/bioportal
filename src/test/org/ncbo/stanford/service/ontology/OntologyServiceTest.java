@@ -22,7 +22,7 @@ import org.ncbo.stanford.util.ontologyfile.pathhandler.impl.PhysicalDirectoryFil
 public class OntologyServiceTest extends AbstractBioPortalTest {
 
 	
-/*	public void testfindLatestOntologyVersions() {
+	public void testfindLatestOntologyVersions() {
 
 		System.out.println ("OntologyServiceTest: testfindLatestOntologyVersions().......................BEGIN");
 		
@@ -35,11 +35,11 @@ public class OntologyServiceTest extends AbstractBioPortalTest {
 		
 		System.out.println ("OntologyServiceTest: testfindLatestOntologyVersions().........................DONE");
 
-	}*/
+	}
 	
-	public void testfindAllOntologyVersionsForAnOntology() {
+	public void testfindAllOntologyVersions() {
 
-		System.out.println ("OntologyServiceTest: testfindLatestOntologyVersions().......................BEGIN");
+		System.out.println ("OntologyServiceTest: testfindAllOntologyVersions().......................BEGIN");
 		
 		List<OntologyBean> ontologies = getOntologyService().findAllOntologyVersionsByOntologyId(new Integer(1001));
 
@@ -48,13 +48,13 @@ public class OntologyServiceTest extends AbstractBioPortalTest {
 			System.out.println(ontology.toString());
 		}
 		
-		System.out.println ("OntologyServiceTest: testfindAllOntologyVersionsForAnOntology().........................DONE");
+		System.out.println ("OntologyServiceTest: testfindAllOntologyVersions().........................DONE");
 
 	}
 
 	
 	
-/*	public void testSearchOntologyMetadata(){	
+	public void testSearchOntologyMetadata(){	
 		List<OntologyBean> ontologies = getOntologyService().searchOntologyMetadata("Mouse");
 
 		for (OntologyBean ontology : ontologies) {
@@ -85,7 +85,6 @@ public class OntologyServiceTest extends AbstractBioPortalTest {
 		System.out.println ("OntologyServiceTest: testCreateOntology()........................BEGIN");
 			
 		OntologyBean ontologyBean = createOntolgyBean();
-		
 		
 		getOntologyService().createOntology(ontologyBean, OntologyServiceTest.getFilePathHandler(ontologyBean));
 		
@@ -165,7 +164,7 @@ public class OntologyServiceTest extends AbstractBioPortalTest {
 		
 	}
 	
-*/	
+	
 
 	
 	private OntologyBean createOntolgyBean() {
