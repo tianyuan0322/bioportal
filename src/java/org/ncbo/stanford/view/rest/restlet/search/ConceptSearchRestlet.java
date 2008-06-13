@@ -3,6 +3,8 @@ package org.ncbo.stanford.view.rest.restlet.search;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.servlet.http.HttpServletRequest;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.ncbo.stanford.bean.OntologyBean;
@@ -12,6 +14,7 @@ import org.ncbo.stanford.bean.search.SearchResultBean;
 import org.ncbo.stanford.service.concept.ConceptService;
 import org.ncbo.stanford.service.ontology.OntologyService;
 import org.ncbo.stanford.service.xml.XMLSerializationService;
+import org.ncbo.stanford.util.RequestUtils;
 import org.ncbo.stanford.view.util.constants.RequestParamConstants;
 import org.restlet.Restlet;
 import org.restlet.data.MediaType;
@@ -66,7 +69,8 @@ public class ConceptSearchRestlet extends Restlet {
 	private void searchConcept(Request request, Response resp) {
 		List<SearchResultBean> concepts = null;
 		String query = (String) request.getAttributes().get("query");
-		String ontologies = (String) request.getAttributes().get("ontologies");
+		HttpServletRequest httpRequest = RequestUtils.getHttpServletRequest(request);
+		String ontologies = (String) httpRequest.getParameter("ontologies");		
 		
 		try {
 			
