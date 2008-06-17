@@ -67,6 +67,14 @@ public class OntologyLoadSchedulerServiceImpl implements
 	public void parseOntology(Integer ontologyVersionId) {
 		NcboLStatus status = new NcboLStatus();
 
+		
+		// cleanup lexgrid
+		
+		// cleanup bioportal
+		
+		// reparse
+		
+		
 		NcboOntology ontology = ncboOntologyVersionDAO
 				.findOntologyVersion(ontologyVersionId);
 		NcboOntologyVersion ver = ncboOntologyVersionDAO
