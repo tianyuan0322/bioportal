@@ -8,13 +8,14 @@ public class OntologyLoadSchedulerServiceTest extends AbstractBioPortalTest {
 		OntologyLoadSchedulerService service = (OntologyLoadSchedulerService) applicationContext
 				.getBean("ontologyLoadSchedulerService",
 						OntologyLoadSchedulerService.class);
-		service.parseOntology(4571);
+		service.parseOntology(3231);
 	}
 
-	public void testParseOntologies() throws Exception {
+/*	public void testParseOntologies() throws Exception {
 		OntologyLoadSchedulerService service = (OntologyLoadSchedulerService) applicationContext
 				.getBean("ontologyLoadSchedulerService",
 						OntologyLoadSchedulerService.class);
 		service.parseOntologies();
 	}
+*/
 }
