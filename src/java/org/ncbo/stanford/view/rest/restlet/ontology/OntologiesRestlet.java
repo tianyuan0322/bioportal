@@ -78,7 +78,7 @@ public class OntologiesRestlet extends Restlet {
 		} finally {
 					
 			// generate response XML with XSL
-			String xslFile = MessageUtils.getMessage("xsl.ontology.findAll");
+			String xslFile = MessageUtils.getMessage("xsl.ontology.findall");
 			getXmlSerializationService().generateXMLResponse (request, response, ontologyList, xslFile);
 		}
 
