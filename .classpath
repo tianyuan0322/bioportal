@@ -91,5 +91,7 @@
 	<classpathentry kind="lib" path="WebRoot/WEB-INF/lib/aspectjrt.jar"/>
 	<classpathentry kind="lib" path="WebRoot/WEB-INF/lib/aspectjweaver.jar"/>
 	<classpathentry kind="lib" path="WebRoot/WEB-INF/lib/tar.jar"/>
+	<classpathentry kind="lib" path="WebRoot/WEB-INF/lib/jcvsii.jar"/>
+	<classpathentry kind="lib" path="WebRoot/WEB-INF/lib/antlr-2.7.5.jar"/>
 	<classpathentry kind="output" path="WebRoot/WEB-INF/classes"/>
 </classpath>
