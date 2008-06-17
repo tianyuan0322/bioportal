@@ -3,7 +3,6 @@
 <project name="bioportal" basedir="." default="usage">
 	<property file="build.properties" />
 
-	<property name="src.dir" value="src/java" />
 	<property name="test.dir" value="src/test" />
 	<property name="dist.dir" value="dist" />
 	<property name="meta-inf.dir" value="${web.dir}/META-INF" />
@@ -82,7 +81,14 @@
 				<filter token="bioportaljdbcpassword" value="${bioportal.jdbc.password}" />
 			</filterset>
 		</copy>
-
+		
+		<copy file="${tmpl.dir}/${bioportal.messagebundle.name}.properties.tmpl" tofile="${bioportal.messagebundle.path}/${bioportal.messagebundle.name}.properties" overwrite="true">
+			<filterset>
+				<filter token="bioportalxsltpath" value="${bioportal.xslt.path}" />
+				<filter token="bioportalontologyfilepath" value="${bioportal.ontology.filepath}" />
+			</filterset>
+		</copy>
+		
 		<copy file="${tmpl.dir}/applicationContext-datasources.xml.tmpl" tofile="${conf.dir.generated}/applicationContext-datasources.xml" overwrite="true">
 			<filterset>
 				<filter token="bioportaldatasource" value="${bioportal.datasource}" />
@@ -104,20 +110,28 @@
 
 		<copy file="${tmpl.dir}/applicationContext-services.xml.tmpl" tofile="${conf.dir.generated}/applicationContext-services.xml" overwrite="true">
 			<filterset>
-				<filter token="messagebundle" value="${bioportal.messagebundle}" />				
+				<filter token="messagebundlepackage" value="${bioportal.messagebundle.package}" />				
 				<filter token="bioportalsessionnumcontainers" value="${bioportal.session.numcontainers}" />
 				<filter token="bioportalsessiontimeout" value="${bioportal.session.timeout}" />
 				<filter token="ontologyloadenabled" value="${ontology.load.enabled}" />
 				<filter token="ontologyloadstartdelay" value="${ontology.load.startdelay}" />
 				<filter token="ontologyloadrepeatinterval" value="${ontology.load.repeatinterval}" />
-				<filter token="bioportalontologyfilepath" value="${bioportal.ontology.filepath}" />
 				<filter token="protegejdbcurl" value="${protege.jdbc.url}" />
 				<filter token="protegejdbcdriver" value="${protege.jdbc.driver}" />
 				<filter token="protegejdbcusername" value="${protege.jdbc.username}" />
 				<filter token="protegejdbcpassword" value="${protege.jdbc.password}" />
 				<filter token="protegetableprefix" value="${protege.table.prefix}" />
-				<filter token="protegetablesuffix" value="${protege.table.suffix}" />				
+				<filter token="protegetablesuffix" value="${protege.table.suffix}" />
 				<filter token="protegebigfilethreshold" value="${protege.big.file.threshold}" />
+				<filter token="obosourceforgecvsusername" value="${obo.sourceforge.cvs.username}" />
+				<filter token="obosourceforgecvspassword" value="${obo.sourceforge.cvs.password}" />
+				<filter token="obosourceforgecvshostname" value="${obo.sourceforge.cvs.hostname}" />
+				<filter token="obosourceforgecvsmodule" value="${obo.sourceforge.cvs.module}" />
+				<filter token="obosourceforgecvsrootdirectory" value="${obo.sourceforge.cvs.rootdirectory}" />
+				<filter token="obosourceforgecvsargumentstring" value="${obo.sourceforge.cvs.argumentstring}" />
+				<filter token="obosourceforgecvscheckoutdir" value="${obo.sourceforge.cvs.checkoutdir}" />
+				<filter token="obosourceforgecvsdescriptorfilename" value="${obo.sourceforge.cvs.descriptor.filename}" />
+				<filter token="bioportaltempdir" value="${bioportal.tempdir}" />
 			</filterset>
 		</copy>
 
