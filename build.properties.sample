@@ -1,6 +1,9 @@
 # Web directory
 web.dir=WebRoot
 
+# Source directory
+src.dir=src/java
+
 # Application full path
 bioportal.path=/apps/bmir.apps/bioportal
 
@@ -18,12 +21,27 @@ deploy.path=${appserver.home}/webapps
 #appserver.logs=${appserver.home}/server/default/log
 #deploy.path=${appserver.home}/server/default/deploy
 
+# XSLT directory path
+bioportal.xslt.path=${web.dir}/WEB-INF/resources/xslt
+
 # Session properties
 #
 # Timeout for inactive sessions (in milliseconds)
 bioportal.session.timeout=5000
 # Number of "buckets" to allocate for session storage
 bioportal.session.numcontainers=11
+
+# OBO Sourceforge CVS properties
+obo.sourceforge.cvs.username=cvsusername
+obo.sourceforge.cvs.password=cvspassword
+obo.sourceforge.cvs.hostname=obo.cvs.sourceforge.net
+obo.sourceforge.cvs.module=obo
+obo.sourceforge.cvs.rootdirectory=/cvsroot/obo
+obo.sourceforge.cvs.argumentstring=
+# Checkout dir on the local server
+obo.sourceforge.cvs.checkoutdir=${bioportal.resource.path}/cvscheckout
+# Ontologies metadata descriptor file
+obo.sourceforge.cvs.descriptor.filename=ontologies.txt
 
 # Logging properties
 bioportal.app.log.deflevel=ERROR
@@ -58,10 +76,15 @@ bioportal.applicationbyapplicationid.query=SELECT applicationid, applicationname
 bioportal.authoritiesbyusername.query=SELECT username, authority FROM yourauthoritytable WHERE username = ?
 
 # Message bundle
-bioportal.messagebundle=org.ncbo.stanford.resource.message
+bioportal.messagebundle.name=message
+bioportal.messagebundle.package=org.ncbo.stanford.resource.generated.${bioportal.messagebundle.name}
+bioportal.messagebundle.path=${src.dir}/org/ncbo/stanford/resource/generated
 
 # Uploaded Files
 bioportal.ontology.filepath=${bioportal.resource.path}/uploads
+
+# Temporary directory for file submission and processing
+bioportal.tempdir=${bioportal.resource.path}/tmp
 
 # Ontology Load Scheduler properties
 # Enable/Disable scheduler service flag
