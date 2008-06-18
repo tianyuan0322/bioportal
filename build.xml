@@ -9,6 +9,7 @@
 	<property name="classes.dir" value="${web.dir}/WEB-INF/classes" />
 	<property name="lib.dir" value="${web.dir}/WEB-INF/lib" />
 	<property name="conf.dir" value="${web.dir}/WEB-INF/conf" />
+	<property name="resources.dir" value="${web.dir}/WEB-INF/resources" />
 	<property name="conf.dir.generated" value="${conf.dir}/generated" />
 	<property name="tmpl.dir" value="tmpl" />
 
@@ -139,8 +140,8 @@
 			<filterset>
 			</filterset>
 		</copy>
-		
-		<copy file="${tmpl.dir}/lexgrid.props.tmpl" tofile="${lexgrid.config.path}/config.props" overwrite="true">
+
+		<copy file="${tmpl.dir}/lexgrid.props.tmpl" tofile="${resources.dir}/config/config.props" overwrite="true">
 			<filterset>
 				<filter token="lexgridbasepath" value="${lexgrid.base.path}" />
 				<filter token="lexgridjarfilelocation" value="${lexgrid.jarfile.location}" />
