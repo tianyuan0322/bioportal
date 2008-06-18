@@ -1,11 +1,11 @@
+# App name
+app.name=${ant.project.name}
+
 # Web directory
 web.dir=WebRoot
 
 # Source directory
 src.dir=src/java
-
-# Application full path
-bioportal.path=/apps/bmir.apps/bioportal
 
 # Path to store resources (cvs downloads, ontologies, test files etc.)
 # outside of the project structure
@@ -22,7 +22,7 @@ deploy.path=${appserver.home}/webapps
 #deploy.path=${appserver.home}/server/default/deploy
 
 # XSLT directory path
-bioportal.xslt.path=${web.dir}/WEB-INF/resources/xslt
+bioportal.xslt.path=${deploy.path}/${app.name}/WEB-INF/resources/xslt
 
 # Session properties
 #
@@ -119,7 +119,7 @@ protege.big.file.threshold=500000
 # it needs to reside on the same level or above the "lib"
 # directory and encased into "resources/config" directory
 # structure
-lexgrid.config.path=${web.dir}/WEB-INF/resources/config
+lexgrid.config.path=${deploy.path}/${app.name}/WEB-INF/resources/config
 #
 # The lexgrid.base.path variable is the location that 
 # LexGrid will use beginning for resolving 
@@ -142,7 +142,7 @@ lexgrid.jarfile.location=../../lib
 # all loaded terminologies.  
 # This path can be relative to the location of 
 # lexgrid.base.path or absolute.
-lexgrid.registry.file=${bioportal.path}/lexgrid/registry/registry.xml
+lexgrid.registry.file=${bioportal.resource.path}/lexgrid/registry/registry.xml
 #
 # The folder that will hold all of the generated system indexes.  
 # This path can be relative to the location of lexgrid.base.path

@@ -26,7 +26,7 @@
 
 	<target name="usage">
 		<echo message="" />
-		<echo message="${ant.project.name} build file" />
+		<echo message="${app.name} build file" />
 		<echo message="-----------------------------------" />
 		<echo message="" />
 		<echo message="Available targets are:" />
@@ -47,10 +47,10 @@
 				<include name="**/*.xml" />
 			</fileset>
 		</delete>
-		<delete file="${dist.dir}/${ant.project.name}.war" />
+		<delete file="${dist.dir}/${app.name}.war" />
 		<delete dir="${conf.dir.generated}" />
-		<delete dir="${deploy.path}/${ant.project.name}" />
-		<delete file="${deploy.path}/${ant.project.name}.war" />
+		<delete dir="${deploy.path}/${app.name}" />
+		<delete file="${deploy.path}/${app.name}.war" />
 	</target>
 
 	<target name="prepare" description="Create configuration files using templates">
@@ -205,7 +205,7 @@
 	</target>
 
 	<target name="deploy" depends="build" description="Deploy application">
-		<copy todir="${deploy.path}/${ant.project.name}" preservelastmodified="true">
+		<copy todir="${deploy.path}/${app.name}" preservelastmodified="true">
 			<fileset dir="${web.dir}">
 				<include name="**/*.*" />
 			</fileset>
@@ -215,7 +215,7 @@
 	<target name="createwar" depends="build" description="Create a WAR file">
 		<mkdir dir="${dist.dir}" />	
 		
-		<war destfile="${dist.dir}/${ant.project.name}.war" webxml="${web.dir}/WEB-INF/web.xml">
+		<war destfile="${dist.dir}/${app.name}.war" webxml="${web.dir}/WEB-INF/web.xml">
 			<fileset dir="${web.dir}">
 				<include name="**/*.*" />
 				<exclude name="**/web.xml" />
