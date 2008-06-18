@@ -3,6 +3,7 @@ package org.ncbo.stanford.manager.impl;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 
@@ -225,13 +226,16 @@ public class OntologyRetrievalManagerProtegeImpl extends
 			SearchResultBean srb = new SearchResultBean();
 			srb.setOntologyVersionId(ontologyVersion.getId());
 			KnowledgeBase kb = getKnowledgeBase(ontologyVersion);
-			Collection<Frame> frames = null;
+			Collection<Frame> frames = new HashSet<Frame>();
 
 			if (kb instanceof OWLModel) {
-				frames = kb.getMatchingFrames(((OWLModel) kb)
+				
+				frames.addAll(kb.getMatchingFrames(((OWLModel) kb)
 						.getRDFSLabelProperty(), null, false,
-						"*" + query + "*", -1);
-
+						"*" + query + "*", -1));
+				frames.addAll(kb.getMatchingFrames(kb.getNameSlot(), null, false,
+						"*" + query + "*", -1));
+				
 			} else {
 				frames = kb.getMatchingFrames(kb.getNameSlot(), null, false,
 						"*" + query + "*", -1);
