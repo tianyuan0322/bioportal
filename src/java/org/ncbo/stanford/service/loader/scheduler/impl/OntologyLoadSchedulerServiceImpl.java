@@ -48,7 +48,6 @@ public class OntologyLoadSchedulerServiceImpl implements
 	 * 
 	 * @throws Exception
 	 */
-	@Transactional(propagation = Propagation.NEVER)
 	public void parseOntologies() {
 		List<NcboOntologyLoadQueue> ontologiesToLoad = ncboOntologyLoadQueueDAO
 				.getOntologiesToLoad();
@@ -65,57 +64,28 @@ public class OntologyLoadSchedulerServiceImpl implements
 	 */
 	@Transactional(propagation = Propagation.NEVER)
 	public void parseOntology(Integer ontologyVersionId) {
-		NcboLStatus status = new NcboLStatus();
-
 		
-		// cleanup lexgrid
-		
-		// cleanup bioportal
-		
-		// reparse
-		
-		
-		NcboOntology ontology = ncboOntologyVersionDAO
-				.findOntologyVersion(ontologyVersionId);
-		NcboOntologyVersion ver = ncboOntologyVersionDAO
+		NcboOntologyVersion ontologyVersion = ncboOntologyVersionDAO
 				.findById(ontologyVersionId);
-		NcboOntologyLoadQueue queueRec = (NcboOntologyLoadQueue) ver
+		
+		// null check
+		if (ontologyVersion == null) {
+			log.error("Error - parseOntology(): Ontology Version ID "
+					+ ontologyVersionId + " does not exist!");
+			return;
+		}
+
+		NcboOntologyLoadQueue rec = (NcboOntologyLoadQueue) ontologyVersion
 				.getNcboOntologyLoadQueues().toArray()[0];
 
-		OntologyBean ontologyBean = new OntologyBean();
-		ontologyBean.populateFromEntity(ontology);
-
-		status.setId(StatusEnum.STATUS_PARSING.getStatus());
-		ver.setNcboLStatus(status);
-
-		status.setId(StatusEnum.STATUS_PARSING.getStatus());
-		ver.setNcboLStatus(status);
-		ncboOntologyVersionDAO.saveOntologyVersion(ver);
-
-		if (queueRec != null) {
-			queueRec.setNcboLStatus(status);
-			ncboOntologyLoadQueueDAO.saveNcboOntologyLoadQueue(queueRec);
+		// null check
+		if (rec == null) {
+			log.error("Error - parseOntology(): There is no loadQueue for Ontology Version ID "
+					+ ontologyVersionId);
+			return;
 		}
 
-		try {
-			loadOntology(ontologyBean);
-
-			status = new NcboLStatus();
-			status.setId(StatusEnum.STATUS_READY.getStatus());
-		} catch (Exception e) {
-			status = new NcboLStatus();
-			status.setId(StatusEnum.STATUS_ERROR.getStatus());
-			log.error(e);
-			e.printStackTrace();
-		}
-
-		ver.setNcboLStatus(status);
-		ncboOntologyVersionDAO.saveOntologyVersion(ver);
-
-		if (queueRec != null) {
-			queueRec.setNcboLStatus(status);
-			ncboOntologyLoadQueueDAO.saveNcboOntologyLoadQueue(queueRec);
-		}
+		processRecord(rec);
 	}
 
 	/**
@@ -123,62 +93,59 @@ public class OntologyLoadSchedulerServiceImpl implements
 	 * 
 	 * @param rec
 	 */
-	private void processRecord(NcboOntologyLoadQueue rec) {
-		NcboLStatus status = new NcboLStatus();
-		NcboOntologyVersion ver = rec.getNcboOntologyVersion();
+	@Transactional(propagation = Propagation.NEVER)
+	private void processRecord(NcboOntologyLoadQueue loadQueue) {
 
-		NcboOntology ontology = ncboOntologyVersionDAO.findOntologyVersion(ver
-				.getId());
+		// populate bean
+		NcboOntology ontology = ncboOntologyVersionDAO
+				.findOntologyVersion(loadQueue.getNcboOntologyVersion().getId());
 		OntologyBean ontologyBean = new OntologyBean();
 		ontologyBean.populateFromEntity(ontology);
+		
+		// cleanup lexgrid
+		//TODO call lexgrid/protege clean up API... something like this
+		//getLoadManager(ontologyBean).cleanup();
 
-		// TODO: remove this
-		// String formatHandler = ontologyFormatHandlerMap.get(ontologyBean
-		// .getFormat());
-		// OntologyLoadManager loadManager = ontologyLoadHandlerMap
-		// .get(formatHandler);
+		// cleanup bioportal
+		Integer status = new Integer (StatusEnum.STATUS_READY.getStatus());
+		updateOntologyStatus(loadQueue, status);
 
-		// TODO: remove this if statement
-		// if (loadManager instanceof OntologyLoadManagerProtegeImpl) {
-
+		// parse
 		try {
+			// set the status as "Parsing"	
+			status = new Integer (StatusEnum.STATUS_PARSING.getStatus());
+			updateOntologyStatus(loadQueue, status);
 
-			// TODO: remove this if block
-			// if (rec.getNcboOntologyVersion().getId() == 3145
-			// || rec.getNcboOntologyVersion().getId() == 4886
-			// || rec.getNcboOntologyVersion().getId() == 13578) {
-			// return;
-			// }
-
-			status.setId(StatusEnum.STATUS_PARSING.getStatus());
-			ver.setNcboLStatus(status);
-			ncboOntologyVersionDAO.saveOntologyVersion(ver);
-
-			rec.setNcboLStatus(status);
-			ncboOntologyLoadQueueDAO.saveNcboOntologyLoadQueue(rec);
-
+			// load ontology
 			loadOntology(ontologyBean);
 
-			status = new NcboLStatus();
-			status.setId(StatusEnum.STATUS_READY.getStatus());
-
 		} catch (Exception e) {
-			status = new NcboLStatus();
-			status.setId(StatusEnum.STATUS_ERROR.getStatus());
+			
+			status = new Integer (StatusEnum.STATUS_ERROR.getStatus());
 			log.error(e);
-			e.printStackTrace();
 		}
 
-		ver.setNcboLStatus(status);
-		ncboOntologyVersionDAO.saveOntologyVersion(ver);
-
-		rec.setNcboLStatus(status);
-		ncboOntologyLoadQueueDAO.saveNcboOntologyLoadQueue(rec);
-
-		// }
-
+		updateOntologyStatus(loadQueue, status);
 	}
 
+	
+	private void updateOntologyStatus(NcboOntologyLoadQueue loadQueue, Integer status) {
+		
+		NcboOntologyVersion ncboOntologyVersion = loadQueue.getNcboOntologyVersion();
+		
+		NcboLStatus ncboStatus = new NcboLStatus();
+		ncboStatus.setId(status);
+		
+		//update ontologyVersion table
+		ncboOntologyVersion.setNcboLStatus(ncboStatus);
+		ncboOntologyVersionDAO.saveOntologyVersion(ncboOntologyVersion);
+
+		//update loadQueue table
+		loadQueue.setNcboLStatus(ncboStatus);
+		ncboOntologyLoadQueueDAO.saveNcboOntologyLoadQueue(loadQueue);
+	}
+	
+	
 	/**
 	 * Loads the specified ontology into the BioPortal repository. The minimum
 	 * requirement is that the ontology file/uri exists and is in the right
@@ -190,10 +157,9 @@ public class OntologyLoadSchedulerServiceImpl implements
 	 * @throws URISyntaxException
 	 */
 	private void loadOntology(OntologyBean ontologyBean) throws Exception {
-		String formatHandler = ontologyFormatHandlerMap.get(ontologyBean
-				.getFormat());
-		OntologyLoadManager loadManager = ontologyLoadHandlerMap
-				.get(formatHandler);
+		
+		log.debug("loadOntology BEGIN..............");
+		
 		List<String> filenames = ontologyBean.getFilenames();
 
 		// for UMLS, zip file, untar it, pass dir to LexGrid
@@ -201,10 +167,27 @@ public class OntologyLoadSchedulerServiceImpl implements
 		// looping through the files
 
 		for (String filename : filenames) {
+			
+			log.debug("......loading filename " + filename);
+
 			File file = new File(AbstractFilePathHandler.getOntologyFilePath(
 					ontologyBean, filename));
-			loadManager.loadOntology(file.toURI(), ontologyBean);
+			
+			getLoadManager(ontologyBean).loadOntology(file.toURI(), ontologyBean);
+			
 		}
+		
+		log.debug("..................loadOntology END");
+	}
+	
+	private OntologyLoadManager getLoadManager(OntologyBean ontologyBean) throws Exception {
+		
+		String formatHandler = ontologyFormatHandlerMap.get(ontologyBean
+				.getFormat());
+		OntologyLoadManager loadManager = ontologyLoadHandlerMap
+				.get(formatHandler);
+		
+		return loadManager;
 	}
 
 	/**
