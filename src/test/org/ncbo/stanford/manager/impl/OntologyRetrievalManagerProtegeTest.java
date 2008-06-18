@@ -18,13 +18,13 @@ import org.ncbo.stanford.util.constants.ApplicationConstants;
  * @author Benjamin Dai
  */
 public class OntologyRetrievalManagerProtegeTest extends AbstractBioPortalTest {
-	private final static int TEST_ONT_ID = 15831;
+	private final static int TEST_ONT_ID = 34237;
 	private final static String TEST_CONCEPT_ID = "http://www.w3.org/2002/07/owl#Class";
 	private final static String TEST_CONCEPT_NAME = "http://www.co-ode.org/ontologies/pizza/2005/10/18/pizza.owl#Pizza";
 
 	
 	
-	public void testSearch() throws Exception{
+	public void Search() throws Exception{
 		OntologyRetrievalManager ocMgr = (OntologyRetrievalManager) applicationContext
 		.getBean("ontologyRetrievalManagerProtege",
 				OntologyRetrievalManager.class);
@@ -58,23 +58,37 @@ public class OntologyRetrievalManagerProtegeTest extends AbstractBioPortalTest {
 			CustomNcboOntologyVersionDAO.class);
 
 NcboOntology version = ncboOntologyVersionDAO.findOntologyVersion(TEST_ONT_ID);
-ClassBean conceptBean = ocMgr.findPathToRoot( version,"SpicyPizza",true);
+ClassBean conceptBean = ocMgr.findPathToRoot( version,"SpicyPizza",false);
 
 System.out.println("Path");
 
 // outputConcept(conceptBean);
 
 System.out.println("Subclasses");
-ClassBean subclass = (ClassBean) conceptBean.getRelations().get(ApplicationConstants.SUB_CLASS);
-
-while (subclass!=null){
-		System.out.println(subclass.getLabel() + " : "+subclass.getId());
-		subclass = (ClassBean) subclass.getRelations().get(ApplicationConstants.SUB_CLASS);
+ArrayList<ClassBean> subclasses = (ArrayList<ClassBean>) conceptBean.getRelations().get(ApplicationConstants.SUB_CLASS);
+int count=0; 
+while (subclasses!=null){
+	boolean found=false;
+	String padding="";
+	for(int x =0;x<=count;x++){
+		padding = padding+"-";
+	}
+	for(ClassBean subclass: subclasses){
+		System.out.println(padding+subclass.getLabel() + " : "+subclass.getId());
+		if(subclass.getRelations().get(ApplicationConstants.SUB_CLASS)!=null){
+		subclasses = (ArrayList<ClassBean>) subclass.getRelations().get(ApplicationConstants.SUB_CLASS);
+		found=true;
+		}
+	}
+	if(!found){
+		subclasses=null;
+	}
+		count+=1;
 }
 	}
 	
 	
-	public void testGetRootNode() throws Exception {
+	public void GetRootNode() throws Exception {
 		OntologyRetrievalManager ocMgr = (OntologyRetrievalManager) applicationContext
 				.getBean("ontologyRetrievalManagerProtege",
 						OntologyRetrievalManager.class);

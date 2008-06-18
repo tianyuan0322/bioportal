@@ -396,9 +396,6 @@ public class OntologyRetrievalManagerProtegeImpl extends
 	
 	private ClassBean createLightBean(Cls cls){
 		
-		if(!cls.isVisible())
-			return null;
-		
 		ClassBean bean = new ClassBean();
 		bean.setId(cls.getName());
 		bean.setLabel(cls.getBrowserText());

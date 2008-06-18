@@ -167,7 +167,8 @@ public class ConceptServiceImpl implements ConceptService {
 		List<SearchResultBean> searchResults = new ArrayList<SearchResultBean>();
 		HashMap<String, List<NcboOntology>> formatLists = new HashMap<String, List<NcboOntology>>();
 		
-		for (String key : ontologyFormatHandlerMap.keySet()) {
+		for (String key : ontologyFormatHandlerMap.values()) {
+			System.out.println("Key is "+key);
 			formatLists.put(key, new ArrayList<NcboOntology>());
 		}
 
@@ -184,6 +185,8 @@ public class ConceptServiceImpl implements ConceptService {
 			
 			String formatHandler = ontologyFormatHandlerMap.get(ontology
 					.getFormat());
+			
+			System.out.println("Looking For "+formatHandler);
 			((List<NcboOntology>) formatLists.get(formatHandler)).add(ontology);
 		}
 
