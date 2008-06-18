@@ -23,6 +23,7 @@ import org.ncbo.stanford.bean.concept.PropertyBean;
 import org.ncbo.stanford.bean.response.ErrorBean;
 import org.ncbo.stanford.bean.response.ErrorStatusBean;
 import org.ncbo.stanford.bean.response.SuccessBean;
+import org.ncbo.stanford.bean.search.SearchResultBean;
 import org.ncbo.stanford.enumeration.ErrorTypeEnum;
 import org.ncbo.stanford.service.ontology.impl.OntologyServiceImpl;
 import org.ncbo.stanford.service.xml.XMLSerializationService;
@@ -323,6 +324,7 @@ public class XMLSerializationServiceImpl implements XMLSerializationService {
 		xstream.alias(MessageUtils.getMessage("entity.classbean"), ClassBean.class);
 		xstream.alias(MessageUtils.getMessage("entity.propertybean"), PropertyBean.class);
 		xstream.alias(MessageUtils.getMessage("entity.instancebean"),InstanceBean.class);
+		xstream.alias(MessageUtils.getMessage("entity.searchbean"),SearchResultBean.class);
 		xstream.alias(ApplicationConstants.RESPONSE_XML_TAG_NAME,
 				SuccessBean.class);
 		xstream.alias(ApplicationConstants.ERROR_XML_TAG_NAME, ErrorBean.class);
