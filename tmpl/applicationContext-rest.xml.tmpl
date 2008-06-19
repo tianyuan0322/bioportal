@@ -93,7 +93,20 @@
 			<ref bean="xmlSerializationService" />
 		</property>
 	</bean>
-
+	
+	<bean id="ontologyParseRestlet"
+		class="org.ncbo.stanford.view.rest.restlet.ontology.OntologyParseRestlet">
+		<property name="ontologyService">
+			<ref bean="ontologyService" />
+		</property>
+		<property name="ontologyLoadSchedulerService">
+			<ref bean="ontologyLoadSchedulerService" />
+		</property>
+		<property name="xmlSerializationService">
+			<ref bean="xmlSerializationService" />
+		</property>
+	</bean>
+	
 	<bean id="usersRestlet"
 		class="org.ncbo.stanford.view.rest.restlet.user.UsersRestlet">
 		<property name="userService">
@@ -132,6 +145,9 @@
 						</entry>
 						<entry key="/ontologies/versions/{ontology}">
 							<ref local="ontologyVersionsRestlet" />
+						</entry>
+						<entry key="/ontologies/parse/{ontology}">
+							<ref local="ontologyParseRestlet" />
 						</entry>
 						<entry key="/concepts/{ontology}/{concept}">
 							<ref local="conceptRestlet" />
