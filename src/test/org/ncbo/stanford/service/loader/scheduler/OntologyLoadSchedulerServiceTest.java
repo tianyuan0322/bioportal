@@ -8,7 +8,11 @@ public class OntologyLoadSchedulerServiceTest extends AbstractBioPortalTest {
 		OntologyLoadSchedulerService service = (OntologyLoadSchedulerService) applicationContext
 				.getBean("ontologyLoadSchedulerService",
 						OntologyLoadSchedulerService.class);
-		service.parseOntology(3231);
+		//lexgrid sample
+		//service.parseOntology(3231);
+		
+		//protege sample
+		service.parseOntology("34375");
 	}
 
 /*	public void testParseOntologies() throws Exception {
