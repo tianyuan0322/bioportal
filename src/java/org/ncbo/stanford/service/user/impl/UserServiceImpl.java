@@ -4,8 +4,10 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+import org.ncbo.stanford.bean.OntologyBean;
 import org.ncbo.stanford.bean.UserBean;
 import org.ncbo.stanford.domain.custom.dao.CustomNcboUserDAO;
+import org.ncbo.stanford.domain.custom.entity.NcboOntology;
 import org.ncbo.stanford.domain.generated.NcboUser;
 import org.ncbo.stanford.service.user.UserService;
 import org.springframework.transaction.annotation.Transactional;
@@ -41,17 +43,15 @@ public class UserServiceImpl implements UserService {
 	 * @return List<UserBean>
 	 */
 	public List<UserBean> findUsers() {
-		
+			
 		List<NcboUser> ncboUserList = ncboUserDAO.findAll();
 		List<UserBean> userBeanList = new ArrayList<UserBean>();
-		UserBean userBean = new UserBean();
 		
 		// populate the query result to UserBean
-		for ( Iterator<NcboUser> iter  = ncboUserList.iterator(); iter.hasNext(); ) {
-						
-			userBean.populateFromEntity((NcboUser)iter.next());
-			userBeanList.add(userBean);
-			
+		for ( NcboUser ncboUser : ncboUserList) {
+			UserBean userBean = new UserBean();			
+			userBean.populateFromEntity(ncboUser);
+			userBeanList.add(userBean);	
 		}
 		
 		return userBeanList;
