@@ -55,61 +55,52 @@ public class OntologyLoadManagerProtegeImpl extends
 	 */
 	public void loadOntology(URI ontologyUri, OntologyBean ontology)
 			throws Exception {
+		
 		File ontologyFile = new File(ontologyUri.getPath());
 
 		if (ontologyFile == null) {
 			log.error("Missing ontology file to load.");
 			throw new FileNotFoundException("Missing ontology file to load");
 		}
+		log.debug("Loading ontology file: " + ontologyFile.getName());
 
-		String tableName = getTableName(ontology.getId());
 
-		if (log.isDebugEnabled()) {
-			log.debug("Loading ontology file: "
-					+ ontologyFile.getAbsoluteFile() + " size: "
-					+ ontologyFile.length());
-			log.debug("URI: " + ontologyUri.toString());
-			log.debug("Ontology table name: " + tableName);
-			log.debug("JDBC name: " + protegeJdbcDriver + " url: "
-					+ protegeJdbcUrl);
-		}
-
+		
 		// If the ontology file is small, use the fast non-streaming Protege
 		// load code.
-		if (ontologyFile.length() < protegeBigFileThreshold) {
-			if (log.isDebugEnabled())
-				log.debug("Loading small ontology file: "
-						+ ontologyFile.getName());
+		
+		//TODO - DISABLE Streaming for now...  DETERMINE WHAT TO DO AFTER PROTEGE NEW RELEASE	
+		//if (ontologyFile.length() < protegeBigFileThreshold) {
 
-			OWLModel fileModel = ProtegeOWL
-					.createJenaOWLModelFromInputStream(new FileInputStream(
-							ontologyFile));
+		OWLModel owlModel = ProtegeOWL
+				.createJenaOWLModelFromInputStream(new FileInputStream(
+						ontologyFile));
 
-			List errors = new ArrayList();
-			Project fileProject = fileModel.getProject();
-			OWLDatabaseKnowledgeBaseFactory factory = new OWLDatabaseKnowledgeBaseFactory();
-			PropertyList sources = PropertyList.create(fileProject
-					.getInternalProjectKnowledgeBase());
+		PropertyList sources = PropertyList.create(owlModel.getProject()
+				.getInternalProjectKnowledgeBase());
 
-			DatabaseKnowledgeBaseFactory.setSources(sources, protegeJdbcDriver,
-					protegeJdbcUrl, tableName, protegeJdbcUsername,
-					protegeJdbcPassword);
-			factory.saveKnowledgeBase(fileModel, sources, errors);
+		String tableName = getTableName(ontology.getId());
+		DatabaseKnowledgeBaseFactory.setSources(sources, protegeJdbcDriver,
+				protegeJdbcUrl, tableName, protegeJdbcUsername,
+				protegeJdbcPassword);
 
-			// If errors are found during the load, log the errors and throw an
-			// exception.
-			if (errors.size() > 0) {
-				logErrors(errors);
-				throw new Exception("Error during load of: "
-						+ ontologyUri.toString());
-			}
-		} else {
+		List errors = new ArrayList();
+		OWLDatabaseKnowledgeBaseFactory factory = new OWLDatabaseKnowledgeBaseFactory();
+		factory.saveKnowledgeBase(owlModel, sources, errors);
+			
+
+		// If errors are found during the load, log the errors and throw an
+		// exception.
+		if (errors.size() > 0) {
+			log.error(errors);
+			throw new Exception("Error during loading "
+					+ ontologyUri.toString());
+		}
+
+// diable streaming for now
+/*		} else {
 			// If the ontology file is big, use the streaming Protege load
 			// approach.
-			if (log.isDebugEnabled()) {
-				log.debug("Loading big ontology file: "
-						+ ontologyUri.toString());
-			}
 
 			CreateOWLDatabaseFromFileProjectPlugin creator = new CreateOWLDatabaseFromFileProjectPlugin();
 			creator
@@ -123,19 +114,7 @@ public class OntologyLoadManagerProtegeImpl extends
 			creator.setUseExistingSources(true);
 
 			Project p = creator.createProject();
-		}
+		}*/
 	}
 
-	//
-	// Private methods
-	//
-	/**
-	 * Outputs text representations of the specified List.
-	 */
-	private void logErrors(List list) {
-		int i = 0;
-		for (Iterator it = list.iterator(); it.hasNext();) {
-			log.error(++i + ") " + it.next());
-		}
-	}
 }

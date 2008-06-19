@@ -1,5 +1,7 @@
 package org.ncbo.stanford.service.loader.scheduler;
 
+import java.util.List;
+
 /**
  * Interface to process (parse) an already loaded ontology using vendor API
  * (LexGrid, Protege etc.)
@@ -20,5 +22,6 @@ public interface OntologyLoadSchedulerService {
 	 * 
 	 * @param ontologyVersionId
 	 */
-	public void parseOntology(Integer ontologyVersionId);
+	public void parseOntology(String ontologyVersionId);
+	public List<Integer> getErrorIdList();
 }
