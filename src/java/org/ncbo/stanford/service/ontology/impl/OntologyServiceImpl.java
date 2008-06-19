@@ -74,7 +74,6 @@ public class OntologyServiceImpl implements OntologyService {
 		List<Integer> versionIds = new ArrayList<Integer>(1);
 		
 		for (NcboOntologyVersion ncboOntologyVersion : ontVersionList) {
-			System.out.println("id = "  + ncboOntologyVersion.getId());
 			versionIds.add(new Integer(ncboOntologyVersion.getId()));
 		}	
 			
