@@ -1,8 +1,5 @@
 package org.ncbo.stanford.view.rest.authentication;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import javax.servlet.http.HttpServletRequest;
 
 import org.acegisecurity.Authentication;
