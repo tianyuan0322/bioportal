@@ -97,14 +97,11 @@ public final class AuthenticationRestlet extends Restlet {
 							HttpSessionContextIntegrationFilter.ACEGI_SECURITY_CONTEXT_KEY,
 							secCtx);
 			// add user and session info to the response
-			List<Object> userData = new ArrayList<Object>();
 			UserBean userBean = userService.findUser(username);
-			userData.add(session.getId());
-			userData.add(userBean);
 			RequestUtils.setHttpServletResponse(response, Status.SUCCESS_OK,
 					MediaType.TEXT_XML, xmlSerializationService
 							.getSuccessAsXML(xmlSerializationService
-									.getSuccessBean(request, userData)));
+									.getSuccessBean(session.getId(), request, userBean)));
 		} catch (AuthenticationServiceException e) {
 			e.printStackTrace();
 			log.error(e);
