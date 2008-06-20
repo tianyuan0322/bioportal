@@ -220,6 +220,7 @@ DROP TABLE IF EXISTS `ncbo_ontology_metadata`;
 CREATE TABLE `ncbo_ontology_metadata` (
   `id` int(11) NOT NULL auto_increment,
   `ontology_version_id` int(11) NOT NULL,
+  `obo_foundry_id` varchar(128) default NULL,
   `display_label` varchar(128) NOT NULL,
   `format` varchar(50) NOT NULL,
   `contact_name` varchar(128) default NULL,
