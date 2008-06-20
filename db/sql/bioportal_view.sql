@@ -14,6 +14,7 @@ SELECT
 	ov.status_id,
 	ov.date_created,
 	ov.date_released,
+	om.obo_foundry_id,
 	om.display_label,
 	om.format,
 	om.contact_name,
