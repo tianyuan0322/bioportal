@@ -113,7 +113,7 @@ public class ConceptServiceImpl implements ConceptService {
 		}
 		
 		for (NcboOntology ontology : ontologies) {
-			if(ontology.getStatusId().equals(StatusEnum.STATUS_READY)){
+			if(ontology.getStatusId().equals(StatusEnum.STATUS_READY.getStatus())){
 				String formatHandler = ontologyFormatHandlerMap.get(ontology
 						.getFormat());
 				
@@ -150,7 +150,7 @@ public class ConceptServiceImpl implements ConceptService {
 		.findOntologyVersions(ontologyIds);
 		}
 		for (NcboOntology ontology : ontologies) {
-			if(ontology.getStatusId().equals(StatusEnum.STATUS_READY)){
+			if(ontology.getStatusId().equals(StatusEnum.STATUS_READY.getStatus())){
 				String formatHandler = ontologyFormatHandlerMap.get(ontology
 						.getFormat());
 				
@@ -190,7 +190,7 @@ public class ConceptServiceImpl implements ConceptService {
 		}
 		
 		for (NcboOntology ontology : ontologies) {
-			if(ontology.getStatusId().equals(StatusEnum.STATUS_READY)){
+			if(ontology.getStatusId().equals(StatusEnum.STATUS_READY.getStatus())){
 			String formatHandler = ontologyFormatHandlerMap.get(ontology
 					.getFormat());
 			
