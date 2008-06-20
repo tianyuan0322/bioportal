@@ -14,8 +14,10 @@ import org.ncbo.stanford.bean.concept.ClassBean;
 import org.ncbo.stanford.bean.search.SearchResultBean;
 import org.ncbo.stanford.domain.custom.dao.CustomNcboOntologyVersionDAO;
 import org.ncbo.stanford.domain.custom.entity.NcboOntology;
+import org.ncbo.stanford.enumeration.StatusEnum;
 import org.ncbo.stanford.manager.OntologyRetrievalManager;
 import org.ncbo.stanford.service.concept.ConceptService;
+import org.ncbo.stanford.util.constants.ApplicationConstants;
 
 /**
  * @author Nick Griffith
@@ -111,10 +113,13 @@ public class ConceptServiceImpl implements ConceptService {
 		}
 		
 		for (NcboOntology ontology : ontologies) {
-			
-			String formatHandler = ontologyFormatHandlerMap.get(ontology
-					.getFormat());
-			((List<NcboOntology>) formatLists.get(formatHandler)).add(ontology);
+			if(ontology.getStatusId().equals(StatusEnum.STATUS_READY)){
+				String formatHandler = ontologyFormatHandlerMap.get(ontology
+						.getFormat());
+				
+				System.out.println("Looking For "+formatHandler);
+				((List<NcboOntology>) formatLists.get(formatHandler)).add(ontology);
+			}
 		}
 
 		for (String formatHandler : formatLists.keySet()) {
@@ -145,10 +150,13 @@ public class ConceptServiceImpl implements ConceptService {
 		.findOntologyVersions(ontologyIds);
 		}
 		for (NcboOntology ontology : ontologies) {
-			
-			String formatHandler = ontologyFormatHandlerMap.get(ontology
-					.getFormat());
-			((List<NcboOntology>) formatLists.get(formatHandler)).add(ontology);
+			if(ontology.getStatusId().equals(StatusEnum.STATUS_READY)){
+				String formatHandler = ontologyFormatHandlerMap.get(ontology
+						.getFormat());
+				
+				System.out.println("Looking For "+formatHandler);
+				((List<NcboOntology>) formatLists.get(formatHandler)).add(ontology);
+			}
 		}
 
 		for (String formatHandler : formatLists.keySet()) {
@@ -182,12 +190,13 @@ public class ConceptServiceImpl implements ConceptService {
 		}
 		
 		for (NcboOntology ontology : ontologies) {
-			
+			if(ontology.getStatusId().equals(StatusEnum.STATUS_READY)){
 			String formatHandler = ontologyFormatHandlerMap.get(ontology
 					.getFormat());
 			
 			System.out.println("Looking For "+formatHandler);
 			((List<NcboOntology>) formatLists.get(formatHandler)).add(ontology);
+			}
 		}
 
 		for (String formatHandler : formatLists.keySet()) {

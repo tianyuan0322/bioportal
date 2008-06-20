@@ -48,7 +48,7 @@ public class ConceptServiceTest extends AbstractBioPortalTest {
 
 
 		
-		String query="a";
+		String query="pizza";
 		List<Integer> ids = new ArrayList<Integer>();
 		ids.add(new Integer(TEST_ONT_ID));
 		List<SearchResultBean> results = service.findConceptNameContains(ids, query);
