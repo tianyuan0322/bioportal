@@ -26,13 +26,13 @@ public class OntologyBean {
 	private Integer userId;
 	private String versionNumber;
 	private String versionStatus;
-
 	private Byte isCurrent;
 	private Byte isRemote;
 	private Byte isReviewed;
 	private Integer statusId;
 	private Date dateCreated;
 	private Date dateReleased;
+	private String oboFoundryId;
 	private String displayLabel;
 	private String format;
 	private String contactName;
@@ -43,28 +43,25 @@ public class OntologyBean {
 	private String urn;
 	private String codingScheme;
 	private Byte isFoundry;
-	
+
 	private List<Integer> categoryIds = new ArrayList<Integer>(0);
-	
+
 	// file name(s)
-	private List<String> filenames = new ArrayList<String>(0);	
-	
+	private List<String> filenames = new ArrayList<String>(0);
+
 	// source fileItem
 	private FileItem fileItem;
-	
+
 	// destination directory
 	private String filePath;
 
-	
 	/**
 	 * Populates the OntologyBean with data from a NcboOntology View
 	 * 
 	 * @param ncboOntology
 	 */
 	public void populateFromEntity(NcboOntology ncboOntology) {
-		
 		if (ncboOntology != null) {
-
 			this.setId(ncboOntology.getId());
 			this.setOntologyId(ncboOntology.getOntologyId());
 			this.setParentId(ncboOntology.getParentId());
@@ -80,6 +77,7 @@ public class OntologyBean {
 			this.setStatusId(ncboOntology.getStatusId());
 			this.setDateCreated(ncboOntology.getDateCreated());
 			this.setDateReleased(ncboOntology.getDateReleased());
+			this.setOboFoundryId(ncboOntology.getOboFoundryId());
 			this.setDisplayLabel(ncboOntology.getDisplayLabel());
 			this.setFormat(ncboOntology.getFormat());
 			this.setContactName(ncboOntology.getContactName());
@@ -92,7 +90,7 @@ public class OntologyBean {
 			this.setIsFoundry(ncboOntology.getIsFoundry());
 
 			addFilenames(ncboOntology.getFilenames());
-	
+
 			addCategoryIds(ncboOntology.getCategoryIds());
 
 		}
@@ -106,35 +104,33 @@ public class OntologyBean {
 	 * @param ontologyVersion
 	 */
 
-	public void populateToMetadataEntity(NcboOntologyMetadata metadata, NcboOntologyVersion ontologyVersion) {
+	public void populateToMetadataEntity(NcboOntologyMetadata metadata,
+			NcboOntologyVersion ontologyVersion) {
+		if (metadata != null) {
+			metadata.setNcboOntologyVersion(ontologyVersion);
 
-        if (metadata != null) {
-
-        	metadata.setNcboOntologyVersion(ontologyVersion);
-        	
-    		metadata.setContactEmail(this.getContactEmail());
-    		metadata.setContactName(this.getContactName());
-    		metadata.setDisplayLabel(this.getDisplayLabel());
-    		metadata.setDocumentation(this.getDocumentation());
-    		metadata.setFormat(this.getFormat());
-    		metadata.setHomepage(this.getHomepage());
-    		metadata.setIsFoundry(this.getIsFoundry());
-    		metadata.setPublication(this.getPublication());
-    		metadata.setUrn(this.getUrn());
-        }
-		
-	}	
-	
+			metadata.setContactEmail(this.getContactEmail());
+			metadata.setContactName(this.getContactName());
+			metadata.setOboFoundryId(this.getOboFoundryId());
+			metadata.setDisplayLabel(this.getDisplayLabel());
+			metadata.setDocumentation(this.getDocumentation());
+			metadata.setFormat(this.getFormat());
+			metadata.setHomepage(this.getHomepage());
+			metadata.setIsFoundry(this.getIsFoundry());
+			metadata.setPublication(this.getPublication());
+			metadata.setUrn(this.getUrn());
+		}
+	}
 
 	/**
 	 * Populates NcboOntologyVersion Entity from this OntologyBean
 	 * 
 	 * @param ncboOntology
 	 */
-	
+
 	public void populateToVersionEntity(NcboOntologyVersion ontologyVersion) {
 
-        if (ontologyVersion != null) {
+		if (ontologyVersion != null) {
 
 			// all the business logic regarding OntologyVersionId and OntologyId
 			// is in OntologyBean layer
@@ -183,7 +179,7 @@ public class OntologyBean {
 			// HashSet<Integer>(this.getCategoryIds()));
 
 		}
-		
+
 		// DEBUG STATETMENT - to be removed later
 		System.out.println("******************************");
 		System.out.println("HTTP REQUEST: OntologyVersion");
@@ -193,22 +189,21 @@ public class OntologyBean {
 		System.out.println("contactName = " + this.getContactName());
 		System.out.println("contactEmail = " + this.getContactEmail());
 		System.out.println("******************************");
-				
+
 	}
-	
-	
-	
+
 	/**
-	 * Populates the OntologyBean to a NcboOntologyFile Entity.
-	 * OntologyVersion should have been populated from OntologyBean before making this call.
+	 * Populates the OntologyBean to a NcboOntologyFile Entity. OntologyVersion
+	 * should have been populated from OntologyBean before making this call.
 	 * 
 	 * @param ncboOntology
 	 */
-	
-	public void populateToFileEntity(List<NcboOntologyFile> ontologyFileList, NcboOntologyVersion ontologyVersion) {		
-		
+
+	public void populateToFileEntity(List<NcboOntologyFile> ontologyFileList,
+			NcboOntologyVersion ontologyVersion) {
+
 		List<String> fileNameList = this.getFilenames();
-		
+
 		for (String fileName : fileNameList) {
 
 			NcboOntologyFile ontologyFile = new NcboOntologyFile();
@@ -218,67 +213,69 @@ public class OntologyBean {
 			ontologyFileList.add(ontologyFile);
 		}
 	}
-	
-	
+
 	/**
 	 * Populates the OntologyBean to a NcboOntologyCategory Entity.
-	 * OntologyVersion should have been populated from OntologyBean before making this call.
+	 * OntologyVersion should have been populated from OntologyBean before
+	 * making this call.
 	 * 
 	 * @param ncboOntology
 	 */
-	
-	public void populateToCategoryEntity(List<NcboOntologyCategory> ontologyCategoryList, NcboOntologyVersion ontologyVersion) {
-				
+
+	public void populateToCategoryEntity(
+			List<NcboOntologyCategory> ontologyCategoryList,
+			NcboOntologyVersion ontologyVersion) {
+
 		List<Integer> categoryIdList = this.getCategoryIds();
 		for (Integer categoryId : categoryIdList) {
-			
+
 			NcboOntologyCategory ontologyCategory = new NcboOntologyCategory();
-			
+
 			NcboLCategory ncboLCategory = new NcboLCategory();
 			ncboLCategory.setId(categoryId);
 			ontologyCategory.setNcboLCategory(ncboLCategory);
 			ontologyCategory.setNcboOntologyVersion(ontologyVersion);
-			
+
 			ontologyCategoryList.add(ontologyCategory);
 		}
-		
+
 	}
-	
-	
+
 	/**
 	 * Populates a NcboOntologyLoadQueue Entity from this ontologyBean.
-	 * OntologyVersion should have been populated from OntologyBean before making this call.
+	 * OntologyVersion should have been populated from OntologyBean before
+	 * making this call.
 	 * 
-	 * @param NcboOntologyLoadQueue, NcboOntologyVersion
+	 * @param NcboOntologyLoadQueue,
+	 *            NcboOntologyVersion
 	 */
 
-	public void populateToLoadQueueEntity(NcboOntologyLoadQueue loadQueue, NcboOntologyVersion ontologyVersion) {
+	public void populateToLoadQueueEntity(NcboOntologyLoadQueue loadQueue,
+			NcboOntologyVersion ontologyVersion) {
 
-        if (loadQueue != null) {
+		if (loadQueue != null) {
 
-        	// OntologyVersion object
-    		loadQueue.setNcboOntologyVersion(ontologyVersion);
-        	        	
-    		// NcboStatus Object
-    		NcboLStatus status = new NcboLStatus();
-    		status.setId(this.getStatusId());
-    		loadQueue.setNcboLStatus(status);
-    		
-    		loadQueue.setDateCreated(Calendar.getInstance().getTime());
-        }
-		
+			// OntologyVersion object
+			loadQueue.setNcboOntologyVersion(ontologyVersion);
+
+			// NcboStatus Object
+			NcboLStatus status = new NcboLStatus();
+			status.setId(this.getStatusId());
+			loadQueue.setNcboLStatus(status);
+
+			loadQueue.setDateCreated(Calendar.getInstance().getTime());
+		}
+
 	}
-	
+
 	public String toString() {
-		return "Id: " + this.getId() + 
-				" OntologyId: " + this.getOntologyId() +
-				" InternalVersionNumer: " + this.getInternalVersionNumber() +
-				" OntologyId: " + this.getOntologyId() + 
-				" VersionNumber: " + this.getVersionNumber() + 
-				" VersionStatus: " + this.getVersionStatus() + 
-				" Name: " + this.getDisplayLabel() + 
-				" ContactName: " + this.getContactName() +
-				" ContactEmail: " + this.getContactEmail();
+		return "Id: " + this.getId() + " OntologyId: " + this.getOntologyId()
+				+ " InternalVersionNumer: " + this.getInternalVersionNumber()
+				+ " OntologyId: " + this.getOntologyId() + " VersionNumber: "
+				+ this.getVersionNumber() + " VersionStatus: "
+				+ this.getVersionStatus() + " Name: " + this.getDisplayLabel()
+				+ " ContactName: " + this.getContactName() + " ContactEmail: "
+				+ this.getContactEmail();
 
 	}
 
@@ -620,7 +617,8 @@ public class OntologyBean {
 	}
 
 	/**
-	 * @param categoryIds the categoryIds to set
+	 * @param categoryIds
+	 *            the categoryIds to set
 	 */
 	public void setCategoryIds(List<Integer> categoryIds) {
 		this.categoryIds = categoryIds;
@@ -642,8 +640,8 @@ public class OntologyBean {
 	 */
 	public boolean addCategoryIds(Collection<? extends Integer> c) {
 		return categoryIds.addAll(c);
-	}	
-	
+	}
+
 	/**
 	 * @param o
 	 * @return
@@ -670,7 +668,8 @@ public class OntologyBean {
 	}
 
 	/**
-	 * @param filenames the filenames to set
+	 * @param filenames
+	 *            the filenames to set
 	 */
 	public void setFilenames(List<String> filenames) {
 		this.filenames = filenames;
@@ -684,28 +683,27 @@ public class OntologyBean {
 	}
 
 	/**
-	 * @param codingScheme the codingScheme to set
+	 * @param codingScheme
+	 *            the codingScheme to set
 	 */
 	public void setCodingScheme(String codingScheme) {
 		this.codingScheme = codingScheme;
 	}
 
-
 	public Integer getStatusId() {
 		return statusId;
 	}
 
-
 	public void setStatusId(Integer statusId) {
 		this.statusId = statusId;
 	}
-	
+
 	public String getOntologyDirPath() {
 		return "/" + this.getOntologyId() + "/"
 				+ this.getInternalVersionNumber();
 	}
 
-	//TODO - this is temporary code until UserBean is avail from the Session
+	// TODO - this is temporary code until UserBean is avail from the Session
 	public NcboUser getNcboUserFromSession() {
 
 		NcboUser ncboUser = new NcboUser();
@@ -721,13 +719,12 @@ public class OntologyBean {
 		bean.setLastname("mylastname");
 		bean.setPhone("123-456-7890");
 		bean.setDateCreated(new Date());
-		
+
 		bean.populateToEntity(ncboUser);
 		// -----------------------------------------------------------------------
-		
+
 		return ncboUser;
 	}
-
 
 	/**
 	 * @return the fileItem
@@ -737,10 +734,25 @@ public class OntologyBean {
 	}
 
 	/**
-	 * @param fileItem the fileItem to set
+	 * @param fileItem
+	 *            the fileItem to set
 	 */
 	public void setFileItem(FileItem fileItem) {
 		this.fileItem = fileItem;
-	}	
+	}
 
+	/**
+	 * @return the oboFoundryId
+	 */
+	public String getOboFoundryId() {
+		return oboFoundryId;
+	}
+
+	/**
+	 * @param oboFoundryId
+	 *            the oboFoundryId to set
+	 */
+	public void setOboFoundryId(String oboFoundryId) {
+		this.oboFoundryId = oboFoundryId;
+	}
 }
