@@ -1,5 +1,8 @@
 package org.ncbo.stanford.view.rest.authentication;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import javax.servlet.http.HttpServletRequest;
 
 import org.acegisecurity.Authentication;
@@ -13,9 +16,11 @@ import org.acegisecurity.providers.UsernamePasswordAuthenticationToken;
 import org.acegisecurity.ui.webapp.AuthenticationProcessingFilter;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.ncbo.stanford.bean.UserBean;
 import org.ncbo.stanford.enumeration.ErrorTypeEnum;
 import org.ncbo.stanford.service.session.RESTfulSession;
 import org.ncbo.stanford.service.session.SessionService;
+import org.ncbo.stanford.service.user.UserService;
 import org.ncbo.stanford.service.xml.XMLSerializationService;
 import org.ncbo.stanford.util.RequestUtils;
 import org.ncbo.stanford.util.security.ui.ApplicationAuthenticationDetails;
@@ -41,6 +46,7 @@ public final class AuthenticationRestlet extends Restlet {
 	private AuthenticationManager authenticationManager;
 	private SessionService sessionService;
 	private XMLSerializationService xmlSerializationService;
+	private UserService userService;
 
 	@Override
 	public void handle(Request request, Response response) {
@@ -90,10 +96,15 @@ public final class AuthenticationRestlet extends Restlet {
 					.setAttribute(
 							HttpSessionContextIntegrationFilter.ACEGI_SECURITY_CONTEXT_KEY,
 							secCtx);
-			RequestUtils
-					.setHttpServletResponse(response, Status.SUCCESS_OK,
-							MediaType.TEXT_XML, xmlSerializationService
-									.getSuccessAsXML(xmlSerializationService.getSuccessBean(request)));
+			// add user and session info to the response
+			List<Object> userData = new ArrayList<Object>();
+			UserBean userBean = userService.findUser(username);
+			userData.add(session.getId());
+			userData.add(userBean);
+			RequestUtils.setHttpServletResponse(response, Status.SUCCESS_OK,
+					MediaType.TEXT_XML, xmlSerializationService
+							.getSuccessAsXML(xmlSerializationService
+									.getSuccessBean(request, userData)));
 		} catch (AuthenticationServiceException e) {
 			e.printStackTrace();
 			log.error(e);
@@ -108,8 +119,9 @@ public final class AuthenticationRestlet extends Restlet {
 
 			RequestUtils.setHttpServletResponse(response,
 					Status.CLIENT_ERROR_FORBIDDEN, MediaType.TEXT_XML,
-					xmlSerializationService.getErrorAsXML(
-							ErrorTypeEnum.INVALID_CREDENTIALS, accessedResource));
+					xmlSerializationService
+							.getErrorAsXML(ErrorTypeEnum.INVALID_CREDENTIALS,
+									accessedResource));
 		} catch (Exception e) {
 			e.printStackTrace();
 			log.error(e);
