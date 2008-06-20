@@ -1,7 +1,14 @@
 package org.ncbo.stanford.service.loader.remote.impl;
 
+import java.util.HashMap;
+import java.util.List;
+
+import org.ncbo.stanford.bean.MetadataFileBean;
+import org.ncbo.stanford.bean.OntologyBean;
 import org.ncbo.stanford.service.loader.remote.OBOCVSPullService;
+import org.ncbo.stanford.util.cvs.CVSFile;
 import org.ncbo.stanford.util.cvs.CVSUtils;
+import org.ncbo.stanford.util.ontologyfile.OntologyDescriptorParser;
 
 public class OBOSVSPullServiceImpl implements OBOCVSPullService {
 
@@ -12,6 +19,7 @@ public class OBOSVSPullServiceImpl implements OBOCVSPullService {
 	private String oboSourceforgeCVSRootDirectory;
 	private String oboSourceforgeCVSArgumentString;
 	private String oboSourceforgeCVSCheckoutDir;
+	private String oboSourceforgeCVSDescriptorFile;
 	private String tempDir;
 
 	public void doCVSPull() {
@@ -21,7 +29,31 @@ public class OBOSVSPullServiceImpl implements OBOCVSPullService {
 				oboSourceforgeCVSArgumentString, oboSourceforgeCVSCheckoutDir,
 				tempDir);
 
-		cvsUtils.cvsCheckout();
+		try {
+			cvsUtils.cvsCheckout();
+			HashMap<String, CVSFile> updateFiles = cvsUtils.getAllCVSEntries();
+			OntologyDescriptorParser odp = new OntologyDescriptorParser(oboSourceforgeCVSDescriptorFile);
+			List<MetadataFileBean> ontologyList = odp.parseOntologyFile();
+			boolean isRemote = false;
+			
+			
+		
+			for (MetadataFileBean mfb : ontologyList) {
+				OntologyBean ontologyBean = new OntologyBean();
+				//ontologyBean.po
+			
+			
+			}		
+			
+			
+			
+			
+		
+		
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 
 	/**
@@ -145,6 +177,21 @@ public class OBOSVSPullServiceImpl implements OBOCVSPullService {
 	 */
 	public void setTempDir(String tempDir) {
 		this.tempDir = tempDir;
+	}
+
+	/**
+	 * @return the oboSourceforgeCVSDescriptorFile
+	 */
+	public String getOboSourceforgeCVSDescriptorFile() {
+		return oboSourceforgeCVSDescriptorFile;
+	}
+
+	/**
+	 * @param oboSourceforgeCVSDescriptorFile the oboSourceforgeCVSDescriptorFile to set
+	 */
+	public void setOboSourceforgeCVSDescriptorFile(
+			String oboSourceforgeCVSDescriptorFile) {
+		this.oboSourceforgeCVSDescriptorFile = oboSourceforgeCVSDescriptorFile;
 	}
 
 }
