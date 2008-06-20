@@ -1,6 +1,8 @@
 package org.ncbo.stanford.bean;
 
 import java.util.Date;
+import java.util.List;
+import java.util.Set;
 
 import org.ncbo.stanford.domain.generated.NcboUser;
 
@@ -14,6 +16,7 @@ public class UserBean {
 	private String lastname;
 	private String phone;
 	private Date dateCreated;
+	private Set roles;
 
 	
 	/**
@@ -33,6 +36,7 @@ public class UserBean {
 			this.setLastname(ncboUser.getLastname());
 			this.setPhone(ncboUser.getPhone());
 			this.setDateCreated(ncboUser.getDateCreated());
+			this.setRoles(ncboUser.getNcboUserRoles());
 		} 
 		
 	}
@@ -54,6 +58,7 @@ public class UserBean {
 			ncboUser.setLastname(this.getLastname());
 			ncboUser.setPhone(this.getPhone());
 			ncboUser.setDateCreated(this.getDateCreated());
+			ncboUser.setNcboUserRoles(this.getRoles());
 		}
 	}
 	
@@ -177,4 +182,15 @@ public class UserBean {
 	public void setDateCreated(Date dateCreated) {
 		this.dateCreated = dateCreated;
 	}
+
+	public Set getRoles() {
+		return roles;
+	}
+
+	public void setRoles(Set roles) {
+		this.roles = roles;
+	}
+	
+	
+	
 }
