@@ -41,7 +41,7 @@ obo.sourceforge.cvs.argumentstring=
 # Checkout dir on the local server
 obo.sourceforge.cvs.checkoutdir=${bioportal.resource.path}/cvscheckout
 # Ontologies metadata descriptor file
-obo.sourceforge.cvs.descriptor.filename=ontologies.txt
+obo.sourceforge.cvs.descriptor.file=${obo.sourceforge.cvs.checkoutdir}/obo/website/cgi-bin/ontologies.txt
 
 # Logging properties
 bioportal.app.log.deflevel=ERROR
