@@ -48,6 +48,9 @@
 		<property name="dateReleased" type="java.util.Date">
 		    <column name="date_released" length="0" />
 		</property>
+		<property name="oboFoundryId" type="java.lang.String">
+		    <column name="obo_foundry_id" length="128" />
+		</property>
 		<property name="displayLabel" type="java.lang.String">
 		    <column name="display_label" length="128" />
 		</property>

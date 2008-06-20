@@ -30,6 +30,7 @@ public class NcboOntology {
 	private Integer statusId;
 	private Date dateCreated;
 	private Date dateReleased;
+	private String oboFoundryId;
 	private String displayLabel;
 	private String format;
 	private String contactName;
@@ -651,5 +652,19 @@ public class NcboOntology {
 	 */
 	public boolean addcategoryIds(Collection<? extends Integer> c) {
 		return categoryIds.addAll(c);
+	}
+
+	/**
+	 * @return the oboFoundryId
+	 */
+	public String getOboFoundryId() {
+		return oboFoundryId;
+	}
+
+	/**
+	 * @param oboFoundryId the oboFoundryId to set
+	 */
+	public void setOboFoundryId(String oboFoundryId) {
+		this.oboFoundryId = oboFoundryId;
 	}
 }
