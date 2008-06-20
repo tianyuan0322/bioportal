@@ -25,3 +25,4 @@
 9.  Verify that ontology files are present in the new files directory and that the directory structure matches the values in the column "file_path" of "ncbo_ontology_version" table.
 10. Run populate_load_queue.sql script located in the bioportal/classic_to_core_migration/db/sql directory.
 11. Drop cbio database (it is no longer required).
+12. Compile and execute OBOFoundryIdUpdater.java file. No arguments are required.
