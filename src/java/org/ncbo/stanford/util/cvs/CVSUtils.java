@@ -204,16 +204,12 @@ public class CVSUtils {
 		request.traceResponse = true;
 		request.traceTCPData = true;
 		request.traceProcessing = true;
-
 		request.allowGzipFileMode = project.allowsGzipFileMode();
 		request.setGzipStreamLevel(project.getGzipStreamLevel());
-
 		request.setEntries(entries);
-
 		request.appendArguments(arguments);
-
-		// request.setUserInterface(new CVSTestUI());
-
+		request.setUserInterface(new CVSTestUI());
+		
 		CVSResponse response = new CVSResponse();
 
 		//
@@ -231,9 +227,7 @@ public class CVSUtils {
 		// NOTE, You MUST make a call to CVSProject.writeAdminFile() ANY
 		// time that you perform an operation that modifies the CVSEntrys
 		// in the project, including "update", "ci", and other commands.
-
 		project.writeAdminFiles();
-
 	}
 
 	public HashMap<String, CVSFile> getFiles(CVSEntryVector entries) {
