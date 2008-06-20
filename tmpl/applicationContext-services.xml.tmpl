@@ -515,6 +515,9 @@
 		<property name="oboSourceforgeCVSCheckoutDir">
 			<ref bean="oboSourceforgeCVSCheckoutDir" />
 		</property>		
+		<property name="oboSourceforgeCVSDescriptorFile">
+			<ref bean="oboSourceforgeCVSDescriptorFile" />
+		</property>
 		<property name="tempDir">
 			<ref bean="tempDir" />
 		</property>		
@@ -698,9 +701,9 @@
 		</constructor-arg>
 	</bean>
 	
-	<bean id="oboSourceforgeCVSDescriptorFilename" class="java.lang.String">
+	<bean id="oboSourceforgeCVSDescriptorFile" class="java.lang.String">
 		<constructor-arg>
-			<value>@obosourceforgecvsdescriptorfilename@</value>
+			<value>@obosourceforgecvsdescriptorfile@</value>
 		</constructor-arg>
 	</bean>
 </beans>
