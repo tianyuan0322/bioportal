@@ -1,10 +1,12 @@
 package org.ncbo.stanford.bean;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Set;
 
 import org.ncbo.stanford.domain.generated.NcboUser;
+import org.ncbo.stanford.domain.generated.NcboUserRole;
 
 public class UserBean {
 
@@ -16,7 +18,7 @@ public class UserBean {
 	private String lastname;
 	private String phone;
 	private Date dateCreated;
-	private Set roles;
+	private List roles;
 
 	
 	/**
@@ -36,7 +38,12 @@ public class UserBean {
 			this.setLastname(ncboUser.getLastname());
 			this.setPhone(ncboUser.getPhone());
 			this.setDateCreated(ncboUser.getDateCreated());
-			this.setRoles(ncboUser.getNcboUserRoles());
+			List roles = new ArrayList();
+			for(Object role :  ncboUser.getNcboUserRoles()){
+				
+				roles.add(((NcboUserRole) role).getNcboLRole().getName());
+			}
+			this.setRoles(roles);
 		} 
 		
 	}
@@ -57,8 +64,7 @@ public class UserBean {
 			ncboUser.setFirstname(this.getFirstname());
 			ncboUser.setLastname(this.getLastname());
 			ncboUser.setPhone(this.getPhone());
-			ncboUser.setDateCreated(this.getDateCreated());
-			ncboUser.setNcboUserRoles(this.getRoles());
+			ncboUser.setDateCreated(this.getDateCreated());			
 		}
 	}
 	
@@ -183,11 +189,11 @@ public class UserBean {
 		this.dateCreated = dateCreated;
 	}
 
-	public Set getRoles() {
+	public List getRoles() {
 		return roles;
 	}
 
-	public void setRoles(Set roles) {
+	public void setRoles(List roles) {
 		this.roles = roles;
 	}
 	
