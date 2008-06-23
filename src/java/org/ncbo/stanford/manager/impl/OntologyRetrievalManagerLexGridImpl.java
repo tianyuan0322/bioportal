@@ -44,6 +44,7 @@ import org.ncbo.stanford.bean.search.SearchResultBean;
 import org.ncbo.stanford.domain.custom.entity.NcboOntology;
 import org.ncbo.stanford.manager.AbstractOntologyManagerLexGrid;
 import org.ncbo.stanford.manager.OntologyRetrievalManager;
+import org.ncbo.stanford.util.constants.ApplicationConstants;
 
 /**
  * A implementation of the OntologyRetrievalManager for ontologies stored
@@ -142,7 +143,7 @@ public class OntologyRetrievalManagerLexGridImpl extends
 	}
 
 	public ClassBean findPathToRoot(NcboOntology ncboOntology,
-			String conceptId,boolean light) throws Exception {
+			String conceptId, boolean light) throws Exception {
 		String urnAndVersion = ncboOntology.getCodingScheme();
 		String urnVersionArray[] = splitUrnAndVersion(urnAndVersion);
 		CodingSchemeVersionOrTag csvt = Constructors
@@ -538,7 +539,7 @@ public class OntologyRetrievalManagerLexGridImpl extends
 		classBean.setId("THING");
 		classBean.setLabel("THING");
 		ArrayList<ClassBean> classBeans = createClassBeanArray(list);
-		classBean.addRelation("hasSubType", classBeans);
+		classBean.addRelation(ApplicationConstants.SUB_CLASS, classBeans);
 		return classBean;
 	}
 
@@ -546,7 +547,7 @@ public class OntologyRetrievalManagerLexGridImpl extends
 		ClassBean classBean = new ClassBean();
 		classBean.setId("THING");
 		classBean.setLabel("THING");
-		classBean.addRelation("hasSubType", classBeans);
+		classBean.addRelation(ApplicationConstants.SUB_CLASS, classBeans);
 		return classBean;
 	}
 	
