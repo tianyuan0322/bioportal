@@ -19,10 +19,13 @@ public class UserServiceImpl implements UserService {
 	private CustomNcboUserDAO ncboUserDAO = null;
 
 	public UserBean findUser(Integer userId) {
+	
+		NcboUser user = ncboUserDAO.findById(userId);
+		if (user == null) return null;
 		
 		// populate userBean from ncbuUser with matched userId
 		UserBean userBean = new UserBean();
-		userBean.populateFromEntity(ncboUserDAO.findById(userId));
+		userBean.populateFromEntity(user);
 			
 		return userBean;
 	}
@@ -30,6 +33,9 @@ public class UserServiceImpl implements UserService {
 
 	
 	public UserBean findUser(String username) {
+		
+		NcboUser user = ncboUserDAO.getUserByUsername(username);
+		if (user == null) return null;
 		
 		// populate userBean from ncbuUser with matched username
 		UserBean userBean = new UserBean();
