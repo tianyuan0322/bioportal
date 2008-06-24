@@ -9,6 +9,7 @@ import org.ncbo.stanford.bean.ContactTypeBean;
 import org.ncbo.stanford.bean.MetadataFileBean;
 import org.ncbo.stanford.bean.OntologyBean;
 import org.ncbo.stanford.bean.UserBean;
+import org.ncbo.stanford.enumeration.StatusEnum;
 import org.ncbo.stanford.exception.InvalidDataException;
 import org.ncbo.stanford.service.loader.remote.OBOCVSPullService;
 import org.ncbo.stanford.service.ontology.OntologyService;
@@ -36,6 +37,7 @@ public class OBOCVSPullServiceImpl implements OBOCVSPullService {
 	private UserService userService;
 	private Map<String, String> ontologyFormatToOBOFoundryMap = new HashMap<String, String>();
 	private Map<String, String> ontologyVersionStatusToOBOFoundryMap = new HashMap<String, String>();
+	private Map<String, Byte> ontologyFoundryToOBOFoundryMap = new HashMap<String, Byte>();
 	private String tempDir;
 
 	@Transactional(propagation = Propagation.NEVER)
@@ -59,9 +61,10 @@ public class OBOCVSPullServiceImpl implements OBOCVSPullService {
 				CVSFile cf;
 				// is the file there?
 				if (!StringHelper.isNullOrNullString(filename)
-						&& (cf = (CVSFile) updateFiles.get(filename)) != null) {
-					if (ontologyFormatToOBOFoundryMap.containsKey(mfb
-							.getFormat())) {
+						&& (cf = (CVSFile) updateFiles.get(filename)) != null) {					
+					String format = getFormat(mfb.getFormat());
+					
+					if (!format.equals(ApplicationConstants.FORMAT_INVALID)) {
 						OntologyBean ont = ontologyService
 								.findLatestOntologyVersionByOboFoundryId(mfb
 										.getId());
@@ -76,34 +79,58 @@ public class OBOCVSPullServiceImpl implements OBOCVSPullService {
 							
 							
 							
-							
-							
-							ont.setOboFoundryId(mfb.getId());
-							ont.setDisplayLabel(mfb.getTitle());
 							UserBean userBean = linkOntologyUser(mfb
 									.getContact(), mfb.getId());
 							ont.setUserId(userBean.getId());
 							ont.setVersionNumber(cf.getVersion());
 							ont.setVersionStatus(getStatus(mfb.getStatus()));
+							ont.setIsCurrent(ApplicationConstants.TRUE);
+							ont.setIsRemote(isRemote(mfb.getDownload()));
+							ont.setStatusId(StatusEnum.STATUS_WAITING.getStatus());							
+							ont.setDateCreated(Calendar.getInstance().getTime());
+							ont.setDateReleased(cf.getTimeStamp().getTime());
+							ont.setOboFoundryId(mfb.getId());
+							ont.setDisplayLabel(mfb.getTitle());							
+							ont.setFormat(format);
+							ont.setContactName(userBean.getLastname());
+							ont.setContactEmail(userBean.getEmail());
+							ont.setHomepage(OntologyDescriptorParser.getHomepage(mfb.getHome()));
+							ont.setDocumentation(OntologyDescriptorParser.getDocumentation(mfb.getDocumentation()));
+							ont.setPublication(OntologyDescriptorParser.getPublication(mfb.getPublication()));
+							ont.setIsFoundry(isFoundry(mfb.getFoundry()));
 							
-
+							
+							
 						} else {
 							// do we already have this version loaded?
 							if (!cf.getVersion().equals(ont.getVersionNumber())) {
-
 								
 								
 								
-								
-								
-								ont.setDisplayLabel(mfb.getTitle());
 								UserBean userBean = linkOntologyUser(mfb
 										.getContact(), mfb.getId());
 								ont.setUserId(userBean.getId());
 								ont.setVersionNumber(cf.getVersion());
-								ont.setVersionStatus(getStatus(mfb.getStatus()));
-
+								ont
+										.setVersionStatus(getStatus(mfb
+												.getStatus()));
+								ont.setIsCurrent(ApplicationConstants.TRUE);
+								ont.setIsRemote(isRemote(mfb.getDownload()));
+								ont.setStatusId(StatusEnum.STATUS_WAITING.getStatus());
+								ont.setDateCreated(Calendar.getInstance().getTime());
+								ont.setDateReleased(cf.getTimeStamp().getTime());
+								ont.setOboFoundryId(mfb.getId());
+								ont.setDisplayLabel(mfb.getTitle());
+								ont.setFormat(format);
+								ont.setContactName(userBean.getLastname());
+								ont.setContactEmail(userBean.getEmail());
+								ont.setHomepage(OntologyDescriptorParser.getHomepage(mfb.getHome()));
+								ont.setDocumentation(OntologyDescriptorParser.getDocumentation(mfb.getDocumentation()));								
+								ont.setPublication(OntologyDescriptorParser.getPublication(mfb.getPublication()));
+								ont.setIsFoundry(isFoundry(mfb.getFoundry()));
 								
+								
+
 							}
 						}
 					} else {
@@ -121,8 +148,58 @@ public class OBOCVSPullServiceImpl implements OBOCVSPullService {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+	}	
+
+	/**
+	 * Determines whether the ontology is hosted remotely
+	 * 
+	 * @param filePath
+	 * @return
+	 */
+	private Byte isRemote(String filePath) {
+		Byte isRemote = ApplicationConstants.TRUE;
+		
+		if (!StringHelper.isNullOrNullString(filePath)
+				&& filePath.indexOf(getOboSourceforgeCVSHostname()) > -1) {
+			isRemote = ApplicationConstants.FALSE;
+		}
+
+		return isRemote;
 	}
 
+	/**
+	 * Returns the foundry preference (mapped in the Spring config file)
+	 * 
+	 * @param str
+	 * @return
+	 */
+	private Byte isFoundry(String str) {
+		Byte foundry = ApplicationConstants.FALSE;
+
+		if (ontologyFoundryToOBOFoundryMap.containsKey(str)) {
+			foundry = ontologyFoundryToOBOFoundryMap.get(str);
+		}
+
+		return foundry;
+	}
+
+	
+	/**
+	 * Returns the version status (mapped in the Spring config file)
+	 * 
+	 * @param str
+	 * @return
+	 */
+	private String getFormat(String str) {
+		String format = ApplicationConstants.FORMAT_INVALID;
+
+		if (ontologyFormatToOBOFoundryMap.containsKey(str)) {
+			format = ontologyFormatToOBOFoundryMap.get(str);
+		}
+
+		return format;
+	}	
+	
 	/**
 	 * Returns the version status (mapped in the Spring config file)
 	 * 
@@ -358,5 +435,20 @@ public class OBOCVSPullServiceImpl implements OBOCVSPullService {
 	public void setOntologyVersionStatusToOBOFoundryMap(
 			Map<String, String> ontologyVersionStatusToOBOFoundryMap) {
 		this.ontologyVersionStatusToOBOFoundryMap = ontologyVersionStatusToOBOFoundryMap;
+	}
+
+	/**
+	 * @return the ontologyFoundryToOBOFoundryMap
+	 */
+	public Map<String, Byte> getOntologyFoundryToOBOFoundryMap() {
+		return ontologyFoundryToOBOFoundryMap;
+	}
+
+	/**
+	 * @param ontologyFoundryToOBOFoundryMap the ontologyFoundryToOBOFoundryMap to set
+	 */
+	public void setOntologyFoundryToOBOFoundryMap(
+			Map<String, Byte> ontologyFoundryToOBOFoundryMap) {
+		this.ontologyFoundryToOBOFoundryMap = ontologyFoundryToOBOFoundryMap;
 	}
 }
