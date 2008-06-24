@@ -242,7 +242,7 @@ public class OntologyLoadManagerLexGridImpl extends AbstractOntologyManagerLexGr
 				|| ontology_bean.getFormat().equalsIgnoreCase(ApplicationConstants.FORMAT_OWL_DL)
 				|| ontology_bean.getFormat().equalsIgnoreCase(ApplicationConstants.FORMAT_OWL_FULL)) {
 			// Override registered name using metadata from the ontology bean
-			String registeredName = ontology_bean.getOntologyId().toString() + "/"
+			String registeredName = "http://www.bioontology.org/"+ontology_bean.getOntologyId().toString() + "/"
 					+ ontology_bean.getVersionNumber().toString() + "/"
 					+ ontology_bean.getDisplayLabel();
 			CsmfRegisteredName csmfRegisteredName = new CsmfRegisteredName();
