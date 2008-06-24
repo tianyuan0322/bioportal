@@ -87,27 +87,14 @@ public class OntologyLoadManagerLexGridImpl extends AbstractOntologyManagerLexGr
 
 		// remove existing scheme if it exists before parsing...
 
-		CodingSchemeRendering csRendering = getCodingSchemeRendering(lbs, ontology_bean
-				.getCodingScheme());
-		if (csRendering != null) {
-			AbsoluteCodingSchemeVersionReference acsvr = Constructors
-					.createAbsoluteCodingSchemeVersionReference(csRendering.getCodingSchemeSummary());
-			lbsm.deactivateCodingSchemeVersion(acsvr, null);
-
-			lbsm.removeCodingSchemeVersion(acsvr);
-			ontology_bean.setCodingScheme(null);
-			NcboOntologyMetadata ncboMetadata = ncboOntologyVersionDAO
-					.findOntologyMetadataById(ontology_bean.getId());
-			if (ncboMetadata != null) {
-				ncboMetadata.setCodingScheme(null);
-				ncboOntologyMetadataDAO.save(ncboMetadata);
-			}
-
-		}
+		cleanup(ontology_bean);
+		
 		Loader loader = null;
+		CodingSchemeManifest csm= createCodingSchemeManifest(ontology_bean);
 		// Load OBO
 		if (ontology_bean.getFormat().equalsIgnoreCase(ApplicationConstants.FORMAT_OBO)) {
 			loader = lbsm.getLoader(org.LexGrid.LexBIG.Impl.loaders.OBOLoaderImpl.name);
+			loader.setCodingSchemeManifest(csm);
 			((OBO_Loader) loader).load(source, null, stopOnErrors, async);
 		}
 		// Load UMLS
@@ -127,7 +114,7 @@ public class OntologyLoadManagerLexGridImpl extends AbstractOntologyManagerLexGr
 		if (ontology_bean.getFormat().equalsIgnoreCase(ApplicationConstants.FORMAT_OWL_DL)
 				|| ontology_bean.getFormat().equalsIgnoreCase(ApplicationConstants.FORMAT_OWL_FULL)) {
 			loader = lbsm.getLoader(org.LexGrid.LexBIG.Impl.loaders.OWLLoaderImpl.name);
-
+			loader.setCodingSchemeManifest(csm);
 			// Load only NCI Thesaurus for now.
 			if (ontology_bean.getFilePath() != null
 					&& ontology_bean.getFilePath().indexOf("Thesaurus") >= 0) {
@@ -188,6 +175,44 @@ public class OntologyLoadManagerLexGridImpl extends AbstractOntologyManagerLexGr
 		}
 	}
 
+	
+	/**
+	 * Remove the LexGrid references to a OntologyBean. We remove the codingScheme that the bean refers to.
+	 * 
+	 * @param ontology_bean
+	 *           the ontology_bean that contains the metadata information of the
+	 *           ontology to be loaded.
+	 * 
+	 * @exception Exception
+	 *               catch all for all other ontology file load errors.
+	 */
+	public void cleanup(OntologyBean ontology_bean) throws Exception {
+		
+		// Get the LexBIGService
+		LexBIGService lbs = LexBIGServiceImpl.defaultInstance();
+		LexBIGServiceManager lbsm = lbs.getServiceManager(null);
+
+		// remove existing scheme if it exists before parsing...
+
+		CodingSchemeRendering csRendering = getCodingSchemeRendering(lbs, ontology_bean
+				.getCodingScheme());
+		if (csRendering != null) {
+			AbsoluteCodingSchemeVersionReference acsvr = Constructors
+					.createAbsoluteCodingSchemeVersionReference(csRendering.getCodingSchemeSummary());
+			lbsm.deactivateCodingSchemeVersion(acsvr, null);
+			lbsm.removeCodingSchemeVersion(acsvr);
+			ontology_bean.setCodingScheme(null);
+			NcboOntologyMetadata ncboMetadata = ncboOntologyVersionDAO
+					.findOntologyMetadataById(ontology_bean.getId());
+			if (ncboMetadata != null) {
+				ncboMetadata.setCodingScheme(null);
+				ncboOntologyMetadataDAO.save(ncboMetadata);
+			}
+		}
+	}
+			
+			
+			
 	public String getTargetTerminologies() {
 		return targetTerminologies;
 	}

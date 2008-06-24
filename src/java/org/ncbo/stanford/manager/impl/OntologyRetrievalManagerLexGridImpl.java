@@ -29,8 +29,8 @@ import org.LexGrid.codingSchemes.CodingScheme;
 import org.LexGrid.commonTypes.Property;
 import org.LexGrid.commonTypes.PropertyQualifier;
 import org.LexGrid.commonTypes.Source;
-import org.LexGrid.concepts.CodedEntry;
 import org.LexGrid.concepts.Comment;
+import org.LexGrid.concepts.Concept;
 import org.LexGrid.concepts.ConceptProperty;
 import org.LexGrid.concepts.Definition;
 import org.LexGrid.concepts.Presentation;
@@ -67,7 +67,7 @@ public class OntologyRetrievalManagerLexGridImpl extends
 
 	private LexBIGService lbs;
 
-	OntologyRetrievalManagerLexGridImpl() throws Exception {
+	public OntologyRetrievalManagerLexGridImpl() throws Exception {
 		lbs = LexBIGServiceImpl.defaultInstance();
 	}
 
@@ -483,12 +483,12 @@ public class OntologyRetrievalManagerLexGridImpl extends
 
 	private PropertyBean createPropertyBean(Property prop) {
 		PropertyBean bean = new PropertyBean();
-		bean.setId(prop.getProperty());
+		bean.setId(prop.getPropertyName());
 		bean.setLabel(prop.getText().getContent());
 		HashMap<Object, Object> map = bean.getRelations();
 		addStringToHashMap(map, "Language", prop.getLanguage());
-		addStringToHashMap(map, "PresentationFormat", prop
-				.getPresentationFormat());
+		addStringToHashMap(map, "Format", prop
+				.getFormat());
 		addArrayToHashMap(map, "UsageContext", prop.getUsageContext());
 		addArrayToHashMap(map, "PropertyQualifier", prop.getPropertyQualifier());
 		addArrayToHashMap(map, "Source", prop.getSource());
@@ -517,14 +517,14 @@ public class OntologyRetrievalManagerLexGridImpl extends
 
 		bean.setId(rcr.getConceptCode());
 		bean.setLabel(rcr.getEntityDescription().getContent());
-		CodedEntry entry = rcr.getReferencedEntry();
+		Concept entry = rcr.getReferencedEntry();
 
 		if (entry == null) {
 			// bean.setLight(true);
 		} else if (entry.getIsAnonymous() == null
 				|| (entry.getIsAnonymous() != null && !entry.getIsAnonymous()
 						.booleanValue())) {
-			addCodedEntryPropertyValue(entry, bean);
+			addConceptPropertyValue(entry, bean);
 
 			if (StringUtils.isBlank(bean.getLabel())) {
 				bean.setLabel(getPreferredPresentation(entry));
@@ -567,7 +567,7 @@ public class OntologyRetrievalManagerLexGridImpl extends
 		return classBeans;
 	}
 
-	private String getDefinition(CodedEntry entry) {
+	private String getDefinition(Concept entry) {
 		Definition d = null;
 		int count = entry.getDefinitionCount();
 		for (int i = 0; i < count; i++) {
@@ -578,7 +578,7 @@ public class OntologyRetrievalManagerLexGridImpl extends
 		return "";
 	}
 
-	private String getPreferredPresentation(CodedEntry entry) {
+	private String getPreferredPresentation(Concept entry) {
 		Presentation[] presentations = entry.getPresentation();
 		for (int i = 0; i < presentations.length; i++) {
 			if (presentations[i].getIsPreferred().booleanValue())
@@ -655,12 +655,12 @@ public class OntologyRetrievalManagerLexGridImpl extends
 	}
 
 	/**
-	 * Populate the ClassBean's map with the CodedEntry's properties
+	 * Populate the ClassBean's map with the Concept's properties
 	 * 
 	 * @param entry
 	 * @param bean
 	 */
-	private void addCodedEntryPropertyValue(CodedEntry entry, ClassBean bean) {
+	private void addConceptPropertyValue(Concept entry, ClassBean bean) {
 		HashMap<Object, Object> map = bean.getRelations();
 		addArrayToHashMap(map, "Presentation", entry.getPresentation());
 		addArrayToHashMap(map, "Definition", entry.getDefinition());
@@ -669,7 +669,7 @@ public class OntologyRetrievalManagerLexGridImpl extends
 		addArrayToHashMap(map, "ConceptProperty", entry.getConceptProperty());
 	}
 
-	private void addCodedEntryPropertyValueOld(CodedEntry entry, ClassBean bean) {
+	private void addCodedEntryPropertyValueOld(Concept entry, ClassBean bean) {
 		// Presentation[] presentation = entry.getPresentation();
 		HashMap<Object, Object> map = bean.getRelations();
 		Presentation p = null;
@@ -716,7 +716,7 @@ public class OntologyRetrievalManagerLexGridImpl extends
 		count = entry.getConceptPropertyCount();
 		for (int i = 0; i < count; i++) {
 			prop = entry.getConceptProperty(i);
-			String key = prop.getProperty();
+			String key = prop.getPropertyName();
 			if (StringUtils.isNotBlank(key)) {
 				addStringToHashMapsArrayList(map, key, prop.getText()
 						.getContent());
