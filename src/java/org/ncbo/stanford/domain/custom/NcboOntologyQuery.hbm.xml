@@ -3,6 +3,18 @@
 "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
 
 <hibernate-mapping>
+ 	<query name="VNcboOntologyVersionDAO.GET_LATEST_ONTOLOGY_VERSION_BY_OBO_FOUNDRY_ID">
+		<![CDATA[
+			FROM NcboOntology 
+			WHERE oboFoundryId = :oboFoundryId 
+				AND internalVersionNumber = (
+					SELECT MAX(internalVersionNumber) 
+					FROM NcboOntology 
+					WHERE oboFoundryId = :oboFoundryId
+				)
+		]]>
+	</query>
+
  	<sql-query name="VNcboOntologyVersionDAO.GET_LATEST_ONTOLOGY_VERSIONS_QUERY">	
 		<return alias="ont" class="org.ncbo.stanford.domain.custom.entity.NcboOntology" />
 	
