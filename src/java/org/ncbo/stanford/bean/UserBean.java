@@ -61,6 +61,11 @@ public class UserBean {
 			ncboUser.setLastname(this.getLastname());
 			ncboUser.setPhone(this.getPhone());
 			ncboUser.setDateCreated(this.getDateCreated());
+			
+			// time stamp
+			if (ncboUser.getDateCreated() == null) {
+				ncboUser.setDateCreated(new Date());
+			}
 		}
 	}
 
