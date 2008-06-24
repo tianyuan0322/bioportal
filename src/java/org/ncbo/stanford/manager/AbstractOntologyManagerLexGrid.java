@@ -1,5 +1,6 @@
 package org.ncbo.stanford.manager;
 
+import java.util.List;
 import java.util.StringTokenizer;
 
 import org.LexGrid.LexBIG.DataModel.Collections.CodingSchemeRenderingList;
@@ -115,6 +116,20 @@ public abstract class AbstractOntologyManagerLexGrid {
 		return ncboOntologyVersionDAO.findLatestOntologyVersion(ontology_id);
 	}
 
+	/** return the latest NcboOntology that has the display_label provided
+	 * @param display_label
+	 * @return
+	 */
+	public NcboOntology getLatestNcboOntology(String display_label) {
+		List<NcboOntology> list= ncboOntologyVersionDAO.findLatestOntologyVersions();
+		for (NcboOntology ncboOntology: list) {
+			if (ncboOntology.getDisplayLabel().equalsIgnoreCase(display_label)) {
+				return ncboOntology;
+			}
+		}
+		return null;
+	}
+	
 	/**
 	 * 
 	 * @param ontologyVersionId
