@@ -31,6 +31,12 @@ public interface ApplicationConstants {
 	public static final String TAR_EXTENSION = "tar";
 	
 	/**
+	 * Ontology version status
+	 */
+	public static final String VERSION_STATUS_PREPRODUCTION = "pre_production";
+	public static final String VERSION_STATUS_PRODUCTION = "production";
+	
+	/**
 	 * Composite filename used for joining multiple ontologies into a single file
 	 */
 	public static final String COMPOSITE_FILENAME = "joined";
