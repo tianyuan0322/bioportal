@@ -9,6 +9,7 @@ import java.util.regex.Pattern;
 
 import org.ncbo.stanford.bean.ContactTypeBean;
 import org.ncbo.stanford.bean.MetadataFileBean;
+import org.ncbo.stanford.exception.InvalidDataException;
 import org.ncbo.stanford.util.helper.StringHelper;
 import org.ncbo.stanford.util.helper.reflection.ReflectionHelper;
 
@@ -38,35 +39,39 @@ import org.ncbo.stanford.util.helper.reflection.ReflectionHelper;
  */
 public class OntologyDescriptorParser {
 
-//	public static void main(String[] args) {
-//		try {
-//			OntologyDescriptorParser po = new OntologyDescriptorParser();
-//			String temp = "";
-//			temp = "SEP developers via the PSI and MSI mailing lists|psidev-gps-dev@lists.sourceforge.net, msi-workgroups-ontology@lists.sourceforge.net,  mdorf@lists.sourceforge.net";
-//			temp = "George Gkoutos	obo-phe_notype lists.sourceforge.net";
-//			temp = "George Gkoutos obo-phe_notype lists.sourceforge.net, obo-anotherthype lists.bioportal.org";
-//			List<ContactTypeBean> contacts = po.getContactList(temp);
-//			System.out.println(contacts);
-//			String filename = po
-//					.getFileName("http://obo.cvs.sourceforge.net/*checkout*/obo/obo/ontology/developmental/animal_development/parasite/PLO.ontology");
-//			List<MetadataFileBean> ol = po.parseOntologyFile();
-//
-//			for (MetadataFileBean mfb : ol) {
-//				System.out.println(mfb);
-//				System.out.println();
-//			}
-//
-//			System.out.println("filename: " + filename);
-//		} catch (Exception e) {
-//			e.printStackTrace();
-//		}
-//	}
+	// public static void main(String[] args) {
+	// try {
+	// OntologyDescriptorParser po = new OntologyDescriptorParser();
+	// String temp = "";
+	// temp = "SEP developers via the PSI and MSI mailing
+	// lists|psidev-gps-dev@lists.sourceforge.net,
+	// msi-workgroups-ontology@lists.sourceforge.net,
+	// mdorf@lists.sourceforge.net";
+	// temp = "George Gkoutos obo-phe_notype lists.sourceforge.net";
+	// temp = "George Gkoutos obo-phe_notype lists.sourceforge.net,
+	// obo-anotherthype lists.bioportal.org";
+	// List<ContactTypeBean> contacts = po.getContactList(temp);
+	// System.out.println(contacts);
+	// String filename = po
+	// .getFileName("http://obo.cvs.sourceforge.net/*checkout*/obo/obo/ontology/developmental/animal_development/parasite/PLO.ontology");
+	// List<MetadataFileBean> ol = po.parseOntologyFile();
+	//
+	// for (MetadataFileBean mfb : ol) {
+	// System.out.println(mfb);
+	// System.out.println();
+	// }
+	//
+	// System.out.println("filename: " + filename);
+	// } catch (Exception e) {
+	// e.printStackTrace();
+	// }
+	// }
 
 	private static final String LINE_PATTERN = "^(\\w+)(\\t|\\s)*(.*)";
 	private static final String UNDERSCORE_LETTER_PATTERN = "_+(\\w)";
 	private static final String LAST_SLASH_PATTERN = ".*/(.*)$";
 	private String descriptorFilePath = null;
-	
+
 	public OntologyDescriptorParser(String descriptorFilePath) {
 		this.descriptorFilePath = descriptorFilePath;
 	}
@@ -120,77 +125,71 @@ public class OntologyDescriptorParser {
 
 	/**
 	 * <pre>
-	 * Parses a contact string in the following format://		} catch (Exception e) {
-//			e.printStackTrace();
-//		}
-//	}
-
-	 * &quot;Person Name|email1@domain.com,email2@domain.com&quot;
-	 * and returns the list of ContactTypeBeans for 
-	 * each email in the list
+	 * Parses a contact string in the following format:
+	 * &quot;PersonName	email	domain.com&quot;
+	 * and returns the ContactTypeBean for the contact
 	 * </pre>
 	 * 
 	 * @param the
 	 *            value in the above format
-	 * @return list of ContactTypeBeans
+	 * @return ContactTypeBean
+	 * @throws InvalidDataException
 	 */
-	public static List<ContactTypeBean> getContactList(String temp) {
-		ArrayList<ContactTypeBean> contactList = new ArrayList<ContactTypeBean>(
-				1);
+	public static ContactTypeBean getContact(String contactString, String oboFoundryId)
+			throws InvalidDataException {
+		ContactTypeBean contact = null;
 		String name = "";
 		String email = "";
 
-		try {
-			if (!StringHelper.isNullOrNullString(temp)) {
-				String contactPattern = "^([\\w\\s]+)([\\s\\t\\|]+)(.*)";
-				Pattern pat = Pattern.compile(contactPattern);
-				Matcher m = pat.matcher(temp);
+		if (!StringHelper.isNullOrNullString(contactString)) {
+			String contactPattern = "^([\\w\\s]+)([\\s\\t\\|]+)(.*)";
+			Pattern pat = Pattern.compile(contactPattern);
+			Matcher m = pat.matcher(contactString);
+			m.find();
+
+			try {
+				name = m.group(1);
+			} catch (Exception e) {
+				name = "";
+			}
+
+			String rest = m.group(3);
+
+			if (rest != null) {
+				if (rest.indexOf('@') < 0) {
+					rest = rest.replaceFirst("[\\s\\t]", "@");
+				}
+
+				rest = rest.replaceFirst("[,\\s\\t\\\r]+", "###");
+
+				pat = Pattern.compile("^(.*)###(.*)$");
+				m = pat.matcher(rest);
 				m.find();
-				
-				try {
-					name = m.group(1);
-				} catch (Exception e) {
-					name = "";
-				}
-				
-				String rest = m.group(3);
 
-				if (rest != null) {
-					if (rest.indexOf('@') < 0) {
-						rest = rest.replaceFirst("[\\s\\t]", "@");
-					}
-
-					rest = rest.replaceFirst("[,\\s\\t\\\r]+", "###");
-
-					pat = Pattern.compile("^(.*)###(.*)$");
-					m = pat.matcher(rest);
-					m.find();
-
-					if (m.matches()) {
-						email = m.group(1);
-					} else {
-						email = rest;
-					}
-				}
-
-				if (!StringHelper.isNullOrNullString(email)) {
-					ContactTypeBean contact = new ContactTypeBean();
-					
-					if (StringHelper.isNullOrNullString(name)) {
-						name = email;
-					}
-					
-					contact.setName(name);
-					contact.setEmail(email);
-					contactList.add(contact);
+				if (m.matches()) {
+					email = m.group(1);
+				} else {
+					email = rest;
 				}
 			}
-		} catch (Exception e) {
-			e.printStackTrace();
-			contactList = new ArrayList<ContactTypeBean>(1);
+
+			if (!StringHelper.isNullOrNullString(email)) {
+				contact = new ContactTypeBean();
+
+				if (StringHelper.isNullOrNullString(name)) {
+					name = email;
+				}
+
+				contact.setName(name);
+				contact.setEmail(email);
+			} else {
+				throw new InvalidDataException(
+						"Contact list must be provided for ontology: "
+								+ oboFoundryId);
+			}
 		}
 
-		return contactList;
+		return contact;
 	}
 
 	/**
