@@ -3,10 +3,10 @@ package org.ncbo.stanford.bean;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import java.util.Set;
 
 import org.ncbo.stanford.domain.generated.NcboUser;
 import org.ncbo.stanford.domain.generated.NcboUserRole;
+import org.ncbo.stanford.util.MessageUtils;
 
 public class UserBean {
 
@@ -18,18 +18,15 @@ public class UserBean {
 	private String lastname;
 	private String phone;
 	private Date dateCreated;
-	private List roles;
+	private List<String> roles;
 
-	
 	/**
 	 * Populates the OntologyBean with data from a NcboOntology
 	 * 
 	 * @param ncboOntology
 	 */
 	public void populateFromEntity(NcboUser ncboUser) {
-		
 		if (ncboUser != null) {
-
 			this.setId(ncboUser.getId());
 			this.setUsername(ncboUser.getUsername());
 			this.setPassword(ncboUser.getPassword());
@@ -38,25 +35,24 @@ public class UserBean {
 			this.setLastname(ncboUser.getLastname());
 			this.setPhone(ncboUser.getPhone());
 			this.setDateCreated(ncboUser.getDateCreated());
-			List roles = new ArrayList();
-			for(Object role :  ncboUser.getNcboUserRoles()){
-				
+
+			List<String> roles = new ArrayList<String>(1);
+
+			for (Object role : ncboUser.getNcboUserRoles()) {
 				roles.add(((NcboUserRole) role).getNcboLRole().getName());
 			}
+
 			this.setRoles(roles);
-		} 
-		
+		}
 	}
-	
+
 	/**
 	 * Populates the OntologyBean with data from a NcboOntology
 	 * 
 	 * @param ncboOntology
 	 */
 	public void populateToEntity(NcboUser ncboUser) {
-		
 		if (ncboUser != null) {
-			
 			ncboUser.setId(this.getId());
 			ncboUser.setUsername(this.getUsername());
 			ncboUser.setPassword(this.getPassword());
@@ -64,11 +60,17 @@ public class UserBean {
 			ncboUser.setFirstname(this.getFirstname());
 			ncboUser.setLastname(this.getLastname());
 			ncboUser.setPhone(this.getPhone());
-			ncboUser.setDateCreated(this.getDateCreated());			
+			ncboUser.setDateCreated(this.getDateCreated());
 		}
 	}
-	
-	
+
+	/**
+	 * Extracts default passwords and sets it in the bean
+	 */
+	public void generateDefaultPassword() {
+		this.setPassword(MessageUtils.getMessage("default.password"));
+	}
+
 	/**
 	 * @return the id
 	 */
@@ -189,14 +191,18 @@ public class UserBean {
 		this.dateCreated = dateCreated;
 	}
 
-	public List getRoles() {
+	/**
+	 * @return the roles
+	 */
+	public List<String> getRoles() {
 		return roles;
 	}
 
-	public void setRoles(List roles) {
+	/**
+	 * @param roles
+	 *            the roles to set
+	 */
+	public void setRoles(List<String> roles) {
 		this.roles = roles;
 	}
-	
-	
-	
 }
