@@ -530,6 +530,9 @@
 		<property name="ontologyVersionStatusToOBOFoundryMap">
 			<ref local="ontologyVersionStatusToOBOFoundryMap" />
 		</property>
+		<property name="ontologyFoundryToOBOFoundryMap">
+			<ref local="ontologyFoundryToOBOFoundryMap" />
+		</property>
 		<property name="tempDir">
 			<ref bean="tempDir" />
 		</property>
@@ -718,6 +721,33 @@
 			</key>
 			<util:constant
 				static-field="org.ncbo.stanford.util.constants.ApplicationConstants.VERSION_STATUS_PREPRODUCTION" />
+		</entry>
+	</util:map>
+
+	<!-- Maps foundry preference in OBO Foundry to the application TRUE/FALSE status -->
+	<util:map id="ontologyFoundryToOBOFoundryMap"
+		map-class="java.util.HashMap">
+		<entry>
+			<key>
+				<bean class="java.lang.String">
+					<constructor-arg>
+						<value>Yes</value>
+					</constructor-arg>
+				</bean>
+			</key>
+			<util:constant
+				static-field="org.ncbo.stanford.util.constants.ApplicationConstants.TRUE" />
+		</entry>
+		<entry>
+			<key>
+				<bean class="java.lang.String">
+					<constructor-arg>
+						<value>No</value>
+					</constructor-arg>
+				</bean>
+			</key>
+			<util:constant
+				static-field="org.ncbo.stanford.util.constants.ApplicationConstants.FALSE" />
 		</entry>
 	</util:map>
 
