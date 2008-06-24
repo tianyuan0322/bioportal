@@ -30,6 +30,12 @@ import org.ncbo.stanford.util.ontologyfile.pathhandler.impl.PhysicalDirectoryFil
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
+/**
+ * A utility that runs as a scheduled process, connecting to OBO Sourceforge CVS
+ * system and pulling all new and updated ontologies into BioPortal
+ * 
+ * @author Michael Dorf
+ */
 @Transactional
 public class OBOCVSPullServiceImpl implements OBOCVSPullService {
 
@@ -51,6 +57,9 @@ public class OBOCVSPullServiceImpl implements OBOCVSPullService {
 	private Map<String, Byte> ontologyFoundryToOBOFoundryMap = new HashMap<String, Byte>();
 	private String tempDir;
 
+	/**
+	 * Performs the pull of ontologies from OBO Sourceforge CVS
+	 */
 	@Transactional(propagation = Propagation.NEVER)
 	public void doCVSPull() {
 		CVSUtils cvsUtils = new CVSUtils(oboSourceforgeCVSUsername,
