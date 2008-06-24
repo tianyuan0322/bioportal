@@ -1,10 +1,14 @@
 package org.ncbo.stanford.service.loader.remote.impl;
 
+import java.io.File;
+import java.io.FileNotFoundException;
 import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.ncbo.stanford.bean.ContactTypeBean;
 import org.ncbo.stanford.bean.MetadataFileBean;
 import org.ncbo.stanford.bean.OntologyBean;
@@ -20,11 +24,17 @@ import org.ncbo.stanford.util.cvs.CVSFile;
 import org.ncbo.stanford.util.cvs.CVSUtils;
 import org.ncbo.stanford.util.helper.StringHelper;
 import org.ncbo.stanford.util.ontologyfile.OntologyDescriptorParser;
+import org.ncbo.stanford.util.ontologyfile.compressedfilehandler.impl.CompressedFileHandlerFactory;
+import org.ncbo.stanford.util.ontologyfile.pathhandler.FilePathHandler;
+import org.ncbo.stanford.util.ontologyfile.pathhandler.impl.PhysicalDirectoryFilePathHandlerImpl;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 @Transactional
 public class OBOCVSPullServiceImpl implements OBOCVSPullService {
+
+	private static final Log log = LogFactory
+			.getLog(OBOCVSPullServiceImpl.class);
 
 	private String oboSourceforgeCVSUsername;
 	private String oboSourceforgeCVSPassword;
@@ -57,102 +67,92 @@ public class OBOCVSPullServiceImpl implements OBOCVSPullService {
 			List<MetadataFileBean> ontologyList = odp.parseOntologyFile();
 
 			for (MetadataFileBean mfb : ontologyList) {
-				String filename = OntologyDescriptorParser.getFileName(mfb
-						.getDownload());
-				CVSFile cf;
-				// is the file there?
-				if (!StringHelper.isNullOrNullString(filename)
-						&& (cf = (CVSFile) updateFiles.get(filename)) != null) {
+				try {
+					String filename = OntologyDescriptorParser.getFileName(mfb
+							.getDownload());
+					CVSFile cf = (CVSFile) updateFiles.get(filename);
+
+					// is the file there?
+					if (StringHelper.isNullOrNullString(filename)) {
+						throw new InvalidDataException(
+								"No filename is specified in the metadata descriptor file for ontology "
+										+ mfb.getId());
+					}
+
+					if (cf == null) {
+						throw new FileNotFoundException(
+								"An entry exists in the metadata descriptor for "
+										+ mfb.getId()
+										+ " ontology but the file (" + filename
+										+ ") is missing");
+					}
+
 					String format = getFormat(mfb.getFormat());
 
-					if (!format.equals(ApplicationConstants.FORMAT_INVALID)) {
-						OntologyBean ont = ontologyService
-								.findLatestOntologyVersionByOboFoundryId(mfb
-										.getId());
-
-						if (ont == null) {
-							// new ontology
-							ont = new OntologyBean();
-
-							UserBean userBean = linkOntologyUser(mfb
-									.getContact(), mfb.getId());
-							ont.setUserId(userBean.getId());
-							ont.setVersionNumber(cf.getVersion());
-							ont.setVersionStatus(getStatus(mfb.getStatus()));
-							ont.setIsCurrent(ApplicationConstants.TRUE);
-							ont.setIsRemote(isRemote(mfb.getDownload()));
-							ont.setStatusId(StatusEnum.STATUS_WAITING
-									.getStatus());
-							ont
-									.setDateCreated(Calendar.getInstance()
-											.getTime());
-							ont.setDateReleased(cf.getTimeStamp().getTime());
-							ont.setOboFoundryId(mfb.getId());
-							ont.setDisplayLabel(mfb.getTitle());
-							ont.setFormat(format);
-							ont.setContactName(userBean.getLastname());
-							ont.setContactEmail(userBean.getEmail());
-							ont.setHomepage(OntologyDescriptorParser
-									.getHomepage(mfb.getHome()));
-							ont.setDocumentation(OntologyDescriptorParser
-									.getDocumentation(mfb.getDocumentation()));
-							ont.setPublication(OntologyDescriptorParser
-									.getPublication(mfb.getPublication()));
-							ont.setIsFoundry(isFoundry(mfb.getFoundry()));
-
-						} else {
-							// do we already have this version loaded?
-							if (!cf.getVersion().equals(ont.getVersionNumber())) {
-
-								UserBean userBean = linkOntologyUser(mfb
-										.getContact(), mfb.getId());
-								ont.setUserId(userBean.getId());
-								ont.setVersionNumber(cf.getVersion());
-								ont
-										.setVersionStatus(getStatus(mfb
-												.getStatus()));
-								ont.setIsCurrent(ApplicationConstants.TRUE);
-								ont.setIsRemote(isRemote(mfb.getDownload()));
-								ont.setStatusId(StatusEnum.STATUS_WAITING
-										.getStatus());
-								ont.setDateCreated(Calendar.getInstance()
-										.getTime());
-								ont
-										.setDateReleased(cf.getTimeStamp()
-												.getTime());
-								ont.setOboFoundryId(mfb.getId());
-								ont.setDisplayLabel(mfb.getTitle());
-								ont.setFormat(format);
-								ont.setContactName(userBean.getLastname());
-								ont.setContactEmail(userBean.getEmail());
-								ont.setHomepage(OntologyDescriptorParser
-										.getHomepage(mfb.getHome()));
-								ont.setDocumentation(OntologyDescriptorParser
-										.getDocumentation(mfb
-												.getDocumentation()));
-								ont.setPublication(OntologyDescriptorParser
-										.getPublication(mfb.getPublication()));
-								ont.setIsFoundry(isFoundry(mfb.getFoundry()));
-
-							}
-						}
-					} else {
+					if (format.equals(ApplicationConstants.FORMAT_INVALID)) {
 						throw new InvalidOntologyFormatException(
 								"The ontology format, " + mfb.getFormat()
 										+ " for ontology " + mfb.getId()
 										+ " is invalid");
 					}
-				} else {
-					// TODO: throw an exception entry exists but file not found
 
+					OntologyBean ont = populateOntologyBean(mfb, cf);
+
+					FilePathHandler filePathHandler = new PhysicalDirectoryFilePathHandlerImpl(
+							CompressedFileHandlerFactory
+									.createFileHandler(format), new File(cf
+									.getPath()));
+					ontologyService.createOntology(ont, filePathHandler);
+				} catch (Exception e) {
+					log.error(e);
+					e.printStackTrace();
 				}
-
 			}
-
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
+			log.error(e);
 			e.printStackTrace();
 		}
+	}
+
+	public OntologyBean populateOntologyBean(MetadataFileBean mfb, CVSFile cf)
+			throws InvalidDataException {
+		OntologyBean ont = ontologyService
+				.findLatestOntologyVersionByOboFoundryId(mfb.getId());
+
+		if (cf.getVersion().equals(ont.getVersionNumber())) {
+			// no new version found
+			ont = null;
+		} else {
+			if (ont == null) {
+				// new ontology
+				ont = new OntologyBean();
+			}
+
+			UserBean userBean = linkOntologyUser(mfb.getContact(), mfb.getId());
+			ont.setUserId(userBean.getId());
+			ont.setVersionNumber(cf.getVersion());
+			ont.setVersionStatus(getStatus(mfb.getStatus()));
+			ont.setIsCurrent(ApplicationConstants.TRUE);
+			ont.setIsRemote(isRemote(mfb.getDownload()));
+			ont.setStatusId(StatusEnum.STATUS_WAITING.getStatus());
+			ont.setDateCreated(Calendar.getInstance().getTime());
+			ont.setDateReleased(cf.getTimeStamp().getTime());
+			ont.setOboFoundryId(mfb.getId());
+			ont.setDisplayLabel(mfb.getTitle());
+			ont.setFormat(getFormat(mfb.getFormat()));
+			ont.setContactName(userBean.getLastname());
+			ont.setContactEmail(userBean.getEmail());
+			ont
+					.setHomepage(OntologyDescriptorParser.getHomepage(mfb
+							.getHome()));
+			ont.setDocumentation(OntologyDescriptorParser.getDocumentation(mfb
+					.getDocumentation()));
+			ont.setPublication(OntologyDescriptorParser.getPublication(mfb
+					.getPublication()));
+			ont.setIsFoundry(isFoundry(mfb.getFoundry()));
+		}
+
+		return ont;
 	}
 
 	/**
