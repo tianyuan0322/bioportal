@@ -31,6 +31,7 @@ public class MetadataFileBean {
 	private String contact;
 	private String format;
 	private String description;
+	private String publication;
 	private String domain;
 	private String relevantOrganism;
 	private String subtypesOf;
@@ -349,6 +350,20 @@ public class MetadataFileBean {
 	}
 
 	/**
+	 * @return the publication
+	 */
+	public String getPublication() {
+		return publication;
+	}
+
+	/**
+	 * @param publication the publication to set
+	 */
+	public void setPublication(String publication) {
+		this.publication = publication;
+	}
+
+	/**
 	 * output of the class
 	 */
 	public String toString() {
@@ -365,6 +380,7 @@ public class MetadataFileBean {
 			"contact: " + contact + "\n" + 
 			"format: " + format + "\n" + 
 			"description: " + description + "\n" + 
+			"publication: " + publication + "\n" + 
 			"domain: " + domain + "\n" + 
 			"relevantOrganism: " + relevantOrganism + "\n" + 
 			"subtypesOf: " + subtypesOf + "\n" + 
