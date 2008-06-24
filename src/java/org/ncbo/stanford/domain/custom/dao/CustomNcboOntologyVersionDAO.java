@@ -37,7 +37,7 @@ public class CustomNcboOntologyVersionDAO extends NcboOntologyVersionDAO {
 	 */
 	public CustomNcboOntologyVersionDAO() {
 		super();
-	}	
+	}
 
 	/**
 	 * Finds a given version of ontology
@@ -45,13 +45,12 @@ public class CustomNcboOntologyVersionDAO extends NcboOntologyVersionDAO {
 	 * @return ontology object
 	 */
 	public NcboOntology findOntologyVersion(final Integer ontologyVersionId) {
-		NcboOntology ontology =  (NcboOntology) getSession().createCriteria(
-				NcboOntology.class)
-					.add(Expression.eq("id", ontologyVersionId))
-					.uniqueResult();		
-		
+		NcboOntology ontology = (NcboOntology) getSession().createCriteria(
+				NcboOntology.class).add(Expression.eq("id", ontologyVersionId))
+				.uniqueResult();
+
 		NcboOntologyVersion ontologyVersion = findById(ontologyVersionId);
-		
+
 		if (ontologyVersion != null) {
 			Set<NcboOntologyFile> files = ontologyVersion
 					.getNcboOntologyFiles();
@@ -66,10 +65,9 @@ public class CustomNcboOntologyVersionDAO extends NcboOntologyVersionDAO {
 				ontology.addCategoryId(cat.getNcboLCategory().getId());
 			}
 		}
-		
+
 		return ontology;
-	}	
-	
+	}
 
 	/**
 	 * Search Ontology metadata
@@ -77,34 +75,56 @@ public class CustomNcboOntologyVersionDAO extends NcboOntologyVersionDAO {
 	 * @return List of ontology objects
 	 */
 	public List<NcboOntology> searchOntologyMetadata(String query) {
-		List<NcboOntology> ontologies =   getSession().createCriteria(
-				NcboOntology.class)
-					.add(Expression.or(Expression.like("publication", "%"+query+"%"),
-							Expression.or(Expression.like("homepage", "%"+query+"%"),
-									Expression.or(Expression.like("contactEmail", "%"+query+"%"),
-											Expression.or(Expression.like("contactName", "%"+query+"%"),
-													Expression.or(Expression.like("displayLabel", "%"+query+"%"),
-															Expression.like("format", "%"+query+"%"))))))).list();		
-		
+		List<NcboOntology> ontologies = getSession().createCriteria(
+				NcboOntology.class).add(
+				Expression.or(
+						Expression.like("publication", "%" + query + "%"),
+						Expression.or(Expression.like("homepage", "%" + query
+								+ "%"), Expression.or(Expression.like(
+								"contactEmail", "%" + query + "%"), Expression
+								.or(Expression.like("contactName", "%" + query
+										+ "%"), Expression.or(Expression.like(
+										"displayLabel", "%" + query + "%"),
+										Expression.like("format", "%" + query
+												+ "%"))))))).list();
+
 		return ontologies;
 	}
-	
-	
-	
+
+	/**
+	 * Finds the latest version of a given ontology based on the obo foundry id
+	 * 
+	 * @param oboFoundryId
+	 * @return the latest ontology version
+	 */
+	public NcboOntology findLatestOntologyVersionByOboFoundryId(
+			final String oboFoundryId) {
+		return (NcboOntology) getHibernateTemplate().execute(
+				new HibernateCallback() {
+					public Object doInHibernate(Session session)
+							throws HibernateException, SQLException {
+						Query query = session
+								.getNamedQuery("VNcboOntologyVersionDAO.GET_LATEST_ONTOLOGY_VERSION_BY_OBO_FOUNDRY_ID");
+						query.setString("oboFoundryId", oboFoundryId);
+
+						return query.uniqueResult();
+					}
+				});
+
+	}
+
 	/**
 	 * Finds a given set of ontology versions
 	 * 
 	 * @return List of ontology objects
 	 */
 	public List<NcboOntology> findOntologyVersions(List<Integer> versionIds) {
-		List<NcboOntology> ontologies =   getSession().createCriteria(
-				NcboOntology.class)
-					.add(Expression.in("id", versionIds))
-					.list();		
-		
+		List<NcboOntology> ontologies = getSession().createCriteria(
+				NcboOntology.class).add(Expression.in("id", versionIds)).list();
+
 		return ontologies;
-	}	
-	
+	}
+
 	/**
 	 * Find all unique latest current versions of ontologies
 	 * 
@@ -122,7 +142,7 @@ public class CustomNcboOntologyVersionDAO extends NcboOntologyVersionDAO {
 			}
 		});
 	}
-	
+
 	/**
 	 * Find all unique latest current versions of ontologies
 	 * 
@@ -141,17 +161,17 @@ public class CustomNcboOntologyVersionDAO extends NcboOntologyVersionDAO {
 						return query.uniqueResult();
 					}
 				});
-		
+
 		NcboOntologyVersion ontologyVer = findById(ontology.getId());
 		Set<NcboOntologyFile> files = ontologyVer.getNcboOntologyFiles();
-		
+
 		for (NcboOntologyFile file : files) {
 			ontology.addFilename(file.getFilename());
 		}
 
 		return ontology;
-	}	
-	
+	}
+
 	/**
 	 * @param transientInstance
 	 * @return
@@ -160,9 +180,9 @@ public class CustomNcboOntologyVersionDAO extends NcboOntologyVersionDAO {
 			NcboOntologyVersion transientInstance) {
 		try {
 			Integer newId = (Integer) getHibernateTemplate().save(
-					transientInstance);			
+					transientInstance);
 			getHibernateTemplate().flush();
-			
+
 			return this.findById(newId);
 		} catch (RuntimeException re) {
 			log.error("save failed", re);
@@ -179,11 +199,12 @@ public class CustomNcboOntologyVersionDAO extends NcboOntologyVersionDAO {
 	public NcboOntologyMetadata findOntologyMetadataById(
 			final Integer ontologyVersionId) {
 		NcboOntologyVersion ncboOntologyVersion = findById(ontologyVersionId);
-		Set<NcboOntologyMetadata> metadataSet = ncboOntologyVersion.getNcboOntologyMetadatas();
-		
+		Set<NcboOntologyMetadata> metadataSet = ncboOntologyVersion
+				.getNcboOntologyMetadatas();
+
 		Object[] metadataArr = metadataSet.toArray();
 		NcboOntologyMetadata ncboMetadata = (NcboOntologyMetadata) metadataArr[0];
-		
+
 		return ncboMetadata;
 	}
 }
