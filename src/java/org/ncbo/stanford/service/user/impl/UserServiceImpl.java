@@ -64,14 +64,10 @@ public class UserServiceImpl implements UserService {
 		NcboUser ncboUser = new NcboUser();
 		userBean.populateToEntity(ncboUser);
 
-		ncboUserDAO.save(ncboUser);
+		//ncboUserDAO.save(ncboUser);
+		NcboUser newNcboUser = ncboUserDAO.saveUser(ncboUser);
+		userBean.setId(newNcboUser.getId());
 
-
-		UserBean newUserBean = findUser(userBean.getUsername());
-		if (newUserBean != null) {
-			userBean.setId(newUserBean.getId());
-		}
-		System.out.println("ID = " + userBean.getId());
 	}
 
 	public void updateUser(UserBean userBean) {
