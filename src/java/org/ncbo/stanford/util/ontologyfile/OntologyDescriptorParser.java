@@ -70,6 +70,7 @@ public class OntologyDescriptorParser {
 	private static final String LINE_PATTERN = "^(\\w+)(\\t|\\s)*(.*)";
 	private static final String UNDERSCORE_LETTER_PATTERN = "_+(\\w)";
 	private static final String LAST_SLASH_PATTERN = ".*/(.*)$";
+	private static final String VALUE_SEPARATOR = "|";
 	private String descriptorFilePath = null;
 
 	public OntologyDescriptorParser(String descriptorFilePath) {
@@ -135,8 +136,8 @@ public class OntologyDescriptorParser {
 	 * @return ContactTypeBean
 	 * @throws InvalidDataException
 	 */
-	public static ContactTypeBean getContact(String contactString, String oboFoundryId)
-			throws InvalidDataException {
+	public static ContactTypeBean getContact(String contactString,
+			String oboFoundryId) throws InvalidDataException {
 		ContactTypeBean contact = null;
 		String name = "";
 		String email = "";
@@ -190,6 +191,53 @@ public class OntologyDescriptorParser {
 		}
 
 		return contact;
+	}
+
+	/**
+	 * Parses out the publication url from the descriptor file string
+	 * 
+	 * @param publicationString
+	 * @return
+	 */
+	public static String getPublication(String publicationString) {
+		return (StringHelper.isNullOrNullString(publicationString)) ? null
+				: publicationString;
+	}
+
+	/**
+	 * Parses out the documentation url from the descriptor file string
+	 * 
+	 * @param documentationString
+	 * @return
+	 */
+	public static String getDocumentation(String documentationString) {
+		String documentation = null;
+
+		if (!StringHelper.isNullOrNullString(documentationString)
+				&& documentationString.contains(VALUE_SEPARATOR)) {
+			documentation = documentationString.substring(documentationString
+					.indexOf(VALUE_SEPARATOR) + 1);
+		}
+
+		return documentation;
+	}
+
+	/**
+	 * Parses out the homepage url from the descriptor file string
+	 * 
+	 * @param homepageString
+	 * @return
+	 */
+	public static String getHomepage(String homepageString) {
+		String homepage = null;
+
+		if (!StringHelper.isNullOrNullString(homepageString)
+				&& homepageString.contains(VALUE_SEPARATOR)) {
+			homepage = homepageString.substring(homepageString
+					.indexOf(VALUE_SEPARATOR) + 1);
+		}
+
+		return homepage;
 	}
 
 	/**
