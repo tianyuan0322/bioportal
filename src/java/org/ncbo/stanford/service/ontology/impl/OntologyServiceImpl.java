@@ -36,6 +36,25 @@ public class OntologyServiceImpl implements OntologyService {
 	private CustomNcboOntologyLoadQueueDAO ncboOntologyLoadQueueDAO;
 	private CustomNcboSeqOntologyIdDAO ncboSeqOntologyIdDAO;
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.ncbo.stanford.service.ontology.OntologyService#findLatestOntologyVersionByOboFoundryId(java.lang.String)
+	 */
+	public OntologyBean findLatestOntologyVersionByOboFoundryId(
+			String oboFoundryId) {
+		OntologyBean ontologyBean = null;
+		NcboOntology ncboOntology = ncboOntologyVersionDAO
+				.findLatestOntologyVersionByOboFoundryId(oboFoundryId);
+
+		if (ncboOntology != null) {
+			ontologyBean = new OntologyBean();
+			ontologyBean.populateFromEntity(ncboOntology);
+		}
+
+		return ontologyBean;
+	}
+
 	/**
 	 * Returns a single record for each ontology in the system. If more than one
 	 * version of ontology exists, return the latest version.
@@ -55,42 +74,42 @@ public class OntologyServiceImpl implements OntologyService {
 
 		return ontBeanList;
 	}
-	
+
 	/**
-	 * Returns all versions for given ontology.
-	 * Two steps :
-	 * 1. Get list of OntologyVersions to get  the list of ontologyVersionId. 
-	 * 2. Get list of NcboOntology entity from the list of ontVersionId.
+	 * Returns all versions for given ontology. Two steps : 1. Get list of
+	 * OntologyVersions to get the list of ontologyVersionId. 2. Get list of
+	 * NcboOntology entity from the list of ontVersionId.
 	 * 
 	 * @return list of Ontology beans
 	 */
-	public List<OntologyBean> findAllOntologyVersionsByOntologyId(Integer ontologyId) {
-
+	public List<OntologyBean> findAllOntologyVersionsByOntologyId(
+			Integer ontologyId) {
 		ArrayList<OntologyBean> ontBeanList = new ArrayList<OntologyBean>(1);
-		
+
 		// 1. get version IDs
 		List<NcboOntologyVersion> ontVersionList = ncboOntologyVersionDAO
 				.findByOntologyId(ontologyId);
 		List<Integer> versionIds = new ArrayList<Integer>(1);
-		
+
 		for (NcboOntologyVersion ncboOntologyVersion : ontVersionList) {
 			versionIds.add(new Integer(ncboOntologyVersion.getId()));
-		}	
-			
+		}
+
 		// check if the list is empty before executing next query
-		if ( ontVersionList.size() == 0 ) { 
+		if (ontVersionList.size() == 0) {
 			return ontBeanList;
 		}
-		
+
 		// 2. get NcboOntology entities to get OntologyBeans
 
-		List<NcboOntology> ontEntityList = ncboOntologyVersionDAO.findOntologyVersions(versionIds);
+		List<NcboOntology> ontEntityList = ncboOntologyVersionDAO
+				.findOntologyVersions(versionIds);
 		for (NcboOntology ncboOntology : ontEntityList) {
 			OntologyBean ontologyBean = new OntologyBean();
 			ontologyBean.populateFromEntity(ncboOntology);
 			ontBeanList.add(ontologyBean);
-		}	
-		
+		}
+
 		return ontBeanList;
 	}
 
@@ -115,13 +134,16 @@ public class OntologyServiceImpl implements OntologyService {
 	 * @return
 	 */
 	public OntologyBean findOntology(Integer ontologyVersionId) {
+		OntologyBean ontologyBean = null;
+		NcboOntology ncboOntology = ncboOntologyVersionDAO
+				.findOntologyVersion(ontologyVersionId);
 
-		OntologyBean ontologyBean = new OntologyBean();
-		ontologyBean.populateFromEntity(ncboOntologyVersionDAO
-				.findOntologyVersion(ontologyVersionId));
+		if (ncboOntology != null) {
+			ontologyBean = new OntologyBean();
+			ontologyBean.populateFromEntity(ncboOntology);
+		}
 
 		return ontologyBean;
-
 	}
 
 	/**
@@ -162,10 +184,11 @@ public class OntologyServiceImpl implements OntologyService {
 	 * 
 	 * @param ontologyBean
 	 * @return
-	 * @throws Exception 
+	 * @throws Exception
 	 */
 	@Transactional(rollbackFor = Exception.class)
-	public void createOntology(OntologyBean ontologyBean, FilePathHandler filePathHander) throws Exception {
+	public void createOntology(OntologyBean ontologyBean,
+			FilePathHandler filePathHander) throws Exception {
 
 		// assign new Ontology Id for new instance
 		generateNextOntologyId(ontologyBean);
@@ -186,12 +209,11 @@ public class OntologyServiceImpl implements OntologyService {
 		NcboOntologyVersion newOntologyVersion = ncboOntologyVersionDAO
 				.saveOntologyVersion(ontologyVersion);
 		ontologyBean.setId(newOntologyVersion.getId());
-		
+
 		// 2. <ontologyMetadata> - populate and save
 		ontologyBean.populateToMetadataEntity(ontologyMetadata,
 				newOntologyVersion);
 		ncboOntologyMetadataDAO.save(ontologyMetadata);
-
 
 		// 3. <ontologyCategory> - populate and save
 		ontologyBean.populateToCategoryEntity(ontologyCategoryList,
@@ -201,10 +223,11 @@ public class OntologyServiceImpl implements OntologyService {
 		}
 
 		// upload the fileItem
-		List<String> fileNames = uploadOntologyFile(ontologyBean, filePathHander);
+		List<String> fileNames = uploadOntologyFile(ontologyBean,
+				filePathHander);
 		ontologyBean.setFilenames(fileNames);
 		ontologyBean.setFilePath(ontologyBean.getOntologyDirPath());
-		
+
 		// 4. <ontologyFile> - populate and save
 		ontologyBean.populateToFileEntity(ontologyFileList, newOntologyVersion);
 		for (NcboOntologyFile ontologyFile : ontologyFileList) {
@@ -273,8 +296,9 @@ public class OntologyServiceImpl implements OntologyService {
 		// get the NcboOntologyVersion instance using OntologyVersionId
 		NcboOntologyVersion ontologyVersion = ncboOntologyVersionDAO
 				.findById(ontologyBean.getId());
-		
-		Set<NcboOntologyCategory> categories = ontologyVersion.getNcboOntologyCategories();
+
+		Set<NcboOntologyCategory> categories = ontologyVersion
+				.getNcboOntologyCategories();
 		for (NcboOntologyCategory ontologyCategory : categories) {
 			ncboOntologyCategoryDAO.delete(ontologyCategory);
 		}
@@ -290,30 +314,34 @@ public class OntologyServiceImpl implements OntologyService {
 			return;
 		}
 
-		// 2. <ontologyMetadata>		
-		Set<NcboOntologyMetadata> ontologyMetadataSet = ontologyVersion.getNcboOntologyMetadatas();
-		for (NcboOntologyMetadata ontologyMetadata : ontologyMetadataSet) {			
+		// 2. <ontologyMetadata>
+		Set<NcboOntologyMetadata> ontologyMetadataSet = ontologyVersion
+				.getNcboOntologyMetadatas();
+		for (NcboOntologyMetadata ontologyMetadata : ontologyMetadataSet) {
 			ncboOntologyMetadataDAO.delete(ontologyMetadata);
 		}
 
 		// 3. <ontologyCategory>
-		Set<NcboOntologyCategory> ontologyCategorySet = ontologyVersion.getNcboOntologyCategories();
-		for (NcboOntologyCategory ontologyCategory : ontologyCategorySet) {			
+		Set<NcboOntologyCategory> ontologyCategorySet = ontologyVersion
+				.getNcboOntologyCategories();
+		for (NcboOntologyCategory ontologyCategory : ontologyCategorySet) {
 			ncboOntologyCategoryDAO.delete(ontologyCategory);
 		}
 
-		// 4. <ontologyFile>		
-		Set<NcboOntologyFile> ontologyFileSet = ontologyVersion.getNcboOntologyFiles();
-		for (NcboOntologyFile ontologyFile : ontologyFileSet) {			
+		// 4. <ontologyFile>
+		Set<NcboOntologyFile> ontologyFileSet = ontologyVersion
+				.getNcboOntologyFiles();
+		for (NcboOntologyFile ontologyFile : ontologyFileSet) {
 			ncboOntologyFileDAO.delete(ontologyFile);
 		}
 
 		// 5. <ontologyQueue>
-		Set<NcboOntologyLoadQueue> ontologyLoadQueueSet = ontologyVersion.getNcboOntologyLoadQueues();
-		for (NcboOntologyLoadQueue ontologyLoadQueue : ontologyLoadQueueSet) {			
+		Set<NcboOntologyLoadQueue> ontologyLoadQueueSet = ontologyVersion
+				.getNcboOntologyLoadQueues();
+		for (NcboOntologyLoadQueue ontologyLoadQueue : ontologyLoadQueueSet) {
 			ncboOntologyLoadQueueDAO.delete(ontologyLoadQueue);
 		}
-		
+
 		// now all the dependency is removed and ontologyVersion can be deleted
 		ncboOntologyVersionDAO.delete(ontologyVersion);
 
@@ -403,8 +431,8 @@ public class OntologyServiceImpl implements OntologyService {
 		}
 	}
 
-	private List<String> uploadOntologyFile(OntologyBean ontologyBean, FilePathHandler filePathHandler)
-			throws Exception {
+	private List<String> uploadOntologyFile(OntologyBean ontologyBean,
+			FilePathHandler filePathHandler) throws Exception {
 
 		List<String> fileNames = new ArrayList<String>(1);
 
@@ -414,7 +442,8 @@ public class OntologyServiceImpl implements OntologyService {
 						.processOntologyFileUpload(ontologyBean);
 			} catch (Exception e) {
 				// log to error
-				log.error("Error in OntologyService:uploadOntologyFile()! - remote file (fileItem) "
+				log
+						.error("Error in OntologyService:uploadOntologyFile()! - remote file (fileItem) "
 								+ e.getMessage());
 				e.printStackTrace();
 				throw e;

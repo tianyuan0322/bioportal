@@ -14,6 +14,14 @@ import org.ncbo.stanford.util.ontologyfile.pathhandler.FilePathHandler;
 public interface OntologyService {
 
 	/**
+	 * Returns the latest version of an ontology using its obo foundry id
+	 * 
+	 * @param oboFoundryId
+	 * @return
+	 */
+	public OntologyBean findLatestOntologyVersionByOboFoundryId(String oboFoundryId);
+	
+	/**
 	 * Returns a single record for each ontology in the system. If more than one
 	 * version of ontology exists, return the latest version.
 	 * 
