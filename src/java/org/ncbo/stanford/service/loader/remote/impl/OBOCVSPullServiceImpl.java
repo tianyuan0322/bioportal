@@ -98,11 +98,13 @@ public class OBOCVSPullServiceImpl implements OBOCVSPullService {
 
 					OntologyBean ont = populateOntologyBean(mfb, cf);
 
-					FilePathHandler filePathHandler = new PhysicalDirectoryFilePathHandlerImpl(
-							CompressedFileHandlerFactory
-									.createFileHandler(format), new File(cf
-									.getPath()));
-					ontologyService.createOntology(ont, filePathHandler);
+					if (ont != null) {
+						FilePathHandler filePathHandler = new PhysicalDirectoryFilePathHandlerImpl(
+								CompressedFileHandlerFactory
+										.createFileHandler(format), new File(cf
+										.getPath()));
+						ontologyService.createOntology(ont, filePathHandler);
+					}
 				} catch (Exception e) {
 					log.error(e);
 					e.printStackTrace();
@@ -114,7 +116,16 @@ public class OBOCVSPullServiceImpl implements OBOCVSPullService {
 		}
 	}
 
-	public OntologyBean populateOntologyBean(MetadataFileBean mfb, CVSFile cf)
+	/**
+	 * Populates an ontology bean from the metadata file bean. Returns null if
+	 * no new version exists
+	 * 
+	 * @param mfb
+	 * @param cf
+	 * @return
+	 * @throws InvalidDataException
+	 */
+	private OntologyBean populateOntologyBean(MetadataFileBean mfb, CVSFile cf)
 			throws InvalidDataException {
 		OntologyBean ont = ontologyService
 				.findLatestOntologyVersionByOboFoundryId(mfb.getId());
