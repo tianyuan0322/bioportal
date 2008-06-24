@@ -287,7 +287,8 @@ CREATE TABLE `ncbo_user` (
   `lastname` varchar(64) NOT NULL,
   `phone` varchar(32) default NULL,
   `date_created` timestamp NOT NULL default CURRENT_TIMESTAMP,
-  PRIMARY KEY  (`id`)
+  PRIMARY KEY  (`id`),
+  UNIQUE KEY `idx_unique_username` (`username`)
 ) ENGINE=InnoDB AUTO_INCREMENT=34207 DEFAULT CHARSET=latin1 COMMENT='InnoDB free: 3072 kB';
 
 /*Table structure for table `ncbo_user_role` */
