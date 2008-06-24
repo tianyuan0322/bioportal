@@ -95,7 +95,7 @@ public class OntologyBean {
 
 		}
 	}
-
+	
 	/**
 	 * Populates a NcboOntologyMetadata Entity from this ontologyBean.
 	 * OntologyVersion should have been populated from OntologyBean before
@@ -103,7 +103,6 @@ public class OntologyBean {
 	 * 
 	 * @param ontologyVersion
 	 */
-
 	public void populateToMetadataEntity(NcboOntologyMetadata metadata,
 			NcboOntologyVersion ontologyVersion) {
 		if (metadata != null) {
@@ -127,7 +126,6 @@ public class OntologyBean {
 	 * 
 	 * @param ncboOntology
 	 */
-
 	public void populateToVersionEntity(NcboOntologyVersion ontologyVersion) {
 
 		if (ontologyVersion != null) {
