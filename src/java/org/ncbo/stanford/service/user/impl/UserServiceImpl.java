@@ -1,17 +1,13 @@
 package org.ncbo.stanford.service.user.impl;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
-import org.ncbo.stanford.bean.OntologyBean;
 import org.ncbo.stanford.bean.UserBean;
 import org.ncbo.stanford.domain.custom.dao.CustomNcboUserDAO;
-import org.ncbo.stanford.domain.custom.entity.NcboOntology;
 import org.ncbo.stanford.domain.generated.NcboUser;
 import org.ncbo.stanford.service.user.UserService;
 import org.springframework.transaction.annotation.Transactional;
-
 
 @Transactional
 public class UserServiceImpl implements UserService {
@@ -19,84 +15,74 @@ public class UserServiceImpl implements UserService {
 	private CustomNcboUserDAO ncboUserDAO = null;
 
 	public UserBean findUser(Integer userId) {
-	
+		UserBean userBean = null;
 		NcboUser user = ncboUserDAO.findById(userId);
-		if (user == null) return null;
-		
-		// populate userBean from ncbuUser with matched userId
-		UserBean userBean = new UserBean();
-		userBean.populateFromEntity(user);
-			
-		return userBean;
-	}
-	
 
-	
-	public UserBean findUser(String username) {
-		
-		NcboUser user = ncboUserDAO.getUserByUsername(username);
-		if (user == null) return null;
-		
-		// populate userBean from ncbuUser with matched username
-		UserBean userBean = new UserBean();
-		userBean.populateFromEntity(ncboUserDAO.getUserByUsername(username));
-		
+		if (user != null) {
+			// populate userBean from ncbuUser with matched userId
+			userBean = new UserBean();
+			userBean.populateFromEntity(user);
+		}
+
 		return userBean;
 	}
-	
-	
+
+	public UserBean findUser(String username) {
+		UserBean userBean = null;
+		NcboUser user = ncboUserDAO.getUserByUsername(username);
+
+		if (user != null) {
+			// populate userBean from ncbuUser with matched username
+			userBean = new UserBean();
+			userBean.populateFromEntity(user);
+		}
+
+		return userBean;
+	}
+
 	/**
 	 * @return List<UserBean>
 	 */
+	@SuppressWarnings("unchecked")
 	public List<UserBean> findUsers() {
-			
 		List<NcboUser> ncboUserList = ncboUserDAO.findAll();
 		List<UserBean> userBeanList = new ArrayList<UserBean>();
-		
+
 		// populate the query result to UserBean
-		for ( NcboUser ncboUser : ncboUserList) {
-			UserBean userBean = new UserBean();			
+		for (NcboUser ncboUser : ncboUserList) {
+			UserBean userBean = new UserBean();
 			userBean.populateFromEntity(ncboUser);
-			userBeanList.add(userBean);	
+			userBeanList.add(userBean);
 		}
-		
+
 		return userBeanList;
 	}
-	
-	
+
 	public void createUser(UserBean userBean) {
-		
 		// populate NcboUser from userBean
 		NcboUser ncboUser = new NcboUser();
 		userBean.populateToEntity(ncboUser);
-		
-		ncboUserDAO.save (ncboUser);
 
-	}
-	
-	
-	public void updateUser(UserBean userBean) {
-				
-		// get ncboUser DAO instance using user_id
-		NcboUser ncboUser = ncboUserDAO.findById(userBean.getId());
-		
-		// populate NcboUser from userBean
-		userBean.populateToEntity(ncboUser);
-				
 		ncboUserDAO.save(ncboUser);
 	}
-	
 
-
-	public void deleteUser(UserBean userBean) {
-		
+	public void updateUser(UserBean userBean) {
 		// get ncboUser DAO instance using user_id
 		NcboUser ncboUser = ncboUserDAO.findById(userBean.getId());
-		
+
+		// populate NcboUser from userBean
+		userBean.populateToEntity(ncboUser);
+
+		ncboUserDAO.save(ncboUser);
+	}
+
+	public void deleteUser(UserBean userBean) {
+		// get ncboUser DAO instance using user_id
+		NcboUser ncboUser = ncboUserDAO.findById(userBean.getId());
+
 		ncboUserDAO.delete(ncboUser);
 	}
-	
-	
+
 	/**
 	 * @return the ncboUserDAO
 	 */
@@ -111,7 +97,4 @@ public class UserServiceImpl implements UserService {
 	public void setNcboUserDAO(CustomNcboUserDAO ncboUserDAO) {
 		this.ncboUserDAO = ncboUserDAO;
 	}
-
-	
-
 }
