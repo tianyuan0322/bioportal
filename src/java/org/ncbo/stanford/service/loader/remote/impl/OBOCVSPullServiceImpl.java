@@ -69,7 +69,7 @@ public class OBOCVSPullServiceImpl implements OBOCVSPullService {
 				tempDir);
 
 		try {
-			cvsUtils.cvsCheckout();
+			// cvsUtils.cvsCheckout();
 			HashMap<String, CVSFile> updateFiles = cvsUtils.getAllCVSEntries();
 			OntologyDescriptorParser odp = new OntologyDescriptorParser(
 					oboSourceforgeCVSDescriptorFile);
@@ -110,8 +110,9 @@ public class OBOCVSPullServiceImpl implements OBOCVSPullService {
 					if (ont != null) {
 						FilePathHandler filePathHandler = new PhysicalDirectoryFilePathHandlerImpl(
 								CompressedFileHandlerFactory
-										.createFileHandler(format), new File(cf
-										.getPath()));
+										.createFileHandler(format),
+								new File(oboSourceforgeCVSCheckoutDir + "/"
+										+ cf.getPath() + "/" + filename));
 						ontologyService.createOntology(ont, filePathHandler);
 					}
 				} catch (Exception e) {
