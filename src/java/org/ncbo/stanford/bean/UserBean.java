@@ -76,7 +76,7 @@ public class UserBean {
 	 * Extracts default passwords and sets it in the bean
 	 */
 	public void generateDefaultPassword() {
-		this.setPassword(MessageUtils.getMessage("default.password"));
+		this.setPassword(MessageUtils.getMessage("default.user.password"));
 	}
 
 	/**
