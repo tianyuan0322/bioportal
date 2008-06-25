@@ -18,6 +18,7 @@ import org.restlet.data.Status;
 import com.noelios.restlet.ext.servlet.ServletCall;
 import com.noelios.restlet.http.HttpCall;
 import com.noelios.restlet.http.HttpRequest;
+import com.noelios.restlet.http.HttpResponse;
 
 /**
  * Various utility methods for request and response processing
@@ -99,6 +100,29 @@ public class RequestUtils {
 				HttpServletRequest httpServletRequest = ((ServletCall) httpCall)
 						.getRequest();
 				return httpServletRequest;
+			}
+		}
+
+		return null;
+	}
+	
+	
+	/**
+	 * Returns an instance of {@link HttpServletRequest} from a Restlet
+	 * {@link Request}
+	 * 
+	 * @param req
+	 * @return
+	 */
+	public static HttpServletResponse getHttpServletResponse(Response res) {
+		if (res instanceof HttpResponse) {
+			HttpResponse httpResponse = (HttpResponse) res;
+			HttpCall httpCall = httpResponse.getHttpCall();
+
+			if (httpCall instanceof ServletCall) {
+				HttpServletResponse httpServletResponse = ((ServletCall) httpCall)
+						.getResponse();
+				return httpServletResponse;
 			}
 		}
 
