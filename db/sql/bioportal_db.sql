@@ -118,6 +118,7 @@ DROP TABLE IF EXISTS `ncbo_l_category`;
 CREATE TABLE `ncbo_l_category` (
   `id` int(11) NOT NULL,
   `name` varchar(128) NOT NULL,
+  `obo_foundry_name` varchar(128) default NULL,
   `parent_category_id` int(11) default NULL,
   PRIMARY KEY  (`id`),
   UNIQUE KEY `name` (`name`),
