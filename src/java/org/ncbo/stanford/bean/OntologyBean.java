@@ -159,15 +159,9 @@ public class OntologyBean {
 			ontologyVersion.setDateCreated(this.getDateCreated());
 			ontologyVersion.setDateReleased(this.getDateReleased());
 
-			// NcboStatus Object
+			// Set NcboStatus
 			NcboLStatus status = new NcboLStatus();
-			status.setId(this.getStatusId());
-			
-			// set default value for status if new record
-			if ((status.getId() == null)) {
-				status.setId(new Integer(MessageUtils
-						.getMessage("default.ontology.status")));
-			}
+			populateStatus(status);
 			ontologyVersion.setNcboLStatus(status);
 
 			// Set filePath
@@ -256,15 +250,9 @@ public class OntologyBean {
 			// OntologyVersion object
 			loadQueue.setNcboOntologyVersion(ontologyVersion);
 
-			// NcboStatus Object
+			// Set NcboStatus
 			NcboLStatus status = new NcboLStatus();
-			status.setId(this.getStatusId());
-
-			// set default value for status if new record
-			if ((status.getId() == null)) {
-				status.setId(new Integer(MessageUtils
-						.getMessage("default.ontology.status")));
-			}
+			populateStatus(status);
 			loadQueue.setNcboLStatus(status);
 
 			loadQueue.setDateCreated(Calendar.getInstance().getTime());
@@ -759,4 +747,28 @@ public class OntologyBean {
 	public void setOboFoundryId(String oboFoundryId) {
 		this.oboFoundryId = oboFoundryId;
 	}
+	
+
+	/**
+	 * Populate default status in the bean
+	 */
+	public void populateDefaultStatus(NcboLStatus status) {
+
+		status.setId(new Integer(MessageUtils
+				.getMessage("default.ontology.status")));
+	}
+	
+	/**
+	 * Populate status in the bean
+	 */
+	public void populateStatus(NcboLStatus status) {
+				
+		status.setId(this.getStatusId());
+		
+		// set default value for status if new record
+		if ((status.getId() == null)) {
+			populateDefaultStatus(status);
+		}
+	}	
+	
 }
