@@ -7,6 +7,7 @@ import java.util.List;
 import org.ncbo.stanford.domain.generated.NcboUser;
 import org.ncbo.stanford.domain.generated.NcboUserRole;
 import org.ncbo.stanford.util.MessageUtils;
+import org.ncbo.stanford.util.helper.StringHelper;
 
 public class UserBean {
 
@@ -55,7 +56,9 @@ public class UserBean {
 		if (ncboUser != null) {
 			ncboUser.setId(this.getId());
 			ncboUser.setUsername(this.getUsername());
-			ncboUser.setPassword(this.getPassword());
+			if (!StringHelper.isNullOrNullString(this.getPassword())) {
+				ncboUser.setPassword(this.getPassword());
+			}
 			ncboUser.setEmail(this.getEmail());
 			ncboUser.setFirstname(this.getFirstname());
 			ncboUser.setLastname(this.getLastname());
