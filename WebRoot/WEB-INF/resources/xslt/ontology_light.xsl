@@ -4,7 +4,9 @@
 
 	<xsl:template match="/">
 	<data>
+		<list>
 		<xsl:apply-templates />
+		</list>
 	</data>
 	</xsl:template>
 
