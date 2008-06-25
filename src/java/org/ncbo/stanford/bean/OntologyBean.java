@@ -16,6 +16,8 @@ import org.ncbo.stanford.domain.generated.NcboOntologyLoadQueue;
 import org.ncbo.stanford.domain.generated.NcboOntologyMetadata;
 import org.ncbo.stanford.domain.generated.NcboOntologyVersion;
 import org.ncbo.stanford.domain.generated.NcboUser;
+import org.ncbo.stanford.util.MessageUtils;
+import org.ncbo.stanford.util.helper.StringHelper;
 
 public class OntologyBean {
 
@@ -160,6 +162,12 @@ public class OntologyBean {
 			// NcboStatus Object
 			NcboLStatus status = new NcboLStatus();
 			status.setId(this.getStatusId());
+			
+			// set default value for status if new record
+			if ((status.getId() == null)) {
+				status.setId(new Integer(MessageUtils
+						.getMessage("default.ontology.status")));
+			}
 			ontologyVersion.setNcboLStatus(status);
 
 			// Set filePath
@@ -167,14 +175,6 @@ public class OntologyBean {
 
 			// Set dateCreated
 			ontologyVersion.setDateCreated(Calendar.getInstance().getTime());
-
-			// // Set FileNames
-			// ontologyVersion.setNcboOntologyFiles( new
-			// HashSet<String>(this.getFilenames()));
-			//		
-			// // Set Categories
-			// ontologyVersion.setNcboOntologyCategories(new
-			// HashSet<Integer>(this.getCategoryIds()));
 
 		}
 
@@ -259,6 +259,12 @@ public class OntologyBean {
 			// NcboStatus Object
 			NcboLStatus status = new NcboLStatus();
 			status.setId(this.getStatusId());
+
+			// set default value for status if new record
+			if ((status.getId() == null)) {
+				status.setId(new Integer(MessageUtils
+						.getMessage("default.ontology.status")));
+			}
 			loadQueue.setNcboLStatus(status);
 
 			loadQueue.setDateCreated(Calendar.getInstance().getTime());
