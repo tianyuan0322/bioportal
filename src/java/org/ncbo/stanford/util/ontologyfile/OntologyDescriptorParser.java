@@ -92,15 +92,15 @@ public class OntologyDescriptorParser {
 		while (true) {
 			String temp = rf.readLine();
 
-			// eof has been reached
-			if (temp == null) {
-				break;
-			}
-
 			// end of one ontology record
 			if (StringHelper.isNullOrNullString(temp)) {
 				ontologyList.add(mfb);
 				mfb = new MetadataFileBean();
+				
+				// eof has been reached
+				if (temp == null) {
+					break;
+				}
 			} else {
 				Pattern pat = Pattern.compile(LINE_PATTERN);
 				Matcher m = pat.matcher(temp);
