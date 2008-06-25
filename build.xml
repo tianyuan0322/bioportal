@@ -114,9 +114,10 @@
 				<filter token="messagebundlepackage" value="${bioportal.messagebundle.package}" />				
 				<filter token="bioportalsessionnumcontainers" value="${bioportal.session.numcontainers}" />
 				<filter token="bioportalsessiontimeout" value="${bioportal.session.timeout}" />
-				<filter token="ontologyloadenabled" value="${ontology.load.enabled}" />
-				<filter token="ontologyloadstartdelay" value="${ontology.load.startdelay}" />
-				<filter token="ontologyloadrepeatinterval" value="${ontology.load.repeatinterval}" />
+				<filter token="obopullschedulerenabled" value="${obo.pull.scheduler.enabled}" />
+				<filter token="obopullschedulercronexpression" value="${obo.pull.scheduler.cronexpression}" />
+				<filter token="ontologyparseschedulerenabled" value="${ontology.parse.scheduler.enabled}" />				
+				<filter token="ontologyparseschedulercronexpression" value="${ontology.parse.scheduler.cronexpression}" />
 				<filter token="protegejdbcurl" value="${protege.jdbc.url}" />
 				<filter token="protegejdbcdriver" value="${protege.jdbc.driver}" />
 				<filter token="protegejdbcusername" value="${protege.jdbc.username}" />

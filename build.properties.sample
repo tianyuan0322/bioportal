@@ -43,6 +43,20 @@ obo.sourceforge.cvs.checkoutdir=${bioportal.resource.path}/cvscheckout
 # Ontologies metadata descriptor file
 obo.sourceforge.cvs.descriptor.file=${obo.sourceforge.cvs.checkoutdir}/obo/website/cgi-bin/ontologies.txt
 
+# OBO Pull Scheduler properties
+# Enable/Disable scheduler service flag
+obo.pull.scheduler.enabled=false
+# Scheduler cron expression
+# Fire at 02:30am every day: 0 30 2 * * ? *
+obo.pull.scheduler.cronexpression=0 30 2 * * ? *
+
+# Ontology Parse Scheduler properties
+# Enable/Disable scheduler service flag
+ontology.parse.scheduler.enabled=false
+# Scheduler cron expression
+# Fire once every hour, at 30 past the hour: 0 30 * * * ? *
+ontology.parse.scheduler.cronexpression=0 30 * * * ? *
+
 # Logging properties
 bioportal.app.log.deflevel=ERROR
 bioportal.app.log.bioportallevel=DEBUG
@@ -85,14 +99,6 @@ bioportal.ontology.filepath=${bioportal.resource.path}/uploads
 
 # Temporary directory for file submission and processing
 bioportal.tempdir=${bioportal.resource.path}/tmp
-
-# Ontology Load Scheduler properties
-# Enable/Disable scheduler service flag
-ontology.load.enabled=true
-# Delay before first scheduler execution (in milliseconds)
-ontology.load.startdelay=28800000
-# Scheduler repeat interval (in milliseconds)
-ontology.load.repeatinterval=86400000
 
 # Max upload file size
 bioportal.upload.maxfilesize=1048576
