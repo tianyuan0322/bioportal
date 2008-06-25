@@ -8,6 +8,7 @@ import org.ncbo.stanford.bean.OntologyBean;
 import org.ncbo.stanford.service.ontology.OntologyService;
 import org.ncbo.stanford.service.xml.XMLSerializationService;
 import org.ncbo.stanford.util.MessageUtils;
+import org.ncbo.stanford.util.RequestUtils;
 import org.restlet.Restlet;
 import org.restlet.data.MediaType;
 import org.restlet.data.Method;
@@ -62,11 +63,15 @@ public class OntologyDownloadRestlet extends Restlet{
 			try {
 							
 				File file = ontologyService.getOntologyFile(ontologyBean);
-
+				String filename = (String)ontologyBean.getFilenames().toArray()[0];
+				
  	            try {
  	            	
  	            	FileRepresentation fileRepresentation = new FileRepresentation(file, MediaType.APPLICATION_ALL, 60);
  	 	           	response.setEntity(fileRepresentation);
+ 	 	           	RequestUtils.getHttpServletResponse(response).setHeader(
+							"Content-Disposition",
+							"attachment; filename=\"" + filename + "\";");
  	            	
  	            } catch (Exception e) {
  	                e.printStackTrace();
