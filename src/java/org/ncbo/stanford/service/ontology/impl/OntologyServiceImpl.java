@@ -25,8 +25,6 @@ import org.ncbo.stanford.service.ontology.OntologyService;
 import org.ncbo.stanford.util.MessageUtils;
 import org.ncbo.stanford.util.ontologyfile.pathhandler.AbstractFilePathHandler;
 import org.ncbo.stanford.util.ontologyfile.pathhandler.FilePathHandler;
-import org.restlet.data.MediaType;
-import org.restlet.resource.FileRepresentation;
 import org.springframework.transaction.annotation.Transactional;
 
 @Transactional
