@@ -3,16 +3,19 @@
 	<xsl:output method="xml" omit-xml-declaration="no" indent="no" />
 
 	<xsl:template match="/">
-	<data>
-		<list>
-		<xsl:apply-templates />
-		</list>
-	</data>
+	<success>
+		<data>
+			<list>
+				<xsl:apply-templates />
+			</list>
+		</data>
+	</success>
 	</xsl:template>
 
 	<xsl:template match="ontology">
 		<ontology>
 			<xsl:copy-of select="id" />
+			<xsl:copy-of select="displayLabel"/>
 			<xsl:copy-of select="ontologyId" />
 			<xsl:copy-of select="internalVersionNumber" />
 			<xsl:copy-of select="versionNumber" />
