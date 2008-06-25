@@ -110,6 +110,17 @@
 		</property>
 	</bean>
 	
+	<bean id="ontologyDownloadRestlet"
+		class="org.ncbo.stanford.view.rest.restlet.ontology.OntologyDownloadRestlet">
+		<property name="ontologyService">
+			<ref bean="ontologyService" />
+		</property>
+		<property name="xmlSerializationService">
+			<ref bean="xmlSerializationService" />
+		</property>
+	</bean>
+	
+	
 	<bean id="usersRestlet"
 		class="org.ncbo.stanford.view.rest.restlet.user.UsersRestlet">
 		<property name="userService">
@@ -151,6 +162,9 @@
 						</entry>
 						<entry key="/ontologies/parse/{ontology}">
 							<ref local="ontologyParseRestlet" />
+						</entry>
+						<entry key="/ontologies/download/{ontology}">
+							<ref local="ontologyDownloadRestlet" />
 						</entry>
 						<entry key="/concepts/{ontology}/{concept}">
 							<ref local="conceptRestlet" />
