@@ -572,8 +572,10 @@
 		class="org.ncbo.stanford.service.xml.impl.XMLSerializationServiceImpl">
 	</bean>
 
-	<!-- Ontology load scheduler begins here -->
-	<bean id="schedulerJobDetailBean"
+	<!-- Scheduled Jobs -->
+
+	<!-- Ontology parse scheduler -->
+	<bean id="ontologyParseSchedulerJobDetailBean"
 		class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
 		<property name="targetObject"
 			ref="ontologyLoadSchedulerService" />
@@ -581,46 +583,81 @@
 		<property name="concurrent" value="false" />
 	</bean>
 
-	<bean id="coreSimpleTrigger"
-		class="org.springframework.scheduling.quartz.SimpleTriggerBean">
-		<property name="jobDetail">
-			<ref bean="schedulerJobDetailBean" />
-		</property>
-		<property name="startDelay">
-			<ref bean="startDelay" />
-		</property>
-		<property name="repeatInterval">
-			<ref bean="repeatInterval" />
-		</property>
+	<bean id="ontologyParseCronTrigger"
+		class="org.springframework.scheduling.quartz.CronTriggerBean">
+		<property name="jobDetail"
+			ref="ontologyParseSchedulerJobDetailBean" />
+		<property name="cronExpression">
+			<value>@ontologyparseschedulercronexpression@</value>
+		</property>			
 	</bean>
 
-	<bean id="startDelay" class="java.lang.Long">
-		<constructor-arg>
-			<value>@ontologyloadstartdelay@</value>
-		</constructor-arg>
-	</bean>
-
-	<bean id="repeatInterval" class="java.lang.Long">
-		<constructor-arg>
-			<value>@ontologyloadrepeatinterval@</value>
-		</constructor-arg>
-	</bean>
-
-	<bean
+	<bean id="ontologyParseSchedulerFactoryBean"
 		class="org.springframework.scheduling.quartz.SchedulerFactoryBean">
+		<property name="schedulerName"
+			value="ontologyParseSchedulerFactoryBean" />
+		<property name="overwriteExistingJobs">
+			<value>true</value>
+		</property>
+		<property name="waitForJobsToCompleteOnShutdown">
+			<value>true</value>
+		</property>
 		<property name="triggers">
 			<list>
-				<ref bean="coreSimpleTrigger" />
+				<ref bean="ontologyParseCronTrigger" />
 			</list>
 		</property>
 		<property name="autoStartup">
-			<ref bean="triggerAutoStartup" />
+			<ref bean="ontologyParseSchedulerAutoStartup" />
 		</property>
 	</bean>
 
-	<bean id="triggerAutoStartup" class="java.lang.Boolean">
+	<bean id="ontologyParseSchedulerAutoStartup"
+		class="java.lang.Boolean">
 		<constructor-arg>
-			<value>@ontologyloadenabled@</value>
+			<value>@ontologyparseschedulerenabled@</value>
+		</constructor-arg>
+	</bean>
+
+	<!-- OBO CVS pull scheduler -->
+	<bean id="oboPullSchedulerJobDetailBean"
+		class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+		<property name="targetObject" ref="oboCVSPullService" />
+		<property name="targetMethod" value="doCVSPull" />
+		<property name="concurrent" value="false" />
+	</bean>
+
+	<bean id="oboPullCronTrigger"
+		class="org.springframework.scheduling.quartz.CronTriggerBean">
+		<property name="jobDetail" ref="oboPullSchedulerJobDetailBean" />
+		<property name="cronExpression">
+			<value>@obopullschedulercronexpression@</value>
+		</property>
+	</bean>
+
+	<bean id="oboPullSchedulerFactoryBean"
+		class="org.springframework.scheduling.quartz.SchedulerFactoryBean">
+		<property name="schedulerName"
+			value="oboPullSchedulerFactoryBean" />
+		<property name="overwriteExistingJobs">
+			<value>true</value>
+		</property>
+		<property name="waitForJobsToCompleteOnShutdown">
+			<value>true</value>
+		</property>
+		<property name="triggers">
+			<list>
+				<ref bean="oboPullCronTrigger" />
+			</list>
+		</property>
+		<property name="autoStartup">
+			<ref bean="oboPullSchedulerAutoStartup" />
+		</property>
+	</bean>
+
+	<bean id="oboPullSchedulerAutoStartup" class="java.lang.Boolean">
+		<constructor-arg>
+			<value>@obopullschedulerenabled@</value>
 		</constructor-arg>
 	</bean>
 
