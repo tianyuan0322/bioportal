@@ -1,9 +1,11 @@
 package org.ncbo.stanford.service.ontology;
 
+import java.io.File;
 import java.util.List;
 
 import org.ncbo.stanford.bean.OntologyBean;
 import org.ncbo.stanford.util.ontologyfile.pathhandler.FilePathHandler;
+import org.restlet.resource.FileRepresentation;
 
 /**
  * Exposes services that provide read and write operations on ontologies
@@ -111,4 +113,13 @@ public interface OntologyService {
 	 * @return
 	 */
 	public void deleteOntology(OntologyBean ontologyBean);
+	
+	/**	
+	 * Get File object for a specific ontology 
+	 * 	  
+	 * @param ontologyBean
+	 * @return
+	 */
+	public File getOntologyFile(OntologyBean ontologyBean) throws Exception;
+
 }
