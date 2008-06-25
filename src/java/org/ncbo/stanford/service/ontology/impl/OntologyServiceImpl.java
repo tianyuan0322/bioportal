@@ -1,5 +1,7 @@
 package org.ncbo.stanford.service.ontology.impl;
 
+import java.io.File;
+import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
@@ -21,7 +23,10 @@ import org.ncbo.stanford.domain.generated.NcboOntologyMetadata;
 import org.ncbo.stanford.domain.generated.NcboOntologyVersion;
 import org.ncbo.stanford.service.ontology.OntologyService;
 import org.ncbo.stanford.util.MessageUtils;
+import org.ncbo.stanford.util.ontologyfile.pathhandler.AbstractFilePathHandler;
 import org.ncbo.stanford.util.ontologyfile.pathhandler.FilePathHandler;
+import org.restlet.data.MediaType;
+import org.restlet.resource.FileRepresentation;
 import org.springframework.transaction.annotation.Transactional;
 
 @Transactional
@@ -346,6 +351,22 @@ public class OntologyServiceImpl implements OntologyService {
 		ncboOntologyVersionDAO.delete(ontologyVersion);
 
 	}
+	
+	
+	public File getOntologyFile(OntologyBean ontologyBean) throws Exception {
+
+		String fileName = (String)ontologyBean.getFilenames().toArray()[0];
+		File file = new File(AbstractFilePathHandler.getOntologyFilePath(
+				ontologyBean, fileName));
+
+		if (file == null) {
+			log.error("Missing ontology file to download.");
+			throw new FileNotFoundException("Missing ontology file to load");
+		}
+	
+		return file;
+	}
+	
 
 	/**
 	 * @return the ncboOntologyVersionDAO
@@ -451,6 +472,7 @@ public class OntologyServiceImpl implements OntologyService {
 		}
 		return fileNames;
 	}
+	
 
 	/**
 	 * @return the ncboOntologyCategoryDAO
