@@ -104,11 +104,10 @@ public class OBOCVSPullServiceImpl implements OBOCVSPullService {
 						cf = (CVSFile) updateFiles.get(filename);
 					}
 
-					HashMap<ActionEnum, OntologyBean> ontologyAction = determineOntologyAction(
+					OntologyAction ontologyAction = determineOntologyAction(
 							mfb, cf);
-					ActionEnum action = (ActionEnum) ontologyAction.keySet()
-							.toArray()[0];
-					OntologyBean ont = ontologyAction.get(action);
+					ActionEnum action = ontologyAction.getAction();
+					OntologyBean ont = ontologyAction.getOntotlogyBean();
 
 					switch (action) {
 					case CREATE_LOCAL_ACTION:
@@ -159,8 +158,8 @@ public class OBOCVSPullServiceImpl implements OBOCVSPullService {
 	 * @return
 	 * @throws InvalidDataException
 	 */
-	private HashMap<ActionEnum, OntologyBean> determineOntologyAction(
-			MetadataFileBean mfb, CVSFile cf) throws InvalidDataException {
+	private OntologyAction determineOntologyAction(MetadataFileBean mfb,
+			CVSFile cf) throws InvalidDataException {
 		ActionEnum action = ActionEnum.NO_ACTION;
 		HashMap<ActionEnum, OntologyBean> ontologyAction = new HashMap<ActionEnum, OntologyBean>(
 				1);
@@ -176,16 +175,16 @@ public class OBOCVSPullServiceImpl implements OBOCVSPullService {
 		// a. remote && exists in the system
 		// b. local && categories changed
 
-		// new ontology
 		if (ont == null) {
+			// new ontology
 			action = (isRemote == ApplicationConstants.TRUE) ? ActionEnum.CREATE_REMOTE_ACTION
 					: ActionEnum.CREATE_LOCAL_ACTION;
 			ont = new OntologyBean();
-			// existing ontology remote
 		} else if (isRemote == ApplicationConstants.TRUE) {
+			// existing ontology remote
 			action = ActionEnum.UPDATE_ACTION;
-			// existing ontology local; no new version
 		} else if (cf != null && cf.getVersion().equals(ont.getVersionNumber())) {
+			// existing ontology local; no new version
 			// no new version found; check if categories have been updated
 			List<Integer> oldCategoryIds = ont.getCategoryIds();
 			boolean categoriesUpdated = isCategoryUpdated(oldCategoryIds,
@@ -194,8 +193,8 @@ public class OBOCVSPullServiceImpl implements OBOCVSPullService {
 			if (categoriesUpdated) {
 				action = ActionEnum.UPDATE_ACTION;
 			}
-			// existing ontology local; new version
 		} else if (cf != null) {
+			// existing ontology local; new version
 			action = ActionEnum.CREATE_LOCAL_ACTION;
 			ont.setId(null);
 		}
@@ -203,7 +202,7 @@ public class OBOCVSPullServiceImpl implements OBOCVSPullService {
 		populateOntologyBean(mfb, cf, action, ont, newCategoryIds, isRemote);
 		ontologyAction.put(action, ont);
 
-		return ontologyAction;
+		return new OntologyAction(action, ont);
 	}
 
 	/**
@@ -375,6 +374,34 @@ public class OBOCVSPullServiceImpl implements OBOCVSPullService {
 		}
 
 		return userBean;
+	}
+
+	private class OntologyAction {
+		ActionEnum action;
+		OntologyBean ontologyBean;
+
+		/**
+		 * @param action
+		 * @param ontologyBean
+		 */
+		private OntologyAction(ActionEnum action, OntologyBean ontologyBean) {
+			this.action = action;
+			this.ontologyBean = ontologyBean;
+		}
+
+		/**
+		 * @return the action
+		 */
+		private ActionEnum getAction() {
+			return action;
+		}
+
+		/**
+		 * @return the ontologyBean
+		 */
+		private OntologyBean getOntotlogyBean() {
+			return ontologyBean;
+		}
 	}
 
 	/**
