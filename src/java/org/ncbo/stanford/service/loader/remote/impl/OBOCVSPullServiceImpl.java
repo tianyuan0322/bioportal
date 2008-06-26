@@ -173,10 +173,10 @@ public class OBOCVSPullServiceImpl implements OBOCVSPullService {
 		Date now = Calendar.getInstance().getTime();
 
 		// is any action required?
-		// a. local && categories didn't change
+		// 		a. local && categories didn't change
 		// is this an update action?
-		// a. remote && exists in the system
-		// b. local && categories changed
+		// 		a. remote && exists in the system
+		// 		b. local && categories changed
 
 		// new ontology
 		if (ont == null) {
