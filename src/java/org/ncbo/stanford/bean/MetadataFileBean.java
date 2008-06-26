@@ -41,6 +41,7 @@ public class MetadataFileBean {
 	private String alternateDownload;
 	private String isObsolete;
 	private String consider;
+	private String xrefsTo;
 	
 
 	/**
@@ -364,6 +365,20 @@ public class MetadataFileBean {
 	}
 
 	/**
+	 * @return the xrefsTo
+	 */
+	public String getXrefsTo() {
+		return xrefsTo;
+	}
+
+	/**
+	 * @param xrefsTo the xrefsTo to set
+	 */
+	public void setXrefsTo(String xrefsTo) {
+		this.xrefsTo = xrefsTo;
+	}
+
+	/**
 	 * output of the class
 	 */
 	public String toString() {
@@ -389,6 +404,7 @@ public class MetadataFileBean {
 			"application: " + application + "\n" + 
 			"isObsolete: " + isObsolete + "\n" + 
 			"consider: " + consider + "\n" + 			
-			"alternateDownload: " + alternateDownload;
+			"alternateDownload: " + alternateDownload + "\n" +
+			"xrefsTo: " + xrefsTo;
 	}
 }
