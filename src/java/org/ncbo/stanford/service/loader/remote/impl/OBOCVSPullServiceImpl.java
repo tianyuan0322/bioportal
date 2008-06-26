@@ -152,8 +152,7 @@ public class OBOCVSPullServiceImpl implements OBOCVSPullService {
 	}
 
 	/**
-	 * Populates an ontology bean from the metadata file bean. Returns null if
-	 * no new version exists
+	 * Determines the action to be executed
 	 * 
 	 * @param mfb
 	 * @param cf
@@ -170,23 +169,22 @@ public class OBOCVSPullServiceImpl implements OBOCVSPullService {
 		String downloadUrl = mfb.getDownload();
 		List<Integer> newCategoryIds = findCategoryIdsByOBONames(downloadUrl);
 		Byte isRemote = isRemote(downloadUrl);
-		Date now = Calendar.getInstance().getTime();
 
 		// is any action required?
-		// 		a. local && categories didn't change
+		// a. local && categories didn't change
 		// is this an update action?
-		// 		a. remote && exists in the system
-		// 		b. local && categories changed
+		// a. remote && exists in the system
+		// b. local && categories changed
 
 		// new ontology
 		if (ont == null) {
 			action = (isRemote == ApplicationConstants.TRUE) ? ActionEnum.CREATE_REMOTE_ACTION
 					: ActionEnum.CREATE_LOCAL_ACTION;
 			ont = new OntologyBean();
-		// existing ontology remote
+			// existing ontology remote
 		} else if (isRemote == ApplicationConstants.TRUE) {
 			action = ActionEnum.UPDATE_ACTION;
-		// existing ontology local; no new version
+			// existing ontology local; no new version
 		} else if (cf != null && cf.getVersion().equals(ont.getVersionNumber())) {
 			// no new version found; check if categories have been updated
 			List<Integer> oldCategoryIds = ont.getCategoryIds();
@@ -196,11 +194,33 @@ public class OBOCVSPullServiceImpl implements OBOCVSPullService {
 			if (categoriesUpdated) {
 				action = ActionEnum.UPDATE_ACTION;
 			}
-		// existing ontology local; new version
+			// existing ontology local; new version
 		} else if (cf != null) {
 			action = ActionEnum.CREATE_LOCAL_ACTION;
 			ont.setId(null);
 		}
+
+		populateOntologyBean(mfb, cf, action, ont, newCategoryIds, isRemote);
+		ontologyAction.put(action, ont);
+
+		return ontologyAction;
+	}
+
+	/**
+	 * Populates ontology bean based on the action
+	 * 
+	 * @param mfb
+	 * @param cf
+	 * @param action
+	 * @param ont
+	 * @param newCategoryIds
+	 * @param isRemote
+	 * @throws InvalidDataException
+	 */
+	private void populateOntologyBean(MetadataFileBean mfb, CVSFile cf,
+			ActionEnum action, OntologyBean ont, List<Integer> newCategoryIds,
+			Byte isRemote) throws InvalidDataException {
+		Date now = Calendar.getInstance().getTime();
 
 		if (action != ActionEnum.NO_ACTION) {
 			if (isRemote == ApplicationConstants.TRUE) {
@@ -212,8 +232,8 @@ public class OBOCVSPullServiceImpl implements OBOCVSPullService {
 				ont.setVersionNumber(cf.getVersion());
 				ont.setDateReleased(cf.getTimeStamp().getTime());
 				ont.setStatusId(StatusEnum.STATUS_WAITING.getStatus());
-				ont.addFilename(OntologyDescriptorParser
-						.getFileName(downloadUrl));
+				ont.addFilename(OntologyDescriptorParser.getFileName(mfb
+						.getDownload()));
 				ont.setCategoryIds(newCategoryIds);
 			}
 
@@ -241,10 +261,6 @@ public class OBOCVSPullServiceImpl implements OBOCVSPullService {
 					.getPublication()));
 			ont.setIsFoundry(isFoundry(mfb.getFoundry()));
 		}
-
-		ontologyAction.put(action, ont);
-
-		return ontologyAction;
 	}
 
 	/**
