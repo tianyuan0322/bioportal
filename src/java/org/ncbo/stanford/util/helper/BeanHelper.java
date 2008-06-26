@@ -67,12 +67,11 @@ public class BeanHelper {
 	 */
 	public static OntologyBean populateOntologyBeanFromRequest (Request request) {
 		
-		//TODO <userId> - retrieve user obj from session. 
-		//[OPTIONS] populate OntologyBean userId field here? or in OntologyBean "populate"?
+
+		HttpServletRequest httpServletRequest = RequestUtils.getHttpServletRequest(request);
 		
-		
-		HttpServletRequest httpServletRequest = RequestUtils
-				.getHttpServletRequest(request);
+		// get userId from request
+		String userId = httpServletRequest.getParameter( MessageUtils.getMessage("http.param.userId"));
 		
 		String versionNumber = httpServletRequest.getParameter(MessageUtils.getMessage("form.ontology.versionNumber"));
 		String versionStatus = httpServletRequest.getParameter(MessageUtils.getMessage("form.ontology.versionStatus"));
@@ -111,6 +110,11 @@ public class BeanHelper {
 		
 		// now populate the OntologyBean
 		OntologyBean bean = new OntologyBean();
+		
+		if (userId != null ) {
+			bean.setUserId(Integer.parseInt(userId));
+		}
+		
 		bean.setVersionNumber(versionNumber);
 		bean.setVersionStatus(versionStatus);
 		
