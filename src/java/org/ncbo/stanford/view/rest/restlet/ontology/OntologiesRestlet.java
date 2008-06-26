@@ -96,12 +96,7 @@ public class OntologiesRestlet extends Restlet {
 	private void createOntology(Request request, Response response) {
 		
 		OntologyBean ontologyBean = BeanHelper.populateOntologyBeanFromRequest(request);
-		
-		// set userId from request
-		HttpServletRequest httpServletRequest = RequestUtils.getHttpServletRequest(request);
-		String userId = httpServletRequest.getParameter( MessageUtils.getMessage("http.param.userId"));
-		ontologyBean.setUserId(new Integer(userId));
-		
+				
 		// create the ontology
 		try {
 			
