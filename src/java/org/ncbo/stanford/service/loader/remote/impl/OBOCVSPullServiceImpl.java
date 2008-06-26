@@ -198,6 +198,7 @@ public class OBOCVSPullServiceImpl implements OBOCVSPullService {
 			}
 		} else if (cf != null) {
 			action = ActionEnum.CREATE_LOCAL_ACTION;
+			ont.setId(null);
 		}
 
 		if (action != ActionEnum.NO_ACTION) {
