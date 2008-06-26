@@ -9,6 +9,7 @@ import java.util.Set;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.ncbo.stanford.bean.OntologyBean;
+import org.ncbo.stanford.domain.custom.dao.CustomNcboLCategoryDAO;
 import org.ncbo.stanford.domain.custom.dao.CustomNcboOntologyCategoryDAO;
 import org.ncbo.stanford.domain.custom.dao.CustomNcboOntologyFileDAO;
 import org.ncbo.stanford.domain.custom.dao.CustomNcboOntologyLoadQueueDAO;
@@ -16,6 +17,7 @@ import org.ncbo.stanford.domain.custom.dao.CustomNcboOntologyMetadataDAO;
 import org.ncbo.stanford.domain.custom.dao.CustomNcboOntologyVersionDAO;
 import org.ncbo.stanford.domain.custom.dao.CustomNcboSeqOntologyIdDAO;
 import org.ncbo.stanford.domain.custom.entity.NcboOntology;
+import org.ncbo.stanford.domain.generated.NcboLCategory;
 import org.ncbo.stanford.domain.generated.NcboOntologyCategory;
 import org.ncbo.stanford.domain.generated.NcboOntologyFile;
 import org.ncbo.stanford.domain.generated.NcboOntologyLoadQueue;
@@ -23,6 +25,7 @@ import org.ncbo.stanford.domain.generated.NcboOntologyMetadata;
 import org.ncbo.stanford.domain.generated.NcboOntologyVersion;
 import org.ncbo.stanford.service.ontology.OntologyService;
 import org.ncbo.stanford.util.MessageUtils;
+import org.ncbo.stanford.util.constants.ApplicationConstants;
 import org.ncbo.stanford.util.ontologyfile.pathhandler.AbstractFilePathHandler;
 import org.ncbo.stanford.util.ontologyfile.pathhandler.FilePathHandler;
 import org.springframework.transaction.annotation.Transactional;
@@ -38,6 +41,25 @@ public class OntologyServiceImpl implements OntologyService {
 	private CustomNcboOntologyCategoryDAO ncboOntologyCategoryDAO;
 	private CustomNcboOntologyLoadQueueDAO ncboOntologyLoadQueueDAO;
 	private CustomNcboSeqOntologyIdDAO ncboSeqOntologyIdDAO;
+	private CustomNcboLCategoryDAO ncboLCategoryDAO;
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.ncbo.stanford.service.ontology.OntologyService#findCategoryIdsByOBOFoundryNames(java.lang.String[])
+	 */
+	public List<Integer> findCategoryIdsByOBOFoundryNames(
+			String[] oboFoundryNames) {
+		List<Integer> categoryIds = new ArrayList<Integer>(1);
+		List<NcboLCategory> categories = ncboLCategoryDAO
+				.findCategoriesByOBOFoundryNames(oboFoundryNames);
+
+		for (NcboLCategory cat : categories) {
+			categoryIds.add(cat.getId());
+		}
+
+		return categoryIds;
+	}
 
 	/*
 	 * (non-Javadoc)
@@ -225,22 +247,25 @@ public class OntologyServiceImpl implements OntologyService {
 			ncboOntologyCategoryDAO.save(ontologyCategory);
 		}
 
-		// upload the fileItem
-		List<String> fileNames = uploadOntologyFile(ontologyBean,
-				filePathHander);
-		ontologyBean.setFilenames(fileNames);
-		ontologyBean.setFilePath(ontologyBean.getOntologyDirPath());
+		if (ontologyBean.getIsRemote() != ApplicationConstants.TRUE) {
+			// upload the fileItem
+			List<String> fileNames = uploadOntologyFile(ontologyBean,
+					filePathHander);
+			ontologyBean.setFilenames(fileNames);
+			ontologyBean.setFilePath(ontologyBean.getOntologyDirPath());
 
-		// 4. <ontologyFile> - populate and save
-		ontologyBean.populateToFileEntity(ontologyFileList, newOntologyVersion);
-		for (NcboOntologyFile ontologyFile : ontologyFileList) {
-			ncboOntologyFileDAO.save(ontologyFile);
+			// 4. <ontologyFile> - populate and save
+			ontologyBean.populateToFileEntity(ontologyFileList,
+					newOntologyVersion);
+			for (NcboOntologyFile ontologyFile : ontologyFileList) {
+				ncboOntologyFileDAO.save(ontologyFile);
+			}
+
+			// 5. <ontologyQueue> - populate and save
+			ontologyBean.populateToLoadQueueEntity(loadQueue,
+					newOntologyVersion);
+			ncboOntologyLoadQueueDAO.save(loadQueue);
 		}
-
-		// 5. <ontologyQueue> - populate and save
-		ontologyBean.populateToLoadQueueEntity(loadQueue, newOntologyVersion);
-		ncboOntologyLoadQueueDAO.save(loadQueue);
-
 	}
 
 	/**
@@ -281,10 +306,10 @@ public class OntologyServiceImpl implements OntologyService {
 		ArrayList<NcboOntologyCategory> ontologyCategoryList = new ArrayList<NcboOntologyCategory>();
 		ontologyBean.populateToCategoryEntity(ontologyCategoryList,
 				ontologyVersion);
+
 		for (NcboOntologyCategory ontologyCategory : ontologyCategoryList) {
 			ncboOntologyCategoryDAO.save(ontologyCategory);
 		}
-
 	}
 
 	/**
@@ -347,13 +372,11 @@ public class OntologyServiceImpl implements OntologyService {
 
 		// now all the dependency is removed and ontologyVersion can be deleted
 		ncboOntologyVersionDAO.delete(ontologyVersion);
-
 	}
-	
-	
+
 	public File getOntologyFile(OntologyBean ontologyBean) throws Exception {
 
-		String fileName = (String)ontologyBean.getFilenames().toArray()[0];
+		String fileName = (String) ontologyBean.getFilenames().toArray()[0];
 		File file = new File(AbstractFilePathHandler.getOntologyFilePath(
 				ontologyBean, fileName));
 
@@ -361,10 +384,9 @@ public class OntologyServiceImpl implements OntologyService {
 			log.error("Missing ontology file to download.");
 			throw new FileNotFoundException("Missing ontology file to load");
 		}
-	
+
 		return file;
 	}
-	
 
 	/**
 	 * @return the ncboOntologyVersionDAO
@@ -470,7 +492,6 @@ public class OntologyServiceImpl implements OntologyService {
 		}
 		return fileNames;
 	}
-	
 
 	/**
 	 * @return the ncboOntologyCategoryDAO
@@ -520,4 +541,18 @@ public class OntologyServiceImpl implements OntologyService {
 		this.ncboOntologyLoadQueueDAO = ncboOntologyLoadQueueDAO;
 	}
 
+	/**
+	 * @return the ncboLCategoryDAO
+	 */
+	public CustomNcboLCategoryDAO getNcboLCategoryDAO() {
+		return ncboLCategoryDAO;
+	}
+
+	/**
+	 * @param ncboLCategoryDAO
+	 *            the ncboLCategoryDAO to set
+	 */
+	public void setNcboLCategoryDAO(CustomNcboLCategoryDAO ncboLCategoryDAO) {
+		this.ncboLCategoryDAO = ncboLCategoryDAO;
+	}
 }
