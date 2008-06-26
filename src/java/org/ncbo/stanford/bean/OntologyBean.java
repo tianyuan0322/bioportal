@@ -17,7 +17,6 @@ import org.ncbo.stanford.domain.generated.NcboOntologyMetadata;
 import org.ncbo.stanford.domain.generated.NcboOntologyVersion;
 import org.ncbo.stanford.domain.generated.NcboUser;
 import org.ncbo.stanford.util.MessageUtils;
-import org.ncbo.stanford.util.helper.StringHelper;
 
 public class OntologyBean {
 
@@ -97,7 +96,7 @@ public class OntologyBean {
 
 		}
 	}
-	
+
 	/**
 	 * Populates a NcboOntologyMetadata Entity from this ontologyBean.
 	 * OntologyVersion should have been populated from OntologyBean before
@@ -263,10 +262,10 @@ public class OntologyBean {
 	public String toString() {
 		return "Id: " + this.getId() + " OntologyId: " + this.getOntologyId()
 				+ " InternalVersionNumer: " + this.getInternalVersionNumber()
-				+ " OntologyId: " + this.getOntologyId() + " VersionNumber: "
-				+ this.getVersionNumber() + " VersionStatus: "
-				+ this.getVersionStatus() + " Name: " + this.getDisplayLabel()
-				+ " ContactName: " + this.getContactName() + " ContactEmail: "
+				+ " VersionNumber: " + this.getVersionNumber()
+				+ " VersionStatus: " + this.getVersionStatus() + " Name: "
+				+ this.getDisplayLabel() + " ContactName: "
+				+ this.getContactName() + " ContactEmail: "
 				+ this.getContactEmail();
 
 	}
@@ -747,7 +746,6 @@ public class OntologyBean {
 	public void setOboFoundryId(String oboFoundryId) {
 		this.oboFoundryId = oboFoundryId;
 	}
-	
 
 	/**
 	 * Populate default status in the bean
@@ -757,18 +755,18 @@ public class OntologyBean {
 		status.setId(new Integer(MessageUtils
 				.getMessage("default.ontology.status")));
 	}
-	
+
 	/**
 	 * Populate status in the bean
 	 */
 	public void populateStatus(NcboLStatus status) {
-				
+
 		status.setId(this.getStatusId());
-		
+
 		// set default value for status if new record
 		if ((status.getId() == null)) {
 			populateDefaultStatus(status);
 		}
-	}	
-	
+	}
+
 }
