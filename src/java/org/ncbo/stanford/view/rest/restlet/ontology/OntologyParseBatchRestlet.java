@@ -1,14 +1,10 @@
 package org.ncbo.stanford.view.rest.restlet.ontology;
 
-import java.util.List;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.ncbo.stanford.domain.generated.NcboOntologyVersion;
 import org.ncbo.stanford.service.loader.scheduler.OntologyLoadSchedulerService;
 import org.ncbo.stanford.service.ontology.OntologyService;
 import org.ncbo.stanford.service.xml.XMLSerializationService;
-import org.ncbo.stanford.util.MessageUtils;
 import org.restlet.Restlet;
 import org.restlet.data.Method;
 import org.restlet.data.Request;
@@ -62,8 +58,7 @@ public class OntologyParseBatchRestlet extends Restlet{
 		//OntologyBean ontologyBean = findOntologyBean(request, response);
 		
 		if (ontologyStart != null && ontologyEnd != null) {
-			System.out.println("ontologyStart = "+ ontologyStart);
-			System.out.println("ontologyEnd = "+ ontologyEnd);
+
 			ontologyLoadSchedulerService.parseOntologies(ontologyStart, ontologyEnd);
 		}
 		
