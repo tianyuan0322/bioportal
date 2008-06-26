@@ -61,6 +61,9 @@ public class OBOCVSPullServiceImpl implements OBOCVSPullService {
 	private Map<String, Byte> ontologyFoundryToOBOFoundryMap = new HashMap<String, Byte>();
 	private String tempDir;
 
+	/**
+	 * Used to the identify the action to be performed on an ontology
+	 */
 	private enum ActionEnum {
 		NO_ACTION, CREATE_LOCAL_ACTION, CREATE_REMOTE_ACTION, UPDATE_ACTION
 	}
