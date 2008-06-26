@@ -51,12 +51,12 @@ public class OntologyServiceImpl implements OntologyService {
 	public List<Integer> findCategoryIdsByOBOFoundryNames(
 			String[] oboFoundryNames) {
 		List<Integer> categoryIds = new ArrayList<Integer>(1);
-/*		List<NcboLCategory> categories = ncboLCategoryDAO
+		List<NcboLCategory> categories = ncboLCategoryDAO
 				.findCategoriesByOBOFoundryNames(oboFoundryNames);
 
 		for (NcboLCategory cat : categories) {
 			categoryIds.add(cat.getId());
-		}*/
+		}
 
 		return categoryIds;
 	}
