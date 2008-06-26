@@ -21,6 +21,14 @@ public class UserBean {
 	private Date dateCreated;
 	private List<String> roles;
 
+	public String toString() {
+		return "{Id: " + this.getId() + ", Username: " + this.getUsername()
+				+ ", Password: " + this.getPassword() + ", Email: "
+				+ this.getEmail() + ", Firstname: " + this.getFirstname()
+				+ ", Lastname: " + this.getLastname() + ", Phone: "
+				+ this.getPhone() + "}";
+	}
+
 	/**
 	 * Populates the OntologyBean with data from a NcboOntology
 	 * 
@@ -64,7 +72,7 @@ public class UserBean {
 			ncboUser.setLastname(this.getLastname());
 			ncboUser.setPhone(this.getPhone());
 			ncboUser.setDateCreated(this.getDateCreated());
-			
+
 			// time stamp
 			if (ncboUser.getDateCreated() == null) {
 				ncboUser.setDateCreated(new Date());
