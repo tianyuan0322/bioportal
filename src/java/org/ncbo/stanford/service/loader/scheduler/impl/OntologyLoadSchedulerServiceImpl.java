@@ -56,9 +56,7 @@ public class OntologyLoadSchedulerServiceImpl implements
 				.getOntologiesToLoad();
 
 		for (NcboOntologyLoadQueue loadQueue : ontologiesToLoad) {
-			
-			System.out.println("ID = " + loadQueue.getNcboOntologyVersion().getId());
-			//processRecord(loadQueue);
+			processRecord(loadQueue);
 		}
 	}
 	
@@ -81,7 +79,7 @@ public class OntologyLoadSchedulerServiceImpl implements
 			
 			int currentId = loadQueue.getNcboOntologyVersion().getId();
 			if (currentId >= start && currentId < end) {
-				System.out.println("parseOntologies(): ID = " + loadQueue.getNcboOntologyVersion().getId());
+				log.debug("parsing ontology : ID = " + loadQueue.getNcboOntologyVersion().getId());
 				processRecord(loadQueue);
 			}
 
