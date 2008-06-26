@@ -173,10 +173,10 @@ public class OBOCVSPullServiceImpl implements OBOCVSPullService {
 		Byte isRemote = isRemote(downloadUrl);
 
 		// is any action required?
-		// a. local && categories didn't change
+		// ____a. local && categories didn't change
 		// is this an update action?
-		// a. remote && exists in the system
-		// b. local && categories changed
+		// ____a. remote && exists in the system
+		// ____b. local && categories changed
 
 		if (ont == null) {
 			// new ontology
