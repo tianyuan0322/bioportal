@@ -22,6 +22,7 @@
 			<xsl:copy-of select="versionStatus" />
 			<xsl:copy-of select="contactName" />
 			<xsl:copy-of select="contactEmail" />
+			<xsl:copy-of select="statusId" />
 		</ontology>
 	</xsl:template>
 
