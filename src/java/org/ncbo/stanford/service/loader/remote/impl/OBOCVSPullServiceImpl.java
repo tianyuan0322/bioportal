@@ -183,12 +183,12 @@ public class OBOCVSPullServiceImpl implements OBOCVSPullService {
 			action = (isRemote == ApplicationConstants.TRUE) ? ActionEnum.CREATE_REMOTE_ACTION
 					: ActionEnum.CREATE_LOCAL_ACTION;
 			ont = new OntologyBean();
-			// existing ontology remote
+		// existing ontology remote
 		} else if (isRemote == ApplicationConstants.TRUE) {
 			action = ActionEnum.UPDATE_ACTION;
-			// existing ontology local
+		// existing ontology local; no new version
 		} else if (cf != null && cf.getVersion().equals(ont.getVersionNumber())) {
-			// no new version found; check categories
+			// no new version found; check if categories have been updated
 			List<Integer> oldCategoryIds = ont.getCategoryIds();
 			boolean categoriesUpdated = isCategoryUpdated(oldCategoryIds,
 					newCategoryIds);
@@ -196,6 +196,7 @@ public class OBOCVSPullServiceImpl implements OBOCVSPullService {
 			if (categoriesUpdated) {
 				action = ActionEnum.UPDATE_ACTION;
 			}
+		// existing ontology local; new version
 		} else if (cf != null) {
 			action = ActionEnum.CREATE_LOCAL_ACTION;
 			ont.setId(null);
