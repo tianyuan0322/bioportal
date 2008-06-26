@@ -1,5 +1,8 @@
 use bioportal;
 
+delete from cbio.ncbouserrole where userid in (select id from ncbouser where lower(login) = 'lfagan');
+delete from cbio.ncbouser where lower(login) = 'lfagan';
+
 insert into ncbo_user (id, username, password, email, firstname, lastname, phone)
 select id, login, password, email, firstname, lastname, phone 
 from cbio.ncbouser;
