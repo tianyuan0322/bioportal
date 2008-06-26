@@ -15,7 +15,7 @@ import org.restlet.data.Request;
 import org.restlet.data.Response;
 import org.restlet.data.Status;
 
-public class OntologyParseRestlet extends Restlet{
+public class OntologyParseBatchRestlet extends Restlet{
 
 	private static final Log log = LogFactory.getLog(OntologyVersionsRestlet.class);
 	private OntologyService ontologyService;
@@ -53,19 +53,26 @@ public class OntologyParseRestlet extends Restlet{
 	 */
 	private void parseOntology(Request request, Response response) {
 	
-		
-		String ontologyVersionId = (String) request.getAttributes().get(MessageUtils.getMessage("entity.ontology"));
+		String ontologyStart = (String) request.getAttributes().get("ontology_start");
+		String ontologyEnd = (String) request.getAttributes().get("ontology_end");
+
 		
 		// TODO - id validation?
 		// find the OntologyBean from request
 		//OntologyBean ontologyBean = findOntologyBean(request, response);
 		
-		// TODO - make both scenario available
-		ontologyLoadSchedulerService.parseOntology(ontologyVersionId);
+		if (ontologyStart != null && ontologyEnd != null) {
+			System.out.println("ontologyStart = "+ ontologyStart);
+			System.out.println("ontologyEnd = "+ ontologyEnd);
+			ontologyLoadSchedulerService.parseOntologies(ontologyStart, ontologyEnd);
+		}
+		
 
 		if (!isParseSuccess()) {
-			
-			response.setStatus(Status.SERVER_ERROR_INTERNAL, "Error Parsing Ontology " + ontologyVersionId);
+
+			response.setStatus(Status.SERVER_ERROR_INTERNAL,
+					"Error Parsing Ontology ranging from " + ontologyStart
+							+ " to " + ontologyEnd);
 		}
 		
 		getXmlSerializationService().generateStatusXMLResponse(request, response);

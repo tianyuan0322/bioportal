@@ -23,6 +23,13 @@ public interface OntologyLoadSchedulerService {
 	 * @param ontologyVersionId
 	 */
 	public void parseOntology(String ontologyVersionId);
-	public void parseOntologies(String ontologyVersionId);
+	
+	/**
+	 * Parses all ontologies in given range
+	 * 
+	 * @param ontologyVersionId
+	 */
+	public void parseOntologies(String startId, String endId);
+	
 	public List<Integer> getErrorIdList();
 }

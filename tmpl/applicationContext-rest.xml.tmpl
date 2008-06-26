@@ -110,6 +110,19 @@
 		</property>
 	</bean>
 	
+	<bean id="ontologyParseBatchRestlet"
+		class="org.ncbo.stanford.view.rest.restlet.ontology.OntologyParseBatchRestlet">
+		<property name="ontologyService">
+			<ref bean="ontologyService" />
+		</property>
+		<property name="ontologyLoadSchedulerService">
+			<ref bean="ontologyLoadSchedulerService" />
+		</property>
+		<property name="xmlSerializationService">
+			<ref bean="xmlSerializationService" />
+		</property>
+	</bean>	
+	
 	<bean id="ontologyDownloadRestlet"
 		class="org.ncbo.stanford.view.rest.restlet.ontology.OntologyDownloadRestlet">
 		<property name="ontologyService">
@@ -163,6 +176,9 @@
 						<entry key="/ontologies/parse/{ontology}">
 							<ref local="ontologyParseRestlet" />
 						</entry>
+						<entry key="/ontologies/parsebatch/{ontology_start}/{ontology_end}">
+							<ref local="ontologyParseBatchRestlet" />
+						</entry>						
 						<entry key="/ontologies/download/{ontology}">
 							<ref local="ontologyDownloadRestlet" />
 						</entry>

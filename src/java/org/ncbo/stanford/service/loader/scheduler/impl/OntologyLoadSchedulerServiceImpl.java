@@ -69,18 +69,20 @@ public class OntologyLoadSchedulerServiceImpl implements
 	 * 
 	 * @throws Exception
 	 */
-	public void parseOntologies(String ontologyVersionId) {
+	public void parseOntologies(String startId, String endId) {
 
-		int start = Integer.parseInt(ontologyVersionId);
+		int start = Integer.parseInt(startId);
+		int end = Integer.parseInt(endId);
 		
 		List<NcboOntologyLoadQueue> ontologiesToLoad = ncboOntologyLoadQueueDAO
 				.getOntologiesToLoad();
 
 		for (NcboOntologyLoadQueue loadQueue : ontologiesToLoad) {
 			
-			if (loadQueue.getNcboOntologyVersion().getId() >= start) {
-				System.out.println("ID = " + loadQueue.getNcboOntologyVersion().getId());
-				//processRecord(loadQueue);
+			int currentId = loadQueue.getNcboOntologyVersion().getId();
+			if (currentId >= start && currentId < end) {
+				System.out.println("parseOntologies(): ID = " + loadQueue.getNcboOntologyVersion().getId());
+				processRecord(loadQueue);
 			}
 
 		}
