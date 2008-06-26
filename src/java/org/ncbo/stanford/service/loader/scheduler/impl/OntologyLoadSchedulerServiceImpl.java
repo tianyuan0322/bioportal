@@ -56,7 +56,33 @@ public class OntologyLoadSchedulerServiceImpl implements
 				.getOntologiesToLoad();
 
 		for (NcboOntologyLoadQueue loadQueue : ontologiesToLoad) {
-			processRecord(loadQueue);
+			
+			System.out.println("ID = " + loadQueue.getNcboOntologyVersion().getId());
+			//processRecord(loadQueue);
+		}
+	}
+	
+	
+	/**
+	 * Gets the list of ontologies that need to be loaded and process each using
+	 * the appropriate loader API.
+	 * 
+	 * @throws Exception
+	 */
+	public void parseOntologies(String ontologyVersionId) {
+
+		int start = Integer.parseInt(ontologyVersionId);
+		
+		List<NcboOntologyLoadQueue> ontologiesToLoad = ncboOntologyLoadQueueDAO
+				.getOntologiesToLoad();
+
+		for (NcboOntologyLoadQueue loadQueue : ontologiesToLoad) {
+			
+			if (loadQueue.getNcboOntologyVersion().getId() >= start) {
+				System.out.println("ID = " + loadQueue.getNcboOntologyVersion().getId());
+				//processRecord(loadQueue);
+			}
+
 		}
 	}
 

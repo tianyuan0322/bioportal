@@ -17,6 +17,8 @@ import org.ncbo.stanford.domain.generated.NcboOntologyMetadata;
 import org.ncbo.stanford.domain.generated.NcboOntologyVersion;
 import org.ncbo.stanford.domain.generated.NcboUser;
 import org.ncbo.stanford.util.MessageUtils;
+import org.ncbo.stanford.util.constants.ApplicationConstants;
+import org.ncbo.stanford.util.helper.StringHelper;
 
 public class OntologyBean {
 
@@ -96,7 +98,7 @@ public class OntologyBean {
 
 		}
 	}
-
+	
 	/**
 	 * Populates a NcboOntologyMetadata Entity from this ontologyBean.
 	 * OntologyVersion should have been populated from OntologyBean before
@@ -150,8 +152,12 @@ public class OntologyBean {
 			ontologyVersion.setNcboUser(getNcboUserFromSession());
 
 			ontologyVersion.setVersionNumber(this.getVersionNumber());
-			ontologyVersion.setInternalVersionNumber(this
-					.getInternalVersionNumber());
+			
+			// do not override internalVersionNumber if blank
+			if (this.getInternalVersionNumber() != null) {
+				ontologyVersion.setInternalVersionNumber(this
+						.getInternalVersionNumber());
+			}
 			ontologyVersion.setIsCurrent(this.getIsCurrent());
 			ontologyVersion.setIsRemote(this.getIsRemote());
 			ontologyVersion.setIsReviewed(this.getIsReviewed());
@@ -746,27 +752,44 @@ public class OntologyBean {
 	public void setOboFoundryId(String oboFoundryId) {
 		this.oboFoundryId = oboFoundryId;
 	}
-
-	/**
-	 * Populate default status in the bean
-	 */
-	public void populateDefaultStatus(NcboLStatus status) {
-
-		status.setId(new Integer(MessageUtils
-				.getMessage("default.ontology.status")));
-	}
-
+	
+	
 	/**
 	 * Populate status in the bean
 	 */
 	public void populateStatus(NcboLStatus status) {
-
+				
 		status.setId(this.getStatusId());
-
+		
 		// set default value for status if new record
 		if ((status.getId() == null)) {
-			populateDefaultStatus(status);
+			populateDefaultStatus(status);	
 		}
 	}
 
+	/**
+	 * Populate default status in the bean
+	 * Status is "1"(waiting) for local upload, "5"(notapplicable) for remote.
+	 */
+	public void populateDefaultStatus(NcboLStatus status) {
+		
+		if (this.isRemote()) {
+			status.setId(new Integer(MessageUtils
+					.getMessage("ncbo.status.notapplicable")));
+		} else {
+			status.setId(new Integer(MessageUtils
+					.getMessage("ncbo.status.waiting")));
+		}
+	}	
+	
+	/**
+	 * @return the isRemote
+	 */
+	public boolean isRemote() {
+		if (this.getIsRemote().equals(ApplicationConstants.TRUE) ) {
+			return true;
+		}
+		return false;
+	}
+	
 }

@@ -51,12 +51,12 @@ public class OntologyServiceImpl implements OntologyService {
 	public List<Integer> findCategoryIdsByOBOFoundryNames(
 			String[] oboFoundryNames) {
 		List<Integer> categoryIds = new ArrayList<Integer>(1);
-		List<NcboLCategory> categories = ncboLCategoryDAO
+/*		List<NcboLCategory> categories = ncboLCategoryDAO
 				.findCategoriesByOBOFoundryNames(oboFoundryNames);
 
 		for (NcboLCategory cat : categories) {
 			categoryIds.add(cat.getId());
-		}
+		}*/
 
 		return categoryIds;
 	}
@@ -247,25 +247,26 @@ public class OntologyServiceImpl implements OntologyService {
 			ncboOntologyCategoryDAO.save(ontologyCategory);
 		}
 
-		if (ontologyBean.getIsRemote() != ApplicationConstants.TRUE) {
-			// upload the fileItem
-			List<String> fileNames = uploadOntologyFile(ontologyBean,
-					filePathHander);
-			ontologyBean.setFilenames(fileNames);
-			ontologyBean.setFilePath(ontologyBean.getOntologyDirPath());
+		// if remote, do not continue to upload(i.e. ontologyFile and ontologyQueue )
+		if (ontologyBean.isRemote())
+			return;
 
-			// 4. <ontologyFile> - populate and save
-			ontologyBean.populateToFileEntity(ontologyFileList,
-					newOntologyVersion);
-			for (NcboOntologyFile ontologyFile : ontologyFileList) {
-				ncboOntologyFileDAO.save(ontologyFile);
-			}
+		// upload the fileItem
+		List<String> fileNames = uploadOntologyFile(ontologyBean,
+				filePathHander);
+		ontologyBean.setFilenames(fileNames);
+		ontologyBean.setFilePath(ontologyBean.getOntologyDirPath());
 
-			// 5. <ontologyQueue> - populate and save
-			ontologyBean.populateToLoadQueueEntity(loadQueue,
-					newOntologyVersion);
-			ncboOntologyLoadQueueDAO.save(loadQueue);
+		// 4. <ontologyFile> - populate and save
+		ontologyBean.populateToFileEntity(ontologyFileList, newOntologyVersion);
+		for (NcboOntologyFile ontologyFile : ontologyFileList) {
+			ncboOntologyFileDAO.save(ontologyFile);
 		}
+
+		// 5. <ontologyQueue> - populate and save
+		ontologyBean.populateToLoadQueueEntity(loadQueue, newOntologyVersion);
+		ncboOntologyLoadQueueDAO.save(loadQueue);
+		
 	}
 
 	/**

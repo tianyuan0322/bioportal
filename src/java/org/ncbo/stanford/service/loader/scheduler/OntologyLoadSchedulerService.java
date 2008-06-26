@@ -23,5 +23,6 @@ public interface OntologyLoadSchedulerService {
 	 * @param ontologyVersionId
 	 */
 	public void parseOntology(String ontologyVersionId);
+	public void parseOntologies(String ontologyVersionId);
 	public List<Integer> getErrorIdList();
 }

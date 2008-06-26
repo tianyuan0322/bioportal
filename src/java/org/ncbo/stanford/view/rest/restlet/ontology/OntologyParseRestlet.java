@@ -59,8 +59,10 @@ public class OntologyParseRestlet extends Restlet{
 		// TODO - id validation?
 		// find the OntologyBean from request
 		//OntologyBean ontologyBean = findOntologyBean(request, response);
-
-		ontologyLoadSchedulerService.parseOntology(ontologyVersionId);
+		
+		// TODO - make both scenario available
+		//ontologyLoadSchedulerService.parseOntology(ontologyVersionId);
+		ontologyLoadSchedulerService.parseOntologies(ontologyVersionId);
 
 		if (!isParseSuccess()) {
 			

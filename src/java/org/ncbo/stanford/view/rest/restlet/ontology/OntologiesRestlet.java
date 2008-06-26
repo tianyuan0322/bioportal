@@ -2,6 +2,8 @@ package org.ncbo.stanford.view.rest.restlet.ontology;
 
 import java.util.List;
 
+import javax.servlet.http.HttpServletRequest;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -15,6 +17,7 @@ import org.ncbo.stanford.bean.OntologyBean;
 import org.ncbo.stanford.service.ontology.OntologyService;
 import org.ncbo.stanford.service.xml.XMLSerializationService;
 import org.ncbo.stanford.util.MessageUtils;
+import org.ncbo.stanford.util.RequestUtils;
 import org.ncbo.stanford.util.helper.BeanHelper;
 import org.ncbo.stanford.util.ontologyfile.compressedfilehandler.impl.CompressedFileHandlerFactory;
 import org.ncbo.stanford.util.ontologyfile.pathhandler.FilePathHandler;
@@ -93,6 +96,11 @@ public class OntologiesRestlet extends Restlet {
 	private void createOntology(Request request, Response response) {
 		
 		OntologyBean ontologyBean = BeanHelper.populateOntologyBeanFromRequest(request);
+		
+		// set userId from request
+		HttpServletRequest httpServletRequest = RequestUtils.getHttpServletRequest(request);
+		String userId = httpServletRequest.getParameter( MessageUtils.getMessage("http.param.userId"));
+		ontologyBean.setUserId(new Integer(userId));
 		
 		// create the ontology
 		try {
