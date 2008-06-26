@@ -266,14 +266,17 @@ public class OntologyBean {
 	}
 
 	public String toString() {
-		return "Id: " + this.getId() + " OntologyId: " + this.getOntologyId()
-				+ " InternalVersionNumer: " + this.getInternalVersionNumber()
-				+ " VersionNumber: " + this.getVersionNumber()
-				+ " VersionStatus: " + this.getVersionStatus() + " Name: "
-				+ this.getDisplayLabel() + " ContactName: "
-				+ this.getContactName() + " ContactEmail: "
-				+ this.getContactEmail();
-
+		return "{Id: " + this.getId() + " Ontology Id: " + this.getOntologyId()
+				+ " Internal Version Number: "
+				+ this.getInternalVersionNumber() + " User Id: "
+				+ this.getUserId() + " Version Number: "
+				+ this.getVersionNumber() + " Version Status: "
+				+ this.getVersionStatus() + " Obo Foundry Id: "
+				+ this.getOboFoundryId() + " Display Label: "
+				+ this.getDisplayLabel() + " Format: " + this.getFormat()
+				+ " Contact Name: " + this.getContactName()
+				+ " Contact Email: " + this.getContactEmail() + " Foundry: "
+				+ this.getIsFoundry() + "}\n";
 	}
 
 	/**
