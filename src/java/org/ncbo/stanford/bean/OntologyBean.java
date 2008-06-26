@@ -18,6 +18,7 @@ import org.ncbo.stanford.domain.generated.NcboOntologyVersion;
 import org.ncbo.stanford.domain.generated.NcboUser;
 import org.ncbo.stanford.util.MessageUtils;
 import org.ncbo.stanford.util.constants.ApplicationConstants;
+import org.ncbo.stanford.util.helper.StringHelper;
 
 public class OntologyBean {
 
@@ -147,7 +148,7 @@ public class OntologyBean {
 				ontologyVersion.setNcboOntologyVersion(parentOntology);
 			}
 
-			// Set User Object (retrieve User Object from the session)
+			// Set User Object (populate UserId)
 			ontologyVersion.setNcboUser(getNcboUserFromSession());
 
 			ontologyVersion.setVersionNumber(this.getVersionNumber());
@@ -702,25 +703,13 @@ public class OntologyBean {
 				+ this.getInternalVersionNumber();
 	}
 
-	// TODO - this is temporary code until UserBean is avail from the Session
+	/**
+	 * UserId should be already set in OntologyBean from OntologiesRestlet when create request comes in
+	 */
 	public NcboUser getNcboUserFromSession() {
 
 		NcboUser ncboUser = new NcboUser();
-		// ncboUser.setId(this.getUserId());
-		// -----------------------------------------------------------------------
-
-		UserBean bean = new UserBean();
-		bean.setId(Integer.parseInt("2850"));
-		bean.setUsername("myusername");
-		bean.setPassword("mypassword");
-		bean.setEmail("myemail@stanford.edu");
-		bean.setFirstname("myfirstname");
-		bean.setLastname("mylastname");
-		bean.setPhone("123-456-7890");
-		bean.setDateCreated(new Date());
-
-		bean.populateToEntity(ncboUser);
-		// -----------------------------------------------------------------------
+		ncboUser.setId(this.getUserId());
 
 		return ncboUser;
 	}
