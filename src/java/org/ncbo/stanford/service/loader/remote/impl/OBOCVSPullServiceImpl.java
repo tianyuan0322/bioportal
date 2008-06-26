@@ -2,11 +2,14 @@ package org.ncbo.stanford.service.loader.remote.impl;
 
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.collections.ListUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.ncbo.stanford.bean.ContactTypeBean;
@@ -19,6 +22,7 @@ import org.ncbo.stanford.exception.InvalidOntologyFormatException;
 import org.ncbo.stanford.service.loader.remote.OBOCVSPullService;
 import org.ncbo.stanford.service.ontology.OntologyService;
 import org.ncbo.stanford.service.user.UserService;
+import org.ncbo.stanford.util.MessageUtils;
 import org.ncbo.stanford.util.constants.ApplicationConstants;
 import org.ncbo.stanford.util.cvs.CVSFile;
 import org.ncbo.stanford.util.cvs.CVSUtils;
@@ -57,6 +61,10 @@ public class OBOCVSPullServiceImpl implements OBOCVSPullService {
 	private Map<String, Byte> ontologyFoundryToOBOFoundryMap = new HashMap<String, Byte>();
 	private String tempDir;
 
+	private enum ActionEnum {
+		NO_ACTION, CREATE_LOCAL_ACTION, CREATE_REMOTE_ACTION, UPDATE_ACTION
+	}
+
 	/**
 	 * Performs the pull of ontologies from OBO Sourceforge CVS
 	 */
@@ -69,7 +77,7 @@ public class OBOCVSPullServiceImpl implements OBOCVSPullService {
 				tempDir);
 
 		try {
-			// cvsUtils.cvsCheckout();
+			cvsUtils.cvsCheckout();
 			HashMap<String, CVSFile> updateFiles = cvsUtils.getAllCVSEntries();
 			OntologyDescriptorParser odp = new OntologyDescriptorParser(
 					oboSourceforgeCVSDescriptorFile);
@@ -77,25 +85,6 @@ public class OBOCVSPullServiceImpl implements OBOCVSPullService {
 
 			for (MetadataFileBean mfb : ontologyList) {
 				try {
-					String filename = OntologyDescriptorParser.getFileName(mfb
-							.getDownload());
-					CVSFile cf = (CVSFile) updateFiles.get(filename);
-
-					// is the file there?
-					if (StringHelper.isNullOrNullString(filename)) {
-						throw new InvalidDataException(
-								"No filename is specified in the metadata descriptor file for ontology "
-										+ mfb.getId());
-					}
-
-					if (cf == null) {
-						throw new FileNotFoundException(
-								"An entry exists in the metadata descriptor for "
-										+ mfb.getId()
-										+ " ontology but the file (" + filename
-										+ ") is missing");
-					}
-
 					String format = getFormat(mfb.getFormat());
 
 					if (format.equals(ApplicationConstants.FORMAT_INVALID)) {
@@ -105,15 +94,51 @@ public class OBOCVSPullServiceImpl implements OBOCVSPullService {
 										+ " is invalid");
 					}
 
-					OntologyBean ont = populateOntologyBean(mfb, cf);
+					CVSFile cf = null;
+					String filename = OntologyDescriptorParser.getFileName(mfb
+							.getDownload());
+					boolean isEmptyFilename = StringHelper
+							.isNullOrNullString(filename);
 
-					if (ont != null) {
+					if (!isEmptyFilename) {
+						cf = (CVSFile) updateFiles.get(filename);
+					}
+
+					HashMap<ActionEnum, OntologyBean> ontologyAction = determineOntologyAction(
+							mfb, cf);
+					ActionEnum action = (ActionEnum) ontologyAction.keySet()
+							.toArray()[0];
+					OntologyBean ont = ontologyAction.get(action);
+
+					switch (action) {
+					case CREATE_LOCAL_ACTION:
+						if (isEmptyFilename) {
+							throw new InvalidDataException(
+									"No filename is specified in the metadata descriptor file for ontology "
+											+ mfb.getId());
+						}
+
+						if (cf == null) {
+							throw new FileNotFoundException(
+									"An entry exists in the metadata descriptor for "
+											+ mfb.getId()
+											+ " ontology but the file ("
+											+ filename + ") is missing");
+						}
+
 						FilePathHandler filePathHandler = new PhysicalDirectoryFilePathHandlerImpl(
 								CompressedFileHandlerFactory
 										.createFileHandler(format),
 								new File(oboSourceforgeCVSCheckoutDir + "/"
 										+ cf.getPath() + "/" + filename));
 						ontologyService.createOntology(ont, filePathHandler);
+						break;
+					case CREATE_REMOTE_ACTION:
+						ontologyService.createOntology(ont, null);
+						break;
+					case UPDATE_ACTION:
+						ontologyService.updateOntology(ont);
+						break;
 					}
 				} catch (Exception e) {
 					log.error(e);
@@ -135,29 +160,71 @@ public class OBOCVSPullServiceImpl implements OBOCVSPullService {
 	 * @return
 	 * @throws InvalidDataException
 	 */
-	private OntologyBean populateOntologyBean(MetadataFileBean mfb, CVSFile cf)
-			throws InvalidDataException {
+	private HashMap<ActionEnum, OntologyBean> determineOntologyAction(
+			MetadataFileBean mfb, CVSFile cf) throws InvalidDataException {
+		ActionEnum action = ActionEnum.NO_ACTION;
+		HashMap<ActionEnum, OntologyBean> ontologyAction = new HashMap<ActionEnum, OntologyBean>(
+				1);
 		OntologyBean ont = ontologyService
 				.findLatestOntologyVersionByOboFoundryId(mfb.getId());
+		String downloadUrl = mfb.getDownload();
+		List<Integer> newCategoryIds = findCategoryIdsByOBONames(downloadUrl);
+		Byte isRemote = isRemote(downloadUrl);
+		Date now = Calendar.getInstance().getTime();
 
-		if (cf.getVersion().equals(ont.getVersionNumber())) {
-			// no new version found
-			ont = null;
-		} else {
-			if (ont == null) {
-				// new ontology
-				ont = new OntologyBean();
+		// is any action required?
+		// a. local && categories didn't change
+		// is this an update action?
+		// a. remote && exists in the system
+		// b. local && categories changed
+
+		// new ontology
+		if (ont == null) {
+			action = (isRemote == ApplicationConstants.TRUE) ? ActionEnum.CREATE_REMOTE_ACTION
+					: ActionEnum.CREATE_LOCAL_ACTION;
+			ont = new OntologyBean();
+			// existing ontology remote
+		} else if (isRemote == ApplicationConstants.TRUE) {
+			action = ActionEnum.UPDATE_ACTION;
+			// existing ontology local
+		} else if (cf != null && cf.getVersion().equals(ont.getVersionNumber())) {
+			// no new version found; check categories
+			List<Integer> oldCategoryIds = ont.getCategoryIds();
+			boolean categoriesUpdated = isCategoryUpdated(oldCategoryIds,
+					newCategoryIds);
+
+			if (categoriesUpdated) {
+				action = ActionEnum.UPDATE_ACTION;
+			}
+		} else if (cf != null) {
+			action = ActionEnum.CREATE_LOCAL_ACTION;
+		}
+
+		if (action != ActionEnum.NO_ACTION) {
+			if (isRemote == ApplicationConstants.TRUE) {
+				ont.setVersionNumber(MessageUtils
+						.getMessage("remote.ontology.version"));
+				ont.setDateReleased(now);
+				ont.setStatusId(StatusEnum.STATUS_NOTAPPLICABLE.getStatus());
+			} else {
+				ont.setVersionNumber(cf.getVersion());
+				ont.setDateReleased(cf.getTimeStamp().getTime());
+				ont.setStatusId(StatusEnum.STATUS_WAITING.getStatus());
+				ont.addFilename(OntologyDescriptorParser
+						.getFileName(downloadUrl));
+				ont.setCategoryIds(newCategoryIds);
 			}
 
 			UserBean userBean = linkOntologyUser(mfb.getContact(), mfb.getId());
 			ont.setUserId(userBean.getId());
-			ont.setVersionNumber(cf.getVersion());
 			ont.setVersionStatus(getStatus(mfb.getStatus()));
 			ont.setIsCurrent(ApplicationConstants.TRUE);
-			ont.setIsRemote(isRemote(mfb.getDownload()));
-			ont.setStatusId(StatusEnum.STATUS_WAITING.getStatus());
-			ont.setDateCreated(Calendar.getInstance().getTime());
-			ont.setDateReleased(cf.getTimeStamp().getTime());
+			ont.setIsRemote(isRemote);
+
+			if (action != ActionEnum.UPDATE_ACTION) {
+				ont.setDateCreated(now);
+			}
+
 			ont.setOboFoundryId(mfb.getId());
 			ont.setDisplayLabel(mfb.getTitle());
 			ont.setFormat(getFormat(mfb.getFormat()));
@@ -173,20 +240,51 @@ public class OBOCVSPullServiceImpl implements OBOCVSPullService {
 			ont.setIsFoundry(isFoundry(mfb.getFoundry()));
 		}
 
-		return ont;
+		ontologyAction.put(action, ont);
+
+		return ontologyAction;
+	}
+
+	/**
+	 * Determines whether the two category id lists are equal
+	 * 
+	 * @param oldCategoryIds
+	 * @param newCategoryIds
+	 * @return
+	 */
+	private boolean isCategoryUpdated(List<Integer> oldCategoryIds,
+			List<Integer> newCategoryIds) {
+		return !ListUtils.isEqualList(oldCategoryIds, newCategoryIds);
+	}
+
+	/**
+	 * Extract category ids from the download string
+	 * 
+	 * @param downloadUrl
+	 * @return
+	 */
+	private List<Integer> findCategoryIdsByOBONames(String downloadUrl) {
+		List<Integer> categoryIds = new ArrayList<Integer>(1);
+
+		if (!StringHelper.isNullOrNullString(downloadUrl)) {
+			categoryIds = ontologyService
+					.findCategoryIdsByOBOFoundryNames(downloadUrl.split("/"));
+		}
+
+		return categoryIds;
 	}
 
 	/**
 	 * Determines whether the ontology is hosted remotely
 	 * 
-	 * @param filePath
+	 * @param downloadUrl
 	 * @return
 	 */
-	private Byte isRemote(String filePath) {
+	private Byte isRemote(String downloadUrl) {
 		Byte isRemote = ApplicationConstants.TRUE;
 
-		if (!StringHelper.isNullOrNullString(filePath)
-				&& filePath.indexOf(getOboSourceforgeCVSHostname()) > -1) {
+		if (!StringHelper.isNullOrNullString(downloadUrl)
+				&& downloadUrl.indexOf(getOboSourceforgeCVSHostname()) > -1) {
 			isRemote = ApplicationConstants.FALSE;
 		}
 
