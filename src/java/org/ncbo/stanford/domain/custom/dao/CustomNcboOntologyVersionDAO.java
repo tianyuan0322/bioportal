@@ -48,22 +48,11 @@ public class CustomNcboOntologyVersionDAO extends NcboOntologyVersionDAO {
 		NcboOntology ontology = (NcboOntology) getSession().createCriteria(
 				NcboOntology.class).add(Expression.eq("id", ontologyVersionId))
 				.uniqueResult();
-
 		NcboOntologyVersion ontologyVersion = findById(ontologyVersionId);
 
-		if (ontologyVersion != null) {
-			Set<NcboOntologyFile> files = ontologyVersion
-					.getNcboOntologyFiles();
-			Set<NcboOntologyCategory> categories = ontologyVersion
-					.getNcboOntologyCategories();
-
-			for (NcboOntologyFile file : files) {
-				ontology.addFilename(file.getFilename());
-			}
-
-			for (NcboOntologyCategory cat : categories) {
-				ontology.addCategoryId(cat.getNcboLCategory().getId());
-			}
+		if (ontology != null && ontologyVersion != null) {
+			populateOntologyCategories(ontologyVersion, ontology);
+			populateOntologyFiles(ontologyVersion, ontology);
 		}
 
 		return ontology;
@@ -99,7 +88,7 @@ public class CustomNcboOntologyVersionDAO extends NcboOntologyVersionDAO {
 	 */
 	public NcboOntology findLatestOntologyVersionByOboFoundryId(
 			final String oboFoundryId) {
-		return (NcboOntology) getHibernateTemplate().execute(
+		NcboOntology ontology = (NcboOntology) getHibernateTemplate().execute(
 				new HibernateCallback() {
 					public Object doInHibernate(Session session)
 							throws HibernateException, SQLException {
@@ -111,6 +100,16 @@ public class CustomNcboOntologyVersionDAO extends NcboOntologyVersionDAO {
 					}
 				});
 
+		if (ontology != null) {
+			NcboOntologyVersion ontologyVersion = findById(ontology.getId());
+
+			if (ontologyVersion != null) {
+				populateOntologyCategories(ontologyVersion, ontology);
+				populateOntologyFiles(ontologyVersion, ontology);
+			}
+		}
+
+		return ontology;
 	}
 
 	/**
@@ -161,14 +160,16 @@ public class CustomNcboOntologyVersionDAO extends NcboOntologyVersionDAO {
 						return query.uniqueResult();
 					}
 				});
+		
+		if (ontology != null) {
+			NcboOntologyVersion ontologyVersion = findById(ontology.getId());
 
-		NcboOntologyVersion ontologyVer = findById(ontology.getId());
-		Set<NcboOntologyFile> files = ontologyVer.getNcboOntologyFiles();
-
-		for (NcboOntologyFile file : files) {
-			ontology.addFilename(file.getFilename());
+			if (ontologyVersion != null) {
+				populateOntologyCategories(ontologyVersion, ontology);
+				populateOntologyFiles(ontologyVersion, ontology);
+			}
 		}
-
+		
 		return ontology;
 	}
 
@@ -206,5 +207,24 @@ public class CustomNcboOntologyVersionDAO extends NcboOntologyVersionDAO {
 		NcboOntologyMetadata ncboMetadata = (NcboOntologyMetadata) metadataArr[0];
 
 		return ncboMetadata;
+	}
+
+	private void populateOntologyCategories(
+			NcboOntologyVersion ontologyVersion, NcboOntology ontology) {
+		Set<NcboOntologyCategory> categories = ontologyVersion
+				.getNcboOntologyCategories();
+
+		for (NcboOntologyCategory cat : categories) {
+			ontology.addCategoryId(cat.getNcboLCategory().getId());
+		}
+	}
+
+	private void populateOntologyFiles(NcboOntologyVersion ontologyVersion,
+			NcboOntology ontology) {
+		Set<NcboOntologyFile> files = ontologyVersion.getNcboOntologyFiles();
+
+		for (NcboOntologyFile file : files) {
+			ontology.addFilename(file.getFilename());
+		}
 	}
 }
