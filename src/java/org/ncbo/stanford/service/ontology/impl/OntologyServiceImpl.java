@@ -8,6 +8,7 @@ import java.util.Set;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.ncbo.stanford.bean.CategoryBean;
 import org.ncbo.stanford.bean.OntologyBean;
 import org.ncbo.stanford.domain.custom.dao.CustomNcboLCategoryDAO;
 import org.ncbo.stanford.domain.custom.dao.CustomNcboOntologyCategoryDAO;
@@ -25,7 +26,6 @@ import org.ncbo.stanford.domain.generated.NcboOntologyMetadata;
 import org.ncbo.stanford.domain.generated.NcboOntologyVersion;
 import org.ncbo.stanford.service.ontology.OntologyService;
 import org.ncbo.stanford.util.MessageUtils;
-import org.ncbo.stanford.util.constants.ApplicationConstants;
 import org.ncbo.stanford.util.ontologyfile.pathhandler.AbstractFilePathHandler;
 import org.ncbo.stanford.util.ontologyfile.pathhandler.FilePathHandler;
 import org.springframework.transaction.annotation.Transactional;
@@ -43,6 +43,25 @@ public class OntologyServiceImpl implements OntologyService {
 	private CustomNcboSeqOntologyIdDAO ncboSeqOntologyIdDAO;
 	private CustomNcboLCategoryDAO ncboLCategoryDAO;
 
+	
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.ncbo.stanford.service.ontology.OntologyService#findAllCategoryIds(java.lang.String[])
+	 */
+	public List<CategoryBean> findAllCategories() {
+
+		ArrayList<CategoryBean> categoryBeanList = new ArrayList<CategoryBean>(1);
+		List<NcboLCategory> categoryEntityList = ncboLCategoryDAO.findAll();
+
+		for (NcboLCategory ncboCategory : categoryEntityList) {
+			CategoryBean categoryBean = new CategoryBean();
+			categoryBean.populateFromEntity(ncboCategory);
+			categoryBeanList.add(categoryBean);
+		}		
+		return categoryBeanList;
+	}	
+	
 	/*
 	 * (non-Javadoc)
 	 * 

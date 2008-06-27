@@ -3,6 +3,7 @@ package org.ncbo.stanford.service.ontology;
 import java.io.File;
 import java.util.List;
 
+import org.ncbo.stanford.bean.CategoryBean;
 import org.ncbo.stanford.bean.OntologyBean;
 import org.ncbo.stanford.util.ontologyfile.pathhandler.FilePathHandler;
 
@@ -14,6 +15,13 @@ import org.ncbo.stanford.util.ontologyfile.pathhandler.FilePathHandler;
  */
 public interface OntologyService {
 
+	/**
+	 * Return the list of all categories 
+	 * 
+	 * @return
+	 */
+	public List<CategoryBean> findAllCategories();
+	
 	/**
 	 * Return the list of category Ids that correspond to the given obo foundry
 	 * names
