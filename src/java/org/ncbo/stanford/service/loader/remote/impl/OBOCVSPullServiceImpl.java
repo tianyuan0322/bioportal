@@ -92,9 +92,9 @@ public class OBOCVSPullServiceImpl implements OBOCVSPullService {
 
 					if (format.equals(ApplicationConstants.FORMAT_INVALID)) {
 						throw new InvalidOntologyFormatException(
-								"The ontology format, " + mfb.getFormat()
-										+ " for ontology " + mfb.getId()
-										+ " is invalid");
+								"The ontology format, [" + mfb.getFormat()
+										+ "] for ontology [" + mfb.getId()
+										+ "] is invalid");
 					}
 
 					CVSFile cf = null;
@@ -116,16 +116,16 @@ public class OBOCVSPullServiceImpl implements OBOCVSPullService {
 					case CREATE_LOCAL_ACTION:
 						if (isEmptyFilename) {
 							throw new InvalidDataException(
-									"No filename is specified in the metadata descriptor file for ontology "
-											+ mfb.getId());
+									"No filename is specified in the metadata descriptor file for ontology ["
+											+ mfb.getId() + "]");
 						}
 
 						if (cf == null) {
 							throw new FileNotFoundException(
-									"An entry exists in the metadata descriptor for "
+									"An entry exists in the metadata descriptor for ["
 											+ mfb.getId()
-											+ " ontology but the file ("
-											+ filename + ") is missing");
+											+ "] ontology but the file ["
+											+ filename + "] is missing");
 						}
 
 						FilePathHandler filePathHandler = new PhysicalDirectoryFilePathHandlerImpl(
@@ -369,9 +369,10 @@ public class OBOCVSPullServiceImpl implements OBOCVSPullService {
 		if (userBean == null) {
 			userBean = new UserBean();
 			userBean.generateDefaultPassword();
+			userBean.setUsername(contact.getEmail());
 			userBean.setEmail(contact.getEmail());
-			userBean.setFirstname(contact.getName());
-			userBean.setLastname(contact.getName());
+			userBean.setFirstname(contact.getFirstName());
+			userBean.setLastname(contact.getLastName());
 			userBean.setDateCreated(Calendar.getInstance().getTime());
 			userService.createUser(userBean);
 		}
@@ -404,6 +405,10 @@ public class OBOCVSPullServiceImpl implements OBOCVSPullService {
 		 */
 		private OntologyBean getOntotlogyBean() {
 			return ontologyBean;
+		}
+
+		public String toString() {
+			return "[*** " + action + ": " + ontologyBean + " ***]";
 		}
 	}
 
