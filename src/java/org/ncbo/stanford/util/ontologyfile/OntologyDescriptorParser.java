@@ -39,19 +39,19 @@ import org.ncbo.stanford.util.helper.reflection.ReflectionHelper;
  */
 public class OntologyDescriptorParser {
 
-//	public static void main(String[] args) {
-//		try {
-//			OntologyDescriptorParser po = new OntologyDescriptorParser("");
-//			String temp = "";
-//			temp = "Paul Schofield	PS	mole.bio.cam.ac.uk";
-//
-//			ContactTypeBean c = getContact(temp, "");
-//			System.out.println(c);
-//
-//		} catch (Exception e) {
-//			e.printStackTrace();
-//		}
-//	}
+	// public static void main(String[] args) {
+	// try {
+	// OntologyDescriptorParser po = new OntologyDescriptorParser("");
+	// String temp = "";
+	// temp = "Paul Schofield PS mole.bio.cam.ac.uk";
+	//
+	// ContactTypeBean c = getContact(temp, "");
+	// System.out.println(c);
+	//
+	// } catch (Exception e) {
+	// e.printStackTrace();
+	// }
+	// }
 
 	private static final String LINE_PATTERN = "^(\\w+)(\\t|\\s)*(.*)";
 	private static final String UNDERSCORE_LETTER_PATTERN = "_+(\\w)";
@@ -129,6 +129,8 @@ public class OntologyDescriptorParser {
 		String emailDomain = "";
 		String email = "";
 		String name = "";
+		String firstName = "";
+		String lastName = "";
 		int i = 0;
 
 		for (i = contactString.length() - 1; i > 0; i--) {
@@ -157,15 +159,24 @@ public class OntologyDescriptorParser {
 					+ "] is invalid for ontology: " + oboFoundryId);
 		}
 
-		name = contactString = contactString.substring(0, i);
-		email = emailName + "@" + emailDomain;
+		name = contactString = contactString.substring(0, i).trim();
 
 		if (StringHelper.isNullOrNullString(name)) {
-			name = email;
+			firstName = "";
+			lastName = email;
+		} else {
+			for (i = 0; i < name.length(); i++) {
+				if (name.charAt(i) == ' ' || name.charAt(i) == '	') {
+					firstName = name.substring(0, i).trim();
+					lastName = name.substring(i).trim();
+					break;
+				}
+			}
 		}
 
-		contact.setName(name);
-		contact.setEmail(email);
+		contact.setFirstName(firstName);
+		contact.setLastName(lastName);
+		contact.setEmail(emailName + "@" + emailDomain);
 
 		return contact;
 	}
