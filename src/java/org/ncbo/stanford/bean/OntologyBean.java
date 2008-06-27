@@ -151,6 +151,7 @@ public class OntologyBean {
 			ontologyVersion.setNcboUser(getNcboUserFromSession());
 
 			ontologyVersion.setVersionNumber(this.getVersionNumber());
+			ontologyVersion.setVersionStatus(this.getVersionStatus());
 
 			// do not override internalVersionNumber if blank
 			if (this.getInternalVersionNumber() != null) {
