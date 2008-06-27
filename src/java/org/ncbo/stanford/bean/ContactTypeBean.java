@@ -15,7 +15,9 @@ public class ContactTypeBean implements Serializable {
 	private String organization;
 
 	public String toString() {
-		return "{Email: " + this.getEmail() + ", Name: " + this.getName() + "}";
+		return "{Email: " + this.getEmail() + ", First Name: "
+				+ this.getFirstName() + ", Last Name: " + this.getLastName()
+				+ "}";
 	}
 
 	/**
@@ -78,7 +80,8 @@ public class ContactTypeBean implements Serializable {
 	}
 
 	/**
-	 * @param firstName the firstName to set
+	 * @param firstName
+	 *            the firstName to set
 	 */
 	public void setFirstName(String firstName) {
 		this.firstName = firstName;
@@ -92,7 +95,8 @@ public class ContactTypeBean implements Serializable {
 	}
 
 	/**
-	 * @param lastName the lastName to set
+	 * @param lastName
+	 *            the lastName to set
 	 */
 	public void setLastName(String lastName) {
 		this.lastName = lastName;
