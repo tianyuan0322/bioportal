@@ -94,7 +94,6 @@ public class OntologyBean {
 			addFilenames(ncboOntology.getFilenames());
 
 			addCategoryIds(ncboOntology.getCategoryIds());
-
 		}
 	}
 
@@ -129,9 +128,7 @@ public class OntologyBean {
 	 * @param ncboOntology
 	 */
 	public void populateToVersionEntity(NcboOntologyVersion ontologyVersion) {
-
 		if (ontologyVersion != null) {
-
 			// all the business logic regarding OntologyVersionId and OntologyId
 			// is in OntologyBean layer
 			ontologyVersion.setId(this.getId());
@@ -174,19 +171,7 @@ public class OntologyBean {
 
 			// Set dateCreated
 			ontologyVersion.setDateCreated(Calendar.getInstance().getTime());
-
 		}
-
-		// DEBUG STATETMENT - to be removed later
-		System.out.println("******************************");
-		System.out.println("HTTP REQUEST: OntologyVersion");
-		System.out.println("versionId = " + this.getId());
-		System.out.println("versionNumber = " + this.getVersionNumber());
-		System.out.println("filePath = " + this.getFilePath());
-		System.out.println("contactName = " + this.getContactName());
-		System.out.println("contactEmail = " + this.getContactEmail());
-		System.out.println("******************************");
-
 	}
 
 	/**
@@ -198,7 +183,6 @@ public class OntologyBean {
 
 	public void populateToFileEntity(List<NcboOntologyFile> ontologyFileList,
 			NcboOntologyVersion ontologyVersion) {
-
 		List<String> fileNameList = this.getFilenames();
 
 		for (String fileName : fileNameList) {
@@ -222,7 +206,6 @@ public class OntologyBean {
 	public void populateToCategoryEntity(
 			List<NcboOntologyCategory> ontologyCategoryList,
 			NcboOntologyVersion ontologyVersion) {
-
 		List<Integer> categoryIdList = this.getCategoryIds();
 		for (Integer categoryId : categoryIdList) {
 
@@ -235,7 +218,6 @@ public class OntologyBean {
 
 			ontologyCategoryList.add(ontologyCategory);
 		}
-
 	}
 
 	/**
@@ -249,9 +231,7 @@ public class OntologyBean {
 
 	public void populateToLoadQueueEntity(NcboOntologyLoadQueue loadQueue,
 			NcboOntologyVersion ontologyVersion) {
-
 		if (loadQueue != null) {
-
 			// OntologyVersion object
 			loadQueue.setNcboOntologyVersion(ontologyVersion);
 
@@ -262,7 +242,6 @@ public class OntologyBean {
 
 			loadQueue.setDateCreated(Calendar.getInstance().getTime());
 		}
-
 	}
 
 	public String toString() {
@@ -705,7 +684,8 @@ public class OntologyBean {
 	}
 
 	/**
-	 * UserId should be already set in OntologyBean from OntologiesRestlet when create request comes in
+	 * UserId should be already set in OntologyBean from OntologiesRestlet when
+	 * create request comes in
 	 */
 	public NcboUser getNcboUserFromSession() {
 
