@@ -1,7 +1,6 @@
 package org.ncbo.stanford.service.user.impl;
 
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 import org.ncbo.stanford.bean.UserBean;
@@ -64,10 +63,9 @@ public class UserServiceImpl implements UserService {
 		NcboUser ncboUser = new NcboUser();
 		userBean.populateToEntity(ncboUser);
 
-		//ncboUserDAO.save(ncboUser);
+		// ncboUserDAO.save(ncboUser);
 		NcboUser newNcboUser = ncboUserDAO.saveUser(ncboUser);
 		userBean.setId(newNcboUser.getId());
-
 	}
 
 	public void updateUser(UserBean userBean) {
