@@ -10,7 +10,8 @@ public class ContactTypeBean implements Serializable {
 	private static final long serialVersionUID = -3012806504438328145L;
 	private String email;
 	private String emailType;
-	private String name;
+	private String firstName;
+	private String lastName;
 	private String organization;
 
 	public String toString() {
@@ -51,15 +52,7 @@ public class ContactTypeBean implements Serializable {
 	 * @return the name
 	 */
 	public String getName() {
-		return name;
-	}
-
-	/**
-	 * @param name
-	 *            the name to set
-	 */
-	public void setName(String name) {
-		this.name = name;
+		return firstName + " " + lastName;
 	}
 
 	/**
@@ -75,5 +68,33 @@ public class ContactTypeBean implements Serializable {
 	 */
 	public void setOrganization(String organization) {
 		this.organization = organization;
+	}
+
+	/**
+	 * @return the firstName
+	 */
+	public String getFirstName() {
+		return firstName;
+	}
+
+	/**
+	 * @param firstName the firstName to set
+	 */
+	public void setFirstName(String firstName) {
+		this.firstName = firstName;
+	}
+
+	/**
+	 * @return the lastName
+	 */
+	public String getLastName() {
+		return lastName;
+	}
+
+	/**
+	 * @param lastName the lastName to set
+	 */
+	public void setLastName(String lastName) {
+		this.lastName = lastName;
 	}
 }
