@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -16,7 +17,6 @@ import org.ncbo.stanford.bean.ContactTypeBean;
 import org.ncbo.stanford.bean.MetadataFileBean;
 import org.ncbo.stanford.bean.OntologyBean;
 import org.ncbo.stanford.bean.UserBean;
-import org.ncbo.stanford.enumeration.StatusEnum;
 import org.ncbo.stanford.exception.InvalidDataException;
 import org.ncbo.stanford.exception.InvalidOntologyFormatException;
 import org.ncbo.stanford.service.loader.remote.OBOCVSPullService;
@@ -170,7 +170,7 @@ public class OBOCVSPullServiceImpl implements OBOCVSPullService {
 				.findLatestOntologyVersionByOboFoundryId(mfb.getId());
 		String downloadUrl = mfb.getDownload();
 		List<Integer> newCategoryIds = findCategoryIdsByOBONames(downloadUrl);
-		Byte isRemote = isRemote(downloadUrl);
+		byte isRemote = isRemote(downloadUrl);
 
 		// is any action required?
 		// ____a. local && categories didn't change
@@ -221,7 +221,7 @@ public class OBOCVSPullServiceImpl implements OBOCVSPullService {
 	 */
 	private void populateOntologyBean(MetadataFileBean mfb, CVSFile cf,
 			ActionEnum action, OntologyBean ont, List<Integer> newCategoryIds,
-			Byte isRemote) throws InvalidDataException {
+			byte isRemote) throws InvalidDataException {
 		Date now = Calendar.getInstance().getTime();
 
 		if (action != ActionEnum.NO_ACTION) {
@@ -229,11 +229,9 @@ public class OBOCVSPullServiceImpl implements OBOCVSPullService {
 				ont.setVersionNumber(MessageUtils
 						.getMessage("remote.ontology.version"));
 				ont.setDateReleased(now);
-				ont.setStatusId(StatusEnum.STATUS_NOTAPPLICABLE.getStatus());
 			} else {
 				ont.setVersionNumber(cf.getVersion());
 				ont.setDateReleased(cf.getTimeStamp().getTime());
-				ont.setStatusId(StatusEnum.STATUS_WAITING.getStatus());
 				ont.addFilename(OntologyDescriptorParser.getFileName(mfb
 						.getDownload()));
 				ont.setCategoryIds(newCategoryIds);
@@ -243,7 +241,8 @@ public class OBOCVSPullServiceImpl implements OBOCVSPullService {
 			ont.setUserId(userBean.getId());
 			ont.setVersionStatus(getStatus(mfb.getStatus()));
 			ont.setIsCurrent(ApplicationConstants.TRUE);
-			ont.setIsRemote(isRemote);
+			ont.setIsRemote(new Byte(isRemote));
+			ont.setIsReviewed(ApplicationConstants.FALSE);
 
 			if (action != ActionEnum.UPDATE_ACTION) {
 				ont.setDateCreated(now);
@@ -261,7 +260,7 @@ public class OBOCVSPullServiceImpl implements OBOCVSPullService {
 					.getDocumentation()));
 			ont.setPublication(OntologyDescriptorParser.getPublication(mfb
 					.getPublication()));
-			ont.setIsFoundry(isFoundry(mfb.getFoundry()));
+			ont.setIsFoundry(new Byte(isFoundry(mfb.getFoundry())));
 		}
 	}
 
@@ -274,6 +273,9 @@ public class OBOCVSPullServiceImpl implements OBOCVSPullService {
 	 */
 	private boolean isCategoryUpdated(List<Integer> oldCategoryIds,
 			List<Integer> newCategoryIds) {
+		Collections.sort(oldCategoryIds);
+		Collections.sort(newCategoryIds);
+
 		return !ListUtils.isEqualList(oldCategoryIds, newCategoryIds);
 	}
 
@@ -300,8 +302,8 @@ public class OBOCVSPullServiceImpl implements OBOCVSPullService {
 	 * @param downloadUrl
 	 * @return
 	 */
-	private Byte isRemote(String downloadUrl) {
-		Byte isRemote = ApplicationConstants.TRUE;
+	private byte isRemote(String downloadUrl) {
+		byte isRemote = ApplicationConstants.TRUE;
 
 		if (!StringHelper.isNullOrNullString(downloadUrl)
 				&& downloadUrl.indexOf(getOboSourceforgeCVSHostname()) > -1) {
@@ -317,11 +319,11 @@ public class OBOCVSPullServiceImpl implements OBOCVSPullService {
 	 * @param str
 	 * @return
 	 */
-	private Byte isFoundry(String str) {
-		Byte foundry = ApplicationConstants.FALSE;
+	private byte isFoundry(String str) {
+		byte foundry = ApplicationConstants.FALSE;
 
 		if (ontologyFoundryToOBOFoundryMap.containsKey(str)) {
-			foundry = ontologyFoundryToOBOFoundryMap.get(str);
+			foundry = ontologyFoundryToOBOFoundryMap.get(str).byteValue();
 		}
 
 		return foundry;
