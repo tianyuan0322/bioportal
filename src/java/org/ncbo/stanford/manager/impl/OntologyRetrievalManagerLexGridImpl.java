@@ -4,7 +4,9 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Enumeration;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import org.LexGrid.LexBIG.DataModel.Collections.AssociatedConceptList;
 import org.LexGrid.LexBIG.DataModel.Collections.AssociationList;
@@ -138,7 +140,6 @@ public class OntologyRetrievalManagerLexGridImpl extends
 					.enumerateResolvedConceptReference().nextElement();
 			return createClassBean(ref);
 		}
-
 		return null;
 	}
 
@@ -163,7 +164,7 @@ public class OntologyRetrievalManagerLexGridImpl extends
 				null);
 		ClassBean conceptClass = findConcept(ncboOntology, conceptId);
 		ArrayList<ClassBean> classBeans = createClassBeanArray(associations,
-				conceptClass);
+				conceptClass, ApplicationConstants.SUB_CLASS);
 		return createThingClassBean(classBeans);
 	}
 
@@ -184,10 +185,10 @@ public class OntologyRetrievalManagerLexGridImpl extends
 		}
 
 		AssociationList associations = lbscm.getHierarchyLevelPrev(
-				urnVersionArray[0], csvt, hierarchyId, conceptId, true, null);
+				urnVersionArray[0], csvt, hierarchyId, conceptId, false, null);
 		ClassBean conceptClass = findConcept(ncboOntology, conceptId);
 		ArrayList<ClassBean> classBeans = createClassBeanArray(associations,
-				conceptClass);
+				conceptClass, ApplicationConstants.SUPER_CLASS);
 
 		return classBeans;
 	}
@@ -210,10 +211,10 @@ public class OntologyRetrievalManagerLexGridImpl extends
 		}
 
 		AssociationList associations = lbscm.getHierarchyLevelNext(
-				urnVersionArray[0], csvt, hierarchyId, conceptId, true, null);
+				urnVersionArray[0], csvt, hierarchyId, conceptId, false, null);
 		ClassBean conceptClass = findConcept(ncboOntology, conceptId);
 		ArrayList<ClassBean> classBeans = createClassBeanArray(associations,
-				conceptClass);
+				conceptClass, ApplicationConstants.SUB_CLASS);
 
 		return classBeans;
 	}
@@ -380,7 +381,7 @@ public class OntologyRetrievalManagerLexGridImpl extends
 			SortOptionList sortCriteria = Constructors
 					.createSortOptionList(new String[] { "matchToQuery", "code" });
 			ResolvedConceptReferencesIterator matchIterator = nodes.resolve(
-					sortCriteria, null, null);
+					sortCriteria, null, null, null, false);
 
 			ResolvedConceptReferenceList lst = matchIterator.next(maxToReturn);
 			SearchResultBean srb = new SearchResultBean();
@@ -445,7 +446,7 @@ public class OntologyRetrievalManagerLexGridImpl extends
 					.createSortOptionList(new String[] { "matchToQuery", "code" });
 			// Analyze the result ...
 			ResolvedConceptReferencesIterator matchIterator = nodes.resolve(
-					sortCriteria, null, null);
+					sortCriteria, null, null, null, false);
 			ResolvedConceptReferenceList lst = matchIterator.next(maxToReturn);
 			SearchResultBean srb = new SearchResultBean();
 			srb.setOntologyVersionId(ncboOntology.getId());
@@ -669,6 +670,107 @@ public class OntologyRetrievalManagerLexGridImpl extends
 		addArrayToHashMap(map, "ConceptProperty", entry.getConceptProperty());
 	}
 
+
+
+	private ArrayList<ClassBean> createClassBeanArray(AssociationList list,
+			ClassBean current_classBean, String hierarchy_relationName) {
+		ArrayList<ClassBean> classBeans = new ArrayList<ClassBean>();
+		Enumeration<Association> assocEnum = list.enumerateAssociation();
+		Association association = null;
+		while (assocEnum.hasMoreElements()) {
+			association = (Association) assocEnum.nextElement();
+			addAssociationInfoToClassBean(association, current_classBean, hierarchy_relationName);
+		}
+		classBeans.add(current_classBean);
+		return classBeans;
+	}
+
+	/**
+	 * This function adds the association information to the current class bean.
+	 * If a hierarchy_relation name is specified, then the association information is also added using the 
+	 * hierarchy_relationName. The hierarchy relationName is used to create subClass and superClass relations needed 
+	 * by BioPortal. For hierarchy realtionNames called subClass, we also add the count of children of the concept.
+	 * @param association
+	 * @param current_classBean
+	 */
+	private void addAssociationInfoToClassBean(Association association,
+			ClassBean current_classBean, String hierarchy_relationName) {
+		AssociatedConceptList assocConceptList = association
+				.getAssociatedConcepts();
+		ArrayList<ClassBean> classBeans = new ArrayList<ClassBean>();
+		for (int i = 0; i < assocConceptList.getAssociatedConceptCount(); i++) {
+			AssociatedConcept assocConcept = assocConceptList
+					.getAssociatedConcept(i);
+			if (assocConcept != null) {
+				ClassBean classBean = createClassBean(assocConcept);
+				classBeans.add(classBean);
+				// Find and recurse printing for next batch ...
+				AssociationList nextLevel = assocConcept.getSourceOf();
+				if (nextLevel != null && nextLevel.getAssociationCount() != 0)
+					for (int j = 0; j < nextLevel.getAssociationCount(); j++) {
+						String next_hierarchyName=null;
+						if (StringUtils.isNotBlank(hierarchy_relationName)) {
+							next_hierarchyName= ApplicationConstants.SUB_CLASS;
+						}
+						addAssociationInfoToClassBean(nextLevel.getAssociation(j),
+								classBean, next_hierarchyName);
+					}
+
+				// Find and recurse printing for previous batch ...
+				AssociationList prevLevel = assocConcept.getTargetOf();
+				if (prevLevel != null && prevLevel.getAssociationCount() != 0)
+					for (int j = 0; j < prevLevel.getAssociationCount(); j++) {
+						String next_hierarchyName=null;
+						if (StringUtils.isNotBlank(hierarchy_relationName)) {
+							next_hierarchyName= ApplicationConstants.SUB_CLASS;
+						}						
+						addAssociationInfoToClassBean(prevLevel.getAssociation(j),
+								classBean, next_hierarchyName);
+			      }
+			}
+		}
+		current_classBean.addRelation(association.getDirectionalName(),
+				classBeans);
+		addHierarchyRelationName(current_classBean, classBeans, hierarchy_relationName);
+	}
+
+	/** This function is written to satisfy the BioPortal need to be able to add subClass
+	 * and superClass hierarchy names as well as a count of the children of a concept.
+	 * A concept may have sets of children defined in the different associations, so
+	 * we need to aggregate them together and deal with duplicates.
+	 * 
+	 * @param bean
+	 * @param beanlist
+	 * @param hierarchy_name
+	 */
+	private void addHierarchyRelationName(ClassBean bean, ArrayList<ClassBean> beanlist, String hierarchy_name) {
+		  Object value= bean.getRelations().get(hierarchy_name);
+		  if (value != null && value instanceof ArrayList) {
+			  // Ensure we do not add duplicates
+			  Set<ClassBean> set = new HashSet<ClassBean>();
+			  List<ClassBean> list= (List<ClassBean>) value;
+			  set.addAll(list);
+			  set.addAll((List<ClassBean>) beanlist);
+			   
+			  // avoid overhead of clear if not needed
+			  if(set.size() < list.size()) {
+			      list.clear();
+			      list.addAll(set);
+			  }
+			  bean.addRelation(hierarchy_name, list);
+			  if (ApplicationConstants.SUB_CLASS.equalsIgnoreCase(hierarchy_name)) {
+				  bean.addRelation(ApplicationConstants.CHILD_COUNT, list.size());
+			  }
+
+			  
+		  } else {
+			  bean.addRelation(hierarchy_name, beanlist);
+			  if (ApplicationConstants.SUB_CLASS.equalsIgnoreCase(hierarchy_name)) {
+				  bean.addRelation(ApplicationConstants.CHILD_COUNT, beanlist.size());
+			  }
+		  }
+	}
+	
 	private void addCodedEntryPropertyValueOld(Concept entry, ClassBean bean) {
 		// Presentation[] presentation = entry.getPresentation();
 		HashMap<Object, Object> map = bean.getRelations();
@@ -723,49 +825,6 @@ public class OntologyRetrievalManagerLexGridImpl extends
 			}
 		}
 
-	}
-
-	private ArrayList<ClassBean> createClassBeanArray(AssociationList list,
-			ClassBean current_classBean) {
-		ArrayList<ClassBean> classBeans = new ArrayList<ClassBean>();
-		Enumeration<Association> assocEnum = list.enumerateAssociation();
-		Association association = null;
-		while (assocEnum.hasMoreElements()) {
-			association = (Association) assocEnum.nextElement();
-			createClassBeanArray(association, current_classBean);
-		}
-		classBeans.add(current_classBean);
-		return classBeans;
-	}
-
-	private void createClassBeanArray(Association association,
-			ClassBean current_classBean) {
-		AssociatedConceptList assocConceptList = association
-				.getAssociatedConcepts();
-		ArrayList<ClassBean> classBeans = new ArrayList<ClassBean>();
-		for (int i = 0; i < assocConceptList.getAssociatedConceptCount(); i++) {
-			AssociatedConcept assocConcept = assocConceptList
-					.getAssociatedConcept(i);
-			if (assocConcept != null) {
-				ClassBean classBean = createClassBean(assocConcept);
-				classBeans.add(classBean);
-				// Find and recurse printing for next batch ...
-				AssociationList nextLevel = assocConcept.getSourceOf();
-				if (nextLevel != null && nextLevel.getAssociationCount() != 0)
-					for (int j = 0; j < nextLevel.getAssociationCount(); j++)
-						createClassBeanArray(nextLevel.getAssociation(j),
-								classBean);
-
-				// Find and recurse printing for previous batch ...
-				AssociationList prevLevel = assocConcept.getTargetOf();
-				if (prevLevel != null && prevLevel.getAssociationCount() != 0)
-					for (int j = 0; j < prevLevel.getAssociationCount(); j++)
-						createClassBeanArray(prevLevel.getAssociation(j),
-								classBean);
-			}
-		}
-		current_classBean.addRelation(association.getDirectionalName(),
-				classBeans);
-	}
-
+	}	
+	
 }

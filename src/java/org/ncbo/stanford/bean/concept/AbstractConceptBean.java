@@ -129,6 +129,15 @@ public abstract class AbstractConceptBean {
 		return relations;
 	}
 	
-	
+	 public boolean equals(Object o) {
+			if (o == this)
+			    return true;
+			if (! (o instanceof AbstractConceptBean)) 
+				return false;
+			AbstractConceptBean t= (AbstractConceptBean) o;
+			if (id.equals(t.id) && label.equals(t.label) && relations.equals(t.relations))
+				return true;
+			return false;
+	 }
 	
 }
