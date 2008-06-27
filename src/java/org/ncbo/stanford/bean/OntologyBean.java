@@ -98,7 +98,7 @@ public class OntologyBean {
 
 		}
 	}
-	
+
 	/**
 	 * Populates a NcboOntologyMetadata Entity from this ontologyBean.
 	 * OntologyVersion should have been populated from OntologyBean before
@@ -152,7 +152,7 @@ public class OntologyBean {
 			ontologyVersion.setNcboUser(getNcboUserFromSession());
 
 			ontologyVersion.setVersionNumber(this.getVersionNumber());
-			
+
 			// do not override internalVersionNumber if blank
 			if (this.getInternalVersionNumber() != null) {
 				ontologyVersion.setInternalVersionNumber(this
@@ -266,16 +266,17 @@ public class OntologyBean {
 	}
 
 	public String toString() {
-		return "{Id: " + this.getId() + " Ontology Id: " + this.getOntologyId()
-				+ " Internal Version Number: "
-				+ this.getInternalVersionNumber() + " User Id: "
-				+ this.getUserId() + " Version Number: "
-				+ this.getVersionNumber() + " Version Status: "
-				+ this.getVersionStatus() + " Obo Foundry Id: "
-				+ this.getOboFoundryId() + " Display Label: "
-				+ this.getDisplayLabel() + " Format: " + this.getFormat()
-				+ " Contact Name: " + this.getContactName()
-				+ " Contact Email: " + this.getContactEmail() + " Foundry: "
+		return "{Id: " + this.getId() + ", Ontology Id: "
+				+ this.getOntologyId() + ", Remote: " + this.getIsRemote()
+				+ ", Obo Foundry Id: " + this.getOboFoundryId()
+				+ ", Internal Version Number: "
+				+ this.getInternalVersionNumber() + ", User Id: "
+				+ this.getUserId() + ", Version Number: "
+				+ this.getVersionNumber() + ", Version Status: "
+				+ this.getVersionStatus() + ", Display Label: "
+				+ this.getDisplayLabel() + ", Format: " + this.getFormat()
+				+ ", Contact Name: " + this.getContactName()
+				+ ", Contact Email: " + this.getContactEmail() + ", Foundry: "
 				+ this.getIsFoundry() + "}";
 	}
 
@@ -743,27 +744,26 @@ public class OntologyBean {
 	public void setOboFoundryId(String oboFoundryId) {
 		this.oboFoundryId = oboFoundryId;
 	}
-	
-	
+
 	/**
 	 * Populate status in the bean
 	 */
 	public void populateStatus(NcboLStatus status) {
-				
+
 		status.setId(this.getStatusId());
-		
+
 		// set default value for status if new record
 		if ((status.getId() == null)) {
-			populateDefaultStatus(status);	
+			populateDefaultStatus(status);
 		}
 	}
 
 	/**
-	 * Populate default status in the bean
-	 * Status is "1"(waiting) for local upload, "5"(notapplicable) for remote.
+	 * Populate default status in the bean Status is "1"(waiting) for local
+	 * upload, "5"(notapplicable) for remote.
 	 */
 	public void populateDefaultStatus(NcboLStatus status) {
-		
+
 		if (this.isRemote()) {
 			status.setId(new Integer(MessageUtils
 					.getMessage("ncbo.status.notapplicable")));
@@ -771,16 +771,16 @@ public class OntologyBean {
 			status.setId(new Integer(MessageUtils
 					.getMessage("ncbo.status.waiting")));
 		}
-	}	
-	
+	}
+
 	/**
 	 * @return the isRemote
 	 */
 	public boolean isRemote() {
-		if (this.getIsRemote().equals(ApplicationConstants.TRUE) ) {
+		if (this.getIsRemote().equals(ApplicationConstants.TRUE)) {
 			return true;
 		}
 		return false;
 	}
-	
+
 }
