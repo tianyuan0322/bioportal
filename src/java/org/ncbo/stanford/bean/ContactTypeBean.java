@@ -13,6 +13,10 @@ public class ContactTypeBean implements Serializable {
 	private String name;
 	private String organization;
 
+	public String toString() {
+		return "{Email: " + this.getEmail() + ", Name: " + this.getName() + "}";
+	}
+
 	/**
 	 * @return the email
 	 */
@@ -71,9 +75,5 @@ public class ContactTypeBean implements Serializable {
 	 */
 	public void setOrganization(String organization) {
 		this.organization = organization;
-	}
-
-	public String toString() {
-		return "name: " + name + "\nemail: " + email;
 	}
 }
