@@ -20,8 +20,10 @@ import org.LexGrid.LexBIG.DataModel.Core.ResolvedConceptReference;
 import org.LexGrid.LexBIG.Extensions.Generic.LexBIGServiceConvenienceMethods;
 import org.LexGrid.LexBIG.Impl.LexBIGServiceImpl;
 import org.LexGrid.LexBIG.LexBIGService.CodedNodeSet;
+
 import org.LexGrid.LexBIG.LexBIGService.LexBIGService;
 import org.LexGrid.LexBIG.LexBIGService.CodedNodeSet.ActiveOption;
+import org.LexGrid.LexBIG.LexBIGService.CodedNodeSet.PropertyType;
 import org.LexGrid.LexBIG.LexBIGService.CodedNodeSet.SearchDesignationOption;
 import org.LexGrid.LexBIG.Utility.Constructors;
 import org.LexGrid.LexBIG.Utility.ConvenienceMethods;
@@ -264,14 +266,26 @@ public class OntologyRetrievalManagerLexGridImpl extends
 		return results;
 	}
 
+	/**
+	 * Search through the concept properties that are in the property names array for a 
+	 * property value that exactly matches the query string. All the ontologies in the 
+	 *  NcboOntologies list are searched. If the property names array is null, we search 
+	 *  through all the properties. 
+	 * @param ontologyVersions
+	 * @param query
+	 * @param property_names
+	 * @param includeObsolete
+	 * @param maxToReturn
+	 * @return
+	 */
 	public List<SearchResultBean> findConceptPropertyExact(
 			List<NcboOntology> ontologyVersions, String query,
-			String properties[], boolean includeObsolete, int maxToReturn) {
+			String property_names[], boolean includeObsolete, int maxToReturn) {
 		ArrayList<SearchResultBean> results = new ArrayList<SearchResultBean>();
 
 		for (NcboOntology ontologyVersion : ontologyVersions) {
 			SearchResultBean result = searchNodesForProperties(ontologyVersion,
-					query, properties, false, includeObsolete, maxToReturn,
+					query, property_names, false, includeObsolete, maxToReturn,
 					Match_Types.SEARCH_EXACT_MATCH);
 			results.add(result);
 		}
@@ -279,14 +293,26 @@ public class OntologyRetrievalManagerLexGridImpl extends
 		return results;
 	}
 
+	/**
+	 * Search through the concept properties that are in the property names array for a 
+	 * property value that starts with the query string. All the ontologies in the 
+	 *  NcboOntologies list are searched. If the property names array is null, we search 
+	 *  through all the properties. 
+	 * @param ontologyVersions
+	 * @param query
+	 * @param property_names
+	 * @param includeObsolete
+	 * @param maxToReturn
+	 * @return
+	 */
 	public List<SearchResultBean> findConceptPropertyStartsWith(
 			List<NcboOntology> ontologyVersions, String query,
-			String properties[], boolean includeObsolete, int maxToReturn) {
+			String property_names[], boolean includeObsolete, int maxToReturn) {
 		ArrayList<SearchResultBean> results = new ArrayList<SearchResultBean>();
 
 		for (NcboOntology ontologyVersion : ontologyVersions) {
 			SearchResultBean result = searchNodesForProperties(ontologyVersion,
-					query, properties, false, includeObsolete, maxToReturn,
+					query, property_names, false, includeObsolete, maxToReturn,
 					Match_Types.SEARCH_STARTS_WITH);
 			results.add(result);
 		}
@@ -294,14 +320,26 @@ public class OntologyRetrievalManagerLexGridImpl extends
 		return results;
 	}
 
+	/**
+	 * Search through the concept properties that are in the property names array for a 
+	 * property value that contains the query string. All the ontologies in the 
+	 *  NcboOntologies list are searched. If the property names array is null, we search 
+	 *  through all the properties. 
+	 * @param ontologyVersions
+	 * @param query
+	 * @param property_names
+	 * @param includeObsolete
+	 * @param maxToReturn
+	 * @return
+	 */
 	public List<SearchResultBean> findConceptPropertyContains(
 			List<NcboOntology> ontologyVersions, String query,
-			String properties[], boolean includeObsolete, int maxToReturn) {
+			String property_names[], boolean includeObsolete, int maxToReturn) {
 		ArrayList<SearchResultBean> results = new ArrayList<SearchResultBean>();
 
 		for (NcboOntology ontologyVersion : ontologyVersions) {
 			SearchResultBean result = searchNodesForProperties(ontologyVersion,
-					query, properties, false, includeObsolete, maxToReturn,
+					query, property_names, false, includeObsolete, maxToReturn,
 					Match_Types.SEARCH_CONTAINS);
 			results.add(result);
 		}
@@ -327,7 +365,7 @@ public class OntologyRetrievalManagerLexGridImpl extends
 	}
 
 	private SearchResultBean searchNodesForProperties(
-			NcboOntology ncboOntology, String search_string, String[] properties,
+			NcboOntology ncboOntology, String search_string, String[] property_names,
 			boolean soundsLike, boolean includeObsolete, int maxToReturn,
 			Match_Types algorithm) {
 		try {
@@ -339,7 +377,6 @@ public class OntologyRetrievalManagerLexGridImpl extends
 							Constructors
 									.createCodingSchemeVersionOrTagFromVersion(urnVersionArray[1]));
 
-			String[] propList = properties;
 			String matchAlgorithm = "RegExp";
 
 			if (soundsLike)
@@ -366,9 +403,16 @@ public class OntologyRetrievalManagerLexGridImpl extends
 				matchAlgorithm = "RegExp";
 			}
 
-			if (properties != null && properties.length > 0) {
+			if (property_names != null && property_names.length > 0) {
 				nodes = nodes.restrictToMatchingProperties(Constructors
-						.createLocalNameList(propList), null, search_string,
+						.createLocalNameList(property_names), null, search_string,
+						matchAlgorithm, null);
+			} else {
+				// We'll search all the properties
+				PropertyType[] propTypes= {PropertyType.COMMENT, PropertyType.DEFINITION, 
+						PropertyType.INSTRUCTION, PropertyType.PRESENTATION, PropertyType.GENERIC };
+				
+				nodes = nodes.restrictToMatchingProperties(null, propTypes, search_string,
 						matchAlgorithm, null);
 			}
 
