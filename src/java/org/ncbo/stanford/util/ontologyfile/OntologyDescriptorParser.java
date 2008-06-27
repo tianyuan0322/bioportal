@@ -39,33 +39,19 @@ import org.ncbo.stanford.util.helper.reflection.ReflectionHelper;
  */
 public class OntologyDescriptorParser {
 
-	// public static void main(String[] args) {
-	// try {
-	// OntologyDescriptorParser po = new OntologyDescriptorParser();
-	// String temp = "";
-	// temp = "SEP developers via the PSI and MSI mailing
-	// lists|psidev-gps-dev@lists.sourceforge.net,
-	// msi-workgroups-ontology@lists.sourceforge.net,
-	// mdorf@lists.sourceforge.net";
-	// temp = "George Gkoutos obo-phe_notype lists.sourceforge.net";
-	// temp = "George Gkoutos obo-phe_notype lists.sourceforge.net,
-	// obo-anotherthype lists.bioportal.org";
-	// List<ContactTypeBean> contacts = po.getContactList(temp);
-	// System.out.println(contacts);
-	// String filename = po
-	// .getFileName("http://obo.cvs.sourceforge.net/*checkout*/obo/obo/ontology/developmental/animal_development/parasite/PLO.ontology");
-	// List<MetadataFileBean> ol = po.parseOntologyFile();
-	//
-	// for (MetadataFileBean mfb : ol) {
-	// System.out.println(mfb);
-	// System.out.println();
-	// }
-	//
-	// System.out.println("filename: " + filename);
-	// } catch (Exception e) {
-	// e.printStackTrace();
-	// }
-	// }
+//	public static void main(String[] args) {
+//		try {
+//			OntologyDescriptorParser po = new OntologyDescriptorParser("");
+//			String temp = "";
+//			temp = "Paul Schofield	PS	mole.bio.cam.ac.uk";
+//
+//			ContactTypeBean c = getContact(temp, "");
+//			System.out.println(c);
+//
+//		} catch (Exception e) {
+//			e.printStackTrace();
+//		}
+//	}
 
 	private static final String LINE_PATTERN = "^(\\w+)(\\t|\\s)*(.*)";
 	private static final String UNDERSCORE_LETTER_PATTERN = "_+(\\w)";
@@ -96,7 +82,7 @@ public class OntologyDescriptorParser {
 			if (StringHelper.isNullOrNullString(temp)) {
 				ontologyList.add(mfb);
 				mfb = new MetadataFileBean();
-				
+
 				// eof has been reached
 				if (temp == null) {
 					break;
@@ -138,57 +124,48 @@ public class OntologyDescriptorParser {
 	 */
 	public static ContactTypeBean getContact(String contactString,
 			String oboFoundryId) throws InvalidDataException {
-		ContactTypeBean contact = null;
-		String name = "";
+		ContactTypeBean contact = new ContactTypeBean();
+		String emailName = "";
+		String emailDomain = "";
 		String email = "";
+		String name = "";
+		int i = 0;
 
-		if (!StringHelper.isNullOrNullString(contactString)) {
-			String contactPattern = "^([\\w\\s]+)([\\s\\t\\|]+)(.*)";
-			Pattern pat = Pattern.compile(contactPattern);
-			Matcher m = pat.matcher(contactString);
-			m.find();
-
-			try {
-				name = m.group(1);
-			} catch (Exception e) {
-				name = "";
-			}
-
-			String rest = m.group(3);
-
-			if (rest != null) {
-				if (rest.indexOf('@') < 0) {
-					rest = rest.replaceFirst("[\\s\\t]", "@");
-				}
-
-				rest = rest.replaceFirst("[,\\s\\t\\\r]+", "###");
-
-				pat = Pattern.compile("^(.*)###(.*)$");
-				m = pat.matcher(rest);
-				m.find();
-
-				if (m.matches()) {
-					email = m.group(1);
-				} else {
-					email = rest;
-				}
-			}
-
-			if (!StringHelper.isNullOrNullString(email)) {
-				contact = new ContactTypeBean();
-
-				if (StringHelper.isNullOrNullString(name)) {
-					name = email;
-				}
-
-				contact.setName(name);
-				contact.setEmail(email);
-			} else {
-				throw new InvalidDataException(
-						"Contact list must be provided for ontology: "
-								+ oboFoundryId);
+		for (i = contactString.length() - 1; i > 0; i--) {
+			if (contactString.charAt(i) == ' '
+					|| contactString.charAt(i) == '	'
+					|| contactString.charAt(i) == '|') {
+				emailDomain = contactString.substring(i).trim();
+				contactString = contactString.substring(0, i);
+				break;
 			}
 		}
+
+		for (i = contactString.length() - 1; i > 0; i--) {
+			if (contactString.charAt(i) == ' '
+					|| contactString.charAt(i) == '	'
+					|| contactString.charAt(i) == '|') {
+				emailName = contactString.substring(i).trim();
+				contactString = contactString.substring(0, i);
+				break;
+			}
+		}
+
+		if (StringHelper.isNullOrNullString(emailName)
+				|| StringHelper.isNullOrNullString(emailDomain)) {
+			throw new InvalidDataException("Provided contact [" + contactString
+					+ "] is invalid for ontology: " + oboFoundryId);
+		}
+
+		name = contactString = contactString.substring(0, i);
+		email = emailName + "@" + emailDomain;
+
+		if (StringHelper.isNullOrNullString(name)) {
+			name = email;
+		}
+
+		contact.setName(name);
+		contact.setEmail(email);
 
 		return contact;
 	}
