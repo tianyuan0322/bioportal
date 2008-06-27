@@ -99,12 +99,19 @@ public class OntologiesRestlet extends Restlet {
 				
 		// create the ontology
 		try {
-			
-			FilePathHandler filePathHandler = new CommonsFileUploadFilePathHandlerImpl(
-					CompressedFileHandlerFactory.createFileHandler(ontologyBean
-							.getFormat()), ontologyBean.getFileItem());
+			// no file handler for remote case since there is no file to upload.
+			if (ontologyBean.isRemote()) {
+				getOntologyService().createOntology(ontologyBean, null);
+			} else {
+				
+				FilePathHandler filePathHandler = new CommonsFileUploadFilePathHandlerImpl(
+						CompressedFileHandlerFactory
+								.createFileHandler(ontologyBean.getFormat()),
+						ontologyBean.getFileItem());
 
-			getOntologyService().createOntology(ontologyBean, filePathHandler);
+				getOntologyService().createOntology(ontologyBean,
+						filePathHandler);
+			}
 
 		} catch (Exception e) {
 			response.setStatus(Status.SERVER_ERROR_INTERNAL, e.getMessage());
