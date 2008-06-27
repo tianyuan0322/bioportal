@@ -43,25 +43,26 @@ public class OntologyServiceImpl implements OntologyService {
 	private CustomNcboSeqOntologyIdDAO ncboSeqOntologyIdDAO;
 	private CustomNcboLCategoryDAO ncboLCategoryDAO;
 
-	
 	/*
 	 * (non-Javadoc)
 	 * 
 	 * @see org.ncbo.stanford.service.ontology.OntologyService#findAllCategoryIds(java.lang.String[])
 	 */
+	@SuppressWarnings("unchecked")
 	public List<CategoryBean> findAllCategories() {
-
-		ArrayList<CategoryBean> categoryBeanList = new ArrayList<CategoryBean>(1);
+		ArrayList<CategoryBean> categoryBeanList = new ArrayList<CategoryBean>(
+				1);
 		List<NcboLCategory> categoryEntityList = ncboLCategoryDAO.findAll();
 
 		for (NcboLCategory ncboCategory : categoryEntityList) {
 			CategoryBean categoryBean = new CategoryBean();
 			categoryBean.populateFromEntity(ncboCategory);
 			categoryBeanList.add(categoryBean);
-		}		
+		}
+		
 		return categoryBeanList;
-	}	
-	
+	}
+
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -266,7 +267,8 @@ public class OntologyServiceImpl implements OntologyService {
 			ncboOntologyCategoryDAO.save(ontologyCategory);
 		}
 
-		// if remote, do not continue to upload(i.e. ontologyFile and ontologyQueue )
+		// if remote, do not continue to upload(i.e. ontologyFile and
+		// ontologyQueue )
 		if (ontologyBean.isRemote())
 			return;
 
@@ -285,7 +287,6 @@ public class OntologyServiceImpl implements OntologyService {
 		// 5. <ontologyQueue> - populate and save
 		ontologyBean.populateToLoadQueueEntity(loadQueue, newOntologyVersion);
 		ncboOntologyLoadQueueDAO.save(loadQueue);
-		
 	}
 
 	/**
@@ -296,7 +297,6 @@ public class OntologyServiceImpl implements OntologyService {
 	 * @return
 	 */
 	public void updateOntology(OntologyBean ontologyBean) {
-
 		// get the NcboOntologyVersion instance using OntologyVersionId
 		NcboOntologyVersion ontologyVersion = ncboOntologyVersionDAO
 				.findById(ontologyBean.getId());
@@ -339,8 +339,8 @@ public class OntologyServiceImpl implements OntologyService {
 	 * @param ontologyBean
 	 * @return
 	 */
+	@SuppressWarnings("unchecked")
 	public void cleanupOntologyCategory(OntologyBean ontologyBean) {
-
 		// get the NcboOntologyVersion instance using OntologyVersionId
 		NcboOntologyVersion ontologyVersion = ncboOntologyVersionDAO
 				.findById(ontologyBean.getId());
@@ -352,8 +352,13 @@ public class OntologyServiceImpl implements OntologyService {
 		}
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.ncbo.stanford.service.ontology.OntologyService#deleteOntology(org.ncbo.stanford.bean.OntologyBean)
+	 */
+	@SuppressWarnings("unchecked")
 	public void deleteOntology(OntologyBean ontologyBean) {
-
 		// 1. <ontologyVersion>
 		NcboOntologyVersion ontologyVersion = ncboOntologyVersionDAO
 				.findById(ontologyBean.getId());
@@ -394,8 +399,12 @@ public class OntologyServiceImpl implements OntologyService {
 		ncboOntologyVersionDAO.delete(ontologyVersion);
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.ncbo.stanford.service.ontology.OntologyService#getOntologyFile(org.ncbo.stanford.bean.OntologyBean)
+	 */
 	public File getOntologyFile(OntologyBean ontologyBean) throws Exception {
-
 		String fileName = (String) ontologyBean.getFilenames().toArray()[0];
 		File file = new File(AbstractFilePathHandler.getOntologyFilePath(
 				ontologyBean, fileName));
