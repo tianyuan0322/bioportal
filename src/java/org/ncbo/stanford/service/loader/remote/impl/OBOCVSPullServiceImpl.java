@@ -224,12 +224,20 @@ public class OBOCVSPullServiceImpl implements OBOCVSPullService {
 			ActionEnum action, OntologyBean ont, List<Integer> newCategoryIds,
 			byte isRemote) throws InvalidDataException {
 		Date now = Calendar.getInstance().getTime();
+		String downloadUrl = mfb.getDownload();
+		String sourceUrl = mfb.getSource();
 
 		if (action != ActionEnum.NO_ACTION) {
 			if (isRemote == ApplicationConstants.TRUE) {
 				ont.setVersionNumber(MessageUtils
 						.getMessage("remote.ontology.version"));
 				ont.setDateReleased(now);
+
+				if (!StringHelper.isNullOrNullString(downloadUrl)) {
+					ont.setFilePath(downloadUrl);
+				} else if (!StringHelper.isNullOrNullString(sourceUrl)) {
+					ont.setFilePath(sourceUrl);
+				}
 			} else {
 				ont.setVersionNumber(cf.getVersion());
 				ont.setDateReleased(cf.getTimeStamp().getTime());
