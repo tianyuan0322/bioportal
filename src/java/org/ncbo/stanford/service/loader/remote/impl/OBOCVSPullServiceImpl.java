@@ -110,6 +110,8 @@ public class OBOCVSPullServiceImpl implements OBOCVSPullService {
 					OntologyAction ontologyAction = determineOntologyAction(
 							mfb, cf);
 					ActionEnum action = ontologyAction.getAction();
+					log.debug(ontologyAction);
+					
 					OntologyBean ont = ontologyAction.getOntotlogyBean();
 
 					switch (action) {
@@ -200,6 +202,7 @@ public class OBOCVSPullServiceImpl implements OBOCVSPullService {
 		} else if (cf != null) {
 			// existing ontology local; new version
 			action = ActionEnum.CREATE_LOCAL_ACTION;
+			ont.setParentId(ont.getId());
 			ont.setId(null);
 		}
 
@@ -252,6 +255,7 @@ public class OBOCVSPullServiceImpl implements OBOCVSPullService {
 			ont.setIsCurrent(ApplicationConstants.TRUE);
 			ont.setIsRemote(new Byte(isRemote));
 			ont.setIsReviewed(ApplicationConstants.FALSE);
+			ont.setStatusId(null);
 
 			if (action != ActionEnum.UPDATE_ACTION) {
 				ont.setDateCreated(now);
