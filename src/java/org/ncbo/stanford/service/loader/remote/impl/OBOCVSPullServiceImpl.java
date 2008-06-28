@@ -259,7 +259,8 @@ public class OBOCVSPullServiceImpl implements OBOCVSPullService {
 			ont.setOboFoundryId(mfb.getId());
 			ont.setDisplayLabel(mfb.getTitle());
 			ont.setFormat(getFormat(mfb.getFormat()));
-			ont.setContactName(userBean.getLastname());
+			ont.setContactName(userBean.getFirstname() + " "
+					+ userBean.getLastname());
 			ont.setContactEmail(userBean.getEmail());
 			ont
 					.setHomepage(OntologyDescriptorParser.getHomepage(mfb
