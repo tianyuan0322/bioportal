@@ -139,6 +139,7 @@ public class OBOCVSPullServiceImpl implements OBOCVSPullService {
 						ontologyService.createOntology(ont, null);
 						break;
 					case UPDATE_ACTION:
+						ontologyService.cleanupOntologyCategory(ont);
 						ontologyService.updateOntology(ont);
 						break;
 					}
