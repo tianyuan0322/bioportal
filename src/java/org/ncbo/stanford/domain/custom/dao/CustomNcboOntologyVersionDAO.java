@@ -4,6 +4,7 @@
 package org.ncbo.stanford.domain.custom.dao;
 
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
@@ -213,6 +214,7 @@ public class CustomNcboOntologyVersionDAO extends NcboOntologyVersionDAO {
 			NcboOntologyVersion ontologyVersion, NcboOntology ontology) {
 		Set<NcboOntologyCategory> categories = ontologyVersion
 				.getNcboOntologyCategories();
+		ontology.setCategoryIds(new ArrayList<Integer>(0));
 
 		for (NcboOntologyCategory cat : categories) {
 			ontology.addCategoryId(cat.getNcboLCategory().getId());
@@ -222,6 +224,7 @@ public class CustomNcboOntologyVersionDAO extends NcboOntologyVersionDAO {
 	private void populateOntologyFiles(NcboOntologyVersion ontologyVersion,
 			NcboOntology ontology) {
 		Set<NcboOntologyFile> files = ontologyVersion.getNcboOntologyFiles();
+		ontology.setFilenames(new ArrayList<String>(0));
 
 		for (NcboOntologyFile file : files) {
 			ontology.addFilename(file.getFilename());
