@@ -256,6 +256,8 @@ public class OBOCVSPullServiceImpl implements OBOCVSPullService {
 			ont.setIsRemote(new Byte(isRemote));
 			ont.setIsReviewed(ApplicationConstants.FALSE);
 			ont.setStatusId(null);
+			ont.setUrn(null);
+			ont.setCodingScheme(null);
 
 			if (action != ActionEnum.UPDATE_ACTION) {
 				ont.setDateCreated(now);
