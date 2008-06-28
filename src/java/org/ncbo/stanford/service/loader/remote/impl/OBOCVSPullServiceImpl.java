@@ -111,7 +111,7 @@ public class OBOCVSPullServiceImpl implements OBOCVSPullService {
 							mfb, cf);
 					ActionEnum action = ontologyAction.getAction();
 					log.debug(ontologyAction);
-					
+
 					OntologyBean ont = ontologyAction.getOntotlogyBean();
 
 					switch (action) {
@@ -167,8 +167,6 @@ public class OBOCVSPullServiceImpl implements OBOCVSPullService {
 	private OntologyAction determineOntologyAction(MetadataFileBean mfb,
 			CVSFile cf) throws InvalidDataException {
 		ActionEnum action = ActionEnum.NO_ACTION;
-		HashMap<ActionEnum, OntologyBean> ontologyAction = new HashMap<ActionEnum, OntologyBean>(
-				1);
 		OntologyBean ont = ontologyService
 				.findLatestOntologyVersionByOboFoundryId(mfb.getId());
 		String downloadUrl = mfb.getDownload();
@@ -202,12 +200,9 @@ public class OBOCVSPullServiceImpl implements OBOCVSPullService {
 		} else if (cf != null) {
 			// existing ontology local; new version
 			action = ActionEnum.CREATE_LOCAL_ACTION;
-			ont.setParentId(ont.getId());
-			ont.setId(null);
 		}
 
 		populateOntologyBean(mfb, cf, action, ont, newCategoryIds, isRemote);
-		ontologyAction.put(action, ont);
 
 		return new OntologyAction(action, ont);
 	}
@@ -249,20 +244,18 @@ public class OBOCVSPullServiceImpl implements OBOCVSPullService {
 				ont.setCategoryIds(newCategoryIds);
 			}
 
+			if (action != ActionEnum.UPDATE_ACTION) {
+				ont.setDateCreated(now);
+				ont.setParentId(ont.getId());
+				ont.setId(null);
+			}
+
 			UserBean userBean = linkOntologyUser(mfb.getContact(), mfb.getId());
 			ont.setUserId(userBean.getId());
 			ont.setVersionStatus(getStatus(mfb.getStatus()));
 			ont.setIsCurrent(ApplicationConstants.TRUE);
 			ont.setIsRemote(new Byte(isRemote));
 			ont.setIsReviewed(ApplicationConstants.FALSE);
-			ont.setStatusId(null);
-			ont.setUrn(null);
-			ont.setCodingScheme(null);
-
-			if (action != ActionEnum.UPDATE_ACTION) {
-				ont.setDateCreated(now);
-			}
-
 			ont.setOboFoundryId(mfb.getId());
 			ont.setDisplayLabel(mfb.getTitle());
 			ont.setFormat(getFormat(mfb.getFormat()));
@@ -276,6 +269,10 @@ public class OBOCVSPullServiceImpl implements OBOCVSPullService {
 			ont.setPublication(OntologyDescriptorParser.getPublication(mfb
 					.getPublication()));
 			ont.setIsFoundry(new Byte(isFoundry(mfb.getFoundry())));
+
+			ont.setStatusId(null);
+			ont.setUrn(null);
+			ont.setCodingScheme(null);
 		}
 	}
 
