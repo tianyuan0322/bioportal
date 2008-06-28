@@ -59,7 +59,7 @@ public class OntologyServiceImpl implements OntologyService {
 			categoryBean.populateFromEntity(ncboCategory);
 			categoryBeanList.add(categoryBean);
 		}
-		
+
 		return categoryBeanList;
 	}
 
@@ -241,6 +241,11 @@ public class OntologyServiceImpl implements OntologyService {
 		// assign internal version ID
 		generateInternalVersionNumber(ontologyBean);
 
+		// set filepath in the bean
+		if (!ontologyBean.isRemote()) {
+			ontologyBean.setFilePath(ontologyBean.getOntologyDirPath());
+		}
+
 		// create new instances
 		NcboOntologyVersion ontologyVersion = new NcboOntologyVersion();
 		NcboOntologyMetadata ontologyMetadata = new NcboOntologyMetadata();
@@ -269,14 +274,14 @@ public class OntologyServiceImpl implements OntologyService {
 
 		// if remote, do not continue to upload(i.e. ontologyFile and
 		// ontologyQueue )
-		if (ontologyBean.isRemote())
+		if (ontologyBean.isRemote()) {
 			return;
+		}
 
 		// upload the fileItem
 		List<String> fileNames = uploadOntologyFile(ontologyBean,
 				filePathHander);
 		ontologyBean.setFilenames(fileNames);
-		ontologyBean.setFilePath(ontologyBean.getOntologyDirPath());
 
 		// 4. <ontologyFile> - populate and save
 		ontologyBean.populateToFileEntity(ontologyFileList, newOntologyVersion);
