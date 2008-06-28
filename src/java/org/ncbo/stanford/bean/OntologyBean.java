@@ -4,7 +4,9 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collection;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import org.apache.commons.fileupload.FileItem;
 import org.ncbo.stanford.domain.custom.entity.NcboOntology;
@@ -184,15 +186,18 @@ public class OntologyBean {
 	public void populateToFileEntity(List<NcboOntologyFile> ontologyFileList,
 			NcboOntologyVersion ontologyVersion) {
 		List<String> fileNameList = this.getFilenames();
+		Set<NcboOntologyFile> ncboOntologyFileSet = new HashSet<NcboOntologyFile>();
 
 		for (String fileName : fileNameList) {
-
 			NcboOntologyFile ontologyFile = new NcboOntologyFile();
 			ontologyFile.setFilename(fileName);
 			ontologyFile.setNcboOntologyVersion(ontologyVersion);
 
 			ontologyFileList.add(ontologyFile);
+			ncboOntologyFileSet.add(ontologyFile);
 		}
+
+		ontologyVersion.setNcboOntologyFiles(ncboOntologyFileSet);
 	}
 
 	/**
@@ -207,17 +212,20 @@ public class OntologyBean {
 			List<NcboOntologyCategory> ontologyCategoryList,
 			NcboOntologyVersion ontologyVersion) {
 		List<Integer> categoryIdList = this.getCategoryIds();
+		Set<NcboOntologyCategory> ncboOntologyCategorySet = new HashSet<NcboOntologyCategory>();
+
 		for (Integer categoryId : categoryIdList) {
-
 			NcboOntologyCategory ontologyCategory = new NcboOntologyCategory();
-
 			NcboLCategory ncboLCategory = new NcboLCategory();
 			ncboLCategory.setId(categoryId);
 			ontologyCategory.setNcboLCategory(ncboLCategory);
 			ontologyCategory.setNcboOntologyVersion(ontologyVersion);
 
 			ontologyCategoryList.add(ontologyCategory);
+			ncboOntologyCategorySet.add(ontologyCategory);
 		}
+
+		ontologyVersion.setNcboOntologyCategories(ncboOntologyCategorySet);
 	}
 
 	/**
@@ -228,7 +236,6 @@ public class OntologyBean {
 	 * @param NcboOntologyLoadQueue,
 	 *            NcboOntologyVersion
 	 */
-
 	public void populateToLoadQueueEntity(NcboOntologyLoadQueue loadQueue,
 			NcboOntologyVersion ontologyVersion) {
 		if (loadQueue != null) {
