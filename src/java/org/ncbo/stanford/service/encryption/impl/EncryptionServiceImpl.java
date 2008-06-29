@@ -63,7 +63,7 @@ public class EncryptionServiceImpl implements EncryptionService {
 	public String decryptQueryString(String encrypted)
 			throws UnsupportedEncodingException {
 		return decrypt(URLDecoder.decode(encrypted, MessageUtils
-				.getMessage(ApplicationConstants.DEFAULT_ENCODING_KEY)));
+				.getMessage("default.encoding")));
 	}
 
 	/**
@@ -76,7 +76,7 @@ public class EncryptionServiceImpl implements EncryptionService {
 	public String encryptQueryString(String queryString)
 			throws UnsupportedEncodingException {
 		return URLEncoder.encode(encrypt(queryString), MessageUtils
-				.getMessage(ApplicationConstants.DEFAULT_ENCODING_KEY));
+				.getMessage("default.encoding"));
 	}
 
 	/**
