@@ -6,13 +6,16 @@ import java.util.List;
 import org.ncbo.stanford.bean.UserBean;
 import org.ncbo.stanford.domain.custom.dao.CustomNcboUserDAO;
 import org.ncbo.stanford.domain.generated.NcboUser;
+import org.ncbo.stanford.service.encryption.EncryptionService;
 import org.ncbo.stanford.service.user.UserService;
+import org.ncbo.stanford.util.helper.StringHelper;
 import org.springframework.transaction.annotation.Transactional;
 
 @Transactional
 public class UserServiceImpl implements UserService {
 
 	private CustomNcboUserDAO ncboUserDAO = null;
+	EncryptionService encryptionService = null;
 
 	public UserBean findUser(Integer userId) {
 		UserBean userBean = null;
@@ -62,6 +65,10 @@ public class UserServiceImpl implements UserService {
 		// populate NcboUser from userBean
 		NcboUser ncboUser = new NcboUser();
 		userBean.populateToEntity(ncboUser);
+		String encodedPassword = encryptionService.encodePassword(userBean
+				.getPassword());
+		ncboUser.setPassword(encodedPassword);
+		userBean.setPassword(encodedPassword);
 
 		// ncboUserDAO.save(ncboUser);
 		NcboUser newNcboUser = ncboUserDAO.saveUser(ncboUser);
@@ -74,6 +81,13 @@ public class UserServiceImpl implements UserService {
 
 		// populate NcboUser from userBean
 		userBean.populateToEntity(ncboUser);
+		String password = userBean.getPassword();
+
+		if (!StringHelper.isNullOrNullString(password)) {
+			String encodedPassword = encryptionService.encodePassword(password);
+			ncboUser.setPassword(encodedPassword);
+			userBean.setPassword(encodedPassword);
+		}
 
 		ncboUserDAO.save(ncboUser);
 	}
@@ -98,5 +112,20 @@ public class UserServiceImpl implements UserService {
 	 */
 	public void setNcboUserDAO(CustomNcboUserDAO ncboUserDAO) {
 		this.ncboUserDAO = ncboUserDAO;
+	}
+
+	/**
+	 * @return the encryptionService
+	 */
+	public EncryptionService getEncryptionService() {
+		return encryptionService;
+	}
+
+	/**
+	 * @param encryptionService
+	 *            the encryptionService to set
+	 */
+	public void setEncryptionService(EncryptionService encryptionService) {
+		this.encryptionService = encryptionService;
 	}
 }
