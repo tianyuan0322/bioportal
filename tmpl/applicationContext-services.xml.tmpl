@@ -289,7 +289,7 @@
 		class="org.jasypt.util.password.StrongPasswordEncryptor" />
 
 	<bean id="passwordEncoder"
-		class="org.jasypt.springsecurity.PasswordEncoder">
+		class="org.jasypt.spring.security.PasswordEncoder">
 		<property name="passwordEncryptor">
 			<ref bean="jasyptPasswordEncryptor" />
 		</property>
