@@ -68,7 +68,6 @@ public class UserServiceImpl implements UserService {
 		String encodedPassword = encryptionService.encodePassword(userBean
 				.getPassword());
 		ncboUser.setPassword(encodedPassword);
-		userBean.setPassword(encodedPassword);
 
 		// ncboUserDAO.save(ncboUser);
 		NcboUser newNcboUser = ncboUserDAO.saveUser(ncboUser);
@@ -86,7 +85,6 @@ public class UserServiceImpl implements UserService {
 		if (!StringHelper.isNullOrNullString(password)) {
 			String encodedPassword = encryptionService.encodePassword(password);
 			ncboUser.setPassword(encodedPassword);
-			userBean.setPassword(encodedPassword);
 		}
 
 		ncboUserDAO.save(ncboUser);
