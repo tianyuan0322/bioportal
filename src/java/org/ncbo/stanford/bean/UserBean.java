@@ -64,9 +64,11 @@ public class UserBean {
 		if (ncboUser != null) {
 			ncboUser.setId(this.getId());
 			ncboUser.setUsername(this.getUsername());
+			
 			if (!StringHelper.isNullOrNullString(this.getPassword())) {
 				ncboUser.setPassword(this.getPassword());
 			}
+			
 			ncboUser.setEmail(this.getEmail());
 			ncboUser.setFirstname(this.getFirstname());
 			ncboUser.setLastname(this.getLastname());
