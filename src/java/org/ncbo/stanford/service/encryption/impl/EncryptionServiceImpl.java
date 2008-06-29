@@ -10,7 +10,6 @@ import org.jasypt.encryption.pbe.StandardPBEStringEncryptor;
 import org.ncbo.stanford.service.encryption.EncryptionService;
 import org.ncbo.stanford.util.MessageUtils;
 import org.ncbo.stanford.util.RequestUtils;
-import org.ncbo.stanford.util.constants.ApplicationConstants;
 
 /**
  * Implementation of Encryption service
