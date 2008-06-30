@@ -120,7 +120,7 @@
 	<bean id="anonymousProcessingFilter"
 		class="org.acegisecurity.providers.anonymous.AnonymousProcessingFilter">
 		<property name="key">
-			<value>@encryptionkey@</value>
+			<ref bean="encryptionKey" />
 		</property>
 		<property name="userAttribute">
 			<value>anonymousUser,ROLE_ANONYMOUS</value>
