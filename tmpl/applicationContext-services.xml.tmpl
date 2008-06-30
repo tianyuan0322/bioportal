@@ -22,6 +22,10 @@
 				</prop>
 				<prop key="hibernate.show_sql">false</prop>
 				<prop key="hibernate.use_outer_join">false</prop>
+				<!-- Auto reconnect after long inactivity -->
+				<prop key="connection.autoReconnect">true</prop>
+				<prop key="connection.autoReconnectForPools">true</prop>
+				<prop key="connection.is-connection-validation-required">true</prop>
 			</props>
 		</property>
 		<property name="mappingResources">
