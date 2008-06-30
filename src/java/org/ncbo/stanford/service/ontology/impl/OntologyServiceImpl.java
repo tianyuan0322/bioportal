@@ -127,6 +127,7 @@ public class OntologyServiceImpl implements OntologyService {
 	 * 
 	 * @return list of Ontology beans
 	 */
+	@SuppressWarnings("unchecked")
 	public List<OntologyBean> findAllOntologyVersionsByOntologyId(
 			Integer ontologyId) {
 		ArrayList<OntologyBean> ontBeanList = new ArrayList<OntologyBean>(1);
