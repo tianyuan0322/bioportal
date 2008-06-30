@@ -352,11 +352,10 @@ public class OntologyServiceImpl implements OntologyService {
 
 		Set<NcboOntologyCategory> categories = ontologyVersion
 				.getNcboOntologyCategories();
+
 		for (NcboOntologyCategory ontologyCategory : categories) {
 			ncboOntologyCategoryDAO.delete(ontologyCategory);
 		}
-		
-		ontologyBean.setCategoryIds(new ArrayList<Integer>(0));
 	}
 
 	/*
