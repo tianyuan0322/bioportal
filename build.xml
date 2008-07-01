@@ -93,7 +93,7 @@
 			</filterset>
 		</copy>
 		
-		<copy file="${tmpl.dir}/applicationContext-datasources.xml.tmpl" tofile="${conf.dir.generated}/applicationContext-datasources.xml" overwrite="true">
+		<copy file="${tmpl.dir}/applicationContext-datasources.${bioportal.environment}.xml.tmpl" tofile="${conf.dir.generated}/applicationContext-datasources.xml" overwrite="true">
 			<filterset>
 				<filter token="bioportaldatasource" value="${bioportal.datasource}" />
 				<filter token="bioportaljdbcdriver" value="${bioportal.jdbc.driver}" />
