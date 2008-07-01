@@ -195,7 +195,7 @@ public class OntologyRetrievalManagerLexGridImplTest extends AbstractBioPortalTe
 		String query = "beta cell";
 		String[] properties= {"synonym"};
 		List<SearchResultBean> searchResultBeans = retrievalManager
-				.findConceptPropertyContains(ontologyVersionIds, query, properties, false, 100);
+				.findConceptPropertyContains(ontologyVersionIds, query, false, 100);
 
 		System.out.println("Results of searching for 'beta cell' in the cell ontology is :");
 		for (SearchResultBean srb : searchResultBeans) {
