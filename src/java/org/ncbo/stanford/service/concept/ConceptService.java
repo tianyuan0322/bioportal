@@ -38,5 +38,5 @@ public interface ConceptService {
 	
 	public List<SearchResultBean> findConceptPropertyStartsWith(List<Integer> ontologyIds, String property, String query);
 	
-	public List<SearchResultBean> findConceptPropertyContains(List<Integer> ontologyIds, String property, String query);
+	public List<SearchResultBean> findConceptPropertyContains(List<Integer> ontologyIds, String query);
 }
