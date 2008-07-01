@@ -30,6 +30,8 @@ import edu.stanford.smi.protegex.owl.model.OWLModel;
 import edu.stanford.smi.protegex.owl.model.OWLNamedClass;
 import edu.stanford.smi.protegex.owl.model.OWLOntology;
 import edu.stanford.smi.protegex.owl.model.RDFSNamedClass;
+import edu.stanford.smi.protegex.owl.model.impl.DefaultOWLHasValue;
+import edu.stanford.smi.protegex.owl.model.impl.DefaultOWLNamedClass;
 
 /**
  * A default implementation to OntologyRetrievalManager interface
@@ -552,8 +554,13 @@ public class OntologyRetrievalManagerProtegeImpl extends
 					
 				bpPropVals.add(((Slot) val).getBrowserText());
 					
+				}else if (val instanceof DefaultOWLNamedClass) {
+					bpPropVals.add(((DefaultOWLNamedClass) val).getBrowserText());
+					
+				}else if (val instanceof DefaultOWLHasValue){
+					bpPropVals.add(((DefaultOWLHasValue) val).getBrowserText());
 				}else{
-				bpPropVals.add(val.toString());
+					bpPropVals.add(val.toString());	
 				}
 			}
 
