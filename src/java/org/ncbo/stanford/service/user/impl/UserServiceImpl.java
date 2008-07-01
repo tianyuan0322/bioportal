@@ -65,6 +65,10 @@ public class UserServiceImpl implements UserService {
 		// populate NcboUser from userBean
 		NcboUser ncboUser = new NcboUser();
 		userBean.populateToEntity(ncboUser);
+		
+		// assign default role at the time of creation
+		userBean.generateDefaultRole();
+		
 		String encodedPassword = encryptionService.encodePassword(userBean
 				.getPassword());
 		ncboUser.setPassword(encodedPassword);
