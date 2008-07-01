@@ -222,8 +222,42 @@ public class ConceptServiceImpl implements ConceptService {
 	}
 
 	public List<SearchResultBean> findConceptPropertyContains(
-			List<Integer> ontologyIds, String property, String query) {
-		throw new UnsupportedOperationException();
+			List<Integer> ontologyIds,  String query) {
+		List<SearchResultBean> searchResults = new ArrayList<SearchResultBean>();
+		HashMap<String, List<NcboOntology>> formatLists = new HashMap<String, List<NcboOntology>>();
+		
+		for (String key : ontologyFormatHandlerMap.values()) {
+			System.out.println("Key is "+key);
+			formatLists.put(key, new ArrayList<NcboOntology>());
+		}
+
+		List<NcboOntology> ontologies = new ArrayList<NcboOntology>();
+		
+		if(ontologyIds.isEmpty()){
+			ontologies = ncboOntologyVersionDAO.findLatestOntologyVersions();
+		}else{
+			ontologies = ncboOntologyVersionDAO
+		.findOntologyVersions(ontologyIds);
+		}
+		
+		for (NcboOntology ontology : ontologies) {
+			if(ontology.getStatusId().equals(StatusEnum.STATUS_READY.getStatus())){
+			String formatHandler = ontologyFormatHandlerMap.get(ontology
+					.getFormat());
+			
+			System.out.println("Looking For "+formatHandler);
+			((List<NcboOntology>) formatLists.get(formatHandler)).add(ontology);
+			}
+		}
+
+		for (String formatHandler : formatLists.keySet()) {
+			OntologyRetrievalManager manager = ontologyRetrievalHandlerMap
+					.get(formatHandler);
+			searchResults.addAll(manager.findConceptPropertyContains(formatLists
+					.get(formatHandler), query, true, MAX_RESULTS));
+		}
+		
+		return searchResults;
 	}
 
 	//

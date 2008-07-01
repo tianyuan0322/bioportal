@@ -77,7 +77,17 @@
 		<property name="xmlSerializationService">
 			<ref bean="xmlSerializationService" />
 		</property>
+	</bean>	
+	<bean id="propertySearchRestlet"
+		class="org.ncbo.stanford.view.rest.restlet.search.PropertySearchRestlet">
+		<property name="conceptService">
+			<ref bean="conceptService" />
+		</property>
+		<property name="xmlSerializationService">
+			<ref bean="xmlSerializationService" />
+		</property>
 	</bean>
+	
 	
 	<bean id="pathRestlet"
 		class="org.ncbo.stanford.view.rest.restlet.path.PathRestlet">
@@ -218,8 +228,12 @@
 						<entry key="/path/{ontologyVersionId}/{source}/{target}">
 							<ref local="pathRestlet" />
 						</entry>
+						propertySearchRestlet
 						<entry key="/search/concepts/{query}">
 							<ref local="conceptSearchRestlet" />
+						</entry>
+						<entry key="/search/properties/{query}">
+							<ref local="propertySearchRestlet" />
 						</entry>
 						<entry key="/search/meta/{query}">
 							<ref local="metaDataSearchRestlet" />

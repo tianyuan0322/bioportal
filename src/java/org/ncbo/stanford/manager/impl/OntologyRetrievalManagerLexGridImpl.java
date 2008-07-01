@@ -334,12 +334,12 @@ public class OntologyRetrievalManagerLexGridImpl extends
 	 */
 	public List<SearchResultBean> findConceptPropertyContains(
 			List<NcboOntology> ontologyVersions, String query,
-			String property_names[], boolean includeObsolete, int maxToReturn) {
+			 boolean includeObsolete, int maxToReturn) {
 		ArrayList<SearchResultBean> results = new ArrayList<SearchResultBean>();
 
 		for (NcboOntology ontologyVersion : ontologyVersions) {
 			SearchResultBean result = searchNodesForProperties(ontologyVersion,
-					query, property_names, false, includeObsolete, maxToReturn,
+					query, null, false, includeObsolete, maxToReturn,
 					Match_Types.SEARCH_CONTAINS);
 			results.add(result);
 		}
