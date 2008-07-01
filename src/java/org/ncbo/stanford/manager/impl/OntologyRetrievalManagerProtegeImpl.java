@@ -546,9 +546,15 @@ public class OntologyRetrievalManagerProtegeImpl extends
 			Collection<Object> vals = concept.getOwnSlotValues(slot);
 			if (vals.isEmpty()) {
 				continue;
-			}
+			}			
 			for (Object val : vals) {
+				if(val instanceof Slot) {
+					
+				bpPropVals.add(((Slot) val).getBrowserText());
+					
+				}else{
 				bpPropVals.add(val.toString());
+				}
 			}
 
 			bpProps.put(slot.getName(), bpPropVals);
