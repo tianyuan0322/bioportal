@@ -87,5 +87,7 @@
 	<classpathentry kind="lib" path="WebRoot/WEB-INF/lib/cglib-nodep-2.2.jar"/>
 	<classpathentry kind="lib" path="WebRoot/WEB-INF/lib/commons-fileupload-1.2.1.jar"/>
 	<classpathentry kind="lib" path="WebRoot/WEB-INF/lib/hsqldb.jar"/>
+	<classpathentry kind="lib" path="WebRoot/WEB-INF/lib/backport-util-concurrent-3.0.jar"/>
+	<classpathentry kind="lib" path="WebRoot/WEB-INF/lib/jsr107cache-1.0.jar"/>
 	<classpathentry kind="output" path="WebRoot/WEB-INF/classes"/>
 </classpath>
