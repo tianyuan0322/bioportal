@@ -80,6 +80,9 @@
 				<filter token="bioportaljdbcurl" value="${bioportal.jdbc.url}" />
 				<filter token="bioportaljdbcusername" value="${bioportal.jdbc.username}" />
 				<filter token="bioportaljdbcpassword" value="${bioportal.jdbc.password}" />
+				<filter token="bioportaljdbcmaxactive" value="${bioportal.jdbc.maxactive}" />
+				<filter token="bioportaljdbcmaxidle" value="${bioportal.jdbc.maxidle}" />
+				<filter token="bioportaljdbcmaxwait" value="${bioportal.jdbc.maxwait}" />
 			</filterset>
 		</copy>
 		

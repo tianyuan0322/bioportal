@@ -76,6 +76,18 @@ bioportal.jdbc.url=jdbc:mysql://localhost:3306/bioportal
 bioportal.jdbc.driver=com.mysql.jdbc.Driver
 bioportal.jdbc.username=yourbioportaldbuser
 bioportal.jdbc.password=yourbioportaldbpassword
+# Maximum number of dB connections in pool. Make sure you
+# configure your mysqld max_connections large enough to handle
+# all of your db connections. Set to 0 for no limit.
+bioportal.jdbc.maxactive=100
+# Maximum number of idle dB connections to retain in pool.
+# Set to -1 for no limit.  See also the DBCP documentation on this
+# and the minEvictableIdleTimeMillis configuration parameter.
+bioportal.jdbc.maxidle=30
+# Maximum time to wait for a dB connection to become available
+# in ms, in this example 10 seconds. An Exception is thrown if
+# this timeout is exceeded.  Set to -1 to wait indefinitely.
+bioportal.jdbc.maxwait=10000
 
 # Encryption key for string encoding/decoding
 bioportal.encryption.key=yourencryptionkey
