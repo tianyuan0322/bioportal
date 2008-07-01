@@ -16,7 +16,7 @@
 
 	<!-- Datasource definitions: In production, use JNDI datasource -->
 	
-	<!-- Uncomment if Data source is being used 
+	<!-- Data source info. Comment if JDBC is being used 
 	<bean id="dataSource"
 		class="org.springframework.jndi.JndiObjectFactoryBean">
 		<property name="jndiName">
@@ -24,8 +24,8 @@
 		</property>
 	</bean>
 	-->
-	
-	<!-- commenting out JDBC info -->
+
+	<!-- JDBC info. Comment if data source is being used -->
 	<bean id="dataSource"
 		class="org.apache.commons.dbcp.BasicDataSource">
 		<property name="driverClassName">
@@ -41,5 +41,4 @@
 			<value>@bioportaljdbcpassword@</value>
 		</property>
 	</bean>
-	
 </beans>
