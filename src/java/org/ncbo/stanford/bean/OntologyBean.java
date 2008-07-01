@@ -109,6 +109,8 @@ public class OntologyBean {
 	public void populateToMetadataEntity(NcboOntologyMetadata metadata,
 			NcboOntologyVersion ontologyVersion) {
 		if (metadata != null) {
+			Set<NcboOntologyMetadata> ncboOntologyMetadataSet = new HashSet<NcboOntologyMetadata>();
+
 			metadata.setNcboOntologyVersion(ontologyVersion);
 
 			metadata.setContactEmail(this.getContactEmail());
@@ -121,6 +123,9 @@ public class OntologyBean {
 			metadata.setIsFoundry(this.getIsFoundry());
 			metadata.setPublication(this.getPublication());
 			metadata.setUrn(this.getUrn());
+
+			ncboOntologyMetadataSet.add(metadata);
+			ontologyVersion.setNcboOntologyMetadatas(ncboOntologyMetadataSet);
 		}
 	}
 
@@ -239,6 +244,8 @@ public class OntologyBean {
 	public void populateToLoadQueueEntity(NcboOntologyLoadQueue loadQueue,
 			NcboOntologyVersion ontologyVersion) {
 		if (loadQueue != null) {
+			Set<NcboOntologyLoadQueue> ncboOntologyLoadQueueSet = new HashSet<NcboOntologyLoadQueue>();
+
 			// OntologyVersion object
 			loadQueue.setNcboOntologyVersion(ontologyVersion);
 
@@ -248,6 +255,9 @@ public class OntologyBean {
 			loadQueue.setNcboLStatus(status);
 
 			loadQueue.setDateCreated(Calendar.getInstance().getTime());
+
+			ncboOntologyLoadQueueSet.add(loadQueue);
+			ontologyVersion.setNcboOntologyLoadQueues(ncboOntologyLoadQueueSet);
 		}
 	}
 
