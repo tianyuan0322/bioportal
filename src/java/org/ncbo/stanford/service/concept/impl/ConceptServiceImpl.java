@@ -17,12 +17,14 @@ import org.ncbo.stanford.domain.custom.entity.NcboOntology;
 import org.ncbo.stanford.enumeration.StatusEnum;
 import org.ncbo.stanford.manager.OntologyRetrievalManager;
 import org.ncbo.stanford.service.concept.ConceptService;
+import org.springframework.transaction.annotation.Transactional;
 
 /**
  * @author Nick Griffith
  * 
  * 
  */
+@Transactional(readOnly = true)
 public class ConceptServiceImpl implements ConceptService {
 
 	private static final Log log = LogFactory.getLog(ConceptServiceImpl.class);
