@@ -25,6 +25,9 @@ public class CompressedFileHandlerFactory {
 		} else if (format
 				.equalsIgnoreCase(ApplicationConstants.FORMAT_UMLS_RRF)) {
 			compressedFileHandler = new UMLSCompressedFileHandlerImpl();
+		} else if (format
+				.equalsIgnoreCase(ApplicationConstants.FORMAT_LEXGRID_XML)) {
+			compressedFileHandler = new LEXGRID_XMLCompressedFileHandlerImpl();
 		}
 
 		return compressedFileHandler;
