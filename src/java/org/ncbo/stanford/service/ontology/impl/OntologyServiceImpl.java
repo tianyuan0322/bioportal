@@ -209,7 +209,7 @@ public class OntologyServiceImpl implements OntologyService {
 	 * @return
 	 */
 	public List<OntologyBean> findAllOntologyVersions(Integer ontologyId) {
-		return new ArrayList();
+		throw new UnsupportedOperationException();
 	}
 
 	/**
@@ -219,7 +219,7 @@ public class OntologyServiceImpl implements OntologyService {
 	 * @return
 	 */
 	public List<String> findProperties(Integer ontologyVersionId) {
-		return new ArrayList();
+		throw new UnsupportedOperationException();
 	}
 
 	/**
