@@ -244,7 +244,7 @@ public class OntologyRetrievalManagerProtegeImpl extends
 
 			if (frames != null) {
 				for (Frame frame : frames) {
-					if (frame instanceof Cls) {
+					if (frame instanceof Cls && frame.isVisible()) {
 						Cls owlClass = (Cls) frame;
 						srb.getNames().add(createLightBean(owlClass));
 					}
@@ -282,7 +282,7 @@ public class OntologyRetrievalManagerProtegeImpl extends
 				
 				ref.addAll(kb.getMatchingReferences("*" + query + "*", -1));
 				for(Reference reference : ref){
-					if(!reference.getSlot().equals(((OWLModel) kb).getRDFSLabelProperty()) && !reference.getSlot().equals(kb.getNameSlot())){
+					if(!reference.getSlot().equals(((OWLModel) kb).getRDFSLabelProperty()) && !reference.getSlot().equals(kb.getNameSlot()) && reference.getSlot().isVisible()){
 						frames.add(reference.getFrame());
 					}
 				}
@@ -290,7 +290,7 @@ public class OntologyRetrievalManagerProtegeImpl extends
 			} else {
 				ref.addAll(kb.getMatchingReferences("*" + query + "*", -1));
 				for(Reference reference : ref){
-					if(!reference.getSlot().equals(kb.getNameSlot())){
+					if(!reference.getSlot().equals(kb.getNameSlot()) && reference.getSlot().isVisible()){
 						frames.add(reference.getFrame());
 					}
 				}
