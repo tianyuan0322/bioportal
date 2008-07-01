@@ -65,8 +65,7 @@ public class ConceptRestlet extends Restlet {
 		ClassBean concept = null;
 		String id = (String) request.getAttributes().get("concept");
 		String ontology = (String) request.getAttributes().get("ontology");
-		System.out.println("concept:"+id);
-		System.out.println("ontology:"+ontology);
+		
 		try {
 			Integer ontId = Integer.parseInt(ontology);
 			if(id.equalsIgnoreCase(RequestParamConstants.PARAM_ROOT_CONCEPT)){

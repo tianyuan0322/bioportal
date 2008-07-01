@@ -22,6 +22,7 @@ import edu.stanford.smi.protege.model.Frame;
 import edu.stanford.smi.protege.model.KnowledgeBase;
 import edu.stanford.smi.protege.model.ModelUtilities;
 import edu.stanford.smi.protege.model.Project;
+import edu.stanford.smi.protege.model.Reference;
 import edu.stanford.smi.protege.model.Slot;
 import edu.stanford.smi.protege.storage.database.DatabaseKnowledgeBaseFactory;
 import edu.stanford.smi.protegex.owl.database.OWLDatabaseKnowledgeBaseFactory;
@@ -266,9 +267,48 @@ public class OntologyRetrievalManagerProtegeImpl extends
 		return new ArrayList();
 	}
 
-	public ArrayList<ClassBean> findConceptPropertyContains(String property,
-			String query, ArrayList<Integer> ontologyVersionIds) {
-		return new ArrayList();
+	public ArrayList<SearchResultBean> findConceptPropertyContains(List<NcboOntology> ontologyVersions, String query,
+			boolean includeObsolete, int maxToReturn) {
+		ArrayList<SearchResultBean> results = new ArrayList<SearchResultBean>();
+
+		for (NcboOntology ontologyVersion : ontologyVersions) {
+			SearchResultBean srb = new SearchResultBean();
+			srb.setOntologyVersionId(ontologyVersion.getId());
+			KnowledgeBase kb = getKnowledgeBase(ontologyVersion);
+			Collection<Frame> frames = new HashSet<Frame>();
+			Collection<Reference> ref = new HashSet<Reference>();
+
+			if (kb instanceof OWLModel) {
+				
+				ref.addAll(kb.getMatchingReferences("*" + query + "*", -1));
+				for(Reference reference : ref){
+					if(!reference.getSlot().equals(((OWLModel) kb).getRDFSLabelProperty()) && !reference.getSlot().equals(kb.getNameSlot())){
+						frames.add(reference.getFrame());
+					}
+				}
+				
+			} else {
+				ref.addAll(kb.getMatchingReferences("*" + query + "*", -1));
+				for(Reference reference : ref){
+					if(!reference.getSlot().equals(kb.getNameSlot())){
+						frames.add(reference.getFrame());
+					}
+				}
+			}
+
+			if (frames != null) {
+				for (Frame frame : frames) {
+					if (frame instanceof Cls) {
+						Cls owlClass = (Cls) frame;
+						srb.getProperties().add(createLightBean(owlClass));
+					}
+				}
+			}
+
+			results.add(srb);
+		}
+
+		return results;
 	}
 
 	//

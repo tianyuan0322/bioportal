@@ -199,7 +199,13 @@ public class OntologyServiceImpl implements OntologyService {
 	 * @return
 	 */
 	public OntologyBean findLatestOntologyVersion(Integer ontologyId) {
-		return null;
+		OntologyBean ontologyBean = null;
+		NcboOntology ncboOntology = ncboOntologyVersionDAO.findLatestOntologyVersion(ontologyId);
+		if (ncboOntology != null){
+			ontologyBean = new OntologyBean();
+			ontologyBean.populateFromEntity(ncboOntology);			
+		}
+		return ontologyBean;
 	}
 
 	/**

@@ -14,7 +14,7 @@ public class ConceptServiceTest extends AbstractBioPortalTest {
 	private final static String TEST_CONCEPT_ID = "http://www.w3.org/2002/07/owl#Class";
 	private final static String TEST_CONCEPT_NAME = "obo_annot:EnumerationClass";
 	
-	public void findRoot() throws Exception {
+	public void testfindRoot() throws Exception {
 		ConceptService service = (ConceptService) applicationContext.getBean(
 				"conceptService", ConceptService.class);
 
@@ -41,7 +41,7 @@ public class ConceptServiceTest extends AbstractBioPortalTest {
 
 	}
 	
-	public void testSearchConcept() throws Exception {
+	public void SearchConcept() throws Exception {
 		ConceptService service = (ConceptService) applicationContext.getBean(
 				"conceptService", ConceptService.class);
 
