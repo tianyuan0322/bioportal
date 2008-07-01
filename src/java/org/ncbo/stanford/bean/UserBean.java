@@ -79,6 +79,7 @@ public class UserBean {
 			if (ncboUser.getDateCreated() == null) {
 				ncboUser.setDateCreated(new Date());
 			}
+			
 		}
 	}
 
@@ -87,6 +88,14 @@ public class UserBean {
 	 */
 	public void generateDefaultPassword() {
 		this.setPassword(MessageUtils.getMessage("default.user.password"));
+	}
+	
+	/**
+	 * Extracts default passwords and sets it in the bean
+	 */
+	public void generateDefaultRole() {
+		roles.add(MessageUtils.getMessage("default.user.role"));
+		this.setRoles(roles);
 	}
 
 	/**
