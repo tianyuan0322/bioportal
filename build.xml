@@ -56,13 +56,18 @@
 
 	<target name="prepare" description="Create configuration files using templates">
 		<echo message="log4j path: = ${bioportal.app.logfilepath}" />
-		
+
+		<mkdir dir="${bioportal.tempdir}" />
+		<mkdir dir="${bioportal.ontology.filepath}" />
+		<mkdir dir="${obo.sourceforge.cvs.checkoutdir}" />
+		<mkdir dir="${lexgrid.index.location}" />
+
 		<copy file="${tmpl.dir}/web.xml.tmpl" tofile="${web.dir}/WEB-INF/web.xml" overwrite="true">
 			<filterset>
 				<filter token="maxfilesize" value="${bioportal.upload.maxfilesize}" />
 			</filterset>
 		</copy>
-		
+
 		<copy file="${tmpl.dir}/log4j.xml.tmpl" tofile="${conf.dir.generated}/log4j.xml" overwrite="true">
 			<filterset>
 				<filter token="logfilepath" value="${bioportal.app.logfilepath}" />
@@ -85,14 +90,14 @@
 				<filter token="bioportaljdbcmaxwait" value="${bioportal.jdbc.maxwait}" />
 			</filterset>
 		</copy>
-		
+
 		<copy file="${tmpl.dir}/${bioportal.messagebundle.name}.properties.tmpl" tofile="${bioportal.messagebundle.path}/${bioportal.messagebundle.name}.properties" overwrite="true">
 			<filterset>
 				<filter token="bioportalxsltpath" value="${bioportal.xslt.path}" />
 				<filter token="bioportalontologyfilepath" value="${bioportal.ontology.filepath}" />
 			</filterset>
 		</copy>
-		
+
 		<copy file="${tmpl.dir}/applicationContext-datasources.${bioportal.environment}.xml.tmpl" tofile="${conf.dir.generated}/applicationContext-datasources.xml" overwrite="true">
 			<filterset>
 				<filter token="bioportaldatasource" value="${bioportal.datasource}" />
