@@ -31,7 +31,9 @@ import edu.stanford.smi.protegex.owl.model.OWLNamedClass;
 import edu.stanford.smi.protegex.owl.model.OWLOntology;
 import edu.stanford.smi.protegex.owl.model.RDFSNamedClass;
 import edu.stanford.smi.protegex.owl.model.impl.DefaultOWLHasValue;
+import edu.stanford.smi.protegex.owl.model.impl.DefaultOWLIntersectionClass;
 import edu.stanford.smi.protegex.owl.model.impl.DefaultOWLNamedClass;
+import edu.stanford.smi.protegex.owl.model.impl.DefaultOWLSomeValuesFrom;
 
 /**
  * A default implementation to OntologyRetrievalManager interface
@@ -556,11 +558,21 @@ public class OntologyRetrievalManagerProtegeImpl extends
 					
 				}else if (val instanceof DefaultOWLNamedClass) {
 					bpPropVals.add(((DefaultOWLNamedClass) val).getBrowserText());
-					
 				}else if (val instanceof DefaultOWLHasValue){
 					bpPropVals.add(((DefaultOWLHasValue) val).getBrowserText());
+				}else if (val instanceof DefaultOWLSomeValuesFrom){
+					bpPropVals.add(((DefaultOWLSomeValuesFrom) val).getBrowserText());
+				}else if (val instanceof DefaultOWLIntersectionClass){
+					bpPropVals.add(((DefaultOWLIntersectionClass) val).getBrowserText());
 				}else{
-					bpPropVals.add(val.toString());	
+					try{
+						bpPropVals.add(((Slot) val).getBrowserText());
+					}catch(Exception e){
+						//Tried to assume its a slot and failed, defaulting to toString
+						bpPropVals.add(val.toString());	
+					}
+					
+						
 				}
 			}
 
