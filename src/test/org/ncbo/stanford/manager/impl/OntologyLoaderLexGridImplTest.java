@@ -130,7 +130,7 @@ public class OntologyLoaderLexGridImplTest extends AbstractBioPortalTest {
 
 		System.out.println("OntologyLoaderLexGridImplTest: testLoadUMLS().................. BEGIN");
 
-		OntologyBean ontologyBean = this.createOntolgyBeanLexgridXML();
+		OntologyBean ontologyBean = this.createOntolgyBeanUMLS();
 		
 		// populate file related field in ontologyBean
 		ontologyBean.setFilePath(TEST_UMLS_PATHNAME + "sampleUMLS-AIR.zip");
