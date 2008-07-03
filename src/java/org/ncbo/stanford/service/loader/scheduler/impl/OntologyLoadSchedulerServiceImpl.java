@@ -155,7 +155,7 @@ public class OntologyLoadSchedulerServiceImpl implements
 
 			// add OntologyVersionId to the error list
 			errorIdList.add(ontologyBean.getId());
-
+			e.printStackTrace();
 			log.error(e);
 		}
 
