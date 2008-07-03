@@ -142,7 +142,7 @@ public class OntologyLoaderLexGridImplTest extends AbstractBioPortalTest {
 			System.out.println("Created OntologyBean with ID = " + ontologyBean.getId());
 		
 		// load
-		loadUMLSOntology(ontologyBean, TEST_LEXGRID_XML_PATHNAME);
+		loadUMLSOntology(ontologyBean, TEST_UMLS_PATHNAME);
 
 
 		assertTrue(ontologyBean.getCodingScheme() != null);
