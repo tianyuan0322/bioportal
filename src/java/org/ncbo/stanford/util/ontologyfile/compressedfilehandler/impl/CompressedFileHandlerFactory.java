@@ -38,6 +38,7 @@ public class CompressedFileHandlerFactory {
 			compressedFileHandler = (CompressedFileHandler) (Class
 					.forName(handlerName).newInstance());
 		} catch (ClassNotFoundException e) {
+			log.error(e);
 			throw new InvalidCompressedFileHandlerException(
 					"Invalid compressed file handler: " + handlerName);
 		}
