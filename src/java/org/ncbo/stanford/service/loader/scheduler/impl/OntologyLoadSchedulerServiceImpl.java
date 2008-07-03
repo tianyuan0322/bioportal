@@ -151,9 +151,14 @@ public class OntologyLoadSchedulerServiceImpl implements
 			status = new Integer(StatusEnum.STATUS_READY.getStatus());
 		} catch (Exception e) {
 			status = new Integer(StatusEnum.STATUS_ERROR.getStatus());
-			errorMessage = e.getStackTrace().toString().substring(0,
-					ERROR_MESSAGE_LENGTH);
+			
+			
+//			errorMessage = e.getStackTrace().toString().substring(0,
+//					ERROR_MESSAGE_LENGTH);
 
+			
+			
+			
 			// add OntologyVersionId to the error list
 			errorIdList.add(ontologyBean.getId());
 			e.printStackTrace();
