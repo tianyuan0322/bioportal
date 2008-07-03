@@ -1,7 +1,6 @@
 package org.ncbo.stanford.service.loader.scheduler.impl;
 
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -214,10 +213,10 @@ public class OntologyLoadSchedulerServiceImpl implements
 
 		for (String filename : filenames) {
 			log.debug("......loading filename " + filename);
-
 			String filePath = AbstractFilePathHandler.getOntologyFilePath(
 					ontologyBean, filename);
-			File file = new File(filePath, filename);
+			File file = new File(filePath);
+			
 			getLoadManager(ontologyBean).loadOntology(file.toURI(),
 					ontologyBean);
 		}
