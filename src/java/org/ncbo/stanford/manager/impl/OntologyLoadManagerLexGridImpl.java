@@ -106,6 +106,7 @@ public class OntologyLoadManagerLexGridImpl extends
 
 		Loader loader = null;
 		CodingSchemeManifest csm = createCodingSchemeManifest(ontology_bean);
+
 		// Load OBO
 		if (ontology_bean.getFormat().equalsIgnoreCase(
 				ApplicationConstants.FORMAT_OBO)) {
@@ -113,39 +114,36 @@ public class OntologyLoadManagerLexGridImpl extends
 					.getLoader(org.LexGrid.LexBIG.Impl.loaders.OBOLoaderImpl.name);
 			loader.setCodingSchemeManifest(csm);
 			((OBO_Loader) loader).load(source, null, stopOnErrors, async);
-		}
-		// Load UMLS
-		if (ontology_bean.getFormat().equalsIgnoreCase(
+			// Load UMLS
+		} else if (ontology_bean.getFormat().equalsIgnoreCase(
 				ApplicationConstants.FORMAT_UMLS_RRF)) {
 			loader = lbsm
 					.getLoader(org.LexGrid.LexBIG.Impl.loaders.UMLSLoaderImpl.name);
 			LocalNameList lnl = getLocalNameListFromTargetTerminologies();
 			((UMLS_Loader) loader).load(source, lnl, stopOnErrors, async);
-
-		}
-		// Load LEXGRID XML
-		if (ontology_bean.getFormat().equalsIgnoreCase(
+			// Load LEXGRID XML
+		} else if (ontology_bean.getFormat().equalsIgnoreCase(
 				ApplicationConstants.FORMAT_LEXGRID_XML)) {
 			loader = lbsm
 					.getLoader(org.LexGrid.LexBIG.Impl.loaders.LexGridLoaderImpl.name);
 			((LexGrid_Loader) loader).load(source, stopOnErrors, async);
-
-		}
-		// Load OWL
-		if (ontology_bean.getFormat().equalsIgnoreCase(
+			// Load OWL
+		} else if (ontology_bean.getFormat().equalsIgnoreCase(
 				ApplicationConstants.FORMAT_OWL_DL)
 				|| ontology_bean.getFormat().equalsIgnoreCase(
 						ApplicationConstants.FORMAT_OWL_FULL)) {
 			loader = lbsm
 					.getLoader(org.LexGrid.LexBIG.Impl.loaders.OWLLoaderImpl.name);
 			loader.setCodingSchemeManifest(csm);
+
 			// Load only NCI Thesaurus for now.
 			if (ontology_bean.getFilePath() != null
 					&& ontology_bean.getFilePath().indexOf("Thesaurus") >= 0) {
 				((OWL_Loader) loader).loadNCI(source, null, false,
 						stopOnErrors, async);
-			} else
+			} else {
 				((OWL_Loader) loader).load(source, null, stopOnErrors, async);
+			}
 		}
 
 		// No Loader could be found for the format
@@ -164,6 +162,7 @@ public class OntologyLoadManagerLexGridImpl extends
 					.getCodingSchemeReferences();
 			String urn = null;
 			String version = null;
+
 			for (int i = 0; i < refs.length; i++) {
 				AbsoluteCodingSchemeVersionReference ref = refs[i];
 				lbsm.activateCodingSchemeVersion(ref);
@@ -196,11 +195,14 @@ public class OntologyLoadManagerLexGridImpl extends
 		} else {
 			if (status.getErrorsLogged().booleanValue()) {
 				String error_message = "";
-				if (status.getMessage() != null)
+
+				if (status.getMessage() != null) {
 					error_message = "LexBIG Ontology load failed with message= "
 							+ status.getMessage();
-				else
+				} else {
 					error_message = "LexBIG Ontology load failed. Check the LexBIG load logs for details.";
+				}
+
 				log.error(error_message);
 				throw new Exception(error_message);
 			}
@@ -219,7 +221,6 @@ public class OntologyLoadManagerLexGridImpl extends
 	 *                catch all for all other ontology file load errors.
 	 */
 	public void cleanup(OntologyBean ontology_bean) throws Exception {
-
 		// Get the LexBIGService
 		LexBIGService lbs = LexBIGServiceImpl.defaultInstance();
 		LexBIGServiceManager lbsm = lbs.getServiceManager(null);
@@ -227,7 +228,7 @@ public class OntologyLoadManagerLexGridImpl extends
 		// remove existing scheme if it exists before parsing...
 		CodingSchemeRendering csRendering = getCodingSchemeRendering(lbs,
 				ontology_bean.getCodingScheme());
-		
+
 		if (csRendering != null) {
 			AbsoluteCodingSchemeVersionReference acsvr = Constructors
 					.createAbsoluteCodingSchemeVersionReference(csRendering
@@ -237,7 +238,7 @@ public class OntologyLoadManagerLexGridImpl extends
 			ontology_bean.setCodingScheme(null);
 			NcboOntologyMetadata ncboMetadata = ncboOntologyVersionDAO
 					.findOntologyMetadataById(ontology_bean.getId());
-			
+
 			if (ncboMetadata != null) {
 				ncboMetadata.setCodingScheme(null);
 				ncboOntologyMetadataDAO.save(ncboMetadata);
@@ -293,11 +294,8 @@ public class OntologyLoadManagerLexGridImpl extends
 			CsmfFormalName csmfFormalName = new CsmfFormalName();
 			csmfFormalName.setContent(ontology_bean.getDisplayLabel());
 			csm.setFormalName(csmfFormalName);
-
 		}
 
 		return csm;
-
 	}
-
 }
