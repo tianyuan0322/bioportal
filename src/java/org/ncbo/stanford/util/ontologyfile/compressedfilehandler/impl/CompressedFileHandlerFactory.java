@@ -33,13 +33,7 @@ public class CompressedFileHandlerFactory {
 							+ getHandlerPrefix(format)
 							+ CompressedFileHandler.class.getSimpleName()
 							+ "Impl").newInstance());
-		} catch (InstantiationException e) {
-			log.error(e);
-			e.printStackTrace();
-		} catch (IllegalAccessException e) {
-			log.error(e);
-			e.printStackTrace();
-		} catch (ClassNotFoundException e) {
+		} catch (Exception e) {
 			log.error(e);
 			e.printStackTrace();
 		}
