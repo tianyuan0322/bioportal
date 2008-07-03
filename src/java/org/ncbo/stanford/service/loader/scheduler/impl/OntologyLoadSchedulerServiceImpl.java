@@ -39,7 +39,7 @@ public class OntologyLoadSchedulerServiceImpl implements
 
 	private static final Log log = LogFactory
 			.getLog(OntologyLoadSchedulerServiceImpl.class);
-	private static final Integer ERROR_MESSAGE_LENGTH = 1000;
+	private static final int ERROR_MESSAGE_LENGTH = 1000;
 
 	private CustomNcboOntologyLoadQueueDAO ncboOntologyLoadQueueDAO;
 	private CustomNcboOntologyVersionDAO ncboOntologyVersionDAO;
@@ -151,14 +151,13 @@ public class OntologyLoadSchedulerServiceImpl implements
 			status = new Integer(StatusEnum.STATUS_READY.getStatus());
 		} catch (Exception e) {
 			status = new Integer(StatusEnum.STATUS_ERROR.getStatus());
-			
-			
-//			errorMessage = e.getStackTrace().toString().substring(0,
-//					ERROR_MESSAGE_LENGTH);
 
-			
-			
-			
+			String stackTrace = e.getStackTrace().toString();
+			int stackTraceLen = stackTrace.length();
+			int messageLen = (stackTraceLen < ERROR_MESSAGE_LENGTH) ? stackTraceLen
+					: ERROR_MESSAGE_LENGTH;
+			errorMessage = stackTrace.substring(0, messageLen);
+
 			// add OntologyVersionId to the error list
 			errorIdList.add(ontologyBean.getId());
 			e.printStackTrace();
