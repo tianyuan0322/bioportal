@@ -15,10 +15,10 @@ import org.ncbo.stanford.util.ontologyfile.compressedfilehandler.AbstractCompres
  * @author Michael Dorf
  * 
  */
-public class UMLSCompressedFileHandlerImpl extends
+public class RRFCompressedFileHandlerImpl extends
 		AbstractCompressedFileHandler {
 
-	protected UMLSCompressedFileHandlerImpl() {
+	protected RRFCompressedFileHandlerImpl() {
 	}
 
 	public List<String> handle(File outputFile, OntologyBean ontologyBean)
