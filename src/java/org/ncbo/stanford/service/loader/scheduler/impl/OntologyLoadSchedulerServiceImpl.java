@@ -239,6 +239,11 @@ public class OntologyLoadSchedulerServiceImpl implements
 		OntologyLoadManager loadManager = ontologyLoadHandlerMap
 				.get(formatHandler);
 
+		if (loadManager == null) {
+			log.error("Cannot find formatHandler for " + ontologyBean.getFormat());
+			throw new Exception("Cannot find formatHandler for " + ontologyBean.getFormat());
+		}
+		
 		return loadManager;
 	}
 
