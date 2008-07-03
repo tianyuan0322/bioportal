@@ -61,6 +61,7 @@
 		<mkdir dir="${bioportal.ontology.filepath}" />
 		<mkdir dir="${obo.sourceforge.cvs.checkoutdir}" />
 		<mkdir dir="${lexgrid.index.location}" />
+		<mkdir dir="${lexgrid.registry.path}" />
 
 		<copy file="${tmpl.dir}/web.xml.tmpl" tofile="${web.dir}/WEB-INF/web.xml" overwrite="true">
 			<filterset>

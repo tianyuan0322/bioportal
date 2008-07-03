@@ -163,7 +163,8 @@ lexgrid.jarfile.location=../../lib
 # all loaded terminologies.  
 # This path can be relative to the location of 
 # lexgrid.base.path or absolute.
-lexgrid.registry.file=${bioportal.resource.path}/lexgrid/registry/registry.xml
+lexgrid.registry.path=${bioportal.resource.path}/lexgrid/registry
+lexgrid.registry.file=${lexgrid.registry.path}/registry.xml
 #
 # The folder that will hold all of the generated system indexes.  
 # This path can be relative to the location of lexgrid.base.path
