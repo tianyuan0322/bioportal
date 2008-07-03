@@ -87,6 +87,7 @@ BEGIN
 		DECLARE dl VARCHAR(128);
 		DECLARE done INT DEFAULT 0;
 		DECLARE cur1 CURSOR FOR select distinct display_label from ncbo_ontology_metadata order by display_label;
+		DECLARE CONTINUE HANDLER FOR NOT FOUND SET done = 1;		
 		
 		OPEN cur1;
   
