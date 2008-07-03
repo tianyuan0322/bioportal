@@ -34,10 +34,9 @@ public class PhysicalDirectoryFilePathHandlerImpl extends
 
 	public List<String> processOntologyFileUpload(OntologyBean ontologyBean)
 			throws FileNotFoundException, IOException, Exception {
-
 		// place holder for return object
 		List<String> fileNames = new ArrayList<String>(1);
-		
+
 		// validate inputfile
 		String filePath = AbstractFilePathHandler
 				.getFullOntologyDirPath(ontologyBean);
@@ -45,7 +44,6 @@ public class PhysicalDirectoryFilePathHandlerImpl extends
 
 		// continue only if there is input file
 		if (filePath != null && fileName != null) {
-
 			// now create output file
 			File outputDirectories = new File(filePath);
 			outputDirectories.mkdirs();
@@ -56,30 +54,31 @@ public class PhysicalDirectoryFilePathHandlerImpl extends
 			InputStream inputStream = new FileInputStream(file);
 
 			int c;
+
 			while ((c = inputStream.read()) != -1) {
 				outputStream.write(c);
 			}
+
 			inputStream.close();
 			outputStream.close();
 
 			// validate output file
 			if (!outputFile.exists()) {
-				
-					String errorMsg = MessageUtils
-							.getMessage("msg.error.file.outputFileCreationError")
-							+ " filePath =  "
-							+ filePath
-							+ " fileName =  "
-							+ fileName;
+				String errorMsg = MessageUtils
+						.getMessage("msg.error.file.outputFileCreationError")
+						+ " filePath =  "
+						+ filePath
+						+ " fileName =  "
+						+ fileName;
 
-					throw new FileNotFoundException(
-							"Error! - PhysicalDirectoryFilePathHandlerImpl(): processOntologyFileUpload - "
-									+ errorMsg);
+				throw new FileNotFoundException(
+						"Error! - PhysicalDirectoryFilePathHandlerImpl(): processOntologyFileUpload - "
+								+ errorMsg);
 			}
 
 			fileNames = compressedFileHandler.handle(outputFile, ontologyBean);
 		}
-		
+
 		return fileNames;
 	}
 
