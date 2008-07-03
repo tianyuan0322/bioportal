@@ -3,6 +3,7 @@ package org.ncbo.stanford.service.loader.scheduler.impl;
 import java.io.File;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -181,6 +182,7 @@ public class OntologyLoadSchedulerServiceImpl implements
 			loadQueue.setErrorMessage(errorMessage);
 		}
 
+		loadQueue.setDateProcessed(Calendar.getInstance().getTime());
 		loadQueue.setNcboLStatus(ncboStatus);
 		ncboOntologyLoadQueueDAO.saveNcboOntologyLoadQueue(loadQueue);
 	}
