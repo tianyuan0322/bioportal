@@ -11,9 +11,6 @@ import org.ncbo.stanford.enumeration.StatusEnum;
 import org.ncbo.stanford.service.ontology.OntologyService;
 import org.ncbo.stanford.service.ontology.OntologyServiceTest;
 import org.ncbo.stanford.util.constants.ApplicationConstants;
-import org.ncbo.stanford.util.ontologyfile.compressedfilehandler.impl.CompressedFileHandlerFactory;
-import org.ncbo.stanford.util.ontologyfile.pathhandler.FilePathHandler;
-import org.ncbo.stanford.util.ontologyfile.pathhandler.impl.PhysicalDirectoryFilePathHandlerImpl;
 
 /**
  * Tests loading ontologies into LexGrid using the
