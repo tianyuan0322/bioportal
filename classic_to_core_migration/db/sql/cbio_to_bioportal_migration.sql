@@ -104,8 +104,6 @@ DELIMITER ;
 
 CALL sp_update_ontology_id();
 
-DROP PROCEDURE IF EXISTS `sp_update_ontology_id`;
-
 update ncbo_ontology_version set file_path = CONCAT("/", ontology_id, "/", internal_version_number)
 where is_remote = 0;
 
@@ -116,3 +114,4 @@ update ncbo_l_role set name = 'ROLE_ADMINISTRATOR' where id = 2824;
 -- alter table ncbo_ontology_version drop foreign key FK_ncbo_ontology_ncbo_ontology_new;
 -- alter table ncbo_ontology_version drop column parent_id;
 
+DROP PROCEDURE IF EXISTS `sp_update_ontology_id`;
