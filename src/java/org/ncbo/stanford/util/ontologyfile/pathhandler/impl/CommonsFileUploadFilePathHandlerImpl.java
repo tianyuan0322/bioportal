@@ -40,22 +40,26 @@ public class CommonsFileUploadFilePathHandlerImpl extends
 
 		// place holder for return object
 		List<String> fileNames = new ArrayList<String>(1);
-		
+
 		// continue only if there is input fileItem to upload
 		FileItem fileItem = ontologyBean.getFileItem();
+
 		if (fileItem != null) {
-			
 			String filePath = AbstractFilePathHandler
 					.getFullOntologyDirPath(ontologyBean);
-			String fileName = fileItem.getName();
 
-			// validate input file		
-			if ( file.getSize() == 0) {
-				String errorMsg = MessageUtils.getMessage("msg.error.file.inputFileNotFoundError")
-						+ " fileName =  " + fileName;	
-				
+			String fileName = fileItem.getName();
+			File inputFile = new File(fileName);
+			fileName = inputFile.getName();
+
+			// validate input file
+			if (file.getSize() == 0) {
+				String errorMsg = MessageUtils
+						.getMessage("msg.error.file.inputFileNotFoundError")
+						+ " fileName =  " + fileName;
+
 				throw new FileNotFoundException(
-						"Error! - CommonsFileUploadFilePathHandlerImpl(): processOntologyFileUpload - "  
+						"Error! - CommonsFileUploadFilePathHandlerImpl(): processOntologyFileUpload - "
 								+ errorMsg);
 			}
 
@@ -64,20 +68,24 @@ public class CommonsFileUploadFilePathHandlerImpl extends
 			outputDirectories.mkdirs();
 			File outputFile = new File(filePath, fileName);
 			file.write(outputFile);
-			
+
 			// validate output file
-			if (!outputFile.exists()) {				
-				String errorMsg = MessageUtils.getMessage("msg.error.file.outputFileCreationError")
-						+ " filePath =  " + filePath 
-						+ " fileName =  " + fileName;
-				
+			if (!outputFile.exists()) {
+				String errorMsg = MessageUtils
+						.getMessage("msg.error.file.outputFileCreationError")
+						+ " filePath =  "
+						+ filePath
+						+ " fileName =  "
+						+ fileName;
+
 				throw new FileNotFoundException(
-						"Error! - CommonsFileUploadFilePathHandlerImpl(): processOntologyFileUpload - "  
-								+ errorMsg);	
+						"Error! - CommonsFileUploadFilePathHandlerImpl(): processOntologyFileUpload - "
+								+ errorMsg);
 			}
 
 			fileNames = compressedFileHandler.handle(outputFile, ontologyBean);
 		}
+
 		return fileNames;
 	}
 
