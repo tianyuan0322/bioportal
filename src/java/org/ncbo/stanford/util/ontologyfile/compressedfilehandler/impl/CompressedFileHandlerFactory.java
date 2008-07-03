@@ -5,6 +5,7 @@ package org.ncbo.stanford.util.ontologyfile.compressedfilehandler.impl;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.ncbo.stanford.exception.InvalidCompressedFileHandlerException;
 import org.ncbo.stanford.util.constants.ApplicationConstants;
 import org.ncbo.stanford.util.ontologyfile.compressedfilehandler.CompressedFileHandler;
 
@@ -20,22 +21,25 @@ public class CompressedFileHandlerFactory {
 			.getLog(CompressedFileHandlerFactory.class);
 	private static final String FORMAT_OWL = "OWL";
 	private static final String FORMAT_LEXGRID_XML = "LEXGRID_XML";
-	private static final String FORMAT_UMLS = "UMLS";
 
-	public static CompressedFileHandler createFileHandler(String format) {
+	public static CompressedFileHandler createFileHandler(String format)
+			throws InstantiationException, IllegalAccessException,
+			InvalidCompressedFileHandlerException {
 		CompressedFileHandler compressedFileHandler = null;
-
+		String handlerName = null;
+		
 		try {
+			handlerName = CompressedFileHandlerFactory.class
+					.getPackage().getName()
+					+ "."
+					+ getHandlerPrefix(format)
+					+ CompressedFileHandler.class.getSimpleName() + "Impl";
+
 			compressedFileHandler = (CompressedFileHandler) (Class
-					.forName(CompressedFileHandlerFactory.class.getPackage()
-							.getName()
-							+ "."
-							+ getHandlerPrefix(format)
-							+ CompressedFileHandler.class.getSimpleName()
-							+ "Impl").newInstance());
-		} catch (Exception e) {
-			log.error(e);
-			e.printStackTrace();
+					.forName(handlerName).newInstance());
+		} catch (ClassNotFoundException e) {
+			throw new InvalidCompressedFileHandlerException(
+					"Invalid compressed file handler: " + handlerName);
 		}
 
 		return compressedFileHandler;
@@ -46,14 +50,13 @@ public class CompressedFileHandlerFactory {
 
 		if (format.equalsIgnoreCase(ApplicationConstants.FORMAT_OWL_DL)
 				|| format
-						.equalsIgnoreCase(ApplicationConstants.FORMAT_OWL_FULL)) {
+						.equalsIgnoreCase(ApplicationConstants.FORMAT_OWL_FULL)
+				|| format
+						.equalsIgnoreCase(ApplicationConstants.FORMAT_OWL_LITE)) {
 			prefix = FORMAT_OWL;
 		} else if (format
 				.equalsIgnoreCase(ApplicationConstants.FORMAT_LEXGRID_XML)) {
 			prefix = FORMAT_LEXGRID_XML;
-		} else if (format
-				.equalsIgnoreCase(ApplicationConstants.FORMAT_UMLS_RRF)) {
-			prefix = FORMAT_UMLS;
 		}
 
 		return prefix;
