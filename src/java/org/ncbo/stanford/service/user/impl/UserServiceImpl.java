@@ -4,8 +4,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.ncbo.stanford.bean.UserBean;
+import org.ncbo.stanford.domain.custom.dao.CustomNcboLRoleDAO;
 import org.ncbo.stanford.domain.custom.dao.CustomNcboUserDAO;
 import org.ncbo.stanford.domain.generated.NcboUser;
+import org.ncbo.stanford.domain.generated.NcboUserRole;
 import org.ncbo.stanford.service.encryption.EncryptionService;
 import org.ncbo.stanford.service.user.UserService;
 import org.ncbo.stanford.util.helper.StringHelper;
@@ -15,6 +17,7 @@ import org.springframework.transaction.annotation.Transactional;
 public class UserServiceImpl implements UserService {
 
 	private CustomNcboUserDAO ncboUserDAO = null;
+	private CustomNcboLRoleDAO ncboUserRoleDAO = null;
 	EncryptionService encryptionService = null;
 
 	public UserBean findUser(Integer userId) {
@@ -62,18 +65,27 @@ public class UserServiceImpl implements UserService {
 	}
 
 	public void createUser(UserBean userBean) {
+
+		// assign default role at the time of creation
+		//userBean.generateDefaultRole();
+		
 		// populate NcboUser from userBean
 		NcboUser ncboUser = new NcboUser();
 		userBean.populateToEntity(ncboUser);
-		
-		// assign default role at the time of creation
-		userBean.generateDefaultRole();
 		
 		String encodedPassword = encryptionService.encodePassword(userBean
 				.getPassword());
 		ncboUser.setPassword(encodedPassword);
 
-		// ncboUserDAO.save(ncboUser);
+/*		// 
+		userBean.populateToUserRoleEntity(userRoleList);
+		userRoleDAO.save(userRole);
+
+		for (NcboUserRole userRole : userRoleList) {
+			ncboUserRoleDAO.save(userRole);
+		}*/
+		
+		
 		NcboUser newNcboUser = ncboUserDAO.saveUser(ncboUser);
 		userBean.setId(newNcboUser.getId());
 	}
@@ -130,4 +142,20 @@ public class UserServiceImpl implements UserService {
 	public void setEncryptionService(EncryptionService encryptionService) {
 		this.encryptionService = encryptionService;
 	}
+
+	/**
+	 * @return the ncboUserRoleDAO
+	 */
+	public CustomNcboLRoleDAO getNcboUserRoleDAO() {
+		return ncboUserRoleDAO;
+	}
+
+	/**
+	 * @param ncboUserRoleDAO the ncboUserRoleDAO to set
+	 */
+	public void setNcboUserRoleDAO(CustomNcboLRoleDAO ncboUserRoleDAO) {
+		this.ncboUserRoleDAO = ncboUserRoleDAO;
+	}
+
+
 }
