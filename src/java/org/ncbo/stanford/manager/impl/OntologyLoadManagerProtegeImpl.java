@@ -5,7 +5,6 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.net.URI;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
 import org.apache.commons.logging.Log;
@@ -14,11 +13,9 @@ import org.ncbo.stanford.bean.OntologyBean;
 import org.ncbo.stanford.manager.AbstractOntologyManagerProtege;
 import org.ncbo.stanford.manager.OntologyLoadManager;
 
-import edu.stanford.smi.protege.model.Project;
 import edu.stanford.smi.protege.storage.database.DatabaseKnowledgeBaseFactory;
 import edu.stanford.smi.protege.util.PropertyList;
 import edu.stanford.smi.protegex.owl.ProtegeOWL;
-import edu.stanford.smi.protegex.owl.database.CreateOWLDatabaseFromFileProjectPlugin;
 import edu.stanford.smi.protegex.owl.database.OWLDatabaseKnowledgeBaseFactory;
 import edu.stanford.smi.protegex.owl.model.OWLModel;
 
@@ -57,14 +54,15 @@ public class OntologyLoadManagerProtegeImpl extends
 			throws Exception {
 		
 		File ontologyFile = new File(ontologyUri.getPath());
-
+		String filePath = ontologyUri.getPath();
+		
 		if (ontologyFile == null) {
-			log.error("Missing ontology file to load.");
-			throw new FileNotFoundException("Missing ontology file to load");
+			log.error("Missing ontology file to load: " + filePath);
+			throw new FileNotFoundException(
+					"Missing ontology file to load: " + filePath);
 		}
+
 		log.debug("Loading ontology file: " + ontologyFile.getName());
-
-
 		
 		// If the ontology file is small, use the fast non-streaming Protege
 		// load code.
