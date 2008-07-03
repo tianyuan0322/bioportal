@@ -225,9 +225,9 @@ public class OntologyLoadManagerLexGridImpl extends
 		LexBIGServiceManager lbsm = lbs.getServiceManager(null);
 
 		// remove existing scheme if it exists before parsing...
-
 		CodingSchemeRendering csRendering = getCodingSchemeRendering(lbs,
 				ontology_bean.getCodingScheme());
+		
 		if (csRendering != null) {
 			AbsoluteCodingSchemeVersionReference acsvr = Constructors
 					.createAbsoluteCodingSchemeVersionReference(csRendering
@@ -237,6 +237,7 @@ public class OntologyLoadManagerLexGridImpl extends
 			ontology_bean.setCodingScheme(null);
 			NcboOntologyMetadata ncboMetadata = ncboOntologyVersionDAO
 					.findOntologyMetadataById(ontology_bean.getId());
+			
 			if (ncboMetadata != null) {
 				ncboMetadata.setCodingScheme(null);
 				ncboOntologyMetadataDAO.save(ncboMetadata);
