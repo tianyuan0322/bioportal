@@ -19,6 +19,7 @@ import org.ncbo.stanford.domain.generated.NcboLStatus;
 import org.ncbo.stanford.domain.generated.NcboOntologyLoadQueue;
 import org.ncbo.stanford.domain.generated.NcboOntologyVersion;
 import org.ncbo.stanford.enumeration.StatusEnum;
+import org.ncbo.stanford.exception.InvalidOntologyFormatException;
 import org.ncbo.stanford.manager.OntologyLoadManager;
 import org.ncbo.stanford.service.loader.scheduler.OntologyLoadSchedulerService;
 import org.ncbo.stanford.util.helper.StringHelper;
@@ -212,18 +213,11 @@ public class OntologyLoadSchedulerServiceImpl implements
 		// looping through the files
 
 		for (String filename : filenames) {
-
 			log.debug("......loading filename " + filename);
 
 			String filePath = AbstractFilePathHandler.getOntologyFilePath(
 					ontologyBean, filename);
 			File file = new File(filePath, filename);
-
-			if (file == null) {
-				log.error("Missing ontology file to load." + filePath);
-				throw new FileNotFoundException("Missing ontology file to load");
-			}
-			
 			getLoadManager(ontologyBean).loadOntology(file.toURI(),
 					ontologyBean);
 		}
@@ -233,17 +227,18 @@ public class OntologyLoadSchedulerServiceImpl implements
 
 	private OntologyLoadManager getLoadManager(OntologyBean ontologyBean)
 			throws Exception {
-
 		String formatHandler = ontologyFormatHandlerMap.get(ontologyBean
 				.getFormat());
 		OntologyLoadManager loadManager = ontologyLoadHandlerMap
 				.get(formatHandler);
 
 		if (loadManager == null) {
-			log.error("Cannot find formatHandler for " + ontologyBean.getFormat());
-			throw new Exception("Cannot find formatHandler for " + ontologyBean.getFormat());
+			log.error("Cannot find formatHandler for "
+					+ ontologyBean.getFormat());
+			throw new InvalidOntologyFormatException(
+					"Cannot find formatHandler for " + ontologyBean.getFormat());
 		}
-		
+
 		return loadManager;
 	}
 
