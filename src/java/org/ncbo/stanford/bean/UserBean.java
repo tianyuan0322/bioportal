@@ -19,7 +19,7 @@ public class UserBean {
 	private String lastname;
 	private String phone;
 	private Date dateCreated;
-	private List<String> roles;
+	private List<String> roles = new ArrayList<String>(0);
 
 	public String toString() {
 		return "{Id: " + this.getId() + ", Username: " + this.getUsername()
@@ -56,9 +56,9 @@ public class UserBean {
 	}
 
 	/**
-	 * Populates the OntologyBean with data from a NcboOntology
+	 * Populates the NcboUser object with data from this instance
 	 * 
-	 * @param ncboOntology
+	 * @param ncboUser
 	 */
 	public void populateToEntity(NcboUser ncboUser) {
 		if (ncboUser != null) {
@@ -78,11 +78,10 @@ public class UserBean {
 			// time stamp
 			if (ncboUser.getDateCreated() == null) {
 				ncboUser.setDateCreated(new Date());
-			}
-			
+			}			
 		}
 	}
-
+	
 	/**
 	 * Extracts default passwords and sets it in the bean
 	 */
@@ -95,7 +94,6 @@ public class UserBean {
 	 */
 	public void generateDefaultRole() {
 		roles.add(MessageUtils.getMessage("default.user.role"));
-		this.setRoles(roles);
 	}
 
 	/**
