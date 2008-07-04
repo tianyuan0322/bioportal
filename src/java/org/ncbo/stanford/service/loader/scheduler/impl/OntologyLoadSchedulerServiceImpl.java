@@ -170,7 +170,6 @@ public class OntologyLoadSchedulerServiceImpl implements
 
 	private void updateOntologyStatus(NcboOntologyLoadQueue loadQueue,
 			Integer status, String errorMessage) {
-
 		NcboOntologyVersion ncboOntologyVersion = loadQueue
 				.getNcboOntologyVersion();
 
@@ -216,7 +215,7 @@ public class OntologyLoadSchedulerServiceImpl implements
 			String filePath = AbstractFilePathHandler.getOntologyFilePath(
 					ontologyBean, filename);
 			File file = new File(filePath);
-			
+
 			getLoadManager(ontologyBean).loadOntology(file.toURI(),
 					ontologyBean);
 		}
