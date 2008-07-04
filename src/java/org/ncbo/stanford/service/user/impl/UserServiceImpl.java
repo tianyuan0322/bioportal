@@ -2,10 +2,13 @@ package org.ncbo.stanford.service.user.impl;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 import org.ncbo.stanford.bean.UserBean;
 import org.ncbo.stanford.domain.custom.dao.CustomNcboLRoleDAO;
 import org.ncbo.stanford.domain.custom.dao.CustomNcboUserDAO;
+import org.ncbo.stanford.domain.custom.dao.CustomNcboUserRoleDAO;
+import org.ncbo.stanford.domain.generated.NcboLRole;
 import org.ncbo.stanford.domain.generated.NcboUser;
 import org.ncbo.stanford.domain.generated.NcboUserRole;
 import org.ncbo.stanford.service.encryption.EncryptionService;
@@ -17,8 +20,9 @@ import org.springframework.transaction.annotation.Transactional;
 public class UserServiceImpl implements UserService {
 
 	private CustomNcboUserDAO ncboUserDAO = null;
-	private CustomNcboLRoleDAO ncboUserRoleDAO = null;
-	EncryptionService encryptionService = null;
+	private CustomNcboLRoleDAO ncboLRoleDAO = null;
+	private CustomNcboUserRoleDAO ncboUserRoleDAO = null;
+	private EncryptionService encryptionService = null;
 
 	public UserBean findUser(Integer userId) {
 		UserBean userBean = null;
@@ -65,29 +69,27 @@ public class UserServiceImpl implements UserService {
 	}
 
 	public void createUser(UserBean userBean) {
-
-		// assign default role at the time of creation
-		//userBean.generateDefaultRole();
-		
 		// populate NcboUser from userBean
 		NcboUser ncboUser = new NcboUser();
 		userBean.populateToEntity(ncboUser);
-		
+
 		String encodedPassword = encryptionService.encodePassword(userBean
 				.getPassword());
 		ncboUser.setPassword(encodedPassword);
-
-/*		// 
-		userBean.populateToUserRoleEntity(userRoleList);
-		userRoleDAO.save(userRole);
-
-		for (NcboUserRole userRole : userRoleList) {
-			ncboUserRoleDAO.save(userRole);
-		}*/
-		
-		
 		NcboUser newNcboUser = ncboUserDAO.saveUser(ncboUser);
 		userBean.setId(newNcboUser.getId());
+
+		if (userBean.getRoles().size() <= 0) {
+			userBean.generateDefaultRole();
+		}
+
+		for (String roleName : userBean.getRoles()) {
+			NcboUserRole ncboUserRole = new NcboUserRole();
+			NcboLRole ncboLRole = ncboLRoleDAO.findRoleByName(roleName);
+			ncboUserRole.setNcboUser(newNcboUser);
+			ncboUserRole.setNcboLRole(ncboLRole);
+			ncboUserRoleDAO.save(ncboUserRole);
+		}
 	}
 
 	public void updateUser(UserBean userBean) {
@@ -106,10 +108,16 @@ public class UserServiceImpl implements UserService {
 		ncboUserDAO.save(ncboUser);
 	}
 
+	@SuppressWarnings("unchecked")
 	public void deleteUser(UserBean userBean) {
 		// get ncboUser DAO instance using user_id
 		NcboUser ncboUser = ncboUserDAO.findById(userBean.getId());
-
+		Set<NcboUserRole> userRoles = ncboUser.getNcboUserRoles();
+		
+		for (NcboUserRole userRole : userRoles) {
+			ncboUserRoleDAO.delete(userRole);
+		}
+		
 		ncboUserDAO.delete(ncboUser);
 	}
 
@@ -144,18 +152,32 @@ public class UserServiceImpl implements UserService {
 	}
 
 	/**
+	 * @return the ncboLRoleDAO
+	 */
+	public CustomNcboLRoleDAO getNcboLRoleDAO() {
+		return ncboLRoleDAO;
+	}
+
+	/**
+	 * @param ncboLRoleDAO
+	 *            the ncboLRoleDAO to set
+	 */
+	public void setNcboLRoleDAO(CustomNcboLRoleDAO ncboLRoleDAO) {
+		this.ncboLRoleDAO = ncboLRoleDAO;
+	}
+
+	/**
 	 * @return the ncboUserRoleDAO
 	 */
-	public CustomNcboLRoleDAO getNcboUserRoleDAO() {
+	public CustomNcboUserRoleDAO getNcboUserRoleDAO() {
 		return ncboUserRoleDAO;
 	}
 
 	/**
-	 * @param ncboUserRoleDAO the ncboUserRoleDAO to set
+	 * @param ncboUserRoleDAO
+	 *            the ncboUserRoleDAO to set
 	 */
-	public void setNcboUserRoleDAO(CustomNcboLRoleDAO ncboUserRoleDAO) {
+	public void setNcboUserRoleDAO(CustomNcboUserRoleDAO ncboUserRoleDAO) {
 		this.ncboUserRoleDAO = ncboUserRoleDAO;
 	}
-
-
 }
