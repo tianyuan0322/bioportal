@@ -8,6 +8,7 @@ import java.util.List;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.hibernate.criterion.Expression;
+import org.hibernate.criterion.Order;
 import org.ncbo.stanford.domain.generated.NcboOntologyLoadQueue;
 import org.ncbo.stanford.domain.generated.NcboOntologyLoadQueueDAO;
 import org.ncbo.stanford.enumeration.StatusEnum;
@@ -55,7 +56,8 @@ public class CustomNcboOntologyLoadQueueDAO extends NcboOntologyLoadQueueDAO {
 				"org.ncbo.stanford.domain.generated.NcboOntologyLoadQueue")
 				.add(
 						Expression.eq("ncboLStatus.id",
-								StatusEnum.STATUS_WAITING.getStatus())).list();
+								StatusEnum.STATUS_WAITING.getStatus()))
+				.addOrder(Order.asc("id")).list();
 	}
 
 	/**
