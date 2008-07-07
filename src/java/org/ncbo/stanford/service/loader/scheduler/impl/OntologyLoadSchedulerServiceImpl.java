@@ -79,8 +79,8 @@ public class OntologyLoadSchedulerServiceImpl implements
 				.getOntologiesToLoad();
 
 		for (NcboOntologyLoadQueue loadQueue : ontologiesToLoad) {
-
 			int currentId = loadQueue.getNcboOntologyVersion().getId();
+
 			if (currentId >= start && currentId < end) {
 				log.debug("parsing ontology : ID = "
 						+ loadQueue.getNcboOntologyVersion().getId());
