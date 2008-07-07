@@ -56,11 +56,14 @@ public class OntologyLoadSchedulerServiceImpl implements
 	 * 
 	 * @throws Exception
 	 */
+	@Transactional(propagation = Propagation.NEVER)
 	public void parseOntologies() {
 		List<NcboOntologyLoadQueue> ontologiesToLoad = ncboOntologyLoadQueueDAO
 				.getOntologiesToLoad();
 
 		for (NcboOntologyLoadQueue loadQueue : ontologiesToLoad) {
+			log.debug("parsing ontology: ID = "
+					+ loadQueue.getNcboOntologyVersion().getId());
 			processRecord(loadQueue);
 		}
 	}
@@ -71,6 +74,7 @@ public class OntologyLoadSchedulerServiceImpl implements
 	 * 
 	 * @throws Exception
 	 */
+	@Transactional(propagation = Propagation.NEVER)
 	public void parseOntologies(String startId, String endId) {
 		int start = Integer.parseInt(startId);
 		int end = Integer.parseInt(endId);
@@ -82,7 +86,7 @@ public class OntologyLoadSchedulerServiceImpl implements
 			int currentId = loadQueue.getNcboOntologyVersion().getId();
 
 			if (currentId >= start && currentId < end) {
-				log.debug("parsing ontology : ID = "
+				log.debug("parsing ontology: ID = "
 						+ loadQueue.getNcboOntologyVersion().getId());
 				processRecord(loadQueue);
 			}
@@ -125,7 +129,6 @@ public class OntologyLoadSchedulerServiceImpl implements
 	 * 
 	 * @param rec
 	 */
-	@Transactional(propagation = Propagation.NEVER)
 	private void processRecord(NcboOntologyLoadQueue loadQueue) {
 		String errorMessage = null;
 		// populate bean
@@ -134,11 +137,6 @@ public class OntologyLoadSchedulerServiceImpl implements
 		OntologyBean ontologyBean = new OntologyBean();
 		ontologyBean.populateFromEntity(ontology);
 
-		// cleanup lexgrid (no need for protege)
-		// TODO - call lexgrid clean up API... something like this
-		// getLoadManager(ontologyBean).cleanup();
-
-		// cleanup bioportal
 		Integer status = new Integer(StatusEnum.STATUS_WAITING.getStatus());
 		updateOntologyStatus(loadQueue, status, errorMessage);
 
