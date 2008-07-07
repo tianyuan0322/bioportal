@@ -1,6 +1,8 @@
 package org.ncbo.stanford.service.loader.scheduler.impl;
 
 import java.io.File;
+import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -153,7 +155,9 @@ public class OntologyLoadSchedulerServiceImpl implements
 		} catch (Exception e) {
 			status = new Integer(StatusEnum.STATUS_ERROR.getStatus());
 
-			String stackTrace = e.getStackTrace().toString();
+			StringWriter sw = new StringWriter();
+			e.printStackTrace(new PrintWriter(sw));
+			String stackTrace = sw.toString();
 			int stackTraceLen = stackTrace.length();
 			int messageLen = (stackTraceLen < ERROR_MESSAGE_LENGTH) ? stackTraceLen
 					: ERROR_MESSAGE_LENGTH;
