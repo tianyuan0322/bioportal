@@ -39,6 +39,7 @@ public class OBOFoundryIdUpdater {
 											"${bioportal.resource.path}",
 											properties
 													.getProperty("bioportal.resource.path")));
+			System.out.println("Descriptor File: " + descriptorFile);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -54,7 +55,8 @@ public class OBOFoundryIdUpdater {
 			List<MetadataFileBean> ontologyList = odp.parseOntologyFile();
 
 			for (MetadataFileBean mfb : ontologyList) {
-				updateFoundryId(conn, mfb.getId(), mfb.getTitle());
+				int statusCode = updateFoundryId(conn, mfb.getId(), mfb.getTitle());
+				System.out.println("Update status code: " + statusCode + ".");
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -72,11 +74,12 @@ public class OBOFoundryIdUpdater {
 	private static int updateFoundryId(Connection conn, String oboFoundryId,
 			String displayLabel) throws SQLException, IOException,
 			ClassNotFoundException {
-
 		if (StringHelper.isNullOrNullString(oboFoundryId)
 				|| StringHelper.isNullOrNullString(displayLabel)) {
 			return ERROR_CODE;
 		}
+
+		System.out.println("Updating obo foundry id to: '" + oboFoundryId + "' for ontology: '" + displayLabel + "'.");
 
 		String sqlUpdate = "UPDATE ncbo_ontology_metadata SET obo_foundry_id = ? WHERE LOWER(display_label) = ?";
 		PreparedStatement stmt = conn.prepareStatement(sqlUpdate);
