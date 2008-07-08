@@ -174,6 +174,7 @@ public class OntologyLoadManagerLexGridImpl extends
 			// version for the ontology
 			NcboOntologyMetadata ncboMetadata = ncboOntologyVersionDAO
 					.findOntologyMetadataById(ontology_bean.getId());
+			
 			if (ncboMetadata != null) {
 				String urnAndVersion = urn + "|" + version;
 				ncboMetadata.setCodingScheme(urnAndVersion);
