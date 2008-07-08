@@ -72,6 +72,8 @@
 		<copy file="${tmpl.dir}/log4j.xml.tmpl" tofile="${conf.dir.generated}/log4j.xml" overwrite="true">
 			<filterset>
 				<filter token="logfilepath" value="${bioportal.app.logfilepath}" />
+				<filter token="maxlogfilesize" value="${bioportal.app.maxlogfilesize}" />				
+				<filter token="maxlogbackupindex" value="${bioportal.app.maxlogbackupindex}" />
 				<filter token="bioportallevel" value="${bioportal.app.log.bioportallevel}" />
 				<filter token="deflevel" value="${bioportal.app.log.deflevel}" />
 			</filterset>

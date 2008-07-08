@@ -64,6 +64,10 @@ ontology.parse.scheduler.cronexpression=0 30 * * * ? *
 bioportal.app.log.deflevel=ERROR
 bioportal.app.log.bioportallevel=DEBUG
 bioportal.app.logfilepath=${appserver.logs}/bioportal.log
+# Max log file size (10MB)
+bioportal.app.maxlogfilesize=10000KB
+# How many backup log files to keep
+bioportal.app.maxlogbackupindex=15
 
 # SMTP Server
 bioportal.smtp.server=yoursmtpserver
@@ -96,13 +100,13 @@ bioportal.jdbc.maxwait=10000
 bioportal.encryption.key=yourencryptionkey
 
 # Users by username query used for authentication
-bioportal.usersbyusername.query=SELECT username, password, 1 AS enabled FROM yourusertable WHERE username = ?
+bioportal.usersbyusername.query=SELECT username, password, 1 AS enabled FROM ncbo_user WHERE username = ?
 
 # Application by application id query used for authentication
-bioportal.applicationbyapplicationid.query=SELECT applicationid, applicationname FROM youradminapplicationtable WHERE applicationid = ?
+bioportal.applicationbyapplicationid.query=SELECT application_id, application_name FROM ncbo_admin_application WHERE application_id = ?
 
 # Authorities by username query used for authorization
-bioportal.authoritiesbyusername.query=SELECT username, authority FROM yourauthoritytable WHERE username = ?
+bioportal.authoritiesbyusername.query=SELECT u.username AS username, r.name AS authority FROM ncbo_user u, ncbo_user_role ur, ncbo_l_role r WHERE u.id = ur.user_id AND ur.role_id = r.id AND u.username = ?
 
 # Message bundle
 bioportal.messagebundle.name=message

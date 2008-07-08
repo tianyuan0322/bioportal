@@ -11,24 +11,12 @@
 		</layout>
 	</appender>
 
-	<!-- The file reference will need to changed so it is not relative.  This is a 
-		kludge to get things working for now. We need to use Ant to set some properties
-		dynamically so that it builds in all environments.
-	-->
-	<appender name="fileAppender"
-		class="org.apache.log4j.FileAppender">
-		<param name="File" value="@logfilepath@" />
-		<param name="Append" value="true" />
-		<layout class="org.apache.log4j.PatternLayout">
-			<param name="ConversionPattern"
-				value="%d{ISO8601} %-5p [%-15c] - %m%n" />
-		</layout>
-	</appender>
-
 	<appender name="file"
-		class="org.apache.log4j.DailyRollingFileAppender">
-		<param name="DatePattern" value="'.'yyyy-MM-dd" />
+		class="org.apache.log4j.RollingFileAppender">
 		<param name="File" value="@logfilepath@" />
+		<param name="MaxFileSize" value="@maxlogfilesize@" />
+		<param name="MaxBackupIndex" value="@maxlogbackupindex@" />
+		<param name="Append" value="true" />
 		<layout class="org.apache.log4j.PatternLayout">
 			<param name="ConversionPattern" value="%d [%t] %p - %m%n" />
 		</layout>
@@ -54,5 +42,5 @@
 		<priority value="@deflevel@" />
 		<appender-ref ref="console" />
 		<appender-ref ref="file" />
-	</root>	
+	</root>
 </log4j:configuration>
