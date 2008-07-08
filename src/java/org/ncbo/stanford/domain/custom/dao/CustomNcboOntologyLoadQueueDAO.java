@@ -61,6 +61,25 @@ public class CustomNcboOntologyLoadQueueDAO extends NcboOntologyLoadQueueDAO {
 	}
 
 	/**
+	 * Determines whether a given ontology needs to be parsed (based on the
+	 * queue status)
+	 * 
+	 * @param loadQueueId
+	 * @return
+	 */
+	public Boolean needsParsing(Integer loadQueueId) {
+		NcboOntologyLoadQueue queue = (NcboOntologyLoadQueue) getSession()
+				.createCriteria(
+						"org.ncbo.stanford.domain.generated.NcboOntologyLoadQueue")
+				.add(Expression.eq("id", loadQueueId)).add(
+						Expression.eq("ncboLStatus.id",
+								StatusEnum.STATUS_WAITING.getStatus()))
+				.uniqueResult();
+
+		return new Boolean(queue != null);
+	}
+
+	/**
 	 * @param transientInstance
 	 * @return
 	 */

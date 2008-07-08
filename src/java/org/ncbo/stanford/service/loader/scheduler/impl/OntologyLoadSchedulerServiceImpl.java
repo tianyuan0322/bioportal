@@ -51,8 +51,8 @@ public class OntologyLoadSchedulerServiceImpl implements
 	private List<Integer> errorIdList = new ArrayList<Integer>();
 
 	/**
-	 * Gets the list of ontologies that need to be loaded and process each using
-	 * the appropriate loader API.
+	 * Gets the list of ontologies that need to be loaded and processed each
+	 * using the appropriate loader API.
 	 * 
 	 * @throws Exception
 	 */
@@ -62,16 +62,27 @@ public class OntologyLoadSchedulerServiceImpl implements
 				.getOntologiesToLoad();
 
 		for (NcboOntologyLoadQueue loadQueue : ontologiesToLoad) {
-			log.debug("parsing ontology: ID = "
-					+ loadQueue.getNcboOntologyVersion().getId());
-			processRecord(loadQueue);
+			if (ncboOntologyLoadQueueDAO.needsParsing(loadQueue.getId())
+					.booleanValue()) {
+				log.debug("parsing ontology: ID = "
+						+ loadQueue.getNcboOntologyVersion().getId());
+				processRecord(loadQueue);
+			} else {
+				log.debug("ontology ID = "
+						+ loadQueue.getNcboOntologyVersion().getId()
+						+ " does not require parsing");
+			}
 		}
 	}
 
 	/**
-	 * Gets the list of ontologies that need to be loaded and process each using
-	 * the appropriate loader API.
+	 * Gets the list of ontologies that need to be loaded and processed each
+	 * using the appropriate loader API.
 	 * 
+	 * @param startId -
+	 *            start ontology version id (inclusive)
+	 * @param endId -
+	 *            end ontology version id (exclusive)
 	 * @throws Exception
 	 */
 	@Transactional(propagation = Propagation.NEVER)
@@ -83,12 +94,24 @@ public class OntologyLoadSchedulerServiceImpl implements
 				.getOntologiesToLoad();
 
 		for (NcboOntologyLoadQueue loadQueue : ontologiesToLoad) {
-			int currentId = loadQueue.getNcboOntologyVersion().getId();
+			int currentId = loadQueue.getNcboOntologyVersion().getId()
+					.intValue();
 
 			if (currentId >= start && currentId < end) {
-				log.debug("parsing ontology: ID = "
-						+ loadQueue.getNcboOntologyVersion().getId());
-				processRecord(loadQueue);
+				if (ncboOntologyLoadQueueDAO.needsParsing(loadQueue.getId())
+						.booleanValue()) {
+					log.debug("parsing ontology: ID = "
+							+ loadQueue.getNcboOntologyVersion().getId());
+					processRecord(loadQueue);
+				} else {
+					log.debug("ontology ID = "
+							+ loadQueue.getNcboOntologyVersion().getId()
+							+ " does not require parsing");
+				}
+			}
+			
+			if (currentId >= end) {
+				break;
 			}
 		}
 	}
