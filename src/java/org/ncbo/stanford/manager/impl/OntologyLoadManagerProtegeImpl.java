@@ -16,6 +16,7 @@ import org.ncbo.stanford.manager.OntologyLoadManager;
 import edu.stanford.smi.protege.storage.database.DatabaseKnowledgeBaseFactory;
 import edu.stanford.smi.protege.util.PropertyList;
 import edu.stanford.smi.protegex.owl.ProtegeOWL;
+import edu.stanford.smi.protegex.owl.database.CreateOWLDatabaseFromFileProjectPlugin;
 import edu.stanford.smi.protegex.owl.database.OWLDatabaseKnowledgeBaseFactory;
 import edu.stanford.smi.protegex.owl.model.OWLModel;
 
@@ -50,11 +51,13 @@ public class OntologyLoadManagerProtegeImpl extends
 	 * @exception Exception
 	 *                catch all for all other ontlogy file load errors.
 	 */
+	@SuppressWarnings("unchecked")
 	public void loadOntology(URI ontologyUri, OntologyBean ontology)
 			throws Exception {
 
 		File ontologyFile = new File(ontologyUri.getPath());
 		String filePath = ontologyUri.getPath();
+		String tableName = null;
 
 		if (ontologyFile == null) {
 			log.error("Missing ontology file to load: " + filePath);
@@ -66,51 +69,44 @@ public class OntologyLoadManagerProtegeImpl extends
 
 		// If the ontology file is small, use the fast non-streaming Protege
 		// load code.
+		if (ontologyFile.length() < protegeBigFileThreshold) {
+			OWLModel owlModel = ProtegeOWL
+					.createJenaOWLModelFromInputStream(new FileInputStream(
+							ontologyFile));
 
-		// TODO - DISABLE Streaming for now... DETERMINE WHAT TO DO AFTER
-		// PROTEGE NEW RELEASE
-		// if (ontologyFile.length() < protegeBigFileThreshold) {
+			PropertyList sources = PropertyList.create(owlModel.getProject()
+					.getInternalProjectKnowledgeBase());
 
-		OWLModel owlModel = ProtegeOWL
-				.createJenaOWLModelFromInputStream(new FileInputStream(
-						ontologyFile));
+			tableName = getTableName(ontology.getId());
+			DatabaseKnowledgeBaseFactory.setSources(sources, protegeJdbcDriver,
+					protegeJdbcUrl, tableName, protegeJdbcUsername,
+					protegeJdbcPassword);
 
-		PropertyList sources = PropertyList.create(owlModel.getProject()
-				.getInternalProjectKnowledgeBase());
+			List errors = new ArrayList();
+			OWLDatabaseKnowledgeBaseFactory factory = new OWLDatabaseKnowledgeBaseFactory();
+			factory.saveKnowledgeBase(owlModel, sources, errors);
 
-		String tableName = getTableName(ontology.getId());
-		DatabaseKnowledgeBaseFactory.setSources(sources, protegeJdbcDriver,
-				protegeJdbcUrl, tableName, protegeJdbcUsername,
-				protegeJdbcPassword);
-
-		List errors = new ArrayList();
-		OWLDatabaseKnowledgeBaseFactory factory = new OWLDatabaseKnowledgeBaseFactory();
-		factory.saveKnowledgeBase(owlModel, sources, errors);
-
-		// If errors are found during the load, log the errors and throw an
-		// exception.
-		if (errors.size() > 0) {
-			log.error(errors);
-			throw new Exception("Error during loading "
-					+ ontologyUri.toString());
+			// If errors are found during the load, log the errors and throw an
+			// exception.
+			if (errors.size() > 0) {
+				log.error(errors);
+				throw new Exception("Error during loading "
+						+ ontologyUri.toString());
+			}
+		} else {
+			// If the ontology file is big, use the streaming Protege load
+			// approach.
+			CreateOWLDatabaseFromFileProjectPlugin creator = new CreateOWLDatabaseFromFileProjectPlugin();
+			creator
+					.setKnowledgeBaseFactory(new OWLDatabaseKnowledgeBaseFactory());
+			creator.setDriver(protegeJdbcDriver);
+			creator.setURL(protegeJdbcUrl);
+			creator.setTable(tableName);
+			creator.setUsername(protegeJdbcUsername);
+			creator.setPassword(protegeJdbcPassword);
+			creator.setOntologyFileURI(ontologyUri);
+			creator.setUseExistingSources(true);
+			creator.createProject();
 		}
-
-		// disable streaming for now
-		/*
-		 * } else { // If the ontology file is big, use the streaming Protege
-		 * load // approach.
-		 * 
-		 * CreateOWLDatabaseFromFileProjectPlugin creator = new
-		 * CreateOWLDatabaseFromFileProjectPlugin(); creator
-		 * .setKnowledgeBaseFactory(new OWLDatabaseKnowledgeBaseFactory());
-		 * creator.setDriver(protegeJdbcDriver); creator.setURL(protegeJdbcUrl);
-		 * creator.setTable(tableName);
-		 * creator.setUsername(protegeJdbcUsername);
-		 * creator.setPassword(protegeJdbcPassword);
-		 * creator.setOntologyFileURI(ontologyUri);
-		 * creator.setUseExistingSources(true);
-		 * 
-		 * Project p = creator.createProject(); }
-		 */
 	}
 }
