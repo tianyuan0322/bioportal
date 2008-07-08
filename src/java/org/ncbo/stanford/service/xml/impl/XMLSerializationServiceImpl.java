@@ -208,13 +208,6 @@ public class XMLSerializationServiceImpl implements XMLSerializationService {
 		getTransformerInstance(xsltFile).transform(traxSource,
 				new StreamResult(buffer));
 
-		// TODO - remove this later
-		System.out
-				.println("++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++");
-		System.out.println(buffer.toString());
-		System.out
-				.println("++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++");
-
 		return buffer.toString();
 	}
 
@@ -340,7 +333,10 @@ public class XMLSerializationServiceImpl implements XMLSerializationService {
 
 		xstream.alias(MessageUtils.getMessage("entity.ontology"),
 				OntologyBean.class);
+
 		xstream.alias(MessageUtils.getMessage("entity.user"), UserBean.class);
+		xstream.omitField(UserBean.class, "password");
+
 		xstream.alias(MessageUtils.getMessage("entity.classbean"),
 				ClassBean.class);
 		xstream.alias(MessageUtils.getMessage("entity.propertybean"),
