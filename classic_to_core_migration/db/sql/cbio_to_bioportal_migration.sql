@@ -25,9 +25,9 @@ select
 	fm.currentversion, 
 	fm.currentversionstatus,
 	f.filepath, 
-	fvi.iscurrent, 
+	1, 
 	f.isremote, 
-	f.isreviewed, 
+	1, 
 	f.releasedate, 
 	f.creationdate
 from 
