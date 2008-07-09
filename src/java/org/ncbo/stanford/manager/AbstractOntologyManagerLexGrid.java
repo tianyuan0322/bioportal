@@ -8,6 +8,7 @@ import org.LexGrid.LexBIG.DataModel.Core.CodingSchemeSummary;
 import org.LexGrid.LexBIG.DataModel.Core.CodingSchemeVersionOrTag;
 import org.LexGrid.LexBIG.DataModel.InterfaceElements.CodingSchemeRendering;
 import org.LexGrid.LexBIG.LexBIGService.LexBIGService;
+import org.LexGrid.LexBIG.Utility.Constructors;
 import org.LexGrid.codingSchemes.CodingScheme;
 import org.apache.commons.lang.StringUtils;
 import org.ncbo.stanford.domain.custom.dao.CustomNcboOntologyMetadataDAO;
@@ -146,7 +147,36 @@ public abstract class AbstractOntologyManagerLexGrid {
 
 		return null;
 	}
+	
+	/**
+	 * 
+	 * @param ncboOntology
+	 * @return The LexGrid codingScheme URN string (registered Name) 
+	 */
+	protected String getLexGridCodingSchemeName(NcboOntology ncboOntology) {
+		String urnAndVersion = ncboOntology.getCodingScheme();
+		String urnVersionArray[] = splitUrnAndVersion(urnAndVersion);
+		if (urnVersionArray!= null )
+		  return urnVersionArray[0];
+		else
+			return null;
+	}	
+	
 
+	/**
+	 * 
+	 * @param ncboOntology
+	 * @return The LexGrid codingScheme URN string (registered Name) 
+	 */
+	protected CodingSchemeVersionOrTag getLexGridCodingSchemeVersion(NcboOntology ncboOntology) {
+		String urnAndVersion = ncboOntology.getCodingScheme();
+		String urnVersionArray[] = splitUrnAndVersion(urnAndVersion);
+		if (urnVersionArray!= null )
+		  return  Constructors
+			.createCodingSchemeVersionOrTagFromVersion(urnVersionArray[1]);
+		else
+			return null;
+	}	
 	/**
 	 * 
 	 * @param urnAndVersion

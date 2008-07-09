@@ -40,7 +40,7 @@ public class OntologyLoaderLexGridImplTest extends AbstractBioPortalTest {
 	OntologyLoadManagerLexGridImpl loadManagerLexGrid;
 
 
-	public void testSimpleMetadataLookup() throws Exception {
+	public void simpleMetadataLookup() throws Exception {
 		CustomNcboOntologyVersionDAO ncboOntologyVersionDAO = (CustomNcboOntologyVersionDAO) applicationContext
 				.getBean("NcboOntologyVersionDAO",
 						CustomNcboOntologyVersionDAO.class);

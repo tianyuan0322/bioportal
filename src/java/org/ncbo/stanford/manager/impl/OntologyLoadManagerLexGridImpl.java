@@ -281,15 +281,14 @@ public class OntologyLoadManagerLexGridImpl extends
 						ApplicationConstants.FORMAT_OWL_FULL)) {
 			// Override registered name using metadata from the ontology bean
 			String registeredName = "http://www.bioontology.org/"
-					+ ontology_bean.getOntologyId().toString() + "/"
-					+ ontology_bean.getVersionNumber().toString() + "/"
+					+ ontology_bean.getId().toString() + "/"
 					+ ontology_bean.getDisplayLabel();
 			CsmfRegisteredName csmfRegisteredName = new CsmfRegisteredName();
 			csmfRegisteredName.setContent(registeredName);
 			csm.setRegisteredName(csmfRegisteredName);
 			// Override version using metadata from the ontology bean
 			CsmfVersion csmfVersion = new CsmfVersion();
-			csmfVersion.setContent(ontology_bean.getVersionNumber());
+			csmfVersion.setContent(ontology_bean.getInternalVersionNumber().toString());
 			csm.setRepresentsVersion(csmfVersion);
 			// Override formal name using metadata from the ontology bean
 			CsmfFormalName csmfFormalName = new CsmfFormalName();
