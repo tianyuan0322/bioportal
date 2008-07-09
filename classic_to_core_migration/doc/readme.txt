@@ -17,7 +17,7 @@
 		NCBOUSERROLE
 4.  Run bioportal_db.sql script located in the bioportal/db/sql directory. This will create a new MySQL database called bioportal.
 5.  Create a database user with the username that matches the bioportal.jdbc.username property in the build.properties file. The password must match the bioportal.jdbc.password property in the build.properties file. Assign this user dba rights to bioportal database.
-6.  Run bioportal_initial_data.sql script located in the bioportal/classic_to_core_migration/db/sql directory.
+6.  Run bioportal_lookup_data.sql script located in the bioportal/db/sql directory.
 7.  Run cbio_to_bioportal_migration.sql script located in the bioportal/classic_to_core_migration/db/sql directory.
 8.  Compile and execute OntologyFileCopier.java file. Pass a single command argument that specifies the full path from the root to the directory containing the ontology files. For example:
 		java OntologyFileCopier /data/ncboapp/files

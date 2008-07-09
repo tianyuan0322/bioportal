@@ -9,14 +9,6 @@ insert into ncbo_user (id, username, password, email, firstname, lastname, phone
 select id, login, password, email, firstname, lastname, phone 
 from cbio.ncbouser;
 
-insert into ncbo_l_category (id, name, parent_category_id)
-select id, name, parentcategoryid 
-from cbio.ncbocategories;
-
-insert into ncbo_l_role (id, name, description)
-select id, name, description 
-from cbio.ncborole;
-
 insert into ncbo_user_role (id, user_id, role_id) 
 select id, userid, roleid 
 from cbio.ncbouserrole;
@@ -41,9 +33,24 @@ select
 from 
 	cbio.ncbofile f 
 	inner join cbio.ncbofileversioninfo fvi on f.id = fvi.id
-	inner join cbio.ncbofilemetadatainfo fm on f.metadadatainfoid = fm.id;
+	inner join cbio.ncbofilemetadatainfo fm on f.metadadatainfoid = fm.id
+	inner join (
+		select 
+			f.metadadatainfoid, 
+			max(fvi.versionnumber) versionnumber
+		from 
+			cbio.ncbofile f 
+			inner join cbio.ncbofileversioninfo fvi on f.id = fvi.id
+			inner join cbio.ncbofilemetadatainfo fm on f.metadadatainfoid = fm.id
+		group by 
+			f.metadadatainfoid
+	) b on fm.id = b.metadadatainfoid and fvi.versionnumber = b.versionnumber;
 
 SET FOREIGN_KEY_CHECKS = 1;
+
+delete from ncbo_user_role where user_id not in (select distinct user_id from ncbo_ontology_version);
+delete from ncbo_user where id not in (select distinct user_id from ncbo_ontology_version);
+update ncbo_user set password = 'MaT9mL6DdWI6s471OFTiJUEZlZz6Ycx0OjXfNZZPHFMic8n5uAeyd9GCLKPstDjQ';
 
 insert into ncbo_ontology_category (id, ontology_version_id, category_id)
 select 	fc.id, o.id, fc.categoryid 
@@ -76,8 +83,6 @@ from ncbo_ontology_version o inner join cbio.ncbofilenames fn on o.id = fn.ncbof
 
 update ncbo_ontology_version set internal_version_number = 1 where internal_version_number = 0;
 
-insert into ncbo_seq_ontology_id (id) values (1000);
-
 DELIMITER $$
 
 DROP PROCEDURE IF EXISTS `sp_update_ontology_id`$$
@@ -93,6 +98,7 @@ BEGIN
   
 		REPEAT
 			FETCH cur1 INTO dl;
+
 			IF NOT done THEN
 				update ncbo_seq_ontology_id set id = last_insert_id(id + 1);
 				update ncbo_ontology_version set ontology_id = last_insert_id() where id in (select ontology_version_id from ncbo_ontology_metadata where display_label = dl);
@@ -105,14 +111,47 @@ DELIMITER ;
 
 CALL sp_update_ontology_id();
 
+DELIMITER $$
+
+DROP PROCEDURE IF EXISTS `sp_remove_duplicate_ontologies`$$
+
+CREATE DEFINER=`root`@`localhost` PROCEDURE `sp_remove_duplicate_ontologies`()
+BEGIN
+		DECLARE ontologyVersionId INT;
+		DECLARE recordCount INT;
+		DECLARE iterCount INT DEFAULT 1;
+
+		DECLARE cur1 CURSOR FOR select ontology_version_id from ncbo_ontology_metadata where display_label = 'Unit' order by ontology_version_id;
+		select count(ontology_version_id) into recordCount from ncbo_ontology_metadata where display_label = 'Unit';
+		
+		IF recordCount > 1 THEN
+			OPEN cur1;
+	  
+			REPEAT
+				FETCH cur1 INTO ontologyVersionId;
+				
+				delete from ncbo_ontology_category where ontology_version_id = ontologyVersionId;
+				delete from ncbo_ontology_file where ontology_version_id = ontologyVersionId;
+				delete from ncbo_ontology_load_queue where ontology_version_id = ontologyVersionId;
+				delete from ncbo_ontology_metadata where ontology_version_id = ontologyVersionId;
+				delete from ncbo_ontology_version where id = ontologyVersionId;
+			
+				SET iterCount := iterCount + 1;
+			UNTIL iterCount = recordCount
+			END REPEAT;
+			CLOSE cur1;
+		END IF;
+	END$$
+
+DELIMITER ;
+
+CALL sp_remove_duplicate_ontologies();
+
 update ncbo_ontology_version set file_path = CONCAT("/", ontology_id, "/", internal_version_number)
 where is_remote = 0;
-
-update ncbo_l_role set name = 'ROLE_DEVELOPER' where id = 2822;
-update ncbo_l_role set name = 'ROLE_LIBRARIAN' where id = 2823;
-update ncbo_l_role set name = 'ROLE_ADMINISTRATOR' where id = 2824;
 
 -- alter table ncbo_ontology_version drop foreign key FK_ncbo_ontology_ncbo_ontology_new;
 -- alter table ncbo_ontology_version drop column parent_id;
 
 DROP PROCEDURE IF EXISTS `sp_update_ontology_id`;
+DROP PROCEDURE IF EXISTS `sp_remove_duplicate_ontologies`;

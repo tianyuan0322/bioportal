@@ -25,26 +25,6 @@ public class OBOFoundryIdUpdater {
 
 	private static Properties properties = new Properties();
 
-	static {
-		try {
-			properties.load(new FileInputStream(PROPERTY_FILENAME));
-			descriptorFile = properties
-					.getProperty("obo.sourceforge.cvs.descriptor.file")
-					.replace(
-							"${obo.sourceforge.cvs.checkoutdir}",
-							properties
-									.getProperty(
-											"obo.sourceforge.cvs.checkoutdir")
-									.replace(
-											"${bioportal.resource.path}",
-											properties
-													.getProperty("bioportal.resource.path")));
-			System.out.println("Descriptor File: " + descriptorFile);
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-	}
-
 	public static void main(String[] args) {
 		Connection conn = null;
 
@@ -68,6 +48,26 @@ public class OBOFoundryIdUpdater {
 			} catch (SQLException e) {
 				e.printStackTrace();
 			}
+		}
+	}
+
+	static {
+		try {
+			properties.load(new FileInputStream(PROPERTY_FILENAME));
+			descriptorFile = properties
+					.getProperty("obo.sourceforge.cvs.descriptor.file")
+					.replace(
+							"${obo.sourceforge.cvs.checkoutdir}",
+							properties
+									.getProperty(
+											"obo.sourceforge.cvs.checkoutdir")
+									.replace(
+											"${bioportal.resource.path}",
+											properties
+													.getProperty("bioportal.resource.path")));
+			System.out.println("Descriptor File: " + descriptorFile);
+		} catch (Exception e) {
+			e.printStackTrace();
 		}
 	}
 

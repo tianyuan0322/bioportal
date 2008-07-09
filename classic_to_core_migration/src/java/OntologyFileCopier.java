@@ -24,14 +24,6 @@ public class OntologyFileCopier {
 
 	private static Properties properties = new Properties();
 
-	static {
-		try {
-			properties.load(new FileInputStream(PROPERTY_FILENAME));
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-	}
-
 	public static void main(String[] args) {
 		Connection conn = null;
 
@@ -82,6 +74,14 @@ public class OntologyFileCopier {
 		}
 	}
 
+	static {
+		try {
+			properties.load(new FileInputStream(PROPERTY_FILENAME));
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+	
 	private static ResultSet getOntologies(Connection conn) throws SQLException,
 			ClassNotFoundException, IOException {
 		conn = connect();
