@@ -81,7 +81,7 @@ insert into ncbo_ontology_file (id, ontology_version_id, filename)
 select fn.id, o.id, fn.filename
 from ncbo_ontology_version o inner join cbio.ncbofilenames fn on o.id = fn.ncbofile;
 
-update ncbo_ontology_version set internal_version_number = 1 where internal_version_number = 0;
+update ncbo_ontology_version set internal_version_number = 1;
 
 DELIMITER $$
 
