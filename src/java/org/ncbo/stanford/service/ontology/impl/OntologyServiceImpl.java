@@ -243,10 +243,8 @@ public class OntologyServiceImpl implements OntologyService {
 			FilePathHandler filePathHander) throws Exception {
 
 		// assign new Ontology Id for new instance
+		// and assign internal version ID
 		generateNextOntologyId(ontologyBean);
-
-		// assign internal version ID
-		generateInternalVersionNumber(ontologyBean);
 
 		// set filepath in the bean
 		if (!ontologyBean.isRemote()) {
@@ -479,8 +477,11 @@ public class OntologyServiceImpl implements OntologyService {
 	}
 
 	/**
-	 * Get next Ontology Id from Id Sequence DAO and assign it to ontologyBean.
+	 * 1. Get next Ontology Id from Id Sequence DAO and assign it to ontologyBean.
 	 * No effect if Ontology Id already exist.
+	 * 
+	 * 2. Check internal version ID on ontologyBean. If null - assign 0. If already
+	 * exist - get latest increment by 1	  
 	 * 
 	 * @param OntologyBean
 	 *            ontologyBean
@@ -488,31 +489,23 @@ public class OntologyServiceImpl implements OntologyService {
 	private void generateNextOntologyId(OntologyBean ontologyBean) {
 
 		Integer ontologyId = ontologyBean.getOntologyId();
-		if (ontologyId == null || ontologyId < 1) {
+		if (ontologyId == null) {
 			ontologyBean.setOntologyId(ncboSeqOntologyIdDAO
 					.generateNewOntologyId());
-		}
-	}
-
-	/**
-	 * Check internal version ID on ontologyBean. If null - assign 0. If already
-	 * exist - increment by 1
-	 * 
-	 * @param OntologyBean
-	 *            ontologyBean
-	 */
-	private void generateInternalVersionNumber(OntologyBean ontologyBean) {
-
-		if (ontologyBean.getInternalVersionNumber() == null) {
+			
 			ontologyBean
-					.setInternalVersionNumber(Integer
-							.parseInt(MessageUtils
-									.getMessage("config.db.ontology.internalVersionNumberStart")));
+			.setInternalVersionNumber(Integer
+					.parseInt(MessageUtils
+							.getMessage("config.db.ontology.internalVersionNumberStart")));
+
 		} else {
-			ontologyBean.setInternalVersionNumber(ontologyBean
-					.getInternalVersionNumber() + 1);
+			
+			Integer lastInternalVersion = findLatestOntologyVersion(ontologyBean.getOntologyId()).getInternalVersionNumber();
+			ontologyBean.setInternalVersionNumber(lastInternalVersion + 1);
+
 		}
 	}
+
 
 	private List<String> uploadOntologyFile(OntologyBean ontologyBean,
 			FilePathHandler filePathHandler) throws Exception {

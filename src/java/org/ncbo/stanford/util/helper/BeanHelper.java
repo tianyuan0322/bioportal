@@ -73,7 +73,10 @@ public class BeanHelper {
 		// get userId from request
 		String userId = httpServletRequest.getParameter( MessageUtils.getMessage("http.param.userId"));
 		
+		// for new version for existing ontology
 		String ontologyId = httpServletRequest.getParameter( MessageUtils.getMessage("form.ontology.ontologyId"));
+		
+		
 		String versionNumber = httpServletRequest.getParameter(MessageUtils.getMessage("form.ontology.versionNumber"));
 		String versionStatus = httpServletRequest.getParameter(MessageUtils.getMessage("form.ontology.versionStatus"));
 		String isCurrent = httpServletRequest.getParameter(MessageUtils.getMessage("form.ontology.isCurrent"));
@@ -112,11 +115,11 @@ public class BeanHelper {
 		// now populate the OntologyBean
 		OntologyBean bean = new OntologyBean();
 		
-		if (userId != null ) {
+		if (!StringHelper.isNullOrNullString(userId)) {
 			bean.setUserId(Integer.parseInt(userId));
 		}
 
-		if (ontologyId != null ) {
+		if (!StringHelper.isNullOrNullString(ontologyId) ) {
 			bean.setOntologyId(Integer.parseInt(ontologyId));
 		}
 		
