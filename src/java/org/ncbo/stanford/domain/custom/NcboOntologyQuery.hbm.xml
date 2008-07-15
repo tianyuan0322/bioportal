@@ -26,7 +26,6 @@
 					SELECT ontology_id, MAX(internal_version_number) AS internal_version_number
 					FROM
 						ncbo_ontology_version
-					WHERE is_current = :isCurrent
 					GROUP BY ontology_id
 				) a ON ont.ontology_id = a.ontology_id AND ont.internal_version_number = a.internal_version_number
 			ORDER BY
@@ -42,14 +41,12 @@
 			FROM
 				v_ncbo_ontology {ont}
 				INNER JOIN (
-					SELECT MAX(id) AS id
-					FROM 
-					    ncbo_ontology_version
-					WHERE is_current = :isCurrent AND
-						ontology_id= :ontologyId
-					GROUP BY internal_version_number
-					HAVING internal_version_number = MAX(internal_version_number)
-				) a ON ont.id = a.id
+					SELECT ontology_id, MAX(internal_version_number) AS internal_version_number
+					FROM
+						ncbo_ontology_version
+					WHERE ontology_id = :ontologyId
+					GROUP BY ontology_id
+				) a ON ont.ontology_id = a.ontology_id
 		]]>
 	</sql-query>
 </hibernate-mapping>
