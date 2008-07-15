@@ -136,7 +136,6 @@ public class CustomNcboOntologyVersionDAO extends NcboOntologyVersionDAO {
 					throws HibernateException, SQLException {
 				Query query = session
 						.getNamedQuery("VNcboOntologyVersionDAO.GET_LATEST_ONTOLOGY_VERSIONS_QUERY");
-				query.setByte("isCurrent", ApplicationConstants.TRUE);
 
 				return query.list();
 			}
@@ -148,15 +147,14 @@ public class CustomNcboOntologyVersionDAO extends NcboOntologyVersionDAO {
 	 * 
 	 * @return list of ontologies
 	 */
-	public NcboOntology findLatestOntologyVersion(final Integer ontology_id) {
+	public NcboOntology findLatestOntologyVersion(final Integer ontologyId) {
 		NcboOntology ontology = (NcboOntology) getHibernateTemplate().execute(
 				new HibernateCallback() {
 					public Object doInHibernate(Session session)
 							throws HibernateException, SQLException {
 						Query query = session
 								.getNamedQuery("VNcboOntologyVersionDAO.GET_LATEST_ONTOLOGY_VERSION_FOR_ONTOLOGY_ID_QUERY");
-						query.setInteger("ontologyId", ontology_id);
-						query.setByte("isCurrent", ApplicationConstants.TRUE);
+						query.setInteger("ontologyId", ontologyId);
 
 						return query.uniqueResult();
 					}
