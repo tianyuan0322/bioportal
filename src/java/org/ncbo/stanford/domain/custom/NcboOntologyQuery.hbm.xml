@@ -46,7 +46,7 @@
 						ncbo_ontology_version
 					WHERE ontology_id = :ontologyId
 					GROUP BY ontology_id
-				) a ON ont.ontology_id = a.ontology_id
+				) a ON ont.ontology_id = a.ontology_id AND ont.internal_version_number = a.internal_version_number 
 		]]>
 	</sql-query>
 </hibernate-mapping>
