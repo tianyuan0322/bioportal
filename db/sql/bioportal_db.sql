@@ -252,7 +252,6 @@ CREATE TABLE `ncbo_ontology_version` (
   `version_number` varchar(64) NOT NULL,
   `version_status` varchar(64) default NULL,
   `file_path` varchar(2048) default NULL,
-  `is_current` tinyint(1) NOT NULL,
   `is_remote` tinyint(1) NOT NULL,
   `is_reviewed` tinyint(1) NOT NULL default '0',
   `date_released` datetime NOT NULL,
@@ -265,7 +264,7 @@ CREATE TABLE `ncbo_ontology_version` (
   CONSTRAINT `FK_ncbo_ontology_ncbo_ontology_new` FOREIGN KEY (`parent_id`) REFERENCES `ncbo_ontology_version` (`id`),
   CONSTRAINT `FK_ncbo_ontology_ncbo_user` FOREIGN KEY (`user_id`) REFERENCES `ncbo_user` (`id`),
   CONSTRAINT `FK_ncbo_ontology_version_status_id` FOREIGN KEY (`status_id`) REFERENCES `ncbo_l_status` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=34238 DEFAULT CHARSET=latin1 CHECKSUM=1 DELAY_KEY_WRITE=1 ROW_FORMAT=DYNAMIC;
+) ENGINE=InnoDB DEFAULT CHARSET=latin1 CHECKSUM=1 DELAY_KEY_WRITE=1 ROW_FORMAT=DYNAMIC;
 
 /*Table structure for table `ncbo_seq_ontology_id` */
 

@@ -8,7 +8,6 @@ SELECT
 	ov.version_number,
 	ov.version_status,
 	ov.file_path,
-	ov.is_current,
 	ov.is_remote,
 	ov.is_reviewed,
 	ov.status_id,
