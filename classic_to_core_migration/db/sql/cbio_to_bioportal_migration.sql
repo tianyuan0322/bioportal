@@ -16,7 +16,7 @@ from cbio.ncbouserrole;
 SET FOREIGN_KEY_CHECKS = 0;
 
 insert into ncbo_ontology_version 
-	(id, parent_id, user_id, internal_version_number, version_number, version_status, file_path, is_current, is_remote, is_reviewed, date_released, date_created)
+	(id, parent_id, user_id, internal_version_number, version_number, version_status, file_path, is_remote, is_reviewed, date_released, date_created)
 select 	
 	f.id, 
 	fvi.parentversionid, 
@@ -25,7 +25,6 @@ select
 	fm.currentversion, 
 	fm.currentversionstatus,
 	f.filepath, 
-	1, 
 	f.isremote, 
 	1, 
 	f.releasedate, 
