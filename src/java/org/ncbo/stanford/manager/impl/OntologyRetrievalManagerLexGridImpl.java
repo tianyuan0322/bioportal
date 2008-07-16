@@ -141,15 +141,15 @@ public class OntologyRetrievalManagerLexGridImpl extends AbstractOntologyManager
         if (matches.getResolvedConceptReferenceCount() > 0) {
             ResolvedConceptReference ref = (ResolvedConceptReference) matches.enumerateResolvedConceptReference()
                     .nextElement();
-            ClassBean classBean=  createClassBean(ref);
-            //Add the children 
-            AssociationList childList =  getHierarchyLevelNext(scheme, csvt, conceptId);
-            addAssociationListInfoToClassBean(childList, classBean, ApplicationConstants.SUB_CLASS);
-            //Add the parents
-            AssociationList paerntList =  getHierarchyLevelPrev(scheme, csvt, conceptId);
-            addAssociationListInfoToClassBean(paerntList, classBean, ApplicationConstants.SUPER_CLASS);
+            ClassBean classBean = createClassBean(ref);
+            // Add the children
+            AssociationList childList = getHierarchyLevelNext(scheme, csvt, conceptId);
+            addAssociationListInfoToClassBean(childList, classBean, ApplicationConstants.SUB_CLASS, false);
+            // Add the parents
+            AssociationList paerntList = getHierarchyLevelPrev(scheme, csvt, conceptId);
+            addAssociationListInfoToClassBean(paerntList, classBean, ApplicationConstants.SUPER_CLASS, false);
             return classBean;
-            
+
         }
         return null;
     }
@@ -169,18 +169,19 @@ public class OntologyRetrievalManagerLexGridImpl extends AbstractOntologyManager
         AssociationList associations = lbscm.getHierarchyPathToRoot(scheme, csvt, hierarchyId, conceptId, false,
                 LexBIGServiceConvenienceMethods.HierarchyPathResolveOption.ALL, null);
         ClassBean conceptClass = findConceptWithoutRelations(ncboOntology, conceptId);
+        boolean includeChildren= ! light;
         ArrayList<ClassBean> classBeans = createClassBeanArray(associations, conceptClass,
-                ApplicationConstants.SUB_CLASS);
+                ApplicationConstants.SUB_CLASS, includeChildren);
         return createThingClassBean(classBeans);
     }
 
     public List<ClassBean> findParent(NcboOntology ncboOntology, String conceptId) throws Exception {
         String scheme = getLexGridCodingSchemeName(ncboOntology);
-        CodingSchemeVersionOrTag csvt = getLexGridCodingSchemeVersion(ncboOntology);   
+        CodingSchemeVersionOrTag csvt = getLexGridCodingSchemeVersion(ncboOntology);
         AssociationList associations = getHierarchyLevelPrev(scheme, csvt, conceptId);
         ClassBean conceptClass = findConceptWithoutRelations(ncboOntology, conceptId);
         ArrayList<ClassBean> classBeans = createClassBeanArray(associations, conceptClass,
-                ApplicationConstants.SUPER_CLASS);
+                ApplicationConstants.SUPER_CLASS, false);
 
         return classBeans;
     }
@@ -188,10 +189,10 @@ public class OntologyRetrievalManagerLexGridImpl extends AbstractOntologyManager
     public List<ClassBean> findChildren(NcboOntology ncboOntology, String conceptId) throws Exception {
         String scheme = getLexGridCodingSchemeName(ncboOntology);
         CodingSchemeVersionOrTag csvt = getLexGridCodingSchemeVersion(ncboOntology);
-        AssociationList associations =  getHierarchyLevelNext(scheme, csvt, conceptId);
+        AssociationList associations = getHierarchyLevelNext(scheme, csvt, conceptId);
         ClassBean conceptClass = findConceptWithoutRelations(ncboOntology, conceptId);
         ArrayList<ClassBean> classBeans = createClassBeanArray(associations, conceptClass,
-                ApplicationConstants.SUB_CLASS);
+                ApplicationConstants.SUB_CLASS, false);
 
         return classBeans;
     }
@@ -549,8 +550,8 @@ public class OntologyRetrievalManagerLexGridImpl extends AbstractOntologyManager
             }
         }
 
-        addAssociationListInfoToClassBean(rcr.getSourceOf(), bean, null);
-        addAssociationListInfoToClassBean(rcr.getTargetOf(), bean, null);
+        addAssociationListInfoToClassBean(rcr.getSourceOf(), bean, null, false);
+        addAssociationListInfoToClassBean(rcr.getTargetOf(), bean, null, false);
 
         return bean;
     }
@@ -682,15 +683,15 @@ public class OntologyRetrievalManagerLexGridImpl extends AbstractOntologyManager
     }
 
     private ArrayList<ClassBean> createClassBeanArray(AssociationList list, ClassBean current_classBean,
-            String hierarchy_relationName) {
+            String hierarchy_relationName, boolean includeChildren) {
         ArrayList<ClassBean> classBeans = new ArrayList<ClassBean>();
-        addAssociationListInfoToClassBean(list, current_classBean, hierarchy_relationName);
+        addAssociationListInfoToClassBean(list, current_classBean, hierarchy_relationName, includeChildren);
         classBeans.add(current_classBean);
         return classBeans;
     }
 
     private void addAssociationListInfoToClassBean(AssociationList list, ClassBean current_classBean,
-            String hierarchy_relationName) {
+            String hierarchy_relationName, boolean includeChildren) {
         if (list == null || current_classBean == null) {
             return;
         }
@@ -698,7 +699,7 @@ public class OntologyRetrievalManagerLexGridImpl extends AbstractOntologyManager
         Association association = null;
         while (assocEnum.hasMoreElements()) {
             association = (Association) assocEnum.nextElement();
-            addAssociationInfoToClassBean(association, current_classBean, hierarchy_relationName);
+            addAssociationInfoToClassBean(association, current_classBean, hierarchy_relationName, includeChildren);
         }
 
     }
@@ -713,9 +714,11 @@ public class OntologyRetrievalManagerLexGridImpl extends AbstractOntologyManager
      * 
      * @param association
      * @param current_classBean
+     * @param hierarchy_relationName
+     * @param includeChildren
      */
     private void addAssociationInfoToClassBean(Association association, ClassBean current_classBean,
-            String hierarchy_relationName) {
+            String hierarchy_relationName, boolean includeChildren) {
         AssociatedConceptList assocConceptList = association.getAssociatedConcepts();
         ArrayList<ClassBean> classBeans = new ArrayList<ClassBean>();
         for (int i = 0; i < assocConceptList.getAssociatedConceptCount(); i++) {
@@ -723,6 +726,20 @@ public class OntologyRetrievalManagerLexGridImpl extends AbstractOntologyManager
             if (assocConcept != null) {
                 ClassBean classBean = createClassBean(assocConcept);
                 classBeans.add(classBean);
+                if (includeChildren) {
+                    // Add the children
+                    String scheme = assocConcept.getCodingScheme();
+                    String version = assocConcept.getCodingSchemeVersion();
+                    String conceptId = assocConcept.getConceptCode();
+                    CodingSchemeVersionOrTag csvt = Constructors.createCodingSchemeVersionOrTagFromVersion(version);
+                    try {
+                        AssociationList childList = getHierarchyLevelNext(scheme, csvt, conceptId);
+                        addAssociationListInfoToClassBean(childList, classBean, ApplicationConstants.SUB_CLASS, false);
+                    } catch (Exception ex) {
+                        ex.printStackTrace();
+                    }
+
+                }
                 // Find and recurse printing for next batch ...
                 AssociationList nextLevel = assocConcept.getSourceOf();
                 if (nextLevel != null && nextLevel.getAssociationCount() != 0)
@@ -731,7 +748,8 @@ public class OntologyRetrievalManagerLexGridImpl extends AbstractOntologyManager
                         if (StringUtils.isNotBlank(hierarchy_relationName)) {
                             next_hierarchyName = ApplicationConstants.SUB_CLASS;
                         }
-                        addAssociationInfoToClassBean(nextLevel.getAssociation(j), classBean, next_hierarchyName);
+                        addAssociationInfoToClassBean(nextLevel.getAssociation(j), classBean, next_hierarchyName,
+                                includeChildren);
                     }
 
                 // Find and recurse printing for previous batch ...
@@ -742,16 +760,17 @@ public class OntologyRetrievalManagerLexGridImpl extends AbstractOntologyManager
                         if (StringUtils.isNotBlank(hierarchy_relationName)) {
                             next_hierarchyName = ApplicationConstants.SUB_CLASS;
                         }
-                        addAssociationInfoToClassBean(prevLevel.getAssociation(j), classBean, next_hierarchyName);
+                        addAssociationInfoToClassBean(prevLevel.getAssociation(j), classBean, next_hierarchyName,
+                                includeChildren);
                     }
             }
         }
-        
+
         String dirName = association.getDirectionalName();
         if (StringUtils.isBlank(dirName)) {
-            dirName= "[R]" + association.getAssociationName();  
+            dirName = "[R]" + association.getAssociationName();
         }
-            
+
         current_classBean.addRelation(dirName, classBeans);
         addHierarchyRelationName(current_classBean, classBeans, hierarchy_relationName);
     }

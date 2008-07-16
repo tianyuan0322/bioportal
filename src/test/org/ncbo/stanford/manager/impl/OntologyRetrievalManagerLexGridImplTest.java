@@ -146,6 +146,21 @@ public class OntologyRetrievalManagerLexGridImplTest extends AbstractBioPortalTe
 		assertTrue(pathBean != null);
 	}	
 	
+	
+    public void testOBOFindPathToRootIncludingChildren() throws Exception {
+        System.out.println("testOBOFindPathToRootIncludingChildren()");
+        retrievalManager = getRetrievalManagerLexGrid();
+
+        NcboOntology ncboOntology = retrievalManager.getLatestNcboOntology(TEST_OBO_DISPLAY_LABEL);
+        String conceptID = "CL:0000255";
+        ClassBean pathBean = retrievalManager.findPathToRoot(ncboOntology,
+                conceptID, false);
+        System.out.println("Paths to root for concept " + conceptID + " of cell ontology are :");
+        System.out.println(pathBean);
+        System.out.println("\n");
+        assertTrue(pathBean != null);
+    }   
+    
 	public void testFindConceptNameContains() throws Exception {
 		System.out.println("testFindConceptNameContains()");
 		retrievalManager = getRetrievalManagerLexGrid();

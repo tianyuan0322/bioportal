@@ -288,7 +288,8 @@ public class OntologyLoadManagerLexGridImpl extends
 			csm.setRegisteredName(csmfRegisteredName);
 			// Override version using metadata from the ontology bean
 			CsmfVersion csmfVersion = new CsmfVersion();
-			csmfVersion.setContent(ontology_bean.getInternalVersionNumber().toString());
+			String version= ontology_bean.getOntologyId()+ "/"+ontology_bean.getInternalVersionNumber().toString();
+			csmfVersion.setContent(version);
 			csm.setRepresentsVersion(csmfVersion);
 			// Override formal name using metadata from the ontology bean
 			CsmfFormalName csmfFormalName = new CsmfFormalName();
