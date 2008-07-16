@@ -53,7 +53,6 @@ public class OntologyFileCopier {
 					try {
 						copyDirectory(oldFile, newFile);
 					} catch (RuntimeException e) {
-						// TODO Auto-generated catch block
 						e.printStackTrace();
 					}
 				} else {
