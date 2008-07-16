@@ -79,7 +79,6 @@ public class BeanHelper {
 		
 		String versionNumber = httpServletRequest.getParameter(MessageUtils.getMessage("form.ontology.versionNumber"));
 		String versionStatus = httpServletRequest.getParameter(MessageUtils.getMessage("form.ontology.versionStatus"));
-		String isCurrent = httpServletRequest.getParameter(MessageUtils.getMessage("form.ontology.isCurrent"));
 		String isRemote = httpServletRequest.getParameter(MessageUtils.getMessage("form.ontology.isRemote"));
 		String dateCreated = httpServletRequest.getParameter(MessageUtils.getMessage("form.ontology.dateCreated"));
 		String dateReleased = httpServletRequest.getParameter(MessageUtils.getMessage("form.ontology.dateReleased"));
@@ -126,7 +125,6 @@ public class BeanHelper {
 		bean.setVersionNumber(versionNumber);
 		bean.setVersionStatus(versionStatus);
 		
-		if ( isCurrent != null) bean.setIsCurrent(Byte.parseByte(isCurrent));
 		if ( isRemote != null) bean.setIsRemote(Byte.parseByte(isRemote));
 		if ( isReviewed != null) bean.setIsReviewed(Byte.parseByte(isReviewed));
 		if ( statusId != null) bean.setStatusId(Integer.parseInt(statusId));

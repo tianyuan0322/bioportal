@@ -215,7 +215,6 @@ public class OntologyLoaderLexGridImplTest extends AbstractBioPortalTest {
 		bean.setVersionNumber("1.0");
 		bean.setStatusId(StatusEnum.STATUS_WAITING.getStatus());
 		bean.setVersionStatus("pre-production");
-		bean.setIsCurrent(new Byte("1"));
 		bean.setIsRemote(new Byte("0"));
 		bean.setIsReviewed(new Byte("1"));
 		bean.setDateCreated(new Date());

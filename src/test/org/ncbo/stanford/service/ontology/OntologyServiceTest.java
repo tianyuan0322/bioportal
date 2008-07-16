@@ -176,7 +176,6 @@ public class OntologyServiceTest extends AbstractBioPortalTest {
 		//default status Id should be populated upon creation
 		//bean.setStatusId(new Integer(1));
 		bean.setVersionStatus("waiting");
-		bean.setIsCurrent(new Byte("1"));
 		bean.setIsRemote(new Byte("0"));
 		bean.setIsReviewed(new Byte("1"));
 		bean.setDateCreated(new Date());

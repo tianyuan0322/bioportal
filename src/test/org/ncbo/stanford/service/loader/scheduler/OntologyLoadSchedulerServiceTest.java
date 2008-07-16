@@ -12,7 +12,9 @@ public class OntologyLoadSchedulerServiceTest extends AbstractBioPortalTest {
 		//service.parseOntology(3231);
 		
 		//protege sample
-		service.parseOntology("34253");
+		// 34253
+		// 34265
+		service.parseOntology("34245");
 	}
 
 /*	public void testParseOntologies() throws Exception {
