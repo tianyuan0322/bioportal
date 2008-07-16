@@ -30,9 +30,6 @@
 		<property name="filePath" type="java.lang.String">
 		    <column name="file_path" length="2048" />
 		</property>
-		<property name="isCurrent" type="java.lang.Byte">
-		    <column name="is_current" />
-		</property>
 		<property name="isRemote" type="java.lang.Byte">
 		    <column name="is_remote" />
 		</property>

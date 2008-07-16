@@ -24,7 +24,6 @@ public class NcboOntology {
 	private String versionNumber;
 	private String versionStatus;
 	private String filePath;
-	private Byte isCurrent;
 	private Byte isRemote;
 	private Byte isReviewed;
 	private Integer statusId;
@@ -165,21 +164,6 @@ public class NcboOntology {
 	 */
 	public void setFilePath(String filePath) {
 		this.filePath = filePath;
-	}
-
-	/**
-	 * @return the isCurrent
-	 */
-	public Byte getIsCurrent() {
-		return isCurrent;
-	}
-
-	/**
-	 * @param isCurrent
-	 *            the isCurrent to set
-	 */
-	public void setIsCurrent(Byte isCurrent) {
-		this.isCurrent = isCurrent;
 	}
 
 	/**
@@ -450,10 +434,6 @@ public class NcboOntology {
 						.getFilePath() != null
 						&& castOther.getFilePath() != null && this
 						.getFilePath().equals(castOther.getFilePath())))
-				&& ((this.getIsCurrent() == castOther.getIsCurrent()) || (this
-						.getIsCurrent() != null
-						&& castOther.getIsCurrent() != null && this
-						.getIsCurrent().equals(castOther.getIsCurrent())))
 				&& ((this.getIsRemote() == castOther.getIsRemote()) || (this
 						.getIsRemote() != null
 						&& castOther.getIsRemote() != null && this
@@ -538,8 +518,6 @@ public class NcboOntology {
 						.hashCode());
 		result = 37 * result
 				+ (getFilePath() == null ? 0 : this.getFilePath().hashCode());
-		result = 37 * result
-				+ (getIsCurrent() == null ? 0 : this.getIsCurrent().hashCode());
 		result = 37 * result
 				+ (getIsRemote() == null ? 0 : this.getIsRemote().hashCode());
 		result = 37
