@@ -30,7 +30,6 @@ public class OntologyBean {
 	private Integer userId;
 	private String versionNumber;
 	private String versionStatus;
-	private Byte isCurrent;
 	private Byte isRemote;
 	private Byte isReviewed;
 	private Integer statusId;
@@ -75,7 +74,6 @@ public class OntologyBean {
 			this.setVersionNumber(ncboOntology.getVersionNumber());
 			this.setVersionStatus(ncboOntology.getVersionStatus());
 			this.setFilePath(ncboOntology.getFilePath());
-			this.setIsCurrent(ncboOntology.getIsCurrent());
 			this.setIsRemote(ncboOntology.getIsRemote());
 			this.setIsReviewed(ncboOntology.getIsReviewed());
 			this.setStatusId(ncboOntology.getStatusId());
@@ -162,7 +160,7 @@ public class OntologyBean {
 				ontologyVersion.setInternalVersionNumber(this
 						.getInternalVersionNumber());
 			}
-			ontologyVersion.setIsCurrent(this.getIsCurrent());
+
 			ontologyVersion.setIsRemote(this.getIsRemote());
 			ontologyVersion.setIsReviewed(this.getIsReviewed());
 			ontologyVersion.setDateCreated(this.getDateCreated());
@@ -364,21 +362,6 @@ public class OntologyBean {
 	 */
 	public void setFilePath(String filePath) {
 		this.filePath = filePath;
-	}
-
-	/**
-	 * @return the isCurrent
-	 */
-	public Byte getIsCurrent() {
-		return isCurrent;
-	}
-
-	/**
-	 * @param isCurrent
-	 *            the isCurrent to set
-	 */
-	public void setIsCurrent(Byte isCurrent) {
-		this.isCurrent = isCurrent;
 	}
 
 	/**
