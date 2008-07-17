@@ -185,8 +185,13 @@ public class OBOCVSPullServiceImpl implements OBOCVSPullService {
 					: ActionEnum.CREATE_LOCAL_ACTION;
 			ont = new OntologyBean();
 		} else if (isRemote == ApplicationConstants.TRUE) {
-			// existing ontology remote
-			action = ActionEnum.UPDATE_ACTION;
+			if (ont.isRemote()) {
+				// existing ontology that had been and remains remote
+				action = ActionEnum.UPDATE_ACTION;
+			} else {
+				// existing ontology that had been local but is now remote
+				action = ActionEnum.CREATE_REMOTE_ACTION;
+			}
 		} else if (cf != null && cf.getVersion().equals(ont.getVersionNumber())) {
 			// existing ontology local; no new version
 			// no new version found; check if categories have been updated
@@ -248,6 +253,10 @@ public class OBOCVSPullServiceImpl implements OBOCVSPullService {
 				ont.setDateCreated(now);
 				ont.setParentId(ont.getId());
 				ont.setId(null);
+				// reset the status and coding scheme
+				ont.setStatusId(null);
+				ont.setUrn(null);
+				ont.setCodingScheme(null);
 			}
 
 			UserBean userBean = linkOntologyUser(mfb.getContact(), mfb.getId());
@@ -269,10 +278,6 @@ public class OBOCVSPullServiceImpl implements OBOCVSPullService {
 			ont.setPublication(OntologyDescriptorParser.getPublication(mfb
 					.getPublication()));
 			ont.setIsFoundry(new Byte(isFoundry(mfb.getFoundry())));
-
-			ont.setStatusId(null);
-			ont.setUrn(null);
-			ont.setCodingScheme(null);
 		}
 	}
 
