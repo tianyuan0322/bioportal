@@ -35,8 +35,8 @@ bioportal.session.timeout=5000
 bioportal.session.numcontainers=11
 
 # OBO Sourceforge CVS properties
-obo.sourceforge.cvs.username=cvsusername
-obo.sourceforge.cvs.password=cvspassword
+obo.sourceforge.cvs.username=anonymous
+obo.sourceforge.cvs.password=
 obo.sourceforge.cvs.hostname=obo.cvs.sourceforge.net
 obo.sourceforge.cvs.module=obo
 obo.sourceforge.cvs.rootdirectory=/cvsroot/obo
