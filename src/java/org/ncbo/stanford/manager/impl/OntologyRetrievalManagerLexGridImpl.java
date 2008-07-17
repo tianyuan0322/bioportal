@@ -111,7 +111,7 @@ public class OntologyRetrievalManagerLexGridImpl extends AbstractOntologyManager
 
         ResolvedConceptReferenceList rcrl = lbscm.getHierarchyRoots(scheme, csvt, hierarchyId);
 
-        return createThingClassBean(rcrl);
+        return createThingClassBeanWithCount(rcrl);
     }
 
     public ClassBean findConceptWithoutRelations(NcboOntology ncboOntology, String conceptId) throws Exception {
@@ -169,7 +169,7 @@ public class OntologyRetrievalManagerLexGridImpl extends AbstractOntologyManager
         AssociationList associations = lbscm.getHierarchyPathToRoot(scheme, csvt, hierarchyId, conceptId, false,
                 LexBIGServiceConvenienceMethods.HierarchyPathResolveOption.ALL, null);
         ClassBean conceptClass = findConceptWithoutRelations(ncboOntology, conceptId);
-        boolean includeChildren= ! light;
+        boolean includeChildren = !light;
         ArrayList<ClassBean> classBeans = createClassBeanArray(associations, conceptClass,
                 ApplicationConstants.SUB_CLASS, includeChildren);
         return createThingClassBean(classBeans);
@@ -387,7 +387,7 @@ public class OntologyRetrievalManagerLexGridImpl extends AbstractOntologyManager
             ResolvedConceptReferenceList lst = matchIterator.next(maxToReturn);
             SearchResultBean srb = new SearchResultBean();
             srb.setOntologyVersionId(ncboOntology.getId());
-            srb.setProperties(createClassBeanArray(lst));
+            srb.setProperties(createClassBeanArray(lst, false));
 
             return srb;
         } catch (Exception e) {
@@ -443,7 +443,7 @@ public class OntologyRetrievalManagerLexGridImpl extends AbstractOntologyManager
             ResolvedConceptReferenceList lst = matchIterator.next(maxToReturn);
             SearchResultBean srb = new SearchResultBean();
             srb.setOntologyVersionId(ncboOntology.getId());
-            srb.setNames(createClassBeanArray(lst));
+            srb.setNames(createClassBeanArray(lst, false));
 
             return srb;
         } catch (Exception e) {
@@ -532,6 +532,23 @@ public class OntologyRetrievalManagerLexGridImpl extends AbstractOntologyManager
         return bean;
     }
 
+    private ClassBean createClassBeanWithChildCount(ResolvedConceptReference rcr) {
+        ClassBean bean= createClassBean(rcr);
+        // Add the children
+        String scheme = rcr.getCodingScheme();
+        String version = rcr.getCodingSchemeVersion();
+        String conceptId = rcr.getConceptCode();
+        CodingSchemeVersionOrTag csvt = Constructors.createCodingSchemeVersionOrTagFromVersion(version);
+        try {
+            AssociationList childList = getHierarchyLevelNext(scheme, csvt, conceptId);
+            bean.addRelation(ApplicationConstants.CHILD_COUNT, getChildCount(childList));
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+        return bean;
+        
+    }
+    
     private ClassBean createClassBean(ResolvedConceptReference rcr) {
         ClassBean bean = new ClassBean();
 
@@ -556,14 +573,10 @@ public class OntologyRetrievalManagerLexGridImpl extends AbstractOntologyManager
         return bean;
     }
 
-    private ClassBean createThingClassBean(ResolvedConceptReferenceList list) {
-        ClassBean classBean = new ClassBean();
-        classBean.setId("THING");
-        classBean.setLabel("THING");
-        ArrayList<ClassBean> classBeans = createClassBeanArray(list);
-        classBean.addRelation(ApplicationConstants.SUB_CLASS, classBeans);
-        classBean.addRelation(ApplicationConstants.CHILD_COUNT, classBeans.size());
-        return classBean;
+    private ClassBean createThingClassBeanWithCount(ResolvedConceptReferenceList list) {
+        ArrayList<ClassBean> classBeans = createClassBeanArray(list, true);
+        return createThingClassBean(classBeans);
+        
     }
 
     private ClassBean createThingClassBean(ArrayList<ClassBean> classBeans) {
@@ -575,14 +588,19 @@ public class OntologyRetrievalManagerLexGridImpl extends AbstractOntologyManager
         return classBean;
     }
 
-    private ArrayList<ClassBean> createClassBeanArray(ResolvedConceptReferenceList list) {
+    private ArrayList<ClassBean> createClassBeanArray(ResolvedConceptReferenceList list, boolean includeCount) {
         ArrayList<ClassBean> classBeans = new ArrayList<ClassBean>();
         Enumeration<ResolvedConceptReference> refEnum = list.enumerateResolvedConceptReference();
         ResolvedConceptReference ref = null;
 
         while (refEnum.hasMoreElements()) {
             ref = (ResolvedConceptReference) refEnum.nextElement();
-            ClassBean bean = createClassBean(ref);
+            ClassBean bean;
+            if (includeCount) {
+                bean = createClassBeanWithChildCount(ref); 
+            } else {
+                bean = createClassBean(ref);
+            }
             classBeans.add(bean);
         }
 
@@ -704,6 +722,21 @@ public class OntologyRetrievalManagerLexGridImpl extends AbstractOntologyManager
 
     }
 
+    int getChildCount(AssociationList list) {
+        int count = 0;
+        if (list == null)
+            return count;
+        Enumeration<Association> assocEnum = list.enumerateAssociation();
+        Association association = null;
+        while (assocEnum.hasMoreElements()) {
+            association = (Association) assocEnum.nextElement();
+            AssociatedConceptList assocConceptList = association.getAssociatedConcepts();
+            count += assocConceptList.getAssociatedConceptCount();
+        }
+        return count;
+
+    }
+
     /**
      * This function adds the association information to the current class bean.
      * If a hierarchy_relation name is specified, then the association
@@ -724,7 +757,7 @@ public class OntologyRetrievalManagerLexGridImpl extends AbstractOntologyManager
         for (int i = 0; i < assocConceptList.getAssociatedConceptCount(); i++) {
             AssociatedConcept assocConcept = assocConceptList.getAssociatedConcept(i);
             if (assocConcept != null) {
-                ClassBean classBean = createClassBean(assocConcept);
+                ClassBean classBean = createClassBeanWithChildCount(assocConcept);
                 classBeans.add(classBean);
                 if (includeChildren) {
                     // Add the children
