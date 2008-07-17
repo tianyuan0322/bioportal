@@ -54,6 +54,19 @@
 		<delete file="${deploy.path}/${app.name}.war" />
 	</target>
 
+	<!--- This target sets the registry.xml-is-present property if the registry file exists -->
+	<target name="check-registry.xml-is-present">
+		<condition property="registry.xml-is-present">
+			<available file="${lexgrid.registry.file}" type="file" />
+		</condition>
+	</target>
+
+	<!-- Task only runs if registry.xml-is-present property is not set (the file does not exist) -->
+	<target name="copy-registry-file-if-required" depends="check-registry.xml-is-present" unless="registry.xml-is-present">
+		<echo message="LexGrid registry.xml file is not present. Creating a default empty file..." />
+		<copy file="${tmpl.dir}/registry.xml.tmpl" tofile="${lexgrid.registry.file}" />
+	</target>
+
 	<target name="prepare" description="Create configuration files using templates">
 		<echo message="log4j path: = ${bioportal.app.logfilepath}" />
 
@@ -62,6 +75,8 @@
 		<mkdir dir="${obo.sourceforge.cvs.checkoutdir}" />
 		<mkdir dir="${lexgrid.index.location}" />
 		<mkdir dir="${lexgrid.registry.path}" />
+
+		<antcall target="copy-registry-file-if-required" />
 
 		<copy file="${tmpl.dir}/web.xml.tmpl" tofile="${web.dir}/WEB-INF/web.xml" overwrite="true">
 			<filterset>
@@ -72,7 +87,7 @@
 		<copy file="${tmpl.dir}/log4j.xml.tmpl" tofile="${conf.dir.generated}/log4j.xml" overwrite="true">
 			<filterset>
 				<filter token="logfilepath" value="${bioportal.app.logfilepath}" />
-				<filter token="maxlogfilesize" value="${bioportal.app.maxlogfilesize}" />				
+				<filter token="maxlogfilesize" value="${bioportal.app.maxlogfilesize}" />
 				<filter token="maxlogbackupindex" value="${bioportal.app.maxlogbackupindex}" />
 				<filter token="bioportallevel" value="${bioportal.app.log.bioportallevel}" />
 				<filter token="deflevel" value="${bioportal.app.log.deflevel}" />
@@ -122,12 +137,12 @@
 		<copy file="${tmpl.dir}/applicationContext-services.xml.tmpl" tofile="${conf.dir.generated}/applicationContext-services.xml" overwrite="true">
 			<filterset>
 				<filter token="encryptionkey" value="${bioportal.encryption.key}" />
-				<filter token="messagebundlepackage" value="${bioportal.messagebundle.package}" />				
+				<filter token="messagebundlepackage" value="${bioportal.messagebundle.package}" />
 				<filter token="bioportalsessionnumcontainers" value="${bioportal.session.numcontainers}" />
 				<filter token="bioportalsessiontimeout" value="${bioportal.session.timeout}" />
 				<filter token="obopullschedulerenabled" value="${obo.pull.scheduler.enabled}" />
 				<filter token="obopullschedulercronexpression" value="${obo.pull.scheduler.cronexpression}" />
-				<filter token="ontologyparseschedulerenabled" value="${ontology.parse.scheduler.enabled}" />				
+				<filter token="ontologyparseschedulerenabled" value="${ontology.parse.scheduler.enabled}" />
 				<filter token="ontologyparseschedulercronexpression" value="${ontology.parse.scheduler.cronexpression}" />
 				<filter token="protegejdbcurl" value="${protege.jdbc.url}" />
 				<filter token="protegejdbcdriver" value="${protege.jdbc.driver}" />
@@ -226,8 +241,8 @@
 	</target>
 
 	<target name="createwar" depends="build" description="Create a WAR file">
-		<mkdir dir="${dist.dir}" />	
-		
+		<mkdir dir="${dist.dir}" />
+
 		<war destfile="${dist.dir}/${app.name}.war" webxml="${web.dir}/WEB-INF/web.xml">
 			<fileset dir="${web.dir}">
 				<include name="**/*.*" />
