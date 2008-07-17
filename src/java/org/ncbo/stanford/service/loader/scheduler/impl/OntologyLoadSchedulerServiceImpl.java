@@ -23,7 +23,6 @@ import org.ncbo.stanford.enumeration.StatusEnum;
 import org.ncbo.stanford.exception.InvalidOntologyFormatException;
 import org.ncbo.stanford.manager.OntologyLoadManager;
 import org.ncbo.stanford.service.loader.scheduler.OntologyLoadSchedulerService;
-import org.ncbo.stanford.util.helper.StringHelper;
 import org.ncbo.stanford.util.ontologyfile.pathhandler.AbstractFilePathHandler;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
@@ -160,21 +159,21 @@ public class OntologyLoadSchedulerServiceImpl implements
 		OntologyBean ontologyBean = new OntologyBean();
 		ontologyBean.populateFromEntity(ontology);
 
-		Integer status = new Integer(StatusEnum.STATUS_WAITING.getStatus());
+		StatusEnum status = StatusEnum.STATUS_WAITING;
 		updateOntologyStatus(loadQueue, status, errorMessage);
 
 		// parse
 		try {
 			// set the status as "Parsing"
-			status = new Integer(StatusEnum.STATUS_PARSING.getStatus());
+			status = StatusEnum.STATUS_PARSING;
 			updateOntologyStatus(loadQueue, status, errorMessage);
 
 			// load ontology
 			loadOntology(ontologyBean);
 
-			status = new Integer(StatusEnum.STATUS_READY.getStatus());
+			status = StatusEnum.STATUS_READY;
 		} catch (Exception e) {
-			status = new Integer(StatusEnum.STATUS_ERROR.getStatus());
+			status = StatusEnum.STATUS_ERROR;
 
 			StringWriter sw = new StringWriter();
 			e.printStackTrace(new PrintWriter(sw));
@@ -194,23 +193,19 @@ public class OntologyLoadSchedulerServiceImpl implements
 	}
 
 	private void updateOntologyStatus(NcboOntologyLoadQueue loadQueue,
-			Integer status, String errorMessage) {
+			StatusEnum status, String errorMessage) {
 		NcboOntologyVersion ncboOntologyVersion = loadQueue
 				.getNcboOntologyVersion();
 
 		NcboLStatus ncboStatus = new NcboLStatus();
-		ncboStatus.setId(status);
+		ncboStatus.setId(status.getStatus());
 
 		// update ontologyVersion table
 		ncboOntologyVersion.setNcboLStatus(ncboStatus);
 		ncboOntologyVersionDAO.saveOntologyVersion(ncboOntologyVersion);
 
 		// update loadQueue table
-
-		if (!StringHelper.isNullOrNullString(errorMessage)) {
-			loadQueue.setErrorMessage(errorMessage);
-		}
-
+		loadQueue.setErrorMessage(errorMessage);
 		loadQueue.setDateProcessed(Calendar.getInstance().getTime());
 		loadQueue.setNcboLStatus(ncboStatus);
 		ncboOntologyLoadQueueDAO.saveNcboOntologyLoadQueue(loadQueue);
