@@ -64,8 +64,7 @@
 	<!-- Task only runs if registry.xml-is-present property is not set (the file does not exist) -->
 	<target name="copy-registry-file-if-required" depends="check-registry.xml-is-present" unless="registry.xml-is-present">
 		<echo message="LexGrid registry.xml file is not present. Creating a default empty file..." />
-		<copy file="${tmpl.dir}/registry.xml.tmpl" tofile="${lexgrid.registry.file}" />		
-		<chmod dir="${lexgrid.registry.path}" perm="777" includes="**/*" />
+		<copy file="${tmpl.dir}/registry.xml.tmpl" tofile="${lexgrid.registry.file}" />
 	</target>
 
 	<target name="prepare" description="Create configuration files using templates">
@@ -76,6 +75,7 @@
 		<mkdir dir="${obo.sourceforge.cvs.checkoutdir}" />
 		<mkdir dir="${lexgrid.index.location}" />
 		<mkdir dir="${lexgrid.registry.path}" />
+		<chmod dir="${lexgrid.resource.path}" perm="777" type="both" includes="**/*" />
 		
 		<antcall target="copy-registry-file-if-required" />
 
