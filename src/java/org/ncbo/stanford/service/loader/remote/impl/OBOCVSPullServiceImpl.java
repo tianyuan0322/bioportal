@@ -263,7 +263,7 @@ public class OBOCVSPullServiceImpl implements OBOCVSPullService {
 			ont.setUserId(userBean.getId());
 			ont.setVersionStatus(getStatus(mfb.getStatus()));
 			ont.setIsRemote(new Byte(isRemote));
-			ont.setIsReviewed(ApplicationConstants.FALSE);
+			ont.setIsReviewed(ApplicationConstants.TRUE);
 			ont.setOboFoundryId(mfb.getId());
 			ont.setDisplayLabel(mfb.getTitle());
 			ont.setFormat(getFormat(mfb.getFormat()));
