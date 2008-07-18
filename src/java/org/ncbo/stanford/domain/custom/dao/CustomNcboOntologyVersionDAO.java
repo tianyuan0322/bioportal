@@ -20,6 +20,7 @@ import org.ncbo.stanford.domain.generated.NcboOntologyFile;
 import org.ncbo.stanford.domain.generated.NcboOntologyMetadata;
 import org.ncbo.stanford.domain.generated.NcboOntologyVersion;
 import org.ncbo.stanford.domain.generated.NcboOntologyVersionDAO;
+import org.ncbo.stanford.enumeration.StatusEnum;
 import org.ncbo.stanford.util.constants.ApplicationConstants;
 import org.springframework.orm.hibernate3.HibernateCallback;
 
@@ -154,6 +155,7 @@ public class CustomNcboOntologyVersionDAO extends NcboOntologyVersionDAO {
 					throws HibernateException, SQLException {
 				Query query = session
 						.getNamedQuery("VNcboOntologyVersionDAO.GET_LATEST_ACTIVE_ONTOLOGY_VERSIONS_QUERY");
+				query.setInteger("statusIdReady", StatusEnum.STATUS_READY.getStatus());
 
 				return query.list();
 			}
