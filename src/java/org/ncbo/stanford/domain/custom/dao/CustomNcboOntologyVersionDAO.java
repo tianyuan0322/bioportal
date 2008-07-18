@@ -141,6 +141,25 @@ public class CustomNcboOntologyVersionDAO extends NcboOntologyVersionDAO {
 			}
 		});
 	}
+	
+	
+	/**
+	 * Find all unique latest and active (i.e. parse status = ready) versions of ontologies
+	 * 
+	 * @return list of ontologies
+	 */
+	public List<NcboOntology> findLatestActiveOntologyVersions() {
+		return getHibernateTemplate().executeFind(new HibernateCallback() {
+			public Object doInHibernate(Session session)
+					throws HibernateException, SQLException {
+				Query query = session
+						.getNamedQuery("VNcboOntologyVersionDAO.GET_LATEST_ACTIVE_ONTOLOGY_VERSIONS_QUERY");
+
+				return query.list();
+			}
+		});
+	}
+	
 
 	/**
 	 * Find all unique latest current versions of ontologies

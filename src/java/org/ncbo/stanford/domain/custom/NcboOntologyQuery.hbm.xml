@@ -32,6 +32,26 @@
 				ont.display_label
 		]]>
 	</sql-query>
+	
+	
+	<sql-query name="VNcboOntologyVersionDAO.GET_LATEST_ACTIVE_ONTOLOGY_VERSIONS_QUERY">	
+		<return alias="ont" class="org.ncbo.stanford.domain.custom.entity.NcboOntology" />
+	
+		<![CDATA[
+			SELECT {ont.*}
+			FROM
+				v_ncbo_ontology {ont}
+				INNER JOIN (
+					SELECT ontology_id, MAX(internal_version_number) AS internal_version_number, status_id
+					FROM
+						ncbo_ontology_version
+					GROUP BY ontology_id
+				) a ON ont.ontology_id = a.ontology_id AND ont.internal_version_number = a.internal_version_number AND ont.status_id = 3
+			ORDER BY
+				ont.display_label
+		]]>
+	</sql-query>
+		
 
 	<sql-query name="VNcboOntologyVersionDAO.GET_LATEST_ONTOLOGY_VERSION_FOR_ONTOLOGY_ID_QUERY">	
 		<return alias="ont" class="org.ncbo.stanford.domain.custom.entity.NcboOntology" />

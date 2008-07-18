@@ -48,6 +48,16 @@ public interface OntologyService {
 	 * @return list of Ontology beans
 	 */
 	public List<OntologyBean> findLatestOntologyVersions();
+	
+	
+	/**
+	 * Returns a single record for each ontology which is active in the system. If more than one
+	 * version of ontology exists, return the latest and active version.  
+	 * "active" meaning parse status is "ready".
+	 * 
+	 * @return list of Ontology beans
+	 */
+	public List<OntologyBean> findLatestActiveOntologyVersions();
 
 	/**
 	 * Returns all versions for given ontology. Two steps : 1. Get list of

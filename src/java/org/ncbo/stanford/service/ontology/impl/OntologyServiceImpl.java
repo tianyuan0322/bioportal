@@ -119,6 +119,28 @@ public class OntologyServiceImpl implements OntologyService {
 
 		return ontBeanList;
 	}
+	
+	
+	/**
+	 * Returns a single record for each ontology which is active in the system. If more than one
+	 * version of ontology exists, return the latest and active version.  
+	 * "active" meaning parse status is "ready".
+	 * 
+	 * @return list of Ontology beans
+	 */
+	public List<OntologyBean> findLatestActiveOntologyVersions() {
+		ArrayList<OntologyBean> ontBeanList = new ArrayList<OntologyBean>(1);
+		List<NcboOntology> ontEntityList = ncboOntologyVersionDAO
+				.findLatestActiveOntologyVersions();
+
+		for (NcboOntology ncboOntology : ontEntityList) {
+			OntologyBean ontologyBean = new OntologyBean();
+			ontologyBean.populateFromEntity(ncboOntology);
+			ontBeanList.add(ontologyBean);
+		}
+
+		return ontBeanList;
+	}
 
 	/**
 	 * Returns all versions for given ontology. Two steps : 1. Get list of
