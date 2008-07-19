@@ -16,6 +16,7 @@ public abstract class AbstractOntologyManagerProtege {
 	protected String protegeTablePrefix;
 	protected String protegeTableSuffix;
 	protected Integer protegeBigFileThreshold;
+	protected String protegePath;
 
 	/**
 	 * Gets the table name associated with an protege ontology id.
@@ -127,5 +128,19 @@ public abstract class AbstractOntologyManagerProtege {
 	 */
 	public void setProtegeBigFileThreshold(Integer protegeBigFileThreshold) {
 		this.protegeBigFileThreshold = protegeBigFileThreshold;
+	}
+
+	/**
+	 * @return the protegePath
+	 */
+	public String getProtegePath() {
+		return protegePath;
+	}
+
+	/**
+	 * @param protegePath the protegePath to set
+	 */
+	public void setProtegePath(String protegePath) {
+		this.protegePath = protegePath;
 	}
 }

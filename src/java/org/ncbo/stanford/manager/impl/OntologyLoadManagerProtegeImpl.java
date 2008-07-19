@@ -71,32 +71,26 @@ public class OntologyLoadManagerProtegeImpl extends
 		// If the ontology file is small, use the fast non-streaming Protege
 		// load code.
 		List errors = new ArrayList();
-		
-		if(ontology.getFormat().contains("OWL")){
-		
+
+		if (ontology.getFormat().contains("OWL")) {
+
 			if (ontologyFile.length() < protegeBigFileThreshold) {
-				
-				
-				
-				
+
 				OWLModel owlModel = ProtegeOWL
 						.createJenaOWLModelFromInputStream(new FileInputStream(
 								ontologyFile));
-	
-				PropertyList sources = PropertyList.create(owlModel.getProject()
-						.getInternalProjectKnowledgeBase());
-	
+
+				PropertyList sources = PropertyList.create(owlModel
+						.getProject().getInternalProjectKnowledgeBase());
+
 				tableName = getTableName(ontology.getId());
-				DatabaseKnowledgeBaseFactory.setSources(sources, protegeJdbcDriver,
-						protegeJdbcUrl, tableName, protegeJdbcUsername,
-						protegeJdbcPassword);
-	
-				
+				DatabaseKnowledgeBaseFactory.setSources(sources,
+						protegeJdbcDriver, protegeJdbcUrl, tableName,
+						protegeJdbcUsername, protegeJdbcPassword);
+
 				OWLDatabaseKnowledgeBaseFactory factory = new OWLDatabaseKnowledgeBaseFactory();
 				factory.saveKnowledgeBase(owlModel, sources, errors);
-	
-				
-				
+
 				// If errors are found during the load, log the errors and throw an
 				// exception.
 				if (errors.size() > 0) {
@@ -104,16 +98,11 @@ public class OntologyLoadManagerProtegeImpl extends
 					throw new Exception("Error during loading "
 							+ ontologyUri.toString());
 				}
-				
-				
-				
-				
-				
-				
+
 			} else {
 				// If the ontology file is big, use the streaming Protege load
 				// approach.
-				
+
 				CreateOWLDatabaseFromFileProjectPlugin creator = new CreateOWLDatabaseFromFileProjectPlugin();
 				creator
 						.setKnowledgeBaseFactory(new OWLDatabaseKnowledgeBaseFactory());
@@ -126,39 +115,33 @@ public class OntologyLoadManagerProtegeImpl extends
 				creator.setUseExistingSources(true);
 				creator.createProject();
 			}
-		
-		
-		}else{
 
-			 tableName = getTableName(ontology.getId());
-		       
-		        Project fileProject =Project.loadProjectFromFile(ontologyFile.getAbsolutePath(), null);		        
-		        DatabaseKnowledgeBaseFactory factory = new
-		DatabaseKnowledgeBaseFactory();
-		        PropertyList sources = PropertyList.create
-		(fileProject.getInternalProjectKnowledgeBase());
-		        DatabaseKnowledgeBaseFactory.setSources(sources,  protegeJdbcDriver,
-						protegeJdbcUrl, tableName, protegeJdbcUsername,
-						protegeJdbcPassword);
+		} else {
 
+			tableName = getTableName(ontology.getId());
 
-		        factory.saveKnowledgeBase(fileProject.getKnowledgeBase(),
-		sources, errors);
-		       
-		        fileProject.dispose();
+			Project fileProject = Project.loadProjectFromFile(protegePath, null);
+			DatabaseKnowledgeBaseFactory factory = new DatabaseKnowledgeBaseFactory();
+			PropertyList sources = PropertyList.create(fileProject
+					.getInternalProjectKnowledgeBase());
+			DatabaseKnowledgeBaseFactory.setSources(sources, protegeJdbcDriver,
+					protegeJdbcUrl, tableName, protegeJdbcUsername,
+					protegeJdbcPassword);
 
-		        Project dbProject = Project.createNewProject(factory, errors);
-		        DatabaseKnowledgeBaseFactory.setSources(dbProject.getSources(),  protegeJdbcDriver,
-						protegeJdbcUrl, tableName, protegeJdbcUsername,
-						protegeJdbcPassword);
+			factory.saveKnowledgeBase(fileProject.getKnowledgeBase(), sources,
+					errors);
 
+			fileProject.dispose();
 
-		        dbProject.createDomainKnowledgeBase(factory, errors, true);
-		       
+			Project dbProject = Project.createNewProject(factory, errors);
+			DatabaseKnowledgeBaseFactory.setSources(dbProject.getSources(),
+					protegeJdbcDriver, protegeJdbcUrl, tableName,
+					protegeJdbcUsername, protegeJdbcPassword);
 
-		        dbProject.save(errors);	
+			dbProject.createDomainKnowledgeBase(factory, errors, true);
+
+			dbProject.save(errors);
 		}
-		
-		
+
 	}
 }
