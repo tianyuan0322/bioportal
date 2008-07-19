@@ -472,6 +472,9 @@
 		<property name="protegeBigFileThreshold">
 			<ref bean="protegeBigFileThreshold" />
 		</property>
+		<property name="protegePath">
+			<ref bean="protegePath" />
+		</property>		
 	</bean>
 
 	<bean id="ontologyRetrievalManagerLexGrid"
@@ -915,6 +918,12 @@
 	<bean id="protegeBigFileThreshold" class="java.lang.Integer">
 		<constructor-arg>
 			<value>@protegebigfilethreshold@</value>
+		</constructor-arg>
+	</bean>
+	
+	<bean id="protegePath" class="java.lang.String">
+		<constructor-arg>
+			<value>@protegePath@</value>
 		</constructor-arg>
 	</bean>
 
