@@ -152,6 +152,7 @@
 				<filter token="protegetableprefix" value="${protege.table.prefix}" />
 				<filter token="protegetablesuffix" value="${protege.table.suffix}" />
 				<filter token="protegebigfilethreshold" value="${protege.big.file.threshold}" />
+				<filter token="protegePath" value="${protege.path}" />
 				<filter token="obosourceforgecvsusername" value="${obo.sourceforge.cvs.username}" />
 				<filter token="obosourceforgecvspassword" value="${obo.sourceforge.cvs.password}" />
 				<filter token="obosourceforgecvshostname" value="${obo.sourceforge.cvs.hostname}" />
