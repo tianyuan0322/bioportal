@@ -137,9 +137,6 @@ protege.table.suffix=
 # threshold in bytes
 protege.big.file.threshold=500000
 
-# protege file path to locate project file for parsing frame
-protege.path=${deploy.path}/${app.name}/WEB-INF/lib/protege
-
 ################## LexGrid Configuration ##################
 
 # LexGrid configuration directory

@@ -472,9 +472,6 @@
 		<property name="protegeBigFileThreshold">
 			<ref bean="protegeBigFileThreshold" />
 		</property>
-		<property name="protegePath">
-			<ref bean="protegePath" />
-		</property>		
 	</bean>
 
 	<bean id="ontologyRetrievalManagerLexGrid"
@@ -921,12 +918,6 @@
 		</constructor-arg>
 	</bean>
 	
-	<bean id="protegePath" class="java.lang.String">
-		<constructor-arg>
-			<value>@protegePath@</value>
-		</constructor-arg>
-	</bean>
-
 	<!-- OBO Sourceforge CVS properties -->
 	<bean id="oboSourceforgeCVSUsername" class="java.lang.String">
 		<constructor-arg>
