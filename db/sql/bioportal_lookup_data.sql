@@ -37,9 +37,5 @@ insert  into `ncbo_l_role`(`id`,`name`,`description`) values (2822,'ROLE_DEVELOP
 
 insert  into `ncbo_l_status`(`id`,`status`,`description`) values (1,'Waiting','The action has not been taken'),(2,'Parsing','The action is in progress'),(3,'Ready','The action has completed successfully'),(4,'Error','The action has encountered an error while executing'),(5,'Not Applicable','The action does not apply to this record');
 
-/*Data for the table `ncbo_seq_ontology_id` */
-
-insert  into `ncbo_seq_ontology_id`(`id`) values (1000);
-
 /*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
 /*!40014 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS */;

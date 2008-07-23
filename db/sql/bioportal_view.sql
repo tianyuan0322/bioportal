@@ -2,7 +2,6 @@ CREATE OR REPLACE VIEW `v_ncbo_ontology` AS
 SELECT 
 	ov.id,
 	ov.ontology_id,				
-	ov.parent_id,
 	ov.user_id,
 	ov.internal_version_number,
 	ov.version_number,
@@ -13,17 +12,19 @@ SELECT
 	ov.status_id,
 	ov.date_created,
 	ov.date_released,
-	om.obo_foundry_id,
-	om.display_label,
-	om.format,
-	om.contact_name,
-	om.contact_email,
-	om.homepage,
-	om.documentation,
-	om.publication,
-	om.urn,
-	om.coding_scheme,
-	om.is_foundry
+	o.obo_foundry_id,
+	o.is_manual,	
+	ovm.display_label,
+	ovm.format,
+	ovm.contact_name,
+	ovm.contact_email,
+	ovm.homepage,
+	ovm.documentation,
+	ovm.publication,
+	ovm.urn,
+	ovm.coding_scheme,
+	ovm.is_foundry
 FROM
-	ncbo_ontology_version ov 
-	INNER JOIN ncbo_ontology_metadata om ON ov.id = om.ontology_version_id;
+	ncbo_ontology o 
+	INNER JOIN ncbo_ontology_version ov on o.id = ov.ontology_id
+	INNER JOIN ncbo_ontology_version_metadata ovm ON ov.id = ovm.ontology_version_id;

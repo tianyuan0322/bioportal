@@ -3,6 +3,7 @@ import java.io.IOException;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.List;
 import java.util.Properties;
@@ -35,7 +36,9 @@ public class OBOFoundryIdUpdater {
 			List<MetadataFileBean> ontologyList = odp.parseOntologyFile();
 
 			for (MetadataFileBean mfb : ontologyList) {
-				int statusCode = updateFoundryId(conn, mfb.getId(), mfb.getTitle());
+				String title = StringHelper.isNullOrNullString(mfb.getTitle()) ? "slkfjslkeswe"
+						: mfb.getTitle();
+				int statusCode = updateFoundryId(conn, mfb.getId(), title);
 				System.out.println("Update status code: " + statusCode + ".");
 			}
 		} catch (Exception e) {
@@ -74,19 +77,50 @@ public class OBOFoundryIdUpdater {
 	private static int updateFoundryId(Connection conn, String oboFoundryId,
 			String displayLabel) throws SQLException, IOException,
 			ClassNotFoundException {
-		if (StringHelper.isNullOrNullString(oboFoundryId)
-				|| StringHelper.isNullOrNullString(displayLabel)) {
-			return ERROR_CODE;
+		int result = ERROR_CODE;
+
+		if (!StringHelper.isNullOrNullString(oboFoundryId)
+				&& !StringHelper.isNullOrNullString(displayLabel)) {
+			String sqlSelect = "SELECT DISTINCT ov.ontology_id ontology_id "
+					+ "FROM ncbo_ontology_version ov "
+					+ "INNER JOIN ncbo_ontology_version_metadata ovm "
+					+ "on ov.id = ovm.ontology_version_id AND LOWER(display_label) = ?";
+
+			PreparedStatement stmt = conn.prepareStatement(sqlSelect);
+			stmt.setString(1, displayLabel.toLowerCase());
+			ResultSet rs = stmt.executeQuery();
+
+			PreparedStatement stmt1 = null;
+
+			if (rs.next()) {
+				Integer ontologyId = rs.getInt("ontology_id");
+				System.out.println("Updating obo foundry id to: '"
+						+ oboFoundryId + "' for ontology: '" + displayLabel
+						+ "' (Id: " + ontologyId + ").");
+
+				String sqlUpdate = "UPDATE ncbo_ontology SET obo_foundry_id = ? WHERE id = ?";
+				stmt1 = conn.prepareStatement(sqlUpdate);
+				stmt1.setString(1, oboFoundryId);
+				stmt1.setInt(2, ontologyId);
+
+				result = stmt1.executeUpdate();
+			} else {
+				System.out.println("No ontology found for display label: '" + displayLabel
+						+ "' (Obo Foundry id: " + oboFoundryId + ").");				
+			}
+			
+			rs.close();
+			rs = null;			
+			stmt.close();
+			stmt = null;
+			
+			if (stmt1 != null) {
+				stmt1.close();
+				stmt1 = null;
+			}
 		}
 
-		System.out.println("Updating obo foundry id to: '" + oboFoundryId + "' for ontology: '" + displayLabel + "'.");
-
-		String sqlUpdate = "UPDATE ncbo_ontology_metadata SET obo_foundry_id = ? WHERE LOWER(display_label) = ?";
-		PreparedStatement stmt = conn.prepareStatement(sqlUpdate);
-		stmt.setString(1, oboFoundryId);
-		stmt.setString(2, displayLabel.toLowerCase());
-
-		return stmt.executeUpdate();
+		return result;
 	}
 
 	/**
