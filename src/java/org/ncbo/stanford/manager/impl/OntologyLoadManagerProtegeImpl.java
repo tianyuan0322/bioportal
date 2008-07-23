@@ -58,10 +58,6 @@ public class OntologyLoadManagerProtegeImpl extends
 
 		File ontologyFile = new File(ontologyUri.getPath());
 		String filePath = ontologyUri.getPath();
-		System.out.println("ontologyUri filePath = " + filePath);
-
-		System.out.println("ontologyUri ABSOLUTE filePath = "
-				+ ontologyFile.getAbsolutePath());
 
 		String tableName = null;
 
