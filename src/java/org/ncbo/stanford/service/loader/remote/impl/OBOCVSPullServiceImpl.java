@@ -280,6 +280,7 @@ public class OBOCVSPullServiceImpl implements OBOCVSPullService {
 			ont.setPublication(OntologyDescriptorParser.getPublication(mfb
 					.getPublication()));
 			ont.setIsFoundry(new Byte(isFoundry(mfb.getFoundry())));
+			ont.setIsManual(ApplicationConstants.FALSE);
 		}
 	}
 
