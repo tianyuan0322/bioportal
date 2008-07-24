@@ -184,27 +184,30 @@ public class OBOCVSPullServiceImpl implements OBOCVSPullService {
 			action = (isRemote == ApplicationConstants.TRUE) ? ActionEnum.CREATE_REMOTE_ACTION
 					: ActionEnum.CREATE_LOCAL_ACTION;
 			ont = new OntologyBean();
-		} else if (isRemote == ApplicationConstants.TRUE) {
-			if (ont.isRemote()) {
-				// existing ontology that had been and remains remote
-				action = ActionEnum.UPDATE_ACTION;
-			} else {
-				// existing ontology that had been local but is now remote
-				action = ActionEnum.CREATE_REMOTE_ACTION;
-			}
-		} else if (cf != null && cf.getVersion().equals(ont.getVersionNumber())) {
-			// existing ontology local; no new version
-			// no new version found; check if categories have been updated
-			List<Integer> oldCategoryIds = ont.getCategoryIds();
-			boolean categoriesUpdated = isCategoryUpdated(oldCategoryIds,
-					newCategoryIds);
+		} else if (ont.getIsManual() != ApplicationConstants.TRUE) {
+			if (isRemote == ApplicationConstants.TRUE) {
+				if (ont.isRemote()) {
+					// existing ontology that had been and remains remote
+					action = ActionEnum.UPDATE_ACTION;
+				} else {
+					// existing ontology that had been local but is now remote
+					action = ActionEnum.CREATE_REMOTE_ACTION;
+				}
+			} else if (cf != null
+					&& cf.getVersion().equals(ont.getVersionNumber())) {
+				// existing ontology local; no new version
+				// no new version found; check if categories have been updated
+				List<Integer> oldCategoryIds = ont.getCategoryIds();
+				boolean categoriesUpdated = isCategoryUpdated(oldCategoryIds,
+						newCategoryIds);
 
-			if (categoriesUpdated) {
-				action = ActionEnum.UPDATE_ACTION;
+				if (categoriesUpdated) {
+					action = ActionEnum.UPDATE_ACTION;
+				}
+			} else if (cf != null) {
+				// existing ontology local; new version
+				action = ActionEnum.CREATE_LOCAL_ACTION;
 			}
-		} else if (cf != null) {
-			// existing ontology local; new version
-			action = ActionEnum.CREATE_LOCAL_ACTION;
 		}
 
 		populateOntologyBean(mfb, cf, action, ont, newCategoryIds, isRemote);
