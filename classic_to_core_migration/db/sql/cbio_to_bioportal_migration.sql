@@ -135,7 +135,34 @@ DELIMITER ;
 
 CALL sp_remove_duplicate_ontologies();
 
+DROP PROCEDURE IF EXISTS `sp_remove_duplicate_ontologies`;
+
 update ncbo_ontology_version set file_path = CONCAT("/", ontology_id, "/", internal_version_number)
 where is_remote = 0;
 
-DROP PROCEDURE IF EXISTS `sp_remove_duplicate_ontologies`;
+DELIMITER $$
+
+DROP PROCEDURE IF EXISTS `sp_remove_gene_ontology`$$
+
+CREATE DEFINER=`root`@`localhost` PROCEDURE `sp_remove_gene_ontology`()
+BEGIN
+		DECLARE ontologyVersionId INT;
+		DECLARE ontologyId INT;
+
+		select ontology_version_id INTO ontologyVersionId FROM ncbo_ontology_version_metadata WHERE display_label = 'Gene Ontology';
+		select ontology_id INTO ontologyId FROM ncbo_ontology_version WHERE id = ontologyVersionId;
+				
+		delete from ncbo_ontology_category where ontology_version_id = ontologyVersionId;
+		delete from ncbo_ontology_file where ontology_version_id = ontologyVersionId;
+		delete from ncbo_ontology_load_queue where ontology_version_id = ontologyVersionId;
+		delete from ncbo_ontology_version_metadata where ontology_version_id = ontologyVersionId;
+		delete from ncbo_ontology_version where ontology_id = ontologyId;
+		delete from ncbo_ontology where id = ontologyId;
+
+	END$$
+
+DELIMITER ;
+
+CALL sp_remove_gene_ontology();
+
+DROP PROCEDURE IF EXISTS `sp_remove_gene_ontology`;
