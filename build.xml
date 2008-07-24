@@ -75,9 +75,10 @@
 		<mkdir dir="${obo.sourceforge.cvs.checkoutdir}" />
 		<mkdir dir="${lexgrid.index.location}" />
 		<mkdir dir="${lexgrid.registry.path}" />
-		<chmod dir="${lexgrid.resource.path}" perm="777" type="both" includes="**/*" />
-		
+
 		<antcall target="copy-registry-file-if-required" />
+		
+		<chmod dir="${lexgrid.resource.path}" perm="777" type="both" includes="**/*" />
 
 		<copy file="${tmpl.dir}/web.xml.tmpl" tofile="${web.dir}/WEB-INF/web.xml" overwrite="true">
 			<filterset>
