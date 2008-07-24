@@ -105,15 +105,16 @@ public class OBOFoundryIdUpdater {
 
 				result = stmt1.executeUpdate();
 			} else {
-				System.out.println("No ontology found for display label: '" + displayLabel
-						+ "' (Obo Foundry id: " + oboFoundryId + ").");				
+				System.out.println("No ontology found for display label: '"
+						+ displayLabel + "' (Obo Foundry id: " + oboFoundryId
+						+ ").");
 			}
-			
+
 			rs.close();
-			rs = null;			
+			rs = null;
 			stmt.close();
 			stmt = null;
-			
+
 			if (stmt1 != null) {
 				stmt1.close();
 				stmt1 = null;
