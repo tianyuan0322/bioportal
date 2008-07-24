@@ -9,14 +9,15 @@ import java.util.List;
 import java.util.Set;
 
 import org.apache.commons.fileupload.FileItem;
-import org.ncbo.stanford.domain.custom.entity.NcboOntology;
+import org.ncbo.stanford.domain.custom.entity.VNcboOntology;
 import org.ncbo.stanford.domain.generated.NcboLCategory;
 import org.ncbo.stanford.domain.generated.NcboLStatus;
+import org.ncbo.stanford.domain.generated.NcboOntology;
 import org.ncbo.stanford.domain.generated.NcboOntologyCategory;
 import org.ncbo.stanford.domain.generated.NcboOntologyFile;
 import org.ncbo.stanford.domain.generated.NcboOntologyLoadQueue;
-import org.ncbo.stanford.domain.generated.NcboOntologyMetadata;
 import org.ncbo.stanford.domain.generated.NcboOntologyVersion;
+import org.ncbo.stanford.domain.generated.NcboOntologyVersionMetadata;
 import org.ncbo.stanford.domain.generated.NcboUser;
 import org.ncbo.stanford.util.MessageUtils;
 import org.ncbo.stanford.util.constants.ApplicationConstants;
@@ -26,7 +27,6 @@ public class OntologyBean {
 	private Integer id;
 	private Integer ontologyId;
 	private Integer internalVersionNumber;
-	private Integer parentId;
 	private Integer userId;
 	private String versionNumber;
 	private String versionStatus;
@@ -36,6 +36,7 @@ public class OntologyBean {
 	private Date dateCreated;
 	private Date dateReleased;
 	private String oboFoundryId;
+	private Byte isManual;
 	private String displayLabel;
 	private String format;
 	private String contactName;
@@ -63,11 +64,10 @@ public class OntologyBean {
 	 * 
 	 * @param ncboOntology
 	 */
-	public void populateFromEntity(NcboOntology ncboOntology) {
+	public void populateFromEntity(VNcboOntology ncboOntology) {
 		if (ncboOntology != null) {
 			this.setId(ncboOntology.getId());
 			this.setOntologyId(ncboOntology.getOntologyId());
-			this.setParentId(ncboOntology.getParentId());
 			this.setUserId(ncboOntology.getUserId());
 			this.setInternalVersionNumber(ncboOntology
 					.getInternalVersionNumber());
@@ -80,6 +80,7 @@ public class OntologyBean {
 			this.setDateCreated(ncboOntology.getDateCreated());
 			this.setDateReleased(ncboOntology.getDateReleased());
 			this.setOboFoundryId(ncboOntology.getOboFoundryId());
+			this.setIsManual(ncboOntology.getIsManual());
 			this.setDisplayLabel(ncboOntology.getDisplayLabel());
 			this.setFormat(ncboOntology.getFormat());
 			this.setContactName(ncboOntology.getContactName());
@@ -104,16 +105,15 @@ public class OntologyBean {
 	 * 
 	 * @param ontologyVersion
 	 */
-	public void populateToMetadataEntity(NcboOntologyMetadata metadata,
+	public void populateToMetadataEntity(NcboOntologyVersionMetadata metadata,
 			NcboOntologyVersion ontologyVersion) {
 		if (metadata != null) {
-			Set<NcboOntologyMetadata> ncboOntologyMetadataSet = new HashSet<NcboOntologyMetadata>();
+			Set<NcboOntologyVersionMetadata> ncboOntologyMetadataSet = new HashSet<NcboOntologyVersionMetadata>();
 
 			metadata.setNcboOntologyVersion(ontologyVersion);
 
 			metadata.setContactEmail(this.getContactEmail());
 			metadata.setContactName(this.getContactName());
-			metadata.setOboFoundryId(this.getOboFoundryId());
 			metadata.setDisplayLabel(this.getDisplayLabel());
 			metadata.setDocumentation(this.getDocumentation());
 			metadata.setFormat(this.getFormat());
@@ -123,10 +123,24 @@ public class OntologyBean {
 			metadata.setUrn(this.getUrn());
 
 			ncboOntologyMetadataSet.add(metadata);
-			ontologyVersion.setNcboOntologyMetadatas(ncboOntologyMetadataSet);
+			ontologyVersion
+					.setNcboOntologyVersionMetadatas(ncboOntologyMetadataSet);
 		}
 	}
 
+	/**
+	 * Populates NcboOntology Entity from this OntologyBean
+	 * 
+	 * @param ncboOntology
+	 */
+	public void populateToOntologyEntity(NcboOntology ont) {
+		if (ont != null) {
+			ont.setId(getOntologyId());
+			ont.setIsManual(getIsManual());
+			ont.setOboFoundryId(getOboFoundryId());
+		}
+	}
+	
 	/**
 	 * Populates NcboOntologyVersion Entity from this OntologyBean
 	 * 
@@ -137,16 +151,13 @@ public class OntologyBean {
 			// all the business logic regarding OntologyVersionId and OntologyId
 			// is in OntologyBean layer
 			ontologyVersion.setId(this.getId());
-			ontologyVersion.setOntologyId(this.getOntologyId());
 
-			// Set Parent Object
-			Integer parentId = this.getParentId();
+			Integer ontologyId = this.getOntologyId();
 
-			if (parentId != null) {
-				NcboOntologyVersion parentOntology = new NcboOntologyVersion();
-				parentOntology.setId(parentId);
-
-				ontologyVersion.setNcboOntologyVersion(parentOntology);
+			if (ontologyId != null) {
+				NcboOntology ont = new NcboOntology();
+				ont.setId(ontologyId);
+				ontologyVersion.setNcboOntology(ont);
 			}
 
 			// Set User Object (populate UserId)
@@ -560,21 +571,6 @@ public class OntologyBean {
 	}
 
 	/**
-	 * @return the parentId
-	 */
-	public Integer getParentId() {
-		return parentId;
-	}
-
-	/**
-	 * @param parentId
-	 *            the parentId to set
-	 */
-	public void setParentId(Integer parentId) {
-		this.parentId = parentId;
-	}
-
-	/**
 	 * @return the userId
 	 */
 	public Integer getUserId() {
@@ -763,4 +759,18 @@ public class OntologyBean {
 		return false;
 	}
 
+	/**
+	 * @return the isManual
+	 */
+	public Byte getIsManual() {
+		return isManual;
+	}
+
+	/**
+	 * @param isManual
+	 *            the isManual to set
+	 */
+	public void setIsManual(Byte isManual) {
+		this.isManual = isManual;
+	}
 }

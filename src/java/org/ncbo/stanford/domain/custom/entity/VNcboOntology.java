@@ -12,13 +12,12 @@ import java.util.List;
  * @author Michael Dorf
  * 
  */
-public class NcboOntology {
+public class VNcboOntology {
 
 	// Fields
 
 	private Integer id;
 	private Integer ontologyId;
-	private Integer parentId;
 	private Integer userId;
 	private Integer internalVersionNumber;
 	private String versionNumber;
@@ -30,6 +29,7 @@ public class NcboOntology {
 	private Date dateCreated;
 	private Date dateReleased;
 	private String oboFoundryId;
+	private Byte isManual;
 	private String displayLabel;
 	private String format;
 	private String contactName;
@@ -74,21 +74,6 @@ public class NcboOntology {
 	 */
 	public void setOntologyId(Integer ontologyId) {
 		this.ontologyId = ontologyId;
-	}
-
-	/**
-	 * @return the parentId
-	 */
-	public Integer getParentId() {
-		return parentId;
-	}
-
-	/**
-	 * @param parentId
-	 *            the parentId to set
-	 */
-	public void setParentId(Integer parentId) {
-		this.parentId = parentId;
 	}
 
 	/**
@@ -395,9 +380,9 @@ public class NcboOntology {
 			return true;
 		if ((other == null))
 			return false;
-		if (!(other instanceof NcboOntology))
+		if (!(other instanceof VNcboOntology))
 			return false;
-		NcboOntology castOther = (NcboOntology) other;
+		VNcboOntology castOther = (VNcboOntology) other;
 
 		return ((this.getId() == castOther.getId()) || (this.getId() != null
 				&& castOther.getId() != null && this.getId().equals(
@@ -406,10 +391,6 @@ public class NcboOntology {
 						.getOntologyId() != null
 						&& castOther.getOntologyId() != null && this
 						.getOntologyId().equals(castOther.getOntologyId())))
-				&& ((this.getParentId() == castOther.getParentId()) || (this
-						.getParentId() != null
-						&& castOther.getParentId() != null && this
-						.getParentId().equals(castOther.getParentId())))
 				&& ((this.getUserId() == castOther.getUserId()) || (this
 						.getUserId() != null
 						&& castOther.getUserId() != null && this.getUserId()
@@ -500,8 +481,6 @@ public class NcboOntology {
 				* result
 				+ (getOntologyId() == null ? 0 : this.getOntologyId()
 						.hashCode());
-		result = 37 * result
-				+ (getParentId() == null ? 0 : this.getParentId().hashCode());
 		result = 37 * result
 				+ (getUserId() == null ? 0 : this.getUserId().hashCode());
 		result = 37
@@ -644,5 +623,19 @@ public class NcboOntology {
 	 */
 	public void setOboFoundryId(String oboFoundryId) {
 		this.oboFoundryId = oboFoundryId;
+	}
+
+	/**
+	 * @return the isManual
+	 */
+	public Byte getIsManual() {
+		return isManual;
+	}
+
+	/**
+	 * @param isManual the isManual to set
+	 */
+	public void setIsManual(Byte isManual) {
+		this.isManual = isManual;
 	}
 }
