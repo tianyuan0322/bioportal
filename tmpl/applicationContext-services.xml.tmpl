@@ -35,7 +35,7 @@
 		<property name="mappingResources">
 			<list>
 				<value>
-					org/ncbo/stanford/domain/custom/NcboOntology.hbm.xml
+					org/ncbo/stanford/domain/custom/VNcboOntology.hbm.xml
 				</value>
 				<value>
 					org/ncbo/stanford/domain/custom/NcboOntologyQuery.hbm.xml
@@ -44,13 +44,16 @@
 					org/ncbo/stanford/domain/custom/NcboTypeDef.hbm.xml
 				</value>
 				<value>
+					org/ncbo/stanford/domain/generated/NcboOntology.hbm.xml
+				</value>
+				<value>
 					org/ncbo/stanford/domain/generated/NcboOntologyVersion.hbm.xml
 				</value>
 				<value>
 					org/ncbo/stanford/domain/generated/NcboOntologyFile.hbm.xml
 				</value>
 				<value>
-					org/ncbo/stanford/domain/generated/NcboOntologyMetadata.hbm.xml
+					org/ncbo/stanford/domain/generated/NcboOntologyVersionMetadata.hbm.xml
 				</value>
 				<value>
 					org/ncbo/stanford/domain/generated/NcboUser.hbm.xml
@@ -59,8 +62,8 @@
 					org/ncbo/stanford/domain/generated/NcboOntologyCategory.hbm.xml
 				</value>
 				<value>
-					org/ncbo/stanford/domain/generated/NcboOntologyAdditionalMetadata.hbm.xml
-				</value>
+					org/ncbo/stanford/domain/generated/NcboOntologyAdditionalVersionMetadata.hbm.xml
+				</value>				
 				<value>
 					org/ncbo/stanford/domain/generated/NcboUserRole.hbm.xml
 				</value>
@@ -72,9 +75,6 @@
 				</value>
 				<value>
 					org/ncbo/stanford/domain/generated/NcboLRole.hbm.xml
-				</value>
-				<value>
-					org/ncbo/stanford/domain/generated/NcboSeqOntologyId.hbm.xml
 				</value>
 				<value>
 					org/ncbo/stanford/domain/generated/NcboAdminApplication.hbm.xml
@@ -176,15 +176,22 @@
 		</property>
 	</bean>
 
-	<bean id="NcboOntologyAdditionalMetadataDAO"
-		class="org.ncbo.stanford.domain.custom.dao.CustomNcboOntologyAdditionalMetadataDAO">
+	<bean id="NcboOntologyAdditionalVersionMetadataDAO"
+		class="org.ncbo.stanford.domain.custom.dao.CustomNcboOntologyAdditionalVersionMetadataDAO">
 		<property name="hibernateTemplate">
 			<ref bean="hibernateTemplate" />
 		</property>
 	</bean>
 
-	<bean id="NcboOntologyMetadataDAO"
-		class="org.ncbo.stanford.domain.custom.dao.CustomNcboOntologyMetadataDAO">
+	<bean id="NcboOntologyVersionMetadataDAO"
+		class="org.ncbo.stanford.domain.custom.dao.CustomNcboOntologyVersionMetadataDAO">
+		<property name="hibernateTemplate">
+			<ref bean="hibernateTemplate" />
+		</property>
+	</bean>
+
+	<bean id="NcboOntologyDAO"
+		class="org.ncbo.stanford.domain.custom.dao.CustomNcboOntologyDAO">
 		<property name="hibernateTemplate">
 			<ref bean="hibernateTemplate" />
 		</property>
@@ -234,13 +241,6 @@
 
 	<bean id="NcboLCategoryDAO"
 		class="org.ncbo.stanford.domain.custom.dao.CustomNcboLCategoryDAO">
-		<property name="hibernateTemplate">
-			<ref bean="hibernateTemplate" />
-		</property>
-	</bean>
-
-	<bean id="NcboSeqOntologyIdDAO"
-		class="org.ncbo.stanford.domain.custom.dao.CustomNcboSeqOntologyIdDAO">
 		<property name="hibernateTemplate">
 			<ref bean="hibernateTemplate" />
 		</property>
@@ -443,8 +443,8 @@
 		<property name="ncboOntologyVersionDAO">
 			<ref bean="NcboOntologyVersionDAO" />
 		</property>
-		<property name="ncboOntologyMetadataDAO">
-			<ref bean="NcboOntologyMetadataDAO" />
+		<property name="ncboOntologyVersionMetadataDAO">
+			<ref bean="NcboOntologyVersionMetadataDAO" />
 		</property>
 	</bean>
 
@@ -526,11 +526,14 @@
 
 	<bean id="ontologyService"
 		class="org.ncbo.stanford.service.ontology.impl.OntologyServiceImpl">
+		<property name="ncboOntologyDAO">
+			<ref bean="NcboOntologyDAO" />
+		</property>
 		<property name="ncboOntologyVersionDAO">
 			<ref bean="NcboOntologyVersionDAO" />
 		</property>
-		<property name="ncboOntologyMetadataDAO">
-			<ref bean="NcboOntologyMetadataDAO" />
+		<property name="ncboOntologyVersionMetadataDAO">
+			<ref bean="NcboOntologyVersionMetadataDAO" />
 		</property>
 		<property name="ncboOntologyFileDAO">
 			<ref bean="NcboOntologyFileDAO" />
@@ -540,9 +543,6 @@
 		</property>
 		<property name="ncboOntologyLoadQueueDAO">
 			<ref bean="NcboOntologyLoadQueueDAO" />
-		</property>
-		<property name="ncboSeqOntologyIdDAO">
-			<ref bean="NcboSeqOntologyIdDAO" />
 		</property>
 		<property name="ncboLCategoryDAO">
 			<ref bean="NcboLCategoryDAO" />
