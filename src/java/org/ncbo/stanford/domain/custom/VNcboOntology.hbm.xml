@@ -5,7 +5,7 @@
     Custom mapping file for NcboOntology
 -->
 <hibernate-mapping>
-    <class name="org.ncbo.stanford.domain.custom.entity.NcboOntology" table="v_ncbo_ontology" catalog="bioportal">          
+    <class name="org.ncbo.stanford.domain.custom.entity.VNcboOntology" table="v_ncbo_ontology" catalog="bioportal">          
 		<id name="id" type="java.lang.Integer">
 		    <column name="id" />
 		</id>           
