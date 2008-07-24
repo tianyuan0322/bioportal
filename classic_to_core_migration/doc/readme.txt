@@ -36,5 +36,6 @@
 		a. Create jar for complete bioportal_core:
 			zip -r /apps/bmir.apps/bioportal/ncbo.jar /apps/bmir.apps/bioportal/WebRoot/WEB-INF/classes/*
 		b. Compile and execute updater utility:
+			cp /apps/bmir.apps/bioportal/classic_to_core_migration/src/java/OBOFoundryIdUpdater.java /apps/bmir.apps/bioportal
   			javac -classpath apps/bmir.apps/bioportal/WebRoot/WEB-INF/lib/mysql-connector-java-5.1.6-bin.jar:/apps/bmir.apps/bioportal/ncbo.jar:. OBOFoundryIdUpdater.java
 			java -classpath /apps/bmir.apps/bioportal/ncbo.jar:/apps/bmir.apps/bioportal/WebRoot/WEB-INF/lib/mysql-connector-java-5.1.6-bin.jar:. OBOFoundryIdUpdater
