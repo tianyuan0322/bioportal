@@ -91,6 +91,16 @@ public class OntologyServiceTest extends AbstractBioPortalTest {
 		System.out.println ("OntologyServiceTest: testCreateOntology().........................DONE");
 	}
 
+	public void testCreateRemoteOntology() throws Exception {
+		
+		System.out.println ("OntologyServiceTest: testCreateRemoteOntology()........................BEGIN");
+			
+		OntologyBean ontologyBean = createOntolgyBeanRemote();
+		
+		getOntologyService().createOntology(ontologyBean, null);
+		
+		System.out.println ("OntologyServiceTest: testCreateRemoteOntology().........................DONE");
+	}
 	
 	
 
@@ -111,8 +121,6 @@ public class OntologyServiceTest extends AbstractBioPortalTest {
 	}
 	
 	
-	
-
 	public void testUpdateOntology() {
 		
 		System.out.println ("OntologyServiceTest: testUpdateOntology().......................BEGIN");
@@ -171,11 +179,13 @@ public class OntologyServiceTest extends AbstractBioPortalTest {
 		
 		OntologyBean bean = new OntologyBean();
 		
-		bean.setUserId(12564);
+		bean.setUserId(2850);
+		bean.setIsManual(new Byte("0"));
+		
 		bean.setVersionNumber("1.0");
 		//default status Id should be populated upon creation
 		//bean.setStatusId(new Integer(1));
-		bean.setVersionStatus("waiting");
+		bean.setVersionStatus("pre-production");
 		bean.setIsRemote(new Byte("0"));
 		bean.setIsReviewed(new Byte("1"));
 		bean.setDateCreated(new Date());
@@ -194,6 +204,38 @@ public class OntologyServiceTest extends AbstractBioPortalTest {
 		// set inputFilePath
 		String inputFileStr = "/dev/cyoun/workspace/bioportal_resources/uploads/3000/0/pizza.owl";
 		bean.setFilePath(inputFileStr);
+				
+		return bean;
+	}
+	
+	private OntologyBean createOntolgyBeanRemote() {
+		
+		OntologyBean bean = new OntologyBean();
+		
+		bean.setUserId(2850);
+		bean.setIsManual(new Byte("0"));
+		bean.setVersionNumber("1.0");
+		//default status Id should be populated upon creation as 5
+		//bean.setStatusId(new Integer(5));
+		bean.setVersionStatus("pre-production");
+		bean.setIsRemote(new Byte("1"));
+		bean.setIsReviewed(new Byte("0"));
+		//bean.setDateCreated(new Date());
+		bean.setDateReleased(new Date());
+		bean.setContactEmail("test111@email.com");
+		bean.setContactName("TesterFirst TesterLastName");
+		bean.setDisplayLabel("Pizza Ontology");
+		bean.setFormat("OWL-DL");
+		bean.setIsFoundry(new Byte("0"));
+				
+		ArrayList<Integer> categoryIds = new ArrayList<Integer>();
+		categoryIds.add(2807);
+		categoryIds.add(2821);
+		bean.setCategoryIds(categoryIds);
+		
+		// set inputFilePath
+		//String inputFileStr = "/dev/cyoun/workspace/bioportal_resources/uploads/3000/0/pizza.owl";
+		//bean.setFilePath(inputFileStr);
 				
 		return bean;
 	}
