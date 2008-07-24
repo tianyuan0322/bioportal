@@ -1,20 +1,19 @@
 package org.ncbo.stanford.domain.generated;
 
 /**
- * AbstractNcboOntologyMetadata entity provides the base persistence definition
- * of the NcboOntologyMetadata entity.
+ * AbstractNcboOntologyVersionMetadata entity provides the base persistence
+ * definition of the NcboOntologyVersionMetadata entity.
  * 
  * @author MyEclipse Persistence Tools
  */
 
-public abstract class AbstractNcboOntologyMetadata implements
+public abstract class AbstractNcboOntologyVersionMetadata implements
 		java.io.Serializable {
 
 	// Fields
 
 	private Integer id;
 	private NcboOntologyVersion ncboOntologyVersion;
-	private String oboFoundryId;
 	private String displayLabel;
 	private String format;
 	private String contactName;
@@ -30,11 +29,11 @@ public abstract class AbstractNcboOntologyMetadata implements
 	// Constructors
 
 	/** default constructor */
-	public AbstractNcboOntologyMetadata() {
+	public AbstractNcboOntologyVersionMetadata() {
 	}
 
 	/** minimal constructor */
-	public AbstractNcboOntologyMetadata(
+	public AbstractNcboOntologyVersionMetadata(
 			NcboOntologyVersion ncboOntologyVersion, String displayLabel,
 			String format, Byte isFoundry) {
 		this.ncboOntologyVersion = ncboOntologyVersion;
@@ -44,14 +43,13 @@ public abstract class AbstractNcboOntologyMetadata implements
 	}
 
 	/** full constructor */
-	public AbstractNcboOntologyMetadata(
-			NcboOntologyVersion ncboOntologyVersion, String oboFoundryId,
-			String displayLabel, String format, String contactName,
-			String contactEmail, String homepage, String documentation,
-			String publication, String urn, String codingScheme,
-			Byte isFoundry, String targetTerminologies) {
+	public AbstractNcboOntologyVersionMetadata(
+			NcboOntologyVersion ncboOntologyVersion, String displayLabel,
+			String format, String contactName, String contactEmail,
+			String homepage, String documentation, String publication,
+			String urn, String codingScheme, Byte isFoundry,
+			String targetTerminologies) {
 		this.ncboOntologyVersion = ncboOntologyVersion;
-		this.oboFoundryId = oboFoundryId;
 		this.displayLabel = displayLabel;
 		this.format = format;
 		this.contactName = contactName;
@@ -81,14 +79,6 @@ public abstract class AbstractNcboOntologyMetadata implements
 
 	public void setNcboOntologyVersion(NcboOntologyVersion ncboOntologyVersion) {
 		this.ncboOntologyVersion = ncboOntologyVersion;
-	}
-
-	public String getOboFoundryId() {
-		return this.oboFoundryId;
-	}
-
-	public void setOboFoundryId(String oboFoundryId) {
-		this.oboFoundryId = oboFoundryId;
 	}
 
 	public String getDisplayLabel() {

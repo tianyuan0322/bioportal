@@ -1,6 +1,7 @@
 package org.ncbo.stanford.domain.generated;
 
 import java.util.List;
+import java.util.Set;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.hibernate.LockMode;
@@ -9,28 +10,28 @@ import org.springframework.orm.hibernate3.support.HibernateDaoSupport;
 
 /**
  * A data access object (DAO) providing persistence and search support for
- * NcboSeqOntologyId entities. Transaction control of the save(), update() and
+ * NcboOntology entities. Transaction control of the save(), update() and
  * delete() operations can directly support Spring container-managed
  * transactions or they can be augmented to handle user-managed Spring
  * transactions. Each of these methods provides additional information for how
  * to configure it for the desired type of transaction control.
  * 
- * @see org.ncbo.stanford.domain.generated.NcboSeqOntologyId
+ * @see org.ncbo.stanford.domain.generated.NcboOntology
  * @author MyEclipse Persistence Tools
  */
 
-public class NcboSeqOntologyIdDAO extends HibernateDaoSupport {
-	private static final Log log = LogFactory
-			.getLog(NcboSeqOntologyIdDAO.class);
-
+public class NcboOntologyDAO extends HibernateDaoSupport {
+	private static final Log log = LogFactory.getLog(NcboOntologyDAO.class);
 	// property constants
+	public static final String OBO_FOUNDRY_ID = "oboFoundryId";
+	public static final String IS_MANUAL = "isManual";
 
 	protected void initDao() {
 		// do nothing
 	}
 
-	public void save(NcboSeqOntologyId transientInstance) {
-		log.debug("saving NcboSeqOntologyId instance");
+	public void save(NcboOntology transientInstance) {
+		log.debug("saving NcboOntology instance");
 		try {
 			getHibernateTemplate().save(transientInstance);
 			log.debug("save successful");
@@ -40,8 +41,8 @@ public class NcboSeqOntologyIdDAO extends HibernateDaoSupport {
 		}
 	}
 
-	public void delete(NcboSeqOntologyId persistentInstance) {
-		log.debug("deleting NcboSeqOntologyId instance");
+	public void delete(NcboOntology persistentInstance) {
+		log.debug("deleting NcboOntology instance");
 		try {
 			getHibernateTemplate().delete(persistentInstance);
 			log.debug("delete successful");
@@ -51,13 +52,11 @@ public class NcboSeqOntologyIdDAO extends HibernateDaoSupport {
 		}
 	}
 
-	public NcboSeqOntologyId findById(java.lang.Integer id) {
-		log.debug("getting NcboSeqOntologyId instance with id: " + id);
+	public NcboOntology findById(java.lang.Integer id) {
+		log.debug("getting NcboOntology instance with id: " + id);
 		try {
-			NcboSeqOntologyId instance = (NcboSeqOntologyId) getHibernateTemplate()
-					.get(
-							"org.ncbo.stanford.domain.generated.NcboSeqOntologyId",
-							id);
+			NcboOntology instance = (NcboOntology) getHibernateTemplate().get(
+					"org.ncbo.stanford.domain.generated.NcboOntology", id);
 			return instance;
 		} catch (RuntimeException re) {
 			log.error("get failed", re);
@@ -65,8 +64,8 @@ public class NcboSeqOntologyIdDAO extends HibernateDaoSupport {
 		}
 	}
 
-	public List findByExample(NcboSeqOntologyId instance) {
-		log.debug("finding NcboSeqOntologyId instance by example");
+	public List findByExample(NcboOntology instance) {
+		log.debug("finding NcboOntology instance by example");
 		try {
 			List results = getHibernateTemplate().findByExample(instance);
 			log.debug("find by example successful, result size: "
@@ -79,10 +78,10 @@ public class NcboSeqOntologyIdDAO extends HibernateDaoSupport {
 	}
 
 	public List findByProperty(String propertyName, Object value) {
-		log.debug("finding NcboSeqOntologyId instance with property: "
+		log.debug("finding NcboOntology instance with property: "
 				+ propertyName + ", value: " + value);
 		try {
-			String queryString = "from NcboSeqOntologyId as model where model."
+			String queryString = "from NcboOntology as model where model."
 					+ propertyName + "= ?";
 			return getHibernateTemplate().find(queryString, value);
 		} catch (RuntimeException re) {
@@ -91,10 +90,18 @@ public class NcboSeqOntologyIdDAO extends HibernateDaoSupport {
 		}
 	}
 
+	public List findByOboFoundryId(Object oboFoundryId) {
+		return findByProperty(OBO_FOUNDRY_ID, oboFoundryId);
+	}
+
+	public List findByIsManual(Object isManual) {
+		return findByProperty(IS_MANUAL, isManual);
+	}
+
 	public List findAll() {
-		log.debug("finding all NcboSeqOntologyId instances");
+		log.debug("finding all NcboOntology instances");
 		try {
-			String queryString = "from NcboSeqOntologyId";
+			String queryString = "from NcboOntology";
 			return getHibernateTemplate().find(queryString);
 		} catch (RuntimeException re) {
 			log.error("find all failed", re);
@@ -102,11 +109,11 @@ public class NcboSeqOntologyIdDAO extends HibernateDaoSupport {
 		}
 	}
 
-	public NcboSeqOntologyId merge(NcboSeqOntologyId detachedInstance) {
-		log.debug("merging NcboSeqOntologyId instance");
+	public NcboOntology merge(NcboOntology detachedInstance) {
+		log.debug("merging NcboOntology instance");
 		try {
-			NcboSeqOntologyId result = (NcboSeqOntologyId) getHibernateTemplate()
-					.merge(detachedInstance);
+			NcboOntology result = (NcboOntology) getHibernateTemplate().merge(
+					detachedInstance);
 			log.debug("merge successful");
 			return result;
 		} catch (RuntimeException re) {
@@ -115,8 +122,8 @@ public class NcboSeqOntologyIdDAO extends HibernateDaoSupport {
 		}
 	}
 
-	public void attachDirty(NcboSeqOntologyId instance) {
-		log.debug("attaching dirty NcboSeqOntologyId instance");
+	public void attachDirty(NcboOntology instance) {
+		log.debug("attaching dirty NcboOntology instance");
 		try {
 			getHibernateTemplate().saveOrUpdate(instance);
 			log.debug("attach successful");
@@ -126,8 +133,8 @@ public class NcboSeqOntologyIdDAO extends HibernateDaoSupport {
 		}
 	}
 
-	public void attachClean(NcboSeqOntologyId instance) {
-		log.debug("attaching clean NcboSeqOntologyId instance");
+	public void attachClean(NcboOntology instance) {
+		log.debug("attaching clean NcboOntology instance");
 		try {
 			getHibernateTemplate().lock(instance, LockMode.NONE);
 			log.debug("attach successful");
@@ -137,8 +144,8 @@ public class NcboSeqOntologyIdDAO extends HibernateDaoSupport {
 		}
 	}
 
-	public static NcboSeqOntologyIdDAO getFromApplicationContext(
+	public static NcboOntologyDAO getFromApplicationContext(
 			ApplicationContext ctx) {
-		return (NcboSeqOntologyIdDAO) ctx.getBean("NcboSeqOntologyIdDAO");
+		return (NcboOntologyDAO) ctx.getBean("NcboOntologyDAO");
 	}
 }

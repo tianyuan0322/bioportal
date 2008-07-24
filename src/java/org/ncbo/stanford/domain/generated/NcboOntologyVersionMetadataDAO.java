@@ -9,21 +9,21 @@ import org.springframework.orm.hibernate3.support.HibernateDaoSupport;
 
 /**
  * A data access object (DAO) providing persistence and search support for
- * NcboOntologyMetadata entities. Transaction control of the save(), update()
- * and delete() operations can directly support Spring container-managed
- * transactions or they can be augmented to handle user-managed Spring
- * transactions. Each of these methods provides additional information for how
- * to configure it for the desired type of transaction control.
+ * NcboOntologyVersionMetadata entities. Transaction control of the save(),
+ * update() and delete() operations can directly support Spring
+ * container-managed transactions or they can be augmented to handle
+ * user-managed Spring transactions. Each of these methods provides additional
+ * information for how to configure it for the desired type of transaction
+ * control.
  * 
- * @see org.ncbo.stanford.domain.generated.NcboOntologyMetadata
+ * @see org.ncbo.stanford.domain.generated.NcboOntologyVersionMetadata
  * @author MyEclipse Persistence Tools
  */
 
-public class NcboOntologyMetadataDAO extends HibernateDaoSupport {
+public class NcboOntologyVersionMetadataDAO extends HibernateDaoSupport {
 	private static final Log log = LogFactory
-			.getLog(NcboOntologyMetadataDAO.class);
+			.getLog(NcboOntologyVersionMetadataDAO.class);
 	// property constants
-	public static final String OBO_FOUNDRY_ID = "oboFoundryId";
 	public static final String DISPLAY_LABEL = "displayLabel";
 	public static final String FORMAT = "format";
 	public static final String CONTACT_NAME = "contactName";
@@ -40,8 +40,8 @@ public class NcboOntologyMetadataDAO extends HibernateDaoSupport {
 		// do nothing
 	}
 
-	public void save(NcboOntologyMetadata transientInstance) {
-		log.debug("saving NcboOntologyMetadata instance");
+	public void save(NcboOntologyVersionMetadata transientInstance) {
+		log.debug("saving NcboOntologyVersionMetadata instance");
 		try {
 			getHibernateTemplate().save(transientInstance);
 			log.debug("save successful");
@@ -51,8 +51,8 @@ public class NcboOntologyMetadataDAO extends HibernateDaoSupport {
 		}
 	}
 
-	public void delete(NcboOntologyMetadata persistentInstance) {
-		log.debug("deleting NcboOntologyMetadata instance");
+	public void delete(NcboOntologyVersionMetadata persistentInstance) {
+		log.debug("deleting NcboOntologyVersionMetadata instance");
 		try {
 			getHibernateTemplate().delete(persistentInstance);
 			log.debug("delete successful");
@@ -62,12 +62,14 @@ public class NcboOntologyMetadataDAO extends HibernateDaoSupport {
 		}
 	}
 
-	public NcboOntologyMetadata findById(java.lang.Integer id) {
-		log.debug("getting NcboOntologyMetadata instance with id: " + id);
+	public NcboOntologyVersionMetadata findById(java.lang.Integer id) {
+		log
+				.debug("getting NcboOntologyVersionMetadata instance with id: "
+						+ id);
 		try {
-			NcboOntologyMetadata instance = (NcboOntologyMetadata) getHibernateTemplate()
+			NcboOntologyVersionMetadata instance = (NcboOntologyVersionMetadata) getHibernateTemplate()
 					.get(
-							"org.ncbo.stanford.domain.generated.NcboOntologyMetadata",
+							"org.ncbo.stanford.domain.generated.NcboOntologyVersionMetadata",
 							id);
 			return instance;
 		} catch (RuntimeException re) {
@@ -76,8 +78,8 @@ public class NcboOntologyMetadataDAO extends HibernateDaoSupport {
 		}
 	}
 
-	public List findByExample(NcboOntologyMetadata instance) {
-		log.debug("finding NcboOntologyMetadata instance by example");
+	public List findByExample(NcboOntologyVersionMetadata instance) {
+		log.debug("finding NcboOntologyVersionMetadata instance by example");
 		try {
 			List results = getHibernateTemplate().findByExample(instance);
 			log.debug("find by example successful, result size: "
@@ -90,20 +92,17 @@ public class NcboOntologyMetadataDAO extends HibernateDaoSupport {
 	}
 
 	public List findByProperty(String propertyName, Object value) {
-		log.debug("finding NcboOntologyMetadata instance with property: "
-				+ propertyName + ", value: " + value);
+		log
+				.debug("finding NcboOntologyVersionMetadata instance with property: "
+						+ propertyName + ", value: " + value);
 		try {
-			String queryString = "from NcboOntologyMetadata as model where model."
+			String queryString = "from NcboOntologyVersionMetadata as model where model."
 					+ propertyName + "= ?";
 			return getHibernateTemplate().find(queryString, value);
 		} catch (RuntimeException re) {
 			log.error("find by property name failed", re);
 			throw re;
 		}
-	}
-
-	public List findByOboFoundryId(Object oboFoundryId) {
-		return findByProperty(OBO_FOUNDRY_ID, oboFoundryId);
 	}
 
 	public List findByDisplayLabel(Object displayLabel) {
@@ -151,9 +150,9 @@ public class NcboOntologyMetadataDAO extends HibernateDaoSupport {
 	}
 
 	public List findAll() {
-		log.debug("finding all NcboOntologyMetadata instances");
+		log.debug("finding all NcboOntologyVersionMetadata instances");
 		try {
-			String queryString = "from NcboOntologyMetadata";
+			String queryString = "from NcboOntologyVersionMetadata";
 			return getHibernateTemplate().find(queryString);
 		} catch (RuntimeException re) {
 			log.error("find all failed", re);
@@ -161,10 +160,11 @@ public class NcboOntologyMetadataDAO extends HibernateDaoSupport {
 		}
 	}
 
-	public NcboOntologyMetadata merge(NcboOntologyMetadata detachedInstance) {
-		log.debug("merging NcboOntologyMetadata instance");
+	public NcboOntologyVersionMetadata merge(
+			NcboOntologyVersionMetadata detachedInstance) {
+		log.debug("merging NcboOntologyVersionMetadata instance");
 		try {
-			NcboOntologyMetadata result = (NcboOntologyMetadata) getHibernateTemplate()
+			NcboOntologyVersionMetadata result = (NcboOntologyVersionMetadata) getHibernateTemplate()
 					.merge(detachedInstance);
 			log.debug("merge successful");
 			return result;
@@ -174,8 +174,8 @@ public class NcboOntologyMetadataDAO extends HibernateDaoSupport {
 		}
 	}
 
-	public void attachDirty(NcboOntologyMetadata instance) {
-		log.debug("attaching dirty NcboOntologyMetadata instance");
+	public void attachDirty(NcboOntologyVersionMetadata instance) {
+		log.debug("attaching dirty NcboOntologyVersionMetadata instance");
 		try {
 			getHibernateTemplate().saveOrUpdate(instance);
 			log.debug("attach successful");
@@ -185,8 +185,8 @@ public class NcboOntologyMetadataDAO extends HibernateDaoSupport {
 		}
 	}
 
-	public void attachClean(NcboOntologyMetadata instance) {
-		log.debug("attaching clean NcboOntologyMetadata instance");
+	public void attachClean(NcboOntologyVersionMetadata instance) {
+		log.debug("attaching clean NcboOntologyVersionMetadata instance");
 		try {
 			getHibernateTemplate().lock(instance, LockMode.NONE);
 			log.debug("attach successful");
@@ -196,8 +196,9 @@ public class NcboOntologyMetadataDAO extends HibernateDaoSupport {
 		}
 	}
 
-	public static NcboOntologyMetadataDAO getFromApplicationContext(
+	public static NcboOntologyVersionMetadataDAO getFromApplicationContext(
 			ApplicationContext ctx) {
-		return (NcboOntologyMetadataDAO) ctx.getBean("NcboOntologyMetadataDAO");
+		return (NcboOntologyVersionMetadataDAO) ctx
+				.getBean("NcboOntologyVersionMetadataDAO");
 	}
 }

@@ -1,28 +1,29 @@
 package org.ncbo.stanford.domain.generated;
 
 /**
- * NcboOntologyAdditionalMetadata entity.
+ * NcboOntologyAdditionalVersionMetadata entity.
  * 
  * @author MyEclipse Persistence Tools
  */
-public class NcboOntologyAdditionalMetadata extends
-		AbstractNcboOntologyAdditionalMetadata implements java.io.Serializable {
+public class NcboOntologyAdditionalVersionMetadata extends
+		AbstractNcboOntologyAdditionalVersionMetadata implements
+		java.io.Serializable {
 
 	// Constructors
 
 	/** default constructor */
-	public NcboOntologyAdditionalMetadata() {
+	public NcboOntologyAdditionalVersionMetadata() {
 	}
 
 	/** minimal constructor */
-	public NcboOntologyAdditionalMetadata(
+	public NcboOntologyAdditionalVersionMetadata(
 			NcboOntologyVersion ncboOntologyVersion,
 			NcboLAdditionalMetadata ncboLAdditionalMetadata) {
 		super(ncboOntologyVersion, ncboLAdditionalMetadata);
 	}
 
 	/** full constructor */
-	public NcboOntologyAdditionalMetadata(
+	public NcboOntologyAdditionalVersionMetadata(
 			NcboOntologyVersion ncboOntologyVersion,
 			NcboLAdditionalMetadata ncboLAdditionalMetadata,
 			String additionalMetadataValue) {
