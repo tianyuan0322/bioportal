@@ -6,8 +6,6 @@ import org.restlet.Application;
 import org.restlet.Context;
 import org.restlet.Restlet;
 import org.restlet.Router;
-import org.restlet.data.Request;
-import org.restlet.data.Response;
 import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.context.support.WebApplicationContextUtils;
 
@@ -37,12 +35,4 @@ public class RestApplication extends Application {
 		return router;
 	}
 
-	public void handle(Request request, Response response) {
-		try {
-			start();
-		} catch (Exception ee) {
-			ee.printStackTrace();
-		}
-		super.handle(request, response);
-	}
 }
