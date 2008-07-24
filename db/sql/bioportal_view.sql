@@ -13,7 +13,7 @@ SELECT
 	ov.date_created,
 	ov.date_released,
 	o.obo_foundry_id,
-	o.is_manual,	
+	o.is_manual,
 	ovm.display_label,
 	ovm.format,
 	ovm.contact_name,
