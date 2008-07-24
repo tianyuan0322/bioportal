@@ -14,14 +14,13 @@ import org.hibernate.HibernateException;
 import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.criterion.Expression;
-import org.ncbo.stanford.domain.custom.entity.NcboOntology;
+import org.ncbo.stanford.domain.custom.entity.VNcboOntology;
 import org.ncbo.stanford.domain.generated.NcboOntologyCategory;
 import org.ncbo.stanford.domain.generated.NcboOntologyFile;
-import org.ncbo.stanford.domain.generated.NcboOntologyMetadata;
 import org.ncbo.stanford.domain.generated.NcboOntologyVersion;
 import org.ncbo.stanford.domain.generated.NcboOntologyVersionDAO;
+import org.ncbo.stanford.domain.generated.NcboOntologyVersionMetadata;
 import org.ncbo.stanford.enumeration.StatusEnum;
-import org.ncbo.stanford.util.constants.ApplicationConstants;
 import org.springframework.orm.hibernate3.HibernateCallback;
 
 /**
@@ -46,9 +45,9 @@ public class CustomNcboOntologyVersionDAO extends NcboOntologyVersionDAO {
 	 * 
 	 * @return ontology object
 	 */
-	public NcboOntology findOntologyVersion(final Integer ontologyVersionId) {
-		NcboOntology ontology = (NcboOntology) getSession().createCriteria(
-				NcboOntology.class).add(Expression.eq("id", ontologyVersionId))
+	public VNcboOntology findOntologyVersion(final Integer ontologyVersionId) {
+		VNcboOntology ontology = (VNcboOntology) getSession().createCriteria(
+				VNcboOntology.class).add(Expression.eq("id", ontologyVersionId))
 				.uniqueResult();
 		NcboOntologyVersion ontologyVersion = findById(ontologyVersionId);
 
@@ -65,9 +64,9 @@ public class CustomNcboOntologyVersionDAO extends NcboOntologyVersionDAO {
 	 * 
 	 * @return List of ontology objects
 	 */
-	public List<NcboOntology> searchOntologyMetadata(String query) {
-		List<NcboOntology> ontologies = getSession().createCriteria(
-				NcboOntology.class).add(
+	public List<VNcboOntology> searchOntologyMetadata(String query) {
+		List<VNcboOntology> ontologies = getSession().createCriteria(
+				VNcboOntology.class).add(
 				Expression.or(
 						Expression.like("publication", "%" + query + "%"),
 						Expression.or(Expression.like("homepage", "%" + query
@@ -88,9 +87,9 @@ public class CustomNcboOntologyVersionDAO extends NcboOntologyVersionDAO {
 	 * @param oboFoundryId
 	 * @return the latest ontology version
 	 */
-	public NcboOntology findLatestOntologyVersionByOboFoundryId(
+	public VNcboOntology findLatestOntologyVersionByOboFoundryId(
 			final String oboFoundryId) {
-		NcboOntology ontology = (NcboOntology) getHibernateTemplate().execute(
+		VNcboOntology ontology = (VNcboOntology) getHibernateTemplate().execute(
 				new HibernateCallback() {
 					public Object doInHibernate(Session session)
 							throws HibernateException, SQLException {
@@ -119,9 +118,9 @@ public class CustomNcboOntologyVersionDAO extends NcboOntologyVersionDAO {
 	 * 
 	 * @return List of ontology objects
 	 */
-	public List<NcboOntology> findOntologyVersions(List<Integer> versionIds) {
-		List<NcboOntology> ontologies = getSession().createCriteria(
-				NcboOntology.class).add(Expression.in("id", versionIds)).list();
+	public List<VNcboOntology> findOntologyVersions(List<Integer> versionIds) {
+		List<VNcboOntology> ontologies = getSession().createCriteria(
+				VNcboOntology.class).add(Expression.in("id", versionIds)).list();
 
 		return ontologies;
 	}
@@ -131,7 +130,7 @@ public class CustomNcboOntologyVersionDAO extends NcboOntologyVersionDAO {
 	 * 
 	 * @return list of ontologies
 	 */
-	public List<NcboOntology> findLatestOntologyVersions() {
+	public List<VNcboOntology> findLatestOntologyVersions() {
 		return getHibernateTemplate().executeFind(new HibernateCallback() {
 			public Object doInHibernate(Session session)
 					throws HibernateException, SQLException {
@@ -149,7 +148,7 @@ public class CustomNcboOntologyVersionDAO extends NcboOntologyVersionDAO {
 	 * 
 	 * @return list of ontologies
 	 */
-	public List<NcboOntology> findLatestActiveOntologyVersions() {
+	public List<VNcboOntology> findLatestActiveOntologyVersions() {
 		return getHibernateTemplate().executeFind(new HibernateCallback() {
 			public Object doInHibernate(Session session)
 					throws HibernateException, SQLException {
@@ -168,8 +167,8 @@ public class CustomNcboOntologyVersionDAO extends NcboOntologyVersionDAO {
 	 * 
 	 * @return list of ontologies
 	 */
-	public NcboOntology findLatestOntologyVersion(final Integer ontologyId) {
-		NcboOntology ontology = (NcboOntology) getHibernateTemplate().execute(
+	public VNcboOntology findLatestOntologyVersion(final Integer ontologyId) {
+		VNcboOntology ontology = (VNcboOntology) getHibernateTemplate().execute(
 				new HibernateCallback() {
 					public Object doInHibernate(Session session)
 							throws HibernateException, SQLException {
@@ -217,20 +216,20 @@ public class CustomNcboOntologyVersionDAO extends NcboOntologyVersionDAO {
 	 * @param ontologyVersionId
 	 * @return
 	 */
-	public NcboOntologyMetadata findOntologyMetadataById(
+	public NcboOntologyVersionMetadata findOntologyMetadataById(
 			final Integer ontologyVersionId) {
 		NcboOntologyVersion ncboOntologyVersion = findById(ontologyVersionId);
-		Set<NcboOntologyMetadata> metadataSet = ncboOntologyVersion
-				.getNcboOntologyMetadatas();
+		Set<NcboOntologyVersionMetadata> metadataSet = ncboOntologyVersion
+				.getNcboOntologyVersionMetadatas();
 
 		Object[] metadataArr = metadataSet.toArray();
-		NcboOntologyMetadata ncboMetadata = (NcboOntologyMetadata) metadataArr[0];
+		NcboOntologyVersionMetadata ncboMetadata = (NcboOntologyVersionMetadata) metadataArr[0];
 
 		return ncboMetadata;
 	}
 
 	private void populateOntologyCategories(
-			NcboOntologyVersion ontologyVersion, NcboOntology ontology) {
+			NcboOntologyVersion ontologyVersion, VNcboOntology ontology) {
 		Set<NcboOntologyCategory> categories = ontologyVersion
 				.getNcboOntologyCategories();
 		ontology.setCategoryIds(new ArrayList<Integer>(0));
@@ -241,7 +240,7 @@ public class CustomNcboOntologyVersionDAO extends NcboOntologyVersionDAO {
 	}
 
 	private void populateOntologyFiles(NcboOntologyVersion ontologyVersion,
-			NcboOntology ontology) {
+			VNcboOntology ontology) {
 		Set<NcboOntologyFile> files = ontologyVersion.getNcboOntologyFiles();
 		ontology.setFilenames(new ArrayList<String>(0));
 

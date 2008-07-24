@@ -5,23 +5,22 @@ package org.ncbo.stanford.domain.custom.dao;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.ncbo.stanford.domain.generated.NcboOntologyLoadQueue;
-import org.ncbo.stanford.domain.generated.NcboOntologyMetadata;
-import org.ncbo.stanford.domain.generated.NcboOntologyMetadataDAO;
+import org.ncbo.stanford.domain.generated.NcboOntology;
+import org.ncbo.stanford.domain.generated.NcboOntologyDAO;
 
 /**
- * @author mdorf
+ * @author Michael Dorf
  * 
  */
-public class CustomNcboOntologyMetadataDAO extends NcboOntologyMetadataDAO {
+public class CustomNcboOntologyDAO extends NcboOntologyDAO {
 
 	private static final Log log = LogFactory
-			.getLog(CustomNcboOntologyLoadQueueDAO.class);
+			.getLog(CustomNcboOntologyDAO.class);
 
 	/**
 	 * 
 	 */
-	public CustomNcboOntologyMetadataDAO() {
+	public CustomNcboOntologyDAO() {
 		super();
 	}
 
@@ -29,8 +28,7 @@ public class CustomNcboOntologyMetadataDAO extends NcboOntologyMetadataDAO {
 	 * @param transientInstance
 	 * @return
 	 */
-	public NcboOntologyMetadata saveNcboOntologyMetadata(
-			NcboOntologyLoadQueue transientInstance) {
+	public NcboOntology saveOntology(NcboOntology transientInstance) {
 		try {
 			Integer newId = (Integer) getHibernateTemplate().save(
 					transientInstance);
