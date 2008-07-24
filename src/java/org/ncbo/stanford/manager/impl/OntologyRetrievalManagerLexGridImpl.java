@@ -560,7 +560,7 @@ public class OntologyRetrievalManagerLexGridImpl extends AbstractOntologyManager
             // bean.setLight(true);
         } else if (entry.getIsAnonymous() == null
                 || (entry.getIsAnonymous() != null && !entry.getIsAnonymous().booleanValue())) {
-            addConceptPropertyValue(entry, bean);
+            addConceptPropertyValueOld(entry, bean);
 
             if (StringUtils.isBlank(bean.getLabel())) {
                 bean.setLabel(getPreferredPresentation(entry));
@@ -852,7 +852,7 @@ public class OntologyRetrievalManagerLexGridImpl extends AbstractOntologyManager
         }
     }
 
-    private void addCodedEntryPropertyValueOld(Concept entry, ClassBean bean) {
+    private void addConceptPropertyValueOld(Concept entry, ClassBean bean) {
         // Presentation[] presentation = entry.getPresentation();
         HashMap<Object, Object> map = bean.getRelations();
         Presentation p = null;
