@@ -439,9 +439,15 @@ public class OntologyServiceImpl implements OntologyService {
 	 * @see org.ncbo.stanford.service.ontology.OntologyService#getOntologyFile(org.ncbo.stanford.bean.OntologyBean)
 	 */
 	public File getOntologyFile(OntologyBean ontologyBean) throws Exception {
-		String fileName = (String) ontologyBean.getFilenames().toArray()[0];
-		File file = new File(AbstractFilePathHandler.getOntologyFilePath(
-				ontologyBean, fileName));
+
+		List<String> fileNames = ontologyBean.getFilenames();
+		File file = null;
+
+		if (fileNames.size() > 0) {
+			String fileName = (String) ontologyBean.getFilenames().toArray()[0];
+			file = new File(AbstractFilePathHandler.getOntologyFilePath(
+					ontologyBean, fileName));
+		}
 
 		if (file == null) {
 			log.error("Missing ontology file to download.");
