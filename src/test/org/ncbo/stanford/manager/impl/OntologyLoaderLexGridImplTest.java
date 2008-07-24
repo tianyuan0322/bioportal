@@ -208,10 +208,11 @@ public class OntologyLoaderLexGridImplTest extends AbstractBioPortalTest {
 		
 		//bean.setOntologyId(3000);
 		// OntologyId gets automatically generated.
+		bean.setIsManual(ApplicationConstants.FALSE);
 		bean.setFormat(ApplicationConstants.FORMAT_OBO);
 		bean.setCodingScheme(TEST_OBO_URN_VERSION);
 		bean.setDisplayLabel(TEST_OBO_DISPLAY_LABEL);
-		bean.setUserId(12564);
+		bean.setUserId(1000);
 		bean.setVersionNumber("1.0");
 		bean.setStatusId(StatusEnum.STATUS_WAITING.getStatus());
 		bean.setVersionStatus("pre-production");
