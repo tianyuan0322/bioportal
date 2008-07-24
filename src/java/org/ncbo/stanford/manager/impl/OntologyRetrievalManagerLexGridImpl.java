@@ -45,7 +45,7 @@ import org.apache.commons.logging.LogFactory;
 import org.ncbo.stanford.bean.concept.ClassBean;
 import org.ncbo.stanford.bean.concept.PropertyBean;
 import org.ncbo.stanford.bean.search.SearchResultBean;
-import org.ncbo.stanford.domain.custom.entity.NcboOntology;
+import org.ncbo.stanford.domain.custom.entity.VNcboOntology;
 import org.ncbo.stanford.manager.AbstractOntologyManagerLexGrid;
 import org.ncbo.stanford.manager.OntologyRetrievalManager;
 import org.ncbo.stanford.util.constants.ApplicationConstants;
@@ -73,7 +73,7 @@ public class OntologyRetrievalManagerLexGridImpl extends AbstractOntologyManager
         lbs = LexBIGServiceImpl.defaultInstance();
     }
 
-    public List<String> findProperties(NcboOntology ncboOntology) throws Exception {
+    public List<String> findProperties(VNcboOntology ncboOntology) throws Exception {
         String urnAndVersion = ncboOntology.getCodingScheme();
         String urnVersionArray[] = splitUrnAndVersion(urnAndVersion);
         CodingScheme cs = getCodingScheme(lbs, urnVersionArray[0], urnVersionArray[1]);
@@ -93,7 +93,7 @@ public class OntologyRetrievalManagerLexGridImpl extends AbstractOntologyManager
     /**
      * Get the root concept for the specified ontology.
      */
-    public ClassBean findRootConcept(NcboOntology ncboOntology) throws Exception {
+    public ClassBean findRootConcept(VNcboOntology ncboOntology) throws Exception {
         LexBIGServiceConvenienceMethods lbscm = (LexBIGServiceConvenienceMethods) lbs
                 .getGenericExtension("LexBIGServiceConvenienceMethods");
 
@@ -114,7 +114,7 @@ public class OntologyRetrievalManagerLexGridImpl extends AbstractOntologyManager
         return createThingClassBeanWithCount(rcrl);
     }
 
-    public ClassBean findConceptWithoutRelations(NcboOntology ncboOntology, String conceptId) throws Exception {
+    public ClassBean findConceptWithoutRelations(VNcboOntology ncboOntology, String conceptId) throws Exception {
         String scheme = getLexGridCodingSchemeName(ncboOntology);
         CodingSchemeVersionOrTag csvt = getLexGridCodingSchemeVersion(ncboOntology);
 
@@ -131,7 +131,7 @@ public class OntologyRetrievalManagerLexGridImpl extends AbstractOntologyManager
         return null;
     }
 
-    public ClassBean findConcept(NcboOntology ncboOntology, String conceptId) throws Exception {
+    public ClassBean findConcept(VNcboOntology ncboOntology, String conceptId) throws Exception {
         String scheme = getLexGridCodingSchemeName(ncboOntology);
         CodingSchemeVersionOrTag csvt = getLexGridCodingSchemeVersion(ncboOntology);
         ResolvedConceptReferenceList matches = lbs.getNodeGraph(scheme, csvt, null).resolveAsList(
@@ -154,7 +154,7 @@ public class OntologyRetrievalManagerLexGridImpl extends AbstractOntologyManager
         return null;
     }
 
-    public ClassBean findPathToRoot(NcboOntology ncboOntology, String conceptId, boolean light) throws Exception {
+    public ClassBean findPathToRoot(VNcboOntology ncboOntology, String conceptId, boolean light) throws Exception {
         String scheme = getLexGridCodingSchemeName(ncboOntology);
         CodingSchemeVersionOrTag csvt = getLexGridCodingSchemeVersion(ncboOntology);
         LexBIGServiceConvenienceMethods lbscm = (LexBIGServiceConvenienceMethods) lbs
@@ -175,7 +175,7 @@ public class OntologyRetrievalManagerLexGridImpl extends AbstractOntologyManager
         return createThingClassBean(classBeans);
     }
 
-    public List<ClassBean> findParent(NcboOntology ncboOntology, String conceptId) throws Exception {
+    public List<ClassBean> findParent(VNcboOntology ncboOntology, String conceptId) throws Exception {
         String scheme = getLexGridCodingSchemeName(ncboOntology);
         CodingSchemeVersionOrTag csvt = getLexGridCodingSchemeVersion(ncboOntology);
         AssociationList associations = getHierarchyLevelPrev(scheme, csvt, conceptId);
@@ -186,7 +186,7 @@ public class OntologyRetrievalManagerLexGridImpl extends AbstractOntologyManager
         return classBeans;
     }
 
-    public List<ClassBean> findChildren(NcboOntology ncboOntology, String conceptId) throws Exception {
+    public List<ClassBean> findChildren(VNcboOntology ncboOntology, String conceptId) throws Exception {
         String scheme = getLexGridCodingSchemeName(ncboOntology);
         CodingSchemeVersionOrTag csvt = getLexGridCodingSchemeVersion(ncboOntology);
         AssociationList associations = getHierarchyLevelNext(scheme, csvt, conceptId);
@@ -197,11 +197,11 @@ public class OntologyRetrievalManagerLexGridImpl extends AbstractOntologyManager
         return classBeans;
     }
 
-    public ArrayList<SearchResultBean> findConceptNameExact(List<NcboOntology> ontologyVersions, String query,
+    public ArrayList<SearchResultBean> findConceptNameExact(List<VNcboOntology> ontologyVersions, String query,
             boolean includeObsolete, int maxToReturn) {
         ArrayList<SearchResultBean> results = new ArrayList<SearchResultBean>();
 
-        for (NcboOntology ontologyVersion : ontologyVersions) {
+        for (VNcboOntology ontologyVersion : ontologyVersions) {
             SearchResultBean result = searchNodesForName(ontologyVersion, query, maxToReturn,
                     Match_Types.SEARCH_EXACT_MATCH, false, includeObsolete);
             results.add(result);
@@ -210,11 +210,11 @@ public class OntologyRetrievalManagerLexGridImpl extends AbstractOntologyManager
         return results;
     }
 
-    public List<SearchResultBean> findConceptNameStartsWith(List<NcboOntology> ontologyVersions, String query,
+    public List<SearchResultBean> findConceptNameStartsWith(List<VNcboOntology> ontologyVersions, String query,
             boolean includeObsolete, int maxToReturn) {
         ArrayList<SearchResultBean> results = new ArrayList<SearchResultBean>();
 
-        for (NcboOntology ontologyVersion : ontologyVersions) {
+        for (VNcboOntology ontologyVersion : ontologyVersions) {
             SearchResultBean result = searchNodesForName(ontologyVersion, query, maxToReturn,
                     Match_Types.SEARCH_STARTS_WITH, false, includeObsolete);
             results.add(result);
@@ -223,11 +223,11 @@ public class OntologyRetrievalManagerLexGridImpl extends AbstractOntologyManager
         return results;
     }
 
-    public List<SearchResultBean> findConceptNameContains(List<NcboOntology> ontologyVersions, String query,
+    public List<SearchResultBean> findConceptNameContains(List<VNcboOntology> ontologyVersions, String query,
             boolean includeObsolete, int maxToReturn) {
         ArrayList<SearchResultBean> results = new ArrayList<SearchResultBean>();
 
-        for (NcboOntology ontologyVersion : ontologyVersions) {
+        for (VNcboOntology ontologyVersion : ontologyVersions) {
             SearchResultBean result = searchNodesForName(ontologyVersion, query, maxToReturn,
                     Match_Types.SEARCH_CONTAINS, false, includeObsolete);
             results.add(result);
@@ -249,11 +249,11 @@ public class OntologyRetrievalManagerLexGridImpl extends AbstractOntologyManager
      * @param maxToReturn
      * @return
      */
-    public List<SearchResultBean> findConceptPropertyExact(List<NcboOntology> ontologyVersions, String query,
+    public List<SearchResultBean> findConceptPropertyExact(List<VNcboOntology> ontologyVersions, String query,
             String property_names[], boolean includeObsolete, int maxToReturn) {
         ArrayList<SearchResultBean> results = new ArrayList<SearchResultBean>();
 
-        for (NcboOntology ontologyVersion : ontologyVersions) {
+        for (VNcboOntology ontologyVersion : ontologyVersions) {
             SearchResultBean result = searchNodesForProperties(ontologyVersion, query, property_names, false,
                     includeObsolete, maxToReturn, Match_Types.SEARCH_EXACT_MATCH);
             results.add(result);
@@ -275,11 +275,11 @@ public class OntologyRetrievalManagerLexGridImpl extends AbstractOntologyManager
      * @param maxToReturn
      * @return
      */
-    public List<SearchResultBean> findConceptPropertyStartsWith(List<NcboOntology> ontologyVersions, String query,
+    public List<SearchResultBean> findConceptPropertyStartsWith(List<VNcboOntology> ontologyVersions, String query,
             String property_names[], boolean includeObsolete, int maxToReturn) {
         ArrayList<SearchResultBean> results = new ArrayList<SearchResultBean>();
 
-        for (NcboOntology ontologyVersion : ontologyVersions) {
+        for (VNcboOntology ontologyVersion : ontologyVersions) {
             SearchResultBean result = searchNodesForProperties(ontologyVersion, query, property_names, false,
                     includeObsolete, maxToReturn, Match_Types.SEARCH_STARTS_WITH);
             results.add(result);
@@ -301,11 +301,11 @@ public class OntologyRetrievalManagerLexGridImpl extends AbstractOntologyManager
      * @param maxToReturn
      * @return
      */
-    public List<SearchResultBean> findConceptPropertyContains(List<NcboOntology> ontologyVersions, String query,
+    public List<SearchResultBean> findConceptPropertyContains(List<VNcboOntology> ontologyVersions, String query,
             boolean includeObsolete, int maxToReturn) {
         ArrayList<SearchResultBean> results = new ArrayList<SearchResultBean>();
 
-        for (NcboOntology ontologyVersion : ontologyVersions) {
+        for (VNcboOntology ontologyVersion : ontologyVersions) {
             SearchResultBean result = searchNodesForProperties(ontologyVersion, query, null, false, includeObsolete,
                     maxToReturn, Match_Types.SEARCH_CONTAINS);
             results.add(result);
@@ -331,7 +331,7 @@ public class OntologyRetrievalManagerLexGridImpl extends AbstractOntologyManager
         return temp;
     }
 
-    private SearchResultBean searchNodesForProperties(NcboOntology ncboOntology, String search_string,
+    private SearchResultBean searchNodesForProperties(VNcboOntology ncboOntology, String search_string,
             String[] property_names, boolean soundsLike, boolean includeObsolete, int maxToReturn, Match_Types algorithm) {
         try {
             String urnAndVersion = ncboOntology.getCodingScheme();
@@ -399,7 +399,7 @@ public class OntologyRetrievalManagerLexGridImpl extends AbstractOntologyManager
 
     }
 
-    private SearchResultBean searchNodesForName(NcboOntology ncboOntology, String search_string, int maxToReturn,
+    private SearchResultBean searchNodesForName(VNcboOntology ncboOntology, String search_string, int maxToReturn,
             Match_Types algorithm, boolean soundsLike, boolean includeObsolete) {
         try {
             String urnAndVersion = ncboOntology.getCodingScheme();

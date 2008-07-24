@@ -46,7 +46,7 @@ import org.LexGrid.LexOnt.CsmfVersion;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.ncbo.stanford.bean.OntologyBean;
-import org.ncbo.stanford.domain.generated.NcboOntologyMetadata;
+import org.ncbo.stanford.domain.generated.NcboOntologyVersionMetadata;
 import org.ncbo.stanford.manager.AbstractOntologyManagerLexGrid;
 import org.ncbo.stanford.manager.OntologyLoadManager;
 import org.ncbo.stanford.util.constants.ApplicationConstants;
@@ -172,7 +172,7 @@ public class OntologyLoadManagerLexGridImpl extends
 
 			// Update the NCBO Metadata table with the unique LexGrid url and
 			// version for the ontology
-			NcboOntologyMetadata ncboMetadata = ncboOntologyVersionDAO
+			NcboOntologyVersionMetadata ncboMetadata = ncboOntologyVersionDAO
 					.findOntologyMetadataById(ontology_bean.getId());
 			
 			if (ncboMetadata != null) {
@@ -181,9 +181,9 @@ public class OntologyLoadManagerLexGridImpl extends
 				log
 						.debug("Updating the NcboOntologyMetadata with the codingScheme name="
 								+ urnAndVersion);
-				ncboOntologyMetadataDAO.getHibernateTemplate().update(
+				ncboOntologyVersionMetadataDAO.getHibernateTemplate().update(
 						ncboMetadata);
-				ncboOntologyMetadataDAO.getSessionFactory().getCurrentSession()
+				ncboOntologyVersionMetadataDAO.getSessionFactory().getCurrentSession()
 						.flush();
 				ontology_bean.setCodingScheme(urnAndVersion);
 			} else {
@@ -237,12 +237,12 @@ public class OntologyLoadManagerLexGridImpl extends
 			lbsm.deactivateCodingSchemeVersion(acsvr, null);
 			lbsm.removeCodingSchemeVersion(acsvr);
 			ontology_bean.setCodingScheme(null);
-			NcboOntologyMetadata ncboMetadata = ncboOntologyVersionDAO
+			NcboOntologyVersionMetadata ncboMetadata = ncboOntologyVersionDAO
 					.findOntologyMetadataById(ontology_bean.getId());
 
 			if (ncboMetadata != null) {
 				ncboMetadata.setCodingScheme(null);
-				ncboOntologyMetadataDAO.save(ncboMetadata);
+				ncboOntologyVersionMetadataDAO.save(ncboMetadata);
 			}
 		}
 	}

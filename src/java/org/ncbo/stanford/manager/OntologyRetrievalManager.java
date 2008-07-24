@@ -4,7 +4,7 @@ import java.util.List;
 
 import org.ncbo.stanford.bean.concept.ClassBean;
 import org.ncbo.stanford.bean.search.SearchResultBean;
-import org.ncbo.stanford.domain.custom.entity.NcboOntology;
+import org.ncbo.stanford.domain.custom.entity.VNcboOntology;
 
 /**
  * An interface designed to provide an abstraction layer to ontology and concept
@@ -21,27 +21,27 @@ import org.ncbo.stanford.domain.custom.entity.NcboOntology;
  * 
  */
 public interface OntologyRetrievalManager {
-	public ClassBean findConcept(NcboOntology ontologyVersion, String conceptId)
+	public ClassBean findConcept(VNcboOntology ontologyVersion, String conceptId)
 			throws Exception;
 
-	public ClassBean findRootConcept(NcboOntology ontologyVersion)
+	public ClassBean findRootConcept(VNcboOntology ontologyVersion)
 			throws Exception;
 
 	public List<SearchResultBean> findConceptNameContains(
-			List<NcboOntology> ontologyVersions, String query,
+			List<VNcboOntology> ontologyVersions, String query,
 			boolean includeObsolete, int maxToReturn);
 
 	public List<SearchResultBean> findConceptNameExact(
-			List<NcboOntology> ontologyVersions, String query,
+			List<VNcboOntology> ontologyVersions, String query,
 			boolean includeObsolete, int maxToReturn);
 
 	public List<SearchResultBean> findConceptNameStartsWith(
-			List<NcboOntology> ontologyVersions, String query,
+			List<VNcboOntology> ontologyVersions, String query,
 			boolean includeObsolete, int maxToReturn);
 	
 	public List<SearchResultBean> findConceptPropertyContains(
-			List<NcboOntology> ontologyVersions, String query,
+			List<VNcboOntology> ontologyVersions, String query,
 			boolean includeObsolete, int maxToReturn);
 	
-	public ClassBean findPathToRoot(NcboOntology ontologyVersion, String conceptId,boolean light) throws Exception;
+	public ClassBean findPathToRoot(VNcboOntology ontologyVersion, String conceptId,boolean light) throws Exception;
 }

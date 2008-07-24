@@ -12,7 +12,7 @@ import org.apache.commons.logging.LogFactory;
 import org.ncbo.stanford.bean.OntologyBean;
 import org.ncbo.stanford.bean.concept.ClassBean;
 import org.ncbo.stanford.bean.search.SearchResultBean;
-import org.ncbo.stanford.domain.custom.entity.NcboOntology;
+import org.ncbo.stanford.domain.custom.entity.VNcboOntology;
 import org.ncbo.stanford.manager.AbstractOntologyManagerProtege;
 import org.ncbo.stanford.manager.OntologyRetrievalManager;
 import org.ncbo.stanford.util.constants.ApplicationConstants;
@@ -91,7 +91,7 @@ public class OntologyRetrievalManagerProtegeImpl extends
 	/**
 	 * Get the root concept for the specified ontology.
 	 */
-	public ClassBean findRootConcept(NcboOntology ontologyVersion) {
+	public ClassBean findRootConcept(VNcboOntology ontologyVersion) {
 		KnowledgeBase kb = getKnowledgeBase(ontologyVersion);
 
 		// Get all root nodes associated with this ontology. Then iterate
@@ -110,7 +110,7 @@ public class OntologyRetrievalManagerProtegeImpl extends
 	}
 
 	@SuppressWarnings("deprecation")
-	public ClassBean findConcept(NcboOntology ontologyVersion, String conceptId) {
+	public ClassBean findConcept(VNcboOntology ontologyVersion, String conceptId) {
 		KnowledgeBase kb = getKnowledgeBase(ontologyVersion);
 
 		// String conceptName = owlModel.getResourceNameForURI(conceptId);
@@ -128,7 +128,7 @@ public class OntologyRetrievalManagerProtegeImpl extends
 		return null;
 	}
 
-	public ClassBean findPathToRoot(NcboOntology ontologyVersion, String conceptId,boolean light) {
+	public ClassBean findPathToRoot(VNcboOntology ontologyVersion, String conceptId,boolean light) {
 
 		KnowledgeBase kb = getKnowledgeBase(ontologyVersion);
 
@@ -149,11 +149,11 @@ public class OntologyRetrievalManagerProtegeImpl extends
 	}
 
 	public List<SearchResultBean> findConceptNameExact(
-			List<NcboOntology> ontologyVersions, String query,
+			List<VNcboOntology> ontologyVersions, String query,
 			boolean includeObsolete, int maxToReturn) {
 		ArrayList<SearchResultBean> results = new ArrayList<SearchResultBean>();
 
-		for (NcboOntology ontologyVersion : ontologyVersions) {
+		for (VNcboOntology ontologyVersion : ontologyVersions) {
 			SearchResultBean srb = new SearchResultBean();
 			srb.setOntologyVersionId(ontologyVersion.getId());
 			KnowledgeBase kb = getKnowledgeBase(ontologyVersion);
@@ -188,10 +188,10 @@ public class OntologyRetrievalManagerProtegeImpl extends
 	}
 
 	public List<SearchResultBean> findConceptNameStartsWith(
-			List<NcboOntology> ontologyVersions, String query,
+			List<VNcboOntology> ontologyVersions, String query,
 			boolean includeObsolete, int maxToReturn) {
 		ArrayList<SearchResultBean> results = new ArrayList<SearchResultBean>();
-		for (NcboOntology ontologyVersion : ontologyVersions) {
+		for (VNcboOntology ontologyVersion : ontologyVersions) {
 			SearchResultBean srb = new SearchResultBean();
 			srb.setOntologyVersionId(ontologyVersion.getId());
 			KnowledgeBase kb = getKnowledgeBase(ontologyVersion);
@@ -223,11 +223,11 @@ public class OntologyRetrievalManagerProtegeImpl extends
 	}
 
 	public List<SearchResultBean> findConceptNameContains(
-			List<NcboOntology> ontologyVersions, String query,
+			List<VNcboOntology> ontologyVersions, String query,
 			boolean includeObsolete, int maxToReturn) {
 		ArrayList<SearchResultBean> results = new ArrayList<SearchResultBean>();
 
-		for (NcboOntology ontologyVersion : ontologyVersions) {
+		for (VNcboOntology ontologyVersion : ontologyVersions) {
 			SearchResultBean srb = new SearchResultBean();
 			srb.setOntologyVersionId(ontologyVersion.getId());
 			KnowledgeBase kb = getKnowledgeBase(ontologyVersion);
@@ -271,11 +271,11 @@ public class OntologyRetrievalManagerProtegeImpl extends
 		return new ArrayList();
 	}
 
-	public ArrayList<SearchResultBean> findConceptPropertyContains(List<NcboOntology> ontologyVersions, String query,
+	public ArrayList<SearchResultBean> findConceptPropertyContains(List<VNcboOntology> ontologyVersions, String query,
 			boolean includeObsolete, int maxToReturn) {
 		ArrayList<SearchResultBean> results = new ArrayList<SearchResultBean>();
 
-		for (NcboOntology ontologyVersion : ontologyVersions) {
+		for (VNcboOntology ontologyVersion : ontologyVersions) {
 			SearchResultBean srb = new SearchResultBean();
 			srb.setOntologyVersionId(ontologyVersion.getId());
 			KnowledgeBase kb = getKnowledgeBase(ontologyVersion);
@@ -326,7 +326,7 @@ public class OntologyRetrievalManagerProtegeImpl extends
 	/**
 	 * Gets the Protege ontology associated with the specified ontology id.
 	 */
-	private KnowledgeBase getKnowledgeBase(NcboOntology ontologyVersion) {
+	private KnowledgeBase getKnowledgeBase(VNcboOntology ontologyVersion) {
 		DatabaseKnowledgeBaseFactory factory = null;
 
 		if (ontologyVersion.getFormat().contains("OWL")) {
