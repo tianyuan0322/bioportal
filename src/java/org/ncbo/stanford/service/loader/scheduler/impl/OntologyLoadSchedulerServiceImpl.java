@@ -15,7 +15,7 @@ import org.apache.commons.logging.LogFactory;
 import org.ncbo.stanford.bean.OntologyBean;
 import org.ncbo.stanford.domain.custom.dao.CustomNcboOntologyLoadQueueDAO;
 import org.ncbo.stanford.domain.custom.dao.CustomNcboOntologyVersionDAO;
-import org.ncbo.stanford.domain.custom.entity.NcboOntology;
+import org.ncbo.stanford.domain.custom.entity.VNcboOntology;
 import org.ncbo.stanford.domain.generated.NcboLStatus;
 import org.ncbo.stanford.domain.generated.NcboOntologyLoadQueue;
 import org.ncbo.stanford.domain.generated.NcboOntologyVersion;
@@ -154,7 +154,7 @@ public class OntologyLoadSchedulerServiceImpl implements
 	private void processRecord(NcboOntologyLoadQueue loadQueue) {
 		String errorMessage = null;
 		// populate bean
-		NcboOntology ontology = ncboOntologyVersionDAO
+		VNcboOntology ontology = ncboOntologyVersionDAO
 				.findOntologyVersion(loadQueue.getNcboOntologyVersion().getId());
 		OntologyBean ontologyBean = new OntologyBean();
 		ontologyBean.populateFromEntity(ontology);

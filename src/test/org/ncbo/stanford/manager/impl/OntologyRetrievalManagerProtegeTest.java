@@ -7,7 +7,7 @@ import org.ncbo.stanford.AbstractBioPortalTest;
 import org.ncbo.stanford.bean.concept.ClassBean;
 import org.ncbo.stanford.bean.search.SearchResultBean;
 import org.ncbo.stanford.domain.custom.dao.CustomNcboOntologyVersionDAO;
-import org.ncbo.stanford.domain.custom.entity.NcboOntology;
+import org.ncbo.stanford.domain.custom.entity.VNcboOntology;
 import org.ncbo.stanford.domain.generated.NcboOntologyVersion;
 import org.ncbo.stanford.manager.OntologyRetrievalManager;
 import org.ncbo.stanford.util.constants.ApplicationConstants;
@@ -33,8 +33,8 @@ public class OntologyRetrievalManagerProtegeTest extends AbstractBioPortalTest {
 			.getBean("NcboOntologyVersionDAO",
 					CustomNcboOntologyVersionDAO.class);
 		
-		 NcboOntology version = ncboOntologyVersionDAO.findOntologyVersion(TEST_ONT_ID);
-		 ArrayList<NcboOntology> versions = new ArrayList<NcboOntology>();
+		 VNcboOntology version = ncboOntologyVersionDAO.findOntologyVersion(TEST_ONT_ID);
+		 ArrayList<VNcboOntology> versions = new ArrayList<VNcboOntology>();
 		 versions.add(version);
 		 
 		 List<SearchResultBean> results = ocMgr.findConceptNameContains(versions,"*Pizza*",true,100);
@@ -57,7 +57,7 @@ public class OntologyRetrievalManagerProtegeTest extends AbstractBioPortalTest {
 	.getBean("NcboOntologyVersionDAO",
 			CustomNcboOntologyVersionDAO.class);
 
-NcboOntology version = ncboOntologyVersionDAO.findOntologyVersion(TEST_ONT_ID);
+VNcboOntology version = ncboOntologyVersionDAO.findOntologyVersion(TEST_ONT_ID);
 ClassBean conceptBean = ocMgr.findPathToRoot( version,"SpicyPizza",false);
 
 System.out.println("Path");
@@ -97,7 +97,7 @@ while (subclasses!=null){
 			.getBean("NcboOntologyVersionDAO",
 					CustomNcboOntologyVersionDAO.class);
 		
-		NcboOntology version = ncboOntologyVersionDAO.findOntologyVersion(TEST_ONT_ID);
+		VNcboOntology version = ncboOntologyVersionDAO.findOntologyVersion(TEST_ONT_ID);
 		ClassBean conceptBean = ocMgr.findRootConcept(version);
 
 		System.out.println("ROOT");

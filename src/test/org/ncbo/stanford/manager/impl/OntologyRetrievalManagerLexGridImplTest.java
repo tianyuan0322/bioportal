@@ -6,7 +6,7 @@ import java.util.List;
 import org.ncbo.stanford.AbstractBioPortalTest;
 import org.ncbo.stanford.bean.concept.ClassBean;
 import org.ncbo.stanford.bean.search.SearchResultBean;
-import org.ncbo.stanford.domain.custom.entity.NcboOntology;
+import org.ncbo.stanford.domain.custom.entity.VNcboOntology;
 
 
 /**
@@ -36,7 +36,7 @@ public class OntologyRetrievalManagerLexGridImplTest extends AbstractBioPortalTe
 		System.out.println("testFindOBORootConcept()");
 		retrievalManager = getRetrievalManagerLexGrid();
 
-		NcboOntology ncboOntology = retrievalManager.getLatestNcboOntology(TEST_OBO_DISPLAY_LABEL);
+		VNcboOntology ncboOntology = retrievalManager.getLatestNcboOntology(TEST_OBO_DISPLAY_LABEL);
 		ClassBean classBean = retrievalManager.findRootConcept(ncboOntology);
 		System.out.println("Root concept is " + classBean);
 		System.out.println("\n");
@@ -46,7 +46,7 @@ public class OntologyRetrievalManagerLexGridImplTest extends AbstractBioPortalTe
 	public void testFindGenericOwlRootConcept() throws Exception {
 		System.out.println("testFindGenericOwlRootConcept()");
 		retrievalManager = getRetrievalManagerLexGrid();
-		NcboOntology ncboOntology = retrievalManager.getLatestNcboOntology(TEST_OWL_DISPLAY_LABEL);
+		VNcboOntology ncboOntology = retrievalManager.getLatestNcboOntology(TEST_OWL_DISPLAY_LABEL);
 		ClassBean classBean = retrievalManager.findRootConcept(ncboOntology);
 		System.out.println("Root concept is " + classBean);
 		System.out.println("\n");
@@ -57,7 +57,7 @@ public class OntologyRetrievalManagerLexGridImplTest extends AbstractBioPortalTe
 	public void testFindLexGridXMLRootConcept() throws Exception {
 		System.out.println("testFindLexGridXMLRootConcept()");
 		retrievalManager = getRetrievalManagerLexGrid();
-		NcboOntology ncboOntology = retrievalManager.getLatestNcboOntology(TEST_LEXGRID_DISPLAY_LABEL);
+		VNcboOntology ncboOntology = retrievalManager.getLatestNcboOntology(TEST_LEXGRID_DISPLAY_LABEL);
 		ClassBean classBean = retrievalManager.findRootConcept(ncboOntology);
 		System.out.println("Root concept is " + classBean);
 		System.out.println("\n");
@@ -67,7 +67,7 @@ public class OntologyRetrievalManagerLexGridImplTest extends AbstractBioPortalTe
 	public void testFindUMLSRootConcept() throws Exception {
 		System.out.println("testFindUMLSRootConcept()");
 		retrievalManager = getRetrievalManagerLexGrid();
-		NcboOntology ncboOntology = retrievalManager.getLatestNcboOntology(TEST_UMLS_DISPLAY_LABEL);
+		VNcboOntology ncboOntology = retrievalManager.getLatestNcboOntology(TEST_UMLS_DISPLAY_LABEL);
 		ClassBean classBean = retrievalManager.findRootConcept(ncboOntology);
 		System.out.println("Root concept is " + classBean);
 		System.out.println("\n");
@@ -78,7 +78,7 @@ public class OntologyRetrievalManagerLexGridImplTest extends AbstractBioPortalTe
 	public void testFindOBOProperties() throws Exception {
 		System.out.println("testFindOBOProperties()");
 		retrievalManager = getRetrievalManagerLexGrid();
-		NcboOntology ncboOntology = retrievalManager.getLatestNcboOntology(TEST_OBO_DISPLAY_LABEL);
+		VNcboOntology ncboOntology = retrievalManager.getLatestNcboOntology(TEST_OBO_DISPLAY_LABEL);
 		List<String> properties = retrievalManager.findProperties(ncboOntology);
 		System.out.println("Properties for cell ontology are :");
 		for (String str : properties) {
@@ -92,7 +92,7 @@ public class OntologyRetrievalManagerLexGridImplTest extends AbstractBioPortalTe
 		System.out.println("testOBOFindConcept()");
 		retrievalManager = getRetrievalManagerLexGrid();
 
-		NcboOntology ncboOntology = retrievalManager.getLatestNcboOntology(TEST_OBO_DISPLAY_LABEL);
+		VNcboOntology ncboOntology = retrievalManager.getLatestNcboOntology(TEST_OBO_DISPLAY_LABEL);
 		String conceptID = "CL:0000255";
 		ClassBean classBean = retrievalManager.findConcept(ncboOntology, conceptID);
 		System.out.println("Concept " + conceptID + " of cell ontology is " + classBean);
@@ -104,7 +104,7 @@ public class OntologyRetrievalManagerLexGridImplTest extends AbstractBioPortalTe
 		System.out.println("testOBOFindChildren()");
 		retrievalManager = getRetrievalManagerLexGrid();
 
-		NcboOntology ncboOntology = retrievalManager.getLatestNcboOntology(TEST_OBO_DISPLAY_LABEL);
+		VNcboOntology ncboOntology = retrievalManager.getLatestNcboOntology(TEST_OBO_DISPLAY_LABEL);
 		String conceptID = "CL:0000255";
 		List<ClassBean> classBeans = retrievalManager.findChildren(ncboOntology,
 				conceptID);
@@ -120,7 +120,7 @@ public class OntologyRetrievalManagerLexGridImplTest extends AbstractBioPortalTe
 		System.out.println("testOBOFindParent()");
 		retrievalManager = getRetrievalManagerLexGrid();
 
-		NcboOntology ncboOntology = retrievalManager.getLatestNcboOntology(TEST_OBO_DISPLAY_LABEL);
+		VNcboOntology ncboOntology = retrievalManager.getLatestNcboOntology(TEST_OBO_DISPLAY_LABEL);
 		String conceptID = "CL:0000255";
 		List<ClassBean> classBeans = retrievalManager.findParent(ncboOntology,
 				conceptID);
@@ -136,7 +136,7 @@ public class OntologyRetrievalManagerLexGridImplTest extends AbstractBioPortalTe
 		System.out.println("testOBOFindPathToRoot()");
 		retrievalManager = getRetrievalManagerLexGrid();
 
-		NcboOntology ncboOntology = retrievalManager.getLatestNcboOntology(TEST_OBO_DISPLAY_LABEL);
+		VNcboOntology ncboOntology = retrievalManager.getLatestNcboOntology(TEST_OBO_DISPLAY_LABEL);
 		String conceptID = "CL:0000255";
 		ClassBean pathBean = retrievalManager.findPathToRoot(ncboOntology,
 				conceptID,true);
@@ -151,7 +151,7 @@ public class OntologyRetrievalManagerLexGridImplTest extends AbstractBioPortalTe
         System.out.println("testOBOFindPathToRootIncludingChildren()");
         retrievalManager = getRetrievalManagerLexGrid();
 
-        NcboOntology ncboOntology = retrievalManager.getLatestNcboOntology(TEST_OBO_DISPLAY_LABEL);
+        VNcboOntology ncboOntology = retrievalManager.getLatestNcboOntology(TEST_OBO_DISPLAY_LABEL);
         String conceptID = "CL:0000255";
         ClassBean pathBean = retrievalManager.findPathToRoot(ncboOntology,
                 conceptID, false);
@@ -164,8 +164,8 @@ public class OntologyRetrievalManagerLexGridImplTest extends AbstractBioPortalTe
 	public void testFindConceptNameContains() throws Exception {
 		System.out.println("testFindConceptNameContains()");
 		retrievalManager = getRetrievalManagerLexGrid();
-		NcboOntology ncboOntology = retrievalManager.getLatestNcboOntology(TEST_OBO_DISPLAY_LABEL);
-		List<NcboOntology> ontologyVersionIds = (List<NcboOntology>) Arrays.asList(ncboOntology);
+		VNcboOntology ncboOntology = retrievalManager.getLatestNcboOntology(TEST_OBO_DISPLAY_LABEL);
+		List<VNcboOntology> ontologyVersionIds = (List<VNcboOntology>) Arrays.asList(ncboOntology);
 		String query = "eukaryotic";
 		List<SearchResultBean> searchResultBeans = retrievalManager
 				.findConceptNameContains(ontologyVersionIds, query, false, 100);
@@ -185,8 +185,8 @@ public class OntologyRetrievalManagerLexGridImplTest extends AbstractBioPortalTe
 		System.out.println("testFindConceptNameExact()");
 		retrievalManager = getRetrievalManagerLexGrid();
 
-		NcboOntology ncboOntology = retrievalManager.getLatestNcboOntology(TEST_OBO_DISPLAY_LABEL);
-		List<NcboOntology> ontologyVersionIds = (List<NcboOntology>) Arrays.asList(ncboOntology);
+		VNcboOntology ncboOntology = retrievalManager.getLatestNcboOntology(TEST_OBO_DISPLAY_LABEL);
+		List<VNcboOntology> ontologyVersionIds = (List<VNcboOntology>) Arrays.asList(ncboOntology);
 		String query =  "eukaryotic cell";
 		List<SearchResultBean> searchResultBeans = retrievalManager
 				.findConceptNameExact(ontologyVersionIds, query, false, 100);
@@ -205,8 +205,8 @@ public class OntologyRetrievalManagerLexGridImplTest extends AbstractBioPortalTe
 		System.out.println("testFindConceptPropertyContains()");
 		retrievalManager = getRetrievalManagerLexGrid();
 
-		NcboOntology ncboOntology = retrievalManager.getLatestNcboOntology(TEST_OBO_DISPLAY_LABEL);
-		List<NcboOntology> ontologyVersionIds = (List<NcboOntology>) Arrays.asList(ncboOntology);
+		VNcboOntology ncboOntology = retrievalManager.getLatestNcboOntology(TEST_OBO_DISPLAY_LABEL);
+		List<VNcboOntology> ontologyVersionIds = (List<VNcboOntology>) Arrays.asList(ncboOntology);
 		String query = "beta cell";
 		String[] properties= {"synonym"};
 		List<SearchResultBean> searchResultBeans = retrievalManager

@@ -6,7 +6,7 @@ import java.util.Date;
 import org.ncbo.stanford.AbstractBioPortalTest;
 import org.ncbo.stanford.bean.OntologyBean;
 import org.ncbo.stanford.domain.custom.dao.CustomNcboOntologyVersionDAO;
-import org.ncbo.stanford.domain.generated.NcboOntologyMetadata;
+import org.ncbo.stanford.domain.generated.NcboOntologyVersionMetadata;
 import org.ncbo.stanford.enumeration.StatusEnum;
 import org.ncbo.stanford.service.ontology.OntologyService;
 import org.ncbo.stanford.service.ontology.OntologyServiceTest;
@@ -44,7 +44,7 @@ public class OntologyLoaderLexGridImplTest extends AbstractBioPortalTest {
 		CustomNcboOntologyVersionDAO ncboOntologyVersionDAO = (CustomNcboOntologyVersionDAO) applicationContext
 				.getBean("NcboOntologyVersionDAO",
 						CustomNcboOntologyVersionDAO.class);
-		NcboOntologyMetadata ncboMetadata = ncboOntologyVersionDAO
+		NcboOntologyVersionMetadata ncboMetadata = ncboOntologyVersionDAO
 				.findOntologyMetadataById(15910);
 		assertTrue(ncboMetadata != null);
 

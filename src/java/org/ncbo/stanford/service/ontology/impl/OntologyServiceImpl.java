@@ -12,18 +12,19 @@ import org.ncbo.stanford.bean.CategoryBean;
 import org.ncbo.stanford.bean.OntologyBean;
 import org.ncbo.stanford.domain.custom.dao.CustomNcboLCategoryDAO;
 import org.ncbo.stanford.domain.custom.dao.CustomNcboOntologyCategoryDAO;
+import org.ncbo.stanford.domain.custom.dao.CustomNcboOntologyDAO;
 import org.ncbo.stanford.domain.custom.dao.CustomNcboOntologyFileDAO;
 import org.ncbo.stanford.domain.custom.dao.CustomNcboOntologyLoadQueueDAO;
-import org.ncbo.stanford.domain.custom.dao.CustomNcboOntologyMetadataDAO;
 import org.ncbo.stanford.domain.custom.dao.CustomNcboOntologyVersionDAO;
-import org.ncbo.stanford.domain.custom.dao.CustomNcboSeqOntologyIdDAO;
-import org.ncbo.stanford.domain.custom.entity.NcboOntology;
+import org.ncbo.stanford.domain.custom.dao.CustomNcboOntologyVersionMetadataDAO;
+import org.ncbo.stanford.domain.custom.entity.VNcboOntology;
 import org.ncbo.stanford.domain.generated.NcboLCategory;
+import org.ncbo.stanford.domain.generated.NcboOntology;
 import org.ncbo.stanford.domain.generated.NcboOntologyCategory;
 import org.ncbo.stanford.domain.generated.NcboOntologyFile;
 import org.ncbo.stanford.domain.generated.NcboOntologyLoadQueue;
-import org.ncbo.stanford.domain.generated.NcboOntologyMetadata;
 import org.ncbo.stanford.domain.generated.NcboOntologyVersion;
+import org.ncbo.stanford.domain.generated.NcboOntologyVersionMetadata;
 import org.ncbo.stanford.service.ontology.OntologyService;
 import org.ncbo.stanford.util.MessageUtils;
 import org.ncbo.stanford.util.ontologyfile.pathhandler.AbstractFilePathHandler;
@@ -35,12 +36,12 @@ public class OntologyServiceImpl implements OntologyService {
 
 	private static final Log log = LogFactory.getLog(OntologyServiceImpl.class);
 
+	private CustomNcboOntologyDAO ncboOntologyDAO;
 	private CustomNcboOntologyVersionDAO ncboOntologyVersionDAO;
 	private CustomNcboOntologyFileDAO ncboOntologyFileDAO;
-	private CustomNcboOntologyMetadataDAO ncboOntologyMetadataDAO;
+	private CustomNcboOntologyVersionMetadataDAO ncboOntologyVersionMetadataDAO;
 	private CustomNcboOntologyCategoryDAO ncboOntologyCategoryDAO;
 	private CustomNcboOntologyLoadQueueDAO ncboOntologyLoadQueueDAO;
-	private CustomNcboSeqOntologyIdDAO ncboSeqOntologyIdDAO;
 	private CustomNcboLCategoryDAO ncboLCategoryDAO;
 
 	/*
@@ -89,7 +90,7 @@ public class OntologyServiceImpl implements OntologyService {
 	public OntologyBean findLatestOntologyVersionByOboFoundryId(
 			String oboFoundryId) {
 		OntologyBean ontologyBean = null;
-		NcboOntology ncboOntology = ncboOntologyVersionDAO
+		VNcboOntology ncboOntology = ncboOntologyVersionDAO
 				.findLatestOntologyVersionByOboFoundryId(oboFoundryId);
 
 		if (ncboOntology != null) {
@@ -108,10 +109,10 @@ public class OntologyServiceImpl implements OntologyService {
 	 */
 	public List<OntologyBean> findLatestOntologyVersions() {
 		ArrayList<OntologyBean> ontBeanList = new ArrayList<OntologyBean>(1);
-		List<NcboOntology> ontEntityList = ncboOntologyVersionDAO
+		List<VNcboOntology> ontEntityList = ncboOntologyVersionDAO
 				.findLatestOntologyVersions();
 
-		for (NcboOntology ncboOntology : ontEntityList) {
+		for (VNcboOntology ncboOntology : ontEntityList) {
 			OntologyBean ontologyBean = new OntologyBean();
 			ontologyBean.populateFromEntity(ncboOntology);
 			ontBeanList.add(ontologyBean);
@@ -119,21 +120,20 @@ public class OntologyServiceImpl implements OntologyService {
 
 		return ontBeanList;
 	}
-	
-	
+
 	/**
-	 * Returns a single record for each ontology which is active in the system. If more than one
-	 * version of ontology exists, return the latest and active version.  
-	 * "active" meaning parse status is "ready".
+	 * Returns a single record for each ontology which is active in the system.
+	 * If more than one version of ontology exists, return the latest and active
+	 * version. "active" meaning parse status is "ready".
 	 * 
 	 * @return list of Ontology beans
 	 */
 	public List<OntologyBean> findLatestActiveOntologyVersions() {
 		ArrayList<OntologyBean> ontBeanList = new ArrayList<OntologyBean>(1);
-		List<NcboOntology> ontEntityList = ncboOntologyVersionDAO
+		List<VNcboOntology> ontEntityList = ncboOntologyVersionDAO
 				.findLatestActiveOntologyVersions();
 
-		for (NcboOntology ncboOntology : ontEntityList) {
+		for (VNcboOntology ncboOntology : ontEntityList) {
 			OntologyBean ontologyBean = new OntologyBean();
 			ontologyBean.populateFromEntity(ncboOntology);
 			ontBeanList.add(ontologyBean);
@@ -155,8 +155,8 @@ public class OntologyServiceImpl implements OntologyService {
 		ArrayList<OntologyBean> ontBeanList = new ArrayList<OntologyBean>(1);
 
 		// 1. get version IDs
-		List<NcboOntologyVersion> ontVersionList = ncboOntologyVersionDAO
-				.findByOntologyId(ontologyId);
+		NcboOntology ont = ncboOntologyDAO.findById(ontologyId);
+		Set<NcboOntologyVersion> ontVersionList = ont.getNcboOntologyVersions();
 		List<Integer> versionIds = new ArrayList<Integer>(1);
 
 		for (NcboOntologyVersion ncboOntologyVersion : ontVersionList) {
@@ -170,9 +170,10 @@ public class OntologyServiceImpl implements OntologyService {
 
 		// 2. get NcboOntology entities to get OntologyBeans
 
-		List<NcboOntology> ontEntityList = ncboOntologyVersionDAO
+		List<VNcboOntology> ontEntityList = ncboOntologyVersionDAO
 				.findOntologyVersions(versionIds);
-		for (NcboOntology ncboOntology : ontEntityList) {
+
+		for (VNcboOntology ncboOntology : ontEntityList) {
 			OntologyBean ontologyBean = new OntologyBean();
 			ontologyBean.populateFromEntity(ncboOntology);
 			ontBeanList.add(ontologyBean);
@@ -183,10 +184,10 @@ public class OntologyServiceImpl implements OntologyService {
 
 	public List<OntologyBean> searchOntologyMetadata(String query) {
 		List<OntologyBean> ontBeanList = new ArrayList<OntologyBean>();
-		List<NcboOntology> ontEntityList = ncboOntologyVersionDAO
+		List<VNcboOntology> ontEntityList = ncboOntologyVersionDAO
 				.searchOntologyMetadata(query);
 
-		for (NcboOntology ncboOntology : ontEntityList) {
+		for (VNcboOntology ncboOntology : ontEntityList) {
 			OntologyBean ontologyBean = new OntologyBean();
 			ontologyBean.populateFromEntity(ncboOntology);
 			ontBeanList.add(ontologyBean);
@@ -203,7 +204,7 @@ public class OntologyServiceImpl implements OntologyService {
 	 */
 	public OntologyBean findOntology(Integer ontologyVersionId) {
 		OntologyBean ontologyBean = null;
-		NcboOntology ncboOntology = ncboOntologyVersionDAO
+		VNcboOntology ncboOntology = ncboOntologyVersionDAO
 				.findOntologyVersion(ontologyVersionId);
 
 		if (ncboOntology != null) {
@@ -222,10 +223,11 @@ public class OntologyServiceImpl implements OntologyService {
 	 */
 	public OntologyBean findLatestOntologyVersion(Integer ontologyId) {
 		OntologyBean ontologyBean = null;
-		NcboOntology ncboOntology = ncboOntologyVersionDAO.findLatestOntologyVersion(ontologyId);
-		if (ncboOntology != null){
+		VNcboOntology ncboOntology = ncboOntologyVersionDAO
+				.findLatestOntologyVersion(ontologyId);
+		if (ncboOntology != null) {
 			ontologyBean = new OntologyBean();
-			ontologyBean.populateFromEntity(ncboOntology);			
+			ontologyBean.populateFromEntity(ncboOntology);
 		}
 		return ontologyBean;
 	}
@@ -263,10 +265,9 @@ public class OntologyServiceImpl implements OntologyService {
 	@Transactional(rollbackFor = Exception.class)
 	public void createOntology(OntologyBean ontologyBean,
 			FilePathHandler filePathHander) throws Exception {
-
 		// assign new Ontology Id for new instance
 		// and assign internal version ID
-		generateNextOntologyId(ontologyBean);
+		findOrCreateNcboOntologyRecord(ontologyBean);
 
 		// set filepath in the bean
 		if (!ontologyBean.isRemote()) {
@@ -275,7 +276,7 @@ public class OntologyServiceImpl implements OntologyService {
 
 		// create new instances
 		NcboOntologyVersion ontologyVersion = new NcboOntologyVersion();
-		NcboOntologyMetadata ontologyMetadata = new NcboOntologyMetadata();
+		NcboOntologyVersionMetadata ontologyMetadata = new NcboOntologyVersionMetadata();
 		ArrayList<NcboOntologyFile> ontologyFileList = new ArrayList<NcboOntologyFile>();
 		ArrayList<NcboOntologyCategory> ontologyCategoryList = new ArrayList<NcboOntologyCategory>();
 		NcboOntologyLoadQueue loadQueue = new NcboOntologyLoadQueue();
@@ -290,7 +291,7 @@ public class OntologyServiceImpl implements OntologyService {
 		// 2. <ontologyMetadata> - populate and save
 		ontologyBean.populateToMetadataEntity(ontologyMetadata,
 				newOntologyVersion);
-		ncboOntologyMetadataDAO.save(ontologyMetadata);
+		ncboOntologyVersionMetadataDAO.save(ontologyMetadata);
 
 		// 3. <ontologyCategory> - populate and save
 		ontologyBean.populateToCategoryEntity(ontologyCategoryList,
@@ -336,8 +337,8 @@ public class OntologyServiceImpl implements OntologyService {
 		// get NcboOntologyMetadata instance from ontologyVersion
 		// since it is one-to-one, there is only one ontologyMetadata record per
 		// ontologyVersion record
-		NcboOntologyMetadata ontologyMetadata = (NcboOntologyMetadata) ontologyVersion
-				.getNcboOntologyMetadatas().toArray()[0];
+		NcboOntologyVersionMetadata ontologyMetadata = (NcboOntologyVersionMetadata) ontologyVersion
+				.getNcboOntologyVersionMetadatas().toArray()[0];
 
 		if (ontologyVersion == null || ontologyMetadata == null)
 			return;
@@ -349,7 +350,7 @@ public class OntologyServiceImpl implements OntologyService {
 		// 2. <ontologyMetadata> - populate and save
 		ontologyBean
 				.populateToMetadataEntity(ontologyMetadata, ontologyVersion);
-		ncboOntologyMetadataDAO.save(ontologyMetadata);
+		ncboOntologyVersionMetadataDAO.save(ontologyMetadata);
 
 		// 3. <ontologyCategory> - populate and save
 		// remove all corresponding categories associated with given
@@ -401,10 +402,10 @@ public class OntologyServiceImpl implements OntologyService {
 		}
 
 		// 2. <ontologyMetadata>
-		Set<NcboOntologyMetadata> ontologyMetadataSet = ontologyVersion
-				.getNcboOntologyMetadatas();
-		for (NcboOntologyMetadata ontologyMetadata : ontologyMetadataSet) {
-			ncboOntologyMetadataDAO.delete(ontologyMetadata);
+		Set<NcboOntologyVersionMetadata> ontologyMetadataSet = ontologyVersion
+				.getNcboOntologyVersionMetadatas();
+		for (NcboOntologyVersionMetadata ontologyMetadata : ontologyMetadataSet) {
+			ncboOntologyVersionMetadataDAO.delete(ontologyMetadata);
 		}
 
 		// 3. <ontologyCategory>
@@ -467,67 +468,29 @@ public class OntologyServiceImpl implements OntologyService {
 	}
 
 	/**
-	 * @return the ncboOntologyMetadataDAO
-	 */
-	public CustomNcboOntologyMetadataDAO getNcboOntologyMetadataDAO() {
-		return ncboOntologyMetadataDAO;
-	}
-
-	/**
-	 * @param ncboOntologyMetadataDAO
-	 *            the ncboOntologyMetadataDAO to set
-	 */
-	public void setNcboOntologyMetadataDAO(
-			CustomNcboOntologyMetadataDAO ncboOntologyMetadataDAO) {
-		this.ncboOntologyMetadataDAO = ncboOntologyMetadataDAO;
-	}
-
-	/**
-	 * @return the ncboSeqOntologyIdDAO
-	 */
-	public CustomNcboSeqOntologyIdDAO getNcboSeqOntologyIdDAO() {
-		return ncboSeqOntologyIdDAO;
-	}
-
-	/**
-	 * @param ncboSeqOntologyIdDAO
-	 *            the ncboSeqOntologyIdDAO to set
-	 */
-	public void setNcboSeqOntologyIdDAO(
-			CustomNcboSeqOntologyIdDAO ncboSeqOntologyIdDAO) {
-		this.ncboSeqOntologyIdDAO = ncboSeqOntologyIdDAO;
-	}
-
-	/**
-	 * 1. Get next Ontology Id from Id Sequence DAO and assign it to ontologyBean.
-	 * No effect if Ontology Id already exist.
-	 * 
-	 * 2. Check internal version ID on ontologyBean. If null - assign 0. If already
-	 * exist - get latest increment by 1	  
+	 * Finds existing or creates new NcboOntology record
 	 * 
 	 * @param OntologyBean
 	 *            ontologyBean
 	 */
-	private void generateNextOntologyId(OntologyBean ontologyBean) {
-
+	private void findOrCreateNcboOntologyRecord(OntologyBean ontologyBean) {
 		Integer ontologyId = ontologyBean.getOntologyId();
+
 		if (ontologyId == null) {
-			ontologyBean.setOntologyId(ncboSeqOntologyIdDAO
-					.generateNewOntologyId());
-			
+			NcboOntology ont = new NcboOntology();
+			ontologyBean.populateToOntologyEntity(ont);
+			NcboOntology ontNew = ncboOntologyDAO.saveOntology(ont);
+			ontologyBean.setOntologyId(ontNew.getId());
 			ontologyBean
-			.setInternalVersionNumber(Integer
-					.parseInt(MessageUtils
-							.getMessage("config.db.ontology.internalVersionNumberStart")));
-
+					.setInternalVersionNumber(Integer
+							.parseInt(MessageUtils
+									.getMessage("config.db.ontology.internalVersionNumberStart")));
 		} else {
-			
-			Integer lastInternalVersion = findLatestOntologyVersion(ontologyBean.getOntologyId()).getInternalVersionNumber();
+			Integer lastInternalVersion = findLatestOntologyVersion(ontologyId)
+					.getInternalVersionNumber();
 			ontologyBean.setInternalVersionNumber(lastInternalVersion + 1);
-
 		}
 	}
-
 
 	private List<String> uploadOntologyFile(OntologyBean ontologyBean,
 			FilePathHandler filePathHandler) throws Exception {
@@ -611,5 +574,36 @@ public class OntologyServiceImpl implements OntologyService {
 	 */
 	public void setNcboLCategoryDAO(CustomNcboLCategoryDAO ncboLCategoryDAO) {
 		this.ncboLCategoryDAO = ncboLCategoryDAO;
+	}
+
+	/**
+	 * @return the ncboOntologyDAO
+	 */
+	public CustomNcboOntologyDAO getNcboOntologyDAO() {
+		return ncboOntologyDAO;
+	}
+
+	/**
+	 * @param ncboOntologyDAO
+	 *            the ncboOntologyDAO to set
+	 */
+	public void setNcboOntologyDAO(CustomNcboOntologyDAO ncboOntologyDAO) {
+		this.ncboOntologyDAO = ncboOntologyDAO;
+	}
+
+	/**
+	 * @return the ncboOntologyVersionMetadataDAO
+	 */
+	public CustomNcboOntologyVersionMetadataDAO getNcboOntologyVersionMetadataDAO() {
+		return ncboOntologyVersionMetadataDAO;
+	}
+
+	/**
+	 * @param ncboOntologyVersionMetadataDAO
+	 *            the ncboOntologyVersionMetadataDAO to set
+	 */
+	public void setNcboOntologyVersionMetadataDAO(
+			CustomNcboOntologyVersionMetadataDAO ncboOntologyVersionMetadataDAO) {
+		this.ncboOntologyVersionMetadataDAO = ncboOntologyVersionMetadataDAO;
 	}
 }

@@ -251,7 +251,6 @@ public class OBOCVSPullServiceImpl implements OBOCVSPullService {
 
 			if (action != ActionEnum.UPDATE_ACTION) {
 				ont.setDateCreated(now);
-				ont.setParentId(ont.getId());
 				ont.setId(null);
 				// reset the status and coding scheme
 				ont.setStatusId(null);

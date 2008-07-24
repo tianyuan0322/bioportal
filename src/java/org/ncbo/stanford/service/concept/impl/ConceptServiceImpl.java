@@ -13,7 +13,7 @@ import org.apache.commons.logging.LogFactory;
 import org.ncbo.stanford.bean.concept.ClassBean;
 import org.ncbo.stanford.bean.search.SearchResultBean;
 import org.ncbo.stanford.domain.custom.dao.CustomNcboOntologyVersionDAO;
-import org.ncbo.stanford.domain.custom.entity.NcboOntology;
+import org.ncbo.stanford.domain.custom.entity.VNcboOntology;
 import org.ncbo.stanford.enumeration.StatusEnum;
 import org.ncbo.stanford.manager.OntologyRetrievalManager;
 import org.ncbo.stanford.service.concept.ConceptService;
@@ -49,7 +49,7 @@ public class ConceptServiceImpl implements ConceptService {
 	 * Get the root concept for the specified ontology.
 	 */
 	public ClassBean findRootConcept(Integer ontologyId) throws Exception {
-		NcboOntology ontology = ncboOntologyVersionDAO
+		VNcboOntology ontology = ncboOntologyVersionDAO
 				.findOntologyVersion(ontologyId);
 		String formatHandler = ontologyFormatHandlerMap.get(ontology
 				.getFormat());		
@@ -62,7 +62,7 @@ public class ConceptServiceImpl implements ConceptService {
 	
 	public ClassBean findConcept(Integer ontologyId, String conceptId)
 			throws Exception {
-		NcboOntology ontology = ncboOntologyVersionDAO
+		VNcboOntology ontology = ncboOntologyVersionDAO
 				.findOntologyVersion(ontologyId);
 		String formatHandler = ontologyFormatHandlerMap.get(ontology
 				.getFormat());
@@ -74,7 +74,7 @@ public class ConceptServiceImpl implements ConceptService {
 
 	public ClassBean findPathToRoot(Integer ontologyId, String conceptId,boolean light)
 			throws Exception {
-		NcboOntology ontology = ncboOntologyVersionDAO
+		VNcboOntology ontology = ncboOntologyVersionDAO
 		.findOntologyVersion(ontologyId);
 		String formatHandler = ontologyFormatHandlerMap.get(ontology
 			.getFormat());
@@ -99,13 +99,13 @@ public class ConceptServiceImpl implements ConceptService {
 	public List<SearchResultBean> findConceptNameExact(
 			List<Integer> ontologyIds, String query) {
 		List<SearchResultBean> searchResults = new ArrayList<SearchResultBean>();
-		HashMap<String, List<NcboOntology>> formatLists = new HashMap<String, List<NcboOntology>>();
+		HashMap<String, List<VNcboOntology>> formatLists = new HashMap<String, List<VNcboOntology>>();
 		
 		for (String key : ontologyFormatHandlerMap.keySet()) {
-			formatLists.put(key, new ArrayList<NcboOntology>());
+			formatLists.put(key, new ArrayList<VNcboOntology>());
 		}
 		
-		List<NcboOntology> ontologies = new ArrayList<NcboOntology>();
+		List<VNcboOntology> ontologies = new ArrayList<VNcboOntology>();
 		
 		if(ontologyIds.isEmpty()){
 			ontologies = ncboOntologyVersionDAO.findLatestOntologyVersions();
@@ -114,13 +114,13 @@ public class ConceptServiceImpl implements ConceptService {
 		.findOntologyVersions(ontologyIds);
 		}
 		
-		for (NcboOntology ontology : ontologies) {
+		for (VNcboOntology ontology : ontologies) {
 			if(ontology.getStatusId().equals(StatusEnum.STATUS_READY.getStatus())){
 				String formatHandler = ontologyFormatHandlerMap.get(ontology
 						.getFormat());
 				
 				System.out.println("Looking For "+formatHandler);
-				((List<NcboOntology>) formatLists.get(formatHandler)).add(ontology);
+				((List<VNcboOntology>) formatLists.get(formatHandler)).add(ontology);
 			}
 		}
 
@@ -137,13 +137,13 @@ public class ConceptServiceImpl implements ConceptService {
 	public List<SearchResultBean> findConceptNameStartsWith(
 			List<Integer> ontologyIds, String query) {
 		List<SearchResultBean> searchResults = new ArrayList<SearchResultBean>();
-		HashMap<String, List<NcboOntology>> formatLists = new HashMap<String, List<NcboOntology>>();
+		HashMap<String, List<VNcboOntology>> formatLists = new HashMap<String, List<VNcboOntology>>();
 		
 		for (String key : ontologyFormatHandlerMap.keySet()) {
-			formatLists.put(key, new ArrayList<NcboOntology>());
+			formatLists.put(key, new ArrayList<VNcboOntology>());
 		}
 		
-		List<NcboOntology> ontologies = new ArrayList<NcboOntology>();
+		List<VNcboOntology> ontologies = new ArrayList<VNcboOntology>();
 		
 		if(ontologyIds.isEmpty()){
 			ontologies = ncboOntologyVersionDAO.findLatestOntologyVersions();
@@ -151,13 +151,13 @@ public class ConceptServiceImpl implements ConceptService {
 			ontologies = ncboOntologyVersionDAO
 		.findOntologyVersions(ontologyIds);
 		}
-		for (NcboOntology ontology : ontologies) {
+		for (VNcboOntology ontology : ontologies) {
 			if(ontology.getStatusId().equals(StatusEnum.STATUS_READY.getStatus())){
 				String formatHandler = ontologyFormatHandlerMap.get(ontology
 						.getFormat());
 				
 				System.out.println("Looking For "+formatHandler);
-				((List<NcboOntology>) formatLists.get(formatHandler)).add(ontology);
+				((List<VNcboOntology>) formatLists.get(formatHandler)).add(ontology);
 			}
 		}
 
@@ -175,14 +175,14 @@ public class ConceptServiceImpl implements ConceptService {
 			List<Integer> ontologyIds, String query) {
 
 		List<SearchResultBean> searchResults = new ArrayList<SearchResultBean>();
-		HashMap<String, List<NcboOntology>> formatLists = new HashMap<String, List<NcboOntology>>();
+		HashMap<String, List<VNcboOntology>> formatLists = new HashMap<String, List<VNcboOntology>>();
 		
 		for (String key : ontologyFormatHandlerMap.values()) {
 			System.out.println("Key is "+key);
-			formatLists.put(key, new ArrayList<NcboOntology>());
+			formatLists.put(key, new ArrayList<VNcboOntology>());
 		}
 
-		List<NcboOntology> ontologies = new ArrayList<NcboOntology>();
+		List<VNcboOntology> ontologies = new ArrayList<VNcboOntology>();
 		
 		if(ontologyIds.isEmpty()){
 			ontologies = ncboOntologyVersionDAO.findLatestOntologyVersions();
@@ -191,13 +191,13 @@ public class ConceptServiceImpl implements ConceptService {
 		.findOntologyVersions(ontologyIds);
 		}
 		
-		for (NcboOntology ontology : ontologies) {
+		for (VNcboOntology ontology : ontologies) {
 			if(ontology.getStatusId().equals(StatusEnum.STATUS_READY.getStatus())){
 			String formatHandler = ontologyFormatHandlerMap.get(ontology
 					.getFormat());
 			
 			System.out.println("Looking For "+formatHandler);
-			((List<NcboOntology>) formatLists.get(formatHandler)).add(ontology);
+			((List<VNcboOntology>) formatLists.get(formatHandler)).add(ontology);
 			}
 		}
 
@@ -224,14 +224,14 @@ public class ConceptServiceImpl implements ConceptService {
 	public List<SearchResultBean> findConceptPropertyContains(
 			List<Integer> ontologyIds,  String query) {
 		List<SearchResultBean> searchResults = new ArrayList<SearchResultBean>();
-		HashMap<String, List<NcboOntology>> formatLists = new HashMap<String, List<NcboOntology>>();
+		HashMap<String, List<VNcboOntology>> formatLists = new HashMap<String, List<VNcboOntology>>();
 		
 		for (String key : ontologyFormatHandlerMap.values()) {
 			System.out.println("Key is "+key);
-			formatLists.put(key, new ArrayList<NcboOntology>());
+			formatLists.put(key, new ArrayList<VNcboOntology>());
 		}
 
-		List<NcboOntology> ontologies = new ArrayList<NcboOntology>();
+		List<VNcboOntology> ontologies = new ArrayList<VNcboOntology>();
 		
 		if(ontologyIds.isEmpty()){
 			ontologies = ncboOntologyVersionDAO.findLatestOntologyVersions();
@@ -240,13 +240,13 @@ public class ConceptServiceImpl implements ConceptService {
 		.findOntologyVersions(ontologyIds);
 		}
 		
-		for (NcboOntology ontology : ontologies) {
+		for (VNcboOntology ontology : ontologies) {
 			if(ontology.getStatusId().equals(StatusEnum.STATUS_READY.getStatus())){
 			String formatHandler = ontologyFormatHandlerMap.get(ontology
 					.getFormat());
 			
 			System.out.println("Looking For "+formatHandler);
-			((List<NcboOntology>) formatLists.get(formatHandler)).add(ontology);
+			((List<VNcboOntology>) formatLists.get(formatHandler)).add(ontology);
 			}
 		}
 
