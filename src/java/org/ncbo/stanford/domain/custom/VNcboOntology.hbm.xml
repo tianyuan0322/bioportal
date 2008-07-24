@@ -12,9 +12,6 @@
 		<property name="ontologyId" type="java.lang.Integer">
 		    <column name="ontology_id" />
 		</property>
-		<property name="parentId" type="java.lang.Integer">
-		    <column name="parent_id" />
-		</property>
 		<property name="userId" type="java.lang.Integer">
 		    <column name="user_id" />
 		</property>
@@ -47,6 +44,9 @@
 		</property>
 		<property name="oboFoundryId" type="java.lang.String">
 		    <column name="obo_foundry_id" length="128" />
+		</property>
+		<property name="isManual" type="java.lang.Byte">
+		    <column name="is_manual" />
 		</property>
 		<property name="displayLabel" type="java.lang.String">
 		    <column name="display_label" length="128" />

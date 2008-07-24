@@ -5,18 +5,18 @@
 <hibernate-mapping>
  	<query name="VNcboOntologyVersionDAO.GET_LATEST_ONTOLOGY_VERSION_BY_OBO_FOUNDRY_ID">
 		<![CDATA[
-			FROM NcboOntology 
+			FROM VNcboOntology 
 			WHERE oboFoundryId = :oboFoundryId 
 				AND internalVersionNumber = (
 					SELECT MAX(internalVersionNumber) 
-					FROM NcboOntology 
+					FROM VNcboOntology 
 					WHERE oboFoundryId = :oboFoundryId
 				)
 		]]>
 	</query>
 
  	<sql-query name="VNcboOntologyVersionDAO.GET_LATEST_ONTOLOGY_VERSIONS_QUERY">	
-		<return alias="ont" class="org.ncbo.stanford.domain.custom.entity.NcboOntology" />
+		<return alias="ont" class="org.ncbo.stanford.domain.custom.entity.VNcboOntology" />
 	
 		<![CDATA[
 			SELECT {ont.*}
@@ -35,7 +35,7 @@
 	
 	
 	<sql-query name="VNcboOntologyVersionDAO.GET_LATEST_ACTIVE_ONTOLOGY_VERSIONS_QUERY">	
-		<return alias="ont" class="org.ncbo.stanford.domain.custom.entity.NcboOntology" />
+		<return alias="ont" class="org.ncbo.stanford.domain.custom.entity.VNcboOntology" />
 	
 		<![CDATA[
 			SELECT {ont.*}
@@ -55,7 +55,7 @@
 		
 
 	<sql-query name="VNcboOntologyVersionDAO.GET_LATEST_ONTOLOGY_VERSION_FOR_ONTOLOGY_ID_QUERY">	
-		<return alias="ont" class="org.ncbo.stanford.domain.custom.entity.NcboOntology" />
+		<return alias="ont" class="org.ncbo.stanford.domain.custom.entity.VNcboOntology" />
 	
 		<![CDATA[
 			SELECT {ont.*}
