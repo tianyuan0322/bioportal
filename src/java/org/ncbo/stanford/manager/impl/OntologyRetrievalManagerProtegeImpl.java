@@ -1,11 +1,16 @@
 package org.ncbo.stanford.manager.impl;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+
+import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.stream.StreamSource;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -16,6 +21,8 @@ import org.ncbo.stanford.domain.custom.entity.VNcboOntology;
 import org.ncbo.stanford.manager.AbstractOntologyManagerProtege;
 import org.ncbo.stanford.manager.OntologyRetrievalManager;
 import org.ncbo.stanford.util.constants.ApplicationConstants;
+
+import com.thoughtworks.xstream.XStream;
 
 import edu.stanford.smi.protege.model.Cls;
 import edu.stanford.smi.protege.model.Frame;
@@ -48,6 +55,8 @@ import edu.stanford.smi.protegex.owl.model.impl.DefaultOWLSomeValuesFrom;
 public class OntologyRetrievalManagerProtegeImpl extends
 		AbstractOntologyManagerProtege implements
 		OntologyRetrievalManager {
+
+	private static HashMap<Integer, KnowledgeBase> knowledgeBases = new HashMap<Integer, KnowledgeBase>();
 
 	// Hack for development testing
 	private final static String TEST_OWL_URI = "test/sample_data/pizza.owl.pprj";
@@ -326,7 +335,7 @@ public class OntologyRetrievalManagerProtegeImpl extends
 	/**
 	 * Gets the Protege ontology associated with the specified ontology id.
 	 */
-	private KnowledgeBase getKnowledgeBase(VNcboOntology ontologyVersion) {
+	private static KnowledgeBase createKnowledgeBaseInstance(VNcboOntology ontologyVersion) {
 		DatabaseKnowledgeBaseFactory factory = null;
 
 		if (ontologyVersion.getFormat().contains("OWL")) {
@@ -349,6 +358,25 @@ public class OntologyRetrievalManagerProtegeImpl extends
 
 		return prj.getKnowledgeBase();
 	}
+	
+	
+	/**
+	 * returns a singleton KnowledgeBase instance for given ontologyVersion. 
+	 */
+	public static KnowledgeBase getKnowledgeBase(VNcboOntology ontologyVersion) {
+
+
+		KnowledgeBase knowledgeBase = (KnowledgeBase) knowledgeBases.get(ontologyVersion.getId());
+		if (knowledgeBase == null) {
+			
+			knowledgeBase = createKnowledgeBaseInstance(ontologyVersion);
+			
+			knowledgeBases.put(ontologyVersion.getId(), knowledgeBase);
+			
+		}
+		return knowledgeBase;
+	}
+
 
 	// /**
 	// * Creates a ConceptBean from a Protege concept class.

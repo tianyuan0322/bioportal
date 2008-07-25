@@ -9,18 +9,18 @@ package org.ncbo.stanford.manager;
  */
 public abstract class AbstractOntologyManagerProtege {
 
-	protected String protegeJdbcUrl;
-	protected String protegeJdbcDriver;
-	protected String protegeJdbcUsername;
-	protected String protegeJdbcPassword;
-	protected String protegeTablePrefix;
-	protected String protegeTableSuffix;
-	protected Integer protegeBigFileThreshold;
+	protected static String protegeJdbcUrl;
+	protected static String protegeJdbcDriver;
+	protected static String protegeJdbcUsername;
+	protected static String protegeJdbcPassword;
+	protected static String protegeTablePrefix;
+	protected static String protegeTableSuffix;
+	protected static Integer protegeBigFileThreshold;
 
 	/**
 	 * Gets the table name associated with an protege ontology id.
 	 */
-	protected String getTableName(Integer ontologyVersionId) {
+	protected static String getTableName(Integer ontologyVersionId) {
 		return protegeTablePrefix + ontologyVersionId + protegeTableSuffix;
 	}
 
