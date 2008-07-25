@@ -6,7 +6,6 @@ package org.ncbo.stanford.service.ontology;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.List;
 
 import org.ncbo.stanford.AbstractBioPortalTest;
 import org.ncbo.stanford.bean.OntologyBean;
@@ -20,8 +19,33 @@ import org.ncbo.stanford.util.ontologyfile.pathhandler.impl.PhysicalDirectoryFil
  */
 
 public class OntologyServiceTest extends AbstractBioPortalTest {
-
 	
+	
+	public void testPerformanceFindOntology() {
+		
+		System.out
+				.println("OntologyServiceTest: testPerformanceFindOntology()..........................BEGIN");
+
+		try {
+			for (int i = 0; i < 500; i++) {
+				Thread.currentThread().sleep(100);
+
+				getOntologyService().findOntology(new Integer(3905));
+
+			}
+		} catch (Exception e) {
+			System.out.println("Exception Occured : "
+					+ e.getMessage().substring(0, 200));
+		}
+
+		System.out
+				.println("OntologyServiceTest: testPerformanceFindOntology()...........................DONE");
+		
+	}
+	
+
+
+/*	
 	public void testfindLatestOntologyVersions() {
 
 		System.out.println ("OntologyServiceTest: testfindLatestOntologyVersions().......................BEGIN");
@@ -79,8 +103,8 @@ public class OntologyServiceTest extends AbstractBioPortalTest {
 		
 	}
 		
-
-	public void testCreateOntology() throws Exception {
+*/
+/*	public void testCreateOntology() throws Exception {
 		
 		System.out.println ("OntologyServiceTest: testCreateOntology()........................BEGIN");
 			
@@ -89,8 +113,21 @@ public class OntologyServiceTest extends AbstractBioPortalTest {
 		getOntologyService().createOntology(ontologyBean, OntologyServiceTest.getFilePathHandler(ontologyBean));
 		
 		System.out.println ("OntologyServiceTest: testCreateOntology().........................DONE");
-	}
+	}*/
 
+/*	
+	public void testCreateManualOntology() throws Exception {
+		
+		System.out.println ("OntologyServiceTest: testCreateManualOntology()........................BEGIN");
+			
+		OntologyBean ontologyBean = createOntolgyBeanManual();
+		
+		getOntologyService().createOntology(ontologyBean, OntologyServiceTest.getFilePathHandler(ontologyBean));
+		
+		System.out.println ("OntologyServiceTest: testCreateManualOntology().........................DONE");
+	}
+	
+	
 	public void testCreateRemoteOntology() throws Exception {
 		
 		System.out.println ("OntologyServiceTest: testCreateRemoteOntology()........................BEGIN");
@@ -101,10 +138,10 @@ public class OntologyServiceTest extends AbstractBioPortalTest {
 		
 		System.out.println ("OntologyServiceTest: testCreateRemoteOntology().........................DONE");
 	}
-	
+	*/
 	
 
-	public void testCleanupOntologyCategory() {
+/*	public void testCleanupOntologyCategory() {
 		
 		System.out.println ("OntologyServiceTest: testCleanupOntologyCategory()........................BEGIN");
 		
@@ -173,7 +210,7 @@ public class OntologyServiceTest extends AbstractBioPortalTest {
 	}
 	
 	
-
+*/
 	
 	private OntologyBean createOntolgyBean() {
 		
@@ -207,35 +244,23 @@ public class OntologyServiceTest extends AbstractBioPortalTest {
 				
 		return bean;
 	}
+
+	
+	private OntologyBean createOntolgyBeanManual() {
+		
+		OntologyBean bean = createOntolgyBean();
+
+		bean.setIsFoundry(new Byte("1"));
+						
+		return bean;
+	}	
 	
 	private OntologyBean createOntolgyBeanRemote() {
 		
-		OntologyBean bean = new OntologyBean();
-		
-		bean.setUserId(2850);
-		bean.setIsManual(new Byte("0"));
-		bean.setVersionNumber("1.0");
-		//default status Id should be populated upon creation as 5
-		//bean.setStatusId(new Integer(5));
-		bean.setVersionStatus("pre-production");
+		OntologyBean bean = createOntolgyBean();
+
 		bean.setIsRemote(new Byte("1"));
-		bean.setIsReviewed(new Byte("0"));
-		//bean.setDateCreated(new Date());
-		bean.setDateReleased(new Date());
-		bean.setContactEmail("test111@email.com");
-		bean.setContactName("TesterFirst TesterLastName");
-		bean.setDisplayLabel("Pizza Ontology");
-		bean.setFormat("OWL-DL");
-		bean.setIsFoundry(new Byte("0"));
-				
-		ArrayList<Integer> categoryIds = new ArrayList<Integer>();
-		categoryIds.add(2807);
-		categoryIds.add(2821);
-		bean.setCategoryIds(categoryIds);
-		
-		// set inputFilePath
-		//String inputFileStr = "/dev/cyoun/workspace/bioportal_resources/uploads/3000/0/pizza.owl";
-		//bean.setFilePath(inputFileStr);
+		bean.setFilePath(null);
 				
 		return bean;
 	}
