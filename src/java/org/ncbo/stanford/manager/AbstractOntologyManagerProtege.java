@@ -16,6 +16,7 @@ public abstract class AbstractOntologyManagerProtege {
 	protected static String protegeTablePrefix;
 	protected static String protegeTableSuffix;
 	protected static Integer protegeBigFileThreshold;
+	protected static Long protegeKnowledgeBaseTimeout;
 
 	/**
 	 * Gets the table name associated with an protege ontology id.
@@ -128,4 +129,21 @@ public abstract class AbstractOntologyManagerProtege {
 	public void setProtegeBigFileThreshold(Integer protegeBigFileThreshold) {
 		this.protegeBigFileThreshold = protegeBigFileThreshold;
 	}
+
+	/**
+	 * @return the protegeKnowledgeBaseTimeout
+	 */
+	public Long getProtegeKnowledgeBaseTimeout() {
+		return protegeKnowledgeBaseTimeout;
+	}
+
+	/**
+	 * @param protegeKnowledgeBaseTimeout the protegeKnowledgeBaseTimeout to set
+	 */
+	public void setProtegeKnowledgeBaseTimeout(
+			Long protegeKnowledgeBaseTimeout) {
+		this.protegeKnowledgeBaseTimeout = protegeKnowledgeBaseTimeout;
+	}
+
+
 }

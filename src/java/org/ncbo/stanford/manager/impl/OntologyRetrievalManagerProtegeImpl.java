@@ -1,16 +1,11 @@
 package org.ncbo.stanford.manager.impl;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
-
-import javax.xml.transform.Transformer;
-import javax.xml.transform.TransformerFactory;
-import javax.xml.transform.stream.StreamSource;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -20,9 +15,8 @@ import org.ncbo.stanford.bean.search.SearchResultBean;
 import org.ncbo.stanford.domain.custom.entity.VNcboOntology;
 import org.ncbo.stanford.manager.AbstractOntologyManagerProtege;
 import org.ncbo.stanford.manager.OntologyRetrievalManager;
+import org.ncbo.stanford.util.cache.CacheMap;
 import org.ncbo.stanford.util.constants.ApplicationConstants;
-
-import com.thoughtworks.xstream.XStream;
 
 import edu.stanford.smi.protege.model.Cls;
 import edu.stanford.smi.protege.model.Frame;
@@ -56,7 +50,9 @@ public class OntologyRetrievalManagerProtegeImpl extends
 		AbstractOntologyManagerProtege implements
 		OntologyRetrievalManager {
 
-	private static HashMap<Integer, KnowledgeBase> knowledgeBases = new HashMap<Integer, KnowledgeBase>();
+	// Expire cache based on timeout
+	//private static HashMap<Integer, KnowledgeBase> knowledgeBases = new HashMap<Integer, KnowledgeBase>();
+	private static CacheMap knowledgeBases = new CacheMap(protegeKnowledgeBaseTimeout.longValue());
 
 	// Hack for development testing
 	private final static String TEST_OWL_URI = "test/sample_data/pizza.owl.pprj";

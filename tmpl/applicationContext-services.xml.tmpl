@@ -472,6 +472,9 @@
 		<property name="protegeBigFileThreshold">
 			<ref bean="protegeBigFileThreshold" />
 		</property>
+		<property name="protegeKnowledgeBaseTimeout">
+			<ref bean="protegeKnowledgeBaseTimeout" />
+		</property>
 	</bean>
 
 	<bean id="ontologyRetrievalManagerLexGrid"
@@ -915,6 +918,12 @@
 	<bean id="protegeBigFileThreshold" class="java.lang.Integer">
 		<constructor-arg>
 			<value>@protegebigfilethreshold@</value>
+		</constructor-arg>
+	</bean>
+
+	<bean id="protegeKnowledgeBaseTimeout" class="java.lang.Long">
+		<constructor-arg>
+			<value>@protegeknowledgebasetimeout@</value>
 		</constructor-arg>
 	</bean>
 	

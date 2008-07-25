@@ -34,6 +34,9 @@ bioportal.session.timeout=5000
 # Number of "buckets" to allocate for session storage
 bioportal.session.numcontainers=11
 
+# Cached Hashmap timeout (in milliseconds)
+bioportal.cache.timeout.protege.knowledgebase=600000
+
 # OBO Sourceforge CVS properties
 obo.sourceforge.cvs.username=anonymous
 obo.sourceforge.cvs.password=
