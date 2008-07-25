@@ -79,6 +79,8 @@
 		<antcall target="copy-registry-file-if-required" />
 		
 		<chmod dir="${lexgrid.resource.path}" perm="777" type="both" includes="**/*" />
+		<chmod dir="${bioportal.ontology.filepath}" perm="777" type="both" includes="**/*" />
+		<chmod dir="${obo.sourceforge.cvs.checkoutdir}" perm="777" type="both" includes="**/*" />
 
 		<copy file="${tmpl.dir}/web.xml.tmpl" tofile="${web.dir}/WEB-INF/web.xml" overwrite="true">
 			<filterset>
