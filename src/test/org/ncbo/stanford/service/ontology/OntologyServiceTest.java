@@ -27,7 +27,7 @@ public class OntologyServiceTest extends AbstractBioPortalTest {
 				.println("OntologyServiceTest: testPerformanceFindOntology()..........................BEGIN");
 
 		try {
-			for (int i = 0; i < 500; i++) {
+			for (int i = 0; i < 5000; i++) {
 				Thread.currentThread().sleep(100);
 
 				getOntologyService().findOntology(new Integer(3905));
