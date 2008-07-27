@@ -171,7 +171,7 @@ public class OntologyRetrievalManagerLexGridImpl extends AbstractOntologyManager
         ClassBean conceptClass = findConceptWithoutRelations(ncboOntology, conceptId);
         boolean includeChildren = !light;
         ArrayList<ClassBean> classBeans = createClassBeanArray(associations, conceptClass,
-                ApplicationConstants.SUB_CLASS, includeChildren);
+                ApplicationConstants.SUPER_CLASS, includeChildren);
         return createThingClassBean(classBeans);
     }
 
@@ -777,11 +777,11 @@ public class OntologyRetrievalManagerLexGridImpl extends AbstractOntologyManager
                 AssociationList nextLevel = assocConcept.getSourceOf();
                 if (nextLevel != null && nextLevel.getAssociationCount() != 0)
                     for (int j = 0; j < nextLevel.getAssociationCount(); j++) {
-                        String next_hierarchyName = null;
-                        if (StringUtils.isNotBlank(hierarchy_relationName)) {
-                            next_hierarchyName = ApplicationConstants.SUB_CLASS;
-                        }
-                        addAssociationInfoToClassBean(nextLevel.getAssociation(j), classBean, next_hierarchyName,
+//                        String next_hierarchyName = null;
+//                        if (StringUtils.isNotBlank(hierarchy_relationName)) {
+//                            next_hierarchyName = ApplicationConstants.SUB_CLASS;
+//                        }
+                        addAssociationInfoToClassBean(nextLevel.getAssociation(j), classBean, hierarchy_relationName,
                                 includeChildren);
                     }
 
@@ -789,11 +789,11 @@ public class OntologyRetrievalManagerLexGridImpl extends AbstractOntologyManager
                 AssociationList prevLevel = assocConcept.getTargetOf();
                 if (prevLevel != null && prevLevel.getAssociationCount() != 0)
                     for (int j = 0; j < prevLevel.getAssociationCount(); j++) {
-                        String next_hierarchyName = null;
-                        if (StringUtils.isNotBlank(hierarchy_relationName)) {
-                            next_hierarchyName = ApplicationConstants.SUB_CLASS;
-                        }
-                        addAssociationInfoToClassBean(prevLevel.getAssociation(j), classBean, next_hierarchyName,
+//                        String next_hierarchyName = null;
+//                        if (StringUtils.isNotBlank(hierarchy_relationName)) {
+//                            next_hierarchyName = ApplicationConstants.SUB_CLASS;
+//                        }
+                        addAssociationInfoToClassBean(prevLevel.getAssociation(j), classBean, hierarchy_relationName,
                                 includeChildren);
                     }
             }
