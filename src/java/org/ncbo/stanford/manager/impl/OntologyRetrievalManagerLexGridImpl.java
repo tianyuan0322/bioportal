@@ -170,9 +170,12 @@ public class OntologyRetrievalManagerLexGridImpl extends AbstractOntologyManager
                 LexBIGServiceConvenienceMethods.HierarchyPathResolveOption.ALL, null);
         ClassBean conceptClass = findConceptWithoutRelations(ncboOntology, conceptId);
         boolean includeChildren = !light;
-        ArrayList<ClassBean> classBeans = createClassBeanArray(associations, conceptClass,
-                ApplicationConstants.SUPER_CLASS, includeChildren);
-        return createThingClassBean(classBeans);
+        addAssociationListInfoToClassBean(associations, conceptClass, ApplicationConstants.SUPER_CLASS, includeChildren);
+        return conceptClass;
+        // ArrayList<ClassBean> classBeans = createClassBeanArray(associations,
+        // conceptClass,
+        // ApplicationConstants.SUPER_CLASS, includeChildren);
+        // return createThingClassBean(classBeans);
     }
 
     public List<ClassBean> findParent(VNcboOntology ncboOntology, String conceptId) throws Exception {
@@ -533,7 +536,7 @@ public class OntologyRetrievalManagerLexGridImpl extends AbstractOntologyManager
     }
 
     private ClassBean createClassBeanWithChildCount(ResolvedConceptReference rcr) {
-        ClassBean bean= createClassBean(rcr);
+        ClassBean bean = createClassBean(rcr);
         // Add the children
         String scheme = rcr.getCodingScheme();
         String version = rcr.getCodingSchemeVersion();
@@ -546,9 +549,9 @@ public class OntologyRetrievalManagerLexGridImpl extends AbstractOntologyManager
             ex.printStackTrace();
         }
         return bean;
-        
+
     }
-    
+
     private ClassBean createClassBean(ResolvedConceptReference rcr) {
         ClassBean bean = new ClassBean();
 
@@ -576,7 +579,7 @@ public class OntologyRetrievalManagerLexGridImpl extends AbstractOntologyManager
     private ClassBean createThingClassBeanWithCount(ResolvedConceptReferenceList list) {
         ArrayList<ClassBean> classBeans = createClassBeanArray(list, true);
         return createThingClassBean(classBeans);
-        
+
     }
 
     private ClassBean createThingClassBean(ArrayList<ClassBean> classBeans) {
@@ -597,7 +600,7 @@ public class OntologyRetrievalManagerLexGridImpl extends AbstractOntologyManager
             ref = (ResolvedConceptReference) refEnum.nextElement();
             ClassBean bean;
             if (includeCount) {
-                bean = createClassBeanWithChildCount(ref); 
+                bean = createClassBeanWithChildCount(ref);
             } else {
                 bean = createClassBean(ref);
             }
@@ -777,10 +780,10 @@ public class OntologyRetrievalManagerLexGridImpl extends AbstractOntologyManager
                 AssociationList nextLevel = assocConcept.getSourceOf();
                 if (nextLevel != null && nextLevel.getAssociationCount() != 0)
                     for (int j = 0; j < nextLevel.getAssociationCount(); j++) {
-//                        String next_hierarchyName = null;
-//                        if (StringUtils.isNotBlank(hierarchy_relationName)) {
-//                            next_hierarchyName = ApplicationConstants.SUB_CLASS;
-//                        }
+                        // String next_hierarchyName = null;
+                        // if (StringUtils.isNotBlank(hierarchy_relationName)) {
+                        // next_hierarchyName = ApplicationConstants.SUB_CLASS;
+                        // }
                         addAssociationInfoToClassBean(nextLevel.getAssociation(j), classBean, hierarchy_relationName,
                                 includeChildren);
                     }
@@ -789,10 +792,10 @@ public class OntologyRetrievalManagerLexGridImpl extends AbstractOntologyManager
                 AssociationList prevLevel = assocConcept.getTargetOf();
                 if (prevLevel != null && prevLevel.getAssociationCount() != 0)
                     for (int j = 0; j < prevLevel.getAssociationCount(); j++) {
-//                        String next_hierarchyName = null;
-//                        if (StringUtils.isNotBlank(hierarchy_relationName)) {
-//                            next_hierarchyName = ApplicationConstants.SUB_CLASS;
-//                        }
+                        // String next_hierarchyName = null;
+                        // if (StringUtils.isNotBlank(hierarchy_relationName)) {
+                        // next_hierarchyName = ApplicationConstants.SUB_CLASS;
+                        // }
                         addAssociationInfoToClassBean(prevLevel.getAssociation(j), classBean, hierarchy_relationName,
                                 includeChildren);
                     }
