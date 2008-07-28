@@ -1,5 +1,6 @@
 package org.ncbo.stanford.manager;
 
+
 /**
  * Abstract class to incorporate functionality common between Protege loader and
  * retrieval manager classes
@@ -9,19 +10,18 @@ package org.ncbo.stanford.manager;
  */
 public abstract class AbstractOntologyManagerProtege {
 
-	protected static String protegeJdbcUrl;
-	protected static String protegeJdbcDriver;
-	protected static String protegeJdbcUsername;
-	protected static String protegeJdbcPassword;
-	protected static String protegeTablePrefix;
-	protected static String protegeTableSuffix;
-	protected static Integer protegeBigFileThreshold;
-	protected static Long protegeKnowledgeBaseTimeout;
+	protected String protegeJdbcUrl;
+	protected String protegeJdbcDriver;
+	protected String protegeJdbcUsername;
+	protected String protegeJdbcPassword;
+	protected String protegeTablePrefix;
+	protected String protegeTableSuffix;
+	protected Integer protegeBigFileThreshold;
 
 	/**
 	 * Gets the table name associated with an protege ontology id.
 	 */
-	protected static String getTableName(Integer ontologyVersionId) {
+	protected String getTableName(Integer ontologyVersionId) {
 		return protegeTablePrefix + ontologyVersionId + protegeTableSuffix;
 	}
 
@@ -129,21 +129,4 @@ public abstract class AbstractOntologyManagerProtege {
 	public void setProtegeBigFileThreshold(Integer protegeBigFileThreshold) {
 		this.protegeBigFileThreshold = protegeBigFileThreshold;
 	}
-
-	/**
-	 * @return the protegeKnowledgeBaseTimeout
-	 */
-	public Long getProtegeKnowledgeBaseTimeout() {
-		return protegeKnowledgeBaseTimeout;
-	}
-
-	/**
-	 * @param protegeKnowledgeBaseTimeout the protegeKnowledgeBaseTimeout to set
-	 */
-	public void setProtegeKnowledgeBaseTimeout(
-			Long protegeKnowledgeBaseTimeout) {
-		this.protegeKnowledgeBaseTimeout = protegeKnowledgeBaseTimeout;
-	}
-
-
 }
