@@ -29,7 +29,10 @@
 				<!-- Auto reconnect after long inactivity -->
 				<prop key="connection.autoReconnect">true</prop>
 				<prop key="connection.autoReconnectForPools">true</prop>
-				<prop key="connection.is-connection-validation-required">true</prop>
+				<prop
+					key="connection.is-connection-validation-required">
+					true
+				</prop>
 			</props>
 		</property>
 		<property name="mappingResources">
@@ -63,7 +66,7 @@
 				</value>
 				<value>
 					org/ncbo/stanford/domain/generated/NcboOntologyAdditionalVersionMetadata.hbm.xml
-				</value>				
+				</value>
 				<value>
 					org/ncbo/stanford/domain/generated/NcboUserRole.hbm.xml
 				</value>
@@ -448,6 +451,13 @@
 		</property>
 	</bean>
 
+	<bean id="protegeKnowledgeBases"
+		class="org.ncbo.stanford.util.cache.CacheMap">
+		<constructor-arg index="0">
+			<ref bean="protegeKnowledgeBaseTimeout" />
+		</constructor-arg>
+	</bean>
+
 	<bean id="abstractOntologyManagerProtege"
 		class="org.ncbo.stanford.manager.AbstractOntologyManagerProtege"
 		abstract="true">
@@ -472,9 +482,6 @@
 		<property name="protegeBigFileThreshold">
 			<ref bean="protegeBigFileThreshold" />
 		</property>
-		<property name="protegeKnowledgeBaseTimeout">
-			<ref bean="protegeKnowledgeBaseTimeout" />
-		</property>
 	</bean>
 
 	<bean id="ontologyRetrievalManagerLexGrid"
@@ -485,6 +492,9 @@
 	<bean id="ontologyRetrievalManagerProtege"
 		class="org.ncbo.stanford.manager.impl.OntologyRetrievalManagerProtegeImpl"
 		parent="abstractOntologyManagerProtege">
+		<property name="protegeKnowledgeBases">
+			<ref bean="protegeKnowledgeBases" />
+		</property>
 	</bean>
 
 	<bean id="ontologyLoadManagerLexGrid"
@@ -870,7 +880,7 @@
 			<value>@encryptionkey@</value>
 		</constructor-arg>
 	</bean>
-	
+
 	<!-- Temporary directory on the server -->
 	<bean id="tempDir" class="java.lang.String">
 		<constructor-arg>
@@ -926,7 +936,7 @@
 			<value>@protegeknowledgebasetimeout@</value>
 		</constructor-arg>
 	</bean>
-	
+
 	<!-- OBO Sourceforge CVS properties -->
 	<bean id="oboSourceforgeCVSUsername" class="java.lang.String">
 		<constructor-arg>
