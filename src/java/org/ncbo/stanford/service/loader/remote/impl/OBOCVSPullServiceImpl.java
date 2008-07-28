@@ -80,7 +80,7 @@ public class OBOCVSPullServiceImpl implements OBOCVSPullService {
 				tempDir);
 
 		try {
-//			cvsUtils.cvsCheckout();
+			cvsUtils.cvsCheckout();
 			HashMap<String, CVSFile> updateFiles = cvsUtils.getAllCVSEntries();
 			OntologyDescriptorParser odp = new OntologyDescriptorParser(
 					oboSourceforgeCVSDescriptorFile);
