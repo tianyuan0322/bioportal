@@ -551,15 +551,15 @@ public class OntologyRetrievalManagerProtegeImpl extends
 	/**
 	 * @return the protegeKnowledgeBases
 	 */
-	public CacheMap getProtegeKnowledgeBases() {
+	public CacheMap<Integer, KnowledgeBase> getProtegeKnowledgeBases() {
 		return protegeKnowledgeBases;
 	}
 
 	/**
-	 * @param protegeKnowledgeBases
-	 *            the protegeKnowledgeBases to set
+	 * @param protegeKnowledgeBases the protegeKnowledgeBases to set
 	 */
-	public void setProtegeKnowledgeBases(CacheMap protegeKnowledgeBases) {
+	public void setProtegeKnowledgeBases(
+			CacheMap<Integer, KnowledgeBase> protegeKnowledgeBases) {
 		this.protegeKnowledgeBases = protegeKnowledgeBases;
 	}
 }
