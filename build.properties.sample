@@ -181,7 +181,7 @@ lexgrid.index.location=${bioportal.resource.path}/lexgrid/lbIndex
 #
 # The maximum number of SQL connections to open (and pool) per 
 # database. 
-lexgrid.max.connections.per.db=8
+lexgrid.max.connections.per.db=50
 #
 # Size of the Dynamic Cache (this is used to cache frequently 
 # accessed information)
