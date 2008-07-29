@@ -98,10 +98,6 @@ public class OntologyRetrievalManagerProtegeImpl extends
 		// through the collection, returning the first one.
 		Cls oThing = kb.getRootCls();
 
-		if (log.isDebugEnabled())
-			log.debug("Searching for root node for ontology id: "
-					+ ontologyVersion.getId());
-
 		if (oThing != null) {
 			return createClassBean(oThing, true);
 		}
@@ -112,12 +108,6 @@ public class OntologyRetrievalManagerProtegeImpl extends
 	@SuppressWarnings("deprecation")
 	public ClassBean findConcept(VNcboOntology ontologyVersion, String conceptId) {
 		KnowledgeBase kb = getKnowledgeBase(ontologyVersion);
-
-		// String conceptName = owlModel.getResourceNameForURI(conceptId);
-
-		if (log.isDebugEnabled()) {
-			log.debug("Getting concept id: " + conceptId);
-		}
 
 		Cls owlClass = kb.getCls(conceptId);
 
@@ -130,14 +120,12 @@ public class OntologyRetrievalManagerProtegeImpl extends
 
 	public ClassBean findPathToRoot(VNcboOntology ontologyVersion,
 			String conceptId, boolean light) {
-
 		KnowledgeBase kb = getKnowledgeBase(ontologyVersion);
 
 		Cls cls = kb.getCls(conceptId);
 		Collection nodes = ModelUtilities.getPathToRoot(cls);
 
 		return buildPath(nodes, light);
-
 	}
 
 	public ClassBean findParent(String id, Integer ontologyVersionId) {
@@ -192,6 +180,7 @@ public class OntologyRetrievalManagerProtegeImpl extends
 			List<VNcboOntology> ontologyVersions, String query,
 			boolean includeObsolete, int maxToReturn) {
 		ArrayList<SearchResultBean> results = new ArrayList<SearchResultBean>();
+		
 		for (VNcboOntology ontologyVersion : ontologyVersions) {
 			SearchResultBean srb = new SearchResultBean();
 			srb.setOntologyVersionId(ontologyVersion.getId());
@@ -212,9 +201,7 @@ public class OntologyRetrievalManagerProtegeImpl extends
 						Cls owlClass = (Cls) frame;
 						srb.getNames().add(createLightBean(owlClass));
 					}
-
 				}
-
 			}
 
 			results.add(srb);
@@ -349,9 +336,6 @@ public class OntologyRetrievalManagerProtegeImpl extends
 				protegeJdbcDriver, protegeJdbcUrl, getTableName(ontologyVersion
 						.getId()), protegeJdbcUsername, protegeJdbcPassword);
 		prj.createDomainKnowledgeBase(factory, errors, true);
-
-		// Project prj = Project.loadProjectFromFile(TEST_OWL_URI, new
-		// ArrayList());
 
 		return prj.getKnowledgeBase();
 	}
