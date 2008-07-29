@@ -1,10 +1,6 @@
 package org.ncbo.stanford.bean;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import org.ncbo.stanford.domain.generated.NcboLCategory;
-import org.ncbo.stanford.domain.generated.NcboUserRole;
 
 public class CategoryBean {
 
@@ -12,8 +8,7 @@ public class CategoryBean {
 	private Integer parentId;
 	private String name;
 	private String oboFoundryName;
-	
-	
+
 	/**
 	 * Populates the OntologyBean with data from a NcboOntology
 	 * 
@@ -24,6 +19,7 @@ public class CategoryBean {
 			this.setId(ncboCategory.getId());
 			this.setName(ncboCategory.getName());
 			this.setOboFoundryName(ncboCategory.getOboFoundryName());
+			
 			if (ncboCategory.getNcboLCategory() != null) {
 				this.setParentId(ncboCategory.getNcboLCategory().getId());
 			}
@@ -40,7 +36,7 @@ public class CategoryBean {
 			ncboCategory.setId(this.getId());
 			ncboCategory.setName(this.getName());
 			ncboCategory.setOboFoundryName(ncboCategory.getOboFoundryName());
-			
+
 			if (this.getParentId() != null) {
 				NcboLCategory parentCategory = new NcboLCategory();
 				parentCategory.setId(this.getParentId());
@@ -48,58 +44,64 @@ public class CategoryBean {
 			}
 		}
 	}
-	
-	
+
 	/**
 	 * @return the id
 	 */
 	public Integer getId() {
 		return id;
 	}
+
 	/**
-	 * @param id the id to set
+	 * @param id
+	 *            the id to set
 	 */
 	public void setId(Integer id) {
 		this.id = id;
 	}
+
 	/**
 	 * @return the parentId
 	 */
 	public Integer getParentId() {
 		return parentId;
 	}
+
 	/**
-	 * @param parentId the parentId to set
+	 * @param parentId
+	 *            the parentId to set
 	 */
 	public void setParentId(Integer parentId) {
 		this.parentId = parentId;
 	}
+
 	/**
 	 * @return the name
 	 */
 	public String getName() {
 		return name;
 	}
+
 	/**
-	 * @param name the name to set
+	 * @param name
+	 *            the name to set
 	 */
 	public void setName(String name) {
 		this.name = name;
 	}
+
 	/**
 	 * @return the oboFoundryName
 	 */
 	public String getOboFoundryName() {
 		return oboFoundryName;
 	}
+
 	/**
-	 * @param oboFoundryName the oboFoundryName to set
+	 * @param oboFoundryName
+	 *            the oboFoundryName to set
 	 */
 	public void setOboFoundryName(String oboFoundryName) {
 		this.oboFoundryName = oboFoundryName;
 	}
-
-
-
-
 }
