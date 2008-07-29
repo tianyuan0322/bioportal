@@ -53,7 +53,7 @@ public class OntologyRetrievalManagerProtegeImpl extends
 			.getLog(OntologyRetrievalManagerProtegeImpl.class);
 
 	// Expire cache based on timeout
-	private CacheMap protegeKnowledgeBases = null;
+	private CacheMap<Integer, KnowledgeBase> protegeKnowledgeBases = null;
 
 	/**
 	 * Default Constructor
