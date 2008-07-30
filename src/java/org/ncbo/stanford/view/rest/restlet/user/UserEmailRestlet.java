@@ -1,14 +1,11 @@
 package org.ncbo.stanford.view.rest.restlet.user;
 
-import java.util.List;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.ncbo.stanford.bean.UserBean;
 import org.ncbo.stanford.service.user.UserService;
 import org.ncbo.stanford.service.xml.XMLSerializationService;
 import org.ncbo.stanford.util.MessageUtils;
-import org.ncbo.stanford.util.helper.BeanHelper;
 import org.restlet.Restlet;
 import org.restlet.data.Method;
 import org.restlet.data.Request;
@@ -49,15 +46,21 @@ public class UserEmailRestlet extends Restlet {
 		 * @param response
 		 */
 		private void getUser(Request request, Response response) {
-			
-			System.out.println("=====================UserEmailRestlet========================");
-			
+						
 			UserBean userBean = null;
 			String email = (String) request.getAttributes().get("email");
 			
 			try {
 				userBean = getUserService().findUserByEmail(email);
 
+				response.setStatus(Status.SUCCESS_OK);
+				
+				// if user is not found, set Error in the Status object
+				if (userBean == null || userBean.getId() == null) {
+					System.out.println("No user found!!! ==========================");
+					response.setStatus(Status.CLIENT_ERROR_NOT_FOUND, MessageUtils.getMessage("msg.error.userNotFound"));
+				}	
+				
 			} catch (Exception e) {
 				response.setStatus(Status.SERVER_ERROR_INTERNAL, e.getMessage());
 				e.printStackTrace();
