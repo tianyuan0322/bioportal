@@ -54,7 +54,6 @@ public class XMLSerializationServiceImpl implements XMLSerializationService {
 	 */
 	public String getErrorAsXML(ErrorTypeEnum errorType, String accessedResource) {
 		String xmlHeader = ApplicationConstants.XML_DECLARATION + "\n";
-
 		getXStreamInstance().omitField(ErrorBean.class, "errorType");
 		ErrorBean errorBean = new ErrorBean(errorType);
 
@@ -73,11 +72,8 @@ public class XMLSerializationServiceImpl implements XMLSerializationService {
 	 * @return
 	 */
 	public String getErrorAsXML(Request request, Response response) {
-
 		String xmlHeader = ApplicationConstants.XML_DECLARATION + "\n";
-
 		String accessedResource = request.getResourceRef().getPath();
-
 		ErrorStatusBean errorStatusBean = new ErrorStatusBean(response
 				.getStatus());
 
@@ -86,7 +82,6 @@ public class XMLSerializationServiceImpl implements XMLSerializationService {
 		}
 
 		return xmlHeader + getXStreamInstance().toXML(errorStatusBean);
-
 	}
 
 	/**
@@ -98,11 +93,9 @@ public class XMLSerializationServiceImpl implements XMLSerializationService {
 	 * @return String
 	 */
 	public String getErrorAsXML(ErrorStatusBean errorStatusBean) {
-
 		String xmlHeader = ApplicationConstants.XML_DECLARATION + "\n";
 
 		return xmlHeader + getXStreamInstance().toXML(errorStatusBean);
-
 	}
 
 	/**
@@ -114,11 +107,9 @@ public class XMLSerializationServiceImpl implements XMLSerializationService {
 	 * @return String
 	 */
 	public String getSuccessAsXML(SuccessBean successBean) {
-
 		String xmlHeader = ApplicationConstants.XML_DECLARATION + "\n";
 
 		return xmlHeader + getXStreamInstance().toXML(successBean);
-
 	}
 
 	/**
@@ -219,21 +210,15 @@ public class XMLSerializationServiceImpl implements XMLSerializationService {
 	 *            response the userService to set
 	 */
 	public void generateStatusXMLResponse(Request request, Response response) {
-
 		if (!response.getStatus().isError()) {
-
 			RequestUtils.setHttpServletResponse(response, Status.SUCCESS_OK,
 					MediaType.TEXT_XML,
 					getSuccessAsXML(getSuccessBean(request)));
-
 		} else {
-
 			RequestUtils.setHttpServletResponse(response, response.getStatus(),
 					MediaType.TEXT_XML, getErrorAsXML(getErrorBean(request,
 							response)));
-
 		}
-
 	}
 
 	/**
@@ -246,7 +231,6 @@ public class XMLSerializationServiceImpl implements XMLSerializationService {
 
 	public void generateXMLResponse(Request request, Response response,
 			Object data) {
-
 		// SUCCESS, include the bean info
 		if (!response.getStatus().isError()) {
 
@@ -272,10 +256,8 @@ public class XMLSerializationServiceImpl implements XMLSerializationService {
 
 	public void generateXMLResponse(Request request, Response response,
 			Object data, String xsltFile) {
-
 		// if SUCCESS, include the bean info
 		if (!response.getStatus().isError()) {
-
 			try {
 				RequestUtils.setHttpServletResponse(response,
 						Status.SUCCESS_OK, MediaType.TEXT_XML, applyXSL(data,
@@ -288,7 +270,6 @@ public class XMLSerializationServiceImpl implements XMLSerializationService {
 				e.printStackTrace();
 				log.error(e);
 			}
-
 			// if ERROR, just status, no bean info
 		} else {
 			generateStatusXMLResponse(request, response);
@@ -301,14 +282,15 @@ public class XMLSerializationServiceImpl implements XMLSerializationService {
 	 */
 	public static Transformer getTransformerInstance(String xslFile)
 			throws TransformerException {
-
 		Transformer transformer = (Transformer) transformers.get(xslFile);
+
 		if (transformer == null) {
 			File ontologyXSLT = new File(xslFile);
 			transformer = TransformerFactory.newInstance().newTransformer(
 					new StreamSource(ontologyXSLT));
 			transformers.put(xslFile, transformer);
 		}
+
 		return transformer;
 	}
 
@@ -317,12 +299,12 @@ public class XMLSerializationServiceImpl implements XMLSerializationService {
 	 * expensive.
 	 */
 	public static XStream getXStreamInstance() {
-
 		if (xstream == null) {
 			xstream = new XStream();
-
+			xstream.setMode(XStream.NO_REFERENCES);
 			setXStreamAliases(xstream);
 		}
+
 		return xstream;
 	}
 
@@ -330,7 +312,6 @@ public class XMLSerializationServiceImpl implements XMLSerializationService {
 	 * set aliases for XStream
 	 */
 	private static void setXStreamAliases(XStream xstream) {
-
 		xstream.alias(MessageUtils.getMessage("entity.ontology"),
 				OntologyBean.class);
 
@@ -350,7 +331,5 @@ public class XMLSerializationServiceImpl implements XMLSerializationService {
 		xstream.alias(ApplicationConstants.ERROR_XML_TAG_NAME, ErrorBean.class);
 		xstream.alias(ApplicationConstants.SUCCESS_XML_TAG_NAME,
 				SuccessBean.class);
-
 	}
-
 }
