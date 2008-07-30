@@ -198,6 +198,16 @@
 			<ref bean="xmlSerializationService" />
 		</property>
 	</bean>
+	
+	<bean id="userEmailRestlet"
+		class="org.ncbo.stanford.view.rest.restlet.user.UserEmailRestlet">
+		<property name="userService">
+			<ref bean="userService" />
+		</property>
+		<property name="xmlSerializationService">
+			<ref bean="xmlSerializationService" />
+		</property>
+	</bean>
 
 	<!-- All mappings: -->
 	<bean id="restManager"
@@ -241,6 +251,9 @@
 						</entry>
 						<entry key="/users/{user}">
 							<ref local="userRestlet" />
+						</entry>
+						<entry key="/users/email/{email}/">
+							<ref local="userEmailRestlet" />
 						</entry>
 						<entry key="/path/{ontologyVersionId}/{source}/{target}">
 							<ref local="pathRestlet" />
