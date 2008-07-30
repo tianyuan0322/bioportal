@@ -57,7 +57,6 @@ public class UserEmailRestlet extends Restlet {
 				
 				// if user is not found, set Error in the Status object
 				if (userBean == null || userBean.getId() == null) {
-					System.out.println("No user found!!! ==========================");
 					response.setStatus(Status.CLIENT_ERROR_NOT_FOUND, MessageUtils.getMessage("msg.error.userNotFound"));
 				}	
 				
