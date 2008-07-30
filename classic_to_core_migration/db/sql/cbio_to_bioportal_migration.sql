@@ -140,6 +140,8 @@ DROP PROCEDURE IF EXISTS `sp_remove_duplicate_ontologies`;
 update ncbo_ontology_version set file_path = CONCAT("/", ontology_id, "/", internal_version_number)
 where is_remote = 0;
 
+update ncbo_ontology_version_metadata set format = 'LEXGRID-XML' where upper(format) = 'LEXGRID_XML';
+
 DELIMITER $$
 
 DROP PROCEDURE IF EXISTS `sp_remove_gene_ontology`$$
