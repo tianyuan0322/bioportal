@@ -74,9 +74,7 @@ public class OntologyLoadManagerProtegeImpl extends
 		List errors = new ArrayList();
 
 		if (ontology.getFormat().contains("OWL")) {
-
 			if (ontologyFile.length() < protegeBigFileThreshold) {
-
 				OWLModel owlModel = ProtegeOWL
 						.createJenaOWLModelFromInputStream(new FileInputStream(
 								ontologyFile));
@@ -99,11 +97,9 @@ public class OntologyLoadManagerProtegeImpl extends
 					throw new Exception("Error during loading "
 							+ ontologyUri.toString());
 				}
-
 			} else {
 				// If the ontology file is big, use the streaming Protege load
 				// approach.
-
 				CreateOWLDatabaseFromFileProjectPlugin creator = new CreateOWLDatabaseFromFileProjectPlugin();
 				creator
 						.setKnowledgeBaseFactory(new OWLDatabaseKnowledgeBaseFactory());
@@ -112,11 +108,10 @@ public class OntologyLoadManagerProtegeImpl extends
 				creator.setTable(tableName);
 				creator.setUsername(protegeJdbcUsername);
 				creator.setPassword(protegeJdbcPassword);
-				creator.setOntologyFileURI(ontologyUri);
+				creator.setOntologyInputSource(ontologyUri);
 				creator.setUseExistingSources(true);
 				creator.createProject();
 			}
-
 		} else {
 
 			tableName = getTableName(ontology.getId());

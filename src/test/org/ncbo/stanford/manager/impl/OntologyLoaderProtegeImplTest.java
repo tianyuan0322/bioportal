@@ -1,7 +1,6 @@
 package org.ncbo.stanford.manager.impl;
 
 import java.net.URI;
-import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -150,9 +149,6 @@ public void testNoStreamPizzaLoad() {
 
 			displayErrors(errors); // optional
 			// return (OWLModel) dbProject.getKnowledgeBase();
-
-		} catch (URISyntaxException exc) {
-			fail("Invalid ontology file URI: " + SOURCE_OWL_URI);
 		} catch (Exception exc) {
 			exc.printStackTrace();
 			fail("General exception: " + exc.getMessage());
@@ -210,9 +206,6 @@ public void testNoStreamPizzaLoad() {
 			 * displayErrors(errors); //optional // return (OWLModel)
 			 * dbProject.getKnowledgeBase();
 			 */
-
-		} catch (URISyntaxException exc) {
-			fail("Invalid ontology file URI: " + SOURCE_OMVOWL_URI);
 		} catch (Exception exc) {
 			exc.printStackTrace();
 			fail("General exception: " + exc.getMessage());
