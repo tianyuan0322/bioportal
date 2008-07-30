@@ -13,11 +13,11 @@
 	<property name="conf.dir.generated" value="${conf.dir}/generated" />
 	<property name="tmpl.dir" value="tmpl" />
 
-	<path id="master-classpath">
+	<path id="master-classpath">		
 		<fileset dir="${lib.dir}">
-			<include name="*.jar" />
+			<include name="**/*.jar" />
 		</fileset>
-
+		
 		<fileset dir="${appserver.lib}">
 			<include name="servlet*.jar" />
 		</fileset>
