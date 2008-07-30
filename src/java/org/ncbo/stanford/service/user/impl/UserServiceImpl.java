@@ -49,6 +49,23 @@ public class UserServiceImpl implements UserService {
 
 		return userBean;
 	}
+	
+	
+	public UserBean findUserByEmail(String email) {
+		UserBean userBean = null;
+		List userList = ncboUserDAO.findByEmail(email);
+		if (userList.size() > 0) {
+			NcboUser user = (NcboUser) userList.toArray()[0];
+
+			if (user != null) {
+				// populate userBean from ncbuUser with matched username
+				userBean = new UserBean();
+				userBean.populateFromEntity(user);
+			}
+		}
+
+		return userBean;
+	}
 
 	/**
 	 * @return List<UserBean>
