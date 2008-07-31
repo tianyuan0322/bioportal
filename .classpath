@@ -43,6 +43,7 @@
 	<classpathentry kind="lib" path="WebRoot/WEB-INF/lib/spring-test.jar"/>
 	<classpathentry kind="lib" path="WebRoot/WEB-INF/lib/acegi-security-1.0.7.jar"/>
 	<classpathentry kind="lib" path="WebRoot/WEB-INF/lib/commons-logging-1.1.1.jar"/>
+	<classpathentry kind="lib" path="WebRoot/WEB-INF/lib/commons-lang-2.4.jar"/>
 	<classpathentry kind="lib" path="WebRoot/WEB-INF/lib/commons-collections-3.2.1.jar"/>
 	<classpathentry kind="lib" path="WebRoot/WEB-INF/lib/commons-io-1.4.jar"/>
 	<classpathentry kind="lib" path="WebRoot/WEB-INF/lib/commons-pool-1.4.jar"/>
@@ -91,7 +92,6 @@
 	<classpathentry kind="lib" path="WebRoot/WEB-INF/lib/protege/plugins/edu.stanford.smi.protegex.rdf_backend/rdf-backend.jar"/>
 	<classpathentry kind="lib" path="WebRoot/WEB-INF/lib/protege/plugins/edu.stanford.smi.protegex.rdf_backend/xerces.jar"/>
 	<classpathentry kind="lib" path="WebRoot/WEB-INF/lib/protege/looks-2.1.3.jar"/>
-	<classpathentry kind="lib" path="WebRoot/WEB-INF/lib/protege/plugins/edu.stanford.smi.protegex.owl/commons-lang-2.4.jar"/>
 	<classpathentry kind="lib" path="WebRoot/WEB-INF/lib/lexgrid/lbAdmin.jar"/>
 	<classpathentry kind="lib" path="WebRoot/WEB-INF/lib/lexgrid/lbImpl.jar"/>
 	<classpathentry kind="lib" path="WebRoot/WEB-INF/lib/lexgrid/lbInterfaces.jar"/>
@@ -117,7 +117,6 @@
 	<classpathentry kind="lib" path="WebRoot/WEB-INF/lib/lexgrid/extLib/commons-codec-1.3.jar"/>
 	<classpathentry kind="lib" path="WebRoot/WEB-INF/lib/lexgrid/extLib/commons-collections-3.2.jar"/>
 	<classpathentry kind="lib" path="WebRoot/WEB-INF/lib/lexgrid/extLib/commons-discovery-0.2.jar"/>
-	<classpathentry kind="lib" path="WebRoot/WEB-INF/lib/lexgrid/extLib/commons-lang-2.2.jar"/>
 	<classpathentry kind="lib" path="WebRoot/WEB-INF/lib/lexgrid/extLib/commons-logging-1.1.jar"/>
 	<classpathentry kind="lib" path="WebRoot/WEB-INF/lib/lexgrid/extLib/commons-pool-1.3.jar"/>
 	<classpathentry kind="lib" path="WebRoot/WEB-INF/lib/lexgrid/extLib/concurrent.jar"/>
