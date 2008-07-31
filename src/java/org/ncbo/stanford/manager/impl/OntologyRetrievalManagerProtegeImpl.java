@@ -27,6 +27,7 @@ import edu.stanford.smi.protege.model.Reference;
 import edu.stanford.smi.protege.model.Slot;
 import edu.stanford.smi.protege.storage.database.DatabaseKnowledgeBaseFactory;
 import edu.stanford.smi.protegex.owl.database.OWLDatabaseKnowledgeBaseFactory;
+import edu.stanford.smi.protegex.owl.model.NamespaceUtil;
 import edu.stanford.smi.protegex.owl.model.OWLModel;
 import edu.stanford.smi.protegex.owl.model.OWLNamedClass;
 import edu.stanford.smi.protegex.owl.model.RDFResource;
@@ -360,7 +361,7 @@ public class OntologyRetrievalManagerProtegeImpl extends
 	private String getId(Cls node){
 		if (node instanceof RDFResource) {
 			RDFResource rdfNode = (RDFResource) node;
-			return rdfNode.getLocalName();
+			return NamespaceUtil.getPrefixedName(rdfNode.getOWLModel(),rdfNode.getName());
 		}else{
 			return node.getName();
 		}
