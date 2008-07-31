@@ -360,7 +360,7 @@ public class OntologyRetrievalManagerProtegeImpl extends
 	private String getId(Cls node){
 		if (node instanceof RDFResource) {
 			RDFResource rdfNode = (RDFResource) node;
-			return rdfNode.getNamespacePrefix();
+			return rdfNode.getLocalName();
 		}else{
 			return node.getName();
 		}
