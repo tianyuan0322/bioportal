@@ -89,6 +89,7 @@ public class OntologyRetrievalManagerLexGridImpl extends
 				list.add(prop.getLocalId());
 			}
 		}
+
 		return list;
 	}
 
@@ -133,8 +134,10 @@ public class OntologyRetrievalManagerLexGridImpl extends
 		if (matches.getResolvedConceptReferenceCount() > 0) {
 			ResolvedConceptReference ref = (ResolvedConceptReference) matches
 					.enumerateResolvedConceptReference().nextElement();
+
 			return createClassBean(ref);
 		}
+
 		return null;
 	}
 
@@ -162,9 +165,10 @@ public class OntologyRetrievalManagerLexGridImpl extends
 					conceptId);
 			addAssociationListInfoToClassBean(paerntList, classBean,
 					ApplicationConstants.SUPER_CLASS, false);
-			return classBean;
 
+			return classBean;
 		}
+
 		return null;
 	}
 
@@ -177,10 +181,12 @@ public class OntologyRetrievalManagerLexGridImpl extends
 
 		String[] hierarchyIDs = lbscm.getHierarchyIDs(scheme, csvt);
 		String hierarchyId = (hierarchyIDs.length > 0) ? hierarchyIDs[0] : null;
+
 		for (String hierarchy : hierarchyIDs) {
 			if (hierarchy.equalsIgnoreCase("IS_A"))
 				hierarchyId = hierarchy;
 		}
+
 		AssociationList associations = lbscm.getHierarchyPathToRoot(scheme,
 				csvt, hierarchyId, conceptId, false,
 				LexBIGServiceConvenienceMethods.HierarchyPathResolveOption.ALL,
@@ -190,11 +196,8 @@ public class OntologyRetrievalManagerLexGridImpl extends
 		boolean includeChildren = !light;
 		addAssociationListInfoToClassBean(associations, conceptClass,
 				ApplicationConstants.SUPER_CLASS, includeChildren);
+
 		return conceptClass;
-		// ArrayList<ClassBean> classBeans = createClassBeanArray(associations,
-		// conceptClass,
-		// ApplicationConstants.SUPER_CLASS, includeChildren);
-		// return createThingClassBean(classBeans);
 	}
 
 	public List<ClassBean> findParent(VNcboOntology ncboOntology,
@@ -393,6 +396,7 @@ public class OntologyRetrievalManagerLexGridImpl extends
 
 			if (!soundsLike) {
 				search_string = replacePeriod(search_string);
+
 				switch (algorithm) {
 				case SEARCH_STARTS_WITH:
 					search_string = search_string + ".*";
@@ -447,7 +451,6 @@ public class OntologyRetrievalManagerLexGridImpl extends
 		}
 
 		return null;
-
 	}
 
 	private SearchResultBean searchNodesForName(VNcboOntology ncboOntology,
@@ -520,12 +523,15 @@ public class OntologyRetrievalManagerLexGridImpl extends
 
 		String[] hierarchyIDs = lbscm.getHierarchyIDs(scheme, csvt);
 		String hierarchyId = (hierarchyIDs.length > 0) ? hierarchyIDs[0] : null;
+
 		for (String hierarchy : hierarchyIDs) {
 			if (hierarchy.equalsIgnoreCase("IS_A"))
 				hierarchyId = hierarchy;
 		}
+
 		AssociationList associations = lbscm.getHierarchyLevelPrev(scheme,
 				csvt, hierarchyId, conceptId, false, null);
+
 		return associations;
 	}
 
@@ -541,8 +547,10 @@ public class OntologyRetrievalManagerLexGridImpl extends
 			if (hierarchy.equalsIgnoreCase("IS_A"))
 				hierarchyId = hierarchy;
 		}
+
 		AssociationList associations = lbscm.getHierarchyLevelNext(scheme,
 				csvt, hierarchyId, conceptId, false, null);
+
 		return associations;
 	}
 
@@ -613,8 +621,8 @@ public class OntologyRetrievalManagerLexGridImpl extends
 		} catch (Exception ex) {
 			ex.printStackTrace();
 		}
-		return bean;
 
+		return bean;
 	}
 
 	private ClassBean createClassBean(ResolvedConceptReference rcr) {
@@ -645,8 +653,8 @@ public class OntologyRetrievalManagerLexGridImpl extends
 	private ClassBean createThingClassBeanWithCount(
 			ResolvedConceptReferenceList list) {
 		ArrayList<ClassBean> classBeans = createClassBeanArray(list, true);
-		return createThingClassBean(classBeans);
 
+		return createThingClassBean(classBeans);
 	}
 
 	private ClassBean createThingClassBean(ArrayList<ClassBean> classBeans) {
@@ -656,6 +664,7 @@ public class OntologyRetrievalManagerLexGridImpl extends
 		classBean.addRelation(ApplicationConstants.SUB_CLASS, classBeans);
 		classBean.addRelation(ApplicationConstants.CHILD_COUNT, classBeans
 				.size());
+
 		return classBean;
 	}
 
@@ -683,21 +692,25 @@ public class OntologyRetrievalManagerLexGridImpl extends
 	private String getDefinition(Concept entry) {
 		Definition d = null;
 		int count = entry.getDefinitionCount();
+
 		for (int i = 0; i < count; i++) {
 			d = entry.getDefinition(i);
+
 			if (d.getIsPreferred().booleanValue())
 				return d.getText().getContent();
 		}
+
 		return "";
 	}
 
 	private String getPreferredPresentation(Concept entry) {
 		Presentation[] presentations = entry.getPresentation();
+
 		for (int i = 0; i < presentations.length; i++) {
 			if (presentations[i].getIsPreferred().booleanValue())
-
 				return presentations[i].getText().getContent();
 		}
+
 		return "";
 	}
 
@@ -705,10 +718,12 @@ public class OntologyRetrievalManagerLexGridImpl extends
 	private static void addStringToHashMapsArrayList(
 			HashMap<Object, Object> map, String key, String value) {
 		List list = (List) map.get(key);
+
 		if (list == null) {
 			list = new ArrayList<Object>();
 			map.put(key, list);
 		}
+
 		if (StringUtils.isNotBlank(value) && !list.contains(value)) {
 			list.add(value);
 		}
@@ -726,10 +741,12 @@ public class OntologyRetrievalManagerLexGridImpl extends
 		if (StringUtils.isNotBlank(key) && properties != null
 				&& properties.length > 0) {
 			ArrayList<PropertyBean> beans = new ArrayList<PropertyBean>();
+
 			for (int i = 0; i < properties.length; i++) {
 				PropertyBean bean = createPropertyBean(properties[i]);
 				beans.add(bean);
 			}
+
 			map.put(key, beans);
 		}
 	}
@@ -739,10 +756,12 @@ public class OntologyRetrievalManagerLexGridImpl extends
 		if (StringUtils.isNotBlank(key) && sources != null
 				&& sources.length > 0) {
 			ArrayList<PropertyBean> beans = new ArrayList<PropertyBean>();
+
 			for (int i = 0; i < sources.length; i++) {
 				PropertyBean bean = createPropertyBean(sources[i]);
 				beans.add(bean);
 			}
+
 			map.put(key, beans);
 		}
 	}
@@ -752,10 +771,12 @@ public class OntologyRetrievalManagerLexGridImpl extends
 		if (StringUtils.isNotBlank(key) && qualifiers != null
 				&& qualifiers.length > 0) {
 			ArrayList<PropertyBean> beans = new ArrayList<PropertyBean>();
+
 			for (int i = 0; i < qualifiers.length; i++) {
 				PropertyBean bean = createPropertyBean(qualifiers[i]);
 				beans.add(bean);
 			}
+
 			map.put(key, beans);
 		}
 	}
@@ -789,6 +810,7 @@ public class OntologyRetrievalManagerLexGridImpl extends
 		addAssociationListInfoToClassBean(list, current_classBean,
 				hierarchy_relationName, includeChildren);
 		classBeans.add(current_classBean);
+
 		return classBeans;
 	}
 
@@ -798,30 +820,34 @@ public class OntologyRetrievalManagerLexGridImpl extends
 		if (list == null || current_classBean == null) {
 			return;
 		}
+
 		Enumeration<Association> assocEnum = list.enumerateAssociation();
 		Association association = null;
+
 		while (assocEnum.hasMoreElements()) {
 			association = (Association) assocEnum.nextElement();
 			addAssociationInfoToClassBean(association, current_classBean,
 					hierarchy_relationName, includeChildren);
 		}
-
 	}
 
 	int getChildCount(AssociationList list) {
 		int count = 0;
+
 		if (list == null)
 			return count;
+
 		Enumeration<Association> assocEnum = list.enumerateAssociation();
 		Association association = null;
+
 		while (assocEnum.hasMoreElements()) {
 			association = (Association) assocEnum.nextElement();
 			AssociatedConceptList assocConceptList = association
 					.getAssociatedConcepts();
 			count += assocConceptList.getAssociatedConceptCount();
 		}
-		return count;
 
+		return count;
 	}
 
 	/**
@@ -843,12 +869,14 @@ public class OntologyRetrievalManagerLexGridImpl extends
 		AssociatedConceptList assocConceptList = association
 				.getAssociatedConcepts();
 		ArrayList<ClassBean> classBeans = new ArrayList<ClassBean>();
+
 		for (int i = 0; i < assocConceptList.getAssociatedConceptCount(); i++) {
 			AssociatedConcept assocConcept = assocConceptList
 					.getAssociatedConcept(i);
 			if (assocConcept != null) {
 				ClassBean classBean = createClassBeanWithChildCount(assocConcept);
 				classBeans.add(classBean);
+
 				if (includeChildren) {
 					// Add the children
 					String scheme = assocConcept.getCodingScheme();
@@ -856,6 +884,7 @@ public class OntologyRetrievalManagerLexGridImpl extends
 					String conceptId = assocConcept.getConceptCode();
 					CodingSchemeVersionOrTag csvt = Constructors
 							.createCodingSchemeVersionOrTagFromVersion(version);
+
 					try {
 						AssociationList childList = getHierarchyLevelNext(
 								scheme, csvt, conceptId);
@@ -864,16 +893,13 @@ public class OntologyRetrievalManagerLexGridImpl extends
 					} catch (Exception ex) {
 						ex.printStackTrace();
 					}
-
 				}
+
 				// Find and recurse printing for next batch ...
 				AssociationList nextLevel = assocConcept.getSourceOf();
+
 				if (nextLevel != null && nextLevel.getAssociationCount() != 0)
 					for (int j = 0; j < nextLevel.getAssociationCount(); j++) {
-						// String next_hierarchyName = null;
-						// if (StringUtils.isNotBlank(hierarchy_relationName)) {
-						// next_hierarchyName = ApplicationConstants.SUB_CLASS;
-						// }
 						addAssociationInfoToClassBean(nextLevel
 								.getAssociation(j), classBean,
 								hierarchy_relationName, includeChildren);
@@ -881,12 +907,9 @@ public class OntologyRetrievalManagerLexGridImpl extends
 
 				// Find and recurse printing for previous batch ...
 				AssociationList prevLevel = assocConcept.getTargetOf();
+
 				if (prevLevel != null && prevLevel.getAssociationCount() != 0)
 					for (int j = 0; j < prevLevel.getAssociationCount(); j++) {
-						// String next_hierarchyName = null;
-						// if (StringUtils.isNotBlank(hierarchy_relationName)) {
-						// next_hierarchyName = ApplicationConstants.SUB_CLASS;
-						// }
 						addAssociationInfoToClassBean(prevLevel
 								.getAssociation(j), classBean,
 								hierarchy_relationName, includeChildren);
@@ -895,6 +918,7 @@ public class OntologyRetrievalManagerLexGridImpl extends
 		}
 
 		String dirName = association.getDirectionalName();
+
 		if (StringUtils.isBlank(dirName)) {
 			dirName = "[R]" + association.getAssociationName();
 		}
@@ -915,15 +939,17 @@ public class OntologyRetrievalManagerLexGridImpl extends
 	 * @param beanlist
 	 * @param hierarchy_name
 	 */
+	@SuppressWarnings("unchecked")
 	private void addHierarchyRelationName(ClassBean bean,
 			ArrayList<ClassBean> beanlist, String hierarchy_name) {
-
 		// If no hierarchy_name is provided, we assume that special BioPortal
 		// relations do not have to be setup.
 		if (StringUtils.isBlank(hierarchy_name)) {
 			return;
 		}
+
 		Object value = bean.getRelations().get(hierarchy_name);
+
 		if (value != null && value instanceof ArrayList) {
 			// Ensure we do not add duplicates
 			Set<ClassBean> set = new HashSet<ClassBean>();
@@ -936,13 +962,15 @@ public class OntologyRetrievalManagerLexGridImpl extends
 				list.clear();
 				list.addAll(set);
 			}
+
 			bean.addRelation(hierarchy_name, list);
+
 			if (ApplicationConstants.SUB_CLASS.equalsIgnoreCase(hierarchy_name)) {
 				bean.addRelation(ApplicationConstants.CHILD_COUNT, list.size());
 			}
-
 		} else {
 			bean.addRelation(hierarchy_name, beanlist);
+
 			if (ApplicationConstants.SUB_CLASS.equalsIgnoreCase(hierarchy_name)) {
 				bean.addRelation(ApplicationConstants.CHILD_COUNT, beanlist
 						.size());
@@ -977,6 +1005,7 @@ public class OntologyRetrievalManagerLexGridImpl extends
 		// handle comment
 		Comment c = null;
 		count = entry.getCommentCount();
+
 		for (int i = 0; i < count; i++) {
 			c = entry.getComment(i);
 			addStringToHashMapsArrayList(map, "Comment", c.getText()
@@ -986,6 +1015,7 @@ public class OntologyRetrievalManagerLexGridImpl extends
 		// handle definitions
 		Definition d = null;
 		count = entry.getDefinitionCount();
+
 		for (int i = 0; i < count; i++) {
 			d = entry.getDefinition(i);
 			addStringToHashMapsArrayList(map, "Definition", d.getText()
@@ -995,15 +1025,15 @@ public class OntologyRetrievalManagerLexGridImpl extends
 		// handle concept properties
 		ConceptProperty prop = null;
 		count = entry.getConceptPropertyCount();
+
 		for (int i = 0; i < count; i++) {
 			prop = entry.getConceptProperty(i);
 			String key = prop.getPropertyName();
+
 			if (StringUtils.isNotBlank(key)) {
 				addStringToHashMapsArrayList(map, key, prop.getText()
 						.getContent());
 			}
 		}
-
 	}
-
 }
