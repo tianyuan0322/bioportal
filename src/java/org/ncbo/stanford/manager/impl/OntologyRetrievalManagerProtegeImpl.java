@@ -29,6 +29,7 @@ import edu.stanford.smi.protege.storage.database.DatabaseKnowledgeBaseFactory;
 import edu.stanford.smi.protegex.owl.database.OWLDatabaseKnowledgeBaseFactory;
 import edu.stanford.smi.protegex.owl.model.OWLModel;
 import edu.stanford.smi.protegex.owl.model.OWLNamedClass;
+import edu.stanford.smi.protegex.owl.model.RDFResource;
 import edu.stanford.smi.protegex.owl.model.RDFSNamedClass;
 import edu.stanford.smi.protegex.owl.model.impl.DefaultOWLHasValue;
 import edu.stanford.smi.protegex.owl.model.impl.DefaultOWLIntersectionClass;
@@ -355,6 +356,17 @@ public class OntologyRetrievalManagerProtegeImpl extends
 		return knowledgeBase;
 	}
 
+	//This is to remove the URI reference that is used by protege for IDs
+	private String getId(Cls node){
+		if (node instanceof RDFResource) {
+			RDFResource rdfNode = (RDFResource) node;
+			return rdfNode.getNamespacePrefix();
+		}else{
+			return node.getName();
+		}
+			
+	}	
+	
 	private ClassBean buildPath(Collection nodes, boolean light) {
 
 		ClassBean rootBean = null;
@@ -363,7 +375,7 @@ public class OntologyRetrievalManagerProtegeImpl extends
 		for (Object nodeObj : nodes) {
 			ClassBean clsBean = new ClassBean();
 			Cls node = (Cls) nodeObj;
-			clsBean.setId(node.getName());
+			clsBean.setId(getId(node));
 			clsBean.setLabel(node.getBrowserText());
 			if (currentBean != null) {
 				if (light) {
@@ -409,7 +421,7 @@ public class OntologyRetrievalManagerProtegeImpl extends
 	private ClassBean createLightBean(Cls cls) {
 
 		ClassBean bean = new ClassBean();
-		bean.setId(cls.getName());
+		bean.setId(getId(cls));
 		bean.setLabel(cls.getBrowserText());
 		bean.addRelation(ApplicationConstants.CHILD_COUNT, cls
 				.getDirectSubclasses().size());
@@ -434,7 +446,7 @@ public class OntologyRetrievalManagerProtegeImpl extends
 		boolean isOwl = pConcept.getKnowledgeBase() instanceof OWLModel;
 
 		ClassBean classBean = new ClassBean();
-		classBean.setId(pConcept.getName());
+		classBean.setId(getId(pConcept));
 		classBean.setLabel(pConcept.getBrowserText());
 
 		// add properties
@@ -541,7 +553,7 @@ public class OntologyRetrievalManagerProtegeImpl extends
 				}
 			}
 
-			bpProps.put(slot.getName(), bpPropVals);
+			bpProps.put(slot.getBrowserText(), bpPropVals);
 			bpPropVals = new ArrayList<String>();
 		}
 
