@@ -266,10 +266,6 @@
 		<copy todir="${deploy.path}/${app.name}" preservelastmodified="true">
 			<fileset dir="${build.dir}/${app.name}">
 				<include name="**/*.*" />
-				<!-- These jars are already in server classpath -->
-				<exclude name="**/javax.servlet.jar" />
-				<exclude name="**/javax.servlet.jsp.jar" />
-				<exclude name="**/servlet-api.jar" />
 			</fileset>
 		</copy>
 	</target>
@@ -281,10 +277,6 @@
 			<fileset dir="${build.dir}/${app.name}">
 				<include name="**/*.*" />
 				<exclude name="**/web.xml" />
-				<!-- These jars are already in server classpath -->
-				<exclude name="**/javax.servlet.jar" />
-				<exclude name="**/javax.servlet.jsp.jar" />
-				<exclude name="**/servlet-api.jar" />
 			</fileset>
 		</war>
 	</target>
