@@ -59,8 +59,6 @@ public class OntologyLoadManagerProtegeImpl extends
 		File ontologyFile = new File(ontologyUri.getPath());
 		String filePath = ontologyUri.getPath();
 
-		String tableName = null;
-
 		if (ontologyFile == null) {
 			log.error("Missing ontology file to load: " + filePath);
 			throw new FileNotFoundException("Missing ontology file to load: "
@@ -72,7 +70,8 @@ public class OntologyLoadManagerProtegeImpl extends
 		// If the ontology file is small, use the fast non-streaming Protege
 		// load code.
 		List errors = new ArrayList();
-
+		String tableName = getTableName(ontology.getId());
+		
 		if (ontology.getFormat().contains("OWL")) {
 			if (ontologyFile.length() < protegeBigFileThreshold) {
 				OWLModel owlModel = ProtegeOWL
@@ -82,7 +81,7 @@ public class OntologyLoadManagerProtegeImpl extends
 				PropertyList sources = PropertyList.create(owlModel
 						.getProject().getInternalProjectKnowledgeBase());
 
-				tableName = getTableName(ontology.getId());
+				
 				DatabaseKnowledgeBaseFactory.setSources(sources,
 						protegeJdbcDriver, protegeJdbcUrl, tableName,
 						protegeJdbcUsername, protegeJdbcPassword);
@@ -114,7 +113,6 @@ public class OntologyLoadManagerProtegeImpl extends
 			}
 		} else {
 
-			tableName = getTableName(ontology.getId());
 
 			Project fileProject = Project.loadProjectFromFile(filePath, errors);
 			DatabaseKnowledgeBaseFactory factory = new DatabaseKnowledgeBaseFactory();
