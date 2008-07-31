@@ -142,6 +142,8 @@ where is_remote = 0;
 
 update ncbo_ontology_version_metadata set format = 'LEXGRID-XML' where upper(format) = 'LEXGRID_XML';
 
+update ncbo_ontology set is_manual = 1 where id = (select distinct ov.ontology_id from ncbo_ontology_version ov inner join ncbo_ontology_version_metadata ovm on ov.id = ovm.ontology_version_id and lower(ovm.display_label) = 'nci thesaurus');
+
 DELIMITER $$
 
 DROP PROCEDURE IF EXISTS `sp_remove_gene_ontology`$$
