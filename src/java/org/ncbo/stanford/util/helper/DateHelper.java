@@ -9,14 +9,16 @@ import java.util.Date;
  * Convenience and helper methods relating to the {@link Date} class.
  */
 public class DateHelper {
-
+	
 	// Try 4-digit years *before* 2 digit years. This is to circumvent
 	// weaknesses in the date parsing subroutines.
-	private static final String dateFormats[] = { "dd-MM-yyyy", "dd-MMM-yyyy",
+	private static final String dateFormats[] = { "yyyy-MM-dd", "dd-MM-yyyy", "dd-MMM-yyyy",
 			"dd-MMMM-yyyy", "M/d/yyyy", "MMMM d yyyy", "EEEE MMMM d yyyy",
 			"dd-MM-yy", "dd-MMM-yy", "dd-MMMM-yy", "M/d/yy", "MMMM d yy",
-			"EEEE MMMM d yy", };
-
+			"EEEE MMMM d yy"};
+	private static final String DEFAULT_FORMAT = "MM/dd/yyyy";
+	
+	
 	/**
 	 * DateHelper constructor comment.
 	 */
@@ -85,5 +87,21 @@ public class DateHelper {
 		}
 
 		return null;
+	}
+
+	public static String getFormattedDate(
+			Date dt, String formatPattern) {
+		String formatted = null;
+		
+		if (dt != null) {
+			formatted = new SimpleDateFormat(
+					formatPattern).format(dt).toString();
+		}
+		
+		return formatted;		
+	}
+
+	public static String getFormattedDate(Date dt) {
+		return getFormattedDate(dt, DEFAULT_FORMAT);
 	}
 }
