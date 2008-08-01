@@ -109,7 +109,11 @@ public class OntologyLoadManagerProtegeImpl extends
 				creator.setPassword(protegeJdbcPassword);
 				creator.setOntologyInputSource(ontologyUri);
 				creator.setUseExistingSources(true);
-				creator.createProject();
+				Project p = creator.createProject(); 
+			    p.save(errors);
+			    
+			    //to avoid OutOfMemory Error
+			    p.dispose();
 			}
 		} else {
 
