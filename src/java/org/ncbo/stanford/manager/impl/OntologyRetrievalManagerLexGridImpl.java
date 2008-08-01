@@ -190,7 +190,6 @@ public class OntologyRetrievalManagerLexGridImpl extends AbstractOntologyManager
                 LexBIGServiceConvenienceMethods.HierarchyPathResolveOption.ALL, null);
 
         // Recursively reverse the chain ...
-
         AssociationList pathFromRoot = new AssociationList();
         HashMap<String, EntityDescription> codeToEntityDescriptionMap = new HashMap<String, EntityDescription>();
         for (int i = pathToRoot.getAssociationCount() - 1; i >= 0; i--) {
@@ -210,8 +209,6 @@ public class OntologyRetrievalManagerLexGridImpl extends AbstractOntologyManager
         return createThingClassBean(classBeans);
     }
 
-
-
     /**
      * 
      * @param ncboOntology
@@ -227,8 +224,9 @@ public class OntologyRetrievalManagerLexGridImpl extends AbstractOntologyManager
         String[] hierarchyIDs = lbscm.getHierarchyIDs(schemeName, csvt);
         String hierarchyId = (hierarchyIDs.length > 0) ? hierarchyIDs[0] : null;
         for (String hierarchy : hierarchyIDs) {
-            if (hierarchy.equalsIgnoreCase("IS_A"))
+            if (hierarchy.equalsIgnoreCase("IS_A")) {
                 hierarchyId = hierarchy;
+            }
         }
         AssociationList associations = lbscm.getHierarchyPathToRoot(schemeName, csvt, hierarchyId, conceptId, false,
                 LexBIGServiceConvenienceMethods.HierarchyPathResolveOption.ALL, null);
@@ -349,7 +347,6 @@ public class OntologyRetrievalManagerLexGridImpl extends AbstractOntologyManager
                     includeObsolete, maxToReturn, Match_Types.SEARCH_EXACT_MATCH);
             results.add(result);
         }
-
         return results;
     }
 
@@ -400,7 +397,6 @@ public class OntologyRetrievalManagerLexGridImpl extends AbstractOntologyManager
                     maxToReturn, Match_Types.SEARCH_CONTAINS);
             results.add(result);
         }
-
         return results;
     }
 
@@ -493,8 +489,8 @@ public class OntologyRetrievalManagerLexGridImpl extends AbstractOntologyManager
                 addTo.addAssociation(rAssoc);
         }
         return acSources;
-    }    
-    
+    }
+
     /**
      * 
      * @param s
@@ -572,14 +568,12 @@ public class OntologyRetrievalManagerLexGridImpl extends AbstractOntologyManager
             } else {
                 nodes = nodes.restrictToStatus(ActiveOption.ACTIVE_ONLY, null);
             }
-
             SortOptionList sortCriteria = Constructors.createSortOptionList(new String[] { "matchToQuery", "code" });
             ResolvedConceptReferencesIterator matchIterator = nodes.resolve(sortCriteria, null, null, null, false);
             ResolvedConceptReferenceList lst = matchIterator.next(maxToReturn);
             SearchResultBean srb = new SearchResultBean();
             srb.setOntologyVersionId(ncboOntology.getId());
             srb.setProperties(createClassBeanArray(lst, false));
-
             return srb;
         } catch (Exception e) {
             e.printStackTrace();
@@ -660,7 +654,6 @@ public class OntologyRetrievalManagerLexGridImpl extends AbstractOntologyManager
      */
     private AssociationList getHierarchyLevelPrev(String schemeName, CodingSchemeVersionOrTag csvt, String conceptId)
             throws Exception {
-
         String[] hierarchyIDs = lbscm.getHierarchyIDs(schemeName, csvt);
         String hierarchyId = (hierarchyIDs.length > 0) ? hierarchyIDs[0] : null;
         for (String hierarchy : hierarchyIDs) {
@@ -791,7 +784,6 @@ public class OntologyRetrievalManagerLexGridImpl extends AbstractOntologyManager
         return bean;
     }
 
-    
     /**
      * 
      * @param rcr
@@ -819,7 +811,6 @@ public class OntologyRetrievalManagerLexGridImpl extends AbstractOntologyManager
         return bean;
     }
 
-    
     /**
      * 
      * @param list
@@ -844,7 +835,6 @@ public class OntologyRetrievalManagerLexGridImpl extends AbstractOntologyManager
         return classBean;
     }
 
-    
     /**
      * 
      * @param list
@@ -901,7 +891,6 @@ public class OntologyRetrievalManagerLexGridImpl extends AbstractOntologyManager
         return "";
     }
 
-    
     /**
      * 
      * @param map
@@ -949,7 +938,6 @@ public class OntologyRetrievalManagerLexGridImpl extends AbstractOntologyManager
         }
     }
 
-    
     /**
      * 
      * @param map
@@ -1027,7 +1015,6 @@ public class OntologyRetrievalManagerLexGridImpl extends AbstractOntologyManager
         return classBeans;
     }
 
-    
     /**
      * 
      * @param list
@@ -1107,7 +1094,7 @@ public class OntologyRetrievalManagerLexGridImpl extends AbstractOntologyManager
                 // Find and recurse printing for next batch ...
                 AssociationList nextLevel = assocConcept.getSourceOf();
                 if (nextLevel != null && nextLevel.getAssociationCount() != 0)
-                    for (int j = 0; j < nextLevel.getAssociationCount(); j++) {                      
+                    for (int j = 0; j < nextLevel.getAssociationCount(); j++) {
                         addAssociationInfoToClassBean(nextLevel.getAssociation(j), classBean, hierarchy_relationName,
                                 includeChildren);
                     }
@@ -1115,7 +1102,7 @@ public class OntologyRetrievalManagerLexGridImpl extends AbstractOntologyManager
                 // Find and recurse printing for previous batch ...
                 AssociationList prevLevel = assocConcept.getTargetOf();
                 if (prevLevel != null && prevLevel.getAssociationCount() != 0)
-                    for (int j = 0; j < prevLevel.getAssociationCount(); j++) {                       
+                    for (int j = 0; j < prevLevel.getAssociationCount(); j++) {
                         addAssociationInfoToClassBean(prevLevel.getAssociation(j), classBean, hierarchy_relationName,
                                 includeChildren);
                     }
