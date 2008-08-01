@@ -111,8 +111,8 @@ public class OntologyRetrievalManagerProtegeImpl extends
 	public ClassBean findConcept(VNcboOntology ontologyVersion, String conceptId) {
 		KnowledgeBase kb = getKnowledgeBase(ontologyVersion);
 
-		Cls owlClass = kb.getCls(conceptId);
-
+		Cls owlClass = getCls(conceptId, kb);
+		
 		if (owlClass != null) {
 			return createClassBean(owlClass, true);
 		}
@@ -124,7 +124,7 @@ public class OntologyRetrievalManagerProtegeImpl extends
 			String conceptId, boolean light) {
 		KnowledgeBase kb = getKnowledgeBase(ontologyVersion);
 
-		Cls cls = kb.getCls(conceptId);
+		Cls cls = getCls(conceptId, kb);
 		Collection nodes = ModelUtilities.getPathToRoot(cls);
 
 		return buildPath(nodes, light);
@@ -367,6 +367,19 @@ public class OntologyRetrievalManagerProtegeImpl extends
 		}
 			
 	}	
+	
+	private Cls getCls(String conceptId,KnowledgeBase kb){
+		
+		Cls owlClass = null;
+		 if (kb instanceof OWLModel) {
+			  owlClass = ((OWLModel)kb).getOWLNamedClass(conceptId);
+			
+		}else{
+		 owlClass = kb.getCls(conceptId);
+		}
+		return owlClass;
+	}
+	
 	
 	private ClassBean buildPath(Collection nodes, boolean light) {
 
