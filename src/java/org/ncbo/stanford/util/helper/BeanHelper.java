@@ -164,6 +164,7 @@ public class BeanHelper {
 			bean.setDateCreated(DateHelper.getDateFrom(dateCreated));
 		}
 		if (!StringHelper.isNullOrNullString(dateReleased)) {
+			System.out.println("DEBUG : before DateHelper : dateReleased = " + dateReleased);
 			System.out.println("DEBUG : DateHelper.getDateFrom(dateReleased) = " + DateHelper.getDateFrom(dateReleased));
 			bean.setDateReleased(DateHelper.getDateFrom(dateReleased));
 			
