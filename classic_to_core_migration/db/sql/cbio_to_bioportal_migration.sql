@@ -101,22 +101,22 @@ update ncbo_ontology_version set internal_version_number = 1;
 
 DELIMITER $$
 
-DROP PROCEDURE IF EXISTS `sp_remove_duplicate_ontologies`$$
+DROP PROCEDURE IF EXISTS `sp_remove_duplicate_unit_ontologies`$$
 
-CREATE DEFINER=`root`@`localhost` PROCEDURE `sp_remove_duplicate_ontologies`()
+CREATE DEFINER=`root`@`localhost` PROCEDURE `sp_remove_duplicate_unit_ontologies`()
 BEGIN
 		DECLARE ontologyVersionId INT;
 		DECLARE recordCount INT;
 		DECLARE iterCount INT DEFAULT 1;
 
-		DECLARE cur1 CURSOR FOR select ontology_version_id from ncbo_ontology_version_metadata where display_label = 'Unit' order by ontology_version_id;
+		DECLARE cur CURSOR FOR select ontology_version_id from ncbo_ontology_version_metadata where display_label = 'Unit' order by ontology_version_id;
 		select count(ontology_version_id) into recordCount from ncbo_ontology_version_metadata where display_label = 'Unit';
 		
 		IF recordCount > 1 THEN
-			OPEN cur1;
+			OPEN cur;
 	  
 			REPEAT
-				FETCH cur1 INTO ontologyVersionId;
+				FETCH cur INTO ontologyVersionId;
 				
 				delete from ncbo_ontology_category where ontology_version_id = ontologyVersionId;
 				delete from ncbo_ontology_file where ontology_version_id = ontologyVersionId;
@@ -127,15 +127,16 @@ BEGIN
 				SET iterCount := iterCount + 1;
 			UNTIL iterCount = recordCount
 			END REPEAT;
-			CLOSE cur1;
+			
+			CLOSE cur;
 		END IF;
 	END$$
 
 DELIMITER ;
 
-CALL sp_remove_duplicate_ontologies();
+CALL sp_remove_duplicate_unit_ontologies();
 
-DROP PROCEDURE IF EXISTS `sp_remove_duplicate_ontologies`;
+DROP PROCEDURE IF EXISTS `sp_remove_duplicate_unit_ontologies`;
 
 update ncbo_ontology_version set file_path = CONCAT("/", ontology_id, "/", internal_version_number)
 where is_remote = 0;
@@ -145,29 +146,5 @@ update ncbo_ontology_version_metadata set format = 'LEXGRID-XML' where upper(for
 update ncbo_ontology set is_manual = 1 where id = (select distinct ov.ontology_id from ncbo_ontology_version ov inner join ncbo_ontology_version_metadata ovm on ov.id = ovm.ontology_version_id and lower(ovm.display_label) = 'nci thesaurus');
 update ncbo_ontology set is_manual = 1 where id = (select distinct ov.ontology_id from ncbo_ontology_version ov inner join ncbo_ontology_version_metadata ovm on ov.id = ovm.ontology_version_id and lower(ovm.display_label) = 'fma');
 
-DELIMITER $$
-
-DROP PROCEDURE IF EXISTS `sp_remove_gene_ontology`$$
-
-CREATE DEFINER=`root`@`localhost` PROCEDURE `sp_remove_gene_ontology`()
-BEGIN
-		DECLARE ontologyVersionId INT;
-		DECLARE ontologyId INT;
-
-		select ontology_version_id INTO ontologyVersionId FROM ncbo_ontology_version_metadata WHERE display_label = 'Gene Ontology';
-		select ontology_id INTO ontologyId FROM ncbo_ontology_version WHERE id = ontologyVersionId;
-				
-		delete from ncbo_ontology_category where ontology_version_id = ontologyVersionId;
-		delete from ncbo_ontology_file where ontology_version_id = ontologyVersionId;
-		delete from ncbo_ontology_load_queue where ontology_version_id = ontologyVersionId;
-		delete from ncbo_ontology_version_metadata where ontology_version_id = ontologyVersionId;
-		delete from ncbo_ontology_version where ontology_id = ontologyId;
-		delete from ncbo_ontology where id = ontologyId;
-
-	END$$
-
-DELIMITER ;
-
-CALL sp_remove_gene_ontology();
-
-DROP PROCEDURE IF EXISTS `sp_remove_gene_ontology`;
+CALL sp_remove_ontology_by_display_label('Gene Ontology');
+CALL sp_remove_ontology_by_display_label('Foundational Model of Anatomy ("Lite" version)');
