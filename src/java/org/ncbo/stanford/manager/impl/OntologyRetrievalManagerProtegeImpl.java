@@ -120,7 +120,7 @@ public class OntologyRetrievalManagerProtegeImpl extends
 		return null;
 	}
 
-	public ClassBean findPathToRoot(VNcboOntology ontologyVersion,
+	public ClassBean findPathFromRoot(VNcboOntology ontologyVersion,
 			String conceptId, boolean light) {
 		KnowledgeBase kb = getKnowledgeBase(ontologyVersion);
 

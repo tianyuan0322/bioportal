@@ -171,13 +171,11 @@ public class OntologyRetrievalManagerLexGridImpl extends AbstractOntologyManager
         return null;
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.ncbo.stanford.manager.OntologyRetrievalManager#findPathToRoot(org.ncbo.stanford.domain.custom.entity.VNcboOntology,
-     *      java.lang.String, boolean)
-     */
-    public ClassBean findPathToRoot(VNcboOntology ncboOntology, String conceptId, boolean light) throws Exception {
+   /*
+    * (non-Javadoc)
+    * @see org.ncbo.stanford.manager.OntologyRetrievalManager#findPathFromRoot(org.ncbo.stanford.domain.custom.entity.VNcboOntology, java.lang.String, boolean)
+    */
+    public ClassBean findPathFromRoot(VNcboOntology ncboOntology, String conceptId, boolean light) throws Exception {
         String schemeName = getLexGridCodingSchemeName(ncboOntology);
         CodingSchemeVersionOrTag csvt = getLexGridCodingSchemeVersion(ncboOntology);
         String[] hierarchyIDs = lbscm.getHierarchyIDs(schemeName, csvt);
@@ -217,7 +215,7 @@ public class OntologyRetrievalManagerLexGridImpl extends AbstractOntologyManager
      * @return
      * @throws Exception
      */
-    public ClassBean findPathFromRoot(VNcboOntology ncboOntology, String conceptId, boolean light) throws Exception {
+    public ClassBean findPathToRoot(VNcboOntology ncboOntology, String conceptId, boolean light) throws Exception {
         String schemeName = getLexGridCodingSchemeName(ncboOntology);
         CodingSchemeVersionOrTag csvt = getLexGridCodingSchemeVersion(ncboOntology);
 
@@ -234,7 +232,6 @@ public class OntologyRetrievalManagerLexGridImpl extends AbstractOntologyManager
         boolean includeChildren = !light;
         addAssociationListInfoToClassBean(associations, conceptClass, ApplicationConstants.SUPER_CLASS, includeChildren);
         return conceptClass;
-
     }
 
     /**

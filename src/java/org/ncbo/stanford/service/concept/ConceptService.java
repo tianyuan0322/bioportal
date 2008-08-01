@@ -22,7 +22,7 @@ public interface ConceptService {
 	
 	public ClassBean findConcept(Integer ontologyId, String conceptId) throws Exception;
 	
-	public ClassBean findPathToRoot(Integer ontologyId, String conceptId,boolean light) throws Exception;
+	public ClassBean findPathFromRoot(Integer ontologyId, String conceptId,boolean light) throws Exception;
 	
 	//public List<ClassBean> findParent(int ontologyId, String id) throws Exception;
 	

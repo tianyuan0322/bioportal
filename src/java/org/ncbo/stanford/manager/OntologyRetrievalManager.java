@@ -43,5 +43,5 @@ public interface OntologyRetrievalManager {
 			List<VNcboOntology> ontologyVersions, String query,
 			boolean includeObsolete, int maxToReturn);
 	
-	public ClassBean findPathToRoot(VNcboOntology ontologyVersion, String conceptId,boolean light) throws Exception;
+	public ClassBean findPathFromRoot(VNcboOntology ontologyVersion, String conceptId,boolean light) throws Exception;
 }

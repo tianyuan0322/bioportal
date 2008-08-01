@@ -58,7 +58,7 @@ public class OntologyRetrievalManagerProtegeTest extends AbstractBioPortalTest {
 			CustomNcboOntologyVersionDAO.class);
 
 VNcboOntology version = ncboOntologyVersionDAO.findOntologyVersion(TEST_ONT_ID);
-ClassBean conceptBean = ocMgr.findPathToRoot( version,"SpicyPizza",false);
+ClassBean conceptBean = ocMgr.findPathFromRoot( version,"SpicyPizza",false);
 
 System.out.println("Path");
 
