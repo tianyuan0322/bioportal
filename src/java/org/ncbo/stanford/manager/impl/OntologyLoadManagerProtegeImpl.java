@@ -142,6 +142,7 @@ public class OntologyLoadManagerProtegeImpl extends
 			dbProject.createDomainKnowledgeBase(factory, errors, true);
 
 			dbProject.save(errors);
+			dbProject.dispose();
 		}
 
 	}
