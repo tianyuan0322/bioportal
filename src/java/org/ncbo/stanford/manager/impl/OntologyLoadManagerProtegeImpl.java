@@ -89,6 +89,9 @@ public class OntologyLoadManagerProtegeImpl extends
 				OWLDatabaseKnowledgeBaseFactory factory = new OWLDatabaseKnowledgeBaseFactory();
 				factory.saveKnowledgeBase(owlModel, sources, errors);
 
+				// save memory
+				owlModel.dispose();
+				
 				// If errors are found during the load, log the errors and throw an
 				// exception.
 				if (errors.size() > 0) {
@@ -112,7 +115,7 @@ public class OntologyLoadManagerProtegeImpl extends
 				Project p = creator.createProject(); 
 			    p.save(errors);
 			    
-			    //to avoid OutOfMemory Error
+			    // save memory
 			    p.dispose();
 			}
 		} else {
