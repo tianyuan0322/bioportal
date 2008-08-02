@@ -112,6 +112,7 @@ public class OntologyLoadManagerProtegeImpl extends
 				creator.setPassword(protegeJdbcPassword);
 				creator.setOntologyInputSource(ontologyUri);
 				creator.setUseExistingSources(true);
+				creator.setMergeImportMode(true);
 				Project p = creator.createProject(); 
 			    p.save(errors);
 			    
