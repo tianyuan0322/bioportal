@@ -16,12 +16,11 @@ import org.springframework.util.AntPathMatcher;
 import org.springframework.util.PathMatcher;
 
 /**
- * Extends Acegi's AbstractFilterInvocationDefinitionSource
- * to allow resource authorization based on an http method 
- * (i.e. GET, PUT, DELETE, POST).
+ * Extends Acegi's AbstractFilterInvocationDefinitionSource to allow resource
+ * authorization based on an http method (i.e. GET, PUT, DELETE, POST).
  * 
  * @author Michael Dorf
- *
+ * 
  */
 public class RESTfulPathBasedFilterInvocationDefinitionMap extends
 		AbstractFilterInvocationDefinitionSource implements
@@ -43,16 +42,6 @@ public class RESTfulPathBasedFilterInvocationDefinitionMap extends
 	public void addSecureUrl(String antPath, String[] httpMethods,
 			ConfigAttributeDefinition attr) {
 		requestMap.add(new EntryHolder(antPath, httpMethods, attr));
-
-		if (log.isDebugEnabled()) {
-			log.debug("Added Ant path: " + antPath + "; attributes: " + attr
-					+ ", httpMethods: " + httpMethods);
-			
-			if (httpMethods != null) {
-				for (int ii = 0; ii < httpMethods.length; ii++)
-					log.debug("httpMethods[" + ii + "]: " + httpMethods[ii]);
-			}
-		}
 	}
 
 	public void addSecureUrl(String antPath, ConfigAttributeDefinition attr) {
@@ -68,7 +57,7 @@ public class RESTfulPathBasedFilterInvocationDefinitionMap extends
 			EntryHolder entryHolder = iter.next();
 			set.add(entryHolder.getConfigAttributeDefinition());
 		}
-		
+
 		return set.iterator();
 	}
 
@@ -119,12 +108,6 @@ public class RESTfulPathBasedFilterInvocationDefinitionMap extends
 
 		if (isConvertUrlToLowercaseBeforeComparison()) {
 			url = url.toLowerCase();
-
-			if (log.isDebugEnabled()) {
-				log.debug("Converted URL to lowercase, from: '" + url
-								+ "'; to: '" + url + "'  and httpMethod= "
-								+ httpMethod);
-			}
 		}
 
 		Iterator<EntryHolder> iter = requestMap.iterator();
@@ -134,23 +117,12 @@ public class RESTfulPathBasedFilterInvocationDefinitionMap extends
 
 			String antPath = entryHolder.getAntPath();
 			String[] methodList = entryHolder.getHttpMethodList();
-			
-			if (log.isDebugEnabled()) {
-				log.debug("~~~~~~~~~~ antPath= " + antPath + " methodList= "
-						+ methodList);
-				
-				if (methodList != null) {
-					for (int ii = 0; ii < methodList.length; ii++)
-						log.debug("method[" + ii + "]: " + methodList[ii]);
-				}
-			}
-
 			boolean matchedPath = pathMatcher.match(antPath, url);
 			boolean matchedMethods = true;
-			
+
 			if (methodList != null) {
 				matchedMethods = false;
-				
+
 				for (int ii = 0; ii < methodList.length; ii++) {
 					if (methodList[ii].equals(httpMethod)) {
 						matchedMethods = true;
@@ -158,18 +130,12 @@ public class RESTfulPathBasedFilterInvocationDefinitionMap extends
 					}
 				}
 			}
-			
-			if (log.isDebugEnabled()) {
-				log.debug("Candidate is: '" + url + "'; antPath is " + antPath
-						+ "; matchedPath=" + matchedPath + "; matchedMethods="
-						+ matchedMethods);
-			}
-			
+
 			if (matchedPath && matchedMethods) {
 				return entryHolder.getConfigAttributeDefinition();
 			}
 		}
-		
+
 		return null;
 	}
 
