@@ -4,10 +4,9 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Enumeration;
 import java.util.HashMap;
-import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import org.LexGrid.LexBIG.DataModel.Collections.AssociatedConceptList;
 import org.LexGrid.LexBIG.DataModel.Collections.AssociationList;
@@ -123,7 +122,8 @@ public class OntologyRetrievalManagerLexGridImpl extends AbstractOntologyManager
      * @return
      * @throws Exception
      */
-    public ClassBean findConceptWithoutRelations(VNcboOntology ncboOntology, String conceptId) throws Exception {
+    public ClassBean findConceptIncludeChildCountNoRelations(VNcboOntology ncboOntology, String conceptId)
+            throws Exception {
         String schemeName = getLexGridCodingSchemeName(ncboOntology);
         CodingSchemeVersionOrTag csvt = getLexGridCodingSchemeVersion(ncboOntology);
         // Perform the query ...
@@ -133,9 +133,9 @@ public class OntologyRetrievalManagerLexGridImpl extends AbstractOntologyManager
                 ActiveOption.ALL, null).restrictToCodes(crefs).resolveToList(null, null, null, 1);
         // Analyze the result ...
         if (matches.getResolvedConceptReferenceCount() > 0) {
-            ResolvedConceptReference ref = (ResolvedConceptReference) matches.enumerateResolvedConceptReference()
+            ResolvedConceptReference rcr = (ResolvedConceptReference) matches.enumerateResolvedConceptReference()
                     .nextElement();
-            return createClassBean(ref);
+            return createClassBeanWithChildCount(rcr, false);
         }
         return null;
     }
@@ -159,22 +159,23 @@ public class OntologyRetrievalManagerLexGridImpl extends AbstractOntologyManager
         if (matches.getResolvedConceptReferenceCount() > 0) {
             ResolvedConceptReference ref = (ResolvedConceptReference) matches.enumerateResolvedConceptReference()
                     .nextElement();
-            ClassBean classBean = createClassBean(ref);
             // Add the children
-            AssociationList childList = getHierarchyLevelNext(schemeName, csvt, conceptId);
-            addAssociationListInfoToClassBean(childList, classBean, ApplicationConstants.SUB_CLASS, false);
+            ClassBean classBean = createClassBeanWithChildCount(ref, true);
+
             // Add the parents
-            AssociationList paerntList = getHierarchyLevelPrev(schemeName, csvt, conceptId);
-            addAssociationListInfoToClassBean(paerntList, classBean, ApplicationConstants.SUPER_CLASS, false);
+            AssociationList parentList = getHierarchyLevelPrev(schemeName, csvt, conceptId);
+            addAssociationListInfoToClassBean(parentList, classBean, ApplicationConstants.SUPER_CLASS, false);
             return classBean;
         }
         return null;
     }
 
-   /*
-    * (non-Javadoc)
-    * @see org.ncbo.stanford.manager.OntologyRetrievalManager#findPathFromRoot(org.ncbo.stanford.domain.custom.entity.VNcboOntology, java.lang.String, boolean)
-    */
+    /*
+     * (non-Javadoc)
+     * 
+     * @see org.ncbo.stanford.manager.OntologyRetrievalManager#findPathFromRoot(org.ncbo.stanford.domain.custom.entity.VNcboOntology,
+     *      java.lang.String, boolean)
+     */
     public ClassBean findPathFromRoot(VNcboOntology ncboOntology, String conceptId, boolean light) throws Exception {
         String schemeName = getLexGridCodingSchemeName(ncboOntology);
         CodingSchemeVersionOrTag csvt = getLexGridCodingSchemeVersion(ncboOntology);
@@ -185,7 +186,7 @@ public class OntologyRetrievalManagerLexGridImpl extends AbstractOntologyManager
                 hierarchyId = hierarchy;
         }
         AssociationList pathToRoot = lbscm.getHierarchyPathToRoot(schemeName, csvt, hierarchyId, conceptId, false,
-                LexBIGServiceConvenienceMethods.HierarchyPathResolveOption.ALL, null);
+                LexBIGServiceConvenienceMethods.HierarchyPathResolveOption.ONE, null);
 
         // Recursively reverse the chain ...
         AssociationList pathFromRoot = new AssociationList();
@@ -199,7 +200,8 @@ public class OntologyRetrievalManagerLexGridImpl extends AbstractOntologyManager
         for (int i = 0; i < pathFromRoot.getAssociationCount(); i++) {
             Association association = pathFromRoot.getAssociation(i);
             ConceptReference cr = association.getAssociationReference();
-            ClassBean classBean = createClassBeanWithChildCount(ncboOntology, cr);
+            ClassBean classBean = createClassBeanWithChildCount(ncboOntology, cr, includeChildren);
+
             classBeans.add(classBean);
             addAssociationListInfoToClassBean(pathFromRoot, classBean, ApplicationConstants.SUB_CLASS, includeChildren);
 
@@ -228,7 +230,7 @@ public class OntologyRetrievalManagerLexGridImpl extends AbstractOntologyManager
         }
         AssociationList associations = lbscm.getHierarchyPathToRoot(schemeName, csvt, hierarchyId, conceptId, false,
                 LexBIGServiceConvenienceMethods.HierarchyPathResolveOption.ALL, null);
-        ClassBean conceptClass = findConceptWithoutRelations(ncboOntology, conceptId);
+        ClassBean conceptClass = findConceptIncludeChildCountNoRelations(ncboOntology, conceptId);
         boolean includeChildren = !light;
         addAssociationListInfoToClassBean(associations, conceptClass, ApplicationConstants.SUPER_CLASS, includeChildren);
         return conceptClass;
@@ -245,7 +247,7 @@ public class OntologyRetrievalManagerLexGridImpl extends AbstractOntologyManager
         String schemeName = getLexGridCodingSchemeName(ncboOntology);
         CodingSchemeVersionOrTag csvt = getLexGridCodingSchemeVersion(ncboOntology);
         AssociationList associations = getHierarchyLevelPrev(schemeName, csvt, conceptId);
-        ClassBean conceptClass = findConceptWithoutRelations(ncboOntology, conceptId);
+        ClassBean conceptClass = findConceptIncludeChildCountNoRelations(ncboOntology, conceptId);
         ArrayList<ClassBean> classBeans = createClassBeanArray(associations, conceptClass,
                 ApplicationConstants.SUPER_CLASS, false);
         return classBeans;
@@ -262,7 +264,7 @@ public class OntologyRetrievalManagerLexGridImpl extends AbstractOntologyManager
         String schemeName = getLexGridCodingSchemeName(ncboOntology);
         CodingSchemeVersionOrTag csvt = getLexGridCodingSchemeVersion(ncboOntology);
         AssociationList associations = getHierarchyLevelNext(schemeName, csvt, conceptId);
-        ClassBean conceptClass = findConceptWithoutRelations(ncboOntology, conceptId);
+        ClassBean conceptClass = findConceptIncludeChildCountNoRelations(ncboOntology, conceptId);
         ArrayList<ClassBean> classBeans = createClassBeanArray(associations, conceptClass,
                 ApplicationConstants.SUB_CLASS, false);
         return classBeans;
@@ -750,14 +752,15 @@ public class OntologyRetrievalManagerLexGridImpl extends AbstractOntologyManager
      * @param cr
      * @return
      */
-    private ClassBean createClassBeanWithChildCount(VNcboOntology ncboOntology, ConceptReference cr) {
+    private ClassBean createClassBeanWithChildCount(VNcboOntology ncboOntology, ConceptReference cr,
+            boolean includeChildren) {
         CodingSchemeVersionOrTag csvt = getLexGridCodingSchemeVersion(ncboOntology);
         ResolvedConceptReference rcr = new ResolvedConceptReference();
         rcr.setCodingScheme(cr.getCodingScheme());
         rcr.setConceptCode(cr.getConceptCode());
         EntityDescription ed = getEntityDescription(ncboOntology, cr.getConceptCode());
         rcr.setEntityDescription(ed);
-        return createClassBeanWithChildCount(rcr);
+        return createClassBeanWithChildCount(rcr, includeChildren);
     }
 
     /**
@@ -765,7 +768,7 @@ public class OntologyRetrievalManagerLexGridImpl extends AbstractOntologyManager
      * @param rcr
      * @return
      */
-    private ClassBean createClassBeanWithChildCount(ResolvedConceptReference rcr) {
+    private ClassBean createClassBeanWithChildCount(ResolvedConceptReference rcr, boolean includeChildren) {
         ClassBean bean = createClassBean(rcr);
         // Add the children
         String schemeName = rcr.getCodingScheme();
@@ -775,6 +778,9 @@ public class OntologyRetrievalManagerLexGridImpl extends AbstractOntologyManager
         try {
             AssociationList childList = getHierarchyLevelNext(schemeName, csvt, conceptId);
             bean.addRelation(ApplicationConstants.CHILD_COUNT, getChildCount(childList));
+            if (includeChildren) {
+                addAssociationListInfoToClassBean(childList, bean, ApplicationConstants.SUB_CLASS, false);
+            }
         } catch (Exception ex) {
             ex.printStackTrace();
         }
@@ -782,6 +788,9 @@ public class OntologyRetrievalManagerLexGridImpl extends AbstractOntologyManager
     }
 
     /**
+     * This function creates a ClassBean from a resolvedConceptReference(rcr).
+     * The association information of the resolvedConceptReference is also added
+     * to the classbean
      * 
      * @param rcr
      * @return
@@ -847,7 +856,7 @@ public class OntologyRetrievalManagerLexGridImpl extends AbstractOntologyManager
             ref = (ResolvedConceptReference) refEnum.nextElement();
             ClassBean bean;
             if (includeCount) {
-                bean = createClassBeanWithChildCount(ref);
+                bean = createClassBeanWithChildCount(ref, false);
             } else {
                 bean = createClassBean(ref);
             }
@@ -1073,21 +1082,9 @@ public class OntologyRetrievalManagerLexGridImpl extends AbstractOntologyManager
         for (int i = 0; i < assocConceptList.getAssociatedConceptCount(); i++) {
             AssociatedConcept assocConcept = assocConceptList.getAssociatedConcept(i);
             if (assocConcept != null) {
-                ClassBean classBean = createClassBeanWithChildCount(assocConcept);
+                ClassBean classBean = createClassBeanWithChildCount(assocConcept, includeChildren);
                 classBeans.add(classBean);
-                if (includeChildren) {
-                    // Add the children
-                    String schemeName = assocConcept.getCodingScheme();
-                    String version = assocConcept.getCodingSchemeVersion();
-                    String conceptId = assocConcept.getConceptCode();
-                    CodingSchemeVersionOrTag csvt = Constructors.createCodingSchemeVersionOrTagFromVersion(version);
-                    try {
-                        AssociationList childList = getHierarchyLevelNext(schemeName, csvt, conceptId);
-                        addAssociationListInfoToClassBean(childList, classBean, ApplicationConstants.SUB_CLASS, false);
-                    } catch (Exception ex) {
-                        ex.printStackTrace();
-                    }
-                }
+
                 // Find and recurse printing for next batch ...
                 AssociationList nextLevel = assocConcept.getSourceOf();
                 if (nextLevel != null && nextLevel.getAssociationCount() != 0)
@@ -1133,28 +1130,59 @@ public class OntologyRetrievalManagerLexGridImpl extends AbstractOntologyManager
         }
         Object value = bean.getRelations().get(hierarchy_name);
         if (value != null && value instanceof ArrayList) {
-            // Ensure we do not add duplicates
-            Set<ClassBean> set = new HashSet<ClassBean>();
-            List<ClassBean> list = (List<ClassBean>) value;
-            set.addAll(list);
-            set.addAll((List<ClassBean>) beanlist);
+            // Ensure we do not add duplicates. We want to also replace the the
+            // hierarchy_name class beans with the new beans from the list of
+            // they match.
+            // The reason for this is because the beanlist classbeans have
+            // hierarchy information in them.
+            // Note: the equals method of the AbstactClassBean has been
+            // customized to same that if if the id and name matches
+            // irrespective of the relations content,
+            // the 2 beans are equal.
+            // Set<ClassBean> set = new HashSet<ClassBean>();
+            // List<ClassBean> list = (List<ClassBean>) value;
+            //            
+            // set.addAll(list);
+            // set.removeAll((List<ClassBean>) beanlist);
+            // set.addAll((List<ClassBean>) beanlist);
+            // list.clear();
+            // list.addAll(set);
 
-            // avoid overhead of clear if not needed
-            if (set.size() < list.size()) {
-                list.clear();
-                list.addAll(set);
-            }
+            List<ClassBean> list = mergeListsEliminatingDuplicates((ArrayList<ClassBean>) value, beanlist);
             bean.addRelation(hierarchy_name, list);
-            if (ApplicationConstants.SUB_CLASS.equalsIgnoreCase(hierarchy_name)) {
-                bean.addRelation(ApplicationConstants.CHILD_COUNT, list.size());
-            }
 
         } else {
             bean.addRelation(hierarchy_name, beanlist);
-            if (ApplicationConstants.SUB_CLASS.equalsIgnoreCase(hierarchy_name)) {
-                bean.addRelation(ApplicationConstants.CHILD_COUNT, beanlist.size());
+        }
+    }
+
+    /**
+     * This function is used to ensure there are no duplicates when the lists
+     * are merged. The enties in the addOverrideList takes precedence and gets
+     * added when there is a comflict. ClassBeans are considered equal if they
+     * have the same id and label.
+     * 
+     * @param baseList
+     * @param addOverideList
+     * @return
+     */
+    private ArrayList<ClassBean> mergeListsEliminatingDuplicates(ArrayList<ClassBean> baseList,
+            ArrayList<ClassBean> addOverideList) {
+        ArrayList<ClassBean> srcList = new ArrayList<ClassBean>();
+        srcList.addAll(baseList);
+        // First remove elements that are in the override list
+        for (ClassBean overideClass : addOverideList) {
+            for (Iterator<ClassBean> it = srcList.iterator(); it.hasNext();) {
+                ClassBean srcClass = it.next();
+                // The id and labels match
+                if (overideClass.getId() != null && overideClass.getId().equals(srcClass.getId())
+                        && overideClass.getLabel() != null && overideClass.getLabel().equals(srcClass.getLabel())) {
+                    it.remove();
+                }
             }
         }
+        srcList.addAll(addOverideList);
+        return srcList;
     }
 
     /**
