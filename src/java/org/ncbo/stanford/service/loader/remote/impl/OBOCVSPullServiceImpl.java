@@ -186,7 +186,7 @@ public class OBOCVSPullServiceImpl implements OBOCVSPullService {
 			action = (isRemote == ApplicationConstants.TRUE) ? ActionEnum.CREATE_REMOTE_ACTION
 					: ActionEnum.CREATE_LOCAL_ACTION;
 			ont = new OntologyBean();
-		} else if (ont.getIsManual() != ApplicationConstants.TRUE) {
+		} else if (ont.getIsManual().byteValue() != ApplicationConstants.TRUE) {
 			if (isRemote == ApplicationConstants.TRUE) {
 				if (ont.isRemote()) {
 					// existing ontology that had been and remains remote
