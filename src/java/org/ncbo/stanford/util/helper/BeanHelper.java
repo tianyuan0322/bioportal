@@ -22,7 +22,6 @@ public class BeanHelper {
 	 * @param Request
 	 */
 	public static UserBean populateUserBeanFromRequest(Request request) {
-
 		HttpServletRequest httpServletRequest = RequestUtils
 				.getHttpServletRequest(request);
 
@@ -67,7 +66,6 @@ public class BeanHelper {
 	 * @param Request
 	 */
 	public static OntologyBean populateOntologyBeanFromRequest(Request request) {
-
 		HttpServletRequest httpServletRequest = RequestUtils
 				.getHttpServletRequest(request);
 
@@ -117,6 +115,7 @@ public class BeanHelper {
 		String[] categoryIdsStr = httpServletRequest
 				.getParameterValues(MessageUtils
 						.getMessage("form.ontology.categoryId"));
+
 		if (categoryIdsStr != null) {
 			for (String categoryIdStr : categoryIdsStr) {
 				categoryIds.add(Integer.parseInt(categoryIdStr));
@@ -154,18 +153,21 @@ public class BeanHelper {
 		if (!StringHelper.isNullOrNullString(isRemote)) {
 			bean.setIsRemote(Byte.parseByte(isRemote));
 		}
+
 		if (!StringHelper.isNullOrNullString(isReviewed)) {
 			bean.setIsReviewed(Byte.parseByte(isReviewed));
 		}
+
 		if (!StringHelper.isNullOrNullString(statusId)) {
 			bean.setStatusId(Integer.parseInt(statusId));
 		}
+
 		if (!StringHelper.isNullOrNullString(dateCreated)) {
 			bean.setDateCreated(DateHelper.getDateFrom(dateCreated));
 		}
+
 		if (!StringHelper.isNullOrNullString(dateReleased)) {
 			bean.setDateReleased(DateHelper.getDateFrom(dateReleased));
-			
 		}
 
 		bean.setDisplayLabel(displayLabel);
@@ -193,7 +195,5 @@ public class BeanHelper {
 		}
 
 		return bean;
-
 	}
-
 }
