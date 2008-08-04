@@ -20,6 +20,7 @@ import org.ncbo.stanford.util.constants.ApplicationConstants;
 
 import edu.stanford.smi.protege.model.Cls;
 import edu.stanford.smi.protege.model.Frame;
+import edu.stanford.smi.protege.model.Instance;
 import edu.stanford.smi.protege.model.KnowledgeBase;
 import edu.stanford.smi.protege.model.ModelUtilities;
 import edu.stanford.smi.protege.model.Project;
@@ -32,10 +33,6 @@ import edu.stanford.smi.protegex.owl.model.OWLModel;
 import edu.stanford.smi.protegex.owl.model.OWLNamedClass;
 import edu.stanford.smi.protegex.owl.model.RDFResource;
 import edu.stanford.smi.protegex.owl.model.RDFSNamedClass;
-import edu.stanford.smi.protegex.owl.model.impl.DefaultOWLHasValue;
-import edu.stanford.smi.protegex.owl.model.impl.DefaultOWLIntersectionClass;
-import edu.stanford.smi.protegex.owl.model.impl.DefaultOWLNamedClass;
-import edu.stanford.smi.protegex.owl.model.impl.DefaultOWLSomeValuesFrom;
 
 /**
  * A default implementation to OntologyRetrievalManager interface designed to
@@ -112,7 +109,7 @@ public class OntologyRetrievalManagerProtegeImpl extends
 		KnowledgeBase kb = getKnowledgeBase(ontologyVersion);
 
 		Cls owlClass = getCls(conceptId, kb);
-		
+
 		if (owlClass != null) {
 			return createClassBean(owlClass, true);
 		}
@@ -153,6 +150,7 @@ public class OntologyRetrievalManagerProtegeImpl extends
 			if (kb instanceof OWLModel) {
 				frames = kb.getFramesWithValue(((OWLModel) kb)
 						.getRDFSLabelProperty(), null, false, query);
+
 				if (frames.size() < 1) {
 					frames = kb.getFramesWithValue(((OWLModel) kb)
 							.getRDFSLabelProperty(), null, false, "@en "
@@ -182,12 +180,13 @@ public class OntologyRetrievalManagerProtegeImpl extends
 			List<VNcboOntology> ontologyVersions, String query,
 			boolean includeObsolete, int maxToReturn) {
 		ArrayList<SearchResultBean> results = new ArrayList<SearchResultBean>();
-		
+
 		for (VNcboOntology ontologyVersion : ontologyVersions) {
 			SearchResultBean srb = new SearchResultBean();
 			srb.setOntologyVersionId(ontologyVersion.getId());
 			KnowledgeBase kb = getKnowledgeBase(ontologyVersion);
 			Collection<Frame> frames = null;
+
 			if (kb instanceof OWLModel) {
 				frames = kb.getMatchingFrames(((OWLModel) kb)
 						.getRDFSLabelProperty(), null, false, "@en " + query
@@ -224,13 +223,11 @@ public class OntologyRetrievalManagerProtegeImpl extends
 			Collection<Frame> frames = new HashSet<Frame>();
 
 			if (kb instanceof OWLModel) {
-
 				frames.addAll(kb.getMatchingFrames(((OWLModel) kb)
 						.getRDFSLabelProperty(), null, false,
 						"*" + query + "*", -1));
 				frames.addAll(kb.getMatchingFrames(kb.getNameSlot(), null,
 						false, "*" + query + "*", -1));
-
 			} else {
 				frames = kb.getMatchingFrames(kb.getNameSlot(), null, false,
 						"*" + query + "*", -1);
@@ -274,8 +271,8 @@ public class OntologyRetrievalManagerProtegeImpl extends
 			Collection<Reference> ref = new HashSet<Reference>();
 
 			if (kb instanceof OWLModel) {
-
 				ref.addAll(kb.getMatchingReferences("*" + query + "*", -1));
+
 				for (Reference reference : ref) {
 					if (!reference.getSlot().equals(
 							((OWLModel) kb).getRDFSLabelProperty())
@@ -287,6 +284,7 @@ public class OntologyRetrievalManagerProtegeImpl extends
 
 			} else {
 				ref.addAll(kb.getMatchingReferences("*" + query + "*", -1));
+
 				for (Reference reference : ref) {
 					if (!reference.getSlot().equals(kb.getNameSlot())
 							&& reference.getSlot().isVisible()) {
@@ -357,30 +355,30 @@ public class OntologyRetrievalManagerProtegeImpl extends
 		return knowledgeBase;
 	}
 
-	//This is to remove the URI reference that is used by protege for IDs
-	private String getId(Cls node){
+	// This is to remove the URI reference that is used by protege for IDs
+	private String getId(Cls node) {
 		if (node instanceof RDFResource) {
 			RDFResource rdfNode = (RDFResource) node;
-			return NamespaceUtil.getPrefixedName(rdfNode.getOWLModel(),rdfNode.getName());
-		}else{
+			return NamespaceUtil.getPrefixedName(rdfNode.getOWLModel(), rdfNode
+					.getName());
+		} else {
 			return node.getName();
 		}
-			
-	}	
-	
-	private Cls getCls(String conceptId,KnowledgeBase kb){
-		
+
+	}
+
+	private Cls getCls(String conceptId, KnowledgeBase kb) {
+
 		Cls owlClass = null;
-		 if (kb instanceof OWLModel) {
-			  owlClass = ((OWLModel)kb).getOWLNamedClass(conceptId);
-			
-		}else{
-		 owlClass = kb.getCls(conceptId);
+		if (kb instanceof OWLModel) {
+			owlClass = ((OWLModel) kb).getOWLNamedClass(conceptId);
+
+		} else {
+			owlClass = kb.getCls(conceptId);
 		}
 		return owlClass;
 	}
-	
-	
+
 	private ClassBean buildPath(Collection nodes, boolean light) {
 
 		ClassBean rootBean = null;
@@ -482,10 +480,13 @@ public class OntologyRetrievalManagerProtegeImpl extends
 		if (pConcept instanceof OWLNamedClass) {
 			subclasses = ((OWLNamedClass) pConcept).getNamedSubclasses(false);
 			OWLModel owlModel = (OWLModel) pConcept.getKnowledgeBase();
+
 			if (pConcept.equals(owlModel.getOWLThingClass())) {
 				Iterator<Cls> it = subclasses.iterator();
+
 				while (it.hasNext()) {
 					Cls subclass = it.next();
+
 					if (subclass.isSystem()) {
 						it.remove();
 					}
@@ -494,8 +495,10 @@ public class OntologyRetrievalManagerProtegeImpl extends
 		} else {
 			subclasses = pConcept.getDirectSubclasses();
 		}
+
 		classBean.addRelation(ApplicationConstants.CHILD_COUNT, subclasses
 				.size());
+
 		if (recursive) {
 			classBean.addRelation(ApplicationConstants.SUB_CLASS,
 					convertClasses(subclasses, false));
@@ -510,8 +513,8 @@ public class OntologyRetrievalManagerProtegeImpl extends
 
 			classBean.addRelation(ApplicationConstants.SUPER_CLASS,
 					convertClasses(superclasses, false));
-
 		}
+
 		// add RDF type
 		if (pConcept instanceof OWLNamedClass) {
 			classBean.addRelation(ApplicationConstants.RDF_TYPE,
@@ -536,34 +539,26 @@ public class OntologyRetrievalManagerProtegeImpl extends
 		// add properties
 		for (Slot slot : slots) {
 			Collection<Object> vals = concept.getOwnSlotValues(slot);
+
 			if (vals.isEmpty()) {
 				continue;
 			}
+
 			for (Object val : vals) {
-				if (val instanceof Slot) {
+				if (val instanceof Instance) {
+					String value = ((Instance) val).getBrowserText();
 
-					bpPropVals.add(((Slot) val).getBrowserText());
+					if (value != null) {
+						if (value.indexOf("~#") > -1) {
+							value = value.substring(value.indexOf(" "));
+						}
 
-				} else if (val instanceof DefaultOWLNamedClass) {
-					bpPropVals.add(((DefaultOWLNamedClass) val)
-							.getBrowserText());
-				} else if (val instanceof DefaultOWLHasValue) {
-					bpPropVals.add(((DefaultOWLHasValue) val).getBrowserText());
-				} else if (val instanceof DefaultOWLSomeValuesFrom) {
-					bpPropVals.add(((DefaultOWLSomeValuesFrom) val)
-							.getBrowserText());
-				} else if (val instanceof DefaultOWLIntersectionClass) {
-					bpPropVals.add(((DefaultOWLIntersectionClass) val)
-							.getBrowserText());
-				} else {
-					try {
-						bpPropVals.add(((Slot) val).getBrowserText());
-					} catch (Exception e) {
-						// Tried to assume its a slot and failed, defaulting to
-						// toString
-						bpPropVals.add(val.toString());
+						bpPropVals.add(value);
 					}
-
+				} else {
+					// Tried to assume its a slot and failed, defaulting to
+					// toString
+					bpPropVals.add(val.toString());
 				}
 			}
 
@@ -582,7 +577,8 @@ public class OntologyRetrievalManagerProtegeImpl extends
 	}
 
 	/**
-	 * @param protegeKnowledgeBases the protegeKnowledgeBases to set
+	 * @param protegeKnowledgeBases
+	 *            the protegeKnowledgeBases to set
 	 */
 	public void setProtegeKnowledgeBases(
 			CacheMap<Integer, KnowledgeBase> protegeKnowledgeBases) {
