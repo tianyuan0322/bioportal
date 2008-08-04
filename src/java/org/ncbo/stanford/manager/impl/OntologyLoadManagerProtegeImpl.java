@@ -71,9 +71,12 @@ public class OntologyLoadManagerProtegeImpl extends
 		// load code.
 		List errors = new ArrayList();
 		String tableName = getTableName(ontology.getId());
-		
+
 		if (ontology.getFormat().contains("OWL")) {
 			if (ontologyFile.length() < protegeBigFileThreshold) {
+				log.debug("Using non-streaming mode. Ontology: "
+						+ ontology.getDisplayLabel() + " (" + ontology.getId()
+						+ ")");
 				OWLModel owlModel = ProtegeOWL
 						.createJenaOWLModelFromInputStream(new FileInputStream(
 								ontologyFile));
@@ -81,7 +84,6 @@ public class OntologyLoadManagerProtegeImpl extends
 				PropertyList sources = PropertyList.create(owlModel
 						.getProject().getInternalProjectKnowledgeBase());
 
-				
 				DatabaseKnowledgeBaseFactory.setSources(sources,
 						protegeJdbcDriver, protegeJdbcUrl, tableName,
 						protegeJdbcUsername, protegeJdbcPassword);
@@ -91,8 +93,9 @@ public class OntologyLoadManagerProtegeImpl extends
 
 				// save memory
 				owlModel.dispose();
-				
-				// If errors are found during the load, log the errors and throw an
+
+				// If errors are found during the load, log the errors and throw
+				// an
 				// exception.
 				if (errors.size() > 0) {
 					log.error(errors);
@@ -102,6 +105,9 @@ public class OntologyLoadManagerProtegeImpl extends
 			} else {
 				// If the ontology file is big, use the streaming Protege load
 				// approach.
+				log.debug("Using streaming mode. Ontology: "
+						+ ontology.getDisplayLabel() + " (" + ontology.getId()
+						+ ")");
 				CreateOWLDatabaseFromFileProjectPlugin creator = new CreateOWLDatabaseFromFileProjectPlugin();
 				creator
 						.setKnowledgeBaseFactory(new OWLDatabaseKnowledgeBaseFactory());
@@ -113,14 +119,13 @@ public class OntologyLoadManagerProtegeImpl extends
 				creator.setOntologyInputSource(ontologyUri);
 				creator.setUseExistingSources(true);
 				creator.setMergeImportMode(true);
-				Project p = creator.createProject(); 
-			    p.save(errors);
-			    
-			    // save memory
-			    p.dispose();
+				Project p = creator.createProject();
+				p.save(errors);
+
+				// save memory
+				p.dispose();
 			}
 		} else {
-
 
 			Project fileProject = Project.loadProjectFromFile(filePath, errors);
 			DatabaseKnowledgeBaseFactory factory = new DatabaseKnowledgeBaseFactory();
