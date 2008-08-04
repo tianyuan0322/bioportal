@@ -148,3 +148,6 @@ update ncbo_ontology set is_manual = 1 where id = (select distinct ov.ontology_i
 
 CALL sp_remove_ontology_by_display_label('Gene Ontology');
 CALL sp_remove_ontology_by_display_label('Foundational Model of Anatomy ("Lite" version)');
+CALL sp_remove_ontology_by_display_label('pizza');
+CALL sp_remove_ontology_by_display_label('new pizza');
+CALL sp_remove_ontology_by_display_label('fixed pizza');
