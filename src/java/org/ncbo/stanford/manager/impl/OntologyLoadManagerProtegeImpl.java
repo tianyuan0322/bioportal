@@ -55,7 +55,6 @@ public class OntologyLoadManagerProtegeImpl extends
 	@SuppressWarnings("unchecked")
 	public void loadOntology(URI ontologyUri, OntologyBean ontology)
 			throws Exception {
-
 		File ontologyFile = new File(ontologyUri.getPath());
 		String filePath = ontologyUri.getPath();
 
@@ -126,7 +125,6 @@ public class OntologyLoadManagerProtegeImpl extends
 				p.dispose();
 			}
 		} else {
-
 			Project fileProject = Project.loadProjectFromFile(filePath, errors);
 			DatabaseKnowledgeBaseFactory factory = new DatabaseKnowledgeBaseFactory();
 			PropertyList sources = PropertyList.create(fileProject
@@ -150,6 +148,5 @@ public class OntologyLoadManagerProtegeImpl extends
 			dbProject.save(errors);
 			dbProject.dispose();
 		}
-
 	}
 }
