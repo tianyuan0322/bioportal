@@ -65,6 +65,7 @@ public class RESTfulDefinitionSource implements
 		return delegate.lookupAttributes(url, method);
 	}
 
+	@SuppressWarnings("unchecked")
 	public Iterator getConfigAttributeDefinitions() {
 		return delegate.getConfigAttributeDefinitions();
 	}
@@ -72,6 +73,7 @@ public class RESTfulDefinitionSource implements
 	/**
 	 * Duplicated from AbstractFilterInvocationDefinitionSource
 	 */
+	@SuppressWarnings("unchecked")
 	public boolean supports(Class clazz) {
 		return FilterInvocation.class.isAssignableFrom(clazz);
 	}
@@ -121,10 +123,6 @@ public class RESTfulDefinitionSource implements
 
 			line = line.trim();
 
-			if (log.isDebugEnabled()) {
-				log.debug("Line " + counter + ": " + line);
-			}
-
 			if (line.startsWith("//")) {
 				continue;
 			}
@@ -155,18 +153,10 @@ public class RESTfulDefinitionSource implements
 
 			int firstColonIndex = name.indexOf(":");
 
-			if (log.isDebugEnabled())
-				log.debug("~~~~~~~~~~ name= " + name + " firstColonIndex= "
-						+ firstColonIndex);
-
 			if (firstColonIndex != -1) {
 				antPath = name.substring(0, firstColonIndex);
 				methods = name.substring((firstColonIndex + 1), name.length());
 			}
-
-			if (log.isDebugEnabled())
-				log.debug("~~~~~~~~~~ name= " + name + " antPath= " + antPath
-						+ " methods= " + methods);
 
 			String[] methodList = null;
 
@@ -190,15 +180,6 @@ public class RESTfulDefinitionSource implements
 										+ methodList[ii]
 										+ " does NOT equal a valid name (GET,PUT,POST,DELETE)");
 					}
-				}
-			}
-
-			if (log.isDebugEnabled()) {
-				log.debug("methodList = " + methodList);
-
-				if (methodList != null) {
-					for (int ii = 0; ii < methodList.length; ii++)
-						log.debug("method[" + ii + "]: " + methodList[ii]);
 				}
 			}
 
