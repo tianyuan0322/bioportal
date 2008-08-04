@@ -1082,6 +1082,13 @@ public class OntologyRetrievalManagerLexGridImpl extends AbstractOntologyManager
         for (int i = 0; i < assocConceptList.getAssociatedConceptCount(); i++) {
             AssociatedConcept assocConcept = assocConceptList.getAssociatedConcept(i);
             if (assocConcept != null) {
+                //We do not want to include children for the target concept
+                if (includeChildren
+                        && ApplicationConstants.SUB_CLASS.equals(hierarchy_relationName)
+                        && (assocConcept.getSourceOf() == null || (assocConcept.getSourceOf() != null && assocConcept
+                                .getSourceOf().getAssociationCount() == 0))) {
+                    includeChildren = false;
+                }
                 ClassBean classBean = createClassBeanWithChildCount(assocConcept, includeChildren);
                 classBeans.add(classBean);
 
