@@ -137,8 +137,8 @@ protege.jdbc.password=yourprotegedbpassword
 protege.table.prefix=tbl_
 protege.table.suffix=
 
-# threshold in bytes
-protege.big.file.threshold=500000
+# threshold in bytes. 157286400 = 150Mb
+protege.big.file.threshold=157286400
 
 ################## LexGrid Configuration ##################
 
