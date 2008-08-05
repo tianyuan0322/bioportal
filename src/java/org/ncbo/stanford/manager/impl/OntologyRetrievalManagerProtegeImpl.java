@@ -15,7 +15,7 @@ import org.ncbo.stanford.bean.search.SearchResultBean;
 import org.ncbo.stanford.domain.custom.entity.VNcboOntology;
 import org.ncbo.stanford.manager.AbstractOntologyManagerProtege;
 import org.ncbo.stanford.manager.OntologyRetrievalManager;
-import org.ncbo.stanford.util.cache.CacheMap;
+import org.ncbo.stanford.util.cache.ProtegeKnowldedgeBaseCacheMap;
 import org.ncbo.stanford.util.constants.ApplicationConstants;
 
 import edu.stanford.smi.protege.model.Cls;
@@ -52,7 +52,7 @@ public class OntologyRetrievalManagerProtegeImpl extends
 			.getLog(OntologyRetrievalManagerProtegeImpl.class);
 
 	// Expire cache based on timeout
-	private CacheMap<Integer, KnowledgeBase> protegeKnowledgeBases = null;
+	private ProtegeKnowldedgeBaseCacheMap protegeKnowledgeBases = null;
 
 	/**
 	 * Default Constructor
@@ -330,8 +330,7 @@ public class OntologyRetrievalManagerProtegeImpl extends
 		}
 
 		List errors = new ArrayList();
-
-		Project prj = Project.createNewProject(factory, errors);
+		Project prj = Project.createBuildProject(factory, errors);
 		DatabaseKnowledgeBaseFactory.setSources(prj.getSources(),
 				protegeJdbcDriver, protegeJdbcUrl, getTableName(ontologyVersion
 						.getId()), protegeJdbcUsername, protegeJdbcPassword);
@@ -572,16 +571,15 @@ public class OntologyRetrievalManagerProtegeImpl extends
 	/**
 	 * @return the protegeKnowledgeBases
 	 */
-	public CacheMap<Integer, KnowledgeBase> getProtegeKnowledgeBases() {
+	public ProtegeKnowldedgeBaseCacheMap getProtegeKnowledgeBases() {
 		return protegeKnowledgeBases;
 	}
 
 	/**
-	 * @param protegeKnowledgeBases
-	 *            the protegeKnowledgeBases to set
+	 * @param protegeKnowledgeBases the protegeKnowledgeBases to set
 	 */
 	public void setProtegeKnowledgeBases(
-			CacheMap<Integer, KnowledgeBase> protegeKnowledgeBases) {
+			ProtegeKnowldedgeBaseCacheMap protegeKnowledgeBases) {
 		this.protegeKnowledgeBases = protegeKnowledgeBases;
 	}
 }
