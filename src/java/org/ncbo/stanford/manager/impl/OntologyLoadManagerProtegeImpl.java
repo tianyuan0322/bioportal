@@ -15,11 +15,14 @@ import org.ncbo.stanford.manager.OntologyLoadManager;
 
 import edu.stanford.smi.protege.model.Project;
 import edu.stanford.smi.protege.storage.database.DatabaseKnowledgeBaseFactory;
+import edu.stanford.smi.protege.util.ApplicationProperties;
 import edu.stanford.smi.protege.util.PropertyList;
 import edu.stanford.smi.protegex.owl.ProtegeOWL;
 import edu.stanford.smi.protegex.owl.database.CreateOWLDatabaseFromFileProjectPlugin;
 import edu.stanford.smi.protegex.owl.database.OWLDatabaseKnowledgeBaseFactory;
 import edu.stanford.smi.protegex.owl.model.OWLModel;
+import edu.stanford.smi.protegex.owl.model.factory.AlreadyImportedException;
+import edu.stanford.smi.protegex.owl.model.factory.FactoryUtils;
 
 /**
  * Provides the functionality to load an ontology into the Protege back-end
@@ -76,23 +79,35 @@ public class OntologyLoadManagerProtegeImpl extends
 				log.debug("Using non-streaming mode. Ontology: "
 						+ ontology.getDisplayLabel() + " (" + ontology.getId()
 						+ ")");
-				OWLModel owlModel = ProtegeOWL
-						.createJenaOWLModelFromInputStream(new FileInputStream(
-								ontologyFile));
+							
+				ApplicationProperties.setBoolean("protege.owl.parser.convert.file.merge.mode", 
+						true);
 
-				PropertyList sources = PropertyList.create(owlModel
-						.getProject().getInternalProjectKnowledgeBase());
-
-				DatabaseKnowledgeBaseFactory.setSources(sources,
-						protegeJdbcDriver, protegeJdbcUrl, tableName,
-						protegeJdbcUsername, protegeJdbcPassword);
+				OWLModel owlModel = ProtegeOWL.createJenaOWLModelFromURI(ontologyUri.toString());
+				Project fileProject = owlModel.getProject();
 
 				OWLDatabaseKnowledgeBaseFactory factory = new OWLDatabaseKnowledgeBaseFactory();
-				factory.saveKnowledgeBase(owlModel, sources, errors);
+				PropertyList sources = PropertyList.create(fileProject.getInternalProjectKnowledgeBase());
 
-				// save memory
-				owlModel.dispose();
+				OWLDatabaseKnowledgeBaseFactory.setSources(sources, protegeJdbcDriver,  protegeJdbcUrl , tableName , protegeJdbcUsername , protegeJdbcPassword);
 
+				factory.saveKnowledgeBase(fileProject.getKnowledgeBase(), sources,    errors);
+				fileProject.dispose();
+
+				Project dbProject = Project.createBuildProject(factory, errors);
+				OWLDatabaseKnowledgeBaseFactory.setSources(dbProject.getSources(),  protegeJdbcDriver, protegeJdbcUrl, tableName, protegeJdbcUsername, protegeJdbcPassword);
+
+				dbProject.createDomainKnowledgeBase(factory, errors, true);
+
+				try {
+					FactoryUtils.writeOntologyAndPrefixInfo(
+							(OWLModel) dbProject.getKnowledgeBase(), errors);
+				} catch (AlreadyImportedException e) {
+					log.error("Error at writeOntologyAndPrefixInfo: This shouldn't happen", e);
+				}
+				dbProject.dispose();
+				
+				
 				// If errors are found during the load, log the errors and throw
 				// an
 				// exception.
@@ -100,7 +115,7 @@ public class OntologyLoadManagerProtegeImpl extends
 					log.error(errors);
 					throw new Exception("Error during loading "
 							+ ontologyUri.toString());
-				}
+				}			
 			} else {
 				// If the ontology file is big, use the streaming Protege load
 				// approach.
@@ -125,6 +140,7 @@ public class OntologyLoadManagerProtegeImpl extends
 				p.dispose();
 			}
 		} else {
+			// PROTEGE .pprj format
 			Project fileProject = Project.loadProjectFromFile(filePath, errors);
 			DatabaseKnowledgeBaseFactory factory = new DatabaseKnowledgeBaseFactory();
 			PropertyList sources = PropertyList.create(fileProject
