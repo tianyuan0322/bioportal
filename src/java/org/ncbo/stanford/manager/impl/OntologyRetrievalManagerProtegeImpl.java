@@ -333,9 +333,12 @@ public class OntologyRetrievalManagerProtegeImpl extends
 		Project prj = Project.createBuildProject(factory, errors);
 		DatabaseKnowledgeBaseFactory.setSources(prj.getSources(),
 				protegeJdbcDriver, protegeJdbcUrl, getTableName(ontologyVersion
-						.getId()), protegeJdbcUsername, protegeJdbcPassword);
+						.getId()), protegeJdbcUsername, protegeJdbcPassword);		
 		prj.createDomainKnowledgeBase(factory, errors, true);
-
+		KnowledgeBase kb = prj.getKnowledgeBase();
+		
+		log.debug("Created new knowledgebase: " + kb.getName());
+		
 		return prj.getKnowledgeBase();
 	}
 
