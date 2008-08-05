@@ -1129,13 +1129,16 @@ public class OntologyRetrievalManagerLexGridImpl extends AbstractOntologyManager
      * @param beanlist
      * @param hierarchy_name
      */
-    private void addHierarchyRelationName(ClassBean bean, ArrayList<ClassBean> beanlist, String hierarchy_name) {
+    @SuppressWarnings("unchecked")
+	private void addHierarchyRelationName(ClassBean bean, ArrayList<ClassBean> beanlist, String hierarchy_name) {
         // If no hierarchy_name is provided, we assume that special BioPortal
         // relations do not have to be setup.
         if (StringUtils.isBlank(hierarchy_name)) {
             return;
         }
+        
         Object value = bean.getRelations().get(hierarchy_name);
+        
         if (value != null && value instanceof ArrayList) {
             // Ensure we do not add duplicates. We want to also replace the the
             // hierarchy_name class beans with the new beans from the list of
