@@ -363,53 +363,54 @@ public class OntologyRetrievalManagerProtegeImpl extends
 		} else {
 			return node.getName();
 		}
-
 	}
 
 	private Cls getCls(String conceptId, KnowledgeBase kb) {
-
 		Cls owlClass = null;
+
 		if (kb instanceof OWLModel) {
 			owlClass = ((OWLModel) kb).getOWLNamedClass(conceptId);
-
 		} else {
 			owlClass = kb.getCls(conceptId);
 		}
+
 		return owlClass;
 	}
 
 	private ClassBean buildPath(Collection nodes, boolean light) {
-
 		ClassBean rootBean = null;
 		ClassBean currentBean = null;
 		Cls previousNode = null;
+
 		for (Object nodeObj : nodes) {
 			ClassBean clsBean = new ClassBean();
 			Cls node = (Cls) nodeObj;
 			clsBean.setId(getId(node));
 			clsBean.setLabel(node.getBrowserText());
+
 			if (currentBean != null) {
 				if (light) {
 					List beanList = new ArrayList();
 					beanList.add(clsBean);
 					currentBean.addRelation(ApplicationConstants.SUB_CLASS,
 							beanList);
-
 				} else {
 					Collection<ClassBean> siblings = convertLightBeans(previousNode
 							.getDirectSubclasses());
+
 					for (ClassBean sibling : siblings) {
 						if (sibling.getId().equals(clsBean.getId())) {
 							clsBean = sibling;
 						}
 					}
+
 					currentBean.addRelation(ApplicationConstants.SUB_CLASS,
 							siblings);
 				}
-
 			} else {
 				rootBean = clsBean;
 			}
+
 			previousNode = node;
 			currentBean = clsBean;
 		}
@@ -418,39 +419,36 @@ public class OntologyRetrievalManagerProtegeImpl extends
 	}
 
 	private Collection<ClassBean> convertLightBeans(Collection<Cls> protegeClses) {
-
 		Collection<ClassBean> beans = new ArrayList<ClassBean>();
 
 		for (Cls cls : protegeClses) {
 			if (cls.isVisible())
 				beans.add(createLightBean(cls));
 		}
-		return beans;
 
+		return beans;
 	}
 
 	private ClassBean createLightBean(Cls cls) {
-
 		ClassBean bean = new ClassBean();
 		bean.setId(getId(cls));
 		bean.setLabel(cls.getBrowserText());
 		bean.addRelation(ApplicationConstants.CHILD_COUNT, cls
 				.getDirectSubclasses().size());
-		return bean;
 
+		return bean;
 	}
 
 	private Collection<ClassBean> convertClasses(Collection<Cls> protegeClses,
 			boolean recursive) {
-
 		Collection<ClassBean> beans = new ArrayList<ClassBean>();
 
 		for (Cls cls : protegeClses) {
 			if (cls.isVisible())
 				beans.add(createClassBean(cls, recursive));
 		}
-		return beans;
 
+		return beans;
 	}
 
 	private ClassBean createClassBean(Cls pConcept, boolean recursive) {
@@ -462,11 +460,13 @@ public class OntologyRetrievalManagerProtegeImpl extends
 
 		// add properties
 		Collection<Slot> slots;
+
 		if (isOwl && pConcept instanceof RDFSNamedClass) {
 			slots = ((RDFSNamedClass) pConcept).getPossibleRDFProperties();
 		} else {
 			slots = pConcept.getOwnSlots();
 		}
+
 		classBean.addRelations(convertProperties(pConcept, slots));
 
 		// add subclasses
@@ -576,7 +576,8 @@ public class OntologyRetrievalManagerProtegeImpl extends
 	}
 
 	/**
-	 * @param protegeKnowledgeBases the protegeKnowledgeBases to set
+	 * @param protegeKnowledgeBases
+	 *            the protegeKnowledgeBases to set
 	 */
 	public void setProtegeKnowledgeBases(
 			ProtegeKnowldedgeBaseCacheMap protegeKnowledgeBases) {
