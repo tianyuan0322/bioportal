@@ -136,6 +136,7 @@ public class CacheMap<K, V> {
 				dispose(val);
 				val = null;
 				cache.set(null);
+				cache = null;
 			}
 
 			cachedObjects.remove(key);
