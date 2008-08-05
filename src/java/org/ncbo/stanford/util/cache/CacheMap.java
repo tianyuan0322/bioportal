@@ -70,19 +70,7 @@ public class CacheMap<K, V> {
 	 * </p>
 	 */
 	public V get(K key) {
-		CachedObject<V> cache = cachedObjects.get(key);
-
-		if (cache == null) {
-			return null;
-		}
-
-		V obj = cache.get();
-
-		if (obj == null) {
-			cachedObjects.remove(key);
-		}
-
-		return obj;
+		return expire(key, cachedObjects.get(key));
 	}
 
 	/**
@@ -99,15 +87,14 @@ public class CacheMap<K, V> {
 	 */
 	public V put(K key, V value) {
 		CachedObject<V> cache = cachedObjects.get(key);
+		V old = null;
 
 		if (cache == null) {
-			cachedObjects
-					.put(key, new CachedObject<V>(value, timeout));
-			return null;
+			cachedObjects.put(key, new CachedObject<V>(value, timeout));
+		} else {
+			old = cache.getVal();
+			cache.set(value);
 		}
-
-		V old = cache.get();
-		cache.set(value);
 
 		return old;
 	}
@@ -127,11 +114,40 @@ public class CacheMap<K, V> {
 		for (Iterator<Map.Entry<K, CachedObject<V>>> it = cachedObjects
 				.entrySet().iterator(); it.hasNext();) {
 			Map.Entry<K, CachedObject<V>> entry = it.next();
-			CachedObject<V> cache = entry.getValue();
-
-			if (cache.get() == null) {
-				cachedObjects.remove(entry.getKey());
-			}
+			expire(entry.getKey(), entry.getValue());
 		}
+	}
+
+	/**
+	 * Check the expiration of a given cache item and expire it if needed
+	 * 
+	 * @param key
+	 * @param cache
+	 * @return
+	 */
+	private V expire(K key, CachedObject<V> cache) {
+		long now = System.currentTimeMillis();
+		V val = (cache != null) ? cache.getVal() : null;
+
+		if (cache == null
+				|| (cache != null && now - cache.getCreationTime() > cache
+						.getTimeout())) {
+			if (cache != null) {
+				dispose(val);
+				val = null;
+				cache.set(null);
+			}
+
+			cachedObjects.remove(key);
+		}
+
+		return val;
+	}
+
+	/**
+	 * Default implementation
+	 */
+	protected void dispose(V val) {
+		val = null;
 	}
 }

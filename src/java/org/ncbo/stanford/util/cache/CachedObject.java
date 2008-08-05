@@ -24,16 +24,7 @@ public class CachedObject<V> {
 	private long creationTime;
 
 	// Actual object stored in cache
-	private V val;
-
-	/**
-	 * Equivalent to <code>CachedObject(null)</code>.
-	 * 
-	 * @see CacheMap
-	 */
-	public CachedObject() {
-		this(null);
-	}
+	protected V val;
 
 	/**
 	 * Equivalent to
@@ -76,22 +67,8 @@ public class CachedObject<V> {
 	 * @return The cached object before its timeout period, <code>null</code>
 	 *         afterwards.
 	 */
-	public V get() {
-		long now = System.currentTimeMillis();
-
-		if (now - creationTime > timeout) {
-			flush();
-		}
-
-		return val;
-	}
-
-	/**
-	 * Clear the stored object. After this call, <code>get</code> will
-	 * 
-	 */
-	public void flush() {
-		val = null;
+	public CachedObject<V> get() {
+		return this;
 	}
 
 	/**
@@ -102,5 +79,25 @@ public class CachedObject<V> {
 		return val.toString() + ":"
 				+ (System.currentTimeMillis() - creationTime);
 	}
-}
 
+	/**
+	 * @return the timeout
+	 */
+	public long getTimeout() {
+		return timeout;
+	}
+
+	/**
+	 * @return the val
+	 */
+	public V getVal() {
+		return val;
+	}
+
+	/**
+	 * @return the creationTime
+	 */
+	public long getCreationTime() {
+		return creationTime;
+	}
+}
