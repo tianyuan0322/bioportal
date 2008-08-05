@@ -151,3 +151,4 @@ CALL sp_remove_ontology_by_display_label('Foundational Model of Anatomy ("Lite" 
 CALL sp_remove_ontology_by_display_label('pizza');
 CALL sp_remove_ontology_by_display_label('new pizza');
 CALL sp_remove_ontology_by_display_label('fixed pizza');
+CALL sp_remove_ontology_by_display_label('PizzaTester');
