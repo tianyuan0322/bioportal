@@ -451,12 +451,6 @@
 		</property>
 	</bean>
 
-	<bean id="protegeKnowledgeBases"
-		class="org.ncbo.stanford.util.cache.ProtegeKnowldedgeBaseCacheMap">
-		<constructor-arg index="0">
-			<ref bean="protegeKnowledgeBaseTimeout" />
-		</constructor-arg>
-	</bean>
 
 	<bean id="abstractOntologyManagerProtege"
 		class="org.ncbo.stanford.manager.AbstractOntologyManagerProtege"
@@ -493,7 +487,7 @@
 		class="org.ncbo.stanford.manager.impl.OntologyRetrievalManagerProtegeImpl"
 		parent="abstractOntologyManagerProtege">
 		<property name="protegeKnowledgeBases">
-			<ref bean="protegeKnowledgeBases" />
+			<ref bean="protegeKnowledgeBaseExpirationSystem" />
 		</property>
 	</bean>
 
@@ -624,11 +618,34 @@
 		</property>
 	</bean>
 
+	<!-- Protege knowledge base cache -->
+	<bean id="protegeKnowledgeBaseExpirationHandler"
+		class="org.ncbo.stanford.util.cache.expiration.handler.impl.ProtegeKnowledgeBaseExpirationHandler" />
+
+	<bean id="protegeKnowledgeBaseHashbeltContainerFactory"
+		class="org.ncbo.stanford.util.cache.container.impl.HashlistBasedHashbeltContainerFactory" />
+
+	<bean id="protegeKnowledgeBaseExpirationSystem"
+		class="org.ncbo.stanford.util.cache.expiration.system.impl.UpdatingHashbeltExpirationSystem">
+		<constructor-arg index="0">
+			<value>@protegeknowledgebasecachenumcontainers@</value>
+		</constructor-arg>
+		<constructor-arg index="1">
+			<value>@protegeknowledgebasecachetimeout@</value>
+		</constructor-arg>
+		<constructor-arg index="2">
+			<ref bean="protegeKnowledgeBaseExpirationHandler" />
+		</constructor-arg>
+		<constructor-arg index="3">
+			<ref bean="protegeKnowledgeBaseHashbeltContainerFactory" />
+		</constructor-arg>	
+	</bean>
+
 	<!-- Session Management -->
-	<bean id="expirationHandler"
+	<bean id="sessionExpirationHandler"
 		class="org.ncbo.stanford.util.cache.expiration.handler.impl.SimpleExpirationHandler" />
 
-	<bean id="hashbeltContainerFactory"
+	<bean id="sessionHashbeltContainerFactory"
 		class="org.ncbo.stanford.util.cache.container.impl.HashlistBasedHashbeltContainerFactory" />
 
 	<bean id="sessionService"
@@ -640,10 +657,10 @@
 			<value>@bioportalsessiontimeout@</value>
 		</constructor-arg>
 		<constructor-arg index="2">
-			<ref bean="expirationHandler" />
+			<ref bean="sessionExpirationHandler" />
 		</constructor-arg>
 		<constructor-arg index="3">
-			<ref bean="hashbeltContainerFactory" />
+			<ref bean="sessionHashbeltContainerFactory" />
 		</constructor-arg>
 	</bean>
 
@@ -928,12 +945,6 @@
 	<bean id="protegeBigFileThreshold" class="java.lang.Integer">
 		<constructor-arg>
 			<value>@protegebigfilethreshold@</value>
-		</constructor-arg>
-	</bean>
-
-	<bean id="protegeKnowledgeBaseTimeout" class="java.lang.Long">
-		<constructor-arg>
-			<value>@protegeknowledgebasetimeout@</value>
 		</constructor-arg>
 	</bean>
 

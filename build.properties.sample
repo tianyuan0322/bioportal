@@ -30,12 +30,9 @@ bioportal.xslt.path=${deploy.path}/${app.name}/WEB-INF/resources/xslt
 # Session properties
 #
 # Timeout for inactive sessions (in milliseconds)
-bioportal.session.timeout=5000
+bioportal.session.timeout=1800000
 # Number of "buckets" to allocate for session storage
 bioportal.session.numcontainers=11
-
-# Cached Hashmap timeout (in milliseconds)
-bioportal.cache.timeout.protege.knowledgebase=600000
 
 # OBO Sourceforge CVS properties
 obo.sourceforge.cvs.username=anonymous
@@ -132,6 +129,12 @@ protege.jdbc.url=jdbc:mysql://localhost/bioportal_protege
 protege.jdbc.driver=com.mysql.jdbc.Driver
 protege.jdbc.username=yourprotegedbuser
 protege.jdbc.password=yourprotegedbpassword
+
+# protege knowledgebase caching settings
+# Timeout for inactive knowledgebases (in milliseconds)
+protege.knowledgebase.cache.timeout=21600000
+# Number of "buckets" to allocate for knowledgebase storage
+protege.knowledgebase.cache.numcontainers=4
 
 # table name prefix/suffix
 protege.table.prefix=tbl_
