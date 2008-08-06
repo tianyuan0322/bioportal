@@ -624,7 +624,8 @@ public class OntologyRetrievalManagerLexGridImpl extends AbstractOntologyManager
                 matchAlgorithm = "RegExp";
             }
 
-            nodes = nodes.restrictToMatchingDesignations(search_string, SearchDesignationOption.PREFERRED_ONLY,
+            System.out.println("Search string= "+ search_string);
+            nodes = nodes.restrictToMatchingDesignations(search_string, SearchDesignationOption.ALL,
                     matchAlgorithm, null);
 
             // Sort by search engine recommendation & code ...

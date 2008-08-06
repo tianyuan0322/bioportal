@@ -91,17 +91,6 @@
 	<classpathentry kind="lib" path="WebRoot/WEB-INF/lib/protege/plugins/edu.stanford.smi.protegex.rdf_backend/rdf-api.jar"/>
 	<classpathentry kind="lib" path="WebRoot/WEB-INF/lib/protege/plugins/edu.stanford.smi.protegex.rdf_backend/rdf-backend.jar"/>
 	<classpathentry kind="lib" path="WebRoot/WEB-INF/lib/protege/looks-2.1.3.jar"/>
-	<classpathentry kind="lib" path="WebRoot/WEB-INF/lib/lexgrid/lbAdmin.jar"/>
-	<classpathentry kind="lib" path="WebRoot/WEB-INF/lib/lexgrid/lbImpl.jar"/>
-	<classpathentry kind="lib" path="WebRoot/WEB-INF/lib/lexgrid/lbInterfaces.jar"/>
-	<classpathentry kind="lib" path="WebRoot/WEB-INF/lib/lexgrid/lbModel.jar"/>
-	<classpathentry kind="lib" path="WebRoot/WEB-INF/lib/lexgrid/lgConverter.jar"/>
-	<classpathentry kind="lib" path="WebRoot/WEB-INF/lib/lexgrid/lgIndexer.jar"/>
-	<classpathentry kind="lib" path="WebRoot/WEB-INF/lib/lexgrid/lgModel.emf.jar"/>
-	<classpathentry kind="lib" path="WebRoot/WEB-INF/lib/lexgrid/lgModel.jar"/>
-	<classpathentry kind="lib" path="WebRoot/WEB-INF/lib/lexgrid/lgRDFConverter.jar"/>
-	<classpathentry kind="lib" path="WebRoot/WEB-INF/lib/lexgrid/lgResourceReader.jar"/>
-	<classpathentry kind="lib" path="WebRoot/WEB-INF/lib/lexgrid/lgUtility.jar"/>
 	<classpathentry kind="lib" path="WebRoot/WEB-INF/lib/lexgrid/extLib/BlankAccessDB.jar"/>
 	<classpathentry kind="lib" path="WebRoot/WEB-INF/lib/lexgrid/extLib/activation-1.1.jar"/>
 	<classpathentry kind="lib" path="WebRoot/WEB-INF/lib/lexgrid/extLib/arq.jar"/>
@@ -147,5 +136,6 @@
 	<classpathentry kind="lib" path="WebRoot/WEB-INF/lib/lexgrid/extLib/org.eclipse.osgi_3.2.0.v20060601.jar"/>
 	<classpathentry kind="lib" path="WebRoot/WEB-INF/lib/lexgrid/extLib/prefuse-2006.07.15-mod.jar"/>
 	<classpathentry kind="lib" path="WebRoot/WEB-INF/lib/lexgrid/extLib/saxpath-1.1.jar"/>
+	<classpathentry kind="lib" path="WebRoot/WEB-INF/lib/lexgrid/lexbig.jar"/>
 	<classpathentry kind="output" path="WebRoot/WEB-INF/classes"/>
 </classpath>
