@@ -481,21 +481,24 @@ public class OntologyServiceImpl implements OntologyService {
 	 */
 	private void findOrCreateNcboOntologyRecord(OntologyBean ontologyBean) {
 		Integer ontologyId = ontologyBean.getOntologyId();
+		NcboOntology ont = null;
 
 		if (ontologyId == null) {
-			NcboOntology ont = new NcboOntology();
-			ontologyBean.populateToOntologyEntity(ont);
-			NcboOntology ontNew = ncboOntologyDAO.saveOntology(ont);
-			ontologyBean.setOntologyId(ontNew.getId());
+			ont = new NcboOntology();
 			ontologyBean
 					.setInternalVersionNumber(Integer
 							.parseInt(MessageUtils
 									.getMessage("config.db.ontology.internalVersionNumberStart")));
 		} else {
+			ont = ncboOntologyDAO.findById(ontologyId);
 			Integer lastInternalVersion = findLatestOntologyVersion(ontologyId)
 					.getInternalVersionNumber();
 			ontologyBean.setInternalVersionNumber(lastInternalVersion + 1);
 		}
+
+		ontologyBean.populateToOntologyEntity(ont);
+		NcboOntology ontNew = ncboOntologyDAO.saveOntology(ont);
+		ontologyBean.setOntologyId(ontNew.getId());
 	}
 
 	private List<String> uploadOntologyFile(OntologyBean ontologyBean,
