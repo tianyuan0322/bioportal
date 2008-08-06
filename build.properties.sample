@@ -120,7 +120,7 @@ bioportal.ontology.filepath=${bioportal.resource.path}/uploads
 bioportal.tempdir=${bioportal.resource.path}/tmp
 
 # Max upload file size
-bioportal.upload.maxfilesize=1048576
+bioportal.upload.maxfilesize=10485760
 
 ################## Protege Configuration ##################
 
