@@ -1,20 +1,26 @@
 package org.ncbo.stanford.util.cache.expiration.system.impl;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.ncbo.stanford.util.cache.container.HashbeltContainer;
 import org.ncbo.stanford.util.cache.container.HashbeltContainerFactory;
 import org.ncbo.stanford.util.cache.expiration.handler.ExpirationHandler;
 import org.ncbo.stanford.util.cache.expiration.system.AbstractHashbeltExpirationSystem;
 
 /**
- * A subclass of AbstractHashbeltExpirationSystem that moves requested
- * elements back into the first container when a get or add occurs.
- * Suitable for information that is expired when it is not used for a
- * while (cached data, session keys, etc.).
+ * A subclass of AbstractHashbeltExpirationSystem that moves requested elements
+ * back into the first container when a get or add occurs. Suitable for
+ * information that is expired when it is not used for a while (cached data,
+ * session keys, etc.).
  * 
  * @author Michael Dorf
  */
 public class UpdatingHashbeltExpirationSystem<K, V> extends
 		AbstractHashbeltExpirationSystem<K, V> {
+
+	private static final Log log = LogFactory
+			.getLog(UpdatingHashbeltExpirationSystem.class);
+
 	public UpdatingHashbeltExpirationSystem() {
 		super();
 	}
