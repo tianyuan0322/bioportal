@@ -37,6 +37,7 @@ public class StandardHashbeltExpirationSystem<K, V> extends
 
 	public void put(K key, V expirableObject) {
 		HashbeltContainer<K, V> container = findContainer(key);
+
 		if (null == container) {
 			containers[0].put(key, expirableObject);
 		}
