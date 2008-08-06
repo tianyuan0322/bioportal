@@ -3,23 +3,18 @@ package org.ncbo.stanford.util.cache.container.impl;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.LinkedList;
 
 import org.ncbo.stanford.util.cache.container.HashbeltContainer;
-import org.ncbo.stanford.util.collections.DoublyLinkedList;
-import org.ncbo.stanford.util.collections.Node;
 
 /**
- * A slight variation on the standard hashbelt container. This maintains three
+ * A slight variation on the standard hashbelt container. This maintains two
  * data structures:
  * 
- * a hashmap from keys to values a hashmap from keys to nodes a linked list (of
- * nodes)
+ * a hashmap from keys to values and a linked list (of nodes)
  * 
  * The idea is that this lets us have fast updates and removals, but also fairly
  * fast iterations at the end.
- * 
- * We can't use the java.util linked list class for this because, unfortunately,
- * they don't expose the node class (and the get methods are insanely painful).
  * 
  * @author Michael Dorf
  */
@@ -27,8 +22,7 @@ public class HashlistBasedHashbeltContainer<K, V> implements
 		HashbeltContainer<K, V> {
 	
 	private HashMap<K, V> keysToExpirableObjects = new HashMap<K, V>();
-	private HashMap<K, Node<V>> keysToNodes = new HashMap<K, Node<V>>();
-	private DoublyLinkedList<V> expirableObjects = new DoublyLinkedList<V>();
+	private LinkedList<V> expirableObjects = new LinkedList<V>();
 
 	public void clear() {
 		keysToExpirableObjects.clear();
@@ -37,7 +31,7 @@ public class HashlistBasedHashbeltContainer<K, V> implements
 	public synchronized V get(K key) {
 		return keysToExpirableObjects.get(key);
 	}
-
+	
 	public synchronized V remove(K key) {
 		V returnValue = keysToExpirableObjects.remove(key);
 
@@ -45,18 +39,16 @@ public class HashlistBasedHashbeltContainer<K, V> implements
 			return null;
 		}
 
-		Node<V> node = keysToNodes.get(key);
-		node.remove();
+		expirableObjects.remove(returnValue);
 
 		return returnValue;
-	}
+	}	
 
 	public synchronized void put(K key, V value) {
 		keysToExpirableObjects.put(key, value);
-		Node<V> node = expirableObjects.add(value);
-		keysToNodes.put(key, node);
+		expirableObjects.add(value);
 	}
-
+	
 	public Iterator<V> getValues() {
 		return expirableObjects.iterator();
 	}
