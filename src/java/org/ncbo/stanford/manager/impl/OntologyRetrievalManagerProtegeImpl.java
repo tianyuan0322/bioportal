@@ -15,7 +15,7 @@ import org.ncbo.stanford.bean.search.SearchResultBean;
 import org.ncbo.stanford.domain.custom.entity.VNcboOntology;
 import org.ncbo.stanford.manager.AbstractOntologyManagerProtege;
 import org.ncbo.stanford.manager.OntologyRetrievalManager;
-import org.ncbo.stanford.util.cache.ProtegeKnowldedgeBaseCacheMap;
+import org.ncbo.stanford.util.cache.expiration.system.ExpirationSystem;
 import org.ncbo.stanford.util.constants.ApplicationConstants;
 
 import edu.stanford.smi.protege.model.Cls;
@@ -50,9 +50,7 @@ public class OntologyRetrievalManagerProtegeImpl extends
 
 	private static final Log log = LogFactory
 			.getLog(OntologyRetrievalManagerProtegeImpl.class);
-
-	// Expire cache based on timeout
-	private ProtegeKnowldedgeBaseCacheMap protegeKnowledgeBases = null;
+	private ExpirationSystem<Integer, KnowledgeBase> protegeKnowledgeBases = null;
 
 	/**
 	 * Default Constructor
@@ -333,12 +331,12 @@ public class OntologyRetrievalManagerProtegeImpl extends
 		Project prj = Project.createBuildProject(factory, errors);
 		DatabaseKnowledgeBaseFactory.setSources(prj.getSources(),
 				protegeJdbcDriver, protegeJdbcUrl, getTableName(ontologyVersion
-						.getId()), protegeJdbcUsername, protegeJdbcPassword);		
+						.getId()), protegeJdbcUsername, protegeJdbcPassword);
 		prj.createDomainKnowledgeBase(factory, errors, true);
 		KnowledgeBase kb = prj.getKnowledgeBase();
-		
+
 		log.debug("Created new knowledgebase: " + kb.getName());
-		
+
 		return prj.getKnowledgeBase();
 	}
 
@@ -574,7 +572,7 @@ public class OntologyRetrievalManagerProtegeImpl extends
 	/**
 	 * @return the protegeKnowledgeBases
 	 */
-	public ProtegeKnowldedgeBaseCacheMap getProtegeKnowledgeBases() {
+	public ExpirationSystem<Integer, KnowledgeBase> getProtegeKnowledgeBases() {
 		return protegeKnowledgeBases;
 	}
 
@@ -583,7 +581,7 @@ public class OntologyRetrievalManagerProtegeImpl extends
 	 *            the protegeKnowledgeBases to set
 	 */
 	public void setProtegeKnowledgeBases(
-			ProtegeKnowldedgeBaseCacheMap protegeKnowledgeBases) {
+			ExpirationSystem<Integer, KnowledgeBase> protegeKnowledgeBases) {
 		this.protegeKnowledgeBases = protegeKnowledgeBases;
 	}
 }
