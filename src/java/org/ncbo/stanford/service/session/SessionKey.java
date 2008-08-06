@@ -19,7 +19,6 @@ public class SessionKey {
 		try {
 			randomNumberGenerator = SecureRandom.getInstance("SHA1PRNG");
 		} catch (NoSuchAlgorithmException e) {
-			System.out.println("Generating insecure session keys");
 			randomNumberGenerator = new Random();
 		}
 	}

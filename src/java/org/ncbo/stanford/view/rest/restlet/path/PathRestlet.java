@@ -66,7 +66,7 @@ public class PathRestlet extends Restlet {
 		
 		String ontologyVersion = (String) request.getAttributes().get(
 				"ontologyVersionId");
-		System.out.println("ontology:" + ontologyVersion);
+
 		try {
 			Integer ontId = Integer.parseInt(ontologyVersion);
 			if (target

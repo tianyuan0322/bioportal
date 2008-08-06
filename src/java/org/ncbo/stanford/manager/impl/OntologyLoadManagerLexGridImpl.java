@@ -190,7 +190,6 @@ public class OntologyLoadManagerLexGridImpl extends
 				String message = "Could not update the codingScheme informtion into NcboOntologyMetadata for ontologyversionid="
 						+ ontology_bean.getId();
 				log.warn(message);
-				System.out.println(message);
 			}
 
 		} else {
