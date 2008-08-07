@@ -623,7 +623,7 @@
 		class="org.ncbo.stanford.util.cache.expiration.handler.impl.ProtegeKnowledgeBaseExpirationHandler" />
 
 	<bean id="protegeKnowledgeBaseHashbeltContainerFactory"
-		class="org.ncbo.stanford.util.cache.container.impl.HashlistBasedHashbeltContainerFactory" />
+		class="org.ncbo.stanford.util.cache.container.impl.FastIteratingHashbeltContainerFactory" />
 
 	<bean id="protegeKnowledgeBaseExpirationSystem"
 		class="org.ncbo.stanford.util.cache.expiration.system.impl.UpdatingHashbeltExpirationSystem">
