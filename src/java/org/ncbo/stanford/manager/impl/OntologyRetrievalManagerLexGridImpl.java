@@ -624,7 +624,7 @@ public class OntologyRetrievalManagerLexGridImpl extends AbstractOntologyManager
                 matchAlgorithm = "RegExp";
             }
 
-            System.out.println("Search string= "+ search_string);
+            System.out.println("Using Algorithm= "+matchAlgorithm+ " Search string= "+ search_string );
             nodes = nodes.restrictToMatchingDesignations(search_string, SearchDesignationOption.ALL,
                     matchAlgorithm, null);
 
@@ -759,6 +759,7 @@ public class OntologyRetrievalManagerLexGridImpl extends AbstractOntologyManager
         ResolvedConceptReference rcr = new ResolvedConceptReference();
         rcr.setCodingScheme(cr.getCodingScheme());
         rcr.setConceptCode(cr.getConceptCode());
+        rcr.setCodingSchemeVersion(csvt.getVersion());
         EntityDescription ed = getEntityDescription(ncboOntology, cr.getConceptCode());
         rcr.setEntityDescription(ed);
         return createClassBeanWithChildCount(rcr, includeChildren);

@@ -29,6 +29,10 @@ public class OntologyLoaderLexGridImplTest extends AbstractBioPortalTest {
 	private final static String TEST_OBO_URN_VERSION = "urn:lsid:bioontology.org:cell|UNASSIGNED";
 	private final static String TEST_OBO_DISPLAY_LABEL = "cell";
 	
+    private final static String TEST_OBO_PATHNAME1 = "test/sample_data/cell_old.obo";
+    private final static String TEST_OBO_URN_VERSION1 = "urn:lsid:bioontology.org:cell|UNASSIGNED";
+    private final static String TEST_OBO_DISPLAY_LABEL1 = "cell1";	
+	
 	private final static String TEST_LEXGRID_XML_PATHNAME = "test/sample_data/Automobiles.xml";
 	private final static String TEST_LEXGRID_XML_URN_VERSION = "urn:oid:11.11.0.1|1.0";
 	private final static String TEST_LEXGRID_DISPLAY_LABEL = "Automobiles.xml";
@@ -73,7 +77,29 @@ public class OntologyLoaderLexGridImplTest extends AbstractBioPortalTest {
 		System.out.println("OntologyLoaderLexGridImplTest: testLoadObo().................... END");
 	}
 
+    public void testLoadObo1() throws Exception {
 
+        System.out.println("OntologyLoaderLexGridImplTest: testLoadObo().................. BEGIN");
+
+        OntologyBean ontologyBean = this.createOntolgyBeanOBO();
+        
+        // populate file field in ontologyBean
+        ontologyBean.setFilePath(TEST_OBO_PATHNAME1);
+        
+        // create - pass FileHandler
+        getOntologyService().createOntology(ontologyBean, OntologyServiceTest.getFilePathHandler(ontologyBean));
+        
+        if (ontologyBean != null)
+            System.out.println("Created OntologyBean with ID = " + ontologyBean.getId());
+        
+        // load
+        loadOntology(ontologyBean, TEST_OBO_PATHNAME1);
+                
+        assertTrue(ontologyBean.getCodingScheme() != null);
+        
+        System.out.println("OntologyLoaderLexGridImplTest: testLoadObo().................... END");
+    }
+    
 	public void testLoadGenericOwl() throws Exception {
 
 		System.out.println("OntologyLoaderLexGridImplTest: testLoadGenericOwl().................. BEGIN");
@@ -161,6 +187,19 @@ public class OntologyLoaderLexGridImplTest extends AbstractBioPortalTest {
 				
 		return bean;
 	}
+	
+private OntologyBean createOntolgyBeanOBO1() {
+        
+        OntologyBean bean = createOntolgyBeanBase();
+        
+        bean.setFormat(ApplicationConstants.FORMAT_OBO);
+        bean.setCodingScheme(TEST_OBO_URN_VERSION1);
+        bean.setDisplayLabel("cell1");
+        bean.setContactEmail("obo@email.com");
+        bean.setContactName("OBO Name");
+                
+        return bean;
+    }	
 	
 	private OntologyBean createOntolgyBeanGenericOWL() {
 		

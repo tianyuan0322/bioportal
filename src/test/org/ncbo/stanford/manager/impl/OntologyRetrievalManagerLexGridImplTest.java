@@ -30,11 +30,45 @@ public class OntologyRetrievalManagerLexGridImplTest extends AbstractBioPortalTe
 
     }
 
+
     public void testFindOBORootConcept() throws Exception {
         System.out.println("testFindOBORootConcept()");
         retrievalManager = getRetrievalManagerLexGrid();
 
         VNcboOntology ncboOntology = retrievalManager.getLatestNcboOntology(TEST_OBO_DISPLAY_LABEL);
+        ClassBean classBean = retrievalManager.findRootConcept(ncboOntology);
+        System.out.println("Root concept is " + classBean);
+        System.out.println("\n");
+        assertTrue(classBean != null);
+    }
+    
+    public void testFindOBORootConceptCell() throws Exception {
+        System.out.println("testFindOBORootConceptCell()");
+        retrievalManager = getRetrievalManagerLexGrid();
+
+        VNcboOntology ncboOntology = retrievalManager.getLatestNcboOntology(1005);
+        ClassBean classBean = retrievalManager.findRootConcept(ncboOntology);
+        System.out.println("Root concept is " + classBean);
+        System.out.println("\n");
+        assertTrue(classBean != null);
+    }
+    
+    public void testFindOBORootConceptCellOld() throws Exception {
+        System.out.println("testFindOBORootConceptCellOld()");
+        retrievalManager = getRetrievalManagerLexGrid();
+
+        VNcboOntology ncboOntology = retrievalManager.getLatestNcboOntology(1006);
+        ClassBean classBean = retrievalManager.findRootConcept(ncboOntology);
+        System.out.println("Root concept is " + classBean);
+        System.out.println("\n");
+        assertTrue(classBean != null);
+    }
+
+    public void estFindOBORootConceptTAO() throws Exception {
+        System.out.println("testFindOBORootConceptTAO()");
+        retrievalManager = getRetrievalManagerLexGrid();
+
+        VNcboOntology ncboOntology = retrievalManager.getLatestNcboOntology(1066);
         ClassBean classBean = retrievalManager.findRootConcept(ncboOntology);
         System.out.println("Root concept is " + classBean);
         System.out.println("\n");
@@ -62,7 +96,7 @@ public class OntologyRetrievalManagerLexGridImplTest extends AbstractBioPortalTe
         assertTrue(classBean != null);
     }
 
-    public void testFindUMLSRootConcept() throws Exception {
+    public void estFindUMLSRootConcept() throws Exception {
         System.out.println("testFindUMLSRootConcept()");
         retrievalManager = getRetrievalManagerLexGrid();
         VNcboOntology ncboOntology = retrievalManager.getLatestNcboOntology(TEST_UMLS_DISPLAY_LABEL);
@@ -86,19 +120,7 @@ public class OntologyRetrievalManagerLexGridImplTest extends AbstractBioPortalTe
         assertTrue(properties != null);
     }
 
-/*    public void testOBOFindConceptMouse() throws Exception {
-        System.out.println("testOBOFindConcept()");
-        retrievalManager = getRetrievalManagerLexGrid();
 
-        VNcboOntology ncboOntology = retrievalManager.getLatestNcboOntology(1045);
-
-        String conceptID = "MPATH:360";
-        ClassBean classBean = retrievalManager.findConcept(ncboOntology, conceptID);
-        System.out.println("Concept " + conceptID + " of cell ontology is " + classBean);
-        System.out.println("\n");
-        assertTrue(classBean.getId().equalsIgnoreCase(conceptID));
-    }
-*/
     public void testOBOFindConcept() throws Exception {
         System.out.println("testOBOFindConcept()");
         retrievalManager = getRetrievalManagerLexGrid();
@@ -166,7 +188,10 @@ public class OntologyRetrievalManagerLexGridImplTest extends AbstractBioPortalTe
         System.out.println("\n");
         assertTrue(pathBean != null);
     }
+    
+    
 
+    
     /*
     public void testOBOFindPathToRootMouse() throws Exception {
         System.out.println("testOBOFindPathToRoot()");
@@ -201,6 +226,7 @@ public class OntologyRetrievalManagerLexGridImplTest extends AbstractBioPortalTe
         VNcboOntology ncboOntology = retrievalManager.getLatestNcboOntology(TEST_OBO_DISPLAY_LABEL);
         List<VNcboOntology> ontologyVersionIds = (List<VNcboOntology>) Arrays.asList(ncboOntology);
         String query = "eukaryotic";
+        //String query = "colony forming unit hematopoietic";
         List<SearchResultBean> searchResultBeans = retrievalManager.findConceptNameContains(ontologyVersionIds, query,
                 false, 100);
 
@@ -255,6 +281,22 @@ public class OntologyRetrievalManagerLexGridImplTest extends AbstractBioPortalTe
         System.out.println("\n");
         assertTrue(searchResultBeans.isEmpty() != true);
     }
+    
+  public void estOBOFindPathFromRootDictyostelium() throws Exception {
+  System.out.println("testOBOFindPathFromRootDictyostelium()");
+  retrievalManager = getRetrievalManagerLexGrid();
+
+  VNcboOntology ncboOntology = retrievalManager.getLatestNcboOntology(1016);
+  //String conceptID = "DDANAT:0000037";
+  //String conceptID = "DDANAT:0010081";
+  String conceptID = "DDANAT:0000097";
+  ClassBean pathBean = retrievalManager.findPathFromRoot(ncboOntology, conceptID, false);
+  System.out.println("Paths from root to concept " + conceptID + " of Dictyostelium  ontology are :");
+  System.out.println(pathBean);
+  System.out.println("\n");
+  assertTrue(pathBean != null);
+}
+    
 
     private OntologyRetrievalManagerLexGridImpl getRetrievalManagerLexGrid() {
         OntologyRetrievalManagerLexGridImpl retrievalManagerLexGrid = (OntologyRetrievalManagerLexGridImpl) applicationContext
