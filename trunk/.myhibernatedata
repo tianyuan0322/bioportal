@@ -1,0 +1,22 @@
+#
+#Tue Jul 22 18:17:44 PDT 2008
+genBasicCompId=false
+sessionFactoryName=
+profile=
+daoSFId=sessionFactory
+version=3.1
+jndiPath=
+detectM2M=false
+reStrategyClass=
+springDaoFile=WebRoot/WEB-INF/conf/generated/applicationContext-services.xml
+useJavaTypes=true
+keyGenerator=identity
+libInstallFolder=
+addLibs2Project=false
+genVersionTag=false
+sessionFactoryId=sessionFactory
+basePersistenceClass=
+reSettingsFile=
+configFile=/bioportal/WebRoot/WEB-INF/conf/generated/applicationContext-services.xml
+createConfigFile=false
+addLibs2Classpath=false
