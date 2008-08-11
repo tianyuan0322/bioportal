@@ -24,9 +24,8 @@
 			<xsl:copy-of select="contactEmail" />
 			<xsl:copy-of select="statusId" />
 			<xsl:copy-of select="format" />
+			<xsl:copy-of select="dateCreated" />
 		</ontology>
 	</xsl:template>
 
 </xsl:stylesheet>
-
-
