@@ -199,13 +199,14 @@ public class OntologyRetrievalManagerLexGridImpl extends AbstractOntologyManager
 
         }
 
+       
         // The classBeans list could be empty either because there is no path
         // from root to the conceptId or the conceptId is the root itself.
         if (classBeans.isEmpty()) {
             // Check if the conceptId is the root itself. If so, we want to add
             // the root concept to the classBeans list
-            ResolvedConceptReferenceList rcrl = getHierarchyRootConcepts(schemeName, csvt);
-            Enumeration<ResolvedConceptReference> refEnum = rcrl.enumerateResolvedConceptReference();
+            ResolvedConceptReferenceList hier_rcrl = getHierarchyRootConcepts(schemeName, csvt);
+            Enumeration<ResolvedConceptReference> refEnum = hier_rcrl.enumerateResolvedConceptReference();
             ResolvedConceptReference ref = null;
 
             while (refEnum.hasMoreElements()) {
@@ -214,12 +215,19 @@ public class OntologyRetrievalManagerLexGridImpl extends AbstractOntologyManager
                 if (ref.getConceptCode().equals(conceptId)) {
                     //We need a lightweight classBean....
                     ResolvedConceptReference rcr= getLightResolvedConceptReference(ncboOntology, conceptId);
-                    bean = createClassBeanWithChildCount(rcr, includeChildren);
+                    bean = createClassBeanWithChildCount(rcr, false);
                     classBeans.add(bean);
                 }
 
             }
 
+        }
+        
+        if (includeChildren) {
+            ResolvedConceptReferenceList rcrl = getHierarchyRootConcepts(schemeName, csvt);
+            ArrayList<ClassBean> rootConceptList= createClassBeanArray(rcrl, true);
+            ArrayList<ClassBean> mergedConceptList= mergeListsEliminatingDuplicates(rootConceptList, classBeans); 
+            return createThingClassBean(mergedConceptList);
         }
 
         return createThingClassBean(classBeans);
@@ -1231,8 +1239,8 @@ public class OntologyRetrievalManagerLexGridImpl extends AbstractOntologyManager
 
     /**
      * This function is used to ensure there are no duplicates when the lists
-     * are merged. The enties in the addOverrideList takes precedence and gets
-     * added when there is a comflict. ClassBeans are considered equal if they
+     * are merged. The entries in the addOverrideList takes precedence and gets
+     * added when there is a conflict. ClassBeans are considered equal if they
      * have the same id and label.
      * 
      * @param baseList
