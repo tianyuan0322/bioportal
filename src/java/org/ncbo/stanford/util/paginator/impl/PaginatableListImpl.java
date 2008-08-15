@@ -6,6 +6,17 @@ import java.util.Iterator;
 
 import org.ncbo.stanford.util.paginator.Paginatable;
 
+/**
+ * 
+ * @author Michael Dorf
+ * 
+ * A default implementation of a java List. Allows to turn any list into a
+ * paginatable list.
+ * 
+ * @param <E> -
+ *            type of objects to paginate over
+ * 
+ */
 public class PaginatableListImpl<E> extends ArrayList<E> implements
 		Paginatable<E> {
 
