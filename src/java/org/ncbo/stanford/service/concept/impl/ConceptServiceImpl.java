@@ -35,21 +35,13 @@ public class ConceptServiceImpl implements ConceptService {
 	private Map<String, String> ontologyFormatHandlerMap = new HashMap<String, String>();
 	private Map<String, OntologyRetrievalManager> ontologyRetrievalHandlerMap = new HashMap<String, OntologyRetrievalManager>();
 
-	// private OntologyRetrievalManager ontologyRetrievalManager;
-
-	// TODO - validate this
-	// This is identical to findRootConcept
-	// REMOVE THIS FROM INTERFACE?????
-	public ClassBean findRoot(Integer ontologyId) throws Exception {
-		return findRootConcept(ontologyId);
-	}
-
 	/**
 	 * Get the root concept for the specified ontology.
 	 */
-	public ClassBean findRootConcept(Integer ontologyId) throws Exception {
+	public ClassBean findRootConcept(Integer ontologyVersionId)
+			throws Exception {
 		VNcboOntology ontology = ncboOntologyVersionDAO
-				.findOntologyVersion(ontologyId);
+				.findOntologyVersion(ontologyVersionId);
 		String formatHandler = ontologyFormatHandlerMap.get(ontology
 				.getFormat());
 		OntologyRetrievalManager manager = ontologyRetrievalHandlerMap
@@ -58,10 +50,10 @@ public class ConceptServiceImpl implements ConceptService {
 		return manager.findRootConcept(ontology);
 	}
 
-	public ClassBean findConcept(Integer ontologyId, String conceptId)
+	public ClassBean findConcept(Integer ontologyVersionId, String conceptId)
 			throws Exception {
 		VNcboOntology ontology = ncboOntologyVersionDAO
-				.findOntologyVersion(ontologyId);
+				.findOntologyVersion(ontologyVersionId);
 		String formatHandler = ontologyFormatHandlerMap.get(ontology
 				.getFormat());
 		OntologyRetrievalManager manager = ontologyRetrievalHandlerMap
@@ -70,10 +62,10 @@ public class ConceptServiceImpl implements ConceptService {
 		return manager.findConcept(ontology, conceptId);
 	}
 
-	public ClassBean findPathFromRoot(Integer ontologyId, String conceptId,
-			boolean light) throws Exception {
+	public ClassBean findPathFromRoot(Integer ontologyVersionId,
+			String conceptId, boolean light) throws Exception {
 		VNcboOntology ontology = ncboOntologyVersionDAO
-				.findOntologyVersion(ontologyId);
+				.findOntologyVersion(ontologyVersionId);
 		String formatHandler = ontologyFormatHandlerMap.get(ontology
 				.getFormat());
 		OntologyRetrievalManager manager = ontologyRetrievalHandlerMap
@@ -82,16 +74,8 @@ public class ConceptServiceImpl implements ConceptService {
 		return manager.findPathFromRoot(ontology, conceptId, light);
 	}
 
-	/*
-	 * public List<ClassBean> findParent(Integer ontologyId, String conceptId)
-	 * throws Exception { return new ArrayList(); }
-	 * 
-	 * public List<ClassBean> findChildren(Integer ontologyId, String
-	 * conceptId) throws Exception { return new ArrayList(); }
-	 */
-
 	public List<SearchResultBean> findConceptNameExact(
-			List<Integer> ontologyIds, String query) {
+			List<Integer> ontologyVersionIds, String query) {
 		List<SearchResultBean> searchResults = new ArrayList<SearchResultBean>();
 		HashMap<String, List<VNcboOntology>> formatLists = new HashMap<String, List<VNcboOntology>>();
 
@@ -101,11 +85,11 @@ public class ConceptServiceImpl implements ConceptService {
 
 		List<VNcboOntology> ontologies = new ArrayList<VNcboOntology>();
 
-		if (ontologyIds.isEmpty()) {
+		if (ontologyVersionIds.isEmpty()) {
 			ontologies = ncboOntologyVersionDAO.findLatestOntologyVersions();
 		} else {
 			ontologies = ncboOntologyVersionDAO
-					.findOntologyVersions(ontologyIds);
+					.findOntologyVersions(ontologyVersionIds);
 		}
 
 		for (VNcboOntology ontology : ontologies) {
@@ -129,7 +113,7 @@ public class ConceptServiceImpl implements ConceptService {
 	}
 
 	public List<SearchResultBean> findConceptNameStartsWith(
-			List<Integer> ontologyIds, String query) {
+			List<Integer> ontologyVersionIds, String query) {
 		List<SearchResultBean> searchResults = new ArrayList<SearchResultBean>();
 		HashMap<String, List<VNcboOntology>> formatLists = new HashMap<String, List<VNcboOntology>>();
 
@@ -139,11 +123,11 @@ public class ConceptServiceImpl implements ConceptService {
 
 		List<VNcboOntology> ontologies = new ArrayList<VNcboOntology>();
 
-		if (ontologyIds.isEmpty()) {
+		if (ontologyVersionIds.isEmpty()) {
 			ontologies = ncboOntologyVersionDAO.findLatestOntologyVersions();
 		} else {
 			ontologies = ncboOntologyVersionDAO
-					.findOntologyVersions(ontologyIds);
+					.findOntologyVersions(ontologyVersionIds);
 		}
 		for (VNcboOntology ontology : ontologies) {
 			if (ontology.getStatusId().equals(
@@ -166,7 +150,7 @@ public class ConceptServiceImpl implements ConceptService {
 	}
 
 	public List<SearchResultBean> findConceptNameContains(
-			List<Integer> ontologyIds, String query) {
+			List<Integer> ontologyVersionIds, String query) {
 
 		List<SearchResultBean> searchResults = new ArrayList<SearchResultBean>();
 		HashMap<String, List<VNcboOntology>> formatLists = new HashMap<String, List<VNcboOntology>>();
@@ -177,11 +161,11 @@ public class ConceptServiceImpl implements ConceptService {
 
 		List<VNcboOntology> ontologies = new ArrayList<VNcboOntology>();
 
-		if (ontologyIds.isEmpty()) {
+		if (ontologyVersionIds.isEmpty()) {
 			ontologies = ncboOntologyVersionDAO.findLatestOntologyVersions();
 		} else {
 			ontologies = ncboOntologyVersionDAO
-					.findOntologyVersions(ontologyIds);
+					.findOntologyVersions(ontologyVersionIds);
 		}
 
 		for (VNcboOntology ontology : ontologies) {
@@ -205,7 +189,7 @@ public class ConceptServiceImpl implements ConceptService {
 	}
 
 	public List<SearchResultBean> findConceptPropertyExact(
-			List<Integer> ontologyIds, String property, String query) {
+			List<Integer> ontologyVersionIds, String property, String query) {
 		throw new UnsupportedOperationException();
 	}
 
@@ -215,7 +199,7 @@ public class ConceptServiceImpl implements ConceptService {
 	}
 
 	public List<SearchResultBean> findConceptPropertyContains(
-			List<Integer> ontologyIds, String query) {
+			List<Integer> ontologyVersionIds, String query) {
 		List<SearchResultBean> searchResults = new ArrayList<SearchResultBean>();
 		HashMap<String, List<VNcboOntology>> formatLists = new HashMap<String, List<VNcboOntology>>();
 
@@ -225,11 +209,11 @@ public class ConceptServiceImpl implements ConceptService {
 
 		List<VNcboOntology> ontologies = new ArrayList<VNcboOntology>();
 
-		if (ontologyIds.isEmpty()) {
+		if (ontologyVersionIds.isEmpty()) {
 			ontologies = ncboOntologyVersionDAO.findLatestOntologyVersions();
 		} else {
 			ontologies = ncboOntologyVersionDAO
-					.findOntologyVersions(ontologyIds);
+					.findOntologyVersions(ontologyVersionIds);
 		}
 
 		for (VNcboOntology ontology : ontologies) {
