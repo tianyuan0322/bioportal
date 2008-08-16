@@ -9,7 +9,6 @@ import java.util.List;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.ncbo.stanford.bean.OntologyBean;
 import org.ncbo.stanford.bean.concept.ClassBean;
 import org.ncbo.stanford.bean.search.SearchResultBean;
 import org.ncbo.stanford.domain.custom.entity.VNcboOntology;
@@ -56,29 +55,6 @@ public class OntologyRetrievalManagerProtegeImpl extends
 	 * Default Constructor
 	 */
 	public OntologyRetrievalManagerProtegeImpl() {
-	}
-
-	/**
-	 * Returns the specified ontology.
-	 * 
-	 * @param id
-	 * @return
-	 */
-
-	public OntologyBean findOntology(Integer ontologyVersionId) {
-		return null;
-	}
-
-	public OntologyBean findOntology(Integer ontologyVersionId, String version) {
-		return null;
-	}
-
-	public List<OntologyBean> findOntologyVersions(Integer ontologyId) {
-		return new ArrayList();
-	}
-
-	public List<String> findProperties(Integer ontologyVersionId) {
-		return new ArrayList();
 	}
 
 	//
@@ -244,16 +220,6 @@ public class OntologyRetrievalManagerProtegeImpl extends
 		}
 
 		return results;
-	}
-
-	public ArrayList<ClassBean> findConceptPropertyExact(String property,
-			String query, ArrayList<Integer> ontologyVersionIds) {
-		return new ArrayList();
-	}
-
-	public ArrayList<ClassBean> findConceptPropertyStartsWith(String property,
-			String query, ArrayList<Integer> ontologyVersionIds) {
-		return new ArrayList();
 	}
 
 	public ArrayList<SearchResultBean> findConceptPropertyContains(

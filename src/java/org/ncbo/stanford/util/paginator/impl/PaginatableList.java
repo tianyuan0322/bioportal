@@ -17,7 +17,7 @@ import org.ncbo.stanford.util.paginator.Paginatable;
  *            type of objects to paginate over
  * 
  */
-public class PaginatableListImpl<E> extends ArrayList<E> implements
+public class PaginatableList<E> extends ArrayList<E> implements
 		Paginatable<E> {
 
 	/**
@@ -28,21 +28,21 @@ public class PaginatableListImpl<E> extends ArrayList<E> implements
 	/**
 	 * 
 	 */
-	public PaginatableListImpl() {
+	public PaginatableList() {
 		super();
 	}
 
 	/**
 	 * @param c
 	 */
-	public PaginatableListImpl(Collection<? extends E> c) {
+	public PaginatableList(Collection<? extends E> c) {
 		super(c);
 	}
 
 	/**
 	 * @param initialCapacity
 	 */
-	public PaginatableListImpl(int initialCapacity) {
+	public PaginatableList(int initialCapacity) {
 		super(initialCapacity);
 	}
 
@@ -55,6 +55,6 @@ public class PaginatableListImpl<E> extends ArrayList<E> implements
 	}
 
 	public Paginatable<E> sublist(int fromIndex, int toIndex) {
-		return new PaginatableListImpl<E>(super.subList(fromIndex, toIndex));
+		return new PaginatableList<E>(super.subList(fromIndex, toIndex));
 	}
 }
