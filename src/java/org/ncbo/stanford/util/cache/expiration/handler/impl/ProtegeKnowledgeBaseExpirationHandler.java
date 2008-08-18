@@ -9,13 +9,13 @@ import edu.stanford.smi.protege.model.KnowledgeBase;
 public class ProtegeKnowledgeBaseExpirationHandler extends
 		AbstractSimpleExpirationHandler<Integer, KnowledgeBase> {
 
-	private static final Log log = LogFactory.getLog(ProtegeKnowledgeBaseExpirationHandler.class);
+	private static final Log log = LogFactory
+			.getLog(ProtegeKnowledgeBaseExpirationHandler.class);
 
 	@Override
-	protected void timeExpired(KnowledgeBase object) {
-		log.debug("Disposing of the knowledgebase: " + object.getName());
-		
+	protected void timeExpired(KnowledgeBase object) {		
 		if (object != null) {
+			log.debug("Disposing of the knowledgebase: " + object.getName());			
 			object.getProject().dispose();
 		}
 	}
