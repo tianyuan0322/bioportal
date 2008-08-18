@@ -1,7 +1,6 @@
 package org.ncbo.stanford.manager.impl;
 
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.net.URI;
 import java.util.ArrayList;
@@ -72,7 +71,11 @@ public class OntologyLoadManagerProtegeImpl extends
 		// If the ontology file is small, use the fast non-streaming Protege
 		// load code.
 		List errors = new ArrayList();
-		String tableName = getTableName(ontology.getId());
+		Integer ontologyId = ontology.getId();
+		String tableName = getTableName(ontologyId);
+
+		// Clear knowledgebase cache for this item
+		protegeKnowledgeBases.remove(ontologyId);
 
 		if (ontology.getFormat().contains("OWL")) {
 			if (ontologyFile.length() < protegeBigFileThreshold) {
@@ -103,10 +106,11 @@ public class OntologyLoadManagerProtegeImpl extends
 					FactoryUtils.writeOntologyAndPrefixInfo(
 							(OWLModel) dbProject.getKnowledgeBase(), errors);
 				} catch (AlreadyImportedException e) {
+					e.printStackTrace();
 					log.error("Error at writeOntologyAndPrefixInfo: This shouldn't happen", e);
 				}
-				dbProject.dispose();
 				
+				dbProject.dispose();				
 				
 				// If errors are found during the load, log the errors and throw
 				// an
