@@ -49,7 +49,6 @@ public class OntologyRetrievalManagerProtegeImpl extends
 
 	private static final Log log = LogFactory
 			.getLog(OntologyRetrievalManagerProtegeImpl.class);
-	private ExpirationSystem<Integer, KnowledgeBase> protegeKnowledgeBases = null;
 
 	/**
 	 * Default Constructor
@@ -309,7 +308,7 @@ public class OntologyRetrievalManagerProtegeImpl extends
 	/**
 	 * Returns a singleton KnowledgeBase instance for given ontologyVersion.
 	 */
-	public KnowledgeBase getKnowledgeBase(VNcboOntology ontologyVersion) {
+	private KnowledgeBase getKnowledgeBase(VNcboOntology ontologyVersion) {
 		KnowledgeBase knowledgeBase = (KnowledgeBase) protegeKnowledgeBases
 				.get(ontologyVersion.getId());
 
@@ -533,21 +532,5 @@ public class OntologyRetrievalManagerProtegeImpl extends
 		}
 
 		return bpProps;
-	}
-
-	/**
-	 * @return the protegeKnowledgeBases
-	 */
-	public ExpirationSystem<Integer, KnowledgeBase> getProtegeKnowledgeBases() {
-		return protegeKnowledgeBases;
-	}
-
-	/**
-	 * @param protegeKnowledgeBases
-	 *            the protegeKnowledgeBases to set
-	 */
-	public void setProtegeKnowledgeBases(
-			ExpirationSystem<Integer, KnowledgeBase> protegeKnowledgeBases) {
-		this.protegeKnowledgeBases = protegeKnowledgeBases;
 	}
 }

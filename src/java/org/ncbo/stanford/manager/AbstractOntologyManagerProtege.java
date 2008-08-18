@@ -1,5 +1,8 @@
 package org.ncbo.stanford.manager;
 
+import org.ncbo.stanford.util.cache.expiration.system.ExpirationSystem;
+
+import edu.stanford.smi.protege.model.KnowledgeBase;
 
 /**
  * Abstract class to incorporate functionality common between Protege loader and
@@ -17,6 +20,7 @@ public abstract class AbstractOntologyManagerProtege {
 	protected String protegeTablePrefix;
 	protected String protegeTableSuffix;
 	protected Integer protegeBigFileThreshold;
+	protected ExpirationSystem<Integer, KnowledgeBase> protegeKnowledgeBases = null;
 
 	/**
 	 * Gets the table name associated with an protege ontology id.
@@ -128,5 +132,21 @@ public abstract class AbstractOntologyManagerProtege {
 	 */
 	public void setProtegeBigFileThreshold(Integer protegeBigFileThreshold) {
 		this.protegeBigFileThreshold = protegeBigFileThreshold;
+	}
+
+	/**
+	 * @return the protegeKnowledgeBases
+	 */
+	public ExpirationSystem<Integer, KnowledgeBase> getProtegeKnowledgeBases() {
+		return protegeKnowledgeBases;
+	}
+
+	/**
+	 * @param protegeKnowledgeBases
+	 *            the protegeKnowledgeBases to set
+	 */
+	public void setProtegeKnowledgeBases(
+			ExpirationSystem<Integer, KnowledgeBase> protegeKnowledgeBases) {
+		this.protegeKnowledgeBases = protegeKnowledgeBases;
 	}
 }
