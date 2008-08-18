@@ -451,7 +451,6 @@
 		</property>
 	</bean>
 
-
 	<bean id="abstractOntologyManagerProtege"
 		class="org.ncbo.stanford.manager.AbstractOntologyManagerProtege"
 		abstract="true">
@@ -476,6 +475,9 @@
 		<property name="protegeBigFileThreshold">
 			<ref bean="protegeBigFileThreshold" />
 		</property>
+		<property name="protegeKnowledgeBases">
+			<ref bean="protegeKnowledgeBaseExpirationSystem" />
+		</property>
 	</bean>
 
 	<bean id="ontologyRetrievalManagerLexGrid"
@@ -486,9 +488,6 @@
 	<bean id="ontologyRetrievalManagerProtege"
 		class="org.ncbo.stanford.manager.impl.OntologyRetrievalManagerProtegeImpl"
 		parent="abstractOntologyManagerProtege">
-		<property name="protegeKnowledgeBases">
-			<ref bean="protegeKnowledgeBaseExpirationSystem" />
-		</property>
 	</bean>
 
 	<bean id="ontologyLoadManagerLexGrid"
@@ -622,8 +621,15 @@
 	<bean id="protegeKnowledgeBaseExpirationHandler"
 		class="org.ncbo.stanford.util.cache.expiration.handler.impl.ProtegeKnowledgeBaseExpirationHandler" />
 
-	<bean id="protegeKnowledgeBaseHashbeltContainerFactory"
+	<bean id="protegeKnowledgeBaseContainerFactoryBase"
 		class="org.ncbo.stanford.util.cache.container.impl.FastIteratingHashbeltContainerFactory" />
+
+	<bean id="protegeKnowledgeBaseContainerFactory"
+		class="org.ncbo.stanford.util.cache.container.impl.ProtegeKnowledgeBaseContainerFactory">
+		<property name="baseFactory">
+			<ref bean="protegeKnowledgeBaseContainerFactoryBase" />
+		</property>
+	</bean>
 
 	<bean id="protegeKnowledgeBaseExpirationSystem"
 		class="org.ncbo.stanford.util.cache.expiration.system.impl.UpdatingHashbeltExpirationSystem">
@@ -637,8 +643,8 @@
 			<ref bean="protegeKnowledgeBaseExpirationHandler" />
 		</constructor-arg>
 		<constructor-arg index="3">
-			<ref bean="protegeKnowledgeBaseHashbeltContainerFactory" />
-		</constructor-arg>	
+			<ref bean="protegeKnowledgeBaseContainerFactory" />
+		</constructor-arg>
 	</bean>
 
 	<!-- Session Management -->
