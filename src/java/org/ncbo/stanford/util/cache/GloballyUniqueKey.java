@@ -1,4 +1,4 @@
-package org.ncbo.stanford.service.session;
+package org.ncbo.stanford.util.cache;
 
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
@@ -10,7 +10,7 @@ import java.util.Random;
  * 
  * @author Michael Dorf
  */
-public class SessionKey {
+public class GloballyUniqueKey {
 
 	private static Random randomNumberGenerator;
 	private String uniqueKey;
@@ -23,7 +23,7 @@ public class SessionKey {
 		}
 	}
 
-	public SessionKey() {
+	public GloballyUniqueKey() {
 		uniqueKey = generateUniqueString();
 	}
 
@@ -36,19 +36,19 @@ public class SessionKey {
 	}
 
 	public boolean equals(Object object) {
-		if (!(object instanceof SessionKey)) {
+		if (!(object instanceof GloballyUniqueKey)) {
 			return false;
 		}
-		
-		SessionKey otherSessionKey = (SessionKey) object;
-		
+
+		GloballyUniqueKey otherSessionKey = (GloballyUniqueKey) object;
+
 		return uniqueKey.equals(otherSessionKey.uniqueKey);
 	}
 
 	public String toString() {
 		return uniqueKey;
 	}
-	
+
 	private static String generateUniqueString() {
 		String randomNum = new Integer(randomNumberGenerator.nextInt())
 				.toString();
