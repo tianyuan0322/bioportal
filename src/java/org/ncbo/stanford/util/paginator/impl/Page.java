@@ -4,6 +4,14 @@ import java.util.Iterator;
 
 import org.ncbo.stanford.util.paginator.Paginatable;
 
+/**
+ * A class that encapsulates a single page of paginated results. It keeps track
+ * of the current page number, the size and the resultset for the current page.
+ * 
+ * @author Michael Dorf
+ * 
+ * @param <E>
+ */
 public class Page<E> {
 
 	private int pageNum;
@@ -43,6 +51,11 @@ public class Page<E> {
 		return pageNum == totalPage;
 	}
 
+	/**
+	 * Determines whether two paginatable lists are equal
+	 * 
+	 * @param o
+	 */
 	@SuppressWarnings("unchecked")
 	public boolean equals(Object o) {
 		if (this == o) {
@@ -85,6 +98,13 @@ public class Page<E> {
 		return result;
 	}
 
+	/**
+	 * Determines whether two paginatable lists are equal
+	 * 
+	 * @param a
+	 * @param b
+	 * @return
+	 */
 	private boolean isListEqual(final Paginatable<E> a, final Paginatable<E> b) {
 		if (a == b || a.equals(b)) {
 			return true;
