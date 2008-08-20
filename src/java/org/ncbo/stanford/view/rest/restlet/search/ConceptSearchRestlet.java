@@ -28,11 +28,9 @@ public class ConceptSearchRestlet extends Restlet {
 
 	@Override
 	public void handle(Request request, Response response) {
-
 		if (request.getMethod().equals(Method.GET)) {
 			getRequest(request, response);
 		}
-
 	}
 
 	/**
@@ -40,16 +38,6 @@ public class ConceptSearchRestlet extends Restlet {
 	 */
 	private void getRequest(Request request, Response response) {
 		searchConcept(request, response);
-	}
-
-	/**
-	 * Handle POST calls here
-	 * 
-	 * @param request
-	 * @param response
-	 */
-	private void postRequest(Request request, Response response) {
-
 	}
 
 	/**
@@ -119,5 +107,4 @@ public class ConceptSearchRestlet extends Restlet {
 			XMLSerializationService xmlSerializationService) {
 		this.xmlSerializationService = xmlSerializationService;
 	}
-
 }
