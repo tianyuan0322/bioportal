@@ -129,6 +129,7 @@ public class ConceptServiceImpl implements ConceptService {
 			ontologies = ncboOntologyVersionDAO
 					.findOntologyVersions(ontologyVersionIds);
 		}
+
 		for (VNcboOntology ontology : ontologies) {
 			if (ontology.getStatusId().equals(
 					StatusEnum.STATUS_READY.getStatus())) {
@@ -151,15 +152,13 @@ public class ConceptServiceImpl implements ConceptService {
 
 	public List<SearchResultBean> findConceptNameContains(
 			List<Integer> ontologyVersionIds, String query) {
-
+		List<VNcboOntology> ontologies;
 		List<SearchResultBean> searchResults = new ArrayList<SearchResultBean>();
 		HashMap<String, List<VNcboOntology>> formatLists = new HashMap<String, List<VNcboOntology>>();
 
 		for (String key : ontologyFormatHandlerMap.values()) {
 			formatLists.put(key, new ArrayList<VNcboOntology>());
 		}
-
-		List<VNcboOntology> ontologies = new ArrayList<VNcboOntology>();
 
 		if (ontologyVersionIds.isEmpty()) {
 			ontologies = ncboOntologyVersionDAO.findLatestOntologyVersions();
@@ -182,7 +181,9 @@ public class ConceptServiceImpl implements ConceptService {
 			OntologyRetrievalManager manager = ontologyRetrievalHandlerMap
 					.get(formatHandler);
 			searchResults.addAll(manager.findConceptNameContains(formatLists
-					.get(formatHandler), query, true, MAX_RESULTS));
+					.get(formatHandler), query, true, MAX_RESULTS)
+
+			);
 		}
 
 		return searchResults;
