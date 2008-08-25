@@ -155,7 +155,7 @@ public class OntologyRetrievalManagerLexGridImplTest extends AbstractBioPortalTe
         retrievalManager = getRetrievalManagerLexGrid();
 
         VNcboOntology ncboOntology = retrievalManager.getLatestNcboOntology(TEST_OBO_CELL_DISPLAY_LABEL);
-        String conceptID = "CL:0000255";
+        String conceptID = "CL:0000003";
         ClassBean pathBean = retrievalManager.findPathFromRoot(ncboOntology, conceptID, true);
         System.out.println("Paths from root to concept " + conceptID + " of cell ontology are :");
         System.out.println(pathBean);
@@ -221,8 +221,9 @@ public class OntologyRetrievalManagerLexGridImplTest extends AbstractBioPortalTe
         retrievalManager = getRetrievalManagerLexGrid();
         VNcboOntology ncboOntology = retrievalManager.getLatestNcboOntology(TEST_OBO_CELL_DISPLAY_LABEL);
         List<VNcboOntology> ontologyVersionIds = (List<VNcboOntology>) Arrays.asList(ncboOntology);
-        String query = "eukaryotic";
-        // String query = "colony forming unit hematopoietic";
+        //String query = "eukaryotic";
+        String query = "colony forming unit hematopoietic";
+        //String query = "hematopoietic";
         List<SearchResultBean> searchResultBeans = retrievalManager.findConceptNameContains(ontologyVersionIds, query,
                 false, 100);
 
