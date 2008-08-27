@@ -310,6 +310,19 @@ public class OntologyRetrievalManagerLexGridImpl extends AbstractOntologyManager
         }
         return results;
     }
+    
+    
+    public int findConceptCount(List<VNcboOntology> ontologyVersions) throws Exception {
+        int count=0;
+
+        for (VNcboOntology ontologyVersion : ontologyVersions) {
+            String schemeName = getLexGridCodingSchemeName(ontologyVersion);
+            CodingSchemeVersionOrTag csvt = getLexGridCodingSchemeVersion(ontologyVersion);            
+            CodingScheme codingScheme = lbs.resolveCodingScheme(schemeName, csvt);
+            count+= codingScheme.getApproxNumConcepts();
+        }
+        return count;
+    }    
 
     /*
      * (non-Javadoc)
