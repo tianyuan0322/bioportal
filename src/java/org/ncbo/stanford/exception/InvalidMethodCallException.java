@@ -3,9 +3,9 @@ package org.ncbo.stanford.exception;
 public class InvalidMethodCallException extends RuntimeException {
 
 	private static final long serialVersionUID = 1L;
-	
+
 	public static final String DEFAULT_MESSAGE = "This method should not be called from within this class";
-	
+
 	/**
 	 * 
 	 */

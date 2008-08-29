@@ -8,7 +8,7 @@ public class InvalidDataException extends Exception {
 	private static final long serialVersionUID = 5777897520002877516L;
 
 	public static final String DEFAULT_MESSAGE = "Invalid data";
-	
+
 	public InvalidDataException(String msg) {
 		super(msg);
 	}

@@ -6,7 +6,7 @@ public class InvalidOntologyFormatException extends Exception {
 	 * 
 	 */
 	private static final long serialVersionUID = -8646279646126534355L;
-	
+
 	public static final String DEFAULT_MESSAGE = "Invalid ontology format";
 
 	/**
