@@ -150,7 +150,7 @@ public class OBOCVSPullServiceImpl implements OBOCVSPullService {
 					e.printStackTrace();
 				}
 			}
-			
+
 			log.debug("**** OBO Pull completed successfully *****");
 		} catch (Exception e) {
 			log.error(e);
