@@ -19,7 +19,7 @@ public class AbstractBioPortalTest extends
 
 	private SessionFactory sessionFactory;
 	protected Session session;
-	
+
 	protected void onSetUp() {
 		session = SessionFactoryUtils.getSession(this.sessionFactory, true);
 		session.setFlushMode(FlushMode.AUTO);
