@@ -119,7 +119,8 @@ public class RESTfulSession {
 	}
 
 	/**
-	 * @param applicationId the applicationId to set
+	 * @param applicationId
+	 *            the applicationId to set
 	 */
 	public void setApplicationId(String applicationId) {
 		this.applicationId = applicationId;
@@ -208,7 +209,7 @@ public class RESTfulSession {
 		sb.append("StandardSession[");
 		sb.append(id);
 		sb.append("]");
-		
+
 		return (sb.toString());
 	}
 
