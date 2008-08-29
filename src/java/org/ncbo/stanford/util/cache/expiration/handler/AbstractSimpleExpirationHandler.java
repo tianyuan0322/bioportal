@@ -5,9 +5,9 @@ import java.util.Iterator;
 import org.ncbo.stanford.util.cache.container.HashbeltContainer;
 
 /**
- * Calls timeExpired for each object in the container. At the end,
- * the objects in the container have been expired and there's no record of
- * them in the AbstractHashbeltExpirationSystem.
+ * Calls timeExpired for each object in the container. At the end, the objects
+ * in the container have been expired and there's no record of them in the
+ * AbstractHashbeltExpirationSystem.
  * 
  * @author Michael Dorf
  */

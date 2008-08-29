@@ -1,9 +1,8 @@
 package org.ncbo.stanford.util.cache.expiration.system;
 
-
 /**
- * An abstract superclass for ExpirationSystems. Holds some
- * common code and useful methods.
+ * An abstract superclass for ExpirationSystems. Holds some common code and
+ * useful methods.
  * 
  * @author Michael Dorf
  */
@@ -20,8 +19,7 @@ public abstract class AbstractExpirationSystem<K, V> implements
 	}
 
 	public AbstractExpirationSystem(long timeToSleep) {
-		expirationThread = new ExpirationThread(timeToSleep,
-				this);
+		expirationThread = new ExpirationThread(timeToSleep, this);
 		expirationThread.start();
 	}
 

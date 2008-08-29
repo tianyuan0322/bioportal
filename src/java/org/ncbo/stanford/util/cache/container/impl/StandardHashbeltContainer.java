@@ -30,6 +30,10 @@ public class StandardHashbeltContainer<K, V> implements HashbeltContainer<K, V> 
 		return keysToExpirableObjects.remove(key);
 	}
 
+	public synchronized V removeShallow(K key) {
+		return remove(key);
+	}
+
 	public synchronized void put(K key, V value) {
 		keysToExpirableObjects.put(key, value);
 	}

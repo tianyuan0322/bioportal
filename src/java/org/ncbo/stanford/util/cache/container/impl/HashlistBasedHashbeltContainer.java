@@ -20,7 +20,7 @@ import org.ncbo.stanford.util.cache.container.HashbeltContainer;
  */
 public class HashlistBasedHashbeltContainer<K, V> implements
 		HashbeltContainer<K, V> {
-	
+
 	private HashMap<K, V> keysToExpirableObjects = new HashMap<K, V>();
 	private LinkedList<V> expirableObjects = new LinkedList<V>();
 
@@ -31,7 +31,7 @@ public class HashlistBasedHashbeltContainer<K, V> implements
 	public synchronized V get(K key) {
 		return keysToExpirableObjects.get(key);
 	}
-	
+
 	public synchronized V remove(K key) {
 		V returnValue = keysToExpirableObjects.remove(key);
 
@@ -42,13 +42,17 @@ public class HashlistBasedHashbeltContainer<K, V> implements
 		expirableObjects.remove(returnValue);
 
 		return returnValue;
-	}	
+	}
+
+	public synchronized V removeShallow(K key) {
+		return remove(key);
+	}
 
 	public synchronized void put(K key, V value) {
 		keysToExpirableObjects.put(key, value);
 		expirableObjects.add(value);
 	}
-	
+
 	public Iterator<V> getValues() {
 		return expirableObjects.iterator();
 	}
