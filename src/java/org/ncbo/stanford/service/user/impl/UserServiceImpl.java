@@ -49,8 +49,7 @@ public class UserServiceImpl implements UserService {
 
 		return userBean;
 	}
-	
-	
+
 	public UserBean findUserByEmail(String email) {
 		UserBean userBean = null;
 		List userList = ncboUserDAO.findByEmail(email);
@@ -130,11 +129,11 @@ public class UserServiceImpl implements UserService {
 		// get ncboUser DAO instance using user_id
 		NcboUser ncboUser = ncboUserDAO.findById(userBean.getId());
 		Set<NcboUserRole> userRoles = ncboUser.getNcboUserRoles();
-		
+
 		for (NcboUserRole userRole : userRoles) {
 			ncboUserRoleDAO.delete(userRole);
 		}
-		
+
 		ncboUserDAO.delete(ncboUser);
 	}
 
