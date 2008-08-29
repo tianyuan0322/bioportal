@@ -98,7 +98,8 @@ public final class AuthenticationRestlet extends Restlet {
 			RequestUtils.setHttpServletResponse(response, Status.SUCCESS_OK,
 					MediaType.TEXT_XML, xmlSerializationService
 							.getSuccessAsXML(xmlSerializationService
-									.getSuccessBean(session.getId(), request, userBean)));
+									.getSuccessBean(session.getId(), request,
+											userBean)));
 		} catch (AuthenticationServiceException e) {
 			e.printStackTrace();
 			log.error(e);
@@ -194,6 +195,5 @@ public final class AuthenticationRestlet extends Restlet {
 	public void setUserService(UserService userService) {
 		this.userService = userService;
 	}
-	
-	
+
 }

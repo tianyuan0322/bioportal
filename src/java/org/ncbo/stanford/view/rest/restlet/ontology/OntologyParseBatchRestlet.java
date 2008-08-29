@@ -11,9 +11,10 @@ import org.restlet.data.Request;
 import org.restlet.data.Response;
 import org.restlet.data.Status;
 
-public class OntologyParseBatchRestlet extends Restlet{
+public class OntologyParseBatchRestlet extends Restlet {
 
-	private static final Log log = LogFactory.getLog(OntologyVersionsRestlet.class);
+	private static final Log log = LogFactory
+			.getLog(OntologyVersionsRestlet.class);
 	private OntologyService ontologyService;
 	private OntologyLoadSchedulerService ontologyLoadSchedulerService;
 	private XMLSerializationService xmlSerializationService;
@@ -24,9 +25,9 @@ public class OntologyParseBatchRestlet extends Restlet{
 		if (request.getMethod().equals(Method.GET)) {
 			getRequest(request, response);
 
-		}	
+		}
 	}
-	
+
 	/**
 	 * Handle GET calls here
 	 * 
@@ -38,30 +39,29 @@ public class OntologyParseBatchRestlet extends Restlet{
 		// Handle GET calls here
 		parseOntology(request, response);
 
-	}	
-			
-	
-	
+	}
+
 	/**
 	 * Return to the response a listing of ontologies
 	 * 
 	 * @param response
 	 */
 	private void parseOntology(Request request, Response response) {
-	
-		String ontologyStart = (String) request.getAttributes().get("ontology_start");
-		String ontologyEnd = (String) request.getAttributes().get("ontology_end");
 
-		
+		String ontologyStart = (String) request.getAttributes().get(
+				"ontology_start");
+		String ontologyEnd = (String) request.getAttributes().get(
+				"ontology_end");
+
 		// TODO - id validation?
 		// find the OntologyBean from request
-		//OntologyBean ontologyBean = findOntologyBean(request, response);
-		
+		// OntologyBean ontologyBean = findOntologyBean(request, response);
+
 		if (ontologyStart != null && ontologyEnd != null) {
 
-			ontologyLoadSchedulerService.parseOntologies(ontologyStart, ontologyEnd);
+			ontologyLoadSchedulerService.parseOntologies(ontologyStart,
+					ontologyEnd);
 		}
-		
 
 		if (!isParseSuccess()) {
 
@@ -69,18 +69,20 @@ public class OntologyParseBatchRestlet extends Restlet{
 					"Error Parsing Ontology ranging from " + ontologyStart
 							+ " to " + ontologyEnd);
 		}
-		
-		getXmlSerializationService().generateStatusXMLResponse(request, response);
-			
+
+		getXmlSerializationService().generateStatusXMLResponse(request,
+				response);
+
 	}
-	
+
 	private boolean isParseSuccess() {
-		
-		if (ontologyLoadSchedulerService.getErrorIdList().size() > 0) return false;
-		else return true;
+
+		if (ontologyLoadSchedulerService.getErrorIdList().size() > 0)
+			return false;
+		else
+			return true;
 	}
-	
-	
+
 	/**
 	 * @return the ontologyService
 	 */
@@ -89,12 +91,12 @@ public class OntologyParseBatchRestlet extends Restlet{
 	}
 
 	/**
-	 * @param ontologyService the ontologyService to set
+	 * @param ontologyService
+	 *            the ontologyService to set
 	 */
 	public void setOntologyService(OntologyService ontologyService) {
 		this.ontologyService = ontologyService;
 	}
-
 
 	/**
 	 * @return the ontologyLoadSchedulerService
@@ -104,7 +106,8 @@ public class OntologyParseBatchRestlet extends Restlet{
 	}
 
 	/**
-	 * @param ontologyLoadSchedulerService the ontologyLoadSchedulerService to set
+	 * @param ontologyLoadSchedulerService
+	 *            the ontologyLoadSchedulerService to set
 	 */
 	public void setOntologyLoadSchedulerService(
 			OntologyLoadSchedulerService ontologyLoadSchedulerService) {
@@ -119,7 +122,8 @@ public class OntologyParseBatchRestlet extends Restlet{
 	}
 
 	/**
-	 * @param xmlSerializationService the xmlSerializationService to set
+	 * @param xmlSerializationService
+	 *            the xmlSerializationService to set
 	 */
 	public void setXmlSerializationService(
 			XMLSerializationService xmlSerializationService) {

@@ -17,12 +17,11 @@ public class PaginatorRestlet extends Restlet {
 			getRequest(request, response);
 		}
 	}
-	
+
 	/**
 	 * Handle GET calls here
 	 */
 	private void getRequest(Request request, Response response) {
 
-	
-	}	
+	}
 }

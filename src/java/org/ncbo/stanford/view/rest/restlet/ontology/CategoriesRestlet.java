@@ -13,7 +13,6 @@ import org.restlet.data.Request;
 import org.restlet.data.Response;
 import org.restlet.data.Status;
 
-
 public class CategoriesRestlet extends Restlet {
 
 	private static final Log log = LogFactory.getLog(CategoriesRestlet.class);
@@ -36,20 +35,18 @@ public class CategoriesRestlet extends Restlet {
 		listCategories(request, response);
 	}
 
-
-	
 	/**
 	 * Return to the response a listing of ontologies
 	 * 
 	 * @param response
 	 */
 	private void listCategories(Request request, Response response) {
-		
-		//List<Integer> categoryList = null;
-		
+
+		// List<Integer> categoryList = null;
+
 		// TODO - determine this...
 		List<CategoryBean> categoryList = null;
-		
+
 		try {
 			categoryList = getOntologyService().findAllCategories();
 
@@ -57,15 +54,15 @@ public class CategoriesRestlet extends Restlet {
 			response.setStatus(Status.SERVER_ERROR_INTERNAL, e.getMessage());
 			e.printStackTrace();
 			log.error(e);
-			
+
 		} finally {
-					
+
 			// generate response XML with XSL
-			getXmlSerializationService().generateXMLResponse (request, response, categoryList);
+			getXmlSerializationService().generateXMLResponse(request, response,
+					categoryList);
 		}
 
 	}
-
 
 	/**
 	 * @return the ontologyService
@@ -97,5 +94,5 @@ public class CategoriesRestlet extends Restlet {
 			XMLSerializationService xmlSerializationService) {
 		this.xmlSerializationService = xmlSerializationService;
 	}
-	
+
 }

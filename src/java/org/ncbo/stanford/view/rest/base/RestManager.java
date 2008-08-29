@@ -18,7 +18,7 @@ public class RestManager {
 			router.attach(key, resourceMappings.get(key));
 		}
 	}
-	
+
 	public void setResourceMappings(HashMap<String, Restlet> resourceMappings) {
 		this.resourceMappings = resourceMappings;
 	}

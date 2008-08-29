@@ -14,7 +14,6 @@ import org.restlet.data.Request;
 import org.restlet.data.Response;
 import org.restlet.data.Status;
 
-
 public class UsersRestlet extends Restlet {
 
 	private static final Log log = LogFactory.getLog(UsersRestlet.class);
@@ -24,25 +23,23 @@ public class UsersRestlet extends Restlet {
 
 	@Override
 	public void handle(Request request, Response response) {
-		
+
 		if (request.getMethod().equals(Method.GET)) {
 			getRequest(request, response);
-	
+
 		} else if (request.getMethod().equals(Method.POST)) {
 			postRequest(request, response);
-		} 		
+		}
 	}
-	
 
 	/**
 	 * Handle GET calls here
 	 */
 	private void getRequest(Request request, Response response) {
-		
+
 		listUsers(request, response);
 	}
 
-	
 	/**
 	 * Handle POST calls here
 	 * 
@@ -50,8 +47,8 @@ public class UsersRestlet extends Restlet {
 	 * @param response
 	 */
 	private void postRequest(Request request, Response response) {
-		
-		createUser(request, response);			
+
+		createUser(request, response);
 	}
 
 	/**
@@ -60,9 +57,9 @@ public class UsersRestlet extends Restlet {
 	 * @param response
 	 */
 	private void listUsers(Request request, Response response) {
-		
+
 		List<UserBean> userList = null;
-		
+
 		try {
 			userList = getUserService().findUsers();
 
@@ -70,27 +67,29 @@ public class UsersRestlet extends Restlet {
 			response.setStatus(Status.SERVER_ERROR_INTERNAL, e.getMessage());
 			e.printStackTrace();
 			log.error(e);
-			
+
 		} finally {
-									
+
 			// generate response XML
-			//getXmlSerializationService().generateUserListXMLResponse (request, response, userList);
-			getXmlSerializationService().generateXMLResponse (request, response, userList);
-			
+			// getXmlSerializationService().generateUserListXMLResponse
+			// (request, response, userList);
+			getXmlSerializationService().generateXMLResponse(request, response,
+					userList);
+
 		}
 
 	}
-	
-	
+
 	/**
 	 * Return to the response creating user
 	 * 
-	 * @param request response
+	 * @param request
+	 *            response
 	 */
 	private void createUser(Request request, Response response) {
-				
+
 		UserBean userBean = BeanHelper.populateUserBeanFromRequest(request);
-		
+
 		// create the user
 		try {
 			getUserService().createUser(userBean);
@@ -99,11 +98,12 @@ public class UsersRestlet extends Restlet {
 			response.setStatus(Status.SERVER_ERROR_INTERNAL, e.getMessage());
 			e.printStackTrace();
 			log.error(e);
-			
+
 		} finally {
-		
+
 			// generate response XML
-			getXmlSerializationService().generateXMLResponse (request, response, userBean);
+			getXmlSerializationService().generateXMLResponse(request, response,
+					userBean);
 		}
 
 	}
@@ -138,5 +138,4 @@ public class UsersRestlet extends Restlet {
 		this.xmlSerializationService = xmlSerializationService;
 	}
 
-	
 }

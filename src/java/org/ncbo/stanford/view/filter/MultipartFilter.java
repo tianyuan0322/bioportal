@@ -53,7 +53,7 @@ public class MultipartFilter implements Filter {
 	public void init(FilterConfig filterConfig) throws ServletException {
 		// Configure maxFileSize.
 		String maxFileSize = filterConfig.getInitParameter("maxFileSize");
-		
+
 		if (maxFileSize != null) {
 			if (!maxFileSize.matches("^\\d+$")) {
 				throw new ServletException(

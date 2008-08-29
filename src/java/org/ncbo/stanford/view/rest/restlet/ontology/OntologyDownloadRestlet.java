@@ -17,9 +17,10 @@ import org.restlet.data.Response;
 import org.restlet.data.Status;
 import org.restlet.resource.FileRepresentation;
 
-public class OntologyDownloadRestlet extends Restlet{
+public class OntologyDownloadRestlet extends Restlet {
 
-	private static final Log log = LogFactory.getLog(OntologyVersionsRestlet.class);
+	private static final Log log = LogFactory
+			.getLog(OntologyVersionsRestlet.class);
 	private OntologyService ontologyService;
 	private XMLSerializationService xmlSerializationService;
 
@@ -29,9 +30,9 @@ public class OntologyDownloadRestlet extends Restlet{
 		if (request.getMethod().equals(Method.GET)) {
 			getRequest(request, response);
 
-		}	
+		}
 	}
-	
+
 	/**
 	 * Handle GET calls here
 	 * 
@@ -43,41 +44,41 @@ public class OntologyDownloadRestlet extends Restlet{
 		// Handle GET calls here
 		downloadOntology(request, response);
 
-	}	
-			
-	
-	
+	}
+
 	/**
 	 * Return to the response a listing of ontologies
 	 * 
 	 * @param response
 	 */
 	private void downloadOntology(Request request, Response response) {
-			
+
 		// find the OntologyBean from request
 		OntologyBean ontologyBean = findOntologyBean(request, response);
-		
+
 		// if "find" was successful, proceed to update
 		if (!response.getStatus().isError()) {
 
 			try {
-							
+
 				File file = ontologyService.getOntologyFile(ontologyBean);
-				String filename = (String)ontologyBean.getFilenames().toArray()[0];
-				
- 	            try {
- 	            	
- 	            	FileRepresentation fileRepresentation = new FileRepresentation(file, MediaType.APPLICATION_ALL, 60);
- 	 	           	response.setEntity(fileRepresentation);
- 	 	           	RequestUtils.getHttpServletResponse(response).setHeader(
+				String filename = (String) ontologyBean.getFilenames()
+						.toArray()[0];
+
+				try {
+
+					FileRepresentation fileRepresentation = new FileRepresentation(
+							file, MediaType.APPLICATION_ALL, 60);
+					response.setEntity(fileRepresentation);
+					RequestUtils.getHttpServletResponse(response).setHeader(
 							"Content-Disposition",
 							"attachment; filename=\"" + filename + "\";");
- 	            	
- 	            } catch (Exception e) {
- 	                e.printStackTrace();
- 	                return;
- 	            }
-								
+
+				} catch (Exception e) {
+					e.printStackTrace();
+					return;
+				}
+
 			} catch (Exception e) {
 
 				response
@@ -86,12 +87,12 @@ public class OntologyDownloadRestlet extends Restlet{
 				log.error(e);
 			}
 		}
-		
-		//getXmlSerializationService().generateStatusXMLResponse(request, response);
-			
+
+		// getXmlSerializationService().generateStatusXMLResponse(request,
+		// response);
+
 	}
-	
-	
+
 	/**
 	 * @return the ontologyService
 	 */
@@ -100,12 +101,12 @@ public class OntologyDownloadRestlet extends Restlet{
 	}
 
 	/**
-	 * @param ontologyService the ontologyService to set
+	 * @param ontologyService
+	 *            the ontologyService to set
 	 */
 	public void setOntologyService(OntologyService ontologyService) {
 		this.ontologyService = ontologyService;
 	}
-
 
 	/**
 	 * @return the xmlSerializationService
@@ -115,63 +116,56 @@ public class OntologyDownloadRestlet extends Restlet{
 	}
 
 	/**
-	 * @param xmlSerializationService the xmlSerializationService to set
+	 * @param xmlSerializationService
+	 *            the xmlSerializationService to set
 	 */
 	public void setXmlSerializationService(
 			XMLSerializationService xmlSerializationService) {
 		this.xmlSerializationService = xmlSerializationService;
 	}
 
-
-
-
-
-
-
-
-
-	//TODO - refactor this later...
+	// TODO - refactor this later...
 	/**
-	 * Returns a specified OntologyBean and set the response status if there is an error.
-	 * This is used for find, findAll, update, delete.
+	 * Returns a specified OntologyBean and set the response status if there is
+	 * an error. This is used for find, findAll, update, delete.
 	 * 
 	 * @param request
 	 * @param response
 	 */
 	private OntologyBean findOntologyBean(Request request, Response response) {
-		
+
 		OntologyBean ontologyBean = null;
-		String ontologyVersionId = (String) request.getAttributes().get(MessageUtils.getMessage("entity.ontology"));
+		String ontologyVersionId = (String) request.getAttributes().get(
+				MessageUtils.getMessage("entity.ontology"));
 
 		try {
 			Integer intId = Integer.parseInt(ontologyVersionId);
 			ontologyBean = getOntologyService().findOntology(intId);
 
 			response.setStatus(Status.SUCCESS_OK);
-			
+
 			// if ontologyBean is not found, set Error in the Status object
 			if (ontologyBean == null || ontologyBean.getId() == null) {
-	
-				response.setStatus(Status.CLIENT_ERROR_NOT_FOUND, MessageUtils.getMessage("msg.error.ontologyNotFound"));
+
+				response.setStatus(Status.CLIENT_ERROR_NOT_FOUND, MessageUtils
+						.getMessage("msg.error.ontologyNotFound"));
 			}
-		
+
 		} catch (NumberFormatException nfe) {
-			
-			response.setStatus(Status.CLIENT_ERROR_BAD_REQUEST, nfe.getMessage());
+
+			response.setStatus(Status.CLIENT_ERROR_BAD_REQUEST, nfe
+					.getMessage());
 			nfe.printStackTrace();
-			log.error(nfe);	
+			log.error(nfe);
 
 		} catch (Exception e) {
-			
+
 			response.setStatus(Status.SERVER_ERROR_INTERNAL, e.getMessage());
 			e.printStackTrace();
 			log.error(e);
 		}
-				
+
 		return ontologyBean;
 	}
 
-
-
 }
-

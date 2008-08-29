@@ -58,7 +58,7 @@ public class ConceptRestlet extends Restlet {
 
 		try {
 			Integer ontVersionId = Integer.parseInt(ontologyVersionId);
-			
+
 			if (conceptId
 					.equalsIgnoreCase(RequestParamConstants.PARAM_ROOT_CONCEPT)) {
 				concept = conceptService.findRootConcept(ontVersionId);

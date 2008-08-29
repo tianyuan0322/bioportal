@@ -29,9 +29,9 @@ public class VirtualUriRestlet extends Restlet {
 		if (request.getMethod().equals(Method.GET)) {
 			getRequest(request, response);
 
-		}	
+		}
 	}
-	
+
 	/**
 	 * Handle GET calls here
 	 * 
@@ -43,63 +43,61 @@ public class VirtualUriRestlet extends Restlet {
 		// Handle GET calls here
 		getVirtualEntity(request, response);
 
-	}	
-			
-	
-	
+	}
+
 	/**
 	 * Return to the response a listing of ontologies
 	 * 
 	 * @param response
 	 */
 	private void getVirtualEntity(Request request, Response response) {
-	
-		
+
 		String id = (String) request.getAttributes().get("concept");
-		String ontology = (String) request.getAttributes().get("ontology");	
-		Object returnObject=null;
-		
+		String ontology = (String) request.getAttributes().get("ontology");
+		Object returnObject = null;
+
 		try {
 			Integer ontId = Integer.parseInt(ontology);
-			if(id==null){
+			if (id == null) {
 				returnObject = ontologyService.findLatestOntologyVersion(ontId);
-				
+
 				if (returnObject == null) {
-					response.setStatus(Status.CLIENT_ERROR_NOT_FOUND, "Ontology not found");
-				}	
-				
-			}else{
-				OntologyBean ontBean = ontologyService.findLatestOntologyVersion(ontId);
+					response.setStatus(Status.CLIENT_ERROR_NOT_FOUND,
+							"Ontology not found");
+				}
+
+			} else {
+				OntologyBean ontBean = ontologyService
+						.findLatestOntologyVersion(ontId);
 				returnObject = conceptService.findConcept(ontBean.getId(), id);
 				if (returnObject == null) {
-					response.setStatus(Status.CLIENT_ERROR_NOT_FOUND, "Concept not found");
-				}	
-			
-			}
-					
-		} catch (NumberFormatException nfe) {
-		
-			response.setStatus(Status.CLIENT_ERROR_BAD_REQUEST, nfe.getMessage());
-			nfe.printStackTrace();
-			log.error(nfe);	
+					response.setStatus(Status.CLIENT_ERROR_NOT_FOUND,
+							"Concept not found");
+				}
 
-		}		
-		catch (Exception e) {
+			}
+
+		} catch (NumberFormatException nfe) {
+
+			response.setStatus(Status.CLIENT_ERROR_BAD_REQUEST, nfe
+					.getMessage());
+			nfe.printStackTrace();
+			log.error(nfe);
+
+		} catch (Exception e) {
 			response.setStatus(Status.SERVER_ERROR_INTERNAL, e.getMessage());
 			e.printStackTrace();
 			log.error(e);
-			
+
 		} finally {
-					
+
 			// generate response XML with XSL
-			getXmlSerializationService().generateXMLResponse (request, response, returnObject);
+			getXmlSerializationService().generateXMLResponse(request, response,
+					returnObject);
 		}
 
 	}
-	
 
-	
-	
 	public ConceptService getConceptService() {
 		return conceptService;
 	}
@@ -122,11 +120,10 @@ public class VirtualUriRestlet extends Restlet {
 	public void setOntologyService(OntologyService ontologyService) {
 		this.ontologyService = ontologyService;
 	}
-	
+
 	public XMLSerializationService getXmlSerializationService() {
 		return xmlSerializationService;
 	}
-
 
 	public void setXmlSerializationService(
 			XMLSerializationService xmlSerializationService) {
