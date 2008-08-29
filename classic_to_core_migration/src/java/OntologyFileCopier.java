@@ -80,15 +80,15 @@ public class OntologyFileCopier {
 			e.printStackTrace();
 		}
 	}
-	
-	private static ResultSet getOntologies(Connection conn) throws SQLException,
-			ClassNotFoundException, IOException {
+
+	private static ResultSet getOntologies(Connection conn)
+			throws SQLException, ClassNotFoundException, IOException {
 		conn = connect();
 		Statement stmt = conn.createStatement();
 		ResultSet rs = stmt.executeQuery("SELECT id, file_path "
 				+ "FROM ncbo_ontology_version WHERE is_remote = 0 "
 				+ "ORDER BY ontology_id, internal_version_number");
-		
+
 		return rs;
 	}
 
