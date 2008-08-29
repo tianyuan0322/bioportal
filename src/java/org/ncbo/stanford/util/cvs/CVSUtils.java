@@ -68,7 +68,7 @@ public class CVSUtils {
 				allEntries = getFiles(entries);
 			}
 		}
-		
+
 		return allEntries;
 	}
 
@@ -89,7 +89,7 @@ public class CVSUtils {
 				.parseArgumentString(cvsArgumentString);
 
 		File localRootDir = new File(localDirectory);
-		
+
 		if (!localRootDir.exists() && !listingModules) {
 			if (!localRootDir.mkdirs()) {
 				System.err.println("Could not create local directory '"
@@ -209,7 +209,7 @@ public class CVSUtils {
 		request.setEntries(entries);
 		request.appendArguments(arguments);
 		request.setUserInterface(new CVSTestUI());
-		
+
 		CVSResponse response = new CVSResponse();
 
 		//
