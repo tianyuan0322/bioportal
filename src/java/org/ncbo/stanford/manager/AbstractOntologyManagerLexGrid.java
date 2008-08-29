@@ -92,20 +92,23 @@ public abstract class AbstractOntologyManagerLexGrid {
 		return ncboOntologyVersionDAO.findLatestOntologyVersion(ontology_id);
 	}
 
-	/** return the latest NcboOntology that has the display_label provided
+	/**
+	 * return the latest NcboOntology that has the display_label provided
+	 * 
 	 * @param display_label
 	 * @return
 	 */
 	public VNcboOntology getLatestNcboOntology(String display_label) {
-		List<VNcboOntology> list= ncboOntologyVersionDAO.findLatestOntologyVersions();
-		for (VNcboOntology ncboOntology: list) {
+		List<VNcboOntology> list = ncboOntologyVersionDAO
+				.findLatestOntologyVersions();
+		for (VNcboOntology ncboOntology : list) {
 			if (ncboOntology.getDisplayLabel().equalsIgnoreCase(display_label)) {
 				return ncboOntology;
 			}
 		}
 		return null;
 	}
-	
+
 	/**
 	 * 
 	 * @param ontologyVersionId
@@ -116,42 +119,43 @@ public abstract class AbstractOntologyManagerLexGrid {
 		VNcboOntology ncboOntology = ncboOntologyVersionDAO
 				.findOntologyVersion(ontologyVersionId);
 
-		if (ncboOntology != null) {			
+		if (ncboOntology != null) {
 			return (ncboOntology.getCodingScheme());
 		}
 
 		return null;
 	}
-	
-	/**
-	 * 
-	 * @param ncboOntology
-	 * @return The LexGrid codingScheme URN string (registered Name) 
-	 */
-	protected String getLexGridCodingSchemeName(VNcboOntology ncboOntology) {
-		String urnAndVersion = ncboOntology.getCodingScheme();
-		String urnVersionArray[] = splitUrnAndVersion(urnAndVersion);
-		if (urnVersionArray!= null )
-		  return urnVersionArray[0];
-		else
-			return null;
-	}	
-	
 
 	/**
 	 * 
 	 * @param ncboOntology
-	 * @return The LexGrid codingScheme URN string (registered Name) 
+	 * @return The LexGrid codingScheme URN string (registered Name)
 	 */
-	protected CodingSchemeVersionOrTag getLexGridCodingSchemeVersion(VNcboOntology ncboOntology) {
+	protected String getLexGridCodingSchemeName(VNcboOntology ncboOntology) {
 		String urnAndVersion = ncboOntology.getCodingScheme();
 		String urnVersionArray[] = splitUrnAndVersion(urnAndVersion);
-		if (urnVersionArray!= null )
-		  return  Constructors
-			.createCodingSchemeVersionOrTagFromVersion(urnVersionArray[1]);
+		if (urnVersionArray != null)
+			return urnVersionArray[0];
 		else
 			return null;
-	}	
+	}
+
+	/**
+	 * 
+	 * @param ncboOntology
+	 * @return The LexGrid codingScheme URN string (registered Name)
+	 */
+	protected CodingSchemeVersionOrTag getLexGridCodingSchemeVersion(
+			VNcboOntology ncboOntology) {
+		String urnAndVersion = ncboOntology.getCodingScheme();
+		String urnVersionArray[] = splitUrnAndVersion(urnAndVersion);
+		if (urnVersionArray != null)
+			return Constructors
+					.createCodingSchemeVersionOrTagFromVersion(urnVersionArray[1]);
+		else
+			return null;
+	}
+
 	/**
 	 * 
 	 * @param urnAndVersion
@@ -162,18 +166,18 @@ public abstract class AbstractOntologyManagerLexGrid {
 		if (StringUtils.isEmpty(urnAndVersion)) {
 			return null;
 		}
-		
+
 		String array[] = { "", "" };
 		StringTokenizer st = new StringTokenizer(urnAndVersion, "|");
-		
+
 		if (st.hasMoreTokens()) {
 			array[0] = st.nextToken();
 		}
-		
+
 		if (st.hasMoreTokens()) {
 			array[1] = st.nextToken();
 		}
-		
+
 		return array;
 	}
 
@@ -185,7 +189,8 @@ public abstract class AbstractOntologyManagerLexGrid {
 	}
 
 	/**
-	 * @param ncboOntologyVersionDAO the ncboOntologyVersionDAO to set
+	 * @param ncboOntologyVersionDAO
+	 *            the ncboOntologyVersionDAO to set
 	 */
 	public void setNcboOntologyVersionDAO(
 			CustomNcboOntologyVersionDAO ncboOntologyVersionDAO) {
@@ -200,7 +205,8 @@ public abstract class AbstractOntologyManagerLexGrid {
 	}
 
 	/**
-	 * @param ncboOntologyVersionMetadataDAO the ncboOntologyVersionMetadataDAO to set
+	 * @param ncboOntologyVersionMetadataDAO
+	 *            the ncboOntologyVersionMetadataDAO to set
 	 */
 	public void setNcboOntologyVersionMetadataDAO(
 			CustomNcboOntologyVersionMetadataDAO ncboOntologyVersionMetadataDAO) {
