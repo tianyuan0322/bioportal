@@ -53,7 +53,7 @@ public class OntologyLoaderProtegeImplTest extends AbstractBioPortalTest {
 
 	//
 	// Non-Streaming Fast load
-public void testNoStreamPizzaLoad() {
+	public void testNoStreamPizzaLoad() {
 		System.out.println("Starting testNoStreamPizzaLoad");
 
 		OntologyLoadManagerProtegeImpl loadManagerProtege = (OntologyLoadManagerProtegeImpl) applicationContext
@@ -74,7 +74,6 @@ public void testNoStreamPizzaLoad() {
 			fail("Pizza load failed: " + exc.getMessage());
 		}
 	}
-
 
 	// Streaming load of Pizza Ontology - Much slower than the non-streaming
 
