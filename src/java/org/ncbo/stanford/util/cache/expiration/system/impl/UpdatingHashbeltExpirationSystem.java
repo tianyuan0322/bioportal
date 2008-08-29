@@ -60,7 +60,7 @@ public class UpdatingHashbeltExpirationSystem<K, V> extends
 		}
 
 		V returnValue = container.get(key);
-		container.remove(key);
+		container.removeShallow(key);
 		containers[0].put(key, returnValue);
 
 		return returnValue;

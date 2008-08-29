@@ -48,6 +48,10 @@ public class FastIteratingHashbeltContainer<K, V> implements
 		return returnValue;
 	}
 
+	public synchronized V removeShallow(K key) {
+		return remove(key);
+	}
+	
 	public synchronized void put(K key, V value) {
 		V currentValue = keysToExpirableObjects.get(key);
 

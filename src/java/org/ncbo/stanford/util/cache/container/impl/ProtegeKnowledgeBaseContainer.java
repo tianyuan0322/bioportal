@@ -30,7 +30,7 @@ public class ProtegeKnowledgeBaseContainer implements
 		baseContainer.clear();
 	}
 
-	public KnowledgeBase get(Integer key) {
+	public synchronized KnowledgeBase get(Integer key) {
 		return baseContainer.get(key);
 	}
 
@@ -42,11 +42,11 @@ public class ProtegeKnowledgeBaseContainer implements
 		return baseContainer.getValues();
 	}
 
-	public void put(Integer key, KnowledgeBase value) {
+	public synchronized void put(Integer key, KnowledgeBase value) {
 		baseContainer.put(key, value);
 	}
 
-	public KnowledgeBase remove(Integer key) {
+	public synchronized KnowledgeBase remove(Integer key) {
 		KnowledgeBase oldValue = baseContainer.remove(key);
 
 		if (oldValue != null) {
@@ -55,6 +55,10 @@ public class ProtegeKnowledgeBaseContainer implements
 		}
 
 		return oldValue;
+	}
+
+	public synchronized KnowledgeBase removeShallow(Integer key) {
+		return baseContainer.removeShallow(key);
 	}
 
 	public int size() {

@@ -44,6 +44,10 @@ public class HashlistBasedHashbeltContainer<K, V> implements
 		return returnValue;
 	}	
 
+	public synchronized V removeShallow(K key) {
+		return remove(key);
+	}
+	
 	public synchronized void put(K key, V value) {
 		keysToExpirableObjects.put(key, value);
 		expirableObjects.add(value);

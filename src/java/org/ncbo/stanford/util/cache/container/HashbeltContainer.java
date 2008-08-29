@@ -21,6 +21,8 @@ public interface HashbeltContainer<K, V> {
 
 	public V remove(K key);
 
+	public V removeShallow(K key);
+
 	public void put(K key, V value);
 
 	public void clear();
