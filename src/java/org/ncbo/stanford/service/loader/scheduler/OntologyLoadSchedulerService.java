@@ -16,20 +16,20 @@ public interface OntologyLoadSchedulerService {
 	 * vendor API
 	 */
 	public void parseOntologies();
-	
+
 	/**
 	 * Parses a single ontology
 	 * 
 	 * @param ontologyVersionId
 	 */
 	public void parseOntology(String ontologyVersionId);
-	
+
 	/**
 	 * Parses all ontologies in given range
 	 * 
 	 * @param ontologyVersionId
 	 */
 	public void parseOntologies(String startId, String endId);
-	
+
 	public List<Integer> getErrorIdList();
 }

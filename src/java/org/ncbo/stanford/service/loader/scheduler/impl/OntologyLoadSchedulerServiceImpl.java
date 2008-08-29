@@ -108,7 +108,7 @@ public class OntologyLoadSchedulerServiceImpl implements
 							+ " does not require parsing");
 				}
 			}
-			
+
 			if (currentId >= end) {
 				break;
 			}
