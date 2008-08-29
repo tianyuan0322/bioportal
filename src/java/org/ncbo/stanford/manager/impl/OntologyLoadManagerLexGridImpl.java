@@ -174,7 +174,7 @@ public class OntologyLoadManagerLexGridImpl extends
 			// version for the ontology
 			NcboOntologyVersionMetadata ncboMetadata = ncboOntologyVersionDAO
 					.findOntologyMetadataById(ontology_bean.getId());
-			
+
 			if (ncboMetadata != null) {
 				String urnAndVersion = urn + "|" + version;
 				ncboMetadata.setCodingScheme(urnAndVersion);
@@ -183,8 +183,8 @@ public class OntologyLoadManagerLexGridImpl extends
 								+ urnAndVersion);
 				ncboOntologyVersionMetadataDAO.getHibernateTemplate().update(
 						ncboMetadata);
-				ncboOntologyVersionMetadataDAO.getSessionFactory().getCurrentSession()
-						.flush();
+				ncboOntologyVersionMetadataDAO.getSessionFactory()
+						.getCurrentSession().flush();
 				ontology_bean.setCodingScheme(urnAndVersion);
 			} else {
 				String message = "Could not update the codingScheme informtion into NcboOntologyMetadata for ontologyversionid="
@@ -287,7 +287,8 @@ public class OntologyLoadManagerLexGridImpl extends
 			csm.setRegisteredName(csmfRegisteredName);
 			// Override version using metadata from the ontology bean
 			CsmfVersion csmfVersion = new CsmfVersion();
-			String version= ontology_bean.getOntologyId()+ "/"+ontology_bean.getInternalVersionNumber().toString();
+			String version = ontology_bean.getOntologyId() + "/"
+					+ ontology_bean.getInternalVersionNumber().toString();
 			csmfVersion.setContent(version);
 			csm.setRepresentsVersion(csmfVersion);
 			// Override formal name using metadata from the ontology bean
