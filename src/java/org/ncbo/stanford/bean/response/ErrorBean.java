@@ -23,7 +23,8 @@ public class ErrorBean extends AbstractResponseBean {
 	/**
 	 * Instantiate using an exception object
 	 * 
-	 * @param e - exception object
+	 * @param e -
+	 *            exception object
 	 */
 	public ErrorBean(Exception e) {
 		super();
@@ -32,7 +33,7 @@ public class ErrorBean extends AbstractResponseBean {
 		setShortMessage(e.getLocalizedMessage());
 		setLongMessage(e.getMessage());
 	}
-	
+
 	/**
 	 * Instantiate using an enum
 	 * 

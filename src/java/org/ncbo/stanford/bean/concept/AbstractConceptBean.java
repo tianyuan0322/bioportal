@@ -52,18 +52,18 @@ public abstract class AbstractConceptBean {
 	}
 
 	public String toString(String indent) {
-		String spacer="   ";
-		String str =  "Id: " + id + " Label: " + label+"\n";
-		str += indent+"Relations:\n";
+		String spacer = "   ";
+		String str = "Id: " + id + " Label: " + label + "\n";
+		str += indent + "Relations:\n";
 
 		for (Object key : relations.keySet()) {
 			Object value = relations.get(key);
 
-			str += indent+ "KEY: ";
+			str += indent + "KEY: ";
 
 			if (key instanceof AbstractConceptBean) {
 				str += ((AbstractConceptBean) key).toString(spacer);
-			}  else {
+			} else {
 				str += key;
 			}
 
@@ -72,41 +72,41 @@ public abstract class AbstractConceptBean {
 			if (value instanceof AbstractConceptBean) {
 				str += ((AbstractConceptBean) value).toString(spacer);
 			} else if (value instanceof List) {
-				str+= toString((List)value,  indent+spacer);
-			}else {
-				str+= value;
+				str += toString((List) value, indent + spacer);
+			} else {
+				str += value;
 			}
-			str+= "\n";
+			str += "\n";
 		}
 
 		return str;
-	}	
-	
+	}
+
 	public String toString(List list, String indent) {
 		StringBuffer buf = new StringBuffer();
 		buf.append("[");
 
-	        Iterator i = list.iterator();
-	        boolean hasNext = i.hasNext();
-	        while (hasNext) {
-	      	  Object o = i.next();
-	      	  if (o instanceof AbstractConceptBean) {
-	      		  AbstractConceptBean acb= (AbstractConceptBean) o;	      	  
-	              buf.append(acb.toString(indent));
-	      	  } else {
-	      		  buf.append(String.valueOf(o));
-	      	  }
-	            
-	            hasNext = i.hasNext();
-	            if (hasNext)
-	                buf.append(", ");
-	        }
+		Iterator i = list.iterator();
+		boolean hasNext = i.hasNext();
+		while (hasNext) {
+			Object o = i.next();
+			if (o instanceof AbstractConceptBean) {
+				AbstractConceptBean acb = (AbstractConceptBean) o;
+				buf.append(acb.toString(indent));
+			} else {
+				buf.append(String.valueOf(o));
+			}
+
+			hasNext = i.hasNext();
+			if (hasNext)
+				buf.append(", ");
+		}
 
 		buf.append(indent).append("]");
 		return buf.toString();
-	    
+
 	}
-	
+
 	/**
 	 * @param arg0
 	 * @param arg1
@@ -128,16 +128,17 @@ public abstract class AbstractConceptBean {
 	public HashMap<Object, Object> getRelations() {
 		return relations;
 	}
-	
-	 public boolean equals(Object o) {
-			if (o == this)
-			    return true;
-			if (! (o instanceof AbstractConceptBean)) 
-				return false;
-			AbstractConceptBean t= (AbstractConceptBean) o;
-			if (id.equals(t.id) && label.equals(t.label) && relations.equals(t.relations))
-				return true;
+
+	public boolean equals(Object o) {
+		if (o == this)
+			return true;
+		if (!(o instanceof AbstractConceptBean))
 			return false;
-	 }
-	
+		AbstractConceptBean t = (AbstractConceptBean) o;
+		if (id.equals(t.id) && label.equals(t.label)
+				&& relations.equals(t.relations))
+			return true;
+		return false;
+	}
+
 }

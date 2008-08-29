@@ -19,7 +19,7 @@ public class ErrorStatusBean extends AbstractResponseBean {
 	public ErrorStatusBean() {
 		super();
 	}
-	
+
 	/**
 	 * Instantiate using a Status object
 	 * 
@@ -27,21 +27,22 @@ public class ErrorStatusBean extends AbstractResponseBean {
 	 */
 	public ErrorStatusBean(Status status) {
 		super();
-		
+
 		this.errorCode = status.getCode();
 		setShortMessage(status.getName());
 		setLongMessage(status.getDescription());
-		
+
 	}
-	
+
 	/**
 	 * Instantiate using an exception object
 	 * 
-	 * @param e - exception object
+	 * @param e -
+	 *            exception object
 	 */
 	public ErrorStatusBean(Exception e) {
 		super();
-		
+
 		this.errorCode = status.getCode();
 		setShortMessage(e.getLocalizedMessage());
 		setLongMessage(e.getMessage());

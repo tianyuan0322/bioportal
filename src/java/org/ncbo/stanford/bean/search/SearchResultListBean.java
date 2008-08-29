@@ -9,6 +9,4 @@ public class SearchResultListBean extends PaginatableList<SearchResultBean> {
 	 */
 	private static final long serialVersionUID = 1067248571020887697L;
 
-	
-	
 }

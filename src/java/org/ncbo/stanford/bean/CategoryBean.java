@@ -19,7 +19,7 @@ public class CategoryBean {
 			this.setId(ncboCategory.getId());
 			this.setName(ncboCategory.getName());
 			this.setOboFoundryName(ncboCategory.getOboFoundryName());
-			
+
 			if (ncboCategory.getNcboLCategory() != null) {
 				this.setParentId(ncboCategory.getNcboLCategory().getId());
 			}

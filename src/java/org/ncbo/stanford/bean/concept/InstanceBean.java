@@ -7,7 +7,7 @@ public class InstanceBean extends AbstractConceptBean {
 	}
 
 	public String toString(String indent) {
-		return "Type: InstanceBean "  + super.toString(indent);
-	}	
-	
+		return "Type: InstanceBean " + super.toString(indent);
+	}
+
 }

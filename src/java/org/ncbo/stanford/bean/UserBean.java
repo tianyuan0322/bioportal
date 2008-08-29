@@ -64,11 +64,11 @@ public class UserBean {
 		if (ncboUser != null) {
 			ncboUser.setId(this.getId());
 			ncboUser.setUsername(this.getUsername());
-			
+
 			if (!StringHelper.isNullOrNullString(this.getPassword())) {
 				ncboUser.setPassword(this.getPassword());
 			}
-			
+
 			ncboUser.setEmail(this.getEmail());
 			ncboUser.setFirstname(this.getFirstname());
 			ncboUser.setLastname(this.getLastname());
@@ -78,17 +78,17 @@ public class UserBean {
 			// time stamp
 			if (ncboUser.getDateCreated() == null) {
 				ncboUser.setDateCreated(new Date());
-			}			
+			}
 		}
 	}
-	
+
 	/**
 	 * Extracts default passwords and sets it in the bean
 	 */
 	public void generateDefaultPassword() {
 		this.setPassword(MessageUtils.getMessage("default.user.password"));
 	}
-	
+
 	/**
 	 * Extracts default passwords and sets it in the bean
 	 */

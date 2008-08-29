@@ -35,7 +35,7 @@ public class SuccessBean extends AbstractResponseBean {
 	public void setSessionId(String sessionId) {
 		this.sessionId = sessionId;
 	}
-	
+
 	/**
 	 * @return the data
 	 */
@@ -44,7 +44,8 @@ public class SuccessBean extends AbstractResponseBean {
 	}
 
 	/**
-	 * @param data the data to set
+	 * @param data
+	 *            the data to set
 	 */
 	public void setData(List<Object> data) {
 		this.data = data;

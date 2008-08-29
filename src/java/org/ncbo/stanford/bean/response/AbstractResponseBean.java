@@ -7,7 +7,7 @@ import java.util.Date;
  * Abstract class to define a generic RESTful Response
  * 
  * @author Michael Dorf
- *
+ * 
  */
 public abstract class AbstractResponseBean {
 

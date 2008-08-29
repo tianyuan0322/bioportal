@@ -15,10 +15,10 @@ package org.ncbo.stanford.bean;
  * </pre>
  * 
  * @author Michael Dorf
- *
+ * 
  */
 public class MetadataFileBean {
-	
+
 	private String id;
 	private String title;
 	private String namespace;
@@ -42,7 +42,6 @@ public class MetadataFileBean {
 	private String isObsolete;
 	private String consider;
 	private String xrefsTo;
-	
 
 	/**
 	 * @return the application
@@ -52,7 +51,8 @@ public class MetadataFileBean {
 	}
 
 	/**
-	 * @param application the application to set
+	 * @param application
+	 *            the application to set
 	 */
 	public void setApplication(String application) {
 		this.application = application;
@@ -66,7 +66,8 @@ public class MetadataFileBean {
 	}
 
 	/**
-	 * @param granularity the granularity to set
+	 * @param granularity
+	 *            the granularity to set
 	 */
 	public void setGranularity(String granularity) {
 		this.granularity = granularity;
@@ -80,7 +81,8 @@ public class MetadataFileBean {
 	}
 
 	/**
-	 * @param pathoType the pathoType to set
+	 * @param pathoType
+	 *            the pathoType to set
 	 */
 	public void setPathoType(String pathoType) {
 		this.pathoType = pathoType;
@@ -94,7 +96,8 @@ public class MetadataFileBean {
 	}
 
 	/**
-	 * @param subtypesOf the subtypesOf to set
+	 * @param subtypesOf
+	 *            the subtypesOf to set
 	 */
 	public void setSubtypesOf(String subtypesOf) {
 		this.subtypesOf = subtypesOf;
@@ -288,7 +291,8 @@ public class MetadataFileBean {
 	}
 
 	/**
-	 * @param alternateDownload the alternateDownload to set
+	 * @param alternateDownload
+	 *            the alternateDownload to set
 	 */
 	public void setAlternateDownload(String alternateDownload) {
 		this.alternateDownload = alternateDownload;
@@ -302,7 +306,8 @@ public class MetadataFileBean {
 	}
 
 	/**
-	 * @param domain the domain to set
+	 * @param domain
+	 *            the domain to set
 	 */
 	public void setDomain(String domain) {
 		this.domain = domain;
@@ -316,7 +321,8 @@ public class MetadataFileBean {
 	}
 
 	/**
-	 * @param relevantOrganism the relevantOrganism to set
+	 * @param relevantOrganism
+	 *            the relevantOrganism to set
 	 */
 	public void setRelevantOrganism(String relevantOrganism) {
 		this.relevantOrganism = relevantOrganism;
@@ -330,7 +336,8 @@ public class MetadataFileBean {
 	}
 
 	/**
-	 * @param isObsolete the isObsolete to set
+	 * @param isObsolete
+	 *            the isObsolete to set
 	 */
 	public void setIsObsolete(String isObsolete) {
 		this.isObsolete = isObsolete;
@@ -344,7 +351,8 @@ public class MetadataFileBean {
 	}
 
 	/**
-	 * @param consider the consider to set
+	 * @param consider
+	 *            the consider to set
 	 */
 	public void setConsider(String consider) {
 		this.consider = consider;
@@ -358,7 +366,8 @@ public class MetadataFileBean {
 	}
 
 	/**
-	 * @param publication the publication to set
+	 * @param publication
+	 *            the publication to set
 	 */
 	public void setPublication(String publication) {
 		this.publication = publication;
@@ -372,7 +381,8 @@ public class MetadataFileBean {
 	}
 
 	/**
-	 * @param xrefsTo the xrefsTo to set
+	 * @param xrefsTo
+	 *            the xrefsTo to set
 	 */
 	public void setXrefsTo(String xrefsTo) {
 		this.xrefsTo = xrefsTo;
@@ -382,29 +392,19 @@ public class MetadataFileBean {
 	 * output of the class
 	 */
 	public String toString() {
-		return "" +
-			"id: " + id + "\n" + 
-			"title: " + title + "\n" + 
-			"namespace: " + namespace + "\n" + 
-			"foundry: " + foundry + "\n" + 						
-			"status: " + status + "\n" + 
-			"download: " + download + "\n" + 
-			"source: " + source + "\n" + 
-			"home: " + home + "\n" + 
-			"documentation: " + documentation + "\n" + 
-			"contact: " + contact + "\n" + 
-			"format: " + format + "\n" + 
-			"description: " + description + "\n" + 
-			"publication: " + publication + "\n" + 
-			"domain: " + domain + "\n" + 
-			"relevantOrganism: " + relevantOrganism + "\n" + 
-			"subtypesOf: " + subtypesOf + "\n" + 
-			"pathoType: " + pathoType + "\n" + 
-			"granularity: " + granularity + "\n" + 
-			"application: " + application + "\n" + 
-			"isObsolete: " + isObsolete + "\n" + 
-			"consider: " + consider + "\n" + 			
-			"alternateDownload: " + alternateDownload + "\n" +
-			"xrefsTo: " + xrefsTo;
+		return "" + "id: " + id + "\n" + "title: " + title + "\n"
+				+ "namespace: " + namespace + "\n" + "foundry: " + foundry
+				+ "\n" + "status: " + status + "\n" + "download: " + download
+				+ "\n" + "source: " + source + "\n" + "home: " + home + "\n"
+				+ "documentation: " + documentation + "\n" + "contact: "
+				+ contact + "\n" + "format: " + format + "\n" + "description: "
+				+ description + "\n" + "publication: " + publication + "\n"
+				+ "domain: " + domain + "\n" + "relevantOrganism: "
+				+ relevantOrganism + "\n" + "subtypesOf: " + subtypesOf + "\n"
+				+ "pathoType: " + pathoType + "\n" + "granularity: "
+				+ granularity + "\n" + "application: " + application + "\n"
+				+ "isObsolete: " + isObsolete + "\n" + "consider: " + consider
+				+ "\n" + "alternateDownload: " + alternateDownload + "\n"
+				+ "xrefsTo: " + xrefsTo;
 	}
 }

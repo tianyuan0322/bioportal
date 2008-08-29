@@ -140,7 +140,7 @@ public class OntologyBean {
 			ont.setOboFoundryId(getOboFoundryId());
 		}
 	}
-	
+
 	/**
 	 * Populates NcboOntologyVersion Entity from this OntologyBean
 	 * 
