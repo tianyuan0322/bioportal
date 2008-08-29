@@ -7,7 +7,7 @@ import org.ncbo.stanford.domain.generated.NcboUserRoleDAO;
 
 /**
  * @author mdorf
- *
+ * 
  */
 public class CustomNcboUserRoleDAO extends NcboUserRoleDAO {
 

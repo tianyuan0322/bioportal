@@ -7,7 +7,7 @@ import org.ncbo.stanford.domain.generated.NcboLStatusDAO;
 
 /**
  * @author Michael Dorf
- *
+ * 
  */
 public class CustomNcboLStatusDAO extends NcboLStatusDAO {
 

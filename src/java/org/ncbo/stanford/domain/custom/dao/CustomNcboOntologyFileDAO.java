@@ -7,7 +7,7 @@ import org.ncbo.stanford.domain.generated.NcboOntologyFileDAO;
 
 /**
  * @author mdorf
- *
+ * 
  */
 public class CustomNcboOntologyFileDAO extends NcboOntologyFileDAO {
 

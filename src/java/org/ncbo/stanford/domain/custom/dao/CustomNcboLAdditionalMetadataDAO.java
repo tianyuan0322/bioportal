@@ -7,7 +7,7 @@ import org.ncbo.stanford.domain.generated.NcboLAdditionalMetadataDAO;
 
 /**
  * @author mdorf
- *
+ * 
  */
 public class CustomNcboLAdditionalMetadataDAO extends
 		NcboLAdditionalMetadataDAO {

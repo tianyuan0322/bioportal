@@ -7,7 +7,7 @@ import org.ncbo.stanford.domain.generated.NcboLAppTextDatatypeDAO;
 
 /**
  * @author Michael Dorf
- *
+ * 
  */
 public class CustomNcboLAppTextDatatypeDAO extends NcboLAppTextDatatypeDAO {
 

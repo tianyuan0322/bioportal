@@ -15,9 +15,8 @@ import org.ncbo.stanford.domain.generated.NcboUserDAO;
  */
 public class CustomNcboUserDAO extends NcboUserDAO {
 
-	private static final Log log = LogFactory
-	.getLog(CustomNcboUserDAO.class);
-	
+	private static final Log log = LogFactory.getLog(CustomNcboUserDAO.class);
+
 	/**
 	 * 
 	 */
@@ -25,13 +24,11 @@ public class CustomNcboUserDAO extends NcboUserDAO {
 		super();
 	}
 
-	
 	/**
 	 * @param transientInstance
 	 * @return
 	 */
-	public NcboUser saveUser(
-			NcboUser transientInstance) {
+	public NcboUser saveUser(NcboUser transientInstance) {
 		try {
 			Integer newId = (Integer) getHibernateTemplate().save(
 					transientInstance);
@@ -43,7 +40,7 @@ public class CustomNcboUserDAO extends NcboUserDAO {
 			throw re;
 		}
 	}
-	
+
 	public NcboUser getUserByUsername(String username) {
 		return (NcboUser) getSession().createCriteria(
 				"org.ncbo.stanford.domain.generated.NcboUser").add(
