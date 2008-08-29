@@ -189,7 +189,8 @@ public class VNcboOntology {
 	}
 
 	/**
-	 * @param statusId the statusId to set
+	 * @param statusId
+	 *            the statusId to set
 	 */
 	public void setStatusId(Integer statusId) {
 		this.statusId = statusId;
@@ -587,12 +588,13 @@ public class VNcboOntology {
 	}
 
 	/**
-	 * @param categoryIds the categoryIds to set
+	 * @param categoryIds
+	 *            the categoryIds to set
 	 */
 	public void setCategoryIds(List<Integer> categoryIds) {
 		this.categoryIds = categoryIds;
 	}
-	
+
 	/**
 	 * @param arg0
 	 * @return
@@ -619,7 +621,8 @@ public class VNcboOntology {
 	}
 
 	/**
-	 * @param oboFoundryId the oboFoundryId to set
+	 * @param oboFoundryId
+	 *            the oboFoundryId to set
 	 */
 	public void setOboFoundryId(String oboFoundryId) {
 		this.oboFoundryId = oboFoundryId;
@@ -633,7 +636,8 @@ public class VNcboOntology {
 	}
 
 	/**
-	 * @param isManual the isManual to set
+	 * @param isManual
+	 *            the isManual to set
 	 */
 	public void setIsManual(Byte isManual) {
 		this.isManual = isManual;
