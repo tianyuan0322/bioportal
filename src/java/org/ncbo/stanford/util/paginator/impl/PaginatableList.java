@@ -17,8 +17,7 @@ import org.ncbo.stanford.util.paginator.Paginatable;
  *            type of objects to paginate over
  * 
  */
-public class PaginatableList<E> extends ArrayList<E> implements
-		Paginatable<E> {
+public class PaginatableList<E> extends ArrayList<E> implements Paginatable<E> {
 
 	/**
 	 * 
