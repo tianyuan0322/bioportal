@@ -16,12 +16,12 @@ import org.ncbo.stanford.util.ontologyfile.pathhandler.FilePathHandler;
 public interface OntologyService {
 
 	/**
-	 * Return the list of all categories 
+	 * Return the list of all categories
 	 * 
 	 * @return
 	 */
 	public List<CategoryBean> findAllCategories();
-	
+
 	/**
 	 * Return the list of category Ids that correspond to the given obo foundry
 	 * names
@@ -48,12 +48,11 @@ public interface OntologyService {
 	 * @return list of Ontology beans
 	 */
 	public List<OntologyBean> findLatestOntologyVersions();
-	
-	
+
 	/**
-	 * Returns a single record for each ontology which is active in the system. If more than one
-	 * version of ontology exists, return the latest and active version.  
-	 * "active" meaning parse status is "ready".
+	 * Returns a single record for each ontology which is active in the system.
+	 * If more than one version of ontology exists, return the latest and active
+	 * version. "active" meaning parse status is "ready".
 	 * 
 	 * @return list of Ontology beans
 	 */
