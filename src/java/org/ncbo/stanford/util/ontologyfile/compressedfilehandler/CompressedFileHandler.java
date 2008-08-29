@@ -8,7 +8,8 @@ import java.util.List;
 import org.ncbo.stanford.bean.OntologyBean;
 
 public interface CompressedFileHandler {
-	
-	public List<String> handle(File outputFile, OntologyBean ontologyBean) throws FileNotFoundException, IOException;
+
+	public List<String> handle(File outputFile, OntologyBean ontologyBean)
+			throws FileNotFoundException, IOException;
 
 }

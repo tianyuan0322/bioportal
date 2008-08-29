@@ -28,10 +28,10 @@ public class PROTEGECompressedFileHandlerImpl extends
 		List<String> relevantFiles = super.handle(outputFile, ontologyBean);
 		boolean hasProjectFile = false;
 		String uploadedFile = relevantFiles.get(0);
-		
-		for (String filename : uncompressedFilenames) {			
+
+		for (String filename : uncompressedFilenames) {
 			if (filename.toLowerCase().endsWith(
-					ApplicationConstants.PROTEGE_EXTENSION)) {				
+					ApplicationConstants.PROTEGE_EXTENSION)) {
 				relevantFiles = new ArrayList<String>(0);
 				relevantFiles.add(uploadedFile);
 				relevantFiles.add(filename);
@@ -51,7 +51,7 @@ public class PROTEGECompressedFileHandlerImpl extends
 			relevantFiles.add(uploadedFile);
 			relevantFiles.add(xmlFile);
 		}
-		
+
 		return relevantFiles;
 	}
 }

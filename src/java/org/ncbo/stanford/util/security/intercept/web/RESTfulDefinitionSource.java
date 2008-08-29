@@ -220,8 +220,7 @@ public class RESTfulDefinitionSource implements
 		Iterator<RESTfulDefinitionSourceMapping> it = mappings.iterator();
 
 		while (it.hasNext()) {
-			RESTfulDefinitionSourceMapping mapping = it
-					.next();
+			RESTfulDefinitionSourceMapping mapping = it.next();
 			ConfigAttributeDefinition configDefinition = new ConfigAttributeDefinition();
 
 			Iterator<String> configAttributesIt = mapping.getConfigAttributes()

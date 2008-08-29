@@ -57,7 +57,7 @@ public abstract class StringHelper {
 			String str, boolean paddingInTheFront) {
 
 		StringBuffer buffer = new StringBuffer(100);
-		
+
 		if (null != str && !"".equals(str)) {
 			char paddingString = (zeroPadded ? '0' : ' ');
 
@@ -73,7 +73,7 @@ public abstract class StringHelper {
 				buffer.append(str.substring(Math.max(0, str.length() - width)));
 			}
 		}
-		
+
 		return buffer.toString();
 	}
 
@@ -191,12 +191,12 @@ public abstract class StringHelper {
 				if (triming && appending) {
 					buffer.append(' ');
 				}
-				
+
 				buffer.append(current);
 				triming = false;
 				appending = true;
 			}
-			
+
 			++index;
 		}
 
@@ -215,11 +215,11 @@ public abstract class StringHelper {
 	 */
 	public static String toSimpleString(String str) {
 		String newStr = null;
-		
+
 		if (null == str) {
 			return str;
 		}
-		
+
 		newStr = str;
 		newStr = newStr.toLowerCase();
 		newStr = removeNonAlphaCharacters(newStr);
@@ -272,7 +272,7 @@ public abstract class StringHelper {
 				foundAtIndex = str.indexOf(replaceWhat);
 			}
 		}
-		
+
 		return str;
 	}
 
@@ -288,14 +288,14 @@ public abstract class StringHelper {
 			StringTokenizer tokenizer = new StringTokenizer(str, delimiter);
 			String[] tokens = new String[tokenizer.countTokens()];
 			int i = 0;
-			
+
 			while (tokenizer.hasMoreElements()) {
 				tokens[i++] = tokenizer.nextToken();
 			}
-			
+
 			return tokens;
 		}
-		
+
 		return null;
 	}
 
@@ -320,11 +320,11 @@ public abstract class StringHelper {
 				if (str.endsWith(delimiter)) {
 					str = str + ' ';
 				}
-				
+
 				str = replaceAll(str, delimiter + delimiter, delimiter + ' '
 						+ delimiter);
 			}
-			
+
 			return split(str, delimiter);
 		}
 
@@ -351,7 +351,7 @@ public abstract class StringHelper {
 				}
 				j++;
 			}
-			
+
 			return !(j == 1);
 		} else {
 			return false;
@@ -366,14 +366,14 @@ public abstract class StringHelper {
 	 */
 	public static boolean isStringArrayContainsAllNull(String[] str) {
 		int flag = 0;
-		
+
 		if (null != str) {
 			for (int i = 0; i < str.length; i++) {
 				if (str[i] != null) {
 					flag = 1;
 				}
 			}
-			
+
 			return !(flag == 1);
 		} else {
 			return true;
@@ -398,7 +398,7 @@ public abstract class StringHelper {
 	 */
 	private static String removeNonAlphaCharacters(String str) {
 		char[] chars = str.toCharArray();
-		
+
 		for (int i = 0; i < chars.length; i++) {
 			char oldChar = chars[i];
 			char newChar = oldChar;
@@ -411,10 +411,10 @@ public abstract class StringHelper {
 					|| (oldChar == ')')) {
 				newChar = ' ';
 			}
-			
+
 			chars[i] = newChar;
 		}
-		
+
 		return new String(chars);
 	}
 

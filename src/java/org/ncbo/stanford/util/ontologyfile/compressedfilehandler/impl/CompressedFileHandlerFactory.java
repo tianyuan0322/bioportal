@@ -27,10 +27,10 @@ public class CompressedFileHandlerFactory {
 			InvalidCompressedFileHandlerException {
 		CompressedFileHandler compressedFileHandler = null;
 		String handlerName = null;
-		
+
 		try {
-			handlerName = CompressedFileHandlerFactory.class
-					.getPackage().getName()
+			handlerName = CompressedFileHandlerFactory.class.getPackage()
+					.getName()
 					+ "."
 					+ getHandlerPrefix(format)
 					+ CompressedFileHandler.class.getSimpleName() + "Impl";

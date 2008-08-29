@@ -87,7 +87,8 @@ public class RESTfulExceptionTranslationFilter extends Restlet implements
 
 			RequestUtils.setHttpServletResponse((HttpServletResponse) response,
 					HttpServletResponse.SC_FORBIDDEN, xmlSerializationService
-							.getErrorAsXML(ErrorTypeEnum.AUTHENTICATION_REQUIRED,
+							.getErrorAsXML(
+									ErrorTypeEnum.AUTHENTICATION_REQUIRED,
 									pathInfo));
 		} catch (AccessDeniedException ex) {
 			if (authenticationTrustResolver.isAnonymous(SecurityContextHolder
@@ -99,8 +100,10 @@ public class RESTfulExceptionTranslationFilter extends Restlet implements
 				RequestUtils.setHttpServletResponse(
 						(HttpServletResponse) response,
 						HttpServletResponse.SC_FORBIDDEN,
-						xmlSerializationService.getErrorAsXML(
-								ErrorTypeEnum.AUTHENTICATION_REQUIRED, pathInfo));
+						xmlSerializationService
+								.getErrorAsXML(
+										ErrorTypeEnum.AUTHENTICATION_REQUIRED,
+										pathInfo));
 			} else {
 				if (logger.isDebugEnabled()) {
 					logger

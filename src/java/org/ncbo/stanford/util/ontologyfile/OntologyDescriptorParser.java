@@ -39,18 +39,18 @@ import org.ncbo.stanford.util.helper.reflection.ReflectionHelper;
  */
 public class OntologyDescriptorParser {
 
-//	public static void main(String[] args) {
-//		try {
-//			String temp = "";
-//			temp = "Wen J. Chen	wchen	its.caltech.edu";
-//
-//			ContactTypeBean c = getContact(temp, "");
-//			System.out.println(c);
-//
-//		} catch (Exception e) {
-//			e.printStackTrace();
-//		}
-//	}
+	// public static void main(String[] args) {
+	// try {
+	// String temp = "";
+	// temp = "Wen J. Chen wchen its.caltech.edu";
+	//
+	// ContactTypeBean c = getContact(temp, "");
+	// System.out.println(c);
+	//
+	// } catch (Exception e) {
+	// e.printStackTrace();
+	// }
+	// }
 
 	private static final String LINE_PATTERN = "^(\\w+)(\\t|\\s)*(.*)";
 	private static final String UNDERSCORE_LETTER_PATTERN = "_+(\\w)";

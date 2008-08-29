@@ -105,8 +105,7 @@ public class RequestUtils {
 
 		return null;
 	}
-	
-	
+
 	/**
 	 * Returns an instance of {@link HttpServletRequest} from a Restlet
 	 * {@link Request}
@@ -158,32 +157,38 @@ public class RequestUtils {
 		response.setStatus(statusCode);
 		response.setEntity(content, mediaType);
 	}
-	
+
 	/**
 	 * Returns the Session ID from a request
+	 * 
 	 * @param request
 	 * @return
 	 */
-	public static String getSessionId(Request request){
-		return getHttpServletRequest(request).getParameter(RequestParamConstants.PARAM_SESSIONID);
+	public static String getSessionId(Request request) {
+		return getHttpServletRequest(request).getParameter(
+				RequestParamConstants.PARAM_SESSIONID);
 	}
-	
+
 	/**
 	 * Returns the user name from a request
+	 * 
 	 * @param request
 	 * @return
 	 */
-	public static String getUserName(Request request){
-		return getHttpServletRequest(request).getParameter(RequestParamConstants.PARAM_USERNAME);
+	public static String getUserName(Request request) {
+		return getHttpServletRequest(request).getParameter(
+				RequestParamConstants.PARAM_USERNAME);
 	}
-	
+
 	/**
 	 * Returns the applicationId from a request
+	 * 
 	 * @param request
 	 * @return
 	 */
-	public static String getApplicationId(Request request){
-		return getHttpServletRequest(request).getParameter(RequestParamConstants.PARAM_APPLICATIONID);
+	public static String getApplicationId(Request request) {
+		return getHttpServletRequest(request).getParameter(
+				RequestParamConstants.PARAM_APPLICATIONID);
 	}
-	
+
 }

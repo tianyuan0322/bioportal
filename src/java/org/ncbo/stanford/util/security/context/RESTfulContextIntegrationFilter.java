@@ -195,7 +195,7 @@ public class RESTfulContextIntegrationFilter implements InitializingBean,
 
 		String sessionId = request
 				.getParameter(RequestParamConstants.PARAM_SESSIONID);
-		
+
 		if (logger.isDebugEnabled()) {
 			logger.debug("sessionid: " + sessionId);
 		}
@@ -547,7 +547,8 @@ public class RESTfulContextIntegrationFilter implements InitializingBean,
 	}
 
 	/**
-	 * @param sessionService the sessionService to set
+	 * @param sessionService
+	 *            the sessionService to set
 	 */
 	public void setSessionService(SessionService sessionService) {
 		this.sessionService = sessionService;

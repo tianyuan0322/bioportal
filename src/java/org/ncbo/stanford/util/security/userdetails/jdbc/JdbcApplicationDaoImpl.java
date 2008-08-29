@@ -36,7 +36,7 @@ public class JdbcApplicationDaoImpl extends JdbcDaoSupport implements
 	public JdbcApplicationDaoImpl() {
 		applicationByApplicationIdQuery = DEF_APPLICATION_BY_APPLICATIONID_QUERY;
 	}
-	
+
 	/**
 	 * Loads an application using its application id
 	 * 

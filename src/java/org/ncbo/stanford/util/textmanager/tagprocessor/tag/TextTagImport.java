@@ -8,20 +8,25 @@ import org.ncbo.stanford.util.textmanager.tagprocessor.TextTagProcessor;
 
 /**
  * @author Michael Dorf
- *
+ * 
  * The class to process the <TAG_IMPORT textIdent> tag
  */
 public class TextTagImport extends TextTag {
 
-	private static Vector<String> useIdents = null;  // a vector used to keep track of
-												     // the recursive template calls
+	private static Vector<String> useIdents = null; // a vector used to keep
 
-	/* (non-Javadoc)
+	// track of
+
+	// the recursive template calls
+
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see TextTag#process(TagProcessor, java.lang.String)
-	 */	
+	 */
 	public String process(TextTagProcessor tp, String tagLine) {
 		String result = "";
-		
+
 		try {
 			Pattern pat = Pattern.compile("<TAG_\\w+\\s+(.*)>");
 			Matcher mat = pat.matcher(tagLine);
@@ -33,9 +38,9 @@ public class TextTagImport extends TextTag {
 			// used to prevent recursive calls to each other
 			// within two or more templates
 			if (useIdents == null) {
-				useIdents = new Vector<String>();	
+				useIdents = new Vector<String>();
 			}
-		
+
 			// add this identifier to the global
 			// identifiers object to avoid recursive
 			// calls to it from lower templates
@@ -58,7 +63,7 @@ public class TextTagImport extends TextTag {
 		} catch (Exception e) {
 			e.printStackTrace();
 			result = "";
-		}		
+		}
 
 		return result;
 	}

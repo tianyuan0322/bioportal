@@ -15,8 +15,7 @@ import org.ncbo.stanford.util.ontologyfile.compressedfilehandler.AbstractCompres
  * @author Michael Dorf
  * 
  */
-public class RRFCompressedFileHandlerImpl extends
-		AbstractCompressedFileHandler {
+public class RRFCompressedFileHandlerImpl extends AbstractCompressedFileHandler {
 
 	protected RRFCompressedFileHandlerImpl() {
 	}

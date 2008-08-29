@@ -7,17 +7,20 @@ import org.ncbo.stanford.util.textmanager.tagprocessor.TextTagProcessor;
 
 /**
  * @author Michael Dorf
- *
+ * 
  * The class to process the <TAG_SETKEYWORD KEY "VALUE"> tag
  */
 public class TextTagSetkeyword extends TextTag {
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see TextTag#process(TextTagProcessor, java.lang.String)
 	 */
 	public String process(TextTagProcessor tp, String tagLine) {
 		try {
-			Pattern pat = Pattern.compile("<TAG_\\w+\\s+(\\w+)\\s+[\"\']*([\\w\\d\\s\\.\\-]+)[\"\']*>");			
+			Pattern pat = Pattern
+					.compile("<TAG_\\w+\\s+(\\w+)\\s+[\"\']*([\\w\\d\\s\\.\\-]+)[\"\']*>");
 			Matcher mat = pat.matcher(tagLine);
 			mat.matches();
 			String key = mat.group(1).trim();

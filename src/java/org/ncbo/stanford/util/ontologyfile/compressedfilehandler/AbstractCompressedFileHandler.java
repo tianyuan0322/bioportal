@@ -26,10 +26,11 @@ public abstract class AbstractCompressedFileHandler implements
 	public List<String> handle(File outputFile, OntologyBean ontologyBean)
 			throws FileNotFoundException, IOException {
 		List<String> relevantFiles = new ArrayList<String>(1);
-		
-		String filePath = AbstractFilePathHandler.getFullOntologyDirPath(ontologyBean);
+
+		String filePath = AbstractFilePathHandler
+				.getFullOntologyDirPath(ontologyBean);
 		String fileName = outputFile.getName();
-		
+
 		relevantFiles.add(fileName);
 		uncompressedFilenames = CompressionUtils.getInstance().uncompress(
 				filePath, fileName);

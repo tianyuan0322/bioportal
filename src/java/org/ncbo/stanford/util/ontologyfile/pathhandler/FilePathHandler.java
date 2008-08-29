@@ -16,18 +16,17 @@ import org.ncbo.stanford.bean.OntologyBean;
  */
 public interface FilePathHandler {
 
-	
 	/**
 	 * Handle the ontology file upload
 	 * 
 	 * @param ontologyBean
 	 * @throws FileNotFoundException
 	 * @throws IOException
-	 * @throws Exception 
+	 * @throws Exception
 	 */
 	public List<String> processOntologyFileUpload(OntologyBean ontologyBean)
-			throws FileNotFoundException, IOException, Exception;	
-	
+			throws FileNotFoundException, IOException, Exception;
+
 	/**
 	 * Get the name of the file
 	 * 
