@@ -22,8 +22,7 @@ public class EncryptionServiceImpl implements EncryptionService {
 	private PasswordEncoder passwordEncoder = null;
 
 	/**
-	 * Encodes passwords using a one-way
-	 * encryption algorithm
+	 * Encodes passwords using a one-way encryption algorithm
 	 * 
 	 * @param password
 	 * @return
@@ -57,7 +56,7 @@ public class EncryptionServiceImpl implements EncryptionService {
 	 * 
 	 * @param encrypted
 	 * @return
-	 * @throws UnsupportedEncodingException 
+	 * @throws UnsupportedEncodingException
 	 */
 	public String decryptQueryString(String encrypted)
 			throws UnsupportedEncodingException {
@@ -79,8 +78,7 @@ public class EncryptionServiceImpl implements EncryptionService {
 	}
 
 	/**
-	 * Returns parameter value based on its name from
-	 * the encrypted query string
+	 * Returns parameter value based on its name from the encrypted query string
 	 * 
 	 * @param encrypted
 	 * @param paramName

@@ -3,23 +3,21 @@ package org.ncbo.stanford.service.encryption;
 import java.io.UnsupportedEncodingException;
 
 /**
- * Service that provides encryption and encoding
- * capabilities
+ * Service that provides encryption and encoding capabilities
  * 
  * @author Michael Dorf
- *
+ * 
  */
 public interface EncryptionService {
 
 	/**
-	 * Encodes passwords using a one-way
-	 * encryption algorithm
+	 * Encodes passwords using a one-way encryption algorithm
 	 * 
 	 * @param password
 	 * @return
 	 */
 	public String encodePassword(String password);
-	
+
 	/**
 	 * Encrypts a specified string
 	 * 
@@ -27,7 +25,7 @@ public interface EncryptionService {
 	 * @return
 	 */
 	public String encrypt(String decrypted);
-	
+
 	/**
 	 * Decrypts a specified string
 	 * 
@@ -41,11 +39,11 @@ public interface EncryptionService {
 	 * 
 	 * @param encrypted
 	 * @return
-	 * @throws UnsupportedEncodingException 
+	 * @throws UnsupportedEncodingException
 	 */
-	public String decryptQueryString(
-			String encrypted) throws UnsupportedEncodingException;
-	
+	public String decryptQueryString(String encrypted)
+			throws UnsupportedEncodingException;
+
 	/**
 	 * Encrypts and URLEncodes a given query string
 	 * 
@@ -53,18 +51,17 @@ public interface EncryptionService {
 	 * @return
 	 * @throws UnsupportedEncodingException
 	 */
-	public String encryptQueryString(
-			String queryString) throws UnsupportedEncodingException;
-	
+	public String encryptQueryString(String queryString)
+			throws UnsupportedEncodingException;
+
 	/**
-	 * Returns parameter value based on its name from
-	 * the encrypted query string
+	 * Returns parameter value based on its name from the encrypted query string
 	 * 
 	 * @param encrypted
 	 * @param paramName
 	 * @return
 	 * @throws UnsupportedEncodingException
 	 */
-	public String getParamFromEncryptedQueryString(
-			String encrypted, String paramName) throws UnsupportedEncodingException;
+	public String getParamFromEncryptedQueryString(String encrypted,
+			String paramName) throws UnsupportedEncodingException;
 }
