@@ -21,6 +21,7 @@ import org.LexGrid.LexBIG.DataModel.Core.ResolvedConceptReference;
 import org.LexGrid.LexBIG.Exceptions.LBException;
 import org.LexGrid.LexBIG.Extensions.Generic.LexBIGServiceConvenienceMethods;
 import org.LexGrid.LexBIG.Impl.LexBIGServiceImpl;
+import org.LexGrid.LexBIG.Impl.dataAccess.WriteLockManager;
 import org.LexGrid.LexBIG.LexBIGService.CodedNodeSet;
 import org.LexGrid.LexBIG.LexBIGService.LexBIGService;
 import org.LexGrid.LexBIG.LexBIGService.CodedNodeSet.ActiveOption;
@@ -311,6 +312,11 @@ public class OntologyRetrievalManagerLexGridImpl extends AbstractOntologyManager
         return results;
     }
     
+    
+    public boolean refresh() throws Exception {
+        WriteLockManager.instance().checkForRegistryUpdates();       
+        return true;
+    }
     
     public int findConceptCount(List<VNcboOntology> ontologyVersions) throws Exception {
         int count=0;
