@@ -1,8 +1,16 @@
 package org.ncbo.stanford.manager;
 
+import java.util.HashSet;
+import java.util.Set;
+
+import org.ncbo.stanford.bean.OntologyBean;
 import org.ncbo.stanford.util.cache.expiration.system.ExpirationSystem;
 
 import edu.stanford.smi.protege.model.KnowledgeBase;
+import edu.stanford.smi.protege.query.api.QueryApi;
+import edu.stanford.smi.protege.query.api.QueryConfiguration;
+import edu.stanford.smi.protege.query.indexer.Indexer;
+import edu.stanford.smi.protege.query.indexer.StdIndexer;
 
 /**
  * Abstract class to incorporate functionality common between Protege loader and
@@ -20,7 +28,28 @@ public abstract class AbstractOntologyManagerProtege {
 	protected String protegeTablePrefix;
 	protected String protegeTableSuffix;
 	protected Integer protegeBigFileThreshold;
+	protected String protegeIndexLocation;
 	protected ExpirationSystem<Integer, KnowledgeBase> protegeKnowledgeBases = null;
+
+	/**
+	 * Sets the configuration for Protege Lucene index
+	 * 
+	 * @param kb
+	 * @param api
+	 * @param ob
+	 */
+	protected void setIndexConfiguration(KnowledgeBase kb, QueryApi api,
+			OntologyBean ob) {
+		QueryConfiguration config = new QueryConfiguration(kb);
+
+		config.setBaseIndexPath(protegeIndexLocation + ob.getOntologyDirPath());
+
+		Set<Indexer> indexers = new HashSet<Indexer>();
+		indexers.add(new StdIndexer());
+		config.setIndexers(indexers);
+
+		api.install(config);
+	}
 
 	/**
 	 * Gets the table name associated with an protege ontology id.
@@ -148,5 +177,20 @@ public abstract class AbstractOntologyManagerProtege {
 	public void setProtegeKnowledgeBases(
 			ExpirationSystem<Integer, KnowledgeBase> protegeKnowledgeBases) {
 		this.protegeKnowledgeBases = protegeKnowledgeBases;
+	}
+
+	/**
+	 * @return the protegeIndexLocation
+	 */
+	public String getProtegeIndexLocation() {
+		return protegeIndexLocation;
+	}
+
+	/**
+	 * @param protegeIndexLocation
+	 *            the protegeIndexLocation to set
+	 */
+	public void setProtegeIndexLocation(String protegeIndexLocation) {
+		this.protegeIndexLocation = protegeIndexLocation;
 	}
 }

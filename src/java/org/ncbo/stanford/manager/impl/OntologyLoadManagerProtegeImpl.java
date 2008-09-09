@@ -12,7 +12,9 @@ import org.ncbo.stanford.bean.OntologyBean;
 import org.ncbo.stanford.manager.AbstractOntologyManagerProtege;
 import org.ncbo.stanford.manager.OntologyLoadManager;
 
+import edu.stanford.smi.protege.model.KnowledgeBase;
 import edu.stanford.smi.protege.model.Project;
+import edu.stanford.smi.protege.query.api.QueryApi;
 import edu.stanford.smi.protege.storage.database.DatabaseKnowledgeBaseFactory;
 import edu.stanford.smi.protege.util.ApplicationProperties;
 import edu.stanford.smi.protege.util.PropertyList;
@@ -55,8 +57,7 @@ public class OntologyLoadManagerProtegeImpl extends
 	 *                catch all for all other ontlogy file load errors.
 	 */
 	@SuppressWarnings("unchecked")
-	public void loadOntology(URI ontologyUri, OntologyBean ontology)
-			throws Exception {
+	public void loadOntology(URI ontologyUri, OntologyBean ob) throws Exception {
 		File ontologyFile = new File(ontologyUri.getPath());
 		String filePath = ontologyUri.getPath();
 
@@ -71,34 +72,42 @@ public class OntologyLoadManagerProtegeImpl extends
 		// If the ontology file is small, use the fast non-streaming Protege
 		// load code.
 		List errors = new ArrayList();
-		Integer ontologyId = ontology.getId();
+		Integer ontologyId = ob.getId();
 		String tableName = getTableName(ontologyId);
 
 		// Clear knowledgebase cache for this item
 		protegeKnowledgeBases.remove(ontologyId);
 
-		if (ontology.getFormat().contains("OWL")) {
+		Project dbProject = null;
+
+		if (ob.getFormat().contains("OWL")) {
 			if (ontologyFile.length() < protegeBigFileThreshold) {
 				log.debug("Using non-streaming mode. Ontology: "
-						+ ontology.getDisplayLabel() + " (" + ontology.getId()
-						+ ")");
-							
-				ApplicationProperties.setBoolean("protege.owl.parser.convert.file.merge.mode", 
-						true);
+						+ ob.getDisplayLabel() + " (" + ob.getId() + ")");
 
-				OWLModel owlModel = ProtegeOWL.createJenaOWLModelFromURI(ontologyUri.toString());
+				ApplicationProperties.setBoolean(
+						"protege.owl.parser.convert.file.merge.mode", true);
+
+				OWLModel owlModel = ProtegeOWL
+						.createJenaOWLModelFromURI(ontologyUri.toString());
 				Project fileProject = owlModel.getProject();
 
 				OWLDatabaseKnowledgeBaseFactory factory = new OWLDatabaseKnowledgeBaseFactory();
-				PropertyList sources = PropertyList.create(fileProject.getInternalProjectKnowledgeBase());
+				PropertyList sources = PropertyList.create(fileProject
+						.getInternalProjectKnowledgeBase());
 
-				OWLDatabaseKnowledgeBaseFactory.setSources(sources, protegeJdbcDriver,  protegeJdbcUrl , tableName , protegeJdbcUsername , protegeJdbcPassword);
+				OWLDatabaseKnowledgeBaseFactory.setSources(sources,
+						protegeJdbcDriver, protegeJdbcUrl, tableName,
+						protegeJdbcUsername, protegeJdbcPassword);
 
-				factory.saveKnowledgeBase(fileProject.getKnowledgeBase(), sources,    errors);
+				factory.saveKnowledgeBase(fileProject.getKnowledgeBase(),
+						sources, errors);
 				fileProject.dispose();
 
-				Project dbProject = Project.createBuildProject(factory, errors);
-				OWLDatabaseKnowledgeBaseFactory.setSources(dbProject.getSources(),  protegeJdbcDriver, protegeJdbcUrl, tableName, protegeJdbcUsername, protegeJdbcPassword);
+				dbProject = Project.createBuildProject(factory, errors);
+				OWLDatabaseKnowledgeBaseFactory.setSources(dbProject
+						.getSources(), protegeJdbcDriver, protegeJdbcUrl,
+						tableName, protegeJdbcUsername, protegeJdbcPassword);
 
 				dbProject.createDomainKnowledgeBase(factory, errors, true);
 
@@ -107,25 +116,16 @@ public class OntologyLoadManagerProtegeImpl extends
 							(OWLModel) dbProject.getKnowledgeBase(), errors);
 				} catch (AlreadyImportedException e) {
 					e.printStackTrace();
-					log.error("Error at writeOntologyAndPrefixInfo: This shouldn't happen", e);
+					log
+							.error(
+									"Error at loadOntology: Already Imported Exception",
+									e);
 				}
-				
-				dbProject.dispose();				
-				
-				// If errors are found during the load, log the errors and throw
-				// an
-				// exception.
-				if (errors.size() > 0) {
-					log.error(errors);
-					throw new Exception("Error during loading "
-							+ ontologyUri.toString());
-				}			
 			} else {
 				// If the ontology file is big, use the streaming Protege load
 				// approach.
 				log.debug("Using streaming mode. Ontology: "
-						+ ontology.getDisplayLabel() + " (" + ontology.getId()
-						+ ")");
+						+ ob.getDisplayLabel() + " (" + ob.getId() + ")");
 				CreateOWLDatabaseFromFileProjectPlugin creator = new CreateOWLDatabaseFromFileProjectPlugin();
 				creator
 						.setKnowledgeBaseFactory(new OWLDatabaseKnowledgeBaseFactory());
@@ -137,11 +137,8 @@ public class OntologyLoadManagerProtegeImpl extends
 				creator.setOntologyInputSource(ontologyUri);
 				creator.setUseExistingSources(true);
 				creator.setMergeImportMode(true);
-				Project p = creator.createProject();
-				p.save(errors);
-
-				// save memory
-				p.dispose();
+				dbProject = creator.createProject();
+				dbProject.save(errors);
 			}
 		} else {
 			// PROTEGE .pprj format
@@ -152,21 +149,36 @@ public class OntologyLoadManagerProtegeImpl extends
 			DatabaseKnowledgeBaseFactory.setSources(sources, protegeJdbcDriver,
 					protegeJdbcUrl, tableName, protegeJdbcUsername,
 					protegeJdbcPassword);
-
 			factory.saveKnowledgeBase(fileProject.getKnowledgeBase(), sources,
 					errors);
-
 			fileProject.dispose();
 
-			Project dbProject = Project.createNewProject(factory, errors);
+			dbProject = Project.createNewProject(factory, errors);
 			DatabaseKnowledgeBaseFactory.setSources(dbProject.getSources(),
 					protegeJdbcDriver, protegeJdbcUrl, tableName,
 					protegeJdbcUsername, protegeJdbcPassword);
-
 			dbProject.createDomainKnowledgeBase(factory, errors, true);
-
 			dbProject.save(errors);
+		}
+
+		// If errors are found during the load, log the errors and throw
+		// an
+		// exception.
+		if (errors.size() > 0) {
+			log.error(errors);
+			throw new Exception("Error during loading "
+					+ ontologyUri.toString());
+		}
+
+		if (dbProject != null) {
+			indexOntology(dbProject.getKnowledgeBase(), ob);
 			dbProject.dispose();
 		}
+	}
+
+	private void indexOntology(KnowledgeBase kb, OntologyBean ob) {
+		QueryApi api = new QueryApi(kb);
+		setIndexConfiguration(kb, api, ob);
+		api.index();
 	}
 }
