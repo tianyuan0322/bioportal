@@ -162,7 +162,7 @@
 				<filter token="protegetableprefix" value="${protege.table.prefix}" />
 				<filter token="protegetablesuffix" value="${protege.table.suffix}" />
 				<filter token="protegebigfilethreshold" value="${protege.big.file.threshold}" />
-				<filter token="protegeknowledgebasecachetimeout" value="${protege.knowledgebase.cache.timeout}" />				
+				<filter token="protegeknowledgebasecachetimeout" value="${protege.knowledgebase.cache.timeout}" />
 				<filter token="protegeknowledgebasecachenumcontainers" value="${protege.knowledgebase.cache.numcontainers}" />
 				<filter token="obosourceforgecvsusername" value="${obo.sourceforge.cvs.username}" />
 				<filter token="obosourceforgecvspassword" value="${obo.sourceforge.cvs.password}" />
@@ -173,6 +173,7 @@
 				<filter token="obosourceforgecvscheckoutdir" value="${obo.sourceforge.cvs.checkoutdir}" />
 				<filter token="obosourceforgecvsdescriptorfile" value="${obo.sourceforge.cvs.descriptor.file}" />
 				<filter token="bioportaltempdir" value="${bioportal.tempdir}" />
+				<filter token="protegeindexlocation" value="${protege.index.location}" />
 			</filterset>
 		</copy>
 
