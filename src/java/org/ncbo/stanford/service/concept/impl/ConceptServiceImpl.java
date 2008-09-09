@@ -21,7 +21,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 /**
  * @author Nick Griffith
- * 
+ * @author Michael Dorf
  * 
  */
 @Transactional(readOnly = true)
@@ -77,13 +77,7 @@ public class ConceptServiceImpl implements ConceptService {
 	public List<SearchResultBean> findConceptNameExact(
 			List<Integer> ontologyVersionIds, String query) {
 		List<SearchResultBean> searchResults = new ArrayList<SearchResultBean>();
-		HashMap<String, List<VNcboOntology>> formatLists = new HashMap<String, List<VNcboOntology>>();
-
-		for (String key : ontologyFormatHandlerMap.keySet()) {
-			formatLists.put(key, new ArrayList<VNcboOntology>());
-		}
-
-		List<VNcboOntology> ontologies = new ArrayList<VNcboOntology>();
+		List<VNcboOntology> ontologies = null;
 
 		if (ontologyVersionIds.isEmpty()) {
 			ontologies = ncboOntologyVersionDAO.findLatestOntologyVersions();
@@ -92,15 +86,7 @@ public class ConceptServiceImpl implements ConceptService {
 					.findOntologyVersions(ontologyVersionIds);
 		}
 
-		for (VNcboOntology ontology : ontologies) {
-			if (ontology.getStatusId().equals(
-					StatusEnum.STATUS_READY.getStatus())) {
-				String formatHandler = ontologyFormatHandlerMap.get(ontology
-						.getFormat());
-				((List<VNcboOntology>) formatLists.get(formatHandler))
-						.add(ontology);
-			}
-		}
+		HashMap<String, List<VNcboOntology>> formatLists = getFormatLists(ontologies);
 
 		for (String formatHandler : formatLists.keySet()) {
 			OntologyRetrievalManager manager = ontologyRetrievalHandlerMap
@@ -115,13 +101,7 @@ public class ConceptServiceImpl implements ConceptService {
 	public List<SearchResultBean> findConceptNameStartsWith(
 			List<Integer> ontologyVersionIds, String query) {
 		List<SearchResultBean> searchResults = new ArrayList<SearchResultBean>();
-		HashMap<String, List<VNcboOntology>> formatLists = new HashMap<String, List<VNcboOntology>>();
-
-		for (String key : ontologyFormatHandlerMap.keySet()) {
-			formatLists.put(key, new ArrayList<VNcboOntology>());
-		}
-
-		List<VNcboOntology> ontologies = new ArrayList<VNcboOntology>();
+		List<VNcboOntology> ontologies = null;
 
 		if (ontologyVersionIds.isEmpty()) {
 			ontologies = ncboOntologyVersionDAO.findLatestOntologyVersions();
@@ -130,15 +110,7 @@ public class ConceptServiceImpl implements ConceptService {
 					.findOntologyVersions(ontologyVersionIds);
 		}
 
-		for (VNcboOntology ontology : ontologies) {
-			if (ontology.getStatusId().equals(
-					StatusEnum.STATUS_READY.getStatus())) {
-				String formatHandler = ontologyFormatHandlerMap.get(ontology
-						.getFormat());
-				((List<VNcboOntology>) formatLists.get(formatHandler))
-						.add(ontology);
-			}
-		}
+		HashMap<String, List<VNcboOntology>> formatLists = getFormatLists(ontologies);
 
 		for (String formatHandler : formatLists.keySet()) {
 			OntologyRetrievalManager manager = ontologyRetrievalHandlerMap
@@ -152,13 +124,8 @@ public class ConceptServiceImpl implements ConceptService {
 
 	public List<SearchResultBean> findConceptNameContains(
 			List<Integer> ontologyVersionIds, String query) {
-		List<VNcboOntology> ontologies;
 		List<SearchResultBean> searchResults = new ArrayList<SearchResultBean>();
-		HashMap<String, List<VNcboOntology>> formatLists = new HashMap<String, List<VNcboOntology>>();
-
-		for (String key : ontologyFormatHandlerMap.values()) {
-			formatLists.put(key, new ArrayList<VNcboOntology>());
-		}
+		List<VNcboOntology> ontologies = null;
 
 		if (ontologyVersionIds.isEmpty()) {
 			ontologies = ncboOntologyVersionDAO.findLatestOntologyVersions();
@@ -167,15 +134,7 @@ public class ConceptServiceImpl implements ConceptService {
 					.findOntologyVersions(ontologyVersionIds);
 		}
 
-		for (VNcboOntology ontology : ontologies) {
-			if (ontology.getStatusId().equals(
-					StatusEnum.STATUS_READY.getStatus())) {
-				String formatHandler = ontologyFormatHandlerMap.get(ontology
-						.getFormat());
-				((List<VNcboOntology>) formatLists.get(formatHandler))
-						.add(ontology);
-			}
-		}
+		HashMap<String, List<VNcboOntology>> formatLists = getFormatLists(ontologies);
 
 		for (String formatHandler : formatLists.keySet()) {
 			OntologyRetrievalManager manager = ontologyRetrievalHandlerMap
@@ -235,6 +194,26 @@ public class ConceptServiceImpl implements ConceptService {
 		}
 
 		return searchResults;
+	}
+
+	private HashMap<String, List<VNcboOntology>> getFormatLists(
+			List<VNcboOntology> ontologies) {
+		HashMap<String, List<VNcboOntology>> formatLists = new HashMap<String, List<VNcboOntology>>();
+
+		for (String key : ontologyRetrievalHandlerMap.keySet()) {
+			formatLists.put(key, new ArrayList<VNcboOntology>());
+		}
+
+		for (VNcboOntology ontology : ontologies) {
+			if (ontology.getStatusId().equals(
+					StatusEnum.STATUS_READY.getStatus())) {
+				String handler = ontologyFormatHandlerMap.get(ontology
+						.getFormat());
+				formatLists.get(handler).add(ontology);
+			}
+		}
+
+		return formatLists;
 	}
 
 	//
