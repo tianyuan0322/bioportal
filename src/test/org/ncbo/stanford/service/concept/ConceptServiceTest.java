@@ -10,11 +10,11 @@ import org.ncbo.stanford.util.constants.ApplicationConstants;
 
 public class ConceptServiceTest extends AbstractBioPortalTest {
 
-	private final static int TEST_ONT_ID = 34237;
+	private final static int TEST_ONT_ID = 3905;
 	private final static String TEST_CONCEPT_ID = "http://www.w3.org/2002/07/owl#Class";
 	private final static String TEST_CONCEPT_NAME = "obo_annot:EnumerationClass";
 
-	public void testfindRoot() throws Exception {
+	public void FindRoot() throws Exception {
 		ConceptService service = (ConceptService) applicationContext.getBean(
 				"conceptService", ConceptService.class);
 		ClassBean root = service.findRootConcept(TEST_ONT_ID);
@@ -32,22 +32,44 @@ public class ConceptServiceTest extends AbstractBioPortalTest {
 		}
 	}
 
-	public void testSearchConcept() throws Exception {
+	public void SearchConcept() throws Exception {
 		ConceptService service = (ConceptService) applicationContext.getBean(
 				"conceptService", ConceptService.class);
 
-		String query = "pizza";
+		String query = "Atom";
 		List<Integer> ids = new ArrayList<Integer>();
 		ids.add(new Integer(TEST_ONT_ID));
 		List<SearchResultBean> results = service.findConceptNameContains(ids,
 				query);
 
 		for (SearchResultBean result : results) {
-			System.out.println(result.getNames().get(0).getLabel());
+			for (ClassBean name : result.getNames()) {
+				System.out.println(name.toString("	"));
+				System.out.println();
+			}
 		}
 	}
 
-	public void testFindConcept() throws Exception {
+	public void testSearchConcept1() throws Exception {
+		ConceptService service = (ConceptService) applicationContext.getBean(
+				"conceptService", ConceptService.class);
+
+		String query = "Atom";
+		List<Integer> ids = new ArrayList<Integer>();
+		ids.add(new Integer(TEST_ONT_ID));
+		List<SearchResultBean> results = service.findConceptNameStartsWith(ids,
+				query);
+
+		for (SearchResultBean result : results) {
+			for (ClassBean name : result.getNames()) {
+				System.out.println(name.toString("	"));
+				System.out.println();
+			}
+
+		}
+	}
+
+	public void FindConcept() throws Exception {
 		ConceptService service = (ConceptService) applicationContext.getBean(
 				"conceptService", ConceptService.class);
 
