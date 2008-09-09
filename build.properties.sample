@@ -130,6 +130,11 @@ protege.jdbc.driver=com.mysql.jdbc.Driver
 protege.jdbc.username=yourprotegedbuser
 protege.jdbc.password=yourprotegedbpassword
 
+# protege resource path
+protege.resource.path=${bioportal.resource.path}/protege
+# the folder that will hold all of the generated protege lucene indexes.  
+protege.index.location=${protege.resource.path}/prIndex
+
 # protege knowledgebase caching settings
 # Timeout for inactive knowledgebases (in milliseconds)
 protege.knowledgebase.cache.timeout=21600000
@@ -180,7 +185,7 @@ lexgrid.registry.file=${lexgrid.registry.path}/registry.xml
 # The folder that will hold all of the generated system indexes.  
 # This path can be relative to the location of lexgrid.base.path
 # or absolute.
-lexgrid.index.location=${bioportal.resource.path}/lexgrid/lbIndex
+lexgrid.index.location=${lexgrid.resource.path}/lbIndex
 #
 # The maximum number of SQL connections to open (and pool) per 
 # database. 
