@@ -60,6 +60,11 @@
 	<classpathentry kind="lib" path="WebRoot/WEB-INF/lib/jsr107cache-1.0.jar"/>
 	<classpathentry kind="lib" path="WebRoot/WEB-INF/lib/xercesImpl.jar"/>
 	<classpathentry kind="lib" path="WebRoot/WEB-INF/lib/xml-apis.jar"/>
+	<classpathentry kind="lib" path="WebRoot/WEB-INF/lib/lucene-core-2.3.2.jar"/>
+	<classpathentry kind="lib" path="WebRoot/WEB-INF/lib/lucene-regex-2.3.2.jar"/>
+	<classpathentry kind="lib" path="WebRoot/WEB-INF/lib/lucene-snowball-2.3.2.jar"/>	
+	<classpathentry kind="lib" path="WebRoot/WEB-INF/lib/concurrent.jar"/>
+	<classpathentry kind="lib" path="WebRoot/WEB-INF/lib/looks-2.1.3.jar"/>
 	<classpathentry kind="lib" path="WebRoot/WEB-INF/lib/protege/protege.jar"/>
 	<classpathentry kind="lib" path="WebRoot/WEB-INF/lib/protege/plugins/edu.stanford.smi.protegex.changes/change-management.jar"/>
 	<classpathentry kind="lib" path="WebRoot/WEB-INF/lib/protege/plugins/edu.stanford.smi.protegex.changes/change-model.jar"/>
@@ -67,8 +72,6 @@
 	<classpathentry kind="lib" path="WebRoot/WEB-INF/lib/protege/plugins/edu.stanford.smi.protegex.owl/antlr-2.7.5.jar"/>
 	<classpathentry kind="lib" path="WebRoot/WEB-INF/lib/protege/plugins/edu.stanford.smi.protegex.owl/arq-extra.jar"/>
 	<classpathentry kind="lib" path="WebRoot/WEB-INF/lib/protege/plugins/edu.stanford.smi.protegex.owl/arq.jar"/>
-	<classpathentry kind="lib" path="WebRoot/WEB-INF/lib/protege/plugins/edu.stanford.smi.protegex.owl/commons-logging-1.1.1.jar"/>
-	<classpathentry kind="lib" path="WebRoot/WEB-INF/lib/protege/plugins/edu.stanford.smi.protegex.owl/concurrent.jar"/>
 	<classpathentry kind="lib" path="WebRoot/WEB-INF/lib/protege/plugins/edu.stanford.smi.protegex.owl/edtftpj-1.5.2.jar"/>
 	<classpathentry kind="lib" path="WebRoot/WEB-INF/lib/protege/plugins/edu.stanford.smi.protegex.owl/ekitspell.jar"/>
 	<classpathentry kind="lib" path="WebRoot/WEB-INF/lib/protege/plugins/edu.stanford.smi.protegex.owl/icu4j_3_4.jar"/>
@@ -80,8 +83,6 @@
 	<classpathentry kind="lib" path="WebRoot/WEB-INF/lib/protege/plugins/edu.stanford.smi.protegex.owl/json.jar"/>
 	<classpathentry kind="lib" path="WebRoot/WEB-INF/lib/protege/plugins/edu.stanford.smi.protegex.owl/junit.jar"/>
 	<classpathentry kind="lib" path="WebRoot/WEB-INF/lib/protege/plugins/edu.stanford.smi.protegex.owl/kazuki.jar"/>
-	<classpathentry kind="lib" path="WebRoot/WEB-INF/lib/protege/plugins/edu.stanford.smi.protegex.owl/log4j-1.2.12.jar"/>
-	<classpathentry kind="lib" path="WebRoot/WEB-INF/lib/protege/plugins/edu.stanford.smi.protegex.owl/lucene-core-2.3.1.jar"/>
 	<classpathentry kind="lib" path="WebRoot/WEB-INF/lib/protege/plugins/edu.stanford.smi.protegex.owl/orphanNodesAlg.jar"/>
 	<classpathentry kind="lib" path="WebRoot/WEB-INF/lib/protege/plugins/edu.stanford.smi.protegex.owl/owlsyntax.jar"/>
 	<classpathentry kind="lib" path="WebRoot/WEB-INF/lib/protege/plugins/edu.stanford.smi.protegex.owl/protege-owl.jar"/>
@@ -90,7 +91,8 @@
 	<classpathentry kind="lib" path="WebRoot/WEB-INF/lib/protege/plugins/edu.stanford.smi.protegex.owl/wstx-asl-3.0.0.jar"/>
 	<classpathentry kind="lib" path="WebRoot/WEB-INF/lib/protege/plugins/edu.stanford.smi.protegex.rdf_backend/rdf-api.jar"/>
 	<classpathentry kind="lib" path="WebRoot/WEB-INF/lib/protege/plugins/edu.stanford.smi.protegex.rdf_backend/rdf-backend.jar"/>
-	<classpathentry kind="lib" path="WebRoot/WEB-INF/lib/protege/looks-2.1.3.jar"/>
+	<classpathentry kind="lib" path="WebRoot/WEB-INF/lib/protege/plugins/edu.stanford.smi.protegex.query.lucene/phonetix.jar"/>
+	<classpathentry kind="lib" path="WebRoot/WEB-INF/lib/protege/plugins/edu.stanford.smi.protegex.query.lucene/luceneQueryPlugin.jar"/>
 	<classpathentry kind="lib" path="WebRoot/WEB-INF/lib/lexgrid/extLib/BlankAccessDB.jar"/>
 	<classpathentry kind="lib" path="WebRoot/WEB-INF/lib/lexgrid/extLib/activation-1.1.jar"/>
 	<classpathentry kind="lib" path="WebRoot/WEB-INF/lib/lexgrid/extLib/arq.jar"/>
@@ -102,12 +104,7 @@
 	<classpathentry kind="lib" path="WebRoot/WEB-INF/lib/lexgrid/extLib/castor-1.2-xml.jar"/>
 	<classpathentry kind="lib" path="WebRoot/WEB-INF/lib/lexgrid/extLib/castor-1.2.jar"/>
 	<classpathentry kind="lib" path="WebRoot/WEB-INF/lib/lexgrid/extLib/commons-cli-1.0.jar"/>
-	<classpathentry kind="lib" path="WebRoot/WEB-INF/lib/lexgrid/extLib/commons-codec-1.3.jar"/>
-	<classpathentry kind="lib" path="WebRoot/WEB-INF/lib/lexgrid/extLib/commons-collections-3.2.jar"/>
 	<classpathentry kind="lib" path="WebRoot/WEB-INF/lib/lexgrid/extLib/commons-discovery-0.2.jar"/>
-	<classpathentry kind="lib" path="WebRoot/WEB-INF/lib/lexgrid/extLib/commons-logging-1.1.jar"/>
-	<classpathentry kind="lib" path="WebRoot/WEB-INF/lib/lexgrid/extLib/commons-pool-1.3.jar"/>
-	<classpathentry kind="lib" path="WebRoot/WEB-INF/lib/lexgrid/extLib/concurrent.jar"/>
 	<classpathentry kind="lib" path="WebRoot/WEB-INF/lib/lexgrid/extLib/gnu-regexp-1.1.4.jar"/>
 	<classpathentry kind="lib" path="WebRoot/WEB-INF/lib/lexgrid/extLib/icu4j-3_6.jar"/>
 	<classpathentry kind="lib" path="WebRoot/WEB-INF/lib/lexgrid/extLib/iri.jar"/>
@@ -119,11 +116,6 @@
 	<classpathentry kind="lib" path="WebRoot/WEB-INF/lib/lexgrid/extLib/jdom-1.0.jar"/>
 	<classpathentry kind="lib" path="WebRoot/WEB-INF/lib/lexgrid/extLib/jena-2.5.4.jar"/>
 	<classpathentry kind="lib" path="WebRoot/WEB-INF/lib/lexgrid/extLib/junit-4.0.jar"/>
-	<classpathentry kind="lib" path="WebRoot/WEB-INF/lib/lexgrid/extLib/log4j-1.2.15.jar"/>
-	<classpathentry kind="lib" path="WebRoot/WEB-INF/lib/lexgrid/extLib/looks-2.1.3.jar"/>
-	<classpathentry kind="lib" path="WebRoot/WEB-INF/lib/lexgrid/extLib/lucene-core-2.3.2.jar"/>
-	<classpathentry kind="lib" path="WebRoot/WEB-INF/lib/lexgrid/extLib/lucene-regex-2.3.2.jar"/>
-	<classpathentry kind="lib" path="WebRoot/WEB-INF/lib/lexgrid/extLib/lucene-snowball-2.3.2.jar"/>
 	<classpathentry kind="lib" path="WebRoot/WEB-INF/lib/lexgrid/extLib/mail-1.4.jar"/>
 	<classpathentry kind="lib" path="WebRoot/WEB-INF/lib/lexgrid/extLib/openrdf-model.1.0.9.jar"/>
 	<classpathentry kind="lib" path="WebRoot/WEB-INF/lib/lexgrid/extLib/org.eclipse.core.commands_3.2.0.I20060327-0010.jar"/>
