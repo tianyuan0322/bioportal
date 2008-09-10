@@ -169,7 +169,6 @@ public class OntologyServiceImpl implements OntologyService {
 		}
 
 		// 2. get NcboOntology entities to get OntologyBeans
-
 		List<VNcboOntology> ontEntityList = ncboOntologyVersionDAO
 				.findOntologyVersions(versionIds);
 
