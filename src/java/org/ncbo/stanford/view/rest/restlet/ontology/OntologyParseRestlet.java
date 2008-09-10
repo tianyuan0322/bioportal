@@ -22,7 +22,6 @@ public class OntologyParseRestlet extends Restlet {
 
 	@Override
 	public void handle(Request request, Response response) {
-
 		if (request.getMethod().equals(Method.GET)) {
 			getRequest(request, response);
 
@@ -36,10 +35,8 @@ public class OntologyParseRestlet extends Restlet {
 	 * @param response
 	 */
 	private void getRequest(Request request, Response response) {
-
 		// Handle GET calls here
 		parseOntology(request, response);
-
 	}
 
 	/**
@@ -48,7 +45,6 @@ public class OntologyParseRestlet extends Restlet {
 	 * @param response
 	 */
 	private void parseOntology(Request request, Response response) {
-
 		String ontologyVersionId = (String) request.getAttributes().get(
 				MessageUtils.getMessage("entity.ontology"));
 
@@ -67,11 +63,9 @@ public class OntologyParseRestlet extends Restlet {
 
 		getXmlSerializationService().generateStatusXMLResponse(request,
 				response);
-
 	}
 
 	private boolean isParseSuccess() {
-
 		if (ontologyLoadSchedulerService.getErrorIdList().size() > 0)
 			return false;
 		else
