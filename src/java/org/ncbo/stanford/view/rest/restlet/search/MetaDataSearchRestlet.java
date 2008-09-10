@@ -9,6 +9,7 @@ import org.ncbo.stanford.service.ontology.OntologyService;
 import org.ncbo.stanford.service.xml.XMLSerializationService;
 import org.restlet.Restlet;
 import org.restlet.data.Method;
+import org.restlet.data.Reference;
 import org.restlet.data.Request;
 import org.restlet.data.Response;
 import org.restlet.data.Status;
@@ -56,6 +57,7 @@ public class MetaDataSearchRestlet extends Restlet {
 	private void searchConcept(Request request, Response response) {
 		List<OntologyBean> ontologies = null;
 		String query = (String) request.getAttributes().get("query");
+		query= Reference.decode(query);
 
 		try {
 
