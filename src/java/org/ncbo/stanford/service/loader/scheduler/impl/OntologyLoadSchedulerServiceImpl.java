@@ -23,6 +23,7 @@ import org.ncbo.stanford.enumeration.StatusEnum;
 import org.ncbo.stanford.exception.InvalidOntologyFormatException;
 import org.ncbo.stanford.manager.OntologyLoadManager;
 import org.ncbo.stanford.service.loader.scheduler.OntologyLoadSchedulerService;
+import org.ncbo.stanford.util.CompressionUtils;
 import org.ncbo.stanford.util.ontologyfile.pathhandler.AbstractFilePathHandler;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
@@ -231,13 +232,15 @@ public class OntologyLoadSchedulerServiceImpl implements
 		// looping through the files
 
 		for (String filename : filenames) {
-			log.debug("......loading filename " + filename);
-			String filePath = AbstractFilePathHandler.getOntologyFilePath(
-					ontologyBean, filename);
-			File file = new File(filePath);
+			if (!CompressionUtils.isCompressed(filename)) {
+				log.debug("......loading filename " + filename);
+				String filePath = AbstractFilePathHandler.getOntologyFilePath(
+						ontologyBean, filename);
+				File file = new File(filePath);
 
-			getLoadManager(ontologyBean).loadOntology(file.toURI(),
-					ontologyBean);
+				getLoadManager(ontologyBean).loadOntology(file.toURI(),
+						ontologyBean);
+			}
 		}
 
 		log.debug("..................loadOntology END");
