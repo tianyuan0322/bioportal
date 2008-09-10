@@ -11,6 +11,7 @@ import org.apache.commons.logging.LogFactory;
 import org.ncbo.stanford.bean.OntologyBean;
 import org.ncbo.stanford.manager.AbstractOntologyManagerProtege;
 import org.ncbo.stanford.manager.OntologyLoadManager;
+import org.ncbo.stanford.util.constants.ApplicationConstants;
 
 import edu.stanford.smi.protege.model.KnowledgeBase;
 import edu.stanford.smi.protege.model.Project;
@@ -36,10 +37,6 @@ public class OntologyLoadManagerProtegeImpl extends
 
 	private static final Log log = LogFactory
 			.getLog(OntologyLoadManagerProtegeImpl.class);
-
-	//
-	// Public static methods
-	//
 
 	/**
 	 * Loads the specified ontology into the BioPortal repository. If the
@@ -80,7 +77,7 @@ public class OntologyLoadManagerProtegeImpl extends
 
 		Project dbProject = null;
 
-		if (ob.getFormat().contains("OWL")) {
+		if (ob.getFormat().contains(ApplicationConstants.FORMAT_OWL)) {
 			if (ontologyFile.length() < protegeBigFileThreshold) {
 				log.debug("Using non-streaming mode. Ontology: "
 						+ ob.getDisplayLabel() + " (" + ob.getId() + ")");
@@ -161,8 +158,7 @@ public class OntologyLoadManagerProtegeImpl extends
 			dbProject.save(errors);
 		}
 
-		// If errors are found during the load, log the errors and throw
-		// an
+		// If errors are found during the load, log the errors and throw an
 		// exception.
 		if (errors.size() > 0) {
 			log.error(errors);
@@ -171,12 +167,24 @@ public class OntologyLoadManagerProtegeImpl extends
 		}
 
 		if (dbProject != null) {
-			indexOntology(dbProject.getKnowledgeBase(), ob);
+			createIndex(dbProject.getKnowledgeBase(), ob);
 			dbProject.dispose();
 		}
 	}
 
-	private void indexOntology(KnowledgeBase kb, OntologyBean ob) {
+	/**
+	 * Creates a Lucene index for a given ontology version. The ontology record
+	 * must exist.
+	 * 
+	 * @param ob -
+	 *            populated ontology bean.
+	 */
+	@SuppressWarnings("unchecked")
+	public void indexOntology(OntologyBean ob) {
+		createIndex(getKnowledgeBase(ob), ob);
+	}
+
+	private void createIndex(KnowledgeBase kb, OntologyBean ob) {
 		QueryApi api = new QueryApi(kb);
 		setIndexConfiguration(kb, api, ob);
 		api.index();

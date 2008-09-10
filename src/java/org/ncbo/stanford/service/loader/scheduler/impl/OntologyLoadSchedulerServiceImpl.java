@@ -148,6 +148,21 @@ public class OntologyLoadSchedulerServiceImpl implements
 	}
 
 	/**
+	 * Create a Lucene Index for a given ontology
+	 * 
+	 * @param ontologyVersionId
+	 * @throws Exception
+	 */
+	public void indexOntology(String ontologyVersionId) throws Exception {
+		VNcboOntology ontology = ncboOntologyVersionDAO
+				.findOntologyVersion(Integer.parseInt(ontologyVersionId));
+		OntologyBean ontologyBean = new OntologyBean();
+		ontologyBean.populateFromEntity(ontology);
+
+		getLoadManager(ontologyBean).indexOntology(ontologyBean);
+	}
+
+	/**
 	 * Parse a single record from the ontology load queue
 	 * 
 	 * @param rec

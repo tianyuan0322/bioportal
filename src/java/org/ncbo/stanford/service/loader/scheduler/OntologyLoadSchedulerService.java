@@ -31,5 +31,18 @@ public interface OntologyLoadSchedulerService {
 	 */
 	public void parseOntologies(String startId, String endId);
 
+	/**
+	 * Returns error ids
+	 * 
+	 * @return
+	 */
 	public List<Integer> getErrorIdList();
+	
+	/**
+	 * Create a Lucene index for a given ontology
+	 * 
+	 * @param ontologyVersionId
+	 * @throws Exception
+	 */
+	public void indexOntology(String ontologyVersionId) throws Exception;
 }

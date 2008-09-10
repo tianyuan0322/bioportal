@@ -1,16 +1,24 @@
 package org.ncbo.stanford.manager;
 
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.ncbo.stanford.bean.OntologyBean;
+import org.ncbo.stanford.domain.custom.entity.VNcboOntology;
 import org.ncbo.stanford.util.cache.expiration.system.ExpirationSystem;
 
 import edu.stanford.smi.protege.model.KnowledgeBase;
+import edu.stanford.smi.protege.model.Project;
 import edu.stanford.smi.protege.query.api.QueryApi;
 import edu.stanford.smi.protege.query.api.QueryConfiguration;
 import edu.stanford.smi.protege.query.indexer.Indexer;
 import edu.stanford.smi.protege.query.indexer.StdIndexer;
+import edu.stanford.smi.protege.storage.database.DatabaseKnowledgeBaseFactory;
+import edu.stanford.smi.protegex.owl.database.OWLDatabaseKnowledgeBaseFactory;
 
 /**
  * Abstract class to incorporate functionality common between Protege loader and
@@ -20,6 +28,9 @@ import edu.stanford.smi.protege.query.indexer.StdIndexer;
  * 
  */
 public abstract class AbstractOntologyManagerProtege {
+
+	private static final Log log = LogFactory
+			.getLog(AbstractOntologyManagerProtege.class);
 
 	protected String protegeJdbcUrl;
 	protected String protegeJdbcDriver;
@@ -49,6 +60,69 @@ public abstract class AbstractOntologyManagerProtege {
 		config.setIndexers(indexers);
 
 		api.install(config);
+	}
+
+	/**
+	 * Returns a singleton KnowledgeBase instance for given ontology.
+	 * Assumes that the OntologyBean object is populated.
+	 */
+	protected KnowledgeBase getKnowledgeBase(OntologyBean ob) {
+		KnowledgeBase kb = (KnowledgeBase) protegeKnowledgeBases
+				.get(ob.getId());
+
+		if (kb == null) {
+			kb = createKnowledgeBaseInstance(ob);
+			protegeKnowledgeBases.put(ob.getId(), kb);
+		}
+
+		return kb;
+	}
+	
+	/**
+	 * Returns a singleton KnowledgeBase instance for given ontologyVersion.
+	 */
+	protected KnowledgeBase getKnowledgeBase(VNcboOntology ontologyVersion) {
+		KnowledgeBase kb = (KnowledgeBase) protegeKnowledgeBases
+				.get(ontologyVersion.getId());
+
+		if (kb == null) {
+			OntologyBean ob = new OntologyBean();
+			ob.populateFromEntity(ontologyVersion);
+			kb = createKnowledgeBaseInstance(ob);
+
+			protegeKnowledgeBases.put(ontologyVersion.getId(), kb);
+		}
+
+		return kb;
+	}
+
+	/**
+	 * Gets the Protege ontology associated with the specified ontology id.
+	 */
+	@SuppressWarnings("unchecked")
+	private KnowledgeBase createKnowledgeBaseInstance(OntologyBean ob) {
+		DatabaseKnowledgeBaseFactory factory = null;
+
+		if (ob.getFormat().contains("OWL")) {
+			factory = new OWLDatabaseKnowledgeBaseFactory();
+		} else {
+			factory = new DatabaseKnowledgeBaseFactory();
+		}
+
+		List errors = new ArrayList();
+		Project prj = Project.createBuildProject(factory, errors);
+		DatabaseKnowledgeBaseFactory.setSources(prj.getSources(),
+				protegeJdbcDriver, protegeJdbcUrl, getTableName(ob.getId()),
+				protegeJdbcUsername, protegeJdbcPassword);
+		prj.createDomainKnowledgeBase(factory, errors, true);
+		KnowledgeBase kb = prj.getKnowledgeBase();
+
+		QueryApi api = new QueryApi(kb);
+		setIndexConfiguration(kb, api, ob);
+
+		log.debug("Created new knowledgebase: " + kb.getName());
+
+		return prj.getKnowledgeBase();
 	}
 
 	/**

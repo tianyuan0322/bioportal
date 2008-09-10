@@ -73,15 +73,14 @@ public class OntologyLoadManagerLexGridImpl extends
 	 *            the ontology id for the specified ontology file.
 	 * @param ontologyUri
 	 *            the uri of the ontology to be loaded.
-	 * @param ontology_bean
+	 * @param ob
 	 *            the ontology_bean that contains the metadata information of
 	 *            the ontology to be loaded.
 	 * 
 	 * @exception Exception
 	 *                catch all for all other ontology file load errors.
 	 */
-	public void loadOntology(URI ontologyUri, OntologyBean ontology_bean)
-			throws Exception {
+	public void loadOntology(URI ontologyUri, OntologyBean ob) throws Exception {
 		boolean stopOnErrors = false;
 		boolean async = false;
 		URI source = ontologyUri;
@@ -102,43 +101,42 @@ public class OntologyLoadManagerLexGridImpl extends
 		LexBIGServiceManager lbsm = lbs.getServiceManager(null);
 
 		// remove existing scheme if it exists before parsing...
-		cleanup(ontology_bean);
+		cleanup(ob);
 
 		Loader loader = null;
-		CodingSchemeManifest csm = createCodingSchemeManifest(ontology_bean);
+		CodingSchemeManifest csm = createCodingSchemeManifest(ob);
 
 		// Load OBO
-		if (ontology_bean.getFormat().equalsIgnoreCase(
-				ApplicationConstants.FORMAT_OBO)) {
+		if (ob.getFormat().equalsIgnoreCase(ApplicationConstants.FORMAT_OBO)) {
 			loader = lbsm
 					.getLoader(org.LexGrid.LexBIG.Impl.loaders.OBOLoaderImpl.name);
 			loader.setCodingSchemeManifest(csm);
 			((OBO_Loader) loader).load(source, null, stopOnErrors, async);
 			// Load UMLS
-		} else if (ontology_bean.getFormat().equalsIgnoreCase(
+		} else if (ob.getFormat().equalsIgnoreCase(
 				ApplicationConstants.FORMAT_UMLS_RRF)) {
 			loader = lbsm
 					.getLoader(org.LexGrid.LexBIG.Impl.loaders.UMLSLoaderImpl.name);
 			LocalNameList lnl = getLocalNameListFromTargetTerminologies();
 			((UMLS_Loader) loader).load(source, lnl, stopOnErrors, async);
 			// Load LEXGRID XML
-		} else if (ontology_bean.getFormat().equalsIgnoreCase(
+		} else if (ob.getFormat().equalsIgnoreCase(
 				ApplicationConstants.FORMAT_LEXGRID_XML)) {
 			loader = lbsm
 					.getLoader(org.LexGrid.LexBIG.Impl.loaders.LexGridLoaderImpl.name);
 			((LexGrid_Loader) loader).load(source, stopOnErrors, async);
 			// Load OWL
-		} else if (ontology_bean.getFormat().equalsIgnoreCase(
+		} else if (ob.getFormat().equalsIgnoreCase(
 				ApplicationConstants.FORMAT_OWL_DL)
-				|| ontology_bean.getFormat().equalsIgnoreCase(
+				|| ob.getFormat().equalsIgnoreCase(
 						ApplicationConstants.FORMAT_OWL_FULL)) {
 			loader = lbsm
 					.getLoader(org.LexGrid.LexBIG.Impl.loaders.OWLLoaderImpl.name);
 			loader.setCodingSchemeManifest(csm);
 
 			// Load only NCI Thesaurus for now.
-			if (ontology_bean.getFilePath() != null
-					&& ontology_bean.getFilePath().indexOf("Thesaurus") >= 0) {
+			if (ob.getFilePath() != null
+					&& ob.getFilePath().indexOf("Thesaurus") >= 0) {
 				((OWL_Loader) loader).loadNCI(source, null, false,
 						stopOnErrors, async);
 			} else {
@@ -149,7 +147,7 @@ public class OntologyLoadManagerLexGridImpl extends
 		// No Loader could be found for the format
 		if (loader == null) {
 			String error_msg = "No LexBIG loader could be found to load the ontology format '"
-					+ ontology_bean.getFormat() + "'";
+					+ ob.getFormat() + "'";
 			log.error(error_msg);
 			throw new Exception(error_msg);
 		}
@@ -173,7 +171,7 @@ public class OntologyLoadManagerLexGridImpl extends
 			// Update the NCBO Metadata table with the unique LexGrid url and
 			// version for the ontology
 			NcboOntologyVersionMetadata ncboMetadata = ncboOntologyVersionDAO
-					.findOntologyMetadataById(ontology_bean.getId());
+					.findOntologyMetadataById(ob.getId());
 
 			if (ncboMetadata != null) {
 				String urnAndVersion = urn + "|" + version;
@@ -185,10 +183,10 @@ public class OntologyLoadManagerLexGridImpl extends
 						ncboMetadata);
 				ncboOntologyVersionMetadataDAO.getSessionFactory()
 						.getCurrentSession().flush();
-				ontology_bean.setCodingScheme(urnAndVersion);
+				ob.setCodingScheme(urnAndVersion);
 			} else {
 				String message = "Could not update the codingScheme informtion into NcboOntologyMetadata for ontologyversionid="
-						+ ontology_bean.getId();
+						+ ob.getId();
 				log.warn(message);
 			}
 
@@ -207,6 +205,9 @@ public class OntologyLoadManagerLexGridImpl extends
 				throw new Exception(error_message);
 			}
 		}
+	}
+
+	public void indexOntology(OntologyBean ob) {
 	}
 
 	/**

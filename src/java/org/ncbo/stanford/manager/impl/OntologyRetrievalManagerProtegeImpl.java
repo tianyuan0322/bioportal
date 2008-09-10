@@ -9,7 +9,6 @@ import java.util.List;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.ncbo.stanford.bean.OntologyBean;
 import org.ncbo.stanford.bean.concept.ClassBean;
 import org.ncbo.stanford.bean.search.SearchResultBean;
 import org.ncbo.stanford.domain.custom.entity.VNcboOntology;
@@ -22,12 +21,8 @@ import edu.stanford.smi.protege.model.Frame;
 import edu.stanford.smi.protege.model.Instance;
 import edu.stanford.smi.protege.model.KnowledgeBase;
 import edu.stanford.smi.protege.model.ModelUtilities;
-import edu.stanford.smi.protege.model.Project;
 import edu.stanford.smi.protege.model.Slot;
-import edu.stanford.smi.protege.query.api.QueryApi;
 import edu.stanford.smi.protege.query.querytypes.LuceneOwnSlotValueQuery;
-import edu.stanford.smi.protege.storage.database.DatabaseKnowledgeBaseFactory;
-import edu.stanford.smi.protegex.owl.database.OWLDatabaseKnowledgeBaseFactory;
 import edu.stanford.smi.protegex.owl.model.NamespaceUtil;
 import edu.stanford.smi.protegex.owl.model.OWLModel;
 import edu.stanford.smi.protegex.owl.model.OWLNamedClass;
@@ -122,7 +117,6 @@ public class OntologyRetrievalManagerProtegeImpl extends
 			Collection<Frame> frames = new ArrayList<Frame>();
 
 			if (kb instanceof OWLModel) {
-
 				Collection<Frame> allFrames = kb
 						.executeQuery(new LuceneOwnSlotValueQuery(kb
 								.getNameSlot(), "*" + query));
@@ -267,52 +261,6 @@ public class OntologyRetrievalManagerProtegeImpl extends
 	//
 	// Private methods
 	//
-
-	/**
-	 * Gets the Protege ontology associated with the specified ontology id.
-	 */
-	private KnowledgeBase createKnowledgeBaseInstance(OntologyBean ob) {
-		DatabaseKnowledgeBaseFactory factory = null;
-
-		if (ob.getFormat().contains("OWL")) {
-			factory = new OWLDatabaseKnowledgeBaseFactory();
-		} else {
-			factory = new DatabaseKnowledgeBaseFactory();
-		}
-
-		List errors = new ArrayList();
-		Project prj = Project.createBuildProject(factory, errors);
-		DatabaseKnowledgeBaseFactory.setSources(prj.getSources(),
-				protegeJdbcDriver, protegeJdbcUrl, getTableName(ob.getId()),
-				protegeJdbcUsername, protegeJdbcPassword);
-		prj.createDomainKnowledgeBase(factory, errors, true);
-		KnowledgeBase kb = prj.getKnowledgeBase();
-
-		QueryApi api = new QueryApi(kb);
-		setIndexConfiguration(kb, api, ob);
-
-		log.debug("Created new knowledgebase: " + kb.getName());
-
-		return prj.getKnowledgeBase();
-	}
-
-	/**
-	 * Returns a singleton KnowledgeBase instance for given ontologyVersion.
-	 */
-	private KnowledgeBase getKnowledgeBase(VNcboOntology ontologyVersion) {
-		KnowledgeBase kb = (KnowledgeBase) protegeKnowledgeBases
-				.get(ontologyVersion.getId());
-
-		if (kb == null) {
-			OntologyBean ob = new OntologyBean();
-			ob.populateFromEntity(ontologyVersion);
-			kb = createKnowledgeBaseInstance(ob);
-
-			protegeKnowledgeBases.put(ontologyVersion.getId(), kb);
-		}
-
-		return kb;
-	}
 
 	// This is to remove the URI reference that is used by protege for IDs
 	private String getId(Cls node) {

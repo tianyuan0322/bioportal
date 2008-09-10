@@ -17,9 +17,16 @@ public interface OntologyLoadManager {
 	 * Load an ontology using the vendor API
 	 * 
 	 * @param ontologyUri
-	 * @param ontologyBean
+	 * @param ob
 	 * @throws Exception
 	 */
-	public void loadOntology(URI ontologyUri, OntologyBean ontologyBean)
+	public void loadOntology(URI ontologyUri, OntologyBean ob)
 			throws Exception;
+
+	/**
+	 * Create a Lucene Index for an ontology using the vendor API
+	 * 
+	 * @param ob
+	 */
+	public void indexOntology(OntologyBean ob);
 }
