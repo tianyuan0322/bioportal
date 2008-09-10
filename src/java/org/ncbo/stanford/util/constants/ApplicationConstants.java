@@ -44,6 +44,7 @@ public interface ApplicationConstants {
 	/**
 	 * Ontology formats
 	 */
+	public static final String FORMAT_OWL = "OWL";
 	public static final String FORMAT_OWL_DL = "OWL-DL";
 	public static final String FORMAT_OWL_FULL = "OWL-FULL";
 	public static final String FORMAT_OWL_LITE = "OWL-LITE";
