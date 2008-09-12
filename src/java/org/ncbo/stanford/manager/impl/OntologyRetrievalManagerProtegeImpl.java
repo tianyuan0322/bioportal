@@ -139,7 +139,7 @@ public class OntologyRetrievalManagerProtegeImpl extends
 			for (Frame frame : frames) {
 				if (frame instanceof Cls) {
 					Cls cls = (Cls) frame;
-					srb.getNames().add(createLightBean(cls));
+					srb.addName(createLightBean(cls));
 				}
 			}
 
@@ -181,7 +181,7 @@ public class OntologyRetrievalManagerProtegeImpl extends
 			for (Frame frame : frames) {
 				if (frame instanceof Cls) {
 					Cls cls = (Cls) frame;
-					srb.getNames().add(createLightBean(cls));
+					srb.addName(createLightBean(cls));
 				}
 			}
 
@@ -215,7 +215,7 @@ public class OntologyRetrievalManagerProtegeImpl extends
 				if (frame instanceof Cls && frame.isVisible()
 						&& !frame.isSystem()) {
 					Cls cls = (Cls) frame;
-					srb.getNames().add(createLightBean(cls));
+					srb.addName(createLightBean(cls));
 				}
 			}
 
@@ -244,7 +244,7 @@ public class OntologyRetrievalManagerProtegeImpl extends
 				if (frame instanceof Cls && frame.isVisible()
 						&& !frame.isSystem()) {
 					Cls cls = (Cls) frame;
-					srb.getProperties().add(createLightBean(cls));
+					srb.addProperty(createLightBean(cls));
 				}
 			}
 
