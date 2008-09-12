@@ -28,8 +28,7 @@ import org.springframework.transaction.annotation.Transactional;
 public class ConceptServiceImpl implements ConceptService {
 
 	private static final Log log = LogFactory.getLog(ConceptServiceImpl.class);
-
-	private static int MAX_RESULTS = 100;
+	private static int MAX_RESULTS_PER_ONTOLOGY = 50;
 
 	private CustomNcboOntologyVersionDAO ncboOntologyVersionDAO;
 	private Map<String, String> ontologyFormatHandlerMap = new HashMap<String, String>();
@@ -91,8 +90,10 @@ public class ConceptServiceImpl implements ConceptService {
 		for (String formatHandler : formatLists.keySet()) {
 			OntologyRetrievalManager manager = ontologyRetrievalHandlerMap
 					.get(formatHandler);
-			searchResults.addAll(manager.findConceptNameExact(formatLists
-					.get(formatHandler), query, true, MAX_RESULTS));
+			searchResults
+					.addAll(manager.findConceptNameExact(formatLists
+							.get(formatHandler), query, true,
+							MAX_RESULTS_PER_ONTOLOGY));
 		}
 
 		return searchResults;
@@ -115,8 +116,10 @@ public class ConceptServiceImpl implements ConceptService {
 		for (String formatHandler : formatLists.keySet()) {
 			OntologyRetrievalManager manager = ontologyRetrievalHandlerMap
 					.get(formatHandler);
-			searchResults.addAll(manager.findConceptNameStartsWith(formatLists
-					.get(formatHandler), query, true, MAX_RESULTS));
+			searchResults
+					.addAll(manager.findConceptNameStartsWith(formatLists
+							.get(formatHandler), query, true,
+							MAX_RESULTS_PER_ONTOLOGY));
 		}
 
 		return searchResults;
@@ -140,7 +143,7 @@ public class ConceptServiceImpl implements ConceptService {
 			OntologyRetrievalManager manager = ontologyRetrievalHandlerMap
 					.get(formatHandler);
 			searchResults.addAll(manager.findConceptNameContains(formatLists
-					.get(formatHandler), query, true, MAX_RESULTS)
+					.get(formatHandler), query, true, MAX_RESULTS_PER_ONTOLOGY)
 
 			);
 		}
@@ -190,7 +193,8 @@ public class ConceptServiceImpl implements ConceptService {
 			OntologyRetrievalManager manager = ontologyRetrievalHandlerMap
 					.get(formatHandler);
 			searchResults.addAll(manager.findConceptPropertyContains(
-					formatLists.get(formatHandler), query, true, MAX_RESULTS));
+					formatLists.get(formatHandler), query, true,
+					MAX_RESULTS_PER_ONTOLOGY));
 		}
 
 		return searchResults;
