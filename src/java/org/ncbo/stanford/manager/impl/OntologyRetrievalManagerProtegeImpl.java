@@ -6,6 +6,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Set;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -136,11 +137,19 @@ public class OntologyRetrievalManagerProtegeImpl extends
 						query);
 			}
 
+			int i = 0;
+
 			for (Frame frame : frames) {
+				if (i >= maxToReturn) {
+					break;
+				}
+
 				if (frame instanceof Cls) {
 					Cls cls = (Cls) frame;
 					srb.addName(createLightBean(cls));
 				}
+
+				i++;
 			}
 
 			results.add(srb);
@@ -178,11 +187,19 @@ public class OntologyRetrievalManagerProtegeImpl extends
 						.getNameSlot(), query + "*")));
 			}
 
+			int i = 0;
+
 			for (Frame frame : frames) {
+				if (i >= maxToReturn) {
+					break;
+				}
+
 				if (frame instanceof Cls) {
 					Cls cls = (Cls) frame;
 					srb.addName(createLightBean(cls));
 				}
+
+				i++;
 			}
 
 			results.add(srb);
@@ -200,7 +217,6 @@ public class OntologyRetrievalManagerProtegeImpl extends
 			SearchResultBean srb = new SearchResultBean();
 			srb.setOntologyVersionId(ontologyVersion.getId());
 			KnowledgeBase kb = getKnowledgeBase(ontologyVersion);
-			Collection<Frame> frames = new HashSet<Frame>();
 
 			// TODO: This should use the browser slot (when there's a browser
 			// slot, don't use the name slot).
@@ -208,15 +224,22 @@ public class OntologyRetrievalManagerProtegeImpl extends
 			// (At load time, we should store the browser slot as a metadata
 			// attribute).
 
-			frames.addAll(kb.executeQuery(new LuceneOwnSlotValueQuery(kb
-					.getNameSlot(), "*" + query + "*")));
+			Set<Frame> frames = kb.executeQuery(new LuceneOwnSlotValueQuery(kb
+					.getNameSlot(), "*" + query + "*"));
+			int i = 0;
 
 			for (Frame frame : frames) {
+				if (i >= maxToReturn) {
+					break;
+				}
+
 				if (frame instanceof Cls && frame.isVisible()
 						&& !frame.isSystem()) {
 					Cls cls = (Cls) frame;
 					srb.addName(createLightBean(cls));
 				}
+
+				i++;
 			}
 
 			results.add(srb);
@@ -235,17 +258,22 @@ public class OntologyRetrievalManagerProtegeImpl extends
 			srb.setOntologyVersionId(ontologyVersion.getId());
 
 			KnowledgeBase kb = getKnowledgeBase(ontologyVersion);
-
-			Collection<Frame> frames = new HashSet<Frame>();
-			frames.addAll(kb.executeQuery(new LuceneOwnSlotValueQuery(null, "*"
-					+ query + "*")));
+			Set<Frame> frames = kb.executeQuery(new LuceneOwnSlotValueQuery(
+					null, "*" + query + "*"));
+			int i = 0;
 
 			for (Frame frame : frames) {
+				if (i >= maxToReturn) {
+					break;
+				}
+
 				if (frame instanceof Cls && frame.isVisible()
 						&& !frame.isSystem()) {
 					Cls cls = (Cls) frame;
 					srb.addProperty(createLightBean(cls));
 				}
+
+				i++;
 			}
 
 			results.add(srb);
