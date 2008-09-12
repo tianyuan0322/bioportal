@@ -224,7 +224,7 @@ public class OntologyRetrievalManagerProtegeImpl extends
 			// (At load time, we should store the browser slot as a metadata
 			// attribute).
 
-			Set<Frame> frames = kb.executeQuery(new LuceneOwnSlotValueQuery(kb
+			Collection<Frame> frames = kb.executeQuery(new LuceneOwnSlotValueQuery(kb
 					.getNameSlot(), "*" + query + "*"));
 			int i = 0;
 
@@ -258,7 +258,7 @@ public class OntologyRetrievalManagerProtegeImpl extends
 			srb.setOntologyVersionId(ontologyVersion.getId());
 
 			KnowledgeBase kb = getKnowledgeBase(ontologyVersion);
-			Set<Frame> frames = kb.executeQuery(new LuceneOwnSlotValueQuery(
+			Collection<Frame> frames = kb.executeQuery(new LuceneOwnSlotValueQuery(
 					null, "*" + query + "*"));
 			int i = 0;
 
