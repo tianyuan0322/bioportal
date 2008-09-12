@@ -53,4 +53,39 @@ public class SearchResultBean {
 		this.ontologyVersionId = ontologyVersionId;
 	}
 
+	/**
+	 * @param arg0
+	 * @return
+	 * @see java.util.List#add(java.lang.Object)
+	 */
+	public boolean addDefinition(ClassBean arg0) {
+		return definitions.add(arg0);
+	}
+
+	/**
+	 * @param arg0
+	 * @return
+	 * @see java.util.List#add(java.lang.Object)
+	 */
+	public boolean addMetadata(String arg0) {
+		return metadata.add(arg0);
+	}
+
+	/**
+	 * @param arg0
+	 * @return
+	 * @see java.util.List#add(java.lang.Object)
+	 */
+	public boolean addName(ClassBean arg0) {
+		return names.add(arg0);
+	}
+
+	/**
+	 * @param arg0
+	 * @return
+	 * @see java.util.List#add(java.lang.Object)
+	 */
+	public boolean addProperty(ClassBean arg0) {
+		return properties.add(arg0);
+	}
 }
