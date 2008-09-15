@@ -1,5 +1,6 @@
 package org.ncbo.stanford.manager.impl;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -7,6 +8,7 @@ import org.ncbo.stanford.AbstractBioPortalTest;
 import org.ncbo.stanford.bean.concept.ClassBean;
 import org.ncbo.stanford.bean.search.SearchResultBean;
 import org.ncbo.stanford.domain.custom.entity.VNcboOntology;
+import org.ncbo.stanford.service.concept.ConceptService;
 
 /**
  * Ensure that the OntologyLoaderLexGridImplTest testcase which is used to load
@@ -176,19 +178,21 @@ public class OntologyRetrievalManagerLexGridImplTest extends AbstractBioPortalTe
         assertTrue(pathBean != null);
     }
 
-    /*
-     * public void testOBOFindPathToRootMouse() throws Exception {
-     * System.out.println("testOBOFindPathToRoot()"); retrievalManager =
-     * getRetrievalManagerLexGrid();
-     * 
-     * VNcboOntology ncboOntology =
-     * retrievalManager.getLatestNcboOntology(1045); String conceptID =
-     * "MPATH:360"; ClassBean pathBean =
-     * retrievalManager.findPathToRoot(ncboOntology, conceptID, true);
-     * System.out.println("Paths to root for concept " + conceptID + " of cell
-     * ontology are :"); System.out.println(pathBean); System.out.println("\n");
-     * assertTrue(pathBean != null); }
-     */
+    public void testConceptCount() throws Exception {
+        System.out.println("testConceptCount");
+        retrievalManager = getRetrievalManagerLexGrid();
+
+        VNcboOntology ncboOntology1 = retrievalManager.getLatestNcboOntology(TEST_OBO_CELL_DISPLAY_LABEL);
+        VNcboOntology ncboOntology2 = retrievalManager.getLatestNcboOntology(TEST_OBO_INFECTIOUS_DISEASE_DISPLAY_LABEL);
+        List<VNcboOntology> ontologyVersions = (List<VNcboOntology>) Arrays.asList(ncboOntology1, ncboOntology2);
+        
+        
+        int count= retrievalManager.findConceptCount(ontologyVersions);
+        System.out.println("Total number of concepts= " + count);
+        System.out.println("\n");
+        assertTrue(count > 0);
+    }
+    
 
     public void testOBOFindPathFromRootIncludingChildrenCell() throws Exception {
         System.out.println("testOBOFindPathFromRootIncludingChildrenCell()");
@@ -216,18 +220,41 @@ public class OntologyRetrievalManagerLexGridImplTest extends AbstractBioPortalTe
         assertTrue(pathBean != null);
     }
 
+    public void testSearchConceptUsingConceptService() throws Exception {
+        System.out.println("testSearchConceptUsingConceptService()");
+        retrievalManager = getRetrievalManagerLexGrid();
+        VNcboOntology ncboOntology = retrievalManager.getLatestNcboOntology(TEST_OBO_CELL_DISPLAY_LABEL);
+        ConceptService service = (ConceptService) applicationContext.getBean(
+                "conceptService", ConceptService.class);
+
+        String query = "hematopoietic";
+        List<Integer> ids = new ArrayList<Integer>();
+        ids.add(new Integer(ncboOntology.getId()));
+        List<SearchResultBean> searchResultBeans = service.findConceptNameContains(ids, query);
+
+        System.out.println("Results of searching for '"+query+"' in the cell ontology is :");
+        for (SearchResultBean srb : searchResultBeans) {
+            List<ClassBean> beans = srb.getNames();
+            for (ClassBean bean : beans)
+                System.out.println(bean);
+        }
+
+        System.out.println("\n");
+        assertTrue(searchResultBeans.isEmpty() != true);
+    }
+    
     public void testFindConceptNameContainsCell() throws Exception {
         System.out.println("testFindConceptNameContainsCell()");
         retrievalManager = getRetrievalManagerLexGrid();
         VNcboOntology ncboOntology = retrievalManager.getLatestNcboOntology(TEST_OBO_CELL_DISPLAY_LABEL);
         List<VNcboOntology> ontologyVersionIds = (List<VNcboOntology>) Arrays.asList(ncboOntology);
         //String query = "eukaryotic";
-        String query = "colony forming unit hematopoietic";
-        //String query = "hematopoietic";
+        //String query = "colony forming unit hematopoietic";
+        String query = "hematopoietic";
         List<SearchResultBean> searchResultBeans = retrievalManager.findConceptNameContains(ontologyVersionIds, query,
                 false, 100);
 
-        System.out.println("Results of searching for 'eukaryotic' in the cell ontology is :");
+        System.out.println("Results of searching for '"+query+"' in the cell ontology is :");
         for (SearchResultBean srb : searchResultBeans) {
             List<ClassBean> beans = srb.getNames();
             for (ClassBean bean : beans)
@@ -248,7 +275,7 @@ public class OntologyRetrievalManagerLexGridImplTest extends AbstractBioPortalTe
         List<SearchResultBean> searchResultBeans = retrievalManager.findConceptNameExact(ontologyVersionIds, query,
                 false, 100);
 
-        System.out.println("Results of searching for 'eukaryotic cell' in the cell ontology is :");
+        System.out.println("Results of searching for '"+query+"' in the cell ontology is :");
         for (SearchResultBean srb : searchResultBeans) {
             List<ClassBean> beans = srb.getNames();
             for (ClassBean bean : beans)
@@ -269,7 +296,7 @@ public class OntologyRetrievalManagerLexGridImplTest extends AbstractBioPortalTe
         List<SearchResultBean> searchResultBeans = retrievalManager.findConceptPropertyContains(ontologyVersionIds,
                 query, false, 100);
 
-        System.out.println("Results of searching for 'beta cell' in the cell ontology is :");
+        System.out.println("Results of searching for '"+query+"' in the cell ontology is :");
         for (SearchResultBean srb : searchResultBeans) {
             List<ClassBean> beans = srb.getProperties();
             for (ClassBean bean : beans)

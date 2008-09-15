@@ -223,14 +223,17 @@ public class OntologyRetrievalManagerLexGridImpl extends AbstractOntologyManager
 
         }
 
+        ClassBean thingBean = createThingClassBean(classBeans);
         if (includeChildren) {
             ResolvedConceptReferenceList rcrl = getHierarchyRootConcepts(schemeName, csvt);
             ArrayList<ClassBean> rootConceptList = createClassBeanArray(rcrl, true);
             ArrayList<ClassBean> mergedConceptList = mergeListsEliminatingDuplicates(rootConceptList, classBeans);
-            return createThingClassBean(mergedConceptList);
+            thingBean= createThingClassBean(mergedConceptList);
         }
 
-        return createThingClassBean(classBeans);
+       
+        ClassBean simpleSubclassThingBean = createSimpleSubClassOnlyClassBean(thingBean);
+        return simpleSubclassThingBean;
     }
 
     /**
@@ -311,24 +314,23 @@ public class OntologyRetrievalManagerLexGridImpl extends AbstractOntologyManager
         }
         return results;
     }
-    
-    
+
     public boolean refresh() throws Exception {
-        WriteLockManager.instance().checkForRegistryUpdates();       
+        WriteLockManager.instance().checkForRegistryUpdates();
         return true;
     }
-    
+
     public int findConceptCount(List<VNcboOntology> ontologyVersions) throws Exception {
-        int count=0;
+        int count = 0;
 
         for (VNcboOntology ontologyVersion : ontologyVersions) {
             String schemeName = getLexGridCodingSchemeName(ontologyVersion);
-            CodingSchemeVersionOrTag csvt = getLexGridCodingSchemeVersion(ontologyVersion);            
+            CodingSchemeVersionOrTag csvt = getLexGridCodingSchemeVersion(ontologyVersion);
             CodingScheme codingScheme = lbs.resolveCodingScheme(schemeName, csvt);
-            count+= codingScheme.getApproxNumConcepts();
+            count += codingScheme.getApproxNumConcepts();
         }
         return count;
-    }    
+    }
 
     /*
      * (non-Javadoc)
@@ -693,7 +695,7 @@ public class OntologyRetrievalManagerLexGridImpl extends AbstractOntologyManager
                 matchAlgorithm = "RegExp";
             }
 
-            String output_str= "Using Algorithm= " + matchAlgorithm + " Search string= " + search_string;
+            String output_str = "Using Algorithm= " + matchAlgorithm + " Search string= " + search_string;
             System.out.println(output_str);
             log.debug(output_str);
             nodes = nodes.restrictToMatchingDesignations(search_string, SearchDesignationOption.ALL, matchAlgorithm,
@@ -1363,6 +1365,35 @@ public class OntologyRetrievalManagerLexGridImpl extends AbstractOntologyManager
             }
         }
 
+    }
+
+    private ClassBean createSimpleSubClassOnlyClassBean(ClassBean classBean) {
+        ClassBean cb = new ClassBean();
+        cb.setId(classBean.getId());
+        cb.setLabel(classBean.getLabel());
+        Integer childCount = (Integer) classBean.getRelations().get(ApplicationConstants.CHILD_COUNT);
+        if (childCount != null) {
+            cb.addRelation(ApplicationConstants.CHILD_COUNT, childCount);
+        }
+
+        if (classBean.getRelations().containsKey(ApplicationConstants.SUB_CLASS)) {
+            Object subclass_obj = classBean.getRelations().get(ApplicationConstants.SUB_CLASS);
+            if (subclass_obj != null && subclass_obj instanceof List) {
+                List<ClassBean> subclasses = (List<ClassBean>) subclass_obj;
+                List<ClassBean> newSubClasses = new ArrayList<ClassBean>();
+                for (ClassBean subclass : subclasses) {
+                    ClassBean newSubClass = createSimpleSubClassOnlyClassBean(subclass);
+                    newSubClasses.add(newSubClass);
+                }
+                cb.addRelation(ApplicationConstants.SUB_CLASS, newSubClasses);
+            } else if (subclass_obj != null && subclass_obj instanceof ClassBean) {
+                ClassBean subclass= (ClassBean) subclass_obj; 
+                ClassBean newSubClass = createSimpleSubClassOnlyClassBean(subclass);
+                cb.addRelation(ApplicationConstants.SUB_CLASS, newSubClass);
+            }
+        }
+
+        return cb;
     }
 
 }
