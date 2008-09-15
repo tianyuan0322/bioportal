@@ -225,7 +225,7 @@ public class OntologyRetrievalManagerProtegeImpl extends
 			// attribute).
 
 			Collection<Frame> frames = kb.executeQuery(new LuceneOwnSlotValueQuery(kb
-					.getNameSlot(), "*" + query + "*"));
+					.getNameSlot(), query));
 			int i = 0;
 
 			for (Frame frame : frames) {
