@@ -102,7 +102,7 @@ public class OntologyRetrievalManagerProtegeImpl extends
 
 	public ArrayList<ClassBean> findChildren(String id,
 			Integer ontologyVersionId) {
-		return new ArrayList();
+		throw new UnsupportedOperationException();
 	}
 
 	public List<SearchResultBean> findConceptNameExact(
