@@ -41,36 +41,25 @@ public class ConceptServiceImpl implements ConceptService {
 			throws Exception {
 		VNcboOntology ontology = ncboOntologyVersionDAO
 				.findOntologyVersion(ontologyVersionId);
-		String formatHandler = ontologyFormatHandlerMap.get(ontology
-				.getFormat());
-		OntologyRetrievalManager manager = ontologyRetrievalHandlerMap
-				.get(formatHandler);
 
-		return manager.findRootConcept(ontology);
+		return getRetrievalManager(ontology).findRootConcept(ontology);
 	}
 
 	public ClassBean findConcept(Integer ontologyVersionId, String conceptId)
 			throws Exception {
 		VNcboOntology ontology = ncboOntologyVersionDAO
 				.findOntologyVersion(ontologyVersionId);
-		String formatHandler = ontologyFormatHandlerMap.get(ontology
-				.getFormat());
-		OntologyRetrievalManager manager = ontologyRetrievalHandlerMap
-				.get(formatHandler);
 
-		return manager.findConcept(ontology, conceptId);
+		return getRetrievalManager(ontology).findConcept(ontology, conceptId);
 	}
 
 	public ClassBean findPathFromRoot(Integer ontologyVersionId,
 			String conceptId, boolean light) throws Exception {
 		VNcboOntology ontology = ncboOntologyVersionDAO
 				.findOntologyVersion(ontologyVersionId);
-		String formatHandler = ontologyFormatHandlerMap.get(ontology
-				.getFormat());
-		OntologyRetrievalManager manager = ontologyRetrievalHandlerMap
-				.get(formatHandler);
 
-		return manager.findPathFromRoot(ontology, conceptId, light);
+		return getRetrievalManager(ontology).findPathFromRoot(ontology,
+				conceptId, light);
 	}
 
 	public List<SearchResultBean> findConceptNameExact(
@@ -218,6 +207,12 @@ public class ConceptServiceImpl implements ConceptService {
 		}
 
 		return formatLists;
+	}
+
+	private OntologyRetrievalManager getRetrievalManager(VNcboOntology ontology) {
+		String formatHandler = ontologyFormatHandlerMap.get(ontology
+				.getFormat());
+		return ontologyRetrievalHandlerMap.get(formatHandler);
 	}
 
 	//
