@@ -28,7 +28,7 @@ import org.springframework.transaction.annotation.Transactional;
 public class ConceptServiceImpl implements ConceptService {
 
 	private static final Log log = LogFactory.getLog(ConceptServiceImpl.class);
-	private static int MAX_RESULTS_PER_ONTOLOGY = 50;
+	private static int MAX_RESULTS_PER_ONTOLOGY = 100;
 
 	private CustomNcboOntologyVersionDAO ncboOntologyVersionDAO;
 	private Map<String, String> ontologyFormatHandlerMap = new HashMap<String, String>();
