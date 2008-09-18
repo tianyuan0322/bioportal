@@ -42,7 +42,7 @@
 	</target>
 
 	<target name="clean">
-		<delete>
+		<delete failonerror="false">
 			<fileset dir="${classes.dir}">
 				<include name="**/*.class" />
 				<include name="**/*.properties" />
