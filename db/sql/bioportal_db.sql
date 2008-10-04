@@ -1,5 +1,5 @@
 /*
-SQLyog Enterprise - MySQL GUI v6.1
+SQLyog Enterprise - MySQL GUI v7.11 
 MySQL - 5.0.45-community-nt-log : Database - bioportal
 *********************************************************************
 */
@@ -8,12 +8,12 @@ MySQL - 5.0.45-community-nt-log : Database - bioportal
 
 /*!40101 SET SQL_MODE=''*/;
 
-create database if not exists `bioportal`;
-
-USE `bioportal`;
-
 /*!40014 SET @OLD_FOREIGN_KEY_CHECKS=@@FOREIGN_KEY_CHECKS, FOREIGN_KEY_CHECKS=0 */;
 /*!40101 SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='NO_AUTO_VALUE_ON_ZERO' */;
+
+CREATE DATABASE /*!32312 IF NOT EXISTS*/`bioportal` /*!40100 DEFAULT CHARACTER SET latin1 */;
+
+USE `bioportal`;
 
 /*Table structure for table `ncbo_admin_application` */
 
@@ -44,39 +44,6 @@ CREATE TABLE `ncbo_app_text` (
   KEY `FK_ncbo_app_text_datatype` (`datatype_code`),
   CONSTRAINT `FK_ncbo_app_text_datatype` FOREIGN KEY (`datatype_code`) REFERENCES `ncbo_l_app_text_datatype` (`datatype_code`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
-
-/*Trigger structure for table `ncbo_app_text` */
-
-DELIMITER $$
-
-/*!50003 DROP TRIGGER*//*!50032 IF EXISTS */ /*!50003 `trg_create_ncbo_app_text_revision_after_insert` */$$
-
-/*!50003 CREATE TRIGGER `trg_create_ncbo_app_text_revision_after_insert` AFTER INSERT ON `ncbo_app_text` FOR EACH ROW BEGIN
-	INSERT INTO ncbo_app_text_revision (
-		identifier, description, text_content, datatype_code, date_revised)
-	SELECT NEW.identifier, NEW.description, NEW.text_content, NEW.datatype_code, CURRENT_TIMESTAMP;
-END */$$
-
-
-/*!50003 DROP TRIGGER*//*!50032 IF EXISTS */ /*!50003 `trg_create_ncbo_app_text_revision_after_update` */$$
-
-/*!50003 CREATE TRIGGER `trg_create_ncbo_app_text_revision_after_update` AFTER UPDATE ON `ncbo_app_text` FOR EACH ROW BEGIN
-	DECLARE strNewTextIdent VARCHAR(128);
-	DECLARE strOldTextIdent VARCHAR(128);	
-	SELECT LOWER(NEW.identifier) INTO strNewTextIdent;
-	SELECT LOWER(OLD.identifier) INTO strOldTextIdent;
-	IF strNewTextIdent != strOldTextIdent THEN
-		UPDATE ncbo_app_text_revision
-		SET identifier = strNewTextIdent
-		WHERE LOWER(identifier) = strOldTextIdent;
-	END IF;
-	INSERT INTO ncbo_app_text_revision (
-		identifier, description, text_content, datatype_code, date_revised)
-	SELECT strNewTextIdent, NEW.description, NEW.text_content, NEW.datatype_code, CURRENT_TIMESTAMP;
-END */$$
-
-
-DELIMITER ;
 
 /*Table structure for table `ncbo_app_text_revision` */
 
@@ -270,6 +237,8 @@ CREATE TABLE `ncbo_ontology_version_metadata` (
   `coding_scheme` varchar(256) default NULL,
   `is_foundry` tinyint(1) NOT NULL,
   `target_terminologies` varchar(256) default NULL,
+  `synonym_slot` varchar(500) character set utf8 collate utf8_bin default NULL,
+  `preferred_name_slot` varchar(500) character set utf8 collate utf8_bin default NULL,
   PRIMARY KEY  (`id`),
   UNIQUE KEY `ontology_version_id` (`ontology_version_id`),
   KEY `ontology_id` (`ontology_version_id`),
@@ -308,46 +277,44 @@ CREATE TABLE `ncbo_user_role` (
   CONSTRAINT `ncbo_user_role_fk_new` FOREIGN KEY (`user_id`) REFERENCES `ncbo_user` (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=1000 DEFAULT CHARSET=latin1 CHECKSUM=1 DELAY_KEY_WRITE=1 ROW_FORMAT=DYNAMIC;
 
-/*Table structure for table `v_ncbo_ontology` */
+/* Trigger structure for table `ncbo_app_text` */
 
-DROP TABLE IF EXISTS `v_ncbo_ontology`;
+DELIMITER $$
 
-/*!50001 DROP VIEW IF EXISTS `v_ncbo_ontology` */;
-/*!50001 DROP TABLE IF EXISTS `v_ncbo_ontology` */;
+/*!50003 DROP TRIGGER*//*!50032 IF EXISTS */ /*!50003 `trg_create_ncbo_app_text_revision_after_insert` */$$
 
-/*!50001 CREATE TABLE `v_ncbo_ontology` (
-  `id` int(11) NOT NULL default '0',
-  `ontology_id` int(11) NOT NULL,
-  `user_id` int(11) NOT NULL,
-  `internal_version_number` int(11) NOT NULL,
-  `version_number` varchar(64) NOT NULL,
-  `version_status` varchar(64) default NULL,
-  `file_path` varchar(2048) default NULL,
-  `is_remote` tinyint(1) NOT NULL,
-  `is_reviewed` tinyint(1) NOT NULL default '0',
-  `status_id` int(11) NOT NULL,
-  `date_created` timestamp NOT NULL default '0000-00-00 00:00:00',
-  `date_released` datetime NOT NULL,
-  `obo_foundry_id` varchar(128) default NULL,
-  `is_manual` tinyint(1) NOT NULL default '0',
-  `display_label` varchar(128) NOT NULL,
-  `format` varchar(50) NOT NULL,
-  `contact_name` varchar(128) default NULL,
-  `contact_email` varchar(128) default NULL,
-  `homepage` varchar(2048) default NULL,
-  `documentation` varchar(2048) default NULL,
-  `publication` varchar(2048) default NULL,
-  `urn` varchar(512) default NULL,
-  `coding_scheme` varchar(256) default NULL,
-  `is_foundry` tinyint(1) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=latin1 */;
+/*!50003 CREATE */ /*!50017 DEFINER = 'root'@'localhost' */ /*!50003 TRIGGER `trg_create_ncbo_app_text_revision_after_insert` AFTER INSERT ON `ncbo_app_text` FOR EACH ROW BEGIN
+	INSERT INTO ncbo_app_text_revision (
+		identifier, description, text_content, datatype_code, date_revised)
+	SELECT NEW.identifier, NEW.description, NEW.text_content, NEW.datatype_code, CURRENT_TIMESTAMP;
+END */$$
 
-/*View structure for view v_ncbo_ontology */
 
-/*!50001 DROP TABLE IF EXISTS `v_ncbo_ontology` */;
-/*!50001 DROP VIEW IF EXISTS `v_ncbo_ontology` */;
+DELIMITER ;
 
-/*!50001 CREATE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` SQL SECURITY DEFINER VIEW `v_ncbo_ontology` AS select `ov`.`id` AS `id`,`ov`.`ontology_id` AS `ontology_id`,`ov`.`user_id` AS `user_id`,`ov`.`internal_version_number` AS `internal_version_number`,`ov`.`version_number` AS `version_number`,`ov`.`version_status` AS `version_status`,`ov`.`file_path` AS `file_path`,`ov`.`is_remote` AS `is_remote`,`ov`.`is_reviewed` AS `is_reviewed`,`ov`.`status_id` AS `status_id`,`ov`.`date_created` AS `date_created`,`ov`.`date_released` AS `date_released`,`o`.`obo_foundry_id` AS `obo_foundry_id`,`o`.`is_manual` AS `is_manual`,`ovm`.`display_label` AS `display_label`,`ovm`.`format` AS `format`,`ovm`.`contact_name` AS `contact_name`,`ovm`.`contact_email` AS `contact_email`,`ovm`.`homepage` AS `homepage`,`ovm`.`documentation` AS `documentation`,`ovm`.`publication` AS `publication`,`ovm`.`urn` AS `urn`,`ovm`.`coding_scheme` AS `coding_scheme`,`ovm`.`is_foundry` AS `is_foundry` from ((`ncbo_ontology` `o` join `ncbo_ontology_version` `ov` on((`o`.`id` = `ov`.`ontology_id`))) join `ncbo_ontology_version_metadata` `ovm` on((`ov`.`id` = `ovm`.`ontology_version_id`))) */;
+/* Trigger structure for table `ncbo_app_text` */
+
+DELIMITER $$
+
+/*!50003 DROP TRIGGER*//*!50032 IF EXISTS */ /*!50003 `trg_create_ncbo_app_text_revision_after_update` */$$
+
+/*!50003 CREATE */ /*!50017 DEFINER = 'root'@'localhost' */ /*!50003 TRIGGER `trg_create_ncbo_app_text_revision_after_update` AFTER UPDATE ON `ncbo_app_text` FOR EACH ROW BEGIN
+	DECLARE strNewTextIdent VARCHAR(128);
+	DECLARE strOldTextIdent VARCHAR(128);	
+	SELECT LOWER(NEW.identifier) INTO strNewTextIdent;
+	SELECT LOWER(OLD.identifier) INTO strOldTextIdent;
+	IF strNewTextIdent != strOldTextIdent THEN
+		UPDATE ncbo_app_text_revision
+		SET identifier = strNewTextIdent
+		WHERE LOWER(identifier) = strOldTextIdent;
+	END IF;
+	INSERT INTO ncbo_app_text_revision (
+		identifier, description, text_content, datatype_code, date_revised)
+	SELECT strNewTextIdent, NEW.description, NEW.text_content, NEW.datatype_code, CURRENT_TIMESTAMP;
+END */$$
+
+
+DELIMITER ;
 
 /* Procedure structure for procedure `sp_insert_app_text_record` */
 
@@ -566,6 +533,50 @@ BEGIN
 	SET p_strMessage := "SUCCESS"; 
 END */$$
 DELIMITER ;
+
+/*Table structure for table `v_ncbo_ontology` */
+
+DROP TABLE IF EXISTS `v_ncbo_ontology`;
+
+/*!50001 DROP VIEW IF EXISTS `v_ncbo_ontology` */;
+/*!50001 DROP TABLE IF EXISTS `v_ncbo_ontology` */;
+
+/*!50001 CREATE TABLE `v_ncbo_ontology` (
+  `id` int(11) NOT NULL default '0',
+  `ontology_id` int(11) NOT NULL,
+  `user_id` int(11) NOT NULL,
+  `internal_version_number` int(11) NOT NULL,
+  `version_number` varchar(64) NOT NULL,
+  `version_status` varchar(64) default NULL,
+  `file_path` varchar(2048) default NULL,
+  `is_remote` tinyint(1) NOT NULL,
+  `is_reviewed` tinyint(1) NOT NULL default '0',
+  `status_id` int(11) NOT NULL,
+  `date_created` timestamp NOT NULL default '0000-00-00 00:00:00',
+  `date_released` datetime NOT NULL,
+  `obo_foundry_id` varchar(128) default NULL,
+  `is_manual` tinyint(1) NOT NULL default '0',
+  `display_label` varchar(128) NOT NULL,
+  `format` varchar(50) NOT NULL,
+  `contact_name` varchar(128) default NULL,
+  `contact_email` varchar(128) default NULL,
+  `homepage` varchar(2048) default NULL,
+  `documentation` varchar(2048) default NULL,
+  `publication` varchar(2048) default NULL,
+  `urn` varchar(512) default NULL,
+  `coding_scheme` varchar(256) default NULL,
+  `target_terminologies` varchar(256) default NULL,
+  `is_foundry` tinyint(1) NOT NULL,
+  `synonym_slot` varchar(500) character set utf8 collate utf8_bin default NULL,
+  `preferred_name_slot` varchar(500) character set utf8 collate utf8_bin default NULL
+) ENGINE=InnoDB DEFAULT CHARSET=latin1 */;
+
+/*View structure for view v_ncbo_ontology */
+
+/*!50001 DROP TABLE IF EXISTS `v_ncbo_ontology` */;
+/*!50001 DROP VIEW IF EXISTS `v_ncbo_ontology` */;
+
+/*!50001 CREATE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` SQL SECURITY DEFINER VIEW `v_ncbo_ontology` AS select `ov`.`id` AS `id`,`ov`.`ontology_id` AS `ontology_id`,`ov`.`user_id` AS `user_id`,`ov`.`internal_version_number` AS `internal_version_number`,`ov`.`version_number` AS `version_number`,`ov`.`version_status` AS `version_status`,`ov`.`file_path` AS `file_path`,`ov`.`is_remote` AS `is_remote`,`ov`.`is_reviewed` AS `is_reviewed`,`ov`.`status_id` AS `status_id`,`ov`.`date_created` AS `date_created`,`ov`.`date_released` AS `date_released`,`o`.`obo_foundry_id` AS `obo_foundry_id`,`o`.`is_manual` AS `is_manual`,`ovm`.`display_label` AS `display_label`,`ovm`.`format` AS `format`,`ovm`.`contact_name` AS `contact_name`,`ovm`.`contact_email` AS `contact_email`,`ovm`.`homepage` AS `homepage`,`ovm`.`documentation` AS `documentation`,`ovm`.`publication` AS `publication`,`ovm`.`urn` AS `urn`,`ovm`.`coding_scheme` AS `coding_scheme`,`ovm`.`target_terminologies` AS `target_terminologies`,`ovm`.`is_foundry` AS `is_foundry`,`ovm`.`synonym_slot` AS `synonym_slot`,`ovm`.`preferred_name_slot` AS `preferred_name_slot` from ((`ncbo_ontology` `o` join `ncbo_ontology_version` `ov` on((`o`.`id` = `ov`.`ontology_id`))) join `ncbo_ontology_version_metadata` `ovm` on((`ov`.`id` = `ovm`.`ontology_version_id`))) */;
 
 /*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
 /*!40014 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS */;
