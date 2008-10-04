@@ -39,7 +39,10 @@ public class VNcboOntology {
 	private String publication;
 	private String urn;
 	private String codingScheme;
+	private String targetTerminologies;
 	private Byte isFoundry;
+	private String synonymSlot;
+	private String preferredNameSlot;
 
 	private List<String> filenames = new ArrayList<String>(0);
 	private List<Integer> categoryIds = new ArrayList<Integer>(0);
@@ -641,5 +644,50 @@ public class VNcboOntology {
 	 */
 	public void setIsManual(Byte isManual) {
 		this.isManual = isManual;
+	}
+
+	/**
+	 * @return the targetTerminologies
+	 */
+	public String getTargetTerminologies() {
+		return targetTerminologies;
+	}
+
+	/**
+	 * @param targetTerminologies
+	 *            the targetTerminologies to set
+	 */
+	public void setTargetTerminologies(String targetTerminologies) {
+		this.targetTerminologies = targetTerminologies;
+	}
+
+	/**
+	 * @return the synonymSlot
+	 */
+	public String getSynonymSlot() {
+		return synonymSlot;
+	}
+
+	/**
+	 * @param synonymSlot
+	 *            the synonymSlot to set
+	 */
+	public void setSynonymSlot(String synonymSlot) {
+		this.synonymSlot = synonymSlot;
+	}
+
+	/**
+	 * @return the preferredNameSlot
+	 */
+	public String getPreferredNameSlot() {
+		return preferredNameSlot;
+	}
+
+	/**
+	 * @param preferredNameSlot
+	 *            the preferredNameSlot to set
+	 */
+	public void setPreferredNameSlot(String preferredNameSlot) {
+		this.preferredNameSlot = preferredNameSlot;
 	}
 }

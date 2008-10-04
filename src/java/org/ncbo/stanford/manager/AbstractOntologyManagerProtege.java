@@ -10,15 +10,20 @@ import org.apache.commons.logging.LogFactory;
 import org.ncbo.stanford.bean.OntologyBean;
 import org.ncbo.stanford.domain.custom.entity.VNcboOntology;
 import org.ncbo.stanford.util.cache.expiration.system.ExpirationSystem;
+import org.ncbo.stanford.util.constants.ApplicationConstants;
+import org.ncbo.stanford.util.helper.StringHelper;
 
+import edu.stanford.smi.protege.model.Cls;
 import edu.stanford.smi.protege.model.KnowledgeBase;
 import edu.stanford.smi.protege.model.Project;
+import edu.stanford.smi.protege.model.Slot;
 import edu.stanford.smi.protege.query.api.QueryApi;
 import edu.stanford.smi.protege.query.api.QueryConfiguration;
 import edu.stanford.smi.protege.query.indexer.Indexer;
 import edu.stanford.smi.protege.query.indexer.StdIndexer;
 import edu.stanford.smi.protege.storage.database.DatabaseKnowledgeBaseFactory;
 import edu.stanford.smi.protegex.owl.database.OWLDatabaseKnowledgeBaseFactory;
+import edu.stanford.smi.protegex.owl.model.OWLModel;
 
 /**
  * Abstract class to incorporate functionality common between Protege loader and
@@ -55,6 +60,20 @@ public abstract class AbstractOntologyManagerProtege {
 
 		config.setBaseIndexPath(protegeIndexLocation + ob.getOntologyDirPath());
 
+		Set<Slot> searchableSlots = config.getSearchableSlots();
+
+		try { // this should unneccessary but it doesn't hurt.
+			Slot synonymSlot = getSynonymSlot(kb, ob.getSynonymSlot());
+			if (synonymSlot == null) {
+				searchableSlots.add(synonymSlot);
+			}
+			searchableSlots.add(getPreferredNameSlot(kb, ob
+					.getPreferredNameSlot()));
+			config.setSearchableSlots(searchableSlots);
+		} catch (Throwable t) {
+
+		}
+
 		Set<Indexer> indexers = new HashSet<Indexer>();
 		indexers.add(new StdIndexer());
 		config.setIndexers(indexers);
@@ -62,9 +81,71 @@ public abstract class AbstractOntologyManagerProtege {
 		api.install(config);
 	}
 
+	protected Slot getSynonymSlot(KnowledgeBase kb, String synonymSlot) {
+
+		if (!StringHelper.isNullOrNullString(synonymSlot)) {
+			return (kb instanceof OWLModel ? ((OWLModel) kb)
+					.getRDFProperty(synonymSlot) : kb.getSlot(synonymSlot));
+		}
+		return null;
+	}
+
+	protected Slot getPreferredNameSlot(KnowledgeBase kb,
+			String preferredNameSlotName) {
+		Slot slot = null;
+
+		if (!StringHelper.isNullOrNullString(preferredNameSlotName)) {
+			slot = kb instanceof OWLModel ? ((OWLModel) kb)
+					.getRDFProperty(preferredNameSlotName) : kb
+					.getSlot(preferredNameSlotName);
+		}
+
+		if (slot == null) {
+			slot = kb instanceof OWLModel ? ((OWLModel) kb)
+					.getRDFSLabelProperty() : kb.getNameSlot();
+		}
+
+		return slot;
+	}
+
+	/*
+	 * protected String getPreferredName(Frame frame, String
+	 * preferredNameSlotName) { Slot preferredNameSlot =
+	 * getPreferredNameSlot(frame.getKnowledgeBase(), preferredNameSlotName);
+	 * Collection values = frame.getOwnSlotValues(preferredNameSlot); if (values ==
+	 * null || values.isEmpty() || values.size() > 1) { return frame.getName(); }
+	 * else { Object o = values.iterator().next(); if (o instanceof String) {
+	 * return (String) o; } else { return frame.getName(); } } }
+	 */
+
+	public static void setBrowserSlotByPreferredNameSlot(KnowledgeBase kb,
+			Slot preferredNameSlot) {
+		Set<Cls> types = new HashSet<Cls>();
+
+		if (kb instanceof OWLModel) {
+			OWLModel owlModel = (OWLModel) kb;
+			types.add(owlModel.getRDFSNamedClassClass());
+			types.add(owlModel.getOWLNamedClassClass());
+
+			types.add(owlModel.getRDFPropertyClass());
+			types.add(owlModel.getOWLObjectPropertyClass());
+			types.add(owlModel.getOWLDatatypePropertyClass());
+
+			types.add(owlModel.getRootCls());
+		} else {
+			types.add(kb.getRootClsMetaCls());
+			types.add(kb.getRootSlotMetaCls());
+			types.add(kb.getRootCls());
+		}
+
+		for (Cls cls : types) {
+			cls.setDirectBrowserSlot(preferredNameSlot);
+		}
+	}
+
 	/**
-	 * Returns a singleton KnowledgeBase instance for given ontology.
-	 * Assumes that the OntologyBean object is populated.
+	 * Returns a singleton KnowledgeBase instance for given ontology. Assumes
+	 * that the OntologyBean object is populated.
 	 */
 	protected KnowledgeBase getKnowledgeBase(OntologyBean ob) {
 		KnowledgeBase kb = (KnowledgeBase) protegeKnowledgeBases
@@ -77,7 +158,7 @@ public abstract class AbstractOntologyManagerProtege {
 
 		return kb;
 	}
-	
+
 	/**
 	 * Returns a singleton KnowledgeBase instance for given ontologyVersion.
 	 */
@@ -103,7 +184,7 @@ public abstract class AbstractOntologyManagerProtege {
 	private KnowledgeBase createKnowledgeBaseInstance(OntologyBean ob) {
 		DatabaseKnowledgeBaseFactory factory = null;
 
-		if (ob.getFormat().contains("OWL")) {
+		if (ob.getFormat().contains(ApplicationConstants.FORMAT_OWL)) {
 			factory = new OWLDatabaseKnowledgeBaseFactory();
 		} else {
 			factory = new DatabaseKnowledgeBaseFactory();
@@ -117,10 +198,15 @@ public abstract class AbstractOntologyManagerProtege {
 		prj.createDomainKnowledgeBase(factory, errors, true);
 		KnowledgeBase kb = prj.getKnowledgeBase();
 
+		setBrowserSlotByPreferredNameSlot(kb, getPreferredNameSlot(kb, ob
+				.getPreferredNameSlot()));
+
 		QueryApi api = new QueryApi(kb);
 		setIndexConfiguration(kb, api, ob);
 
-		log.debug("Created new knowledgebase: " + kb.getName());
+		if (log.isDebugEnabled()) {
+			log.debug("Created new knowledgebase: " + kb.getName());
+		}
 
 		return prj.getKnowledgeBase();
 	}

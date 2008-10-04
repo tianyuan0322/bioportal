@@ -73,7 +73,6 @@ public class OntologyRetrievalManagerProtegeImpl extends
 		return null;
 	}
 
-	@SuppressWarnings("deprecation")
 	public ClassBean findConcept(VNcboOntology ontologyVersion, String conceptId) {
 		KnowledgeBase kb = getKnowledgeBase(ontologyVersion);
 
@@ -97,7 +96,7 @@ public class OntologyRetrievalManagerProtegeImpl extends
 	}
 
 	public ClassBean findParent(String id, Integer ontologyVersionId) {
-		return new ClassBean();
+		throw new UnsupportedOperationException();
 	}
 
 	public ArrayList<ClassBean> findChildren(String id,
@@ -115,40 +114,36 @@ public class OntologyRetrievalManagerProtegeImpl extends
 			srb.setOntologyVersionId(ontologyVersion.getId());
 			KnowledgeBase kb = getKnowledgeBase(ontologyVersion);
 			Collection<Frame> frames = new ArrayList<Frame>();
+			Slot preferredNameSlot = getPreferredNameSlot(kb, ontologyVersion
+					.getPreferredNameSlot());
 
 			if (kb instanceof OWLModel) {
 				Collection<Frame> allFrames = kb
-						.executeQuery(new LuceneOwnSlotValueQuery(kb
-								.getNameSlot(), "*" + query));
+						.executeQuery(new LuceneOwnSlotValueQuery(
+								preferredNameSlot, query));
 
 				for (Frame frame : allFrames) {
 					if (frame instanceof RDFSNamedClass && frame.isVisible()
 							&& !frame.isSystem()) {
-						RDFResource resource = (RDFResource) frame;
-
-						if (resource.getLocalName().equals(query)) {
-							frames.add(frame);
-						}
+						frames.add(frame);
 					}
 				}
 			} else {
-				frames = kb.getFramesWithValue(kb.getNameSlot(), null, false,
+				frames = kb.getFramesWithValue(preferredNameSlot, null, false,
 						query);
 			}
 
 			int i = 0;
 
 			for (Frame frame : frames) {
-				if (i >= maxToReturn) {
+				if (i++ >= maxToReturn) {
 					break;
 				}
 
 				if (frame instanceof Cls) {
 					Cls cls = (Cls) frame;
-					srb.addName(createLightBean(cls));
+					srb.addName(createLightClassBean(cls));
 				}
-
-				i++;
 			}
 
 			results.add(srb);
@@ -169,36 +164,43 @@ public class OntologyRetrievalManagerProtegeImpl extends
 			Collection<Frame> frames = new HashSet<Frame>();
 
 			if (kb instanceof OWLModel) {
+				Slot preferredNameSlot = getPreferredNameSlot(kb,
+						ontologyVersion.getPreferredNameSlot());
 				Collection<Frame> allFrames = kb
-						.executeQuery(new LuceneOwnSlotValueQuery(kb
-								.getNameSlot(), "*" + query));
+						.executeQuery(new LuceneOwnSlotValueQuery(
+								preferredNameSlot, query + "*"));
+				Slot synonymSlot = getSynonymSlot(kb, ontologyVersion
+						.getSynonymSlot());
+
+				if (synonymSlot != null) {
+					allFrames.addAll(kb
+							.executeQuery(new LuceneOwnSlotValueQuery(
+									synonymSlot, query + "*")));
+
+				}
 				for (Frame frame : allFrames) {
 					if (frame instanceof RDFSNamedClass && frame.isVisible()
 							&& !frame.isSystem()) {
-						RDFResource resource = (RDFResource) frame;
-						if (resource.getLocalName().startsWith(query)) {
-							frames.add(frame);
-						}
+						frames.add(frame);
 					}
 				}
 			} else {
-				frames.addAll(kb.executeQuery(new LuceneOwnSlotValueQuery(kb
-						.getNameSlot(), query + "*")));
+				frames.addAll(kb.executeQuery(new LuceneOwnSlotValueQuery(
+						getPreferredNameSlot(kb, ontologyVersion
+								.getPreferredNameSlot()), query + "*")));
 			}
 
 			int i = 0;
 
 			for (Frame frame : frames) {
-				if (i >= maxToReturn) {
+				if (i++ >= maxToReturn) {
 					break;
 				}
 
 				if (frame instanceof Cls) {
 					Cls cls = (Cls) frame;
-					srb.addName(createLightBean(cls));
+					srb.addName(createLightClassBean(cls));
 				}
-
-				i++;
 			}
 
 			results.add(srb);
@@ -217,28 +219,32 @@ public class OntologyRetrievalManagerProtegeImpl extends
 			srb.setOntologyVersionId(ontologyVersion.getId());
 			KnowledgeBase kb = getKnowledgeBase(ontologyVersion);
 
-			// TODO: This should use the browser slot (when there's a browser
-			// slot, don't use the name slot).
-			// This can be obtained from the pprj file.
-			// (At load time, we should store the browser slot as a metadata
-			// attribute).
+			Collection<Frame> frames = kb
+					.executeQuery(new LuceneOwnSlotValueQuery(
+							getPreferredNameSlot(kb, ontologyVersion
+									.getPreferredNameSlot()), query));
 
-			Collection<Frame> frames = kb.executeQuery(new LuceneOwnSlotValueQuery(kb
-					.getNameSlot(), query));
+			Slot synonymSlot = getSynonymSlot(kb, ontologyVersion
+					.getSynonymSlot());
+
+			if (synonymSlot != null) {
+				frames.addAll(kb.executeQuery(new LuceneOwnSlotValueQuery(
+						synonymSlot, query)));
+			}
+
 			int i = 0;
 
 			for (Frame frame : frames) {
-				if (i >= maxToReturn) {
+				if (i++ >= maxToReturn) {
 					break;
 				}
 
 				if (frame instanceof Cls && frame.isVisible()
 						&& !frame.isSystem()) {
 					Cls cls = (Cls) frame;
-					srb.addName(createLightBean(cls));
+					srb.addName(createLightClassBean(cls));
 				}
 
-				i++;
 			}
 
 			results.add(srb);
@@ -257,22 +263,21 @@ public class OntologyRetrievalManagerProtegeImpl extends
 			srb.setOntologyVersionId(ontologyVersion.getId());
 
 			KnowledgeBase kb = getKnowledgeBase(ontologyVersion);
-			Collection<Frame> frames = kb.executeQuery(new LuceneOwnSlotValueQuery(
-					null, "*" + query + "*"));
+			Collection<Frame> frames = kb
+					.executeQuery(new LuceneOwnSlotValueQuery(null, "*" + query
+							+ "*"));
 			int i = 0;
 
 			for (Frame frame : frames) {
-				if (i >= maxToReturn) {
+				if (i++ >= maxToReturn) {
 					break;
 				}
 
 				if (frame instanceof Cls && frame.isVisible()
 						&& !frame.isSystem()) {
 					Cls cls = (Cls) frame;
-					srb.addProperty(createLightBean(cls));
+					srb.addProperty(createLightClassBean(cls));
 				}
-
-				i++;
 			}
 
 			results.add(srb);
@@ -321,7 +326,7 @@ public class OntologyRetrievalManagerProtegeImpl extends
 			ClassBean clsBean = new ClassBean();
 			Cls node = (Cls) nodeObj;
 			clsBean.setId(getId(node));
-			clsBean.setLabel(node.getBrowserText());
+			// clsBean.setLabel(node.getBrowserText());
 
 			if (currentBean != null) {
 				if (light) {
@@ -358,20 +363,10 @@ public class OntologyRetrievalManagerProtegeImpl extends
 
 		for (Cls cls : protegeClses) {
 			if (cls.isVisible())
-				beans.add(createLightBean(cls));
+				beans.add(createLightClassBean(cls));
 		}
 
 		return beans;
-	}
-
-	private ClassBean createLightBean(Cls cls) {
-		ClassBean bean = new ClassBean();
-		bean.setId(getId(cls));
-		bean.setLabel(cls.getBrowserText());
-		bean.addRelation(ApplicationConstants.CHILD_COUNT, cls
-				.getDirectSubclasses().size());
-
-		return bean;
 	}
 
 	private Collection<ClassBean> convertClasses(Collection<Cls> protegeClses,
@@ -386,23 +381,55 @@ public class OntologyRetrievalManagerProtegeImpl extends
 		return beans;
 	}
 
-	private ClassBean createClassBean(Cls pConcept, boolean recursive) {
-		boolean isOwl = pConcept.getKnowledgeBase() instanceof OWLModel;
+	// protected String getLabel(Frame node) {
+	// String label = null;
+	//
+	// if (node instanceof RDFResource) {
+	// RDFResource rs = (RDFResource) node;
+	// Collection labels = rs.getLabels();
+	//
+	// if (labels == null || labels.isEmpty()) {
+	// label = node.getBrowserText();
+	// } else {
+	// label = CollectionUtilities.getFirstItem(labels).toString();
+	// }
+	// } else {
+	// label = node.getBrowserText();
+	// }
+	//
+	// return label;
+	// }
+
+	private ClassBean createLightClassBean(Cls cls) {
+		ClassBean classBean = new ClassBean();
+		classBean.setId(getId(cls));
+
+		classBean.setLabel(cls.getBrowserText());
+
+		classBean.addRelation(ApplicationConstants.CHILD_COUNT, cls
+				.getDirectSubclasses().size());
+
+		return classBean;
+	}
+
+	private ClassBean createClassBean(Cls cls, boolean recursive) {
+		boolean isOwl = cls.getKnowledgeBase() instanceof OWLModel;
 
 		ClassBean classBean = new ClassBean();
-		classBean.setId(getId(pConcept));
-		classBean.setLabel(pConcept.getBrowserText());
+		classBean.setId(getId(cls));
+
+		classBean.setLabel(cls.getBrowserText());
 
 		// add properties
 		Collection<Slot> slots;
 
-		if (isOwl && pConcept instanceof RDFSNamedClass) {
-			slots = ((RDFSNamedClass) pConcept).getPossibleRDFProperties();
+		if (isOwl && cls instanceof RDFSNamedClass) {
+			slots = ((RDFSNamedClass) cls).getPossibleRDFProperties();
 		} else {
-			slots = pConcept.getOwnSlots();
+			slots = cls.getOwnSlots();
 		}
 
-		classBean.addRelations(convertProperties(pConcept, slots));
+		classBean.addRelations(convertProperties(cls, slots));
 
 		// add subclasses
 		// if OWLNamedClass, then use getNamedSubclasses/Superclasses,
@@ -411,11 +438,11 @@ public class OntologyRetrievalManagerProtegeImpl extends
 		Collection<Cls> subclasses = null;
 		Collection<Cls> superclasses = new ArrayList<Cls>();
 
-		if (pConcept instanceof OWLNamedClass) {
-			subclasses = ((OWLNamedClass) pConcept).getNamedSubclasses(false);
-			OWLModel owlModel = (OWLModel) pConcept.getKnowledgeBase();
+		if (cls instanceof OWLNamedClass) {
+			subclasses = ((OWLNamedClass) cls).getNamedSubclasses(false);
+			OWLModel owlModel = (OWLModel) cls.getKnowledgeBase();
 
-			if (pConcept.equals(owlModel.getOWLThingClass())) {
+			if (cls.equals(owlModel.getOWLThingClass())) {
 				Iterator<Cls> it = subclasses.iterator();
 
 				while (it.hasNext()) {
@@ -427,7 +454,7 @@ public class OntologyRetrievalManagerProtegeImpl extends
 				}
 			}
 		} else {
-			subclasses = pConcept.getDirectSubclasses();
+			subclasses = cls.getDirectSubclasses();
 		}
 
 		classBean.addRelation(ApplicationConstants.CHILD_COUNT, subclasses
@@ -438,11 +465,11 @@ public class OntologyRetrievalManagerProtegeImpl extends
 					convertClasses(subclasses, false));
 
 			// add superclasses
-			if (pConcept instanceof OWLNamedClass) {
-				superclasses = ((OWLNamedClass) pConcept)
+			if (cls instanceof OWLNamedClass) {
+				superclasses = ((OWLNamedClass) cls)
 						.getNamedSuperclasses(false);
 			} else {
-				superclasses = pConcept.getDirectSuperclasses();
+				superclasses = cls.getDirectSuperclasses();
 			}
 
 			classBean.addRelation(ApplicationConstants.SUPER_CLASS,
@@ -450,10 +477,9 @@ public class OntologyRetrievalManagerProtegeImpl extends
 		}
 
 		// add RDF type
-		if (pConcept instanceof OWLNamedClass) {
+		if (cls instanceof OWLNamedClass) {
 			classBean.addRelation(ApplicationConstants.RDF_TYPE,
-					convertClasses(((OWLNamedClass) pConcept).getRDFTypes(),
-							false));
+					convertClasses(((OWLNamedClass) cls).getRDFTypes(), false));
 		}
 
 		return classBean;
@@ -483,10 +509,6 @@ public class OntologyRetrievalManagerProtegeImpl extends
 					String value = ((Instance) val).getBrowserText();
 
 					if (value != null) {
-						if (value.indexOf("~#") > -1) {
-							value = value.substring(value.indexOf(" "));
-						}
-
 						bpPropVals.add(value);
 					}
 				} else {
@@ -497,6 +519,7 @@ public class OntologyRetrievalManagerProtegeImpl extends
 			}
 
 			bpProps.put(slot.getBrowserText(), bpPropVals);
+
 			bpPropVals = new ArrayList<String>();
 		}
 

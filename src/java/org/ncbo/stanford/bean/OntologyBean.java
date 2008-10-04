@@ -46,7 +46,10 @@ public class OntologyBean {
 	private String publication;
 	private String urn;
 	private String codingScheme;
+	private String targetTerminologies;
 	private Byte isFoundry;
+	private String synonymSlot;
+	private String preferredNameSlot;
 
 	private List<Integer> categoryIds = new ArrayList<Integer>(0);
 
@@ -91,6 +94,9 @@ public class OntologyBean {
 			this.setUrn(ncboOntology.getUrn());
 			this.setCodingScheme(ncboOntology.getCodingScheme());
 			this.setIsFoundry(ncboOntology.getIsFoundry());
+			this.setTargetTerminologies(ncboOntology.getTargetTerminologies());
+			this.setSynonymSlot(ncboOntology.getSynonymSlot());
+			this.setPreferredNameSlot(ncboOntology.getPreferredNameSlot());
 
 			addFilenames(ncboOntology.getFilenames());
 
@@ -121,7 +127,11 @@ public class OntologyBean {
 			metadata.setIsFoundry(this.getIsFoundry());
 			metadata.setPublication(this.getPublication());
 			metadata.setUrn(this.getUrn());
-
+			metadata.setCodingScheme(this.getCodingScheme());
+			metadata.setTargetTerminologies(this.getTargetTerminologies());
+			metadata.setSynonymSlot(this.getSynonymSlot());
+			metadata.setPreferredNameSlot(this.getPreferredNameSlot());
+			
 			ncboOntologyMetadataSet.add(metadata);
 			ontologyVersion
 					.setNcboOntologyVersionMetadatas(ncboOntologyMetadataSet);
@@ -282,7 +292,11 @@ public class OntologyBean {
 				+ this.getDisplayLabel() + ", Format: " + this.getFormat()
 				+ ", Contact Name: " + this.getContactName()
 				+ ", Contact Email: " + this.getContactEmail() + ", Foundry: "
-				+ this.getIsFoundry() + "}";
+				+ this.getIsFoundry() + " Coding Scheme: "
+				+ this.getCodingScheme() + ", Target Terminologies: "
+				+ this.getTargetTerminologies() + ", Synonym Slot: "
+				+ this.getSynonymSlot() + ", Preferred Name Slot: "
+				+ this.getPreferredNameSlot() + "}";
 	}
 
 	/**
@@ -684,7 +698,6 @@ public class OntologyBean {
 	 * create request comes in
 	 */
 	public NcboUser getNcboUserFromSession() {
-
 		NcboUser ncboUser = new NcboUser();
 		ncboUser.setId(this.getUserId());
 
@@ -725,7 +738,6 @@ public class OntologyBean {
 	 * Populate status in the bean
 	 */
 	public void populateStatus(NcboLStatus status) {
-
 		status.setId(this.getStatusId());
 
 		// set default value for status if new record
@@ -739,7 +751,6 @@ public class OntologyBean {
 	 * upload, "5"(notapplicable) for remote.
 	 */
 	public void populateDefaultStatus(NcboLStatus status) {
-
 		if (this.isRemote()) {
 			status.setId(new Integer(MessageUtils
 					.getMessage("ncbo.status.notapplicable")));
@@ -756,6 +767,7 @@ public class OntologyBean {
 		if (this.getIsRemote().equals(ApplicationConstants.TRUE)) {
 			return true;
 		}
+
 		return false;
 	}
 
@@ -772,5 +784,50 @@ public class OntologyBean {
 	 */
 	public void setIsManual(Byte isManual) {
 		this.isManual = isManual;
+	}
+
+	/**
+	 * @return the targetTerminologies
+	 */
+	public String getTargetTerminologies() {
+		return targetTerminologies;
+	}
+
+	/**
+	 * @param targetTerminologies
+	 *            the targetTerminologies to set
+	 */
+	public void setTargetTerminologies(String targetTerminologies) {
+		this.targetTerminologies = targetTerminologies;
+	}
+
+	/**
+	 * @return the synonymSlot
+	 */
+	public String getSynonymSlot() {
+		return synonymSlot;
+	}
+
+	/**
+	 * @param synonymSlot
+	 *            the synonymSlot to set
+	 */
+	public void setSynonymSlot(String synonymSlot) {
+		this.synonymSlot = synonymSlot;
+	}
+
+	/**
+	 * @return the preferredNameSlot
+	 */
+	public String getPreferredNameSlot() {
+		return preferredNameSlot;
+	}
+
+	/**
+	 * @param preferredNameSlot
+	 *            the preferredNameSlot to set
+	 */
+	public void setPreferredNameSlot(String preferredNameSlot) {
+		this.preferredNameSlot = preferredNameSlot;
 	}
 }

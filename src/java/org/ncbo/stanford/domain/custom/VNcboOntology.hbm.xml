@@ -75,8 +75,17 @@
 		<property name="codingScheme" type="java.lang.String">
 		    <column name="coding_scheme" length="256" />
 		</property>
+		<property name="targetTerminologies" type="java.lang.String">
+		    <column name="target_terminologies" length="256" />
+		</property>
 		<property name="isFoundry" type="java.lang.Byte">
 		    <column name="is_foundry" />
+		</property>		
+		<property name="synonymSlot" type="java.lang.String">
+		    <column name="synonym_slot" length="500" />
+		</property>
+		<property name="preferredNameSlot" type="java.lang.String">
+		    <column name="preferred_name_slot" length="500" />
 		</property>
 	</class>
 </hibernate-mapping>
