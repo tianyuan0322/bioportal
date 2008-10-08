@@ -4,7 +4,9 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.net.URI;
 import java.util.ArrayList;
+import java.util.EnumSet;
 import java.util.List;
+import java.util.Set;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -15,7 +17,10 @@ import org.ncbo.stanford.util.constants.ApplicationConstants;
 
 import edu.stanford.smi.protege.model.KnowledgeBase;
 import edu.stanford.smi.protege.model.Project;
+import edu.stanford.smi.protege.model.Slot;
 import edu.stanford.smi.protege.query.api.QueryApi;
+import edu.stanford.smi.protege.query.api.QueryConfiguration;
+import edu.stanford.smi.protege.query.indexer.IndexMechanism;
 import edu.stanford.smi.protege.storage.database.DatabaseKnowledgeBaseFactory;
 import edu.stanford.smi.protege.util.ApplicationProperties;
 import edu.stanford.smi.protege.util.PropertyList;
@@ -185,8 +190,27 @@ public class OntologyLoadManagerProtegeImpl extends
 	}
 
 	private void createIndex(KnowledgeBase kb, OntologyBean ob) {
+		QueryConfiguration config = new QueryConfiguration(kb);
+		config.setBaseIndexPath(getIndexPath(ob));
+		Set<Slot> searchableSlots = config.getSearchableSlots();
+
+		try { // this should unneccessary but it doesn't hurt.
+			Slot synonymSlot = getSynonymSlot(kb, ob.getSynonymSlot());
+
+			if (synonymSlot == null) {
+				searchableSlots.add(synonymSlot);
+			}
+
+			searchableSlots.add(getPreferredNameSlot(kb, ob
+					.getPreferredNameSlot()));
+			config.setSearchableSlots(searchableSlots);
+		} catch (Throwable t) {
+		}
+
+		config.setIndexers(EnumSet.of(IndexMechanism.STANDARD_INDICIES));
+
 		QueryApi api = new QueryApi(kb);
-		setIndexConfiguration(kb, api, ob);
-		api.index();
+		installLuceneIndexMechanism(api, ob);
+		api.index(config);
 	}
 }

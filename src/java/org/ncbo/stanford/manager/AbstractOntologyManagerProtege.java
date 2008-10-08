@@ -1,5 +1,6 @@
 package org.ncbo.stanford.manager;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -18,9 +19,6 @@ import edu.stanford.smi.protege.model.KnowledgeBase;
 import edu.stanford.smi.protege.model.Project;
 import edu.stanford.smi.protege.model.Slot;
 import edu.stanford.smi.protege.query.api.QueryApi;
-import edu.stanford.smi.protege.query.api.QueryConfiguration;
-import edu.stanford.smi.protege.query.indexer.Indexer;
-import edu.stanford.smi.protege.query.indexer.StdIndexer;
 import edu.stanford.smi.protege.storage.database.DatabaseKnowledgeBaseFactory;
 import edu.stanford.smi.protegex.owl.database.OWLDatabaseKnowledgeBaseFactory;
 import edu.stanford.smi.protegex.owl.model.OWLModel;
@@ -54,39 +52,20 @@ public abstract class AbstractOntologyManagerProtege {
 	 * @param api
 	 * @param ob
 	 */
-	protected void setIndexConfiguration(KnowledgeBase kb, QueryApi api,
-			OntologyBean ob) {
-		QueryConfiguration config = new QueryConfiguration(kb);
+	protected void installLuceneIndexMechanism(QueryApi api, OntologyBean ob) {
+		api.install(new File(getIndexPath(ob)));
+	}
 
-		config.setBaseIndexPath(protegeIndexLocation + ob.getOntologyDirPath());
-
-		Set<Slot> searchableSlots = config.getSearchableSlots();
-
-		try { // this should unneccessary but it doesn't hurt.
-			Slot synonymSlot = getSynonymSlot(kb, ob.getSynonymSlot());
-			if (synonymSlot == null) {
-				searchableSlots.add(synonymSlot);
-			}
-			searchableSlots.add(getPreferredNameSlot(kb, ob
-					.getPreferredNameSlot()));
-			config.setSearchableSlots(searchableSlots);
-		} catch (Throwable t) {
-
-		}
-
-		Set<Indexer> indexers = new HashSet<Indexer>();
-		indexers.add(new StdIndexer());
-		config.setIndexers(indexers);
-
-		api.install(config);
+	protected String getIndexPath(OntologyBean ob) {
+		return protegeIndexLocation + ob.getOntologyDirPath();
 	}
 
 	protected Slot getSynonymSlot(KnowledgeBase kb, String synonymSlot) {
-
 		if (!StringHelper.isNullOrNullString(synonymSlot)) {
 			return (kb instanceof OWLModel ? ((OWLModel) kb)
 					.getRDFProperty(synonymSlot) : kb.getSlot(synonymSlot));
 		}
+
 		return null;
 	}
 
@@ -118,7 +97,7 @@ public abstract class AbstractOntologyManagerProtege {
 	 * return (String) o; } else { return frame.getName(); } } }
 	 */
 
-	public static void setBrowserSlotByPreferredNameSlot(KnowledgeBase kb,
+	private static void setBrowserSlotByPreferredNameSlot(KnowledgeBase kb,
 			Slot preferredNameSlot) {
 		Set<Cls> types = new HashSet<Cls>();
 
@@ -202,7 +181,7 @@ public abstract class AbstractOntologyManagerProtege {
 				.getPreferredNameSlot()));
 
 		QueryApi api = new QueryApi(kb);
-		setIndexConfiguration(kb, api, ob);
+		installLuceneIndexMechanism(api, ob);
 
 		if (log.isDebugEnabled()) {
 			log.debug("Created new knowledgebase: " + kb.getName());
