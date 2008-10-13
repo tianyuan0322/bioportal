@@ -1,5 +1,6 @@
 package org.ncbo.stanford.manager.impl;
 
+import java.beans.DesignMode;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Enumeration;
@@ -228,10 +229,9 @@ public class OntologyRetrievalManagerLexGridImpl extends AbstractOntologyManager
             ResolvedConceptReferenceList rcrl = getHierarchyRootConcepts(schemeName, csvt);
             ArrayList<ClassBean> rootConceptList = createClassBeanArray(rcrl, true);
             ArrayList<ClassBean> mergedConceptList = mergeListsEliminatingDuplicates(rootConceptList, classBeans);
-            thingBean= createThingClassBean(mergedConceptList);
+            thingBean = createThingClassBean(mergedConceptList);
         }
 
-       
         ClassBean simpleSubclassThingBean = createSimpleSubClassOnlyClassBean(thingBean);
         return simpleSubclassThingBean;
     }
@@ -667,10 +667,11 @@ public class OntologyRetrievalManagerLexGridImpl extends AbstractOntologyManager
     private SearchResultBean searchNodesForName(VNcboOntology ncboOntology, String search_string, int maxToReturn,
             Match_Types algorithm, boolean soundsLike, boolean includeObsolete) {
         try {
-            String urnAndVersion = ncboOntology.getCodingScheme();
-            String urnVersionArray[] = splitUrnAndVersion(urnAndVersion);
-            CodedNodeSet nodes = lbs.getCodingSchemeConcepts(urnVersionArray[0], Constructors
-                    .createCodingSchemeVersionOrTagFromVersion(urnVersionArray[1]));
+            String schemeName = getLexGridCodingSchemeName(ncboOntology);
+            CodingSchemeVersionOrTag csvt = getLexGridCodingSchemeVersion(ncboOntology);
+            CodedNodeSet code_set = lbs.getCodingSchemeConcepts(schemeName, csvt);
+            CodedNodeSet designation_set = lbs.getCodingSchemeConcepts(schemeName, csvt);
+
             String matchAlgorithm = "RegExp";
             if (soundsLike) {
                 matchAlgorithm = MatchAlgorithms.DoubleMetaphoneLuceneQuery.name();
@@ -680,27 +681,38 @@ public class OntologyRetrievalManagerLexGridImpl extends AbstractOntologyManager
                 search_string = replacePeriod(search_string);
                 switch (algorithm) {
                 case SEARCH_STARTS_WITH:
+                    search_string= replacePeriod(search_string);
                     search_string = search_string + ".*";
                     break;
                 case SEARCH_ENDS_WITH:
+                    search_string= replacePeriod(search_string);
                     search_string = ".*" + search_string;
                     break;
                 case SEARCH_CONTAINS:
-                    search_string = ".*" + search_string + ".*";
+                    matchAlgorithm = MatchAlgorithms.LuceneQuery.name();
                     break;
                 case SEARCH_EXACT_MATCH:
+                    matchAlgorithm = MatchAlgorithms.LuceneQuery.name();
                     break;
                 }
 
-                matchAlgorithm = "RegExp";
+                
             }
 
             String output_str = "Using Algorithm= " + matchAlgorithm + " Search string= " + search_string;
             System.out.println(output_str);
             log.debug(output_str);
-            nodes = nodes.restrictToMatchingDesignations(search_string, SearchDesignationOption.ALL, matchAlgorithm,
-                    null);
 
+            code_set = code_set.restrictToMatchingProperties(Constructors.createLocalNameList("conceptCode"), null,
+                    search_string, matchAlgorithm, null);
+            
+//            code_set = code_set.restrictToCodes(
+//                    ConvenienceMethods.createConceptReferenceList(new String[] { search_string }, schemeName));
+
+            designation_set = designation_set.restrictToMatchingDesignations(search_string,
+                    SearchDesignationOption.ALL, matchAlgorithm, null);
+            
+            CodedNodeSet nodes = code_set.union(designation_set);
             // Sort by search engine recommendation & code ...
             SortOptionList sortCriteria = Constructors.createSortOptionList(new String[] { "matchToQuery", "code" });
             // Analyze the result ...
@@ -1387,7 +1399,7 @@ public class OntologyRetrievalManagerLexGridImpl extends AbstractOntologyManager
                 }
                 cb.addRelation(ApplicationConstants.SUB_CLASS, newSubClasses);
             } else if (subclass_obj != null && subclass_obj instanceof ClassBean) {
-                ClassBean subclass= (ClassBean) subclass_obj; 
+                ClassBean subclass = (ClassBean) subclass_obj;
                 ClassBean newSubClass = createSimpleSubClassOnlyClassBean(subclass);
                 cb.addRelation(ApplicationConstants.SUB_CLASS, newSubClass);
             }

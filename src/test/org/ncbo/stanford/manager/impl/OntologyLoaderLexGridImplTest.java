@@ -6,6 +6,7 @@ import java.util.Date;
 import org.ncbo.stanford.AbstractBioPortalTest;
 import org.ncbo.stanford.bean.OntologyBean;
 import org.ncbo.stanford.domain.custom.dao.CustomNcboOntologyVersionDAO;
+import org.ncbo.stanford.domain.custom.entity.VNcboOntology;
 import org.ncbo.stanford.domain.generated.NcboOntologyVersionMetadata;
 import org.ncbo.stanford.enumeration.StatusEnum;
 import org.ncbo.stanford.service.ontology.OntologyService;
@@ -28,6 +29,10 @@ public class OntologyLoaderLexGridImplTest extends AbstractBioPortalTest {
     private final static String TEST_OBO_CELL_PATHNAME = "test/sample_data/cell.obo";
     private final static String TEST_OBO_CELL_URN_VERSION = "urn:lsid:bioontology.org:cell|UNASSIGNED";
     private final static String TEST_OBO_CELL_DISPLAY_LABEL = "cell";
+    
+    private final static String TEST_OBO_FUNGAL_PATHNAME = "test/sample_data/fungal_anatomy.obo";
+    private final static String TEST_OBO_FUNGAL_URN_VERSION = "urn:lsid:bioontology.org:fungal|UNASSIGNED";
+    private final static String TEST_OBO_FUNGAL_DISPLAY_LABEL = "fungal";    
 
     private final static String TEST_OBO_CELL_OLD_PATHNAME = "test/sample_data/cell_old.obo";
     private final static String TEST_OBO_CELL_OLD_URN_VERSION = "urn:lsid:bioontology.org:cell|UNASSIGNED";
@@ -74,6 +79,9 @@ public class OntologyLoaderLexGridImplTest extends AbstractBioPortalTest {
         System.out.println("OntologyLoaderLexGridImplTest: testLoadOboCell().................... END");
     }
 
+
+    
+    
     public void testLoadOboCellOld() throws Exception {
         System.out.println("OntologyLoaderLexGridImplTest: testLoadOboCellOld().................. BEGIN");
         OntologyBean ontologyBean = this.createOntolgyBeanOboCellOld();
@@ -166,6 +174,31 @@ public class OntologyLoaderLexGridImplTest extends AbstractBioPortalTest {
         System.out.println("OntologyLoaderLexGridImplTest: testLoadUMLS().................... END");
 
     }
+    
+    public void testLoadOboFungal() throws Exception {
+        System.out.println("OntologyLoaderLexGridImplTest: testLoadOboFungal().................. BEGIN");
+        OntologyBean ontologyBean = this.createOntolgyBeanOboFungal();
+        // populate file field in ontologyBean
+        ontologyBean.setFilePath(TEST_OBO_FUNGAL_PATHNAME);
+        // create - pass FileHandler
+        getOntologyService().createOntology(ontologyBean, OntologyServiceTest.getFilePathHandler(ontologyBean));
+        if (ontologyBean != null)
+            System.out.println("Created OntologyBean with ID = " + ontologyBean.getId());
+        // load
+        loadOntology(ontologyBean, TEST_OBO_FUNGAL_PATHNAME);
+        assertTrue(ontologyBean.getCodingScheme() != null);
+        System.out.println("OntologyLoaderLexGridImplTest: testLoadOboFungal().................... END");
+    }
+    
+    public void testLoadAndCleanup() throws Exception {
+        System.out.println("testLoadAndCleanup()");
+        OntologyLoadManagerLexGridImpl loadManagerLexGrid = getLoadManagerLexGrid();
+        VNcboOntology ncboOntology = loadManagerLexGrid.getLatestNcboOntology(TEST_OBO_FUNGAL_DISPLAY_LABEL);
+        OntologyBean ob= new OntologyBean();
+        ob.populateFromEntity(ncboOntology);
+        loadManagerLexGrid.cleanup(ob);        
+    }
+    
 
     private OntologyBean createOntolgyBeanOboCell() {
         OntologyBean bean = createOntolgyBeanBase();
@@ -176,6 +209,16 @@ public class OntologyLoaderLexGridImplTest extends AbstractBioPortalTest {
         bean.setContactName("OBO Name");
         return bean;
     }
+    
+    private OntologyBean createOntolgyBeanOboFungal() {
+        OntologyBean bean = createOntolgyBeanBase();
+        bean.setFormat(ApplicationConstants.FORMAT_OBO);
+        bean.setCodingScheme(TEST_OBO_FUNGAL_URN_VERSION);
+        bean.setDisplayLabel(TEST_OBO_FUNGAL_DISPLAY_LABEL);
+        bean.setContactEmail("obo@email.com");
+        bean.setContactName("OBO Name");
+        return bean;
+    }    
 
     private OntologyBean createOntolgyBeanOboCellOld() {
         OntologyBean bean = createOntolgyBeanBase();
@@ -282,5 +325,12 @@ public class OntologyLoaderLexGridImplTest extends AbstractBioPortalTest {
         loadManagerLexGrid.loadOntology(new File(filePath).toURI(), ontologyBean);
         System.out.println("___Loading Ontology........ END : " + filePath);
     }
+    
+    private OntologyLoadManagerLexGridImpl getLoadManagerLexGrid() {
+        loadManagerLexGrid = (OntologyLoadManagerLexGridImpl) applicationContext.getBean("ontologyLoadManagerLexGrid",
+                OntologyLoadManagerLexGridImpl.class);
+
+        return loadManagerLexGrid;
+    }    
 
 }

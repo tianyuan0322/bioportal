@@ -27,6 +27,7 @@ public class OntologyRetrievalManagerLexGridImplTest extends AbstractBioPortalTe
     private final static String TEST_LEXGRID_DISPLAY_LABEL = "Automobiles.xml";
     private final static String TEST_UMLS_DISPLAY_LABEL = "AIR";
 
+
     OntologyRetrievalManagerLexGridImpl retrievalManager;
 
     public void testInitialize() {
@@ -265,6 +266,27 @@ public class OntologyRetrievalManagerLexGridImplTest extends AbstractBioPortalTe
         assertTrue(searchResultBeans.isEmpty() != true);
     }
 
+    public void testFindConceptNameContainsCellConceptCode() throws Exception {
+        System.out.println("testFindConceptNameContainsCellConceptCode()");
+        retrievalManager = getRetrievalManagerLexGrid();
+        VNcboOntology ncboOntology = retrievalManager.getLatestNcboOntology(TEST_OBO_CELL_DISPLAY_LABEL);
+        List<VNcboOntology> ontologyVersionIds = (List<VNcboOntology>) Arrays.asList(ncboOntology);
+        //String query = "eukaryotic";
+        //String query = "colony forming unit hematopoietic";
+        String query = "CL:0000169";
+        List<SearchResultBean> searchResultBeans = retrievalManager.findConceptNameContains(ontologyVersionIds, query,
+                false, 100);
+
+        System.out.println("Results of searching for '"+query+"' in the cell ontology is :");
+        for (SearchResultBean srb : searchResultBeans) {
+            List<ClassBean> beans = srb.getNames();
+            for (ClassBean bean : beans)
+                System.out.println(bean);
+        }
+
+        System.out.println("\n");
+        assertTrue(searchResultBeans.isEmpty() != true);
+    }
     public void testFindConceptNameExactCell() throws Exception {
         System.out.println("testFindConceptNameExactCell()");
         retrievalManager = getRetrievalManagerLexGrid();
@@ -356,6 +378,9 @@ public class OntologyRetrievalManagerLexGridImplTest extends AbstractBioPortalTe
         assertTrue(pathBean != null);
     }    
 
+
+    
+    
     private OntologyRetrievalManagerLexGridImpl getRetrievalManagerLexGrid() {
         OntologyRetrievalManagerLexGridImpl retrievalManagerLexGrid = (OntologyRetrievalManagerLexGridImpl) applicationContext
                 .getBean("ontologyRetrievalManagerLexGrid", OntologyRetrievalManagerLexGridImpl.class);
