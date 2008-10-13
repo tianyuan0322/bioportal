@@ -214,21 +214,21 @@ public class OntologyLoadManagerLexGridImpl extends
 	 * Remove the LexGrid references to a OntologyBean. We remove the
 	 * codingScheme that the bean refers to.
 	 * 
-	 * @param ontology_bean
+	 * @param ontologyBean
 	 *            the ontology_bean that contains the metadata information of
 	 *            the ontology to be loaded.
 	 * 
 	 * @exception Exception
 	 *                catch all for all other ontology file load errors.
 	 */
-	public void cleanup(OntologyBean ontology_bean) throws Exception {
+	public void cleanup(OntologyBean ontologyBean) throws Exception {
 		// Get the LexBIGService
 		LexBIGService lbs = LexBIGServiceImpl.defaultInstance();
 		LexBIGServiceManager lbsm = lbs.getServiceManager(null);
 
 		// remove existing scheme if it exists before parsing...
 		CodingSchemeRendering csRendering = getCodingSchemeRendering(lbs,
-				ontology_bean.getCodingScheme());
+				ontologyBean.getCodingScheme());
 
 		if (csRendering != null) {
 			AbsoluteCodingSchemeVersionReference acsvr = Constructors
@@ -236,9 +236,9 @@ public class OntologyLoadManagerLexGridImpl extends
 							.getCodingSchemeSummary());
 			lbsm.deactivateCodingSchemeVersion(acsvr, null);
 			lbsm.removeCodingSchemeVersion(acsvr);
-			ontology_bean.setCodingScheme(null);
+			ontologyBean.setCodingScheme(null);
 			NcboOntologyVersionMetadata ncboMetadata = ncboOntologyVersionDAO
-					.findOntologyMetadataById(ontology_bean.getId());
+					.findOntologyMetadataById(ontologyBean.getId());
 
 			if (ncboMetadata != null) {
 				ncboMetadata.setCodingScheme(null);

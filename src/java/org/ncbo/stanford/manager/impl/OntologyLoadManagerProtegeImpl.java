@@ -189,6 +189,10 @@ public class OntologyLoadManagerProtegeImpl extends
 		createIndex(getKnowledgeBase(ob), ob);
 	}
 
+	public void cleanup(OntologyBean ontologyBean) throws Exception {
+		// TODO: fill in
+	}
+
 	private void createIndex(KnowledgeBase kb, OntologyBean ob) {
 		QueryConfiguration config = new QueryConfiguration(kb);
 		config.setBaseIndexPath(getIndexPath(ob));

@@ -3,7 +3,9 @@ package org.ncbo.stanford.service.ontology.impl;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import org.apache.commons.logging.Log;
@@ -25,6 +27,8 @@ import org.ncbo.stanford.domain.generated.NcboOntologyFile;
 import org.ncbo.stanford.domain.generated.NcboOntologyLoadQueue;
 import org.ncbo.stanford.domain.generated.NcboOntologyVersion;
 import org.ncbo.stanford.domain.generated.NcboOntologyVersionMetadata;
+import org.ncbo.stanford.exception.InvalidOntologyFormatException;
+import org.ncbo.stanford.manager.OntologyLoadManager;
 import org.ncbo.stanford.service.ontology.OntologyService;
 import org.ncbo.stanford.util.MessageUtils;
 import org.ncbo.stanford.util.ontologyfile.pathhandler.AbstractFilePathHandler;
@@ -43,6 +47,8 @@ public class OntologyServiceImpl implements OntologyService {
 	private CustomNcboOntologyCategoryDAO ncboOntologyCategoryDAO;
 	private CustomNcboOntologyLoadQueueDAO ncboOntologyLoadQueueDAO;
 	private CustomNcboLCategoryDAO ncboLCategoryDAO;
+	private Map<String, String> ontologyFormatHandlerMap = new HashMap<String, String>();
+	private Map<String, OntologyLoadManager> ontologyLoadHandlerMap = new HashMap<String, OntologyLoadManager>();
 
 	/*
 	 * (non-Javadoc)
@@ -328,6 +334,7 @@ public class OntologyServiceImpl implements OntologyService {
 	 * @param ontologyBean
 	 * @return
 	 */
+	@Transactional(rollbackFor = Exception.class)
 	public void updateOntology(OntologyBean ontologyBean) {
 		// get the NcboOntologyVersion instance using OntologyVersionId
 		NcboOntologyVersion ontologyVersion = ncboOntologyVersionDAO
@@ -372,6 +379,7 @@ public class OntologyServiceImpl implements OntologyService {
 	 * @return
 	 */
 	@SuppressWarnings("unchecked")
+	@Transactional(rollbackFor = Exception.class)
 	public void cleanupOntologyCategory(OntologyBean ontologyBean) {
 		// get the NcboOntologyVersion instance using OntologyVersionId
 		NcboOntologyVersion ontologyVersion = ncboOntologyVersionDAO
@@ -391,8 +399,12 @@ public class OntologyServiceImpl implements OntologyService {
 	 * @see org.ncbo.stanford.service.ontology.OntologyService#deleteOntology(org.ncbo.stanford.bean.OntologyBean)
 	 */
 	@SuppressWarnings("unchecked")
-	public void deleteOntology(OntologyBean ontologyBean) {
-		// 1. <ontologyVersion>
+	@Transactional(rollbackFor = Exception.class)
+	public void deleteOntology(OntologyBean ontologyBean) throws Exception {
+		// 1. Remove ontology from the backend
+		getLoadManager(ontologyBean).cleanup(ontologyBean);
+		
+		// 2. <ontologyVersion>
 		NcboOntologyVersion ontologyVersion = ncboOntologyVersionDAO
 				.findById(ontologyBean.getId());
 
@@ -400,35 +412,35 @@ public class OntologyServiceImpl implements OntologyService {
 			return;
 		}
 
-		// 2. <ontologyMetadata>
+		// 3. <ontologyMetadata>
 		Set<NcboOntologyVersionMetadata> ontologyMetadataSet = ontologyVersion
 				.getNcboOntologyVersionMetadatas();
 		for (NcboOntologyVersionMetadata ontologyMetadata : ontologyMetadataSet) {
 			ncboOntologyVersionMetadataDAO.delete(ontologyMetadata);
 		}
 
-		// 3. <ontologyCategory>
+		// 4. <ontologyCategory>
 		Set<NcboOntologyCategory> ontologyCategorySet = ontologyVersion
 				.getNcboOntologyCategories();
 		for (NcboOntologyCategory ontologyCategory : ontologyCategorySet) {
 			ncboOntologyCategoryDAO.delete(ontologyCategory);
 		}
 
-		// 4. <ontologyFile>
+		// 5. <ontologyFile>
 		Set<NcboOntologyFile> ontologyFileSet = ontologyVersion
 				.getNcboOntologyFiles();
 		for (NcboOntologyFile ontologyFile : ontologyFileSet) {
 			ncboOntologyFileDAO.delete(ontologyFile);
 		}
 
-		// 5. <ontologyQueue>
+		// 6. <ontologyQueue>
 		Set<NcboOntologyLoadQueue> ontologyLoadQueueSet = ontologyVersion
 				.getNcboOntologyLoadQueues();
 		for (NcboOntologyLoadQueue ontologyLoadQueue : ontologyLoadQueueSet) {
 			ncboOntologyLoadQueueDAO.delete(ontologyLoadQueue);
 		}
 
-		// now all the dependency is removed and ontologyVersion can be deleted
+		// 7. Now that all dependencies have been removed, delete ontologyVersion
 		ncboOntologyVersionDAO.delete(ontologyVersion);
 	}
 
@@ -519,6 +531,23 @@ public class OntologyServiceImpl implements OntologyService {
 			}
 		}
 		return fileNames;
+	}
+
+	private OntologyLoadManager getLoadManager(OntologyBean ontologyBean)
+			throws Exception {
+		String formatHandler = ontologyFormatHandlerMap.get(ontologyBean
+				.getFormat());
+		OntologyLoadManager loadManager = ontologyLoadHandlerMap
+				.get(formatHandler);
+
+		if (loadManager == null) {
+			log.error("Cannot find formatHandler for "
+					+ ontologyBean.getFormat());
+			throw new InvalidOntologyFormatException(
+					"Cannot find formatHandler for " + ontologyBean.getFormat());
+		}
+
+		return loadManager;
 	}
 
 	/**
@@ -613,5 +642,37 @@ public class OntologyServiceImpl implements OntologyService {
 	public void setNcboOntologyVersionMetadataDAO(
 			CustomNcboOntologyVersionMetadataDAO ncboOntologyVersionMetadataDAO) {
 		this.ncboOntologyVersionMetadataDAO = ncboOntologyVersionMetadataDAO;
+	}
+
+	/**
+	 * @return the ontologyFormatHandlerMap
+	 */
+	public Map<String, String> getOntologyFormatHandlerMap() {
+		return ontologyFormatHandlerMap;
+	}
+
+	/**
+	 * @param ontologyFormatHandlerMap
+	 *            the ontologyFormatHandlerMap to set
+	 */
+	public void setOntologyFormatHandlerMap(
+			Map<String, String> ontologyFormatHandlerMap) {
+		this.ontologyFormatHandlerMap = ontologyFormatHandlerMap;
+	}
+
+	/**
+	 * @return the ontologyLoadHandlerMap
+	 */
+	public Map<String, OntologyLoadManager> getOntologyLoadHandlerMap() {
+		return ontologyLoadHandlerMap;
+	}
+
+	/**
+	 * @param ontologyLoadHandlerMap
+	 *            the ontologyLoadHandlerMap to set
+	 */
+	public void setOntologyLoadHandlerMap(
+			Map<String, OntologyLoadManager> ontologyLoadHandlerMap) {
+		this.ontologyLoadHandlerMap = ontologyLoadHandlerMap;
 	}
 }

@@ -139,7 +139,7 @@ public interface OntologyService {
 	 * @param ontologyBean
 	 * @return
 	 */
-	public void deleteOntology(OntologyBean ontologyBean);
+	public void deleteOntology(OntologyBean ontologyBean) throws Exception;
 
 	/**
 	 * Get File object for a specific ontology

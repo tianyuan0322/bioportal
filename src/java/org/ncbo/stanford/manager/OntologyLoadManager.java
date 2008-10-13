@@ -29,4 +29,12 @@ public interface OntologyLoadManager {
 	 * @param ob
 	 */
 	public void indexOntology(OntologyBean ob);
+	
+	/**
+	 * Remove all traces of a given ontology version
+	 * 
+	 * @param ontologyBean
+	 * @throws Exception
+	 */
+	public void cleanup(OntologyBean ontologyBean) throws Exception;
 }
