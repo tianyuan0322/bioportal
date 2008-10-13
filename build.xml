@@ -38,6 +38,7 @@
 		<echo message="deploy    --> Deploy application as directory" />
 		<echo message="createwar --> Create a WAR file but don't deploy it to the server" />
 		<echo message="deploywar --> Deploy application as a WAR file" />
+		<echo message="test      --> Invoke selected unit tests with dependent test framework"/>
 		<echo message="" />
 	</target>
 
@@ -291,4 +292,13 @@
 			</fileset>
 		</copy>
 	</target>
+
+  <target name="test">
+          <!-- Temporary placeholder until a sufficient number of unit tests can be invoked incrementally. -->
+  <junit fork="yes" haltonfailure="yes">
+    <test name="org.ncbo.stanford.service.user.UserServiceTest" />
+    <formatter type="plain" usefile="false" />
+    <classpath refid="master-classpath" />
+  </junit>
+  </target>
 </project>
