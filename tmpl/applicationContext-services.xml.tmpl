@@ -556,6 +556,12 @@
 		<property name="ncboLCategoryDAO">
 			<ref bean="NcboLCategoryDAO" />
 		</property>
+		<property name="ontologyFormatHandlerMap">
+			<ref local="ontologyFormatHandlerMap" />
+		</property>
+		<property name="ontologyLoadHandlerMap">
+			<ref local="ontologyLoadHandlerMap" />
+		</property>
 	</bean>
 
 	<bean id="ontologyLoadSchedulerService"
