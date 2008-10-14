@@ -76,7 +76,6 @@ public class BeanHelper {
 		// for new version for existing ontology
 		String ontologyId = httpServletRequest.getParameter(MessageUtils
 				.getMessage("form.ontology.ontologyId"));
-
 		String isManual = httpServletRequest.getParameter(MessageUtils
 				.getMessage("form.ontology.isManual"));
 		String versionNumber = httpServletRequest.getParameter(MessageUtils
@@ -93,12 +92,10 @@ public class BeanHelper {
 				.getMessage("form.ontology.displayLabel"));
 		String format = httpServletRequest.getParameter(MessageUtils
 				.getMessage("form.ontology.format"));
-
 		String contactName = httpServletRequest.getParameter(MessageUtils
 				.getMessage("form.ontology.contactName"));
 		String contactEmail = httpServletRequest.getParameter(MessageUtils
 				.getMessage("form.ontology.contactEmail"));
-
 		String homepage = httpServletRequest.getParameter(MessageUtils
 				.getMessage("form.ontology.homepage"));
 		String documentation = httpServletRequest.getParameter(MessageUtils
@@ -109,6 +106,10 @@ public class BeanHelper {
 				.getMessage("form.ontology.urn"));
 		String isFoundry = httpServletRequest.getParameter(MessageUtils
 				.getMessage("form.ontology.isFoundry"));
+		String synonymSlot = httpServletRequest.getParameter(MessageUtils
+				.getMessage("form.ontology.synonymSlot"));
+		String preferredNameSlot = httpServletRequest.getParameter(MessageUtils
+				.getMessage("form.ontology.preferredNameSlot"));
 
 		List<Integer> categoryIds = new ArrayList<Integer>();
 
@@ -184,12 +185,21 @@ public class BeanHelper {
 			bean.setIsFoundry(Byte.parseByte(isFoundry));
 		}
 
+		if (!StringHelper.isNullOrNullString(synonymSlot)) {
+			bean.setSynonymSlot(synonymSlot);
+		}
+
+		if (!StringHelper.isNullOrNullString(preferredNameSlot)) {
+			bean.setPreferredNameSlot(preferredNameSlot);
+		}
+
 		if (categoryIds.size() > 0)
 			bean.setCategoryIds(categoryIds);
 
 		// set file attribute in ontologyBean
 		FileItem fileItem = (FileItem) httpServletRequest
 				.getAttribute(MessageUtils.getMessage("form.ontology.filePath"));
+
 		if (fileItem != null) {
 			bean.setFileItem(fileItem);
 		}
