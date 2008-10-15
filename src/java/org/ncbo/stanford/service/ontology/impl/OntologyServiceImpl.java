@@ -402,8 +402,11 @@ public class OntologyServiceImpl implements OntologyService {
 	@Transactional(rollbackFor = Exception.class)
 	public void deleteOntology(OntologyBean ontologyBean) throws Exception {
 		// 1. Remove ontology from the backend
-		getLoadManager(ontologyBean).cleanup(ontologyBean);
-		
+		if (!ontologyBean.isRemote()) {
+			getLoadManager(ontologyBean).cleanup(ontologyBean);
+			deleteOntologyFile(ontologyBean);
+		}
+
 		// 2. <ontologyVersion>
 		NcboOntologyVersion ontologyVersion = ncboOntologyVersionDAO
 				.findById(ontologyBean.getId());
@@ -440,7 +443,8 @@ public class OntologyServiceImpl implements OntologyService {
 			ncboOntologyLoadQueueDAO.delete(ontologyLoadQueue);
 		}
 
-		// 7. Now that all dependencies have been removed, delete ontologyVersion
+		// 7. Now that all dependencies have been removed, delete
+		// ontologyVersion
 		ncboOntologyVersionDAO.delete(ontologyVersion);
 	}
 
@@ -450,7 +454,6 @@ public class OntologyServiceImpl implements OntologyService {
 	 * @see org.ncbo.stanford.service.ontology.OntologyService#getOntologyFile(org.ncbo.stanford.bean.OntologyBean)
 	 */
 	public File getOntologyFile(OntologyBean ontologyBean) throws Exception {
-
 		List<String> fileNames = ontologyBean.getFilenames();
 		File file = null;
 
@@ -466,6 +469,13 @@ public class OntologyServiceImpl implements OntologyService {
 		}
 
 		return file;
+	}
+
+	private boolean deleteOntologyFile(OntologyBean ontologyBean) {
+		String dirPath = AbstractFilePathHandler
+				.getFullOntologyDirPath(ontologyBean);
+
+		return AbstractFilePathHandler.deleteDirectory(new File(dirPath));
 	}
 
 	/**
