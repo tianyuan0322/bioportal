@@ -201,7 +201,7 @@ public class OntologyLoadManagerProtegeImpl extends
 		try { // this should unneccessary but it doesn't hurt.
 			Slot synonymSlot = getSynonymSlot(kb, ob.getSynonymSlot());
 
-			if (synonymSlot == null) {
+			if (synonymSlot != null) {
 				searchableSlots.add(synonymSlot);
 			}
 
