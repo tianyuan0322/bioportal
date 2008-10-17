@@ -220,15 +220,6 @@ public class OntologyRetrievalManagerProtegeImpl extends
 			srb.setOntologyVersionId(ontologyVersion.getId());
 			KnowledgeBase kb = getKnowledgeBase(ontologyVersion);
 
-			// Collection<Frame> frames = kb
-			// .executeQuery(new LuceneOwnSlotValueQuery(
-			// getPreferredNameSlot(kb, ontologyVersion
-			// .getPreferredNameSlot()), query));
-
-			// Collection<Frame> frames = kb
-			// .executeQuery(new LuceneOwnSlotValueQuery(kb.getNameSlot(),
-			// query));
-
 			Set<Slot> slots = new HashSet<Slot>();
 
 			slots.add(getPreferredNameSlot(kb, ontologyVersion
@@ -243,12 +234,6 @@ public class OntologyRetrievalManagerProtegeImpl extends
 
 			Collection<Frame> frames = kb
 					.executeQuery(new LuceneOwnSlotValueQuery(slots, query));
-
-			//
-			// if (synonymSlot != null) {
-			// frames.addAll(kb.executeQuery(new LuceneOwnSlotValueQuery(
-			// synonymSlot, query)));
-			// }
 
 			int i = 0;
 
