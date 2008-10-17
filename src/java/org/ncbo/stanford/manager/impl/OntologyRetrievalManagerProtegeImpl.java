@@ -6,6 +6,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Set;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -219,28 +220,35 @@ public class OntologyRetrievalManagerProtegeImpl extends
 			srb.setOntologyVersionId(ontologyVersion.getId());
 			KnowledgeBase kb = getKnowledgeBase(ontologyVersion);
 
-//			Collection<Frame> frames = kb
-//					.executeQuery(new LuceneOwnSlotValueQuery(
-//							getPreferredNameSlot(kb, ontologyVersion
-//									.getPreferredNameSlot()), query));
+			// Collection<Frame> frames = kb
+			// .executeQuery(new LuceneOwnSlotValueQuery(
+			// getPreferredNameSlot(kb, ontologyVersion
+			// .getPreferredNameSlot()), query));
 
-//			Collection<Frame> frames = kb
-//			.executeQuery(new LuceneOwnSlotValueQuery(kb.getNameSlot(), query));
+			// Collection<Frame> frames = kb
+			// .executeQuery(new LuceneOwnSlotValueQuery(kb.getNameSlot(),
+			// query));
 
-			
+			Set<Slot> slots = new HashSet<Slot>();
+
+			slots.add(getPreferredNameSlot(kb, ontologyVersion
+					.getPreferredNameSlot()));
+
+			Slot synonymSlot = getSynonymSlot(kb, ontologyVersion
+					.getSynonymSlot());
+
+			if (synonymSlot != null) {
+				slots.add(synonymSlot);
+			}
+
 			Collection<Frame> frames = kb
-			.executeQuery(new LuceneOwnSlotValueQuery(
-					null, query));
-			
-			
-			
-//			Slot synonymSlot = getSynonymSlot(kb, ontologyVersion
-//					.getSynonymSlot());
-//
-//			if (synonymSlot != null) {
-//				frames.addAll(kb.executeQuery(new LuceneOwnSlotValueQuery(
-//						synonymSlot, query)));
-//			}
+					.executeQuery(new LuceneOwnSlotValueQuery(slots, query));
+
+			//
+			// if (synonymSlot != null) {
+			// frames.addAll(kb.executeQuery(new LuceneOwnSlotValueQuery(
+			// synonymSlot, query)));
+			// }
 
 			int i = 0;
 
@@ -273,8 +281,8 @@ public class OntologyRetrievalManagerProtegeImpl extends
 
 			KnowledgeBase kb = getKnowledgeBase(ontologyVersion);
 			Collection<Frame> frames = kb
-					.executeQuery(new LuceneOwnSlotValueQuery(null, "*" + query
-							+ "*"));
+					.executeQuery(new LuceneOwnSlotValueQuery(
+							new HashSet<Slot>(), "*" + query + "*"));
 			int i = 0;
 
 			for (Frame frame : frames) {
