@@ -17,6 +17,13 @@ WHERE
 
 UPDATE ncbo_ontology_version_metadata 
 SET
+	synonym_slot = 'http://bioontology.org/projects/ontologies/fma/fma20OwlDlComponent#Synonym', 
+	preferred_name_slot = 'http://bioontology.org/projects/ontologies/fma/fma20OwlDlComponent#Preferred_name'
+WHERE
+	ontology_version_id = 4513;
+
+UPDATE ncbo_ontology_version_metadata 
+SET
 	synonym_slot = 'http://ccdb.ucsd.edu/SAO/1.2#synonym' 
 WHERE
 	ontology_version_id = 14391;
