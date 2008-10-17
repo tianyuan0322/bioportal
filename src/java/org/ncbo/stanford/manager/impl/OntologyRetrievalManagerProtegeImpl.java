@@ -224,10 +224,13 @@ public class OntologyRetrievalManagerProtegeImpl extends
 //							getPreferredNameSlot(kb, ontologyVersion
 //									.getPreferredNameSlot()), query));
 
-			
 			Collection<Frame> frames = kb
-			.executeQuery(new LuceneOwnSlotValueQuery(
-					null, query));
+			.executeQuery(new LuceneOwnSlotValueQuery(kb.getNameSlot(), query));
+
+			
+//			Collection<Frame> frames = kb
+//			.executeQuery(new LuceneOwnSlotValueQuery(
+//					null, query));
 			
 			
 			
