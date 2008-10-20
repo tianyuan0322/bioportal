@@ -44,6 +44,7 @@ import edu.stanford.smi.protegex.owl.model.RDFSNamedClass;
 public class OntologyRetrievalManagerProtegeImpl extends
 		AbstractOntologyManagerProtege implements OntologyRetrievalManager {
 
+	@SuppressWarnings("unused")
 	private static final Log log = LogFactory
 			.getLog(OntologyRetrievalManagerProtegeImpl.class);
 
@@ -108,106 +109,13 @@ public class OntologyRetrievalManagerProtegeImpl extends
 	public List<SearchResultBean> findConceptNameExact(
 			List<VNcboOntology> ontologyVersions, String query,
 			boolean includeObsolete, int maxToReturn) {
-		ArrayList<SearchResultBean> results = new ArrayList<SearchResultBean>();
-
-		for (VNcboOntology ontologyVersion : ontologyVersions) {
-			SearchResultBean srb = new SearchResultBean();
-			srb.setOntologyVersionId(ontologyVersion.getId());
-			KnowledgeBase kb = getKnowledgeBase(ontologyVersion);
-			Collection<Frame> frames = new ArrayList<Frame>();
-			Slot preferredNameSlot = getPreferredNameSlot(kb, ontologyVersion
-					.getPreferredNameSlot());
-
-			if (kb instanceof OWLModel) {
-				Collection<Frame> allFrames = kb
-						.executeQuery(new LuceneOwnSlotValueQuery(
-								preferredNameSlot, query));
-
-				for (Frame frame : allFrames) {
-					if (frame instanceof RDFSNamedClass && frame.isVisible()
-							&& !frame.isSystem()) {
-						frames.add(frame);
-					}
-				}
-			} else {
-				frames = kb.getFramesWithValue(preferredNameSlot, null, false,
-						query);
-			}
-
-			int i = 0;
-
-			for (Frame frame : frames) {
-				if (i++ >= maxToReturn) {
-					break;
-				}
-
-				if (frame instanceof Cls) {
-					Cls cls = (Cls) frame;
-					srb.addName(createLightClassBean(cls));
-				}
-			}
-
-			results.add(srb);
-		}
-
-		return results;
+		throw new UnsupportedOperationException();
 	}
 
 	public List<SearchResultBean> findConceptNameStartsWith(
 			List<VNcboOntology> ontologyVersions, String query,
 			boolean includeObsolete, int maxToReturn) {
-		ArrayList<SearchResultBean> results = new ArrayList<SearchResultBean>();
-
-		for (VNcboOntology ontologyVersion : ontologyVersions) {
-			SearchResultBean srb = new SearchResultBean();
-			srb.setOntologyVersionId(ontologyVersion.getId());
-			KnowledgeBase kb = getKnowledgeBase(ontologyVersion);
-			Collection<Frame> frames = new HashSet<Frame>();
-
-			if (kb instanceof OWLModel) {
-				Slot preferredNameSlot = getPreferredNameSlot(kb,
-						ontologyVersion.getPreferredNameSlot());
-				Collection<Frame> allFrames = kb
-						.executeQuery(new LuceneOwnSlotValueQuery(
-								preferredNameSlot, query + "*"));
-				Slot synonymSlot = getSynonymSlot(kb, ontologyVersion
-						.getSynonymSlot());
-
-				if (synonymSlot != null) {
-					allFrames.addAll(kb
-							.executeQuery(new LuceneOwnSlotValueQuery(
-									synonymSlot, query + "*")));
-
-				}
-				for (Frame frame : allFrames) {
-					if (frame instanceof RDFSNamedClass && frame.isVisible()
-							&& !frame.isSystem()) {
-						frames.add(frame);
-					}
-				}
-			} else {
-				frames.addAll(kb.executeQuery(new LuceneOwnSlotValueQuery(
-						getPreferredNameSlot(kb, ontologyVersion
-								.getPreferredNameSlot()), query + "*")));
-			}
-
-			int i = 0;
-
-			for (Frame frame : frames) {
-				if (i++ >= maxToReturn) {
-					break;
-				}
-
-				if (frame instanceof Cls) {
-					Cls cls = (Cls) frame;
-					srb.addName(createLightClassBean(cls));
-				}
-			}
-
-			results.add(srb);
-		}
-
-		return results;
+		throw new UnsupportedOperationException();
 	}
 
 	public List<SearchResultBean> findConceptNameContains(
@@ -267,7 +175,7 @@ public class OntologyRetrievalManagerProtegeImpl extends
 			KnowledgeBase kb = getKnowledgeBase(ontologyVersion);
 			Collection<Frame> frames = kb
 					.executeQuery(new LuceneOwnSlotValueQuery(
-							new HashSet<Slot>(), "*" + query + "*"));
+							new HashSet<Slot>(), query));
 			int i = 0;
 
 			for (Frame frame : frames) {
