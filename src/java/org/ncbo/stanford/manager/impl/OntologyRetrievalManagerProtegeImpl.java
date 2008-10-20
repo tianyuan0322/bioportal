@@ -175,7 +175,7 @@ public class OntologyRetrievalManagerProtegeImpl extends
 			KnowledgeBase kb = getKnowledgeBase(ontologyVersion);
 			Collection<Frame> frames = kb
 					.executeQuery(new LuceneOwnSlotValueQuery(
-							new HashSet<Slot>(), query));
+							new HashSet<Slot>(), "*" + query + "*"));
 			int i = 0;
 
 			for (Frame frame : frames) {
