@@ -38,7 +38,7 @@
 		<echo message="deploy    --> Deploy application as directory" />
 		<echo message="createwar --> Create a WAR file but don't deploy it to the server" />
 		<echo message="deploywar --> Deploy application as a WAR file" />
-		<echo message="test      --> Invoke selected unit tests with dependent test framework" />
+		<echo message="test      --> Invoke selected unit tests with dependent test database fixtures (the fixture will wipe out your local database)." />
 		<echo message="" />
 	</target>
 
@@ -217,12 +217,12 @@
 		<mkdir dir="${classes.dir}" />
 		<mkdir dir="${conf.dir.generated}" />
 
-		<javac destdir="${classes.dir}" debug="true" deprecation="false" optimize="false" failonerror="true">
+    <javac destdir="${classes.dir}" debug="${debug.enabled}" deprecation="false" optimize="false" failonerror="true">
 			<src path="${src.dir}" />
 			<classpath refid="master-classpath" />
 		</javac>
 
-		<javac destdir="${classes.dir}" debug="true" deprecation="false" optimize="false" failonerror="true">
+    <javac destdir="${classes.dir}" debug="${debug.enabled}" deprecation="false" optimize="false" failonerror="true">
 			<src path="${test.dir}" />
 			<classpath refid="master-classpath" />
 		</javac>
@@ -293,12 +293,38 @@
 		</copy>
 	</target>
 
+		<!-- Only tests user unit tests for now until full database test fixtures can be created.-->
 	<target name="test">
-		<!-- Temporary placeholder until a sufficient number of unit tests can be invoked incrementally. -->
 		<junit fork="yes" haltonfailure="yes">
-			<test name="org.ncbo.stanford.service.user.UserServiceTest" />
+      <batchtest>
+        <fileset dir="${classes.dir}" includes="**/User*Test*.class" />
+      </batchtest>
 			<formatter type="plain" usefile="false" />
 			<classpath refid="master-classpath" />
 		</junit>
 	</target>
+
+	<!-- TODO:  This task does not work.  The bioportal_db.sql scripts do not work correctly through Ant "sql" targets.  It only works directly in the MySQL Query browser.-->
+  <target description="Setup test database for Bioportal metadata, version info, and user data."
+          name="test.dbsetupinit">
+    <sql driver="${test.jdbc.driver}"
+          src="${test.sql.dir}/bioportal_db.sql"
+          url="${test.db.url}/?autoReconnect=true"
+        userid="${test.db.user}"
+        password="${test.db.password}" >
+			<classpath refid="master-classpath" />
+      </sql>
+  </target>
+
+  <target description="Setup database test fixture for unit tests."
+          name="test.dbsetup">
+    <sql driver="${test.jdbc.driver}"
+          src="${test.sql.dir}/test_db_fixture.sql"
+          url="${test.db.url}/?autoReconnect=true"
+        userid="${test.db.user}"
+        password="${test.db.password}" >
+			<classpath refid="master-classpath" />
+      </sql>
+  </target>
+  
 </project>
