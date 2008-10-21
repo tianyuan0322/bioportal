@@ -1,14 +1,14 @@
 /* Drop old users*/
-DROP USER 'bioportal_user';
-DROP USER 'lexgrid_user';
-DROP USER 'protege_user';
+DROP USER 'bioportal_user'@'localhost';
+DROP USER 'lexgrid_user'@'localhost';
+DROP USER 'protege_user'@'localhost';
 
 
 /* Create LexGrid database */
-CREATE DATABASE `bioportal_lexgrid`;
+CREATE DATABASE IF NOT EXISTS `bioportal_lexgrid`;
 
 /* Create Protege database */
-CREATE DATABASE `bioportal_protege`;
+CREATE DATABASE IF NOT EXISTS `bioportal_protege`;
 
 /* Create Users */
 create user 'bioportal_user'@'localhost' identified by 'password';
