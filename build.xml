@@ -217,12 +217,12 @@
 		<mkdir dir="${classes.dir}" />
 		<mkdir dir="${conf.dir.generated}" />
 
-    <javac destdir="${classes.dir}" debug="${debug.enabled}" deprecation="false" optimize="false" failonerror="true">
+    <javac destdir="${classes.dir}" debug="true" deprecation="false" optimize="false" failonerror="true">
 			<src path="${src.dir}" />
 			<classpath refid="master-classpath" />
 		</javac>
 
-    <javac destdir="${classes.dir}" debug="${debug.enabled}" deprecation="false" optimize="false" failonerror="true">
+    <javac destdir="${classes.dir}" debug="true" deprecation="false" optimize="false" failonerror="true">
 			<src path="${test.dir}" />
 			<classpath refid="master-classpath" />
 		</javac>
