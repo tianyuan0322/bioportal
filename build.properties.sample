@@ -10,10 +10,6 @@ web.dir=WebRoot
 # Source directory
 src.dir=src/java
 
-# Enabling Debug will cause much more information to be
-# written to the log files, but will impact runtime performance.
-debug.enabled=true
-
 # Path to store resources (cvs downloads, ontologies, test files etc.)
 # outside of the project structure
 bioportal.resource.path=/apps/bmir.apps/bioportal_resources
