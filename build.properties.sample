@@ -10,6 +10,10 @@ web.dir=WebRoot
 # Source directory
 src.dir=src/java
 
+# Enabling Debug will cause much more information to be
+# written to the log files, but will impact runtime performance.
+debug.enabled=true
+
 # Path to store resources (cvs downloads, ontologies, test files etc.)
 # outside of the project structure
 bioportal.resource.path=/apps/bmir.apps/bioportal_resources
@@ -340,3 +344,13 @@ lexgrid.smtp.server=${bioportal.smtp.server}
 # This can be a single address or comma-separated list.
 # NOTE: Only applicable if lexgrid.email.errors is set to 'true'.
 lexgrid.email.to=youremail@yourserver.edu
+
+# 
+# NCBO Test Fixture setup information.  Make adjustments to match your database
+# connection configuration.
+test.db.url=jdbc:mysql://localhost:3306
+test.jdbc.driver=${bioportal.jdbc.driver}
+
+test.db.user=root
+test.db.password=yourrootpassword
+test.sql.dir=db/sql
