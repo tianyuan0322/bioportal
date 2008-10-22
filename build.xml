@@ -217,12 +217,12 @@
 		<mkdir dir="${classes.dir}" />
 		<mkdir dir="${conf.dir.generated}" />
 
-    <javac destdir="${classes.dir}" debug="true" deprecation="false" optimize="false" failonerror="true">
+		<javac destdir="${classes.dir}" debug="true" deprecation="false" optimize="false" failonerror="true">
 			<src path="${src.dir}" />
 			<classpath refid="master-classpath" />
 		</javac>
 
-    <javac destdir="${classes.dir}" debug="true" deprecation="false" optimize="false" failonerror="true">
+		<javac destdir="${classes.dir}" debug="true" deprecation="false" optimize="false" failonerror="true">
 			<src path="${test.dir}" />
 			<classpath refid="master-classpath" />
 		</javac>
@@ -293,38 +293,27 @@
 		</copy>
 	</target>
 
-		<!-- Only tests user unit tests for now until full database test fixtures can be created.-->
+	<!-- Only tests user unit tests for now until full database test fixtures can be created.-->
 	<target name="test">
 		<junit fork="yes" haltonfailure="yes">
-      <batchtest>
-        <fileset dir="${classes.dir}" includes="**/User*Test*.class" />
-      </batchtest>
+			<batchtest>
+				<fileset dir="${classes.dir}" includes="**/User*Test*.class" />
+			</batchtest>
 			<formatter type="plain" usefile="false" />
 			<classpath refid="master-classpath" />
 		</junit>
 	</target>
 
 	<!-- TODO:  This task does not work.  The bioportal_db.sql scripts do not work correctly through Ant "sql" targets.  It only works directly in the MySQL Query browser.-->
-  <target description="Setup test database for Bioportal metadata, version info, and user data."
-          name="test.dbsetupinit">
-    <sql driver="${test.jdbc.driver}"
-          src="${test.sql.dir}/bioportal_db.sql"
-          url="${test.db.url}/?autoReconnect=true"
-        userid="${test.db.user}"
-        password="${test.db.password}" >
+	<target description="Setup test database for Bioportal metadata, version info, and user data." name="test.dbsetupinit">
+		<sql driver="${test.jdbc.driver}" src="${test.sql.dir}/bioportal_db.sql" url="${test.db.url}/?autoReconnect=true" userid="${test.db.user}" password="${test.db.password}">
 			<classpath refid="master-classpath" />
-      </sql>
-  </target>
+		</sql>
+	</target>
 
-  <target description="Setup database test fixture for unit tests."
-          name="test.dbsetup">
-    <sql driver="${test.jdbc.driver}"
-          src="${test.sql.dir}/test_db_fixture.sql"
-          url="${test.db.url}/?autoReconnect=true"
-        userid="${test.db.user}"
-        password="${test.db.password}" >
+	<target description="Setup database test fixture for unit tests." name="test.dbsetup">
+		<sql driver="${test.jdbc.driver}" src="${test.sql.dir}/test_db_fixture.sql" url="${test.db.url}/?autoReconnect=true" userid="${test.db.user}" password="${test.db.password}">
 			<classpath refid="master-classpath" />
-      </sql>
-  </target>
-  
+		</sql>
+	</target>
 </project>
