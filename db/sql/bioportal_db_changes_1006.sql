@@ -55,6 +55,12 @@ WHERE
 
 UPDATE ncbo_ontology_version_metadata 
 SET
+	preferred_name_slot = 'http://bioontology.org/projects/ontologies/birnlex#preferred_label' 
+WHERE
+	ontology_version_id = 29684;
+
+UPDATE ncbo_ontology_version_metadata 
+SET
 	synonym_slot = 'http://www.bootstrep.eu/ontology/GRO#synonym' 
 WHERE
 	ontology_version_id = 38291;
