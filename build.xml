@@ -294,10 +294,10 @@
 	</target>
 
 	<!-- Only tests user unit tests for now until full database test fixtures can be created.-->
-	<target name="test" depends="clean,deploy">
+	<target name="test">
 		<junit fork="yes" haltonfailure="yes">
 			<batchtest>
-				<fileset dir="${classes.dir}" includes="**/UserService*Test*.class" />
+				<fileset dir="${classes.dir}" includes="**/User*Test*.class" />
 			</batchtest>
 			<formatter type="plain" usefile="false" />
 			<classpath refid="master-classpath" />
