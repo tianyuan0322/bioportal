@@ -38,7 +38,7 @@
 		<echo message="deploy    --> Deploy application as directory" />
 		<echo message="createwar --> Create a WAR file but don't deploy it to the server" />
 		<echo message="deploywar --> Deploy application as a WAR file" />
-		<echo message="test      --> Invoke selected unit tests with dependent test database fixtures (the fixture will wipe out your local database)." />
+		<echo message="test      --> Invoke selected unit tests (assumes test fixtures such as databases are setup)." />
 		<echo message="" />
 	</target>
 
@@ -303,6 +303,8 @@
 			<classpath refid="master-classpath" />
 		</junit>
 	</target>
+
+	<target name="cleantest" depends="clean,deploy,test"/>
 
 	<!-- TODO:  This task does not work.  The bioportal_db.sql scripts do not work correctly through Ant "sql" targets.  It only works directly in the MySQL Query browser.-->
 	<target description="Setup test database for Bioportal metadata, version info, and user data." name="test.dbsetupinit">
