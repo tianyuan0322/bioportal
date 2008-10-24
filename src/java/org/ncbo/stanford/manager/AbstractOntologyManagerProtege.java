@@ -97,7 +97,7 @@ public abstract class AbstractOntologyManagerProtege {
 	 * return (String) o; } else { return frame.getName(); } } }
 	 */
 
-	private static void setBrowserSlotByPreferredNameSlot(KnowledgeBase kb,
+	private void setBrowserSlotByPreferredNameSlot(KnowledgeBase kb,
 			Slot preferredNameSlot) {
 		Set<Cls> types = new HashSet<Cls>();
 
@@ -187,7 +187,7 @@ public abstract class AbstractOntologyManagerProtege {
 			log.debug("Created new knowledgebase: " + kb.getName());
 		}
 
-		return prj.getKnowledgeBase();
+		return kb;
 	}
 
 	/**
