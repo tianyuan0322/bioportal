@@ -76,6 +76,10 @@ public class LuceneIndexer {
 
 		while (rs.next()) {
 			try {
+				System.out.println("Indexing ontology: " + rs.getString("display_label") + " (Id: " + rs
+						.getInt("id") + ", Ontology Id: " + rs
+						.getInt("ontology_id") + ")");
+				
 				KnowledgeBase kb = createKnowledgeBaseInstance(rs);
 				boolean owlMode = kb instanceof OWLModel;
 				Set<LuceneSlot> searchableSlots = getSearchableSlots(kb, rs
@@ -125,6 +129,10 @@ public class LuceneIndexer {
 
 				if (!(t instanceof MySQLSyntaxErrorException)) {
 					throw new Exception(t);
+				} else {
+					System.out.println("Ontology: " + rs.getString("display_label") + " (Id: " + rs
+							.getInt("id") + ", Ontology Id: " + rs
+							.getInt("ontology_id") + ") does not exist in Protege");
 				}
 			}
 		}
@@ -314,7 +322,7 @@ public class LuceneIndexer {
 				
 				
 				
-				+ "ORDER BY " + "ont.display_label" + " LIMIT 5";
+				+ "ORDER BY " + "ont.display_label" + " LIMIT 10";
 
 		
 		
