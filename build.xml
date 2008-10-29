@@ -299,10 +299,10 @@
 	<target name="test">
     <mkdir dir="../${test_tmp.dir}"/>
 		<junit printsummary="true" fork="yes" haltonfailure="true">
-        <batchtest todir="../${test_tmp.dir}">
+        <batchtest>
 				<fileset dir="${classes.dir}" includes="**/User*Test*.class" />
 			</batchtest>
-			<formatter type="xml" usefile="true" />
+			<formatter type="plain" usefile="false" />
 			<classpath refid="master-classpath" />
 		</junit>
 
