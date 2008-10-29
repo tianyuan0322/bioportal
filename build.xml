@@ -4,7 +4,7 @@
 	<property file="build.properties" />
 
 	<property name="test.dir" value="src/test" />
-	<property name="test_tmp.dir" value="tmp" />
+	<property name="testresults.dir" value="testresults" />
 	<property name="build.dir" value="build" />
 	<property name="dist.dir" value="dist" />
 	<property name="meta-inf.dir" value="${web.dir}/META-INF" />
@@ -62,7 +62,6 @@
 		<delete dir="${conf.dir.generated}" />
 		<delete dir="${deploy.path}/${app.name}" />
 		<delete file="${deploy.path}/${app.name}.war" />
-		<delete dir="${test_tmp.dir}" />
 	</target>
 
 	<!--- This target sets the registry.xml-is-present property if the registry file exists -->
@@ -297,18 +296,19 @@
 
 	<!-- Only tests user unit tests for now until full database test fixtures can be created.-->
 	<target name="test">
-    <mkdir dir="../${test_tmp.dir}"/>
+		<delete dir="${testresults.dir}" />
+		<mkdir dir="${testresults.dir}" />
 		<junit printsummary="true" fork="yes" haltonfailure="true">
-        <batchtest>
+            <batchtest todir="${testresults.dir}">
 				<fileset dir="${classes.dir}" includes="**/User*Test*.class" />
 			</batchtest>
-			<formatter type="plain" usefile="false" />
+			<formatter type="xml" usefile="true" />
 			<classpath refid="master-classpath" />
 		</junit>
 
 	</target>
 
-	<target name="cleantest" depends="clean,deploy,test"/>
+	<target name="deploytest" depends="deploy,test"/>
 
 	<!-- TODO:  This task does not work.  The bioportal_db.sql scripts do not work correctly through Ant "sql" targets.  It only works directly in the MySQL Query browser.-->
 	<target description="Setup test database for Bioportal metadata, version info, and user data." name="test.dbsetupinit">
