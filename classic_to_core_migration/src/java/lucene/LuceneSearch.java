@@ -14,7 +14,6 @@ import java.util.Map;
 import java.util.Properties;
 
 import lucene.bean.LuceneSearchDocument;
-import lucene.bean.LuceneSearchField;
 import lucene.manager.LuceneSearchManager;
 import lucene.manager.impl.LuceneSearchManagerLexGridImpl;
 import lucene.manager.impl.LuceneSearchManagerProtegeImpl;
@@ -22,9 +21,6 @@ import lucene.wrapper.IndexWriterWrapper;
 
 import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.analysis.standard.StandardAnalyzer;
-import org.apache.lucene.document.Document;
-import org.apache.lucene.document.Field;
-import org.apache.lucene.index.IndexWriter;
 import org.apache.lucene.index.Term;
 import org.apache.lucene.queryParser.ParseException;
 import org.apache.lucene.queryParser.QueryParser;
@@ -131,7 +127,7 @@ public class LuceneSearch {
 
 					long stop = System.currentTimeMillis(); // stop timing
 					System.out.println("Finished indexing ontology: "
-							+ displayLabel + " in " + (stop - start)
+							+ displayLabel + " in " + (double) (stop - start) / 1000
 							+ " milliseconds.");
 
 				} else {

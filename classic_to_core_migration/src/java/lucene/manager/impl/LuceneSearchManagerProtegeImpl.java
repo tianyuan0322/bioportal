@@ -25,6 +25,7 @@ import edu.stanford.smi.protege.model.KnowledgeBase;
 import edu.stanford.smi.protege.model.Model;
 import edu.stanford.smi.protege.model.Project;
 import edu.stanford.smi.protege.model.Slot;
+import edu.stanford.smi.protege.model.ValueType;
 import edu.stanford.smi.protege.model.framestore.FrameStore;
 import edu.stanford.smi.protege.model.framestore.NarrowFrameStore;
 import edu.stanford.smi.protege.model.framestore.SimpleFrameStore;
@@ -82,7 +83,7 @@ public class LuceneSearchManagerProtegeImpl implements LuceneSearchManager {
 		}
 
 		LuceneSearchDocument doc = new LuceneSearchDocument();
-	
+
 		for (Frame frame : frames) {
 			for (LuceneProtegeSlot luceneSlot : searchableSlots) {
 				synchronized (kb) {
@@ -95,8 +96,8 @@ public class LuceneSearchManagerProtegeImpl implements LuceneSearchManager {
 						continue;
 					}
 
-					setLuceneSearchDocument(doc,
-							nfs, frame, luceneSlot, (String) value, owlMode);
+					setLuceneSearchDocument(doc, nfs, frame, luceneSlot,
+							(String) value, owlMode);
 					writer.addDocument(doc);
 				}
 			}
@@ -168,6 +169,7 @@ public class LuceneSearchManagerProtegeImpl implements LuceneSearchManager {
 			String preferredNameSlotName) {
 		Set<LuceneProtegeSlot> searchableSlots = new HashSet<LuceneProtegeSlot>();
 
+		// add synonym slot if exists
 		Slot synonymSlot = getSynonymSlot(kb, synonymSlotName);
 
 		if (synonymSlot != null) {
@@ -175,11 +177,46 @@ public class LuceneSearchManagerProtegeImpl implements LuceneSearchManager {
 					LuceneRecordTypeEnum.RECORD_TYPE_SYNONYM));
 		}
 
+		// add preferred name slot
 		searchableSlots.add(new LuceneProtegeSlot(getPreferredNameSlot(kb,
 				preferredNameSlotName), ontologyId,
 				LuceneRecordTypeEnum.RECORD_TYPE_PREFERRED_NAME));
 
+		// add property slots
+		Set<Slot> propertySlots = getPropertySlots(kb);
+
+		for (Slot propertySlot : propertySlots) {
+			searchableSlots.add(new LuceneProtegeSlot(propertySlot, ontologyId,
+					LuceneRecordTypeEnum.RECORD_TYPE_PROPERTY));
+		}
+
 		return searchableSlots;
+	}
+
+	@SuppressWarnings("unchecked")
+	private Set<Slot> getPropertySlots(KnowledgeBase kb) {
+		Set<Slot> allSlots = new HashSet<Slot>();
+		Set<Slot> propertySlots = new HashSet<Slot>();
+
+		if (kb instanceof OWLModel) {
+			OWLModel owl = (OWLModel) kb;
+			allSlots.addAll(owl.getOWLAnnotationProperties());
+			allSlots.add(owl.getRDFSLabelProperty());
+			allSlots.add(owl.getRDFSCommentProperty());
+			allSlots.add(kb.getSystemFrames().getNameSlot());
+		} else {
+			allSlots.addAll(kb.getSlots());
+		}
+
+		for (Slot slot : allSlots) {
+			ValueType vt = slot.getValueType();
+
+			if (vt.equals(ValueType.ANY) || vt.equals(ValueType.STRING)) {
+				propertySlots.add(slot);
+			}
+		}
+
+		return propertySlots;
 	}
 
 	private void setBrowserSlotByPreferredNameSlot(KnowledgeBase kb,

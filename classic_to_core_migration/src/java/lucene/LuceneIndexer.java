@@ -45,6 +45,7 @@ import edu.stanford.smi.protege.model.KnowledgeBase;
 import edu.stanford.smi.protege.model.Model;
 import edu.stanford.smi.protege.model.Project;
 import edu.stanford.smi.protege.model.Slot;
+import edu.stanford.smi.protege.model.ValueType;
 import edu.stanford.smi.protege.model.framestore.FrameStore;
 import edu.stanford.smi.protege.model.framestore.NarrowFrameStore;
 import edu.stanford.smi.protege.model.framestore.SimpleFrameStore;
@@ -75,7 +76,7 @@ public class LuceneIndexer {
 
 			executeQuery("blood");
 
-			Collection<Integer> ontologyIds = new ArrayList();
+			Collection<Integer> ontologyIds = new ArrayList<Integer>();
 			ontologyIds.add(1053);
 			ontologyIds.add(1089);
 			executeQuery("blood", ontologyIds);
@@ -111,6 +112,7 @@ public class LuceneIndexer {
 		System.out.println("Hits:" + hits.length());
 	}
 
+	@SuppressWarnings("unchecked")
 	public static void index() throws Exception {
 		Connection connBioPortal = connectBioPortal();
 		ResultSet rs = findAllProtegeOntologies(connBioPortal);
@@ -256,6 +258,7 @@ public class LuceneIndexer {
 		writer.addDocument(doc);
 	}
 
+	@SuppressWarnings("unchecked")
 	private static String getFrameName(NarrowFrameStore nfs, Frame frame) {
 		Collection values = nfs.getValues(frame, (Slot) nfs
 				.getFrame(Model.SlotID.NAME), null, false);
@@ -272,6 +275,7 @@ public class LuceneIndexer {
 			String preferredNameSlotName) {
 		Set<LuceneProtegeSlot> searchableSlots = new HashSet<LuceneProtegeSlot>();
 
+		// add synonym slot if exists
 		Slot synonymSlot = getSynonymSlot(kb, synonymSlotName);
 
 		if (synonymSlot != null) {
@@ -279,11 +283,46 @@ public class LuceneIndexer {
 					LuceneRecordTypeEnum.RECORD_TYPE_SYNONYM));
 		}
 
+		// add preferred name slot
 		searchableSlots.add(new LuceneProtegeSlot(getPreferredNameSlot(kb,
 				preferredNameSlotName), ontologyId,
 				LuceneRecordTypeEnum.RECORD_TYPE_PREFERRED_NAME));
 
+		// add property slots
+		Set<Slot> propertySlots = getPropertySlots(kb);
+
+		for (Slot propertySlot : propertySlots) {
+			searchableSlots.add(new LuceneProtegeSlot(propertySlot, ontologyId,
+					LuceneRecordTypeEnum.RECORD_TYPE_PROPERTY));
+		}
+
 		return searchableSlots;
+	}
+
+	@SuppressWarnings("unchecked")
+	private static Set<Slot> getPropertySlots(KnowledgeBase kb) {
+		Set<Slot> allSlots = new HashSet<Slot>();
+		Set<Slot> propertySlots = new HashSet<Slot>();
+
+		if (kb instanceof OWLModel) {
+			OWLModel owl = (OWLModel) kb;
+			allSlots.addAll(owl.getOWLAnnotationProperties());
+			allSlots.add(owl.getRDFSLabelProperty());
+			allSlots.add(owl.getRDFSCommentProperty());
+			allSlots.add(kb.getSystemFrames().getNameSlot());
+		} else {
+			allSlots.addAll(kb.getSlots());
+		}
+
+		for (Slot slot : allSlots) {
+			ValueType vt = slot.getValueType();
+
+			if (vt.equals(ValueType.ANY) || vt.equals(ValueType.STRING)) {
+				propertySlots.add(slot);
+			}
+		}
+
+		return propertySlots;
 	}
 
 	/**
