@@ -1,13 +1,13 @@
 package lucene.manager;
 
-import java.io.IOException;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.Collection;
 
-import org.apache.lucene.index.IndexWriter;
+import lucene.bean.LuceneSearchDocument;
 
 public interface LuceneSearchManager {
 	// in BioPortal, use OntologyBean as the argument
-	public void indexOntology(IndexWriter writer, ResultSet rs)
-			throws SQLException, IOException;
+	public Collection<LuceneSearchDocument> generateLuceneDocuments(ResultSet rs)
+			throws SQLException;
 }

@@ -14,12 +14,15 @@ import java.util.Map;
 import java.util.Properties;
 
 import lucene.bean.LuceneSearchDocument;
+import lucene.bean.LuceneSearchField;
 import lucene.manager.LuceneSearchManager;
 import lucene.manager.impl.LuceneSearchManagerLexGridImpl;
 import lucene.manager.impl.LuceneSearchManagerProtegeImpl;
 
 import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.analysis.standard.StandardAnalyzer;
+import org.apache.lucene.document.Document;
+import org.apache.lucene.document.Field;
 import org.apache.lucene.index.IndexWriter;
 import org.apache.lucene.index.Term;
 import org.apache.lucene.queryParser.ParseException;
@@ -89,20 +92,20 @@ public class LuceneSearch {
 		executeQuery(expr, null);
 	}
 
-	public void executeQuery(String expr, Collection<Integer> ontologyIds) throws IOException {
-        Searcher searcher = null;
-        Collection<Frame> results = new LinkedHashSet<Frame>();
+	public void executeQuery(String expr, Collection<Integer> ontologyIds)
+			throws IOException {
+		Searcher searcher = null;
+		Collection<Frame> results = new LinkedHashSet<Frame>();
 
-        Query q = generateLuceneQuery(ontologyIds, expr);
+		Query q = generateLuceneQuery(ontologyIds, expr);
 
-        searcher = new IndexSearcher(getIndexPath());
-        Hits hits = searcher.search(q);
-		
-		
+		searcher = new IndexSearcher(getIndexPath());
+		Hits hits = searcher.search(q);
+
 		System.out.println("Query:" + q);
 		System.out.println("Hits:" + hits.length());
 	}
-	
+
 	public void index() throws Exception {
 		Connection connBioPortal = connectBioPortal();
 		ResultSet rs = findAllOntologies(connBioPortal);
@@ -114,7 +117,9 @@ public class LuceneSearch {
 				LuceneSearchManager mgr = formatHandlerMap.get(format);
 
 				if (mgr != null) {
-					mgr.indexOntology(writer, rs);
+					Collection<LuceneSearchDocument> docs = mgr
+							.generateLuceneDocuments(rs);
+					indexOntology(writer, docs);
 				} else {
 					System.out.println("No hanlder was found for ontology: "
 							+ rs.getString("display_label") + " (Id: "
@@ -144,33 +149,29 @@ public class LuceneSearch {
 		connBioPortal = null;
 	}
 
-	private Query generateLuceneQuery(Collection<Integer> ontologyIds,
-			String expr) throws IOException {
-		BooleanQuery query = new BooleanQuery();
-		QueryParser parser = new QueryParser(LuceneSearchDocument.CONTENTS_FIELD_LABEL, analyzer);
-		parser.setAllowLeadingWildcard(true);
-
-		try {
-			query.add(parser.parse(expr), BooleanClause.Occur.MUST);
-		} catch (ParseException e) {
-			IOException ioe = new IOException(e.getMessage());
-			ioe.initCause(e);
-			throw ioe;
+	private void indexOntology(IndexWriter writer,
+			Collection<LuceneSearchDocument> docs) throws IOException {
+		for (LuceneSearchDocument doc : docs) {
+			addDocument(writer, doc);
 		}
+	}
 
-		if (ontologyIds != null && !ontologyIds.isEmpty()) {
-			BooleanQuery ontologyIdQuery = new BooleanQuery();
+	private void addDocument(IndexWriter writer, LuceneSearchDocument searchDoc)
+			throws IOException {
+		Document doc = new Document();
 
-			for (Integer ontologyId : ontologyIds) {
-				Term term = new Term(LuceneSearchDocument.ONTOLOGY_ID_FIELD_LABEL, ontologyId.toString());
-				ontologyIdQuery.add(new TermQuery(term),
-						BooleanClause.Occur.SHOULD);
-			}
+		addField(doc, searchDoc.getOntologyId());
+		addField(doc, searchDoc.getRecordType());
+		addField(doc, searchDoc.getFrameName());
+		addField(doc, searchDoc.getContents());
+		addField(doc, searchDoc.getLiteralContents());
 
-			query.add(ontologyIdQuery, BooleanClause.Occur.MUST);
-		}
+		writer.addDocument(doc);
+	}
 
-		return query;
+	private void addField(Document doc, LuceneSearchField field) {
+		doc.add(new Field(field.getLabel(), field.getContents(), field
+				.getStore(), field.getIndex()));
 	}
 
 	private void forceWriterClose(IndexWriter writer) {
@@ -195,6 +196,38 @@ public class LuceneSearch {
 
 	private IndexWriter openWriter(boolean create) throws IOException {
 		return new IndexWriter(getIndexPath(), analyzer, create);
+	}
+
+	private Query generateLuceneQuery(Collection<Integer> ontologyIds,
+			String expr) throws IOException {
+		BooleanQuery query = new BooleanQuery();
+		QueryParser parser = new QueryParser(
+				LuceneSearchDocument.CONTENTS_FIELD_LABEL, analyzer);
+		parser.setAllowLeadingWildcard(true);
+
+		try {
+			query.add(parser.parse(expr), BooleanClause.Occur.MUST);
+		} catch (ParseException e) {
+			IOException ioe = new IOException(e.getMessage());
+			ioe.initCause(e);
+			throw ioe;
+		}
+
+		if (ontologyIds != null && !ontologyIds.isEmpty()) {
+			BooleanQuery ontologyIdQuery = new BooleanQuery();
+
+			for (Integer ontologyId : ontologyIds) {
+				Term term = new Term(
+						LuceneSearchDocument.ONTOLOGY_ID_FIELD_LABEL,
+						ontologyId.toString());
+				ontologyIdQuery.add(new TermQuery(term),
+						BooleanClause.Occur.SHOULD);
+			}
+
+			query.add(ontologyIdQuery, BooleanClause.Occur.MUST);
+		}
+
+		return query;
 	}
 
 	private ResultSet findAllOntologies(Connection conn) throws SQLException {

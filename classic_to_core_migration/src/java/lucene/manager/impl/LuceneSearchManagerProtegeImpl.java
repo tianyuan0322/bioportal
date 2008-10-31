@@ -1,6 +1,5 @@
 package lucene.manager.impl;
 
-import java.io.IOException;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -12,9 +11,8 @@ import java.util.Set;
 import lucene.bean.LuceneProtegeSlot;
 import lucene.bean.LuceneSearchDocument;
 import lucene.enumeration.LuceneRecordTypeEnum;
-import lucene.manager.AbstractLuceneSearchManager;
+import lucene.manager.LuceneSearchManager;
 
-import org.apache.lucene.index.IndexWriter;
 import org.ncbo.stanford.util.constants.ApplicationConstants;
 import org.ncbo.stanford.util.helper.StringHelper;
 
@@ -32,7 +30,7 @@ import edu.stanford.smi.protege.storage.database.DatabaseKnowledgeBaseFactory;
 import edu.stanford.smi.protegex.owl.database.OWLDatabaseKnowledgeBaseFactory;
 import edu.stanford.smi.protegex.owl.model.OWLModel;
 
-public class LuceneSearchManagerProtegeImpl extends AbstractLuceneSearchManager {
+public class LuceneSearchManagerProtegeImpl implements LuceneSearchManager {
 
 	private final String protegeTablePrefix = "tbl_";
 	private final String protegeTableSuffix = "";
@@ -63,8 +61,9 @@ public class LuceneSearchManagerProtegeImpl extends AbstractLuceneSearchManager 
 	// TODO: END, Throwaway code ==========================================
 
 	@SuppressWarnings("unchecked")
-	public void indexOntology(IndexWriter writer, ResultSet rs)
-			throws SQLException, IOException {
+	public Collection<LuceneSearchDocument> generateLuceneDocuments(ResultSet rs)
+			throws SQLException {
+		Collection<LuceneSearchDocument> docs = new ArrayList<LuceneSearchDocument>();
 		KnowledgeBase kb = createKnowledgeBaseInstance(rs);
 		boolean owlMode = kb instanceof OWLModel;
 		Set<LuceneProtegeSlot> searchableSlots = getSearchableSlots(kb, rs
@@ -95,7 +94,7 @@ public class LuceneSearchManagerProtegeImpl extends AbstractLuceneSearchManager 
 
 					LuceneSearchDocument doc = generateLuceneSearchDocument(
 							nfs, frame, luceneSlot, (String) value, owlMode);
-					addDocument(writer, doc);
+					docs.add(doc);
 				}
 
 				// values.clear();
@@ -105,6 +104,8 @@ public class LuceneSearchManagerProtegeImpl extends AbstractLuceneSearchManager 
 
 		kb.dispose();
 		kb = null;
+
+		return docs;
 	}
 
 	private LuceneSearchDocument generateLuceneSearchDocument(
