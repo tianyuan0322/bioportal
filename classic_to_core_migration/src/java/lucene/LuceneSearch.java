@@ -117,6 +117,12 @@ public class LuceneSearch {
 				LuceneSearchManager mgr = formatHandlerMap.get(format);
 
 				if (mgr != null) {
+					System.out.println("Indexing ontology: "
+							+ rs.getString("display_label") + " (Id: "
+							+ rs.getInt("id") + ", Ontology Id: "
+							+ rs.getInt("ontology_id") + ", Format: " + format
+							+ ")");
+
 					Collection<LuceneSearchDocument> docs = mgr
 							.generateLuceneDocuments(rs);
 					indexOntology(writer, docs);
@@ -151,8 +157,10 @@ public class LuceneSearch {
 
 	private void indexOntology(IndexWriter writer,
 			Collection<LuceneSearchDocument> docs) throws IOException {
-		for (LuceneSearchDocument doc : docs) {
-			addDocument(writer, doc);
+		if (docs != null) {
+			for (LuceneSearchDocument doc : docs) {
+				addDocument(writer, doc);
+			}
 		}
 	}
 
@@ -241,8 +249,8 @@ public class LuceneSearch {
 				+ "		WHERE status_id = ? "
 				+ "		GROUP BY ontology_id "
 				+ "	) a ON ont.ontology_id = a.ontology_id AND ont.internal_version_number = a.internal_version_number "
-				+ "WHERE "
-				+ "	upper(ont.format) in ('PROTEGE', 'OWL-FULL', 'OWL-DL', 'OWL-LITE') "
+				+ "WHERE 1 = 1 "
+//				+ "AND UPPER(ont.format) IN ('PROTEGE', 'OWL-FULL', 'OWL-DL', 'OWL-LITE') "
 
 				// + " and id = 13578 "
 

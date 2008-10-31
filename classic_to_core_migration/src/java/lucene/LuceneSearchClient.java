@@ -10,7 +10,7 @@ public class LuceneSearchClient {
 
 			LuceneSearch search = LuceneSearch.getInstance();
 
-			// search.index();
+			search.index();
 
 			search.executeQuery("blood");
 
