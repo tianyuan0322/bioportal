@@ -18,6 +18,7 @@ import lucene.bean.LuceneSearchField;
 import lucene.manager.LuceneSearchManager;
 import lucene.manager.impl.LuceneSearchManagerLexGridImpl;
 import lucene.manager.impl.LuceneSearchManagerProtegeImpl;
+import lucene.wrapper.IndexWriterWrapper;
 
 import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.analysis.standard.StandardAnalyzer;
@@ -109,7 +110,8 @@ public class LuceneSearch {
 	public void index() throws Exception {
 		Connection connBioPortal = connectBioPortal();
 		ResultSet rs = findAllOntologies(connBioPortal);
-		IndexWriter writer = openWriter(true);
+		IndexWriterWrapper writer = new IndexWriterWrapper(getIndexPath(),
+				analyzer, true);
 
 		while (rs.next()) {
 			try {
@@ -117,15 +119,21 @@ public class LuceneSearch {
 				LuceneSearchManager mgr = formatHandlerMap.get(format);
 
 				if (mgr != null) {
-					System.out.println("Indexing ontology: "
-							+ rs.getString("display_label") + " (Id: "
-							+ rs.getInt("id") + ", Ontology Id: "
+					String displayLabel = rs.getString("display_label");
+
+					System.out.println("Indexing ontology: " + displayLabel
+							+ " (Id: " + rs.getInt("id") + ", Ontology Id: "
 							+ rs.getInt("ontology_id") + ", Format: " + format
 							+ ")");
+					long start = System.currentTimeMillis();
 
-					Collection<LuceneSearchDocument> docs = mgr
-							.generateLuceneDocuments(rs);
-					indexOntology(writer, docs);
+					mgr.indexOntology(writer, rs);
+
+					long stop = System.currentTimeMillis(); // stop timing
+					System.out.println("Finished indexing ontology: "
+							+ displayLabel + " in " + (stop - start)
+							+ " milliseconds.");
+
 				} else {
 					System.out.println("No hanlder was found for ontology: "
 							+ rs.getString("display_label") + " (Id: "
@@ -149,52 +157,15 @@ public class LuceneSearch {
 		}
 
 		writer.optimize();
-		forceWriterClose(writer);
+		writer.closeWriter();
 		writer = null;
-		forceResultSetClose(rs);
+		closeResultSet(rs);
 		rs = null;
-		forceConnectionClose(connBioPortal);
+		closeConnection(connBioPortal);
 		connBioPortal = null;
 	}
 
-	private void indexOntology(IndexWriter writer,
-			Collection<LuceneSearchDocument> docs) throws IOException {
-		if (docs != null) {
-			for (LuceneSearchDocument doc : docs) {
-				addDocument(writer, doc);
-			}
-		}
-	}
-
-	private void addDocument(IndexWriter writer, LuceneSearchDocument searchDoc)
-			throws IOException {
-		Document doc = new Document();
-
-		addField(doc, searchDoc.getOntologyId());
-		addField(doc, searchDoc.getRecordType());
-		addField(doc, searchDoc.getFrameName());
-		addField(doc, searchDoc.getContents());
-		addField(doc, searchDoc.getLiteralContents());
-
-		writer.addDocument(doc);
-	}
-
-	private void addField(Document doc, LuceneSearchField field) {
-		doc.add(new Field(field.getLabel(), field.getContents(), field
-				.getStore(), field.getIndex()));
-	}
-
-	private void forceWriterClose(IndexWriter writer) {
-		try {
-			if (writer != null) {
-				writer.close();
-			}
-		} catch (IOException ioe) {
-			ioe.printStackTrace();
-		}
-	}
-
-	private void forceConnectionClose(Connection conn) {
+	private void closeConnection(Connection conn) {
 		try {
 			if (conn != null) {
 				conn.close();
@@ -204,7 +175,7 @@ public class LuceneSearch {
 		}
 	}
 
-	private void forceResultSetClose(ResultSet rs) {
+	private void closeResultSet(ResultSet rs) {
 		try {
 			if (rs != null) {
 				rs.close();
@@ -212,10 +183,6 @@ public class LuceneSearch {
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
-	}
-
-	private IndexWriter openWriter(boolean create) throws IOException {
-		return new IndexWriter(getIndexPath(), analyzer, create);
 	}
 
 	private Query generateLuceneQuery(Collection<Integer> ontologyIds,
@@ -262,9 +229,10 @@ public class LuceneSearch {
 				+ "		GROUP BY ontology_id "
 				+ "	) a ON ont.ontology_id = a.ontology_id AND ont.internal_version_number = a.internal_version_number "
 				+ "WHERE 1 = 1 "
-//				+ "AND UPPER(ont.format) IN ('PROTEGE', 'OWL-FULL', 'OWL-DL', 'OWL-LITE') "
+				+ "AND UPPER(ont.format) IN ('PROTEGE', 'OWL-FULL', 'OWL-DL', 'OWL-LITE') "
 
-				// + " and id = 13578 "
+				// + "AND id = 13578 "
+				+ "AND id = 29684 "
 
 				+ "ORDER BY " + "ont.display_label" + " LIMIT 10";
 

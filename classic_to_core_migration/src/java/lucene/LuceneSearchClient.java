@@ -14,7 +14,7 @@ public class LuceneSearchClient {
 
 			search.executeQuery("blood");
 
-			Collection<Integer> ontologyIds = new ArrayList();
+			Collection<Integer> ontologyIds = new ArrayList<Integer>();
 			ontologyIds.add(1053);
 			ontologyIds.add(1089);
 			search.executeQuery("blood", ontologyIds);

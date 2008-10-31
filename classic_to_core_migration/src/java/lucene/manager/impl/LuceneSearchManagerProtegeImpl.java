@@ -1,5 +1,6 @@
 package lucene.manager.impl;
 
+import java.io.IOException;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -12,6 +13,7 @@ import lucene.bean.LuceneProtegeSlot;
 import lucene.bean.LuceneSearchDocument;
 import lucene.enumeration.LuceneRecordTypeEnum;
 import lucene.manager.LuceneSearchManager;
+import lucene.wrapper.IndexWriterWrapper;
 
 import org.ncbo.stanford.util.constants.ApplicationConstants;
 import org.ncbo.stanford.util.helper.StringHelper;
@@ -61,9 +63,8 @@ public class LuceneSearchManagerProtegeImpl implements LuceneSearchManager {
 	// TODO: END, Throwaway code ==========================================
 
 	@SuppressWarnings("unchecked")
-	public Collection<LuceneSearchDocument> generateLuceneDocuments(ResultSet rs)
-			throws SQLException {
-		Collection<LuceneSearchDocument> docs = new ArrayList<LuceneSearchDocument>();
+	public void indexOntology(IndexWriterWrapper writer, ResultSet rs)
+			throws SQLException, IOException {
 		KnowledgeBase kb = createKnowledgeBaseInstance(rs);
 		boolean owlMode = kb instanceof OWLModel;
 		Set<LuceneProtegeSlot> searchableSlots = getSearchableSlots(kb, rs
@@ -80,6 +81,8 @@ public class LuceneSearchManagerProtegeImpl implements LuceneSearchManager {
 			frames = nfs.getFrames();
 		}
 
+		LuceneSearchDocument doc = new LuceneSearchDocument();
+	
 		for (Frame frame : frames) {
 			for (LuceneProtegeSlot luceneSlot : searchableSlots) {
 				synchronized (kb) {
@@ -92,32 +95,29 @@ public class LuceneSearchManagerProtegeImpl implements LuceneSearchManager {
 						continue;
 					}
 
-					LuceneSearchDocument doc = generateLuceneSearchDocument(
+					setLuceneSearchDocument(doc,
 							nfs, frame, luceneSlot, (String) value, owlMode);
-					docs.add(doc);
+					writer.addDocument(doc);
 				}
-
-				// values.clear();
-				// values = null;
 			}
 		}
 
 		kb.dispose();
 		kb = null;
-
-		return docs;
 	}
 
-	private LuceneSearchDocument generateLuceneSearchDocument(
+	private void setLuceneSearchDocument(LuceneSearchDocument doc,
 			NarrowFrameStore nfs, Frame frame, LuceneProtegeSlot luceneSlot,
 			String value, boolean owlMode) {
 		if (owlMode && value.startsWith("~#")) {
 			value = value.substring(5);
 		}
 
-		return new LuceneSearchDocument(luceneSlot.getOntologyId().toString(),
-				luceneSlot.getSlotType(), getFrameName(nfs, frame), value,
-				value);
+		doc.setOntologyId(luceneSlot.getOntologyId().toString());
+		doc.setRecordType(luceneSlot.getSlotType());
+		doc.setFrameName(getFrameName(nfs, frame));
+		doc.setContents(value);
+		doc.setLiteralContents(value);
 	}
 
 	@SuppressWarnings("unchecked")

@@ -69,17 +69,17 @@ public class LuceneIndexer {
 
 	public static void main(String[] args) {
 		try {
-//			contents:"blood" && (ontologyId:1116 || ontologyId:1053)
+			// contents:"blood" && (ontologyId:1116 || ontologyId:1053)
 
-//			index();
-			
+			index();
+
 			executeQuery("blood");
-			
-			Collection<Integer> ontologyIds = new ArrayList(); 
+
+			Collection<Integer> ontologyIds = new ArrayList();
 			ontologyIds.add(1053);
 			ontologyIds.add(1089);
 			executeQuery("blood", ontologyIds);
-			
+
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -97,16 +97,16 @@ public class LuceneIndexer {
 		executeQuery(expr, null);
 	}
 
-	public static void executeQuery(String expr, Collection<Integer> ontologyIds) throws IOException {
-        Searcher searcher = null;
-        Collection<Frame> results = new LinkedHashSet<Frame>();
+	public static void executeQuery(String expr, Collection<Integer> ontologyIds)
+			throws IOException {
+		Searcher searcher = null;
+		Collection<Frame> results = new LinkedHashSet<Frame>();
 
-        Query q = generateLuceneQuery(ontologyIds, expr);
+		Query q = generateLuceneQuery(ontologyIds, expr);
 
-        searcher = new IndexSearcher(getIndexPath());
-        Hits hits = searcher.search(q);
-		
-		
+		searcher = new IndexSearcher(getIndexPath());
+		Hits hits = searcher.search(q);
+
 		System.out.println("Query:" + q);
 		System.out.println("Hits:" + hits.length());
 	}
@@ -118,15 +118,19 @@ public class LuceneIndexer {
 
 		while (rs.next()) {
 			try {
-				System.out.println("Indexing ontology: "
-						+ rs.getString("display_label") + " (Id: "
-						+ rs.getInt("id") + ", Ontology Id: "
-						+ rs.getInt("ontology_id") + ")");
+				String displayLabel = rs.getString("display_label");
+
+				System.out.println("Indexing ontology: " + displayLabel
+						+ " (Id: " + rs.getInt("id") + ", Ontology Id: "
+						+ rs.getInt("ontology_id") + ", Format: "
+						+ rs.getString("format") + ")");
+
+				long start = System.currentTimeMillis();
 
 				KnowledgeBase kb = createKnowledgeBaseInstance(rs);
 				boolean owlMode = kb instanceof OWLModel;
-				Set<LuceneProtegeSlot> searchableSlots = getSearchableSlots(kb, rs
-						.getInt("ontology_id"), rs.getString("synonym_slot"),
+				Set<LuceneProtegeSlot> searchableSlots = getSearchableSlots(kb,
+						rs.getInt("ontology_id"), rs.getString("synonym_slot"),
 						rs.getString("preferred_name_slot"));
 
 				FrameStore fs = ((DefaultKnowledgeBase) kb)
@@ -156,14 +160,19 @@ public class LuceneIndexer {
 									(String) value, owlMode);
 						}
 
-//						values.clear();
-//						values = null;
-
+						// values.clear();
+						// values = null;
 					}
 				}
 
 				kb.dispose();
 				kb = null;
+
+				long stop = System.currentTimeMillis(); // stop timing
+				System.out.println("Finished indexing ontology: "
+						+ displayLabel + " in " + (stop - start)
+						+ " milliseconds.");
+
 			} catch (RuntimeException e) {
 				Throwable t = e.getCause();
 
@@ -223,8 +232,8 @@ public class LuceneIndexer {
 	}
 
 	private static void addDocument(IndexWriter writer, NarrowFrameStore nfs,
-			Frame frame, LuceneProtegeSlot luceneSlot, String value, boolean owlMode)
-			throws IOException {
+			Frame frame, LuceneProtegeSlot luceneSlot, String value,
+			boolean owlMode) throws IOException {
 		if (owlMode && value.startsWith("~#")) {
 			value = value.substring(5);
 		}
@@ -389,6 +398,7 @@ public class LuceneIndexer {
 				+ "	upper(ont.format) in ('PROTEGE', 'OWL-FULL', 'OWL-DL', 'OWL-LITE') "
 
 				// + " and id = 13578 "
+				+ "AND id = 29684 "
 
 				+ "ORDER BY " + "ont.display_label" + " LIMIT 10";
 
