@@ -151,6 +151,8 @@ public class LuceneSearch {
 		writer.optimize();
 		forceWriterClose(writer);
 		writer = null;
+		forceResultSetClose(rs);
+		rs = null;
 		forceConnectionClose(connBioPortal);
 		connBioPortal = null;
 	}
@@ -196,6 +198,16 @@ public class LuceneSearch {
 		try {
 			if (conn != null) {
 				conn.close();
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+	}
+
+	private void forceResultSetClose(ResultSet rs) {
+		try {
+			if (rs != null) {
+				rs.close();
 			}
 		} catch (SQLException e) {
 			e.printStackTrace();
