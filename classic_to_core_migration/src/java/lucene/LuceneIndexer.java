@@ -10,15 +10,29 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Properties;
 import java.util.Set;
+
+import lucene.bean.LuceneProtegeSlot;
+import lucene.enumeration.LuceneRecordTypeEnum;
 
 import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.analysis.standard.StandardAnalyzer;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.document.Field;
 import org.apache.lucene.index.IndexWriter;
+import org.apache.lucene.index.Term;
+import org.apache.lucene.queryParser.ParseException;
+import org.apache.lucene.queryParser.QueryParser;
+import org.apache.lucene.search.BooleanClause;
+import org.apache.lucene.search.BooleanQuery;
+import org.apache.lucene.search.Hits;
+import org.apache.lucene.search.IndexSearcher;
+import org.apache.lucene.search.Query;
+import org.apache.lucene.search.Searcher;
+import org.apache.lucene.search.TermQuery;
 import org.ncbo.stanford.util.constants.ApplicationConstants;
 import org.ncbo.stanford.util.helper.StringHelper;
 
@@ -55,7 +69,17 @@ public class LuceneIndexer {
 
 	public static void main(String[] args) {
 		try {
-			index();
+//			contents:"blood" && (ontologyId:1116 || ontologyId:1053)
+
+//			index();
+			
+			executeQuery("blood");
+			
+			Collection<Integer> ontologyIds = new ArrayList(); 
+			ontologyIds.add(1053);
+			ontologyIds.add(1089);
+			executeQuery("blood", ontologyIds);
+			
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -69,6 +93,24 @@ public class LuceneIndexer {
 		}
 	}
 
+	public static void executeQuery(String expr) throws IOException {
+		executeQuery(expr, null);
+	}
+
+	public static void executeQuery(String expr, Collection<Integer> ontologyIds) throws IOException {
+        Searcher searcher = null;
+        Collection<Frame> results = new LinkedHashSet<Frame>();
+
+        Query q = generateLuceneQuery(ontologyIds, expr);
+
+        searcher = new IndexSearcher(getIndexPath());
+        Hits hits = searcher.search(q);
+		
+		
+		System.out.println("Query:" + q);
+		System.out.println("Hits:" + hits.length());
+	}
+
 	public static void index() throws Exception {
 		Connection connBioPortal = connectBioPortal();
 		ResultSet rs = findAllProtegeOntologies(connBioPortal);
@@ -76,13 +118,14 @@ public class LuceneIndexer {
 
 		while (rs.next()) {
 			try {
-				System.out.println("Indexing ontology: " + rs.getString("display_label") + " (Id: " + rs
-						.getInt("id") + ", Ontology Id: " + rs
-						.getInt("ontology_id") + ")");
-				
+				System.out.println("Indexing ontology: "
+						+ rs.getString("display_label") + " (Id: "
+						+ rs.getInt("id") + ", Ontology Id: "
+						+ rs.getInt("ontology_id") + ")");
+
 				KnowledgeBase kb = createKnowledgeBaseInstance(rs);
 				boolean owlMode = kb instanceof OWLModel;
-				Set<LuceneSlot> searchableSlots = getSearchableSlots(kb, rs
+				Set<LuceneProtegeSlot> searchableSlots = getSearchableSlots(kb, rs
 						.getInt("ontology_id"), rs.getString("synonym_slot"),
 						rs.getString("preferred_name_slot"));
 
@@ -98,7 +141,7 @@ public class LuceneIndexer {
 				}
 
 				for (Frame frame : frames) {
-					for (LuceneSlot luceneSlot : searchableSlots) {
+					for (LuceneProtegeSlot luceneSlot : searchableSlots) {
 						synchronized (kb) {
 							values = nfs.getValues(frame, luceneSlot.getSlot(),
 									null, false);
@@ -112,13 +155,10 @@ public class LuceneIndexer {
 							addDocument(writer, nfs, frame, luceneSlot,
 									(String) value, owlMode);
 						}
-						
-						
-						values.clear();
-						values = null;
-						
-						
-						
+
+//						values.clear();
+//						values = null;
+
 					}
 				}
 
@@ -130,15 +170,46 @@ public class LuceneIndexer {
 				if (!(t instanceof MySQLSyntaxErrorException)) {
 					throw new Exception(t);
 				} else {
-					System.out.println("Ontology: " + rs.getString("display_label") + " (Id: " + rs
-							.getInt("id") + ", Ontology Id: " + rs
-							.getInt("ontology_id") + ") does not exist in Protege");
+					System.out.println("Ontology: "
+							+ rs.getString("display_label") + " (Id: "
+							+ rs.getInt("id") + ", Ontology Id: "
+							+ rs.getInt("ontology_id")
+							+ ") does not exist in Protege");
 				}
 			}
 		}
 
 		writer.optimize();
 		forceWriterClose(writer);
+	}
+
+	private static Query generateLuceneQuery(Collection<Integer> ontologyIds,
+			String expr) throws IOException {
+		BooleanQuery query = new BooleanQuery();
+		QueryParser parser = new QueryParser(CONTENTS_FIELD, analyzer);
+		parser.setAllowLeadingWildcard(true);
+
+		try {
+			query.add(parser.parse(expr), BooleanClause.Occur.MUST);
+		} catch (ParseException e) {
+			IOException ioe = new IOException(e.getMessage());
+			ioe.initCause(e);
+			throw ioe;
+		}
+
+		if (ontologyIds != null && !ontologyIds.isEmpty()) {
+			BooleanQuery ontologyIdQuery = new BooleanQuery();
+
+			for (Integer ontologyId : ontologyIds) {
+				Term term = new Term(ONTOLOGY_ID_FIELD, ontologyId.toString());
+				ontologyIdQuery.add(new TermQuery(term),
+						BooleanClause.Occur.SHOULD);
+			}
+
+			query.add(ontologyIdQuery, BooleanClause.Occur.MUST);
+		}
+
+		return query;
 	}
 
 	private static void forceWriterClose(IndexWriter writer) {
@@ -152,7 +223,7 @@ public class LuceneIndexer {
 	}
 
 	private static void addDocument(IndexWriter writer, NarrowFrameStore nfs,
-			Frame frame, LuceneSlot luceneSlot, String value, boolean owlMode)
+			Frame frame, LuceneProtegeSlot luceneSlot, String value, boolean owlMode)
 			throws IOException {
 		if (owlMode && value.startsWith("~#")) {
 			value = value.substring(5);
@@ -187,21 +258,21 @@ public class LuceneIndexer {
 		return (String) values.iterator().next();
 	}
 
-	private static Set<LuceneSlot> getSearchableSlots(KnowledgeBase kb,
+	private static Set<LuceneProtegeSlot> getSearchableSlots(KnowledgeBase kb,
 			Integer ontologyId, String synonymSlotName,
 			String preferredNameSlotName) {
-		Set<LuceneSlot> searchableSlots = new HashSet<LuceneSlot>();
+		Set<LuceneProtegeSlot> searchableSlots = new HashSet<LuceneProtegeSlot>();
 
 		Slot synonymSlot = getSynonymSlot(kb, synonymSlotName);
 
 		if (synonymSlot != null) {
-			searchableSlots.add(new LuceneSlot(synonymSlot, ontologyId,
-					SlotTypeEnum.SLOT_TYPE_SYNONYM));
+			searchableSlots.add(new LuceneProtegeSlot(synonymSlot, ontologyId,
+					LuceneRecordTypeEnum.RECORD_TYPE_SYNONYM));
 		}
 
-		searchableSlots.add(new LuceneSlot(getPreferredNameSlot(kb,
+		searchableSlots.add(new LuceneProtegeSlot(getPreferredNameSlot(kb,
 				preferredNameSlotName), ontologyId,
-				SlotTypeEnum.SLOT_TYPE_PREFERRED_NAME));
+				LuceneRecordTypeEnum.RECORD_TYPE_PREFERRED_NAME));
 
 		return searchableSlots;
 	}
@@ -316,18 +387,11 @@ public class LuceneIndexer {
 				+ "	) a ON ont.ontology_id = a.ontology_id AND ont.internal_version_number = a.internal_version_number "
 				+ "WHERE "
 				+ "	upper(ont.format) in ('PROTEGE', 'OWL-FULL', 'OWL-DL', 'OWL-LITE') "
-		
-				
-//				+ " and id = 13578 " 
-				
-				
-				
+
+				// + " and id = 13578 "
+
 				+ "ORDER BY " + "ont.display_label" + " LIMIT 10";
 
-		
-		
-		
-		
 		PreparedStatement stmt = conn.prepareStatement(sqlSelect);
 		stmt.setInt(1, 3);
 
