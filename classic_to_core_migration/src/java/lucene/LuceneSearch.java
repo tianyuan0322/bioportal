@@ -26,11 +26,12 @@ import org.apache.lucene.queryParser.ParseException;
 import org.apache.lucene.queryParser.QueryParser;
 import org.apache.lucene.search.BooleanClause;
 import org.apache.lucene.search.BooleanQuery;
-import org.apache.lucene.search.Hits;
 import org.apache.lucene.search.IndexSearcher;
 import org.apache.lucene.search.Query;
+import org.apache.lucene.search.ScoreDoc;
 import org.apache.lucene.search.Searcher;
 import org.apache.lucene.search.TermQuery;
+import org.apache.lucene.search.TopDocCollector;
 import org.ncbo.stanford.util.constants.ApplicationConstants;
 
 import com.mysql.jdbc.exceptions.MySQLSyntaxErrorException;
@@ -39,6 +40,7 @@ import edu.stanford.smi.protege.model.Frame;
 
 public class LuceneSearch {
 
+	private static final int MAX_NUM_HITS = 1000;
 	private Analyzer analyzer = new StandardAnalyzer();
 
 	// TODO: Throwaway code ===============================================
@@ -95,12 +97,15 @@ public class LuceneSearch {
 		Collection<Frame> results = new LinkedHashSet<Frame>();
 
 		Query q = generateLuceneQuery(ontologyIds, expr);
-
 		searcher = new IndexSearcher(getIndexPath());
-		Hits hits = searcher.search(q);
+		TopDocCollector collector = new TopDocCollector(MAX_NUM_HITS);
+		searcher.search(q, collector);
+		
+		ScoreDoc[] hits = collector.topDocs().scoreDocs;
+
 
 		System.out.println("Query:" + q);
-		System.out.println("Hits:" + hits.length());
+		System.out.println("Hits:" + hits.length);
 	}
 
 	public void index() throws Exception {
@@ -127,8 +132,8 @@ public class LuceneSearch {
 
 					long stop = System.currentTimeMillis(); // stop timing
 					System.out.println("Finished indexing ontology: "
-							+ displayLabel + " in " + (double) (stop - start) / 1000
-							+ " milliseconds.");
+							+ displayLabel + " in " + (double) (stop - start)
+							/ 1000 + " seconds.");
 
 				} else {
 					System.out.println("No hanlder was found for ontology: "
@@ -227,8 +232,8 @@ public class LuceneSearch {
 				+ "WHERE 1 = 1 "
 				+ "AND UPPER(ont.format) IN ('PROTEGE', 'OWL-FULL', 'OWL-DL', 'OWL-LITE') "
 
-				// + "AND id = 13578 "
-				+ "AND id = 29684 "
+				+ "AND id = 13578 "
+				// + "AND id = 29684 "
 
 				+ "ORDER BY " + "ont.display_label" + " LIMIT 10";
 

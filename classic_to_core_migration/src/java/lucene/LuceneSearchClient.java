@@ -10,12 +10,12 @@ public class LuceneSearchClient {
 
 			LuceneSearch search = LuceneSearch.getInstance();
 
-			search.index();
+//			search.index();
 
 			search.executeQuery("blood");
 
 			Collection<Integer> ontologyIds = new ArrayList<Integer>();
-			ontologyIds.add(1053);
+			ontologyIds.add(1032);
 			ontologyIds.add(1089);
 			search.executeQuery("blood", ontologyIds);
 		} catch (Exception e) {

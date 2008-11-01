@@ -172,8 +172,8 @@ public class LuceneIndexer {
 
 				long stop = System.currentTimeMillis(); // stop timing
 				System.out.println("Finished indexing ontology: "
-						+ displayLabel + " in " + (stop - start)
-						+ " milliseconds.");
+						+ displayLabel + " in " + (double) (stop - start)
+						/ 1000 + " seconds.");
 
 			} catch (RuntimeException e) {
 				Throwable t = e.getCause();
