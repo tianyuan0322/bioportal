@@ -26,7 +26,8 @@ public class IndexWriterWrapper {
 	public IndexWriterWrapper(String indexPath, Analyzer analyzer,
 			boolean create) throws IOException {
 		super();
-		writer = new IndexWriter(indexPath, analyzer, create);
+		writer = new IndexWriter(indexPath, analyzer, create,
+				IndexWriter.MaxFieldLength.LIMITED);
 	}
 
 	public void addDocument(LuceneSearchDocument searchDoc) throws IOException {
