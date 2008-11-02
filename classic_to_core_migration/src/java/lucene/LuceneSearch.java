@@ -14,6 +14,7 @@ import java.util.Map;
 import java.util.Properties;
 
 import lucene.bean.LuceneSearchDocument;
+import lucene.enumeration.LuceneRecordTypeEnum;
 import lucene.manager.LuceneSearchManager;
 import lucene.manager.impl.LuceneSearchManagerLexGridImpl;
 import lucene.manager.impl.LuceneSearchManagerProtegeImpl;
@@ -21,17 +22,19 @@ import lucene.wrapper.IndexWriterWrapper;
 
 import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.analysis.standard.StandardAnalyzer;
+import org.apache.lucene.document.Document;
 import org.apache.lucene.index.Term;
-import org.apache.lucene.queryParser.ParseException;
-import org.apache.lucene.queryParser.QueryParser;
 import org.apache.lucene.search.BooleanClause;
 import org.apache.lucene.search.BooleanQuery;
 import org.apache.lucene.search.IndexSearcher;
+import org.apache.lucene.search.PhraseQuery;
 import org.apache.lucene.search.Query;
 import org.apache.lucene.search.ScoreDoc;
 import org.apache.lucene.search.Searcher;
+import org.apache.lucene.search.Sort;
+import org.apache.lucene.search.SortField;
 import org.apache.lucene.search.TermQuery;
-import org.apache.lucene.search.TopDocCollector;
+import org.apache.lucene.search.TopFieldDocs;
 import org.ncbo.stanford.util.constants.ApplicationConstants;
 
 import com.mysql.jdbc.exceptions.MySQLSyntaxErrorException;
@@ -40,7 +43,7 @@ import edu.stanford.smi.protege.model.Frame;
 
 public class LuceneSearch {
 
-	private static final int MAX_NUM_HITS = 1000;
+	private static final int MAX_NUM_HITS = 100;
 	private Analyzer analyzer = new StandardAnalyzer();
 
 	// TODO: Throwaway code ===============================================
@@ -87,25 +90,40 @@ public class LuceneSearch {
 
 	// TODO: END, Throwaway code ==========================================
 
-	public void executeQuery(String expr) throws IOException {
-		executeQuery(expr, null);
+	public void executeQuery(String expr, boolean includeProperties)
+			throws IOException {
+		executeQuery(expr, null, includeProperties);
 	}
 
-	public void executeQuery(String expr, Collection<Integer> ontologyIds)
-			throws IOException {
+	public void executeQuery(String expr, Collection<Integer> ontologyIds,
+			boolean includeProperties) throws IOException {
 		Searcher searcher = null;
 		Collection<Frame> results = new LinkedHashSet<Frame>();
 
-		Query q = generateLuceneQuery(ontologyIds, expr);
+		Query query = generateLuceneQuery(ontologyIds, expr, includeProperties);
 		searcher = new IndexSearcher(getIndexPath());
-		TopDocCollector collector = new TopDocCollector(MAX_NUM_HITS);
-		searcher.search(q, collector);
-		
-		ScoreDoc[] hits = collector.topDocs().scoreDocs;
 
+//		 TopDocCollector collector = new TopDocCollector(MAX_NUM_HITS);
+//		 searcher.search(query, collector);
+//		 ScoreDoc[] hits = collector.topDocs().scoreDocs;
 
-		System.out.println("Query:" + q);
-		System.out.println("Hits:" + hits.length);
+		SortField[] fields = { SortField.FIELD_SCORE,
+				new SortField("recordType") };
+		TopFieldDocs docs = searcher.search(query, null, MAX_NUM_HITS,
+				new Sort(fields));
+		ScoreDoc[] hits = docs.scoreDocs;
+
+		for (int i = 0; i < hits.length; i++) {
+			int docId = hits[i].doc;
+			Document d = searcher.doc(docId);
+
+			System.out.println(hits[i].score + " | " + d.get("frameName")
+					+ " | " + d.get("contents") + " | " + d.get("recordType")
+					+ " | " + d.get("ontologyId") + " |L: " + d.get("literalContents"));
+		}
+
+		System.out.println("Query: " + query);
+		System.out.println("Hits: " + hits.length);
 	}
 
 	public void index() throws Exception {
@@ -187,25 +205,49 @@ public class LuceneSearch {
 	}
 
 	private Query generateLuceneQuery(Collection<Integer> ontologyIds,
-			String expr) throws IOException {
+			String expr, boolean includeProperties) throws IOException {
+		Term term;
 		BooleanQuery query = new BooleanQuery();
-		QueryParser parser = new QueryParser(
-				LuceneSearchDocument.CONTENTS_FIELD_LABEL, analyzer);
-		parser.setAllowLeadingWildcard(true);
 
-		try {
-			query.add(parser.parse(expr), BooleanClause.Occur.MUST);
-		} catch (ParseException e) {
-			IOException ioe = new IOException(e.getMessage());
-			ioe.initCause(e);
-			throw ioe;
+		
+
+		
+		
+		
+//		QueryParser parser = new QueryParser(
+//				LuceneSearchDocument.CONTENTS_FIELD_LABEL, analyzer);
+//		parser.setAllowLeadingWildcard(true);
+//
+//		try {
+//			query.add(parser.parse(expr), BooleanClause.Occur.MUST);
+//		} catch (ParseException e) {
+//			IOException ioe = new IOException(e.getMessage());
+//			ioe.initCause(e);
+//			throw ioe;
+//		}
+
+//		Term term1 = new Term(LuceneSearchDocument.CONTENTS_FIELD_LABEL,
+//				expr);
+//		query.add(new TermQuery(term1), BooleanClause.Occur.MUST);
+		
+		PhraseQuery q = new PhraseQuery();
+		expr = expr.trim().replaceAll("[\\t|\\s]+", " ");
+		String [] words = expr.split(" ");
+		for (int i = 0; i < words.length; i++) {
+			q.add(new Term(LuceneSearchDocument.CONTENTS_FIELD_LABEL, words[i]));
 		}
+		query.add(q, BooleanClause.Occur.MUST);
 
+//		TermQuery q = new TermQuery(new Term(LuceneSearchDocument.CONTENTS_FIELD_LABEL, expr));
+//		q.add(new Term(LuceneSearchDocument.CONTENTS_FIELD_LABEL, expr));
+//		query.add(q, BooleanClause.Occur.MUST);
+		
+		
 		if (ontologyIds != null && !ontologyIds.isEmpty()) {
 			BooleanQuery ontologyIdQuery = new BooleanQuery();
 
 			for (Integer ontologyId : ontologyIds) {
-				Term term = new Term(
+				term = new Term(
 						LuceneSearchDocument.ONTOLOGY_ID_FIELD_LABEL,
 						ontologyId.toString());
 				ontologyIdQuery.add(new TermQuery(term),
@@ -213,6 +255,12 @@ public class LuceneSearch {
 			}
 
 			query.add(ontologyIdQuery, BooleanClause.Occur.MUST);
+		}
+
+		if (!includeProperties) {
+			term = new Term(LuceneSearchDocument.RECORD_TYPE_FIELD_LABEL,
+					LuceneRecordTypeEnum.RECORD_TYPE_PROPERTY.getLabel());
+			query.add(new TermQuery(term), BooleanClause.Occur.MUST_NOT);
 		}
 
 		return query;
@@ -232,10 +280,10 @@ public class LuceneSearch {
 				+ "WHERE 1 = 1 "
 				+ "AND UPPER(ont.format) IN ('PROTEGE', 'OWL-FULL', 'OWL-DL', 'OWL-LITE') "
 
-				+ "AND id = 13578 "
+				+ "AND id IN (" + "13578 " + ", 29684 "
 				// + "AND id = 29684 "
 
-				+ "ORDER BY " + "ont.display_label" + " LIMIT 10";
+				+ ") ORDER BY " + "ont.display_label" + " LIMIT 10";
 
 		PreparedStatement stmt = conn.prepareStatement(sqlSelect);
 		stmt.setInt(1, 3);
