@@ -209,7 +209,7 @@ public class LuceneSearch {
 		BooleanQuery query = new BooleanQuery();
 		
 		addContentsClause(expr, query);
-		addOntologyIdClause(ontologyIds, query);
+		addOntologyIdsClause(ontologyIds, query);
 		addPropertiesClause(includeProperties, query);
 
 		return query;
@@ -249,7 +249,7 @@ public class LuceneSearch {
 		}
 	}
 
-	private void addOntologyIdClause(Collection<Integer> ontologyIds,
+	private void addOntologyIdsClause(Collection<Integer> ontologyIds,
 			BooleanQuery query) {
 		if (ontologyIds != null && !ontologyIds.isEmpty()) {
 			BooleanQuery ontologyIdQuery = new BooleanQuery();
