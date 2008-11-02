@@ -243,17 +243,17 @@ public class LuceneIndexer {
 		Document doc = new Document();
 
 		doc.add(new Field(ONTOLOGY_ID_FIELD, luceneSlot.getOntologyId()
-				.toString(), Field.Store.YES, Field.Index.UN_TOKENIZED));
+				.toString(), Field.Store.YES, Field.Index.NOT_ANALYZED));
 		doc.add(new Field(SLOT_TYPE_FIELD, luceneSlot.getSlotType().getLabel(),
-				Field.Store.YES, Field.Index.UN_TOKENIZED));
+				Field.Store.YES, Field.Index.NOT_ANALYZED));
 		doc.add(new Field(FRAME_NAME_FIELD, getFrameName(nfs, frame),
-				Field.Store.YES, Field.Index.UN_TOKENIZED));
+				Field.Store.YES, Field.Index.NOT_ANALYZED));
 		doc.add(new Field(SLOT_NAME_FIELD, getFrameName(nfs, luceneSlot
-				.getSlot()), Field.Store.YES, Field.Index.UN_TOKENIZED));
+				.getSlot()), Field.Store.YES, Field.Index.NOT_ANALYZED));
 		doc.add(new Field(CONTENTS_FIELD, value, Field.Store.YES,
-				Field.Index.TOKENIZED));
+				Field.Index.ANALYZED));
 		doc.add(new Field(LITERAL_CONTENTS_FIELD, value, Field.Store.YES,
-				Field.Index.UN_TOKENIZED));
+				Field.Index.NOT_ANALYZED));
 
 		writer.addDocument(doc);
 	}
