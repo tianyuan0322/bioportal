@@ -88,45 +88,35 @@ public class LuceneSearch {
 		return LuceneSearchHolder.instance;
 	}
 
-	// TODO: END, Throwaway code ==========================================
+	public void indexOntology(Integer ontologyId) throws Exception {
+		Connection connBioPortal = connectBioPortal();
+		ResultSet rs = findOntology(connBioPortal, ontologyId);
 
-	public void executeQuery(String expr, boolean includeProperties)
-			throws IOException {
-		executeQuery(expr, null, includeProperties);
-	}
+		while (rs.next()) {
+			try {
+				indexOntology(rs);
+			} catch (RuntimeException re) {
+				Throwable t = re.getCause();
 
-	public void executeQuery(String expr, Collection<Integer> ontologyIds,
-			boolean includeProperties) throws IOException {
-		Searcher searcher = null;
-		Collection<Frame> results = new LinkedHashSet<Frame>();
-
-		Query query = generateLuceneQuery(ontologyIds, expr, includeProperties);
-		searcher = new IndexSearcher(getIndexPath());
-
-//		 TopDocCollector collector = new TopDocCollector(MAX_NUM_HITS);
-//		 searcher.search(query, collector);
-//		 ScoreDoc[] hits = collector.topDocs().scoreDocs;
-
-		SortField[] fields = { SortField.FIELD_SCORE,
-				new SortField("recordType") };
-		TopFieldDocs docs = searcher.search(query, null, MAX_NUM_HITS,
-				new Sort(fields));
-		ScoreDoc[] hits = docs.scoreDocs;
-
-		for (int i = 0; i < hits.length; i++) {
-			int docId = hits[i].doc;
-			Document d = searcher.doc(docId);
-
-			System.out.println(hits[i].score + " | " + d.get("frameName")
-					+ " | " + d.get("contents") + " | " + d.get("recordType")
-					+ " | " + d.get("ontologyId") + " |L: " + d.get("literalContents"));
+				if (!(t instanceof MySQLSyntaxErrorException)) {
+					throw new Exception(t);
+				} else {
+					throw new Exception("Ontology: "
+							+ rs.getString("display_label") + " (Id: "
+							+ rs.getInt("id") + ", Ontology Id: "
+							+ rs.getInt("ontology_id")
+							+ ") does not exist in Protege");
+				}
+			}
 		}
 
-		System.out.println("Query: " + query);
-		System.out.println("Hits: " + hits.length);
+		closeResultSet(rs);
+		rs = null;
+		closeConnection(connBioPortal);
+		connBioPortal = null;
 	}
 
-	public void index() throws Exception {
+	public void indexAllOntologies() throws Exception {
 		Connection connBioPortal = connectBioPortal();
 		ResultSet rs = findAllOntologies(connBioPortal);
 		IndexWriterWrapper writer = new IndexWriterWrapper(getIndexPath(),
@@ -134,32 +124,7 @@ public class LuceneSearch {
 
 		while (rs.next()) {
 			try {
-				String format = rs.getString("format");
-				LuceneSearchManager mgr = formatHandlerMap.get(format);
-
-				if (mgr != null) {
-					String displayLabel = rs.getString("display_label");
-
-					System.out.println("Indexing ontology: " + displayLabel
-							+ " (Id: " + rs.getInt("id") + ", Ontology Id: "
-							+ rs.getInt("ontology_id") + ", Format: " + format
-							+ ")");
-					long start = System.currentTimeMillis();
-
-					mgr.indexOntology(writer, rs);
-
-					long stop = System.currentTimeMillis(); // stop timing
-					System.out.println("Finished indexing ontology: "
-							+ displayLabel + " in " + (double) (stop - start)
-							/ 1000 + " seconds.");
-
-				} else {
-					System.out.println("No hanlder was found for ontology: "
-							+ rs.getString("display_label") + " (Id: "
-							+ rs.getInt("id") + ", Ontology Id: "
-							+ rs.getInt("ontology_id") + ", Format: " + format
-							+ ")");
-				}
+				indexOntology(rs, writer);
 			} catch (RuntimeException e) {
 				Throwable t = e.getCause();
 
@@ -184,6 +149,85 @@ public class LuceneSearch {
 		connBioPortal = null;
 	}
 
+	// TODO: END, Throwaway code ==========================================
+
+	public void executeQuery(String expr, boolean includeProperties)
+			throws IOException {
+		executeQuery(expr, null, includeProperties);
+	}
+
+	public void executeQuery(String expr, Collection<Integer> ontologyIds,
+			boolean includeProperties) throws IOException {
+		Searcher searcher = null;
+		Collection<Frame> results = new LinkedHashSet<Frame>();
+
+		Query query = generateLuceneSearchQuery(ontologyIds, expr,
+				includeProperties);
+		searcher = new IndexSearcher(getIndexPath());
+
+		// TopDocCollector collector = new TopDocCollector(MAX_NUM_HITS);
+		// searcher.search(query, collector);
+		// ScoreDoc[] hits = collector.topDocs().scoreDocs;
+
+		SortField[] fields = { SortField.FIELD_SCORE,
+				new SortField("recordType") };
+		TopFieldDocs docs = searcher.search(query, null, MAX_NUM_HITS,
+				new Sort(fields));
+		ScoreDoc[] hits = docs.scoreDocs;
+
+		for (int i = 0; i < hits.length; i++) {
+			int docId = hits[i].doc;
+			Document d = searcher.doc(docId);
+
+			System.out.println(hits[i].score + " | " + d.get("frameName")
+					+ " | " + d.get("contents") + " | " + d.get("recordType")
+					+ " | " + d.get("ontologyId") + " |L: "
+					+ d.get("literalContents"));
+		}
+
+		System.out.println("Query: " + query);
+		System.out.println("Hits: " + hits.length);
+	}
+
+	// TODO: in BP, replace rs with OntologyBean
+	public void indexOntology(ResultSet rs) throws SQLException, IOException {
+		IndexWriterWrapper writer = new IndexWriterWrapper(getIndexPath(),
+				analyzer);
+		indexOntology(rs, writer);
+		writer.optimize();
+		writer.closeWriter();
+		writer = null;
+	}
+
+	// TODO: in BP, replace rs with OntologyBean
+	public void indexOntology(ResultSet rs, IndexWriterWrapper writer)
+			throws SQLException, IOException {
+		Integer ontologyId = rs.getInt("ontologyId");
+		String format = rs.getString("format");
+		String displayLabel = rs.getString("display_label");
+		LuceneSearchManager mgr = formatHandlerMap.get(format);
+
+		if (mgr != null) {
+			System.out.println("Indexing ontology: " + displayLabel + " (Id: "
+					+ rs.getInt("id") + ", Ontology Id: " + ontologyId
+					+ ", Format: " + format + ")");
+			long start = System.currentTimeMillis();
+
+			writer.removeOntology(ontologyId);
+			mgr.indexOntology(writer, rs);
+
+			long stop = System.currentTimeMillis(); // stop timing
+			System.out.println("Finished indexing ontology: " + displayLabel
+					+ " in " + (double) (stop - start) / 1000 + " seconds.");
+
+		} else {
+			System.out.println("No hanlder was found for ontology: "
+					+ displayLabel + " (Id: " + rs.getInt("id")
+					+ ", Ontology Id: " + ontologyId + ", Format: " + format
+					+ ")");
+		}
+	}
+
 	private void closeConnection(Connection conn) {
 		try {
 			if (conn != null) {
@@ -204,10 +248,10 @@ public class LuceneSearch {
 		}
 	}
 
-	private Query generateLuceneQuery(Collection<Integer> ontologyIds,
-			String expr, boolean includeProperties) throws IOException {
+	private Query generateLuceneSearchQuery(Collection<Integer> ontologyIds,
+			String expr, boolean includeProperties) {
 		BooleanQuery query = new BooleanQuery();
-		
+
 		addContentsClause(expr, query);
 		addOntologyIdsClause(ontologyIds, query);
 		addPropertiesClause(includeProperties, query);
@@ -216,27 +260,29 @@ public class LuceneSearch {
 	}
 
 	private void addContentsClause(String expr, BooleanQuery query) {
-//		QueryParser parser = new QueryParser(
-//		LuceneSearchDocument.CONTENTS_FIELD_LABEL, analyzer);
-//		parser.setAllowLeadingWildcard(true);
-//
-//		try {
-//			query.add(parser.parse(expr), BooleanClause.Occur.MUST);
-//		} catch (ParseException e) {
-//			IOException ioe = new IOException(e.getMessage());
-//			ioe.initCause(e);
-//			throw ioe;
-//		}
-		
+		// QueryParser parser = new QueryParser(
+		// LuceneSearchDocument.CONTENTS_FIELD_LABEL, analyzer);
+		// parser.setAllowLeadingWildcard(true);
+		//
+		// try {
+		// query.add(parser.parse(expr), BooleanClause.Occur.MUST);
+		// } catch (ParseException e) {
+		// IOException ioe = new IOException(e.getMessage());
+		// ioe.initCause(e);
+		// throw ioe;
+		// }
+
 		PhraseQuery q = new PhraseQuery();
 		expr = expr.trim().toLowerCase().replaceAll("[\\t|\\s]+", " ");
-//		expr = expr.trim().replaceAll("[\\t|\\s]+", " ");
-		String [] words = expr.split(" ");
-		
+		// expr = expr.trim().replaceAll("[\\t|\\s]+", " ");
+		String[] words = expr.split(" ");
+
 		for (int i = 0; i < words.length; i++) {
-			q.add(new Term(LuceneSearchDocument.CONTENTS_FIELD_LABEL, words[i]));
+			q
+					.add(new Term(LuceneSearchDocument.CONTENTS_FIELD_LABEL,
+							words[i]));
 		}
-		
+
 		query.add(q, BooleanClause.Occur.MUST);
 	}
 
@@ -252,18 +298,42 @@ public class LuceneSearch {
 	private void addOntologyIdsClause(Collection<Integer> ontologyIds,
 			BooleanQuery query) {
 		if (ontologyIds != null && !ontologyIds.isEmpty()) {
-			BooleanQuery ontologyIdQuery = new BooleanQuery();
-
-			for (Integer ontologyId : ontologyIds) {
-				Term term = new Term(
-						LuceneSearchDocument.ONTOLOGY_ID_FIELD_LABEL,
-						ontologyId.toString());
-				ontologyIdQuery.add(new TermQuery(term),
-						BooleanClause.Occur.SHOULD);
-			}
-
-			query.add(ontologyIdQuery, BooleanClause.Occur.MUST);
+			query.add(generateOntologyIdsQuery(ontologyIds),
+					BooleanClause.Occur.MUST);
 		}
+	}
+
+	private Query generateOntologyIdsQuery(Collection<Integer> ontologyIds) {
+		BooleanQuery query = new BooleanQuery();
+
+		for (Integer ontologyId : ontologyIds) {
+			Term term = new Term(LuceneSearchDocument.ONTOLOGY_ID_FIELD_LABEL,
+					ontologyId.toString());
+			query.add(new TermQuery(term), BooleanClause.Occur.SHOULD);
+		}
+
+		return query;
+	}
+
+	private ResultSet findOntology(Connection conn, Integer ontologyId)
+			throws SQLException {
+		String sqlSelect = "SELECT ont.* "
+				+ "FROM "
+				+ "	v_ncbo_ontology ont "
+				+ "    INNER JOIN ( "
+				+ "		SELECT ontology_id, MAX(internal_version_number) AS internal_version_number "
+				+ "		FROM "
+				+ "			ncbo_ontology_version "
+				+ "		WHERE status_id = ? "
+				+ "		GROUP BY ontology_id "
+				+ "	) a ON ont.ontology_id = a.ontology_id AND ont.internal_version_number = a.internal_version_number "
+				+ "WHERE ontology_id = ?";
+
+		PreparedStatement stmt = conn.prepareStatement(sqlSelect);
+		stmt.setInt(1, 3);
+		stmt.setInt(2, ontologyId);
+
+		return stmt.executeQuery();
 	}
 
 	private ResultSet findAllOntologies(Connection conn) throws SQLException {

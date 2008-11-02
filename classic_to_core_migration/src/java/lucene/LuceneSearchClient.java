@@ -12,12 +12,12 @@ public class LuceneSearchClient {
 
 //			search.index();
 
-			search.executeQuery("cell type", false);
+//			search.executeQuery("cell type", false);
 
 			Collection<Integer> ontologyIds = new ArrayList<Integer>();
 			ontologyIds.add(1032);
 //			ontologyIds.add(1089);
-//			search.executeQuery("Cell Type", ontologyIds, false);
+			search.executeQuery("Cell Type", ontologyIds, true);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
