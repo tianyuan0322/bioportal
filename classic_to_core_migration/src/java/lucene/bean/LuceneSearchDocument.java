@@ -12,16 +12,16 @@ public class LuceneSearchDocument {
 	public static final String LITERAL_CONTENTS_FIELD_LABEL = "literalContents";
 
 	private LuceneSearchField ontologyId = new LuceneSearchField(
-			ONTOLOGY_ID_FIELD_LABEL, Field.Store.YES, Field.Index.UN_TOKENIZED);
+			ONTOLOGY_ID_FIELD_LABEL, Field.Store.YES, Field.Index.NOT_ANALYZED);
 	private LuceneSearchField recordType = new LuceneSearchField(
-			RECORD_TYPE_FIELD_LABEL, Field.Store.YES, Field.Index.UN_TOKENIZED);
+			RECORD_TYPE_FIELD_LABEL, Field.Store.YES, Field.Index.NOT_ANALYZED);
 	private LuceneSearchField frameName = new LuceneSearchField(
-			FRAME_NAME_FIELD_LABEL, Field.Store.YES, Field.Index.UN_TOKENIZED);
+			FRAME_NAME_FIELD_LABEL, Field.Store.YES, Field.Index.NOT_ANALYZED);
 	private LuceneSearchField contents = new LuceneSearchField(
-			CONTENTS_FIELD_LABEL, Field.Store.YES, Field.Index.TOKENIZED);
+			CONTENTS_FIELD_LABEL, Field.Store.YES, Field.Index.ANALYZED);
 	private LuceneSearchField literalContents = new LuceneSearchField(
 			LITERAL_CONTENTS_FIELD_LABEL, Field.Store.YES,
-			Field.Index.UN_TOKENIZED);
+			Field.Index.NOT_ANALYZED);
 
 	public LuceneSearchDocument() {
 	}
