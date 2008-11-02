@@ -43,7 +43,7 @@ import edu.stanford.smi.protege.model.Frame;
 
 public class LuceneSearch {
 
-	private static final int MAX_NUM_HITS = 100;
+	private static final int MAX_NUM_HITS = 1000;
 	private Analyzer analyzer = new StandardAnalyzer();
 
 	// TODO: Throwaway code ===============================================
@@ -206,16 +206,18 @@ public class LuceneSearch {
 
 	private Query generateLuceneQuery(Collection<Integer> ontologyIds,
 			String expr, boolean includeProperties) throws IOException {
-		Term term;
 		BooleanQuery query = new BooleanQuery();
+		
+		addContentsClause(expr, query);
+		addOntologyIdClause(ontologyIds, query);
+		addPropertiesClause(includeProperties, query);
 
-		
+		return query;
+	}
 
-		
-		
-		
+	private void addContentsClause(String expr, BooleanQuery query) {
 //		QueryParser parser = new QueryParser(
-//				LuceneSearchDocument.CONTENTS_FIELD_LABEL, analyzer);
+//		LuceneSearchDocument.CONTENTS_FIELD_LABEL, analyzer);
 //		parser.setAllowLeadingWildcard(true);
 //
 //		try {
@@ -225,29 +227,35 @@ public class LuceneSearch {
 //			ioe.initCause(e);
 //			throw ioe;
 //		}
-
-//		Term term1 = new Term(LuceneSearchDocument.CONTENTS_FIELD_LABEL,
-//				expr);
-//		query.add(new TermQuery(term1), BooleanClause.Occur.MUST);
 		
 		PhraseQuery q = new PhraseQuery();
-		expr = expr.trim().replaceAll("[\\t|\\s]+", " ");
+		expr = expr.trim().toLowerCase().replaceAll("[\\t|\\s]+", " ");
+//		expr = expr.trim().replaceAll("[\\t|\\s]+", " ");
 		String [] words = expr.split(" ");
+		
 		for (int i = 0; i < words.length; i++) {
 			q.add(new Term(LuceneSearchDocument.CONTENTS_FIELD_LABEL, words[i]));
 		}
+		
 		query.add(q, BooleanClause.Occur.MUST);
+	}
 
-//		TermQuery q = new TermQuery(new Term(LuceneSearchDocument.CONTENTS_FIELD_LABEL, expr));
-//		q.add(new Term(LuceneSearchDocument.CONTENTS_FIELD_LABEL, expr));
-//		query.add(q, BooleanClause.Occur.MUST);
-		
-		
+	private void addPropertiesClause(boolean includeProperties,
+			BooleanQuery query) {
+		if (!includeProperties) {
+			Term term = new Term(LuceneSearchDocument.RECORD_TYPE_FIELD_LABEL,
+					LuceneRecordTypeEnum.RECORD_TYPE_PROPERTY.getLabel());
+			query.add(new TermQuery(term), BooleanClause.Occur.MUST_NOT);
+		}
+	}
+
+	private void addOntologyIdClause(Collection<Integer> ontologyIds,
+			BooleanQuery query) {
 		if (ontologyIds != null && !ontologyIds.isEmpty()) {
 			BooleanQuery ontologyIdQuery = new BooleanQuery();
 
 			for (Integer ontologyId : ontologyIds) {
-				term = new Term(
+				Term term = new Term(
 						LuceneSearchDocument.ONTOLOGY_ID_FIELD_LABEL,
 						ontologyId.toString());
 				ontologyIdQuery.add(new TermQuery(term),
@@ -256,14 +264,6 @@ public class LuceneSearch {
 
 			query.add(ontologyIdQuery, BooleanClause.Occur.MUST);
 		}
-
-		if (!includeProperties) {
-			term = new Term(LuceneSearchDocument.RECORD_TYPE_FIELD_LABEL,
-					LuceneRecordTypeEnum.RECORD_TYPE_PROPERTY.getLabel());
-			query.add(new TermQuery(term), BooleanClause.Occur.MUST_NOT);
-		}
-
-		return query;
 	}
 
 	private ResultSet findAllOntologies(Connection conn) throws SQLException {
