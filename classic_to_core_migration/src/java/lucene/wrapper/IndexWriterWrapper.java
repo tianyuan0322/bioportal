@@ -58,17 +58,6 @@ public class IndexWriterWrapper {
 		writer.deleteDocuments(term);
 	}
 
-	// public void updateDocument(LuceneSearchDocument searchDoc)
-	// throws IOException {
-	// Document doc = new Document();
-	//
-	// addFields(doc, searchDoc);
-	// Term term = new Term(LuceneSearchDocument.ONTOLOGY_ID_FIELD_LABEL,
-	// searchDoc.getOntologyId().getContents());
-	//
-	// writer.updateDocument(term, doc);
-	// }
-
 	public void optimize() throws IOException {
 		writer.optimize();
 	}
