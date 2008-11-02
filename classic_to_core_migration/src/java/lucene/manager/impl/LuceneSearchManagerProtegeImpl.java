@@ -66,6 +66,14 @@ public class LuceneSearchManagerProtegeImpl implements LuceneSearchManager {
 	@SuppressWarnings("unchecked")
 	public void indexOntology(IndexWriterWrapper writer, ResultSet rs)
 			throws SQLException, IOException {
+		String displayLabel = rs.getString("display_label");
+
+		System.out.println("Adding ontology to index: " + displayLabel
+				+ " (Id: " + rs.getInt("id") + ", Ontology Id: "
+				+ rs.getInt("ontology_id") + ", Format: "
+				+ rs.getString("format") + ")");
+		long start = System.currentTimeMillis();
+
 		KnowledgeBase kb = createKnowledgeBaseInstance(rs);
 		boolean owlMode = kb instanceof OWLModel;
 		Set<LuceneProtegeSlot> searchableSlots = getSearchableSlots(kb, rs
@@ -105,6 +113,10 @@ public class LuceneSearchManagerProtegeImpl implements LuceneSearchManager {
 
 		kb.dispose();
 		kb = null;
+
+		long stop = System.currentTimeMillis(); // stop timing
+		System.out.println("Finished indexing ontology: " + displayLabel
+				+ " in " + (double) (stop - start) / 1000 + " seconds.");
 	}
 
 	private void setLuceneSearchDocument(LuceneSearchDocument doc,

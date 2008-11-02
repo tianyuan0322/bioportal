@@ -124,7 +124,7 @@ public class LuceneSearch {
 
 		while (rs.next()) {
 			try {
-				indexOntology(rs, writer);
+				indexOntology(writer, rs);
 			} catch (RuntimeException e) {
 				Throwable t = e.getCause();
 
@@ -143,6 +143,34 @@ public class LuceneSearch {
 		writer.optimize();
 		writer.closeWriter();
 		writer = null;
+		closeResultSet(rs);
+		rs = null;
+		closeConnection(connBioPortal);
+		connBioPortal = null;
+	}
+
+	public void removeOntology(Integer ontologyId) throws Exception {
+		Connection connBioPortal = connectBioPortal();
+		ResultSet rs = findOntology(connBioPortal, ontologyId);
+
+		while (rs.next()) {
+			try {
+				removeOntology(rs);
+			} catch (RuntimeException re) {
+				Throwable t = re.getCause();
+
+				if (!(t instanceof MySQLSyntaxErrorException)) {
+					throw new Exception(t);
+				} else {
+					throw new Exception("Ontology: "
+							+ rs.getString("display_label") + " (Id: "
+							+ rs.getInt("id") + ", Ontology Id: "
+							+ rs.getInt("ontology_id")
+							+ ") does not exist in Protege");
+				}
+			}
+		}
+
 		closeResultSet(rs);
 		rs = null;
 		closeConnection(connBioPortal);
@@ -193,39 +221,55 @@ public class LuceneSearch {
 	public void indexOntology(ResultSet rs) throws SQLException, IOException {
 		IndexWriterWrapper writer = new IndexWriterWrapper(getIndexPath(),
 				analyzer);
-		indexOntology(rs, writer);
+		indexOntology(writer, rs);
 		writer.optimize();
 		writer.closeWriter();
 		writer = null;
 	}
 
 	// TODO: in BP, replace rs with OntologyBean
-	public void indexOntology(ResultSet rs, IndexWriterWrapper writer)
+	public void removeOntology(ResultSet rs) throws SQLException, IOException {
+		IndexWriterWrapper writer = new IndexWriterWrapper(getIndexPath(),
+				analyzer);
+		removeOntology(writer, rs);
+		writer.optimize();
+		writer.closeWriter();
+		writer = null;
+	}
+
+	// TODO: in BP, replace rs with OntologyBean
+	public void indexOntology(IndexWriterWrapper writer, ResultSet rs)
 			throws SQLException, IOException {
-		Integer ontologyId = rs.getInt("ontologyId");
 		String format = rs.getString("format");
-		String displayLabel = rs.getString("display_label");
 		LuceneSearchManager mgr = formatHandlerMap.get(format);
 
 		if (mgr != null) {
-			System.out.println("Indexing ontology: " + displayLabel + " (Id: "
-					+ rs.getInt("id") + ", Ontology Id: " + ontologyId
-					+ ", Format: " + format + ")");
-			long start = System.currentTimeMillis();
-
-			writer.removeOntology(ontologyId);
+			removeOntology(writer, rs);
 			mgr.indexOntology(writer, rs);
-
-			long stop = System.currentTimeMillis(); // stop timing
-			System.out.println("Finished indexing ontology: " + displayLabel
-					+ " in " + (double) (stop - start) / 1000 + " seconds.");
-
 		} else {
 			System.out.println("No hanlder was found for ontology: "
-					+ displayLabel + " (Id: " + rs.getInt("id")
-					+ ", Ontology Id: " + ontologyId + ", Format: " + format
+					+ rs.getString("display_label") + " (Id: " + rs.getInt("id")
+					+ ", Ontology Id: " + rs.getInt("ontology_id") + ", Format: " + format
 					+ ")");
 		}
+	}
+
+	// TODO: in BP, replace rs with OntologyBean
+	public void removeOntology(IndexWriterWrapper writer, ResultSet rs)
+			throws SQLException, IOException {
+		Integer ontologyId = rs.getInt("ontology_id");
+		String displayLabel = rs.getString("display_label");
+
+		System.out.println("Removing ontology from index: " + displayLabel
+				+ " (Id: " + rs.getInt("id") + ", Ontology Id: " + ontologyId
+				+ ", Format: " + rs.getString("format") + ")");
+		long start = System.currentTimeMillis();
+
+		writer.removeOntology(ontologyId);
+
+		long stop = System.currentTimeMillis(); // stop timing
+		System.out.println("Finished removing ontology: " + displayLabel
+				+ " in " + (double) (stop - start) / 1000 + " seconds.");
 	}
 
 	private void closeConnection(Connection conn) {
@@ -327,7 +371,7 @@ public class LuceneSearch {
 				+ "		WHERE status_id = ? "
 				+ "		GROUP BY ontology_id "
 				+ "	) a ON ont.ontology_id = a.ontology_id AND ont.internal_version_number = a.internal_version_number "
-				+ "WHERE ontology_id = ?";
+				+ "WHERE ont.ontology_id = ?";
 
 		PreparedStatement stmt = conn.prepareStatement(sqlSelect);
 		stmt.setInt(1, 3);
