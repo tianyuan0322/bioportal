@@ -209,8 +209,7 @@ public class LuceneSearch {
 
 			System.out.println(hits[i].score + " | " + d.get("frameName")
 					+ " | " + d.get("contents") + " | " + d.get("recordType")
-					+ " | " + d.get("ontologyId") + " | "
-					+ d.get("conceptId"));
+					+ " | " + d.get("ontologyId") + " | " + d.get("conceptId"));
 		}
 
 		System.out.println("Query: " + query);
@@ -218,7 +217,7 @@ public class LuceneSearch {
 	}
 
 	// TODO: in BP, replace rs with OntologyBean
-	public void indexOntology(ResultSet rs) throws SQLException, IOException {
+	public void indexOntology(ResultSet rs) throws Exception {
 		IndexWriterWrapper writer = new IndexWriterWrapper(getIndexPath(),
 				analyzer);
 		indexOntology(writer, rs);
@@ -228,7 +227,7 @@ public class LuceneSearch {
 	}
 
 	// TODO: in BP, replace rs with OntologyBean
-	public void removeOntology(ResultSet rs) throws SQLException, IOException {
+	public void removeOntology(ResultSet rs) throws Exception {
 		IndexWriterWrapper writer = new IndexWriterWrapper(getIndexPath(),
 				analyzer);
 		removeOntology(writer, rs);
@@ -239,7 +238,7 @@ public class LuceneSearch {
 
 	// TODO: in BP, replace rs with OntologyBean
 	public void indexOntology(IndexWriterWrapper writer, ResultSet rs)
-			throws SQLException, IOException {
+			throws Exception {
 		String format = rs.getString("format");
 		LuceneSearchManager mgr = formatHandlerMap.get(format);
 
@@ -248,15 +247,15 @@ public class LuceneSearch {
 			mgr.indexOntology(writer, rs);
 		} else {
 			System.out.println("No hanlder was found for ontology: "
-					+ rs.getString("display_label") + " (Id: " + rs.getInt("id")
-					+ ", Ontology Id: " + rs.getInt("ontology_id") + ", Format: " + format
-					+ ")");
+					+ rs.getString("display_label") + " (Id: "
+					+ rs.getInt("id") + ", Ontology Id: "
+					+ rs.getInt("ontology_id") + ", Format: " + format + ")");
 		}
 	}
 
 	// TODO: in BP, replace rs with OntologyBean
 	public void removeOntology(IndexWriterWrapper writer, ResultSet rs)
-			throws SQLException, IOException {
+			throws Exception {
 		Integer ontologyId = rs.getInt("ontology_id");
 		String displayLabel = rs.getString("display_label");
 
