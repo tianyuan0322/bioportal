@@ -209,8 +209,8 @@ public class LuceneSearch {
 
 			System.out.println(hits[i].score + " | " + d.get("frameName")
 					+ " | " + d.get("contents") + " | " + d.get("recordType")
-					+ " | " + d.get("ontologyId") + " |L: "
-					+ d.get("literalContents"));
+					+ " | " + d.get("ontologyId") + " | "
+					+ d.get("conceptId"));
 		}
 
 		System.out.println("Query: " + query);

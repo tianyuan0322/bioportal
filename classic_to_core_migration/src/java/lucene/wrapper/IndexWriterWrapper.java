@@ -73,6 +73,7 @@ public class IndexWriterWrapper {
 		addField(doc, searchDoc.getOntologyId());
 		addField(doc, searchDoc.getRecordType());
 		addField(doc, searchDoc.getFrameName());
+		addField(doc, searchDoc.getConceptId());
 		addField(doc, searchDoc.getContents());
 		addField(doc, searchDoc.getLiteralContents());
 	}

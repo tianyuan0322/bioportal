@@ -16,8 +16,10 @@ public class LuceneSearchClient {
 //			search.executeQuery("cell type", false);
 
 			Collection<Integer> ontologyIds = new ArrayList<Integer>();
-			ontologyIds.add(1056);
-//			ontologyIds.add(1089);
+//			ontologyIds.add(1032); // NCIT
+			ontologyIds.add(1056); // Basic Vertebrate Anatomy
+//			ontologyIds.add(1053); // FMA
+//			ontologyIds.add(1089); // RadLex
 			search.executeQuery("Cell", ontologyIds, true);
 		} catch (Exception e) {
 			e.printStackTrace();
