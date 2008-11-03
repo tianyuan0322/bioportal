@@ -31,7 +31,9 @@ import edu.stanford.smi.protege.model.framestore.NarrowFrameStore;
 import edu.stanford.smi.protege.model.framestore.SimpleFrameStore;
 import edu.stanford.smi.protege.storage.database.DatabaseKnowledgeBaseFactory;
 import edu.stanford.smi.protegex.owl.database.OWLDatabaseKnowledgeBaseFactory;
+import edu.stanford.smi.protegex.owl.model.NamespaceUtil;
 import edu.stanford.smi.protegex.owl.model.OWLModel;
+import edu.stanford.smi.protegex.owl.model.RDFResource;
 
 public class LuceneSearchManagerProtegeImpl implements LuceneSearchManager {
 
@@ -129,6 +131,7 @@ public class LuceneSearchManagerProtegeImpl implements LuceneSearchManager {
 		doc.setOntologyId(luceneSlot.getOntologyId().toString());
 		doc.setRecordType(luceneSlot.getSlotType());
 		doc.setFrameName(getFrameName(nfs, frame));
+		doc.setConceptId(getConceptId(frame));
 		doc.setContents(value);
 		doc.setLiteralContents(value);
 	}
@@ -143,6 +146,16 @@ public class LuceneSearchManagerProtegeImpl implements LuceneSearchManager {
 		}
 
 		return (String) values.iterator().next();
+	}
+
+	private String getConceptId(Frame frame) {
+		if (frame instanceof RDFResource) {
+			RDFResource rdfNode = (RDFResource) frame;
+			return NamespaceUtil.getPrefixedName(rdfNode.getOWLModel(), rdfNode
+					.getName());
+		} else {
+			return frame.getName();
+		}
 	}
 
 	/**
