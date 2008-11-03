@@ -13,7 +13,8 @@ public class LuceneProtegeSlot {
 	 * @param ontologyId
 	 * @param slotType
 	 */
-	public LuceneProtegeSlot(Slot slot, Integer ontologyId, LuceneRecordTypeEnum slotType) {
+	public LuceneProtegeSlot(Slot slot, Integer ontologyId,
+			LuceneRecordTypeEnum slotType) {
 		super();
 		this.slot = slot;
 		this.ontologyId = ontologyId;

@@ -51,7 +51,8 @@ public class LuceneSearchField {
 	}
 
 	/**
-	 * @param contents the contents to set
+	 * @param contents
+	 *            the contents to set
 	 */
 	public void setContents(String contents) {
 		this.contents = contents;
