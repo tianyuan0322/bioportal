@@ -1,6 +1,5 @@
 package lucene.manager.impl;
 
-import java.io.IOException;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -67,7 +66,7 @@ public class LuceneSearchManagerProtegeImpl implements LuceneSearchManager {
 
 	@SuppressWarnings("unchecked")
 	public void indexOntology(IndexWriterWrapper writer, ResultSet rs)
-			throws SQLException, IOException {
+			throws Exception {
 		String displayLabel = rs.getString("display_label");
 
 		System.out.println("Adding ontology to index: " + displayLabel
