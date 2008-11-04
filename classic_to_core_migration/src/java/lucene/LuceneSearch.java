@@ -98,8 +98,8 @@ public class LuceneSearch {
 			} catch (RuntimeException re) {
 				Throwable t = re.getCause();
 
-				if (!(t instanceof MySQLSyntaxErrorException)) {
-					throw new Exception(t);
+				if (t == null || !(t instanceof MySQLSyntaxErrorException)) {
+					throw new Exception(re);
 				} else {
 					throw new Exception("Ontology: "
 							+ rs.getString("display_label") + " (Id: "
@@ -128,8 +128,8 @@ public class LuceneSearch {
 			} catch (RuntimeException e) {
 				Throwable t = e.getCause();
 
-				if (!(t instanceof MySQLSyntaxErrorException)) {
-					throw new Exception(t);
+				if (t == null || !(t instanceof MySQLSyntaxErrorException)) {
+					throw new Exception(e);
 				} else {
 					System.out.println("Ontology: "
 							+ rs.getString("display_label") + " (Id: "
