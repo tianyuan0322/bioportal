@@ -14,6 +14,7 @@ import org.LexGrid.LexBIG.DataModel.Core.ResolvedConceptReference;
 import org.LexGrid.LexBIG.Impl.LexBIGServiceImpl;
 import org.LexGrid.LexBIG.LexBIGService.CodedNodeSet;
 import org.LexGrid.LexBIG.LexBIGService.LexBIGService;
+import org.LexGrid.LexBIG.LexBIGService.CodedNodeSet.PropertyType;
 import org.LexGrid.LexBIG.Utility.Constructors;
 import org.LexGrid.LexBIG.Utility.Iterators.ResolvedConceptReferencesIterator;
 import org.LexGrid.concepts.Comment;
@@ -27,6 +28,7 @@ import org.apache.commons.lang.StringUtils;
 
 public class LuceneSearchManagerLexGridImpl implements LuceneSearchManager {
 
+	private static final int MAX_NUM_CONCEPTS = Integer.MAX_VALUE;
 	private LexBIGService lbs;
 
 	public LuceneSearchManagerLexGridImpl() {
@@ -42,54 +44,62 @@ public class LuceneSearchManagerLexGridImpl implements LuceneSearchManager {
 				+ csvt.getVersion());
 
 		CodedNodeSet codeSet = lbs.getCodingSchemeConcepts(schemeName, csvt);
-
-		// Analyze the result ...
 		ResolvedConceptReferencesIterator matchIterator = codeSet.resolve(null,
 				null, null, null, true);
-		ResolvedConceptReferenceList lst = matchIterator.next(10000);
 
-		for (Iterator<ResolvedConceptReference> itr = lst
-				.iterateResolvedConceptReference(); itr.hasNext();) {
-			ResolvedConceptReference ref = itr.next();
-			Concept entry = ref.getReferencedEntry();
+		while (matchIterator.hasNext()) {
+			ResolvedConceptReferenceList lst = matchIterator
+					.next(MAX_NUM_CONCEPTS);
 
-			System.out.println("Id: " + entry.getId());
+			for (Iterator<ResolvedConceptReference> itr = lst
+					.iterateResolvedConceptReference(); itr.hasNext();) {
+				ResolvedConceptReference ref = itr.next();
+				Concept entry = ref.getReferencedEntry();
+				boolean isFirst = true;
 
-			
-			for (Iterator<Comment> itr1 = entry.iterateComment(); itr1
-					.hasNext();) {
-				Comment c = itr1.next();
-				System.out.println("Comment: " + c.getText().getContent());
-			}
-			for (Iterator<ConceptProperty> itr1 = entry
-					.iterateConceptProperty(); itr1.hasNext();) {
-				ConceptProperty cp = itr1.next();
-				System.out.println("ConceptProprty: " + cp.getText().getContent());
-			}
-			for (Iterator<Definition> itr1 = entry.iterateDefinition(); itr1
-					.hasNext();) {
-				Definition d = itr1.next();
-				System.out.println("Definition: " + d.getText().getContent());
-			}
-			for (Iterator<Instruction> itr1 = entry.iterateInstruction(); itr1
-					.hasNext();) {
-				Instruction i = itr1.next();
-				System.out.println("Instruction: " + i.getText().getContent());
-			}
-			for (Iterator<Presentation> itr1 = entry.iteratePresentation(); itr1
-					.hasNext();) {
-				Presentation p = itr1.next();
-				System.out.println("Presentation: " + p.getText().getContent());
-			}
-			for (Iterator<PropertyLink> itr1 = entry.iteratePropertyLink(); itr1
-					.hasNext();) {
-				PropertyLink pl = itr1.next();
-				System.out.println("PropertyLink: " + pl.getLink());
-			}
+				for (Iterator<Presentation> itr1 = entry.iteratePresentation(); itr1
+						.hasNext();) {
+					Presentation p = itr1.next();
+					
+					if (isFirst) {
+						// preferred name
+					} else {
+						// synonym
+					}
+				}
 
+				
+				
+				
+				
+				
+				
+				
+			}
 		}
 
-		System.out.println("Count: " + lst.getResolvedConceptReferenceCount());
+		// for (Iterator<ResolvedConceptReference> itr = lst
+		// .iterateResolvedConceptReference(); itr.hasNext();) {
+		// ResolvedConceptReference ref = itr.next();
+		// Concept entry = ref.getReferencedEntry();
+		//
+		// System.out.println("Id: " + entry.getId());
+		//			
+		// for (Iterator<Presentation> itr1 = entry.iteratePresentation(); itr1
+		// .hasNext();) {
+		// Presentation p = itr1.next();
+		// System.out.println("Presentation: " + p.getText().getContent());
+		// }
+		//
+		// for (Iterator<Definition> itr1 = entry.iterateDefinition(); itr1
+		// .hasNext();) {
+		// Definition d = itr1.next();
+		// System.out.println("Definition: " + d.getText().getContent());
+		// }
+		// }
+
+		// System.out.println("Count: " +
+		// lst.getResolvedConceptReferenceCount());
 	}
 
 	/**
