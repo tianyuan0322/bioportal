@@ -5,6 +5,7 @@ import java.sql.SQLException;
 import java.util.Iterator;
 import java.util.StringTokenizer;
 
+import lucene.bean.LuceneSearchDocument;
 import lucene.manager.LuceneSearchManager;
 import lucene.wrapper.IndexWriterWrapper;
 
@@ -26,7 +27,6 @@ import org.apache.commons.lang.StringUtils;
 
 public class LuceneSearchManagerLexGridImpl implements LuceneSearchManager {
 
-	private static final int MAX_NUM_CONCEPTS = Integer.MAX_VALUE;
 	private LexBIGService lbs;
 
 	public LuceneSearchManagerLexGridImpl() {
@@ -45,9 +45,11 @@ public class LuceneSearchManagerLexGridImpl implements LuceneSearchManager {
 		ResolvedConceptReferencesIterator matchIterator = codeSet.resolve(null,
 				null, null, null, true);
 
+		LuceneSearchDocument doc = new LuceneSearchDocument();
+
 		while (matchIterator.hasNext()) {
 			ResolvedConceptReferenceList lst = matchIterator
-					.next(MAX_NUM_CONCEPTS);
+					.next(Integer.MAX_VALUE);
 
 			for (Iterator<ResolvedConceptReference> itr = lst
 					.iterateResolvedConceptReference(); itr.hasNext();) {
@@ -97,7 +99,6 @@ public class LuceneSearchManagerLexGridImpl implements LuceneSearchManager {
 					Instruction i = itr1.next();
 
 				}
-
 			}
 		}
 	}
