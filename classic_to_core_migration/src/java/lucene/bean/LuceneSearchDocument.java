@@ -7,8 +7,8 @@ import org.apache.lucene.document.Field;
 public class LuceneSearchDocument {
 	public static final String ONTOLOGY_ID_FIELD_LABEL = "ontologyId";
 	public static final String RECORD_TYPE_FIELD_LABEL = "recordType";
-	public static final String FRAME_NAME_FIELD_LABEL = "frameName";
 	public static final String CONCEPT_ID_FIELD_LABEL = "conceptId";
+	public static final String CONCEPT_ID_SHORT_FIELD_LABEL = "conceptIdShort";
 	public static final String CONTENTS_FIELD_LABEL = "contents";
 	public static final String LITERAL_CONTENTS_FIELD_LABEL = "literalContents";
 
@@ -16,10 +16,10 @@ public class LuceneSearchDocument {
 			ONTOLOGY_ID_FIELD_LABEL, Field.Store.YES, Field.Index.NOT_ANALYZED);
 	private LuceneSearchField recordType = new LuceneSearchField(
 			RECORD_TYPE_FIELD_LABEL, Field.Store.YES, Field.Index.NOT_ANALYZED);
-	private LuceneSearchField frameName = new LuceneSearchField(
-			FRAME_NAME_FIELD_LABEL, Field.Store.YES, Field.Index.NOT_ANALYZED);
 	private LuceneSearchField conceptId = new LuceneSearchField(
 			CONCEPT_ID_FIELD_LABEL, Field.Store.YES, Field.Index.NOT_ANALYZED);
+	private LuceneSearchField conceptIdShort = new LuceneSearchField(
+			CONCEPT_ID_SHORT_FIELD_LABEL, Field.Store.YES, Field.Index.NOT_ANALYZED);
 	private LuceneSearchField contents = new LuceneSearchField(
 			CONTENTS_FIELD_LABEL, Field.Store.YES, Field.Index.ANALYZED);
 	private LuceneSearchField literalContents = new LuceneSearchField(
@@ -37,13 +37,13 @@ public class LuceneSearchDocument {
 	 * @param literalContents
 	 */
 	public LuceneSearchDocument(String ontologyId,
-			LuceneRecordTypeEnum recordType, String frameName,
-			String conceptId, String contents, String literalContents) {
+			LuceneRecordTypeEnum recordType, String conceptId,
+			String conceptIdShort, String contents, String literalContents) {
 		super();
 		setOntologyId(ontologyId);
 		setRecordType(recordType);
-		setFrameName(frameName);
 		setConceptId(conceptId);
+		setConceptIdShort(conceptIdShort);
 		setContents(contents);
 		setLiteralContents(literalContents);
 	}
@@ -65,19 +65,19 @@ public class LuceneSearchDocument {
 	}
 
 	/**
-	 * @param frameName
-	 *            the frameName to set
-	 */
-	public void setFrameName(String frameName) {
-		this.frameName.setContents(frameName);
-	}
-
-	/**
 	 * @param conceptId
-	 *            the conceptId to set
+	 *            the frameName to set
 	 */
 	public void setConceptId(String conceptId) {
 		this.conceptId.setContents(conceptId);
+	}
+
+	/**
+	 * @param conceptIdShort
+	 *            the conceptIdShort to set
+	 */
+	public void setConceptIdShort(String conceptIdShort) {
+		this.conceptIdShort.setContents(conceptIdShort);
 	}
 
 	/**
@@ -111,17 +111,17 @@ public class LuceneSearchDocument {
 	}
 
 	/**
-	 * @return the frameName
-	 */
-	public LuceneSearchField getFrameName() {
-		return frameName;
-	}
-
-	/**
 	 * @return the coneptId
 	 */
 	public LuceneSearchField getConceptId() {
 		return conceptId;
+	}
+
+	/**
+	 * @return the conceptIdShort
+	 */
+	public LuceneSearchField getConceptIdShort() {
+		return conceptIdShort;
 	}
 
 	/**

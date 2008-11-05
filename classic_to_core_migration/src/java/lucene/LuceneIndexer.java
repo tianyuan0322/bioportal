@@ -244,7 +244,7 @@ public class LuceneIndexer {
 
 		doc.add(new Field(ONTOLOGY_ID_FIELD, luceneSlot.getOntologyId()
 				.toString(), Field.Store.YES, Field.Index.NOT_ANALYZED));
-		doc.add(new Field(SLOT_TYPE_FIELD, luceneSlot.getSlotType().getLabel(),
+		doc.add(new Field(SLOT_TYPE_FIELD, luceneSlot.getPropertyType().getLabel(),
 				Field.Store.YES, Field.Index.NOT_ANALYZED));
 		doc.add(new Field(FRAME_NAME_FIELD, getFrameName(nfs, frame),
 				Field.Store.YES, Field.Index.NOT_ANALYZED));

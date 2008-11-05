@@ -207,9 +207,9 @@ public class LuceneSearch {
 			int docId = hits[i].doc;
 			Document d = searcher.doc(docId);
 
-			System.out.println(hits[i].score + " | " + d.get("frameName")
+			System.out.println(hits[i].score + " | " + d.get("conceptId")
 					+ " | " + d.get("contents") + " | " + d.get("recordType")
-					+ " | " + d.get("ontologyId") + " | " + d.get("conceptId"));
+					+ " | " + d.get("ontologyId") + " | " + d.get("conceptIdShort"));
 		}
 
 		System.out.println("Query: " + query);
@@ -391,9 +391,9 @@ public class LuceneSearch {
 				+ "		GROUP BY ontology_id "
 				+ "	) a ON ont.ontology_id = a.ontology_id AND ont.internal_version_number = a.internal_version_number "
 				+ "WHERE 1 = 1 "
-				+ "AND UPPER(ont.format) IN ('PROTEGE', 'OWL-FULL', 'OWL-DL', 'OWL-LITE') "
+//				+ "AND UPPER(ont.format) IN ('PROTEGE', 'OWL-FULL', 'OWL-DL', 'OWL-LITE') "
 
-				+ "AND id IN (" + "13578 " + ", 29684 "
+				+ "AND id IN (" + "13578 " + ", 38765 "
 				// + "AND id = 29684 "
 
 				+ ") ORDER BY " + "ont.display_label" + " LIMIT 10";

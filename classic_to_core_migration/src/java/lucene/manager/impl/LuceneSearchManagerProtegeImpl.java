@@ -128,9 +128,9 @@ public class LuceneSearchManagerProtegeImpl implements LuceneSearchManager {
 		}
 
 		doc.setOntologyId(luceneSlot.getOntologyId().toString());
-		doc.setRecordType(luceneSlot.getSlotType());
-		doc.setFrameName(getFrameName(nfs, frame));
-		doc.setConceptId(getConceptId(frame));
+		doc.setRecordType(luceneSlot.getPropertyType());
+		doc.setConceptId(getFrameName(nfs, frame));
+		doc.setConceptIdShort(getConceptIdShort(frame));
 		doc.setContents(value);
 		doc.setLiteralContents(value);
 	}
@@ -147,7 +147,7 @@ public class LuceneSearchManagerProtegeImpl implements LuceneSearchManager {
 		return (String) values.iterator().next();
 	}
 
-	private String getConceptId(Frame frame) {
+	private String getConceptIdShort(Frame frame) {
 		if (frame instanceof RDFResource) {
 			RDFResource rdfNode = (RDFResource) frame;
 			return NamespaceUtil.getPrefixedName(rdfNode.getOWLModel(), rdfNode

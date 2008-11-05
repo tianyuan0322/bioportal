@@ -3,10 +3,8 @@ package lucene.bean;
 import lucene.enumeration.LuceneRecordTypeEnum;
 import edu.stanford.smi.protege.model.Slot;
 
-public class LuceneProtegeSlot {
-	Slot slot;
-	Integer ontologyId;
-	LuceneRecordTypeEnum slotType;
+public class LuceneProtegeSlot extends AbstractLuceneConceptProperty {
+	private Slot slot;
 
 	/**
 	 * @param slot
@@ -15,10 +13,8 @@ public class LuceneProtegeSlot {
 	 */
 	public LuceneProtegeSlot(Slot slot, Integer ontologyId,
 			LuceneRecordTypeEnum slotType) {
-		super();
+		super(ontologyId, slotType);
 		this.slot = slot;
-		this.ontologyId = ontologyId;
-		this.slotType = slotType;
 	}
 
 	/**
@@ -26,19 +22,5 @@ public class LuceneProtegeSlot {
 	 */
 	public Slot getSlot() {
 		return slot;
-	}
-
-	/**
-	 * @return the ontologyId
-	 */
-	public Integer getOntologyId() {
-		return ontologyId;
-	}
-
-	/**
-	 * @return the slotType
-	 */
-	public LuceneRecordTypeEnum getSlotType() {
-		return slotType;
 	}
 }
