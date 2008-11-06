@@ -17,18 +17,20 @@ public class LuceneSearchClient {
 //			search.indexOntology(1070);
 //			search.indexOntology(1090);
 //			search.indexOntology(1056);
+			search.indexOntology(1032);
 //			search.indexAllOntologies();
 //
 //			// search.executeQuery("cell type", false);
 //
 			Collection<Integer> ontologyIds = new ArrayList<Integer>();
-			ontologyIds.add(1070); // Biological Process (GO)
-//			// ontologyIds.add(1090); // Amphibian gross anatomy
-//			ontologyIds.add(1032); // NCIT
-//			// ontologyIds.add(1056); // Basic Vertebrate Anatomy
-//			// ontologyIds.add(1053); // FMA
-//			// ontologyIds.add(1089); // RadLex
-			search.executeQuery("Blood", ontologyIds, false);
+			ontologyIds.add(1058); // SNP-Ontology - OWL
+			ontologyIds.add(1070); // Biological Process (GO) - OBO
+//			ontologyIds.add(1090); // Amphibian gross anatomy - OBO
+//			ontologyIds.add(1032); // NCIT - OWL
+//			// ontologyIds.add(1056); // Basic Vertebrate Anatomy - OWL
+//			// ontologyIds.add(1053); // FMA - OWL
+//			// ontologyIds.add(1089); // RadLex - FRAMES
+			search.executeQuery("cell", ontologyIds, false);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

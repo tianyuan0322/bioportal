@@ -8,7 +8,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import lucene.bean.LuceneProtegeSlot;
+import lucene.bean.LuceneProtegeFrame;
 import lucene.bean.LuceneSearchDocument;
 import lucene.enumeration.LuceneRecordTypeEnum;
 import lucene.manager.LuceneSearchManager;
@@ -68,18 +68,17 @@ public class LuceneSearchManagerProtegeImpl implements LuceneSearchManager {
 	public void indexOntology(IndexWriterWrapper writer, ResultSet rs)
 			throws Exception {
 		String displayLabel = rs.getString("display_label");
-
+		Integer ontologyId = rs.getInt("ontology_id");
 		System.out.println("Adding ontology to index: " + displayLabel
-				+ " (Id: " + rs.getInt("id") + ", Ontology Id: "
-				+ rs.getInt("ontology_id") + ", Format: "
-				+ rs.getString("format") + ")");
+				+ " (Id: " + rs.getInt("id") + ", Ontology Id: " + ontologyId
+				+ ", Format: " + rs.getString("format") + ")");
 		long start = System.currentTimeMillis();
 
 		KnowledgeBase kb = createKnowledgeBaseInstance(rs);
 		boolean owlMode = kb instanceof OWLModel;
-		Set<LuceneProtegeSlot> searchableSlots = getSearchableSlots(kb, rs
-				.getInt("ontology_id"), rs.getString("synonym_slot"), rs
-				.getString("preferred_name_slot"));
+		List<LuceneProtegeFrame> searchableSlots = getSearchableSlots(kb,
+				ontologyId, rs.getString("synonym_slot"), rs
+						.getString("preferred_name_slot"));
 
 		FrameStore fs = ((DefaultKnowledgeBase) kb).getTerminalFrameStore();
 		NarrowFrameStore nfs = ((SimpleFrameStore) fs).getHelper();
@@ -94,10 +93,13 @@ public class LuceneSearchManagerProtegeImpl implements LuceneSearchManager {
 		LuceneSearchDocument doc = new LuceneSearchDocument();
 
 		for (Frame frame : frames) {
-			for (LuceneProtegeSlot luceneSlot : searchableSlots) {
+			String preferredName = null;
+			boolean isFirst = true;
+
+			for (LuceneProtegeFrame luceneSlot : searchableSlots) {
 				synchronized (kb) {
-					values = nfs.getValues(frame, luceneSlot.getSlot(), null,
-							false);
+					values = nfs.getValues(frame, (Slot) luceneSlot.getFrame(),
+							null, false);
 				}
 
 				for (Object value : values) {
@@ -105,7 +107,16 @@ public class LuceneSearchManagerProtegeImpl implements LuceneSearchManager {
 						continue;
 					}
 
-					setLuceneSearchDocument(doc, nfs, frame, luceneSlot,
+					// the first slot is always the preferred name slot
+					if (isFirst) {
+						preferredName = (String) value;
+						isFirst = false;
+					}
+
+					LuceneProtegeFrame luceneProtegeFrame = new LuceneProtegeFrame(
+							frame, luceneSlot.getOntologyId(), preferredName,
+							luceneSlot.getPropertyType());
+					setLuceneSearchDocument(doc, nfs, luceneProtegeFrame,
 							(String) value, owlMode);
 					writer.addDocument(doc);
 				}
@@ -117,22 +128,63 @@ public class LuceneSearchManagerProtegeImpl implements LuceneSearchManager {
 
 		long stop = System.currentTimeMillis(); // stop timing
 		System.out.println("Finished indexing ontology: " + displayLabel
-				+ " in " + (double) (stop - start) / 1000 + " seconds.");
+				+ " in " + (double) (stop - start) / 1000 / 60 + " minutes.");
+	}
+
+	private List<LuceneProtegeFrame> getSearchableSlots(KnowledgeBase kb,
+			Integer ontologyId, String synonymSlotName,
+			String preferredNameSlotName) {
+		List<LuceneProtegeFrame> searchableSlots = new ArrayList<LuceneProtegeFrame>();
+
+		// add preferred name slot
+		// we always assume that the preferred name slot
+		// is the first element on the list
+		searchableSlots.add(new LuceneProtegeFrame(getPreferredNameSlot(kb,
+				preferredNameSlotName), ontologyId, null,
+				LuceneRecordTypeEnum.RECORD_TYPE_PREFERRED_NAME));
+
+		// add synonym slot if exists
+		Slot synonymSlot = getSynonymSlot(kb, synonymSlotName);
+
+		if (synonymSlot != null) {
+			searchableSlots.add(new LuceneProtegeFrame(synonymSlot, ontologyId,
+					null, LuceneRecordTypeEnum.RECORD_TYPE_SYNONYM));
+		}
+
+		// add property slots
+		Set<Slot> propertySlots = getPropertySlots(kb);
+
+		for (Slot propertySlot : propertySlots) {
+			searchableSlots
+					.add(new LuceneProtegeFrame(propertySlot, ontologyId, null,
+							LuceneRecordTypeEnum.RECORD_TYPE_PROPERTY));
+		}
+
+		return searchableSlots;
 	}
 
 	private void setLuceneSearchDocument(LuceneSearchDocument doc,
-			NarrowFrameStore nfs, Frame frame, LuceneProtegeSlot luceneSlot,
+			NarrowFrameStore nfs, LuceneProtegeFrame luceneProtegeFrame,
 			String value, boolean owlMode) {
+		value = stripLanguageIdentifier(value, owlMode);
+		String preferredName = stripLanguageIdentifier(luceneProtegeFrame
+				.getPreferredName(), owlMode);
+
+		doc.setOntologyId(luceneProtegeFrame.getOntologyId().toString());
+		doc.setRecordType(luceneProtegeFrame.getPropertyType());
+		doc.setConceptId(getFrameName(nfs, luceneProtegeFrame.getFrame()));
+		doc.setConceptIdShort(getConceptIdShort(luceneProtegeFrame.getFrame()));
+		doc.setPreferredName(preferredName);
+		doc.setContents(value);
+		doc.setLiteralContents(value);
+	}
+
+	private String stripLanguageIdentifier(String value, boolean owlMode) {
 		if (owlMode && value.startsWith("~#")) {
 			value = value.substring(5);
 		}
 
-		doc.setOntologyId(luceneSlot.getOntologyId().toString());
-		doc.setRecordType(luceneSlot.getPropertyType());
-		doc.setConceptId(getFrameName(nfs, frame));
-		doc.setConceptIdShort(getConceptIdShort(frame));
-		doc.setContents(value);
-		doc.setLiteralContents(value);
+		return value;
 	}
 
 	@SuppressWarnings("unchecked")
@@ -186,35 +238,6 @@ public class LuceneSearchManagerProtegeImpl implements LuceneSearchManager {
 				.getString("preferred_name_slot")));
 
 		return kb;
-	}
-
-	private Set<LuceneProtegeSlot> getSearchableSlots(KnowledgeBase kb,
-			Integer ontologyId, String synonymSlotName,
-			String preferredNameSlotName) {
-		Set<LuceneProtegeSlot> searchableSlots = new HashSet<LuceneProtegeSlot>();
-
-		// add synonym slot if exists
-		Slot synonymSlot = getSynonymSlot(kb, synonymSlotName);
-
-		if (synonymSlot != null) {
-			searchableSlots.add(new LuceneProtegeSlot(synonymSlot, ontologyId,
-					LuceneRecordTypeEnum.RECORD_TYPE_SYNONYM));
-		}
-
-		// add preferred name slot
-		searchableSlots.add(new LuceneProtegeSlot(getPreferredNameSlot(kb,
-				preferredNameSlotName), ontologyId,
-				LuceneRecordTypeEnum.RECORD_TYPE_PREFERRED_NAME));
-
-		// add property slots
-		Set<Slot> propertySlots = getPropertySlots(kb);
-
-		for (Slot propertySlot : propertySlots) {
-			searchableSlots.add(new LuceneProtegeSlot(propertySlot, ontologyId,
-					LuceneRecordTypeEnum.RECORD_TYPE_PROPERTY));
-		}
-
-		return searchableSlots;
 	}
 
 	@SuppressWarnings("unchecked")

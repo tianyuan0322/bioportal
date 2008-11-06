@@ -9,6 +9,7 @@ public class LuceneSearchDocument {
 	public static final String RECORD_TYPE_FIELD_LABEL = "recordType";
 	public static final String CONCEPT_ID_FIELD_LABEL = "conceptId";
 	public static final String CONCEPT_ID_SHORT_FIELD_LABEL = "conceptIdShort";
+	public static final String PREFERRED_NAME_FIELD_LABEL = "preferredName";
 	public static final String CONTENTS_FIELD_LABEL = "contents";
 	public static final String LITERAL_CONTENTS_FIELD_LABEL = "literalContents";
 
@@ -20,6 +21,8 @@ public class LuceneSearchDocument {
 			CONCEPT_ID_FIELD_LABEL, Field.Store.YES, Field.Index.NOT_ANALYZED);
 	private LuceneSearchField conceptIdShort = new LuceneSearchField(
 			CONCEPT_ID_SHORT_FIELD_LABEL, Field.Store.YES, Field.Index.NOT_ANALYZED);
+	private LuceneSearchField preferredName = new LuceneSearchField(
+			PREFERRED_NAME_FIELD_LABEL, Field.Store.YES, Field.Index.NOT_ANALYZED);
 	private LuceneSearchField contents = new LuceneSearchField(
 			CONTENTS_FIELD_LABEL, Field.Store.YES, Field.Index.ANALYZED);
 	private LuceneSearchField literalContents = new LuceneSearchField(
@@ -32,18 +35,21 @@ public class LuceneSearchDocument {
 	/**
 	 * @param ontologyId
 	 * @param recordType
-	 * @param frameName
+	 * @param conceptId
+	 * @param conceptIdShort
+	 * @param preferredName
 	 * @param contents
 	 * @param literalContents
 	 */
 	public LuceneSearchDocument(String ontologyId,
 			LuceneRecordTypeEnum recordType, String conceptId,
-			String conceptIdShort, String contents, String literalContents) {
+			String conceptIdShort, String preferredName, String contents, String literalContents) {
 		super();
 		setOntologyId(ontologyId);
 		setRecordType(recordType);
 		setConceptId(conceptId);
 		setConceptIdShort(conceptIdShort);
+		setPreferredName(preferredName);
 		setContents(contents);
 		setLiteralContents(literalContents);
 	}
@@ -78,6 +84,14 @@ public class LuceneSearchDocument {
 	 */
 	public void setConceptIdShort(String conceptIdShort) {
 		this.conceptIdShort.setContents(conceptIdShort);
+	}
+
+	/**
+	 * @param preferredName
+	 *            the preferredName to set
+	 */
+	public void setPreferredName(String preferredName) {
+		this.preferredName.setContents(preferredName);
 	}
 
 	/**
@@ -122,6 +136,13 @@ public class LuceneSearchDocument {
 	 */
 	public LuceneSearchField getConceptIdShort() {
 		return conceptIdShort;
+	}
+
+	/**
+	 * @return the preferredName
+	 */
+	public LuceneSearchField getPreferredName() {
+		return preferredName;
 	}
 
 	/**

@@ -20,6 +20,7 @@ import lucene.manager.impl.LuceneSearchManagerLexGridImpl;
 import lucene.manager.impl.LuceneSearchManagerProtegeImpl;
 import lucene.wrapper.IndexWriterWrapper;
 
+import org.LexGrid.LexBIG.Exceptions.LBParameterException;
 import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.analysis.standard.StandardAnalyzer;
 import org.apache.lucene.document.Document;
@@ -95,17 +96,18 @@ public class LuceneSearch {
 		while (rs.next()) {
 			try {
 				indexOntology(rs);
-			} catch (RuntimeException re) {
-				Throwable t = re.getCause();
+			} catch (Exception e) {
+				Throwable t = e.getCause();
 
-				if (t == null || !(t instanceof MySQLSyntaxErrorException)) {
-					throw new Exception(re);
-				} else {
+				if (e instanceof LBParameterException
+						|| (t != null && t instanceof MySQLSyntaxErrorException)) {
 					throw new Exception("Ontology: "
 							+ rs.getString("display_label") + " (Id: "
 							+ rs.getInt("id") + ", Ontology Id: "
 							+ rs.getInt("ontology_id")
-							+ ") does not exist in Protege");
+							+ ") does not exist in the backend store");
+				} else {
+					throw new Exception(e);
 				}
 			}
 		}
@@ -125,17 +127,18 @@ public class LuceneSearch {
 		while (rs.next()) {
 			try {
 				indexOntology(writer, rs);
-			} catch (RuntimeException e) {
+			} catch (Exception e) {
 				Throwable t = e.getCause();
 
-				if (t == null || !(t instanceof MySQLSyntaxErrorException)) {
-					throw new Exception(e);
-				} else {
+				if (e instanceof LBParameterException
+						|| (t != null && t instanceof MySQLSyntaxErrorException)) {
 					System.out.println("Ontology: "
 							+ rs.getString("display_label") + " (Id: "
 							+ rs.getInt("id") + ", Ontology Id: "
 							+ rs.getInt("ontology_id")
-							+ ") does not exist in Protege");
+							+ ") does not exist in the backend store");
+				} else {
+					throw new Exception(e);
 				}
 			}
 		}
@@ -209,7 +212,8 @@ public class LuceneSearch {
 
 			System.out.println(hits[i].score + " | " + d.get("conceptId")
 					+ " | " + d.get("contents") + " | " + d.get("recordType")
-					+ " | " + d.get("ontologyId") + " | " + d.get("conceptIdShort"));
+					+ " | " + d.get("preferredName") + " | "
+					+ d.get("ontologyId") + " | " + d.get("conceptIdShort"));
 		}
 
 		System.out.println("Query: " + query);
@@ -391,10 +395,11 @@ public class LuceneSearch {
 				+ "		GROUP BY ontology_id "
 				+ "	) a ON ont.ontology_id = a.ontology_id AND ont.internal_version_number = a.internal_version_number "
 				+ "WHERE 1 = 1 "
-//				+ "AND UPPER(ont.format) IN ('PROTEGE', 'OWL-FULL', 'OWL-DL', 'OWL-LITE') "
+				// + "AND UPPER(ont.format) IN ('PROTEGE', 'OWL-FULL', 'OWL-DL',
+				// 'OWL-LITE') "
 
-				+ "AND id IN (" + "13578 " + ", 38765 "
-				// + "AND id = 29684 "
+				// + "AND ont.ontology_id IN (" + "1032, " + "1070 "
+				+ "AND ont.ontology_id IN (" + "1058, 1070 "
 
 				+ ") ORDER BY " + "ont.display_label" + " LIMIT 10";
 

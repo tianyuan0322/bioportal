@@ -74,6 +74,7 @@ public class IndexWriterWrapper {
 		addField(doc, searchDoc.getRecordType());
 		addField(doc, searchDoc.getConceptId());
 		addField(doc, searchDoc.getConceptIdShort());
+		addField(doc, searchDoc.getPreferredName());
 		addField(doc, searchDoc.getContents());
 		addField(doc, searchDoc.getLiteralContents());
 	}

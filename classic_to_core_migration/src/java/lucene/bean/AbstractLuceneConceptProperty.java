@@ -4,16 +4,18 @@ import lucene.enumeration.LuceneRecordTypeEnum;
 
 public class AbstractLuceneConceptProperty {
 	protected Integer ontologyId;
+	protected String preferredName;
 	protected LuceneRecordTypeEnum propertyType;
 
 	/**
 	 * @param ontologyId
 	 * @param propetyType
 	 */
-	public AbstractLuceneConceptProperty(Integer ontologyId,
+	public AbstractLuceneConceptProperty(Integer ontologyId, String preferredName,
 			LuceneRecordTypeEnum propetyType) {
 		super();
 		this.ontologyId = ontologyId;
+		this.preferredName = preferredName;
 		this.propertyType = propetyType;
 	}
 
@@ -22,6 +24,13 @@ public class AbstractLuceneConceptProperty {
 	 */
 	public Integer getOntologyId() {
 		return ontologyId;
+	}
+
+	/**
+	 * @return the preferredName
+	 */
+	public String getPreferredName() {
+		return preferredName;
 	}
 
 	/**
