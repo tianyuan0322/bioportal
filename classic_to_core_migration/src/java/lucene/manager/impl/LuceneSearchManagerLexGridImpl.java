@@ -91,7 +91,9 @@ public class LuceneSearchManagerLexGridImpl implements LuceneSearchManager {
 		for (Iterator<Presentation> itr = concept.iteratePresentation(); itr
 				.hasNext();) {
 			Presentation p = itr.next();
-
+			
+			// the first value is assumed to be the preferred name
+			// the rest of the values are assumed to by synonyms
 			if (isFirst) {
 				preferredName = p.getText().getContent();
 				isFirst = false;
