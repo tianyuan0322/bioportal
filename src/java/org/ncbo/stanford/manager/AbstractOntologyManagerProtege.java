@@ -80,8 +80,7 @@ public abstract class AbstractOntologyManagerProtege {
 		}
 
 		if (slot == null) {
-			slot = kb instanceof OWLModel ? ((OWLModel) kb)
-					.getRDFSLabelProperty() : kb.getNameSlot();
+			slot = kb.getNameSlot();
 		}
 
 		return slot;
