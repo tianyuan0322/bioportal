@@ -30,6 +30,7 @@ import org.apache.lucene.queryParser.QueryParser;
 import org.apache.lucene.search.BooleanClause;
 import org.apache.lucene.search.BooleanQuery;
 import org.apache.lucene.search.IndexSearcher;
+import org.apache.lucene.search.PhraseQuery;
 import org.apache.lucene.search.Query;
 import org.apache.lucene.search.ScoreDoc;
 import org.apache.lucene.search.Searcher;
@@ -202,7 +203,7 @@ public class LuceneSearch {
 		// ScoreDoc[] hits = collector.topDocs().scoreDocs;
 
 		SortField[] fields = { SortField.FIELD_SCORE,
-				new SortField("recordType") };
+				new SortField("recordType")}; // , new SortField("conceptId") };
 		TopFieldDocs docs = searcher.search(query, null, MAX_NUM_HITS,
 				new Sort(fields));
 		ScoreDoc[] hits = docs.scoreDocs;
@@ -311,7 +312,8 @@ public class LuceneSearch {
 		QueryParser parser = new QueryParser(
 				LuceneSearchDocument.CONTENTS_FIELD_LABEL, analyzer);
 		parser.setAllowLeadingWildcard(true);
-
+		parser.setDefaultOperator(QueryParser.AND_OPERATOR);
+		
 		try {
 			query.add(parser.parse(expr), BooleanClause.Occur.MUST);
 		} catch (ParseException e) {
@@ -320,16 +322,18 @@ public class LuceneSearch {
 			// throw ioe;
 		}
 
-		/*
-		 * PhraseQuery q = new PhraseQuery(); expr =
-		 * expr.trim().toLowerCase().replaceAll("[\\t|\\s]+", " "); // expr =
-		 * expr.trim().replaceAll("[\\t|\\s]+", " "); String[] words =
-		 * expr.split(" ");
-		 * 
-		 * for (int i = 0; i < words.length; i++) { q .add(new
-		 * Term(LuceneSearchDocument.CONTENTS_FIELD_LABEL, words[i])); }
-		 * query.add(q, BooleanClause.Occur.MUST);
-		 */
+		
+		PhraseQuery q = new PhraseQuery();		
+		expr = expr.trim().toLowerCase().replaceAll("[\\t|\\s]+", " "); 
+		String[] words = expr.split(" ");
+
+		for (int i = 0; i < words.length; i++) {
+			q
+					.add(new Term(LuceneSearchDocument.CONTENTS_FIELD_LABEL,
+							words[i]));
+		}
+//		query.add(q, BooleanClause.Occur.MUST);
+		 
 	}
 
 	private void addPropertiesClause(boolean includeProperties,
