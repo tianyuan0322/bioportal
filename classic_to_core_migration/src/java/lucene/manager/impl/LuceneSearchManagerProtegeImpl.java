@@ -1,5 +1,6 @@
 package lucene.manager.impl;
 
+import java.io.IOException;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -17,7 +18,6 @@ import lucene.wrapper.IndexWriterWrapper;
 import org.ncbo.stanford.util.constants.ApplicationConstants;
 import org.ncbo.stanford.util.helper.StringHelper;
 
-import edu.stanford.smi.protege.model.Cls;
 import edu.stanford.smi.protege.model.DefaultKnowledgeBase;
 import edu.stanford.smi.protege.model.Frame;
 import edu.stanford.smi.protege.model.KnowledgeBase;
@@ -76,15 +76,9 @@ public class LuceneSearchManagerProtegeImpl implements LuceneSearchManager {
 
 		KnowledgeBase kb = createKnowledgeBaseInstance(rs);
 		boolean owlMode = kb instanceof OWLModel;
-		List<LuceneProtegeFrame> searchableSlots = getSearchableSlots(kb,
-				ontologyId, rs.getString("synonym_slot"), rs
-						.getString("preferred_name_slot"));
-
 		FrameStore fs = ((DefaultKnowledgeBase) kb).getTerminalFrameStore();
 		NarrowFrameStore nfs = ((SimpleFrameStore) fs).getHelper();
-
 		Set<Frame> frames;
-		Collection values;
 
 		synchronized (kb) {
 			frames = nfs.getFrames();
@@ -93,33 +87,39 @@ public class LuceneSearchManagerProtegeImpl implements LuceneSearchManager {
 		LuceneSearchDocument doc = new LuceneSearchDocument();
 
 		for (Frame frame : frames) {
-			String preferredName = null;
-			boolean isFirst = true;
+			// add preferred name slot
+			List<Slot> preferredNameSlots = getPreferredNameSlots(kb, rs
+					.getString("preferred_name_slot"));
+			LuceneProtegeFrame protegeFrame = new LuceneProtegeFrame(frame,
+					ontologyId, null,
+					LuceneRecordTypeEnum.RECORD_TYPE_PREFERRED_NAME);
 
-			for (LuceneProtegeFrame luceneSlot : searchableSlots) {
-				synchronized (kb) {
-					values = nfs.getValues(frame, (Slot) luceneSlot.getFrame(),
-							null, false);
-				}
+			String preferredName = addPreferredNameSlotToIndex(writer, doc, kb,
+					nfs, protegeFrame, preferredNameSlots.get(0), owlMode);
 
-				for (Object value : values) {
-					if (!(value instanceof String)) {
-						continue;
-					}
+			if (preferredName == null && preferredNameSlots.size() > 1) {
+				preferredName = addPreferredNameSlotToIndex(writer, doc, kb,
+						nfs, protegeFrame, preferredNameSlots.get(1), owlMode);
+			}
 
-					// the first slot is always the preferred name slot
-					if (isFirst) {
-						preferredName = (String) value;
-						isFirst = false;
-					}
+			// add synonym slot if exists
+			Slot synonymSlot = getSynonymSlot(kb, rs.getString("synonym_slot"));
 
-					LuceneProtegeFrame luceneProtegeFrame = new LuceneProtegeFrame(
-							frame, luceneSlot.getOntologyId(), preferredName,
-							luceneSlot.getPropertyType());
-					setLuceneSearchDocument(doc, nfs, luceneProtegeFrame,
-							(String) value, owlMode);
-					writer.addDocument(doc);
-				}
+			if (synonymSlot != null) {
+				protegeFrame
+						.setPropertyType(LuceneRecordTypeEnum.RECORD_TYPE_SYNONYM);
+				addSlotToIndex(writer, doc, kb, nfs, protegeFrame, synonymSlot,
+						owlMode);
+			}
+
+			// add property slots
+			Set<Slot> propertySlots = getPropertySlots(kb);
+			protegeFrame
+					.setPropertyType(LuceneRecordTypeEnum.RECORD_TYPE_PROPERTY);
+
+			for (Slot propertySlot : propertySlots) {
+				addSlotToIndex(writer, doc, kb, nfs, protegeFrame,
+						propertySlot, owlMode);
 			}
 		}
 
@@ -131,36 +131,55 @@ public class LuceneSearchManagerProtegeImpl implements LuceneSearchManager {
 				+ " in " + (double) (stop - start) / 1000 / 60 + " minutes.");
 	}
 
-	private List<LuceneProtegeFrame> getSearchableSlots(KnowledgeBase kb,
-			Integer ontologyId, String synonymSlotName,
-			String preferredNameSlotName) {
-		List<LuceneProtegeFrame> searchableSlots = new ArrayList<LuceneProtegeFrame>();
+	@SuppressWarnings("unchecked")
+	private void addSlotToIndex(IndexWriterWrapper writer,
+			LuceneSearchDocument doc, KnowledgeBase kb, NarrowFrameStore nfs,
+			LuceneProtegeFrame protegeFrame, Slot slot, boolean owlMode)
+			throws IOException {
+		Collection values;
 
-		// add preferred name slot
-		// we always assume that the preferred name slot
-		// is the first element on the list
-		searchableSlots.add(new LuceneProtegeFrame(getPreferredNameSlot(kb,
-				preferredNameSlotName), ontologyId, null,
-				LuceneRecordTypeEnum.RECORD_TYPE_PREFERRED_NAME));
-
-		// add synonym slot if exists
-		Slot synonymSlot = getSynonymSlot(kb, synonymSlotName);
-
-		if (synonymSlot != null) {
-			searchableSlots.add(new LuceneProtegeFrame(synonymSlot, ontologyId,
-					null, LuceneRecordTypeEnum.RECORD_TYPE_SYNONYM));
+		synchronized (kb) {
+			values = nfs.getValues(protegeFrame.getFrame(), slot, null, false);
 		}
 
-		// add property slots
-		Set<Slot> propertySlots = getPropertySlots(kb);
+		for (Object value : values) {
+			if (!(value instanceof String)) {
+				continue;
+			}
 
-		for (Slot propertySlot : propertySlots) {
-			searchableSlots
-					.add(new LuceneProtegeFrame(propertySlot, ontologyId, null,
-							LuceneRecordTypeEnum.RECORD_TYPE_PROPERTY));
+			setLuceneSearchDocument(doc, nfs, protegeFrame, (String) value,
+					owlMode);
+			writer.addDocument(doc);
+		}
+	}
+
+	@SuppressWarnings("unchecked")
+	private String addPreferredNameSlotToIndex(IndexWriterWrapper writer,
+			LuceneSearchDocument doc, KnowledgeBase kb, NarrowFrameStore nfs,
+			LuceneProtegeFrame protegeFrame, Slot preferredNameSlot,
+			boolean owlMode) throws IOException {
+		String preferredName = null;
+		Collection values;
+
+		synchronized (kb) {
+			values = nfs.getValues(protegeFrame.getFrame(), preferredNameSlot,
+					null, false);
 		}
 
-		return searchableSlots;
+		for (Object value : values) {
+			if (!(value instanceof String)) {
+				continue;
+			}
+
+			preferredName = (String) value;
+			protegeFrame.setPreferredName(preferredName);
+			setLuceneSearchDocument(doc, nfs, protegeFrame, (String) value,
+					owlMode);
+			writer.addDocument(doc);
+			break;
+		}
+
+		return preferredName;
 	}
 
 	private void setLuceneSearchDocument(LuceneSearchDocument doc,
@@ -234,9 +253,6 @@ public class LuceneSearchManagerProtegeImpl implements LuceneSearchManager {
 		prj.createDomainKnowledgeBase(factory, errors, true);
 		KnowledgeBase kb = prj.getKnowledgeBase();
 
-		setBrowserSlotByPreferredNameSlot(kb, getPreferredNameSlot(kb, rs
-				.getString("preferred_name_slot")));
-
 		return kb;
 	}
 
@@ -250,7 +266,7 @@ public class LuceneSearchManagerProtegeImpl implements LuceneSearchManager {
 			allSlots.addAll(owl.getOWLAnnotationProperties());
 			allSlots.add(owl.getRDFSLabelProperty());
 			allSlots.add(owl.getRDFSCommentProperty());
-			allSlots.add(kb.getSystemFrames().getNameSlot());
+			allSlots.add(kb.getNameSlot());
 		} else {
 			allSlots.addAll(kb.getSlots());
 		}
@@ -266,31 +282,6 @@ public class LuceneSearchManagerProtegeImpl implements LuceneSearchManager {
 		return propertySlots;
 	}
 
-	private void setBrowserSlotByPreferredNameSlot(KnowledgeBase kb,
-			Slot preferredNameSlot) {
-		Set<Cls> types = new HashSet<Cls>();
-
-		if (kb instanceof OWLModel) {
-			OWLModel owlModel = (OWLModel) kb;
-			types.add(owlModel.getRDFSNamedClassClass());
-			types.add(owlModel.getOWLNamedClassClass());
-
-			types.add(owlModel.getRDFPropertyClass());
-			types.add(owlModel.getOWLObjectPropertyClass());
-			types.add(owlModel.getOWLDatatypePropertyClass());
-
-			types.add(owlModel.getRootCls());
-		} else {
-			types.add(kb.getRootClsMetaCls());
-			types.add(kb.getRootSlotMetaCls());
-			types.add(kb.getRootCls());
-		}
-
-		for (Cls cls : types) {
-			cls.setDirectBrowserSlot(preferredNameSlot);
-		}
-	}
-
 	private Slot getSynonymSlot(KnowledgeBase kb, String synonymSlot) {
 		if (!StringHelper.isNullOrNullString(synonymSlot)) {
 			return (kb instanceof OWLModel ? ((OWLModel) kb)
@@ -300,8 +291,9 @@ public class LuceneSearchManagerProtegeImpl implements LuceneSearchManager {
 		return null;
 	}
 
-	private Slot getPreferredNameSlot(KnowledgeBase kb,
+	private List<Slot> getPreferredNameSlots(KnowledgeBase kb,
 			String preferredNameSlotName) {
+		List<Slot> slots = new ArrayList<Slot>();
 		Slot slot = null;
 
 		if (!StringHelper.isNullOrNullString(preferredNameSlotName)) {
@@ -311,11 +303,16 @@ public class LuceneSearchManagerProtegeImpl implements LuceneSearchManager {
 		}
 
 		if (slot == null) {
-			slot = kb instanceof OWLModel ? ((OWLModel) kb)
-					.getRDFSLabelProperty() : kb.getNameSlot();
+			if (kb instanceof OWLModel) {
+				slots.add(((OWLModel) kb).getRDFSLabelProperty());
+			}
+
+			slots.add(kb.getNameSlot());
+		} else {
+			slots.add(slot);
 		}
 
-		return slot;
+		return slots;
 	}
 
 	/**

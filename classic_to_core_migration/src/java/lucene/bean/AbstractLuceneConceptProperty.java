@@ -39,4 +39,25 @@ public class AbstractLuceneConceptProperty {
 	public LuceneRecordTypeEnum getPropertyType() {
 		return propertyType;
 	}
+
+	/**
+	 * @param ontologyId the ontologyId to set
+	 */
+	public void setOntologyId(Integer ontologyId) {
+		this.ontologyId = ontologyId;
+	}
+
+	/**
+	 * @param preferredName the preferredName to set
+	 */
+	public void setPreferredName(String preferredName) {
+		this.preferredName = preferredName;
+	}
+
+	/**
+	 * @param propertyType the propertyType to set
+	 */
+	public void setPropertyType(LuceneRecordTypeEnum propertyType) {
+		this.propertyType = propertyType;
+	}
 }
