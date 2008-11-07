@@ -266,7 +266,7 @@ public class LuceneSearchManagerProtegeImpl implements LuceneSearchManager {
 			allSlots.addAll(owl.getOWLAnnotationProperties());
 			allSlots.add(owl.getRDFSLabelProperty());
 			allSlots.add(owl.getRDFSCommentProperty());
-			allSlots.add(kb.getNameSlot());
+			allSlots.add(owl.getSystemFrames().getNameSlot());
 		} else {
 			allSlots.addAll(kb.getSlots());
 		}
