@@ -323,7 +323,7 @@ public class LuceneSearch {
 		parser.setDefaultOperator(QueryParser.AND_OPERATOR);
 
 		try {
-			query.add(parser.parse(expr), BooleanClause.Occur.MUST);
+			query.add(parser.parse(doubleQuoteString(expr)), BooleanClause.Occur.MUST);
 		} catch (ParseException e) {
 			IOException ioe = new IOException(e.getMessage());
 			ioe.initCause(e);
@@ -343,6 +343,10 @@ public class LuceneSearch {
 
 	}
 
+	private String doubleQuoteString(String str) {
+		return "\"" + str + "\"";
+	}
+	
 	private void addPropertiesClause(boolean includeProperties,
 			BooleanQuery query) {
 		if (!includeProperties) {
