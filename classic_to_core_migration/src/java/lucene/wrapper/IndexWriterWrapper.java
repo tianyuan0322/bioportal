@@ -58,6 +58,10 @@ public class IndexWriterWrapper {
 		writer.deleteDocuments(term);
 	}
 
+	public void setMergeFactor(Integer mergeFactor) {
+		writer.setMergeFactor(mergeFactor);
+	}
+
 	public void optimize() throws IOException {
 		writer.optimize();
 	}
