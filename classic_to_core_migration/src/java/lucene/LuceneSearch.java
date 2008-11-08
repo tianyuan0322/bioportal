@@ -52,6 +52,7 @@ public class LuceneSearch {
 	// TODO: Throwaway code ===============================================
 
 	public static final String PROPERTY_FILENAME = "build.properties";
+	private static final Integer INDEX_MERGE_FACTOR = 100;
 	private static Properties properties = new Properties();
 
 	private Map<String, LuceneSearchManager> formatHandlerMap = null;
@@ -203,7 +204,7 @@ public class LuceneSearch {
 		// ScoreDoc[] hits = collector.topDocs().scoreDocs;
 
 		SortField[] fields = { SortField.FIELD_SCORE,
-				new SortField("recordType")}; // , new SortField("conceptId") };
+				new SortField("recordType") };
 		TopFieldDocs docs = searcher.search(query, null, MAX_NUM_HITS,
 				new Sort(fields));
 		ScoreDoc[] hits = docs.scoreDocs;
@@ -226,6 +227,13 @@ public class LuceneSearch {
 	public void indexOntology(ResultSet rs) throws Exception {
 		IndexWriterWrapper writer = new IndexWriterWrapper(getIndexPath(),
 				analyzer);
+		
+		
+		
+		writer.setMergeFactor(INDEX_MERGE_FACTOR);
+		
+		
+		
 		indexOntology(writer, rs);
 		writer.optimize();
 		writer.closeWriter();
@@ -313,7 +321,7 @@ public class LuceneSearch {
 				LuceneSearchDocument.CONTENTS_FIELD_LABEL, analyzer);
 		parser.setAllowLeadingWildcard(true);
 		parser.setDefaultOperator(QueryParser.AND_OPERATOR);
-		
+
 		try {
 			query.add(parser.parse(expr), BooleanClause.Occur.MUST);
 		} catch (ParseException e) {
@@ -322,9 +330,8 @@ public class LuceneSearch {
 			// throw ioe;
 		}
 
-		
-		PhraseQuery q = new PhraseQuery();		
-		expr = expr.trim().toLowerCase().replaceAll("[\\t|\\s]+", " "); 
+		PhraseQuery q = new PhraseQuery();
+		expr = expr.trim().toLowerCase().replaceAll("[\\t|\\s]+", " ");
 		String[] words = expr.split(" ");
 
 		for (int i = 0; i < words.length; i++) {
@@ -332,8 +339,8 @@ public class LuceneSearch {
 					.add(new Term(LuceneSearchDocument.CONTENTS_FIELD_LABEL,
 							words[i]));
 		}
-//		query.add(q, BooleanClause.Occur.MUST);
-		 
+		// query.add(q, BooleanClause.Occur.MUST);
+
 	}
 
 	private void addPropertiesClause(boolean includeProperties,
