@@ -293,7 +293,7 @@ public class OntologyRetrievalManagerProtegeImpl extends
 		return beans;
 	}
 
-	protected String getLabel(Frame node) {
+/*	protected String getLabel(Frame node) {
 		String label = null;
 
 		if (node instanceof RDFResource) {
@@ -311,12 +311,12 @@ public class OntologyRetrievalManagerProtegeImpl extends
 
 		return label;
 	}
-
+*/
 	private ClassBean createLightClassBean(Cls cls) {
 		ClassBean classBean = new ClassBean();
 		classBean.setId(getId(cls));
 
-		classBean.setLabel(getLabel(cls));
+		classBean.setLabel(cls.getBrowserText());
 
 		classBean.addRelation(ApplicationConstants.CHILD_COUNT, cls
 				.getDirectSubclasses().size());
@@ -330,7 +330,7 @@ public class OntologyRetrievalManagerProtegeImpl extends
 		ClassBean classBean = new ClassBean();
 		classBean.setId(getId(cls));
 
-		classBean.setLabel(getLabel(cls));
+		classBean.setLabel(cls.getBrowserText());
 
 		// add properties
 		Collection<Slot> slots;
