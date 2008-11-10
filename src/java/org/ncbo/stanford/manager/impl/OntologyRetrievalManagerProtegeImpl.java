@@ -134,7 +134,8 @@ public class OntologyRetrievalManagerProtegeImpl extends
 
 			slots.add(getPreferredNameSlot(kb, ontologyVersion
 					.getPreferredNameSlot()));
-
+			slots.add(kb.getNameSlot());
+			
 			Slot synonymSlot = getSynonymSlot(kb, ontologyVersion
 					.getSynonymSlot());
 
