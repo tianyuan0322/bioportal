@@ -301,20 +301,12 @@ public class OntologyRetrievalManagerProtegeImpl extends
 			Collection labels = rs.getLabels();
 			
 			if (labels == null || labels.isEmpty()) {
-				label = node.getBrowserText();
-				
-				if (StringHelper.isNullOrNullString(label)) {
-					label = node.getName();
-				}				
+				label = node.getName();				
 			} else {
 				label = CollectionUtilities.getFirstItem(labels).toString();
 			}
 		} else {
-			label = node.getBrowserText();
-
-			if (StringHelper.isNullOrNullString(label)) {
-				label = node.getName();
-			}				
+			label = node.getName();
 		}
 
 		return label;
