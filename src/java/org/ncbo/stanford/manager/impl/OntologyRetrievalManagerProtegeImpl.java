@@ -16,6 +16,7 @@ import org.ncbo.stanford.domain.custom.entity.VNcboOntology;
 import org.ncbo.stanford.manager.AbstractOntologyManagerProtege;
 import org.ncbo.stanford.manager.OntologyRetrievalManager;
 import org.ncbo.stanford.util.constants.ApplicationConstants;
+import org.ncbo.stanford.util.helper.StringHelper;
 
 import edu.stanford.smi.protege.model.Cls;
 import edu.stanford.smi.protege.model.Frame;
@@ -298,14 +299,22 @@ public class OntologyRetrievalManagerProtegeImpl extends
 		if (node instanceof RDFResource) {
 			RDFResource rs = (RDFResource) node;
 			Collection labels = rs.getLabels();
-
+			
 			if (labels == null || labels.isEmpty()) {
 				label = node.getBrowserText();
+				
+				if (StringHelper.isNullOrNullString(label)) {
+					label = node.getName();
+				}				
 			} else {
 				label = CollectionUtilities.getFirstItem(labels).toString();
 			}
 		} else {
 			label = node.getBrowserText();
+
+			if (StringHelper.isNullOrNullString(label)) {
+				label = node.getName();
+			}				
 		}
 
 		return label;
