@@ -9,6 +9,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Properties;
@@ -46,7 +47,7 @@ import edu.stanford.smi.protege.model.Frame;
 
 public class LuceneSearch {
 
-	private static final int MAX_NUM_HITS = 1000;
+	private static final int MAX_NUM_HITS = 10000;
 	private Analyzer analyzer = new StandardAnalyzer();
 
 	// TODO: Throwaway code ===============================================
@@ -209,31 +210,37 @@ public class LuceneSearch {
 				new Sort(fields));
 		ScoreDoc[] hits = docs.scoreDocs;
 
+		Map<String, Document> uniqueDocs = new LinkedHashMap<String, Document>();
+
 		for (int i = 0; i < hits.length; i++) {
 			int docId = hits[i].doc;
 			Document d = searcher.doc(docId);
+			String conceptId = d.get("conceptId");
 
-			System.out.println(hits[i].score + " | " + d.get("ontologyId")
-					+ " | " + d.get("conceptId") + " | " + d.get("contents")
-					+ " | " + d.get("recordType") + " | "
-					+ d.get("preferredName") + " | " + d.get("conceptIdShort"));
+			if (!uniqueDocs.containsKey(conceptId)) {
+				uniqueDocs.put(conceptId, d);
+
+				System.out.println(hits[i].score + " | " + d.get("ontologyId")
+						+ " | " + conceptId + " | " + d.get("contents") + " | "
+						+ d.get("recordType") + " | " + d.get("preferredName")
+						+ " | " + d.get("conceptIdShort"));
+
+			}
+
 		}
 
 		System.out.println("Query: " + query);
-		System.out.println("Hits: " + hits.length);
+		System.out.println("Hits: " + hits.length + ", Unique Hits: "
+				+ uniqueDocs.size());
 	}
 
 	// TODO: in BP, replace rs with OntologyBean
 	public void indexOntology(ResultSet rs) throws Exception {
 		IndexWriterWrapper writer = new IndexWriterWrapper(getIndexPath(),
 				analyzer);
-		
-		
-		
+
 		writer.setMergeFactor(INDEX_MERGE_FACTOR);
-		
-		
-		
+
 		indexOntology(writer, rs);
 		writer.optimize();
 		writer.closeWriter();
@@ -306,28 +313,40 @@ public class LuceneSearch {
 	}
 
 	private Query generateLuceneSearchQuery(Collection<Integer> ontologyIds,
-			String expr, boolean includeProperties) {
+			String expr, boolean includeProperties) throws IOException {
 		BooleanQuery query = new BooleanQuery();
 
-		addContentsClause(expr, query);
+		addContentsClauseContains(expr, query);
 		addOntologyIdsClause(ontologyIds, query);
 		addPropertiesClause(includeProperties, query);
 
 		return query;
 	}
 
-	private void addContentsClause(String expr, BooleanQuery query) {
+	private void addContentsClauseExact(String expr, BooleanQuery query)
+			throws IOException {
+		TermQuery q = new TermQuery(new Term(
+				LuceneSearchDocument.LITERAL_CONTENTS_FIELD_LABEL, expr));
+		query.add(q, BooleanClause.Occur.MUST);
+	}
+
+	private void addContentsClauseContains(String expr, BooleanQuery query)
+			throws IOException {
 		QueryParser parser = new QueryParser(
 				LuceneSearchDocument.CONTENTS_FIELD_LABEL, analyzer);
 		parser.setAllowLeadingWildcard(true);
 		parser.setDefaultOperator(QueryParser.AND_OPERATOR);
 
+		// parser.setLowercaseExpandedTerms(false);
+
 		try {
-			query.add(parser.parse(doubleQuoteString(expr)), BooleanClause.Occur.MUST);
+			// expr = doubleQuoteString(expr);
+			expr = escapeSpaces(expr);
+			query.add(parser.parse(expr), BooleanClause.Occur.MUST);
 		} catch (ParseException e) {
 			IOException ioe = new IOException(e.getMessage());
 			ioe.initCause(e);
-			// throw ioe;
+			throw ioe;
 		}
 
 		PhraseQuery q = new PhraseQuery();
@@ -343,10 +362,14 @@ public class LuceneSearch {
 
 	}
 
+	private String escapeSpaces(String str) {
+		return str.replaceAll("[\\s\\t]+", "\\\\ ");
+	}
+
 	private String doubleQuoteString(String str) {
 		return "\"" + str + "\"";
 	}
-	
+
 	private void addPropertiesClause(boolean includeProperties,
 			BooleanQuery query) {
 		if (!includeProperties) {
