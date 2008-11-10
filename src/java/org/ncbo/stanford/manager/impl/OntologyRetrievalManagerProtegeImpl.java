@@ -24,6 +24,7 @@ import edu.stanford.smi.protege.model.KnowledgeBase;
 import edu.stanford.smi.protege.model.ModelUtilities;
 import edu.stanford.smi.protege.model.Slot;
 import edu.stanford.smi.protege.query.querytypes.LuceneOwnSlotValueQuery;
+import edu.stanford.smi.protege.util.CollectionUtilities;
 import edu.stanford.smi.protegex.owl.model.NamespaceUtil;
 import edu.stanford.smi.protegex.owl.model.OWLModel;
 import edu.stanford.smi.protegex.owl.model.OWLNamedClass;
@@ -291,30 +292,30 @@ public class OntologyRetrievalManagerProtegeImpl extends
 		return beans;
 	}
 
-	// protected String getLabel(Frame node) {
-	// String label = null;
-	//
-	// if (node instanceof RDFResource) {
-	// RDFResource rs = (RDFResource) node;
-	// Collection labels = rs.getLabels();
-	//
-	// if (labels == null || labels.isEmpty()) {
-	// label = node.getBrowserText();
-	// } else {
-	// label = CollectionUtilities.getFirstItem(labels).toString();
-	// }
-	// } else {
-	// label = node.getBrowserText();
-	// }
-	//
-	// return label;
-	// }
+	protected String getLabel(Frame node) {
+		String label = null;
+
+		if (node instanceof RDFResource) {
+			RDFResource rs = (RDFResource) node;
+			Collection labels = rs.getLabels();
+
+			if (labels == null || labels.isEmpty()) {
+				label = node.getBrowserText();
+			} else {
+				label = CollectionUtilities.getFirstItem(labels).toString();
+			}
+		} else {
+			label = node.getBrowserText();
+		}
+
+		return label;
+	}
 
 	private ClassBean createLightClassBean(Cls cls) {
 		ClassBean classBean = new ClassBean();
 		classBean.setId(getId(cls));
 
-		classBean.setLabel(cls.getBrowserText());
+		classBean.setLabel(getLabel(cls));
 
 		classBean.addRelation(ApplicationConstants.CHILD_COUNT, cls
 				.getDirectSubclasses().size());
@@ -328,7 +329,7 @@ public class OntologyRetrievalManagerProtegeImpl extends
 		ClassBean classBean = new ClassBean();
 		classBean.setId(getId(cls));
 
-		classBean.setLabel(cls.getBrowserText());
+		classBean.setLabel(getLabel(cls));
 
 		// add properties
 		Collection<Slot> slots;
