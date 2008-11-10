@@ -20,9 +20,11 @@ public class LuceneSearchDocument {
 	private LuceneSearchField conceptId = new LuceneSearchField(
 			CONCEPT_ID_FIELD_LABEL, Field.Store.YES, Field.Index.NOT_ANALYZED);
 	private LuceneSearchField conceptIdShort = new LuceneSearchField(
-			CONCEPT_ID_SHORT_FIELD_LABEL, Field.Store.YES, Field.Index.NOT_ANALYZED);
+			CONCEPT_ID_SHORT_FIELD_LABEL, Field.Store.YES,
+			Field.Index.NOT_ANALYZED);
 	private LuceneSearchField preferredName = new LuceneSearchField(
-			PREFERRED_NAME_FIELD_LABEL, Field.Store.YES, Field.Index.NOT_ANALYZED);
+			PREFERRED_NAME_FIELD_LABEL, Field.Store.YES,
+			Field.Index.NOT_ANALYZED);
 	private LuceneSearchField contents = new LuceneSearchField(
 			CONTENTS_FIELD_LABEL, Field.Store.YES, Field.Index.ANALYZED);
 	private LuceneSearchField literalContents = new LuceneSearchField(
@@ -43,7 +45,8 @@ public class LuceneSearchDocument {
 	 */
 	public LuceneSearchDocument(String ontologyId,
 			LuceneRecordTypeEnum recordType, String conceptId,
-			String conceptIdShort, String preferredName, String contents, String literalContents) {
+			String conceptIdShort, String preferredName, String contents,
+			String literalContents) {
 		super();
 		setOntologyId(ontologyId);
 		setRecordType(recordType);
@@ -107,7 +110,8 @@ public class LuceneSearchDocument {
 	 *            the literalContents to set
 	 */
 	public void setLiteralContents(String literalContents) {
-		this.literalContents.setContents(literalContents);
+		this.literalContents.setContents((literalContents == null) ? null
+				: literalContents.trim().toLowerCase());
 	}
 
 	/**
