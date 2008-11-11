@@ -2,6 +2,7 @@ package org.ncbo.stanford.manager.impl;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -318,9 +319,8 @@ public class OntologyRetrievalManagerProtegeImpl extends
 		classBean.setId(getId(cls));
 
 		classBean.setLabel(cls.getBrowserText());
-
-		classBean.addRelation(ApplicationConstants.CHILD_COUNT, cls
-				.getDirectSubclasses().size());
+		classBean.addRelation(ApplicationConstants.CHILD_COUNT,
+				getUniqueClasses(cls.getDirectSubclasses()).size());
 
 		return classBean;
 	}
@@ -348,11 +348,13 @@ public class OntologyRetrievalManagerProtegeImpl extends
 		// if OWLNamedClass, then use getNamedSubclasses/Superclasses,
 		// else use getDirectSubclasses/Superclasses (cast to
 		// Collection<Cls>)
-		Collection<Cls> subclasses = null;
-		Collection<Cls> superclasses = new ArrayList<Cls>();
+		Set<Cls> subclasses = null;
+		Set<Cls> superclasses = null;
 
 		if (cls instanceof OWLNamedClass) {
-			subclasses = ((OWLNamedClass) cls).getNamedSubclasses(false);
+			subclasses = getUniqueClasses(((OWLNamedClass) cls)
+					.getNamedSubclasses(false));
+
 			OWLModel owlModel = (OWLModel) cls.getKnowledgeBase();
 
 			if (cls.equals(owlModel.getOWLThingClass())) {
@@ -367,7 +369,7 @@ public class OntologyRetrievalManagerProtegeImpl extends
 				}
 			}
 		} else {
-			subclasses = cls.getDirectSubclasses();
+			subclasses = getUniqueClasses(cls.getDirectSubclasses());
 		}
 
 		classBean.addRelation(ApplicationConstants.CHILD_COUNT, subclasses
@@ -379,10 +381,10 @@ public class OntologyRetrievalManagerProtegeImpl extends
 
 			// add superclasses
 			if (cls instanceof OWLNamedClass) {
-				superclasses = ((OWLNamedClass) cls)
-						.getNamedSuperclasses(false);
+				superclasses = getUniqueClasses(((OWLNamedClass) cls)
+						.getNamedSuperclasses(false));
 			} else {
-				superclasses = cls.getDirectSuperclasses();
+				superclasses = getUniqueClasses(cls.getDirectSuperclasses());
 			}
 
 			classBean.addRelation(ApplicationConstants.SUPER_CLASS,
@@ -392,12 +394,21 @@ public class OntologyRetrievalManagerProtegeImpl extends
 		// add RDF type
 		if (cls instanceof OWLNamedClass) {
 			classBean.addRelation(ApplicationConstants.RDF_TYPE,
-					convertClasses(((OWLNamedClass) cls).getRDFTypes(), false));
+					convertClasses(getUniqueClasses(((OWLNamedClass) cls)
+							.getRDFTypes()), false));
 		}
 
 		return classBean;
 	}
 
+	private Set<Cls> getUniqueClasses(Collection<Cls> classes) {
+		if (classes != null) {
+			return new HashSet<Cls>(classes);
+		}
+
+		return Collections.emptySet();
+	}
+	
 	/**
 	 * Converts collection of slots into a string representation of values
 	 * 
