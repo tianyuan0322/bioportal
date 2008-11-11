@@ -249,8 +249,8 @@ public class OntologyRetrievalManagerProtegeImpl extends
 					currentBean.addRelation(ApplicationConstants.SUB_CLASS,
 							new ArrayList(beanSet));
 				} else {
-					List<ClassBean> siblings = convertLightBeans(previousNode
-							.getDirectSubclasses());
+					List<ClassBean> siblings = getUniqueClasses(convertLightBeans(previousNode
+							.getDirectSubclasses()));
 
 					for (ClassBean sibling : siblings) {
 						if (sibling.getId().equals(clsBean.getId())) {
@@ -273,26 +273,26 @@ public class OntologyRetrievalManagerProtegeImpl extends
 	}
 
 	private List<ClassBean> convertLightBeans(Collection<Cls> protegeClses) {
-		Set<ClassBean> beans = new HashSet<ClassBean>();
+		List<ClassBean> beans = new ArrayList<ClassBean>();
 
 		for (Cls cls : protegeClses) {
 			if (cls.isVisible())
 				beans.add(createLightClassBean(cls));
 		}
 
-		return new ArrayList(beans);
+		return beans;
 	}
 
 	private List<ClassBean> convertClasses(Collection<Cls> protegeClses,
 			boolean recursive) {
-		Set<ClassBean> beans = new HashSet<ClassBean>();
+		List<ClassBean> beans = new ArrayList<ClassBean>();
 
 		for (Cls cls : protegeClses) {
 			if (cls.isVisible())
 				beans.add(createClassBean(cls, recursive));
 		}
 
-		return new ArrayList(beans);
+		return beans;
 	}
 
 	/*
