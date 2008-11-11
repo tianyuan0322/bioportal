@@ -95,7 +95,7 @@ public class OntologyRetrievalManagerProtegeImpl extends
 		KnowledgeBase kb = getKnowledgeBase(ontologyVersion);
 
 		Cls cls = getCls(conceptId, kb);
-		Collection nodes = ModelUtilities.getPathToRoot(cls);
+		Collection nodes = getUniqueClasses(ModelUtilities.getPathToRoot(cls));
 
 		return buildPath(nodes, light);
 	}
@@ -136,7 +136,7 @@ public class OntologyRetrievalManagerProtegeImpl extends
 			slots.add(getPreferredNameSlot(kb, ontologyVersion
 					.getPreferredNameSlot()));
 			slots.add(kb.getNameSlot());
-			
+
 			Slot synonymSlot = getSynonymSlot(kb, ontologyVersion
 					.getSynonymSlot());
 
@@ -295,25 +295,18 @@ public class OntologyRetrievalManagerProtegeImpl extends
 		return beans;
 	}
 
-/*	protected String getLabel(Frame node) {
-		String label = null;
-
-		if (node instanceof RDFResource) {
-			RDFResource rs = (RDFResource) node;
-			Collection labels = rs.getLabels();
-			
-			if (labels == null || labels.isEmpty()) {
-				label = node.getName();				
-			} else {
-				label = CollectionUtilities.getFirstItem(labels).toString();
-			}
-		} else {
-			label = node.getName();
-		}
-
-		return label;
-	}
-*/
+	/*
+	 * protected String getLabel(Frame node) { String label = null;
+	 * 
+	 * if (node instanceof RDFResource) { RDFResource rs = (RDFResource) node;
+	 * Collection labels = rs.getLabels();
+	 * 
+	 * if (labels == null || labels.isEmpty()) { label = node.getName(); } else {
+	 * label = CollectionUtilities.getFirstItem(labels).toString(); } } else {
+	 * label = node.getName(); }
+	 * 
+	 * return label; }
+	 */
 	private ClassBean createLightClassBean(Cls cls) {
 		ClassBean classBean = new ClassBean();
 		classBean.setId(getId(cls));
@@ -408,7 +401,7 @@ public class OntologyRetrievalManagerProtegeImpl extends
 
 		return Collections.emptySet();
 	}
-	
+
 	/**
 	 * Converts collection of slots into a string representation of values
 	 * 
