@@ -17,7 +17,6 @@ import org.ncbo.stanford.domain.custom.entity.VNcboOntology;
 import org.ncbo.stanford.manager.AbstractOntologyManagerProtege;
 import org.ncbo.stanford.manager.OntologyRetrievalManager;
 import org.ncbo.stanford.util.constants.ApplicationConstants;
-import org.ncbo.stanford.util.helper.StringHelper;
 
 import edu.stanford.smi.protege.model.Cls;
 import edu.stanford.smi.protege.model.Frame;
@@ -26,7 +25,6 @@ import edu.stanford.smi.protege.model.KnowledgeBase;
 import edu.stanford.smi.protege.model.ModelUtilities;
 import edu.stanford.smi.protege.model.Slot;
 import edu.stanford.smi.protege.query.querytypes.LuceneOwnSlotValueQuery;
-import edu.stanford.smi.protege.util.CollectionUtilities;
 import edu.stanford.smi.protegex.owl.model.NamespaceUtil;
 import edu.stanford.smi.protegex.owl.model.OWLModel;
 import edu.stanford.smi.protegex.owl.model.OWLNamedClass;
@@ -343,11 +341,12 @@ public class OntologyRetrievalManagerProtegeImpl extends
 		// if OWLNamedClass, then use getNamedSubclasses/Superclasses,
 		// else use getDirectSubclasses/Superclasses (cast to
 		// Collection<Cls>)
-		Collection<Cls> subclasses = null;
-		Collection<Cls> superclasses = null;
+		Set<Cls> subclasses = null;
+		Set<Cls> superclasses = null;
 
 		if (cls instanceof OWLNamedClass) {
-			subclasses = ((OWLNamedClass) cls).getNamedSubclasses(false);
+			subclasses = getUniqueClasses(((OWLNamedClass) cls)
+					.getNamedSubclasses(false));
 
 			OWLModel owlModel = (OWLModel) cls.getKnowledgeBase();
 
@@ -363,11 +362,11 @@ public class OntologyRetrievalManagerProtegeImpl extends
 				}
 			}
 		} else {
-			subclasses = cls.getDirectSubclasses();
+			subclasses = getUniqueClasses(cls.getDirectSubclasses());
 		}
 
-		classBean.addRelation(ApplicationConstants.CHILD_COUNT,
-				getUniqueClasses(subclasses).size());
+		classBean.addRelation(ApplicationConstants.CHILD_COUNT, subclasses
+				.size());
 
 		if (recursive) {
 			classBean.addRelation(ApplicationConstants.SUB_CLASS,
@@ -375,10 +374,10 @@ public class OntologyRetrievalManagerProtegeImpl extends
 
 			// add superclasses
 			if (cls instanceof OWLNamedClass) {
-				superclasses = ((OWLNamedClass) cls)
-						.getNamedSuperclasses(false);
+				superclasses = getUniqueClasses(((OWLNamedClass) cls)
+						.getNamedSuperclasses(false));
 			} else {
-				superclasses = cls.getDirectSuperclasses();
+				superclasses = getUniqueClasses(cls.getDirectSuperclasses());
 			}
 
 			classBean.addRelation(ApplicationConstants.SUPER_CLASS,
@@ -388,7 +387,8 @@ public class OntologyRetrievalManagerProtegeImpl extends
 		// add RDF type
 		if (cls instanceof OWLNamedClass) {
 			classBean.addRelation(ApplicationConstants.RDF_TYPE,
-					convertClasses(((OWLNamedClass) cls).getRDFTypes(), false));
+					convertClasses(getUniqueClasses(((OWLNamedClass) cls)
+							.getRDFTypes()), false));
 		}
 
 		return classBean;
