@@ -95,7 +95,7 @@ public class OntologyRetrievalManagerProtegeImpl extends
 		KnowledgeBase kb = getKnowledgeBase(ontologyVersion);
 
 		Cls cls = getCls(conceptId, kb);
-		Set nodes = getUniqueClasses(ModelUtilities.getPathToRoot(cls));
+		Collection nodes = ModelUtilities.getPathToRoot(cls);
 
 		return buildPath(nodes, light);
 	}
@@ -236,7 +236,9 @@ public class OntologyRetrievalManagerProtegeImpl extends
 		ClassBean currentBean = null;
 		Cls previousNode = null;
 
-		for (Object nodeObj : nodes) {
+		Set uniqueNodes = getUniqueClasses(nodes);
+
+		for (Object nodeObj : uniqueNodes) {
 			ClassBean clsBean = new ClassBean();
 			Cls node = (Cls) nodeObj;
 			clsBean.setId(getId(node));
@@ -244,12 +246,12 @@ public class OntologyRetrievalManagerProtegeImpl extends
 
 			if (currentBean != null) {
 				if (light) {
-					List beanList = new ArrayList();
+					Set beanList = new HashSet();
 					beanList.add(clsBean);
 					currentBean.addRelation(ApplicationConstants.SUB_CLASS,
 							beanList);
 				} else {
-					Collection<ClassBean> siblings = convertLightBeans(previousNode
+					Set<ClassBean> siblings = convertLightBeans(previousNode
 							.getDirectSubclasses());
 
 					for (ClassBean sibling : siblings) {
@@ -272,8 +274,8 @@ public class OntologyRetrievalManagerProtegeImpl extends
 		return rootBean;
 	}
 
-	private Collection<ClassBean> convertLightBeans(Collection<Cls> protegeClses) {
-		Collection<ClassBean> beans = new ArrayList<ClassBean>();
+	private Set<ClassBean> convertLightBeans(Collection<Cls> protegeClses) {
+		Set<ClassBean> beans = new HashSet<ClassBean>();
 
 		for (Cls cls : protegeClses) {
 			if (cls.isVisible())
@@ -283,9 +285,9 @@ public class OntologyRetrievalManagerProtegeImpl extends
 		return beans;
 	}
 
-	private Collection<ClassBean> convertClasses(Collection<Cls> protegeClses,
+	private Set<ClassBean> convertClasses(Collection<Cls> protegeClses,
 			boolean recursive) {
-		Collection<ClassBean> beans = new ArrayList<ClassBean>();
+		Set<ClassBean> beans = new HashSet<ClassBean>();
 
 		for (Cls cls : protegeClses) {
 			if (cls.isVisible())
@@ -341,12 +343,11 @@ public class OntologyRetrievalManagerProtegeImpl extends
 		// if OWLNamedClass, then use getNamedSubclasses/Superclasses,
 		// else use getDirectSubclasses/Superclasses (cast to
 		// Collection<Cls>)
-		Set<Cls> subclasses = null;
-		Set<Cls> superclasses = null;
+		Collection<Cls> subclasses = null;
+		Collection<Cls> superclasses = null;
 
 		if (cls instanceof OWLNamedClass) {
-			subclasses = getUniqueClasses(((OWLNamedClass) cls)
-					.getNamedSubclasses(false));
+			subclasses = ((OWLNamedClass) cls).getNamedSubclasses(false);
 
 			OWLModel owlModel = (OWLModel) cls.getKnowledgeBase();
 
@@ -362,11 +363,11 @@ public class OntologyRetrievalManagerProtegeImpl extends
 				}
 			}
 		} else {
-			subclasses = getUniqueClasses(cls.getDirectSubclasses());
+			subclasses = cls.getDirectSubclasses();
 		}
 
-		classBean.addRelation(ApplicationConstants.CHILD_COUNT, subclasses
-				.size());
+		classBean.addRelation(ApplicationConstants.CHILD_COUNT,
+				getUniqueClasses(subclasses).size());
 
 		if (recursive) {
 			classBean.addRelation(ApplicationConstants.SUB_CLASS,
@@ -374,10 +375,10 @@ public class OntologyRetrievalManagerProtegeImpl extends
 
 			// add superclasses
 			if (cls instanceof OWLNamedClass) {
-				superclasses = getUniqueClasses(((OWLNamedClass) cls)
-						.getNamedSuperclasses(false));
+				superclasses = ((OWLNamedClass) cls)
+						.getNamedSuperclasses(false);
 			} else {
-				superclasses = getUniqueClasses(cls.getDirectSuperclasses());
+				superclasses = cls.getDirectSuperclasses();
 			}
 
 			classBean.addRelation(ApplicationConstants.SUPER_CLASS,
@@ -387,16 +388,15 @@ public class OntologyRetrievalManagerProtegeImpl extends
 		// add RDF type
 		if (cls instanceof OWLNamedClass) {
 			classBean.addRelation(ApplicationConstants.RDF_TYPE,
-					convertClasses(getUniqueClasses(((OWLNamedClass) cls)
-							.getRDFTypes()), false));
+					convertClasses(((OWLNamedClass) cls).getRDFTypes(), false));
 		}
 
 		return classBean;
 	}
 
-	private Set<Cls> getUniqueClasses(Collection<Cls> classes) {
+	private Set getUniqueClasses(Collection classes) {
 		if (classes != null) {
-			return new HashSet<Cls>(classes);
+			return new HashSet(classes);
 		}
 
 		return Collections.emptySet();
@@ -415,7 +415,7 @@ public class OntologyRetrievalManagerProtegeImpl extends
 
 		// add properties
 		for (Slot slot : slots) {
-			Set<Cls> vals = getUniqueClasses(concept.getOwnSlotValues(slot));
+			Set vals = getUniqueClasses(concept.getOwnSlotValues(slot));
 
 			if (vals.isEmpty()) {
 				continue;
@@ -436,7 +436,6 @@ public class OntologyRetrievalManagerProtegeImpl extends
 			}
 
 			bpProps.put(slot.getBrowserText(), bpPropVals);
-
 			bpPropVals = new ArrayList<String>();
 		}
 
