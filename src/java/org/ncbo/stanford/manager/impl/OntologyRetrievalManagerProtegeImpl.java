@@ -396,7 +396,8 @@ public class OntologyRetrievalManagerProtegeImpl extends
 
 	private List getUniqueClasses(Collection classes) {
 		if (classes != null) {
-			return new ArrayList(new HashSet(classes));
+			Set c = new HashSet(classes);			
+			return new ArrayList(c);
 		}
 
 		return Collections.emptyList();
