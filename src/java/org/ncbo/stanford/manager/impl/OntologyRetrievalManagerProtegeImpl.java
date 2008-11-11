@@ -234,7 +234,7 @@ public class OntologyRetrievalManagerProtegeImpl extends
 		ClassBean currentBean = null;
 		Cls previousNode = null;
 
-		Set uniqueNodes = getUniqueClasses(nodes);
+		List uniqueNodes = getUniqueClasses(nodes);
 
 		for (Object nodeObj : uniqueNodes) {
 			ClassBean clsBean = new ClassBean();
@@ -244,12 +244,12 @@ public class OntologyRetrievalManagerProtegeImpl extends
 
 			if (currentBean != null) {
 				if (light) {
-					Set beanList = new HashSet();
-					beanList.add(clsBean);
+					Set beanSet = new HashSet();
+					beanSet.add(clsBean);
 					currentBean.addRelation(ApplicationConstants.SUB_CLASS,
-							beanList);
+							new ArrayList(beanSet));
 				} else {
-					Set<ClassBean> siblings = convertLightBeans(previousNode
+					List<ClassBean> siblings = convertLightBeans(previousNode
 							.getDirectSubclasses());
 
 					for (ClassBean sibling : siblings) {
@@ -272,7 +272,7 @@ public class OntologyRetrievalManagerProtegeImpl extends
 		return rootBean;
 	}
 
-	private Set<ClassBean> convertLightBeans(Collection<Cls> protegeClses) {
+	private List<ClassBean> convertLightBeans(Collection<Cls> protegeClses) {
 		Set<ClassBean> beans = new HashSet<ClassBean>();
 
 		for (Cls cls : protegeClses) {
@@ -280,10 +280,10 @@ public class OntologyRetrievalManagerProtegeImpl extends
 				beans.add(createLightClassBean(cls));
 		}
 
-		return beans;
+		return new ArrayList(beans);
 	}
 
-	private Set<ClassBean> convertClasses(Collection<Cls> protegeClses,
+	private List<ClassBean> convertClasses(Collection<Cls> protegeClses,
 			boolean recursive) {
 		Set<ClassBean> beans = new HashSet<ClassBean>();
 
@@ -292,7 +292,7 @@ public class OntologyRetrievalManagerProtegeImpl extends
 				beans.add(createClassBean(cls, recursive));
 		}
 
-		return beans;
+		return new ArrayList(beans);
 	}
 
 	/*
@@ -341,8 +341,8 @@ public class OntologyRetrievalManagerProtegeImpl extends
 		// if OWLNamedClass, then use getNamedSubclasses/Superclasses,
 		// else use getDirectSubclasses/Superclasses (cast to
 		// Collection<Cls>)
-		Set<Cls> subclasses = null;
-		Set<Cls> superclasses = null;
+		List<Cls> subclasses = null;
+		List<Cls> superclasses = null;
 
 		if (cls instanceof OWLNamedClass) {
 			subclasses = getUniqueClasses(((OWLNamedClass) cls)
@@ -394,12 +394,12 @@ public class OntologyRetrievalManagerProtegeImpl extends
 		return classBean;
 	}
 
-	private Set getUniqueClasses(Collection classes) {
+	private List getUniqueClasses(Collection classes) {
 		if (classes != null) {
-			return new HashSet(classes);
+			return new ArrayList(new HashSet(classes));
 		}
 
-		return Collections.emptySet();
+		return Collections.emptyList();
 	}
 
 	/**
@@ -415,7 +415,7 @@ public class OntologyRetrievalManagerProtegeImpl extends
 
 		// add properties
 		for (Slot slot : slots) {
-			Set vals = getUniqueClasses(concept.getOwnSlotValues(slot));
+			List vals = getUniqueClasses(concept.getOwnSlotValues(slot));
 
 			if (vals.isEmpty()) {
 				continue;
