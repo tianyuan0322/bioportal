@@ -95,7 +95,7 @@ public class OntologyRetrievalManagerProtegeImpl extends
 		KnowledgeBase kb = getKnowledgeBase(ontologyVersion);
 
 		Cls cls = getCls(conceptId, kb);
-		Collection nodes = getUniqueClasses(ModelUtilities.getPathToRoot(cls));
+		Set nodes = getUniqueClasses(ModelUtilities.getPathToRoot(cls));
 
 		return buildPath(nodes, light);
 	}
@@ -415,7 +415,7 @@ public class OntologyRetrievalManagerProtegeImpl extends
 
 		// add properties
 		for (Slot slot : slots) {
-			Collection<Object> vals = concept.getOwnSlotValues(slot);
+			Set<Cls> vals = getUniqueClasses(concept.getOwnSlotValues(slot));
 
 			if (vals.isEmpty()) {
 				continue;
