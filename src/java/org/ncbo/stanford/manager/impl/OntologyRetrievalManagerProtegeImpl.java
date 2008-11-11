@@ -249,7 +249,7 @@ public class OntologyRetrievalManagerProtegeImpl extends
 					currentBean.addRelation(ApplicationConstants.SUB_CLASS,
 							new ArrayList(beanSet));
 				} else {
-					List<ClassBean> siblings = getUniqueClasses(convertLightBeans(previousNode
+					List<ClassBean> siblings = convertLightBeans(getUniqueClasses(previousNode
 							.getDirectSubclasses()));
 
 					for (ClassBean sibling : siblings) {
