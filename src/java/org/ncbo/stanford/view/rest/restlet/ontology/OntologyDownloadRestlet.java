@@ -1,12 +1,14 @@
 package org.ncbo.stanford.view.rest.restlet.ontology;
 
 import java.io.File;
+import java.util.List;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.ncbo.stanford.bean.OntologyBean;
 import org.ncbo.stanford.service.ontology.OntologyService;
 import org.ncbo.stanford.service.xml.XMLSerializationService;
+import org.ncbo.stanford.util.CompressionUtils;
 import org.ncbo.stanford.util.MessageUtils;
 import org.ncbo.stanford.util.RequestUtils;
 import org.ncbo.stanford.util.helper.StringHelper;
@@ -59,8 +61,8 @@ public class OntologyDownloadRestlet extends Restlet {
 				String versionNumber = ontologyBean.getVersionNumber();
 				versionNumber = (StringHelper.isNullOrNullString(versionNumber) ? ""
 						: versionNumber);
-				String[] splitFilename = splitFilename(ontologyBean
-						.getFilenames().get(0));
+				String[] splitFilename = splitFilename(getFilename(ontologyBean
+						.getFilenames()));
 
 				if (splitFilename == null) {
 					response.setStatus(Status.SERVER_ERROR_INTERNAL,
@@ -190,5 +192,19 @@ public class OntologyDownloadRestlet extends Restlet {
 		}
 
 		return splitFilename;
+	}
+
+	private String getFilename(List<String> filenames) {
+		String filename = null;
+
+		for (String f : filenames) {
+			filename = f;
+
+			if (CompressionUtils.isCompressed(f)) {
+				break;
+			}
+		}
+
+		return filename;
 	}
 }
