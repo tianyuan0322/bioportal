@@ -234,13 +234,10 @@ public class OntologyRetrievalManagerProtegeImpl extends
 		ClassBean currentBean = null;
 		Cls previousNode = null;
 
-//		List uniqueNodes = getUniqueClasses(nodes);
-
 		for (Object nodeObj : nodes) {
 			ClassBean clsBean = new ClassBean();
 			Cls node = (Cls) nodeObj;
 			clsBean.setId(getId(node));
-			// clsBean.setLabel(node.getBrowserText());
 
 			if (currentBean != null) {
 				if (light) {
@@ -396,7 +393,7 @@ public class OntologyRetrievalManagerProtegeImpl extends
 
 	private List getUniqueClasses(Collection classes) {
 		if (classes != null) {
-			Set c = new HashSet(classes);			
+			Set c = new HashSet(classes);
 			return new ArrayList(c);
 		}
 
