@@ -47,7 +47,7 @@ import edu.stanford.smi.protege.model.Frame;
 
 public class LuceneSearch {
 
-	private static final int MAX_NUM_HITS = 10000;
+	private static final int MAX_NUM_HITS = 1000;
 	private Analyzer analyzer = new StandardAnalyzer();
 
 	// TODO: Throwaway code ===============================================
@@ -127,6 +127,7 @@ public class LuceneSearch {
 		ResultSet rs = findAllOntologies(connBioPortal);
 		IndexWriterWrapper writer = new IndexWriterWrapper(getIndexPath(),
 				analyzer, true);
+		writer.setMergeFactor(INDEX_MERGE_FACTOR);
 
 		while (rs.next()) {
 			try {
@@ -238,7 +239,6 @@ public class LuceneSearch {
 	public void indexOntology(ResultSet rs) throws Exception {
 		IndexWriterWrapper writer = new IndexWriterWrapper(getIndexPath(),
 				analyzer);
-
 		writer.setMergeFactor(INDEX_MERGE_FACTOR);
 
 		indexOntology(writer, rs);
