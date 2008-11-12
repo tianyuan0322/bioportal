@@ -75,7 +75,7 @@ public class OntologyDownloadRestlet extends Restlet {
 								file, MediaType.APPLICATION_ALL, 60);
 						response.setEntity(fileRepresentation);
 						String filename = splitFilename[0]
-								+ subSpaces(versionNumber);
+								+ prepareVersion(versionNumber);
 						filename += (StringHelper
 								.isNullOrNullString(splitFilename[1])) ? ""
 								: "." + splitFilename[1];
@@ -168,8 +168,12 @@ public class OntologyDownloadRestlet extends Restlet {
 		return ontologyBean;
 	}
 
-	private String subSpaces(String version) {
-		return version.trim().replaceAll("[\\s\\t]+", "_");
+	private String prepareVersion(String version) {
+		if (!StringHelper.isNullOrNullString(version)) {
+			return "_" + version.trim().replaceAll("[\\s\\t]+", "_");
+		}
+		
+		return "";
 	}
 
 	private String[] splitFilename(String filename) {
