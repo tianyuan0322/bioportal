@@ -170,7 +170,7 @@ public class OntologyDownloadRestlet extends Restlet {
 
 	private String prepareVersion(String version) {
 		if (!StringHelper.isNullOrNullString(version)) {
-			return "_" + version.trim().replaceAll("[\\s\\t]+", "_");
+			return "_v" + version.trim().replaceAll("[\\s\\t]+", "_");
 		}
 		
 		return "";
