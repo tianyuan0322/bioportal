@@ -234,9 +234,9 @@ public class OntologyRetrievalManagerProtegeImpl extends
 		ClassBean currentBean = null;
 		Cls previousNode = null;
 
-		List uniqueNodes = getUniqueClasses(nodes);
+//		List uniqueNodes = getUniqueClasses(nodes);
 
-		for (Object nodeObj : uniqueNodes) {
+		for (Object nodeObj : nodes) {
 			ClassBean clsBean = new ClassBean();
 			Cls node = (Cls) nodeObj;
 			clsBean.setId(getId(node));
