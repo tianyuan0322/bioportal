@@ -40,6 +40,7 @@ import org.apache.lucene.search.SortField;
 import org.apache.lucene.search.TermQuery;
 import org.apache.lucene.search.TopFieldDocs;
 import org.ncbo.stanford.util.constants.ApplicationConstants;
+import org.ncbo.stanford.util.helper.StringHelper;
 
 import com.mysql.jdbc.exceptions.MySQLSyntaxErrorException;
 
@@ -206,7 +207,7 @@ public class LuceneSearch {
 		// ScoreDoc[] hits = collector.topDocs().scoreDocs;
 
 		SortField[] fields = { SortField.FIELD_SCORE,
-				new SortField("recordType") };
+				new SortField("recordType"), new SortField("preferredName") };
 		TopFieldDocs docs = searcher.search(query, null, MAX_NUM_HITS,
 				new Sort(fields));
 		ScoreDoc[] hits = docs.scoreDocs;
@@ -225,9 +226,7 @@ public class LuceneSearch {
 						+ " | " + conceptId + " | " + d.get("contents") + " | "
 						+ d.get("recordType") + " | " + d.get("preferredName")
 						+ " | " + d.get("conceptIdShort"));
-
 			}
-
 		}
 
 		System.out.println("Query: " + query);
@@ -341,7 +340,7 @@ public class LuceneSearch {
 
 		try {
 			// expr = doubleQuoteString(expr);
-			expr = escapeSpaces(expr);
+			expr = StringHelper.escapeSpaces(expr);
 			query.add(parser.parse(expr), BooleanClause.Occur.MUST);
 		} catch (ParseException e) {
 			IOException ioe = new IOException(e.getMessage());
@@ -360,14 +359,6 @@ public class LuceneSearch {
 		}
 		// query.add(q, BooleanClause.Occur.MUST);
 
-	}
-
-	private String escapeSpaces(String str) {
-		return str.replaceAll("[\\s\\t]+", "\\\\ ");
-	}
-
-	private String doubleQuoteString(String str) {
-		return "\"" + str + "\"";
 	}
 
 	private void addPropertiesClause(boolean includeProperties,

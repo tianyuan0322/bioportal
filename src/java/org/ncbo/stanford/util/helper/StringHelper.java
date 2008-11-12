@@ -207,6 +207,14 @@ public abstract class StringHelper {
 		return buffer.toString();
 	}
 
+	public static String escapeSpaces(String str) {
+		return str.replaceAll("[\\s\\t]+", "\\\\ ");
+	}
+
+	public static String doubleQuoteString(String str) {
+		return "\"" + str + "\"";
+	}
+
 	/**
 	 * removes space, removes NonAlphaCharacters, converts to lowercase
 	 * 
