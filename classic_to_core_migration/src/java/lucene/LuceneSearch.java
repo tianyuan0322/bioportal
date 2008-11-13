@@ -124,6 +124,21 @@ public class LuceneSearch {
 		connBioPortal = null;
 	}
 
+	public void backupIndex() throws Exception {
+		System.out.println("Backing up index...");
+		long start = System.currentTimeMillis();
+		IndexWriterWrapper writer = new IndexWriterWrapper(getIndexPath(),
+				analyzer, false);
+//		writer.backupIndexByCopy(getBackupIndexPath());
+		writer.backupIndexByReading(getBackupIndexPath());
+
+		writer.closeWriter();
+		writer = null;
+		long stop = System.currentTimeMillis(); // stop timing
+		System.out.println("Finished backing up index in "
+				+ (double) (stop - start) / 1000 / 60 + " minutes.");
+	}
+
 	public void indexAllOntologies() throws Exception {
 		long start = System.currentTimeMillis();
 
@@ -271,6 +286,7 @@ public class LuceneSearch {
 		LuceneSearchManager mgr = formatHandlerMap.get(format);
 
 		if (mgr != null) {
+			backupIndex();
 			removeOntology(writer, rs);
 			mgr.indexOntology(writer, rs);
 		} else {
@@ -446,7 +462,7 @@ public class LuceneSearch {
 
 		return stmt.executeQuery();
 	}
-	
+
 	/**
 	 * Connect to BioPortal db
 	 * 
@@ -463,6 +479,10 @@ public class LuceneSearch {
 
 	private String getIndexPath() {
 		return properties.getProperty("bioportal.resource.path") + "/lucene";
+	}
+
+	private String getBackupIndexPath() {
+		return getIndexPath() + "/backup";
 	}
 
 	/**

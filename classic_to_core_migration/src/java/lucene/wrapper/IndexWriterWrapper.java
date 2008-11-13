@@ -1,5 +1,6 @@
 package lucene.wrapper;
 
+import java.io.File;
 import java.io.IOException;
 
 import lucene.bean.LuceneSearchDocument;
@@ -14,6 +15,7 @@ import org.apache.lucene.index.IndexWriter;
 import org.apache.lucene.index.Term;
 import org.apache.lucene.index.IndexWriter.MaxFieldLength;
 import org.apache.lucene.store.LockObtainFailedException;
+import org.ncbo.stanford.util.ontologyfile.pathhandler.AbstractFilePathHandler;
 
 public class IndexWriterWrapper {
 	public static final MaxFieldLength MAX_FIELD_LENGTH = IndexWriter.MaxFieldLength.LIMITED;
@@ -79,7 +81,28 @@ public class IndexWriterWrapper {
 		}
 	}
 
-	public void backupIndex(String backupPath) throws IOException {
+	public void backupIndexByCopy(String backupPath) throws IOException {
+		File indexFilePath = new File(indexPath);
+		String[] children = indexFilePath.list();
+		File backupFilePath = new File(backupPath);
+
+		if (!backupFilePath.exists()) {
+			backupFilePath.mkdirs();
+		}
+
+		for (int i = 0; i < children.length; i++) {
+			File f = new File(indexFilePath, children[i]);
+
+			if (f.isFile()
+					&& !f.getName().equalsIgnoreCase(
+							IndexWriter.WRITE_LOCK_NAME)) {
+				AbstractFilePathHandler.copyFile(f, new File(backupFilePath
+						+ File.separator + f.getName()));
+			}
+		}
+	}
+
+	public void backupIndexByReading(String backupPath) throws IOException {
 		IndexReader reader = IndexReader.open(indexPath);
 		IndexWriter backupWriter = new IndexWriter(backupPath, writer
 				.getAnalyzer(), true, MAX_FIELD_LENGTH);
@@ -102,5 +125,33 @@ public class IndexWriterWrapper {
 	private void addField(Document doc, LuceneSearchField field) {
 		doc.add(new Field(field.getLabel(), field.getContents(), field
 				.getStore(), field.getIndex()));
+	}
+
+	/**
+	 * Copies all files under srcDir to dstDir. If dstDir does not exist, it
+	 * will be created.
+	 * 
+	 * @param srcDir
+	 * @param dstDir
+	 * @throws IOException
+	 */
+	private void copyIndex(File dstDir) throws IOException {
+		File indexFilePath = new File(indexPath);
+		String[] children = indexFilePath.list();
+
+		if (!dstDir.exists()) {
+			dstDir.mkdirs();
+		}
+
+		for (int i = 0; i < children.length; i++) {
+			File f = new File(indexFilePath, children[i]);
+
+			if (f.isFile()
+					&& !f.getName().equalsIgnoreCase(
+							IndexWriter.WRITE_LOCK_NAME)) {
+				AbstractFilePathHandler.copyFile(f, new File(dstDir
+						+ File.separator + f.getName()));
+			}
+		}
 	}
 }
