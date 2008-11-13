@@ -428,14 +428,14 @@ public class LuceneSearch {
 				+ "		WHERE status_id = ? "
 				+ "		GROUP BY ontology_id "
 				+ "	) a ON ont.ontology_id = a.ontology_id AND ont.internal_version_number = a.internal_version_number "
-				+ "WHERE 1 = 1 "
-				// + "AND UPPER(ont.format) IN ('PROTEGE', 'OWL-FULL', 'OWL-DL',
-				// 'OWL-LITE') "
+				+ "WHERE 1 = 1 " 
+//				+ "AND UPPER(ont.format) IN ('PROTEGE', 'OWL-FULL', 'OWL-DL', 'OWL-LITE') "
+//				+ "AND ont.ontology_id IN (" + "1032, " + "1070 "
+//				+ "AND ont.ontology_id IN (" + "1058, 1070 "
 
-				// + "AND ont.ontology_id IN (" + "1032, " + "1070 "
-				+ "AND ont.ontology_id IN (" + "1058, 1070 "
-
-				+ ") ORDER BY " + "ont.display_label" + " LIMIT 10";
+//				+ ") " + 
+				+ "ORDER BY " + "ont.display_label"; 
+//				" LIMIT 10";
 
 		PreparedStatement stmt = conn.prepareStatement(sqlSelect);
 		stmt.setInt(1, 3);
