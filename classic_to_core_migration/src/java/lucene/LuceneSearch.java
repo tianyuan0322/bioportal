@@ -124,6 +124,8 @@ public class LuceneSearch {
 	}
 
 	public void indexAllOntologies() throws Exception {
+		long start = System.currentTimeMillis();
+		
 		Connection connBioPortal = connectBioPortal();
 		ResultSet rs = findAllOntologies(connBioPortal);
 		IndexWriterWrapper writer = new IndexWriterWrapper(getIndexPath(),
@@ -156,6 +158,10 @@ public class LuceneSearch {
 		rs = null;
 		closeConnection(connBioPortal);
 		connBioPortal = null;
+
+		long stop = System.currentTimeMillis(); // stop timing
+		System.out.println("Finished indexing all ontologies in "
+				+ (double) (stop - start) / 1000 / 60 / 60 + " hours.");
 	}
 
 	public void removeOntology(Integer ontologyId) throws Exception {
