@@ -9,12 +9,18 @@ import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.document.Field;
 import org.apache.lucene.index.CorruptIndexException;
+import org.apache.lucene.index.IndexReader;
 import org.apache.lucene.index.IndexWriter;
 import org.apache.lucene.index.Term;
+import org.apache.lucene.index.IndexWriter.MaxFieldLength;
 import org.apache.lucene.store.LockObtainFailedException;
 
 public class IndexWriterWrapper {
+	public static final MaxFieldLength MAX_FIELD_LENGTH = IndexWriter.MaxFieldLength.LIMITED;
 	private IndexWriter writer;
+	private String indexPath;
+
+	// private Analyzer analyzer;
 
 	/**
 	 * @param indexPath
@@ -27,8 +33,8 @@ public class IndexWriterWrapper {
 	public IndexWriterWrapper(String indexPath, Analyzer analyzer,
 			boolean create) throws IOException {
 		super();
-		writer = new IndexWriter(indexPath, analyzer, create,
-				IndexWriter.MaxFieldLength.LIMITED);
+		this.indexPath = indexPath;
+		writer = new IndexWriter(indexPath, analyzer, create, MAX_FIELD_LENGTH);
 	}
 
 	/**
@@ -71,6 +77,16 @@ public class IndexWriterWrapper {
 			writer.close();
 			writer = null;
 		}
+	}
+
+	public void backupIndex(String backupPath) throws IOException {
+		IndexReader reader = IndexReader.open(indexPath);
+		IndexWriter backupWriter = new IndexWriter(backupPath, writer
+				.getAnalyzer(), true, MAX_FIELD_LENGTH);
+
+		backupWriter.addIndexes(new IndexReader[] { reader });
+		backupWriter.close();
+		reader.close();
 	}
 
 	private void addFields(Document doc, LuceneSearchDocument searchDoc) {

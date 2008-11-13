@@ -25,6 +25,7 @@ import org.LexGrid.LexBIG.Exceptions.LBParameterException;
 import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.analysis.standard.StandardAnalyzer;
 import org.apache.lucene.document.Document;
+import org.apache.lucene.index.LogMergePolicy;
 import org.apache.lucene.index.Term;
 import org.apache.lucene.queryParser.ParseException;
 import org.apache.lucene.queryParser.QueryParser;
@@ -49,12 +50,12 @@ import edu.stanford.smi.protege.model.Frame;
 public class LuceneSearch {
 
 	private static final int MAX_NUM_HITS = 1000;
+	private static final int INDEX_MERGE_FACTOR = LogMergePolicy.DEFAULT_MERGE_FACTOR;
 	private Analyzer analyzer = new StandardAnalyzer();
 
 	// TODO: Throwaway code ===============================================
 
 	public static final String PROPERTY_FILENAME = "build.properties";
-	private static final Integer INDEX_MERGE_FACTOR = 100;
 	private static Properties properties = new Properties();
 
 	private Map<String, LuceneSearchManager> formatHandlerMap = null;
@@ -125,7 +126,7 @@ public class LuceneSearch {
 
 	public void indexAllOntologies() throws Exception {
 		long start = System.currentTimeMillis();
-		
+
 		Connection connBioPortal = connectBioPortal();
 		ResultSet rs = findAllOntologies(connBioPortal);
 		IndexWriterWrapper writer = new IndexWriterWrapper(getIndexPath(),
@@ -231,7 +232,8 @@ public class LuceneSearch {
 				System.out.println(hits[i].score + " | " + d.get("ontologyId")
 						+ " | " + conceptId + " | " + d.get("contents") + " | "
 						+ d.get("recordType") + " | " + d.get("preferredName")
-						+ " | " + d.get("conceptIdShort"));
+						+ " | " + d.get("conceptIdShort") + " | "
+						+ d.get("literalContents"));
 			}
 		}
 
@@ -321,6 +323,7 @@ public class LuceneSearch {
 			String expr, boolean includeProperties) throws IOException {
 		BooleanQuery query = new BooleanQuery();
 
+		// addContentsClauseExact(expr, query);
 		addContentsClauseContains(expr, query);
 		addOntologyIdsClause(ontologyIds, query);
 		addPropertiesClause(includeProperties, query);
@@ -428,21 +431,22 @@ public class LuceneSearch {
 				+ "		WHERE status_id = ? "
 				+ "		GROUP BY ontology_id "
 				+ "	) a ON ont.ontology_id = a.ontology_id AND ont.internal_version_number = a.internal_version_number "
-				+ "WHERE 1 = 1 " 
-//				+ "AND UPPER(ont.format) IN ('PROTEGE', 'OWL-FULL', 'OWL-DL', 'OWL-LITE') "
-//				+ "AND ont.ontology_id IN (" + "1032, " + "1070 "
-//				+ "AND ont.ontology_id IN (" + "1058, 1070 "
+				+ "WHERE 1 = 1 "
+				// + "AND UPPER(ont.format) IN ('PROTEGE', 'OWL-FULL', 'OWL-DL',
+				// 'OWL-LITE') "
+				// + "AND ont.ontology_id IN (" + "1032, " + "1070 "
+				// + "AND ont.ontology_id IN (" + "1058, 1070 "
 
-//				+ ") " + 
-				+ "ORDER BY " + "ont.display_label"; 
-//				" LIMIT 10";
+				// + ") " +
+				+ "ORDER BY " + "ont.display_label";
+		// " LIMIT 10";
 
 		PreparedStatement stmt = conn.prepareStatement(sqlSelect);
 		stmt.setInt(1, 3);
 
 		return stmt.executeQuery();
 	}
-
+	
 	/**
 	 * Connect to BioPortal db
 	 * 
