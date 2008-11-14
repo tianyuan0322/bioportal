@@ -27,6 +27,7 @@ import org.LexGrid.concepts.Definition;
 import org.LexGrid.concepts.Instruction;
 import org.LexGrid.concepts.Presentation;
 import org.apache.commons.lang.StringUtils;
+import org.ncbo.stanford.util.helper.StringHelper;
 
 public class LuceneSearchManagerLexGridImpl implements LuceneSearchManager {
 
@@ -180,6 +181,11 @@ public class LuceneSearchManagerLexGridImpl implements LuceneSearchManager {
 	 */
 	private String getLexGridCodingSchemeName(ResultSet rs) throws SQLException {
 		String urnAndVersion = rs.getString("coding_scheme");
+
+		if (StringHelper.isNullOrNullString(urnAndVersion)) {
+			urnAndVersion = rs.getString("urn");
+		}
+
 		String urnVersionArray[] = splitUrnAndVersion(urnAndVersion);
 
 		return (urnVersionArray != null && urnVersionArray.length > 0) ? urnVersionArray[0]
@@ -195,6 +201,11 @@ public class LuceneSearchManagerLexGridImpl implements LuceneSearchManager {
 	private CodingSchemeVersionOrTag getLexGridCodingSchemeVersion(ResultSet rs)
 			throws SQLException {
 		String urnAndVersion = rs.getString("coding_scheme");
+		
+		if (StringHelper.isNullOrNullString(urnAndVersion)) {
+			urnAndVersion = rs.getString("urn");
+		}
+		
 		String urnVersionArray[] = splitUrnAndVersion(urnAndVersion);
 
 		return (urnVersionArray != null && urnVersionArray.length > 1) ? Constructors
