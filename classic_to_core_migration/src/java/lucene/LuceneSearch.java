@@ -77,6 +77,7 @@ public class LuceneSearch {
 		LuceneSearchManager lsmLexGrid = new LuceneSearchManagerLexGridImpl();
 
 		formatHandlerMap = new HashMap<String, LuceneSearchManager>();
+		formatHandlerMap.put(ApplicationConstants.FORMAT_OWL, lsmProtege);
 		formatHandlerMap.put(ApplicationConstants.FORMAT_OWL_DL, lsmProtege);
 		formatHandlerMap.put(ApplicationConstants.FORMAT_OWL_FULL, lsmProtege);
 		formatHandlerMap.put(ApplicationConstants.FORMAT_OWL_LITE, lsmProtege);
@@ -95,26 +96,51 @@ public class LuceneSearch {
 		return LuceneSearchHolder.instance;
 	}
 
+	// TODO: END, Throwaway code ==========================================
+
 	public void indexOntology(Integer ontologyId) throws Exception {
 		Connection connBioPortal = connectBioPortal();
 		ResultSet rs = findOntology(connBioPortal, ontologyId);
 
-		while (rs.next()) {
+		if (rs.next()) {
 			try {
-				indexOntology(rs);
-			} catch (Exception e) {
-				Throwable t = e.getCause();
+				IndexWriterWrapper writer = new IndexWriterWrapper(
+						getIndexPath(), analyzer);
+				writer.setMergeFactor(INDEX_MERGE_FACTOR);
 
-				if (e instanceof LBParameterException
-						|| (t != null && t instanceof MySQLSyntaxErrorException)) {
-					throw new Exception("Ontology: "
-							+ rs.getString("display_label") + " (Id: "
-							+ rs.getInt("id") + ", Ontology Id: "
-							+ rs.getInt("ontology_id")
-							+ ") does not exist in the backend store");
-				} else {
-					throw new Exception(e);
-				}
+				indexOntology(writer, rs);
+
+				writer.optimize();
+				writer.closeWriter();
+				writer = null;
+			} catch (Exception e) {
+				handleException(rs, e, false);
+			}
+		}
+
+		closeResultSet(rs);
+		rs = null;
+		closeConnection(connBioPortal);
+		connBioPortal = null;
+	}
+
+	public void removeOntology(Integer ontologyId) throws Exception {
+		Connection connBioPortal = connectBioPortal();
+		ResultSet rs = findOntology(connBioPortal, ontologyId);
+
+		if (rs.next()) {
+			try {
+				IndexWriterWrapper writer = new IndexWriterWrapper(
+						getIndexPath(), analyzer);
+				writer.setMergeFactor(INDEX_MERGE_FACTOR);
+
+				removeOntology(writer, rs);
+
+				writer.optimize();
+				writer.closeWriter();
+				writer = null;
+			} catch (Exception e) {
+				handleException(rs, e, false);
 			}
 		}
 
@@ -125,18 +151,13 @@ public class LuceneSearch {
 	}
 
 	public void backupIndex() throws Exception {
-		System.out.println("Backing up index...");
-		long start = System.currentTimeMillis();
 		IndexWriterWrapper writer = new IndexWriterWrapper(getIndexPath(),
-				analyzer, false);
-//		writer.backupIndexByCopy(getBackupIndexPath());
-		writer.backupIndexByReading(getBackupIndexPath());
+				analyzer);
+		writer.setMergeFactor(INDEX_MERGE_FACTOR);
 
+		backupIndex(writer);
 		writer.closeWriter();
 		writer = null;
-		long stop = System.currentTimeMillis(); // stop timing
-		System.out.println("Finished backing up index in "
-				+ (double) (stop - start) / 1000 / 60 + " minutes.");
 	}
 
 	public void indexAllOntologies() throws Exception {
@@ -152,18 +173,7 @@ public class LuceneSearch {
 			try {
 				indexOntology(writer, rs);
 			} catch (Exception e) {
-				Throwable t = e.getCause();
-
-				if (e instanceof LBParameterException
-						|| (t != null && t instanceof MySQLSyntaxErrorException)) {
-					System.out.println("Ontology: "
-							+ rs.getString("display_label") + " (Id: "
-							+ rs.getInt("id") + ", Ontology Id: "
-							+ rs.getInt("ontology_id")
-							+ ") does not exist in the backend store");
-				} else {
-					throw new Exception(e);
-				}
+				handleException(rs, e, true);
 			}
 		}
 
@@ -179,36 +189,6 @@ public class LuceneSearch {
 		System.out.println("Finished indexing all ontologies in "
 				+ (double) (stop - start) / 1000 / 60 / 60 + " hours.");
 	}
-
-	public void removeOntology(Integer ontologyId) throws Exception {
-		Connection connBioPortal = connectBioPortal();
-		ResultSet rs = findOntology(connBioPortal, ontologyId);
-
-		while (rs.next()) {
-			try {
-				removeOntology(rs);
-			} catch (RuntimeException re) {
-				Throwable t = re.getCause();
-
-				if (!(t instanceof MySQLSyntaxErrorException)) {
-					throw new Exception(t);
-				} else {
-					throw new Exception("Ontology: "
-							+ rs.getString("display_label") + " (Id: "
-							+ rs.getInt("id") + ", Ontology Id: "
-							+ rs.getInt("ontology_id")
-							+ ") does not exist in Protege");
-				}
-			}
-		}
-
-		closeResultSet(rs);
-		rs = null;
-		closeConnection(connBioPortal);
-		connBioPortal = null;
-	}
-
-	// TODO: END, Throwaway code ==========================================
 
 	public void executeQuery(String expr, boolean includeProperties)
 			throws IOException {
@@ -258,35 +238,13 @@ public class LuceneSearch {
 	}
 
 	// TODO: in BP, replace rs with OntologyBean
-	public void indexOntology(ResultSet rs) throws Exception {
-		IndexWriterWrapper writer = new IndexWriterWrapper(getIndexPath(),
-				analyzer);
-		writer.setMergeFactor(INDEX_MERGE_FACTOR);
-
-		indexOntology(writer, rs);
-		writer.optimize();
-		writer.closeWriter();
-		writer = null;
-	}
-
-	// TODO: in BP, replace rs with OntologyBean
-	public void removeOntology(ResultSet rs) throws Exception {
-		IndexWriterWrapper writer = new IndexWriterWrapper(getIndexPath(),
-				analyzer);
-		removeOntology(writer, rs);
-		writer.optimize();
-		writer.closeWriter();
-		writer = null;
-	}
-
-	// TODO: in BP, replace rs with OntologyBean
 	public void indexOntology(IndexWriterWrapper writer, ResultSet rs)
 			throws Exception {
 		String format = rs.getString("format");
 		LuceneSearchManager mgr = formatHandlerMap.get(format);
 
 		if (mgr != null) {
-			backupIndex();
+			backupIndex(writer);
 			removeOntology(writer, rs);
 			mgr.indexOntology(writer, rs);
 		} else {
@@ -295,6 +253,17 @@ public class LuceneSearch {
 					+ rs.getInt("id") + ", Ontology Id: "
 					+ rs.getInt("ontology_id") + ", Format: " + format + ")");
 		}
+	}
+
+	public void backupIndex(IndexWriterWrapper writer) throws Exception {
+		System.out.println("Backing up index...");
+		long start = System.currentTimeMillis();
+		writer.backupIndexByCopy(getBackupIndexPath());
+		// writer.backupIndexByReading(getBackupIndexPath());
+
+		long stop = System.currentTimeMillis(); // stop timing
+		System.out.println("Finished backing up index in "
+				+ (double) (stop - start) / 1000 / 60 + " minutes.");
 	}
 
 	// TODO: in BP, replace rs with OntologyBean
@@ -503,5 +472,26 @@ public class LuceneSearch {
 		// Load the JDBC driver
 		Class.forName(jdbcDriver);
 		return DriverManager.getConnection(jdbcUrl, jdbcUsername, jdbcPassword);
+	}
+
+	private void handleException(ResultSet rs, Exception e,
+			boolean ignoreNotFound) throws Exception {
+		Throwable t = e.getCause();
+
+		if (e instanceof LBParameterException
+				|| (t != null && t instanceof MySQLSyntaxErrorException)) {
+			String msg = "Ontology: " + rs.getString("display_label")
+					+ " (Id: " + rs.getInt("id") + ", Ontology Id: "
+					+ rs.getInt("ontology_id")
+					+ ") does not exist in the backend store";
+
+			if (ignoreNotFound) {
+				System.out.println(msg);
+			} else {
+				throw new Exception(msg);
+			}
+		} else {
+			throw new Exception(e);
+		}
 	}
 }

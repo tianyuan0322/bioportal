@@ -49,6 +49,7 @@ public class IndexWriterWrapper {
 	public IndexWriterWrapper(String indexPath, Analyzer analyzer)
 			throws IOException {
 		super();
+		this.indexPath = indexPath;
 		writer = new IndexWriter(indexPath, analyzer,
 				IndexWriter.MaxFieldLength.LIMITED);
 	}

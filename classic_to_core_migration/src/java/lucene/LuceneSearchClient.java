@@ -15,7 +15,7 @@ public class LuceneSearchClient {
 			LuceneSearch search = LuceneSearch.getInstance();
 
 			
-			search.backupIndex();
+//			search.backupIndex();
 //			search.indexOntology(1070);
 //			search.indexOntology(1032);
 //			search.indexOntology(1058);
@@ -26,6 +26,7 @@ public class LuceneSearchClient {
 //			search.indexOntology(1090);
 //			search.indexOntology(1053);
 //			search.indexOntology(1054);
+			search.indexOntology(1104);
 //			search.indexAllOntologies();
 
 //			System.out.println("Searching...");
@@ -42,6 +43,7 @@ public class LuceneSearchClient {
 //			ontologyIds.add(1090); // Amphibian gross anatomy - OBO
 //			ontologyIds.add(1053); // FMA - OWL
 //			ontologyIds.add(1054); // Amino Acid - OWL
+//			ontologyIds.add(1104); // Biomedical Resource Ontology (BRO) - OWL
 //			System.out.println("Searching...");
 //			search.executeQuery("cell", ontologyIds, false);
 		} catch (Exception e) {
