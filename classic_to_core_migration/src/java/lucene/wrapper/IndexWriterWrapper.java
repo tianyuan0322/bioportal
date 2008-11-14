@@ -45,8 +45,7 @@ public class IndexWriterWrapper {
 			throws IOException {
 		super();
 		this.indexPath = indexPath;
-		writer = new IndexWriter(indexPath, analyzer,
-				IndexWriter.MaxFieldLength.LIMITED);
+		writer = new IndexWriter(indexPath, analyzer, MAX_FIELD_LENGTH);
 	}
 
 	public void addDocument(LuceneSearchDocument searchDoc) throws IOException {
