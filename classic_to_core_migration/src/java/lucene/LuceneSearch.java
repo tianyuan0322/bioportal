@@ -108,7 +108,7 @@ public class LuceneSearch {
 						getIndexPath(), analyzer);
 				writer.setMergeFactor(INDEX_MERGE_FACTOR);
 
-				indexOntology(writer, rs);
+				indexOntology(writer, rs, true);
 
 				writer.optimize();
 				writer.closeWriter();
@@ -124,6 +124,37 @@ public class LuceneSearch {
 		connBioPortal = null;
 	}
 
+	public void indexAllOntologies() throws Exception {
+		long start = System.currentTimeMillis();
+
+		Connection connBioPortal = connectBioPortal();
+		ResultSet rs = findAllOntologies(connBioPortal);
+		IndexWriterWrapper writer = new IndexWriterWrapper(getIndexPath(),
+				analyzer, true);
+		writer.setMergeFactor(INDEX_MERGE_FACTOR);
+		backupIndex(writer);
+
+		while (rs.next()) {
+			try {
+				indexOntology(writer, rs, false);
+			} catch (Exception e) {
+				handleException(rs, e, true);
+			}
+		}
+
+		writer.optimize();
+		writer.closeWriter();
+		writer = null;
+		closeResultSet(rs);
+		rs = null;
+		closeConnection(connBioPortal);
+		connBioPortal = null;
+
+		long stop = System.currentTimeMillis(); // stop timing
+		System.out.println("Finished indexing all ontologies in "
+				+ (double) (stop - start) / 1000 / 60 / 60 + " hours.");
+	}
+
 	public void removeOntology(Integer ontologyId) throws Exception {
 		Connection connBioPortal = connectBioPortal();
 		ResultSet rs = findOntology(connBioPortal, ontologyId);
@@ -134,7 +165,7 @@ public class LuceneSearch {
 						getIndexPath(), analyzer);
 				writer.setMergeFactor(INDEX_MERGE_FACTOR);
 
-				removeOntology(writer, rs);
+				removeOntology(writer, rs, true);
 
 				writer.optimize();
 				writer.closeWriter();
@@ -158,36 +189,6 @@ public class LuceneSearch {
 		backupIndex(writer);
 		writer.closeWriter();
 		writer = null;
-	}
-
-	public void indexAllOntologies() throws Exception {
-		long start = System.currentTimeMillis();
-
-		Connection connBioPortal = connectBioPortal();
-		ResultSet rs = findAllOntologies(connBioPortal);
-		IndexWriterWrapper writer = new IndexWriterWrapper(getIndexPath(),
-				analyzer, true);
-		writer.setMergeFactor(INDEX_MERGE_FACTOR);
-
-		while (rs.next()) {
-			try {
-				indexOntology(writer, rs);
-			} catch (Exception e) {
-				handleException(rs, e, true);
-			}
-		}
-
-		writer.optimize();
-		writer.closeWriter();
-		writer = null;
-		closeResultSet(rs);
-		rs = null;
-		closeConnection(connBioPortal);
-		connBioPortal = null;
-
-		long stop = System.currentTimeMillis(); // stop timing
-		System.out.println("Finished indexing all ontologies in "
-				+ (double) (stop - start) / 1000 / 60 / 60 + " hours.");
 	}
 
 	public void executeQuery(String expr, boolean includeProperties)
@@ -238,14 +239,13 @@ public class LuceneSearch {
 	}
 
 	// TODO: in BP, replace rs with OntologyBean
-	public void indexOntology(IndexWriterWrapper writer, ResultSet rs)
-			throws Exception {
+	public void indexOntology(IndexWriterWrapper writer, ResultSet rs,
+			boolean doBackup) throws Exception {
 		String format = rs.getString("format");
 		LuceneSearchManager mgr = formatHandlerMap.get(format);
 
 		if (mgr != null) {
-			backupIndex(writer);
-			removeOntology(writer, rs);
+			removeOntology(writer, rs, doBackup);
 			mgr.indexOntology(writer, rs);
 		} else {
 			System.out.println("No hanlder was found for ontology: "
@@ -259,7 +259,7 @@ public class LuceneSearch {
 		System.out.println("Backing up index...");
 		long start = System.currentTimeMillis();
 		writer.backupIndexByFileCopy(getBackupIndexPath());
-//		writer.backupIndexByReading(getBackupIndexPath());
+		// writer.backupIndexByReading(getBackupIndexPath());
 
 		long stop = System.currentTimeMillis(); // stop timing
 		System.out.println("Finished backing up index in "
@@ -267,8 +267,8 @@ public class LuceneSearch {
 	}
 
 	// TODO: in BP, replace rs with OntologyBean
-	public void removeOntology(IndexWriterWrapper writer, ResultSet rs)
-			throws Exception {
+	public void removeOntology(IndexWriterWrapper writer, ResultSet rs,
+			boolean doBackup) throws Exception {
 		Integer ontologyId = rs.getInt("ontology_id");
 		String displayLabel = rs.getString("display_label");
 
@@ -276,6 +276,10 @@ public class LuceneSearch {
 				+ " (Id: " + rs.getInt("id") + ", Ontology Id: " + ontologyId
 				+ ", Format: " + rs.getString("format") + ")");
 		long start = System.currentTimeMillis();
+
+		if (doBackup) {
+			backupIndex(writer);
+		}
 
 		writer.removeOntology(ontologyId);
 
