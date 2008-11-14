@@ -483,7 +483,7 @@ public class LuceneSearch {
 	private void handleException(ResultSet rs, Exception e,
 			boolean ignoreNotFound) throws Exception {
 		Throwable t = e.getCause();
-		String className = t.getClass().getName();
+		String className = (t == null) ? "" : t.getClass().getName();
 
 		if (e instanceof LBParameterException
 				|| (t != null && (className
