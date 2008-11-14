@@ -427,6 +427,7 @@ public class LuceneSearch {
 				// 'OWL-LITE') "
 				// + "AND ont.ontology_id IN (" + "1032, " + "1070 "
 				// + "AND ont.ontology_id IN (" + "1058, 1070 "
+				+ "AND ont.ontology_id = 1049 "
 
 				// + ") " +
 				+ "ORDER BY " + "ont.display_label";
@@ -483,24 +484,27 @@ public class LuceneSearch {
 	private void handleException(ResultSet rs, Exception e,
 			boolean ignoreNotFound) throws Exception {
 		Throwable t = e.getCause();
+		String msg = null;
 		String className = (t == null) ? "" : t.getClass().getName();
 
 		if (e instanceof LBParameterException
 				|| (t != null && (className
 						.equals("com.mysql.jdbc.exceptions.MySQLSyntaxErrorException") || className
 						.equals("com.mysql.jdbc.exceptions.jdbc4.MySQLSyntaxErrorException")))) {
-			String msg = "Ontology: " + rs.getString("display_label")
-					+ " (Id: " + rs.getInt("id") + ", Ontology Id: "
+			msg = "Ontology: " + rs.getString("display_label") + " (Id: "
+					+ rs.getInt("id") + ", Ontology Id: "
 					+ rs.getInt("ontology_id")
 					+ ") does not exist in the backend store";
+		}
 
-			if (ignoreNotFound) {
-				System.out.println(msg);
-			} else {
-				throw new Exception(msg);
-			}
+		if (ignoreNotFound && msg != null) {
+			System.out.println(msg);
+		} else if (ignoreNotFound) {
+			e.printStackTrace();
+		} else if (msg != null) {
+			throw new Exception(msg);
 		} else {
-			throw new Exception(e);
+			throw e;
 		}
 	}
 }
