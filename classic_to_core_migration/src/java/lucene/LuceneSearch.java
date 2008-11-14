@@ -274,14 +274,14 @@ public class LuceneSearch {
 		Integer ontologyId = rs.getInt("ontology_id");
 		String displayLabel = rs.getString("display_label");
 
+		if (doBackup) {
+			backupIndex(writer);
+		}
+
 		System.out.println("Removing ontology from index: " + displayLabel
 				+ " (Id: " + rs.getInt("id") + ", Ontology Id: " + ontologyId
 				+ ", Format: " + rs.getString("format") + ")");
 		long start = System.currentTimeMillis();
-
-		if (doBackup) {
-			backupIndex(writer);
-		}
 
 		writer.removeOntology(ontologyId);
 
