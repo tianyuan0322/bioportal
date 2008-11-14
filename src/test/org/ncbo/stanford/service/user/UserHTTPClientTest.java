@@ -30,7 +30,10 @@ public class UserHTTPClientTest extends AbstractBioPortalTest {
 
 		try {
 			String xml = response.getEntity().getText();
+
 			System.out.println(xml);
+
+      assertTrue(xml.contains("<success>"));
 
 		} catch (IOException ioe) {
 			System.out
@@ -52,11 +55,14 @@ public class UserHTTPClientTest extends AbstractBioPortalTest {
 		Client client = new Client(Protocol.HTTP);
 		
 		Response response = client
-				.get("http://localhost:8080/bioportal/rest/user/2850");
+				.get("http://localhost:8080/bioportal/rest/users/2850");
 
 		try {
 			String xml = response.getEntity().getText();
+
 			System.out.println(xml);
+
+      assertTrue(xml.contains("<accessedResource>"));
 
 		} catch (IOException ioe) {
 			System.out
