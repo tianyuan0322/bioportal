@@ -1,14 +1,17 @@
 package org.ncbo.stanford.view.rest.restlet.ontology;
 
 import java.io.File;
+import java.util.List;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.ncbo.stanford.bean.OntologyBean;
 import org.ncbo.stanford.service.ontology.OntologyService;
 import org.ncbo.stanford.service.xml.XMLSerializationService;
+import org.ncbo.stanford.util.CompressionUtils;
 import org.ncbo.stanford.util.MessageUtils;
 import org.ncbo.stanford.util.RequestUtils;
+import org.ncbo.stanford.util.helper.StringHelper;
 import org.restlet.Restlet;
 import org.restlet.data.MediaType;
 import org.restlet.data.Method;
@@ -26,10 +29,8 @@ public class OntologyDownloadRestlet extends Restlet {
 
 	@Override
 	public void handle(Request request, Response response) {
-
 		if (request.getMethod().equals(Method.GET)) {
 			getRequest(request, response);
-
 		}
 	}
 
@@ -40,10 +41,8 @@ public class OntologyDownloadRestlet extends Restlet {
 	 * @param response
 	 */
 	private void getRequest(Request request, Response response) {
-
 		// Handle GET calls here
 		downloadOntology(request, response);
-
 	}
 
 	/**
@@ -52,45 +51,52 @@ public class OntologyDownloadRestlet extends Restlet {
 	 * @param response
 	 */
 	private void downloadOntology(Request request, Response response) {
-
 		// find the OntologyBean from request
 		OntologyBean ontologyBean = findOntologyBean(request, response);
 
 		// if "find" was successful, proceed to update
 		if (!response.getStatus().isError()) {
-
 			try {
-
 				File file = ontologyService.getOntologyFile(ontologyBean);
-				String filename = (String) ontologyBean.getFilenames()
-						.toArray()[0];
+				String versionNumber = ontologyBean.getVersionNumber();
+				versionNumber = (StringHelper.isNullOrNullString(versionNumber) ? ""
+						: versionNumber);
+				String[] splitFilename = splitFilename(getFilename(ontologyBean
+						.getFilenames()));
 
-				try {
+				if (splitFilename == null) {
+					response.setStatus(Status.SERVER_ERROR_INTERNAL,
+							"No file found for ontology "
+									+ ontologyBean.getDisplayLabel() + " (Id: "
+									+ ontologyBean.getId() + ")");
+				} else {
+					try {
+						FileRepresentation fileRepresentation = new FileRepresentation(
+								file, MediaType.APPLICATION_ALL, 60);
+						response.setEntity(fileRepresentation);
+						String filename = splitFilename[0]
+								+ prepareVersion(versionNumber);
+						filename += (StringHelper
+								.isNullOrNullString(splitFilename[1])) ? ""
+								: "." + splitFilename[1];
 
-					FileRepresentation fileRepresentation = new FileRepresentation(
-							file, MediaType.APPLICATION_ALL, 60);
-					response.setEntity(fileRepresentation);
-					RequestUtils.getHttpServletResponse(response).setHeader(
-							"Content-Disposition",
-							"attachment; filename=\"" + filename + "\";");
-
-				} catch (Exception e) {
-					e.printStackTrace();
-					return;
+						RequestUtils.getHttpServletResponse(response)
+								.setHeader(
+										"Content-Disposition",
+										"attachment; filename=\"" + filename
+												+ "\";");
+					} catch (Exception e) {
+						e.printStackTrace();
+						return;
+					}
 				}
-
 			} catch (Exception e) {
-
 				response
 						.setStatus(Status.SERVER_ERROR_INTERNAL, e.getMessage());
 				e.printStackTrace();
 				log.error(e);
 			}
 		}
-
-		// getXmlSerializationService().generateStatusXMLResponse(request,
-		// response);
-
 	}
 
 	/**
@@ -133,7 +139,6 @@ public class OntologyDownloadRestlet extends Restlet {
 	 * @param response
 	 */
 	private OntologyBean findOntologyBean(Request request, Response response) {
-
 		OntologyBean ontologyBean = null;
 		String ontologyVersionId = (String) request.getAttributes().get(
 				MessageUtils.getMessage("entity.ontology"));
@@ -146,20 +151,15 @@ public class OntologyDownloadRestlet extends Restlet {
 
 			// if ontologyBean is not found, set Error in the Status object
 			if (ontologyBean == null || ontologyBean.getId() == null) {
-
 				response.setStatus(Status.CLIENT_ERROR_NOT_FOUND, MessageUtils
 						.getMessage("msg.error.ontologyNotFound"));
 			}
-
 		} catch (NumberFormatException nfe) {
-
 			response.setStatus(Status.CLIENT_ERROR_BAD_REQUEST, nfe
 					.getMessage());
 			nfe.printStackTrace();
 			log.error(nfe);
-
 		} catch (Exception e) {
-
 			response.setStatus(Status.SERVER_ERROR_INTERNAL, e.getMessage());
 			e.printStackTrace();
 			log.error(e);
@@ -168,4 +168,47 @@ public class OntologyDownloadRestlet extends Restlet {
 		return ontologyBean;
 	}
 
+	private String prepareVersion(String version) {
+		if (!StringHelper.isNullOrNullString(version)) {
+			return "_v" + version.trim().replaceAll("[\\s\\t]+", "_");
+		}
+		
+		return "";
+	}
+
+	private String[] splitFilename(String filename) {
+		String[] splitFilename = null;
+
+		if (!StringHelper.isNullOrNullString(filename)) {
+			splitFilename = new String[2];
+			splitFilename[0] = filename;
+			splitFilename[1] = "";
+
+			int lastDot = filename.lastIndexOf('.');
+			String name = filename.substring(0, lastDot);
+			String ext = filename.substring(lastDot + 1);
+
+			if (!StringHelper.isNullOrNullString(name)
+					&& !StringHelper.isNullOrNullString(ext)) {
+				splitFilename[0] = name;
+				splitFilename[1] = ext;
+			}
+		}
+
+		return splitFilename;
+	}
+
+	private String getFilename(List<String> filenames) {
+		String filename = null;
+
+		for (String f : filenames) {
+			filename = f;
+
+			if (CompressionUtils.isCompressed(f)) {
+				break;
+			}
+		}
+
+		return filename;
+	}
 }
