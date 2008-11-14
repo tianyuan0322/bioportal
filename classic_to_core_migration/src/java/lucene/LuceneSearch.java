@@ -129,10 +129,14 @@ public class LuceneSearch {
 
 		Connection connBioPortal = connectBioPortal();
 		ResultSet rs = findAllOntologies(connBioPortal);
-		IndexWriterWrapper writer = new IndexWriterWrapper(getIndexPath(),
-				analyzer, true);
-		writer.setMergeFactor(INDEX_MERGE_FACTOR);
+		String indexPath = getIndexPath();
+
+		IndexWriterWrapper writer = new IndexWriterWrapper(indexPath, analyzer);
 		backupIndex(writer);
+		writer.closeWriter();
+
+		writer = new IndexWriterWrapper(indexPath, analyzer, true);
+		writer.setMergeFactor(INDEX_MERGE_FACTOR);
 
 		while (rs.next()) {
 			try {
