@@ -427,8 +427,7 @@ public class LuceneSearch {
 				// 'OWL-LITE') "
 				// + "AND ont.ontology_id IN (" + "1032, " + "1070 "
 				// + "AND ont.ontology_id IN (" + "1058, 1070 "
-				+ "AND ont.ontology_id = 1049 "
-
+				// + "AND ont.ontology_id = 1049 "
 				// + ") " +
 				+ "ORDER BY " + "ont.display_label";
 		// " LIMIT 10";
