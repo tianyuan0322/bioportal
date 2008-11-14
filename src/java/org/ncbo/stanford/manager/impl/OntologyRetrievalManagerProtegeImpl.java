@@ -2,6 +2,7 @@ package org.ncbo.stanford.manager.impl;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -217,15 +218,15 @@ public class OntologyRetrievalManagerProtegeImpl extends
 	}
 
 	private Cls getCls(String conceptId, KnowledgeBase kb) {
-		Cls owlClass = null;
+		Cls cls = null;
 
 		if (kb instanceof OWLModel) {
-			owlClass = ((OWLModel) kb).getOWLNamedClass(conceptId);
+			cls = ((OWLModel) kb).getRDFSNamedClass(conceptId);
 		} else {
-			owlClass = kb.getCls(conceptId);
+			cls = kb.getCls(conceptId);
 		}
 
-		return owlClass;
+		return cls;
 	}
 
 	private ClassBean buildPath(Collection nodes, boolean light) {
@@ -237,17 +238,16 @@ public class OntologyRetrievalManagerProtegeImpl extends
 			ClassBean clsBean = new ClassBean();
 			Cls node = (Cls) nodeObj;
 			clsBean.setId(getId(node));
-			// clsBean.setLabel(node.getBrowserText());
 
 			if (currentBean != null) {
 				if (light) {
-					List beanList = new ArrayList();
-					beanList.add(clsBean);
+					Set beanSet = new HashSet();
+					beanSet.add(clsBean);
 					currentBean.addRelation(ApplicationConstants.SUB_CLASS,
-							beanList);
+							new ArrayList(beanSet));
 				} else {
-					Collection<ClassBean> siblings = convertLightBeans(previousNode
-							.getDirectSubclasses());
+					List<ClassBean> siblings = convertLightBeans(getUniqueClasses(previousNode
+							.getDirectSubclasses()));
 
 					for (ClassBean sibling : siblings) {
 						if (sibling.getId().equals(clsBean.getId())) {
@@ -269,8 +269,8 @@ public class OntologyRetrievalManagerProtegeImpl extends
 		return rootBean;
 	}
 
-	private Collection<ClassBean> convertLightBeans(Collection<Cls> protegeClses) {
-		Collection<ClassBean> beans = new ArrayList<ClassBean>();
+	private List<ClassBean> convertLightBeans(Collection<Cls> protegeClses) {
+		List<ClassBean> beans = new ArrayList<ClassBean>();
 
 		for (Cls cls : protegeClses) {
 			if (cls.isVisible())
@@ -280,9 +280,9 @@ public class OntologyRetrievalManagerProtegeImpl extends
 		return beans;
 	}
 
-	private Collection<ClassBean> convertClasses(Collection<Cls> protegeClses,
+	private List<ClassBean> convertClasses(Collection<Cls> protegeClses,
 			boolean recursive) {
-		Collection<ClassBean> beans = new ArrayList<ClassBean>();
+		List<ClassBean> beans = new ArrayList<ClassBean>();
 
 		for (Cls cls : protegeClses) {
 			if (cls.isVisible())
@@ -292,33 +292,26 @@ public class OntologyRetrievalManagerProtegeImpl extends
 		return beans;
 	}
 
-	// protected String getLabel(Frame node) {
-	// String label = null;
-	//
-	// if (node instanceof RDFResource) {
-	// RDFResource rs = (RDFResource) node;
-	// Collection labels = rs.getLabels();
-	//
-	// if (labels == null || labels.isEmpty()) {
-	// label = node.getBrowserText();
-	// } else {
-	// label = CollectionUtilities.getFirstItem(labels).toString();
-	// }
-	// } else {
-	// label = node.getBrowserText();
-	// }
-	//
-	// return label;
-	// }
+	/*
+	 * protected String getLabel(Frame node) { String label = null;
+	 * 
+	 * if (node instanceof RDFResource) { RDFResource rs = (RDFResource) node;
+	 * Collection labels = rs.getLabels();
+	 * 
+	 * if (labels == null || labels.isEmpty()) { label = node.getName(); } else {
+	 * label = CollectionUtilities.getFirstItem(labels).toString(); } } else {
+	 * label = node.getName(); }
+	 * 
+	 * return label; }
+	 */
 
 	private ClassBean createLightClassBean(Cls cls) {
 		ClassBean classBean = new ClassBean();
 		classBean.setId(getId(cls));
 
 		classBean.setLabel(cls.getBrowserText());
-
-		classBean.addRelation(ApplicationConstants.CHILD_COUNT, cls
-				.getDirectSubclasses().size());
+		classBean.addRelation(ApplicationConstants.CHILD_COUNT,
+				getUniqueClasses(cls.getDirectSubclasses()).size());
 
 		return classBean;
 	}
@@ -346,11 +339,13 @@ public class OntologyRetrievalManagerProtegeImpl extends
 		// if OWLNamedClass, then use getNamedSubclasses/Superclasses,
 		// else use getDirectSubclasses/Superclasses (cast to
 		// Collection<Cls>)
-		Collection<Cls> subclasses = null;
-		Collection<Cls> superclasses = new ArrayList<Cls>();
+		List<Cls> subclasses = null;
+		List<Cls> superclasses = null;
 
 		if (cls instanceof OWLNamedClass) {
-			subclasses = ((OWLNamedClass) cls).getNamedSubclasses(false);
+			subclasses = getUniqueClasses(((OWLNamedClass) cls)
+					.getNamedSubclasses(false));
+
 			OWLModel owlModel = (OWLModel) cls.getKnowledgeBase();
 
 			if (cls.equals(owlModel.getOWLThingClass())) {
@@ -365,7 +360,7 @@ public class OntologyRetrievalManagerProtegeImpl extends
 				}
 			}
 		} else {
-			subclasses = cls.getDirectSubclasses();
+			subclasses = getUniqueClasses(cls.getDirectSubclasses());
 		}
 
 		classBean.addRelation(ApplicationConstants.CHILD_COUNT, subclasses
@@ -377,10 +372,10 @@ public class OntologyRetrievalManagerProtegeImpl extends
 
 			// add superclasses
 			if (cls instanceof OWLNamedClass) {
-				superclasses = ((OWLNamedClass) cls)
-						.getNamedSuperclasses(false);
+				superclasses = getUniqueClasses(((OWLNamedClass) cls)
+						.getNamedSuperclasses(false));
 			} else {
-				superclasses = cls.getDirectSuperclasses();
+				superclasses = getUniqueClasses(cls.getDirectSuperclasses());
 			}
 
 			classBean.addRelation(ApplicationConstants.SUPER_CLASS,
@@ -390,10 +385,20 @@ public class OntologyRetrievalManagerProtegeImpl extends
 		// add RDF type
 		if (cls instanceof OWLNamedClass) {
 			classBean.addRelation(ApplicationConstants.RDF_TYPE,
-					convertClasses(((OWLNamedClass) cls).getRDFTypes(), false));
+					convertClasses(getUniqueClasses(((OWLNamedClass) cls)
+							.getRDFTypes()), false));
 		}
 
 		return classBean;
+	}
+
+	private List getUniqueClasses(Collection classes) {
+		if (classes != null) {
+			Set c = new HashSet(classes);
+			return new ArrayList(c);
+		}
+
+		return Collections.emptyList();
 	}
 
 	/**
@@ -409,7 +414,7 @@ public class OntologyRetrievalManagerProtegeImpl extends
 
 		// add properties
 		for (Slot slot : slots) {
-			Collection<Object> vals = concept.getOwnSlotValues(slot);
+			List vals = getUniqueClasses(concept.getOwnSlotValues(slot));
 
 			if (vals.isEmpty()) {
 				continue;
@@ -430,7 +435,6 @@ public class OntologyRetrievalManagerProtegeImpl extends
 			}
 
 			bpProps.put(slot.getBrowserText(), bpPropVals);
-
 			bpPropVals = new ArrayList<String>();
 		}
 
