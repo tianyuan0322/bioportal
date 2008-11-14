@@ -259,7 +259,7 @@ public class LuceneSearch {
 		System.out.println("Backing up index...");
 		long start = System.currentTimeMillis();
 		writer.backupIndexByCopy(getBackupIndexPath());
-		// writer.backupIndexByReading(getBackupIndexPath());
+//		writer.backupIndexByReading(getBackupIndexPath());
 
 		long stop = System.currentTimeMillis(); // stop timing
 		System.out.println("Finished backing up index in "

@@ -15,7 +15,7 @@ public class LuceneSearchClient {
 			LuceneSearch search = LuceneSearch.getInstance();
 
 			
-//			search.backupIndex();
+			search.backupIndex();
 //			search.indexOntology(1070);
 //			search.indexOntology(1032);
 //			search.indexOntology(1058);
@@ -26,7 +26,7 @@ public class LuceneSearchClient {
 //			search.indexOntology(1090);
 //			search.indexOntology(1053);
 //			search.indexOntology(1054);
-			search.indexOntology(1104);
+//			search.indexOntology(1104);
 //			search.indexAllOntologies();
 
 //			System.out.println("Searching...");

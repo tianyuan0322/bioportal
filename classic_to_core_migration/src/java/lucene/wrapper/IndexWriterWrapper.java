@@ -9,16 +9,15 @@ import lucene.bean.LuceneSearchField;
 import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.document.Field;
-import org.apache.lucene.index.CorruptIndexException;
 import org.apache.lucene.index.IndexReader;
 import org.apache.lucene.index.IndexWriter;
 import org.apache.lucene.index.Term;
 import org.apache.lucene.index.IndexWriter.MaxFieldLength;
-import org.apache.lucene.store.LockObtainFailedException;
 import org.ncbo.stanford.util.ontologyfile.pathhandler.AbstractFilePathHandler;
 
 public class IndexWriterWrapper {
 	public static final MaxFieldLength MAX_FIELD_LENGTH = IndexWriter.MaxFieldLength.LIMITED;
+	private static final String OLD_BACKUP_FILE_EXTENSION = "bak";
 	private IndexWriter writer;
 	private String indexPath;
 
@@ -29,8 +28,6 @@ public class IndexWriterWrapper {
 	 * @param analyzer
 	 * @param create
 	 * @throws IOException
-	 * @throws LockObtainFailedException
-	 * @throws CorruptIndexException
 	 */
 	public IndexWriterWrapper(String indexPath, Analyzer analyzer,
 			boolean create) throws IOException {
@@ -43,8 +40,6 @@ public class IndexWriterWrapper {
 	 * @param indexPath
 	 * @param analyzer
 	 * @throws IOException
-	 * @throws LockObtainFailedException
-	 * @throws CorruptIndexException
 	 */
 	public IndexWriterWrapper(String indexPath, Analyzer analyzer)
 			throws IOException {
@@ -89,6 +84,8 @@ public class IndexWriterWrapper {
 
 		if (!backupFilePath.exists()) {
 			backupFilePath.mkdirs();
+		} else {
+			renameBackupIndex(backupFilePath);
 		}
 
 		for (int i = 0; i < children.length; i++) {
@@ -101,9 +98,17 @@ public class IndexWriterWrapper {
 						+ File.separator + f.getName()));
 			}
 		}
+
+		removeOldBackup(backupFilePath);
 	}
 
 	public void backupIndexByReading(String backupPath) throws IOException {
+		File backupFilePath = new File(backupPath);
+
+		if (backupFilePath.exists()) {
+			renameBackupIndex(backupFilePath);
+		}
+
 		IndexReader reader = IndexReader.open(indexPath);
 		IndexWriter backupWriter = new IndexWriter(backupPath, writer
 				.getAnalyzer(), true, MAX_FIELD_LENGTH);
@@ -111,6 +116,41 @@ public class IndexWriterWrapper {
 		backupWriter.addIndexes(new IndexReader[] { reader });
 		backupWriter.close();
 		reader.close();
+
+		removeOldBackup(backupFilePath);
+	}
+
+	private void renameBackupIndex(File backupFilePath) throws IOException {
+		if (backupFilePath.exists()) {
+			String[] children = backupFilePath.list();
+
+			for (int i = 0; i < children.length; i++) {
+				File f = new File(backupFilePath, children[i]);
+
+				if (f.isFile()) {
+					f.renameTo(new File(backupFilePath, f.getName() + "."
+							+ OLD_BACKUP_FILE_EXTENSION));
+				}
+			}
+		}
+	}
+
+	private void removeOldBackup(File backupFilePath) {
+		if (backupFilePath.exists()) {
+			String[] children = backupFilePath.list();
+
+			for (int i = 0; i < children.length; i++) {
+				File f = new File(backupFilePath, children[i]);
+
+				if (f.isFile() && isOldBackupFile(f.getName())) {
+					f.delete();
+				}
+			}
+		}
+	}
+
+	private boolean isOldBackupFile(String filename) {
+		return filename.toLowerCase().endsWith(OLD_BACKUP_FILE_EXTENSION);
 	}
 
 	private void addFields(Document doc, LuceneSearchDocument searchDoc) {
@@ -126,33 +166,5 @@ public class IndexWriterWrapper {
 	private void addField(Document doc, LuceneSearchField field) {
 		doc.add(new Field(field.getLabel(), field.getContents(), field
 				.getStore(), field.getIndex()));
-	}
-
-	/**
-	 * Copies all files under srcDir to dstDir. If dstDir does not exist, it
-	 * will be created.
-	 * 
-	 * @param srcDir
-	 * @param dstDir
-	 * @throws IOException
-	 */
-	private void copyIndex(File dstDir) throws IOException {
-		File indexFilePath = new File(indexPath);
-		String[] children = indexFilePath.list();
-
-		if (!dstDir.exists()) {
-			dstDir.mkdirs();
-		}
-
-		for (int i = 0; i < children.length; i++) {
-			File f = new File(indexFilePath, children[i]);
-
-			if (f.isFile()
-					&& !f.getName().equalsIgnoreCase(
-							IndexWriter.WRITE_LOCK_NAME)) {
-				AbstractFilePathHandler.copyFile(f, new File(dstDir
-						+ File.separator + f.getName()));
-			}
-		}
 	}
 }
