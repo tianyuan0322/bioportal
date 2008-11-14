@@ -15,6 +15,8 @@ SELECT
 	o.obo_foundry_id,
 	o.is_manual,
 	ovm.display_label,
+	ovm.description,
+	ovm.abbreviation,
 	ovm.format,
 	ovm.contact_name,
 	ovm.contact_email,

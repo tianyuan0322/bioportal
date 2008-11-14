@@ -1,5 +1,5 @@
 /*
-SQLyog Enterprise - MySQL GUI v7.11 
+SQLyog Enterprise - MySQL GUI v7.12 
 MySQL - 5.0.45-community-nt-log : Database - bioportal
 *********************************************************************
 */
@@ -227,6 +227,8 @@ CREATE TABLE `ncbo_ontology_version_metadata` (
   `id` int(11) NOT NULL auto_increment,
   `ontology_version_id` int(11) NOT NULL,
   `display_label` varchar(128) NOT NULL,
+  `description` varchar(512) default NULL,
+  `abbreviation` varchar(32) default NULL,
   `format` varchar(50) NOT NULL,
   `contact_name` varchar(128) default NULL,
   `contact_email` varchar(128) default NULL,
@@ -237,8 +239,8 @@ CREATE TABLE `ncbo_ontology_version_metadata` (
   `coding_scheme` varchar(256) default NULL,
   `is_foundry` tinyint(1) NOT NULL,
   `target_terminologies` varchar(256) default NULL,
-  `synonym_slot` varchar(500) character set utf8 collate utf8_bin default NULL,
-  `preferred_name_slot` varchar(500) character set utf8 collate utf8_bin default NULL,
+  `synonym_slot` varchar(512) character set utf8 collate utf8_bin default NULL,
+  `preferred_name_slot` varchar(512) character set utf8 collate utf8_bin default NULL,
   PRIMARY KEY  (`id`),
   UNIQUE KEY `ontology_version_id` (`ontology_version_id`),
   KEY `ontology_id` (`ontology_version_id`),
@@ -557,6 +559,8 @@ DROP TABLE IF EXISTS `v_ncbo_ontology`;
   `obo_foundry_id` varchar(128) default NULL,
   `is_manual` tinyint(1) NOT NULL default '0',
   `display_label` varchar(128) NOT NULL,
+  `description` varchar(512) default NULL,
+  `abbreviation` varchar(32) default NULL,
   `format` varchar(50) NOT NULL,
   `contact_name` varchar(128) default NULL,
   `contact_email` varchar(128) default NULL,
@@ -567,8 +571,8 @@ DROP TABLE IF EXISTS `v_ncbo_ontology`;
   `coding_scheme` varchar(256) default NULL,
   `target_terminologies` varchar(256) default NULL,
   `is_foundry` tinyint(1) NOT NULL,
-  `synonym_slot` varchar(500) character set utf8 collate utf8_bin default NULL,
-  `preferred_name_slot` varchar(500) character set utf8 collate utf8_bin default NULL
+  `synonym_slot` varchar(512) character set utf8 collate utf8_bin default NULL,
+  `preferred_name_slot` varchar(512) character set utf8 collate utf8_bin default NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 */;
 
 /*View structure for view v_ncbo_ontology */
@@ -576,7 +580,7 @@ DROP TABLE IF EXISTS `v_ncbo_ontology`;
 /*!50001 DROP TABLE IF EXISTS `v_ncbo_ontology` */;
 /*!50001 DROP VIEW IF EXISTS `v_ncbo_ontology` */;
 
-/*!50001 CREATE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` SQL SECURITY DEFINER VIEW `v_ncbo_ontology` AS select `ov`.`id` AS `id`,`ov`.`ontology_id` AS `ontology_id`,`ov`.`user_id` AS `user_id`,`ov`.`internal_version_number` AS `internal_version_number`,`ov`.`version_number` AS `version_number`,`ov`.`version_status` AS `version_status`,`ov`.`file_path` AS `file_path`,`ov`.`is_remote` AS `is_remote`,`ov`.`is_reviewed` AS `is_reviewed`,`ov`.`status_id` AS `status_id`,`ov`.`date_created` AS `date_created`,`ov`.`date_released` AS `date_released`,`o`.`obo_foundry_id` AS `obo_foundry_id`,`o`.`is_manual` AS `is_manual`,`ovm`.`display_label` AS `display_label`,`ovm`.`format` AS `format`,`ovm`.`contact_name` AS `contact_name`,`ovm`.`contact_email` AS `contact_email`,`ovm`.`homepage` AS `homepage`,`ovm`.`documentation` AS `documentation`,`ovm`.`publication` AS `publication`,`ovm`.`urn` AS `urn`,`ovm`.`coding_scheme` AS `coding_scheme`,`ovm`.`target_terminologies` AS `target_terminologies`,`ovm`.`is_foundry` AS `is_foundry`,`ovm`.`synonym_slot` AS `synonym_slot`,`ovm`.`preferred_name_slot` AS `preferred_name_slot` from ((`ncbo_ontology` `o` join `ncbo_ontology_version` `ov` on((`o`.`id` = `ov`.`ontology_id`))) join `ncbo_ontology_version_metadata` `ovm` on((`ov`.`id` = `ovm`.`ontology_version_id`))) */;
+/*!50001 CREATE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` SQL SECURITY DEFINER VIEW `v_ncbo_ontology` AS select `ov`.`id` AS `id`,`ov`.`ontology_id` AS `ontology_id`,`ov`.`user_id` AS `user_id`,`ov`.`internal_version_number` AS `internal_version_number`,`ov`.`version_number` AS `version_number`,`ov`.`version_status` AS `version_status`,`ov`.`file_path` AS `file_path`,`ov`.`is_remote` AS `is_remote`,`ov`.`is_reviewed` AS `is_reviewed`,`ov`.`status_id` AS `status_id`,`ov`.`date_created` AS `date_created`,`ov`.`date_released` AS `date_released`,`o`.`obo_foundry_id` AS `obo_foundry_id`,`o`.`is_manual` AS `is_manual`,`ovm`.`display_label` AS `display_label`,`ovm`.`description` AS `description`,`ovm`.`abbreviation` AS `abbreviation`,`ovm`.`format` AS `format`,`ovm`.`contact_name` AS `contact_name`,`ovm`.`contact_email` AS `contact_email`,`ovm`.`homepage` AS `homepage`,`ovm`.`documentation` AS `documentation`,`ovm`.`publication` AS `publication`,`ovm`.`urn` AS `urn`,`ovm`.`coding_scheme` AS `coding_scheme`,`ovm`.`target_terminologies` AS `target_terminologies`,`ovm`.`is_foundry` AS `is_foundry`,`ovm`.`synonym_slot` AS `synonym_slot`,`ovm`.`preferred_name_slot` AS `preferred_name_slot` from ((`ncbo_ontology` `o` join `ncbo_ontology_version` `ov` on((`o`.`id` = `ov`.`ontology_id`))) join `ncbo_ontology_version_metadata` `ovm` on((`ov`.`id` = `ovm`.`ontology_version_id`))) */;
 
 /*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
 /*!40014 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS */;
