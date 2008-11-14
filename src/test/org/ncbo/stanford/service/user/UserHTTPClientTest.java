@@ -36,6 +36,7 @@ public class UserHTTPClientTest extends AbstractBioPortalTest {
 			System.out
 					.println("ERROR in UserHTTPClientTest: testHttpClientGETUsers() ");
 			ioe.printStackTrace();
+      fail();
 		}
 		
 		System.out.println ("UserHTTPClientTest: testHttpClientGETUsers().........................DONE");
@@ -61,6 +62,7 @@ public class UserHTTPClientTest extends AbstractBioPortalTest {
 			System.out
 					.println("ERROR in UserHTTPClientTest: testHttpClient() ");
 			ioe.printStackTrace();
+      fail();
 		}
 		
 		System.out.println ("UserHTTPClientTest: testHttpClientGETUser().........................DONE");
