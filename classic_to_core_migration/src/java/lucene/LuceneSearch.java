@@ -481,7 +481,7 @@ public class LuceneSearch {
 	}
 
 	private void handleException(ResultSet rs, Exception e,
-			boolean ignoreNotFound) throws Exception {
+			boolean ignoreErrors) throws Exception {
 		Throwable t = e.getCause();
 		String msg = null;
 		String className = (t == null) ? "" : t.getClass().getName();
@@ -496,9 +496,9 @@ public class LuceneSearch {
 					+ ") does not exist in the backend store";
 		}
 
-		if (ignoreNotFound && msg != null) {
+		if (ignoreErrors && msg != null) {
 			System.out.println(msg);
-		} else if (ignoreNotFound) {
+		} else if (ignoreErrors) {
 			e.printStackTrace();
 		} else if (msg != null) {
 			throw new Exception(msg);
