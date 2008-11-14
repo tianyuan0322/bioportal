@@ -15,8 +15,10 @@
 	<xsl:template match="ontology">
 		<ontology>
 			<xsl:copy-of select="id" />
-			<xsl:copy-of select="displayLabel"/>
 			<xsl:copy-of select="ontologyId" />
+			<xsl:copy-of select="displayLabel"/>
+			<xsl:copy-of select="description"/>
+			<xsl:copy-of select="abbreviation"/>
 			<xsl:copy-of select="internalVersionNumber" />
 			<xsl:copy-of select="versionNumber" />
 			<xsl:copy-of select="versionStatus" />

@@ -50,6 +50,12 @@
 		</property>
 		<property name="displayLabel" type="java.lang.String">
 		    <column name="display_label" length="128" />
+		</property>		
+		<property name="description" type="java.lang.String">
+		    <column name="description" length="512" />
+		</property>
+		<property name="abbreviation" type="java.lang.String">
+		    <column name="abbreviation" length="32" />
 		</property>
 		<property name="format" type="java.lang.String">
 		    <column name="format" length="50" />
@@ -82,10 +88,10 @@
 		    <column name="is_foundry" />
 		</property>		
 		<property name="synonymSlot" type="java.lang.String">
-		    <column name="synonym_slot" length="500" />
+		    <column name="synonym_slot" length="512" />
 		</property>
 		<property name="preferredNameSlot" type="java.lang.String">
-		    <column name="preferred_name_slot" length="500" />
+		    <column name="preferred_name_slot" length="512" />
 		</property>
 	</class>
 </hibernate-mapping>

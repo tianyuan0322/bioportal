@@ -90,6 +90,10 @@ public class BeanHelper {
 				.getMessage("form.ontology.dateReleased"));
 		String displayLabel = httpServletRequest.getParameter(MessageUtils
 				.getMessage("form.ontology.displayLabel"));
+		String description = httpServletRequest.getParameter(MessageUtils
+				.getMessage("form.ontology.description"));
+		String abbreviation = httpServletRequest.getParameter(MessageUtils
+				.getMessage("form.ontology.abbreviation"));
 		String format = httpServletRequest.getParameter(MessageUtils
 				.getMessage("form.ontology.format"));
 		String contactName = httpServletRequest.getParameter(MessageUtils
@@ -172,6 +176,8 @@ public class BeanHelper {
 		}
 
 		bean.setDisplayLabel(displayLabel);
+		bean.setDescription(description);
+		bean.setAbbreviation(abbreviation);
 		bean.setFormat(format);
 		bean.setContactName(contactName);
 		bean.setContactEmail(contactEmail);

@@ -38,6 +38,8 @@ public class OntologyBean {
 	private String oboFoundryId;
 	private Byte isManual;
 	private String displayLabel;
+	private String description;
+	private String abbreviation;
 	private String format;
 	private String contactName;
 	private String contactEmail;
@@ -85,6 +87,8 @@ public class OntologyBean {
 			this.setOboFoundryId(ncboOntology.getOboFoundryId());
 			this.setIsManual(ncboOntology.getIsManual());
 			this.setDisplayLabel(ncboOntology.getDisplayLabel());
+			this.setDescription(ncboOntology.getDescription());
+			this.setAbbreviation(ncboOntology.getAbbreviation());
 			this.setFormat(ncboOntology.getFormat());
 			this.setContactName(ncboOntology.getContactName());
 			this.setContactEmail(ncboOntology.getContactEmail());
@@ -121,6 +125,8 @@ public class OntologyBean {
 			metadata.setContactEmail(this.getContactEmail());
 			metadata.setContactName(this.getContactName());
 			metadata.setDisplayLabel(this.getDisplayLabel());
+			metadata.setDescription(this.getDescription());
+			metadata.setAbbreviation(this.getAbbreviation());
 			metadata.setDocumentation(this.getDocumentation());
 			metadata.setFormat(this.getFormat());
 			metadata.setHomepage(this.getHomepage());
@@ -131,7 +137,7 @@ public class OntologyBean {
 			metadata.setTargetTerminologies(this.getTargetTerminologies());
 			metadata.setSynonymSlot(this.getSynonymSlot());
 			metadata.setPreferredNameSlot(this.getPreferredNameSlot());
-			
+
 			ncboOntologyMetadataSet.add(metadata);
 			ontologyVersion
 					.setNcboOntologyVersionMetadatas(ncboOntologyMetadataSet);
@@ -289,7 +295,9 @@ public class OntologyBean {
 				+ this.getUserId() + ", Version Number: "
 				+ this.getVersionNumber() + ", Version Status: "
 				+ this.getVersionStatus() + ", Display Label: "
-				+ this.getDisplayLabel() + ", Format: " + this.getFormat()
+				+ this.getDisplayLabel() + ", Description: "
+				+ this.getDescription() + ", Abbreviation: "
+				+ this.getAbbreviation() + ", Format: " + this.getFormat()
 				+ ", Contact Name: " + this.getContactName()
 				+ ", Contact Email: " + this.getContactEmail() + ", Foundry: "
 				+ this.getIsFoundry() + " Coding Scheme: "
@@ -829,5 +837,35 @@ public class OntologyBean {
 	 */
 	public void setPreferredNameSlot(String preferredNameSlot) {
 		this.preferredNameSlot = preferredNameSlot;
+	}
+
+	/**
+	 * @return the description
+	 */
+	public String getDescription() {
+		return description;
+	}
+
+	/**
+	 * @param description
+	 *            the description to set
+	 */
+	public void setDescription(String description) {
+		this.description = description;
+	}
+
+	/**
+	 * @return the abbreviation
+	 */
+	public String getAbbreviation() {
+		return abbreviation;
+	}
+
+	/**
+	 * @param abbreviation
+	 *            the abbreviation to set
+	 */
+	public void setAbbreviation(String abbreviation) {
+		this.abbreviation = abbreviation;
 	}
 }

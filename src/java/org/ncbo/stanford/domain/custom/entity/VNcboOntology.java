@@ -31,6 +31,8 @@ public class VNcboOntology {
 	private String oboFoundryId;
 	private Byte isManual;
 	private String displayLabel;
+	private String description;
+	private String abbreviation;
 	private String format;
 	private String contactName;
 	private String contactEmail;
@@ -689,5 +691,33 @@ public class VNcboOntology {
 	 */
 	public void setPreferredNameSlot(String preferredNameSlot) {
 		this.preferredNameSlot = preferredNameSlot;
+	}
+
+	/**
+	 * @return the description
+	 */
+	public String getDescription() {
+		return description;
+	}
+
+	/**
+	 * @param description the description to set
+	 */
+	public void setDescription(String description) {
+		this.description = description;
+	}
+
+	/**
+	 * @return the abbreviation
+	 */
+	public String getAbbreviation() {
+		return abbreviation;
+	}
+
+	/**
+	 * @param abbreviation the abbreviation to set
+	 */
+	public void setAbbreviation(String abbreviation) {
+		this.abbreviation = abbreviation;
 	}
 }
