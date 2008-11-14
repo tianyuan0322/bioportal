@@ -77,7 +77,7 @@ public class IndexWriterWrapper {
 		}
 	}
 
-	public void backupIndexByCopy(String backupPath) throws IOException {
+	public void backupIndexByFileCopy(String backupPath) throws IOException {
 		File indexFilePath = new File(indexPath);
 		String[] children = indexFilePath.list();
 		File backupFilePath = new File(backupPath);

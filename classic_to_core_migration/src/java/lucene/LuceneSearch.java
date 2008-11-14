@@ -258,7 +258,7 @@ public class LuceneSearch {
 	public void backupIndex(IndexWriterWrapper writer) throws Exception {
 		System.out.println("Backing up index...");
 		long start = System.currentTimeMillis();
-		writer.backupIndexByCopy(getBackupIndexPath());
+		writer.backupIndexByFileCopy(getBackupIndexPath());
 //		writer.backupIndexByReading(getBackupIndexPath());
 
 		long stop = System.currentTimeMillis(); // stop timing
