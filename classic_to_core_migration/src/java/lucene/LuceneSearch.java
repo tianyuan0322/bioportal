@@ -43,8 +43,6 @@ import org.apache.lucene.search.TopFieldDocs;
 import org.ncbo.stanford.util.constants.ApplicationConstants;
 import org.ncbo.stanford.util.helper.StringHelper;
 
-import com.mysql.jdbc.exceptions.MySQLSyntaxErrorException;
-
 import edu.stanford.smi.protege.model.Frame;
 
 public class LuceneSearch {
@@ -267,7 +265,7 @@ public class LuceneSearch {
 
 		long stop = System.currentTimeMillis(); // stop timing
 		System.out.println("Finished backing up index in "
-				+ (double) (stop - start) / 1000 / 60 + " minutes.");
+				+ (double) (stop - start) / 1000 + " seconds.");
 	}
 
 	// TODO: in BP, replace rs with OntologyBean
@@ -485,9 +483,12 @@ public class LuceneSearch {
 	private void handleException(ResultSet rs, Exception e,
 			boolean ignoreNotFound) throws Exception {
 		Throwable t = e.getCause();
+		String className = t.getClass().getName();
 
 		if (e instanceof LBParameterException
-				|| (t != null && t instanceof MySQLSyntaxErrorException)) {
+				|| (t != null && (className
+						.equals("com.mysql.jdbc.exceptions.MySQLSyntaxErrorException") || className
+						.equals("com.mysql.jdbc.exceptions.jdbc4.MySQLSyntaxErrorException")))) {
 			String msg = "Ontology: " + rs.getString("display_label")
 					+ " (Id: " + rs.getInt("id") + ", Ontology Id: "
 					+ rs.getInt("ontology_id")

@@ -302,7 +302,10 @@ public class LuceneSearchManagerProtegeImpl implements LuceneSearchManager {
 			slot = kb instanceof OWLModel ? ((OWLModel) kb)
 					.getRDFProperty(preferredNameSlotName) : kb
 					.getSlot(preferredNameSlotName);
-			slots.add(slot);
+
+			if (slot != null) {
+				slots.add(slot);
+			}
 		}
 
 		if (kb instanceof OWLModel) {
