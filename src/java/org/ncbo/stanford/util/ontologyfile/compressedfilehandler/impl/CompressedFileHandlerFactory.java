@@ -19,7 +19,6 @@ public class CompressedFileHandlerFactory {
 
 	private static final Log log = LogFactory
 			.getLog(CompressedFileHandlerFactory.class);
-	private static final String FORMAT_OWL = "OWL";
 	private static final String FORMAT_LEXGRID_XML = "LEXGRID_XML";
 
 	public static CompressedFileHandler createFileHandler(String format)
@@ -54,7 +53,7 @@ public class CompressedFileHandlerFactory {
 						.equalsIgnoreCase(ApplicationConstants.FORMAT_OWL_FULL)
 				|| format
 						.equalsIgnoreCase(ApplicationConstants.FORMAT_OWL_LITE)) {
-			prefix = FORMAT_OWL;
+			prefix = ApplicationConstants.FORMAT_OWL;
 		} else if (format
 				.equalsIgnoreCase(ApplicationConstants.FORMAT_LEXGRID_XML)) {
 			prefix = FORMAT_LEXGRID_XML;
