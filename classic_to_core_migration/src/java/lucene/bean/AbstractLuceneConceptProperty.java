@@ -3,20 +3,34 @@ package lucene.bean;
 import lucene.enumeration.LuceneRecordTypeEnum;
 
 public class AbstractLuceneConceptProperty {
+	protected Integer ontologyVersionId;
 	protected Integer ontologyId;
+	protected String ontologyDisplayLabel;
 	protected String preferredName;
 	protected LuceneRecordTypeEnum propertyType;
 
 	/**
+	 * @param ontologyVersionId
 	 * @param ontologyId
+	 * @param ontologyDisplayLabel
+	 * @param preferredName
 	 * @param propetyType
 	 */
-	public AbstractLuceneConceptProperty(Integer ontologyId, String preferredName,
+	public AbstractLuceneConceptProperty(Integer ontologyVersionId, Integer ontologyId, String ontologyDisplayLabel, String preferredName,
 			LuceneRecordTypeEnum propetyType) {
 		super();
+		this.ontologyVersionId = ontologyVersionId;
 		this.ontologyId = ontologyId;
+		this.ontologyDisplayLabel = ontologyDisplayLabel;
 		this.preferredName = preferredName;
 		this.propertyType = propetyType;
+	}
+
+	/**
+	 * @return the ontologyVersionId
+	 */
+	public Integer getOntologyVersionId() {
+		return ontologyVersionId;
 	}
 
 	/**
@@ -24,6 +38,13 @@ public class AbstractLuceneConceptProperty {
 	 */
 	public Integer getOntologyId() {
 		return ontologyId;
+	}
+
+	/**
+	 * @return the ontologyDisplayLabel
+	 */
+	public String getOntologyDisplayLabel() {
+		return ontologyDisplayLabel;
 	}
 
 	/**
