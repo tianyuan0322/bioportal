@@ -10,7 +10,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.ncbo.stanford.bean.OntologyBean;
-import org.ncbo.stanford.util.constants.ApplicationConstants;
 import org.ncbo.stanford.util.ontologyfile.compressedfilehandler.AbstractCompressedFileHandler;
 
 /**
@@ -26,18 +25,19 @@ public class RRFCompressedFileHandlerImpl extends AbstractCompressedFileHandler 
 			throws FileNotFoundException, IOException {
 		List<String> relevantFiles = super.handle(outputFile, ontologyBean);
 		String uploadedFile = relevantFiles.get(0);
-        relevantFiles = new ArrayList<String>(0);
-        relevantFiles.add(uploadedFile);
-        int indexOfLastFileSeparator= uploadedFile.toString().lastIndexOf(System
-                        .getProperty("file.separator"));
-        if (indexOfLastFileSeparator== -1) {
-            indexOfLastFileSeparator=0;
-        }
-        String directoryName= uploadedFile.substring(0, indexOfLastFileSeparator);
-        relevantFiles.add(directoryName);
-                
+		relevantFiles = new ArrayList<String>(0);
+		relevantFiles.add(uploadedFile);
+		int indexOfLastFileSeparator = uploadedFile.toString().lastIndexOf(
+				System.getProperty("file.separator"));
+		
+		if (indexOfLastFileSeparator == -1) {
+			indexOfLastFileSeparator = 0;
+		}
+
+		String directoryName = uploadedFile.substring(0,
+				indexOfLastFileSeparator);
+		relevantFiles.add(directoryName);
+
 		return relevantFiles;
 	}
-	
-
 }
