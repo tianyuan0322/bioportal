@@ -228,11 +228,12 @@ public class LuceneSearch {
 			if (!uniqueDocs.containsKey(conceptId)) {
 				uniqueDocs.put(conceptId, d);
 
-				System.out.println(hits[i].score + " | " + d.get("ontologyId")
+				System.out.println(hits[i].score + " | " + d.get("ontologyVersionId")
+						+ " | " + d.get("ontologyId")
 						+ " | " + conceptId + " | " + d.get("contents") + " | "
 						+ d.get("recordType") + " | " + d.get("preferredName")
 						+ " | " + d.get("conceptIdShort") + " | "
-						+ d.get("literalContents"));
+						+ d.get("ontologyDisplayLabel"));
 			}
 		}
 
