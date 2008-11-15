@@ -32,6 +32,7 @@ public class MetadataFileBean {
 	private String format;
 	private String description;
 	private String publication;
+	private String wiki;
 	private String domain;
 	private String relevantOrganism;
 	private String subtypesOf;
@@ -374,6 +375,21 @@ public class MetadataFileBean {
 	}
 
 	/**
+	 * @return the wiki
+	 */
+	public String getWiki() {
+		return wiki;
+	}
+
+	/**
+	 * @param wiki
+	 *            the wiki to set
+	 */
+	public void setWiki(String wiki) {
+		this.wiki = wiki;
+	}
+
+	/**
 	 * @return the xrefsTo
 	 */
 	public String getXrefsTo() {
@@ -399,12 +415,13 @@ public class MetadataFileBean {
 				+ "documentation: " + documentation + "\n" + "contact: "
 				+ contact + "\n" + "format: " + format + "\n" + "description: "
 				+ description + "\n" + "publication: " + publication + "\n"
-				+ "domain: " + domain + "\n" + "relevantOrganism: "
-				+ relevantOrganism + "\n" + "subtypesOf: " + subtypesOf + "\n"
-				+ "pathoType: " + pathoType + "\n" + "granularity: "
-				+ granularity + "\n" + "application: " + application + "\n"
-				+ "isObsolete: " + isObsolete + "\n" + "consider: " + consider
-				+ "\n" + "alternateDownload: " + alternateDownload + "\n"
+				+ "wiki: " + wiki + "\n" + "domain: " + domain + "\n"
+				+ "relevantOrganism: " + relevantOrganism + "\n"
+				+ "subtypesOf: " + subtypesOf + "\n" + "pathoType: "
+				+ pathoType + "\n" + "granularity: " + granularity + "\n"
+				+ "application: " + application + "\n" + "isObsolete: "
+				+ isObsolete + "\n" + "consider: " + consider + "\n"
+				+ "alternateDownload: " + alternateDownload + "\n"
 				+ "xrefsTo: " + xrefsTo;
 	}
 }
