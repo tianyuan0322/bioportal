@@ -7,14 +7,18 @@ public class LuceneProtegeFrame extends AbstractLuceneConceptProperty {
 	private Frame frame;
 
 	/**
-	 * @param frame
+	 * @param ontologyVersionId
 	 * @param ontologyId
+	 * @param ontologyDisplayLabel
 	 * @param preferredName
 	 * @param frameType
+	 * @param frame
 	 */
-	public LuceneProtegeFrame(Frame frame, Integer ontologyId,
-			String preferredName, LuceneRecordTypeEnum frameType) {
-		super(ontologyId, preferredName, frameType);
+	public LuceneProtegeFrame(Integer ontologyVersionId, Integer ontologyId,
+			String ontologyDisplayLabel, String preferredName,
+			LuceneRecordTypeEnum frameType, Frame frame) {
+		super(ontologyVersionId, ontologyId, ontologyDisplayLabel,
+				preferredName, frameType);
 		this.frame = frame;
 	}
 

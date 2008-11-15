@@ -67,10 +67,11 @@ public class LuceneSearchManagerProtegeImpl implements LuceneSearchManager {
 	@SuppressWarnings("unchecked")
 	public void indexOntology(IndexWriterWrapper writer, ResultSet rs)
 			throws Exception {
-		String displayLabel = rs.getString("display_label");
+		Integer ontologyVersionId = rs.getInt("id");
 		Integer ontologyId = rs.getInt("ontology_id");
-		System.out.println("Adding ontology to index: " + displayLabel
-				+ " (Id: " + rs.getInt("id") + ", Ontology Id: " + ontologyId
+		String ontologyDisplayLabel = rs.getString("display_label");
+		System.out.println("Adding ontology to index: " + ontologyDisplayLabel
+				+ " (Id: " + ontologyVersionId + ", Ontology Id: " + ontologyId
 				+ ", Format: " + rs.getString("format") + ")");
 		long start = System.currentTimeMillis();
 
@@ -91,9 +92,9 @@ public class LuceneSearchManagerProtegeImpl implements LuceneSearchManager {
 			String preferredName = null;
 			List<Slot> preferredNameSlots = getPreferredNameSlots(kb, rs
 					.getString("preferred_name_slot"));
-			LuceneProtegeFrame protegeFrame = new LuceneProtegeFrame(frame,
-					ontologyId, null,
-					LuceneRecordTypeEnum.RECORD_TYPE_PREFERRED_NAME);
+			LuceneProtegeFrame protegeFrame = new LuceneProtegeFrame(
+					ontologyVersionId, ontologyId, ontologyDisplayLabel, null,
+					LuceneRecordTypeEnum.RECORD_TYPE_PREFERRED_NAME, frame);
 
 			for (Slot prefNameSlot : preferredNameSlots) {
 				preferredName = addPreferredNameSlotToIndex(writer, doc, kb,
@@ -129,8 +130,9 @@ public class LuceneSearchManagerProtegeImpl implements LuceneSearchManager {
 		kb = null;
 
 		long stop = System.currentTimeMillis(); // stop timing
-		System.out.println("Finished indexing ontology: " + displayLabel
-				+ " in " + (double) (stop - start) / 1000 / 60 + " minutes.");
+		System.out.println("Finished indexing ontology: "
+				+ ontologyDisplayLabel + " in " + (double) (stop - start)
+				/ 1000 / 60 + " minutes.");
 	}
 
 	@SuppressWarnings("unchecked")

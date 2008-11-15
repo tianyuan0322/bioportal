@@ -218,8 +218,6 @@ public class LuceneSearch {
 		TopFieldDocs docs = searcher.search(query, null, MAX_NUM_HITS,
 				new Sort(fields));
 		ScoreDoc[] hits = docs.scoreDocs;
-
-		long stop = System.currentTimeMillis(); // stop timing
 		
 		Map<String, Document> uniqueDocs = new LinkedHashMap<String, Document>();
 
@@ -239,6 +237,7 @@ public class LuceneSearch {
 			}
 		}
 
+		long stop = System.currentTimeMillis(); // stop timing
 		System.out.println("Query: " + query);
 		System.out.println("Hits: " + hits.length + ", Unique Hits: "
 				+ uniqueDocs.size());

@@ -8,13 +8,18 @@ public class LuceneLexGridProperty extends AbstractLuceneConceptProperty {
 	Property property;
 
 	/**
+	 * @param ontologyVersionId
 	 * @param ontologyId
+	 * @param ontologyDisplayLabel
+	 * @param preferredName
 	 * @param propetyType
 	 * @param property
 	 */
-	public LuceneLexGridProperty(Integer ontologyId, String preferredName,
+	public LuceneLexGridProperty(Integer ontologyVersionId, Integer ontologyId,
+			String ontologyDisplayLabel, String preferredName,
 			LuceneRecordTypeEnum propetyType, Property property) {
-		super(ontologyId, preferredName, propetyType);
+		super(ontologyVersionId, ontologyId, ontologyDisplayLabel,
+				preferredName, propetyType);
 		this.property = property;
 	}
 

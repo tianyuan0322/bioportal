@@ -15,7 +15,7 @@ public class LuceneSearchClient {
 			LuceneSearch search = LuceneSearch.getInstance();
 
 			
-			search.backupIndex();
+//			search.backupIndex();
 //			search.indexOntology(1070);
 //			search.indexOntology(1032);
 //			search.indexOntology(1058);
@@ -27,15 +27,17 @@ public class LuceneSearchClient {
 //			search.indexOntology(1053);
 //			search.indexOntology(1054);
 //			search.indexOntology(1104);
+//			search.indexOntology(1066);
 //			search.indexAllOntologies();
 
-//			System.out.println("Searching...");
-//			search.executeQuery("blood", true);
+			System.out.println("Searching...");
+			search.executeQuery("melanoma", true);
 
 			Collection<Integer> ontologyIds = new ArrayList<Integer>();
-//			ontologyIds.add(1070); // Biological Process (GO) - OBO
+			ontologyIds.add(1070); // Biological Process (GO) - OBO
+//			ontologyIds.add(1102); // Cellular Component (GO) - OBO
 			ontologyIds.add(1032); // NCIT - OWL
-			ontologyIds.add(1058); // SNP-Ontology - OWL
+//			ontologyIds.add(1058); // SNP-Ontology - OWL
 //			ontologyIds.add(1055); // Galen - OWL
 //			ontologyIds.add(1056); // Basic Vertebrate Anatomy - OWL
 //			ontologyIds.add(1089); // BIRNLex - OWL
@@ -44,6 +46,7 @@ public class LuceneSearchClient {
 //			ontologyIds.add(1053); // FMA - OWL
 //			ontologyIds.add(1054); // Amino Acid - OWL
 //			ontologyIds.add(1104); // Biomedical Resource Ontology (BRO) - OWL
+//			ontologyIds.add(1066); // Unit - OBO
 //			System.out.println("Searching...");
 //			search.executeQuery("cell", ontologyIds, false);
 		} catch (Exception e) {

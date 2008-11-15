@@ -153,7 +153,9 @@ public class IndexWriterWrapper {
 	}
 
 	private void addFields(Document doc, LuceneSearchDocument searchDoc) {
+		addField(doc, searchDoc.getOntologyVersionId());
 		addField(doc, searchDoc.getOntologyId());
+		addField(doc, searchDoc.getOntologyDisplayLabel());
 		addField(doc, searchDoc.getRecordType());
 		addField(doc, searchDoc.getConceptId());
 		addField(doc, searchDoc.getConceptIdShort());

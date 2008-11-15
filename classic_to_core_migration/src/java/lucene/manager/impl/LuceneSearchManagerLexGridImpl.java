@@ -33,11 +33,12 @@ public class LuceneSearchManagerLexGridImpl implements LuceneSearchManager {
 
 	public void indexOntology(IndexWriterWrapper writer, ResultSet rs)
 			throws Exception {
+		Integer ontologyVersionId = rs.getInt("id");
 		Integer ontologyId = rs.getInt("ontology_id");
-		String displayLabel = rs.getString("display_label");
+		String ontologyDisplayLabel = rs.getString("display_label");
 
-		System.out.println("Adding ontology to index: " + displayLabel
-				+ " (Id: " + rs.getInt("id") + ", Ontology Id: "
+		System.out.println("Adding ontology to index: " + ontologyDisplayLabel
+				+ " (Id: " + ontologyVersionId + ", Ontology Id: "
 				+ rs.getInt("ontology_id") + ", Format: "
 				+ rs.getString("format") + ")");
 		long start = System.currentTimeMillis();
@@ -65,25 +66,32 @@ public class LuceneSearchManagerLexGridImpl implements LuceneSearchManager {
 				Concept concept = ref.getReferencedEntry();
 
 				String preferredName = setPresentationProperties(writer, doc,
-						ontologyId, concept);
-				setGenericProperties(writer, doc, ontologyId, preferredName,
+						ontologyVersionId, ontologyId, ontologyDisplayLabel,
 						concept);
-				setDefinitionProperties(writer, doc, ontologyId, preferredName,
+				setGenericProperties(writer, doc, ontologyVersionId,
+						ontologyId, ontologyDisplayLabel, preferredName,
 						concept);
-				setCommentProperties(writer, doc, ontologyId, preferredName,
+				setDefinitionProperties(writer, doc, ontologyVersionId,
+						ontologyId, ontologyDisplayLabel, preferredName,
 						concept);
-				setInstructionProperties(writer, doc, ontologyId,
-						preferredName, concept);
+				setCommentProperties(writer, doc, ontologyVersionId,
+						ontologyId, ontologyDisplayLabel, preferredName,
+						concept);
+				setInstructionProperties(writer, doc, ontologyVersionId,
+						ontologyId, ontologyDisplayLabel, preferredName,
+						concept);
 			}
 		}
 
 		long stop = System.currentTimeMillis(); // stop timing
-		System.out.println("Finished indexing ontology: " + displayLabel
-				+ " in " + (double) (stop - start) / 1000 / 60 + " minutes.");
+		System.out.println("Finished indexing ontology: "
+				+ ontologyDisplayLabel + " in " + (double) (stop - start)
+				/ 1000 / 60 + " minutes.");
 	}
 
 	private String setPresentationProperties(IndexWriterWrapper writer,
-			LuceneSearchDocument doc, Integer ontologyId, Concept concept)
+			LuceneSearchDocument doc, Integer ontologyVersionId,
+			Integer ontologyId, String ontologyDisplayLabel, Concept concept)
 			throws IOException {
 		LuceneRecordTypeEnum recType = LuceneRecordTypeEnum.RECORD_TYPE_PREFERRED_NAME;
 		boolean isFirst = true;
@@ -92,7 +100,7 @@ public class LuceneSearchManagerLexGridImpl implements LuceneSearchManager {
 		for (Iterator<Presentation> itr = concept.iteratePresentation(); itr
 				.hasNext();) {
 			Presentation p = itr.next();
-			
+
 			// the first value is assumed to be the preferred name
 			// the rest of the values are assumed to by synonyms
 			if (isFirst) {
@@ -103,8 +111,8 @@ public class LuceneSearchManagerLexGridImpl implements LuceneSearchManager {
 			}
 
 			setLuceneSearchDocument(doc, concept.getId(),
-					new LuceneLexGridProperty(ontologyId, preferredName,
-							recType, p));
+					new LuceneLexGridProperty(ontologyVersionId, ontologyId,
+							ontologyDisplayLabel, preferredName, recType, p));
 			writer.addDocument(doc);
 		}
 
@@ -112,51 +120,59 @@ public class LuceneSearchManagerLexGridImpl implements LuceneSearchManager {
 	}
 
 	private void setGenericProperties(IndexWriterWrapper writer,
-			LuceneSearchDocument doc, Integer ontologyId, String preferredName,
-			Concept concept) throws IOException {
+			LuceneSearchDocument doc, Integer ontologyVersionId,
+			Integer ontologyId, String ontologyDisplayLabel,
+			String preferredName, Concept concept) throws IOException {
 		for (Iterator<ConceptProperty> itr = concept.iterateConceptProperty(); itr
 				.hasNext();) {
 			ConceptProperty cp = itr.next();
 			setLuceneSearchDocument(doc, concept.getId(),
-					new LuceneLexGridProperty(ontologyId, preferredName,
+					new LuceneLexGridProperty(ontologyVersionId, ontologyId,
+							ontologyDisplayLabel, preferredName,
 							LuceneRecordTypeEnum.RECORD_TYPE_PROPERTY, cp));
 			writer.addDocument(doc);
 		}
 	}
 
 	private void setDefinitionProperties(IndexWriterWrapper writer,
-			LuceneSearchDocument doc, Integer ontologyId, String preferredName,
-			Concept concept) throws IOException {
+			LuceneSearchDocument doc, Integer ontologyVersionId,
+			Integer ontologyId, String ontologyDisplayLabel,
+			String preferredName, Concept concept) throws IOException {
 		for (Iterator<Definition> itr = concept.iterateDefinition(); itr
 				.hasNext();) {
 			Definition d = itr.next();
 			setLuceneSearchDocument(doc, concept.getId(),
-					new LuceneLexGridProperty(ontologyId, preferredName,
+					new LuceneLexGridProperty(ontologyVersionId, ontologyId,
+							ontologyDisplayLabel, preferredName,
 							LuceneRecordTypeEnum.RECORD_TYPE_PROPERTY, d));
 			writer.addDocument(doc);
 		}
 	}
 
 	private void setCommentProperties(IndexWriterWrapper writer,
-			LuceneSearchDocument doc, Integer ontologyId, String preferredName,
-			Concept concept) throws IOException {
+			LuceneSearchDocument doc, Integer ontologyVersionId,
+			Integer ontologyId, String ontologyDisplayLabel,
+			String preferredName, Concept concept) throws IOException {
 		for (Iterator<Comment> itr = concept.iterateComment(); itr.hasNext();) {
 			Comment c = itr.next();
 			setLuceneSearchDocument(doc, concept.getId(),
-					new LuceneLexGridProperty(ontologyId, preferredName,
+					new LuceneLexGridProperty(ontologyVersionId, ontologyId,
+							ontologyDisplayLabel, preferredName,
 							LuceneRecordTypeEnum.RECORD_TYPE_PROPERTY, c));
 			writer.addDocument(doc);
 		}
 	}
 
 	private void setInstructionProperties(IndexWriterWrapper writer,
-			LuceneSearchDocument doc, Integer ontologyId, String preferredName,
-			Concept concept) throws IOException {
+			LuceneSearchDocument doc, Integer ontologyVersionId,
+			Integer ontologyId, String ontologyDisplayLabel,
+			String preferredName, Concept concept) throws IOException {
 		for (Iterator<Instruction> itr = concept.iterateInstruction(); itr
 				.hasNext();) {
 			Instruction i = itr.next();
 			setLuceneSearchDocument(doc, concept.getId(),
-					new LuceneLexGridProperty(ontologyId, preferredName,
+					new LuceneLexGridProperty(ontologyVersionId, ontologyId,
+							ontologyDisplayLabel, preferredName,
 							LuceneRecordTypeEnum.RECORD_TYPE_PROPERTY, i));
 			writer.addDocument(doc);
 		}
@@ -164,7 +180,9 @@ public class LuceneSearchManagerLexGridImpl implements LuceneSearchManager {
 
 	private void setLuceneSearchDocument(LuceneSearchDocument doc,
 			String conceptId, LuceneLexGridProperty prop) {
+		doc.setOntologyVersionId(prop.getOntologyVersionId().toString());
 		doc.setOntologyId(prop.getOntologyId().toString());
+		doc.setOntologyDisplayLabel(prop.getOntologyDisplayLabel());
 		doc.setRecordType(prop.getPropertyType());
 		doc.setConceptId(conceptId);
 		doc.setConceptIdShort(conceptId);
@@ -174,8 +192,7 @@ public class LuceneSearchManagerLexGridImpl implements LuceneSearchManager {
 	}
 
 	/**
-	 * 
-	 * @param ncboOntology
+	 * @param rs
 	 * @return The LexGrid codingScheme URN string (registered Name)
 	 * @throws SQLException
 	 */
@@ -193,19 +210,18 @@ public class LuceneSearchManagerLexGridImpl implements LuceneSearchManager {
 	}
 
 	/**
-	 * 
-	 * @param ncboOntology
+	 * @param rs
 	 * @return The LexGrid codingScheme URN string (registered Name)
 	 * @throws SQLException
 	 */
 	private CodingSchemeVersionOrTag getLexGridCodingSchemeVersion(ResultSet rs)
 			throws SQLException {
 		String urnAndVersion = rs.getString("coding_scheme");
-		
+
 		if (StringHelper.isNullOrNullString(urnAndVersion)) {
 			urnAndVersion = rs.getString("urn");
 		}
-		
+
 		String urnVersionArray[] = splitUrnAndVersion(urnAndVersion);
 
 		return (urnVersionArray != null && urnVersionArray.length > 1) ? Constructors
