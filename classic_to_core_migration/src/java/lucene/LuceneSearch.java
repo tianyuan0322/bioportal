@@ -200,6 +200,8 @@ public class LuceneSearch {
 
 	public void executeQuery(String expr, Collection<Integer> ontologyIds,
 			boolean includeProperties) throws IOException {
+		long start = System.currentTimeMillis();
+
 		Searcher searcher = null;
 		Collection<Frame> results = new LinkedHashSet<Frame>();
 
@@ -217,6 +219,8 @@ public class LuceneSearch {
 				new Sort(fields));
 		ScoreDoc[] hits = docs.scoreDocs;
 
+		long stop = System.currentTimeMillis(); // stop timing
+		
 		Map<String, Document> uniqueDocs = new LinkedHashMap<String, Document>();
 
 		for (int i = 0; i < hits.length; i++) {
@@ -238,6 +242,8 @@ public class LuceneSearch {
 		System.out.println("Query: " + query);
 		System.out.println("Hits: " + hits.length + ", Unique Hits: "
 				+ uniqueDocs.size());
+		System.out.println("Excecution Time: " + (double) (stop - start) / 1000
+				+ " seconds.");
 	}
 
 	// TODO: in BP, replace rs with OntologyBean
@@ -480,8 +486,8 @@ public class LuceneSearch {
 		return DriverManager.getConnection(jdbcUrl, jdbcUsername, jdbcPassword);
 	}
 
-	private void handleException(ResultSet rs, Exception e,
-			boolean ignoreErrors) throws Exception {
+	private void handleException(ResultSet rs, Exception e, boolean ignoreErrors)
+			throws Exception {
 		Throwable t = e.getCause();
 		String msg = null;
 		String className = (t == null) ? "" : t.getClass().getName();
