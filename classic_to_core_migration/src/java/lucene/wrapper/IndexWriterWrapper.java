@@ -65,6 +65,10 @@ public class IndexWriterWrapper {
 		writer.setMergeFactor(mergeFactor);
 	}
 
+	public void setMaxMergeDocs(Integer maxMergeDocs) {
+		writer.setMaxMergeDocs(maxMergeDocs);
+	}
+
 	public void optimize() throws IOException {
 		writer.optimize();
 	}

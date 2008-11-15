@@ -49,6 +49,7 @@ public class LuceneSearch {
 
 	private static final int MAX_NUM_HITS = 1000;
 	private static final int INDEX_MERGE_FACTOR = LogMergePolicy.DEFAULT_MERGE_FACTOR;
+	private static final int INDEX_MAX_MERGE_DOCS = LogMergePolicy.DEFAULT_MAX_MERGE_DOCS;
 	private Analyzer analyzer = new StandardAnalyzer();
 
 	// TODO: Throwaway code ===============================================
@@ -104,8 +105,7 @@ public class LuceneSearch {
 			try {
 				IndexWriterWrapper writer = new IndexWriterWrapper(
 						getIndexPath(), analyzer);
-				writer.setMergeFactor(INDEX_MERGE_FACTOR);
-
+				
 				indexOntology(writer, rs, true);
 
 				writer.optimize();
@@ -135,6 +135,7 @@ public class LuceneSearch {
 
 		writer = new IndexWriterWrapper(indexPath, analyzer, true);
 		writer.setMergeFactor(INDEX_MERGE_FACTOR);
+		writer.setMaxMergeDocs(INDEX_MAX_MERGE_DOCS);
 
 		while (rs.next()) {
 			try {
@@ -165,7 +166,6 @@ public class LuceneSearch {
 			try {
 				IndexWriterWrapper writer = new IndexWriterWrapper(
 						getIndexPath(), analyzer);
-				writer.setMergeFactor(INDEX_MERGE_FACTOR);
 
 				removeOntology(writer, rs, true);
 
@@ -186,7 +186,6 @@ public class LuceneSearch {
 	public void backupIndex() throws Exception {
 		IndexWriterWrapper writer = new IndexWriterWrapper(getIndexPath(),
 				analyzer);
-		writer.setMergeFactor(INDEX_MERGE_FACTOR);
 
 		backupIndex(writer);
 		writer.closeWriter();
