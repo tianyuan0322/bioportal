@@ -45,10 +45,6 @@ public class LuceneSearchManagerLexGridImpl implements LuceneSearchManager {
 
 		String schemeName = getLexGridCodingSchemeName(rs);
 		CodingSchemeVersionOrTag csvt = getLexGridCodingSchemeVersion(rs);
-
-		System.out.println("Coding Scheme: " + csvt.getTag() + " **** "
-				+ csvt.getVersion());
-
 		LexBIGService lbs = LexBIGServiceImpl.defaultInstance();
 		CodedNodeSet codeSet = lbs.getCodingSchemeConcepts(schemeName, csvt);
 		ResolvedConceptReferencesIterator matchIterator = codeSet.resolve(null,
@@ -86,7 +82,7 @@ public class LuceneSearchManagerLexGridImpl implements LuceneSearchManager {
 		long stop = System.currentTimeMillis(); // stop timing
 		System.out.println("Finished indexing ontology: "
 				+ ontologyDisplayLabel + " in " + (double) (stop - start)
-				/ 1000 / 60 + " minutes.");
+				/ 1000 / 60 + " minutes.\n");
 	}
 
 	private String setPresentationProperties(IndexWriterWrapper writer,

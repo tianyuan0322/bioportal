@@ -132,7 +132,7 @@ public class LuceneSearchManagerProtegeImpl implements LuceneSearchManager {
 		long stop = System.currentTimeMillis(); // stop timing
 		System.out.println("Finished indexing ontology: "
 				+ ontologyDisplayLabel + " in " + (double) (stop - start)
-				/ 1000 / 60 + " minutes.");
+				/ 1000 / 60 + " minutes.\n");
 	}
 
 	@SuppressWarnings("unchecked")
