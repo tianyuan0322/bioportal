@@ -7,6 +7,7 @@ import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.text.DecimalFormat;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
@@ -105,7 +106,9 @@ public class LuceneSearch {
 			try {
 				IndexWriterWrapper writer = new IndexWriterWrapper(
 						getIndexPath(), analyzer);
-				
+				writer.setMergeFactor(INDEX_MERGE_FACTOR);
+				writer.setMaxMergeDocs(INDEX_MAX_MERGE_DOCS);
+
 				indexOntology(writer, rs, true);
 
 				writer.optimize();
@@ -213,11 +216,12 @@ public class LuceneSearch {
 		// ScoreDoc[] hits = collector.topDocs().scoreDocs;
 
 		SortField[] fields = { SortField.FIELD_SCORE,
-				new SortField("recordType"), new SortField("preferredName") };
+				new SortField(LuceneSearchDocument.RECORD_TYPE_FIELD_LABEL),
+				new SortField(LuceneSearchDocument.PREFERRED_NAME_FIELD_LABEL) };
 		TopFieldDocs docs = searcher.search(query, null, MAX_NUM_HITS,
 				new Sort(fields));
 		ScoreDoc[] hits = docs.scoreDocs;
-		
+
 		Map<String, Document> uniqueDocs = new LinkedHashMap<String, Document>();
 
 		for (int i = 0; i < hits.length; i++) {
@@ -228,12 +232,14 @@ public class LuceneSearch {
 			if (!uniqueDocs.containsKey(conceptId)) {
 				uniqueDocs.put(conceptId, d);
 
-				System.out.println(hits[i].score + " | " + d.get("ontologyVersionId")
-						+ " | " + d.get("ontologyId")
-						+ " | " + conceptId + " | " + d.get("contents") + " | "
-						+ d.get("recordType") + " | " + d.get("preferredName")
-						+ " | " + d.get("conceptIdShort") + " | "
-						+ d.get("ontologyDisplayLabel"));
+				DecimalFormat score = new DecimalFormat("0.00");
+				System.out.println(score.format(hits[i].score) + " | "
+						+ d.get("ontologyVersionId") + " | "
+						+ d.get("ontologyId") + " | " + conceptId + " | "
+						+ d.get("contents") + " | " + d.get("recordType"));
+				System.out.println(d.get("preferredName") + " | "
+						+ d.get("conceptIdShort") + " | "
+						+ d.get("ontologyDisplayLabel") + "\n");
 			}
 		}
 
@@ -283,16 +289,11 @@ public class LuceneSearch {
 			backupIndex(writer);
 		}
 
-		System.out.println("Removing ontology from index: " + displayLabel
-				+ " (Id: " + rs.getInt("id") + ", Ontology Id: " + ontologyId
-				+ ", Format: " + rs.getString("format") + ")");
-		long start = System.currentTimeMillis();
-
 		writer.removeOntology(ontologyId);
 
-		long stop = System.currentTimeMillis(); // stop timing
-		System.out.println("Finished removing ontology: " + displayLabel
-				+ " in " + (double) (stop - start) / 1000 + " seconds.");
+		System.out.println("Removed ontology from index: " + displayLabel
+				+ " (Id: " + rs.getInt("id") + ", Ontology Id: " + ontologyId
+				+ ", Format: " + rs.getString("format") + ")");
 	}
 
 	private void closeConnection(Connection conn) {
