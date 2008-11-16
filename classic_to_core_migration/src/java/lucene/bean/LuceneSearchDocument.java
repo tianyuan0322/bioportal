@@ -58,6 +58,15 @@ public class LuceneSearchDocument {
 			String conceptId, String conceptIdShort, String preferredName,
 			String contents, String literalContents) {
 		super();
+		populateInstance(ontologyVersionId, ontologyId, ontologyDisplayLabel,
+				recordType, conceptId, conceptIdShort, preferredName, contents,
+				literalContents);
+	}
+
+	public void populateInstance(String ontologyVersionId, String ontologyId,
+			String ontologyDisplayLabel, LuceneRecordTypeEnum recordType,
+			String conceptId, String conceptIdShort, String preferredName,
+			String contents, String literalContents) {
 		setOntologyVersionId(ontologyVersionId);
 		setOntologyId(ontologyId);
 		setOntologyDisplayLabel(ontologyDisplayLabel);

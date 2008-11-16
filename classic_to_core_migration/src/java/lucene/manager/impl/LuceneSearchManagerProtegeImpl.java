@@ -193,17 +193,13 @@ public class LuceneSearchManagerProtegeImpl implements LuceneSearchManager {
 		String preferredName = stripLanguageIdentifier(luceneProtegeFrame
 				.getPreferredName(), owlMode);
 
-		doc.setOntologyVersionId(luceneProtegeFrame.getOntologyVersionId()
-				.toString());
-		doc.setOntologyId(luceneProtegeFrame.getOntologyId().toString());
-		doc.setOntologyDisplayLabel(luceneProtegeFrame
-				.getOntologyDisplayLabel());
-		doc.setRecordType(luceneProtegeFrame.getPropertyType());
-		doc.setConceptId(getFrameName(nfs, luceneProtegeFrame.getFrame()));
-		doc.setConceptIdShort(getConceptIdShort(luceneProtegeFrame.getFrame()));
-		doc.setPreferredName(preferredName);
-		doc.setContents(value);
-		doc.setLiteralContents(value);
+		doc.populateInstance(luceneProtegeFrame.getOntologyVersionId()
+				.toString(), luceneProtegeFrame.getOntologyId().toString(),
+				luceneProtegeFrame.getOntologyDisplayLabel(),
+				luceneProtegeFrame.getPropertyType(), getFrameName(nfs,
+						luceneProtegeFrame.getFrame()),
+				getConceptIdShort(luceneProtegeFrame.getFrame()),
+				preferredName, value, value);
 	}
 
 	private String stripLanguageIdentifier(String value, boolean owlMode) {

@@ -176,15 +176,11 @@ public class LuceneSearchManagerLexGridImpl implements LuceneSearchManager {
 
 	private void setLuceneSearchDocument(LuceneSearchDocument doc,
 			String conceptId, LuceneLexGridProperty prop) {
-		doc.setOntologyVersionId(prop.getOntologyVersionId().toString());
-		doc.setOntologyId(prop.getOntologyId().toString());
-		doc.setOntologyDisplayLabel(prop.getOntologyDisplayLabel());
-		doc.setRecordType(prop.getPropertyType());
-		doc.setConceptId(conceptId);
-		doc.setConceptIdShort(conceptId);
-		doc.setPreferredName(prop.getPreferredName());
-		doc.setContents(prop.getPropertyContent());
-		doc.setLiteralContents(prop.getPropertyContent());
+		doc.populateInstance(prop.getOntologyVersionId().toString(), prop
+				.getOntologyId().toString(), prop.getOntologyDisplayLabel(),
+				prop.getPropertyType(), conceptId, conceptId, prop
+						.getPreferredName(), prop.getPropertyContent(), prop
+						.getPropertyContent());
 	}
 
 	/**
