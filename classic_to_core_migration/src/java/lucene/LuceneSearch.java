@@ -227,19 +227,39 @@ public class LuceneSearch {
 		for (int i = 0; i < hits.length; i++) {
 			int docId = hits[i].doc;
 			Document d = searcher.doc(docId);
-			String conceptId = d.get("conceptId");
+			String conceptId = d
+					.get(LuceneSearchDocument.CONCEPT_ID_FIELD_LABEL);
 
 			if (!uniqueDocs.containsKey(conceptId)) {
 				uniqueDocs.put(conceptId, d);
 
 				DecimalFormat score = new DecimalFormat("0.00");
-				System.out.println(score.format(hits[i].score) + " | "
-						+ d.get("ontologyVersionId") + " | "
-						+ d.get("ontologyId") + " | " + conceptId + " | "
-						+ d.get("contents") + " | " + d.get("recordType"));
-				System.out.println(d.get("preferredName") + " | "
-						+ d.get("conceptIdShort") + " | "
-						+ d.get("ontologyDisplayLabel") + "\n");
+				System.out
+						.println(score.format(hits[i].score)
+								+ " | "
+								+ d
+										.get(LuceneSearchDocument.ONTOLOGY_VERSION_ID_FIELD_LABEL)
+								+ " | "
+								+ d
+										.get(LuceneSearchDocument.ONTOLOGY_ID_FIELD_LABEL)
+								+ " | "
+								+ conceptId
+								+ " | "
+								+ d
+										.get(LuceneSearchDocument.CONTENTS_FIELD_LABEL)
+								+ " | "
+								+ d
+										.get(LuceneSearchDocument.RECORD_TYPE_FIELD_LABEL));
+				System.out
+						.println(d
+								.get(LuceneSearchDocument.PREFERRED_NAME_FIELD_LABEL)
+								+ " | "
+								+ d
+										.get(LuceneSearchDocument.CONCEPT_ID_SHORT_FIELD_LABEL)
+								+ " | "
+								+ d
+										.get(LuceneSearchDocument.ONTOLOGY_DISPLAY_LABEL_FIELD_LABEL)
+								+ "\n");
 			}
 		}
 
