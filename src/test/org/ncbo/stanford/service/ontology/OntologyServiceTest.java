@@ -6,6 +6,7 @@ package org.ncbo.stanford.service.ontology;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 import org.ncbo.stanford.AbstractBioPortalTest;
 import org.ncbo.stanford.bean.OntologyBean;
@@ -21,7 +22,7 @@ import org.ncbo.stanford.util.ontologyfile.pathhandler.impl.PhysicalDirectoryFil
 public class OntologyServiceTest extends AbstractBioPortalTest {
 	
 	
-	public void testPerformanceFindOntology() {
+/*	public void testPerformanceFindOntology() {
 		
 		System.out
 				.println("OntologyServiceTest: testPerformanceFindOntology()..........................BEGIN");
@@ -42,10 +43,8 @@ public class OntologyServiceTest extends AbstractBioPortalTest {
 				.println("OntologyServiceTest: testPerformanceFindOntology()...........................DONE");
 		
 	}
-	
+*/	
 
-
-/*	
 	public void testfindLatestOntologyVersions() {
 
 		System.out.println ("OntologyServiceTest: testfindLatestOntologyVersions().......................BEGIN");
@@ -60,6 +59,8 @@ public class OntologyServiceTest extends AbstractBioPortalTest {
 		System.out.println ("OntologyServiceTest: testfindLatestOntologyVersions().........................DONE");
 
 	}
+
+/*	
 	
 	public void testfindAllOntologyVersions() {
 
