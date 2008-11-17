@@ -4,7 +4,6 @@
 package org.ncbo.stanford.domain.custom.dao;
 
 import java.sql.SQLException;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
@@ -15,8 +14,6 @@ import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.criterion.Expression;
 import org.ncbo.stanford.domain.custom.entity.VNcboOntology;
-import org.ncbo.stanford.domain.generated.NcboOntologyCategory;
-import org.ncbo.stanford.domain.generated.NcboOntologyFile;
 import org.ncbo.stanford.domain.generated.NcboOntologyVersion;
 import org.ncbo.stanford.domain.generated.NcboOntologyVersionDAO;
 import org.ncbo.stanford.domain.generated.NcboOntologyVersionMetadata;
@@ -46,17 +43,8 @@ public class CustomNcboOntologyVersionDAO extends NcboOntologyVersionDAO {
 	 * @return ontology object
 	 */
 	public VNcboOntology findOntologyVersion(final Integer ontologyVersionId) {
-		VNcboOntology ontology = (VNcboOntology) getSession().createCriteria(
-				VNcboOntology.class)
+		return (VNcboOntology) getSession().createCriteria(VNcboOntology.class)
 				.add(Expression.eq("id", ontologyVersionId)).uniqueResult();
-		NcboOntologyVersion ontologyVersion = findById(ontologyVersionId);
-
-		if (ontology != null && ontologyVersion != null) {
-			populateOntologyCategories(ontologyVersion, ontology);
-			populateOntologyFiles(ontologyVersion, ontology);
-		}
-
-		return ontology;
 	}
 
 	/**
@@ -65,8 +53,7 @@ public class CustomNcboOntologyVersionDAO extends NcboOntologyVersionDAO {
 	 * @return List of ontology objects
 	 */
 	public List<VNcboOntology> searchOntologyMetadata(String query) {
-		List<VNcboOntology> ontologies = getSession().createCriteria(
-				VNcboOntology.class).add(
+		return getSession().createCriteria(VNcboOntology.class).add(
 				Expression.or(
 						Expression.like("publication", "%" + query + "%"),
 						Expression.or(Expression.like("homepage", "%" + query
@@ -77,8 +64,6 @@ public class CustomNcboOntologyVersionDAO extends NcboOntologyVersionDAO {
 										"displayLabel", "%" + query + "%"),
 										Expression.like("format", "%" + query
 												+ "%"))))))).list();
-
-		return ontologies;
 	}
 
 	/**
@@ -89,8 +74,8 @@ public class CustomNcboOntologyVersionDAO extends NcboOntologyVersionDAO {
 	 */
 	public VNcboOntology findLatestOntologyVersionByOboFoundryId(
 			final String oboFoundryId) {
-		VNcboOntology ontology = (VNcboOntology) getHibernateTemplate()
-				.execute(new HibernateCallback() {
+		return (VNcboOntology) getHibernateTemplate().execute(
+				new HibernateCallback() {
 					public Object doInHibernate(Session session)
 							throws HibernateException, SQLException {
 						Query query = session
@@ -100,17 +85,6 @@ public class CustomNcboOntologyVersionDAO extends NcboOntologyVersionDAO {
 						return query.uniqueResult();
 					}
 				});
-
-		if (ontology != null) {
-			NcboOntologyVersion ontologyVersion = findById(ontology.getId());
-
-			if (ontologyVersion != null) {
-				populateOntologyCategories(ontologyVersion, ontology);
-				populateOntologyFiles(ontologyVersion, ontology);
-			}
-		}
-
-		return ontology;
 	}
 
 	/**
@@ -119,11 +93,8 @@ public class CustomNcboOntologyVersionDAO extends NcboOntologyVersionDAO {
 	 * @return List of ontology objects
 	 */
 	public List<VNcboOntology> findOntologyVersions(List<Integer> versionIds) {
-		List<VNcboOntology> ontologies = getSession().createCriteria(
-				VNcboOntology.class).add(Expression.in("id", versionIds))
-				.list();
-
-		return ontologies;
+		return getSession().createCriteria(VNcboOntology.class).add(
+				Expression.in("id", versionIds)).list();
 	}
 
 	/**
@@ -169,8 +140,8 @@ public class CustomNcboOntologyVersionDAO extends NcboOntologyVersionDAO {
 	 * @return list of ontologies
 	 */
 	public VNcboOntology findLatestOntologyVersion(final Integer ontologyId) {
-		VNcboOntology ontology = (VNcboOntology) getHibernateTemplate()
-				.execute(new HibernateCallback() {
+		return (VNcboOntology) getHibernateTemplate().execute(
+				new HibernateCallback() {
 					public Object doInHibernate(Session session)
 							throws HibernateException, SQLException {
 						Query query = session
@@ -180,17 +151,6 @@ public class CustomNcboOntologyVersionDAO extends NcboOntologyVersionDAO {
 						return query.uniqueResult();
 					}
 				});
-
-		if (ontology != null) {
-			NcboOntologyVersion ontologyVersion = findById(ontology.getId());
-
-			if (ontologyVersion != null) {
-				populateOntologyCategories(ontologyVersion, ontology);
-				populateOntologyFiles(ontologyVersion, ontology);
-			}
-		}
-
-		return ontology;
 	}
 
 	/**
@@ -227,26 +187,5 @@ public class CustomNcboOntologyVersionDAO extends NcboOntologyVersionDAO {
 		NcboOntologyVersionMetadata ncboMetadata = (NcboOntologyVersionMetadata) metadataArr[0];
 
 		return ncboMetadata;
-	}
-
-	private void populateOntologyCategories(
-			NcboOntologyVersion ontologyVersion, VNcboOntology ontology) {
-		Set<NcboOntologyCategory> categories = ontologyVersion
-				.getNcboOntologyCategories();
-		ontology.setCategoryIds(new ArrayList<Integer>(0));
-
-		for (NcboOntologyCategory cat : categories) {
-			ontology.addCategoryId(cat.getNcboLCategory().getId());
-		}
-	}
-
-	private void populateOntologyFiles(NcboOntologyVersion ontologyVersion,
-			VNcboOntology ontology) {
-		Set<NcboOntologyFile> files = ontologyVersion.getNcboOntologyFiles();
-		ontology.setFilenames(new ArrayList<String>(0));
-
-		for (NcboOntologyFile file : files) {
-			ontology.addFilename(file.getFilename());
-		}
 	}
 }

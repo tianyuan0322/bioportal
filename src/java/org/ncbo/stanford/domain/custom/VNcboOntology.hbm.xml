@@ -93,5 +93,17 @@
 		<property name="preferredNameSlot" type="java.lang.String">
 		    <column name="preferred_name_slot" length="512" />
 		</property>
+        <set name="ncboOntologyCategories" inverse="true">
+            <key>
+                <column name="ontology_version_id" not-null="true" />
+            </key>
+            <one-to-many class="org.ncbo.stanford.domain.generated.NcboOntologyCategory" />
+        </set>
+        <set name="ncboOntologyFiles" inverse="true">
+            <key>
+                <column name="ontology_version_id" not-null="true" />
+            </key>
+            <one-to-many class="org.ncbo.stanford.domain.generated.NcboOntologyFile" />
+        </set>
 	</class>
 </hibernate-mapping>

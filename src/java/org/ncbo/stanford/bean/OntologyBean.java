@@ -53,6 +53,7 @@ public class OntologyBean {
 	private String synonymSlot;
 	private String preferredNameSlot;
 
+	// category id(s)
 	private List<Integer> categoryIds = new ArrayList<Integer>(0);
 
 	// file name(s)
@@ -102,9 +103,26 @@ public class OntologyBean {
 			this.setSynonymSlot(ncboOntology.getSynonymSlot());
 			this.setPreferredNameSlot(ncboOntology.getPreferredNameSlot());
 
-			addFilenames(ncboOntology.getFilenames());
+			populateFilenamesFromEntity(ncboOntology);
+			populateCategoryIdsFromEntity(ncboOntology);
+		}
+	}
 
-			addCategoryIds(ncboOntology.getCategoryIds());
+	private void populateFilenamesFromEntity(VNcboOntology ncboOntology) {
+		Collection<NcboOntologyFile> files = ncboOntology
+				.getNcboOntologyFiles();
+
+		for (NcboOntologyFile f : files) {
+			filenames.add(f.getFilename());
+		}
+	}
+
+	private void populateCategoryIdsFromEntity(VNcboOntology ncboOntology) {
+		Collection<NcboOntologyCategory> categories = ncboOntology
+				.getNcboOntologyCategories();
+
+		for (NcboOntologyCategory c : categories) {
+			categoryIds.add(c.getNcboLCategory().getId());
 		}
 	}
 

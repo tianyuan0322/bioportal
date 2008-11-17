@@ -1,9 +1,11 @@
 package org.ncbo.stanford.domain.custom.entity;
 
-import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Date;
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
+
+import org.ncbo.stanford.domain.generated.NcboOntologyCategory;
+import org.ncbo.stanford.domain.generated.NcboOntologyFile;
 
 /**
  * Class that represents the view of ontology with metadata. It is mappped to a
@@ -46,8 +48,8 @@ public class VNcboOntology {
 	private String synonymSlot;
 	private String preferredNameSlot;
 
-	private List<String> filenames = new ArrayList<String>(0);
-	private List<Integer> categoryIds = new ArrayList<Integer>(0);
+	private Set<NcboOntologyCategory> ncboOntologyCategories = new HashSet<NcboOntologyCategory>(0);
+	private Set<NcboOntologyFile> ncboOntologyFiles = new HashSet<NcboOntologyFile>(0);
 
 	// Property accessors
 
@@ -381,243 +383,6 @@ public class VNcboOntology {
 		this.isFoundry = isFoundry;
 	}
 
-	public boolean equals(Object other) {
-		if ((this == other))
-			return true;
-		if ((other == null))
-			return false;
-		if (!(other instanceof VNcboOntology))
-			return false;
-		VNcboOntology castOther = (VNcboOntology) other;
-
-		return ((this.getId() == castOther.getId()) || (this.getId() != null
-				&& castOther.getId() != null && this.getId().equals(
-				castOther.getId())))
-				&& ((this.getOntologyId() == castOther.getOntologyId()) || (this
-						.getOntologyId() != null
-						&& castOther.getOntologyId() != null && this
-						.getOntologyId().equals(castOther.getOntologyId())))
-				&& ((this.getUserId() == castOther.getUserId()) || (this
-						.getUserId() != null
-						&& castOther.getUserId() != null && this.getUserId()
-						.equals(castOther.getUserId())))
-				&& ((this.getInternalVersionNumber() == castOther
-						.getInternalVersionNumber()) || (this
-						.getInternalVersionNumber() != null
-						&& castOther.getInternalVersionNumber() != null && this
-						.getInternalVersionNumber().equals(
-								castOther.getInternalVersionNumber())))
-				&& ((this.getVersionNumber() == castOther.getVersionNumber()) || (this
-						.getVersionNumber() != null
-						&& castOther.getVersionNumber() != null && this
-						.getVersionNumber()
-						.equals(castOther.getVersionNumber())))
-				&& ((this.getVersionStatus() == castOther.getVersionStatus()) || (this
-						.getVersionStatus() != null
-						&& castOther.getVersionStatus() != null && this
-						.getVersionStatus()
-						.equals(castOther.getVersionStatus())))
-				&& ((this.getFilePath() == castOther.getFilePath()) || (this
-						.getFilePath() != null
-						&& castOther.getFilePath() != null && this
-						.getFilePath().equals(castOther.getFilePath())))
-				&& ((this.getIsRemote() == castOther.getIsRemote()) || (this
-						.getIsRemote() != null
-						&& castOther.getIsRemote() != null && this
-						.getIsRemote().equals(castOther.getIsRemote())))
-				&& ((this.getIsReviewed() == castOther.getIsReviewed()) || (this
-						.getIsReviewed() != null
-						&& castOther.getIsReviewed() != null && this
-						.getIsReviewed().equals(castOther.getIsReviewed())))
-				&& ((this.getDateCreated() == castOther.getDateCreated()) || (this
-						.getDateCreated() != null
-						&& castOther.getDateCreated() != null && this
-						.getDateCreated().equals(castOther.getDateCreated())))
-				&& ((this.getDateReleased() == castOther.getDateReleased()) || (this
-						.getDateReleased() != null
-						&& castOther.getDateReleased() != null && this
-						.getDateReleased().equals(castOther.getDateReleased())))
-				&& ((this.getDisplayLabel() == castOther.getDisplayLabel()) || (this
-						.getDisplayLabel() != null
-						&& castOther.getDisplayLabel() != null && this
-						.getDisplayLabel().equals(castOther.getDisplayLabel())))
-				&& ((this.getFormat() == castOther.getFormat()) || (this
-						.getFormat() != null
-						&& castOther.getFormat() != null && this.getFormat()
-						.equals(castOther.getFormat())))
-				&& ((this.getContactName() == castOther.getContactName()) || (this
-						.getContactName() != null
-						&& castOther.getContactName() != null && this
-						.getContactName().equals(castOther.getContactName())))
-				&& ((this.getContactEmail() == castOther.getContactEmail()) || (this
-						.getContactEmail() != null
-						&& castOther.getContactEmail() != null && this
-						.getContactEmail().equals(castOther.getContactEmail())))
-				&& ((this.getHomepage() == castOther.getHomepage()) || (this
-						.getHomepage() != null
-						&& castOther.getHomepage() != null && this
-						.getHomepage().equals(castOther.getHomepage())))
-				&& ((this.getDocumentation() == castOther.getDocumentation()) || (this
-						.getDocumentation() != null
-						&& castOther.getDocumentation() != null && this
-						.getDocumentation()
-						.equals(castOther.getDocumentation())))
-				&& ((this.getPublication() == castOther.getPublication()) || (this
-						.getPublication() != null
-						&& castOther.getPublication() != null && this
-						.getPublication().equals(castOther.getPublication())))
-				&& ((this.getUrn() == castOther.getUrn()) || (this.getUrn() != null
-						&& castOther.getUrn() != null && this.getUrn().equals(
-						castOther.getUrn())))
-				&& ((this.getCodingScheme() == castOther.getCodingScheme()) || (this
-						.getCodingScheme() != null
-						&& castOther.getCodingScheme() != null && this
-						.getCodingScheme().equals(castOther.getCodingScheme())))
-				&& ((this.getIsFoundry() == castOther.getIsFoundry()) || (this
-						.getIsFoundry() != null
-						&& castOther.getIsFoundry() != null && this
-						.getIsFoundry().equals(castOther.getIsFoundry())));
-	}
-
-	public int hashCode() {
-		int result = 17;
-
-		result = 37 * result + (getId() == null ? 0 : this.getId().hashCode());
-		result = 37
-				* result
-				+ (getOntologyId() == null ? 0 : this.getOntologyId()
-						.hashCode());
-		result = 37 * result
-				+ (getUserId() == null ? 0 : this.getUserId().hashCode());
-		result = 37
-				* result
-				+ (getInternalVersionNumber() == null ? 0 : this
-						.getInternalVersionNumber().hashCode());
-		result = 37
-				* result
-				+ (getVersionNumber() == null ? 0 : this.getVersionNumber()
-						.hashCode());
-		result = 37
-				* result
-				+ (getVersionStatus() == null ? 0 : this.getVersionStatus()
-						.hashCode());
-		result = 37 * result
-				+ (getFilePath() == null ? 0 : this.getFilePath().hashCode());
-		result = 37 * result
-				+ (getIsRemote() == null ? 0 : this.getIsRemote().hashCode());
-		result = 37
-				* result
-				+ (getIsReviewed() == null ? 0 : this.getIsReviewed()
-						.hashCode());
-		result = 37
-				* result
-				+ (getDateCreated() == null ? 0 : this.getDateCreated()
-						.hashCode());
-		result = 37
-				* result
-				+ (getDateReleased() == null ? 0 : this.getDateReleased()
-						.hashCode());
-		result = 37
-				* result
-				+ (getDisplayLabel() == null ? 0 : this.getDisplayLabel()
-						.hashCode());
-		result = 37 * result
-				+ (getFormat() == null ? 0 : this.getFormat().hashCode());
-		result = 37
-				* result
-				+ (getContactName() == null ? 0 : this.getContactName()
-						.hashCode());
-		result = 37
-				* result
-				+ (getContactEmail() == null ? 0 : this.getContactEmail()
-						.hashCode());
-		result = 37 * result
-				+ (getHomepage() == null ? 0 : this.getHomepage().hashCode());
-		result = 37
-				* result
-				+ (getDocumentation() == null ? 0 : this.getDocumentation()
-						.hashCode());
-		result = 37
-				* result
-				+ (getPublication() == null ? 0 : this.getPublication()
-						.hashCode());
-		result = 37 * result
-				+ (getUrn() == null ? 0 : this.getUrn().hashCode());
-		result = 37
-				* result
-				+ (getCodingScheme() == null ? 0 : this.getCodingScheme()
-						.hashCode());
-		result = 37 * result
-				+ (getIsFoundry() == null ? 0 : this.getIsFoundry().hashCode());
-		return result;
-	}
-
-	/**
-	 * @param arg0
-	 * @return
-	 * @see java.util.List#add(java.lang.Object)
-	 */
-	public boolean addFilename(String filename) {
-		return filenames.add(filename);
-	}
-
-	/**
-	 * @param c
-	 * @return
-	 * @see java.util.List#addAll(java.util.Collection)
-	 */
-	public boolean addFilenames(Collection<? extends String> c) {
-		return filenames.addAll(c);
-	}
-
-	/**
-	 * @return the filenames
-	 */
-	public List<String> getFilenames() {
-		return filenames;
-	}
-
-	/**
-	 * @param filenames
-	 *            the filenames to set
-	 */
-	public void setFilenames(List<String> filenames) {
-		this.filenames = filenames;
-	}
-
-	/**
-	 * @return the categoryIds
-	 */
-	public List<Integer> getCategoryIds() {
-		return categoryIds;
-	}
-
-	/**
-	 * @param categoryIds
-	 *            the categoryIds to set
-	 */
-	public void setCategoryIds(List<Integer> categoryIds) {
-		this.categoryIds = categoryIds;
-	}
-
-	/**
-	 * @param arg0
-	 * @return
-	 * @see java.util.List#add(java.lang.Object)
-	 */
-	public boolean addCategoryId(Integer categoryId) {
-		return categoryIds.add(categoryId);
-	}
-
-	/**
-	 * @param c
-	 * @return
-	 * @see java.util.List#addAll(java.util.Collection)
-	 */
-	public boolean addcategoryIds(Collection<? extends Integer> c) {
-		return categoryIds.addAll(c);
-	}
-
 	/**
 	 * @return the oboFoundryId
 	 */
@@ -701,7 +466,8 @@ public class VNcboOntology {
 	}
 
 	/**
-	 * @param description the description to set
+	 * @param description
+	 *            the description to set
 	 */
 	public void setDescription(String description) {
 		this.description = description;
@@ -715,9 +481,39 @@ public class VNcboOntology {
 	}
 
 	/**
-	 * @param abbreviation the abbreviation to set
+	 * @param abbreviation
+	 *            the abbreviation to set
 	 */
 	public void setAbbreviation(String abbreviation) {
 		this.abbreviation = abbreviation;
+	}
+
+	/**
+	 * @return the ncboOntologyCategories
+	 */
+	public Set<NcboOntologyCategory> getNcboOntologyCategories() {
+		return ncboOntologyCategories;
+	}
+
+	/**
+	 * @param ncboOntologyCategories the ncboOntologyCategories to set
+	 */
+	public void setNcboOntologyCategories(
+			Set<NcboOntologyCategory> ncboOntologyCategories) {
+		this.ncboOntologyCategories = ncboOntologyCategories;
+	}
+
+	/**
+	 * @return the ncboOntologyFiles
+	 */
+	public Set<NcboOntologyFile> getNcboOntologyFiles() {
+		return ncboOntologyFiles;
+	}
+
+	/**
+	 * @param ncboOntologyFiles the ncboOntologyFiles to set
+	 */
+	public void setNcboOntologyFiles(Set<NcboOntologyFile> ncboOntologyFiles) {
+		this.ncboOntologyFiles = ncboOntologyFiles;
 	}
 }
