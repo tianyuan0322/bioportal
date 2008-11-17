@@ -4,7 +4,6 @@ import java.util.List;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.ncbo.stanford.bean.CategoryBean;
 import org.ncbo.stanford.bean.OntologyBean;
 import org.ncbo.stanford.service.ontology.OntologyService;
 import org.ncbo.stanford.service.xml.XMLSerializationService;
@@ -23,11 +22,9 @@ public class OntologiesActiveRestlet extends Restlet {
 
 	@Override
 	public void handle(Request request, Response response) {
-
 		if (request.getMethod().equals(Method.GET)) {
 			getRequest(request, response);
 		}
-
 	}
 
 	/**
@@ -48,13 +45,11 @@ public class OntologiesActiveRestlet extends Restlet {
 		try {
 			ontologyList = getOntologyService()
 					.findLatestActiveOntologyVersions();
-
 		} catch (Exception e) {
 			response.setStatus(Status.SERVER_ERROR_INTERNAL, e.getMessage());
 			e.printStackTrace();
 			log.error(e);
 		} finally {
-
 			// generate response XML with XSL
 			String xslFile = MessageUtils.getMessage("xsl.ontology.findall");
 			getXmlSerializationService().generateXMLResponse(request, response,
@@ -92,5 +87,4 @@ public class OntologiesActiveRestlet extends Restlet {
 			XMLSerializationService xmlSerializationService) {
 		this.xmlSerializationService = xmlSerializationService;
 	}
-
 }

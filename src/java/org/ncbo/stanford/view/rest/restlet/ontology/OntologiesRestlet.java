@@ -61,13 +61,11 @@ public class OntologiesRestlet extends Restlet {
 
 		try {
 			ontologyList = getOntologyService().findLatestOntologyVersions();
-
 		} catch (Exception e) {
 			response.setStatus(Status.SERVER_ERROR_INTERNAL, e.getMessage());
 			e.printStackTrace();
 			log.error(e);
 		} finally {
-
 			// generate response XML with XSL
 			String xslFile = MessageUtils.getMessage("xsl.ontology.findall");
 			getXmlSerializationService().generateXMLResponse(request, response,
