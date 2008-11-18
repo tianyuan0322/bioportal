@@ -17,6 +17,32 @@ import org.restlet.data.Response;
 public class UserHTTPClientTest extends AbstractBioPortalTest {
 
 	
+	public void testTomcatBaseURL() {
+		System.out.println("UserHTTPClientTest: testTomcatBaseURL().......................BEGIN");
+
+		// Prepare HTTP client connector.
+		Client client = new Client(Protocol.HTTP);
+		
+		Response response = client.get("http://localhost:8080");
+
+		try {
+			String xml = response.getEntity().getText();
+
+			System.out.println(xml);
+
+      assertTrue(xml.contains("Apache Tomcat"));
+
+		} catch (IOException ioe) {
+			System.out
+					.println("ERROR in UserHTTPClientTest: testTomcatBaseURL() ");
+			ioe.printStackTrace();
+      fail();
+		}
+		
+		System.out.println ("UserHTTPClientTest: testTomcatBaseURL().........................DONE");
+
+	}
+
 	public void testHttpClientGETUsers() {
 
 		System.out
