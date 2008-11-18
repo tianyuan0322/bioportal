@@ -15,6 +15,7 @@ import javax.xml.transform.stream.StreamSource;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.commons.validator.GenericValidator;
+import org.ncbo.stanford.bean.CategoryBean;
 import org.ncbo.stanford.bean.OntologyBean;
 import org.ncbo.stanford.bean.UserBean;
 import org.ncbo.stanford.bean.concept.ClassBean;
@@ -320,6 +321,8 @@ public class XMLSerializationServiceImpl implements XMLSerializationService {
 
 		xstream.alias(MessageUtils.getMessage("entity.classbean"),
 				ClassBean.class);
+		xstream.alias(MessageUtils.getMessage("entity.categorybean"),
+				CategoryBean.class);
 		xstream.alias(MessageUtils.getMessage("entity.propertybean"),
 				PropertyBean.class);
 		xstream.alias(MessageUtils.getMessage("entity.instancebean"),
