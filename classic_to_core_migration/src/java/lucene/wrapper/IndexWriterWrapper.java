@@ -3,7 +3,7 @@ package lucene.wrapper;
 import java.io.File;
 import java.io.IOException;
 
-import lucene.bean.LuceneSearchDocument;
+import lucene.bean.LuceneIndexBean;
 import lucene.bean.LuceneSearchField;
 
 import org.apache.lucene.analysis.Analyzer;
@@ -48,15 +48,15 @@ public class IndexWriterWrapper {
 		writer = new IndexWriter(indexPath, analyzer, MAX_FIELD_LENGTH);
 	}
 
-	public void addDocument(LuceneSearchDocument searchDoc) throws IOException {
+	public void addDocument(LuceneIndexBean indexBean) throws IOException {
 		Document doc = new Document();
 
-		addFields(doc, searchDoc);
+		addFields(doc, indexBean);
 		writer.addDocument(doc);
 	}
 
 	public void removeOntology(Integer ontologyId) throws IOException {
-		Term term = new Term(LuceneSearchDocument.ONTOLOGY_ID_FIELD_LABEL,
+		Term term = new Term(LuceneIndexBean.ONTOLOGY_ID_FIELD_LABEL,
 				ontologyId.toString());
 		writer.deleteDocuments(term);
 	}
@@ -156,16 +156,16 @@ public class IndexWriterWrapper {
 		return filename.toLowerCase().endsWith(OLD_BACKUP_FILE_EXTENSION);
 	}
 
-	private void addFields(Document doc, LuceneSearchDocument searchDoc) {
-		addField(doc, searchDoc.getOntologyVersionId());
-		addField(doc, searchDoc.getOntologyId());
-		addField(doc, searchDoc.getOntologyDisplayLabel());
-		addField(doc, searchDoc.getRecordType());
-		addField(doc, searchDoc.getConceptId());
-		addField(doc, searchDoc.getConceptIdShort());
-		addField(doc, searchDoc.getPreferredName());
-		addField(doc, searchDoc.getContents());
-		addField(doc, searchDoc.getLiteralContents());
+	private void addFields(Document doc, LuceneIndexBean indexBean) {
+		addField(doc, indexBean.getOntologyVersionIdField());
+		addField(doc, indexBean.getOntologyIdField());
+		addField(doc, indexBean.getOntologyDisplayLabelField());
+		addField(doc, indexBean.getRecordTypeField());
+		addField(doc, indexBean.getConceptIdField());
+		addField(doc, indexBean.getConceptIdShortField());
+		addField(doc, indexBean.getPreferredNameField());
+		addField(doc, indexBean.getContentsField());
+		addField(doc, indexBean.getLiteralContentsField());
 	}
 
 	private void addField(Document doc, LuceneSearchField field) {

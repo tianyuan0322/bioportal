@@ -9,8 +9,8 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import lucene.bean.LuceneIndexBean;
 import lucene.bean.LuceneProtegeFrame;
-import lucene.bean.LuceneSearchDocument;
 import lucene.enumeration.LuceneRecordTypeEnum;
 import lucene.manager.LuceneSearchManager;
 import lucene.wrapper.IndexWriterWrapper;
@@ -85,7 +85,7 @@ public class LuceneSearchManagerProtegeImpl implements LuceneSearchManager {
 			frames = nfs.getFrames();
 		}
 
-		LuceneSearchDocument doc = new LuceneSearchDocument();
+		LuceneIndexBean doc = new LuceneIndexBean();
 
 		for (Frame frame : frames) {
 			// add preferred name slot
@@ -93,8 +93,9 @@ public class LuceneSearchManagerProtegeImpl implements LuceneSearchManager {
 			List<Slot> preferredNameSlots = getPreferredNameSlots(kb, rs
 					.getString("preferred_name_slot"));
 			LuceneProtegeFrame protegeFrame = new LuceneProtegeFrame(
-					ontologyVersionId, ontologyId, ontologyDisplayLabel, null,
-					LuceneRecordTypeEnum.RECORD_TYPE_PREFERRED_NAME, frame);
+					ontologyVersionId, ontologyId, ontologyDisplayLabel,
+					LuceneRecordTypeEnum.RECORD_TYPE_PREFERRED_NAME, null,
+					frame);
 
 			for (Slot prefNameSlot : preferredNameSlots) {
 				preferredName = addPreferredNameSlotToIndex(writer, doc, kb,
@@ -110,7 +111,7 @@ public class LuceneSearchManagerProtegeImpl implements LuceneSearchManager {
 
 			if (synonymSlot != null) {
 				protegeFrame
-						.setPropertyType(LuceneRecordTypeEnum.RECORD_TYPE_SYNONYM);
+						.setRecordType(LuceneRecordTypeEnum.RECORD_TYPE_SYNONYM);
 				addSlotToIndex(writer, doc, kb, nfs, protegeFrame, synonymSlot,
 						owlMode);
 			}
@@ -118,7 +119,7 @@ public class LuceneSearchManagerProtegeImpl implements LuceneSearchManager {
 			// add property slots
 			Set<Slot> propertySlots = getPropertySlots(kb);
 			protegeFrame
-					.setPropertyType(LuceneRecordTypeEnum.RECORD_TYPE_PROPERTY);
+					.setRecordType(LuceneRecordTypeEnum.RECORD_TYPE_PROPERTY);
 
 			for (Slot propertySlot : propertySlots) {
 				addSlotToIndex(writer, doc, kb, nfs, protegeFrame,
@@ -136,8 +137,8 @@ public class LuceneSearchManagerProtegeImpl implements LuceneSearchManager {
 	}
 
 	@SuppressWarnings("unchecked")
-	private void addSlotToIndex(IndexWriterWrapper writer,
-			LuceneSearchDocument doc, KnowledgeBase kb, NarrowFrameStore nfs,
+	private void addSlotToIndex(IndexWriterWrapper writer, LuceneIndexBean doc,
+			KnowledgeBase kb, NarrowFrameStore nfs,
 			LuceneProtegeFrame protegeFrame, Slot slot, boolean owlMode)
 			throws IOException {
 		Collection values;
@@ -151,7 +152,7 @@ public class LuceneSearchManagerProtegeImpl implements LuceneSearchManager {
 				continue;
 			}
 
-			setLuceneSearchDocument(doc, nfs, protegeFrame, (String) value,
+			setLuceneIndexBean(doc, nfs, protegeFrame, (String) value,
 					owlMode);
 			writer.addDocument(doc);
 		}
@@ -159,7 +160,7 @@ public class LuceneSearchManagerProtegeImpl implements LuceneSearchManager {
 
 	@SuppressWarnings("unchecked")
 	private String addPreferredNameSlotToIndex(IndexWriterWrapper writer,
-			LuceneSearchDocument doc, KnowledgeBase kb, NarrowFrameStore nfs,
+			LuceneIndexBean doc, KnowledgeBase kb, NarrowFrameStore nfs,
 			LuceneProtegeFrame protegeFrame, Slot preferredNameSlot,
 			boolean owlMode) throws IOException {
 		String preferredName = null;
@@ -177,7 +178,7 @@ public class LuceneSearchManagerProtegeImpl implements LuceneSearchManager {
 
 			preferredName = (String) value;
 			protegeFrame.setPreferredName(preferredName);
-			setLuceneSearchDocument(doc, nfs, protegeFrame, (String) value,
+			setLuceneIndexBean(doc, nfs, protegeFrame, (String) value,
 					owlMode);
 			writer.addDocument(doc);
 			break;
@@ -186,20 +187,19 @@ public class LuceneSearchManagerProtegeImpl implements LuceneSearchManager {
 		return preferredName;
 	}
 
-	private void setLuceneSearchDocument(LuceneSearchDocument doc,
+	private void setLuceneIndexBean(LuceneIndexBean doc,
 			NarrowFrameStore nfs, LuceneProtegeFrame luceneProtegeFrame,
 			String value, boolean owlMode) {
 		value = stripLanguageIdentifier(value, owlMode);
 		String preferredName = stripLanguageIdentifier(luceneProtegeFrame
 				.getPreferredName(), owlMode);
 
-		doc.populateInstance(luceneProtegeFrame.getOntologyVersionId()
-				.toString(), luceneProtegeFrame.getOntologyId().toString(),
-				luceneProtegeFrame.getOntologyDisplayLabel(),
-				luceneProtegeFrame.getPropertyType(), getFrameName(nfs,
-						luceneProtegeFrame.getFrame()),
-				getConceptIdShort(luceneProtegeFrame.getFrame()),
-				preferredName, value, value);
+		doc.populateInstance(luceneProtegeFrame.getOntologyVersionId(),
+				luceneProtegeFrame.getOntologyId(), luceneProtegeFrame
+						.getOntologyDisplayLabel(), luceneProtegeFrame
+						.getRecordType(), getFrameName(nfs, luceneProtegeFrame
+						.getFrame()), getConceptIdShort(luceneProtegeFrame
+						.getFrame()), preferredName, value, value);
 	}
 
 	private String stripLanguageIdentifier(String value, boolean owlMode) {

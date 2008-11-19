@@ -6,8 +6,8 @@ import java.sql.SQLException;
 import java.util.Iterator;
 import java.util.StringTokenizer;
 
+import lucene.bean.LuceneIndexBean;
 import lucene.bean.LuceneLexGridProperty;
-import lucene.bean.LuceneSearchDocument;
 import lucene.enumeration.LuceneRecordTypeEnum;
 import lucene.manager.LuceneSearchManager;
 import lucene.wrapper.IndexWriterWrapper;
@@ -50,7 +50,7 @@ public class LuceneSearchManagerLexGridImpl implements LuceneSearchManager {
 		ResolvedConceptReferencesIterator matchIterator = codeSet.resolve(null,
 				null, null, null, true);
 
-		LuceneSearchDocument doc = new LuceneSearchDocument();
+		LuceneIndexBean doc = new LuceneIndexBean();
 
 		while (matchIterator.hasNext()) {
 			ResolvedConceptReferenceList lst = matchIterator
@@ -86,9 +86,8 @@ public class LuceneSearchManagerLexGridImpl implements LuceneSearchManager {
 	}
 
 	private String setPresentationProperties(IndexWriterWrapper writer,
-			LuceneSearchDocument doc, Integer ontologyVersionId,
-			Integer ontologyId, String ontologyDisplayLabel, Concept concept)
-			throws IOException {
+			LuceneIndexBean doc, Integer ontologyVersionId, Integer ontologyId,
+			String ontologyDisplayLabel, Concept concept) throws IOException {
 		LuceneRecordTypeEnum recType = LuceneRecordTypeEnum.RECORD_TYPE_PREFERRED_NAME;
 		boolean isFirst = true;
 		String preferredName = null;
@@ -106,9 +105,9 @@ public class LuceneSearchManagerLexGridImpl implements LuceneSearchManager {
 				recType = LuceneRecordTypeEnum.RECORD_TYPE_SYNONYM;
 			}
 
-			setLuceneSearchDocument(doc, concept.getId(),
+			setLuceneIndexBean(doc, concept.getId(),
 					new LuceneLexGridProperty(ontologyVersionId, ontologyId,
-							ontologyDisplayLabel, preferredName, recType, p));
+							ontologyDisplayLabel, recType, preferredName, p));
 			writer.addDocument(doc);
 		}
 
@@ -116,71 +115,74 @@ public class LuceneSearchManagerLexGridImpl implements LuceneSearchManager {
 	}
 
 	private void setGenericProperties(IndexWriterWrapper writer,
-			LuceneSearchDocument doc, Integer ontologyVersionId,
-			Integer ontologyId, String ontologyDisplayLabel,
-			String preferredName, Concept concept) throws IOException {
+			LuceneIndexBean doc, Integer ontologyVersionId, Integer ontologyId,
+			String ontologyDisplayLabel, String preferredName, Concept concept)
+			throws IOException {
 		for (Iterator<ConceptProperty> itr = concept.iterateConceptProperty(); itr
 				.hasNext();) {
 			ConceptProperty cp = itr.next();
-			setLuceneSearchDocument(doc, concept.getId(),
+			setLuceneIndexBean(doc, concept.getId(),
 					new LuceneLexGridProperty(ontologyVersionId, ontologyId,
-							ontologyDisplayLabel, preferredName,
-							LuceneRecordTypeEnum.RECORD_TYPE_PROPERTY, cp));
+							ontologyDisplayLabel,
+							LuceneRecordTypeEnum.RECORD_TYPE_PROPERTY,
+							preferredName, cp));
 			writer.addDocument(doc);
 		}
 	}
 
 	private void setDefinitionProperties(IndexWriterWrapper writer,
-			LuceneSearchDocument doc, Integer ontologyVersionId,
-			Integer ontologyId, String ontologyDisplayLabel,
-			String preferredName, Concept concept) throws IOException {
+			LuceneIndexBean doc, Integer ontologyVersionId, Integer ontologyId,
+			String ontologyDisplayLabel, String preferredName, Concept concept)
+			throws IOException {
 		for (Iterator<Definition> itr = concept.iterateDefinition(); itr
 				.hasNext();) {
 			Definition d = itr.next();
-			setLuceneSearchDocument(doc, concept.getId(),
+			setLuceneIndexBean(doc, concept.getId(),
 					new LuceneLexGridProperty(ontologyVersionId, ontologyId,
-							ontologyDisplayLabel, preferredName,
-							LuceneRecordTypeEnum.RECORD_TYPE_PROPERTY, d));
+							ontologyDisplayLabel,
+							LuceneRecordTypeEnum.RECORD_TYPE_PROPERTY,
+							preferredName, d));
 			writer.addDocument(doc);
 		}
 	}
 
 	private void setCommentProperties(IndexWriterWrapper writer,
-			LuceneSearchDocument doc, Integer ontologyVersionId,
-			Integer ontologyId, String ontologyDisplayLabel,
-			String preferredName, Concept concept) throws IOException {
+			LuceneIndexBean doc, Integer ontologyVersionId, Integer ontologyId,
+			String ontologyDisplayLabel, String preferredName, Concept concept)
+			throws IOException {
 		for (Iterator<Comment> itr = concept.iterateComment(); itr.hasNext();) {
 			Comment c = itr.next();
-			setLuceneSearchDocument(doc, concept.getId(),
+			setLuceneIndexBean(doc, concept.getId(),
 					new LuceneLexGridProperty(ontologyVersionId, ontologyId,
-							ontologyDisplayLabel, preferredName,
-							LuceneRecordTypeEnum.RECORD_TYPE_PROPERTY, c));
+							ontologyDisplayLabel,
+							LuceneRecordTypeEnum.RECORD_TYPE_PROPERTY,
+							preferredName, c));
 			writer.addDocument(doc);
 		}
 	}
 
 	private void setInstructionProperties(IndexWriterWrapper writer,
-			LuceneSearchDocument doc, Integer ontologyVersionId,
-			Integer ontologyId, String ontologyDisplayLabel,
-			String preferredName, Concept concept) throws IOException {
+			LuceneIndexBean doc, Integer ontologyVersionId, Integer ontologyId,
+			String ontologyDisplayLabel, String preferredName, Concept concept)
+			throws IOException {
 		for (Iterator<Instruction> itr = concept.iterateInstruction(); itr
 				.hasNext();) {
 			Instruction i = itr.next();
-			setLuceneSearchDocument(doc, concept.getId(),
+			setLuceneIndexBean(doc, concept.getId(),
 					new LuceneLexGridProperty(ontologyVersionId, ontologyId,
-							ontologyDisplayLabel, preferredName,
-							LuceneRecordTypeEnum.RECORD_TYPE_PROPERTY, i));
+							ontologyDisplayLabel,
+							LuceneRecordTypeEnum.RECORD_TYPE_PROPERTY,
+							preferredName, i));
 			writer.addDocument(doc);
 		}
 	}
 
-	private void setLuceneSearchDocument(LuceneSearchDocument doc,
-			String conceptId, LuceneLexGridProperty prop) {
-		doc.populateInstance(prop.getOntologyVersionId().toString(), prop
-				.getOntologyId().toString(), prop.getOntologyDisplayLabel(),
-				prop.getPropertyType(), conceptId, conceptId, prop
-						.getPreferredName(), prop.getPropertyContent(), prop
-						.getPropertyContent());
+	private void setLuceneIndexBean(LuceneIndexBean doc, String conceptId,
+			LuceneLexGridProperty prop) {
+		doc.populateInstance(prop.getOntologyVersionId(), prop.getOntologyId(),
+				prop.getOntologyDisplayLabel(), prop.getRecordType(),
+				conceptId, conceptId, prop.getPreferredName(), prop
+						.getPropertyContent(), prop.getPropertyContent());
 	}
 
 	/**

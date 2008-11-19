@@ -15,7 +15,7 @@ import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Properties;
 
-import lucene.bean.LuceneSearchDocument;
+import lucene.bean.LuceneIndexBean;
 import lucene.enumeration.LuceneRecordTypeEnum;
 import lucene.manager.LuceneSearchManager;
 import lucene.manager.impl.LuceneSearchManagerLexGridImpl;
@@ -216,8 +216,8 @@ public class LuceneSearch {
 		// ScoreDoc[] hits = collector.topDocs().scoreDocs;
 
 		SortField[] fields = { SortField.FIELD_SCORE,
-				new SortField(LuceneSearchDocument.RECORD_TYPE_FIELD_LABEL),
-				new SortField(LuceneSearchDocument.PREFERRED_NAME_FIELD_LABEL) };
+				new SortField(LuceneIndexBean.RECORD_TYPE_FIELD_LABEL),
+				new SortField(LuceneIndexBean.PREFERRED_NAME_FIELD_LABEL) };
 		TopFieldDocs docs = searcher.search(query, null, MAX_NUM_HITS,
 				new Sort(fields));
 		ScoreDoc[] hits = docs.scoreDocs;
@@ -227,8 +227,7 @@ public class LuceneSearch {
 		for (int i = 0; i < hits.length; i++) {
 			int docId = hits[i].doc;
 			Document d = searcher.doc(docId);
-			String conceptId = d
-					.get(LuceneSearchDocument.CONCEPT_ID_FIELD_LABEL);
+			String conceptId = d.get(LuceneIndexBean.CONCEPT_ID_FIELD_LABEL);
 
 			if (!uniqueDocs.containsKey(conceptId)) {
 				uniqueDocs.put(conceptId, d);
@@ -238,27 +237,26 @@ public class LuceneSearch {
 						.println(score.format(hits[i].score)
 								+ " | "
 								+ d
-										.get(LuceneSearchDocument.ONTOLOGY_VERSION_ID_FIELD_LABEL)
+										.get(LuceneIndexBean.ONTOLOGY_VERSION_ID_FIELD_LABEL)
 								+ " | "
 								+ d
-										.get(LuceneSearchDocument.ONTOLOGY_ID_FIELD_LABEL)
+										.get(LuceneIndexBean.ONTOLOGY_ID_FIELD_LABEL)
 								+ " | "
 								+ conceptId
 								+ " | "
-								+ d
-										.get(LuceneSearchDocument.CONTENTS_FIELD_LABEL)
+								+ d.get(LuceneIndexBean.CONTENTS_FIELD_LABEL)
 								+ " | "
 								+ d
-										.get(LuceneSearchDocument.RECORD_TYPE_FIELD_LABEL));
+										.get(LuceneIndexBean.RECORD_TYPE_FIELD_LABEL));
 				System.out
 						.println(d
-								.get(LuceneSearchDocument.PREFERRED_NAME_FIELD_LABEL)
+								.get(LuceneIndexBean.PREFERRED_NAME_FIELD_LABEL)
 								+ " | "
 								+ d
-										.get(LuceneSearchDocument.CONCEPT_ID_SHORT_FIELD_LABEL)
+										.get(LuceneIndexBean.CONCEPT_ID_SHORT_FIELD_LABEL)
 								+ " | "
 								+ d
-										.get(LuceneSearchDocument.ONTOLOGY_DISPLAY_LABEL_FIELD_LABEL)
+										.get(LuceneIndexBean.ONTOLOGY_DISPLAY_LABEL_FIELD_LABEL)
 								+ "\n");
 			}
 		}
@@ -351,14 +349,14 @@ public class LuceneSearch {
 	private void addContentsClauseExact(String expr, BooleanQuery query)
 			throws IOException {
 		TermQuery q = new TermQuery(new Term(
-				LuceneSearchDocument.LITERAL_CONTENTS_FIELD_LABEL, expr));
+				LuceneIndexBean.LITERAL_CONTENTS_FIELD_LABEL, expr));
 		query.add(q, BooleanClause.Occur.MUST);
 	}
 
 	private void addContentsClauseContains(String expr, BooleanQuery query)
 			throws IOException {
 		QueryParser parser = new QueryParser(
-				LuceneSearchDocument.CONTENTS_FIELD_LABEL, analyzer);
+				LuceneIndexBean.CONTENTS_FIELD_LABEL, analyzer);
 		parser.setAllowLeadingWildcard(true);
 		parser.setDefaultOperator(QueryParser.AND_OPERATOR);
 
@@ -379,9 +377,7 @@ public class LuceneSearch {
 		String[] words = expr.split(" ");
 
 		for (int i = 0; i < words.length; i++) {
-			q
-					.add(new Term(LuceneSearchDocument.CONTENTS_FIELD_LABEL,
-							words[i]));
+			q.add(new Term(LuceneIndexBean.CONTENTS_FIELD_LABEL, words[i]));
 		}
 		// query.add(q, BooleanClause.Occur.MUST);
 
@@ -390,7 +386,7 @@ public class LuceneSearch {
 	private void addPropertiesClause(boolean includeProperties,
 			BooleanQuery query) {
 		if (!includeProperties) {
-			Term term = new Term(LuceneSearchDocument.RECORD_TYPE_FIELD_LABEL,
+			Term term = new Term(LuceneIndexBean.RECORD_TYPE_FIELD_LABEL,
 					LuceneRecordTypeEnum.RECORD_TYPE_PROPERTY.getLabel());
 			query.add(new TermQuery(term), BooleanClause.Occur.MUST_NOT);
 		}
@@ -408,7 +404,7 @@ public class LuceneSearch {
 		BooleanQuery query = new BooleanQuery();
 
 		for (Integer ontologyId : ontologyIds) {
-			Term term = new Term(LuceneSearchDocument.ONTOLOGY_ID_FIELD_LABEL,
+			Term term = new Term(LuceneIndexBean.ONTOLOGY_ID_FIELD_LABEL,
 					ontologyId.toString());
 			query.add(new TermQuery(term), BooleanClause.Occur.SHOULD);
 		}
