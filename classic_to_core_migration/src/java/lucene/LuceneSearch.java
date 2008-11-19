@@ -11,11 +11,11 @@ import java.text.DecimalFormat;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
-import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Properties;
 
 import lucene.bean.LuceneIndexBean;
+import lucene.bean.LuceneSearchBean;
 import lucene.enumeration.LuceneRecordTypeEnum;
 import lucene.manager.LuceneSearchManager;
 import lucene.manager.impl.LuceneSearchManagerLexGridImpl;
@@ -41,10 +41,9 @@ import org.apache.lucene.search.Sort;
 import org.apache.lucene.search.SortField;
 import org.apache.lucene.search.TermQuery;
 import org.apache.lucene.search.TopFieldDocs;
+import org.ncbo.stanford.bean.search.SearchResultListBean;
 import org.ncbo.stanford.util.constants.ApplicationConstants;
 import org.ncbo.stanford.util.helper.StringHelper;
-
-import edu.stanford.smi.protege.model.Frame;
 
 public class LuceneSearch {
 
@@ -195,67 +194,75 @@ public class LuceneSearch {
 		writer = null;
 	}
 
-	public void executeQuery(String expr, boolean includeProperties)
-			throws IOException {
-		executeQuery(expr, null, includeProperties);
+	public SearchResultListBean executeQuery(String expr,
+			boolean includeProperties) throws IOException {
+		return executeQuery(expr, null, includeProperties);
 	}
 
-	public void executeQuery(String expr, Collection<Integer> ontologyIds,
-			boolean includeProperties) throws IOException {
+	public SearchResultListBean executeQuery(String expr,
+			Collection<Integer> ontologyIds, boolean includeProperties)
+			throws IOException {
 		long start = System.currentTimeMillis();
-
-		Searcher searcher = null;
-		Collection<Frame> results = new LinkedHashSet<Frame>();
 
 		Query query = generateLuceneSearchQuery(ontologyIds, expr,
 				includeProperties);
-		searcher = new IndexSearcher(getIndexPath());
-
-		// TopDocCollector collector = new TopDocCollector(MAX_NUM_HITS);
-		// searcher.search(query, collector);
-		// ScoreDoc[] hits = collector.topDocs().scoreDocs;
-
-		SortField[] fields = { SortField.FIELD_SCORE,
-				new SortField(LuceneIndexBean.RECORD_TYPE_FIELD_LABEL),
-				new SortField(LuceneIndexBean.PREFERRED_NAME_FIELD_LABEL) };
+		Searcher searcher = new IndexSearcher(getIndexPath());
 		TopFieldDocs docs = searcher.search(query, null, MAX_NUM_HITS,
-				new Sort(fields));
+				getSortFields());
 		ScoreDoc[] hits = docs.scoreDocs;
 
 		Map<String, Document> uniqueDocs = new LinkedHashMap<String, Document>();
+		SearchResultListBean searchResults = new SearchResultListBean();
 
 		for (int i = 0; i < hits.length; i++) {
 			int docId = hits[i].doc;
-			Document d = searcher.doc(docId);
-			String conceptId = d.get(LuceneIndexBean.CONCEPT_ID_FIELD_LABEL);
+			Document doc = searcher.doc(docId);
+			String conceptId = doc.get(LuceneIndexBean.CONCEPT_ID_FIELD_LABEL);
 
 			if (!uniqueDocs.containsKey(conceptId)) {
-				uniqueDocs.put(conceptId, d);
+				LuceneSearchBean searchResult = new LuceneSearchBean(
+						new Integer(
+								doc
+										.get(LuceneIndexBean.ONTOLOGY_VERSION_ID_FIELD_LABEL)),
+						new Integer(doc
+								.get(LuceneIndexBean.ONTOLOGY_ID_FIELD_LABEL)),
+						doc
+								.get(LuceneIndexBean.ONTOLOGY_DISPLAY_LABEL_FIELD_LABEL),
+						LuceneRecordTypeEnum.getFromLabel(doc
+								.get(LuceneIndexBean.RECORD_TYPE_FIELD_LABEL)),
+						doc.get(LuceneIndexBean.CONCEPT_ID_FIELD_LABEL),
+						doc.get(LuceneIndexBean.CONCEPT_ID_SHORT_FIELD_LABEL),
+						doc.get(LuceneIndexBean.PREFERRED_NAME_FIELD_LABEL),
+						doc.get(LuceneIndexBean.CONTENTS_FIELD_LABEL),
+						doc.get(LuceneIndexBean.LITERAL_CONTENTS_FIELD_LABEL));
+				searchResults.add(searchResult);
+
+				uniqueDocs.put(conceptId, doc);
 
 				DecimalFormat score = new DecimalFormat("0.00");
 				System.out
 						.println(score.format(hits[i].score)
 								+ " | "
-								+ d
+								+ doc
 										.get(LuceneIndexBean.ONTOLOGY_VERSION_ID_FIELD_LABEL)
 								+ " | "
-								+ d
+								+ doc
 										.get(LuceneIndexBean.ONTOLOGY_ID_FIELD_LABEL)
 								+ " | "
 								+ conceptId
 								+ " | "
-								+ d.get(LuceneIndexBean.CONTENTS_FIELD_LABEL)
+								+ doc.get(LuceneIndexBean.CONTENTS_FIELD_LABEL)
 								+ " | "
-								+ d
+								+ doc
 										.get(LuceneIndexBean.RECORD_TYPE_FIELD_LABEL));
 				System.out
-						.println(d
+						.println(doc
 								.get(LuceneIndexBean.PREFERRED_NAME_FIELD_LABEL)
 								+ " | "
-								+ d
+								+ doc
 										.get(LuceneIndexBean.CONCEPT_ID_SHORT_FIELD_LABEL)
 								+ " | "
-								+ d
+								+ doc
 										.get(LuceneIndexBean.ONTOLOGY_DISPLAY_LABEL_FIELD_LABEL)
 								+ "\n");
 			}
@@ -267,6 +274,8 @@ public class LuceneSearch {
 				+ uniqueDocs.size());
 		System.out.println("Excecution Time: " + (double) (stop - start) / 1000
 				+ " seconds.");
+
+		return searchResults;
 	}
 
 	// TODO: in BP, replace rs with OntologyBean
@@ -344,6 +353,14 @@ public class LuceneSearch {
 		addPropertiesClause(includeProperties, query);
 
 		return query;
+	}
+
+	private Sort getSortFields() {
+		SortField[] fields = { SortField.FIELD_SCORE,
+				new SortField(LuceneIndexBean.RECORD_TYPE_FIELD_LABEL),
+				new SortField(LuceneIndexBean.PREFERRED_NAME_FIELD_LABEL) };
+
+		return new Sort(fields);
 	}
 
 	private void addContentsClauseExact(String expr, BooleanQuery query)
