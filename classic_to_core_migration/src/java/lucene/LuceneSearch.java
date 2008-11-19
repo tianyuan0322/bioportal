@@ -8,9 +8,10 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.text.DecimalFormat;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
-import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 
@@ -211,7 +212,7 @@ public class LuceneSearch {
 				getSortFields());
 		ScoreDoc[] hits = docs.scoreDocs;
 
-		Map<String, Document> uniqueDocs = new LinkedHashMap<String, Document>();
+		List<String> uniqueDocs = new ArrayList<String>();
 		SearchResultListBean searchResults = new SearchResultListBean();
 
 		for (int i = 0; i < hits.length; i++) {
@@ -219,7 +220,7 @@ public class LuceneSearch {
 			Document doc = searcher.doc(docId);
 			String conceptId = doc.get(LuceneIndexBean.CONCEPT_ID_FIELD_LABEL);
 
-			if (!uniqueDocs.containsKey(conceptId)) {
+			if (!uniqueDocs.contains(conceptId)) {
 				LuceneSearchBean searchResult = new LuceneSearchBean(
 						new Integer(
 								doc
@@ -230,14 +231,14 @@ public class LuceneSearch {
 								.get(LuceneIndexBean.ONTOLOGY_DISPLAY_LABEL_FIELD_LABEL),
 						LuceneRecordTypeEnum.getFromLabel(doc
 								.get(LuceneIndexBean.RECORD_TYPE_FIELD_LABEL)),
-						doc.get(LuceneIndexBean.CONCEPT_ID_FIELD_LABEL),
+						conceptId,
 						doc.get(LuceneIndexBean.CONCEPT_ID_SHORT_FIELD_LABEL),
 						doc.get(LuceneIndexBean.PREFERRED_NAME_FIELD_LABEL),
 						doc.get(LuceneIndexBean.CONTENTS_FIELD_LABEL),
 						doc.get(LuceneIndexBean.LITERAL_CONTENTS_FIELD_LABEL));
 				searchResults.add(searchResult);
 
-				uniqueDocs.put(conceptId, doc);
+				uniqueDocs.add(conceptId);
 
 				DecimalFormat score = new DecimalFormat("0.00");
 				System.out
