@@ -7,11 +7,11 @@ ALTER TABLE ncbo_ontology_version_metadata MODIFY
 	COLUMN `preferred_name_slot` varchar(512) character set utf8 collate utf8_bin default NULL;
 
 ALTER TABLE ncbo_ontology_version_metadata ADD
-	COLUMN `description` varchar(512) default NULL
+	COLUMN `description` varchar(1024) default NULL
 	AFTER `display_label`;
 
 ALTER TABLE ncbo_ontology_version_metadata ADD
-	COLUMN `abbreviation` varchar(32) default NULL
+	COLUMN `abbreviation` varchar(48) default NULL
 	AFTER `description`;
 
 ALTER TABLE ncbo_ontology_version_metadata AUTO_INCREMENT = 1000;

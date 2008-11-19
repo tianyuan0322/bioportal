@@ -17,10 +17,10 @@
             <column name="display_label" length="128" not-null="true" />
         </property>
         <property name="description" type="java.lang.String">
-            <column name="description" length="512" />
+            <column name="description" length="1024" />
         </property>
         <property name="abbreviation" type="java.lang.String">
-            <column name="abbreviation" length="32" />
+            <column name="abbreviation" length="48" />
         </property>
         <property name="format" type="java.lang.String">
             <column name="format" length="50" not-null="true" />
