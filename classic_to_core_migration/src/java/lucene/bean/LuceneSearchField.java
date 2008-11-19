@@ -5,9 +5,9 @@ import org.apache.lucene.document.Field.Store;
 
 public class LuceneSearchField {
 	private String label;
-	private String contents;
 	private Store store;
 	private Index index;
+	private String contents;
 
 	/**
 	 * @param label
@@ -21,19 +21,21 @@ public class LuceneSearchField {
 		this.index = index;
 	}
 
+	public String toString() {
+		return "Label: " + label + ", Store: " + store + ", Index: " + index
+				+ ", Contents: " + contents;
+	}
+
 	/**
 	 * @param label
-	 * @param contents
 	 * @param store
 	 * @param index
+	 * @param contents
 	 */
-	public LuceneSearchField(String label, String contents, Store store,
-			Index index) {
-		super();
-		this.label = label;
+	public LuceneSearchField(String label, Store store, Index index,
+			String contents) {
+		this(label, store, index);
 		this.contents = contents;
-		this.store = store;
-		this.index = index;
 	}
 
 	/**
@@ -41,6 +43,20 @@ public class LuceneSearchField {
 	 */
 	public String getLabel() {
 		return label;
+	}
+
+	/**
+	 * @return the store
+	 */
+	public Store getStore() {
+		return store;
+	}
+
+	/**
+	 * @return the index
+	 */
+	public Index getIndex() {
+		return index;
 	}
 
 	/**
@@ -56,19 +72,5 @@ public class LuceneSearchField {
 	 */
 	public void setContents(String contents) {
 		this.contents = contents;
-	}
-
-	/**
-	 * @return the store
-	 */
-	public Store getStore() {
-		return store;
-	}
-
-	/**
-	 * @return the index
-	 */
-	public Index getIndex() {
-		return index;
 	}
 }

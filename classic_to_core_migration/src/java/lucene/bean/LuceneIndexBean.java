@@ -4,7 +4,7 @@ import lucene.enumeration.LuceneRecordTypeEnum;
 
 import org.apache.lucene.document.Field;
 
-public class LuceneSearchDocument {
+public class LuceneIndexBean extends LuceneSearchBean {
 	public static final String ONTOLOGY_VERSION_ID_FIELD_LABEL = "ontologyVersionId";
 	public static final String ONTOLOGY_ID_FIELD_LABEL = "ontologyId";
 	public static final String ONTOLOGY_DISPLAY_LABEL_FIELD_LABEL = "ontologyDisplayLabel";
@@ -39,59 +39,24 @@ public class LuceneSearchDocument {
 			LITERAL_CONTENTS_FIELD_LABEL, Field.Store.YES,
 			Field.Index.NOT_ANALYZED);
 
-	public LuceneSearchDocument() {
-	}
-
-	/**
-	 * @param ontologyVersionId
-	 * @param ontologyId
-	 * @param ontologyDisplayLabel
-	 * @param recordType
-	 * @param conceptId
-	 * @param conceptIdShort
-	 * @param preferredName
-	 * @param contents
-	 * @param literalContents
-	 */
-	public LuceneSearchDocument(String ontologyVersionId, String ontologyId,
-			String ontologyDisplayLabel, LuceneRecordTypeEnum recordType,
-			String conceptId, String conceptIdShort, String preferredName,
-			String contents, String literalContents) {
-		super();
-		populateInstance(ontologyVersionId, ontologyId, ontologyDisplayLabel,
-				recordType, conceptId, conceptIdShort, preferredName, contents,
-				literalContents);
-	}
-
-	public void populateInstance(String ontologyVersionId, String ontologyId,
-			String ontologyDisplayLabel, LuceneRecordTypeEnum recordType,
-			String conceptId, String conceptIdShort, String preferredName,
-			String contents, String literalContents) {
-		setOntologyVersionId(ontologyVersionId);
-		setOntologyId(ontologyId);
-		setOntologyDisplayLabel(ontologyDisplayLabel);
-		setRecordType(recordType);
-		setConceptId(conceptId);
-		setConceptIdShort(conceptIdShort);
-		setPreferredName(preferredName);
-		setContents(contents);
-		setLiteralContents(literalContents);
-	}
-
 	/**
 	 * @param ontologyVersionId
 	 *            the ontologyVersionId to set
 	 */
-	public void setOntologyVersionId(String ontologyVersionId) {
-		this.ontologyVersionId.setContents(ontologyVersionId);
+	public void setOntologyVersionId(Integer ontologyVersionId) {
+		super.setOntologyVersionId(ontologyVersionId);
+		this.ontologyVersionId.setContents((ontologyVersionId == null) ? null
+				: ontologyVersionId.toString());
 	}
 
 	/**
 	 * @param ontologyId
 	 *            the ontologyId to set
 	 */
-	public void setOntologyId(String ontologyId) {
-		this.ontologyId.setContents(ontologyId);
+	public void setOntologyId(Integer ontologyId) {
+		super.setOntologyId(ontologyId);
+		this.ontologyId.setContents((ontologyId == null) ? null : ontologyId
+				.toString());
 	}
 
 	/**
@@ -99,6 +64,7 @@ public class LuceneSearchDocument {
 	 *            the ontologyVersionId to set
 	 */
 	public void setOntologyDisplayLabel(String ontologyDisplayLabel) {
+		super.setOntologyDisplayLabel(ontologyDisplayLabel);
 		this.ontologyDisplayLabel.setContents(ontologyDisplayLabel);
 	}
 
@@ -107,7 +73,9 @@ public class LuceneSearchDocument {
 	 *            the recordType to set
 	 */
 	public void setRecordType(LuceneRecordTypeEnum recordType) {
-		this.recordType.setContents(recordType.getLabel());
+		super.setRecordType(recordType);
+		this.recordType.setContents((recordType == null) ? null : recordType
+				.getLabel());
 	}
 
 	/**
@@ -115,6 +83,7 @@ public class LuceneSearchDocument {
 	 *            the frameName to set
 	 */
 	public void setConceptId(String conceptId) {
+		super.setConceptId(conceptId);
 		this.conceptId.setContents(conceptId);
 	}
 
@@ -123,6 +92,7 @@ public class LuceneSearchDocument {
 	 *            the conceptIdShort to set
 	 */
 	public void setConceptIdShort(String conceptIdShort) {
+		super.setConceptIdShort(conceptIdShort);
 		this.conceptIdShort.setContents(conceptIdShort);
 	}
 
@@ -131,6 +101,7 @@ public class LuceneSearchDocument {
 	 *            the preferredName to set
 	 */
 	public void setPreferredName(String preferredName) {
+		super.setPreferredName(preferredName);
 		this.preferredName.setContents(preferredName);
 	}
 
@@ -139,6 +110,7 @@ public class LuceneSearchDocument {
 	 *            the contents to set
 	 */
 	public void setContents(String contents) {
+		super.setContents(contents);
 		this.contents.setContents(contents);
 	}
 
@@ -147,6 +119,7 @@ public class LuceneSearchDocument {
 	 *            the literalContents to set
 	 */
 	public void setLiteralContents(String literalContents) {
+		super.setLiteralContents(literalContents);
 		this.literalContents.setContents((literalContents == null) ? null
 				: literalContents.trim().toLowerCase());
 	}
@@ -154,63 +127,63 @@ public class LuceneSearchDocument {
 	/**
 	 * @return the ontologyVersionId
 	 */
-	public LuceneSearchField getOntologyVersionId() {
+	public LuceneSearchField getOntologyVersionIdField() {
 		return ontologyVersionId;
 	}
 
 	/**
 	 * @return the ontologyId
 	 */
-	public LuceneSearchField getOntologyId() {
+	public LuceneSearchField getOntologyIdField() {
 		return ontologyId;
 	}
 
 	/**
 	 * @return the ontologyDisplayLabel
 	 */
-	public LuceneSearchField getOntologyDisplayLabel() {
+	public LuceneSearchField getOntologyDisplayLabelField() {
 		return ontologyDisplayLabel;
 	}
 
 	/**
 	 * @return the recordType
 	 */
-	public LuceneSearchField getRecordType() {
+	public LuceneSearchField getRecordTypeField() {
 		return recordType;
 	}
 
 	/**
 	 * @return the coneptId
 	 */
-	public LuceneSearchField getConceptId() {
+	public LuceneSearchField getConceptIdField() {
 		return conceptId;
 	}
 
 	/**
 	 * @return the conceptIdShort
 	 */
-	public LuceneSearchField getConceptIdShort() {
+	public LuceneSearchField getConceptIdShortField() {
 		return conceptIdShort;
 	}
 
 	/**
 	 * @return the preferredName
 	 */
-	public LuceneSearchField getPreferredName() {
+	public LuceneSearchField getPreferredNameField() {
 		return preferredName;
 	}
 
 	/**
 	 * @return the contents
 	 */
-	public LuceneSearchField getContents() {
+	public LuceneSearchField getContentsField() {
 		return contents;
 	}
 
 	/**
 	 * @return the literalContents
 	 */
-	public LuceneSearchField getLiteralContents() {
+	public LuceneSearchField getLiteralContentsField() {
 		return literalContents;
 	}
 }

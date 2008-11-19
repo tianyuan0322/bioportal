@@ -3,22 +3,22 @@ package lucene.bean;
 import lucene.enumeration.LuceneRecordTypeEnum;
 import edu.stanford.smi.protege.model.Frame;
 
-public class LuceneProtegeFrame extends AbstractLuceneConceptProperty {
+public class LuceneProtegeFrame extends LuceneSearchBean {
 	private Frame frame;
 
 	/**
 	 * @param ontologyVersionId
 	 * @param ontologyId
 	 * @param ontologyDisplayLabel
+	 * @param recordType
 	 * @param preferredName
-	 * @param frameType
 	 * @param frame
 	 */
 	public LuceneProtegeFrame(Integer ontologyVersionId, Integer ontologyId,
-			String ontologyDisplayLabel, String preferredName,
-			LuceneRecordTypeEnum frameType, Frame frame) {
-		super(ontologyVersionId, ontologyId, ontologyDisplayLabel,
-				preferredName, frameType);
+			String ontologyDisplayLabel, LuceneRecordTypeEnum recordType,
+			String preferredName, Frame frame) {
+		super(ontologyVersionId, ontologyId, ontologyDisplayLabel, recordType,
+				preferredName);
 		this.frame = frame;
 	}
 

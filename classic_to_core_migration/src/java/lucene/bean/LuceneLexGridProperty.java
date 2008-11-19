@@ -4,22 +4,22 @@ import lucene.enumeration.LuceneRecordTypeEnum;
 
 import org.LexGrid.commonTypes.Property;
 
-public class LuceneLexGridProperty extends AbstractLuceneConceptProperty {
+public class LuceneLexGridProperty extends LuceneSearchBean {
 	Property property;
 
 	/**
 	 * @param ontologyVersionId
 	 * @param ontologyId
 	 * @param ontologyDisplayLabel
+	 * @param recordType
 	 * @param preferredName
-	 * @param propetyType
 	 * @param property
 	 */
 	public LuceneLexGridProperty(Integer ontologyVersionId, Integer ontologyId,
-			String ontologyDisplayLabel, String preferredName,
-			LuceneRecordTypeEnum propetyType, Property property) {
-		super(ontologyVersionId, ontologyId, ontologyDisplayLabel,
-				preferredName, propetyType);
+			String ontologyDisplayLabel, LuceneRecordTypeEnum recordType,
+			String preferredName, Property property) {
+		super(ontologyVersionId, ontologyId, ontologyDisplayLabel, recordType,
+				preferredName);
 		this.property = property;
 	}
 
