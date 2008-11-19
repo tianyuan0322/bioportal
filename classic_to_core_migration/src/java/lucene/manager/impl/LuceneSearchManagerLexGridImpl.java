@@ -105,7 +105,7 @@ public class LuceneSearchManagerLexGridImpl implements LuceneSearchManager {
 				recType = LuceneRecordTypeEnum.RECORD_TYPE_SYNONYM;
 			}
 
-			setLuceneIndexBean(doc, concept.getId(),
+			populateIndexBean(doc, concept.getId(),
 					new LuceneLexGridProperty(ontologyVersionId, ontologyId,
 							ontologyDisplayLabel, recType, preferredName, p));
 			writer.addDocument(doc);
@@ -121,7 +121,7 @@ public class LuceneSearchManagerLexGridImpl implements LuceneSearchManager {
 		for (Iterator<ConceptProperty> itr = concept.iterateConceptProperty(); itr
 				.hasNext();) {
 			ConceptProperty cp = itr.next();
-			setLuceneIndexBean(doc, concept.getId(),
+			populateIndexBean(doc, concept.getId(),
 					new LuceneLexGridProperty(ontologyVersionId, ontologyId,
 							ontologyDisplayLabel,
 							LuceneRecordTypeEnum.RECORD_TYPE_PROPERTY,
@@ -137,7 +137,7 @@ public class LuceneSearchManagerLexGridImpl implements LuceneSearchManager {
 		for (Iterator<Definition> itr = concept.iterateDefinition(); itr
 				.hasNext();) {
 			Definition d = itr.next();
-			setLuceneIndexBean(doc, concept.getId(),
+			populateIndexBean(doc, concept.getId(),
 					new LuceneLexGridProperty(ontologyVersionId, ontologyId,
 							ontologyDisplayLabel,
 							LuceneRecordTypeEnum.RECORD_TYPE_PROPERTY,
@@ -152,7 +152,7 @@ public class LuceneSearchManagerLexGridImpl implements LuceneSearchManager {
 			throws IOException {
 		for (Iterator<Comment> itr = concept.iterateComment(); itr.hasNext();) {
 			Comment c = itr.next();
-			setLuceneIndexBean(doc, concept.getId(),
+			populateIndexBean(doc, concept.getId(),
 					new LuceneLexGridProperty(ontologyVersionId, ontologyId,
 							ontologyDisplayLabel,
 							LuceneRecordTypeEnum.RECORD_TYPE_PROPERTY,
@@ -168,7 +168,7 @@ public class LuceneSearchManagerLexGridImpl implements LuceneSearchManager {
 		for (Iterator<Instruction> itr = concept.iterateInstruction(); itr
 				.hasNext();) {
 			Instruction i = itr.next();
-			setLuceneIndexBean(doc, concept.getId(),
+			populateIndexBean(doc, concept.getId(),
 					new LuceneLexGridProperty(ontologyVersionId, ontologyId,
 							ontologyDisplayLabel,
 							LuceneRecordTypeEnum.RECORD_TYPE_PROPERTY,
@@ -177,7 +177,7 @@ public class LuceneSearchManagerLexGridImpl implements LuceneSearchManager {
 		}
 	}
 
-	private void setLuceneIndexBean(LuceneIndexBean doc, String conceptId,
+	private void populateIndexBean(LuceneIndexBean doc, String conceptId,
 			LuceneLexGridProperty prop) {
 		doc.populateInstance(prop.getOntologyVersionId(), prop.getOntologyId(),
 				prop.getOntologyDisplayLabel(), prop.getRecordType(),

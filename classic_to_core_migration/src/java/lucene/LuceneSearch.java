@@ -49,7 +49,7 @@ import edu.stanford.smi.protege.model.Frame;
 public class LuceneSearch {
 
 	private static final int MAX_NUM_HITS = 1000;
-	private static final int INDEX_MERGE_FACTOR = LogMergePolicy.DEFAULT_MERGE_FACTOR;
+	private static final int INDEX_MERGE_FACTOR = 100;
 	private static final int INDEX_MAX_MERGE_DOCS = LogMergePolicy.DEFAULT_MAX_MERGE_DOCS;
 	private Analyzer analyzer = new StandardAnalyzer();
 

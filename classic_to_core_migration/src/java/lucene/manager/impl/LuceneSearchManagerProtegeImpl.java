@@ -152,7 +152,7 @@ public class LuceneSearchManagerProtegeImpl implements LuceneSearchManager {
 				continue;
 			}
 
-			setLuceneIndexBean(doc, nfs, protegeFrame, (String) value,
+			populateIndexBean(doc, nfs, protegeFrame, (String) value,
 					owlMode);
 			writer.addDocument(doc);
 		}
@@ -178,7 +178,7 @@ public class LuceneSearchManagerProtegeImpl implements LuceneSearchManager {
 
 			preferredName = (String) value;
 			protegeFrame.setPreferredName(preferredName);
-			setLuceneIndexBean(doc, nfs, protegeFrame, (String) value,
+			populateIndexBean(doc, nfs, protegeFrame, (String) value,
 					owlMode);
 			writer.addDocument(doc);
 			break;
@@ -187,7 +187,7 @@ public class LuceneSearchManagerProtegeImpl implements LuceneSearchManager {
 		return preferredName;
 	}
 
-	private void setLuceneIndexBean(LuceneIndexBean doc,
+	private void populateIndexBean(LuceneIndexBean doc,
 			NarrowFrameStore nfs, LuceneProtegeFrame luceneProtegeFrame,
 			String value, boolean owlMode) {
 		value = stripLanguageIdentifier(value, owlMode);
