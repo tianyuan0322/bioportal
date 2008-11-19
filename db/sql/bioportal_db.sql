@@ -2,7 +2,8 @@
 SQLyog Enterprise - MySQL GUI v7.12 
 MySQL - 5.0.45-community-nt-log : Database - bioportal
 *********************************************************************
-*/
+*/
+
 
 /*!40101 SET NAMES utf8 */;
 
@@ -227,8 +228,8 @@ CREATE TABLE `ncbo_ontology_version_metadata` (
   `id` int(11) NOT NULL auto_increment,
   `ontology_version_id` int(11) NOT NULL,
   `display_label` varchar(128) NOT NULL,
-  `description` varchar(512) default NULL,
-  `abbreviation` varchar(32) default NULL,
+  `description` varchar(1024) default NULL,
+  `abbreviation` varchar(48) default NULL,
   `format` varchar(50) NOT NULL,
   `contact_name` varchar(128) default NULL,
   `contact_email` varchar(128) default NULL,
@@ -559,8 +560,8 @@ DROP TABLE IF EXISTS `v_ncbo_ontology`;
   `obo_foundry_id` varchar(128) default NULL,
   `is_manual` tinyint(1) NOT NULL default '0',
   `display_label` varchar(128) NOT NULL,
-  `description` varchar(512) default NULL,
-  `abbreviation` varchar(32) default NULL,
+  `description` varchar(1024) default NULL,
+  `abbreviation` varchar(48) default NULL,
   `format` varchar(50) NOT NULL,
   `contact_name` varchar(128) default NULL,
   `contact_email` varchar(128) default NULL,
