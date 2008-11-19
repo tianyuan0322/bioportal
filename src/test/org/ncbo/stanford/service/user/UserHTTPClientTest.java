@@ -28,6 +28,8 @@ public class UserHTTPClientTest extends AbstractBioPortalTest {
 		try {
 			String xml = response.getEntity().getText();
 
+      assertNotNull(xml);
+
 			System.out.println(xml);
 
       assertTrue(xml.contains("Apache Tomcat"));
@@ -57,6 +59,8 @@ public class UserHTTPClientTest extends AbstractBioPortalTest {
 		try {
 			String xml = response.getEntity().getText();
 
+      assertNotNull(xml);
+
 			System.out.println(xml);
 
       assertTrue(xml.contains("<success>"));
@@ -85,6 +89,8 @@ public class UserHTTPClientTest extends AbstractBioPortalTest {
 
 		try {
 			String xml = response.getEntity().getText();
+
+      assertNotNull(xml);
 
 			System.out.println(xml);
 
