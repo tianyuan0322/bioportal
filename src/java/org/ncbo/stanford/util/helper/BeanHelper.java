@@ -114,6 +114,8 @@ public class BeanHelper {
 				.getMessage("form.ontology.synonymSlot"));
 		String preferredNameSlot = httpServletRequest.getParameter(MessageUtils
 				.getMessage("form.ontology.preferredNameSlot"));
+		String targetTerminologies = httpServletRequest.getParameter(MessageUtils
+				.getMessage("form.ontology.targetTerminologies"));
 
 		List<Integer> categoryIds = new ArrayList<Integer>();
 
@@ -197,6 +199,10 @@ public class BeanHelper {
 
 		if (!StringHelper.isNullOrNullString(preferredNameSlot)) {
 			bean.setPreferredNameSlot(preferredNameSlot);
+		}
+
+		if (!StringHelper.isNullOrNullString(targetTerminologies)) {
+			bean.setTargetTerminologies(targetTerminologies);
 		}
 
 		if (categoryIds.size() > 0)
