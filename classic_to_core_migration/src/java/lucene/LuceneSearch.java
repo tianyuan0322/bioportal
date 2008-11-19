@@ -241,31 +241,8 @@ public class LuceneSearch {
 				uniqueDocs.add(conceptId);
 
 				DecimalFormat score = new DecimalFormat("0.00");
-				System.out
-						.println(score.format(hits[i].score)
-								+ " | "
-								+ doc
-										.get(LuceneIndexBean.ONTOLOGY_VERSION_ID_FIELD_LABEL)
-								+ " | "
-								+ doc
-										.get(LuceneIndexBean.ONTOLOGY_ID_FIELD_LABEL)
-								+ " | "
-								+ conceptId
-								+ " | "
-								+ doc.get(LuceneIndexBean.CONTENTS_FIELD_LABEL)
-								+ " | "
-								+ doc
-										.get(LuceneIndexBean.RECORD_TYPE_FIELD_LABEL));
-				System.out
-						.println(doc
-								.get(LuceneIndexBean.PREFERRED_NAME_FIELD_LABEL)
-								+ " | "
-								+ doc
-										.get(LuceneIndexBean.CONCEPT_ID_SHORT_FIELD_LABEL)
-								+ " | "
-								+ doc
-										.get(LuceneIndexBean.ONTOLOGY_DISPLAY_LABEL_FIELD_LABEL)
-								+ "\n");
+				System.out.println(score.format(hits[i].score) + " | "
+						+ searchResult);
 			}
 		}
 

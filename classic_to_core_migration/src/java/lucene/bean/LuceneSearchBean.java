@@ -65,6 +65,13 @@ public class LuceneSearchBean {
 		setLiteralContents(literalContents);
 	}
 
+	public String toString() {
+		return ontologyVersionId + " | " + ontologyId + " | " + conceptId
+				+ " | " + contents + " | " + recordType.getLabel() + "\n"
+				+ preferredName + " | " + conceptIdShort + " | "
+				+ ontologyDisplayLabel + "\n";
+	}
+
 	/**
 	 * @return the ontologyVersionId
 	 */
