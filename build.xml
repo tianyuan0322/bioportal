@@ -308,7 +308,10 @@
 
 	</target>
 
-	<target name="deploytest" depends="deploy,test"/>
+	<target name="deploytest" depends="deploy">
+     <sleep seconds="20"/>     
+     <ant target="test"/>     
+  </target>
 
 	<!-- TODO:  This task does not work.  The bioportal_db.sql scripts do not work correctly through Ant "sql" targets.  It only works directly in the MySQL Query browser.-->
 	<target description="Setup test database for Bioportal metadata, version info, and user data." name="test.dbsetupinit">
