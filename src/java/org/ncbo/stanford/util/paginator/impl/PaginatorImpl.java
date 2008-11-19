@@ -34,6 +34,17 @@ public class PaginatorImpl<E> implements Paginator<E> {
 		this(originalList, DEFAULT_PAGESIZE);
 	}
 
+	public Page<E> getAll() {
+		Page<E> result = null;
+		int size = originalList.size();
+
+		if (originalList != null && size > 0) {
+			result = new Page<E>(1, 1, size, originalList);
+		}
+
+		return result;
+	}
+
 	public Page<E> getFirstPage() {
 		Page<E> result = null;
 
