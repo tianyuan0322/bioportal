@@ -49,7 +49,7 @@ import org.ncbo.stanford.util.helper.StringHelper;
 public class LuceneSearch {
 
 	private static final int MAX_NUM_HITS = 1000;
-	private static final int INDEX_MERGE_FACTOR = 100;
+	private static final int INDEX_MERGE_FACTOR = LogMergePolicy.DEFAULT_MERGE_FACTOR;
 	private static final int INDEX_MAX_MERGE_DOCS = LogMergePolicy.DEFAULT_MAX_MERGE_DOCS;
 	private Analyzer analyzer = new StandardAnalyzer();
 
@@ -213,7 +213,7 @@ public class LuceneSearch {
 		ScoreDoc[] hits = docs.scoreDocs;
 
 		List<String> uniqueDocs = new ArrayList<String>();
-		SearchResultListBean searchResults = new SearchResultListBean();
+		SearchResultListBean searchResults = new SearchResultListBean(0);
 
 		for (int i = 0; i < hits.length; i++) {
 			int docId = hits[i].doc;
