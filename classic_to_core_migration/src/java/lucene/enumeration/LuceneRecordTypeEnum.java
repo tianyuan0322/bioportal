@@ -32,6 +32,10 @@ public enum LuceneRecordTypeEnum {
 		return recordType;
 	}
 
+	public String toString() {
+		return label;
+	}
+	
 	/**
 	 * @return the label
 	 */
