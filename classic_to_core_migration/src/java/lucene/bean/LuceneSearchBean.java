@@ -1,8 +1,16 @@
 package lucene.bean;
 
+import java.io.Serializable;
+
 import lucene.enumeration.LuceneRecordTypeEnum;
 
-public class LuceneSearchBean {
+public class LuceneSearchBean implements Serializable {
+	
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -8273948677287240533L;
+
 	private Integer ontologyVersionId;
 	private Integer ontologyId;
 	private String ontologyDisplayLabel;
