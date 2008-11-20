@@ -28,6 +28,7 @@ import edu.stanford.smi.protege.query.querytypes.LuceneOwnSlotValueQuery;
 import edu.stanford.smi.protegex.owl.model.NamespaceUtil;
 import edu.stanford.smi.protegex.owl.model.OWLModel;
 import edu.stanford.smi.protegex.owl.model.OWLNamedClass;
+import edu.stanford.smi.protegex.owl.model.RDFProperty;
 import edu.stanford.smi.protegex.owl.model.RDFResource;
 import edu.stanford.smi.protegex.owl.model.RDFSNamedClass;
 
@@ -333,7 +334,7 @@ public class OntologyRetrievalManagerProtegeImpl extends
 			slots = cls.getOwnSlots();
 		}
 
-		classBean.addRelations(convertProperties(cls, slots));
+		classBean.addRelations(convertProperties(cls, slots, isOwl));
 
 		// add subclasses
 		// if OWLNamedClass, then use getNamedSubclasses/Superclasses,
@@ -408,13 +409,16 @@ public class OntologyRetrievalManagerProtegeImpl extends
 	 * @return
 	 */
 	private HashMap<String, List<String>> convertProperties(Cls concept,
-			Collection<Slot> slots) {
+			Collection<Slot> slots, boolean isOwl) {
 		HashMap<String, List<String>> bpProps = new HashMap<String, List<String>>();
 		ArrayList<String> bpPropVals = new ArrayList<String>();
 
 		// add properties
 		for (Slot slot : slots) {
-			List vals = getUniqueClasses(concept.getOwnSlotValues(slot));
+			Collection classes = (isOwl) ? ((OWLNamedClass) concept)
+					.getPropertyValues((RDFProperty) slot) : concept
+					.getOwnSlotValues(slot);
+			List vals = getUniqueClasses(classes);
 
 			if (vals.isEmpty()) {
 				continue;
