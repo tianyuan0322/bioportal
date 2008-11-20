@@ -518,14 +518,14 @@ public class LuceneSearch {
 				|| (t != null && (className
 						.equals("com.mysql.jdbc.exceptions.MySQLSyntaxErrorException") || className
 						.equals("com.mysql.jdbc.exceptions.jdbc4.MySQLSyntaxErrorException")))) {
-			msg = "Ontology: " + rs.getString("display_label") + " (Id: "
+			msg = "Ontology " + rs.getString("display_label") + " (Id: "
 					+ rs.getInt("id") + ", Ontology Id: "
 					+ rs.getInt("ontology_id")
 					+ ") does not exist in the backend store";
 		}
 
 		if (ignoreErrors && msg != null) {
-			System.out.println(msg);
+			System.out.println(msg + "\n");
 		} else if (ignoreErrors) {
 			e.printStackTrace();
 		} else if (msg != null) {
