@@ -1,6 +1,5 @@
 package org.ncbo.stanford.util.paginator;
 
-import java.util.Collection;
 import java.util.Iterator;
 
 /**
@@ -10,7 +9,7 @@ import java.util.Iterator;
  * 
  * @param <E>
  */
-public interface Paginatable<E> extends Collection<E> {
+public interface Paginatable<E> {
 
 	/**
 	 * List iterator
