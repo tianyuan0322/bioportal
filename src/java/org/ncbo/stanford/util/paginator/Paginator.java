@@ -12,6 +12,13 @@ import org.ncbo.stanford.util.paginator.impl.Page;
 public interface Paginator<E> {
 
 	/**
+	 * Returns the entire list of results
+	 * 
+	 * @return
+	 */
+	public Page<E> getAll();
+	
+	/**
 	 * Returns the first page of results
 	 * 
 	 * @return
