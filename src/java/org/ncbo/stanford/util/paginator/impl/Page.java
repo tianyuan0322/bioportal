@@ -1,5 +1,6 @@
 package org.ncbo.stanford.util.paginator.impl;
 
+import java.io.Serializable;
 import java.util.Iterator;
 
 import org.ncbo.stanford.util.paginator.Paginatable;
@@ -12,17 +13,26 @@ import org.ncbo.stanford.util.paginator.Paginatable;
  * 
  * @param <E>
  */
-public class Page<E> {
+public class Page<E> implements Serializable {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 7375888859434573070L;
+	
 	private int pageNum;
 	private int totalPage;
 	private int pagesize;
 	private Paginatable<E> contents;
 
-	public Page(final int pageNum, final int totalPage, final int pagesize,
-			final Paginatable<E> contents) {
+	public Page(final int pageNum, final int totalPage) {
 		this.pageNum = pageNum;
 		this.totalPage = totalPage;
+	}
+
+	public Page(final int pageNum, final int totalPage, final int pagesize,
+			final Paginatable<E> contents) {
+		this(pageNum, totalPage);
 		this.pagesize = pagesize;
 		this.contents = contents;
 	}
