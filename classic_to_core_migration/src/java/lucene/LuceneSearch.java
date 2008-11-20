@@ -196,17 +196,23 @@ public class LuceneSearch {
 	}
 
 	public SearchResultListBean executeQuery(String expr,
-			boolean includeProperties) throws IOException {
-		return executeQuery(expr, null, includeProperties);
+			boolean includeProperties, boolean isExactMatch) throws IOException {
+		return executeQuery(expr, null, includeProperties, isExactMatch);
 	}
 
 	public SearchResultListBean executeQuery(String expr,
-			Collection<Integer> ontologyIds, boolean includeProperties)
+			Collection<Integer> ontologyIds, boolean includeProperties,
+			boolean isExactMatch) throws IOException {
+		Query query = generateLuceneSearchQuery(ontologyIds, expr,
+				includeProperties, isExactMatch);
+
+		return executeQuery(query);
+	}
+
+	public SearchResultListBean executeQuery(Query query)
 			throws IOException {
 		long start = System.currentTimeMillis();
 
-		Query query = generateLuceneSearchQuery(ontologyIds, expr,
-				includeProperties);
 		Searcher searcher = new IndexSearcher(getIndexPath());
 		TopFieldDocs docs = searcher.search(query, null, MAX_NUM_HITS,
 				getSortFields());
@@ -321,12 +327,17 @@ public class LuceneSearch {
 		}
 	}
 
-	private Query generateLuceneSearchQuery(Collection<Integer> ontologyIds,
-			String expr, boolean includeProperties) throws IOException {
+	public Query generateLuceneSearchQuery(Collection<Integer> ontologyIds,
+			String expr, boolean includeProperties, boolean isExactMatch)
+			throws IOException {
 		BooleanQuery query = new BooleanQuery();
 
-		// addContentsClauseExact(expr, query);
-		addContentsClauseContains(expr, query);
+		if (isExactMatch) {
+			addContentsClauseExact(expr, query);
+		} else {
+			addContentsClauseContains(expr, query);
+		}
+
 		addOntologyIdsClause(ontologyIds, query);
 		addPropertiesClause(includeProperties, query);
 
@@ -344,7 +355,7 @@ public class LuceneSearch {
 	private void addContentsClauseExact(String expr, BooleanQuery query)
 			throws IOException {
 		TermQuery q = new TermQuery(new Term(
-				LuceneIndexBean.LITERAL_CONTENTS_FIELD_LABEL, expr));
+				LuceneIndexBean.LITERAL_CONTENTS_FIELD_LABEL, expr.toLowerCase()));
 		query.add(q, BooleanClause.Occur.MUST);
 	}
 
