@@ -130,10 +130,10 @@ public abstract class AbstractOntologyManagerProtege {
 		KnowledgeBase kb = (KnowledgeBase) protegeKnowledgeBases
 				.get(ob.getId());
 
-//		if (kb == null) {
+		if (kb == null) {
 			kb = createKnowledgeBaseInstance(ob);
 			protegeKnowledgeBases.put(ob.getId(), kb);
-//		}
+		}
 
 		return kb;
 	}
@@ -145,13 +145,13 @@ public abstract class AbstractOntologyManagerProtege {
 		KnowledgeBase kb = (KnowledgeBase) protegeKnowledgeBases
 				.get(ontologyVersion.getId());
 
-//		if (kb == null) {
+		if (kb == null) {
 			OntologyBean ob = new OntologyBean();
 			ob.populateFromEntity(ontologyVersion);
 			kb = createKnowledgeBaseInstance(ob);
 
-//			protegeKnowledgeBases.put(ontologyVersion.getId(), kb);
-//		}
+			protegeKnowledgeBases.put(ontologyVersion.getId(), kb);
+		}
 
 		return kb;
 	}
