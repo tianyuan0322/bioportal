@@ -54,7 +54,7 @@ FROM
 
 update ncbo_ontology_version_metadata set abbreviation = 'nif' where display_label = 'NIFSTD';
 
-update ncbo_ontology_version_metadata set abbreviation = 'FFHO' where display_label = 'Family Health History Ontology';
+update ncbo_ontology_version_metadata set abbreviation = 'FHHO' where display_label = 'Family Health History Ontology';
 
 update ncbo_ontology_version_metadata set abbreviation = 'ATMO' where display_label = 'African Traditional Medicine';
 
@@ -248,6 +248,14 @@ update ncbo_ontology_version_metadata set abbreviation = 'YPO' where display_lab
 
 update ncbo_ontology_version_metadata set abbreviation = 'ZFA' where display_label = 'Zebrafish anatomy and development';
 
+update ncbo_ontology_version_metadata set description = 'SO-Pharm (Suggested Ontology for Pharmacogenomics) is a domain ontology implemented in OWL-DL, which proposes a formal description of pharmacogenomic knowledge. SO-Pharm articulates different ontologies that represent complementary sub-domains of pharmacogenomics, i.e. related to genotype, phenotype, drugs, and clinical trials. SO-Pharm enables to represent pharmacogenomic relationships between a drug, a genomic variation and a phenotype trait. In addition, it enables to represent patient and more largely panel included in trials, and populations. SO-Pharm enables the representation of measured items on this patients such as results from the observation of a phenotype trait or of genomic variations. SO-Pharm supports knowledge about pharmacogenomic hypothesis, case study, and investigations in pharmacogenomics. SO-Pharm is designed to facilitate data integration and knowledge discovery in pharmacogenomics. In addition it provides a consistent articulation of ontologies of pharmacogenomic sub-domains.' where display_label = 'SO-Pharm';
+
+update ncbo_ontology_version_metadata set description = 'SNP-Ontology is a domain ontology that provides a formal representation (OWL-DL) of genomic variations. Despite its name, SNP-Ontology, is not limited to the representation of SNPs but it encompasses genomic variations in a broader meaning. SNP-Ontology is general enough to enable the representation of variations observed in genome of various species. Latest versions of SNP-Ontology include the representation of haplotype and of CNV. The unambiguous representation of genomic variations provided by SNP-Ontology enables to integrate heterogeneous data related to genomic variations. To achieve this goal SNP-Ontology enables (1) to represent one variation in accordance with various ways that exist for describing it, (2) to represent the equivalence between two distinct descriptions of one variation, and (3) to represent correspondence between a genomic variation and its outcome at the transcriptome and proteome levels.' where display_label = 'SNP-Ontology';
+
+update ncbo_ontology_version_metadata set description = 'The FHHO facilitates representing the family health histories of persons related by biological and/or social family relationships (e.g. step, adoptive) who share genetic, behavioral, and/or environmental risk factors for disease. SWRL rules are included to compute 3 generations of biological relationships based on parentage and family history findings based on personal health findings.' where display_label = 'Family Health History Ontology';
+
+update ncbo_ontology_version_metadata set description = 'The ontology for the original papers investigating the relations between genetic factors and disease.' where display_label = 'Ontology for disease genetic investigation';
+
 update ncbo_ontology_version_metadata set description = 'African Traditional Medicine Ontology (ATMO) describes the actors\' function (healer, fetishist or soothsayer); the different types of proposed process treatment, the symptom\'s roles and the disease consideration.' where display_label = 'African Traditional Medicine';
 
 update ncbo_ontology_version_metadata set description = 'An ontology of amino acids and their properties.' where display_label = 'Amino Acid';
@@ -320,6 +328,8 @@ update ncbo_ontology_version_metadata set description = 'A structured controlled
 
 update ncbo_ontology_version_metadata set description = 'A conceptual model for the domain of gene regulation.' where display_label = 'Gene Regulation Ontology';
 
+update ncbo_ontology_version_metadata set description = 'The Gene Regulation Ontology (GRO) is a conceptual model for the domain of gene regulation. It covers processes that are linked to the regulation of gene expression as well as physical entities that are involved in these processes (such as genes and transcription factors) in terms of ontology classes and semantic relations between classes.' where display_label = 'Gene Regulation Ontology(GRO)';
+
 update ncbo_ontology_version_metadata set description = 'The Habronattus courtship ontology is an ontology of terms used to describe the courtship display of the jumping spider Habronattus californicus.  It was constructed from observations of video clips provided to the curator by Wayne Maddison.' where display_label = 'Habronattus courtship';
 
 update ncbo_ontology_version_metadata set description = 'Creating a comprehensive hierarchical controlled vocabulary for human disease representation.' where display_label = 'Human disease';
@@ -390,6 +400,8 @@ update ncbo_ontology_version_metadata set description = 'SAO describes structure
 
 update ncbo_ontology_version_metadata set description = 'A multi-species anatomy ontology for teleost fish.' where display_label = 'Teleost anatomy and development';
 
+update ncbo_ontology_version_metadata set description = 'The Teleost taxonomy ontology is being used to facilitate annotation of phenotypes, particularly for taxa that are not covered by NCBI because no submissions of molecular data have been made. Taxonomy ontologies can also be valuable in annotating legacy data, where authors make phenotype or ecological assertions (e.g., host-parasite associations) that refer to groups that are reorganized or no longer recognized. The taxonomy ontology serves as the source of taxa for our project\'s use for identifying evolutionary changes that match the phenotype of a zebrafish mutant.' where display_label = 'Teleost taxonomy';
+
 update ncbo_ontology_version_metadata set description = 'The anatomy of the Tick, Families: Ixodidae, Argassidae. ' where display_label = 'Tick gross anatomy';
 
 update ncbo_ontology_version_metadata set description = 'Uberon is a multi-species anatomy ontology created to facilitate comparison of phenotypes across multiple species. Uberon is generated semi-automatically from the union of existing species-centric anatomy ontologies.' where display_label = 'Uber anatomy ontology';
@@ -401,3 +413,60 @@ update ncbo_ontology_version_metadata set description = 'A structured controlled
 update ncbo_ontology_version_metadata set description = 'A structured controlled vocabulary for the phenotypes of budding yeast.' where display_label = 'Yeast phenotypes';
 
 update ncbo_ontology_version_metadata set description = 'A structured controlled vocabulary of the anatomy and development of the Zebrafish (Danio rerio).' where display_label = 'Zebrafish anatomy and development';
+
+update ncbo_ontology_version_metadata set description = 'An ontology that organizes the concepts and terms of pathway objects such as sub-pathways, biological processes and experimental environments appearing in the cellular pathway (e.g. signal transductions, disease pathways, metabolic pathways, etc.) The concepts in the Event Ontology were manually extracted from scientific articles and text books. Each concept has a link to Gene Ontology if possible.' where display_label = 'Event (INOH pathway ontology)';
+
+insert into ncbo_l_category (id, name, obo_foundry_name, parent_category_id) select max(id) + 1, 'Health', null, null from ncbo_l_category;
+
+insert into ncbo_l_category (id, name, obo_foundry_name, parent_category_id) select max(id) + 1, 'Biomedical Resources', null, null from ncbo_l_category;
+
+insert into ncbo_l_category (id, name, obo_foundry_name, parent_category_id) select max(id) + 1, 'Biological Process', null, null from ncbo_l_category;
+
+insert into ncbo_l_category (id, name, obo_foundry_name, parent_category_id) select max(id) + 1, 'Arabadopsis', null, null from ncbo_l_category;
+
+insert into ncbo_l_category (id, name, obo_foundry_name, parent_category_id) select max(id) + 1, 'Human', null, null from ncbo_l_category;
+
+insert into ncbo_l_category (id, name, obo_foundry_name, parent_category_id) select max(id) + 1, 'Plant', null, null from ncbo_l_category;
+
+insert into ncbo_l_category (id, name, obo_foundry_name, parent_category_id) select max(id) + 1, 'Yeast', null, null from ncbo_l_category;
+
+insert into ncbo_ontology_category (ontology_version_id, category_id) select om.ontology_version_id, c.id from ncbo_ontology_version_metadata om, ncbo_l_category c where om.display_label='African Traditional Medicine' and c.name in ('Health');
+
+insert into ncbo_ontology_category (ontology_version_id, category_id) select om.ontology_version_id, c.id from ncbo_ontology_version_metadata om, ncbo_l_category c where om.display_label='Biomedical Resource Ontology' and c.name in ('Biomedical resources');
+
+insert into ncbo_ontology_category (ontology_version_id, category_id) select om.ontology_version_id, c.id from ncbo_ontology_version_metadata om, ncbo_l_category c where om.display_label='Bleeding History Phenotype' and c.name in ('Phenotype');
+
+insert into ncbo_ontology_category (ontology_version_id, category_id) select om.ontology_version_id, c.id from ncbo_ontology_version_metadata om, ncbo_l_category c where om.display_label='Cell Cycle Ontology (A. thaliana)' and c.name in ('Arabadopsis', 'Biological Process');
+
+insert into ncbo_ontology_category (ontology_version_id, category_id) select om.ontology_version_id, c.id from ncbo_ontology_version_metadata om, ncbo_l_category c where om.display_label='Cell Cycle Ontology (H. sapiens)' and c.name in ('Human', 'Biological Process');
+
+insert into ncbo_ontology_category (ontology_version_id, category_id) select om.ontology_version_id, c.id from ncbo_ontology_version_metadata om, ncbo_l_category c where om.display_label='Cell Cycle Ontology (S. cerevisiae)' and c.name in ('Yeast', 'Biological Process');
+
+insert into ncbo_ontology_category (ontology_version_id, category_id) select om.ontology_version_id, c.id from ncbo_ontology_version_metadata om, ncbo_l_category c where om.display_label='Cell Cycle Ontology (S. pombe)' and c.name in ('Yeast', 'Biological Process');
+
+insert into ncbo_ontology_category (ontology_version_id, category_id) select om.ontology_version_id, c.id from ncbo_ontology_version_metadata om, ncbo_l_category c where om.display_label='Cereal plant development' and c.name in ('Plant', 'Development', 'Plant Development');
+
+insert into ncbo_ontology_category (ontology_version_id, category_id) select om.ontology_version_id, c.id from ncbo_ontology_version_metadata om, ncbo_l_category c where om.display_label='Cereal plant gross anatomy' and c.name in ('Plant', 'Anatomy', 'Plant Anatomy');
+
+insert into ncbo_ontology_category (ontology_version_id, category_id) select om.ontology_version_id, c.id from ncbo_ontology_version_metadata om, ncbo_l_category c where om.display_label='Comparative Data Analysis Ontology' and c.name in ('Experimental Conditions');
+
+insert into ncbo_ontology_category (ontology_version_id, category_id) select om.ontology_version_id, c.id from ncbo_ontology_version_metadata om, ncbo_l_category c where om.display_label='Family Health History Ontology' and c.name in ('Health');
+
+insert into ncbo_ontology_category (ontology_version_id, category_id) select om.ontology_version_id, c.id from ncbo_ontology_version_metadata om, ncbo_l_category c where om.display_label='Gene Regulation Ontology (GRO)' and c.name in ('Genomic and Proteomic');
+
+insert into ncbo_ontology_category (ontology_version_id, category_id) select om.ontology_version_id, c.id from ncbo_ontology_version_metadata om, ncbo_l_category c where om.display_label='NanoParticle Ontology (NPO)' and c.name in ('Health');
+
+insert into ncbo_ontology_category (ontology_version_id, category_id) select om.ontology_version_id, c.id from ncbo_ontology_version_metadata om, ncbo_l_category c where om.display_label='Ontology for disease genetic investigation' and c.name in ('Experimental Conditions');
+
+insert into ncbo_ontology_category (ontology_version_id, category_id) select om.ontology_version_id, c.id from ncbo_ontology_version_metadata om, ncbo_l_category c where om.display_label='Ontology of Glucose Metabolism Disorder' and c.name in ('Health');
+
+insert into ncbo_ontology_category (ontology_version_id, category_id) select om.ontology_version_id, c.id from ncbo_ontology_version_metadata om, ncbo_l_category c where om.display_label='Problem-Oriented Medical Record Ontology' and c.name in ('Health');
+
+insert into ncbo_ontology_category (ontology_version_id, category_id) select om.ontology_version_id, c.id from ncbo_ontology_version_metadata om, ncbo_l_category c where om.display_label='RadLex' and c.name in ('Imaging');
+
+insert into ncbo_ontology_category (ontology_version_id, category_id) select om.ontology_version_id, c.id from ncbo_ontology_version_metadata om, ncbo_l_category c where om.display_label='Skin Physiology Ontology' and c.name in ('Biological Process');
+
+insert into ncbo_ontology_category (ontology_version_id, category_id) select om.ontology_version_id, c.id from ncbo_ontology_version_metadata om, ncbo_l_category c where om.display_label='SNP-Ontology' and c.name in ('Genomic and Proteomic');
+
+insert into ncbo_ontology_category (ontology_version_id, category_id) select om.ontology_version_id, c.id from ncbo_ontology_version_metadata om, ncbo_l_category c where om.display_label='SO-Pharm' and c.name in ('Genomic and Proteomic');
+
