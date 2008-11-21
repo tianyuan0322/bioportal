@@ -78,6 +78,8 @@ public class LuceneSearchManagerLexGridImpl implements LuceneSearchManager {
 						concept);
 			}
 		}
+		
+		matchIterator.release();
 
 		long stop = System.currentTimeMillis(); // stop timing
 		System.out.println("Finished indexing ontology: "
