@@ -48,7 +48,7 @@ import org.ncbo.stanford.util.helper.StringHelper;
 
 public class LuceneSearch {
 
-	private static final int MAX_NUM_HITS = 1000;
+	private static final int MAX_NUM_HITS = 20;
 	private static final int INDEX_MERGE_FACTOR = LogMergePolicy.DEFAULT_MERGE_FACTOR;
 	private static final int INDEX_MAX_MERGE_DOCS = LogMergePolicy.DEFAULT_MAX_MERGE_DOCS;
 	private Analyzer analyzer = new StandardAnalyzer();
@@ -99,6 +99,10 @@ public class LuceneSearch {
 	// TODO: END, Throwaway code ==========================================
 
 	public void indexOntology(Integer ontologyId) throws Exception {
+		indexOntology(ontologyId, true);
+	}
+
+	public void indexOntology(Integer ontologyId, boolean doBackup) throws Exception {
 		Connection connBioPortal = connectBioPortal();
 		ResultSet rs = findOntology(connBioPortal, ontologyId);
 
@@ -109,7 +113,7 @@ public class LuceneSearch {
 				writer.setMergeFactor(INDEX_MERGE_FACTOR);
 				writer.setMaxMergeDocs(INDEX_MAX_MERGE_DOCS);
 
-				indexOntology(writer, rs, true);
+				indexOntology(writer, rs, doBackup);
 
 				writer.optimize();
 				writer.closeWriter();
