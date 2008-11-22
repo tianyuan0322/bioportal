@@ -19,9 +19,9 @@
   	</STYLE>
   	  
   	<script language="JavaScript">
-	function OnSubmitForm()
+	function onSubmitForm()
 	{	
-   		document.ontologyform.action ="http://localhost:8080/bioportal/rest/ontology/" + document.ontologyform.id.value;
+   		document.ontologyform.action ="http://ncbo-core-stage1.stanford.edu:8080/bioportal/rest/ontologies/" + document.ontologyform.id.value;
 		//alert("document.ontologyform.action=" + document.ontologyform.action);
 	
   		return true;
@@ -45,9 +45,9 @@
    	<DIV CLASS="indented">
    
 	<!--  form action="http://localhost:8080/bioportal/rest/ontology/34320" method="POST" -->
-	<form name="ontologyform" onSubmit="return OnSubmitForm();" method="POST">
+	<form name="ontologyform" onSubmit="return onSubmitForm();" method="POST">
 
-    	Ontology ID: <input type="text" id="id" name="id" value="34320" /><br />
+    	Ontology ID: <input type="text" id="id" name="id" value="" /><br />
 
     	<input type="hidden" name="sessionid" value="9c188a9b8de0fe0c21b9322b72255fb939a68bb2" /> 
 		<!--  <input type="hidden" name="applicationid" value="4ea81d74-8960-4525-810b-fa1baab576ff" /> -->
