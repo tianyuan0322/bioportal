@@ -48,7 +48,7 @@ import org.ncbo.stanford.util.helper.StringHelper;
 
 public class LuceneSearch {
 
-	private static final int MAX_NUM_HITS = 20;
+	private static final int MAX_NUM_HITS = 1000;
 	private static final int INDEX_MERGE_FACTOR = LogMergePolicy.DEFAULT_MERGE_FACTOR;
 	private static final int INDEX_MAX_MERGE_DOCS = LogMergePolicy.DEFAULT_MAX_MERGE_DOCS;
 	private Analyzer analyzer = new StandardAnalyzer();
@@ -222,6 +222,8 @@ public class LuceneSearch {
 				getSortFields());
 		ScoreDoc[] hits = docs.scoreDocs;
 
+		long stop = System.currentTimeMillis(); // stop timing
+	
 		List<String> uniqueDocs = new ArrayList<String>();
 		SearchResultListBean searchResults = new SearchResultListBean(0);
 
@@ -229,14 +231,14 @@ public class LuceneSearch {
 			int docId = hits[i].doc;
 			Document doc = searcher.doc(docId);
 			String conceptId = doc.get(LuceneIndexBean.CONCEPT_ID_FIELD_LABEL);
+			Integer ontologyId = new Integer(doc.get(LuceneIndexBean.ONTOLOGY_ID_FIELD_LABEL));
 
 			if (!uniqueDocs.contains(conceptId)) {
 				LuceneSearchBean searchResult = new LuceneSearchBean(
 						new Integer(
 								doc
 										.get(LuceneIndexBean.ONTOLOGY_VERSION_ID_FIELD_LABEL)),
-						new Integer(doc
-								.get(LuceneIndexBean.ONTOLOGY_ID_FIELD_LABEL)),
+						ontologyId,
 						doc
 								.get(LuceneIndexBean.ONTOLOGY_DISPLAY_LABEL_FIELD_LABEL),
 						LuceneRecordTypeEnum.getFromLabel(doc
@@ -247,6 +249,7 @@ public class LuceneSearch {
 						doc.get(LuceneIndexBean.CONTENTS_FIELD_LABEL),
 						doc.get(LuceneIndexBean.LITERAL_CONTENTS_FIELD_LABEL));
 				searchResults.add(searchResult);
+				searchResults.addOntologyHit(ontologyId);
 
 				uniqueDocs.add(conceptId);
 
@@ -256,7 +259,6 @@ public class LuceneSearch {
 			}
 		}
 
-		long stop = System.currentTimeMillis(); // stop timing
 		System.out.println("Query: " + query);
 		System.out.println("Hits: " + hits.length + ", Unique Hits: "
 				+ uniqueDocs.size());
