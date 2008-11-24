@@ -657,6 +657,29 @@
 	<bean id="searchAnalyzer"
 		class="org.apache.lucene.analysis.standard.StandardAnalyzer" />
 
+	<!-- Search Results Cache -->
+	<bean id="searchResultExpirationHandler"
+		class="org.ncbo.stanford.util.cache.expiration.handler.impl.NullExpirationHandler" />
+
+	<bean id="searchResultHashbeltContainerFactory"
+		class="org.ncbo.stanford.util.cache.container.impl.StandardHashbeltContainerFactory" />
+
+	<bean id="searchResultCache"
+		class="org.ncbo.stanford.util.cache.expiration.system.impl.UpdatingHashbeltExpirationSystem">
+		<constructor-arg index="0">
+			<value>@bioportalsearchresultnumcontainers@</value>
+		</constructor-arg>
+		<constructor-arg index="1">
+			<value>@bioportalsearchresulttimeout@</value>
+		</constructor-arg>
+		<constructor-arg index="2">
+			<ref bean="searchResultExpirationHandler" />
+		</constructor-arg>
+		<constructor-arg index="3">
+			<ref bean="searchResultHashbeltContainerFactory" />
+		</constructor-arg>
+	</bean>
+
 	<!-- Protege knowledge base cache -->
 	<bean id="protegeKnowledgeBaseExpirationHandler"
 		class="org.ncbo.stanford.util.cache.expiration.handler.impl.ProtegeKnowledgeBaseExpirationHandler" />
@@ -684,29 +707,6 @@
 		</constructor-arg>
 		<constructor-arg index="3">
 			<ref bean="protegeKnowledgeBaseContainerFactory" />
-		</constructor-arg>
-	</bean>
-
-	<!-- Search Results Cache -->
-	<bean id="searchResultExpirationHandler"
-		class="org.ncbo.stanford.util.cache.expiration.handler.impl.NullExpirationHandler" />
-
-	<bean id="searchResultHashbeltContainerFactory"
-		class="org.ncbo.stanford.util.cache.container.impl.StandardHashbeltContainerFactory" />
-
-	<bean id="searchResultCache"
-		class="org.ncbo.stanford.util.cache.expiration.system.impl.UpdatingHashbeltExpirationSystem">
-		<constructor-arg index="0">
-			<value>@bioportalsearchresultnumcontainers@</value>
-		</constructor-arg>
-		<constructor-arg index="1">
-			<value>@bioportalsearchresulttimeout@</value>
-		</constructor-arg>
-		<constructor-arg index="2">
-			<ref bean="searchResultExpirationHandler" />
-		</constructor-arg>
-		<constructor-arg index="3">
-			<ref bean="searchResultHashbeltContainerFactory" />
 		</constructor-arg>
 	</bean>
 

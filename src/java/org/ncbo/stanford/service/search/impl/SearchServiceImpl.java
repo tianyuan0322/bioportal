@@ -43,6 +43,7 @@ import org.ncbo.stanford.manager.search.impl.OntologySearchManagerLexGridImpl;
 import org.ncbo.stanford.manager.search.impl.OntologySearchManagerProtegeImpl;
 import org.ncbo.stanford.service.search.SearchService;
 import org.ncbo.stanford.util.cache.expiration.system.ExpirationSystem;
+import org.ncbo.stanford.util.cache.expiration.system.impl.UpdatingHashbeltExpirationSystem;
 import org.ncbo.stanford.util.constants.ApplicationConstants;
 import org.ncbo.stanford.util.helper.StringHelper;
 import org.ncbo.stanford.wrapper.LuceneIndexWriterWrapper;
@@ -53,7 +54,7 @@ public class SearchServiceImpl implements SearchService {
 	private int indexMergeFactor = LogMergePolicy.DEFAULT_MERGE_FACTOR;
 	private int indexMaxMergeDocs = LogMergePolicy.DEFAULT_MAX_MERGE_DOCS;
 	private Analyzer analyzer = new StandardAnalyzer();
-	private ExpirationSystem<Integer, SearchResultListBean> searchResultCache = null;
+	private ExpirationSystem<Integer, SearchResultListBean> searchResultCache = new UpdatingHashbeltExpirationSystem<Integer, SearchResultListBean>();
 
 	// TODO: Throwaway code ===============================================
 
