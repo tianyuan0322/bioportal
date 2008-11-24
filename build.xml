@@ -154,6 +154,9 @@
 				<filter token="messagebundlepackage" value="${bioportal.messagebundle.package}" />
 				<filter token="bioportalsessionnumcontainers" value="${bioportal.session.numcontainers}" />
 				<filter token="bioportalsessiontimeout" value="${bioportal.session.timeout}" />
+				<filter token="bioportalsearchmaxnumhits" value="${bioportal.search.maxnumhits}" />
+				<filter token="bioportalsearchindexmergefactor" value="${bioportal.search.indexmergefactor}" />
+				<filter token="bioportalsearchindexmaxmergedocs" value="${bioportal.search.indexmaxmergedocs}" />
 				<filter token="bioportalsearchresultnumcontainers" value="${bioportal.searchresult.numcontainers}" />
 				<filter token="bioportalsearchresulttimeout" value="${bioportal.searchresult.timeout}" />
 				<filter token="obopullschedulerenabled" value="${obo.pull.scheduler.enabled}" />
@@ -301,7 +304,7 @@
 		<delete dir="${testresults.dir}" />
 		<mkdir dir="${testresults.dir}" />
 		<junit printsummary="true" fork="yes" haltonfailure="true">
-            <batchtest todir="${testresults.dir}">
+			<batchtest todir="${testresults.dir}">
 				<fileset dir="${classes.dir}" includes="**/User*Test*.class" />
 			</batchtest>
 			<formatter type="xml" usefile="true" />
@@ -311,9 +314,9 @@
 	</target>
 
 	<target name="deploytest" depends="deploy">
-     <sleep seconds="20"/>     
-     <ant target="test"/>     
-  </target>
+		<sleep seconds="20" />
+		<ant target="test" />
+	</target>
 
 	<!-- TODO:  This task does not work.  The bioportal_db.sql scripts do not work correctly through Ant "sql" targets.  It only works directly in the MySQL Query browser.-->
 	<target description="Setup test database for Bioportal metadata, version info, and user data." name="test.dbsetupinit">

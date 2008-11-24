@@ -634,6 +634,7 @@
 		</property>
 	</bean>
 
+	<!-- Search related beans -->
 	<bean id="searchService"
 		class="org.ncbo.stanford.service.search.impl.SearchServiceImpl">
 		<property name="searchResultCache">
@@ -641,6 +642,15 @@
 		</property>
 		<property name="analyzer">
 			<ref bean="searchAnalyzer" />
+		</property>
+		<property name="maxNumHits">
+			<value>@bioportalsearchmaxnumhits@</value>
+		</property>
+		<property name="indexMergeFactor">
+			<value>@bioportalsearchindexmergefactor@</value>
+		</property>
+		<property name="indexMaxMergeDocs">
+			<value>@bioportalsearchindexmaxmergedocs@</value>
 		</property>
 	</bean>
 

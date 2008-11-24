@@ -34,6 +34,11 @@ bioportal.session.timeout=1800000
 # Number of "buckets" to allocate for session storage
 bioportal.session.numcontainers=11
 
+# Search properties
+bioportal.search.maxnumhits=1000
+bioportal.search.indexmergefactor=<util:constant static-field="org.apache.lucene.index.LogMergePolicy.DEFAULT_MERGE_FACTOR" />
+bioportal.search.indexmaxmergedocs=<util:constant static-field="org.apache.lucene.index.LogMergePolicy.DEFAULT_MAX_MERGE_DOCS" />
+
 # Search results cache properties
 #
 # Timeout for inactive search results (in milliseconds)

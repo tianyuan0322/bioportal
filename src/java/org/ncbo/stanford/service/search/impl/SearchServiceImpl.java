@@ -49,11 +49,11 @@ import org.ncbo.stanford.wrapper.LuceneIndexWriterWrapper;
 
 public class SearchServiceImpl implements SearchService {
 
-	private static final int MAX_NUM_HITS = 1000;
-	private static final int INDEX_MERGE_FACTOR = LogMergePolicy.DEFAULT_MERGE_FACTOR;
-	private static final int INDEX_MAX_MERGE_DOCS = LogMergePolicy.DEFAULT_MAX_MERGE_DOCS;
+	private int maxNumHits = 1000;
+	private int indexMergeFactor = LogMergePolicy.DEFAULT_MERGE_FACTOR;
+	private int indexMaxMergeDocs = LogMergePolicy.DEFAULT_MAX_MERGE_DOCS;
 	private Analyzer analyzer = new StandardAnalyzer();
-	protected ExpirationSystem<Integer, SearchResultListBean> searchResultCache = null;
+	private ExpirationSystem<Integer, SearchResultListBean> searchResultCache = null;
 
 	// TODO: Throwaway code ===============================================
 
@@ -104,7 +104,8 @@ public class SearchServiceImpl implements SearchService {
 		indexOntology(ontologyId, true);
 	}
 
-	public void indexOntology(Integer ontologyId, boolean doBackup) throws Exception {
+	public void indexOntology(Integer ontologyId, boolean doBackup)
+			throws Exception {
 		Connection connBioPortal = connectBioPortal();
 		ResultSet rs = findOntology(connBioPortal, ontologyId);
 
@@ -112,8 +113,8 @@ public class SearchServiceImpl implements SearchService {
 			try {
 				LuceneIndexWriterWrapper writer = new LuceneIndexWriterWrapper(
 						getIndexPath(), analyzer);
-				writer.setMergeFactor(INDEX_MERGE_FACTOR);
-				writer.setMaxMergeDocs(INDEX_MAX_MERGE_DOCS);
+				writer.setMergeFactor(indexMergeFactor);
+				writer.setMaxMergeDocs(indexMaxMergeDocs);
 
 				indexOntology(writer, rs, doBackup);
 
@@ -138,13 +139,14 @@ public class SearchServiceImpl implements SearchService {
 		ResultSet rs = findAllOntologies(connBioPortal);
 		String indexPath = getIndexPath();
 
-		LuceneIndexWriterWrapper writer = new LuceneIndexWriterWrapper(indexPath, analyzer);
+		LuceneIndexWriterWrapper writer = new LuceneIndexWriterWrapper(
+				indexPath, analyzer);
 		backupIndex(writer);
 		writer.closeWriter();
 
 		writer = new LuceneIndexWriterWrapper(indexPath, analyzer, true);
-		writer.setMergeFactor(INDEX_MERGE_FACTOR);
-		writer.setMaxMergeDocs(INDEX_MAX_MERGE_DOCS);
+		writer.setMergeFactor(indexMergeFactor);
+		writer.setMaxMergeDocs(indexMaxMergeDocs);
 
 		while (rs.next()) {
 			try {
@@ -193,8 +195,8 @@ public class SearchServiceImpl implements SearchService {
 	}
 
 	public void backupIndex() throws Exception {
-		LuceneIndexWriterWrapper writer = new LuceneIndexWriterWrapper(getIndexPath(),
-				analyzer);
+		LuceneIndexWriterWrapper writer = new LuceneIndexWriterWrapper(
+				getIndexPath(), analyzer);
 
 		backupIndex(writer);
 		writer.closeWriter();
@@ -215,17 +217,16 @@ public class SearchServiceImpl implements SearchService {
 		return executeQuery(query);
 	}
 
-	public SearchResultListBean executeQuery(Query query)
-			throws IOException {
+	public SearchResultListBean executeQuery(Query query) throws IOException {
 		long start = System.currentTimeMillis();
 
 		Searcher searcher = new IndexSearcher(getIndexPath());
-		TopFieldDocs docs = searcher.search(query, null, MAX_NUM_HITS,
+		TopFieldDocs docs = searcher.search(query, null, maxNumHits,
 				getSortFields());
 		ScoreDoc[] hits = docs.scoreDocs;
 
 		long stop = System.currentTimeMillis(); // stop timing
-	
+
 		List<String> uniqueDocs = new ArrayList<String>();
 		SearchResultListBean searchResults = new SearchResultListBean(0);
 
@@ -233,7 +234,8 @@ public class SearchServiceImpl implements SearchService {
 			int docId = hits[i].doc;
 			Document doc = searcher.doc(docId);
 			String conceptId = doc.get(SearchIndexBean.CONCEPT_ID_FIELD_LABEL);
-			Integer ontologyId = new Integer(doc.get(SearchIndexBean.ONTOLOGY_ID_FIELD_LABEL));
+			Integer ontologyId = new Integer(doc
+					.get(SearchIndexBean.ONTOLOGY_ID_FIELD_LABEL));
 
 			if (!uniqueDocs.contains(conceptId)) {
 				SearchBean searchResult = new SearchBean(
@@ -363,7 +365,8 @@ public class SearchServiceImpl implements SearchService {
 	private void addContentsClauseExact(String expr, BooleanQuery query)
 			throws IOException {
 		TermQuery q = new TermQuery(new Term(
-				SearchIndexBean.LITERAL_CONTENTS_FIELD_LABEL, expr.toLowerCase()));
+				SearchIndexBean.LITERAL_CONTENTS_FIELD_LABEL, expr
+						.toLowerCase()));
 		query.add(q, BooleanClause.Occur.MUST);
 	}
 
@@ -551,17 +554,43 @@ public class SearchServiceImpl implements SearchService {
 	}
 
 	/**
-	 * @param analyzer the analyzer to set
+	 * @param analyzer
+	 *            the analyzer to set
 	 */
 	public void setAnalyzer(Analyzer analyzer) {
 		this.analyzer = analyzer;
 	}
 
 	/**
-	 * @param searchResultCache the searchResultCache to set
+	 * @param searchResultCache
+	 *            the searchResultCache to set
 	 */
 	public void setSearchResultCache(
 			ExpirationSystem<Integer, SearchResultListBean> searchResultCache) {
 		this.searchResultCache = searchResultCache;
+	}
+
+	/**
+	 * @param maxNumHits
+	 *            the maxNumHits to set
+	 */
+	public void setMaxNumHits(Integer maxNumHits) {
+		this.maxNumHits = maxNumHits;
+	}
+
+	/**
+	 * @param indexMergeFactor
+	 *            the indexMergeFactor to set
+	 */
+	public void setIndexMergeFactor(int indexMergeFactor) {
+		this.indexMergeFactor = indexMergeFactor;
+	}
+
+	/**
+	 * @param indexMaxMergeDocs
+	 *            the indexMaxMergeDocs to set
+	 */
+	public void setIndexMaxMergeDocs(int indexMaxMergeDocs) {
+		this.indexMaxMergeDocs = indexMaxMergeDocs;
 	}
 }
