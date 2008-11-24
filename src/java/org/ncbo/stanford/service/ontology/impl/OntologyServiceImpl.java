@@ -28,7 +28,7 @@ import org.ncbo.stanford.domain.generated.NcboOntologyLoadQueue;
 import org.ncbo.stanford.domain.generated.NcboOntologyVersion;
 import org.ncbo.stanford.domain.generated.NcboOntologyVersionMetadata;
 import org.ncbo.stanford.exception.InvalidOntologyFormatException;
-import org.ncbo.stanford.manager.OntologyLoadManager;
+import org.ncbo.stanford.manager.load.OntologyLoadManager;
 import org.ncbo.stanford.service.ontology.OntologyService;
 import org.ncbo.stanford.util.MessageUtils;
 import org.ncbo.stanford.util.ontologyfile.pathhandler.AbstractFilePathHandler;

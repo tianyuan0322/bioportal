@@ -7,7 +7,6 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.ncbo.stanford.bean.search.SearchResultBean;
 import org.ncbo.stanford.service.concept.ConceptService;
 import org.ncbo.stanford.service.xml.XMLSerializationService;
 import org.ncbo.stanford.util.RequestUtils;
@@ -48,7 +47,7 @@ public class ConceptSearchRestlet extends Restlet {
 	 * @param resp
 	 */
 	private void searchConcept(Request request, Response resp) {
-		List<SearchResultBean> concepts = null;
+//		List<SearchResultBean> concepts = null;
 		String query = (String) request.getAttributes().get("query");
 		query= Reference.decode(query);
 		HttpServletRequest httpRequest = RequestUtils
@@ -67,14 +66,14 @@ public class ConceptSearchRestlet extends Restlet {
 
 			}
 
-			concepts = conceptService.findConceptNameContains(ontologyIds,
+/*			concepts = conceptService.findConceptNameContains(ontologyIds,
 					query);
 
 			if (concepts.isEmpty()) {
 				resp.setStatus(Status.CLIENT_ERROR_NOT_FOUND,
 						"Concept not found");
 			}
-		} catch (NumberFormatException nfe) {
+*/		} catch (NumberFormatException nfe) {
 			nfe.printStackTrace();
 			resp.setStatus(Status.CLIENT_ERROR_BAD_REQUEST, nfe.getMessage());
 		} catch (Exception e) {
@@ -82,8 +81,8 @@ public class ConceptSearchRestlet extends Restlet {
 			resp.setStatus(Status.SERVER_ERROR_INTERNAL, e.getMessage());
 		}
 
-		getXmlSerializationService().generateXMLResponse(request, resp,
-				concepts);
+//		getXmlSerializationService().generateXMLResponse(request, resp,
+//				concepts);
 	}
 
 	/**

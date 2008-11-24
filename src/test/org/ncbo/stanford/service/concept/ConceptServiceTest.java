@@ -1,11 +1,9 @@
 package org.ncbo.stanford.service.concept;
 
 import java.util.ArrayList;
-import java.util.List;
 
 import org.ncbo.stanford.AbstractBioPortalTest;
 import org.ncbo.stanford.bean.concept.ClassBean;
-import org.ncbo.stanford.bean.search.SearchResultBean;
 import org.ncbo.stanford.util.constants.ApplicationConstants;
 
 public class ConceptServiceTest extends AbstractBioPortalTest {
@@ -32,7 +30,7 @@ public class ConceptServiceTest extends AbstractBioPortalTest {
 		}
 	}
 
-	public void SearchConcept() throws Exception {
+/*	public void SearchConcept() throws Exception {
 		ConceptService service = (ConceptService) applicationContext.getBean(
 				"conceptService", ConceptService.class);
 
@@ -49,8 +47,8 @@ public class ConceptServiceTest extends AbstractBioPortalTest {
 			}
 		}
 	}
-
-	public void testSearchConcept1() throws Exception {
+*/
+/*	public void testSearchConcept1() throws Exception {
 		ConceptService service = (ConceptService) applicationContext.getBean(
 				"conceptService", ConceptService.class);
 
@@ -68,7 +66,7 @@ public class ConceptServiceTest extends AbstractBioPortalTest {
 
 		}
 	}
-
+*/
 	public void FindConcept() throws Exception {
 		ConceptService service = (ConceptService) applicationContext.getBean(
 				"conceptService", ConceptService.class);

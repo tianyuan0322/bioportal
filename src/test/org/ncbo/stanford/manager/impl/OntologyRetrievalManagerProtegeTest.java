@@ -1,15 +1,12 @@
 package org.ncbo.stanford.manager.impl;
 
 import java.util.ArrayList;
-import java.util.List;
 
 import org.ncbo.stanford.AbstractBioPortalTest;
 import org.ncbo.stanford.bean.concept.ClassBean;
-import org.ncbo.stanford.bean.search.SearchResultBean;
 import org.ncbo.stanford.domain.custom.dao.CustomNcboOntologyVersionDAO;
 import org.ncbo.stanford.domain.custom.entity.VNcboOntology;
-import org.ncbo.stanford.domain.generated.NcboOntologyVersion;
-import org.ncbo.stanford.manager.OntologyRetrievalManager;
+import org.ncbo.stanford.manager.retrieval.OntologyRetrievalManager;
 import org.ncbo.stanford.util.constants.ApplicationConstants;
 
 /**
@@ -22,7 +19,7 @@ public class OntologyRetrievalManagerProtegeTest extends AbstractBioPortalTest {
 	private final static String TEST_CONCEPT_ID = "http://www.w3.org/2002/07/owl#Class";
 	private final static String TEST_CONCEPT_NAME = "http://www.co-ode.org/ontologies/pizza/2005/10/18/pizza.owl#Pizza";
 
-	public void Search() throws Exception {
+/*	public void Search() throws Exception {
 		OntologyRetrievalManager ocMgr = (OntologyRetrievalManager) applicationContext
 				.getBean("ontologyRetrievalManagerProtege",
 						OntologyRetrievalManager.class);
@@ -47,7 +44,7 @@ public class OntologyRetrievalManagerProtegeTest extends AbstractBioPortalTest {
 		}
 
 	}
-
+*/
 	public void testPathToRoot() throws Exception {
 		OntologyRetrievalManager ocMgr = (OntologyRetrievalManager) applicationContext
 				.getBean("ontologyRetrievalManagerProtege",

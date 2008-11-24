@@ -9,6 +9,7 @@ import org.ncbo.stanford.domain.custom.dao.CustomNcboOntologyVersionDAO;
 import org.ncbo.stanford.domain.custom.entity.VNcboOntology;
 import org.ncbo.stanford.domain.generated.NcboOntologyVersionMetadata;
 import org.ncbo.stanford.enumeration.StatusEnum;
+import org.ncbo.stanford.manager.load.impl.OntologyLoadManagerLexGridImpl;
 import org.ncbo.stanford.service.ontology.OntologyService;
 import org.ncbo.stanford.service.ontology.OntologyServiceTest;
 import org.ncbo.stanford.util.constants.ApplicationConstants;

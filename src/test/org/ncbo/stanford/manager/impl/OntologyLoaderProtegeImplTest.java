@@ -7,6 +7,7 @@ import java.util.List;
 
 import org.ncbo.stanford.AbstractBioPortalTest;
 import org.ncbo.stanford.bean.OntologyBean;
+import org.ncbo.stanford.manager.load.impl.OntologyLoadManagerProtegeImpl;
 
 import edu.stanford.smi.protege.model.Project;
 import edu.stanford.smi.protege.storage.database.DatabaseKnowledgeBaseFactory;
