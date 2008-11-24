@@ -34,6 +34,13 @@ bioportal.session.timeout=1800000
 # Number of "buckets" to allocate for session storage
 bioportal.session.numcontainers=11
 
+# Search results cache properties
+#
+# Timeout for inactive search results (in milliseconds)
+bioportal.searchresult.timeout=3600000
+# Number of "buckets" to allocate for search results storage
+bioportal.searchresult.numcontainers=5
+
 # OBO Sourceforge CVS properties
 obo.sourceforge.cvs.username=anonymous
 obo.sourceforge.cvs.password=
