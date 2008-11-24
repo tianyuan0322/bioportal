@@ -1,6 +1,5 @@
 package org.ncbo.stanford.manager;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -18,7 +17,6 @@ import edu.stanford.smi.protege.model.Cls;
 import edu.stanford.smi.protege.model.KnowledgeBase;
 import edu.stanford.smi.protege.model.Project;
 import edu.stanford.smi.protege.model.Slot;
-import edu.stanford.smi.protege.query.api.QueryApi;
 import edu.stanford.smi.protege.storage.database.DatabaseKnowledgeBaseFactory;
 import edu.stanford.smi.protegex.owl.database.OWLDatabaseKnowledgeBaseFactory;
 import edu.stanford.smi.protegex.owl.model.OWLModel;
@@ -52,10 +50,10 @@ public abstract class AbstractOntologyManagerProtege {
 	 * @param api
 	 * @param ob
 	 */
-	protected void installLuceneIndexMechanism(QueryApi api, OntologyBean ob) {
+/*	protected void installLuceneIndexMechanism(QueryApi api, OntologyBean ob) {
 		api.install(new File(getIndexPath(ob)));
 	}
-
+*/
 	protected String getIndexPath(OntologyBean ob) {
 		return protegeIndexLocation + ob.getOntologyDirPath();
 	}
@@ -180,8 +178,8 @@ public abstract class AbstractOntologyManagerProtege {
 		setBrowserSlotByPreferredNameSlot(kb, getPreferredNameSlot(kb, ob
 				.getPreferredNameSlot()));
 
-		QueryApi api = new QueryApi(kb);
-		installLuceneIndexMechanism(api, ob);
+//		QueryApi api = new QueryApi(kb);
+//		installLuceneIndexMechanism(api, ob);
 
 		if (log.isDebugEnabled()) {
 			log.debug("Created new knowledgebase: " + kb.getName());

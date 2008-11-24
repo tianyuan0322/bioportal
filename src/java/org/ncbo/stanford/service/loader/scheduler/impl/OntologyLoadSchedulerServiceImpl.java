@@ -159,7 +159,7 @@ public class OntologyLoadSchedulerServiceImpl implements
 		OntologyBean ontologyBean = new OntologyBean();
 		ontologyBean.populateFromEntity(ontology);
 
-		getLoadManager(ontologyBean).indexOntology(ontologyBean);
+//		getLoadManager(ontologyBean).indexOntology(ontologyBean);
 	}
 
 	/**
