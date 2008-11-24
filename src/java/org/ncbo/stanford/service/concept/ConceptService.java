@@ -3,10 +3,7 @@
  */
 package org.ncbo.stanford.service.concept;
 
-import java.util.List;
-
 import org.ncbo.stanford.bean.concept.ClassBean;
-import org.ncbo.stanford.bean.search.SearchResultBean;
 
 /**
  * @author nickgriffith
@@ -23,7 +20,7 @@ public interface ConceptService {
 	public ClassBean findPathFromRoot(Integer ontologyVersionId,
 			String conceptId, boolean light) throws Exception;
 
-	public List<SearchResultBean> findConceptNameExact(
+/*	public List<SearchResultBean> findConceptNameExact(
 			List<Integer> ontologyVersionIds, String query);
 
 	public List<SearchResultBean> findConceptNameStartsWith(
@@ -40,4 +37,5 @@ public interface ConceptService {
 
 	public List<SearchResultBean> findConceptPropertyContains(
 			List<Integer> ontologyVersionIds, String query);
+*/
 }

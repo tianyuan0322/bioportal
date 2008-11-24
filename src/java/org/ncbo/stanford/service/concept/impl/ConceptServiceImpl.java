@@ -11,11 +11,10 @@ import java.util.Map;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.ncbo.stanford.bean.concept.ClassBean;
-import org.ncbo.stanford.bean.search.SearchResultBean;
 import org.ncbo.stanford.domain.custom.dao.CustomNcboOntologyVersionDAO;
 import org.ncbo.stanford.domain.custom.entity.VNcboOntology;
 import org.ncbo.stanford.enumeration.StatusEnum;
-import org.ncbo.stanford.manager.OntologyRetrievalManager;
+import org.ncbo.stanford.manager.retrieval.OntologyRetrievalManager;
 import org.ncbo.stanford.service.concept.ConceptService;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -62,7 +61,7 @@ public class ConceptServiceImpl implements ConceptService {
 				conceptId, light);
 	}
 
-	public List<SearchResultBean> findConceptNameExact(
+/*	public List<SearchResultBean> findConceptNameExact(
 			List<Integer> ontologyVersionIds, String query) {
 		List<SearchResultBean> searchResults = new ArrayList<SearchResultBean>();
 		List<VNcboOntology> ontologies = null;
@@ -188,7 +187,7 @@ public class ConceptServiceImpl implements ConceptService {
 
 		return searchResults;
 	}
-
+*/
 	private HashMap<String, List<VNcboOntology>> getFormatLists(
 			List<VNcboOntology> ontologies) {
 		HashMap<String, List<VNcboOntology>> formatLists = new HashMap<String, List<VNcboOntology>>();

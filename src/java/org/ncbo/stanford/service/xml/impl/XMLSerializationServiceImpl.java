@@ -24,7 +24,7 @@ import org.ncbo.stanford.bean.concept.PropertyBean;
 import org.ncbo.stanford.bean.response.ErrorBean;
 import org.ncbo.stanford.bean.response.ErrorStatusBean;
 import org.ncbo.stanford.bean.response.SuccessBean;
-import org.ncbo.stanford.bean.search.SearchResultBean;
+import org.ncbo.stanford.bean.search.SearchBean;
 import org.ncbo.stanford.enumeration.ErrorTypeEnum;
 import org.ncbo.stanford.service.ontology.impl.OntologyServiceImpl;
 import org.ncbo.stanford.service.xml.XMLSerializationService;
@@ -234,11 +234,9 @@ public class XMLSerializationServiceImpl implements XMLSerializationService {
 			Object data) {
 		// SUCCESS, include the bean info
 		if (!response.getStatus().isError()) {
-
 			RequestUtils.setHttpServletResponse(response, Status.SUCCESS_OK,
 					MediaType.TEXT_XML, getSuccessAsXML(getSuccessBean(request,
 							data)));
-
 			// if ERROR, just status, no bean info
 		} else {
 			generateStatusXMLResponse(request, response);
@@ -328,7 +326,7 @@ public class XMLSerializationServiceImpl implements XMLSerializationService {
 		xstream.alias(MessageUtils.getMessage("entity.instancebean"),
 				InstanceBean.class);
 		xstream.alias(MessageUtils.getMessage("entity.searchbean"),
-				SearchResultBean.class);
+				SearchBean.class);
 		xstream.alias(ApplicationConstants.RESPONSE_XML_TAG_NAME,
 				SuccessBean.class);
 		xstream.alias(ApplicationConstants.ERROR_XML_TAG_NAME, ErrorBean.class);

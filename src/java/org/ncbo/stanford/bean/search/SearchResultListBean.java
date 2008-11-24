@@ -3,11 +3,10 @@ package org.ncbo.stanford.bean.search;
 import java.util.Collection;
 import java.util.HashMap;
 
-import lucene.bean.LuceneSearchBean;
 
 import org.ncbo.stanford.util.paginator.impl.PaginatableList;
 
-public class SearchResultListBean extends PaginatableList<LuceneSearchBean> {
+public class SearchResultListBean extends PaginatableList<SearchBean> {
 
 	/**
 	 * 
@@ -26,7 +25,7 @@ public class SearchResultListBean extends PaginatableList<LuceneSearchBean> {
 	/**
 	 * @param c
 	 */
-	public SearchResultListBean(Collection<LuceneSearchBean> c) {
+	public SearchResultListBean(Collection<SearchBean> c) {
 		super(c);
 	}
 
