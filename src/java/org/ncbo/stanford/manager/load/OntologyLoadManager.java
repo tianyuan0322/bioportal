@@ -28,7 +28,7 @@ public interface OntologyLoadManager {
 	 * 
 	 * @param ob
 	 */
-	public void indexOntology(OntologyBean ob);
+//	public void indexOntology(OntologyBean ob);
 	
 	/**
 	 * Remove all traces of a given ontology version

@@ -4,9 +4,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.net.URI;
 import java.util.ArrayList;
-import java.util.EnumSet;
 import java.util.List;
-import java.util.Set;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -15,12 +13,7 @@ import org.ncbo.stanford.manager.AbstractOntologyManagerProtege;
 import org.ncbo.stanford.manager.load.OntologyLoadManager;
 import org.ncbo.stanford.util.constants.ApplicationConstants;
 
-import edu.stanford.smi.protege.model.KnowledgeBase;
 import edu.stanford.smi.protege.model.Project;
-import edu.stanford.smi.protege.model.Slot;
-import edu.stanford.smi.protege.query.api.QueryApi;
-import edu.stanford.smi.protege.query.api.QueryConfiguration;
-import edu.stanford.smi.protege.query.indexer.IndexMechanism;
 import edu.stanford.smi.protege.storage.database.DatabaseKnowledgeBaseFactory;
 import edu.stanford.smi.protege.util.ApplicationProperties;
 import edu.stanford.smi.protege.util.PropertyList;
@@ -171,11 +164,11 @@ public class OntologyLoadManagerProtegeImpl extends
 					+ ontologyUri.toString());
 		}
 
-		if (dbProject != null) {
+/*		if (dbProject != null) {
 			createIndex(dbProject.getKnowledgeBase(), ob);
 			dbProject.dispose();
 		}
-	}
+*/	}
 
 	/**
 	 * Creates a Lucene index for a given ontology version. The ontology record
@@ -184,16 +177,16 @@ public class OntologyLoadManagerProtegeImpl extends
 	 * @param ob -
 	 *            populated ontology bean.
 	 */
-	@SuppressWarnings("unchecked")
+/*	@SuppressWarnings("unchecked")
 	public void indexOntology(OntologyBean ob) {
 		createIndex(getKnowledgeBase(ob), ob);
 	}
-
+*/
 	public void cleanup(OntologyBean ontologyBean) throws Exception {
 		// TODO: fill in
 	}
 
-	private void createIndex(KnowledgeBase kb, OntologyBean ob) {
+/*	private void createIndex(KnowledgeBase kb, OntologyBean ob) {
 		QueryConfiguration config = new QueryConfiguration(kb);
 		config.setBaseIndexPath(getIndexPath(ob));
 		Set<Slot> searchableSlots = config.getSearchableSlots();
@@ -217,4 +210,4 @@ public class OntologyLoadManagerProtegeImpl extends
 		installLuceneIndexMechanism(api, ob);
 		api.index(config);
 	}
-}
+*/}
