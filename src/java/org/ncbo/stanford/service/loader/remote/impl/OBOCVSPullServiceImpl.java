@@ -172,7 +172,8 @@ public class OBOCVSPullServiceImpl implements OBOCVSPullService {
 		OntologyBean ont = ontologyService
 				.findLatestOntologyVersionByOboFoundryId(mfb.getId());
 		String downloadUrl = mfb.getDownload();
-		List<Integer> newCategoryIds = findCategoryIdsByOBONames(downloadUrl);
+		List<Integer> newCategoryIds = findCategoryIdsByOBONames(mfb
+				.getDomain());
 		byte isRemote = isRemote(downloadUrl);
 
 		// is any action required?
@@ -270,6 +271,8 @@ public class OBOCVSPullServiceImpl implements OBOCVSPullService {
 			ont.setIsReviewed(ApplicationConstants.TRUE);
 			ont.setOboFoundryId(mfb.getId());
 			ont.setDisplayLabel(mfb.getTitle());
+			ont.setDescription(mfb.getDescription());
+			ont.setAbbreviation(mfb.getNamespace());
 			ont.setFormat(getFormat(mfb.getFormat()));
 			ont.setContactName(userBean.getFirstname() + " "
 					+ userBean.getLastname());
@@ -307,12 +310,12 @@ public class OBOCVSPullServiceImpl implements OBOCVSPullService {
 	 * @param downloadUrl
 	 * @return
 	 */
-	private List<Integer> findCategoryIdsByOBONames(String downloadUrl) {
+	private List<Integer> findCategoryIdsByOBONames(String domain) {
 		List<Integer> categoryIds = new ArrayList<Integer>(1);
 
-		if (!StringHelper.isNullOrNullString(downloadUrl)) {
+		if (!StringHelper.isNullOrNullString(domain)) {
 			categoryIds = ontologyService
-					.findCategoryIdsByOBOFoundryNames(downloadUrl.split("/"));
+					.findCategoryIdsByOBOFoundryNames(new String[] { domain });
 		}
 
 		return categoryIds;
