@@ -484,7 +484,7 @@
 			<ref bean="protegeBigFileThreshold" />
 		</property>
 		<property name="protegeKnowledgeBases">
-			<ref bean="protegeKnowledgeBaseExpirationSystem" />
+			<ref bean="protegeKnowledgeBaseCache" />
 		</property>
 		<property name="protegeIndexLocation">
 			<ref bean="protegeIndexLocation" />
@@ -492,22 +492,22 @@
 	</bean>
 
 	<bean id="ontologyRetrievalManagerLexGrid"
-		class="org.ncbo.stanford.manager.impl.OntologyRetrievalManagerLexGridImpl"
+		class="org.ncbo.stanford.manager.retrieval.impl.OntologyRetrievalManagerLexGridImpl"
 		parent="abstractOntologyManagerLexGrid">
 	</bean>
 
 	<bean id="ontologyRetrievalManagerProtege"
-		class="org.ncbo.stanford.manager.impl.OntologyRetrievalManagerProtegeImpl"
+		class="org.ncbo.stanford.manager.retrieval.impl.OntologyRetrievalManagerProtegeImpl"
 		parent="abstractOntologyManagerProtege">
 	</bean>
 
 	<bean id="ontologyLoadManagerLexGrid"
-		class="org.ncbo.stanford.manager.impl.OntologyLoadManagerLexGridImpl"
+		class="org.ncbo.stanford.manager.load.impl.OntologyLoadManagerLexGridImpl"
 		parent="abstractOntologyManagerLexGrid">
 	</bean>
 
 	<bean id="ontologyLoadManagerProtege"
-		class="org.ncbo.stanford.manager.impl.OntologyLoadManagerProtegeImpl"
+		class="org.ncbo.stanford.manager.load.impl.OntologyLoadManagerProtegeImpl"
 		parent="abstractOntologyManagerProtege">
 	</bean>
 
@@ -634,6 +634,19 @@
 		</property>
 	</bean>
 
+	<bean id="searchService"
+		class="org.ncbo.stanford.service.search.impl.SearchServiceImpl">
+		<property name="searchResultCache">
+			<ref bean="searchResultCache" />
+		</property>
+		<property name="analyzer">
+			<ref bean="searchAnalyzer" />
+		</property>
+	</bean>
+
+	<bean id="searchAnalyzer"
+		class="org.apache.lucene.analysis.standard.StandardAnalyzer" />
+
 	<!-- Protege knowledge base cache -->
 	<bean id="protegeKnowledgeBaseExpirationHandler"
 		class="org.ncbo.stanford.util.cache.expiration.handler.impl.ProtegeKnowledgeBaseExpirationHandler" />
@@ -648,7 +661,7 @@
 		</property>
 	</bean>
 
-	<bean id="protegeKnowledgeBaseExpirationSystem"
+	<bean id="protegeKnowledgeBaseCache"
 		class="org.ncbo.stanford.util.cache.expiration.system.impl.UpdatingHashbeltExpirationSystem">
 		<constructor-arg index="0">
 			<value>@protegeknowledgebasecachenumcontainers@</value>
@@ -661,6 +674,29 @@
 		</constructor-arg>
 		<constructor-arg index="3">
 			<ref bean="protegeKnowledgeBaseContainerFactory" />
+		</constructor-arg>
+	</bean>
+
+	<!-- Search Results Cache -->
+	<bean id="searchResultExpirationHandler"
+		class="org.ncbo.stanford.util.cache.expiration.handler.impl.NullExpirationHandler" />
+
+	<bean id="searchResultHashbeltContainerFactory"
+		class="org.ncbo.stanford.util.cache.container.impl.StandardHashbeltContainerFactory" />
+
+	<bean id="searchResultCache"
+		class="org.ncbo.stanford.util.cache.expiration.system.impl.UpdatingHashbeltExpirationSystem">
+		<constructor-arg index="0">
+			<value>@bioportalsearchresultnumcontainers@</value>
+		</constructor-arg>
+		<constructor-arg index="1">
+			<value>@bioportalsearchresulttimeout@</value>
+		</constructor-arg>
+		<constructor-arg index="2">
+			<ref bean="searchResultExpirationHandler" />
+		</constructor-arg>
+		<constructor-arg index="3">
+			<ref bean="searchResultHashbeltContainerFactory" />
 		</constructor-arg>
 	</bean>
 
