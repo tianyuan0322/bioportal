@@ -50,6 +50,10 @@ import org.ncbo.stanford.wrapper.LuceneIndexWriterWrapper;
 
 public class SearchServiceImpl implements SearchService {
 
+	private String indexPath = properties
+			.getProperty("bioportal.search.indexpath");
+	private String indexBackupPath = properties
+			.getProperty("bioportal.search.indexbackuppath");
 	private int maxNumHits = 1000;
 	private int indexMergeFactor = LogMergePolicy.DEFAULT_MERGE_FACTOR;
 	private int indexMaxMergeDocs = LogMergePolicy.DEFAULT_MAX_MERGE_DOCS;
@@ -113,7 +117,7 @@ public class SearchServiceImpl implements SearchService {
 		if (rs.next()) {
 			try {
 				LuceneIndexWriterWrapper writer = new LuceneIndexWriterWrapper(
-						getIndexPath(), analyzer);
+						indexPath, analyzer);
 				writer.setMergeFactor(indexMergeFactor);
 				writer.setMaxMergeDocs(indexMaxMergeDocs);
 
@@ -138,8 +142,6 @@ public class SearchServiceImpl implements SearchService {
 
 		Connection connBioPortal = connectBioPortal();
 		ResultSet rs = findAllOntologies(connBioPortal);
-		String indexPath = getIndexPath();
-
 		LuceneIndexWriterWrapper writer = new LuceneIndexWriterWrapper(
 				indexPath, analyzer);
 		backupIndex(writer);
@@ -177,7 +179,7 @@ public class SearchServiceImpl implements SearchService {
 		if (rs.next()) {
 			try {
 				LuceneIndexWriterWrapper writer = new LuceneIndexWriterWrapper(
-						getIndexPath(), analyzer);
+						indexPath, analyzer);
 
 				removeOntology(writer, rs, true);
 
@@ -197,7 +199,7 @@ public class SearchServiceImpl implements SearchService {
 
 	public void backupIndex() throws Exception {
 		LuceneIndexWriterWrapper writer = new LuceneIndexWriterWrapper(
-				getIndexPath(), analyzer);
+				indexPath, analyzer);
 
 		backupIndex(writer);
 		writer.closeWriter();
@@ -221,7 +223,7 @@ public class SearchServiceImpl implements SearchService {
 	public SearchResultListBean executeQuery(Query query) throws IOException {
 		long start = System.currentTimeMillis();
 
-		Searcher searcher = new IndexSearcher(getIndexPath());
+		Searcher searcher = new IndexSearcher(indexPath);
 		TopFieldDocs docs = searcher.search(query, null, maxNumHits,
 				getSortFields());
 		ScoreDoc[] hits = docs.scoreDocs;
@@ -293,7 +295,7 @@ public class SearchServiceImpl implements SearchService {
 	public void backupIndex(LuceneIndexWriterWrapper writer) throws Exception {
 		System.out.println("Backing up index...");
 		long start = System.currentTimeMillis();
-		writer.backupIndexByFileCopy(getBackupIndexPath());
+		writer.backupIndexByFileCopy(indexBackupPath);
 		// writer.backupIndexByReading(getBackupIndexPath());
 
 		long stop = System.currentTimeMillis(); // stop timing
@@ -492,14 +494,6 @@ public class SearchServiceImpl implements SearchService {
 				"bioportal.jdbc.username", "bioportal.jdbc.password");
 	}
 
-	private String getIndexPath() {
-		return properties.getProperty("bioportal.resource.path") + "/lucene";
-	}
-
-	private String getBackupIndexPath() {
-		return getIndexPath() + "/backup";
-	}
-
 	/**
 	 * Connect to a db
 	 * 
@@ -593,5 +587,21 @@ public class SearchServiceImpl implements SearchService {
 	 */
 	public void setIndexMaxMergeDocs(int indexMaxMergeDocs) {
 		this.indexMaxMergeDocs = indexMaxMergeDocs;
+	}
+
+	/**
+	 * @param indexPath
+	 *            the indexPath to set
+	 */
+	public void setIndexPath(String indexPath) {
+		this.indexPath = indexPath;
+	}
+
+	/**
+	 * @param indexBackupPath
+	 *            the indexBackupPath to set
+	 */
+	public void setIndexBackupPath(String indexBackupPath) {
+		this.indexBackupPath = indexBackupPath;
 	}
 }

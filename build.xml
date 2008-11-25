@@ -81,7 +81,9 @@
 		<echo message="log4j path: = ${bioportal.app.logfilepath}" />
 
 		<mkdir dir="${bioportal.tempdir}" />
-		<mkdir dir="${bioportal.ontology.filepath}" />
+		<mkdir dir="${bioportal.ontology.filepath}" />		
+		<mkdir dir="${bioportal.search.indexpath}" />
+		<mkdir dir="${bioportal.search.indexbackuppath}" />
 		<mkdir dir="${obo.sourceforge.cvs.checkoutdir}" />
 		<mkdir dir="${protege.index.location}" />
 		<mkdir dir="${lexgrid.index.location}" />
@@ -157,6 +159,8 @@
 				<filter token="bioportalsearchmaxnumhits" value="${bioportal.search.maxnumhits}" />
 				<filter token="bioportalsearchindexmergefactor" value="${bioportal.search.indexmergefactor}" />
 				<filter token="bioportalsearchindexmaxmergedocs" value="${bioportal.search.indexmaxmergedocs}" />
+				<filter token="bioportalsearchindexpath" value="${bioportal.search.indexpath}" />
+				<filter token="bioportalsearchindexbackuppath" value="${bioportal.search.indexbackuppath}" />
 				<filter token="bioportalsearchresultnumcontainers" value="${bioportal.searchresult.numcontainers}" />
 				<filter token="bioportalsearchresulttimeout" value="${bioportal.searchresult.timeout}" />
 				<filter token="obopullschedulerenabled" value="${obo.pull.scheduler.enabled}" />

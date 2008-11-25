@@ -643,6 +643,12 @@
 		<property name="analyzer">
 			<ref bean="searchAnalyzer" />
 		</property>
+		<property name="indexPath">
+			<ref bean="searchIndexPath" />
+		</property>
+		<property name="indexBackupPath">
+			<ref bean="searchIndexBackupPath" />
+		</property>
 		<property name="maxNumHits">
 			<value>@bioportalsearchmaxnumhits@</value>
 		</property>
@@ -652,6 +658,18 @@
 		<property name="indexMaxMergeDocs">
 			<value>@bioportalsearchindexmaxmergedocs@</value>
 		</property>
+	</bean>
+
+	<bean id="searchIndexPath" class="java.lang.String">
+		<constructor-arg>
+			<value>@bioportalsearchindexpath@</value>
+		</constructor-arg>
+	</bean>
+
+	<bean id="searchIndexBackupPath" class="java.lang.String">
+		<constructor-arg>
+			<value>@bioportalsearchindexbackuppath@</value>
+		</constructor-arg>
 	</bean>
 
 	<bean id="searchAnalyzer"
