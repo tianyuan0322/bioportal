@@ -1,5 +1,6 @@
 package lucene;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Collection;
 
@@ -8,9 +9,8 @@ import org.ncbo.stanford.bean.search.SearchBean;
 import org.ncbo.stanford.bean.search.SearchResultListBean;
 import org.ncbo.stanford.service.search.SearchService;
 import org.ncbo.stanford.service.search.impl.SearchServiceImpl;
-import org.ncbo.stanford.util.cache.expiration.system.ExpirationSystem;
-import org.ncbo.stanford.util.cache.expiration.system.impl.UpdatingHashbeltExpirationSystem;
 import org.ncbo.stanford.util.constants.ApplicationConstants;
+import org.ncbo.stanford.util.ontologyfile.pathhandler.AbstractFilePathHandler;
 import org.ncbo.stanford.util.paginator.Paginator;
 import org.ncbo.stanford.util.paginator.impl.Page;
 import org.ncbo.stanford.util.paginator.impl.PaginatorImpl;
@@ -29,14 +29,17 @@ public class LuceneSearchClient {
 			// File("/apps/bmir.apps/bioportal_resources/lucene", "lock");
 			// System.out.println(file.getAbsolutePath());
 
-			SearchService search = SearchServiceImpl.getInstance();
+//			SearchService search = SearchServiceImpl.getInstance();
 			// search.indexOntology(1121);
 
+//			File file = new File("C:\\apps\\bmir.apps\\bioportal\\\\${bioportal.resource.path}");
+//			AbstractFilePathHandler.deleteDirRecursive(file);
+			
 			// search.backupIndex();
 			// search.indexOntology(1070);
 			// search.indexOntology(1032);
 			// search.indexOntology(1055);
-			// search.indexOntology(1056);
+//			search.indexOntology(1056, false);
 			// search.indexOntology(1089);
 			// search.indexOntology(1057);
 			// search.indexOntology(1090);
@@ -67,11 +70,11 @@ public class LuceneSearchClient {
 			// ontologyIds.add(1047); // Cereal plant development - OBO
 
 			System.out.println("Searching...");
-			Query q = search.generateLuceneSearchQuery(ontologyIds, "cell", true, false);
+//			Query q = search.generateLuceneSearchQuery(ontologyIds, "cell", true, false);
 			
 			
 			long start = System.currentTimeMillis();
-			SearchResultListBean results = search.executeQuery(q);
+//			SearchResultListBean results = search.executeQuery(q);
 			long stop = System.currentTimeMillis();
 			System.out.println("Query Time: " + (double) (stop - start) / 1000
 					+ " seconds.");
@@ -82,13 +85,13 @@ public class LuceneSearchClient {
 			start = System.currentTimeMillis();
 //			results = resultsCache.get(q.hashCode());
 			stop = System.currentTimeMillis();
-			System.out.println("Cache Time: " + (double) (stop - start) / 1000
-					+ " seconds." + " " + q.hashCode());
+//			System.out.println("Cache Time: " + (double) (stop - start) / 1000
+//					+ " seconds." + " " + q.hashCode());
 			
 			
-			Paginator<SearchBean> p = new PaginatorImpl<SearchBean>(
-					results);
-			Page<SearchBean> page = p.getAll();
+//			Paginator<SearchBean> p = new PaginatorImpl<SearchBean>(
+//					results);
+//			Page<SearchBean> page = p.getAll();
 
 		} catch (Exception e) {
 			e.printStackTrace();

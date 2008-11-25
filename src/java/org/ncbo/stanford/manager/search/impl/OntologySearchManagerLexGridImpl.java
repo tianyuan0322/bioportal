@@ -1,11 +1,7 @@
 package org.ncbo.stanford.manager.search.impl;
 
 import java.io.IOException;
-import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.util.Iterator;
-import java.util.StringTokenizer;
-
 
 import org.LexGrid.LexBIG.DataModel.Collections.ResolvedConceptReferenceList;
 import org.LexGrid.LexBIG.DataModel.Core.CodingSchemeVersionOrTag;
@@ -13,7 +9,6 @@ import org.LexGrid.LexBIG.DataModel.Core.ResolvedConceptReference;
 import org.LexGrid.LexBIG.Impl.LexBIGServiceImpl;
 import org.LexGrid.LexBIG.LexBIGService.CodedNodeSet;
 import org.LexGrid.LexBIG.LexBIGService.LexBIGService;
-import org.LexGrid.LexBIG.Utility.Constructors;
 import org.LexGrid.LexBIG.Utility.Iterators.ResolvedConceptReferencesIterator;
 import org.LexGrid.concepts.Comment;
 import org.LexGrid.concepts.Concept;
@@ -21,30 +16,24 @@ import org.LexGrid.concepts.ConceptProperty;
 import org.LexGrid.concepts.Definition;
 import org.LexGrid.concepts.Instruction;
 import org.LexGrid.concepts.Presentation;
-import org.apache.commons.lang.StringUtils;
-import org.ncbo.stanford.bean.search.SearchIndexBean;
 import org.ncbo.stanford.bean.search.LexGridSearchProperty;
+import org.ncbo.stanford.bean.search.SearchIndexBean;
+import org.ncbo.stanford.domain.custom.entity.VNcboOntology;
 import org.ncbo.stanford.enumeration.SearchRecordTypeEnum;
+import org.ncbo.stanford.manager.AbstractOntologyManagerLexGrid;
 import org.ncbo.stanford.manager.search.OntologySearchManager;
-import org.ncbo.stanford.util.helper.StringHelper;
 import org.ncbo.stanford.wrapper.LuceneIndexWriterWrapper;
 
-public class OntologySearchManagerLexGridImpl implements OntologySearchManager {
+public class OntologySearchManagerLexGridImpl extends
+		AbstractOntologyManagerLexGrid implements OntologySearchManager {
 
-	public void indexOntology(LuceneIndexWriterWrapper writer, ResultSet rs)
+	public void indexOntology(LuceneIndexWriterWrapper writer, VNcboOntology ontology)
 			throws Exception {
-		Integer ontologyVersionId = rs.getInt("id");
-		Integer ontologyId = rs.getInt("ontology_id");
-		String ontologyDisplayLabel = rs.getString("display_label");
-
-		System.out.println("Adding ontology to index: " + ontologyDisplayLabel
-				+ " (Id: " + ontologyVersionId + ", Ontology Id: "
-				+ rs.getInt("ontology_id") + ", Format: "
-				+ rs.getString("format") + ")");
-		long start = System.currentTimeMillis();
-
-		String schemeName = getLexGridCodingSchemeName(rs);
-		CodingSchemeVersionOrTag csvt = getLexGridCodingSchemeVersion(rs);
+		Integer ontologyVersionId = ontology.getId();
+		Integer ontologyId = ontology.getOntologyId();
+		String ontologyDisplayLabel = ontology.getDisplayLabel();
+		String schemeName = getLexGridCodingSchemeName(ontology);
+		CodingSchemeVersionOrTag csvt = getLexGridCodingSchemeVersion(ontology);
 		LexBIGService lbs = LexBIGServiceImpl.defaultInstance();
 		CodedNodeSet codeSet = lbs.getCodingSchemeConcepts(schemeName, csvt);
 		ResolvedConceptReferencesIterator matchIterator = codeSet.resolve(null,
@@ -78,13 +67,8 @@ public class OntologySearchManagerLexGridImpl implements OntologySearchManager {
 						concept);
 			}
 		}
-		
-		matchIterator.release();
 
-		long stop = System.currentTimeMillis(); // stop timing
-		System.out.println("Finished indexing ontology: "
-				+ ontologyDisplayLabel + " in " + (double) (stop - start)
-				/ 1000 / 60 + " minutes.\n");
+		matchIterator.release();
 	}
 
 	private String setPresentationProperties(LuceneIndexWriterWrapper writer,
@@ -107,9 +91,9 @@ public class OntologySearchManagerLexGridImpl implements OntologySearchManager {
 				recType = SearchRecordTypeEnum.RECORD_TYPE_SYNONYM;
 			}
 
-			populateIndexBean(doc, concept.getId(),
-					new LexGridSearchProperty(ontologyVersionId, ontologyId,
-							ontologyDisplayLabel, recType, preferredName, p));
+			populateIndexBean(doc, concept.getId(), new LexGridSearchProperty(
+					ontologyVersionId, ontologyId, ontologyDisplayLabel,
+					recType, preferredName, p));
 			writer.addDocument(doc);
 		}
 
@@ -123,11 +107,10 @@ public class OntologySearchManagerLexGridImpl implements OntologySearchManager {
 		for (Iterator<ConceptProperty> itr = concept.iterateConceptProperty(); itr
 				.hasNext();) {
 			ConceptProperty cp = itr.next();
-			populateIndexBean(doc, concept.getId(),
-					new LexGridSearchProperty(ontologyVersionId, ontologyId,
-							ontologyDisplayLabel,
-							SearchRecordTypeEnum.RECORD_TYPE_PROPERTY,
-							preferredName, cp));
+			populateIndexBean(doc, concept.getId(), new LexGridSearchProperty(
+					ontologyVersionId, ontologyId, ontologyDisplayLabel,
+					SearchRecordTypeEnum.RECORD_TYPE_PROPERTY, preferredName,
+					cp));
 			writer.addDocument(doc);
 		}
 	}
@@ -185,68 +168,5 @@ public class OntologySearchManagerLexGridImpl implements OntologySearchManager {
 				prop.getOntologyDisplayLabel(), prop.getRecordType(),
 				conceptId, conceptId, prop.getPreferredName(), prop
 						.getPropertyContent(), prop.getPropertyContent());
-	}
-
-	/**
-	 * @param rs
-	 * @return The LexGrid codingScheme URN string (registered Name)
-	 * @throws SQLException
-	 */
-	private String getLexGridCodingSchemeName(ResultSet rs) throws SQLException {
-		String urnAndVersion = rs.getString("coding_scheme");
-
-		if (StringHelper.isNullOrNullString(urnAndVersion)) {
-			urnAndVersion = rs.getString("urn");
-		}
-
-		String urnVersionArray[] = splitUrnAndVersion(urnAndVersion);
-
-		return (urnVersionArray != null && urnVersionArray.length > 0) ? urnVersionArray[0]
-				: null;
-	}
-
-	/**
-	 * @param rs
-	 * @return The LexGrid codingScheme URN string (registered Name)
-	 * @throws SQLException
-	 */
-	private CodingSchemeVersionOrTag getLexGridCodingSchemeVersion(ResultSet rs)
-			throws SQLException {
-		String urnAndVersion = rs.getString("coding_scheme");
-
-		if (StringHelper.isNullOrNullString(urnAndVersion)) {
-			urnAndVersion = rs.getString("urn");
-		}
-
-		String urnVersionArray[] = splitUrnAndVersion(urnAndVersion);
-
-		return (urnVersionArray != null && urnVersionArray.length > 1) ? Constructors
-				.createCodingSchemeVersionOrTagFromVersion(urnVersionArray[1])
-				: null;
-	}
-
-	/**
-	 * 
-	 * @param urnAndVersion
-	 * @return A string array of length 2, with the first element holding the
-	 *         urn information and the second element holding the version
-	 */
-	private String[] splitUrnAndVersion(String urnAndVersion) {
-		if (StringUtils.isEmpty(urnAndVersion)) {
-			return null;
-		}
-
-		String array[] = { "", "" };
-		StringTokenizer st = new StringTokenizer(urnAndVersion, "|");
-
-		if (st.hasMoreTokens()) {
-			array[0] = st.nextToken();
-		}
-
-		if (st.hasMoreTokens()) {
-			array[1] = st.nextToken();
-		}
-
-		return array;
 	}
 }

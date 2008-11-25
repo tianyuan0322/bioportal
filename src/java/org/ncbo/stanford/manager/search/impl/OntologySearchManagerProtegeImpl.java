@@ -1,20 +1,20 @@
 package org.ncbo.stanford.manager.search.impl;
 
 import java.io.IOException;
-import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-
-import org.ncbo.stanford.bean.search.SearchIndexBean;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.ncbo.stanford.bean.search.ProtegeSearchFrame;
+import org.ncbo.stanford.bean.search.SearchIndexBean;
+import org.ncbo.stanford.domain.custom.entity.VNcboOntology;
 import org.ncbo.stanford.enumeration.SearchRecordTypeEnum;
+import org.ncbo.stanford.manager.AbstractOntologyManagerProtege;
 import org.ncbo.stanford.manager.search.OntologySearchManager;
-import org.ncbo.stanford.util.constants.ApplicationConstants;
 import org.ncbo.stanford.util.helper.StringHelper;
 import org.ncbo.stanford.wrapper.LuceneIndexWriterWrapper;
 
@@ -22,60 +22,26 @@ import edu.stanford.smi.protege.model.DefaultKnowledgeBase;
 import edu.stanford.smi.protege.model.Frame;
 import edu.stanford.smi.protege.model.KnowledgeBase;
 import edu.stanford.smi.protege.model.Model;
-import edu.stanford.smi.protege.model.Project;
 import edu.stanford.smi.protege.model.Slot;
 import edu.stanford.smi.protege.model.ValueType;
 import edu.stanford.smi.protege.model.framestore.FrameStore;
 import edu.stanford.smi.protege.model.framestore.NarrowFrameStore;
 import edu.stanford.smi.protege.model.framestore.SimpleFrameStore;
-import edu.stanford.smi.protege.storage.database.DatabaseKnowledgeBaseFactory;
-import edu.stanford.smi.protegex.owl.database.OWLDatabaseKnowledgeBaseFactory;
 import edu.stanford.smi.protegex.owl.model.NamespaceUtil;
 import edu.stanford.smi.protegex.owl.model.OWLModel;
 import edu.stanford.smi.protegex.owl.model.RDFResource;
 
-public class OntologySearchManagerProtegeImpl implements OntologySearchManager {
+public class OntologySearchManagerProtegeImpl extends
+		AbstractOntologyManagerProtege implements OntologySearchManager {
 
-	private final String protegeTablePrefix = "tbl_";
-	private final String protegeTableSuffix = "";
-
-	// TODO: Throwaway code ===============================================
-
-	private String protegeJdbcUrl;
-	private String protegeJdbcDriver;
-	private String protegeJdbcUsername;
-	private String protegeJdbcPassword;
-
-	/**
-	 * @param protegeJdbcUrl
-	 * @param protegeJdbcDriver
-	 * @param protegeJdbcUsername
-	 * @param protegeJdbcPassword
-	 */
-	public OntologySearchManagerProtegeImpl(String protegeJdbcUrl,
-			String protegeJdbcDriver, String protegeJdbcUsername,
-			String protegeJdbcPassword) {
-		super();
-		this.protegeJdbcUrl = protegeJdbcUrl;
-		this.protegeJdbcDriver = protegeJdbcDriver;
-		this.protegeJdbcUsername = protegeJdbcUsername;
-		this.protegeJdbcPassword = protegeJdbcPassword;
-	}
-
-	// TODO: END, Throwaway code ==========================================
+	@SuppressWarnings("unused")
+	private static final Log log = LogFactory
+			.getLog(OntologySearchManagerProtegeImpl.class);
 
 	@SuppressWarnings("unchecked")
-	public void indexOntology(LuceneIndexWriterWrapper writer, ResultSet rs)
-			throws Exception {
-		Integer ontologyVersionId = rs.getInt("id");
-		Integer ontologyId = rs.getInt("ontology_id");
-		String ontologyDisplayLabel = rs.getString("display_label");
-		System.out.println("Adding ontology to index: " + ontologyDisplayLabel
-				+ " (Id: " + ontologyVersionId + ", Ontology Id: " + ontologyId
-				+ ", Format: " + rs.getString("format") + ")");
-		long start = System.currentTimeMillis();
-
-		KnowledgeBase kb = createKnowledgeBaseInstance(rs);
+	public void indexOntology(LuceneIndexWriterWrapper writer,
+			VNcboOntology ontology) throws Exception {
+		KnowledgeBase kb = getKnowledgeBase(ontology);
 		boolean owlMode = kb instanceof OWLModel;
 		FrameStore fs = ((DefaultKnowledgeBase) kb).getTerminalFrameStore();
 		NarrowFrameStore nfs = ((SimpleFrameStore) fs).getHelper();
@@ -90,10 +56,11 @@ public class OntologySearchManagerProtegeImpl implements OntologySearchManager {
 		for (Frame frame : frames) {
 			// add preferred name slot
 			String preferredName = null;
-			List<Slot> preferredNameSlots = getPreferredNameSlots(kb, rs
-					.getString("preferred_name_slot"));
-			ProtegeSearchFrame protegeFrame = new ProtegeSearchFrame(
-					ontologyVersionId, ontologyId, ontologyDisplayLabel,
+			List<Slot> preferredNameSlots = getPreferredNameSlots(kb, ontology
+					.getPreferredNameSlot());
+			ProtegeSearchFrame protegeFrame = new ProtegeSearchFrame(ontology
+					.getId(), ontology.getOntologyId(), ontology
+					.getDisplayLabel(),
 					SearchRecordTypeEnum.RECORD_TYPE_PREFERRED_NAME, null,
 					frame);
 
@@ -107,7 +74,7 @@ public class OntologySearchManagerProtegeImpl implements OntologySearchManager {
 			}
 
 			// add synonym slot if exists
-			Slot synonymSlot = getSynonymSlot(kb, rs.getString("synonym_slot"));
+			Slot synonymSlot = getSynonymSlot(kb, ontology.getSynonymSlot());
 
 			if (synonymSlot != null) {
 				protegeFrame
@@ -126,19 +93,11 @@ public class OntologySearchManagerProtegeImpl implements OntologySearchManager {
 						propertySlot, owlMode);
 			}
 		}
-
-		kb.dispose();
-		kb = null;
-
-		long stop = System.currentTimeMillis(); // stop timing
-		System.out.println("Finished indexing ontology: "
-				+ ontologyDisplayLabel + " in " + (double) (stop - start)
-				/ 1000 / 60 + " minutes.\n");
 	}
 
 	@SuppressWarnings("unchecked")
-	private void addSlotToIndex(LuceneIndexWriterWrapper writer, SearchIndexBean doc,
-			KnowledgeBase kb, NarrowFrameStore nfs,
+	private void addSlotToIndex(LuceneIndexWriterWrapper writer,
+			SearchIndexBean doc, KnowledgeBase kb, NarrowFrameStore nfs,
 			ProtegeSearchFrame protegeFrame, Slot slot, boolean owlMode)
 			throws IOException {
 		Collection values;
@@ -152,8 +111,7 @@ public class OntologySearchManagerProtegeImpl implements OntologySearchManager {
 				continue;
 			}
 
-			populateIndexBean(doc, nfs, protegeFrame, (String) value,
-					owlMode);
+			populateIndexBean(doc, nfs, protegeFrame, (String) value, owlMode);
 			writer.addDocument(doc);
 		}
 	}
@@ -178,8 +136,7 @@ public class OntologySearchManagerProtegeImpl implements OntologySearchManager {
 
 			preferredName = (String) value;
 			protegeFrame.setPreferredName(preferredName);
-			populateIndexBean(doc, nfs, protegeFrame, (String) value,
-					owlMode);
+			populateIndexBean(doc, nfs, protegeFrame, (String) value, owlMode);
 			writer.addDocument(doc);
 			break;
 		}
@@ -187,9 +144,8 @@ public class OntologySearchManagerProtegeImpl implements OntologySearchManager {
 		return preferredName;
 	}
 
-	private void populateIndexBean(SearchIndexBean doc,
-			NarrowFrameStore nfs, ProtegeSearchFrame luceneProtegeFrame,
-			String value, boolean owlMode) {
+	private void populateIndexBean(SearchIndexBean doc, NarrowFrameStore nfs,
+			ProtegeSearchFrame luceneProtegeFrame, String value, boolean owlMode) {
 		value = stripLanguageIdentifier(value, owlMode);
 		String preferredName = stripLanguageIdentifier(luceneProtegeFrame
 				.getPreferredName(), owlMode);
@@ -232,34 +188,6 @@ public class OntologySearchManagerProtegeImpl implements OntologySearchManager {
 		}
 	}
 
-	/**
-	 * Gets the Protege ontology associated with the specified ontology id.
-	 * 
-	 * @throws SQLException
-	 */
-	@SuppressWarnings("unchecked")
-	private KnowledgeBase createKnowledgeBaseInstance(ResultSet rs)
-			throws SQLException {
-		DatabaseKnowledgeBaseFactory factory = null;
-
-		if (rs.getString("format").contains(ApplicationConstants.FORMAT_OWL)) {
-			factory = new OWLDatabaseKnowledgeBaseFactory();
-		} else {
-			factory = new DatabaseKnowledgeBaseFactory();
-		}
-
-		List errors = new ArrayList();
-		Project prj = Project.createBuildProject(factory, errors);
-		DatabaseKnowledgeBaseFactory.setSources(prj.getSources(),
-				protegeJdbcDriver, protegeJdbcUrl,
-				getTableName(rs.getInt("id")), protegeJdbcUsername,
-				protegeJdbcPassword);
-		prj.createDomainKnowledgeBase(factory, errors, true);
-		KnowledgeBase kb = prj.getKnowledgeBase();
-
-		return kb;
-	}
-
 	@SuppressWarnings("unchecked")
 	private Set<Slot> getPropertySlots(KnowledgeBase kb) {
 		Set<Slot> allSlots = new HashSet<Slot>();
@@ -286,15 +214,6 @@ public class OntologySearchManagerProtegeImpl implements OntologySearchManager {
 		return propertySlots;
 	}
 
-	private Slot getSynonymSlot(KnowledgeBase kb, String synonymSlot) {
-		if (!StringHelper.isNullOrNullString(synonymSlot)) {
-			return (kb instanceof OWLModel ? ((OWLModel) kb)
-					.getRDFProperty(synonymSlot) : kb.getSlot(synonymSlot));
-		}
-
-		return null;
-	}
-
 	private List<Slot> getPreferredNameSlots(KnowledgeBase kb,
 			String preferredNameSlotName) {
 		List<Slot> slots = new ArrayList<Slot>();
@@ -317,12 +236,5 @@ public class OntologySearchManagerProtegeImpl implements OntologySearchManager {
 		slots.add(kb.getNameSlot());
 
 		return slots;
-	}
-
-	/**
-	 * Gets the table name associated with an protege ontology id.
-	 */
-	private String getTableName(Integer ontologyVersionId) {
-		return protegeTablePrefix + ontologyVersionId + protegeTableSuffix;
 	}
 }

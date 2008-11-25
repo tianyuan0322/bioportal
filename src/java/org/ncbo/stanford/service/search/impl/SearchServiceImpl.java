@@ -1,25 +1,18 @@
 package org.ncbo.stanford.service.search.impl;
 
-import java.io.FileInputStream;
 import java.io.IOException;
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Properties;
 
 import org.LexGrid.LexBIG.Exceptions.LBParameterException;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.apache.lucene.analysis.Analyzer;
-import org.apache.lucene.analysis.standard.StandardAnalyzer;
 import org.apache.lucene.document.Document;
-import org.apache.lucene.index.LogMergePolicy;
 import org.apache.lucene.index.Term;
 import org.apache.lucene.queryParser.ParseException;
 import org.apache.lucene.queryParser.QueryParser;
@@ -29,7 +22,6 @@ import org.apache.lucene.search.IndexSearcher;
 import org.apache.lucene.search.PhraseQuery;
 import org.apache.lucene.search.Query;
 import org.apache.lucene.search.ScoreDoc;
-import org.apache.lucene.search.Searcher;
 import org.apache.lucene.search.Sort;
 import org.apache.lucene.search.SortField;
 import org.apache.lucene.search.TermQuery;
@@ -37,73 +29,32 @@ import org.apache.lucene.search.TopFieldDocs;
 import org.ncbo.stanford.bean.search.SearchBean;
 import org.ncbo.stanford.bean.search.SearchIndexBean;
 import org.ncbo.stanford.bean.search.SearchResultListBean;
+import org.ncbo.stanford.domain.custom.dao.CustomNcboOntologyVersionDAO;
+import org.ncbo.stanford.domain.custom.entity.VNcboOntology;
 import org.ncbo.stanford.enumeration.SearchRecordTypeEnum;
 import org.ncbo.stanford.manager.search.OntologySearchManager;
-import org.ncbo.stanford.manager.search.impl.OntologySearchManagerLexGridImpl;
-import org.ncbo.stanford.manager.search.impl.OntologySearchManagerProtegeImpl;
 import org.ncbo.stanford.service.search.SearchService;
 import org.ncbo.stanford.util.cache.expiration.system.ExpirationSystem;
-import org.ncbo.stanford.util.cache.expiration.system.impl.UpdatingHashbeltExpirationSystem;
-import org.ncbo.stanford.util.constants.ApplicationConstants;
 import org.ncbo.stanford.util.helper.StringHelper;
 import org.ncbo.stanford.wrapper.LuceneIndexWriterWrapper;
 
 public class SearchServiceImpl implements SearchService {
 
-	private String indexPath = properties
-			.getProperty("bioportal.search.indexpath");
-	private String indexBackupPath = properties
-			.getProperty("bioportal.search.indexbackuppath");
-	private int maxNumHits = 1000;
-	private int indexMergeFactor = LogMergePolicy.DEFAULT_MERGE_FACTOR;
-	private int indexMaxMergeDocs = LogMergePolicy.DEFAULT_MAX_MERGE_DOCS;
-	private Analyzer analyzer = new StandardAnalyzer();
-	private ExpirationSystem<Integer, SearchResultListBean> searchResultCache = new UpdatingHashbeltExpirationSystem<Integer, SearchResultListBean>();
-
-	// TODO: Throwaway code ===============================================
-
-	public static final String PROPERTY_FILENAME = "build.properties";
-	private static Properties properties = new Properties();
-
-	private Map<String, OntologySearchManager> formatHandlerMap = null;
-
-	static {
-		try {
-			properties.load(new FileInputStream(PROPERTY_FILENAME));
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-	}
-
-	protected SearchServiceImpl() {
-		OntologySearchManager lsmProtege = new OntologySearchManagerProtegeImpl(
-				properties.getProperty("protege.jdbc.url"), properties
-						.getProperty("protege.jdbc.driver"), properties
-						.getProperty("protege.jdbc.username"), properties
-						.getProperty("protege.jdbc.password"));
-		OntologySearchManager lsmLexGrid = new OntologySearchManagerLexGridImpl();
-
-		formatHandlerMap = new HashMap<String, OntologySearchManager>();
-		formatHandlerMap.put(ApplicationConstants.FORMAT_OWL, lsmProtege);
-		formatHandlerMap.put(ApplicationConstants.FORMAT_OWL_DL, lsmProtege);
-		formatHandlerMap.put(ApplicationConstants.FORMAT_OWL_FULL, lsmProtege);
-		formatHandlerMap.put(ApplicationConstants.FORMAT_OWL_LITE, lsmProtege);
-		formatHandlerMap.put(ApplicationConstants.FORMAT_PROTEGE, lsmProtege);
-		formatHandlerMap.put(ApplicationConstants.FORMAT_OBO, lsmLexGrid);
-		formatHandlerMap.put(ApplicationConstants.FORMAT_UMLS_RRF, lsmLexGrid);
-		formatHandlerMap.put(ApplicationConstants.FORMAT_LEXGRID_XML,
-				lsmLexGrid);
-	}
-
-	private static class LuceneSearchHolder {
-		private static final SearchServiceImpl instance = new SearchServiceImpl();
-	}
-
-	public static SearchServiceImpl getInstance() {
-		return LuceneSearchHolder.instance;
-	}
-
-	// TODO: END, Throwaway code ==========================================
+	@SuppressWarnings("unused")
+	private static final Log log = LogFactory.getLog(SearchServiceImpl.class);
+	private String indexPath;
+	private String indexBackupPath;
+	private int maxNumHits;
+	private int indexMergeFactor;
+	private int indexMaxMergeDocs;
+	private CustomNcboOntologyVersionDAO ncboOntologyVersionDAO;
+	private Analyzer analyzer;
+	private IndexSearcher searcher;
+	private ExpirationSystem<Integer, SearchResultListBean> searchResultCache;
+	private Map<String, String> ontologyFormatHandlerMap = new HashMap<String, String>(
+			0);
+	private Map<String, OntologySearchManager> ontologySearchHandlerMap = new HashMap<String, OntologySearchManager>(
+			0);
 
 	public void indexOntology(Integer ontologyId) throws Exception {
 		indexOntology(ontologyId, true);
@@ -111,37 +62,33 @@ public class SearchServiceImpl implements SearchService {
 
 	public void indexOntology(Integer ontologyId, boolean doBackup)
 			throws Exception {
-		Connection connBioPortal = connectBioPortal();
-		ResultSet rs = findOntology(connBioPortal, ontologyId);
+		VNcboOntology ontology = ncboOntologyVersionDAO
+				.findLatestActiveOntologyVersion(ontologyId);
 
-		if (rs.next()) {
+		if (ontology != null) {
 			try {
 				LuceneIndexWriterWrapper writer = new LuceneIndexWriterWrapper(
 						indexPath, analyzer);
 				writer.setMergeFactor(indexMergeFactor);
 				writer.setMaxMergeDocs(indexMaxMergeDocs);
 
-				indexOntology(writer, rs, doBackup);
+				indexOntology(writer, ontology, doBackup);
 
 				writer.optimize();
 				writer.closeWriter();
 				writer = null;
+				reloadSearcher();
 			} catch (Exception e) {
-				handleException(rs, e, false);
+				handleException(ontology, e, false);
 			}
 		}
-
-		closeResultSet(rs);
-		rs = null;
-		closeConnection(connBioPortal);
-		connBioPortal = null;
 	}
 
 	public void indexAllOntologies() throws Exception {
 		long start = System.currentTimeMillis();
+		List<VNcboOntology> ontologies = ncboOntologyVersionDAO
+				.findLatestActiveOntologyVersions();
 
-		Connection connBioPortal = connectBioPortal();
-		ResultSet rs = findAllOntologies(connBioPortal);
 		LuceneIndexWriterWrapper writer = new LuceneIndexWriterWrapper(
 				indexPath, analyzer);
 		backupIndex(writer);
@@ -151,56 +98,48 @@ public class SearchServiceImpl implements SearchService {
 		writer.setMergeFactor(indexMergeFactor);
 		writer.setMaxMergeDocs(indexMaxMergeDocs);
 
-		while (rs.next()) {
+		for (VNcboOntology ontology : ontologies) {
 			try {
-				indexOntology(writer, rs, false);
+				indexOntology(writer, ontology, false);
 			} catch (Exception e) {
-				handleException(rs, e, true);
+				handleException(ontology, e, true);
 			}
 		}
 
 		writer.optimize();
 		writer.closeWriter();
 		writer = null;
-		closeResultSet(rs);
-		rs = null;
-		closeConnection(connBioPortal);
-		connBioPortal = null;
+		reloadSearcher();
 
-		long stop = System.currentTimeMillis(); // stop timing
-		System.out.println("Finished indexing all ontologies in "
-				+ (double) (stop - start) / 1000 / 60 / 60 + " hours.");
+		if (log.isDebugEnabled()) {
+			long stop = System.currentTimeMillis(); // stop timing
+			log.debug("Finished indexing all ontologies in "
+					+ (double) (stop - start) / 1000 / 60 / 60 + " hours.");
+		}
 	}
 
 	public void removeOntology(Integer ontologyId) throws Exception {
-		Connection connBioPortal = connectBioPortal();
-		ResultSet rs = findOntology(connBioPortal, ontologyId);
+		VNcboOntology ontology = ncboOntologyVersionDAO
+				.findLatestOntologyVersion(ontologyId);
 
-		if (rs.next()) {
+		if (ontology != null) {
 			try {
 				LuceneIndexWriterWrapper writer = new LuceneIndexWriterWrapper(
 						indexPath, analyzer);
-
-				removeOntology(writer, rs, true);
-
+				removeOntology(writer, ontology, true);
 				writer.optimize();
 				writer.closeWriter();
 				writer = null;
+				reloadSearcher();
 			} catch (Exception e) {
-				handleException(rs, e, false);
+				handleException(ontology, e, false);
 			}
 		}
-
-		closeResultSet(rs);
-		rs = null;
-		closeConnection(connBioPortal);
-		connBioPortal = null;
 	}
 
 	public void backupIndex() throws Exception {
 		LuceneIndexWriterWrapper writer = new LuceneIndexWriterWrapper(
 				indexPath, analyzer);
-
 		backupIndex(writer);
 		writer.closeWriter();
 		writer = null;
@@ -223,12 +162,11 @@ public class SearchServiceImpl implements SearchService {
 	public SearchResultListBean executeQuery(Query query) throws IOException {
 		long start = System.currentTimeMillis();
 
-		Searcher searcher = new IndexSearcher(indexPath);
 		TopFieldDocs docs = searcher.search(query, null, maxNumHits,
 				getSortFields());
 		ScoreDoc[] hits = docs.scoreDocs;
 
-		long stop = System.currentTimeMillis(); // stop timing
+		long stop = System.currentTimeMillis();
 
 		List<String> uniqueDocs = new ArrayList<String>();
 		SearchResultListBean searchResults = new SearchResultListBean(0);
@@ -260,54 +198,84 @@ public class SearchServiceImpl implements SearchService {
 
 				uniqueDocs.add(conceptId);
 
-				DecimalFormat score = new DecimalFormat("0.00");
-				System.out.println(score.format(hits[i].score) + " | "
-						+ searchResult);
+				if (log.isDebugEnabled()) {
+					DecimalFormat score = new DecimalFormat("0.00");
+					log.debug(score.format(hits[i].score) + " | "
+							+ searchResult);
+				}
 			}
 		}
 
-		System.out.println("Query: " + query);
-		System.out.println("Hits: " + hits.length + ", Unique Hits: "
-				+ uniqueDocs.size());
-		System.out.println("Excecution Time: " + (double) (stop - start) / 1000
-				+ " seconds.");
+		if (log.isDebugEnabled()) {
+			log.debug("Query: " + query);
+			log.debug("Hits: " + hits.length + ", Unique Hits: "
+					+ uniqueDocs.size());
+			log.debug("Excecution Time: " + (double) (stop - start) / 1000
+					+ " seconds.");
+		}
 
 		return searchResults;
 	}
 
-	// TODO: in BP, replace rs with OntologyBean
-	public void indexOntology(LuceneIndexWriterWrapper writer, ResultSet rs,
-			boolean doBackup) throws Exception {
-		String format = rs.getString("format");
-		OntologySearchManager mgr = formatHandlerMap.get(format);
+	private void indexOntology(LuceneIndexWriterWrapper writer,
+			VNcboOntology ontology, boolean doBackup) throws Exception {
+		Integer ontologyVersionId = ontology.getId();
+		Integer ontologyId = ontology.getOntologyId();
+		String format = ontology.getFormat();
+		String displayLabel = ontology.getDisplayLabel();
+		OntologySearchManager mgr = getOntologySearchManager(format);
+		long start = 0;
+		long stop = 0;
 
 		if (mgr != null) {
-			removeOntology(writer, rs, doBackup);
-			mgr.indexOntology(writer, rs);
+			removeOntology(writer, ontology, doBackup);
+
+			if (log.isDebugEnabled()) {
+				log.debug("Adding ontology to index: " + displayLabel
+						+ " (Id: " + ontologyVersionId + ", Ontology Id: "
+						+ ontologyId + ", Format: " + format + ")");
+				start = System.currentTimeMillis();
+			}
+
+			mgr.indexOntology(writer, ontology);
+
+			if (log.isDebugEnabled()) {
+				stop = System.currentTimeMillis(); // stop timing
+				log.debug("Finished indexing ontology: " + displayLabel
+						+ " in " + (double) (stop - start) / 1000 / 60
+						+ " minutes.\n");
+			}
 		} else {
-			System.out.println("No hanlder was found for ontology: "
-					+ rs.getString("display_label") + " (Id: "
-					+ rs.getInt("id") + ", Ontology Id: "
-					+ rs.getInt("ontology_id") + ", Format: " + format + ")");
+			throw new Exception("No hanlder was found for ontology: "
+					+ ontology.getDisplayLabel() + " (Id: " + ontologyVersionId
+					+ ", Ontology Id: " + ontologyId + ", Format: " + format
+					+ ")");
 		}
 	}
 
-	public void backupIndex(LuceneIndexWriterWrapper writer) throws Exception {
-		System.out.println("Backing up index...");
-		long start = System.currentTimeMillis();
+	private void backupIndex(LuceneIndexWriterWrapper writer) throws Exception {
+		long start = 0;
+		long stop = 0;
+
+		if (log.isDebugEnabled()) {
+			log.debug("Backing up index...");
+			start = System.currentTimeMillis();
+		}
+
 		writer.backupIndexByFileCopy(indexBackupPath);
 		// writer.backupIndexByReading(getBackupIndexPath());
 
-		long stop = System.currentTimeMillis(); // stop timing
-		System.out.println("Finished backing up index in "
-				+ (double) (stop - start) / 1000 + " seconds.");
+		if (log.isDebugEnabled()) {
+			stop = System.currentTimeMillis(); // stop timing
+			log.debug("Finished backing up index in " + (double) (stop - start)
+					/ 1000 + " seconds.");
+		}
 	}
 
-	// TODO: in BP, replace rs with OntologyBean
-	public void removeOntology(LuceneIndexWriterWrapper writer, ResultSet rs,
-			boolean doBackup) throws Exception {
-		Integer ontologyId = rs.getInt("ontology_id");
-		String displayLabel = rs.getString("display_label");
+	private void removeOntology(LuceneIndexWriterWrapper writer,
+			VNcboOntology ontology, boolean doBackup) throws Exception {
+		Integer ontologyId = ontology.getOntologyId();
+		String displayLabel = ontology.getDisplayLabel();
 
 		if (doBackup) {
 			backupIndex(writer);
@@ -315,9 +283,11 @@ public class SearchServiceImpl implements SearchService {
 
 		writer.removeOntology(ontologyId);
 
-		System.out.println("Removed ontology from index: " + displayLabel
-				+ " (Id: " + rs.getInt("id") + ", Ontology Id: " + ontologyId
-				+ ", Format: " + rs.getString("format") + ")");
+		if (log.isDebugEnabled()) {
+			log.debug("Removed ontology from index: " + displayLabel + " (Id: "
+					+ ontology.getId() + ", Ontology Id: " + ontologyId
+					+ ", Format: " + ontology.getFormat() + ")");
+		}
 	}
 
 	public Query generateLuceneSearchQuery(Collection<Integer> ontologyIds,
@@ -335,26 +305,6 @@ public class SearchServiceImpl implements SearchService {
 		addPropertiesClause(includeProperties, query);
 
 		return query;
-	}
-
-	private void closeConnection(Connection conn) {
-		try {
-			if (conn != null) {
-				conn.close();
-			}
-		} catch (SQLException e) {
-			e.printStackTrace();
-		}
-	}
-
-	private void closeResultSet(ResultSet rs) {
-		try {
-			if (rs != null) {
-				rs.close();
-			}
-		} catch (SQLException e) {
-			e.printStackTrace();
-		}
 	}
 
 	private Sort getSortFields() {
@@ -432,90 +382,18 @@ public class SearchServiceImpl implements SearchService {
 		return query;
 	}
 
-	private ResultSet findOntology(Connection conn, Integer ontologyId)
-			throws SQLException {
-		String sqlSelect = "SELECT ont.* "
-				+ "FROM "
-				+ "	v_ncbo_ontology ont "
-				+ "    INNER JOIN ( "
-				+ "		SELECT ontology_id, MAX(internal_version_number) AS internal_version_number "
-				+ "		FROM "
-				+ "			ncbo_ontology_version "
-				+ "		WHERE status_id = ? "
-				+ "		GROUP BY ontology_id "
-				+ "	) a ON ont.ontology_id = a.ontology_id AND ont.internal_version_number = a.internal_version_number "
-				+ "WHERE ont.ontology_id = ?";
+	private void reloadSearcher() throws IOException {
+		IndexSearcher oldSearcher = searcher;
+		searcher = new IndexSearcher(indexPath);
 
-		PreparedStatement stmt = conn.prepareStatement(sqlSelect);
-		stmt.setInt(1, 3);
-		stmt.setInt(2, ontologyId);
-
-		return stmt.executeQuery();
+		if (oldSearcher != null) {
+			oldSearcher.close();
+			oldSearcher = null;
+		}
 	}
 
-	private ResultSet findAllOntologies(Connection conn) throws SQLException {
-		String sqlSelect = "SELECT ont.* "
-				+ "FROM "
-				+ "	v_ncbo_ontology ont "
-				+ "    INNER JOIN ( "
-				+ "		SELECT ontology_id, MAX(internal_version_number) AS internal_version_number "
-				+ "		FROM "
-				+ "			ncbo_ontology_version "
-				+ "		WHERE status_id = ? "
-				+ "		GROUP BY ontology_id "
-				+ "	) a ON ont.ontology_id = a.ontology_id AND ont.internal_version_number = a.internal_version_number "
-				+ "WHERE 1 = 1 "
-				// + "AND UPPER(ont.format) IN ('PROTEGE', 'OWL-FULL', 'OWL-DL',
-				// 'OWL-LITE') "
-				// + "AND ont.ontology_id IN (" + "1032, " + "1070 "
-				// + "AND ont.ontology_id IN (" + "1058, 1070 "
-				// + "AND ont.ontology_id = 1049 "
-				// + ") " +
-				+ "ORDER BY " + "ont.display_label";
-		// " LIMIT 10";
-
-		PreparedStatement stmt = conn.prepareStatement(sqlSelect);
-		stmt.setInt(1, 3);
-
-		return stmt.executeQuery();
-	}
-
-	/**
-	 * Connect to BioPortal db
-	 * 
-	 * @return Connection
-	 * @throws SQLException
-	 * @throws IOException
-	 * @throws ClassNotFoundException
-	 */
-	private Connection connectBioPortal() throws SQLException,
-			ClassNotFoundException {
-		return connect("bioportal.jdbc.url", "bioportal.jdbc.driver",
-				"bioportal.jdbc.username", "bioportal.jdbc.password");
-	}
-
-	/**
-	 * Connect to a db
-	 * 
-	 * @return Connection
-	 * @throws SQLException
-	 * @throws IOException
-	 * @throws ClassNotFoundException
-	 */
-	private Connection connect(String url, String driver, String username,
-			String password) throws SQLException, ClassNotFoundException {
-		String jdbcUrl = properties.getProperty(url);
-		String jdbcDriver = properties.getProperty(driver);
-		String jdbcUsername = properties.getProperty(username);
-		String jdbcPassword = properties.getProperty(password);
-
-		// Load the JDBC driver
-		Class.forName(jdbcDriver);
-		return DriverManager.getConnection(jdbcUrl, jdbcUsername, jdbcPassword);
-	}
-
-	private void handleException(ResultSet rs, Exception e, boolean ignoreErrors)
-			throws Exception {
+	private void handleException(VNcboOntology ontology, Exception e,
+			boolean ignoreErrors) throws Exception {
 		Throwable t = e.getCause();
 		String msg = null;
 		String className = (t == null) ? "" : t.getClass().getName();
@@ -524,21 +402,28 @@ public class SearchServiceImpl implements SearchService {
 				|| (t != null && (className
 						.equals("com.mysql.jdbc.exceptions.MySQLSyntaxErrorException") || className
 						.equals("com.mysql.jdbc.exceptions.jdbc4.MySQLSyntaxErrorException")))) {
-			msg = "Ontology " + rs.getString("display_label") + " (Id: "
-					+ rs.getInt("id") + ", Ontology Id: "
-					+ rs.getInt("ontology_id")
+			msg = "Ontology " + ontology.getDisplayLabel() + " (Id: "
+					+ ontology.getId() + ", Ontology Id: "
+					+ ontology.getOntologyId()
 					+ ") does not exist in the backend store";
 		}
 
 		if (ignoreErrors && msg != null) {
-			System.out.println(msg + "\n");
+			log.error(msg + "\n");
 		} else if (ignoreErrors) {
+			log.error(e);
 			e.printStackTrace();
 		} else if (msg != null) {
 			throw new Exception(msg);
 		} else {
 			throw e;
 		}
+	}
+
+	private OntologySearchManager getOntologySearchManager(String format) {
+		return ontologyFormatHandlerMap.containsKey(format) ? ontologySearchHandlerMap
+				.get(ontologyFormatHandlerMap.get(format))
+				: null;
 	}
 
 	/**
@@ -603,5 +488,40 @@ public class SearchServiceImpl implements SearchService {
 	 */
 	public void setIndexBackupPath(String indexBackupPath) {
 		this.indexBackupPath = indexBackupPath;
+	}
+
+	/**
+	 * @param searcher
+	 *            the searcher to set
+	 */
+	public void setSearcher(IndexSearcher searcher) {
+		this.searcher = searcher;
+	}
+
+	/**
+	 * @param ontologyFormatHandlerMap
+	 *            the ontologyFormatHandlerMap to set
+	 */
+	public void setOntologyFormatHandlerMap(
+			Map<String, String> ontologyFormatHandlerMap) {
+		this.ontologyFormatHandlerMap = ontologyFormatHandlerMap;
+	}
+
+	/**
+	 * @param ontologySearchHandlerMap
+	 *            the ontologySearchHandlerMap to set
+	 */
+	public void setOntologySearchHandlerMap(
+			Map<String, OntologySearchManager> ontologySearchHandlerMap) {
+		this.ontologySearchHandlerMap = ontologySearchHandlerMap;
+	}
+
+	/**
+	 * @param ncboOntologyVersionDAO
+	 *            the ncboOntologyVersionDAO to set
+	 */
+	public void setNcboOntologyVersionDAO(
+			CustomNcboOntologyVersionDAO ncboOntologyVersionDAO) {
+		this.ncboOntologyVersionDAO = ncboOntologyVersionDAO;
 	}
 }

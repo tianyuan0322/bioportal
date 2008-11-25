@@ -43,17 +43,6 @@ public abstract class AbstractOntologyManagerProtege {
 	protected String protegeIndexLocation;
 	protected ExpirationSystem<Integer, KnowledgeBase> protegeKnowledgeBases = null;
 
-	/**
-	 * Sets the configuration for Protege Lucene index
-	 * 
-	 * @param kb
-	 * @param api
-	 * @param ob
-	 */
-/*	protected void installLuceneIndexMechanism(QueryApi api, OntologyBean ob) {
-		api.install(new File(getIndexPath(ob)));
-	}
-*/
 	protected String getIndexPath(OntologyBean ob) {
 		return protegeIndexLocation + ob.getOntologyDirPath();
 	}
@@ -85,16 +74,6 @@ public abstract class AbstractOntologyManagerProtege {
 		return slot;
 	}
 
-	/*
-	 * protected String getPreferredName(Frame frame, String
-	 * preferredNameSlotName) { Slot preferredNameSlot =
-	 * getPreferredNameSlot(frame.getKnowledgeBase(), preferredNameSlotName);
-	 * Collection values = frame.getOwnSlotValues(preferredNameSlot); if (values ==
-	 * null || values.isEmpty() || values.size() > 1) { return frame.getName(); }
-	 * else { Object o = values.iterator().next(); if (o instanceof String) {
-	 * return (String) o; } else { return frame.getName(); } } }
-	 */
-
 	private void setBrowserSlotByPreferredNameSlot(KnowledgeBase kb,
 			Slot preferredNameSlot) {
 		Set<Cls> types = new HashSet<Cls>();
@@ -121,34 +100,15 @@ public abstract class AbstractOntologyManagerProtege {
 	}
 
 	/**
-	 * Returns a singleton KnowledgeBase instance for given ontology. Assumes
-	 * that the OntologyBean object is populated.
-	 */
-	protected KnowledgeBase getKnowledgeBase(OntologyBean ob) {
-		KnowledgeBase kb = (KnowledgeBase) protegeKnowledgeBases
-				.get(ob.getId());
-
-		if (kb == null) {
-			kb = createKnowledgeBaseInstance(ob);
-			protegeKnowledgeBases.put(ob.getId(), kb);
-		}
-
-		return kb;
-	}
-
-	/**
 	 * Returns a singleton KnowledgeBase instance for given ontologyVersion.
 	 */
-	protected KnowledgeBase getKnowledgeBase(VNcboOntology ontologyVersion) {
+	protected KnowledgeBase getKnowledgeBase(VNcboOntology ontology) {
 		KnowledgeBase kb = (KnowledgeBase) protegeKnowledgeBases
-				.get(ontologyVersion.getId());
+				.get(ontology.getId());
 
 		if (kb == null) {
-			OntologyBean ob = new OntologyBean();
-			ob.populateFromEntity(ontologyVersion);
-			kb = createKnowledgeBaseInstance(ob);
-
-			protegeKnowledgeBases.put(ontologyVersion.getId(), kb);
+			kb = createKnowledgeBaseInstance(ontology);
+			protegeKnowledgeBases.put(ontology.getId(), kb);
 		}
 
 		return kb;
@@ -158,10 +118,10 @@ public abstract class AbstractOntologyManagerProtege {
 	 * Gets the Protege ontology associated with the specified ontology id.
 	 */
 	@SuppressWarnings("unchecked")
-	private KnowledgeBase createKnowledgeBaseInstance(OntologyBean ob) {
+	private KnowledgeBase createKnowledgeBaseInstance(VNcboOntology ontology) {
 		DatabaseKnowledgeBaseFactory factory = null;
 
-		if (ob.getFormat().contains(ApplicationConstants.FORMAT_OWL)) {
+		if (ontology.getFormat().contains(ApplicationConstants.FORMAT_OWL)) {
 			factory = new OWLDatabaseKnowledgeBaseFactory();
 		} else {
 			factory = new DatabaseKnowledgeBaseFactory();
@@ -170,16 +130,13 @@ public abstract class AbstractOntologyManagerProtege {
 		List errors = new ArrayList();
 		Project prj = Project.createBuildProject(factory, errors);
 		DatabaseKnowledgeBaseFactory.setSources(prj.getSources(),
-				protegeJdbcDriver, protegeJdbcUrl, getTableName(ob.getId()),
+				protegeJdbcDriver, protegeJdbcUrl, getTableName(ontology.getId()),
 				protegeJdbcUsername, protegeJdbcPassword);
 		prj.createDomainKnowledgeBase(factory, errors, true);
 		KnowledgeBase kb = prj.getKnowledgeBase();
 
-		setBrowserSlotByPreferredNameSlot(kb, getPreferredNameSlot(kb, ob
+		setBrowserSlotByPreferredNameSlot(kb, getPreferredNameSlot(kb, ontology
 				.getPreferredNameSlot()));
-
-//		QueryApi api = new QueryApi(kb);
-//		installLuceneIndexMechanism(api, ob);
 
 		if (log.isDebugEnabled()) {
 			log.debug("Created new knowledgebase: " + kb.getName());
@@ -187,7 +144,7 @@ public abstract class AbstractOntologyManagerProtege {
 
 		return kb;
 	}
-
+	
 	/**
 	 * Gets the table name associated with an protege ontology id.
 	 */

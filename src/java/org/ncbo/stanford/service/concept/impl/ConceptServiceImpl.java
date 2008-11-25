@@ -30,8 +30,10 @@ public class ConceptServiceImpl implements ConceptService {
 	private static int MAX_RESULTS_PER_ONTOLOGY = 100;
 
 	private CustomNcboOntologyVersionDAO ncboOntologyVersionDAO;
-	private Map<String, String> ontologyFormatHandlerMap = new HashMap<String, String>();
-	private Map<String, OntologyRetrievalManager> ontologyRetrievalHandlerMap = new HashMap<String, OntologyRetrievalManager>();
+	private Map<String, String> ontologyFormatHandlerMap = new HashMap<String, String>(
+			0);
+	private Map<String, OntologyRetrievalManager> ontologyRetrievalHandlerMap = new HashMap<String, OntologyRetrievalManager>(
+			0);
 
 	/**
 	 * Get the root concept for the specified ontology.
@@ -61,133 +63,104 @@ public class ConceptServiceImpl implements ConceptService {
 				conceptId, light);
 	}
 
-/*	public List<SearchResultBean> findConceptNameExact(
-			List<Integer> ontologyVersionIds, String query) {
-		List<SearchResultBean> searchResults = new ArrayList<SearchResultBean>();
-		List<VNcboOntology> ontologies = null;
-
-		if (ontologyVersionIds.isEmpty()) {
-			ontologies = ncboOntologyVersionDAO.findLatestOntologyVersions();
-		} else {
-			ontologies = ncboOntologyVersionDAO
-					.findOntologyVersions(ontologyVersionIds);
-		}
-
-		HashMap<String, List<VNcboOntology>> formatLists = getFormatLists(ontologies);
-
-		for (String formatHandler : formatLists.keySet()) {
-			OntologyRetrievalManager manager = ontologyRetrievalHandlerMap
-					.get(formatHandler);
-			searchResults
-					.addAll(manager.findConceptNameExact(formatLists
-							.get(formatHandler), query, true,
-							MAX_RESULTS_PER_ONTOLOGY));
-		}
-
-		return searchResults;
-	}
-
-	public List<SearchResultBean> findConceptNameStartsWith(
-			List<Integer> ontologyVersionIds, String query) {
-		List<SearchResultBean> searchResults = new ArrayList<SearchResultBean>();
-		List<VNcboOntology> ontologies = null;
-
-		if (ontologyVersionIds.isEmpty()) {
-			ontologies = ncboOntologyVersionDAO.findLatestOntologyVersions();
-		} else {
-			ontologies = ncboOntologyVersionDAO
-					.findOntologyVersions(ontologyVersionIds);
-		}
-
-		HashMap<String, List<VNcboOntology>> formatLists = getFormatLists(ontologies);
-
-		for (String formatHandler : formatLists.keySet()) {
-			OntologyRetrievalManager manager = ontologyRetrievalHandlerMap
-					.get(formatHandler);
-			searchResults
-					.addAll(manager.findConceptNameStartsWith(formatLists
-							.get(formatHandler), query, true,
-							MAX_RESULTS_PER_ONTOLOGY));
-		}
-
-		return searchResults;
-	}
-
-	public List<SearchResultBean> findConceptNameContains(
-			List<Integer> ontologyVersionIds, String query) {
-		List<SearchResultBean> searchResults = new ArrayList<SearchResultBean>();
-		List<VNcboOntology> ontologies = null;
-
-		if (ontologyVersionIds.isEmpty()) {
-			ontologies = ncboOntologyVersionDAO.findLatestOntologyVersions();
-		} else {
-			ontologies = ncboOntologyVersionDAO
-					.findOntologyVersions(ontologyVersionIds);
-		}
-
-		HashMap<String, List<VNcboOntology>> formatLists = getFormatLists(ontologies);
-
-		for (String formatHandler : formatLists.keySet()) {
-			OntologyRetrievalManager manager = ontologyRetrievalHandlerMap
-					.get(formatHandler);
-			searchResults.addAll(manager.findConceptNameContains(formatLists
-					.get(formatHandler), query, true, MAX_RESULTS_PER_ONTOLOGY)
-
-			);
-		}
-
-		return searchResults;
-	}
-
-	public List<SearchResultBean> findConceptPropertyExact(
-			List<Integer> ontologyVersionIds, String property, String query) {
-		throw new UnsupportedOperationException();
-	}
-
-	public List<SearchResultBean> findConceptPropertyStartsWith(
-			List<Integer> ontologyIds, String property, String query) {
-		throw new UnsupportedOperationException();
-	}
-
-	public List<SearchResultBean> findConceptPropertyContains(
-			List<Integer> ontologyVersionIds, String query) {
-		List<SearchResultBean> searchResults = new ArrayList<SearchResultBean>();
-		HashMap<String, List<VNcboOntology>> formatLists = new HashMap<String, List<VNcboOntology>>();
-
-		for (String key : ontologyFormatHandlerMap.values()) {
-			formatLists.put(key, new ArrayList<VNcboOntology>());
-		}
-
-		List<VNcboOntology> ontologies = new ArrayList<VNcboOntology>();
-
-		if (ontologyVersionIds.isEmpty()) {
-			ontologies = ncboOntologyVersionDAO.findLatestOntologyVersions();
-		} else {
-			ontologies = ncboOntologyVersionDAO
-					.findOntologyVersions(ontologyVersionIds);
-		}
-
-		for (VNcboOntology ontology : ontologies) {
-			if (ontology.getStatusId().equals(
-					StatusEnum.STATUS_READY.getStatus())) {
-				String formatHandler = ontologyFormatHandlerMap.get(ontology
-						.getFormat());
-				((List<VNcboOntology>) formatLists.get(formatHandler))
-						.add(ontology);
-			}
-		}
-
-		for (String formatHandler : formatLists.keySet()) {
-			OntologyRetrievalManager manager = ontologyRetrievalHandlerMap
-					.get(formatHandler);
-			searchResults.addAll(manager.findConceptPropertyContains(
-					formatLists.get(formatHandler), query, true,
-					MAX_RESULTS_PER_ONTOLOGY));
-		}
-
-		return searchResults;
-	}
-*/
+	/*
+	 * public List<SearchResultBean> findConceptNameExact( List<Integer>
+	 * ontologyVersionIds, String query) { List<SearchResultBean> searchResults =
+	 * new ArrayList<SearchResultBean>(); List<VNcboOntology> ontologies =
+	 * null;
+	 * 
+	 * if (ontologyVersionIds.isEmpty()) { ontologies =
+	 * ncboOntologyVersionDAO.findLatestOntologyVersions(); } else { ontologies =
+	 * ncboOntologyVersionDAO .findOntologyVersions(ontologyVersionIds); }
+	 * 
+	 * HashMap<String, List<VNcboOntology>> formatLists =
+	 * getFormatLists(ontologies);
+	 * 
+	 * for (String formatHandler : formatLists.keySet()) {
+	 * OntologyRetrievalManager manager = ontologyRetrievalHandlerMap
+	 * .get(formatHandler); searchResults
+	 * .addAll(manager.findConceptNameExact(formatLists .get(formatHandler),
+	 * query, true, MAX_RESULTS_PER_ONTOLOGY)); }
+	 * 
+	 * return searchResults; }
+	 * 
+	 * public List<SearchResultBean> findConceptNameStartsWith( List<Integer>
+	 * ontologyVersionIds, String query) { List<SearchResultBean> searchResults =
+	 * new ArrayList<SearchResultBean>(); List<VNcboOntology> ontologies =
+	 * null;
+	 * 
+	 * if (ontologyVersionIds.isEmpty()) { ontologies =
+	 * ncboOntologyVersionDAO.findLatestOntologyVersions(); } else { ontologies =
+	 * ncboOntologyVersionDAO .findOntologyVersions(ontologyVersionIds); }
+	 * 
+	 * HashMap<String, List<VNcboOntology>> formatLists =
+	 * getFormatLists(ontologies);
+	 * 
+	 * for (String formatHandler : formatLists.keySet()) {
+	 * OntologyRetrievalManager manager = ontologyRetrievalHandlerMap
+	 * .get(formatHandler); searchResults
+	 * .addAll(manager.findConceptNameStartsWith(formatLists
+	 * .get(formatHandler), query, true, MAX_RESULTS_PER_ONTOLOGY)); }
+	 * 
+	 * return searchResults; }
+	 * 
+	 * public List<SearchResultBean> findConceptNameContains( List<Integer>
+	 * ontologyVersionIds, String query) { List<SearchResultBean> searchResults =
+	 * new ArrayList<SearchResultBean>(); List<VNcboOntology> ontologies =
+	 * null;
+	 * 
+	 * if (ontologyVersionIds.isEmpty()) { ontologies =
+	 * ncboOntologyVersionDAO.findLatestOntologyVersions(); } else { ontologies =
+	 * ncboOntologyVersionDAO .findOntologyVersions(ontologyVersionIds); }
+	 * 
+	 * HashMap<String, List<VNcboOntology>> formatLists =
+	 * getFormatLists(ontologies);
+	 * 
+	 * for (String formatHandler : formatLists.keySet()) {
+	 * OntologyRetrievalManager manager = ontologyRetrievalHandlerMap
+	 * .get(formatHandler);
+	 * searchResults.addAll(manager.findConceptNameContains(formatLists
+	 * .get(formatHandler), query, true, MAX_RESULTS_PER_ONTOLOGY)
+	 *  ); }
+	 * 
+	 * return searchResults; }
+	 * 
+	 * public List<SearchResultBean> findConceptPropertyExact( List<Integer>
+	 * ontologyVersionIds, String property, String query) { throw new
+	 * UnsupportedOperationException(); }
+	 * 
+	 * public List<SearchResultBean> findConceptPropertyStartsWith( List<Integer>
+	 * ontologyIds, String property, String query) { throw new
+	 * UnsupportedOperationException(); }
+	 * 
+	 * public List<SearchResultBean> findConceptPropertyContains( List<Integer>
+	 * ontologyVersionIds, String query) { List<SearchResultBean> searchResults =
+	 * new ArrayList<SearchResultBean>(); HashMap<String, List<VNcboOntology>>
+	 * formatLists = new HashMap<String, List<VNcboOntology>>();
+	 * 
+	 * for (String key : ontologyFormatHandlerMap.values()) {
+	 * formatLists.put(key, new ArrayList<VNcboOntology>()); }
+	 * 
+	 * List<VNcboOntology> ontologies = new ArrayList<VNcboOntology>();
+	 * 
+	 * if (ontologyVersionIds.isEmpty()) { ontologies =
+	 * ncboOntologyVersionDAO.findLatestOntologyVersions(); } else { ontologies =
+	 * ncboOntologyVersionDAO .findOntologyVersions(ontologyVersionIds); }
+	 * 
+	 * for (VNcboOntology ontology : ontologies) { if
+	 * (ontology.getStatusId().equals( StatusEnum.STATUS_READY.getStatus())) {
+	 * String formatHandler = ontologyFormatHandlerMap.get(ontology
+	 * .getFormat()); ((List<VNcboOntology>) formatLists.get(formatHandler))
+	 * .add(ontology); } }
+	 * 
+	 * for (String formatHandler : formatLists.keySet()) {
+	 * OntologyRetrievalManager manager = ontologyRetrievalHandlerMap
+	 * .get(formatHandler);
+	 * searchResults.addAll(manager.findConceptPropertyContains(
+	 * formatLists.get(formatHandler), query, true, MAX_RESULTS_PER_ONTOLOGY)); }
+	 * 
+	 * return searchResults; }
+	 */
 	private HashMap<String, List<VNcboOntology>> getFormatLists(
 			List<VNcboOntology> ontologies) {
 		HashMap<String, List<VNcboOntology>> formatLists = new HashMap<String, List<VNcboOntology>>();
@@ -234,26 +207,12 @@ public class ConceptServiceImpl implements ConceptService {
 	}
 
 	/**
-	 * @return the ontologyRetrievalHandlerMap
-	 */
-	public Map<String, OntologyRetrievalManager> getOntologyRetrievalHandlerMap() {
-		return ontologyRetrievalHandlerMap;
-	}
-
-	/**
 	 * @param ontologyRetrievalHandlerMap
 	 *            the ontologyRetrievalHandlerMap to set
 	 */
 	public void setOntologyRetrievalHandlerMap(
 			Map<String, OntologyRetrievalManager> ontologyRetrievalHandlerMap) {
 		this.ontologyRetrievalHandlerMap = ontologyRetrievalHandlerMap;
-	}
-
-	/**
-	 * @return the ontologyFormatHandlerMap
-	 */
-	public Map<String, String> getOntologyFormatHandlerMap() {
-		return ontologyFormatHandlerMap;
 	}
 
 	/**

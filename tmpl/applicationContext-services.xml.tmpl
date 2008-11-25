@@ -637,12 +637,6 @@
 	<!-- Search related beans -->
 	<bean id="searchService"
 		class="org.ncbo.stanford.service.search.impl.SearchServiceImpl">
-		<property name="searchResultCache">
-			<ref bean="searchResultCache" />
-		</property>
-		<property name="analyzer">
-			<ref bean="searchAnalyzer" />
-		</property>
 		<property name="indexPath">
 			<ref bean="searchIndexPath" />
 		</property>
@@ -658,7 +652,35 @@
 		<property name="indexMaxMergeDocs">
 			<value>@bioportalsearchindexmaxmergedocs@</value>
 		</property>
+		<property name="ncboOntologyVersionDAO">
+			<ref bean="NcboOntologyVersionDAO" />
+		</property>
+		<property name="analyzer">
+			<ref bean="searchAnalyzer" />
+		</property>
+		<property name="searcher">
+			<ref bean="searchIndexSearcher" />
+		</property>
+		<property name="searchResultCache">
+			<ref bean="searchResultCache" />
+		</property>
+		<property name="ontologyFormatHandlerMap">
+			<ref local="ontologyFormatHandlerMap" />
+		</property>
+		<property name="ontologySearchHandlerMap">
+			<ref local="ontologySearchHandlerMap" />
+		</property>
 	</bean>
+
+	<bean id="searchAnalyzer"
+		class="org.apache.lucene.analysis.standard.StandardAnalyzer" />
+		
+	<bean id="searchIndexSearcher"
+		class="org.apache.lucene.search.IndexSearcher">
+		<constructor-arg>
+			<ref bean="searchIndexPath" />
+		</constructor-arg>
+	</bean>		
 
 	<bean id="searchIndexPath" class="java.lang.String">
 		<constructor-arg>
@@ -672,8 +694,33 @@
 		</constructor-arg>
 	</bean>
 
-	<bean id="searchAnalyzer"
-		class="org.apache.lucene.analysis.standard.StandardAnalyzer" />
+	<util:map id="ontologySearchHandlerMap"
+		map-class="java.util.HashMap">
+		<entry>
+			<key>
+				<util:constant
+					static-field="org.ncbo.stanford.util.constants.ApplicationConstants.FORMAT_HANDLER_LEXGRID" />
+			</key>
+			<ref local="ontologySearchManagerLexGrid" />
+		</entry>
+		<entry>
+			<key>
+				<util:constant
+					static-field="org.ncbo.stanford.util.constants.ApplicationConstants.FORMAT_HANDLER_PROTEGE" />
+			</key>
+			<ref local="ontologySearchManagerProtege" />
+		</entry>
+	</util:map>
+
+	<bean id="ontologySearchManagerLexGrid"
+		class="org.ncbo.stanford.manager.search.impl.OntologySearchManagerLexGridImpl"
+		parent="abstractOntologyManagerLexGrid">
+	</bean>
+
+	<bean id="ontologySearchManagerProtege"
+		class="org.ncbo.stanford.manager.search.impl.OntologySearchManagerProtegeImpl"
+		parent="abstractOntologyManagerProtege">
+	</bean>
 
 	<!-- Search Results Cache -->
 	<bean id="searchResultExpirationHandler"
