@@ -6,8 +6,10 @@ package org.ncbo.stanford.service.user;
 import java.util.Date;
 import java.util.List;
 
+import org.junit.Test;
 import org.ncbo.stanford.AbstractBioPortalTest;
 import org.ncbo.stanford.bean.UserBean;
+import org.springframework.beans.factory.annotation.Autowired;
 
 /**
  * Test create/find/findAll/update/delete
@@ -17,9 +19,12 @@ import org.ncbo.stanford.bean.UserBean;
  */
 public class UserServiceTest extends AbstractBioPortalTest {
 
-	public void testFindUsers() {
+	@Autowired
+	UserService userService;
 
-		List<UserBean> users = getUserService().findUsers();
+	@Test
+	public void testFindUsers() {
+		List<UserBean> users = userService.findUsers();
 
 		System.out
 				.println("UserServiceTest: testfindUsers().......................BEGIN");
@@ -31,27 +36,26 @@ public class UserServiceTest extends AbstractBioPortalTest {
 
 		System.out
 				.println("UserServiceTest: testfindUsers().........................DONE");
-
 	}
 
+	@Test
 	public void testCreateUser() {
-
 		System.out
 				.println("UserServiceTest: testCreateUser()........................BEGIN");
 
 		UserBean userBean = createTestBean();
-		getUserService().createUser(userBean);
+		userService.createUser(userBean);
 
 		System.out
 				.println("UserServiceTest: testCreateUser().........................DONE");
 	}
 
+	@Test
 	public void testFindUser() {
-
 		System.out
 				.println("UserServiceTest: testFindUser()..........................BEGIN");
 
-		UserBean userBean = getUserService().findUser(new Integer(2850));
+		UserBean userBean = userService.findUser(new Integer(2850));
 
 		if (userBean != null) {
 			System.out.println("...Username is " + userBean.getUsername());
@@ -60,54 +64,47 @@ public class UserServiceTest extends AbstractBioPortalTest {
 
 		System.out
 				.println("UserServiceTest: testFindUser()...........................DONE");
-
 	}
 
+	@Test
 	public void testUpdateUser() {
-
 		System.out
 				.println("UserServiceTest: testUpdateUsers().......................BEGIN");
 
-		UserBean userBean = getUserService().findUser("myusername");
+		UserBean userBean = userService.findUser("myusername");
 
 		if (userBean != null) {
-
 			System.out.println(".....Updating phone number to 111-222-3333");
 
 			userBean.setPhone("333-222-3333");
-			getUserService().updateUser(userBean);
+			userService.updateUser(userBean);
 		} else {
 			System.out.println(".....No matching record!");
 		}
 
 		System.out
 				.println("UserServiceTest: testUpdateUsers()........................DONE");
-
 	}
 
+	@Test
 	public void testDeleteUser() {
-
 		System.out
 				.println("UserServiceTest: testDeleteUser()........................BEGIN");
 
 		// "getUser" by username does not work if duplicate is allowed in DB.
-		UserBean userBean = getUserService().findUser("myusername");
+		UserBean userBean = userService.findUser("myusername");
 
 		if (userBean != null) {
-
-			getUserService().deleteUser(userBean);
-
+			userService.deleteUser(userBean);
 		} else {
 			System.out.println(".....No matching record!");
 		}
 
 		System.out
 				.println("UserServiceTest: testDeleteUser().........................DONE");
-
 	}
 
 	private UserBean createTestBean() {
-
 		UserBean bean = new UserBean();
 		bean.setUsername("myusername");
 		bean.setPassword("mypassword");
@@ -119,13 +116,4 @@ public class UserServiceTest extends AbstractBioPortalTest {
 
 		return bean;
 	}
-
-	private UserService getUserService() {
-
-		UserService service = (UserService) applicationContext.getBean(
-				"userService", UserService.class);
-
-		return service;
-	}
-
 }

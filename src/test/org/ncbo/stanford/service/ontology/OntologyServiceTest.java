@@ -8,11 +8,13 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import org.junit.Test;
 import org.ncbo.stanford.AbstractBioPortalTest;
 import org.ncbo.stanford.bean.OntologyBean;
 import org.ncbo.stanford.util.ontologyfile.compressedfilehandler.impl.CompressedFileHandlerFactory;
 import org.ncbo.stanford.util.ontologyfile.pathhandler.FilePathHandler;
 import org.ncbo.stanford.util.ontologyfile.pathhandler.impl.PhysicalDirectoryFilePathHandlerImpl;
+import org.springframework.beans.factory.annotation.Autowired;
 
 /**
  * @author nickgriffith
@@ -21,6 +23,8 @@ import org.ncbo.stanford.util.ontologyfile.pathhandler.impl.PhysicalDirectoryFil
 
 public class OntologyServiceTest extends AbstractBioPortalTest {
 	
+	@Autowired
+	OntologyService ontologyService;
 	
 /*	public void testPerformanceFindOntology() {
 		
@@ -44,12 +48,12 @@ public class OntologyServiceTest extends AbstractBioPortalTest {
 		
 	}
 */	
-
+	@Test
 	public void testfindLatestOntologyVersions() {
 
 		System.out.println ("OntologyServiceTest: testfindLatestOntologyVersions().......................BEGIN");
 		
-		List<OntologyBean> ontologies = getOntologyService().findLatestOntologyVersions();
+		List<OntologyBean> ontologies = ontologyService.findLatestOntologyVersions();
 
 		for (OntologyBean ontology : ontologies) {
 
@@ -247,8 +251,7 @@ public class OntologyServiceTest extends AbstractBioPortalTest {
 	}
 
 	
-	private OntologyBean createOntolgyBeanManual() {
-		
+	private OntologyBean createOntolgyBeanManual() {	
 		OntologyBean bean = createOntolgyBean();
 
 		bean.setIsFoundry(new Byte("1"));
@@ -256,23 +259,13 @@ public class OntologyServiceTest extends AbstractBioPortalTest {
 		return bean;
 	}	
 	
-	private OntologyBean createOntolgyBeanRemote() {
-		
+	private OntologyBean createOntolgyBeanRemote() {	
 		OntologyBean bean = createOntolgyBean();
 
 		bean.setIsRemote(new Byte("1"));
 		bean.setFilePath(null);
 				
 		return bean;
-	}
-	
-	
-	private OntologyService getOntologyService() {
-		
-		OntologyService service = (OntologyService) applicationContext.getBean(
-				"ontologyService", OntologyService.class);
-	
-		return service;
 	}
 	
 	public static FilePathHandler getFilePathHandler(OntologyBean ontologyBean) throws Exception {

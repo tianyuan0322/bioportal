@@ -3,9 +3,14 @@ package org.ncbo.stanford;
 import org.hibernate.FlushMode;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.runner.RunWith;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.orm.hibernate3.SessionFactoryUtils;
 import org.springframework.orm.hibernate3.SessionHolder;
-import org.springframework.test.AbstractDependencyInjectionSpringContextTests;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.transaction.support.TransactionSynchronizationManager;
 
 /**
@@ -14,37 +19,28 @@ import org.springframework.transaction.support.TransactionSynchronizationManager
  * @author Michael Dorf
  * 
  */
-public class AbstractBioPortalTest extends
-		AbstractDependencyInjectionSpringContextTests {
+@RunWith(SpringJUnit4ClassRunner.class)
+@ContextConfiguration(locations = { "/applicationContext-datasources.xml",
+		"/applicationContext-services.xml", "/applicationContext-rest.xml",
+		"/applicationContext-security.xml" })
+public class AbstractBioPortalTest {
 
+	@Autowired
 	private SessionFactory sessionFactory;
 	protected Session session;
 
-	protected void onSetUp() {
+	@Before
+	public void setUp() {
 		session = SessionFactoryUtils.getSession(this.sessionFactory, true);
 		session.setFlushMode(FlushMode.AUTO);
 		TransactionSynchronizationManager.bindResource(this.sessionFactory,
 				new SessionHolder(session));
 	}
 
-	protected void onTearDown() {
+	@After
+	public void tearDown() {
 		TransactionSynchronizationManager.unbindResource(sessionFactory);
 		session.flush();
 		SessionFactoryUtils.releaseSession(session, sessionFactory);
-	}
-
-	protected String[] getConfigLocations() {
-		return new String[] { "classpath:applicationContext-datasources.xml",
-				"classpath:applicationContext-services.xml",
-				"classpath:applicationContext-rest.xml",
-				"classpath:applicationContext-security.xml" };
-	}
-
-	/**
-	 * @param sessionFactory
-	 *            the sessionFactory to set
-	 */
-	public void setSessionFactory(SessionFactory sessionFactory) {
-		this.sessionFactory = sessionFactory;
 	}
 }

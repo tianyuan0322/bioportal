@@ -1,13 +1,17 @@
 package org.ncbo.stanford.manager.impl;
 
+import static org.junit.Assert.fail;
+
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+import org.junit.Test;
 import org.ncbo.stanford.AbstractBioPortalTest;
 import org.ncbo.stanford.bean.OntologyBean;
 import org.ncbo.stanford.manager.load.impl.OntologyLoadManagerProtegeImpl;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import edu.stanford.smi.protege.model.Project;
 import edu.stanford.smi.protege.storage.database.DatabaseKnowledgeBaseFactory;
@@ -52,15 +56,14 @@ public class OntologyLoaderProtegeImplTest extends AbstractBioPortalTest {
 	private final static String SOURCE_OMVOWL_URI = "file:///c:/OMV_v2.3.owl";
 	private final static String TABLE_OMV_NONSTREAM = "omv_table_nonstream2";
 
+	@Autowired
+	OntologyLoadManagerProtegeImpl loadManagerProtege;
+
 	//
 	// Non-Streaming Fast load
+	@Test
 	public void testNoStreamPizzaLoad() {
 		System.out.println("Starting testNoStreamPizzaLoad");
-
-		OntologyLoadManagerProtegeImpl loadManagerProtege = (OntologyLoadManagerProtegeImpl) applicationContext
-				.getBean("ontologyLoadManagerProtege",
-						OntologyLoadManagerProtegeImpl.class);
-
 		loadManagerProtege.setProtegeBigFileThreshold(TEST_NOT_STREAM_SIZE);
 
 		OntologyBean ontologyBean = new OntologyBean();
@@ -77,13 +80,9 @@ public class OntologyLoaderProtegeImplTest extends AbstractBioPortalTest {
 	}
 
 	// Streaming load of Pizza Ontology - Much slower than the non-streaming
-
-	public void StreamPizzaLoad() {
+	@Test
+	public void testStreamPizzaLoad() {
 		System.out.println("Starting testStreamPizzaLoad");
-
-		OntologyLoadManagerProtegeImpl loadManagerProtege = (OntologyLoadManagerProtegeImpl) applicationContext
-				.getBean("ontologyLoadManagerProtege",
-						OntologyLoadManagerProtegeImpl.class);
 
 		loadManagerProtege.setProtegeBigFileThreshold(TEST_STREAM_SIZE);
 
@@ -101,7 +100,8 @@ public class OntologyLoaderProtegeImplTest extends AbstractBioPortalTest {
 	}
 
 	// Testing Protege api with ontology queries to verify validity.
-	public void BasicPizzaNonStreamingLoad() {
+	@Test
+	public void testBasicPizzaNonStreamingLoad() {
 		try {
 			System.out.println("Starting testBasicPizzaNonStreamingLoad");
 			OWLModel fileModel = ProtegeOWL
@@ -156,7 +156,8 @@ public class OntologyLoaderProtegeImplTest extends AbstractBioPortalTest {
 	}
 
 	// Fast load of medium complexity ontology OMV.
-	public void MediumNonStreamingLoad() {
+	@Test
+	public void testMediumNonStreamingLoad() {
 		try {
 			OWLModel fileModel = ProtegeOWL
 					.createJenaOWLModelFromURI(SOURCE_OMVOWL_URI);
@@ -192,45 +193,12 @@ public class OntologyLoaderProtegeImplTest extends AbstractBioPortalTest {
 				fail("There were errors: " + errors.size());
 				return;
 			}
-
-			/*
-			 * Project dbProject = Project.createNewProject(factory, errors);
-			 * DatabaseKnowledgeBaseFactory.setSources(dbProject.getSources(),
-			 * JDBC_DRIVER, DB_URL, TABLE_OMV_NONSTREAM, PROTEGE_USER,
-			 * PROTEGE_PASSWORD);
-			 * 
-			 * dbProject.createDomainKnowledgeBase(factory, errors, true);
-			 * dbProject.setProjectURI(URIUtilities.createURI(ERRORS_OMV_URI));
-			 * dbProject.save(errors);
-			 * 
-			 * displayErrors(errors); //optional // return (OWLModel)
-			 * dbProject.getKnowledgeBase();
-			 */
 		} catch (Exception exc) {
 			exc.printStackTrace();
 			fail("General exception: " + exc.getMessage());
 		}
 	}
 
-	/*
-	 * // Fast load of medium complexity ontology FMA public void
-	 * testComplexNonStreamingLoad(){ try { OWLModel fileModel =
-	 * ProtegeOWL.createJenaOWLModelFromURI(SOURCE_FMAOWL_URI);
-	 * 
-	 * List errors = new ArrayList(); Project fileProject =
-	 * fileModel.getProject(); OWLDatabaseKnowledgeBaseFactory factory = new
-	 * OWLDatabaseKnowledgeBaseFactory(); PropertyList sources =
-	 * PropertyList.create(fileProject.getInternalProjectKnowledgeBase());
-	 * 
-	 * DatabaseKnowledgeBaseFactory.setSources(sources, JDBC_DRIVER, DB_URL,
-	 * TABLE_FMA_NONSTREAM, PROTEGE_USER, PROTEGE_PASSWORD);
-	 * factory.saveKnowledgeBase(fileModel, sources, errors); // Optional error
-	 * dump of load displayErrors(errors); //optional if (!errors.isEmpty()) {
-	 * fail("There were errors: " + errors.size()); return; } } catch
-	 * (URISyntaxException exc) { fail("Invalid ontology file URI: " +
-	 * SOURCE_FMAOWL_URI); } catch (Exception exc) { exc.printStackTrace();
-	 * fail("General exception: " + exc.getMessage()); } }
-	 */
 	//
 	// Private methods
 	//

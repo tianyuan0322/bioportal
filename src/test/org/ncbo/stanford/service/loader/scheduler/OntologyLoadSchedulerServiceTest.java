@@ -1,13 +1,16 @@
 package org.ncbo.stanford.service.loader.scheduler;
 
+import org.junit.Test;
 import org.ncbo.stanford.AbstractBioPortalTest;
+import org.springframework.beans.factory.annotation.Autowired;
 
 public class OntologyLoadSchedulerServiceTest extends AbstractBioPortalTest {
 
+	@Autowired
+	OntologyLoadSchedulerService service;
+	
+	@Test
 	public void testParseOntology() throws Exception {
-		OntologyLoadSchedulerService service = (OntologyLoadSchedulerService) applicationContext
-				.getBean("ontologyLoadSchedulerService",
-						OntologyLoadSchedulerService.class);
 		// lexgrid sample
 		// service.parseOntology(3231);
 
@@ -17,10 +20,8 @@ public class OntologyLoadSchedulerServiceTest extends AbstractBioPortalTest {
 		service.parseOntology("3905");
 	}
 
+	@Test
 	public void testIndexOntology() throws Exception {
-		OntologyLoadSchedulerService service = (OntologyLoadSchedulerService) applicationContext
-				.getBean("ontologyLoadSchedulerService",
-						OntologyLoadSchedulerService.class);
 		// lexgrid sample
 		// service.parseOntology(3231);
 
