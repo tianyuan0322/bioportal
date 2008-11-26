@@ -167,6 +167,8 @@ public class CustomNcboOntologyVersionDAO extends NcboOntologyVersionDAO {
 						Query query = session
 								.getNamedQuery("VNcboOntologyVersionDAO.GET_LATEST_ACTIVE_ONTOLOGY_VERSION_FOR_ONTOLOGY_ID_QUERY");
 						query.setInteger("ontologyId", ontologyId);
+						query.setInteger("statusIdReady", StatusEnum.STATUS_READY
+								.getStatus());
 
 						return query.uniqueResult();
 					}
