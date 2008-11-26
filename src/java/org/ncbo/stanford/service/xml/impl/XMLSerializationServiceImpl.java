@@ -21,6 +21,7 @@ import org.ncbo.stanford.bean.UserBean;
 import org.ncbo.stanford.bean.concept.ClassBean;
 import org.ncbo.stanford.bean.concept.InstanceBean;
 import org.ncbo.stanford.bean.concept.PropertyBean;
+import org.ncbo.stanford.bean.response.AbstractResponseBean;
 import org.ncbo.stanford.bean.response.ErrorBean;
 import org.ncbo.stanford.bean.response.ErrorStatusBean;
 import org.ncbo.stanford.bean.response.SuccessBean;
@@ -54,7 +55,6 @@ public class XMLSerializationServiceImpl implements XMLSerializationService {
 	 * @return
 	 */
 	public String getErrorAsXML(ErrorTypeEnum errorType, String accessedResource) {
-		String xmlHeader = ApplicationConstants.XML_DECLARATION + "\n";
 		getXStreamInstance().omitField(ErrorBean.class, "errorType");
 		ErrorBean errorBean = new ErrorBean(errorType);
 
@@ -62,7 +62,7 @@ public class XMLSerializationServiceImpl implements XMLSerializationService {
 			errorBean.setAccessedResource(accessedResource);
 		}
 
-		return xmlHeader + getXStreamInstance().toXML(errorBean);
+		return getResponseAsXML(errorBean);
 	}
 
 	/**
@@ -73,7 +73,6 @@ public class XMLSerializationServiceImpl implements XMLSerializationService {
 	 * @return
 	 */
 	public String getErrorAsXML(Request request, Response response) {
-		String xmlHeader = ApplicationConstants.XML_DECLARATION + "\n";
 		String accessedResource = request.getResourceRef().getPath();
 		ErrorStatusBean errorStatusBean = new ErrorStatusBean(response
 				.getStatus());
@@ -82,7 +81,7 @@ public class XMLSerializationServiceImpl implements XMLSerializationService {
 			errorStatusBean.setAccessedResource(accessedResource);
 		}
 
-		return xmlHeader + getXStreamInstance().toXML(errorStatusBean);
+		return getResponseAsXML(errorStatusBean);
 	}
 
 	/**
@@ -94,9 +93,7 @@ public class XMLSerializationServiceImpl implements XMLSerializationService {
 	 * @return String
 	 */
 	public String getErrorAsXML(ErrorStatusBean errorStatusBean) {
-		String xmlHeader = ApplicationConstants.XML_DECLARATION + "\n";
-
-		return xmlHeader + getXStreamInstance().toXML(errorStatusBean);
+		return getResponseAsXML(errorStatusBean);
 	}
 
 	/**
@@ -108,16 +105,13 @@ public class XMLSerializationServiceImpl implements XMLSerializationService {
 	 * @return String
 	 */
 	public String getSuccessAsXML(SuccessBean successBean) {
-		String xmlHeader = ApplicationConstants.XML_DECLARATION + "\n";
-
-		return xmlHeader + getXStreamInstance().toXML(successBean);
+		return getResponseAsXML(successBean);
 	}
 
 	/**
 	 * returns SuccessBean with sessionId, accessedResource populated
 	 */
 	public ErrorStatusBean getErrorBean(Request request, Response response) {
-
 		String accessedResource = request.getResourceRef().getPath();
 		ErrorStatusBean errorStatusBean = new ErrorStatusBean(response
 				.getStatus());
@@ -186,7 +180,6 @@ public class XMLSerializationServiceImpl implements XMLSerializationService {
 	 */
 	public String applyXSL(Object data, String xsltFile)
 			throws TransformerException {
-
 		// SuccessBean is not being used in findAll type of restlet requests....
 		// - cyoun
 
@@ -305,6 +298,20 @@ public class XMLSerializationServiceImpl implements XMLSerializationService {
 		}
 
 		return xstream;
+	}
+
+	/**
+	 * Generate an XML representation of a request.
+	 * 
+	 * @param responseBean
+	 * @return String
+	 */
+	private String getResponseAsXML(AbstractResponseBean responseBean) {
+		StringBuffer sb = new StringBuffer(ApplicationConstants.XML_DECLARATION);
+		sb.append('\n');
+		sb.append(getXStreamInstance().toXML(responseBean));
+
+		return sb.toString();
 	}
 
 	/**
