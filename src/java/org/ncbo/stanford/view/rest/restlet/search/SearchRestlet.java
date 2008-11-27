@@ -18,10 +18,9 @@ import org.restlet.data.Request;
 import org.restlet.data.Response;
 import org.restlet.data.Status;
 
-public class ConceptSearchRestlet extends Restlet {
+public class SearchRestlet extends Restlet {
 
-	private static final Log log = LogFactory
-			.getLog(ConceptSearchRestlet.class);
+	private static final Log log = LogFactory.getLog(SearchRestlet.class);
 
 	private ConceptService conceptService;
 	private XMLSerializationService xmlSerializationService;
@@ -47,9 +46,9 @@ public class ConceptSearchRestlet extends Restlet {
 	 * @param resp
 	 */
 	private void searchConcept(Request request, Response resp) {
-//		List<SearchResultBean> concepts = null;
+		// List<SearchResultBean> concepts = null;
 		String query = (String) request.getAttributes().get("query");
-		query= Reference.decode(query);
+		query = Reference.decode(query);
 		HttpServletRequest httpRequest = RequestUtils
 				.getHttpServletRequest(request);
 		String ontologies = (String) httpRequest.getParameter("ontologies");
@@ -66,14 +65,14 @@ public class ConceptSearchRestlet extends Restlet {
 
 			}
 
-/*			concepts = conceptService.findConceptNameContains(ontologyIds,
-					query);
-
-			if (concepts.isEmpty()) {
-				resp.setStatus(Status.CLIENT_ERROR_NOT_FOUND,
-						"Concept not found");
-			}
-*/		} catch (NumberFormatException nfe) {
+			/*
+			 * concepts = conceptService.findConceptNameContains(ontologyIds,
+			 * query);
+			 * 
+			 * if (concepts.isEmpty()) {
+			 * resp.setStatus(Status.CLIENT_ERROR_NOT_FOUND, "Concept not
+			 * found"); }
+			 */} catch (NumberFormatException nfe) {
 			nfe.printStackTrace();
 			resp.setStatus(Status.CLIENT_ERROR_BAD_REQUEST, nfe.getMessage());
 		} catch (Exception e) {
@@ -81,8 +80,8 @@ public class ConceptSearchRestlet extends Restlet {
 			resp.setStatus(Status.SERVER_ERROR_INTERNAL, e.getMessage());
 		}
 
-//		getXmlSerializationService().generateXMLResponse(request, resp,
-//				concepts);
+		// getXmlSerializationService().generateXMLResponse(request, resp,
+		// concepts);
 	}
 
 	/**
