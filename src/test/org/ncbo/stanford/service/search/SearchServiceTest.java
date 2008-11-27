@@ -20,18 +20,6 @@ public class SearchServiceTest extends AbstractBioPortalTest {
 	QueryService queryService;
 
 	@Test
-	@Ignore
-	public void testIndexOntology() throws Exception {
-		System.out
-				.println("SearchServiceTest: indexOntology().......................BEGIN");
-
-		indexService.indexOntology(1056, false);
-
-		System.out
-				.println("SearchServiceTest: indexOntology().........................DONE");
-	}
-
-	@Test
 	@Repeat(2)
 	public void testSearchAllOntologies() throws Exception {
 		System.out
@@ -48,13 +36,25 @@ public class SearchServiceTest extends AbstractBioPortalTest {
 	}
 
 	@Test
+//	@Ignore
+	public void testIndexOntology() throws Exception {
+		System.out
+				.println("SearchServiceTest: indexOntology().......................BEGIN");
+
+		indexService.indexOntology(1056, false);
+
+		System.out
+				.println("SearchServiceTest: indexOntology().........................DONE");
+	}
+
+	@Test
 	public void testSearchAllOntologiesPaginated() throws Exception {
 		System.out
 				.println("SearchServiceTest: searchAllOntologies().......................BEGIN");
 
 		Query query = queryService.generateLuceneSearchQuery(null, "cell",
 				true, false);
-		Page<SearchBean> results = queryService.executeQuery(query, 7, 193);
+		Page<SearchBean> results = queryService.executeQuery(query, 7, 1);
 
 		assertNotNull(results);
 
