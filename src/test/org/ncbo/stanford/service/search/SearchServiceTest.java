@@ -5,7 +5,8 @@ import static org.junit.Assert.assertNotNull;
 import org.apache.lucene.search.Query;
 import org.junit.Test;
 import org.ncbo.stanford.AbstractBioPortalTest;
-import org.ncbo.stanford.bean.search.SearchResultListBean;
+import org.ncbo.stanford.bean.search.SearchBean;
+import org.ncbo.stanford.util.paginator.impl.Page;
 import org.springframework.beans.factory.annotation.Autowired;
 
 public class SearchServiceTest extends AbstractBioPortalTest {
@@ -34,7 +35,7 @@ public class SearchServiceTest extends AbstractBioPortalTest {
 
 		Query query = queryService.generateLuceneSearchQuery(null, "cell",
 				true, false);
-		SearchResultListBean results = queryService.executeQuery(query);
+		Page<SearchBean> results = queryService.executeQuery(query);
 
 		assertNotNull(results);
 
