@@ -33,4 +33,10 @@ public interface Paginatable<E> {
 	 * @return
 	 */
 	public int size();
+	
+	/**
+	 * A unique identifier for the list
+	 * @return
+	 */
+	public int hashCode();
 }
