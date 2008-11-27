@@ -68,28 +68,35 @@ public class PaginatorImpl<E> implements Paginator<E> {
 		return result;
 	}
 
-	public Page<E> getNextPage(final Page<E> currentPage) {
+//	public Page<E> getPage(final Integer pageNum) {
+//	}
+	
+	public Page<E> getNextPage(final Integer currentPageNum) {
+		int totalPage = getTotalPage();
+		Page<E> currentPage = new Page<E>(currentPageNum, totalPage);
+
 		if (currentPage == null) {
 			return getFirstPage();
 		}
 
 		if (currentPage.isLastPage()) {
-			return currentPage;
+			return getLastPage();
 		}
 
 		Page<E> result = null;
 
 		if (originalList != null) {
-			result = new Page<E>(currentPage.getPageNum() + 1, currentPage
-					.getTotalPage(), pagesize, iterateFrom(currentPage
-					.getPageNum()
-					* pagesize));
+			result = new Page<E>(currentPage.getPageNum() + 1, totalPage,
+					pagesize, iterateFrom(currentPage.getPageNum() * pagesize));
 		}
 
 		return result;
 	}
 
-	public Page<E> getPrevPage(final Page<E> currentPage) {
+	public Page<E> getPrevPage(final Integer currentPageNum) {
+		int totalPage = getTotalPage();
+		Page<E> currentPage = new Page<E>(currentPageNum, totalPage);
+
 		if (currentPage == null) {
 			return getFirstPage();
 		}
@@ -101,10 +108,9 @@ public class PaginatorImpl<E> implements Paginator<E> {
 		Page<E> result = null;
 
 		if (originalList != null) {
-			result = new Page<E>(currentPage.getPageNum() - 1, currentPage
-					.getTotalPage(), pagesize, iterateFrom((currentPage
-					.getPageNum() - 2)
-					* pagesize));
+			result = new Page<E>(currentPage.getPageNum() - 1, totalPage,
+					pagesize, iterateFrom((currentPage.getPageNum() - 2)
+							* pagesize));
 		}
 
 		return result;

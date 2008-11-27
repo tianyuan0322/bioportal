@@ -88,7 +88,6 @@ public class QueryServiceImpl implements QueryService {
 		Integer queryHashCode = new Integer(query.hashCode());
 		boolean fromCache = true;
 		SearchResultListBean searchResults = searchResultCache.get(queryHashCode);
-		int resultsSize = searchResults.size();
 		
 		if (searchResults == null) {
 			searchResults = runQuery(query);
@@ -96,6 +95,8 @@ public class QueryServiceImpl implements QueryService {
 			searchResultCache.put(queryHashCode, searchResults);
 		}
 		
+		int resultsSize = searchResults.size();
+
 		if (pageSize == null || pageSize <= 0) {
 			pageSize = resultsSize;
 		}
@@ -106,7 +107,7 @@ public class QueryServiceImpl implements QueryService {
 		if (pageNum == null || pageNum <= 1) {
 			page = p.getFirstPage();
 		} else {
-			page = p.getNextPage(new Page<SearchBean>(pageNum - 1, p.getTotalPage(), pageSize, searchResults));
+			page = p.getNextPage(pageNum - 1);
 		}		
 		
 		long stop = System.currentTimeMillis();

@@ -19,14 +19,14 @@ public class Page<E> implements Serializable {
 	 * 
 	 */
 	private static final long serialVersionUID = 7375888859434573070L;
-	
+
 	private int pageNum;
 	private int totalPage;
 	private int pagesize;
 	private Paginatable<E> contents;
 
 	public Page(final int pageNum, final int totalPage) {
-		this.pageNum = pageNum;
+		this.pageNum = (pageNum > totalPage) ? totalPage : pageNum;
 		this.totalPage = totalPage;
 	}
 

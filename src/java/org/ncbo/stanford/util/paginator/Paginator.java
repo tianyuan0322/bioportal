@@ -17,7 +17,7 @@ public interface Paginator<E> {
 	 * @return
 	 */
 	public Page<E> getAll();
-	
+
 	/**
 	 * Returns the first page of results
 	 * 
@@ -35,18 +35,18 @@ public interface Paginator<E> {
 	/**
 	 * Returns the next page of results
 	 * 
-	 * @param currentPage
+	 * @param currentPageNum
 	 * @return
 	 */
-	public Page<E> getNextPage(Page<E> currentPage);
+	public Page<E> getNextPage(Integer currentPageNum);
 
 	/**
 	 * Returns the previous page of results
 	 * 
-	 * @param currentPage
+	 * @param currentPageNum
 	 * @return
 	 */
-	public Page<E> getPrevPage(Page<E> currentPage);
+	public Page<E> getPrevPage(Integer currentPageNum);
 
 	/**
 	 * Returns the total number of pages
