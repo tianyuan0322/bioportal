@@ -53,16 +53,6 @@
 		</property>
 	</bean>
 
-	<bean id="metaDataSearchRestlet"
-		class="org.ncbo.stanford.view.rest.restlet.search.MetaDataSearchRestlet">
-		<property name="ontologyService">
-			<ref bean="ontologyService" />
-		</property>
-		<property name="xmlSerializationService">
-			<ref bean="xmlSerializationService" />
-		</property>
-	</bean>
-
 	<bean id="conceptRestlet"
 		class="org.ncbo.stanford.view.rest.restlet.concept.ConceptRestlet">
 		<property name="conceptService">
@@ -73,25 +63,22 @@
 		</property>
 	</bean>
 
-	<bean id="conceptSearchRestlet"
-		class="org.ncbo.stanford.view.rest.restlet.search.ConceptSearchRestlet">
-		<property name="conceptService">
-			<ref bean="conceptService" />
-		</property>
-		<property name="xmlSerializationService">
-			<ref bean="xmlSerializationService" />
-		</property>
-	</bean>
-	<bean id="propertySearchRestlet"
-		class="org.ncbo.stanford.view.rest.restlet.search.PropertySearchRestlet">
-		<property name="conceptService">
-			<ref bean="conceptService" />
-		</property>
+	<bean id="searchRestlet"
+		class="org.ncbo.stanford.view.rest.restlet.search.SearchRestlet">
 		<property name="xmlSerializationService">
 			<ref bean="xmlSerializationService" />
 		</property>
 	</bean>
 
+	<bean id="metadataSearchRestlet"
+		class="org.ncbo.stanford.view.rest.restlet.search.MetaDataSearchRestlet">
+		<property name="ontologyService">
+			<ref bean="ontologyService" />
+		</property>
+		<property name="xmlSerializationService">
+			<ref bean="xmlSerializationService" />
+		</property>
+	</bean>
 
 	<bean id="pathRestlet"
 		class="org.ncbo.stanford.view.rest.restlet.path.PathRestlet">
@@ -273,14 +260,11 @@
 							key="/path/{ontologyVersionId}/{source}/{target}">
 							<ref local="pathRestlet" />
 						</entry>
-						<entry key="/search/concepts/{query}">
-							<ref local="conceptSearchRestlet" />
-						</entry>
-						<entry key="/search/properties/{query}">
-							<ref local="propertySearchRestlet" />
+						<entry key="/search/{query}">
+							<ref local="searchRestlet" />
 						</entry>
 						<entry key="/search/meta/{query}">
-							<ref local="metaDataSearchRestlet" />
+							<ref local="metadataSearchRestlet" />
 						</entry>
 						<entry key="/virtual/{ontology}">
 							<ref local="virtualRestlet" />
