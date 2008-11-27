@@ -50,14 +50,6 @@ public class IndexServiceImpl implements IndexService {
 				writer.optimize();
 				writer.closeWriter();
 				writer = null;
-				
-				
-				
-//				reloadSearcher();
-				
-				
-				
-				
 			} catch (Exception e) {
 				handleException(ontology, e, false);
 			}
@@ -89,14 +81,7 @@ public class IndexServiceImpl implements IndexService {
 		writer.optimize();
 		writer.closeWriter();
 		writer = null;
-		
-		
-		
-//		reloadSearcher();
 
-		
-		
-		
 		if (log.isDebugEnabled()) {
 			long stop = System.currentTimeMillis(); // stop timing
 			log.debug("Finished indexing all ontologies in "
@@ -116,13 +101,6 @@ public class IndexServiceImpl implements IndexService {
 				writer.optimize();
 				writer.closeWriter();
 				writer = null;
-				
-				
-				
-//				reloadSearcher();
-				
-				
-				
 			} catch (Exception e) {
 				handleException(ontology, e, false);
 			}
@@ -183,7 +161,7 @@ public class IndexServiceImpl implements IndexService {
 		}
 
 		writer.backupIndexByFileCopy(indexBackupPath);
-		// writer.backupIndexByReading(getBackupIndexPath());
+		// writer.backupIndexByReading(indexBackupPath);
 
 		if (log.isDebugEnabled()) {
 			stop = System.currentTimeMillis(); // stop timing
@@ -209,7 +187,7 @@ public class IndexServiceImpl implements IndexService {
 					+ ", Format: " + ontology.getFormat() + ")");
 		}
 	}
-	
+
 	private void handleException(VNcboOntology ontology, Exception e,
 			boolean ignoreErrors) throws Exception {
 		Throwable t = e.getCause();
@@ -237,13 +215,13 @@ public class IndexServiceImpl implements IndexService {
 			throw e;
 		}
 	}
-	
+
 	private OntologySearchManager getOntologySearchManager(String format) {
 		return ontologyFormatHandlerMap.containsKey(format) ? ontologySearchHandlerMap
 				.get(ontologyFormatHandlerMap.get(format))
 				: null;
 	}
-	
+
 	/**
 	 * @return the analyzer
 	 */
