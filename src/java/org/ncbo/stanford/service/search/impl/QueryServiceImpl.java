@@ -64,9 +64,7 @@ public class QueryServiceImpl implements QueryService {
 		long start = System.currentTimeMillis();
 
 		synchronized (createSearcherLock) {
-			if (searcher == null) {
-				createSearcher();
-			} else if (hasNewerIndexFile()) {
+			if (hasNewerIndexFile()) {
 				reloadSearcher();
 			}
 		}
@@ -214,7 +212,7 @@ public class QueryServiceImpl implements QueryService {
 		if (log.isDebugEnabled()) {
 			log.debug("Index file has changed. Reloading searcher...");
 		}
-		
+
 		searcher.close();
 		createSearcher();
 	}
@@ -258,6 +256,13 @@ public class QueryServiceImpl implements QueryService {
 	 */
 	public void setIndexPath(String indexPath) {
 		this.indexPath = indexPath;
+
+		try {
+			createSearcher();
+		} catch (IOException e) {
+			e.printStackTrace();
+			log.error("Could not create IndexSearcher at startup: " + e);
+		}
 	}
 
 	/**
