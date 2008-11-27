@@ -67,9 +67,6 @@ public class PaginatorImpl<E> implements Paginator<E> {
 
 		return result;
 	}
-
-//	public Page<E> getPage(final Integer pageNum) {
-//	}
 	
 	public Page<E> getNextPage(final Integer currentPageNum) {
 		int totalPage = getTotalPage();
