@@ -18,7 +18,6 @@ import org.apache.lucene.queryParser.QueryParser;
 import org.apache.lucene.search.BooleanClause;
 import org.apache.lucene.search.BooleanQuery;
 import org.apache.lucene.search.IndexSearcher;
-import org.apache.lucene.search.PhraseQuery;
 import org.apache.lucene.search.Query;
 import org.apache.lucene.search.ScoreDoc;
 import org.apache.lucene.search.Sort;
@@ -167,10 +166,7 @@ public class QueryServiceImpl implements QueryService {
 		parser.setAllowLeadingWildcard(true);
 		parser.setDefaultOperator(QueryParser.AND_OPERATOR);
 
-		// parser.setLowercaseExpandedTerms(false);
-
 		try {
-			// expr = doubleQuoteString(expr);
 			expr = StringHelper.escapeSpaces(expr);
 			query.add(parser.parse(expr), BooleanClause.Occur.MUST);
 		} catch (ParseException e) {
@@ -178,16 +174,6 @@ public class QueryServiceImpl implements QueryService {
 			ioe.initCause(e);
 			throw ioe;
 		}
-
-		PhraseQuery q = new PhraseQuery();
-		expr = expr.trim().toLowerCase().replaceAll("[\\t|\\s]+", " ");
-		String[] words = expr.split(" ");
-
-		for (int i = 0; i < words.length; i++) {
-			q.add(new Term(SearchIndexBean.CONTENTS_FIELD_LABEL, words[i]));
-		}
-		// query.add(q, BooleanClause.Occur.MUST);
-
 	}
 
 	private void addPropertiesClause(boolean includeProperties,
