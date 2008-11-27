@@ -635,16 +635,32 @@
 	</bean>
 
 	<!-- Search related beans -->
-	<bean id="searchService"
-		class="org.ncbo.stanford.service.search.impl.SearchServiceImpl">
+	<bean id="searchQueryService"
+		class="org.ncbo.stanford.service.search.impl.QueryServiceImpl">
+		<property name="analyzer">
+			<ref bean="searchAnalyzer" />
+		</property>
+		<property name="indexPath">
+			<ref bean="searchIndexPath" />
+		</property>
+		<property name="maxNumHits">
+			<value>@bioportalsearchmaxnumhits@</value>
+		</property>
+		<property name="searchResultCache">
+			<ref bean="paginatableCache" />
+		</property>
+	</bean>
+
+	<bean id="searchIndexService"
+		class="org.ncbo.stanford.service.search.impl.IndexServiceImpl">
+		<property name="analyzer">
+			<ref bean="searchAnalyzer" />
+		</property>
 		<property name="indexPath">
 			<ref bean="searchIndexPath" />
 		</property>
 		<property name="indexBackupPath">
 			<ref bean="searchIndexBackupPath" />
-		</property>
-		<property name="maxNumHits">
-			<value>@bioportalsearchmaxnumhits@</value>
 		</property>
 		<property name="indexMergeFactor">
 			<value>@bioportalsearchindexmergefactor@</value>
@@ -654,15 +670,6 @@
 		</property>
 		<property name="ncboOntologyVersionDAO">
 			<ref bean="NcboOntologyVersionDAO" />
-		</property>
-		<property name="analyzer">
-			<ref bean="searchAnalyzer" />
-		</property>
-		<property name="searcher">
-			<ref bean="searchIndexSearcher" />
-		</property>
-		<property name="searchResultCache">
-			<ref bean="searchResultCache" />
 		</property>
 		<property name="ontologyFormatHandlerMap">
 			<ref local="ontologyFormatHandlerMap" />
@@ -674,13 +681,6 @@
 
 	<bean id="searchAnalyzer"
 		class="org.apache.lucene.analysis.standard.StandardAnalyzer" />
-		
-	<bean id="searchIndexSearcher"
-		class="org.apache.lucene.search.IndexSearcher">
-		<constructor-arg>
-			<ref bean="searchIndexPath" />
-		</constructor-arg>
-	</bean>		
 
 	<bean id="searchIndexPath" class="java.lang.String">
 		<constructor-arg>
@@ -722,26 +722,27 @@
 		parent="abstractOntologyManagerProtege">
 	</bean>
 
-	<!-- Search Results Cache -->
-	<bean id="searchResultExpirationHandler"
+	<!-- Cache to be used for all paginatable lists, 
+		such as ontology lists or search results -->
+	<bean id="paginatableExpirationHandler"
 		class="org.ncbo.stanford.util.cache.expiration.handler.impl.NullExpirationHandler" />
 
-	<bean id="searchResultHashbeltContainerFactory"
+	<bean id="paginatableHashbeltContainerFactory"
 		class="org.ncbo.stanford.util.cache.container.impl.StandardHashbeltContainerFactory" />
 
-	<bean id="searchResultCache"
+	<bean id="paginatableCache"
 		class="org.ncbo.stanford.util.cache.expiration.system.impl.UpdatingHashbeltExpirationSystem">
 		<constructor-arg index="0">
-			<value>@bioportalsearchresultnumcontainers@</value>
+			<value>@bioportalpaginatablecachenumcontainers@</value>
 		</constructor-arg>
 		<constructor-arg index="1">
-			<value>@bioportalsearchresulttimeout@</value>
+			<value>@bioportalpaginatablecachetimeout@</value>
 		</constructor-arg>
 		<constructor-arg index="2">
-			<ref bean="searchResultExpirationHandler" />
+			<ref bean="paginatableExpirationHandler" />
 		</constructor-arg>
 		<constructor-arg index="3">
-			<ref bean="searchResultHashbeltContainerFactory" />
+			<ref bean="paginatableHashbeltContainerFactory" />
 		</constructor-arg>
 	</bean>
 
