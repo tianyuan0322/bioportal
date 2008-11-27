@@ -39,6 +39,7 @@ import org.LexGrid.LexBIG.Impl.LexBIGServiceImpl;
 import org.LexGrid.LexBIG.LexBIGService.LexBIGService;
 import org.LexGrid.LexBIG.LexBIGService.LexBIGServiceManager;
 import org.LexGrid.LexBIG.Utility.Constructors;
+import org.LexGrid.LexBIG.Utility.ObjectToString;
 import org.LexGrid.LexOnt.CodingSchemeManifest;
 import org.LexGrid.LexOnt.CsmfFormalName;
 import org.LexGrid.LexOnt.CsmfRegisteredName;
@@ -56,7 +57,7 @@ public class OntologyLoadManagerLexGridImpl extends
 
 	private static final Log log = LogFactory
 			.getLog(OntologyLoadManagerLexGridImpl.class);
-	private String targetTerminologies;
+	
 
 	/**
 	 * A comma delimited list of UMLS terminologies to load. If null, all
@@ -83,10 +84,10 @@ public class OntologyLoadManagerLexGridImpl extends
 	public void loadOntology(URI ontologyUri, OntologyBean ob) throws Exception {
 		boolean stopOnErrors = false;
 		boolean async = false;
-		URI source = ontologyUri;
+		
 
-		File ontologyFile = new File(source.getPath());
-		String filePath = source.getPath();
+		File ontologyFile = new File(ontologyUri.getPath());
+		String filePath = ontologyUri.getPath();
 
 		if (ontologyFile == null) {
 			log.error("Missing ontology file to load: " + filePath);
@@ -94,7 +95,7 @@ public class OntologyLoadManagerLexGridImpl extends
 					+ filePath);
 		}
 
-		log.debug("Loading ontology file: " + ontologyFile.getName());
+		log.debug("In OntologyLoadManagerLexGridImpl. Loading ontology from uri: " + ontologyUri);
 
 		// Get the LexBIGService
 		LexBIGService lbs = LexBIGServiceImpl.defaultInstance();
@@ -111,21 +112,22 @@ public class OntologyLoadManagerLexGridImpl extends
 			loader = lbsm
 					.getLoader(org.LexGrid.LexBIG.Impl.loaders.OBOLoaderImpl.name);
 			loader.setCodingSchemeManifest(csm);
-			((OBO_Loader) loader).load(source, null, stopOnErrors, async);
-			// Load UMLS
+			((OBO_Loader) loader).load(ontologyUri, null, stopOnErrors, async);
+		// Load UMLS
 		} else if (ob.getFormat().equalsIgnoreCase(
 				ApplicationConstants.FORMAT_UMLS_RRF)) {
 			loader = lbsm
 					.getLoader(org.LexGrid.LexBIG.Impl.loaders.UMLSLoaderImpl.name);
-			LocalNameList lnl = getLocalNameListFromTargetTerminologies();
-			((UMLS_Loader) loader).load(source, lnl, stopOnErrors, async);
-			// Load LEXGRID XML
+			LocalNameList lnl = getLocalNameListFromTargetTerminologies(ob);
+			log.debug("Using the UMLS loader. Target terminology= "+ ObjectToString.toString(lnl));
+			((UMLS_Loader) loader).load(ontologyUri, lnl, stopOnErrors, async);
+		// Load LEXGRID XML
 		} else if (ob.getFormat().equalsIgnoreCase(
 				ApplicationConstants.FORMAT_LEXGRID_XML)) {
 			loader = lbsm
 					.getLoader(org.LexGrid.LexBIG.Impl.loaders.LexGridLoaderImpl.name);
-			((LexGrid_Loader) loader).load(source, stopOnErrors, async);
-			// Load OWL
+			((LexGrid_Loader) loader).load(ontologyUri, stopOnErrors, async);
+		// Load OWL
 		} else if (ob.getFormat().equalsIgnoreCase(
 				ApplicationConstants.FORMAT_OWL_DL)
 				|| ob.getFormat().equalsIgnoreCase(
@@ -137,10 +139,10 @@ public class OntologyLoadManagerLexGridImpl extends
 			// Load only NCI Thesaurus for now.
 			if (ob.getFilePath() != null
 					&& ob.getFilePath().indexOf("Thesaurus") >= 0) {
-				((OWL_Loader) loader).loadNCI(source, null, false,
+				((OWL_Loader) loader).loadNCI(ontologyUri, null, false,
 						stopOnErrors, async);
 			} else {
-				((OWL_Loader) loader).load(source, null, stopOnErrors, async);
+				((OWL_Loader) loader).load(ontologyUri, null, stopOnErrors, async);
 			}
 		}
 
@@ -247,17 +249,10 @@ public class OntologyLoadManagerLexGridImpl extends
 		}
 	}
 
-	public String getTargetTerminologies() {
-		return targetTerminologies;
-	}
-
-	public void setTargetTerminologies(String targetTerminologies) {
-		this.targetTerminologies = targetTerminologies;
-	}
-
-	public LocalNameList getLocalNameListFromTargetTerminologies() {
+	
+	public LocalNameList getLocalNameListFromTargetTerminologies(OntologyBean ob) {
 		LocalNameList lnl = null;
-
+        String targetTerminologies= ob.getTargetTerminologies();
 		if (targetTerminologies != null) {
 			lnl = new LocalNameList();
 			String[] terminologies = targetTerminologies.split(",");

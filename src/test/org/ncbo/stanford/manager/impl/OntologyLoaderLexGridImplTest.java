@@ -68,12 +68,7 @@ public class OntologyLoaderLexGridImplTest extends AbstractBioPortalTest {
 	@Autowired
 	CustomNcboOntologyVersionDAO ncboOntologyVersionDAO;
 
-	@Test
-	public void testSimpleMetadataLookup() throws Exception {
-		NcboOntologyVersionMetadata ncboMetadata = ncboOntologyVersionDAO
-				.findOntologyMetadataById(15910);
-		assertTrue(ncboMetadata != null);
-	}
+
 
 	@Test
 	public void testLoadOboCell() throws Exception {
@@ -326,6 +321,7 @@ public class OntologyLoaderLexGridImplTest extends AbstractBioPortalTest {
 		bean.setFormat(ApplicationConstants.FORMAT_UMLS_RRF);
 		bean.setCodingScheme(TEST_UMLS_URN_VERSION);
 		bean.setDisplayLabel(TEST_UMLS_DISPLAY_LABEL);
+		bean.setTargetTerminologies(TEST_UMLS_DISPLAY_LABEL);
 		bean.setContactEmail("umls@email.com");
 		bean.setContactName("Umls Name");
 		return bean;
@@ -365,7 +361,6 @@ public class OntologyLoaderLexGridImplTest extends AbstractBioPortalTest {
 			throws Exception {
 		System.out.println("___Loading Ontology....... BEGIN : " + filePath);
 		// UMLS ONLY
-		loadManagerLexGrid.setTargetTerminologies("AIR");
 		loadManagerLexGrid.loadOntology(new File(filePath).toURI(),
 				ontologyBean);
 		System.out.println("___Loading Ontology........ END : " + filePath);

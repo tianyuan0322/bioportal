@@ -1,19 +1,11 @@
 package lucene;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.Collection;
 
-import org.apache.lucene.search.Query;
 import org.ncbo.stanford.bean.search.SearchBean;
-import org.ncbo.stanford.bean.search.SearchResultListBean;
-import org.ncbo.stanford.service.search.SearchService;
-import org.ncbo.stanford.service.search.impl.SearchServiceImpl;
 import org.ncbo.stanford.util.constants.ApplicationConstants;
-import org.ncbo.stanford.util.ontologyfile.pathhandler.AbstractFilePathHandler;
-import org.ncbo.stanford.util.paginator.Paginator;
 import org.ncbo.stanford.util.paginator.impl.Page;
-import org.ncbo.stanford.util.paginator.impl.PaginatorImpl;
 
 import com.thoughtworks.xstream.XStream;
 
