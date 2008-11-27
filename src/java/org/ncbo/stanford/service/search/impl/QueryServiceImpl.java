@@ -267,7 +267,7 @@ public class QueryServiceImpl implements QueryService {
 			if (getCurrentIndexDate().after(openIndexDate)) {
 				return true;
 			}
-		} catch (IOException e) { // no index file exist
+		} catch (IOException e) { // no index file found
 		}
 
 		return false;
