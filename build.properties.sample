@@ -43,12 +43,12 @@ bioportal.search.indexmaxmergedocs=2147483647
 bioportal.search.indexpath=${bioportal.resource.path}/searchindex
 bioportal.search.indexbackuppath=${bioportal.search.indexpath}/backup
 
-# Search results cache properties
+# Paginatable lists cache properties
 #
-# Timeout for inactive search results (in milliseconds)
-bioportal.searchresult.timeout=3600000
-# Number of "buckets" to allocate for search results storage
-bioportal.searchresult.numcontainers=5
+# Timeout for inactive paginatable lists (in milliseconds)
+bioportal.paginatable.cache.timeout=3600000
+# Number of "buckets" to allocate for paginatable lists storage
+bioportal.paginatable.cache.numcontainers=5
 
 # OBO Sourceforge CVS properties
 obo.sourceforge.cvs.username=anonymous

@@ -161,8 +161,8 @@
 				<filter token="bioportalsearchindexmaxmergedocs" value="${bioportal.search.indexmaxmergedocs}" />
 				<filter token="bioportalsearchindexpath" value="${bioportal.search.indexpath}" />
 				<filter token="bioportalsearchindexbackuppath" value="${bioportal.search.indexbackuppath}" />
-				<filter token="bioportalsearchresultnumcontainers" value="${bioportal.searchresult.numcontainers}" />
-				<filter token="bioportalsearchresulttimeout" value="${bioportal.searchresult.timeout}" />
+				<filter token="bioportalpaginatablecachenumcontainers" value="${bioportal.paginatable.cache.numcontainers}" />
+				<filter token="bioportalpaginatablecachetimeout" value="${bioportal.paginatable.cache.timeout}" />
 				<filter token="obopullschedulerenabled" value="${obo.pull.scheduler.enabled}" />
 				<filter token="obopullschedulercronexpression" value="${obo.pull.scheduler.cronexpression}" />
 				<filter token="ontologyparseschedulerenabled" value="${ontology.parse.scheduler.enabled}" />
