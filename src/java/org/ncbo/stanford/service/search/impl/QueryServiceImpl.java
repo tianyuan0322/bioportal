@@ -1,7 +1,6 @@
 package org.ncbo.stanford.service.search.impl;
 
 import java.io.IOException;
-import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
@@ -31,6 +30,9 @@ import org.ncbo.stanford.enumeration.SearchRecordTypeEnum;
 import org.ncbo.stanford.service.search.QueryService;
 import org.ncbo.stanford.util.cache.expiration.system.ExpirationSystem;
 import org.ncbo.stanford.util.helper.StringHelper;
+import org.ncbo.stanford.util.paginator.Paginator;
+import org.ncbo.stanford.util.paginator.impl.Page;
+import org.ncbo.stanford.util.paginator.impl.PaginatorImpl;
 
 public class QueryServiceImpl implements QueryService {
 
@@ -40,18 +42,34 @@ public class QueryServiceImpl implements QueryService {
 	private String indexPath;
 	private int maxNumHits;
 	private ExpirationSystem<Integer, SearchResultListBean> searchResultCache;
-
+	
 	// non-injected properties
 	private IndexSearcher searcher = null;
 	private Date openIndexDate;
 	private Object createSearcherLock = new Object();
 
-	public SearchResultListBean executeQuery(String expr,
+	public Page<SearchBean> executeQuery(String expr,
+			boolean includeProperties, boolean isExactMatch, Integer pageSize,
+			Integer pageNum) throws IOException {
+		return executeQuery(expr, null, includeProperties, isExactMatch,
+				pageSize, pageNum);
+	}
+
+	public Page<SearchBean> executeQuery(String expr,
 			boolean includeProperties, boolean isExactMatch) throws IOException {
 		return executeQuery(expr, null, includeProperties, isExactMatch);
 	}
 
-	public SearchResultListBean executeQuery(String expr,
+	public Page<SearchBean> executeQuery(String expr,
+			Collection<Integer> ontologyIds, boolean includeProperties,
+			boolean isExactMatch, Integer pageSize, Integer pageNum) throws IOException {
+		Query query = generateLuceneSearchQuery(ontologyIds, expr,
+				includeProperties, isExactMatch);
+
+		return executeQuery(query, pageSize, pageNum);
+	}
+
+	public Page<SearchBean> executeQuery(String expr,
 			Collection<Integer> ontologyIds, boolean includeProperties,
 			boolean isExactMatch) throws IOException {
 		Query query = generateLuceneSearchQuery(ontologyIds, expr,
@@ -60,9 +78,68 @@ public class QueryServiceImpl implements QueryService {
 		return executeQuery(query);
 	}
 
-	public SearchResultListBean executeQuery(Query query) throws IOException {
+	public Page<SearchBean> executeQuery(Query query) throws IOException {
+		return executeQuery(query, null, null);
+	}
+	
+	public Page<SearchBean> executeQuery(Query query, Integer pageSize, Integer pageNum)
+			throws IOException {
 		long start = System.currentTimeMillis();
+		Integer queryHashCode = new Integer(query.hashCode());
+		boolean fromCache = true;
+		SearchResultListBean searchResults = searchResultCache.get(queryHashCode);
+		int resultsSize = searchResults.size();
+		
+		if (searchResults == null) {
+			searchResults = runQuery(query);
+			fromCache = false;
+			searchResultCache.put(queryHashCode, searchResults);
+		}
+		
+		if (pageSize == null || pageSize <= 0) {
+			pageSize = resultsSize;
+		}
 
+		Page<SearchBean> page;
+		Paginator<SearchBean> p = new PaginatorImpl<SearchBean>(searchResults, pageSize);
+		
+		if (pageNum == null || pageNum <= 1) {
+			page = p.getFirstPage();
+		} else {
+			page = p.getNextPage(new Page<SearchBean>(pageNum - 1, p.getTotalPage(), pageSize, searchResults));
+		}		
+		
+		long stop = System.currentTimeMillis();
+
+		if (log.isDebugEnabled()) {
+			log.debug("Query: " + query);
+			log.debug("Cached?: " + (fromCache ? "Yes" : "No"));
+			log.debug("Number of Hits: " + searchResults.size());
+			log.debug("Excecution Time: " + (double) (stop - start) / 1000
+					+ " seconds.");
+		}
+
+		return page;
+	}
+	
+	public Query generateLuceneSearchQuery(Collection<Integer> ontologyIds,
+			String expr, boolean includeProperties, boolean isExactMatch)
+			throws IOException {
+		BooleanQuery query = new BooleanQuery();
+
+		if (isExactMatch) {
+			addContentsClauseExact(expr, query);
+		} else {
+			addContentsClauseContains(expr, query);
+		}
+
+		addOntologyIdsClause(ontologyIds, query);
+		addPropertiesClause(includeProperties, query);
+
+		return query;
+	}
+
+	private SearchResultListBean runQuery(Query query) throws IOException {
 		synchronized (createSearcherLock) {
 			if (hasNewerIndexFile()) {
 				reloadSearcher();
@@ -72,8 +149,6 @@ public class QueryServiceImpl implements QueryService {
 		TopFieldDocs docs = searcher.search(query, null, maxNumHits,
 				getSortFields());
 		ScoreDoc[] hits = docs.scoreDocs;
-
-		long stop = System.currentTimeMillis();
 
 		List<String> uniqueDocs = new ArrayList<String>();
 		SearchResultListBean searchResults = new SearchResultListBean(0);
@@ -104,41 +179,10 @@ public class QueryServiceImpl implements QueryService {
 				searchResults.addOntologyHit(ontologyId);
 
 				uniqueDocs.add(conceptId);
-
-				if (log.isDebugEnabled()) {
-					DecimalFormat score = new DecimalFormat("0.00");
-					log.debug("\n" + score.format(hits[i].score) + " | "
-							+ searchResult);
-				}
 			}
 		}
 
-		if (log.isDebugEnabled()) {
-			log.debug("Query: " + query);
-			log.debug("Hits: " + hits.length + ", Unique Hits: "
-					+ uniqueDocs.size());
-			log.debug("Excecution Time: " + (double) (stop - start) / 1000
-					+ " seconds.");
-		}
-
 		return searchResults;
-	}
-
-	public Query generateLuceneSearchQuery(Collection<Integer> ontologyIds,
-			String expr, boolean includeProperties, boolean isExactMatch)
-			throws IOException {
-		BooleanQuery query = new BooleanQuery();
-
-		if (isExactMatch) {
-			addContentsClauseExact(expr, query);
-		} else {
-			addContentsClauseContains(expr, query);
-		}
-
-		addOntologyIdsClause(ontologyIds, query);
-		addPropertiesClause(includeProperties, query);
-
-		return query;
 	}
 
 	private Sort getSortFields() {

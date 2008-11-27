@@ -47,4 +47,11 @@ public interface Paginator<E> {
 	 * @return
 	 */
 	public Page<E> getPrevPage(Page<E> currentPage);
+
+	/**
+	 * Returns the total number of pages
+	 * 
+	 * @return
+	 */
+	public int getTotalPage();
 }

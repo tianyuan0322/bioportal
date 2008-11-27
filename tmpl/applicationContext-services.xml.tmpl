@@ -677,6 +677,9 @@
 		<property name="ontologySearchHandlerMap">
 			<ref local="ontologySearchHandlerMap" />
 		</property>
+		<property name="searchResultCache">
+			<ref bean="paginatableCache" />
+		</property>
 	</bean>
 
 	<bean id="searchAnalyzer"

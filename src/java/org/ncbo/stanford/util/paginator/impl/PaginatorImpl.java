@@ -110,6 +110,16 @@ public class PaginatorImpl<E> implements Paginator<E> {
 		return result;
 	}
 
+	public int getTotalPage() {
+		if (originalList == null || originalList.size() <= 0) {
+			return 0;
+		}
+
+		final int totalSize = originalList.size();
+
+		return ((totalSize - 1) / pagesize) + 1;
+	}
+
 	private Paginatable<E> iterateFrom(final int fromIndex) {
 		final int totalSize = originalList.size();
 
@@ -120,15 +130,5 @@ public class PaginatorImpl<E> implements Paginator<E> {
 		}
 
 		return originalList.sublist(fromIndex, toIndex);
-	}
-
-	private int getTotalPage() {
-		if (originalList == null || originalList.size() <= 0) {
-			return 0;
-		}
-
-		final int totalSize = originalList.size();
-
-		return ((totalSize - 1) / pagesize) + 1;
 	}
 }

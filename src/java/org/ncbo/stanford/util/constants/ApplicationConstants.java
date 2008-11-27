@@ -25,11 +25,11 @@ public interface ApplicationConstants {
 	public static final String TAR_EXTENSION = "tar";
 	
 	/**
-	 * Lucene Record Types
+	 * Search Record Types
 	 */
-	public static final String LUCENE_RECORD_TYPE_PREFERRED_NAME = "apreferredname";
-	public static final String LUCENE_RECORD_TYPE_SYNONYM = "bsynonym";
-	public static final String LUCENE_RECORD_TYPE_PROPERTY = "cproperty";
+	public static final String SEARCH_RECORD_TYPE_PREFERRED_NAME = "apreferredname";
+	public static final String SEARCH_RECORD_TYPE_SYNONYM = "bsynonym";
+	public static final String SEARCH_RECORD_TYPE_PROPERTY = "cproperty";
 
 	/**
 	 * Ontology version status

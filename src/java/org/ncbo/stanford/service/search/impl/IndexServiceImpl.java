@@ -1,5 +1,6 @@
 package org.ncbo.stanford.service.search.impl;
 
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -8,10 +9,12 @@ import org.LexGrid.LexBIG.Exceptions.LBParameterException;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.lucene.analysis.Analyzer;
+import org.ncbo.stanford.bean.search.SearchResultListBean;
 import org.ncbo.stanford.domain.custom.dao.CustomNcboOntologyVersionDAO;
 import org.ncbo.stanford.domain.custom.entity.VNcboOntology;
 import org.ncbo.stanford.manager.search.OntologySearchManager;
 import org.ncbo.stanford.service.search.IndexService;
+import org.ncbo.stanford.util.cache.expiration.system.ExpirationSystem;
 import org.ncbo.stanford.wrapper.LuceneIndexWriterWrapper;
 
 public class IndexServiceImpl implements IndexService {
@@ -28,6 +31,7 @@ public class IndexServiceImpl implements IndexService {
 			0);
 	private Map<String, OntologySearchManager> ontologySearchHandlerMap = new HashMap<String, OntologySearchManager>(
 			0);
+	private ExpirationSystem<Integer, SearchResultListBean> searchResultCache;
 
 	public void indexOntology(Integer ontologyId) throws Exception {
 		indexOntology(ontologyId, true);
@@ -47,9 +51,7 @@ public class IndexServiceImpl implements IndexService {
 
 				indexOntology(writer, ontology, doBackup);
 
-				writer.optimize();
-				writer.closeWriter();
-				writer = null;
+				closeWriter(writer);
 			} catch (Exception e) {
 				handleException(ontology, e, false);
 			}
@@ -78,9 +80,7 @@ public class IndexServiceImpl implements IndexService {
 			}
 		}
 
-		writer.optimize();
-		writer.closeWriter();
-		writer = null;
+		closeWriter(writer);
 
 		if (log.isDebugEnabled()) {
 			long stop = System.currentTimeMillis(); // stop timing
@@ -98,9 +98,7 @@ public class IndexServiceImpl implements IndexService {
 				LuceneIndexWriterWrapper writer = new LuceneIndexWriterWrapper(
 						indexPath, analyzer);
 				removeOntology(writer, ontology, true);
-				writer.optimize();
-				writer.closeWriter();
-				writer = null;
+				closeWriter(writer);
 			} catch (Exception e) {
 				handleException(ontology, e, false);
 			}
@@ -113,6 +111,13 @@ public class IndexServiceImpl implements IndexService {
 		backupIndex(writer);
 		writer.closeWriter();
 		writer = null;
+	}
+
+	private void closeWriter(LuceneIndexWriterWrapper writer)
+			throws IOException {
+		writer.optimize();
+		writer.closeWriter();
+		searchResultCache.clear();
 	}
 
 	private void indexOntology(LuceneIndexWriterWrapper writer,
@@ -294,5 +299,14 @@ public class IndexServiceImpl implements IndexService {
 	public void setOntologySearchHandlerMap(
 			Map<String, OntologySearchManager> ontologySearchHandlerMap) {
 		this.ontologySearchHandlerMap = ontologySearchHandlerMap;
+	}
+
+	/**
+	 * @param searchResultCache
+	 *            the searchResultCache to set
+	 */
+	public void setSearchResultCache(
+			ExpirationSystem<Integer, SearchResultListBean> searchResultCache) {
+		this.searchResultCache = searchResultCache;
 	}
 }
