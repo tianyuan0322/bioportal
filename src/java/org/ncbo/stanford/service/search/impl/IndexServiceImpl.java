@@ -34,11 +34,11 @@ public class IndexServiceImpl implements IndexService {
 	private ExpirationSystem<Integer, SearchResultListBean> searchResultCache;
 
 	public void indexOntology(Integer ontologyId) throws Exception {
-		indexOntology(ontologyId, true);
+		indexOntology(ontologyId, true, true);
 	}
 
-	public void indexOntology(Integer ontologyId, boolean doBackup)
-			throws Exception {
+	public void indexOntology(Integer ontologyId, boolean doBackup,
+			boolean doOptimize) throws Exception {
 		VNcboOntology ontology = ncboOntologyVersionDAO
 				.findLatestActiveOntologyVersion(ontologyId);
 
@@ -51,7 +51,7 @@ public class IndexServiceImpl implements IndexService {
 
 				indexOntology(writer, ontology, doBackup);
 
-				closeWriter(writer);
+				closeWriter(writer, doOptimize);
 			} catch (Exception e) {
 				handleException(ontology, e, false);
 			}
@@ -80,7 +80,7 @@ public class IndexServiceImpl implements IndexService {
 			}
 		}
 
-		closeWriter(writer);
+		closeWriter(writer, true);
 
 		if (log.isDebugEnabled()) {
 			long stop = System.currentTimeMillis(); // stop timing
@@ -90,6 +90,11 @@ public class IndexServiceImpl implements IndexService {
 	}
 
 	public void removeOntology(Integer ontologyId) throws Exception {
+		removeOntology(ontologyId, true, true);
+	}
+
+	public void removeOntology(Integer ontologyId, boolean doBackup,
+			boolean doOptimize) throws Exception {
 		VNcboOntology ontology = ncboOntologyVersionDAO
 				.findLatestOntologyVersion(ontologyId);
 
@@ -97,8 +102,8 @@ public class IndexServiceImpl implements IndexService {
 			try {
 				LuceneIndexWriterWrapper writer = new LuceneIndexWriterWrapper(
 						indexPath, analyzer);
-				removeOntology(writer, ontology, true);
-				closeWriter(writer);
+				removeOntology(writer, ontology, doBackup);
+				closeWriter(writer, doOptimize);
 			} catch (Exception e) {
 				handleException(ontology, e, false);
 			}
@@ -113,9 +118,12 @@ public class IndexServiceImpl implements IndexService {
 		writer = null;
 	}
 
-	private void closeWriter(LuceneIndexWriterWrapper writer)
+	private void closeWriter(LuceneIndexWriterWrapper writer, boolean doOptimize)
 			throws IOException {
-		writer.optimize();
+		if (doOptimize) {
+			writer.optimize();
+		}
+
 		writer.closeWriter();
 		searchResultCache.clear();
 	}

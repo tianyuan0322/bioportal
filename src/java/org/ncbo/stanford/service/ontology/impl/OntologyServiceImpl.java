@@ -30,6 +30,7 @@ import org.ncbo.stanford.domain.generated.NcboOntologyVersionMetadata;
 import org.ncbo.stanford.exception.InvalidOntologyFormatException;
 import org.ncbo.stanford.manager.load.OntologyLoadManager;
 import org.ncbo.stanford.service.ontology.OntologyService;
+import org.ncbo.stanford.service.search.IndexService;
 import org.ncbo.stanford.util.MessageUtils;
 import org.ncbo.stanford.util.ontologyfile.pathhandler.AbstractFilePathHandler;
 import org.ncbo.stanford.util.ontologyfile.pathhandler.FilePathHandler;
@@ -40,6 +41,7 @@ public class OntologyServiceImpl implements OntologyService {
 
 	private static final Log log = LogFactory.getLog(OntologyServiceImpl.class);
 
+	private IndexService indexService;
 	private CustomNcboOntologyDAO ncboOntologyDAO;
 	private CustomNcboOntologyVersionDAO ncboOntologyVersionDAO;
 	private CustomNcboOntologyFileDAO ncboOntologyFileDAO;
@@ -446,6 +448,12 @@ public class OntologyServiceImpl implements OntologyService {
 		// 7. Now that all dependencies have been removed, delete
 		// ontologyVersion
 		ncboOntologyVersionDAO.delete(ontologyVersion);
+
+		// 8. Reindex the latest version of ontology (this operation removes
+		// this version from the index). Do not backup or optimize the index (it
+		// will be backed up and optimized on the next ontology indexing
+		// operation).
+		indexService.indexOntology(ontologyBean.getOntologyId(), false, false);
 	}
 
 	/*
@@ -684,5 +692,13 @@ public class OntologyServiceImpl implements OntologyService {
 	public void setOntologyLoadHandlerMap(
 			Map<String, OntologyLoadManager> ontologyLoadHandlerMap) {
 		this.ontologyLoadHandlerMap = ontologyLoadHandlerMap;
+	}
+
+	/**
+	 * @param indexService
+	 *            the indexService to set
+	 */
+	public void setIndexService(IndexService indexService) {
+		this.indexService = indexService;
 	}
 }

@@ -543,6 +543,9 @@
 
 	<bean id="ontologyService"
 		class="org.ncbo.stanford.service.ontology.impl.OntologyServiceImpl">
+		<property name="indexService">
+			<ref bean="searchIndexService" />
+		</property>
 		<property name="ncboOntologyDAO">
 			<ref bean="NcboOntologyDAO" />
 		</property>

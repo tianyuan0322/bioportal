@@ -7,9 +7,12 @@ import org.junit.Ignore;
 import org.junit.Test;
 import org.ncbo.stanford.AbstractBioPortalTest;
 import org.ncbo.stanford.bean.search.SearchBean;
+import org.ncbo.stanford.util.constants.ApplicationConstants;
 import org.ncbo.stanford.util.paginator.impl.Page;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.annotation.Repeat;
+
+import com.thoughtworks.xstream.XStream;
 
 public class SearchServiceTest extends AbstractBioPortalTest {
 
@@ -41,7 +44,7 @@ public class SearchServiceTest extends AbstractBioPortalTest {
 		System.out
 				.println("SearchServiceTest: indexOntology().......................BEGIN");
 
-		indexService.indexOntology(1056, false);
+		indexService.indexOntology(1056, false, true);
 
 		System.out
 				.println("SearchServiceTest: indexOntology().........................DONE");
@@ -52,15 +55,29 @@ public class SearchServiceTest extends AbstractBioPortalTest {
 		System.out
 				.println("SearchServiceTest: searchAllOntologies().......................BEGIN");
 
-		Query query = queryService.generateLuceneSearchQuery(null, "cell",
+		Query query = queryService.generateLuceneSearchQuery(null, "blood",
 				true, false);
-		Page<SearchBean> results = queryService.executeQuery(query, 7, 1);
+		Page<SearchBean> results = queryService.executeQuery(query, 3, 6);
 
 		assertNotNull(results);
 
-		System.out.println(results);
+		System.out.println(getXML(results));
 		
 		System.out
 				.println("SearchServiceTest: searchAllOntologies().........................DONE");
 	}
+	
+	public String getXML(Page<SearchBean> page) {
+		String xmlHeader = ApplicationConstants.XML_DECLARATION + "\n";
+		XStream xstream = new XStream();
+		xstream.setMode(XStream.NO_REFERENCES);
+		// xstream.alias("paginatableList", PaginatableList.class);
+		xstream.alias("page", Page.class);
+		xstream.alias("luceneSearchBean", SearchBean.class);
+		// xstream.addDefaultImplementation(ArrayList.class,
+		// SearchResultListBean.class);
+		// xstream.addImplicitCollection(Page.class, "contents", List.class);
+
+		return xmlHeader + xstream.toXML(page);
+	}	
 }

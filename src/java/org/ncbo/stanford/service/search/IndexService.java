@@ -6,10 +6,13 @@ public interface IndexService {
 
 	public void indexOntology(Integer ontologyId) throws Exception;
 
-	public void indexOntology(Integer ontologyId, boolean doBackup)
-			throws Exception;
+	public void indexOntology(Integer ontologyId, boolean doBackup,
+			boolean doOptimize) throws Exception;
 
 	public void removeOntology(Integer ontologyId) throws Exception;
+
+	public void removeOntology(Integer ontologyId, boolean doBackup,
+			boolean doOptimize) throws Exception;
 
 	public void backupIndex() throws Exception;
 }

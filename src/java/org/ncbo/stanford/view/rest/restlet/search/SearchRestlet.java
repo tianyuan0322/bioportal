@@ -7,7 +7,8 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.ncbo.stanford.service.concept.ConceptService;
+import org.ncbo.stanford.service.search.IndexService;
+import org.ncbo.stanford.service.search.QueryService;
 import org.ncbo.stanford.service.xml.XMLSerializationService;
 import org.ncbo.stanford.util.RequestUtils;
 import org.ncbo.stanford.view.util.constants.RequestParamConstants;
@@ -22,7 +23,8 @@ public class SearchRestlet extends Restlet {
 
 	private static final Log log = LogFactory.getLog(SearchRestlet.class);
 
-	private ConceptService conceptService;
+	private QueryService queryService;
+	private IndexService indexService;
 	private XMLSerializationService xmlSerializationService;
 
 	@Override
@@ -84,21 +86,6 @@ public class SearchRestlet extends Restlet {
 		// concepts);
 	}
 
-	/**
-	 * @return the conceptService
-	 */
-	public ConceptService getConceptService() {
-		return conceptService;
-	}
-
-	/**
-	 * @param conceptService
-	 *            the conceptService to set
-	 */
-	public void setConceptService(ConceptService conceptService) {
-		this.conceptService = conceptService;
-	}
-
 	public XMLSerializationService getXmlSerializationService() {
 		return xmlSerializationService;
 	}
@@ -106,5 +93,19 @@ public class SearchRestlet extends Restlet {
 	public void setXmlSerializationService(
 			XMLSerializationService xmlSerializationService) {
 		this.xmlSerializationService = xmlSerializationService;
+	}
+
+	/**
+	 * @param queryService the queryService to set
+	 */
+	public void setQueryService(QueryService queryService) {
+		this.queryService = queryService;
+	}
+
+	/**
+	 * @param indexService the indexService to set
+	 */
+	public void setIndexService(IndexService indexService) {
+		this.indexService = indexService;
 	}
 }
