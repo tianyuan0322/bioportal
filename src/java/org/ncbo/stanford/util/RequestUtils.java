@@ -1,7 +1,9 @@
 package org.ncbo.stanford.util;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.StringTokenizer;
 
 import javax.servlet.ServletOutputStream;
@@ -191,4 +193,44 @@ public class RequestUtils {
 				RequestParamConstants.PARAM_APPLICATIONID);
 	}
 
+	public static boolean parseBooleanParam(String booleanVal) {
+		boolean isPresent = false;
+
+		if (booleanVal != null
+				&& RequestParamConstants.PARAM_VALUE_TRUE.contains(StringHelper
+						.removeSpaces(booleanVal).toLowerCase())) {
+			isPresent = true;
+		}
+
+		return isPresent;
+	}
+
+	public static Integer parseIntegerParam(String integerVal) {
+		Integer val = null;
+
+		try {
+			val = Integer.parseInt(StringHelper.removeSpaces(integerVal));
+		} catch (NumberFormatException e) {
+		}
+
+		return val;
+	}	
+
+	public static List<Integer> parseIntegerListParam(String integerListParam) {
+		List<Integer> integerList = new ArrayList<Integer>(0);
+
+		integerListParam = StringHelper.removeSpaces(integerListParam);
+
+		if (integerListParam != null) {
+			for (String integerParam : integerListParam.split(",")) {
+				try {
+					Integer integerParamInt = Integer.parseInt(integerParam);
+					integerList.add(integerParamInt);
+				} catch (NumberFormatException e) {
+				}
+			}
+		}
+
+		return integerList;
+	}
 }

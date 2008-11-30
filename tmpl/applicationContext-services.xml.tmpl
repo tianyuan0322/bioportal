@@ -577,6 +577,9 @@
 
 	<bean id="ontologyLoadSchedulerService"
 		class="org.ncbo.stanford.service.loader.scheduler.impl.OntologyLoadSchedulerServiceImpl">
+		<property name="indexService">
+			<ref bean="searchIndexService" />
+		</property>
 		<property name="ncboOntologyLoadQueueDAO">
 			<ref bean="NcboOntologyLoadQueueDAO" />
 		</property>

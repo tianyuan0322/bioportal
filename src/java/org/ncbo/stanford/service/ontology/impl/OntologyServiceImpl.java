@@ -569,6 +569,14 @@ public class OntologyServiceImpl implements OntologyService {
 	}
 
 	/**
+	 * @param indexService
+	 *            the indexService to set
+	 */
+	public void setIndexService(IndexService indexService) {
+		this.indexService = indexService;
+	}
+
+	/**
 	 * @return the ncboOntologyCategoryDAO
 	 */
 	public CustomNcboOntologyCategoryDAO getNcboOntologyCategoryDAO() {
@@ -692,13 +700,5 @@ public class OntologyServiceImpl implements OntologyService {
 	public void setOntologyLoadHandlerMap(
 			Map<String, OntologyLoadManager> ontologyLoadHandlerMap) {
 		this.ontologyLoadHandlerMap = ontologyLoadHandlerMap;
-	}
-
-	/**
-	 * @param indexService
-	 *            the indexService to set
-	 */
-	public void setIndexService(IndexService indexService) {
-		this.indexService = indexService;
 	}
 }

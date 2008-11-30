@@ -136,6 +136,11 @@ public abstract class StringHelper {
 		return value.toUpperCase();
 	}
 
+	public static String escapeSpaces(String str) {
+		return (str == null) ? null : str.trim().replaceAll("[\\s\\t]+",
+				"\\\\ ");
+	}
+
 	/**
 	 * Remove all spaces from the string passed as a parameter
 	 * 
@@ -143,19 +148,8 @@ public abstract class StringHelper {
 	 *            string to trim
 	 * @return the value without any spaces character
 	 */
-	public static String removeAllSpaces(String str) {
-		int i = str.indexOf(' ');
-		if (i == -1) {
-			return str;
-		} else {
-			StringTokenizer tokens = new StringTokenizer(str, " ");
-
-			StringBuffer buffer = new StringBuffer(100);
-			while (tokens.hasMoreTokens()) {
-				buffer.append(tokens.nextToken());
-			}
-			return buffer.toString();
-		}
+	public static String removeSpaces(String str) {
+		return (str == null) ? null : str.trim().replaceAll("[\\s\\t]+", "");
 	}
 
 	/**
@@ -205,10 +199,6 @@ public abstract class StringHelper {
 		}
 
 		return buffer.toString();
-	}
-
-	public static String escapeSpaces(String str) {
-		return str.replaceAll("[\\s\\t]+", "\\\\ ");
 	}
 
 	public static String doubleQuoteString(String str) {

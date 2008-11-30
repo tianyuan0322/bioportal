@@ -202,16 +202,6 @@
 		</property>
 	</bean>
 
-	<bean id="ontologyIndexRestlet"
-		class="org.ncbo.stanford.view.rest.restlet.ontology.OntologyIndexRestlet">
-		<property name="ontologyLoadSchedulerService">
-			<ref bean="ontologyLoadSchedulerService" />
-		</property>
-		<property name="xmlSerializationService">
-			<ref bean="xmlSerializationService" />
-		</property>
-	</bean>
-
 	<!-- All mappings: -->
 	<bean id="restManager"
 		class="org.ncbo.stanford.view.rest.base.RestManager">
@@ -240,9 +230,6 @@
 						<entry
 							key="/ontologies/parsebatch/{ontology_start}/{ontology_end}">
 							<ref local="ontologyParseBatchRestlet" />
-						</entry>
-						<entry key="/ontologies/index/{ontology}">
-							<ref local="ontologyIndexRestlet" />
 						</entry>
 						<entry key="/ontologies/download/{ontology}">
 							<ref local="ontologyDownloadRestlet" />

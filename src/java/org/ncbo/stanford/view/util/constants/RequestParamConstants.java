@@ -1,5 +1,9 @@
 package org.ncbo.stanford.view.util.constants;
 
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Set;
+
 /**
  * Request parameter constants
  * 
@@ -20,8 +24,6 @@ public interface RequestParamConstants {
 
 	public static final String PARAM_ROOT_CONCEPT = "root";
 
-	public static final String PARAM_ALL_ONTOLOGIES = "0";
-
 	/**
 	 * A mandatory parameter required to be included in all encrypted URL query
 	 * strings
@@ -29,7 +31,19 @@ public interface RequestParamConstants {
 	public static final String PARAM_ENCRYPTED_MANDATORY = "owmvurhsllhheeddtgkxx";
 
 	/**
-	 * The constant for value "true" appended to query string
+	 * The constant for values true/false appended to query string
 	 */
-	public static final String PARAM_VALUE_TRUE = "true";
+	public static final Set<String> PARAM_VALUE_TRUE = new HashSet<String>(
+			Arrays.asList("1", "true"));
+	public static final Set<String> PARAM_VALUE_FALSE = new HashSet<String>(
+			Arrays.asList("0", "false"));
+
+	/**
+	 * Search query parameters
+	 */
+	public static final String PARAM_ONTOLOGY_IDS = "ontologyids";
+	public static final String PARAM_INCLUDEPROPERTIES = "includeproperties";
+	public static final String PARAM_ISEXACTMATCH = "isexactmatch";
+	public static final String PARAM_PAGESIZE = "pagesize";
+	public static final String PARAM_PAGENUM = "pagenum";
 }

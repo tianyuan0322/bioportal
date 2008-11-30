@@ -23,6 +23,7 @@ import org.ncbo.stanford.enumeration.StatusEnum;
 import org.ncbo.stanford.exception.InvalidOntologyFormatException;
 import org.ncbo.stanford.manager.load.OntologyLoadManager;
 import org.ncbo.stanford.service.loader.scheduler.OntologyLoadSchedulerService;
+import org.ncbo.stanford.service.search.IndexService;
 import org.ncbo.stanford.util.CompressionUtils;
 import org.ncbo.stanford.util.ontologyfile.pathhandler.AbstractFilePathHandler;
 import org.springframework.transaction.annotation.Propagation;
@@ -44,6 +45,7 @@ public class OntologyLoadSchedulerServiceImpl implements
 			.getLog(OntologyLoadSchedulerServiceImpl.class);
 	private static final int ERROR_MESSAGE_LENGTH = 1000;
 
+	private IndexService indexService;
 	private CustomNcboOntologyLoadQueueDAO ncboOntologyLoadQueueDAO;
 	private CustomNcboOntologyVersionDAO ncboOntologyVersionDAO;
 	private Map<String, String> ontologyFormatHandlerMap = new HashMap<String, String>();
@@ -148,21 +150,6 @@ public class OntologyLoadSchedulerServiceImpl implements
 	}
 
 	/**
-	 * Create a Lucene Index for a given ontology
-	 * 
-	 * @param ontologyVersionId
-	 * @throws Exception
-	 */
-	public void indexOntology(String ontologyVersionId) throws Exception {
-		VNcboOntology ontology = ncboOntologyVersionDAO
-				.findOntologyVersion(Integer.parseInt(ontologyVersionId));
-		OntologyBean ontologyBean = new OntologyBean();
-		ontologyBean.populateFromEntity(ontology);
-
-//		getLoadManager(ontologyBean).indexOntology(ontologyBean);
-	}
-
-	/**
 	 * Parse a single record from the ontology load queue
 	 * 
 	 * @param rec
@@ -186,6 +173,8 @@ public class OntologyLoadSchedulerServiceImpl implements
 
 			// load ontology
 			loadOntology(ontologyBean);
+			// index ontology
+			indexService.indexOntology(ontologyBean.getOntologyId());
 
 			status = StatusEnum.STATUS_READY;
 		} catch (Exception e) {
@@ -276,6 +265,14 @@ public class OntologyLoadSchedulerServiceImpl implements
 		}
 
 		return loadManager;
+	}
+
+	/**
+	 * @param indexService
+	 *            the indexService to set
+	 */
+	public void setIndexService(IndexService indexService) {
+		this.indexService = indexService;
 	}
 
 	/**

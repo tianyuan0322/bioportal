@@ -19,15 +19,4 @@ public class OntologyLoadSchedulerServiceTest extends AbstractBioPortalTest {
 		// 34265
 		service.parseOntology("3905");
 	}
-
-	@Test
-	public void testIndexOntology() throws Exception {
-		// lexgrid sample
-		// service.parseOntology(3231);
-
-		// protege sample
-		// 34253
-		// 34265
-		service.indexOntology("3905");
-	}
 }

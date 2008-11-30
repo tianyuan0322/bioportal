@@ -1,16 +1,17 @@
 package org.ncbo.stanford.view.rest.restlet.search;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.ncbo.stanford.bean.search.SearchBean;
 import org.ncbo.stanford.service.search.IndexService;
 import org.ncbo.stanford.service.search.QueryService;
 import org.ncbo.stanford.service.xml.XMLSerializationService;
 import org.ncbo.stanford.util.RequestUtils;
+import org.ncbo.stanford.util.paginator.impl.Page;
 import org.ncbo.stanford.view.util.constants.RequestParamConstants;
 import org.restlet.Restlet;
 import org.restlet.data.Method;
@@ -47,65 +48,66 @@ public class SearchRestlet extends Restlet {
 	 * @param ref
 	 * @param resp
 	 */
-	private void searchConcept(Request request, Response resp) {
-		// List<SearchResultBean> concepts = null;
-		String query = (String) request.getAttributes().get("query");
-		query = Reference.decode(query);
+	private void searchConcept(Request request, Response response) {
 		HttpServletRequest httpRequest = RequestUtils
 				.getHttpServletRequest(request);
-		String ontologies = (String) httpRequest.getParameter("ontologies");
+		String ontologyIds = (String) httpRequest
+				.getParameter(RequestParamConstants.PARAM_ONTOLOGY_IDS);
+		String includeProperties = (String) httpRequest
+				.getParameter(RequestParamConstants.PARAM_INCLUDEPROPERTIES);
+		String isExactMatch = (String) httpRequest
+				.getParameter(RequestParamConstants.PARAM_ISEXACTMATCH);
+		String pageSize = (String) httpRequest
+				.getParameter(RequestParamConstants.PARAM_PAGESIZE);
+		String pageNum = (String) httpRequest
+				.getParameter(RequestParamConstants.PARAM_PAGENUM);
+
+		String query = Reference.decode((String) request.getAttributes().get(
+				"query"));
+		List<Integer> ontologyIdsInt = RequestUtils.parseIntegerListParam(ontologyIds);
+		boolean includePropertiesBool = RequestUtils.parseBooleanParam(includeProperties);
+		boolean isExactMatchBool = RequestUtils.parseBooleanParam(isExactMatch);
+		Integer pageSizeInt = RequestUtils.parseIntegerParam(pageSize);
+		Integer pageNumInt = RequestUtils.parseIntegerParam(pageNum);
+		Page<SearchBean> searchResults = null;
 
 		try {
-
-			List<Integer> ontologyIds = new ArrayList<Integer>();
-			if (!ontologies
-					.equalsIgnoreCase(RequestParamConstants.PARAM_ALL_ONTOLOGIES)) {
-				String[] ontologyStrings = ontologies.split(",");
-				for (int x = 0; x < ontologyStrings.length; x++) {
-					ontologyIds.add(Integer.parseInt(ontologyStrings[x]));
-				}
-
-			}
-
-			/*
-			 * concepts = conceptService.findConceptNameContains(ontologyIds,
-			 * query);
-			 * 
-			 * if (concepts.isEmpty()) {
-			 * resp.setStatus(Status.CLIENT_ERROR_NOT_FOUND, "Concept not
-			 * found"); }
-			 */} catch (NumberFormatException nfe) {
-			nfe.printStackTrace();
-			resp.setStatus(Status.CLIENT_ERROR_BAD_REQUEST, nfe.getMessage());
+			searchResults = queryService.executeQuery(query, ontologyIdsInt,
+					includePropertiesBool, isExactMatchBool, pageSizeInt,
+					pageNumInt);
 		} catch (Exception e) {
+			response.setStatus(Status.SERVER_ERROR_INTERNAL, e.getMessage());
 			e.printStackTrace();
-			resp.setStatus(Status.SERVER_ERROR_INTERNAL, e.getMessage());
+			log.error(e);
+		} finally {
+			// generate response XML
+			xmlSerializationService.generateXMLResponse(request, response,
+					searchResults);
 		}
-
-		// getXmlSerializationService().generateXMLResponse(request, resp,
-		// concepts);
-	}
-
-	public XMLSerializationService getXmlSerializationService() {
-		return xmlSerializationService;
-	}
-
-	public void setXmlSerializationService(
-			XMLSerializationService xmlSerializationService) {
-		this.xmlSerializationService = xmlSerializationService;
 	}
 
 	/**
-	 * @param queryService the queryService to set
+	 * @param queryService
+	 *            the queryService to set
 	 */
 	public void setQueryService(QueryService queryService) {
 		this.queryService = queryService;
 	}
 
 	/**
-	 * @param indexService the indexService to set
+	 * @param indexService
+	 *            the indexService to set
 	 */
 	public void setIndexService(IndexService indexService) {
 		this.indexService = indexService;
+	}
+
+	/**
+	 * @param xmlSerializationService
+	 *            the xmlSerializationService to set
+	 */
+	public void setXmlSerializationService(
+			XMLSerializationService xmlSerializationService) {
+		this.xmlSerializationService = xmlSerializationService;
 	}
 }

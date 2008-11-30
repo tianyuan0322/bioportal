@@ -37,12 +37,4 @@ public interface OntologyLoadSchedulerService {
 	 * @return
 	 */
 	public List<Integer> getErrorIdList();
-	
-	/**
-	 * Create a Lucene index for a given ontology
-	 * 
-	 * @param ontologyVersionId
-	 * @throws Exception
-	 */
-	public void indexOntology(String ontologyVersionId) throws Exception;
 }
