@@ -50,19 +50,19 @@ public class QueryServiceImpl implements QueryService {
 
 	public Page<SearchBean> executeQuery(String expr,
 			boolean includeProperties, boolean isExactMatch, Integer pageSize,
-			Integer pageNum) throws IOException {
+			Integer pageNum) throws Exception {
 		return executeQuery(expr, null, includeProperties, isExactMatch,
 				pageSize, pageNum);
 	}
 
 	public Page<SearchBean> executeQuery(String expr,
-			boolean includeProperties, boolean isExactMatch) throws IOException {
+			boolean includeProperties, boolean isExactMatch) throws Exception {
 		return executeQuery(expr, null, includeProperties, isExactMatch);
 	}
 
 	public Page<SearchBean> executeQuery(String expr,
 			Collection<Integer> ontologyIds, boolean includeProperties,
-			boolean isExactMatch, Integer pageSize, Integer pageNum) throws IOException {
+			boolean isExactMatch, Integer pageSize, Integer pageNum) throws Exception {
 		Query query = generateLuceneSearchQuery(ontologyIds, expr,
 				includeProperties, isExactMatch);
 
@@ -71,19 +71,19 @@ public class QueryServiceImpl implements QueryService {
 
 	public Page<SearchBean> executeQuery(String expr,
 			Collection<Integer> ontologyIds, boolean includeProperties,
-			boolean isExactMatch) throws IOException {
+			boolean isExactMatch) throws Exception {
 		Query query = generateLuceneSearchQuery(ontologyIds, expr,
 				includeProperties, isExactMatch);
 
 		return executeQuery(query);
 	}
 
-	public Page<SearchBean> executeQuery(Query query) throws IOException {
+	public Page<SearchBean> executeQuery(Query query) throws Exception {
 		return executeQuery(query, null, null);
 	}
 	
 	public Page<SearchBean> executeQuery(Query query, Integer pageSize, Integer pageNum)
-			throws IOException {
+			throws Exception {
 		long start = System.currentTimeMillis();
 		Integer queryHashCode = new Integer(query.hashCode());
 		boolean fromCache = true;
@@ -140,15 +140,22 @@ public class QueryServiceImpl implements QueryService {
 		return query;
 	}
 
-	private SearchResultListBean runQuery(Query query) throws IOException {
+	private SearchResultListBean runQuery(Query query) throws Exception {
 		synchronized (createSearcherLock) {
 			if (hasNewerIndexFile()) {
 				reloadSearcher();
 			}
 		}
-
-		TopFieldDocs docs = searcher.search(query, null, maxNumHits,
-				getSortFields());
+		
+		TopFieldDocs docs = null;
+		
+		try {
+			docs = searcher.search(query, null, maxNumHits,
+					getSortFields());
+		} catch (OutOfMemoryError e) {
+			throw new Exception(e);
+		}
+		
 		ScoreDoc[] hits = docs.scoreDocs;
 
 		List<String> uniqueDocs = new ArrayList<String>();
@@ -182,6 +189,8 @@ public class QueryServiceImpl implements QueryService {
 				uniqueDocs.add(conceptId);
 			}
 		}
+		
+		System.out.println(searchResults);
 
 		return searchResults;
 	}

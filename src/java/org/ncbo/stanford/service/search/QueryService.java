@@ -11,24 +11,24 @@ public interface QueryService {
 
 	public Page<SearchBean> executeQuery(String expr,
 			boolean includeProperties, boolean isExactMatch, Integer pageSize,
-			Integer pageNum) throws IOException;
+			Integer pageNum) throws Exception;
 
 	public Page<SearchBean> executeQuery(String expr,
-			boolean includeProperties, boolean isExactMatch) throws IOException;
+			boolean includeProperties, boolean isExactMatch) throws Exception;
 
 	public Page<SearchBean> executeQuery(String expr,
 			Collection<Integer> ontologyIds, boolean includeProperties,
 			boolean isExactMatch, Integer pageSize, Integer pageNum)
-			throws IOException;
+			throws Exception;
 
 	public Page<SearchBean> executeQuery(String expr,
 			Collection<Integer> ontologyIds, boolean includeProperties,
-			boolean isExactMatch) throws IOException;
+			boolean isExactMatch) throws Exception;
 
 	public Page<SearchBean> executeQuery(Query query, Integer pageSize,
-			Integer pageNum) throws IOException;
+			Integer pageNum) throws Exception;
 
-	public Page<SearchBean> executeQuery(Query query) throws IOException;
+	public Page<SearchBean> executeQuery(Query query) throws Exception;
 
 	public Query generateLuceneSearchQuery(Collection<Integer> ontologyIds,
 			String expr, boolean includeProperties, boolean isExactMatch)
