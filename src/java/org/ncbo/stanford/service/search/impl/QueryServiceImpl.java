@@ -189,8 +189,6 @@ public class QueryServiceImpl implements QueryService {
 				uniqueDocs.add(conceptId);
 			}
 		}
-		
-		System.out.println(searchResults);
 
 		return searchResults;
 	}
