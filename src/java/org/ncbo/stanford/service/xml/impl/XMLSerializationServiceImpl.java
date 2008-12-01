@@ -32,6 +32,7 @@ import org.ncbo.stanford.service.xml.XMLSerializationService;
 import org.ncbo.stanford.util.MessageUtils;
 import org.ncbo.stanford.util.RequestUtils;
 import org.ncbo.stanford.util.constants.ApplicationConstants;
+import org.ncbo.stanford.util.paginator.impl.Page;
 import org.restlet.data.MediaType;
 import org.restlet.data.Request;
 import org.restlet.data.Response;
@@ -336,6 +337,8 @@ public class XMLSerializationServiceImpl implements XMLSerializationService {
 				SearchBean.class);
 		xstream.alias(ApplicationConstants.RESPONSE_XML_TAG_NAME,
 				SuccessBean.class);
+		xstream.alias(MessageUtils.getMessage("entity.page"),
+				Page.class);
 		xstream.alias(ApplicationConstants.ERROR_XML_TAG_NAME, ErrorBean.class);
 		xstream.alias(ApplicationConstants.SUCCESS_XML_TAG_NAME,
 				SuccessBean.class);
