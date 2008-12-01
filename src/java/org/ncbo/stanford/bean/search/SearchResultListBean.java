@@ -3,7 +3,6 @@ package org.ncbo.stanford.bean.search;
 import java.util.Collection;
 import java.util.HashMap;
 
-
 import org.ncbo.stanford.util.paginator.Paginatable;
 import org.ncbo.stanford.util.paginator.impl.PaginatableList;
 
@@ -53,14 +52,16 @@ public class SearchResultListBean extends PaginatableList<SearchBean> {
 	}
 
 	public Paginatable<SearchBean> sublist(int fromIndex, int toIndex) {
-		SearchResultListBean results = new SearchResultListBean(super.subList(fromIndex, toIndex));
+		SearchResultListBean results = new SearchResultListBean(super.subList(
+				fromIndex, toIndex));
 		results.setHitsPerOntology(hitsPerOntology);
-		
+
 		return results;
 	}
 
 	/**
-	 * @param hitsPerOntology the hitsPerOntology to set
+	 * @param hitsPerOntology
+	 *            the hitsPerOntology to set
 	 */
 	public void setHitsPerOntology(HashMap<Integer, Integer> hitsPerOntology) {
 		this.hitsPerOntology = hitsPerOntology;
