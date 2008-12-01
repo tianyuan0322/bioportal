@@ -22,7 +22,7 @@ public class PaginatorImpl<E> implements Paginator<E> {
 
 	public PaginatorImpl(final Paginatable<E> originalList, final int pagesize)
 			throws IllegalArgumentException {
-		if (pagesize <= 0) {
+		if (pagesize < 0) {
 			throw new IllegalArgumentException(INVALID_PAGESIZE);
 		}
 
