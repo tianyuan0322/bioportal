@@ -4,6 +4,7 @@ import java.util.Collection;
 import java.util.HashMap;
 
 
+import org.ncbo.stanford.util.paginator.Paginatable;
 import org.ncbo.stanford.util.paginator.impl.PaginatableList;
 
 public class SearchResultListBean extends PaginatableList<SearchBean> {
@@ -49,5 +50,19 @@ public class SearchResultListBean extends PaginatableList<SearchBean> {
 
 	public HashMap<Integer, Integer> getAllHits() {
 		return hitsPerOntology;
+	}
+
+	public Paginatable<SearchBean> sublist(int fromIndex, int toIndex) {
+		SearchResultListBean results = new SearchResultListBean(super.subList(fromIndex, toIndex));
+		results.setHitsPerOntology(hitsPerOntology);
+		
+		return results;
+	}
+
+	/**
+	 * @param hitsPerOntology the hitsPerOntology to set
+	 */
+	public void setHitsPerOntology(HashMap<Integer, Integer> hitsPerOntology) {
+		this.hitsPerOntology = hitsPerOntology;
 	}
 }
