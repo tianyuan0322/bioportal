@@ -83,7 +83,7 @@ public class SearchRestlet extends Restlet {
 			log.error(e);
 		} finally {
 			// generate response XML
-			xmlSerializationService.addImplicitCollection(Page.class, "contents");
+//			xmlSerializationService.addImplicitCollection(Page.class, "contents");
 			xmlSerializationService.generateXMLResponse(request, response,
 					searchResults);
 		}

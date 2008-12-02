@@ -357,9 +357,6 @@ public class XMLSerializationServiceImpl implements XMLSerializationService {
 				InstanceBean.class);
 		xmlSerializer.alias(MessageUtils.getMessage("entity.searchbean"),
 				SearchBean.class);
-		// xmlSerializer.alias(MessageUtils
-		// .getMessage("entity.searchresultlistbean"),
-		// SearchResultListBean.class);
 		xmlSerializer.alias(MessageUtils.getMessage("entity.page"), Page.class);
 		xmlSerializer.alias(MessageUtils.getMessage("entity.ontologyhitbean"),
 				OntologyHitBean.class);

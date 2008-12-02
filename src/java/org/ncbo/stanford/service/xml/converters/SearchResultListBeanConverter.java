@@ -1,6 +1,8 @@
 package org.ncbo.stanford.service.xml.converters;
 
+import org.ncbo.stanford.bean.search.SearchBean;
 import org.ncbo.stanford.bean.search.SearchResultListBean;
+import org.ncbo.stanford.util.MessageUtils;
 
 import com.thoughtworks.xstream.converters.MarshallingContext;
 import com.thoughtworks.xstream.converters.collections.CollectionConverter;
@@ -22,15 +24,25 @@ public class SearchResultListBeanConverter extends CollectionConverter {
 	@Override
 	public void marshal(Object source, HierarchicalStreamWriter writer,
 			MarshallingContext context) {
-
 		SearchResultListBean results = (SearchResultListBean) source;
+		writer.startNode(MessageUtils.getMessage("entity.searchresultlist"));
 
-		super.marshal(source, writer, context);
+		for (SearchBean searchBean : results) {
+			writeItem(searchBean, context, writer);
+		}
 
-		writer.startNode("hitsPerOntology");
-		writeItem(results.getHitsPerOntology(), context, writer);
 		writer.endNode();
-
+		writeOntologyHits(results.getHitsPerOntology(), context, writer);
 	}
 
+	protected void writeOntologyHits(Object item, MarshallingContext context,
+			HierarchicalStreamWriter writer) {
+		if (item == null) {
+			String name = mapper().serializedClass(null);
+			writer.startNode(name);
+			writer.endNode();
+		} else {
+			context.convertAnother(item);
+		}
+	}
 }

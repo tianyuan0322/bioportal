@@ -1,9 +1,8 @@
 package org.ncbo.stanford.service.xml.converters;
 
-import java.util.Iterator;
-import java.util.Map;
-
+import org.ncbo.stanford.bean.search.OntologyHitBean;
 import org.ncbo.stanford.bean.search.OntologyHitMap;
+import org.ncbo.stanford.util.MessageUtils;
 
 import com.thoughtworks.xstream.converters.MarshallingContext;
 import com.thoughtworks.xstream.converters.UnmarshallingContext;
@@ -29,12 +28,13 @@ public class OntologyHitMapConverter extends TreeMapConverter {
 	public void marshal(Object source, HierarchicalStreamWriter writer,
 			MarshallingContext context) {
 		OntologyHitMap ontologyHitMap = (OntologyHitMap) source;
+		writer.startNode(MessageUtils.getMessage("entity.ontologyhitlist"));
 
-		for (Iterator iterator = ontologyHitMap.entrySet().iterator(); iterator
-				.hasNext();) {
-			Map.Entry entry = (Map.Entry) iterator.next();
-			writeItem(entry.getValue(), context, writer);
+		for (OntologyHitBean hit : ontologyHitMap.values()) {
+			writeItem(hit, context, writer);
 		}
+
+		writer.endNode();
 	}
 
 	@Override
