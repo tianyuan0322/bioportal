@@ -310,7 +310,9 @@
 		<mkdir dir="${testresults.dir}" />
 		<junit printsummary="true" fork="yes" haltonfailure="true">
 			<batchtest todir="${testresults.dir}">
-				<fileset dir="${classes.dir}" includes="**/User*Test*.class" />
+          <fileset dir="${classes.dir}" includes="**/user/User*Test*.class" />
+          <fileset dir="${classes.dir}" includes="**/ontology/Ontology*Test.class" />
+          <fileset dir="${classes.dir}" includes="**/search/Search*Test.class" />
 			</batchtest>
 			<formatter type="xml" usefile="true" />
 			<classpath refid="master-classpath" />
@@ -320,8 +322,10 @@
 
 	<target name="testout">
 		<junit printsummary="true" fork="yes" haltonfailure="true" showoutput="true">
-			<batchtest todir="${testresults.dir}">
-				<fileset dir="${classes.dir}" includes="**/User*Test*.class" />
+			<batchtest>
+          <fileset dir="${classes.dir}" includes="**/user/User*Test*.class" />
+          <fileset dir="${classes.dir}" includes="**/ontology/Ontology*Test.class" />
+          <fileset dir="${classes.dir}" includes="**/search/Search*Test.class" />
 			</batchtest>
 			<classpath refid="master-classpath" />
 		</junit>
