@@ -40,16 +40,16 @@ public class SearchRestlet extends Restlet {
 	 * Handle GET calls here
 	 */
 	private void getRequest(Request request, Response response) {
-		searchConcept(request, response);
+		executeSearch(request, response);
 	}
 
 	/**
-	 * Return to the response an individual ontology
+	 * Execute search
 	 * 
-	 * @param ref
-	 * @param resp
+	 * @param request
+	 * @param response
 	 */
-	private void searchConcept(Request request, Response response) {
+	private void executeSearch(Request request, Response response) {
 		HttpServletRequest httpRequest = RequestUtils
 				.getHttpServletRequest(request);
 		String ontologyIds = (String) httpRequest
