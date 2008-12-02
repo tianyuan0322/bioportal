@@ -19,6 +19,16 @@ public class IndexRestlet extends AbstractBaseRestlet {
 	private XMLSerializationService xmlSerializationService;
 
 	/**
+	 * Handle GET calls here
+	 */
+	@Override
+	protected void getRequest(Request request, Response response) {
+		// no GET requests should be made to this restlet
+		response.setStatus(Status.CLIENT_ERROR_NOT_FOUND);
+		xmlSerializationService.generateStatusXMLResponse(request, response);
+	}
+
+	/**
 	 * Handle POST calls here
 	 */
 	@Override
