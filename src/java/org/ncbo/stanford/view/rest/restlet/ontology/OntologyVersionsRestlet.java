@@ -39,7 +39,7 @@ public class OntologyVersionsRestlet extends AbstractBaseRestlet {
 	 */
 	private void listOntologies(Request request, Response response) {
 		String ontologyVersionId = (String) request.getAttributes().get(
-				MessageUtils.getMessage("entity.ontology"));
+				MessageUtils.getMessage("entity.ontologyversionid"));
 		List<OntologyBean> ontologyList = null;
 
 		try {

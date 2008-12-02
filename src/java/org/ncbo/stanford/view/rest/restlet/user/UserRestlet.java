@@ -157,11 +157,11 @@ public class UserRestlet extends AbstractBaseRestlet {
 	 */
 	private UserBean findUserBean(Request request, Response response) {
 		UserBean userBean = null;
-		String id = (String) request.getAttributes().get(
-				MessageUtils.getMessage("entity.user"));
+		String userId = (String) request.getAttributes().get(
+				MessageUtils.getMessage("entity.userid"));
 
 		try {
-			Integer intId = Integer.parseInt(id);
+			Integer intId = Integer.parseInt(userId);
 			userBean = userService.findUser(intId);
 
 			response.setStatus(Status.SUCCESS_OK);

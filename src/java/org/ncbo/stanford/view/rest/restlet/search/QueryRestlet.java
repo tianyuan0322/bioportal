@@ -7,7 +7,6 @@ import javax.servlet.http.HttpServletRequest;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.ncbo.stanford.bean.search.SearchBean;
-import org.ncbo.stanford.service.search.IndexService;
 import org.ncbo.stanford.service.search.QueryService;
 import org.ncbo.stanford.service.xml.XMLSerializationService;
 import org.ncbo.stanford.util.RequestUtils;
@@ -19,13 +18,12 @@ import org.restlet.data.Request;
 import org.restlet.data.Response;
 import org.restlet.data.Status;
 
-public class SearchRestlet extends AbstractBaseRestlet {
+public class QueryRestlet extends AbstractBaseRestlet {
 
 	private static final String QUERY_PARAM = "query";
-	private static final Log log = LogFactory.getLog(SearchRestlet.class);
+	private static final Log log = LogFactory.getLog(QueryRestlet.class);
 
 	private QueryService queryService;
-	private IndexService indexService;
 	private XMLSerializationService xmlSerializationService;
 
 	/**
@@ -88,14 +86,6 @@ public class SearchRestlet extends AbstractBaseRestlet {
 	 */
 	public void setQueryService(QueryService queryService) {
 		this.queryService = queryService;
-	}
-
-	/**
-	 * @param indexService
-	 *            the indexService to set
-	 */
-	public void setIndexService(IndexService indexService) {
-		this.indexService = indexService;
 	}
 
 	/**

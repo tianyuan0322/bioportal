@@ -39,9 +39,9 @@ public class OntologyParseBatchRestlet extends AbstractBaseRestlet {
 	 */
 	private void parseOntology(Request request, Response response) {
 		String ontologyStart = (String) request.getAttributes().get(
-				"ontology_start");
+				"ontologyversionidstart");
 		String ontologyEnd = (String) request.getAttributes().get(
-				"ontology_end");
+				"ontologyversionidend");
 
 		// TODO - id validation?
 		// find the OntologyBean from request

@@ -5,6 +5,7 @@ import org.apache.commons.logging.LogFactory;
 import org.ncbo.stanford.bean.concept.ClassBean;
 import org.ncbo.stanford.service.concept.ConceptService;
 import org.ncbo.stanford.service.xml.XMLSerializationService;
+import org.ncbo.stanford.util.MessageUtils;
 import org.ncbo.stanford.view.rest.restlet.AbstractBaseRestlet;
 import org.ncbo.stanford.view.util.constants.RequestParamConstants;
 import org.restlet.data.Request;
@@ -34,9 +35,10 @@ public class ConceptRestlet extends AbstractBaseRestlet {
 	 */
 	private void findConcept(Request request, Response response) {
 		ClassBean concept = null;
-		String conceptId = (String) request.getAttributes().get("concept");
+		String conceptId = (String) request.getAttributes().get(
+				MessageUtils.getMessage("entity.conceptid"));
 		String ontologyVersionId = (String) request.getAttributes().get(
-				"ontology");
+				MessageUtils.getMessage("entity.ontologyversionid"));
 
 		try {
 			Integer ontVersionId = Integer.parseInt(ontologyVersionId);

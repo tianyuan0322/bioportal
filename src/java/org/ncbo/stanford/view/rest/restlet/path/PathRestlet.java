@@ -7,6 +7,7 @@ import org.apache.commons.logging.LogFactory;
 import org.ncbo.stanford.bean.concept.ClassBean;
 import org.ncbo.stanford.service.concept.ConceptService;
 import org.ncbo.stanford.service.xml.XMLSerializationService;
+import org.ncbo.stanford.util.MessageUtils;
 import org.ncbo.stanford.util.RequestUtils;
 import org.ncbo.stanford.view.rest.restlet.AbstractBaseRestlet;
 import org.ncbo.stanford.view.util.constants.RequestParamConstants;
@@ -42,16 +43,16 @@ public class PathRestlet extends AbstractBaseRestlet {
 		String target = (String) request.getAttributes().get("target");
 		HttpServletRequest httpRequest = RequestUtils
 				.getHttpServletRequest(request);
-		String light_string = (String) httpRequest.getParameter("light");
+		String lightString = (String) httpRequest.getParameter("light");
 		boolean light = true;
-		if (light_string != null && light_string.equalsIgnoreCase("false"))
+		if (lightString != null && lightString.equalsIgnoreCase("false"))
 			light = false;
 
-		String ontologyVersion = (String) request.getAttributes().get(
-				"ontologyVersionId");
+		String ontologyVersionId = (String) request.getAttributes().get(
+				MessageUtils.getMessage("entity.ontologyversionid"));
 
 		try {
-			Integer ontId = Integer.parseInt(ontologyVersion);
+			Integer ontId = Integer.parseInt(ontologyVersionId);
 			if (target
 					.equalsIgnoreCase(RequestParamConstants.PARAM_ROOT_CONCEPT)) {
 				concept = conceptService.findPathFromRoot(ontId, source, light);

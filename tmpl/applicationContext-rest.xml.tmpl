@@ -63,11 +63,18 @@
 		</property>
 	</bean>
 
-	<bean id="searchRestlet"
-		class="org.ncbo.stanford.view.rest.restlet.search.SearchRestlet">
+	<bean id="queryRestlet"
+		class="org.ncbo.stanford.view.rest.restlet.search.QueryRestlet">
 		<property name="queryService">
 			<ref bean="searchQueryService" />
 		</property>
+		<property name="xmlSerializationService">
+			<ref bean="xmlSerializationService" />
+		</property>
+	</bean>
+
+	<bean id="indexRestlet"
+		class="org.ncbo.stanford.view.rest.restlet.search.IndexRestlet">
 		<property name="indexService">
 			<ref bean="searchIndexService" />
 		</property>
@@ -215,51 +222,58 @@
 						<entry key="/ontologies">
 							<ref local="ontologiesRestlet" />
 						</entry>
-						<entry key="/ontologies/{ontology}">
+						<entry key="/ontologies/{ontologyversionid}">
 							<ref local="ontologyRestlet" />
 						</entry>
-						<entry key="/ontologies/versions/{ontology}">
+						<entry
+							key="/ontologies/versions/{ontologyversionid}">
 							<ref local="ontologyVersionsRestlet" />
 						</entry>
-						<entry key="/ontologies/parse/{ontology}">
+						<entry
+							key="/ontologies/parse/{ontologyversionid}">
 							<ref local="ontologyParseRestlet" />
 						</entry>
 						<entry
-							key="/ontologies/parsebatch/{ontology_start}/{ontology_end}">
+							key="/ontologies/parsebatch/{ontologyversionidstart}/{ontologyversionidend}">
 							<ref local="ontologyParseBatchRestlet" />
 						</entry>
-						<entry key="/ontologies/download/{ontology}">
+						<entry
+							key="/ontologies/download/{ontologyversionid}">
 							<ref local="ontologyDownloadRestlet" />
 						</entry>
 						<entry key="/categories">
 							<ref local="categoriesRestlet" />
 						</entry>
-						<entry key="/concepts/{ontology}/{concept}">
+						<entry
+							key="/concepts/{ontologyversionid}/{conceptid}">
 							<ref local="conceptRestlet" />
 						</entry>
 						<entry key="/users">
 							<ref local="usersRestlet" />
 						</entry>
-						<entry key="/users/{user}">
+						<entry key="/users/{userid}">
 							<ref local="userRestlet" />
 						</entry>
 						<entry key="/users/email/{email}/">
 							<ref local="userEmailRestlet" />
 						</entry>
 						<entry
-							key="/path/{ontologyVersionId}/{source}/{target}">
+							key="/path/{ontologyversionid}/{source}/{target}">
 							<ref local="pathRestlet" />
 						</entry>
 						<entry key="/search/{query}">
-							<ref local="searchRestlet" />
+							<ref local="queryRestlet" />
+						</entry>
+						<entry key="/ontologies/index/{ontologyid}">
+							<ref local="indexRestlet" />
 						</entry>
 						<entry key="/search/meta/{query}">
 							<ref local="metadataSearchRestlet" />
 						</entry>
-						<entry key="/virtual/{ontology}">
+						<entry key="/virtual/{ontologyversionid}">
 							<ref local="virtualRestlet" />
 						</entry>
-						<entry key="/virtual/{ontology}/{concept}">
+						<entry key="/virtual/{ontologyversionid}/{conceptid}">
 							<ref local="virtualRestlet" />
 						</entry>
 					</map>

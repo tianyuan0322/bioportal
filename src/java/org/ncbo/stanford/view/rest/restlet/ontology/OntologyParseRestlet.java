@@ -39,7 +39,7 @@ public class OntologyParseRestlet extends AbstractBaseRestlet {
 	 */
 	private void parseOntology(Request request, Response response) {
 		String ontologyVersionId = (String) request.getAttributes().get(
-				MessageUtils.getMessage("entity.ontology"));
+				MessageUtils.getMessage("entity.ontologyversionid"));
 
 		// TODO - id validation?
 		// find the OntologyBean from request

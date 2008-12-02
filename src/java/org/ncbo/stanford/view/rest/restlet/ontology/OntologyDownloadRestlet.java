@@ -108,7 +108,7 @@ public class OntologyDownloadRestlet extends AbstractBaseRestlet {
 	private OntologyBean findOntologyBean(Request request, Response response) {
 		OntologyBean ontologyBean = null;
 		String ontologyVersionId = (String) request.getAttributes().get(
-				MessageUtils.getMessage("entity.ontology"));
+				MessageUtils.getMessage("entity.ontologyversionid"));
 
 		try {
 			Integer intId = Integer.parseInt(ontologyVersionId);

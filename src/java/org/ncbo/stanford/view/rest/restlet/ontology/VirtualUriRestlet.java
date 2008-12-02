@@ -6,6 +6,7 @@ import org.ncbo.stanford.bean.OntologyBean;
 import org.ncbo.stanford.service.concept.ConceptService;
 import org.ncbo.stanford.service.ontology.OntologyService;
 import org.ncbo.stanford.service.xml.XMLSerializationService;
+import org.ncbo.stanford.util.MessageUtils;
 import org.ncbo.stanford.view.rest.restlet.AbstractBaseRestlet;
 import org.restlet.data.Request;
 import org.restlet.data.Response;
@@ -36,14 +37,16 @@ public class VirtualUriRestlet extends AbstractBaseRestlet {
 	 * @param response
 	 */
 	private void getVirtualEntity(Request request, Response response) {
-		String id = (String) request.getAttributes().get("concept");
-		String ontology = (String) request.getAttributes().get("ontology");
+		String conceptId = (String) request.getAttributes().get(
+				MessageUtils.getMessage("entity.conceptid"));
+		String ontologyVersionId = (String) request.getAttributes().get(
+				MessageUtils.getMessage("entity.ontologyversionid"));
 		Object returnObject = null;
 
 		try {
-			Integer ontId = Integer.parseInt(ontology);
-			
-			if (id == null) {
+			Integer ontId = Integer.parseInt(ontologyVersionId);
+
+			if (conceptId == null) {
 				returnObject = ontologyService.findLatestOntologyVersion(ontId);
 
 				if (returnObject == null) {
@@ -53,7 +56,8 @@ public class VirtualUriRestlet extends AbstractBaseRestlet {
 			} else {
 				OntologyBean ontBean = ontologyService
 						.findLatestOntologyVersion(ontId);
-				returnObject = conceptService.findConcept(ontBean.getId(), id);
+				returnObject = conceptService.findConcept(ontBean.getId(),
+						conceptId);
 
 				if (returnObject == null) {
 					response.setStatus(Status.CLIENT_ERROR_NOT_FOUND,
