@@ -22,6 +22,7 @@ import org.restlet.data.Status;
 
 public class SearchRestlet extends Restlet {
 
+	private static final String QUERY_PARAM = "query";
 	private static final Log log = LogFactory.getLog(SearchRestlet.class);
 
 	private QueryService queryService;
@@ -63,7 +64,7 @@ public class SearchRestlet extends Restlet {
 				.getParameter(RequestParamConstants.PARAM_PAGENUM);
 
 		String query = Reference.decode((String) request.getAttributes().get(
-				"query"));
+				QUERY_PARAM));
 		List<Integer> ontologyIdsInt = RequestUtils
 				.parseIntegerListParam(ontologyIds);
 		boolean includePropertiesBool = RequestUtils
