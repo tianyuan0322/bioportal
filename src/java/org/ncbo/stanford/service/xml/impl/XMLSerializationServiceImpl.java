@@ -340,11 +340,11 @@ public class XMLSerializationServiceImpl implements XMLSerializationService {
 	 * set aliases for xmlSerializer
 	 */
 	private void setAliases(XStream xmlSerializer) {
-		xmlSerializer.alias(MessageUtils.getMessage("entity.ontology"),
+		xmlSerializer.alias(MessageUtils.getMessage("entity.ontologybean"),
 				OntologyBean.class);
-
-		xmlSerializer.alias(MessageUtils.getMessage("entity.user"),
+		xmlSerializer.alias(MessageUtils.getMessage("entity.userbean"),
 				UserBean.class);
+
 		xmlSerializer.omitField(UserBean.class, "password");
 
 		xmlSerializer.alias(MessageUtils.getMessage("entity.classbean"),
