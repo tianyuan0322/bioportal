@@ -25,11 +25,12 @@ import org.ncbo.stanford.bean.response.AbstractResponseBean;
 import org.ncbo.stanford.bean.response.ErrorBean;
 import org.ncbo.stanford.bean.response.ErrorStatusBean;
 import org.ncbo.stanford.bean.response.SuccessBean;
+import org.ncbo.stanford.bean.search.OntologyHitBean;
 import org.ncbo.stanford.bean.search.SearchBean;
-import org.ncbo.stanford.bean.search.SearchResultListBean;
 import org.ncbo.stanford.enumeration.ErrorTypeEnum;
-import org.ncbo.stanford.service.ontology.impl.OntologyServiceImpl;
 import org.ncbo.stanford.service.xml.XMLSerializationService;
+import org.ncbo.stanford.service.xml.converters.OntologyHitMapConverter;
+import org.ncbo.stanford.service.xml.converters.SearchResultListBeanConverter;
 import org.ncbo.stanford.util.MessageUtils;
 import org.ncbo.stanford.util.RequestUtils;
 import org.ncbo.stanford.util.constants.ApplicationConstants;
@@ -44,10 +45,12 @@ import com.thoughtworks.xstream.io.xml.TraxSource;
 
 public class XMLSerializationServiceImpl implements XMLSerializationService {
 
-	private static final Log log = LogFactory.getLog(OntologyServiceImpl.class);
+	private static final Log log = LogFactory
+			.getLog(XMLSerializationServiceImpl.class);
 
-	private static HashMap<String, Transformer> transformers = new HashMap<String, Transformer>();
-	private static XStream xstream = null;
+	private HashMap<String, Transformer> transformers = new HashMap<String, Transformer>(
+			0);
+	private XStream xmlSerializer = null;
 
 	/**
 	 * Generate an XML representation of a specific error This is going to
@@ -57,7 +60,7 @@ public class XMLSerializationServiceImpl implements XMLSerializationService {
 	 * @return
 	 */
 	public String getErrorAsXML(ErrorTypeEnum errorType, String accessedResource) {
-		getXStreamInstance().omitField(ErrorBean.class, "errorType");
+		omitField(ErrorBean.class, "errorType");
 		ErrorBean errorBean = new ErrorBean(errorType);
 
 		if (!GenericValidator.isBlankOrNull(accessedResource)) {
@@ -186,7 +189,7 @@ public class XMLSerializationServiceImpl implements XMLSerializationService {
 		// - cyoun
 
 		// create source
-		TraxSource traxSource = new TraxSource(data, getXStreamInstance());
+		TraxSource traxSource = new TraxSource(data, xmlSerializer);
 		traxSource.setSourceAsList(Arrays.asList(data));
 
 		// create buffer for XML output
@@ -274,7 +277,7 @@ public class XMLSerializationServiceImpl implements XMLSerializationService {
 	 * returns a singleton transformer instance for a XSL file specified. do not
 	 * use synchronized since it is expensive.
 	 */
-	public static Transformer getTransformerInstance(String xslFile)
+	public Transformer getTransformerInstance(String xslFile)
 			throws TransformerException {
 		Transformer transformer = (Transformer) transformers.get(xslFile);
 
@@ -288,18 +291,14 @@ public class XMLSerializationServiceImpl implements XMLSerializationService {
 		return transformer;
 	}
 
-	/**
-	 * returns a singleton XStream instance. do not use synchronized since it is
-	 * expensive.
-	 */
-	public static XStream getXStreamInstance() {
-		if (xstream == null) {
-			xstream = new XStream();
-			xstream.setMode(XStream.NO_REFERENCES);
-			setXStreamAliases(xstream);
-		}
+	@SuppressWarnings("unchecked")
+	public void addImplicitCollection(Class ownerType, String fieldName) {
+		xmlSerializer.addImplicitCollection(ownerType, fieldName);
+	}
 
-		return xstream;
+	@SuppressWarnings("unchecked")
+	public void omitField(Class definedIn, String fieldName) {
+		xmlSerializer.omitField(definedIn, fieldName);
 	}
 
 	/**
@@ -311,38 +310,64 @@ public class XMLSerializationServiceImpl implements XMLSerializationService {
 	private String getResponseAsXML(AbstractResponseBean responseBean) {
 		StringBuffer sb = new StringBuffer(ApplicationConstants.XML_DECLARATION);
 		sb.append('\n');
-		sb.append(getXStreamInstance().toXML(responseBean));
+		sb.append(xmlSerializer.toXML(responseBean));
 
 		return sb.toString();
 	}
 
 	/**
-	 * set aliases for XStream
+	 * @param xmlSerializer
+	 *            the xmlSerializer to set
 	 */
-	private static void setXStreamAliases(XStream xstream) {
-		xstream.alias(MessageUtils.getMessage("entity.ontology"),
+	public void setXmlSerializer(XStream xmlSerializer) {
+		this.xmlSerializer = xmlSerializer;
+		this.xmlSerializer.setMode(XStream.NO_REFERENCES);
+		setAliases(this.xmlSerializer);
+		registerConverters(this.xmlSerializer);
+	}
+
+	/**
+	 * set aliases for xmlSerializer
+	 */
+	private void registerConverters(XStream xmlSerializer) {
+		xmlSerializer.registerConverter(new OntologyHitMapConverter(
+				xmlSerializer.getMapper()));
+		xmlSerializer.registerConverter(new SearchResultListBeanConverter(
+				xmlSerializer.getMapper()));
+	}
+
+	/**
+	 * set aliases for xmlSerializer
+	 */
+	private void setAliases(XStream xmlSerializer) {
+		xmlSerializer.alias(MessageUtils.getMessage("entity.ontology"),
 				OntologyBean.class);
 
-		xstream.alias(MessageUtils.getMessage("entity.user"), UserBean.class);
-		xstream.omitField(UserBean.class, "password");
+		xmlSerializer.alias(MessageUtils.getMessage("entity.user"),
+				UserBean.class);
+		xmlSerializer.omitField(UserBean.class, "password");
 
-		xstream.alias(MessageUtils.getMessage("entity.classbean"),
+		xmlSerializer.alias(MessageUtils.getMessage("entity.classbean"),
 				ClassBean.class);
-		xstream.alias(MessageUtils.getMessage("entity.categorybean"),
+		xmlSerializer.alias(MessageUtils.getMessage("entity.categorybean"),
 				CategoryBean.class);
-		xstream.alias(MessageUtils.getMessage("entity.propertybean"),
+		xmlSerializer.alias(MessageUtils.getMessage("entity.propertybean"),
 				PropertyBean.class);
-		xstream.alias(MessageUtils.getMessage("entity.instancebean"),
+		xmlSerializer.alias(MessageUtils.getMessage("entity.instancebean"),
 				InstanceBean.class);
-		xstream.alias(MessageUtils.getMessage("entity.searchbean"),
+		xmlSerializer.alias(MessageUtils.getMessage("entity.searchbean"),
 				SearchBean.class);
-		xstream.alias(MessageUtils.getMessage("entity.searchresultlistbean"),
-				SearchResultListBean.class);
-		xstream.alias(ApplicationConstants.RESPONSE_XML_TAG_NAME,
+		// xmlSerializer.alias(MessageUtils
+		// .getMessage("entity.searchresultlistbean"),
+		// SearchResultListBean.class);
+		xmlSerializer.alias(MessageUtils.getMessage("entity.page"), Page.class);
+		xmlSerializer.alias(MessageUtils.getMessage("entity.ontologyhitbean"),
+				OntologyHitBean.class);
+		xmlSerializer.alias(ApplicationConstants.RESPONSE_XML_TAG_NAME,
 				SuccessBean.class);
-		xstream.alias(MessageUtils.getMessage("entity.page"), Page.class);
-		xstream.alias(ApplicationConstants.ERROR_XML_TAG_NAME, ErrorBean.class);
-		xstream.alias(ApplicationConstants.SUCCESS_XML_TAG_NAME,
+		xmlSerializer.alias(ApplicationConstants.ERROR_XML_TAG_NAME,
+				ErrorBean.class);
+		xmlSerializer.alias(ApplicationConstants.SUCCESS_XML_TAG_NAME,
 				SuccessBean.class);
 	}
 }

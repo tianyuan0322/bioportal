@@ -42,7 +42,7 @@ public class QueryServiceImpl implements QueryService {
 	private String indexPath;
 	private int maxNumHits;
 	private ExpirationSystem<Integer, SearchResultListBean> searchResultCache;
-	
+
 	// non-injected properties
 	private IndexSearcher searcher = null;
 	private Date openIndexDate;
@@ -62,7 +62,8 @@ public class QueryServiceImpl implements QueryService {
 
 	public Page<SearchBean> executeQuery(String expr,
 			Collection<Integer> ontologyIds, boolean includeProperties,
-			boolean isExactMatch, Integer pageSize, Integer pageNum) throws Exception {
+			boolean isExactMatch, Integer pageSize, Integer pageNum)
+			throws Exception {
 		Query query = generateLuceneSearchQuery(ontologyIds, expr,
 				includeProperties, isExactMatch);
 
@@ -81,20 +82,21 @@ public class QueryServiceImpl implements QueryService {
 	public Page<SearchBean> executeQuery(Query query) throws Exception {
 		return executeQuery(query, null, null);
 	}
-	
-	public Page<SearchBean> executeQuery(Query query, Integer pageSize, Integer pageNum)
-			throws Exception {
+
+	public Page<SearchBean> executeQuery(Query query, Integer pageSize,
+			Integer pageNum) throws Exception {
 		long start = System.currentTimeMillis();
 		Integer queryHashCode = new Integer(query.hashCode());
 		boolean fromCache = true;
-		SearchResultListBean searchResults = searchResultCache.get(queryHashCode);
-		
+		SearchResultListBean searchResults = searchResultCache
+				.get(queryHashCode);
+
 		if (searchResults == null) {
 			searchResults = runQuery(query);
 			fromCache = false;
 			searchResultCache.put(queryHashCode, searchResults);
 		}
-		
+
 		int resultsSize = searchResults.size();
 
 		if (pageSize == null || pageSize <= 0) {
@@ -102,14 +104,15 @@ public class QueryServiceImpl implements QueryService {
 		}
 
 		Page<SearchBean> page;
-		Paginator<SearchBean> p = new PaginatorImpl<SearchBean>(searchResults, pageSize);
-		
+		Paginator<SearchBean> p = new PaginatorImpl<SearchBean>(searchResults,
+				pageSize);
+
 		if (pageNum == null || pageNum <= 1) {
 			page = p.getFirstPage();
 		} else {
 			page = p.getNextPage(pageNum - 1);
-		}		
-		
+		}
+
 		long stop = System.currentTimeMillis();
 
 		if (log.isDebugEnabled()) {
@@ -122,7 +125,7 @@ public class QueryServiceImpl implements QueryService {
 
 		return page;
 	}
-	
+
 	public Query generateLuceneSearchQuery(Collection<Integer> ontologyIds,
 			String expr, boolean includeProperties, boolean isExactMatch)
 			throws IOException {
@@ -146,16 +149,15 @@ public class QueryServiceImpl implements QueryService {
 				reloadSearcher();
 			}
 		}
-		
+
 		TopFieldDocs docs = null;
-		
+
 		try {
-			docs = searcher.search(query, null, maxNumHits,
-					getSortFields());
+			docs = searcher.search(query, null, maxNumHits, getSortFields());
 		} catch (OutOfMemoryError e) {
 			throw new Exception(e);
 		}
-		
+
 		ScoreDoc[] hits = docs.scoreDocs;
 
 		List<String> uniqueDocs = new ArrayList<String>();
@@ -165,17 +167,16 @@ public class QueryServiceImpl implements QueryService {
 			int docId = hits[i].doc;
 			Document doc = searcher.doc(docId);
 			String conceptId = doc.get(SearchIndexBean.CONCEPT_ID_FIELD_LABEL);
+			Integer ontologyVersionId = new Integer(doc
+					.get(SearchIndexBean.ONTOLOGY_VERSION_ID_FIELD_LABEL));
 			Integer ontologyId = new Integer(doc
 					.get(SearchIndexBean.ONTOLOGY_ID_FIELD_LABEL));
+			String ontologyDisplayLabel = doc
+					.get(SearchIndexBean.ONTOLOGY_DISPLAY_LABEL_FIELD_LABEL);
 
 			if (!uniqueDocs.contains(conceptId)) {
-				SearchBean searchResult = new SearchBean(
-						new Integer(
-								doc
-										.get(SearchIndexBean.ONTOLOGY_VERSION_ID_FIELD_LABEL)),
-						ontologyId,
-						doc
-								.get(SearchIndexBean.ONTOLOGY_DISPLAY_LABEL_FIELD_LABEL),
+				SearchBean searchResult = new SearchBean(ontologyVersionId,
+						ontologyId, ontologyDisplayLabel,
 						SearchRecordTypeEnum.getFromLabel(doc
 								.get(SearchIndexBean.RECORD_TYPE_FIELD_LABEL)),
 						conceptId,
@@ -184,7 +185,8 @@ public class QueryServiceImpl implements QueryService {
 						doc.get(SearchIndexBean.CONTENTS_FIELD_LABEL),
 						doc.get(SearchIndexBean.LITERAL_CONTENTS_FIELD_LABEL));
 				searchResults.add(searchResult);
-				searchResults.addOntologyHit(ontologyId);
+				searchResults.addOntologyHit(ontologyVersionId, ontologyId,
+						ontologyDisplayLabel);
 
 				uniqueDocs.add(conceptId);
 			}

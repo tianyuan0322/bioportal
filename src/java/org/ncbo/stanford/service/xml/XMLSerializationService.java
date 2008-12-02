@@ -67,4 +67,9 @@ public interface XMLSerializationService {
 
 	public void generateStatusXMLResponse(Request request, Response response);
 
+	@SuppressWarnings("unchecked")
+	public void addImplicitCollection(Class ownerType, String fieldName);
+
+	@SuppressWarnings("unchecked")
+	public void omitField(Class definedIn, String fieldName);
 }

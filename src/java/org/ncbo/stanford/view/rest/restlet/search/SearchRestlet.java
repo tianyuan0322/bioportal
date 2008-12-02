@@ -1,12 +1,14 @@
 package org.ncbo.stanford.view.rest.restlet.search;
 
 import java.util.List;
+import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.ncbo.stanford.bean.search.SearchBean;
+import org.ncbo.stanford.bean.search.SearchResultListBean;
 import org.ncbo.stanford.service.search.IndexService;
 import org.ncbo.stanford.service.search.QueryService;
 import org.ncbo.stanford.service.xml.XMLSerializationService;
@@ -81,6 +83,7 @@ public class SearchRestlet extends Restlet {
 			log.error(e);
 		} finally {
 			// generate response XML
+			xmlSerializationService.addImplicitCollection(Page.class, "contents");
 			xmlSerializationService.generateXMLResponse(request, response,
 					searchResults);
 		}

@@ -53,5 +53,5 @@ public interface Paginator<E> {
 	 * 
 	 * @return
 	 */
-	public int getTotalPage();
+	public int getNumPages();
 }

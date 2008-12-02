@@ -29,6 +29,23 @@ public class SearchBean {
 	 * @param literalContents
 	 */
 	public SearchBean(Integer ontologyVersionId, Integer ontologyId,
+			String ontologyDisplayLabel) {
+		populateInstance(ontologyVersionId, ontologyId, ontologyDisplayLabel,
+				null, null, null, null, null, null);
+	}
+
+	/**
+	 * @param ontologyVersionId
+	 * @param ontologyId
+	 * @param ontologyDisplayLabel
+	 * @param recordType
+	 * @param conceptId
+	 * @param conceptIdShort
+	 * @param preferredName
+	 * @param contents
+	 * @param literalContents
+	 */
+	public SearchBean(Integer ontologyVersionId, Integer ontologyId,
 			String ontologyDisplayLabel, SearchRecordTypeEnum recordType,
 			String conceptId, String conceptIdShort, String preferredName,
 			String contents, String literalContents) {

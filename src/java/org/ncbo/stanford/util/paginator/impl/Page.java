@@ -21,34 +21,64 @@ public class Page<E> implements Serializable {
 	private static final long serialVersionUID = 7375888859434573070L;
 
 	private int pageNum;
-	private int totalPage;
-	private int pagesize;
+	private int numPages;
+	private int pageSize;
+	private int numResultsPage;
+	private int numResultsTotal;
 	private Paginatable<E> contents;
 
-	public Page(final int pageNum, final int totalPage) {
-		this.pageNum = (pageNum > totalPage) ? totalPage : pageNum;
-		this.totalPage = totalPage;
+	public Page(final int pageNum, final int numPages) {
+		this.pageNum = (pageNum > numPages) ? numPages : pageNum;
+		this.numPages = numPages;
 	}
 
-	public Page(final int pageNum, final int totalPage, final int pagesize,
-			final Paginatable<E> contents) {
-		this(pageNum, totalPage);
-		this.pagesize = pagesize;
+	public Page(final int pageNum, final int numPages, final int pageSize,
+			final int numResultsTotal, final Paginatable<E> contents) {
+		this(pageNum, numPages);
+		this.pageSize = pageSize;
+		this.numResultsTotal = numResultsTotal;
 		this.contents = contents;
+		this.numResultsPage = (contents != null) ? contents.size() : 0;
 	}
 
+	/**
+	 * @return the pageNum
+	 */
 	public int getPageNum() {
 		return pageNum;
 	}
 
-	public int getTotalPage() {
-		return totalPage;
+	/**
+	 * @return the numPages
+	 */
+	public int getNumPages() {
+		return numPages;
 	}
 
-	public int getPagesize() {
-		return pagesize;
+	/**
+	 * @return the pageSize
+	 */
+	public int getPageSize() {
+		return pageSize;
 	}
 
+	/**
+	 * @return the numResultsPage
+	 */
+	public int getNumResultsPage() {
+		return numResultsPage;
+	}
+
+	/**
+	 * @return the numResultsTotal
+	 */
+	public int getNumResultsTotal() {
+		return numResultsTotal;
+	}
+
+	/**
+	 * @return the contents
+	 */
 	public Paginatable<E> getContents() {
 		return contents;
 	}
@@ -58,7 +88,7 @@ public class Page<E> implements Serializable {
 	}
 
 	public boolean isLastPage() {
-		return pageNum == totalPage;
+		return pageNum == numPages;
 	}
 
 	/**
@@ -82,11 +112,11 @@ public class Page<E> implements Serializable {
 			return false;
 		}
 
-		if (pagesize != page.pagesize) {
+		if (pageSize != page.pageSize) {
 			return false;
 		}
 
-		if (totalPage != page.totalPage) {
+		if (numPages != page.numPages) {
 			return false;
 		}
 
@@ -101,8 +131,8 @@ public class Page<E> implements Serializable {
 	public int hashCode() {
 		int result;
 		result = pageNum;
-		result = 29 * result + totalPage;
-		result = 29 * result + pagesize;
+		result = 29 * result + numPages;
+		result = 29 * result + pageSize;
 		result = 29 * result + (contents != null ? listHashCode(contents) : 0);
 
 		return result;
@@ -152,7 +182,7 @@ public class Page<E> implements Serializable {
 
 	public String toString() {
 		final StringBuffer sb = new StringBuffer();
-		sb.append("Page ").append(pageNum).append(" of ").append(totalPage);
+		sb.append("Page ").append(pageNum).append(" of ").append(numPages);
 		sb.append("\n");
 
 		for (Iterator<E> it = contents.iterator(); it.hasNext();) {
