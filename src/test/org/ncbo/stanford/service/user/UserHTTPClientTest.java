@@ -34,7 +34,7 @@ public class UserHTTPClientTest extends AbstractBioPortalTest {
 		try {
 			String xml = response.getEntity().getText();
 			assertNotNull(xml);
-			System.out.println(xml);
+//			System.out.println(xml);
 			assertTrue(xml.contains("Apache Tomcat"));
 		} catch (IOException ioe) {
 			System.out
