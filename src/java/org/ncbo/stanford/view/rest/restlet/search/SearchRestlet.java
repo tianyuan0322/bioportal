@@ -64,8 +64,10 @@ public class SearchRestlet extends Restlet {
 
 		String query = Reference.decode((String) request.getAttributes().get(
 				"query"));
-		List<Integer> ontologyIdsInt = RequestUtils.parseIntegerListParam(ontologyIds);
-		boolean includePropertiesBool = RequestUtils.parseBooleanParam(includeProperties);
+		List<Integer> ontologyIdsInt = RequestUtils
+				.parseIntegerListParam(ontologyIds);
+		boolean includePropertiesBool = RequestUtils
+				.parseBooleanParam(includeProperties);
 		boolean isExactMatchBool = RequestUtils.parseBooleanParam(isExactMatch);
 		Integer pageSizeInt = RequestUtils.parseIntegerParam(pageSize);
 		Integer pageNumInt = RequestUtils.parseIntegerParam(pageNum);
@@ -81,7 +83,6 @@ public class SearchRestlet extends Restlet {
 			log.error(e);
 		} finally {
 			// generate response XML
-//			xmlSerializationService.addImplicitCollection(Page.class, "contents");
 			xmlSerializationService.generateXMLResponse(request, response,
 					searchResults);
 		}
