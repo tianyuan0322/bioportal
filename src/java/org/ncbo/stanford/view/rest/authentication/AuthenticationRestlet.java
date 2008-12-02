@@ -21,8 +21,8 @@ import org.ncbo.stanford.service.user.UserService;
 import org.ncbo.stanford.service.xml.XMLSerializationService;
 import org.ncbo.stanford.util.RequestUtils;
 import org.ncbo.stanford.util.security.ui.ApplicationAuthenticationDetails;
+import org.ncbo.stanford.view.rest.restlet.AbstractBaseRestlet;
 import org.ncbo.stanford.view.util.constants.RequestParamConstants;
-import org.restlet.Restlet;
 import org.restlet.data.MediaType;
 import org.restlet.data.Request;
 import org.restlet.data.Response;
@@ -35,7 +35,7 @@ import org.restlet.data.Status;
  * @author Michael Dorf
  * 
  */
-public final class AuthenticationRestlet extends Restlet {
+public final class AuthenticationRestlet extends AbstractBaseRestlet {
 
 	private static final Log log = LogFactory
 			.getLog(AuthenticationRestlet.class);
@@ -75,7 +75,7 @@ public final class AuthenticationRestlet extends Restlet {
 			/*
 			 * perform authentication
 			 */
-			final Authentication auth = getAuthenticationManager()
+			final Authentication auth = authenticationManager
 					.authenticate(authReq);
 
 			final RESTfulSession session = sessionService.createNewSession();
@@ -142,26 +142,12 @@ public final class AuthenticationRestlet extends Restlet {
 	}
 
 	/**
-	 * @return the authenticationManager
-	 */
-	public AuthenticationManager getAuthenticationManager() {
-		return authenticationManager;
-	}
-
-	/**
 	 * @param authenticationManager
 	 *            the authenticationManager to set
 	 */
 	public void setAuthenticationManager(
 			AuthenticationManager authenticationManager) {
 		this.authenticationManager = authenticationManager;
-	}
-
-	/**
-	 * @return the sessionService
-	 */
-	public SessionService getSessionService() {
-		return sessionService;
 	}
 
 	/**
@@ -173,13 +159,6 @@ public final class AuthenticationRestlet extends Restlet {
 	}
 
 	/**
-	 * @return the xmlSerializationService
-	 */
-	public XMLSerializationService getXmlSerializationService() {
-		return xmlSerializationService;
-	}
-
-	/**
 	 * @param xmlSerializationService
 	 *            the xmlSerializationService to set
 	 */
@@ -188,12 +167,11 @@ public final class AuthenticationRestlet extends Restlet {
 		this.xmlSerializationService = xmlSerializationService;
 	}
 
-	public UserService getUserService() {
-		return userService;
-	}
-
+	/**
+	 * @param userService
+	 *            the userService to set
+	 */
 	public void setUserService(UserService userService) {
 		this.userService = userService;
 	}
-
 }

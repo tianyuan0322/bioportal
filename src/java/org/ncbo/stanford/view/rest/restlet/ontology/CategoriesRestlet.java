@@ -7,68 +7,45 @@ import org.apache.commons.logging.LogFactory;
 import org.ncbo.stanford.bean.CategoryBean;
 import org.ncbo.stanford.service.ontology.OntologyService;
 import org.ncbo.stanford.service.xml.XMLSerializationService;
-import org.restlet.Restlet;
-import org.restlet.data.Method;
+import org.ncbo.stanford.view.rest.restlet.AbstractBaseRestlet;
 import org.restlet.data.Request;
 import org.restlet.data.Response;
 import org.restlet.data.Status;
 
-public class CategoriesRestlet extends Restlet {
+public class CategoriesRestlet extends AbstractBaseRestlet {
 
 	private static final Log log = LogFactory.getLog(CategoriesRestlet.class);
 	private OntologyService ontologyService;
 	private XMLSerializationService xmlSerializationService;
 
-	@Override
-	public void handle(Request request, Response response) {
-
-		if (request.getMethod().equals(Method.GET)) {
-			getRequest(request, response);
-		}
-
-	}
-
 	/**
 	 * Handle GET calls here
 	 */
-	private void getRequest(Request request, Response response) {
+	@Override
+	protected void getRequest(Request request, Response response) {
 		listCategories(request, response);
 	}
 
 	/**
 	 * Return to the response a listing of ontologies
 	 * 
+	 * @param request
 	 * @param response
 	 */
 	private void listCategories(Request request, Response response) {
-
-		// List<Integer> categoryList = null;
-
-		// TODO - determine this...
 		List<CategoryBean> categoryList = null;
 
 		try {
-			categoryList = getOntologyService().findAllCategories();
-
+			categoryList = ontologyService.findAllCategories();
 		} catch (Exception e) {
 			response.setStatus(Status.SERVER_ERROR_INTERNAL, e.getMessage());
 			e.printStackTrace();
 			log.error(e);
-
 		} finally {
-
 			// generate response XML with XSL
-			getXmlSerializationService().generateXMLResponse(request, response,
+			xmlSerializationService.generateXMLResponse(request, response,
 					categoryList);
 		}
-
-	}
-
-	/**
-	 * @return the ontologyService
-	 */
-	public OntologyService getOntologyService() {
-		return ontologyService;
 	}
 
 	/**
@@ -80,13 +57,6 @@ public class CategoriesRestlet extends Restlet {
 	}
 
 	/**
-	 * @return the xmlSerializationService
-	 */
-	public XMLSerializationService getXmlSerializationService() {
-		return xmlSerializationService;
-	}
-
-	/**
 	 * @param xmlSerializationService
 	 *            the xmlSerializationService to set
 	 */
@@ -94,5 +64,4 @@ public class CategoriesRestlet extends Restlet {
 			XMLSerializationService xmlSerializationService) {
 		this.xmlSerializationService = xmlSerializationService;
 	}
-
 }

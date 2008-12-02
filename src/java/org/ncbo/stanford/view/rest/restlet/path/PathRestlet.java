@@ -8,44 +8,26 @@ import org.ncbo.stanford.bean.concept.ClassBean;
 import org.ncbo.stanford.service.concept.ConceptService;
 import org.ncbo.stanford.service.xml.XMLSerializationService;
 import org.ncbo.stanford.util.RequestUtils;
+import org.ncbo.stanford.view.rest.restlet.AbstractBaseRestlet;
 import org.ncbo.stanford.view.util.constants.RequestParamConstants;
-import org.restlet.Restlet;
-import org.restlet.data.Method;
 import org.restlet.data.Request;
 import org.restlet.data.Response;
 import org.restlet.data.Status;
 
-public class PathRestlet extends Restlet {
+public class PathRestlet extends AbstractBaseRestlet {
 
+	@SuppressWarnings("unused")
 	private static final Log log = LogFactory.getLog(PathRestlet.class);
 
 	private ConceptService conceptService;
 	private XMLSerializationService xmlSerializationService;
 
-	@Override
-	public void handle(Request request, Response response) {
-
-		if (request.getMethod().equals(Method.GET)) {
-			getRequest(request, response);
-		}
-
-	}
-
 	/**
 	 * Handle GET calls here
 	 */
-	private void getRequest(Request request, Response response) {
+	@Override
+	protected void getRequest(Request request, Response response) {
 		findPathFromRoot(request, response);
-	}
-
-	/**
-	 * Handle POST calls here
-	 * 
-	 * @param request
-	 * @param response
-	 */
-	private void postRequest(Request request, Response response) {
-
 	}
 
 	/**
@@ -90,15 +72,7 @@ public class PathRestlet extends Restlet {
 			resp.setStatus(Status.CLIENT_ERROR_BAD_REQUEST, e.getMessage());
 		}
 
-		getXmlSerializationService()
-				.generateXMLResponse(request, resp, concept);
-	}
-
-	/**
-	 * @return the conceptService
-	 */
-	public ConceptService getConceptService() {
-		return conceptService;
+		xmlSerializationService.generateXMLResponse(request, resp, concept);
 	}
 
 	/**
@@ -107,13 +81,6 @@ public class PathRestlet extends Restlet {
 	 */
 	public void setConceptService(ConceptService conceptService) {
 		this.conceptService = conceptService;
-	}
-
-	/**
-	 * @return the xmlSerializationService
-	 */
-	public XMLSerializationService getXmlSerializationService() {
-		return xmlSerializationService;
 	}
 
 	/**

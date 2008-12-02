@@ -6,27 +6,19 @@ import org.ncbo.stanford.service.loader.scheduler.OntologyLoadSchedulerService;
 import org.ncbo.stanford.service.ontology.OntologyService;
 import org.ncbo.stanford.service.xml.XMLSerializationService;
 import org.ncbo.stanford.util.MessageUtils;
-import org.restlet.Restlet;
-import org.restlet.data.Method;
+import org.ncbo.stanford.view.rest.restlet.AbstractBaseRestlet;
 import org.restlet.data.Request;
 import org.restlet.data.Response;
 import org.restlet.data.Status;
 
-public class OntologyParseRestlet extends Restlet {
+public class OntologyParseRestlet extends AbstractBaseRestlet {
 
+	@SuppressWarnings("unused")
 	private static final Log log = LogFactory
-			.getLog(OntologyVersionsRestlet.class);
+			.getLog(OntologyParseRestlet.class);
 	private OntologyService ontologyService;
 	private OntologyLoadSchedulerService ontologyLoadSchedulerService;
 	private XMLSerializationService xmlSerializationService;
-
-	@Override
-	public void handle(Request request, Response response) {
-		if (request.getMethod().equals(Method.GET)) {
-			getRequest(request, response);
-
-		}
-	}
 
 	/**
 	 * Handle GET calls here
@@ -34,7 +26,8 @@ public class OntologyParseRestlet extends Restlet {
 	 * @param request
 	 * @param response
 	 */
-	private void getRequest(Request request, Response response) {
+	@Override
+	protected void getRequest(Request request, Response response) {
 		// Handle GET calls here
 		parseOntology(request, response);
 	}
@@ -61,22 +54,15 @@ public class OntologyParseRestlet extends Restlet {
 					"Error Parsing Ontology " + ontologyVersionId);
 		}
 
-		getXmlSerializationService().generateStatusXMLResponse(request,
-				response);
+		xmlSerializationService.generateStatusXMLResponse(request, response);
 	}
 
 	private boolean isParseSuccess() {
-		if (ontologyLoadSchedulerService.getErrorIdList().size() > 0)
+		if (ontologyLoadSchedulerService.getErrorIdList().size() > 0) {
 			return false;
-		else
-			return true;
-	}
+		}
 
-	/**
-	 * @return the ontologyService
-	 */
-	public OntologyService getOntologyService() {
-		return ontologyService;
+		return true;
 	}
 
 	/**
@@ -88,26 +74,12 @@ public class OntologyParseRestlet extends Restlet {
 	}
 
 	/**
-	 * @return the ontologyLoadSchedulerService
-	 */
-	public OntologyLoadSchedulerService getOntologyLoadSchedulerService() {
-		return ontologyLoadSchedulerService;
-	}
-
-	/**
 	 * @param ontologyLoadSchedulerService
 	 *            the ontologyLoadSchedulerService to set
 	 */
 	public void setOntologyLoadSchedulerService(
 			OntologyLoadSchedulerService ontologyLoadSchedulerService) {
 		this.ontologyLoadSchedulerService = ontologyLoadSchedulerService;
-	}
-
-	/**
-	 * @return the xmlSerializationService
-	 */
-	public XMLSerializationService getXmlSerializationService() {
-		return xmlSerializationService;
 	}
 
 	/**

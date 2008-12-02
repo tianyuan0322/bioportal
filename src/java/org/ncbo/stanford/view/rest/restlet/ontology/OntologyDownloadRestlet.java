@@ -7,32 +7,22 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.ncbo.stanford.bean.OntologyBean;
 import org.ncbo.stanford.service.ontology.OntologyService;
-import org.ncbo.stanford.service.xml.XMLSerializationService;
 import org.ncbo.stanford.util.CompressionUtils;
 import org.ncbo.stanford.util.MessageUtils;
 import org.ncbo.stanford.util.RequestUtils;
 import org.ncbo.stanford.util.helper.StringHelper;
-import org.restlet.Restlet;
+import org.ncbo.stanford.view.rest.restlet.AbstractBaseRestlet;
 import org.restlet.data.MediaType;
-import org.restlet.data.Method;
 import org.restlet.data.Request;
 import org.restlet.data.Response;
 import org.restlet.data.Status;
 import org.restlet.resource.FileRepresentation;
 
-public class OntologyDownloadRestlet extends Restlet {
+public class OntologyDownloadRestlet extends AbstractBaseRestlet {
 
 	private static final Log log = LogFactory
-			.getLog(OntologyVersionsRestlet.class);
+			.getLog(OntologyDownloadRestlet.class);
 	private OntologyService ontologyService;
-	private XMLSerializationService xmlSerializationService;
-
-	@Override
-	public void handle(Request request, Response response) {
-		if (request.getMethod().equals(Method.GET)) {
-			getRequest(request, response);
-		}
-	}
 
 	/**
 	 * Handle GET calls here
@@ -40,7 +30,8 @@ public class OntologyDownloadRestlet extends Restlet {
 	 * @param request
 	 * @param response
 	 */
-	private void getRequest(Request request, Response response) {
+	@Override
+	protected void getRequest(Request request, Response response) {
 		// Handle GET calls here
 		downloadOntology(request, response);
 	}
@@ -100,13 +91,6 @@ public class OntologyDownloadRestlet extends Restlet {
 	}
 
 	/**
-	 * @return the ontologyService
-	 */
-	public OntologyService getOntologyService() {
-		return ontologyService;
-	}
-
-	/**
 	 * @param ontologyService
 	 *            the ontologyService to set
 	 */
@@ -114,23 +98,6 @@ public class OntologyDownloadRestlet extends Restlet {
 		this.ontologyService = ontologyService;
 	}
 
-	/**
-	 * @return the xmlSerializationService
-	 */
-	public XMLSerializationService getXmlSerializationService() {
-		return xmlSerializationService;
-	}
-
-	/**
-	 * @param xmlSerializationService
-	 *            the xmlSerializationService to set
-	 */
-	public void setXmlSerializationService(
-			XMLSerializationService xmlSerializationService) {
-		this.xmlSerializationService = xmlSerializationService;
-	}
-
-	// TODO - refactor this later...
 	/**
 	 * Returns a specified OntologyBean and set the response status if there is
 	 * an error. This is used for find, findAll, update, delete.
@@ -145,7 +112,7 @@ public class OntologyDownloadRestlet extends Restlet {
 
 		try {
 			Integer intId = Integer.parseInt(ontologyVersionId);
-			ontologyBean = getOntologyService().findOntology(intId);
+			ontologyBean = ontologyService.findOntology(intId);
 
 			response.setStatus(Status.SUCCESS_OK);
 
@@ -172,7 +139,7 @@ public class OntologyDownloadRestlet extends Restlet {
 		if (!StringHelper.isNullOrNullString(version)) {
 			return "_v" + version.trim().replaceAll("[\\s\\t]+", "_");
 		}
-		
+
 		return "";
 	}
 

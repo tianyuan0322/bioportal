@@ -12,32 +12,22 @@ import org.ncbo.stanford.util.helper.BeanHelper;
 import org.ncbo.stanford.util.ontologyfile.compressedfilehandler.impl.CompressedFileHandlerFactory;
 import org.ncbo.stanford.util.ontologyfile.pathhandler.FilePathHandler;
 import org.ncbo.stanford.util.ontologyfile.pathhandler.impl.CommonsFileUploadFilePathHandlerImpl;
-import org.restlet.Restlet;
-import org.restlet.data.Method;
+import org.ncbo.stanford.view.rest.restlet.AbstractBaseRestlet;
 import org.restlet.data.Request;
 import org.restlet.data.Response;
 import org.restlet.data.Status;
 
-public class OntologiesRestlet extends Restlet {
+public class OntologiesRestlet extends AbstractBaseRestlet {
 
 	private static final Log log = LogFactory.getLog(OntologiesRestlet.class);
 	private OntologyService ontologyService;
 	private XMLSerializationService xmlSerializationService;
 
-	@Override
-	public void handle(Request request, Response response) {
-		if (request.getMethod().equals(Method.GET)) {
-			getRequest(request, response);
-
-		} else if (request.getMethod().equals(Method.POST)) {
-			postRequest(request, response);
-		}
-	}
-
 	/**
 	 * Handle GET calls here
 	 */
-	private void getRequest(Request request, Response response) {
+	@Override
+	protected void getRequest(Request request, Response response) {
 		listOntologies(request, response);
 	}
 
@@ -47,7 +37,8 @@ public class OntologiesRestlet extends Restlet {
 	 * @param request
 	 * @param response
 	 */
-	private void postRequest(Request request, Response response) {
+	@Override
+	protected void postRequest(Request request, Response response) {
 		createOntology(request, response);
 	}
 
@@ -60,7 +51,7 @@ public class OntologiesRestlet extends Restlet {
 		List<OntologyBean> ontologyList = null;
 
 		try {
-			ontologyList = getOntologyService().findLatestOntologyVersions();
+			ontologyList = ontologyService.findLatestOntologyVersions();
 		} catch (Exception e) {
 			response.setStatus(Status.SERVER_ERROR_INTERNAL, e.getMessage());
 			e.printStackTrace();
@@ -68,7 +59,7 @@ public class OntologiesRestlet extends Restlet {
 		} finally {
 			// generate response XML with XSL
 			String xslFile = MessageUtils.getMessage("xsl.ontology.findall");
-			getXmlSerializationService().generateXMLResponse(request, response,
+			xmlSerializationService.generateXMLResponse(request, response,
 					ontologyList, xslFile);
 		}
 	}
@@ -87,15 +78,14 @@ public class OntologiesRestlet extends Restlet {
 		try {
 			// no file handler for remote case since there is no file to upload.
 			if (ontologyBean.isRemote()) {
-				getOntologyService().createOntology(ontologyBean, null);
+				ontologyService.createOntology(ontologyBean, null);
 			} else {
 				FilePathHandler filePathHandler = new CommonsFileUploadFilePathHandlerImpl(
 						CompressedFileHandlerFactory
 								.createFileHandler(ontologyBean.getFormat()),
 						ontologyBean.getFileItem());
 
-				getOntologyService().createOntology(ontologyBean,
-						filePathHandler);
+				ontologyService.createOntology(ontologyBean, filePathHandler);
 			}
 		} catch (Exception e) {
 			response.setStatus(Status.SERVER_ERROR_INTERNAL, e.getMessage());
@@ -103,16 +93,9 @@ public class OntologiesRestlet extends Restlet {
 			log.error(e);
 		} finally {
 			// generate response XML
-			getXmlSerializationService().generateXMLResponse(request, response,
+			xmlSerializationService.generateXMLResponse(request, response,
 					ontologyBean);
 		}
-	}
-
-	/**
-	 * @return the ontologyService
-	 */
-	public OntologyService getOntologyService() {
-		return ontologyService;
 	}
 
 	/**
@@ -121,13 +104,6 @@ public class OntologiesRestlet extends Restlet {
 	 */
 	public void setOntologyService(OntologyService ontologyService) {
 		this.ontologyService = ontologyService;
-	}
-
-	/**
-	 * @return the xmlSerializationService
-	 */
-	public XMLSerializationService getXmlSerializationService() {
-		return xmlSerializationService;
 	}
 
 	/**

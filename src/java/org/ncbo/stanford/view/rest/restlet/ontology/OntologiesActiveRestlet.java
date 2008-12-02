@@ -8,43 +8,37 @@ import org.ncbo.stanford.bean.OntologyBean;
 import org.ncbo.stanford.service.ontology.OntologyService;
 import org.ncbo.stanford.service.xml.XMLSerializationService;
 import org.ncbo.stanford.util.MessageUtils;
-import org.restlet.Restlet;
-import org.restlet.data.Method;
+import org.ncbo.stanford.view.rest.restlet.AbstractBaseRestlet;
 import org.restlet.data.Request;
 import org.restlet.data.Response;
 import org.restlet.data.Status;
 
-public class OntologiesActiveRestlet extends Restlet {
+public class OntologiesActiveRestlet extends AbstractBaseRestlet {
 
-	private static final Log log = LogFactory.getLog(CategoriesRestlet.class);
+	private static final Log log = LogFactory
+			.getLog(OntologiesActiveRestlet.class);
 	private OntologyService ontologyService;
 	private XMLSerializationService xmlSerializationService;
-
-	@Override
-	public void handle(Request request, Response response) {
-		if (request.getMethod().equals(Method.GET)) {
-			getRequest(request, response);
-		}
-	}
 
 	/**
 	 * Handle GET calls here
 	 */
-	private void getRequest(Request request, Response response) {
+	@Override
+	protected void getRequest(Request request, Response response) {
 		listOntologiesActive(request, response);
 	}
 
 	/**
 	 * Return to the response a listing of ontologies
 	 * 
+	 * @param request
 	 * @param response
 	 */
 	private void listOntologiesActive(Request request, Response response) {
 		List<OntologyBean> ontologyList = null;
 
 		try {
-			ontologyList = getOntologyService()
-					.findLatestActiveOntologyVersions();
+			ontologyList = ontologyService.findLatestActiveOntologyVersions();
 		} catch (Exception e) {
 			response.setStatus(Status.SERVER_ERROR_INTERNAL, e.getMessage());
 			e.printStackTrace();
@@ -52,16 +46,9 @@ public class OntologiesActiveRestlet extends Restlet {
 		} finally {
 			// generate response XML with XSL
 			String xslFile = MessageUtils.getMessage("xsl.ontology.findall");
-			getXmlSerializationService().generateXMLResponse(request, response,
+			xmlSerializationService.generateXMLResponse(request, response,
 					ontologyList, xslFile);
 		}
-	}
-
-	/**
-	 * @return the ontologyService
-	 */
-	public OntologyService getOntologyService() {
-		return ontologyService;
 	}
 
 	/**
@@ -70,13 +57,6 @@ public class OntologiesActiveRestlet extends Restlet {
 	 */
 	public void setOntologyService(OntologyService ontologyService) {
 		this.ontologyService = ontologyService;
-	}
-
-	/**
-	 * @return the xmlSerializationService
-	 */
-	public XMLSerializationService getXmlSerializationService() {
-		return xmlSerializationService;
 	}
 
 	/**

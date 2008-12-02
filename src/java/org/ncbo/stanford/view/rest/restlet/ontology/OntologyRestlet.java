@@ -1,57 +1,22 @@
 package org.ncbo.stanford.view.rest.restlet.ontology;
 
-import javax.servlet.http.HttpServletRequest;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.ncbo.stanford.bean.OntologyBean;
 import org.ncbo.stanford.service.ontology.OntologyService;
 import org.ncbo.stanford.service.xml.XMLSerializationService;
 import org.ncbo.stanford.util.MessageUtils;
-import org.ncbo.stanford.util.RequestUtils;
 import org.ncbo.stanford.util.helper.BeanHelper;
-import org.restlet.Restlet;
-import org.restlet.data.Method;
+import org.ncbo.stanford.view.rest.restlet.AbstractBaseRestlet;
 import org.restlet.data.Request;
 import org.restlet.data.Response;
 import org.restlet.data.Status;
 
-public class OntologyRestlet extends Restlet {
+public class OntologyRestlet extends AbstractBaseRestlet {
 
 	private static final Log log = LogFactory.getLog(OntologyRestlet.class);
 	private OntologyService ontologyService;
 	private XMLSerializationService xmlSerializationService;
-
-	@Override
-	public void handle(Request request, Response response) {
-		if (request.getMethod().equals(Method.GET)) {
-			getRequest(request, response);
-		} else if (request.getMethod().equals(Method.POST)) {
-			HttpServletRequest httpServletRequest = RequestUtils
-					.getHttpServletRequest(request);
-			String method = httpServletRequest.getParameter(MessageUtils
-					.getMessage("http.param.method"));
-
-			if (method != null) {
-				if (method
-						.equalsIgnoreCase(MessageUtils.getMessage("http.put"))) {
-
-					putRequest(request, response);
-
-				} else if (method.equalsIgnoreCase(MessageUtils
-						.getMessage("http.delete"))) {
-
-					deleteRequest(request, response);
-				}
-			}
-		} else if (request.getMethod().equals(
-				MessageUtils.getMessage("http.put"))) {
-			putRequest(request, response);
-		} else if (request.getMethod().equals(
-				MessageUtils.getMessage("http.delete"))) {
-			deleteRequest(request, response);
-		}
-	}
 
 	/**
 	 * Handle GET calls here
@@ -59,7 +24,8 @@ public class OntologyRestlet extends Restlet {
 	 * @param request
 	 * @param response
 	 */
-	private void getRequest(Request request, Response response) {
+	@Override
+	protected void getRequest(Request request, Response response) {
 		// Handle GET calls here
 		findOntology(request, response);
 	}
@@ -70,7 +36,8 @@ public class OntologyRestlet extends Restlet {
 	 * @param request
 	 * @param response
 	 */
-	private void putRequest(Request request, Response response) {
+	@Override
+	protected void putRequest(Request request, Response response) {
 		// Handle PUT calls here
 		updateOntology(request, response);
 	}
@@ -81,7 +48,8 @@ public class OntologyRestlet extends Restlet {
 	 * @param request
 	 * @param response
 	 */
-	private void deleteRequest(Request request, Response response) {
+	@Override
+	protected void deleteRequest(Request request, Response response) {
 		// Handle DELETE calls here
 		deleteOntology(request, response);
 	}
@@ -97,7 +65,7 @@ public class OntologyRestlet extends Restlet {
 		OntologyBean ontologyBean = findOntologyBean(request, response);
 
 		// generate response XML
-		getXmlSerializationService().generateXMLResponse(request, response,
+		xmlSerializationService.generateXMLResponse(request, response,
 				ontologyBean);
 	}
 
@@ -129,8 +97,8 @@ public class OntologyRestlet extends Restlet {
 
 			// 4. now update the ontology
 			try {
-				getOntologyService().cleanupOntologyCategory(ontologyBean);
-				getOntologyService().updateOntology(ontologyBean);
+				ontologyService.cleanupOntologyCategory(ontologyBean);
+				ontologyService.updateOntology(ontologyBean);
 			} catch (Exception e) {
 				response
 						.setStatus(Status.SERVER_ERROR_INTERNAL, e.getMessage());
@@ -140,7 +108,7 @@ public class OntologyRestlet extends Restlet {
 		}
 
 		// generate response XML
-		getXmlSerializationService().generateXMLResponse(request, response,
+		xmlSerializationService.generateXMLResponse(request, response,
 				ontologyBean);
 	}
 
@@ -158,7 +126,7 @@ public class OntologyRestlet extends Restlet {
 		if (!response.getStatus().isError()) {
 			// now delete the user
 			try {
-				getOntologyService().deleteOntology(ontologyBean);
+				ontologyService.deleteOntology(ontologyBean);
 			} catch (Exception e) {
 				response
 						.setStatus(Status.SERVER_ERROR_INTERNAL, e.getMessage());
@@ -170,10 +138,10 @@ public class OntologyRestlet extends Restlet {
 		// generate response XML
 		// display success XML when successful, otherwise display bean XML
 		if (!response.getStatus().isError()) {
-			getXmlSerializationService().generateStatusXMLResponse(request,
-					response);
+			xmlSerializationService
+					.generateStatusXMLResponse(request, response);
 		} else {
-			getXmlSerializationService().generateXMLResponse(request, response,
+			xmlSerializationService.generateXMLResponse(request, response,
 					ontologyBean);
 		}
 	}
@@ -192,7 +160,7 @@ public class OntologyRestlet extends Restlet {
 
 		try {
 			Integer intId = Integer.parseInt(ontologyVersionId);
-			ontologyBean = getOntologyService().findOntology(intId);
+			ontologyBean = ontologyService.findOntology(intId);
 
 			response.setStatus(Status.SUCCESS_OK);
 
@@ -216,22 +184,11 @@ public class OntologyRestlet extends Restlet {
 	}
 
 	/**
-	 * @return the ontologyService
-	 */
-	public OntologyService getOntologyService() {
-		return ontologyService;
-	}
-
-	/**
 	 * @param ontologyService
 	 *            the ontologyService to set
 	 */
 	public void setOntologyService(OntologyService ontologyService) {
 		this.ontologyService = ontologyService;
-	}
-
-	public XMLSerializationService getXmlSerializationService() {
-		return xmlSerializationService;
 	}
 
 	public void setXmlSerializationService(

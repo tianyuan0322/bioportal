@@ -12,15 +12,14 @@ import org.ncbo.stanford.service.search.QueryService;
 import org.ncbo.stanford.service.xml.XMLSerializationService;
 import org.ncbo.stanford.util.RequestUtils;
 import org.ncbo.stanford.util.paginator.impl.Page;
+import org.ncbo.stanford.view.rest.restlet.AbstractBaseRestlet;
 import org.ncbo.stanford.view.util.constants.RequestParamConstants;
-import org.restlet.Restlet;
-import org.restlet.data.Method;
 import org.restlet.data.Reference;
 import org.restlet.data.Request;
 import org.restlet.data.Response;
 import org.restlet.data.Status;
 
-public class SearchRestlet extends Restlet {
+public class SearchRestlet extends AbstractBaseRestlet {
 
 	private static final String QUERY_PARAM = "query";
 	private static final Log log = LogFactory.getLog(SearchRestlet.class);
@@ -29,17 +28,11 @@ public class SearchRestlet extends Restlet {
 	private IndexService indexService;
 	private XMLSerializationService xmlSerializationService;
 
-	@Override
-	public void handle(Request request, Response response) {
-		if (request.getMethod().equals(Method.GET)) {
-			getRequest(request, response);
-		}
-	}
-
 	/**
 	 * Handle GET calls here
 	 */
-	private void getRequest(Request request, Response response) {
+	@Override
+	protected void getRequest(Request request, Response response) {
 		executeSearch(request, response);
 	}
 
