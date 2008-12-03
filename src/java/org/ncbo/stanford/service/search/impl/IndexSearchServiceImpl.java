@@ -155,7 +155,7 @@ public class IndexSearchServiceImpl extends AbstractSearchService implements
 			} catch (Exception e) {
 				results = null;
 				e.printStackTrace();
-				log.error(e);
+				log.error("Error while reloading cache: " + e);
 			}
 
 			if (results != null) {
