@@ -55,7 +55,6 @@ public class ConceptRestlet extends AbstractBaseRestlet {
 				// URL Decode the concept Id
 				conceptId = URLDecoder.decode(conceptId, MessageUtils
 						.getMessage("default.encoding"));
-
 				concept = conceptService.findConcept(ontVersionId, conceptId);
 			}
 
