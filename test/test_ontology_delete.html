@@ -21,8 +21,7 @@
   	<script language="JavaScript">
 	function onSubmitForm()
 	{	
-   		document.ontologyform.action ="http://ncbo-core-prod1.stanford.edu:8080/bioportal/rest/ontologies/" + document.ontologyform.id.value;
-		//alert("document.ontologyform.action=" + document.ontologyform.action);
+   		document.ontologyform.action ="/bioportal/rest/ontologies/" + document.ontologyform.id.value;
 	
   		return true;
 	}
