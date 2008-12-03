@@ -25,7 +25,8 @@ import org.ncbo.stanford.util.cache.expiration.system.ExpirationSystem;
 public class AbstractSearchService {
 
 	@SuppressWarnings("unused")
-	private static final Log log = LogFactory.getLog(AbstractSearchService.class);
+	private static final Log log = LogFactory
+			.getLog(AbstractSearchService.class);
 
 	protected Analyzer analyzer;
 	protected String indexPath;
@@ -36,12 +37,12 @@ public class AbstractSearchService {
 	private IndexSearcher searcher = null;
 	private Date openIndexDate;
 	private Object createSearcherLock = new Object();
-	
+
 	protected SearchResultListBean runQuery(Query query) throws Exception {
 		if (log.isDebugEnabled()) {
 			log.debug("Executing Query: " + query);
 		}
-		
+
 		synchronized (createSearcherLock) {
 			if (hasNewerIndexFile()) {
 				reloadSearcher();
@@ -80,8 +81,7 @@ public class AbstractSearchService {
 						conceptId,
 						doc.get(SearchIndexBean.CONCEPT_ID_SHORT_FIELD_LABEL),
 						doc.get(SearchIndexBean.PREFERRED_NAME_FIELD_LABEL),
-						doc.get(SearchIndexBean.CONTENTS_FIELD_LABEL),
-						doc.get(SearchIndexBean.LITERAL_CONTENTS_FIELD_LABEL));
+						doc.get(SearchIndexBean.CONTENTS_FIELD_LABEL), null);
 				searchResults.add(searchResult);
 				searchResults.addOntologyHit(ontologyVersionId, ontologyId,
 						ontologyDisplayLabel);
@@ -92,7 +92,7 @@ public class AbstractSearchService {
 
 		return searchResults;
 	}
-	
+
 	private Sort getSortFields() {
 		SortField[] fields = { SortField.FIELD_SCORE,
 				new SortField(SearchIndexBean.RECORD_TYPE_FIELD_LABEL),
@@ -125,7 +125,7 @@ public class AbstractSearchService {
 
 		return false;
 	}
-	
+
 	/**
 	 * @return Creation date of current used search index.
 	 */
