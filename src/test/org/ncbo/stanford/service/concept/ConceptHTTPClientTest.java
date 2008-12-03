@@ -11,6 +11,7 @@ import org.ncbo.stanford.AbstractBioPortalTest;
 import org.restlet.Client;
 import org.restlet.data.Protocol;
 import org.restlet.data.Response;
+import java.net.URLEncoder;
 
 /**
  * Tests concept rest calls.
@@ -29,6 +30,10 @@ public class ConceptHTTPClientTest extends AbstractBioPortalTest {
 	
 	private final static int NCIT_OID = 13578;
 
+	private final static int TEST_OID2 = 38563;
+	private final static String TEST_CID2 = "Bleeding From Tongue";
+	private final static String TEST_NAME2 = "Bleeding From Tongue";
+	
 	@Test
 	public void testAminoConcept() {
 		System.out
@@ -79,6 +84,34 @@ public class ConceptHTTPClientTest extends AbstractBioPortalTest {
 		System.out
 				.println("ConceptHTTPClientTest: testAminoRoot().........................DONE");
 	}
+	
+	@Test
+	public void testConceptWithSpaceID() {
+		System.out
+				.println("ConceptHTTPClientTest: testConceptWithSpaceID().......................BEGIN");
+
+		// Prepare HTTP client connector.
+		Client client = new Client(Protocol.HTTP);
+
+		try {
+			String encodedCID = URLEncoder.encode(TEST_CID2, "UTF-8");
+			
+			Response response = client.get(BASE_URL + "concepts/" + TEST_OID2 + "/" + encodedCID);
+
+			String xml = response.getEntity().getText();
+			assertNotNull(xml);
+			System.out.println(xml);
+			assertTrue(xml.contains("<label>" + TEST_NAME2));
+		} catch (IOException ioe) {
+			System.out.println("ERROR in ConceptHTTPClientTest: testConceptWithSpaceID() ");
+			ioe.printStackTrace();
+			fail();
+		}
+
+		System.out
+				.println("ConceptHTTPClientTest: testConceptWithSpaceID().........................DONE");
+	}
+	
 	
 	@Test
 	public void testNCITRoot() {
