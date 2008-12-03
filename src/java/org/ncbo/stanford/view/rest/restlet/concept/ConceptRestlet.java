@@ -11,9 +11,12 @@ import org.ncbo.stanford.view.util.constants.RequestParamConstants;
 import org.restlet.data.Request;
 import org.restlet.data.Response;
 import org.restlet.data.Status;
+import java.net.URLDecoder;
 
 public class ConceptRestlet extends AbstractBaseRestlet {
 
+	private static String	UTF8 = "UTF-8";
+	
 	@SuppressWarnings("unused")
 	private static final Log log = LogFactory.getLog(ConceptRestlet.class);
 	private ConceptService conceptService;
@@ -40,13 +43,21 @@ public class ConceptRestlet extends AbstractBaseRestlet {
 		String ontologyVersionId = (String) request.getAttributes().get(
 				MessageUtils.getMessage("entity.ontologyversionid"));
 
+// Commented out for performance optimization
+//		if (log.isDebugEnabled()) 
+//			log.debug("finding concept - oid: " + ontologyVersionId + " cid: " + conceptId);
+		
 		try {
 			Integer ontVersionId = Integer.parseInt(ontologyVersionId);
+			
 
 			if (conceptId
 					.equalsIgnoreCase(RequestParamConstants.PARAM_ROOT_CONCEPT)) {
 				concept = conceptService.findRootConcept(ontVersionId);
 			} else {
+				// URL Decode the concept Id
+				conceptId = URLDecoder.decode(conceptId, UTF8);
+
 				concept = conceptService.findConcept(ontVersionId, conceptId);
 			}
 
