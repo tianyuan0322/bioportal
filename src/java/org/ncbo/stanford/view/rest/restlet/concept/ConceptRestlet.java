@@ -1,26 +1,23 @@
 package org.ncbo.stanford.view.rest.restlet.concept;
 
+import java.net.URLDecoder;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.ncbo.stanford.bean.concept.ClassBean;
 import org.ncbo.stanford.service.concept.ConceptService;
-import org.ncbo.stanford.service.xml.XMLSerializationService;
 import org.ncbo.stanford.util.MessageUtils;
 import org.ncbo.stanford.view.rest.restlet.AbstractBaseRestlet;
 import org.ncbo.stanford.view.util.constants.RequestParamConstants;
 import org.restlet.data.Request;
 import org.restlet.data.Response;
 import org.restlet.data.Status;
-import java.net.URLDecoder;
 
 public class ConceptRestlet extends AbstractBaseRestlet {
 
-	private static String	UTF8 = "UTF-8";
-	
 	@SuppressWarnings("unused")
 	private static final Log log = LogFactory.getLog(ConceptRestlet.class);
 	private ConceptService conceptService;
-	private XMLSerializationService xmlSerializationService;
 
 	/**
 	 * Handle GET calls here
@@ -43,20 +40,21 @@ public class ConceptRestlet extends AbstractBaseRestlet {
 		String ontologyVersionId = (String) request.getAttributes().get(
 				MessageUtils.getMessage("entity.ontologyversionid"));
 
-// Commented out for performance optimization
-//		if (log.isDebugEnabled()) 
-//			log.debug("finding concept - oid: " + ontologyVersionId + " cid: " + conceptId);
-		
+		if (log.isDebugEnabled()) {
+			log.debug("finding concept - oid: " + ontologyVersionId + " cid: "
+					+ conceptId);
+		}
+
 		try {
 			Integer ontVersionId = Integer.parseInt(ontologyVersionId);
-			
 
 			if (conceptId
 					.equalsIgnoreCase(RequestParamConstants.PARAM_ROOT_CONCEPT)) {
 				concept = conceptService.findRootConcept(ontVersionId);
 			} else {
 				// URL Decode the concept Id
-				conceptId = URLDecoder.decode(conceptId, UTF8);
+				conceptId = URLDecoder.decode(conceptId, MessageUtils
+						.getMessage("default.encoding"));
 
 				concept = conceptService.findConcept(ontVersionId, conceptId);
 			}
@@ -67,7 +65,8 @@ public class ConceptRestlet extends AbstractBaseRestlet {
 			}
 		} catch (NumberFormatException nfe) {
 			nfe.printStackTrace();
-			response.setStatus(Status.CLIENT_ERROR_BAD_REQUEST, nfe.getMessage());
+			response.setStatus(Status.CLIENT_ERROR_BAD_REQUEST, nfe
+					.getMessage());
 		} catch (Exception e) {
 			e.printStackTrace();
 			response.setStatus(Status.CLIENT_ERROR_BAD_REQUEST, e.getMessage());
@@ -82,14 +81,5 @@ public class ConceptRestlet extends AbstractBaseRestlet {
 	 */
 	public void setConceptService(ConceptService conceptService) {
 		this.conceptService = conceptService;
-	}
-
-	/**
-	 * @param xmlSerializationService
-	 *            the xmlSerializationService to set
-	 */
-	public void setXmlSerializationService(
-			XMLSerializationService xmlSerializationService) {
-		this.xmlSerializationService = xmlSerializationService;
 	}
 }
