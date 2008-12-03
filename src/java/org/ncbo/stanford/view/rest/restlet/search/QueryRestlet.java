@@ -7,7 +7,7 @@ import javax.servlet.http.HttpServletRequest;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.ncbo.stanford.bean.search.SearchBean;
-import org.ncbo.stanford.service.search.QueryService;
+import org.ncbo.stanford.service.search.QuerySearchService;
 import org.ncbo.stanford.service.xml.XMLSerializationService;
 import org.ncbo.stanford.util.RequestUtils;
 import org.ncbo.stanford.util.paginator.impl.Page;
@@ -23,7 +23,7 @@ public class QueryRestlet extends AbstractBaseRestlet {
 	private static final String QUERY_PARAM = "query";
 	private static final Log log = LogFactory.getLog(QueryRestlet.class);
 
-	private QueryService queryService;
+	private QuerySearchService queryService;
 	private XMLSerializationService xmlSerializationService;
 
 	/**
@@ -84,7 +84,7 @@ public class QueryRestlet extends AbstractBaseRestlet {
 	 * @param queryService
 	 *            the queryService to set
 	 */
-	public void setQueryService(QueryService queryService) {
+	public void setQueryService(QuerySearchService queryService) {
 		this.queryService = queryService;
 	}
 

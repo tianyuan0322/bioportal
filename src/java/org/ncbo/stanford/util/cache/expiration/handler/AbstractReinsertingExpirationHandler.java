@@ -29,6 +29,7 @@ public abstract class AbstractReinsertingExpirationHandler<K, V> implements
 
 	public void handleExpiredContainer(HashbeltContainer<K, V> expiredContainer) {
 		Iterator<K> i = expiredContainer.getKeys();
+		
 		while (i.hasNext()) {
 			K key = i.next();
 			V nextValue = expiredContainer.get(key);

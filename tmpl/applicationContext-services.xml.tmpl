@@ -544,7 +544,7 @@
 	<bean id="ontologyService"
 		class="org.ncbo.stanford.service.ontology.impl.OntologyServiceImpl">
 		<property name="indexService">
-			<ref bean="searchIndexService" />
+			<ref bean="indexSearchService" />
 		</property>
 		<property name="ncboOntologyDAO">
 			<ref bean="NcboOntologyDAO" />
@@ -578,7 +578,7 @@
 	<bean id="ontologyLoadSchedulerService"
 		class="org.ncbo.stanford.service.loader.scheduler.impl.OntologyLoadSchedulerServiceImpl">
 		<property name="indexService">
-			<ref bean="searchIndexService" />
+			<ref bean="indexSearchService" />
 		</property>
 		<property name="ncboOntologyLoadQueueDAO">
 			<ref bean="NcboOntologyLoadQueueDAO" />
@@ -641,8 +641,9 @@
 	</bean>
 
 	<!-- Search related beans -->
-	<bean id="searchQueryService"
-		class="org.ncbo.stanford.service.search.impl.QueryServiceImpl">
+	<bean id="abstractSearchService"
+		class="org.ncbo.stanford.service.search.AbstractSearchService"
+		abstract="true">
 		<property name="analyzer">
 			<ref bean="searchAnalyzer" />
 		</property>
@@ -656,15 +657,15 @@
 			<ref bean="paginatableCache" />
 		</property>
 	</bean>
-
-	<bean id="searchIndexService"
-		class="org.ncbo.stanford.service.search.impl.IndexServiceImpl">
-		<property name="analyzer">
-			<ref bean="searchAnalyzer" />
-		</property>
-		<property name="indexPath">
-			<ref bean="searchIndexPath" />
-		</property>
+	
+	<bean id="querySearchService"
+		class="org.ncbo.stanford.service.search.impl.QuerySearchServiceImpl"
+		parent="abstractSearchService">
+	</bean>
+	
+	<bean id="indexSearchService"
+		class="org.ncbo.stanford.service.search.impl.IndexSearchServiceImpl"
+		parent="abstractSearchService">
 		<property name="indexBackupPath">
 			<ref bean="searchIndexBackupPath" />
 		</property>
@@ -682,9 +683,6 @@
 		</property>
 		<property name="ontologySearchHandlerMap">
 			<ref local="ontologySearchHandlerMap" />
-		</property>
-		<property name="searchResultCache">
-			<ref bean="paginatableCache" />
 		</property>
 	</bean>
 

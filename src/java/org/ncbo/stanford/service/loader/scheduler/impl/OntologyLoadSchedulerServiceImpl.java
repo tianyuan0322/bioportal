@@ -23,7 +23,7 @@ import org.ncbo.stanford.enumeration.StatusEnum;
 import org.ncbo.stanford.exception.InvalidOntologyFormatException;
 import org.ncbo.stanford.manager.load.OntologyLoadManager;
 import org.ncbo.stanford.service.loader.scheduler.OntologyLoadSchedulerService;
-import org.ncbo.stanford.service.search.IndexService;
+import org.ncbo.stanford.service.search.IndexSearchService;
 import org.ncbo.stanford.util.CompressionUtils;
 import org.ncbo.stanford.util.ontologyfile.pathhandler.AbstractFilePathHandler;
 import org.springframework.transaction.annotation.Propagation;
@@ -45,12 +45,12 @@ public class OntologyLoadSchedulerServiceImpl implements
 			.getLog(OntologyLoadSchedulerServiceImpl.class);
 	private static final int ERROR_MESSAGE_LENGTH = 1000;
 
-	private IndexService indexService;
+	private IndexSearchService indexService;
 	private CustomNcboOntologyLoadQueueDAO ncboOntologyLoadQueueDAO;
 	private CustomNcboOntologyVersionDAO ncboOntologyVersionDAO;
-	private Map<String, String> ontologyFormatHandlerMap = new HashMap<String, String>();
-	private Map<String, OntologyLoadManager> ontologyLoadHandlerMap = new HashMap<String, OntologyLoadManager>();
-	private List<Integer> errorIdList = new ArrayList<Integer>();
+	private Map<String, String> ontologyFormatHandlerMap = new HashMap<String, String>(0);
+	private Map<String, OntologyLoadManager> ontologyLoadHandlerMap = new HashMap<String, OntologyLoadManager>(0);
+	private List<Integer> errorIdList = new ArrayList<Integer>(0);
 
 	/**
 	 * Gets the list of ontologies that need to be loaded and processed each
@@ -62,6 +62,8 @@ public class OntologyLoadSchedulerServiceImpl implements
 	public void parseOntologies() {
 		List<NcboOntologyLoadQueue> ontologiesToLoad = ncboOntologyLoadQueueDAO
 				.getOntologiesToLoad();
+
+		backupIndex();
 
 		for (NcboOntologyLoadQueue loadQueue : ontologiesToLoad) {
 			if (ncboOntologyLoadQueueDAO.needsParsing(loadQueue.getId())
@@ -75,6 +77,8 @@ public class OntologyLoadSchedulerServiceImpl implements
 						+ " does not require parsing");
 			}
 		}
+		
+		optimizeIndex();
 	}
 
 	/**
@@ -94,6 +98,8 @@ public class OntologyLoadSchedulerServiceImpl implements
 
 		List<NcboOntologyLoadQueue> ontologiesToLoad = ncboOntologyLoadQueueDAO
 				.getOntologiesToLoad();
+
+		backupIndex();
 
 		for (NcboOntologyLoadQueue loadQueue : ontologiesToLoad) {
 			int currentId = loadQueue.getNcboOntologyVersion().getId()
@@ -116,6 +122,8 @@ public class OntologyLoadSchedulerServiceImpl implements
 				break;
 			}
 		}
+		
+		optimizeIndex();
 	}
 
 	/**
@@ -145,8 +153,9 @@ public class OntologyLoadSchedulerServiceImpl implements
 							+ ontologyVersionId);
 			return;
 		}
-
+		
 		processRecord(loadQueue);
+		optimizeIndex();
 	}
 
 	/**
@@ -174,7 +183,8 @@ public class OntologyLoadSchedulerServiceImpl implements
 			// load ontology
 			loadOntology(ontologyBean);
 			// index ontology
-			indexService.indexOntology(ontologyBean.getOntologyId());
+			indexService.indexOntology(ontologyBean.getOntologyId(), false,
+					false);
 
 			status = StatusEnum.STATUS_READY;
 		} catch (Exception e) {
@@ -227,7 +237,9 @@ public class OntologyLoadSchedulerServiceImpl implements
 	 * @throws URISyntaxException
 	 */
 	private void loadOntology(OntologyBean ontologyBean) throws Exception {
-		log.debug("loadOntology BEGIN..............");
+		if (log.isDebugEnabled()) {
+			log.debug("loadOntology BEGIN..............");
+		}
 
 		List<String> filenames = ontologyBean.getFilenames();
 
@@ -247,7 +259,9 @@ public class OntologyLoadSchedulerServiceImpl implements
 			}
 		}
 
-		log.debug("..................loadOntology END");
+		if (log.isDebugEnabled()) {
+			log.debug("..................loadOntology END");
+		}
 	}
 
 	private OntologyLoadManager getLoadManager(OntologyBean ontologyBean)
@@ -267,19 +281,30 @@ public class OntologyLoadSchedulerServiceImpl implements
 		return loadManager;
 	}
 
+	private void backupIndex() {
+		try {
+			indexService.backupIndex();
+		} catch (Exception e) {
+			e.printStackTrace();
+			log.error("Unable to backup index due to: " + e);
+		}
+	}
+
+	private void optimizeIndex() {
+		try {
+			indexService.optimizeIndex();
+		} catch (Exception e) {
+			e.printStackTrace();
+			log.error("Unable to optimize index due to: " + e);
+		}
+	}
+
 	/**
 	 * @param indexService
 	 *            the indexService to set
 	 */
-	public void setIndexService(IndexService indexService) {
+	public void setIndexService(IndexSearchService indexService) {
 		this.indexService = indexService;
-	}
-
-	/**
-	 * @return the ncboOntologyLoadQueueDAO
-	 */
-	public CustomNcboOntologyLoadQueueDAO getNcboOntologyLoadQueueDAO() {
-		return ncboOntologyLoadQueueDAO;
 	}
 
 	/**
@@ -292,13 +317,6 @@ public class OntologyLoadSchedulerServiceImpl implements
 	}
 
 	/**
-	 * @return the ncboOntologyVersionDAO
-	 */
-	public CustomNcboOntologyVersionDAO getNcboOntologyVersionDAO() {
-		return ncboOntologyVersionDAO;
-	}
-
-	/**
 	 * @param ncboOntologyVersionDAO
 	 *            the ncboOntologyVersionDAO to set
 	 */
@@ -308,26 +326,12 @@ public class OntologyLoadSchedulerServiceImpl implements
 	}
 
 	/**
-	 * @return the ontologyLoadHandlerMap
-	 */
-	public Map<String, OntologyLoadManager> getOntologyLoadHandlerMap() {
-		return ontologyLoadHandlerMap;
-	}
-
-	/**
 	 * @param ontologyLoadHandlerMap
 	 *            the ontologyLoadHandlerMap to set
 	 */
 	public void setOntologyLoadHandlerMap(
 			Map<String, OntologyLoadManager> ontologyLoadHandlerMap) {
 		this.ontologyLoadHandlerMap = ontologyLoadHandlerMap;
-	}
-
-	/**
-	 * @return the ontologyFormatHandlerMap
-	 */
-	public Map<String, String> getOntologyFormatHandlerMap() {
-		return ontologyFormatHandlerMap;
 	}
 
 	/**

@@ -15,6 +15,7 @@ public abstract class AbstractSimpleExpirationHandler<K, V> implements
 		ExpirationHandler<K, V> {
 	public void handleExpiredContainer(HashbeltContainer<K, V> expiredContainer) {
 		Iterator<V> i = expiredContainer.getValues();
+		
 		while (i.hasNext()) {
 			V nextValue = i.next();
 			timeExpired(nextValue);

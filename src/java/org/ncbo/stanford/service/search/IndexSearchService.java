@@ -1,6 +1,6 @@
 package org.ncbo.stanford.service.search;
 
-public interface IndexService {
+public interface IndexSearchService {
 
 	public void indexAllOntologies() throws Exception;
 
@@ -15,4 +15,6 @@ public interface IndexService {
 			boolean doOptimize) throws Exception;
 
 	public void backupIndex() throws Exception;
+
+	public void optimizeIndex() throws Exception;
 }

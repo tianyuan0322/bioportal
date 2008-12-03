@@ -1,0 +1,76 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+	<head>
+		<STYLE TYPE="text/css">
+			.indented {
+				padding-left: 50pt;
+				padding-right: 50pt;
+			}
+			
+			BODY {
+				font-family: Verdana, Arial, Helvetica, sans-serif;
+				font-size: 10pt;
+			}
+		</STYLE>
+
+		<script language="JavaScript">
+			function onSubmitForm(form) {
+		   		form.action = "/bioportal/rest/ontologies/index/" + form.ontologyid.value;
+		  		return true;
+			}
+	  	</script>
+
+		<title>test_search_index.html</title>
+
+		<meta http-equiv="keywords" content="keyword1,keyword2,keyword3">
+		<meta http-equiv="description" content="this is my page">
+		<meta http-equiv="content-type"
+			content="text/html; charset=ISO-8859-1">
+	</head>
+
+	<body>
+		<div class="indented">
+		<h3>
+			Index Ontology
+		</h3>
+		<form name="ontologyIndexForm" onSubmit="return onSubmitForm(this);"
+			method="POST">
+
+			Ontology Id:
+			<input type="text" id="ontologyid" name="ontologyid" value="" />
+			<input type="hidden" name="sessionid"
+				value="9c188a9b8de0fe0c21b9322b72255fb939a68bb2" />
+			<!--  <input type="hidden" name="applicationid" value="4ea81d74-8960-4525-810b-fa1baab576ff" /> -->
+			<input type="hidden" name="method" value="PUT" />
+			<input type="submit" value="Run" />
+		</form>
+		
+		<h3>
+			Index All Ontologies
+		</h3>
+		<form name="ontologyIndexAllForm" onSubmit="return onSubmitForm(this);"
+			method="POST">
+			<input type="hidden" id="ontologyid" name="ontologyid" value="" />
+			<input type="hidden" name="sessionid"
+				value="9c188a9b8de0fe0c21b9322b72255fb939a68bb2" />
+			<!--  <input type="hidden" name="applicationid" value="4ea81d74-8960-4525-810b-fa1baab576ff" /> -->
+			<input type="submit" value="Run" />
+		</form>
+
+		<h3>
+			Remove Ontology from Index
+		</h3>
+		<form name="ontologyDeleteForm" onSubmit="return onSubmitForm(this);"
+			method="POST">
+
+			Ontology Id:
+			<input type="text" id="ontologyid" name="ontologyid" value="" />
+			<input type="hidden" name="sessionid"
+				value="9c188a9b8de0fe0c21b9322b72255fb939a68bb2" />
+			<!--  <input type="hidden" name="applicationid" value="4ea81d74-8960-4525-810b-fa1baab576ff" /> -->
+			<input type="hidden" name="method" value="DELETE" />
+			<input type="submit" value="Run" />
+		</form>
+		</div>
+	</body>
+</html>

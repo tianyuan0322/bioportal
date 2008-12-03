@@ -66,7 +66,7 @@
 	<bean id="queryRestlet"
 		class="org.ncbo.stanford.view.rest.restlet.search.QueryRestlet">
 		<property name="queryService">
-			<ref bean="searchQueryService" />
+			<ref bean="querySearchService" />
 		</property>
 		<property name="xmlSerializationService">
 			<ref bean="xmlSerializationService" />
@@ -76,7 +76,7 @@
 	<bean id="indexRestlet"
 		class="org.ncbo.stanford.view.rest.restlet.search.IndexRestlet">
 		<property name="indexService">
-			<ref bean="searchIndexService" />
+			<ref bean="indexSearchService" />
 		</property>
 		<property name="xmlSerializationService">
 			<ref bean="xmlSerializationService" />

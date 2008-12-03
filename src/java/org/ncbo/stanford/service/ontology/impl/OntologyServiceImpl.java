@@ -30,7 +30,7 @@ import org.ncbo.stanford.domain.generated.NcboOntologyVersionMetadata;
 import org.ncbo.stanford.exception.InvalidOntologyFormatException;
 import org.ncbo.stanford.manager.load.OntologyLoadManager;
 import org.ncbo.stanford.service.ontology.OntologyService;
-import org.ncbo.stanford.service.search.IndexService;
+import org.ncbo.stanford.service.search.IndexSearchService;
 import org.ncbo.stanford.util.MessageUtils;
 import org.ncbo.stanford.util.ontologyfile.pathhandler.AbstractFilePathHandler;
 import org.ncbo.stanford.util.ontologyfile.pathhandler.FilePathHandler;
@@ -41,7 +41,7 @@ public class OntologyServiceImpl implements OntologyService {
 
 	private static final Log log = LogFactory.getLog(OntologyServiceImpl.class);
 
-	private IndexService indexService;
+	private IndexSearchService indexService;
 	private CustomNcboOntologyDAO ncboOntologyDAO;
 	private CustomNcboOntologyVersionDAO ncboOntologyVersionDAO;
 	private CustomNcboOntologyFileDAO ncboOntologyFileDAO;
@@ -572,7 +572,7 @@ public class OntologyServiceImpl implements OntologyService {
 	 * @param indexService
 	 *            the indexService to set
 	 */
-	public void setIndexService(IndexService indexService) {
+	public void setIndexService(IndexSearchService indexService) {
 		this.indexService = indexService;
 	}
 

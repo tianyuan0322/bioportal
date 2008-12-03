@@ -45,6 +45,7 @@ public class StandardHashbeltContainer<K, V> implements HashbeltContainer<K, V> 
 
 	public Iterator<K> getKeys() {
 		ArrayList<K> keys = new ArrayList<K>(keysToExpirableObjects.keySet());
+		
 		return keys.iterator();
 	}
 

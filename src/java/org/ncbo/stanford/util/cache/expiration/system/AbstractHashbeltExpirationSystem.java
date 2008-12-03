@@ -1,5 +1,11 @@
 package org.ncbo.stanford.util.cache.expiration.system;
 
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.Set;
+
 import org.ncbo.stanford.util.cache.container.HashbeltContainer;
 import org.ncbo.stanford.util.cache.container.HashbeltContainerFactory;
 import org.ncbo.stanford.util.cache.container.impl.StandardHashbeltContainerFactory;
@@ -67,6 +73,42 @@ public abstract class AbstractHashbeltExpirationSystem<K, V> extends
 		}
 	}
 
+	public Set<K> getKeys() {
+		Set<K> keys = new HashSet<K>(0);
+		
+		for (int index = 0; index < numberOfContainers; index++) {
+			Iterator<K> keysIter = containers[index].getKeys();
+
+			while (keysIter.hasNext()) {
+				K key = keysIter.next();
+				
+				if (key != null) {
+					keys.add(key);
+				}
+			}
+		}
+		
+		return keys;
+	}
+	
+	public Collection<V> getValues() {
+		Collection<V> values = new ArrayList<V>(0);
+		
+		for (int index = 0; index < numberOfContainers; index++) {
+			Iterator<V> valuesIter = containers[index].getValues();
+
+			while (valuesIter.hasNext()) {
+				V value = valuesIter.next();
+				
+				if (value != null) {
+					values.add(value);
+				}
+			}
+		}
+		
+		return values;
+	}
+	
 	public void remove(K key) {
 		HashbeltContainer<K, V> container = findContainer(key);
 

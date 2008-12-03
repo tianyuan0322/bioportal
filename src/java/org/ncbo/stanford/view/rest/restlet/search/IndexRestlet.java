@@ -2,7 +2,7 @@ package org.ncbo.stanford.view.rest.restlet.search;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.ncbo.stanford.service.search.IndexService;
+import org.ncbo.stanford.service.search.IndexSearchService;
 import org.ncbo.stanford.service.xml.XMLSerializationService;
 import org.ncbo.stanford.util.MessageUtils;
 import org.ncbo.stanford.view.rest.restlet.AbstractBaseRestlet;
@@ -15,7 +15,7 @@ public class IndexRestlet extends AbstractBaseRestlet {
 	@SuppressWarnings("unused")
 	private static final Log log = LogFactory.getLog(IndexRestlet.class);
 
-	private IndexService indexService;
+	private IndexSearchService indexService;
 	private XMLSerializationService xmlSerializationService;
 
 	/**
@@ -83,7 +83,7 @@ public class IndexRestlet extends AbstractBaseRestlet {
 			String ontologyIdStr = (String) request.getAttributes().get(
 					MessageUtils.getMessage("entity.ontologyid"));
 			Integer ontologyId = Integer.parseInt(ontologyIdStr);
-			indexService.indexOntology(ontologyId);
+			indexService.indexOntology(ontologyId, false, true);
 		} catch (Exception e) {
 			response.setStatus(Status.SERVER_ERROR_INTERNAL, e.getMessage());
 			e.printStackTrace();
@@ -106,7 +106,7 @@ public class IndexRestlet extends AbstractBaseRestlet {
 			String ontologyIdStr = (String) request.getAttributes().get(
 					MessageUtils.getMessage("entity.ontologyid"));
 			Integer ontologyId = Integer.parseInt(ontologyIdStr);
-			indexService.removeOntology(ontologyId);
+			indexService.removeOntology(ontologyId, false, true);
 		} catch (Exception e) {
 			response.setStatus(Status.SERVER_ERROR_INTERNAL, e.getMessage());
 			e.printStackTrace();
@@ -122,7 +122,7 @@ public class IndexRestlet extends AbstractBaseRestlet {
 	 * @param indexService
 	 *            the indexService to set
 	 */
-	public void setIndexService(IndexService indexService) {
+	public void setIndexService(IndexSearchService indexService) {
 		this.indexService = indexService;
 	}
 

@@ -7,7 +7,7 @@ import org.apache.lucene.search.Query;
 import org.ncbo.stanford.bean.search.SearchBean;
 import org.ncbo.stanford.util.paginator.impl.Page;
 
-public interface QueryService {
+public interface QuerySearchService {
 
 	public Page<SearchBean> executeQuery(String expr,
 			boolean includeProperties, boolean isExactMatch, Integer pageSize,

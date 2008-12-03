@@ -17,10 +17,10 @@ import com.thoughtworks.xstream.XStream;
 public class SearchServiceTest extends AbstractBioPortalTest {
 
 	@Autowired
-	IndexService indexService;
+	IndexSearchService indexService;
 
 	@Autowired
-	QueryService queryService;
+	QuerySearchService queryService;
 
 	@Test
 	@Repeat(2)
