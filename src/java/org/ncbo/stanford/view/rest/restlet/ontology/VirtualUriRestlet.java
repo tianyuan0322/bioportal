@@ -5,7 +5,6 @@ import org.apache.commons.logging.LogFactory;
 import org.ncbo.stanford.bean.OntologyBean;
 import org.ncbo.stanford.service.concept.ConceptService;
 import org.ncbo.stanford.service.ontology.OntologyService;
-import org.ncbo.stanford.service.xml.XMLSerializationService;
 import org.ncbo.stanford.util.MessageUtils;
 import org.ncbo.stanford.view.rest.restlet.AbstractBaseRestlet;
 import org.restlet.data.Request;
@@ -17,7 +16,6 @@ public class VirtualUriRestlet extends AbstractBaseRestlet {
 	private static final Log log = LogFactory.getLog(VirtualUriRestlet.class);
 	private OntologyService ontologyService;
 	private ConceptService conceptService;
-	private XMLSerializationService xmlSerializationService;
 
 	/**
 	 * Handle GET calls here
@@ -90,10 +88,5 @@ public class VirtualUriRestlet extends AbstractBaseRestlet {
 	 */
 	public void setOntologyService(OntologyService ontologyService) {
 		this.ontologyService = ontologyService;
-	}
-
-	public void setXmlSerializationService(
-			XMLSerializationService xmlSerializationService) {
-		this.xmlSerializationService = xmlSerializationService;
 	}
 }

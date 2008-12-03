@@ -4,7 +4,6 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.ncbo.stanford.bean.UserBean;
 import org.ncbo.stanford.service.user.UserService;
-import org.ncbo.stanford.service.xml.XMLSerializationService;
 import org.ncbo.stanford.util.MessageUtils;
 import org.ncbo.stanford.util.helper.BeanHelper;
 import org.ncbo.stanford.view.rest.restlet.AbstractBaseRestlet;
@@ -15,9 +14,7 @@ import org.restlet.data.Status;
 public class UserRestlet extends AbstractBaseRestlet {
 
 	private static final Log log = LogFactory.getLog(UserRestlet.class);
-
 	private UserService userService;
-	private XMLSerializationService xmlSerializationService;
 
 	/**
 	 * Handle GET calls here
@@ -191,14 +188,5 @@ public class UserRestlet extends AbstractBaseRestlet {
 	 */
 	public void setUserService(UserService userService) {
 		this.userService = userService;
-	}
-
-	/**
-	 * @param xmlSerializationService
-	 *            to set
-	 */
-	public void setXmlSerializationService(
-			XMLSerializationService xmlSerializationService) {
-		this.xmlSerializationService = xmlSerializationService;
 	}
 }

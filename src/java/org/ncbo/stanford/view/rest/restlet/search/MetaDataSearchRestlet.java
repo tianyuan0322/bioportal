@@ -6,7 +6,6 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.ncbo.stanford.bean.OntologyBean;
 import org.ncbo.stanford.service.ontology.OntologyService;
-import org.ncbo.stanford.service.xml.XMLSerializationService;
 import org.ncbo.stanford.view.rest.restlet.AbstractBaseRestlet;
 import org.restlet.data.Reference;
 import org.restlet.data.Request;
@@ -18,9 +17,7 @@ public class MetaDataSearchRestlet extends AbstractBaseRestlet {
 	@SuppressWarnings("unused")
 	private static final Log log = LogFactory
 			.getLog(MetaDataSearchRestlet.class);
-
 	private OntologyService ontologyService;
-	private XMLSerializationService xmlSerializationService;
 
 	/**
 	 * Handle GET calls here
@@ -67,14 +64,5 @@ public class MetaDataSearchRestlet extends AbstractBaseRestlet {
 	 */
 	public void setOntologyService(OntologyService ontologyService) {
 		this.ontologyService = ontologyService;
-	}
-
-	/**
-	 * @param xmlSerializationService
-	 *            the xmlSerializationService to set
-	 */
-	public void setXmlSerializationService(
-			XMLSerializationService xmlSerializationService) {
-		this.xmlSerializationService = xmlSerializationService;
 	}
 }

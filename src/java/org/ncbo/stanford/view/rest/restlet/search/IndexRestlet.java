@@ -5,7 +5,6 @@ import javax.servlet.http.HttpServletRequest;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.ncbo.stanford.service.search.IndexSearchService;
-import org.ncbo.stanford.service.xml.XMLSerializationService;
 import org.ncbo.stanford.util.MessageUtils;
 import org.ncbo.stanford.util.RequestUtils;
 import org.ncbo.stanford.util.helper.StringHelper;
@@ -19,9 +18,7 @@ public class IndexRestlet extends AbstractBaseRestlet {
 
 	@SuppressWarnings("unused")
 	private static final Log log = LogFactory.getLog(IndexRestlet.class);
-
 	private IndexSearchService indexService;
-	private XMLSerializationService xmlSerializationService;
 
 	/**
 	 * Handle GET calls here
@@ -169,14 +166,5 @@ public class IndexRestlet extends AbstractBaseRestlet {
 	 */
 	public void setIndexService(IndexSearchService indexService) {
 		this.indexService = indexService;
-	}
-
-	/**
-	 * @param xmlSerializationService
-	 *            the xmlSerializationService to set
-	 */
-	public void setXmlSerializationService(
-			XMLSerializationService xmlSerializationService) {
-		this.xmlSerializationService = xmlSerializationService;
 	}
 }

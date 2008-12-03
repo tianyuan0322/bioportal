@@ -32,7 +32,6 @@ public class OntologyDownloadRestlet extends AbstractBaseRestlet {
 	 */
 	@Override
 	protected void getRequest(Request request, Response response) {
-		// Handle GET calls here
 		downloadOntology(request, response);
 	}
 

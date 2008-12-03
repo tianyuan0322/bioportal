@@ -6,7 +6,6 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.ncbo.stanford.bean.concept.ClassBean;
 import org.ncbo.stanford.service.concept.ConceptService;
-import org.ncbo.stanford.service.xml.XMLSerializationService;
 import org.ncbo.stanford.util.MessageUtils;
 import org.ncbo.stanford.util.RequestUtils;
 import org.ncbo.stanford.view.rest.restlet.AbstractBaseRestlet;
@@ -19,9 +18,7 @@ public class PathRestlet extends AbstractBaseRestlet {
 
 	@SuppressWarnings("unused")
 	private static final Log log = LogFactory.getLog(PathRestlet.class);
-
 	private ConceptService conceptService;
-	private XMLSerializationService xmlSerializationService;
 
 	/**
 	 * Handle GET calls here
@@ -82,14 +79,5 @@ public class PathRestlet extends AbstractBaseRestlet {
 	 */
 	public void setConceptService(ConceptService conceptService) {
 		this.conceptService = conceptService;
-	}
-
-	/**
-	 * @param xmlSerializationService
-	 *            the xmlSerializationService to set
-	 */
-	public void setXmlSerializationService(
-			XMLSerializationService xmlSerializationService) {
-		this.xmlSerializationService = xmlSerializationService;
 	}
 }

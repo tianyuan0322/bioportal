@@ -4,7 +4,6 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.ncbo.stanford.service.loader.scheduler.OntologyLoadSchedulerService;
 import org.ncbo.stanford.service.ontology.OntologyService;
-import org.ncbo.stanford.service.xml.XMLSerializationService;
 import org.ncbo.stanford.view.rest.restlet.AbstractBaseRestlet;
 import org.restlet.data.Request;
 import org.restlet.data.Response;
@@ -17,7 +16,6 @@ public class OntologyParseBatchRestlet extends AbstractBaseRestlet {
 			.getLog(OntologyParseBatchRestlet.class);
 	private OntologyService ontologyService;
 	private OntologyLoadSchedulerService ontologyLoadSchedulerService;
-	private XMLSerializationService xmlSerializationService;
 
 	/**
 	 * Handle GET calls here
@@ -84,14 +82,5 @@ public class OntologyParseBatchRestlet extends AbstractBaseRestlet {
 	public void setOntologyLoadSchedulerService(
 			OntologyLoadSchedulerService ontologyLoadSchedulerService) {
 		this.ontologyLoadSchedulerService = ontologyLoadSchedulerService;
-	}
-
-	/**
-	 * @param xmlSerializationService
-	 *            the xmlSerializationService to set
-	 */
-	public void setXmlSerializationService(
-			XMLSerializationService xmlSerializationService) {
-		this.xmlSerializationService = xmlSerializationService;
 	}
 }
