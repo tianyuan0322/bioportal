@@ -15,16 +15,22 @@
        http://www.springframework.org/schema/aop/spring-aop-2.5.xsd">
 
 	<!-- Wire all restlets -->
+	<bean id="abstractBaseRestlet"
+		class="org.ncbo.stanford.view.rest.restlet.AbstractBaseRestlet"
+		abstract="true">
+		<property name="xmlSerializationService">
+			<ref bean="xmlSerializationService" />
+		</property>
+	</bean>
+
 	<bean id="authenticationRestlet"
-		class="org.ncbo.stanford.view.rest.authentication.AuthenticationRestlet">
+		class="org.ncbo.stanford.view.rest.authentication.AuthenticationRestlet"
+		parent="abstractBaseRestlet">
 		<property name="authenticationManager">
 			<ref bean="authenticationManager" />
 		</property>
 		<property name="sessionService">
 			<ref bean="sessionService" />
-		</property>
-		<property name="xmlSerializationService">
-			<ref bean="xmlSerializationService" />
 		</property>
 		<property name="userService">
 			<ref bean="userService" />
@@ -32,177 +38,146 @@
 	</bean>
 
 	<bean id="ontologyRestlet"
-		class="org.ncbo.stanford.view.rest.restlet.ontology.OntologyRestlet">
+		class="org.ncbo.stanford.view.rest.restlet.ontology.OntologyRestlet"
+		parent="abstractBaseRestlet">
 		<property name="ontologyService">
 			<ref bean="ontologyService" />
 		</property>
-		<property name="xmlSerializationService">
-			<ref bean="xmlSerializationService" />
-		</property>
 	</bean>
 	<bean id="virtualRestlet"
-		class="org.ncbo.stanford.view.rest.restlet.ontology.VirtualUriRestlet">
+		class="org.ncbo.stanford.view.rest.restlet.ontology.VirtualUriRestlet"
+		parent="abstractBaseRestlet">
 		<property name="ontologyService">
 			<ref bean="ontologyService" />
 		</property>
 		<property name="conceptService">
 			<ref bean="conceptService" />
-		</property>
-		<property name="xmlSerializationService">
-			<ref bean="xmlSerializationService" />
 		</property>
 	</bean>
 
 	<bean id="conceptRestlet"
-		class="org.ncbo.stanford.view.rest.restlet.concept.ConceptRestlet">
+		class="org.ncbo.stanford.view.rest.restlet.concept.ConceptRestlet"
+		parent="abstractBaseRestlet">
 		<property name="conceptService">
 			<ref bean="conceptService" />
-		</property>
-		<property name="xmlSerializationService">
-			<ref bean="xmlSerializationService" />
 		</property>
 	</bean>
 
 	<bean id="queryRestlet"
-		class="org.ncbo.stanford.view.rest.restlet.search.QueryRestlet">
+		class="org.ncbo.stanford.view.rest.restlet.search.QueryRestlet"
+		parent="abstractBaseRestlet">
 		<property name="queryService">
 			<ref bean="querySearchService" />
-		</property>
-		<property name="xmlSerializationService">
-			<ref bean="xmlSerializationService" />
 		</property>
 	</bean>
 
 	<bean id="indexRestlet"
-		class="org.ncbo.stanford.view.rest.restlet.search.IndexRestlet">
+		class="org.ncbo.stanford.view.rest.restlet.search.IndexRestlet"
+		parent="abstractBaseRestlet">
 		<property name="indexService">
 			<ref bean="indexSearchService" />
-		</property>
-		<property name="xmlSerializationService">
-			<ref bean="xmlSerializationService" />
 		</property>
 	</bean>
 
 	<bean id="metadataSearchRestlet"
-		class="org.ncbo.stanford.view.rest.restlet.search.MetaDataSearchRestlet">
+		class="org.ncbo.stanford.view.rest.restlet.search.MetaDataSearchRestlet"
+		parent="abstractBaseRestlet">
 		<property name="ontologyService">
 			<ref bean="ontologyService" />
-		</property>
-		<property name="xmlSerializationService">
-			<ref bean="xmlSerializationService" />
 		</property>
 	</bean>
 
 	<bean id="pathRestlet"
-		class="org.ncbo.stanford.view.rest.restlet.path.PathRestlet">
+		class="org.ncbo.stanford.view.rest.restlet.path.PathRestlet"
+		parent="abstractBaseRestlet">
 		<property name="conceptService">
 			<ref bean="conceptService" />
-		</property>
-		<property name="xmlSerializationService">
-			<ref bean="xmlSerializationService" />
 		</property>
 	</bean>
 
 	<bean id="ontologiesRestlet"
-		class="org.ncbo.stanford.view.rest.restlet.ontology.OntologiesRestlet">
+		class="org.ncbo.stanford.view.rest.restlet.ontology.OntologiesRestlet"
+		parent="abstractBaseRestlet">
 		<property name="ontologyService">
 			<ref bean="ontologyService" />
-		</property>
-		<property name="xmlSerializationService">
-			<ref bean="xmlSerializationService" />
 		</property>
 	</bean>
 
 	<bean id="ontologiesActiveRestlet"
-		class="org.ncbo.stanford.view.rest.restlet.ontology.OntologiesActiveRestlet">
+		class="org.ncbo.stanford.view.rest.restlet.ontology.OntologiesActiveRestlet"
+		parent="abstractBaseRestlet">
 		<property name="ontologyService">
 			<ref bean="ontologyService" />
-		</property>
-		<property name="xmlSerializationService">
-			<ref bean="xmlSerializationService" />
 		</property>
 	</bean>
 
 	<bean id="ontologyVersionsRestlet"
-		class="org.ncbo.stanford.view.rest.restlet.ontology.OntologyVersionsRestlet">
+		class="org.ncbo.stanford.view.rest.restlet.ontology.OntologyVersionsRestlet"
+		parent="abstractBaseRestlet">
 		<property name="ontologyService">
 			<ref bean="ontologyService" />
-		</property>
-		<property name="xmlSerializationService">
-			<ref bean="xmlSerializationService" />
 		</property>
 	</bean>
 
 	<bean id="ontologyParseRestlet"
-		class="org.ncbo.stanford.view.rest.restlet.ontology.OntologyParseRestlet">
+		class="org.ncbo.stanford.view.rest.restlet.ontology.OntologyParseRestlet"
+		parent="abstractBaseRestlet">
 		<property name="ontologyService">
 			<ref bean="ontologyService" />
 		</property>
 		<property name="ontologyLoadSchedulerService">
 			<ref bean="ontologyLoadSchedulerService" />
-		</property>
-		<property name="xmlSerializationService">
-			<ref bean="xmlSerializationService" />
 		</property>
 	</bean>
 
 	<bean id="ontologyParseBatchRestlet"
-		class="org.ncbo.stanford.view.rest.restlet.ontology.OntologyParseBatchRestlet">
+		class="org.ncbo.stanford.view.rest.restlet.ontology.OntologyParseBatchRestlet"
+		parent="abstractBaseRestlet">
 		<property name="ontologyService">
 			<ref bean="ontologyService" />
 		</property>
 		<property name="ontologyLoadSchedulerService">
 			<ref bean="ontologyLoadSchedulerService" />
 		</property>
-		<property name="xmlSerializationService">
-			<ref bean="xmlSerializationService" />
-		</property>
 	</bean>
 
 	<bean id="ontologyDownloadRestlet"
-		class="org.ncbo.stanford.view.rest.restlet.ontology.OntologyDownloadRestlet">
+		class="org.ncbo.stanford.view.rest.restlet.ontology.OntologyDownloadRestlet"
+		parent="abstractBaseRestlet">
 		<property name="ontologyService">
 			<ref bean="ontologyService" />
 		</property>
 	</bean>
 
 	<bean id="categoriesRestlet"
-		class="org.ncbo.stanford.view.rest.restlet.ontology.CategoriesRestlet">
+		class="org.ncbo.stanford.view.rest.restlet.ontology.CategoriesRestlet"
+		parent="abstractBaseRestlet">
 		<property name="ontologyService">
 			<ref bean="ontologyService" />
-		</property>
-		<property name="xmlSerializationService">
-			<ref bean="xmlSerializationService" />
 		</property>
 	</bean>
 
 	<bean id="usersRestlet"
-		class="org.ncbo.stanford.view.rest.restlet.user.UsersRestlet">
+		class="org.ncbo.stanford.view.rest.restlet.user.UsersRestlet"
+		parent="abstractBaseRestlet">
 		<property name="userService">
 			<ref bean="userService" />
-		</property>
-		<property name="xmlSerializationService">
-			<ref bean="xmlSerializationService" />
 		</property>
 	</bean>
 
 	<bean id="userRestlet"
-		class="org.ncbo.stanford.view.rest.restlet.user.UserRestlet">
+		class="org.ncbo.stanford.view.rest.restlet.user.UserRestlet"
+		parent="abstractBaseRestlet">
 		<property name="userService">
 			<ref bean="userService" />
-		</property>
-		<property name="xmlSerializationService">
-			<ref bean="xmlSerializationService" />
 		</property>
 	</bean>
 
 	<bean id="userEmailRestlet"
-		class="org.ncbo.stanford.view.rest.restlet.user.UserEmailRestlet">
+		class="org.ncbo.stanford.view.rest.restlet.user.UserEmailRestlet"
+		parent="abstractBaseRestlet">
 		<property name="userService">
 			<ref bean="userService" />
-		</property>
-		<property name="xmlSerializationService">
-			<ref bean="xmlSerializationService" />
 		</property>
 	</bean>
 
@@ -273,7 +248,8 @@
 						<entry key="/virtual/{ontologyversionid}">
 							<ref local="virtualRestlet" />
 						</entry>
-						<entry key="/virtual/{ontologyversionid}/{conceptid}">
+						<entry
+							key="/virtual/{ontologyversionid}/{conceptid}">
 							<ref local="virtualRestlet" />
 						</entry>
 					</map>

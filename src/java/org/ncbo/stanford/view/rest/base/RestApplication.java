@@ -34,5 +34,4 @@ public class RestApplication extends Application {
 
 		return router;
 	}
-
 }

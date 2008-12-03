@@ -18,7 +18,6 @@ import org.ncbo.stanford.enumeration.ErrorTypeEnum;
 import org.ncbo.stanford.service.session.RESTfulSession;
 import org.ncbo.stanford.service.session.SessionService;
 import org.ncbo.stanford.service.user.UserService;
-import org.ncbo.stanford.service.xml.XMLSerializationService;
 import org.ncbo.stanford.util.RequestUtils;
 import org.ncbo.stanford.util.security.ui.ApplicationAuthenticationDetails;
 import org.ncbo.stanford.view.rest.restlet.AbstractBaseRestlet;
@@ -42,7 +41,6 @@ public final class AuthenticationRestlet extends AbstractBaseRestlet {
 
 	private AuthenticationManager authenticationManager;
 	private SessionService sessionService;
-	private XMLSerializationService xmlSerializationService;
 	private UserService userService;
 
 	@Override
@@ -156,15 +154,6 @@ public final class AuthenticationRestlet extends AbstractBaseRestlet {
 	 */
 	public void setSessionService(SessionService sessionService) {
 		this.sessionService = sessionService;
-	}
-
-	/**
-	 * @param xmlSerializationService
-	 *            the xmlSerializationService to set
-	 */
-	public void setXmlSerializationService(
-			XMLSerializationService xmlSerializationService) {
-		this.xmlSerializationService = xmlSerializationService;
 	}
 
 	/**
