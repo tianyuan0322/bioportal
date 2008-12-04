@@ -20,6 +20,8 @@ public class SimpleExpirationHandler<K, V> extends
 
 	@Override
 	protected void timeExpired(V object) {
-		// do nothing
+		if (log.isDebugEnabled()) {
+			log.debug("Expiring object: " + object);
+		}
 	}
 }
