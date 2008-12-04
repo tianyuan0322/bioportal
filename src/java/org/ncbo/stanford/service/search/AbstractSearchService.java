@@ -44,7 +44,7 @@ public class AbstractSearchService {
 		}
 
 		synchronized (createSearcherLock) {
-			if (hasNewerIndexFile()) {
+			if (searcher == null || hasNewerIndexFile()) {
 				reloadSearcher();
 			}
 		}
