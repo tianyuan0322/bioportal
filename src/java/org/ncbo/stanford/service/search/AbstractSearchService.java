@@ -111,7 +111,10 @@ public class AbstractSearchService {
 			log.debug("Index file has changed. Reloading searcher...");
 		}
 
-		searcher.close();
+		if (searcher != null) {
+			searcher.close();
+		}
+
 		createSearcher();
 	}
 
