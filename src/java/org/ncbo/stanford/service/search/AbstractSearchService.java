@@ -113,6 +113,7 @@ public class AbstractSearchService {
 
 		if (searcher != null) {
 			searcher.close();
+			searcher = null;
 		}
 
 		createSearcher();
