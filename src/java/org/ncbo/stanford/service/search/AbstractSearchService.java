@@ -120,7 +120,7 @@ public class AbstractSearchService {
 			if (getCurrentIndexDate().after(openIndexDate)) {
 				return true;
 			}
-		} catch (IOException e) { // no index file found
+		} catch (Exception e) { // no index file found
 		}
 
 		return false;
