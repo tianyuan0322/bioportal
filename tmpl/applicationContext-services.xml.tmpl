@@ -732,7 +732,7 @@
 	<!-- Cache to be used for all paginatable lists, 
 		such as ontology lists or search results -->
 	<bean id="paginatableExpirationHandler"
-		class="org.ncbo.stanford.util.cache.expiration.handler.impl.NullExpirationHandler" />
+		class="org.ncbo.stanford.util.cache.expiration.handler.impl.SimpleExpirationHandler" />
 
 	<bean id="paginatableHashbeltContainerFactory"
 		class="org.ncbo.stanford.util.cache.container.impl.StandardHashbeltContainerFactory" />
