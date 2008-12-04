@@ -1,5 +1,6 @@
 package org.ncbo.stanford.service.concept;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
@@ -94,14 +95,34 @@ public class ConceptHTTPClientTest extends AbstractBioPortalTest {
 		Client client = new Client(Protocol.HTTP);
 
 		try {
+			// Test CID with spaces
 			String encodedCID = URLEncoder.encode(TEST_CID2, "UTF-8");
-			
 			Response response = client.get(BASE_URL + "concepts/" + TEST_OID2 + "/" + encodedCID);
 
 			String xml = response.getEntity().getText();
 			assertNotNull(xml);
-			System.out.println(xml);
+//			System.out.println(xml);
 			assertTrue(xml.contains("<label>" + TEST_NAME2));
+			
+
+			// Test CID with spaces
+			encodedCID = URLEncoder.encode("Questionnaire Forms", "UTF-8");
+			response = client.get(BASE_URL + "concepts/" + 38563 + "/" + encodedCID);
+
+			xml = response.getEntity().getText();
+			assertNotNull(xml);
+//			System.out.println(xml);
+			assertTrue(xml.contains("<label>" + "Questionnaire Forms"));
+	
+			// Test CID with spaces
+			encodedCID = URLEncoder.encode("Symptom-Specific Treatment", "UTF-8");
+			response = client.get(BASE_URL + "concepts/" + 38563 + "/" + encodedCID);
+
+			xml = response.getEntity().getText();
+			assertNotNull(xml);
+	//		System.out.println(xml);
+			assertTrue(xml.contains("<label>" + "Symptom-Specific Treatment"));
+			
 		} catch (IOException ioe) {
 			System.out.println("ERROR in ConceptHTTPClientTest: testConceptWithSpaceID() ");
 			ioe.printStackTrace();
@@ -112,6 +133,103 @@ public class ConceptHTTPClientTest extends AbstractBioPortalTest {
 				.println("ConceptHTTPClientTest: testConceptWithSpaceID().........................DONE");
 	}
 	
+	@Test
+	public void testAbnormalCIDs() {
+		System.out
+				.println("ConceptHTTPClientTest: testAbnormalCIDs().......................BEGIN");
+
+		// Prepare HTTP client connector.
+		Client client = new Client(Protocol.HTTP);
+		
+
+		try {
+			// Test CID with spaces
+			String encodedCID = URLEncoder.encode("@_A116138", "UTF-8");
+			Response response = client.get(BASE_URL + "concepts/" + 32939 + "/" + encodedCID);
+
+			String xml = response.getEntity().getText();
+			assertNotNull(xml);
+	//		System.out.println(xml);
+			assertTrue(xml.contains("<label>" + "UMLS_ICD9CM_2006_AUI:A8359098"));
+			
+
+			// Test CID with spaces
+			encodedCID = URLEncoder.encode("@_A116934", "UTF-8");
+			response = client.get(BASE_URL + "concepts/" + 35377 + "/" + encodedCID);
+
+			xml = response.getEntity().getText();
+			assertNotNull(xml);
+//			System.out.println(xml);
+			assertTrue(xml.contains("<label>" + "@_A116934"));
+	
+				
+		} catch (IOException ioe) {
+			System.out.println("ERROR in ConceptHTTPClientTest: testAbnormalCIDs() ");
+			ioe.printStackTrace();
+			fail();
+		}
+
+		System.out
+				.println("ConceptHTTPClientTest: testAbnormalCIDs().........................DONE");
+	}
+	/*
+	// This test currently fails
+	@Test
+	public void testHTTPCIDs() {
+		System.out
+				.println("ConceptHTTPClientTest: testHTTPCIDs().......................BEGIN");
+
+			
+		// Prepare HTTP client connector.
+		Client client = new Client(Protocol.HTTP);
+		
+		try {
+			// Test HTTP CID w
+			String encodedCID = URLEncoder.encode( "http://www.ifomis.org/bfo/1.1/snap#Continuant", "UTF-8");
+			
+			String urlRequest = BASE_URL + "concepts/" + 14174 + "/" + encodedCID;
+			
+			System.out.println("Test URL: " + urlRequest);
+
+			Response response = client.get(urlRequest);
+			
+			String xml = response.getEntity().getText();
+			assertNotNull(xml);
+		System.out.println("output: " + xml);
+		
+//			assertTrue(xml.contains("<id>" +  "http://www.ifomis.org/bfo/1.1/snap#Continuant"));
+	
+
+			// Test HTTP CID
+			encodedCID = URLEncoder.encode("http://www.owl-ontologies.com/nullUA45", "UTF-8");
+			response = client.get(BASE_URL + "concepts/" + 32939 + "/" + encodedCID);
+
+			xml = response.getEntity().getText();
+			assertNotNull(xml);
+			System.out.println(xml);
+	//		assertTrue(xml.contains("<id>" + "http://www.owl-ontologies.com/nullUA45"));
+	
+			// Test HTTP CID
+			encodedCID = URLEncoder.encode("http://purl.org/nbirn/birnlex/ontology/BIRNLex-OBI-proxy.owl#birnlex_11013", "UTF-8");
+			response = client.get(BASE_URL + "concepts/" + 28096 + "/" + encodedCID);
+
+			xml = response.getEntity().getText();
+			assertNotNull(xml);
+			System.out.println("BIRN: " + xml);
+	//		assertTrue(xml.contains("<id>" + "http://www.owl-ontologies.com/nullUA45"));
+			
+				
+		} catch (IOException ioe) {
+			System.out.println("ERROR in ConceptHTTPClientTest: testHTTPCIDs() ");
+			ioe.printStackTrace();
+			fail();
+		}
+
+		System.out
+				.println("ConceptHTTPClientTest: testHTTPCIDs().........................DONE");
+	}
+	*/
+	/*
 	
 	@Test
 	public void testNCITRoot() {
@@ -137,4 +255,5 @@ public class ConceptHTTPClientTest extends AbstractBioPortalTest {
 		System.out
 				.println("ConceptHTTPClientTest: testNCITRoot().........................DONE");
 	}
+	*/
 }

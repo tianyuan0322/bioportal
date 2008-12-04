@@ -30,12 +30,13 @@ public class ConceptServiceTest extends AbstractBioPortalTest {
 	
 	private final static int NCIT_OID = 13578;
 	
-	private final static int TEST_OID1 = 38657;
-	private final static String TEST_CID1 = "@_A2318";
+
 	
 	private final static int TEST_OID2 = 38563;
 	private final static String TEST_CID2 = "Bleeding From Tongue";
-
+	
+	private final static int LONG_OID = 28837;
+	private final static String LONG_CID = "http://www.owl-ontologies.com/GeographicalRegion.owl#Geographical_Regions";
 	
 	@Autowired
 	ConceptService conceptService;
@@ -91,33 +92,28 @@ public class ConceptServiceTest extends AbstractBioPortalTest {
 		}*/
 	}
 	
-	/* Fails for now...
-	@Test
-	public void testCrypticCID() throws Exception {
-		ClassBean concept = conceptService.findConcept(TEST_OID1, TEST_CID1);
-	
-		assertEquals(TEST_CID1, concept.getId());
-		
-		ArrayList<ClassBean> subclasses = (ArrayList<ClassBean>) concept
-		.getRelations().get(ApplicationConstants.SUB_CLASS);
 
-System.out.println("Size:" + subclasses.size());
-for (ClassBean subclass : subclasses) {
-	System.out.println(subclass.getLabel()
-			+ " || "
-			+ subclass.getId()
-			+ " || "
-			+ subclass.getRelations()
-					.get(ApplicationConstants.RDF_TYPE));
-}
-	}
-	*/
 	
 	@Test
 	public void testFindConceptsWithSpaces() throws Exception {
 		ClassBean concept = conceptService.findConcept(TEST_OID2, TEST_CID2);
-	
 		assertEquals(TEST_CID2, concept.getId());
+
+		concept = conceptService.findConcept(38563, "Questionnaire Forms");
+		assertEquals("Questionnaire Forms", concept.getId());
+		
+		
+	 concept = conceptService.findConcept(38563, "Symptom-Specific Treatment");
+		assertEquals("Symptom-Specific Treatment", concept.getId());
+	}
+	
+
+	@Test
+	public void testLongCIDWithInvalid() throws Exception {
+		
+		ClassBean concept = conceptService.findConcept(LONG_OID, LONG_CID);
+	
+		assertEquals(LONG_CID, concept.getId());
 		
 		ArrayList<ClassBean> subclasses = (ArrayList<ClassBean>) concept
 		.getRelations().get(ApplicationConstants.SUB_CLASS);
@@ -132,7 +128,68 @@ for (ClassBean subclass : subclasses) {
 					.get(ApplicationConstants.RDF_TYPE));
 }
 	}
+
+	@Test
+	public void testHTTPCIDs() throws Exception {
+		
+		ClassBean concept = conceptService.findConcept(14174, "http://www.ifomis.org/bfo/1.1/span#Occurrent");
+		assertEquals("http://www.ifomis.org/bfo/1.1/span#Occurrent", concept.getId());
+		
+		System.out.println("Occurant: " + concept.toString());
+		
+
+	//	concept = conceptService.findConcept(14174, "obi:OBI_69");
+	//	assertEquals("obi:OBI_69", concept.getId());
+
+		concept = conceptService.findConcept(14174, "http://www.ifomis.org/bfo/1.1/snap#Continuant");
+		assertEquals("http://www.ifomis.org/bfo/1.1/snap#Continuant", concept.getId());
+
+		System.out.println("Continuant: " + concept.toString());
+/*
+		 concept = conceptService.findConcept(32939, "http://www.owl-ontologies.com/nullUA45");
+		assertEquals("http://www.owl-ontologies.com/nullUA45", concept.getId());
+	*/
+	}
 	
+	@Test
+	public void testAbnormalCIDs() throws Exception {
+	
+		try {
+			System.out.println("Starting testAbnormalCIDs()...");
+			ClassBean concept = conceptService.findConcept(38657, "@_A2318");
+//			System.out.println("Abnormal @_2318: " + concept.toString());
+			assertEquals("@_A2318", concept.getId());
+			
+			 concept = conceptService.findConcept(32939, "@_A115449");
+//			System.out.println("Abnormal: " + concept.toString());
+			assertEquals("@_A115449", concept.getId());
+
+			 concept = conceptService.findConcept(32939, "@_A114928");
+//			System.out.println("Abnormal: " + concept.toString());
+			assertEquals("@_A114928", concept.getId());
+
+			 concept = conceptService.findConcept(32939, "@_A116138");
+//			System.out.println("Abnormal: " + concept.toString());
+			assertEquals("@_A116138", concept.getId());
+
+			 concept = conceptService.findConcept(35377, "@_A116934");
+//			System.out.println("Abnormal: " + concept.toString());
+			assertEquals("@_A116934", concept.getId());
+
+			 concept = conceptService.findConcept(32947, "region1:Europe");
+//				System.out.println("Abnormal: " + concept.toString());
+				assertEquals("region1:Europe", concept.getId());
+				
+
+		}
+		catch (Exception exc) {
+			exc.printStackTrace();
+			
+			fail("Unable to get the abnormal CIDs: " + exc.getMessage());
+		}
+	
+	}
+
 	/*
 	@Test
 	public void testFindConcept() throws Exception {
