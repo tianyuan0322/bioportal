@@ -321,7 +321,7 @@ public class OntologyRetrievalManagerProtegeImpl extends
 
 		// add properties
 		for (Slot slot : slots) {
-			Collection classes = (isOwl && slot instanceof RDFProperty) ? ((OWLNamedClass) concept)
+			Collection classes = (isOwl && slot instanceof RDFProperty) ? ((RDFSNamedClass) concept)
 					.getPropertyValues((RDFProperty) slot)
 					: concept.getOwnSlotValues(slot);
 			List vals = getUniqueClasses(classes);
