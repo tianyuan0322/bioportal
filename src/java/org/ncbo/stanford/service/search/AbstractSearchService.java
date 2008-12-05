@@ -22,6 +22,14 @@ import org.ncbo.stanford.bean.search.SearchResultListBean;
 import org.ncbo.stanford.enumeration.SearchRecordTypeEnum;
 import org.ncbo.stanford.util.cache.expiration.system.ExpirationSystem;
 
+/**
+ * Abstract class to contain functionality common to both query and indexing
+ * services
+ * 
+ * 
+ * @author Michael Dorf
+ * 
+ */
 public class AbstractSearchService {
 
 	@SuppressWarnings("unused")
@@ -38,7 +46,15 @@ public class AbstractSearchService {
 	private Date openIndexDate;
 	private Object createSearcherLock = new Object();
 
+	/**
+	 * Executes a query against the Lucene index
+	 * 
+	 * @param query
+	 * @return
+	 * @throws Exception
+	 */
 	protected SearchResultListBean runQuery(Query query) throws Exception {
+		// reloading searcher must be synchronized to avoid null searchers
 		synchronized (createSearcherLock) {
 			if (searcher == null || hasNewerIndexFile()) {
 				reloadSearcher();
@@ -48,7 +64,7 @@ public class AbstractSearchService {
 		if (log.isDebugEnabled()) {
 			log.debug("Executing Query: " + query);
 		}
-		
+
 		TopFieldDocs docs = null;
 
 		try {
@@ -93,6 +109,11 @@ public class AbstractSearchService {
 		return searchResults;
 	}
 
+	/**
+	 * Returns the sort fields for the query
+	 * 
+	 * @return
+	 */
 	private Sort getSortFields() {
 		SortField[] fields = { SortField.FIELD_SCORE,
 				new SortField(SearchIndexBean.RECORD_TYPE_FIELD_LABEL),
@@ -101,11 +122,21 @@ public class AbstractSearchService {
 		return new Sort(fields);
 	}
 
+	/**
+	 * Creates a new instance of the searcher
+	 * 
+	 * @throws IOException
+	 */
 	private void createSearcher() throws IOException {
 		searcher = new IndexSearcher(indexPath);
 		openIndexDate = getCurrentIndexDate();
 	}
 
+	/**
+	 * Reloads the searcher, disposes of the old searcher
+	 * 
+	 * @throws IOException
+	 */
 	private void reloadSearcher() throws IOException {
 		if (log.isDebugEnabled()) {
 			log.debug("Index file has changed. Reloading searcher...");
@@ -118,6 +149,11 @@ public class AbstractSearchService {
 		createSearcher();
 	}
 
+	/**
+	 * Determines whether the index file has changed
+	 * 
+	 * @return
+	 */
 	private boolean hasNewerIndexFile() {
 		try {
 			if (getCurrentIndexDate().after(openIndexDate)) {
@@ -130,7 +166,7 @@ public class AbstractSearchService {
 	}
 
 	/**
-	 * @return Creation date of current used search index.
+	 * @return creation date of current used search index
 	 */
 	private Date getCurrentIndexDate() throws IOException {
 		return new Date(IndexReader.getCurrentVersion(indexPath));
