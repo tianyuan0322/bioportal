@@ -23,12 +23,31 @@ import org.ncbo.stanford.util.paginator.Paginator;
 import org.ncbo.stanford.util.paginator.impl.Page;
 import org.ncbo.stanford.util.paginator.impl.PaginatorImpl;
 
+/**
+ * A default implementation of the QuerySearchService
+ * 
+ * @author Michael Dorf
+ * 
+ */
 public class QuerySearchServiceImpl extends AbstractSearchService implements
 		QuerySearchService {
 
 	@SuppressWarnings("unused")
-	private static final Log log = LogFactory.getLog(QuerySearchServiceImpl.class);
+	private static final Log log = LogFactory
+			.getLog(QuerySearchServiceImpl.class);
 
+	/**
+	 * Execute a search query for a given expression and return results in a
+	 * form of a single page (of specified size)
+	 * 
+	 * @param expr
+	 * @param includeProperties
+	 * @param isExactMatch
+	 * @param pageSize
+	 * @param pageNum
+	 * @return
+	 * @throws Exception
+	 */
 	public Page<SearchBean> executeQuery(String expr,
 			boolean includeProperties, boolean isExactMatch, Integer pageSize,
 			Integer pageNum) throws Exception {
@@ -36,11 +55,35 @@ public class QuerySearchServiceImpl extends AbstractSearchService implements
 				pageSize, pageNum);
 	}
 
+	/**
+	 * Execute a search query for a given expression and return ALL results in a
+	 * form of a single page
+	 * 
+	 * @param expr
+	 * @param includeProperties
+	 * @param isExactMatch
+	 * @return
+	 * @throws Exception
+	 */
 	public Page<SearchBean> executeQuery(String expr,
 			boolean includeProperties, boolean isExactMatch) throws Exception {
 		return executeQuery(expr, null, includeProperties, isExactMatch);
 	}
 
+	/**
+	 * Execute a search query for a given expression, limiting search to the
+	 * specific ontologies. Return results in a form of a single page (of
+	 * specified size)
+	 * 
+	 * @param expr
+	 * @param ontologyIds
+	 * @param includeProperties
+	 * @param isExactMatch
+	 * @param pageSize
+	 * @param pageNum
+	 * @return
+	 * @throws Exception
+	 */
 	public Page<SearchBean> executeQuery(String expr,
 			Collection<Integer> ontologyIds, boolean includeProperties,
 			boolean isExactMatch, Integer pageSize, Integer pageNum)
@@ -51,6 +94,17 @@ public class QuerySearchServiceImpl extends AbstractSearchService implements
 		return executeQuery(query, pageSize, pageNum);
 	}
 
+	/**
+	 * Execute a search query for a given expression, limiting search to the
+	 * specific ontologies. Return ALL results in a form of a single page
+	 * 
+	 * @param expr
+	 * @param ontologyIds
+	 * @param includeProperties
+	 * @param isExactMatch
+	 * @return
+	 * @throws Exception
+	 */
 	public Page<SearchBean> executeQuery(String expr,
 			Collection<Integer> ontologyIds, boolean includeProperties,
 			boolean isExactMatch) throws Exception {
@@ -60,10 +114,28 @@ public class QuerySearchServiceImpl extends AbstractSearchService implements
 		return executeQuery(query);
 	}
 
+	/**
+	 * Execute a search from an already constructed Query object. Return results
+	 * in a form of a single page (of specified size)
+	 * 
+	 * @param query
+	 * @param pageSize
+	 * @param pageNum
+	 * @return
+	 * @throws Exception
+	 */
 	public Page<SearchBean> executeQuery(Query query) throws Exception {
 		return executeQuery(query, null, null);
 	}
 
+	/**
+	 * Execute a search from an already constructed Query object. Return ALL
+	 * results in a form of a single page
+	 * 
+	 * @param query
+	 * @return
+	 * @throws Exception
+	 */
 	public Page<SearchBean> executeQuery(Query query, Integer pageSize,
 			Integer pageNum) throws Exception {
 		long start = System.currentTimeMillis();
@@ -106,6 +178,16 @@ public class QuerySearchServiceImpl extends AbstractSearchService implements
 		return page;
 	}
 
+	/**
+	 * Generate a search query from the expression and optional ontology ids
+	 * 
+	 * @param ontologyIds
+	 * @param expr
+	 * @param includeProperties
+	 * @param isExactMatch
+	 * @return
+	 * @throws IOException
+	 */
 	public Query generateLuceneSearchQuery(Collection<Integer> ontologyIds,
 			String expr, boolean includeProperties, boolean isExactMatch)
 			throws IOException {
@@ -123,6 +205,14 @@ public class QuerySearchServiceImpl extends AbstractSearchService implements
 		return query;
 	}
 
+	/**
+	 * Constructs the contents field clause for "exact match" searches and adds
+	 * it to the main query
+	 * 
+	 * @param expr
+	 * @param query
+	 * @throws IOException
+	 */
 	private void addContentsClauseExact(String expr, BooleanQuery query)
 			throws IOException {
 		TermQuery q = new TermQuery(new Term(
@@ -131,6 +221,14 @@ public class QuerySearchServiceImpl extends AbstractSearchService implements
 		query.add(q, BooleanClause.Occur.MUST);
 	}
 
+	/**
+	 * Constructs the contents field clause for "regular (non-exact) match"
+	 * searches and adds it to the main query
+	 * 
+	 * @param expr
+	 * @param query
+	 * @throws IOException
+	 */
 	private void addContentsClauseContains(String expr, BooleanQuery query)
 			throws IOException {
 		QueryParser parser = new QueryParser(
@@ -148,6 +246,13 @@ public class QuerySearchServiceImpl extends AbstractSearchService implements
 		}
 	}
 
+	/**
+	 * Constructs the search clause for searching ontology properties and adds
+	 * it to the main query
+	 * 
+	 * @param includeProperties
+	 * @param query
+	 */
 	private void addPropertiesClause(boolean includeProperties,
 			BooleanQuery query) {
 		if (!includeProperties) {
@@ -157,6 +262,13 @@ public class QuerySearchServiceImpl extends AbstractSearchService implements
 		}
 	}
 
+	/**
+	 * Adds the clause that limits the search to the given ontology ids to the
+	 * main query
+	 * 
+	 * @param ontologyIds
+	 * @param query
+	 */
 	private void addOntologyIdsClause(Collection<Integer> ontologyIds,
 			BooleanQuery query) {
 		if (ontologyIds != null && !ontologyIds.isEmpty()) {
@@ -165,6 +277,13 @@ public class QuerySearchServiceImpl extends AbstractSearchService implements
 		}
 	}
 
+	/**
+	 * Constructs the search clause that limits the search to the given ontology
+	 * ids
+	 * 
+	 * @param ontologyIds
+	 * @return
+	 */
 	private Query generateOntologyIdsQuery(Collection<Integer> ontologyIds) {
 		BooleanQuery query = new BooleanQuery();
 

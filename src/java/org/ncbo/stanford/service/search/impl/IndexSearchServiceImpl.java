@@ -19,6 +19,12 @@ import org.ncbo.stanford.service.search.AbstractSearchService;
 import org.ncbo.stanford.service.search.IndexSearchService;
 import org.ncbo.stanford.wrapper.LuceneIndexWriterWrapper;
 
+/**
+ * The default implementation of the IndexSearchService
+ * 
+ * @author Michael Dorf
+ * 
+ */
 public class IndexSearchServiceImpl extends AbstractSearchService implements
 		IndexSearchService {
 
@@ -34,31 +40,11 @@ public class IndexSearchServiceImpl extends AbstractSearchService implements
 	private Map<String, OntologySearchManager> ontologySearchHandlerMap = new HashMap<String, OntologySearchManager>(
 			0);
 
-	public void indexOntology(Integer ontologyId) throws Exception {
-		indexOntology(ontologyId, true, true);
-	}
-
-	public void indexOntology(Integer ontologyId, boolean doBackup,
-			boolean doOptimize) throws Exception {
-		VNcboOntology ontology = ncboOntologyVersionDAO
-				.findLatestActiveOntologyVersion(ontologyId);
-
-		if (ontology != null) {
-			try {
-				LuceneIndexWriterWrapper writer = new LuceneIndexWriterWrapper(
-						indexPath, analyzer);
-				writer.setMergeFactor(indexMergeFactor);
-				writer.setMaxMergeDocs(indexMaxMergeDocs);
-
-				indexOntology(writer, ontology, doBackup, doOptimize);
-
-				closeWriter(writer, true);
-			} catch (Exception e) {
-				handleException(ontology, e, false);
-			}
-		}
-	}
-
+	/**
+	 * Recreate the index of all ontologies, overwriting the existing one
+	 * 
+	 * @throws Exception
+	 */
 	public void indexAllOntologies() throws Exception {
 		long start = System.currentTimeMillis();
 		List<VNcboOntology> ontologies = ncboOntologyVersionDAO
@@ -88,10 +74,64 @@ public class IndexSearchServiceImpl extends AbstractSearchService implements
 		}
 	}
 
+	/**
+	 * Index a given ontology
+	 * 
+	 * @param ontologyId
+	 * @throws Exception
+	 */
+	public void indexOntology(Integer ontologyId) throws Exception {
+		indexOntology(ontologyId, true, true);
+	}
+
+	/**
+	 * Index a given ontology with options to backup and optimize index
+	 * 
+	 * @param ontologyId
+	 * @param doBackup
+	 * @param doOptimize
+	 * @throws Exception
+	 */
+	public void indexOntology(Integer ontologyId, boolean doBackup,
+			boolean doOptimize) throws Exception {
+		VNcboOntology ontology = ncboOntologyVersionDAO
+				.findLatestActiveOntologyVersion(ontologyId);
+
+		if (ontology != null) {
+			try {
+				LuceneIndexWriterWrapper writer = new LuceneIndexWriterWrapper(
+						indexPath, analyzer);
+				writer.setMergeFactor(indexMergeFactor);
+				writer.setMaxMergeDocs(indexMaxMergeDocs);
+
+				indexOntology(writer, ontology, doBackup, doOptimize);
+
+				closeWriter(writer, true);
+			} catch (Exception e) {
+				handleException(ontology, e, false);
+			}
+		}
+	}
+
+	/**
+	 * Remove an ontology from index
+	 * 
+	 * @param ontologyId
+	 * @throws Exception
+	 */
 	public void removeOntology(Integer ontologyId) throws Exception {
 		removeOntology(ontologyId, true, true);
 	}
 
+	/**
+	 * Remove a given ontology from index with options to backup and optimize
+	 * index
+	 * 
+	 * @param ontologyId
+	 * @param doBackup
+	 * @param doOptimize
+	 * @throws Exception
+	 */
 	public void removeOntology(Integer ontologyId, boolean doBackup,
 			boolean doOptimize) throws Exception {
 		VNcboOntology ontology = ncboOntologyVersionDAO
@@ -109,6 +149,11 @@ public class IndexSearchServiceImpl extends AbstractSearchService implements
 		}
 	}
 
+	/**
+	 * Create a backup of the existing search index
+	 * 
+	 * @throws Exception
+	 */
 	public void backupIndex() throws Exception {
 		LuceneIndexWriterWrapper writer = new LuceneIndexWriterWrapper(
 				indexPath, analyzer);
@@ -116,6 +161,11 @@ public class IndexSearchServiceImpl extends AbstractSearchService implements
 		closeWriter(writer, false);
 	}
 
+	/**
+	 * Run an optimization command on the existing index
+	 * 
+	 * @throws Exception
+	 */
 	public void optimizeIndex() throws Exception {
 		LuceneIndexWriterWrapper writer = new LuceneIndexWriterWrapper(
 				indexPath, analyzer);
@@ -123,6 +173,13 @@ public class IndexSearchServiceImpl extends AbstractSearchService implements
 		closeWriter(writer, false);
 	}
 
+	/**
+	 * Close the given writer and reload search results cache
+	 * 
+	 * @param writer
+	 * @param reloadCache
+	 * @throws IOException
+	 */
 	private void closeWriter(LuceneIndexWriterWrapper writer,
 			boolean reloadCache) throws IOException {
 		writer.closeWriter();
@@ -133,6 +190,10 @@ public class IndexSearchServiceImpl extends AbstractSearchService implements
 		}
 	}
 
+	/**
+	 * Reload search results cache by re-running all queries in it and
+	 * re-populating it with new results
+	 */
 	private void reloadCache() {
 		long start = 0;
 		long stop = 0;
@@ -170,6 +231,15 @@ public class IndexSearchServiceImpl extends AbstractSearchService implements
 		}
 	}
 
+	/**
+	 * Index a given ontology with options to backup and optimize the index
+	 * 
+	 * @param writer
+	 * @param ontology
+	 * @param doBackup
+	 * @param doOptimize
+	 * @throws Exception
+	 */
 	private void indexOntology(LuceneIndexWriterWrapper writer,
 			VNcboOntology ontology, boolean doBackup, boolean doOptimize)
 			throws Exception {
@@ -211,6 +281,16 @@ public class IndexSearchServiceImpl extends AbstractSearchService implements
 		}
 	}
 
+	/**
+	 * Remove an ontology from index with options to backup and optimize the
+	 * index
+	 * 
+	 * @param writer
+	 * @param ontology
+	 * @param doBackup
+	 * @param doOptimize
+	 * @throws Exception
+	 */
 	private void removeOntology(LuceneIndexWriterWrapper writer,
 			VNcboOntology ontology, boolean doBackup, boolean doOptimize)
 			throws Exception {
@@ -234,6 +314,12 @@ public class IndexSearchServiceImpl extends AbstractSearchService implements
 		}
 	}
 
+	/**
+	 * Backup the index
+	 * 
+	 * @param writer
+	 * @throws Exception
+	 */
 	private void backupIndex(LuceneIndexWriterWrapper writer) throws Exception {
 		long start = 0;
 		long stop = 0;
@@ -253,6 +339,12 @@ public class IndexSearchServiceImpl extends AbstractSearchService implements
 		}
 	}
 
+	/**
+	 * Otimize the index
+	 * 
+	 * @param writer
+	 * @throws Exception
+	 */
 	private void optimizeIndex(LuceneIndexWriterWrapper writer)
 			throws Exception {
 		long start = 0;
@@ -272,6 +364,15 @@ public class IndexSearchServiceImpl extends AbstractSearchService implements
 		}
 	}
 
+	/**
+	 * Provides error handling for different scenarios, where the exception
+	 * either has to be thrown or muted
+	 * 
+	 * @param ontology
+	 * @param e
+	 * @param ignoreErrors
+	 * @throws Exception
+	 */
 	private void handleException(VNcboOntology ontology, Exception e,
 			boolean ignoreErrors) throws Exception {
 		Throwable t = e.getCause();
@@ -300,6 +401,12 @@ public class IndexSearchServiceImpl extends AbstractSearchService implements
 		}
 	}
 
+	/**
+	 * Returns the search manager for a given ontology format
+	 * 
+	 * @param format
+	 * @return
+	 */
 	private OntologySearchManager getOntologySearchManager(String format) {
 		return ontologyFormatHandlerMap.containsKey(format) ? ontologySearchHandlerMap
 				.get(ontologyFormatHandlerMap.get(format))
