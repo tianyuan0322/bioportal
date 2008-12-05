@@ -43,6 +43,12 @@ import org.restlet.data.Status;
 import com.thoughtworks.xstream.XStream;
 import com.thoughtworks.xstream.io.xml.TraxSource;
 
+/**
+ * A default implementation of the XMLSerializationService
+ * 
+ * @author Michael Dorf
+ *
+ */
 public class XMLSerializationServiceImpl implements XMLSerializationService {
 
 	private static final Log log = LogFactory
