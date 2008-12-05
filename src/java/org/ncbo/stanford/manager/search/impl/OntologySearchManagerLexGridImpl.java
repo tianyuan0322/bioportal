@@ -24,9 +24,19 @@ import org.ncbo.stanford.manager.AbstractOntologyManagerLexGrid;
 import org.ncbo.stanford.manager.search.OntologySearchManager;
 import org.ncbo.stanford.wrapper.LuceneIndexWriterWrapper;
 
+/**
+ * Implements the OntologySearchManager interface that deals specifically with
+ * ontologies handled by LexGrid backend
+ * 
+ * @author Michael Dorf
+ * 
+ */
 public class OntologySearchManagerLexGridImpl extends
 		AbstractOntologyManagerLexGrid implements OntologySearchManager {
 
+	/**
+	 * Index a given ontology
+	 */
 	public void indexOntology(LuceneIndexWriterWrapper writer, VNcboOntology ontology)
 			throws Exception {
 		Integer ontologyVersionId = ontology.getId();
@@ -71,6 +81,18 @@ public class OntologySearchManagerLexGridImpl extends
 		matchIterator.release();
 	}
 
+	/**
+	 * Adds documents to index that define "presentation" type properties in LexGrid
+	 * 
+	 * @param writer
+	 * @param doc
+	 * @param ontologyVersionId
+	 * @param ontologyId
+	 * @param ontologyDisplayLabel
+	 * @param concept
+	 * @return
+	 * @throws IOException
+	 */
 	private String setPresentationProperties(LuceneIndexWriterWrapper writer,
 			SearchIndexBean doc, Integer ontologyVersionId, Integer ontologyId,
 			String ontologyDisplayLabel, Concept concept) throws IOException {
@@ -100,6 +122,18 @@ public class OntologySearchManagerLexGridImpl extends
 		return preferredName;
 	}
 
+	/**
+	 * Adds documents to index that define "generic" type properties in LexGrid
+	 * 
+	 * @param writer
+	 * @param doc
+	 * @param ontologyVersionId
+	 * @param ontologyId
+	 * @param ontologyDisplayLabel
+	 * @param preferredName
+	 * @param concept
+	 * @throws IOException
+	 */
 	private void setGenericProperties(LuceneIndexWriterWrapper writer,
 			SearchIndexBean doc, Integer ontologyVersionId, Integer ontologyId,
 			String ontologyDisplayLabel, String preferredName, Concept concept)
@@ -115,6 +149,18 @@ public class OntologySearchManagerLexGridImpl extends
 		}
 	}
 
+	/**
+	 * Adds documents to index that define "definition" type properties in LexGrid
+	 * 
+	 * @param writer
+	 * @param doc
+	 * @param ontologyVersionId
+	 * @param ontologyId
+	 * @param ontologyDisplayLabel
+	 * @param preferredName
+	 * @param concept
+	 * @throws IOException
+	 */
 	private void setDefinitionProperties(LuceneIndexWriterWrapper writer,
 			SearchIndexBean doc, Integer ontologyVersionId, Integer ontologyId,
 			String ontologyDisplayLabel, String preferredName, Concept concept)
@@ -131,6 +177,18 @@ public class OntologySearchManagerLexGridImpl extends
 		}
 	}
 
+	/**
+	 * Adds documents to index that define "comment" type properties in LexGrid
+	 * 
+	 * @param writer
+	 * @param doc
+	 * @param ontologyVersionId
+	 * @param ontologyId
+	 * @param ontologyDisplayLabel
+	 * @param preferredName
+	 * @param concept
+	 * @throws IOException
+	 */
 	private void setCommentProperties(LuceneIndexWriterWrapper writer,
 			SearchIndexBean doc, Integer ontologyVersionId, Integer ontologyId,
 			String ontologyDisplayLabel, String preferredName, Concept concept)
@@ -146,6 +204,18 @@ public class OntologySearchManagerLexGridImpl extends
 		}
 	}
 
+	/**
+	 * Adds documents to index that define "instruction" type properties in LexGrid
+	 * 
+	 * @param writer
+	 * @param doc
+	 * @param ontologyVersionId
+	 * @param ontologyId
+	 * @param ontologyDisplayLabel
+	 * @param preferredName
+	 * @param concept
+	 * @throws IOException
+	 */
 	private void setInstructionProperties(LuceneIndexWriterWrapper writer,
 			SearchIndexBean doc, Integer ontologyVersionId, Integer ontologyId,
 			String ontologyDisplayLabel, String preferredName, Concept concept)
@@ -162,6 +232,13 @@ public class OntologySearchManagerLexGridImpl extends
 		}
 	}
 
+	/**
+	 * Populate a single record in the index
+	 * 
+	 * @param doc
+	 * @param conceptId
+	 * @param prop
+	 */
 	private void populateIndexBean(SearchIndexBean doc, String conceptId,
 			LexGridSearchProperty prop) {
 		doc.populateInstance(prop.getOntologyVersionId(), prop.getOntologyId(),

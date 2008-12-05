@@ -31,6 +31,13 @@ import edu.stanford.smi.protegex.owl.model.NamespaceUtil;
 import edu.stanford.smi.protegex.owl.model.OWLModel;
 import edu.stanford.smi.protegex.owl.model.RDFResource;
 
+/**
+ * Implements the OntologySearchManager interface that deals specifically with
+ * ontologies handled by Protege backend
+ * 
+ * @author Michael Dorf
+ * 
+ */
 public class OntologySearchManagerProtegeImpl extends
 		AbstractOntologyManagerProtege implements OntologySearchManager {
 
@@ -38,6 +45,9 @@ public class OntologySearchManagerProtegeImpl extends
 	private static final Log log = LogFactory
 			.getLog(OntologySearchManagerProtegeImpl.class);
 
+	/**
+	 * Index a given ontology
+	 */
 	@SuppressWarnings("unchecked")
 	public void indexOntology(LuceneIndexWriterWrapper writer,
 			VNcboOntology ontology) throws Exception {
@@ -95,6 +105,18 @@ public class OntologySearchManagerProtegeImpl extends
 		}
 	}
 
+	/**
+	 * Adds a single Protege slot to the index
+	 * 
+	 * @param writer
+	 * @param doc
+	 * @param kb
+	 * @param nfs
+	 * @param protegeFrame
+	 * @param slot
+	 * @param owlMode
+	 * @throws IOException
+	 */
 	@SuppressWarnings("unchecked")
 	private void addSlotToIndex(LuceneIndexWriterWrapper writer,
 			SearchIndexBean doc, KnowledgeBase kb, NarrowFrameStore nfs,
@@ -116,6 +138,19 @@ public class OntologySearchManagerProtegeImpl extends
 		}
 	}
 
+	/**
+	 * Adds the preferred name slot to index
+	 * 
+	 * @param writer
+	 * @param doc
+	 * @param kb
+	 * @param nfs
+	 * @param protegeFrame
+	 * @param preferredNameSlot
+	 * @param owlMode
+	 * @return
+	 * @throws IOException
+	 */
 	@SuppressWarnings("unchecked")
 	private String addPreferredNameSlotToIndex(LuceneIndexWriterWrapper writer,
 			SearchIndexBean doc, KnowledgeBase kb, NarrowFrameStore nfs,
@@ -144,6 +179,15 @@ public class OntologySearchManagerProtegeImpl extends
 		return preferredName;
 	}
 
+	/**
+	 * Populates the index bean with data for a single record
+	 * 
+	 * @param doc
+	 * @param nfs
+	 * @param luceneProtegeFrame
+	 * @param value
+	 * @param owlMode
+	 */
 	private void populateIndexBean(SearchIndexBean doc, NarrowFrameStore nfs,
 			ProtegeSearchFrame luceneProtegeFrame, String value, boolean owlMode) {
 		value = stripLanguageIdentifier(value, owlMode);
@@ -158,6 +202,13 @@ public class OntologySearchManagerProtegeImpl extends
 						.getFrame()), preferredName, value, value);
 	}
 
+	/**
+	 * Removes the language identifier from the value
+	 * 
+	 * @param value
+	 * @param owlMode
+	 * @return
+	 */
 	private String stripLanguageIdentifier(String value, boolean owlMode) {
 		if (owlMode && value.startsWith("~#")) {
 			value = value.substring(5);
@@ -166,6 +217,13 @@ public class OntologySearchManagerProtegeImpl extends
 		return value;
 	}
 
+	/**
+	 * Returns the name of a given frame
+	 * 
+	 * @param nfs
+	 * @param frame
+	 * @return
+	 */
 	@SuppressWarnings("unchecked")
 	private String getFrameName(NarrowFrameStore nfs, Frame frame) {
 		Collection values = nfs.getValues(frame, (Slot) nfs
@@ -178,6 +236,12 @@ public class OntologySearchManagerProtegeImpl extends
 		return (String) values.iterator().next();
 	}
 
+	/**
+	 * Returns the concept id representation minus the namespace prefix
+	 * 
+	 * @param frame
+	 * @return
+	 */
 	private String getConceptIdShort(Frame frame) {
 		if (frame instanceof RDFResource) {
 			RDFResource rdfNode = (RDFResource) frame;
@@ -188,6 +252,12 @@ public class OntologySearchManagerProtegeImpl extends
 		}
 	}
 
+	/**
+	 * Returns all slots that identify ontology "properties"
+	 * 
+	 * @param kb
+	 * @return
+	 */
 	@SuppressWarnings("unchecked")
 	private Set<Slot> getPropertySlots(KnowledgeBase kb) {
 		Set<Slot> allSlots = new HashSet<Slot>();
@@ -214,6 +284,14 @@ public class OntologySearchManagerProtegeImpl extends
 		return propertySlots;
 	}
 
+	/**
+	 * Returns all possible preferred name slots. The caller is responsible for
+	 * selecting the most appropriate slot for indexing.
+	 * 
+	 * @param kb
+	 * @param preferredNameSlotName
+	 * @return
+	 */
 	private List<Slot> getPreferredNameSlots(KnowledgeBase kb,
 			String preferredNameSlotName) {
 		List<Slot> slots = new ArrayList<Slot>();
