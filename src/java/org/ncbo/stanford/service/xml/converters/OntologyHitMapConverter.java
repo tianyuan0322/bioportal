@@ -11,6 +11,13 @@ import com.thoughtworks.xstream.io.HierarchicalStreamReader;
 import com.thoughtworks.xstream.io.HierarchicalStreamWriter;
 import com.thoughtworks.xstream.mapper.Mapper;
 
+/**
+ * Implements an XStream converter that serializes the OntologyHitMap objects
+ * into XML
+ * 
+ * @author Michael Dorf
+ * 
+ */
 public class OntologyHitMapConverter extends TreeMapConverter {
 
 	public OntologyHitMapConverter(Mapper mapper) {
