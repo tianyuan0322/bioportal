@@ -24,7 +24,7 @@ public class HashlistBasedHashbeltContainer<K, V> implements
 	private HashMap<K, V> keysToExpirableObjects = new HashMap<K, V>();
 	private LinkedList<V> expirableObjects = new LinkedList<V>();
 
-	public void clear() {
+	public synchronized void clear() {
 		keysToExpirableObjects.clear();
 	}
 
@@ -53,11 +53,11 @@ public class HashlistBasedHashbeltContainer<K, V> implements
 		expirableObjects.add(value);
 	}
 
-	public Iterator<V> getValues() {
+	public synchronized Iterator<V> getValues() {
 		return expirableObjects.iterator();
 	}
 
-	public Iterator<K> getKeys() {
+	public synchronized Iterator<K> getKeys() {
 		ArrayList<K> keys = new ArrayList<K>(keysToExpirableObjects.keySet());
 
 		return keys.iterator();

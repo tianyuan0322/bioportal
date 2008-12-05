@@ -28,7 +28,7 @@ public class FastIteratingHashbeltContainer<K, V> implements
 	private ArrayList<V> values = new ArrayList<V>();
 	private ArrayList<K> keys = new ArrayList<K>();
 
-	public void clear() {
+	public synchronized void clear() {
 		keysToExpirableObjects.clear();
 		values.clear();
 	}
@@ -67,11 +67,11 @@ public class FastIteratingHashbeltContainer<K, V> implements
 		keys.add(key);
 	}
 
-	public Iterator<V> getValues() {
+	public synchronized Iterator<V> getValues() {
 		return values.iterator();
 	}
 
-	public Iterator<K> getKeys() {
+	public synchronized Iterator<K> getKeys() {
 		return keys.iterator();
 	}
 

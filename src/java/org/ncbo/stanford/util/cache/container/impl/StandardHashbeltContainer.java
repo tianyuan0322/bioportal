@@ -18,7 +18,7 @@ import org.ncbo.stanford.util.cache.container.HashbeltContainer;
 public class StandardHashbeltContainer<K, V> implements HashbeltContainer<K, V> {
 	private HashMap<K, V> keysToExpirableObjects = new HashMap<K, V>();
 
-	public void clear() {
+	public synchronized void clear() {
 		keysToExpirableObjects.clear();
 	}
 
@@ -38,12 +38,12 @@ public class StandardHashbeltContainer<K, V> implements HashbeltContainer<K, V> 
 		keysToExpirableObjects.put(key, value);
 	}
 
-	public Iterator<V> getValues() {
+	public synchronized Iterator<V> getValues() {
 		ArrayList<V> values = new ArrayList<V>(keysToExpirableObjects.values());
 		return values.iterator();
 	}
 
-	public Iterator<K> getKeys() {
+	public synchronized Iterator<K> getKeys() {
 		ArrayList<K> keys = new ArrayList<K>(keysToExpirableObjects.keySet());
 		
 		return keys.iterator();
