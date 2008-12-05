@@ -15,8 +15,17 @@
 
 		<script language="JavaScript">
 			function onSubmitForm(form) {
-		   		form.action = "/bioportal/rest/ontologies/index/" + (form.ontologyid) ? form.ontologyid.value : "";
-		  		return true;
+				var ontologyId = (form.ontologyid) ? form.ontologyid.value : "";
+				var submitOk = true;
+
+		   		if (ontologyId == "all" && !confirm("Are you sure? This is a time-consuming " +
+					"opertation that will re-create the entire index. It cannot be undone.")) {
+					submitOk = false;
+				}
+			
+		   		form.action = "/bioportal/rest/ontologies/index/" + ontologyId;		   		
+		   		
+		  		return submitOk;
 			}
 	  	</script>
 
