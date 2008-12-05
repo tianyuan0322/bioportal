@@ -13,12 +13,22 @@ import org.restlet.data.Request;
 import org.restlet.data.Response;
 import org.restlet.data.Status;
 
+/**
+ * An abstract restlet that contains common funcitonality as well as default
+ * handling for GET, POST, PUT, and DELETE methods
+ * 
+ * @author Michael Dorf
+ * 
+ */
 public abstract class AbstractBaseRestlet extends Restlet {
 
 	@SuppressWarnings("unused")
 	private static final Log log = LogFactory.getLog(AbstractBaseRestlet.class);
 	protected XMLSerializationService xmlSerializationService;
 
+	/**
+	 * Handle requests
+	 */
 	@Override
 	public void handle(Request request, Response response) {
 		if (request.getMethod().equals(Method.GET)) {

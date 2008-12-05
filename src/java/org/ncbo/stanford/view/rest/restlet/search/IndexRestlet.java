@@ -14,6 +14,12 @@ import org.restlet.data.Request;
 import org.restlet.data.Response;
 import org.restlet.data.Status;
 
+/**
+ * Restlet responsible for executing indexing operations
+ * 
+ * @author Michael Dorf
+ *
+ */
 public class IndexRestlet extends AbstractBaseRestlet {
 
 	@SuppressWarnings("unused")
