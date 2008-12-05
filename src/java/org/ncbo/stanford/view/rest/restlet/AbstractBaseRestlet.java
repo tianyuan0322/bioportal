@@ -14,7 +14,7 @@ import org.restlet.data.Response;
 import org.restlet.data.Status;
 
 /**
- * An abstract restlet that contains common funcitonality as well as default
+ * An abstract restlet that contains common functionality as well as default
  * handling for GET, POST, PUT, and DELETE methods
  * 
  * @author Michael Dorf
