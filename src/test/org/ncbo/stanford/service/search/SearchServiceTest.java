@@ -1,6 +1,7 @@
 package org.ncbo.stanford.service.search;
 
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.fail;
 
 import org.apache.lucene.search.Query;
 import org.junit.Ignore;
@@ -22,21 +23,6 @@ public class SearchServiceTest extends AbstractBioPortalTest {
 	@Autowired
 	QuerySearchService queryService;
 
-	@Test
-	@Repeat(2)
-	public void testSearchAllOntologies() throws Exception {
-		System.out
-				.println("SearchServiceTest: searchAllOntologies().......................BEGIN");
-
-		Query query = queryService.generateLuceneSearchQuery(null, "cell",
-				true, false);
-		Page<SearchBean> results = queryService.executeQuery(query);
-
-		assertNotNull(results);
-
-		System.out
-				.println("SearchServiceTest: searchAllOntologies().........................DONE");
-	}
 
 	@Test
 //	@Ignore
@@ -44,11 +30,41 @@ public class SearchServiceTest extends AbstractBioPortalTest {
 		System.out
 				.println("SearchServiceTest: indexOntology().......................BEGIN");
 
-		indexService.indexOntology(1056, false, true);
+		try {
+			indexService.indexOntology(1056, false, true);
+		}
+		catch (Exception exc) {
+			exc.printStackTrace();
+			fail(exc.getMessage());
+		}
 
 		System.out
 				.println("SearchServiceTest: indexOntology().........................DONE");
 	}
+	
+	@Test
+	@Repeat(2)
+	public void testSearchAllOntologies() throws Exception {
+		System.out
+				.println("SearchServiceTest: searchAllOntologies().......................BEGIN");
+
+		try {
+		Query query = queryService.generateLuceneSearchQuery(null, "cell",
+				true, false);
+		Page<SearchBean> results = queryService.executeQuery(query);
+
+		assertNotNull(results);
+		}
+		catch (Exception exc ){ 
+			exc.printStackTrace();
+			
+			fail(exc.getMessage());
+		}
+
+		System.out
+				.println("SearchServiceTest: searchAllOntologies().........................DONE");
+	}
+
 
 	@Test
 	public void testSearchAllOntologiesPaginated() throws Exception {
