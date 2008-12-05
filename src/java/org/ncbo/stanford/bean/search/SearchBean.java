@@ -2,6 +2,12 @@ package org.ncbo.stanford.bean.search;
 
 import org.ncbo.stanford.enumeration.SearchRecordTypeEnum;
 
+/**
+ * A base search bean that define a single search result entity
+ * 
+ * @author Michael Dorf
+ * 
+ */
 public class SearchBean {
 
 	private Integer ontologyVersionId;
@@ -68,6 +74,20 @@ public class SearchBean {
 				recordType, null, null, preferredName, null, null);
 	}
 
+	/**
+	 * Populates this instance with data. This is the "official" function to use
+	 * to populate the bean. Do not create any custom population methods!!!
+	 * 
+	 * @param ontologyVersionId
+	 * @param ontologyId
+	 * @param ontologyDisplayLabel
+	 * @param recordType
+	 * @param conceptId
+	 * @param conceptIdShort
+	 * @param preferredName
+	 * @param contents
+	 * @param literalContents
+	 */
 	public void populateInstance(Integer ontologyVersionId, Integer ontologyId,
 			String ontologyDisplayLabel, SearchRecordTypeEnum recordType,
 			String conceptId, String conceptIdShort, String preferredName,

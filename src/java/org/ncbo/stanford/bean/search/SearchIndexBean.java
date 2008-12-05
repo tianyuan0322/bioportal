@@ -1,9 +1,16 @@
 package org.ncbo.stanford.bean.search;
 
-
 import org.apache.lucene.document.Field;
 import org.ncbo.stanford.enumeration.SearchRecordTypeEnum;
 
+/**
+ * A bean that contains information required for indexing a single search
+ * record. This class overrides the SearchBean class with additional parameters
+ * for each field, such as labels and lucine indexing attributes.
+ * 
+ * @author Michael Dorf
+ * 
+ */
 public class SearchIndexBean extends SearchBean {
 	public static final String ONTOLOGY_VERSION_ID_FIELD_LABEL = "ontologyVersionId";
 	public static final String ONTOLOGY_ID_FIELD_LABEL = "ontologyId";
@@ -18,23 +25,23 @@ public class SearchIndexBean extends SearchBean {
 	private SearchField ontologyVersionId = new SearchField(
 			ONTOLOGY_VERSION_ID_FIELD_LABEL, Field.Store.YES,
 			Field.Index.NOT_ANALYZED);
-	private SearchField ontologyId = new SearchField(
-			ONTOLOGY_ID_FIELD_LABEL, Field.Store.YES, Field.Index.NOT_ANALYZED);
+	private SearchField ontologyId = new SearchField(ONTOLOGY_ID_FIELD_LABEL,
+			Field.Store.YES, Field.Index.NOT_ANALYZED);
 	private SearchField ontologyDisplayLabel = new SearchField(
 			ONTOLOGY_DISPLAY_LABEL_FIELD_LABEL, Field.Store.YES,
 			Field.Index.NOT_ANALYZED);
-	private SearchField recordType = new SearchField(
-			RECORD_TYPE_FIELD_LABEL, Field.Store.YES, Field.Index.NOT_ANALYZED);
-	private SearchField conceptId = new SearchField(
-			CONCEPT_ID_FIELD_LABEL, Field.Store.YES, Field.Index.NOT_ANALYZED);
+	private SearchField recordType = new SearchField(RECORD_TYPE_FIELD_LABEL,
+			Field.Store.YES, Field.Index.NOT_ANALYZED);
+	private SearchField conceptId = new SearchField(CONCEPT_ID_FIELD_LABEL,
+			Field.Store.YES, Field.Index.NOT_ANALYZED);
 	private SearchField conceptIdShort = new SearchField(
 			CONCEPT_ID_SHORT_FIELD_LABEL, Field.Store.YES,
 			Field.Index.NOT_ANALYZED);
 	private SearchField preferredName = new SearchField(
 			PREFERRED_NAME_FIELD_LABEL, Field.Store.YES,
 			Field.Index.NOT_ANALYZED);
-	private SearchField contents = new SearchField(
-			CONTENTS_FIELD_LABEL, Field.Store.YES, Field.Index.ANALYZED);
+	private SearchField contents = new SearchField(CONTENTS_FIELD_LABEL,
+			Field.Store.YES, Field.Index.ANALYZED);
 	private SearchField literalContents = new SearchField(
 			LITERAL_CONTENTS_FIELD_LABEL, Field.Store.YES,
 			Field.Index.NOT_ANALYZED);

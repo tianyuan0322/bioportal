@@ -6,6 +6,12 @@ import java.util.Map;
 import org.ncbo.stanford.util.paginator.Paginatable;
 import org.ncbo.stanford.util.paginator.impl.PaginatableList;
 
+/**
+ * Class that aggregates all search results
+ * 
+ * @author Michael Dorf
+ *
+ */
 public class SearchResultListBean extends PaginatableList<SearchBean> {
 
 	/**

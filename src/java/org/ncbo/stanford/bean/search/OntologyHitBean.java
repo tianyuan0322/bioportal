@@ -1,5 +1,12 @@
 package org.ncbo.stanford.bean.search;
 
+/**
+ * The class to store number of results for each ontology for a given search
+ * query
+ * 
+ * @author Michael Dorf
+ * 
+ */
 public class OntologyHitBean extends SearchBean {
 	private Integer numHits = null;
 

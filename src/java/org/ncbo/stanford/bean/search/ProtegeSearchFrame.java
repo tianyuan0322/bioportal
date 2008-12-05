@@ -4,6 +4,12 @@ import org.ncbo.stanford.enumeration.SearchRecordTypeEnum;
 
 import edu.stanford.smi.protege.model.Frame;
 
+/**
+ * Class to contain Protege specific attributes needed for indexing
+ * 
+ * @author Michael Dorf
+ * 
+ */
 public class ProtegeSearchFrame extends SearchBean {
 	private Frame frame;
 

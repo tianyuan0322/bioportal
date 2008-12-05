@@ -2,7 +2,13 @@ package org.ncbo.stanford.bean.search;
 
 import java.util.TreeMap;
 
-public class OntologyHitMap extends TreeMap<String, OntologyHitBean>{
+/**
+ * A wrapper to store ontology hit beans for a given search result
+ * 
+ * @author Michael Dorf
+ * 
+ */
+public class OntologyHitMap extends TreeMap<String, OntologyHitBean> {
 
 	/**
 	 * 

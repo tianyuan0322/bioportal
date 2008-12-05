@@ -3,6 +3,12 @@ package org.ncbo.stanford.bean.search;
 import org.apache.lucene.document.Field.Index;
 import org.apache.lucene.document.Field.Store;
 
+/**
+ * Defins a structure for a single search field in the index
+ * 
+ * @author Michael Dorf
+ * 
+ */
 public class SearchField {
 	private String label;
 	private Store store;
@@ -32,8 +38,7 @@ public class SearchField {
 	 * @param index
 	 * @param contents
 	 */
-	public SearchField(String label, Store store, Index index,
-			String contents) {
+	public SearchField(String label, Store store, Index index, String contents) {
 		this(label, store, index);
 		this.contents = contents;
 	}

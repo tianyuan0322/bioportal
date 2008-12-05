@@ -4,6 +4,12 @@ package org.ncbo.stanford.bean.search;
 import org.LexGrid.commonTypes.Property;
 import org.ncbo.stanford.enumeration.SearchRecordTypeEnum;
 
+/**
+ * Class to contain LexGrid specific attributes needed for indexing
+ * 
+ * @author Michael Dorf
+ * 
+ */
 public class LexGridSearchProperty extends SearchBean {
 	Property property;
 
