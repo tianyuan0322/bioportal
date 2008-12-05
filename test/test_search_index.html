@@ -95,6 +95,32 @@
 			<input type="hidden" name="method" value="DELETE" />
 			<input type="submit" value="Run" />
 		</form>
+		
+		<h3>
+			Backup Index
+		</h3>
+		<form name="indexBackupForm" onSubmit="return onSubmitForm(this);"
+			method="POST">
+			<input type="hidden" name="dobackup" value="1" />
+			<input type="hidden" name="sessionid"
+				value="9c188a9b8de0fe0c21b9322b72255fb939a68bb2" />
+			<!--  <input type="hidden" name="applicationid" value="4ea81d74-8960-4525-810b-fa1baab576ff" /> -->
+			<input type="hidden" name="method" value="PUT" />
+			<input type="submit" value="Run" />
+		</form>
+		
+		<h3>
+			Optimize Index
+		</h3>
+		<form name="indexOptimizeForm" onSubmit="return onSubmitForm(this);"
+			method="POST">
+			<input type="hidden" name="dooptimize" value="1" />
+			<input type="hidden" name="sessionid"
+				value="9c188a9b8de0fe0c21b9322b72255fb939a68bb2" />
+			<!--  <input type="hidden" name="applicationid" value="4ea81d74-8960-4525-810b-fa1baab576ff" /> -->
+			<input type="hidden" name="method" value="PUT" />
+			<input type="submit" value="Run" />
+		</form>
 		</div>
 	</body>
 </html>

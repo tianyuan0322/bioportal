@@ -39,16 +39,16 @@ public class AbstractSearchService {
 	private Object createSearcherLock = new Object();
 
 	protected SearchResultListBean runQuery(Query query) throws Exception {
-		if (log.isDebugEnabled()) {
-			log.debug("Executing Query: " + query);
-		}
-
 		synchronized (createSearcherLock) {
 			if (searcher == null || hasNewerIndexFile()) {
 				reloadSearcher();
 			}
 		}
 
+		if (log.isDebugEnabled()) {
+			log.debug("Executing Query: " + query);
+		}
+		
 		TopFieldDocs docs = null;
 
 		try {
@@ -113,7 +113,6 @@ public class AbstractSearchService {
 
 		if (searcher != null) {
 			searcher.close();
-			searcher = null;
 		}
 
 		createSearcher();

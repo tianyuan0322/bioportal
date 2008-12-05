@@ -94,7 +94,7 @@ public abstract class AbstractBaseRestlet extends Restlet {
 	}
 
 	private void unsupportedMethod(Request request, Response response) {
-		response.setStatus(Status.CLIENT_ERROR_NOT_FOUND);
+		response.setStatus(Status.CLIENT_ERROR_METHOD_NOT_ALLOWED);
 		xmlSerializationService.generateStatusXMLResponse(request, response);
 	}
 

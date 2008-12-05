@@ -43,7 +43,7 @@ public class IndexRestlet extends AbstractBaseRestlet {
 	 */
 	@Override
 	protected void putRequest(Request request, Response response) {
-		indexOntology(request, response);
+		handlePutRequest(request, response);
 	}
 
 	/**
@@ -75,21 +75,30 @@ public class IndexRestlet extends AbstractBaseRestlet {
 	}
 
 	/**
-	 * Index ontology
+	 * Index ontology or backup index or optimize index
 	 * 
 	 * @param request
 	 * @param response
 	 */
-	private void indexOntology(Request request, Response response) {
+	private void handlePutRequest(Request request, Response response) {
 		try {
 			HttpServletRequest httpRequest = RequestUtils
 					.getHttpServletRequest(request);
 
-			Integer ontologyId = getOntologyId(request);
+			Integer ontologyId = getOntologyId(request, true);
 			boolean doBackup = getDoBackup(httpRequest);
 			boolean doOptimize = getDoOptimize(httpRequest);
 
-			indexService.indexOntology(ontologyId, doBackup, doOptimize);
+			if (ontologyId != null) {
+				indexService.indexOntology(ontologyId, doBackup, doOptimize);
+			} else if (doBackup) {
+				indexService.backupIndex();
+			} else if (doOptimize) {
+				indexService.optimizeIndex();
+			} else {
+				response.setStatus(Status.CLIENT_ERROR_BAD_REQUEST,
+						"No valid parameters supplied");
+			}
 		} catch (Exception e) {
 			response.setStatus(Status.SERVER_ERROR_INTERNAL, e.getMessage());
 			e.printStackTrace();
@@ -112,7 +121,7 @@ public class IndexRestlet extends AbstractBaseRestlet {
 			HttpServletRequest httpRequest = RequestUtils
 					.getHttpServletRequest(request);
 
-			Integer ontologyId = getOntologyId(request);
+			Integer ontologyId = getOntologyId(request, false);
 			boolean doBackup = getDoBackup(httpRequest);
 			boolean doOptimize = getDoOptimize(httpRequest);
 
@@ -128,19 +137,20 @@ public class IndexRestlet extends AbstractBaseRestlet {
 		}
 	}
 
-	private Integer getOntologyId(Request request) throws Exception {
+	private Integer getOntologyId(Request request, boolean ignoreNull)
+			throws Exception {
 		Integer ontologyId = null;
 		String ontologyIdStr = (String) request.getAttributes().get(
 				MessageUtils.getMessage("entity.ontologyid"));
 
-		if (StringHelper.isNullOrNullString(ontologyIdStr)) {
+		if (!StringHelper.isNullOrNullString(ontologyIdStr)) {
+			try {
+				ontologyId = Integer.parseInt(ontologyIdStr);
+			} catch (NumberFormatException e) {
+				throw new Exception("Invalid ontology id supplied");
+			}
+		} else if (!ignoreNull) {
 			throw new Exception("You must supply a valid ontology id");
-		}
-
-		try {
-			ontologyId = Integer.parseInt(ontologyIdStr);
-		} catch (NumberFormatException e) {
-			throw new Exception("Invalid ontology id supplied");
 		}
 
 		return ontologyId;
