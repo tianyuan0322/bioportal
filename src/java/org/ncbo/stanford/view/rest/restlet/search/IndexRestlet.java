@@ -18,7 +18,7 @@ import org.restlet.data.Status;
  * Restlet responsible for executing indexing operations
  * 
  * @author Michael Dorf
- *
+ * 
  */
 public class IndexRestlet extends AbstractBaseRestlet {
 
@@ -91,7 +91,7 @@ public class IndexRestlet extends AbstractBaseRestlet {
 			HttpServletRequest httpRequest = RequestUtils
 					.getHttpServletRequest(request);
 
-			Integer ontologyId = getOntologyId(request, true);
+			Integer ontologyId = getOntologyId(httpRequest, true);
 			boolean doBackup = getDoBackup(httpRequest);
 			boolean doOptimize = getDoOptimize(httpRequest);
 
@@ -127,7 +127,7 @@ public class IndexRestlet extends AbstractBaseRestlet {
 			HttpServletRequest httpRequest = RequestUtils
 					.getHttpServletRequest(request);
 
-			Integer ontologyId = getOntologyId(request, false);
+			Integer ontologyId = getOntologyId(httpRequest, false);
 			boolean doBackup = getDoBackup(httpRequest);
 			boolean doOptimize = getDoOptimize(httpRequest);
 
@@ -143,11 +143,11 @@ public class IndexRestlet extends AbstractBaseRestlet {
 		}
 	}
 
-	private Integer getOntologyId(Request request, boolean ignoreNull)
-			throws Exception {
+	private Integer getOntologyId(HttpServletRequest httpRequest,
+			boolean ignoreNull) throws Exception {
 		Integer ontologyId = null;
-		String ontologyIdStr = (String) request.getAttributes().get(
-				MessageUtils.getMessage("entity.ontologyid"));
+		String ontologyIdStr = (String) httpRequest.getParameter(MessageUtils
+				.getMessage("entity.ontologyid"));
 
 		if (!StringHelper.isNullOrNullString(ontologyIdStr)) {
 			try {
