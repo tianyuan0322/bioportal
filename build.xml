@@ -186,7 +186,6 @@
 				<filter token="obosourceforgecvscheckoutdir" value="${obo.sourceforge.cvs.checkoutdir}" />
 				<filter token="obosourceforgecvsdescriptorfile" value="${obo.sourceforge.cvs.descriptor.file}" />
 				<filter token="bioportaltempdir" value="${bioportal.tempdir}" />
-				<filter token="protegeindexlocation" value="${protege.index.location}" />
 			</filterset>
 		</copy>
 

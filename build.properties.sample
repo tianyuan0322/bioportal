@@ -146,11 +146,6 @@ protege.jdbc.driver=com.mysql.jdbc.Driver
 protege.jdbc.username=yourprotegedbuser
 protege.jdbc.password=yourprotegedbpassword
 
-# protege resource path
-protege.resource.path=${bioportal.resource.path}/protege
-# the folder that will hold all of the generated protege lucene indexes.  
-protege.index.location=${protege.resource.path}/prIndex
-
 # protege knowledgebase caching settings
 # Timeout for inactive knowledgebases (in milliseconds)
 protege.knowledgebase.cache.timeout=21600000

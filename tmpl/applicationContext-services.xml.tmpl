@@ -486,9 +486,6 @@
 		<property name="protegeKnowledgeBases">
 			<ref bean="protegeKnowledgeBaseCache" />
 		</property>
-		<property name="protegeIndexLocation">
-			<ref bean="protegeIndexLocation" />
-		</property>
 	</bean>
 
 	<bean id="ontologyRetrievalManagerLexGrid"
@@ -1051,13 +1048,6 @@
 	<bean id="tempDir" class="java.lang.String">
 		<constructor-arg>
 			<value>@bioportaltempdir@</value>
-		</constructor-arg>
-	</bean>
-
-	<!-- Protege Lucene index location -->
-	<bean id="protegeIndexLocation" class="java.lang.String">
-		<constructor-arg>
-			<value>@protegeindexlocation@</value>
 		</constructor-arg>
 	</bean>
 

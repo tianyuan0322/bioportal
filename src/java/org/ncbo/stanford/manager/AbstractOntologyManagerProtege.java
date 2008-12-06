@@ -7,7 +7,6 @@ import java.util.Set;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.ncbo.stanford.bean.OntologyBean;
 import org.ncbo.stanford.domain.custom.entity.VNcboOntology;
 import org.ncbo.stanford.util.cache.expiration.system.ExpirationSystem;
 import org.ncbo.stanford.util.constants.ApplicationConstants;
@@ -40,12 +39,7 @@ public abstract class AbstractOntologyManagerProtege {
 	protected String protegeTablePrefix;
 	protected String protegeTableSuffix;
 	protected Integer protegeBigFileThreshold;
-	protected String protegeIndexLocation;
 	protected ExpirationSystem<Integer, KnowledgeBase> protegeKnowledgeBases = null;
-
-	protected String getIndexPath(OntologyBean ob) {
-		return protegeIndexLocation + ob.getOntologyDirPath();
-	}
 
 	protected Slot getSynonymSlot(KnowledgeBase kb, String synonymSlot) {
 		if (!StringHelper.isNullOrNullString(synonymSlot)) {
@@ -271,20 +265,5 @@ public abstract class AbstractOntologyManagerProtege {
 	public void setProtegeKnowledgeBases(
 			ExpirationSystem<Integer, KnowledgeBase> protegeKnowledgeBases) {
 		this.protegeKnowledgeBases = protegeKnowledgeBases;
-	}
-
-	/**
-	 * @return the protegeIndexLocation
-	 */
-	public String getProtegeIndexLocation() {
-		return protegeIndexLocation;
-	}
-
-	/**
-	 * @param protegeIndexLocation
-	 *            the protegeIndexLocation to set
-	 */
-	public void setProtegeIndexLocation(String protegeIndexLocation) {
-		this.protegeIndexLocation = protegeIndexLocation;
 	}
 }
