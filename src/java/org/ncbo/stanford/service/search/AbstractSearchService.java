@@ -44,7 +44,7 @@ public class AbstractSearchService {
 	// non-injected properties
 	private IndexSearcher searcher = null;
 	private Date openIndexDate;
-	protected Object createSearcherLock = new Object();
+	private Object createSearcherLock = new Object();
 
 	/**
 	 * Executes a query against the Lucene index
@@ -115,7 +115,7 @@ public class AbstractSearchService {
 	 * 
 	 * @throws IOException
 	 */
-	protected void reloadSearcher() throws IOException {
+	private void reloadSearcher() throws IOException {
 		if (log.isDebugEnabled()) {
 			log.debug("Index file has changed. Reloading searcher...");
 		}
