@@ -73,6 +73,10 @@ public class LuceneIndexWriterWrapper {
 		writer.optimize();
 	}
 
+	public void commit() throws IOException {
+		writer.commit();
+	}
+
 	public void expungeDeletes() throws IOException {
 		writer.expungeDeletes();
 	}

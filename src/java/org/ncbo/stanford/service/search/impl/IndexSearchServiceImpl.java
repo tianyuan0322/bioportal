@@ -59,13 +59,16 @@ public class IndexSearchServiceImpl extends AbstractSearchService implements
 		for (VNcboOntology ontology : ontologies) {
 			try {
 				indexOntology(writer, ontology, false, false);
+
+				// commit changes to writer so they are visible to the searcher
+				writer.commit();
 			} catch (Exception e) {
 				handleException(ontology, e, true);
 			}
 		}
 
 		optimizeIndex(writer);
-		closeWriter(writer, true);
+		closeWriter(writer);
 
 		if (log.isDebugEnabled()) {
 			long stop = System.currentTimeMillis(); // stop timing
@@ -103,10 +106,8 @@ public class IndexSearchServiceImpl extends AbstractSearchService implements
 						indexPath, analyzer);
 				writer.setMergeFactor(indexMergeFactor);
 				writer.setMaxMergeDocs(indexMaxMergeDocs);
-
 				indexOntology(writer, ontology, doBackup, doOptimize);
-
-				closeWriter(writer, true);
+				closeWriter(writer);
 			} catch (Exception e) {
 				handleException(ontology, e, false);
 			}
@@ -141,8 +142,8 @@ public class IndexSearchServiceImpl extends AbstractSearchService implements
 			try {
 				LuceneIndexWriterWrapper writer = new LuceneIndexWriterWrapper(
 						indexPath, analyzer);
-				removeOntology(writer, ontology, doBackup, doOptimize);
-				closeWriter(writer, true);
+				removeOntology(writer, ontology, doBackup, doOptimize, true);
+				closeWriter(writer);
 			} catch (Exception e) {
 				handleException(ontology, e, false);
 			}
@@ -158,7 +159,7 @@ public class IndexSearchServiceImpl extends AbstractSearchService implements
 		LuceneIndexWriterWrapper writer = new LuceneIndexWriterWrapper(
 				indexPath, analyzer);
 		backupIndex(writer);
-		closeWriter(writer, false);
+		closeWriter(writer);
 	}
 
 	/**
@@ -170,7 +171,7 @@ public class IndexSearchServiceImpl extends AbstractSearchService implements
 		LuceneIndexWriterWrapper writer = new LuceneIndexWriterWrapper(
 				indexPath, analyzer);
 		optimizeIndex(writer);
-		closeWriter(writer, false);
+		closeWriter(writer);
 	}
 
 	/**
@@ -180,14 +181,10 @@ public class IndexSearchServiceImpl extends AbstractSearchService implements
 	 * @param reloadCache
 	 * @throws IOException
 	 */
-	private void closeWriter(LuceneIndexWriterWrapper writer,
-			boolean reloadCache) throws IOException {
+	private void closeWriter(LuceneIndexWriterWrapper writer)
+			throws IOException {
 		writer.closeWriter();
 		writer = null;
-
-		if (reloadCache) {
-			reloadCache();
-		}
 	}
 
 	/**
@@ -252,7 +249,7 @@ public class IndexSearchServiceImpl extends AbstractSearchService implements
 		long stop = 0;
 
 		if (mgr != null) {
-			removeOntology(writer, ontology, doBackup, false);
+			removeOntology(writer, ontology, doBackup, false, false);
 
 			if (log.isDebugEnabled()) {
 				log.debug("Adding ontology to index: " + displayLabel
@@ -269,6 +266,8 @@ public class IndexSearchServiceImpl extends AbstractSearchService implements
 						+ " in " + (double) (stop - start) / 1000 / 60
 						+ " minutes.\n");
 			}
+
+			reloadCache();
 
 			if (doOptimize) {
 				optimizeIndex(writer);
@@ -292,8 +291,8 @@ public class IndexSearchServiceImpl extends AbstractSearchService implements
 	 * @throws Exception
 	 */
 	private void removeOntology(LuceneIndexWriterWrapper writer,
-			VNcboOntology ontology, boolean doBackup, boolean doOptimize)
-			throws Exception {
+			VNcboOntology ontology, boolean doBackup, boolean doOptimize,
+			boolean reloadCache) throws Exception {
 		Integer ontologyId = ontology.getOntologyId();
 		String displayLabel = ontology.getDisplayLabel();
 
@@ -302,6 +301,10 @@ public class IndexSearchServiceImpl extends AbstractSearchService implements
 		}
 
 		writer.removeOntology(ontologyId);
+
+		if (reloadCache) {
+			reloadCache();
+		}
 
 		if (doOptimize) {
 			optimizeIndex(writer);

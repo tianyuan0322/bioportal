@@ -44,7 +44,7 @@ public class AbstractSearchService {
 	// non-injected properties
 	private IndexSearcher searcher = null;
 	private Date openIndexDate;
-	private Object createSearcherLock = new Object();
+	protected Object createSearcherLock = new Object();
 
 	/**
 	 * Executes a query against the Lucene index
@@ -54,6 +54,7 @@ public class AbstractSearchService {
 	 * @throws Exception
 	 */
 	protected SearchResultListBean runQuery(Query query) throws Exception {
+		// check whether the index has changed and if so, reloads the searcher
 		// reloading searcher must be synchronized to avoid null searchers
 		synchronized (createSearcherLock) {
 			if (searcher == null || hasNewerIndexFile()) {
@@ -110,14 +111,34 @@ public class AbstractSearchService {
 	}
 
 	/**
+	 * Reloads the searcher, disposes of the old searcher
+	 * 
+	 * @throws IOException
+	 */
+	protected void reloadSearcher() throws IOException {
+		if (log.isDebugEnabled()) {
+			log.debug("Index file has changed. Reloading searcher...");
+		}
+
+		if (searcher != null) {
+			searcher.close();
+		}
+
+		createSearcher();
+	}
+
+	/**
 	 * Returns the sort fields for the query
 	 * 
 	 * @return
 	 */
 	private Sort getSortFields() {
-		SortField[] fields = { SortField.FIELD_SCORE,
-				new SortField(SearchIndexBean.RECORD_TYPE_FIELD_LABEL),
-				new SortField(SearchIndexBean.PREFERRED_NAME_FIELD_LABEL) };
+		SortField[] fields = {
+				SortField.FIELD_SCORE,
+				new SortField(SearchIndexBean.RECORD_TYPE_FIELD_LABEL,
+						SortField.STRING),
+				new SortField(SearchIndexBean.PREFERRED_NAME_FIELD_LABEL,
+						SortField.STRING) };
 
 		return new Sort(fields);
 	}
@@ -130,23 +151,6 @@ public class AbstractSearchService {
 	private void createSearcher() throws IOException {
 		searcher = new IndexSearcher(indexPath);
 		openIndexDate = getCurrentIndexDate();
-	}
-
-	/**
-	 * Reloads the searcher, disposes of the old searcher
-	 * 
-	 * @throws IOException
-	 */
-	private void reloadSearcher() throws IOException {
-		if (log.isDebugEnabled()) {
-			log.debug("Index file has changed. Reloading searcher...");
-		}
-
-		if (searcher != null) {
-			searcher.close();
-		}
-
-		createSearcher();
 	}
 
 	/**
