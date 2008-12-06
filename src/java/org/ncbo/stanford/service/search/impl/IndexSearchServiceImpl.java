@@ -360,7 +360,7 @@ public class IndexSearchServiceImpl extends AbstractSearchService implements
 		if (log.isDebugEnabled()) {
 			stop = System.currentTimeMillis(); // stop timing
 			log.debug("Finished optimizing index in " + (double) (stop - start)
-					/ 1000 + " seconds.");
+					/ 1000 / 60 + " minutes.");
 		}
 	}
 
