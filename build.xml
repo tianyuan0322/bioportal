@@ -86,7 +86,6 @@
 		<mkdir dir="${bioportal.search.indexpath}" />
 		<mkdir dir="${bioportal.search.indexbackuppath}" />
 		<mkdir dir="${obo.sourceforge.cvs.checkoutdir}" />
-		<mkdir dir="${protege.index.location}" />
 		<mkdir dir="${lexgrid.index.location}" />
 		<mkdir dir="${lexgrid.registry.path}" />
 		<mkdir dir="${build.dir}" />
