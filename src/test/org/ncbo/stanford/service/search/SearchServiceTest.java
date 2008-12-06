@@ -23,17 +23,15 @@ public class SearchServiceTest extends AbstractBioPortalTest {
 	@Autowired
 	QuerySearchService queryService;
 
-
 	@Test
-//	@Ignore
+	// @Ignore
 	public void testIndexOntology() throws Exception {
 		System.out
 				.println("SearchServiceTest: indexOntology().......................BEGIN");
 
 		try {
 			indexService.indexOntology(1056, false, true);
-		}
-		catch (Exception exc) {
+		} catch (Exception exc) {
 			exc.printStackTrace();
 			fail(exc.getMessage());
 		}
@@ -41,7 +39,7 @@ public class SearchServiceTest extends AbstractBioPortalTest {
 		System.out
 				.println("SearchServiceTest: indexOntology().........................DONE");
 	}
-	
+
 	@Test
 	@Repeat(2)
 	public void testSearchAllOntologies() throws Exception {
@@ -49,22 +47,19 @@ public class SearchServiceTest extends AbstractBioPortalTest {
 				.println("SearchServiceTest: searchAllOntologies().......................BEGIN");
 
 		try {
-		Query query = queryService.generateLuceneSearchQuery(null, "cell",
-				true, false);
-		Page<SearchBean> results = queryService.executeQuery(query);
+			Query query = queryService.generateLuceneSearchQuery(null, "cell",
+					true, false);
+			Page<SearchBean> results = queryService.executeQuery(query);
 
-		assertNotNull(results);
-		}
-		catch (Exception exc ){ 
+			assertNotNull(results);
+		} catch (Exception exc) {
 			exc.printStackTrace();
-			
 			fail(exc.getMessage());
 		}
 
 		System.out
 				.println("SearchServiceTest: searchAllOntologies().........................DONE");
 	}
-
 
 	@Test
 	public void testSearchAllOntologiesPaginated() throws Exception {
@@ -78,11 +73,11 @@ public class SearchServiceTest extends AbstractBioPortalTest {
 		assertNotNull(results);
 
 		System.out.println(getXML(results));
-		
+
 		System.out
 				.println("SearchServiceTest: searchAllOntologies().........................DONE");
 	}
-	
+
 	public String getXML(Page<SearchBean> page) {
 		String xmlHeader = ApplicationConstants.XML_DECLARATION + "\n";
 		XStream xstream = new XStream();
@@ -95,5 +90,5 @@ public class SearchServiceTest extends AbstractBioPortalTest {
 		// xstream.addImplicitCollection(Page.class, "contents", List.class);
 
 		return xmlHeader + xstream.toXML(page);
-	}	
+	}
 }
