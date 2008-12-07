@@ -89,8 +89,9 @@ public class IndexSearchServiceImpl extends AbstractSearchService implements
 	 */
 	public void indexOntology(Integer ontologyId, boolean doBackup,
 			boolean doOptimize) throws Exception {
-		indexOntologies(new ArrayList<Integer>(ontologyId), doBackup,
-				doOptimize);
+		List<Integer> ontologyIds = new ArrayList<Integer>(1);
+		ontologyIds.add(ontologyId);
+		indexOntologies(ontologyIds, doBackup, doOptimize);
 	}
 
 	/**
@@ -127,8 +128,9 @@ public class IndexSearchServiceImpl extends AbstractSearchService implements
 	 */
 	public void removeOntology(Integer ontologyId, boolean doBackup,
 			boolean doOptimize) throws Exception {
-		removeOntologies(new ArrayList<Integer>(ontologyId), doBackup,
-				doOptimize);
+		List<Integer> ontologyIds = new ArrayList<Integer>(1);
+		ontologyIds.add(ontologyId);
+		removeOntologies(ontologyIds, doBackup, doOptimize);
 	}
 
 	/**
@@ -269,9 +271,8 @@ public class IndexSearchServiceImpl extends AbstractSearchService implements
 	private void removeOntology(LuceneIndexWriterWrapper writer,
 			VNcboOntology ontology, boolean doBackup, boolean doOptimize,
 			boolean reloadCache) throws Exception {
-		List<VNcboOntology> ontologies = new ArrayList<VNcboOntology>(0);
+		List<VNcboOntology> ontologies = new ArrayList<VNcboOntology>(1);
 		ontologies.add(ontology);
-
 		removeOntologies(writer, ontologies, doBackup, doOptimize, reloadCache);
 	}
 
