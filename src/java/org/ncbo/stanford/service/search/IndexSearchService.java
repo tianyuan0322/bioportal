@@ -1,5 +1,7 @@
 package org.ncbo.stanford.service.search;
 
+import java.util.List;
+
 /**
  * Service responsible for creating and maintaining BioPortal search (Lucene)
  * index
@@ -17,14 +19,6 @@ public interface IndexSearchService {
 	public void indexAllOntologies() throws Exception;
 
 	/**
-	 * Index a given ontology
-	 * 
-	 * @param ontologyId
-	 * @throws Exception
-	 */
-	public void indexOntology(Integer ontologyId) throws Exception;
-
-	/**
 	 * Index a given ontology with options to backup and optimize index
 	 * 
 	 * @param ontologyId
@@ -36,12 +30,15 @@ public interface IndexSearchService {
 			boolean doOptimize) throws Exception;
 
 	/**
-	 * Remove an ontology from index
+	 * Index given ontologies with options to backup and optimize index
 	 * 
-	 * @param ontologyId
+	 * @param ontologyIdList
+	 * @param doBackup
+	 * @param doOptimize
 	 * @throws Exception
 	 */
-	public void removeOntology(Integer ontologyId) throws Exception;
+	public void indexOntologies(List<Integer> ontologyIdList, boolean doBackup,
+			boolean doOptimize) throws Exception;
 
 	/**
 	 * Remove a given ontology from index with options to backup and optimize
@@ -53,6 +50,18 @@ public interface IndexSearchService {
 	 * @throws Exception
 	 */
 	public void removeOntology(Integer ontologyId, boolean doBackup,
+			boolean doOptimize) throws Exception;
+
+	/**
+	 * Remove given ontologies from index with options to backup and optimize
+	 * index
+	 * 
+	 * @param ontologyIds
+	 * @param doBackup
+	 * @param doOptimize
+	 * @throws Exception
+	 */
+	public void removeOntologies(List<Integer> ontologyIds, boolean doBackup,
 			boolean doOptimize) throws Exception;
 
 	/**

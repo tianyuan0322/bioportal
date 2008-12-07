@@ -107,7 +107,7 @@ public class CustomNcboOntologyVersionDAO extends NcboOntologyVersionDAO {
 			public Object doInHibernate(Session session)
 					throws HibernateException, SQLException {
 				Query query = session
-						.getNamedQuery("VNcboOntologyVersionDAO.GET_LATEST_ONTOLOGY_VERSIONS_QUERY");
+						.getNamedQuery("VNcboOntologyVersionDAO.GET_ALL_LATEST_ONTOLOGY_VERSIONS_QUERY");
 
 				return query.list();
 			}
@@ -125,7 +125,28 @@ public class CustomNcboOntologyVersionDAO extends NcboOntologyVersionDAO {
 			public Object doInHibernate(Session session)
 					throws HibernateException, SQLException {
 				Query query = session
+						.getNamedQuery("VNcboOntologyVersionDAO.GET_ALL_LATEST_ACTIVE_ONTOLOGY_VERSIONS_QUERY");
+				query.setInteger("statusIdReady", StatusEnum.STATUS_READY
+						.getStatus());
+
+				return query.list();
+			}
+		});
+	}
+
+	/**
+	 * Find unique latest current versions of given ontologies
+	 * 
+	 * @return list of ontologies
+	 */
+	public List<VNcboOntology> findLatestActiveOntologyVersions(
+			final List<Integer> ontologyIds) {
+		return getHibernateTemplate().executeFind(new HibernateCallback() {
+			public Object doInHibernate(Session session)
+					throws HibernateException, SQLException {
+				Query query = session
 						.getNamedQuery("VNcboOntologyVersionDAO.GET_LATEST_ACTIVE_ONTOLOGY_VERSIONS_QUERY");
+				query.setParameterList("ontologyIds", ontologyIds);
 				query.setInteger("statusIdReady", StatusEnum.STATUS_READY
 						.getStatus());
 
@@ -167,8 +188,8 @@ public class CustomNcboOntologyVersionDAO extends NcboOntologyVersionDAO {
 						Query query = session
 								.getNamedQuery("VNcboOntologyVersionDAO.GET_LATEST_ACTIVE_ONTOLOGY_VERSION_FOR_ONTOLOGY_ID_QUERY");
 						query.setInteger("ontologyId", ontologyId);
-						query.setInteger("statusIdReady", StatusEnum.STATUS_READY
-								.getStatus());
+						query.setInteger("statusIdReady",
+								StatusEnum.STATUS_READY.getStatus());
 
 						return query.uniqueResult();
 					}

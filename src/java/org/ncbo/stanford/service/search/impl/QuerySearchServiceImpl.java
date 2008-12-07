@@ -276,23 +276,4 @@ public class QuerySearchServiceImpl extends AbstractSearchService implements
 					BooleanClause.Occur.MUST);
 		}
 	}
-
-	/**
-	 * Constructs the search clause that limits the search to the given ontology
-	 * ids
-	 * 
-	 * @param ontologyIds
-	 * @return
-	 */
-	private Query generateOntologyIdsQuery(Collection<Integer> ontologyIds) {
-		BooleanQuery query = new BooleanQuery();
-
-		for (Integer ontologyId : ontologyIds) {
-			Term term = new Term(SearchIndexBean.ONTOLOGY_ID_FIELD_LABEL,
-					ontologyId.toString());
-			query.add(new TermQuery(term), BooleanClause.Occur.SHOULD);
-		}
-
-		return query;
-	}
 }

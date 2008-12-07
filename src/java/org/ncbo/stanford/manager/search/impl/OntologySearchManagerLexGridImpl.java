@@ -6,6 +6,7 @@ import java.util.Iterator;
 import org.LexGrid.LexBIG.DataModel.Collections.ResolvedConceptReferenceList;
 import org.LexGrid.LexBIG.DataModel.Core.CodingSchemeVersionOrTag;
 import org.LexGrid.LexBIG.DataModel.Core.ResolvedConceptReference;
+import org.LexGrid.LexBIG.Exceptions.LBParameterException;
 import org.LexGrid.LexBIG.Impl.LexBIGServiceImpl;
 import org.LexGrid.LexBIG.LexBIGService.CodedNodeSet;
 import org.LexGrid.LexBIG.LexBIGService.LexBIGService;
@@ -36,53 +37,66 @@ public class OntologySearchManagerLexGridImpl extends
 
 	/**
 	 * Index a given ontology
+	 * 
+	 * @param writer
+	 * @param ontology
+	 * @throws Exception
 	 */
-	public void indexOntology(LuceneIndexWriterWrapper writer, VNcboOntology ontology)
-			throws Exception {
-		Integer ontologyVersionId = ontology.getId();
-		Integer ontologyId = ontology.getOntologyId();
-		String ontologyDisplayLabel = ontology.getDisplayLabel();
-		String schemeName = getLexGridCodingSchemeName(ontology);
-		CodingSchemeVersionOrTag csvt = getLexGridCodingSchemeVersion(ontology);
-		LexBIGService lbs = LexBIGServiceImpl.defaultInstance();
-		CodedNodeSet codeSet = lbs.getCodingSchemeConcepts(schemeName, csvt);
-		ResolvedConceptReferencesIterator matchIterator = codeSet.resolve(null,
-				null, null, null, true);
+	public void indexOntology(LuceneIndexWriterWrapper writer,
+			VNcboOntology ontology) throws Exception {
+		try {
+			Integer ontologyVersionId = ontology.getId();
+			Integer ontologyId = ontology.getOntologyId();
+			String ontologyDisplayLabel = ontology.getDisplayLabel();
+			String schemeName = getLexGridCodingSchemeName(ontology);
+			CodingSchemeVersionOrTag csvt = getLexGridCodingSchemeVersion(ontology);
+			LexBIGService lbs = LexBIGServiceImpl.defaultInstance();
+			CodedNodeSet codeSet = lbs
+					.getCodingSchemeConcepts(schemeName, csvt);
+			ResolvedConceptReferencesIterator matchIterator = codeSet.resolve(
+					null, null, null, null, true);
 
-		SearchIndexBean doc = new SearchIndexBean();
+			SearchIndexBean doc = new SearchIndexBean();
 
-		while (matchIterator.hasNext()) {
-			ResolvedConceptReferenceList lst = matchIterator
-					.next(Integer.MAX_VALUE);
+			while (matchIterator.hasNext()) {
+				ResolvedConceptReferenceList lst = matchIterator
+						.next(Integer.MAX_VALUE);
 
-			for (Iterator<ResolvedConceptReference> itr = lst
-					.iterateResolvedConceptReference(); itr.hasNext();) {
-				ResolvedConceptReference ref = itr.next();
-				Concept concept = ref.getReferencedEntry();
+				for (Iterator<ResolvedConceptReference> itr = lst
+						.iterateResolvedConceptReference(); itr.hasNext();) {
+					ResolvedConceptReference ref = itr.next();
+					Concept concept = ref.getReferencedEntry();
 
-				String preferredName = setPresentationProperties(writer, doc,
-						ontologyVersionId, ontologyId, ontologyDisplayLabel,
-						concept);
-				setGenericProperties(writer, doc, ontologyVersionId,
-						ontologyId, ontologyDisplayLabel, preferredName,
-						concept);
-				setDefinitionProperties(writer, doc, ontologyVersionId,
-						ontologyId, ontologyDisplayLabel, preferredName,
-						concept);
-				setCommentProperties(writer, doc, ontologyVersionId,
-						ontologyId, ontologyDisplayLabel, preferredName,
-						concept);
-				setInstructionProperties(writer, doc, ontologyVersionId,
-						ontologyId, ontologyDisplayLabel, preferredName,
-						concept);
+					String preferredName = setPresentationProperties(writer,
+							doc, ontologyVersionId, ontologyId,
+							ontologyDisplayLabel, concept);
+					setGenericProperties(writer, doc, ontologyVersionId,
+							ontologyId, ontologyDisplayLabel, preferredName,
+							concept);
+					setDefinitionProperties(writer, doc, ontologyVersionId,
+							ontologyId, ontologyDisplayLabel, preferredName,
+							concept);
+					setCommentProperties(writer, doc, ontologyVersionId,
+							ontologyId, ontologyDisplayLabel, preferredName,
+							concept);
+					setInstructionProperties(writer, doc, ontologyVersionId,
+							ontologyId, ontologyDisplayLabel, preferredName,
+							concept);
+				}
 			}
-		}
 
-		matchIterator.release();
+			matchIterator.release();
+		} catch (LBParameterException e) {
+			throw new Exception("Ontology " + ontology.getDisplayLabel()
+					+ " (Id: " + ontology.getId() + ", Ontology Id: "
+					+ ontology.getOntologyId()
+					+ ") does not exist in the LexGrid back-end");
+		}
 	}
 
 	/**
-	 * Adds documents to index that define "presentation" type properties in LexGrid
+	 * Adds documents to index that define "presentation" type properties in
+	 * LexGrid
 	 * 
 	 * @param writer
 	 * @param doc
@@ -150,7 +164,8 @@ public class OntologySearchManagerLexGridImpl extends
 	}
 
 	/**
-	 * Adds documents to index that define "definition" type properties in LexGrid
+	 * Adds documents to index that define "definition" type properties in
+	 * LexGrid
 	 * 
 	 * @param writer
 	 * @param doc
@@ -205,7 +220,8 @@ public class OntologySearchManagerLexGridImpl extends
 	}
 
 	/**
-	 * Adds documents to index that define "instruction" type properties in LexGrid
+	 * Adds documents to index that define "instruction" type properties in
+	 * LexGrid
 	 * 
 	 * @param writer
 	 * @param doc

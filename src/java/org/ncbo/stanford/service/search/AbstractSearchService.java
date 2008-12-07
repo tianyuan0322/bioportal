@@ -2,6 +2,7 @@ package org.ncbo.stanford.service.search;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 
@@ -10,15 +11,20 @@ import org.apache.commons.logging.LogFactory;
 import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.index.IndexReader;
+import org.apache.lucene.index.Term;
+import org.apache.lucene.search.BooleanClause;
+import org.apache.lucene.search.BooleanQuery;
 import org.apache.lucene.search.IndexSearcher;
 import org.apache.lucene.search.Query;
 import org.apache.lucene.search.ScoreDoc;
 import org.apache.lucene.search.Sort;
 import org.apache.lucene.search.SortField;
+import org.apache.lucene.search.TermQuery;
 import org.apache.lucene.search.TopFieldDocs;
 import org.ncbo.stanford.bean.search.SearchBean;
 import org.ncbo.stanford.bean.search.SearchIndexBean;
 import org.ncbo.stanford.bean.search.SearchResultListBean;
+import org.ncbo.stanford.domain.custom.entity.VNcboOntology;
 import org.ncbo.stanford.enumeration.SearchRecordTypeEnum;
 import org.ncbo.stanford.util.cache.expiration.system.ExpirationSystem;
 
@@ -108,6 +114,57 @@ public class AbstractSearchService {
 		}
 
 		return searchResults;
+	}
+
+	/**
+	 * Constructs the query that limits the search to the given ontology ids
+	 * 
+	 * @param ontologyIds
+	 * @return
+	 */
+	protected Query generateOntologyIdsQuery(Collection<Integer> ontologyIds) {
+		BooleanQuery query = new BooleanQuery();
+
+		for (Integer ontologyId : ontologyIds) {
+			query.add(new TermQuery(generateOntologyIdTerm(ontologyId)),
+					BooleanClause.Occur.SHOULD);
+		}
+
+		return query;
+	}
+
+	/**
+	 * Constructs the term with the given ontology id
+	 * 
+	 * @param ontologyId
+	 * @return
+	 */
+	protected Term generateOntologyIdTerm(Integer ontologyId) {
+		return new Term(SearchIndexBean.ONTOLOGY_ID_FIELD_LABEL, ontologyId
+				.toString());
+	}
+
+	/**
+	 * Provides a display format for a list of ontologies
+	 * 
+	 * @param ontologies
+	 * @return
+	 */
+	protected String getDebugDisplay(List<VNcboOntology> ontologies) {
+		StringBuffer sb = new StringBuffer(0);
+
+		for (VNcboOntology ontology : ontologies) {
+			sb.append(ontology.getDisplayLabel());
+			sb.append(" (Id: ");
+			sb.append(ontology.getId());
+			sb.append(", Ont Id: ");
+			sb.append(ontology.getOntologyId());
+			sb.append(", Fmt: ");
+			sb.append(ontology.getFormat());
+			sb.append("), ");
+		}
+
+		return sb.substring(0, sb.length() - 2);
 	}
 
 	/**

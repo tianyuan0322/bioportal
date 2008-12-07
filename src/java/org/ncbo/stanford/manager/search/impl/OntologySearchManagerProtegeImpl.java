@@ -47,11 +47,15 @@ public class OntologySearchManagerProtegeImpl extends
 
 	/**
 	 * Index a given ontology
+	 * 
+	 * @param writer
+	 * @param ontology
+	 * @throws Exception
 	 */
 	@SuppressWarnings("unchecked")
 	public void indexOntology(LuceneIndexWriterWrapper writer,
 			VNcboOntology ontology) throws Exception {
-		KnowledgeBase kb = getKnowledgeBase(ontology);
+		KnowledgeBase kb = getKnowledgeBaseInstance(ontology);
 		boolean owlMode = kb instanceof OWLModel;
 		FrameStore fs = ((DefaultKnowledgeBase) kb).getTerminalFrameStore();
 		NarrowFrameStore nfs = ((SimpleFrameStore) fs).getHelper();
@@ -103,6 +107,37 @@ public class OntologySearchManagerProtegeImpl extends
 						propertySlot, owlMode);
 			}
 		}
+	}
+
+	/**
+	 * Returns an instance of the knowledge base. Provides exception handling
+	 * 
+	 * @param ontology
+	 * @return
+	 * @throws Exception
+	 */
+	private KnowledgeBase getKnowledgeBaseInstance(VNcboOntology ontology) throws Exception {
+		KnowledgeBase kb = null;
+		
+		try {
+			kb = getKnowledgeBase(ontology);
+		} catch (Exception e) {
+			Throwable t = e.getCause();
+			String className = (t == null) ? "" : t.getClass().getName();
+
+			if (t != null && (className
+							.equals("com.mysql.jdbc.exceptions.MySQLSyntaxErrorException") || className
+							.equals("com.mysql.jdbc.exceptions.jdbc4.MySQLSyntaxErrorException"))) {
+				throw new Exception("Ontology " + ontology.getDisplayLabel() + " (Id: "
+						+ ontology.getId() + ", Ontology Id: "
+						+ ontology.getOntologyId()
+						+ ") does not exist in Protege back-end");
+			} else {
+				throw e;
+			}		
+		}
+		
+		return kb;
 	}
 
 	/**

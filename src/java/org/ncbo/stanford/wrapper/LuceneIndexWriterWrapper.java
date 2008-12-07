@@ -3,7 +3,6 @@ package org.ncbo.stanford.wrapper;
 import java.io.File;
 import java.io.IOException;
 
-
 import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.document.Field;
@@ -11,8 +10,9 @@ import org.apache.lucene.index.IndexReader;
 import org.apache.lucene.index.IndexWriter;
 import org.apache.lucene.index.Term;
 import org.apache.lucene.index.IndexWriter.MaxFieldLength;
-import org.ncbo.stanford.bean.search.SearchIndexBean;
+import org.apache.lucene.search.Query;
 import org.ncbo.stanford.bean.search.SearchField;
+import org.ncbo.stanford.bean.search.SearchIndexBean;
 import org.ncbo.stanford.util.ontologyfile.pathhandler.AbstractFilePathHandler;
 
 public class LuceneIndexWriterWrapper {
@@ -55,10 +55,12 @@ public class LuceneIndexWriterWrapper {
 		writer.addDocument(doc);
 	}
 
-	public void removeOntology(Integer ontologyId) throws IOException {
-		Term term = new Term(SearchIndexBean.ONTOLOGY_ID_FIELD_LABEL,
-				ontologyId.toString());
+	public void deleteDocuments(Term term) throws IOException {
 		writer.deleteDocuments(term);
+	}
+
+	public void deleteDocuments(Query query) throws IOException {
+		writer.deleteDocuments(query);
 	}
 
 	public void setMergeFactor(Integer mergeFactor) {

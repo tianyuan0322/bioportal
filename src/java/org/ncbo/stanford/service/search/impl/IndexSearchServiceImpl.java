@@ -1,15 +1,17 @@
 package org.ncbo.stanford.service.search.impl;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.LexGrid.LexBIG.Exceptions.LBParameterException;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.lucene.index.Term;
 import org.apache.lucene.queryParser.QueryParser;
+import org.apache.lucene.search.Query;
 import org.ncbo.stanford.bean.search.SearchIndexBean;
 import org.ncbo.stanford.bean.search.SearchResultListBean;
 import org.ncbo.stanford.domain.custom.dao.CustomNcboOntologyVersionDAO;
@@ -63,7 +65,7 @@ public class IndexSearchServiceImpl extends AbstractSearchService implements
 				// commit changes to writer so they are visible to the searcher
 				writer.commit();
 			} catch (Exception e) {
-				handleException(ontology, e, true);
+				log.error(e);
 			}
 		}
 
@@ -78,16 +80,6 @@ public class IndexSearchServiceImpl extends AbstractSearchService implements
 	}
 
 	/**
-	 * Index a given ontology
-	 * 
-	 * @param ontologyId
-	 * @throws Exception
-	 */
-	public void indexOntology(Integer ontologyId) throws Exception {
-		indexOntology(ontologyId, true, true);
-	}
-
-	/**
 	 * Index a given ontology with options to backup and optimize index
 	 * 
 	 * @param ontologyId
@@ -97,31 +89,31 @@ public class IndexSearchServiceImpl extends AbstractSearchService implements
 	 */
 	public void indexOntology(Integer ontologyId, boolean doBackup,
 			boolean doOptimize) throws Exception {
-		VNcboOntology ontology = ncboOntologyVersionDAO
-				.findLatestActiveOntologyVersion(ontologyId);
-
-		if (ontology != null) {
-			try {
-				LuceneIndexWriterWrapper writer = new LuceneIndexWriterWrapper(
-						indexPath, analyzer);
-				writer.setMergeFactor(indexMergeFactor);
-				writer.setMaxMergeDocs(indexMaxMergeDocs);
-				indexOntology(writer, ontology, doBackup, doOptimize);
-				closeWriter(writer);
-			} catch (Exception e) {
-				handleException(ontology, e, false);
-			}
-		}
+		indexOntologies(new ArrayList<Integer>(ontologyId), doBackup,
+				doOptimize);
 	}
 
 	/**
-	 * Remove an ontology from index
+	 * Index given ontologies with options to backup and optimize index
 	 * 
-	 * @param ontologyId
+	 * @param ontologyIdList
+	 * @param doBackup
+	 * @param doOptimize
 	 * @throws Exception
 	 */
-	public void removeOntology(Integer ontologyId) throws Exception {
-		removeOntology(ontologyId, true, true);
+	public void indexOntologies(List<Integer> ontologyIdList, boolean doBackup,
+			boolean doOptimize) throws Exception {
+		List<VNcboOntology> ontologies = ncboOntologyVersionDAO
+				.findLatestActiveOntologyVersions(ontologyIdList);
+
+		if (!ontologies.isEmpty()) {
+			LuceneIndexWriterWrapper writer = new LuceneIndexWriterWrapper(
+					indexPath, analyzer);
+			writer.setMergeFactor(indexMergeFactor);
+			writer.setMaxMergeDocs(indexMaxMergeDocs);
+			indexOntologies(writer, ontologies, doBackup, doOptimize);
+			closeWriter(writer);
+		}
 	}
 
 	/**
@@ -135,18 +127,29 @@ public class IndexSearchServiceImpl extends AbstractSearchService implements
 	 */
 	public void removeOntology(Integer ontologyId, boolean doBackup,
 			boolean doOptimize) throws Exception {
-		VNcboOntology ontology = ncboOntologyVersionDAO
-				.findLatestOntologyVersion(ontologyId);
+		removeOntologies(new ArrayList<Integer>(ontologyId), doBackup,
+				doOptimize);
+	}
 
-		if (ontology != null) {
-			try {
-				LuceneIndexWriterWrapper writer = new LuceneIndexWriterWrapper(
-						indexPath, analyzer);
-				removeOntology(writer, ontology, doBackup, doOptimize, true);
-				closeWriter(writer);
-			} catch (Exception e) {
-				handleException(ontology, e, false);
-			}
+	/**
+	 * Remove given ontologies from index with options to backup and optimize
+	 * index
+	 * 
+	 * @param ontologyIds
+	 * @param doBackup
+	 * @param doOptimize
+	 * @throws Exception
+	 */
+	public void removeOntologies(List<Integer> ontologyIds, boolean doBackup,
+			boolean doOptimize) throws Exception {
+		List<VNcboOntology> ontologies = ncboOntologyVersionDAO
+				.findLatestActiveOntologyVersions(ontologyIds);
+
+		if (!ontologies.isEmpty()) {
+			LuceneIndexWriterWrapper writer = new LuceneIndexWriterWrapper(
+					indexPath, analyzer);
+			removeOntologies(writer, ontologies, doBackup, doOptimize, true);
+			closeWriter(writer);
 		}
 	}
 
@@ -172,60 +175,6 @@ public class IndexSearchServiceImpl extends AbstractSearchService implements
 				indexPath, analyzer);
 		optimizeIndex(writer);
 		closeWriter(writer);
-	}
-
-	/**
-	 * Close the given writer and reload search results cache
-	 * 
-	 * @param writer
-	 * @param reloadCache
-	 * @throws IOException
-	 */
-	private void closeWriter(LuceneIndexWriterWrapper writer)
-			throws IOException {
-		writer.closeWriter();
-		writer = null;
-	}
-
-	/**
-	 * Reload search results cache by re-running all queries in it and
-	 * re-populating it with new results
-	 */
-	private void reloadCache() {
-		long start = 0;
-		long stop = 0;
-
-		if (log.isDebugEnabled()) {
-			log.debug("Reloading cache...");
-			start = System.currentTimeMillis();
-		}
-
-		QueryParser parser = new QueryParser(
-				SearchIndexBean.CONTENTS_FIELD_LABEL, analyzer);
-		Set<String> queries = searchResultCache.getKeys();
-		searchResultCache.clear();
-
-		for (String queryStr : queries) {
-			SearchResultListBean results = null;
-
-			try {
-				results = runQuery(parser.parse(queryStr));
-			} catch (Exception e) {
-				results = null;
-				e.printStackTrace();
-				log.error("Error while reloading cache: " + e);
-			}
-
-			if (results != null) {
-				searchResultCache.put(queryStr, results);
-			}
-		}
-
-		if (log.isDebugEnabled()) {
-			stop = System.currentTimeMillis(); // stop timing
-			log.debug("Finished reloading cache in " + (double) (stop - start)
-					/ 1000 + " seconds.");
-		}
 	}
 
 	/**
@@ -281,6 +230,33 @@ public class IndexSearchServiceImpl extends AbstractSearchService implements
 	}
 
 	/**
+	 * Index given ontologies with options to backup and optimize the index
+	 * 
+	 * @param writer
+	 * @param ontologies
+	 * @param doBackup
+	 * @param doOptimize
+	 * @throws Exception
+	 */
+	private void indexOntologies(LuceneIndexWriterWrapper writer,
+			List<VNcboOntology> ontologies, boolean doBackup, boolean doOptimize)
+			throws Exception {
+		if (!ontologies.isEmpty()) {
+			if (doBackup) {
+				backupIndex(writer);
+			}
+
+			for (VNcboOntology ontology : ontologies) {
+				indexOntology(writer, ontology, false, false);
+			}
+
+			if (doOptimize) {
+				optimizeIndex(writer);
+			}
+		}
+	}
+
+	/**
 	 * Remove an ontology from index with options to backup and optimize the
 	 * index
 	 * 
@@ -293,14 +269,42 @@ public class IndexSearchServiceImpl extends AbstractSearchService implements
 	private void removeOntology(LuceneIndexWriterWrapper writer,
 			VNcboOntology ontology, boolean doBackup, boolean doOptimize,
 			boolean reloadCache) throws Exception {
-		Integer ontologyId = ontology.getOntologyId();
-		String displayLabel = ontology.getDisplayLabel();
+		List<VNcboOntology> ontologies = new ArrayList<VNcboOntology>(0);
+		ontologies.add(ontology);
+
+		removeOntologies(writer, ontologies, doBackup, doOptimize, reloadCache);
+	}
+
+	/**
+	 * Remove given ontologies from index with options to backup and optimize
+	 * the index
+	 * 
+	 * @param writer
+	 * @param ontologies
+	 * @param doBackup
+	 * @param doOptimize
+	 * @throws Exception
+	 */
+	private void removeOntologies(LuceneIndexWriterWrapper writer,
+			List<VNcboOntology> ontologies, boolean doBackup,
+			boolean doOptimize, boolean reloadCache) throws Exception {
+		List<Integer> ontologyIdList = new ArrayList<Integer>(0);
+
+		for (VNcboOntology ontology : ontologies) {
+			ontologyIdList.add(ontology.getOntologyId());
+		}
 
 		if (doBackup) {
 			backupIndex(writer);
 		}
 
-		writer.removeOntology(ontologyId);
+		if (ontologyIdList.size() == 1) {
+			Term ontologyIdTerm = generateOntologyIdTerm(ontologyIdList.get(0));
+			writer.deleteDocuments(ontologyIdTerm);
+		} else {
+			Query ontologyIdsQuery = generateOntologyIdsQuery(ontologyIdList);
+			writer.deleteDocuments(ontologyIdsQuery);
+		}
 
 		if (reloadCache) {
 			reloadCache();
@@ -311,9 +315,8 @@ public class IndexSearchServiceImpl extends AbstractSearchService implements
 		}
 
 		if (log.isDebugEnabled()) {
-			log.debug("Removed ontology from index: " + displayLabel + " (Id: "
-					+ ontology.getId() + ", Ontology Id: " + ontologyId
-					+ ", Format: " + ontology.getFormat() + ")");
+			log.debug("Removed ontologies from index: "
+					+ getDebugDisplay(ontologies));
 		}
 	}
 
@@ -368,40 +371,57 @@ public class IndexSearchServiceImpl extends AbstractSearchService implements
 	}
 
 	/**
-	 * Provides error handling for different scenarios, where the exception
-	 * either has to be thrown or muted
-	 * 
-	 * @param ontology
-	 * @param e
-	 * @param ignoreErrors
-	 * @throws Exception
+	 * Reload search results cache by re-running all queries in it and
+	 * re-populating it with new results
 	 */
-	private void handleException(VNcboOntology ontology, Exception e,
-			boolean ignoreErrors) throws Exception {
-		Throwable t = e.getCause();
-		String msg = null;
-		String className = (t == null) ? "" : t.getClass().getName();
+	private void reloadCache() {
+		long start = 0;
+		long stop = 0;
 
-		if (e instanceof LBParameterException
-				|| (t != null && (className
-						.equals("com.mysql.jdbc.exceptions.MySQLSyntaxErrorException") || className
-						.equals("com.mysql.jdbc.exceptions.jdbc4.MySQLSyntaxErrorException")))) {
-			msg = "Ontology " + ontology.getDisplayLabel() + " (Id: "
-					+ ontology.getId() + ", Ontology Id: "
-					+ ontology.getOntologyId()
-					+ ") does not exist in the backend store";
+		if (log.isDebugEnabled()) {
+			log.debug("Reloading cache...");
+			start = System.currentTimeMillis();
 		}
 
-		if (ignoreErrors && msg != null) {
-			log.error(msg + "\n");
-		} else if (ignoreErrors) {
-			log.error(e);
-			e.printStackTrace();
-		} else if (msg != null) {
-			throw new Exception(msg);
-		} else {
-			throw e;
+		QueryParser parser = new QueryParser(
+				SearchIndexBean.CONTENTS_FIELD_LABEL, analyzer);
+		Set<String> queries = searchResultCache.getKeys();
+		searchResultCache.clear();
+
+		for (String queryStr : queries) {
+			SearchResultListBean results = null;
+
+			try {
+				results = runQuery(parser.parse(queryStr));
+			} catch (Exception e) {
+				results = null;
+				e.printStackTrace();
+				log.error("Error while reloading cache: " + e);
+			}
+
+			if (results != null) {
+				searchResultCache.put(queryStr, results);
+			}
 		}
+
+		if (log.isDebugEnabled()) {
+			stop = System.currentTimeMillis(); // stop timing
+			log.debug("Finished reloading cache in " + (double) (stop - start)
+					/ 1000 + " seconds.");
+		}
+	}
+
+	/**
+	 * Close the given writer and reload search results cache
+	 * 
+	 * @param writer
+	 * @param reloadCache
+	 * @throws IOException
+	 */
+	private void closeWriter(LuceneIndexWriterWrapper writer)
+			throws IOException {
+		writer.closeWriter();
+		writer = null;
 	}
 
 	/**
