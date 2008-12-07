@@ -9,6 +9,7 @@ import java.util.Set;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.hibernate.Hibernate;
 import org.hibernate.HibernateException;
 import org.hibernate.Query;
 import org.hibernate.Session;
@@ -146,7 +147,7 @@ public class CustomNcboOntologyVersionDAO extends NcboOntologyVersionDAO {
 					throws HibernateException, SQLException {
 				Query query = session
 						.getNamedQuery("VNcboOntologyVersionDAO.GET_LATEST_ACTIVE_ONTOLOGY_VERSIONS_QUERY");
-				query.setParameterList("ontologyIds", ontologyIds);
+				query.setParameterList("ontologyIds", ontologyIds, Hibernate.INTEGER);
 				query.setInteger("statusIdReady", StatusEnum.STATUS_READY
 						.getStatus());
 
