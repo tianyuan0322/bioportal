@@ -6,6 +6,7 @@ import java.util.Iterator;
 import org.LexGrid.LexBIG.DataModel.Collections.ResolvedConceptReferenceList;
 import org.LexGrid.LexBIG.DataModel.Core.CodingSchemeVersionOrTag;
 import org.LexGrid.LexBIG.DataModel.Core.ResolvedConceptReference;
+import org.LexGrid.LexBIG.Exceptions.LBInvocationException;
 import org.LexGrid.LexBIG.Exceptions.LBParameterException;
 import org.LexGrid.LexBIG.Impl.LexBIGServiceImpl;
 import org.LexGrid.LexBIG.LexBIGService.CodedNodeSet;
@@ -86,11 +87,14 @@ public class OntologySearchManagerLexGridImpl extends
 			}
 
 			matchIterator.release();
-		} catch (LBParameterException e) {
-			throw new Exception("Ontology " + ontology.getDisplayLabel()
-					+ " (Id: " + ontology.getId() + ", Ontology Id: "
-					+ ontology.getOntologyId()
-					+ ") does not exist in the LexGrid back-end");
+		} catch (Exception e) {
+			if (e instanceof LBParameterException
+					|| e instanceof LBInvocationException) {
+				throw new Exception("Ontology " + ontology.getDisplayLabel()
+						+ " (Id: " + ontology.getId() + ", Ontology Id: "
+						+ ontology.getOntologyId()
+						+ ") does not exist in the LexGrid back-end");
+			}
 		}
 	}
 
