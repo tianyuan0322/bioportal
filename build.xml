@@ -308,7 +308,7 @@
 		<mkdir dir="${testresults.dir}" />
 		<junit printsummary="true" fork="yes" maxmemory="256m" haltonfailure="true">
 			<batchtest todir="${testresults.dir}">
-          <fileset dir="${classes.dir}" includes="**/user/UserHTTP*Test*.class" />
+          <fileset dir="${classes.dir}" includes="**/user/User*Test*.class" />
           <fileset dir="${classes.dir}" includes="**/concept/Concept*Test*.class" />
           <fileset dir="${classes.dir}" includes="**/ontology/Ontology*Test.class" />
           <fileset dir="${classes.dir}" includes="**/search/Search*Test.class" />
@@ -322,7 +322,7 @@
 	<target name="testout">
 		<junit printsummary="true" fork="yes" maxmemory="256m" haltonfailure="true" showoutput="true">
 			<batchtest>
-          <fileset dir="${classes.dir}" includes="**/user/UserHTTP*Test*.class" />
+          <fileset dir="${classes.dir}" includes="**/user/User*Test*.class" />
           <fileset dir="${classes.dir}" includes="**/ontology/Ontology*Test.class" />
           <fileset dir="${classes.dir}" includes="**/search/Search*Test.class" />
           <fileset dir="${classes.dir}" includes="**/concept/Concept*Test*.class" />
