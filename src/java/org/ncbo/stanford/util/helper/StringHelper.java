@@ -20,6 +20,9 @@ import java.util.StringTokenizer;
  */
 public abstract class StringHelper {
 
+	private final static String EMPTY_TXT = "";
+	private final static String QUOTE_TXT = "\"";
+
 	/**
 	 * Formats the number
 	 * 
@@ -58,7 +61,7 @@ public abstract class StringHelper {
 
 		StringBuffer buffer = new StringBuffer(100);
 
-		if (null != str && !"".equals(str)) {
+		if (null != str && !EMPTY_TXT.equals(str)) {
 			char paddingString = (zeroPadded ? '0' : ' ');
 
 			if (!paddingInTheFront) {
@@ -149,7 +152,8 @@ public abstract class StringHelper {
 	 * @return the value without any spaces character
 	 */
 	public static String removeSpaces(String str) {
-		return (str == null) ? null : str.trim().replaceAll("[\\s\\t]+", "");
+		return (str == null) ? null : str.trim().replaceAll("[\\s\\t]+",
+				EMPTY_TXT);
 	}
 
 	/**
@@ -202,7 +206,7 @@ public abstract class StringHelper {
 	}
 
 	public static String doubleQuoteString(String str) {
-		return "\"" + str + "\"";
+		return QUOTE_TXT + str + QUOTE_TXT;
 	}
 
 	/**
@@ -385,7 +389,7 @@ public abstract class StringHelper {
 	 * @return
 	 */
 	public static boolean isNullOrNullString(String str) {
-		return (null == str) || "".equals(str.trim());
+		return (null == str) || EMPTY_TXT.equals(str.trim());
 	}
 
 	/**
