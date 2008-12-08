@@ -150,21 +150,42 @@ public class AbstractSearchService {
 	 * @param ontologies
 	 * @return
 	 */
-	protected String getDebugDisplay(List<VNcboOntology> ontologies) {
+	protected String getOntologyListDisplay(List<VNcboOntology> ontologies) {
 		StringBuffer sb = new StringBuffer(0);
 
 		for (VNcboOntology ontology : ontologies) {
-			sb.append(ontology.getDisplayLabel());
-			sb.append(" (Id: ");
-			sb.append(ontology.getId());
-			sb.append(", Ont Id: ");
-			sb.append(ontology.getOntologyId());
-			sb.append(", Fmt: ");
-			sb.append(ontology.getFormat());
-			sb.append("), ");
+			sb.append(getOntologyDisplay(ontology.getId(), ontology
+					.getOntologyId(), ontology.getDisplayLabel(), ontology
+					.getFormat()));
+			sb.append(", ");
 		}
 
 		return sb.substring(0, sb.length() - 2);
+	}
+
+	/**
+	 * Provides a display format for a single ontology
+	 * 
+	 * @param ontologyVersionId
+	 * @param ontologyId
+	 * @param displayLabel
+	 * @param format
+	 * @return
+	 */
+	protected String getOntologyDisplay(Integer ontologyVersionId,
+			Integer ontologyId, String displayLabel, String format) {
+		StringBuffer sb = new StringBuffer(0);
+
+		sb.append(displayLabel);
+		sb.append(" (Id: ");
+		sb.append(ontologyVersionId);
+		sb.append(", Ont Id: ");
+		sb.append(ontologyId);
+		sb.append(", Fmt: ");
+		sb.append(format);
+		sb.append(')');
+
+		return sb.toString();
 	}
 
 	/**

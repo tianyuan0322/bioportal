@@ -203,9 +203,9 @@ public class IndexSearchServiceImpl extends AbstractSearchService implements
 			removeOntology(writer, ontology, doBackup, false, false);
 
 			if (log.isDebugEnabled()) {
-				log.debug("Adding ontology to index: " + displayLabel
-						+ " (Id: " + ontologyVersionId + ", Ontology Id: "
-						+ ontologyId + ", Format: " + format + ")");
+				log.debug("Adding ontology to index: "
+						+ getOntologyDisplay(ontologyVersionId, ontologyId,
+								displayLabel, format));
 				start = System.currentTimeMillis();
 			}
 
@@ -213,9 +213,10 @@ public class IndexSearchServiceImpl extends AbstractSearchService implements
 
 			if (log.isDebugEnabled()) {
 				stop = System.currentTimeMillis(); // stop timing
-				log.debug("Finished indexing ontology: " + displayLabel
-						+ " in " + (double) (stop - start) / 1000 / 60
-						+ " minutes.\n");
+				log.debug("Finished indexing ontology: "
+						+ getOntologyDisplay(ontologyVersionId, ontologyId,
+								displayLabel, format) + " in "
+						+ (double) (stop - start) / 1000 / 60 + " minutes.\n");
 			}
 
 			reloadCache();
@@ -225,9 +226,8 @@ public class IndexSearchServiceImpl extends AbstractSearchService implements
 			}
 		} else {
 			throw new Exception("No hanlder was found for ontology: "
-					+ ontology.getDisplayLabel() + " (Id: " + ontologyVersionId
-					+ ", Ontology Id: " + ontologyId + ", Format: " + format
-					+ ")");
+					+ getOntologyDisplay(ontologyVersionId, ontologyId,
+							displayLabel, format));
 		}
 	}
 
@@ -317,7 +317,7 @@ public class IndexSearchServiceImpl extends AbstractSearchService implements
 
 		if (log.isDebugEnabled()) {
 			log.debug("Removed ontologies from index: "
-					+ getDebugDisplay(ontologies));
+					+ getOntologyListDisplay(ontologies));
 		}
 	}
 
