@@ -29,7 +29,9 @@ bioportal.xslt.path=${deploy.path}/${app.name}/WEB-INF/resources/xslt
 
 # Session properties
 #
-# Timeout for inactive sessions (in milliseconds)
+# Total timeout = .session.timeout * .session.numcontainers
+#
+# Timeout per "bucket" for inactive sessions (in milliseconds)
 bioportal.session.timeout=1800000
 # Number of "buckets" to allocate for session storage
 bioportal.session.numcontainers=11
@@ -45,7 +47,9 @@ bioportal.search.indexbackuppath=${bioportal.search.indexpath}/backup
 
 # Paginatable lists cache properties
 #
-# Timeout for inactive paginatable lists (in milliseconds)
+# Total timeout = .cache.timeout * .cache.numcontainers
+#
+# Timeout per "bucket" for inactive paginatable lists (in milliseconds)
 bioportal.paginatable.cache.timeout=3600000
 # Number of "buckets" to allocate for paginatable lists storage
 bioportal.paginatable.cache.numcontainers=5
@@ -146,8 +150,11 @@ protege.jdbc.driver=com.mysql.jdbc.Driver
 protege.jdbc.username=yourprotegedbuser
 protege.jdbc.password=yourprotegedbpassword
 
-# protege knowledgebase caching settings
-# Timeout for inactive knowledgebases (in milliseconds)
+# Protege knowledgebase caching settings
+#
+# Total timeout = .cache.timeout * .cache.numcontainers
+#
+# Timeout per "bucket" for inactive knowledgebases (in milliseconds)
 protege.knowledgebase.cache.timeout=21600000
 # Number of "buckets" to allocate for knowledgebase storage
 protege.knowledgebase.cache.numcontainers=4
