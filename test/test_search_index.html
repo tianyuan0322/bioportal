@@ -15,10 +15,10 @@
 
 		<script language="JavaScript">
 			function onSubmitForm(form) {
-				var ontologyId = (form.ontologyid) ? form.ontologyid.value : "";
+				var ontologyIds = (form.ontologyids) ? form.ontologyids.value : "";
 				var submitOk = true;
 
-		   		if (ontologyId == "all" && !confirm("Are you sure? This is a time-consuming " +
+		   		if (ontologyIds == "all" && !confirm("Are you sure? This is a time-consuming " +
 					"opertation that will re-create the entire index. It cannot be undone.")) {
 					submitOk = false;
 				}
@@ -40,13 +40,13 @@
 	<body>
 		<div class="indented">
 		<h3>
-			Index Ontology
+			Index Ontologies
 		</h3>
 		<form name="ontologyIndexForm" onSubmit="return onSubmitForm(this);"
 			method="POST">
-
-			Ontology Id:
-			<input type="text" id="ontologyid" name="ontologyid" value="" />
+			Enter ontology ids separated by commas (ex: 1056,1070,1023)<br /><br />
+			Ontology Ids:
+			<input type="text" id="ontologyids" name="ontologyids" value="" size="42" />
 			<br />
 			Backup Index:
 			<select id="dobackup" name="dobackup">
@@ -58,7 +58,6 @@
 				<option selected value="1">Yes</option>
 				<option value="0">No</option>
 			</select>
-			
 			<input type="hidden" name="sessionid"
 				value="9c188a9b8de0fe0c21b9322b72255fb939a68bb2" />
 			<!--  <input type="hidden" name="applicationid" value="4ea81d74-8960-4525-810b-fa1baab576ff" /> -->
@@ -71,7 +70,7 @@
 		</h3>
 		<form name="ontologyIndexAllForm" onSubmit="return onSubmitForm(this);"
 			method="POST">
-			<input type="hidden" id="ontologyid" name="ontologyid" value="all" />
+			<input type="hidden" id="ontologyids" name="ontologyids" value="all" />
 			<input type="hidden" name="sessionid"
 				value="9c188a9b8de0fe0c21b9322b72255fb939a68bb2" />
 			<!--  <input type="hidden" name="applicationid" value="4ea81d74-8960-4525-810b-fa1baab576ff" /> -->
@@ -79,13 +78,13 @@
 		</form>
 
 		<h3>
-			Remove Ontology from Index
+			Remove Ontologies from Index
 		</h3>
 		<form name="ontologyDeleteForm" onSubmit="return onSubmitForm(this);"
 			method="POST">
-
-			Ontology Id:
-			<input type="text" id="ontologyid" name="ontologyid" value="" />
+			Enter ontology ids separated by commas (ex: 1056,1070,1023)<br /><br />
+			Ontology Ids:
+			<input type="text" id="ontologyids" name="ontologyids" value="" size="42" />
 			<br />
 			Backup Index:
 			<select id="dobackup" name="dobackup">
@@ -96,8 +95,7 @@
 			<select id="dooptimize" name="dooptimize">
 				<option selected value="1">Yes</option>
 				<option value="0">No</option>
-			</select>
-			
+			</select>	
 			<input type="hidden" name="sessionid"
 				value="9c188a9b8de0fe0c21b9322b72255fb939a68bb2" />
 			<!--  <input type="hidden" name="applicationid" value="4ea81d74-8960-4525-810b-fa1baab576ff" /> -->

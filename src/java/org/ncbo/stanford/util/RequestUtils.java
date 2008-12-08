@@ -2,6 +2,7 @@ package org.ncbo.stanford.util;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.List;
 import java.util.StringTokenizer;
@@ -45,6 +46,30 @@ public class RequestUtils {
 		}
 
 		response.sendRedirect(response.encodeRedirectURL(url));
+	}
+
+	/**
+	 * Determines whether a given parameter exists in the request
+	 * 
+	 * @param request
+	 * @param paramName
+	 * @return boolean
+	 * @throws
+	 */
+	@SuppressWarnings("unchecked")
+	public static boolean parameterExists(HttpServletRequest request,
+			String paramName) {
+		boolean exists = false;
+		Enumeration paramNames = request.getParameterNames();
+
+		while (paramNames.hasMoreElements()) {
+			if (((String) paramNames.nextElement()).equals(paramName)) {
+				exists = true;
+				break;
+			}
+		}
+
+		return exists;
 	}
 
 	/**
@@ -214,14 +239,14 @@ public class RequestUtils {
 		}
 
 		return val;
-	}	
+	}
 
 	public static List<Integer> parseIntegerListParam(String integerListParam) {
 		List<Integer> integerList = new ArrayList<Integer>(0);
 
-		integerListParam = StringHelper.removeSpaces(integerListParam);
+		if (!StringHelper.isNullOrNullString(integerListParam)) {
+			integerListParam = StringHelper.removeSpaces(integerListParam);
 
-		if (integerListParam != null) {
 			for (String integerParam : integerListParam.split(",")) {
 				try {
 					Integer integerParamInt = Integer.parseInt(integerParam);

@@ -1,13 +1,13 @@
 package org.ncbo.stanford.view.rest.restlet.search;
 
+import java.util.List;
+
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.ncbo.stanford.service.search.IndexSearchService;
-import org.ncbo.stanford.util.MessageUtils;
 import org.ncbo.stanford.util.RequestUtils;
-import org.ncbo.stanford.util.helper.StringHelper;
 import org.ncbo.stanford.view.rest.restlet.AbstractBaseRestlet;
 import org.ncbo.stanford.view.util.constants.RequestParamConstants;
 import org.restlet.data.Request;
@@ -57,7 +57,7 @@ public class IndexRestlet extends AbstractBaseRestlet {
 	 */
 	@Override
 	protected void deleteRequest(Request request, Response response) {
-		removeOntology(request, response);
+		removeOntologies(request, response);
 	}
 
 	/**
@@ -90,13 +90,12 @@ public class IndexRestlet extends AbstractBaseRestlet {
 		try {
 			HttpServletRequest httpRequest = RequestUtils
 					.getHttpServletRequest(request);
-
-			Integer ontologyId = getOntologyId(httpRequest, true);
+			List<Integer> ontologyIds = getOntologyIds(httpRequest);
 			boolean doBackup = getDoBackup(httpRequest);
 			boolean doOptimize = getDoOptimize(httpRequest);
 
-			if (ontologyId != null) {
-				indexService.indexOntology(ontologyId, doBackup, doOptimize);
+			if (ontologyIds != null) {
+				indexService.indexOntologies(ontologyIds, doBackup, doOptimize);
 			} else if (doBackup) {
 				indexService.backupIndex();
 			} else if (doOptimize) {
@@ -122,16 +121,15 @@ public class IndexRestlet extends AbstractBaseRestlet {
 	 * @param request
 	 * @param response
 	 */
-	private void removeOntology(Request request, Response response) {
+	private void removeOntologies(Request request, Response response) {
 		try {
 			HttpServletRequest httpRequest = RequestUtils
 					.getHttpServletRequest(request);
-
-			Integer ontologyId = getOntologyId(httpRequest, false);
+			List<Integer> ontologyIds = getOntologyIds(httpRequest);
 			boolean doBackup = getDoBackup(httpRequest);
 			boolean doOptimize = getDoOptimize(httpRequest);
 
-			indexService.removeOntology(ontologyId, doBackup, doOptimize);
+			indexService.removeOntologies(ontologyIds, doBackup, doOptimize);
 		} catch (Exception e) {
 			response.setStatus(Status.SERVER_ERROR_INTERNAL, e.getMessage());
 			e.printStackTrace();
@@ -143,23 +141,23 @@ public class IndexRestlet extends AbstractBaseRestlet {
 		}
 	}
 
-	private Integer getOntologyId(HttpServletRequest httpRequest,
-			boolean ignoreNull) throws Exception {
-		Integer ontologyId = null;
-		String ontologyIdStr = (String) httpRequest.getParameter(MessageUtils
-				.getMessage("entity.ontologyid"));
+	private List<Integer> getOntologyIds(HttpServletRequest httpRequest)
+			throws Exception {
+		List<Integer> ontologyIds = null;
 
-		if (!StringHelper.isNullOrNullString(ontologyIdStr)) {
-			try {
-				ontologyId = Integer.parseInt(ontologyIdStr);
-			} catch (NumberFormatException e) {
-				throw new Exception("Invalid ontology id supplied");
+		if (RequestUtils.parameterExists(httpRequest,
+				RequestParamConstants.PARAM_ONTOLOGY_IDS)) {
+			String ontologyIdsStr = (String) httpRequest
+					.getParameter(RequestParamConstants.PARAM_ONTOLOGY_IDS);
+			ontologyIds = RequestUtils.parseIntegerListParam(ontologyIdsStr);
+
+			if (ontologyIds.isEmpty()) {
+				throw new Exception(
+						"You must supply at least one valid ontology id");
 			}
-		} else if (!ignoreNull) {
-			throw new Exception("You must supply a valid ontology id");
 		}
 
-		return ontologyId;
+		return ontologyIds;
 	}
 
 	private boolean getDoBackup(HttpServletRequest httpRequest) {

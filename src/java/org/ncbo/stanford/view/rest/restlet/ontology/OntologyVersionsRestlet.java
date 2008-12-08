@@ -48,7 +48,7 @@ public class OntologyVersionsRestlet extends AbstractBaseRestlet {
 			response.setStatus(Status.SUCCESS_OK);
 
 			// if no data is not found, set Error in the Status object
-			if (ontologyList == null || ontologyList.size() == 0) {
+			if (ontologyList == null || ontologyList.isEmpty()) {
 				response.setStatus(Status.CLIENT_ERROR_NOT_FOUND, MessageUtils
 						.getMessage("msg.error.ontologyNotFound"));
 			}

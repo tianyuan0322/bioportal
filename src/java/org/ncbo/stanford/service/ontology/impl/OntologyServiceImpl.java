@@ -172,7 +172,7 @@ public class OntologyServiceImpl implements OntologyService {
 		}
 
 		// check if the list is empty before executing next query
-		if (ontVersionList.size() == 0) {
+		if (ontVersionList.isEmpty()) {
 			return ontBeanList;
 		}
 

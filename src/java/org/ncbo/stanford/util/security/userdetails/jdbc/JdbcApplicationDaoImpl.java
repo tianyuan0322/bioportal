@@ -42,11 +42,12 @@ public class JdbcApplicationDaoImpl extends JdbcDaoSupport implements
 	 * 
 	 * @param applicationId
 	 */
+	@SuppressWarnings("unchecked")
 	public ApplicationBean loadApplicationByApplicationId(String applicationId) {
 		List applications = applicationByApplicationIdMapping
 				.execute(applicationId);
 
-		if (applications.size() == 0) {
+		if (applications.isEmpty()) {
 			throw new ApplicationNotFoundException("Application: "
 					+ applicationId + " not found");
 		}
