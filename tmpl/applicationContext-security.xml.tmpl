@@ -63,11 +63,12 @@
 			ref="filterDefinitionMap" />
 	</bean>
 	
+	<!-- /rest/ontologies/index/:DELETE,POST,PUT=ROLE_ADMINISTRATOR -->
 	<bean id="filterDefinitionMap"
 		class="org.ncbo.stanford.util.security.intercept.web.RESTfulDefinitionSource">
 		<constructor-arg type="java.lang.String">
 			<value>
-				/rest/auth:GET,POST=ROLE_ANONYMOUS
+				/rest/auth/:GET,POST=ROLE_ANONYMOUS
 				/rest/**:GET=ROLE_ANONYMOUS
 			</value>
 		</constructor-arg>
