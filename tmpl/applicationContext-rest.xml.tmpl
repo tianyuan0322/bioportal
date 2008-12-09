@@ -188,13 +188,13 @@
 			<bean class="java.util.HashMap">
 				<constructor-arg>
 					<map>
-						<entry key="/auth/">
+						<entry key="/auth">
 							<ref local="authenticationRestlet" />
 						</entry>
-						<entry key="/ontologies/active/">
+						<entry key="/ontologies/active">
 							<ref local="ontologiesActiveRestlet" />
 						</entry>
-						<entry key="/ontologies/">
+						<entry key="/ontologies">
 							<ref local="ontologiesRestlet" />
 						</entry>
 						<entry key="/ontologies/{ontologyversionid}">
@@ -216,7 +216,7 @@
 							key="/ontologies/download/{ontologyversionid}">
 							<ref local="ontologyDownloadRestlet" />
 						</entry>
-						<entry key="/categories/">
+						<entry key="/categories">
 							<ref local="categoriesRestlet" />
 						</entry>
 						<entry
@@ -239,7 +239,7 @@
 						<entry key="/search/{query}">
 							<ref local="queryRestlet" />
 						</entry>
-						<entry key="/ontologies/index/">
+						<entry key="/ontologies/index">
 							<ref local="indexRestlet" />
 						</entry>
 						<entry key="/search/meta/{query}">
