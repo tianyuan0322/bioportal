@@ -12,8 +12,8 @@
 		</success>
 	</xsl:template>
 
-	<xsl:template match="ontology">
-		<ontology>
+	<xsl:template match="ontologyBean">
+		<ontologyBean>
 			<xsl:copy-of select="id" />
 			<xsl:copy-of select="ontologyId" />
 			<xsl:copy-of select="displayLabel" />
@@ -28,6 +28,6 @@
 			<xsl:copy-of select="statusId" />
 			<xsl:copy-of select="categoryIds" />
 			<xsl:copy-of select="dateCreated" />
-		</ontology>
+		</ontologyBean>
 	</xsl:template>
 </xsl:stylesheet>
