@@ -191,8 +191,11 @@
 						<entry key="/auth">
 							<ref local="authenticationRestlet" />
 						</entry>
-						<entry key="/ontologies/active">
+						<entry key="/ontologies/active/">
 							<ref local="ontologiesActiveRestlet" />
+						</entry>
+						<entry key="/ontologies/index/">
+							<ref local="indexRestlet" />
 						</entry>
 						<entry key="/ontologies">
 							<ref local="ontologiesRestlet" />
@@ -238,9 +241,6 @@
 						</entry>
 						<entry key="/search/{query}">
 							<ref local="queryRestlet" />
-						</entry>
-						<entry key="/ontologies/index">
-							<ref local="indexRestlet" />
 						</entry>
 						<entry key="/search/meta/{query}">
 							<ref local="metadataSearchRestlet" />
