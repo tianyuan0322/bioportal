@@ -200,15 +200,15 @@
 						<entry key="/ontologies">
 							<ref local="ontologiesRestlet" />
 						</entry>
-						<entry key="/ontologies/{ontologyversionid}">
+						<entry key="/ontology/{ontologyversionid}">
 							<ref local="ontologyRestlet" />
 						</entry>
 						<entry
-							key="/ontologies/versions/{ontologyversionid}">
+							key="/ontologies/versions/{ontologyid}">
 							<ref local="ontologyVersionsRestlet" />
 						</entry>
 						<entry
-							key="/ontologies/parse/{ontologyversionid}">
+							key="/ontology/parse/{ontologyversionid}">
 							<ref local="ontologyParseRestlet" />
 						</entry>
 						<entry
@@ -223,13 +223,13 @@
 							<ref local="categoriesRestlet" />
 						</entry>
 						<entry
-							key="/concepts/{ontologyversionid}/{conceptid}">
+							key="/concept/{ontologyversionid}/{conceptid}">
 							<ref local="conceptRestlet" />
 						</entry>
 						<entry key="/users">
 							<ref local="usersRestlet" />
 						</entry>
-						<entry key="/users/{userid}">
+						<entry key="/user/{userid}">
 							<ref local="userRestlet" />
 						</entry>
 						<entry key="/users/email/{email}/">
