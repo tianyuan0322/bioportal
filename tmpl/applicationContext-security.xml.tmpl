@@ -47,7 +47,7 @@
 		class="org.ncbo.stanford.util.security.ui.RESTfulExceptionTranslationFilter">
 		<property name="xmlSerializationService">
 			<ref bean="xmlSerializationService" />
-		</property>		
+		</property>
 	</bean>
 
 	<!-- filter responsible for access decisions. What urlrequests may be
@@ -62,14 +62,19 @@
 		<property name="objectDefinitionSource"
 			ref="filterDefinitionMap" />
 	</bean>
-	
-	<!-- /rest/ontologies/index/:DELETE,POST,PUT=ROLE_ADMINISTRATOR -->
+
 	<bean id="filterDefinitionMap"
 		class="org.ncbo.stanford.util.security.intercept.web.RESTfulDefinitionSource">
 		<constructor-arg type="java.lang.String">
 			<value>
-				/rest/auth/:GET,POST=ROLE_ANONYMOUS
-				/rest/**:GET=ROLE_ANONYMOUS
+				/ontologies/**:DELETE,POST,PUT=ROLE_ADMINISTRATOR
+				/ontologies/index/**:DELETE,GET,POST,PUT=ROLE_ADMINISTRATOR
+				/ontology/parse/**:DELETE,GET,POST,PUT=ROLE_ADMINISTRATOR
+				/ontologies/parsebatch/**:DELETE,GET,POST,PUT=ROLE_ADMINISTRATOR
+				/user/**:DELETE,POST,PUT=ROLE_ADMINISTRATOR	
+				/users/**:DELETE,POST,PUT=ROLE_ADMINISTRATOR	
+				/auth:GET,POST=ROLE_ANONYMOUS
+				/**:GET=ROLE_ANONYMOUS
 			</value>
 		</constructor-arg>
 	</bean>
@@ -95,7 +100,7 @@
 			<ref local="userApplicationCache" />
 		</property>
 		<property name="passwordEncoder">
-			<ref bean="passwordEncoder"/>
+			<ref bean="passwordEncoder" />
 		</property>
 	</bean>
 
