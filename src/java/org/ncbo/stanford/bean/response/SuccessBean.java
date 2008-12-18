@@ -12,7 +12,7 @@ import java.util.List;
 public class SuccessBean extends AbstractResponseBean {
 
 	private String sessionId;
-	private List<Object> data = new ArrayList<Object>();
+	private List<Object> data = new ArrayList<Object>(0);
 
 	/**
 	 * Default constructor
