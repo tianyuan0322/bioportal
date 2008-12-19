@@ -119,23 +119,9 @@
 		</property>
 	</bean>
 
-	<bean id="ontologyParseRestlet"
-		class="org.ncbo.stanford.view.rest.restlet.ontology.OntologyParseRestlet"
+	<bean id="ontologiesParseRestlet"
+		class="org.ncbo.stanford.view.rest.restlet.ontology.OntologiesParseRestlet"
 		parent="abstractBaseRestlet">
-		<property name="ontologyService">
-			<ref bean="ontologyService" />
-		</property>
-		<property name="ontologyLoadSchedulerService">
-			<ref bean="ontologyLoadSchedulerService" />
-		</property>
-	</bean>
-
-	<bean id="ontologyParseBatchRestlet"
-		class="org.ncbo.stanford.view.rest.restlet.ontology.OntologyParseBatchRestlet"
-		parent="abstractBaseRestlet">
-		<property name="ontologyService">
-			<ref bean="ontologyService" />
-		</property>
 		<property name="ontologyLoadSchedulerService">
 			<ref bean="ontologyLoadSchedulerService" />
 		</property>
@@ -200,7 +186,7 @@
 						<entry key="/ontologies">
 							<ref local="ontologiesRestlet" />
 						</entry>
-						<entry key="/ontology/{ontologyversionid}">
+						<entry key="/ontologies/{ontologyversionid}">
 							<ref local="ontologyRestlet" />
 						</entry>
 						<entry
@@ -208,12 +194,8 @@
 							<ref local="ontologyVersionsRestlet" />
 						</entry>
 						<entry
-							key="/ontology/parse/{ontologyversionid}">
-							<ref local="ontologyParseRestlet" />
-						</entry>
-						<entry
-							key="/ontologies/parsebatch/{ontologyversionidstart}/{ontologyversionidend}">
-							<ref local="ontologyParseBatchRestlet" />
+							key="/ontologies/parse/{ontologyversionid}">
+							<ref local="ontologiesParseRestlet" />
 						</entry>
 						<entry
 							key="/ontologies/download/{ontologyversionid}">
@@ -223,13 +205,13 @@
 							<ref local="categoriesRestlet" />
 						</entry>
 						<entry
-							key="/concept/{ontologyversionid}/{conceptid}">
+							key="/concepts/{ontologyversionid}/{conceptid}">
 							<ref local="conceptRestlet" />
 						</entry>
 						<entry key="/users">
 							<ref local="usersRestlet" />
 						</entry>
-						<entry key="/user/{userid}">
+						<entry key="/users/{userid}">
 							<ref local="userRestlet" />
 						</entry>
 						<entry key="/users/email/{email}/">

@@ -6,6 +6,7 @@ import java.util.Set;
 
 import org.ncbo.stanford.domain.generated.NcboOntologyCategory;
 import org.ncbo.stanford.domain.generated.NcboOntologyFile;
+import org.ncbo.stanford.domain.generated.NcboOntologyLoadQueue;
 
 /**
  * Class that represents the view of ontology with metadata. It is mappped to a
@@ -48,8 +49,12 @@ public class VNcboOntology {
 	private String synonymSlot;
 	private String preferredNameSlot;
 
-	private Set<NcboOntologyCategory> ncboOntologyCategories = new HashSet<NcboOntologyCategory>(0);
-	private Set<NcboOntologyFile> ncboOntologyFiles = new HashSet<NcboOntologyFile>(0);
+	private Set<NcboOntologyCategory> ncboOntologyCategories = new HashSet<NcboOntologyCategory>(
+			0);
+	private Set<NcboOntologyFile> ncboOntologyFiles = new HashSet<NcboOntologyFile>(
+			0);
+	private Set<NcboOntologyLoadQueue> ncboOntologyLoadQueues = new HashSet<NcboOntologyLoadQueue>(
+			0);
 
 	// Property accessors
 
@@ -496,7 +501,8 @@ public class VNcboOntology {
 	}
 
 	/**
-	 * @param ncboOntologyCategories the ncboOntologyCategories to set
+	 * @param ncboOntologyCategories
+	 *            the ncboOntologyCategories to set
 	 */
 	public void setNcboOntologyCategories(
 			Set<NcboOntologyCategory> ncboOntologyCategories) {
@@ -511,9 +517,26 @@ public class VNcboOntology {
 	}
 
 	/**
-	 * @param ncboOntologyFiles the ncboOntologyFiles to set
+	 * @param ncboOntologyFiles
+	 *            the ncboOntologyFiles to set
 	 */
 	public void setNcboOntologyFiles(Set<NcboOntologyFile> ncboOntologyFiles) {
 		this.ncboOntologyFiles = ncboOntologyFiles;
+	}
+
+	/**
+	 * @return the ncboOntologyLoadQueues
+	 */
+	public Set<NcboOntologyLoadQueue> getNcboOntologyLoadQueues() {
+		return ncboOntologyLoadQueues;
+	}
+
+	/**
+	 * @param ncboOntologyLoadQueues
+	 *            the ncboOntologyLoadQueues to set
+	 */
+	public void setNcboOntologyLoadQueues(
+			Set<NcboOntologyLoadQueue> ncboOntologyLoadQueues) {
+		this.ncboOntologyLoadQueues = ncboOntologyLoadQueues;
 	}
 }

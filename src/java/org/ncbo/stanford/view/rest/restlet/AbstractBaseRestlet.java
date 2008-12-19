@@ -1,5 +1,7 @@
 package org.ncbo.stanford.view.rest.restlet;
 
+import java.util.List;
+
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.logging.Log;
@@ -7,6 +9,7 @@ import org.apache.commons.logging.LogFactory;
 import org.ncbo.stanford.service.xml.XMLSerializationService;
 import org.ncbo.stanford.util.MessageUtils;
 import org.ncbo.stanford.util.RequestUtils;
+import org.ncbo.stanford.view.util.constants.RequestParamConstants;
 import org.restlet.Restlet;
 import org.restlet.data.Method;
 import org.restlet.data.Request;
@@ -106,6 +109,36 @@ public abstract class AbstractBaseRestlet extends Restlet {
 	private void unsupportedMethod(Request request, Response response) {
 		response.setStatus(Status.CLIENT_ERROR_METHOD_NOT_ALLOWED);
 		xmlSerializationService.generateStatusXMLResponse(request, response);
+	}
+
+	protected List<Integer> getOntologyVersionIds(HttpServletRequest httpRequest)
+			throws Exception {
+		return getIntegerList(httpRequest,
+				RequestParamConstants.PARAM_ONTOLOGY_VERSION_IDS);
+	}
+
+	protected List<Integer> getOntologyIds(HttpServletRequest httpRequest)
+			throws Exception {
+		return getIntegerList(httpRequest,
+				RequestParamConstants.PARAM_ONTOLOGY_IDS);
+	}
+
+	private List<Integer> getIntegerList(HttpServletRequest httpRequest,
+			String paramName) throws Exception {
+		List<Integer> integers = null;
+
+		if (RequestUtils.parameterExists(httpRequest, paramName)) {
+			String ontologyIdsStr = (String) httpRequest
+					.getParameter(paramName);
+			integers = RequestUtils.parseIntegerListParam(ontologyIdsStr);
+
+			if (integers.isEmpty()) {
+				throw new Exception("You must supply at least one valid "
+						+ paramName);
+			}
+		}
+
+		return integers;
 	}
 
 	/**

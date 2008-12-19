@@ -141,25 +141,6 @@ public class IndexRestlet extends AbstractBaseRestlet {
 		}
 	}
 
-	private List<Integer> getOntologyIds(HttpServletRequest httpRequest)
-			throws Exception {
-		List<Integer> ontologyIds = null;
-
-		if (RequestUtils.parameterExists(httpRequest,
-				RequestParamConstants.PARAM_ONTOLOGY_IDS)) {
-			String ontologyIdsStr = (String) httpRequest
-					.getParameter(RequestParamConstants.PARAM_ONTOLOGY_IDS);
-			ontologyIds = RequestUtils.parseIntegerListParam(ontologyIdsStr);
-
-			if (ontologyIds.isEmpty()) {
-				throw new Exception(
-						"You must supply at least one valid ontology id");
-			}
-		}
-
-		return ontologyIds;
-	}
-
 	private boolean getDoBackup(HttpServletRequest httpRequest) {
 		String doBackupStr = (String) httpRequest
 				.getParameter(RequestParamConstants.PARAM_DOBACKUP);

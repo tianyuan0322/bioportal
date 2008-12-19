@@ -105,5 +105,11 @@
             </key>
             <one-to-many class="org.ncbo.stanford.domain.generated.NcboOntologyFile" />
         </set>
+        <set name="ncboOntologyLoadQueues" inverse="true">
+            <key>
+                <column name="ontology_version_id" not-null="true" />
+            </key>
+            <one-to-many class="org.ncbo.stanford.domain.generated.NcboOntologyLoadQueue" />
+        </set>
 	</class>
 </hibernate-mapping>
