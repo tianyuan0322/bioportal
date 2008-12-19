@@ -21,8 +21,6 @@ public class LuceneIndexWriterWrapper {
 	private IndexWriter writer;
 	private String indexPath;
 
-	// private Analyzer analyzer;
-
 	/**
 	 * @param indexPath
 	 * @param analyzer
