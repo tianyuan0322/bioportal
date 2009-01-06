@@ -14,9 +14,12 @@ public interface IndexSearchService {
 	/**
 	 * Recreate the index of all ontologies, overwriting the existing one
 	 * 
+	 * @param doBackup
+	 * @param doOptimize
 	 * @throws Exception
 	 */
-	public void indexAllOntologies() throws Exception;
+	public void indexAllOntologies(boolean doBackup, boolean doOptimize)
+			throws Exception;
 
 	/**
 	 * Index a given ontology with options to backup and optimize index
