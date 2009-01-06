@@ -68,7 +68,12 @@ public class IndexRestlet extends AbstractBaseRestlet {
 	 */
 	private void indexAllOntologies(Request request, Response response) {
 		try {
-			indexService.indexAllOntologies();
+			HttpServletRequest httpRequest = RequestUtils
+					.getHttpServletRequest(request);
+			boolean doBackup = getDoBackup(httpRequest);
+			boolean doOptimize = getDoOptimize(httpRequest);
+
+			indexService.indexAllOntologies(doBackup, doOptimize);
 		} catch (Exception e) {
 			response.setStatus(Status.SERVER_ERROR_INTERNAL, e.getMessage());
 			e.printStackTrace();

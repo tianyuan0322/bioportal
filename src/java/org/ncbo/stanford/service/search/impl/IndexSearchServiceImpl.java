@@ -45,13 +45,19 @@ public class IndexSearchServiceImpl extends AbstractSearchService implements
 	/**
 	 * Recreate the index of all ontologies, overwriting the existing one
 	 * 
+	 * @param doBackup
+	 * @param doOptimize
 	 * @throws Exception
 	 */
-	public void indexAllOntologies() throws Exception {
+	public void indexAllOntologies(boolean doBackup, boolean doOptimize)
+			throws Exception {
 		long start = System.currentTimeMillis();
 		List<VNcboOntology> ontologies = ncboOntologyVersionDAO
 				.findLatestActiveOntologyVersions();
-		backupIndex();
+
+		if (doBackup) {
+			backupIndex();
+		}
 
 		LuceneIndexWriterWrapper writer = new LuceneIndexWriterWrapper(
 				indexPath, analyzer, true);
@@ -69,7 +75,10 @@ public class IndexSearchServiceImpl extends AbstractSearchService implements
 			}
 		}
 
-		optimizeIndex(writer);
+		if (doOptimize) {
+			optimizeIndex(writer);
+		}
+
 		closeWriter(writer);
 
 		if (log.isDebugEnabled()) {
