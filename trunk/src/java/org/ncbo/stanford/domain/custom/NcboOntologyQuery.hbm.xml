@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+
+<hibernate-mapping>
+ 	<query name="VNcboOntologyVersionDAO.GET_LATEST_ONTOLOGY_VERSION_BY_OBO_FOUNDRY_ID">
+		<![CDATA[
+			FROM VNcboOntology 
+			WHERE oboFoundryId = :oboFoundryId 
+				AND internalVersionNumber = (
+					SELECT MAX(internalVersionNumber) 
+					FROM VNcboOntology 
+					WHERE oboFoundryId = :oboFoundryId
+				)
+		]]>
+	</query>
+
+ 	<sql-query name="VNcboOntologyVersionDAO.GET_ALL_LATEST_ONTOLOGY_VERSIONS_QUERY">	
+		<return alias="ont" class="org.ncbo.stanford.domain.custom.entity.VNcboOntology" />
+	
+		<![CDATA[
+			SELECT {ont.*}
+			FROM
+				v_ncbo_ontology {ont}
+				INNER JOIN (
+					SELECT ontology_id, MAX(internal_version_number) AS internal_version_number
+					FROM
+						ncbo_ontology_version
+					GROUP BY ontology_id
+				) a ON ont.ontology_id = a.ontology_id AND ont.internal_version_number = a.internal_version_number
+			ORDER BY
+				ont.display_label
+		]]>
+	</sql-query>
+	
+	
+	<sql-query name="VNcboOntologyVersionDAO.GET_ALL_LATEST_ACTIVE_ONTOLOGY_VERSIONS_QUERY">	
+		<return alias="ont" class="org.ncbo.stanford.domain.custom.entity.VNcboOntology" />
+	
+		<![CDATA[
+			SELECT {ont.*}
+			FROM
+				v_ncbo_ontology {ont}
+			    INNER JOIN (
+					SELECT ontology_id, MAX(internal_version_number) AS internal_version_number
+					FROM
+						ncbo_ontology_version
+					WHERE status_id = :statusIdReady
+					GROUP BY ontology_id
+				) a ON ont.ontology_id = a.ontology_id AND ont.internal_version_number = a.internal_version_number
+			ORDER BY
+				ont.display_label				
+		]]>
+	</sql-query>
+
+	<sql-query name="VNcboOntologyVersionDAO.GET_LATEST_ACTIVE_ONTOLOGY_VERSIONS_QUERY">	
+		<return alias="ont" class="org.ncbo.stanford.domain.custom.entity.VNcboOntology" />
+	
+		<![CDATA[
+			SELECT {ont.*}
+			FROM
+				v_ncbo_ontology {ont}
+			    INNER JOIN (
+					SELECT ontology_id, MAX(internal_version_number) AS internal_version_number
+					FROM
+						ncbo_ontology_version
+					WHERE ontology_id IN (:ontologyIds) AND status_id = :statusIdReady
+					GROUP BY ontology_id
+				) a ON ont.ontology_id = a.ontology_id AND ont.internal_version_number = a.internal_version_number
+			ORDER BY
+				ont.display_label				
+		]]>
+	</sql-query>
+
+	<sql-query name="VNcboOntologyVersionDAO.GET_LATEST_ONTOLOGY_VERSION_FOR_ONTOLOGY_ID_QUERY">	
+		<return alias="ont" class="org.ncbo.stanford.domain.custom.entity.VNcboOntology" />
+	
+		<![CDATA[
+			SELECT {ont.*}
+			FROM
+				v_ncbo_ontology {ont}
+				INNER JOIN (
+					SELECT ontology_id, MAX(internal_version_number) AS internal_version_number
+					FROM
+						ncbo_ontology_version
+					WHERE ontology_id = :ontologyId
+					GROUP BY ontology_id
+				) a ON ont.ontology_id = a.ontology_id AND ont.internal_version_number = a.internal_version_number 
+		]]>
+	</sql-query>
+
+	<sql-query name="VNcboOntologyVersionDAO.GET_LATEST_ACTIVE_ONTOLOGY_VERSION_FOR_ONTOLOGY_ID_QUERY">	
+		<return alias="ont" class="org.ncbo.stanford.domain.custom.entity.VNcboOntology" />
+	
+		<![CDATA[
+			SELECT {ont.*}
+			FROM
+				v_ncbo_ontology {ont}
+				INNER JOIN (
+					SELECT ontology_id, MAX(internal_version_number) AS internal_version_number
+					FROM
+						ncbo_ontology_version
+					WHERE ontology_id = :ontologyId AND status_id = :statusIdReady
+					GROUP BY ontology_id
+				) a ON ont.ontology_id = a.ontology_id AND ont.internal_version_number = a.internal_version_number 
+		]]>
+	</sql-query>
+</hibernate-mapping>

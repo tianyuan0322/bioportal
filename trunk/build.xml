@@ -1,0 +1,352 @@
+<?xml version="1.0"?>
+
+<project name="bioportal" basedir="." default="usage">
+	<property file="build.properties" />
+
+	<property name="test.dir" value="src/test" />
+	<property name="testresults.dir" value="testresults" />
+	<property name="build.dir" value="build" />
+	<property name="dist.dir" value="dist" />
+	<property name="meta-inf.dir" value="${web.dir}/META-INF" />
+	<property name="classes.dir" value="${web.dir}/WEB-INF/classes" />
+	<property name="lib.dir" value="${web.dir}/WEB-INF/lib" />
+	<property name="conf.dir" value="${web.dir}/WEB-INF/conf" />
+	<property name="resources.dir" value="${web.dir}/WEB-INF/resources" />
+	<property name="conf.dir.generated" value="${conf.dir}/generated" />
+	<property name="tmpl.dir" value="tmpl" />
+
+	<path id="master-classpath">
+		<fileset dir="${lib.dir}">
+			<include name="**/*.jar" />
+		</fileset>
+
+		<fileset dir="${appserver.lib}">
+			<include name="servlet*.jar" />
+		</fileset>
+
+		<pathelement path="${classes.dir}" />
+	</path>
+
+	<target name="usage">
+		<echo message="" />
+		<echo message="${app.name} build file" />
+		<echo message="-----------------------------------" />
+		<echo message="" />
+		<echo message="Available targets are:" />
+		<echo message="" />
+		<echo message="clean     --> Remove build directories" />
+		<echo message="build     --> Build the application" />
+		<echo message="deploy    --> Deploy application as directory" />
+		<echo message="createwar --> Create a WAR file but don't deploy it to the server" />
+		<echo message="deploywar --> Deploy application as a WAR file" />
+		<echo message="test      --> Invoke selected unit tests (assumes test fixtures such as databases are setup).  Outputs to XML file." />
+		<echo message="testout    --> Invoke selected unit tests (assumes test fixtures such as databases are setup). Outputs to console." />
+		<echo message="" />
+	</target>
+
+	<target name="clean">
+		<delete failonerror="false">
+			<fileset dir="${classes.dir}">
+				<include name="**/*.class" />
+				<include name="**/*.properties" />
+				<include name="**/*.xml" />
+			</fileset>
+		</delete>
+
+		<delete includeemptydirs="true" failonerror="false">
+			<fileset dir="${build.dir}">
+				<include name="**/*" />
+			</fileset>
+		</delete>
+
+		<delete file="${dist.dir}/${app.name}.war" />
+		<delete dir="${conf.dir.generated}" />
+		<delete dir="${deploy.path}/${app.name}" />
+		<delete file="${deploy.path}/${app.name}.war" />
+	</target>
+
+	<!--- This target sets the registry.xml-is-present property if the registry file exists -->
+	<target name="check-registry.xml-is-present">
+		<condition property="registry.xml-is-present">
+			<available file="${lexgrid.registry.file}" type="file" />
+		</condition>
+	</target>
+
+	<!-- Task only runs if registry.xml-is-present property is not set (the file does not exist) -->
+	<target name="copy-registry-file-if-required" depends="check-registry.xml-is-present" unless="registry.xml-is-present">
+		<echo message="LexGrid registry.xml file is not present. Creating a default empty file..." />
+		<copy file="${tmpl.dir}/registry.xml.tmpl" tofile="${lexgrid.registry.file}" />
+	</target>
+
+	<target name="prepare" description="Create configuration files using templates">
+		<echo message="log4j path: = ${bioportal.app.logfilepath}" />
+
+		<mkdir dir="${bioportal.tempdir}" />
+		<mkdir dir="${bioportal.ontology.filepath}" />		
+		<mkdir dir="${bioportal.search.indexpath}" />
+		<mkdir dir="${bioportal.search.indexbackuppath}" />
+		<mkdir dir="${obo.sourceforge.cvs.checkoutdir}" />
+		<mkdir dir="${lexgrid.index.location}" />
+		<mkdir dir="${lexgrid.registry.path}" />
+		<mkdir dir="${build.dir}" />
+
+		<antcall target="copy-registry-file-if-required" />
+
+		<chmod dir="${bioportal.resource.path}" perm="777" type="both" includes="**/*" />
+
+		<copy file="${tmpl.dir}/web.xml.tmpl" tofile="${web.dir}/WEB-INF/web.xml" overwrite="true">
+			<filterset>
+				<filter token="maxfilesize" value="${bioportal.upload.maxfilesize}" />
+			</filterset>
+		</copy>
+
+		<copy file="${tmpl.dir}/log4j.xml.tmpl" tofile="${conf.dir.generated}/log4j.xml" overwrite="true">
+			<filterset>
+				<filter token="logfilepath" value="${bioportal.app.logfilepath}" />
+				<filter token="maxlogfilesize" value="${bioportal.app.maxlogfilesize}" />
+				<filter token="maxlogbackupindex" value="${bioportal.app.maxlogbackupindex}" />
+				<filter token="bioportallevel" value="${bioportal.app.log.bioportallevel}" />
+				<filter token="deflevel" value="${bioportal.app.log.deflevel}" />
+			</filterset>
+		</copy>
+
+		<copy file="${tmpl.dir}/log4j.dtd" tofile="${conf.dir.generated}/log4j.dtd" overwrite="true" />
+
+		<copy file="${tmpl.dir}/context.xml.tmpl" tofile="${meta-inf.dir}/context.xml" overwrite="true">
+			<filterset>
+				<filter token="bioportaldatasourcename" value="${bioportal.datasource.name}" />
+				<filter token="bioportaljdbcdriver" value="${bioportal.jdbc.driver}" />
+				<filter token="bioportaljdbcurl" value="${bioportal.jdbc.url}" />
+				<filter token="bioportaljdbcusername" value="${bioportal.jdbc.username}" />
+				<filter token="bioportaljdbcpassword" value="${bioportal.jdbc.password}" />
+				<filter token="bioportaljdbcmaxactive" value="${bioportal.jdbc.maxactive}" />
+				<filter token="bioportaljdbcmaxidle" value="${bioportal.jdbc.maxidle}" />
+				<filter token="bioportaljdbcmaxwait" value="${bioportal.jdbc.maxwait}" />
+			</filterset>
+		</copy>
+
+		<copy file="${tmpl.dir}/${bioportal.messagebundle.name}.properties.tmpl" tofile="${bioportal.messagebundle.path}/${bioportal.messagebundle.name}.properties" overwrite="true">
+			<filterset>
+				<filter token="bioportalxsltpath" value="${bioportal.xslt.path}" />
+				<filter token="bioportalontologyfilepath" value="${bioportal.ontology.filepath}" />
+			</filterset>
+		</copy>
+
+		<copy file="${tmpl.dir}/applicationContext-datasources.${bioportal.environment}.xml.tmpl" tofile="${conf.dir.generated}/applicationContext-datasources.xml" overwrite="true">
+			<filterset>
+				<filter token="bioportaldatasource" value="${bioportal.datasource}" />
+				<filter token="bioportaljdbcdriver" value="${bioportal.jdbc.driver}" />
+				<filter token="bioportaljdbcurl" value="${bioportal.jdbc.url}" />
+				<filter token="bioportaljdbcusername" value="${bioportal.jdbc.username}" />
+				<filter token="bioportaljdbcpassword" value="${bioportal.jdbc.password}" />
+			</filterset>
+		</copy>
+
+		<copy file="${tmpl.dir}/applicationContext-security.xml.tmpl" tofile="${conf.dir.generated}/applicationContext-security.xml" overwrite="true">
+			<filterset>
+				<filter token="applicationbyapplicationidquery" value="${bioportal.applicationbyapplicationid.query}" />
+				<filter token="usersbyusernamequery" value="${bioportal.usersbyusername.query}" />
+				<filter token="authoritiesbyusernamequery" value="${bioportal.authoritiesbyusername.query}" />
+			</filterset>
+		</copy>
+
+		<copy file="${tmpl.dir}/applicationContext-services.xml.tmpl" tofile="${conf.dir.generated}/applicationContext-services.xml" overwrite="true">
+			<filterset>
+				<filter token="encryptionkey" value="${bioportal.encryption.key}" />
+				<filter token="messagebundlepackage" value="${bioportal.messagebundle.package}" />
+				<filter token="bioportalsessionnumcontainers" value="${bioportal.session.numcontainers}" />
+				<filter token="bioportalsessiontimeout" value="${bioportal.session.timeout}" />
+				<filter token="bioportalsearchmaxnumhits" value="${bioportal.search.maxnumhits}" />
+				<filter token="bioportalsearchindexmergefactor" value="${bioportal.search.indexmergefactor}" />
+				<filter token="bioportalsearchindexmaxmergedocs" value="${bioportal.search.indexmaxmergedocs}" />
+				<filter token="bioportalsearchindexpath" value="${bioportal.search.indexpath}" />
+				<filter token="bioportalsearchindexbackuppath" value="${bioportal.search.indexbackuppath}" />
+				<filter token="bioportalpaginatablecachenumcontainers" value="${bioportal.paginatable.cache.numcontainers}" />
+				<filter token="bioportalpaginatablecachetimeout" value="${bioportal.paginatable.cache.timeout}" />
+				<filter token="obopullschedulerenabled" value="${obo.pull.scheduler.enabled}" />
+				<filter token="obopullschedulercronexpression" value="${obo.pull.scheduler.cronexpression}" />
+				<filter token="ontologyparseschedulerenabled" value="${ontology.parse.scheduler.enabled}" />
+				<filter token="ontologyparseschedulercronexpression" value="${ontology.parse.scheduler.cronexpression}" />
+				<filter token="protegejdbcurl" value="${protege.jdbc.url}" />
+				<filter token="protegejdbcdriver" value="${protege.jdbc.driver}" />
+				<filter token="protegejdbcusername" value="${protege.jdbc.username}" />
+				<filter token="protegejdbcpassword" value="${protege.jdbc.password}" />
+				<filter token="protegetableprefix" value="${protege.table.prefix}" />
+				<filter token="protegetablesuffix" value="${protege.table.suffix}" />
+				<filter token="protegebigfilethreshold" value="${protege.big.file.threshold}" />
+				<filter token="protegeknowledgebasecachetimeout" value="${protege.knowledgebase.cache.timeout}" />
+				<filter token="protegeknowledgebasecachenumcontainers" value="${protege.knowledgebase.cache.numcontainers}" />
+				<filter token="obosourceforgecvsusername" value="${obo.sourceforge.cvs.username}" />
+				<filter token="obosourceforgecvspassword" value="${obo.sourceforge.cvs.password}" />
+				<filter token="obosourceforgecvshostname" value="${obo.sourceforge.cvs.hostname}" />
+				<filter token="obosourceforgecvsmodule" value="${obo.sourceforge.cvs.module}" />
+				<filter token="obosourceforgecvsrootdirectory" value="${obo.sourceforge.cvs.rootdirectory}" />
+				<filter token="obosourceforgecvsargumentstring" value="${obo.sourceforge.cvs.argumentstring}" />
+				<filter token="obosourceforgecvscheckoutdir" value="${obo.sourceforge.cvs.checkoutdir}" />
+				<filter token="obosourceforgecvsdescriptorfile" value="${obo.sourceforge.cvs.descriptor.file}" />
+				<filter token="bioportaltempdir" value="${bioportal.tempdir}" />
+			</filterset>
+		</copy>
+
+		<copy file="${tmpl.dir}/applicationContext-rest.xml.tmpl" tofile="${conf.dir.generated}/applicationContext-rest.xml" overwrite="true">
+			<filterset>
+			</filterset>
+		</copy>
+
+		<copy file="${tmpl.dir}/lexgrid.props.tmpl" tofile="${resources.dir}/config/config.props" overwrite="true">
+			<filterset>
+				<filter token="lexgridbasepath" value="${lexgrid.base.path}" />
+				<filter token="lexgridjarfilelocation" value="${lexgrid.jarfile.location}" />
+				<filter token="lexgridregistryfile" value="${lexgrid.registry.file}" />
+				<filter token="lexgridindexlocation" value="${lexgrid.index.location}" />
+				<filter token="lexgridmaxconnectionsperdb" value="${lexgrid.max.connections.per.db}" />
+				<filter token="lexgridcachesize" value="${lexgrid.cache.size}" />
+				<filter token="lexgriditeratoridletime" value="${lexgrid.iterator.idle.time}" />
+				<filter token="lexgridmaxresultsize" value="${lexgrid.max.result.size}" />
+				<filter token="lexgridsingledbmode" value="${lexgrid.single.db.mode}" />
+				<filter token="lexgriddburl" value="${lexgrid.db.url}" />
+				<filter token="lexgriddbprefix" value="${lexgrid.db.prefix}" />
+				<filter token="lexgriddbparam" value="${lexgrid.db.param}" />
+				<filter token="lexgriddbdriver" value="${lexgrid.db.driver}" />
+				<filter token="lexgriddbuser" value="${lexgrid.db.user}" />
+				<filter token="lexgriddbpassword" value="${lexgrid.db.password}" />
+				<filter token="lexgridlogfilelocation" value="${lexgrid.log.file.location}" />
+				<filter token="lexgridapilogenabled" value="${lexgrid.api.log.enabled}" />
+				<filter token="lexgriddebugenabled" value="${lexgrid.debug.enabled}" />
+				<filter token="lexgridlogchange" value="${lexgrid.log.change}" />
+				<filter token="lexgrideraselogsafter" value="${lexgrid.erase.logs.after}" />
+				<filter token="lexgridemailerrors" value="${lexgrid.email.errors}" />
+				<filter token="lexgridsmtpserver" value="${lexgrid.smtp.server}" />
+				<filter token="lexgridemailto" value="${lexgrid.email.to}" />
+			</filterset>
+		</copy>
+	</target>
+
+	<target name="build" depends="prepare" description="Compile main source tree java files">
+		<mkdir dir="${classes.dir}" />
+		<mkdir dir="${conf.dir.generated}" />
+
+		<javac destdir="${classes.dir}" debug="true" deprecation="false" optimize="false" failonerror="true">
+			<src path="${src.dir}" />
+			<classpath refid="master-classpath" />
+		</javac>
+
+		<javac destdir="${classes.dir}" debug="true" deprecation="false" optimize="false" failonerror="true">
+			<src path="${test.dir}" />
+			<classpath refid="master-classpath" />
+		</javac>
+
+		<copy todir="${classes.dir}">
+			<fileset dir="${src.dir}">
+				<include name="**/*.properties" />
+				<include name="**/*.xml" />
+				<exclude name="**/*.java" />
+			</fileset>
+
+			<fileset dir="${conf.dir}">
+				<include name="*.properties" />
+				<include name="*.xml" />
+				<include name="*.dtd" />
+			</fileset>
+
+			<fileset dir="${conf.dir.generated}">
+				<include name="*.properties" />
+				<include name="*.xml" />
+				<include name="*.dtd" />
+			</fileset>
+		</copy>
+
+		<copy todir="${build.dir}/${app.name}" preservelastmodified="true">
+			<fileset dir="${web.dir}">
+				<include name="**/*.*" />
+				<!-- These jars are already in server classpath -->
+				<exclude name="**/lib/**" />
+			</fileset>
+		</copy>
+
+		<copy todir="${build.dir}/${app.name}/WEB-INF/lib" flatten="true">
+			<fileset dir="${lib.dir}">
+				<include name="**/*.jar" />
+				<!--These jars will be there in app server path -->
+				<exclude name="javax.servlet.jar" />
+				<exclude name="javax.servlet.jsp.jar" />
+				<exclude name="servlet-api.jar" />
+			</fileset>
+		</copy>
+	</target>
+
+	<target name="deploy" depends="build" description="Deploy application">
+		<copy todir="${deploy.path}/${app.name}" preservelastmodified="true">
+			<fileset dir="${build.dir}/${app.name}">
+				<include name="**/*.*" />
+			</fileset>
+		</copy>
+	</target>
+
+	<target name="createwar" depends="build" description="Create a WAR file">
+		<mkdir dir="${dist.dir}" />
+
+		<war destfile="${dist.dir}/${app.name}.war" webxml="${web.dir}/WEB-INF/web.xml">
+			<fileset dir="${build.dir}/${app.name}">
+				<include name="**/*.*" />
+				<exclude name="**/web.xml" />
+			</fileset>
+		</war>
+	</target>
+
+	<target name="deploywar" depends="createwar" description="Deploy WAR file to app server">
+		<copy todir="${deploy.path}" preservelastmodified="true">
+			<fileset dir="${dist.dir}">
+				<include name="*.war" />
+			</fileset>
+		</copy>
+	</target>
+
+	<!-- Only tests user unit tests for now until full database test fixtures can be created.-->
+	<target name="test">
+		<delete dir="${testresults.dir}" />
+		<mkdir dir="${testresults.dir}" />
+		<junit printsummary="true" fork="yes" maxmemory="256m" haltonfailure="true">
+			<batchtest todir="${testresults.dir}">
+          <fileset dir="${classes.dir}" includes="**/user/User*Test*.class" />
+          <fileset dir="${classes.dir}" includes="**/concept/Concept*Test*.class" />
+          <fileset dir="${classes.dir}" includes="**/ontology/Ontology*Test.class" />
+          <fileset dir="${classes.dir}" includes="**/search/Search*Test.class" />
+			</batchtest>
+			<formatter type="xml" usefile="true" />
+			<classpath refid="master-classpath" />
+		</junit>
+
+	</target>
+
+	<target name="testout">
+		<junit printsummary="true" fork="yes" maxmemory="256m" haltonfailure="true" showoutput="true">
+			<batchtest>
+          <fileset dir="${classes.dir}" includes="**/user/User*Test*.class" />
+          <fileset dir="${classes.dir}" includes="**/ontology/Ontology*Test.class" />
+          <fileset dir="${classes.dir}" includes="**/search/Search*Test.class" />
+          <fileset dir="${classes.dir}" includes="**/concept/Concept*Test*.class" />
+			</batchtest>
+			<classpath refid="master-classpath" />
+		</junit>
+
+	</target>
+
+	<target name="deploytest" depends="deploy">
+		<sleep seconds="20" />
+		<ant target="test" />
+	</target>
+
+	<!-- TODO:  This task does not work.  The bioportal_db.sql scripts do not work correctly through Ant "sql" targets.  It only works directly in the MySQL Query browser.-->
+	<target description="Setup test database for Bioportal metadata, version info, and user data." name="test.dbsetupinit">
+		<sql driver="${test.jdbc.driver}" src="${test.sql.dir}/bioportal_db.sql" url="${test.db.url}/?autoReconnect=true" userid="${test.db.user}" password="${test.db.password}">
+			<classpath refid="master-classpath" />
+		</sql>
+	</target>
+
+	<target description="Setup database test fixture for unit tests." name="test.dbsetup">
+		<sql driver="${test.jdbc.driver}" src="${test.sql.dir}/test_db_fixture.sql" url="${test.db.url}/?autoReconnect=true" userid="${test.db.user}" password="${test.db.password}">
+			<classpath refid="master-classpath" />
+		</sql>
+	</target>
+</project>
