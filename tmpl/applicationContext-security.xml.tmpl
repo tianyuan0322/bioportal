@@ -67,10 +67,12 @@
 		class="org.ncbo.stanford.util.security.intercept.web.RESTfulDefinitionSource">
 		<constructor-arg type="java.lang.String">
 			<value>
-				/ontologies/**:DELETE,POST,PUT=ROLE_ADMINISTRATOR
+				/ontologies/**:POST,PUT=ROLE_LIBRARIAN
+				/ontologies/**:DELETE=ROLE_ADMINISTRATOR
 				/ontologies/index/**:DELETE,GET,POST,PUT=ROLE_ADMINISTRATOR
 				/ontologies/parse/**:DELETE,GET,POST,PUT=ROLE_ADMINISTRATOR
-				/users/**:DELETE,POST,PUT=ROLE_ADMINISTRATOR
+				/users/**:POST,PUT=ROLE_ANONYMOUS
+				/users/**:DELETE=ROLE_ADMINISTRATOR
 				/auth:GET,POST=ROLE_ANONYMOUS
 				/**:GET=ROLE_ANONYMOUS
 			</value>
