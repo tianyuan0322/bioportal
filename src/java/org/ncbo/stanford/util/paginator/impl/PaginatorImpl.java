@@ -77,9 +77,7 @@ public class PaginatorImpl<E> implements Paginator<E> {
 		Page<E> currentPage = new Page<E>(currentPageNum, numPages);
 		int resultSize;
 
-		if (currentPage.isFirstPage()) {
-			result = getFirstPage();
-		} else if (currentPage.isLastPage()) {
+		if (currentPage.isLastPage()) {
 			result = getLastPage();
 		} else if (originalList != null
 				&& (resultSize = originalList.size()) > 0) {
@@ -99,8 +97,6 @@ public class PaginatorImpl<E> implements Paginator<E> {
 
 		if (currentPage.isFirstPage()) {
 			result = getFirstPage();
-		} else if (currentPage.isLastPage()) {
-			result = getLastPage();
 		} else if (originalList != null
 				&& (resultSize = originalList.size()) > 0) {
 			result = new Page<E>(currentPage.getPageNum() - 1, numPages,
