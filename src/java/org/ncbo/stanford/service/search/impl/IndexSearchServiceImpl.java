@@ -20,6 +20,7 @@ import org.ncbo.stanford.manager.search.OntologySearchManager;
 import org.ncbo.stanford.service.search.AbstractSearchService;
 import org.ncbo.stanford.service.search.IndexSearchService;
 import org.ncbo.stanford.wrapper.LuceneIndexWriterWrapper;
+import org.springframework.transaction.annotation.Transactional;
 
 /**
  * The default implementation of the IndexSearchService
@@ -27,6 +28,7 @@ import org.ncbo.stanford.wrapper.LuceneIndexWriterWrapper;
  * @author Michael Dorf
  * 
  */
+@Transactional
 public class IndexSearchServiceImpl extends AbstractSearchService implements
 		IndexSearchService {
 
