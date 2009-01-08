@@ -23,7 +23,7 @@ import java.net.URLEncoder;
 
 public class ConceptHTTPClientTest extends AbstractBioPortalTest {
 
-	private final static String 	BASE_URL = "http://localhost:8080/bioportal/rest/";
+	private final static String 	BASE_URL = "http://localhost:8080/bioportal/";
 	
 	private final static int AMINO_OID = 4519;
 	private final static String AMINO_CID1 = "SpecificAminoAcid";
