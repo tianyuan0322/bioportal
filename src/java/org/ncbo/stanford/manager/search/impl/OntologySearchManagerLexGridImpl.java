@@ -12,6 +12,7 @@ import org.LexGrid.LexBIG.Impl.LexBIGServiceImpl;
 import org.LexGrid.LexBIG.LexBIGService.CodedNodeSet;
 import org.LexGrid.LexBIG.LexBIGService.LexBIGService;
 import org.LexGrid.LexBIG.Utility.Iterators.ResolvedConceptReferencesIterator;
+import org.LexGrid.commonTypes.EntityDescription;
 import org.LexGrid.concepts.Comment;
 import org.LexGrid.concepts.Concept;
 import org.LexGrid.concepts.ConceptProperty;
@@ -73,10 +74,11 @@ public class OntologySearchManagerLexGridImpl extends
 						.iterateResolvedConceptReference(); itr.hasNext();) {
 					ResolvedConceptReference ref = itr.next();
 					Concept concept = ref.getReferencedEntry();
+					String preferredName = getPreferredName(concept);
 
-					String preferredName = setPresentationProperties(writer,
-							doc, ontologyVersionId, ontologyId,
-							ontologyDisplayLabel, concept);
+					setPresentationProperties(writer, doc, ontologyVersionId,
+							ontologyId, ontologyDisplayLabel, preferredName,
+							concept);
 					setGenericProperties(writer, doc, ontologyVersionId,
 							ontologyId, ontologyDisplayLabel, preferredName,
 							concept);
@@ -116,26 +118,21 @@ public class OntologySearchManagerLexGridImpl extends
 	 * @param ontologyId
 	 * @param ontologyDisplayLabel
 	 * @param concept
-	 * @return
 	 * @throws IOException
 	 */
-	private String setPresentationProperties(LuceneIndexWriterWrapper writer,
+	private void setPresentationProperties(LuceneIndexWriterWrapper writer,
 			SearchIndexBean doc, Integer ontologyVersionId, Integer ontologyId,
-			String ontologyDisplayLabel, Concept concept) throws IOException {
+			String ontologyDisplayLabel, String preferredName, Concept concept)
+			throws IOException {
 		SearchRecordTypeEnum recType = SearchRecordTypeEnum.RECORD_TYPE_PREFERRED_NAME;
-		boolean isFirst = true;
-		String preferredName = null;
 
 		for (Iterator<Presentation> itr = concept.iteratePresentation(); itr
 				.hasNext();) {
 			Presentation p = itr.next();
 
-			// the first value is assumed to be the preferred name
-			// the rest of the values are assumed to by synonyms
-			if (isFirst) {
-				preferredName = p.getText().getContent();
-				isFirst = false;
-			} else {
+			// if the value is not a preferred name, it is assumed to be
+			// asynonym
+			if (!p.getIsPreferred()) {
 				recType = SearchRecordTypeEnum.RECORD_TYPE_SYNONYM;
 			}
 
@@ -143,6 +140,30 @@ public class OntologySearchManagerLexGridImpl extends
 					ontologyVersionId, ontologyId, ontologyDisplayLabel,
 					recType, preferredName, p));
 			writer.addDocument(doc);
+		}
+	}
+
+	/**
+	 * Get the preferred name of a concept
+	 * 
+	 * @param concept
+	 */
+	private String getPreferredName(Concept concept) {
+		String preferredName = "";
+		EntityDescription desc = concept.getEntityDescription();
+
+		if (desc != null) {
+			preferredName = desc.getContent();
+		} else {
+			for (Iterator<Presentation> itr = concept.iteratePresentation(); itr
+					.hasNext();) {
+				Presentation p = itr.next();
+
+				if (p.getIsPreferred()) {
+					preferredName = p.getText().getContent();
+					break;
+				}
+			}
 		}
 
 		return preferredName;
