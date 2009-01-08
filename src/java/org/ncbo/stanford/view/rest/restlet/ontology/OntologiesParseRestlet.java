@@ -21,14 +21,14 @@ public class OntologiesParseRestlet extends AbstractBaseRestlet {
 	private OntologyLoadSchedulerService ontologyLoadSchedulerService;
 
 	/**
-	 * Handle PUT calls here
+	 * Handle GET calls here
 	 * 
 	 * @param request
 	 * @param response
 	 */
 	@Override
-	protected void putRequest(Request request, Response response) {
-		// Handle PUT calls here
+	protected void getRequest(Request request, Response response) {
+		// Handle GET calls here
 		parseOntologies(request, response);
 	}
 
