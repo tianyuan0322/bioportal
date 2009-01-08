@@ -128,7 +128,6 @@ public class CustomNcboOntologyVersionDAO extends NcboOntologyVersionDAO {
 					throws HibernateException, SQLException {
 				Query query = session
 						.getNamedQuery("VNcboOntologyVersionDAO.GET_ALL_LATEST_ACTIVE_ONTOLOGY_VERSIONS_QUERY");
-//				query.setFlushMode(FlushMode.ALWAYS);
 				query.setInteger("statusIdReady", StatusEnum.STATUS_READY
 						.getStatus());
 
