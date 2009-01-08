@@ -68,6 +68,12 @@ public class OntologySearchManagerProtegeImpl extends
 		SearchIndexBean doc = new SearchIndexBean();
 
 		for (Frame frame : frames) {
+			// exclude anonymous classes from being indexed
+			if (frame instanceof RDFResource
+					&& ((RDFResource) frame).isAnonymous()) {
+				continue;
+			}
+
 			// add preferred name slot
 			String preferredName = null;
 			List<Slot> preferredNameSlots = getPreferredNameSlots(kb, ontology
@@ -116,27 +122,29 @@ public class OntologySearchManagerProtegeImpl extends
 	 * @return
 	 * @throws Exception
 	 */
-	private KnowledgeBase getKnowledgeBaseInstance(VNcboOntology ontology) throws Exception {
+	private KnowledgeBase getKnowledgeBaseInstance(VNcboOntology ontology)
+			throws Exception {
 		KnowledgeBase kb = null;
-		
+
 		try {
 			kb = getKnowledgeBase(ontology);
 		} catch (Exception e) {
 			Throwable t = e.getCause();
 			String className = (t == null) ? "" : t.getClass().getName();
 
-			if (t != null && (className
+			if (t != null
+					&& (className
 							.equals("com.mysql.jdbc.exceptions.MySQLSyntaxErrorException") || className
 							.equals("com.mysql.jdbc.exceptions.jdbc4.MySQLSyntaxErrorException"))) {
-				throw new Exception("Ontology " + ontology.getDisplayLabel() + " (Id: "
-						+ ontology.getId() + ", Ontology Id: "
+				throw new Exception("Ontology " + ontology.getDisplayLabel()
+						+ " (Id: " + ontology.getId() + ", Ontology Id: "
 						+ ontology.getOntologyId()
 						+ ") does not exist in Protege back-end");
 			} else {
 				throw e;
-			}		
+			}
 		}
-		
+
 		return kb;
 	}
 
