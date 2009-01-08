@@ -163,51 +163,9 @@ public class OntologyLoadManagerProtegeImpl extends
 			throw new Exception("Error during loading "
 					+ ontologyUri.toString());
 		}
-
-/*		if (dbProject != null) {
-			createIndex(dbProject.getKnowledgeBase(), ob);
-			dbProject.dispose();
-		}
-*/	}
-
-	/**
-	 * Creates a Lucene index for a given ontology version. The ontology record
-	 * must exist.
-	 * 
-	 * @param ob -
-	 *            populated ontology bean.
-	 */
-/*	@SuppressWarnings("unchecked")
-	public void indexOntology(OntologyBean ob) {
-		createIndex(getKnowledgeBase(ob), ob);
 	}
-*/
+
 	public void cleanup(OntologyBean ontologyBean) throws Exception {
 		// TODO: fill in
 	}
-
-/*	private void createIndex(KnowledgeBase kb, OntologyBean ob) {
-		QueryConfiguration config = new QueryConfiguration(kb);
-		config.setBaseIndexPath(getIndexPath(ob));
-		Set<Slot> searchableSlots = config.getSearchableSlots();
-
-		try { // this should unneccessary but it doesn't hurt.
-			Slot synonymSlot = getSynonymSlot(kb, ob.getSynonymSlot());
-
-			if (synonymSlot != null) {
-				searchableSlots.add(synonymSlot);
-			}
-
-			searchableSlots.add(getPreferredNameSlot(kb, ob
-					.getPreferredNameSlot()));
-			config.setSearchableSlots(searchableSlots);
-		} catch (Throwable t) {
-		}
-
-		config.setIndexers(EnumSet.of(IndexMechanism.STANDARD_INDICIES));
-
-		QueryApi api = new QueryApi(kb);
-		installLuceneIndexMechanism(api, ob);
-		api.index(config);
-	}
-*/}
+}
