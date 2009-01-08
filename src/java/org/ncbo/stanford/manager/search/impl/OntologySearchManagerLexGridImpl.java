@@ -152,16 +152,15 @@ public class OntologySearchManagerLexGridImpl extends
 		String preferredName="";
 		if (concept.getEntityDescription()!= null) {
 			preferredName= concept.getEntityDescription().getContent();
-			if (StringUtils.isBlank(preferredName)){
-				for (Iterator<Presentation> itr = concept.iteratePresentation(); itr.hasNext();) {
-			       Presentation p = itr.next();
-		           if (p.getIsPreferred()) {
+		}
+		if (StringUtils.isBlank(preferredName)){
+			for (Iterator<Presentation> itr = concept.iteratePresentation(); itr.hasNext();) {
+			    Presentation p = itr.next();
+		        if (p.getIsPreferred()) {
 				     preferredName = p.getText().getContent();
 				     break;
-		           }
-				}
-			
-			}
+		        }
+		    }
 		}
 		return preferredName;
 	}
