@@ -68,6 +68,11 @@ public class OntologySearchManagerProtegeImpl extends
 		SearchIndexBean doc = new SearchIndexBean();
 
 		for (Frame frame : frames) {
+			// exclude anonymous classes from being indexed
+			if (frame instanceof RDFResource
+					&& ((RDFResource) frame).isAnonymous()) {
+				continue;
+			}
 			// add preferred name slot
 			String preferredName = null;
 			List<Slot> preferredNameSlots = getPreferredNameSlots(kb, ontology
