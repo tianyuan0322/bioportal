@@ -20,6 +20,7 @@ import org.LexGrid.concepts.Instruction;
 import org.LexGrid.concepts.Presentation;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.commons.lang.StringUtils;
 import org.ncbo.stanford.bean.search.LexGridSearchProperty;
 import org.ncbo.stanford.bean.search.SearchIndexBean;
 import org.ncbo.stanford.domain.custom.entity.VNcboOntology;
@@ -73,10 +74,11 @@ public class OntologySearchManagerLexGridImpl extends
 						.iterateResolvedConceptReference(); itr.hasNext();) {
 					ResolvedConceptReference ref = itr.next();
 					Concept concept = ref.getReferencedEntry();
+					String preferredName= getPreferredName(concept);
 
-					String preferredName = setPresentationProperties(writer,
+					setPresentationProperties(writer,
 							doc, ontologyVersionId, ontologyId,
-							ontologyDisplayLabel, concept);
+							ontologyDisplayLabel, preferredName, concept);
 					setGenericProperties(writer, doc, ontologyVersionId,
 							ontologyId, ontologyDisplayLabel, preferredName,
 							concept);
@@ -116,26 +118,22 @@ public class OntologySearchManagerLexGridImpl extends
 	 * @param ontologyId
 	 * @param ontologyDisplayLabel
 	 * @param concept
-	 * @return
 	 * @throws IOException
 	 */
-	private String setPresentationProperties(LuceneIndexWriterWrapper writer,
+	private void setPresentationProperties(LuceneIndexWriterWrapper writer,
 			SearchIndexBean doc, Integer ontologyVersionId, Integer ontologyId,
-			String ontologyDisplayLabel, Concept concept) throws IOException {
+			String ontologyDisplayLabel, String preferredName, Concept concept) throws IOException {
 		SearchRecordTypeEnum recType = SearchRecordTypeEnum.RECORD_TYPE_PREFERRED_NAME;
 		boolean isFirst = true;
-		String preferredName = null;
 
 		for (Iterator<Presentation> itr = concept.iteratePresentation(); itr
 				.hasNext();) {
 			Presentation p = itr.next();
+		
 
 			// the first value is assumed to be the preferred name
 			// the rest of the values are assumed to by synonyms
-			if (isFirst) {
-				preferredName = p.getText().getContent();
-				isFirst = false;
-			} else {
+			if (!p.getIsPreferred()) {
 				recType = SearchRecordTypeEnum.RECORD_TYPE_SYNONYM;
 			}
 
@@ -145,9 +143,28 @@ public class OntologySearchManagerLexGridImpl extends
 			writer.addDocument(doc);
 		}
 
-		return preferredName;
 	}
 
+	/**
+	 * get the preferred name of a concept
+	 */
+	private String getPreferredName(Concept concept) {
+		String preferredName="";
+		if (concept.getEntityDescription()!= null) {
+			preferredName= concept.getEntityDescription().getContent();
+			if (StringUtils.isBlank(preferredName)){
+				for (Iterator<Presentation> itr = concept.iteratePresentation(); itr.hasNext();) {
+			       Presentation p = itr.next();
+		           if (p.getIsPreferred()) {
+				     preferredName = p.getText().getContent();
+				     break;
+		           }
+				}
+			
+			}
+		}
+		return preferredName;
+	}
 	/**
 	 * Adds documents to index that define "generic" type properties in LexGrid
 	 * 
