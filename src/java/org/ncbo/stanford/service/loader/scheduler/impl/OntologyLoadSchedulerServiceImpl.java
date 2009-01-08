@@ -171,22 +171,11 @@ public class OntologyLoadSchedulerServiceImpl implements
 				// load ontology
 				loadOntology(ontologyBean);
 
-				// index ontology
-				indexService.indexOntology(ontologyBean.getOntologyId(), false,
-						false);
-
 				status = StatusEnum.STATUS_READY;
 			}
 		} catch (Exception e) {
 			status = StatusEnum.STATUS_ERROR;
-
-			StringWriter sw = new StringWriter();
-			e.printStackTrace(new PrintWriter(sw));
-			String stackTrace = sw.toString();
-			int stackTraceLen = stackTrace.length();
-			int messageLen = (stackTraceLen < ERROR_MESSAGE_LENGTH) ? stackTraceLen
-					: ERROR_MESSAGE_LENGTH;
-			errorMessage = stackTrace.substring(0, messageLen);
+			errorMessage = getErrorMessage(e);
 
 			// add OntologyVersionId to the error list
 			errorOntologies.add(getOntologyDisplay(ontologyVersion));
@@ -195,6 +184,56 @@ public class OntologyLoadSchedulerServiceImpl implements
 		}
 
 		updateOntologyStatus(loadQueue, status, errorMessage);
+
+		// index ontology
+		if (status == StatusEnum.STATUS_READY) {
+			errorMessage = indexOntology(errorMessage, ontologyVersion,
+					ontologyBean);
+			updateOntologyStatus(loadQueue, status, errorMessage);
+		}
+	}
+
+	private String indexOntology(String errorMessage,
+			VNcboOntology ontologyVersion, OntologyBean ontologyBean) {
+		try {
+			indexService.indexOntology(ontologyBean.getOntologyId(), false,
+					false);
+		} catch (Exception e) {
+			int halfError = ERROR_MESSAGE_LENGTH / 2 - 2;
+			String newErrorMessage = getErrorMessage(e);
+
+			if (errorMessage != null) {
+				errorMessage = (errorMessage.length() > halfError) ? errorMessage
+						.substring(0, halfError)
+						: errorMessage;
+
+				newErrorMessage = "\n\n"
+						+ ((newErrorMessage.length() > halfError) ? newErrorMessage
+								.substring(0, halfError)
+								: newErrorMessage);
+			} else {
+				errorMessage = "";
+			}
+
+			errorMessage += newErrorMessage;
+
+			errorOntologies.add(getOntologyDisplay(ontologyVersion));
+			e.printStackTrace();
+			log.error(e);
+		}
+
+		return errorMessage;
+	}
+
+	private String getErrorMessage(Exception e) {
+		StringWriter sw = new StringWriter();
+		e.printStackTrace(new PrintWriter(sw));
+		String stackTrace = sw.toString();
+		int stackTraceLen = stackTrace.length();
+		int messageLen = (stackTraceLen < ERROR_MESSAGE_LENGTH) ? stackTraceLen
+				: ERROR_MESSAGE_LENGTH;
+
+		return stackTrace.substring(0, messageLen);
 	}
 
 	private void updateOntologyStatus(NcboOntologyLoadQueue loadQueue,
