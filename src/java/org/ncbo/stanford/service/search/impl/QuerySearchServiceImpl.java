@@ -22,6 +22,7 @@ import org.ncbo.stanford.util.helper.StringHelper;
 import org.ncbo.stanford.util.paginator.Paginator;
 import org.ncbo.stanford.util.paginator.impl.Page;
 import org.ncbo.stanford.util.paginator.impl.PaginatorImpl;
+import org.springframework.transaction.annotation.Transactional;
 
 /**
  * A default implementation of the QuerySearchService
@@ -29,6 +30,7 @@ import org.ncbo.stanford.util.paginator.impl.PaginatorImpl;
  * @author Michael Dorf
  * 
  */
+@Transactional
 public class QuerySearchServiceImpl extends AbstractSearchService implements
 		QuerySearchService {
 
