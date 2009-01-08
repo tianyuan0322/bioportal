@@ -183,6 +183,10 @@
 						<entry key="/ontologies/index/">
 							<ref local="indexRestlet" />
 						</entry>
+						<entry
+							key="/ontologies/parse/">
+							<ref local="ontologiesParseRestlet" />
+						</entry>
 						<entry key="/ontologies">
 							<ref local="ontologiesRestlet" />
 						</entry>
@@ -192,10 +196,6 @@
 						<entry
 							key="/ontologies/versions/{ontologyid}">
 							<ref local="ontologyVersionsRestlet" />
-						</entry>
-						<entry
-							key="/ontologies/parse/{ontologyversionid}">
-							<ref local="ontologiesParseRestlet" />
 						</entry>
 						<entry
 							key="/ontologies/download/{ontologyversionid}">
