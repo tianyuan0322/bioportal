@@ -6,8 +6,6 @@ import java.util.Iterator;
 import org.LexGrid.LexBIG.DataModel.Collections.ResolvedConceptReferenceList;
 import org.LexGrid.LexBIG.DataModel.Core.CodingSchemeVersionOrTag;
 import org.LexGrid.LexBIG.DataModel.Core.ResolvedConceptReference;
-import org.LexGrid.LexBIG.Exceptions.LBInvocationException;
-import org.LexGrid.LexBIG.Exceptions.LBParameterException;
 import org.LexGrid.LexBIG.Impl.LexBIGServiceImpl;
 import org.LexGrid.LexBIG.LexBIGService.CodedNodeSet;
 import org.LexGrid.LexBIG.LexBIGService.LexBIGService;
@@ -43,6 +41,8 @@ public class OntologySearchManagerLexGridImpl extends
 	private static final Log log = LogFactory
 			.getLog(OntologySearchManagerLexGridImpl.class);
 
+	private static final int MATCH_ITERATOR_BLOCK = 100;
+
 	/**
 	 * Index a given ontology
 	 * 
@@ -68,7 +68,7 @@ public class OntologySearchManagerLexGridImpl extends
 
 			while (matchIterator.hasNext()) {
 				ResolvedConceptReferenceList lst = matchIterator
-						.next(Integer.MAX_VALUE);
+						.next(MATCH_ITERATOR_BLOCK);
 
 				for (Iterator<ResolvedConceptReference> itr = lst
 						.iterateResolvedConceptReference(); itr.hasNext();) {
@@ -96,15 +96,12 @@ public class OntologySearchManagerLexGridImpl extends
 
 			matchIterator.release();
 		} catch (Exception e) {
-			if (e instanceof LBParameterException
-					|| e instanceof LBInvocationException) {
-				e.printStackTrace();
-				log.error(e);
-				throw new Exception("Ontology " + ontology.getDisplayLabel()
-						+ " (Id: " + ontology.getId() + ", Ontology Id: "
-						+ ontology.getOntologyId()
-						+ ") does not exist in the LexGrid back-end");
-			}
+			e.printStackTrace();
+			log.error(e);
+			throw new Exception("Ontology " + ontology.getDisplayLabel()
+					+ " (Id: " + ontology.getId() + ", Ontology Id: "
+					+ ontology.getOntologyId() + ") has generated an error: "
+					+ e.getMessage());
 		}
 	}
 
