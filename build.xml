@@ -63,6 +63,7 @@
 		<delete dir="${conf.dir.generated}" />
 		<delete dir="${deploy.path}/${app.name}" />
 		<delete file="${deploy.path}/${app.name}.war" />
+		<delete file="${bioportal.search.indexpath}/write.lock" />
 	</target>
 
 	<!--- This target sets the registry.xml-is-present property if the registry file exists -->
