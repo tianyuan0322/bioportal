@@ -172,8 +172,7 @@ public class OBOCVSPullServiceImpl implements OBOCVSPullService {
 		OntologyBean ont = ontologyService
 				.findLatestOntologyVersionByOboFoundryId(mfb.getId());
 		String downloadUrl = mfb.getDownload();
-		List<Integer> newCategoryIds = findCategoryIdsByOBONames(mfb
-				.getDomain());
+		List<Integer> newCategoryIds = findCategoryIdsByOBONames(downloadUrl);
 		byte isRemote = isRemote(downloadUrl);
 
 		// is any action required?
@@ -310,12 +309,12 @@ public class OBOCVSPullServiceImpl implements OBOCVSPullService {
 	 * @param downloadUrl
 	 * @return
 	 */
-	private List<Integer> findCategoryIdsByOBONames(String domain) {
+	private List<Integer> findCategoryIdsByOBONames(String downloadUrl) {
 		List<Integer> categoryIds = new ArrayList<Integer>(1);
 
-		if (!StringHelper.isNullOrNullString(domain)) {
+		if (!StringHelper.isNullOrNullString(downloadUrl)) {
 			categoryIds = ontologyService
-					.findCategoryIdsByOBOFoundryNames(new String[] { domain });
+					.findCategoryIdsByOBOFoundryNames(downloadUrl.split("/"));
 		}
 
 		return categoryIds;
