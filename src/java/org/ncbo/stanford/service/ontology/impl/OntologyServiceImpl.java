@@ -398,11 +398,17 @@ public class OntologyServiceImpl implements OntologyService {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.ncbo.stanford.service.ontology.OntologyService#deleteOntology(org.ncbo.stanford.bean.OntologyBean)
+	 * @see org.ncbo.stanford.service.ontology.OntologyService#deleteOntology(java.lang.Integer)
 	 */
 	@SuppressWarnings("unchecked")
 	@Transactional(rollbackFor = Exception.class)
-	public void deleteOntology(OntologyBean ontologyBean) throws Exception {
+	public void deleteOntology(Integer ontologyVersionId) throws Exception {
+		OntologyBean ontologyBean = findOntology(ontologyVersionId);
+
+		if (ontologyBean == null) {
+			return;
+		}
+
 		// 1. Remove ontology from the backend
 		if (!ontologyBean.isRemote()) {
 			getLoadManager(ontologyBean).cleanup(ontologyBean);
@@ -412,10 +418,6 @@ public class OntologyServiceImpl implements OntologyService {
 		// 2. <ontologyVersion>
 		NcboOntologyVersion ontologyVersion = ncboOntologyVersionDAO
 				.findById(ontologyBean.getId());
-
-		if (ontologyVersion == null) {
-			return;
-		}
 
 		// 3. <ontologyMetadata>
 		Set<NcboOntologyVersionMetadata> ontologyMetadataSet = ontologyVersion
@@ -454,6 +456,18 @@ public class OntologyServiceImpl implements OntologyService {
 		// will be backed up and optimized on the next ontology indexing
 		// operation).
 		indexService.indexOntology(ontologyBean.getOntologyId(), false, false);
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.ncbo.stanford.service.ontology.OntologyService#deleteOntologies(java.util.List)
+	 */
+	public void deleteOntologies(List<Integer> ontologyVersionIds)
+			throws Exception {
+		for (Integer ontologyVersionId : ontologyVersionIds) {
+			deleteOntology(ontologyVersionId);
+		}
 	}
 
 	/*
