@@ -86,7 +86,7 @@ public class IndexRestlet extends AbstractBaseRestlet {
 	}
 
 	/**
-	 * Index ontology or backup index or optimize index
+	 * Index ontologies or backup index or optimize index
 	 * 
 	 * @param request
 	 * @param response
@@ -121,7 +121,7 @@ public class IndexRestlet extends AbstractBaseRestlet {
 	}
 
 	/**
-	 * Removes ontology from index
+	 * Removes ontologies from index
 	 * 
 	 * @param request
 	 * @param response

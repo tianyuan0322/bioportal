@@ -136,10 +136,19 @@ public interface OntologyService {
 	/**
 	 * Delete an ontology
 	 * 
-	 * @param ontologyBean
+	 * @param ontologyVersionId
 	 * @return
 	 */
-	public void deleteOntology(OntologyBean ontologyBean) throws Exception;
+	public void deleteOntology(Integer ontologyVersionId) throws Exception;
+
+	/**
+	 * Delete several ontologies
+	 * 
+	 * @param ontologyVersionIds
+	 * @return
+	 */
+	public void deleteOntologies(List<Integer> ontologyVersionIds)
+			throws Exception;
 
 	/**
 	 * Get File object for a specific ontology
@@ -148,5 +157,4 @@ public interface OntologyService {
 	 * @return
 	 */
 	public File getOntologyFile(OntologyBean ontologyBean) throws Exception;
-
 }
