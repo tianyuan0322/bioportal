@@ -20,7 +20,7 @@ use DBD::mysql;
 use DBIx::Wrapper::VerySimple;
 use HTTP::Request::Common;
 require LWP::UserAgent;
-my  $ua = LWP::UserAgent->new;
+my $ua = LWP::UserAgent->new;
  
 
 
