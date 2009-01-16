@@ -36,14 +36,14 @@ public class OntologyVersionsRestlet extends AbstractBaseRestlet {
 	 * @param response
 	 */
 	private void listOntologies(Request request, Response response) {
-		String ontologyVersionId = (String) request.getAttributes().get(
-				MessageUtils.getMessage("entity.ontologyversionid"));
+		String ontologyId = (String) request.getAttributes().get(
+				MessageUtils.getMessage("entity.ontologyid"));
 		List<OntologyBean> ontologyList = null;
 
 		try {
 			ontologyList = ontologyService
 					.findAllOntologyVersionsByOntologyId(Integer
-							.parseInt(ontologyVersionId));
+							.parseInt(ontologyId));
 
 			response.setStatus(Status.SUCCESS_OK);
 
@@ -66,59 +66,6 @@ public class OntologyVersionsRestlet extends AbstractBaseRestlet {
 			xmlSerializationService.generateXMLResponse(request, response,
 					ontologyList);
 		}
-	}
-
-	/**
-	 * Returns a specified OntologyBean to the response
-	 * 
-	 * @param request
-	 * @param resp
-	 */
-	private void findOntologyVersions(Request request, Response response) {
-		// find the OntologyBean from request
-		OntologyBean ontologyBean = findOntologyBean(request, response);
-
-		// generate response XML
-		xmlSerializationService.generateXMLResponse(request, response,
-				ontologyBean);
-
-	}
-
-	/**
-	 * Returns a specified OntologyBean and set the response status if there is
-	 * an error. This is used for find, findAll, update, delete.
-	 * 
-	 * @param request
-	 * @param response
-	 */
-	private OntologyBean findOntologyBean(Request request, Response response) {
-		OntologyBean ontologyBean = null;
-		String ontologyVersionId = (String) request.getAttributes().get(
-				MessageUtils.getMessage("entity.ontologyversionid"));
-
-		try {
-			Integer intId = Integer.parseInt(ontologyVersionId);
-			ontologyBean = ontologyService.findOntology(intId);
-
-			response.setStatus(Status.SUCCESS_OK);
-
-			// if ontologyBean is not found, set Error in the Status object
-			if (ontologyBean == null || ontologyBean.getId() == null) {
-				response.setStatus(Status.CLIENT_ERROR_NOT_FOUND, MessageUtils
-						.getMessage("msg.error.ontologyNotFound"));
-			}
-		} catch (NumberFormatException nfe) {
-			response.setStatus(Status.CLIENT_ERROR_BAD_REQUEST, nfe
-					.getMessage());
-			nfe.printStackTrace();
-			log.error(nfe);
-		} catch (Exception e) {
-			response.setStatus(Status.SERVER_ERROR_INTERNAL, e.getMessage());
-			e.printStackTrace();
-			log.error(e);
-		}
-
-		return ontologyBean;
 	}
 
 	/**

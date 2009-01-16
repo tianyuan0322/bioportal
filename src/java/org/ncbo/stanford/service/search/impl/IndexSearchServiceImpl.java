@@ -20,6 +20,7 @@ import org.ncbo.stanford.manager.search.OntologySearchManager;
 import org.ncbo.stanford.service.search.AbstractSearchService;
 import org.ncbo.stanford.service.search.IndexSearchService;
 import org.ncbo.stanford.wrapper.LuceneIndexWriterWrapper;
+import org.springframework.transaction.annotation.Transactional;
 
 /**
  * The default implementation of the IndexSearchService
@@ -27,6 +28,7 @@ import org.ncbo.stanford.wrapper.LuceneIndexWriterWrapper;
  * @author Michael Dorf
  * 
  */
+@Transactional
 public class IndexSearchServiceImpl extends AbstractSearchService implements
 		IndexSearchService {
 
@@ -45,13 +47,19 @@ public class IndexSearchServiceImpl extends AbstractSearchService implements
 	/**
 	 * Recreate the index of all ontologies, overwriting the existing one
 	 * 
+	 * @param doBackup
+	 * @param doOptimize
 	 * @throws Exception
 	 */
-	public void indexAllOntologies() throws Exception {
+	public void indexAllOntologies(boolean doBackup, boolean doOptimize)
+			throws Exception {
 		long start = System.currentTimeMillis();
 		List<VNcboOntology> ontologies = ncboOntologyVersionDAO
 				.findLatestActiveOntologyVersions();
-		backupIndex();
+
+		if (doBackup) {
+			backupIndex();
+		}
 
 		LuceneIndexWriterWrapper writer = new LuceneIndexWriterWrapper(
 				indexPath, analyzer, true);
@@ -69,7 +77,10 @@ public class IndexSearchServiceImpl extends AbstractSearchService implements
 			}
 		}
 
-		optimizeIndex(writer);
+		if (doOptimize) {
+			optimizeIndex(writer);
+		}
+
 		closeWriter(writer);
 
 		if (log.isDebugEnabled()) {

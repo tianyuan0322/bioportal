@@ -23,7 +23,7 @@ import org.springframework.transaction.support.TransactionSynchronizationManager
 @ContextConfiguration(locations = { "/applicationContext-datasources.xml",
 		"/applicationContext-services.xml", "/applicationContext-rest.xml",
 		"/applicationContext-security.xml" })
-public class AbstractBioPortalTest {
+public abstract class AbstractBioPortalTest {
 
 	@Autowired
 	private SessionFactory sessionFactory;

@@ -55,7 +55,7 @@ public class UserHTTPClientTest extends AbstractBioPortalTest {
 		// Prepare HTTP client connector.
 		Client client = new Client(Protocol.HTTP);
 		Response response = client
-				.get("http://localhost:8080/bioportal/rest/users");
+				.get("http://localhost:8080/bioportal/users");
 
 		try {
 			String xml = response.getEntity().getText();
@@ -81,7 +81,7 @@ public class UserHTTPClientTest extends AbstractBioPortalTest {
 		// Prepare HTTP client connector.
 		Client client = new Client(Protocol.HTTP);
 		Response response = client
-				.get("http://localhost:8080/bioportal/rest/users/2850");
+				.get("http://localhost:8080/bioportal/users/2850");
 
 		try {
 			String xml = response.getEntity().getText();

@@ -26,6 +26,7 @@ import org.springframework.util.StringUtils;
 public class RESTfulDefinitionSource implements
 		FilterInvocationDefinitionSource {
 
+	@SuppressWarnings("unused")
 	private static Log log = LogFactory.getLog(RESTfulDefinitionSource.class);
 
 	private static final String[] validMethodNames = { "GET", "PUT", "DELETE",

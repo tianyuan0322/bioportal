@@ -22,6 +22,7 @@ import org.ncbo.stanford.util.helper.StringHelper;
 import org.ncbo.stanford.util.paginator.Paginator;
 import org.ncbo.stanford.util.paginator.impl.Page;
 import org.ncbo.stanford.util.paginator.impl.PaginatorImpl;
+import org.springframework.transaction.annotation.Transactional;
 
 /**
  * A default implementation of the QuerySearchService
@@ -29,13 +30,42 @@ import org.ncbo.stanford.util.paginator.impl.PaginatorImpl;
  * @author Michael Dorf
  * 
  */
+@Transactional
 public class QuerySearchServiceImpl extends AbstractSearchService implements
 		QuerySearchService {
 
 	@SuppressWarnings("unused")
 	private static final Log log = LogFactory
 			.getLog(QuerySearchServiceImpl.class);
+	
+/*	public static void main(String[] args) {
+		try {
+			IndexSearcher searcher = new IndexSearcher(
+					"/apps/bmir.apps/bioportal_resources/searchindex");
+			TermEnum terms = searcher.getIndexReader().terms(
+					new Term("conceptId", ""));
+			int numTerms = 0;
 
+			while ("conceptId".equals(terms.term().field())) {
+				numTerms++;
+
+				if (!terms.next())
+					break;
+			}
+
+			terms.close();
+			
+			System.out.println("Num Concepts: " + numTerms);
+		} catch (CorruptIndexException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+*/
+	
 	/**
 	 * Execute a search query for a given expression and return results in a
 	 * form of a single page (of specified size)

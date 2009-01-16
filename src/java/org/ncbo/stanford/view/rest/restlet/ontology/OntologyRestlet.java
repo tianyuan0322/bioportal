@@ -1,10 +1,15 @@
 package org.ncbo.stanford.view.rest.restlet.ontology;
 
+import java.util.List;
+
+import javax.servlet.http.HttpServletRequest;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.ncbo.stanford.bean.OntologyBean;
 import org.ncbo.stanford.service.ontology.OntologyService;
 import org.ncbo.stanford.util.MessageUtils;
+import org.ncbo.stanford.util.RequestUtils;
 import org.ncbo.stanford.util.helper.BeanHelper;
 import org.ncbo.stanford.view.rest.restlet.AbstractBaseRestlet;
 import org.restlet.data.Request;
@@ -49,7 +54,7 @@ public class OntologyRestlet extends AbstractBaseRestlet {
 	@Override
 	protected void deleteRequest(Request request, Response response) {
 		// Handle DELETE calls here
-		deleteOntology(request, response);
+		deleteOntologies(request, response);
 	}
 
 	/**
@@ -111,36 +116,31 @@ public class OntologyRestlet extends AbstractBaseRestlet {
 	}
 
 	/**
-	 * Delete a specified UserBean to the response
+	 * Delete several ontologies4
 	 * 
 	 * @param request
-	 * @param resp
+	 * @param response
 	 */
-	private void deleteOntology(Request request, Response response) {
-		// find the UserBean by UserID
-		OntologyBean ontologyBean = findOntologyBean(request, response);
+	private void deleteOntologies(Request request, Response response) {
+		try {
+			HttpServletRequest httpRequest = RequestUtils
+					.getHttpServletRequest(request);
+			List<Integer> ontologyVersionIds = getOntologyVersionIds(httpRequest);
 
-		// if "find" was successful, proceed to update
-		if (!response.getStatus().isError()) {
-			// now delete the user
-			try {
-				ontologyService.deleteOntology(ontologyBean);
-			} catch (Exception e) {
-				response
-						.setStatus(Status.SERVER_ERROR_INTERNAL, e.getMessage());
-				e.printStackTrace();
-				log.error(e);
+			if (ontologyVersionIds != null) {
+				ontologyService.deleteOntologies(ontologyVersionIds);
+			} else {
+				response.setStatus(Status.CLIENT_ERROR_BAD_REQUEST,
+						"No valid parameters supplied");
 			}
-		}
-
-		// generate response XML
-		// display success XML when successful, otherwise display bean XML
-		if (!response.getStatus().isError()) {
+		} catch (Exception e) {
+			response.setStatus(Status.SERVER_ERROR_INTERNAL, e.getMessage());
+			e.printStackTrace();
+			log.error(e);
+		} finally {
+			// generate response XML
 			xmlSerializationService
 					.generateStatusXMLResponse(request, response);
-		} else {
-			xmlSerializationService.generateXMLResponse(request, response,
-					ontologyBean);
 		}
 	}
 

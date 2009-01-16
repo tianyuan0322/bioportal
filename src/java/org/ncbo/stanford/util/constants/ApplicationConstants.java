@@ -104,6 +104,11 @@ public interface ApplicationConstants {
 	public static final String ERROR_XML_TAG_NAME = "error";
 
 	/**
+	 * The name of the root tag of all xml error status response messages
+	 */
+	public static final String ERROR_STATUS_XML_TAG_NAME = "errorStatus";
+
+	/**
 	 * The name of the root tag of success xml response message
 	 */
 	public static final String SUCCESS_XML_TAG_NAME = "success";

@@ -57,7 +57,6 @@ public class OntologyLoadManagerLexGridImpl extends
 
 	private static final Log log = LogFactory
 			.getLog(OntologyLoadManagerLexGridImpl.class);
-	
 
 	/**
 	 * A comma delimited list of UMLS terminologies to load. If null, all
@@ -84,7 +83,6 @@ public class OntologyLoadManagerLexGridImpl extends
 	public void loadOntology(URI ontologyUri, OntologyBean ob) throws Exception {
 		boolean stopOnErrors = false;
 		boolean async = false;
-		
 
 		File ontologyFile = new File(ontologyUri.getPath());
 		String filePath = ontologyUri.getPath();
@@ -95,7 +93,9 @@ public class OntologyLoadManagerLexGridImpl extends
 					+ filePath);
 		}
 
-		log.debug("In OntologyLoadManagerLexGridImpl. Loading ontology from uri: " + ontologyUri);
+		log
+				.debug("In OntologyLoadManagerLexGridImpl. Loading ontology from uri: "
+						+ ontologyUri);
 
 		// Get the LexBIGService
 		LexBIGService lbs = LexBIGServiceImpl.defaultInstance();
@@ -113,21 +113,22 @@ public class OntologyLoadManagerLexGridImpl extends
 					.getLoader(org.LexGrid.LexBIG.Impl.loaders.OBOLoaderImpl.name);
 			loader.setCodingSchemeManifest(csm);
 			((OBO_Loader) loader).load(ontologyUri, null, stopOnErrors, async);
-		// Load UMLS
+			// Load UMLS
 		} else if (ob.getFormat().equalsIgnoreCase(
 				ApplicationConstants.FORMAT_UMLS_RRF)) {
 			loader = lbsm
 					.getLoader(org.LexGrid.LexBIG.Impl.loaders.UMLSLoaderImpl.name);
 			LocalNameList lnl = getLocalNameListFromTargetTerminologies(ob);
-			log.debug("Using the UMLS loader. Target terminology= "+ ObjectToString.toString(lnl));
+			log.debug("Using the UMLS loader. Target terminology= "
+					+ ObjectToString.toString(lnl));
 			((UMLS_Loader) loader).load(ontologyUri, lnl, stopOnErrors, async);
-		// Load LEXGRID XML
+			// Load LEXGRID XML
 		} else if (ob.getFormat().equalsIgnoreCase(
 				ApplicationConstants.FORMAT_LEXGRID_XML)) {
 			loader = lbsm
 					.getLoader(org.LexGrid.LexBIG.Impl.loaders.LexGridLoaderImpl.name);
 			((LexGrid_Loader) loader).load(ontologyUri, stopOnErrors, async);
-		// Load OWL
+			// Load OWL
 		} else if (ob.getFormat().equalsIgnoreCase(
 				ApplicationConstants.FORMAT_OWL_DL)
 				|| ob.getFormat().equalsIgnoreCase(
@@ -142,7 +143,8 @@ public class OntologyLoadManagerLexGridImpl extends
 				((OWL_Loader) loader).loadNCI(ontologyUri, null, false,
 						stopOnErrors, async);
 			} else {
-				((OWL_Loader) loader).load(ontologyUri, null, stopOnErrors, async);
+				((OWL_Loader) loader).load(ontologyUri, null, stopOnErrors,
+						async);
 			}
 		}
 
@@ -181,17 +183,14 @@ public class OntologyLoadManagerLexGridImpl extends
 				log
 						.debug("Updating the NcboOntologyMetadata with the codingScheme name="
 								+ urnAndVersion);
-				ncboOntologyVersionMetadataDAO.getHibernateTemplate().update(
-						ncboMetadata);
-				ncboOntologyVersionMetadataDAO.getSessionFactory()
-						.getCurrentSession().flush();
+				ncboMetadata = ncboOntologyVersionMetadataDAO
+						.saveNcboOntologyMetadata(ncboMetadata);
 				ob.setCodingScheme(urnAndVersion);
 			} else {
 				String message = "Could not update the codingScheme informtion into NcboOntologyMetadata for ontologyversionid="
 						+ ob.getId();
 				log.warn(message);
 			}
-
 		} else {
 			if (status.getErrorsLogged().booleanValue()) {
 				String error_message = "";
@@ -207,9 +206,6 @@ public class OntologyLoadManagerLexGridImpl extends
 				throw new Exception(error_message);
 			}
 		}
-	}
-
-	public void indexOntology(OntologyBean ob) {
 	}
 
 	/**
@@ -249,10 +245,9 @@ public class OntologyLoadManagerLexGridImpl extends
 		}
 	}
 
-	
 	public LocalNameList getLocalNameListFromTargetTerminologies(OntologyBean ob) {
 		LocalNameList lnl = null;
-        String targetTerminologies= ob.getTargetTerminologies();
+		String targetTerminologies = ob.getTargetTerminologies();
 		if (targetTerminologies != null) {
 			lnl = new LocalNameList();
 			String[] terminologies = targetTerminologies.split(",");

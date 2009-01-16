@@ -151,13 +151,10 @@ public class OntologyDownloadRestlet extends AbstractBaseRestlet {
 			splitFilename[1] = "";
 
 			int lastDot = filename.lastIndexOf('.');
-			String name = filename.substring(0, lastDot);
-			String ext = filename.substring(lastDot + 1);
 
-			if (!StringHelper.isNullOrNullString(name)
-					&& !StringHelper.isNullOrNullString(ext)) {
-				splitFilename[0] = name;
-				splitFilename[1] = ext;
+			if (lastDot > -1) {
+				splitFilename[0] = filename.substring(0, lastDot);
+				splitFilename[1] = filename.substring(lastDot + 1);
 			}
 		}
 

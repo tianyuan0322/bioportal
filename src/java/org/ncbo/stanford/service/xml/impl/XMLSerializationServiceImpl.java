@@ -47,7 +47,7 @@ import com.thoughtworks.xstream.io.xml.TraxSource;
  * A default implementation of the XMLSerializationService
  * 
  * @author Michael Dorf
- *
+ * 
  */
 public class XMLSerializationServiceImpl implements XMLSerializationService {
 
@@ -370,6 +370,8 @@ public class XMLSerializationServiceImpl implements XMLSerializationService {
 				SuccessBean.class);
 		xmlSerializer.alias(ApplicationConstants.ERROR_XML_TAG_NAME,
 				ErrorBean.class);
+		xmlSerializer.alias(ApplicationConstants.ERROR_STATUS_XML_TAG_NAME,
+				ErrorStatusBean.class);
 		xmlSerializer.alias(ApplicationConstants.SUCCESS_XML_TAG_NAME,
 				SuccessBean.class);
 	}

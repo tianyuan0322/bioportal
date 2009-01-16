@@ -6,18 +6,19 @@ import java.util.Iterator;
 import org.LexGrid.LexBIG.DataModel.Collections.ResolvedConceptReferenceList;
 import org.LexGrid.LexBIG.DataModel.Core.CodingSchemeVersionOrTag;
 import org.LexGrid.LexBIG.DataModel.Core.ResolvedConceptReference;
-import org.LexGrid.LexBIG.Exceptions.LBInvocationException;
-import org.LexGrid.LexBIG.Exceptions.LBParameterException;
 import org.LexGrid.LexBIG.Impl.LexBIGServiceImpl;
 import org.LexGrid.LexBIG.LexBIGService.CodedNodeSet;
 import org.LexGrid.LexBIG.LexBIGService.LexBIGService;
 import org.LexGrid.LexBIG.Utility.Iterators.ResolvedConceptReferencesIterator;
+import org.LexGrid.commonTypes.EntityDescription;
 import org.LexGrid.concepts.Comment;
 import org.LexGrid.concepts.Concept;
 import org.LexGrid.concepts.ConceptProperty;
 import org.LexGrid.concepts.Definition;
 import org.LexGrid.concepts.Instruction;
 import org.LexGrid.concepts.Presentation;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.ncbo.stanford.bean.search.LexGridSearchProperty;
 import org.ncbo.stanford.bean.search.SearchIndexBean;
 import org.ncbo.stanford.domain.custom.entity.VNcboOntology;
@@ -35,6 +36,12 @@ import org.ncbo.stanford.wrapper.LuceneIndexWriterWrapper;
  */
 public class OntologySearchManagerLexGridImpl extends
 		AbstractOntologyManagerLexGrid implements OntologySearchManager {
+
+	@SuppressWarnings("unused")
+	private static final Log log = LogFactory
+			.getLog(OntologySearchManagerLexGridImpl.class);
+
+	private static final int MATCH_ITERATOR_BLOCK = 100;
 
 	/**
 	 * Index a given ontology
@@ -61,16 +68,17 @@ public class OntologySearchManagerLexGridImpl extends
 
 			while (matchIterator.hasNext()) {
 				ResolvedConceptReferenceList lst = matchIterator
-						.next(Integer.MAX_VALUE);
+						.next(MATCH_ITERATOR_BLOCK);
 
 				for (Iterator<ResolvedConceptReference> itr = lst
 						.iterateResolvedConceptReference(); itr.hasNext();) {
 					ResolvedConceptReference ref = itr.next();
 					Concept concept = ref.getReferencedEntry();
+					String preferredName = getPreferredName(concept);
 
-					String preferredName = setPresentationProperties(writer,
-							doc, ontologyVersionId, ontologyId,
-							ontologyDisplayLabel, concept);
+					setPresentationProperties(writer, doc, ontologyVersionId,
+							ontologyId, ontologyDisplayLabel, preferredName,
+							concept);
 					setGenericProperties(writer, doc, ontologyVersionId,
 							ontologyId, ontologyDisplayLabel, preferredName,
 							concept);
@@ -88,13 +96,12 @@ public class OntologySearchManagerLexGridImpl extends
 
 			matchIterator.release();
 		} catch (Exception e) {
-			if (e instanceof LBParameterException
-					|| e instanceof LBInvocationException) {
-				throw new Exception("Ontology " + ontology.getDisplayLabel()
-						+ " (Id: " + ontology.getId() + ", Ontology Id: "
-						+ ontology.getOntologyId()
-						+ ") does not exist in the LexGrid back-end");
-			}
+			e.printStackTrace();
+			log.error(e);
+			throw new Exception("Ontology " + ontology.getDisplayLabel()
+					+ " (Id: " + ontology.getId() + ", Ontology Id: "
+					+ ontology.getOntologyId() + ") has generated an error: "
+					+ e.getMessage());
 		}
 	}
 
@@ -108,26 +115,21 @@ public class OntologySearchManagerLexGridImpl extends
 	 * @param ontologyId
 	 * @param ontologyDisplayLabel
 	 * @param concept
-	 * @return
 	 * @throws IOException
 	 */
-	private String setPresentationProperties(LuceneIndexWriterWrapper writer,
+	private void setPresentationProperties(LuceneIndexWriterWrapper writer,
 			SearchIndexBean doc, Integer ontologyVersionId, Integer ontologyId,
-			String ontologyDisplayLabel, Concept concept) throws IOException {
+			String ontologyDisplayLabel, String preferredName, Concept concept)
+			throws IOException {
 		SearchRecordTypeEnum recType = SearchRecordTypeEnum.RECORD_TYPE_PREFERRED_NAME;
-		boolean isFirst = true;
-		String preferredName = null;
 
 		for (Iterator<Presentation> itr = concept.iteratePresentation(); itr
 				.hasNext();) {
 			Presentation p = itr.next();
 
-			// the first value is assumed to be the preferred name
-			// the rest of the values are assumed to by synonyms
-			if (isFirst) {
-				preferredName = p.getText().getContent();
-				isFirst = false;
-			} else {
+			// if the value is not a preferred name, it is assumed to be
+			// asynonym
+			if (!p.getIsPreferred()) {
 				recType = SearchRecordTypeEnum.RECORD_TYPE_SYNONYM;
 			}
 
@@ -135,6 +137,30 @@ public class OntologySearchManagerLexGridImpl extends
 					ontologyVersionId, ontologyId, ontologyDisplayLabel,
 					recType, preferredName, p));
 			writer.addDocument(doc);
+		}
+	}
+
+	/**
+	 * Get the preferred name of a concept
+	 * 
+	 * @param concept
+	 */
+	private String getPreferredName(Concept concept) {
+		String preferredName = "";
+		EntityDescription desc = concept.getEntityDescription();
+
+		if (desc != null) {
+			preferredName = desc.getContent();
+		} else {
+			for (Iterator<Presentation> itr = concept.iteratePresentation(); itr
+					.hasNext();) {
+				Presentation p = itr.next();
+
+				if (p.getIsPreferred()) {
+					preferredName = p.getText().getContent();
+					break;
+				}
+			}
 		}
 
 		return preferredName;

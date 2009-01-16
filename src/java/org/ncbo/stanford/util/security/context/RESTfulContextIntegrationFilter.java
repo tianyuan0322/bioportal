@@ -98,8 +98,8 @@ public class RESTfulContextIntegrationFilter implements InitializingBean,
 	// ~ Instance fields
 	// ================================================================================================
 
+	@SuppressWarnings("unchecked")
 	private Class context = SecurityContextImpl.class;
-	private Object contextObject;
 	private SessionService sessionService;
 
 	/**
@@ -151,10 +151,6 @@ public class RESTfulContextIntegrationFilter implements InitializingBean,
 
 	public void setCloneFromHttpSession(boolean cloneFromHttpSession) {
 		this.cloneFromHttpSession = cloneFromHttpSession;
-	}
-
-	public RESTfulContextIntegrationFilter() throws ServletException {
-		this.contextObject = generateNewContext();
 	}
 
 	// ~ Methods
@@ -433,10 +429,12 @@ public class RESTfulContextIntegrationFilter implements InitializingBean,
 		this.allowSessionCreation = allowSessionCreation;
 	}
 
+	@SuppressWarnings("unchecked")
 	public Class getContext() {
 		return context;
 	}
 
+	@SuppressWarnings("unchecked")
 	public void setContext(Class secureContext) {
 		this.context = secureContext;
 	}

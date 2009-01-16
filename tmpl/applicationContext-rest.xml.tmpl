@@ -119,23 +119,9 @@
 		</property>
 	</bean>
 
-	<bean id="ontologyParseRestlet"
-		class="org.ncbo.stanford.view.rest.restlet.ontology.OntologyParseRestlet"
+	<bean id="ontologiesParseRestlet"
+		class="org.ncbo.stanford.view.rest.restlet.ontology.OntologiesParseRestlet"
 		parent="abstractBaseRestlet">
-		<property name="ontologyService">
-			<ref bean="ontologyService" />
-		</property>
-		<property name="ontologyLoadSchedulerService">
-			<ref bean="ontologyLoadSchedulerService" />
-		</property>
-	</bean>
-
-	<bean id="ontologyParseBatchRestlet"
-		class="org.ncbo.stanford.view.rest.restlet.ontology.OntologyParseBatchRestlet"
-		parent="abstractBaseRestlet">
-		<property name="ontologyService">
-			<ref bean="ontologyService" />
-		</property>
 		<property name="ontologyLoadSchedulerService">
 			<ref bean="ontologyLoadSchedulerService" />
 		</property>
@@ -197,6 +183,12 @@
 						<entry key="/ontologies/index/">
 							<ref local="indexRestlet" />
 						</entry>
+						<entry key="/ontologies/parse/">
+							<ref local="ontologiesParseRestlet" />
+						</entry>
+						<entry key="/ontologies/delete/">
+							<ref local="ontologyRestlet" />
+						</entry>
 						<entry key="/ontologies">
 							<ref local="ontologiesRestlet" />
 						</entry>
@@ -204,16 +196,8 @@
 							<ref local="ontologyRestlet" />
 						</entry>
 						<entry
-							key="/ontologies/versions/{ontologyversionid}">
+							key="/ontologies/versions/{ontologyid}">
 							<ref local="ontologyVersionsRestlet" />
-						</entry>
-						<entry
-							key="/ontologies/parse/{ontologyversionid}">
-							<ref local="ontologyParseRestlet" />
-						</entry>
-						<entry
-							key="/ontologies/parsebatch/{ontologyversionidstart}/{ontologyversionidend}">
-							<ref local="ontologyParseBatchRestlet" />
 						</entry>
 						<entry
 							key="/ontologies/download/{ontologyversionid}">

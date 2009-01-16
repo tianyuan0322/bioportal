@@ -5,7 +5,6 @@ package org.ncbo.stanford.domain.custom.dao;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.ncbo.stanford.domain.generated.NcboOntologyLoadQueue;
 import org.ncbo.stanford.domain.generated.NcboOntologyVersionMetadata;
 import org.ncbo.stanford.domain.generated.NcboOntologyVersionMetadataDAO;
 
@@ -31,7 +30,7 @@ public class CustomNcboOntologyVersionMetadataDAO extends
 	 * @return
 	 */
 	public NcboOntologyVersionMetadata saveNcboOntologyMetadata(
-			NcboOntologyLoadQueue transientInstance) {
+			NcboOntologyVersionMetadata transientInstance) {
 		try {
 			Integer newId = (Integer) getHibernateTemplate().save(
 					transientInstance);

@@ -26,6 +26,7 @@ public class RESTfulPathBasedFilterInvocationDefinitionMap extends
 		AbstractFilterInvocationDefinitionSource implements
 		FilterInvocationDefinition {
 
+	@SuppressWarnings("unused")
 	private static Log log = LogFactory
 			.getLog(RESTfulPathBasedFilterInvocationDefinitionMap.class);
 

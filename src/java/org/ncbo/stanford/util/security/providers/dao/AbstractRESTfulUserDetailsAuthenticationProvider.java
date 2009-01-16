@@ -361,6 +361,7 @@ public abstract class AbstractRESTfulUserDetailsAuthenticationProvider
 		this.messages = new MessageSourceAccessor(messageSource);
 	}
 
+	@SuppressWarnings("unchecked")
 	public boolean supports(Class authentication) {
 		return (UsernamePasswordAuthenticationToken.class
 				.isAssignableFrom(authentication));

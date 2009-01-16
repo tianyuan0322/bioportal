@@ -68,7 +68,12 @@ public class IndexRestlet extends AbstractBaseRestlet {
 	 */
 	private void indexAllOntologies(Request request, Response response) {
 		try {
-			indexService.indexAllOntologies();
+			HttpServletRequest httpRequest = RequestUtils
+					.getHttpServletRequest(request);
+			boolean doBackup = getDoBackup(httpRequest);
+			boolean doOptimize = getDoOptimize(httpRequest);
+
+			indexService.indexAllOntologies(doBackup, doOptimize);
 		} catch (Exception e) {
 			response.setStatus(Status.SERVER_ERROR_INTERNAL, e.getMessage());
 			e.printStackTrace();
@@ -81,7 +86,7 @@ public class IndexRestlet extends AbstractBaseRestlet {
 	}
 
 	/**
-	 * Index ontology or backup index or optimize index
+	 * Index ontologies or backup index or optimize index
 	 * 
 	 * @param request
 	 * @param response
@@ -116,7 +121,7 @@ public class IndexRestlet extends AbstractBaseRestlet {
 	}
 
 	/**
-	 * Removes ontology from index
+	 * Removes ontologies from index
 	 * 
 	 * @param request
 	 * @param response
@@ -139,25 +144,6 @@ public class IndexRestlet extends AbstractBaseRestlet {
 			xmlSerializationService
 					.generateStatusXMLResponse(request, response);
 		}
-	}
-
-	private List<Integer> getOntologyIds(HttpServletRequest httpRequest)
-			throws Exception {
-		List<Integer> ontologyIds = null;
-
-		if (RequestUtils.parameterExists(httpRequest,
-				RequestParamConstants.PARAM_ONTOLOGY_IDS)) {
-			String ontologyIdsStr = (String) httpRequest
-					.getParameter(RequestParamConstants.PARAM_ONTOLOGY_IDS);
-			ontologyIds = RequestUtils.parseIntegerListParam(ontologyIdsStr);
-
-			if (ontologyIds.isEmpty()) {
-				throw new Exception(
-						"You must supply at least one valid ontology id");
-			}
-		}
-
-		return ontologyIds;
 	}
 
 	private boolean getDoBackup(HttpServletRequest httpRequest) {
