@@ -132,6 +132,8 @@ public class OntologyLoadManagerLexGridImpl extends
 		} else if (ob.getFormat().equalsIgnoreCase(
 				ApplicationConstants.FORMAT_OWL_DL)
 				|| ob.getFormat().equalsIgnoreCase(
+						ApplicationConstants.FORMAT_OWL)
+				|| ob.getFormat().equalsIgnoreCase(
 						ApplicationConstants.FORMAT_OWL_FULL)) {
 			loader = lbsm
 					.getLoader(org.LexGrid.LexBIG.Impl.loaders.OWLLoaderImpl.name);
