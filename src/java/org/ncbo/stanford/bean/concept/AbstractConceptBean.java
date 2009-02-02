@@ -14,6 +14,7 @@ import java.util.Map;
  */
 public abstract class AbstractConceptBean {
 	protected String id;
+	protected String fullId;
 	protected String label;
 	protected HashMap<Object, Object> relations = new HashMap<Object, Object>();
 
@@ -32,6 +33,21 @@ public abstract class AbstractConceptBean {
 		this.id = id;
 	}
 
+	/**
+	 * @return the full id
+	 */
+	public String getFullId() {
+		return fullId;
+	}
+
+	/**
+	 * @param id
+	 *            the id to set
+	 */
+	public void setFullId(String fullId) {
+		this.fullId = fullId;
+	}	
+	
 	/**
 	 * @return the label
 	 */

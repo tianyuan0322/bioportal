@@ -275,7 +275,7 @@ public class OntologyServiceImpl implements OntologyService {
 		// assign new Ontology Id for new instance
 		// and assign internal version ID
 		findOrCreateNcboOntologyRecord(ontologyBean);
-
+		
 		// set filepath in the bean
 		if (!ontologyBean.isRemote()) {
 			ontologyBean.setFilePath(ontologyBean.getOntologyDirPath());
@@ -532,13 +532,14 @@ public class OntologyServiceImpl implements OntologyService {
 					.setInternalVersionNumber(Integer
 							.parseInt(MessageUtils
 									.getMessage("config.db.ontology.internalVersionNumberStart")));
+			// Moved to here since it should only be set on new ontologies
+			ont.setOboFoundryId(ontologyBean.getOboFoundryId());
 		} else {
 			ont = ncboOntologyDAO.findById(ontologyId);
 			Integer lastInternalVersion = findLatestOntologyVersion(ontologyId)
 					.getInternalVersionNumber();
 			ontologyBean.setInternalVersionNumber(lastInternalVersion + 1);
 		}
-
 		ontologyBean.populateToOntologyEntity(ont);
 		NcboOntology ontNew = ncboOntologyDAO.saveOntology(ont);
 		ontologyBean.setOntologyId(ontNew.getId());

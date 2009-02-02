@@ -215,7 +215,8 @@ public class OntologyRetrievalManagerProtegeImpl extends
 	private ClassBean createLightClassBean(Cls cls) {
 		ClassBean classBean = new ClassBean();
 		classBean.setId(getId(cls));
-
+		classBean.setFullId(cls.getName());
+		
 		classBean.setLabel(cls.getBrowserText());
 		classBean.addRelation(ApplicationConstants.CHILD_COUNT,
 				getUniqueClasses(cls.getDirectSubclasses()).size());
@@ -228,7 +229,8 @@ public class OntologyRetrievalManagerProtegeImpl extends
 
 		ClassBean classBean = new ClassBean();
 		classBean.setId(getId(cls));
-
+		classBean.setFullId(cls.getName());
+		
 		classBean.setLabel(cls.getBrowserText());
 
 		// add properties
