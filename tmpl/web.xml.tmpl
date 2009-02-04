@@ -59,6 +59,24 @@
 
 	<!-- All filters -->
 	
+		<!-- UTF-8 Filter -->
+  <filter>
+    <filter-name>CharsetFilter</filter-name>
+    <filter-class>org.ncbo.stanford.util.CharsetFilter</filter-class>
+      <init-param>
+        <param-name>requestEncoding</param-name>
+        <param-value>UTF-8</param-value>
+      </init-param>
+  </filter>
+
+  <filter-mapping>
+    <filter-name>CharsetFilter</filter-name>
+    <url-pattern>/*</url-pattern>
+  </filter-mapping>
+	
+	
+	
+	
 <!-- 	
 	<filter>
 		<description>
@@ -144,20 +162,6 @@
 		<mime-type>image/x-icon</mime-type>
 	</mime-mapping>
 	
-	<!-- UTF-8 Filter -->
-  <filter>
-    <filter-name>CharsetFilter</filter-name>
-    <filter-class>org.ncbo.stanford.util.CharsetFilter</filter-class>
-      <init-param>
-        <param-name>requestEncoding</param-name>
-        <param-value>UTF-8</param-value>
-      </init-param>
-  </filter>
 
-  <filter-mapping>
-    <filter-name>CharsetFilter</filter-name>
-    <url-pattern>/*</url-pattern>
-  </filter-mapping>
-	
 	
 </web-app>

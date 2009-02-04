@@ -2,6 +2,7 @@ package org.ncbo.stanford.service.xml.impl;
 
 import java.io.File;
 import java.io.StringWriter;
+import java.io.UnsupportedEncodingException;
 import java.io.Writer;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -317,8 +318,26 @@ public class XMLSerializationServiceImpl implements XMLSerializationService {
 		StringBuffer sb = new StringBuffer(ApplicationConstants.XML_DECLARATION);
 		sb.append('\n');
 		sb.append(xmlSerializer.toXML(responseBean));
+		
+		
+		// Added code to encode ALL responses in UTF-8 
+		String utf8String=null;
+		try{
+		  byte[] stringBytes = sb.toString().getBytes();
+		    utf8String= new String(stringBytes, "UTF-8");
+		}catch(UnsupportedEncodingException e)
+		   {
+		    //  TODO: This should never happen. The UnsupportedEncodingException
+		    // should be propagated instead of swallowed. This error would indicate
+		    // a severe misconfiguration of the JVM.
 
-		return sb.toString();
+		    // As we can't translate just send back the best guess.
+		    System.out.println("UnsupportedEncodingException is: " +
+		e.getMessage());
+		    utf8String = sb.toString();
+		   }
+
+		return utf8String;
 	}
 
 	/**
