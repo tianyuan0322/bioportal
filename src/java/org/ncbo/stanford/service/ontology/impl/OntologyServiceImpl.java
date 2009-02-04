@@ -532,6 +532,8 @@ public class OntologyServiceImpl implements OntologyService {
 					.setInternalVersionNumber(Integer
 							.parseInt(MessageUtils
 									.getMessage("config.db.ontology.internalVersionNumberStart")));
+			// Moved to here since it should only be set on new ontologies
+			ont.setOboFoundryId(ontologyBean.getOboFoundryId());
 		} else {
 			ont = ncboOntologyDAO.findById(ontologyId);
 			Integer lastInternalVersion = findLatestOntologyVersion(ontologyId)
