@@ -29,8 +29,9 @@ public class SearchServiceTest extends AbstractBioPortalTest {
 		System.out
 				.println("SearchServiceTest: indexOntology().......................BEGIN");
 
+
 		try {
-			indexService.indexOntology(1056, false, true);
+			indexService.indexOntology(1166, false, true);
 		} catch (Exception exc) {
 			exc.printStackTrace();
 			fail(exc.getMessage());
@@ -61,6 +62,31 @@ public class SearchServiceTest extends AbstractBioPortalTest {
 				.println("SearchServiceTest: searchAllOntologies().........................DONE");
 	}
 
+	@Test
+	public void testSearchECG() throws Exception {
+		System.out
+				.println("SearchServiceTest: testSearchECG().......................BEGIN");
+
+		try {
+			Query query = queryService.generateLuceneSearchQuery(null, "lead",
+					true, false);
+			Page<SearchBean> results = queryService.executeQuery(query);
+
+			assertNotNull(results);
+			
+			if (results.getNumResultsTotal() < 98)
+				fail("Search results should be 98");
+			
+			System.out.println(getXML(results));
+		} catch (Exception exc) {
+			exc.printStackTrace();
+			fail(exc.getMessage());
+		}
+
+		System.out
+				.println("SearchServiceTest: testSearchECG().........................DONE");
+	}
+	
 	@Test
 	public void testSearchAllOntologiesPaginated() throws Exception {
 		System.out
