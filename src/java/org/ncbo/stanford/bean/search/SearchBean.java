@@ -104,9 +104,9 @@ public class SearchBean {
 	}
 
 	public String toString() {
-		return ontologyVersionId + " | " + ontologyId + " | " + conceptId
-				+ " | " + contents + " | " + recordType.getLabel() + "\n"
-				+ preferredName + " | " + conceptIdShort + " | "
+		return "VersionID: "+ ontologyVersionId + " | OntologyId: " + ontologyId + " | ConceptId: " + conceptId
+				+ " | Contents: " + contents + " | RecordType: " + recordType.getLabel() + "\n"
+				+ " PreferedName: "+ preferredName + " | ConceptIdShort: " + conceptIdShort + " | OntologyDisplayLabel: "
 				+ ontologyDisplayLabel + "\n";
 	}
 

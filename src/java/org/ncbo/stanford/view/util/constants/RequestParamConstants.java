@@ -39,6 +39,13 @@ public interface RequestParamConstants {
 			Arrays.asList("0", "false"));
 
 	/**
+	 * Concepts Restlet parameters (param for dealing with http://something.com Ids
+	 */
+
+	public static final String PARAM_CONCEPT_ID = "conceptid";
+	
+	
+	/**
 	 * Search query parameters
 	 */
 	public static final String PARAM_ONTOLOGY_IDS = "ontologyids";
