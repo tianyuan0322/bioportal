@@ -262,8 +262,10 @@ public class OntologyRetrievalManagerProtegeImpl extends
 
 				while (it.hasNext()) {
 					Cls subclass = it.next();
-					//2/23/09 Added !(subclass instanceof OWLNamedClass) to catch a protege bug where non named classes got added
-					if (subclass.isSystem()  || !(subclass instanceof OWLNamedClass)) {
+					//2/23/09 Added subclass.getName().startsWith("@") to catch a protege bug where non named classes got added
+					// Using .startsWith because protege team suggested it as the best way
+					System.out.println(subclass.getName());
+					if (subclass.isSystem()  || subclass.getName().startsWith("@")) {
 						it.remove();
 					}
 
