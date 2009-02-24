@@ -16,6 +16,7 @@ import org.ncbo.stanford.domain.custom.entity.VNcboOntology;
 import org.ncbo.stanford.manager.AbstractOntologyManagerProtege;
 import org.ncbo.stanford.manager.retrieval.OntologyRetrievalManager;
 import org.ncbo.stanford.util.constants.ApplicationConstants;
+import org.ncbo.stanford.util.helper.StringHelper;
 
 import edu.stanford.smi.protege.model.Cls;
 import edu.stanford.smi.protege.model.Instance;
@@ -62,13 +63,14 @@ public class OntologyRetrievalManagerProtegeImpl extends
 	 */
 	public ClassBean findRootConcept(VNcboOntology ontologyVersion) {
 		KnowledgeBase kb = getKnowledgeBase(ontologyVersion);
+		Slot synonymSlot = getSynonymSlot(kb, ontologyVersion.getSynonymSlot());
 
 		// Get all root nodes associated with this ontology. Then iterate
 		// through the collection, returning the first one.
 		Cls oThing = kb.getRootCls();
 
 		if (oThing != null) {
-			return createClassBean(oThing, true);
+			return createClassBean(oThing, true,synonymSlot);
 		}
 
 		return null;
@@ -76,11 +78,11 @@ public class OntologyRetrievalManagerProtegeImpl extends
 
 	public ClassBean findConcept(VNcboOntology ontologyVersion, String conceptId) {
 		KnowledgeBase kb = getKnowledgeBase(ontologyVersion);
-
+		Slot synonymSlot = getSynonymSlot(kb, ontologyVersion.getSynonymSlot());
 		Cls owlClass = getCls(conceptId, kb);
 
 		if (owlClass != null) {
-			return createClassBean(owlClass, true);
+			return createClassBean(owlClass, true,synonymSlot);
 		}
 
 		return null;
@@ -88,8 +90,7 @@ public class OntologyRetrievalManagerProtegeImpl extends
 
 	public ClassBean findPathFromRoot(VNcboOntology ontologyVersion,
 			String conceptId, boolean light) {
-		KnowledgeBase kb = getKnowledgeBase(ontologyVersion);
-
+		KnowledgeBase kb = getKnowledgeBase(ontologyVersion);		
 		Cls cls = getCls(conceptId, kb);
 		Collection nodes = ModelUtilities.getPathToRoot(cls);
 
@@ -188,12 +189,12 @@ public class OntologyRetrievalManagerProtegeImpl extends
 	}
 
 	private List<ClassBean> convertClasses(Collection<Cls> protegeClses,
-			boolean recursive) {
+			boolean recursive,Slot synonymSlot) {
 		List<ClassBean> beans = new ArrayList<ClassBean>();
 
 		for (Cls cls : protegeClses) {
 			if (cls.isVisible())
-				beans.add(createClassBean(cls, recursive));
+				beans.add(createClassBean(cls, recursive,synonymSlot));
 		}
 
 		return beans;
@@ -224,7 +225,7 @@ public class OntologyRetrievalManagerProtegeImpl extends
 		return classBean;
 	}
 
-	private ClassBean createClassBean(Cls cls, boolean recursive) {
+	private ClassBean createClassBean(Cls cls, boolean recursive,Slot synonymSlot) {
 		boolean isOwl = cls.getKnowledgeBase() instanceof OWLModel;
 
 		ClassBean classBean = new ClassBean();
@@ -264,7 +265,6 @@ public class OntologyRetrievalManagerProtegeImpl extends
 					Cls subclass = it.next();
 					//2/23/09 Added subclass.getName().startsWith("@") to catch a protege bug where non named classes got added
 					// Using .startsWith because protege team suggested it as the best way
-					System.out.println(subclass.getName());
 					if (subclass.isSystem()  || subclass.getName().startsWith("@")) {
 						it.remove();
 					}
@@ -277,10 +277,17 @@ public class OntologyRetrievalManagerProtegeImpl extends
 
 		classBean.addRelation(ApplicationConstants.CHILD_COUNT, subclasses
 				.size());
-
+		
+		// Adds synonyms to a constant
+		// 2/23/09 Had to change method signatures for createClass() and its related methods
+		if(synonymSlot!=null){
+		classBean.addRelation(ApplicationConstants.SYNONYM, cls.getOwnSlotValues(synonymSlot));
+		}
+		
+		
 		if (recursive) {
 			classBean.addRelation(ApplicationConstants.SUB_CLASS,
-					convertClasses(subclasses, false));
+					convertClasses(subclasses, false,synonymSlot));
 
 			// add superclasses
 			if (cls instanceof OWLNamedClass) {
@@ -291,14 +298,14 @@ public class OntologyRetrievalManagerProtegeImpl extends
 			}
 
 			classBean.addRelation(ApplicationConstants.SUPER_CLASS,
-					convertClasses(superclasses, false));
+					convertClasses(superclasses, false,synonymSlot));
 		}
 
 		// add RDF type
 		if (cls instanceof OWLNamedClass) {
 			classBean.addRelation(ApplicationConstants.RDF_TYPE,
 					convertClasses(getUniqueClasses(((OWLNamedClass) cls)
-							.getRDFTypes()), false));
+							.getRDFTypes()), false,synonymSlot));
 		}
 
 		return classBean;
@@ -355,4 +362,17 @@ public class OntologyRetrievalManagerProtegeImpl extends
 
 		return bpProps;
 	}
+	
+	
+	// Added to find synonyms to add to the bean.  Probably should find some way to extract since the search manager uses
+	// the same function
+	protected Slot getSynonymSlot(KnowledgeBase kb, String synonymSlot) {
+		if (!StringHelper.isNullOrNullString(synonymSlot)) {
+			return (kb instanceof OWLModel ? ((OWLModel) kb)
+					.getRDFProperty(synonymSlot) : kb.getSlot(synonymSlot));
+		}
+
+		return null;
+	}
+	
 }
