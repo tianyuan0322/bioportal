@@ -268,6 +268,15 @@ public class QuerySearchServiceImpl extends AbstractSearchService implements
 
 		try {
 			expr = StringHelper.escapeSpaces(expr);
+			
+			//3/3/09 For contains searches, need to add *s to make it wildcard
+			if(!expr.startsWith("*")){
+				expr = "*"+expr;
+			}
+			if(!expr.endsWith("*")){
+				expr = expr+"*";
+			}
+			
 			query.add(parser.parse(expr), BooleanClause.Occur.MUST);
 		} catch (ParseException e) {
 			IOException ioe = new IOException(e.getMessage());
