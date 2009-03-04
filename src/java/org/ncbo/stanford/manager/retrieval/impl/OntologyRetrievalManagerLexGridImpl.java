@@ -164,8 +164,10 @@ public class OntologyRetrievalManagerLexGridImpl extends
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.ncbo.stanford.manager.OntologyRetrievalManager#findPathFromRoot(org.ncbo.stanford.domain.custom.entity.VNcboOntology,
-	 *      java.lang.String, boolean)
+	 * @see
+	 * org.ncbo.stanford.manager.OntologyRetrievalManager#findPathFromRoot(org
+	 * .ncbo.stanford.domain.custom.entity.VNcboOntology, java.lang.String,
+	 * boolean)
 	 */
 	public ClassBean findPathFromRoot(VNcboOntology ncboOntology,
 			String conceptId, boolean light) throws Exception {
@@ -240,7 +242,8 @@ public class OntologyRetrievalManagerLexGridImpl extends
 			thingBean = createThingClassBean(mergedConceptList);
 		}
 
-		ClassBean simpleSubclassThingBean = createSimpleSubClassOnlyClassBean(thingBean);
+		ClassBean simpleSubclassThingBean = createSimpleSubClassOnlyClassBean(
+				thingBean, includeChildren);
 		return simpleSubclassThingBean;
 	}
 
@@ -975,7 +978,8 @@ public class OntologyRetrievalManagerLexGridImpl extends
 	}
 
 	@SuppressWarnings("unchecked")
-	private ClassBean createSimpleSubClassOnlyClassBean(ClassBean classBean) {
+	private ClassBean createSimpleSubClassOnlyClassBean(ClassBean classBean,
+			boolean includeChildren) {
 		ClassBean cb = new ClassBean();
 		cb.setId(classBean.getId());
 		cb.setLabel(classBean.getLabel());
@@ -983,6 +987,31 @@ public class OntologyRetrievalManagerLexGridImpl extends
 				ApplicationConstants.CHILD_COUNT);
 		if (childCount != null) {
 			cb.addRelation(ApplicationConstants.CHILD_COUNT, childCount);
+		}
+
+		if (includeChildren) {
+			for (Object key : classBean.getRelations().keySet()) {
+				if (key instanceof String) {
+					String keyString = (String) key;
+					if (keyString.equals(ApplicationConstants.SUB_CLASS))
+						continue;
+					Object value_obj = classBean.getRelations().get(keyString);
+					if (value_obj != null && value_obj instanceof List) {
+						List<ClassBean> classes = (List<ClassBean>) value_obj;
+						List<ClassBean> newClasses = new ArrayList<ClassBean>();
+						for (ClassBean classB : classes) {
+							ClassBean newClassB = createSimpleStrippedDownClassBean(classB);
+							newClasses.add(newClassB);
+						}
+						cb.addRelation(keyString, newClasses);
+					} else if (value_obj != null
+							&& value_obj instanceof ClassBean) {
+						ClassBean classB = (ClassBean) value_obj;
+						ClassBean newClassB = createSimpleStrippedDownClassBean(classB);
+						cb.addRelation(keyString, newClassB);
+					}
+				}
+			}
 		}
 
 		if (classBean.getRelations()
@@ -993,18 +1022,33 @@ public class OntologyRetrievalManagerLexGridImpl extends
 				List<ClassBean> subclasses = (List<ClassBean>) subclass_obj;
 				List<ClassBean> newSubClasses = new ArrayList<ClassBean>();
 				for (ClassBean subclass : subclasses) {
-					ClassBean newSubClass = createSimpleSubClassOnlyClassBean(subclass);
+					ClassBean newSubClass = createSimpleSubClassOnlyClassBean(
+							subclass, includeChildren);
 					newSubClasses.add(newSubClass);
 				}
 				cb.addRelation(ApplicationConstants.SUB_CLASS, newSubClasses);
 			} else if (subclass_obj != null
 					&& subclass_obj instanceof ClassBean) {
 				ClassBean subclass = (ClassBean) subclass_obj;
-				ClassBean newSubClass = createSimpleSubClassOnlyClassBean(subclass);
+				ClassBean newSubClass = createSimpleSubClassOnlyClassBean(
+						subclass, includeChildren);
 				cb.addRelation(ApplicationConstants.SUB_CLASS, newSubClass);
 			}
 		}
 
+		return cb;
+	}
+
+	@SuppressWarnings("unchecked")
+	private ClassBean createSimpleStrippedDownClassBean(ClassBean classBean) {
+		ClassBean cb = new ClassBean();
+		cb.setId(classBean.getId());
+		cb.setLabel(classBean.getLabel());
+		Integer childCount = (Integer) classBean.getRelations().get(
+				ApplicationConstants.CHILD_COUNT);
+		if (childCount != null) {
+			cb.addRelation(ApplicationConstants.CHILD_COUNT, childCount);
+		}
 		return cb;
 	}
 
