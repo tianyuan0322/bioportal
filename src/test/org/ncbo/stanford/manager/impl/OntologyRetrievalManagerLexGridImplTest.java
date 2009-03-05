@@ -234,6 +234,7 @@ public class OntologyRetrievalManagerLexGridImplTest extends
 		VNcboOntology ncboOntology = retrievalManager
 				.getLatestNcboOntology(TEST_OBO_CELL_DISPLAY_LABEL);
 		String conceptID = "CL:0000255";
+		//String conceptID = "CL:0000003"; 
 		ClassBean pathBean = retrievalManager.findPathFromRoot(ncboOntology,
 				conceptID, false);
 		System.out.println("Paths to root for concept " + conceptID
