@@ -831,8 +831,10 @@ public class OntologyRetrievalManagerLexGridImpl extends
 		if (StringUtils.isBlank(dirName)) {
 			dirName = "[R]" + association.getAssociationName();
 		}
-		current_classBean.addRelation(dirName, classBeans);
-		addHierarchyRelationName(current_classBean, classBeans,
+		//current_classBean.addRelation(dirName, classBeans);
+		mergeClassBeansIntoClassBeanRelationsUsingRelationName(current_classBean, classBeans,
+				dirName);
+		mergeClassBeansIntoClassBeanRelationsUsingRelationName(current_classBean, classBeans,
 				hierarchy_relationName);
 	}
 
@@ -845,44 +847,26 @@ public class OntologyRetrievalManagerLexGridImpl extends
 	 * 
 	 * @param bean
 	 * @param beanlist
-	 * @param hierarchy_name
+	 * @param relation_name
 	 */
 	@SuppressWarnings("unchecked")
-	private void addHierarchyRelationName(ClassBean bean,
-			ArrayList<ClassBean> beanlist, String hierarchy_name) {
+	private void mergeClassBeansIntoClassBeanRelationsUsingRelationName(ClassBean bean,
+			ArrayList<ClassBean> beanlist, String relation_name) {
 		// If no hierarchy_name is provided, we assume that special BioPortal
 		// relations do not have to be setup.
-		if (StringUtils.isBlank(hierarchy_name)) {
+		if (StringUtils.isBlank(relation_name)) {
 			return;
 		}
 
-		Object value = bean.getRelations().get(hierarchy_name);
+		Object value = bean.getRelations().get(relation_name);
 
 		if (value != null && value instanceof ArrayList) {
-			// Ensure we do not add duplicates. We want to also replace the the
-			// hierarchy_name class beans with the new beans from the list of
-			// they match.
-			// The reason for this is because the beanlist classbeans have
-			// hierarchy information in them.
-			// Note: the equals method of the AbstactClassBean has been
-			// customized to same that if if the id and name matches
-			// irrespective of the relations content,
-			// the 2 beans are equal.
-			// Set<ClassBean> set = new HashSet<ClassBean>();
-			// List<ClassBean> list = (List<ClassBean>) value;
-			//            
-			// set.addAll(list);
-			// set.removeAll((List<ClassBean>) beanlist);
-			// set.addAll((List<ClassBean>) beanlist);
-			// list.clear();
-			// list.addAll(set);
-
 			List<ClassBean> list = mergeListsEliminatingDuplicates(
 					(ArrayList<ClassBean>) value, beanlist);
-			bean.addRelation(hierarchy_name, list);
+			bean.addRelation(relation_name, list);
 
 		} else {
-			bean.addRelation(hierarchy_name, beanlist);
+			bean.addRelation(relation_name, beanlist);
 		}
 	}
 
