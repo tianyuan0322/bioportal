@@ -169,12 +169,28 @@ public class OBOCVSPullServiceImpl implements OBOCVSPullService {
 	private OntologyAction determineOntologyAction(MetadataFileBean mfb,
 			CVSFile cf) throws InvalidDataException {
 		ActionEnum action = ActionEnum.NO_ACTION;
+		
 		OntologyBean ont = ontologyService
 				.findLatestOntologyVersionByOboFoundryId(mfb.getId());
 		String downloadUrl = mfb.getDownload();
 		List<Integer> newCategoryIds = findCategoryIdsByOBONames(downloadUrl);
 		byte isRemote = isRemote(downloadUrl);
 
+		// 3/5/09 
+		// Created to deal with the lexgrid issue that it cant determine the namespaces which creates an issue with searching.
+		// The ontologies are replicated within eachother.
+		// This code will ignore cellular_component and molecular_function and turn biological_process into the main GO ontology
+		if(mfb.getId().equalsIgnoreCase("cellular_component") || mfb.getId().equalsIgnoreCase("molecular_function") ){
+			populateOntologyBean(mfb, cf, action, ont, newCategoryIds, isRemote);
+			return new OntologyAction(action, ont);
+		}
+		if(mfb.getId().equalsIgnoreCase("biological_process")){
+			mfb.setTitle("Gene Ontology");		
+			mfb.setDescription("Provides structured controlled vocabularies for the annotation of gene products" +
+							" with respect to their molecular function, cellular component, and biological role." +
+							" The Gene Ontology consists of three Vocabularies.");
+		}
+		
 		// is any action required?
 		// ____a. local && categories didn't change
 		// is this an update action?
