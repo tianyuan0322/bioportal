@@ -980,14 +980,20 @@ public class OntologyRetrievalManagerLexGridImpl extends
 					if (keyString.equals(ApplicationConstants.SUB_CLASS))
 						continue;
 					Object value_obj = classBean.getRelations().get(keyString);
+					//We only want to add the association information. So we check for List of classbeans and add only those.
 					if (value_obj != null && value_obj instanceof List) {
-						List<ClassBean> classes = (List<ClassBean>) value_obj;
+						List value_list= (List) value_obj;
 						List<ClassBean> newClasses = new ArrayList<ClassBean>();
-						for (ClassBean classB : classes) {
-							ClassBean newClassB = createSimpleStrippedDownClassBean(classB);
-							newClasses.add(newClassB);
+						for (Object element_obj: value_list) {
+							if (element_obj instanceof ClassBean) {
+								ClassBean classB= (ClassBean)element_obj;
+								ClassBean newClassB = createSimpleStrippedDownClassBean(classB);
+								newClasses.add(newClassB);
+							}
 						}
-						cb.addRelation(keyString, newClasses);
+						if (!newClasses.isEmpty()) {
+						    cb.addRelation(keyString, newClasses);
+						}
 					} else if (value_obj != null
 							&& value_obj instanceof ClassBean) {
 						ClassBean classB = (ClassBean) value_obj;
