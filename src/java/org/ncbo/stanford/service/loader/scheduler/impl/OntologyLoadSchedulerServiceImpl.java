@@ -1,35 +1,23 @@
 package org.ncbo.stanford.service.loader.scheduler.impl;
 
-import java.io.File;
-import java.io.PrintWriter;
-import java.io.StringWriter;
-import java.net.URISyntaxException;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.io.*;
+import java.net.*;
+import java.util.*;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-import org.ncbo.stanford.bean.OntologyBean;
-import org.ncbo.stanford.domain.custom.dao.CustomNcboOntologyLoadQueueDAO;
-import org.ncbo.stanford.domain.custom.dao.CustomNcboOntologyVersionDAO;
-import org.ncbo.stanford.domain.custom.entity.VNcboOntology;
-import org.ncbo.stanford.domain.generated.NcboLStatus;
-import org.ncbo.stanford.domain.generated.NcboOntologyLoadQueue;
-import org.ncbo.stanford.domain.generated.NcboOntologyVersion;
-import org.ncbo.stanford.enumeration.StatusEnum;
-import org.ncbo.stanford.exception.InvalidOntologyFormatException;
-import org.ncbo.stanford.manager.load.OntologyLoadManager;
-import org.ncbo.stanford.service.loader.scheduler.OntologyLoadSchedulerService;
-import org.ncbo.stanford.service.search.IndexSearchService;
-import org.ncbo.stanford.util.CompressionUtils;
-import org.ncbo.stanford.util.MessageUtils;
-import org.ncbo.stanford.util.ontologyfile.pathhandler.AbstractFilePathHandler;
-import org.springframework.transaction.annotation.Propagation;
-import org.springframework.transaction.annotation.Transactional;
+import org.apache.commons.logging.*;
+import org.ncbo.stanford.bean.*;
+import org.ncbo.stanford.domain.custom.dao.*;
+import org.ncbo.stanford.domain.custom.entity.*;
+import org.ncbo.stanford.domain.generated.*;
+import org.ncbo.stanford.enumeration.*;
+import org.ncbo.stanford.exception.*;
+import org.ncbo.stanford.manager.diff.*;
+import org.ncbo.stanford.manager.load.*;
+import org.ncbo.stanford.service.loader.scheduler.*;
+import org.ncbo.stanford.service.search.*;
+import org.ncbo.stanford.util.*;
+import org.ncbo.stanford.util.ontologyfile.pathhandler.*;
+import org.springframework.transaction.annotation.*;
 
 /**
  * Implementation of the scheduler service that runs periodically, checking for
@@ -55,7 +43,9 @@ public class OntologyLoadSchedulerServiceImpl implements
 	private Map<String, OntologyLoadManager> ontologyLoadHandlerMap = new HashMap<String, OntologyLoadManager>(
 			0);
 	private List<String> errorOntologies = new ArrayList<String>(0);
-
+	private Map<String, OntologyDiffManager> ontologyDiffHandlerMap = new HashMap<String, OntologyDiffManager>(
+			0);
+	
 	/**
 	 * Gets the list of ontologies that need to be loaded and processed each
 	 * using the appropriate loader API.
@@ -170,8 +160,16 @@ public class OntologyLoadSchedulerServiceImpl implements
 
 				// load ontology
 				loadOntology(ontologyBean);
-
+				
 				status = StatusEnum.STATUS_READY;
+				
+				// ******************************************
+				// We will call create Diff when we are ready to include this process in the scheduler
+				// Commenting it out for now
+				//
+				// createDiff (ontologyBean);
+				//
+				//************************************
 			}
 		} catch (Exception e) {
 			status = StatusEnum.STATUS_ERROR;
@@ -289,7 +287,8 @@ public class OntologyLoadSchedulerServiceImpl implements
 			log.debug("..................loadOntology END");
 		}
 	}
-
+	
+	
 	private OntologyLoadManager getLoadManager(OntologyBean ontologyBean)
 			throws Exception {
 		String formatHandler = ontologyFormatHandlerMap.get(ontologyBean
@@ -305,6 +304,45 @@ public class OntologyLoadSchedulerServiceImpl implements
 		}
 
 		return loadManager;
+	}
+
+	/**
+	 * Creates a diff between the two latest versions of the specified ontology
+	 * This method is called after the ontology has been successfully parsed. 
+	 * So, one version is the bean that is being passed in
+	 * 
+	 * @param ontologyBean
+	 *            bean
+	 * @throws Exception
+	 */
+	private void createDiff(OntologyBean ontologyBean) throws Exception {
+		if (log.isDebugEnabled()) {
+			log.debug("createDiff BEGIN..............");
+		}
+
+		getDiffManager(ontologyBean).createDiffForTwoLatestVersions (ontologyBean.getOntologyId());
+
+		if (log.isDebugEnabled()) {
+			log.debug("..................createDiff END");
+		}
+	}
+	
+	
+	private OntologyDiffManager getDiffManager(OntologyBean ontologyBean)
+	throws Exception {
+		String formatHandler = ontologyFormatHandlerMap.get(ontologyBean
+				.getFormat());
+		OntologyDiffManager diffManager = ontologyDiffHandlerMap
+		.get(formatHandler);
+
+		if (diffManager == null) {
+			log.error("Cannot find diffHandler for "
+					+ ontologyBean.getFormat());
+			throw new InvalidOntologyFormatException(
+					"Cannot find formatHandler for " + ontologyBean.getFormat());
+		}
+
+		return diffManager;
 	}
 
 	private void backupIndex() {
@@ -374,5 +412,14 @@ public class OntologyLoadSchedulerServiceImpl implements
 	 */
 	public List<String> getErrorOntologies() {
 		return errorOntologies;
+	}
+
+	/**
+	 * @param ontologyDiffHandlerMap
+	 *            the ontologyDiffHandlerMap to set
+	 */
+	public void setOntologyDiffHandlerMap(
+			Map<String, OntologyDiffManager> ontologyDiffHandlerMap) {
+		this.ontologyDiffHandlerMap = ontologyDiffHandlerMap;
 	}
 }

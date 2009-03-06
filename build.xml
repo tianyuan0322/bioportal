@@ -84,6 +84,7 @@
 
 		<mkdir dir="${bioportal.tempdir}" />
 		<mkdir dir="${bioportal.ontology.filepath}" />		
+		<mkdir dir="${bioportal.diff.filepath}" />		
 		<mkdir dir="${bioportal.search.indexpath}" />
 		<mkdir dir="${bioportal.search.indexbackuppath}" />
 		<mkdir dir="${obo.sourceforge.cvs.checkoutdir}" />
@@ -130,6 +131,7 @@
 			<filterset>
 				<filter token="bioportalxsltpath" value="${bioportal.xslt.path}" />
 				<filter token="bioportalontologyfilepath" value="${bioportal.ontology.filepath}" />
+				<filter token="bioportaldifffilepath" value="${bioportal.diff.filepath}" />
 			</filterset>
 		</copy>
 

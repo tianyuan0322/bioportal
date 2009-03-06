@@ -44,6 +44,8 @@
 			<ref bean="ontologyService" />
 		</property>
 	</bean>
+
+
 	<bean id="virtualRestlet"
 		class="org.ncbo.stanford.view.rest.restlet.ontology.VirtualUriRestlet"
 		parent="abstractBaseRestlet">
@@ -135,6 +137,22 @@
 		</property>
 	</bean>
 
+	<bean id="diffRestlet"
+		class="org.ncbo.stanford.view.rest.restlet.diff.DiffRestlet"
+		parent="abstractBaseRestlet">
+		<property name="diffService">
+			<ref bean="diffService" />
+		</property>
+	</bean>
+
+	<bean id="diffDownloadRestlet"
+		class="org.ncbo.stanford.view.rest.restlet.diff.DiffDownloadRestlet"
+		parent="abstractBaseRestlet">
+		<property name="diffService">
+			<ref bean="diffService" />
+		</property>
+	</bean>
+
 	<bean id="categoriesRestlet"
 		class="org.ncbo.stanford.view.rest.restlet.ontology.CategoriesRestlet"
 		parent="abstractBaseRestlet">
@@ -202,6 +220,14 @@
 						<entry
 							key="/ontologies/download/{ontologyversionid}">
 							<ref local="ontologyDownloadRestlet" />
+						</entry>
+						<entry
+							key="/diffs/download/{ontologyversionid1}/{ontologyversionid2}">
+							<ref local="diffDownloadRestlet" />
+						</entry>
+						<entry
+							key="/diffs/{ontologyid}">
+							<ref local="diffRestlet" />
 						</entry>
 						<entry key="/categories">
 							<ref local="categoriesRestlet" />

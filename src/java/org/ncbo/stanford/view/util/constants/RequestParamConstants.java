@@ -60,4 +60,10 @@ public interface RequestParamConstants {
 	 */
 	public static final String PARAM_DOBACKUP = "dobackup";
 	public static final String PARAM_DOOPTIMIZE = "dooptimize";
+
+	/**
+	 * Diff download parameters
+	 */
+	public static final String PARAM_FORMAT = "format";
+
 }

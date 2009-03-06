@@ -136,6 +136,9 @@ bioportal.messagebundle.path=${src.dir}/org/ncbo/stanford/resource/generated
 # Uploaded Files
 bioportal.ontology.filepath=${bioportal.resource.path}/uploads
 
+# Diff Files
+bioportal.diff.filepath=${bioportal.resource.path}/diffs
+
 # Temporary directory for file submission and processing
 bioportal.tempdir=${bioportal.resource.path}/tmp
 

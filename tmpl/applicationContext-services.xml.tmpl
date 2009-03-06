@@ -508,6 +508,22 @@
 		parent="abstractOntologyManagerProtege">
 	</bean>
 
+	<bean id="ontologyDiffManagerProtege"
+		class="org.ncbo.stanford.manager.diff.impl.OntologyDiffManagerProtegeImpl"
+		parent="abstractOntologyManagerProtege">
+		<property name="ontologyService">
+			<ref bean="ontologyService" />
+		</property>
+		<property name="ncboOntologyVersionDAO">
+			<ref bean="NcboOntologyVersionDAO" />
+		</property>
+	</bean>
+
+	<bean id="ontologyDiffManagerLexGrid"
+		class="org.ncbo.stanford.manager.diff.impl.OntologyDiffManagerLexGridImpl"
+		parent="abstractOntologyManagerLexGrid">
+	</bean>
+
 	<!-- Application Services -->
 	<bean id="userService"
 		class="org.ncbo.stanford.service.user.impl.UserServiceImpl">
@@ -572,6 +588,19 @@
 		</property>
 	</bean>
 
+	<bean id="diffService"
+		class="org.ncbo.stanford.service.diff.impl.DiffServiceImpl">
+		<property name="ontologyService">
+			<ref bean="ontologyService" />
+		</property>
+		<property name="ontologyFormatHandlerMap">
+			<ref local="ontologyFormatHandlerMap" />
+		</property>
+		<property name="ontologyDiffHandlerMap">
+			<ref local="ontologyDiffHandlerMap" />
+		</property>
+	</bean>
+
 	<bean id="ontologyLoadSchedulerService"
 		class="org.ncbo.stanford.service.loader.scheduler.impl.OntologyLoadSchedulerServiceImpl">
 		<property name="indexService">
@@ -588,6 +617,9 @@
 		</property>
 		<property name="ontologyLoadHandlerMap">
 			<ref local="ontologyLoadHandlerMap" />
+		</property>
+		<property name="ontologyDiffHandlerMap">
+			<ref local="ontologyDiffHandlerMap" />
 		</property>
 	</bean>
 
@@ -697,6 +729,24 @@
 			<value>@bioportalsearchindexbackuppath@</value>
 		</constructor-arg>
 	</bean>
+
+	<util:map id="ontologyDiffHandlerMap"
+		map-class="java.util.HashMap">
+		<entry>
+			<key>
+				<util:constant
+					static-field="org.ncbo.stanford.util.constants.ApplicationConstants.FORMAT_HANDLER_LEXGRID" />
+			</key>
+			<ref local="ontologyDiffManagerLexGrid" />
+		</entry>
+		<entry>
+			<key>
+				<util:constant
+					static-field="org.ncbo.stanford.util.constants.ApplicationConstants.FORMAT_HANDLER_PROTEGE" />
+			</key>
+			<ref local="ontologyDiffManagerProtege" />
+		</entry>
+	</util:map>
 
 	<util:map id="ontologySearchHandlerMap"
 		map-class="java.util.HashMap">
