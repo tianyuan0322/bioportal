@@ -238,6 +238,9 @@ public abstract class StringHelper {
 	 * @return String
 	 */
 	public static String removeSuffix(String value, String suffix) {
+		if (value == null) {
+			return null;
+		}
 		int index = value.indexOf(suffix);
 		return index < 0 ? value : value.substring(0, index);
 	}
@@ -250,6 +253,9 @@ public abstract class StringHelper {
 	 * @return String
 	 */
 	public static String removePrefix(String value, String prefix) {
+		if (value == null) {
+			return null;
+		}
 		return value.startsWith(prefix) ? value.substring(prefix.length())
 				: value;
 	}

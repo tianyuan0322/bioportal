@@ -39,7 +39,22 @@ public abstract class AbstractOntologyManagerProtege {
 	protected String protegeTablePrefix;
 	protected String protegeTableSuffix;
 	protected Integer protegeBigFileThreshold;
+	protected String metadataUserInstPrefix;
+	protected String metadataUserInstSuffix;
+	protected String metadataOntologyDomainInstPrefix;
+	protected String metadataOntologyDomainInstSuffix;
+	protected String metadataOntologyInstPrefix;
+	protected String metadataOntologyInstSuffix;
+	protected String metadataOntologyViewInstPrefix;
+	protected String metadataOntologyViewInstSuffix;
+	protected String metadataVirtualOntologyInstPrefix;
+	protected String metadataVirtualOntologyInstSuffix;
+	protected String metadataVirtualViewInstPrefix;
+	protected String metadataVirtualViewInstSuffix;
 	protected ExpirationSystem<Integer, KnowledgeBase> protegeKnowledgeBases = null;
+
+	private String METADATA_TABLE_NAME = "metadata";
+	private int METADATA_KB_ID = -5; //must be a negative value in order not to interfere with valid ontology IDs
 
 	protected Slot getSynonymSlot(KnowledgeBase kb, String synonymSlot) {
 		if (!StringHelper.isNullOrNullString(synonymSlot)) {
@@ -97,8 +112,8 @@ public abstract class AbstractOntologyManagerProtege {
 	 * Returns a singleton KnowledgeBase instance for given ontologyVersion.
 	 */
 	protected KnowledgeBase getKnowledgeBase(VNcboOntology ontology) {
-		KnowledgeBase kb = (KnowledgeBase) protegeKnowledgeBases
-				.get(ontology.getId());
+		KnowledgeBase kb = (KnowledgeBase) protegeKnowledgeBases.get(ontology
+				.getId());
 
 		if (kb == null) {
 			kb = createKnowledgeBaseInstance(ontology);
@@ -124,8 +139,8 @@ public abstract class AbstractOntologyManagerProtege {
 		List errors = new ArrayList();
 		Project prj = Project.createBuildProject(factory, errors);
 		DatabaseKnowledgeBaseFactory.setSources(prj.getSources(),
-				protegeJdbcDriver, protegeJdbcUrl, getTableName(ontology.getId()),
-				protegeJdbcUsername, protegeJdbcPassword);
+				protegeJdbcDriver, protegeJdbcUrl, getTableName(ontology
+						.getId()), protegeJdbcUsername, protegeJdbcPassword);
 		prj.createDomainKnowledgeBase(factory, errors, true);
 		KnowledgeBase kb = prj.getKnowledgeBase();
 
@@ -138,12 +153,103 @@ public abstract class AbstractOntologyManagerProtege {
 
 		return kb;
 	}
-	
+
+	protected OWLModel getMetadataOWLModel() {
+		// VNcboOntology ont = new VNcboOntology();
+		// ont.setId(METADATA_ONTOLOGY_VERSION_ID);
+		// ont.setOntologyId(METADATA_ONTOLOGY_ID);
+		// ont.setFormat(ApplicationConstants.FORMAT_HANDLER_PROTEGE);
+		//
+		// KnowledgeBase kb = getKnowledgeBase(ont);
+
+		// KnowledgeBase kb = (KnowledgeBase)
+		// protegeKnowledgeBases.get(METADATA_ONTOLOGY_VERSION_ID);
+
+		KnowledgeBase kb = protegeKnowledgeBases.get(METADATA_KB_ID);
+
+		if (kb != null && kb instanceof OWLModel) {
+			return (OWLModel) kb;
+		} else {
+			DatabaseKnowledgeBaseFactory factory = null;
+
+			factory = new OWLDatabaseKnowledgeBaseFactory();
+
+			List errors = new ArrayList();
+			Project prj = Project.createBuildProject(factory, errors);
+			DatabaseKnowledgeBaseFactory.setSources(prj.getSources(),
+					protegeJdbcDriver, protegeJdbcUrl, METADATA_TABLE_NAME,
+					protegeJdbcUsername, protegeJdbcPassword);
+			prj.createDomainKnowledgeBase(factory, errors, true);
+			kb = prj.getKnowledgeBase();
+
+			// setBrowserSlotByPreferredNameSlot(kb, getPreferredNameSlot(kb,
+			// ontology
+			// .getPreferredNameSlot()));
+
+			if (log.isDebugEnabled()) {
+				log.debug("Created new knowledgebase: " + kb.getName());
+			}
+
+			protegeKnowledgeBases.put(METADATA_KB_ID, kb);
+
+			return (OWLModel) kb;
+		}
+
+	}
+
 	/**
 	 * Gets the table name associated with an protege ontology id.
 	 */
 	protected String getTableName(Integer ontologyVersionId) {
 		return protegeTablePrefix + ontologyVersionId + protegeTableSuffix;
+	}
+
+	/**
+	 * Gets the BioPortalUser individual name associated with a user id.
+	 */
+	protected String getUserIndividualName(Integer userId) {
+		return metadataUserInstPrefix + userId + metadataUserInstSuffix;
+	}
+
+	/**
+	 * Gets the OMV:OntologyDomain individual name associated with a user id.
+	 */
+	protected String getOntologyDomainIndividualName(Integer userId) {
+		return metadataOntologyDomainInstPrefix + userId + metadataOntologyDomainInstSuffix;
+	}
+	
+	/**
+	 * Gets the OMV:Ontology individual name associated with an ontology version
+	 * id.
+	 */
+	protected String getOntologyIndividualName(Integer ontologyVersionId) {
+		return metadataOntologyInstPrefix + ontologyVersionId
+				+ metadataOntologyInstSuffix;
+	}
+
+	/**
+	 * Gets the OntologyView individual name associated with an ontology view
+	 * version id.
+	 */
+	protected String getOntologyViewIndividualName(Integer ontologyViewVersionId) {
+		return metadataOntologyViewInstPrefix + ontologyViewVersionId
+				+ metadataOntologyViewInstSuffix;
+	}
+
+	/**
+	 * Gets the VirtualOntology individual name associated with a virtual ontology id.
+	 */
+	protected String getVirtualOntologyIndividualName(Integer ontologyId) {
+		return metadataVirtualOntologyInstPrefix + ontologyId
+				+ metadataVirtualOntologyInstSuffix;
+	}
+
+	/**
+	 * Gets the VirtualView individual name associated with a virtual ontology view id.
+	 */
+	protected String getVirtualViewIndividualName(Integer ontologyViewId) {
+		return metadataVirtualViewInstPrefix + ontologyViewId
+				+ metadataVirtualViewInstSuffix;
 	}
 
 	/**
@@ -249,6 +355,162 @@ public abstract class AbstractOntologyManagerProtege {
 	 */
 	public void setProtegeBigFileThreshold(Integer protegeBigFileThreshold) {
 		this.protegeBigFileThreshold = protegeBigFileThreshold;
+	}
+
+	/**
+	 * @return the metadataUserInstPrefix
+	 */
+	public String getMetadataUserInstPrefix() {
+		return metadataUserInstPrefix;
+	}
+
+	/**
+	 * @param metadataUserInstPrefix
+	 *            the metadataUserInstPrefix to set
+	 */
+	public void setMetadataUserInstPrefix(String metadataUserInstPrefix) {
+		this.metadataUserInstPrefix = metadataUserInstPrefix;
+	}
+
+	/**
+	 * @return the metadataUserInstSuffix
+	 */
+	public String getMetadataUserInstSuffix() {
+		return metadataUserInstSuffix;
+	}
+
+	/**
+	 * @param metadataUserInstSuffix
+	 *            the metadataUserInstSuffix to set
+	 */
+	public void setMetadataUserInstSuffix(String metadataUserInstSuffix) {
+		this.metadataUserInstSuffix = metadataUserInstSuffix;
+	}
+
+	/**
+	 * @return the metadataOntologyInstPrefix
+	 */
+	public String getMetadataOntologyInstPrefix() {
+		return metadataOntologyInstPrefix;
+	}
+
+	/**
+	 * @param metadataOntologyInstPrefix
+	 *            the metadataOntologyInstPrefix to set
+	 */
+	public void setMetadataOntologyInstPrefix(String metadataOntologyInstPrefix) {
+		this.metadataOntologyInstPrefix = metadataOntologyInstPrefix;
+	}
+
+	/**
+	 * @return the metadataOntologyInstSuffix
+	 */
+	public String getMetadataOntologyInstSuffix() {
+		return metadataOntologyInstSuffix;
+	}
+
+	/**
+	 * @param metadataOntologyInstSuffix
+	 *            the metadataOntologyInstSuffix to set
+	 */
+	public void setMetadataOntologyInstSuffix(String metadataOntologyInstSuffix) {
+		this.metadataOntologyInstSuffix = metadataOntologyInstSuffix;
+	}
+
+	/**
+	 * @return the metadataOntologyViewInstPrefix
+	 */
+	public String getMetadataOntologyViewInstPrefix() {
+		return metadataOntologyViewInstPrefix;
+	}
+
+	/**
+	 * @param metadataOntologyViewInstPrefix
+	 *            the metadataOntologyViewInstPrefix to set
+	 */
+	public void setMetadataOntologyViewInstPrefix(
+			String metadataOntologyViewInstPrefix) {
+		this.metadataOntologyViewInstPrefix = metadataOntologyViewInstPrefix;
+	}
+
+	/**
+	 * @return the metadataOntologyViewInstSuffix
+	 */
+	public String getMetadataOntologyViewInstSuffix() {
+		return metadataOntologyViewInstSuffix;
+	}
+
+	/**
+	 * @param metadataOntologyViewInstSuffix
+	 *            the metadataOntologyViewInstSuffix to set
+	 */
+	public void setMetadataOntologyViewInstSuffix(
+			String metadataOntologyViewInstSuffix) {
+		this.metadataOntologyViewInstSuffix = metadataOntologyViewInstSuffix;
+	}
+
+	/**
+	 * @return the metadataVirtualOntologyInstPrefix
+	 */
+	public String getMetadataVirtualOntologyInstPrefix() {
+		return metadataVirtualOntologyInstPrefix;
+	}
+
+	/**
+	 * @param metadataVirtualOntologyInstPrefix
+	 *            the metadataVirtualOntologyInstPrefix to set
+	 */
+	public void setMetadataVirtualOntologyInstPrefix(
+			String metadataVirtualOntologyInstPrefix) {
+		this.metadataVirtualOntologyInstPrefix = metadataVirtualOntologyInstPrefix;
+	}
+
+	/**
+	 * @return the metadataVirtualOntologyInstSuffix
+	 */
+	public String getMetadataVirtualOntologyInstSuffix() {
+		return metadataVirtualOntologyInstSuffix;
+	}
+
+	/**
+	 * @param metadataVirtualOntologyInstSuffix
+	 *            the metadataVirtualOntologyInstSuffix to set
+	 */
+	public void setMetadataVirtualOntologyInstSuffix(
+			String metadataVirtualOntologyInstSuffix) {
+		this.metadataVirtualOntologyInstSuffix = metadataVirtualOntologyInstSuffix;
+	}
+
+	/**
+	 * @return the metadataVirtualViewInstPrefix
+	 */
+	public String getMetadataVirtualViewInstPrefix() {
+		return metadataVirtualViewInstPrefix;
+	}
+
+	/**
+	 * @param metadataVirtualViewInstPrefix
+	 *            the metadataVirtualViewInstPrefix to set
+	 */
+	public void setMetadataVirtualViewInstPrefix(
+			String metadataVirtualViewInstPrefix) {
+		this.metadataVirtualViewInstPrefix = metadataVirtualViewInstPrefix;
+	}
+
+	/**
+	 * @return the metadataVirtualViewInstSuffix
+	 */
+	public String getMetadataVirtualViewInstSuffix() {
+		return metadataVirtualViewInstSuffix;
+	}
+
+	/**
+	 * @param metadataVirtualViewInstSuffix
+	 *            the metadataVirtualViewInstSuffix to set
+	 */
+	public void setMetadataVirtualViewInstSuffix(
+			String metadataVirtualViewInstSuffix) {
+		this.metadataVirtualViewInstSuffix = metadataVirtualViewInstSuffix;
 	}
 
 	/**
