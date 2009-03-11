@@ -483,6 +483,42 @@
 		<property name="protegeBigFileThreshold">
 			<ref bean="protegeBigFileThreshold" />
 		</property>
+		<property name="metadataUserInstPrefix">
+			<ref bean="metadataUserInstPrefix" />
+		</property>
+		<property name="metadataUserInstSuffix">
+			<ref bean="metadataUserInstSuffix" />
+		</property>
+		<property name="metadataOntologyDomainInstPrefix">
+			<ref bean="metadataOntologyDomainInstPrefix" />
+		</property>
+		<property name="metadataOntologyDomainInstSuffix">
+			<ref bean="metadataOntologyDomainInstSuffix" />
+		</property>
+		<property name="metadataOntologyInstPrefix">
+			<ref bean="metadataOntologyInstPrefix" />
+		</property>
+		<property name="metadataOntologyInstSuffix">
+			<ref bean="metadataOntologyInstSuffix" />
+		</property>
+		<property name="metadataOntologyViewInstPrefix">
+			<ref bean="metadataOntologyViewInstPrefix" />
+		</property>
+		<property name="metadataOntologyViewInstSuffix">
+			<ref bean="metadataOntologyViewInstSuffix" />
+		</property>
+		<property name="metadataVirtualOntologyInstPrefix">
+			<ref bean="metadataVirtualOntologyInstPrefix" />
+		</property>
+		<property name="metadataVirtualOntologyInstSuffix">
+			<ref bean="metadataVirtualOntologyInstSuffix" />
+		</property>
+		<property name="metadataVirtualViewInstPrefix">
+			<ref bean="metadataVirtualViewInstPrefix" />
+		</property>
+		<property name="metadataVirtualViewInstSuffix">
+			<ref bean="metadataVirtualViewInstSuffix" />
+		</property>
 		<property name="protegeKnowledgeBases">
 			<ref bean="protegeKnowledgeBaseCache" />
 		</property>
@@ -505,6 +541,11 @@
 
 	<bean id="ontologyLoadManagerProtege"
 		class="org.ncbo.stanford.manager.load.impl.OntologyLoadManagerProtegeImpl"
+		parent="abstractOntologyManagerProtege">
+	</bean>
+
+	<bean id="ontologyMetadataManagerProtege"
+		class="org.ncbo.stanford.manager.metadata.impl.OntologyMetadataManagerProtegeImpl"
 		parent="abstractOntologyManagerProtege">
 	</bean>
 
@@ -1091,6 +1132,78 @@
 	<bean id="protegeBigFileThreshold" class="java.lang.Integer">
 		<constructor-arg>
 			<value>@protegebigfilethreshold@</value>
+		</constructor-arg>
+	</bean>
+
+	<bean id="metadataUserInstPrefix" class="java.lang.String">
+		<constructor-arg>
+			<value>@metadatauserinstprefix@</value>
+		</constructor-arg>
+	</bean>
+
+	<bean id="metadataUserInstSuffix" class="java.lang.String">
+		<constructor-arg>
+			<value>@metadatauserinstsuffix@</value>
+		</constructor-arg>
+	</bean>
+
+	<bean id="metadataOntologyDomainInstPrefix" class="java.lang.String">
+		<constructor-arg>
+			<value>@metadataontologydomaininstprefix@</value>
+		</constructor-arg>
+	</bean>
+
+	<bean id="metadataOntologyDomainInstSuffix" class="java.lang.String">
+		<constructor-arg>
+			<value>@metadataontologydomaininstsuffix@</value>
+		</constructor-arg>
+	</bean>
+
+	<bean id="metadataOntologyInstPrefix" class="java.lang.String">
+		<constructor-arg>
+			<value>@metadataontologyinstprefix@</value>
+		</constructor-arg>
+	</bean>
+
+	<bean id="metadataOntologyInstSuffix" class="java.lang.String">
+		<constructor-arg>
+			<value>@metadataontologyinstsuffix@</value>
+		</constructor-arg>
+	</bean>
+
+	<bean id="metadataOntologyViewInstPrefix" class="java.lang.String">
+		<constructor-arg>
+			<value>@metadataontologyviewinstprefix@</value>
+		</constructor-arg>
+	</bean>
+
+	<bean id="metadataOntologyViewInstSuffix" class="java.lang.String">
+		<constructor-arg>
+			<value>@metadataontologyviewinstsuffix@</value>
+		</constructor-arg>
+	</bean>
+
+	<bean id="metadataVirtualOntologyInstPrefix" class="java.lang.String">
+		<constructor-arg>
+			<value>@metadatavirtualontologyinstprefix@</value>
+		</constructor-arg>
+	</bean>
+
+	<bean id="metadataVirtualOntologyInstSuffix" class="java.lang.String">
+		<constructor-arg>
+			<value>@metadatavirtualontologyinstsuffix@</value>
+		</constructor-arg>
+	</bean>
+
+	<bean id="metadataVirtualViewInstPrefix" class="java.lang.String">
+		<constructor-arg>
+			<value>@metadatavirtualviewinstprefix@</value>
+		</constructor-arg>
+	</bean>
+
+	<bean id="metadataVirtualViewInstSuffix" class="java.lang.String">
+		<constructor-arg>
+			<value>@metadatavirtualviewinstsuffix@</value>
 		</constructor-arg>
 	</bean>
 
