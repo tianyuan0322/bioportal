@@ -14,6 +14,11 @@ public interface ApplicationConstants {
 	public static final Byte FALSE = 0;
 
 	/**
+	 * UTF-8 Encoding
+	 */
+	public static final String UTF_8 = "UTF-8";
+	
+	/**
 	 * File extensions
 	 */
 	public static final String OBO_EXTENSION = "obo";
