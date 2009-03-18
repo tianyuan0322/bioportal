@@ -270,12 +270,14 @@ public class QuerySearchServiceImpl extends AbstractSearchService implements
 			expr = StringHelper.escapeSpaces(expr);
 			
 			//3/3/09 For contains searches, need to add *s to make it truely contains
-			if(!expr.startsWith("*")){
-				expr = "*"+expr;
-			}
-			if(!expr.endsWith("*")){
-				expr = expr+"*";
-			}
+			//3/17/09 This creates a problem where you cannot search multiple word phrases correctly.
+			// Commenting out till a solution is found.
+			//if(!expr.startsWith("*")){
+			//	expr = "*"+expr;
+			//}
+			//if(!expr.endsWith("*")){
+			//	expr = expr+"*";
+			//}
 			
 			query.add(parser.parse(expr), BooleanClause.Occur.MUST);
 		} catch (ParseException e) {
