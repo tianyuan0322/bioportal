@@ -1,12 +1,7 @@
 
 package org.ncbo.stanford.util.diff;
 
-import java.io.*;
-import java.util.*;
-
-import javax.swing.text.TableView.TableRow;
-
-import edu.stanford.smi.protegex.prompt.promptDiff.structures.*;
+import edu.stanford.smi.protegex.prompt.promptDiff.structures.ResultTable;
 
 /**
  * 
@@ -55,7 +50,5 @@ public class DiffUtils {
 //				nextRow.saveToFile(log, printFrameDifferences);
 //			}
 //		}
-//	   
-	   
-
+//
 }
