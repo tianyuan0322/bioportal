@@ -26,6 +26,7 @@ public class TextManagerImpl implements TextManager {
 	// System.out.println(content);
 	// }
 
+	@SuppressWarnings("unused")
 	private static final Log log = LogFactory.getLog(TextManagerImpl.class);
 	private CustomNcboAppTextDAO ncboAppTextDAO = null;
 	private TextTagProcessor tp = null; // instance of TagProcessor
