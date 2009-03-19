@@ -12,6 +12,7 @@ import org.ncbo.stanford.util.messages.Messages;
  */
 public class MessageUtils {
 
+	@SuppressWarnings("unused")
 	private static final Log log = LogFactory.getLog(MessageUtils.class);
 
 	private static Messages messages;
