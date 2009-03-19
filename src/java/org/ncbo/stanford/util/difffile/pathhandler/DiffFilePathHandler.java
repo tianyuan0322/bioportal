@@ -3,8 +3,7 @@
  */
 package org.ncbo.stanford.util.difffile.pathhandler;
 
-import java.io.*;
-import java.util.*;
+import java.util.ArrayList;
 
 /**
  * An interface to handle diff files. 
@@ -22,5 +21,4 @@ public interface DiffFilePathHandler {
 			Integer ontologyVersionId2);
 
 	public ArrayList<String> getVerisonIdArrayFromDirectoryName(String dirName);
-	
 }
