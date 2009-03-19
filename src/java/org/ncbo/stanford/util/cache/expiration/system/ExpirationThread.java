@@ -12,6 +12,7 @@ import org.apache.commons.logging.LogFactory;
 @SuppressWarnings("unchecked")
 public class ExpirationThread extends Thread {
 
+	@SuppressWarnings("unused")
 	private static final Log log = LogFactory.getLog(ExpirationThread.class);
 
 	public static final long FIFTEEN_SECONDS = 15 * 1000;
