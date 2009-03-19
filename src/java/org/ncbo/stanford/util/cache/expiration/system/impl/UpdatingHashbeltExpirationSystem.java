@@ -18,6 +18,7 @@ import org.ncbo.stanford.util.cache.expiration.system.AbstractHashbeltExpiration
 public class UpdatingHashbeltExpirationSystem<K, V> extends
 		AbstractHashbeltExpirationSystem<K, V> {
 
+	@SuppressWarnings("unused")
 	private static final Log log = LogFactory
 			.getLog(UpdatingHashbeltExpirationSystem.class);
 
