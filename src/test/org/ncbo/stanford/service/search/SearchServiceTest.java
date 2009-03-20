@@ -4,7 +4,6 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.fail;
 
 import org.apache.lucene.search.Query;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.ncbo.stanford.AbstractBioPortalTest;
 import org.ncbo.stanford.bean.search.SearchBean;
@@ -28,7 +27,6 @@ public class SearchServiceTest extends AbstractBioPortalTest {
 	public void testIndexOntology() throws Exception {
 		System.out
 				.println("SearchServiceTest: indexOntology().......................BEGIN");
-
 
 		try {
 			indexService.indexOntology(1166, false, true);
@@ -73,10 +71,10 @@ public class SearchServiceTest extends AbstractBioPortalTest {
 			Page<SearchBean> results = queryService.executeQuery(query);
 
 			assertNotNull(results);
-			
+
 			if (results.getNumResultsTotal() < 98)
 				fail("Search results should be 98");
-			
+
 			System.out.println(getXML(results));
 		} catch (Exception exc) {
 			exc.printStackTrace();
@@ -86,7 +84,7 @@ public class SearchServiceTest extends AbstractBioPortalTest {
 		System.out
 				.println("SearchServiceTest: testSearchECG().........................DONE");
 	}
-	
+
 	@Test
 	public void testSearchAllOntologiesPaginated() throws Exception {
 		System.out
