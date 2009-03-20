@@ -17,13 +17,12 @@ import org.ncbo.stanford.exception.InvalidOntologyFormatException;
 import org.ncbo.stanford.manager.diff.OntologyDiffManager;
 import org.ncbo.stanford.service.diff.DiffService;
 import org.ncbo.stanford.service.ontology.OntologyService;
-import org.ncbo.stanford.service.ontology.impl.OntologyServiceImpl;
 import org.springframework.transaction.annotation.Transactional;
 
 @Transactional
 public class DiffServiceImpl implements DiffService {
 
-	private static final Log log = LogFactory.getLog(OntologyServiceImpl.class);
+	private static final Log log = LogFactory.getLog(DiffServiceImpl.class);
 	private OntologyService ontologyService;
 	private Map<String, String> ontologyFormatHandlerMap = new HashMap<String, String>(
 			0);
