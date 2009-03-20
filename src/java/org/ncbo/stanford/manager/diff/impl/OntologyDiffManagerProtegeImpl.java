@@ -37,7 +37,8 @@ public class OntologyDiffManagerProtegeImpl extends
 	public static final String FORMAT_TXT = "txt";
 	public static final String FORMAT_DEFAULT = "txt";
 
-	private static final Log log = LogFactory.getLog(OntologyDiffManagerProtegeImpl.class);
+	private static final Log log = LogFactory
+			.getLog(OntologyDiffManagerProtegeImpl.class);
 
 	private OntologyService ontologyService;
 	private CustomNcboOntologyVersionDAO ncboOntologyVersionDAO;
@@ -51,7 +52,6 @@ public class OntologyDiffManagerProtegeImpl extends
 	 * 
 	 * @throws Exception
 	 */
-
 	public void createDiff(VNcboOntology ontologyVersionOld,
 			VNcboOntology ontologyVersionNew) throws Exception {
 
@@ -66,7 +66,6 @@ public class OntologyDiffManagerProtegeImpl extends
 
 		saveDiffToFiles(ontologyVersionOld, ontologyVersionNew, promptDiff
 				.getResultsTable());
-
 	}
 
 	/**
@@ -103,9 +102,9 @@ public class OntologyDiffManagerProtegeImpl extends
 		Collections.sort(versionIds);
 
 		Integer newVersionId = versionIds.get(versionIds.size() - 1); // latest
-																		// version
+		// version
 		Integer oldVersionId = versionIds.get(versionIds.size() - 2); // previous
-																		// version
+		// version
 
 		VNcboOntology newVersion = ncboOntologyVersionDAO
 				.findOntologyVersion(newVersionId);
@@ -113,7 +112,6 @@ public class OntologyDiffManagerProtegeImpl extends
 				.findOntologyVersion(oldVersionId);
 
 		createDiff(oldVersion, newVersion);
-
 	}
 
 	/**
@@ -123,7 +121,6 @@ public class OntologyDiffManagerProtegeImpl extends
 	 * 
 	 * @param onotlogyId
 	 */
-
 	public List<ArrayList<String>> getAllDiffsForOntology(Integer ontologyId) {
 		DiffFilePathHandler diffPathFileHandler = new DiffFilePathHandlerImpl();
 
@@ -140,8 +137,8 @@ public class OntologyDiffManagerProtegeImpl extends
 			diffsForOntology
 					.add(getVerisonIdArrayFromDirectoryName(diffList[i]));
 		}
-		return diffsForOntology;
 
+		return diffsForOntology;
 	}
 
 	/**
@@ -152,7 +149,6 @@ public class OntologyDiffManagerProtegeImpl extends
 	 *            ontologyVersionId2
 	 * @throws FileNotFoundException
 	 */
-
 	public File getDiffFileForOntologyVersions(Integer ontologyVersionId1,
 			Integer ontologyVersionId2, String format)
 			throws FileNotFoundException, Exception {
@@ -173,6 +169,7 @@ public class OntologyDiffManagerProtegeImpl extends
 		DiffFilePathHandler diffPathFileHandler = new DiffFilePathHandlerImpl();
 		ArrayList<String> versionIdArray = diffPathFileHandler
 				.getVerisonIdArrayFromDirectoryName(dirName);
+
 		return versionIdArray;
 	}
 
@@ -319,7 +316,7 @@ public class OntologyDiffManagerProtegeImpl extends
 						ontologyVersionId1, ontologyVersionId2, createDir);
 
 		if (createDir) // the directory was created in getDiffDirName if it
-						// didn't exist
+			// didn't exist
 			return diffPathFileHandler.getFileName(diffDirName,
 					ontologyVersionId1, ontologyVersionId2);
 
@@ -352,5 +349,4 @@ public class OntologyDiffManagerProtegeImpl extends
 			CustomNcboOntologyVersionDAO ncboOntologyVersionDAO) {
 		this.ncboOntologyVersionDAO = ncboOntologyVersionDAO;
 	}
-
 }
