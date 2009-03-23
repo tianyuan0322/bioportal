@@ -200,34 +200,28 @@ public class OntologySearchManagerProtegeImpl extends
 			ProtegeSearchFrame protegeFrame, Slot preferredNameSlot,
 			boolean owlMode) throws IOException {
 		String preferredName = null;
-		Collection values= new ArrayList();
+		Collection values = new ArrayList();
 
-/*		synchronized (kb) {
-			values = nfs.getValues(protegeFrame.getFrame(), preferredNameSlot,
-					null, false);
-		}
-*/
-		
-		
+		// add a local name to the index -- critical in cases where the rdf:ID
+		// is the only name we have for a resource add a local name to the index
+		// so that it comes up as a search result
+		// otherwise Lucene treats it as a very bad match since it is only a
+		// short substring that matches
+		// Also since only 1 preferred name can be involved, the logic is 'add
+		// all values, unless its the name slot,
+		// then remove all the values and add just the local value'
+		// The size is to avoid 'oddball' frames that shouldnt be displayed
 		synchronized (kb) {
 			Frame frame = protegeFrame.getFrame();
-			
-			
-			// add a local name to the index -- critical in cases where the rdf:ID is the only name we have for a resource
-			// add a local name to the index so that it comes up as a search result
-			// otherwise Lucene treats it as a very bad match since it is only a shortsubstring that matches
-			// ALso since only 1 preferred name can be involved, the logic is 'add all values, unless its the name slot,
-			// then remove all the values and add just the local value'  
-			// The size is to avoid 'oddball' frames that shouldnt be displayed
-			values.addAll(nfs.getValues(frame, preferredNameSlot,
-					null, false));
-			if (frame instanceof RDFResource && preferredNameSlot.equals(kb.getNameSlot()) && values.size()>0) {
+			values.addAll(nfs.getValues(frame, preferredNameSlot, null, false));
+
+			if (frame instanceof RDFResource
+					&& preferredNameSlot.equals(kb.getNameSlot())
+					&& values.size() > 0) {
 				values = new ArrayList();
-				values.add(((RDFResource)frame).getLocalName());
+				values.add(((RDFResource) frame).getLocalName());
 			}
 		}
-
-
 
 		for (Object value : values) {
 			if (!(value instanceof String)) {
