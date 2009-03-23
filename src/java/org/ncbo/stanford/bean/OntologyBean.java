@@ -171,7 +171,9 @@ public class OntologyBean {
 		if (ont != null) {
 			ont.setId(getOntologyId());
 			ont.setIsManual(getIsManual());
-			// This overwrites the obo foundry id with nothing, moving it to line 535 of OntologyServiceImpl since it should only be set on new ontologies
+			// This overwrites the obo foundry id with nothing, 
+			// moving it to line 535 of OntologyServiceImpl since 
+			// it should only be set on new ontologies
 			//ont.setOboFoundryId(getOboFoundryId());
 		}
 	}
