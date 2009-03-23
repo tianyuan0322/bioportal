@@ -46,6 +46,10 @@ public class OBOCVSPullServiceImpl implements OBOCVSPullService {
 	private static final Log log = LogFactory
 			.getLog(OBOCVSPullServiceImpl.class);
 
+	private static final String BIOLOGICAL_PROCESS_OBO_FOUNDRY_ID = "biological_process";
+	private static final String CELLULAR_COMPONENT_OBO_FOUNDRY_ID = "cellular_component";
+	private static final String MOLECULAR_FUNCTION_OBO_FOUNDRY_ID = "molecular_function";
+
 	private String oboSourceforgeCVSUsername;
 	private String oboSourceforgeCVSPassword;
 	private String oboSourceforgeCVSHostname;
@@ -110,7 +114,7 @@ public class OBOCVSPullServiceImpl implements OBOCVSPullService {
 					OntologyAction ontologyAction = determineOntologyAction(
 							mfb, cf);
 					ActionEnum action = ontologyAction.getAction();
-					log.debug(ontologyAction);
+					log.debug("Action: " + ontologyAction);
 
 					OntologyBean ont = ontologyAction.getOntotlogyBean();
 
@@ -169,66 +173,72 @@ public class OBOCVSPullServiceImpl implements OBOCVSPullService {
 	private OntologyAction determineOntologyAction(MetadataFileBean mfb,
 			CVSFile cf) throws InvalidDataException {
 		ActionEnum action = ActionEnum.NO_ACTION;
-		
+		String oboFoundryId = mfb.getId();
+
 		OntologyBean ont = ontologyService
-				.findLatestOntologyVersionByOboFoundryId(mfb.getId());
+				.findLatestOntologyVersionByOboFoundryId(oboFoundryId);
 		String downloadUrl = mfb.getDownload();
 		List<Integer> newCategoryIds = findCategoryIdsByOBONames(downloadUrl);
 		byte isRemote = isRemote(downloadUrl);
 
-		// 3/5/09 
-		// Created to deal with the lexgrid issue that it cant determine the namespaces which creates an issue with searching.
-		// The ontologies are replicated within eachother.
-		// This code will ignore cellular_component and molecular_function and turn biological_process into the main GO ontology
-		if(mfb.getId().equalsIgnoreCase("cellular_component") || mfb.getId().equalsIgnoreCase("molecular_function") ){
-			populateOntologyBean(mfb, cf, action, ont, newCategoryIds, isRemote);
-			return new OntologyAction(action, ont);
-		}
-		if(mfb.getId().equalsIgnoreCase("biological_process")){
-			mfb.setTitle("Gene Ontology");		
-			mfb.setDescription("Provides structured controlled vocabularies for the annotation of gene products" +
-							" with respect to their molecular function, cellular component, and biological role." +
-							" The Gene Ontology consists of three Vocabularies.");
-		}
-		
 		// is any action required?
-		// ____a. local && categories didn't change
+		// ____a. this is not cellular_component or molecular_function ontology
+		// ____b. local && categories didn't change
 		// is this an update action?
 		// ____a. remote && exists in the system
 		// ____b. local && categories changed
 
-		if (ont == null) {
-			// new ontology
-			action = (isRemote == ApplicationConstants.TRUE) ? ActionEnum.CREATE_REMOTE_ACTION
-					: ActionEnum.CREATE_LOCAL_ACTION;
-			ont = new OntologyBean();
-		} else if (ont.getIsManual().byteValue() != ApplicationConstants.TRUE) {
-			if (isRemote == ApplicationConstants.TRUE) {
-				if (ont.isRemote()) {
-					// existing ontology that had been and remains remote
-					action = ActionEnum.UPDATE_ACTION;
-				} else {
-					// existing ontology that had been local but is now remote
-					action = ActionEnum.CREATE_REMOTE_ACTION;
-				}
-			} else if (cf != null
-					&& cf.getVersion().equals(ont.getVersionNumber())) {
-				// existing ontology local; no new version
-				// no new version found; check if categories have been updated
-				List<Integer> oldCategoryIds = ont.getCategoryIds();
-				boolean categoriesUpdated = isCategoryUpdated(oldCategoryIds,
-						newCategoryIds);
+		// The logic that deals with biological_process, cellular_component,
+		// and mollecular_function ontologies is designed to deal with the
+		// LexGrid limitation, which can't determine namespaces. This creates
+		// a problem with searching. The ontologies are replicated within each
+		// other. The code will ignore cellular_component and molecular_function
+		// and turn biological_process into the main GO ontology
 
-				if (categoriesUpdated) {
-					action = ActionEnum.UPDATE_ACTION;
-				}
-			} else if (cf != null) {
-				// existing ontology local; new version
-				action = ActionEnum.CREATE_LOCAL_ACTION;
-			}
+		if (oboFoundryId.equalsIgnoreCase(BIOLOGICAL_PROCESS_OBO_FOUNDRY_ID)) {
+			mfb.setTitle(MessageUtils.getMessage("gene.ontology.title"));
+			mfb.setDescription(MessageUtils
+					.getMessage("gene.ontology.description"));
 		}
 
-		populateOntologyBean(mfb, cf, action, ont, newCategoryIds, isRemote);
+		if (!oboFoundryId.equalsIgnoreCase(CELLULAR_COMPONENT_OBO_FOUNDRY_ID)
+				&& !oboFoundryId
+						.equalsIgnoreCase(MOLECULAR_FUNCTION_OBO_FOUNDRY_ID)) {
+			if (ont == null) {
+				// new ontology
+				action = (isRemote == ApplicationConstants.TRUE) ? ActionEnum.CREATE_REMOTE_ACTION
+						: ActionEnum.CREATE_LOCAL_ACTION;
+				ont = new OntologyBean();
+			} else if (ont.getIsManual().byteValue() != ApplicationConstants.TRUE) {
+				if (isRemote == ApplicationConstants.TRUE) {
+					if (ont.isRemote()) {
+						// existing ontology that had been and remains remote
+						action = ActionEnum.UPDATE_ACTION;
+					} else {
+						// existing ontology that had been local but is now
+						// remote
+						action = ActionEnum.CREATE_REMOTE_ACTION;
+					}
+				} else if (cf != null
+						&& cf.getVersion().equals(ont.getVersionNumber())) {
+					// existing ontology local; no new version
+					// no new version found; check if categories have been
+					// updated
+					List<Integer> oldCategoryIds = ont.getCategoryIds();
+					boolean categoriesUpdated = isCategoryUpdated(
+							oldCategoryIds, newCategoryIds);
+
+					if (categoriesUpdated) {
+						action = ActionEnum.UPDATE_ACTION;
+					}
+				} else if (cf != null) {
+					// existing ontology local; new version
+					action = ActionEnum.CREATE_LOCAL_ACTION;
+				}
+			}
+
+			populateOntologyBean(mfb, cf, action, ont, newCategoryIds, isRemote);
+		}
 
 		return new OntologyAction(action, ont);
 	}
