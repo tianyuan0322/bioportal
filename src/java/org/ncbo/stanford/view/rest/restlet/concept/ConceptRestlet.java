@@ -42,25 +42,27 @@ public class ConceptRestlet extends AbstractBaseRestlet {
 				MessageUtils.getMessage("entity.conceptid"));
 		String ontologyVersionId = (String) request.getAttributes().get(
 				MessageUtils.getMessage("entity.ontologyversionid"));
-		
-		if (log.isDebugEnabled()) {
-			for(String key : request.getAttributes().keySet()){
 
-				log.debug("Attribute: "+key + " Val: "+request.getAttributes().get(key));
+		if (log.isDebugEnabled()) {
+			for (String key : request.getAttributes().keySet()) {
+
+				log.debug("Attribute: " + key + " Val: "
+						+ request.getAttributes().get(key));
 			}
 		}
-		// See if concept ID is being passed through param for full URL ID concepts
 
-		if(conceptId==null || conceptId.equalsIgnoreCase("")){
+		// See if concept ID is being passed through param for full URL ID
+		// concepts
+		if (conceptId == null || conceptId.equalsIgnoreCase("")) {
 			HttpServletRequest httpRequest = RequestUtils
-			.getHttpServletRequest(request);
+					.getHttpServletRequest(request);
 			conceptId = (String) httpRequest
-			.getParameter(RequestParamConstants.PARAM_CONCEPT_ID);
+					.getParameter(RequestParamConstants.PARAM_CONCEPT_ID);
 		}
-		
+
 		if (log.isDebugEnabled()) {
-			log.debug("finding concept - oid: " + ontologyVersionId + " cid: "
-					+ conceptId);
+			log.debug("finding concept - ovid: " + ontologyVersionId
+					+ ", cid: " + conceptId);
 		}
 
 		try {
