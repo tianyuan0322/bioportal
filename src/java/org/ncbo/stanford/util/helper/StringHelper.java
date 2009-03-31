@@ -19,7 +19,6 @@ import java.util.StringTokenizer;
  * 
  */
 public abstract class StringHelper {
-
 	private final static String EMPTY_TXT = "";
 	private final static String QUOTE_TXT = "\"";
 
@@ -390,6 +389,49 @@ public abstract class StringHelper {
 	 */
 	public static boolean isNullOrNullString(String str) {
 		return (null == str) || EMPTY_TXT.equals(str.trim());
+	}
+
+	/**
+	 * Undouble all the chs in a string.
+	 */
+	public static String undoubleChars(String str, char ch) {
+		StringBuffer strbuf = new StringBuffer();
+		char prevChar = (char) 0;
+
+		for (char curChar : str.toCharArray()) {
+			if (curChar != ch) {
+				strbuf.append(curChar);
+				prevChar = curChar;
+			} else if (curChar == ch) {
+				if (prevChar == ch) {
+					strbuf.append(ch);
+					prevChar = (char) 0;
+				} else {
+					prevChar = ch;
+				}
+			}
+		}
+
+		return (strbuf.toString());
+	}
+
+	/**
+	 * Removes leading and trailing double-quotes from a string (only if both
+	 * are present). The rest of double-quotes remain intact.
+	 */
+	public static String unquote(String string) {
+		if (string == null)
+			return (null);
+		if (string.length() <= 0)
+			return ("");
+		if (string.length() == 1)
+			return (string); // You can't unquote a single quote!
+		if (string.charAt(0) == '"'
+				&& string.charAt(string.length() - 1) == '"') {
+			return (string.substring(1, string.length() - 1));
+		} else {
+			return (string);
+		}
 	}
 
 	/**
