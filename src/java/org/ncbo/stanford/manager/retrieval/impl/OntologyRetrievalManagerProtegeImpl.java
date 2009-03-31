@@ -16,8 +16,10 @@ import org.ncbo.stanford.domain.custom.entity.VNcboOntology;
 import org.ncbo.stanford.manager.AbstractOntologyManagerProtege;
 import org.ncbo.stanford.manager.retrieval.OntologyRetrievalManager;
 import org.ncbo.stanford.util.constants.ApplicationConstants;
+import org.ncbo.stanford.util.helper.StringHelper;
 
 import edu.stanford.smi.protege.model.Cls;
+import edu.stanford.smi.protege.model.Frame;
 import edu.stanford.smi.protege.model.Instance;
 import edu.stanford.smi.protege.model.KnowledgeBase;
 import edu.stanford.smi.protege.model.ModelUtilities;
@@ -199,25 +201,16 @@ public class OntologyRetrievalManagerProtegeImpl extends
 		return beans;
 	}
 
-	/*
-	 * protected String getLabel(Frame node) { String label = null;
-	 * 
-	 * if (node instanceof RDFResource) { RDFResource rs = (RDFResource) node;
-	 * Collection labels = rs.getLabels();
-	 * 
-	 * if (labels == null || labels.isEmpty()) { label = node.getName(); } else {
-	 * label = CollectionUtilities.getFirstItem(labels).toString(); } } else {
-	 * label = node.getName(); }
-	 * 
-	 * return label; }
-	 */
+	private String getBrowserText(Frame frame) {
+		return StringHelper.unquote(frame.getBrowserText());
+	}
 
 	private ClassBean createLightClassBean(Cls cls) {
 		ClassBean classBean = new ClassBean();
 		classBean.setId(getId(cls));
 		classBean.setFullId(cls.getName());
 
-		classBean.setLabel(cls.getBrowserText());
+		classBean.setLabel(getBrowserText(cls));
 		classBean.addRelation(ApplicationConstants.CHILD_COUNT,
 				getUniqueClasses(cls.getDirectSubclasses()).size());
 
@@ -232,7 +225,7 @@ public class OntologyRetrievalManagerProtegeImpl extends
 		classBean.setId(getId(cls));
 		classBean.setFullId(cls.getName());
 
-		classBean.setLabel(cls.getBrowserText());
+		classBean.setLabel(getBrowserText(cls));
 
 		// add properties
 		Collection<Slot> slots;
@@ -347,7 +340,7 @@ public class OntologyRetrievalManagerProtegeImpl extends
 
 			for (Object val : vals) {
 				if (val instanceof Instance) {
-					String value = ((Instance) val).getBrowserText();
+					String value = getBrowserText((Instance) val);
 
 					if (value != null) {
 						bpPropVals.add(value);
@@ -359,7 +352,7 @@ public class OntologyRetrievalManagerProtegeImpl extends
 				}
 			}
 
-			bpProps.put(slot.getBrowserText(), bpPropVals);
+			bpProps.put(getBrowserText(slot), bpPropVals);
 			bpPropVals = new ArrayList<String>();
 		}
 
