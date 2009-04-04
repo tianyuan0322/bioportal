@@ -61,7 +61,7 @@ public class OntologyRestlet extends AbstractBaseRestlet {
 	 * Returns a specified OntologyBean to the response
 	 * 
 	 * @param request
-	 * @param resp
+	 * @param response
 	 */
 	private void findOntology(Request request, Response response) {
 		// find the OntologyBean from request
@@ -76,7 +76,7 @@ public class OntologyRestlet extends AbstractBaseRestlet {
 	 * Update a specified OntologyBean to the response
 	 * 
 	 * @param request
-	 * @param resp
+	 * @param response
 	 */
 	private void updateOntology(Request request, Response response) {
 		// find the OntologyBean from request

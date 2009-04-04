@@ -447,7 +447,7 @@
 		</entry>
 	</util:map>
 
-	<!-- Manager Wrappers -->
+	<!-- Managers -->
 	<bean id="abstractOntologyManagerLexGrid"
 		class="org.ncbo.stanford.manager.AbstractOntologyManagerLexGrid"
 		abstract="true">
@@ -524,6 +524,13 @@
 		parent="abstractOntologyManagerLexGrid">
 	</bean>
 
+	<bean id="obsManager"
+		class="org.ncbo.stanford.manager.obs.impl.OBSManagerImpl">
+		<property name="xmlSerializationService">
+			<ref bean="xmlSerializationService" />
+		</property>
+	</bean>
+
 	<!-- Application Services -->
 	<bean id="userService"
 		class="org.ncbo.stanford.service.user.impl.UserServiceImpl">
@@ -551,6 +558,9 @@
 		</property>
 		<property name="ontologyRetrievalHandlerMap">
 			<ref local="ontologyRetrievalHandlerMap" />
+		</property>
+		<property name="obsManager">
+			<ref local="obsManager" />
 		</property>
 	</bean>
 
@@ -686,12 +696,12 @@
 			<ref bean="paginatableCache" />
 		</property>
 	</bean>
-	
+
 	<bean id="querySearchService"
 		class="org.ncbo.stanford.service.search.impl.QuerySearchServiceImpl"
 		parent="abstractSearchService">
 	</bean>
-	
+
 	<bean id="indexSearchService"
 		class="org.ncbo.stanford.service.search.impl.IndexSearchServiceImpl"
 		parent="abstractSearchService">
@@ -867,8 +877,7 @@
 		</property>
 	</bean>
 
-	<bean id="xmlSerializer"
-		class="com.thoughtworks.xstream.XStream">
+	<bean id="xmlSerializer" class="com.thoughtworks.xstream.XStream">
 	</bean>
 
 	<!-- Scheduled Jobs -->

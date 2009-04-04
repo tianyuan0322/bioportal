@@ -16,6 +16,9 @@ public abstract class AbstractResponseBean {
 	private String shortMessage;
 	private String longMessage;
 
+	public abstract boolean isResponseError();
+	public abstract boolean isResponseSuccess();
+	
 	/**
 	 * @return the accessedResource
 	 */

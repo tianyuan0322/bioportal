@@ -32,7 +32,7 @@ public abstract class AbstractConceptBean {
 	public void setId(String id) {
 		this.id = id;
 	}
-	
+
 	/**
 	 * @return the full id
 	 */
@@ -46,7 +46,7 @@ public abstract class AbstractConceptBean {
 	 */
 	public void setFullId(String fullId) {
 		this.fullId = fullId;
-	}	
+	}
 
 	/**
 	 * @return the label
@@ -67,6 +67,7 @@ public abstract class AbstractConceptBean {
 		return toString("");
 	}
 
+	@SuppressWarnings("unchecked")
 	public String toString(String indent) {
 		String spacer = "   ";
 		String str = "Id: " + id + " Label: " + label + "\n";
@@ -98,14 +99,17 @@ public abstract class AbstractConceptBean {
 		return str;
 	}
 
+	@SuppressWarnings("unchecked")
 	public String toString(List list, String indent) {
 		StringBuffer buf = new StringBuffer();
 		buf.append("[");
 
 		Iterator i = list.iterator();
 		boolean hasNext = i.hasNext();
+
 		while (hasNext) {
 			Object o = i.next();
+
 			if (o instanceof AbstractConceptBean) {
 				AbstractConceptBean acb = (AbstractConceptBean) o;
 				buf.append(acb.toString(indent));
@@ -119,8 +123,8 @@ public abstract class AbstractConceptBean {
 		}
 
 		buf.append(indent).append("]");
-		return buf.toString();
 
+		return buf.toString();
 	}
 
 	/**

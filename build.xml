@@ -132,6 +132,7 @@
 				<filter token="bioportalxsltpath" value="${bioportal.xslt.path}" />
 				<filter token="bioportalontologyfilepath" value="${bioportal.ontology.filepath}" />
 				<filter token="bioportaldifffilepath" value="${bioportal.diff.filepath}" />
+				<filter token="obsrestbaseurl" value="${obs.rest.base.url}" />
 			</filterset>
 		</copy>
 

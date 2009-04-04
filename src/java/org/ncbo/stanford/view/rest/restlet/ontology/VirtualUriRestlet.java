@@ -38,7 +38,7 @@ public class VirtualUriRestlet extends AbstractBaseRestlet {
 		String conceptId = (String) request.getAttributes().get(
 				MessageUtils.getMessage("entity.conceptid"));
 		String ontologyVersionId = (String) request.getAttributes().get(
-				MessageUtils.getMessage("entity.ontologyversionid"));
+				MessageUtils.getMessage("entity.ontologyid"));
 		Object returnObject = null;
 
 		try {

@@ -1,7 +1,10 @@
 package org.ncbo.stanford.service.xml;
 
+import java.util.HashMap;
+
 import javax.xml.transform.TransformerException;
 
+import org.ncbo.stanford.bean.response.AbstractResponseBean;
 import org.ncbo.stanford.bean.response.SuccessBean;
 import org.ncbo.stanford.enumeration.ErrorTypeEnum;
 import org.restlet.data.Request;
@@ -67,9 +70,14 @@ public interface XMLSerializationService {
 
 	public void generateStatusXMLResponse(Request request, Response response);
 
+	public AbstractResponseBean processGet(String baseUrl,
+			HashMap<String, String> getParams) throws Exception;
+
 	@SuppressWarnings("unchecked")
 	public void addImplicitCollection(Class ownerType, String fieldName);
 
 	@SuppressWarnings("unchecked")
 	public void omitField(Class definedIn, String fieldName);
+	
+	public Object fromXML(String xml);
 }

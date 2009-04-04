@@ -9,6 +9,7 @@ import org.apache.commons.logging.LogFactory;
 import org.ncbo.stanford.service.xml.XMLSerializationService;
 import org.ncbo.stanford.util.MessageUtils;
 import org.ncbo.stanford.util.RequestUtils;
+import org.ncbo.stanford.util.helper.StringHelper;
 import org.ncbo.stanford.view.util.constants.RequestParamConstants;
 import org.restlet.Restlet;
 import org.restlet.data.Method;
@@ -123,6 +124,22 @@ public abstract class AbstractBaseRestlet extends Restlet {
 				RequestParamConstants.PARAM_ONTOLOGY_IDS);
 	}
 
+	protected String getConceptId(Request request) {
+		String conceptId = (String) request.getAttributes().get(
+				MessageUtils.getMessage("entity.conceptid"));
+
+		// See if concept ID is being passed through param for full URL ID
+		// concepts
+		if (StringHelper.isNullOrNullString(conceptId)) {
+			HttpServletRequest httpRequest = RequestUtils
+					.getHttpServletRequest(request);
+			conceptId = (String) httpRequest
+					.getParameter(RequestParamConstants.PARAM_CONCEPT_ID);
+		}
+		
+		return conceptId;
+	}
+	
 	private List<Integer> getIntegerList(HttpServletRequest httpRequest,
 			String paramName) throws Exception {
 		List<Integer> integers = null;

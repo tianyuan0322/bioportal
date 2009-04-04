@@ -2,14 +2,11 @@ package org.ncbo.stanford.view.rest.restlet.concept;
 
 import java.net.URLDecoder;
 
-import javax.servlet.http.HttpServletRequest;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.ncbo.stanford.bean.concept.ClassBean;
 import org.ncbo.stanford.service.concept.ConceptService;
 import org.ncbo.stanford.util.MessageUtils;
-import org.ncbo.stanford.util.RequestUtils;
 import org.ncbo.stanford.view.rest.restlet.AbstractBaseRestlet;
 import org.ncbo.stanford.view.util.constants.RequestParamConstants;
 import org.restlet.data.Request;
@@ -38,26 +35,15 @@ public class ConceptRestlet extends AbstractBaseRestlet {
 	 */
 	private void findConcept(Request request, Response response) {
 		ClassBean concept = null;
-		String conceptId = (String) request.getAttributes().get(
-				MessageUtils.getMessage("entity.conceptid"));
 		String ontologyVersionId = (String) request.getAttributes().get(
 				MessageUtils.getMessage("entity.ontologyversionid"));
+		String conceptId = getConceptId(request);
 
 		if (log.isDebugEnabled()) {
 			for (String key : request.getAttributes().keySet()) {
-
 				log.debug("Attribute: " + key + " Val: "
 						+ request.getAttributes().get(key));
 			}
-		}
-
-		// See if concept ID is being passed through param for full URL ID
-		// concepts
-		if (conceptId == null || conceptId.equalsIgnoreCase("")) {
-			HttpServletRequest httpRequest = RequestUtils
-					.getHttpServletRequest(request);
-			conceptId = (String) httpRequest
-					.getParameter(RequestParamConstants.PARAM_CONCEPT_ID);
 		}
 
 		if (log.isDebugEnabled()) {

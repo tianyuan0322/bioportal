@@ -7,9 +7,12 @@ import java.io.Writer;
 import java.util.Arrays;
 import java.util.HashMap;
 
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.transform.OutputKeys;
 import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerException;
 import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 import javax.xml.transform.stream.StreamSource;
 
@@ -22,6 +25,10 @@ import org.ncbo.stanford.bean.UserBean;
 import org.ncbo.stanford.bean.concept.ClassBean;
 import org.ncbo.stanford.bean.concept.InstanceBean;
 import org.ncbo.stanford.bean.concept.PropertyBean;
+import org.ncbo.stanford.bean.http.HttpInputStreamWrapper;
+import org.ncbo.stanford.bean.obs.ChildBean;
+import org.ncbo.stanford.bean.obs.ConceptBean;
+import org.ncbo.stanford.bean.obs.ParentBean;
 import org.ncbo.stanford.bean.response.AbstractResponseBean;
 import org.ncbo.stanford.bean.response.ErrorBean;
 import org.ncbo.stanford.bean.response.ErrorStatusBean;
@@ -40,6 +47,8 @@ import org.restlet.data.MediaType;
 import org.restlet.data.Request;
 import org.restlet.data.Response;
 import org.restlet.data.Status;
+import org.w3c.dom.Document;
+import org.w3c.dom.Node;
 
 import com.thoughtworks.xstream.XStream;
 import com.thoughtworks.xstream.io.xml.TraxSource;
@@ -280,6 +289,55 @@ public class XMLSerializationServiceImpl implements XMLSerializationService {
 		}
 	}
 
+	public AbstractResponseBean processGet(String baseUrl,
+			HashMap<String, String> getParams) throws Exception {
+		HttpInputStreamWrapper inputStreamWrapper = RequestUtils.doHttpGet(
+				baseUrl, getParams);
+		Document doc = DocumentBuilderFactory.newInstance()
+				.newDocumentBuilder()
+				.parse(inputStreamWrapper.getInputStream());
+		AbstractResponseBean responseBean = null;
+
+		if (inputStreamWrapper.isError()) {
+			responseBean = populateErrorBean(doc);
+		} else {
+			responseBean = populateSuccessBean(doc);
+		}
+
+		return responseBean;
+	}
+
+	private ErrorStatusBean populateErrorBean(Document doc)
+			throws TransformerException {
+		String node = getNodeAsXML(doc);
+
+		return (ErrorStatusBean) xmlSerializer.fromXML(node);
+	}
+
+	private SuccessBean populateSuccessBean(Document doc)
+			throws TransformerException {
+		SuccessBean sb = new SuccessBean();
+		String node = getNodeAsXML(doc.getElementsByTagName(
+				ApplicationConstants.DATA_XML_TAG_NAME).item(0).getFirstChild());
+		sb.setDataXml(node);
+
+		return sb;
+	}
+
+	private String getNodeAsXML(Node node) throws TransformerException {
+		TransformerFactory transfac = TransformerFactory.newInstance();
+		Transformer trans = transfac.newTransformer();
+		trans.setOutputProperty(OutputKeys.OMIT_XML_DECLARATION, "yes");
+		trans.setOutputProperty(OutputKeys.INDENT, "yes");
+
+		DOMSource source = new DOMSource(node);
+		StringWriter sw = new StringWriter();
+		StreamResult result = new StreamResult(sw);
+		trans.transform(source, result);
+
+		return sw.toString();
+	}
+
 	/**
 	 * returns a singleton transformer instance for a XSL file specified. do not
 	 * use synchronized since it is expensive.
@@ -308,6 +366,10 @@ public class XMLSerializationServiceImpl implements XMLSerializationService {
 		xmlSerializer.omitField(definedIn, fieldName);
 	}
 
+	public Object fromXML(String xml) {
+		return xmlSerializer.fromXML(xml);
+	}
+
 	/**
 	 * Generate an XML representation of a request.
 	 * 
@@ -321,7 +383,7 @@ public class XMLSerializationServiceImpl implements XMLSerializationService {
 
 		// Added code to encode ALL responses in UTF-8
 		String utf8String = null;
-		
+
 		try {
 			byte[] stringBytes = sb.toString().getBytes();
 			utf8String = new String(stringBytes, ApplicationConstants.UTF_8);
@@ -381,6 +443,15 @@ public class XMLSerializationServiceImpl implements XMLSerializationService {
 		xmlSerializer.alias(MessageUtils.getMessage("entity.page"), Page.class);
 		xmlSerializer.alias(MessageUtils.getMessage("entity.ontologyhitbean"),
 				OntologyHitBean.class);
+
+		// OBS Wrapper Aliases
+		xmlSerializer.alias(MessageUtils.getMessage("entity.obs.conceptbean"),
+				ConceptBean.class);
+		xmlSerializer.alias(MessageUtils.getMessage("entity.obs.parentbean"),
+				ParentBean.class);
+		xmlSerializer.alias(MessageUtils.getMessage("entity.obs.childbean"),
+				ChildBean.class);
+
 		xmlSerializer.alias(ApplicationConstants.RESPONSE_XML_TAG_NAME,
 				SuccessBean.class);
 		xmlSerializer.alias(ApplicationConstants.ERROR_XML_TAG_NAME,

@@ -74,6 +74,7 @@ public interface ApplicationConstants {
 	public static final String RDF_TYPE = "RdfType";
 	public static final String CHILD_COUNT = "ChildCount";
 	public static final String SYNONYM = "BP_Synonym";
+	public static final String LEVEL = "Level";
 
 	/**
 	 * Ontology format handlers
@@ -108,6 +109,11 @@ public interface ApplicationConstants {
 	 * The name of the root tag of all xml error response messages
 	 */
 	public static final String ERROR_XML_TAG_NAME = "error";
+
+	/**
+	 * The name of the data element in response xml
+	 */
+	public static final String DATA_XML_TAG_NAME = "data";
 
 	/**
 	 * The name of the root tag of all xml error status response messages

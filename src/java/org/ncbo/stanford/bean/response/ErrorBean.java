@@ -46,6 +46,16 @@ public class ErrorBean extends AbstractResponseBean {
 		setShortMessage(errorType.getDefErrorMessage());
 	}
 
+	@Override
+	public boolean isResponseError() {
+		return true;
+	}
+
+	@Override
+	public boolean isResponseSuccess() {
+		return false;
+	}
+
 	/**
 	 * @return the errorType
 	 */

@@ -48,6 +48,16 @@ public class ErrorStatusBean extends AbstractResponseBean {
 		setLongMessage(e.getMessage());
 	}
 
+	@Override
+	public boolean isResponseError() {
+		return true;
+	}
+
+	@Override
+	public boolean isResponseSuccess() {
+		return false;
+	}
+
 	public Status getStatus() {
 		return status;
 	}

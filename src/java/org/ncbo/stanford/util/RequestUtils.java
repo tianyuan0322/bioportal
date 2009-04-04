@@ -1,6 +1,11 @@
 package org.ncbo.stanford.util;
 
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStreamWriter;
+import java.net.HttpURLConnection;
+import java.net.URL;
+import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.HashMap;
@@ -11,6 +16,7 @@ import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.ncbo.stanford.bean.http.HttpInputStreamWrapper;
 import org.ncbo.stanford.util.helper.StringHelper;
 import org.ncbo.stanford.view.util.constants.RequestParamConstants;
 import org.restlet.data.MediaType;
@@ -257,5 +263,108 @@ public class RequestUtils {
 		}
 
 		return integerList;
+	}
+
+	/**
+	 * Executes an HTTP post
+	 * 
+	 * @param postUrl
+	 * @param postParams
+	 * @return
+	 * @throws IOException
+	 */
+	public static HttpInputStreamWrapper doHttpPost(String postUrl,
+			HashMap<String, String> postParams) throws Exception {
+		InputStream is = null;
+		String postData = new String("");
+		String encoding = MessageUtils.getMessage("default.encoding");
+
+		// Send data
+		URL url = new URL(postUrl);
+		HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+
+		// Construct post parameters
+		if (postParams != null) {
+			for (String key : postParams.keySet()) {
+				postData += URLEncoder.encode(key, encoding) + "="
+						+ URLEncoder.encode(postParams.get(key), encoding)
+						+ "&";
+			}
+
+			postData = (postData.length() > 0) ? postData.substring(0, postData
+					.length() - 1) : postData;
+
+			conn.setDoOutput(true);
+			OutputStreamWriter wr = new OutputStreamWriter(conn
+					.getOutputStream());
+			wr.write(postData);
+			wr.flush();
+			wr.close();
+		}
+
+		try {
+			is = conn.getInputStream();
+		} catch (Exception e) {
+			is = conn.getErrorStream();
+		}
+
+		// BufferedReader rd = new BufferedReader(new InputStreamReader(is));
+		// String line;
+		//		
+		// while ((line = rd.readLine()) != null) {
+		// System.out.println(line);
+		// }
+
+		int statusCode = conn.getResponseCode();
+
+		return new HttpInputStreamWrapper(statusCode, is);
+	}
+
+	/**
+	 * Executes an HTTP post
+	 * 
+	 * @param baseUrl
+	 * @param getParams
+	 * @return
+	 * @throws IOException
+	 */
+	public static HttpInputStreamWrapper doHttpGet(String baseUrl,
+			HashMap<String, String> getParams) throws Exception {
+		InputStream is = null;
+		String getData = new String("");
+		String encoding = MessageUtils.getMessage("default.encoding");
+
+		// Construct get parameters
+		if (getParams != null) {
+			for (String key : getParams.keySet()) {
+				getData += URLEncoder.encode(key, encoding) + "="
+						+ URLEncoder.encode(getParams.get(key), encoding) + "&";
+			}
+
+			getData = (getData.length() > 0) ? getData.substring(0, getData
+					.length() - 1) : getData;
+		}
+
+		// Send data
+		URL url = new URL(baseUrl + ((getData.length() > 0) ? "?" : "")
+				+ getData);
+		HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+
+		try {
+			is = conn.getInputStream();
+		} catch (Exception e) {
+			is = conn.getErrorStream();
+		}
+
+		// BufferedReader rd = new BufferedReader(new InputStreamReader(is));
+		// String line;
+		//				
+		// while ((line = rd.readLine()) != null) {
+		// System.out.println(line);
+		// }
+
+		int statusCode = conn.getResponseCode();
+
+		return new HttpInputStreamWrapper(statusCode, is);
 	}
 }

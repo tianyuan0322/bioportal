@@ -4,13 +4,17 @@
 package org.ncbo.stanford.service.concept.impl;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.ncbo.stanford.bean.OntologyIdBean;
+import org.ncbo.stanford.bean.OntologyVersionIdBean;
 import org.ncbo.stanford.bean.concept.ClassBean;
 import org.ncbo.stanford.domain.custom.dao.CustomNcboOntologyVersionDAO;
 import org.ncbo.stanford.domain.custom.entity.VNcboOntology;
+import org.ncbo.stanford.manager.obs.OBSManager;
 import org.ncbo.stanford.manager.retrieval.OntologyRetrievalManager;
 import org.ncbo.stanford.service.concept.ConceptService;
 import org.springframework.transaction.annotation.Transactional;
@@ -31,6 +35,7 @@ public class ConceptServiceImpl implements ConceptService {
 			0);
 	private Map<String, OntologyRetrievalManager> ontologyRetrievalHandlerMap = new HashMap<String, OntologyRetrievalManager>(
 			0);
+	private OBSManager obsManager;
 
 	/**
 	 * Get the root concept for the specified ontology.
@@ -60,15 +65,34 @@ public class ConceptServiceImpl implements ConceptService {
 				conceptId, light);
 	}
 
-	private OntologyRetrievalManager getRetrievalManager(VNcboOntology ontology) {
-		String formatHandler = ontologyFormatHandlerMap.get(ontology
-				.getFormat());
-		return ontologyRetrievalHandlerMap.get(formatHandler);
+	public List<ClassBean> findParents(OntologyVersionIdBean ontologyVersionId,
+			String conceptId) throws Exception {
+		return obsManager.findParents(ontologyVersionId.getOntologyVersionId(),
+				conceptId);
+	}
+
+	public List<ClassBean> findChildren(
+			OntologyVersionIdBean ontologyVersionId, String conceptId)
+			throws Exception {
+		return obsManager.findChildren(
+				ontologyVersionId.getOntologyVersionId(), conceptId);
+	}
+
+	public List<ClassBean> findParents(OntologyIdBean ontologyId,
+			String conceptId) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 	//
 	// Non interface methods
 	//
+
+	private OntologyRetrievalManager getRetrievalManager(VNcboOntology ontology) {
+		String formatHandler = ontologyFormatHandlerMap.get(ontology
+				.getFormat());
+		return ontologyRetrievalHandlerMap.get(formatHandler);
+	}
 
 	/**
 	 * @param ncboOntologyVersionDAO
@@ -95,5 +119,13 @@ public class ConceptServiceImpl implements ConceptService {
 	public void setOntologyFormatHandlerMap(
 			Map<String, String> ontologyFormatHandlerMap) {
 		this.ontologyFormatHandlerMap = ontologyFormatHandlerMap;
+	}
+
+	/**
+	 * @param obsManager
+	 *            the obsManager to set
+	 */
+	public void setObsManager(OBSManager obsManager) {
+		this.obsManager = obsManager;
 	}
 }

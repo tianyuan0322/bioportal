@@ -54,6 +54,9 @@ bioportal.paginatable.cache.timeout=3600000
 # Number of "buckets" to allocate for paginatable lists storage
 bioportal.paginatable.cache.numcontainers=5
 
+# OBS Rest Base URL
+obs.rest.base.url=http://ncbo-obs-dev1:8080/obs_hibernate
+
 # OBO Sourceforge CVS properties
 obo.sourceforge.cvs.username=anonymous
 obo.sourceforge.cvs.password=

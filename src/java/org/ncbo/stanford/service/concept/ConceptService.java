@@ -3,6 +3,10 @@
  */
 package org.ncbo.stanford.service.concept;
 
+import java.util.List;
+
+import org.ncbo.stanford.bean.OntologyIdBean;
+import org.ncbo.stanford.bean.OntologyVersionIdBean;
 import org.ncbo.stanford.bean.concept.ClassBean;
 
 /**
@@ -20,22 +24,15 @@ public interface ConceptService {
 	public ClassBean findPathFromRoot(Integer ontologyVersionId,
 			String conceptId, boolean light) throws Exception;
 
-/*	public List<SearchResultBean> findConceptNameExact(
-			List<Integer> ontologyVersionIds, String query);
+	
+	
+	
+	public List<ClassBean> findParents(OntologyVersionIdBean ontologyVesionId,
+			String conceptId) throws Exception;
 
-	public List<SearchResultBean> findConceptNameStartsWith(
-			List<Integer> ontologyVersionIds, String query);
+	public List<ClassBean> findParents(OntologyIdBean ontologyId,
+			String conceptId) throws Exception;
 
-	public List<SearchResultBean> findConceptNameContains(
-			List<Integer> ontologyVersionIds, String query);
-
-	public List<SearchResultBean> findConceptPropertyExact(
-			List<Integer> ontologyVersionIds, String property, String query);
-
-	public List<SearchResultBean> findConceptPropertyStartsWith(
-			List<Integer> ontologyVersionIds, String property, String query);
-
-	public List<SearchResultBean> findConceptPropertyContains(
-			List<Integer> ontologyVersionIds, String query);
-*/
+	public List<ClassBean> findChildren(OntologyVersionIdBean ontologyVesionId,
+			String conceptId) throws Exception;
 }

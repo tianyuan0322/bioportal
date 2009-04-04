@@ -13,12 +13,23 @@ public class SuccessBean extends AbstractResponseBean {
 
 	private String sessionId;
 	private List<Object> data = new ArrayList<Object>(0);
+	private String dataXml;
 
 	/**
 	 * Default constructor
 	 */
 	public SuccessBean() {
 		super();
+	}
+
+	@Override
+	public boolean isResponseError() {
+		return false;
+	}
+
+	@Override
+	public boolean isResponseSuccess() {
+		return true;
 	}
 
 	/**
@@ -49,5 +60,19 @@ public class SuccessBean extends AbstractResponseBean {
 	 */
 	public void setData(List<Object> data) {
 		this.data = data;
+	}
+
+	/**
+	 * @return the dataXml
+	 */
+	public String getDataXml() {
+		return dataXml;
+	}
+
+	/**
+	 * @param dataXml the dataXml to set
+	 */
+	public void setDataXml(String dataXml) {
+		this.dataXml = dataXml;
 	}
 }
