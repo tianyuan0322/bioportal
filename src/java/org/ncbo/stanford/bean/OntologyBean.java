@@ -171,10 +171,10 @@ public class OntologyBean {
 		if (ont != null) {
 			ont.setId(getOntologyId());
 			ont.setIsManual(getIsManual());
-			// This overwrites the obo foundry id with nothing, 
-			// moving it to line 535 of OntologyServiceImpl since 
+			// This overwrites the obo foundry id with nothing,
+			// moving it to line 535 of OntologyServiceImpl since
 			// it should only be set on new ontologies
-			//ont.setOboFoundryId(getOboFoundryId());
+			// ont.setOboFoundryId(getOboFoundryId());
 		}
 	}
 
@@ -187,9 +187,7 @@ public class OntologyBean {
 		if (ontologyVersion != null) {
 			// all the business logic regarding OntologyVersionId and OntologyId
 			// is in OntologyBean layer
-			ontologyVersion.setId(this.getId());
-
-			Integer ontologyId = this.getOntologyId();
+			ontologyVersion.setId(id);
 
 			if (ontologyId != null) {
 				NcboOntology ont = new NcboOntology();
@@ -200,30 +198,51 @@ public class OntologyBean {
 			// Set User Object (populate UserId)
 			ontologyVersion.setNcboUser(getNcboUserFromSession());
 
-			ontologyVersion.setVersionNumber(this.getVersionNumber());
-			ontologyVersion.setVersionStatus(this.getVersionStatus());
+			ontologyVersion.setVersionNumber(versionNumber);
 
-			// do not override internalVersionNumber if blank
-			if (this.getInternalVersionNumber() != null) {
-				ontologyVersion.setInternalVersionNumber(this
-						.getInternalVersionNumber());
+			// do not override versionStatus if blank
+			if (versionStatus != null) {
+				ontologyVersion.setVersionStatus(versionStatus);
 			}
 
-			ontologyVersion.setIsRemote(this.getIsRemote());
-			ontologyVersion.setIsReviewed(this.getIsReviewed());
-			ontologyVersion.setDateCreated(this.getDateCreated());
-			ontologyVersion.setDateReleased(this.getDateReleased());
+			// do not override internalVersionNumber if blank
+			if (internalVersionNumber != null) {
+				ontologyVersion.setInternalVersionNumber(internalVersionNumber);
+			}
 
-			// Set NcboStatus
-			NcboLStatus status = new NcboLStatus();
-			populateStatus(status);
-			ontologyVersion.setNcboLStatus(status);
+			ontologyVersion.setIsRemote(isRemote);
+			ontologyVersion.setIsReviewed(isReviewed);
+			ontologyVersion.setDateCreated(dateCreated);
+			ontologyVersion.setDateReleased(dateReleased);
 
-			// Set filePath
-			ontologyVersion.setFilePath(this.getFilePath());
+			// populate status, if necessary
+			populateStatusToVersionEntity(ontologyVersion);
+
+			// do not override filePath if blank
+			if (filePath != null) {
+				ontologyVersion.setFilePath(filePath);
+			}
 
 			// Set dateCreated
 			ontologyVersion.setDateCreated(Calendar.getInstance().getTime());
+		}
+	}
+
+	/**
+	 * Populate status in the version entity
+	 */
+	private void populateStatusToVersionEntity(
+			NcboOntologyVersion ontologyVersion) {
+		NcboLStatus status = null;
+
+		if (statusId != null) {
+			status = new NcboLStatus();
+			status.setId(statusId);
+			ontologyVersion.setNcboLStatus(status);
+		} else if (ontologyVersion.getNcboLStatus() == null) {
+			status = new NcboLStatus();
+			populateDefaultStatus(status);
+			ontologyVersion.setNcboLStatus(status);
 		}
 	}
 
@@ -297,7 +316,7 @@ public class OntologyBean {
 
 			// Set NcboStatus
 			NcboLStatus status = new NcboLStatus();
-			populateStatus(status);
+			populateDefaultStatus(status);
 			loadQueue.setNcboLStatus(status);
 
 			loadQueue.setDateCreated(Calendar.getInstance().getTime());
@@ -761,18 +780,6 @@ public class OntologyBean {
 	 */
 	public void setOboFoundryId(String oboFoundryId) {
 		this.oboFoundryId = oboFoundryId;
-	}
-
-	/**
-	 * Populate status in the bean
-	 */
-	public void populateStatus(NcboLStatus status) {
-		status.setId(this.getStatusId());
-
-		// set default value for status if new record
-		if ((status.getId() == null)) {
-			populateDefaultStatus(status);
-		}
 	}
 
 	/**
