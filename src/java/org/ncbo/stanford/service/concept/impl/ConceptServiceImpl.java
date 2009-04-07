@@ -84,6 +84,13 @@ public class ConceptServiceImpl implements ConceptService {
 		return null;
 	}
 
+	public List<ClassBean> findRootPaths(
+			OntologyVersionIdBean ontologyVersionId, String conceptId)
+			throws Exception {
+		return obsManager.findRootPaths(ontologyVersionId
+				.getOntologyVersionId(), conceptId);
+	}
+
 	//
 	// Non interface methods
 	//

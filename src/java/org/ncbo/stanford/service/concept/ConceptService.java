@@ -11,6 +11,7 @@ import org.ncbo.stanford.bean.concept.ClassBean;
 
 /**
  * @author nickgriffith
+ * @author Michael Dorf
  * 
  */
 public interface ConceptService {
@@ -24,15 +25,17 @@ public interface ConceptService {
 	public ClassBean findPathFromRoot(Integer ontologyVersionId,
 			String conceptId, boolean light) throws Exception;
 
-	
-	
-	
-	public List<ClassBean> findParents(OntologyVersionIdBean ontologyVesionId,
+	public List<ClassBean> findParents(OntologyVersionIdBean ontologyVersionId,
 			String conceptId) throws Exception;
 
 	public List<ClassBean> findParents(OntologyIdBean ontologyId,
 			String conceptId) throws Exception;
 
-	public List<ClassBean> findChildren(OntologyVersionIdBean ontologyVesionId,
-			String conceptId) throws Exception;
+	public List<ClassBean> findChildren(
+			OntologyVersionIdBean ontologyVersionId, String conceptId)
+			throws Exception;
+
+	public List<ClassBean> findRootPaths(
+			OntologyVersionIdBean ontologyVersionId, String conceptId)
+			throws Exception;
 }

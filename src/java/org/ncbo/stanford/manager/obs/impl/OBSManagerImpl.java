@@ -8,6 +8,7 @@ import org.apache.commons.logging.LogFactory;
 import org.ncbo.stanford.bean.concept.ClassBean;
 import org.ncbo.stanford.bean.obs.ChildBean;
 import org.ncbo.stanford.bean.obs.ParentBean;
+import org.ncbo.stanford.bean.obs.PathBean;
 import org.ncbo.stanford.bean.response.AbstractResponseBean;
 import org.ncbo.stanford.bean.response.ErrorStatusBean;
 import org.ncbo.stanford.bean.response.SuccessBean;
@@ -45,14 +46,7 @@ public class OBSManagerImpl implements OBSManager {
 				parents.add(parent);
 			}
 		} else {
-			ErrorStatusBean error = (ErrorStatusBean) response;
-			String message = error.getLongMessage();
-
-			if (StringHelper.isNullOrNullString(message)) {
-				message = error.getShortMessage();
-			}
-
-			throw new Exception(message);
+			handleError(response);
 		}
 
 		return parents;
@@ -80,17 +74,49 @@ public class OBSManagerImpl implements OBSManager {
 				children.add(child);
 			}
 		} else {
-			ErrorStatusBean error = (ErrorStatusBean) response;
-			String message = error.getLongMessage();
-
-			if (StringHelper.isNullOrNullString(message)) {
-				message = error.getShortMessage();
-			}
-
-			throw new Exception(message);
+			handleError(response);
 		}
 
 		return children;
+	}
+
+	@SuppressWarnings("unchecked")
+	public List<ClassBean> findRootPaths(Integer ontologyVersionId,
+			String conceptId) throws Exception {
+		AbstractResponseBean response = xmlSerializationService.processGet(
+				MessageUtils.getMessage("obs.rest.rootpath.url")
+						+ ontologyVersionId + "/" + conceptId, null);
+		List<ClassBean> rootPaths = null;
+
+		if (response.isResponseSuccess()) {
+			String data = ((SuccessBean) response).getDataXml();
+			List<PathBean> obsRootPaths = (ArrayList<PathBean>) xmlSerializationService
+					.fromXML(data);
+			rootPaths = new ArrayList<ClassBean>(0);
+
+			for (PathBean obsRootPath : obsRootPaths) {
+				ClassBean rootPath = new ClassBean();
+				rootPath.setId(obsRootPath.getLocalConceptId());
+				rootPath.addRelation(ApplicationConstants.PATH, obsRootPath
+						.getPath());
+				rootPaths.add(rootPath);
+			}
+		} else {
+			handleError(response);
+		}
+
+		return rootPaths;
+	}
+
+	private void handleError(AbstractResponseBean response) throws Exception {
+		ErrorStatusBean error = (ErrorStatusBean) response;
+		String message = error.getLongMessage();
+
+		if (StringHelper.isNullOrNullString(message)) {
+			message = error.getShortMessage();
+		}
+
+		throw new Exception(message);
 	}
 
 	/**

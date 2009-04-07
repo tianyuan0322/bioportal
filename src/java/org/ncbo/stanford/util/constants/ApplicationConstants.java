@@ -75,6 +75,7 @@ public interface ApplicationConstants {
 	public static final String CHILD_COUNT = "ChildCount";
 	public static final String SYNONYM = "BP_Synonym";
 	public static final String LEVEL = "Level";
+	public static final String PATH = "Path";
 
 	/**
 	 * Ontology format handlers

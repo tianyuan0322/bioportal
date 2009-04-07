@@ -11,4 +11,7 @@ public interface OBSManager {
 
 	public List<ClassBean> findChildren(Integer ontologyVersionId,
 			String conceptId) throws Exception;
+
+	public List<ClassBean> findRootPaths(Integer ontologyVersionId,
+			String conceptId) throws Exception;
 }

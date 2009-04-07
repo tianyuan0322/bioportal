@@ -45,7 +45,6 @@
 		</property>
 	</bean>
 
-
 	<bean id="virtualRestlet"
 		class="org.ncbo.stanford.view.rest.restlet.ontology.VirtualUriRestlet"
 		parent="abstractBaseRestlet">
@@ -64,14 +63,6 @@
 			<ref bean="conceptService" />
 		</property>
 	</bean>
-
-
-
-
-
-
-
-
 
 	<bean id="conceptParentsRestlet"
 		class="org.ncbo.stanford.view.rest.restlet.concept.ConceptParentsRestlet"
@@ -105,11 +96,13 @@
 		</property>
 	</bean>
 
-
-
-
-
-
+	<bean id="conceptRootPathRestlet"
+		class="org.ncbo.stanford.view.rest.restlet.concept.ConceptRootPathRestlet"
+		parent="abstractBaseRestlet">
+		<property name="conceptService">
+			<ref bean="conceptService" />
+		</property>
+	</bean>
 
 	<bean id="queryRestlet"
 		class="org.ncbo.stanford.view.rest.restlet.search.QueryRestlet"
@@ -284,36 +277,35 @@
 							key="/concepts/{ontologyversionid}/{conceptid}">
 							<ref local="conceptRestlet" />
 						</entry>
-						
-						
 						<entry
 							key="/concepts/parents/{ontologyversionid}/{conceptid}">
 							<ref local="conceptParentsRestlet" />
 						</entry>
-						
 						<entry
 							key="/virtual/parents/{ontologyid}/{conceptid}">
 							<ref local="conceptParentsVirtualRestlet" />
 						</entry>
-						
-						
 						<entry
 							key="/concepts/children/{ontologyversionid}/{conceptid}">
 							<ref local="conceptChildrenRestlet" />
 						</entry>
-						
+
 						<entry
 							key="/virtual/children/{ontologyid}/{conceptid}">
 							<ref local="conceptChildrenVirtualRestlet" />
 						</entry>
-						
-						
-						
-						
-						
-						
-						
-						
+
+						<entry
+							key="/concepts/rootpath/{ontologyversionid}/{conceptid}">
+							<ref local="conceptRootPathRestlet" />
+						</entry>
+
+
+
+
+
+
+
 						<entry key="/users">
 							<ref local="usersRestlet" />
 						</entry>
