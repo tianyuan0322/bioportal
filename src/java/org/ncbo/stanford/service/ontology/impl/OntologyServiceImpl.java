@@ -320,6 +320,7 @@ public class OntologyServiceImpl implements OntologyService {
 
 		// 4. <ontologyFile> - populate and save
 		ontologyBean.populateToFileEntity(ontologyFileList, newOntologyVersion);
+		
 		for (NcboOntologyFile ontologyFile : ontologyFileList) {
 			ncboOntologyFileDAO.save(ontologyFile);
 		}
