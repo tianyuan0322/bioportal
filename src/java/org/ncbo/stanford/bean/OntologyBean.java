@@ -21,6 +21,7 @@ import org.ncbo.stanford.domain.generated.NcboOntologyVersionMetadata;
 import org.ncbo.stanford.domain.generated.NcboUser;
 import org.ncbo.stanford.util.MessageUtils;
 import org.ncbo.stanford.util.constants.ApplicationConstants;
+import org.ncbo.stanford.util.helper.StringHelper;
 
 public class OntologyBean {
 
@@ -404,7 +405,8 @@ public class OntologyBean {
 	 *            the versionNumber to set
 	 */
 	public void setVersionNumber(String versionNumber) {
-		this.versionNumber = versionNumber;
+		this.versionNumber = StringHelper.isNullOrNullString(versionNumber) ? null
+				: versionNumber;
 	}
 
 	/**
@@ -419,7 +421,8 @@ public class OntologyBean {
 	 *            the versionStatus to set
 	 */
 	public void setVersionStatus(String versionStatus) {
-		this.versionStatus = versionStatus;
+		this.versionStatus = StringHelper.isNullOrNullString(versionStatus) ? null
+				: versionStatus;
 	}
 
 	/**
@@ -434,7 +437,8 @@ public class OntologyBean {
 	 *            the filePath to set
 	 */
 	public void setFilePath(String filePath) {
-		this.filePath = filePath;
+		this.filePath = StringHelper.isNullOrNullString(filePath) ? null
+				: filePath;
 	}
 
 	/**
@@ -494,7 +498,8 @@ public class OntologyBean {
 	 *            the displayLabel to set
 	 */
 	public void setDisplayLabel(String displayLabel) {
-		this.displayLabel = displayLabel;
+		this.displayLabel = StringHelper.isNullOrNullString(displayLabel) ? null
+				: displayLabel;
 	}
 
 	/**
@@ -509,7 +514,7 @@ public class OntologyBean {
 	 *            the format to set
 	 */
 	public void setFormat(String format) {
-		this.format = format;
+		this.format = StringHelper.isNullOrNullString(format) ? null : format;
 	}
 
 	/**
@@ -524,7 +529,8 @@ public class OntologyBean {
 	 *            the contactName to set
 	 */
 	public void setContactName(String contactName) {
-		this.contactName = contactName;
+		this.contactName = StringHelper.isNullOrNullString(contactName) ? null
+				: contactName;
 	}
 
 	/**
@@ -539,7 +545,8 @@ public class OntologyBean {
 	 *            the contactEmail to set
 	 */
 	public void setContactEmail(String contactEmail) {
-		this.contactEmail = contactEmail;
+		this.contactEmail = StringHelper.isNullOrNullString(contactEmail) ? null
+				: contactEmail;
 	}
 
 	/**
@@ -554,7 +561,8 @@ public class OntologyBean {
 	 *            the homepage to set
 	 */
 	public void setHomepage(String homepage) {
-		this.homepage = homepage;
+		this.homepage = StringHelper.isNullOrNullString(homepage) ? null
+				: homepage;
 	}
 
 	/**
@@ -569,7 +577,8 @@ public class OntologyBean {
 	 *            the documentation to set
 	 */
 	public void setDocumentation(String documentation) {
-		this.documentation = documentation;
+		this.documentation = StringHelper.isNullOrNullString(documentation) ? null
+				: documentation;
 	}
 
 	/**
@@ -584,7 +593,8 @@ public class OntologyBean {
 	 *            the publication to set
 	 */
 	public void setPublication(String publication) {
-		this.publication = publication;
+		this.publication = StringHelper.isNullOrNullString(publication) ? null
+				: publication;
 	}
 
 	/**
@@ -599,7 +609,7 @@ public class OntologyBean {
 	 *            the urn to set
 	 */
 	public void setUrn(String urn) {
-		this.urn = urn;
+		this.urn = StringHelper.isNullOrNullString(urn) ? null : urn;
 	}
 
 	/**
@@ -725,7 +735,8 @@ public class OntologyBean {
 	 *            the codingScheme to set
 	 */
 	public void setCodingScheme(String codingScheme) {
-		this.codingScheme = codingScheme;
+		this.codingScheme = StringHelper.isNullOrNullString(codingScheme) ? null
+				: codingScheme;
 	}
 
 	public Integer getStatusId() {
@@ -779,7 +790,8 @@ public class OntologyBean {
 	 *            the oboFoundryId to set
 	 */
 	public void setOboFoundryId(String oboFoundryId) {
-		this.oboFoundryId = oboFoundryId;
+		this.oboFoundryId = StringHelper.isNullOrNullString(oboFoundryId) ? null
+				: oboFoundryId;
 	}
 
 	/**
@@ -834,7 +846,9 @@ public class OntologyBean {
 	 *            the targetTerminologies to set
 	 */
 	public void setTargetTerminologies(String targetTerminologies) {
-		this.targetTerminologies = targetTerminologies;
+		this.targetTerminologies = StringHelper
+				.isNullOrNullString(targetTerminologies) ? null
+				: targetTerminologies;
 	}
 
 	/**
@@ -849,7 +863,8 @@ public class OntologyBean {
 	 *            the synonymSlot to set
 	 */
 	public void setSynonymSlot(String synonymSlot) {
-		this.synonymSlot = synonymSlot;
+		this.synonymSlot = StringHelper.isNullOrNullString(synonymSlot) ? null
+				: synonymSlot;
 	}
 
 	/**
@@ -864,7 +879,9 @@ public class OntologyBean {
 	 *            the preferredNameSlot to set
 	 */
 	public void setPreferredNameSlot(String preferredNameSlot) {
-		this.preferredNameSlot = preferredNameSlot;
+		this.preferredNameSlot = StringHelper
+				.isNullOrNullString(preferredNameSlot) ? null
+				: preferredNameSlot;
 	}
 
 	/**
@@ -879,7 +896,8 @@ public class OntologyBean {
 	 *            the description to set
 	 */
 	public void setDescription(String description) {
-		this.description = description;
+		this.description = StringHelper.isNullOrNullString(description) ? null
+				: description;
 	}
 
 	/**
@@ -894,6 +912,7 @@ public class OntologyBean {
 	 *            the abbreviation to set
 	 */
 	public void setAbbreviation(String abbreviation) {
-		this.abbreviation = abbreviation;
+		this.abbreviation = StringHelper.isNullOrNullString(abbreviation) ? null
+				: abbreviation;
 	}
 }
