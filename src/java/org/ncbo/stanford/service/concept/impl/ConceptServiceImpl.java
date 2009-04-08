@@ -91,6 +91,12 @@ public class ConceptServiceImpl implements ConceptService {
 				.getOntologyVersionId(), conceptId);
 	}
 
+	public List<ClassBean> findSiblings(OntologyVersionIdBean ontologyVersionId,
+			String conceptId) throws Exception {
+		return obsManager.findSiblings(ontologyVersionId.getOntologyVersionId(),
+				conceptId);
+	}
+
 	//
 	// Non interface methods
 	//

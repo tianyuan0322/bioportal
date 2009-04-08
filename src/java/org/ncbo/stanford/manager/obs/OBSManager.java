@@ -6,12 +6,15 @@ import org.ncbo.stanford.bean.concept.ClassBean;
 
 public interface OBSManager {
 
-	public List<ClassBean> findParents(Integer ontologyVersionId,
+	public List<ClassBean> findParents(String ontologyVersionId,
 			String conceptId) throws Exception;
 
-	public List<ClassBean> findChildren(Integer ontologyVersionId,
+	public List<ClassBean> findChildren(String ontologyVersionId,
 			String conceptId) throws Exception;
 
-	public List<ClassBean> findRootPaths(Integer ontologyVersionId,
+	public List<ClassBean> findRootPaths(String ontologyVersionId,
+			String conceptId) throws Exception;
+
+	public List<ClassBean> findSiblings(String ontologyVersionId,
 			String conceptId) throws Exception;
 }

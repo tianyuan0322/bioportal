@@ -13,11 +13,11 @@ import org.restlet.data.Request;
 import org.restlet.data.Response;
 import org.restlet.data.Status;
 
-public class ConceptRootPathRestlet extends AbstractBaseRestlet {
+public class ConceptSiblingsRestlet extends AbstractBaseRestlet {
 
 	@SuppressWarnings("unused")
 	private static final Log log = LogFactory
-			.getLog(ConceptRootPathRestlet.class);
+			.getLog(ConceptSiblingsRestlet.class);
 
 	private ConceptService conceptService;
 
@@ -26,18 +26,18 @@ public class ConceptRootPathRestlet extends AbstractBaseRestlet {
 	 */
 	@Override
 	protected void getRequest(Request request, Response response) {
-		findRootPaths(request, response);
+		findSiblings(request, response);
 	}
 
-	private void findRootPaths(Request request, Response response) {
+	private void findSiblings(Request request, Response response) {
 		String ontologyVersionId = (String) request.getAttributes().get(
 				MessageUtils.getMessage("entity.ontologyversionid"));
 		String conceptId = getConceptId(request);
-		List<ClassBean> rootPaths = null;
+		List<ClassBean> parentConcepts = null;
 
 		try {
-			rootPaths = conceptService.findRootPaths(new OntologyVersionIdBean(
-					ontologyVersionId), conceptId);
+			parentConcepts = conceptService.findSiblings(
+					new OntologyVersionIdBean(ontologyVersionId), conceptId);
 		} catch (Exception e) {
 			response.setStatus(Status.SERVER_ERROR_INTERNAL, e.getMessage());
 			e.printStackTrace();
@@ -45,7 +45,7 @@ public class ConceptRootPathRestlet extends AbstractBaseRestlet {
 		} finally {
 			// generate response XML
 			xmlSerializationService.generateXMLResponse(request, response,
-					rootPaths);
+					parentConcepts);
 		}
 	}
 

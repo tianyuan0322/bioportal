@@ -9,6 +9,7 @@ import org.ncbo.stanford.bean.concept.ClassBean;
 import org.ncbo.stanford.bean.obs.ChildBean;
 import org.ncbo.stanford.bean.obs.ParentBean;
 import org.ncbo.stanford.bean.obs.PathBean;
+import org.ncbo.stanford.bean.obs.SiblingBean;
 import org.ncbo.stanford.bean.response.AbstractResponseBean;
 import org.ncbo.stanford.bean.response.ErrorStatusBean;
 import org.ncbo.stanford.bean.response.SuccessBean;
@@ -25,7 +26,7 @@ public class OBSManagerImpl implements OBSManager {
 	private XMLSerializationService xmlSerializationService;
 
 	@SuppressWarnings("unchecked")
-	public List<ClassBean> findParents(Integer ontologyVersionId,
+	public List<ClassBean> findParents(String ontologyVersionId,
 			String conceptId) throws Exception {
 		AbstractResponseBean response = xmlSerializationService.processGet(
 				MessageUtils.getMessage("obs.rest.parents.url")
@@ -53,7 +54,7 @@ public class OBSManagerImpl implements OBSManager {
 	}
 
 	@SuppressWarnings("unchecked")
-	public List<ClassBean> findChildren(Integer ontologyVersionId,
+	public List<ClassBean> findChildren(String ontologyVersionId,
 			String conceptId) throws Exception {
 		AbstractResponseBean response = xmlSerializationService.processGet(
 				MessageUtils.getMessage("obs.rest.children.url")
@@ -81,7 +82,7 @@ public class OBSManagerImpl implements OBSManager {
 	}
 
 	@SuppressWarnings("unchecked")
-	public List<ClassBean> findRootPaths(Integer ontologyVersionId,
+	public List<ClassBean> findRootPaths(String ontologyVersionId,
 			String conceptId) throws Exception {
 		AbstractResponseBean response = xmlSerializationService.processGet(
 				MessageUtils.getMessage("obs.rest.rootpath.url")
@@ -106,6 +107,34 @@ public class OBSManagerImpl implements OBSManager {
 		}
 
 		return rootPaths;
+	}
+
+	@SuppressWarnings("unchecked")
+	public List<ClassBean> findSiblings(String ontologyVersionId,
+			String conceptId) throws Exception {
+		AbstractResponseBean response = xmlSerializationService.processGet(
+				MessageUtils.getMessage("obs.rest.siblings.url")
+						+ ontologyVersionId + "/" + conceptId, null);
+		List<ClassBean> siblings = null;
+
+		if (response.isResponseSuccess()) {
+			String data = ((SuccessBean) response).getDataXml();
+			List<SiblingBean> obsSiblings = (ArrayList<SiblingBean>) xmlSerializationService
+					.fromXML(data);
+			siblings = new ArrayList<ClassBean>(0);
+
+			for (SiblingBean obsSibling : obsSiblings) {
+				ClassBean sibling = new ClassBean();
+				sibling.setId(obsSibling.getLocalConceptId());
+				sibling.addRelation(ApplicationConstants.LEVEL, obsSibling
+						.getLevel());
+				siblings.add(sibling);
+			}
+		} else {
+			handleError(response);
+		}
+
+		return siblings;
 	}
 
 	private void handleError(AbstractResponseBean response) throws Exception {

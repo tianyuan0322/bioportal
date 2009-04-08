@@ -30,20 +30,14 @@ public class ConceptChildrenRestlet extends AbstractBaseRestlet {
 	}
 
 	private void findChildren(Request request, Response response) {
-		String strOntologyVersionId = (String) request.getAttributes().get(
+		String ontologyVersionId = (String) request.getAttributes().get(
 				MessageUtils.getMessage("entity.ontologyversionid"));
 		String conceptId = getConceptId(request);
 		List<ClassBean> childConcepts = null;
 
 		try {
-			Integer ontologyVersionId = Integer.parseInt(strOntologyVersionId);
 			childConcepts = conceptService.findChildren(
 					new OntologyVersionIdBean(ontologyVersionId), conceptId);
-		} catch (NumberFormatException nfe) {
-			response.setStatus(Status.CLIENT_ERROR_BAD_REQUEST, nfe
-					.getMessage());
-			nfe.printStackTrace();
-			log.error(nfe);
 		} catch (Exception e) {
 			response.setStatus(Status.SERVER_ERROR_INTERNAL, e.getMessage());
 			e.printStackTrace();

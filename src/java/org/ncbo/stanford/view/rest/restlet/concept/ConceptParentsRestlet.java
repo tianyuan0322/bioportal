@@ -30,19 +30,14 @@ public class ConceptParentsRestlet extends AbstractBaseRestlet {
 	}
 
 	private void findParents(Request request, Response response) {
-		String strOntologyVersionId = (String) request.getAttributes().get(
-				MessageUtils.getMessage("entity.ontologyversionid"));		
+		String ontologyVersionId = (String) request.getAttributes().get(
+				MessageUtils.getMessage("entity.ontologyversionid"));
 		String conceptId = getConceptId(request);
 		List<ClassBean> parentConcepts = null;
-		
+
 		try {
-			Integer ontologyVersionId = Integer.parseInt(strOntologyVersionId);			
-			parentConcepts = conceptService.findParents(new OntologyVersionIdBean(ontologyVersionId), conceptId);
-		} catch (NumberFormatException nfe) {
-			response.setStatus(Status.CLIENT_ERROR_BAD_REQUEST, nfe
-					.getMessage());
-			nfe.printStackTrace();
-			log.error(nfe);
+			parentConcepts = conceptService.findParents(
+					new OntologyVersionIdBean(ontologyVersionId), conceptId);
 		} catch (Exception e) {
 			response.setStatus(Status.SERVER_ERROR_INTERNAL, e.getMessage());
 			e.printStackTrace();
@@ -55,7 +50,8 @@ public class ConceptParentsRestlet extends AbstractBaseRestlet {
 	}
 
 	/**
-	 * @param conceptService the conceptService to set
+	 * @param conceptService
+	 *            the conceptService to set
 	 */
 	public void setConceptService(ConceptService conceptService) {
 		this.conceptService = conceptService;
