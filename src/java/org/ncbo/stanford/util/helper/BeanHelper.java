@@ -56,7 +56,7 @@ public class BeanHelper {
 	 * Creates OntologyBean object and populate from Request object.
 	 * 
 	 * <ontology Id>, <internal_version_number> - will be determined at ontology
-	 * creation time <parent_id> - soon to be OBSOLETE
+	 * creation time
 	 * 
 	 * The following attributes are only for System or Admin. <statusId>,
 	 * <codingScheme> - updated by Scheduler <isReviewed> - updated by Admin
@@ -66,16 +66,16 @@ public class BeanHelper {
 	 * @param Request
 	 */
 	public static OntologyBean populateOntologyBeanFromRequest(Request request) {
+		List<Integer> categoryIds = new ArrayList<Integer>(0);
 		HttpServletRequest httpServletRequest = RequestUtils
 				.getHttpServletRequest(request);
-
-		// get userId from request
-		String userId = httpServletRequest.getParameter(MessageUtils
-				.getMessage("http.param.userId"));
 
 		// for new version for existing ontology
 		String ontologyId = httpServletRequest.getParameter(MessageUtils
 				.getMessage("form.ontology.ontologyId"));
+		// get userId from request
+		String userId = httpServletRequest.getParameter(MessageUtils
+				.getMessage("http.param.userId"));
 		String isManual = httpServletRequest.getParameter(MessageUtils
 				.getMessage("form.ontology.isManual"));
 		String versionNumber = httpServletRequest.getParameter(MessageUtils
@@ -84,10 +84,16 @@ public class BeanHelper {
 				.getMessage("form.ontology.versionStatus"));
 		String isRemote = httpServletRequest.getParameter(MessageUtils
 				.getMessage("form.ontology.isRemote"));
+		// only accessible by Admin
+		String isReviewed = httpServletRequest.getParameter(MessageUtils
+				.getMessage("form.ontology.isReviewed"));
 		String dateCreated = httpServletRequest.getParameter(MessageUtils
 				.getMessage("form.ontology.dateCreated"));
 		String dateReleased = httpServletRequest.getParameter(MessageUtils
 				.getMessage("form.ontology.dateReleased"));
+		// only accessible by Scheduler (system)
+		String statusId = httpServletRequest.getParameter(MessageUtils
+				.getMessage("form.ontology.statusId"));
 		String displayLabel = httpServletRequest.getParameter(MessageUtils
 				.getMessage("form.ontology.displayLabel"));
 		String description = httpServletRequest.getParameter(MessageUtils
@@ -108,16 +114,120 @@ public class BeanHelper {
 				.getMessage("form.ontology.publication"));
 		String urn = httpServletRequest.getParameter(MessageUtils
 				.getMessage("form.ontology.urn"));
+		String codingScheme = httpServletRequest.getParameter(MessageUtils
+				.getMessage("form.ontology.codingScheme"));
 		String isFoundry = httpServletRequest.getParameter(MessageUtils
 				.getMessage("form.ontology.isFoundry"));
+		String targetTerminologies = httpServletRequest
+				.getParameter(MessageUtils
+						.getMessage("form.ontology.targetTerminologies"));
 		String synonymSlot = httpServletRequest.getParameter(MessageUtils
 				.getMessage("form.ontology.synonymSlot"));
 		String preferredNameSlot = httpServletRequest.getParameter(MessageUtils
 				.getMessage("form.ontology.preferredNameSlot"));
-		String targetTerminologies = httpServletRequest.getParameter(MessageUtils
-				.getMessage("form.ontology.targetTerminologies"));
 
-		List<Integer> categoryIds = new ArrayList<Integer>();
+		// now populate the OntologyBean
+		OntologyBean bean = new OntologyBean();
+
+		if (!StringHelper.isNullOrNullString(ontologyId)) {
+			bean.setOntologyId(Integer.parseInt(ontologyId));
+		}
+
+		if (!StringHelper.isNullOrNullString(userId)) {
+			bean.setUserId(Integer.parseInt(userId));
+		}
+
+		if (!StringHelper.isNullOrNullString(isManual)) {
+			bean.setIsManual(Byte.parseByte(isManual));
+		}
+
+		if (!StringHelper.isNullOrNullString(isRemote)) {
+			bean.setIsRemote(Byte.parseByte(isRemote));
+		}
+
+		if (isReviewed != null) {
+			bean.setIsReviewed(Byte.parseByte(isReviewed));
+		}
+
+		if (!StringHelper.isNullOrNullString(dateCreated)) {
+			bean.setDateCreated(DateHelper.getDateFrom(dateCreated));
+		}
+
+		if (!StringHelper.isNullOrNullString(statusId)) {
+			bean.setStatusId(Integer.parseInt(statusId));
+		}
+
+		if (displayLabel != null) {
+			bean.setDisplayLabel(displayLabel);
+		}
+
+		if (description != null) {
+			bean.setDescription(description);
+		}
+
+		if (abbreviation != null) {
+			bean.setAbbreviation(abbreviation);
+		}
+
+		if (format != null) {
+			bean.setFormat(format);
+		}
+
+		if (versionNumber != null) {
+			bean.setVersionNumber(versionNumber);
+		}
+
+		if (versionStatus != null) {
+			bean.setVersionStatus(versionStatus);
+		}
+
+		if (dateReleased != null) {
+			bean.setDateReleased(DateHelper.getDateFrom(dateReleased));
+		}
+
+		if (preferredNameSlot != null) {
+			bean.setPreferredNameSlot(preferredNameSlot);
+		}
+
+		if (synonymSlot != null) {
+			bean.setSynonymSlot(synonymSlot);
+		}
+
+		if (contactName != null) {
+			bean.setContactName(contactName);
+		}
+
+		if (contactEmail != null) {
+			bean.setContactEmail(contactEmail);
+		}
+
+		if (homepage != null) {
+			bean.setHomepage(homepage);
+		}
+
+		if (documentation != null) {
+			bean.setDocumentation(documentation);
+		}
+
+		if (publication != null) {
+			bean.setPublication(publication);
+		}
+
+		if (urn != null) {
+			bean.setUrn(urn);
+		}
+
+		if (codingScheme != null) {
+			bean.setCodingScheme(codingScheme);
+		}
+
+		if (!StringHelper.isNullOrNullString(isFoundry)) {
+			bean.setIsFoundry(Byte.parseByte(isFoundry));
+		}
+
+		if (targetTerminologies != null) {
+			bean.setTargetTerminologies(targetTerminologies);
+		}
 
 		String[] categoryIdsStr = httpServletRequest
 				.getParameterValues(MessageUtils
@@ -129,84 +239,9 @@ public class BeanHelper {
 			}
 		}
 
-		// only accessible by Admin
-		String isReviewed = httpServletRequest.getParameter(MessageUtils
-				.getMessage("form.ontology.isReviewed"));
-
-		// only accessible by Scheduler (system)
-		String statusId = httpServletRequest.getParameter(MessageUtils
-				.getMessage("form.ontology.statusId"));
-		String codingScheme = httpServletRequest.getParameter(MessageUtils
-				.getMessage("form.ontology.codingScheme"));
-
-		// now populate the OntologyBean
-		OntologyBean bean = new OntologyBean();
-
-		if (!StringHelper.isNullOrNullString(userId)) {
-			bean.setUserId(Integer.parseInt(userId));
-		}
-
-		if (!StringHelper.isNullOrNullString(ontologyId)) {
-			bean.setOntologyId(Integer.parseInt(ontologyId));
-		}
-
-		if (!StringHelper.isNullOrNullString(isManual)) {
-			bean.setIsManual(Byte.parseByte(isManual));
-		}
-
-		bean.setVersionNumber(versionNumber);
-		bean.setVersionStatus(versionStatus);
-
-		if (!StringHelper.isNullOrNullString(isRemote)) {
-			bean.setIsRemote(Byte.parseByte(isRemote));
-		}
-
-		if (!StringHelper.isNullOrNullString(isReviewed)) {
-			bean.setIsReviewed(Byte.parseByte(isReviewed));
-		}
-
-		if (!StringHelper.isNullOrNullString(statusId)) {
-			bean.setStatusId(Integer.parseInt(statusId));
-		}
-
-		if (!StringHelper.isNullOrNullString(dateCreated)) {
-			bean.setDateCreated(DateHelper.getDateFrom(dateCreated));
-		}
-
-		if (!StringHelper.isNullOrNullString(dateReleased)) {
-			bean.setDateReleased(DateHelper.getDateFrom(dateReleased));
-		}
-
-		bean.setDisplayLabel(displayLabel);
-		bean.setDescription(description);
-		bean.setAbbreviation(abbreviation);
-		bean.setFormat(format);
-		bean.setContactName(contactName);
-		bean.setContactEmail(contactEmail);
-		bean.setHomepage(homepage);
-		bean.setDocumentation(documentation);
-		bean.setPublication(publication);
-		bean.setUrn(urn);
-		bean.setCodingScheme(codingScheme);
-
-		if (!StringHelper.isNullOrNullString(isFoundry)) {
-			bean.setIsFoundry(Byte.parseByte(isFoundry));
-		}
-
-		if (!StringHelper.isNullOrNullString(synonymSlot)) {
-			bean.setSynonymSlot(synonymSlot);
-		}
-
-		if (!StringHelper.isNullOrNullString(preferredNameSlot)) {
-			bean.setPreferredNameSlot(preferredNameSlot);
-		}
-
-		if (!StringHelper.isNullOrNullString(targetTerminologies)) {
-			bean.setTargetTerminologies(targetTerminologies);
-		}
-
-		if (categoryIds.size() > 0)
+		if (categoryIds.size() > 0) {
 			bean.setCategoryIds(categoryIds);
+		}
 
 		// set file attribute in ontologyBean
 		FileItem fileItem = (FileItem) httpServletRequest

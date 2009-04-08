@@ -100,7 +100,6 @@ public class OntologyRestlet extends AbstractBaseRestlet {
 
 			// 4. now update the ontology
 			try {
-				ontologyService.cleanupOntologyCategory(ontologyBean);
 				ontologyService.updateOntology(ontologyBean);
 			} catch (Exception e) {
 				response

@@ -365,6 +365,8 @@ public class OntologyServiceImpl implements OntologyService {
 		// remove all corresponding categories associated with given
 		// ontologyVersionId
 		// and add new categories
+		removeOldCategories(ontologyVersion);
+
 		ArrayList<NcboOntologyCategory> ontologyCategoryList = new ArrayList<NcboOntologyCategory>();
 		ontologyBean.populateToCategoryEntity(ontologyCategoryList,
 				ontologyVersion);
@@ -388,12 +390,7 @@ public class OntologyServiceImpl implements OntologyService {
 		NcboOntologyVersion ontologyVersion = ncboOntologyVersionDAO
 				.findById(ontologyBean.getId());
 
-		Set<NcboOntologyCategory> categories = ontologyVersion
-				.getNcboOntologyCategories();
-
-		for (NcboOntologyCategory ontologyCategory : categories) {
-			ncboOntologyCategoryDAO.delete(ontologyCategory);
-		}
+		removeOldCategories(ontologyVersion);
 	}
 
 	/*
@@ -427,12 +424,7 @@ public class OntologyServiceImpl implements OntologyService {
 			ncboOntologyVersionMetadataDAO.delete(ontologyMetadata);
 		}
 
-		// 4. <ontologyCategory>
-		Set<NcboOntologyCategory> ontologyCategorySet = ontologyVersion
-				.getNcboOntologyCategories();
-		for (NcboOntologyCategory ontologyCategory : ontologyCategorySet) {
-			ncboOntologyCategoryDAO.delete(ontologyCategory);
-		}
+		removeOldCategories(ontologyVersion);
 
 		// 5. <ontologyFile>
 		Set<NcboOntologyFile> ontologyFileSet = ontologyVersion
@@ -492,6 +484,16 @@ public class OntologyServiceImpl implements OntologyService {
 		}
 
 		return file;
+	}
+
+	@SuppressWarnings("unchecked")
+	private void removeOldCategories(NcboOntologyVersion ontologyVersion) {
+		Set<NcboOntologyCategory> categories = ontologyVersion
+				.getNcboOntologyCategories();
+
+		for (NcboOntologyCategory ontologyCategory : categories) {
+			ncboOntologyCategoryDAO.delete(ontologyCategory);
+		}
 	}
 
 	private boolean deleteOntologyFile(OntologyBean ontologyBean) {

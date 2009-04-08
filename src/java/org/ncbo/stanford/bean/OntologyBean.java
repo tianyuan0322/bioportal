@@ -73,36 +73,35 @@ public class OntologyBean {
 	 */
 	public void populateFromEntity(VNcboOntology ncboOntology) {
 		if (ncboOntology != null) {
-			this.setId(ncboOntology.getId());
-			this.setOntologyId(ncboOntology.getOntologyId());
-			this.setUserId(ncboOntology.getUserId());
-			this.setInternalVersionNumber(ncboOntology
-					.getInternalVersionNumber());
-			this.setVersionNumber(ncboOntology.getVersionNumber());
-			this.setVersionStatus(ncboOntology.getVersionStatus());
-			this.setFilePath(ncboOntology.getFilePath());
-			this.setIsRemote(ncboOntology.getIsRemote());
-			this.setIsReviewed(ncboOntology.getIsReviewed());
-			this.setStatusId(ncboOntology.getStatusId());
-			this.setDateCreated(ncboOntology.getDateCreated());
-			this.setDateReleased(ncboOntology.getDateReleased());
-			this.setOboFoundryId(ncboOntology.getOboFoundryId());
-			this.setIsManual(ncboOntology.getIsManual());
-			this.setDisplayLabel(ncboOntology.getDisplayLabel());
-			this.setDescription(ncboOntology.getDescription());
-			this.setAbbreviation(ncboOntology.getAbbreviation());
-			this.setFormat(ncboOntology.getFormat());
-			this.setContactName(ncboOntology.getContactName());
-			this.setContactEmail(ncboOntology.getContactEmail());
-			this.setHomepage(ncboOntology.getHomepage());
-			this.setDocumentation(ncboOntology.getDocumentation());
-			this.setPublication(ncboOntology.getPublication());
-			this.setUrn(ncboOntology.getUrn());
-			this.setCodingScheme(ncboOntology.getCodingScheme());
-			this.setIsFoundry(ncboOntology.getIsFoundry());
-			this.setTargetTerminologies(ncboOntology.getTargetTerminologies());
-			this.setSynonymSlot(ncboOntology.getSynonymSlot());
-			this.setPreferredNameSlot(ncboOntology.getPreferredNameSlot());
+			setId(ncboOntology.getId());
+			setOntologyId(ncboOntology.getOntologyId());
+			setUserId(ncboOntology.getUserId());
+			setInternalVersionNumber(ncboOntology.getInternalVersionNumber());
+			setVersionNumber(ncboOntology.getVersionNumber());
+			setVersionStatus(ncboOntology.getVersionStatus());
+			setFilePath(ncboOntology.getFilePath());
+			setIsRemote(ncboOntology.getIsRemote());
+			setIsReviewed(ncboOntology.getIsReviewed());
+			setStatusId(ncboOntology.getStatusId());
+			setDateCreated(ncboOntology.getDateCreated());
+			setDateReleased(ncboOntology.getDateReleased());
+			setOboFoundryId(ncboOntology.getOboFoundryId());
+			setIsManual(ncboOntology.getIsManual());
+			setDisplayLabel(ncboOntology.getDisplayLabel());
+			setDescription(ncboOntology.getDescription());
+			setAbbreviation(ncboOntology.getAbbreviation());
+			setFormat(ncboOntology.getFormat());
+			setContactName(ncboOntology.getContactName());
+			setContactEmail(ncboOntology.getContactEmail());
+			setHomepage(ncboOntology.getHomepage());
+			setDocumentation(ncboOntology.getDocumentation());
+			setPublication(ncboOntology.getPublication());
+			setUrn(ncboOntology.getUrn());
+			setCodingScheme(ncboOntology.getCodingScheme());
+			setIsFoundry(ncboOntology.getIsFoundry());
+			setTargetTerminologies(ncboOntology.getTargetTerminologies());
+			setSynonymSlot(ncboOntology.getSynonymSlot());
+			setPreferredNameSlot(ncboOntology.getPreferredNameSlot());
 
 			populateFilenamesFromEntity(ncboOntology);
 			populateCategoryIdsFromEntity(ncboOntology);
@@ -141,21 +140,92 @@ public class OntologyBean {
 
 			metadata.setNcboOntologyVersion(ontologyVersion);
 
-			metadata.setContactEmail(this.getContactEmail());
-			metadata.setContactName(this.getContactName());
-			metadata.setDisplayLabel(this.getDisplayLabel());
-			metadata.setDescription(this.getDescription());
-			metadata.setAbbreviation(this.getAbbreviation());
-			metadata.setDocumentation(this.getDocumentation());
-			metadata.setFormat(this.getFormat());
-			metadata.setHomepage(this.getHomepage());
-			metadata.setIsFoundry(this.getIsFoundry());
-			metadata.setPublication(this.getPublication());
-			metadata.setUrn(this.getUrn());
-			metadata.setCodingScheme(this.getCodingScheme());
-			metadata.setTargetTerminologies(this.getTargetTerminologies());
-			metadata.setSynonymSlot(this.getSynonymSlot());
-			metadata.setPreferredNameSlot(this.getPreferredNameSlot());
+			if (displayLabel != null) {
+				metadata
+						.setDisplayLabel(StringHelper
+								.isNullOrNullString(displayLabel) ? null
+								: displayLabel);
+			}
+
+			if (format != null) {
+				metadata
+						.setFormat(StringHelper.isNullOrNullString(format) ? null
+								: format);
+			}
+
+			if (description != null) {
+				metadata.setDescription(StringHelper
+						.isNullOrNullString(description) ? null : description);
+			}
+
+			if (abbreviation != null) {
+				metadata
+						.setAbbreviation(StringHelper
+								.isNullOrNullString(abbreviation) ? null
+								: abbreviation);
+			}
+
+			if (contactName != null) {
+				metadata.setContactName(StringHelper
+						.isNullOrNullString(contactName) ? null : contactName);
+			}
+
+			if (contactEmail != null) {
+				metadata
+						.setContactEmail(StringHelper
+								.isNullOrNullString(contactEmail) ? null
+								: contactEmail);
+			}
+
+			if (documentation != null) {
+				metadata.setDocumentation(StringHelper
+						.isNullOrNullString(documentation) ? null
+						: documentation);
+			}
+
+			if (homepage != null) {
+				metadata
+						.setHomepage(StringHelper.isNullOrNullString(homepage) ? null
+								: homepage);
+			}
+
+			if (isFoundry != null) {
+				metadata.setIsFoundry(isFoundry);
+			}
+
+			if (publication != null) {
+				metadata.setPublication(StringHelper
+						.isNullOrNullString(publication) ? null : publication);
+			}
+
+			if (urn != null) {
+				metadata.setUrn(StringHelper.isNullOrNullString(urn) ? null
+						: urn);
+			}
+
+			if (codingScheme != null) {
+				metadata
+						.setCodingScheme(StringHelper
+								.isNullOrNullString(codingScheme) ? null
+								: codingScheme);
+			}
+
+			if (targetTerminologies != null) {
+				metadata.setTargetTerminologies(StringHelper
+						.isNullOrNullString(targetTerminologies) ? null
+						: targetTerminologies);
+			}
+
+			if (synonymSlot != null) {
+				metadata.setSynonymSlot(StringHelper
+						.isNullOrNullString(synonymSlot) ? null : synonymSlot);
+			}
+
+			if (preferredNameSlot != null) {
+				metadata.setPreferredNameSlot(StringHelper
+						.isNullOrNullString(preferredNameSlot) ? null
+						: preferredNameSlot);
+			}
 
 			ncboOntologyMetadataSet.add(metadata);
 			ontologyVersion
@@ -170,8 +240,14 @@ public class OntologyBean {
 	 */
 	public void populateToOntologyEntity(NcboOntology ont) {
 		if (ont != null) {
-			ont.setId(getOntologyId());
-			ont.setIsManual(getIsManual());
+			if (ontologyId != null) {
+				ont.setId(ontologyId);
+			}
+
+			if (isManual != null) {
+				ont.setIsManual(isManual);
+			}
+
 			// This overwrites the obo foundry id with nothing,
 			// moving it to line 535 of OntologyServiceImpl since
 			// it should only be set on new ontologies
@@ -186,9 +262,9 @@ public class OntologyBean {
 	 */
 	public void populateToVersionEntity(NcboOntologyVersion ontologyVersion) {
 		if (ontologyVersion != null) {
-			// all the business logic regarding OntologyVersionId and OntologyId
-			// is in OntologyBean layer
-			ontologyVersion.setId(id);
+			if (id != null) {
+				ontologyVersion.setId(id);
+			}
 
 			if (ontologyId != null) {
 				NcboOntology ont = new NcboOntology();
@@ -196,14 +272,23 @@ public class OntologyBean {
 				ontologyVersion.setNcboOntology(ont);
 			}
 
-			// Set User Object (populate UserId)
-			ontologyVersion.setNcboUser(getNcboUserFromSession());
+			if (userId != null) {
+				NcboUser ncboUser = new NcboUser();
+				ncboUser.setId(userId);
+				ontologyVersion.setNcboUser(ncboUser);
+			}
 
-			ontologyVersion.setVersionNumber(versionNumber);
+			if (versionNumber != null) {
+				ontologyVersion.setVersionNumber(StringHelper
+						.isNullOrNullString(versionNumber) ? null
+						: versionNumber);
+			}
 
 			// do not override versionStatus if blank
 			if (versionStatus != null) {
-				ontologyVersion.setVersionStatus(versionStatus);
+				ontologyVersion.setVersionStatus(StringHelper
+						.isNullOrNullString(versionStatus) ? null
+						: versionStatus);
 			}
 
 			// do not override internalVersionNumber if blank
@@ -211,21 +296,29 @@ public class OntologyBean {
 				ontologyVersion.setInternalVersionNumber(internalVersionNumber);
 			}
 
-			ontologyVersion.setIsRemote(isRemote);
-			ontologyVersion.setIsReviewed(isReviewed);
-			ontologyVersion.setDateCreated(dateCreated);
-			ontologyVersion.setDateReleased(dateReleased);
+			if (isRemote != null) {
+				ontologyVersion.setIsRemote(isRemote);
+			}
+
+			if (isReviewed != null) {
+				ontologyVersion.setIsReviewed(isReviewed);
+			}
+
+			ontologyVersion.setDateCreated((dateCreated != null) ? dateCreated
+					: Calendar.getInstance().getTime());
+
+			if (dateReleased != null) {
+				ontologyVersion.setDateReleased(dateReleased);
+			}
 
 			// populate status, if necessary
 			populateStatusToVersionEntity(ontologyVersion);
 
 			// do not override filePath if blank
 			if (filePath != null) {
-				ontologyVersion.setFilePath(filePath);
+				ontologyVersion.setFilePath(StringHelper
+						.isNullOrNullString(filePath) ? null : filePath);
 			}
-
-			// Set dateCreated
-			ontologyVersion.setDateCreated(Calendar.getInstance().getTime());
 		}
 	}
 
@@ -278,14 +371,12 @@ public class OntologyBean {
 	 * 
 	 * @param ncboOntology
 	 */
-
 	public void populateToCategoryEntity(
 			List<NcboOntologyCategory> ontologyCategoryList,
 			NcboOntologyVersion ontologyVersion) {
-		List<Integer> categoryIdList = this.getCategoryIds();
 		Set<NcboOntologyCategory> ncboOntologyCategorySet = new HashSet<NcboOntologyCategory>();
 
-		for (Integer categoryId : categoryIdList) {
+		for (Integer categoryId : categoryIds) {
 			NcboOntologyCategory ontologyCategory = new NcboOntologyCategory();
 			NcboLCategory ncboLCategory = new NcboLCategory();
 			ncboLCategory.setId(categoryId);
@@ -405,8 +496,7 @@ public class OntologyBean {
 	 *            the versionNumber to set
 	 */
 	public void setVersionNumber(String versionNumber) {
-		this.versionNumber = StringHelper.isNullOrNullString(versionNumber) ? null
-				: versionNumber;
+		this.versionNumber = versionNumber;
 	}
 
 	/**
@@ -421,8 +511,7 @@ public class OntologyBean {
 	 *            the versionStatus to set
 	 */
 	public void setVersionStatus(String versionStatus) {
-		this.versionStatus = StringHelper.isNullOrNullString(versionStatus) ? null
-				: versionStatus;
+		this.versionStatus = versionStatus;
 	}
 
 	/**
@@ -437,8 +526,7 @@ public class OntologyBean {
 	 *            the filePath to set
 	 */
 	public void setFilePath(String filePath) {
-		this.filePath = StringHelper.isNullOrNullString(filePath) ? null
-				: filePath;
+		this.filePath = filePath;
 	}
 
 	/**
@@ -498,8 +586,7 @@ public class OntologyBean {
 	 *            the displayLabel to set
 	 */
 	public void setDisplayLabel(String displayLabel) {
-		this.displayLabel = StringHelper.isNullOrNullString(displayLabel) ? null
-				: displayLabel;
+		this.displayLabel = displayLabel;
 	}
 
 	/**
@@ -514,7 +601,30 @@ public class OntologyBean {
 	 *            the format to set
 	 */
 	public void setFormat(String format) {
-		this.format = StringHelper.isNullOrNullString(format) ? null : format;
+		this.format = format;
+	}
+
+	/**
+	 * @param description
+	 *            the description to set
+	 */
+	public void setDescription(String description) {
+		this.description = description;
+	}
+
+	/**
+	 * @return the abbreviation
+	 */
+	public String getAbbreviation() {
+		return abbreviation;
+	}
+
+	/**
+	 * @param abbreviation
+	 *            the abbreviation to set
+	 */
+	public void setAbbreviation(String abbreviation) {
+		this.abbreviation = abbreviation;
 	}
 
 	/**
@@ -529,8 +639,7 @@ public class OntologyBean {
 	 *            the contactName to set
 	 */
 	public void setContactName(String contactName) {
-		this.contactName = StringHelper.isNullOrNullString(contactName) ? null
-				: contactName;
+		this.contactName = contactName;
 	}
 
 	/**
@@ -545,8 +654,7 @@ public class OntologyBean {
 	 *            the contactEmail to set
 	 */
 	public void setContactEmail(String contactEmail) {
-		this.contactEmail = StringHelper.isNullOrNullString(contactEmail) ? null
-				: contactEmail;
+		this.contactEmail = contactEmail;
 	}
 
 	/**
@@ -561,8 +669,7 @@ public class OntologyBean {
 	 *            the homepage to set
 	 */
 	public void setHomepage(String homepage) {
-		this.homepage = StringHelper.isNullOrNullString(homepage) ? null
-				: homepage;
+		this.homepage = homepage;
 	}
 
 	/**
@@ -577,8 +684,7 @@ public class OntologyBean {
 	 *            the documentation to set
 	 */
 	public void setDocumentation(String documentation) {
-		this.documentation = StringHelper.isNullOrNullString(documentation) ? null
-				: documentation;
+		this.documentation = documentation;
 	}
 
 	/**
@@ -593,8 +699,7 @@ public class OntologyBean {
 	 *            the publication to set
 	 */
 	public void setPublication(String publication) {
-		this.publication = StringHelper.isNullOrNullString(publication) ? null
-				: publication;
+		this.publication = publication;
 	}
 
 	/**
@@ -609,7 +714,7 @@ public class OntologyBean {
 	 *            the urn to set
 	 */
 	public void setUrn(String urn) {
-		this.urn = StringHelper.isNullOrNullString(urn) ? null : urn;
+		this.urn = urn;
 	}
 
 	/**
@@ -735,8 +840,7 @@ public class OntologyBean {
 	 *            the codingScheme to set
 	 */
 	public void setCodingScheme(String codingScheme) {
-		this.codingScheme = StringHelper.isNullOrNullString(codingScheme) ? null
-				: codingScheme;
+		this.codingScheme = codingScheme;
 	}
 
 	public Integer getStatusId() {
@@ -750,17 +854,6 @@ public class OntologyBean {
 	public String getOntologyDirPath() {
 		return "/" + this.getOntologyId() + "/"
 				+ this.getInternalVersionNumber();
-	}
-
-	/**
-	 * UserId should be already set in OntologyBean from OntologiesRestlet when
-	 * create request comes in
-	 */
-	public NcboUser getNcboUserFromSession() {
-		NcboUser ncboUser = new NcboUser();
-		ncboUser.setId(this.getUserId());
-
-		return ncboUser;
 	}
 
 	/**
@@ -790,8 +883,7 @@ public class OntologyBean {
 	 *            the oboFoundryId to set
 	 */
 	public void setOboFoundryId(String oboFoundryId) {
-		this.oboFoundryId = StringHelper.isNullOrNullString(oboFoundryId) ? null
-				: oboFoundryId;
+		this.oboFoundryId = oboFoundryId;
 	}
 
 	/**
@@ -846,9 +938,7 @@ public class OntologyBean {
 	 *            the targetTerminologies to set
 	 */
 	public void setTargetTerminologies(String targetTerminologies) {
-		this.targetTerminologies = StringHelper
-				.isNullOrNullString(targetTerminologies) ? null
-				: targetTerminologies;
+		this.targetTerminologies = targetTerminologies;
 	}
 
 	/**
@@ -863,8 +953,7 @@ public class OntologyBean {
 	 *            the synonymSlot to set
 	 */
 	public void setSynonymSlot(String synonymSlot) {
-		this.synonymSlot = StringHelper.isNullOrNullString(synonymSlot) ? null
-				: synonymSlot;
+		this.synonymSlot = synonymSlot;
 	}
 
 	/**
@@ -879,9 +968,7 @@ public class OntologyBean {
 	 *            the preferredNameSlot to set
 	 */
 	public void setPreferredNameSlot(String preferredNameSlot) {
-		this.preferredNameSlot = StringHelper
-				.isNullOrNullString(preferredNameSlot) ? null
-				: preferredNameSlot;
+		this.preferredNameSlot = preferredNameSlot;
 	}
 
 	/**
@@ -889,30 +976,5 @@ public class OntologyBean {
 	 */
 	public String getDescription() {
 		return description;
-	}
-
-	/**
-	 * @param description
-	 *            the description to set
-	 */
-	public void setDescription(String description) {
-		this.description = StringHelper.isNullOrNullString(description) ? null
-				: description;
-	}
-
-	/**
-	 * @return the abbreviation
-	 */
-	public String getAbbreviation() {
-		return abbreviation;
-	}
-
-	/**
-	 * @param abbreviation
-	 *            the abbreviation to set
-	 */
-	public void setAbbreviation(String abbreviation) {
-		this.abbreviation = StringHelper.isNullOrNullString(abbreviation) ? null
-				: abbreviation;
 	}
 }
