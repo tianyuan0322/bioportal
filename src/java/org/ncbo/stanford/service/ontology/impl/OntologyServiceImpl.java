@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -320,7 +321,7 @@ public class OntologyServiceImpl implements OntologyService {
 
 		// 4. <ontologyFile> - populate and save
 		ontologyBean.populateToFileEntity(ontologyFileList, newOntologyVersion);
-		
+
 		for (NcboOntologyFile ontologyFile : ontologyFileList) {
 			ncboOntologyFileDAO.save(ontologyFile);
 		}
@@ -420,6 +421,7 @@ public class OntologyServiceImpl implements OntologyService {
 		// 3. <ontologyMetadata>
 		Set<NcboOntologyVersionMetadata> ontologyMetadataSet = ontologyVersion
 				.getNcboOntologyVersionMetadatas();
+
 		for (NcboOntologyVersionMetadata ontologyMetadata : ontologyMetadataSet) {
 			ncboOntologyVersionMetadataDAO.delete(ontologyMetadata);
 		}
@@ -429,6 +431,7 @@ public class OntologyServiceImpl implements OntologyService {
 		// 5. <ontologyFile>
 		Set<NcboOntologyFile> ontologyFileSet = ontologyVersion
 				.getNcboOntologyFiles();
+
 		for (NcboOntologyFile ontologyFile : ontologyFileSet) {
 			ncboOntologyFileDAO.delete(ontologyFile);
 		}
@@ -436,6 +439,7 @@ public class OntologyServiceImpl implements OntologyService {
 		// 6. <ontologyQueue>
 		Set<NcboOntologyLoadQueue> ontologyLoadQueueSet = ontologyVersion
 				.getNcboOntologyLoadQueues();
+		
 		for (NcboOntologyLoadQueue ontologyLoadQueue : ontologyLoadQueueSet) {
 			ncboOntologyLoadQueueDAO.delete(ontologyLoadQueue);
 		}
@@ -493,8 +497,9 @@ public class OntologyServiceImpl implements OntologyService {
 
 		for (NcboOntologyCategory ontologyCategory : categories) {
 			ncboOntologyCategoryDAO.delete(ontologyCategory);
-			categories.remove(ontologyCategory);
 		}
+		
+		ontologyVersion.setNcboOntologyCategories(new HashSet<NcboOntologyCategory>(0));
 	}
 
 	private boolean deleteOntologyFile(OntologyBean ontologyBean) {
