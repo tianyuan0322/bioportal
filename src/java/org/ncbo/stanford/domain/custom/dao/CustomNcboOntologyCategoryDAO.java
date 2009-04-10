@@ -24,6 +24,17 @@ public class CustomNcboOntologyCategoryDAO extends NcboOntologyCategoryDAO {
 		super();
 	}
 
+	public void deleteOntologyCategory(
+			NcboOntologyCategory persistentInstance) {
+		try {
+			delete(persistentInstance);
+			getHibernateTemplate().flush();
+		} catch (RuntimeException re) {
+			log.error("delete failed", re);
+			throw re;
+		}
+	}	
+
 	/**
 	 * @param transientInstance
 	 * @return
