@@ -145,9 +145,9 @@ public abstract class AbstractBaseRestlet extends Restlet {
 		List<Integer> integers = null;
 
 		if (RequestUtils.parameterExists(httpRequest, paramName)) {
-			String ontologyIdsStr = (String) httpRequest
+			String integerListStr = (String) httpRequest
 					.getParameter(paramName);
-			integers = RequestUtils.parseIntegerListParam(ontologyIdsStr);
+			integers = RequestUtils.parseIntegerListParam(integerListStr);
 
 			if (integers.isEmpty()) {
 				throw new Exception("You must supply at least one valid "

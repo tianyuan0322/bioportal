@@ -64,5 +64,4 @@ public interface RequestParamConstants {
 	 * Diff download parameters
 	 */
 	public static final String PARAM_FORMAT = "format";
-
 }

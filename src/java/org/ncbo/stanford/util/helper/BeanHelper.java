@@ -229,17 +229,11 @@ public class BeanHelper {
 			bean.setTargetTerminologies(targetTerminologies);
 		}
 
-		String[] categoryIdsStr = httpServletRequest
-				.getParameterValues(MessageUtils
-						.getMessage("form.ontology.categoryId"));
+		String categoryIdsStr = httpServletRequest.getParameter(MessageUtils
+				.getMessage("form.ontology.categoryId"));
 
 		if (categoryIdsStr != null) {
-			for (String categoryIdStr : categoryIdsStr) {
-				categoryIds.add(Integer.parseInt(categoryIdStr));
-			}
-		}
-
-		if (categoryIds.size() > 0) {
+			categoryIds = RequestUtils.parseIntegerListParam(categoryIdsStr);
 			bean.setCategoryIds(categoryIds);
 		}
 
