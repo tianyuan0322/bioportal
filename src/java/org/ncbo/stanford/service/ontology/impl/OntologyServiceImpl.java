@@ -421,7 +421,6 @@ public class OntologyServiceImpl implements OntologyService {
 		// 3. <ontologyMetadata>
 		Set<NcboOntologyVersionMetadata> ontologyMetadataSet = ontologyVersion
 				.getNcboOntologyVersionMetadatas();
-
 		for (NcboOntologyVersionMetadata ontologyMetadata : ontologyMetadataSet) {
 			ncboOntologyVersionMetadataDAO.delete(ontologyMetadata);
 		}
@@ -431,7 +430,6 @@ public class OntologyServiceImpl implements OntologyService {
 		// 5. <ontologyFile>
 		Set<NcboOntologyFile> ontologyFileSet = ontologyVersion
 				.getNcboOntologyFiles();
-
 		for (NcboOntologyFile ontologyFile : ontologyFileSet) {
 			ncboOntologyFileDAO.delete(ontologyFile);
 		}
@@ -439,7 +437,6 @@ public class OntologyServiceImpl implements OntologyService {
 		// 6. <ontologyQueue>
 		Set<NcboOntologyLoadQueue> ontologyLoadQueueSet = ontologyVersion
 				.getNcboOntologyLoadQueues();
-		
 		for (NcboOntologyLoadQueue ontologyLoadQueue : ontologyLoadQueueSet) {
 			ncboOntologyLoadQueueDAO.delete(ontologyLoadQueue);
 		}
@@ -498,8 +495,9 @@ public class OntologyServiceImpl implements OntologyService {
 		for (NcboOntologyCategory ontologyCategory : categories) {
 			ncboOntologyCategoryDAO.delete(ontologyCategory);
 		}
-		
-		ontologyVersion.setNcboOntologyCategories(new HashSet<NcboOntologyCategory>(0));
+
+		ontologyVersion
+				.setNcboOntologyCategories(new HashSet<NcboOntologyCategory>(0));
 	}
 
 	private boolean deleteOntologyFile(OntologyBean ontologyBean) {
