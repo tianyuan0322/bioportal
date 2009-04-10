@@ -16,5 +16,5 @@ public interface OBSManager {
 			String conceptId) throws Exception;
 
 	public List<ClassBean> findSiblings(String ontologyVersionId,
-			String conceptId) throws Exception;
+			String conceptId, String level) throws Exception;
 }

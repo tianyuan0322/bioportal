@@ -30,6 +30,7 @@ import org.ncbo.stanford.bean.obs.ChildBean;
 import org.ncbo.stanford.bean.obs.ConceptBean;
 import org.ncbo.stanford.bean.obs.ParentBean;
 import org.ncbo.stanford.bean.obs.PathBean;
+import org.ncbo.stanford.bean.obs.SiblingBean;
 import org.ncbo.stanford.bean.response.AbstractResponseBean;
 import org.ncbo.stanford.bean.response.ErrorBean;
 import org.ncbo.stanford.bean.response.ErrorStatusBean;
@@ -473,6 +474,8 @@ public class XMLSerializationServiceImpl implements XMLSerializationService {
 				ChildBean.class);
 		xmlSerializer.alias(MessageUtils.getMessage("entity.obs.pathbean"),
 				PathBean.class);
+		xmlSerializer.alias(MessageUtils.getMessage("entity.obs.siblingbean"),
+				SiblingBean.class);
 
 		xmlSerializer.alias(ApplicationConstants.RESPONSE_XML_TAG_NAME,
 				SuccessBean.class);

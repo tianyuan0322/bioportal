@@ -1,6 +1,7 @@
 package org.ncbo.stanford.manager.obs.impl;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 import org.apache.commons.logging.Log;
@@ -18,6 +19,7 @@ import org.ncbo.stanford.service.xml.XMLSerializationService;
 import org.ncbo.stanford.util.MessageUtils;
 import org.ncbo.stanford.util.constants.ApplicationConstants;
 import org.ncbo.stanford.util.helper.StringHelper;
+import org.ncbo.stanford.view.util.constants.RequestParamConstants;
 
 public class OBSManagerImpl implements OBSManager {
 
@@ -111,10 +113,13 @@ public class OBSManagerImpl implements OBSManager {
 
 	@SuppressWarnings("unchecked")
 	public List<ClassBean> findSiblings(String ontologyVersionId,
-			String conceptId) throws Exception {
+			String conceptId, String level) throws Exception {
+		
+		HashMap<String, String> getParams = new HashMap<String, String>(0);
+		getParams.put(RequestParamConstants.PARAM_LEVEL, level);
 		AbstractResponseBean response = xmlSerializationService.processGet(
 				MessageUtils.getMessage("obs.rest.siblings.url")
-						+ ontologyVersionId + "/" + conceptId, null);
+						+ ontologyVersionId + "/" + conceptId, getParams);
 		List<ClassBean> siblings = null;
 
 		if (response.isResponseSuccess()) {

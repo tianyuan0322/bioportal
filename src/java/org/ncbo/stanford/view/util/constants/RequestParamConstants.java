@@ -64,4 +64,9 @@ public interface RequestParamConstants {
 	 * Diff download parameters
 	 */
 	public static final String PARAM_FORMAT = "format";
+
+	/**
+	 * Hierarchy parameters
+	 */
+	public static final String PARAM_LEVEL = "level";
 }
