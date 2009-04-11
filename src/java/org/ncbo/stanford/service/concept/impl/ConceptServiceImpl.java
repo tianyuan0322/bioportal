@@ -97,6 +97,13 @@ public class ConceptServiceImpl implements ConceptService {
 				conceptId, level);
 	}
 
+	public List<ClassBean> findLeaves(
+			OntologyVersionIdBean ontologyVersionId, String conceptId)
+			throws Exception {
+		return obsManager.findLeaves(ontologyVersionId
+				.getOntologyVersionId(), conceptId);
+	}
+
 	//
 	// Non interface methods
 	//

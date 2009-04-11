@@ -39,6 +39,10 @@ public interface ConceptService {
 			OntologyVersionIdBean ontologyVersionId, String conceptId)
 			throws Exception;
 
-	public List<ClassBean> findSiblings(OntologyVersionIdBean ontologyVersionId,
-			String conceptId, String level) throws Exception;
+	public List<ClassBean> findSiblings(
+			OntologyVersionIdBean ontologyVersionId, String conceptId,
+			String level) throws Exception;
+
+	public List<ClassBean> findLeaves(OntologyVersionIdBean ontologyVersionId,
+			String conceptId) throws Exception;
 }

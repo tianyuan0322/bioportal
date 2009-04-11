@@ -142,6 +142,34 @@ public class OBSManagerImpl implements OBSManager {
 		return siblings;
 	}
 
+	@SuppressWarnings("unchecked")
+	public List<ClassBean> findLeaves(String ontologyVersionId,
+			String conceptId) throws Exception {
+		AbstractResponseBean response = xmlSerializationService.processGet(
+				MessageUtils.getMessage("obs.rest.leafpath.url")
+						+ ontologyVersionId + "/" + conceptId, null);
+		List<ClassBean> leaves = null;
+
+		if (response.isResponseSuccess()) {
+			String data = ((SuccessBean) response).getDataXml();
+			List<PathBean> obsLeaves = (ArrayList<PathBean>) xmlSerializationService
+					.fromXML(data);
+			leaves = new ArrayList<ClassBean>(0);
+
+			for (PathBean obsLeaf : obsLeaves) {
+				ClassBean leaf = new ClassBean();
+				leaf.setId(obsLeaf.getLocalConceptId());
+				leaf.addRelation(ApplicationConstants.PATH, obsLeaf
+						.getPath());
+				leaves.add(leaf);
+			}
+		} else {
+			handleError(response);
+		}
+
+		return leaves;
+	}
+
 	private void handleError(AbstractResponseBean response) throws Exception {
 		ErrorStatusBean error = (ErrorStatusBean) response;
 		String message = error.getLongMessage();
