@@ -10,6 +10,13 @@ public class ConceptNotFoundException extends Exception {
 	public static final String DEFAULT_MESSAGE = "Concept not found";
 
 	/**
+	 * 
+	 */
+	public ConceptNotFoundException() {
+		super(DEFAULT_MESSAGE);
+	}
+
+	/**
 	 * @param message
 	 * @param cause
 	 */

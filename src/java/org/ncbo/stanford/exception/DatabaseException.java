@@ -11,6 +11,14 @@ public class DatabaseException extends Exception {
 	 * 
 	 */
 	private static final long serialVersionUID = 4976135600117962702L;
+	public static final String DEFAULT_MESSAGE = "Database exception";
+
+	/**
+	 * 
+	 */
+	public DatabaseException() {
+		super(DEFAULT_MESSAGE);
+	}
 
 	public DatabaseException(String msg) {
 		super(msg);

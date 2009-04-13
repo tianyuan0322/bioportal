@@ -10,6 +10,13 @@ public class InvalidParameterException extends Exception {
 	public static final String DEFAULT_MESSAGE = "Invalid parameter";
 
 	/**
+	 * 
+	 */
+	public InvalidParameterException() {
+		super(DEFAULT_MESSAGE);
+	}
+
+	/**
 	 * @param message
 	 * @param cause
 	 */

@@ -1,21 +1,18 @@
 package org.ncbo.stanford.bean;
 
-public class OntologyIdBean {
-
-	private Integer ontologyId;
+public class OntologyIdBean extends AbstractIdBean {
 
 	/**
 	 * @param ontologyId
 	 */
-	public OntologyIdBean(Integer ontologyId) {
-		super();
-		this.ontologyId = ontologyId;
+	public OntologyIdBean(String ontologyId) {
+		super(ontologyId);
 	}
 
 	/**
 	 * @return the ontologyId
 	 */
-	public Integer getOntologyId() {
-		return ontologyId;
+	public String getOntologyId() {
+		return getId();
 	}
 }

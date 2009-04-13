@@ -9,6 +9,13 @@ public class InvalidDataException extends Exception {
 
 	public static final String DEFAULT_MESSAGE = "Invalid data";
 
+	/**
+	 * 
+	 */
+	public InvalidDataException() {
+		super(DEFAULT_MESSAGE);
+	}
+
 	public InvalidDataException(String msg) {
 		super(msg);
 	}

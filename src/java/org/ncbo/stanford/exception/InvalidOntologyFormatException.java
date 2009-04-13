@@ -10,6 +10,13 @@ public class InvalidOntologyFormatException extends Exception {
 	public static final String DEFAULT_MESSAGE = "Invalid ontology format";
 
 	/**
+	 * 
+	 */
+	public InvalidOntologyFormatException() {
+		super(DEFAULT_MESSAGE);
+	}
+
+	/**
 	 * @param message
 	 * @param cause
 	 */

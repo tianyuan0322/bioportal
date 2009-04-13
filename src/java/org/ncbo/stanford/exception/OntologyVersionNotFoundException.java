@@ -10,6 +10,13 @@ public class OntologyVersionNotFoundException extends Exception {
 	public static final String DEFAULT_MESSAGE = "Ontology version not found";
 
 	/**
+	 * 
+	 */
+	public OntologyVersionNotFoundException() {
+		super(DEFAULT_MESSAGE);
+	}
+
+	/**
 	 * @param message
 	 * @param cause
 	 */

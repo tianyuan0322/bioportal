@@ -14,6 +14,8 @@ import org.ncbo.stanford.bean.OntologyVersionIdBean;
 import org.ncbo.stanford.bean.concept.ClassBean;
 import org.ncbo.stanford.domain.custom.dao.CustomNcboOntologyVersionDAO;
 import org.ncbo.stanford.domain.custom.entity.VNcboOntology;
+import org.ncbo.stanford.exception.ConceptNotFoundException;
+import org.ncbo.stanford.exception.OntologyNotFoundException;
 import org.ncbo.stanford.manager.obs.OBSManager;
 import org.ncbo.stanford.manager.retrieval.OntologyRetrievalManager;
 import org.ncbo.stanford.service.concept.ConceptService;
@@ -29,6 +31,8 @@ public class ConceptServiceImpl implements ConceptService {
 
 	@SuppressWarnings("unused")
 	private static final Log log = LogFactory.getLog(ConceptServiceImpl.class);
+
+	private static final String UMLS_VIRTUAL_NOT_IMPLEMENTED = "The virtual concept service for UMLS has not been implemented";
 
 	private CustomNcboOntologyVersionDAO ncboOntologyVersionDAO;
 	private Map<String, String> ontologyFormatHandlerMap = new HashMap<String, String>(
@@ -71,17 +75,28 @@ public class ConceptServiceImpl implements ConceptService {
 				conceptId);
 	}
 
+	public List<ClassBean> findParents(OntologyIdBean ontologyId,
+			String conceptId) throws Exception {
+		if (ontologyId.isUmls()) {
+			throw new ConceptNotFoundException(UMLS_VIRTUAL_NOT_IMPLEMENTED);
+		}
+
+		VNcboOntology ontology = ncboOntologyVersionDAO
+				.findLatestActiveOntologyVersion(Integer.parseInt(ontologyId
+						.getOntologyId()));
+
+		if (ontology == null) {
+			throw new OntologyNotFoundException();
+		}
+
+		return obsManager.findParents(ontology.getId().toString(), conceptId);
+	}
+
 	public List<ClassBean> findChildren(
 			OntologyVersionIdBean ontologyVersionId, String conceptId)
 			throws Exception {
 		return obsManager.findChildren(
 				ontologyVersionId.getOntologyVersionId(), conceptId);
-	}
-
-	public List<ClassBean> findParents(OntologyIdBean ontologyId,
-			String conceptId) {
-		// TODO Auto-generated method stub
-		return null;
 	}
 
 	public List<ClassBean> findRootPaths(
@@ -91,17 +106,17 @@ public class ConceptServiceImpl implements ConceptService {
 				.getOntologyVersionId(), conceptId);
 	}
 
-	public List<ClassBean> findSiblings(OntologyVersionIdBean ontologyVersionId,
-			String conceptId, String level) throws Exception {
-		return obsManager.findSiblings(ontologyVersionId.getOntologyVersionId(),
-				conceptId, level);
+	public List<ClassBean> findSiblings(
+			OntologyVersionIdBean ontologyVersionId, String conceptId,
+			String level) throws Exception {
+		return obsManager.findSiblings(
+				ontologyVersionId.getOntologyVersionId(), conceptId, level);
 	}
 
-	public List<ClassBean> findLeaves(
-			OntologyVersionIdBean ontologyVersionId, String conceptId)
-			throws Exception {
-		return obsManager.findLeaves(ontologyVersionId
-				.getOntologyVersionId(), conceptId);
+	public List<ClassBean> findLeaves(OntologyVersionIdBean ontologyVersionId,
+			String conceptId) throws Exception {
+		return obsManager.findLeaves(ontologyVersionId.getOntologyVersionId(),
+				conceptId);
 	}
 
 	//

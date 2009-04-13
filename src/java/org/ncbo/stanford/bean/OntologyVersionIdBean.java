@@ -1,35 +1,18 @@
 package org.ncbo.stanford.bean;
 
-public class OntologyVersionIdBean {
-
-	private String ontologyVersionId = null;
-	private boolean isUmls;
+public class OntologyVersionIdBean extends AbstractIdBean {
 
 	/**
 	 * @param ontologyVersionId
 	 */
 	public OntologyVersionIdBean(String ontologyVersionId) {
-		super();
-		this.ontologyVersionId = ontologyVersionId;
-
-		try {
-			Integer.parseInt(ontologyVersionId);
-		} catch (NumberFormatException e) {
-			isUmls = true;
-		}
+		super(ontologyVersionId);
 	}
 
 	/**
 	 * @return the ontologyVersionId
 	 */
 	public String getOntologyVersionId() {
-		return ontologyVersionId;
-	}
-
-	/**
-	 * @return the isUmls
-	 */
-	public boolean isUmls() {
-		return isUmls;
+		return getId();
 	}
 }

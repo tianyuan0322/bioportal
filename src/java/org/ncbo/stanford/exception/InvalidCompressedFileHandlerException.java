@@ -9,6 +9,13 @@ public class InvalidCompressedFileHandlerException extends Exception {
 	public static final String DEFAULT_MESSAGE = "Invalid ontology compressed file handler";
 
 	/**
+	 * 
+	 */
+	public InvalidCompressedFileHandlerException() {
+		super(DEFAULT_MESSAGE);
+	}
+
+	/**
 	 * @param message
 	 * @param cause
 	 */
