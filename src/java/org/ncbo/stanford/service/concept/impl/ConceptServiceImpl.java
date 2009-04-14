@@ -77,17 +77,7 @@ public class ConceptServiceImpl implements ConceptService {
 
 	public List<ClassBean> findParents(OntologyIdBean ontologyId,
 			String conceptId) throws Exception {
-		if (ontologyId.isUmls()) {
-			throw new ConceptNotFoundException(UMLS_VIRTUAL_NOT_IMPLEMENTED);
-		}
-
-		VNcboOntology ontology = ncboOntologyVersionDAO
-				.findLatestActiveOntologyVersion(Integer.parseInt(ontologyId
-						.getOntologyId()));
-
-		if (ontology == null) {
-			throw new OntologyNotFoundException();
-		}
+		VNcboOntology ontology = findOntology(ontologyId);
 
 		return obsManager.findParents(ontology.getId().toString(), conceptId);
 	}
@@ -97,6 +87,13 @@ public class ConceptServiceImpl implements ConceptService {
 			throws Exception {
 		return obsManager.findChildren(
 				ontologyVersionId.getOntologyVersionId(), conceptId);
+	}
+
+	public List<ClassBean> findChildren(OntologyIdBean ontologyId,
+			String conceptId) throws Exception {
+		VNcboOntology ontology = findOntology(ontologyId);
+
+		return obsManager.findChildren(ontology.getId().toString(), conceptId);
 	}
 
 	public List<ClassBean> findRootPaths(
@@ -122,6 +119,23 @@ public class ConceptServiceImpl implements ConceptService {
 	//
 	// Non interface methods
 	//
+
+	private VNcboOntology findOntology(OntologyIdBean ontologyId)
+			throws ConceptNotFoundException, OntologyNotFoundException {
+		if (ontologyId.isUmls()) {
+			throw new ConceptNotFoundException(UMLS_VIRTUAL_NOT_IMPLEMENTED);
+		}
+
+		VNcboOntology ontology = ncboOntologyVersionDAO
+				.findLatestActiveOntologyVersion(Integer.parseInt(ontologyId
+						.getOntologyId()));
+
+		if (ontology == null) {
+			throw new OntologyNotFoundException();
+		}
+
+		return ontology;
+	}
 
 	private OntologyRetrievalManager getRetrievalManager(VNcboOntology ontology) {
 		String formatHandler = ontologyFormatHandlerMap.get(ontology

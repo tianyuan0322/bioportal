@@ -35,6 +35,9 @@ public interface ConceptService {
 			OntologyVersionIdBean ontologyVersionId, String conceptId)
 			throws Exception;
 
+	public List<ClassBean> findChildren(OntologyIdBean ontologyId,
+			String conceptId) throws Exception;
+
 	public List<ClassBean> findRootPaths(
 			OntologyVersionIdBean ontologyVersionId, String conceptId)
 			throws Exception;
