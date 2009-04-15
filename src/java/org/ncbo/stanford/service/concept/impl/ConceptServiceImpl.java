@@ -14,7 +14,6 @@ import org.ncbo.stanford.bean.OntologyVersionIdBean;
 import org.ncbo.stanford.bean.concept.ClassBean;
 import org.ncbo.stanford.domain.custom.dao.CustomNcboOntologyVersionDAO;
 import org.ncbo.stanford.domain.custom.entity.VNcboOntology;
-import org.ncbo.stanford.exception.ConceptNotFoundException;
 import org.ncbo.stanford.exception.OntologyNotFoundException;
 import org.ncbo.stanford.manager.obs.OBSManager;
 import org.ncbo.stanford.manager.retrieval.OntologyRetrievalManager;
@@ -31,8 +30,6 @@ public class ConceptServiceImpl implements ConceptService {
 
 	@SuppressWarnings("unused")
 	private static final Log log = LogFactory.getLog(ConceptServiceImpl.class);
-
-	private static final String UMLS_VIRTUAL_NOT_IMPLEMENTED = "The virtual concept service for UMLS has not been implemented";
 
 	private CustomNcboOntologyVersionDAO ncboOntologyVersionDAO;
 	private Map<String, String> ontologyFormatHandlerMap = new HashMap<String, String>(
@@ -77,9 +74,9 @@ public class ConceptServiceImpl implements ConceptService {
 
 	public List<ClassBean> findParents(OntologyIdBean ontologyId,
 			String conceptId) throws Exception {
-		VNcboOntology ontology = findOntology(ontologyId);
+		String ontologyVersionId = findLatestActiveOntologyVersionId(ontologyId);
 
-		return obsManager.findParents(ontology.getId().toString(), conceptId);
+		return obsManager.findParents(ontologyVersionId, conceptId);
 	}
 
 	public List<ClassBean> findChildren(
@@ -91,9 +88,9 @@ public class ConceptServiceImpl implements ConceptService {
 
 	public List<ClassBean> findChildren(OntologyIdBean ontologyId,
 			String conceptId) throws Exception {
-		VNcboOntology ontology = findOntology(ontologyId);
+		String ontologyVersionId = findLatestActiveOntologyVersionId(ontologyId);
 
-		return obsManager.findChildren(ontology.getId().toString(), conceptId);
+		return obsManager.findChildren(ontologyVersionId, conceptId);
 	}
 
 	public List<ClassBean> findRootPaths(
@@ -120,21 +117,26 @@ public class ConceptServiceImpl implements ConceptService {
 	// Non interface methods
 	//
 
-	private VNcboOntology findOntology(OntologyIdBean ontologyId)
-			throws ConceptNotFoundException, OntologyNotFoundException {
+	private String findLatestActiveOntologyVersionId(OntologyIdBean ontologyId)
+			throws OntologyNotFoundException {
+		String ontologyVersionId = null;
+
+		// if UMLS, just pass through the id, else, find the latest version
 		if (ontologyId.isUmls()) {
-			throw new ConceptNotFoundException(UMLS_VIRTUAL_NOT_IMPLEMENTED);
+			ontologyVersionId = ontologyId.getOntologyId();
+		} else {
+			VNcboOntology ontology = ncboOntologyVersionDAO
+					.findLatestActiveOntologyVersion(Integer
+							.parseInt(ontologyId.getOntologyId()));
+
+			if (ontology == null) {
+				throw new OntologyNotFoundException();
+			}
+
+			ontologyVersionId = ontology.getId().toString();
 		}
 
-		VNcboOntology ontology = ncboOntologyVersionDAO
-				.findLatestActiveOntologyVersion(Integer.parseInt(ontologyId
-						.getOntologyId()));
-
-		if (ontology == null) {
-			throw new OntologyNotFoundException();
-		}
-
-		return ontology;
+		return ontologyVersionId;
 	}
 
 	private OntologyRetrievalManager getRetrievalManager(VNcboOntology ontology) {
