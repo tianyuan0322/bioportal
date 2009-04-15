@@ -67,6 +67,7 @@ public class OntologyLoadSchedulerServiceImpl implements
 	 */
 	@Transactional(propagation = Propagation.NEVER)
 	public void parseOntologies() {
+		errorOntologies.clear();
 		List<NcboOntologyLoadQueue> ontologiesToLoad = ncboOntologyLoadQueueDAO
 				.getOntologiesToLoad();
 
@@ -95,6 +96,7 @@ public class OntologyLoadSchedulerServiceImpl implements
 	 */
 	@Transactional(propagation = Propagation.NEVER)
 	public void parseOntology(String ontologyVersionId) {
+		errorOntologies.clear();
 		VNcboOntology ontologyVersion = ncboOntologyVersionDAO
 				.findOntologyVersion(Integer.parseInt(ontologyVersionId));
 
@@ -111,6 +113,7 @@ public class OntologyLoadSchedulerServiceImpl implements
 
 	@Transactional(propagation = Propagation.NEVER)
 	public void parseOntologies(List<Integer> ontologyVersionIdList) {
+		errorOntologies.clear();
 		List<VNcboOntology> ontologies = ncboOntologyVersionDAO
 				.findOntologyVersions(ontologyVersionIdList);
 
