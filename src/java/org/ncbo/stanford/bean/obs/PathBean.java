@@ -1,24 +1,8 @@
 package org.ncbo.stanford.bean.obs;
 
-public class PathBean {
+public class PathBean extends AbstractConceptBean {
 
-	private String localConceptId;
 	private String path;
-
-	/**
-	 * @return the localConceptId
-	 */
-	public String getLocalConceptId() {
-		return localConceptId;
-	}
-
-	/**
-	 * @param localConceptId
-	 *            the localConceptId to set
-	 */
-	public void setLocalConceptId(String localConceptId) {
-		this.localConceptId = localConceptId;
-	}
 
 	/**
 	 * @return the path
@@ -33,5 +17,9 @@ public class PathBean {
 	 */
 	public void setPath(String path) {
 		this.path = path;
+	}
+
+	public String toString() {
+		return "[" + super.toString() + " path: " + path + "]";
 	}
 }

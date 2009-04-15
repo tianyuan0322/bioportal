@@ -1,24 +1,8 @@
 package org.ncbo.stanford.bean.obs;
 
-public class SiblingBean {
+public class SiblingBean extends AbstractConceptBean {
 
-	private String localConceptId;
 	private int level;
-
-	/**
-	 * @return the localConceptId
-	 */
-	public String getLocalConceptId() {
-		return localConceptId;
-	}
-
-	/**
-	 * @param localConceptId
-	 *            the localConceptId to set
-	 */
-	public void setLocalConceptId(String localConceptId) {
-		this.localConceptId = localConceptId;
-	}
 
 	/**
 	 * @return the level
@@ -36,7 +20,6 @@ public class SiblingBean {
 	}
 
 	public String toString() {
-		return "[localConceptID: " + this.getLocalConceptId() + ", level: "
-				+ this.getLevel() + "]";
+		return "[" + super.toString() + " level: " + level + "]";
 	}
 }

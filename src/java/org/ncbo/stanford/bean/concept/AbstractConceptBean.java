@@ -13,6 +13,7 @@ import java.util.Map;
  * 
  */
 public abstract class AbstractConceptBean {
+	protected String ontologyVersionId;
 	protected String id;
 	protected String fullId;
 	protected String label;
@@ -70,7 +71,8 @@ public abstract class AbstractConceptBean {
 	@SuppressWarnings("unchecked")
 	public String toString(String indent) {
 		String spacer = "   ";
-		String str = "Id: " + id + " Label: " + label + "\n";
+		String str = "Id: " + id + " FullId: " + fullId + " Label: " + label
+				+ " OntologyVersionId: " + ontologyVersionId + "\n";
 		str += indent + "Relations:\n";
 
 		for (Object key : relations.keySet()) {
@@ -93,6 +95,7 @@ public abstract class AbstractConceptBean {
 			} else {
 				str += value;
 			}
+
 			str += "\n";
 		}
 
@@ -149,16 +152,69 @@ public abstract class AbstractConceptBean {
 		return relations;
 	}
 
-	public boolean equals(Object o) {
-		if (o == this)
-			return true;
-		if (!(o instanceof AbstractConceptBean))
-			return false;
-		AbstractConceptBean t = (AbstractConceptBean) o;
-		if (id.equals(t.id) && label.equals(t.label)
-				&& relations.equals(t.relations))
-			return true;
-		return false;
+	/**
+	 * @return the ontologyVersionId
+	 */
+	public String getOntologyVersionId() {
+		return ontologyVersionId;
 	}
 
+	/**
+	 * @param ontologyVersionId
+	 *            the ontologyVersionId to set
+	 */
+	public void setOntologyVersionId(String ontologyVersionId) {
+		this.ontologyVersionId = ontologyVersionId;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see java.lang.Object#equals(java.lang.Object)
+	 */
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+
+		if (obj == null)
+			return false;
+
+		if (getClass() != obj.getClass())
+			return false;
+
+		final AbstractConceptBean other = (AbstractConceptBean) obj;
+
+		if (fullId == null) {
+			if (other.fullId != null)
+				return false;
+		} else if (!fullId.equals(other.fullId))
+			return false;
+
+		if (id == null) {
+			if (other.id != null)
+				return false;
+		} else if (!id.equals(other.id))
+			return false;
+
+		if (label == null) {
+			if (other.label != null)
+				return false;
+		} else if (!label.equals(other.label))
+			return false;
+
+		if (ontologyVersionId == null) {
+			if (other.ontologyVersionId != null)
+				return false;
+		} else if (!ontologyVersionId.equals(other.ontologyVersionId))
+			return false;
+
+		if (relations == null) {
+			if (other.relations != null)
+				return false;
+		} else if (!relations.equals(other.relations))
+			return false;
+
+		return true;
+	}
 }

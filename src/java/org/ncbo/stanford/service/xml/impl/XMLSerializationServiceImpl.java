@@ -26,11 +26,6 @@ import org.ncbo.stanford.bean.concept.ClassBean;
 import org.ncbo.stanford.bean.concept.InstanceBean;
 import org.ncbo.stanford.bean.concept.PropertyBean;
 import org.ncbo.stanford.bean.http.HttpInputStreamWrapper;
-import org.ncbo.stanford.bean.obs.ChildBean;
-import org.ncbo.stanford.bean.obs.ConceptBean;
-import org.ncbo.stanford.bean.obs.ParentBean;
-import org.ncbo.stanford.bean.obs.PathBean;
-import org.ncbo.stanford.bean.obs.SiblingBean;
 import org.ncbo.stanford.bean.response.AbstractResponseBean;
 import org.ncbo.stanford.bean.response.ErrorBean;
 import org.ncbo.stanford.bean.response.ErrorStatusBean;
@@ -387,6 +382,16 @@ public class XMLSerializationServiceImpl implements XMLSerializationService {
 		xmlSerializer.omitField(definedIn, fieldName);
 	}
 
+	@SuppressWarnings("unchecked")
+	public void alias(String name, Class type) {
+		xmlSerializer.alias(name, type);
+	}
+
+	@SuppressWarnings("unchecked")
+	public void aliasField(String alias, Class definedIn, String fieldName) {
+		xmlSerializer.aliasField(alias, definedIn, fieldName);
+	}
+
 	public Object fromXML(String xml) {
 		return xmlSerializer.fromXML(xml);
 	}
@@ -464,18 +469,6 @@ public class XMLSerializationServiceImpl implements XMLSerializationService {
 		xmlSerializer.alias(MessageUtils.getMessage("entity.page"), Page.class);
 		xmlSerializer.alias(MessageUtils.getMessage("entity.ontologyhitbean"),
 				OntologyHitBean.class);
-
-		// OBS Wrapper Aliases
-		xmlSerializer.alias(MessageUtils.getMessage("entity.obs.conceptbean"),
-				ConceptBean.class);
-		xmlSerializer.alias(MessageUtils.getMessage("entity.obs.parentbean"),
-				ParentBean.class);
-		xmlSerializer.alias(MessageUtils.getMessage("entity.obs.childbean"),
-				ChildBean.class);
-		xmlSerializer.alias(MessageUtils.getMessage("entity.obs.pathbean"),
-				PathBean.class);
-		xmlSerializer.alias(MessageUtils.getMessage("entity.obs.siblingbean"),
-				SiblingBean.class);
 
 		xmlSerializer.alias(ApplicationConstants.RESPONSE_XML_TAG_NAME,
 				SuccessBean.class);

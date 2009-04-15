@@ -3,11 +3,15 @@ package org.ncbo.stanford.manager.obs.impl;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.ncbo.stanford.bean.concept.ClassBean;
+import org.ncbo.stanford.bean.obs.AbstractConceptBean;
 import org.ncbo.stanford.bean.obs.ChildBean;
+import org.ncbo.stanford.bean.obs.ConceptBean;
 import org.ncbo.stanford.bean.obs.ParentBean;
 import org.ncbo.stanford.bean.obs.PathBean;
 import org.ncbo.stanford.bean.obs.SiblingBean;
@@ -25,6 +29,10 @@ public class OBSManagerImpl implements OBSManager {
 
 	@SuppressWarnings("unused")
 	private static final Log log = LogFactory.getLog(OBSManagerImpl.class);
+
+	private static final String OBS_ONTOLOGY_ID_PATTERN = "\\w+/";
+	private static final String OBS_CONCEPT_ID_PATTERN = "^(.+)/(.+)$";
+
 	private XMLSerializationService xmlSerializationService;
 
 	@SuppressWarnings("unchecked")
@@ -43,7 +51,7 @@ public class OBSManagerImpl implements OBSManager {
 
 			for (ParentBean obsParent : obsParents) {
 				ClassBean parent = new ClassBean();
-				parent.setId(obsParent.getParentLocalConceptId());
+				populateBaseClassBean(obsParent, parent);
 				parent.addRelation(ApplicationConstants.LEVEL, obsParent
 						.getLevel());
 				parents.add(parent);
@@ -71,7 +79,7 @@ public class OBSManagerImpl implements OBSManager {
 
 			for (ChildBean obsChild : obsChildren) {
 				ClassBean child = new ClassBean();
-				child.setId(obsChild.getLocalConceptId());
+				populateBaseClassBean(obsChild, child);
 				child.addRelation(ApplicationConstants.LEVEL, obsChild
 						.getLevel());
 				children.add(child);
@@ -99,9 +107,9 @@ public class OBSManagerImpl implements OBSManager {
 
 			for (PathBean obsRootPath : obsRootPaths) {
 				ClassBean rootPath = new ClassBean();
-				rootPath.setId(obsRootPath.getLocalConceptId());
+				populateBaseClassBean(obsRootPath, rootPath);
 				rootPath.addRelation(ApplicationConstants.PATH, obsRootPath
-						.getPath());
+						.getPath().replaceAll(OBS_ONTOLOGY_ID_PATTERN, ""));
 				rootPaths.add(rootPath);
 			}
 		} else {
@@ -114,7 +122,7 @@ public class OBSManagerImpl implements OBSManager {
 	@SuppressWarnings("unchecked")
 	public List<ClassBean> findSiblings(String ontologyVersionId,
 			String conceptId, String level) throws Exception {
-		
+
 		HashMap<String, String> getParams = new HashMap<String, String>(0);
 		getParams.put(RequestParamConstants.PARAM_LEVEL, level);
 		AbstractResponseBean response = xmlSerializationService.processGet(
@@ -130,7 +138,7 @@ public class OBSManagerImpl implements OBSManager {
 
 			for (SiblingBean obsSibling : obsSiblings) {
 				ClassBean sibling = new ClassBean();
-				sibling.setId(obsSibling.getLocalConceptId());
+				populateBaseClassBean(obsSibling, sibling);
 				sibling.addRelation(ApplicationConstants.LEVEL, obsSibling
 						.getLevel());
 				siblings.add(sibling);
@@ -143,8 +151,8 @@ public class OBSManagerImpl implements OBSManager {
 	}
 
 	@SuppressWarnings("unchecked")
-	public List<ClassBean> findLeaves(String ontologyVersionId,
-			String conceptId) throws Exception {
+	public List<ClassBean> findLeaves(String ontologyVersionId, String conceptId)
+			throws Exception {
 		AbstractResponseBean response = xmlSerializationService.processGet(
 				MessageUtils.getMessage("obs.rest.leafpath.url")
 						+ ontologyVersionId + "/" + conceptId, null);
@@ -158,9 +166,9 @@ public class OBSManagerImpl implements OBSManager {
 
 			for (PathBean obsLeaf : obsLeaves) {
 				ClassBean leaf = new ClassBean();
-				leaf.setId(obsLeaf.getLocalConceptId());
-				leaf.addRelation(ApplicationConstants.PATH, obsLeaf
-						.getPath());
+				populateBaseClassBean(obsLeaf, leaf);
+				leaf.addRelation(ApplicationConstants.PATH, obsLeaf.getPath()
+						.replaceAll(OBS_ONTOLOGY_ID_PATTERN, ""));
 				leaves.add(leaf);
 			}
 		} else {
@@ -168,6 +176,21 @@ public class OBSManagerImpl implements OBSManager {
 		}
 
 		return leaves;
+	}
+
+	private void populateBaseClassBean(AbstractConceptBean obsBean,
+			ClassBean classBean) {
+		String fullConceptId = obsBean.getLocalConceptId();
+		Pattern mask = Pattern.compile(OBS_CONCEPT_ID_PATTERN);
+		Matcher matcher = mask.matcher(fullConceptId);
+		matcher.find();
+
+		if (matcher.matches() && matcher.groupCount() > 1) {
+			classBean.setOntologyVersionId(matcher.group(1));
+			classBean.setId(matcher.group(2));
+		} else {
+			classBean.setId(fullConceptId);
+		}
 	}
 
 	private void handleError(AbstractResponseBean response) throws Exception {
@@ -187,6 +210,21 @@ public class OBSManagerImpl implements OBSManager {
 	 */
 	public void setXmlSerializationService(
 			XMLSerializationService xmlSerializationService) {
+		// OBS Wrapper Aliases
+		xmlSerializationService.alias(MessageUtils
+				.getMessage("entity.obs.conceptbean"), ConceptBean.class);
+		xmlSerializationService.alias(MessageUtils
+				.getMessage("entity.obs.parentbean"), ParentBean.class);
+		xmlSerializationService.aliasField(MessageUtils
+				.getMessage("property.obs.parentlocalconceptid"),
+				ParentBean.class, MessageUtils
+						.getMessage("property.obs.localconceptid"));
+		xmlSerializationService.alias(MessageUtils
+				.getMessage("entity.obs.childbean"), ChildBean.class);
+		xmlSerializationService.alias(MessageUtils
+				.getMessage("entity.obs.pathbean"), PathBean.class);
+		xmlSerializationService.alias(MessageUtils
+				.getMessage("entity.obs.siblingbean"), SiblingBean.class);
 		this.xmlSerializationService = xmlSerializationService;
 	}
 }

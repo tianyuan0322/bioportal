@@ -78,6 +78,12 @@ public interface XMLSerializationService {
 
 	@SuppressWarnings("unchecked")
 	public void omitField(Class definedIn, String fieldName);
-	
+
+	@SuppressWarnings("unchecked")
+	public void alias(String name, Class type);
+
+	@SuppressWarnings("unchecked")
+	public void aliasField(String alias, Class definedIn, String fieldName);
+
 	public Object fromXML(String xml);
 }
