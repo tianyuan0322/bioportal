@@ -37,10 +37,12 @@ public class OBSManagerImpl implements OBSManager {
 
 	@SuppressWarnings("unchecked")
 	public List<ClassBean> findParents(String ontologyVersionId,
-			String conceptId) throws Exception {
+			String conceptId, Integer level, Integer offset, Integer limit)
+			throws Exception {
 		AbstractResponseBean response = xmlSerializationService.processGet(
 				MessageUtils.getMessage("obs.rest.parents.url")
-						+ ontologyVersionId + "/" + conceptId, null);
+						+ ontologyVersionId + "/" + conceptId,
+				assembleGetParameters(level, offset, limit));
 		List<ClassBean> parents = null;
 
 		if (response.isResponseSuccess()) {
@@ -65,10 +67,12 @@ public class OBSManagerImpl implements OBSManager {
 
 	@SuppressWarnings("unchecked")
 	public List<ClassBean> findChildren(String ontologyVersionId,
-			String conceptId) throws Exception {
+			String conceptId, Integer level, Integer offset, Integer limit)
+			throws Exception {
 		AbstractResponseBean response = xmlSerializationService.processGet(
 				MessageUtils.getMessage("obs.rest.children.url")
-						+ ontologyVersionId + "/" + conceptId, null);
+						+ ontologyVersionId + "/" + conceptId,
+				assembleGetParameters(level, offset, limit));
 		List<ClassBean> children = null;
 
 		if (response.isResponseSuccess()) {
@@ -93,10 +97,11 @@ public class OBSManagerImpl implements OBSManager {
 
 	@SuppressWarnings("unchecked")
 	public List<ClassBean> findRootPaths(String ontologyVersionId,
-			String conceptId) throws Exception {
+			String conceptId, Integer offset, Integer limit) throws Exception {
 		AbstractResponseBean response = xmlSerializationService.processGet(
 				MessageUtils.getMessage("obs.rest.rootpath.url")
-						+ ontologyVersionId + "/" + conceptId, null);
+						+ ontologyVersionId + "/" + conceptId,
+				assembleGetParameters(null, offset, limit));
 		List<ClassBean> rootPaths = null;
 
 		if (response.isResponseSuccess()) {
@@ -121,13 +126,11 @@ public class OBSManagerImpl implements OBSManager {
 
 	@SuppressWarnings("unchecked")
 	public List<ClassBean> findSiblings(String ontologyVersionId,
-			String conceptId, String level) throws Exception {
-
-		HashMap<String, String> getParams = new HashMap<String, String>(0);
-		getParams.put(RequestParamConstants.PARAM_LEVEL, level);
+			String conceptId, Integer level, Integer offset) throws Exception {
 		AbstractResponseBean response = xmlSerializationService.processGet(
 				MessageUtils.getMessage("obs.rest.siblings.url")
-						+ ontologyVersionId + "/" + conceptId, getParams);
+						+ ontologyVersionId + "/" + conceptId,
+				assembleGetParameters(level, offset, null));
 		List<ClassBean> siblings = null;
 
 		if (response.isResponseSuccess()) {
@@ -151,11 +154,12 @@ public class OBSManagerImpl implements OBSManager {
 	}
 
 	@SuppressWarnings("unchecked")
-	public List<ClassBean> findLeaves(String ontologyVersionId, String conceptId)
-			throws Exception {
+	public List<ClassBean> findLeaves(String ontologyVersionId,
+			String conceptId, Integer offset, Integer limit) throws Exception {
 		AbstractResponseBean response = xmlSerializationService.processGet(
 				MessageUtils.getMessage("obs.rest.leafpath.url")
-						+ ontologyVersionId + "/" + conceptId, null);
+						+ ontologyVersionId + "/" + conceptId,
+				assembleGetParameters(null, offset, limit));
 		List<ClassBean> leaves = null;
 
 		if (response.isResponseSuccess()) {
@@ -176,6 +180,30 @@ public class OBSManagerImpl implements OBSManager {
 		}
 
 		return leaves;
+	}
+
+	/**
+	 * @param xmlSerializationService
+	 *            the xmlSerializationService to set
+	 */
+	public void setXmlSerializationService(
+			XMLSerializationService xmlSerializationService) {
+		// OBS Wrapper Aliases
+		xmlSerializationService.alias(MessageUtils
+				.getMessage("entity.obs.conceptbean"), ConceptBean.class);
+		xmlSerializationService.alias(MessageUtils
+				.getMessage("entity.obs.parentbean"), ParentBean.class);
+		xmlSerializationService.aliasField(MessageUtils
+				.getMessage("property.obs.parentlocalconceptid"),
+				ParentBean.class, MessageUtils
+						.getMessage("property.obs.localconceptid"));
+		xmlSerializationService.alias(MessageUtils
+				.getMessage("entity.obs.childbean"), ChildBean.class);
+		xmlSerializationService.alias(MessageUtils
+				.getMessage("entity.obs.pathbean"), PathBean.class);
+		xmlSerializationService.alias(MessageUtils
+				.getMessage("entity.obs.siblingbean"), SiblingBean.class);
+		this.xmlSerializationService = xmlSerializationService;
 	}
 
 	private void populateBaseClassBean(AbstractConceptBean obsBean,
@@ -204,27 +232,23 @@ public class OBSManagerImpl implements OBSManager {
 		throw new Exception(message);
 	}
 
-	/**
-	 * @param xmlSerializationService
-	 *            the xmlSerializationService to set
-	 */
-	public void setXmlSerializationService(
-			XMLSerializationService xmlSerializationService) {
-		// OBS Wrapper Aliases
-		xmlSerializationService.alias(MessageUtils
-				.getMessage("entity.obs.conceptbean"), ConceptBean.class);
-		xmlSerializationService.alias(MessageUtils
-				.getMessage("entity.obs.parentbean"), ParentBean.class);
-		xmlSerializationService.aliasField(MessageUtils
-				.getMessage("property.obs.parentlocalconceptid"),
-				ParentBean.class, MessageUtils
-						.getMessage("property.obs.localconceptid"));
-		xmlSerializationService.alias(MessageUtils
-				.getMessage("entity.obs.childbean"), ChildBean.class);
-		xmlSerializationService.alias(MessageUtils
-				.getMessage("entity.obs.pathbean"), PathBean.class);
-		xmlSerializationService.alias(MessageUtils
-				.getMessage("entity.obs.siblingbean"), SiblingBean.class);
-		this.xmlSerializationService = xmlSerializationService;
+	private HashMap<String, String> assembleGetParameters(Integer level,
+			Integer offset, Integer limit) {
+		HashMap<String, String> getParams = new HashMap<String, String>(0);
+
+		if (level != null) {
+			getParams.put(RequestParamConstants.PARAM_LEVEL, level.toString());
+		}
+
+		if (offset != null) {
+			getParams
+					.put(RequestParamConstants.PARAM_OFFSET, offset.toString());
+		}
+
+		if (limit != null) {
+			getParams.put(RequestParamConstants.PARAM_LIMIT, limit.toString());
+		}
+
+		return getParams;
 	}
 }

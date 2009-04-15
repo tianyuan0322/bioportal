@@ -36,22 +36,33 @@ public class ConceptSiblingsRestlet extends AbstractBaseRestlet {
 	}
 
 	private void findSiblings(Request request, Response response) {
+		List<ClassBean> siblings = null;
 		HttpServletRequest httpRequest = RequestUtils
 				.getHttpServletRequest(request);
 		String ontologyVersionId = (String) request.getAttributes().get(
 				MessageUtils.getMessage("entity.ontologyversionid"));
 		String conceptId = getConceptId(request);
+
 		String level = (String) httpRequest
 				.getParameter(RequestParamConstants.PARAM_LEVEL);
-		List<ClassBean> siblings = null;
-		
+		String offset = (String) httpRequest
+				.getParameter(RequestParamConstants.PARAM_OFFSET);
+		Integer levelInt = RequestUtils.parseIntegerParam(level);
+		Integer offsetInt = RequestUtils.parseIntegerParam(offset);
+
 		try {
 			if (StringHelper.isNullOrNullString(level)) {
-				throw new InvalidParameterException("No level parameter specified");
+				throw new InvalidParameterException(
+						"No level parameter specified");
 			}
-			
-			siblings = conceptService.findSiblings(
-					new OntologyVersionIdBean(ontologyVersionId), conceptId, level);
+
+			if (levelInt == null) {
+				throw new InvalidParameterException(
+						"Invalid level parameter specified");
+			}
+
+			siblings = conceptService.findSiblings(new OntologyVersionIdBean(
+					ontologyVersionId), conceptId, levelInt, offsetInt);
 		} catch (Exception e) {
 			response.setStatus(Status.SERVER_ERROR_INTERNAL, e.getMessage());
 			e.printStackTrace();

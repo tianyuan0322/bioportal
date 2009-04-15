@@ -26,26 +26,29 @@ public interface ConceptService {
 			String conceptId, boolean light) throws Exception;
 
 	public List<ClassBean> findParents(OntologyVersionIdBean ontologyVersionId,
-			String conceptId) throws Exception;
+			String conceptId, Integer level, Integer offset, Integer limit)
+			throws Exception;
 
 	public List<ClassBean> findParents(OntologyIdBean ontologyId,
-			String conceptId) throws Exception;
+			String conceptId, Integer level, Integer offset, Integer limit)
+			throws Exception;
 
 	public List<ClassBean> findChildren(
-			OntologyVersionIdBean ontologyVersionId, String conceptId)
-			throws Exception;
+			OntologyVersionIdBean ontologyVersionId, String conceptId,
+			Integer level, Integer offset, Integer limit) throws Exception;
 
 	public List<ClassBean> findChildren(OntologyIdBean ontologyId,
-			String conceptId) throws Exception;
+			String conceptId, Integer level, Integer offset, Integer limit)
+			throws Exception;
 
 	public List<ClassBean> findRootPaths(
-			OntologyVersionIdBean ontologyVersionId, String conceptId)
-			throws Exception;
+			OntologyVersionIdBean ontologyVersionId, String conceptId,
+			Integer offset, Integer limit) throws Exception;
 
 	public List<ClassBean> findSiblings(
 			OntologyVersionIdBean ontologyVersionId, String conceptId,
-			String level) throws Exception;
+			Integer level, Integer offset) throws Exception;
 
 	public List<ClassBean> findLeaves(OntologyVersionIdBean ontologyVersionId,
-			String conceptId) throws Exception;
+			String conceptId, Integer offset, Integer limit) throws Exception;
 }
