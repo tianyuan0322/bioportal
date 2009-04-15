@@ -233,10 +233,31 @@ public class OntologyServiceImpl implements OntologyService {
 		OntologyBean ontologyBean = null;
 		VNcboOntology ncboOntology = ncboOntologyVersionDAO
 				.findLatestOntologyVersion(ontologyId);
+
 		if (ncboOntology != null) {
 			ontologyBean = new OntologyBean();
 			ontologyBean.populateFromEntity(ncboOntology);
 		}
+
+		return ontologyBean;
+	}
+
+	/**
+	 * Finds the latest "active" version of a given ontology
+	 * 
+	 * @param ontologyId
+	 * @return
+	 */
+	public OntologyBean findLatestActiveOntologyVersion(Integer ontologyId) {
+		OntologyBean ontologyBean = null;
+		VNcboOntology ncboOntology = ncboOntologyVersionDAO
+				.findLatestActiveOntologyVersion(ontologyId);
+
+		if (ncboOntology != null) {
+			ontologyBean = new OntologyBean();
+			ontologyBean.populateFromEntity(ncboOntology);
+		}
+
 		return ontologyBean;
 	}
 

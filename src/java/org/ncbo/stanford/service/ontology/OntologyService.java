@@ -93,6 +93,14 @@ public interface OntologyService {
 	public OntologyBean findLatestOntologyVersion(Integer ontologyId);
 
 	/**
+	 * Finds the latest "active" version of a given ontology
+	 * 
+	 * @param ontologyId
+	 * @return
+	 */
+	public OntologyBean findLatestActiveOntologyVersion(Integer ontologyId);
+
+	/**
 	 * Find all versions of the given ontology in the system
 	 * 
 	 * @param ontologyId

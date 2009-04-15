@@ -53,7 +53,7 @@ public class VirtualUriRestlet extends AbstractBaseRestlet {
 				}
 			} else {
 				OntologyBean ontBean = ontologyService
-						.findLatestOntologyVersion(ontId);
+						.findLatestActiveOntologyVersion(ontId);
 				returnObject = conceptService.findConcept(ontBean.getId(),
 						conceptId);
 
