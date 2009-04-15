@@ -106,6 +106,14 @@ public class ConceptServiceImpl implements ConceptService {
 				.getOntologyVersionId(), conceptId, offset, limit);
 	}
 
+	public List<ClassBean> findRootPaths(OntologyIdBean ontologyId,
+			String conceptId, Integer offset, Integer limit) throws Exception {
+		String ontologyVersionId = findLatestActiveOntologyVersionId(ontologyId);
+
+		return obsManager.findRootPaths(ontologyVersionId, conceptId, offset,
+				limit);
+	}
+
 	public List<ClassBean> findSiblings(
 			OntologyVersionIdBean ontologyVersionId, String conceptId,
 			Integer level, Integer offset) throws Exception {
@@ -114,10 +122,26 @@ public class ConceptServiceImpl implements ConceptService {
 				offset);
 	}
 
+	public List<ClassBean> findSiblings(OntologyIdBean ontologyId,
+			String conceptId, Integer level, Integer offset) throws Exception {
+		String ontologyVersionId = findLatestActiveOntologyVersionId(ontologyId);
+
+		return obsManager.findLeaves(ontologyVersionId, conceptId, level,
+				offset);
+	}
+
 	public List<ClassBean> findLeaves(OntologyVersionIdBean ontologyVersionId,
 			String conceptId, Integer offset, Integer limit) throws Exception {
 		return obsManager.findLeaves(ontologyVersionId.getOntologyVersionId(),
 				conceptId, offset, limit);
+	}
+
+	public List<ClassBean> findLeaves(OntologyIdBean ontologyId,
+			String conceptId, Integer offset, Integer limit) throws Exception {
+		String ontologyVersionId = findLatestActiveOntologyVersionId(ontologyId);
+
+		return obsManager.findLeaves(ontologyVersionId, conceptId, offset,
+				limit);
 	}
 
 	//

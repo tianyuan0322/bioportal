@@ -45,10 +45,19 @@ public interface ConceptService {
 			OntologyVersionIdBean ontologyVersionId, String conceptId,
 			Integer offset, Integer limit) throws Exception;
 
+	public List<ClassBean> findRootPaths(OntologyIdBean ontologyVersionId,
+			String conceptId, Integer offset, Integer limit) throws Exception;
+
 	public List<ClassBean> findSiblings(
 			OntologyVersionIdBean ontologyVersionId, String conceptId,
 			Integer level, Integer offset) throws Exception;
 
+	public List<ClassBean> findSiblings(OntologyIdBean ontologyId,
+			String conceptId, Integer level, Integer offset) throws Exception;
+
 	public List<ClassBean> findLeaves(OntologyVersionIdBean ontologyVersionId,
+			String conceptId, Integer offset, Integer limit) throws Exception;
+
+	public List<ClassBean> findLeaves(OntologyIdBean ontologyVersionId,
 			String conceptId, Integer offset, Integer limit) throws Exception;
 }

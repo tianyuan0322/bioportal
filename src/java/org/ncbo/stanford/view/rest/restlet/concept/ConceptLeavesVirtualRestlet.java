@@ -6,7 +6,7 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.ncbo.stanford.bean.OntologyVersionIdBean;
+import org.ncbo.stanford.bean.OntologyIdBean;
 import org.ncbo.stanford.bean.concept.ClassBean;
 import org.ncbo.stanford.service.concept.ConceptService;
 import org.ncbo.stanford.util.MessageUtils;
@@ -17,11 +17,11 @@ import org.restlet.data.Request;
 import org.restlet.data.Response;
 import org.restlet.data.Status;
 
-public class ConceptLeavesRestlet extends AbstractBaseRestlet {
+public class ConceptLeavesVirtualRestlet extends AbstractBaseRestlet {
 
 	@SuppressWarnings("unused")
 	private static final Log log = LogFactory
-			.getLog(ConceptLeavesRestlet.class);
+			.getLog(ConceptLeavesVirtualRestlet.class);
 
 	private ConceptService conceptService;
 
@@ -37,8 +37,8 @@ public class ConceptLeavesRestlet extends AbstractBaseRestlet {
 		List<ClassBean> leafConcepts = null;
 		HttpServletRequest httpRequest = RequestUtils
 				.getHttpServletRequest(request);
-		String ontologyVersionId = (String) request.getAttributes().get(
-				MessageUtils.getMessage("entity.ontologyversionid"));
+		String ontologyId = (String) request.getAttributes().get(
+				MessageUtils.getMessage("entity.ontologyid"));
 		String conceptId = getConceptId(request);
 
 		String offset = (String) httpRequest
@@ -49,8 +49,8 @@ public class ConceptLeavesRestlet extends AbstractBaseRestlet {
 		Integer limitInt = RequestUtils.parseIntegerParam(limit);
 
 		try {
-			leafConcepts = conceptService.findLeaves(new OntologyVersionIdBean(
-					ontologyVersionId), conceptId, offsetInt, limitInt);
+			leafConcepts = conceptService.findLeaves(new OntologyIdBean(
+					ontologyId), conceptId, offsetInt, limitInt);
 		} catch (Exception e) {
 			response.setStatus(Status.SERVER_ERROR_INTERNAL, e.getMessage());
 			e.printStackTrace();
