@@ -36,7 +36,7 @@ import org.ncbo.stanford.util.cache.expiration.system.ExpirationSystem;
  * @author Michael Dorf
  * 
  */
-public class AbstractSearchService {
+public abstract class AbstractSearchService {
 
 	@SuppressWarnings("unused")
 	private static final Log log = LogFactory
