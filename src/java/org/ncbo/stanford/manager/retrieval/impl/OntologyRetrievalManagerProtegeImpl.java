@@ -202,7 +202,7 @@ public class OntologyRetrievalManagerProtegeImpl extends
 	}
 
 	private String getBrowserText(Frame frame) {
-		return StringHelper.unquote(frame.getBrowserText());
+		return StringHelper.unSingleQuote(frame.getBrowserText());
 	}
 
 	private ClassBean createLightClassBean(Cls cls) {

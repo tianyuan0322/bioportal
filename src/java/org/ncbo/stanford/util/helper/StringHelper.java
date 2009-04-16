@@ -20,7 +20,18 @@ import java.util.StringTokenizer;
  */
 public abstract class StringHelper {
 	private final static String EMPTY_TXT = "";
-	private final static String QUOTE_TXT = "\"";
+	private final static char DOUBLE_QUOTE_CHAR = '"';
+	private final static char SINGLE_QUOTE_CHAR = '\'';
+
+//	public static void main(String[] args) {
+//		String k = "\"Hello World\"";
+//		String us = unSingleQuote(k);
+//		System.out.println("With Quotes: " + k);
+//		System.out.println("Without Single Quotes: " + us);
+//
+//		String ud = unDoubleQuote(k);
+//		System.out.println("Without Double Quotes: " + ud);
+//	}
 
 	/**
 	 * Formats the number
@@ -205,7 +216,7 @@ public abstract class StringHelper {
 	}
 
 	public static String doubleQuoteString(String str) {
-		return QUOTE_TXT + str + QUOTE_TXT;
+		return DOUBLE_QUOTE_CHAR + str + DOUBLE_QUOTE_CHAR;
 	}
 
 	/**
@@ -419,15 +430,34 @@ public abstract class StringHelper {
 	 * Removes leading and trailing double-quotes from a string (only if both
 	 * are present). The rest of double-quotes remain intact.
 	 */
-	public static String unquote(String string) {
+	public static String unDoubleQuote(String string) {
 		if (string == null)
 			return (null);
 		if (string.length() <= 0)
 			return ("");
 		if (string.length() == 1)
 			return (string); // You can't unquote a single quote!
-		if (string.charAt(0) == '"'
-				&& string.charAt(string.length() - 1) == '"') {
+		if (string.charAt(0) == DOUBLE_QUOTE_CHAR
+				&& string.charAt(string.length() - 1) == DOUBLE_QUOTE_CHAR) {
+			return (string.substring(1, string.length() - 1));
+		} else {
+			return (string);
+		}
+	}
+
+	/**
+	 * Removes leading and trailing single-quotes from a string (only if both
+	 * are present). The rest of single-quotes remain intact.
+	 */
+	public static String unSingleQuote(String string) {
+		if (string == null)
+			return (null);
+		if (string.length() <= 0)
+			return ("");
+		if (string.length() == 1)
+			return (string); // You can't unquote a single quote!
+		if (string.charAt(0) == SINGLE_QUOTE_CHAR
+				&& string.charAt(string.length() - 1) == SINGLE_QUOTE_CHAR) {
 			return (string.substring(1, string.length() - 1));
 		} else {
 			return (string);
