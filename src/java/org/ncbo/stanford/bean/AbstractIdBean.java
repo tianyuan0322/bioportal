@@ -1,6 +1,6 @@
 package org.ncbo.stanford.bean;
 
-public class AbstractIdBean {
+public abstract class AbstractIdBean {
 
 	private String id = null;
 	private boolean isUmls = false;
