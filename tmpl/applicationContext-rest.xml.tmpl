@@ -264,6 +264,14 @@
 		</property>
 	</bean>
 
+	<bean id="oboCVSPullRestlet"
+		class="org.ncbo.stanford.view.rest.restlet.loader.remote.OBOCVSPullRestlet"
+		parent="abstractBaseRestlet">
+		<property name="oboCVSPullService">
+			<ref bean="oboCVSPullService" />
+		</property>
+	</bean>
+
 	<!-- All mappings: -->
 	<bean id="restManager"
 		class="org.ncbo.stanford.view.rest.base.RestManager">
@@ -382,6 +390,9 @@
 						<entry
 							key="/virtual/{ontologyversionid}/{conceptid}">
 							<ref local="virtualRestlet" />
+						</entry>
+						<entry key="/obopull">
+							<ref local="oboCVSPullRestlet" />
 						</entry>
 					</map>
 				</constructor-arg>
