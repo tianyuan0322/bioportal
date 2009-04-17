@@ -33,10 +33,9 @@ public class OBOCVSPullRestlet extends AbstractBaseRestlet {
 	}
 
 	/**
-	 * @param oboCVSPullService
-	 *            the oboCVSPullService to set
+	 * @param oboCVSPullService the oboCVSPullService to set
 	 */
-	public void setOboPullService(OBOCVSPullService oboCVSPullService) {
+	public void setOboCVSPullService(OBOCVSPullService oboCVSPullService) {
 		this.oboCVSPullService = oboCVSPullService;
 	}
 }
