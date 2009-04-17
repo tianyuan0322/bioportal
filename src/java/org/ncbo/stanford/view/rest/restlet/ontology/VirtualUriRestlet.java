@@ -37,12 +37,12 @@ public class VirtualUriRestlet extends AbstractBaseRestlet {
 	private void getVirtualEntity(Request request, Response response) {
 		String conceptId = (String) request.getAttributes().get(
 				MessageUtils.getMessage("entity.conceptid"));
-		String ontologyVersionId = (String) request.getAttributes().get(
+		String ontologyId = (String) request.getAttributes().get(
 				MessageUtils.getMessage("entity.ontologyid"));
 		Object returnObject = null;
 
 		try {
-			Integer ontId = Integer.parseInt(ontologyVersionId);
+			Integer ontId = Integer.parseInt(ontologyId);
 
 			if (conceptId == null) {
 				returnObject = ontologyService.findLatestOntologyVersion(ontId);
