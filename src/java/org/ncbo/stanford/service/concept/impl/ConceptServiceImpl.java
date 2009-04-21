@@ -126,7 +126,7 @@ public class ConceptServiceImpl implements ConceptService {
 			String conceptId, Integer level, Integer offset) throws Exception {
 		String ontologyVersionId = findLatestActiveOntologyVersionId(ontologyId);
 
-		return obsManager.findLeaves(ontologyVersionId, conceptId, level,
+		return obsManager.findSiblings(ontologyVersionId, conceptId, level,
 				offset);
 	}
 
