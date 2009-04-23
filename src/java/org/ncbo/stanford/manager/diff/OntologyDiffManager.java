@@ -61,4 +61,16 @@ public interface OntologyDiffManager {
 	 * @param onotlogyId
 	 */
 	public List<ArrayList<String>> getAllDiffsForOntology(Integer ontologyId);
+	/** 
+	 * Creates a diff between two ontology versions, if one does not exist. 
+	 * Assumes that a diff exists if the corresponding directory exists
+	 * 
+	 * @param ontologyVersionOld, ontologyVersionNew
+	 * 
+	 * @throws Exception
+	 */
+
+	public boolean diffExists (VNcboOntology ontologyVersionOld,
+			VNcboOntology ontologyVersionNew) throws Exception;
+
 }
