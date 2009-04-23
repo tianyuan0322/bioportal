@@ -34,4 +34,10 @@ public class OntologyDiffManagerLexGridImpl extends
 			throws FileNotFoundException {
 		throw new UnsupportedOperationException();
 	}
+
+	public boolean diffExists(VNcboOntology ontologyVersionOld,
+			VNcboOntology ontologyVersionNew) throws Exception {
+		// TODO Auto-generated method stub
+		return false;
+	}
 }
