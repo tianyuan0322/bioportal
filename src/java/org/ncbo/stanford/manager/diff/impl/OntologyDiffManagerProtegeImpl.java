@@ -349,4 +349,10 @@ public class OntologyDiffManagerProtegeImpl extends
 			CustomNcboOntologyVersionDAO ncboOntologyVersionDAO) {
 		this.ncboOntologyVersionDAO = ncboOntologyVersionDAO;
 	}
+
+	public boolean diffExists(VNcboOntology ontologyVersionOld,
+			VNcboOntology ontologyVersionNew) throws Exception {
+		// TODO Auto-generated method stub
+		return false;
+	}
 }
