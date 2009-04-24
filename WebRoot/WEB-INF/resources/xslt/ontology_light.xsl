@@ -27,6 +27,7 @@
 			<xsl:copy-of select="contactEmail" />
 			<xsl:copy-of select="statusId" />
 			<xsl:copy-of select="categoryIds" />
+			<xsl:copy-of select="isFoundry" />
 			<xsl:copy-of select="dateCreated" />
 		</ontologyBean>
 	</xsl:template>
