@@ -19,6 +19,7 @@ public class SearchIndexBean extends SearchBean {
 	public static final String CONCEPT_ID_FIELD_LABEL = "conceptId";
 	public static final String CONCEPT_ID_SHORT_FIELD_LABEL = "conceptIdShort";
 	public static final String PREFERRED_NAME_FIELD_LABEL = "preferredName";
+	public static final String PREFERRED_NAME_LC_FIELD_LABEL = "preferredNameLC";
 	public static final String CONTENTS_FIELD_LABEL = "contents";
 	public static final String LITERAL_CONTENTS_FIELD_LABEL = "literalContents";
 
@@ -39,6 +40,9 @@ public class SearchIndexBean extends SearchBean {
 			Field.Index.NOT_ANALYZED);
 	private SearchField preferredName = new SearchField(
 			PREFERRED_NAME_FIELD_LABEL, Field.Store.YES,
+			Field.Index.NOT_ANALYZED);
+	private SearchField preferredNameLC = new SearchField(
+			PREFERRED_NAME_LC_FIELD_LABEL, Field.Store.NO,
 			Field.Index.NOT_ANALYZED);
 	private SearchField contents = new SearchField(CONTENTS_FIELD_LABEL,
 			Field.Store.YES, Field.Index.ANALYZED);
@@ -110,6 +114,8 @@ public class SearchIndexBean extends SearchBean {
 	public void setPreferredName(String preferredName) {
 		super.setPreferredName(preferredName);
 		this.preferredName.setContents(preferredName);
+		this.preferredNameLC.setContents((preferredName == null) ? null
+				: preferredName.trim().toLowerCase());
 	}
 
 	/**
@@ -178,6 +184,13 @@ public class SearchIndexBean extends SearchBean {
 	 */
 	public SearchField getPreferredNameField() {
 		return preferredName;
+	}
+
+	/**
+	 * @return the preferredNameLC
+	 */
+	public SearchField getPreferredNameLCField() {
+		return preferredNameLC;
 	}
 
 	/**

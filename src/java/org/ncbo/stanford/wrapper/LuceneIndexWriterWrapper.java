@@ -172,6 +172,7 @@ public class LuceneIndexWriterWrapper {
 		addField(doc, indexBean.getConceptIdField());
 		addField(doc, indexBean.getConceptIdShortField());
 		addField(doc, indexBean.getPreferredNameField());
+		addField(doc, indexBean.getPreferredNameLCField());
 		addField(doc, indexBean.getContentsField());
 		addField(doc, indexBean.getLiteralContentsField());
 	}
