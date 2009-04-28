@@ -33,8 +33,8 @@ public class CharsetFilter implements Filter {
 		/**
 		 * Set the default response content type and encoding
 		 */
-		response.setContentType("text/html; charset=" + encoding);
-		response.setCharacterEncoding(encoding);
+		response.setContentType("text/xml;charset=" + encoding);
+		response.flushBuffer();
 
 		next.doFilter(request, response);
 	}
