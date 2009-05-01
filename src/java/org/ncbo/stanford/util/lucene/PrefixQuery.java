@@ -13,6 +13,13 @@ import org.apache.lucene.search.TermQuery;
 import org.apache.lucene.search.regex.SpanRegexQuery;
 import org.apache.lucene.search.spans.SpanFirstQuery;
 
+/**
+ * Class that handles the construction of Lucene "prefix" type queries (i.e.
+ * "Microsoft app*" or "melanom*")
+ * 
+ * @author Michael Dorf
+ * 
+ */
 public class PrefixQuery extends BooleanQuery {
 
 	/**
@@ -28,31 +35,47 @@ public class PrefixQuery extends BooleanQuery {
 		this.reader = reader;
 	}
 
+	/**
+	 * Constructs a Lucene query that finds all possible matches for words or
+	 * phrases that contain a wildcard character at the end (i.e. "bloo*" or
+	 * "cutaneous mela*")
+	 * 
+	 * @param field - field to search on
+	 * @param expr
+	 * @throws Exception
+	 */
 	public void parsePrefixQuery(String field, String expr) throws Exception {
 		expr = prepareExpression(expr);
 
 		if (expr.length() > 0) {
-			Term t = new Term(field, expr);
-			TermQuery tq = new TermQuery(t);
+			TermQuery tq = new TermQuery(new Term(field, expr));
 			tq.setBoost(10);
 			add(tq, BooleanClause.Occur.SHOULD);
 
-			MultiPhraseQuery mqr = new MultiPhraseQuery();
+			MultiPhraseQuery mpq = new MultiPhraseQuery();
 			String[] words = expr.split(SPACES);
 
 			for (int i = 0; i < words.length; i++) {
 				if (i == words.length - 1) {
 					Term[] terms = expand(field, words[i]);
-					mqr.add(terms);
+					mpq.add(terms);
 				} else {
-					mqr.add(new Term(field, words[i]));
+					mpq.add(new Term(field, words[i]));
 				}
 			}
 
-			add(mqr, BooleanClause.Occur.SHOULD);
+			add(mpq, BooleanClause.Occur.SHOULD);
 		}
 	}
 
+	/**
+	 * Constructs a Lucene query that finds all possible matches for words or
+	 * phrases that start with a word or expression and contain a wildcard
+	 * character at the end (i.e. "bloo*" or "cutaneous mela*")
+	 * 
+	 * @param field - field to search on
+	 * @param expr
+	 */
 	public void parseStartsWithPrefixQuery(String field, String expr) {
 		expr = prepareExpression(expr);
 
@@ -75,25 +98,23 @@ public class PrefixQuery extends BooleanQuery {
 
 	private Term[] expand(String field, String prefix) throws IOException {
 		ArrayList<Term> terms = new ArrayList<Term>(1);
-		Term te = new Term(field, prefix);
-		terms.add(te);
+		terms.add(new Term(field, prefix));
+		TermEnum te = reader.terms(new Term(field, prefix));
 
-		TermEnum t = reader.terms(new Term(field, prefix));
-
-		while (t.next() && t.term().text().startsWith(prefix)) {
-			terms.add(t.term());
+		while (te.next() && te.term().text().startsWith(prefix)) {
+			terms.add(te.term());
 		}
 
-		t.close();
+		te.close();
 
 		return (Term[]) terms.toArray(new Term[0]);
 	}
 
-	private String prepareExpression(String queryText) {
-		if (endsWithWildcard(queryText)) {
-			queryText = queryText.substring(0, queryText.length() - 1);
+	private String prepareExpression(String expr) {
+		if (endsWithWildcard(expr)) {
+			expr = expr.substring(0, expr.length() - 1);
 		}
 
-		return queryText.toLowerCase().replaceAll(SPACES, " ");
+		return expr.toLowerCase().replaceAll(SPACES, " ");
 	}
 }
