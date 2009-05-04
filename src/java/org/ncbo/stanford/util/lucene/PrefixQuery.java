@@ -5,6 +5,8 @@ import java.util.ArrayList;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.apache.lucene.index.IndexReader;
 import org.apache.lucene.index.Term;
 import org.apache.lucene.index.TermEnum;
@@ -24,6 +26,8 @@ import org.apache.lucene.search.spans.SpanFirstQuery;
  */
 public class PrefixQuery extends BooleanQuery {
 
+	@SuppressWarnings("unused")
+	private static final Log log = LogFactory.getLog(PrefixQuery.class);
 	/**
 	 * 
 	 */
