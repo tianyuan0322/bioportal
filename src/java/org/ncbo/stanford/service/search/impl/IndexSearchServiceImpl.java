@@ -155,15 +155,10 @@ public class IndexSearchServiceImpl extends AbstractSearchService implements
 	 */
 	public void removeOntologies(List<Integer> ontologyIds, boolean doBackup,
 			boolean doOptimize) throws Exception {
-		List<VNcboOntology> ontologies = ncboOntologyVersionDAO
-				.findLatestActiveOntologyVersions(ontologyIds);
-
-		if (!ontologies.isEmpty()) {
-			LuceneIndexWriterWrapper writer = new LuceneIndexWriterWrapper(
-					indexPath, analyzer);
-			removeOntologies(writer, ontologies, doBackup, doOptimize, true);
-			closeWriter(writer);
-		}
+		LuceneIndexWriterWrapper writer = new LuceneIndexWriterWrapper(
+				indexPath, analyzer);
+		removeOntologies(writer, ontologyIds, doBackup, doOptimize, true);
+		closeWriter(writer);
 	}
 
 	/**
@@ -211,7 +206,7 @@ public class IndexSearchServiceImpl extends AbstractSearchService implements
 		long stop = 0;
 
 		if (mgr != null) {
-			removeOntology(writer, ontology, doBackup, false, false);
+			removeOntology(writer, ontologyId, doBackup, false, false);
 
 			if (log.isDebugEnabled()) {
 				log.debug("Adding ontology to index: "
@@ -274,17 +269,17 @@ public class IndexSearchServiceImpl extends AbstractSearchService implements
 	 * index
 	 * 
 	 * @param writer
-	 * @param ontology
+	 * @param ontologyId
 	 * @param doBackup
 	 * @param doOptimize
 	 * @throws Exception
 	 */
 	private void removeOntology(LuceneIndexWriterWrapper writer,
-			VNcboOntology ontology, boolean doBackup, boolean doOptimize,
+			Integer ontologyId, boolean doBackup, boolean doOptimize,
 			boolean reloadCache) throws Exception {
-		List<VNcboOntology> ontologies = new ArrayList<VNcboOntology>(1);
-		ontologies.add(ontology);
-		removeOntologies(writer, ontologies, doBackup, doOptimize, reloadCache);
+		List<Integer> ontologyIds = new ArrayList<Integer>(1);
+		ontologyIds.add(ontologyId);
+		removeOntologies(writer, ontologyIds, doBackup, doOptimize, reloadCache);
 	}
 
 	/**
@@ -292,29 +287,23 @@ public class IndexSearchServiceImpl extends AbstractSearchService implements
 	 * the index
 	 * 
 	 * @param writer
-	 * @param ontologies
+	 * @param ontologyIds
 	 * @param doBackup
 	 * @param doOptimize
 	 * @throws Exception
 	 */
 	private void removeOntologies(LuceneIndexWriterWrapper writer,
-			List<VNcboOntology> ontologies, boolean doBackup,
-			boolean doOptimize, boolean reloadCache) throws Exception {
-		List<Integer> ontologyIdList = new ArrayList<Integer>(0);
-
-		for (VNcboOntology ontology : ontologies) {
-			ontologyIdList.add(ontology.getOntologyId());
-		}
-
+			List<Integer> ontologyIds, boolean doBackup, boolean doOptimize,
+			boolean reloadCache) throws Exception {
 		if (doBackup) {
 			backupIndex(writer);
 		}
 
-		if (ontologyIdList.size() == 1) {
-			Term ontologyIdTerm = generateOntologyIdTerm(ontologyIdList.get(0));
+		if (ontologyIds.size() == 1) {
+			Term ontologyIdTerm = generateOntologyIdTerm(ontologyIds.get(0));
 			writer.deleteDocuments(ontologyIdTerm);
 		} else {
-			Query ontologyIdsQuery = generateOntologyIdsQuery(ontologyIdList);
+			Query ontologyIdsQuery = generateOntologyIdsQuery(ontologyIds);
 			writer.deleteDocuments(ontologyIdsQuery);
 		}
 
@@ -327,8 +316,7 @@ public class IndexSearchServiceImpl extends AbstractSearchService implements
 		}
 
 		if (log.isDebugEnabled()) {
-			log.debug("Removed ontologies from index: "
-					+ getOntologyListDisplay(ontologies));
+			log.debug("Removed ontologies from index: " + ontologyIds);
 		}
 	}
 
