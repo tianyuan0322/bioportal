@@ -258,7 +258,7 @@ public class OntologySearchManagerProtegeImpl extends
 						.getOntologyDisplayLabel(), luceneProtegeFrame
 						.getRecordType(), getFrameName(nfs, luceneProtegeFrame
 						.getFrame()), getConceptIdShort(luceneProtegeFrame
-						.getFrame()), preferredName, value, value);
+						.getFrame()), preferredName, value);
 	}
 
 	/**
