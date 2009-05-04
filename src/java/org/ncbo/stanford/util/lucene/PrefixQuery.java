@@ -2,6 +2,8 @@ package org.ncbo.stanford.util.lucene;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.apache.lucene.index.IndexReader;
 import org.apache.lucene.index.Term;
@@ -26,21 +28,25 @@ public class PrefixQuery extends BooleanQuery {
 	 * 
 	 */
 	private static final long serialVersionUID = -6160362866197315524L;
-	private static final String SPACES = "\\s+";
+	private static final String SPACES_PATTERN = "\\s+";
+	private static final String SINGLE_LETTER_WORD_PATTERN = "^\\w$|\\s+\\w$";
+//	private static final String SINGLE_LETTER_WORD_PATTERN = "^h$|^z$";
 	private static final char WILDCARD_CHAR = '*';
+	private static final int EXACT_MATCH_BOOST = 10;
 
 	private IndexReader reader;
 
 	public PrefixQuery(IndexReader reader) {
 		this.reader = reader;
 	}
-
+	
 	/**
 	 * Constructs a Lucene query that finds all possible matches for words or
 	 * phrases that contain a wildcard character at the end (i.e. "bloo*" or
 	 * "cutaneous mela*")
 	 * 
-	 * @param field - field to search on
+	 * @param field -
+	 *            field to search on
 	 * @param expr
 	 * @throws Exception
 	 */
@@ -49,11 +55,11 @@ public class PrefixQuery extends BooleanQuery {
 
 		if (expr.length() > 0) {
 			TermQuery tq = new TermQuery(new Term(field, expr));
-			tq.setBoost(10);
+			tq.setBoost(EXACT_MATCH_BOOST);
 			add(tq, BooleanClause.Occur.SHOULD);
 
 			MultiPhraseQuery mpq = new MultiPhraseQuery();
-			String[] words = expr.split(SPACES);
+			String[] words = expr.split(SPACES_PATTERN);
 
 			for (int i = 0; i < words.length; i++) {
 				if (i == words.length - 1) {
@@ -73,7 +79,8 @@ public class PrefixQuery extends BooleanQuery {
 	 * phrases that start with a word or expression and contain a wildcard
 	 * character at the end (i.e. "bloo*" or "cutaneous mela*")
 	 * 
-	 * @param field - field to search on
+	 * @param field -
+	 *            field to search on
 	 * @param expr
 	 */
 	public void parseStartsWithPrefixQuery(String field, String expr) {
@@ -93,7 +100,7 @@ public class PrefixQuery extends BooleanQuery {
 	}
 
 	public static boolean isMultiWord(String expr) {
-		return expr.trim().split(SPACES).length > 1;
+		return expr.trim().split(SPACES_PATTERN).length > 1;
 	}
 
 	private Term[] expand(String field, String prefix) throws IOException {
@@ -115,6 +122,17 @@ public class PrefixQuery extends BooleanQuery {
 			expr = expr.substring(0, expr.length() - 1);
 		}
 
-		return expr.toLowerCase().replaceAll(SPACES, " ");
+		expr = expr.toLowerCase().replaceAll(SPACES_PATTERN, " ");
+		
+		// replace single-letter words with empty strings
+		Pattern mask = Pattern.compile(SINGLE_LETTER_WORD_PATTERN);
+		Matcher matcher = mask.matcher(expr);
+		boolean found = matcher.find();
+		
+		if (found) {
+			expr = expr.replace(matcher.group(), "");
+		}
+		
+		return expr;
 	}
 }
