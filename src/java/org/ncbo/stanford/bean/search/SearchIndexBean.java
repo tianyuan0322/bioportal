@@ -47,7 +47,7 @@ public class SearchIndexBean extends SearchBean {
 	private SearchField contents = new SearchField(CONTENTS_FIELD_LABEL,
 			Field.Store.YES, Field.Index.ANALYZED);
 	private SearchField literalContents = new SearchField(
-			LITERAL_CONTENTS_FIELD_LABEL, Field.Store.YES,
+			LITERAL_CONTENTS_FIELD_LABEL, Field.Store.NO,
 			Field.Index.NOT_ANALYZED);
 
 	/**
@@ -125,16 +125,8 @@ public class SearchIndexBean extends SearchBean {
 	public void setContents(String contents) {
 		super.setContents(contents);
 		this.contents.setContents(contents);
-	}
-
-	/**
-	 * @param literalContents
-	 *            the literalContents to set
-	 */
-	public void setLiteralContents(String literalContents) {
-		super.setLiteralContents(literalContents);
-		this.literalContents.setContents((literalContents == null) ? null
-				: literalContents.trim().toLowerCase());
+		this.literalContents.setContents((contents == null) ? null : contents
+				.trim().toLowerCase());
 	}
 
 	/**
