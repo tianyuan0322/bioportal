@@ -18,7 +18,6 @@ public class SearchBean {
 	private String conceptIdShort;
 	private String preferredName;
 	private String contents;
-	private String literalContents;
 
 	public SearchBean() {
 	}
@@ -32,12 +31,11 @@ public class SearchBean {
 	 * @param conceptIdShort
 	 * @param preferredName
 	 * @param contents
-	 * @param literalContents
 	 */
 	public SearchBean(Integer ontologyVersionId, Integer ontologyId,
 			String ontologyDisplayLabel) {
 		populateInstance(ontologyVersionId, ontologyId, ontologyDisplayLabel,
-				null, null, null, null, null, null);
+				null, null, null, null, null);
 	}
 
 	/**
@@ -49,15 +47,13 @@ public class SearchBean {
 	 * @param conceptIdShort
 	 * @param preferredName
 	 * @param contents
-	 * @param literalContents
 	 */
 	public SearchBean(Integer ontologyVersionId, Integer ontologyId,
 			String ontologyDisplayLabel, SearchRecordTypeEnum recordType,
 			String conceptId, String conceptIdShort, String preferredName,
-			String contents, String literalContents) {
+			String contents) {
 		populateInstance(ontologyVersionId, ontologyId, ontologyDisplayLabel,
-				recordType, conceptId, conceptIdShort, preferredName, contents,
-				literalContents);
+				recordType, conceptId, conceptIdShort, preferredName, contents);
 	}
 
 	/**
@@ -71,7 +67,7 @@ public class SearchBean {
 			String ontologyDisplayLabel, SearchRecordTypeEnum recordType,
 			String preferredName) {
 		populateInstance(ontologyVersionId, ontologyId, ontologyDisplayLabel,
-				recordType, null, null, preferredName, null, null);
+				recordType, null, null, preferredName, null);
 	}
 
 	/**
@@ -86,12 +82,11 @@ public class SearchBean {
 	 * @param conceptIdShort
 	 * @param preferredName
 	 * @param contents
-	 * @param literalContents
 	 */
 	public void populateInstance(Integer ontologyVersionId, Integer ontologyId,
 			String ontologyDisplayLabel, SearchRecordTypeEnum recordType,
 			String conceptId, String conceptIdShort, String preferredName,
-			String contents, String literalContents) {
+			String contents) {
 		setOntologyVersionId(ontologyVersionId);
 		setOntologyId(ontologyId);
 		setOntologyDisplayLabel(ontologyDisplayLabel);
@@ -100,14 +95,12 @@ public class SearchBean {
 		setConceptIdShort(conceptIdShort);
 		setPreferredName(preferredName);
 		setContents(contents);
-		setLiteralContents(literalContents);
 	}
 
 	public String toString() {
 		return "VersionId: " + ontologyVersionId + " | OntologyId: "
 				+ ontologyId + " | ConceptId: " + conceptId + " | Contents: "
-				+ contents + " | LiteralContents: " + literalContents
-				+ " | RecordType: " + recordType.getLabel() + "\n"
+				+ contents + " | RecordType: " + recordType.getLabel() + "\n"
 				+ " PreferedName: " + preferredName + " | ConceptIdShort: "
 				+ conceptIdShort + " | OntologyDisplayLabel: "
 				+ ontologyDisplayLabel + "\n";
@@ -231,20 +224,5 @@ public class SearchBean {
 	 */
 	public void setContents(String contents) {
 		this.contents = contents;
-	}
-
-	/**
-	 * @return the literalContents
-	 */
-	public String getLiteralContents() {
-		return literalContents;
-	}
-
-	/**
-	 * @param literalContents
-	 *            the literalContents to set
-	 */
-	public void setLiteralContents(String literalContents) {
-		this.literalContents = literalContents;
 	}
 }
