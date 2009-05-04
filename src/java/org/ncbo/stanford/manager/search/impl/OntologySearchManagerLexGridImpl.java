@@ -290,6 +290,6 @@ public class OntologySearchManagerLexGridImpl extends
 		doc.populateInstance(prop.getOntologyVersionId(), prop.getOntologyId(),
 				prop.getOntologyDisplayLabel(), prop.getRecordType(),
 				conceptId, conceptId, prop.getPreferredName(), prop
-						.getPropertyContent(), prop.getPropertyContent());
+						.getPropertyContent());
 	}
 }
