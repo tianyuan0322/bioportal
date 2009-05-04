@@ -30,7 +30,6 @@ public class PrefixQuery extends BooleanQuery {
 	private static final long serialVersionUID = -6160362866197315524L;
 	private static final String SPACES_PATTERN = "\\s+";
 	private static final String SINGLE_LETTER_WORD_PATTERN = "^\\w$|\\s+\\w$";
-//	private static final String SINGLE_LETTER_WORD_PATTERN = "^h$|^z$";
 	private static final char WILDCARD_CHAR = '*';
 	private static final int EXACT_MATCH_BOOST = 10;
 
@@ -39,7 +38,7 @@ public class PrefixQuery extends BooleanQuery {
 	public PrefixQuery(IndexReader reader) {
 		this.reader = reader;
 	}
-	
+
 	/**
 	 * Constructs a Lucene query that finds all possible matches for words or
 	 * phrases that contain a wildcard character at the end (i.e. "bloo*" or
@@ -118,21 +117,23 @@ public class PrefixQuery extends BooleanQuery {
 	}
 
 	private String prepareExpression(String expr) {
+		expr = expr.trim().toLowerCase();
+
 		if (endsWithWildcard(expr)) {
 			expr = expr.substring(0, expr.length() - 1);
 		}
 
-		expr = expr.toLowerCase().replaceAll(SPACES_PATTERN, " ");
-		
+		expr = expr.replaceAll(SPACES_PATTERN, " ");
+
 		// replace single-letter words with empty strings
 		Pattern mask = Pattern.compile(SINGLE_LETTER_WORD_PATTERN);
 		Matcher matcher = mask.matcher(expr);
 		boolean found = matcher.find();
-		
+
 		if (found) {
 			expr = expr.replace(matcher.group(), "");
 		}
-		
+
 		return expr;
 	}
 }
