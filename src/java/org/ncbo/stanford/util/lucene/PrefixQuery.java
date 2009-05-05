@@ -2,8 +2,6 @@ package org.ncbo.stanford.util.lucene;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -33,6 +31,7 @@ public class PrefixQuery extends BooleanQuery {
 	 */
 	private static final long serialVersionUID = -6160362866197315524L;
 	private static final String SPACES_PATTERN = "\\s+";
+	@SuppressWarnings("unused")
 	private static final String SINGLE_LETTER_WORD_PATTERN = "^\\w$|\\s+\\w$";
 	private static final char WILDCARD_CHAR = '*';
 	private static final int EXACT_MATCH_BOOST = 10;
@@ -130,13 +129,13 @@ public class PrefixQuery extends BooleanQuery {
 		expr = expr.replaceAll(SPACES_PATTERN, " ");
 
 		// replace single-letter words with empty strings
-		Pattern mask = Pattern.compile(SINGLE_LETTER_WORD_PATTERN);
-		Matcher matcher = mask.matcher(expr);
-		boolean found = matcher.find();
-
-		if (found) {
-			expr = expr.replace(matcher.group(), "");
-		}
+//		Pattern mask = Pattern.compile(SINGLE_LETTER_WORD_PATTERN);
+//		Matcher matcher = mask.matcher(expr);
+//		boolean found = matcher.find();
+//
+//		if (found) {
+//			expr = expr.replace(matcher.group(), "");
+//		}
 
 		return expr;
 	}
