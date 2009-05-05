@@ -21,7 +21,7 @@ import org.restlet.data.Status;
  * Restlet responsible for executing search query operations
  * 
  * @author Michael Dorf
- *
+ * 
  */
 public class QueryRestlet extends AbstractBaseRestlet {
 
@@ -56,6 +56,8 @@ public class QueryRestlet extends AbstractBaseRestlet {
 				.getParameter(RequestParamConstants.PARAM_PAGESIZE);
 		String pageNum = (String) httpRequest
 				.getParameter(RequestParamConstants.PARAM_PAGENUM);
+		String maxNumHits = (String) httpRequest
+				.getParameter(RequestParamConstants.PARAM_MAXNUMHITS);
 
 		String query = Reference.decode((String) request.getAttributes().get(
 				QUERY_PARAM));
@@ -66,12 +68,13 @@ public class QueryRestlet extends AbstractBaseRestlet {
 		boolean isExactMatchBool = RequestUtils.parseBooleanParam(isExactMatch);
 		Integer pageSizeInt = RequestUtils.parseIntegerParam(pageSize);
 		Integer pageNumInt = RequestUtils.parseIntegerParam(pageNum);
+		Integer maxNumHitsInt = RequestUtils.parseIntegerParam(maxNumHits);
 		Page<SearchBean> searchResults = null;
 
 		try {
 			searchResults = queryService.executeQuery(query, ontologyIdsInt,
 					includePropertiesBool, isExactMatchBool, pageSizeInt,
-					pageNumInt);
+					pageNumInt, maxNumHitsInt);
 		} catch (Exception e) {
 			response.setStatus(Status.SERVER_ERROR_INTERNAL, e.getMessage());
 			e.printStackTrace();

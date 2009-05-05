@@ -4,6 +4,7 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.fail;
 
 import org.apache.lucene.search.Query;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.ncbo.stanford.AbstractBioPortalTest;
 import org.ncbo.stanford.bean.search.SearchBean;
@@ -23,13 +24,12 @@ public class SearchServiceTest extends AbstractBioPortalTest {
 	QuerySearchService queryService;
 
 	@Test
-	// @Ignore
 	public void testIndexOntology() throws Exception {
 		System.out
 				.println("SearchServiceTest: indexOntology().......................BEGIN");
 
 		try {
-			indexService.indexOntology(1166, false, true);
+			indexService.indexOntology(1032, false, true);
 		} catch (Exception exc) {
 			exc.printStackTrace();
 			fail(exc.getMessage());
@@ -41,14 +41,17 @@ public class SearchServiceTest extends AbstractBioPortalTest {
 
 	@Test
 	@Repeat(2)
+	@Ignore
 	public void testSearchAllOntologies() throws Exception {
 		System.out
 				.println("SearchServiceTest: searchAllOntologies().......................BEGIN");
 
 		try {
+			Integer maxNumHits = 50;
 			Query query = queryService.generateLuceneSearchQuery(null, "cell",
 					true, false);
-			Page<SearchBean> results = queryService.executeQuery(query);
+			Page<SearchBean> results = queryService.executeQuery(query,
+					maxNumHits);
 
 			assertNotNull(results);
 		} catch (Exception exc) {
@@ -61,14 +64,17 @@ public class SearchServiceTest extends AbstractBioPortalTest {
 	}
 
 	@Test
+	@Ignore
 	public void testSearchECG() throws Exception {
 		System.out
 				.println("SearchServiceTest: testSearchECG().......................BEGIN");
 
 		try {
+			Integer maxNumHits = 98;
 			Query query = queryService.generateLuceneSearchQuery(null, "lead",
 					true, false);
-			Page<SearchBean> results = queryService.executeQuery(query);
+			Page<SearchBean> results = queryService.executeQuery(query,
+					maxNumHits);
 
 			assertNotNull(results);
 
@@ -86,13 +92,16 @@ public class SearchServiceTest extends AbstractBioPortalTest {
 	}
 
 	@Test
+	@Ignore
 	public void testSearchAllOntologiesPaginated() throws Exception {
 		System.out
 				.println("SearchServiceTest: searchAllOntologies().......................BEGIN");
 
+		Integer maxNumHits = 50;
 		Query query = queryService.generateLuceneSearchQuery(null, "blood",
 				true, false);
-		Page<SearchBean> results = queryService.executeQuery(query, 3, 6);
+		Page<SearchBean> results = queryService.executeQuery(query, 3, 6,
+				maxNumHits);
 
 		assertNotNull(results);
 

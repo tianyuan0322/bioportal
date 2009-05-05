@@ -17,89 +17,103 @@ public interface QuerySearchService {
 
 	/**
 	 * Execute a search query for a given expression and return results in a
-	 * form of a single page (of specified size)
+	 * form of a single page (of specified size). If maxNumHits is null, the
+	 * default value from the configuration file is used.
 	 * 
 	 * @param expr
 	 * @param includeProperties
 	 * @param isExactMatch
 	 * @param pageSize
 	 * @param pageNum
+	 * @param maxNumHits
 	 * @return
 	 * @throws Exception
 	 */
 	public Page<SearchBean> executeQuery(String expr,
 			boolean includeProperties, boolean isExactMatch, Integer pageSize,
-			Integer pageNum) throws Exception;
+			Integer pageNum, Integer maxNumHits) throws Exception;
 
 	/**
 	 * Execute a search query for a given expression and return ALL results in a
-	 * form of a single page
+	 * form of a single page. If maxNumHits is null, the default value from the
+	 * configuration file is used.
 	 * 
 	 * @param expr
 	 * @param includeProperties
 	 * @param isExactMatch
+	 * @param maxNumHits
 	 * @return
 	 * @throws Exception
 	 */
 	public Page<SearchBean> executeQuery(String expr,
-			boolean includeProperties, boolean isExactMatch) throws Exception;
-
-	/**
-	 * Execute a search query for a given expression, limiting search to the
-	 * specific ontologies. Return results in a form of a single page (of
-	 * specified size)
-	 * 
-	 * @param expr
-	 * @param ontologyIds
-	 * @param includeProperties
-	 * @param isExactMatch
-	 * @param pageSize
-	 * @param pageNum
-	 * @return
-	 * @throws Exception
-	 */
-	public Page<SearchBean> executeQuery(String expr,
-			Collection<Integer> ontologyIds, boolean includeProperties,
-			boolean isExactMatch, Integer pageSize, Integer pageNum)
+			boolean includeProperties, boolean isExactMatch, Integer maxNumHits)
 			throws Exception;
 
 	/**
 	 * Execute a search query for a given expression, limiting search to the
-	 * specific ontologies. Return ALL results in a form of a single page
+	 * specific ontologies. Return results in a form of a single page (of
+	 * specified size). If maxNumHits is null, the default value from the
+	 * configuration file is used.
 	 * 
 	 * @param expr
 	 * @param ontologyIds
 	 * @param includeProperties
 	 * @param isExactMatch
+	 * @param pageSize
+	 * @param pageNum
+	 * @param maxNumHits
 	 * @return
 	 * @throws Exception
 	 */
 	public Page<SearchBean> executeQuery(String expr,
 			Collection<Integer> ontologyIds, boolean includeProperties,
-			boolean isExactMatch) throws Exception;
+			boolean isExactMatch, Integer pageSize, Integer pageNum,
+			Integer maxNumHits) throws Exception;
 
 	/**
-	 * Execute a search from an already constructed Query object. Return results
-	 * in a form of a single page (of specified size)
+	 * Execute a search query for a given expression, limiting search to the
+	 * specific ontologies. Return ALL results in a form of a single page. If
+	 * maxNumHits is null, the default value from the configuration file is used.
+	 * 
+	 * @param expr
+	 * @param ontologyIds
+	 * @param includeProperties
+	 * @param isExactMatch
+	 * @param maxNumHits
+	 * @return
+	 * @throws Exception
+	 */
+	public Page<SearchBean> executeQuery(String expr,
+			Collection<Integer> ontologyIds, boolean includeProperties,
+			boolean isExactMatch, Integer maxNumHits) throws Exception;
+
+	/**
+	 * Execute a search from an already constructed Query object. Return ALL
+	 * results in a form of a single page. If maxNumHits is null, the default
+	 * value from the configuration file is used.
 	 * 
 	 * @param query
 	 * @param pageSize
 	 * @param pageNum
+	 * @param maxNumHits
 	 * @return
 	 * @throws Exception
 	 */
 	public Page<SearchBean> executeQuery(Query query, Integer pageSize,
-			Integer pageNum) throws Exception;
+			Integer pageNum, Integer maxNumHits) throws Exception;
 
 	/**
-	 * Execute a search from an already constructed Query object. Return ALL
-	 * results in a form of a single page
+	 * Execute a search from an already constructed Query object. Return results
+	 * in a form of a single page (of specified size). If maxNumHits is null,
+	 * the default value from the configuration file is used.
 	 * 
 	 * @param query
+	 * @param maxNumHits
 	 * @return
 	 * @throws Exception
 	 */
-	public Page<SearchBean> executeQuery(Query query) throws Exception;
+	public Page<SearchBean> executeQuery(Query query, Integer maxNumHits)
+			throws Exception;
 
 	/**
 	 * Generate a search query from the expression and optional ontology ids

@@ -6,8 +6,6 @@ import java.util.Collection;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.lucene.index.Term;
-import org.apache.lucene.queryParser.ParseException;
-import org.apache.lucene.queryParser.QueryParser;
 import org.apache.lucene.search.BooleanClause;
 import org.apache.lucene.search.BooleanQuery;
 import org.apache.lucene.search.Query;
@@ -18,7 +16,7 @@ import org.ncbo.stanford.bean.search.SearchResultListBean;
 import org.ncbo.stanford.enumeration.SearchRecordTypeEnum;
 import org.ncbo.stanford.service.search.AbstractSearchService;
 import org.ncbo.stanford.service.search.QuerySearchService;
-import org.ncbo.stanford.util.helper.StringHelper;
+import org.ncbo.stanford.util.lucene.PrefixQuery;
 import org.ncbo.stanford.util.paginator.Paginator;
 import org.ncbo.stanford.util.paginator.impl.Page;
 import org.ncbo.stanford.util.paginator.impl.PaginatorImpl;
@@ -37,73 +35,111 @@ public class QuerySearchServiceImpl extends AbstractSearchService implements
 	@SuppressWarnings("unused")
 	private static final Log log = LogFactory
 			.getLog(QuerySearchServiceImpl.class);
-	
-/*	public static void main(String[] args) {
-		try {
-			IndexSearcher searcher = new IndexSearcher(
-					"/apps/bmir.apps/bioportal_resources/searchindex");
-			TermEnum terms = searcher.getIndexReader().terms(
-					new Term("conceptId", ""));
-			int numTerms = 0;
 
-			while ("conceptId".equals(terms.term().field())) {
-				numTerms++;
+//	public static void main(String[] args) {
+//		try {
+//			String expr = "blood";
+//			Collection<Integer> ontologyIds = new ArrayList<Integer>(0);
+//			// ontologyIds.add(1032);
+//			// ontologyIds.add(1070);
+//			// ontologyIds.add(1107);
+//
+//			boolean includeProperties = false;
+//			boolean isExactMatch = false;
+//			Integer maxNumHits = 250;
+//
+//			String indexPath = "/apps/bmir.apps/bioportal_resources/searchindex";
+//			QuerySearchServiceImpl ss = new QuerySearchServiceImpl();
+//			ss.setAnalyzer(new StandardAnalyzer());
+//			ss.setIndexPath(indexPath);
+//
+//			Query q = ss.generateLuceneSearchQuery(ontologyIds, expr,
+//					includeProperties, isExactMatch);
+//			System.out.println("q: " + q);
+//
+//			long start = System.currentTimeMillis();
+//			SearchResultListBean results = ss.runQuery(q, maxNumHits);
+//			long stop = System.currentTimeMillis();
+//
+//			System.out.println("Excecution Time: " + (double) (stop - start)
+//					/ 1000 + " seconds.");
+//		} catch (Exception e) {
+//			// TODO Auto-generated catch block
+//			e.printStackTrace();
+//		}
+//	}
+//	
+//	public static void main(String[] args) {
+//		try {
+//			IndexSearcher searcher = new IndexSearcher(
+//					"/apps/bmir.apps/bioportal_resources/searchindex");
+//			TermEnum terms = searcher.getIndexReader().terms(
+//					new Term("conceptId", ""));
+//			int numTerms = 0;
+//
+//			while ("conceptId".equals(terms.term().field())) {
+//				numTerms++;
+//
+//				if (!terms.next())
+//					break;
+//			}
+//
+//			terms.close();
+//
+//			System.out.println("Num Concepts: " + numTerms);
+//
+//		} catch (CorruptIndexException e) { // TODO Auto-generated catch block
+//			e.printStackTrace();
+//		} catch (IOException e) { // TODO Auto-generated
+//			e.printStackTrace();
+//		}
+//	}
 
-				if (!terms.next())
-					break;
-			}
-
-			terms.close();
-			
-			System.out.println("Num Concepts: " + numTerms);
-		} catch (CorruptIndexException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-	}
-*/
-	
 	/**
 	 * Execute a search query for a given expression and return results in a
-	 * form of a single page (of specified size)
+	 * form of a single page (of specified size). If maxNumHits is null, the
+	 * default value from the configuration file is used.
 	 * 
 	 * @param expr
 	 * @param includeProperties
 	 * @param isExactMatch
 	 * @param pageSize
 	 * @param pageNum
+	 * @param maxNumHits
 	 * @return
 	 * @throws Exception
 	 */
 	public Page<SearchBean> executeQuery(String expr,
 			boolean includeProperties, boolean isExactMatch, Integer pageSize,
-			Integer pageNum) throws Exception {
+			Integer pageNum, Integer maxNumHits) throws Exception {
 		return executeQuery(expr, null, includeProperties, isExactMatch,
-				pageSize, pageNum);
+				pageSize, pageNum, maxNumHits);
 	}
 
 	/**
 	 * Execute a search query for a given expression and return ALL results in a
-	 * form of a single page
+	 * form of a single page. If maxNumHits is null, the default value from the
+	 * configuration file is used.
 	 * 
 	 * @param expr
 	 * @param includeProperties
 	 * @param isExactMatch
+	 * @param maxNumHits
 	 * @return
 	 * @throws Exception
 	 */
 	public Page<SearchBean> executeQuery(String expr,
-			boolean includeProperties, boolean isExactMatch) throws Exception {
-		return executeQuery(expr, null, includeProperties, isExactMatch);
+			boolean includeProperties, boolean isExactMatch, Integer maxNumHits)
+			throws Exception {
+		return executeQuery(expr, null, includeProperties, isExactMatch,
+				maxNumHits);
 	}
 
 	/**
 	 * Execute a search query for a given expression, limiting search to the
 	 * specific ontologies. Return results in a form of a single page (of
-	 * specified size)
+	 * specified size). If maxNumHits is null, the default value from the
+	 * configuation file is used.
 	 * 
 	 * @param expr
 	 * @param ontologyIds
@@ -111,70 +147,78 @@ public class QuerySearchServiceImpl extends AbstractSearchService implements
 	 * @param isExactMatch
 	 * @param pageSize
 	 * @param pageNum
+	 * @param maxNumHits
 	 * @return
 	 * @throws Exception
 	 */
 	public Page<SearchBean> executeQuery(String expr,
 			Collection<Integer> ontologyIds, boolean includeProperties,
-			boolean isExactMatch, Integer pageSize, Integer pageNum)
-			throws Exception {
+			boolean isExactMatch, Integer pageSize, Integer pageNum,
+			Integer maxNumHits) throws Exception {
 		Query query = generateLuceneSearchQuery(ontologyIds, expr,
 				includeProperties, isExactMatch);
 
-		return executeQuery(query, pageSize, pageNum);
+		return executeQuery(query, pageSize, pageNum, maxNumHits);
 	}
 
 	/**
 	 * Execute a search query for a given expression, limiting search to the
-	 * specific ontologies. Return ALL results in a form of a single page
+	 * specific ontologies. Return ALL results in a form of a single page. If
+	 * maxNumHits is null, the default value from the configuation file is used.
 	 * 
 	 * @param expr
 	 * @param ontologyIds
 	 * @param includeProperties
 	 * @param isExactMatch
+	 * @param maxNumHits
 	 * @return
 	 * @throws Exception
 	 */
 	public Page<SearchBean> executeQuery(String expr,
 			Collection<Integer> ontologyIds, boolean includeProperties,
-			boolean isExactMatch) throws Exception {
+			boolean isExactMatch, Integer maxNumHits) throws Exception {
 		Query query = generateLuceneSearchQuery(ontologyIds, expr,
 				includeProperties, isExactMatch);
 
-		return executeQuery(query);
+		return executeQuery(query, maxNumHits);
 	}
 
 	/**
 	 * Execute a search from an already constructed Query object. Return results
-	 * in a form of a single page (of specified size)
+	 * in a form of a single page (of specified size). If maxNumHits is null,
+	 * the default value from the configuation file is used.
 	 * 
 	 * @param query
-	 * @param pageSize
-	 * @param pageNum
+	 * @param maxNumHits
 	 * @return
 	 * @throws Exception
 	 */
-	public Page<SearchBean> executeQuery(Query query) throws Exception {
-		return executeQuery(query, null, null);
+	public Page<SearchBean> executeQuery(Query query, Integer maxNumHits)
+			throws Exception {
+		return executeQuery(query, null, null, maxNumHits);
 	}
 
 	/**
 	 * Execute a search from an already constructed Query object. Return ALL
-	 * results in a form of a single page
+	 * results in a form of a single page. If maxNumHits is null, the default
+	 * value from the configuation file is used.
 	 * 
 	 * @param query
+	 * @param pageSize
+	 * @param pageNum
+	 * @param maxNumHits
 	 * @return
 	 * @throws Exception
 	 */
 	public Page<SearchBean> executeQuery(Query query, Integer pageSize,
-			Integer pageNum) throws Exception {
+			Integer pageNum, Integer maxNumHits) throws Exception {
 		long start = System.currentTimeMillis();
-		String resultsKey = query.toString();
+		String resultsKey = composeCacheKey(query, maxNumHits);
 		boolean fromCache = true;
 		SearchResultListBean searchResults = searchResultCache.get(resultsKey);
 
 		if (searchResults == null) {
-			searchResults = runQuery(query);
+			searchResults = runQuery(query, maxNumHits);
 			fromCache = false;
 			searchResultCache.put(resultsKey, searchResults);
 		}
@@ -222,6 +266,7 @@ public class QuerySearchServiceImpl extends AbstractSearchService implements
 			String expr, boolean includeProperties, boolean isExactMatch)
 			throws IOException {
 		BooleanQuery query = new BooleanQuery();
+		BooleanQuery.setMaxClauseCount(Integer.MAX_VALUE);
 
 		if (isExactMatch) {
 			addContentsClauseExact(expr, query);
@@ -233,6 +278,30 @@ public class QuerySearchServiceImpl extends AbstractSearchService implements
 		addPropertiesClause(includeProperties, query);
 
 		return query;
+	}
+
+	/**
+	 * Constructs the contents field clause for "regular (non-exact) match"
+	 * searches and adds it to the main query
+	 * 
+	 * @param expr
+	 * @param query
+	 * @throws IOException
+	 */
+	private void addContentsClauseContains(String expr, BooleanQuery query)
+			throws IOException {
+		try {
+			PrefixQuery q = new PrefixQuery(searcher.getIndexReader());
+			q.parsePrefixQuery(SearchIndexBean.CONTENTS_FIELD_LABEL, expr);
+			// q.parseStartsWithPrefixQuery((PrefixQuery.isMultiWord(expr)) ?
+			// SearchIndexBean.LITERAL_CONTENTS_FIELD_LABEL :
+			// SearchIndexBean.CONTENTS_FIELD_LABEL, expr);
+			query.add(q, BooleanClause.Occur.MUST);
+		} catch (Exception e) {
+			IOException ioe = new IOException(e.getMessage());
+			ioe.initCause(e);
+			throw ioe;
+		}
 	}
 
 	/**
@@ -249,31 +318,6 @@ public class QuerySearchServiceImpl extends AbstractSearchService implements
 				SearchIndexBean.LITERAL_CONTENTS_FIELD_LABEL, expr
 						.toLowerCase()));
 		query.add(q, BooleanClause.Occur.MUST);
-	}
-
-	/**
-	 * Constructs the contents field clause for "regular (non-exact) match"
-	 * searches and adds it to the main query
-	 * 
-	 * @param expr
-	 * @param query
-	 * @throws IOException
-	 */
-	private void addContentsClauseContains(String expr, BooleanQuery query)
-			throws IOException {
-		QueryParser parser = new QueryParser(
-				SearchIndexBean.CONTENTS_FIELD_LABEL, analyzer);
-		parser.setAllowLeadingWildcard(true);
-		parser.setDefaultOperator(QueryParser.AND_OPERATOR);
-
-		try {
-			expr = StringHelper.escapeSpaces(expr);
-			query.add(parser.parse(expr), BooleanClause.Occur.MUST);
-		} catch (ParseException e) {
-			IOException ioe = new IOException(e.getMessage());
-			ioe.initCause(e);
-			throw ioe;
-		}
 	}
 
 	/**

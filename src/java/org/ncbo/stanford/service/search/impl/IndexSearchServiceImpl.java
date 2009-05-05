@@ -385,14 +385,16 @@ public class IndexSearchServiceImpl extends AbstractSearchService implements
 
 		QueryParser parser = new QueryParser(
 				SearchIndexBean.CONTENTS_FIELD_LABEL, analyzer);
-		Set<String> queries = searchResultCache.getKeys();
+		Set<String> keys = searchResultCache.getKeys();
 		searchResultCache.clear();
 
-		for (String queryStr : queries) {
+		for (String fullKey : keys) {
 			SearchResultListBean results = null;
+			String[] splitKey = parseCacheKey(fullKey);
 
 			try {
-				results = runQuery(parser.parse(queryStr));
+				results = runQuery(parser.parse(splitKey[0]), Integer
+						.parseInt(splitKey[1]));
 			} catch (Exception e) {
 				results = null;
 				e.printStackTrace();
@@ -400,7 +402,7 @@ public class IndexSearchServiceImpl extends AbstractSearchService implements
 			}
 
 			if (results != null) {
-				searchResultCache.put(queryStr, results);
+				searchResultCache.put(fullKey, results);
 			}
 		}
 

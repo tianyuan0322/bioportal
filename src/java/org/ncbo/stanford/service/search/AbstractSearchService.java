@@ -42,13 +42,18 @@ public abstract class AbstractSearchService {
 	private static final Log log = LogFactory
 			.getLog(AbstractSearchService.class);
 
+	/**
+	 * Separates the query from the maxNumHits in the cache key
+	 */
+	private static final String CACHE_KEY_SEPARATOR = "|#|";
+
 	protected Analyzer analyzer;
 	protected String indexPath;
-	protected int maxNumHits;
+	protected int defMaxNumHits;
 	protected ExpirationSystem<String, SearchResultListBean> searchResultCache;
 
 	// non-injected properties
-	private IndexSearcher searcher = null;
+	protected IndexSearcher searcher = null;
 	private Date openIndexDate;
 	private Object createSearcherLock = new Object();
 
@@ -59,7 +64,8 @@ public abstract class AbstractSearchService {
 	 * @return
 	 * @throws Exception
 	 */
-	protected SearchResultListBean runQuery(Query query) throws Exception {
+	protected SearchResultListBean runQuery(Query query, Integer maxNumHits)
+			throws Exception {
 		// check whether the index has changed and if so, reloads the searcher
 		// reloading searcher must be synchronized to avoid null searchers
 		synchronized (createSearcherLock) {
@@ -75,7 +81,8 @@ public abstract class AbstractSearchService {
 		TopFieldDocs docs = null;
 
 		try {
-			docs = searcher.search(query, null, maxNumHits, getSortFields());
+			docs = searcher.search(query, null, getMaxNumHits(maxNumHits),
+					getSortFields());
 		} catch (OutOfMemoryError e) {
 			throw new Exception(e);
 		}
@@ -104,12 +111,25 @@ public abstract class AbstractSearchService {
 						conceptId,
 						doc.get(SearchIndexBean.CONCEPT_ID_SHORT_FIELD_LABEL),
 						doc.get(SearchIndexBean.PREFERRED_NAME_FIELD_LABEL),
-						doc.get(SearchIndexBean.CONTENTS_FIELD_LABEL), null);
+						doc.get(SearchIndexBean.CONTENTS_FIELD_LABEL));
 				searchResults.add(searchResult);
 				searchResults.addOntologyHit(ontologyVersionId, ontologyId,
 						ontologyDisplayLabel);
 
 				uniqueDocs.add(conceptId);
+
+				// System.out.println(hits[i].score
+				// + " | "
+				// + searchResult.getContents()
+				// + ", Type: "
+				// + searchResult.getRecordType()
+				// + ", PrefName: "
+				// + searchResult.getPreferredName()
+				// + ", OntologyId: "
+				// + searchResult.getOntologyDisplayLabel()
+				// + ", Concept Id: "
+				// + searchResult.getConceptIdShort()
+				// );
 			}
 		}
 
@@ -188,6 +208,63 @@ public abstract class AbstractSearchService {
 		return sb.toString();
 	}
 
+	protected String[] parseCacheKey(String cacheKey) {
+		return cacheKey.split(CACHE_KEY_SEPARATOR);
+	}
+
+	protected String composeCacheKey(Query query, Integer maxNumHits) {
+		return query + CACHE_KEY_SEPARATOR + getMaxNumHits(maxNumHits);
+	}
+
+	/**
+	 * Sets the index path and creates a new instance of searcher
+	 * 
+	 * @param indexPath
+	 *            the indexPath to set
+	 */
+	public void setIndexPath(String indexPath) {
+		this.indexPath = indexPath;
+
+		try {
+			createSearcher();
+		} catch (IOException e) {
+			e.printStackTrace();
+			log.error("Could not create IndexSearcher at startup: " + e);
+		}
+	}
+
+	/**
+	 * @return the analyzer
+	 */
+	public Analyzer getAnalyzer() {
+		return analyzer;
+	}
+
+	/**
+	 * @param analyzer
+	 *            the analyzer to set
+	 */
+	public void setAnalyzer(Analyzer analyzer) {
+		this.analyzer = analyzer;
+	}
+
+	/**
+	 * @param defMaxNumHits
+	 *            the defMaxNumHits to set
+	 */
+	public void setDefMaxNumHits(int defMaxNumHits) {
+		this.defMaxNumHits = defMaxNumHits;
+	}
+
+	/**
+	 * @param searchResultCache
+	 *            the searchResultCache to set
+	 */
+	public void setSearchResultCache(
+			ExpirationSystem<String, SearchResultListBean> searchResultCache) {
+		this.searchResultCache = searchResultCache;
+	}
+
 	/**
 	 * Reloads the searcher, disposes of the old searcher
 	 * 
@@ -206,6 +283,17 @@ public abstract class AbstractSearchService {
 	}
 
 	/**
+	 * Method that always returns a valid maxNumHits
+	 * 
+	 * @param maxNumHits
+	 * @return
+	 */
+	private Integer getMaxNumHits(Integer maxNumHits) {
+		return (maxNumHits != null && maxNumHits > 0) ? maxNumHits
+				: defMaxNumHits;
+	}
+
+	/**
 	 * Returns the sort fields for the query
 	 * 
 	 * @return
@@ -215,7 +303,7 @@ public abstract class AbstractSearchService {
 				SortField.FIELD_SCORE,
 				new SortField(SearchIndexBean.RECORD_TYPE_FIELD_LABEL,
 						SortField.STRING),
-				new SortField(SearchIndexBean.PREFERRED_NAME_FIELD_LABEL,
+				new SortField(SearchIndexBean.PREFERRED_NAME_LC_FIELD_LABEL,
 						SortField.STRING) };
 
 		return new Sort(fields);
@@ -252,52 +340,5 @@ public abstract class AbstractSearchService {
 	 */
 	private Date getCurrentIndexDate() throws IOException {
 		return new Date(IndexReader.getCurrentVersion(indexPath));
-	}
-
-	/**
-	 * @param indexPath
-	 *            the indexPath to set
-	 */
-	public void setIndexPath(String indexPath) {
-		this.indexPath = indexPath;
-
-		try {
-			createSearcher();
-		} catch (IOException e) {
-			e.printStackTrace();
-			log.error("Could not create IndexSearcher at startup: " + e);
-		}
-	}
-
-	/**
-	 * @return the analyzer
-	 */
-	public Analyzer getAnalyzer() {
-		return analyzer;
-	}
-
-	/**
-	 * @param analyzer
-	 *            the analyzer to set
-	 */
-	public void setAnalyzer(Analyzer analyzer) {
-		this.analyzer = analyzer;
-	}
-
-	/**
-	 * @param maxNumHits
-	 *            the maxNumHits to set
-	 */
-	public void setMaxNumHits(Integer maxNumHits) {
-		this.maxNumHits = maxNumHits;
-	}
-
-	/**
-	 * @param searchResultCache
-	 *            the searchResultCache to set
-	 */
-	public void setSearchResultCache(
-			ExpirationSystem<String, SearchResultListBean> searchResultCache) {
-		this.searchResultCache = searchResultCache;
 	}
 }

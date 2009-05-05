@@ -53,6 +53,7 @@ public interface RequestParamConstants {
 	public static final String PARAM_ISEXACTMATCH = "isexactmatch";
 	public static final String PARAM_PAGESIZE = "pagesize";
 	public static final String PARAM_PAGENUM = "pagenum";
+	public static final String PARAM_MAXNUMHITS = "maxnumhits";
 
 	/**
 	 * Search index parameters
