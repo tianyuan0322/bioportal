@@ -6,6 +6,8 @@ import org.ncbo.stanford.bean.concept.ClassBean;
 
 public interface OBSManager {
 
+	public String findLatestOntologyVersion(String ontologyId) throws Exception;
+
 	public List<ClassBean> findParents(String ontologyVersionId,
 			String conceptId, Integer level, Integer offset, Integer limit)
 			throws Exception;

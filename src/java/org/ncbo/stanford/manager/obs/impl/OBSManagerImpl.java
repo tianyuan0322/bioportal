@@ -12,6 +12,7 @@ import org.ncbo.stanford.bean.concept.ClassBean;
 import org.ncbo.stanford.bean.obs.AbstractConceptBean;
 import org.ncbo.stanford.bean.obs.ChildBean;
 import org.ncbo.stanford.bean.obs.ConceptBean;
+import org.ncbo.stanford.bean.obs.OntologyBean;
 import org.ncbo.stanford.bean.obs.ParentBean;
 import org.ncbo.stanford.bean.obs.PathBean;
 import org.ncbo.stanford.bean.obs.SiblingBean;
@@ -34,6 +35,24 @@ public class OBSManagerImpl implements OBSManager {
 	private static final String OBS_CONCEPT_ID_PATTERN = "^(.+)/(.+)$";
 
 	private XMLSerializationService xmlSerializationService;
+
+	public String findLatestOntologyVersion(String ontologyId) throws Exception {
+		AbstractResponseBean response = xmlSerializationService.processGet(
+				MessageUtils.getMessage("obs.rest.virtual.ontology.url")
+						+ ontologyId, null);
+		String ontologyVersionId = null;
+
+		if (response.isResponseSuccess()) {
+			String data = ((SuccessBean) response).getDataXml();
+			OntologyBean obsOntology = (OntologyBean) xmlSerializationService
+					.fromXML(data);
+			ontologyVersionId = obsOntology.getLocalOntologyID();
+		} else {
+			handleError(response);
+		}
+
+		return ontologyVersionId;
+	}
 
 	@SuppressWarnings("unchecked")
 	public List<ClassBean> findParents(String ontologyVersionId,
@@ -189,6 +208,8 @@ public class OBSManagerImpl implements OBSManager {
 	public void setXmlSerializationService(
 			XMLSerializationService xmlSerializationService) {
 		// OBS Wrapper Aliases
+		xmlSerializationService.alias(MessageUtils
+				.getMessage("entity.obs.ontologybean"), OntologyBean.class);
 		xmlSerializationService.alias(MessageUtils
 				.getMessage("entity.obs.conceptbean"), ConceptBean.class);
 		xmlSerializationService.alias(MessageUtils
