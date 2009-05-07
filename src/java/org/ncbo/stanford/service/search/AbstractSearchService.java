@@ -74,10 +74,6 @@ public abstract class AbstractSearchService {
 			}
 		}
 
-		if (log.isDebugEnabled()) {
-			log.debug("Executing Query: " + query);
-		}
-
 		TopFieldDocs docs = null;
 
 		try {
@@ -117,19 +113,6 @@ public abstract class AbstractSearchService {
 						ontologyDisplayLabel);
 
 				uniqueDocs.add(conceptId);
-
-				// System.out.println(hits[i].score
-				// + " | "
-				// + searchResult.getContents()
-				// + ", Type: "
-				// + searchResult.getRecordType()
-				// + ", PrefName: "
-				// + searchResult.getPreferredName()
-				// + ", OntologyId: "
-				// + searchResult.getOntologyDisplayLabel()
-				// + ", Concept Id: "
-				// + searchResult.getConceptIdShort()
-				// );
 			}
 		}
 
