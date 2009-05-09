@@ -27,8 +27,11 @@ public class OBOCompressedFileHandlerImpl extends AbstractCompressedFileHandler 
 
 	public List<String> handle(File outputFile, OntologyBean ontologyBean)
 			throws FileNotFoundException, IOException {
-		String filePath = outputFile.getPath();
 		String filename = outputFile.getName();
+		String fullFilePath = outputFile.getPath();
+		String filePath = fullFilePath.substring(0, fullFilePath
+				.indexOf(filename));
+
 		List<String> relevantFiles = super.handle(outputFile, ontologyBean);
 
 		if (CompressionUtils.isCompressed(filename)) {

@@ -44,7 +44,10 @@ public abstract class AbstractCompressedFileHandler implements
 
 	public String getCompositeFilePath(String compressedFilePath,
 			String compressedFilename) {
-		return compressedFilePath + File.separator
-				+ getCompositeFilename(compressedFilename);
+		if (!compressedFilePath.endsWith(File.separator)) {
+			compressedFilePath += File.separator;
+		}
+
+		return compressedFilePath + getCompositeFilename(compressedFilename);
 	}
 }
