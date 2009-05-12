@@ -34,7 +34,9 @@ public class CharsetFilter implements Filter {
 		 * Set the default response content type and encoding
 		 */
 		response.setContentType("text/xml;charset=" + encoding);
-		response.flushBuffer();
+		
+		//this appears to solve the utf-8 issue, but break the dowlnoad restlet
+		//response.flushBuffer();
 
 		next.doFilter(request, response);
 	}
