@@ -27,9 +27,9 @@ import org.LexGrid.LexBIG.Utility.Constructors;
 import org.LexGrid.LexBIG.Utility.ConvenienceMethods;
 import org.LexGrid.codingSchemes.CodingScheme;
 import org.LexGrid.commonTypes.EntityDescription;
+import org.LexGrid.commonTypes.Property;
 import org.LexGrid.concepts.Comment;
 import org.LexGrid.concepts.Concept;
-import org.LexGrid.concepts.ConceptProperty;
 import org.LexGrid.concepts.Definition;
 import org.LexGrid.concepts.Presentation;
 import org.LexGrid.naming.SupportedProperty;
@@ -408,7 +408,7 @@ public class OntologyRetrievalManagerLexGridImpl extends
 
 		ConceptReference acRef = assoc.getAssociationReference();
 		AssociatedConcept acFromRef = new AssociatedConcept();
-		acFromRef.setCodingScheme(acRef.getCodingScheme());
+		acFromRef.setCodingSchemeName(acRef.getCodingSchemeName());
 		acFromRef.setConceptCode(acRef.getConceptCode());
 		AssociationList acSources = new AssociationList();
 		acFromRef.setIsNavigable(Boolean.TRUE);
@@ -433,7 +433,7 @@ public class OntologyRetrievalManagerLexGridImpl extends
 			rAssoc.setAssociationName(assoc.getAssociationName());
 			// On reverse, old associated concept is new reference point.
 			ConceptReference ref = new ConceptReference();
-			ref.setCodingScheme(ac.getCodingScheme());
+			ref.setCodingSchemeName(ac.getCodingSchemeName());
 			ref.setConceptCode(ac.getConceptCode());
 			rAssoc.setAssociationReference(ref);
 			// And old reference is new associated concept.
@@ -553,7 +553,7 @@ public class OntologyRetrievalManagerLexGridImpl extends
 			ConceptReference cr, boolean includeChildren) {
 		CodingSchemeVersionOrTag csvt = getLexGridCodingSchemeVersion(ncboOntology);
 		ResolvedConceptReference rcr = new ResolvedConceptReference();
-		rcr.setCodingScheme(cr.getCodingScheme());
+		rcr.setCodingSchemeName(cr.getCodingSchemeName());
 		rcr.setConceptCode(cr.getConceptCode());
 		rcr.setCodingSchemeVersion(csvt.getVersion());
 		EntityDescription ed = getEntityDescription(ncboOntology, cr
@@ -571,7 +571,7 @@ public class OntologyRetrievalManagerLexGridImpl extends
 			ResolvedConceptReference rcr, boolean includeChildren) {
 		ClassBean bean = createClassBean(rcr);
 		// Add the children
-		String schemeName = rcr.getCodingScheme();
+		String schemeName = rcr.getCodingSchemeName();
 		String version = rcr.getCodingSchemeVersion();
 		String conceptId = rcr.getConceptCode();
 		CodingSchemeVersionOrTag csvt = Constructors
@@ -685,7 +685,7 @@ public class OntologyRetrievalManagerLexGridImpl extends
 		for (int i = 0; i < presentations.length; i++) {
 			if (presentations[i].getIsPreferred().booleanValue())
 
-				return presentations[i].getText().getContent();
+				return presentations[i].getValue().getContent();
 		}
 		return "";
 	}
@@ -916,14 +916,14 @@ public class OntologyRetrievalManagerLexGridImpl extends
 			if (!p.getIsPreferred().booleanValue()) {
 				if (StringUtils.isNotBlank(p.getDegreeOfFidelity())) {
 					String key = p.getDegreeOfFidelity() + " SYNONYM";
-					addStringToHashMapsArrayList(map, key, p.getText()
+					addStringToHashMapsArrayList(map, key, p.getValue()
 							.getContent());
 				} else if (StringUtils.isNotBlank(p.getRepresentationalForm())) {
 					addStringToHashMapsArrayList(map, p
-							.getRepresentationalForm(), p.getText()
+							.getRepresentationalForm(), p.getValue()
 							.getContent());
 				} else {
-					addStringToHashMapsArrayList(map, "SYNONYM", p.getText()
+					addStringToHashMapsArrayList(map, "SYNONYM", p.getValue()
 							.getContent());
 				}
 			}
@@ -934,7 +934,7 @@ public class OntologyRetrievalManagerLexGridImpl extends
 		count = entry.getCommentCount();
 		for (int i = 0; i < count; i++) {
 			c = entry.getComment(i);
-			addStringToHashMapsArrayList(map, "Comment", c.getText()
+			addStringToHashMapsArrayList(map, "Comment", c.getValue()
 					.getContent());
 		}
 
@@ -943,18 +943,18 @@ public class OntologyRetrievalManagerLexGridImpl extends
 		count = entry.getDefinitionCount();
 		for (int i = 0; i < count; i++) {
 			d = entry.getDefinition(i);
-			addStringToHashMapsArrayList(map, "Definition", d.getText()
+			addStringToHashMapsArrayList(map, "Definition", d.getValue()
 					.getContent());
 		}
 
 		// handle concept properties
-		ConceptProperty prop = null;
-		count = entry.getConceptPropertyCount();
+		Property prop = null;
+		count = entry.getPropertyCount();
 		for (int i = 0; i < count; i++) {
-			prop = entry.getConceptProperty(i);
+			prop = entry.getProperty(i);
 			String key = prop.getPropertyName();
 			if (StringUtils.isNotBlank(key)) {
-				addStringToHashMapsArrayList(map, key, prop.getText()
+				addStringToHashMapsArrayList(map, key, prop.getValue()
 						.getContent());
 			}
 		}

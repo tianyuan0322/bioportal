@@ -33,6 +33,6 @@ public class LexGridSearchProperty extends SearchBean {
 	 * @return the content of the property
 	 */
 	public String getPropertyContent() {
-		return property.getText().getContent();
+		return property.getValue().getContent();
 	}
 }

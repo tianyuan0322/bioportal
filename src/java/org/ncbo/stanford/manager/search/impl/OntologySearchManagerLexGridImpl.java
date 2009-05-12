@@ -11,11 +11,10 @@ import org.LexGrid.LexBIG.LexBIGService.CodedNodeSet;
 import org.LexGrid.LexBIG.LexBIGService.LexBIGService;
 import org.LexGrid.LexBIG.Utility.Iterators.ResolvedConceptReferencesIterator;
 import org.LexGrid.commonTypes.EntityDescription;
+import org.LexGrid.commonTypes.Property;
 import org.LexGrid.concepts.Comment;
 import org.LexGrid.concepts.Concept;
-import org.LexGrid.concepts.ConceptProperty;
 import org.LexGrid.concepts.Definition;
-import org.LexGrid.concepts.Instruction;
 import org.LexGrid.concepts.Presentation;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -88,9 +87,7 @@ public class OntologySearchManagerLexGridImpl extends
 					setCommentProperties(writer, doc, ontologyVersionId,
 							ontologyId, ontologyDisplayLabel, preferredName,
 							concept);
-					setInstructionProperties(writer, doc, ontologyVersionId,
-							ontologyId, ontologyDisplayLabel, preferredName,
-							concept);
+					
 				}
 			}
 
@@ -133,7 +130,7 @@ public class OntologySearchManagerLexGridImpl extends
 				recType = SearchRecordTypeEnum.RECORD_TYPE_SYNONYM;
 			}
 
-			populateIndexBean(doc, concept.getId(), new LexGridSearchProperty(
+			populateIndexBean(doc, concept.getEntityCode(), new LexGridSearchProperty(
 					ontologyVersionId, ontologyId, ontologyDisplayLabel,
 					recType, preferredName, p));
 			writer.addDocument(doc);
@@ -157,7 +154,7 @@ public class OntologySearchManagerLexGridImpl extends
 				Presentation p = itr.next();
 
 				if (p.getIsPreferred()) {
-					preferredName = p.getText().getContent();
+					preferredName = p.getValue().getContent();
 					break;
 				}
 			}
@@ -182,10 +179,10 @@ public class OntologySearchManagerLexGridImpl extends
 			SearchIndexBean doc, Integer ontologyVersionId, Integer ontologyId,
 			String ontologyDisplayLabel, String preferredName, Concept concept)
 			throws IOException {
-		for (Iterator<ConceptProperty> itr = concept.iterateConceptProperty(); itr
+		for (Iterator<Property> itr = concept.iterateProperty(); itr
 				.hasNext();) {
-			ConceptProperty cp = itr.next();
-			populateIndexBean(doc, concept.getId(), new LexGridSearchProperty(
+			Property cp = itr.next();
+			populateIndexBean(doc, concept.getEntityCode(), new LexGridSearchProperty(
 					ontologyVersionId, ontologyId, ontologyDisplayLabel,
 					SearchRecordTypeEnum.RECORD_TYPE_PROPERTY, preferredName,
 					cp));
@@ -213,7 +210,7 @@ public class OntologySearchManagerLexGridImpl extends
 		for (Iterator<Definition> itr = concept.iterateDefinition(); itr
 				.hasNext();) {
 			Definition d = itr.next();
-			populateIndexBean(doc, concept.getId(),
+			populateIndexBean(doc, concept.getEntityCode(),
 					new LexGridSearchProperty(ontologyVersionId, ontologyId,
 							ontologyDisplayLabel,
 							SearchRecordTypeEnum.RECORD_TYPE_PROPERTY,
@@ -240,7 +237,7 @@ public class OntologySearchManagerLexGridImpl extends
 			throws IOException {
 		for (Iterator<Comment> itr = concept.iterateComment(); itr.hasNext();) {
 			Comment c = itr.next();
-			populateIndexBean(doc, concept.getId(),
+			populateIndexBean(doc, concept.getEntityCode(),
 					new LexGridSearchProperty(ontologyVersionId, ontologyId,
 							ontologyDisplayLabel,
 							SearchRecordTypeEnum.RECORD_TYPE_PROPERTY,
@@ -249,34 +246,7 @@ public class OntologySearchManagerLexGridImpl extends
 		}
 	}
 
-	/**
-	 * Adds documents to index that define "instruction" type properties in
-	 * LexGrid
-	 * 
-	 * @param writer
-	 * @param doc
-	 * @param ontologyVersionId
-	 * @param ontologyId
-	 * @param ontologyDisplayLabel
-	 * @param preferredName
-	 * @param concept
-	 * @throws IOException
-	 */
-	private void setInstructionProperties(LuceneIndexWriterWrapper writer,
-			SearchIndexBean doc, Integer ontologyVersionId, Integer ontologyId,
-			String ontologyDisplayLabel, String preferredName, Concept concept)
-			throws IOException {
-		for (Iterator<Instruction> itr = concept.iterateInstruction(); itr
-				.hasNext();) {
-			Instruction i = itr.next();
-			populateIndexBean(doc, concept.getId(),
-					new LexGridSearchProperty(ontologyVersionId, ontologyId,
-							ontologyDisplayLabel,
-							SearchRecordTypeEnum.RECORD_TYPE_PROPERTY,
-							preferredName, i));
-			writer.addDocument(doc);
-		}
-	}
+
 
 	/**
 	 * Populate a single record in the index

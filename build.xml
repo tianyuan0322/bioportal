@@ -197,7 +197,7 @@
 			</filterset>
 		</copy>
 
-		<copy file="${tmpl.dir}/lexgrid.props.tmpl" tofile="${resources.dir}/config/config.props" overwrite="true">
+		<copy file="${tmpl.dir}/lexgrid.props.tmpl" tofile="${resources.dir}/config/lbconfig.props" overwrite="true">
 			<filterset>
 				<filter token="lexgridbasepath" value="${lexgrid.base.path}" />
 				<filter token="lexgridjarfilelocation" value="${lexgrid.jarfile.location}" />

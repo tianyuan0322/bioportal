@@ -43,7 +43,7 @@ public abstract class AbstractOntologyManagerLexGrid {
 		for (CodingSchemeRendering csr : schemes.getCodingSchemeRendering()) {
 			css = csr.getCodingSchemeSummary();
 			String version = css.getRepresentsVersion();
-			String urn = css.getCodingSchemeURN();
+			String urn = css.getCodingSchemeURI();
 
 			if (urn != null && urn.equals(fileUrn)) {
 				if (version != null && version.equals(ver)) {

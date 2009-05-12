@@ -41,8 +41,8 @@ import org.LexGrid.LexBIG.LexBIGService.LexBIGServiceManager;
 import org.LexGrid.LexBIG.Utility.Constructors;
 import org.LexGrid.LexBIG.Utility.ObjectToString;
 import org.LexGrid.LexOnt.CodingSchemeManifest;
+import org.LexGrid.LexOnt.CsmfCodingSchemeURI;
 import org.LexGrid.LexOnt.CsmfFormalName;
-import org.LexGrid.LexOnt.CsmfRegisteredName;
 import org.LexGrid.LexOnt.CsmfVersion;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -145,8 +145,8 @@ public class OntologyLoadManagerLexGridImpl extends
 				((OWL_Loader) loader).loadNCI(ontologyUri, null, false,
 						stopOnErrors, async);
 			} else {
-				((OWL_Loader) loader).load(ontologyUri, null, stopOnErrors,
-						async);
+				int memSafe=1;
+				((OWL_Loader) loader).load(ontologyUri, null, memSafe, stopOnErrors, async);
 			}
 		}
 
@@ -268,16 +268,20 @@ public class OntologyLoadManagerLexGridImpl extends
 		if (ontology_bean.getFormat().equalsIgnoreCase(
 				ApplicationConstants.FORMAT_OBO)
 				|| ontology_bean.getFormat().equalsIgnoreCase(
+						ApplicationConstants.FORMAT_OWL)
+				|| ontology_bean.getFormat().equalsIgnoreCase(
 						ApplicationConstants.FORMAT_OWL_DL)
 				|| ontology_bean.getFormat().equalsIgnoreCase(
 						ApplicationConstants.FORMAT_OWL_FULL)) {
 			// Override registered name using metadata from the ontology bean
-			String registeredName = "http://www.bioontology.org/"
+			String strCodingSchemeURI = "http://www.bioontology.org/"
 					+ ontology_bean.getId().toString() + "/"
 					+ ontology_bean.getDisplayLabel();
-			CsmfRegisteredName csmfRegisteredName = new CsmfRegisteredName();
-			csmfRegisteredName.setContent(registeredName);
-			csm.setRegisteredName(csmfRegisteredName);
+			//CodingSchemeManifest needs an id for it to be valid...set the id value
+			csm.setId(strCodingSchemeURI);
+			CsmfCodingSchemeURI csmfCSURI = new CsmfCodingSchemeURI();
+			csmfCSURI.setContent(strCodingSchemeURI);
+			csm.setCodingSchemeURI(csmfCSURI);
 			// Override version using metadata from the ontology bean
 			CsmfVersion csmfVersion = new CsmfVersion();
 			String version = ontology_bean.getOntologyId() + "/"
