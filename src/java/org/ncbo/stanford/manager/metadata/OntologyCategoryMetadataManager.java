@@ -20,4 +20,12 @@ public interface OntologyCategoryMetadataManager {
 	 */
 	public void saveOntologyCategory(CategoryBean categoryBean) throws Exception;
 
+	
+	/**
+	 * Retrieves the categoryBean representing an ontology category for a specific category id.
+	 * 
+	 * @param categoryId
+	 */
+	public CategoryBean findCategoryById(Integer categoryId);
+	
 }

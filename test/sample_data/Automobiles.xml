@@ -17,9 +17,9 @@
     <supportedFormat localId="text/plain">text/plain</supportedFormat>
     <supportedProperty localId="definition">definition</supportedProperty>
     <supportedProperty localId="textualPresentation">textualPresentation</supportedProperty>
-    <supportedCodingScheme localId="Automobiles" urn="urn:oid:11.11.0.1">Automobiles</supportedCodingScheme>
-    <supportedCodingScheme localId="Expendable Parts" urn="urn:oid:11.11.0.50">Expendable Parts</supportedCodingScheme>
-    <supportedCodingScheme localId="German Made Parts" urn="urn:oid:11.11.0.2">German Made Parts</supportedCodingScheme>
+    <supportedCodingScheme localId="Automobiles" urn="urn:oid:11.11.0.1" isImported="false">Automobiles</supportedCodingScheme>
+    <supportedCodingScheme localId="Expendable Parts" urn="urn:oid:11.11.0.50" isImported="false">Expendable Parts</supportedCodingScheme>
+    <supportedCodingScheme localId="German Made Parts" urn="urn:oid:11.11.0.2" isImported="false">German Made Parts</supportedCodingScheme>
     <supportedSource localId="lexgrid.org">lexgrid.org</supportedSource>
     <supportedSource localId="11.11.0.1">11.11.0.1</supportedSource>
     <supportedAssociation localId="hasSubtype" urn="urn:oid:1.3.6.1.4.1.2114.108.1.8.1">hasSubtype</supportedAssociation>
@@ -124,36 +124,36 @@
     <lgCommon:entityDescription>asD</lgCommon:entityDescription>
     <lgRel:association id="hasSubtype" forwardName="hasSubtype" isAntiReflexive="true" isAntiSymmetric="true" isAntiTransitive="true" isFunctional="true" isNavigable="true" isReflexive="true" isReverseFunctional="true" isSymmetric="true" isTransitive="true" isTranslationAssociation="true" reverseName="isA" targetCodingScheme="Automobiles">
       <lgCommon:entityDescription>hasSubtype</lgCommon:entityDescription>
-      <lgRel:sourceEntity sourceCodingScheme="Automobiles" sourceId="005">
-        <lgRel:targetEntity targetCodingScheme="Automobiles" targetId="Ford"/>
-        <lgRel:targetEntity targetCodingScheme="Automobiles" targetId="GM"/>
+      <lgRel:sourceEntity sourceCodingScheme="Automobiles" sourceId="005" sourceEntityType="concept">
+        <lgRel:targetEntity targetCodingScheme="Automobiles" targetId="Ford" targetEntityType="concept"/>
+        <lgRel:targetEntity targetCodingScheme="Automobiles" targetId="GM" targetEntityType="concept"/>
       </lgRel:sourceEntity>
-      <lgRel:sourceEntity sourceCodingScheme="Automobiles" sourceId="@">
-        <lgRel:targetEntity targetCodingScheme="Automobiles" targetId="005"/>
-        <lgRel:targetEntity deprecated="true" firstRelease="true" targetCodingScheme="Automobiles" targetId="A0001"/>
+      <lgRel:sourceEntity sourceCodingScheme="Automobiles" sourceId="@" sourceEntityType="concept">
+        <lgRel:targetEntity targetCodingScheme="Automobiles" targetId="005" targetEntityType="concept"/>
+        <lgRel:targetEntity deprecated="true" firstRelease="true" targetCodingScheme="Automobiles" targetId="A0001" targetEntityType="concept"/>
       </lgRel:sourceEntity>
-      <lgRel:sourceEntity sourceCodingScheme="Automobiles" sourceId="A0001">
-        <lgRel:targetEntity deprecated="true" firstRelease="true" targetCodingScheme="Automobiles" targetId="C0001">
+      <lgRel:sourceEntity sourceCodingScheme="Automobiles" sourceId="A0001" sourceEntityType="concept">
+        <lgRel:targetEntity deprecated="true" firstRelease="true" targetCodingScheme="Automobiles" targetId="C0001" targetEntityType="concept">
           <lgRel:associationQualification associationQualifier="hasEngine">true</lgRel:associationQualification>
         </lgRel:targetEntity>
-        <lgRel:targetEntity deprecated="true" firstRelease="true" targetCodingScheme="Automobiles" targetId="T0001"/>
+        <lgRel:targetEntity deprecated="true" firstRelease="true" targetCodingScheme="Automobiles" targetId="T0001" targetEntityType="concept"/>
       </lgRel:sourceEntity>
-      <lgRel:sourceEntity sourceCodingScheme="Automobiles" sourceId="Ford">
-        <lgRel:targetEntity targetCodingScheme="Automobiles" targetId="Jaguar">
+      <lgRel:sourceEntity sourceCodingScheme="Automobiles" sourceId="Ford" sourceEntityType="concept">
+        <lgRel:targetEntity targetCodingScheme="Automobiles" targetId="Jaguar" targetEntityType="concept">
           <lgRel:associationQualification associationQualifier="since">true</lgRel:associationQualification>
         </lgRel:targetEntity>
       </lgRel:sourceEntity>
-      <lgRel:sourceEntity sourceCodingScheme="Automobiles" sourceId="GM">
-        <lgRel:targetEntity targetCodingScheme="Automobiles" targetId="73"/>
-        <lgRel:targetEntity targetCodingScheme="Automobiles" targetId="Chevy"/>
+      <lgRel:sourceEntity sourceCodingScheme="Automobiles" sourceId="GM" sourceEntityType="concept">
+        <lgRel:targetEntity targetCodingScheme="Automobiles" targetId="73" targetEntityType="concept"/>
+        <lgRel:targetEntity targetCodingScheme="Automobiles" targetId="Chevy" targetEntityType="concept"/>
       </lgRel:sourceEntity>
     </lgRel:association>
     <lgRel:association id="uses" forwardName="uses" isNavigable="true" isTransitive="true" reverseName="usedBy">
       <lgCommon:entityDescription>expendable things that Automobiles use</lgCommon:entityDescription>
-      <lgRel:sourceEntity sourceCodingScheme="Automobiles" sourceId="A0001">
-        <lgRel:targetEntity targetCodingScheme="Expendable Parts" targetId="Batteries"/>
-        <lgRel:targetEntity targetCodingScheme="Expendable Parts" targetId="Brakes"/>
-        <lgRel:targetEntity targetCodingScheme="Expendable Parts" targetId="Tires"/>
+      <lgRel:sourceEntity sourceCodingScheme="Automobiles" sourceId="A0001" sourceEntityType="concept">
+        <lgRel:targetEntity targetCodingScheme="Expendable Parts" targetId="Batteries" targetEntityType="concept"/>
+        <lgRel:targetEntity targetCodingScheme="Expendable Parts" targetId="Brakes" targetEntityType="concept"/>
+        <lgRel:targetEntity targetCodingScheme="Expendable Parts" targetId="Tires" targetEntityType="concept"/>
       </lgRel:sourceEntity>
     </lgRel:association>
   </relations>

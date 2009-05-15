@@ -7,6 +7,7 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.fileupload.FileItem;
 import org.ncbo.stanford.bean.OntologyBean;
+import org.ncbo.stanford.bean.OntologyViewBean;
 import org.ncbo.stanford.bean.UserBean;
 import org.ncbo.stanford.util.MessageUtils;
 import org.ncbo.stanford.util.RequestUtils;
@@ -51,7 +52,27 @@ public class BeanHelper {
 
 		return userBean;
 	}
-
+	
+	/**
+	 * Creates OntologyViewBean object and populate from Request object.
+	 * 
+	 * <ontology Id>, <internal_version_number> - will be determined at ontology
+	 * creation time <parent_id> - soon to be OBSOLETE
+	 * 
+	 * The following attributes are only for System or Admin. <statusId>,
+	 * <codingScheme> - updated by Scheduler <isReviewed> - updated by Admin
+	 * 
+	 * source: request, destination: ontologyViewBean
+	 * 
+	 * @param Request
+	 */
+	public static OntologyViewBean populateOntologyViewBeanFromRequest(Request request) {
+		OntologyViewBean bean = new OntologyViewBean();
+		populateOntologyBeanFromRequest(bean, request);
+		populateOntologyViewBeanFromRequest(bean, request);
+		return bean;
+	}
+	
 	/**
 	 * Creates OntologyBean object and populate from Request object.
 	 * 
@@ -66,6 +87,12 @@ public class BeanHelper {
 	 * @param Request
 	 */
 	public static OntologyBean populateOntologyBeanFromRequest(Request request) {
+		OntologyBean bean = new OntologyBean();
+		populateOntologyBeanFromRequest(bean, request);
+		return bean;
+	}
+	
+	private static void populateOntologyBeanFromRequest(OntologyBean bean, Request request) {
 		HttpServletRequest httpServletRequest = RequestUtils
 				.getHttpServletRequest(request);
 
@@ -140,7 +167,6 @@ public class BeanHelper {
 				.getMessage("form.ontology.codingScheme"));
 
 		// now populate the OntologyBean
-		OntologyBean bean = new OntologyBean();
 
 		if (!StringHelper.isNullOrNullString(userId)) {
 			bean.setUserId(Integer.parseInt(userId));
@@ -215,7 +241,46 @@ public class BeanHelper {
 		if (fileItem != null) {
 			bean.setFileItem(fileItem);
 		}
+	}
+	
+	private static void populateOntologyViewBeanFromRequest(OntologyViewBean bean, Request request) {
+		HttpServletRequest httpServletRequest = RequestUtils
+				.getHttpServletRequest(request);
 
-		return bean;
+		// for new version for existing ontology view
+		String viewDefinition = httpServletRequest.getParameter(MessageUtils
+				.getMessage("form.ontology.viewDefinition"));
+		String viewDefinitionLanguage = httpServletRequest.getParameter(MessageUtils
+				.getMessage("form.ontology.viewDefinitionLanguage"));
+		String viewGenerationEngine = httpServletRequest.getParameter(MessageUtils
+				.getMessage("form.ontology.viewGenerationEngine"));
+
+		List<Integer> ontVerIds = new ArrayList<Integer>();
+
+		String[] ontVerIdsStr = httpServletRequest
+				.getParameterValues(MessageUtils
+						.getMessage("form.ontology.viewOnOntologyVersionId"));
+
+		if (ontVerIdsStr != null) {
+			for (String categoryIdStr : ontVerIdsStr) {
+				ontVerIds.add(Integer.parseInt(categoryIdStr));
+			}
+		}
+
+		// now populate the OntologyViewBean
+
+		if (!StringHelper.isNullOrNullString(viewDefinition)) {
+			bean.setViewDefinition(viewDefinition);
+		}
+		if (!StringHelper.isNullOrNullString(viewDefinitionLanguage)) {
+			bean.setViewDefinition(viewDefinitionLanguage);
+		}
+		if (!StringHelper.isNullOrNullString(viewGenerationEngine)) {
+			bean.setViewDefinition(viewGenerationEngine);
+		}
+
+		if (ontVerIds.size() > 0)
+			bean.setViewOnOntologyVersionId(ontVerIds);
+
 	}
 }

@@ -1,7 +1,6 @@
 package org.ncbo.stanford.manager.impl;
 
 import static org.junit.Assert.*;
-import static org.junit.Assert.fail;
 
 import java.util.Date;
 
@@ -22,7 +21,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 public class OntologyMetadataManagerProtegeImplTest extends AbstractBioPortalTest {
 	
 	private static int ID_ONTOLOGY_VERSION_1 = 98765;
-	private static int ID_ONTOLOGY_1 = 1143;
+	private static int ID_ONTOLOGY_1 = 2143;
+	private static int ID_ONTOLOGY_VERSION_2 = 12321;
+	private static int ID_ONTOLOGY_2 = 2002;
+	
+	private static int ID_USER_DEFAULT = 1000;
+	private static int ID_USER_1 = 1005;
 	
 	@Autowired
 	OntologyMetadataManagerProtegeImpl ontMetadataManagerProtege;
@@ -33,9 +37,7 @@ public class OntologyMetadataManagerProtegeImplTest extends AbstractBioPortalTes
 		System.out.println("Starting testSaveOntologyMetadata");
 		
 		try {
-			OntologyBean ontologyBean = createOntolgyBeanBase();
-			ontologyBean.setId(ID_ONTOLOGY_VERSION_1);
-			ontologyBean.setOntologyId(ID_ONTOLOGY_1);
+			OntologyBean ontologyBean = createOntologyBean(ID_ONTOLOGY_VERSION_2, ID_ONTOLOGY_2, ID_USER_1);
 			ontMetadataManagerProtege.saveOntology(ontologyBean);
 		}
 		catch (Exception e) {
@@ -52,7 +54,7 @@ public class OntologyMetadataManagerProtegeImplTest extends AbstractBioPortalTes
 		System.out.println("Starting testFindOntologyMetadataById");
 		
 		try {
-			OntologyBean ob = ontMetadataManagerProtege.findOntologyById(ID_ONTOLOGY_VERSION_1);
+			OntologyBean ob = ontMetadataManagerProtege.findOntologyById(ID_ONTOLOGY_VERSION_2);
 			
 			System.out.println("OntologyBean: " + ob);
 			assertNotNull("Retrieving ontology metadata by ID has failed", ob);
@@ -70,8 +72,25 @@ public class OntologyMetadataManagerProtegeImplTest extends AbstractBioPortalTes
 	}
 	
 	
+	private OntologyBean createOntologyBean(int onotVerId, int ontologyId, int userId) {
+		OntologyBean ob = createOntologyBean(onotVerId, ontologyId);
+		ob.setUserId(userId);
+		return ob;
+	}
+	
+	private OntologyBean createOntologyBean(int onotVerId, int ontologyId) {
+		OntologyBean ub = createOntologyBeanBase();
+		setOntologyBeanEssentialProperties(ub, onotVerId, ontologyId);
+		return ub;
+	}
+	
+	private void setOntologyBeanEssentialProperties(OntologyBean ob,
+			int id, int ontologyId) {
+		ob.setId(id);
+		ob.setOntologyId(ontologyId);
+	}
 
-	private OntologyBean createOntolgyBeanBase() {
+	private OntologyBean createOntologyBeanBase() {
 		OntologyBean bean = new OntologyBean();
 		// bean.setOntologyId(3000);
 		// OntologyId gets automatically generated.
@@ -79,7 +98,7 @@ public class OntologyMetadataManagerProtegeImplTest extends AbstractBioPortalTes
 		bean.setFormat(ApplicationConstants.FORMAT_OWL);
 		bean.setCodingScheme(null);
 		bean.setDisplayLabel("BioPortal Metadata Ontology");
-		bean.setUserId(1000);
+		bean.setUserId(ID_USER_DEFAULT);
 		bean.setVersionNumber("1.0");
 		bean.setStatusId(StatusEnum.STATUS_WAITING.getStatus());
 		bean.setVersionStatus("pre-production");

@@ -2,19 +2,19 @@ package org.ncbo.stanford.view.rest.restlet.ontology;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.ncbo.stanford.bean.OntologyBean;
+import org.ncbo.stanford.bean.OntologyViewBean;
 import org.ncbo.stanford.service.concept.ConceptService;
-import org.ncbo.stanford.service.ontology.OntologyService;
+import org.ncbo.stanford.service.ontology.OntologyViewService;
 import org.ncbo.stanford.util.MessageUtils;
 import org.ncbo.stanford.view.rest.restlet.AbstractBaseRestlet;
 import org.restlet.data.Request;
 import org.restlet.data.Response;
 import org.restlet.data.Status;
 
-public class VirtualUriRestlet extends AbstractBaseRestlet {
+public class VirtualViewUriRestlet extends AbstractBaseRestlet {
 
-	private static final Log log = LogFactory.getLog(VirtualUriRestlet.class);
-	private OntologyService ontologyService;
+	private static final Log log = LogFactory.getLog(VirtualViewUriRestlet.class);
+	private OntologyViewService ontologyViewService;
 	private ConceptService conceptService;
 
 	/**
@@ -30,7 +30,7 @@ public class VirtualUriRestlet extends AbstractBaseRestlet {
 	}
 
 	/**
-	 * Return to the response a listing of ontologies
+	 * Return to the response a listing of ontology views
 	 * 
 	 * @param response
 	 */
@@ -45,15 +45,15 @@ public class VirtualUriRestlet extends AbstractBaseRestlet {
 			Integer ontId = Integer.parseInt(ontologyVersionId);
 
 			if (conceptId == null) {
-				returnObject = ontologyService.findLatestOntologyVersion(ontId);
+				returnObject = ontologyViewService.findLatestOntologyViewVersion(ontId);
 
 				if (returnObject == null) {
 					response.setStatus(Status.CLIENT_ERROR_NOT_FOUND, MessageUtils
-							.getMessage("msg.error.ontologyNotFound"));
+							.getMessage("msg.error.ontologyViewNotFound"));
 				}
 			} else {
-				OntologyBean ontBean = ontologyService
-						.findLatestOntologyVersion(ontId);
+				OntologyViewBean ontBean = ontologyViewService
+						.findLatestOntologyViewVersion(ontId);
 				returnObject = conceptService.findConcept(ontBean.getId(),
 						conceptId);
 
@@ -83,10 +83,10 @@ public class VirtualUriRestlet extends AbstractBaseRestlet {
 	}
 
 	/**
-	 * @param ontologyService
-	 *            the ontologyService to set
+	 * @param ontologyViewService
+	 *            the ontologyViewService to set
 	 */
-	public void setOntologyService(OntologyService ontologyService) {
-		this.ontologyService = ontologyService;
+	public void setOntologyViewService(OntologyViewService ontologyViewService) {
+		this.ontologyViewService = ontologyViewService;
 	}
 }

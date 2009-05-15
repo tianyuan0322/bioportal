@@ -1,27 +1,48 @@
 package org.ncbo.stanford.util.metadata;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Collection;
 import java.util.Date;
+import java.util.Iterator;
 import java.util.List;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.ncbo.stanford.bean.OntologyBean;
+import org.ncbo.stanford.bean.OntologyViewBean;
+import org.ncbo.stanford.service.ontology.impl.OntologyServiceImpl;
 
 import edu.stanford.smi.protegex.owl.model.OWLClass;
 import edu.stanford.smi.protegex.owl.model.OWLIndividual;
 import edu.stanford.smi.protegex.owl.model.OWLModel;
 import edu.stanford.smi.protegex.owl.model.OWLNamedClass;
-import edu.stanford.smi.protegex.owl.model.OWLProperty;
+import edu.stanford.smi.protegex.owl.model.RDFIndividual;
 import edu.stanford.smi.protegex.owl.model.RDFProperty;
-import edu.stanford.smi.protegex.owl.model.RDFSDatatype;
 import edu.stanford.smi.protegex.owl.model.RDFSLiteral;
+import edu.stanford.smi.protegex.owl.swrl.exceptions.SWRLFactoryException;
+import edu.stanford.smi.protegex.owl.swrl.model.SWRLFactory;
+import edu.stanford.smi.protegex.owl.swrl.model.SWRLImp;
+import edu.stanford.smi.protegex.owl.swrl.parser.SWRLParseException;
+import edu.stanford.smi.protegex.owl.swrl.parser.SWRLParser;
+import edu.stanford.smi.protegex.owl.swrl.sqwrl.DatatypeValue;
+import edu.stanford.smi.protegex.owl.swrl.sqwrl.SQWRLQueryEngine;
+import edu.stanford.smi.protegex.owl.swrl.sqwrl.SQWRLResult;
+import edu.stanford.smi.protegex.owl.swrl.sqwrl.exceptions.SQWRLException;
+import edu.stanford.smi.protegex.owl.ui.widget.OWLDateWidget;
 
-public class OntologyMetadataUtils {
+public class OntologyMetadataUtils extends MetadataUtils {
 
-	private static final String PREFIX_OMV = "OMV:";
-	private static final String PREFIX_METADATA = "metadata:";
-	
+	private static final Log log = LogFactory.getLog(OntologyMetadataUtils.class);
+
+	private static final String CLASS_OMV_ONTOLOGY = PREFIX_OMV + "Ontology";
 	private static final String CLASS_OMV_ONTOLOGY_LANGUAGE = PREFIX_OMV + "OntologyLanguage";
+	private static final String CLASS_VIRTUAL_ONTOLOGY = PREFIX_METADATA + "VirtualOntology";
+	
+	private static final String CLASS_ONTOLOGY_VIEW = PREFIX_METADATA + "OntologyView";
+	private static final String CLASS_VIEW_DEFINITION_LANGUAGE = PREFIX_METADATA + "ViewDefinitionLanguage";
+	private static final String CLASS_VIEW_GENERATION_ENGINE = PREFIX_METADATA + "ViewGenerationEngine";
+	private static final String CLASS_VIRTUAL_VIEW = PREFIX_METADATA + "VirtualView";
 	
 	private static final String PROPERTY_ADMINISTERED_BY = PREFIX_METADATA + "administeredBy";
 	private static final String PROPERTY_CODING_SCHEME = PREFIX_METADATA + "codingScheme";
@@ -29,7 +50,7 @@ public class OntologyMetadataUtils {
 	private static final String PROPERTY_FILE_PATH = PREFIX_METADATA + "filePath";
 	private static final String PROPERTY_HAS_CONTACT_EMAIL = PREFIX_METADATA + "hasContactEmail";
 	private static final String PROPERTY_HAS_CONTACT_NAME = PREFIX_METADATA + "hasContactName";
-	 public static final String PROPERTY_ID = PREFIX_METADATA + "id";
+	//private static final String PROPERTY_ID = PREFIX_METADATA + "id";
 	private static final String PROPERTY_INTERNAL_VERSION_NUMBER = PREFIX_METADATA + "internalVersionNumber";
 	private static final String PROPERTY_IS_FOUNDRY = PREFIX_METADATA + "isFoundry";
 	private static final String PROPERTY_IS_MANUAL = PREFIX_METADATA + "isManual";
@@ -38,11 +59,11 @@ public class OntologyMetadataUtils {
 	private static final String PROPERTY_OBO_FOUNDRY_ID = PREFIX_METADATA + "oboFoundryID";
 	private static final String PROPERTY_OMV_ACRONYM = PREFIX_OMV + "acronym";
 	private static final String PROPERTY_OMV_CREATION_DATE = PREFIX_OMV + "creationDate";
-	private static final String PROPERTY_OMV_DESCRIPTION = PREFIX_OMV + "description";
+	//private static final String PROPERTY_OMV_DESCRIPTION = PREFIX_OMV + "description";
 	private static final String PROPERTY_OMV_DOCUMENTATION = PREFIX_OMV + "documentation";
 	private static final String PROPERTY_OMV_HAS_DOMAIN = PREFIX_OMV + "hasDomain";
 	private static final String PROPERTY_OMV_HAS_ONTOLOGY_LANGUAGE = PREFIX_OMV + "hasOntologyLanguage";
-	 public static final String PROPERTY_OMV_NAME = PREFIX_OMV + "name";
+	//private static final String PROPERTY_OMV_NAME = PREFIX_OMV + "name";
 	private static final String PROPERTY_OMV_STATUS = PREFIX_OMV + "status";
 	private static final String PROPERTY_OMV_URI = PREFIX_OMV + "URI";
 	private static final String PROPERTY_OMV_VERSION = PREFIX_OMV + "version";
@@ -50,23 +71,113 @@ public class OntologyMetadataUtils {
 	private static final String PROPERTY_STATUS_ID = PREFIX_METADATA + "statusID";
 	private static final String PROPERTY_SYNONYM_PROPERTY = PREFIX_METADATA + "synonymProperty";
 	private static final String PROPERTY_TARGET_TERMINOLOGIES = PREFIX_METADATA + "targetTerminologies";
-	private static final String PROPERTY_UPLOAD_DATE = PREFIX_METADATA + "uploadDate";
+	private static final String PROPERTY_UPLOAD_DATE = PREFIX_METADATA + "timestampCreation";
 	private static final String PROPERTY_URL_HOMEPAGE = PREFIX_METADATA + "urlHomepage";
 	private static final String PROPERTY_URL_PUBLICATIONS = PREFIX_METADATA + "urlPublications";
+	
+//	private static final String PROPERTY_CURRENT_VERSION = PREFIX_METADATA + "currentVersion";
+	private static final String PROPERTY_HAS_VERSION = PREFIX_METADATA + "hasVersion";
 
 	
-	private static final String PROPERTY_CURRENT_VERSION = PREFIX_METADATA + "currentVersion";
+	private static final String PROPERTY_IS_VIEW_ON_ONTOLOGY_VERSION = PREFIX_METADATA + "isViewOnOntologyVersion";
+	private static final String PROPERTY_VIEW_DEFINITION = PREFIX_METADATA + "viewDefinition";
+	private static final String PROPERTY_VIEW_DEFINITION_LANGUAGE = PREFIX_METADATA + "viewDefinitionLanguage";
+	private static final String PROPERTY_VIEW_GENERATION_ENGINE = PREFIX_METADATA + "viewGenerationEngine";
+
+	private static final String PROPERTY_VIRTUAL_VIEW_OF = PREFIX_METADATA + "virtualViewOf";
 
 	
-	private static final String PROPERTY_RDFS_LABEL = "rdfs:label";
+	public static final int STATUS_WAITING = 1; 
+	public static final int STATUS_PARSING = 2; 
+	public static final int STATUS_READY = 3; 
+	public static final int STATUS_ERROR = 4; 
+	public static final int STATUS_NOT_APPLICABLE = 5; 
 
+
+	public static void ensureOntologyBeanDoesNotInvalidateOntologyInstance(
+			OWLIndividual ontologyInd, OntologyBean ob, OWLIndividual vOntInd) throws Exception {
+		
+		if (ontologyInd == null || ob == null) {
+			throw new Exception("The method fillInOntologyInstancePropertiesFromBean can't take null arguments. Please make sure that both arguments are properly initialized.");
+		}
+		
+		OWLModel owlModel = ontologyInd.getOWLModel();
+		
+		if (ob.getInternalVersionNumber() == null ) {
+			Integer internalVerNr = getPropertyValue(owlModel, ontologyInd, PROPERTY_INTERNAL_VERSION_NUMBER, Integer.class);
+			if (internalVerNr != null) {
+				ob.setInternalVersionNumber(internalVerNr);
+			}
+		}
+		
+		if (ob.getStatusId() == null ) {
+			Integer statusId = getPropertyValue(owlModel, ontologyInd, PROPERTY_STATUS_ID, Integer.class);
+			if (statusId != null) {
+				ob.setStatusId(statusId);
+			}
+			else {
+				ob.setStatusId(ob.getDefaultStatus());
+			}
+		}
+		
+		if (ob.getIsManual() == null ) {
+			Boolean isManual = getPropertyValue(owlModel, vOntInd, PROPERTY_IS_MANUAL, Boolean.class);
+			if (isManual != null) {
+				ob.setIsManual(convertBooleanToByte(isManual));
+			}
+			else {
+				ob.setIsManual((byte) 0);
+			}
+		}
+		
+		if (ob.getIsRemote() == null ) {
+			Boolean isRemote = getPropertyValue(owlModel, ontologyInd, PROPERTY_IS_REMOTE, Boolean.class);
+			if (isRemote != null) {
+				ob.setIsRemote(convertBooleanToByte(isRemote));
+			}
+			else {
+				ob.setIsRemote((byte) 0);
+			}
+		}
+		
+		if (ob.getIsFoundry() == null ) {
+			Boolean isFoundry = getPropertyValue(owlModel, ontologyInd, PROPERTY_IS_FOUNDRY, Boolean.class);
+			if (isFoundry != null) {
+				ob.setIsFoundry(convertBooleanToByte(isFoundry));
+			}
+			else {
+				ob.setIsFoundry((byte) 0);
+			}
+		}
+		
+		if (ob.getUserId() == null ) {
+			//TODO temporary solution, until multiple administrators will be allowed:
+			Integer userId = getFirstElement(getPropertyValueIds(owlModel, ontologyInd, PROPERTY_ADMINISTERED_BY));
+			if (userId != null) {
+				ob.setUserId( userId );
+			}
+		}
+		
+		if (ob.getDateCreated() == null ) {
+			ob.setDateCreated(Calendar.getInstance().getTime());
+		}
+	}
+	
+	public static void ensureOntologyViewBeanDoesNotInvalidateOntologyViewInstance(
+			OWLIndividual ontologyViewInd, OntologyViewBean ob, OWLIndividual vViewInd) throws Exception {
+		
+		ensureOntologyBeanDoesNotInvalidateOntologyInstance(ontologyViewInd, ob, vViewInd);
+		
+		//TODO continue
+	}
+	
 	
 	public static void fillInOntologyInstancePropertiesFromBean(OWLIndividual ontologyInd,
 			OntologyBean ob, OWLIndividual vOntInd, OWLIndividual userInd, 
 			Collection<OWLIndividual> domainIndividuals) throws Exception {
 		
 		if (ontologyInd == null || ob == null) {
-			throw new Exception("The method fillInInstancePropertiesFromBean can't take null arguments. Please make sure that both arguments are properly initialized.");
+			throw new Exception("The method fillInOntologyInstancePropertiesFromBean can't take null arguments. Please make sure that both arguments are properly initialized.");
 		}
 		
 		OWLModel owlModel = ontologyInd.getOWLModel();
@@ -79,9 +190,8 @@ public class OntologyMetadataUtils {
 		setPropertyValue(owlModel, ontologyInd, PROPERTY_CODING_SCHEME, ob.getCodingScheme());
 		setPropertyValue(owlModel, ontologyInd, PROPERTY_HAS_CONTACT_EMAIL, ob.getContactEmail());
 		setPropertyValue(owlModel, ontologyInd, PROPERTY_HAS_CONTACT_NAME, ob.getContactName());
-		//owlModel.createRDFSLiteral(ob.getDateCreated(), PROPERTY_UPLOAD_DATE);
 		RDFSLiteral litDateCreated = owlModel.createRDFSLiteral(ob.getDateCreated().toString(), owlModel.getXSDdate());
-		setPropertyValue(owlModel, ontologyInd, PROPERTY_UPLOAD_DATE, litDateCreated);	//TODO check this for correct type conversion
+		setPropertyValue(owlModel, ontologyInd, PROPERTY_UPLOAD_DATE, litDateCreated);
 		setPropertyValue(owlModel, ontologyInd, PROPERTY_OMV_CREATION_DATE, ob.getDateReleased().toString());
 		setPropertyValue(owlModel, ontologyInd, PROPERTY_OMV_NAME, ob.getDisplayLabel());
 		setPropertyValue(owlModel, ontologyInd, PROPERTY_OMV_DESCRIPTION, ob.getDescription());
@@ -98,21 +208,24 @@ public class OntologyMetadataUtils {
 		else {
 			//TODO what to do?
 			//throw Exception?
-			//log.error("No OMV:OntologyLanguage individual found for format: " + format);
+			//log.error("No OMV:OntologyLanguage individual found for ontology: " + ontologyInd);
 		}
+		
+		//ob.getHasViews();//FIXME
+		
 		setPropertyValue(owlModel, ontologyInd, PROPERTY_URL_HOMEPAGE, ob.getHomepage());
 		setPropertyValue(owlModel, ontologyInd, PROPERTY_ID, ob.getId());
 		setPropertyValue(owlModel, ontologyInd, PROPERTY_INTERNAL_VERSION_NUMBER, ob.getInternalVersionNumber());
 		RDFSLiteral litIsFoundry = owlModel.createRDFSLiteral(ob.getIsFoundry()==0 ? "false" : "true", owlModel.getXSDboolean());
 		setPropertyValue(owlModel, ontologyInd, PROPERTY_IS_FOUNDRY, litIsFoundry); //TODO check this for correct type conversion
 		RDFSLiteral litIsManual = owlModel.createRDFSLiteral(ob.getIsManual()==0 ? "false" : "true", owlModel.getXSDboolean());
-		setPropertyValue(owlModel, ontologyInd, PROPERTY_IS_MANUAL, litIsManual);
+		setPropertyValue(owlModel, vOntInd, PROPERTY_IS_MANUAL, litIsManual);
 		RDFSLiteral litIsRemote = owlModel.createRDFSLiteral(ob.getIsRemote()==0 ? "false" : "true", owlModel.getXSDboolean());
 		setPropertyValue(owlModel, ontologyInd, PROPERTY_IS_REMOTE, litIsRemote);
 		
 		//ob.getIsReviewed();
 		
-		setPropertyValue(owlModel, ontologyInd, PROPERTY_OBO_FOUNDRY_ID, ob.getOboFoundryId());
+		setPropertyValue(owlModel, vOntInd, PROPERTY_OBO_FOUNDRY_ID, ob.getOboFoundryId());
 		
 		//ob.getOntologyId();
 		setPropertyValue(owlModel, ontologyInd, PROPERTY_IS_VERSION_OF_VIRTUAL_ONTOLOGY, vOntInd);
@@ -131,7 +244,42 @@ public class OntologyMetadataUtils {
 		setPropertyValue(owlModel, ontologyInd, PROPERTY_OMV_STATUS, ob.getVersionStatus());
 	}
 
+	public static void fillInOntologyViewInstancePropertiesFromBean(OWLIndividual ontologyViewInd,
+			OntologyViewBean ob, OWLIndividual vViewInd, OWLIndividual userInd, 
+			Collection<OWLIndividual> domainIndividuals, 
+			Collection<OWLIndividual> ontologyIndividuals) throws Exception {
+		
+		fillInOntologyInstancePropertiesFromBean(ontologyViewInd, ob, vViewInd, userInd, domainIndividuals);
+		
+		OWLModel owlModel = ontologyViewInd.getOWLModel();
+		
+		setPropertyValue(owlModel, ontologyViewInd, PROPERTY_IS_VIEW_ON_ONTOLOGY_VERSION, ontologyIndividuals);
+
+		setPropertyValue(owlModel, ontologyViewInd, PROPERTY_VIEW_DEFINITION, ob.getViewDefinition());
+		OWLIndividual viewDefLangInd = getViewDefinitionLanguageInstance(owlModel, ob.getViewDefinitionLanguage());
+		if (viewDefLangInd != null) {
+			setPropertyValue(owlModel, ontologyViewInd, PROPERTY_VIEW_DEFINITION_LANGUAGE, viewDefLangInd);
+		}
+		else {
+			//TODO what to do?
+			//throw Exception?
+			//log.error("No metadata:ViewDefinitionLanguage individual found for ontology view: " + ontologyViewInd);
+		}
+		OWLIndividual viewGenEngInd = getViewGenerationEngineInstance(owlModel, ob.getViewGenerationEngine());
+		if (viewGenEngInd != null) {
+			setPropertyValue(owlModel, ontologyViewInd, PROPERTY_VIEW_GENERATION_ENGINE, viewGenEngInd);
+		}
+		else {
+			//TODO what to do?
+			//throw Exception?
+			//log.error("No metadata:ViewGenerationEngine individual found for ontology view: " + ontologyViewInd);
+		}
+		
+		//TODO see if we have to deal with virtualViewOf property or not
+	}
 	
+	
+	@SuppressWarnings("deprecation")
 	public static void fillInOntologyBeanFromInstance(OntologyBean ob,
 			OWLIndividual ontologyInd) throws Exception {
 		
@@ -147,7 +295,8 @@ public class OntologyMetadataUtils {
 		ob.setContactEmail( getPropertyValue(owlModel, ontologyInd, PROPERTY_HAS_CONTACT_EMAIL, String.class));
 		ob.setContactName( getPropertyValue(owlModel, ontologyInd, PROPERTY_HAS_CONTACT_NAME, String.class));
 		ob.setDateCreated( getPropertyValue(owlModel, ontologyInd, PROPERTY_UPLOAD_DATE, Date.class));
-		ob.setDateReleased( new Date(Date.parse(getPropertyValue(owlModel, ontologyInd, PROPERTY_OMV_CREATION_DATE, String.class))));
+		//ob.setDateReleased( new Date(Date.parse(getPropertyValue(owlModel, ontologyInd, PROPERTY_OMV_CREATION_DATE, String.class))));
+		ob.setDateReleased( OWLDateWidget.getDate(getPropertyValue(owlModel, ontologyInd, PROPERTY_OMV_CREATION_DATE, String.class)));
 		ob.setDisplayLabel( getPropertyValue(owlModel, ontologyInd, PROPERTY_OMV_NAME, String.class));
 		ob.setDescription( getPropertyValue(owlModel, ontologyInd, PROPERTY_OMV_DESCRIPTION, String.class));
 		ob.setDocumentation( getPropertyValue(owlModel, ontologyInd, PROPERTY_OMV_DOCUMENTATION, String.class));
@@ -158,25 +307,31 @@ public class OntologyMetadataUtils {
 		ob.setFilePath( getPropertyValue(owlModel, ontologyInd, PROPERTY_FILE_PATH, String.class));
 		ob.setFormat( getOntologyFormatValue(
 				owlModel, getPropertyValue(owlModel, ontologyInd, PROPERTY_OMV_HAS_ONTOLOGY_LANGUAGE, OWLIndividual.class)) );
+		
+		//ob.setHasViews(null);//FIXME
+		
 		ob.setHomepage( getPropertyValue(owlModel, ontologyInd, PROPERTY_URL_HOMEPAGE, String.class));
 		ob.setId( getPropertyValue(owlModel, ontologyInd, PROPERTY_ID, Integer.class));
 		ob.setInternalVersionNumber( getPropertyValue(owlModel, ontologyInd, PROPERTY_INTERNAL_VERSION_NUMBER, Integer.class));
 		ob.setIsFoundry( convertBooleanToByte(getPropertyValue(owlModel, ontologyInd, PROPERTY_IS_FOUNDRY, Boolean.class)) );
-		ob.setIsManual( convertBooleanToByte(getPropertyValue(owlModel, ontologyInd, PROPERTY_IS_MANUAL, Boolean.class)) );
+		
+		OWLIndividual vOntInd = getPropertyValue(owlModel, ontologyInd, PROPERTY_IS_VERSION_OF_VIRTUAL_ONTOLOGY, OWLIndividual.class);
+		ob.setIsManual( convertBooleanToByte(getPropertyValue(owlModel, vOntInd, PROPERTY_IS_MANUAL, Boolean.class)) );
 		ob.setIsRemote( convertBooleanToByte(getPropertyValue(owlModel, ontologyInd, PROPERTY_IS_REMOTE, Boolean.class)) );
 		
 		//ob.setIsReviewed(null);
 		
-		ob.setOboFoundryId( getPropertyValue(owlModel, ontologyInd, PROPERTY_OBO_FOUNDRY_ID, String.class));
-		Integer virtOntId = getFirstElement(getPropertyValueIds(owlModel, ontologyInd, PROPERTY_IS_VERSION_OF_VIRTUAL_ONTOLOGY));
-		if (virtOntId != null) {
-			ob.setOntologyId( virtOntId);
-		}
-		else {
-			// TODO what to do?
-			// throw Exception?
-			// log.error("No OMV:OntologyLanguage individual found for format: " + format);
-		}
+		ob.setOboFoundryId( getPropertyValue(owlModel, vOntInd, PROPERTY_OBO_FOUNDRY_ID, String.class));
+		ob.setOntologyId( getPropertyValue(owlModel, vOntInd, PROPERTY_ID, Integer.class));
+//		Integer virtOntId = getFirstElement(getPropertyValueIds(owlModel, ontologyInd, PROPERTY_IS_VERSION_OF_VIRTUAL_ONTOLOGY));
+//		if (virtOntId != null) {
+//			ob.setOntologyId( virtOntId);
+//		}
+//		else {
+//			// TODO what to do?
+//			// throw Exception?
+//			// log.error("No metadata:isVersionOfVirtualOntology individual found for ontology: " + ontologyInd);
+//		}
 		ob.setPreferredNameSlot( getPropertyValue(owlModel, ontologyInd, PROPERTY_PREFERRED_NAME_PROPERTY, String.class));
 		ob.setPublication( getPropertyValue(owlModel, ontologyInd, PROPERTY_URL_PUBLICATIONS, String.class));
 		ob.setStatusId( getPropertyValue(owlModel, ontologyInd, PROPERTY_STATUS_ID, Integer.class));
@@ -189,99 +344,24 @@ public class OntologyMetadataUtils {
 		ob.setVersionStatus( getPropertyValue(owlModel, ontologyInd, PROPERTY_OMV_STATUS, String.class));
 	}
 
-	
-	private static void setPropertyValue(OWLModel owlModel, OWLIndividual owlInd, String propName, Object value) throws Exception {
-		OWLProperty prop = owlModel.getOWLProperty(propName);
-		if (prop == null) {
-			throw new Exception("Metadata ontology does not contain property " + propName);
-		}
-		if (value instanceof Collection && ((Collection)value).isEmpty()) {
-			value = null;
-		}
-		owlInd.setPropertyValue(prop, value);
+	public static void fillInOntologyViewBeanFromInstance(OntologyViewBean ob,
+			OWLIndividual ontologyViewInd) throws Exception {
+		
+		fillInOntologyBeanFromInstance(ob, ontologyViewInd);
+		
+		OWLModel owlModel = ontologyViewInd.getOWLModel();
+		
+		ob.setViewOnOntologyVersionId( getPropertyValueIds(owlModel, ontologyViewInd, PROPERTY_IS_VIEW_ON_ONTOLOGY_VERSION));
+		ob.setViewDefinition( getPropertyValue(owlModel, ontologyViewInd, PROPERTY_VIEW_DEFINITION, String.class));
+		ob.setViewDefinitionLanguage( getViewDefinitionLanguageValue(
+				owlModel, getPropertyValue(owlModel, ontologyViewInd, PROPERTY_VIEW_DEFINITION_LANGUAGE, OWLIndividual.class)) );
+		ob.setViewGenerationEngine( getViewGenerationEngineValue(
+				owlModel, getPropertyValue(owlModel, ontologyViewInd, PROPERTY_VIEW_GENERATION_ENGINE, OWLIndividual.class)) );
+		
+		//TODO see if we have to deal with virtualViewOf property or not
 	}
 	
-	private static <T> T getPropertyValue(OWLModel owlModel, OWLIndividual owlInd, String propName, Class<T> type) throws Exception {
-		OWLProperty prop = owlModel.getOWLProperty(propName);
-		if (prop == null) {
-			throw new Exception("Metadata ontology does not contain property " + propName);
-		}
-		Collection<?> propVals = owlInd.getPropertyValues(prop);
-		if (propVals==null || propVals.size() == 0) {
-			return null;
-		} else if (propVals.size() == 1) {
-			Object val = propVals.iterator().next();
-			if (val instanceof RDFSLiteral) {
-				RDFSLiteral lit = (RDFSLiteral)val;
-				if (lit.getPlainValue() != null) {
-					val = lit.getPlainValue();
-				}
-				else {
-					//try to extract some non-standard values like date, time, datetime, etc.
-					RDFSDatatype datatype = lit.getDatatype();
-					if (owlModel.getXSDdate().equals(datatype) ||
-							owlModel.getXSDtime().equals(datatype) ||
-							owlModel.getXSDdateTime().equals(datatype) ) {
-						val = new Date(Date.parse(lit.getString()));
-					}
-				}
-			}
-			return (T)val;
-		}
-		else {
-			throw new RuntimeException("Multiple values attached to individual: " + owlInd.getLocalName() + " for property: " + propName);
-		}
-	}
 	
-	private static <T> List<T> getPropertyValues(OWLModel owlModel, OWLIndividual owlInd, String propName, Class<T> type) throws Exception {
-		OWLProperty prop = owlModel.getOWLProperty(propName);
-		if (prop == null) {
-			throw new Exception("Metadata ontology does not contain property " + propName);
-		}
-		Collection<?> propVals = owlInd.getPropertyValues(prop);
-		if (propVals != null && propVals.isEmpty()) {
-			return null;
-		}
-		else {
-			List<T> res = new ArrayList<T>();
-			for (Object propVal : propVals) {
-				res.add( (T)propVal );
-			}
-			return res;
-		}
-	}
-
-	private static List<Integer> getPropertyValueIds(OWLModel owlModel,
-			OWLIndividual owlInd, String propName) throws Exception {
-		Collection<?> propVals = getPropertyValues(owlModel, owlInd, propName, Object.class);
-		if (propVals == null) {
-			return null;
-		} else {
-			List<Integer> idList = new ArrayList<Integer>();
-			for (Object propVal : propVals) {
-				if (propVal instanceof OWLIndividual) {
-					OWLIndividual ind = (OWLIndividual) propVal;
-					idList.add((Integer) getPropertyValue(owlModel, ind,
-							PROPERTY_ID, Integer.class));
-				} else {
-					// TODO what to do?
-					// throw Exception?
-					// log.error("No OMV:OntologyLanguage individual found for format: " + format);
-				}
-			}
-			return idList;
-		}
-	}
-	
-	private static <T> T getFirstElement(List<T> list) {
-		if (list == null || list.isEmpty()) {
-			return null;
-		}
-		else {
-			return list.iterator().next();
-		}
-	}
-
 	private static Byte convertBooleanToByte(Boolean boolValue) {
 		if (boolValue == null) {
 			return null;
@@ -290,28 +370,45 @@ public class OntologyMetadataUtils {
 			 return (boolValue ? (byte)1 : (byte)0);
 		}
 	}
-
+	
 	private static OWLIndividual getOntologyLanguageInstance(OWLModel metadata,
 			String format) {
-		OWLNamedClass ontLangClass = metadata.getOWLNamedClass(CLASS_OMV_ONTOLOGY_LANGUAGE);
+		return getInstanceWithName(metadata, CLASS_OMV_ONTOLOGY_LANGUAGE, format);
+	}
+	
+	private static OWLIndividual getViewDefinitionLanguageInstance(OWLModel metadata,
+			String viewDefLanguage) {
+		return getInstanceWithName(metadata, CLASS_VIEW_DEFINITION_LANGUAGE, viewDefLanguage);
+	}
+	
+	private static OWLIndividual getViewGenerationEngineInstance(OWLModel metadata,
+			String viewGenEngine) {
+		return getInstanceWithName(metadata, CLASS_VIEW_GENERATION_ENGINE, viewGenEngine);
+	}
+	
+	private static OWLIndividual getInstanceWithName(OWLModel metadata, String className,
+			String name) {
+		OWLNamedClass owlClass = metadata.getOWLNamedClass(className);
 		RDFProperty nameProp = metadata.getRDFProperty(PROPERTY_OMV_NAME);
 		RDFProperty labelProp = metadata.getRDFProperty(PROPERTY_RDFS_LABEL);
 		
-		Collection<?> matchingResources = metadata.getMatchingResources(nameProp, format, -1);
-		OWLIndividual matchingInd = getIndividualWithType(matchingResources, ontLangClass);
+		Collection<?> matchingResources = metadata.getMatchingResources(nameProp, name, -1);
+		OWLIndividual matchingInd = getIndividualWithType(matchingResources, owlClass);
 		if (matchingInd != null) {
 			return matchingInd;
 		}
 		
-		//metadata.getFramesWithValue("rdfs:label", null, false, format);
-		//metadata.getMatchingFrames(labelProp, null, false, format, -1);
-		matchingResources = metadata.getMatchingResources(labelProp, format, -1);
-		matchingInd = getIndividualWithType(matchingResources, ontLangClass);
+		//metadata.getFramesWithValue("rdfs:label", null, false, name);
+		//metadata.getMatchingFrames(labelProp, null, false, name, -1);
+		matchingResources = metadata.getMatchingResources(labelProp, name, -1);
+		matchingInd = getIndividualWithType(matchingResources, owlClass);
 		if (matchingInd != null) {
 			return matchingInd;
 		}
 		
-		return metadata.getOWLIndividual(format);
+		//TODO check for acronyms too!
+		
+		return metadata.getOWLIndividual(name);
 	}
 
 	private static OWLIndividual getIndividualWithType(Collection<?> matchingResources, OWLClass type) {
@@ -326,34 +423,165 @@ public class OntologyMetadataUtils {
 		
 		return null;
 	}
-
+	
 	private static String getOntologyFormatValue(OWLModel metadata, OWLIndividual ontologyLanguageInd) throws Exception {
-		if (ontologyLanguageInd == null) {
+		return getNameOfIndividual(metadata, ontologyLanguageInd);
+	}
+
+	private static String getViewDefinitionLanguageValue(OWLModel metadata, OWLIndividual viewDefLanguageInd) throws Exception {
+		return getNameOfIndividual(metadata, viewDefLanguageInd);
+	}
+	
+	private static String getViewGenerationEngineValue(OWLModel metadata, OWLIndividual viewGenEngineInd) throws Exception {
+		return getNameOfIndividual(metadata, viewGenEngineInd);
+	}
+	
+	private static String getNameOfIndividual(OWLModel metadata, OWLIndividual ind) throws Exception {
+		if (ind == null) {
 			return null;
 		}
 		String res;
-		res = getPropertyValue(metadata, ontologyLanguageInd, PROPERTY_OMV_NAME, String.class);
+		res = getPropertyValue(metadata, ind, PROPERTY_OMV_NAME, String.class);
 		if (res != null) {
 			return res;
 		}
 		
-//		res = getPropertyValue(metadata, ontologyLanguageInd, PROPERTY_RDFS_LABEL, String.class);
+//		res = getPropertyValue(metadata, ind, PROPERTY_RDFS_LABEL, String.class);
 //		if (res != null) {
 //			return res;
 //		}
-		Collection<String> labels = ontologyLanguageInd.getLabels();
+		Collection<?> labels = ind.getLabels();
 		if (labels != null && labels.size()>0) {
-			res = labels.iterator().next();
-			return res;
+			Object label1 = labels.iterator().next();
+			if (label1 != null) {
+				return label1.toString();
+			}
 		}
 		
-		return ontologyLanguageInd.getLocalName();
+		//TODO check for acronyms too!
+		
+		return ind.getLocalName();
 	}
 	
-	public static void setLatestVersion(OWLIndividual virtualOntologyInd,
-			OWLIndividual ontologyInd) throws Exception {
+	public static OWLIndividual getLatestVersion(OWLIndividual virtualOntologyInd, boolean onlyActive) throws Exception {
 		OWLModel owlModel = virtualOntologyInd.getOWLModel();
-		setPropertyValue(owlModel, virtualOntologyInd, PROPERTY_CURRENT_VERSION, ontologyInd);
+		//return getPropertyValue(owlModel, virtualOntologyInd, PROPERTY_CURRENT_VERSION, OWLIndividual.class);
+		List<OWLIndividual> propValues = getPropertyValues(owlModel, virtualOntologyInd, PROPERTY_HAS_VERSION, OWLIndividual.class);
+		OWLIndividual latest = null;
+		int maxVerNr = -1;
+		boolean doNotFilterForActive = ! onlyActive;
+		for (Iterator<OWLIndividual> it = propValues.iterator(); it.hasNext();) {
+			OWLIndividual ontologyInd = (OWLIndividual) it.next();
+			Integer verNr = getPropertyValue(owlModel, ontologyInd, PROPERTY_INTERNAL_VERSION_NUMBER, Integer.class);
+			if ((doNotFilterForActive || isReady(ontologyInd)) 
+					&& (latest == null || verNr > maxVerNr)) {
+				latest = ontologyInd;
+				maxVerNr = verNr;
+			}
+		}
+		
+		return latest;
 	}
 	
+//	public static void setLatestVersion(OWLIndividual virtualOntologyInd,
+//			OWLIndividual ontologyInd) throws Exception {
+//		OWLModel owlModel = virtualOntologyInd.getOWLModel();
+//		setPropertyValue(owlModel, virtualOntologyInd, PROPERTY_CURRENT_VERSION, ontologyInd);
+//	}
+
+	private static boolean isReady(OWLIndividual ontologyInd) throws Exception {
+		OWLModel owlModel = ontologyInd.getOWLModel();
+		Integer status = getPropertyValue(owlModel, ontologyInd, PROPERTY_STATUS_ID, Integer.class);
+		return (status == STATUS_READY) || (status == STATUS_NOT_APPLICABLE);
+	}
+	
+	public static List<Integer> getAllOntologyVersionIDs(OWLModel metadata,
+			OWLIndividual virtualOntologyInd) throws Exception {
+		//List<Integer> res = new ArrayList<Integer>();
+		return getPropertyValueIds(metadata, virtualOntologyInd, PROPERTY_HAS_VERSION);
+	}
+
+
+	public static List<Integer> getAllVirtualOntologyIDs(OWLModel metadata) {
+		OWLNamedClass vOntClass = metadata.getOWLNamedClass(CLASS_VIRTUAL_ONTOLOGY);
+		List<Integer> res = new ArrayList<Integer>();
+		Collection<?> vOntologies = vOntClass.getInstances(true);
+		for (Object vOnt : vOntologies) {
+			if (vOnt instanceof RDFIndividual) {
+				RDFIndividual vOntInst = (RDFIndividual)vOnt;
+				try {
+					Integer id = getId(metadata, vOntInst);
+					res.add(id);
+				}
+				catch(Exception e) {
+					log.error("Exception while getting ID of virtual ontology " + vOntInst.getBrowserText());
+				}
+			}
+			else {
+				log.warn("Invalid instance of class " + vOntClass.getBrowserText() + ": " + vOnt);
+			}
+		}
+		return res;
+	}
+	
+	public static List<Integer> getAllVirtualViewIDs(OWLModel metadata) {
+		OWLNamedClass vViewClass = metadata.getOWLNamedClass(CLASS_VIRTUAL_VIEW);
+		List<Integer> res = new ArrayList<Integer>();
+		Collection<?> vViews = vViewClass.getInstances(true);
+		for (Object vView : vViews) {
+			if (vView instanceof RDFIndividual) {
+				RDFIndividual vOntInst = (RDFIndividual)vView;
+				try {
+					Integer id = getId(metadata, vOntInst);
+					res.add(id);
+				}
+				catch(Exception e) {
+					log.error("Exception while getting ID of virtual view " + vOntInst.getBrowserText());
+				}
+			}
+			else {
+				log.warn("Invalid instance of class " + vViewClass.getBrowserText() + ": " + vView);
+			}
+		}
+		return res;
+	}
+
+	
+	public static int getNextAvailableOntologyId(OWLModel metadata) {
+		try {
+			return getNextAvailableIdForClass(metadata.getOWLNamedClass(CLASS_VIRTUAL_ONTOLOGY));
+		} catch (Exception e) {
+			e.printStackTrace();
+			return -5;
+		}
+	}
+
+	public static int getNextAvailableVirtualViewId(OWLModel metadata) {
+		try {
+			return getNextAvailableIdForClass(metadata.getOWLNamedClass(CLASS_VIRTUAL_VIEW));
+		} catch (Exception e) {
+			e.printStackTrace();
+			return -5;
+		}
+	}
+	
+	
+	public static int getNextAvailableOntologyVersionId(OWLModel metadata) {
+		try {
+			return getNextAvailableIdForClass(metadata.getOWLNamedClass(CLASS_OMV_ONTOLOGY));
+		} catch (Exception e) {
+			e.printStackTrace();
+			return -5;
+		}
+	}
+	
+	public static int getNextAvailableOntologyViewVersionId(OWLModel metadata) {
+		try {
+			return getNextAvailableIdForClass(metadata.getOWLNamedClass(CLASS_ONTOLOGY_VIEW));
+		} catch (Exception e) {
+			e.printStackTrace();
+			return -5;
+		}
+	}
+
 }

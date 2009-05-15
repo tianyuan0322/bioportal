@@ -177,6 +177,8 @@
 				<filter token="protegebigfilethreshold" value="${protege.big.file.threshold}" />
 				<filter token="metadatauserinstprefix" value="${metadata.user.inst.prefix}" />
 				<filter token="metadatauserinstsuffix" value="${metadata.user.inst.suffix}" />
+				<filter token="metadatauserroleinstprefix" value="${metadata.user.role.inst.prefix}" />
+				<filter token="metadatauserroleinstsuffix" value="${metadata.user.role.inst.suffix}" />
 				<filter token="metadataontologydomaininstprefix" value="${metadata.ontologydomain.inst.prefix}" />
 				<filter token="metadataontologydomaininstsuffix" value="${metadata.ontologydomain.inst.suffix}" />
 				<filter token="metadataontologyinstprefix" value="${metadata.ontology.inst.prefix}" />

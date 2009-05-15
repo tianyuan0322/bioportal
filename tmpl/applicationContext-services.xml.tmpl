@@ -489,6 +489,12 @@
 		<property name="metadataUserInstSuffix">
 			<ref bean="metadataUserInstSuffix" />
 		</property>
+		<property name="metadataUserRoleInstPrefix">
+			<ref bean="metadataUserRoleInstPrefix" />
+		</property>
+		<property name="metadataUserRoleInstSuffix">
+			<ref bean="metadataUserRoleInstSuffix" />
+		</property>
 		<property name="metadataOntologyDomainInstPrefix">
 			<ref bean="metadataOntologyDomainInstPrefix" />
 		</property>
@@ -544,8 +550,18 @@
 		parent="abstractOntologyManagerProtege">
 	</bean>
 
+	<bean id="userMetadataManagerProtege"
+		class="org.ncbo.stanford.manager.metadata.impl.UserMetadataManagerProtegeImpl"
+		parent="abstractOntologyManagerProtege">
+	</bean>
+
 	<bean id="ontologyMetadataManagerProtege"
 		class="org.ncbo.stanford.manager.metadata.impl.OntologyMetadataManagerProtegeImpl"
+		parent="abstractOntologyManagerProtege">
+	</bean>
+
+	<bean id="ontologyViewMetadataManagerProtege"
+		class="org.ncbo.stanford.manager.metadata.impl.OntologyViewMetadataManagerProtegeImpl"
 		parent="abstractOntologyManagerProtege">
 	</bean>
 
@@ -579,7 +595,35 @@
 		</property>
 	</bean>
 
+	<bean id="ontologyViewService"
+		class="org.ncbo.stanford.service.ontology.impl.OntologyViewServiceMetadataImpl">
+		<property name="ontologyViewMetadataManager">
+			<ref bean="ontologyViewMetadataManagerProtege" />
+		</property>
+
+		<property name="ncboOntologyLoadQueueDAO">
+			<ref bean="NcboOntologyLoadQueueDAO" />
+		</property>
+		<property name="ncboOntologyVersionDAO">
+			<ref bean="NcboOntologyVersionDAO" />
+		</property>
+	</bean>
+
 	<bean id="ontologyService"
+		class="org.ncbo.stanford.service.ontology.impl.OntologyServiceMetadataImpl">
+		<property name="ontologyMetadataManager">
+			<ref bean="ontologyMetadataManagerProtege" />
+		</property>
+
+		<property name="ncboOntologyLoadQueueDAO">
+			<ref bean="NcboOntologyLoadQueueDAO" />
+		</property>
+		<property name="ncboOntologyVersionDAO">
+			<ref bean="NcboOntologyVersionDAO" />
+		</property>
+	</bean>
+
+	<!--bean id="ontologyService"
 		class="org.ncbo.stanford.service.ontology.impl.OntologyServiceImpl">
 		<property name="indexService">
 			<ref bean="indexSearchService" />
@@ -611,7 +655,7 @@
 		<property name="ontologyLoadHandlerMap">
 			<ref local="ontologyLoadHandlerMap" />
 		</property>
-	</bean>
+	</bean-->
 
 	<bean id="ontologyLoadSchedulerService"
 		class="org.ncbo.stanford.service.loader.scheduler.impl.OntologyLoadSchedulerServiceImpl">
@@ -1144,6 +1188,18 @@
 	<bean id="metadataUserInstSuffix" class="java.lang.String">
 		<constructor-arg>
 			<value>@metadatauserinstsuffix@</value>
+		</constructor-arg>
+	</bean>
+
+	<bean id="metadataUserRoleInstPrefix" class="java.lang.String">
+		<constructor-arg>
+			<value>@metadatauserroleinstprefix@</value>
+		</constructor-arg>
+	</bean>
+
+	<bean id="metadataUserRoleInstSuffix" class="java.lang.String">
+		<constructor-arg>
+			<value>@metadatauserroleinstsuffix@</value>
 		</constructor-arg>
 	</bean>
 

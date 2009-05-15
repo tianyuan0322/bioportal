@@ -1,0 +1,1141 @@
+======================== CVSClient.processCVSRequest ========================
+   Command:        co
+   Repository:     obo
+   RootRepository: /cvsroot/obo
+   CVSServer:      2401@obo.cvs.sourceforge.net
+   RootDirectory:  /cvsroot/obo
+   LocalDirectory: \work\apps\bmir.apps\bioportal_resources\cvscheckout
+   Connect Method: INETD
+   Rsh Command:    null
+   Server Command: cvs server
+   isPServer?      'true '   user 'anonymous'   pass 'A'
+   There are no user set variables.
+   NumEntries:      0        NumArguments:     1
+   GlobalOptions:   0        GzipStreamLevel:  0
+   redirectOutput  'false'   execInCurDir    'false'
+   sendEntries     'false'   sendEntryfiles  'false'
+   sendModifieds   'false'   sendEmptyMods   'false'
+   sendArguments   'true '   ignoreResult    'false'
+   sendModule      'false'   allowOverWrites 'true '
+   displayReponse  'true '   handleUpdated   'true '
+   handleMerged    'false'   handleCopyFile  'false'
+   handleEntries   'true '   handleFlags     'false'
+   queueResponse   'false'   responseHandler 'com.ice.cvsc.CVSProject'
+   includeNotifies 'false'   notifiesSize    'null'
+*****************************************************************************
+CVSRequest: opening server...
+CVSClient.openServer: creating connection...
+CVSClient.openServer: creating i/o streams...
+CVSClient.openServer: server is open.
+CVSRequest: server is open.
+AUTHENTICATE: verifyOnly? 'false' userName 'anonymous' password 'A'
+CVSClient.SENDLine: 'BEGIN AUTH REQUEST'
+CVSClient.SENDLine: '/cvsroot/obo'
+CVSClient.SENDLine: 'anonymous'
+CVSClient.SENDLine: 'A'
+CVSClient.SENDLine: 'END AUTH REQUEST'
+CVSClient.READLine: 'I LOVE YOU'
+AUTHENTICATE: REPLY: 'I LOVE YOU'
+CVSClient.SENDLine: 'valid-requests'
+CVSClient.READLine: 'Valid-requests Root Valid-responses valid-requests Repository Directory Max-dotdot Static-directory Sticky Entry Kopt Checkin-time Modified Is-modified UseUnchanged Unchanged Notify Questionable Argument Argumentx Global_option Gzip-stream wrapper-sendme-rcsOptions Set Gssapi-authenticate expand-modules ci co update diff log rlog add remove update-patches gzip-file-contents status rdiff tag rtag import admin export history release watch-on watch-off watch-add watch-remove watchers editors init annotate rannotate noop version'
+CVSClient.READLine: 'ok'
+PARSE: ok
+Valid Requests:  useUnchanged 'true'   useDirectory 'true'
+CVSRequest: send root directory...
+CVSClient.SENDLine: 'Root /cvsroot/obo'
+CVSClient.SENDLine: 'Valid-responses E M ok error Valid-requests Created Merged Updated Update-existing Removed Remove-entry New-entry Checked-in Checksum Copy-file Notified Clear-sticky Set-sticky Clear-static-directory Set-static-directory '
+CVSClient.SENDLine: 'UseUnchanged'
+CVSRequest: send entries...
+CVSRequest: send root repository...
+CVSClient.SENDLine: 'Directory .'
+CVSClient.SENDLine: '/cvsroot/obo'
+CVSRequest: send arguments...
+CVSClient.SENDLine: 'Argument obo'
+CVSRequest: send command 'co'
+CVSClient.SENDLine: 'co'
+CVSRequest: reading response...
+CVSClient.READLine: 'Clear-sticky obo/'
+PARSE: Clear-sticky 'obo/'
+CVSClient.READLine: '/cvsroot/obo/obo/'
+PARSE: FullPath '/cvsroot/obo/obo/'
+CVSProject.handleResponseItem:
+   [ type=4,pathName=obo/,reposName=/cvsroot/obo/obo/,modeLine=null,entriesLine=null,newName=null,tagSpec=null,useProgram=null,file=null ]
+Clear-sticky: pathName './obo/'
+
+CVSClient.READLine: 'Clear-static-directory obo/'
+PARSE: Clear-static-directory 'obo/'
+CVSClient.READLine: '/cvsroot/obo/obo/'
+PARSE: FullPath '/cvsroot/obo/obo/'
+CVSProject.handleResponseItem:
+   [ type=3,pathName=obo/,reposName=/cvsroot/obo/obo/,modeLine=null,entriesLine=null,newName=null,tagSpec=null,useProgram=null,file=null ]
+Clear-static-directory: pathName './obo/'
+
+CVSClient.READLine: 'E cvs checkout: Updating obo'
+CVSClient.READLine: 'Clear-sticky obo/ontology/'
+PARSE: Clear-sticky 'obo/ontology/'
+CVSClient.READLine: '/cvsroot/obo/obo/ontology/'
+PARSE: FullPath '/cvsroot/obo/obo/ontology/'
+CVSProject.handleResponseItem:
+   [ type=4,pathName=obo/ontology/,reposName=/cvsroot/obo/obo/ontology/,modeLine=null,entriesLine=null,newName=null,tagSpec=null,useProgram=null,file=null ]
+Clear-sticky: pathName './obo/ontology/'
+
+CVSClient.READLine: 'Clear-static-directory obo/ontology/'
+PARSE: Clear-static-directory 'obo/ontology/'
+CVSClient.READLine: '/cvsroot/obo/obo/ontology/'
+PARSE: FullPath '/cvsroot/obo/obo/ontology/'
+CVSProject.handleResponseItem:
+   [ type=3,pathName=obo/ontology/,reposName=/cvsroot/obo/obo/ontology/,modeLine=null,entriesLine=null,newName=null,tagSpec=null,useProgram=null,file=null ]
+Clear-static-directory: pathName './obo/ontology/'
+
+CVSClient.READLine: 'E cvs checkout: Updating obo/ontology'
+CVSClient.READLine: 'M U obo/ontology/evidence_code.obo'
+CVSClient.READLine: 'Created obo/ontology/'
+PARSE: Created 'obo/ontology/'
+CVSClient.READLine: '/cvsroot/obo/obo/ontology/evidence_code.obo'
+PARSE: FullPath '/cvsroot/obo/obo/ontology/evidence_code.obo'
+CVSClient.READLine: '/evidence_code.obo/1.17///'
+PARSE: Entry '/evidence_code.obo/1.17///'
+CVSClient.READLine: 'u=rw,g=rw,o=rw'
+PARSE: Mode 'u=rw,g=rw,o=rw'
+CVSClient.READLine: '43237'
+CVSProject.handleResponseItem:
+   [ type=6,pathName=obo/ontology/,reposName=/cvsroot/obo/obo/ontology/evidence_code.obo,modeLine=u=rw,g=rw,o=rw,entriesLine=/evidence_code.obo/1.17///,newName=null,tagSpec=null,useProgram=null,file=\work\apps\bmir.apps\bioportal_resources\tmp\Tedd71e5.cvs ]
+CVSClient.READLine: 'Clear-sticky obo/ontology/'
+PARSE: Clear-sticky 'obo/ontology/'
+CVSClient.READLine: '/cvsroot/obo/obo/ontology/'
+PARSE: FullPath '/cvsroot/obo/obo/ontology/'
+CVSProject.handleResponseItem:
+   [ type=4,pathName=obo/ontology/,reposName=/cvsroot/obo/obo/ontology/,modeLine=null,entriesLine=null,newName=null,tagSpec=null,useProgram=null,file=null ]
+Clear-sticky: pathName './obo/ontology/'
+
+CVSClient.READLine: 'Clear-sticky obo/ontology/OBO_REL/'
+PARSE: Clear-sticky 'obo/ontology/OBO_REL/'
+CVSClient.READLine: '/cvsroot/obo/obo/ontology/OBO_REL/'
+PARSE: FullPath '/cvsroot/obo/obo/ontology/OBO_REL/'
+CVSProject.handleResponseItem:
+   [ type=4,pathName=obo/ontology/OBO_REL/,reposName=/cvsroot/obo/obo/ontology/OBO_REL/,modeLine=null,entriesLine=null,newName=null,tagSpec=null,useProgram=null,file=null ]
+Clear-sticky: pathName './obo/ontology/OBO_REL/'
+
+CVSClient.READLine: 'Clear-static-directory obo/ontology/OBO_REL/'
+PARSE: Clear-static-directory 'obo/ontology/OBO_REL/'
+CVSClient.READLine: '/cvsroot/obo/obo/ontology/OBO_REL/'
+PARSE: FullPath '/cvsroot/obo/obo/ontology/OBO_REL/'
+CVSProject.handleResponseItem:
+   [ type=3,pathName=obo/ontology/OBO_REL/,reposName=/cvsroot/obo/obo/ontology/OBO_REL/,modeLine=null,entriesLine=null,newName=null,tagSpec=null,useProgram=null,file=null ]
+Clear-static-directory: pathName './obo/ontology/OBO_REL/'
+
+CVSClient.READLine: 'E cvs checkout: Updating obo/ontology/OBO_REL'
+CVSClient.READLine: 'M U obo/ontology/OBO_REL/idspace-bfo1-0.obo'
+CVSClient.READLine: 'Created obo/ontology/OBO_REL/'
+PARSE: Created 'obo/ontology/OBO_REL/'
+CVSClient.READLine: '/cvsroot/obo/obo/ontology/OBO_REL/idspace-bfo1-0.obo'
+PARSE: FullPath '/cvsroot/obo/obo/ontology/OBO_REL/idspace-bfo1-0.obo'
+CVSClient.READLine: '/idspace-bfo1-0.obo/1.2///'
+PARSE: Entry '/idspace-bfo1-0.obo/1.2///'
+CVSClient.READLine: 'u=rw,g=rw,o=rw'
+PARSE: Mode 'u=rw,g=rw,o=rw'
+CVSClient.READLine: '580'
+CVSProject.handleResponseItem:
+   [ type=6,pathName=obo/ontology/OBO_REL/,reposName=/cvsroot/obo/obo/ontology/OBO_REL/idspace-bfo1-0.obo,modeLine=u=rw,g=rw,o=rw,entriesLine=/idspace-bfo1-0.obo/1.2///,newName=null,tagSpec=null,useProgram=null,file=\work\apps\bmir.apps\bioportal_resources\tmp\Tedd71e6.cvs ]
+CVSClient.READLine: 'M U obo/ontology/OBO_REL/idspace-bfo1-1.obo'
+CVSClient.READLine: 'Created obo/ontology/OBO_REL/'
+PARSE: Created 'obo/ontology/OBO_REL/'
+CVSClient.READLine: '/cvsroot/obo/obo/ontology/OBO_REL/idspace-bfo1-1.obo'
+PARSE: FullPath '/cvsroot/obo/obo/ontology/OBO_REL/idspace-bfo1-1.obo'
+CVSClient.READLine: '/idspace-bfo1-1.obo/1.2///'
+PARSE: Entry '/idspace-bfo1-1.obo/1.2///'
+CVSClient.READLine: 'u=rw,g=rw,o=rw'
+PARSE: Mode 'u=rw,g=rw,o=rw'
+CVSClient.READLine: '580'
+CVSProject.handleResponseItem:
+   [ type=6,pathName=obo/ontology/OBO_REL/,reposName=/cvsroot/obo/obo/ontology/OBO_REL/idspace-bfo1-1.obo,modeLine=u=rw,g=rw,o=rw,entriesLine=/idspace-bfo1-1.obo/1.2///,newName=null,tagSpec=null,useProgram=null,file=\work\apps\bmir.apps\bioportal_resources\tmp\Tedd71e7.cvs ]
+CVSClient.READLine: 'M U obo/ontology/OBO_REL/relationship.obo'
+CVSClient.READLine: 'Created obo/ontology/OBO_REL/'
+PARSE: Created 'obo/ontology/OBO_REL/'
+CVSClient.READLine: '/cvsroot/obo/obo/ontology/OBO_REL/relationship.obo'
+PARSE: FullPath '/cvsroot/obo/obo/ontology/OBO_REL/relationship.obo'
+CVSClient.READLine: '/relationship.obo/1.19///'
+PARSE: Entry '/relationship.obo/1.19///'
+CVSClient.READLine: 'u=rw,g=rw,o=rw'
+PARSE: Mode 'u=rw,g=rw,o=rw'
+CVSClient.READLine: '15776'
+CVSProject.handleResponseItem:
+   [ type=6,pathName=obo/ontology/OBO_REL/,reposName=/cvsroot/obo/obo/ontology/OBO_REL/relationship.obo,modeLine=u=rw,g=rw,o=rw,entriesLine=/relationship.obo/1.19///,newName=null,tagSpec=null,useProgram=null,file=\work\apps\bmir.apps\bioportal_resources\tmp\Tedd71e8.cvs ]
+CVSClient.READLine: 'M U obo/ontology/OBO_REL/relationship_bfo_bridge.obo'
+CVSClient.READLine: 'Created obo/ontology/OBO_REL/'
+PARSE: Created 'obo/ontology/OBO_REL/'
+CVSClient.READLine: '/cvsroot/obo/obo/ontology/OBO_REL/relationship_bfo_bridge.obo'
+PARSE: FullPath '/cvsroot/obo/obo/ontology/OBO_REL/relationship_bfo_bridge.obo'
+CVSClient.READLine: '/relationship_bfo_bridge.obo/1.1///'
+PARSE: Entry '/relationship_bfo_bridge.obo/1.1///'
+CVSClient.READLine: 'u=rw,g=rw,o=rw'
+PARSE: Mode 'u=rw,g=rw,o=rw'
+CVSClient.READLine: '2238'
+CVSProject.handleResponseItem:
+   [ type=6,pathName=obo/ontology/OBO_REL/,reposName=/cvsroot/obo/obo/ontology/OBO_REL/relationship_bfo_bridge.obo,modeLine=u=rw,g=rw,o=rw,entriesLine=/relationship_bfo_bridge.obo/1.1///,newName=null,tagSpec=null,useProgram=null,file=\work\apps\bmir.apps\bioportal_resources\tmp\Tedd71e9.cvs ]
+CVSClient.READLine: 'M U obo/ontology/OBO_REL/ro.obo'
+CVSClient.READLine: 'Created obo/ontology/OBO_REL/'
+PARSE: Created 'obo/ontology/OBO_REL/'
+CVSClient.READLine: '/cvsroot/obo/obo/ontology/OBO_REL/ro.obo'
+PARSE: FullPath '/cvsroot/obo/obo/ontology/OBO_REL/ro.obo'
+CVSClient.READLine: '/ro.obo/1.12///'
+PARSE: Entry '/ro.obo/1.12///'
+CVSClient.READLine: 'u=rw,g=rw,o=rw'
+PARSE: Mode 'u=rw,g=rw,o=rw'
+CVSClient.READLine: '17805'
+CVSProject.handleResponseItem:
+   [ type=6,pathName=obo/ontology/OBO_REL/,reposName=/cvsroot/obo/obo/ontology/OBO_REL/ro.obo,modeLine=u=rw,g=rw,o=rw,entriesLine=/ro.obo/1.12///,newName=null,tagSpec=null,useProgram=null,file=\work\apps\bmir.apps\bioportal_resources\tmp\Tedd71ea.cvs ]
+CVSClient.READLine: 'M U obo/ontology/OBO_REL/ro_bfo_bridge.obo'
+CVSClient.READLine: 'Created obo/ontology/OBO_REL/'
+PARSE: Created 'obo/ontology/OBO_REL/'
+CVSClient.READLine: '/cvsroot/obo/obo/ontology/OBO_REL/ro_bfo_bridge.obo'
+PARSE: FullPath '/cvsroot/obo/obo/ontology/OBO_REL/ro_bfo_bridge.obo'
+CVSClient.READLine: '/ro_bfo_bridge.obo/1.7///'
+PARSE: Entry '/ro_bfo_bridge.obo/1.7///'
+CVSClient.READLine: 'u=rw,g=rw,o=rw'
+PARSE: Mode 'u=rw,g=rw,o=rw'
+CVSClient.READLine: '1043'
+CVSProject.handleResponseItem:
+   [ type=6,pathName=obo/ontology/OBO_REL/,reposName=/cvsroot/obo/obo/ontology/OBO_REL/ro_bfo_bridge.obo,modeLine=u=rw,g=rw,o=rw,entriesLine=/ro_bfo_bridge.obo/1.7///,newName=null,tagSpec=null,useProgram=null,file=\work\apps\bmir.apps\bioportal_resources\tmp\Tedd71eb.cvs ]
+CVSClient.READLine: 'M U obo/ontology/OBO_REL/ro_bfo_bridge_edit.obo'
+CVSClient.READLine: 'Created obo/ontology/OBO_REL/'
+PARSE: Created 'obo/ontology/OBO_REL/'
+CVSClient.READLine: '/cvsroot/obo/obo/ontology/OBO_REL/ro_bfo_bridge_edit.obo'
+PARSE: FullPath '/cvsroot/obo/obo/ontology/OBO_REL/ro_bfo_bridge_edit.obo'
+CVSClient.READLine: '/ro_bfo_bridge_edit.obo/1.2///'
+PARSE: Entry '/ro_bfo_bridge_edit.obo/1.2///'
+CVSClient.READLine: 'u=rw,g=rw,o=rw'
+PARSE: Mode 'u=rw,g=rw,o=rw'
+CVSClient.READLine: '1943'
+CVSProject.handleResponseItem:
+   [ type=6,pathName=obo/ontology/OBO_REL/,reposName=/cvsroot/obo/obo/ontology/OBO_REL/ro_bfo_bridge_edit.obo,modeLine=u=rw,g=rw,o=rw,entriesLine=/ro_bfo_bridge_edit.obo/1.2///,newName=null,tagSpec=null,useProgram=null,file=\work\apps\bmir.apps\bioportal_resources\tmp\Tedd71ec.cvs ]
+CVSClient.READLine: 'M U obo/ontology/OBO_REL/ro_edit.obo'
+CVSClient.READLine: 'Created obo/ontology/OBO_REL/'
+PARSE: Created 'obo/ontology/OBO_REL/'
+CVSClient.READLine: '/cvsroot/obo/obo/ontology/OBO_REL/ro_edit.obo'
+PARSE: FullPath '/cvsroot/obo/obo/ontology/OBO_REL/ro_edit.obo'
+CVSClient.READLine: '/ro_edit.obo/1.5///'
+PARSE: Entry '/ro_edit.obo/1.5///'
+CVSClient.READLine: 'u=rw,g=rw,o=rw'
+PARSE: Mode 'u=rw,g=rw,o=rw'
+CVSClient.READLine: '17804'
+CVSProject.handleResponseItem:
+   [ type=6,pathName=obo/ontology/OBO_REL/,reposName=/cvsroot/obo/obo/ontology/OBO_REL/ro_edit.obo,modeLine=u=rw,g=rw,o=rw,entriesLine=/ro_edit.obo/1.5///,newName=null,tagSpec=null,useProgram=null,file=\work\apps\bmir.apps\bioportal_resources\tmp\Tedd71ed.cvs ]
+CVSClient.READLine: 'M U obo/ontology/OBO_REL/ro_proposed.obo'
+CVSClient.READLine: 'Created obo/ontology/OBO_REL/'
+PARSE: Created 'obo/ontology/OBO_REL/'
+CVSClient.READLine: '/cvsroot/obo/obo/ontology/OBO_REL/ro_proposed.obo'
+PARSE: FullPath '/cvsroot/obo/obo/ontology/OBO_REL/ro_proposed.obo'
+CVSClient.READLine: '/ro_proposed.obo/1.28///'
+PARSE: Entry '/ro_proposed.obo/1.28///'
+CVSClient.READLine: 'u=rw,g=rw,o=rw'
+PARSE: Mode 'u=rw,g=rw,o=rw'
+CVSClient.READLine: '47262'
+CVSProject.handleResponseItem:
+   [ type=6,pathName=obo/ontology/OBO_REL/,reposName=/cvsroot/obo/obo/ontology/OBO_REL/ro_proposed.obo,modeLine=u=rw,g=rw,o=rw,entriesLine=/ro_proposed.obo/1.28///,newName=null,tagSpec=null,useProgram=null,file=\work\apps\bmir.apps\bioportal_resources\tmp\Tedd71ee.cvs ]
+CVSClient.READLine: 'M U obo/ontology/OBO_REL/ro_proposed_edit.obo'
+CVSClient.READLine: 'Created obo/ontology/OBO_REL/'
+PARSE: Created 'obo/ontology/OBO_REL/'
+CVSClient.READLine: '/cvsroot/obo/obo/ontology/OBO_REL/ro_proposed_edit.obo'
+PARSE: FullPath '/cvsroot/obo/obo/ontology/OBO_REL/ro_proposed_edit.obo'
+CVSClient.READLine: '/ro_proposed_edit.obo/1.1///'
+PARSE: Entry '/ro_proposed_edit.obo/1.1///'
+CVSClient.READLine: 'u=rw,g=rw,o=rw'
+PARSE: Mode 'u=rw,g=rw,o=rw'
+CVSClient.READLine: '45828'
+CVSProject.handleResponseItem:
+   [ type=6,pathName=obo/ontology/OBO_REL/,reposName=/cvsroot/obo/obo/ontology/OBO_REL/ro_proposed_edit.obo,modeLine=u=rw,g=rw,o=rw,entriesLine=/ro_proposed_edit.obo/1.1///,newName=null,tagSpec=null,useProgram=null,file=\work\apps\bmir.apps\bioportal_resources\tmp\Tedd71ef.cvs ]
+CVSClient.READLine: 'Clear-sticky obo/ontology/OBO_REL/'
+PARSE: Clear-sticky 'obo/ontology/OBO_REL/'
+CVSClient.READLine: '/cvsroot/obo/obo/ontology/OBO_REL/'
+PARSE: FullPath '/cvsroot/obo/obo/ontology/OBO_REL/'
+CVSProject.handleResponseItem:
+   [ type=4,pathName=obo/ontology/OBO_REL/,reposName=/cvsroot/obo/obo/ontology/OBO_REL/,modeLine=null,entriesLine=null,newName=null,tagSpec=null,useProgram=null,file=null ]
+Clear-sticky: pathName './obo/ontology/OBO_REL/'
+
+CVSClient.READLine: 'Clear-sticky obo/ontology/anatomy/'
+PARSE: Clear-sticky 'obo/ontology/anatomy/'
+CVSClient.READLine: '/cvsroot/obo/obo/ontology/anatomy/'
+PARSE: FullPath '/cvsroot/obo/obo/ontology/anatomy/'
+CVSProject.handleResponseItem:
+   [ type=4,pathName=obo/ontology/anatomy/,reposName=/cvsroot/obo/obo/ontology/anatomy/,modeLine=null,entriesLine=null,newName=null,tagSpec=null,useProgram=null,file=null ]
+Clear-sticky: pathName './obo/ontology/anatomy/'
+
+CVSClient.READLine: 'Clear-static-directory obo/ontology/anatomy/'
+PARSE: Clear-static-directory 'obo/ontology/anatomy/'
+CVSClient.READLine: '/cvsroot/obo/obo/ontology/anatomy/'
+PARSE: FullPath '/cvsroot/obo/obo/ontology/anatomy/'
+CVSProject.handleResponseItem:
+   [ type=3,pathName=obo/ontology/anatomy/,reposName=/cvsroot/obo/obo/ontology/anatomy/,modeLine=null,entriesLine=null,newName=null,tagSpec=null,useProgram=null,file=null ]
+Clear-static-directory: pathName './obo/ontology/anatomy/'
+
+CVSClient.READLine: 'E cvs checkout: Updating obo/ontology/anatomy'
+CVSClient.READLine: 'M U obo/ontology/anatomy/BrendaTissue.obo'
+CVSClient.READLine: 'Created obo/ontology/anatomy/'
+PARSE: Created 'obo/ontology/anatomy/'
+CVSClient.READLine: '/cvsroot/obo/obo/ontology/anatomy/BrendaTissue.obo'
+PARSE: FullPath '/cvsroot/obo/obo/ontology/anatomy/BrendaTissue.obo'
+CVSClient.READLine: '/BrendaTissue.obo/1.302///'
+PARSE: Entry '/BrendaTissue.obo/1.302///'
+CVSClient.READLine: 'u=rw,g=rw,o=rw'
+PARSE: Mode 'u=rw,g=rw,o=rw'
+CVSClient.READLine: '3002'
+CVSProject.handleResponseItem:
+   [ type=6,pathName=obo/ontology/anatomy/,reposName=/cvsroot/obo/obo/ontology/anatomy/BrendaTissue.obo,modeLine=u=rw,g=rw,o=rw,entriesLine=/BrendaTissue.obo/1.302///,newName=null,tagSpec=null,useProgram=null,file=\work\apps\bmir.apps\bioportal_resources\tmp\Tedd71f0.cvs ]
+CVSClient.READLine: 'Clear-sticky obo/ontology/anatomy/'
+PARSE: Clear-sticky 'obo/ontology/anatomy/'
+CVSClient.READLine: '/cvsroot/obo/obo/ontology/anatomy/'
+PARSE: FullPath '/cvsroot/obo/obo/ontology/anatomy/'
+CVSProject.handleResponseItem:
+   [ type=4,pathName=obo/ontology/anatomy/,reposName=/cvsroot/obo/obo/ontology/anatomy/,modeLine=null,entriesLine=null,newName=null,tagSpec=null,useProgram=null,file=null ]
+Clear-sticky: pathName './obo/ontology/anatomy/'
+
+CVSClient.READLine: 'Clear-sticky obo/ontology/anatomy/anatomy_xp/'
+PARSE: Clear-sticky 'obo/ontology/anatomy/anatomy_xp/'
+CVSClient.READLine: '/cvsroot/obo/obo/ontology/anatomy/anatomy_xp/'
+PARSE: FullPath '/cvsroot/obo/obo/ontology/anatomy/anatomy_xp/'
+CVSProject.handleResponseItem:
+   [ type=4,pathName=obo/ontology/anatomy/anatomy_xp/,reposName=/cvsroot/obo/obo/ontology/anatomy/anatomy_xp/,modeLine=null,entriesLine=null,newName=null,tagSpec=null,useProgram=null,file=null ]
+Clear-sticky: pathName './obo/ontology/anatomy/anatomy_xp/'
+
+CVSClient.READLine: 'Clear-static-directory obo/ontology/anatomy/anatomy_xp/'
+PARSE: Clear-static-directory 'obo/ontology/anatomy/anatomy_xp/'
+CVSClient.READLine: '/cvsroot/obo/obo/ontology/anatomy/anatomy_xp/'
+PARSE: FullPath '/cvsroot/obo/obo/ontology/anatomy/anatomy_xp/'
+CVSProject.handleResponseItem:
+   [ type=3,pathName=obo/ontology/anatomy/anatomy_xp/,reposName=/cvsroot/obo/obo/ontology/anatomy/anatomy_xp/,modeLine=null,entriesLine=null,newName=null,tagSpec=null,useProgram=null,file=null ]
+Clear-static-directory: pathName './obo/ontology/anatomy/anatomy_xp/'
+
+CVSClient.READLine: 'E cvs checkout: Updating obo/ontology/anatomy/anatomy_xp'
+CVSClient.READLine: 'M U obo/ontology/anatomy/anatomy_xp/MIAA.obo'
+CVSClient.READLine: 'Created obo/ontology/anatomy/anatomy_xp/'
+PARSE: Created 'obo/ontology/anatomy/anatomy_xp/'
+CVSClient.READLine: '/cvsroot/obo/obo/ontology/anatomy/anatomy_xp/MIAA.obo'
+PARSE: FullPath '/cvsroot/obo/obo/ontology/anatomy/anatomy_xp/MIAA.obo'
+CVSClient.READLine: '/MIAA.obo/1.1///'
+PARSE: Entry '/MIAA.obo/1.1///'
+CVSClient.READLine: 'u=rw,g=rw,o=rw'
+PARSE: Mode 'u=rw,g=rw,o=rw'
+CVSClient.READLine: '79841'
+CVSProject.handleResponseItem:
+   [ type=6,pathName=obo/ontology/anatomy/anatomy_xp/,reposName=/cvsroot/obo/obo/ontology/anatomy/anatomy_xp/MIAA.obo,modeLine=u=rw,g=rw,o=rw,entriesLine=/MIAA.obo/1.1///,newName=null,tagSpec=null,useProgram=null,file=\work\apps\bmir.apps\bioportal_resources\tmp\Tedd71f1.cvs ]
+CVSClient.READLine: 'M U obo/ontology/anatomy/anatomy_xp/Makefile'
+CVSClient.READLine: 'Created obo/ontology/anatomy/anatomy_xp/'
+PARSE: Created 'obo/ontology/anatomy/anatomy_xp/'
+CVSClient.READLine: '/cvsroot/obo/obo/ontology/anatomy/anatomy_xp/Makefile'
+PARSE: FullPath '/cvsroot/obo/obo/ontology/anatomy/anatomy_xp/Makefile'
+CVSClient.READLine: '/Makefile/1.47///'
+PARSE: Entry '/Makefile/1.47///'
+CVSClient.READLine: 'u=rw,g=rw,o=rw'
+PARSE: Mode 'u=rw,g=rw,o=rw'
+CVSClient.READLine: '13844'
+CVSProject.handleResponseItem:
+   [ type=6,pathName=obo/ontology/anatomy/anatomy_xp/,reposName=/cvsroot/obo/obo/ontology/anatomy/anatomy_xp/Makefile,modeLine=u=rw,g=rw,o=rw,entriesLine=/Makefile/1.47///,newName=null,tagSpec=null,useProgram=null,file=\work\apps\bmir.apps\bioportal_resources\tmp\Tedd71f2.cvs ]
+CVSClient.READLine: 'M U obo/ontology/anatomy/anatomy_xp/adult_mouse_anatomy_xp.obo'
+CVSClient.READLine: 'Created obo/ontology/anatomy/anatomy_xp/'
+PARSE: Created 'obo/ontology/anatomy/anatomy_xp/'
+CVSClient.READLine: '/cvsroot/obo/obo/ontology/anatomy/anatomy_xp/adult_mouse_anatomy_xp.obo'
+PARSE: FullPath '/cvsroot/obo/obo/ontology/anatomy/anatomy_xp/adult_mouse_anatomy_xp.obo'
+CVSClient.READLine: '/adult_mouse_anatomy_xp.obo/1.1///'
+PARSE: Entry '/adult_mouse_anatomy_xp.obo/1.1///'
+CVSClient.READLine: 'u=rw,g=rw,o=rw'
+PARSE: Mode 'u=rw,g=rw,o=rw'
+CVSClient.READLine: '307407'
+CVSProject.handleResponseItem:
+   [ type=6,pathName=obo/ontology/anatomy/anatomy_xp/,reposName=/cvsroot/obo/obo/ontology/anatomy/anatomy_xp/adult_mouse_anatomy_xp.obo,modeLine=u=rw,g=rw,o=rw,entriesLine=/adult_mouse_anatomy_xp.obo/1.1///,newName=null,tagSpec=null,useProgram=null,file=\work\apps\bmir.apps\bioportal_resources\tmp\Tedd71f3.cvs ]
+CVSClient.READLine: 'M U obo/ontology/anatomy/anatomy_xp/cell_xp-imports.obo'
+CVSClient.READLine: 'Created obo/ontology/anatomy/anatomy_xp/'
+PARSE: Created 'obo/ontology/anatomy/anatomy_xp/'
+CVSClient.READLine: '/cvsroot/obo/obo/ontology/anatomy/anatomy_xp/cell_xp-imports.obo'
+PARSE: FullPath '/cvsroot/obo/obo/ontology/anatomy/anatomy_xp/cell_xp-imports.obo'
+CVSClient.READLine: '/cell_xp-imports.obo/1.1///'
+PARSE: Entry '/cell_xp-imports.obo/1.1///'
+CVSClient.READLine: 'u=rw,g=rw,o=rw'
+PARSE: Mode 'u=rw,g=rw,o=rw'
+CVSClient.READLine: '360'
+CVSProject.handleResponseItem:
+   [ type=6,pathName=obo/ontology/anatomy/anatomy_xp/,reposName=/cvsroot/obo/obo/ontology/anatomy/anatomy_xp/cell_xp-imports.obo,modeLine=u=rw,g=rw,o=rw,entriesLine=/cell_xp-imports.obo/1.1///,newName=null,tagSpec=null,useProgram=null,file=\work\apps\bmir.apps\bioportal_resources\tmp\Tedd71f4.cvs ]
+CVSClient.READLine: 'M U obo/ontology/anatomy/anatomy_xp/cell_xp-newlinks.txt'
+CVSClient.READLine: 'Created obo/ontology/anatomy/anatomy_xp/'
+PARSE: Created 'obo/ontology/anatomy/anatomy_xp/'
+CVSClient.READLine: '/cvsroot/obo/obo/ontology/anatomy/anatomy_xp/cell_xp-newlinks.txt'
+PARSE: FullPath '/cvsroot/obo/obo/ontology/anatomy/anatomy_xp/cell_xp-newlinks.txt'
+CVSClient.READLine: '/cell_xp-newlinks.txt/1.1///'
+PARSE: Entry '/cell_xp-newlinks.txt/1.1///'
+CVSClient.READLine: 'u=rw,g=rw,o=rw'
+PARSE: Mode 'u=rw,g=rw,o=rw'
+CVSClient.READLine: '1206'
+CVSProject.handleResponseItem:
+   [ type=6,pathName=obo/ontology/anatomy/anatomy_xp/,reposName=/cvsroot/obo/obo/ontology/anatomy/anatomy_xp/cell_xp-newlinks.txt,modeLine=u=rw,g=rw,o=rw,entriesLine=/cell_xp-newlinks.txt/1.1///,newName=null,tagSpec=null,useProgram=null,file=\work\apps\bmir.apps\bioportal_resources\tmp\Tedd71f5.cvs ]
+CVSClient.READLine: 'M U obo/ontology/anatomy/anatomy_xp/cell_xp.obo'
+CVSClient.READLine: 'Created obo/ontology/anatomy/anatomy_xp/'
+PARSE: Created 'obo/ontology/anatomy/anatomy_xp/'
+CVSClient.READLine: '/cvsroot/obo/obo/ontology/anatomy/anatomy_xp/cell_xp.obo'
+PARSE: FullPath '/cvsroot/obo/obo/ontology/anatomy/anatomy_xp/cell_xp.obo'
+CVSClient.READLine: '/cell_xp.obo/1.3///'
+PARSE: Entry '/cell_xp.obo/1.3///'
+CVSClient.READLine: 'u=rw,g=rw,o=rw'
+PARSE: Mode 'u=rw,g=rw,o=rw'
+CVSClient.READLine: '294614'
+CVSProject.handleResponseItem:
+   [ type=6,pathName=obo/ontology/anatomy/anatomy_xp/,reposName=/cvsroot/obo/obo/ontology/anatomy/anatomy_xp/cell_xp.obo,modeLine=u=rw,g=rw,o=rw,entriesLine=/cell_xp.obo/1.3///,newName=null,tagSpec=null,useProgram=null,file=\work\apps\bmir.apps\bioportal_resources\tmp\Tedd71f6.cvs ]
+CVSClient.READLine: 'M U obo/ontology/anatomy/anatomy_xp/dictyostelium_anatomy_xp-imports.obo'
+CVSClient.READLine: 'Created obo/ontology/anatomy/anatomy_xp/'
+PARSE: Created 'obo/ontology/anatomy/anatomy_xp/'
+CVSClient.READLine: '/cvsroot/obo/obo/ontology/anatomy/anatomy_xp/dictyostelium_anatomy_xp-imports.obo'
+PARSE: FullPath '/cvsroot/obo/obo/ontology/anatomy/anatomy_xp/dictyostelium_anatomy_xp-imports.obo'
+CVSClient.READLine: '/dictyostelium_anatomy_xp-imports.obo/1.2///'
+PARSE: Entry '/dictyostelium_anatomy_xp-imports.obo/1.2///'
+CVSClient.READLine: 'u=rw,g=rw,o=rw'
+PARSE: Mode 'u=rw,g=rw,o=rw'
+CVSClient.READLine: '155'
+CVSProject.handleResponseItem:
+   [ type=6,pathName=obo/ontology/anatomy/anatomy_xp/,reposName=/cvsroot/obo/obo/ontology/anatomy/anatomy_xp/dictyostelium_anatomy_xp-imports.obo,modeLine=u=rw,g=rw,o=rw,entriesLine=/dictyostelium_anatomy_xp-imports.obo/1.2///,newName=null,tagSpec=null,useProgram=null,file=\work\apps\bmir.apps\bioportal_resources\tmp\Tedd71f7.cvs ]
+CVSClient.READLine: 'M U obo/ontology/anatomy/anatomy_xp/dictyostelium_anatomy_xp.obo'
+CVSClient.READLine: 'Created obo/ontology/anatomy/anatomy_xp/'
+PARSE: Created 'obo/ontology/anatomy/anatomy_xp/'
+CVSClient.READLine: '/cvsroot/obo/obo/ontology/anatomy/anatomy_xp/dictyostelium_anatomy_xp.obo'
+PARSE: FullPath '/cvsroot/obo/obo/ontology/anatomy/anatomy_xp/dictyostelium_anatomy_xp.obo'
+CVSClient.READLine: '/dictyostelium_anatomy_xp.obo/1.4///'
+PARSE: Entry '/dictyostelium_anatomy_xp.obo/1.4///'
+CVSClient.READLine: 'u=rw,g=rw,o=rw'
+PARSE: Mode 'u=rw,g=rw,o=rw'
+CVSClient.READLine: '69604'
+CVSProject.handleResponseItem:
+   [ type=6,pathName=obo/ontology/anatomy/anatomy_xp/,reposName=/cvsroot/obo/obo/ontology/anatomy/anatomy_xp/dictyostelium_anatomy_xp.obo,modeLine=u=rw,g=rw,o=rw,entriesLine=/dictyostelium_anatomy_xp.obo/1.4///,newName=null,tagSpec=null,useProgram=null,file=\work\apps\bmir.apps\bioportal_resources\tmp\Tedd71f8.cvs ]
+CVSClient.READLine: 'M U obo/ontology/anatomy/anatomy_xp/fly-to-caro.obo'
+CVSClient.READLine: 'Created obo/ontology/anatomy/anatomy_xp/'
+PARSE: Created 'obo/ontology/anatomy/anatomy_xp/'
+CVSClient.READLine: '/cvsroot/obo/obo/ontology/anatomy/anatomy_xp/fly-to-caro.obo'
+PARSE: FullPath '/cvsroot/obo/obo/ontology/anatomy/anatomy_xp/fly-to-caro.obo'
+CVSClient.READLine: '/fly-to-caro.obo/1.1///'
+PARSE: Entry '/fly-to-caro.obo/1.1///'
+CVSClient.READLine: 'u=rw,g=rw,o=rw'
+PARSE: Mode 'u=rw,g=rw,o=rw'
+CVSClient.READLine: '720'
+CVSProject.handleResponseItem:
+   [ type=6,pathName=obo/ontology/anatomy/anatomy_xp/,reposName=/cvsroot/obo/obo/ontology/anatomy/anatomy_xp/fly-to-caro.obo,modeLine=u=rw,g=rw,o=rw,entriesLine=/fly-to-caro.obo/1.1///,newName=null,tagSpec=null,useProgram=null,file=\work\apps\bmir.apps\bioportal_resources\tmp\Tedd71f9.cvs ]
+CVSClient.READLine: 'M U obo/ontology/anatomy/anatomy_xp/fly-to-fma-homology.obo'
+CVSClient.READLine: 'Created obo/ontology/anatomy/anatomy_xp/'
+PARSE: Created 'obo/ontology/anatomy/anatomy_xp/'
+CVSClient.READLine: '/cvsroot/obo/obo/ontology/anatomy/anatomy_xp/fly-to-fma-homology.obo'
+PARSE: FullPath '/cvsroot/obo/obo/ontology/anatomy/anatomy_xp/fly-to-fma-homology.obo'
+CVSClient.READLine: '/fly-to-fma-homology.obo/1.3///'
+PARSE: Entry '/fly-to-fma-homology.obo/1.3///'
+CVSClient.READLine: 'u=rw,g=rw,o=rw'
+PARSE: Mode 'u=rw,g=rw,o=rw'
+CVSClient.READLine: '15107'
+CVSProject.handleResponseItem:
+   [ type=6,pathName=obo/ontology/anatomy/anatomy_xp/,reposName=/cvsroot/obo/obo/ontology/anatomy/anatomy_xp/fly-to-fma-homology.obo,modeLine=u=rw,g=rw,o=rw,entriesLine=/fly-to-fma-homology.obo/1.3///,newName=null,tagSpec=null,useProgram=null,file=\work\apps\bmir.apps\bioportal_resources\tmp\Tedd71fa.cvs ]
+CVSClient.READLine: 'M U obo/ontology/anatomy/anatomy_xp/fly-to-worm-homology.obo'
+CVSClient.READLine: 'Created obo/ontology/anatomy/anatomy_xp/'
+PARSE: Created 'obo/ontology/anatomy/anatomy_xp/'
+CVSClient.READLine: '/cvsroot/obo/obo/ontology/anatomy/anatomy_xp/fly-to-worm-homology.obo'
+PARSE: FullPath '/cvsroot/obo/obo/ontology/anatomy/anatomy_xp/fly-to-worm-homology.obo'
+CVSClient.READLine: '/fly-to-worm-homology.obo/1.2///'
+PARSE: Entry '/fly-to-worm-homology.obo/1.2///'
+CVSClient.READLine: 'u=rw,g=rw,o=rw'
+PARSE: Mode 'u=rw,g=rw,o=rw'
+CVSClient.READLine: '7009'
+CVSProject.handleResponseItem:
+   [ type=6,pathName=obo/ontology/anatomy/anatomy_xp/,reposName=/cvsroot/obo/obo/ontology/anatomy/anatomy_xp/fly-to-worm-homology.obo,modeLine=u=rw,g=rw,o=rw,entriesLine=/fly-to-worm-homology.obo/1.2///,newName=null,tagSpec=null,useProgram=null,file=\work\apps\bmir.apps\bioportal_resources\tmp\Tedd71fb.cvs ]
+CVSClient.READLine: 'M U obo/ontology/anatomy/anatomy_xp/fly_anatomy-cell-aln.tbl'
+CVSClient.READLine: 'Created obo/ontology/anatomy/anatomy_xp/'
+PARSE: Created 'obo/ontology/anatomy/anatomy_xp/'
+CVSClient.READLine: '/cvsroot/obo/obo/ontology/anatomy/anatomy_xp/fly_anatomy-cell-aln.tbl'
+PARSE: FullPath '/cvsroot/obo/obo/ontology/anatomy/anatomy_xp/fly_anatomy-cell-aln.tbl'
+CVSClient.READLine: '/fly_anatomy-cell-aln.tbl/1.1///'
+PARSE: Entry '/fly_anatomy-cell-aln.tbl/1.1///'
+CVSClient.READLine: 'u=rw,g=rw,o=rw'
+PARSE: Mode 'u=rw,g=rw,o=rw'
+CVSClient.READLine: '62716'
+CVSProject.handleResponseItem:
+   [ type=6,pathName=obo/ontology/anatomy/anatomy_xp/,reposName=/cvsroot/obo/obo/ontology/anatomy/anatomy_xp/fly_anatomy-cell-aln.tbl,modeLine=u=rw,g=rw,o=rw,entriesLine=/fly_anatomy-cell-aln.tbl/1.1///,newName=null,tagSpec=null,useProgram=null,file=\work\apps\bmir.apps\bioportal_resources\tmp\Tedd71fc.cvs ]
+CVSClient.READLine: 'M U obo/ontology/anatomy/anatomy_xp/fly_anatomy-to-caro.obo'
+CVSClient.READLine: 'Created obo/ontology/anatomy/anatomy_xp/'
+PARSE: Created 'obo/ontology/anatomy/anatomy_xp/'
+CVSClient.READLine: '/cvsroot/obo/obo/ontology/anatomy/anatomy_xp/fly_anatomy-to-caro.obo'
+PARSE: FullPath '/cvsroot/obo/obo/ontology/anatomy/anatomy_xp/fly_anatomy-to-caro.obo'
+CVSClient.READLine: '/fly_anatomy-to-caro.obo/1.1///'
+PARSE: Entry '/fly_anatomy-to-caro.obo/1.1///'
+CVSClient.READLine: 'u=rw,g=rw,o=rw'
+PARSE: Mode 'u=rw,g=rw,o=rw'
+CVSClient.READLine: '720'
+CVSProject.handleResponseItem:
+   [ type=6,pathName=obo/ontology/anatomy/anatomy_xp/,reposName=/cvsroot/obo/obo/ontology/anatomy/anatomy_xp/fly_anatomy-to-caro.obo,modeLine=u=rw,g=rw,o=rw,entriesLine=/fly_anatomy-to-caro.obo/1.1///,newName=null,tagSpec=null,useProgram=null,file=\work\apps\bmir.apps\bioportal_resources\tmp\Tedd71fd.cvs ]
+CVSClient.READLine: 'M U obo/ontology/anatomy/anatomy_xp/fly_anatomy_xp-imports.obo'
+CVSClient.READLine: 'Created obo/ontology/anatomy/anatomy_xp/'
+PARSE: Created 'obo/ontology/anatomy/anatomy_xp/'
+CVSClient.READLine: '/cvsroot/obo/obo/ontology/anatomy/anatomy_xp/fly_anatomy_xp-imports.obo'
+PARSE: FullPath '/cvsroot/obo/obo/ontology/anatomy/anatomy_xp/fly_anatomy_xp-imports.obo'
+CVSClient.READLine: '/fly_anatomy_xp-imports.obo/1.1///'
+PARSE: Entry '/fly_anatomy_xp-imports.obo/1.1///'
+CVSClient.READLine: 'u=rw,g=rw,o=rw'
+PARSE: Mode 'u=rw,g=rw,o=rw'
+CVSClient.READLine: '131'
+CVSProject.handleResponseItem:
+   [ type=6,pathName=obo/ontology/anatomy/anatomy_xp/,reposName=/cvsroot/obo/obo/ontology/anatomy/anatomy_xp/fly_anatomy_xp-imports.obo,modeLine=u=rw,g=rw,o=rw,entriesLine=/fly_anatomy_xp-imports.obo/1.1///,newName=null,tagSpec=null,useProgram=null,file=\work\apps\bmir.apps\bioportal_resources\tmp\Tedd71fe.cvs ]
+CVSClient.READLine: 'M U obo/ontology/anatomy/anatomy_xp/fly_anatomy_xp.obo'
+CVSClient.READLine: 'Created obo/ontology/anatomy/anatomy_xp/'
+PARSE: Created 'obo/ontology/anatomy/anatomy_xp/'
+CVSClient.READLine: '/cvsroot/obo/obo/ontology/anatomy/anatomy_xp/fly_anatomy_xp.obo'
+PARSE: FullPath '/cvsroot/obo/obo/ontology/anatomy/anatomy_xp/fly_anatomy_xp.obo'
+CVSClient.READLine: '/fly_anatomy_xp.obo/1.2///'
+PARSE: Entry '/fly_anatomy_xp.obo/1.2///'
+CVSClient.READLine: 'u=rw,g=rw,o=rw'
+PARSE: Mode 'u=rw,g=rw,o=rw'
+CVSClient.READLine: '1029159'
+CVSProject.handleResponseItem:
+   [ type=6,pathName=obo/ontology/anatomy/anatomy_xp/,reposName=/cvsroot/obo/obo/ontology/anatomy/anatomy_xp/fly_anatomy_xp.obo,modeLine=u=rw,g=rw,o=rw,entriesLine=/fly_anatomy_xp.obo/1.2///,newName=null,tagSpec=null,useProgram=null,file=\work\apps\bmir.apps\bioportal_resources\tmp\Tedd71ff.cvs ]
+CVSClient.READLine: 'M U obo/ontology/anatomy/anatomy_xp/fly_anatomy_xp_cell.obo'
+CVSClient.READLine: 'Created obo/ontology/anatomy/anatomy_xp/'
+PARSE: Created 'obo/ontology/anatomy/anatomy_xp/'
+CVSClient.READLine: '/cvsroot/obo/obo/ontology/anatomy/anatomy_xp/fly_anatomy_xp_cell.obo'
+PARSE: FullPath '/cvsroot/obo/obo/ontology/anatomy/anatomy_xp/fly_anatomy_xp_cell.obo'
+CVSClient.READLine: '/fly_anatomy_xp_cell.obo/1.1///'
+PARSE: Entry '/fly_anatomy_xp_cell.obo/1.1///'
+CVSClient.READLine: 'u=rw,g=rw,o=rw'
+PARSE: Mode 'u=rw,g=rw,o=rw'
+CVSClient.READLine: '5768'
+CVSProject.handleResponseItem:
+   [ type=6,pathName=obo/ontology/anatomy/anatomy_xp/,reposName=/cvsroot/obo/obo/ontology/anatomy/anatomy_xp/fly_anatomy_xp_cell.obo,modeLine=u=rw,g=rw,o=rw,entriesLine=/fly_anatomy_xp_cell.obo/1.1///,newName=null,tagSpec=null,useProgram=null,file=\work\apps\bmir.apps\bioportal_resources\tmp\Tedd7200.cvs ]
+CVSClient.READLine: 'M U obo/ontology/anatomy/anatomy_xp/fma-to-caro.obo'
+CVSClient.READLine: 'Created obo/ontology/anatomy/anatomy_xp/'
+PARSE: Created 'obo/ontology/anatomy/anatomy_xp/'
+CVSClient.READLine: '/cvsroot/obo/obo/ontology/anatomy/anatomy_xp/fma-to-caro.obo'
+PARSE: FullPath '/cvsroot/obo/obo/ontology/anatomy/anatomy_xp/fma-to-caro.obo'
+CVSClient.READLine: '/fma-to-caro.obo/1.2///'
+PARSE: Entry '/fma-to-caro.obo/1.2///'
+CVSClient.READLine: 'u=rw,g=rw,o=rw'
+PARSE: Mode 'u=rw,g=rw,o=rw'
+CVSClient.READLine: '2367'
+CVSProject.handleResponseItem:
+   [ type=6,pathName=obo/ontology/anatomy/anatomy_xp/,reposName=/cvsroot/obo/obo/ontology/anatomy/anatomy_xp/fma-to-caro.obo,modeLine=u=rw,g=rw,o=rw,entriesLine=/fma-to-caro.obo/1.2///,newName=null,tagSpec=null,useProgram=null,file=\work\apps\bmir.apps\bioportal_resources\tmp\Tedd7201.cvs ]
+CVSClient.READLine: 'M U obo/ontology/anatomy/anatomy_xp/fma_xp.obo'
+CVSClient.READLine: 'Created obo/ontology/anatomy/anatomy_xp/'
+PARSE: Created 'obo/ontology/anatomy/anatomy_xp/'
+CVSClient.READLine: '/cvsroot/obo/obo/ontology/anatomy/anatomy_xp/fma_xp.obo'
+PARSE: FullPath '/cvsroot/obo/obo/ontology/anatomy/anatomy_xp/fma_xp.obo'
+CVSClient.READLine: '/fma_xp.obo/1.1///'
+PARSE: Entry '/fma_xp.obo/1.1///'
+CVSClient.READLine: 'u=rw,g=rw,o=rw'
+PARSE: Mode 'u=rw,g=rw,o=rw'
+CVSClient.READLine: '14018820'
+CVSProject.handleResponseItem:
+   [ type=6,pathName=obo/ontology/anatomy/anatomy_xp/,reposName=/cvsroot/obo/obo/ontology/anatomy/anatomy_xp/fma_xp.obo,modeLine=u=rw,g=rw,o=rw,entriesLine=/fma_xp.obo/1.1///,newName=null,tagSpec=null,useProgram=null,file=\work\apps\bmir.apps\bioportal_resources\tmp\Tedd7202.cvs ]
+CVSClient.READLine: 'M U obo/ontology/anatomy/anatomy_xp/ma-to-fma.obo'
+CVSClient.READLine: 'Created obo/ontology/anatomy/anatomy_xp/'
+PARSE: Created 'obo/ontology/anatomy/anatomy_xp/'
+CVSClient.READLine: '/cvsroot/obo/obo/ontology/anatomy/anatomy_xp/ma-to-fma.obo'
+PARSE: FullPath '/cvsroot/obo/obo/ontology/anatomy/anatomy_xp/ma-to-fma.obo'
+CVSClient.READLine: '/ma-to-fma.obo/1.2///'
+PARSE: Entry '/ma-to-fma.obo/1.2///'
+CVSClient.READLine: 'u=rw,g=rw,o=rw'
+PARSE: Mode 'u=rw,g=rw,o=rw'
+CVSClient.READLine: '144135'
+CVSProject.handleResponseItem:
+   [ type=6,pathName=obo/ontology/anatomy/anatomy_xp/,reposName=/cvsroot/obo/obo/ontology/anatomy/anatomy_xp/ma-to-fma.obo,modeLine=u=rw,g=rw,o=rw,entriesLine=/ma-to-fma.obo/1.2///,newName=null,tagSpec=null,useProgram=null,file=\work\apps\bmir.apps\bioportal_resources\tmp\Tedd7203.cvs ]
+CVSClient.READLine: 'M U obo/ontology/anatomy/anatomy_xp/map_CL-EMAPA.obo'
+CVSClient.READLine: 'Created obo/ontology/anatomy/anatomy_xp/'
+PARSE: Created 'obo/ontology/anatomy/anatomy_xp/'
+CVSClient.READLine: '/cvsroot/obo/obo/ontology/anatomy/anatomy_xp/map_CL-EMAPA.obo'
+PARSE: FullPath '/cvsroot/obo/obo/ontology/anatomy/anatomy_xp/map_CL-EMAPA.obo'
+CVSClient.READLine: '/map_CL-EMAPA.obo/1.1///'
+PARSE: Entry '/map_CL-EMAPA.obo/1.1///'
+CVSClient.READLine: 'u=rw,g=rw,o=rw'
+PARSE: Mode 'u=rw,g=rw,o=rw'
+CVSClient.READLine: '895656'
+CVSProject.handleResponseItem:
+   [ type=6,pathName=obo/ontology/anatomy/anatomy_xp/,reposName=/cvsroot/obo/obo/ontology/anatomy/anatomy_xp/map_CL-EMAPA.obo,modeLine=u=rw,g=rw,o=rw,entriesLine=/map_CL-EMAPA.obo/1.1///,newName=null,tagSpec=null,useProgram=null,file=\work\apps\bmir.apps\bioportal_resources\tmp\Tedd7204.cvs ]
+CVSClient.READLine: 'M U obo/ontology/anatomy/anatomy_xp/nif_anatomy_xp.obo'
+CVSClient.READLine: 'Created obo/ontology/anatomy/anatomy_xp/'
+PARSE: Created 'obo/ontology/anatomy/anatomy_xp/'
+CVSClient.READLine: '/cvsroot/obo/obo/ontology/anatomy/anatomy_xp/nif_anatomy_xp.obo'
+PARSE: FullPath '/cvsroot/obo/obo/ontology/anatomy/anatomy_xp/nif_anatomy_xp.obo'
+CVSClient.READLine: '/nif_anatomy_xp.obo/1.4///'
+PARSE: Entry '/nif_anatomy_xp.obo/1.4///'
+CVSClient.READLine: 'u=rw,g=rw,o=rw'
+PARSE: Mode 'u=rw,g=rw,o=rw'
+CVSClient.READLine: '36650'
+CVSProject.handleResponseItem:
+   [ type=6,pathName=obo/ontology/anatomy/anatomy_xp/,reposName=/cvsroot/obo/obo/ontology/anatomy/anatomy_xp/nif_anatomy_xp.obo,modeLine=u=rw,g=rw,o=rw,entriesLine=/nif_anatomy_xp.obo/1.4///,newName=null,tagSpec=null,useProgram=null,file=\work\apps\bmir.apps\bioportal_resources\tmp\Tedd7205.cvs ]
+CVSClient.READLine: 'M U obo/ontology/anatomy/anatomy_xp/nif_anatomy_xp.owl'
+CVSClient.READLine: 'Created obo/ontology/anatomy/anatomy_xp/'
+PARSE: Created 'obo/ontology/anatomy/anatomy_xp/'
+CVSClient.READLine: '/cvsroot/obo/obo/ontology/anatomy/anatomy_xp/nif_anatomy_xp.owl'
+PARSE: FullPath '/cvsroot/obo/obo/ontology/anatomy/anatomy_xp/nif_anatomy_xp.owl'
+CVSClient.READLine: '/nif_anatomy_xp.owl/1.2///'
+PARSE: Entry '/nif_anatomy_xp.owl/1.2///'
+CVSClient.READLine: 'u=rw,g=rw,o=rw'
+PARSE: Mode 'u=rw,g=rw,o=rw'
+CVSClient.READLine: '131687'
+CVSProject.handleResponseItem:
+   [ type=6,pathName=obo/ontology/anatomy/anatomy_xp/,reposName=/cvsroot/obo/obo/ontology/anatomy/anatomy_xp/nif_anatomy_xp.owl,modeLine=u=rw,g=rw,o=rw,entriesLine=/nif_anatomy_xp.owl/1.2///,newName=null,tagSpec=null,useProgram=null,file=\work\apps\bmir.apps\bioportal_resources\tmp\Tedd7206.cvs ]
+CVSClient.READLine: 'M U obo/ontology/anatomy/anatomy_xp/part_of.obo'
+CVSClient.READLine: 'Created obo/ontology/anatomy/anatomy_xp/'
+PARSE: Created 'obo/ontology/anatomy/anatomy_xp/'
+CVSClient.READLine: '/cvsroot/obo/obo/ontology/anatomy/anatomy_xp/part_of.obo'
+PARSE: FullPath '/cvsroot/obo/obo/ontology/anatomy/anatomy_xp/part_of.obo'
+CVSClient.READLine: '/part_of.obo/1.1///'
+PARSE: Entry '/part_of.obo/1.1///'
+CVSClient.READLine: 'u=rw,g=rw,o=rw'
+PARSE: Mode 'u=rw,g=rw,o=rw'
+CVSClient.READLine: '126'
+CVSProject.handleResponseItem:
+   [ type=6,pathName=obo/ontology/anatomy/anatomy_xp/,reposName=/cvsroot/obo/obo/ontology/anatomy/anatomy_xp/part_of.obo,modeLine=u=rw,g=rw,o=rw,entriesLine=/part_of.obo/1.1///,newName=null,tagSpec=null,useProgram=null,file=\work\apps\bmir.apps\bioportal_resources\tmp\Tedd7207.cvs ]
+CVSClient.READLine: 'M U obo/ontology/anatomy/anatomy_xp/plant_anatomy-cell-aln.tbl'
+CVSClient.READLine: 'Created obo/ontology/anatomy/anatomy_xp/'
+PARSE: Created 'obo/ontology/anatomy/anatomy_xp/'
+CVSClient.READLine: '/cvsroot/obo/obo/ontology/anatomy/anatomy_xp/plant_anatomy-cell-aln.tbl'
+PARSE: FullPath '/cvsroot/obo/obo/ontology/anatomy/anatomy_xp/plant_anatomy-cell-aln.tbl'
+CVSClient.READLine: '/plant_anatomy-cell-aln.tbl/1.1///'
+PARSE: Entry '/plant_anatomy-cell-aln.tbl/1.1///'
+CVSClient.READLine: 'u=rw,g=rw,o=rw'
+PARSE: Mode 'u=rw,g=rw,o=rw'
+CVSClient.READLine: '19226'
+CVSProject.handleResponseItem:
+   [ type=6,pathName=obo/ontology/anatomy/anatomy_xp/,reposName=/cvsroot/obo/obo/ontology/anatomy/anatomy_xp/plant_anatomy-cell-aln.tbl,modeLine=u=rw,g=rw,o=rw,entriesLine=/plant_anatomy-cell-aln.tbl/1.1///,newName=null,tagSpec=null,useProgram=null,file=\work\apps\bmir.apps\bioportal_resources\tmp\Tedd7208.cvs ]
+CVSClient.READLine: 'M U obo/ontology/anatomy/anatomy_xp/plant_anatomy_xp_cell.obo'
+CVSClient.READLine: 'Created obo/ontology/anatomy/anatomy_xp/'
+PARSE: Created 'obo/ontology/anatomy/anatomy_xp/'
+CVSClient.READLine: '/cvsroot/obo/obo/ontology/anatomy/anatomy_xp/plant_anatomy_xp_cell.obo'
+PARSE: FullPath '/cvsroot/obo/obo/ontology/anatomy/anatomy_xp/plant_anatomy_xp_cell.obo'
+CVSClient.READLine: '/plant_anatomy_xp_cell.obo/1.2///'
+PARSE: Entry '/plant_anatomy_xp_cell.obo/1.2///'
+CVSClient.READLine: 'u=rw,g=rw,o=rw'
+PARSE: Mode 'u=rw,g=rw,o=rw'
+CVSClient.READLine: '5165'
+CVSProject.handleResponseItem:
+   [ type=6,pathName=obo/ontology/anatomy/anatomy_xp/,reposName=/cvsroot/obo/obo/ontology/anatomy/anatomy_xp/plant_anatomy_xp_cell.obo,modeLine=u=rw,g=rw,o=rw,entriesLine=/plant_anatomy_xp_cell.obo/1.2///,newName=null,tagSpec=null,useProgram=null,file=\work\apps\bmir.apps\bioportal_resources\tmp\Tedd7209.cvs ]
+CVSClient.READLine: 'M U obo/ontology/anatomy/anatomy_xp/po_anatomy_xp-imports.obo'
+CVSClient.READLine: 'Created obo/ontology/anatomy/anatomy_xp/'
+PARSE: Created 'obo/ontology/anatomy/anatomy_xp/'
+CVSClient.READLine: '/cvsroot/obo/obo/ontology/anatomy/anatomy_xp/po_anatomy_xp-imports.obo'
+PARSE: FullPath '/cvsroot/obo/obo/ontology/anatomy/anatomy_xp/po_anatomy_xp-imports.obo'
+CVSClient.READLine: '/po_anatomy_xp-imports.obo/1.1///'
+PARSE: Entry '/po_anatomy_xp-imports.obo/1.1///'
+CVSClient.READLine: 'u=rw,g=rw,o=rw'
+PARSE: Mode 'u=rw,g=rw,o=rw'
+CVSClient.READLine: '128'
+CVSProject.handleResponseItem:
+   [ type=6,pathName=obo/ontology/anatomy/anatomy_xp/,reposName=/cvsroot/obo/obo/ontology/anatomy/anatomy_xp/po_anatomy_xp-imports.obo,modeLine=u=rw,g=rw,o=rw,entriesLine=/po_anatomy_xp-imports.obo/1.1///,newName=null,tagSpec=null,useProgram=null,file=\work\apps\bmir.apps\bioportal_resources\tmp\Tedd720a.cvs ]
+CVSClient.READLine: 'M U obo/ontology/anatomy/anatomy_xp/po_anatomy_xp.obo'
+CVSClient.READLine: 'Created obo/ontology/anatomy/anatomy_xp/'
+PARSE: Created 'obo/ontology/anatomy/anatomy_xp/'
+CVSClient.READLine: '/cvsroot/obo/obo/ontology/anatomy/anatomy_xp/po_anatomy_xp.obo'
+PARSE: FullPath '/cvsroot/obo/obo/ontology/anatomy/anatomy_xp/po_anatomy_xp.obo'
+CVSClient.READLine: '/po_anatomy_xp.obo/1.2///'
+PARSE: Entry '/po_anatomy_xp.obo/1.2///'
+CVSClient.READLine: 'u=rw,g=rw,o=rw'
+PARSE: Mode 'u=rw,g=rw,o=rw'
+CVSClient.READLine: '198935'
+CVSProject.handleResponseItem:
+   [ type=6,pathName=obo/ontology/anatomy/anatomy_xp/,reposName=/cvsroot/obo/obo/ontology/anatomy/anatomy_xp/po_anatomy_xp.obo,modeLine=u=rw,g=rw,o=rw,entriesLine=/po_anatomy_xp.obo/1.2///,newName=null,tagSpec=null,useProgram=null,file=\work\apps\bmir.apps\bioportal_resources\tmp\Tedd720b.cvs ]
+CVSClient.READLine: 'M U obo/ontology/anatomy/anatomy_xp/tick_anatomy_xp.obo'
+CVSClient.READLine: 'Created obo/ontology/anatomy/anatomy_xp/'
+PARSE: Created 'obo/ontology/anatomy/anatomy_xp/'
+CVSClient.READLine: '/cvsroot/obo/obo/ontology/anatomy/anatomy_xp/tick_anatomy_xp.obo'
+PARSE: FullPath '/cvsroot/obo/obo/ontology/anatomy/anatomy_xp/tick_anatomy_xp.obo'
+CVSClient.READLine: '/tick_anatomy_xp.obo/1.2///'
+PARSE: Entry '/tick_anatomy_xp.obo/1.2///'
+CVSClient.READLine: 'u=rw,g=rw,o=rw'
+PARSE: Mode 'u=rw,g=rw,o=rw'
+CVSClient.READLine: '100992'
+CVSProject.handleResponseItem:
+   [ type=6,pathName=obo/ontology/anatomy/anatomy_xp/,reposName=/cvsroot/obo/obo/ontology/anatomy/anatomy_xp/tick_anatomy_xp.obo,modeLine=u=rw,g=rw,o=rw,entriesLine=/tick_anatomy_xp.obo/1.2///,newName=null,tagSpec=null,useProgram=null,file=\work\apps\bmir.apps\bioportal_resources\tmp\Tedd720c.cvs ]
+CVSClient.READLine: 'M U obo/ontology/anatomy/anatomy_xp/uberon-with-isa.obo'
+CVSClient.READLine: 'Created obo/ontology/anatomy/anatomy_xp/'
+PARSE: Created 'obo/ontology/anatomy/anatomy_xp/'
+CVSClient.READLine: '/cvsroot/obo/obo/ontology/anatomy/anatomy_xp/uberon-with-isa.obo'
+PARSE: FullPath '/cvsroot/obo/obo/ontology/anatomy/anatomy_xp/uberon-with-isa.obo'
+CVSClient.READLine: '/uberon-with-isa.obo/1.3///'
+PARSE: Entry '/uberon-with-isa.obo/1.3///'
+CVSClient.READLine: 'u=rw,g=rw,o=rw'
+PARSE: Mode 'u=rw,g=rw,o=rw'
+CVSClient.READLine: '2322141'
+CVSProject.handleResponseItem:
+   [ type=6,pathName=obo/ontology/anatomy/anatomy_xp/,reposName=/cvsroot/obo/obo/ontology/anatomy/anatomy_xp/uberon-with-isa.obo,modeLine=u=rw,g=rw,o=rw,entriesLine=/uberon-with-isa.obo/1.3///,newName=null,tagSpec=null,useProgram=null,file=\work\apps\bmir.apps\bioportal_resources\tmp\Tedd720d.cvs ]
+CVSClient.READLine: 'M U obo/ontology/anatomy/anatomy_xp/uberon.obo'
+CVSClient.READLine: 'Created obo/ontology/anatomy/anatomy_xp/'
+PARSE: Created 'obo/ontology/anatomy/anatomy_xp/'
+CVSClient.READLine: '/cvsroot/obo/obo/ontology/anatomy/anatomy_xp/uberon.obo'
+PARSE: FullPath '/cvsroot/obo/obo/ontology/anatomy/anatomy_xp/uberon.obo'
+CVSClient.READLine: '/uberon.obo/1.40///'
+PARSE: Entry '/uberon.obo/1.40///'
+CVSClient.READLine: 'u=rw,g=rw,o=rw'
+PARSE: Mode 'u=rw,g=rw,o=rw'
+CVSClient.READLine: '1748597'
+CVSProject.handleResponseItem:
+   [ type=6,pathName=obo/ontology/anatomy/anatomy_xp/,reposName=/cvsroot/obo/obo/ontology/anatomy/anatomy_xp/uberon.obo,modeLine=u=rw,g=rw,o=rw,entriesLine=/uberon.obo/1.40///,newName=null,tagSpec=null,useProgram=null,file=\work\apps\bmir.apps\bioportal_resources\tmp\Tedd720e.cvs ]
+CVSClient.READLine: 'M U obo/ontology/anatomy/anatomy_xp/uberon_edit-wikipedia.xrefs'
+CVSClient.READLine: 'Created obo/ontology/anatomy/anatomy_xp/'
+PARSE: Created 'obo/ontology/anatomy/anatomy_xp/'
+CVSClient.READLine: '/cvsroot/obo/obo/ontology/anatomy/anatomy_xp/uberon_edit-wikipedia.xrefs'
+PARSE: FullPath '/cvsroot/obo/obo/ontology/anatomy/anatomy_xp/uberon_edit-wikipedia.xrefs'
+CVSClient.READLine: '/uberon_edit-wikipedia.xrefs/1.1///'
+PARSE: Entry '/uberon_edit-wikipedia.xrefs/1.1///'
+CVSClient.READLine: 'u=rw,g=rw,o=rw'
+PARSE: Mode 'u=rw,g=rw,o=rw'
+CVSClient.READLine: '106874'
+CVSProject.handleResponseItem:
+   [ type=6,pathName=obo/ontology/anatomy/anatomy_xp/,reposName=/cvsroot/obo/obo/ontology/anatomy/anatomy_xp/uberon_edit-wikipedia.xrefs,modeLine=u=rw,g=rw,o=rw,entriesLine=/uberon_edit-wikipedia.xrefs/1.1///,newName=null,tagSpec=null,useProgram=null,file=\work\apps\bmir.apps\bioportal_resources\tmp\Tedd720f.cvs ]
+CVSClient.READLine: 'M U obo/ontology/anatomy/anatomy_xp/uberon_edit.obo'
+CVSClient.READLine: 'Created obo/ontology/anatomy/anatomy_xp/'
+PARSE: Created 'obo/ontology/anatomy/anatomy_xp/'
+CVSClient.READLine: '/cvsroot/obo/obo/ontology/anatomy/anatomy_xp/uberon_edit.obo'
+PARSE: FullPath '/cvsroot/obo/obo/ontology/anatomy/anatomy_xp/uberon_edit.obo'
+CVSClient.READLine: '/uberon_edit.obo/1.75///'
+PARSE: Entry '/uberon_edit.obo/1.75///'
+CVSClient.READLine: 'u=rw,g=rw,o=rw'
+PARSE: Mode 'u=rw,g=rw,o=rw'
+CVSClient.READLine: '1749850'
+CVSProject.handleResponseItem:
+   [ type=6,pathName=obo/ontology/anatomy/anatomy_xp/,reposName=/cvsroot/obo/obo/ontology/anatomy/anatomy_xp/uberon_edit.obo,modeLine=u=rw,g=rw,o=rw,entriesLine=/uberon_edit.obo/1.75///,newName=null,tagSpec=null,useProgram=null,file=\work\apps\bmir.apps\bioportal_resources\tmp\Tedd7210.cvs ]
+CVSClient.READLine: 'M U obo/ontology/anatomy/anatomy_xp/wikitbl2defxref.pl'
+CVSClient.READLine: 'Created obo/ontology/anatomy/anatomy_xp/'
+PARSE: Created 'obo/ontology/anatomy/anatomy_xp/'
+CVSClient.READLine: '/cvsroot/obo/obo/ontology/anatomy/anatomy_xp/wikitbl2defxref.pl'
+PARSE: FullPath '/cvsroot/obo/obo/ontology/anatomy/anatomy_xp/wikitbl2defxref.pl'
+CVSClient.READLine: '/wikitbl2defxref.pl/1.1///'
+PARSE: Entry '/wikitbl2defxref.pl/1.1///'
+CVSClient.READLine: 'u=rwx,g=rwx,o=rwx'
+PARSE: Mode 'u=rwx,g=rwx,o=rwx'
+CVSClient.READLine: '194'
+CVSProject.handleResponseItem:
+   [ type=6,pathName=obo/ontology/anatomy/anatomy_xp/,reposName=/cvsroot/obo/obo/ontology/anatomy/anatomy_xp/wikitbl2defxref.pl,modeLine=u=rwx,g=rwx,o=rwx,entriesLine=/wikitbl2defxref.pl/1.1///,newName=null,tagSpec=null,useProgram=null,file=\work\apps\bmir.apps\bioportal_resources\tmp\Tedd7211.cvs ]
+CVSClient.READLine: 'M U obo/ontology/anatomy/anatomy_xp/worm_anatomy_xp.obo'
+CVSClient.READLine: 'Created obo/ontology/anatomy/anatomy_xp/'
+PARSE: Created 'obo/ontology/anatomy/anatomy_xp/'
+CVSClient.READLine: '/cvsroot/obo/obo/ontology/anatomy/anatomy_xp/worm_anatomy_xp.obo'
+PARSE: FullPath '/cvsroot/obo/obo/ontology/anatomy/anatomy_xp/worm_anatomy_xp.obo'
+CVSClient.READLine: '/worm_anatomy_xp.obo/1.1///'
+PARSE: Entry '/worm_anatomy_xp.obo/1.1///'
+CVSClient.READLine: 'u=rw,g=rw,o=rw'
+PARSE: Mode 'u=rw,g=rw,o=rw'
+CVSClient.READLine: '440166'
+CVSProject.handleResponseItem:
+   [ type=6,pathName=obo/ontology/anatomy/anatomy_xp/,reposName=/cvsroot/obo/obo/ontology/anatomy/anatomy_xp/worm_anatomy_xp.obo,modeLine=u=rw,g=rw,o=rw,entriesLine=/worm_anatomy_xp.obo/1.1///,newName=null,tagSpec=null,useProgram=null,file=\work\apps\bmir.apps\bioportal_resources\tmp\Tedd7212.cvs ]
+CVSClient.READLine: 'M U obo/ontology/anatomy/anatomy_xp/xao-to-fma-homology.obo'
+CVSClient.READLine: 'Created obo/ontology/anatomy/anatomy_xp/'
+PARSE: Created 'obo/ontology/anatomy/anatomy_xp/'
+CVSClient.READLine: '/cvsroot/obo/obo/ontology/anatomy/anatomy_xp/xao-to-fma-homology.obo'
+PARSE: FullPath '/cvsroot/obo/obo/ontology/anatomy/anatomy_xp/xao-to-fma-homology.obo'
+CVSClient.READLine: '/xao-to-fma-homology.obo/1.2///'
+PARSE: Entry '/xao-to-fma-homology.obo/1.2///'
+CVSClient.READLine: 'u=rw,g=rw,o=rw'
+PARSE: Mode 'u=rw,g=rw,o=rw'
+CVSClient.READLine: '19575'
+CVSProject.handleResponseItem:
+   [ type=6,pathName=obo/ontology/anatomy/anatomy_xp/,reposName=/cvsroot/obo/obo/ontology/anatomy/anatomy_xp/xao-to-fma-homology.obo,modeLine=u=rw,g=rw,o=rw,entriesLine=/xao-to-fma-homology.obo/1.2///,newName=null,tagSpec=null,useProgram=null,file=\work\apps\bmir.apps\bioportal_resources\tmp\Tedd7213.cvs ]
+CVSClient.READLine: 'M U obo/ontology/anatomy/anatomy_xp/xenopus_anatomy-to-caro.obo'
+CVSClient.READLine: 'Created obo/ontology/anatomy/anatomy_xp/'
+PARSE: Created 'obo/ontology/anatomy/anatomy_xp/'
+CVSClient.READLine: '/cvsroot/obo/obo/ontology/anatomy/anatomy_xp/xenopus_anatomy-to-caro.obo'
+PARSE: FullPath '/cvsroot/obo/obo/ontology/anatomy/anatomy_xp/xenopus_anatomy-to-caro.obo'
+CVSClient.READLine: '/xenopus_anatomy-to-caro.obo/1.1///'
+PARSE: Entry '/xenopus_anatomy-to-caro.obo/1.1///'
+CVSClient.READLine: 'u=rw,g=rw,o=rw'
+PARSE: Mode 'u=rw,g=rw,o=rw'
+CVSClient.READLine: '602'
+CVSProject.handleResponseItem:
+   [ type=6,pathName=obo/ontology/anatomy/anatomy_xp/,reposName=/cvsroot/obo/obo/ontology/anatomy/anatomy_xp/xenopus_anatomy-to-caro.obo,modeLine=u=rw,g=rw,o=rw,entriesLine=/xenopus_anatomy-to-caro.obo/1.1///,newName=null,tagSpec=null,useProgram=null,file=\work\apps\bmir.apps\bioportal_resources\tmp\Tedd7214.cvs ]
+CVSClient.READLine: 'M U obo/ontology/anatomy/anatomy_xp/xenopus_anatomy_xp.obo'
+CVSClient.READLine: 'Created obo/ontology/anatomy/anatomy_xp/'
+PARSE: Created 'obo/ontology/anatomy/anatomy_xp/'
+CVSClient.READLine: '/cvsroot/obo/obo/ontology/anatomy/anatomy_xp/xenopus_anatomy_xp.obo'
+PARSE: FullPath '/cvsroot/obo/obo/ontology/anatomy/anatomy_xp/xenopus_anatomy_xp.obo'
+CVSClient.READLine: '/xenopus_anatomy_xp.obo/1.1///'
+PARSE: Entry '/xenopus_anatomy_xp.obo/1.1///'
+CVSClient.READLine: 'u=rw,g=rw,o=rw'
+PARSE: Mode 'u=rw,g=rw,o=rw'
+CVSClient.READLine: '37487'
+CVSProject.handleResponseItem:
+   [ type=6,pathName=obo/ontology/anatomy/anatomy_xp/,reposName=/cvsroot/obo/obo/ontology/anatomy/anatomy_xp/xenopus_anatomy_xp.obo,modeLine=u=rw,g=rw,o=rw,entriesLine=/xenopus_anatomy_xp.obo/1.1///,newName=null,tagSpec=null,useProgram=null,file=\work\apps\bmir.apps\bioportal_resources\tmp\Tedd7215.cvs ]
+CVSClient.READLine: 'M U obo/ontology/anatomy/anatomy_xp/zebrafish_anatomy-to-caro.obo'
+CVSClient.READLine: 'Created obo/ontology/anatomy/anatomy_xp/'
+PARSE: Created 'obo/ontology/anatomy/anatomy_xp/'
+CVSClient.READLine: '/cvsroot/obo/obo/ontology/anatomy/anatomy_xp/zebrafish_anatomy-to-caro.obo'
+PARSE: FullPath '/cvsroot/obo/obo/ontology/anatomy/anatomy_xp/zebrafish_anatomy-to-caro.obo'
+CVSClient.READLine: '/zebrafish_anatomy-to-caro.obo/1.1///'
+PARSE: Entry '/zebrafish_anatomy-to-caro.obo/1.1///'
+CVSClient.READLine: 'u=rw,g=rw,o=rw'
+PARSE: Mode 'u=rw,g=rw,o=rw'
+CVSClient.READLine: '1161'
+CVSProject.handleResponseItem:
+   [ type=6,pathName=obo/ontology/anatomy/anatomy_xp/,reposName=/cvsroot/obo/obo/ontology/anatomy/anatomy_xp/zebrafish_anatomy-to-caro.obo,modeLine=u=rw,g=rw,o=rw,entriesLine=/zebrafish_anatomy-to-caro.obo/1.1///,newName=null,tagSpec=null,useProgram=null,file=\work\apps\bmir.apps\bioportal_resources\tmp\Tedd7216.cvs ]
+CVSClient.READLine: 'M U obo/ontology/anatomy/anatomy_xp/zebrafish_anatomy_xp-imports.obo'
+CVSClient.READLine: 'Created obo/ontology/anatomy/anatomy_xp/'
+PARSE: Created 'obo/ontology/anatomy/anatomy_xp/'
+CVSClient.READLine: '/cvsroot/obo/obo/ontology/anatomy/anatomy_xp/zebrafish_anatomy_xp-imports.obo'
+PARSE: FullPath '/cvsroot/obo/obo/ontology/anatomy/anatomy_xp/zebrafish_anatomy_xp-imports.obo'
+CVSClient.READLine: '/zebrafish_anatomy_xp-imports.obo/1.1///'
+PARSE: Entry '/zebrafish_anatomy_xp-imports.obo/1.1///'
+CVSClient.READLine: 'u=rw,g=rw,o=rw'
+PARSE: Mode 'u=rw,g=rw,o=rw'
+CVSClient.READLine: '149'
+CVSProject.handleResponseItem:
+   [ type=6,pathName=obo/ontology/anatomy/anatomy_xp/,reposName=/cvsroot/obo/obo/ontology/anatomy/anatomy_xp/zebrafish_anatomy_xp-imports.obo,modeLine=u=rw,g=rw,o=rw,entriesLine=/zebrafish_anatomy_xp-imports.obo/1.1///,newName=null,tagSpec=null,useProgram=null,file=\work\apps\bmir.apps\bioportal_resources\tmp\Tedd7217.cvs ]
+CVSClient.READLine: 'M U obo/ontology/anatomy/anatomy_xp/zebrafish_anatomy_xp.obo'
+CVSClient.READLine: 'Created obo/ontology/anatomy/anatomy_xp/'
+PARSE: Created 'obo/ontology/anatomy/anatomy_xp/'
+CVSClient.READLine: '/cvsroot/obo/obo/ontology/anatomy/anatomy_xp/zebrafish_anatomy_xp.obo'
+PARSE: FullPath '/cvsroot/obo/obo/ontology/anatomy/anatomy_xp/zebrafish_anatomy_xp.obo'
+CVSClient.READLine: '/zebrafish_anatomy_xp.obo/1.1///'
+PARSE: Entry '/zebrafish_anatomy_xp.obo/1.1///'
+CVSClient.READLine: 'u=rw,g=rw,o=rw'
+PARSE: Mode 'u=rw,g=rw,o=rw'
+CVSClient.READLine: '250503'
+CVSProject.handleResponseItem:
+   [ type=6,pathName=obo/ontology/anatomy/anatomy_xp/,reposName=/cvsroot/obo/obo/ontology/anatomy/anatomy_xp/zebrafish_anatomy_xp.obo,modeLine=u=rw,g=rw,o=rw,entriesLine=/zebrafish_anatomy_xp.obo/1.1///,newName=null,tagSpec=null,useProgram=null,file=\work\apps\bmir.apps\bioportal_resources\tmp\Tedd7218.cvs ]
+CVSClient.READLine: 'M U obo/ontology/anatomy/anatomy_xp/zebrafish_anatomy_xp_cell.obo'
+CVSClient.READLine: 'Created obo/ontology/anatomy/anatomy_xp/'
+PARSE: Created 'obo/ontology/anatomy/anatomy_xp/'
+CVSClient.READLine: '/cvsroot/obo/obo/ontology/anatomy/anatomy_xp/zebrafish_anatomy_xp_cell.obo'
+PARSE: FullPath '/cvsroot/obo/obo/ontology/anatomy/anatomy_xp/zebrafish_anatomy_xp_cell.obo'
+CVSClient.READLine: '/zebrafish_anatomy_xp_cell.obo/1.3///'
+PARSE: Entry '/zebrafish_anatomy_xp_cell.obo/1.3///'
+CVSClient.READLine: 'u=rw,g=rw,o=rw'
+PARSE: Mode 'u=rw,g=rw,o=rw'
+CVSClient.READLine: '37186'
+CVSProject.handleResponseItem:
+   [ type=6,pathName=obo/ontology/anatomy/anatomy_xp/,reposName=/cvsroot/obo/obo/ontology/anatomy/anatomy_xp/zebrafish_anatomy_xp_cell.obo,modeLine=u=rw,g=rw,o=rw,entriesLine=/zebrafish_anatomy_xp_cell.obo/1.3///,newName=null,tagSpec=null,useProgram=null,file=\work\apps\bmir.apps\bioportal_resources\tmp\Tedd7219.cvs ]
+CVSClient.READLine: 'M U obo/ontology/anatomy/anatomy_xp/zfa-fma-aln.tbl'
+CVSClient.READLine: 'Created obo/ontology/anatomy/anatomy_xp/'
+PARSE: Created 'obo/ontology/anatomy/anatomy_xp/'
+CVSClient.READLine: '/cvsroot/obo/obo/ontology/anatomy/anatomy_xp/zfa-fma-aln.tbl'
+PARSE: FullPath '/cvsroot/obo/obo/ontology/anatomy/anatomy_xp/zfa-fma-aln.tbl'
+CVSClient.READLine: '/zfa-fma-aln.tbl/1.4///'
+PARSE: Entry '/zfa-fma-aln.tbl/1.4///'
+CVSClient.READLine: 'u=rw,g=rw,o=rw'
+PARSE: Mode 'u=rw,g=rw,o=rw'
+CVSClient.READLine: '54105'
+CVSProject.handleResponseItem:
+   [ type=6,pathName=obo/ontology/anatomy/anatomy_xp/,reposName=/cvsroot/obo/obo/ontology/anatomy/anatomy_xp/zfa-fma-aln.tbl,modeLine=u=rw,g=rw,o=rw,entriesLine=/zfa-fma-aln.tbl/1.4///,newName=null,tagSpec=null,useProgram=null,file=\work\apps\bmir.apps\bioportal_resources\tmp\Tedd721a.cvs ]
+CVSClient.READLine: 'M U obo/ontology/anatomy/anatomy_xp/zfa-to-fma-homology.obo'
+CVSClient.READLine: 'Created obo/ontology/anatomy/anatomy_xp/'
+PARSE: Created 'obo/ontology/anatomy/anatomy_xp/'
+CVSClient.READLine: '/cvsroot/obo/obo/ontology/anatomy/anatomy_xp/zfa-to-fma-homology.obo'
+PARSE: FullPath '/cvsroot/obo/obo/ontology/anatomy/anatomy_xp/zfa-to-fma-homology.obo'
+CVSClient.READLine: '/zfa-to-fma-homology.obo/1.5///'
+PARSE: Entry '/zfa-to-fma-homology.obo/1.5///'
+CVSClient.READLine: 'u=rw,g=rw,o=rw'
+PARSE: Mode 'u=rw,g=rw,o=rw'
+CVSClient.READLine: '49891'
+CVSProject.handleResponseItem:
+   [ type=6,pathName=obo/ontology/anatomy/anatomy_xp/,reposName=/cvsroot/obo/obo/ontology/anatomy/anatomy_xp/zfa-to-fma-homology.obo,modeLine=u=rw,g=rw,o=rw,entriesLine=/zfa-to-fma-homology.obo/1.5///,newName=null,tagSpec=null,useProgram=null,file=\work\apps\bmir.apps\bioportal_resources\tmp\Tedd721b.cvs ]
+CVSClient.READLine: 'Clear-sticky obo/ontology/anatomy/anatomy_xp/'
+PARSE: Clear-sticky 'obo/ontology/anatomy/anatomy_xp/'
+CVSClient.READLine: '/cvsroot/obo/obo/ontology/anatomy/anatomy_xp/'
+PARSE: FullPath '/cvsroot/obo/obo/ontology/anatomy/anatomy_xp/'
+CVSProject.handleResponseItem:
+   [ type=4,pathName=obo/ontology/anatomy/anatomy_xp/,reposName=/cvsroot/obo/obo/ontology/anatomy/anatomy_xp/,modeLine=null,entriesLine=null,newName=null,tagSpec=null,useProgram=null,file=null ]
+Clear-sticky: pathName './obo/ontology/anatomy/anatomy_xp/'
+
+CVSClient.READLine: 'Clear-sticky obo/ontology/anatomy/caro/'
+PARSE: Clear-sticky 'obo/ontology/anatomy/caro/'
+CVSClient.READLine: '/cvsroot/obo/obo/ontology/anatomy/caro/'
+PARSE: FullPath '/cvsroot/obo/obo/ontology/anatomy/caro/'
+CVSProject.handleResponseItem:
+   [ type=4,pathName=obo/ontology/anatomy/caro/,reposName=/cvsroot/obo/obo/ontology/anatomy/caro/,modeLine=null,entriesLine=null,newName=null,tagSpec=null,useProgram=null,file=null ]
+Clear-sticky: pathName './obo/ontology/anatomy/caro/'
+
+CVSClient.READLine: 'Clear-static-directory obo/ontology/anatomy/caro/'
+PARSE: Clear-static-directory 'obo/ontology/anatomy/caro/'
+CVSClient.READLine: '/cvsroot/obo/obo/ontology/anatomy/caro/'
+PARSE: FullPath '/cvsroot/obo/obo/ontology/anatomy/caro/'
+CVSProject.handleResponseItem:
+   [ type=3,pathName=obo/ontology/anatomy/caro/,reposName=/cvsroot/obo/obo/ontology/anatomy/caro/,modeLine=null,entriesLine=null,newName=null,tagSpec=null,useProgram=null,file=null ]
+Clear-static-directory: pathName './obo/ontology/anatomy/caro/'
+
+CVSClient.READLine: 'E cvs checkout: Updating obo/ontology/anatomy/caro'
+CVSClient.READLine: 'M U obo/ontology/anatomy/caro/caro.obo'
+CVSClient.READLine: 'Created obo/ontology/anatomy/caro/'
+PARSE: Created 'obo/ontology/anatomy/caro/'
+CVSClient.READLine: '/cvsroot/obo/obo/ontology/anatomy/caro/caro.obo'
+PARSE: FullPath '/cvsroot/obo/obo/ontology/anatomy/caro/caro.obo'
+CVSClient.READLine: '/caro.obo/1.3///'
+PARSE: Entry '/caro.obo/1.3///'
+CVSClient.READLine: 'u=rw,g=rw,o=rw'
+PARSE: Mode 'u=rw,g=rw,o=rw'
+CVSClient.READLine: '10871'
+CVSProject.handleResponseItem:
+   [ type=6,pathName=obo/ontology/anatomy/caro/,reposName=/cvsroot/obo/obo/ontology/anatomy/caro/caro.obo,modeLine=u=rw,g=rw,o=rw,entriesLine=/caro.obo/1.3///,newName=null,tagSpec=null,useProgram=null,file=\work\apps\bmir.apps\bioportal_resources\tmp\Tedd721c.cvs ]
+CVSClient.READLine: 'M U obo/ontology/anatomy/caro/caro_to_bfo.obo'
+CVSClient.READLine: 'Created obo/ontology/anatomy/caro/'
+PARSE: Created 'obo/ontology/anatomy/caro/'
+CVSClient.READLine: '/cvsroot/obo/obo/ontology/anatomy/caro/caro_to_bfo.obo'
+PARSE: FullPath '/cvsroot/obo/obo/ontology/anatomy/caro/caro_to_bfo.obo'
+CVSClient.READLine: '/caro_to_bfo.obo/1.2///'
+PARSE: Entry '/caro_to_bfo.obo/1.2///'
+CVSClient.READLine: 'u=rw,g=rw,o=rw'
+PARSE: Mode 'u=rw,g=rw,o=rw'
+CVSClient.READLine: '1453'
+CVSProject.handleResponseItem:
+   [ type=6,pathName=obo/ontology/anatomy/caro/,reposName=/cvsroot/obo/obo/ontology/anatomy/caro/caro_to_bfo.obo,modeLine=u=rw,g=rw,o=rw,entriesLine=/caro_to_bfo.obo/1.2///,newName=null,tagSpec=null,useProgram=null,file=\work\apps\bmir.apps\bioportal_resources\tmp\Tedd721d.cvs ]
+CVSClient.READLine: 'M U obo/ontology/anatomy/caro/spatial.obo'
+CVSClient.READLine: 'Created obo/ontology/anatomy/caro/'
+PARSE: Created 'obo/ontology/anatomy/caro/'
+CVSClient.READLine: '/cvsroot/obo/obo/ontology/anatomy/caro/spatial.obo'
+PARSE: FullPath '/cvsroot/obo/obo/ontology/anatomy/caro/spatial.obo'
+CVSClient.READLine: '/spatial.obo/1.12///'
+PARSE: Entry '/spatial.obo/1.12///'
+CVSClient.READLine: 'u=rw,g=rw,o=rw'
+PARSE: Mode 'u=rw,g=rw,o=rw'
+CVSClient.READLine: '33704'
+CVSProject.handleResponseItem:
+   [ type=6,pathName=obo/ontology/anatomy/caro/,reposName=/cvsroot/obo/obo/ontology/anatomy/caro/spatial.obo,modeLine=u=rw,g=rw,o=rw,entriesLine=/spatial.obo/1.12///,newName=null,tagSpec=null,useProgram=null,file=\work\apps\bmir.apps\bioportal_resources\tmp\Tedd721e.cvs ]
+CVSClient.READLine: 'Clear-sticky obo/ontology/anatomy/caro/'
+PARSE: Clear-sticky 'obo/ontology/anatomy/caro/'
+CVSClient.READLine: '/cvsroot/obo/obo/ontology/anatomy/caro/'
+PARSE: FullPath '/cvsroot/obo/obo/ontology/anatomy/caro/'
+CVSProject.handleResponseItem:
+   [ type=4,pathName=obo/ontology/anatomy/caro/,reposName=/cvsroot/obo/obo/ontology/anatomy/caro/,modeLine=null,entriesLine=null,newName=null,tagSpec=null,useProgram=null,file=null ]
+Clear-sticky: pathName './obo/ontology/anatomy/caro/'
+
+CVSClient.READLine: 'Clear-sticky obo/ontology/anatomy/cell_type/'
+PARSE: Clear-sticky 'obo/ontology/anatomy/cell_type/'
+CVSClient.READLine: '/cvsroot/obo/obo/ontology/anatomy/cell_type/'
+PARSE: FullPath '/cvsroot/obo/obo/ontology/anatomy/cell_type/'
+CVSProject.handleResponseItem:
+   [ type=4,pathName=obo/ontology/anatomy/cell_type/,reposName=/cvsroot/obo/obo/ontology/anatomy/cell_type/,modeLine=null,entriesLine=null,newName=null,tagSpec=null,useProgram=null,file=null ]
+Clear-sticky: pathName './obo/ontology/anatomy/cell_type/'
+
+CVSClient.READLine: 'Clear-static-directory obo/ontology/anatomy/cell_type/'
+PARSE: Clear-static-directory 'obo/ontology/anatomy/cell_type/'
+CVSClient.READLine: '/cvsroot/obo/obo/ontology/anatomy/cell_type/'
+PARSE: FullPath '/cvsroot/obo/obo/ontology/anatomy/cell_type/'
+CVSProject.handleResponseItem:
+   [ type=3,pathName=obo/ontology/anatomy/cell_type/,reposName=/cvsroot/obo/obo/ontology/anatomy/cell_type/,modeLine=null,entriesLine=null,newName=null,tagSpec=null,useProgram=null,file=null ]
+Clear-static-directory: pathName './obo/ontology/anatomy/cell_type/'
+
+CVSClient.READLine: 'E cvs checkout: Updating obo/ontology/anatomy/cell_type'
+CVSClient.READLine: 'M U obo/ontology/anatomy/cell_type/DC-CL_deployed.obo'
+CVSClient.READLine: 'Created obo/ontology/anatomy/cell_type/'
+PARSE: Created 'obo/ontology/anatomy/cell_type/'
+CVSClient.READLine: '/cvsroot/obo/obo/ontology/anatomy/cell_type/DC-CL_deployed.obo'
+PARSE: FullPath '/cvsroot/obo/obo/ontology/anatomy/cell_type/DC-CL_deployed.obo'
+CVSClient.READLine: '/DC-CL_deployed.obo/1.4///'
+PARSE: Entry '/DC-CL_deployed.obo/1.4///'
+CVSClient.READLine: 'u=rw,g=rw,o=rw'
+PARSE: Mode 'u=rw,g=rw,o=rw'
+CVSClient.READLine: '56700'
+CVSProject.handleResponseItem:
+   [ type=6,pathName=obo/ontology/anatomy/cell_type/,reposName=/cvsroot/obo/obo/ontology/anatomy/cell_type/DC-CL_deployed.obo,modeLine=u=rw,g=rw,o=rw,entriesLine=/DC-CL_deployed.obo/1.4///,newName=null,tagSpec=null,useProgram=null,file=\work\apps\bmir.apps\bioportal_resources\tmp\Tedd721f.cvs ]
+CVSClient.READLine: 'M U obo/ontology/anatomy/cell_type/DC-CL_editor.obo'
+CVSClient.READLine: 'Created obo/ontology/anatomy/cell_type/'
+PARSE: Created 'obo/ontology/anatomy/cell_type/'
+CVSClient.READLine: '/cvsroot/obo/obo/ontology/anatomy/cell_type/DC-CL_editor.obo'
+PARSE: FullPath '/cvsroot/obo/obo/ontology/anatomy/cell_type/DC-CL_editor.obo'
+CVSClient.READLine: '/DC-CL_editor.obo/1.4///'
+PARSE: Entry '/DC-CL_editor.obo/1.4///'
+CVSClient.READLine: 'u=rw,g=rw,o=rw'
+PARSE: Mode 'u=rw,g=rw,o=rw'
+CVSClient.READLine: '56378'
+CVSProject.handleResponseItem:
+   [ type=6,pathName=obo/ontology/anatomy/cell_type/,reposName=/cvsroot/obo/obo/ontology/anatomy/cell_type/DC-CL_editor.obo,modeLine=u=rw,g=rw,o=rw,entriesLine=/DC-CL_editor.obo/1.4///,newName=null,tagSpec=null,useProgram=null,file=\work\apps\bmir.apps\bioportal_resources\tmp\Tedd7220.cvs ]
+CVSClient.READLine: 'M U obo/ontology/anatomy/cell_type/cdo.obo'
+CVSClient.READLine: 'Created obo/ontology/anatomy/cell_type/'
+PARSE: Created 'obo/ontology/anatomy/cell_type/'
+CVSClient.READLine: '/cvsroot/obo/obo/ontology/anatomy/cell_type/cdo.obo'
+PARSE: FullPath '/cvsroot/obo/obo/ontology/anatomy/cell_type/cdo.obo'
+CVSClient.READLine: '/cdo.obo/1.5///'
+PARSE: Entry '/cdo.obo/1.5///'
+CVSClient.READLine: 'u=rw,g=rw,o=rw'
+PARSE: Mode 'u=rw,g=rw,o=rw'
+CVSClient.READLine: '74558'
+CVSProject.handleResponseItem:
+   [ type=6,pathName=obo/ontology/anatomy/cell_type/,reposName=/cvsroot/obo/obo/ontology/anatomy/cell_type/cdo.obo,modeLine=u=rw,g=rw,o=rw,entriesLine=/cdo.obo/1.5///,newName=null,tagSpec=null,useProgram=null,file=\work\apps\bmir.apps\bioportal_resources\tmp\Tedd7221.cvs ]
+CVSClient.READLine: 'M U obo/ontology/anatomy/cell_type/cell.obo'
+CVSClient.READLine: 'Created obo/ontology/anatomy/cell_type/'
+PARSE: Created 'obo/ontology/anatomy/cell_type/'
+CVSClient.READLine: '/cvsroot/obo/obo/ontology/anatomy/cell_type/cell.obo'
+PARSE: FullPath '/cvsroot/obo/obo/ontology/anatomy/cell_type/cell.obo'
+CVSClient.READLine: '/cell.obo/1.38///'
+PARSE: Entry '/cell.obo/1.38///'
+CVSClient.READLine: 'u=rw,g=rw,o=rw'
+PARSE: Mode 'u=rw,g=rw,o=rw'
+CVSClient.READLine: '259488'
+CVSProject.handleResponseItem:
+   [ type=6,pathName=obo/ontology/anatomy/cell_type/,reposName=/cvsroot/obo/obo/ontology/anatomy/cell_type/cell.obo,modeLine=u=rw,g=rw,o=rw,entriesLine=/cell.obo/1.38///,newName=null,tagSpec=null,useProgram=null,file=\work\apps\bmir.apps\bioportal_resources\tmp\Tedd7222.cvs ]
+CVSClient.READLine: 'Clear-sticky obo/ontology/anatomy/cell_type/'
+PARSE: Clear-sticky 'obo/ontology/anatomy/cell_type/'
+CVSClient.READLine: '/cvsroot/obo/obo/ontology/anatomy/cell_type/'
+PARSE: FullPath '/cvsroot/obo/obo/ontology/anatomy/cell_type/'
+CVSProject.handleResponseItem:
+   [ type=4,pathName=obo/ontology/anatomy/cell_type/,reposName=/cvsroot/obo/obo/ontology/anatomy/cell_type/,modeLine=null,entriesLine=null,newName=null,tagSpec=null,useProgram=null,file=null ]
+Clear-sticky: pathName './obo/ontology/anatomy/cell_type/'
+
+CVSClient.READLine: 'Clear-sticky obo/ontology/anatomy/gross_anatomy/'
+PARSE: Clear-sticky 'obo/ontology/anatomy/gross_anatomy/'
+CVSClient.READLine: '/cvsroot/obo/obo/ontology/anatomy/gross_anatomy/'
+PARSE: FullPath '/cvsroot/obo/obo/ontology/anatomy/gross_anatomy/'
+CVSProject.handleResponseItem:
+   [ type=4,pathName=obo/ontology/anatomy/gross_anatomy/,reposName=/cvsroot/obo/obo/ontology/anatomy/gross_anatomy/,modeLine=null,entriesLine=null,newName=null,tagSpec=null,useProgram=null,file=null ]
+Clear-sticky: pathName './obo/ontology/anatomy/gross_anatomy/'
+
+CVSClient.READLine: 'Clear-static-directory obo/ontology/anatomy/gross_anatomy/'
+PARSE: Clear-static-directory 'obo/ontology/anatomy/gross_anatomy/'
+CVSClient.READLine: '/cvsroot/obo/obo/ontology/anatomy/gross_anatomy/'
+PARSE: FullPath '/cvsroot/obo/obo/ontology/anatomy/gross_anatomy/'
+CVSProject.handleResponseItem:
+   [ type=3,pathName=obo/ontology/anatomy/gross_anatomy/,reposName=/cvsroot/obo/obo/ontology/anatomy/gross_anatomy/,modeLine=null,entriesLine=null,newName=null,tagSpec=null,useProgram=null,file=null ]
+Clear-static-directory: pathName './obo/ontology/anatomy/gross_anatomy/'
+
+CVSClient.READLine: 'E cvs checkout: Updating obo/ontology/anatomy/gross_anatomy'
+CVSClient.READLine: 'Clear-sticky obo/ontology/anatomy/gross_anatomy/'
+PARSE: Clear-sticky 'obo/ontology/anatomy/gross_anatomy/'
+CVSClient.READLine: '/cvsroot/obo/obo/ontology/anatomy/gross_anatomy/'
+PARSE: FullPath '/cvsroot/obo/obo/ontology/anatomy/gross_anatomy/'
+CVSProject.handleResponseItem:
+   [ type=4,pathName=obo/ontology/anatomy/gross_anatomy/,reposName=/cvsroot/obo/obo/ontology/anatomy/gross_anatomy/,modeLine=null,entriesLine=null,newName=null,tagSpec=null,useProgram=null,file=null ]
+Clear-sticky: pathName './obo/ontology/anatomy/gross_anatomy/'
+
+CVSClient.READLine: 'Clear-sticky obo/ontology/anatomy/gross_anatomy/animal_gross_anatomy/'
+PARSE: Clear-sticky 'obo/ontology/anatomy/gross_anatomy/animal_gross_anatomy/'
+CVSClient.READLine: '/cvsroot/obo/obo/ontology/anatomy/gross_anatomy/animal_gross_anatomy/'
+PARSE: FullPath '/cvsroot/obo/obo/ontology/anatomy/gross_anatomy/animal_gross_anatomy/'
+CVSProject.handleResponseItem:
+   [ type=4,pathName=obo/ontology/anatomy/gross_anatomy/animal_gross_anatomy/,reposName=/cvsroot/obo/obo/ontology/anatomy/gross_anatomy/animal_gross_anatomy/,modeLine=null,entriesLine=null,newName=null,tagSpec=null,useProgram=null,file=null ]
+Clear-sticky: pathName './obo/ontology/anatomy/gross_anatomy/animal_gross_anatomy/'
+
+CVSClient.READLine: 'Clear-static-directory obo/ontology/anatomy/gross_anatomy/animal_gross_anatomy/'
+PARSE: Clear-static-directory 'obo/ontology/anatomy/gross_anatomy/animal_gross_anatomy/'
+CVSClient.READLine: '/cvsroot/obo/obo/ontology/anatomy/gross_anatomy/animal_gross_anatomy/'
+PARSE: FullPath '/cvsroot/obo/obo/ontology/anatomy/gross_anatomy/animal_gross_anatomy/'
+CVSProject.handleResponseItem:
+   [ type=3,pathName=obo/ontology/anatomy/gross_anatomy/animal_gross_anatomy/,reposName=/cvsroot/obo/obo/ontology/anatomy/gross_anatomy/animal_gross_anatomy/,modeLine=null,entriesLine=null,newName=null,tagSpec=null,useProgram=null,file=null ]
+Clear-static-directory: pathName './obo/ontology/anatomy/gross_anatomy/animal_gross_anatomy/'
+
+CVSClient.READLine: 'E cvs checkout: Updating obo/ontology/anatomy/gross_anatomy/animal_gross_anatomy'
+CVSClient.READLine: 'M U obo/ontology/anatomy/gross_anatomy/animal_gross_anatomy/mosquito_anatomy.obo'
+CVSClient.READLine: 'Created obo/ontology/anatomy/gross_anatomy/animal_gross_anatomy/'
+PARSE: Created 'obo/ontology/anatomy/gross_anatomy/animal_gross_anatomy/'
+CVSClient.READLine: '/cvsroot/obo/obo/ontology/anatomy/gross_anatomy/animal_gross_anatomy/mosquito_anatomy.obo'
+PARSE: FullPath '/cvsroot/obo/obo/ontology/anatomy/gross_anatomy/animal_gross_anatomy/mosquito_anatomy.obo'
+CVSClient.READLine: '/mosquito_anatomy.obo/1.10///'
+PARSE: Entry '/mosquito_anatomy.obo/1.10///'
+CVSClient.READLine: 'u=rw,g=rw,o=rw'
+PARSE: Mode 'u=rw,g=rw,o=rw'
+CVSClient.READLine: '970229'
+CVSProject.handleResponseItem:
+   [ type=6,pathName=obo/ontology/anatomy/gross_anatomy/animal_gross_anatomy/,reposName=/cvsroot/obo/obo/ontology/anatomy/gross_anatomy/animal_gross_anatomy/mosquito_anatomy.obo,modeLine=u=rw,g=rw,o=rw,entriesLine=/mosquito_anatomy.obo/1.10///,newName=null,tagSpec=null,useProgram=null,file=\work\apps\bmir.apps\bioportal_resources\tmp\Tedd7223.cvs ]
+CVSClient.READLine: 'M U obo/ontology/anatomy/gross_anatomy/animal_gross_anatomy/tick_anatomy.obo'
+CVSClient.READLine: 'Created obo/ontology/anatomy/gross_anatomy/animal_gross_anatomy/'
+PARSE: Created 'obo/ontology/anatomy/gross_anatomy/animal_gross_anatomy/'
+CVSClient.READLine: '/cvsroot/obo/obo/ontology/anatomy/gross_anatomy/animal_gross_anatomy/tick_anatomy.obo'
+PARSE: FullPath '/cvsroot/obo/obo/ontology/anatomy/gross_anatomy/animal_gross_anatomy/tick_anatomy.obo'
+CVSClient.READLine: '/tick_anatomy.obo/1.2///'
+PARSE: Entry '/tick_anatomy.obo/1.2///'
+CVSClient.READLine: 'u=rw,g=rw,o=rw'
+PARSE: Mode 'u=rw,g=rw,o=rw'
+CVSClient.READLine: '259207'
+CVSProject.handleResponseItem:
+   [ type=6,pathName=obo/ontology/anatomy/gross_anatomy/animal_gross_anatomy/,reposName=/cvsroot/obo/obo/ontology/anatomy/gross_anatomy/animal_gross_anatomy/tick_anatomy.obo,modeLine=u=rw,g=rw,o=rw,entriesLine=/tick_anatomy.obo/1.2///,newName=null,tagSpec=null,useProgram=null,file=\work\apps\bmir.apps\bioportal_resources\tmp\Tedd7224.cvs ]
+CVSClient.READLine: 'Clear-sticky obo/ontology/anatomy/gross_anatomy/animal_gross_anatomy/'
+PARSE: Clear-sticky 'obo/ontology/anatomy/gross_anatomy/animal_gross_anatomy/'
+CVSClient.READLine: '/cvsroot/obo/obo/ontology/anatomy/gross_anatomy/animal_gross_anatomy/'
+PARSE: FullPath '/cvsroot/obo/obo/ontology/anatomy/gross_anatomy/animal_gross_anatomy/'
+CVSProject.handleResponseItem:
+   [ type=4,pathName=obo/ontology/anatomy/gross_anatomy/animal_gross_anatomy/,reposName=/cvsroot/obo/obo/ontology/anatomy/gross_anatomy/animal_gross_anatomy/,modeLine=null,entriesLine=null,newName=null,tagSpec=null,useProgram=null,file=null ]
+Clear-sticky: pathName './obo/ontology/anatomy/gross_anatomy/animal_gross_anatomy/'
+
+CVSClient.READLine: 'Clear-sticky obo/ontology/anatomy/gross_anatomy/animal_gross_anatomy/amphibian/'
+PARSE: Clear-sticky 'obo/ontology/anatomy/gross_anatomy/animal_gross_anatomy/amphibian/'
+CVSClient.READLine: '/cvsroot/obo/obo/ontology/anatomy/gross_anatomy/animal_gross_anatomy/amphibian/'
+PARSE: FullPath '/cvsroot/obo/obo/ontology/anatomy/gross_anatomy/animal_gross_anatomy/amphibian/'
+CVSProject.handleResponseItem:
+   [ type=4,pathName=obo/ontology/anatomy/gross_anatomy/animal_gross_anatomy/amphibian/,reposName=/cvsroot/obo/obo/ontology/anatomy/gross_anatomy/animal_gross_anatomy/amphibian/,modeLine=null,entriesLine=null,newName=null,tagSpec=null,useProgram=null,file=null ]
+Clear-sticky: pathName './obo/ontology/anatomy/gross_anatomy/animal_gross_anatomy/amphibian/'
+
+CVSClient.READLine: 'Clear-static-directory obo/ontology/anatomy/gross_anatomy/animal_gross_anatomy/amphibian/'
+PARSE: Clear-static-directory 'obo/ontology/anatomy/gross_anatomy/animal_gross_anatomy/amphibian/'
+CVSClient.READLine: '/cvsroot/obo/obo/ontology/anatomy/gross_anatomy/animal_gross_anatomy/amphibian/'
+PARSE: FullPath '/cvsroot/obo/obo/ontology/anatomy/gross_anatomy/animal_gross_anatomy/amphibian/'
+CVSProject.handleResponseItem:
+   [ type=3,pathName=obo/ontology/anatomy/gross_anatomy/animal_gross_anatomy/amphibian/,reposName=/cvsroot/obo/obo/ontology/anatomy/gross_anatomy/animal_gross_anatomy/amphibian/,modeLine=null,entriesLine=null,newName=null,tagSpec=null,useProgram=null,file=null ]
+Clear-static-directory: pathName './obo/ontology/anatomy/gross_anatomy/animal_gross_anatomy/amphibian/'
+
+CVSClient.READLine: 'E cvs checkout: Updating obo/ontology/anatomy/gross_anatomy/animal_gross_anatomy/amphibian'
+CVSClient.READLine: 'M U obo/ontology/anatomy/gross_anatomy/animal_gross_anatomy/amphibian/amphibian_anatomy.obo'
+CVSClient.READLine: 'Created obo/ontology/anatomy/gross_anatomy/animal_gross_anatomy/amphibian/'
+PARSE: Created 'obo/ontology/anatomy/gross_anatomy/animal_gross_anatomy/amphibian/'
+CVSClient.READLine: '/cvsroot/obo/obo/ontology/anatomy/gross_anatomy/animal_gross_anatomy/amphibian/amphibian_anatomy.obo'
+PARSE: FullPath '/cvsroot/obo/obo/ontology/anatomy/gross_anatomy/animal_gross_anatomy/amphibian/amphibian_anatomy.obo'
+CVSClient.READLine: '/amphibian_anatomy.obo/1.8///'
+PARSE: Entry '/amphibian_anatomy.obo/1.8///'
+CVSClient.READLine: 'u=rw,g=rw,o=rw'
+PARSE: Mode 'u=rw,g=rw,o=rw'
+CVSClient.READLine: '151792'
+CVSProject.handleResponseItem:
+   [ type=6,pathName=obo/ontology/anatomy/gross_anatomy/animal_gross_anatomy/amphibian/,reposName=/cvsroot/obo/obo/ontology/anatomy/gross_anatomy/animal_gross_anatomy/amphibian/amphibian_anatomy.obo,modeLine=u=rw,g=rw,o=rw,entriesLine=/amphibian_anatomy.obo/1.8///,newName=null,tagSpec=null,useProgram=null,file=\work\apps\bmir.apps\bioportal_resources\tmp\Tedd7225.cvs ]
+CVSClient.READLine: 'Clear-sticky obo/ontology/anatomy/gross_anatomy/animal_gross_anatomy/amphibian/'
+PARSE: Clear-sticky 'obo/ontology/anatomy/gross_anatomy/animal_gross_anatomy/amphibian/'
+CVSClient.READLine: '/cvsroot/obo/obo/ontology/anatomy/gross_anatomy/animal_gross_anatomy/amphibian/'
+PARSE: FullPath '/cvsroot/obo/obo/ontology/anatomy/gross_anatomy/animal_gross_anatomy/amphibian/'
+CVSProject.handleResponseItem:
+   [ type=4,pathName=obo/ontology/anatomy/gross_anatomy/animal_gross_anatomy/amphibian/,reposName=/cvsroot/obo/obo/ontology/anatomy/gross_anatomy/animal_gross_anatomy/amphibian/,modeLine=null,entriesLine=null,newName=null,tagSpec=null,useProgram=null,file=null ]
+Clear-sticky: pathName './obo/ontology/anatomy/gross_anatomy/animal_gross_anatomy/amphibian/'
+
+CVSClient.READLine: 'Clear-sticky obo/ontology/anatomy/gross_anatomy/animal_gross_anatomy/fish/'
+PARSE: Clear-sticky 'obo/ontology/anatomy/gross_anatomy/animal_gross_anatomy/fish/'
+CVSClient.READLine: '/cvsroot/obo/obo/ontology/anatomy/gross_anatomy/animal_gross_anatomy/fish/'
+PARSE: FullPath '/cvsroot/obo/obo/ontology/anatomy/gross_anatomy/animal_gross_anatomy/fish/'
+CVSProject.handleResponseItem:
+   [ type=4,pathName=obo/ontology/anatomy/gross_anatomy/animal_gross_anatomy/fish/,reposName=/cvsroot/obo/obo/ontology/anatomy/gross_anatomy/animal_gross_anatomy/fish/,modeLine=null,entriesLine=null,newName=null,tagSpec=null,useProgram=null,file=null ]
+Clear-sticky: pathName './obo/ontology/anatomy/gross_anatomy/animal_gross_anatomy/fish/'
+
+CVSClient.READLine: 'Clear-static-directory obo/ontology/anatomy/gross_anatomy/animal_gross_anatomy/fish/'
+PARSE: Clear-static-directory 'obo/ontology/anatomy/gross_anatomy/animal_gross_anatomy/fish/'
+CVSClient.READLine: '/cvsroot/obo/obo/ontology/anatomy/gross_anatomy/animal_gross_anatomy/fish/'
+PARSE: FullPath '/cvsroot/obo/obo/ontology/anatomy/gross_anatomy/animal_gross_anatomy/fish/'
+CVSProject.handleResponseItem:
+   [ type=3,pathName=obo/ontology/anatomy/gross_anatomy/animal_gross_anatomy/fish/,reposName=/cvsroot/obo/obo/ontology/anatomy/gross_anatomy/animal_gross_anatomy/fish/,modeLine=null,entriesLine=null,newName=null,tagSpec=null,useProgram=null,file=null ]
+Clear-static-directory: pathName './obo/ontology/anatomy/gross_anatomy/animal_gross_anatomy/fish/'
+
+CVSClient.READLine: 'E cvs checkout: Updating obo/ontology/anatomy/gross_anatomy/animal_gross_anatomy/fish'
+CVSClient.READLine: 'M U obo/ontology/anatomy/gross_anatomy/animal_gross_anatomy/fish/medaka_ontology.obo'
+CVSClient.READLine: 'Created obo/ontology/anatomy/gross_anatomy/animal_gross_anatomy/fish/'
+PARSE: Created 'obo/ontology/anatomy/gross_anatomy/animal_gross_anatomy/fish/'
+CVSClient.READLine: '/cvsroot/obo/obo/ontology/anatomy/gross_anatomy/animal_gross_anatomy/fish/medaka_ontology.obo'
+PARSE: FullPath '/cvsroot/obo/obo/ontology/anatomy/gross_anatomy/animal_gross_anatomy/fish/medaka_ontology.obo'
+CVSClient.READLine: '/medaka_ontology.obo/1.1///'
+PARSE: Entry '/medaka_ontology.obo/1.1///'
+CVSClient.READLine: 'u=rw,g=rw,o=rw'
+PARSE: Mode 'u=rw,g=rw,o=rw'
+CVSClient.READLine: '512204'
+CVSProject.handleResponseItem:
+   [ type=6,pathName=obo/ontology/anatomy/gross_anatomy/animal_gross_anatomy/fish/,reposName=/cvsroot/obo/obo/ontology/anatomy/gross_anatomy/animal_gross_anatomy/fish/medaka_ontology.obo,modeLine=u=rw,g=rw,o=rw,entriesLine=/medaka_ontology.obo/1.1///,newName=null,tagSpec=null,useProgram=null,file=\work\apps\bmir.apps\bioportal_resources\tmp\Tedd7226.cvs ]
+CVSClient.READLine: 'M U obo/ontology/anatomy/gross_anatomy/animal_gross_anatomy/fish/preversion.zfish.obo'
+CVSClient.READLine: 'Created obo/ontology/anatomy/gross_anatomy/animal_gross_anatomy/fish/'
+PARSE: Created 'obo/ontology/anatomy/gross_anatomy/animal_gross_anatomy/fish/'
+CVSClient.READLine: '/cvsroot/obo/obo/ontology/anatomy/gross_anatomy/animal_gross_anatomy/fish/preversion.zfish.obo'
+PARSE: FullPath '/cvsroot/obo/obo/ontology/anatomy/gross_anatomy/animal_gross_anatomy/fish/preversion.zfish.obo'
+CVSClient.READLine: '/preversion.zfish.obo/1.12///'
+PARSE: Entry '/preversion.zfish.obo/1.12///'
+CVSClient.READLine: 'u=rw,g=rw,o=rw'
+PARSE: Mode 'u=rw,g=rw,o=rw'
+CVSClient.READLine: '990759'
+CVSProject.handleResponseItem:
+   [ type=6,pathName=obo/ontology/anatomy/gross_anatomy/animal_gross_anatomy/fish/,reposName=/cvsroot/obo/obo/ontology/anatomy/gross_anatomy/animal_gross_anatomy/fish/preversion.zfish.obo,modeLine=u=rw,g=rw,o=rw,entriesLine=/preversion.zfish.obo/1.12///,newName=null,tagSpec=null,useProgram=null,file=\work\apps\bmir.apps\bioportal_resources\tmp\Tedd7227.cvs ]
+CVSClient.READLine: 'M U obo/ontology/anatomy/gross_anatomy/animal_gross_anatomy/fish/teleost_anatomy.obo'
+CVSClient.READLine: 'Created obo/ontology/anatomy/gross_anatomy/animal_gross_anatomy/fish/'
+PARSE: Created 'obo/ontology/anatomy/gross_anatomy/animal_gross_anatomy/fish/'
+CVSClient.READLine: '/cvsroot/obo/obo/ontology/anatomy/gross_anatomy/animal_gross_anatomy/fish/teleost_anatomy.obo'
+PARSE: FullPath '/cvsroot/obo/obo/ontology/anatomy/gross_anatomy/animal_gross_anatomy/fish/teleost_anatomy.obo'
+CVSClient.READLine: '/teleost_anatomy.obo/1.62///'
+PARSE: Entry '/teleost_anatomy.obo/1.62///'
+CVSClient.READLine: 'u=rw,g=rw,o=rw'
+PARSE: Mode 'u=rw,g=rw,o=rw'
+CVSClient.READLine: '695985'
+CVSProject.handleResponseItem:
+   [ type=6,pathName=obo/ontology/anatomy/gross_anatomy/animal_gross_anatomy/fish/,reposName=/cvsroot/obo/obo/ontology/anatomy/gross_anatomy/animal_gross_anatomy/fish/teleost_anatomy.obo,modeLine=u=rw,g=rw,o=rw,entriesLine=/teleost_anatomy.obo/1.62///,newName=null,tagSpec=null,useProgram=null,file=\work\apps\bmir.apps\bioportal_resources\tmp\Tedd7228.cvs ]
+CVSClient.READLine: 'M U obo/ontology/anatomy/gross_anatomy/animal_gross_anatomy/fish/zebrafish_anatomy.obo'
+CVSClient.READLine: 'Created obo/ontology/anatomy/gross_anatomy/animal_gross_anatomy/fish/'
+PARSE: Created 'obo/ontology/anatomy/gross_anatomy/animal_gross_anatomy/fish/'
+CVSClient.READLine: '/cvsroot/obo/obo/ontology/anatomy/gross_anatomy/animal_gross_anatomy/fish/zebrafish_anatomy.obo'
+PARSE: FullPath '/cvsroot/obo/obo/ontology/anatomy/gross_anatomy/animal_gross_anatomy/fish/zebrafish_anatomy.obo'
+CVSClient.READLine: '/zebrafish_anatomy.obo/1.21///'
+PARSE: Entry '/zebrafish_anatomy.obo/1.21///'
+CVSClient.READLine: 'u=rw,g=rw,o=rw'
+PARSE: Mode 'u=rw,g=rw,o=rw'
+CVSClient.READLine: '960515'

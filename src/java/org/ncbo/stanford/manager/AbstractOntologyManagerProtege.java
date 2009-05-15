@@ -19,6 +19,10 @@ import edu.stanford.smi.protege.model.Slot;
 import edu.stanford.smi.protege.storage.database.DatabaseKnowledgeBaseFactory;
 import edu.stanford.smi.protegex.owl.database.OWLDatabaseKnowledgeBaseFactory;
 import edu.stanford.smi.protegex.owl.model.OWLModel;
+import edu.stanford.smi.protegex.owl.swrl.model.SWRLFactory;
+import edu.stanford.smi.protegex.owl.swrl.sqwrl.SQWRLQueryEngine;
+import edu.stanford.smi.protegex.owl.swrl.sqwrl.SQWRLQueryEngineFactory;
+import edu.stanford.smi.protegex.owl.swrl.sqwrl.exceptions.SQWRLException;
 
 /**
  * Abstract class to incorporate functionality common between Protege loader and
@@ -41,6 +45,8 @@ public abstract class AbstractOntologyManagerProtege {
 	protected Integer protegeBigFileThreshold;
 	protected String metadataUserInstPrefix;
 	protected String metadataUserInstSuffix;
+	protected String metadataUserRoleInstPrefix;
+	protected String metadataUserRoleInstSuffix;
 	protected String metadataOntologyDomainInstPrefix;
 	protected String metadataOntologyDomainInstSuffix;
 	protected String metadataOntologyInstPrefix;
@@ -52,9 +58,12 @@ public abstract class AbstractOntologyManagerProtege {
 	protected String metadataVirtualViewInstPrefix;
 	protected String metadataVirtualViewInstSuffix;
 	protected ExpirationSystem<Integer, KnowledgeBase> protegeKnowledgeBases = null;
+//	protected ExpirationSystem<OWLModel, SQWRLQueryEngine> sqwrlQueryEngines = null;
+//	protected ExpirationSystem<OWLModel, SWRLFactory> swrlFactories = null;
 
 	private String METADATA_TABLE_NAME = "metadata";
-	private int METADATA_KB_ID = -5; //must be a negative value in order not to interfere with valid ontology IDs
+	private int METADATA_KB_ID = -5; // must be a negative value in order not to
+										// interfere with valid ontology IDs
 
 	protected Slot getSynonymSlot(KnowledgeBase kb, String synonymSlot) {
 		if (!StringHelper.isNullOrNullString(synonymSlot)) {
@@ -196,7 +205,39 @@ public abstract class AbstractOntologyManagerProtege {
 		}
 
 	}
+	
+	protected SQWRLQueryEngine getMetadataSQWRLEngine() throws SQWRLException {
+		OWLModel owlModel = getMetadataOWLModel();
 
+//		SQWRLQueryEngine sqwrlEngine = sqwrlQueryEngines.get(owlModel);
+//
+//		if (sqwrlEngine != null) {
+//			return sqwrlEngine;
+//		} else {
+//			sqwrlEngine = SQWRLQueryEngineFactory.create(owlModel);
+//			sqwrlQueryEngines.put(owlModel, sqwrlEngine);
+//			return sqwrlEngine;
+//		}
+		
+		return SQWRLQueryEngineFactory.create(owlModel);
+	}
+
+	protected SWRLFactory getMetadataSWRLFactory() throws SQWRLException {
+		OWLModel owlModel = getMetadataOWLModel();
+
+//		SWRLFactory swrlFactory = swrlFactories.get(owlModel);
+//		
+//		if (swrlFactory != null) {
+//			return swrlFactory;
+//		} else {
+//			swrlFactory = new SWRLFactory(owlModel);
+//			swrlFactories.put(owlModel, swrlFactory);
+//			return swrlFactory;
+//		}
+		
+		return new SWRLFactory(owlModel);
+	}
+	
 	/**
 	 * Gets the table name associated with an protege ontology id.
 	 */
@@ -210,14 +251,22 @@ public abstract class AbstractOntologyManagerProtege {
 	protected String getUserIndividualName(Integer userId) {
 		return metadataUserInstPrefix + userId + metadataUserInstSuffix;
 	}
+	
+	/**
+	 * Gets the BioPortalUserRole individual name associated with a user id.
+	 */
+	protected String getUserRoleIndividualName(Integer userId) {
+		return metadataUserRoleInstPrefix + userId + metadataUserRoleInstSuffix;
+	}
 
 	/**
 	 * Gets the OMV:OntologyDomain individual name associated with a user id.
 	 */
 	protected String getOntologyDomainIndividualName(Integer userId) {
-		return metadataOntologyDomainInstPrefix + userId + metadataOntologyDomainInstSuffix;
+		return metadataOntologyDomainInstPrefix + userId
+				+ metadataOntologyDomainInstSuffix;
 	}
-	
+
 	/**
 	 * Gets the OMV:Ontology individual name associated with an ontology version
 	 * id.
@@ -237,7 +286,8 @@ public abstract class AbstractOntologyManagerProtege {
 	}
 
 	/**
-	 * Gets the VirtualOntology individual name associated with a virtual ontology id.
+	 * Gets the VirtualOntology individual name associated with a virtual
+	 * ontology id.
 	 */
 	protected String getVirtualOntologyIndividualName(Integer ontologyId) {
 		return metadataVirtualOntologyInstPrefix + ontologyId
@@ -245,7 +295,8 @@ public abstract class AbstractOntologyManagerProtege {
 	}
 
 	/**
-	 * Gets the VirtualView individual name associated with a virtual ontology view id.
+	 * Gets the VirtualView individual name associated with a virtual ontology
+	 * view id.
 	 */
 	protected String getVirtualViewIndividualName(Integer ontologyViewId) {
 		return metadataVirtualViewInstPrefix + ontologyViewId
@@ -385,6 +436,66 @@ public abstract class AbstractOntologyManagerProtege {
 	 */
 	public void setMetadataUserInstSuffix(String metadataUserInstSuffix) {
 		this.metadataUserInstSuffix = metadataUserInstSuffix;
+	}
+	
+	/**
+	 * @return the metadataUserRoleInstPrefix
+	 */
+	public String getMetadataUserRoleInstPrefix() {
+		return metadataUserRoleInstPrefix;
+	}
+	
+	/**
+	 * @param metadataUserRoleInstPrefix the metadataUserRoleInstPrefix to set
+	 */
+	public void setMetadataUserRoleInstPrefix(String metadataUserRoleInstPrefix) {
+		this.metadataUserRoleInstPrefix = metadataUserRoleInstPrefix;
+	}
+
+	/**
+	 * @return the metadataUserRoleInstSuffix
+	 */
+	public String getMetadataUserRoleInstSuffix() {
+		return metadataUserRoleInstSuffix;
+	}
+
+	/**
+	 * @param metadataUserRoleInstSuffix the metadataUserRoleInstSuffix to set
+	 */
+	public void setMetadataUserRoleInstSuffix(String metadataUserRoleInstSuffix) {
+		this.metadataUserRoleInstSuffix = metadataUserRoleInstSuffix;
+	}
+
+	/**
+	 * @return the metadataOntologyDomainInstPrefix
+	 */
+	public String getMetadataOntologyDomainInstPrefix() {
+		return metadataOntologyDomainInstPrefix;
+	}
+
+	/**
+	 * @param metadataOntologyDomainInstPrefix
+	 *            the metadataOntologyDomainInstPrefix to set
+	 */
+	public void setMetadataOntologyDomainInstPrefix(
+			String metadataOntologyDomainInstPrefix) {
+		this.metadataOntologyDomainInstPrefix = metadataOntologyDomainInstPrefix;
+	}
+
+	/**
+	 * @return the metadataOntologyDomainInstSuffix
+	 */
+	public String getMetadataOntologyDomainInstSuffix() {
+		return metadataOntologyDomainInstSuffix;
+	}
+
+	/**
+	 * @param metadataOntologyDomainInstSuffix
+	 *            the metadataOntologyDomainInstSuffix to set
+	 */
+	public void setMetadataOntologyDomainInstSuffix(
+			String metadataOntologyDomainInstSuffix) {
+		this.metadataOntologyDomainInstSuffix = metadataOntologyDomainInstSuffix;
 	}
 
 	/**

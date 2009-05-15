@@ -20,7 +20,7 @@
   	<script language="JavaScript">
 	function OnSubmitForm()
 	{	
-   		document.ontologyform.action ="http://localhost:8080/bioportal/rest/ontology/" + document.ontologyform.id.value;
+   		document.ontologyform.action ="http://localhost:8080/bioportal/ontologies/" + document.ontologyform.id.value;
 		alert("document.ontologyform.action=" + document.ontologyform.action);
 	
   		return true;

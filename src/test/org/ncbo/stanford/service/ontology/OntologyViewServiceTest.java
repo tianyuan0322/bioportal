@@ -11,6 +11,7 @@ import java.util.List;
 import org.junit.Test;
 import org.ncbo.stanford.AbstractBioPortalTest;
 import org.ncbo.stanford.bean.OntologyBean;
+import org.ncbo.stanford.bean.OntologyViewBean;
 import org.ncbo.stanford.util.ontologyfile.compressedfilehandler.impl.CompressedFileHandlerFactory;
 import org.ncbo.stanford.util.ontologyfile.pathhandler.FilePathHandler;
 import org.ncbo.stanford.util.ontologyfile.pathhandler.impl.PhysicalDirectoryFilePathHandlerImpl;
@@ -21,10 +22,10 @@ import org.springframework.beans.factory.annotation.Autowired;
  * 
  */
 
-public class OntologyServiceTest extends AbstractBioPortalTest {
+public class OntologyViewServiceTest extends AbstractBioPortalTest {
 	
 	@Autowired
-	OntologyService ontologyService;
+	OntologyViewService ontologyViewService;
 	
 /* * /
 	@Test
@@ -85,38 +86,38 @@ public class OntologyServiceTest extends AbstractBioPortalTest {
 	
 /*	*/
 	@Test
-	public void testfindAllOntologyVersions() {
+	public void testfindAllOntologyViewVersions() {
 
-		System.out.println ("OntologyServiceTest: testfindAllOntologyVersions().......................BEGIN");
+		System.out.println ("OntologyViewServiceTest: testfindAllOntologyViewVersions().......................BEGIN");
 		
-		List<OntologyBean> ontologies = getOntologyService().findAllOntologyVersionsByOntologyId(new Integer(1001));
+		List<OntologyViewBean> ontologies = getOntologyViewService().findAllOntologyViewVersionsByVirtualViewId(new Integer(6000));
 
-		for (OntologyBean ontology : ontologies) {
+		for (OntologyViewBean ontology : ontologies) {
 
 			System.out.println(ontology.toString());
 		}
 		
-		System.out.println ("OntologyServiceTest: testfindAllOntologyVersions().........................DONE");
+		System.out.println ("OntologyViewServiceTest: testfindAllOntologyViewVersions().........................DONE");
 
 	}
 
 	
 	//@Test
-	public void testSearchOntologyMetadata(){	
-		List<OntologyBean> ontologies = getOntologyService().searchOntologyMetadata("Mouse");
+	public void testSearchOntologyViewMetadata(){	
+		List<OntologyViewBean> ontologies = getOntologyViewService().searchOntologyViewMetadata("Mouse");
 
-		for (OntologyBean ontology : ontologies) {
+		for (OntologyViewBean ontology : ontologies) {
 
 			System.out.println(ontology.toString());
 		}		
 	}
 	
 	@Test
-	public void testFindOntology() {
+	public void testFindOntologyView() {
 		
-		System.out.println ("OntologyServiceTest: testFindOntology()..........................BEGIN");
+		System.out.println ("OntologyViewServiceTest: testFindOntologyView()..........................BEGIN");
 		
-		OntologyBean ontologyBean = getOntologyService().findOntology(new Integer(3905));
+		OntologyViewBean ontologyBean = getOntologyViewService().findOntologyView(new Integer(50000));
 		
 		System.out.println(ontologyBean);
 		
@@ -126,22 +127,22 @@ public class OntologyServiceTest extends AbstractBioPortalTest {
 			System.out.println (".....ContactName: " +  ontologyBean.getContactName());
 		}
 		
-		System.out.println ("OntologyServiceTest: testFindOntology()...........................DONE");
+		System.out.println ("OntologyViewServiceTest: testFindOntologyView()...........................DONE");
 		
 	}
 		
 /**/
 /* */
 	@Test
-	public void testCreateOntology() throws Exception {
+	public void testCreateOntologyView() throws Exception {
 		
-		System.out.println ("OntologyServiceTest: testCreateOntology()........................BEGIN");
+		System.out.println ("OntologyViewServiceTest: testCreateOntologyView()........................BEGIN");
 			
-		OntologyBean ontologyBean = createOntolgyBean();
+		OntologyViewBean ontologyBean = createOntolgyViewBean();
 		
-		getOntologyService().createOntology(ontologyBean, OntologyServiceTest.getFilePathHandler(ontologyBean));
+		getOntologyViewService().createOntologyView(ontologyBean, OntologyViewServiceTest.getFilePathHandler(ontologyBean));
 		
-		System.out.println ("OntologyServiceTest: testCreateOntology().........................DONE");
+		System.out.println ("OntologyViewServiceTest: testCreateOntologyView().........................DONE");
 	}
 /**/
 
@@ -243,14 +244,14 @@ public class OntologyServiceTest extends AbstractBioPortalTest {
 /**/
 	
 	
-	private OntologyService getOntologyService() {
-			return ontologyService;
+	private OntologyViewService getOntologyViewService() {
+			return ontologyViewService;
 		}
 	
 	
-	private OntologyBean createOntolgyBean() {
+	private OntologyViewBean createOntolgyViewBean() {
 		
-		OntologyBean bean = new OntologyBean();
+		OntologyViewBean bean = new OntologyViewBean();
 		
 		bean.setUserId(2850);
 		bean.setIsManual(new Byte("0"));
@@ -265,13 +266,13 @@ public class OntologyServiceTest extends AbstractBioPortalTest {
 		bean.setDateReleased(new Date());
 		bean.setContactEmail("test111@email.com");
 		bean.setContactName("TesterFirst TesterLastName");
-		bean.setDisplayLabel("Pizza Ontology");
+		bean.setDisplayLabel("Liver");
 		bean.setFormat("OWL-DL");
 		bean.setIsFoundry(new Byte("0"));
 				
 		ArrayList<Integer> categoryIds = new ArrayList<Integer>();
-		categoryIds.add(2807);
-		categoryIds.add(2821);
+		categoryIds.add(2810);
+		categoryIds.add(2814);
 		bean.setCategoryIds(categoryIds);
 		
 		// set inputFilePath
@@ -279,12 +280,19 @@ public class OntologyServiceTest extends AbstractBioPortalTest {
 		String inputFileStr = "C:\\Program Files\\Protege_3.4\\examples\\pizza\\pizza.owl";
 		bean.setFilePath(inputFileStr);
 				
+		bean.setViewDefinition("SELECT smthg FROM TEST");
+		bean.setViewDefinitionLanguage("SPARQL");
+		bean.setViewGenerationEngine("Jena/ARQ");
+		
+		ArrayList<Integer> ontVerIds = new ArrayList<Integer>();
+		ontVerIds.add(4513);
+		bean.setViewOnOntologyVersionId(ontVerIds);
 		return bean;
 	}
 
 	
 	private OntologyBean createOntolgyBeanManual() {	
-		OntologyBean bean = createOntolgyBean();
+		OntologyBean bean = createOntolgyViewBean();
 
 		bean.setIsFoundry(new Byte("1"));
 						
@@ -292,7 +300,7 @@ public class OntologyServiceTest extends AbstractBioPortalTest {
 	}	
 	
 	private OntologyBean createOntolgyBeanRemote() {	
-		OntologyBean bean = createOntolgyBean();
+		OntologyBean bean = createOntolgyViewBean();
 
 		bean.setIsRemote(new Byte("1"));
 		bean.setFilePath(null);

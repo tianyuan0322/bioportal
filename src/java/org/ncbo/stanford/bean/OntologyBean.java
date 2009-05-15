@@ -21,6 +21,7 @@ import org.ncbo.stanford.domain.generated.NcboOntologyVersionMetadata;
 import org.ncbo.stanford.domain.generated.NcboUser;
 import org.ncbo.stanford.util.MessageUtils;
 import org.ncbo.stanford.util.constants.ApplicationConstants;
+import org.ncbo.stanford.util.metadata.OntologyMetadataUtils;
 
 public class OntologyBean {
 
@@ -64,6 +65,9 @@ public class OntologyBean {
 
 	// destination directory
 	private String filePath;
+	
+	// views
+	private List<Integer> hasViews = new ArrayList<Integer>(0); 
 
 	/**
 	 * Populates the OntologyBean with data from a NcboOntology View
@@ -224,6 +228,16 @@ public class OntologyBean {
 		}
 	}
 
+	
+	/**
+	 * This method should execute all the updates necessary in the ontological metadata implementation
+	 * that were previously done in {@link #populateToVersionEntity(NcboOntologyVersion)} method
+	 */
+	public void updateIfNecessary() {
+		// Set User Object (populate UserId)
+
+	}
+
 	/**
 	 * Populates the OntologyBean to a NcboOntologyFile Entity. OntologyVersion
 	 * should have been populated from OntologyBean before making this call.
@@ -304,6 +318,32 @@ public class OntologyBean {
 		}
 	}
 
+	/**
+	 * Populates a NcboOntologyLoadQueue Entity from this ontologyBean.
+	 * 
+	 * @param NcboOntologyLoadQueue,
+	 *            NcboOntologyVersion
+	 */
+	public void populateToLoadQueueEntity2(NcboOntologyLoadQueue loadQueue,
+			NcboOntologyVersion ontologyVersion) {
+		if (loadQueue != null) {
+//			Set<NcboOntologyLoadQueue> ncboOntologyLoadQueueSet = new HashSet<NcboOntologyLoadQueue>();
+			
+			// OntologyVersion object
+			loadQueue.setNcboOntologyVersion(ontologyVersion);
+			
+			// Set NcboStatus
+			NcboLStatus status = new NcboLStatus();
+			populateStatus(status);
+			loadQueue.setNcboLStatus(status);
+			
+			loadQueue.setDateCreated(Calendar.getInstance().getTime());
+			
+//			ncboOntologyLoadQueueSet.add(loadQueue);
+//			ontologyVersion.setNcboOntologyLoadQueues(ncboOntologyLoadQueueSet);
+		}
+	}
+	
 	public String toString() {
 		return "{Id: " + this.getId() + ", Ontology Id: "
 				+ this.getOntologyId() + ", Remote: " + this.getIsRemote()
@@ -761,6 +801,9 @@ public class OntologyBean {
 	}
 
 	/**
+	 * TODO: this method should be replaced by {@link #populateStatusToVersionEntity(NcboOntologyVersion)}
+	 * to solve the version reset bug.
+	 * 
 	 * Populate status in the bean
 	 */
 	public void populateStatus(NcboLStatus status) {
@@ -771,7 +814,39 @@ public class OntologyBean {
 			populateDefaultStatus(status);
 		}
 	}
+	/**
+	 * Populate status in the version entity
+	 */
+	private void populateStatusToVersionEntity(
+			NcboOntologyVersion ontologyVersion) {
+		NcboLStatus status = null;
 
+		if (statusId != null) {
+			status = new NcboLStatus();
+			status.setId(statusId);
+			ontologyVersion.setNcboLStatus(status);
+		} else if (ontologyVersion.getNcboLStatus() == null) {
+			status = new NcboLStatus();
+			populateDefaultStatus(status);
+			ontologyVersion.setNcboLStatus(status);
+		}
+	}
+	 
+	/**
+	 * NOTE: This method should replicate the {@link #populateDefaultStatus(NcboLStatus)}
+	 * method an is to be used in the ontological metadata implementation
+	 *  
+	 * Returns default status, i.e. "1"(waiting) for local
+	 * upload, "5"(notapplicable) for remote.
+	 */
+	public Integer getDefaultStatus() {
+		if (this.isRemote()) {
+			return new Integer(MessageUtils.getMessage("ncbo.status.notapplicable"));
+		} else {
+			return new Integer(MessageUtils.getMessage("ncbo.status.waiting"));
+		}
+	}
+	
 	/**
 	 * Populate default status in the bean Status is "1"(waiting) for local
 	 * upload, "5"(notapplicable) for remote.
@@ -885,5 +960,19 @@ public class OntologyBean {
 	 */
 	public void setAbbreviation(String abbreviation) {
 		this.abbreviation = abbreviation;
+	}
+
+	/**
+	 * @return the hasViews
+	 */
+	public List<Integer> getHasViews() {
+		return hasViews;
+	}
+
+	/**
+	 * @param hasViews the hasViews to set
+	 */
+	public void setHasViews(List<Integer> hasViews) {
+		this.hasViews = hasViews;
 	}
 }
