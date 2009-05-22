@@ -7,8 +7,8 @@ import java.util.List;
 
 import org.junit.Test;
 import org.ncbo.stanford.AbstractBioPortalTest;
+import org.ncbo.stanford.bean.OntologyBean;
 import org.ncbo.stanford.bean.concept.ClassBean;
-import org.ncbo.stanford.domain.custom.entity.VNcboOntology;
 import org.ncbo.stanford.manager.retrieval.impl.OntologyRetrievalManagerLexGridImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -37,7 +37,7 @@ public class OntologyRetrievalManagerLexGridImplTest extends
 	public void testFindOBORootConceptCell() throws Exception {
 		System.out.println("testFindOBORootConceptCell()");
 
-		VNcboOntology ncboOntology = retrievalManager
+		OntologyBean ncboOntology = retrievalManager
 				.getLatestNcboOntology(TEST_OBO_CELL_DISPLAY_LABEL);
 		ClassBean classBean = retrievalManager.findRootConcept(ncboOntology);
 		System.out.println("Root concept is " + classBean);
@@ -49,7 +49,7 @@ public class OntologyRetrievalManagerLexGridImplTest extends
 	public void testFindOBORootConceptCellOld() throws Exception {
 		System.out.println("testFindOBORootConceptCellOld()");
 
-		VNcboOntology ncboOntology = retrievalManager
+		OntologyBean ncboOntology = retrievalManager
 				.getLatestNcboOntology(TEST_OBO_CELL_OLD_DISPLAY_LABEL);
 		ClassBean classBean = retrievalManager.findRootConcept(ncboOntology);
 		System.out.println("Root concept is " + classBean);
@@ -61,7 +61,7 @@ public class OntologyRetrievalManagerLexGridImplTest extends
 	public void testFindGenericOwlRootConcept() throws Exception {
 		System.out.println("testFindGenericOwlRootConcept()");
 
-		VNcboOntology ncboOntology = retrievalManager
+		OntologyBean ncboOntology = retrievalManager
 				.getLatestNcboOntology(TEST_OWL_DISPLAY_LABEL);
 		ClassBean classBean = retrievalManager.findRootConcept(ncboOntology);
 		System.out.println("Root concept is " + classBean);
@@ -73,7 +73,7 @@ public class OntologyRetrievalManagerLexGridImplTest extends
 	public void testFindLexGridXMLRootConcept() throws Exception {
 		System.out.println("testFindLexGridXMLRootConcept()");
 
-		VNcboOntology ncboOntology = retrievalManager
+		OntologyBean ncboOntology = retrievalManager
 				.getLatestNcboOntology(TEST_LEXGRID_DISPLAY_LABEL);
 		ClassBean classBean = retrievalManager.findRootConcept(ncboOntology);
 		System.out.println("Root concept is " + classBean);
@@ -85,7 +85,7 @@ public class OntologyRetrievalManagerLexGridImplTest extends
 	public void testFindUMLSRootConcept() throws Exception {
 		System.out.println("testFindUMLSRootConcept()");
 
-		VNcboOntology ncboOntology = retrievalManager
+		OntologyBean ncboOntology = retrievalManager
 				.getLatestNcboOntology(TEST_UMLS_DISPLAY_LABEL);
 		ClassBean classBean = retrievalManager.findRootConcept(ncboOntology);
 		System.out.println("Root concept is " + classBean);
@@ -97,7 +97,7 @@ public class OntologyRetrievalManagerLexGridImplTest extends
 	public void testFindOBOProperties() throws Exception {
 		System.out.println("testFindOBOProperties()");
 
-		VNcboOntology ncboOntology = retrievalManager
+		OntologyBean ncboOntology = retrievalManager
 				.getLatestNcboOntology(TEST_OBO_CELL_DISPLAY_LABEL);
 		List<String> properties = retrievalManager.findProperties(ncboOntology);
 		System.out.println("Properties for cell ontology are :");
@@ -112,7 +112,7 @@ public class OntologyRetrievalManagerLexGridImplTest extends
 	public void testOBOFindConceptCell() throws Exception {
 		System.out.println("testOBOFindConceptCell()");
 
-		VNcboOntology ncboOntology = retrievalManager
+		OntologyBean ncboOntology = retrievalManager
 				.getLatestNcboOntology(TEST_OBO_CELL_DISPLAY_LABEL);
 		String conceptID = "CL:0000255";
 		ClassBean classBean = retrievalManager.findConcept(ncboOntology,
@@ -127,7 +127,7 @@ public class OntologyRetrievalManagerLexGridImplTest extends
 	public void testOBOFindChildrenCell() throws Exception {
 		System.out.println("testOBOFindChildrenCell()");
 
-		VNcboOntology ncboOntology = retrievalManager
+		OntologyBean ncboOntology = retrievalManager
 				.getLatestNcboOntology(TEST_OBO_CELL_DISPLAY_LABEL);
 		String conceptID = "CL:0000255";
 		List<ClassBean> classBeans = retrievalManager.findChildren(
@@ -147,7 +147,7 @@ public class OntologyRetrievalManagerLexGridImplTest extends
 	public void testOBOFindParentCell() throws Exception {
 		System.out.println("testOBOFindParentCell()");
 
-		VNcboOntology ncboOntology = retrievalManager
+		OntologyBean ncboOntology = retrievalManager
 				.getLatestNcboOntology(TEST_OBO_CELL_DISPLAY_LABEL);
 		String conceptID = "CL:0000255";
 		List<ClassBean> classBeans = retrievalManager.findParent(ncboOntology,
@@ -166,7 +166,7 @@ public class OntologyRetrievalManagerLexGridImplTest extends
 	public void testOBOFindPathToRootCell() throws Exception {
 		System.out.println("testOBOFindPathToRootCell()");
 
-		VNcboOntology ncboOntology = retrievalManager
+		OntologyBean ncboOntology = retrievalManager
 				.getLatestNcboOntology(TEST_OBO_CELL_DISPLAY_LABEL);
 		String conceptID = "CL:0000255";
 		ClassBean pathBean = retrievalManager.findPathToRoot(ncboOntology,
@@ -182,7 +182,7 @@ public class OntologyRetrievalManagerLexGridImplTest extends
 	public void testOBOFindPathFromRootCell() throws Exception {
 		System.out.println("testOBOFindPathFromRootCell()");
 
-		VNcboOntology ncboOntology = retrievalManager
+		OntologyBean ncboOntology = retrievalManager
 				.getLatestNcboOntology(TEST_OBO_CELL_DISPLAY_LABEL);
 		String conceptID = "CL:0000003";
 		ClassBean pathBean = retrievalManager.findPathFromRoot(ncboOntology,
@@ -198,7 +198,7 @@ public class OntologyRetrievalManagerLexGridImplTest extends
 	public void testOBOFindPathFromRootForRootConceptCell() throws Exception {
 		System.out.println("testOBOFindPathFromRootForRootConceptCell()");
 
-		VNcboOntology ncboOntology = retrievalManager
+		OntologyBean ncboOntology = retrievalManager
 				.getLatestNcboOntology(TEST_OBO_CELL_DISPLAY_LABEL);
 		String conceptID = "CL:0000000";
 		ClassBean pathBean = retrievalManager.findPathFromRoot(ncboOntology,
@@ -214,11 +214,11 @@ public class OntologyRetrievalManagerLexGridImplTest extends
 	public void testConceptCount() throws Exception {
 		System.out.println("testConceptCount");
 
-		VNcboOntology ncboOntology1 = retrievalManager
+		OntologyBean ncboOntology1 = retrievalManager
 				.getLatestNcboOntology(TEST_OBO_CELL_DISPLAY_LABEL);
-		VNcboOntology ncboOntology2 = retrievalManager
+		OntologyBean ncboOntology2 = retrievalManager
 				.getLatestNcboOntology(TEST_OBO_INFECTIOUS_DISEASE_DISPLAY_LABEL);
-		List<VNcboOntology> ontologyVersions = (List<VNcboOntology>) Arrays
+		List<OntologyBean> ontologyVersions = (List<OntologyBean>) Arrays
 				.asList(ncboOntology1, ncboOntology2);
 
 		int count = retrievalManager.findConceptCount(ontologyVersions);
@@ -231,10 +231,10 @@ public class OntologyRetrievalManagerLexGridImplTest extends
 	public void testOBOFindPathFromRootIncludingChildrenCell() throws Exception {
 		System.out.println("testOBOFindPathFromRootIncludingChildrenCell()");
 
-		VNcboOntology ncboOntology = retrievalManager
+		OntologyBean ncboOntology = retrievalManager
 				.getLatestNcboOntology(TEST_OBO_CELL_DISPLAY_LABEL);
 		String conceptID = "CL:0000255";
-		//String conceptID = "CL:0000003"; 
+		// String conceptID = "CL:0000003";
 		ClassBean pathBean = retrievalManager.findPathFromRoot(ncboOntology,
 				conceptID, false);
 		System.out.println("Paths to root for concept " + conceptID
@@ -250,7 +250,7 @@ public class OntologyRetrievalManagerLexGridImplTest extends
 		System.out
 				.println("testOBOFindPathFromRootForRootConceptIncludingChildrenCell()");
 
-		VNcboOntology ncboOntology = retrievalManager
+		OntologyBean ncboOntology = retrievalManager
 				.getLatestNcboOntology(TEST_OBO_CELL_DISPLAY_LABEL);
 		String conceptID = "CL:0000000";
 		ClassBean pathBean = retrievalManager.findPathFromRoot(ncboOntology,
@@ -267,7 +267,7 @@ public class OntologyRetrievalManagerLexGridImplTest extends
 			throws Exception {
 		System.out.println("testOBOFindPathFromRootInfectiousDisease()");
 
-		VNcboOntology ncboOntology = retrievalManager
+		OntologyBean ncboOntology = retrievalManager
 				.getLatestNcboOntology(TEST_OBO_INFECTIOUS_DISEASE_DISPLAY_LABEL);
 		String conceptID = "GO:0000005";
 		ClassBean pathBean = retrievalManager.findPathFromRoot(ncboOntology,
@@ -285,7 +285,7 @@ public class OntologyRetrievalManagerLexGridImplTest extends
 		System.out
 				.println("testOBOFindPathFromRootForRootConceptIncludingChildrenInfectiousDisease()");
 
-		VNcboOntology ncboOntology = retrievalManager
+		OntologyBean ncboOntology = retrievalManager
 				.getLatestNcboOntology(TEST_OBO_INFECTIOUS_DISEASE_DISPLAY_LABEL);
 		String conceptID = "ID:0000003";
 		ClassBean pathBean = retrievalManager.findPathFromRoot(ncboOntology,
@@ -302,7 +302,7 @@ public class OntologyRetrievalManagerLexGridImplTest extends
 			throws Exception {
 		System.out.println("testOBOFindPathFromRootDictyostelium()");
 
-		VNcboOntology ncboOntology = retrievalManager
+		OntologyBean ncboOntology = retrievalManager
 				.getLatestNcboOntology(TEST_OBO_DICTYOSTELIUM_DISPLAY_LABEL);
 		// String conceptID = "DDANAT:0000037";
 		// String conceptID = "DDANAT:0010081";
@@ -322,7 +322,7 @@ public class OntologyRetrievalManagerLexGridImplTest extends
 		System.out
 				.println("testOBOFindPathFromRootForRootConceptIncludingChildrenDictyostelium()");
 
-		VNcboOntology ncboOntology = retrievalManager
+		OntologyBean ncboOntology = retrievalManager
 				.getLatestNcboOntology(TEST_OBO_DICTYOSTELIUM_DISPLAY_LABEL);
 		String conceptID = "DDANAT:0010001";
 		ClassBean pathBean = retrievalManager.findPathFromRoot(ncboOntology,

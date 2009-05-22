@@ -36,8 +36,8 @@ import org.LexGrid.naming.SupportedProperty;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.ncbo.stanford.bean.OntologyBean;
 import org.ncbo.stanford.bean.concept.ClassBean;
-import org.ncbo.stanford.domain.custom.entity.VNcboOntology;
 import org.ncbo.stanford.manager.AbstractOntologyManagerLexGrid;
 import org.ncbo.stanford.manager.retrieval.OntologyRetrievalManager;
 import org.ncbo.stanford.util.constants.ApplicationConstants;
@@ -66,7 +66,7 @@ public class OntologyRetrievalManagerLexGridImpl extends
 				.getGenericExtension("LexBIGServiceConvenienceMethods");
 	}
 
-	public List<String> findProperties(VNcboOntology ncboOntology)
+	public List<String> findProperties(OntologyBean ncboOntology)
 			throws Exception {
 		String urnAndVersion = ncboOntology.getCodingScheme();
 		String urnVersionArray[] = splitUrnAndVersion(urnAndVersion);
@@ -88,7 +88,7 @@ public class OntologyRetrievalManagerLexGridImpl extends
 	/**
 	 * Get the root concept for the specified ontology.
 	 */
-	public ClassBean findRootConcept(VNcboOntology ncboOntology)
+	public ClassBean findRootConcept(OntologyBean ncboOntology)
 			throws Exception {
 		String schemeName = getLexGridCodingSchemeName(ncboOntology);
 		CodingSchemeVersionOrTag csvt = getLexGridCodingSchemeVersion(ncboOntology);
@@ -107,7 +107,7 @@ public class OntologyRetrievalManagerLexGridImpl extends
 	 * @throws Exception
 	 */
 	public ClassBean findConceptIncludeChildCountNoRelations(
-			VNcboOntology ncboOntology, String conceptId) throws Exception {
+			OntologyBean ncboOntology, String conceptId) throws Exception {
 		String schemeName = getLexGridCodingSchemeName(ncboOntology);
 		CodingSchemeVersionOrTag csvt = getLexGridCodingSchemeVersion(ncboOntology);
 		// Perform the query ...
@@ -135,7 +135,7 @@ public class OntologyRetrievalManagerLexGridImpl extends
 	 * @return
 	 * @throws Exception
 	 */
-	public ClassBean findConcept(VNcboOntology ncboOntology, String conceptId)
+	public ClassBean findConcept(OntologyBean ncboOntology, String conceptId)
 			throws Exception {
 		String schemeName = getLexGridCodingSchemeName(ncboOntology);
 		CodingSchemeVersionOrTag csvt = getLexGridCodingSchemeVersion(ncboOntology);
@@ -169,7 +169,7 @@ public class OntologyRetrievalManagerLexGridImpl extends
 	 * .ncbo.stanford.domain.custom.entity.VNcboOntology, java.lang.String,
 	 * boolean)
 	 */
-	public ClassBean findPathFromRoot(VNcboOntology ncboOntology,
+	public ClassBean findPathFromRoot(OntologyBean ncboOntology,
 			String conceptId, boolean light) throws Exception {
 		String schemeName = getLexGridCodingSchemeName(ncboOntology);
 		CodingSchemeVersionOrTag csvt = getLexGridCodingSchemeVersion(ncboOntology);
@@ -255,7 +255,7 @@ public class OntologyRetrievalManagerLexGridImpl extends
 	 * @return
 	 * @throws Exception
 	 */
-	public ClassBean findPathToRoot(VNcboOntology ncboOntology,
+	public ClassBean findPathToRoot(OntologyBean ncboOntology,
 			String conceptId, boolean light) throws Exception {
 		String schemeName = getLexGridCodingSchemeName(ncboOntology);
 		CodingSchemeVersionOrTag csvt = getLexGridCodingSchemeVersion(ncboOntology);
@@ -286,7 +286,7 @@ public class OntologyRetrievalManagerLexGridImpl extends
 	 * @return
 	 * @throws Exception
 	 */
-	public List<ClassBean> findParent(VNcboOntology ncboOntology,
+	public List<ClassBean> findParent(OntologyBean ncboOntology,
 			String conceptId) throws Exception {
 		String schemeName = getLexGridCodingSchemeName(ncboOntology);
 		CodingSchemeVersionOrTag csvt = getLexGridCodingSchemeVersion(ncboOntology);
@@ -307,7 +307,7 @@ public class OntologyRetrievalManagerLexGridImpl extends
 	 * @return
 	 * @throws Exception
 	 */
-	public List<ClassBean> findChildren(VNcboOntology ncboOntology,
+	public List<ClassBean> findChildren(OntologyBean ncboOntology,
 			String conceptId) throws Exception {
 		String schemeName = getLexGridCodingSchemeName(ncboOntology);
 		CodingSchemeVersionOrTag csvt = getLexGridCodingSchemeVersion(ncboOntology);
@@ -326,11 +326,11 @@ public class OntologyRetrievalManagerLexGridImpl extends
 		return true;
 	}
 
-	public int findConceptCount(List<VNcboOntology> ontologyVersions)
+	public int findConceptCount(List<OntologyBean> ontologyVersions)
 			throws Exception {
 		int count = 0;
 
-		for (VNcboOntology ontologyVersion : ontologyVersions) {
+		for (OntologyBean ontologyVersion : ontologyVersions) {
 			String schemeName = getLexGridCodingSchemeName(ontologyVersion);
 			CodingSchemeVersionOrTag csvt = getLexGridCodingSchemeVersion(ontologyVersion);
 			CodingScheme codingScheme = lbs.resolveCodingScheme(schemeName,
@@ -350,7 +350,7 @@ public class OntologyRetrievalManagerLexGridImpl extends
 	 * @throws Exception
 	 */
 	private ResolvedConceptReference getLightResolvedConceptReference(
-			VNcboOntology ncboOntology, String conceptId) throws Exception {
+			OntologyBean ncboOntology, String conceptId) throws Exception {
 		String schemeName = getLexGridCodingSchemeName(ncboOntology);
 		CodingSchemeVersionOrTag csvt = getLexGridCodingSchemeVersion(ncboOntology);
 
@@ -377,7 +377,7 @@ public class OntologyRetrievalManagerLexGridImpl extends
 	 * @param conceptId
 	 * @return
 	 */
-	private EntityDescription getEntityDescription(VNcboOntology ncboOntology,
+	private EntityDescription getEntityDescription(OntologyBean ncboOntology,
 			String conceptId) {
 		try {
 			ResolvedConceptReference rcr = getLightResolvedConceptReference(
@@ -400,7 +400,7 @@ public class OntologyRetrievalManagerLexGridImpl extends
 	 * @param codeToEntityDescriptionMap
 	 * @return Position in the given association list for recursive adds.
 	 */
-	protected AssociationList reverseAssoc(VNcboOntology ncboOntology,
+	protected AssociationList reverseAssoc(OntologyBean ncboOntology,
 			Association assoc, AssociationList addTo,
 			Map<String, EntityDescription> codeToEntityDescriptionMap) {
 		String schemeName = getLexGridCodingSchemeName(ncboOntology);
@@ -549,7 +549,7 @@ public class OntologyRetrievalManagerLexGridImpl extends
 	 * @param cr
 	 * @return
 	 */
-	private ClassBean createClassBeanWithChildCount(VNcboOntology ncboOntology,
+	private ClassBean createClassBeanWithChildCount(OntologyBean ncboOntology,
 			ConceptReference cr, boolean includeChildren) {
 		CodingSchemeVersionOrTag csvt = getLexGridCodingSchemeVersion(ncboOntology);
 		ResolvedConceptReference rcr = new ResolvedConceptReference();
@@ -958,7 +958,6 @@ public class OntologyRetrievalManagerLexGridImpl extends
 						.getContent());
 			}
 		}
-
 	}
 
 	@SuppressWarnings("unchecked")

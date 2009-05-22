@@ -11,9 +11,8 @@ import org.LexGrid.LexBIG.LexBIGService.LexBIGService;
 import org.LexGrid.LexBIG.Utility.Constructors;
 import org.LexGrid.codingSchemes.CodingScheme;
 import org.apache.commons.lang.StringUtils;
-import org.ncbo.stanford.domain.custom.dao.CustomNcboOntologyVersionDAO;
-import org.ncbo.stanford.domain.custom.dao.CustomNcboOntologyVersionMetadataDAO;
-import org.ncbo.stanford.domain.custom.entity.VNcboOntology;
+import org.ncbo.stanford.bean.OntologyBean;
+import org.ncbo.stanford.manager.metadata.OntologyMetadataManager;
 import org.ncbo.stanford.util.helper.StringHelper;
 
 /**
@@ -25,8 +24,7 @@ import org.ncbo.stanford.util.helper.StringHelper;
  */
 public abstract class AbstractOntologyManagerLexGrid {
 
-	protected CustomNcboOntologyVersionDAO ncboOntologyVersionDAO;
-	protected CustomNcboOntologyVersionMetadataDAO ncboOntologyVersionMetadataDAO;
+	protected OntologyMetadataManager ontologyMetadataManagerProtege;
 
 	protected CodingSchemeRendering getCodingSchemeRendering(LexBIGService lbs,
 			String urnAndVersion) throws Exception {
@@ -91,16 +89,16 @@ public abstract class AbstractOntologyManagerLexGrid {
 	 * @param displayLabel
 	 * @return
 	 */
-	public VNcboOntology getLatestNcboOntology(String displayLabel) {
-		List<VNcboOntology> list = ncboOntologyVersionDAO
+	public OntologyBean getLatestNcboOntology(String displayLabel) {
+		List<OntologyBean> list = ontologyMetadataManagerProtege
 				.findLatestOntologyVersions();
-		
-		for (VNcboOntology ncboOntology : list) {
+
+		for (OntologyBean ncboOntology : list) {
 			if (ncboOntology.getDisplayLabel().equalsIgnoreCase(displayLabel)) {
 				return ncboOntology;
 			}
 		}
-		
+
 		return null;
 	}
 
@@ -111,8 +109,8 @@ public abstract class AbstractOntologyManagerLexGrid {
 	 *         concatenating the urn, "|" and version
 	 */
 	protected String getLexGridUrnAndVersion(Integer ontologyVersionId) {
-		VNcboOntology ncboOntology = ncboOntologyVersionDAO
-				.findOntologyVersion(ontologyVersionId);
+		OntologyBean ncboOntology = ontologyMetadataManagerProtege
+				.findOntologyById(ontologyVersionId);
 
 		if (ncboOntology != null) {
 			return (ncboOntology.getCodingScheme());
@@ -125,7 +123,7 @@ public abstract class AbstractOntologyManagerLexGrid {
 	 * @param ontology
 	 * @return The LexGrid codingScheme URN string (registered Name)
 	 */
-	protected String getLexGridCodingSchemeName(VNcboOntology ontology) {
+	protected String getLexGridCodingSchemeName(OntologyBean ontology) {
 		String urnAndVersion = ontology.getCodingScheme();
 
 		if (StringHelper.isNullOrNullString(urnAndVersion)) {
@@ -143,7 +141,7 @@ public abstract class AbstractOntologyManagerLexGrid {
 	 * @return The LexGrid codingScheme URN string (registered Name)
 	 */
 	protected CodingSchemeVersionOrTag getLexGridCodingSchemeVersion(
-			VNcboOntology ontology) {
+			OntologyBean ontology) {
 		String urnAndVersion = ontology.getCodingScheme();
 
 		if (StringHelper.isNullOrNullString(urnAndVersion)) {
@@ -183,34 +181,10 @@ public abstract class AbstractOntologyManagerLexGrid {
 	}
 
 	/**
-	 * @return the ncboOntologyVersionDAO
+	 * @param ontologyMetadataManagerProtege the ontologyMetadataManagerProtege to set
 	 */
-	public CustomNcboOntologyVersionDAO getNcboOntologyVersionDAO() {
-		return ncboOntologyVersionDAO;
-	}
-
-	/**
-	 * @param ncboOntologyVersionDAO
-	 *            the ncboOntologyVersionDAO to set
-	 */
-	public void setNcboOntologyVersionDAO(
-			CustomNcboOntologyVersionDAO ncboOntologyVersionDAO) {
-		this.ncboOntologyVersionDAO = ncboOntologyVersionDAO;
-	}
-
-	/**
-	 * @return the ncboOntologyVersionMetadataDAO
-	 */
-	public CustomNcboOntologyVersionMetadataDAO getNcboOntologyVersionMetadataDAO() {
-		return ncboOntologyVersionMetadataDAO;
-	}
-
-	/**
-	 * @param ncboOntologyVersionMetadataDAO
-	 *            the ncboOntologyVersionMetadataDAO to set
-	 */
-	public void setNcboOntologyVersionMetadataDAO(
-			CustomNcboOntologyVersionMetadataDAO ncboOntologyVersionMetadataDAO) {
-		this.ncboOntologyVersionMetadataDAO = ncboOntologyVersionMetadataDAO;
+	public void setOntologyMetadataManagerProtege(
+			OntologyMetadataManager ontologyMetadataManagerProtege) {
+		this.ontologyMetadataManagerProtege = ontologyMetadataManagerProtege;
 	}
 }

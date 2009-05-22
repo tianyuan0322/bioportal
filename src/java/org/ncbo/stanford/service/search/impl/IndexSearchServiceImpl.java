@@ -12,10 +12,10 @@ import org.apache.commons.logging.LogFactory;
 import org.apache.lucene.index.Term;
 import org.apache.lucene.queryParser.QueryParser;
 import org.apache.lucene.search.Query;
+import org.ncbo.stanford.bean.OntologyBean;
 import org.ncbo.stanford.bean.search.SearchIndexBean;
 import org.ncbo.stanford.bean.search.SearchResultListBean;
-import org.ncbo.stanford.domain.custom.dao.CustomNcboOntologyVersionDAO;
-import org.ncbo.stanford.domain.custom.entity.VNcboOntology;
+import org.ncbo.stanford.manager.metadata.OntologyMetadataManager;
 import org.ncbo.stanford.manager.search.OntologySearchManager;
 import org.ncbo.stanford.service.search.AbstractSearchService;
 import org.ncbo.stanford.service.search.IndexSearchService;
@@ -38,7 +38,7 @@ public class IndexSearchServiceImpl extends AbstractSearchService implements
 	private String indexBackupPath;
 	private int indexMergeFactor;
 	private int indexMaxMergeDocs;
-	private CustomNcboOntologyVersionDAO ncboOntologyVersionDAO;
+	private OntologyMetadataManager ontologyMetadataManagerProtege;
 	private Map<String, String> ontologyFormatHandlerMap = new HashMap<String, String>(
 			0);
 	private Map<String, OntologySearchManager> ontologySearchHandlerMap = new HashMap<String, OntologySearchManager>(
@@ -54,7 +54,8 @@ public class IndexSearchServiceImpl extends AbstractSearchService implements
 	public void indexAllOntologies(boolean doBackup, boolean doOptimize)
 			throws Exception {
 		long start = System.currentTimeMillis();
-		List<VNcboOntology> ontologies = ncboOntologyVersionDAO
+		
+		List<OntologyBean> ontologies = ontologyMetadataManagerProtege
 				.findLatestActiveOntologyVersions();
 
 		if (doBackup) {
@@ -66,7 +67,7 @@ public class IndexSearchServiceImpl extends AbstractSearchService implements
 		writer.setMergeFactor(indexMergeFactor);
 		writer.setMaxMergeDocs(indexMaxMergeDocs);
 
-		for (VNcboOntology ontology : ontologies) {
+		for (OntologyBean ontology : ontologies) {
 			try {
 				indexOntology(writer, ontology, false, false);
 
@@ -115,7 +116,7 @@ public class IndexSearchServiceImpl extends AbstractSearchService implements
 	 */
 	public void indexOntologies(List<Integer> ontologyIdList, boolean doBackup,
 			boolean doOptimize) throws Exception {
-		List<VNcboOntology> ontologies = ncboOntologyVersionDAO
+		List<OntologyBean> ontologies = ontologyMetadataManagerProtege
 				.findLatestActiveOntologyVersions(ontologyIdList);
 
 		if (!ontologies.isEmpty()) {
@@ -195,7 +196,7 @@ public class IndexSearchServiceImpl extends AbstractSearchService implements
 	 * @throws Exception
 	 */
 	private void indexOntology(LuceneIndexWriterWrapper writer,
-			VNcboOntology ontology, boolean doBackup, boolean doOptimize)
+			OntologyBean ontology, boolean doBackup, boolean doOptimize)
 			throws Exception {
 		Integer ontologyVersionId = ontology.getId();
 		Integer ontologyId = ontology.getOntologyId();
@@ -247,14 +248,14 @@ public class IndexSearchServiceImpl extends AbstractSearchService implements
 	 * @throws Exception
 	 */
 	private void indexOntologies(LuceneIndexWriterWrapper writer,
-			List<VNcboOntology> ontologies, boolean doBackup, boolean doOptimize)
+			List<OntologyBean> ontologies, boolean doBackup, boolean doOptimize)
 			throws Exception {
 		if (!ontologies.isEmpty()) {
 			if (doBackup) {
 				backupIndex(writer);
 			}
 
-			for (VNcboOntology ontology : ontologies) {
+			for (OntologyBean ontology : ontologies) {
 				indexOntology(writer, ontology, false, false);
 			}
 
@@ -463,15 +464,6 @@ public class IndexSearchServiceImpl extends AbstractSearchService implements
 	}
 
 	/**
-	 * @param ncboOntologyVersionDAO
-	 *            the ncboOntologyVersionDAO to set
-	 */
-	public void setNcboOntologyVersionDAO(
-			CustomNcboOntologyVersionDAO ncboOntologyVersionDAO) {
-		this.ncboOntologyVersionDAO = ncboOntologyVersionDAO;
-	}
-
-	/**
 	 * @param ontologyFormatHandlerMap
 	 *            the ontologyFormatHandlerMap to set
 	 */
@@ -487,5 +479,13 @@ public class IndexSearchServiceImpl extends AbstractSearchService implements
 	public void setOntologySearchHandlerMap(
 			Map<String, OntologySearchManager> ontologySearchHandlerMap) {
 		this.ontologySearchHandlerMap = ontologySearchHandlerMap;
+	}
+
+	/**
+	 * @param ontologyMetadataManagerProtege the ontologyMetadataManagerProtege to set
+	 */
+	public void setOntologyMetadataManagerProtege(
+			OntologyMetadataManager ontologyMetadataManagerProtege) {
+		this.ontologyMetadataManagerProtege = ontologyMetadataManagerProtege;
 	}
 }

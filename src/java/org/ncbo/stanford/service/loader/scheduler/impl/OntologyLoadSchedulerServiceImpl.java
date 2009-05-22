@@ -3,27 +3,23 @@ package org.ncbo.stanford.service.loader.scheduler.impl;
 import java.io.File;
 import java.io.PrintWriter;
 import java.io.StringWriter;
-import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.ncbo.stanford.bean.OntologyBean;
 import org.ncbo.stanford.domain.custom.dao.CustomNcboOntologyLoadQueueDAO;
-import org.ncbo.stanford.domain.custom.dao.CustomNcboOntologyVersionDAO;
-import org.ncbo.stanford.domain.custom.entity.VNcboOntology;
 import org.ncbo.stanford.domain.generated.NcboLStatus;
 import org.ncbo.stanford.domain.generated.NcboOntologyLoadQueue;
-import org.ncbo.stanford.domain.generated.NcboOntologyVersion;
 import org.ncbo.stanford.enumeration.StatusEnum;
 import org.ncbo.stanford.exception.InvalidOntologyFormatException;
 import org.ncbo.stanford.manager.diff.OntologyDiffManager;
 import org.ncbo.stanford.manager.load.OntologyLoadManager;
+import org.ncbo.stanford.manager.metadata.OntologyMetadataManager;
 import org.ncbo.stanford.service.loader.scheduler.OntologyLoadSchedulerService;
 import org.ncbo.stanford.service.search.IndexSearchService;
 import org.ncbo.stanford.util.CompressionUtils;
@@ -53,7 +49,7 @@ public class OntologyLoadSchedulerServiceImpl implements
 
 	private IndexSearchService indexService;
 	private CustomNcboOntologyLoadQueueDAO ncboOntologyLoadQueueDAO;
-	private CustomNcboOntologyVersionDAO ncboOntologyVersionDAO;
+	private OntologyMetadataManager ontologyMetadataManagerProtege;
 	private Map<String, String> ontologyFormatHandlerMap = new HashMap<String, String>(
 			0);
 	private Map<String, OntologyLoadManager> ontologyLoadHandlerMap = new HashMap<String, OntologyLoadManager>(
@@ -65,8 +61,6 @@ public class OntologyLoadSchedulerServiceImpl implements
 	/**
 	 * Gets the list of ontologies that need to be loaded and processed each
 	 * using the appropriate loader API.
-	 * 
-	 * @throws Exception
 	 */
 	@Transactional(propagation = Propagation.NEVER)
 	public void parseOntologies() {
@@ -80,11 +74,11 @@ public class OntologyLoadSchedulerServiceImpl implements
 			if (ncboOntologyLoadQueueDAO.needsParsing(loadQueue.getId())
 					.booleanValue()) {
 				log.debug("parsing ontology: ID = "
-						+ loadQueue.getNcboOntologyVersion().getId());
+						+ loadQueue.getOntologyVersionId());
 				processRecord(loadQueue);
 			} else {
 				log.debug("ontology ID = "
-						+ loadQueue.getNcboOntologyVersion().getId()
+						+ loadQueue.getOntologyVersionId()
 						+ " does not require parsing");
 			}
 		}
@@ -100,8 +94,8 @@ public class OntologyLoadSchedulerServiceImpl implements
 	@Transactional(propagation = Propagation.NEVER)
 	public void parseOntology(String ontologyVersionId) {
 		errorOntologies.clear();
-		VNcboOntology ontologyVersion = ncboOntologyVersionDAO
-				.findOntologyVersion(Integer.parseInt(ontologyVersionId));
+		OntologyBean ontologyVersion = ontologyMetadataManagerProtege
+				.findOntologyById(Integer.parseInt(ontologyVersionId));
 
 		// null check
 		if (ontologyVersion == null) {
@@ -109,7 +103,7 @@ public class OntologyLoadSchedulerServiceImpl implements
 					ONTOLOGY_VERSION_DOES_NOT_EXIST_ERROR);
 			log.error(error);
 		} else {
-			parseOntology(ontologyVersion);
+			parseOntology(ontologyVersionId);
 			optimizeIndex();
 		}
 	}
@@ -117,13 +111,21 @@ public class OntologyLoadSchedulerServiceImpl implements
 	@Transactional(propagation = Propagation.NEVER)
 	public void parseOntologies(List<Integer> ontologyVersionIdList) {
 		errorOntologies.clear();
-		List<VNcboOntology> ontologies = ncboOntologyVersionDAO
+		List<OntologyBean> ontologies = ontologyMetadataManagerProtege
 				.findOntologyVersions(ontologyVersionIdList);
 
-		for (VNcboOntology ontologyVersion : ontologies) {
-			Integer ontologyVersionId = ontologyVersion.getId();
+		for (OntologyBean ontologyBean : ontologies) {
+			Integer ontologyVersionId = ontologyBean.getId();
 			ontologyVersionIdList.remove(ontologyVersionId);
-			parseOntology(ontologyVersion);
+			
+			try {
+				parseOntology(ontologyVersionId);
+			} catch (Exception e) {
+				String error = addErrorOntology(ontologyVersionId.toString(), ontologyBean,
+						e.getMessage());
+				e.printStackTrace();
+				log.error(error);
+			}
 		}
 
 		optimizeIndex();
@@ -135,24 +137,22 @@ public class OntologyLoadSchedulerServiceImpl implements
 		}
 	}
 
-	private void parseOntology(VNcboOntology ontologyVersion) {
-		Set<NcboOntologyLoadQueue> loadQueues = ontologyVersion
-				.getNcboOntologyLoadQueues();
+	private void parseOntology(Integer ontologyVersionId) {
+		NcboOntologyLoadQueue loadQueue = ncboOntologyLoadQueueDAO.findByOntologyVersionId(ontologyVersionId);
 
-		if (loadQueues.isEmpty()) {
-			String errorMessage = "No loadQueue record exists for the ontology";
-			String error = addErrorOntology(ontologyVersion.getId().toString(),
+		if (loadQueue == null) {
+			String errorMessage = "No loadQueue record exists for the ontology";			
+			OntologyBean ontologyVersion = ontologyMetadataManagerProtege.findOntologyById(ontologyVersionId);			
+			String error = addErrorOntology(ontologyVersionId.toString(),
 					ontologyVersion, errorMessage);
 			log.error(error);
 		} else {
-			NcboOntologyLoadQueue loadQueue = (NcboOntologyLoadQueue) loadQueues
-					.toArray()[0];
 			processRecord(loadQueue);
 		}
 	}
 
 	private String getOntologyDisplay(String ontologyVersionId,
-			VNcboOntology ontologyVersion) {
+			OntologyBean ontologyVersion) {
 		String ontologyDisplay = "(Id: " + ontologyVersionId + ")";
 
 		if (ontologyVersion != null) {
@@ -170,28 +170,25 @@ public class OntologyLoadSchedulerServiceImpl implements
 	 */
 	private void processRecord(NcboOntologyLoadQueue loadQueue) {
 		String errorMessage = null;
-		// populate bean
-		VNcboOntology ontologyVersion = ncboOntologyVersionDAO
-				.findOntologyVersion(loadQueue.getNcboOntologyVersion().getId());
-		OntologyBean ontologyBean = new OntologyBean();
-		ontologyBean.populateFromEntity(ontologyVersion);
-
+		Integer ontologyVersionId = loadQueue.getOntologyVersionId();
+		OntologyBean ontologyBean = ontologyMetadataManagerProtege.findOntologyById(ontologyVersionId);		
 		StatusEnum status = StatusEnum.STATUS_WAITING;
-		updateOntologyStatus(loadQueue, status, errorMessage);
-
+		
 		// parse
 		try {
+			updateOntologyStatus(loadQueue, ontologyBean, status, errorMessage);
+
 			List<String> filenames = ontologyBean.getFilenames();
 
 			if (filenames.isEmpty()) {
 				status = StatusEnum.STATUS_ERROR;
 
-				updateOntologyStatus(loadQueue, status, MessageUtils
+				updateOntologyStatus(loadQueue, ontologyBean, status, MessageUtils
 						.getMessage("msg.error.noontologyfilessubmitted"));
 			} else {
 				// set the status as "Parsing"
 				status = StatusEnum.STATUS_PARSING;
-				updateOntologyStatus(loadQueue, status, errorMessage);
+				updateOntologyStatus(loadQueue, ontologyBean, status, errorMessage);
 
 				// load ontology
 				loadOntology(ontologyBean);
@@ -207,27 +204,25 @@ public class OntologyLoadSchedulerServiceImpl implements
 				//
 				// ************************************
 			}
+
+			updateOntologyStatus(loadQueue, ontologyBean, status, errorMessage);
+	
+			// index ontology
+			if (status == StatusEnum.STATUS_READY) {
+				errorMessage = indexOntology(errorMessage, ontologyBean);
+				updateOntologyStatus(loadQueue, ontologyBean, status, errorMessage);
+			}	
 		} catch (Exception e) {
 			status = StatusEnum.STATUS_ERROR;
 			errorMessage = getLongErrorMessage(e);
-			addErrorOntology(ontologyVersion.getId().toString(),
-					ontologyVersion, errorMessage);
+			addErrorOntology(ontologyVersionId.toString(),
+					ontologyBean, errorMessage);
 			e.printStackTrace();
 			log.error(e);
 		}
-
-		updateOntologyStatus(loadQueue, status, errorMessage);
-
-		// index ontology
-		if (status == StatusEnum.STATUS_READY) {
-			errorMessage = indexOntology(errorMessage, ontologyVersion,
-					ontologyBean);
-			updateOntologyStatus(loadQueue, status, errorMessage);
-		}
 	}
 
-	private String indexOntology(String errorMessage,
-			VNcboOntology ontologyVersion, OntologyBean ontologyBean) {
+	private String indexOntology(String errorMessage, OntologyBean ontologyBean) {
 		try {
 			indexService.indexOntology(ontologyBean.getOntologyId(), false,
 					false);
@@ -249,8 +244,8 @@ public class OntologyLoadSchedulerServiceImpl implements
 			}
 
 			errorMessage += newErrorMessage;
-			addErrorOntology(ontologyVersion.getId().toString(),
-					ontologyVersion, errorMessage);
+			addErrorOntology(ontologyBean.getId().toString(),
+					ontologyBean, errorMessage);
 			e.printStackTrace();
 			log.error(e);
 		}
@@ -259,7 +254,7 @@ public class OntologyLoadSchedulerServiceImpl implements
 	}
 
 	private String addErrorOntology(String ontologyVersionId,
-			VNcboOntology ontologyVersion, String errorMessage) {
+			OntologyBean ontologyVersion, String errorMessage) {
 		String error = getOntologyDisplay(ontologyVersionId, ontologyVersion);
 
 		if (!StringHelper.isNullOrNullString(errorMessage)) {
@@ -286,17 +281,15 @@ public class OntologyLoadSchedulerServiceImpl implements
 		return stackTrace.substring(0, messageLen);
 	}
 
-	private void updateOntologyStatus(NcboOntologyLoadQueue loadQueue,
-			StatusEnum status, String errorMessage) {
-		NcboOntologyVersion ncboOntologyVersion = loadQueue
-				.getNcboOntologyVersion();
-
+	private void updateOntologyStatus(NcboOntologyLoadQueue loadQueue, OntologyBean ontologyBean,
+			StatusEnum status, String errorMessage) throws Exception {
 		NcboLStatus ncboStatus = new NcboLStatus();
-		ncboStatus.setId(status.getStatus());
+		Integer statusId = status.getStatus();
+		ncboStatus.setId(statusId);
 
-		// update ontologyVersion table
-		ncboOntologyVersion.setNcboLStatus(ncboStatus);
-		ncboOntologyVersionDAO.saveOntologyVersion(ncboOntologyVersion);
+		// update ontology metadata
+		ontologyBean.setStatusId(statusId);
+		ontologyMetadataManagerProtege.saveOntology(ontologyBean);
 
 		// update loadQueue table
 		loadQueue.setErrorMessage(errorMessage);
@@ -313,7 +306,7 @@ public class OntologyLoadSchedulerServiceImpl implements
 	 * 
 	 * @param ontologyBean
 	 *            bean
-	 * @throws URISyntaxException
+	 * @throws Exception
 	 */
 	private void loadOntology(OntologyBean ontologyBean) throws Exception {
 		if (log.isDebugEnabled()) {
@@ -433,15 +426,6 @@ public class OntologyLoadSchedulerServiceImpl implements
 	}
 
 	/**
-	 * @param ncboOntologyVersionDAO
-	 *            the ncboOntologyVersionDAO to set
-	 */
-	public void setNcboOntologyVersionDAO(
-			CustomNcboOntologyVersionDAO ncboOntologyVersionDAO) {
-		this.ncboOntologyVersionDAO = ncboOntologyVersionDAO;
-	}
-
-	/**
 	 * @param ontologyLoadHandlerMap
 	 *            the ontologyLoadHandlerMap to set
 	 */
@@ -473,5 +457,13 @@ public class OntologyLoadSchedulerServiceImpl implements
 	public void setOntologyDiffHandlerMap(
 			Map<String, OntologyDiffManager> ontologyDiffHandlerMap) {
 		this.ontologyDiffHandlerMap = ontologyDiffHandlerMap;
+	}
+
+	/**
+	 * @param ontologyMetadataManagerProtege the ontologyMetadataManagerProtege to set
+	 */
+	public void setOntologyMetadataManagerProtege(
+			OntologyMetadataManager ontologyMetadataManagerProtege) {
+		this.ontologyMetadataManagerProtege = ontologyMetadataManagerProtege;
 	}
 }

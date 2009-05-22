@@ -1,7 +1,7 @@
 package org.ncbo.stanford.manager.retrieval;
 
+import org.ncbo.stanford.bean.OntologyBean;
 import org.ncbo.stanford.bean.concept.ClassBean;
-import org.ncbo.stanford.domain.custom.entity.VNcboOntology;
 
 /**
  * An interface designed to provide an abstraction layer to ontology and concept
@@ -13,11 +13,11 @@ import org.ncbo.stanford.domain.custom.entity.VNcboOntology;
  * @author Michael Dorf
  */
 public interface OntologyRetrievalManager {
-	public ClassBean findConcept(VNcboOntology ontologyVersion, String conceptId)
+	public ClassBean findConcept(OntologyBean ob, String conceptId)
 			throws Exception;
 
-	public ClassBean findRootConcept(VNcboOntology ontology) throws Exception;
+	public ClassBean findRootConcept(OntologyBean ob) throws Exception;
 
-	public ClassBean findPathFromRoot(VNcboOntology ontology, String conceptId,
+	public ClassBean findPathFromRoot(OntologyBean ob, String conceptId,
 			boolean light) throws Exception;
 }

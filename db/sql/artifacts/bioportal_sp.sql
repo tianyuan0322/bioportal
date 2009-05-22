@@ -2,43 +2,6 @@ DELIMITER $$
 
 DROP PROCEDURE IF EXISTS `sp_remove_ontology_by_display_label`$$
 
-CREATE DEFINER=`root`@`localhost` PROCEDURE `sp_remove_ontology_by_display_label`(
-	p_strDisplayLabel VARCHAR(128)
-)
-BEGIN
-		DECLARE done INT DEFAULT 0;
-		DECLARE ontologyVersionId INT;
-		DECLARE ontologyId INT DEFAULT -1;
-		DECLARE iterCount INT DEFAULT 1;
-		DECLARE cur CURSOR FOR SELECT ontology_version_id FROM ncbo_ontology_version_metadata WHERE LOWER(display_label) = LOWER(p_strDisplayLabel);
-		DECLARE CONTINUE HANDLER FOR NOT FOUND SET done = 1;
-
-		OPEN cur;
-
-		REPEAT
-			FETCH cur INTO ontologyVersionId;
-
-			IF iterCount = 1 THEN
-				SELECT ontology_id INTO ontologyId FROM ncbo_ontology_version WHERE id = ontologyVersionId;
-			END IF;
-
-			IF NOT done THEN
-				DELETE FROM ncbo_ontology_category WHERE ontology_version_id = ontologyVersionId;
-				DELETE FROM ncbo_ontology_file WHERE ontology_version_id = ontologyVersionId;
-				DELETE FROM ncbo_ontology_load_queue WHERE ontology_version_id = ontologyVersionId;
-				DELETE FROM ncbo_ontology_version_metadata WHERE ontology_version_id = ontologyVersionId;
-				DELETE FROM ncbo_ontology_version WHERE ontology_id = ontologyId;
-   			END IF;
-   			
-   			SET iterCount := iterCount + 1;
-		UNTIL done END REPEAT;
-		
-		CLOSE cur;
-		
-		DELETE FROM ncbo_ontology WHERE id = ontologyId;
-
-	END$$
-
 DELIMITER ;
 
 DELIMITER $$

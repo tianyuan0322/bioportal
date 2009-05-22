@@ -16,12 +16,10 @@ import java.util.List;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.ncbo.stanford.bean.OntologyBean;
-import org.ncbo.stanford.domain.custom.dao.CustomNcboOntologyVersionDAO;
-import org.ncbo.stanford.domain.custom.entity.VNcboOntology;
 import org.ncbo.stanford.enumeration.StatusEnum;
 import org.ncbo.stanford.manager.AbstractOntologyManagerProtege;
 import org.ncbo.stanford.manager.diff.OntologyDiffManager;
-import org.ncbo.stanford.service.ontology.OntologyService;
+import org.ncbo.stanford.manager.metadata.OntologyMetadataManager;
 import org.ncbo.stanford.util.diff.DiffUtils;
 import org.ncbo.stanford.util.difffile.pathhandler.DiffFilePathHandler;
 import org.ncbo.stanford.util.difffile.pathhandler.impl.DiffFilePathHandlerImpl;
@@ -40,8 +38,7 @@ public class OntologyDiffManagerProtegeImpl extends
 	private static final Log log = LogFactory
 			.getLog(OntologyDiffManagerProtegeImpl.class);
 
-	private OntologyService ontologyService;
-	private CustomNcboOntologyVersionDAO ncboOntologyVersionDAO;
+	private OntologyMetadataManager ontologyMetadataManagerProtege;
 
 	/**
 	 * Creates a diff between two ontology versions. Calls Prompt to do that and
@@ -52,11 +49,13 @@ public class OntologyDiffManagerProtegeImpl extends
 	 * 
 	 * @throws Exception
 	 */
-	public void createDiff(VNcboOntology ontologyVersionOld,
-			VNcboOntology ontologyVersionNew) throws Exception {
+	public void createDiff(OntologyBean ontologyVersionOld,
+			OntologyBean ontologyVersionNew) throws Exception {
 
-		System.out.println("In create diff for " + ontologyVersionOld.getId()
+		if (log.isDebugEnabled()) {
+			log.debug("In create diff for " + ontologyVersionOld.getId()
 				+ " and " + ontologyVersionNew.getId());
+		}
 
 		KnowledgeBase oldKb = getKnowledgeBase(ontologyVersionOld);
 		KnowledgeBase newKb = getKnowledgeBase(ontologyVersionNew);
@@ -80,8 +79,8 @@ public class OntologyDiffManagerProtegeImpl extends
 
 	public void createDiffForTwoLatestVersions(Integer ontologyId)
 			throws Exception {
-		List<OntologyBean> allVersions = ontologyService
-				.findAllOntologyVersionsByOntologyId(ontologyId);
+		List<OntologyBean> allVersions = ontologyMetadataManagerProtege
+				.findAllOntologyVersionsById(ontologyId);
 
 		// get a list of version ids, filtering out ontologies that are not
 		// active
@@ -106,10 +105,10 @@ public class OntologyDiffManagerProtegeImpl extends
 		Integer oldVersionId = versionIds.get(versionIds.size() - 2); // previous
 		// version
 
-		VNcboOntology newVersion = ncboOntologyVersionDAO
-				.findOntologyVersion(newVersionId);
-		VNcboOntology oldVersion = ncboOntologyVersionDAO
-				.findOntologyVersion(oldVersionId);
+		OntologyBean newVersion = ontologyMetadataManagerProtege
+				.findOntologyById(newVersionId);
+		OntologyBean oldVersion = ontologyMetadataManagerProtege
+				.findOntologyById(oldVersionId);
 
 		createDiff(oldVersion, newVersion);
 	}
@@ -176,8 +175,8 @@ public class OntologyDiffManagerProtegeImpl extends
 	/**
 	 * Saves the ResultTable in different file formats
 	 */
-	private void saveDiffToFiles(VNcboOntology ontologyVersionOld,
-			VNcboOntology ontologyVersionNew, ResultTable resultsTable)
+	private void saveDiffToFiles(OntologyBean ontologyVersionOld,
+			OntologyBean ontologyVersionNew, ResultTable resultsTable)
 			throws Exception {
 		String diffFileName = getDiffFileName(ontologyVersionOld
 				.getOntologyId(), ontologyVersionOld.getId(),
@@ -258,10 +257,10 @@ public class OntologyDiffManagerProtegeImpl extends
 	 */
 	private String getDiffFileName(Integer ontologyVersionId1,
 			Integer ontologyVersionId2) throws FileNotFoundException, Exception {
-		VNcboOntology ontologyVersion1 = ncboOntologyVersionDAO
-				.findOntologyVersion(ontologyVersionId1);
-		VNcboOntology ontologyVersion2 = ncboOntologyVersionDAO
-				.findOntologyVersion(ontologyVersionId2);
+		OntologyBean ontologyVersion1 = ontologyMetadataManagerProtege
+				.findOntologyById(ontologyVersionId1);
+		OntologyBean ontologyVersion2 = ontologyMetadataManagerProtege
+				.findOntologyById(ontologyVersionId2);
 
 		if (ontologyVersion1 == null || ontologyVersion2 == null) {
 			log.error("Ontology version id is invalid.");
@@ -332,27 +331,17 @@ public class OntologyDiffManagerProtegeImpl extends
 		return "." + format;
 	}
 
-	/**
-	 * @param ontologyService
-	 *            the ontologyService to set
-	 */
-
-	public void setOntologyService(OntologyService ontologyService) {
-		this.ontologyService = ontologyService;
-	}
-
-	/**
-	 * @param ncboOntologyVersionDAO
-	 *            the ncboOntologyVersionDAO to set
-	 */
-	public void setNcboOntologyVersionDAO(
-			CustomNcboOntologyVersionDAO ncboOntologyVersionDAO) {
-		this.ncboOntologyVersionDAO = ncboOntologyVersionDAO;
-	}
-
-	public boolean diffExists(VNcboOntology ontologyVersionOld,
-			VNcboOntology ontologyVersionNew) throws Exception {
+	public boolean diffExists(OntologyBean ontologyVersionOld,
+			OntologyBean ontologyVersionNew) throws Exception {
 		// TODO Auto-generated method stub
-		return false;
+		throw new UnsupportedOperationException();
+	}
+
+	/**
+	 * @param ontologyMetadataManagerProtege the ontologyMetadataManagerProtege to set
+	 */
+	public void setOntologyMetadataManagerProtege(
+			OntologyMetadataManager ontologyMetadataManagerProtege) {
+		this.ontologyMetadataManagerProtege = ontologyMetadataManagerProtege;
 	}
 }

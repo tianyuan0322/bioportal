@@ -1,9 +1,8 @@
 /*
-SQLyog Enterprise - MySQL GUI v7.12 
-MySQL - 5.0.45-community-nt-log : Database - bioportal
+SQLyog Enterprise - MySQL GUI v8.05 
+MySQL - 5.0.81-community-nt : Database - bioportal
 *********************************************************************
-*/
-
+*/
 
 /*!40101 SET NAMES utf8 */;
 
@@ -58,17 +57,6 @@ CREATE TABLE `ncbo_app_text_revision` (
   `date_revised` timestamp NOT NULL default CURRENT_TIMESTAMP
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
-/*Table structure for table `ncbo_l_additional_metadata` */
-
-DROP TABLE IF EXISTS `ncbo_l_additional_metadata`;
-
-CREATE TABLE `ncbo_l_additional_metadata` (
-  `id` int(11) NOT NULL,
-  `name` varchar(128) NOT NULL,
-  PRIMARY KEY  (`id`),
-  UNIQUE KEY `name` (`name`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
-
 /*Table structure for table `ncbo_l_app_text_datatype` */
 
 DROP TABLE IF EXISTS `ncbo_l_app_text_datatype`;
@@ -77,21 +65,6 @@ CREATE TABLE `ncbo_l_app_text_datatype` (
   `datatype_code` char(3) NOT NULL default '',
   `datatype` varchar(48) NOT NULL,
   PRIMARY KEY  (`datatype_code`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
-
-/*Table structure for table `ncbo_l_category` */
-
-DROP TABLE IF EXISTS `ncbo_l_category`;
-
-CREATE TABLE `ncbo_l_category` (
-  `id` int(11) NOT NULL,
-  `name` varchar(128) NOT NULL,
-  `obo_foundry_name` varchar(128) default NULL,
-  `parent_category_id` int(11) default NULL,
-  PRIMARY KEY  (`id`),
-  UNIQUE KEY `name` (`name`),
-  KEY `parent_category_id` (`parent_category_id`),
-  CONSTRAINT `FK_ncbo_l_category_ncbo_l_category_new` FOREIGN KEY (`parent_category_id`) REFERENCES `ncbo_l_category` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 /*Table structure for table `ncbo_l_role` */
@@ -117,51 +90,6 @@ CREATE TABLE `ncbo_l_status` (
   PRIMARY KEY  (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
-/*Table structure for table `ncbo_ontology` */
-
-DROP TABLE IF EXISTS `ncbo_ontology`;
-
-CREATE TABLE `ncbo_ontology` (
-  `id` int(11) NOT NULL auto_increment,
-  `obo_foundry_id` varchar(128) default NULL,
-  `is_manual` tinyint(1) NOT NULL default '0',
-  PRIMARY KEY  (`id`),
-  UNIQUE KEY `IDX_unique_obo_foundry_id` (`obo_foundry_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=1000 DEFAULT CHARSET=latin1 CHECKSUM=1 DELAY_KEY_WRITE=1 ROW_FORMAT=DYNAMIC;
-
-/*Table structure for table `ncbo_ontology_additional_version_metadata` */
-
-DROP TABLE IF EXISTS `ncbo_ontology_additional_version_metadata`;
-
-CREATE TABLE `ncbo_ontology_additional_version_metadata` (
-  `id` int(11) NOT NULL auto_increment,
-  `ontology_version_id` int(11) NOT NULL,
-  `additional_metadata_id` int(11) NOT NULL,
-  `additional_metadata_value` varchar(2048) default NULL,
-  PRIMARY KEY  (`id`),
-  UNIQUE KEY `IND_ontology_id_additional_metadata_id` (`ontology_version_id`,`additional_metadata_id`),
-  KEY `additional_metadata_id` (`additional_metadata_id`),
-  KEY `ontology_id` (`ontology_version_id`),
-  CONSTRAINT `FK_ncbo_ontology_additional_metadata_ncbo_ontology_version` FOREIGN KEY (`ontology_version_id`) REFERENCES `ncbo_ontology_version` (`id`),
-  CONSTRAINT `FK_ncbo_ontology_addl_metadata_ncbo_l_addl_metadata_new` FOREIGN KEY (`additional_metadata_id`) REFERENCES `ncbo_l_additional_metadata` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=1000 DEFAULT CHARSET=latin1 CHECKSUM=1 DELAY_KEY_WRITE=1 ROW_FORMAT=DYNAMIC;
-
-/*Table structure for table `ncbo_ontology_category` */
-
-DROP TABLE IF EXISTS `ncbo_ontology_category`;
-
-CREATE TABLE `ncbo_ontology_category` (
-  `id` int(11) NOT NULL auto_increment,
-  `ontology_version_id` int(11) NOT NULL,
-  `category_id` int(11) NOT NULL,
-  PRIMARY KEY  (`id`),
-  UNIQUE KEY `IND_ontology_id_category_id` (`ontology_version_id`,`category_id`),
-  KEY `category_id` (`category_id`),
-  KEY `ontology_id` (`ontology_version_id`),
-  CONSTRAINT `FK_ncbo_ontology_category` FOREIGN KEY (`ontology_version_id`) REFERENCES `ncbo_ontology_version` (`id`),
-  CONSTRAINT `FK_ncbo_ontology_category_ncbo_l_category_new` FOREIGN KEY (`category_id`) REFERENCES `ncbo_l_category` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=1000 DEFAULT CHARSET=latin1 CHECKSUM=1 DELAY_KEY_WRITE=1 ROW_FORMAT=DYNAMIC;
-
 /*Table structure for table `ncbo_ontology_file` */
 
 DROP TABLE IF EXISTS `ncbo_ontology_file`;
@@ -172,9 +100,8 @@ CREATE TABLE `ncbo_ontology_file` (
   `filename` varchar(128) NOT NULL,
   PRIMARY KEY  (`id`),
   UNIQUE KEY `ind_ontology_id_filename` (`ontology_version_id`,`filename`),
-  KEY `ontology_id_2` (`ontology_version_id`),
-  CONSTRAINT `FK_ncbo_ontology_file_ncbo_ontology_version` FOREIGN KEY (`ontology_version_id`) REFERENCES `ncbo_ontology_version` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=1000 DEFAULT CHARSET=latin1 CHECKSUM=1 DELAY_KEY_WRITE=1 ROW_FORMAT=DYNAMIC;
+  KEY `ontology_id_2` (`ontology_version_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1 CHECKSUM=1 DELAY_KEY_WRITE=1 ROW_FORMAT=DYNAMIC;
 
 /*Table structure for table `ncbo_ontology_load_queue` */
 
@@ -190,63 +117,8 @@ CREATE TABLE `ncbo_ontology_load_queue` (
   PRIMARY KEY  (`id`),
   KEY `FK_ncbo_ontology_load_queue_ontology_version_id` (`ontology_version_id`),
   KEY `FK_ncbo_ontology_load_queue_status_id` (`status_id`),
-  CONSTRAINT `FK_ncbo_ontology_load_queue_ontology_version_id` FOREIGN KEY (`ontology_version_id`) REFERENCES `ncbo_ontology_version` (`id`),
   CONSTRAINT `FK_ncbo_ontology_load_queue_status_id` FOREIGN KEY (`status_id`) REFERENCES `ncbo_l_status` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=1000 DEFAULT CHARSET=latin1 CHECKSUM=1 DELAY_KEY_WRITE=1 ROW_FORMAT=DYNAMIC;
-
-/*Table structure for table `ncbo_ontology_version` */
-
-DROP TABLE IF EXISTS `ncbo_ontology_version`;
-
-CREATE TABLE `ncbo_ontology_version` (
-  `id` int(11) NOT NULL auto_increment,
-  `ontology_id` int(11) NOT NULL,
-  `user_id` int(11) NOT NULL,
-  `internal_version_number` int(11) NOT NULL,
-  `version_number` varchar(64) NOT NULL,
-  `version_status` varchar(64) default NULL,
-  `file_path` varchar(2048) default NULL,
-  `is_remote` tinyint(1) NOT NULL,
-  `is_reviewed` tinyint(1) NOT NULL default '0',
-  `date_released` datetime NOT NULL,
-  `date_created` timestamp NOT NULL default CURRENT_TIMESTAMP,
-  `status_id` int(11) NOT NULL,
-  PRIMARY KEY  (`id`),
-  KEY `ncbo_ontology_fk_new` (`user_id`),
-  KEY `FK_ncbo_ontology_version_status_id` (`status_id`),
-  KEY `FK_ncbo_ontology_version_ontology_id` (`ontology_id`),
-  CONSTRAINT `FK_ncbo_ontology_ncbo_user` FOREIGN KEY (`user_id`) REFERENCES `ncbo_user` (`id`),
-  CONSTRAINT `FK_ncbo_ontology_version_ontology_id` FOREIGN KEY (`ontology_id`) REFERENCES `ncbo_ontology` (`id`),
-  CONSTRAINT `FK_ncbo_ontology_version_status_id` FOREIGN KEY (`status_id`) REFERENCES `ncbo_l_status` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=1000 DEFAULT CHARSET=latin1 CHECKSUM=1 DELAY_KEY_WRITE=1 ROW_FORMAT=DYNAMIC;
-
-/*Table structure for table `ncbo_ontology_version_metadata` */
-
-DROP TABLE IF EXISTS `ncbo_ontology_version_metadata`;
-
-CREATE TABLE `ncbo_ontology_version_metadata` (
-  `id` int(11) NOT NULL auto_increment,
-  `ontology_version_id` int(11) NOT NULL,
-  `display_label` varchar(128) NOT NULL,
-  `description` varchar(1024) default NULL,
-  `abbreviation` varchar(48) default NULL,
-  `format` varchar(50) NOT NULL,
-  `contact_name` varchar(128) default NULL,
-  `contact_email` varchar(128) default NULL,
-  `homepage` varchar(2048) default NULL,
-  `documentation` varchar(2048) default NULL,
-  `publication` varchar(2048) default NULL,
-  `urn` varchar(512) default NULL,
-  `coding_scheme` varchar(256) default NULL,
-  `is_foundry` tinyint(1) NOT NULL,
-  `target_terminologies` varchar(256) default NULL,
-  `synonym_slot` varchar(512) character set utf8 collate utf8_bin default NULL,
-  `preferred_name_slot` varchar(512) character set utf8 collate utf8_bin default NULL,
-  PRIMARY KEY  (`id`),
-  UNIQUE KEY `ontology_version_id` (`ontology_version_id`),
-  KEY `ontology_id` (`ontology_version_id`),
-  CONSTRAINT `FK_ncbo_ontology_version_metadata_ncbo_ontology_version` FOREIGN KEY (`ontology_version_id`) REFERENCES `ncbo_ontology_version` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=1000 DEFAULT CHARSET=latin1 CHECKSUM=1 DELAY_KEY_WRITE=1 ROW_FORMAT=DYNAMIC;
+) ENGINE=InnoDB DEFAULT CHARSET=latin1 CHECKSUM=1 DELAY_KEY_WRITE=1 ROW_FORMAT=DYNAMIC;
 
 /*Table structure for table `ncbo_user` */
 
@@ -433,45 +305,6 @@ BEGIN
 END */$$
 DELIMITER ;
 
-/* Procedure structure for procedure `sp_remove_ontology_by_display_label` */
-
-/*!50003 DROP PROCEDURE IF EXISTS  `sp_remove_ontology_by_display_label` */;
-
-DELIMITER $$
-
-/*!50003 CREATE DEFINER=`root`@`localhost` PROCEDURE `sp_remove_ontology_by_display_label`(
-	p_strDisplayLabel VARCHAR(128)
-)
-BEGIN
-		DECLARE done INT DEFAULT 0;
-		DECLARE ontologyVersionId INT;
-		DECLARE ontologyId INT DEFAULT -1;
-		DECLARE iterCount INT DEFAULT 1;
-		DECLARE cur CURSOR FOR SELECT ontology_version_id FROM ncbo_ontology_version_metadata WHERE LOWER(display_label) = LOWER(p_strDisplayLabel);
-		DECLARE CONTINUE HANDLER FOR NOT FOUND SET done = 1;
-		OPEN cur;
-		REPEAT
-			FETCH cur INTO ontologyVersionId;
-			IF iterCount = 1 THEN
-				SELECT ontology_id INTO ontologyId FROM ncbo_ontology_version WHERE id = ontologyVersionId;
-			END IF;
-			IF NOT done THEN
-				DELETE FROM ncbo_ontology_category WHERE ontology_version_id = ontologyVersionId;
-				DELETE FROM ncbo_ontology_file WHERE ontology_version_id = ontologyVersionId;
-				DELETE FROM ncbo_ontology_load_queue WHERE ontology_version_id = ontologyVersionId;
-				DELETE FROM ncbo_ontology_version_metadata WHERE ontology_version_id = ontologyVersionId;
-				DELETE FROM ncbo_ontology_version WHERE ontology_id = ontologyId;
-   			END IF;
-   			
-   			SET iterCount := iterCount + 1;
-		UNTIL done END REPEAT;
-		
-		CLOSE cur;
-		
-		DELETE FROM ncbo_ontology WHERE id = ontologyId;
-	END */$$
-DELIMITER ;
-
 /* Procedure structure for procedure `sp_update_app_text_record` */
 
 /*!50003 DROP PROCEDURE IF EXISTS  `sp_update_app_text_record` */;
@@ -536,52 +369,6 @@ BEGIN
 	SET p_strMessage := "SUCCESS"; 
 END */$$
 DELIMITER ;
-
-/*Table structure for table `v_ncbo_ontology` */
-
-DROP TABLE IF EXISTS `v_ncbo_ontology`;
-
-/*!50001 DROP VIEW IF EXISTS `v_ncbo_ontology` */;
-/*!50001 DROP TABLE IF EXISTS `v_ncbo_ontology` */;
-
-/*!50001 CREATE TABLE `v_ncbo_ontology` (
-  `id` int(11) NOT NULL default '0',
-  `ontology_id` int(11) NOT NULL,
-  `user_id` int(11) NOT NULL,
-  `internal_version_number` int(11) NOT NULL,
-  `version_number` varchar(64) NOT NULL,
-  `version_status` varchar(64) default NULL,
-  `file_path` varchar(2048) default NULL,
-  `is_remote` tinyint(1) NOT NULL,
-  `is_reviewed` tinyint(1) NOT NULL default '0',
-  `status_id` int(11) NOT NULL,
-  `date_created` timestamp NOT NULL default '0000-00-00 00:00:00',
-  `date_released` datetime NOT NULL,
-  `obo_foundry_id` varchar(128) default NULL,
-  `is_manual` tinyint(1) NOT NULL default '0',
-  `display_label` varchar(128) NOT NULL,
-  `description` varchar(1024) default NULL,
-  `abbreviation` varchar(48) default NULL,
-  `format` varchar(50) NOT NULL,
-  `contact_name` varchar(128) default NULL,
-  `contact_email` varchar(128) default NULL,
-  `homepage` varchar(2048) default NULL,
-  `documentation` varchar(2048) default NULL,
-  `publication` varchar(2048) default NULL,
-  `urn` varchar(512) default NULL,
-  `coding_scheme` varchar(256) default NULL,
-  `target_terminologies` varchar(256) default NULL,
-  `is_foundry` tinyint(1) NOT NULL,
-  `synonym_slot` varchar(512) character set utf8 collate utf8_bin default NULL,
-  `preferred_name_slot` varchar(512) character set utf8 collate utf8_bin default NULL
-) ENGINE=InnoDB DEFAULT CHARSET=latin1 */;
-
-/*View structure for view v_ncbo_ontology */
-
-/*!50001 DROP TABLE IF EXISTS `v_ncbo_ontology` */;
-/*!50001 DROP VIEW IF EXISTS `v_ncbo_ontology` */;
-
-/*!50001 CREATE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` SQL SECURITY DEFINER VIEW `v_ncbo_ontology` AS select `ov`.`id` AS `id`,`ov`.`ontology_id` AS `ontology_id`,`ov`.`user_id` AS `user_id`,`ov`.`internal_version_number` AS `internal_version_number`,`ov`.`version_number` AS `version_number`,`ov`.`version_status` AS `version_status`,`ov`.`file_path` AS `file_path`,`ov`.`is_remote` AS `is_remote`,`ov`.`is_reviewed` AS `is_reviewed`,`ov`.`status_id` AS `status_id`,`ov`.`date_created` AS `date_created`,`ov`.`date_released` AS `date_released`,`o`.`obo_foundry_id` AS `obo_foundry_id`,`o`.`is_manual` AS `is_manual`,`ovm`.`display_label` AS `display_label`,`ovm`.`description` AS `description`,`ovm`.`abbreviation` AS `abbreviation`,`ovm`.`format` AS `format`,`ovm`.`contact_name` AS `contact_name`,`ovm`.`contact_email` AS `contact_email`,`ovm`.`homepage` AS `homepage`,`ovm`.`documentation` AS `documentation`,`ovm`.`publication` AS `publication`,`ovm`.`urn` AS `urn`,`ovm`.`coding_scheme` AS `coding_scheme`,`ovm`.`target_terminologies` AS `target_terminologies`,`ovm`.`is_foundry` AS `is_foundry`,`ovm`.`synonym_slot` AS `synonym_slot`,`ovm`.`preferred_name_slot` AS `preferred_name_slot` from ((`ncbo_ontology` `o` join `ncbo_ontology_version` `ov` on((`o`.`id` = `ov`.`ontology_id`))) join `ncbo_ontology_version_metadata` `ovm` on((`ov`.`id` = `ovm`.`ontology_version_id`))) */;
 
 /*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
 /*!40014 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS */;

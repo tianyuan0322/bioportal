@@ -16,7 +16,7 @@ import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.ncbo.stanford.domain.custom.entity.VNcboOntology;
+import org.ncbo.stanford.bean.OntologyBean;
 
 public interface OntologyDiffManager {
 	/**
@@ -27,8 +27,8 @@ public interface OntologyDiffManager {
 	 * 
 	 * @throws Exception
 	 */
-	public void createDiff(VNcboOntology ontologyVersionOld,
-			VNcboOntology ontologyVersionNew) throws Exception;
+	public void createDiff(OntologyBean ontologyVersionOld,
+			OntologyBean ontologyVersionNew) throws Exception;
 
 	/**
 	 * Creates a diff between the ontology that has just been loaded and its
@@ -70,7 +70,7 @@ public interface OntologyDiffManager {
 	 * @throws Exception
 	 */
 
-	public boolean diffExists (VNcboOntology ontologyVersionOld,
-			VNcboOntology ontologyVersionNew) throws Exception;
+	public boolean diffExists (OntologyBean ontologyVersionOld,
+			OntologyBean ontologyVersionNew) throws Exception;
 
 }

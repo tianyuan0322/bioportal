@@ -21,6 +21,7 @@ import org.apache.commons.logging.LogFactory;
 import org.apache.commons.validator.GenericValidator;
 import org.ncbo.stanford.bean.CategoryBean;
 import org.ncbo.stanford.bean.OntologyBean;
+import org.ncbo.stanford.bean.OntologyViewBean;
 import org.ncbo.stanford.bean.UserBean;
 import org.ncbo.stanford.bean.concept.ClassBean;
 import org.ncbo.stanford.bean.concept.InstanceBean;
@@ -451,6 +452,8 @@ public class XMLSerializationServiceImpl implements XMLSerializationService {
 	private void setAliases(XStream xmlSerializer) {
 		xmlSerializer.alias(MessageUtils.getMessage("entity.ontologybean"),
 				OntologyBean.class);
+		xmlSerializer.alias(MessageUtils.getMessage("entity.ontologyviewbean"),
+				OntologyViewBean.class);
 		xmlSerializer.alias(MessageUtils.getMessage("entity.userbean"),
 				UserBean.class);
 

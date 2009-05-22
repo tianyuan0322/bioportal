@@ -18,9 +18,9 @@ import org.LexGrid.concepts.Definition;
 import org.LexGrid.concepts.Presentation;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.ncbo.stanford.bean.OntologyBean;
 import org.ncbo.stanford.bean.search.LexGridSearchProperty;
 import org.ncbo.stanford.bean.search.SearchIndexBean;
-import org.ncbo.stanford.domain.custom.entity.VNcboOntology;
 import org.ncbo.stanford.enumeration.SearchRecordTypeEnum;
 import org.ncbo.stanford.manager.AbstractOntologyManagerLexGrid;
 import org.ncbo.stanford.manager.search.OntologySearchManager;
@@ -50,7 +50,7 @@ public class OntologySearchManagerLexGridImpl extends
 	 * @throws Exception
 	 */
 	public void indexOntology(LuceneIndexWriterWrapper writer,
-			VNcboOntology ontology) throws Exception {
+			OntologyBean ontology) throws Exception {
 		try {
 			Integer ontologyVersionId = ontology.getId();
 			Integer ontologyId = ontology.getOntologyId();

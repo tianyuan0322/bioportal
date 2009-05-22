@@ -8,15 +8,15 @@ import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.ncbo.stanford.domain.custom.entity.VNcboOntology;
+import org.ncbo.stanford.bean.OntologyBean;
 import org.ncbo.stanford.manager.AbstractOntologyManagerLexGrid;
 import org.ncbo.stanford.manager.diff.OntologyDiffManager;
 
 public class OntologyDiffManagerLexGridImpl extends
 		AbstractOntologyManagerLexGrid implements OntologyDiffManager {
 
-	public void createDiff(VNcboOntology ontologyVersionOld,
-			VNcboOntology ontologyVersionNew) throws Exception {
+	public void createDiff(OntologyBean ontologyVersionOld,
+			OntologyBean ontologyVersionNew) throws Exception {
 		throw new UnsupportedOperationException();
 	}
 
@@ -35,9 +35,8 @@ public class OntologyDiffManagerLexGridImpl extends
 		throw new UnsupportedOperationException();
 	}
 
-	public boolean diffExists(VNcboOntology ontologyVersionOld,
-			VNcboOntology ontologyVersionNew) throws Exception {
-		// TODO Auto-generated method stub
-		return false;
+	public boolean diffExists(OntologyBean ontologyVersionOld,
+			OntologyBean ontologyVersionNew) throws Exception {
+		throw new UnsupportedOperationException();
 	}
 }

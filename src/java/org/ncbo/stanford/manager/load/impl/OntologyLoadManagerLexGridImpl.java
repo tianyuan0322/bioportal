@@ -47,7 +47,6 @@ import org.LexGrid.LexOnt.CsmfVersion;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.ncbo.stanford.bean.OntologyBean;
-import org.ncbo.stanford.domain.generated.NcboOntologyVersionMetadata;
 import org.ncbo.stanford.manager.AbstractOntologyManagerLexGrid;
 import org.ncbo.stanford.manager.load.OntologyLoadManager;
 import org.ncbo.stanford.util.constants.ApplicationConstants;
@@ -174,25 +173,11 @@ public class OntologyLoadManagerLexGridImpl extends
 				version = ref.getCodingSchemeVersion();
 			}
 
-			// Update the NCBO Metadata table with the unique LexGrid url and
-			// version for the ontology
-			NcboOntologyVersionMetadata ncboMetadata = ncboOntologyVersionDAO
-					.findOntologyMetadataById(ob.getId());
-
-			if (ncboMetadata != null) {
-				String urnAndVersion = urn + "|" + version;
-				ncboMetadata.setCodingScheme(urnAndVersion);
-				log
-						.debug("Updating the NcboOntologyMetadata with the codingScheme name="
-								+ urnAndVersion);
-				ncboMetadata = ncboOntologyVersionMetadataDAO
-						.saveNcboOntologyMetadata(ncboMetadata);
-				ob.setCodingScheme(urnAndVersion);
-			} else {
-				String message = "Could not update the codingScheme informtion into NcboOntologyMetadata for ontologyversionid="
-						+ ob.getId();
-				log.warn(message);
-			}
+			String urnAndVersion = urn + "|" + version;
+			ob.setCodingScheme(urnAndVersion);
+			log.debug("Updating the NcboOntologyMetadata with the codingScheme name="
+							+ urnAndVersion);
+			ontologyMetadataManagerProtege.saveOntology(ob);
 		} else {
 			if (status.getErrorsLogged().booleanValue()) {
 				String error_message = "";
@@ -237,13 +222,7 @@ public class OntologyLoadManagerLexGridImpl extends
 			lbsm.deactivateCodingSchemeVersion(acsvr, null);
 			lbsm.removeCodingSchemeVersion(acsvr);
 			ontologyBean.setCodingScheme(null);
-			NcboOntologyVersionMetadata ncboMetadata = ncboOntologyVersionDAO
-					.findOntologyMetadataById(ontologyBean.getId());
-
-			if (ncboMetadata != null) {
-				ncboMetadata.setCodingScheme(null);
-				ncboOntologyVersionMetadataDAO.save(ncboMetadata);
-			}
+			ontologyMetadataManagerProtege.saveOntology(ontologyBean);
 		}
 	}
 

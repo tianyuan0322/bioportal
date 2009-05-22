@@ -21,10 +21,10 @@ import org.apache.lucene.search.Sort;
 import org.apache.lucene.search.SortField;
 import org.apache.lucene.search.TermQuery;
 import org.apache.lucene.search.TopFieldDocs;
+import org.ncbo.stanford.bean.OntologyBean;
 import org.ncbo.stanford.bean.search.SearchBean;
 import org.ncbo.stanford.bean.search.SearchIndexBean;
 import org.ncbo.stanford.bean.search.SearchResultListBean;
-import org.ncbo.stanford.domain.custom.entity.VNcboOntology;
 import org.ncbo.stanford.enumeration.SearchRecordTypeEnum;
 import org.ncbo.stanford.util.cache.expiration.system.ExpirationSystem;
 
@@ -113,6 +113,20 @@ public abstract class AbstractSearchService {
 						ontologyDisplayLabel);
 
 				uniqueDocs.add(conceptId);
+				
+				 System.out.println(hits[i].score
+				 + " | "
+				 + searchResult.getContents()
+				 + ", Type: "
+				 + searchResult.getRecordType()
+				 + ", PrefName: "
+				 + searchResult.getPreferredName()
+				 + ", OntologyId: "
+				 + searchResult.getOntologyDisplayLabel()
+				 + ", Concept Id: "
+				 + searchResult.getConceptIdShort()
+				 );
+				
 			}
 		}
 
@@ -153,10 +167,10 @@ public abstract class AbstractSearchService {
 	 * @param ontologies
 	 * @return
 	 */
-	protected String getOntologyListDisplay(List<VNcboOntology> ontologies) {
+	protected String getOntologyListDisplay(List<OntologyBean> ontologies) {
 		StringBuffer sb = new StringBuffer(0);
 
-		for (VNcboOntology ontology : ontologies) {
+		for (OntologyBean ontology : ontologies) {
 			sb.append(getOntologyDisplay(ontology.getId(), ontology
 					.getOntologyId(), ontology.getDisplayLabel(), ontology
 					.getFormat()));

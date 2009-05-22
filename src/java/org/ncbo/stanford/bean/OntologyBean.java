@@ -9,19 +9,11 @@ import java.util.List;
 import java.util.Set;
 
 import org.apache.commons.fileupload.FileItem;
-import org.ncbo.stanford.domain.custom.entity.VNcboOntology;
-import org.ncbo.stanford.domain.generated.NcboLCategory;
 import org.ncbo.stanford.domain.generated.NcboLStatus;
-import org.ncbo.stanford.domain.generated.NcboOntology;
-import org.ncbo.stanford.domain.generated.NcboOntologyCategory;
 import org.ncbo.stanford.domain.generated.NcboOntologyFile;
 import org.ncbo.stanford.domain.generated.NcboOntologyLoadQueue;
-import org.ncbo.stanford.domain.generated.NcboOntologyVersion;
-import org.ncbo.stanford.domain.generated.NcboOntologyVersionMetadata;
-import org.ncbo.stanford.domain.generated.NcboUser;
 import org.ncbo.stanford.util.MessageUtils;
 import org.ncbo.stanford.util.constants.ApplicationConstants;
-import org.ncbo.stanford.util.helper.StringHelper;
 
 public class OntologyBean {
 
@@ -66,330 +58,48 @@ public class OntologyBean {
 	// destination directory
 	private String filePath;
 
-	/**
-	 * Populates the OntologyBean with data from a NcboOntology View
-	 * 
-	 * @param ncboOntology
-	 */
-	public void populateFromEntity(VNcboOntology ncboOntology) {
-		if (ncboOntology != null) {
-			setId(ncboOntology.getId());
-			setOntologyId(ncboOntology.getOntologyId());
-			setUserId(ncboOntology.getUserId());
-			setInternalVersionNumber(ncboOntology.getInternalVersionNumber());
-			setVersionNumber(ncboOntology.getVersionNumber());
-			setVersionStatus(ncboOntology.getVersionStatus());
-			setFilePath(ncboOntology.getFilePath());
-			setIsRemote(ncboOntology.getIsRemote());
-			setIsReviewed(ncboOntology.getIsReviewed());
-			setStatusId(ncboOntology.getStatusId());
-			setDateCreated(ncboOntology.getDateCreated());
-			setDateReleased(ncboOntology.getDateReleased());
-			setOboFoundryId(ncboOntology.getOboFoundryId());
-			setIsManual(ncboOntology.getIsManual());
-			setDisplayLabel(ncboOntology.getDisplayLabel());
-			setDescription(ncboOntology.getDescription());
-			setAbbreviation(ncboOntology.getAbbreviation());
-			setFormat(ncboOntology.getFormat());
-			setContactName(ncboOntology.getContactName());
-			setContactEmail(ncboOntology.getContactEmail());
-			setHomepage(ncboOntology.getHomepage());
-			setDocumentation(ncboOntology.getDocumentation());
-			setPublication(ncboOntology.getPublication());
-			setUrn(ncboOntology.getUrn());
-			setCodingScheme(ncboOntology.getCodingScheme());
-			setIsFoundry(ncboOntology.getIsFoundry());
-			setTargetTerminologies(ncboOntology.getTargetTerminologies());
-			setSynonymSlot(ncboOntology.getSynonymSlot());
-			setPreferredNameSlot(ncboOntology.getPreferredNameSlot());
-
-			populateFilenamesFromEntity(ncboOntology);
-			populateCategoryIdsFromEntity(ncboOntology);
-		}
-	}
-
-	private void populateFilenamesFromEntity(VNcboOntology ncboOntology) {
-		Collection<NcboOntologyFile> files = ncboOntology
-				.getNcboOntologyFiles();
-
-		for (NcboOntologyFile f : files) {
-			filenames.add(f.getFilename());
-		}
-	}
-
-	private void populateCategoryIdsFromEntity(VNcboOntology ncboOntology) {
-		Collection<NcboOntologyCategory> categories = ncboOntology
-				.getNcboOntologyCategories();
-
-		for (NcboOntologyCategory c : categories) {
-			categoryIds.add(c.getNcboLCategory().getId());
-		}
-	}
-
-	/**
-	 * Populates a NcboOntologyMetadata Entity from this ontologyBean.
-	 * OntologyVersion should have been populated from OntologyBean before
-	 * making this call.
-	 * 
-	 * @param ontologyVersion
-	 */
-	public void populateToMetadataEntity(NcboOntologyVersionMetadata metadata,
-			NcboOntologyVersion ontologyVersion) {
-		if (metadata != null) {
-			Set<NcboOntologyVersionMetadata> ncboOntologyMetadataSet = new HashSet<NcboOntologyVersionMetadata>();
-
-			metadata.setNcboOntologyVersion(ontologyVersion);
-
-			if (displayLabel != null) {
-				metadata
-						.setDisplayLabel(StringHelper
-								.isNullOrNullString(displayLabel) ? null
-								: displayLabel);
-			}
-
-			if (format != null) {
-				metadata
-						.setFormat(StringHelper.isNullOrNullString(format) ? null
-								: format);
-			}
-
-			if (description != null) {
-				metadata.setDescription(StringHelper
-						.isNullOrNullString(description) ? null : description);
-			}
-
-			if (abbreviation != null) {
-				metadata
-						.setAbbreviation(StringHelper
-								.isNullOrNullString(abbreviation) ? null
-								: abbreviation);
-			}
-
-			if (contactName != null) {
-				metadata.setContactName(StringHelper
-						.isNullOrNullString(contactName) ? null : contactName);
-			}
-
-			if (contactEmail != null) {
-				metadata
-						.setContactEmail(StringHelper
-								.isNullOrNullString(contactEmail) ? null
-								: contactEmail);
-			}
-
-			if (documentation != null) {
-				metadata.setDocumentation(StringHelper
-						.isNullOrNullString(documentation) ? null
-						: documentation);
-			}
-
-			if (homepage != null) {
-				metadata
-						.setHomepage(StringHelper.isNullOrNullString(homepage) ? null
-								: homepage);
-			}
-
-			if (isFoundry != null) {
-				metadata.setIsFoundry(isFoundry);
-			}
-
-			if (publication != null) {
-				metadata.setPublication(StringHelper
-						.isNullOrNullString(publication) ? null : publication);
-			}
-
-			if (urn != null) {
-				metadata.setUrn(StringHelper.isNullOrNullString(urn) ? null
-						: urn);
-			}
-
-			if (codingScheme != null) {
-				metadata
-						.setCodingScheme(StringHelper
-								.isNullOrNullString(codingScheme) ? null
-								: codingScheme);
-			}
-
-			if (targetTerminologies != null) {
-				metadata.setTargetTerminologies(StringHelper
-						.isNullOrNullString(targetTerminologies) ? null
-						: targetTerminologies);
-			}
-
-			if (synonymSlot != null) {
-				metadata.setSynonymSlot(StringHelper
-						.isNullOrNullString(synonymSlot) ? null : synonymSlot);
-			}
-
-			if (preferredNameSlot != null) {
-				metadata.setPreferredNameSlot(StringHelper
-						.isNullOrNullString(preferredNameSlot) ? null
-						: preferredNameSlot);
-			}
-
-			ncboOntologyMetadataSet.add(metadata);
-			ontologyVersion
-					.setNcboOntologyVersionMetadatas(ncboOntologyMetadataSet);
-		}
-	}
-
-	/**
-	 * Populates NcboOntology Entity from this OntologyBean
-	 * 
-	 * @param ncboOntology
-	 */
-	public void populateToOntologyEntity(NcboOntology ont) {
-		if (ont != null) {
-			if (ontologyId != null) {
-				ont.setId(ontologyId);
-			}
-
-			if (isManual != null) {
-				ont.setIsManual(isManual);
-			}
-
-			// This overwrites the obo foundry id with nothing,
-			// moving it to line 535 of OntologyServiceImpl since
-			// it should only be set on new ontologies
-			// ont.setOboFoundryId(getOboFoundryId());
-		}
-	}
-
-	/**
-	 * Populates NcboOntologyVersion Entity from this OntologyBean
-	 * 
-	 * @param ncboOntology
-	 */
-	public void populateToVersionEntity(NcboOntologyVersion ontologyVersion) {
-		if (ontologyVersion != null) {
-			if (id != null) {
-				ontologyVersion.setId(id);
-			}
-
-			if (ontologyId != null) {
-				NcboOntology ont = new NcboOntology();
-				ont.setId(ontologyId);
-				ontologyVersion.setNcboOntology(ont);
-			}
-
-			if (userId != null) {
-				NcboUser ncboUser = new NcboUser();
-				ncboUser.setId(userId);
-				ontologyVersion.setNcboUser(ncboUser);
-			}
-
-			if (versionNumber != null) {
-				ontologyVersion.setVersionNumber(StringHelper
-						.isNullOrNullString(versionNumber) ? null
-						: versionNumber);
-			}
-
-			// do not override versionStatus if blank
-			if (versionStatus != null) {
-				ontologyVersion.setVersionStatus(StringHelper
-						.isNullOrNullString(versionStatus) ? null
-						: versionStatus);
-			}
-
-			// do not override internalVersionNumber if blank
-			if (internalVersionNumber != null) {
-				ontologyVersion.setInternalVersionNumber(internalVersionNumber);
-			}
-
-			if (isRemote != null) {
-				ontologyVersion.setIsRemote(isRemote);
-			}
-
-			if (isReviewed != null) {
-				ontologyVersion.setIsReviewed(isReviewed);
-			}
-
-			ontologyVersion.setDateCreated((dateCreated != null) ? dateCreated
-					: Calendar.getInstance().getTime());
-
-			if (dateReleased != null) {
-				ontologyVersion.setDateReleased(dateReleased);
-			}
-
-			// populate status, if necessary
-			populateStatusToVersionEntity(ontologyVersion);
-
-			// do not override filePath if blank
-			if (filePath != null) {
-				ontologyVersion.setFilePath(StringHelper
-						.isNullOrNullString(filePath) ? null : filePath);
-			}
-		}
-	}
-
-	/**
-	 * Populate status in the version entity
-	 */
-	private void populateStatusToVersionEntity(
-			NcboOntologyVersion ontologyVersion) {
-		NcboLStatus status = null;
-
-		if (statusId != null) {
-			status = new NcboLStatus();
-			status.setId(statusId);
-			ontologyVersion.setNcboLStatus(status);
-		} else if (ontologyVersion.getNcboLStatus() == null) {
-			status = new NcboLStatus();
-			populateDefaultStatus(status);
-			ontologyVersion.setNcboLStatus(status);
-		}
-	}
+	// views
+	private List<Integer> hasViews = new ArrayList<Integer>(0); 
 
 	/**
 	 * Populates the OntologyBean to a NcboOntologyFile Entity. OntologyVersion
 	 * should have been populated from OntologyBean before making this call.
 	 * 
-	 * @param ncboOntology
+	 * @param ontologyFileList
 	 */
 
-	public void populateToFileEntity(List<NcboOntologyFile> ontologyFileList,
-			NcboOntologyVersion ontologyVersion) {
-		List<String> fileNameList = this.getFilenames();
-		Set<NcboOntologyFile> ncboOntologyFileSet = new HashSet<NcboOntologyFile>();
-
-		for (String fileName : fileNameList) {
+	public void populateToFileEntity(List<NcboOntologyFile> ontologyFileList) {		
+		for (String fileName : filenames) {
 			NcboOntologyFile ontologyFile = new NcboOntologyFile();
 			ontologyFile.setFilename(fileName);
-			ontologyFile.setNcboOntologyVersion(ontologyVersion);
-
+			ontologyFile.setOntologyVersionId(id);
 			ontologyFileList.add(ontologyFile);
-			ncboOntologyFileSet.add(ontologyFile);
 		}
-
-		ontologyVersion.setNcboOntologyFiles(ncboOntologyFileSet);
 	}
 
 	/**
-	 * Populates the OntologyBean to a NcboOntologyCategory Entity.
-	 * OntologyVersion should have been populated from OntologyBean before
-	 * making this call.
-	 * 
-	 * @param ncboOntology
+	 * This method should execute all the updates necessary in the ontological metadata implementation
+	 * that were previously done in {@link #populateToVersionEntity(NcboOntologyVersion)} method
 	 */
-	public void populateToCategoryEntity(
-			List<NcboOntologyCategory> ontologyCategoryList,
-			NcboOntologyVersion ontologyVersion) {
-		Set<NcboOntologyCategory> ncboOntologyCategorySet = new HashSet<NcboOntologyCategory>();
-
-		for (Integer categoryId : categoryIds) {
-			NcboOntologyCategory ontologyCategory = new NcboOntologyCategory();
-			NcboLCategory ncboLCategory = new NcboLCategory();
-			ncboLCategory.setId(categoryId);
-			ontologyCategory.setNcboLCategory(ncboLCategory);
-			ontologyCategory.setNcboOntologyVersion(ontologyVersion);
-
-			ontologyCategoryList.add(ontologyCategory);
-			ncboOntologyCategorySet.add(ontologyCategory);
-		}
-
-		ontologyVersion.setNcboOntologyCategories(ncboOntologyCategorySet);
+	public void updateIfNecessary() {
+		//TODO: implement
 	}
 
+	/**
+	 * NOTE: This method should replicate the {@link #populateDefaultStatus(NcboLStatus)}
+	 * method an is to be used in the ontological metadata implementation
+	 *  
+	 * Returns default status, i.e. "1"(waiting) for local
+	 * upload, "5"(notapplicable) for remote.
+	 */
+	public Integer getDefaultStatus() {
+		if (this.isRemote()) {
+			return new Integer(MessageUtils.getMessage("ncbo.status.notapplicable"));
+		} else {
+			return new Integer(MessageUtils.getMessage("ncbo.status.waiting"));
+		}
+	}
+	
 	/**
 	 * Populates a NcboOntologyLoadQueue Entity from this ontologyBean.
 	 * OntologyVersion should have been populated from OntologyBean before
@@ -399,12 +109,12 @@ public class OntologyBean {
 	 *            NcboOntologyVersion
 	 */
 	public void populateToLoadQueueEntity(NcboOntologyLoadQueue loadQueue,
-			NcboOntologyVersion ontologyVersion) {
+			Integer ontologyVersionId) {
 		if (loadQueue != null) {
 			Set<NcboOntologyLoadQueue> ncboOntologyLoadQueueSet = new HashSet<NcboOntologyLoadQueue>();
 
 			// OntologyVersion object
-			loadQueue.setNcboOntologyVersion(ontologyVersion);
+			loadQueue.setOntologyVersionId(ontologyVersionId);
 
 			// Set NcboStatus
 			NcboLStatus status = new NcboLStatus();
@@ -414,7 +124,6 @@ public class OntologyBean {
 			loadQueue.setDateCreated(Calendar.getInstance().getTime());
 
 			ncboOntologyLoadQueueSet.add(loadQueue);
-			ontologyVersion.setNcboOntologyLoadQueues(ncboOntologyLoadQueueSet);
 		}
 	}
 
@@ -976,5 +685,19 @@ public class OntologyBean {
 	 */
 	public String getDescription() {
 		return description;
+	}
+
+	/**
+	 * @return the hasViews
+	 */
+	public List<Integer> getHasViews() {
+		return hasViews;
+	}
+
+	/**
+	 * @param hasViews the hasViews to set
+	 */
+	public void setHasViews(List<Integer> hasViews) {
+		this.hasViews = hasViews;
 	}
 }

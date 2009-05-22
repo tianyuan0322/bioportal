@@ -3,13 +3,12 @@
  */
 package org.ncbo.stanford.manager.impl;
 
-import org.junit.*;
-import org.ncbo.stanford.*;
-import org.ncbo.stanford.domain.custom.dao.*;
-import org.ncbo.stanford.domain.custom.entity.*;
-import org.ncbo.stanford.manager.diff.impl.*;
-import org.springframework.beans.factory.annotation.*;
-
+import org.junit.Test;
+import org.ncbo.stanford.AbstractBioPortalTest;
+import org.ncbo.stanford.bean.OntologyBean;
+import org.ncbo.stanford.manager.diff.impl.OntologyDiffManagerProtegeImpl;
+import org.ncbo.stanford.manager.metadata.OntologyMetadataManager;
+import org.springframework.beans.factory.annotation.Autowired;
 
 /**
  * Tests comparing ontologies using PromptDiff
@@ -21,34 +20,34 @@ public class OntologyDiffProtegeImplTest extends AbstractBioPortalTest {
 
 	private final static int OLD_VERSION_ID = 39522;
 	private final static int NEW_VERSION_ID = 39523;
-	
+
 	private final static int ONTOLOGY_ID = 1262;
 
+	@Autowired
+	private OntologyMetadataManager ontologyMetadataManagerProtege;
 
 	@Autowired
-	CustomNcboOntologyVersionDAO ncboOntologyVersionDAO;
-	
-	@Autowired
-	OntologyDiffManagerProtegeImpl diffManagerProtege;
-	
+	private OntologyDiffManagerProtegeImpl diffManagerProtege;
 
 	@Test
-	public void testDiff () throws Exception {
-		System.out.println ("Starting diff test.");
+	public void testDiff() throws Exception {
+		System.out.println("Starting diff test.");
 
-		VNcboOntology oldVersion = 	ncboOntologyVersionDAO.findOntologyVersion(OLD_VERSION_ID);
+		OntologyBean oldVersion = ontologyMetadataManagerProtege
+				.findOntologyById(OLD_VERSION_ID);
 
-		VNcboOntology newVersion = ncboOntologyVersionDAO.findOntologyVersion(NEW_VERSION_ID);
-		
-		System.out.println ("old: " + oldVersion + ", new: " + newVersion);
+		OntologyBean newVersion = ontologyMetadataManagerProtege
+				.findOntologyById(NEW_VERSION_ID);
+
+		System.out.println("old: " + oldVersion + ", new: " + newVersion);
 		diffManagerProtege.createDiff(oldVersion, newVersion);
 	}
 
 	@Test
-	public void testDiffByOntologyId () throws Exception {
-		System.out.println ("Starting diff test.");
+	public void testDiffByOntologyId() throws Exception {
+		System.out.println("Starting diff test.");
 
-		diffManagerProtege.createDiffForTwoLatestVersions(new Integer (ONTOLOGY_ID));
+		diffManagerProtege.createDiffForTwoLatestVersions(new Integer(
+				ONTOLOGY_ID));
 	}
-
 }

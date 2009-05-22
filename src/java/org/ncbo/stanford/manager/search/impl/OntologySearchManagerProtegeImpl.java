@@ -9,9 +9,9 @@ import java.util.Set;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.ncbo.stanford.bean.OntologyBean;
 import org.ncbo.stanford.bean.search.ProtegeSearchFrame;
 import org.ncbo.stanford.bean.search.SearchIndexBean;
-import org.ncbo.stanford.domain.custom.entity.VNcboOntology;
 import org.ncbo.stanford.enumeration.SearchRecordTypeEnum;
 import org.ncbo.stanford.manager.AbstractOntologyManagerProtege;
 import org.ncbo.stanford.manager.search.OntologySearchManager;
@@ -54,7 +54,7 @@ public class OntologySearchManagerProtegeImpl extends
 	 */
 	@SuppressWarnings("unchecked")
 	public void indexOntology(LuceneIndexWriterWrapper writer,
-			VNcboOntology ontology) throws Exception {
+			OntologyBean ontology) throws Exception {
 		KnowledgeBase kb = getKnowledgeBaseInstance(ontology);
 		boolean owlMode = kb instanceof OWLModel;
 		FrameStore fs = ((DefaultKnowledgeBase) kb).getTerminalFrameStore();
@@ -122,7 +122,7 @@ public class OntologySearchManagerProtegeImpl extends
 	 * @return
 	 * @throws Exception
 	 */
-	private KnowledgeBase getKnowledgeBaseInstance(VNcboOntology ontology)
+	private KnowledgeBase getKnowledgeBaseInstance(OntologyBean ontology)
 			throws Exception {
 		KnowledgeBase kb = null;
 

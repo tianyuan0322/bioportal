@@ -11,8 +11,8 @@ import java.util.Set;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.ncbo.stanford.bean.OntologyBean;
 import org.ncbo.stanford.bean.concept.ClassBean;
-import org.ncbo.stanford.domain.custom.entity.VNcboOntology;
 import org.ncbo.stanford.manager.AbstractOntologyManagerProtege;
 import org.ncbo.stanford.manager.retrieval.OntologyRetrievalManager;
 import org.ncbo.stanford.util.constants.ApplicationConstants;
@@ -62,7 +62,7 @@ public class OntologyRetrievalManagerProtegeImpl extends
 	/**
 	 * Get the root concept for the specified ontology.
 	 */
-	public ClassBean findRootConcept(VNcboOntology ontologyVersion) {
+	public ClassBean findRootConcept(OntologyBean ontologyVersion) {
 		KnowledgeBase kb = getKnowledgeBase(ontologyVersion);
 		Slot synonymSlot = getSynonymSlot(kb, ontologyVersion.getSynonymSlot());
 
@@ -77,7 +77,7 @@ public class OntologyRetrievalManagerProtegeImpl extends
 		return null;
 	}
 
-	public ClassBean findConcept(VNcboOntology ontologyVersion, String conceptId) {
+	public ClassBean findConcept(OntologyBean ontologyVersion, String conceptId) {
 		KnowledgeBase kb = getKnowledgeBase(ontologyVersion);
 		Slot synonymSlot = getSynonymSlot(kb, ontologyVersion.getSynonymSlot());
 		Cls owlClass = getCls(conceptId, kb);
@@ -89,7 +89,7 @@ public class OntologyRetrievalManagerProtegeImpl extends
 		return null;
 	}
 
-	public ClassBean findPathFromRoot(VNcboOntology ontologyVersion,
+	public ClassBean findPathFromRoot(OntologyBean ontologyVersion,
 			String conceptId, boolean light) {
 		KnowledgeBase kb = getKnowledgeBase(ontologyVersion);
 		Cls cls = getCls(conceptId, kb);

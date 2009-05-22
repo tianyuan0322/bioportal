@@ -169,6 +169,20 @@ protege.knowledgebase.cache.numcontainers=4
 # table name prefix/suffix
 protege.table.prefix=tbl_
 protege.table.suffix=
+metadata.user.inst.prefix=usr_
+metadata.user.inst.suffix=
+metadata.user.role.inst.prefix=role_
+metadata.user.role.inst.suffix=
+metadata.ontologydomain.inst.prefix=cat_
+metadata.ontologydomain.inst.suffix=
+metadata.ontology.inst.prefix=ont_
+metadata.ontology.inst.suffix=
+metadata.ontologyview.inst.prefix=ont_view_
+metadata.ontologyview.inst.suffix=
+metadata.virtualontology.inst.prefix=vrtl_ont_
+metadata.virtualontology.inst.suffix=
+metadata.virtualview.inst.prefix=vrtl_view_
+metadata.virtualview.inst.suffix=
 
 # threshold in bytes. 157286400 = 150Mb
 protege.big.file.threshold=157286400

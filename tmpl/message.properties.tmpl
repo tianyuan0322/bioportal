@@ -44,6 +44,7 @@ bioportal.diff.filepath=@bioportaldifffilepath@
 # Names of XSLT transformation templates
 ####################################################
 xsl.ontology.findall=@bioportalxsltpath@/ontology_light.xsl
+xsl.ontology.view.findall=@bioportalxsltpath@/ontology_view_light.xsl
 
 ####################################################
 # Status
@@ -87,6 +88,7 @@ entity.conceptid=conceptid
 entity.ontologyversionid=ontologyversionid
 entity.ontologyid=ontologyid
 entity.ontologybean=ontologyBean
+entity.ontologyviewbean=ontologyViewBean
 entity.userbean=userBean
 entity.classbean=classBean
 entity.categorybean=categoryBean
@@ -152,12 +154,17 @@ form.ontology.codingScheme=codingScheme
 form.ontology.synonymSlot=synonymSlot
 form.ontology.preferredNameSlot=preferredNameSlot
 form.ontology.targetTerminologies=targetTerminologies
+form.ontology.viewDefinition=viewDefinition
+form.ontology.viewDefinitionLanguage=viewDefinitionLanguage
+form.ontology.viewGenerationEngine=viewGenerationEngine
+form.ontology.viewOntologyVersionId=viewOntologyVersionId
 
 ####################################################
 # Error Msg mapping 
 ####################################################
 msg.error.userNotFound=User Not Found
 msg.error.ontologyNotFound=Ontology Not Found
+msg.error.ontologyViewNotFound=Ontology View Not Found
 msg.error.file.inputFileNotFoundError=Input file does not exist or the size is zero
 msg.error.file.outputFileCreationError=Could not create output file
 msg.error.noontologyfilessubmitted=No ontology files have been submitted

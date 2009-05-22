@@ -4,9 +4,9 @@ import java.util.ArrayList;
 
 import org.junit.Test;
 import org.ncbo.stanford.AbstractBioPortalTest;
+import org.ncbo.stanford.bean.OntologyBean;
 import org.ncbo.stanford.bean.concept.ClassBean;
-import org.ncbo.stanford.domain.custom.dao.CustomNcboOntologyVersionDAO;
-import org.ncbo.stanford.domain.custom.entity.VNcboOntology;
+import org.ncbo.stanford.manager.metadata.OntologyMetadataManager;
 import org.ncbo.stanford.manager.retrieval.impl.OntologyRetrievalManagerProtegeImpl;
 import org.ncbo.stanford.util.constants.ApplicationConstants;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,20 +17,20 @@ import org.springframework.beans.factory.annotation.Autowired;
  * @author Benjamin Dai
  */
 public class OntologyRetrievalManagerProtegeTest extends AbstractBioPortalTest {
-	private final static int TEST_ONT_ID = 38657;
+	private final static int TEST_ONT_VERSION_ID = 38657;
 	private final static String TEST_CONCEPT_ID = "http://www.w3.org/2002/07/owl#Class";
 	private final static String TEST_CONCEPT_NAME = "http://www.co-ode.org/ontologies/pizza/2005/10/18/pizza.owl#Pizza";
 
 	@Autowired
-	OntologyRetrievalManagerProtegeImpl ocMgr;
+	private OntologyRetrievalManagerProtegeImpl ocMgr;
 
 	@Autowired
-	CustomNcboOntologyVersionDAO ncboOntologyVersionDAO;
+	private OntologyMetadataManager ontologyMetadataManagerProtege;
 
 	@Test
 	public void testPathToRoot() throws Exception {
-		VNcboOntology version = ncboOntologyVersionDAO
-				.findOntologyVersion(TEST_ONT_ID);
+		OntologyBean version = ontologyMetadataManagerProtege
+				.findOntologyById(TEST_ONT_VERSION_ID);
 		ClassBean conceptBean = ocMgr.findPathFromRoot(version, "SpicyPizza",
 				false);
 
@@ -54,7 +54,6 @@ public class OntologyRetrievalManagerProtegeTest extends AbstractBioPortalTest {
 			for (ClassBean subclass : subclasses) {
 				System.out.println(padding + subclass.getLabel() + " : "
 						+ subclass.getId());
-
 				if (subclass.getRelations().get(ApplicationConstants.SUB_CLASS) != null) {
 					subclasses = (ArrayList<ClassBean>) subclass.getRelations()
 							.get(ApplicationConstants.SUB_CLASS);
@@ -72,8 +71,8 @@ public class OntologyRetrievalManagerProtegeTest extends AbstractBioPortalTest {
 
 	@Test
 	public void testGetRootNode() throws Exception {
-		VNcboOntology version = ncboOntologyVersionDAO
-				.findOntologyVersion(TEST_ONT_ID);
+		OntologyBean version = ontologyMetadataManagerProtege
+				.findOntologyById(TEST_ONT_VERSION_ID);
 		ClassBean conceptBean = ocMgr.findRootConcept(version);
 
 		System.out.println("ROOT");

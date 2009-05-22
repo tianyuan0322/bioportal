@@ -9,12 +9,11 @@ import java.util.Map;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.ncbo.stanford.bean.OntologyBean;
 import org.ncbo.stanford.bean.OntologyIdBean;
 import org.ncbo.stanford.bean.OntologyVersionIdBean;
 import org.ncbo.stanford.bean.concept.ClassBean;
-import org.ncbo.stanford.domain.custom.dao.CustomNcboOntologyVersionDAO;
-import org.ncbo.stanford.domain.custom.entity.VNcboOntology;
-import org.ncbo.stanford.exception.OntologyNotFoundException;
+import org.ncbo.stanford.manager.metadata.OntologyMetadataManager;
 import org.ncbo.stanford.manager.obs.OBSManager;
 import org.ncbo.stanford.manager.retrieval.OntologyRetrievalManager;
 import org.ncbo.stanford.service.concept.ConceptService;
@@ -31,36 +30,34 @@ public class ConceptServiceImpl implements ConceptService {
 	@SuppressWarnings("unused")
 	private static final Log log = LogFactory.getLog(ConceptServiceImpl.class);
 
-	private CustomNcboOntologyVersionDAO ncboOntologyVersionDAO;
 	private Map<String, String> ontologyFormatHandlerMap = new HashMap<String, String>(
 			0);
 	private Map<String, OntologyRetrievalManager> ontologyRetrievalHandlerMap = new HashMap<String, OntologyRetrievalManager>(
 			0);
-	private OBSManager obsManager;
+	private OBSManager obsManager;	
+	private OntologyMetadataManager ontologyMetadataManagerProtege;
+	
 
 	/**
 	 * Get the root concept for the specified ontology.
 	 */
 	public ClassBean findRootConcept(Integer ontologyVersionId)
 			throws Exception {
-		VNcboOntology ontology = ncboOntologyVersionDAO
-				.findOntologyVersion(ontologyVersionId);
+		OntologyBean ontology = ontologyMetadataManagerProtege.findOntologyById(ontologyVersionId);
 
 		return getRetrievalManager(ontology).findRootConcept(ontology);
 	}
 
 	public ClassBean findConcept(Integer ontologyVersionId, String conceptId)
 			throws Exception {
-		VNcboOntology ontology = ncboOntologyVersionDAO
-				.findOntologyVersion(ontologyVersionId);
+		OntologyBean ontology = ontologyMetadataManagerProtege.findOntologyById(ontologyVersionId);
 
 		return getRetrievalManager(ontology).findConcept(ontology, conceptId);
 	}
 
 	public ClassBean findPathFromRoot(Integer ontologyVersionId,
 			String conceptId, boolean light) throws Exception {
-		VNcboOntology ontology = ncboOntologyVersionDAO
-				.findOntologyVersion(ontologyVersionId);
+		OntologyBean ontology = ontologyMetadataManagerProtege.findOntologyById(ontologyVersionId);
 
 		return getRetrievalManager(ontology).findPathFromRoot(ontology,
 				conceptId, light);
@@ -153,42 +150,10 @@ public class ConceptServiceImpl implements ConceptService {
 	// Non interface methods
 	//
 
-	@SuppressWarnings("unused")
-	private String findLatestActiveOntologyVersionId(OntologyIdBean ontologyId)
-			throws OntologyNotFoundException {
-		String ontologyVersionId = null;
-
-		// if UMLS, just pass through the id, else, find the latest version
-		if (ontologyId.isUmls()) {
-			ontologyVersionId = ontologyId.getOntologyId();
-		} else {
-			VNcboOntology ontology = ncboOntologyVersionDAO
-					.findLatestActiveOntologyVersion(Integer
-							.parseInt(ontologyId.getOntologyId()));
-
-			if (ontology == null) {
-				throw new OntologyNotFoundException();
-			}
-
-			ontologyVersionId = ontology.getId().toString();
-		}
-
-		return ontologyVersionId;
-	}
-
-	private OntologyRetrievalManager getRetrievalManager(VNcboOntology ontology) {
+	private OntologyRetrievalManager getRetrievalManager(OntologyBean ontology) {
 		String formatHandler = ontologyFormatHandlerMap.get(ontology
 				.getFormat());
 		return ontologyRetrievalHandlerMap.get(formatHandler);
-	}
-
-	/**
-	 * @param ncboOntologyVersionDAO
-	 *            the ncboOntologyVersionDAO to set
-	 */
-	public void setNcboOntologyVersionDAO(
-			CustomNcboOntologyVersionDAO ncboOntologyVersionDAO) {
-		this.ncboOntologyVersionDAO = ncboOntologyVersionDAO;
 	}
 
 	/**
@@ -215,5 +180,13 @@ public class ConceptServiceImpl implements ConceptService {
 	 */
 	public void setObsManager(OBSManager obsManager) {
 		this.obsManager = obsManager;
+	}
+
+	/**
+	 * @param ontologyMetadataManagerProtege the ontologyMetadataManagerProtege to set
+	 */
+	public void setOntologyMetadataManagerProtege(
+			OntologyMetadataManager ontologyMetadataManagerProtege) {
+		this.ontologyMetadataManagerProtege = ontologyMetadataManagerProtege;
 	}
 }
