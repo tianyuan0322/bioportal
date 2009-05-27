@@ -404,18 +404,6 @@
 		<property name="protegeBigFileThreshold">
 			<ref bean="protegeBigFileThreshold" />
 		</property>
-		<property name="metadataUserInstPrefix">
-			<ref bean="metadataUserInstPrefix" />
-		</property>
-		<property name="metadataUserInstSuffix">
-			<ref bean="metadataUserInstSuffix" />
-		</property>
-		<property name="metadataUserRoleInstPrefix">
-			<ref bean="metadataUserRoleInstPrefix" />
-		</property>
-		<property name="metadataUserRoleInstSuffix">
-			<ref bean="metadataUserRoleInstSuffix" />
-		</property>
 		<property name="metadataOntologyDomainInstPrefix">
 			<ref bean="metadataOntologyDomainInstPrefix" />
 		</property>
@@ -1115,6 +1103,66 @@
 	<bean id="protegeBigFileThreshold" class="java.lang.Integer">
 		<constructor-arg>
 			<value>@protegebigfilethreshold@</value>
+		</constructor-arg>
+	</bean>
+
+	<bean id="metadataOntologyDomainInstPrefix" class="java.lang.String">
+		<constructor-arg>
+			<value>@metadataontologydomaininstprefix@</value>
+		</constructor-arg>
+	</bean>
+
+	<bean id="metadataOntologyDomainInstSuffix" class="java.lang.String">
+		<constructor-arg>
+			<value>@metadataontologydomaininstsuffix@</value>
+		</constructor-arg>
+	</bean>
+
+	<bean id="metadataOntologyInstPrefix" class="java.lang.String">
+		<constructor-arg>
+			<value>@metadataontologyinstprefix@</value>
+		</constructor-arg>
+	</bean>
+
+	<bean id="metadataOntologyInstSuffix" class="java.lang.String">
+		<constructor-arg>
+			<value>@metadataontologyinstsuffix@</value>
+		</constructor-arg>
+	</bean>
+
+	<bean id="metadataOntologyViewInstPrefix" class="java.lang.String">
+		<constructor-arg>
+			<value>@metadataontologyviewinstprefix@</value>
+		</constructor-arg>
+	</bean>
+
+	<bean id="metadataOntologyViewInstSuffix" class="java.lang.String">
+		<constructor-arg>
+			<value>@metadataontologyviewinstsuffix@</value>
+		</constructor-arg>
+	</bean>
+
+	<bean id="metadataVirtualOntologyInstPrefix" class="java.lang.String">
+		<constructor-arg>
+			<value>@metadatavirtualontologyinstprefix@</value>
+		</constructor-arg>
+	</bean>
+
+	<bean id="metadataVirtualOntologyInstSuffix" class="java.lang.String">
+		<constructor-arg>
+			<value>@metadatavirtualontologyinstsuffix@</value>
+		</constructor-arg>
+	</bean>
+
+	<bean id="metadataVirtualViewInstPrefix" class="java.lang.String">
+		<constructor-arg>
+			<value>@metadatavirtualviewinstprefix@</value>
+		</constructor-arg>
+	</bean>
+
+	<bean id="metadataVirtualViewInstSuffix" class="java.lang.String">
+		<constructor-arg>
+			<value>@metadatavirtualviewinstsuffix@</value>
 		</constructor-arg>
 	</bean>
 

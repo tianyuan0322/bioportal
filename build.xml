@@ -178,6 +178,16 @@
 				<filter token="protegetableprefix" value="${protege.table.prefix}" />
 				<filter token="protegetablesuffix" value="${protege.table.suffix}" />
 				<filter token="protegebigfilethreshold" value="${protege.big.file.threshold}" />
+				<filter token="metadataontologydomaininstprefix" value="${metadata.ontologydomain.inst.prefix}" />
+				<filter token="metadataontologydomaininstsuffix" value="${metadata.ontologydomain.inst.suffix}" />
+				<filter token="metadataontologyinstprefix" value="${metadata.ontology.inst.prefix}" />
+				<filter token="metadataontologyinstsuffix" value="${metadata.ontology.inst.suffix}" />
+				<filter token="metadataontologyviewinstprefix" value="${metadata.ontologyview.inst.prefix}" />
+				<filter token="metadataontologyviewinstsuffix" value="${metadata.ontologyview.inst.suffix}" />
+				<filter token="metadatavirtualontologyinstprefix" value="${metadata.virtualontology.inst.prefix}" />
+				<filter token="metadatavirtualontologyinstsuffix" value="${metadata.virtualontology.inst.suffix}" />
+				<filter token="metadatavirtualviewinstprefix" value="${metadata.virtualview.inst.prefix}" />
+				<filter token="metadatavirtualviewinstsuffix" value="${metadata.virtualview.inst.suffix}" />
 				<filter token="protegeknowledgebasecachetimeout" value="${protege.knowledgebase.cache.timeout}" />
 				<filter token="protegeknowledgebasecachenumcontainers" value="${protege.knowledgebase.cache.numcontainers}" />
 				<filter token="obosourceforgecvsusername" value="${obo.sourceforge.cvs.username}" />
