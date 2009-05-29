@@ -58,6 +58,10 @@ public class OntologyServiceMetadataImpl implements OntologyService {
 		
 		Integer newVersionId = ontologyMetadataManager.getNextAvailableOntologyVersionId();
 		ontologyBean.setId(newVersionId);
+
+		
+		
+		
 		
 		
 		// if remote, do not continue to upload(i.e. ontologyFile and ontologyQueue)
@@ -228,10 +232,8 @@ public class OntologyServiceMetadataImpl implements OntologyService {
 	 */
 	private void findOrCreateNcboOntologyRecord(OntologyBean ontologyBean) {
 		Integer ontologyId = ontologyBean.getOntologyId();
-//		NcboOntology ont = null;
 
 		if (ontologyId == null) {
-			//ont = new NcboOntology();
 			ontologyBean.setOntologyId(
 					ontologyMetadataManager.getNextAvailableOntologyId());
 			ontologyBean
@@ -239,15 +241,10 @@ public class OntologyServiceMetadataImpl implements OntologyService {
 							.parseInt(MessageUtils
 									.getMessage("config.db.ontology.internalVersionNumberStart")));
 		} else {
-			//ont = ncboOntologyDAO.findById(ontologyId);
 			Integer lastInternalVersion = findLatestOntologyVersion(ontologyId)
 					.getInternalVersionNumber();
 			ontologyBean.setInternalVersionNumber(lastInternalVersion + 1);
 		}
-
-//		ontologyBean.populateToOntologyEntity(ont);
-//		NcboOntology ontNew = ncboOntologyDAO.saveOntology(ont);
-//		ontologyBean.setOntologyId(ontNew.getId());
 	}
 	
 
