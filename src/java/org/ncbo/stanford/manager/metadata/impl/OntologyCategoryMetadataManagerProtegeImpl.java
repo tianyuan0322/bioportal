@@ -16,7 +16,7 @@ import edu.stanford.smi.protegex.owl.model.OWLModel;
 import edu.stanford.smi.protegex.owl.model.OWLNamedClass;
 
 /**
- * Provides the functionality to deal with ontology domain metadata
+ * Provides the functionality to deal with ontology category metadata
  * 
  * @author Csongor Nyulas
  * 
@@ -61,14 +61,17 @@ public class OntologyCategoryMetadataManagerProtegeImpl extends
 	private OWLIndividual getOntologyDomainInstance(OWLModel metadata, int id, boolean createIfMissing) {
 		String ontDomainInstName = getOntologyDomainIndividualName(id);
 		OWLIndividual ontDomainInd = metadata.getOWLIndividual(ontDomainInstName);
+		
 		if (ontDomainInd == null && createIfMissing) {
 			ontDomainInd = createOntologyDomainInstance(metadata, ontDomainInstName);
 		}
+		
 		return ontDomainInd;
 	}
 	
 	private OWLIndividual createOntologyDomainInstance(OWLModel metadata, String indName) {
 		OWLNamedClass ontClass = metadata.getOWLNamedClass(CLASS_ONTOLOGY_DOMAIN);
+
 		return ontClass.createOWLIndividual(indName);
 	}
 	
