@@ -20,7 +20,7 @@
   	<script language="JavaScript">
 	function OnSubmitForm()
 	{	
-   		document.ontologyform.action ="http://localhost:8080/bioportal/rest/ontology/" + document.ontologyform.id.value;
+   		document.ontologyform.action ="/bioportal/ontologies/" + document.ontologyform.id.value;
 		alert("document.ontologyform.action=" + document.ontologyform.action);
 	
   		return true;
@@ -49,26 +49,28 @@
 		<br /><br />
 
 		<b>System/Admin/Scheduler attributes </b><br />
-    	UserId: <input type="text" id="userId" name="userId" value="12564" /><br />
-    	StatusId: <input type="text" id="statusId" name="statusId" value="1" /><br />
+    	User Id: <input type="text" id="userId" name="userId" value="12564" /><br />
+    	Status Id: <input type="text" id="statusId" name="statusId" value="1" /><br />
     	IsReviewed: <input type="text" id="isReviewed" name="isReviewed" value="1" /><br />
-    	CodingScheme: <input type="text" id="isReviewed" name="codingScheme" value="1" /><br />
+    	IsManual: <input type="text" id="isManual" name="isManual" value="1" /><br />
     	<br /><br />
     	     	
     	<b>User input </b><br />
     	
-    	VersionNumber: <input type="text" id="versionNumber" name="versionNumber" value="1.0" /><br />
-    	VersionStatus: <input type="text" id="versionStatus" name="versionStatus" value="pre-production" /><br />
+    	Ontology Name: <input type="text" id="displayLabel" name="displayLabel" value="Pizza Ontology" /><br />
+    	Ontology Abbreviation: <input type="text" id="abbreviation" name="abbreviation"  value="PO" /><br />
+    	Ontology Description: <input type="text" id="description" name="description"  value="this is a pizza ontology" /><br />
+    	Ontology Format: <input type="text" id="format" name="format" value="OWL-DL" /><br />
+    	Version Number: <input type="text" id="versionNumber" name="versionNumber" value="1.0" /><br />
+    	Version Status: <input type="text" id="versionStatus" name="versionStatus" value="pre-production" /><br />
     	IsRemote: <input type="text" id="isRemote" name="isRemote" value="0" /><br />
 		
-		DateCreated:  N/A for PUT (Update) <br />
-    	DateReleased: <input type="text" id="dateReleased" name="dateReleased" value="05/1/2008" /><br />
+		Date Created:  N/A for PUT (Update) <br />
+    	Date Released: <input type="text" id="dateReleased" name="dateReleased" value="05/1/2008" /><br />
     	
     	<br /><br />
-    	ContactEmail: <input type="text" id="contactEmail" name="contactEmail" size=50 value="email111@email.com" /><br />
-    	ContactName: <input type="text" id="contactName" name="contactName" size=50 value="TesterFirst TesterLastName" /><br />
-    	DisplayLabel: <input type="text" id="displayLabel" name="displayLabel" value="Pizza Ontology" /><br />
-    	Format: <input type="text" id="format" name="format" value="OWL-DL" /><br />
+    	Contact Name: <input type="text" id="contactName" name="contactName" size=50 value="TesterFirst TesterLastName" /><br />
+    	Contact Email: <input type="text" id="contactEmail" name="contactEmail" size=50 value="email111@email.com" /><br />
     	IsFoundry: <input type="text" id="isFoundry" name="isFoundry" value="0" /><br />
     	
     	<br /><br />
