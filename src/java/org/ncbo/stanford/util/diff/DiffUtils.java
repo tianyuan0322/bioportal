@@ -62,7 +62,8 @@ public class DiffUtils {
 	// But mostly it is the old stuff that hasn't been looked at for a while
 
 	public  static void saveToRDFFile(ResultTable resultsTable, String fileName) {
-
+		fileName += ".pprj";
+		
 		KnowledgeBase chaoKb = ChAOKbManager.createRDFFileChAOKb(resultsTable.getKb2(), URIUtilities.createURI(fileName));
 		chaoKb.getProject().setProjectURI(URIUtilities.createURI(fileName));
 		ChangesProject.initialize(resultsTable.getKb2().getProject());
