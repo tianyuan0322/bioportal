@@ -13,7 +13,7 @@ import org.ncbo.stanford.manager.AbstractOntologyManagerLexGrid;
 import org.ncbo.stanford.manager.diff.OntologyDiffManager;
 
 public class OntologyDiffManagerLexGridImpl extends
-		AbstractOntologyManagerLexGrid implements OntologyDiffManager {
+AbstractOntologyManagerLexGrid implements OntologyDiffManager {
 
 	public void createDiff(VNcboOntology ontologyVersionOld,
 			VNcboOntology ontologyVersionNew) throws Exception {
@@ -21,18 +21,18 @@ public class OntologyDiffManagerLexGridImpl extends
 	}
 
 	public void createDiffForTwoLatestVersions(Integer ontologyId)
-			throws Exception {
+	throws Exception {
 		throw new UnsupportedOperationException();
 	}
 
 	public List<ArrayList<String>> getAllDiffsForOntology(Integer ontologyId) {
-		throw new UnsupportedOperationException();
+		return null; //we do not have diffs for LexGrid ontologies currently
 	}
 
 	public File getDiffFileForOntologyVersions(Integer ontologyVerisonId1,
 			Integer ontologyVersionId2, String format)
-			throws FileNotFoundException {
-		throw new UnsupportedOperationException();
+	throws FileNotFoundException {
+		return null; //we do not have diffs for LexGrid ontologies currently
 	}
 
 	public boolean diffExists(VNcboOntology ontologyVersionOld,
