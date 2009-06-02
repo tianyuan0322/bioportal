@@ -26,13 +26,13 @@ public class OntologyDiffManagerLexGridImpl extends
 	}
 
 	public List<ArrayList<String>> getAllDiffsForOntology(Integer ontologyId) {
-		throw new UnsupportedOperationException();
+		return null; //we do not have diffs for LexGrid ontologies currently
 	}
 
 	public File getDiffFileForOntologyVersions(Integer ontologyVerisonId1,
 			Integer ontologyVersionId2, String format)
 			throws FileNotFoundException {
-		throw new UnsupportedOperationException();
+		return null; //we do not have diffs for LexGrid ontologies currently
 	}
 
 	public boolean diffExists(OntologyBean ontologyVersionOld,

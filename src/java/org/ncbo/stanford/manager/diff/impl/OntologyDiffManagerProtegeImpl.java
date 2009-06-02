@@ -182,8 +182,8 @@ public class OntologyDiffManagerProtegeImpl extends
 				.getOntologyId(), ontologyVersionOld.getId(),
 				ontologyVersionNew.getId(), true);
 
-		// saveToRDFFile (resultsTable, diffFileName,
-		// ontologyVersionOld.getUrn(), ontologyVersionNew.getUrn());
+		 saveToRDFFile (resultsTable, diffFileName,
+		 ontologyVersionOld.getUrn(), ontologyVersionNew.getUrn());
 		saveToTabDelimitedTextFile(resultsTable, diffFileName);
 	}
 
@@ -203,9 +203,10 @@ public class OntologyDiffManagerProtegeImpl extends
 	 */
 	private void saveToRDFFile(ResultTable resultsTable, String diffFileName,
 			String oldNameSpace, String newNameSpace) throws Exception {
-		resultsTable.saveToRDF(diffFileName
-				+ getFileExtensionFromFormat(FORMAT_RDF),
-				new URL(oldNameSpace), new URL(newNameSpace));
+//		resultsTable.saveToRDF(diffFileName
+//				+ getFileExtensionFromFormat(FORMAT_RDF),
+//				new URL(oldNameSpace), new URL(newNameSpace));
+		DiffUtils.saveToRDFFile(resultsTable, diffFileName);
 	}
 
 	// The methods for file and directory management
