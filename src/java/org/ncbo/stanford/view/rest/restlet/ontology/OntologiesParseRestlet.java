@@ -9,6 +9,7 @@ import org.apache.commons.logging.LogFactory;
 import org.ncbo.stanford.service.loader.scheduler.OntologyLoadSchedulerService;
 import org.ncbo.stanford.util.RequestUtils;
 import org.ncbo.stanford.view.rest.restlet.AbstractBaseRestlet;
+import org.ncbo.stanford.view.util.constants.RequestParamConstants;
 import org.restlet.data.Request;
 import org.restlet.data.Response;
 import org.restlet.data.Status;
@@ -43,8 +44,11 @@ public class OntologiesParseRestlet extends AbstractBaseRestlet {
 			HttpServletRequest httpRequest = RequestUtils
 					.getHttpServletRequest(request);
 			List<Integer> ontologyVersionIds = getOntologyVersionIds(httpRequest);
+			String formatHandler = (String) httpRequest
+					.getParameter(RequestParamConstants.PARAM_ONTOLOGYPARSER);
 
-			ontologyLoadSchedulerService.parseOntologies(ontologyVersionIds);
+			ontologyLoadSchedulerService.parseOntologies(ontologyVersionIds,
+					formatHandler);
 			List<String> errorOntologies = ontologyLoadSchedulerService
 					.getErrorOntologies();
 

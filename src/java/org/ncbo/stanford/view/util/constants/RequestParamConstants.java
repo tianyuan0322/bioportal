@@ -72,4 +72,9 @@ public interface RequestParamConstants {
 	public static final String PARAM_LEVEL = "level";
 	public static final String PARAM_OFFSET = "offset";
 	public static final String PARAM_LIMIT = "limit";
+	
+	/**
+	 * Parameter for overriding default ontology load handler (parser)
+	 */
+	public static final String PARAM_ONTOLOGYPARSER = "ontologyparser";
 }

@@ -18,18 +18,13 @@ public interface OntologyLoadSchedulerService {
 	public void parseOntologies();
 
 	/**
-	 * Parses a single ontology
-	 * 
-	 * @param ontologyVersionId
-	 */
-	public void parseOntology(String ontologyVersionId);
-
-	/**
 	 * Parses given ontologies
 	 * 
 	 * @param ontologyVersionIdList
+	 * @param formatHandler
 	 */
-	public void parseOntologies(List<Integer> ontologyVersionIdList);
+	public void parseOntologies(List<Integer> ontologyVersionIdList,
+			String formatHandler);
 
 	/**
 	 * Returns info about ontologies that did not process successfully
