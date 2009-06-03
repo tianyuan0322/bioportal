@@ -178,6 +178,8 @@
 				<filter token="protegetableprefix" value="${protege.table.prefix}" />
 				<filter token="protegetablesuffix" value="${protege.table.suffix}" />
 				<filter token="protegebigfilethreshold" value="${protege.big.file.threshold}" />
+				<filter token="metadatauserinstprefix" value="${metadata.user.inst.prefix}" />
+				<filter token="metadatauserinstsuffix" value="${metadata.user.inst.suffix}" />
 				<filter token="metadataontologydomaininstprefix" value="${metadata.ontologydomain.inst.prefix}" />
 				<filter token="metadataontologydomaininstsuffix" value="${metadata.ontologydomain.inst.suffix}" />
 				<filter token="metadataontologyinstprefix" value="${metadata.ontology.inst.prefix}" />

@@ -169,6 +169,8 @@ protege.knowledgebase.cache.numcontainers=4
 # table name prefix/suffix
 protege.table.prefix=tbl_
 protege.table.suffix=
+metadata.user.inst.prefix=usr_
+metadata.user.inst.suffix=
 metadata.ontologydomain.inst.prefix=cat_
 metadata.ontologydomain.inst.suffix=
 metadata.ontology.inst.prefix=ont_

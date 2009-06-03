@@ -404,6 +404,12 @@
 		<property name="protegeBigFileThreshold">
 			<ref bean="protegeBigFileThreshold" />
 		</property>
+		<property name="metadataUserInstPrefix">
+			<ref bean="metadataUserInstPrefix" />
+		</property>
+		<property name="metadataUserInstSuffix">
+			<ref bean="metadataUserInstSuffix" />
+		</property>
 		<property name="metadataOntologyDomainInstPrefix">
 			<ref bean="metadataOntologyDomainInstPrefix" />
 		</property>
@@ -1103,6 +1109,18 @@
 	<bean id="protegeBigFileThreshold" class="java.lang.Integer">
 		<constructor-arg>
 			<value>@protegebigfilethreshold@</value>
+		</constructor-arg>
+	</bean>
+
+	<bean id="metadataUserInstPrefix" class="java.lang.String">
+		<constructor-arg>
+			<value>@metadatauserinstprefix@</value>
+		</constructor-arg>
+	</bean>
+
+	<bean id="metadataUserInstSuffix" class="java.lang.String">
+		<constructor-arg>
+			<value>@metadatauserinstsuffix@</value>
 		</constructor-arg>
 	</bean>
 
