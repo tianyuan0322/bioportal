@@ -1,24 +1,31 @@
-/*
-SQLyog Enterprise - MySQL GUI v8.05 
-MySQL - 5.0.81-community-nt : Database - bioportal
-*********************************************************************
-*/
+-- MySQL Administrator dump 1.4
+--
+-- ------------------------------------------------------
+-- Server version	5.0.81-community-nt
 
+
+/*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
+/*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
+/*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
 /*!40101 SET NAMES utf8 */;
 
-/*!40101 SET SQL_MODE=''*/;
-
+/*!40014 SET @OLD_UNIQUE_CHECKS=@@UNIQUE_CHECKS, UNIQUE_CHECKS=0 */;
 /*!40014 SET @OLD_FOREIGN_KEY_CHECKS=@@FOREIGN_KEY_CHECKS, FOREIGN_KEY_CHECKS=0 */;
 /*!40101 SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='NO_AUTO_VALUE_ON_ZERO' */;
 
-CREATE DATABASE /*!32312 IF NOT EXISTS*/`bioportal` /*!40100 DEFAULT CHARACTER SET latin1 */;
 
-USE `bioportal`;
+--
+-- Create schema bioportal
+--
 
-/*Table structure for table `ncbo_admin_application` */
+CREATE DATABASE IF NOT EXISTS bioportal;
+USE bioportal;
+
+--
+-- Definition of table `ncbo_admin_application`
+--
 
 DROP TABLE IF EXISTS `ncbo_admin_application`;
-
 CREATE TABLE `ncbo_admin_application` (
   `id` int(11) NOT NULL,
   `application_id` varchar(64) NOT NULL,
@@ -28,10 +35,19 @@ CREATE TABLE `ncbo_admin_application` (
   UNIQUE KEY `application_id` (`application_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
-/*Table structure for table `ncbo_app_text` */
+--
+-- Dumping data for table `ncbo_admin_application`
+--
+
+/*!40000 ALTER TABLE `ncbo_admin_application` DISABLE KEYS */;
+/*!40000 ALTER TABLE `ncbo_admin_application` ENABLE KEYS */;
+
+
+--
+-- Definition of table `ncbo_app_text`
+--
 
 DROP TABLE IF EXISTS `ncbo_app_text`;
-
 CREATE TABLE `ncbo_app_text` (
   `identifier` varchar(128) NOT NULL,
   `description` varchar(512) default NULL,
@@ -45,10 +61,60 @@ CREATE TABLE `ncbo_app_text` (
   CONSTRAINT `FK_ncbo_app_text_datatype` FOREIGN KEY (`datatype_code`) REFERENCES `ncbo_l_app_text_datatype` (`datatype_code`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
-/*Table structure for table `ncbo_app_text_revision` */
+--
+-- Dumping data for table `ncbo_app_text`
+--
+
+/*!40000 ALTER TABLE `ncbo_app_text` DISABLE KEYS */;
+/*!40000 ALTER TABLE `ncbo_app_text` ENABLE KEYS */;
+
+
+--
+-- Definition of trigger `trg_create_ncbo_app_text_revision_after_insert`
+--
+
+DROP TRIGGER /*!50030 IF EXISTS */ `trg_create_ncbo_app_text_revision_after_insert`;
+
+DELIMITER $$
+
+CREATE DEFINER = `root`@`localhost` TRIGGER `trg_create_ncbo_app_text_revision_after_insert` AFTER INSERT ON `ncbo_app_text` FOR EACH ROW BEGIN
+	INSERT INTO ncbo_app_text_revision (
+		identifier, description, text_content, datatype_code, date_revised)
+	SELECT NEW.identifier, NEW.description, NEW.text_content, NEW.datatype_code, CURRENT_TIMESTAMP;
+END $$
+
+DELIMITER ;
+
+--
+-- Definition of trigger `trg_create_ncbo_app_text_revision_after_update`
+--
+
+DROP TRIGGER /*!50030 IF EXISTS */ `trg_create_ncbo_app_text_revision_after_update`;
+
+DELIMITER $$
+
+CREATE DEFINER = `root`@`localhost` TRIGGER `trg_create_ncbo_app_text_revision_after_update` AFTER UPDATE ON `ncbo_app_text` FOR EACH ROW BEGIN
+	DECLARE strNewTextIdent VARCHAR(128);
+	DECLARE strOldTextIdent VARCHAR(128);	
+	SELECT LOWER(NEW.identifier) INTO strNewTextIdent;
+	SELECT LOWER(OLD.identifier) INTO strOldTextIdent;
+	IF strNewTextIdent != strOldTextIdent THEN
+		UPDATE ncbo_app_text_revision
+		SET identifier = strNewTextIdent
+		WHERE LOWER(identifier) = strOldTextIdent;
+	END IF;
+	INSERT INTO ncbo_app_text_revision (
+		identifier, description, text_content, datatype_code, date_revised)
+	SELECT strNewTextIdent, NEW.description, NEW.text_content, NEW.datatype_code, CURRENT_TIMESTAMP;
+END $$
+
+DELIMITER ;
+
+--
+-- Definition of table `ncbo_app_text_revision`
+--
 
 DROP TABLE IF EXISTS `ncbo_app_text_revision`;
-
 CREATE TABLE `ncbo_app_text_revision` (
   `identifier` varchar(128) NOT NULL,
   `description` varchar(512) default NULL,
@@ -57,20 +123,38 @@ CREATE TABLE `ncbo_app_text_revision` (
   `date_revised` timestamp NOT NULL default CURRENT_TIMESTAMP
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
-/*Table structure for table `ncbo_l_app_text_datatype` */
+--
+-- Dumping data for table `ncbo_app_text_revision`
+--
+
+/*!40000 ALTER TABLE `ncbo_app_text_revision` DISABLE KEYS */;
+/*!40000 ALTER TABLE `ncbo_app_text_revision` ENABLE KEYS */;
+
+
+--
+-- Definition of table `ncbo_l_app_text_datatype`
+--
 
 DROP TABLE IF EXISTS `ncbo_l_app_text_datatype`;
-
 CREATE TABLE `ncbo_l_app_text_datatype` (
   `datatype_code` char(3) NOT NULL default '',
   `datatype` varchar(48) NOT NULL,
   PRIMARY KEY  (`datatype_code`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
-/*Table structure for table `ncbo_l_role` */
+--
+-- Dumping data for table `ncbo_l_app_text_datatype`
+--
+
+/*!40000 ALTER TABLE `ncbo_l_app_text_datatype` DISABLE KEYS */;
+/*!40000 ALTER TABLE `ncbo_l_app_text_datatype` ENABLE KEYS */;
+
+
+--
+-- Definition of table `ncbo_l_role`
+--
 
 DROP TABLE IF EXISTS `ncbo_l_role`;
-
 CREATE TABLE `ncbo_l_role` (
   `id` int(11) NOT NULL,
   `name` varchar(128) NOT NULL,
@@ -79,10 +163,19 @@ CREATE TABLE `ncbo_l_role` (
   UNIQUE KEY `name` (`name`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
-/*Table structure for table `ncbo_l_status` */
+--
+-- Dumping data for table `ncbo_l_role`
+--
+
+/*!40000 ALTER TABLE `ncbo_l_role` DISABLE KEYS */;
+/*!40000 ALTER TABLE `ncbo_l_role` ENABLE KEYS */;
+
+
+--
+-- Definition of table `ncbo_l_status`
+--
 
 DROP TABLE IF EXISTS `ncbo_l_status`;
-
 CREATE TABLE `ncbo_l_status` (
   `id` int(11) NOT NULL,
   `status` varchar(32) NOT NULL,
@@ -90,10 +183,19 @@ CREATE TABLE `ncbo_l_status` (
   PRIMARY KEY  (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
-/*Table structure for table `ncbo_ontology_file` */
+--
+-- Dumping data for table `ncbo_l_status`
+--
+
+/*!40000 ALTER TABLE `ncbo_l_status` DISABLE KEYS */;
+/*!40000 ALTER TABLE `ncbo_l_status` ENABLE KEYS */;
+
+
+--
+-- Definition of table `ncbo_ontology_file`
+--
 
 DROP TABLE IF EXISTS `ncbo_ontology_file`;
-
 CREATE TABLE `ncbo_ontology_file` (
   `id` int(11) NOT NULL auto_increment,
   `ontology_version_id` int(11) NOT NULL,
@@ -103,10 +205,19 @@ CREATE TABLE `ncbo_ontology_file` (
   KEY `ontology_id_2` (`ontology_version_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 CHECKSUM=1 DELAY_KEY_WRITE=1 ROW_FORMAT=DYNAMIC;
 
-/*Table structure for table `ncbo_ontology_load_queue` */
+--
+-- Dumping data for table `ncbo_ontology_file`
+--
+
+/*!40000 ALTER TABLE `ncbo_ontology_file` DISABLE KEYS */;
+/*!40000 ALTER TABLE `ncbo_ontology_file` ENABLE KEYS */;
+
+
+--
+-- Definition of table `ncbo_ontology_load_queue`
+--
 
 DROP TABLE IF EXISTS `ncbo_ontology_load_queue`;
-
 CREATE TABLE `ncbo_ontology_load_queue` (
   `id` int(11) NOT NULL auto_increment,
   `ontology_version_id` int(11) NOT NULL,
@@ -120,10 +231,19 @@ CREATE TABLE `ncbo_ontology_load_queue` (
   CONSTRAINT `FK_ncbo_ontology_load_queue_status_id` FOREIGN KEY (`status_id`) REFERENCES `ncbo_l_status` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 CHECKSUM=1 DELAY_KEY_WRITE=1 ROW_FORMAT=DYNAMIC;
 
-/*Table structure for table `ncbo_user` */
+--
+-- Dumping data for table `ncbo_ontology_load_queue`
+--
+
+/*!40000 ALTER TABLE `ncbo_ontology_load_queue` DISABLE KEYS */;
+/*!40000 ALTER TABLE `ncbo_ontology_load_queue` ENABLE KEYS */;
+
+
+--
+-- Definition of table `ncbo_user`
+--
 
 DROP TABLE IF EXISTS `ncbo_user`;
-
 CREATE TABLE `ncbo_user` (
   `id` int(11) NOT NULL auto_increment,
   `username` varchar(64) NOT NULL,
@@ -137,10 +257,19 @@ CREATE TABLE `ncbo_user` (
   UNIQUE KEY `idx_unique_username` (`username`)
 ) ENGINE=InnoDB AUTO_INCREMENT=1000 DEFAULT CHARSET=latin1 CHECKSUM=1 DELAY_KEY_WRITE=1 ROW_FORMAT=DYNAMIC;
 
-/*Table structure for table `ncbo_user_role` */
+--
+-- Dumping data for table `ncbo_user`
+--
+
+/*!40000 ALTER TABLE `ncbo_user` DISABLE KEYS */;
+/*!40000 ALTER TABLE `ncbo_user` ENABLE KEYS */;
+
+
+--
+-- Definition of table `ncbo_user_role`
+--
 
 DROP TABLE IF EXISTS `ncbo_user_role`;
-
 CREATE TABLE `ncbo_user_role` (
   `id` int(11) NOT NULL auto_increment,
   `user_id` int(11) NOT NULL,
@@ -152,52 +281,24 @@ CREATE TABLE `ncbo_user_role` (
   CONSTRAINT `ncbo_user_role_fk_new` FOREIGN KEY (`user_id`) REFERENCES `ncbo_user` (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=1000 DEFAULT CHARSET=latin1 CHECKSUM=1 DELAY_KEY_WRITE=1 ROW_FORMAT=DYNAMIC;
 
-/* Trigger structure for table `ncbo_app_text` */
+--
+-- Dumping data for table `ncbo_user_role`
+--
+
+/*!40000 ALTER TABLE `ncbo_user_role` DISABLE KEYS */;
+/*!40000 ALTER TABLE `ncbo_user_role` ENABLE KEYS */;
+
+
+--
+-- Definition of procedure `sp_insert_app_text_record`
+--
+
+DROP PROCEDURE IF EXISTS `sp_insert_app_text_record`;
 
 DELIMITER $$
 
-/*!50003 DROP TRIGGER*//*!50032 IF EXISTS */ /*!50003 `trg_create_ncbo_app_text_revision_after_insert` */$$
-
-/*!50003 CREATE */ /*!50017 DEFINER = 'root'@'localhost' */ /*!50003 TRIGGER `trg_create_ncbo_app_text_revision_after_insert` AFTER INSERT ON `ncbo_app_text` FOR EACH ROW BEGIN
-	INSERT INTO ncbo_app_text_revision (
-		identifier, description, text_content, datatype_code, date_revised)
-	SELECT NEW.identifier, NEW.description, NEW.text_content, NEW.datatype_code, CURRENT_TIMESTAMP;
-END */$$
-
-
-DELIMITER ;
-
-/* Trigger structure for table `ncbo_app_text` */
-
-DELIMITER $$
-
-/*!50003 DROP TRIGGER*//*!50032 IF EXISTS */ /*!50003 `trg_create_ncbo_app_text_revision_after_update` */$$
-
-/*!50003 CREATE */ /*!50017 DEFINER = 'root'@'localhost' */ /*!50003 TRIGGER `trg_create_ncbo_app_text_revision_after_update` AFTER UPDATE ON `ncbo_app_text` FOR EACH ROW BEGIN
-	DECLARE strNewTextIdent VARCHAR(128);
-	DECLARE strOldTextIdent VARCHAR(128);	
-	SELECT LOWER(NEW.identifier) INTO strNewTextIdent;
-	SELECT LOWER(OLD.identifier) INTO strOldTextIdent;
-	IF strNewTextIdent != strOldTextIdent THEN
-		UPDATE ncbo_app_text_revision
-		SET identifier = strNewTextIdent
-		WHERE LOWER(identifier) = strOldTextIdent;
-	END IF;
-	INSERT INTO ncbo_app_text_revision (
-		identifier, description, text_content, datatype_code, date_revised)
-	SELECT strNewTextIdent, NEW.description, NEW.text_content, NEW.datatype_code, CURRENT_TIMESTAMP;
-END */$$
-
-
-DELIMITER ;
-
-/* Procedure structure for procedure `sp_insert_app_text_record` */
-
-/*!50003 DROP PROCEDURE IF EXISTS  `sp_insert_app_text_record` */;
-
-DELIMITER $$
-
-/*!50003 CREATE DEFINER=`root`@`localhost` PROCEDURE `sp_insert_app_text_record`(
+/*!50003 SET @TEMP_SQL_MODE=@@SQL_MODE, SQL_MODE='NO_AUTO_VALUE_ON_ZERO' */ $$
+CREATE DEFINER=`root`@`localhost` PROCEDURE `sp_insert_app_text_record`(
 	p_strTextIdent VARCHAR(128),
 	p_strDescription VARCHAR(512),
 	p_strLastModifier VARCHAR(128),
@@ -252,16 +353,21 @@ BEGIN
 	END IF;	
 	COMMIT;
 	SET p_strMessage := "SUCCESS"; 
-END */$$
+END $$
+/*!50003 SET SESSION SQL_MODE=@TEMP_SQL_MODE */  $$
+
 DELIMITER ;
 
-/* Procedure structure for procedure `sp_insert_update_app_text_record` */
+--
+-- Definition of procedure `sp_insert_update_app_text_record`
+--
 
-/*!50003 DROP PROCEDURE IF EXISTS  `sp_insert_update_app_text_record` */;
+DROP PROCEDURE IF EXISTS `sp_insert_update_app_text_record`;
 
 DELIMITER $$
 
-/*!50003 CREATE DEFINER=`root`@`localhost` PROCEDURE `sp_insert_update_app_text_record`(
+/*!50003 SET @TEMP_SQL_MODE=@@SQL_MODE, SQL_MODE='NO_AUTO_VALUE_ON_ZERO' */ $$
+CREATE DEFINER=`root`@`localhost` PROCEDURE `sp_insert_update_app_text_record`(
 	p_strOldTextIdent VARCHAR(128),
 	p_strNewTextIdent VARCHAR(128),
 	p_strDescription VARCHAR(512),
@@ -302,16 +408,21 @@ BEGIN
 		);
 		SET p_strExecType = "Insert";
 	END IF;	
-END */$$
+END $$
+/*!50003 SET SESSION SQL_MODE=@TEMP_SQL_MODE */  $$
+
 DELIMITER ;
 
-/* Procedure structure for procedure `sp_update_app_text_record` */
+--
+-- Definition of procedure `sp_update_app_text_record`
+--
 
-/*!50003 DROP PROCEDURE IF EXISTS  `sp_update_app_text_record` */;
+DROP PROCEDURE IF EXISTS `sp_update_app_text_record`;
 
 DELIMITER $$
 
-/*!50003 CREATE DEFINER=`root`@`localhost` PROCEDURE `sp_update_app_text_record`(
+/*!50003 SET @TEMP_SQL_MODE=@@SQL_MODE, SQL_MODE='NO_AUTO_VALUE_ON_ZERO' */ $$
+CREATE DEFINER=`root`@`localhost` PROCEDURE `sp_update_app_text_record`(
 	p_strOldTextIdent VARCHAR(128),
 	p_strNewTextIdent VARCHAR(128),
 	p_strDescription VARCHAR(512),
@@ -367,8 +478,17 @@ BEGIN
 	END IF;
 	COMMIT;
 	SET p_strMessage := "SUCCESS"; 
-END */$$
+END $$
+/*!50003 SET SESSION SQL_MODE=@TEMP_SQL_MODE */  $$
+
 DELIMITER ;
+
+
 
 /*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
 /*!40014 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS */;
+/*!40014 SET UNIQUE_CHECKS=@OLD_UNIQUE_CHECKS */;
+/*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
+/*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
+/*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
+/*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
