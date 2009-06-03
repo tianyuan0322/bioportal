@@ -2,7 +2,9 @@ package org.ncbo.stanford.service.ontology.impl;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -12,31 +14,37 @@ import org.ncbo.stanford.domain.custom.dao.CustomNcboOntologyFileDAO;
 import org.ncbo.stanford.domain.custom.dao.CustomNcboOntologyLoadQueueDAO;
 import org.ncbo.stanford.domain.generated.NcboOntologyFile;
 import org.ncbo.stanford.domain.generated.NcboOntologyLoadQueue;
+import org.ncbo.stanford.exception.InvalidOntologyFormatException;
+import org.ncbo.stanford.manager.load.OntologyLoadManager;
 import org.ncbo.stanford.manager.metadata.OntologyMetadataManager;
 import org.ncbo.stanford.service.ontology.OntologyService;
 import org.ncbo.stanford.service.search.IndexSearchService;
 import org.ncbo.stanford.util.MessageUtils;
+import org.ncbo.stanford.util.ontologyfile.pathhandler.AbstractFilePathHandler;
 import org.ncbo.stanford.util.ontologyfile.pathhandler.FilePathHandler;
 import org.springframework.transaction.annotation.Transactional;
 
 @Transactional
 public class OntologyServiceMetadataImpl implements OntologyService {
 
-	private static final Log log = LogFactory.getLog(OntologyServiceMetadataImpl.class);
+	private static final Log log = LogFactory
+			.getLog(OntologyServiceMetadataImpl.class);
 
 	private OntologyMetadataManager ontologyMetadataManager;
 	private CustomNcboOntologyLoadQueueDAO ncboOntologyLoadQueueDAO;
 	private CustomNcboOntologyFileDAO ncboOntologyFileDAO;
+	private Map<String, String> ontologyFormatHandlerMap = new HashMap<String, String>();
+	private Map<String, OntologyLoadManager> ontologyLoadHandlerMap = new HashMap<String, OntologyLoadManager>();
 	private IndexSearchService indexService;
-	
+
 	public void cleanupOntologyCategory(OntologyBean ontologyBean) {
 		// This method was created in the original implementation where
-		// metadata was stored in databases. 
-		// The function of this method was to remove old table entries 
+		// metadata was stored in databases.
+		// The function of this method was to remove old table entries
 		// representing relations between ontology versions and categories.
 		//
 		// Since Protege takes care of the consistency of relationships
-		// automatically, this method in this class should have nothing to do. 
+		// automatically, this method in this class should have nothing to do.
 	}
 
 	public void createOntology(OntologyBean ontologyBean,
@@ -52,19 +60,17 @@ public class OntologyServiceMetadataImpl implements OntologyService {
 		if (!ontologyBean.isRemote()) {
 			ontologyBean.setFilePath(ontologyBean.getOntologyDirPath());
 		}
-		
-		//executing actions previously in ontologyBean.populateToVersionEntity(ontologyVersion);
+
+		// executing actions previously in
+		// ontologyBean.populateToVersionEntity(ontologyVersion);
 		ontologyBean.updateIfNecessary();
-		
-		Integer newVersionId = ontologyMetadataManager.getNextAvailableOntologyVersionId();
+
+		Integer newVersionId = ontologyMetadataManager
+				.getNextAvailableOntologyVersionId();
 		ontologyBean.setId(newVersionId);
 
-		
-		
-		
-		
-		
-		// if remote, do not continue to upload(i.e. ontologyFile and ontologyQueue)
+		// if remote, do not continue to upload(i.e. ontologyFile and
+		// ontologyQueue)
 		if (ontologyBean.isRemote()) {
 			ontologyMetadataManager.saveOntology(ontologyBean);
 			return;
@@ -81,28 +87,59 @@ public class OntologyServiceMetadataImpl implements OntologyService {
 		for (NcboOntologyFile ontologyFile : ontologyFileList) {
 			ncboOntologyFileDAO.save(ontologyFile);
 		}
-		
+
 		ontologyMetadataManager.saveOntology(ontologyBean);
 
 		// 5. <ontologyQueue> - populate and save
 		ontologyBean.populateToLoadQueueEntity(loadQueue, newVersionId);
-		ncboOntologyLoadQueueDAO.save(loadQueue);		
+		ncboOntologyLoadQueueDAO.save(loadQueue);
 	}
 
 	public void deleteOntologies(List<Integer> ontologyVersionIds)
 			throws Exception {
 		// TODO Auto-generated method stub
-		
+
 	}
 
+	@SuppressWarnings("unchecked")
 	public void deleteOntology(Integer ontologyVersionId) throws Exception {
 		OntologyBean ontologyBean = findOntology(ontologyVersionId);
 
-		// 8. Reindex the latest version of ontology (this operation removes
+		if (ontologyBean == null) {
+			return;
+		}
+
+		// 1. Remove ontology from the backend
+		if (!ontologyBean.isRemote()) {
+			getLoadManager(ontologyBean).cleanup(ontologyBean);
+			deleteOntologyFile(ontologyBean);
+		}
+		
+		// 2. Remove ontology metadata
+		//TODO: remove ontology metadata
+		
+		
+		
+		
+		// 3. Remove ontologyFile records from DB
+		List<NcboOntologyFile> ontologyFileSet = ncboOntologyFileDAO.findByOntologyVersionId(ontologyVersionId);
+
+		for (NcboOntologyFile ontologyFile : ontologyFileSet) {
+			ncboOntologyFileDAO.delete(ontologyFile);
+		}
+
+		// 4. Remove ontologyQueue record from DB
+		NcboOntologyLoadQueue ontologyLoadQueue = ncboOntologyLoadQueueDAO.findByOntologyVersionId(ontologyVersionId);
+
+		if (ontologyLoadQueue != null) {
+			ncboOntologyLoadQueueDAO.delete(ontologyLoadQueue);
+		}
+		
+		// 5. Reindex the latest version of ontology (this operation removes
 		// this version from the index). Do not backup or optimize the index (it
 		// will be backed up and optimized on the next ontology indexing
 		// operation).
-		indexService.indexOntology(ontologyBean.getOntologyId(), false, false);	
+		indexService.indexOntology(ontologyBean.getOntologyId(), false, false);
 	}
 
 	public List<CategoryBean> findAllCategories() {
@@ -118,9 +155,10 @@ public class OntologyServiceMetadataImpl implements OntologyService {
 	public List<OntologyBean> findAllOntologyVersionsByOntologyId(
 			Integer ontologyId) {
 		try {
-			return ontologyMetadataManager.findAllOntologyVersionsById(ontologyId);
+			return ontologyMetadataManager
+					.findAllOntologyVersionsById(ontologyId);
 		} catch (Exception e) {
-			//TODO see if this is the way we want to deal with exceptions
+			// TODO see if this is the way we want to deal with exceptions
 			e.printStackTrace();
 			return null;
 		}
@@ -140,9 +178,10 @@ public class OntologyServiceMetadataImpl implements OntologyService {
 		// TODO Auto-generated method stub
 		return null;
 	}
-	
+
 	public OntologyBean findLatestOntologyVersion(Integer ontologyId) {
-		return ontologyMetadataManager.findLatestOntologyVersionById(ontologyId);
+		return ontologyMetadataManager
+				.findLatestOntologyVersionById(ontologyId);
 	}
 
 	public OntologyBean findLatestOntologyVersionByOboFoundryId(
@@ -188,7 +227,7 @@ public class OntologyServiceMetadataImpl implements OntologyService {
 
 	public void updateOntology(OntologyBean ontologyBean) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	/**
@@ -199,29 +238,21 @@ public class OntologyServiceMetadataImpl implements OntologyService {
 	}
 
 	/**
-	 * @param ontologyMetadataManager the ontologyMetadataManager to set
+	 * @param ontologyMetadataManager
+	 *            the ontologyMetadataManager to set
 	 */
 	public void setOntologyMetadataManager(
 			OntologyMetadataManager ontologyMetadataManager) {
 		this.ontologyMetadataManager = ontologyMetadataManager;
 	}
 
-	
-	//utility method
+	// Utility methods
 
-	/**
-	 * @return the ncboOntologyLoadQueueDAO
-	 */
-	public CustomNcboOntologyLoadQueueDAO getNcboOntologyLoadQueueDAO() {
-		return ncboOntologyLoadQueueDAO;
-	}
+	private boolean deleteOntologyFile(OntologyBean ontologyBean) {
+		String dirPath = AbstractFilePathHandler
+				.getFullOntologyDirPath(ontologyBean);
 
-	/**
-	 * @param ncboOntologyLoadQueueDAO the ncboOntologyLoadQueueDAO to set
-	 */
-	public void setNcboOntologyLoadQueueDAO(
-			CustomNcboOntologyLoadQueueDAO ncboOntologyLoadQueueDAO) {
-		this.ncboOntologyLoadQueueDAO = ncboOntologyLoadQueueDAO;
+		return AbstractFilePathHandler.deleteDirectory(new File(dirPath));
 	}
 
 	/**
@@ -234,8 +265,8 @@ public class OntologyServiceMetadataImpl implements OntologyService {
 		Integer ontologyId = ontologyBean.getOntologyId();
 
 		if (ontologyId == null) {
-			ontologyBean.setOntologyId(
-					ontologyMetadataManager.getNextAvailableOntologyId());
+			ontologyBean.setOntologyId(ontologyMetadataManager
+					.getNextAvailableOntologyId());
 			ontologyBean
 					.setInternalVersionNumber(Integer
 							.parseInt(MessageUtils
@@ -246,7 +277,6 @@ public class OntologyServiceMetadataImpl implements OntologyService {
 			ontologyBean.setInternalVersionNumber(lastInternalVersion + 1);
 		}
 	}
-	
 
 	private List<String> uploadOntologyFile(OntologyBean ontologyBean,
 			FilePathHandler filePathHandler) throws Exception {
@@ -269,17 +299,64 @@ public class OntologyServiceMetadataImpl implements OntologyService {
 		return fileNames;
 	}
 
+	private OntologyLoadManager getLoadManager(OntologyBean ontologyBean)
+			throws Exception {
+		String formatHandler = ontologyFormatHandlerMap.get(ontologyBean
+				.getFormat());
+		OntologyLoadManager loadManager = ontologyLoadHandlerMap
+				.get(formatHandler);
+
+		if (loadManager == null) {
+			log.error("Cannot find formatHandler for "
+					+ ontologyBean.getFormat());
+			throw new InvalidOntologyFormatException(
+					"Cannot find formatHandler for " + ontologyBean.getFormat());
+		}
+
+		return loadManager;
+	}
+
 	/**
-	 * @param indexService the indexService to set
+	 * @param indexService
+	 *            the indexService to set
 	 */
 	public void setIndexService(IndexSearchService indexService) {
 		this.indexService = indexService;
 	}
 
 	/**
-	 * @param ncboOntologyFileDAO the ncboOntologyFileDAO to set
+	 * @param ncboOntologyFileDAO
+	 *            the ncboOntologyFileDAO to set
 	 */
-	public void setNcboOntologyFileDAO(CustomNcboOntologyFileDAO ncboOntologyFileDAO) {
+	public void setNcboOntologyFileDAO(
+			CustomNcboOntologyFileDAO ncboOntologyFileDAO) {
 		this.ncboOntologyFileDAO = ncboOntologyFileDAO;
+	}
+
+	/**
+	 * @param ncboOntologyLoadQueueDAO
+	 *            the ncboOntologyLoadQueueDAO to set
+	 */
+	public void setNcboOntologyLoadQueueDAO(
+			CustomNcboOntologyLoadQueueDAO ncboOntologyLoadQueueDAO) {
+		this.ncboOntologyLoadQueueDAO = ncboOntologyLoadQueueDAO;
+	}
+
+	/**
+	 * @param ontologyFormatHandlerMap
+	 *            the ontologyFormatHandlerMap to set
+	 */
+	public void setOntologyFormatHandlerMap(
+			Map<String, String> ontologyFormatHandlerMap) {
+		this.ontologyFormatHandlerMap = ontologyFormatHandlerMap;
+	}
+
+	/**
+	 * @param ontologyLoadHandlerMap
+	 *            the ontologyLoadHandlerMap to set
+	 */
+	public void setOntologyLoadHandlerMap(
+			Map<String, OntologyLoadManager> ontologyLoadHandlerMap) {
+		this.ontologyLoadHandlerMap = ontologyLoadHandlerMap;
 	}
 }

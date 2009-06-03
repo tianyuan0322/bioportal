@@ -552,6 +552,12 @@
 		<property name="ncboOntologyLoadQueueDAO">
 			<ref bean="NcboOntologyLoadQueueDAO" />
 		</property>
+		<property name="ontologyFormatHandlerMap">
+			<ref local="ontologyFormatHandlerMap" />
+		</property>
+		<property name="ontologyLoadHandlerMap">
+			<ref local="ontologyLoadHandlerMap" />
+		</property>
 		<property name="indexService">
 			<ref bean="indexSearchService" />
 		</property>
