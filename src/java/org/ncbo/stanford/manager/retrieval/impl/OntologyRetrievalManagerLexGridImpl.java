@@ -25,6 +25,7 @@ import org.LexGrid.LexBIG.LexBIGService.LexBIGService;
 import org.LexGrid.LexBIG.LexBIGService.CodedNodeSet.ActiveOption;
 import org.LexGrid.LexBIG.Utility.Constructors;
 import org.LexGrid.LexBIG.Utility.ConvenienceMethods;
+import org.LexGrid.LexBIG.Utility.ObjectToString;
 import org.LexGrid.codingSchemes.CodingScheme;
 import org.LexGrid.commonTypes.EntityDescription;
 import org.LexGrid.commonTypes.Property;
@@ -191,7 +192,7 @@ public class OntologyRetrievalManagerLexGridImpl extends
 			reverseAssoc(ncboOntology, pathToRoot.getAssociation(i),
 					pathFromRoot, codeToEntityDescriptionMap);
 		}
-
+        log.debug(ObjectToString.toString(pathFromRoot));
 		ArrayList<ClassBean> classBeans = new ArrayList<ClassBean>();
 		boolean includeChildren = !light;
 		for (int i = 0; i < pathFromRoot.getAssociationCount(); i++) {
@@ -371,6 +372,31 @@ public class OntologyRetrievalManagerLexGridImpl extends
 	}
 
 	/**
+	 * Return resolvedConceptReference without the associations
+	 * 
+	 * @param AssociatedConcept
+	 * @return
+	 * @throws Exception
+	 */
+	
+	private ResolvedConceptReference getResolvedConceptReferenceWithoutRelations(AssociatedConcept ac)  {
+		
+		ResolvedConceptReference rcr = new ResolvedConceptReference();
+		rcr.setReferencedEntry(ac.getReferencedEntry());
+		rcr.setCode(ac.getCode());
+		rcr.setCodeNamespace(ac.getCodeNamespace());
+		rcr.setCodingSchemeName(ac.getCodingSchemeName());
+		rcr.setCodingSchemeURI(ac.getCodingSchemeURI());
+		rcr.setCodingSchemeVersion(ac.getCodingSchemeVersion());
+		rcr.setConceptCode(ac.getConceptCode());
+		rcr.setEntity(ac.getEntity());
+		rcr.setEntityDescription(ac.getEntityDescription());
+		
+		return rcr;
+
+	}
+	
+	/**
 	 * Return the entityDescription of the conceptId
 	 * 
 	 * @param ncboOntology
@@ -514,7 +540,7 @@ public class OntologyRetrievalManagerLexGridImpl extends
 			}
 		}
 		AssociationList associations = lbscm.getHierarchyLevelPrev(schemeName,
-				csvt, hierarchyId, conceptId, false, null);
+				csvt, hierarchyId, conceptId, false, false, null);
 		return associations;
 	}
 
@@ -539,7 +565,7 @@ public class OntologyRetrievalManagerLexGridImpl extends
 			}
 		}
 		AssociationList associations = lbscm.getHierarchyLevelNext(schemeName,
-				csvt, hierarchyId, conceptId, false, null);
+				csvt, hierarchyId, conceptId, false, false, null);
 		return associations;
 	}
 
@@ -570,6 +596,7 @@ public class OntologyRetrievalManagerLexGridImpl extends
 	private ClassBean createClassBeanWithChildCount(
 			ResolvedConceptReference rcr, boolean includeChildren) {
 		ClassBean bean = createClassBean(rcr);
+		log.debug("createClassBeanWithChildCount for conceptCode "+ rcr.getConceptCode());
 		// Add the children
 		String schemeName = rcr.getCodingSchemeName();
 		String version = rcr.getCodingSchemeVersion();
@@ -588,6 +615,7 @@ public class OntologyRetrievalManagerLexGridImpl extends
 		} catch (Exception ex) {
 			ex.printStackTrace();
 		}
+		log.debug("createClassBeanWithChildCount returned ");
 		return bean;
 	}
 
@@ -803,8 +831,11 @@ public class OntologyRetrievalManagerLexGridImpl extends
 								.getSourceOf().getAssociationCount() == 0))) {
 					includeChildren = false;
 				}
+				ResolvedConceptReference rcr_without_relations = getResolvedConceptReferenceWithoutRelations(assocConcept);
 				ClassBean classBean = createClassBeanWithChildCount(
-						assocConcept, includeChildren);
+						rcr_without_relations, includeChildren);
+//				ClassBean classBean = createClassBeanWithChildCount(
+//						assocConcept, includeChildren);
 				classBeans.add(classBean);
 
 				// Find and recurse printing for next batch ...
