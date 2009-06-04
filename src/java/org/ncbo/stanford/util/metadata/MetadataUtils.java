@@ -131,26 +131,21 @@ public class MetadataUtils {
 			RDFResource owlInd, String propName) throws Exception {
 		Collection<?> propVals = getPropertyValues(owlModel, owlInd, propName,
 				Object.class);
-		if (propVals == null) {
-			return null;
-		} else {
-			List<Integer> idList = new ArrayList<Integer>();
+		List<Integer> idList = new ArrayList<Integer>();
 
+		if (propVals != null) {
 			for (Object propVal : propVals) {
 				if (propVal instanceof RDFResource) {
 					RDFResource ind = (RDFResource) propVal;
 					idList.add((Integer) getPropertyValue(owlModel, ind,
 							PROPERTY_ID, Integer.class));
 				} else {
-					// TODO what to do?
-					// throw Exception?
-					// log.error("No OMV:OntologyLanguage individual found for
-					// format: " + format);
+					 log.error("UNEXPECTED ERROR: Non-RDFResource value attached to " + owlInd + " through property " + propName);
 				}
 			}
-
-			return idList;
 		}
+		
+		return idList;
 	}
 
 	protected static Integer getId(OWLModel owlModel, RDFResource owlInd)
