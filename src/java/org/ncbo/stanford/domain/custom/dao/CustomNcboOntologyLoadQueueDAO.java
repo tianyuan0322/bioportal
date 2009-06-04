@@ -40,7 +40,7 @@ public class CustomNcboOntologyLoadQueueDAO extends NcboOntologyLoadQueueDAO {
 		return (NcboOntologyLoadQueue) getSession()
 				.createCriteria(
 						"org.ncbo.stanford.domain.generated.NcboOntologyLoadQueue")
-				.add(Expression.eq("ncboOntologyVersion.id", ontologyVersionId))
+				.add(Expression.eq("ontologyVersionId", ontologyVersionId))
 				.uniqueResult();
 	}
 
