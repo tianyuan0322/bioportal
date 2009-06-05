@@ -265,6 +265,28 @@ public class RequestUtils {
 		return integerList;
 	}
 
+	public static List<Integer> parseIntegerListParam(String[] integerListParam) {
+		List<Integer> integerList = new ArrayList<Integer>(0);
+		
+		for (String integerParam : integerListParam) {
+			if (!StringHelper.isNullOrNullString(integerParam)) {
+				integerParam = StringHelper.removeSpaces(integerParam);
+				try {
+					//simplified solution: just parses the String input to an Integer 
+					//Integer integerParamInt = Integer.parseInt(integerParam);
+					//integerList.add(integerParamInt);
+					
+					//combining the two solutions (i.e. also parsing each string input for multiple Integer values)
+					List<Integer> integerParamInts = parseIntegerListParam(integerParam);
+					integerList.addAll(integerParamInts);
+				} catch (NumberFormatException e) {
+				}
+			}
+		}
+		
+		return integerList;
+	}
+	
 	/**
 	 * Executes an HTTP post
 	 * 

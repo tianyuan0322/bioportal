@@ -495,6 +495,11 @@
 		parent="abstractOntologyManagerProtege">
 	</bean>
 
+	<bean id="ontologyCategoryMetadataManagerProtege"
+		class="org.ncbo.stanford.manager.metadata.impl.OntologyCategoryMetadataManagerProtegeImpl"
+		parent="abstractOntologyManagerProtege">
+	</bean>
+
 	<!-- Application Services -->
 	<bean id="userService"
 		class="org.ncbo.stanford.service.user.impl.UserServiceImpl">
@@ -526,40 +531,47 @@
 		<property name="ontologyMetadataManagerProtege">
 			<ref local="ontologyMetadataManagerProtege" />
 		</property>
-	</bean>
-
-	<bean id="ontologyViewService"
-		class="org.ncbo.stanford.service.ontology.impl.OntologyViewServiceMetadataImpl">
-		<property name="ontologyViewMetadataManager">
-			<ref bean="ontologyViewMetadataManagerProtege" />
-		</property>
-		<property name="ncboOntologyFileDAO">
-			<ref bean="NcboOntologyFileDAO" />
-		</property>
-		<property name="ncboOntologyLoadQueueDAO">
-			<ref bean="NcboOntologyLoadQueueDAO" />
+		<property name="ontologyViewMetadataManagerProtege">
+			<ref local="ontologyViewMetadataManagerProtege" />
 		</property>
 	</bean>
 
-	<bean id="ontologyService"
-		class="org.ncbo.stanford.service.ontology.impl.OntologyServiceMetadataImpl">
-		<property name="ontologyMetadataManager">
-			<ref bean="ontologyMetadataManagerProtege" />
-		</property>
-		<property name="ncboOntologyFileDAO">
-			<ref bean="NcboOntologyFileDAO" />
-		</property>
-		<property name="ncboOntologyLoadQueueDAO">
-			<ref bean="NcboOntologyLoadQueueDAO" />
-		</property>
+	<bean id="abstractOntologyService"
+		class="org.ncbo.stanford.service.ontology.AbstractOntologyService"
+		abstract="true">
 		<property name="ontologyFormatHandlerMap">
 			<ref local="ontologyFormatHandlerMap" />
 		</property>
 		<property name="ontologyLoadHandlerMap">
 			<ref local="ontologyLoadHandlerMap" />
 		</property>
+		<property name="ncboOntologyFileDAO">
+			<ref bean="NcboOntologyFileDAO" />
+		</property>
+		<property name="ncboOntologyLoadQueueDAO">
+			<ref bean="NcboOntologyLoadQueueDAO" />
+		</property>
 		<property name="indexService">
 			<ref bean="indexSearchService" />
+		</property>
+	</bean>
+
+	<bean id="ontologyViewService"
+		class="org.ncbo.stanford.service.ontology.impl.OntologyViewServiceMetadataImpl"
+		parent="abstractOntologyService">
+		<property name="ontologyViewMetadataManager">
+			<ref bean="ontologyViewMetadataManagerProtege" />
+		</property>
+	</bean>
+
+	<bean id="ontologyService"
+		class="org.ncbo.stanford.service.ontology.impl.OntologyServiceMetadataImpl"
+		parent="abstractOntologyService">
+		<property name="ontologyMetadataManager">
+			<ref bean="ontologyMetadataManagerProtege" />
+		</property>
+		<property name="ontologyCategoryMetadataManager">
+			<ref bean="ontologyCategoryMetadataManagerProtege" />
 		</property>
 	</bean>
 

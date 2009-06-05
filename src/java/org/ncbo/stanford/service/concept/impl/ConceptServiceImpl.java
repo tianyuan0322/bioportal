@@ -12,8 +12,10 @@ import org.apache.commons.logging.LogFactory;
 import org.ncbo.stanford.bean.OntologyBean;
 import org.ncbo.stanford.bean.OntologyIdBean;
 import org.ncbo.stanford.bean.OntologyVersionIdBean;
+import org.ncbo.stanford.bean.OntologyViewBean;
 import org.ncbo.stanford.bean.concept.ClassBean;
 import org.ncbo.stanford.manager.metadata.OntologyMetadataManager;
+import org.ncbo.stanford.manager.metadata.OntologyViewMetadataManager;
 import org.ncbo.stanford.manager.obs.OBSManager;
 import org.ncbo.stanford.manager.retrieval.OntologyRetrievalManager;
 import org.ncbo.stanford.service.concept.ConceptService;
@@ -36,6 +38,7 @@ public class ConceptServiceImpl implements ConceptService {
 			0);
 	private OBSManager obsManager;	
 	private OntologyMetadataManager ontologyMetadataManagerProtege;
+	private OntologyViewMetadataManager ontologyViewMetadataManagerProtege;
 	
 
 	/**
@@ -48,10 +51,27 @@ public class ConceptServiceImpl implements ConceptService {
 		return getRetrievalManager(ontology).findRootConcept(ontology);
 	}
 
+	/**
+	 * Get the root concept for the specified ontology view.
+	 */
+	public ClassBean findRootConceptInView(Integer ontologyViewId)
+			throws Exception {
+		OntologyViewBean ontology = ontologyViewMetadataManagerProtege.findOntologyViewById(ontologyViewId);
+		
+		return getRetrievalManager(ontology).findRootConcept(ontology);
+	}
+	
 	public ClassBean findConcept(Integer ontologyVersionId, String conceptId)
 			throws Exception {
 		OntologyBean ontology = ontologyMetadataManagerProtege.findOntologyById(ontologyVersionId);
 
+		return getRetrievalManager(ontology).findConcept(ontology, conceptId);
+	}
+	
+	public ClassBean findConceptInView(Integer ontologyViewId, String conceptId)
+			throws Exception {
+		OntologyViewBean ontology = ontologyViewMetadataManagerProtege.findOntologyViewById(ontologyViewId);
+		
 		return getRetrievalManager(ontology).findConcept(ontology, conceptId);
 	}
 
@@ -59,6 +79,14 @@ public class ConceptServiceImpl implements ConceptService {
 			String conceptId, boolean light) throws Exception {
 		OntologyBean ontology = ontologyMetadataManagerProtege.findOntologyById(ontologyVersionId);
 
+		return getRetrievalManager(ontology).findPathFromRoot(ontology,
+				conceptId, light);
+	}
+	
+	public ClassBean findPathFromRootInView(Integer ontologyViewId,
+			String conceptId, boolean light) throws Exception {
+		OntologyViewBean ontology = ontologyViewMetadataManagerProtege.findOntologyViewById(ontologyViewId);
+		
 		return getRetrievalManager(ontology).findPathFromRoot(ontology,
 				conceptId, light);
 	}
@@ -188,5 +216,13 @@ public class ConceptServiceImpl implements ConceptService {
 	public void setOntologyMetadataManagerProtege(
 			OntologyMetadataManager ontologyMetadataManagerProtege) {
 		this.ontologyMetadataManagerProtege = ontologyMetadataManagerProtege;
+	}
+
+	/**
+	 * @param ontologyViewMetadataManagerProtege the ontologyViewMetadataManagerProtege to set
+	 */
+	public void setOntologyViewMetadataManagerProtege(
+			OntologyViewMetadataManager ontologyViewMetadataManagerProtege) {
+		this.ontologyViewMetadataManagerProtege = ontologyViewMetadataManagerProtege;
 	}
 }

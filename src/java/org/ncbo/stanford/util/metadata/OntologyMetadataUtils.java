@@ -11,6 +11,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.ncbo.stanford.bean.OntologyBean;
 import org.ncbo.stanford.bean.OntologyViewBean;
+import org.ncbo.stanford.exception.MetadataException;
 import org.ncbo.stanford.util.MessageUtils;
 
 import edu.stanford.smi.protegex.owl.model.OWLClass;
@@ -27,6 +28,7 @@ public class OntologyMetadataUtils extends MetadataUtils {
 	private static final Log log = LogFactory.getLog(OntologyMetadataUtils.class);
 
 	private static final String CLASS_OMV_ONTOLOGY = PREFIX_OMV + "Ontology";
+	private static final String CLASS_OMV_ONTOLOGY_DOMAIN = PREFIX_OMV + "OntologyDomain";
 	private static final String CLASS_OMV_ONTOLOGY_LANGUAGE = PREFIX_OMV + "OntologyLanguage";
 	private static final String CLASS_VIRTUAL_ONTOLOGY = PREFIX_METADATA + "VirtualOntology";
 	
@@ -69,6 +71,8 @@ public class OntologyMetadataUtils extends MetadataUtils {
 //	private static final String PROPERTY_CURRENT_VERSION = PREFIX_METADATA + "currentVersion";
 	private static final String PROPERTY_HAS_VERSION = PREFIX_METADATA + "hasVersion";
 
+	private static final String PROPERTY_HAS_VIEW = PREFIX_METADATA + "hasView";
+
 	
 	private static final String PROPERTY_IS_VIEW_ON_ONTOLOGY_VERSION = PREFIX_METADATA + "isViewOnOntologyVersion";
 	private static final String PROPERTY_VIEW_DEFINITION = PREFIX_METADATA + "viewDefinition";
@@ -78,10 +82,10 @@ public class OntologyMetadataUtils extends MetadataUtils {
 	private static final String PROPERTY_VIRTUAL_VIEW_OF = PREFIX_METADATA + "virtualViewOf";
 
 	public static void ensureOntologyBeanDoesNotInvalidateOntologyInstance(
-			OWLIndividual ontologyInd, OntologyBean ob, OWLIndividual vOntInd) throws Exception {
+			OWLIndividual ontologyInd, OntologyBean ob, OWLIndividual vOntInd) throws MetadataException {
 		
 		if (ontologyInd == null || ob == null) {
-			throw new Exception("The method fillInOntologyInstancePropertiesFromBean can't take null arguments. Please make sure that both arguments are properly initialized.");
+			throw new MetadataException("The method ensureOntologyBeanDoesNotInvalidateOntologyInstance can't take null arguments. Please make sure that both arguments are properly initialized.");
 		}
 		
 		OWLModel owlModel = ontologyInd.getOWLModel();
@@ -148,7 +152,7 @@ public class OntologyMetadataUtils extends MetadataUtils {
 	}
 	
 	public static void ensureOntologyViewBeanDoesNotInvalidateOntologyViewInstance(
-			OWLIndividual ontologyViewInd, OntologyViewBean ob, OWLIndividual vViewInd) throws Exception {
+			OWLIndividual ontologyViewInd, OntologyViewBean ob, OWLIndividual vViewInd) throws MetadataException {
 		
 		ensureOntologyBeanDoesNotInvalidateOntologyInstance(ontologyViewInd, ob, vViewInd);
 		
@@ -158,10 +162,11 @@ public class OntologyMetadataUtils extends MetadataUtils {
 	
 	public static void fillInOntologyInstancePropertiesFromBean(OWLIndividual ontologyInd,
 			OntologyBean ob, OWLIndividual vOntInd, OWLIndividual userInd, 
-			Collection<OWLIndividual> domainIndividuals) throws Exception {
+			Collection<OWLIndividual> domainIndividuals, 
+			Collection<OWLIndividual> viewIndividuals) throws MetadataException {
 		
 		if (ontologyInd == null || ob == null) {
-			throw new Exception("The method fillInOntologyInstancePropertiesFromBean can't take null arguments. Please make sure that both arguments are properly initialized.");
+			throw new MetadataException("The method fillInOntologyInstancePropertiesFromBean can't take null arguments. Please make sure that both arguments are properly initialized.");
 		}
 		
 		OWLModel owlModel = ontologyInd.getOWLModel();
@@ -227,14 +232,17 @@ public class OntologyMetadataUtils extends MetadataUtils {
 		
 		setPropertyValue(owlModel, ontologyInd, PROPERTY_OMV_VERSION, ob.getVersionNumber());
 		setPropertyValue(owlModel, ontologyInd, PROPERTY_OMV_STATUS, ob.getVersionStatus());
+		
+		setPropertyValue(owlModel, ontologyInd, PROPERTY_HAS_VIEW, viewIndividuals);
 	}
 
 	public static void fillInOntologyViewInstancePropertiesFromBean(OWLIndividual ontologyViewInd,
 			OntologyViewBean ob, OWLIndividual vViewInd, OWLIndividual userInd, 
 			Collection<OWLIndividual> domainIndividuals, 
-			Collection<OWLIndividual> ontologyIndividuals) throws Exception {
+			Collection<OWLIndividual> viewIndividuals, 
+			Collection<OWLIndividual> ontologyIndividuals) throws MetadataException {
 		
-		fillInOntologyInstancePropertiesFromBean(ontologyViewInd, ob, vViewInd, userInd, domainIndividuals);
+		fillInOntologyInstancePropertiesFromBean(ontologyViewInd, ob, vViewInd, userInd, domainIndividuals, viewIndividuals);
 		
 		OWLModel owlModel = ontologyViewInd.getOWLModel();
 		
@@ -330,6 +338,8 @@ public class OntologyMetadataUtils extends MetadataUtils {
 		ob.setUserId( getFirstElement(getPropertyValueIds(owlModel, ontologyInd, PROPERTY_ADMINISTERED_BY)) );
 		ob.setVersionNumber( getPropertyValue(owlModel, ontologyInd, PROPERTY_OMV_VERSION, String.class));
 		ob.setVersionStatus( getPropertyValue(owlModel, ontologyInd, PROPERTY_OMV_STATUS, String.class));
+		
+		ob.setHasViews( getPropertyValueIds(owlModel, ontologyInd, PROPERTY_HAS_VIEW));
 	}
 
 	public static void fillInOntologyViewBeanFromInstance(OntologyViewBean ob,
@@ -484,7 +494,7 @@ public class OntologyMetadataUtils extends MetadataUtils {
 	}
 	
 	public static List<Integer> getAllOntologyVersionIDs(OWLModel metadata,
-			OWLIndividual virtualOntologyInd) throws Exception {
+			OWLIndividual virtualOntologyInd) throws MetadataException {
 		//List<Integer> res = new ArrayList<Integer>();
 		return getPropertyValueIds(metadata, virtualOntologyInd, PROPERTY_HAS_VERSION);
 	}
@@ -529,6 +539,28 @@ public class OntologyMetadataUtils extends MetadataUtils {
 			}
 			else {
 				log.warn("Invalid instance of class " + vViewClass.getBrowserText() + ": " + vView);
+			}
+		}
+		return res;
+	}
+	
+	public static List<Integer> getAllCategoryIDs(OWLModel metadata) {
+		OWLNamedClass ontDomClass = metadata.getOWLNamedClass(CLASS_OMV_ONTOLOGY_DOMAIN);
+		List<Integer> res = new ArrayList<Integer>();
+		Collection<?> ontDomains = ontDomClass.getInstances(true);
+		for (Object ontDomain : ontDomains) {
+			if (ontDomain instanceof RDFIndividual) {
+				RDFIndividual ontDomainInst = (RDFIndividual)ontDomain;
+				try {
+					Integer id = getId(metadata, ontDomainInst);
+					res.add(id);
+				}
+				catch(Exception e) {
+					log.error("Exception while getting ID of virtual view " + ontDomainInst.getBrowserText());
+				}
+			}
+			else {
+				log.warn("Invalid instance of class " + ontDomClass.getBrowserText() + ": " + ontDomain);
 			}
 		}
 		return res;

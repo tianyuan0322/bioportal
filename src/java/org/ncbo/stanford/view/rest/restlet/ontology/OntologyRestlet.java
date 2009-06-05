@@ -84,21 +84,11 @@ public class OntologyRestlet extends AbstractBaseRestlet {
 
 		// if "find" was successful, proceed to update
 		if (!response.getStatus().isError()) {
-			// 1. save implicit values such as id
-			Integer id = ontologyBean.getId();
-			Integer ontologyId = ontologyBean.getOntologyId();
-			Integer internalVersionNumber = ontologyBean
-					.getInternalVersionNumber();
 
-			// 2. populate OntologyBean from Request object
-			ontologyBean = BeanHelper.populateOntologyBeanFromRequest(request);
+			// 1. populate OntologyBean from Request object
+			ontologyBean = BeanHelper.populateOntologyBeanFromRequest(ontologyBean, request);
 
-			// 3. populate implicit values
-			ontologyBean.setId(id);
-			ontologyBean.setOntologyId(ontologyId);
-			ontologyBean.setInternalVersionNumber(internalVersionNumber);
-
-			// 4. now update the ontology
+			// 2. now update the ontology
 			try {
 				ontologyService.updateOntology(ontologyBean);
 			} catch (Exception e) {

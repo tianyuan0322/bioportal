@@ -8,6 +8,7 @@ import java.util.List;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.ncbo.stanford.bean.OntologyBean;
+import org.ncbo.stanford.exception.MetadataException;
 import org.ncbo.stanford.manager.AbstractOntologyManagerProtege;
 import org.ncbo.stanford.manager.metadata.OntologyMetadataManager;
 import org.ncbo.stanford.util.metadata.MetadataUtils;
@@ -55,18 +56,61 @@ public class OntologyMetadataManagerProtegeImpl extends
 	private static final boolean ONLY_ACTIVE_VERSIONS = true;
 	private static final boolean ALL_VERSIONS = (! ONLY_ACTIVE_VERSIONS);
 	
-	public void saveOntology(OntologyBean ob) throws Exception {
+	public void saveOntology(OntologyBean ob) throws MetadataException {
 		OWLModel metadata = getMetadataOWLModel();
 		OWLIndividual ontVerInd = getOntologyInstance(metadata, ob.getId(), CREATE_IF_MISSING);
 
+		saveOrUpdate(metadata, ontVerInd, ob);
+	}
+
+	public void updateOntology(OntologyBean ob) throws MetadataException {
+		OWLModel metadata = getMetadataOWLModel();
+		OWLIndividual ontVerInd = getOntologyInstance(metadata, ob.getId(), DO_NOT_CREATE_IF_MISSING);
+		
+		if (ontVerInd == null) {
+			throw new MetadataException(
+				"Metadata for ontology " + ob.getId() + " could not be updated because it could not be found!");
+		}
+		
+		saveOrUpdate(metadata, ontVerInd, ob);
+	}
+	
+	/**
+	 * Method containing the common behavior for save and update ontology bean
+	 *  
+	 * @param metadata the Metadata OWL ontology
+	 * @param ontVerInd 
+	 * @param ob
+	 * @throws MetadataException
+	 */
+	private void saveOrUpdate(OWLModel metadata, OWLIndividual ontVerInd, OntologyBean ob) throws MetadataException {
 		OWLIndividual vOntInd = getVirtualOntologyInstance(metadata, ob.getOntologyId());
 		OWLIndividual userInd = getUserInstance(metadata, ob.getUserId());
 		Collection<OWLIndividual> domainInd = getOntologyDomainInstances(metadata, ob.getCategoryIds());
+		Collection<OWLIndividual> viewInd = getOntologyDomainInstances(metadata, ob.getHasViews());
 
 		OntologyMetadataUtils.ensureOntologyBeanDoesNotInvalidateOntologyInstance(ontVerInd, ob, vOntInd);
 		
-		OntologyMetadataUtils.fillInOntologyInstancePropertiesFromBean(ontVerInd, ob, vOntInd, userInd, domainInd);
+		OntologyMetadataUtils.fillInOntologyInstancePropertiesFromBean(ontVerInd, ob, vOntInd, userInd, domainInd, viewInd);
 //		OntologyMetadataUtils.setLatestVersion(vOntInd, ontVerInd); //use this if we will reintroduce the "metadata:currentVersion" property
+	}
+	
+	public void deleteOntology(OntologyBean ob) throws MetadataException {
+		OWLModel metadata = getMetadataOWLModel();
+		OWLIndividual ontVerInd = getOntologyInstance(metadata, ob.getId(), DO_NOT_CREATE_IF_MISSING);
+		
+		if (ontVerInd == null) {
+			throw new MetadataException(
+				"Metadata for ontology " + ob.getId() + " could not be deleted because it could not be found!");
+		}
+
+		ontVerInd.delete();
+
+		//TODO check with Misha if we need this (i.e. to delete the VirtualOntology metadata once the last version is deleted)
+		if (findAllOntologyVersionsById(ob.getOntologyId()).isEmpty()) {
+			OWLIndividual vOntInd = getVirtualOntologyInstance(metadata, ob.getOntologyId());
+			vOntInd.delete();
+		}
 	}
 
 	public OntologyBean findOntologyById(Integer ontologyVersionId) {
@@ -108,10 +152,6 @@ public class OntologyMetadataManagerProtegeImpl extends
 		return res;
 	}
 	
-//	public OntologyBean findVirtualOntologyById(Integer ontologyId) {
-//		return findLatestActiveOntologyVersionById(ontologyId);
-//	}	
-//
 	public OntologyBean findLatestOntologyVersionById(Integer ontologyId) {
 		//WARNING: Any modification to this method should be replicated 
 		//         in the findLatestActiveOntologyVersionById() method
@@ -147,7 +187,7 @@ public class OntologyMetadataManagerProtegeImpl extends
 		}
 	}
 
-	public List<OntologyBean> findAllOntologyVersionsById(Integer ontologyId) throws Exception {
+	public List<OntologyBean> findAllOntologyVersionsById(Integer ontologyId) throws MetadataException {
 		OWLModel metadata = getMetadataOWLModel();
 		
 		OWLIndividual vOntInd = getVirtualOntologyInstance(metadata, ontologyId);

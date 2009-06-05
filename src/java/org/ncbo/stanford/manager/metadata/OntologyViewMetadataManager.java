@@ -3,6 +3,7 @@ package org.ncbo.stanford.manager.metadata;
 import java.util.List;
 
 import org.ncbo.stanford.bean.OntologyViewBean;
+import org.ncbo.stanford.exception.MetadataException;
 
 /**
  * An interface for all API specific ontology view metadata managers to conform to. This allows
@@ -21,17 +22,26 @@ public interface OntologyViewMetadataManager {
 	 * Saves the ontology view metadata specified by the ontologyViewBean representing an ontology view version.
 	 * 
 	 * @param ontologyViewBean
-	 * @throws Exception
+	 * @throws MetadataException
 	 */
-	public void saveOntologyView(OntologyViewBean ontologyViewBean) throws Exception;
+	public void saveOntologyView(OntologyViewBean ontologyViewBean) throws MetadataException;
 
-//	/**
-//	 * Saves the view metadata specified by the ontologyViewBean representing a virtual view.
-//	 * 
-//	 * @param ontologyViewBean
-//	 * @throws Exception
-//	 */
-//	public void saveVirtualView(OntologyBean ontologyViewBean) throws Exception;
+
+	/**
+	 * Updates the ontology view metadata specified by the ontologyBean representing an ontology view version.
+	 * 
+	 * @param ontologyViewBean
+	 * @throws MetadataException
+	 */
+	public void updateOntologyView(OntologyViewBean ontologyViewBean) throws MetadataException;
+
+	/**
+	 * Deletes the ontology view metadata specified by the ontologyBean representing an ontology view version.
+	 * 
+	 * @param ontologyViewBean
+	 * @throws MetadataException
+	 */
+	public void deleteOntologyView(OntologyViewBean ontologyViewBean) throws MetadataException;
 	
 	/**
 	 * Retrieves the ontologyViewBean representing an ontology view version for a specific ontology view version id.
@@ -73,9 +83,9 @@ public interface OntologyViewMetadataManager {
 	 *  
 	 * @param viewId a virtual view id
 	 * @return the list of ontology view beans corresponding to the versions of the virtual view with ID <code>viewId</code>
-	 * @throws Exception 
+	 * @throws MetadataException 
 	 */
-	public List<OntologyViewBean> findAllOntologyViewVersionsById(Integer viewId) throws Exception;
+	public List<OntologyViewBean> findAllOntologyViewVersionsById(Integer viewId) throws MetadataException;
 
 	
 	/**

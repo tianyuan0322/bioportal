@@ -101,22 +101,6 @@ public interface OntologyService {
 	public OntologyBean findLatestActiveOntologyVersion(Integer ontologyId);
 
 	/**
-	 * Find all versions of the given ontology in the system
-	 * 
-	 * @param ontologyId
-	 * @return
-	 */
-	public List<OntologyBean> findAllOntologyVersions(Integer ontologyId);
-
-	/**
-	 * Find ontology properties, such as "definition", "synonyms", "cui"...
-	 * 
-	 * @param ontologyVersionId
-	 * @return
-	 */
-	public List<String> findProperties(Integer ontologyVersionId);
-
-	/**
 	 * Create an ontology
 	 * 
 	 * @param ontologyBean
@@ -131,7 +115,7 @@ public interface OntologyService {
 	 * @param ontologyBean
 	 * @return
 	 */
-	public void updateOntology(OntologyBean ontologyBean);
+	public void updateOntology(OntologyBean ontologyBean) throws Exception;
 
 	/**
 	 * Update an ontology Category

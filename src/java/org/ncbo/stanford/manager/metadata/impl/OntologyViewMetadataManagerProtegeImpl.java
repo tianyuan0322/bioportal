@@ -8,6 +8,7 @@ import java.util.List;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.ncbo.stanford.bean.OntologyViewBean;
+import org.ncbo.stanford.exception.MetadataException;
 import org.ncbo.stanford.manager.AbstractOntologyManagerProtege;
 import org.ncbo.stanford.manager.metadata.OntologyViewMetadataManager;
 import org.ncbo.stanford.util.metadata.MetadataUtils;
@@ -55,19 +56,62 @@ public class OntologyViewMetadataManagerProtegeImpl extends
 	private static final boolean ONLY_ACTIVE_VERSIONS = true;
 	private static final boolean ALL_VERSIONS = (! ONLY_ACTIVE_VERSIONS);
 	
-	public void saveOntologyView(OntologyViewBean ob) throws Exception {
+	public void saveOntologyView(OntologyViewBean ob) throws MetadataException {
 		OWLModel metadata = getMetadataOWLModel();
 		OWLIndividual ontVerInd = getOntologyViewInstance(metadata, ob.getId(), CREATE_IF_MISSING);
 
+		saveOrUpdate(metadata, ontVerInd, ob);
+	}
+
+	public void updateOntologyView(OntologyViewBean ob) throws MetadataException {
+		OWLModel metadata = getMetadataOWLModel();
+		OWLIndividual ontVerInd = getOntologyViewInstance(metadata, ob.getId(), DO_NOT_CREATE_IF_MISSING);
+
+		if (ontVerInd == null) {
+			throw new MetadataException(
+				"Metadata for ontology view " + ob.getId() + " could not be updated because it could not be found!");
+		}
+		
+		saveOrUpdate(metadata, ontVerInd, ob);
+	}
+	
+	/**
+	 * Method containing the common behavior for save and update ontology bean
+	 *  
+	 * @param metadata the Metadata OWL ontology
+	 * @param ontVerInd 
+	 * @param ob
+	 * @throws MetadataException
+	 */
+	private void saveOrUpdate(OWLModel metadata, OWLIndividual ontVerInd, OntologyViewBean ob) throws MetadataException {
 		OWLIndividual vViewInd = getVirtualViewInstance(metadata, ob.getOntologyId());
 		OWLIndividual userInd = getUserInstance(metadata, ob.getUserId());
 		Collection<OWLIndividual> domainInd = getOntologyDomainInstances(metadata, ob.getCategoryIds());
+		Collection<OWLIndividual> viewInd = getOntologyDomainInstances(metadata, ob.getHasViews());
 		Collection<OWLIndividual> srcOntInd = getOntologyInstances(metadata, ob.getViewOnOntologyVersionId());
 
 		OntologyMetadataUtils.ensureOntologyViewBeanDoesNotInvalidateOntologyViewInstance(ontVerInd, ob, vViewInd);
 		
-		OntologyMetadataUtils.fillInOntologyViewInstancePropertiesFromBean(ontVerInd, ob, vViewInd, userInd, domainInd, srcOntInd);
+		OntologyMetadataUtils.fillInOntologyViewInstancePropertiesFromBean(ontVerInd, ob, vViewInd, userInd, domainInd, viewInd, srcOntInd);
 //		OntologyMetadataUtils.setLatestVersion(vOntInd, ontVerInd); //use this if we will reintroduce the "metadata:currentVersion" property
+	}
+	
+	public void deleteOntologyView(OntologyViewBean ob) throws MetadataException {
+		OWLModel metadata = getMetadataOWLModel();
+		OWLIndividual ontVerInd = getOntologyViewInstance(metadata, ob.getId(), DO_NOT_CREATE_IF_MISSING);
+		
+		if (ontVerInd == null) {
+			throw new MetadataException(
+				"Metadata for ontology view " + ob.getId() + " could not be deleted because it could not be found!");
+		}
+
+		ontVerInd.delete();
+
+		//TODO check with Misha if we need this (i.e. to delete the VirtualView metadata once the last view version is deleted)
+		if (findAllOntologyViewVersionsById(ob.getOntologyId()).isEmpty()) {
+			OWLIndividual vViewInd = getVirtualViewInstance(metadata, ob.getOntologyId());
+			vViewInd.delete();
+		}
 	}
 
 	public OntologyViewBean findOntologyViewById(Integer ontologyViewVersionId) {
@@ -100,10 +144,6 @@ public class OntologyViewMetadataManagerProtegeImpl extends
 		}
 	}
 	
-//	public OntologyBean findVirtualViewById(Integer viewId) {
-//		return findLatestActiveOntologyViewVersionById(viewId);
-//	}	
-//
 	public OntologyViewBean findLatestOntologyViewVersionById(Integer viewId) {
 		//WARNING: Any modification to this method should be replicated 
 		//         in the findLatestActiveOntologyViewVersionById() method
@@ -138,7 +178,7 @@ public class OntologyViewMetadataManagerProtegeImpl extends
 		}
 	}
 
-	public List<OntologyViewBean> findAllOntologyViewVersionsById(Integer viewId) throws Exception {
+	public List<OntologyViewBean> findAllOntologyViewVersionsById(Integer viewId) throws MetadataException {
 		OWLModel metadata = getMetadataOWLModel();
 		
 		OWLIndividual vOntInd = getVirtualViewInstance(metadata, viewId);

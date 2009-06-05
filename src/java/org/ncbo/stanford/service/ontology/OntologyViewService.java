@@ -2,7 +2,6 @@ package org.ncbo.stanford.service.ontology;
 
 import java.util.List;
 
-import org.ncbo.stanford.bean.OntologyBean;
 import org.ncbo.stanford.bean.OntologyViewBean;
 import org.ncbo.stanford.util.ontologyfile.pathhandler.FilePathHandler;
 
@@ -71,22 +70,6 @@ public interface OntologyViewService {
 	public OntologyViewBean findLatestOntologyViewVersion(Integer viewId);
 
 	/**
-	 * Find all versions of the given ontology view in the system
-	 * 
-	 * @param viewId
-	 * @return
-	 */
-	public List<OntologyViewBean> findAllOntologyViewVersions(Integer viewId);
-
-	/**
-	 * Find ontology view properties, such as "definition", "synonyms", "cui"...
-	 * 
-	 * @param ontologyViewVersionId
-	 * @return
-	 */
-	public List<String> findProperties(Integer ontologyViewVersionId);
-
-	/**
 	 * Create an ontology view
 	 * 
 	 * @param ontologyViewBean
@@ -101,7 +84,7 @@ public interface OntologyViewService {
 	 * @param ontologyViewBean
 	 * @return
 	 */
-	public void updateOntologyView(OntologyViewBean ontologyViewBean);
+	public void updateOntologyView(OntologyViewBean ontologyViewBean) throws Exception;
 
 	/**
 	 * Update an ontology view Category

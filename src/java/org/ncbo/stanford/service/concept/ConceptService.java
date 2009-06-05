@@ -19,10 +19,19 @@ public interface ConceptService {
 	public ClassBean findRootConcept(Integer ontologyVersionId)
 			throws Exception;
 
+	public ClassBean findRootConceptInView(Integer ontologyViewId)
+			throws Exception;
+	
 	public ClassBean findConcept(Integer ontologyVersionId, String conceptId)
 			throws Exception;
 
+	public ClassBean findConceptInView(Integer ontologyViewId, String conceptId)
+			throws Exception;
+	
 	public ClassBean findPathFromRoot(Integer ontologyVersionId,
+			String conceptId, boolean light) throws Exception;
+	
+	public ClassBean findPathFromRootInView(Integer ontologyViewId,
 			String conceptId, boolean light) throws Exception;
 
 	public List<ClassBean> findParents(OntologyVersionIdBean ontologyVersionId,

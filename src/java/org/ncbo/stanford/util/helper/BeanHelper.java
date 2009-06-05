@@ -268,11 +268,11 @@ public class BeanHelper {
 			bean.setTargetTerminologies(targetTerminologies);
 		}
 
-		String categoryIdsStr = httpServletRequest.getParameter(MessageUtils
+		String[] categoryIdValues = httpServletRequest.getParameterValues(MessageUtils
 				.getMessage("form.ontology.categoryId"));
 
-		if (categoryIdsStr != null) {
-			categoryIds = RequestUtils.parseIntegerListParam(categoryIdsStr);
+		if (categoryIdValues != null) {
+			categoryIds = RequestUtils.parseIntegerListParam(categoryIdValues);
 			bean.setCategoryIds(categoryIds);
 		}
 

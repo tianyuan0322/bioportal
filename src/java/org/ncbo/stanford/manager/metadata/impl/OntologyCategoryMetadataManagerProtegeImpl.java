@@ -1,6 +1,8 @@
 package org.ncbo.stanford.manager.metadata.impl;
 
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -9,6 +11,7 @@ import org.ncbo.stanford.manager.AbstractOntologyManagerProtege;
 import org.ncbo.stanford.manager.metadata.OntologyCategoryMetadataManager;
 import org.ncbo.stanford.util.metadata.MetadataUtils;
 import org.ncbo.stanford.util.metadata.OntologyCategoryMetadataUtils;
+import org.ncbo.stanford.util.metadata.OntologyMetadataUtils;
 
 import edu.emory.mathcs.backport.java.util.Collections;
 import edu.stanford.smi.protegex.owl.model.OWLIndividual;
@@ -56,6 +59,19 @@ public class OntologyCategoryMetadataManagerProtegeImpl extends
 		} catch (Exception e) {
 			return null;
 		}
+	}
+
+	public List<CategoryBean> findAllCategories() {
+		OWLModel metadata = getMetadataOWLModel();
+		
+		List<Integer> ontologyIds = OntologyMetadataUtils.getAllCategoryIDs(metadata);
+		List<CategoryBean> res = new ArrayList<CategoryBean>();
+		
+		for (Integer id : ontologyIds) {
+			res.add(findCategoryById(id));
+		}
+		
+		return res;
 	}
 	
 	private OWLIndividual getOntologyDomainInstance(OWLModel metadata, int id, boolean createIfMissing) {

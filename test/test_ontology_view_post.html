@@ -17,7 +17,7 @@
    		}
   	</STYLE>
   
-    <title>test_ontology_post.html</title>
+    <title>test_ontology_view_post.html</title>
 
     <meta http-equiv="keywords" content="keyword1,keyword2,keyword3">
     <meta http-equiv="description" content="this is my page">
@@ -27,12 +27,12 @@
 
   <body>
    
-    <h3> Test POST (Create) for Ontology  </h3>  
+    <h3> Test POST (Create) for Ontology View </h3>  
 
 <DIV CLASS="indented">
 
     <!-- enctype="multipart/form-data" is to submit file -->
-    <form name="testForm" method="post" action="/bioportal/ontologies" enctype="multipart/form-data">
+    <form name="testForm" method="post" action="/bioportal/ontologies/views" enctype="multipart/form-data">
 
 
 		<b>System/Admin/Scheduler attributes </b><br />
@@ -44,10 +44,10 @@
     	     	
     	<b>User input </b><br />
     	
-    	Ontology Name: <input type="text" id="displayLabel" name="displayLabel" value="Pizza Ontology" /><br />
-    	Ontology Abbreviation: <input type="text" id="abbreviation" name="abbreviation"  value="PO" /><br />
-    	Ontology Description: <input type="text" id="description" name="description"  value="this is a pizza ontology" /><br />
-    	Ontology Format: <input type="text" id="format" name="format" value="OWL-DL" /><br />
+    	Ontology View Name: <input type="text" id="displayLabel" name="displayLabel" value="Pizza Ingredients Ontology" /><br />
+    	Ontology View Abbreviation: <input type="text" id="abbreviation" name="abbreviation"  value="PIO" /><br />
+    	Ontology View Description: <input type="text" id="description" name="description"  value="this is a pizza ingredients ontology which is a view on the pizza ontology" /><br />
+    	Ontology View Format: <input type="text" id="format" name="format" value="OWL-DL" /><br />
     	Version Number: <input type="text" id="versionNumber" name="versionNumber" value="1.0" /><br />
     	Version Status: <input type="text" id="versionStatus" name="versionStatus" value="pre-production" /><br />
     	IsRemote: <input type="text" id="isRemote" name="isRemote" value="0" /><br />

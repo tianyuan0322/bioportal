@@ -3,6 +3,7 @@ package org.ncbo.stanford.manager.metadata;
 import java.util.List;
 
 import org.ncbo.stanford.bean.OntologyBean;
+import org.ncbo.stanford.exception.MetadataException;
 
 /**
  * An interface for all API specific ontology metadata managers to conform to. This allows
@@ -21,17 +22,25 @@ public interface OntologyMetadataManager {
 	 * Saves the ontology metadata specified by the ontologyBean representing an ontology version.
 	 * 
 	 * @param ontologyBean
-	 * @throws Exception
+	 * @throws MetadataException
 	 */
-	public void saveOntology(OntologyBean ontologyBean) throws Exception;
+	public void saveOntology(OntologyBean ontologyBean) throws MetadataException;
 
-//	/**
-//	 * Saves the ontology metadata specified by the ontologyBean representing a virtual ontology.
-//	 * 
-//	 * @param ontologyBean
-//	 * @throws Exception
-//	 */
-//	public void saveVirtualOntology(OntologyBean ontologyBean) throws Exception;
+	/**
+	 * Updates the ontology metadata specified by the ontologyBean representing an ontology version.
+	 * 
+	 * @param ontologyBean
+	 * @throws MetadataException
+	 */
+	public void updateOntology(OntologyBean ontologyBean) throws MetadataException;
+
+	/**
+	 * Deletes the ontology metadata specified by the ontologyBean representing an ontology version.
+	 * 
+	 * @param ontologyBean
+	 * @throws MetadataException
+	 */
+	public void deleteOntology(OntologyBean ontologyBean) throws MetadataException;
 	
 	/**
 	 * Retrieves the ontologyBean representing an ontology version for a specific ontology version id.
@@ -91,9 +100,9 @@ public interface OntologyMetadataManager {
 	 *  
 	 * @param ontologyId a (virtual) ontology id
 	 * @return the list of ontology beans corresponding to the versions of the virtual ontology with ID <code>ontologyId</code>
-	 * @throws Exception 
+	 * @throws MetadataException 
 	 */
-	public List<OntologyBean> findAllOntologyVersionsById(Integer ontologyId) throws Exception;
+	public List<OntologyBean> findAllOntologyVersionsById(Integer ontologyId) throws MetadataException;
 
 	
 	/**

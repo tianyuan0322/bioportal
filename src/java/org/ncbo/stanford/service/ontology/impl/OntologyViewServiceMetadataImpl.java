@@ -6,24 +6,21 @@ import java.util.List;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.ncbo.stanford.bean.OntologyViewBean;
-import org.ncbo.stanford.domain.custom.dao.CustomNcboOntologyFileDAO;
-import org.ncbo.stanford.domain.custom.dao.CustomNcboOntologyLoadQueueDAO;
 import org.ncbo.stanford.domain.generated.NcboOntologyFile;
 import org.ncbo.stanford.domain.generated.NcboOntologyLoadQueue;
 import org.ncbo.stanford.manager.metadata.OntologyViewMetadataManager;
+import org.ncbo.stanford.service.ontology.AbstractOntologyService;
 import org.ncbo.stanford.service.ontology.OntologyViewService;
 import org.ncbo.stanford.util.MessageUtils;
 import org.ncbo.stanford.util.ontologyfile.pathhandler.FilePathHandler;
 import org.springframework.transaction.annotation.Transactional;
 
 @Transactional
-public class OntologyViewServiceMetadataImpl implements OntologyViewService {
+public class OntologyViewServiceMetadataImpl extends AbstractOntologyService implements OntologyViewService {
 
 	private static final Log log = LogFactory.getLog(OntologyViewServiceMetadataImpl.class);
 
 	private OntologyViewMetadataManager ontologyViewMetadataManager;
-	private CustomNcboOntologyFileDAO ncboOntologyFileDAO;
-	private CustomNcboOntologyLoadQueueDAO ncboOntologyLoadQueueDAO;
 	
 	public void cleanupOntologyViewCategory(OntologyViewBean ontologyViewBean) {
 		// This method was created in the original implementation where
@@ -35,6 +32,7 @@ public class OntologyViewServiceMetadataImpl implements OntologyViewService {
 		// automatically, this method in this class should have nothing to do. 
 	}
 
+	@Transactional(rollbackFor = Exception.class)
 	public void createOntologyView(OntologyViewBean ontologyBean,
 			FilePathHandler filePathHander) throws Exception {
 		ArrayList<NcboOntologyFile> ontologyFileList = new ArrayList<NcboOntologyFile>();
@@ -48,45 +46,17 @@ public class OntologyViewServiceMetadataImpl implements OntologyViewService {
 		if (!ontologyBean.isRemote()) {
 			ontologyBean.setFilePath(ontologyBean.getOntologyDirPath());
 		}
-		
-		//executing actions previously in ontologyBean.populateToVersionEntity(ontologyVersion);
+
+		// executing actions previously in
+		// ontologyBean.populateToVersionEntity(ontologyVersion);
 		ontologyBean.updateIfNecessary();
-		
-/*
-//		// create new instances
-		NcboOntologyVersion ontologyVersion = new NcboOntologyVersion();
-//		NcboOntologyVersionMetadata ontologyMetadata = new NcboOntologyVersionMetadata();
-//		ArrayList<NcboOntologyCategory> ontologyCategoryList = new ArrayList<NcboOntologyCategory>();
 
-//		// 1. <ontologyVersion> - populate and save : get the new instance with
-		// OntologyVersionId populated
-		//TODO revise this method
-		//HACK TO break the chain of unnecessary entries in all the tables referenced by foreign keys
-		int ontologyId = ontologyBean.getOntologyId();
-		ontologyBean.setOntologyId(1001);
-		ontologyBean.populateToVersionEntity(ontologyVersion);
-		ontologyBean.setOntologyId(ontologyId);
-		NcboOntologyVersion newOntologyVersion = ncboOntologyVersionDAO
-				.saveOntologyVersion(ontologyVersion);
-		ontologyBean.setId(newOntologyVersion.getId());
-*/		
-		ontologyBean.setId(ontologyViewMetadataManager.getNextAvailableOntologyViewVersionId());
-		
-//		// 2. <ontologyMetadata> - populate and save
-//		ontologyBean.populateToMetadataEntity(ontologyMetadata,
-//				newOntologyVersion);
-//		ncboOntologyVersionMetadataDAO.save(ontologyMetadata);
+		Integer newVersionId = ontologyViewMetadataManager
+				.getNextAvailableOntologyViewVersionId();
+		ontologyBean.setId(newVersionId);
 
-//		// 3. <ontologyCategory> - populate and save
-//		ontologyBean.populateToCategoryEntity(ontologyCategoryList,
-//				newOntologyVersion);
-//		for (NcboOntologyCategory ontologyCategory : ontologyCategoryList) {
-//			ncboOntologyCategoryDAO.save(ontologyCategory);
-//		}
-
-		
 		// if remote, do not continue to upload(i.e. ontologyFile and
-		// ontologyQueue )
+		// ontologyQueue)
 		if (ontologyBean.isRemote()) {
 			ontologyViewMetadataManager.saveOntologyView(ontologyBean);
 			return;
@@ -97,36 +67,68 @@ public class OntologyViewServiceMetadataImpl implements OntologyViewService {
 				filePathHander);
 		ontologyBean.setFilenames(fileNames);
 
-//		// 4. <ontologyFile> - populate and save
+		// 4. <ontologyFile> - populate and save
 		ontologyBean.populateToFileEntity(ontologyFileList);
-		
+
 		for (NcboOntologyFile ontologyFile : ontologyFileList) {
 			ncboOntologyFileDAO.save(ontologyFile);
 		}
-		
+
 		ontologyViewMetadataManager.saveOntologyView(ontologyBean);
-/*
+
 		// 5. <ontologyQueue> - populate and save
-		ontologyBean.populateToLoadQueueEntity(loadQueue, newOntologyVersion);
-		//ontologyBean.populateToLoadQueueEntity2(loadQueue);
+		ontologyBean.populateToLoadQueueEntity(loadQueue, newVersionId);
 		ncboOntologyLoadQueueDAO.save(loadQueue);
-*/		
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.ncbo.stanford.service.ontology.OntologyViewService#deleteOntologyViews(java.util.List)
+	 */
 	public void deleteOntologyViews(List<Integer> ontologyViewVersionIds)
 			throws Exception {
-		// TODO Auto-generated method stub
-		
+		for (Integer ontologyViewVersionId : ontologyViewVersionIds) {
+			deleteOntologyView(ontologyViewVersionId);
+		}
 	}
 
+	@Transactional(rollbackFor = Exception.class)
 	public void deleteOntologyView(Integer ontologyViewVersionId) throws Exception {
-		// TODO Auto-generated method stub
-		
-	}
+		OntologyViewBean ontologyBean = findOntologyView(ontologyViewVersionId);
 
-	public List<OntologyViewBean> findAllOntologyViewVersions(Integer viewId) {
-		// TODO Auto-generated method stub
-		return null;
+		if (ontologyBean == null) {
+			return;
+		}
+
+		// 1. Remove ontology from the backend
+		if (!ontologyBean.isRemote()) {
+			getLoadManager(ontologyBean).cleanup(ontologyBean);
+			deleteOntologyFile(ontologyBean);
+		}
+		
+		// 2. Remove ontology view metadata
+		ontologyViewMetadataManager.deleteOntologyView(ontologyBean);
+		
+		// 3. Remove ontologyFile records from DB
+		List<NcboOntologyFile> ontologyFileSet = ncboOntologyFileDAO.findByOntologyVersionId(ontologyViewVersionId);
+
+		for (NcboOntologyFile ontologyFile : ontologyFileSet) {
+			ncboOntologyFileDAO.delete(ontologyFile);
+		}
+
+		// 4. Remove ontologyQueue record from DB
+		NcboOntologyLoadQueue ontologyLoadQueue = ncboOntologyLoadQueueDAO.findByOntologyVersionId(ontologyViewVersionId);
+
+		if (ontologyLoadQueue != null) {
+			ncboOntologyLoadQueueDAO.delete(ontologyLoadQueue);
+		}
+		
+		// 5. Reindex the latest version of ontology (this operation removes
+		// this version from the index). Do not backup or optimize the index (it
+		// will be backed up and optimized on the next ontology indexing
+		// operation).
+		indexService.indexOntology(ontologyBean.getOntologyId(), false, false);
 	}
 
 	public List<OntologyViewBean> findAllOntologyViewVersionsByVirtualViewId(
@@ -150,7 +152,7 @@ public class OntologyViewServiceMetadataImpl implements OntologyViewService {
 
 //	public OntologyViewBean findLatestOntologyViewVersionByOboFoundryId(
 //			String oboFoundryId) {
-//		// TODO Auto-generated method stub
+//		// TODO see if we need this method. If yes, add it also to the OntologyViewService interface
 //		return null;
 //	}
 
@@ -174,26 +176,14 @@ public class OntologyViewServiceMetadataImpl implements OntologyViewService {
 		return ontologyViewMetadataManager.findOntologyViewById(ontologyViewVersionId);
 	}
 
-	public List<String> findProperties(Integer ontologyViewVersionId) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
 	public List<OntologyViewBean> searchOntologyViewMetadata(String query) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
-	public void updateOntologyView(OntologyViewBean ontologyViewBean) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	/**
-	 * @return the ontologyViewMetadataManager
-	 */
-	public OntologyViewMetadataManager getOntologyViewMetadataManager() {
-		return ontologyViewMetadataManager;
+	@Transactional(rollbackFor = Exception.class)
+	public void updateOntologyView(OntologyViewBean ontologyViewBean) throws Exception {
+		ontologyViewMetadataManager.updateOntologyView(ontologyViewBean);
 	}
 
 	/**
@@ -206,14 +196,6 @@ public class OntologyViewServiceMetadataImpl implements OntologyViewService {
 
 	
 	//utility method
-
-	/**
-	 * @param ncboOntologyLoadQueueDAO the ncboOntologyLoadQueueDAO to set
-	 */
-	public void setNcboOntologyLoadQueueDAO(
-			CustomNcboOntologyLoadQueueDAO ncboOntologyLoadQueueDAO) {
-		this.ncboOntologyLoadQueueDAO = ncboOntologyLoadQueueDAO;
-	}
 
 	/**
 	 * Finds existing or creates new NcboOntology record
@@ -245,32 +227,4 @@ public class OntologyViewServiceMetadataImpl implements OntologyViewService {
 //		ontologyBean.setOntologyId(ontNew.getId());
 	}
 	
-
-	private List<String> uploadOntologyFile(OntologyViewBean ontologyBean,
-			FilePathHandler filePathHandler) throws Exception {
-
-		List<String> fileNames = new ArrayList<String>(1);
-
-		if (filePathHandler != null) {
-			try {
-				fileNames = filePathHandler
-						.processOntologyFileUpload(ontologyBean);
-			} catch (Exception e) {
-				// log to error
-				log
-						.error("Error in OntologyService:uploadOntologyFile()! - remote file (fileItem) "
-								+ e.getMessage());
-				e.printStackTrace();
-				throw e;
-			}
-		}
-		return fileNames;
-	}
-
-	/**
-	 * @param ncboOntologyFileDAO the ncboOntologyFileDAO to set
-	 */
-	public void setNcboOntologyFileDAO(CustomNcboOntologyFileDAO ncboOntologyFileDAO) {
-		this.ncboOntologyFileDAO = ncboOntologyFileDAO;
-	}
 }

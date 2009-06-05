@@ -7,6 +7,7 @@ import java.util.List;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.ncbo.stanford.exception.MetadataException;
 
 import edu.stanford.smi.protegex.owl.model.OWLClass;
 import edu.stanford.smi.protegex.owl.model.OWLModel;
@@ -38,11 +39,11 @@ public class MetadataUtils {
 	public static final String PROPERTY_RDFS_LABEL = "rdfs:label";
 
 	protected static void setPropertyValue(OWLModel owlModel,
-			RDFResource owlInd, String propName, Object value) throws Exception {
+			RDFResource owlInd, String propName, Object value) throws MetadataException {
 		OWLProperty prop = owlModel.getOWLProperty(propName);
 		
 		if (prop == null) {
-			throw new Exception("Metadata ontology does not contain property "
+			throw new MetadataException("Metadata ontology does not contain property "
 					+ propName);
 		}
 		
@@ -60,11 +61,11 @@ public class MetadataUtils {
 	@SuppressWarnings("unchecked")
 	protected static <T> T getPropertyValue(OWLModel owlModel,
 			RDFResource owlInd, String propName, Class<T> type)
-			throws Exception {
+			throws MetadataException {
 		OWLProperty prop = owlModel.getOWLProperty(propName);
 
 		if (prop == null) {
-			throw new Exception("Metadata ontology does not contain property "
+			throw new MetadataException("Metadata ontology does not contain property "
 					+ propName);
 		}
 
@@ -94,7 +95,7 @@ public class MetadataUtils {
 
 			return (T) val;
 		} else {
-			throw new RuntimeException(
+			throw new MetadataException(
 					"Multiple values attached to individual: "
 							+ owlInd.getLocalName() + " for property: "
 							+ propName);
@@ -104,31 +105,27 @@ public class MetadataUtils {
 	@SuppressWarnings("unchecked")
 	protected static <T> List<T> getPropertyValues(OWLModel owlModel,
 			RDFResource owlInd, String propName, Class<T> type)
-			throws Exception {
+			throws MetadataException {
 		OWLProperty prop = owlModel.getOWLProperty(propName);
 
 		if (prop == null) {
-			throw new Exception("Metadata ontology does not contain property "
+			throw new MetadataException("Metadata ontology does not contain property "
 					+ propName);
 		}
 
 		Collection<?> propVals = owlInd.getPropertyValues(prop);
+		List<T> res = new ArrayList<T>();
 
-		if (propVals != null && propVals.isEmpty()) {
-			return null;
-		} else {
-			List<T> res = new ArrayList<T>();
-
+		if (propVals != null) {
 			for (Object propVal : propVals) {
 				res.add((T) propVal);
 			}
-
-			return res;
 		}
+		return res;
 	}
 
 	protected static List<Integer> getPropertyValueIds(OWLModel owlModel,
-			RDFResource owlInd, String propName) throws Exception {
+			RDFResource owlInd, String propName) throws MetadataException {
 		Collection<?> propVals = getPropertyValues(owlModel, owlInd, propName,
 				Object.class);
 		List<Integer> idList = new ArrayList<Integer>();

@@ -1,6 +1,9 @@
 package org.ncbo.stanford.manager.metadata;
 
+import java.util.List;
+
 import org.ncbo.stanford.bean.CategoryBean;
+import org.ncbo.stanford.bean.OntologyBean;
 
 /**
  * An interface for all API specific user metadata managers to conform to. This allows
@@ -27,4 +30,11 @@ public interface OntologyCategoryMetadataManager {
 	 */
 	public CategoryBean findCategoryById(Integer categoryId);
 	
+	/**
+	 * Returns the list of categoryBeans, one for each category in the metadata.
+	 *  
+	 * @return the list of category beans
+	 * @throws Exception 
+	 */
+	public List<CategoryBean> findAllCategories();
 }
