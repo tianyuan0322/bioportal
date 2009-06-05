@@ -106,8 +106,8 @@ public class BeanHelper {
 	 * 
 	 * @param Request
 	 */
-	public static OntologyBean populateOntologyBeanFromRequest(
-			OntologyBean bean, Request request) {
+	public static void populateOntologyBeanFromRequest(OntologyBean bean,
+			Request request) {
 		List<Integer> categoryIds = new ArrayList<Integer>(0);
 		HttpServletRequest httpServletRequest = RequestUtils
 				.getHttpServletRequest(request);
@@ -268,8 +268,9 @@ public class BeanHelper {
 			bean.setTargetTerminologies(targetTerminologies);
 		}
 
-		String[] categoryIdValues = httpServletRequest.getParameterValues(MessageUtils
-				.getMessage("form.ontology.categoryId"));
+		String[] categoryIdValues = httpServletRequest
+				.getParameterValues(MessageUtils
+						.getMessage("form.ontology.categoryId"));
 
 		if (categoryIdValues != null) {
 			categoryIds = RequestUtils.parseIntegerListParam(categoryIdValues);
@@ -283,12 +284,12 @@ public class BeanHelper {
 		if (fileItem != null) {
 			bean.setFileItem(fileItem);
 		}
-
-		return bean;
 	}
 
-	private static void populateOntologyViewBeanFromRequest(
+	public static void populateOntologyViewBeanFromRequest(
 			OntologyViewBean bean, Request request) {
+		populateOntologyBeanFromRequest(bean, request);
+
 		HttpServletRequest httpServletRequest = RequestUtils
 				.getHttpServletRequest(request);
 
@@ -318,11 +319,11 @@ public class BeanHelper {
 		if (!StringHelper.isNullOrNullString(viewDefinition)) {
 			bean.setViewDefinition(viewDefinition);
 		}
-		
+
 		if (!StringHelper.isNullOrNullString(viewDefinitionLanguage)) {
 			bean.setViewDefinition(viewDefinitionLanguage);
 		}
-		
+
 		if (!StringHelper.isNullOrNullString(viewGenerationEngine)) {
 			bean.setViewDefinition(viewGenerationEngine);
 		}
