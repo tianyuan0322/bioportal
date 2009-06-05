@@ -40,7 +40,7 @@ public class OntologyServiceMetadataImpl extends AbstractOntologyService impleme
 
 		// assign new Ontology Id for new instance
 		// and assign internal version ID
-		findOrCreateNcboOntologyRecord(ontologyBean);
+		populateInternalVersionNumber(ontologyBean);
 
 		// set filepath in the bean
 		if (!ontologyBean.isRemote()) {
@@ -218,7 +218,7 @@ public class OntologyServiceMetadataImpl extends AbstractOntologyService impleme
 	 * @param OntologyBean
 	 *            ontologyBean
 	 */
-	private void findOrCreateNcboOntologyRecord(OntologyBean ontologyBean) {
+	private void populateInternalVersionNumber(OntologyBean ontologyBean) {
 		Integer ontologyId = ontologyBean.getOntologyId();
 
 		if (ontologyId == null) {

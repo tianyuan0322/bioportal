@@ -18,6 +18,7 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional
 public class OntologyViewServiceMetadataImpl extends AbstractOntologyService implements OntologyViewService {
 
+	@SuppressWarnings("unused")
 	private static final Log log = LogFactory.getLog(OntologyViewServiceMetadataImpl.class);
 
 	private OntologyViewMetadataManager ontologyViewMetadataManager;
@@ -40,7 +41,7 @@ public class OntologyViewServiceMetadataImpl extends AbstractOntologyService imp
 
 		// assign new Ontology Id for new instance
 		// and assign internal version ID
-		findOrCreateNcboOntologyRecord(ontologyBean);
+		populateInternalVersionNumber(ontologyBean);
 
 		// set filepath in the bean
 		if (!ontologyBean.isRemote()) {
@@ -93,6 +94,7 @@ public class OntologyViewServiceMetadataImpl extends AbstractOntologyService imp
 		}
 	}
 
+	@SuppressWarnings("unchecked")
 	@Transactional(rollbackFor = Exception.class)
 	public void deleteOntologyView(Integer ontologyViewVersionId) throws Exception {
 		OntologyViewBean ontologyBean = findOntologyView(ontologyViewVersionId);
@@ -203,12 +205,10 @@ public class OntologyViewServiceMetadataImpl extends AbstractOntologyService imp
 	 * @param OntologyBean
 	 *            ontologyBean
 	 */
-	private void findOrCreateNcboOntologyRecord(OntologyViewBean ontologyBean) {
+	private void populateInternalVersionNumber(OntologyViewBean ontologyBean) {
 		Integer ontologyId = ontologyBean.getOntologyId();
-//		NcboOntology ont = null;
 
 		if (ontologyId == null) {
-			//ont = new NcboOntology();
 			ontologyBean.setOntologyId(
 					ontologyViewMetadataManager.getNextAvailableVirtualViewId());
 			ontologyBean
@@ -216,15 +216,10 @@ public class OntologyViewServiceMetadataImpl extends AbstractOntologyService imp
 							.parseInt(MessageUtils
 									.getMessage("config.db.ontology.internalVersionNumberStart")));
 		} else {
-			//ont = ncboOntologyDAO.findById(ontologyId);
 			Integer lastInternalVersion = findLatestOntologyViewVersion(ontologyId)
 					.getInternalVersionNumber();
 			ontologyBean.setInternalVersionNumber(lastInternalVersion + 1);
 		}
-
-//		ontologyBean.populateToOntologyEntity(ont);
-//		NcboOntology ontNew = ncboOntologyDAO.saveOntology(ont);
-//		ontologyBean.setOntologyId(ontNew.getId());
 	}
 	
 }
