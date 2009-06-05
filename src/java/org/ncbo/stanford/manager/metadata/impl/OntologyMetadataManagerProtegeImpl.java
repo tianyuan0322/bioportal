@@ -106,11 +106,11 @@ public class OntologyMetadataManagerProtegeImpl extends
 
 		ontVerInd.delete();
 
-		//TODO check with Misha if we need this (i.e. to delete the VirtualOntology metadata once the last version is deleted)
-		if (findAllOntologyVersionsById(ob.getOntologyId()).isEmpty()) {
-			OWLIndividual vOntInd = getVirtualOntologyInstance(metadata, ob.getOntologyId());
-			vOntInd.delete();
-		}
+		// delete the virtual record if all version records have been deleted
+//		if (findAllOntologyVersionsById(ob.getOntologyId()).isEmpty()) {
+//			OWLIndividual vOntInd = getVirtualOntologyInstance(metadata, ob.getOntologyId());
+//			vOntInd.delete();
+//		}
 	}
 
 	public OntologyBean findOntologyById(Integer ontologyVersionId) {
