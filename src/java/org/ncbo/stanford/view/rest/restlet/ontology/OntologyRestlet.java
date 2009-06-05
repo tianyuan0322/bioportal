@@ -84,9 +84,8 @@ public class OntologyRestlet extends AbstractBaseRestlet {
 
 		// if "find" was successful, proceed to update
 		if (!response.getStatus().isError()) {
-
 			// 1. populate OntologyBean from Request object
-			ontologyBean = BeanHelper.populateOntologyBeanFromRequest(ontologyBean, request);
+			BeanHelper.populateOntologyBeanFromRequest(ontologyBean, request);
 
 			// 2. now update the ontology
 			try {

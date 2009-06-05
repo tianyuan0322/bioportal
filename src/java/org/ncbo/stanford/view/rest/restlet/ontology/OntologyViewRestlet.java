@@ -80,28 +80,17 @@ public class OntologyViewRestlet extends AbstractBaseRestlet {
 	 */
 	private void updateOntology(Request request, Response response) {
 		// find the OntologyBean from request
-		OntologyViewBean ontologyBean = findOntologyViewBean(request, response);
+		OntologyViewBean ontologyViewBean = findOntologyViewBean(request, response);
 
 		// if "find" was successful, proceed to update
 		if (!response.getStatus().isError()) {
-			// 1. save implicit values such as id
-			Integer id = ontologyBean.getId();
-			Integer ontologyId = ontologyBean.getOntologyId();
-			Integer internalVersionNumber = ontologyBean
-					.getInternalVersionNumber();
+			// 1. populate OntologyBean from Request object
+			BeanHelper.populateOntologyViewBeanFromRequest(ontologyViewBean, request);
 
-			// 2. populate OntologyBean from Request object
-			ontologyBean = BeanHelper.populateOntologyViewBeanFromRequest(request);
-
-			// 3. populate implicit values
-			ontologyBean.setId(id);
-			ontologyBean.setOntologyId(ontologyId);
-			ontologyBean.setInternalVersionNumber(internalVersionNumber);
-
-			// 4. now update the ontology
+			// 2. now update the ontology
 			try {
-				ontologyViewService.cleanupOntologyViewCategory(ontologyBean);
-				ontologyViewService.updateOntologyView(ontologyBean);
+				ontologyViewService.cleanupOntologyViewCategory(ontologyViewBean);
+				ontologyViewService.updateOntologyView(ontologyViewBean);
 			} catch (Exception e) {
 				response
 						.setStatus(Status.SERVER_ERROR_INTERNAL, e.getMessage());
@@ -112,7 +101,7 @@ public class OntologyViewRestlet extends AbstractBaseRestlet {
 
 		// generate response XML
 		xmlSerializationService.generateXMLResponse(request, response,
-				ontologyBean);
+				ontologyViewBean);
 	}
 
 	/**
