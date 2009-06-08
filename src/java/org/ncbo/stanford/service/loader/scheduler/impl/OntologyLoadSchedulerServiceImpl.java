@@ -76,7 +76,7 @@ public class OntologyLoadSchedulerServiceImpl implements
 					.booleanValue()) {
 				log.debug("parsing ontology: ID = "
 						+ loadQueue.getOntologyVersionId());
-				processRecord(loadQueue, null);
+				processRecord(loadQueue, null, null);
 			} else {
 				log.debug("ontology ID = " + loadQueue.getOntologyVersionId()
 						+ " does not require parsing");
@@ -105,7 +105,7 @@ public class OntologyLoadSchedulerServiceImpl implements
 						ontologyBean, ONTOLOGY_QUEUE_DOES_NOT_EXIST_ERROR);
 				log.error(error);
 			} else {
-				processRecord(loadQueue, formatHandler);
+				processRecord(loadQueue, formatHandler, ontologyBean);
 			}
 		}
 
@@ -137,11 +137,15 @@ public class OntologyLoadSchedulerServiceImpl implements
 	 * @param formatHandler
 	 */
 	private void processRecord(NcboOntologyLoadQueue loadQueue,
-			String formatHandler) {
+			String formatHandler, OntologyBean ontologyBean) {
 		String errorMessage = null;
 		Integer ontologyVersionId = loadQueue.getOntologyVersionId();
-		OntologyBean ontologyBean = ontologyMetadataManagerProtege
-				.findOntologyOrOntologyViewById(ontologyVersionId);
+
+		if (ontologyBean == null) {
+			ontologyBean = ontologyMetadataManagerProtege
+					.findOntologyOrOntologyViewById(ontologyVersionId);
+		}
+
 		StatusEnum status = StatusEnum.STATUS_WAITING;
 
 		// parse
