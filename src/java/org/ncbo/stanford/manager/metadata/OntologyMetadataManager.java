@@ -49,6 +49,13 @@ public interface OntologyMetadataManager {
 	 */
 	public OntologyBean findOntologyById(Integer ontologyVersionId);
 	
+	/**
+	 * Retrieves the ontologyBean representing an ontology or a view version for a specific version id.
+	 * 
+	 * @param ontologyOrViewVersionId an ontology or view version id
+	 */
+	public OntologyBean findOntologyOrOntologyViewById(Integer ontologyOrViewVersionId);
+	
 
 	/**
 	 * Retrieves the ontologyBeans representing the ontology versions for specific ontology version ids.

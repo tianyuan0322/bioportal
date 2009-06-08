@@ -268,6 +268,14 @@ public class OntologyViewMetadataManagerProtegeImpl extends
 		if (ontInd == null && createIfMissing) {
 			ontInd = createOntologyInstance(metadata, ontInstName);
 		}
+		
+		//last resort
+		if (ontInd == null) {
+			ontInd = OntologyMetadataUtils.getOntologyViewWithId(metadata, id);
+			if (ontInd != null) {
+				log.warn("Ontology view instance for id: " + id + " has non-standard name: " + ontInd);
+			}
+		}
 		return ontInd;
 	}
 	

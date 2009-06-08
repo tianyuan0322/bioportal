@@ -141,7 +141,7 @@ public class OntologyLoadSchedulerServiceImpl implements
 		String errorMessage = null;
 		Integer ontologyVersionId = loadQueue.getOntologyVersionId();
 		OntologyBean ontologyBean = ontologyMetadataManagerProtege
-				.findOntologyById(ontologyVersionId);
+				.findOntologyOrOntologyViewById(ontologyVersionId);
 		StatusEnum status = StatusEnum.STATUS_WAITING;
 
 		// parse

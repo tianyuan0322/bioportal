@@ -106,9 +106,9 @@ public class OntologyDiffManagerProtegeImpl extends
 		// version
 
 		OntologyBean newVersion = ontologyMetadataManagerProtege
-				.findOntologyById(newVersionId);
+				.findOntologyOrOntologyViewById(newVersionId);
 		OntologyBean oldVersion = ontologyMetadataManagerProtege
-				.findOntologyById(oldVersionId);
+				.findOntologyOrOntologyViewById(oldVersionId);
 
 		createDiff(oldVersion, newVersion);
 	}
@@ -259,9 +259,9 @@ public class OntologyDiffManagerProtegeImpl extends
 	private String getDiffFileName(Integer ontologyVersionId1,
 			Integer ontologyVersionId2) throws FileNotFoundException, Exception {
 		OntologyBean ontologyVersion1 = ontologyMetadataManagerProtege
-				.findOntologyById(ontologyVersionId1);
+				.findOntologyOrOntologyViewById(ontologyVersionId1);
 		OntologyBean ontologyVersion2 = ontologyMetadataManagerProtege
-				.findOntologyById(ontologyVersionId2);
+				.findOntologyOrOntologyViewById(ontologyVersionId2);
 
 		if (ontologyVersion1 == null || ontologyVersion2 == null) {
 			log.error("Ontology version id is invalid.");

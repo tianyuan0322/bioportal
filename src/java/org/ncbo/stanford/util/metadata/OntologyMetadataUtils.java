@@ -604,4 +604,19 @@ public class OntologyMetadataUtils extends MetadataUtils {
 		}
 	}
 
+	public static OWLIndividual getOntologyWithId(OWLModel metadata, Integer id) {
+		OWLNamedClass ontClass = metadata.getOWLNamedClass(CLASS_OMV_ONTOLOGY);
+		return getIndividualWithId(metadata, ontClass, id, false);
+	}
+	
+	public static OWLIndividual getOntologyOrViewWithId(OWLModel metadata, Integer id) {
+		OWLNamedClass ontClass = metadata.getOWLNamedClass(CLASS_OMV_ONTOLOGY);
+		return getIndividualWithId(metadata, ontClass, id, true);
+	}
+	
+	public static OWLIndividual getOntologyViewWithId(OWLModel metadata, Integer id) {
+		OWLNamedClass viewClass = metadata.getOWLNamedClass(CLASS_ONTOLOGY_VIEW);
+		return getIndividualWithId(metadata, viewClass, id, false);
+	}
+
 }

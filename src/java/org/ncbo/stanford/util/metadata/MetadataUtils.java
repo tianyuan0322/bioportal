@@ -10,6 +10,7 @@ import org.apache.commons.logging.LogFactory;
 import org.ncbo.stanford.exception.MetadataException;
 
 import edu.stanford.smi.protegex.owl.model.OWLClass;
+import edu.stanford.smi.protegex.owl.model.OWLIndividual;
 import edu.stanford.smi.protegex.owl.model.OWLModel;
 import edu.stanford.smi.protegex.owl.model.OWLProperty;
 import edu.stanford.smi.protegex.owl.model.RDFResource;
@@ -162,6 +163,71 @@ public class MetadataUtils {
 				return propVals.iterator().next();
 			}
 		}
+	}
+	
+	protected static Collection<RDFResource> getRDFResourcesWithId(OWLModel owlModel, Integer id) {
+		
+		Collection<RDFResource> res = new ArrayList<RDFResource>();
+		Collection<?> matchingResources = owlModel.getRDFResourcesWithPropertyValue(owlModel.getOWLProperty(PROPERTY_ID), id);
+		
+		if (matchingResources == null) {
+			res = null;
+		} else {
+			for (Object resource : matchingResources) {
+				if (resource instanceof RDFResource) {
+					res.add((RDFResource)resource);
+				}
+				else {
+					log.error("Matching resource for id: " + id + " is not an RDFResource: " + resource);
+				}
+			}
+		}
+		if (res.isEmpty()) {
+			res = null;
+		}
+		return res;
+	}
+
+	protected static Collection<OWLIndividual> getOWLIndividualsWithId(OWLModel owlModel, Integer id) {
+
+		Collection<OWLIndividual> res = new ArrayList<OWLIndividual>();
+		Collection<?> matchingResources = owlModel.getRDFResourcesWithPropertyValue(owlModel.getOWLProperty(PROPERTY_ID), id);
+
+		if (matchingResources == null) {
+			res = null;
+		} else {
+			for (Object resource : matchingResources) {
+				if (resource instanceof OWLIndividual) {
+					res.add((OWLIndividual)resource);
+				}
+			}
+		}
+		if (res.isEmpty()) {
+			res = null;
+		}
+		return res;
+	}
+	
+	protected static OWLIndividual getIndividualWithId(OWLModel metadata,
+			OWLClass type, Integer id, boolean transitive) {
+		OWLIndividual res = null;
+		Collection<OWLIndividual> individualsWithId = getOWLIndividualsWithId(
+				metadata, id);
+		if (individualsWithId != null) {
+			for (OWLIndividual ind : individualsWithId) {
+				if (ind.hasRDFType(type, transitive)) {
+					if (res == null) {
+						res = ind;
+					}
+					else {
+						log.warn("Multiple individuals match class: " + type + 
+								" with id: " + id + " transitive: " + transitive + 
+								": " + ind);
+					}
+				}
+			}
+		}
+		return res;
 	}
 
 	protected static <T> T getFirstElement(List<T> list) {

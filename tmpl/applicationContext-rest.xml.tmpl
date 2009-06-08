@@ -83,14 +83,6 @@
 		</property>
 	</bean>
 
-	<bean id="viewConceptRestlet"
-		class="org.ncbo.stanford.view.rest.restlet.concept.ViewConceptRestlet"
-		parent="abstractBaseRestlet">
-		<property name="conceptService">
-			<ref bean="conceptService" />
-		</property>
-	</bean>
-
 	<bean id="conceptParentsRestlet"
 		class="org.ncbo.stanford.view.rest.restlet.concept.ConceptParentsRestlet"
 		parent="abstractBaseRestlet">
@@ -197,14 +189,6 @@
 
 	<bean id="pathRestlet"
 		class="org.ncbo.stanford.view.rest.restlet.path.PathRestlet"
-		parent="abstractBaseRestlet">
-		<property name="conceptService">
-			<ref bean="conceptService" />
-		</property>
-	</bean>
-
-	<bean id="viewPathRestlet"
-		class="org.ncbo.stanford.view.rest.restlet.path.ViewPathRestlet"
 		parent="abstractBaseRestlet">
 		<property name="conceptService">
 			<ref bean="conceptService" />
@@ -396,16 +380,9 @@
 						<entry key="/concepts/{ontologyversionid}">
 							<ref local="conceptRestlet" />
 						</entry>
-						<entry key="/concepts/view/{ontologyversionid}">
-							<ref local="viewConceptRestlet" />
-						</entry>
 						<entry
 							key="/concepts/{ontologyversionid}/{conceptid}">
 							<ref local="conceptRestlet" />
-						</entry>
-						<entry
-							key="/concepts/view/{ontologyversionid}/{conceptid}">
-							<ref local="viewConceptRestlet" />
 						</entry>
 						<entry
 							key="/concepts/parents/{ontologyversionid}/{conceptid}">
@@ -459,10 +436,6 @@
 						<entry
 							key="/path/{ontologyversionid}/{source}/{target}">
 							<ref local="pathRestlet" />
-						</entry>
-						<entry
-							key="/path/view/{ontologyversionid}/{source}/{target}">
-							<ref local="viewPathRestlet" />
 						</entry>
 						<entry key="/search/{query}">
 							<ref local="queryRestlet" />

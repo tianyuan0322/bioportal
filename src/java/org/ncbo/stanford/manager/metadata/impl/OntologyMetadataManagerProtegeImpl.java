@@ -143,6 +143,21 @@ public class OntologyMetadataManagerProtegeImpl extends
 		}
 	}
 
+	public OntologyBean findOntologyOrOntologyViewById(Integer ontologyOrViewVersionId){
+		OWLModel metadata = getMetadataOWLModel();
+//		should we have a SQWRL solution for this too?
+		
+		OWLIndividual ontInd = getOntologyOrViewInstance(metadata, ontologyOrViewVersionId);
+		
+		OntologyBean ob = new OntologyBean();
+		try {
+			OntologyMetadataUtils.fillInOntologyBeanFromInstance(ob, ontInd);
+			return ob;
+		} catch (Exception e) {
+			return null;
+		}
+	}
+
 	public List<OntologyBean> findOntologyVersions(
 			List<Integer> ontologyVersionIds) {
 		List<OntologyBean> res = new ArrayList<OntologyBean>();
@@ -287,12 +302,38 @@ public class OntologyMetadataManagerProtegeImpl extends
 		if (ontInd == null && createIfMissing) {
 			ontInd = createOntologyInstance(metadata, ontInstName);
 		}
+		
+		//last resort
+		if (ontInd == null) {
+			ontInd = OntologyMetadataUtils.getOntologyWithId(metadata, id);
+			if (ontInd != null) {
+				log.warn("Ontology instance for id: " + id + " has non-standard name: " + ontInd);
+			}
+		}
 		return ontInd;
 	}
 	
 	private OWLIndividual createOntologyInstance(OWLModel metadata, String indName) {
 		OWLNamedClass ontClass = metadata.getOWLNamedClass(CLASS_ONTOLOGY);
 		return ontClass.createOWLIndividual(indName);
+	}
+
+	private OWLIndividual getOntologyOrViewInstance(OWLModel metadata, int id) {
+		String ontInstName = getOntologyIndividualName(id);
+		OWLIndividual ontInd = metadata.getOWLIndividual(ontInstName);
+		if (ontInd == null) {
+			String viewInstName = getOntologyViewIndividualName(id);
+			ontInd = metadata.getOWLIndividual(viewInstName);
+		}
+		
+		//last resort
+		if (ontInd == null) {
+			ontInd = OntologyMetadataUtils.getOntologyOrViewWithId(metadata, id);
+			if (ontInd != null) {
+				log.warn("Ontology or view instance for id: " + id + " has non-standard name: " + ontInd);
+			}
+		}
+		return ontInd;
 	}
 	
 	private OWLIndividual getVirtualOntologyInstance(OWLModel metadata, int id) {
