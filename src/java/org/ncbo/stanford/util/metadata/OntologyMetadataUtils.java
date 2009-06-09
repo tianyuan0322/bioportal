@@ -190,7 +190,7 @@ public class OntologyMetadataUtils extends MetadataUtils {
 		
 		setPropertyValue(owlModel, ontologyInd, PROPERTY_FILE_NAMES, ob.getFilenames());
 		setPropertyValue(owlModel, ontologyInd, PROPERTY_FILE_PATH, ob.getFilePath());
-		OWLIndividual ontLangInd = getOntologyLanguageInstance(owlModel, ob.getFormat());
+		RDFIndividual ontLangInd = getOntologyLanguageInstance(owlModel, ob.getFormat());
 		
 		if (ontLangInd != null) {
 			setPropertyValue(owlModel, ontologyInd, PROPERTY_OMV_HAS_ONTOLOGY_LANGUAGE, ontLangInd);
@@ -249,7 +249,7 @@ public class OntologyMetadataUtils extends MetadataUtils {
 		setPropertyValue(owlModel, ontologyViewInd, PROPERTY_IS_VIEW_ON_ONTOLOGY_VERSION, ontologyIndividuals);
 
 		setPropertyValue(owlModel, ontologyViewInd, PROPERTY_VIEW_DEFINITION, ob.getViewDefinition());
-		OWLIndividual viewDefLangInd = getViewDefinitionLanguageInstance(owlModel, ob.getViewDefinitionLanguage());
+		RDFIndividual viewDefLangInd = getViewDefinitionLanguageInstance(owlModel, ob.getViewDefinitionLanguage());
 		
 		if (viewDefLangInd != null) {
 			setPropertyValue(owlModel, ontologyViewInd, PROPERTY_VIEW_DEFINITION_LANGUAGE, viewDefLangInd);
@@ -302,7 +302,7 @@ public class OntologyMetadataUtils extends MetadataUtils {
 		ob.setFilenames( getPropertyValues(owlModel, ontologyInd, PROPERTY_FILE_NAMES, String.class));
 		ob.setFilePath( getPropertyValue(owlModel, ontologyInd, PROPERTY_FILE_PATH, String.class));
 		ob.setFormat( getOntologyFormatValue(
-				owlModel, getPropertyValue(owlModel, ontologyInd, PROPERTY_OMV_HAS_ONTOLOGY_LANGUAGE, OWLIndividual.class)) );
+				owlModel, getPropertyValue(owlModel, ontologyInd, PROPERTY_OMV_HAS_ONTOLOGY_LANGUAGE, RDFIndividual.class)) );
 		
 		//ob.setHasViews(null);//FIXME
 		
@@ -352,9 +352,9 @@ public class OntologyMetadataUtils extends MetadataUtils {
 		ob.setViewOnOntologyVersionId( getPropertyValueIds(owlModel, ontologyViewInd, PROPERTY_IS_VIEW_ON_ONTOLOGY_VERSION));
 		ob.setViewDefinition( getPropertyValue(owlModel, ontologyViewInd, PROPERTY_VIEW_DEFINITION, String.class));
 		ob.setViewDefinitionLanguage( getViewDefinitionLanguageValue(
-				owlModel, getPropertyValue(owlModel, ontologyViewInd, PROPERTY_VIEW_DEFINITION_LANGUAGE, OWLIndividual.class)) );
+				owlModel, getPropertyValue(owlModel, ontologyViewInd, PROPERTY_VIEW_DEFINITION_LANGUAGE, RDFIndividual.class)) );
 		ob.setViewGenerationEngine( getViewGenerationEngineValue(
-				owlModel, getPropertyValue(owlModel, ontologyViewInd, PROPERTY_VIEW_GENERATION_ENGINE, OWLIndividual.class)) );
+				owlModel, getPropertyValue(owlModel, ontologyViewInd, PROPERTY_VIEW_GENERATION_ENGINE, RDFIndividual.class)) );
 		
 		//TODO see if we have to deal with virtualViewOf property or not
 	}
@@ -422,19 +422,19 @@ public class OntologyMetadataUtils extends MetadataUtils {
 		return null;
 	}
 	
-	private static String getOntologyFormatValue(OWLModel metadata, OWLIndividual ontologyLanguageInd) throws Exception {
+	private static String getOntologyFormatValue(OWLModel metadata, RDFIndividual ontologyLanguageInd) throws Exception {
 		return getNameOfIndividual(metadata, ontologyLanguageInd);
 	}
 
-	private static String getViewDefinitionLanguageValue(OWLModel metadata, OWLIndividual viewDefLanguageInd) throws Exception {
+	private static String getViewDefinitionLanguageValue(OWLModel metadata, RDFIndividual viewDefLanguageInd) throws Exception {
 		return getNameOfIndividual(metadata, viewDefLanguageInd);
 	}
 	
-	private static String getViewGenerationEngineValue(OWLModel metadata, OWLIndividual viewGenEngineInd) throws Exception {
+	private static String getViewGenerationEngineValue(OWLModel metadata, RDFIndividual viewGenEngineInd) throws Exception {
 		return getNameOfIndividual(metadata, viewGenEngineInd);
 	}
 	
-	private static String getNameOfIndividual(OWLModel metadata, OWLIndividual ind) throws Exception {
+	private static String getNameOfIndividual(OWLModel metadata, RDFIndividual ind) throws Exception {
 		if (ind == null) {
 			return null;
 		}
