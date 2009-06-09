@@ -154,6 +154,7 @@ public class OntologyMetadataManagerProtegeImpl extends
 			OntologyMetadataUtils.fillInOntologyBeanFromInstance(ob, ontInd);
 			return ob;
 		} catch (Exception e) {
+			e.printStackTrace();
 			return null;
 		}
 	}
