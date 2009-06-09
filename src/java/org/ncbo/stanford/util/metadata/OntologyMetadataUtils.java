@@ -567,9 +567,13 @@ public class OntologyMetadataUtils extends MetadataUtils {
 	}
 
 	
-	public static int getNextAvailableOntologyId(OWLModel metadata) {
+	public static int getNextAvailableVirtualOntologyId(OWLModel metadata) {
 		try {
-			return getNextAvailableIdForClass(metadata.getOWLNamedClass(CLASS_VIRTUAL_ONTOLOGY));
+			Integer newId = getNextAvailableIdForClass(metadata.getOWLNamedClass(CLASS_VIRTUAL_ONTOLOGY));
+			if (getVirtualViewWithId(metadata, newId) != null) {
+				newId = (newId + 1500) / 1000;
+			}
+			return newId;
 		} catch (Exception e) {
 			e.printStackTrace();
 			return -5;
@@ -578,7 +582,11 @@ public class OntologyMetadataUtils extends MetadataUtils {
 
 	public static int getNextAvailableVirtualViewId(OWLModel metadata) {
 		try {
-			return getNextAvailableIdForClass(metadata.getOWLNamedClass(CLASS_VIRTUAL_VIEW));
+			Integer newId = getNextAvailableIdForClass(metadata.getOWLNamedClass(CLASS_VIRTUAL_VIEW));
+			if (getVirtualOntologyWithId(metadata, newId) != null) {
+				newId = (newId + 1500) / 1000;
+			}
+			return newId;
 		} catch (Exception e) {
 			e.printStackTrace();
 			return -5;
@@ -588,7 +596,11 @@ public class OntologyMetadataUtils extends MetadataUtils {
 	
 	public static int getNextAvailableOntologyVersionId(OWLModel metadata) {
 		try {
-			return getNextAvailableIdForClass(metadata.getOWLNamedClass(CLASS_OMV_ONTOLOGY));
+			Integer newId = getNextAvailableIdForClass(metadata.getOWLNamedClass(CLASS_OMV_ONTOLOGY));
+			if (getOntologyViewWithId(metadata, newId) != null) {
+				newId = (newId + 1500) / 1000;
+			}
+			return newId;
 		} catch (Exception e) {
 			e.printStackTrace();
 			return -5;
@@ -597,11 +609,25 @@ public class OntologyMetadataUtils extends MetadataUtils {
 	
 	public static int getNextAvailableOntologyViewVersionId(OWLModel metadata) {
 		try {
-			return getNextAvailableIdForClass(metadata.getOWLNamedClass(CLASS_ONTOLOGY_VIEW));
+			Integer newId = getNextAvailableIdForClass(metadata.getOWLNamedClass(CLASS_ONTOLOGY_VIEW));
+			if (getOntologyWithId(metadata, newId) != null) {
+				newId = (newId + 1500) / 1000;
+			}
+			return newId;
 		} catch (Exception e) {
 			e.printStackTrace();
 			return -5;
 		}
+	}
+	
+	public static OWLIndividual getVirtualOntologyWithId(OWLModel metadata, Integer id) {
+		OWLNamedClass ontClass = metadata.getOWLNamedClass(CLASS_VIRTUAL_ONTOLOGY);
+		return getIndividualWithId(metadata, ontClass, id, false);
+	}
+	
+	public static OWLIndividual getVirtualViewWithId(OWLModel metadata, Integer id) {
+		OWLNamedClass viewClass = metadata.getOWLNamedClass(CLASS_VIRTUAL_VIEW);
+		return getIndividualWithId(metadata, viewClass, id, false);
 	}
 
 	public static OWLIndividual getOntologyWithId(OWLModel metadata, Integer id) {

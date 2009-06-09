@@ -62,7 +62,7 @@ public interface OntologyMetadataManager {
 	 * 
 	 * @param ontologyVersionIds a list of ontology version ids
 	 */
-	public List<OntologyBean> findOntologyVersions(List<Integer> ontologyVersionIds);
+	public List<OntologyBean> findOntologyOrOntologyViewVersions(List<Integer> ontologyVersionIds);
 
 
 	/**

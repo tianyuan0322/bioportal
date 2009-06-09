@@ -91,7 +91,7 @@ public class OntologyLoadSchedulerServiceImpl implements
 			String formatHandler) {
 		errorOntologies.clear();
 		List<OntologyBean> ontologies = ontologyMetadataManagerProtege
-				.findOntologyVersions(ontologyVersionIdList);
+				.findOntologyOrOntologyViewVersions(ontologyVersionIdList);
 
 		for (OntologyBean ontologyBean : ontologies) {
 			Integer ontologyVersionId = ontologyBean.getId();

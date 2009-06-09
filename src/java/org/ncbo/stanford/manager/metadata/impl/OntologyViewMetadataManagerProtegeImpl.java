@@ -268,12 +268,11 @@ public class OntologyViewMetadataManagerProtegeImpl extends
 		if (ontInd == null && createIfMissing) {
 			ontInd = createOntologyInstance(metadata, ontInstName);
 		}
-		
-		//last resort
+		//alternative lookup
 		if (ontInd == null) {
 			ontInd = OntologyMetadataUtils.getOntologyViewWithId(metadata, id);
 			if (ontInd != null) {
-				log.warn("Ontology view instance for id: " + id + " has non-standard name: " + ontInd);
+				log.warn("Ontology view instance for id: " + id + " has been found having non-standard name: " + ontInd);
 			}
 		}
 		return ontInd;
@@ -287,6 +286,14 @@ public class OntologyViewMetadataManagerProtegeImpl extends
 	private OWLIndividual getVirtualViewInstance(OWLModel metadata, int id) {
 		String ontInstName = getVirtualViewIndividualName(id);
 		OWLIndividual ontInd = metadata.getOWLIndividual(ontInstName);
+		//alternative lookup
+		if (ontInd == null) {
+			ontInd = OntologyMetadataUtils.getVirtualViewWithId(metadata, id);
+			if (ontInd != null) {
+				log.warn("Virtual view instance for id: " + id + " has been found having non-standard name: " + ontInd);
+			}
+		}
+		//create if could not be found
 		if (ontInd == null) {
 			ontInd = createVirtualOntologyInstance(metadata, ontInstName);
 			ontInd.setPropertyValue(ontInd.getOWLModel().getOWLProperty(OntologyMetadataUtils.PROPERTY_ID), new Integer(id));
