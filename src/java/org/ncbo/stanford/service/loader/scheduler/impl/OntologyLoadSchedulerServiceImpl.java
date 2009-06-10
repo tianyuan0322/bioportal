@@ -12,6 +12,7 @@ import java.util.Map;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.ncbo.stanford.bean.OntologyBean;
+import org.ncbo.stanford.bean.OntologyViewBean;
 import org.ncbo.stanford.domain.custom.dao.CustomNcboOntologyLoadQueueDAO;
 import org.ncbo.stanford.domain.generated.NcboLStatus;
 import org.ncbo.stanford.domain.generated.NcboOntologyLoadQueue;
@@ -20,6 +21,7 @@ import org.ncbo.stanford.exception.InvalidOntologyFormatException;
 import org.ncbo.stanford.manager.diff.OntologyDiffManager;
 import org.ncbo.stanford.manager.load.OntologyLoadManager;
 import org.ncbo.stanford.manager.metadata.OntologyMetadataManager;
+import org.ncbo.stanford.manager.metadata.OntologyViewMetadataManager;
 import org.ncbo.stanford.service.loader.scheduler.OntologyLoadSchedulerService;
 import org.ncbo.stanford.service.search.IndexSearchService;
 import org.ncbo.stanford.util.CompressionUtils;
@@ -51,6 +53,8 @@ public class OntologyLoadSchedulerServiceImpl implements
 	private IndexSearchService indexService;
 	private CustomNcboOntologyLoadQueueDAO ncboOntologyLoadQueueDAO;
 	private OntologyMetadataManager ontologyMetadataManagerProtege;
+	private OntologyViewMetadataManager ontologyViewMetadataManagerProtege;
+
 	private Map<String, String> ontologyFormatHandlerMap = new HashMap<String, String>(
 			0);
 	private Map<String, OntologyLoadManager> ontologyLoadHandlerMap = new HashMap<String, OntologyLoadManager>(
@@ -270,8 +274,13 @@ public class OntologyLoadSchedulerServiceImpl implements
 
 		// update ontology metadata
 		ontologyBean.setStatusId(statusId);
-		ontologyMetadataManagerProtege.saveOntology(ontologyBean);
-
+		
+		if (ontologyBean.isView()) {
+			ontologyViewMetadataManagerProtege.saveOntologyView((OntologyViewBean) ontologyBean);
+		} else {
+			ontologyMetadataManagerProtege.saveOntology(ontologyBean);
+		}
+		
 		// update loadQueue table
 		loadQueue.setErrorMessage(errorMessage);
 		loadQueue.setDateProcessed(Calendar.getInstance().getTime());
