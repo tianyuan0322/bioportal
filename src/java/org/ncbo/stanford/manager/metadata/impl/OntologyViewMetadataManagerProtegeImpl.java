@@ -306,13 +306,19 @@ public class OntologyViewMetadataManagerProtegeImpl extends
 		return ontClass.createOWLIndividual(indName);
 	}
 	
-	private OWLIndividual getUserInstance(OWLModel metadata, int id) {
-		String ontInstName = getUserIndividualName(id);
-		OWLIndividual userInd = metadata.getOWLIndividual(ontInstName);
-		if (userInd == null) {
-			userInd = createUserInstance(metadata, ontInstName);
-			userInd.setPropertyValue(userInd.getOWLModel().getOWLProperty(OntologyMetadataUtils.PROPERTY_ID), new Integer(id));
-		}
+	private OWLIndividual getUserInstance(OWLModel metadata, Integer userId) {
+		OWLIndividual userInd = null;
+		
+		if (userId != null) {
+			String ontInstName = getUserIndividualName(userId);
+			userInd = metadata.getOWLIndividual(ontInstName);
+			
+			if (userInd == null) {
+				userInd = createUserInstance(metadata, ontInstName);
+				userInd.setPropertyValue(userInd.getOWLModel().getOWLProperty(OntologyMetadataUtils.PROPERTY_ID), new Integer(userId));
+			}
+		}	
+
 		return userInd;
 	}
 	
