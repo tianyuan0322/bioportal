@@ -384,29 +384,41 @@ public class OntologyMetadataUtils extends MetadataUtils {
 		return getInstanceWithName(metadata, CLASS_VIEW_GENERATION_ENGINE, viewGenEngine);
 	}
 	
-	private static OWLIndividual getInstanceWithName(OWLModel metadata, String className,
-			String name) {
-		OWLNamedClass owlClass = metadata.getOWLNamedClass(className);
-		RDFProperty nameProp = metadata.getRDFProperty(PROPERTY_OMV_NAME);
-		RDFProperty labelProp = metadata.getRDFProperty(PROPERTY_RDFS_LABEL);
-		
-		Collection<?> matchingResources = metadata.getMatchingResources(nameProp, name, -1);
-		OWLIndividual matchingInd = getIndividualWithType(matchingResources, owlClass);
-		if (matchingInd != null) {
-			return matchingInd;
+	private static OWLIndividual getInstanceWithName(OWLModel metadata,
+			String className, String name) {
+		OWLIndividual instance = null;
+
+		if (name != null) {
+			OWLNamedClass owlClass = metadata.getOWLNamedClass(className);
+			RDFProperty nameProp = metadata.getRDFProperty(PROPERTY_OMV_NAME);
+			RDFProperty labelProp = metadata
+					.getRDFProperty(PROPERTY_RDFS_LABEL);
+
+			Collection<?> matchingResources = metadata.getMatchingResources(
+					nameProp, name, -1);
+			OWLIndividual matchingInd = getIndividualWithType(
+					matchingResources, owlClass);
+
+			if (matchingInd != null) {
+				instance = matchingInd;
+			} else {
+
+				// metadata.getFramesWithValue("rdfs:label", null, false, name);
+				// metadata.getMatchingFrames(labelProp, null, false, name, -1);
+				matchingResources = metadata.getMatchingResources(labelProp,
+						name, -1);
+				matchingInd = getIndividualWithType(matchingResources, owlClass);
+
+				if (matchingInd != null) {
+					instance = matchingInd;
+				} else {
+					// TODO check for acronyms too!
+					instance = metadata.getOWLIndividual(name);
+				}
+			}
 		}
-		
-		//metadata.getFramesWithValue("rdfs:label", null, false, name);
-		//metadata.getMatchingFrames(labelProp, null, false, name, -1);
-		matchingResources = metadata.getMatchingResources(labelProp, name, -1);
-		matchingInd = getIndividualWithType(matchingResources, owlClass);
-		if (matchingInd != null) {
-			return matchingInd;
-		}
-		
-		//TODO check for acronyms too!
-		
-		return metadata.getOWLIndividual(name);
+
+		return instance;
 	}
 
 	private static OWLIndividual getIndividualWithType(Collection<?> matchingResources, OWLClass type) {
