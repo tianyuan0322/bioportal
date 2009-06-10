@@ -136,7 +136,9 @@ public class OntologyRetrievalManagerLexGridImplTest extends
 				+ classBean);
 		System.out.println("\n");
 		assertTrue(classBean == null );
-	}	
+	}
+	
+
 	@Test
 	public void testOBOFindConceptTwoRelationDictyostelium() throws Exception {
 		System.out.println("testOBOFindConceptTwoRelationDictyostelium()");
@@ -173,8 +175,7 @@ public class OntologyRetrievalManagerLexGridImplTest extends
 
 		VNcboOntology ncboOntology = retrievalManager
 				.getLatestNcboOntology(TEST_UMLS_DISPLAY_LABEL);
-		//String conceptID = "MFART";
-		String conceptID = "abcd";
+		String conceptID = "MFART";
 		ClassBean classBean = retrievalManager.findConcept(ncboOntology,
 				conceptID);
 		System.out.println("Concept " + conceptID + " of UMLS AIR ontology that has both directionalNames polulated \n"

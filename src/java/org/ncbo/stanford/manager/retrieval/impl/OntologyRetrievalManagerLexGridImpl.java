@@ -92,6 +92,10 @@ public class OntologyRetrievalManagerLexGridImpl extends
 	public ClassBean findRootConcept(VNcboOntology ncboOntology)
 			throws Exception {
 		String schemeName = getLexGridCodingSchemeName(ncboOntology);
+		if (StringUtils.isBlank(schemeName)) {
+			log.warn("Can not process request when the codingSchemeURI is blank");
+			return null;
+		}
 		CodingSchemeVersionOrTag csvt = getLexGridCodingSchemeVersion(ncboOntology);
 		ResolvedConceptReferenceList rcrl = getHierarchyRootConcepts(
 				schemeName, csvt);
@@ -139,6 +143,10 @@ public class OntologyRetrievalManagerLexGridImpl extends
 			throws Exception {
 		//log.debug("findConcept= "+conceptId);
 		String schemeName = getLexGridCodingSchemeName(ncboOntology);
+		if (StringUtils.isBlank(schemeName)) {
+			log.warn("Can not process request when the codingSchemeURI is blank");
+			return null;
+		}
 		CodingSchemeVersionOrTag csvt = getLexGridCodingSchemeVersion(ncboOntology);
 		ResolvedConceptReferenceList matches = lbs.getNodeGraph(schemeName,
 				csvt, null).resolveAsList(
@@ -205,6 +213,10 @@ public class OntologyRetrievalManagerLexGridImpl extends
 	public ClassBean findPathFromRoot(VNcboOntology ncboOntology,
 			String conceptId, boolean light) throws Exception {
 		String schemeName = getLexGridCodingSchemeName(ncboOntology);
+		if (StringUtils.isBlank(schemeName)) {
+			log.warn("Can not proceed when the codingSchemeURI is blank");
+			return null;
+		}
 		CodingSchemeVersionOrTag csvt = getLexGridCodingSchemeVersion(ncboOntology);
 		String hierarchyId= getDefaultHierarchyId(schemeName, csvt);
 		AssociationList pathToRoot = lbscm.getHierarchyPathToRoot(schemeName,
@@ -311,6 +323,10 @@ public class OntologyRetrievalManagerLexGridImpl extends
 	public List<ClassBean> findParent(VNcboOntology ncboOntology,
 			String conceptId) throws Exception {
 		String schemeName = getLexGridCodingSchemeName(ncboOntology);
+		if (StringUtils.isBlank(schemeName)) {
+			log.warn("Can not process request when the codingSchemeURI is blank");
+			return null;
+		}
 		CodingSchemeVersionOrTag csvt = getLexGridCodingSchemeVersion(ncboOntology);
 		AssociationList associations = getHierarchyLevelPrev(schemeName, csvt,
 				conceptId);
@@ -332,6 +348,10 @@ public class OntologyRetrievalManagerLexGridImpl extends
 	public List<ClassBean> findChildren(VNcboOntology ncboOntology,
 			String conceptId) throws Exception {
 		String schemeName = getLexGridCodingSchemeName(ncboOntology);
+		if (StringUtils.isBlank(schemeName)) {
+			log.warn("Can not process request when the codingSchemeURI is blank");
+			return null;
+		}
 		CodingSchemeVersionOrTag csvt = getLexGridCodingSchemeVersion(ncboOntology);
 		AssociationList associations = getHierarchyLevelNext(schemeName, csvt,
 				conceptId);
