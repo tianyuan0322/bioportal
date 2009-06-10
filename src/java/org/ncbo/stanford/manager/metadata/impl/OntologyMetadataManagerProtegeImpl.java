@@ -8,6 +8,7 @@ import java.util.List;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.ncbo.stanford.bean.OntologyBean;
+import org.ncbo.stanford.bean.OntologyViewBean;
 import org.ncbo.stanford.exception.MetadataException;
 import org.ncbo.stanford.manager.AbstractOntologyManagerProtege;
 import org.ncbo.stanford.manager.metadata.OntologyMetadataManager;
@@ -149,13 +150,29 @@ public class OntologyMetadataManagerProtegeImpl extends
 		
 		OWLIndividual ontInd = getOntologyOrViewInstance(metadata, ontologyOrViewVersionId);
 		
-		OntologyBean ob = new OntologyBean();
-		try {
-			OntologyMetadataUtils.fillInOntologyBeanFromInstance(ob, ontInd);
-			return ob;
-		} catch (Exception e) {
-			e.printStackTrace();
+		if (ontInd == null) {
 			return null;
+		}
+		OWLNamedClass ontClass = metadata.getOWLNamedClass(CLASS_ONTOLOGY);
+		if (ontInd.hasRDFType(ontClass)) {
+			OntologyBean ob = new OntologyBean();
+			try {
+				OntologyMetadataUtils.fillInOntologyBeanFromInstance(ob, ontInd);
+				return ob;
+			} catch (Exception e) {
+				e.printStackTrace();
+				return null;
+			}
+		}
+		else {
+			OntologyViewBean ob = new OntologyViewBean();
+			try {
+				OntologyMetadataUtils.fillInOntologyViewBeanFromInstance(ob, ontInd);
+				return ob;
+			} catch (Exception e) {
+				e.printStackTrace();
+				return null;
+			}
 		}
 	}
 
