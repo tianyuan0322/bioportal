@@ -45,6 +45,7 @@ public class OntologyBean {
 	private Byte isFoundry;
 	private String synonymSlot;
 	private String preferredNameSlot;
+	protected boolean isView = false;
 
 	// category id(s)
 	private List<Integer> categoryIds = new ArrayList<Integer>(0);
@@ -699,5 +700,12 @@ public class OntologyBean {
 	 */
 	public void setHasViews(List<Integer> hasViews) {
 		this.hasViews = hasViews;
+	}
+
+	/**
+	 * @return the isView
+	 */
+	public boolean isView() {
+		return isView;
 	}
 }

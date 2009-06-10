@@ -11,6 +11,10 @@ public class OntologyViewBean extends OntologyBean {
 	private String viewDefinitionLanguage;
 	private String viewGenerationEngine;
 
+	public OntologyViewBean() {
+		isView = true;
+	}
+	
 	public String toString() {
 		final int max = 80;
 		String viewDef = this.getViewDefinition();
