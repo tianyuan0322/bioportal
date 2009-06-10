@@ -147,6 +147,10 @@ public class OntologyRetrievalManagerLexGridImpl extends
 			log.warn("Can not process request when the codingSchemeURI is blank");
 			return null;
 		}
+		if (StringUtils.isBlank(conceptId)) {
+			log.warn("Can not process request when the conceptId is blank");
+			return null;
+		}
 		CodingSchemeVersionOrTag csvt = getLexGridCodingSchemeVersion(ncboOntology);
 		ResolvedConceptReferenceList matches = lbs.getNodeGraph(schemeName,
 				csvt, null).resolveAsList(
@@ -217,6 +221,11 @@ public class OntologyRetrievalManagerLexGridImpl extends
 			log.warn("Can not proceed when the codingSchemeURI is blank");
 			return null;
 		}
+		if (StringUtils.isBlank(conceptId)) {
+			log.warn("Can not process request when the conceptId is blank");
+			return null;
+		}
+		
 		CodingSchemeVersionOrTag csvt = getLexGridCodingSchemeVersion(ncboOntology);
 		String hierarchyId= getDefaultHierarchyId(schemeName, csvt);
 		AssociationList pathToRoot = lbscm.getHierarchyPathToRoot(schemeName,
