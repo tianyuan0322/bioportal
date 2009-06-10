@@ -3,7 +3,6 @@ package org.ncbo.stanford.manager.metadata;
 import java.util.List;
 
 import org.ncbo.stanford.bean.OntologyBean;
-import org.ncbo.stanford.exception.MetadataException;
 
 /**
  * An interface for all API specific ontology metadata managers to conform to. This allows
@@ -22,25 +21,25 @@ public interface OntologyMetadataManager {
 	 * Saves the ontology metadata specified by the ontologyBean representing an ontology version.
 	 * 
 	 * @param ontologyBean
-	 * @throws MetadataException
+	 * @throws Exception
 	 */
-	public void saveOntology(OntologyBean ontologyBean) throws MetadataException;
+	public void saveOntology(OntologyBean ontologyBean) throws Exception;
 
 	/**
 	 * Updates the ontology metadata specified by the ontologyBean representing an ontology version.
 	 * 
 	 * @param ontologyBean
-	 * @throws MetadataException
+	 * @throws Exception
 	 */
-	public void updateOntology(OntologyBean ontologyBean) throws MetadataException;
+	public void updateOntology(OntologyBean ontologyBean) throws Exception;
 
 	/**
 	 * Deletes the ontology metadata specified by the ontologyBean representing an ontology version.
 	 * 
 	 * @param ontologyBean
-	 * @throws MetadataException
+	 * @throws Exception
 	 */
-	public void deleteOntology(OntologyBean ontologyBean) throws MetadataException;
+	public void deleteOntology(OntologyBean ontologyBean) throws Exception;
 	
 	/**
 	 * Retrieves the ontologyBean representing an ontology version for a specific ontology version id.
@@ -53,17 +52,9 @@ public interface OntologyMetadataManager {
 	 * Retrieves the ontologyBean representing an ontology or a view version for a specific version id.
 	 * 
 	 * @param ontologyOrViewVersionId an ontology or view version id
+	 * @throws Exception 
 	 */
-	public OntologyBean findOntologyOrOntologyViewById(Integer ontologyOrViewVersionId);
-	
-
-	/**
-	 * Retrieves the ontologyBeans representing the ontology versions for specific ontology version ids.
-	 * 
-	 * @param ontologyVersionIds a list of ontology version ids
-	 */
-	public List<OntologyBean> findOntologyOrOntologyViewVersions(List<Integer> ontologyVersionIds);
-
+	public OntologyBean findOntologyOrOntologyViewById(Integer ontologyOrViewVersionId) throws Exception;
 
 	/**
 	 * Retrieves the ontologyBean representing the latest version for a specific ontology id.
@@ -87,11 +78,27 @@ public interface OntologyMetadataManager {
 	public OntologyBean findLatestActiveOntologyVersionById(Integer ontologyId);
 	
 	/**
+	 * Retrieves the ontology(View)Bean representing the latest active version for a specific ontology/view id.
+	 * 
+	 * @param ontologyId a (virtual) ontology/view id
+	 * @throws Exception 
+	 */
+	public OntologyBean findLatestActiveOntologyOrOntologyViewVersionById(Integer ontologyOrViewId) throws Exception;
+	
+	/**
 	 * Returns the list of ontologyBeans, one for each ontology's latest active version.
 	 *  
 	 * @return the list of ontology beans corresponding to the latest active version of each virtual ontology
 	 */
 	public List<OntologyBean> findLatestActiveOntologyVersions();
+	
+	/**
+	 * Returns the list of ontology(View)Beans, one for each ontology's/view's latest active version.
+	 *  
+	 * @return the list of ontology/view beans corresponding to the latest active version of each virtual ontology/view
+	 * @throws Exception 
+	 */
+	public List<OntologyBean> findLatestActiveOntologyOrOntologyViewVersions() throws Exception;
 	
 
 	/**
@@ -103,13 +110,31 @@ public interface OntologyMetadataManager {
 	public List<OntologyBean> findLatestActiveOntologyVersions(List<Integer> ontologyIds);
 
 	/**
+	 * Returns the list of ontology(View)Beans, one for each ontology's/view's latest active version.
+	 *  
+	 * @param ontologyOrViewIds a list of (virtual) ontology/view ids
+	 * @return the list of ontology (view) beans corresponding to the latest active version of each virtual ontology/view
+	 * @throws Exception 
+	 */
+	public List<OntologyBean> findLatestActiveOntologyOrOntologyViewVersions(List<Integer> ontologyOrViewIds) throws Exception;
+	
+	/**
 	 * Returns the list of ontologyBeans, one for each version of a specific virtual ontology.
 	 *  
 	 * @param ontologyId a (virtual) ontology id
 	 * @return the list of ontology beans corresponding to the versions of the virtual ontology with ID <code>ontologyId</code>
-	 * @throws MetadataException 
+	 * @throws Exception 
 	 */
-	public List<OntologyBean> findAllOntologyVersionsById(Integer ontologyId) throws MetadataException;
+	public List<OntologyBean> findAllOntologyVersionsById(Integer ontologyId) throws Exception;
+	
+	/**
+	 * Returns the list of ontology(View)Beans, one for each version of a specific virtual ontology/view.
+	 *  
+	 * @param ontologyOrViewId a (virtual) ontology/view id
+	 * @return the list of ontology/view beans corresponding to the versions of the virtual ontology/view with ID <code>ontologyOrViewId</code>
+	 * @throws Exception 
+	 */
+	public List<OntologyBean> findAllOntologyOrOntologyViewVersionsById(Integer ontologyOrViewId) throws Exception;
 
 	
 	/**

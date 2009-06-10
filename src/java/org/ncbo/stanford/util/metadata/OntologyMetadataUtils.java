@@ -82,7 +82,7 @@ public class OntologyMetadataUtils extends MetadataUtils {
 	private static final String PROPERTY_VIRTUAL_VIEW_OF = PREFIX_METADATA + "virtualViewOf";
 
 	public static void ensureOntologyBeanDoesNotInvalidateOntologyInstance(
-			OWLIndividual ontologyInd, OntologyBean ob, OWLIndividual vOntInd) throws MetadataException {
+			OWLIndividual ontologyInd, OntologyBean ob, OWLIndividual vOntInd) throws Exception {
 		
 		if (ontologyInd == null || ob == null) {
 			throw new MetadataException("The method ensureOntologyBeanDoesNotInvalidateOntologyInstance can't take null arguments. Please make sure that both arguments are properly initialized.");
@@ -152,7 +152,7 @@ public class OntologyMetadataUtils extends MetadataUtils {
 	}
 	
 	public static void ensureOntologyViewBeanDoesNotInvalidateOntologyViewInstance(
-			OWLIndividual ontologyViewInd, OntologyViewBean ob, OWLIndividual vViewInd) throws MetadataException {
+			OWLIndividual ontologyViewInd, OntologyViewBean ob, OWLIndividual vViewInd) throws Exception {
 		
 		ensureOntologyBeanDoesNotInvalidateOntologyInstance(ontologyViewInd, ob, vViewInd);
 		
@@ -280,7 +280,7 @@ public class OntologyMetadataUtils extends MetadataUtils {
 			OWLIndividual ontologyInd) throws Exception {
 		
 		if (ontologyInd == null || ob == null) {
-			throw new Exception("The method fillInOntologyBeanFromInstance can't take null arguments. Please make sure that both arguments are properly initialized.");
+			throw new MetadataException("The method fillInOntologyBeanFromInstance can't take null arguments. Please make sure that both arguments are properly initialized.");
 		}
 		
 		OWLModel owlModel = ontologyInd.getOWLModel();
@@ -506,7 +506,7 @@ public class OntologyMetadataUtils extends MetadataUtils {
 	}
 	
 	public static List<Integer> getAllOntologyVersionIDs(OWLModel metadata,
-			OWLIndividual virtualOntologyInd) throws MetadataException {
+			OWLIndividual virtualOntologyInd) throws Exception {
 		//List<Integer> res = new ArrayList<Integer>();
 		return getPropertyValueIds(metadata, virtualOntologyInd, PROPERTY_HAS_VERSION);
 	}
@@ -635,6 +635,11 @@ public class OntologyMetadataUtils extends MetadataUtils {
 	public static OWLIndividual getVirtualOntologyWithId(OWLModel metadata, Integer id) {
 		OWLNamedClass ontClass = metadata.getOWLNamedClass(CLASS_VIRTUAL_ONTOLOGY);
 		return getIndividualWithId(metadata, ontClass, id, false);
+	}
+	
+	public static OWLIndividual getVirtualOntologyOrViewWithId(OWLModel metadata, Integer id) {
+		OWLNamedClass ontClass = metadata.getOWLNamedClass(CLASS_VIRTUAL_ONTOLOGY);
+		return getIndividualWithId(metadata, ontClass, id, true);
 	}
 	
 	public static OWLIndividual getVirtualViewWithId(OWLModel metadata, Integer id) {

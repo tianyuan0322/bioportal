@@ -56,14 +56,14 @@ public class OntologyViewMetadataManagerProtegeImpl extends
 	private static final boolean ONLY_ACTIVE_VERSIONS = true;
 	private static final boolean ALL_VERSIONS = (! ONLY_ACTIVE_VERSIONS);
 	
-	public void saveOntologyView(OntologyViewBean ob) throws MetadataException {
+	public void saveOntologyView(OntologyViewBean ob) throws Exception {
 		OWLModel metadata = getMetadataOWLModel();
 		OWLIndividual ontVerInd = getOntologyViewInstance(metadata, ob.getId(), CREATE_IF_MISSING);
 
 		saveOrUpdate(metadata, ontVerInd, ob);
 	}
 
-	public void updateOntologyView(OntologyViewBean ob) throws MetadataException {
+	public void updateOntologyView(OntologyViewBean ob) throws Exception {
 		OWLModel metadata = getMetadataOWLModel();
 		OWLIndividual ontVerInd = getOntologyViewInstance(metadata, ob.getId(), DO_NOT_CREATE_IF_MISSING);
 
@@ -83,7 +83,7 @@ public class OntologyViewMetadataManagerProtegeImpl extends
 	 * @param ob
 	 * @throws MetadataException
 	 */
-	private void saveOrUpdate(OWLModel metadata, OWLIndividual ontVerInd, OntologyViewBean ob) throws MetadataException {
+	private void saveOrUpdate(OWLModel metadata, OWLIndividual ontVerInd, OntologyViewBean ob) throws Exception {
 		OWLIndividual vViewInd = getVirtualViewInstance(metadata, ob.getOntologyId());
 		OWLIndividual userInd = getUserInstance(metadata, ob.getUserId());
 		Collection<OWLIndividual> domainInd = getOntologyDomainInstances(metadata, ob.getCategoryIds());
@@ -178,7 +178,7 @@ public class OntologyViewMetadataManagerProtegeImpl extends
 		}
 	}
 
-	public List<OntologyViewBean> findAllOntologyViewVersionsById(Integer viewId) throws MetadataException {
+	public List<OntologyViewBean> findAllOntologyViewVersionsById(Integer viewId) throws Exception {
 		OWLModel metadata = getMetadataOWLModel();
 		
 		OWLIndividual vOntInd = getVirtualViewInstance(metadata, viewId);

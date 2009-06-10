@@ -8,7 +8,6 @@ package org.ncbo.stanford.manager.diff.impl;
  */
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -17,6 +16,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.ncbo.stanford.bean.OntologyBean;
 import org.ncbo.stanford.enumeration.StatusEnum;
+import org.ncbo.stanford.exception.OntologyNotFoundException;
 import org.ncbo.stanford.manager.AbstractOntologyManagerProtege;
 import org.ncbo.stanford.manager.diff.OntologyDiffManager;
 import org.ncbo.stanford.manager.metadata.OntologyMetadataManager;
@@ -54,7 +54,7 @@ public class OntologyDiffManagerProtegeImpl extends
 
 		if (log.isDebugEnabled()) {
 			log.debug("In create diff for " + ontologyVersionOld.getId()
-				+ " and " + ontologyVersionNew.getId());
+					+ " and " + ontologyVersionNew.getId());
 		}
 
 		KnowledgeBase oldKb = getKnowledgeBase(ontologyVersionOld);
@@ -80,7 +80,7 @@ public class OntologyDiffManagerProtegeImpl extends
 	public void createDiffForTwoLatestVersions(Integer ontologyId)
 			throws Exception {
 		List<OntologyBean> allVersions = ontologyMetadataManagerProtege
-				.findAllOntologyVersionsById(ontologyId);
+				.findAllOntologyOrOntologyViewVersionsById(ontologyId);
 
 		// get a list of version ids, filtering out ontologies that are not
 		// active
@@ -109,6 +109,18 @@ public class OntologyDiffManagerProtegeImpl extends
 				.findOntologyOrOntologyViewById(newVersionId);
 		OntologyBean oldVersion = ontologyMetadataManagerProtege
 				.findOntologyOrOntologyViewById(oldVersionId);
+
+		if (newVersion == null) {
+			throw new OntologyNotFoundException(
+					OntologyNotFoundException.DEFAULT_MESSAGE
+							+ " (Version Id: " + newVersionId + ")");
+		}
+
+		if (oldVersion == null) {
+			throw new OntologyNotFoundException(
+					OntologyNotFoundException.DEFAULT_MESSAGE
+							+ " (Version Id: " + oldVersionId + ")");
+		}
 
 		createDiff(oldVersion, newVersion);
 	}
@@ -182,8 +194,8 @@ public class OntologyDiffManagerProtegeImpl extends
 				.getOntologyId(), ontologyVersionOld.getId(),
 				ontologyVersionNew.getId(), true);
 
-		 saveToRDFFile (resultsTable, diffFileName,
-		 ontologyVersionOld.getUrn(), ontologyVersionNew.getUrn());
+		saveToRDFFile(resultsTable, diffFileName, ontologyVersionOld.getUrn(),
+				ontologyVersionNew.getUrn());
 		saveToTabDelimitedTextFile(resultsTable, diffFileName);
 	}
 
@@ -203,9 +215,9 @@ public class OntologyDiffManagerProtegeImpl extends
 	 */
 	private void saveToRDFFile(ResultTable resultsTable, String diffFileName,
 			String oldNameSpace, String newNameSpace) throws Exception {
-//		resultsTable.saveToRDF(diffFileName
-//				+ getFileExtensionFromFormat(FORMAT_RDF),
-//				new URL(oldNameSpace), new URL(newNameSpace));
+		// resultsTable.saveToRDF(diffFileName
+		// + getFileExtensionFromFormat(FORMAT_RDF),
+		// new URL(oldNameSpace), new URL(newNameSpace));
 		DiffUtils.saveToRDFFile(resultsTable, diffFileName);
 	}
 
@@ -263,9 +275,16 @@ public class OntologyDiffManagerProtegeImpl extends
 		OntologyBean ontologyVersion2 = ontologyMetadataManagerProtege
 				.findOntologyOrOntologyViewById(ontologyVersionId2);
 
-		if (ontologyVersion1 == null || ontologyVersion2 == null) {
-			log.error("Ontology version id is invalid.");
-			throw new Exception("Ontology version id is invalid");
+		if (ontologyVersion1 == null) {
+			throw new OntologyNotFoundException(
+					OntologyNotFoundException.DEFAULT_MESSAGE
+							+ " (Version Id: " + ontologyVersion1 + ")");
+		}
+
+		if (ontologyVersion2 == null) {
+			throw new OntologyNotFoundException(
+					OntologyNotFoundException.DEFAULT_MESSAGE
+							+ " (Version Id: " + ontologyVersion2 + ")");
 		}
 
 		Integer ontologyId1 = ontologyVersion1.getOntologyId();
@@ -339,7 +358,8 @@ public class OntologyDiffManagerProtegeImpl extends
 	}
 
 	/**
-	 * @param ontologyMetadataManagerProtege the ontologyMetadataManagerProtege to set
+	 * @param ontologyMetadataManagerProtege
+	 *            the ontologyMetadataManagerProtege to set
 	 */
 	public void setOntologyMetadataManagerProtege(
 			OntologyMetadataManager ontologyMetadataManagerProtege) {

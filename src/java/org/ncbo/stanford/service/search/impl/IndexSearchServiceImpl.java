@@ -56,7 +56,7 @@ public class IndexSearchServiceImpl extends AbstractSearchService implements
 		long start = System.currentTimeMillis();
 		
 		List<OntologyBean> ontologies = ontologyMetadataManagerProtege
-				.findLatestActiveOntologyVersions();
+				.findLatestActiveOntologyOrOntologyViewVersions();
 
 		if (doBackup) {
 			backupIndex();
@@ -117,7 +117,7 @@ public class IndexSearchServiceImpl extends AbstractSearchService implements
 	public void indexOntologies(List<Integer> ontologyIdList, boolean doBackup,
 			boolean doOptimize) throws Exception {
 		List<OntologyBean> ontologies = ontologyMetadataManagerProtege
-				.findLatestActiveOntologyVersions(ontologyIdList);
+				.findLatestActiveOntologyOrOntologyViewVersions(ontologyIdList);
 
 		if (!ontologies.isEmpty()) {
 			LuceneIndexWriterWrapper writer = new LuceneIndexWriterWrapper(

@@ -18,6 +18,7 @@ import org.ncbo.stanford.domain.generated.NcboLStatus;
 import org.ncbo.stanford.domain.generated.NcboOntologyLoadQueue;
 import org.ncbo.stanford.enumeration.StatusEnum;
 import org.ncbo.stanford.exception.InvalidOntologyFormatException;
+import org.ncbo.stanford.exception.OntologyNotFoundException;
 import org.ncbo.stanford.manager.diff.OntologyDiffManager;
 import org.ncbo.stanford.manager.load.OntologyLoadManager;
 import org.ncbo.stanford.manager.metadata.OntologyMetadataManager;
@@ -93,30 +94,43 @@ public class OntologyLoadSchedulerServiceImpl implements
 	@Transactional(propagation = Propagation.NEVER)
 	public void parseOntologies(List<Integer> ontologyVersionIdList,
 			String formatHandler) {
+		OntologyBean ob = null;
 		errorOntologies.clear();
-		List<OntologyBean> ontologies = ontologyMetadataManagerProtege
-				.findOntologyOrOntologyViewVersions(ontologyVersionIdList);
 
-		for (OntologyBean ontologyBean : ontologies) {
-			Integer ontologyVersionId = ontologyBean.getId();
-			ontologyVersionIdList.remove(ontologyVersionId);
+		for (Integer ontologyVersionId : ontologyVersionIdList) {
+			try {
+				ob = ontologyMetadataManagerProtege
+						.findOntologyOrOntologyViewById(ontologyVersionId);
 
-			NcboOntologyLoadQueue loadQueue = ncboOntologyLoadQueueDAO
-					.findByOntologyVersionId(ontologyVersionId);
+				if (ob == null) {
+					continue;
+				}
 
-			if (loadQueue == null) {
-				String error = addErrorOntology(ontologyVersionId.toString(),
-						ontologyBean, ONTOLOGY_QUEUE_DOES_NOT_EXIST_ERROR);
-				log.error(error);
-			} else {
-				processRecord(loadQueue, formatHandler, ontologyBean);
+				ontologyVersionIdList.remove(ontologyVersionId);
+
+				NcboOntologyLoadQueue loadQueue = ncboOntologyLoadQueueDAO
+						.findByOntologyVersionId(ontologyVersionId);
+
+				if (loadQueue == null) {
+					String error = addErrorOntology(ontologyVersionId
+							.toString(), ob,
+							ONTOLOGY_QUEUE_DOES_NOT_EXIST_ERROR);
+					log.error(error);
+				} else {
+					processRecord(loadQueue, formatHandler, ob);
+				}
+			} catch (Exception e) {
+				addErrorOntology(ontologyVersionId.toString(), null, e
+						.getMessage());
+				e.printStackTrace();
+				log.error(e);
 			}
 		}
 
 		optimizeIndex();
 
-		for (Integer errorId : ontologyVersionIdList) {
-			String error = addErrorOntology(errorId.toString(), null,
+		for (Integer errorVersionId : ontologyVersionIdList) {
+			String error = addErrorOntology(errorVersionId.toString(), null,
 					ONTOLOGY_VERSION_DOES_NOT_EXIST_ERROR);
 			log.error(error);
 		}
@@ -144,16 +158,25 @@ public class OntologyLoadSchedulerServiceImpl implements
 			String formatHandler, OntologyBean ontologyBean) {
 		String errorMessage = null;
 		Integer ontologyVersionId = loadQueue.getOntologyVersionId();
-
-		if (ontologyBean == null) {
-			ontologyBean = ontologyMetadataManagerProtege
-					.findOntologyOrOntologyViewById(ontologyVersionId);
-		}
-
-		StatusEnum status = StatusEnum.STATUS_WAITING;
+		StatusEnum status = StatusEnum.STATUS_ERROR;
 
 		// parse
 		try {
+			// in some cases the ontologyBean is passed as null, so we need to
+			// retrieve it from backend
+			if (ontologyBean == null) {
+				ontologyBean = ontologyMetadataManagerProtege
+						.findOntologyOrOntologyViewById(ontologyVersionId);
+			}
+
+			if (ontologyBean == null) {
+				throw new OntologyNotFoundException(
+						OntologyNotFoundException.DEFAULT_MESSAGE
+								+ " (Version Id: " + ontologyVersionId + ")");
+			}
+
+			status = StatusEnum.STATUS_WAITING;
+
 			updateOntologyStatus(loadQueue, ontologyBean, status, errorMessage);
 
 			List<String> filenames = ontologyBean.getFilenames();
@@ -274,13 +297,14 @@ public class OntologyLoadSchedulerServiceImpl implements
 
 		// update ontology metadata
 		ontologyBean.setStatusId(statusId);
-		
+
 		if (ontologyBean.isView()) {
-			ontologyViewMetadataManagerProtege.saveOntologyView((OntologyViewBean) ontologyBean);
+			ontologyViewMetadataManagerProtege
+					.saveOntologyView((OntologyViewBean) ontologyBean);
 		} else {
 			ontologyMetadataManagerProtege.saveOntology(ontologyBean);
 		}
-		
+
 		// update loadQueue table
 		loadQueue.setErrorMessage(errorMessage);
 		loadQueue.setDateProcessed(Calendar.getInstance().getTime());
@@ -474,7 +498,8 @@ public class OntologyLoadSchedulerServiceImpl implements
 	}
 
 	/**
-	 * @param ontologyViewMetadataManagerProtege the ontologyViewMetadataManagerProtege to set
+	 * @param ontologyViewMetadataManagerProtege
+	 *            the ontologyViewMetadataManagerProtege to set
 	 */
 	public void setOntologyViewMetadataManagerProtege(
 			OntologyViewMetadataManager ontologyViewMetadataManagerProtege) {

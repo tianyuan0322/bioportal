@@ -3,7 +3,6 @@ package org.ncbo.stanford.manager.metadata;
 import java.util.List;
 
 import org.ncbo.stanford.bean.OntologyViewBean;
-import org.ncbo.stanford.exception.MetadataException;
 
 /**
  * An interface for all API specific ontology view metadata managers to conform to. This allows
@@ -22,26 +21,26 @@ public interface OntologyViewMetadataManager {
 	 * Saves the ontology view metadata specified by the ontologyViewBean representing an ontology view version.
 	 * 
 	 * @param ontologyViewBean
-	 * @throws MetadataException
+	 * @throws Exception
 	 */
-	public void saveOntologyView(OntologyViewBean ontologyViewBean) throws MetadataException;
+	public void saveOntologyView(OntologyViewBean ontologyViewBean) throws Exception;
 
 
 	/**
 	 * Updates the ontology view metadata specified by the ontologyBean representing an ontology view version.
 	 * 
 	 * @param ontologyViewBean
-	 * @throws MetadataException
+	 * @throws Exception
 	 */
-	public void updateOntologyView(OntologyViewBean ontologyViewBean) throws MetadataException;
+	public void updateOntologyView(OntologyViewBean ontologyViewBean) throws Exception;
 
 	/**
 	 * Deletes the ontology view metadata specified by the ontologyBean representing an ontology view version.
 	 * 
 	 * @param ontologyViewBean
-	 * @throws MetadataException
+	 * @throws Exception
 	 */
-	public void deleteOntologyView(OntologyViewBean ontologyViewBean) throws MetadataException;
+	public void deleteOntologyView(OntologyViewBean ontologyViewBean) throws Exception;
 	
 	/**
 	 * Retrieves the ontologyViewBean representing an ontology view version for a specific ontology view version id.
@@ -83,11 +82,10 @@ public interface OntologyViewMetadataManager {
 	 *  
 	 * @param viewId a virtual view id
 	 * @return the list of ontology view beans corresponding to the versions of the virtual view with ID <code>viewId</code>
-	 * @throws MetadataException 
+	 * @throws Exception 
 	 */
-	public List<OntologyViewBean> findAllOntologyViewVersionsById(Integer viewId) throws MetadataException;
+	public List<OntologyViewBean> findAllOntologyViewVersionsById(Integer viewId) throws Exception;
 
-	
 	/**
 	 * Returns the next available (i.e. not already in use) virtual view ID
 	 * 

@@ -62,7 +62,7 @@ public class MetadataUtils {
 	@SuppressWarnings("unchecked")
 	protected static <T> T getPropertyValue(OWLModel owlModel,
 			RDFResource owlInd, String propName, Class<T> type)
-			throws MetadataException {
+			throws Exception {
 		OWLProperty prop = owlModel.getOWLProperty(propName);
 
 		if (prop == null) {
@@ -126,7 +126,7 @@ public class MetadataUtils {
 	}
 
 	protected static List<Integer> getPropertyValueIds(OWLModel owlModel,
-			RDFResource owlInd, String propName) throws MetadataException {
+			RDFResource owlInd, String propName) throws Exception {
 		Collection<?> propVals = getPropertyValues(owlModel, owlInd, propName,
 				Object.class);
 		List<Integer> idList = new ArrayList<Integer>();
