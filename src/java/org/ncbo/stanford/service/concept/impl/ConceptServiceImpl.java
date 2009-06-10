@@ -12,10 +12,9 @@ import org.apache.commons.logging.LogFactory;
 import org.ncbo.stanford.bean.OntologyBean;
 import org.ncbo.stanford.bean.OntologyIdBean;
 import org.ncbo.stanford.bean.OntologyVersionIdBean;
-import org.ncbo.stanford.bean.OntologyViewBean;
 import org.ncbo.stanford.bean.concept.ClassBean;
+import org.ncbo.stanford.exception.OntologyNotFoundException;
 import org.ncbo.stanford.manager.metadata.OntologyMetadataManager;
-import org.ncbo.stanford.manager.metadata.OntologyViewMetadataManager;
 import org.ncbo.stanford.manager.obs.OBSManager;
 import org.ncbo.stanford.manager.retrieval.OntologyRetrievalManager;
 import org.ncbo.stanford.service.concept.ConceptService;
@@ -36,30 +35,50 @@ public class ConceptServiceImpl implements ConceptService {
 			0);
 	private Map<String, OntologyRetrievalManager> ontologyRetrievalHandlerMap = new HashMap<String, OntologyRetrievalManager>(
 			0);
-	private OBSManager obsManager;	
+	private OBSManager obsManager;
 	private OntologyMetadataManager ontologyMetadataManagerProtege;
-	
 
 	/**
 	 * Get the root concept for the specified ontology.
 	 */
 	public ClassBean findRootConcept(Integer ontologyVersionId)
 			throws Exception {
-		OntologyBean ontology = ontologyMetadataManagerProtege.findOntologyOrOntologyViewById(ontologyVersionId);
+		OntologyBean ontology = ontologyMetadataManagerProtege
+				.findOntologyOrOntologyViewById(ontologyVersionId);
+
+		if (ontology == null) {
+			throw new OntologyNotFoundException(
+					OntologyNotFoundException.DEFAULT_MESSAGE
+							+ " (Version Id: " + ontologyVersionId + ")");
+		}
 
 		return getRetrievalManager(ontology).findRootConcept(ontology);
 	}
 
 	public ClassBean findConcept(Integer ontologyVersionId, String conceptId)
 			throws Exception {
-		OntologyBean ontology = ontologyMetadataManagerProtege.findOntologyOrOntologyViewById(ontologyVersionId);
+		OntologyBean ontology = ontologyMetadataManagerProtege
+				.findOntologyOrOntologyViewById(ontologyVersionId);
+
+		if (ontology == null) {
+			throw new OntologyNotFoundException(
+					OntologyNotFoundException.DEFAULT_MESSAGE
+							+ " (Version Id: " + ontologyVersionId + ")");
+		}
 
 		return getRetrievalManager(ontology).findConcept(ontology, conceptId);
 	}
-	
+
 	public ClassBean findPathFromRoot(Integer ontologyVersionId,
 			String conceptId, boolean light) throws Exception {
-		OntologyBean ontology = ontologyMetadataManagerProtege.findOntologyOrOntologyViewById(ontologyVersionId);
+		OntologyBean ontology = ontologyMetadataManagerProtege
+				.findOntologyOrOntologyViewById(ontologyVersionId);
+
+		if (ontology == null) {
+			throw new OntologyNotFoundException(
+					OntologyNotFoundException.DEFAULT_MESSAGE
+							+ " (Version Id: " + ontologyVersionId + ")");
+		}
 
 		return getRetrievalManager(ontology).findPathFromRoot(ontology,
 				conceptId, light);
@@ -185,7 +204,8 @@ public class ConceptServiceImpl implements ConceptService {
 	}
 
 	/**
-	 * @param ontologyMetadataManagerProtege the ontologyMetadataManagerProtege to set
+	 * @param ontologyMetadataManagerProtege
+	 *            the ontologyMetadataManagerProtege to set
 	 */
 	public void setOntologyMetadataManagerProtege(
 			OntologyMetadataManager ontologyMetadataManagerProtege) {
