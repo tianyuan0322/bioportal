@@ -46,6 +46,12 @@ public class ConceptServiceImpl implements ConceptService {
 		VNcboOntology ontology = ncboOntologyVersionDAO
 				.findOntologyVersion(ontologyVersionId);
 
+		if (ontology == null) {
+			throw new OntologyNotFoundException(
+					OntologyNotFoundException.DEFAULT_MESSAGE
+							+ " (Version Id: " + ontologyVersionId + ")");
+		}
+
 		return getRetrievalManager(ontology).findRootConcept(ontology);
 	}
 
@@ -54,6 +60,12 @@ public class ConceptServiceImpl implements ConceptService {
 		VNcboOntology ontology = ncboOntologyVersionDAO
 				.findOntologyVersion(ontologyVersionId);
 
+		if (ontology == null) {
+			throw new OntologyNotFoundException(
+					OntologyNotFoundException.DEFAULT_MESSAGE
+							+ " (Version Id: " + ontologyVersionId + ")");
+		}
+
 		return getRetrievalManager(ontology).findConcept(ontology, conceptId);
 	}
 
@@ -61,6 +73,12 @@ public class ConceptServiceImpl implements ConceptService {
 			String conceptId, boolean light) throws Exception {
 		VNcboOntology ontology = ncboOntologyVersionDAO
 				.findOntologyVersion(ontologyVersionId);
+
+		if (ontology == null) {
+			throw new OntologyNotFoundException(
+					OntologyNotFoundException.DEFAULT_MESSAGE
+							+ " (Version Id: " + ontologyVersionId + ")");
+		}
 
 		return getRetrievalManager(ontology).findPathFromRoot(ontology,
 				conceptId, light);
