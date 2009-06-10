@@ -472,4 +472,12 @@ public class OntologyLoadSchedulerServiceImpl implements
 			OntologyMetadataManager ontologyMetadataManagerProtege) {
 		this.ontologyMetadataManagerProtege = ontologyMetadataManagerProtege;
 	}
+
+	/**
+	 * @param ontologyViewMetadataManagerProtege the ontologyViewMetadataManagerProtege to set
+	 */
+	public void setOntologyViewMetadataManagerProtege(
+			OntologyViewMetadataManager ontologyViewMetadataManagerProtege) {
+		this.ontologyViewMetadataManagerProtege = ontologyViewMetadataManagerProtege;
+	}
 }
