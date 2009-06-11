@@ -83,8 +83,8 @@
 		<echo message="log4j path: = ${bioportal.app.logfilepath}" />
 
 		<mkdir dir="${bioportal.tempdir}" />
-		<mkdir dir="${bioportal.ontology.filepath}" />		
-		<mkdir dir="${bioportal.diff.filepath}" />		
+		<mkdir dir="${bioportal.ontology.filepath}" />
+		<mkdir dir="${bioportal.diff.filepath}" />
 		<mkdir dir="${bioportal.search.indexpath}" />
 		<mkdir dir="${bioportal.search.indexbackuppath}" />
 		<mkdir dir="${obo.sourceforge.cvs.checkoutdir}" />
@@ -132,6 +132,7 @@
 				<filter token="bioportalxsltpath" value="${bioportal.xslt.path}" />
 				<filter token="bioportalontologyfilepath" value="${bioportal.ontology.filepath}" />
 				<filter token="bioportaldifffilepath" value="${bioportal.diff.filepath}" />
+				<filter token="bioportalmetadataincludespath" value="${bioportal.metadata.includes.path}" />
 				<filter token="obsrestbaseurl" value="${obs.rest.base.url}" />
 			</filterset>
 		</copy>
@@ -324,10 +325,10 @@
 		<mkdir dir="${testresults.dir}" />
 		<junit printsummary="true" fork="yes" maxmemory="256m" haltonfailure="true">
 			<batchtest todir="${testresults.dir}">
-          <fileset dir="${classes.dir}" includes="**/user/User*Test*.class" />
-          <fileset dir="${classes.dir}" includes="**/concept/Concept*Test*.class" />
-          <fileset dir="${classes.dir}" includes="**/ontology/Ontology*Test.class" />
-          <fileset dir="${classes.dir}" includes="**/search/Search*Test.class" />
+				<fileset dir="${classes.dir}" includes="**/user/User*Test*.class" />
+				<fileset dir="${classes.dir}" includes="**/concept/Concept*Test*.class" />
+				<fileset dir="${classes.dir}" includes="**/ontology/Ontology*Test.class" />
+				<fileset dir="${classes.dir}" includes="**/search/Search*Test.class" />
 			</batchtest>
 			<formatter type="xml" usefile="true" />
 			<classpath refid="master-classpath" />
@@ -338,10 +339,10 @@
 	<target name="testout">
 		<junit printsummary="true" fork="yes" maxmemory="256m" haltonfailure="true" showoutput="true">
 			<batchtest>
-          <fileset dir="${classes.dir}" includes="**/user/User*Test*.class" />
-          <fileset dir="${classes.dir}" includes="**/ontology/Ontology*Test.class" />
-          <fileset dir="${classes.dir}" includes="**/search/Search*Test.class" />
-          <fileset dir="${classes.dir}" includes="**/concept/Concept*Test*.class" />
+				<fileset dir="${classes.dir}" includes="**/user/User*Test*.class" />
+				<fileset dir="${classes.dir}" includes="**/ontology/Ontology*Test.class" />
+				<fileset dir="${classes.dir}" includes="**/search/Search*Test.class" />
+				<fileset dir="${classes.dir}" includes="**/concept/Concept*Test*.class" />
 			</batchtest>
 			<classpath refid="master-classpath" />
 		</junit>
