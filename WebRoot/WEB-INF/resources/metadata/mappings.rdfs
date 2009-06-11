@@ -1,0 +1,163 @@
+<?xml version="1.0"?>
+<rdf:RDF
+    xmlns:xsp="http://www.owl-ontologies.com/2005/08/07/xsp.owl#"
+    xmlns:swrlb="http://www.w3.org/2003/11/swrlb#"
+    xmlns:swrl="http://www.w3.org/2003/11/swrl#"
+    xmlns:protege="http://protege.stanford.edu/plugins/owl/protege#"
+    xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema#"
+    xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#"
+    xmlns:owl="http://www.w3.org/2002/07/owl#"
+    xmlns="http://protege.stanford.edu/ontologies/mappings/mappings.rdfs#"
+  xml:base="http://protege.stanford.edu/ontologies/mappings/mappings.rdfs">
+  <owl:Ontology rdf:about=""/>
+  <rdfs:Class rdf:about="http://protege.stanford.edu/ontologies/mappings/mappings.rdfs#Authority_Algorithm">
+    <rdfs:subClassOf>
+      <rdfs:Class rdf:about="http://protege.stanford.edu/ontologies/mappings/mappings.rdfs#Authority"/>
+    </rdfs:subClassOf>
+    <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+    >mappings:Authority_Algorithm</rdfs:label>
+  </rdfs:Class>
+  <rdfs:Class rdf:about="http://protege.stanford.edu/ontologies/mappings/mappings.rdfs#Mapping_Metadata">
+    <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+    >mappings:Mapping_Metadata</rdfs:label>
+    <rdfs:subClassOf rdf:resource="http://www.w3.org/2000/01/rdf-schema#Resource"/>
+  </rdfs:Class>
+  <rdfs:Class rdf:about="http://protege.stanford.edu/ontologies/mappings/mappings.rdfs#One_to_one_mapping">
+    <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+    >mappings:One_to_one_mapping</rdfs:label>
+    <rdfs:subClassOf rdf:resource="http://www.w3.org/2000/01/rdf-schema#Resource"/>
+  </rdfs:Class>
+  <rdfs:Class rdf:about="http://protege.stanford.edu/ontologies/mappings/mappings.rdfs#Authority">
+    <rdfs:subClassOf rdf:resource="http://www.w3.org/2000/01/rdf-schema#Resource"/>
+    <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+    >mappings:Authority</rdfs:label>
+  </rdfs:Class>
+  <rdfs:Class rdf:about="http://protege.stanford.edu/ontologies/mappings/mappings.rdfs#Authority_Manual">
+    <rdfs:subClassOf rdf:resource="http://protege.stanford.edu/ontologies/mappings/mappings.rdfs#Authority"/>
+    <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+    >mappings:Authority_Manual</rdfs:label>
+  </rdfs:Class>
+  <rdfs:Class rdf:about="http://protege.stanford.edu/ontologies/mappings/mappings.rdfs#Verification">
+    <rdfs:subClassOf rdf:resource="http://www.w3.org/2000/01/rdf-schema#Resource"/>
+    <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+    >mappings:Verification</rdfs:label>
+  </rdfs:Class>
+  <rdf:Property rdf:about="http://protege.stanford.edu/ontologies/mappings/mappings.rdfs#target">
+    <rdfs:domain rdf:resource="http://protege.stanford.edu/ontologies/mappings/mappings.rdfs#One_to_one_mapping"/>
+    <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+    >mappings:target</rdfs:label>
+  </rdf:Property>
+  <rdf:Property rdf:about="http://protege.stanford.edu/ontologies/mappings/mappings.rdfs#mapping_metadata">
+    <rdfs:domain rdf:resource="http://protege.stanford.edu/ontologies/mappings/mappings.rdfs#One_to_one_mapping"/>
+    <rdfs:range rdf:resource="http://protege.stanford.edu/ontologies/mappings/mappings.rdfs#Mapping_Metadata"/>
+    <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+    >mappings:mapping_metadata</rdfs:label>
+  </rdf:Property>
+  <rdf:Property rdf:about="http://protege.stanford.edu/ontologies/mappings/mappings.rdfs#comment">
+    <rdfs:range rdf:resource="http://www.w3.org/2000/01/rdf-schema#Literal"/>
+    <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+    >mappings:comment</rdfs:label>
+    <rdfs:domain rdf:resource="http://protege.stanford.edu/ontologies/mappings/mappings.rdfs#Mapping_Metadata"/>
+  </rdf:Property>
+  <rdf:Property rdf:about="http://protege.stanford.edu/ontologies/mappings/mappings.rdfs#source">
+    <rdfs:domain rdf:resource="http://protege.stanford.edu/ontologies/mappings/mappings.rdfs#One_to_one_mapping"/>
+    <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+    >mappings:source</rdfs:label>
+  </rdf:Property>
+  <rdf:Property rdf:about="http://protege.stanford.edu/ontologies/mappings/mappings.rdfs#relation">
+    <rdfs:range rdf:resource="http://www.w3.org/2000/01/rdf-schema#Literal"/>
+    <rdfs:domain rdf:resource="http://protege.stanford.edu/ontologies/mappings/mappings.rdfs#One_to_one_mapping"/>
+    <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+    >mappings:relation</rdfs:label>
+  </rdf:Property>
+  <rdf:Property rdf:about="http://protege.stanford.edu/ontologies/mappings/mappings.rdfs#author">
+    <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+    >mappings:author</rdfs:label>
+    <rdfs:range rdf:resource="http://www.w3.org/2000/01/rdf-schema#Literal"/>
+    <rdfs:domain rdf:resource="http://protege.stanford.edu/ontologies/mappings/mappings.rdfs#Authority_Manual"/>
+  </rdf:Property>
+  <rdf:Property rdf:about="http://protege.stanford.edu/ontologies/mappings/mappings.rdfs#verified_on">
+    <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+    >mappings:verified_on</rdfs:label>
+    <rdfs:domain rdf:resource="http://protege.stanford.edu/ontologies/mappings/mappings.rdfs#Verification"/>
+    <rdfs:range rdf:resource="http://www.w3.org/2000/01/rdf-schema#Literal"/>
+  </rdf:Property>
+  <rdf:Property rdf:about="http://protege.stanford.edu/ontologies/mappings/mappings.rdfs#date">
+    <rdfs:range rdf:resource="http://www.w3.org/2000/01/rdf-schema#Literal"/>
+    <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+    >mappings:date</rdfs:label>
+    <rdfs:domain rdf:resource="http://protege.stanford.edu/ontologies/mappings/mappings.rdfs#Mapping_Metadata"/>
+  </rdf:Property>
+  <rdf:Property rdf:about="http://protege.stanford.edu/ontologies/mappings/mappings.rdfs#application_Context">
+    <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+    >mappings:application_Context</rdfs:label>
+    <rdfs:domain rdf:resource="http://protege.stanford.edu/ontologies/mappings/mappings.rdfs#Mapping_Metadata"/>
+    <rdfs:range rdf:resource="http://www.w3.org/2000/01/rdf-schema#Literal"/>
+  </rdf:Property>
+  <rdf:Property rdf:about="http://protege.stanford.edu/ontologies/mappings/mappings.rdfs#verified_by">
+    <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+    >mappings:verified_by</rdfs:label>
+    <rdfs:range rdf:resource="http://www.w3.org/2000/01/rdf-schema#Literal"/>
+    <rdfs:domain rdf:resource="http://protege.stanford.edu/ontologies/mappings/mappings.rdfs#Verification"/>
+  </rdf:Property>
+  <rdf:Property rdf:about="http://protege.stanford.edu/ontologies/mappings/mappings.rdfs#submittedBy">
+    <rdfs:domain rdf:resource="http://protege.stanford.edu/ontologies/mappings/mappings.rdfs#Mapping_Metadata"/>
+    <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+    >mappings:submittedBy</rdfs:label>
+    <rdfs:range rdf:resource="http://www.w3.org/2000/01/rdf-schema#Literal"/>
+  </rdf:Property>
+  <rdf:Property rdf:about="http://protege.stanford.edu/ontologies/mappings/mappings.rdfs#algorithm_name">
+    <rdfs:range rdf:resource="http://www.w3.org/2000/01/rdf-schema#Literal"/>
+    <rdfs:domain rdf:resource="http://protege.stanford.edu/ontologies/mappings/mappings.rdfs#Authority_Algorithm"/>
+    <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+    >mappings:algorithm_name</rdfs:label>
+  </rdf:Property>
+  <rdf:Property rdf:about="http://protege.stanford.edu/ontologies/mappings/mappings.rdfs#component_source">
+    <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+    >mappings:component_source</rdfs:label>
+    <rdfs:range rdf:resource="http://www.w3.org/2000/01/rdf-schema#Literal"/>
+  </rdf:Property>
+  <rdf:Property rdf:about="http://protege.stanford.edu/ontologies/mappings/mappings.rdfs#component_name">
+    <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+    >mappings:component_name</rdfs:label>
+    <rdfs:range rdf:resource="http://www.w3.org/2000/01/rdf-schema#Literal"/>
+  </rdf:Property>
+  <rdf:Property rdf:about="http://protege.stanford.edu/ontologies/mappings/mappings.rdfs#verified">
+    <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+    >mappings:verified</rdfs:label>
+    <rdfs:domain rdf:resource="http://protege.stanford.edu/ontologies/mappings/mappings.rdfs#Mapping_Metadata"/>
+    <rdfs:range rdf:resource="http://protege.stanford.edu/ontologies/mappings/mappings.rdfs#Verification"/>
+  </rdf:Property>
+  <rdf:Property rdf:about="http://protege.stanford.edu/ontologies/mappings/mappings.rdfs#component_type">
+    <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+    >mappings:component_type</rdfs:label>
+    <rdfs:range rdf:resource="http://www.w3.org/2000/01/rdf-schema#Literal"/>
+  </rdf:Property>
+  <rdf:Property rdf:about="http://protege.stanford.edu/ontologies/mappings/mappings.rdfs#dependency">
+    <rdfs:domain rdf:resource="http://protege.stanford.edu/ontologies/mappings/mappings.rdfs#Mapping_Metadata"/>
+    <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+    >mappings:dependency</rdfs:label>
+    <rdfs:range rdf:resource="http://protege.stanford.edu/ontologies/mappings/mappings.rdfs#One_to_one_mapping"/>
+  </rdf:Property>
+  <rdf:Property rdf:about="http://protege.stanford.edu/ontologies/mappings/mappings.rdfs#authority">
+    <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+    >mappings:authority</rdfs:label>
+    <rdfs:domain rdf:resource="http://protege.stanford.edu/ontologies/mappings/mappings.rdfs#Mapping_Metadata"/>
+    <rdfs:range rdf:resource="http://protege.stanford.edu/ontologies/mappings/mappings.rdfs#Authority"/>
+  </rdf:Property>
+  <rdf:Property rdf:about="http://protege.stanford.edu/ontologies/mappings/mappings.rdfs#externalReferences">
+    <rdfs:domain rdf:resource="http://protege.stanford.edu/ontologies/mappings/mappings.rdfs#Mapping_Metadata"/>
+    <rdfs:range rdf:resource="http://www.w3.org/2000/01/rdf-schema#Literal"/>
+    <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+    >mappings:externalReferences</rdfs:label>
+  </rdf:Property>
+  <rdf:Property rdf:about="http://protege.stanford.edu/ontologies/mappings/mappings.rdfs#confidence">
+    <rdfs:range rdf:resource="http://www.w3.org/2000/01/rdf-schema#Literal"/>
+    <rdfs:domain rdf:resource="http://protege.stanford.edu/ontologies/mappings/mappings.rdfs#Mapping_Metadata"/>
+    <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+    >mappings:confidence</rdfs:label>
+  </rdf:Property>
+</rdf:RDF>
+
+<!-- Created with Protege (with OWL Plugin 3.4, Build 500)  http://protege.stanford.edu -->
