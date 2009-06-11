@@ -174,7 +174,6 @@ public abstract class AbstractOntologyManagerProtege {
 		if (kb != null && kb instanceof OWLModel) {
 			return (OWLModel) kb;
 		} else {
-			
 			// TODO this solution is a temporary hack. 
 			// We should use the creator after migration to Protege 3.4.1
 			//start...
@@ -186,8 +185,8 @@ public abstract class AbstractOntologyManagerProtege {
 					protegeJdbcDriver, protegeJdbcUrl, METADATA_TABLE_NAME,
 					protegeJdbcUsername, protegeJdbcPassword);
 	        project.createDomainKnowledgeBase(factory, errors, false);
-	        
-	        OWLModel owlModel = (OWLModel) project.getKnowledgeBase();
+	        kb = project.getKnowledgeBase();
+	        OWLModel owlModel = (OWLModel) kb;
 	        
 	        Repository repository = new LocalFolderRepository(new File(MessageUtils.getMessage("bioportal.metadata.includes.path")), true);
 	        owlModel.getRepositoryManager().addProjectRepository(repository);
@@ -202,16 +201,14 @@ public abstract class AbstractOntologyManagerProtege {
 	        owlModel.setChanged(false);
 	        owlModel.setChanged(false);
 	        //end
-	        
-	        kb = owlModel;
-	        
+
 			if (log.isDebugEnabled()) {
 				log.debug("Created new knowledgebase: " + kb.getName());
 			}
-			
+
 			protegeKnowledgeBases.put(METADATA_KB_ID, kb);
 
-			return (OWLModel) kb;
+			return owlModel;
 		}
 	}
 
