@@ -504,7 +504,8 @@ public class OntologyMetadataUtils extends MetadataUtils {
 	private static boolean isReady(OWLIndividual ontologyInd) throws Exception {
 		OWLModel owlModel = ontologyInd.getOWLModel();
 		Integer status = getPropertyValue(owlModel, ontologyInd, PROPERTY_STATUS_ID, Integer.class);
-		return (status == new Integer(MessageUtils.getMessage("ncbo.status.ready"))) || (status == new Integer(MessageUtils.getMessage("ncbo.status.notapplicable")));
+		return status.equals(new Integer(MessageUtils.getMessage("ncbo.status.ready")))
+				|| status.equals(new Integer(MessageUtils.getMessage("ncbo.status.notapplicable")));
 	}
 	
 	public static List<Integer> getAllOntologyVersionIDs(OWLModel metadata,
