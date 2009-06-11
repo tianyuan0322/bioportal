@@ -96,7 +96,8 @@ public class OntologyLoadSchedulerServiceImpl implements
 			String formatHandler) {
 		OntologyBean ob = null;
 		errorOntologies.clear();
-
+		List<Integer> errorVersionIdList = new ArrayList<Integer>(ontologyVersionIdList);
+		
 		for (Integer ontologyVersionId : ontologyVersionIdList) {
 			try {
 				ob = ontologyMetadataManagerProtege
@@ -106,7 +107,7 @@ public class OntologyLoadSchedulerServiceImpl implements
 					continue;
 				}
 
-				ontologyVersionIdList.remove(ontologyVersionId);
+				errorVersionIdList.remove(ontologyVersionId);
 
 				NcboOntologyLoadQueue loadQueue = ncboOntologyLoadQueueDAO
 						.findByOntologyVersionId(ontologyVersionId);
@@ -129,7 +130,7 @@ public class OntologyLoadSchedulerServiceImpl implements
 
 		optimizeIndex();
 
-		for (Integer errorVersionId : ontologyVersionIdList) {
+		for (Integer errorVersionId : errorVersionIdList) {
 			String error = addErrorOntology(errorVersionId.toString(), null,
 					ONTOLOGY_VERSION_DOES_NOT_EXIST_ERROR);
 			log.error(error);
