@@ -12,6 +12,7 @@ import org.ncbo.stanford.exception.MetadataException;
 import edu.stanford.smi.protegex.owl.model.OWLClass;
 import edu.stanford.smi.protegex.owl.model.OWLIndividual;
 import edu.stanford.smi.protegex.owl.model.OWLModel;
+import edu.stanford.smi.protegex.owl.model.OWLNamedClass;
 import edu.stanford.smi.protegex.owl.model.OWLProperty;
 import edu.stanford.smi.protegex.owl.model.RDFResource;
 import edu.stanford.smi.protegex.owl.model.RDFSDatatype;
@@ -188,11 +189,24 @@ public class MetadataUtils {
 		return res;
 	}
 
-	protected static Collection<OWLIndividual> getOWLIndividualsWithId(OWLModel owlModel, Integer id) {
+	protected static Collection<OWLIndividual> getOWLIndividualsWithId(
+			OWLModel owlModel, Integer id) {
+		Collection<?> matchingResources = owlModel
+				.getRDFResourcesWithPropertyValue(owlModel
+						.getOWLProperty(PROPERTY_ID), id);
+		return filterMatchingResourcesForOWLIndividuals(matchingResources);
+	}
 
+	protected static Collection<OWLIndividual> getMatchingOWLIndividuals(
+			OWLModel owlModel, OWLProperty property, String query) {
+		Collection<?> matchingResources = owlModel.getMatchingResources(
+				property, query, -1);
+		return filterMatchingResourcesForOWLIndividuals(matchingResources);
+	}
+	
+	private static Collection<OWLIndividual> filterMatchingResourcesForOWLIndividuals(
+			Collection<?> matchingResources) {
 		Collection<OWLIndividual> res = new ArrayList<OWLIndividual>();
-		Collection<?> matchingResources = owlModel.getRDFResourcesWithPropertyValue(owlModel.getOWLProperty(PROPERTY_ID), id);
-
 		if (matchingResources == null) {
 			res = null;
 		} else {
@@ -209,22 +223,57 @@ public class MetadataUtils {
 	}
 	
 	protected static OWLIndividual getIndividualWithId(OWLModel metadata,
-			OWLClass type, Integer id, boolean transitive) {
+			String class_name, Integer id, boolean transitive) {
 		OWLIndividual res = null;
-		Collection<OWLIndividual> individualsWithId = getOWLIndividualsWithId(
-				metadata, id);
-		if (individualsWithId != null) {
-			for (OWLIndividual ind : individualsWithId) {
-				if (ind.hasRDFType(type, transitive)) {
-					if (res == null) {
-						res = ind;
-					}
-					else {
-						log.warn("Multiple individuals match class: " + type + 
-								" with id: " + id + " transitive: " + transitive + 
-								": " + ind);
+		OWLNamedClass type = metadata.getOWLNamedClass(class_name);
+		if (type != null) {
+			Collection<OWLIndividual> individualsWithId = getOWLIndividualsWithId(
+					metadata, id);
+			if (individualsWithId != null) {
+				for (OWLIndividual ind : individualsWithId) {
+					if (ind.hasRDFType(type, transitive)) {
+						if (res == null) {
+							res = ind;
+						}
+						else {
+							log.warn("Multiple individuals match class: " + type + 
+									" with id: " + id + " transitive: " + transitive + 
+									": " + ind);
+						}
 					}
 				}
+			}
+		}
+		else {
+			log.error("Invalid class name specified for the method getIndividualWithId:" + class_name);
+		}
+		return res;
+	}
+	
+	protected static List<OWLIndividual> getIndividualsWithMatchingProperty(OWLModel metadata,
+			String class_name, String property_name, String value, boolean transitive) {
+		List<OWLIndividual> res = null;
+		OWLNamedClass type = metadata.getOWLNamedClass(class_name);
+		OWLProperty prop = metadata.getOWLProperty(property_name);
+		
+		if (type != null && prop != null) {
+			res = new ArrayList<OWLIndividual>();
+			Collection<OWLIndividual> individualsWithId = getMatchingOWLIndividuals(
+					metadata, prop, value);
+			if (individualsWithId != null) {
+				for (OWLIndividual ind : individualsWithId) {
+					if (ind.hasRDFType(type, transitive)) {
+						res.add(ind);
+					}
+				}
+			}
+		}
+		else {
+			if (type == null) {
+				log.error("Invalid class name specified in the method getIndividualWithId:" + class_name);
+			}
+			if (prop == null) {
+				log.error("Invalid property name specified in the method getIndividualWithId:" + property_name);
 			}
 		}
 		return res;

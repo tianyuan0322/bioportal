@@ -179,8 +179,9 @@ public class OntologyViewServiceMetadataImpl extends AbstractOntologyService imp
 	}
 
 	public List<OntologyViewBean> searchOntologyViewMetadata(String query) {
-		// TODO Auto-generated method stub
-		return null;
+		// TODO check if we want separate metadata search for
+		// ontologies and view
+		return ontologyViewMetadataManager.searchOntologyViewMetadata(query);
 	}
 
 	@Transactional(rollbackFor = Exception.class)

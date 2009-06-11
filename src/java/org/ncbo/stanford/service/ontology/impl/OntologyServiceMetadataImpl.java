@@ -201,8 +201,9 @@ public class OntologyServiceMetadataImpl extends AbstractOntologyService impleme
 	}
 
 	public List<OntologyBean> searchOntologyMetadata(String query) {
-		// TODO Auto-generated method stub
-		return null;
+		// TODO check if we want separate metadata search for
+		// ontologies and view
+		return ontologyMetadataManager.searchOntologyMetadata(query);
 	}
 
 	@Transactional(rollbackFor = Exception.class)

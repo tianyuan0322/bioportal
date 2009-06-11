@@ -371,6 +371,22 @@ public class OntologyMetadataManagerProtegeImpl extends
 			return -3;
 		}
 	}
+
+	public List<OntologyBean> searchOntologyMetadata(String query) {
+		OWLModel metadata = getMetadataOWLModel();
+		List<OWLIndividual> matchingIndividuals = OntologyMetadataUtils.searchOntologyMetadata(metadata, query);
+		List<OntologyBean> res = new ArrayList<OntologyBean>();
+		for (OWLIndividual ontInd : matchingIndividuals) {
+			OntologyBean ob = new OntologyBean();
+			try {
+				OntologyMetadataUtils.fillInOntologyBeanFromInstance(ob, ontInd);
+				res.add(ob);
+			} catch (Exception e) {
+				return null;
+			}
+		}
+		return res;
+	}
 	
 	//------------- private helper methods ---------------//
 	

@@ -69,7 +69,6 @@ public class BeanHelper {
 	public static OntologyViewBean populateOntologyViewBeanFromRequest(
 			Request request) {
 		OntologyViewBean bean = new OntologyViewBean();
-		populateOntologyBeanFromRequest(bean, request);
 		populateOntologyViewBeanFromRequest(bean, request);
 		return bean;
 	}
@@ -94,7 +93,7 @@ public class BeanHelper {
 	}
 
 	/**
-	 * Creates OntologyBean object and populate from Request object.
+	 * Takes an OntologyBean object and populates it from Request object.
 	 * 
 	 * <ontology Id>, <internal_version_number> - will be determined at ontology
 	 * creation time
@@ -109,6 +108,7 @@ public class BeanHelper {
 	public static void populateOntologyBeanFromRequest(OntologyBean bean,
 			Request request) {
 		List<Integer> categoryIds = new ArrayList<Integer>(0);
+		List<Integer> hasViewIds = new ArrayList<Integer>(0);
 		HttpServletRequest httpServletRequest = RequestUtils
 				.getHttpServletRequest(request);
 
@@ -284,8 +284,34 @@ public class BeanHelper {
 		if (fileItem != null) {
 			bean.setFileItem(fileItem);
 		}
+		
+		//specifying this in the request is optional. Views should be added to a
+		//version by specifying value for the "viewOnOntologyVersionId" parameter
+		//on a create/update view request
+		String[] hasViewIdValues = httpServletRequest
+		.getParameterValues(MessageUtils
+				.getMessage("form.ontology.hasView"));
+		
+		if (hasViewIdValues != null) {
+			hasViewIds = RequestUtils.parseIntegerListParam(hasViewIdValues);
+			bean.setCategoryIds(hasViewIds);
+		}
 	}
 
+
+	/**
+	 * Takes an OntologyViewBean object and populates it from Request object.
+	 * 
+	 * <ontology Id>, <internal_version_number> - will be determined at ontology
+	 * creation time
+	 * 
+	 * The following attributes are only for System or Admin. <statusId>,
+	 * <codingScheme> - updated by Scheduler <isReviewed> - updated by Admin
+	 * 
+	 * source: request, destination: ontologyBean
+	 * 
+	 * @param Request
+	 */
 	public static void populateOntologyViewBeanFromRequest(
 			OntologyViewBean bean, Request request) {
 		populateOntologyBeanFromRequest(bean, request);
@@ -307,12 +333,11 @@ public class BeanHelper {
 
 		String[] ontVerIdsStr = httpServletRequest
 				.getParameterValues(MessageUtils
-						.getMessage("form.ontology.viewOntologyVersionId"));
+						.getMessage("form.ontology.viewOnOntologyVersionId"));
 
 		if (ontVerIdsStr != null) {
-			for (String categoryIdStr : ontVerIdsStr) {
-				ontVerIds.add(Integer.parseInt(categoryIdStr));
-			}
+			ontVerIds = RequestUtils.parseIntegerListParam(ontVerIdsStr);
+			bean.setCategoryIds(ontVerIds);
 		}
 
 		// now populate the OntologyViewBean

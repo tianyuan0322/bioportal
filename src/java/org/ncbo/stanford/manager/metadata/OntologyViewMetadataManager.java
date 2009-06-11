@@ -99,4 +99,13 @@ public interface OntologyViewMetadataManager {
 	 * @return
 	 */
 	public int getNextAvailableOntologyViewVersionId();
+
+	/**
+	 * Returns list of ontology view beans for all ontology view versions that have some 
+	 * properties that matches the argument
+	 * 
+	 * @param query a String that is searched for in the metadata
+	 * @return list of matching ontology view beans
+	 */
+	public List<OntologyViewBean> searchOntologyViewMetadata(String query);
 }

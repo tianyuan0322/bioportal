@@ -4,11 +4,13 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collection;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.hibernate.criterion.Expression;
 import org.ncbo.stanford.bean.OntologyBean;
 import org.ncbo.stanford.bean.OntologyViewBean;
 import org.ncbo.stanford.exception.MetadataException;
@@ -633,33 +635,56 @@ public class OntologyMetadataUtils extends MetadataUtils {
 	}
 	
 	public static OWLIndividual getVirtualOntologyWithId(OWLModel metadata, Integer id) {
-		OWLNamedClass ontClass = metadata.getOWLNamedClass(CLASS_VIRTUAL_ONTOLOGY);
-		return getIndividualWithId(metadata, ontClass, id, false);
+		return getIndividualWithId(metadata, CLASS_VIRTUAL_ONTOLOGY, id, false);
 	}
 	
 	public static OWLIndividual getVirtualOntologyOrViewWithId(OWLModel metadata, Integer id) {
-		OWLNamedClass ontClass = metadata.getOWLNamedClass(CLASS_VIRTUAL_ONTOLOGY);
-		return getIndividualWithId(metadata, ontClass, id, true);
+		return getIndividualWithId(metadata, CLASS_VIRTUAL_ONTOLOGY, id, true);
 	}
 	
 	public static OWLIndividual getVirtualViewWithId(OWLModel metadata, Integer id) {
-		OWLNamedClass viewClass = metadata.getOWLNamedClass(CLASS_VIRTUAL_VIEW);
-		return getIndividualWithId(metadata, viewClass, id, false);
+		return getIndividualWithId(metadata, CLASS_VIRTUAL_VIEW, id, false);
 	}
 
 	public static OWLIndividual getOntologyWithId(OWLModel metadata, Integer id) {
-		OWLNamedClass ontClass = metadata.getOWLNamedClass(CLASS_OMV_ONTOLOGY);
-		return getIndividualWithId(metadata, ontClass, id, false);
+		return getIndividualWithId(metadata, CLASS_OMV_ONTOLOGY, id, false);
 	}
 	
 	public static OWLIndividual getOntologyOrViewWithId(OWLModel metadata, Integer id) {
-		OWLNamedClass ontClass = metadata.getOWLNamedClass(CLASS_OMV_ONTOLOGY);
-		return getIndividualWithId(metadata, ontClass, id, true);
+		return getIndividualWithId(metadata, CLASS_OMV_ONTOLOGY, id, true);
 	}
 	
 	public static OWLIndividual getOntologyViewWithId(OWLModel metadata, Integer id) {
-		OWLNamedClass viewClass = metadata.getOWLNamedClass(CLASS_ONTOLOGY_VIEW);
-		return getIndividualWithId(metadata, viewClass, id, false);
+		return getIndividualWithId(metadata, CLASS_ONTOLOGY_VIEW, id, false);
+	}
+
+	public static List<OWLIndividual> searchOntologyMetadata(OWLModel metadata, String query) {
+		return searchMetadataOnClass(metadata, CLASS_OMV_ONTOLOGY, query);
+	}
+	
+	public static List<OWLIndividual> searchOntologyViewMetadata(OWLModel metadata, String query) {
+		return searchMetadataOnClass(metadata, CLASS_ONTOLOGY_VIEW, query);
+	}
+	
+	public static List<OWLIndividual> searchMetadataOnClass(OWLModel metadata,
+			String class_name, String query) {
+		HashSet<OWLIndividual> res = new HashSet<OWLIndividual>();
+
+		res.addAll(getIndividualsWithMatchingProperty(metadata, class_name,
+				PROPERTY_URL_PUBLICATIONS, query, false));
+		res.addAll(getIndividualsWithMatchingProperty(metadata, class_name,
+				PROPERTY_URL_HOMEPAGE, query, false));
+		res.addAll(getIndividualsWithMatchingProperty(metadata, class_name,
+				PROPERTY_HAS_CONTACT_EMAIL, query, false));
+		res.addAll(getIndividualsWithMatchingProperty(metadata, class_name,
+				PROPERTY_HAS_CONTACT_NAME, query, false));
+		// TODO check corresponding properties for displayLabel and format!
+		res.addAll(getIndividualsWithMatchingProperty(metadata, class_name,
+				PROPERTY_OMV_NAME, query, false));
+		// res.addAll(getIndividualsWithMatchingProperty(metadata, class_name,
+		// 		PROPERTY_format????, query, false));
+
+		return new ArrayList<OWLIndividual>(res);
 	}
 
 }
