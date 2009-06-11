@@ -1,5 +1,6 @@
 package org.ncbo.stanford.manager;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -8,6 +9,7 @@ import java.util.Set;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.ncbo.stanford.bean.OntologyBean;
+import org.ncbo.stanford.util.MessageUtils;
 import org.ncbo.stanford.util.cache.expiration.system.ExpirationSystem;
 import org.ncbo.stanford.util.constants.ApplicationConstants;
 import org.ncbo.stanford.util.helper.StringHelper;
@@ -16,9 +18,13 @@ import edu.stanford.smi.protege.model.Cls;
 import edu.stanford.smi.protege.model.KnowledgeBase;
 import edu.stanford.smi.protege.model.Project;
 import edu.stanford.smi.protege.model.Slot;
+import edu.stanford.smi.protege.model.framestore.MergingNarrowFrameStore;
+import edu.stanford.smi.protege.model.framestore.NarrowFrameStore;
 import edu.stanford.smi.protege.storage.database.DatabaseKnowledgeBaseFactory;
 import edu.stanford.smi.protegex.owl.database.OWLDatabaseKnowledgeBaseFactory;
 import edu.stanford.smi.protegex.owl.model.OWLModel;
+import edu.stanford.smi.protegex.owl.repository.Repository;
+import edu.stanford.smi.protegex.owl.repository.impl.LocalFolderRepository;
 import edu.stanford.smi.protegex.owl.swrl.model.SWRLFactory;
 import edu.stanford.smi.protegex.owl.swrl.sqwrl.SQWRLQueryEngine;
 import edu.stanford.smi.protegex.owl.swrl.sqwrl.SQWRLQueryEngineFactory;
@@ -168,22 +174,41 @@ public abstract class AbstractOntologyManagerProtege {
 		if (kb != null && kb instanceof OWLModel) {
 			return (OWLModel) kb;
 		} else {
-			DatabaseKnowledgeBaseFactory factory = null;
-
-			factory = new OWLDatabaseKnowledgeBaseFactory();
+			
+			// TODO this solution is a temporary hack. 
+			// We should use the creator after migration to Protege 3.4.1
+			//start...
+			DatabaseKnowledgeBaseFactory factory = new OWLDatabaseKnowledgeBaseFactory();
 
 			List errors = new ArrayList();
-			Project prj = Project.createBuildProject(factory, errors);
-			DatabaseKnowledgeBaseFactory.setSources(prj.getSources(),
+	        Project project = Project.createBuildProject(factory, errors);
+			DatabaseKnowledgeBaseFactory.setSources(project.getSources(),
 					protegeJdbcDriver, protegeJdbcUrl, METADATA_TABLE_NAME,
 					protegeJdbcUsername, protegeJdbcPassword);
-			prj.createDomainKnowledgeBase(factory, errors, true);
-			kb = prj.getKnowledgeBase();
-
+	        project.createDomainKnowledgeBase(factory, errors, false);
+	        
+	        OWLModel owlModel = (OWLModel) project.getKnowledgeBase();
+	        
+	        Repository repository = new LocalFolderRepository(new File(MessageUtils.getMessage("bioportal.metadata.includes.path")), true);
+	        owlModel.getRepositoryManager().addProjectRepository(repository);
+	        
+	        MergingNarrowFrameStore mnfs = MergingNarrowFrameStore.get(owlModel);
+	        owlModel.setGenerateEventsEnabled(false);
+	        NarrowFrameStore nfs = factory.createNarrowFrameStore("<new>");
+	        mnfs.addActiveFrameStore(nfs);
+	        factory.loadKnowledgeBase(owlModel, project.getSources(), errors);
+	        
+	        owlModel.setGenerateEventsEnabled(true);
+	        owlModel.setChanged(false);
+	        owlModel.setChanged(false);
+	        //end
+	        
+	        kb = owlModel;
+	        
 			if (log.isDebugEnabled()) {
 				log.debug("Created new knowledgebase: " + kb.getName());
 			}
-
+			
 			protegeKnowledgeBases.put(METADATA_KB_ID, kb);
 
 			return (OWLModel) kb;
