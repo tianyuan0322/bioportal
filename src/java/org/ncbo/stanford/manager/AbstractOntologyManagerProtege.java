@@ -195,18 +195,21 @@ public abstract class AbstractOntologyManagerProtege {
 	        owlModel.setGenerateEventsEnabled(false);
 	        NarrowFrameStore nfs = factory.createNarrowFrameStore("<new>");
 	        mnfs.addActiveFrameStore(nfs);
-	        factory.loadKnowledgeBase(owlModel, project.getSources(), errors);
-	        
+	        factory.loadKnowledgeBase(owlModel, project.getSources(), errors);	        
 	        owlModel.setGenerateEventsEnabled(true);
 	        owlModel.setChanged(false);
 	        project.getInternalProjectKnowledgeBase().setChanged(false);
 	        //end
 	        
+	        if (!errors.isEmpty()) {
+	        	log.error("Errors during Protege metadata project creation: " + errors);
+	        }
+
 			if (log.isDebugEnabled()) {
 				log.debug("Created new metadata knowledgebase: " + kb.getName());
 			}
 			
-//			protegeKnowledgeBases.put(METADATA_KB_ID, kb);
+			protegeKnowledgeBases.put(METADATA_KB_ID, kb);
 
 			return owlModel;
 		}
