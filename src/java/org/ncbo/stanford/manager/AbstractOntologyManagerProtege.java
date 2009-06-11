@@ -173,7 +173,7 @@ public abstract class AbstractOntologyManagerProtege {
 
 		if (kb != null && kb instanceof OWLModel) {
 			return (OWLModel) kb;
-		} else {
+		} else {			
 			// TODO this solution is a temporary hack. 
 			// We should use the creator after migration to Protege 3.4.1
 			//start...
@@ -199,14 +199,14 @@ public abstract class AbstractOntologyManagerProtege {
 	        
 	        owlModel.setGenerateEventsEnabled(true);
 	        owlModel.setChanged(false);
-	        owlModel.setChanged(false);
+	        project.getInternalProjectKnowledgeBase().setChanged(false);
 	        //end
-
+	        
 			if (log.isDebugEnabled()) {
-				log.debug("Created new knowledgebase: " + kb.getName());
+				log.debug("Created new metadata knowledgebase: " + kb.getName());
 			}
-
-			protegeKnowledgeBases.put(METADATA_KB_ID, kb);
+			
+//			protegeKnowledgeBases.put(METADATA_KB_ID, kb);
 
 			return owlModel;
 		}
