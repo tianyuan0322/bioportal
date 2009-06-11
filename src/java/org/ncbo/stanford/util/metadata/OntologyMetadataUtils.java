@@ -482,6 +482,7 @@ public class OntologyMetadataUtils extends MetadataUtils {
 		OWLIndividual latest = null;
 		int maxVerNr = -1;
 		boolean doNotFilterForActive = ! onlyActive;
+		
 		for (Iterator<OWLIndividual> it = propValues.iterator(); it.hasNext();) {
 			OWLIndividual ontologyInd = (OWLIndividual) it.next();
 			Integer verNr = getPropertyValue(owlModel, ontologyInd, PROPERTY_INTERNAL_VERSION_NUMBER, Integer.class);
