@@ -173,7 +173,7 @@ public class ConceptServiceImpl implements ConceptService {
 
 	private OntologyRetrievalManager getRetrievalManager(OntologyBean ontology) {
 		String formatHandler = ontologyFormatHandlerMap.get(ontology
-				.getFormat());
+				.getFormat().toUpperCase());
 		return ontologyRetrievalHandlerMap.get(formatHandler);
 	}
 
