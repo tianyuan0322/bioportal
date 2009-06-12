@@ -13,7 +13,8 @@ import org.restlet.data.Status;
 
 public class VirtualViewUriRestlet extends AbstractBaseRestlet {
 
-	private static final Log log = LogFactory.getLog(VirtualViewUriRestlet.class);
+	private static final Log log = LogFactory
+			.getLog(VirtualViewUriRestlet.class);
 	private OntologyViewService ontologyViewService;
 	private ConceptService conceptService;
 
@@ -45,21 +46,34 @@ public class VirtualViewUriRestlet extends AbstractBaseRestlet {
 			Integer ontId = Integer.parseInt(ontologyId);
 
 			if (conceptId == null) {
-				returnObject = ontologyViewService.findLatestOntologyViewVersion(ontId);
+				returnObject = ontologyViewService
+						.findLatestOntologyViewVersion(ontId);
 
 				if (returnObject == null) {
-					response.setStatus(Status.CLIENT_ERROR_NOT_FOUND, MessageUtils
-							.getMessage("msg.error.ontologyViewNotFound"));
+					response
+							.setStatus(
+									Status.CLIENT_ERROR_NOT_FOUND,
+									MessageUtils
+											.getMessage("msg.error.ontologyViewNotFound"));
 				}
 			} else {
 				OntologyViewBean ontBean = ontologyViewService
 						.findLatestOntologyViewVersion(ontId);
-				returnObject = conceptService.findConcept(ontBean.getId(),
-						conceptId);
 
-				if (returnObject == null) {
-					response.setStatus(Status.CLIENT_ERROR_NOT_FOUND,
-							"Concept not found");
+				if (ontBean == null) {
+					response
+							.setStatus(
+									Status.CLIENT_ERROR_NOT_FOUND,
+									MessageUtils
+											.getMessage("msg.error.ontologyViewNotFound"));
+				} else {
+					returnObject = conceptService.findConcept(ontBean.getId(),
+							conceptId);
+
+					if (returnObject == null) {
+						response.setStatus(Status.CLIENT_ERROR_NOT_FOUND,
+								"Concept not found");
+					}
 				}
 			}
 		} catch (NumberFormatException nfe) {

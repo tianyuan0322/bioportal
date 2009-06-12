@@ -49,7 +49,8 @@ public class VirtualUriRestlet extends AbstractBaseRestlet {
 
 				if (returnObject == null) {
 					response.setStatus(Status.CLIENT_ERROR_NOT_FOUND,
-							"Ontology not found");
+							MessageUtils
+									.getMessage("msg.error.ontologyNotFound"));
 				}
 			} else {
 				OntologyBean ontBean = ontologyService
@@ -57,15 +58,16 @@ public class VirtualUriRestlet extends AbstractBaseRestlet {
 
 				if (ontBean == null) {
 					response.setStatus(Status.CLIENT_ERROR_NOT_FOUND,
-							"Ontology not found");
-				}
-				
-				returnObject = conceptService.findConcept(ontBean.getId(),
-						conceptId);
+							MessageUtils
+									.getMessage("msg.error.ontologyNotFound"));
+				} else {
+					returnObject = conceptService.findConcept(ontBean.getId(),
+							conceptId);
 
-				if (returnObject == null) {
-					response.setStatus(Status.CLIENT_ERROR_NOT_FOUND,
-							"Concept not found");
+					if (returnObject == null) {
+						response.setStatus(Status.CLIENT_ERROR_NOT_FOUND,
+								"Concept not found");
+					}
 				}
 			}
 		} catch (NumberFormatException nfe) {
