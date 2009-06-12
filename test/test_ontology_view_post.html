@@ -48,6 +48,9 @@
     	Ontology View Abbreviation: <input type="text" id="abbreviation" name="abbreviation"  value="PIO" /><br />
     	Ontology View Description: <input type="text" id="description" name="description"  value="this is a pizza ingredients ontology which is a view on the pizza ontology" /><br />
     	Ontology View Format: <input type="text" id="format" name="format" value="OWL-DL" /><br />
+    	<div style="color:RED">
+    	View on Ontology (Ont. Version ID): <input type="text" id="viewOnOntologyVersionId" name="viewOnOntologyVersionId" value="" /><br />
+    	</div>
     	Version Number: <input type="text" id="versionNumber" name="versionNumber" value="1.0" /><br />
     	Version Status: <input type="text" id="versionStatus" name="versionStatus" value="pre-production" /><br />
     	IsRemote: <input type="text" id="isRemote" name="isRemote" value="0" /><br />
@@ -74,6 +77,33 @@
 			<OPTION value="2809">2809</OPTION>
 			<OPTION value="2810">2810</OPTION>
 			<OPTION selected value="2812">2812</OPTION>
+		</SELECT>	
+		<br /><br />
+
+    	View Definition: 
+    	<TEXTAREA id="viewDefinition" name="viewDefinition" rows=3 cols=50></TEXTAREA>
+    	<br /><br />
+    	
+    	View Definition Language: (select one)
+    	<SELECT id="viewDefinitionLanguage" name="viewDefinitionLanguage" size=1 >
+			<OPTION selected value="Manual">Manual</OPTION>
+			<OPTION value="ARQ">ARQ</OPTION>
+			<OPTION value="RDQL">RDQL</OPTION>
+			<OPTION value="RQL">RQL</OPTION>
+			<OPTION value="RVL">RVL</OPTION>
+			<OPTION value="SPARQL">SPARQL</OPTION>
+			<OPTION value="vSPARQL">vSPARQL</OPTION>
+		</SELECT>	
+		<br /><br />
+    	
+    	View Generation Engine: (select one)
+    	<SELECT id="viewGenerationEngine" name="viewGenerationEngine" size=1 >
+			<OPTION selected value=""></OPTION>
+			<OPTION value="Jena/ARQ">Jena/ARQ</OPTION>
+			<OPTION value="Pellet">Pellet</OPTION>
+			<OPTION value="Redland/Rasqal">Redland/Rasqal</OPTION>
+			<OPTION value="Sesame/SPARQL Engine">SPARQL Engine</OPTION>
+			<OPTION value="Virtuoso SPARQL">Virtuoso SPARQL</OPTION>
 		</SELECT>	
 		<br /><br /><br />
 		

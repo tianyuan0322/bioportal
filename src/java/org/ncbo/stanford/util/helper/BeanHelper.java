@@ -294,7 +294,7 @@ public class BeanHelper {
 		
 		if (hasViewIdValues != null) {
 			hasViewIds = RequestUtils.parseIntegerListParam(hasViewIdValues);
-			bean.setCategoryIds(hasViewIds);
+			bean.setHasViews(hasViewIds);
 		}
 	}
 
@@ -337,7 +337,9 @@ public class BeanHelper {
 
 		if (ontVerIdsStr != null) {
 			ontVerIds = RequestUtils.parseIntegerListParam(ontVerIdsStr);
-			bean.setCategoryIds(ontVerIds);
+			if (ontVerIds.size() > 0) {
+				bean.setViewOnOntologyVersionId(ontVerIds);
+			}
 		}
 
 		// now populate the OntologyViewBean
@@ -346,15 +348,11 @@ public class BeanHelper {
 		}
 
 		if (!StringHelper.isNullOrNullString(viewDefinitionLanguage)) {
-			bean.setViewDefinition(viewDefinitionLanguage);
+			bean.setViewDefinitionLanguage(viewDefinitionLanguage);
 		}
 
 		if (!StringHelper.isNullOrNullString(viewGenerationEngine)) {
-			bean.setViewDefinition(viewGenerationEngine);
-		}
-
-		if (ontVerIds.size() > 0) {
-			bean.setViewOnOntologyVersionId(ontVerIds);
+			bean.setViewGenerationEngine(viewGenerationEngine);
 		}
 	}
 }

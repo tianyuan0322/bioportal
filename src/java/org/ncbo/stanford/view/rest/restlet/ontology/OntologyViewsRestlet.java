@@ -26,7 +26,7 @@ public class OntologyViewsRestlet extends AbstractBaseRestlet {
 	 */
 	@Override
 	protected void getRequest(Request request, Response response) {
-		listOntologies(request, response);
+		listOntologyViews(request, response);
 	}
 
 	/**
@@ -37,7 +37,7 @@ public class OntologyViewsRestlet extends AbstractBaseRestlet {
 	 */
 	@Override
 	protected void postRequest(Request request, Response response) {
-		createOntology(request, response);
+		createOntologyView(request, response);
 	}
 
 	/**
@@ -45,7 +45,7 @@ public class OntologyViewsRestlet extends AbstractBaseRestlet {
 	 * 
 	 * @param response
 	 */
-	private void listOntologies(Request request, Response response) {
+	private void listOntologyViews(Request request, Response response) {
 		List<OntologyViewBean> ontologyList = null;
 
 		try {
@@ -68,7 +68,7 @@ public class OntologyViewsRestlet extends AbstractBaseRestlet {
 	 * @param request
 	 *            response
 	 */
-	private void createOntology(Request request, Response response) {
+	private void createOntologyView(Request request, Response response) {
 		OntologyViewBean ontologyViewBean = BeanHelper
 				.populateOntologyViewBeanFromRequest(request);
 

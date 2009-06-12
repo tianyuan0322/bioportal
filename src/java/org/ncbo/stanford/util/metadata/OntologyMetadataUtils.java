@@ -586,8 +586,8 @@ public class OntologyMetadataUtils extends MetadataUtils {
 	public static int getNextAvailableVirtualOntologyId(OWLModel metadata) {
 		try {
 			Integer newId = getNextAvailableIdForClass(metadata.getOWLNamedClass(CLASS_VIRTUAL_ONTOLOGY));
-			if (getVirtualViewWithId(metadata, newId) != null) {
-				newId = (newId + 1500) / 1000;
+			while (getVirtualViewWithId(metadata, newId) != null) {
+				newId = ((newId + 1500) / 1000) * 1000;
 			}
 			return newId;
 		} catch (Exception e) {
@@ -599,8 +599,8 @@ public class OntologyMetadataUtils extends MetadataUtils {
 	public static int getNextAvailableVirtualViewId(OWLModel metadata) {
 		try {
 			Integer newId = getNextAvailableIdForClass(metadata.getOWLNamedClass(CLASS_VIRTUAL_VIEW));
-			if (getVirtualOntologyWithId(metadata, newId) != null) {
-				newId = (newId + 1500) / 1000;
+			while (getVirtualOntologyWithId(metadata, newId) != null) {
+				newId = ((newId + 1500) / 1000) * 1000;
 			}
 			return newId;
 		} catch (Exception e) {
@@ -613,8 +613,8 @@ public class OntologyMetadataUtils extends MetadataUtils {
 	public static int getNextAvailableOntologyVersionId(OWLModel metadata) {
 		try {
 			Integer newId = getNextAvailableIdForClass(metadata.getOWLNamedClass(CLASS_OMV_ONTOLOGY));
-			if (getOntologyViewWithId(metadata, newId) != null) {
-				newId = (newId + 1500) / 1000;
+			while (getOntologyViewWithId(metadata, newId) != null) {
+				newId = ((newId + 1500) / 1000) * 1000;
 			}
 			return newId;
 		} catch (Exception e) {
@@ -626,8 +626,8 @@ public class OntologyMetadataUtils extends MetadataUtils {
 	public static int getNextAvailableOntologyViewVersionId(OWLModel metadata) {
 		try {
 			Integer newId = getNextAvailableIdForClass(metadata.getOWLNamedClass(CLASS_ONTOLOGY_VIEW));
-			if (getOntologyWithId(metadata, newId) != null) {
-				newId = (newId + 1500) / 1000;
+			while (getOntologyWithId(metadata, newId) != null) {
+				newId = ((newId + 1500) / 1000) * 1000;
 			}
 			return newId;
 		} catch (Exception e) {
