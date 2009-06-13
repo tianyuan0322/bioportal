@@ -24,6 +24,21 @@ public class CommonsFileUploadFilePathHandlerImpl extends
 
 	private FileItem file;
 
+	public static void main(String[] args) {
+		String path = "C:\\apps\\Protege_3.4\\examples\\pizza\\pizza.owl";
+		// String path = "pizza.owl";
+
+		int ind = path.lastIndexOf(File.separatorChar);
+
+		if (ind > -1) {
+			path = path.substring(ind + 1);
+		}
+
+		// System.out.println("path separator: " + File.separatorChar);
+		System.out.println("path: " + path);
+
+	}
+
 	public CommonsFileUploadFilePathHandlerImpl(
 			CompressedFileHandler compressedFileHandler, FileItem file) {
 		super(compressedFileHandler);
@@ -48,10 +63,17 @@ public class CommonsFileUploadFilePathHandlerImpl extends
 			String filePath = AbstractFilePathHandler
 					.getFullOntologyDirPath(ontologyBean);
 			String fileName = fileItem.getName();
-			int ind = fileName.lastIndexOf(File.separatorChar);
 
-			if (ind > -1) {
-				fileName = fileName.substring(ind + 1);
+			int indBackSlash = fileName.lastIndexOf('\\');
+
+			if (indBackSlash > -1) {
+				fileName = fileName.substring(indBackSlash + 1);
+			}
+
+			int indForSlash = fileName.lastIndexOf('/');
+
+			if (indForSlash > -1) {
+				fileName = fileName.substring(indForSlash + 1);
 			}
 
 			// validate input file
