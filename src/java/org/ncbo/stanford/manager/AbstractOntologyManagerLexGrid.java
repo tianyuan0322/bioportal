@@ -125,13 +125,7 @@ public abstract class AbstractOntologyManagerLexGrid {
 	 */
 	protected String getLexGridCodingSchemeName(OntologyBean ontology) {
 		String urnAndVersion = ontology.getCodingScheme();
-
-		if (StringHelper.isNullOrNullString(urnAndVersion)) {
-			urnAndVersion = ontology.getUrn();
-		}
-
 		String urnVersionArray[] = splitUrnAndVersion(urnAndVersion);
-
 		return (urnVersionArray != null && urnVersionArray.length > 0) ? urnVersionArray[0]
 				: null;
 	}
@@ -143,13 +137,7 @@ public abstract class AbstractOntologyManagerLexGrid {
 	protected CodingSchemeVersionOrTag getLexGridCodingSchemeVersion(
 			OntologyBean ontology) {
 		String urnAndVersion = ontology.getCodingScheme();
-
-		if (StringHelper.isNullOrNullString(urnAndVersion)) {
-			urnAndVersion = ontology.getUrn();
-		}
-
 		String urnVersionArray[] = splitUrnAndVersion(urnAndVersion);
-
 		return (urnVersionArray != null && urnVersionArray.length > 1) ? Constructors
 				.createCodingSchemeVersionOrTagFromVersion(urnVersionArray[1])
 				: null;
