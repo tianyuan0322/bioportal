@@ -21,6 +21,8 @@ use DBIx::Wrapper::VerySimple;
 use HTTP::Request::Common;
 require LWP::UserAgent;
 my $ua = LWP::UserAgent->new;
+#time out setting in seconds
+$ua->timeout(1200);
  
 
 
@@ -29,15 +31,15 @@ my $ua = LWP::UserAgent->new;
 # CONFIG VARIABLES
 # 
 # db connection: 
-use constant POST_URL => 'http://rest.bioontology.org/bioportal/ontologies/';
-use constant HOST => "ncbo-db-prod2.sunet";
+use constant POST_URL => 'http://rest_url/bioportal/ontologies/delete/?ontologyversionids=';
+use constant HOST => "localhost";
 my $platform = "mysql";
 my $database = "bioportal";
 my $port = "3306";
 my $tablename = "ncbo_ontology_version";
 # auth (disabled now):
-my $user = "ncboadmin";
-my $pw = "ncbo123";
+my $user = "user";
+my $pw = "password";
 # output/log file:
 my $logfile="logfile.txt";
 # to save more/less latest ontologies chage it 
