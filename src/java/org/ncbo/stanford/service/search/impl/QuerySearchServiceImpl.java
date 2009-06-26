@@ -38,38 +38,38 @@ public class QuerySearchServiceImpl extends AbstractSearchService implements
 	private static final Log log = LogFactory
 			.getLog(QuerySearchServiceImpl.class);
 
-	public static void main(String[] args) {
-		try {
-			String expr = "cutaneous mela";
-			Collection<Integer> ontologyIds = new ArrayList<Integer>(0);
-			 ontologyIds.add(1032);
+//	public static void main(String[] args) {
+//		try {
+//			String expr = "Melanoma";
+//			Collection<Integer> ontologyIds = new ArrayList<Integer>(0);
+//			 ontologyIds.add(1009);
 			// ontologyIds.add(1070);
 			// ontologyIds.add(1107);
 
-			boolean includeProperties = false;
-			boolean isExactMatch = false;
-			Integer maxNumHits = 250;
-
-			String indexPath = "/apps/bmir.apps/bioportal_resources/searchindex";
-			QuerySearchServiceImpl ss = new QuerySearchServiceImpl();
-			ss.setAnalyzer(new StandardAnalyzer());
-			ss.setIndexPath(indexPath);
-
-			Query q = ss.generateLuceneSearchQuery(ontologyIds, expr,
-					includeProperties, isExactMatch);
-			System.out.println("q: " + q);
-
-			long start = System.currentTimeMillis();
-			SearchResultListBean results = ss.runQuery(q, maxNumHits);
-			long stop = System.currentTimeMillis();
-
-			System.out.println("Excecution Time: " + (double) (stop - start)
-					/ 1000 + " seconds.");
-		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-	}
+//			boolean includeProperties = false;
+//			boolean isExactMatch = true;
+//			Integer maxNumHits = 250;
+//
+//			String indexPath = "/apps/bmir.apps/bioportal_resources/searchindex";
+//			QuerySearchServiceImpl ss = new QuerySearchServiceImpl();
+//			ss.setAnalyzer(new StandardAnalyzer());
+//			ss.setIndexPath(indexPath);
+//
+//			Query q = ss.generateLuceneSearchQuery(ontologyIds, expr,
+//					includeProperties, isExactMatch);
+//			System.out.println("q: " + q);
+//
+//			long start = System.currentTimeMillis();
+//			SearchResultListBean results = ss.runQuery(q, maxNumHits);
+//			long stop = System.currentTimeMillis();
+//
+//			System.out.println("Excecution Time: " + (double) (stop - start)
+//					/ 1000 + " seconds.");
+//		} catch (Exception e) {
+//			// TODO Auto-generated catch block
+//			e.printStackTrace();
+//		}
+//	}
 //	
 //	public static void main(String[] args) {
 //		try {
