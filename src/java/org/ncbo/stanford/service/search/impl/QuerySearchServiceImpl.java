@@ -1,10 +1,12 @@
 package org.ncbo.stanford.service.search.impl;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Collection;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.lucene.analysis.standard.StandardAnalyzer;
 import org.apache.lucene.index.Term;
 import org.apache.lucene.search.BooleanClause;
 import org.apache.lucene.search.BooleanQuery;
@@ -38,14 +40,15 @@ public class QuerySearchServiceImpl extends AbstractSearchService implements
 
 //	public static void main(String[] args) {
 //		try {
-//			String expr = "blood";
+//			String expr = "DOID:1909";
+//			String expr = "Melanoma";
 //			Collection<Integer> ontologyIds = new ArrayList<Integer>(0);
-//			// ontologyIds.add(1032);
-//			// ontologyIds.add(1070);
-//			// ontologyIds.add(1107);
-//
+			// ontologyIds.add(1032);
+			// ontologyIds.add(1070);
+			// ontologyIds.add(1107);
+
 //			boolean includeProperties = false;
-//			boolean isExactMatch = false;
+//			boolean isExactMatch = true;
 //			Integer maxNumHits = 250;
 //
 //			String indexPath = "/apps/bmir.apps/bioportal_resources/searchindex";
@@ -68,7 +71,7 @@ public class QuerySearchServiceImpl extends AbstractSearchService implements
 //			e.printStackTrace();
 //		}
 //	}
-//	
+	
 //	public static void main(String[] args) {
 //		try {
 //			IndexSearcher searcher = new IndexSearcher(

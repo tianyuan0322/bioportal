@@ -98,8 +98,9 @@ public abstract class AbstractSearchService {
 					.get(SearchIndexBean.ONTOLOGY_ID_FIELD_LABEL));
 			String ontologyDisplayLabel = doc
 					.get(SearchIndexBean.ONTOLOGY_DISPLAY_LABEL_FIELD_LABEL);
+			String uniqueIdent = ontologyId + "_" + conceptId;
 
-			if (!uniqueDocs.contains(ontologyId + "_" + conceptId)) {
+			if (!uniqueDocs.contains(uniqueIdent)) {
 				SearchBean searchResult = new SearchBean(ontologyVersionId,
 						ontologyId, ontologyDisplayLabel,
 						SearchRecordTypeEnum.getFromLabel(doc
@@ -112,7 +113,16 @@ public abstract class AbstractSearchService {
 				searchResults.addOntologyHit(ontologyVersionId, ontologyId,
 						ontologyDisplayLabel);
 
-				uniqueDocs.add(ontologyId + "_" + conceptId);
+				uniqueDocs.add(uniqueIdent);
+
+//				System.out.println(hits[i].score + " | "
+//						+ searchResult.getContents() + ", Type: "
+//						+ searchResult.getRecordType() + ", PrefName: "
+//						+ searchResult.getPreferredName() + ", OntologyId: "
+//						+ searchResult.getOntologyDisplayLabel()
+//						+ ", Concept Id: " + searchResult.getConceptId()
+//						+ ", Concept Id Short: "
+//						+ searchResult.getConceptIdShort());
 			}
 		}
 

@@ -74,15 +74,16 @@ public class OntologySearchManagerProtegeImpl extends
 				continue;
 			}
 
-			// add preferred name slot
 			String preferredName = null;
-			List<Slot> preferredNameSlots = getPreferredNameSlots(kb, ontology
-					.getPreferredNameSlot());
 			ProtegeSearchFrame protegeFrame = new ProtegeSearchFrame(ontology
 					.getId(), ontology.getOntologyId(), ontology
 					.getDisplayLabel(),
 					SearchRecordTypeEnum.RECORD_TYPE_PREFERRED_NAME, null,
 					frame);
+
+			// add preferred name slot
+			List<Slot> preferredNameSlots = getPreferredNameSlots(kb, ontology
+					.getPreferredNameSlot());
 
 			for (Slot prefNameSlot : preferredNameSlots) {
 				preferredName = addPreferredNameSlotToIndex(writer, doc, kb,
@@ -92,6 +93,12 @@ public class OntologySearchManagerProtegeImpl extends
 					break;
 				}
 			}
+
+			// add name slot but only if the concept id != preferredName
+			protegeFrame
+					.setRecordType(SearchRecordTypeEnum.RECORD_TYPE_CONCEPT_ID);
+			addNameSlotToIndex(writer, doc, kb, nfs, protegeFrame,
+					preferredName, owlMode);
 
 			// add synonym slot if exists
 			Slot synonymSlot = getSynonymSlot(kb, ontology.getSynonymSlot());
@@ -227,15 +234,48 @@ public class OntologySearchManagerProtegeImpl extends
 			if (!(value instanceof String)) {
 				continue;
 			}
+
 			preferredName = (String) value;
 			protegeFrame.setPreferredName(preferredName);
 			populateIndexBean(doc, nfs, protegeFrame, (String) value, owlMode);
 			writer.addDocument(doc);
-
 			break;
 		}
 
 		return preferredName;
+	}
+
+	/**
+	 * Adds the Protege name slot to the index
+	 * 
+	 * @param writer
+	 * @param doc
+	 * @param kb
+	 * @param nfs
+	 * @param protegeFrame
+	 * @param slot
+	 * @param owlMode
+	 * @throws IOException
+	 */
+	@SuppressWarnings("unchecked")
+	private void addNameSlotToIndex(LuceneIndexWriterWrapper writer,
+			SearchIndexBean doc, KnowledgeBase kb, NarrowFrameStore nfs,
+			ProtegeSearchFrame protegeFrame, String preferredName,
+			boolean owlMode) throws IOException {
+		synchronized (kb) {
+			Frame frame = protegeFrame.getFrame();
+
+			if (frame instanceof RDFResource) {
+				String name = ((RDFResource) frame).getLocalName();
+
+				// add name slot only if the concept id != preferredName to
+				// avoid duplication of data
+				if (!name.equals(preferredName)) {
+					populateIndexBean(doc, nfs, protegeFrame, name, owlMode);
+					writer.addDocument(doc);
+				}
+			}
+		}
 	}
 
 	/**

@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project-module
   type="WEB"
-  name="bioportal"
+  name="bioportal_pre_metadata_enhancements"
   id="myeclipse.1193794409635"
   context-root="/bioportal"
   j2ee-spec="1.4"
-  archive="bioportal.war">
+  archive="bioportal_pre_metadata_enhancements.war">
   <attributes>
     <attribute name="webrootdir" value="/WebRoot" />
   </attributes>

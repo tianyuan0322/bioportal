@@ -75,19 +75,20 @@ public class OntologySearchManagerLexGridImpl extends
 					Concept concept = ref.getReferencedEntry();
 					String preferredName = getPreferredName(concept);
 
-					setPresentationProperties(writer, doc, ontologyVersionId,
+					addConceptIds(writer, doc, ontologyVersionId, ontologyId,
+							ontologyDisplayLabel, preferredName, concept);
+					addPresentationProperties(writer, doc, ontologyVersionId,
 							ontologyId, ontologyDisplayLabel, preferredName,
 							concept);
-					setGenericProperties(writer, doc, ontologyVersionId,
+					addGenericProperties(writer, doc, ontologyVersionId,
 							ontologyId, ontologyDisplayLabel, preferredName,
 							concept);
-					setDefinitionProperties(writer, doc, ontologyVersionId,
+					addDefinitionProperties(writer, doc, ontologyVersionId,
 							ontologyId, ontologyDisplayLabel, preferredName,
 							concept);
-					setCommentProperties(writer, doc, ontologyVersionId,
+					addCommentProperties(writer, doc, ontologyVersionId,
 							ontologyId, ontologyDisplayLabel, preferredName,
 							concept);
-					
 				}
 			}
 
@@ -114,7 +115,7 @@ public class OntologySearchManagerLexGridImpl extends
 	 * @param concept
 	 * @throws IOException
 	 */
-	private void setPresentationProperties(LuceneIndexWriterWrapper writer,
+	private void addPresentationProperties(LuceneIndexWriterWrapper writer,
 			SearchIndexBean doc, Integer ontologyVersionId, Integer ontologyId,
 			String ontologyDisplayLabel, String preferredName, Concept concept)
 			throws IOException {
@@ -130,9 +131,9 @@ public class OntologySearchManagerLexGridImpl extends
 				recType = SearchRecordTypeEnum.RECORD_TYPE_SYNONYM;
 			}
 
-			populateIndexBean(doc, concept.getEntityCode(), new LexGridSearchProperty(
-					ontologyVersionId, ontologyId, ontologyDisplayLabel,
-					recType, preferredName, p));
+			populateIndexBean(doc, concept.getEntityCode(),
+					new LexGridSearchProperty(ontologyVersionId, ontologyId,
+							ontologyDisplayLabel, recType, preferredName, p));
 			writer.addDocument(doc);
 		}
 	}
@@ -175,17 +176,17 @@ public class OntologySearchManagerLexGridImpl extends
 	 * @param concept
 	 * @throws IOException
 	 */
-	private void setGenericProperties(LuceneIndexWriterWrapper writer,
+	private void addGenericProperties(LuceneIndexWriterWrapper writer,
 			SearchIndexBean doc, Integer ontologyVersionId, Integer ontologyId,
 			String ontologyDisplayLabel, String preferredName, Concept concept)
 			throws IOException {
-		for (Iterator<Property> itr = concept.iterateProperty(); itr
-				.hasNext();) {
+		for (Iterator<Property> itr = concept.iterateProperty(); itr.hasNext();) {
 			Property cp = itr.next();
-			populateIndexBean(doc, concept.getEntityCode(), new LexGridSearchProperty(
-					ontologyVersionId, ontologyId, ontologyDisplayLabel,
-					SearchRecordTypeEnum.RECORD_TYPE_PROPERTY, preferredName,
-					cp));
+			populateIndexBean(doc, concept.getEntityCode(),
+					new LexGridSearchProperty(ontologyVersionId, ontologyId,
+							ontologyDisplayLabel,
+							SearchRecordTypeEnum.RECORD_TYPE_PROPERTY,
+							preferredName, cp));
 			writer.addDocument(doc);
 		}
 	}
@@ -203,7 +204,7 @@ public class OntologySearchManagerLexGridImpl extends
 	 * @param concept
 	 * @throws IOException
 	 */
-	private void setDefinitionProperties(LuceneIndexWriterWrapper writer,
+	private void addDefinitionProperties(LuceneIndexWriterWrapper writer,
 			SearchIndexBean doc, Integer ontologyVersionId, Integer ontologyId,
 			String ontologyDisplayLabel, String preferredName, Concept concept)
 			throws IOException {
@@ -231,7 +232,7 @@ public class OntologySearchManagerLexGridImpl extends
 	 * @param concept
 	 * @throws IOException
 	 */
-	private void setCommentProperties(LuceneIndexWriterWrapper writer,
+	private void addCommentProperties(LuceneIndexWriterWrapper writer,
 			SearchIndexBean doc, Integer ontologyVersionId, Integer ontologyId,
 			String ontologyDisplayLabel, String preferredName, Concept concept)
 			throws IOException {
@@ -246,7 +247,34 @@ public class OntologySearchManagerLexGridImpl extends
 		}
 	}
 
+	/**
+	 * Adds concept ids to the index
+	 * 
+	 * @param writer
+	 * @param doc
+	 * @param ontologyVersionId
+	 * @param ontologyId
+	 * @param ontologyDisplayLabel
+	 * @param preferredName
+	 * @param concept
+	 * @throws IOException
+	 */
+	private void addConceptIds(LuceneIndexWriterWrapper writer,
+			SearchIndexBean doc, Integer ontologyVersionId, Integer ontologyId,
+			String ontologyDisplayLabel, String preferredName, Concept concept)
+			throws IOException {
+		String conceptId = concept.getEntityCode();
 
+		// add concept id to index only if concept id != preferredName to avoid
+		// duplication of data
+		if (!conceptId.equals(preferredName)) {
+			doc.populateInstance(ontologyVersionId, ontologyId,
+					ontologyDisplayLabel,
+					SearchRecordTypeEnum.RECORD_TYPE_CONCEPT_ID, conceptId,
+					conceptId, preferredName, conceptId);
+			writer.addDocument(doc);
+		}
+	}
 
 	/**
 	 * Populate a single record in the index
