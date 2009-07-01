@@ -647,13 +647,18 @@ public class OntologyRetrievalManagerLexGridImpl extends
 		CodingSchemeVersionOrTag csvt = Constructors
 				.createCodingSchemeVersionOrTagFromVersion(version);
 		try {
-			AssociationList childList = getHierarchyLevelNext(schemeName, csvt,
-					conceptId);
-			bean.addRelation(ApplicationConstants.CHILD_COUNT,
-					getChildCount(childList));
 			if (includeChildren) {
+		    	AssociationList childList = getHierarchyLevelNext(schemeName, csvt,
+					conceptId);
+			    bean.addRelation(ApplicationConstants.CHILD_COUNT,
+					getChildCount(childList));
+			
 				addAssociationListInfoToClassBean(childList, bean,
 						ApplicationConstants.SUB_CLASS, false);
+			} else {
+				String hierarchyId= getDefaultHierarchyId(schemeName, csvt);
+				int count= lbscm.getHierarchyLevelNextCount(schemeName, csvt, hierarchyId, rcr);
+				bean.addRelation(ApplicationConstants.CHILD_COUNT,	count);
 			}
 		} catch (Exception ex) {
 			ex.printStackTrace();
