@@ -8,6 +8,7 @@ import javax.servlet.http.HttpServletRequest;
 import org.apache.commons.fileupload.FileItem;
 import org.ncbo.stanford.bean.OntologyBean;
 import org.ncbo.stanford.bean.UserBean;
+import org.ncbo.stanford.bean.logging.UsageLoggingBean;
 import org.ncbo.stanford.util.MessageUtils;
 import org.ncbo.stanford.util.RequestUtils;
 import org.restlet.data.Request;
@@ -246,5 +247,42 @@ public class BeanHelper {
 		}
 
 		return bean;
+	}
+
+	/**
+	 * Creates UsageLoggingBean object and populates from Request object.
+	 * 
+	 * source: request, destination: usageLoggingBean
+	 * 
+	 * @param Request
+	 */
+	public static UsageLoggingBean populateUsageLoggingBeanFromRequest(
+			Request request) {
+		UsageLoggingBean usageLoggingBean = new UsageLoggingBean();
+		HttpServletRequest httpServletRequest = RequestUtils
+				.getHttpServletRequest(request);
+		
+		String applicationId = RequestUtils.getApplicationId(request);
+		String resourceParameters = RequestUtils.getResourceAttributesAsString(request);
+		String requestParameters = RequestUtils.getRequestParametersAsString(httpServletRequest);
+		
+		if (applicationId != null) {
+			usageLoggingBean.setApplicationId(applicationId);
+		}
+		
+		usageLoggingBean.setRequestUrl(httpServletRequest.getPathInfo());
+		usageLoggingBean.setHttpMethod(httpServletRequest.getMethod());
+
+		if (resourceParameters != null) {
+			usageLoggingBean.setResourceParameters(resourceParameters);
+		}
+
+		if (requestParameters != null) {
+			usageLoggingBean.setRequestParameters(requestParameters);
+		}
+		
+		usageLoggingBean.setDateAccessed(DateHelper.getTodaysDate());
+		
+		return usageLoggingBean;
 	}
 }
