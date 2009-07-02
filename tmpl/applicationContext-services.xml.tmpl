@@ -94,6 +94,9 @@
 				<value>
 					org/ncbo/stanford/domain/generated/NcboLStatus.hbm.xml
 				</value>
+				<value>
+					org/ncbo/stanford/domain/generated/NcboUsageLog.hbm.xml
+				</value>
 			</list>
 		</property>
 	</bean>
@@ -284,6 +287,13 @@
 		</property>
 	</bean>
 
+	<bean id="NcboUsageLogDAO"
+		class="org.ncbo.stanford.domain.custom.dao.CustomNcboUsageLogDAO">
+		<property name="hibernateTemplate">
+			<ref bean="hibernateTemplate" />
+		</property>
+	</bean>
+	
 	<!-- Encryption -->
 
 	<bean id="stringEncryptor"
@@ -608,6 +618,13 @@
 		</property>
 		<property name="ontologyDiffHandlerMap">
 			<ref local="ontologyDiffHandlerMap" />
+		</property>
+	</bean>
+
+	<bean id="usageLoggingService"
+		class="org.ncbo.stanford.service.logging.impl.UsageLoggingServiceImpl">
+		<property name="ncboUsageLogDAO">
+			<ref bean="NcboUsageLogDAO" />
 		</property>
 	</bean>
 
