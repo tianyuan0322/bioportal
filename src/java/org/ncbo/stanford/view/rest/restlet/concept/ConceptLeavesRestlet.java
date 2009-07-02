@@ -29,7 +29,7 @@ public class ConceptLeavesRestlet extends AbstractBaseRestlet {
 	 * Handle GET calls here
 	 */
 	@Override
-	protected void getRequest(Request request, Response response) {
+	public void getRequest(Request request, Response response) {
 		findLeaves(request, response);
 	}
 
