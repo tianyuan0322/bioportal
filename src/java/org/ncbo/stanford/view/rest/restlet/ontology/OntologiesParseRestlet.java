@@ -27,7 +27,7 @@ public class OntologiesParseRestlet extends AbstractBaseRestlet {
 	 * @param response
 	 */
 	@Override
-	protected void putRequest(Request request, Response response) {
+	public void putRequest(Request request, Response response) {
 		// Handle PUT calls here
 		parseOntologies(request, response);
 	}
