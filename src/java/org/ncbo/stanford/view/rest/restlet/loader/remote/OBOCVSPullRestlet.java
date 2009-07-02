@@ -18,7 +18,7 @@ public class OBOCVSPullRestlet extends AbstractBaseRestlet {
 	 * Handle PUT calls here
 	 */
 	@Override
-	protected void putRequest(Request request, Response response) {
+	public void putRequest(Request request, Response response) {
 		try {
 			oboCVSPullService.doCVSPull();
 		} catch (Exception e) {

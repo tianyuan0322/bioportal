@@ -30,7 +30,7 @@ public class IndexRestlet extends AbstractBaseRestlet {
 	 * Handle POST calls here
 	 */
 	@Override
-	protected void postRequest(Request request, Response response) {
+	public void postRequest(Request request, Response response) {
 		indexAllOntologies(request, response);
 	}
 
@@ -38,7 +38,7 @@ public class IndexRestlet extends AbstractBaseRestlet {
 	 * Handle PUT calls here
 	 */
 	@Override
-	protected void putRequest(Request request, Response response) {
+	public void putRequest(Request request, Response response) {
 		handlePutRequest(request, response);
 	}
 
@@ -46,7 +46,7 @@ public class IndexRestlet extends AbstractBaseRestlet {
 	 * Handle DELETE calls here
 	 */
 	@Override
-	protected void deleteRequest(Request request, Response response) {
+	public void deleteRequest(Request request, Response response) {
 		removeOntologies(request, response);
 	}
 
