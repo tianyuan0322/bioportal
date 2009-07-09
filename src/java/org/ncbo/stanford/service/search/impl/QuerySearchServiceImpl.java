@@ -35,66 +35,7 @@ public class QuerySearchServiceImpl extends AbstractSearchService implements
 	@SuppressWarnings("unused")
 	private static final Log log = LogFactory
 			.getLog(QuerySearchServiceImpl.class);
-
-//	public static void main(String[] args) {
-//		try {
-//			String expr = "blood";
-//			Collection<Integer> ontologyIds = new ArrayList<Integer>(0);
-//			// ontologyIds.add(1032);
-//			// ontologyIds.add(1070);
-//			// ontologyIds.add(1107);
-//
-//			boolean includeProperties = false;
-//			boolean isExactMatch = false;
-//			Integer maxNumHits = 250;
-//
-//			String indexPath = "/apps/bmir.apps/bioportal_resources/searchindex";
-//			QuerySearchServiceImpl ss = new QuerySearchServiceImpl();
-//			ss.setAnalyzer(new StandardAnalyzer());
-//			ss.setIndexPath(indexPath);
-//
-//			Query q = ss.generateLuceneSearchQuery(ontologyIds, expr,
-//					includeProperties, isExactMatch);
-//			System.out.println("q: " + q);
-//
-//			long start = System.currentTimeMillis();
-//			SearchResultListBean results = ss.runQuery(q, maxNumHits);
-//			long stop = System.currentTimeMillis();
-//
-//			System.out.println("Excecution Time: " + (double) (stop - start)
-//					/ 1000 + " seconds.");
-//		} catch (Exception e) {
-//			// TODO Auto-generated catch block
-//			e.printStackTrace();
-//		}
-//	}
-//	
-//	public static void main(String[] args) {
-//		try {
-//			IndexSearcher searcher = new IndexSearcher(
-//					"/apps/bmir.apps/bioportal_resources/searchindex");
-//			TermEnum terms = searcher.getIndexReader().terms(
-//					new Term("conceptId", ""));
-//			int numTerms = 0;
-//
-//			while ("conceptId".equals(terms.term().field())) {
-//				numTerms++;
-//
-//				if (!terms.next())
-//					break;
-//			}
-//
-//			terms.close();
-//
-//			System.out.println("Num Concepts: " + numTerms);
-//
-//		} catch (CorruptIndexException e) { // TODO Auto-generated catch block
-//			e.printStackTrace();
-//		} catch (IOException e) { // TODO Auto-generated
-//			e.printStackTrace();
-//		}
-//	}
-
+	
 	/**
 	 * Execute a search query for a given expression and return results in a
 	 * form of a single page (of specified size). If maxNumHits is null, the

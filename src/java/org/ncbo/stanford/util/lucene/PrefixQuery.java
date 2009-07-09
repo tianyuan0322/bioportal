@@ -2,6 +2,7 @@ package org.ncbo.stanford.util.lucene;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -35,8 +36,13 @@ public class PrefixQuery extends BooleanQuery {
 	private static final String SINGLE_LETTER_WORD_PATTERN = "^\\w$|\\s+\\w$";
 	private static final char WILDCARD_CHAR = '*';
 	private static final int EXACT_MATCH_BOOST = 10;
-
+	private static HashMap<String, String> exceptionTermMap = new HashMap<String, String>(
+			0);
 	private IndexReader reader;
+
+	static {
+		exceptionTermMap.put("algorith", "algorithm");
+	}
 
 	public PrefixQuery(IndexReader reader) {
 		this.reader = reader;
@@ -110,7 +116,14 @@ public class PrefixQuery extends BooleanQuery {
 		terms.add(new Term(field, prefix));
 		TermEnum te = reader.terms(new Term(field, prefix));
 
-		while (te.next() && te.term().text().startsWith(prefix)) {
+		for (String key : exceptionTermMap.keySet()) {
+			if (prefix.equals(key)) {
+				terms.add(new Term(field, exceptionTermMap.get(key)));
+			}
+		}
+
+		while (te.next() && te.term().field().equals(field)
+				&& te.term().text().startsWith(prefix)) {
 			terms.add(te.term());
 		}
 
@@ -129,13 +142,13 @@ public class PrefixQuery extends BooleanQuery {
 		expr = expr.replaceAll(SPACES_PATTERN, " ");
 
 		// replace single-letter words with empty strings
-//		Pattern mask = Pattern.compile(SINGLE_LETTER_WORD_PATTERN);
-//		Matcher matcher = mask.matcher(expr);
-//		boolean found = matcher.find();
-//
-//		if (found) {
-//			expr = expr.replace(matcher.group(), "");
-//		}
+		// Pattern mask = Pattern.compile(SINGLE_LETTER_WORD_PATTERN);
+		// Matcher matcher = mask.matcher(expr);
+		// boolean found = matcher.find();
+		//
+		// if (found) {
+		// expr = expr.replace(matcher.group(), "");
+		// }
 
 		return expr;
 	}

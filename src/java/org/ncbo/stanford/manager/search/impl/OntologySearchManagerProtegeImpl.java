@@ -68,9 +68,10 @@ public class OntologySearchManagerProtegeImpl extends
 		SearchIndexBean doc = new SearchIndexBean();
 
 		for (Frame frame : frames) {
-			// exclude anonymous classes from being indexed
-			if (frame instanceof RDFResource
-					&& ((RDFResource) frame).isAnonymous()) {
+			// exclude anonymous and system frames from being indexed
+			if (frame.isSystem()
+					|| (frame instanceof RDFResource && ((RDFResource) frame)
+							.isAnonymous())) {
 				continue;
 			}
 
