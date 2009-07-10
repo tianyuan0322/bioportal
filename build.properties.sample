@@ -230,7 +230,7 @@ lexgrid.iterator.idle.time=5
 # NOTE: This does not affect the total number of results
 # that can be returned by an iterator, just the size that
 # can be returned per 'next' call.
-lexgrid.max.result.size=1000
+lexgrid.max.result.size=10000
 #
 # When lexgrid.single.db.mode is set to false, a new database will 
 # be created for each loaded terminology.  When 
