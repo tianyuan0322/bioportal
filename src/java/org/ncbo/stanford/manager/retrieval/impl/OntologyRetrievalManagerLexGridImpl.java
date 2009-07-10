@@ -485,7 +485,9 @@ public class OntologyRetrievalManagerLexGridImpl extends
 		ConceptReference acRef = assoc.getAssociationReference();
 		AssociatedConcept acFromRef = new AssociatedConcept();
 		acFromRef.setCodingSchemeName(acRef.getCodingSchemeName());
+		acFromRef.setCodeNamespace(acRef.getCodeNamespace());
 		acFromRef.setConceptCode(acRef.getConceptCode());
+		acFromRef.setCodingSchemeVersion(csvt.getVersion());
 		AssociationList acSources = new AssociationList();
 		acFromRef.setIsNavigable(Boolean.TRUE);
 		acFromRef.setSourceOf(acSources);
@@ -620,6 +622,7 @@ public class OntologyRetrievalManagerLexGridImpl extends
 	 */
 	private ClassBean createClassBeanWithChildCount(VNcboOntology ncboOntology,
 			ConceptReference cr, boolean includeChildren) {
+		
 		CodingSchemeVersionOrTag csvt = getLexGridCodingSchemeVersion(ncboOntology);
 		ResolvedConceptReference rcr = new ResolvedConceptReference();
 		rcr.setCodingSchemeName(cr.getCodingSchemeName());
@@ -628,6 +631,11 @@ public class OntologyRetrievalManagerLexGridImpl extends
 		EntityDescription ed = getEntityDescription(ncboOntology, cr
 				.getConceptCode());
 		rcr.setEntityDescription(ed);
+		try {
+		   rcr= getLightResolvedConceptReference(ncboOntology, cr.getConceptCode());
+		} catch (Exception ex) {
+			ex.printStackTrace();
+		}
 		return createClassBeanWithChildCount(rcr, includeChildren);
 	}
 
