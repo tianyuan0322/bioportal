@@ -727,9 +727,9 @@ public class OntologyRetrievalManagerLexGridImpl extends
 				Integer countInt = countMap.get(key);
 				int count = 0;
 				if (countInt == null) {
-					// Did not find the count in the hashmap....strange..maybe
-					// because it is a mapping
-					System.out.println("Count not found in map for key=" + key);
+					// Did not find the count in the hashmap....One case where this happens is
+					// when the namespace of the concept reference is null. 
+					//System.out.println("Count not found in map for key=" + key);
 					log.debug("Count not found in map for key=" + key);
 					String hierarchyId = getDefaultHierarchyId(schemeName, csvt);
 					count = lbscm.getHierarchyLevelNextCount(schemeName, csvt,
@@ -984,6 +984,11 @@ public class OntologyRetrievalManagerLexGridImpl extends
 		AssociatedConceptList assocConceptList = association
 				.getAssociatedConcepts();
 		ArrayList<ClassBean> classBeans = new ArrayList<ClassBean>();
+		ResolvedConceptReferenceList rcrl = new ResolvedConceptReferenceList();
+		rcrl.setResolvedConceptReference(assocConceptList
+				.getAssociatedConcept());
+		HashMap<String, Integer> countMap = getHashMapWithChildCount(rcrl);
+
 		for (int i = 0; i < assocConceptList.getAssociatedConceptCount(); i++) {
 			AssociatedConcept assocConcept = assocConceptList
 					.getAssociatedConcept(i);
@@ -999,9 +1004,11 @@ public class OntologyRetrievalManagerLexGridImpl extends
 				}
 				ResolvedConceptReference rcr_without_relations = getResolvedConceptReferenceWithoutRelations(assocConcept);
 				ClassBean classBean = createClassBeanWithChildCount(
-						rcr_without_relations, includeChildren);
-				// ClassBean classBean = createClassBeanWithChildCount(
-				// assocConcept, includeChildren);
+						rcr_without_relations, countMap, includeChildren);
+
+				//ClassBean classBean = createClassBeanWithChildCount(
+				//		rcr_without_relations, includeChildren);
+				
 				classBeans.add(classBean);
 
 				// Find and recurse printing for next batch ...

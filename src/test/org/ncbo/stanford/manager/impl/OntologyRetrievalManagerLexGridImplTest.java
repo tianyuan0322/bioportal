@@ -365,7 +365,7 @@ public class OntologyRetrievalManagerLexGridImplTest extends
 	@Test
 	public void testOBOFindPathFromRootIncludingChildrenDictyostelium()
 			throws Exception {
-		System.out.println("testOBOFindPathFromRootDictyostelium()");
+		System.out.println("testOBOFindPathFromRootIncludingChildrenDictyostelium()");
 
 		VNcboOntology ncboOntology = retrievalManager
 				.getLatestNcboOntology(TEST_OBO_DICTYOSTELIUM_DISPLAY_LABEL);
