@@ -7,6 +7,7 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLEncoder;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.List;
@@ -18,6 +19,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.ncbo.stanford.bean.http.HttpInputStreamWrapper;
+import org.ncbo.stanford.util.helper.DateHelper;
 import org.ncbo.stanford.util.helper.StringHelper;
 import org.ncbo.stanford.view.util.constants.RequestParamConstants;
 import org.restlet.data.MediaType;
@@ -80,6 +82,18 @@ public class RequestUtils {
 		}
 
 		return exists;
+	}
+
+	/**
+	 * Determines whether the request contains at least one parameter
+	 * 
+	 * @param request
+	 * @return boolean
+	 * @throws
+	 */
+	@SuppressWarnings("unchecked")
+	public static boolean isEmptyRequest(HttpServletRequest request) {
+		return request.getParameterNames().hasMoreElements();
 	}
 
 	/**
@@ -250,6 +264,10 @@ public class RequestUtils {
 		}
 
 		return val;
+	}
+
+	public static Date parseDateParam(String dateVal) {
+		return DateHelper.getDateFrom(StringHelper.removeSpaces(dateVal));
 	}
 
 	public static List<Integer> parseIntegerListParam(String integerListParam) {
