@@ -14,6 +14,10 @@ public class UsageLoggingBean {
 	private Integer userId;
 	private Integer hitCount;
 	private Date dateAccessed;
+	private Date startDateAccessed;
+	private Date endDateAccessed;
+
+	private static final int EMPTY_HASHCODE = -196513505;
 
 	/**
 	 * Populates a NcboUsageLog entity from this UsageLoggingBean.
@@ -54,16 +58,33 @@ public class UsageLoggingBean {
 			if (userId != null) {
 				usageLog.setUserId(userId);
 			}
-			
+
 			usageLog.setHashCode(hashCode());
 			usageLog.setHitCount(hitCount);
 			usageLog.setDateAccessed(dateAccessed);
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
+	/**
+	 * Populates this bean using the NcboUsageLog entity
 	 * 
+	 * @param usageLog -
+	 *            the entity bean from which to populate
+	 */
+	public void populateFromEntity(NcboUsageLog usageLog) {
+		if (usageLog != null) {
+			setApplicationId(usageLog.getApplicationId());
+			setRequestUrl(usageLog.getRequestUrl());
+			setHttpMethod(usageLog.getHttpMethod());
+			setResourceParameters(usageLog.getResourceParameters());
+			setRequestParameters(usageLog.getRequestParameters());
+			setUserId(usageLog.getUserId());
+			setHitCount(usageLog.getHitCount());
+			setDateAccessed(usageLog.getDateAccessed());
+		}
+	}
+
+	/* (non-Javadoc)
 	 * @see java.lang.Object#hashCode()
 	 */
 	@Override
@@ -74,6 +95,8 @@ public class UsageLoggingBean {
 				+ ((applicationId == null) ? 0 : applicationId.hashCode());
 		result = prime * result
 				+ ((dateAccessed == null) ? 0 : dateAccessed.hashCode());
+		result = prime * result
+				+ ((endDateAccessed == null) ? 0 : endDateAccessed.hashCode());
 		result = prime * result
 				+ ((httpMethod == null) ? 0 : httpMethod.hashCode());
 		result = prime
@@ -86,13 +109,19 @@ public class UsageLoggingBean {
 				* result
 				+ ((resourceParameters == null) ? 0 : resourceParameters
 						.hashCode());
+		result = prime
+				* result
+				+ ((startDateAccessed == null) ? 0 : startDateAccessed
+						.hashCode());
 		result = prime * result + ((userId == null) ? 0 : userId.hashCode());
 		return result;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
+	public boolean isEmpty() {
+		return hashCode() == EMPTY_HASHCODE;
+	}
+
+	/* (non-Javadoc)
 	 * @see java.lang.Object#equals(java.lang.Object)
 	 */
 	@Override
@@ -114,6 +143,11 @@ public class UsageLoggingBean {
 				return false;
 		} else if (!dateAccessed.equals(other.dateAccessed))
 			return false;
+		if (endDateAccessed == null) {
+			if (other.endDateAccessed != null)
+				return false;
+		} else if (!endDateAccessed.equals(other.endDateAccessed))
+			return false;
 		if (httpMethod == null) {
 			if (other.httpMethod != null)
 				return false;
@@ -133,6 +167,11 @@ public class UsageLoggingBean {
 			if (other.resourceParameters != null)
 				return false;
 		} else if (!resourceParameters.equals(other.resourceParameters))
+			return false;
+		if (startDateAccessed == null) {
+			if (other.startDateAccessed != null)
+				return false;
+		} else if (!startDateAccessed.equals(other.startDateAccessed))
 			return false;
 		if (userId == null) {
 			if (other.userId != null)
@@ -255,9 +294,40 @@ public class UsageLoggingBean {
 	}
 
 	/**
-	 * @param hitCount the hitCount to set
+	 * @param hitCount
+	 *            the hitCount to set
 	 */
 	public void setHitCount(Integer hitCount) {
 		this.hitCount = hitCount;
+	}
+
+	/**
+	 * @return the startDateAccessed
+	 */
+	public Date getStartDateAccessed() {
+		return startDateAccessed;
+	}
+
+	/**
+	 * @param startDateAccessed
+	 *            the startDateAccessed to set
+	 */
+	public void setStartDateAccessed(Date startDateAccessed) {
+		this.startDateAccessed = startDateAccessed;
+	}
+
+	/**
+	 * @return the endDateAccessed
+	 */
+	public Date getEndDateAccessed() {
+		return endDateAccessed;
+	}
+
+	/**
+	 * @param endDateAccessed
+	 *            the endDateAccessed to set
+	 */
+	public void setEndDateAccessed(Date endDateAccessed) {
+		this.endDateAccessed = endDateAccessed;
 	}
 }
