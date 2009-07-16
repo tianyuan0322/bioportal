@@ -1,5 +1,7 @@
 package org.ncbo.stanford.view.rest.restlet.ontology;
 
+import java.net.URLDecoder;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.ncbo.stanford.bean.OntologyBean;
@@ -7,6 +9,7 @@ import org.ncbo.stanford.service.concept.ConceptService;
 import org.ncbo.stanford.service.ontology.OntologyService;
 import org.ncbo.stanford.util.MessageUtils;
 import org.ncbo.stanford.view.rest.restlet.AbstractBaseRestlet;
+import org.ncbo.stanford.view.util.constants.RequestParamConstants;
 import org.restlet.data.Request;
 import org.restlet.data.Response;
 import org.restlet.data.Status;
@@ -49,17 +52,34 @@ public class VirtualUriRestlet extends AbstractBaseRestlet {
 
 				if (returnObject == null) {
 					response.setStatus(Status.CLIENT_ERROR_NOT_FOUND,
-							"Ontology not found");
+							MessageUtils
+									.getMessage("msg.error.ontologyNotFound"));
 				}
 			} else {
 				OntologyBean ontBean = ontologyService
 						.findLatestActiveOntologyVersion(ontId);
-				returnObject = conceptService.findConcept(ontBean.getId(),
-						conceptId);
 
-				if (returnObject == null) {
+				if (ontBean == null) {
 					response.setStatus(Status.CLIENT_ERROR_NOT_FOUND,
-							"Concept not found");
+							MessageUtils
+									.getMessage("msg.error.ontologyNotFound"));
+				} else {
+					if (conceptId
+							.equalsIgnoreCase(RequestParamConstants.PARAM_ROOT_CONCEPT)) {
+						returnObject = conceptService.findRootConcept(ontBean
+								.getId());
+					} else {
+						// URL Decode the concept Id
+						conceptId = URLDecoder.decode(conceptId, MessageUtils
+								.getMessage("default.encoding"));
+						returnObject = conceptService.findConcept(ontBean
+								.getId(), conceptId);
+					}
+
+					if (returnObject == null) {
+						response.setStatus(Status.CLIENT_ERROR_NOT_FOUND,
+								"Concept not found");
+					}
 				}
 			}
 		} catch (NumberFormatException nfe) {
