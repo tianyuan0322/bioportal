@@ -1,8 +1,6 @@
 package org.ncbo.stanford.view.rest.restlet;
 
-import java.util.Enumeration;
 import java.util.List;
-import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -80,7 +78,8 @@ public abstract class AbstractBaseRestlet extends Restlet {
 			isValidRequest = handleDeleteRequest(request, response, logOnlyBool);
 		}
 
-		if (isValidRequest && response.getStatus().equals(Status.SUCCESS_OK)) {
+		if (logRequests() && isValidRequest
+				&& response.getStatus().equals(Status.SUCCESS_OK)) {
 			logRequest(request);
 		}
 	}
@@ -130,62 +129,9 @@ public abstract class AbstractBaseRestlet extends Restlet {
 	}
 
 	private void logRequest(Request request) {
-		UsageLoggingBean usageLoggingBean = BeanHelper.populateUsageLoggingBeanFromRequest(request);
+		UsageLoggingBean usageLoggingBean = BeanHelper
+				.populateUsageLoggingBeanFromRequestForLogging(request);
 		usageLoggingService.logUsage(usageLoggingBean);
-
-//		HttpServletRequest httpServletRequest = RequestUtils
-//		.getHttpServletRequest(request);
-//		String RESTLET_RESERVED_ATTRIBUTE_PREFIX = "org.restlet";
-//
-//		log.debug("Path Info: " + httpServletRequest.getPathInfo());
-//		log.debug("Request URL: " + httpServletRequest.getRequestURL());
-//		log.debug("Method: " + httpServletRequest.getMethod());
-//		log.debug("Host Ref: " + request.getHostRef());
-//
-//		String message = "\nResource URI  : " + request.getResourceRef() + '\n'
-//				+ "Root URI      : " + request.getRootRef() + '\n'
-//				+ "Routed part   : " + request.getResourceRef().getBaseRef()
-//				+ '\n' + "Remaining part: "
-//				+ request.getResourceRef().getRemainingPart();
-//
-//		log.debug(message);
-//
-//		log.debug("Resource path: " + request.getResourceRef().getPath());
-//		log.debug("Resource last segment: "
-//				+ request.getResourceRef().getLastSegment());
-//		log.debug("Segments: " + request.getResourceRef().getSegments());
-//
-//		log.debug("Client Info: " + request.getClientInfo().getAddress());
-//
-//		Enumeration headerNames = httpServletRequest.getHeaderNames();
-//
-//		while (headerNames.hasMoreElements()) {
-//			String name = (String) headerNames.nextElement();
-//			System.out
-//					.println(name + ": " + httpServletRequest.getHeader(name));
-//		}
-//
-//		log.debug("Request Params: ");
-//		Map params = httpServletRequest.getParameterMap();
-//
-//		for (Object key : params.keySet()) {
-//			System.out.println(key + " = "
-//					+ httpServletRequest.getParameter((String) key));
-//		}
-//
-//		log.debug("Attributes: ");
-//		Map<String, Object> attr = request.getAttributes();
-//
-//		for (String key : attr.keySet()) {
-//			if (!key.contains(RESTLET_RESERVED_ATTRIBUTE_PREFIX)) {
-//				System.out.println(key + " = " + attr.get(key));
-//			}
-//		}
-//		
-//		
-//		log.debug("attribs: " + RequestUtils.getResourceAttributesAsString(request));
-//		log.debug("params: " + RequestUtils.getRequestParametersAsString(httpServletRequest));
-		
 	}
 
 	/**
@@ -310,6 +256,10 @@ public abstract class AbstractBaseRestlet extends Restlet {
 		}
 
 		return this.getClass().equals(handler.getDeclaringClass());
+	}
+
+	protected boolean logRequests() {
+		return true;
 	}
 
 	/**
