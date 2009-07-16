@@ -54,6 +54,7 @@ public interface RequestParamConstants {
 	public static final String PARAM_PAGESIZE = "pagesize";
 	public static final String PARAM_PAGENUM = "pagenum";
 	public static final String PARAM_MAXNUMHITS = "maxnumhits";
+	public static final String PARAM_QUERY = "query";
 
 	/**
 	 * Search index parameters
@@ -77,4 +78,8 @@ public interface RequestParamConstants {
 	 * Logging parameters
 	 */
 	public static final String PARAM_LOGONLY = "logonly";
+	public static final String PARAM_REQUEST_URL = "requesturl";
+	public static final String PARAM_RESOURCE_PARAMETERS = "resourceparameters";
+	public static final String PARAM_START_DATE_ACCESSED = "startdateaccessed";
+	public static final String PARAM_END_DATE_ACCESSED = "enddateaccessed";
 }
