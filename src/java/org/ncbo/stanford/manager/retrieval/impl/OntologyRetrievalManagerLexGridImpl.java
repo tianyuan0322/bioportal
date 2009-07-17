@@ -747,13 +747,17 @@ public class OntologyRetrievalManagerLexGridImpl extends
 		return bean;
 	}
 
+	
 	private HashMap<String, Integer> getHashMapWithChildCount(
 			ResolvedConceptReferenceList rcrl) {
 		HashMap<String, Integer> countMap = new HashMap<String, Integer>();
 		if (rcrl == null || rcrl.getResolvedConceptReferenceCount() == 0) {
 			return countMap;
 		}
+		long startTime = System.currentTimeMillis();
 		try {
+			log.debug("getHashMapWithChildCount with rcrl of size="+rcrl.getResolvedConceptReferenceCount());
+			
 			ResolvedConceptReference[] rcrs = rcrl
 					.getResolvedConceptReference();
 			ResolvedConceptReference rcr = rcrs[0];
@@ -777,9 +781,11 @@ public class OntologyRetrievalManagerLexGridImpl extends
 		} catch (Exception ex) {
 			ex.printStackTrace();
 		}
+		log.debug("Time to getHashMapWithChildCount=" + (System.currentTimeMillis() - startTime));
 		return countMap;
 	}
 
+	
 	private String getKey(ConceptReference cr) {
 		String key = cr.getCodeNamespace() + "[:]" + cr.getConceptCode();
 		return key;
@@ -1006,8 +1012,8 @@ public class OntologyRetrievalManagerLexGridImpl extends
 				ClassBean classBean = createClassBeanWithChildCount(
 						rcr_without_relations, countMap, includeChildren);
 
-				//ClassBean classBean = createClassBeanWithChildCount(
-				//		rcr_without_relations, includeChildren);
+//				ClassBean classBean = createClassBeanWithChildCount(
+//						rcr_without_relations, includeChildren);
 				
 				classBeans.add(classBean);
 
@@ -1063,11 +1069,14 @@ public class OntologyRetrievalManagerLexGridImpl extends
 		}
 
 		Object value = bean.getRelations().get(relation_name);
-
-		if (value != null && value instanceof ArrayList) {
-			List<ClassBean> list = mergeListsEliminatingDuplicates(
+		
+		if (value != null && value instanceof ArrayList ) {
+			ArrayList valueList= (ArrayList) value;
+			if (! valueList.isEmpty() && valueList.get(0) instanceof ClassBean) {
+			    List<ClassBean> list = mergeListsEliminatingDuplicates(
 					(ArrayList<ClassBean>) value, beanlist);
-			bean.addRelation(relation_name, list);
+			    bean.addRelation(relation_name, list);
+			}
 
 		} else {
 			bean.addRelation(relation_name, beanlist);
@@ -1123,8 +1132,8 @@ public class OntologyRetrievalManagerLexGridImpl extends
 					addStringToHashMapsArrayList(map, key, p.getValue()
 							.getContent());
 				} else if (StringUtils.isNotBlank(p.getRepresentationalForm())) {
-					addStringToHashMapsArrayList(map, p
-							.getRepresentationalForm(), p.getValue()
+					String key = "SYNONYM " + p.getRepresentationalForm();
+					addStringToHashMapsArrayList(map, key, p.getValue()
 							.getContent());
 				} else {
 					addStringToHashMapsArrayList(map, "SYNONYM", p.getValue()
