@@ -728,9 +728,8 @@ public class OntologyRetrievalManagerLexGridImpl extends
 				int count = 0;
 				if (countInt == null) {
 					// Did not find the count in the hashmap....One case where this happens is
-					// when the namespace of the concept reference is null. 
-					//System.out.println("Count not found in map for key=" + key);
-					log.debug("Count not found in map for key=" + key);
+					// when the namespace of the concept reference is null. 					
+					//log.debug("Count not found in map for key=" + key);
 					String hierarchyId = getDefaultHierarchyId(schemeName, csvt);
 					count = lbscm.getHierarchyLevelNextCount(schemeName, csvt,
 							hierarchyId, rcr);
@@ -756,7 +755,7 @@ public class OntologyRetrievalManagerLexGridImpl extends
 		}
 		long startTime = System.currentTimeMillis();
 		try {
-			log.debug("getHashMapWithChildCount with rcrl of size="+rcrl.getResolvedConceptReferenceCount());
+			//log.debug("getHashMapWithChildCount with rcrl of size="+rcrl.getResolvedConceptReferenceCount());
 			
 			ResolvedConceptReference[] rcrs = rcrl
 					.getResolvedConceptReference();
@@ -771,17 +770,16 @@ public class OntologyRetrievalManagerLexGridImpl extends
 			crl.setConceptReference(rcrs);
 			ConceptReferenceList countList = lbscm.getHierarchyLevelNextCount(
 					schemeName, csvt, hierarchyId, crl);
-			Iterator<ConceptReference> i = countList.iterateConceptReference();
-			while (i.hasNext()) {
-				ConceptReference cr = i.next();
+			
+			for (ConceptReference cr: countList.getConceptReference()) {
 				CountConceptReference ccr = (CountConceptReference) cr;
-				countMap.put(getKey(cr), ccr.getChildCount());
-
+				countMap.put(getKey(cr), ccr.getChildCount());				
 			}
+
 		} catch (Exception ex) {
 			ex.printStackTrace();
 		}
-		log.debug("Time to getHashMapWithChildCount=" + (System.currentTimeMillis() - startTime));
+		//log.debug("Time to getHashMapWithChildCount=" + (System.currentTimeMillis() - startTime));
 		return countMap;
 	}
 
@@ -940,10 +938,8 @@ public class OntologyRetrievalManagerLexGridImpl extends
 		if (list == null || current_classBean == null) {
 			return;
 		}
-		Enumeration<Association> assocEnum = list.enumerateAssociation();
-		Association association = null;
-		while (assocEnum.hasMoreElements()) {
-			association = (Association) assocEnum.nextElement();
+		
+		for (Association association: list.getAssociation()) {
 			addAssociationInfoToClassBean(association, current_classBean,
 					hierarchy_relationName, includeChildren);
 		}
@@ -959,10 +955,7 @@ public class OntologyRetrievalManagerLexGridImpl extends
 		int count = 0;
 		if (list == null)
 			return count;
-		Enumeration<Association> assocEnum = list.enumerateAssociation();
-		Association association = null;
-		while (assocEnum.hasMoreElements()) {
-			association = (Association) assocEnum.nextElement();
+		for (Association association: list.getAssociation()) {
 			AssociatedConceptList assocConceptList = association
 					.getAssociatedConcepts();
 			count += assocConceptList.getAssociatedConceptCount();
@@ -1019,21 +1012,23 @@ public class OntologyRetrievalManagerLexGridImpl extends
 
 				// Find and recurse printing for next batch ...
 				AssociationList nextLevel = assocConcept.getSourceOf();
-				if (nextLevel != null && nextLevel.getAssociationCount() != 0)
+				if (nextLevel != null && nextLevel.getAssociationCount() != 0) {
 					for (int j = 0; j < nextLevel.getAssociationCount(); j++) {
 						addAssociationInfoToClassBean(nextLevel
 								.getAssociation(j), classBean,
 								hierarchy_relationName, includeChildren);
 					}
+				}
 
 				// Find and recurse printing for previous batch ...
 				AssociationList prevLevel = assocConcept.getTargetOf();
-				if (prevLevel != null && prevLevel.getAssociationCount() != 0)
+				if (prevLevel != null && prevLevel.getAssociationCount() != 0) {
 					for (int j = 0; j < prevLevel.getAssociationCount(); j++) {
 						addAssociationInfoToClassBean(prevLevel
 								.getAssociation(j), classBean,
 								hierarchy_relationName, includeChildren);
 					}
+				}
 			}
 		}
 
