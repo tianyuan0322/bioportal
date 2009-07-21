@@ -97,6 +97,7 @@
 
 		<copy file="${tmpl.dir}/web.xml.tmpl" tofile="${web.dir}/WEB-INF/web.xml" overwrite="true">
 			<filterset>
+				<filter token="appname" value="${app.name}" />
 				<filter token="maxfilesize" value="${bioportal.upload.maxfilesize}" />
 			</filterset>
 		</copy>
