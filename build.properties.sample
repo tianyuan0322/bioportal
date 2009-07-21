@@ -24,8 +24,17 @@ deploy.path=${appserver.home}/webapps
 #appserver.logs=${appserver.home}/server/default/log
 #deploy.path=${appserver.home}/server/default/deploy
 
+# Path to static resources such as XSLT files and OWL includes
+bioportal.static.resource.path=${deploy.path}/${app.name}/WEB-INF/resources
+
 # XSLT directory path
-bioportal.xslt.path=${deploy.path}/${app.name}/WEB-INF/resources/xslt
+bioportal.xslt.path=${bioportal.static.resource.path}/xslt
+
+# Metadata includes path
+bioportal.metadata.includes.path=${bioportal.static.resource.path}/metadata
+
+# OBO Repositories config path
+obo.repositories.config.filepath=${bioportal.static.resource.path}/config/obo_repository.xml
 
 # Session properties
 #
@@ -180,7 +189,7 @@ protege.big.file.threshold=157286400
 # it needs to reside on the same level or above the "lib"
 # directory and encased into "resources/config" directory
 # structure
-lexgrid.config.path=${deploy.path}/${app.name}/WEB-INF/resources/config
+lexgrid.config.path=${bioportal.static.resource.path}/config
 #
 # The lexgrid.base.path variable is the location that 
 # LexGrid will use beginning for resolving 

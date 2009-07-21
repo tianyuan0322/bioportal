@@ -652,30 +652,6 @@
 
 	<bean id="oboCVSPullService"
 		class="org.ncbo.stanford.service.loader.remote.impl.OBOCVSPullServiceImpl">
-		<property name="oboSourceforgeCVSUsername">
-			<ref bean="oboSourceforgeCVSUsername" />
-		</property>
-		<property name="oboSourceforgeCVSPassword">
-			<ref bean="oboSourceforgeCVSPassword" />
-		</property>
-		<property name="oboSourceforgeCVSHostname">
-			<ref bean="oboSourceforgeCVSHostname" />
-		</property>
-		<property name="oboSourceforgeCVSModule">
-			<ref bean="oboSourceforgeCVSModule" />
-		</property>
-		<property name="oboSourceforgeCVSRootDirectory">
-			<ref bean="oboSourceforgeCVSRootDirectory" />
-		</property>
-		<property name="oboSourceforgeCVSArgumentString">
-			<ref bean="oboSourceforgeCVSArgumentString" />
-		</property>
-		<property name="oboSourceforgeCVSCheckoutDir">
-			<ref bean="oboSourceforgeCVSCheckoutDir" />
-		</property>
-		<property name="oboSourceforgeCVSDescriptorFile">
-			<ref bean="oboSourceforgeCVSDescriptorFile" />
-		</property>
 		<property name="ontologyService">
 			<ref bean="ontologyService" />
 		</property>
@@ -693,6 +669,9 @@
 		</property>
 		<property name="tempDir">
 			<ref bean="tempDir" />
+		</property>
+		<property name="oboRepositoriesConfigFilepath">
+			<ref bean="oboRepositoriesConfigFilepath" />
 		</property>
 	</bean>
 
@@ -1169,56 +1148,10 @@
 			<value>@protegebigfilethreshold@</value>
 		</constructor-arg>
 	</bean>
-
-	<!-- OBO Sourceforge CVS properties -->
-	<bean id="oboSourceforgeCVSUsername" class="java.lang.String">
+	
+	<bean id="oboRepositoriesConfigFilepath" class="java.lang.String">
 		<constructor-arg>
-			<value>@obosourceforgecvsusername@</value>
+			<value>@oborepositoriesconfigfilepath@</value>
 		</constructor-arg>
-	</bean>
-
-	<bean id="oboSourceforgeCVSPassword" class="java.lang.String">
-		<constructor-arg>
-			<value>@obosourceforgecvspassword@</value>
-		</constructor-arg>
-	</bean>
-
-	<bean id="oboSourceforgeCVSHostname" class="java.lang.String">
-		<constructor-arg>
-			<value>@obosourceforgecvshostname@</value>
-		</constructor-arg>
-	</bean>
-
-	<bean id="oboSourceforgeCVSModule" class="java.lang.String">
-		<constructor-arg>
-			<value>@obosourceforgecvsmodule@</value>
-		</constructor-arg>
-	</bean>
-
-	<bean id="oboSourceforgeCVSRootDirectory"
-		class="java.lang.String">
-		<constructor-arg>
-			<value>@obosourceforgecvsrootdirectory@</value>
-		</constructor-arg>
-	</bean>
-
-	<bean id="oboSourceforgeCVSArgumentString"
-		class="java.lang.String">
-		<constructor-arg>
-			<value>@obosourceforgecvsargumentstring@</value>
-		</constructor-arg>
-	</bean>
-
-	<bean id="oboSourceforgeCVSCheckoutDir" class="java.lang.String">
-		<constructor-arg>
-			<value>@obosourceforgecvscheckoutdir@</value>
-		</constructor-arg>
-	</bean>
-
-	<bean id="oboSourceforgeCVSDescriptorFile"
-		class="java.lang.String">
-		<constructor-arg>
-			<value>@obosourceforgecvsdescriptorfile@</value>
-		</constructor-arg>
-	</bean>
+	</bean>	
 </beans>

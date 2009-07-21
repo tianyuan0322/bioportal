@@ -83,11 +83,10 @@
 		<echo message="log4j path: = ${bioportal.app.logfilepath}" />
 
 		<mkdir dir="${bioportal.tempdir}" />
-		<mkdir dir="${bioportal.ontology.filepath}" />		
-		<mkdir dir="${bioportal.diff.filepath}" />		
+		<mkdir dir="${bioportal.ontology.filepath}" />
+		<mkdir dir="${bioportal.diff.filepath}" />
 		<mkdir dir="${bioportal.search.indexpath}" />
 		<mkdir dir="${bioportal.search.indexbackuppath}" />
-		<mkdir dir="${obo.sourceforge.cvs.checkoutdir}" />
 		<mkdir dir="${lexgrid.index.location}" />
 		<mkdir dir="${lexgrid.registry.path}" />
 		<mkdir dir="${build.dir}" />
@@ -180,15 +179,8 @@
 				<filter token="protegebigfilethreshold" value="${protege.big.file.threshold}" />
 				<filter token="protegeknowledgebasecachetimeout" value="${protege.knowledgebase.cache.timeout}" />
 				<filter token="protegeknowledgebasecachenumcontainers" value="${protege.knowledgebase.cache.numcontainers}" />
-				<filter token="obosourceforgecvsusername" value="${obo.sourceforge.cvs.username}" />
-				<filter token="obosourceforgecvspassword" value="${obo.sourceforge.cvs.password}" />
-				<filter token="obosourceforgecvshostname" value="${obo.sourceforge.cvs.hostname}" />
-				<filter token="obosourceforgecvsmodule" value="${obo.sourceforge.cvs.module}" />
-				<filter token="obosourceforgecvsrootdirectory" value="${obo.sourceforge.cvs.rootdirectory}" />
-				<filter token="obosourceforgecvsargumentstring" value="${obo.sourceforge.cvs.argumentstring}" />
-				<filter token="obosourceforgecvscheckoutdir" value="${obo.sourceforge.cvs.checkoutdir}" />
-				<filter token="obosourceforgecvsdescriptorfile" value="${obo.sourceforge.cvs.descriptor.file}" />
 				<filter token="bioportaltempdir" value="${bioportal.tempdir}" />
+				<filter token="oborepositoriesconfigfilepath" value="${obo.repositories.config.filepath}" />
 			</filterset>
 		</copy>
 
@@ -222,6 +214,12 @@
 				<filter token="lexgridemailerrors" value="${lexgrid.email.errors}" />
 				<filter token="lexgridsmtpserver" value="${lexgrid.smtp.server}" />
 				<filter token="lexgridemailto" value="${lexgrid.email.to}" />
+			</filterset>
+		</copy>
+
+		<copy file="${tmpl.dir}/obo_repository.xml.tmpl" tofile="${resources.dir}/config/obo_repository.xml" overwrite="true">
+			<filterset>
+				<filter token="bioportalresourcepath" value="${bioportal.resource.path}" />
 			</filterset>
 		</copy>
 	</target>
@@ -312,10 +310,10 @@
 		<mkdir dir="${testresults.dir}" />
 		<junit printsummary="true" fork="yes" maxmemory="256m" haltonfailure="true">
 			<batchtest todir="${testresults.dir}">
-          <fileset dir="${classes.dir}" includes="**/user/User*Test*.class" />
-          <fileset dir="${classes.dir}" includes="**/concept/Concept*Test*.class" />
-          <fileset dir="${classes.dir}" includes="**/ontology/Ontology*Test.class" />
-          <fileset dir="${classes.dir}" includes="**/search/Search*Test.class" />
+				<fileset dir="${classes.dir}" includes="**/user/User*Test*.class" />
+				<fileset dir="${classes.dir}" includes="**/concept/Concept*Test*.class" />
+				<fileset dir="${classes.dir}" includes="**/ontology/Ontology*Test.class" />
+				<fileset dir="${classes.dir}" includes="**/search/Search*Test.class" />
 			</batchtest>
 			<formatter type="xml" usefile="true" />
 			<classpath refid="master-classpath" />
@@ -326,10 +324,10 @@
 	<target name="testout">
 		<junit printsummary="true" fork="yes" maxmemory="256m" haltonfailure="true" showoutput="true">
 			<batchtest>
-          <fileset dir="${classes.dir}" includes="**/user/User*Test*.class" />
-          <fileset dir="${classes.dir}" includes="**/ontology/Ontology*Test.class" />
-          <fileset dir="${classes.dir}" includes="**/search/Search*Test.class" />
-          <fileset dir="${classes.dir}" includes="**/concept/Concept*Test*.class" />
+				<fileset dir="${classes.dir}" includes="**/user/User*Test*.class" />
+				<fileset dir="${classes.dir}" includes="**/ontology/Ontology*Test.class" />
+				<fileset dir="${classes.dir}" includes="**/search/Search*Test.class" />
+				<fileset dir="${classes.dir}" includes="**/concept/Concept*Test*.class" />
 			</batchtest>
 			<classpath refid="master-classpath" />
 		</junit>

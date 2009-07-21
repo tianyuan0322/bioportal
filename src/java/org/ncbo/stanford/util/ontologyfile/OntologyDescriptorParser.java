@@ -53,7 +53,6 @@ public class OntologyDescriptorParser {
 	// }
 
 	private static final String LINE_PATTERN = "^(\\w+)(\\t|\\s)*(.*)";
-	private static final String UNDERSCORE_LETTER_PATTERN = "_+(\\w)";
 	private static final String LAST_SLASH_PATTERN = ".*/(.*)$";
 	private static final String VALUE_SEPARATOR = "|";
 	private String descriptorFilePath = null;
@@ -96,7 +95,7 @@ public class OntologyDescriptorParser {
 				try {
 					// convert label to property and set
 					// its value using Reflection
-					ReflectionHelper.setProperty(mfb, labelToProperty(label),
+					ReflectionHelper.setProperty(mfb, StringHelper.labelToProperty(label),
 							value.trim());
 				} catch (RuntimeException e) {
 					// ignore error, property doesn't exist
@@ -218,32 +217,5 @@ public class OntologyDescriptorParser {
 		}
 
 		return t;
-	}
-
-	/**
-	 * Converts string from format "my_first_hello_world" to
-	 * "myFirstHelloWorld". All existing letters in the label are converted to
-	 * lower-case.
-	 * 
-	 * @param label
-	 *            to convert
-	 * @return converted label
-	 */
-	public static String labelToProperty(String label) {
-		StringBuffer sb = new StringBuffer();
-		Pattern pat = Pattern.compile(UNDERSCORE_LETTER_PATTERN);
-		Matcher m = pat.matcher(label.toLowerCase());
-
-		while (m.find()) {
-			try {
-				m.appendReplacement(sb, m.group(1).toUpperCase());
-			} catch (RuntimeException e) {
-				// igonore exception, no match found
-			}
-		}
-
-		m.appendTail(sb);
-
-		return sb.toString();
 	}
 }

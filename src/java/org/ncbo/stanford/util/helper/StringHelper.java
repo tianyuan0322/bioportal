@@ -11,6 +11,8 @@ package org.ncbo.stanford.util.helper;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.StringTokenizer;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * This gives utility methods related to String object
@@ -22,16 +24,17 @@ public abstract class StringHelper {
 	private final static String EMPTY_TXT = "";
 	private final static char DOUBLE_QUOTE_CHAR = '"';
 	private final static char SINGLE_QUOTE_CHAR = '\'';
+	private static final String UNDERSCORE_LETTER_PATTERN = "_+(\\w)";
 
-//	public static void main(String[] args) {
-//		String k = "\"Hello World\"";
-//		String us = unSingleQuote(k);
-//		System.out.println("With Quotes: " + k);
-//		System.out.println("Without Single Quotes: " + us);
-//
-//		String ud = unDoubleQuote(k);
-//		System.out.println("Without Double Quotes: " + ud);
-//	}
+	// public static void main(String[] args) {
+	// String k = "\"Hello World\"";
+	// String us = unSingleQuote(k);
+	// System.out.println("With Quotes: " + k);
+	// System.out.println("Without Single Quotes: " + us);
+	//
+	// String ud = unDoubleQuote(k);
+	// System.out.println("Without Double Quotes: " + ud);
+	// }
 
 	/**
 	 * Formats the number
@@ -462,6 +465,33 @@ public abstract class StringHelper {
 		} else {
 			return (string);
 		}
+	}
+
+	/**
+	 * Converts string from format "my_first_hello_world" to
+	 * "myFirstHelloWorld". All existing letters in the label are converted to
+	 * lower-case.
+	 * 
+	 * @param label
+	 *            to convert
+	 * @return converted label
+	 */
+	public static String labelToProperty(String label) {
+		StringBuffer sb = new StringBuffer();
+		Pattern pat = Pattern.compile(UNDERSCORE_LETTER_PATTERN);
+		Matcher m = pat.matcher(label.toLowerCase());
+
+		while (m.find()) {
+			try {
+				m.appendReplacement(sb, m.group(1).toUpperCase());
+			} catch (RuntimeException e) {
+				// igonore exception, no match found
+			}
+		}
+
+		m.appendTail(sb);
+
+		return sb.toString();
 	}
 
 	/**
