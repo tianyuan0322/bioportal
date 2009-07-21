@@ -1,17 +1,15 @@
 package org.ncbo.stanford.util.lucene;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.lucene.index.IndexReader;
+import org.apache.lucene.analysis.standard.StandardAnalyzer;
 import org.apache.lucene.index.Term;
-import org.apache.lucene.index.TermEnum;
+import org.apache.lucene.queryParser.ParseException;
+import org.apache.lucene.queryParser.QueryParser;
 import org.apache.lucene.search.BooleanClause;
 import org.apache.lucene.search.BooleanQuery;
-import org.apache.lucene.search.MultiPhraseQuery;
 import org.apache.lucene.search.TermQuery;
 import org.apache.lucene.search.regex.SpanRegexQuery;
 import org.apache.lucene.search.spans.SpanFirstQuery;
@@ -36,17 +34,6 @@ public class PrefixQuery extends BooleanQuery {
 	private static final String SINGLE_LETTER_WORD_PATTERN = "^\\w$|\\s+\\w$";
 	private static final char WILDCARD_CHAR = '*';
 	private static final int EXACT_MATCH_BOOST = 10;
-	private static HashMap<String, String> exceptionTermMap = new HashMap<String, String>(
-			0);
-	private IndexReader reader;
-
-	static {
-		exceptionTermMap.put("algorith", "algorithm");
-	}
-
-	public PrefixQuery(IndexReader reader) {
-		this.reader = reader;
-	}
 
 	/**
 	 * Constructs a Lucene query that finds all possible matches for words or
@@ -66,19 +53,31 @@ public class PrefixQuery extends BooleanQuery {
 			tq.setBoost(EXACT_MATCH_BOOST);
 			add(tq, BooleanClause.Occur.SHOULD);
 
-			MultiPhraseQuery mpq = new MultiPhraseQuery();
 			String[] words = expr.split(SPACES_PATTERN);
+			StringBuffer contentsExpr = new StringBuffer();
 
 			for (int i = 0; i < words.length; i++) {
+				contentsExpr.append(words[i]);
+
 				if (i == words.length - 1) {
-					Term[] terms = expand(field, words[i]);
-					mpq.add(terms);
+					contentsExpr.append(WILDCARD_CHAR);
 				} else {
-					mpq.add(new Term(field, words[i]));
+					contentsExpr.append(" && ");
 				}
 			}
 
-			add(mpq, BooleanClause.Occur.SHOULD);
+			QueryParser parser = new QueryParser(field, new StandardAnalyzer());
+//			parser.setAllowLeadingWildcard(true);
+			parser.setDefaultOperator(QueryParser.AND_OPERATOR);
+
+			try {
+				add(parser.parse(contentsExpr.toString()),
+						BooleanClause.Occur.SHOULD);
+			} catch (ParseException e) {
+				IOException ioe = new IOException(e.getMessage());
+				ioe.initCause(e);
+				throw ioe;
+			}
 		}
 	}
 
@@ -107,39 +106,28 @@ public class PrefixQuery extends BooleanQuery {
 		return (len > 0 && expr.lastIndexOf(WILDCARD_CHAR) == len - 1);
 	}
 
+	public static boolean startsWithWildcard(String expr) {
+		int len = expr.length();
+
+		return (len > 0 && expr.charAt(0) == WILDCARD_CHAR);
+	}
+
 	public static boolean isMultiWord(String expr) {
 		return expr.trim().split(SPACES_PATTERN).length > 1;
 	}
 
-	private Term[] expand(String field, String prefix) throws IOException {
-		ArrayList<Term> terms = new ArrayList<Term>(1);
-		terms.add(new Term(field, prefix));
-
-		for (String key : exceptionTermMap.keySet()) {
-			if (prefix.equals(key)) {
-				terms.add(new Term(field, exceptionTermMap.get(key)));
-			}
-		}
-
-		TermEnum te = reader.terms(new Term(field, prefix));
-
-		while (te.next() && te.term().field().equals(field)
-				&& te.term().text().startsWith(prefix)) {
-			terms.add(te.term());
-		}
-
-		te.close();
-
-		return (Term[]) terms.toArray(new Term[0]);
-	}
-
 	private String prepareExpression(String expr) {
-		expr = expr.trim().toLowerCase();
+		expr = expr.trim();
+		
+		if (startsWithWildcard(expr)) {
+			expr = expr.substring(1);
+		}
 
 		if (endsWithWildcard(expr)) {
 			expr = expr.substring(0, expr.length() - 1);
 		}
 
+		expr = expr.toLowerCase();
 		expr = expr.replaceAll(SPACES_PATTERN, " ");
 
 		// replace single-letter words with empty strings
