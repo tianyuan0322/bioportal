@@ -117,6 +117,9 @@
 		<copy file="${tmpl.dir}/context.xml.tmpl" tofile="${meta-inf.dir}/context.xml" overwrite="true">
 			<filterset>
 				<filter token="bioportaldatasourcename" value="${bioportal.datasource.name}" />
+				<filter token="bioportaldatasourceremoveabandoned" value="${bioportal.datasource.removeabandoned}" />
+				<filter token="bioportaldatasourceremoveabandonedtimeout" value="${bioportal.datasource.removeabandonedtimeout}" />
+				<filter token="bioportaldatasourcelogabandoned" value="${bioportal.datasource.logabandoned}" />
 				<filter token="bioportaljdbcdriver" value="${bioportal.jdbc.driver}" />
 				<filter token="bioportaljdbcurl" value="${bioportal.jdbc.url}" />
 				<filter token="bioportaljdbcusername" value="${bioportal.jdbc.username}" />

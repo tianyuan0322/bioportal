@@ -4,5 +4,8 @@
 		type="javax.sql.DataSource" driverClassName="@bioportaljdbcdriver@"
 		username="@bioportaljdbcusername@" password="@bioportaljdbcpassword@"
 		url="@bioportaljdbcurl@" maxActive="@bioportaljdbcmaxactive@"
-		maxIdle="@bioportaljdbcmaxidle@" maxWait="@bioportaljdbcmaxwait@" />
+		maxIdle="@bioportaljdbcmaxidle@" maxWait="@bioportaljdbcmaxwait@"
+		removeAbandoned="@bioportaldatasourceremoveabandoned@"
+		removeAbandonedTimeout="@bioportaldatasourceremoveabandonedtimeout@"
+		logAbandoned="@bioportaldatasourcelogabandoned@" />
 </Context>
