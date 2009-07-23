@@ -130,6 +130,7 @@ public class PrefixQuery extends BooleanQuery {
 		expr = expr.toLowerCase();
 		expr = expr.replaceAll(SPACES_PATTERN, " ");
 		expr = expr.replaceAll(":", " ");
+		expr = expr.replaceAll("_", " ");
 		
 		// replace single-letter words with empty strings
 		// Pattern mask = Pattern.compile(SINGLE_LETTER_WORD_PATTERN);
