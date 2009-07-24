@@ -18,6 +18,7 @@ USE `bioportal`;
 /*Data for the table `ncbo_admin_application` */
 
 insert  into `ncbo_admin_application`(`id`,`application_id`,`application_name`,`application_description`) values (1,'4ea81d74-8960-4525-810b-fa1baab576ff','NcboBioPortal','NCBO Ruby on Rails based BioPortal GUI implementation');
+insert  into `ncbo_admin_application`(`id`,`application_id`,`application_name`,`application_description`) values (2,'6a7c5586-5744-2041-818e-e3bc21db91b2','BioPortalAdmin','BioPortal administration application');
 
 /*Data for the table `ncbo_l_additional_metadata` */
 
