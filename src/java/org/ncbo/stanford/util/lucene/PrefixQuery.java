@@ -104,18 +104,6 @@ public class PrefixQuery extends BooleanQuery {
 		}
 	}
 
-	public static boolean endsWithWildcard(String expr) {
-		int len = expr.length();
-
-		return (len > 0 && expr.lastIndexOf(WILDCARD_CHAR) == len - 1);
-	}
-
-	public static boolean startsWithWildcard(String expr) {
-		int len = expr.length();
-
-		return (len > 0 && expr.charAt(0) == WILDCARD_CHAR);
-	}
-
 	public static boolean isMultiWord(String expr) {
 		return expr.trim().split(SPACES_PATTERN).length > 1;
 	}
