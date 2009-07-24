@@ -1,7 +1,5 @@
 package org.ncbo.stanford.util.lucene;
 
-import java.io.IOException;
-import java.util.ArrayList;
 import java.util.Set;
 import java.util.TreeSet;
 
@@ -10,7 +8,6 @@ import org.apache.commons.logging.LogFactory;
 import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.index.IndexReader;
 import org.apache.lucene.index.Term;
-import org.apache.lucene.index.TermEnum;
 import org.apache.lucene.queryParser.ParseException;
 import org.apache.lucene.queryParser.QueryParser;
 import org.apache.lucene.search.BooleanClause;
@@ -37,22 +34,14 @@ public class PrefixQuery extends BooleanQuery {
 	 */
 	private static final long serialVersionUID = -6160362866197315524L;
 
-	
 	private static final String SPACES_PATTERN = "\\s+";
-
-	
-	
 	@SuppressWarnings("unused")
 	private static final String SINGLE_LETTER_WORD_PATTERN = "^\\w$|\\s+\\w$";
-	
-		
-		
-	
 	private static final char WILDCARD_CHAR = '*';
-	
-	private static final String WILDCARD_LEADING_TRAILING_PATTERN = "^\\" + WILDCARD_CHAR + "|\\" + WILDCARD_CHAR + "$";
-	
+	private static final String WILDCARD_LEADING_TRAILING_PATTERN = "^\\"
+			+ WILDCARD_CHAR + "|\\" + WILDCARD_CHAR + "$";
 	private static final int EXACT_MATCH_BOOST = 10;
+
 	private IndexReader reader;
 	private Analyzer analyzer;
 
@@ -60,7 +49,7 @@ public class PrefixQuery extends BooleanQuery {
 		this.reader = reader;
 		this.analyzer = analyzer;
 	}
-	
+
 	/**
 	 * Constructs a Lucene query that finds all possible matches for words or
 	 * phrases that contain a wildcard character at the end (i.e. "bloo*" or
@@ -75,64 +64,6 @@ public class PrefixQuery extends BooleanQuery {
 		expr = prepareExpression(expr, field);
 
 		if (expr.length() > 0) {
-			String[] words = expr.split(SPACES_PATTERN);
-			StringBuffer exprBuff = new StringBuffer();
-
-			for (int i = 0; i < words.length; i++) {
-				exprBuff.append(words[i]);
-
-				if (i == words.length - 1) {
-					exprBuff.append(WILDCARD_CHAR);
-				} else {
-					exprBuff.append(" && ");
-				}
-			}
-
-			QueryParser parser = new QueryParser(field, analyzer);
-			// parser.setAllowLeadingWildcard(true);
-			parser.setDefaultOperator(QueryParser.AND_OPERATOR);
-
-			try {
-				String contentsExpr = exprBuff.toString();
-				
-				Query queryExact = parser.parse(contentsExpr.substring(0,
-						contentsExpr.length() - 1));
-				queryExact.setBoost(EXACT_MATCH_BOOST);		
-				
-				Query queryWildcard = parser.parse(contentsExpr);
-
-				add(queryExact, BooleanClause.Occur.SHOULD);
-				
-				
-				
-				
-				add(queryWildcard, BooleanClause.Occur.SHOULD);
-			} catch (Exception e) {
-				IOException ioe = new IOException(e.getMessage());
-				ioe.initCause(e);
-				throw ioe;
-			}
-		}
-	}
-
-	
-	
-	
-	
-	/**
-	 * Constructs a Lucene query that finds all possible matches for words or
-	 * phrases that contain a wildcard character at the end (i.e. "bloo*" or
-	 * "cutaneous mela*")
-	 * 
-	 * @param field -
-	 *            field to search on
-	 * @param expr
-	 * @throws Exception
-	 */
-	public void parsePrefixQuery1(String field, String expr) throws Exception {
-		expr = prepareExpression(expr, field);
-		
-		if (expr.length() > 0) {
 			TermQuery tq = new TermQuery(new Term(field, expr));
 			tq.setBoost(EXACT_MATCH_BOOST);
 			add(tq, BooleanClause.Occur.SHOULD);
@@ -142,23 +73,7 @@ public class PrefixQuery extends BooleanQuery {
 
 			for (int i = 0; i < words.length; i++) {
 				if (i == words.length - 1) {
-//					Term[] terms = expand(field, words[i]);
-					
-					QueryParser parser = new QueryParser(field, analyzer);
-					Query queryExact = parser.parse(words[i] + WILDCARD_CHAR);
-					Query queryRewritten = queryExact.rewrite(reader);
-					
-					Set<Term> termsSet = new TreeSet<Term>();
-					
-					termsSet.add(new Term(field, words[i]));
-					
-					queryRewritten.extractTerms(termsSet);
-
-					
-					Term[] terms = (Term[])termsSet.toArray(new Term[termsSet.size()]);
-//					Term[] terms = expand(field, words[i]);
-					
-
+					Term[] terms = expand(field, words[i]);
 					mpq.add(terms);
 				} else {
 					mpq.add(new Term(field, words[i]));
@@ -168,16 +83,7 @@ public class PrefixQuery extends BooleanQuery {
 			add(mpq, BooleanClause.Occur.SHOULD);
 		}
 	}
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
+
 	/**
 	 * Constructs a Lucene query that finds all possible matches for words or
 	 * phrases that start with a word or expression and contain a wildcard
@@ -187,7 +93,8 @@ public class PrefixQuery extends BooleanQuery {
 	 *            field to search on
 	 * @param expr
 	 */
-	public void parseStartsWithPrefixQuery(String field, String expr) throws Exception {
+	public void parseStartsWithPrefixQuery(String field, String expr)
+			throws Exception {
 		expr = prepareExpression(expr, field);
 
 		if (expr.length() > 0) {
@@ -213,43 +120,17 @@ public class PrefixQuery extends BooleanQuery {
 		return expr.trim().split(SPACES_PATTERN).length > 1;
 	}
 
-	private String prepareExpression(String expr, String field) throws ParseException {
-//		expr = expr.trim();
-
-//		if (startsWithWildcard(expr)) {
-//			expr = expr.substring(1);
-//		}
-//
-//		if (endsWithWildcard(expr)) {
-//			expr = expr.substring(0, expr.length() - 1);
-//		}
-
+	private String prepareExpression(String expr, String field)
+			throws ParseException {
 		expr = expr.replaceAll(WILDCARD_LEADING_TRAILING_PATTERN, "");
-		
-		QueryParser p = new QueryParser(field, analyzer);
-		Query qe = p.parse(expr);
-//		Query qr = qe.rewrite(reader);
-//		Set<Term> ts = new TreeSet<Term>();		
-//		qr.extractTerms(ts);
-		
-		expr = qe.toString().replace(field + ":", "");
+
+		QueryParser parser = new QueryParser(field, analyzer);
+		Query query = parser.parse(expr);
+
+		expr = query.toString().replace(field + ":", "");
 		expr = expr.replace("\"", "");
-		
-		
 		expr = expr.toLowerCase();
-//		expr = expr.replaceAll(SPACES_PATTERN, " ");
-//		expr = expr.replaceAll(SINGLE_QUOTE_MIDDLE_PATTERN, " ");
-//		expr = expr.replaceAll(SINGLE_QUOTE_END_PATTERN, "");
-
-		
-
 		expr = expr.replaceAll(":", " ");
-		
-		
-		
-		
-//		expr = expr.replaceAll("_", " ");		
-//		expr = expr.replaceAll("-", " ");
 
 		// replace single-letter words with empty strings
 		// Pattern mask = Pattern.compile(SINGLE_LETTER_WORD_PATTERN);
@@ -263,17 +144,16 @@ public class PrefixQuery extends BooleanQuery {
 		return expr;
 	}
 
-	private Term[] expand(String field, String prefix) throws IOException {
-		ArrayList<Term> terms = new ArrayList<Term>(1);
+	private Term[] expand(String field, String prefix) throws Exception {
+		QueryParser parser = new QueryParser(field, analyzer);
+		Query queryExact = parser.parse(prefix + WILDCARD_CHAR);
+		Query queryRewritten = queryExact.rewrite(reader);
+
+		Set<Term> terms = new TreeSet<Term>();
 		terms.add(new Term(field, prefix));
-		TermEnum te = reader.terms(new Term(field, prefix));
 
-		while (te.next() && te.term().text().startsWith(prefix)) {
-			terms.add(te.term());
-		}
+		queryRewritten.extractTerms(terms);
 
-		te.close();
-
-		return (Term[]) terms.toArray(new Term[0]);
+		return (Term[]) terms.toArray(new Term[terms.size()]);
 	}
 }
