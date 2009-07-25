@@ -115,17 +115,21 @@ public class IndexSearchServiceImpl extends AbstractSearchService implements
 	 */
 	public void indexOntologies(List<Integer> ontologyIdList, boolean doBackup,
 			boolean doOptimize) throws Exception {
+		LuceneIndexWriterWrapper writer = new LuceneIndexWriterWrapper(
+				indexPath, analyzer);
+		writer.setMergeFactor(indexMergeFactor);
+		writer.setMaxMergeDocs(indexMaxMergeDocs);
+
 		List<VNcboOntology> ontologies = ncboOntologyVersionDAO
 				.findLatestActiveOntologyVersions(ontologyIdList);
 
+		removeOntologies(writer, ontologyIdList, doBackup, false, true);
+
 		if (!ontologies.isEmpty()) {
-			LuceneIndexWriterWrapper writer = new LuceneIndexWriterWrapper(
-					indexPath, analyzer);
-			writer.setMergeFactor(indexMergeFactor);
-			writer.setMaxMergeDocs(indexMaxMergeDocs);
-			indexOntologies(writer, ontologies, doBackup, doOptimize);
-			closeWriter(writer);
+			indexOntologies(writer, ontologies, false, doOptimize);
 		}
+
+		closeWriter(writer);
 	}
 
 	/**
