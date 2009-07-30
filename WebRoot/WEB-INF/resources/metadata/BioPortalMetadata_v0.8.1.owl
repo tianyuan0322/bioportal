@@ -1,16 +1,17 @@
 <?xml version="1.0"?>
 <rdf:RDF
-    xmlns:xsp="http://www.owl-ontologies.com/2005/08/07/xsp.owl#"
-    xmlns:swrlb="http://www.w3.org/2003/11/swrlb#"
-    xmlns:protege="http://protege.stanford.edu/plugins/owl/protege#"
+    xmlns:metrics="http://protege.stanford.edu/ontologies/metrics/metrics.rdfs#"
     xmlns:swrl="http://www.w3.org/2003/11/swrl#"
-    xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
-    xmlns:xsd="http://www.w3.org/2001/XMLSchema#"
     xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#"
     xmlns:owl="http://www.w3.org/2002/07/owl#"
     xmlns:changes="http://protege.stanford.edu/ontologies/ChAO/changes.rdfs#"
-    xmlns="http://protege.stanford.edu/ontologies/metadata/BioPortalMetadata.owl#"
     xmlns:OMV="http://omv.ontoware.org/2005/05/ontology#"
+    xmlns:xsp="http://www.owl-ontologies.com/2005/08/07/xsp.owl#"
+    xmlns:swrlb="http://www.w3.org/2003/11/swrlb#"
+    xmlns:protege="http://protege.stanford.edu/plugins/owl/protege#"
+    xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema#"
+    xmlns="http://protege.stanford.edu/ontologies/metadata/BioPortalMetadata.owl#"
     xmlns:mappings="http://protege.stanford.edu/ontologies/mappings/mappings.rdfs#"
   xml:base="http://protege.stanford.edu/ontologies/metadata/BioPortalMetadata.owl">
   <owl:Ontology rdf:about="">
@@ -41,11 +42,11 @@
     <rdfs:subClassOf rdf:resource="http://www.w3.org/2002/07/owl#Thing"/>
     <rdfs:subClassOf>
       <owl:Restriction>
-        <owl:cardinality rdf:datatype="http://www.w3.org/2001/XMLSchema#int"
-        >1</owl:cardinality>
         <owl:onProperty>
           <owl:DatatypeProperty rdf:ID="id"/>
         </owl:onProperty>
+        <owl:cardinality rdf:datatype="http://www.w3.org/2001/XMLSchema#int"
+        >1</owl:cardinality>
       </owl:Restriction>
     </rdfs:subClassOf>
   </owl:Class>
@@ -68,43 +69,7 @@
                         <owl:cardinality rdf:datatype="http://www.w3.org/2001/XMLSchema#int"
                         >1</owl:cardinality>
                         <owl:onProperty>
-                          <owl:DatatypeProperty rdf:ID="isFoundry"/>
-                        </owl:onProperty>
-                      </owl:Restriction>
-                    </rdfs:subClassOf>
-                    <rdfs:subClassOf>
-                      <owl:Restriction>
-                        <owl:onProperty>
-                          <owl:DatatypeProperty rdf:ID="isRemote"/>
-                        </owl:onProperty>
-                        <owl:cardinality rdf:datatype="http://www.w3.org/2001/XMLSchema#int"
-                        >1</owl:cardinality>
-                      </owl:Restriction>
-                    </rdfs:subClassOf>
-                    <rdfs:subClassOf>
-                      <owl:Restriction>
-                        <owl:onProperty>
-                          <owl:DatatypeProperty rdf:ID="synonymProperty"/>
-                        </owl:onProperty>
-                        <owl:maxCardinality rdf:datatype="http://www.w3.org/2001/XMLSchema#int"
-                        >1</owl:maxCardinality>
-                      </owl:Restriction>
-                    </rdfs:subClassOf>
-                    <rdfs:subClassOf>
-                      <owl:Restriction>
-                        <owl:onProperty>
-                          <owl:DatatypeProperty rdf:ID="statusID"/>
-                        </owl:onProperty>
-                        <owl:cardinality rdf:datatype="http://www.w3.org/2001/XMLSchema#int"
-                        >1</owl:cardinality>
-                      </owl:Restriction>
-                    </rdfs:subClassOf>
-                    <rdfs:subClassOf>
-                      <owl:Restriction>
-                        <owl:minCardinality rdf:datatype="http://www.w3.org/2001/XMLSchema#int"
-                        >1</owl:minCardinality>
-                        <owl:onProperty>
-                          <owl:ObjectProperty rdf:ID="administeredBy"/>
+                          <owl:DatatypeProperty rdf:ID="filePath"/>
                         </owl:onProperty>
                       </owl:Restriction>
                     </rdfs:subClassOf>
@@ -113,16 +78,7 @@
                         <owl:cardinality rdf:datatype="http://www.w3.org/2001/XMLSchema#int"
                         >1</owl:cardinality>
                         <owl:onProperty>
-                          <owl:DatatypeProperty rdf:about="#id"/>
-                        </owl:onProperty>
-                      </owl:Restriction>
-                    </rdfs:subClassOf>
-                    <rdfs:subClassOf>
-                      <owl:Restriction>
-                        <owl:maxCardinality rdf:datatype="http://www.w3.org/2001/XMLSchema#int"
-                        >1</owl:maxCardinality>
-                        <owl:onProperty>
-                          <owl:DatatypeProperty rdf:ID="preferredNameProperty"/>
+                          <owl:DatatypeProperty rdf:ID="timestampCreation"/>
                         </owl:onProperty>
                       </owl:Restriction>
                     </rdfs:subClassOf>
@@ -146,29 +102,20 @@
                     </rdfs:subClassOf>
                     <rdfs:subClassOf>
                       <owl:Restriction>
-                        <owl:cardinality rdf:datatype="http://www.w3.org/2001/XMLSchema#int"
-                        >1</owl:cardinality>
+                        <owl:maxCardinality rdf:datatype="http://www.w3.org/2001/XMLSchema#int"
+                        >1</owl:maxCardinality>
+                        <owl:onProperty>
+                          <owl:DatatypeProperty rdf:ID="synonymProperty"/>
+                        </owl:onProperty>
+                      </owl:Restriction>
+                    </rdfs:subClassOf>
+                    <rdfs:subClassOf>
+                      <owl:Restriction>
                         <owl:onProperty>
                           <owl:DatatypeProperty rdf:ID="internalVersionNumber"/>
                         </owl:onProperty>
-                      </owl:Restriction>
-                    </rdfs:subClassOf>
-                    <rdfs:subClassOf>
-                      <owl:Restriction>
-                        <owl:onProperty>
-                          <owl:DatatypeProperty rdf:ID="filePath"/>
-                        </owl:onProperty>
                         <owl:cardinality rdf:datatype="http://www.w3.org/2001/XMLSchema#int"
                         >1</owl:cardinality>
-                      </owl:Restriction>
-                    </rdfs:subClassOf>
-                    <rdfs:subClassOf>
-                      <owl:Restriction>
-                        <owl:cardinality rdf:datatype="http://www.w3.org/2001/XMLSchema#int"
-                        >1</owl:cardinality>
-                        <owl:onProperty>
-                          <owl:DatatypeProperty rdf:ID="timestampCreation"/>
-                        </owl:onProperty>
                       </owl:Restriction>
                     </rdfs:subClassOf>
                     <rdfs:subClassOf>
@@ -182,11 +129,65 @@
                     </rdfs:subClassOf>
                     <rdfs:subClassOf>
                       <owl:Restriction>
+                        <owl:minCardinality rdf:datatype="http://www.w3.org/2001/XMLSchema#int"
+                        >1</owl:minCardinality>
+                        <owl:onProperty>
+                          <owl:ObjectProperty rdf:ID="administeredBy"/>
+                        </owl:onProperty>
+                      </owl:Restriction>
+                    </rdfs:subClassOf>
+                    <rdfs:subClassOf>
+                      <owl:Restriction>
+                        <owl:onProperty>
+                          <owl:DatatypeProperty rdf:about="#id"/>
+                        </owl:onProperty>
+                        <owl:cardinality rdf:datatype="http://www.w3.org/2001/XMLSchema#int"
+                        >1</owl:cardinality>
+                      </owl:Restriction>
+                    </rdfs:subClassOf>
+                    <rdfs:subClassOf>
+                      <owl:Restriction>
+                        <owl:cardinality rdf:datatype="http://www.w3.org/2001/XMLSchema#int"
+                        >1</owl:cardinality>
+                        <owl:onProperty>
+                          <owl:DatatypeProperty rdf:ID="isRemote"/>
+                        </owl:onProperty>
+                      </owl:Restriction>
+                    </rdfs:subClassOf>
+                    <rdfs:subClassOf>
+                      <owl:Restriction>
+                        <owl:maxCardinality rdf:datatype="http://www.w3.org/2001/XMLSchema#int"
+                        >1</owl:maxCardinality>
+                        <owl:onProperty>
+                          <owl:DatatypeProperty rdf:ID="preferredNameProperty"/>
+                        </owl:onProperty>
+                      </owl:Restriction>
+                    </rdfs:subClassOf>
+                    <rdfs:subClassOf>
+                      <owl:Restriction>
+                        <owl:maxCardinality rdf:datatype="http://www.w3.org/2001/XMLSchema#int"
+                        >1</owl:maxCardinality>
                         <owl:onProperty>
                           <owl:DatatypeProperty rdf:ID="hasContactEmail"/>
                         </owl:onProperty>
-                        <owl:maxCardinality rdf:datatype="http://www.w3.org/2001/XMLSchema#int"
-                        >1</owl:maxCardinality>
+                      </owl:Restriction>
+                    </rdfs:subClassOf>
+                    <rdfs:subClassOf>
+                      <owl:Restriction>
+                        <owl:onProperty>
+                          <owl:DatatypeProperty rdf:ID="isFoundry"/>
+                        </owl:onProperty>
+                        <owl:cardinality rdf:datatype="http://www.w3.org/2001/XMLSchema#int"
+                        >1</owl:cardinality>
+                      </owl:Restriction>
+                    </rdfs:subClassOf>
+                    <rdfs:subClassOf>
+                      <owl:Restriction>
+                        <owl:onProperty>
+                          <owl:DatatypeProperty rdf:ID="statusID"/>
+                        </owl:onProperty>
+                        <owl:cardinality rdf:datatype="http://www.w3.org/2001/XMLSchema#int"
+                        >1</owl:cardinality>
                       </owl:Restriction>
                     </rdfs:subClassOf>
                   </rdf:Description>
@@ -208,7 +209,6 @@
     </rdfs:subClassOf>
     <rdfs:subClassOf>
       <owl:Restriction>
-        <owl:allValuesFrom rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
         <owl:onProperty>
           <rdf:Description rdf:about="http://omv.ontoware.org/2005/05/ontology#name">
             <rdfs:domain>
@@ -221,13 +221,14 @@
             </rdfs:domain>
           </rdf:Description>
         </owl:onProperty>
+        <owl:allValuesFrom rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
       </owl:Restriction>
     </rdfs:subClassOf>
     <rdfs:subClassOf>
       <owl:Restriction>
+        <owl:onProperty rdf:resource="http://omv.ontoware.org/2005/05/ontology#name"/>
         <owl:cardinality rdf:datatype="http://www.w3.org/2001/XMLSchema#int"
         >1</owl:cardinality>
-        <owl:onProperty rdf:resource="http://omv.ontoware.org/2005/05/ontology#name"/>
       </owl:Restriction>
     </rdfs:subClassOf>
     <rdfs:subClassOf>
@@ -259,20 +260,19 @@
     </rdfs:subClassOf>
     <rdfs:subClassOf>
       <owl:Restriction>
-        <owl:onProperty rdf:resource="http://omv.ontoware.org/2005/05/ontology#description"/>
         <owl:allValuesFrom rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
+        <owl:onProperty rdf:resource="http://omv.ontoware.org/2005/05/ontology#description"/>
       </owl:Restriction>
     </rdfs:subClassOf>
     <rdfs:subClassOf>
       <owl:Restriction>
-        <owl:allValuesFrom rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
         <owl:onProperty rdf:resource="http://omv.ontoware.org/2005/05/ontology#acronym"/>
+        <owl:allValuesFrom rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
       </owl:Restriction>
     </rdfs:subClassOf>
     <rdfs:subClassOf rdf:resource="http://www.w3.org/2002/07/owl#Thing"/>
     <rdfs:subClassOf>
       <owl:Restriction>
-        <owl:allValuesFrom rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
         <owl:onProperty>
           <rdf:Description rdf:about="http://omv.ontoware.org/2005/05/ontology#documentation">
             <rdfs:domain>
@@ -294,6 +294,7 @@
             </rdfs:domain>
           </rdf:Description>
         </owl:onProperty>
+        <owl:allValuesFrom rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
       </owl:Restriction>
     </rdfs:subClassOf>
   </owl:Class>
@@ -306,55 +307,55 @@
   <owl:Class rdf:about="#ViewDefinitionLanguage">
     <rdfs:subClassOf>
       <owl:Restriction>
-        <owl:onProperty rdf:resource="http://omv.ontoware.org/2005/05/ontology#name"/>
         <owl:cardinality rdf:datatype="http://www.w3.org/2001/XMLSchema#int"
         >1</owl:cardinality>
+        <owl:onProperty rdf:resource="http://omv.ontoware.org/2005/05/ontology#name"/>
       </owl:Restriction>
     </rdfs:subClassOf>
     <rdfs:subClassOf rdf:resource="http://www.w3.org/2002/07/owl#Thing"/>
     <rdfs:subClassOf>
       <owl:Restriction>
-        <owl:maxCardinality rdf:datatype="http://www.w3.org/2001/XMLSchema#int"
-        >1</owl:maxCardinality>
-        <owl:onProperty rdf:resource="http://omv.ontoware.org/2005/05/ontology#acronym"/>
-      </owl:Restriction>
-    </rdfs:subClassOf>
-    <rdfs:subClassOf>
-      <owl:Restriction>
-        <owl:allValuesFrom rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
-        <owl:onProperty rdf:resource="http://omv.ontoware.org/2005/05/ontology#documentation"/>
-      </owl:Restriction>
-    </rdfs:subClassOf>
-    <rdfs:subClassOf>
-      <owl:Restriction>
-        <owl:onProperty rdf:resource="http://omv.ontoware.org/2005/05/ontology#documentation"/>
-        <owl:maxCardinality rdf:datatype="http://www.w3.org/2001/XMLSchema#int"
-        >1</owl:maxCardinality>
-      </owl:Restriction>
-    </rdfs:subClassOf>
-    <rdfs:subClassOf>
-      <owl:Restriction>
         <owl:onProperty rdf:resource="http://omv.ontoware.org/2005/05/ontology#description"/>
+        <owl:maxCardinality rdf:datatype="http://www.w3.org/2001/XMLSchema#int"
+        >1</owl:maxCardinality>
+      </owl:Restriction>
+    </rdfs:subClassOf>
+    <rdfs:subClassOf>
+      <owl:Restriction>
+        <owl:onProperty rdf:resource="http://omv.ontoware.org/2005/05/ontology#documentation"/>
         <owl:allValuesFrom rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
       </owl:Restriction>
     </rdfs:subClassOf>
     <rdfs:subClassOf>
       <owl:Restriction>
+        <owl:onProperty rdf:resource="http://omv.ontoware.org/2005/05/ontology#acronym"/>
+        <owl:maxCardinality rdf:datatype="http://www.w3.org/2001/XMLSchema#int"
+        >1</owl:maxCardinality>
+      </owl:Restriction>
+    </rdfs:subClassOf>
+    <rdfs:subClassOf>
+      <owl:Restriction>
+        <owl:allValuesFrom rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
+        <owl:onProperty rdf:resource="http://omv.ontoware.org/2005/05/ontology#description"/>
+      </owl:Restriction>
+    </rdfs:subClassOf>
+    <rdfs:subClassOf>
+      <owl:Restriction>
+        <owl:allValuesFrom rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
         <owl:onProperty rdf:resource="http://omv.ontoware.org/2005/05/ontology#name"/>
-        <owl:allValuesFrom rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
       </owl:Restriction>
     </rdfs:subClassOf>
     <rdfs:subClassOf>
       <owl:Restriction>
-        <owl:onProperty rdf:resource="http://omv.ontoware.org/2005/05/ontology#description"/>
+        <owl:allValuesFrom rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
+        <owl:onProperty rdf:resource="http://omv.ontoware.org/2005/05/ontology#acronym"/>
+      </owl:Restriction>
+    </rdfs:subClassOf>
+    <rdfs:subClassOf>
+      <owl:Restriction>
         <owl:maxCardinality rdf:datatype="http://www.w3.org/2001/XMLSchema#int"
         >1</owl:maxCardinality>
-      </owl:Restriction>
-    </rdfs:subClassOf>
-    <rdfs:subClassOf>
-      <owl:Restriction>
-        <owl:onProperty rdf:resource="http://omv.ontoware.org/2005/05/ontology#acronym"/>
-        <owl:allValuesFrom rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
+        <owl:onProperty rdf:resource="http://omv.ontoware.org/2005/05/ontology#documentation"/>
       </owl:Restriction>
     </rdfs:subClassOf>
   </owl:Class>
@@ -383,20 +384,20 @@
     </rdfs:subClassOf>
     <rdfs:subClassOf>
       <owl:Restriction>
+        <owl:cardinality rdf:datatype="http://www.w3.org/2001/XMLSchema#int"
+        >1</owl:cardinality>
         <owl:onProperty>
           <owl:DatatypeProperty rdf:about="#id"/>
         </owl:onProperty>
-        <owl:cardinality rdf:datatype="http://www.w3.org/2001/XMLSchema#int"
-        >1</owl:cardinality>
       </owl:Restriction>
     </rdfs:subClassOf>
     <rdfs:subClassOf>
       <owl:Restriction>
-        <owl:cardinality rdf:datatype="http://www.w3.org/2001/XMLSchema#int"
-        >1</owl:cardinality>
         <owl:onProperty>
           <owl:DatatypeProperty rdf:about="#timestampCreation"/>
         </owl:onProperty>
+        <owl:cardinality rdf:datatype="http://www.w3.org/2001/XMLSchema#int"
+        >1</owl:cardinality>
       </owl:Restriction>
     </rdfs:subClassOf>
   </owl:Class>
@@ -416,18 +417,18 @@
     </rdfs:subClassOf>
     <rdfs:subClassOf>
       <owl:Restriction>
-        <owl:cardinality rdf:datatype="http://www.w3.org/2001/XMLSchema#int"
-        >1</owl:cardinality>
         <owl:onProperty>
           <owl:DatatypeProperty rdf:about="#id"/>
         </owl:onProperty>
+        <owl:cardinality rdf:datatype="http://www.w3.org/2001/XMLSchema#int"
+        >1</owl:cardinality>
       </owl:Restriction>
     </rdfs:subClassOf>
     <rdfs:subClassOf>
       <owl:Restriction>
-        <owl:onProperty rdf:resource="http://omv.ontoware.org/2005/05/ontology#name"/>
         <owl:cardinality rdf:datatype="http://www.w3.org/2001/XMLSchema#int"
         >1</owl:cardinality>
+        <owl:onProperty rdf:resource="http://omv.ontoware.org/2005/05/ontology#name"/>
       </owl:Restriction>
     </rdfs:subClassOf>
     <rdfs:subClassOf>
@@ -574,6 +575,121 @@
   <owl:ObjectProperty rdf:about="http://protege.stanford.edu/ontologies/ChAO/changes.rdfs#annotates">
     <owl:inverseOf rdf:resource="http://protege.stanford.edu/ontologies/ChAO/changes.rdfs#associatedAnnotations"/>
   </owl:ObjectProperty>
+  <owl:DatatypeProperty rdf:about="#preferredNameProperty">
+    <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#FunctionalProperty"/>
+    <rdfs:domain rdf:resource="http://omv.ontoware.org/2005/05/ontology#Ontology"/>
+  </owl:DatatypeProperty>
+  <owl:DatatypeProperty rdf:ID="fileNames">
+    <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
+    <rdfs:domain rdf:resource="http://omv.ontoware.org/2005/05/ontology#Ontology"/>
+  </owl:DatatypeProperty>
+  <owl:DatatypeProperty rdf:about="http://protege.stanford.edu/ontologies/metrics/metrics.rdfs#classesWithNoDocumentation">
+    <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
+    <rdfs:domain rdf:resource="http://omv.ontoware.org/2005/05/ontology#Ontology"/>
+  </owl:DatatypeProperty>
+  <owl:DatatypeProperty rdf:about="#codingScheme">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#FunctionalProperty"/>
+    <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
+    <rdfs:domain rdf:resource="http://omv.ontoware.org/2005/05/ontology#Ontology"/>
+  </owl:DatatypeProperty>
+  <owl:DatatypeProperty rdf:about="#hasContactName">
+    <rdfs:comment rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+    >The name(s) of the contact person(s).</rdfs:comment>
+    <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
+    <rdfs:domain>
+      <owl:Class>
+        <owl:unionOf rdf:parseType="Collection">
+          <rdf:Description rdf:about="http://omv.ontoware.org/2005/05/ontology#Ontology"/>
+          <owl:Class rdf:about="#Project"/>
+        </owl:unionOf>
+      </owl:Class>
+    </rdfs:domain>
+  </owl:DatatypeProperty>
+  <owl:DatatypeProperty rdf:ID="textualReview">
+    <rdfs:domain rdf:resource="#EvaluationDimension"/>
+    <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
+  </owl:DatatypeProperty>
+  <owl:DatatypeProperty rdf:about="http://protege.stanford.edu/ontologies/metrics/metrics.rdfs#averageNumberOfSiblings">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#FunctionalProperty"/>
+    <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#int"/>
+    <rdfs:domain rdf:resource="http://omv.ontoware.org/2005/05/ontology#Ontology"/>
+  </owl:DatatypeProperty>
+  <owl:DatatypeProperty rdf:ID="rating">
+    <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#int"/>
+    <rdfs:domain rdf:resource="#EvaluationDimension"/>
+  </owl:DatatypeProperty>
+  <owl:DatatypeProperty rdf:about="#isRemote">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#FunctionalProperty"/>
+    <rdfs:comment rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+    >BioPortal internal flag. Specifies whether an ontology is stored in BioPortal or it is remote.</rdfs:comment>
+    <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#boolean"/>
+    <rdfs:domain rdf:resource="http://omv.ontoware.org/2005/05/ontology#Ontology"/>
+  </owl:DatatypeProperty>
+  <owl:DatatypeProperty rdf:ID="urlPublications">
+    <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
+    <rdfs:domain rdf:resource="http://omv.ontoware.org/2005/05/ontology#Ontology"/>
+  </owl:DatatypeProperty>
+  <owl:DatatypeProperty rdf:about="#oboFoundryID">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#FunctionalProperty"/>
+    <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
+    <rdfs:domain rdf:resource="#VirtualOntology"/>
+    <rdfs:comment rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+    >The OBO Foundry id of an OBO ontology.</rdfs:comment>
+  </owl:DatatypeProperty>
+  <owl:DatatypeProperty rdf:ID="documentationProperty">
+    <rdfs:domain rdf:resource="http://omv.ontoware.org/2005/05/ontology#Ontology"/>
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#FunctionalProperty"/>
+    <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
+  </owl:DatatypeProperty>
+  <owl:DatatypeProperty rdf:about="http://protege.stanford.edu/ontologies/metrics/metrics.rdfs#maximumNumberOfSiblings">
+    <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#int"/>
+    <rdfs:domain rdf:resource="http://omv.ontoware.org/2005/05/ontology#Ontology"/>
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#FunctionalProperty"/>
+  </owl:DatatypeProperty>
+  <owl:DatatypeProperty rdf:ID="annotatesByVirtualID">
+    <rdfs:domain rdf:resource="http://protege.stanford.edu/ontologies/ChAO/changes.rdfs#Annotation"/>
+    <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
+  </owl:DatatypeProperty>
+  <owl:DatatypeProperty rdf:about="#internalVersionNumber">
+    <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#int"/>
+    <rdfs:domain rdf:resource="http://omv.ontoware.org/2005/05/ontology#Ontology"/>
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#FunctionalProperty"/>
+  </owl:DatatypeProperty>
+  <owl:DatatypeProperty rdf:about="#isFoundry">
+    <rdfs:domain rdf:resource="http://omv.ontoware.org/2005/05/ontology#Ontology"/>
+    <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#boolean"/>
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#FunctionalProperty"/>
+  </owl:DatatypeProperty>
+  <owl:DatatypeProperty rdf:ID="propertyWithUniqueValue">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#FunctionalProperty"/>
+    <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
+    <rdfs:domain rdf:resource="http://omv.ontoware.org/2005/05/ontology#Ontology"/>
+  </owl:DatatypeProperty>
+  <owl:DatatypeProperty rdf:about="http://protege.stanford.edu/ontologies/metrics/metrics.rdfs#classesWithMoreThanXSubclasses">
+    <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
+    <rdfs:domain rdf:resource="http://omv.ontoware.org/2005/05/ontology#Ontology"/>
+  </owl:DatatypeProperty>
+  <owl:DatatypeProperty rdf:about="#filePath">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#FunctionalProperty"/>
+    <rdfs:domain rdf:resource="http://omv.ontoware.org/2005/05/ontology#Ontology"/>
+    <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
+  </owl:DatatypeProperty>
+  <owl:DatatypeProperty rdf:about="#timestampCreation">
+    <rdfs:comment rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+    >The date and time when the referred element (user, ontology, etc.) was created in BioPortal.
+In case of ontology versions, this represents the date and time when it was uploaded into BioPortal.</rdfs:comment>
+    <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#dateTime"/>
+    <rdfs:domain>
+      <owl:Class>
+        <owl:unionOf rdf:parseType="Collection">
+          <rdf:Description rdf:about="http://omv.ontoware.org/2005/05/ontology#Ontology"/>
+          <owl:Class rdf:about="#BioPortalUser"/>
+        </owl:unionOf>
+      </owl:Class>
+    </rdfs:domain>
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#FunctionalProperty"/>
+  </owl:DatatypeProperty>
   <owl:DatatypeProperty rdf:about="#id">
     <rdfs:domain>
       <owl:Class>
@@ -621,36 +737,10 @@
     </rdfs:domain>
     <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
   </owl:DatatypeProperty>
-  <owl:DatatypeProperty rdf:about="#preferredNameProperty">
-    <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
+  <owl:DatatypeProperty rdf:ID="authorProperty">
     <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#FunctionalProperty"/>
     <rdfs:domain rdf:resource="http://omv.ontoware.org/2005/05/ontology#Ontology"/>
-  </owl:DatatypeProperty>
-  <owl:DatatypeProperty rdf:ID="fileNames">
     <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
-    <rdfs:domain rdf:resource="http://omv.ontoware.org/2005/05/ontology#Ontology"/>
-  </owl:DatatypeProperty>
-  <owl:DatatypeProperty rdf:about="#codingScheme">
-    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#FunctionalProperty"/>
-    <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
-    <rdfs:domain rdf:resource="http://omv.ontoware.org/2005/05/ontology#Ontology"/>
-  </owl:DatatypeProperty>
-  <owl:DatatypeProperty rdf:ID="textualReview">
-    <rdfs:domain rdf:resource="#EvaluationDimension"/>
-    <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
-  </owl:DatatypeProperty>
-  <owl:DatatypeProperty rdf:about="#hasContactName">
-    <rdfs:comment rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
-    >The name(s) of the contact person(s).</rdfs:comment>
-    <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
-    <rdfs:domain>
-      <owl:Class>
-        <owl:unionOf rdf:parseType="Collection">
-          <rdf:Description rdf:about="http://omv.ontoware.org/2005/05/ontology#Ontology"/>
-          <owl:Class rdf:about="#Project"/>
-        </owl:unionOf>
-      </owl:Class>
-    </rdfs:domain>
   </owl:DatatypeProperty>
   <owl:DatatypeProperty rdf:ID="urlHomepage">
     <rdfs:domain rdf:resource="http://omv.ontoware.org/2005/05/ontology#Ontology"/>
@@ -660,50 +750,27 @@
     <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
     <rdfs:domain rdf:resource="http://omv.ontoware.org/2005/05/ontology#Ontology"/>
   </owl:DatatypeProperty>
-  <owl:DatatypeProperty rdf:ID="rating">
-    <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#int"/>
-    <rdfs:domain rdf:resource="#EvaluationDimension"/>
-  </owl:DatatypeProperty>
-  <owl:DatatypeProperty rdf:about="#oboFoundryID">
-    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#FunctionalProperty"/>
-    <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
-    <rdfs:domain rdf:resource="#VirtualOntology"/>
-    <rdfs:comment rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
-    >The OBO Foundry id of an OBO ontology.</rdfs:comment>
-  </owl:DatatypeProperty>
-  <owl:DatatypeProperty rdf:ID="urlPublications">
-    <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
-    <rdfs:domain rdf:resource="http://omv.ontoware.org/2005/05/ontology#Ontology"/>
-  </owl:DatatypeProperty>
-  <owl:DatatypeProperty rdf:about="#isRemote">
-    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#FunctionalProperty"/>
-    <rdfs:comment rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
-    >BioPortal internal flag. Specifies whether an ontology is stored in BioPortal or it is remote.</rdfs:comment>
-    <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#boolean"/>
-    <rdfs:domain rdf:resource="http://omv.ontoware.org/2005/05/ontology#Ontology"/>
-  </owl:DatatypeProperty>
   <owl:DatatypeProperty rdf:about="#isManual">
     <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#FunctionalProperty"/>
     <rdfs:domain rdf:resource="#VirtualOntology"/>
     <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#boolean"/>
   </owl:DatatypeProperty>
-  <owl:DatatypeProperty rdf:ID="annotatesByVirtualID">
-    <rdfs:domain rdf:resource="http://protege.stanford.edu/ontologies/ChAO/changes.rdfs#Annotation"/>
+  <owl:DatatypeProperty rdf:about="http://protege.stanford.edu/ontologies/metrics/metrics.rdfs#classesWithMoreThanOnePropertyValueForPropertyWithUniqueValue">
+    <rdfs:domain rdf:resource="http://omv.ontoware.org/2005/05/ontology#Ontology"/>
+    <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
+  </owl:DatatypeProperty>
+  <owl:DatatypeProperty rdf:about="http://protege.stanford.edu/ontologies/metrics/metrics.rdfs#maximumDepth">
+    <rdfs:domain rdf:resource="http://omv.ontoware.org/2005/05/ontology#Ontology"/>
+    <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#int"/>
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#FunctionalProperty"/>
+  </owl:DatatypeProperty>
+  <owl:DatatypeProperty rdf:about="http://protege.stanford.edu/ontologies/metrics/metrics.rdfs#classesWithNoAuthor">
+    <rdfs:domain rdf:resource="http://omv.ontoware.org/2005/05/ontology#Ontology"/>
     <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
   </owl:DatatypeProperty>
   <owl:DatatypeProperty rdf:ID="virtualURI">
     <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
     <rdfs:domain rdf:resource="#VirtualOntology"/>
-  </owl:DatatypeProperty>
-  <owl:DatatypeProperty rdf:about="#isFoundry">
-    <rdfs:domain rdf:resource="http://omv.ontoware.org/2005/05/ontology#Ontology"/>
-    <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#boolean"/>
-    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#FunctionalProperty"/>
-  </owl:DatatypeProperty>
-  <owl:DatatypeProperty rdf:about="#internalVersionNumber">
-    <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#int"/>
-    <rdfs:domain rdf:resource="http://omv.ontoware.org/2005/05/ontology#Ontology"/>
-    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#FunctionalProperty"/>
   </owl:DatatypeProperty>
   <owl:DatatypeProperty rdf:about="#statusID">
     <rdfs:domain rdf:resource="http://omv.ontoware.org/2005/05/ontology#Ontology"/>
@@ -712,10 +779,10 @@
     <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#FunctionalProperty"/>
     <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#int"/>
   </owl:DatatypeProperty>
-  <owl:DatatypeProperty rdf:about="#filePath">
+  <owl:DatatypeProperty rdf:about="http://protege.stanford.edu/ontologies/metrics/metrics.rdfs#preferredMaximumSubclassLimit">
+    <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#int"/>
     <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#FunctionalProperty"/>
     <rdfs:domain rdf:resource="http://omv.ontoware.org/2005/05/ontology#Ontology"/>
-    <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
   </owl:DatatypeProperty>
   <owl:DatatypeProperty rdf:about="#oboFoundryName">
     <rdfs:domain rdf:resource="http://omv.ontoware.org/2005/05/ontology#OntologyDomain"/>
@@ -724,20 +791,9 @@
     <rdfs:comment rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
     >The OBO Foundry name of an ontology domain (a.k.a. category).</rdfs:comment>
   </owl:DatatypeProperty>
-  <owl:DatatypeProperty rdf:about="#timestampCreation">
-    <rdfs:comment rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
-    >The date and time when the referred element (user, ontology, etc.) was created in BioPortal.
-In case of ontology versions, this represents the date and time when it was uploaded into BioPortal.</rdfs:comment>
-    <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#dateTime"/>
-    <rdfs:domain>
-      <owl:Class>
-        <owl:unionOf rdf:parseType="Collection">
-          <rdf:Description rdf:about="http://omv.ontoware.org/2005/05/ontology#Ontology"/>
-          <owl:Class rdf:about="#BioPortalUser"/>
-        </owl:unionOf>
-      </owl:Class>
-    </rdfs:domain>
-    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#FunctionalProperty"/>
+  <owl:DatatypeProperty rdf:about="http://protege.stanford.edu/ontologies/metrics/metrics.rdfs#classesWithSingleSubclass">
+    <rdfs:domain rdf:resource="http://omv.ontoware.org/2005/05/ontology#Ontology"/>
+    <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
   </owl:DatatypeProperty>
   <owl:DatatypeProperty rdf:about="#synonymProperty">
     <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#FunctionalProperty"/>
@@ -1056,4 +1112,4 @@ In case of ontology versions, this represents the date and time when it was uplo
   </ViewGenerationEngine>
 </rdf:RDF>
 
-<!-- Created with Protege (with OWL Plugin 3.4, Build 533)  http://protege.stanford.edu -->
+<!-- Created with Protege (with OWL Plugin 3.4.1, Build 536)  http://protege.stanford.edu -->

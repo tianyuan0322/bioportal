@@ -11,6 +11,7 @@ import java.util.Map;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.ncbo.stanford.bean.OntologyMetricsBean;
 import org.ncbo.stanford.bean.OntologyBean;
 import org.ncbo.stanford.bean.OntologyViewBean;
 import org.ncbo.stanford.domain.custom.dao.CustomNcboOntologyLoadQueueDAO;
@@ -202,6 +203,9 @@ public class OntologyLoadSchedulerServiceImpl implements
 
 				status = StatusEnum.STATUS_READY;
 
+				// calculate ontology metrics
+				calculateMetrics(ontologyBean, formatHandler);
+				
 				// ******************************************
 				// We will call create Diff when we are ready to include this
 				// process in the scheduler
@@ -380,6 +384,36 @@ public class OntologyLoadSchedulerServiceImpl implements
 		return loadManager;
 	}
 
+	/**
+	 * Calculate ontology metrics for the specified ontology. The minimum
+	 * requirement is that the ontology is parsed and exists in the
+	 * Bioportal repository.
+	 * 
+	 * @param ontologyBean
+	 * @param formatHandler
+	 * @throws Exception
+	 */
+	private void calculateMetrics(OntologyBean ontologyBean, String formatHandler)
+			throws Exception {
+		if (log.isDebugEnabled()) {
+			log.debug("calculateMetrics BEGIN..............");
+		}
+
+		OntologyMetricsBean metricsBean = getLoadManager(ontologyBean, formatHandler).extractOntologyMetrics(ontologyBean);
+		
+		if (ontologyBean.isView()) {
+			ontologyViewMetadataManagerProtege.updateOntologyViewMetrics(
+					(OntologyViewBean) ontologyBean, metricsBean);
+		} else {
+			ontologyMetadataManagerProtege.updateOntologyMetrics(ontologyBean,
+					metricsBean);
+		}
+
+		if (log.isDebugEnabled()) {
+			log.debug("..................calculateMetrics END");
+		}
+	}
+	
 	/**
 	 * Creates a diff between the two latest versions of the specified ontology
 	 * This method is called after the ontology has been successfully parsed.

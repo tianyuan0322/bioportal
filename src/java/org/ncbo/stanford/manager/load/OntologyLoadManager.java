@@ -2,6 +2,7 @@ package org.ncbo.stanford.manager.load;
 
 import java.net.URI;
 
+import org.ncbo.stanford.bean.OntologyMetricsBean;
 import org.ncbo.stanford.bean.OntologyBean;
 
 /**
@@ -37,4 +38,13 @@ public interface OntologyLoadManager {
 	 * @throws Exception
 	 */
 	public void cleanup(OntologyBean ontologyBean) throws Exception;
+
+	/**
+	 * Extracts ontology metrics of a given ontology version
+	 * 
+	 * @param ontologyBean
+	 * @return an ontology metrics bean filled in with metrics values
+	 * @throws Exception
+	 */
+	public OntologyMetricsBean extractOntologyMetrics(OntologyBean ontologyBean) throws Exception;
 }

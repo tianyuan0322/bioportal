@@ -45,6 +45,10 @@ public class OntologyBean {
 	private Byte isFoundry;
 	private String synonymSlot;
 	private String preferredNameSlot;
+	private String documentationSlot;
+	private String authorSlot;
+	private String slotWithUniqueValue;
+	private Integer preferredMaximumSubclassLimit;
 	protected boolean isView = false;
 
 	// category id(s)
@@ -679,6 +683,69 @@ public class OntologyBean {
 	 */
 	public void setPreferredNameSlot(String preferredNameSlot) {
 		this.preferredNameSlot = preferredNameSlot;
+	}
+
+	/**
+	 * @return the documentationSlot
+	 */
+	public String getDocumentationSlot() {
+		return documentationSlot;
+	}
+
+	/**
+	 * @param documentationSlot the documentationSlot to set
+	 */
+	public void setDocumentationSlot(String documentationSlot) {
+		this.documentationSlot = documentationSlot;
+	}
+
+	/**
+	 * @return the authorSlot
+	 */
+	public String getAuthorSlot() {
+		return authorSlot;
+	}
+
+	/**
+	 * @param authorSlot the authorSlot to set
+	 */
+	public void setAuthorSlot(String authorSlot) {
+		this.authorSlot = authorSlot;
+	}
+
+	/**
+	 * @return the slotWithUniqueValue
+	 */
+	public String getSlotWithUniqueValue() {
+		return slotWithUniqueValue;
+	}
+
+	/**
+	 * @param slotWithUniqueValue the slotWithUniqueValue to set
+	 */
+	public void setSlotWithUniqueValue(String slotWithUniqueValue) {
+		this.slotWithUniqueValue = slotWithUniqueValue;
+	}
+
+	/**
+	 * @return the preferredMaximumSubclassLimit
+	 */
+	public Integer getPreferredMaximumSubclassLimit() {
+		return preferredMaximumSubclassLimit;
+	}
+
+	/**
+	 * @param preferredMaximumSubclassLimit the preferredMaximumSubclassLimit to set
+	 */
+	public void setPreferredMaximumSubclassLimit(Integer preferredMaximumSubclassLimit) {
+		this.preferredMaximumSubclassLimit = preferredMaximumSubclassLimit;
+	}
+
+	/**
+	 * @param isView the isView to set
+	 */
+	public void setView(boolean isView) {
+		this.isView = isView;
 	}
 
 	/**

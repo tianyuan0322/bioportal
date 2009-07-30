@@ -2,6 +2,8 @@ package org.ncbo.stanford.manager.metadata;
 
 import java.util.List;
 
+import org.ncbo.stanford.bean.OntologyMetricsBean;
+import org.ncbo.stanford.bean.OntologyBean;
 import org.ncbo.stanford.bean.OntologyViewBean;
 
 /**
@@ -27,7 +29,7 @@ public interface OntologyViewMetadataManager {
 
 
 	/**
-	 * Updates the ontology view metadata specified by the ontologyBean representing an ontology view version.
+	 * Updates the ontology view metadata specified by the ontologyViewBean representing an ontology view version.
 	 * 
 	 * @param ontologyViewBean
 	 * @throws Exception
@@ -35,7 +37,17 @@ public interface OntologyViewMetadataManager {
 	public void updateOntologyView(OntologyViewBean ontologyViewBean) throws Exception;
 
 	/**
-	 * Deletes the ontology view metadata specified by the ontologyBean representing an ontology view version.
+	 * Updates the metadata of an ontology view version specified by the ontologyViewBean 
+	 * with ontology metrics information specified by metricsBean.
+	 * 
+	 * @param ontologyViewBean
+	 * @param metricsBean
+	 * @throws Exception
+	 */
+	public void updateOntologyViewMetrics(OntologyViewBean ontologyViewBean, OntologyMetricsBean metricsBean) throws Exception;
+	
+	/**
+	 * Deletes the ontology view metadata specified by the ontologyViewBean representing an ontology view version.
 	 * 
 	 * @param ontologyViewBean
 	 * @throws Exception

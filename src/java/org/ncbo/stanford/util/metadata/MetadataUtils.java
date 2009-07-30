@@ -32,6 +32,7 @@ public class MetadataUtils {
 
 	public static final String PREFIX_OMV = "OMV:";
 	public static final String PREFIX_METADATA = "metadata:";
+	public static final String PREFIX_METRICS = "metrics:";
 
 	public static final String PROPERTY_ID = PREFIX_METADATA + "id";
 	public static final String PROPERTY_OMV_NAME = PREFIX_OMV + "name";

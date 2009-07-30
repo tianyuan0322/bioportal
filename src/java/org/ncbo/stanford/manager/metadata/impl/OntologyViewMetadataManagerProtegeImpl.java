@@ -7,6 +7,7 @@ import java.util.List;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.ncbo.stanford.bean.OntologyMetricsBean;
 import org.ncbo.stanford.bean.OntologyViewBean;
 import org.ncbo.stanford.exception.MetadataException;
 import org.ncbo.stanford.manager.AbstractOntologyManagerProtege;
@@ -94,6 +95,24 @@ public class OntologyViewMetadataManagerProtegeImpl extends
 		
 		OntologyMetadataUtils.fillInOntologyViewInstancePropertiesFromBean(ontVerInd, ob, vViewInd, userInd, domainInd, viewInd, srcOntInd);
 //		OntologyMetadataUtils.setLatestVersion(vOntInd, ontVerInd); //use this if we will reintroduce the "metadata:currentVersion" property
+	}
+
+	public void updateOntologyViewMetrics(OntologyViewBean ob, OntologyMetricsBean mb) throws Exception {
+		OWLModel metadata = getMetadataOWLModel();
+		OWLIndividual ontVerInd = getOntologyViewInstance(metadata, ob.getId(), DO_NOT_CREATE_IF_MISSING);
+
+		if (ontVerInd == null) {
+			throw new MetadataException(
+				"Metadata for ontology view " + ob.getId() + " could not be updated because it could not be found!");
+		}
+		
+		if (ob.getId() != mb.getId()) {
+			throw new MetadataException(
+					"Trying to attach ontology metrics information from OntologyMetricsBean with id " + mb.getId() + 
+					"to ontology view version with id " + ob.getId() + ". Invalid operation!");
+		}
+		
+		OntologyMetadataUtils.fillInOntologyInstancePropertiesFromBean(ontVerInd, mb);
 	}
 	
 	public void deleteOntologyView(OntologyViewBean ob) throws MetadataException {

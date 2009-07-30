@@ -3,16 +3,23 @@ package org.ncbo.stanford.manager.load.impl;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.net.URI;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.ncbo.stanford.bean.OntologyBean;
+import org.ncbo.stanford.bean.OntologyMetricsBean;
 import org.ncbo.stanford.manager.AbstractOntologyManagerProtege;
 import org.ncbo.stanford.manager.load.OntologyLoadManager;
 import org.ncbo.stanford.util.constants.ApplicationConstants;
+import org.ncbo.stanford.util.metadata.OntologyMetricsCalculator;
 
+import edu.stanford.smi.protege.model.KnowledgeBase;
 import edu.stanford.smi.protege.model.Project;
 import edu.stanford.smi.protege.storage.database.DatabaseKnowledgeBaseFactory;
 import edu.stanford.smi.protege.util.ApplicationProperties;
@@ -166,6 +173,55 @@ public class OntologyLoadManagerProtegeImpl extends
 	}
 
 	public void cleanup(OntologyBean ontologyBean) throws Exception {
-		// TODO: fill in
+		Integer ontologyId = ontologyBean.getId();
+		if (ontologyId == null) {
+			throw new Exception("cleanup method called with invalid ontologyBean: ontologyId is null!");
+		}
+		String tableName = getTableName(ontologyId);
+		
+		Exception ex = null;
+		Connection c = null;
+		try {
+			c = DriverManager.getConnection(protegeJdbcUrl, protegeJdbcUsername, protegeJdbcPassword);
+			Statement stmt;
+			stmt = c.createStatement();
+			stmt.execute("DROP TABLE IF EXISTS " + tableName);
+		} catch (Exception e) {
+			//e.printStackTrace();
+			ex = e;
+		}
+		finally {
+			try {
+				if ( c != null && (! c.isClosed()) ) {
+					c.close();
+				}
+			} catch (SQLException e) {
+				//e.printStackTrace();
+				ex = e;
+			}
+			
+			if (ex != null) {
+				throw ex;
+			}
+		}
+	}
+	
+	public OntologyMetricsBean extractOntologyMetrics(OntologyBean ontologyBean)
+			throws Exception {
+		KnowledgeBase kb = getKnowledgeBase(ontologyBean);
+		OntologyMetricsBean mb = new OntologyMetricsBean();
+
+		String documentationProperty = ontologyBean.getDocumentationSlot();
+		String authorProperty = ontologyBean.getAuthorSlot();
+		String propertyWithUniqueValue = ontologyBean.getSlotWithUniqueValue();
+		Integer preferredMaximumSubclassLimit = ontologyBean.getPreferredMaximumSubclassLimit();
+		
+		OntologyMetricsCalculator ontologyMetricsCalculator = new OntologyMetricsCalculator(
+				kb, documentationProperty, authorProperty,
+				propertyWithUniqueValue, preferredMaximumSubclassLimit);
+		ontologyMetricsCalculator.populateOntologyMetrics(mb);
+		
+		mb.setId(ontologyBean.getId());
+		return mb;
 	}
 }

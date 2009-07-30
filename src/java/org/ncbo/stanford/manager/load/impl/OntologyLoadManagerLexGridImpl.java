@@ -46,6 +46,7 @@ import org.LexGrid.LexOnt.CsmfFormalName;
 import org.LexGrid.LexOnt.CsmfVersion;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.ncbo.stanford.bean.OntologyMetricsBean;
 import org.ncbo.stanford.bean.OntologyBean;
 import org.ncbo.stanford.manager.AbstractOntologyManagerLexGrid;
 import org.ncbo.stanford.manager.load.OntologyLoadManager;
@@ -274,5 +275,12 @@ public class OntologyLoadManagerLexGridImpl extends
 		}
 
 		return csm;
+	}
+
+	public OntologyMetricsBean extractOntologyMetrics(OntologyBean ontologyBean)
+			throws Exception {
+		OntologyMetricsBean res = new OntologyMetricsBean();
+		// TODO: fill in
+		return res;
 	}
 }

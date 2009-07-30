@@ -7,6 +7,7 @@ import java.util.List;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.ncbo.stanford.bean.OntologyMetricsBean;
 import org.ncbo.stanford.bean.OntologyBean;
 import org.ncbo.stanford.bean.OntologyViewBean;
 import org.ncbo.stanford.exception.MetadataException;
@@ -94,6 +95,24 @@ public class OntologyMetadataManagerProtegeImpl extends
 		
 		OntologyMetadataUtils.fillInOntologyInstancePropertiesFromBean(ontVerInd, ob, vOntInd, userInd, domainInd, viewInd);
 //		OntologyMetadataUtils.setLatestVersion(vOntInd, ontVerInd); //use this if we will reintroduce the "metadata:currentVersion" property
+	}
+	
+	public void updateOntologyMetrics(OntologyBean ob, OntologyMetricsBean mb) throws Exception {
+		OWLModel metadata = getMetadataOWLModel();
+		OWLIndividual ontVerInd = getOntologyInstance(metadata, ob.getId(), DO_NOT_CREATE_IF_MISSING);
+		
+		if (ontVerInd == null) {
+			throw new MetadataException(
+					"Metadata for ontology " + ob.getId() + " could not be updated with metrics because it could not be found!");
+		}
+		
+		if (ob.getId() != mb.getId()) {
+			throw new MetadataException(
+					"Trying to attach ontology metrics information from OntologyMetricsBean with id " + mb.getId() + 
+					" to ontology version with id " + ob.getId() + ". Invalid operation!");
+		}
+		
+		OntologyMetadataUtils.fillInOntologyInstancePropertiesFromBean(ontVerInd, mb);
 	}
 	
 	public void deleteOntology(OntologyBean ob) throws Exception {
@@ -218,16 +237,26 @@ public class OntologyMetadataManagerProtegeImpl extends
 		
 		if (vOntInd.hasRDFType(vOntClass)) {
 			OntologyBean ob = new OntologyBean();
-			OWLIndividual ontInd = OntologyMetadataUtils.getLatestVersion(vOntInd, ONLY_ACTIVE_VERSIONS);			
-			OntologyMetadataUtils.fillInOntologyBeanFromInstance(ob, ontInd);
+			OWLIndividual ontInd = OntologyMetadataUtils.getLatestVersion(vOntInd, ONLY_ACTIVE_VERSIONS);	
+			try {
+				OntologyMetadataUtils.fillInOntologyBeanFromInstance(ob, ontInd);
+			}
+			catch (MetadataException e) {
+				return null;
+			}
 			
 			return ob;
 		}
 		else {
 			OntologyViewBean ob = new OntologyViewBean();
-			OWLIndividual ontInd = OntologyMetadataUtils.getLatestVersion(vOntInd, ONLY_ACTIVE_VERSIONS);			
-			OntologyMetadataUtils.fillInOntologyViewBeanFromInstance(ob, ontInd);
-			
+			OWLIndividual ontInd = OntologyMetadataUtils.getLatestVersion(vOntInd, ONLY_ACTIVE_VERSIONS);
+			try {
+				OntologyMetadataUtils.fillInOntologyViewBeanFromInstance(ob, ontInd);
+			}
+			catch (MetadataException e) {
+				return null;
+			}
+
 			return ob;
 		}
 	}

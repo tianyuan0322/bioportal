@@ -10,8 +10,8 @@ import java.util.List;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.hibernate.criterion.Expression;
 import org.ncbo.stanford.bean.OntologyBean;
+import org.ncbo.stanford.bean.OntologyMetricsBean;
 import org.ncbo.stanford.bean.OntologyViewBean;
 import org.ncbo.stanford.exception.MetadataException;
 import org.ncbo.stanford.util.MessageUtils;
@@ -23,6 +23,7 @@ import edu.stanford.smi.protegex.owl.model.OWLNamedClass;
 import edu.stanford.smi.protegex.owl.model.RDFIndividual;
 import edu.stanford.smi.protegex.owl.model.RDFProperty;
 import edu.stanford.smi.protegex.owl.model.RDFSLiteral;
+import edu.stanford.smi.protegex.owl.model.impl.DefaultRDFSLiteral;
 import edu.stanford.smi.protegex.owl.ui.widget.OWLDateWidget;
 
 public class OntologyMetadataUtils extends MetadataUtils {
@@ -74,6 +75,26 @@ public class OntologyMetadataUtils extends MetadataUtils {
 	private static final String PROPERTY_HAS_VERSION = PREFIX_METADATA + "hasVersion";
 
 	private static final String PROPERTY_HAS_VIEW = PREFIX_METADATA + "hasView";
+
+	private static final String PROPERTY_DOCUMENTATION_PROPERTY = PREFIX_METADATA + "documentationProperty";
+	private static final String PROPERTY_AUTHOR_PROPERTY = PREFIX_METADATA + "authorProperty";
+	private static final String PROPERTY_PROPERTY_WITH_UNIQUE_VALUE = PREFIX_METADATA + "propertyWithUniqueValue";
+	private static final String PROPERTY_METRICS_PREFERRED_MAXIMUM_SUBCLASS_LIMIT = PREFIX_METRICS + "preferredMaximumSubclassLimit";
+	
+	private static final String PROPERTY_OMV_NUMBER_OF_AXIOMS = PREFIX_OMV + "numberOfAxioms";
+    private static final String PROPERTY_OMV_NUMBER_OF_CLASSES = PREFIX_OMV + "numberOfClasses";
+    private static final String PROPERTY_OMV_NUMBER_OF_INDIVIDUALS = PREFIX_OMV + "numberOfIndividuals";
+    private static final String PROPERTY_OMV_NUMBER_OF_PROPERTIES = PREFIX_OMV + "numberOfProperties";
+    
+    private static final String PROPERTY_METRICS_MAXIMUM_DEPTH = PREFIX_METRICS + "maximumDepth";
+    private static final String PROPERTY_METRICS_MAXIMUM_NUMBER_OF_SIBLINGS = PREFIX_METRICS + "maximumNumberOfSiblings";
+    private static final String PROPERTY_METRICS_AVERAGE_NUMBER_OF_SIBLINGS = PREFIX_METRICS + "averageNumberOfSiblings";
+    private static final String PROPERTY_METRICS_CLASSES_WITH_NO_DOCUMENTATION = PREFIX_METRICS + "classesWithNoDocumentation";
+    private static final String PROPERTY_METRICS_CLASSES_WITH_NO_AUTHOR = PREFIX_METRICS + "classesWithNoAuthor";
+    private static final String PROPERTY_METRICS_CLASSES_WITH_SINGLE_SUBCLASS = PREFIX_METRICS + "classesWithSingleSubclass";
+    private static final String PROPERTY_METRICS_CLASSES_WITH_MORE_THAN_X_SUBCLASSES = PREFIX_METRICS + "classesWithMoreThanXSubclasses";
+    private static final String PROPERTY_METRICS_CLASSES_WITH_MORE_THAN_ONE_PROPERTY_VALUE_FOR_PROPERTY_WITH_UNIQUE_VALUE = 
+    	PREFIX_METRICS + "classesWithMoreThanOnePropertyValueForPropertyWithUniqueValue";
 
 	
 	private static final String PROPERTY_IS_VIEW_ON_ONTOLOGY_VERSION = PREFIX_METADATA + "isViewOnOntologyVersion";
@@ -235,6 +256,11 @@ public class OntologyMetadataUtils extends MetadataUtils {
 		setPropertyValue(owlModel, ontologyInd, PROPERTY_OMV_VERSION, ob.getVersionNumber());
 		setPropertyValue(owlModel, ontologyInd, PROPERTY_OMV_STATUS, ob.getVersionStatus());
 		
+		setPropertyValue(owlModel, ontologyInd, PROPERTY_DOCUMENTATION_PROPERTY, ob.getDocumentationSlot());
+		setPropertyValue(owlModel, ontologyInd, PROPERTY_AUTHOR_PROPERTY, ob.getAuthorSlot());
+		setPropertyValue(owlModel, ontologyInd, PROPERTY_PROPERTY_WITH_UNIQUE_VALUE, ob.getSlotWithUniqueValue());
+		setPropertyValue(owlModel, ontologyInd, PROPERTY_METRICS_PREFERRED_MAXIMUM_SUBCLASS_LIMIT, ob.getPreferredMaximumSubclassLimit());
+		
 		setPropertyValue(owlModel, ontologyInd, PROPERTY_HAS_VIEW, viewIndividuals);
 	}
 
@@ -275,7 +301,43 @@ public class OntologyMetadataUtils extends MetadataUtils {
 		
 		//TODO see if we have to deal with virtualViewOf property or not
 	}
+
 	
+	public static void fillInOntologyInstancePropertiesFromBean(OWLIndividual ontologyInd,
+			OntologyMetricsBean mb) throws MetadataException {
+		
+		if (ontologyInd == null || mb == null) {
+			throw new MetadataException("The method fillInOntologyInstancePropertiesFromBean can't take null arguments. Please make sure that both arguments are properly initialized.");
+		}
+		
+		OWLModel owlModel = ontologyInd.getOWLModel();
+		
+		setPropertyValue(owlModel, ontologyInd, PROPERTY_ID, mb.getId());
+
+		RDFSLiteral litVal;
+		Integer intVal;
+		intVal = mb.getNumberOfAxioms();
+		litVal = (intVal==null ? null : DefaultRDFSLiteral.create(owlModel,intVal.toString() , owlModel.getXSDinteger()));
+		setPropertyValue(owlModel, ontologyInd, PROPERTY_OMV_NUMBER_OF_AXIOMS, litVal);
+		intVal = mb.getNumberOfClasses();
+		litVal = (intVal==null ? null : DefaultRDFSLiteral.create(owlModel,intVal.toString() , owlModel.getXSDinteger()));
+		setPropertyValue(owlModel, ontologyInd, PROPERTY_OMV_NUMBER_OF_CLASSES, litVal);
+		intVal = mb.getNumberOfIndividuals();
+		litVal = (intVal==null ? null : DefaultRDFSLiteral.create(owlModel,intVal.toString() , owlModel.getXSDinteger()));
+		setPropertyValue(owlModel, ontologyInd, PROPERTY_OMV_NUMBER_OF_INDIVIDUALS, litVal);
+		intVal = mb.getNumberOfProperties();
+		litVal = (intVal==null ? null : DefaultRDFSLiteral.create(owlModel,intVal.toString() , owlModel.getXSDinteger()));
+		setPropertyValue(owlModel, ontologyInd, PROPERTY_OMV_NUMBER_OF_PROPERTIES, litVal);
+		
+		setPropertyValue(owlModel, ontologyInd, PROPERTY_METRICS_MAXIMUM_DEPTH, mb.getMaximumDepth());
+		setPropertyValue(owlModel, ontologyInd, PROPERTY_METRICS_MAXIMUM_NUMBER_OF_SIBLINGS, mb.getMaximumNumberOfSiblings());
+		setPropertyValue(owlModel, ontologyInd, PROPERTY_METRICS_AVERAGE_NUMBER_OF_SIBLINGS, mb.getAverageNumberOfSiblings());
+		setPropertyValue(owlModel, ontologyInd, PROPERTY_METRICS_CLASSES_WITH_NO_DOCUMENTATION, mb.getClassesWithNoDocumentation());
+		setPropertyValue(owlModel, ontologyInd, PROPERTY_METRICS_CLASSES_WITH_NO_AUTHOR, mb.getClassesWithNoAuthor());
+		setPropertyValue(owlModel, ontologyInd, PROPERTY_METRICS_CLASSES_WITH_SINGLE_SUBCLASS, mb.getClassesWithOneSubclass());
+		setPropertyValue(owlModel, ontologyInd, PROPERTY_METRICS_CLASSES_WITH_MORE_THAN_X_SUBCLASSES, mb.getClassesWithMoreThanXSubclasses().keySet());
+		setPropertyValue(owlModel, ontologyInd, PROPERTY_METRICS_CLASSES_WITH_MORE_THAN_ONE_PROPERTY_VALUE_FOR_PROPERTY_WITH_UNIQUE_VALUE, mb.getClassesWithMoreThanOnePropertyValue());
+	}
 	
 	@SuppressWarnings("deprecation")
 	public static void fillInOntologyBeanFromInstance(OntologyBean ob,
@@ -340,7 +402,12 @@ public class OntologyMetadataUtils extends MetadataUtils {
 		ob.setUserId( getFirstElement(getPropertyValueIds(owlModel, ontologyInd, PROPERTY_ADMINISTERED_BY)) );
 		ob.setVersionNumber( getPropertyValue(owlModel, ontologyInd, PROPERTY_OMV_VERSION, String.class));
 		ob.setVersionStatus( getPropertyValue(owlModel, ontologyInd, PROPERTY_OMV_STATUS, String.class));
-		
+
+		ob.setDocumentationSlot( getPropertyValue(owlModel, ontologyInd, PROPERTY_DOCUMENTATION_PROPERTY, String.class));
+		ob.setAuthorSlot( getPropertyValue(owlModel, ontologyInd, PROPERTY_AUTHOR_PROPERTY, String.class));
+		ob.setSlotWithUniqueValue( getPropertyValue(owlModel, ontologyInd, PROPERTY_PROPERTY_WITH_UNIQUE_VALUE, String.class));
+		ob.setPreferredMaximumSubclassLimit( getPropertyValue(owlModel, ontologyInd, PROPERTY_METRICS_PREFERRED_MAXIMUM_SUBCLASS_LIMIT, Integer.class));
+
 		ob.setHasViews( getPropertyValueIds(owlModel, ontologyInd, PROPERTY_HAS_VIEW));
 	}
 
@@ -359,6 +426,19 @@ public class OntologyMetadataUtils extends MetadataUtils {
 				owlModel, getPropertyValue(owlModel, ontologyViewInd, PROPERTY_VIEW_GENERATION_ENGINE, RDFIndividual.class)) );
 		
 		//TODO see if we have to deal with virtualViewOf property or not
+	}
+	
+	public static void fillInMetricsBeanFromInstance(OntologyMetricsBean mb,
+			OWLIndividual ontologyInd) throws Exception {
+		
+		OWLModel owlModel = ontologyInd.getOWLModel();
+		
+		mb.setId( getPropertyValue(owlModel, ontologyInd, PROPERTY_ID, Integer.class));
+		
+		mb.setNumberOfAxioms( getPropertyValue(owlModel, ontologyInd, PROPERTY_OMV_NUMBER_OF_AXIOMS, Integer.class));
+		mb.setNumberOfClasses( getPropertyValue(owlModel, ontologyInd, PROPERTY_OMV_NUMBER_OF_CLASSES, Integer.class));
+		mb.setNumberOfIndividuals( getPropertyValue(owlModel, ontologyInd, PROPERTY_OMV_NUMBER_OF_INDIVIDUALS, Integer.class));
+		mb.setNumberOfProperties( getPropertyValue(owlModel, ontologyInd, PROPERTY_OMV_NUMBER_OF_PROPERTIES, Integer.class));
 	}
 	
 	
