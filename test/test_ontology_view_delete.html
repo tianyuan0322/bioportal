@@ -21,13 +21,13 @@
   	<script language="JavaScript">
 	function onSubmitForm()
 	{	
-   		document.ontologyform.action ="/bioportal/ontologies/delete/" + document.ontologyform.id.value;
+   		document.ontologyviewform.action ="/bioportal/ontologies/views/delete/" + document.ontologyviewform.id.value;
 	
   		return true;
 	}
   	</script>
   
-    <title>test_ontology_delete.html</title>
+    <title>test_ontology_view_delete.html</title>
 
     <meta http-equiv="keywords" content="keyword1,keyword2,keyword3">
     <meta http-equiv="description" content="this is my page">
@@ -39,20 +39,20 @@
 
   <body>
    
-    <h3> Test DELETE for Ontology  </h3>  
+    <h3> Test DELETE for Ontology View  </h3>  
    
    	<DIV CLASS="indented">
    
-	<!--  form action="http://localhost:8080/bioportal/rest/ontology/34320" method="POST" -->
-	<form name="ontologyform" onSubmit="return onSubmitForm();" method="POST">
+	<!--  form action="http://localhost:8080/bioportal/rest/ontology/view/34320" method="POST" -->
+	<form name="ontologyviewform" onSubmit="return onSubmitForm();" method="POST">
 
-    	Ontology ID: <input type="text" id="ontologyversionids" name="ontologyversionids" value="" /><br />
+    	Ontology View ID: <input type="text" id="ontologyversionids" name="ontologyversionids" value="" /><br />
 
     	<input type="hidden" name="sessionid" value="9c188a9b8de0fe0c21b9322b72255fb939a68bb2" /> 
 		<!--  <input type="hidden" name="applicationid" value="4ea81d74-8960-4525-810b-fa1baab576ff" /> -->
 		<input type="hidden" name="method" value="DELETE" />
     	<br /><br />
-    	<input type="submit" value="Delete Ontology" />
+    	<input type="submit" value="Delete Ontology View" />
     </form>
     
     </DIV>
