@@ -3,7 +3,6 @@ package org.ncbo.stanford.view.rest.base;
 import javax.servlet.ServletContext;
 
 import org.restlet.Application;
-import org.restlet.Context;
 import org.restlet.Restlet;
 import org.restlet.Router;
 import org.springframework.web.context.WebApplicationContext;
@@ -16,7 +15,7 @@ import com.noelios.restlet.ext.servlet.ServletContextAdapter;
  */
 public class RestApplication extends Application {
 
-	public RestApplication(Context context) {
+	public RestApplication() {
 	}
 
 	@Override
