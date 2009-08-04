@@ -22,10 +22,13 @@ import org.ncbo.stanford.bean.http.HttpInputStreamWrapper;
 import org.ncbo.stanford.util.helper.DateHelper;
 import org.ncbo.stanford.util.helper.StringHelper;
 import org.ncbo.stanford.view.util.constants.RequestParamConstants;
+import org.restlet.data.CharacterSet;
 import org.restlet.data.MediaType;
 import org.restlet.data.Request;
 import org.restlet.data.Response;
 import org.restlet.data.Status;
+import org.restlet.resource.Representation;
+import org.restlet.resource.StringRepresentation;
 
 import com.noelios.restlet.ext.servlet.ServletCall;
 import com.noelios.restlet.http.HttpCall;
@@ -207,7 +210,16 @@ public class RequestUtils {
 	public static void setHttpServletResponse(Response response,
 			Status statusCode, MediaType mediaType, String content) {
 		response.setStatus(statusCode);
-		response.setEntity(content, mediaType);
+		
+		Representation r = new StringRepresentation(content, mediaType);	
+		HttpServletResponse servletResponse = getHttpServletResponse(response);
+		String charEncoding = servletResponse.getCharacterEncoding();
+		
+		if (charEncoding != null) {
+			r.setCharacterSet(new CharacterSet(charEncoding));
+		}
+		
+		response.setEntity(r);
 	}
 
 	/**
