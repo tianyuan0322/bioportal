@@ -23,7 +23,7 @@
   <localName>11.11.0.1</localName>
   <localName>Automobiles</localName>
   <localName>SomeOtherValue</localName>
-  <source subRef="testSubRef" role="testRole">lexgrid.org</source>
+ 
   <copyright>Copyright by Mayo Clinic.</copyright>
  
   <mappings>

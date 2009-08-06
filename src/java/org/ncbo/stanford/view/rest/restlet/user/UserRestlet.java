@@ -23,7 +23,7 @@ public class UserRestlet extends AbstractBaseRestlet {
 	 * @param response
 	 */
 	@Override
-	protected void getRequest(Request request, Response response) {
+	public void getRequest(Request request, Response response) {
 		// Handle GET calls here
 		findUser(request, response);
 	}
@@ -35,7 +35,7 @@ public class UserRestlet extends AbstractBaseRestlet {
 	 * @param response
 	 */
 	@Override
-	protected void putRequest(Request request, Response response) {
+	public void putRequest(Request request, Response response) {
 		// Handle PUT calls here
 		updateUser(request, response);
 	}
@@ -47,7 +47,7 @@ public class UserRestlet extends AbstractBaseRestlet {
 	 * @param response
 	 */
 	@Override
-	protected void deleteRequest(Request request, Response response) {
+	public void deleteRequest(Request request, Response response) {
 		// Handle DELETE calls here
 		deleteUser(request, response);
 	}

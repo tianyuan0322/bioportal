@@ -21,6 +21,9 @@
 		<property name="xmlSerializationService">
 			<ref bean="xmlSerializationService" />
 		</property>
+		<property name="usageLoggingService">
+			<ref bean="usageLoggingService" />
+		</property>
 	</bean>
 
 	<bean id="authenticationRestlet"
@@ -315,6 +318,13 @@
 		</property>
 	</bean>
 
+	<bean id="usageLoggingRestlet"
+		class="org.ncbo.stanford.view.rest.restlet.logging.UsageLoggingRestlet"
+		parent="abstractBaseRestlet">
+		<property name="usageLoggingService">
+			<ref bean="usageLoggingService" />
+		</property>
+	</bean>
 	<!-- All mappings: -->
 	<bean id="restManager"
 		class="org.ncbo.stanford.view.rest.base.RestManager">
@@ -459,6 +469,9 @@
 						</entry>
 						<entry key="/obopull">
 							<ref local="oboCVSPullRestlet" />
+						</entry>
+						<entry key="/usage">
+							<ref local="usageLoggingRestlet" />
 						</entry>
 					</map>
 				</constructor-arg>

@@ -33,8 +33,9 @@ public interface ApplicationConstants {
 	 * Search Record Types
 	 */
 	public static final String SEARCH_RECORD_TYPE_PREFERRED_NAME = "apreferredname";
-	public static final String SEARCH_RECORD_TYPE_SYNONYM = "bsynonym";
-	public static final String SEARCH_RECORD_TYPE_PROPERTY = "cproperty";
+	public static final String SEARCH_RECORD_TYPE_CONCEPT_ID = "bconceptid";
+	public static final String SEARCH_RECORD_TYPE_SYNONYM = "csynonym";
+	public static final String SEARCH_RECORD_TYPE_PROPERTY = "dproperty";
 
 	/**
 	 * Ontology version status

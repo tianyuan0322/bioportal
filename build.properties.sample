@@ -33,6 +33,9 @@ bioportal.xslt.path=${bioportal.static.resource.path}/xslt
 # Metadata includes path
 bioportal.metadata.includes.path=${bioportal.static.resource.path}/metadata
 
+# OBO Repositories config path
+obo.repositories.config.filepath=${bioportal.static.resource.path}/config/obo_repository.xml
+
 # Session properties
 #
 # Total timeout = .session.timeout * .session.numcontainers
@@ -64,18 +67,6 @@ bioportal.paginatable.cache.numcontainers=5
 # OBS Rest Base URL
 obs.rest.base.url=http://ncbo-obs-dev1:8080/obs_hibernate
 
-# OBO Sourceforge CVS properties
-obo.sourceforge.cvs.username=anonymous
-obo.sourceforge.cvs.password=
-obo.sourceforge.cvs.hostname=obo.cvs.sourceforge.net
-obo.sourceforge.cvs.module=obo
-obo.sourceforge.cvs.rootdirectory=/cvsroot/obo
-obo.sourceforge.cvs.argumentstring=
-# Checkout dir on the local server
-obo.sourceforge.cvs.checkoutdir=${bioportal.resource.path}/cvscheckout
-# Ontologies metadata descriptor file
-obo.sourceforge.cvs.descriptor.file=${obo.sourceforge.cvs.checkoutdir}/obo/website/cgi-bin/ontologies.txt
-
 # OBO Pull Scheduler properties
 # Enable/Disable scheduler service flag
 obo.pull.scheduler.enabled=false
@@ -102,13 +93,17 @@ bioportal.app.maxlogbackupindex=15
 # SMTP Server
 bioportal.smtp.server=yoursmtpserver
 
-# Data Source properties
+# Data Source properties (for Prod only)
 bioportal.datasource.name=jdbc/BioPortalDataSource
 bioportal.datasource=java:comp/env/${bioportal.datasource.name}
+bioportal.datasource.removeabandoned=true
+bioportal.datasource.removeabandonedtimeout=60
+bioportal.datasource.logabandoned=true
 
 # JDBC connection that should only be used during local 
 # development. Local development can also be done using a 
 # datasource simply by configuring a Tomcat datasource.
+# (for Dev only)
 bioportal.jdbc.url=jdbc:mysql://localhost:3306/bioportal
 bioportal.jdbc.driver=com.mysql.jdbc.Driver
 bioportal.jdbc.username=yourbioportaldbuser
@@ -248,7 +243,7 @@ lexgrid.iterator.idle.time=5
 # NOTE: This does not affect the total number of results
 # that can be returned by an iterator, just the size that
 # can be returned per 'next' call.
-lexgrid.max.result.size=1000
+lexgrid.max.result.size=10000
 #
 # When lexgrid.single.db.mode is set to false, a new database will 
 # be created for each loaded terminology.  When 

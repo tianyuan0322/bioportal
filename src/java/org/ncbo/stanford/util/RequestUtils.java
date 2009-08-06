@@ -7,9 +7,11 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLEncoder;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.StringTokenizer;
 
 import javax.servlet.ServletOutputStream;
@@ -17,12 +19,16 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.ncbo.stanford.bean.http.HttpInputStreamWrapper;
+import org.ncbo.stanford.util.helper.DateHelper;
 import org.ncbo.stanford.util.helper.StringHelper;
 import org.ncbo.stanford.view.util.constants.RequestParamConstants;
+import org.restlet.data.CharacterSet;
 import org.restlet.data.MediaType;
 import org.restlet.data.Request;
 import org.restlet.data.Response;
 import org.restlet.data.Status;
+import org.restlet.resource.Representation;
+import org.restlet.resource.StringRepresentation;
 
 import com.noelios.restlet.ext.servlet.ServletCall;
 import com.noelios.restlet.http.HttpCall;
@@ -36,6 +42,9 @@ import com.noelios.restlet.http.HttpResponse;
  * 
  */
 public class RequestUtils {
+
+	public static final String PARAM_SEPARATOR = "&";
+	private static final String RESTLET_RESERVED_ATTRIBUTE_PREFIX = "org.restlet";
 
 	/**
 	 * Sends a redirect call to a specified URL
@@ -79,6 +88,18 @@ public class RequestUtils {
 	}
 
 	/**
+	 * Determines whether the request contains at least one parameter
+	 * 
+	 * @param request
+	 * @return boolean
+	 * @throws
+	 */
+	@SuppressWarnings("unchecked")
+	public static boolean isEmptyRequest(HttpServletRequest request) {
+		return request.getParameterNames().hasMoreElements();
+	}
+
+	/**
 	 * Parses a query string and puts parameters in the HashMap of <Key, Value>
 	 * pairs
 	 * 
@@ -87,7 +108,8 @@ public class RequestUtils {
 	 */
 	public static HashMap<String, String> parseQueryString(String queryString) {
 		HashMap<String, String> parsed = new HashMap<String, String>(1);
-		StringTokenizer stAmpersand = new StringTokenizer(queryString, "&");
+		StringTokenizer stAmpersand = new StringTokenizer(queryString,
+				PARAM_SEPARATOR);
 
 		while (stAmpersand.hasMoreTokens()) {
 			String anItem = stAmpersand.nextToken();
@@ -188,7 +210,16 @@ public class RequestUtils {
 	public static void setHttpServletResponse(Response response,
 			Status statusCode, MediaType mediaType, String content) {
 		response.setStatus(statusCode);
-		response.setEntity(content, mediaType);
+		
+		Representation r = new StringRepresentation(content, mediaType);	
+		HttpServletResponse servletResponse = getHttpServletResponse(response);
+		String charEncoding = servletResponse.getCharacterEncoding();
+		
+		if (charEncoding != null) {
+			r.setCharacterSet(new CharacterSet(charEncoding));
+		}
+		
+		response.setEntity(r);
 	}
 
 	/**
@@ -247,6 +278,10 @@ public class RequestUtils {
 		return val;
 	}
 
+	public static Date parseDateParam(String dateVal) {
+		return DateHelper.getDateFrom(StringHelper.removeSpaces(dateVal));
+	}
+
 	public static List<Integer> parseIntegerListParam(String integerListParam) {
 		List<Integer> integerList = new ArrayList<Integer>(0);
 
@@ -286,7 +321,7 @@ public class RequestUtils {
 		
 		return integerList;
 	}
-	
+
 	/**
 	 * Executes an HTTP post
 	 * 
@@ -310,7 +345,7 @@ public class RequestUtils {
 			for (String key : postParams.keySet()) {
 				postData += URLEncoder.encode(key, encoding) + "="
 						+ URLEncoder.encode(postParams.get(key), encoding)
-						+ "&";
+						+ PARAM_SEPARATOR;
 			}
 
 			postData = (postData.length() > 0) ? postData.substring(0, postData
@@ -360,7 +395,8 @@ public class RequestUtils {
 		if (getParams != null) {
 			for (String key : getParams.keySet()) {
 				getData += URLEncoder.encode(key, encoding) + "="
-						+ URLEncoder.encode(getParams.get(key), encoding) + "&";
+						+ URLEncoder.encode(getParams.get(key), encoding)
+						+ PARAM_SEPARATOR;
 			}
 
 			getData = (getData.length() > 0) ? getData.substring(0, getData
@@ -388,5 +424,57 @@ public class RequestUtils {
 		int statusCode = conn.getResponseCode();
 
 		return new HttpInputStreamWrapper(statusCode, is);
+	}
+
+	public static String getResourceAttributesAsString(Request request) {
+		Map<String, Object> attr = request.getAttributes();
+		StringBuffer sb = null;
+		String attrStr = null;
+
+		if (!attr.isEmpty()) {
+			sb = new StringBuffer();
+
+			for (String key : attr.keySet()) {
+				if (!key.contains(RESTLET_RESERVED_ATTRIBUTE_PREFIX)) {
+					sb.append(key);
+					sb.append("=");
+					sb.append(attr.get(key));
+					sb.append(PARAM_SEPARATOR);
+				}
+			}
+
+			if (sb.length() > 0) {
+				attrStr = sb.toString();
+				attrStr = attrStr.substring(0, attrStr.length() - 1);
+			}
+		}
+
+		return attrStr;
+	}
+
+	@SuppressWarnings("unchecked")
+	public static String getRequestParametersAsString(
+			HttpServletRequest httpServletRequest) {
+		Map params = httpServletRequest.getParameterMap();
+		StringBuffer sb = null;
+		String attrStr = null;
+
+		if (!params.isEmpty()) {
+			sb = new StringBuffer();
+
+			for (Object key : params.keySet()) {
+				sb.append(key);
+				sb.append("=");
+				sb.append(httpServletRequest.getParameter((String) key));
+				sb.append(PARAM_SEPARATOR);
+			}
+
+			if (sb.length() > 0) {
+				attrStr = sb.toString();
+				attrStr = attrStr.substring(0, attrStr.length() - 1);
+			}
+		}
+
+		return attrStr;
 	}
 }

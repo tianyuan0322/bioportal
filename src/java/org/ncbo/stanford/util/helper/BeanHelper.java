@@ -1,6 +1,7 @@
 package org.ncbo.stanford.util.helper;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
@@ -9,8 +10,10 @@ import org.apache.commons.fileupload.FileItem;
 import org.ncbo.stanford.bean.OntologyBean;
 import org.ncbo.stanford.bean.OntologyViewBean;
 import org.ncbo.stanford.bean.UserBean;
+import org.ncbo.stanford.bean.logging.UsageLoggingBean;
 import org.ncbo.stanford.util.MessageUtils;
 import org.ncbo.stanford.util.RequestUtils;
+import org.ncbo.stanford.view.util.constants.RequestParamConstants;
 import org.restlet.data.Request;
 
 public class BeanHelper {
@@ -298,7 +301,6 @@ public class BeanHelper {
 		}
 	}
 
-
 	/**
 	 * Takes an OntologyViewBean object and populates it from Request object.
 	 * 
@@ -354,5 +356,93 @@ public class BeanHelper {
 		if (!StringHelper.isNullOrNullString(viewGenerationEngine)) {
 			bean.setViewGenerationEngine(viewGenerationEngine);
 		}
+	}
+
+	/**
+	 * Creates UsageLoggingBean object and populates from Request object. This
+	 * method is used when populating for data recording purposes. source:
+	 * request, destination: usageLoggingBean
+	 * 
+	 * @param Request
+	 */
+	public static UsageLoggingBean populateUsageLoggingBeanFromRequestForLogging(
+			Request request) {
+		UsageLoggingBean usageLoggingBean = new UsageLoggingBean();
+		HttpServletRequest httpServletRequest = RequestUtils
+				.getHttpServletRequest(request);
+
+		String applicationId = RequestUtils.getApplicationId(request);
+		String resourceParameters = RequestUtils
+				.getResourceAttributesAsString(request);
+		String requestParameters = RequestUtils
+				.getRequestParametersAsString(httpServletRequest);
+
+		if (applicationId != null) {
+			usageLoggingBean.setApplicationId(applicationId);
+		}
+
+		usageLoggingBean.setRequestUrl(httpServletRequest.getPathInfo());
+		usageLoggingBean.setHttpMethod(httpServletRequest.getMethod());
+
+		if (resourceParameters != null) {
+			usageLoggingBean.setResourceParameters(resourceParameters);
+		}
+
+		if (requestParameters != null) {
+			usageLoggingBean.setRequestParameters(requestParameters);
+		}
+
+		usageLoggingBean.setDateAccessed(DateHelper.getTodaysDate());
+
+		return usageLoggingBean;
+	}
+
+	/**
+	 * Creates UsageLoggingBean object and populates from Request object. This
+	 * method is used when populating for logging data extraction. source:
+	 * request, destination: usageLoggingBean
+	 * 
+	 * @param Request
+	 */
+	public static UsageLoggingBean populateUsageLoggingBeanFromRequestForDataExtraction(
+			Request request) {
+		UsageLoggingBean usageLoggingBean = new UsageLoggingBean();
+		HttpServletRequest httpServletRequest = RequestUtils
+				.getHttpServletRequest(request);
+
+		String applicationId = RequestUtils.getApplicationId(request);
+		String requestUrl = (String) httpServletRequest
+				.getParameter(RequestParamConstants.PARAM_REQUEST_URL);
+		String resourceParameters = (String) httpServletRequest
+				.getParameter(RequestParamConstants.PARAM_RESOURCE_PARAMETERS);
+		String startDateAccessed = (String) httpServletRequest
+				.getParameter(RequestParamConstants.PARAM_START_DATE_ACCESSED);
+		String endDateAccessed = (String) httpServletRequest
+				.getParameter(RequestParamConstants.PARAM_END_DATE_ACCESSED);
+
+		Date startDate = RequestUtils.parseDateParam(startDateAccessed);
+		Date endDate = RequestUtils.parseDateParam(endDateAccessed);
+
+		if (applicationId != null) {
+			usageLoggingBean.setApplicationId(applicationId);
+		}
+
+		if (requestUrl != null) {
+			usageLoggingBean.setRequestUrl(requestUrl);
+		}
+
+		if (resourceParameters != null) {
+			usageLoggingBean.setResourceParameters(resourceParameters);
+		}
+
+		if (startDate != null) {
+			usageLoggingBean.setStartDateAccessed(startDate);
+		}
+
+		if (endDate != null) {
+			usageLoggingBean.setEndDateAccessed(endDate);
+		}
+
+		return usageLoggingBean;
 	}
 }

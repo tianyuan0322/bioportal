@@ -25,7 +25,7 @@ public class OntologyViewsRestlet extends AbstractBaseRestlet {
 	 * Handle GET calls here
 	 */
 	@Override
-	protected void getRequest(Request request, Response response) {
+	public void getRequest(Request request, Response response) {
 		listOntologyViews(request, response);
 	}
 
@@ -36,7 +36,7 @@ public class OntologyViewsRestlet extends AbstractBaseRestlet {
 	 * @param response
 	 */
 	@Override
-	protected void postRequest(Request request, Response response) {
+	public void postRequest(Request request, Response response) {
 		createOntologyView(request, response);
 	}
 

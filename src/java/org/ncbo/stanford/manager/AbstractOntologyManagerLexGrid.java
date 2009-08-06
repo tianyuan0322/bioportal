@@ -28,7 +28,7 @@ public abstract class AbstractOntologyManagerLexGrid {
 
 	protected CodingSchemeRendering getCodingSchemeRendering(LexBIGService lbs,
 			String urnAndVersion) throws Exception {
-		if (urnAndVersion == null) {
+		if (StringUtils.isBlank(urnAndVersion)) {
 			return null;
 		}
 
@@ -61,7 +61,7 @@ public abstract class AbstractOntologyManagerLexGrid {
 
 	protected CodingScheme getCodingScheme(LexBIGService lbs, String urn,
 			String version) throws Exception {
-		if (StringUtils.isEmpty(urn)) {
+		if (StringUtils.isBlank(urn)) {
 			return null;
 		}
 
@@ -150,7 +150,7 @@ public abstract class AbstractOntologyManagerLexGrid {
 	 *         urn information and the second element holding the version
 	 */
 	protected String[] splitUrnAndVersion(String urnAndVersion) {
-		if (StringUtils.isEmpty(urnAndVersion)) {
+		if (StringUtils.isBlank(urnAndVersion)) {
 			return null;
 		}
 

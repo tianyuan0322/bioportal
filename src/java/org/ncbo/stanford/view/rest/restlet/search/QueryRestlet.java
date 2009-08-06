@@ -25,7 +25,6 @@ import org.restlet.data.Status;
  */
 public class QueryRestlet extends AbstractBaseRestlet {
 
-	private static final String QUERY_PARAM = "query";
 	private static final Log log = LogFactory.getLog(QueryRestlet.class);
 	private QuerySearchService queryService;
 
@@ -33,7 +32,7 @@ public class QueryRestlet extends AbstractBaseRestlet {
 	 * Handle GET calls here
 	 */
 	@Override
-	protected void getRequest(Request request, Response response) {
+	public void getRequest(Request request, Response response) {
 		executeSearch(request, response);
 	}
 
@@ -60,7 +59,7 @@ public class QueryRestlet extends AbstractBaseRestlet {
 				.getParameter(RequestParamConstants.PARAM_MAXNUMHITS);
 
 		String query = Reference.decode((String) request.getAttributes().get(
-				QUERY_PARAM));
+				RequestParamConstants.PARAM_QUERY));
 		List<Integer> ontologyIdsInt = RequestUtils
 				.parseIntegerListParam(ontologyIds);
 		boolean includePropertiesBool = RequestUtils

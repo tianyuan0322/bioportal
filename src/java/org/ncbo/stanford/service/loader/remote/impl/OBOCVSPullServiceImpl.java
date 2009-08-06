@@ -2,6 +2,7 @@ package org.ncbo.stanford.service.loader.remote.impl;
 
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
@@ -10,11 +11,14 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.xml.parsers.DocumentBuilderFactory;
+
 import org.apache.commons.collections.ListUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.ncbo.stanford.bean.ContactTypeBean;
 import org.ncbo.stanford.bean.MetadataFileBean;
+import org.ncbo.stanford.bean.OBORepositoryInfoHolder;
 import org.ncbo.stanford.bean.OntologyBean;
 import org.ncbo.stanford.bean.UserBean;
 import org.ncbo.stanford.exception.InvalidDataException;
@@ -27,12 +31,17 @@ import org.ncbo.stanford.util.constants.ApplicationConstants;
 import org.ncbo.stanford.util.cvs.CVSFile;
 import org.ncbo.stanford.util.cvs.CVSUtils;
 import org.ncbo.stanford.util.helper.StringHelper;
+import org.ncbo.stanford.util.helper.reflection.ReflectionHelper;
 import org.ncbo.stanford.util.ontologyfile.OntologyDescriptorParser;
 import org.ncbo.stanford.util.ontologyfile.compressedfilehandler.impl.CompressedFileHandlerFactory;
 import org.ncbo.stanford.util.ontologyfile.pathhandler.FilePathHandler;
 import org.ncbo.stanford.util.ontologyfile.pathhandler.impl.PhysicalDirectoryFilePathHandlerImpl;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
 
 /**
  * A utility that runs as a scheduled process, connecting to OBO Sourceforge CVS
@@ -50,20 +59,13 @@ public class OBOCVSPullServiceImpl implements OBOCVSPullService {
 	private static final String CELLULAR_COMPONENT_OBO_FOUNDRY_ID = "cellular_component";
 	private static final String MOLECULAR_FUNCTION_OBO_FOUNDRY_ID = "molecular_function";
 
-	private String oboSourceforgeCVSUsername;
-	private String oboSourceforgeCVSPassword;
-	private String oboSourceforgeCVSHostname;
-	private String oboSourceforgeCVSModule;
-	private String oboSourceforgeCVSRootDirectory;
-	private String oboSourceforgeCVSArgumentString;
-	private String oboSourceforgeCVSCheckoutDir;
-	private String oboSourceforgeCVSDescriptorFile;
 	private OntologyService ontologyService;
 	private UserService userService;
 	private Map<String, String> ontologyFormatToOBOFoundryMap = new HashMap<String, String>();
 	private Map<String, String> ontologyVersionStatusToOBOFoundryMap = new HashMap<String, String>();
 	private Map<String, Byte> ontologyFoundryToOBOFoundryMap = new HashMap<String, Byte>();
 	private String tempDir;
+	private String oboRepositoriesConfigFilepath;
 
 	/**
 	 * Used to the identify the action to be performed on an ontology
@@ -77,88 +79,95 @@ public class OBOCVSPullServiceImpl implements OBOCVSPullService {
 	 */
 	@Transactional(propagation = Propagation.NEVER)
 	public void doCVSPull() {
-		CVSUtils cvsUtils = new CVSUtils(oboSourceforgeCVSUsername,
-				oboSourceforgeCVSPassword, oboSourceforgeCVSHostname,
-				oboSourceforgeCVSModule, oboSourceforgeCVSRootDirectory,
-				oboSourceforgeCVSArgumentString, oboSourceforgeCVSCheckoutDir,
-				tempDir);
-
 		try {
-			cvsUtils.cvsCheckout();
-			HashMap<String, CVSFile> updateFiles = cvsUtils.getAllCVSEntries();
-			OntologyDescriptorParser odp = new OntologyDescriptorParser(
-					oboSourceforgeCVSDescriptorFile);
-			List<MetadataFileBean> ontologyList = odp.parseOntologyFile();
+			List<OBORepositoryInfoHolder> repos = parseRepositoryConfigFile();
 
-			for (MetadataFileBean mfb : ontologyList) {
-				try {
-					String format = getFormat(mfb.getFormat());
+			for (OBORepositoryInfoHolder repo : repos) {
+				CVSUtils cvsUtils = new CVSUtils(repo.getUsername(), repo
+						.getPassword(), repo.getHostname(), repo.getModule(),
+						repo.getRootdirectory(), repo.getArgumentstring(), repo
+								.getCheckoutdir(), tempDir);
 
-					if (format.equals(ApplicationConstants.FORMAT_INVALID)) {
-						throw new InvalidOntologyFormatException(
-								"The ontology format, [" + mfb.getFormat()
-										+ "] for ontology [" + mfb.getId()
-										+ "] is invalid");
-					}
-
-					CVSFile cf = null;
-					String filename = OntologyDescriptorParser.getFileName(mfb
-							.getDownload());
-					boolean isEmptyFilename = StringHelper
-							.isNullOrNullString(filename);
-
-					if (!isEmptyFilename) {
-						cf = (CVSFile) updateFiles.get(filename);
-					}
-
-					OntologyAction ontologyAction = determineOntologyAction(
-							mfb, cf);
-					ActionEnum action = ontologyAction.getAction();
-					log.debug("Action: " + ontologyAction);
-
-					OntologyBean ont = ontologyAction.getOntotlogyBean();
-
-					switch (action) {
-					case CREATE_LOCAL_ACTION:
-						if (isEmptyFilename) {
-							throw new InvalidDataException(
-									"No filename is specified in the metadata descriptor file for ontology ["
-											+ mfb.getId() + "]");
-						}
-
-						if (cf == null) {
-							throw new FileNotFoundException(
-									"An entry exists in the metadata descriptor for ["
-											+ mfb.getId()
-											+ "] ontology but the file ["
-											+ filename + "] is missing");
-						}
-
-						FilePathHandler filePathHandler = new PhysicalDirectoryFilePathHandlerImpl(
-								CompressedFileHandlerFactory
-										.createFileHandler(format),
-								new File(oboSourceforgeCVSCheckoutDir + "/"
-										+ cf.getPath() + "/" + filename));
-						ontologyService.createOntology(ont, filePathHandler);
-						break;
-					case CREATE_REMOTE_ACTION:
-						ontologyService.createOntology(ont, null);
-						break;
-					case UPDATE_ACTION:
-						ontologyService.cleanupOntologyCategory(ont);
-						ontologyService.updateOntology(ont);
-						break;
-					}
-				} catch (Exception e) {
-					log.error(e);
-					e.printStackTrace();
-				}
+				cvsUtils.cvsCheckout();
+				HashMap<String, CVSFile> updateFiles = cvsUtils
+						.getAllCVSEntries();
+				processRecords(repo, updateFiles);
 			}
 
 			log.debug("**** OBO Pull completed successfully *****");
 		} catch (Exception e) {
 			log.error(e);
 			e.printStackTrace();
+		}
+	}
+
+	private void processRecords(OBORepositoryInfoHolder repo,
+			HashMap<String, CVSFile> updateFiles) throws IOException {
+		OntologyDescriptorParser odp = new OntologyDescriptorParser(repo
+				.getDescriptorlocation());
+		List<MetadataFileBean> ontologyList = odp.parseOntologyFile();
+
+		for (MetadataFileBean mfb : ontologyList) {
+			try {
+				String format = getFormat(mfb.getFormat());
+
+				if (format.equals(ApplicationConstants.FORMAT_INVALID)) {
+					throw new InvalidOntologyFormatException(
+							"The ontology format, [" + mfb.getFormat()
+									+ "] for ontology [" + mfb.getId()
+									+ "] is invalid");
+				}
+
+				CVSFile cf = null;
+				String filename = OntologyDescriptorParser.getFileName(mfb
+						.getDownload());
+				boolean isEmptyFilename = StringHelper
+						.isNullOrNullString(filename);
+
+				if (!isEmptyFilename) {
+					cf = (CVSFile) updateFiles.get(filename);
+				}
+
+				OntologyAction ontologyAction = determineOntologyAction(mfb,
+						cf, repo.getHostname());
+				ActionEnum action = ontologyAction.getAction();
+				OntologyBean ont = ontologyAction.getOntotlogyBean();
+
+				switch (action) {
+				case CREATE_LOCAL_ACTION:
+					if (isEmptyFilename) {
+						throw new InvalidDataException(
+								"No filename is specified in the metadata descriptor file for ontology ["
+										+ mfb.getId() + "]");
+					}
+
+					if (cf == null) {
+						throw new FileNotFoundException(
+								"An entry exists in the metadata descriptor for ["
+										+ mfb.getId()
+										+ "] ontology but the file ["
+										+ filename + "] is missing");
+					}
+
+					FilePathHandler filePathHandler = new PhysicalDirectoryFilePathHandlerImpl(
+							CompressedFileHandlerFactory
+									.createFileHandler(format), new File(repo
+									.getCheckoutdir()
+									+ "/" + cf.getPath() + "/" + filename));
+					ontologyService.createOntology(ont, filePathHandler);
+					break;
+				case CREATE_REMOTE_ACTION:
+					ontologyService.createOntology(ont, null);
+					break;
+				case UPDATE_ACTION:
+					ontologyService.cleanupOntologyCategory(ont);
+					ontologyService.updateOntology(ont);
+					break;
+				}
+			} catch (Exception e) {
+				log.error(e);
+				e.printStackTrace();
+			}
 		}
 	}
 
@@ -171,7 +180,7 @@ public class OBOCVSPullServiceImpl implements OBOCVSPullService {
 	 * @throws InvalidDataException
 	 */
 	private OntologyAction determineOntologyAction(MetadataFileBean mfb,
-			CVSFile cf) throws InvalidDataException {
+			CVSFile cf, String cvsHostname) throws InvalidDataException {
 		ActionEnum action = ActionEnum.NO_ACTION;
 		String oboFoundryId = mfb.getId();
 
@@ -179,7 +188,7 @@ public class OBOCVSPullServiceImpl implements OBOCVSPullService {
 				.findLatestOntologyVersionByOboFoundryId(oboFoundryId);
 		String downloadUrl = mfb.getDownload();
 		List<Integer> newCategoryIds = findCategoryIdsByOBONames(downloadUrl);
-		byte isRemote = isRemote(downloadUrl);
+		byte isRemote = isRemote(downloadUrl, cvsHostname);
 
 		// is any action required?
 		// ____a. this is not cellular_component or molecular_function ontology
@@ -352,11 +361,11 @@ public class OBOCVSPullServiceImpl implements OBOCVSPullService {
 	 * @param downloadUrl
 	 * @return
 	 */
-	private byte isRemote(String downloadUrl) {
+	private byte isRemote(String downloadUrl, String cvsHostname) {
 		byte isRemote = ApplicationConstants.TRUE;
 
 		if (!StringHelper.isNullOrNullString(downloadUrl)
-				&& downloadUrl.indexOf(getOboSourceforgeCVSHostname()) > -1) {
+				&& downloadUrl.indexOf(cvsHostname) > -1) {
 			isRemote = ApplicationConstants.FALSE;
 		}
 
@@ -464,119 +473,36 @@ public class OBOCVSPullServiceImpl implements OBOCVSPullService {
 		}
 	}
 
-	/**
-	 * @return the oboSourceforgeCVSUsername
-	 */
-	public String getOboSourceforgeCVSUsername() {
-		return oboSourceforgeCVSUsername;
-	}
+	private List<OBORepositoryInfoHolder> parseRepositoryConfigFile()
+			throws Exception {
+		List<OBORepositoryInfoHolder> repositories = new ArrayList<OBORepositoryInfoHolder>(
+				0);
+		Document doc = DocumentBuilderFactory.newInstance()
+				.newDocumentBuilder().parse(oboRepositoriesConfigFilepath);
+		Element root = doc.getDocumentElement();
 
-	/**
-	 * @param oboSourceforgeCVSUsername
-	 *            the oboSourceforgeCVSUsername to set
-	 */
-	public void setOboSourceforgeCVSUsername(String oboSourceforgeCVSUsername) {
-		this.oboSourceforgeCVSUsername = oboSourceforgeCVSUsername;
-	}
+		for (Node child = root.getFirstChild(); child != null; child = child
+				.getNextSibling()) {
+			if (child.getNodeType() == Node.ELEMENT_NODE) {
+				NodeList repoInfo = child.getChildNodes();
+				OBORepositoryInfoHolder infoHolder = new OBORepositoryInfoHolder();
 
-	/**
-	 * @return the oboSourceforgeCVSPassword
-	 */
-	public String getOboSourceforgeCVSPassword() {
-		return oboSourceforgeCVSPassword;
-	}
+				for (int i = 0; i < repoInfo.getLength(); i++) {
+					Node node = repoInfo.item(i);
 
-	/**
-	 * @param oboSourceforgeCVSPassword
-	 *            the oboSourceforgeCVSPassword to set
-	 */
-	public void setOboSourceforgeCVSPassword(String oboSourceforgeCVSPassword) {
-		this.oboSourceforgeCVSPassword = oboSourceforgeCVSPassword;
-	}
+					if (node.getNodeType() == Node.ELEMENT_NODE) {
+						// convert label to property and set
+						// its value using Reflection
+						ReflectionHelper.setProperty(infoHolder, node
+								.getNodeName(), node.getTextContent().trim());
+					}
+				}
 
-	/**
-	 * @return the oboSourceforgeCVSHostname
-	 */
-	public String getOboSourceforgeCVSHostname() {
-		return oboSourceforgeCVSHostname;
-	}
+				repositories.add(infoHolder);
+			}
+		}
 
-	/**
-	 * @param oboSourceforgeCVSHostname
-	 *            the oboSourceforgeCVSHostname to set
-	 */
-	public void setOboSourceforgeCVSHostname(String oboSourceforgeCVSHostname) {
-		this.oboSourceforgeCVSHostname = oboSourceforgeCVSHostname;
-	}
-
-	/**
-	 * @return the oboSourceforgeCVSModule
-	 */
-	public String getOboSourceforgeCVSModule() {
-		return oboSourceforgeCVSModule;
-	}
-
-	/**
-	 * @param oboSourceforgeCVSModule
-	 *            the oboSourceforgeCVSModule to set
-	 */
-	public void setOboSourceforgeCVSModule(String oboSourceforgeCVSModule) {
-		this.oboSourceforgeCVSModule = oboSourceforgeCVSModule;
-	}
-
-	/**
-	 * @return the oboSourceforgeCVSRootDirectory
-	 */
-	public String getOboSourceforgeCVSRootDirectory() {
-		return oboSourceforgeCVSRootDirectory;
-	}
-
-	/**
-	 * @param oboSourceforgeCVSRootDirectory
-	 *            the oboSourceforgeCVSRootDirectory to set
-	 */
-	public void setOboSourceforgeCVSRootDirectory(
-			String oboSourceforgeCVSRootDirectory) {
-		this.oboSourceforgeCVSRootDirectory = oboSourceforgeCVSRootDirectory;
-	}
-
-	/**
-	 * @return the oboSourceforgeCVSArgumentString
-	 */
-	public String getOboSourceforgeCVSArgumentString() {
-		return oboSourceforgeCVSArgumentString;
-	}
-
-	/**
-	 * @param oboSourceforgeCVSArgumentString
-	 *            the oboSourceforgeCVSArgumentString to set
-	 */
-	public void setOboSourceforgeCVSArgumentString(
-			String oboSourceforgeCVSArgumentString) {
-		this.oboSourceforgeCVSArgumentString = oboSourceforgeCVSArgumentString;
-	}
-
-	/**
-	 * @return the oboSourceforgeCVSCheckoutDir
-	 */
-	public String getOboSourceforgeCVSCheckoutDir() {
-		return oboSourceforgeCVSCheckoutDir;
-	}
-
-	/**
-	 * @param oboSourceforgeCVSCheckoutDir
-	 *            the oboSourceforgeCVSCheckoutDir to set
-	 */
-	public void setOboSourceforgeCVSCheckoutDir(
-			String oboSourceforgeCVSCheckoutDir) {
-		this.oboSourceforgeCVSCheckoutDir = oboSourceforgeCVSCheckoutDir;
-	}
-
-	/**
-	 * @return the tempDir
-	 */
-	public String getTempDir() {
-		return tempDir;
+		return repositories;
 	}
 
 	/**
@@ -585,29 +511,6 @@ public class OBOCVSPullServiceImpl implements OBOCVSPullService {
 	 */
 	public void setTempDir(String tempDir) {
 		this.tempDir = tempDir;
-	}
-
-	/**
-	 * @return the oboSourceforgeCVSDescriptorFile
-	 */
-	public String getOboSourceforgeCVSDescriptorFile() {
-		return oboSourceforgeCVSDescriptorFile;
-	}
-
-	/**
-	 * @param oboSourceforgeCVSDescriptorFile
-	 *            the oboSourceforgeCVSDescriptorFile to set
-	 */
-	public void setOboSourceforgeCVSDescriptorFile(
-			String oboSourceforgeCVSDescriptorFile) {
-		this.oboSourceforgeCVSDescriptorFile = oboSourceforgeCVSDescriptorFile;
-	}
-
-	/**
-	 * @return the ontologyFormatToOBOFoundryMap
-	 */
-	public Map<String, String> getOntologyFormatToOBOFoundryMap() {
-		return ontologyFormatToOBOFoundryMap;
 	}
 
 	/**
@@ -620,13 +523,6 @@ public class OBOCVSPullServiceImpl implements OBOCVSPullService {
 	}
 
 	/**
-	 * @return the ontologyService
-	 */
-	public OntologyService getOntologyService() {
-		return ontologyService;
-	}
-
-	/**
 	 * @param ontologyService
 	 *            the ontologyService to set
 	 */
@@ -635,25 +531,11 @@ public class OBOCVSPullServiceImpl implements OBOCVSPullService {
 	}
 
 	/**
-	 * @return the userService
-	 */
-	public UserService getUserService() {
-		return userService;
-	}
-
-	/**
 	 * @param userService
 	 *            the userService to set
 	 */
 	public void setUserService(UserService userService) {
 		this.userService = userService;
-	}
-
-	/**
-	 * @return the ontologyVersionStatusToOBOFoundryMap
-	 */
-	public Map<String, String> getOntologyVersionStatusToOBOFoundryMap() {
-		return ontologyVersionStatusToOBOFoundryMap;
 	}
 
 	/**
@@ -666,18 +548,20 @@ public class OBOCVSPullServiceImpl implements OBOCVSPullService {
 	}
 
 	/**
-	 * @return the ontologyFoundryToOBOFoundryMap
-	 */
-	public Map<String, Byte> getOntologyFoundryToOBOFoundryMap() {
-		return ontologyFoundryToOBOFoundryMap;
-	}
-
-	/**
 	 * @param ontologyFoundryToOBOFoundryMap
 	 *            the ontologyFoundryToOBOFoundryMap to set
 	 */
 	public void setOntologyFoundryToOBOFoundryMap(
 			Map<String, Byte> ontologyFoundryToOBOFoundryMap) {
 		this.ontologyFoundryToOBOFoundryMap = ontologyFoundryToOBOFoundryMap;
+	}
+
+	/**
+	 * @param oboRepositoriesConfigFilepath
+	 *            the oboRepositoriesConfigFilepath to set
+	 */
+	public void setOboRepositoriesConfigFilepath(
+			String oboRepositoriesConfigFilepath) {
+		this.oboRepositoriesConfigFilepath = oboRepositoriesConfigFilepath;
 	}
 }

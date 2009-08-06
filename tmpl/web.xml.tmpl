@@ -21,6 +21,12 @@
 		<param-value>classpath:log4j.xml</param-value>
 	</context-param>
 
+	<!-- Web app root -->
+	<context-param>
+		<param-name>webAppRootKey</param-name>
+		<param-value>/@appname@</param-value>
+	</context-param>
+
 	<!-- Restlet base application -->
 	<context-param>
 		<param-name>org.restlet.application</param-name>
@@ -59,40 +65,43 @@
 
 	<!-- All filters -->
 
-	<!-- UTF-8 Filter -->
+	<!-- Character Encoding Filter -->
 	<filter>
-		<filter-name>CharsetFilter</filter-name>
+		<filter-name>SetCharacterEncodingFilter</filter-name>
 		<filter-class>
-			org.ncbo.stanford.view.filter.CharsetFilter
+			org.ncbo.stanford.view.filter.SetCharacterEncodingFilter
 		</filter-class>
 		<init-param>
-			<param-name>requestEncoding</param-name>
+			<param-name>encoding</param-name>
 			<param-value>UTF-8</param-value>
+		</init-param>
+		<init-param>
+			<param-name>ignore</param-name>
+			<param-value>true</param-value>
 		</init-param>
 	</filter>
 
 	<filter-mapping>
-		<filter-name>CharsetFilter</filter-name>
+		<filter-name>SetCharacterEncodingFilter</filter-name>
 		<url-pattern>/*</url-pattern>
 	</filter-mapping>
-	
-	<!-- 
-	<filter>
+
+	<!-- 	
+		<filter>
 		<description>
-			Spring hibernate interceptor filter for lazy initialization
+		Spring hibernate interceptor filter for lazy initialization
 		</description>
 		<filter-name>applicationSessionFilter</filter-name>
 		<filter-class>
-			org.springframework.orm.hibernate3.support.OpenSessionInViewFilter
+		org.springframework.orm.hibernate3.support.OpenSessionInViewFilter		
 		</filter-class>
-	</filter>
-
-	<filter-mapping>
+		</filter>
+		
+		<filter-mapping>
 		<filter-name>applicationSessionFilter</filter-name>
 		<url-pattern>/*</url-pattern>
-	</filter-mapping>
- 	-->
-
+		</filter-mapping>
+	-->
 	<filter>
 		<description>
 			Spring hibernate interceptor filter for lazy initialization
@@ -161,7 +170,5 @@
 		<extension>ico</extension>
 		<mime-type>image/x-icon</mime-type>
 	</mime-mapping>
-
-
 
 </web-app>

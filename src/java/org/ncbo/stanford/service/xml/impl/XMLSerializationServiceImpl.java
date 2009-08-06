@@ -27,6 +27,7 @@ import org.ncbo.stanford.bean.concept.ClassBean;
 import org.ncbo.stanford.bean.concept.InstanceBean;
 import org.ncbo.stanford.bean.concept.PropertyBean;
 import org.ncbo.stanford.bean.http.HttpInputStreamWrapper;
+import org.ncbo.stanford.bean.logging.UsageLoggingBean;
 import org.ncbo.stanford.bean.response.AbstractResponseBean;
 import org.ncbo.stanford.bean.response.ErrorBean;
 import org.ncbo.stanford.bean.response.ErrorStatusBean;
@@ -469,6 +470,8 @@ public class XMLSerializationServiceImpl implements XMLSerializationService {
 				InstanceBean.class);
 		xmlSerializer.alias(MessageUtils.getMessage("entity.searchbean"),
 				SearchBean.class);
+		xmlSerializer.alias(MessageUtils.getMessage("entity.usageloggingbean"),
+				UsageLoggingBean.class);
 		xmlSerializer.alias(MessageUtils.getMessage("entity.page"), Page.class);
 		xmlSerializer.alias(MessageUtils.getMessage("entity.ontologyhitbean"),
 				OntologyHitBean.class);

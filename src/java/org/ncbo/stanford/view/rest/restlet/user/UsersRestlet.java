@@ -24,7 +24,7 @@ public class UsersRestlet extends AbstractBaseRestlet {
 	 * @param response
 	 */
 	@Override
-	protected void getRequest(Request request, Response response) {
+	public void getRequest(Request request, Response response) {
 		listUsers(request, response);
 	}
 
@@ -35,7 +35,7 @@ public class UsersRestlet extends AbstractBaseRestlet {
 	 * @param response
 	 */
 	@Override
-	protected void postRequest(Request request, Response response) {
+	public void postRequest(Request request, Response response) {
 		createUser(request, response);
 	}
 

@@ -28,7 +28,7 @@ public class OntologyRestlet extends AbstractBaseRestlet {
 	 * @param response
 	 */
 	@Override
-	protected void getRequest(Request request, Response response) {
+	public void getRequest(Request request, Response response) {
 		// Handle GET calls here
 		findOntology(request, response);
 	}
@@ -40,7 +40,7 @@ public class OntologyRestlet extends AbstractBaseRestlet {
 	 * @param response
 	 */
 	@Override
-	protected void putRequest(Request request, Response response) {
+	public void putRequest(Request request, Response response) {
 		// Handle PUT calls here
 		updateOntology(request, response);
 	}
@@ -52,7 +52,7 @@ public class OntologyRestlet extends AbstractBaseRestlet {
 	 * @param response
 	 */
 	@Override
-	protected void deleteRequest(Request request, Response response) {
+	public void deleteRequest(Request request, Response response) {
 		// Handle DELETE calls here
 		deleteOntologies(request, response);
 	}

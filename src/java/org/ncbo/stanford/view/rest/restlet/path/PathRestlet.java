@@ -24,7 +24,7 @@ public class PathRestlet extends AbstractBaseRestlet {
 	 * Handle GET calls here
 	 */
 	@Override
-	protected void getRequest(Request request, Response response) {
+	public void getRequest(Request request, Response response) {
 		findPathFromRoot(request, response);
 	}
 

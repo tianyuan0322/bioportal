@@ -1,16 +1,19 @@
 package org.ncbo.stanford.util.lucene;
 
-import java.io.IOException;
-import java.util.ArrayList;
+import java.util.Set;
+import java.util.TreeSet;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.index.IndexReader;
 import org.apache.lucene.index.Term;
-import org.apache.lucene.index.TermEnum;
+import org.apache.lucene.queryParser.ParseException;
+import org.apache.lucene.queryParser.QueryParser;
 import org.apache.lucene.search.BooleanClause;
 import org.apache.lucene.search.BooleanQuery;
 import org.apache.lucene.search.MultiPhraseQuery;
+import org.apache.lucene.search.Query;
 import org.apache.lucene.search.TermQuery;
 import org.apache.lucene.search.regex.SpanRegexQuery;
 import org.apache.lucene.search.spans.SpanFirstQuery;
@@ -30,16 +33,21 @@ public class PrefixQuery extends BooleanQuery {
 	 * 
 	 */
 	private static final long serialVersionUID = -6160362866197315524L;
+
 	private static final String SPACES_PATTERN = "\\s+";
 	@SuppressWarnings("unused")
 	private static final String SINGLE_LETTER_WORD_PATTERN = "^\\w$|\\s+\\w$";
 	private static final char WILDCARD_CHAR = '*';
+	private static final String WILDCARD_LEADING_TRAILING_PATTERN = "^\\"
+			+ WILDCARD_CHAR + "|\\" + WILDCARD_CHAR + "$";
 	private static final int EXACT_MATCH_BOOST = 10;
 
 	private IndexReader reader;
+	private Analyzer analyzer;
 
-	public PrefixQuery(IndexReader reader) {
+	public PrefixQuery(IndexReader reader, Analyzer analyzer) {
 		this.reader = reader;
+		this.analyzer = analyzer;
 	}
 
 	/**
@@ -53,7 +61,7 @@ public class PrefixQuery extends BooleanQuery {
 	 * @throws Exception
 	 */
 	public void parsePrefixQuery(String field, String expr) throws Exception {
-		expr = prepareExpression(expr);
+		expr = prepareExpression(expr, field);
 
 		if (expr.length() > 0) {
 			TermQuery tq = new TermQuery(new Term(field, expr));
@@ -85,8 +93,9 @@ public class PrefixQuery extends BooleanQuery {
 	 *            field to search on
 	 * @param expr
 	 */
-	public void parseStartsWithPrefixQuery(String field, String expr) {
-		expr = prepareExpression(expr);
+	public void parseStartsWithPrefixQuery(String field, String expr)
+			throws Exception {
+		expr = prepareExpression(expr, field);
 
 		if (expr.length() > 0) {
 			SpanRegexQuery srq = new SpanRegexQuery(new Term(field, expr));
@@ -95,48 +104,44 @@ public class PrefixQuery extends BooleanQuery {
 		}
 	}
 
-	public static boolean endsWithWildcard(String expr) {
-		int len = expr.length();
-
-		return (len > 0 && expr.lastIndexOf(WILDCARD_CHAR) == len - 1);
-	}
-
 	public static boolean isMultiWord(String expr) {
 		return expr.trim().split(SPACES_PATTERN).length > 1;
 	}
 
-	private Term[] expand(String field, String prefix) throws IOException {
-		ArrayList<Term> terms = new ArrayList<Term>(1);
-		terms.add(new Term(field, prefix));
-		TermEnum te = reader.terms(new Term(field, prefix));
+	private String prepareExpression(String expr, String field)
+			throws ParseException {
+		expr = expr.replaceAll(WILDCARD_LEADING_TRAILING_PATTERN, "");
 
-		while (te.next() && te.term().text().startsWith(prefix)) {
-			terms.add(te.term());
-		}
+		QueryParser parser = new QueryParser(field, analyzer);
+		Query query = parser.parse(expr);
 
-		te.close();
-
-		return (Term[]) terms.toArray(new Term[0]);
-	}
-
-	private String prepareExpression(String expr) {
-		expr = expr.trim().toLowerCase();
-
-		if (endsWithWildcard(expr)) {
-			expr = expr.substring(0, expr.length() - 1);
-		}
-
-		expr = expr.replaceAll(SPACES_PATTERN, " ");
+		expr = query.toString().replace(field + ":", "");
+		expr = expr.replace("\"", "");
+		expr = expr.toLowerCase();
+		expr = expr.replaceAll(":", " ");
 
 		// replace single-letter words with empty strings
-//		Pattern mask = Pattern.compile(SINGLE_LETTER_WORD_PATTERN);
-//		Matcher matcher = mask.matcher(expr);
-//		boolean found = matcher.find();
-//
-//		if (found) {
-//			expr = expr.replace(matcher.group(), "");
-//		}
+		// Pattern mask = Pattern.compile(SINGLE_LETTER_WORD_PATTERN);
+		// Matcher matcher = mask.matcher(expr);
+		// boolean found = matcher.find();
+		//
+		// if (found) {
+		// expr = expr.replace(matcher.group(), "");
+		// }
 
 		return expr;
+	}
+
+	private Term[] expand(String field, String prefix) throws Exception {
+		QueryParser parser = new QueryParser(field, analyzer);
+		Query queryExact = parser.parse(prefix + WILDCARD_CHAR);
+		Query queryRewritten = queryExact.rewrite(reader);
+
+		Set<Term> terms = new TreeSet<Term>();
+		terms.add(new Term(field, prefix));
+
+		queryRewritten.extractTerms(terms);
+
+		return (Term[]) terms.toArray(new Term[terms.size()]);
 	}
 }

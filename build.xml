@@ -87,7 +87,6 @@
 		<mkdir dir="${bioportal.diff.filepath}" />
 		<mkdir dir="${bioportal.search.indexpath}" />
 		<mkdir dir="${bioportal.search.indexbackuppath}" />
-		<mkdir dir="${obo.sourceforge.cvs.checkoutdir}" />
 		<mkdir dir="${lexgrid.index.location}" />
 		<mkdir dir="${lexgrid.registry.path}" />
 		<mkdir dir="${build.dir}" />
@@ -98,6 +97,7 @@
 
 		<copy file="${tmpl.dir}/web.xml.tmpl" tofile="${web.dir}/WEB-INF/web.xml" overwrite="true">
 			<filterset>
+				<filter token="appname" value="${app.name}" />
 				<filter token="maxfilesize" value="${bioportal.upload.maxfilesize}" />
 			</filterset>
 		</copy>
@@ -117,6 +117,9 @@
 		<copy file="${tmpl.dir}/context.xml.tmpl" tofile="${meta-inf.dir}/context.xml" overwrite="true">
 			<filterset>
 				<filter token="bioportaldatasourcename" value="${bioportal.datasource.name}" />
+				<filter token="bioportaldatasourceremoveabandoned" value="${bioportal.datasource.removeabandoned}" />
+				<filter token="bioportaldatasourceremoveabandonedtimeout" value="${bioportal.datasource.removeabandonedtimeout}" />
+				<filter token="bioportaldatasourcelogabandoned" value="${bioportal.datasource.logabandoned}" />
 				<filter token="bioportaljdbcdriver" value="${bioportal.jdbc.driver}" />
 				<filter token="bioportaljdbcurl" value="${bioportal.jdbc.url}" />
 				<filter token="bioportaljdbcusername" value="${bioportal.jdbc.username}" />
@@ -202,6 +205,7 @@
 				<filter token="obosourceforgecvscheckoutdir" value="${obo.sourceforge.cvs.checkoutdir}" />
 				<filter token="obosourceforgecvsdescriptorfile" value="${obo.sourceforge.cvs.descriptor.file}" />
 				<filter token="bioportaltempdir" value="${bioportal.tempdir}" />
+				<filter token="oborepositoriesconfigfilepath" value="${obo.repositories.config.filepath}" />
 			</filterset>
 		</copy>
 
@@ -235,6 +239,12 @@
 				<filter token="lexgridemailerrors" value="${lexgrid.email.errors}" />
 				<filter token="lexgridsmtpserver" value="${lexgrid.smtp.server}" />
 				<filter token="lexgridemailto" value="${lexgrid.email.to}" />
+			</filterset>
+		</copy>
+
+		<copy file="${tmpl.dir}/obo_repository.xml.tmpl" tofile="${resources.dir}/config/obo_repository.xml" overwrite="true">
+			<filterset>
+				<filter token="bioportalresourcepath" value="${bioportal.resource.path}" />
 			</filterset>
 		</copy>
 	</target>

@@ -37,6 +37,7 @@ public class OntologyDiffManagerLexGridImpl extends
 
 	public boolean diffExists(OntologyBean ontologyVersionOld,
 			OntologyBean ontologyVersionNew) throws Exception {
-		throw new UnsupportedOperationException();
+		// TODO Auto-generated method stub
+		return false;
 	}
 }

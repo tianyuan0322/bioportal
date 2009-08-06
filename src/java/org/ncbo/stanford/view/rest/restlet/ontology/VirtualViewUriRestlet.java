@@ -25,7 +25,7 @@ public class VirtualViewUriRestlet extends AbstractBaseRestlet {
 	 * @param response
 	 */
 	@Override
-	protected void getRequest(Request request, Response response) {
+	public void getRequest(Request request, Response response) {
 		// Handle GET calls here
 		getVirtualEntity(request, response);
 	}

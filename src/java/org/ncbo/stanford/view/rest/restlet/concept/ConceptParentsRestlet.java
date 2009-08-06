@@ -29,7 +29,7 @@ public class ConceptParentsRestlet extends AbstractBaseRestlet {
 	 * Handle GET calls here
 	 */
 	@Override
-	protected void getRequest(Request request, Response response) {
+	public void getRequest(Request request, Response response) {
 		findParents(request, response);
 	}
 
