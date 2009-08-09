@@ -33,7 +33,7 @@ public class ConceptServiceImpl implements ConceptService {
 
 	@SuppressWarnings("unused")
 	private static final Log log = LogFactory.getLog(ConceptServiceImpl.class);
-	
+
 	private static final String DUMMY_CONCEPT_ID = "0";
 	private static final Integer MAX_CHILD_COUNT = 100;
 
@@ -47,6 +47,7 @@ public class ConceptServiceImpl implements ConceptService {
 	/**
 	 * Get the root concept for the specified ontology.
 	 */
+	@SuppressWarnings("unchecked")
 	public ClassBean findRootConcept(Integer ontologyVersionId)
 			throws Exception {
 		VNcboOntology ontology = ncboOntologyVersionDAO
@@ -58,9 +59,19 @@ public class ConceptServiceImpl implements ConceptService {
 							+ " (Version Id: " + ontologyVersionId + ")");
 		}
 
-		return getRetrievalManager(ontology).findRootConcept(ontology);
+		ClassBean concept = getRetrievalManager(ontology).findRootConcept(
+				ontology);
+
+		// temporary fix to remove long list of siblings
+		removeExtraSiblings((ArrayList<ClassBean>) concept
+				.getRelation((Object) ApplicationConstants.SUB_CLASS), null,
+				(Integer) concept
+						.getRelation((Object) ApplicationConstants.CHILD_COUNT));
+
+		return concept;
 	}
 
+	@SuppressWarnings("unchecked")
 	public ClassBean findConcept(Integer ontologyVersionId, String conceptId)
 			throws Exception {
 		VNcboOntology ontology = ncboOntologyVersionDAO
@@ -72,7 +83,16 @@ public class ConceptServiceImpl implements ConceptService {
 							+ " (Version Id: " + ontologyVersionId + ")");
 		}
 
-		return getRetrievalManager(ontology).findConcept(ontology, conceptId);
+		ClassBean concept = getRetrievalManager(ontology).findConcept(ontology,
+				conceptId);
+
+		// temporary fix to remove long list of siblings
+		removeExtraSiblings((ArrayList<ClassBean>) concept
+				.getRelation((Object) ApplicationConstants.SUB_CLASS),
+				conceptId, (Integer) concept
+						.getRelation((Object) ApplicationConstants.CHILD_COUNT));
+
+		return concept;
 	}
 
 	@SuppressWarnings("unchecked")
@@ -92,17 +112,20 @@ public class ConceptServiceImpl implements ConceptService {
 
 		// temporary fix to remove long list of siblings
 		if (!light) {
-			removeExtraSiblings((ArrayList<ClassBean>) path
-					.getRelation((Object) ApplicationConstants.SUB_CLASS),
-					conceptId, 0);
+			removeExtraSiblings(
+					(ArrayList<ClassBean>) path
+							.getRelation((Object) ApplicationConstants.SUB_CLASS),
+					conceptId,
+					(Integer) path
+							.getRelation((Object) ApplicationConstants.CHILD_COUNT));
 		}
 
 		return path;
 	}
 
 	@SuppressWarnings("unchecked")
-	private void removeExtraSiblings(ArrayList<ClassBean> subClasses, String conceptId,
-			Integer parentChildCount) {
+	private void removeExtraSiblings(ArrayList<ClassBean> subClasses,
+			String conceptId, Integer parentChildCount) {
 		for (ClassBean subClass : subClasses) {
 			ArrayList<ClassBean> sub = (ArrayList<ClassBean>) subClass
 					.getRelation((Object) ApplicationConstants.SUB_CLASS);
