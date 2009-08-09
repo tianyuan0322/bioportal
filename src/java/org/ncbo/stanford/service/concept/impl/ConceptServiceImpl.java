@@ -3,8 +3,10 @@
  */
 package org.ncbo.stanford.service.concept.impl;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.ListIterator;
 import java.util.Map;
 
 import org.apache.commons.logging.Log;
@@ -18,6 +20,7 @@ import org.ncbo.stanford.exception.OntologyNotFoundException;
 import org.ncbo.stanford.manager.obs.OBSManager;
 import org.ncbo.stanford.manager.retrieval.OntologyRetrievalManager;
 import org.ncbo.stanford.service.concept.ConceptService;
+import org.ncbo.stanford.util.constants.ApplicationConstants;
 import org.springframework.transaction.annotation.Transactional;
 
 /**
@@ -30,6 +33,9 @@ public class ConceptServiceImpl implements ConceptService {
 
 	@SuppressWarnings("unused")
 	private static final Log log = LogFactory.getLog(ConceptServiceImpl.class);
+	
+	private static final String DUMMY_CONCEPT_ID = "0";
+	private static final Integer MAX_CHILD_COUNT = 100;
 
 	private CustomNcboOntologyVersionDAO ncboOntologyVersionDAO;
 	private Map<String, String> ontologyFormatHandlerMap = new HashMap<String, String>(
@@ -69,6 +75,7 @@ public class ConceptServiceImpl implements ConceptService {
 		return getRetrievalManager(ontology).findConcept(ontology, conceptId);
 	}
 
+	@SuppressWarnings("unchecked")
 	public ClassBean findPathFromRoot(Integer ontologyVersionId,
 			String conceptId, boolean light) throws Exception {
 		VNcboOntology ontology = ncboOntologyVersionDAO
@@ -80,8 +87,52 @@ public class ConceptServiceImpl implements ConceptService {
 							+ " (Version Id: " + ontologyVersionId + ")");
 		}
 
-		return getRetrievalManager(ontology).findPathFromRoot(ontology,
-				conceptId, light);
+		ClassBean path = getRetrievalManager(ontology).findPathFromRoot(
+				ontology, conceptId, light);
+
+		// temporary fix to remove long list of siblings
+		if (!light) {
+			removeExtraSiblings((ArrayList<ClassBean>) path
+					.getRelation((Object) ApplicationConstants.SUB_CLASS),
+					conceptId, 0);
+		}
+
+		return path;
+	}
+
+	@SuppressWarnings("unchecked")
+	private void removeExtraSiblings(ArrayList<ClassBean> subClasses, String conceptId,
+			Integer parentChildCount) {
+		for (ClassBean subClass : subClasses) {
+			ArrayList<ClassBean> sub = (ArrayList<ClassBean>) subClass
+					.getRelation((Object) ApplicationConstants.SUB_CLASS);
+
+			subClass.removeRelation((Object) "CHD");
+
+			if (sub != null) {
+				Integer childCount = (Integer) subClass
+						.getRelation((Object) ApplicationConstants.CHILD_COUNT);
+				removeExtraSiblings(sub, conceptId, childCount);
+			}
+		}
+
+		if (parentChildCount > MAX_CHILD_COUNT) {
+			ListIterator<ClassBean> listIterator = subClasses.listIterator();
+
+			while (listIterator.hasNext()) {
+				ClassBean next = listIterator.next();
+				ArrayList<ClassBean> sub = (ArrayList<ClassBean>) next
+						.getRelation((Object) ApplicationConstants.SUB_CLASS);
+
+				if (!next.getId().equalsIgnoreCase(conceptId) && sub == null) {
+					listIterator.remove();
+				}
+			}
+
+			ClassBean dummyClass = new ClassBean();
+			dummyClass.setId(DUMMY_CONCEPT_ID);
+			subClasses.add(dummyClass);
+		}
 	}
 
 	public List<ClassBean> findParents(OntologyVersionIdBean ontologyVersionId,
