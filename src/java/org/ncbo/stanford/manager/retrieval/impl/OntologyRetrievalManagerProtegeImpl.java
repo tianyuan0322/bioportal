@@ -154,6 +154,8 @@ public class OntologyRetrievalManagerProtegeImpl extends
 					beanSet.add(clsBean);
 					currentBean.addRelation(ApplicationConstants.SUB_CLASS,
 							new ArrayList(beanSet));
+					currentBean.addRelation(ApplicationConstants.CHILD_COUNT,
+							node.getDirectSubclassCount());
 				} else {
 					List<ClassBean> siblings = convertLightBeans(getUniqueClasses(previousNode
 							.getDirectSubclasses()));
@@ -166,6 +168,8 @@ public class OntologyRetrievalManagerProtegeImpl extends
 
 					currentBean.addRelation(ApplicationConstants.SUB_CLASS,
 							siblings);
+					currentBean.addRelation(ApplicationConstants.CHILD_COUNT,
+							siblings.size());
 				}
 			} else {
 				rootBean = clsBean;
