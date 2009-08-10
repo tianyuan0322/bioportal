@@ -152,6 +152,14 @@ public abstract class AbstractConceptBean {
 		return relations;
 	}
 
+	public Object getRelation(Object key) {
+		return relations.get(key);
+	}
+
+	public Object removeRelation(Object key) {
+		return relations.remove(key);
+	}
+
 	/**
 	 * @return the ontologyVersionId
 	 */

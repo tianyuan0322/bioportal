@@ -35,6 +35,7 @@ public class ConceptServiceImpl implements ConceptService {
 	private static final Log log = LogFactory.getLog(ConceptServiceImpl.class);
 
 	private static final String DUMMY_CONCEPT_ID = "0";
+	private static final String DUMMY_CONCEPT_LABEL = "Too many children";
 	private static final Integer MAX_CHILD_COUNT = 100;
 
 	private CustomNcboOntologyVersionDAO ncboOntologyVersionDAO;
@@ -63,7 +64,7 @@ public class ConceptServiceImpl implements ConceptService {
 				ontology);
 
 		// temporary fix to remove long list of siblings
-		removeExtraSiblings((ArrayList<ClassBean>) concept
+		removeExtraSiblingsOneIteration((ArrayList<ClassBean>) concept
 				.getRelation((Object) ApplicationConstants.SUB_CLASS), null,
 				(Integer) concept
 						.getRelation((Object) ApplicationConstants.CHILD_COUNT));
@@ -87,7 +88,7 @@ public class ConceptServiceImpl implements ConceptService {
 				conceptId);
 
 		// temporary fix to remove long list of siblings
-		removeExtraSiblings((ArrayList<ClassBean>) concept
+		removeExtraSiblingsOneIteration((ArrayList<ClassBean>) concept
 				.getRelation((Object) ApplicationConstants.SUB_CLASS),
 				conceptId, (Integer) concept
 						.getRelation((Object) ApplicationConstants.CHILD_COUNT));
@@ -112,30 +113,73 @@ public class ConceptServiceImpl implements ConceptService {
 
 		// temporary fix to remove long list of siblings
 		if (!light) {
-			removeExtraSiblings(
+			// long start = System.currentTimeMillis();
+			// System.out.println("Start: " + start);
+			removeExtraSiblingsOneIteration(
 					(ArrayList<ClassBean>) path
 							.getRelation((Object) ApplicationConstants.SUB_CLASS),
 					conceptId,
 					(Integer) path
 							.getRelation((Object) ApplicationConstants.CHILD_COUNT));
+			// long stop = System.currentTimeMillis(); // stop timing
+			// System.out.println("Stop: " + stop);
+			// System.out.println("Finished removing siblings in "
+			// + (stop - start) / 1000F + " miliseconds.\n");
 		}
 
 		return path;
 	}
 
-	@SuppressWarnings("unchecked")
-	private void removeExtraSiblings(ArrayList<ClassBean> subClasses,
-			String conceptId, Integer parentChildCount) {
+	@SuppressWarnings( { "unchecked", "unused" })
+	private void removeExtraSiblingsOneIteration(
+			ArrayList<ClassBean> subClasses, String conceptId,
+			Integer parentChildCount) {
+		ListIterator<ClassBean> listIterator = subClasses.listIterator();
+		boolean removed = false;
+
+		while (listIterator.hasNext()) {
+			ClassBean sibling = listIterator.next();
+			ArrayList<ClassBean> sub = (ArrayList<ClassBean>) sibling
+					.getRelation((Object) ApplicationConstants.SUB_CLASS);
+
+			// removing this relation, as it duplicates the SUB_CLASS relation
+			sibling.removeRelation((Object) "CHD");
+
+			if (sub != null) {
+				Integer childCount = (Integer) sibling
+						.getRelation((Object) ApplicationConstants.CHILD_COUNT);
+				removeExtraSiblingsOneIteration(sub, conceptId, childCount);
+			}
+
+			if (parentChildCount > MAX_CHILD_COUNT && sub == null
+					&& !sibling.getId().equalsIgnoreCase(conceptId)) {
+				listIterator.remove();
+				removed = true;
+			}
+
+			if (!listIterator.hasNext() && removed) {
+				ClassBean dummyClass = new ClassBean();
+				dummyClass.setId(DUMMY_CONCEPT_ID);
+				dummyClass.setLabel(DUMMY_CONCEPT_LABEL);
+				listIterator.add(dummyClass);
+			}
+		}
+	}
+
+	@SuppressWarnings( { "unchecked", "unused" })
+	private void removeExtraSiblingsTwoIterations(
+			ArrayList<ClassBean> subClasses, String conceptId,
+			Integer parentChildCount) {
 		for (ClassBean subClass : subClasses) {
 			ArrayList<ClassBean> sub = (ArrayList<ClassBean>) subClass
 					.getRelation((Object) ApplicationConstants.SUB_CLASS);
-
+			// removing this relation, as it duplicates the SUB_CLASS relation
 			subClass.removeRelation((Object) "CHD");
 
 			if (sub != null) {
 				Integer childCount = (Integer) subClass
 						.getRelation((Object) ApplicationConstants.CHILD_COUNT);
-				removeExtraSiblings(sub, conceptId, childCount);
+				removeExtraSiblingsTwoIterations(sub, conceptId, childCount);
 			}
 		}
 
@@ -154,6 +198,7 @@ public class ConceptServiceImpl implements ConceptService {
 
 			ClassBean dummyClass = new ClassBean();
 			dummyClass.setId(DUMMY_CONCEPT_ID);
+			dummyClass.setLabel(DUMMY_CONCEPT_LABEL);
 			subClasses.add(dummyClass);
 		}
 	}
