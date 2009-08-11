@@ -64,10 +64,14 @@ public class ConceptServiceImpl implements ConceptService {
 				ontology);
 
 		// temporary fix to remove long list of siblings
-		removeExtraSiblingsOneIteration((ArrayList<ClassBean>) concept
-				.getRelation((Object) ApplicationConstants.SUB_CLASS), null,
-				(Integer) concept
-						.getRelation((Object) ApplicationConstants.CHILD_COUNT));
+		if (concept != null) {
+			removeExtraSiblingsOneIteration(
+					(ArrayList<ClassBean>) concept
+							.getRelation((Object) ApplicationConstants.SUB_CLASS),
+					null,
+					(Integer) concept
+							.getRelation((Object) ApplicationConstants.CHILD_COUNT));
+		}
 
 		return concept;
 	}
@@ -88,10 +92,14 @@ public class ConceptServiceImpl implements ConceptService {
 				conceptId);
 
 		// temporary fix to remove long list of siblings
-		removeExtraSiblingsOneIteration((ArrayList<ClassBean>) concept
-				.getRelation((Object) ApplicationConstants.SUB_CLASS),
-				conceptId, (Integer) concept
-						.getRelation((Object) ApplicationConstants.CHILD_COUNT));
+		if (concept != null) {
+			removeExtraSiblingsOneIteration(
+					(ArrayList<ClassBean>) concept
+							.getRelation((Object) ApplicationConstants.SUB_CLASS),
+					conceptId,
+					(Integer) concept
+							.getRelation((Object) ApplicationConstants.CHILD_COUNT));
+		}
 
 		return concept;
 	}
@@ -112,7 +120,7 @@ public class ConceptServiceImpl implements ConceptService {
 				ontology, conceptId, light);
 
 		// temporary fix to remove long list of siblings
-		if (!light) {
+		if (path != null && !light) {
 			// long start = System.currentTimeMillis();
 			// System.out.println("Start: " + start);
 			removeExtraSiblingsOneIteration(
@@ -134,6 +142,10 @@ public class ConceptServiceImpl implements ConceptService {
 	private void removeExtraSiblingsOneIteration(
 			ArrayList<ClassBean> subClasses, String conceptId,
 			Integer parentChildCount) {
+		if (subClasses == null) {
+			return;
+		}
+		
 		ListIterator<ClassBean> listIterator = subClasses.listIterator();
 		boolean removed = false;
 
@@ -170,6 +182,10 @@ public class ConceptServiceImpl implements ConceptService {
 	private void removeExtraSiblingsTwoIterations(
 			ArrayList<ClassBean> subClasses, String conceptId,
 			Integer parentChildCount) {
+		if (subClasses == null) {
+			return;
+		}
+
 		for (ClassBean subClass : subClasses) {
 			ArrayList<ClassBean> sub = (ArrayList<ClassBean>) subClass
 					.getRelation((Object) ApplicationConstants.SUB_CLASS);
