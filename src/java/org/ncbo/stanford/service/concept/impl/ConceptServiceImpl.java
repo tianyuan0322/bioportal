@@ -142,6 +142,10 @@ public class ConceptServiceImpl implements ConceptService {
 	private void removeExtraSiblingsOneIteration(
 			ArrayList<ClassBean> subClasses, String conceptId,
 			Integer parentChildCount) {
+		if (subClasses == null) {
+			return;
+		}
+
 		ListIterator<ClassBean> listIterator = subClasses.listIterator();
 		boolean removed = false;
 
@@ -178,6 +182,10 @@ public class ConceptServiceImpl implements ConceptService {
 	private void removeExtraSiblingsTwoIterations(
 			ArrayList<ClassBean> subClasses, String conceptId,
 			Integer parentChildCount) {
+		if (subClasses == null) {
+			return;
+		}
+
 		for (ClassBean subClass : subClasses) {
 			ArrayList<ClassBean> sub = (ArrayList<ClassBean>) subClass
 					.getRelation((Object) ApplicationConstants.SUB_CLASS);
