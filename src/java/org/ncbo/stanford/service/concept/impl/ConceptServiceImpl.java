@@ -35,8 +35,7 @@ public class ConceptServiceImpl implements ConceptService {
 	private static final Log log = LogFactory.getLog(ConceptServiceImpl.class);
 
 	private static final String DUMMY_CONCEPT_ID = "0";
-	private static final String DUMMY_CONCEPT_LABEL = "Too many children";
-	private static final Integer MAX_CHILD_COUNT = 100;
+	private static final String DUMMY_CONCEPT_LABEL = "*** Too many children...";
 
 	private CustomNcboOntologyVersionDAO ncboOntologyVersionDAO;
 	private Map<String, String> ontologyFormatHandlerMap = new HashMap<String, String>(
@@ -49,8 +48,8 @@ public class ConceptServiceImpl implements ConceptService {
 	 * Get the root concept for the specified ontology.
 	 */
 	@SuppressWarnings("unchecked")
-	public ClassBean findRootConcept(Integer ontologyVersionId)
-			throws Exception {
+	public ClassBean findRootConcept(Integer ontologyVersionId,
+			Integer maxNumChildren) throws Exception {
 		VNcboOntology ontology = ncboOntologyVersionDAO
 				.findOntologyVersion(ontologyVersionId);
 
@@ -64,21 +63,22 @@ public class ConceptServiceImpl implements ConceptService {
 				ontology);
 
 		// temporary fix to remove long list of siblings
-		if (concept != null) {
+		if (concept != null && maxNumChildren != null) {
 			removeExtraSiblingsOneIteration(
 					(ArrayList<ClassBean>) concept
 							.getRelation((Object) ApplicationConstants.SUB_CLASS),
 					null,
 					(Integer) concept
-							.getRelation((Object) ApplicationConstants.CHILD_COUNT));
+							.getRelation((Object) ApplicationConstants.CHILD_COUNT),
+					maxNumChildren);
 		}
 
 		return concept;
 	}
 
 	@SuppressWarnings("unchecked")
-	public ClassBean findConcept(Integer ontologyVersionId, String conceptId)
-			throws Exception {
+	public ClassBean findConcept(Integer ontologyVersionId, String conceptId,
+			Integer maxNumChildren) throws Exception {
 		VNcboOntology ontology = ncboOntologyVersionDAO
 				.findOntologyVersion(ontologyVersionId);
 
@@ -92,13 +92,14 @@ public class ConceptServiceImpl implements ConceptService {
 				conceptId);
 
 		// temporary fix to remove long list of siblings
-		if (concept != null) {
+		if (concept != null && maxNumChildren != null) {
 			removeExtraSiblingsOneIteration(
 					(ArrayList<ClassBean>) concept
 							.getRelation((Object) ApplicationConstants.SUB_CLASS),
 					conceptId,
 					(Integer) concept
-							.getRelation((Object) ApplicationConstants.CHILD_COUNT));
+							.getRelation((Object) ApplicationConstants.CHILD_COUNT),
+					maxNumChildren);
 		}
 
 		return concept;
@@ -106,7 +107,8 @@ public class ConceptServiceImpl implements ConceptService {
 
 	@SuppressWarnings("unchecked")
 	public ClassBean findPathFromRoot(Integer ontologyVersionId,
-			String conceptId, boolean light) throws Exception {
+			String conceptId, boolean light, Integer maxNumChildren)
+			throws Exception {
 		VNcboOntology ontology = ncboOntologyVersionDAO
 				.findOntologyVersion(ontologyVersionId);
 
@@ -120,7 +122,7 @@ public class ConceptServiceImpl implements ConceptService {
 				ontology, conceptId, light);
 
 		// temporary fix to remove long list of siblings
-		if (path != null && !light) {
+		if (path != null && maxNumChildren != null && !light) {
 			// long start = System.currentTimeMillis();
 			// System.out.println("Start: " + start);
 			removeExtraSiblingsOneIteration(
@@ -128,7 +130,8 @@ public class ConceptServiceImpl implements ConceptService {
 							.getRelation((Object) ApplicationConstants.SUB_CLASS),
 					conceptId,
 					(Integer) path
-							.getRelation((Object) ApplicationConstants.CHILD_COUNT));
+							.getRelation((Object) ApplicationConstants.CHILD_COUNT),
+					maxNumChildren);
 			// long stop = System.currentTimeMillis(); // stop timing
 			// System.out.println("Stop: " + stop);
 			// System.out.println("Finished removing siblings in "
@@ -141,7 +144,7 @@ public class ConceptServiceImpl implements ConceptService {
 	@SuppressWarnings( { "unchecked", "unused" })
 	private void removeExtraSiblingsOneIteration(
 			ArrayList<ClassBean> subClasses, String conceptId,
-			Integer parentChildCount) {
+			Integer parentChildCount, Integer maxNumChildren) {
 		if (subClasses == null) {
 			return;
 		}
@@ -160,10 +163,11 @@ public class ConceptServiceImpl implements ConceptService {
 			if (sub != null) {
 				Integer childCount = (Integer) sibling
 						.getRelation((Object) ApplicationConstants.CHILD_COUNT);
-				removeExtraSiblingsOneIteration(sub, conceptId, childCount);
+				removeExtraSiblingsOneIteration(sub, conceptId, childCount,
+						maxNumChildren);
 			}
 
-			if (parentChildCount > MAX_CHILD_COUNT && sub == null
+			if (parentChildCount > maxNumChildren && sub == null
 					&& !sibling.getId().equalsIgnoreCase(conceptId)) {
 				listIterator.remove();
 				removed = true;
@@ -181,7 +185,7 @@ public class ConceptServiceImpl implements ConceptService {
 	@SuppressWarnings( { "unchecked", "unused" })
 	private void removeExtraSiblingsTwoIterations(
 			ArrayList<ClassBean> subClasses, String conceptId,
-			Integer parentChildCount) {
+			Integer parentChildCount, Integer maxNumChildren) {
 		if (subClasses == null) {
 			return;
 		}
@@ -195,11 +199,12 @@ public class ConceptServiceImpl implements ConceptService {
 			if (sub != null) {
 				Integer childCount = (Integer) subClass
 						.getRelation((Object) ApplicationConstants.CHILD_COUNT);
-				removeExtraSiblingsTwoIterations(sub, conceptId, childCount);
+				removeExtraSiblingsTwoIterations(sub, conceptId, childCount,
+						maxNumChildren);
 			}
 		}
 
-		if (parentChildCount > MAX_CHILD_COUNT) {
+		if (parentChildCount > maxNumChildren) {
 			ListIterator<ClassBean> listIterator = subClasses.listIterator();
 
 			while (listIterator.hasNext()) {

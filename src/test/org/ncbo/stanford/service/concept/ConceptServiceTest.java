@@ -1,5 +1,8 @@
 package org.ncbo.stanford.service.concept;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.fail;
+
 import java.util.ArrayList;
 
 import org.junit.Test;
@@ -7,11 +10,6 @@ import org.ncbo.stanford.AbstractBioPortalTest;
 import org.ncbo.stanford.bean.concept.ClassBean;
 import org.ncbo.stanford.util.constants.ApplicationConstants;
 import org.springframework.beans.factory.annotation.Autowired;
-
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
-import static org.junit.Assert.assertEquals;
 
 /*
  * Test concept service requests.
@@ -43,7 +41,7 @@ public class ConceptServiceTest extends AbstractBioPortalTest {
 
 	@Test
 	public void testFindRoot() throws Exception {
-		ClassBean root = conceptService.findRootConcept(TEST_ONT_ID);
+		ClassBean root = conceptService.findRootConcept(TEST_ONT_ID, 100);
 		
 		ArrayList<ClassBean> subclasses = (ArrayList<ClassBean>) root
 				.getRelations().get(ApplicationConstants.SUB_CLASS);
@@ -61,21 +59,21 @@ public class ConceptServiceTest extends AbstractBioPortalTest {
 	
 	@Test
 	public void testFindAminoRoot() throws Exception {
-		ClassBean root = conceptService.findRootConcept(AMINO_OID);
+		ClassBean root = conceptService.findRootConcept(AMINO_OID, 100);
 		
 		assertEquals("owl:Thing",root.getId());
 	}
 	
 	@Test
 	public void testFindNCITRoot() throws Exception {
-		ClassBean root = conceptService.findRootConcept(NCIT_OID);
+		ClassBean root = conceptService.findRootConcept(NCIT_OID, 100);
 		
 		assertEquals("owl:Thing",root.getId());
 	}
 	
 	@Test
 	public void testFindAminoConcept() throws Exception {
-		ClassBean concept = conceptService.findConcept(AMINO_OID, AMINO_CID1);
+		ClassBean concept = conceptService.findConcept(AMINO_OID, AMINO_CID1, 100);
 	
 		assertEquals(AMINO_NAME, concept.getLabel());
 /*		ArrayList<ClassBean> subclasses = (ArrayList<ClassBean>) root
@@ -96,14 +94,14 @@ public class ConceptServiceTest extends AbstractBioPortalTest {
 	
 	@Test
 	public void testFindConceptsWithSpaces() throws Exception {
-		ClassBean concept = conceptService.findConcept(TEST_OID2, TEST_CID2);
+		ClassBean concept = conceptService.findConcept(TEST_OID2, TEST_CID2, 100);
 		assertEquals(TEST_CID2, concept.getId());
 
-		concept = conceptService.findConcept(38563, "Questionnaire Forms");
+		concept = conceptService.findConcept(38563, "Questionnaire Forms", 100);
 		assertEquals("Questionnaire Forms", concept.getId());
 		
 		
-	 concept = conceptService.findConcept(38563, "Symptom-Specific Treatment");
+	 concept = conceptService.findConcept(38563, "Symptom-Specific Treatment", 100);
 		assertEquals("Symptom-Specific Treatment", concept.getId());
 	}
 	
@@ -111,7 +109,7 @@ public class ConceptServiceTest extends AbstractBioPortalTest {
 	@Test
 	public void testLongCIDWithInvalid() throws Exception {
 		
-		ClassBean concept = conceptService.findConcept(LONG_OID, LONG_CID);
+		ClassBean concept = conceptService.findConcept(LONG_OID, LONG_CID, 100);
 	
 		assertEquals(LONG_CID, concept.getId());
 		
@@ -132,7 +130,7 @@ for (ClassBean subclass : subclasses) {
 	@Test
 	public void testHTTPCIDs() throws Exception {
 		
-		ClassBean concept = conceptService.findConcept(14174, "http://www.ifomis.org/bfo/1.1/span#Occurrent");
+		ClassBean concept = conceptService.findConcept(14174, "http://www.ifomis.org/bfo/1.1/span#Occurrent", 100);
 		assertEquals("http://www.ifomis.org/bfo/1.1/span#Occurrent", concept.getId());
 		
 		System.out.println("Occurant: " + concept.toString());
@@ -141,7 +139,7 @@ for (ClassBean subclass : subclasses) {
 	//	concept = conceptService.findConcept(14174, "obi:OBI_69");
 	//	assertEquals("obi:OBI_69", concept.getId());
 
-		concept = conceptService.findConcept(14174, "http://www.ifomis.org/bfo/1.1/snap#Continuant");
+		concept = conceptService.findConcept(14174, "http://www.ifomis.org/bfo/1.1/snap#Continuant", 100);
 		assertEquals("http://www.ifomis.org/bfo/1.1/snap#Continuant", concept.getId());
 
 		System.out.println("Continuant: " + concept.toString());
@@ -156,31 +154,29 @@ for (ClassBean subclass : subclasses) {
 	
 		try {
 			System.out.println("Starting testAbnormalCIDs()...");
-			ClassBean concept = conceptService.findConcept(38657, "@_A2318");
+			ClassBean concept = conceptService.findConcept(38657, "@_A2318", 100);
 //			System.out.println("Abnormal @_2318: " + concept.toString());
 			assertEquals("@_A2318", concept.getId());
 			
-			 concept = conceptService.findConcept(32939, "@_A115449");
+			 concept = conceptService.findConcept(32939, "@_A115449", 100);
 //			System.out.println("Abnormal: " + concept.toString());
 			assertEquals("@_A115449", concept.getId());
 
-			 concept = conceptService.findConcept(32939, "@_A114928");
+			 concept = conceptService.findConcept(32939, "@_A114928", 100);
 //			System.out.println("Abnormal: " + concept.toString());
 			assertEquals("@_A114928", concept.getId());
 
-			 concept = conceptService.findConcept(32939, "@_A116138");
+			 concept = conceptService.findConcept(32939, "@_A116138", 100);
 //			System.out.println("Abnormal: " + concept.toString());
 			assertEquals("@_A116138", concept.getId());
 
-			 concept = conceptService.findConcept(35377, "@_A116934");
+			 concept = conceptService.findConcept(35377, "@_A116934", 100);
 //			System.out.println("Abnormal: " + concept.toString());
 			assertEquals("@_A116934", concept.getId());
 
-			 concept = conceptService.findConcept(32947, "region1:Europe");
+			 concept = conceptService.findConcept(32947, "region1:Europe", 100);
 //				System.out.println("Abnormal: " + concept.toString());
 				assertEquals("region1:Europe", concept.getId());
-				
-
 		}
 		catch (Exception exc) {
 			exc.printStackTrace();

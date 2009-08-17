@@ -2,11 +2,15 @@ package org.ncbo.stanford.view.rest.restlet.concept;
 
 import java.net.URLDecoder;
 
+import javax.servlet.http.HttpServletRequest;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.ncbo.stanford.bean.concept.ClassBean;
+import org.ncbo.stanford.exception.OntologyNotFoundException;
 import org.ncbo.stanford.service.concept.ConceptService;
 import org.ncbo.stanford.util.MessageUtils;
+import org.ncbo.stanford.util.RequestUtils;
 import org.ncbo.stanford.view.rest.restlet.AbstractBaseRestlet;
 import org.ncbo.stanford.view.util.constants.RequestParamConstants;
 import org.restlet.data.Request;
@@ -37,31 +41,27 @@ public class ConceptRestlet extends AbstractBaseRestlet {
 		ClassBean concept = null;
 		String ontologyVersionId = (String) request.getAttributes().get(
 				MessageUtils.getMessage("entity.ontologyversionid"));
+		HttpServletRequest httpRequest = RequestUtils
+				.getHttpServletRequest(request);
+		String maxNumChildren = (String) httpRequest
+				.getParameter(RequestParamConstants.PARAM_MAXNUMCHILDREN);
 		String conceptId = getConceptId(request);
-
-		if (log.isDebugEnabled()) {
-			for (String key : request.getAttributes().keySet()) {
-				log.debug("Attribute: " + key + " Val: "
-						+ request.getAttributes().get(key));
-			}
-		}
-
-		if (log.isDebugEnabled()) {
-			log.debug("finding concept - ovid: " + ontologyVersionId
-					+ ", cid: " + conceptId);
-		}
+		Integer maxNumChildrenInt = RequestUtils
+				.parseIntegerParam(maxNumChildren);
 
 		try {
 			Integer ontVersionId = Integer.parseInt(ontologyVersionId);
 
 			if (conceptId
 					.equalsIgnoreCase(RequestParamConstants.PARAM_ROOT_CONCEPT)) {
-				concept = conceptService.findRootConcept(ontVersionId);
+				concept = conceptService.findRootConcept(ontVersionId,
+						maxNumChildrenInt);
 			} else {
 				// URL Decode the concept Id
 				conceptId = URLDecoder.decode(conceptId, MessageUtils
 						.getMessage("default.encoding"));
-				concept = conceptService.findConcept(ontVersionId, conceptId);
+				concept = conceptService.findConcept(ontVersionId, conceptId,
+						maxNumChildrenInt);
 			}
 
 			if (concept == null) {
@@ -69,15 +69,18 @@ public class ConceptRestlet extends AbstractBaseRestlet {
 						"Concept not found");
 			}
 		} catch (NumberFormatException nfe) {
-			nfe.printStackTrace();
 			response.setStatus(Status.CLIENT_ERROR_BAD_REQUEST, nfe
+					.getMessage());
+		} catch (OntologyNotFoundException onfe) {
+			response.setStatus(Status.CLIENT_ERROR_BAD_REQUEST, onfe
 					.getMessage());
 		} catch (Exception e) {
 			e.printStackTrace();
 			response.setStatus(Status.CLIENT_ERROR_BAD_REQUEST, e.getMessage());
+		} finally {
+			xmlSerializationService.generateXMLResponse(request, response,
+					concept);
 		}
-
-		xmlSerializationService.generateXMLResponse(request, response, concept);
 	}
 
 	/**

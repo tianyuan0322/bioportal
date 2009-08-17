@@ -169,8 +169,6 @@ public class OntologyRestlet extends AbstractBaseRestlet {
 		} catch (NumberFormatException nfe) {
 			response.setStatus(Status.CLIENT_ERROR_BAD_REQUEST, nfe
 					.getMessage());
-			nfe.printStackTrace();
-			log.error(nfe);
 		} catch (Exception e) {
 			response.setStatus(Status.SERVER_ERROR_INTERNAL, e.getMessage());
 			e.printStackTrace();
