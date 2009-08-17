@@ -1,12 +1,18 @@
 package org.ncbo.stanford.view.rest.restlet.ontology;
 
+import java.net.URLDecoder;
+
+import javax.servlet.http.HttpServletRequest;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.ncbo.stanford.bean.OntologyViewBean;
 import org.ncbo.stanford.service.concept.ConceptService;
 import org.ncbo.stanford.service.ontology.OntologyViewService;
 import org.ncbo.stanford.util.MessageUtils;
+import org.ncbo.stanford.util.RequestUtils;
 import org.ncbo.stanford.view.rest.restlet.AbstractBaseRestlet;
+import org.ncbo.stanford.view.util.constants.RequestParamConstants;
 import org.restlet.data.Request;
 import org.restlet.data.Response;
 import org.restlet.data.Status;
@@ -36,18 +42,23 @@ public class VirtualViewUriRestlet extends AbstractBaseRestlet {
 	 * @param response
 	 */
 	private void getVirtualEntity(Request request, Response response) {
-		String conceptId = (String) request.getAttributes().get(
-				MessageUtils.getMessage("entity.conceptid"));
+		Object returnObject = null;
 		String ontologyId = (String) request.getAttributes().get(
 				MessageUtils.getMessage("entity.ontologyid"));
-		Object returnObject = null;
+		String conceptId = getConceptId(request);
+		HttpServletRequest httpRequest = RequestUtils
+				.getHttpServletRequest(request);
+		String maxNumChildren = (String) httpRequest
+				.getParameter(RequestParamConstants.PARAM_MAXNUMCHILDREN);
+		Integer maxNumChildrenInt = RequestUtils
+				.parseIntegerParam(maxNumChildren);
 
 		try {
-			Integer ontId = Integer.parseInt(ontologyId);
+			Integer ontologyIdInt = Integer.parseInt(ontologyId);
 
 			if (conceptId == null) {
 				returnObject = ontologyViewService
-						.findLatestOntologyViewVersion(ontId);
+						.findLatestOntologyViewVersion(ontologyIdInt);
 
 				if (returnObject == null) {
 					response
@@ -58,7 +69,7 @@ public class VirtualViewUriRestlet extends AbstractBaseRestlet {
 				}
 			} else {
 				OntologyViewBean ontBean = ontologyViewService
-						.findLatestOntologyViewVersion(ontId);
+						.findLatestOntologyViewVersion(ontologyIdInt);
 
 				if (ontBean == null) {
 					response
@@ -67,8 +78,17 @@ public class VirtualViewUriRestlet extends AbstractBaseRestlet {
 									MessageUtils
 											.getMessage("msg.error.ontologyViewNotFound"));
 				} else {
-					returnObject = conceptService.findConcept(ontBean.getId(),
-							conceptId);
+					if (conceptId
+							.equalsIgnoreCase(RequestParamConstants.PARAM_ROOT_CONCEPT)) {
+						returnObject = conceptService.findRootConcept(ontBean
+								.getId(), maxNumChildrenInt);
+					} else {
+						// URL Decode the concept Id
+						conceptId = URLDecoder.decode(conceptId, MessageUtils
+								.getMessage("default.encoding"));
+						returnObject = conceptService.findConcept(ontBean
+								.getId(), conceptId, maxNumChildrenInt);
+					}
 
 					if (returnObject == null) {
 						response.setStatus(Status.CLIENT_ERROR_NOT_FOUND,
@@ -79,8 +99,6 @@ public class VirtualViewUriRestlet extends AbstractBaseRestlet {
 		} catch (NumberFormatException nfe) {
 			response.setStatus(Status.CLIENT_ERROR_BAD_REQUEST, nfe
 					.getMessage());
-			nfe.printStackTrace();
-			log.error(nfe);
 		} catch (Exception e) {
 			response.setStatus(Status.SERVER_ERROR_INTERNAL, e.getMessage());
 			e.printStackTrace();

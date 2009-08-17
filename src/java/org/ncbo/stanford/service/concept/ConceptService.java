@@ -16,14 +16,15 @@ import org.ncbo.stanford.bean.concept.ClassBean;
  */
 public interface ConceptService {
 
-	public ClassBean findRootConcept(Integer ontologyVersionId)
-			throws Exception;
+	public ClassBean findRootConcept(Integer ontologyVersionId,
+			Integer maxNumChildren) throws Exception;
 
-	public ClassBean findConcept(Integer ontologyVersionId, String conceptId)
-			throws Exception;
+	public ClassBean findConcept(Integer ontologyVersionId, String conceptId,
+			Integer maxNumChildren) throws Exception;
 
 	public ClassBean findPathFromRoot(Integer ontologyVersionId,
-			String conceptId, boolean light) throws Exception;
+			String conceptId, boolean light, Integer maxNumChildren)
+			throws Exception;
 	
 	public List<ClassBean> findParents(OntologyVersionIdBean ontologyVersionId,
 			String conceptId, Integer level, Integer offset, Integer limit)

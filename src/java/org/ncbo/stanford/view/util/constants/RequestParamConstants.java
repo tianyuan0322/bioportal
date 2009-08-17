@@ -43,6 +43,14 @@ public interface RequestParamConstants {
 	 * Ids
 	 */
 	public static final String PARAM_CONCEPT_ID = "conceptid";
+	public static final String PARAM_MAXNUMCHILDREN = "maxnumchildren";
+
+	/**
+	 * Path Restlet parameters
+	 */
+	public static final String PARAM_SOURCE = "source";
+	public static final String PARAM_TARGET = "target";
+	public static final String PARAM_LIGHT = "light";
 
 	/**
 	 * Search query parameters
