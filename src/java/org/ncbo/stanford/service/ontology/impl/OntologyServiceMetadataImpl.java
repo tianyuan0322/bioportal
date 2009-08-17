@@ -260,4 +260,13 @@ public class OntologyServiceMetadataImpl extends AbstractOntologyService impleme
 			OntologyCategoryMetadataManager ontologyCategoryMetadataManager) {
 		this.ontologyCategoryMetadataManager = ontologyCategoryMetadataManager;
 	}
+	
+	/**
+	 * @param ontologyGroupMetadataManager
+	 *            the ontologyGroupMetadataManager to set
+	 */
+	public void setOntologyGroupMetadataManager(
+			OntologyGroupMetadataManager ontologyGroupMetadataManager) {
+		this.ontologyGroupMetadataManager = ontologyGroupMetadataManager;
+	}
 }

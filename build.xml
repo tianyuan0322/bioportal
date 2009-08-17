@@ -186,6 +186,8 @@
 				<filter token="metadatauserinstsuffix" value="${metadata.user.inst.suffix}" />
 				<filter token="metadataontologydomaininstprefix" value="${metadata.ontologydomain.inst.prefix}" />
 				<filter token="metadataontologydomaininstsuffix" value="${metadata.ontologydomain.inst.suffix}" />
+				<filter token="metadataontologygroupinstprefix" value="${metadata.ontologygroup.inst.prefix}" />
+				<filter token="metadataontologygroupinstsuffix" value="${metadata.ontologygroup.inst.suffix}" />
 				<filter token="metadataontologyinstprefix" value="${metadata.ontology.inst.prefix}" />
 				<filter token="metadataontologyinstsuffix" value="${metadata.ontology.inst.suffix}" />
 				<filter token="metadataontologyviewinstprefix" value="${metadata.ontologyview.inst.prefix}" />
