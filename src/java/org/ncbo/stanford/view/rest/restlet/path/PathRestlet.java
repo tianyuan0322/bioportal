@@ -5,6 +5,7 @@ import javax.servlet.http.HttpServletRequest;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.ncbo.stanford.bean.concept.ClassBean;
+import org.ncbo.stanford.exception.OntologyNotFoundException;
 import org.ncbo.stanford.service.concept.ConceptService;
 import org.ncbo.stanford.util.MessageUtils;
 import org.ncbo.stanford.util.RequestUtils;
@@ -31,46 +32,57 @@ public class PathRestlet extends AbstractBaseRestlet {
 	/**
 	 * Return to the response an individual ontology
 	 * 
-	 * @param ref
-	 * @param resp
+	 * @param request
+	 * @param response
 	 */
-	private void findPathFromRoot(Request request, Response resp) {
+	private void findPathFromRoot(Request request, Response response) {
 		ClassBean concept = null;
-		String source = (String) request.getAttributes().get("source");
-		String target = (String) request.getAttributes().get("target");
-		HttpServletRequest httpRequest = RequestUtils
-				.getHttpServletRequest(request);
-		String lightString = (String) httpRequest.getParameter("light");
-		boolean light = true;
-		if (lightString != null && lightString.equalsIgnoreCase("false"))
-			light = false;
-
+		String source = (String) request.getAttributes().get(
+				RequestParamConstants.PARAM_SOURCE);
+		String target = (String) request.getAttributes().get(
+				RequestParamConstants.PARAM_TARGET);
 		String ontologyVersionId = (String) request.getAttributes().get(
 				MessageUtils.getMessage("entity.ontologyversionid"));
+		HttpServletRequest httpRequest = RequestUtils
+				.getHttpServletRequest(request);
+		String light = (String) httpRequest
+				.getParameter(RequestParamConstants.PARAM_LIGHT);
+		String maxNumChildren = (String) httpRequest
+				.getParameter(RequestParamConstants.PARAM_MAXNUMCHILDREN);
+
+		Boolean lightBool = RequestUtils.parseBooleanParam(light);
+		Integer maxNumChildrenInt = RequestUtils
+				.parseIntegerParam(maxNumChildren);
 
 		try {
-			Integer ontId = Integer.parseInt(ontologyVersionId);
+			Integer ontologyVersionIdInt = Integer.parseInt(ontologyVersionId);
+
 			if (target
 					.equalsIgnoreCase(RequestParamConstants.PARAM_ROOT_CONCEPT)) {
-				concept = conceptService.findPathFromRoot(ontId, source, light);
+				concept = conceptService.findPathFromRoot(ontologyVersionIdInt,
+						source, lightBool, maxNumChildrenInt);
 			} else {
 				// This is for when you are finding path from source to target--
 				// Not Implemented Yet
 			}
 
 			if (concept == null) {
-				resp.setStatus(Status.CLIENT_ERROR_NOT_FOUND,
+				response.setStatus(Status.CLIENT_ERROR_NOT_FOUND,
 						"Concept not found");
 			}
 		} catch (NumberFormatException nfe) {
-			nfe.printStackTrace();
-			resp.setStatus(Status.CLIENT_ERROR_BAD_REQUEST, nfe.getMessage());
+			response.setStatus(Status.CLIENT_ERROR_BAD_REQUEST, nfe
+					.getMessage());
+		} catch (OntologyNotFoundException onfe) {
+			response.setStatus(Status.CLIENT_ERROR_BAD_REQUEST, onfe
+					.getMessage());
 		} catch (Exception e) {
 			e.printStackTrace();
-			resp.setStatus(Status.CLIENT_ERROR_BAD_REQUEST, e.getMessage());
+			response.setStatus(Status.CLIENT_ERROR_BAD_REQUEST, e.getMessage());
+		} finally {
+			xmlSerializationService.generateXMLResponse(request, response,
+					concept);
 		}
-
-		xmlSerializationService.generateXMLResponse(request, resp, concept);
 	}
 
 	/**
