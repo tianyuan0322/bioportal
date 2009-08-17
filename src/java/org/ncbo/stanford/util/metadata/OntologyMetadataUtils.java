@@ -30,79 +30,82 @@ public class OntologyMetadataUtils extends MetadataUtils {
 
 	private static final Log log = LogFactory.getLog(OntologyMetadataUtils.class);
 
-	private static final String CLASS_OMV_ONTOLOGY = PREFIX_OMV + "Ontology";
-	private static final String CLASS_OMV_ONTOLOGY_DOMAIN = PREFIX_OMV + "OntologyDomain";
-	private static final String CLASS_OMV_ONTOLOGY_LANGUAGE = PREFIX_OMV + "OntologyLanguage";
-	private static final String CLASS_VIRTUAL_ONTOLOGY = PREFIX_METADATA + "VirtualOntology";
+	public static final String CLASS_OMV_ONTOLOGY = PREFIX_OMV + "Ontology";
+	public static final String CLASS_OMV_ONTOLOGY_DOMAIN = PREFIX_OMV + "OntologyDomain";
+	public static final String CLASS_OMV_ONTOLOGY_LANGUAGE = PREFIX_OMV + "OntologyLanguage";
+	public static final String CLASS_VIRTUAL_ONTOLOGY = PREFIX_METADATA + "VirtualOntology";
+	public static final String CLASS_ONTOLOGY_GROUP = PREFIX_METADATA + "OntologyGroup";
 	
-	private static final String CLASS_ONTOLOGY_VIEW = PREFIX_METADATA + "OntologyView";
-	private static final String CLASS_VIEW_DEFINITION_LANGUAGE = PREFIX_METADATA + "ViewDefinitionLanguage";
-	private static final String CLASS_VIEW_GENERATION_ENGINE = PREFIX_METADATA + "ViewGenerationEngine";
-	private static final String CLASS_VIRTUAL_VIEW = PREFIX_METADATA + "VirtualView";
+	public static final String CLASS_ONTOLOGY_VIEW = PREFIX_METADATA + "OntologyView";
+	public static final String CLASS_VIEW_DEFINITION_LANGUAGE = PREFIX_METADATA + "ViewDefinitionLanguage";
+	public static final String CLASS_VIEW_GENERATION_ENGINE = PREFIX_METADATA + "ViewGenerationEngine";
+	public static final String CLASS_VIRTUAL_VIEW = PREFIX_METADATA + "VirtualView";
 	
-	private static final String PROPERTY_ADMINISTERED_BY = PREFIX_METADATA + "administeredBy";
-	private static final String PROPERTY_CODING_SCHEME = PREFIX_METADATA + "codingScheme";
-	private static final String PROPERTY_FILE_NAMES = PREFIX_METADATA + "fileNames";
-	private static final String PROPERTY_FILE_PATH = PREFIX_METADATA + "filePath";
-	private static final String PROPERTY_HAS_CONTACT_EMAIL = PREFIX_METADATA + "hasContactEmail";
-	private static final String PROPERTY_HAS_CONTACT_NAME = PREFIX_METADATA + "hasContactName";
-	//private static final String PROPERTY_ID = PREFIX_METADATA + "id";
-	private static final String PROPERTY_INTERNAL_VERSION_NUMBER = PREFIX_METADATA + "internalVersionNumber";
-	private static final String PROPERTY_IS_FOUNDRY = PREFIX_METADATA + "isFoundry";
-	private static final String PROPERTY_IS_MANUAL = PREFIX_METADATA + "isManual";
-	private static final String PROPERTY_IS_REMOTE = PREFIX_METADATA + "isRemote";
-	private static final String PROPERTY_IS_VERSION_OF_VIRTUAL_ONTOLOGY = PREFIX_METADATA + "isVersionOfVirtualOntology";
-	private static final String PROPERTY_OBO_FOUNDRY_ID = PREFIX_METADATA + "oboFoundryID";
-	private static final String PROPERTY_OMV_ACRONYM = PREFIX_OMV + "acronym";
-	private static final String PROPERTY_OMV_CREATION_DATE = PREFIX_OMV + "creationDate";
-	//private static final String PROPERTY_OMV_DESCRIPTION = PREFIX_OMV + "description";
-	private static final String PROPERTY_OMV_DOCUMENTATION = PREFIX_OMV + "documentation";
-	private static final String PROPERTY_OMV_HAS_DOMAIN = PREFIX_OMV + "hasDomain";
-	private static final String PROPERTY_OMV_HAS_ONTOLOGY_LANGUAGE = PREFIX_OMV + "hasOntologyLanguage";
-	//private static final String PROPERTY_OMV_NAME = PREFIX_OMV + "name";
-	private static final String PROPERTY_OMV_STATUS = PREFIX_OMV + "status";
-	private static final String PROPERTY_OMV_URI = PREFIX_OMV + "URI";
-	private static final String PROPERTY_OMV_VERSION = PREFIX_OMV + "version";
-	private static final String PROPERTY_PREFERRED_NAME_PROPERTY = PREFIX_METADATA + "preferredNameProperty";
-	private static final String PROPERTY_STATUS_ID = PREFIX_METADATA + "statusID";
-	private static final String PROPERTY_SYNONYM_PROPERTY = PREFIX_METADATA + "synonymProperty";
-	private static final String PROPERTY_TARGET_TERMINOLOGIES = PREFIX_METADATA + "targetTerminologies";
-	private static final String PROPERTY_UPLOAD_DATE = PREFIX_METADATA + "timestampCreation";
-	private static final String PROPERTY_URL_HOMEPAGE = PREFIX_METADATA + "urlHomepage";
-	private static final String PROPERTY_URL_PUBLICATIONS = PREFIX_METADATA + "urlPublications";
+	public static final String CLASS_BIOPORTAL_USER = PREFIX_METADATA + "BioPortalUser";
 	
-//	private static final String PROPERTY_CURRENT_VERSION = PREFIX_METADATA + "currentVersion";
-	private static final String PROPERTY_HAS_VERSION = PREFIX_METADATA + "hasVersion";
+	public static final String PROPERTY_ADMINISTERED_BY = PREFIX_METADATA + "administeredBy";
+	public static final String PROPERTY_CODING_SCHEME = PREFIX_METADATA + "codingScheme";
+	public static final String PROPERTY_FILE_NAMES = PREFIX_METADATA + "fileNames";
+	public static final String PROPERTY_FILE_PATH = PREFIX_METADATA + "filePath";
+	public static final String PROPERTY_HAS_CONTACT_EMAIL = PREFIX_METADATA + "hasContactEmail";
+	public static final String PROPERTY_HAS_CONTACT_NAME = PREFIX_METADATA + "hasContactName";
+	//public static final String PROPERTY_ID = PREFIX_METADATA + "id";
+	public static final String PROPERTY_INTERNAL_VERSION_NUMBER = PREFIX_METADATA + "internalVersionNumber";
+	public static final String PROPERTY_IS_FOUNDRY = PREFIX_METADATA + "isFoundry";
+	public static final String PROPERTY_IS_MANUAL = PREFIX_METADATA + "isManual";
+	public static final String PROPERTY_IS_REMOTE = PREFIX_METADATA + "isRemote";
+	public static final String PROPERTY_IS_VERSION_OF_VIRTUAL_ONTOLOGY = PREFIX_METADATA + "isVersionOfVirtualOntology";
+	public static final String PROPERTY_OBO_FOUNDRY_ID = PREFIX_METADATA + "oboFoundryID";
+	public static final String PROPERTY_OMV_CREATION_DATE = PREFIX_OMV + "creationDate";
+	//public static final String PROPERTY_OMV_DESCRIPTION = PREFIX_OMV + "description";
+	public static final String PROPERTY_OMV_DOCUMENTATION = PREFIX_OMV + "documentation";
+	public static final String PROPERTY_OMV_HAS_DOMAIN = PREFIX_OMV + "hasDomain";
+	public static final String PROPERTY_OMV_HAS_ONTOLOGY_LANGUAGE = PREFIX_OMV + "hasOntologyLanguage";
+	//public static final String PROPERTY_OMV_NAME = PREFIX_OMV + "name";
+	public static final String PROPERTY_OMV_STATUS = PREFIX_OMV + "status";
+	public static final String PROPERTY_OMV_URI = PREFIX_OMV + "URI";
+	public static final String PROPERTY_OMV_VERSION = PREFIX_OMV + "version";
+	public static final String PROPERTY_PREFERRED_NAME_PROPERTY = PREFIX_METADATA + "preferredNameProperty";
+	public static final String PROPERTY_STATUS_ID = PREFIX_METADATA + "statusID";
+	public static final String PROPERTY_SYNONYM_PROPERTY = PREFIX_METADATA + "synonymProperty";
+	public static final String PROPERTY_TARGET_TERMINOLOGIES = PREFIX_METADATA + "targetTerminologies";
+	public static final String PROPERTY_UPLOAD_DATE = PREFIX_METADATA + "timestampCreation";
+	public static final String PROPERTY_URL_HOMEPAGE = PREFIX_METADATA + "urlHomepage";
+	public static final String PROPERTY_URL_PUBLICATIONS = PREFIX_METADATA + "urlPublications";
+	
+//	public static final String PROPERTY_CURRENT_VERSION = PREFIX_METADATA + "currentVersion";
+	public static final String PROPERTY_HAS_VERSION = PREFIX_METADATA + "hasVersion";
 
-	private static final String PROPERTY_HAS_VIEW = PREFIX_METADATA + "hasView";
+	public static final String PROPERTY_BELONGS_TO_GROUP = PREFIX_METADATA + "belongsToGroup";
+	public static final String PROPERTY_HAS_VIEW = PREFIX_METADATA + "hasView";
 
-	private static final String PROPERTY_DOCUMENTATION_PROPERTY = PREFIX_METADATA + "documentationProperty";
-	private static final String PROPERTY_AUTHOR_PROPERTY = PREFIX_METADATA + "authorProperty";
-	private static final String PROPERTY_PROPERTY_WITH_UNIQUE_VALUE = PREFIX_METADATA + "propertyWithUniqueValue";
-	private static final String PROPERTY_METRICS_PREFERRED_MAXIMUM_SUBCLASS_LIMIT = PREFIX_METRICS + "preferredMaximumSubclassLimit";
+	public static final String PROPERTY_DOCUMENTATION_PROPERTY = PREFIX_METADATA + "documentationProperty";
+	public static final String PROPERTY_AUTHOR_PROPERTY = PREFIX_METADATA + "authorProperty";
+	public static final String PROPERTY_PROPERTY_WITH_UNIQUE_VALUE = PREFIX_METADATA + "propertyWithUniqueValue";
+	public static final String PROPERTY_METRICS_PREFERRED_MAXIMUM_SUBCLASS_LIMIT = PREFIX_METRICS + "preferredMaximumSubclassLimit";
 	
-	private static final String PROPERTY_OMV_NUMBER_OF_AXIOMS = PREFIX_OMV + "numberOfAxioms";
-    private static final String PROPERTY_OMV_NUMBER_OF_CLASSES = PREFIX_OMV + "numberOfClasses";
-    private static final String PROPERTY_OMV_NUMBER_OF_INDIVIDUALS = PREFIX_OMV + "numberOfIndividuals";
-    private static final String PROPERTY_OMV_NUMBER_OF_PROPERTIES = PREFIX_OMV + "numberOfProperties";
+	public static final String PROPERTY_OMV_NUMBER_OF_AXIOMS = PREFIX_OMV + "numberOfAxioms";
+    public static final String PROPERTY_OMV_NUMBER_OF_CLASSES = PREFIX_OMV + "numberOfClasses";
+    public static final String PROPERTY_OMV_NUMBER_OF_INDIVIDUALS = PREFIX_OMV + "numberOfIndividuals";
+    public static final String PROPERTY_OMV_NUMBER_OF_PROPERTIES = PREFIX_OMV + "numberOfProperties";
     
-    private static final String PROPERTY_METRICS_MAXIMUM_DEPTH = PREFIX_METRICS + "maximumDepth";
-    private static final String PROPERTY_METRICS_MAXIMUM_NUMBER_OF_SIBLINGS = PREFIX_METRICS + "maximumNumberOfSiblings";
-    private static final String PROPERTY_METRICS_AVERAGE_NUMBER_OF_SIBLINGS = PREFIX_METRICS + "averageNumberOfSiblings";
-    private static final String PROPERTY_METRICS_CLASSES_WITH_NO_DOCUMENTATION = PREFIX_METRICS + "classesWithNoDocumentation";
-    private static final String PROPERTY_METRICS_CLASSES_WITH_NO_AUTHOR = PREFIX_METRICS + "classesWithNoAuthor";
-    private static final String PROPERTY_METRICS_CLASSES_WITH_SINGLE_SUBCLASS = PREFIX_METRICS + "classesWithSingleSubclass";
-    private static final String PROPERTY_METRICS_CLASSES_WITH_MORE_THAN_X_SUBCLASSES = PREFIX_METRICS + "classesWithMoreThanXSubclasses";
-    private static final String PROPERTY_METRICS_CLASSES_WITH_MORE_THAN_ONE_PROPERTY_VALUE_FOR_PROPERTY_WITH_UNIQUE_VALUE = 
+    public static final String PROPERTY_METRICS_MAXIMUM_DEPTH = PREFIX_METRICS + "maximumDepth";
+    public static final String PROPERTY_METRICS_MAXIMUM_NUMBER_OF_SIBLINGS = PREFIX_METRICS + "maximumNumberOfSiblings";
+    public static final String PROPERTY_METRICS_AVERAGE_NUMBER_OF_SIBLINGS = PREFIX_METRICS + "averageNumberOfSiblings";
+    public static final String PROPERTY_METRICS_CLASSES_WITH_NO_DOCUMENTATION = PREFIX_METRICS + "classesWithNoDocumentation";
+    public static final String PROPERTY_METRICS_CLASSES_WITH_NO_AUTHOR = PREFIX_METRICS + "classesWithNoAuthor";
+    public static final String PROPERTY_METRICS_CLASSES_WITH_SINGLE_SUBCLASS = PREFIX_METRICS + "classesWithSingleSubclass";
+    public static final String PROPERTY_METRICS_CLASSES_WITH_MORE_THAN_X_SUBCLASSES = PREFIX_METRICS + "classesWithMoreThanXSubclasses";
+    public static final String PROPERTY_METRICS_CLASSES_WITH_MORE_THAN_ONE_PROPERTY_VALUE_FOR_PROPERTY_WITH_UNIQUE_VALUE = 
     	PREFIX_METRICS + "classesWithMoreThanOnePropertyValueForPropertyWithUniqueValue";
 
 	
-	private static final String PROPERTY_IS_VIEW_ON_ONTOLOGY_VERSION = PREFIX_METADATA + "isViewOnOntologyVersion";
-	private static final String PROPERTY_VIEW_DEFINITION = PREFIX_METADATA + "viewDefinition";
-	private static final String PROPERTY_VIEW_DEFINITION_LANGUAGE = PREFIX_METADATA + "viewDefinitionLanguage";
-	private static final String PROPERTY_VIEW_GENERATION_ENGINE = PREFIX_METADATA + "viewGenerationEngine";
+	public static final String PROPERTY_IS_VIEW_ON_ONTOLOGY_VERSION = PREFIX_METADATA + "isViewOnOntologyVersion";
+	public static final String PROPERTY_VIEW_DEFINITION = PREFIX_METADATA + "viewDefinition";
+	public static final String PROPERTY_VIEW_DEFINITION_LANGUAGE = PREFIX_METADATA + "viewDefinitionLanguage";
+	public static final String PROPERTY_VIEW_GENERATION_ENGINE = PREFIX_METADATA + "viewGenerationEngine";
 
-	private static final String PROPERTY_VIRTUAL_VIEW_OF = PREFIX_METADATA + "virtualViewOf";
+	public static final String PROPERTY_VIRTUAL_VIEW_OF = PREFIX_METADATA + "virtualViewOf";
 
 	public static void ensureOntologyBeanDoesNotInvalidateOntologyInstance(
 			OWLIndividual ontologyInd, OntologyBean ob, OWLIndividual vOntInd) throws Exception {
@@ -351,6 +354,7 @@ public class OntologyMetadataUtils extends MetadataUtils {
 		
 		ob.setAbbreviation( getPropertyValue(owlModel, ontologyInd, PROPERTY_OMV_ACRONYM, String.class));
 		ob.setCategoryIds( getPropertyValueIds(owlModel, ontologyInd, PROPERTY_OMV_HAS_DOMAIN));
+		ob.setGroupIds( getPropertyValueIds(owlModel, ontologyInd, PROPERTY_BELONGS_TO_GROUP));
 		ob.setCodingScheme( getPropertyValue(owlModel, ontologyInd, PROPERTY_CODING_SCHEME, String.class));
 		ob.setContactEmail( getPropertyValue(owlModel, ontologyInd, PROPERTY_HAS_CONTACT_EMAIL, String.class));
 		ob.setContactName( getPropertyValue(owlModel, ontologyInd, PROPERTY_HAS_CONTACT_NAME, String.class));
@@ -367,8 +371,6 @@ public class OntologyMetadataUtils extends MetadataUtils {
 		ob.setFilePath( getPropertyValue(owlModel, ontologyInd, PROPERTY_FILE_PATH, String.class));
 		ob.setFormat( getOntologyFormatValue(
 				owlModel, getPropertyValue(owlModel, ontologyInd, PROPERTY_OMV_HAS_ONTOLOGY_LANGUAGE, RDFIndividual.class)) );
-		
-		//ob.setHasViews(null);//FIXME
 		
 		ob.setHomepage( getPropertyValue(owlModel, ontologyInd, PROPERTY_URL_HOMEPAGE, String.class));
 		ob.setId( getPropertyValue(owlModel, ontologyInd, PROPERTY_ID, Integer.class));
@@ -657,6 +659,28 @@ public class OntologyMetadataUtils extends MetadataUtils {
 			}
 			else {
 				log.warn("Invalid instance of class " + ontDomClass.getBrowserText() + ": " + ontDomain);
+			}
+		}
+		return res;
+	}
+	
+	public static List<Integer> getAllGroupIDs(OWLModel metadata) {
+		OWLNamedClass ontGrpClass = metadata.getOWLNamedClass(CLASS_ONTOLOGY_GROUP);
+		List<Integer> res = new ArrayList<Integer>();
+		Collection<?> ontGroups = ontGrpClass.getInstances(true);
+		for (Object ontGroup : ontGroups) {
+			if (ontGroup instanceof RDFIndividual) {
+				RDFIndividual ontGroupInst = (RDFIndividual)ontGroup;
+				try {
+					Integer id = getId(metadata, ontGroupInst);
+					res.add(id);
+				}
+				catch(Exception e) {
+					log.error("Exception while getting ID of virtual view " + ontGroupInst.getBrowserText());
+				}
+			}
+			else {
+				log.warn("Invalid instance of class " + ontGrpClass.getBrowserText() + ": " + ontGroup);
 			}
 		}
 		return res;

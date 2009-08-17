@@ -3,7 +3,6 @@ package org.ncbo.stanford.manager.metadata;
 import java.util.List;
 
 import org.ncbo.stanford.bean.CategoryBean;
-import org.ncbo.stanford.bean.OntologyBean;
 
 /**
  * An interface for all API specific user metadata managers to conform to. This allows

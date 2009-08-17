@@ -425,6 +425,12 @@
 		<property name="metadataOntologyDomainInstSuffix">
 			<ref bean="metadataOntologyDomainInstSuffix" />
 		</property>
+		<property name="metadataOntologyGroupInstPrefix">
+			<ref bean="metadataOntologyGroupInstPrefix" />
+		</property>
+		<property name="metadataOntologyGroupInstSuffix">
+			<ref bean="metadataOntologyGroupInstSuffix" />
+		</property>
 		<property name="metadataOntologyInstPrefix">
 			<ref bean="metadataOntologyInstPrefix" />
 		</property>
@@ -509,6 +515,11 @@
 		parent="abstractOntologyManagerProtege">
 	</bean>
 
+	<bean id="ontologyGroupMetadataManagerProtege"
+		class="org.ncbo.stanford.manager.metadata.impl.OntologyGroupMetadataManagerProtegeImpl"
+		parent="abstractOntologyManagerProtege">
+	</bean>
+
 	<!-- Application Services -->
 	<bean id="userService"
 		class="org.ncbo.stanford.service.user.impl.UserServiceImpl">
@@ -578,6 +589,9 @@
 		</property>
 		<property name="ontologyCategoryMetadataManager">
 			<ref bean="ontologyCategoryMetadataManagerProtege" />
+		</property>
+		<property name="ontologyGroupMetadataManager">
+			<ref bean="ontologyGroupMetadataManagerProtege" />
 		</property>
 	</bean>
 
@@ -1145,6 +1159,18 @@
 	<bean id="metadataOntologyDomainInstSuffix" class="java.lang.String">
 		<constructor-arg>
 			<value>@metadataontologydomaininstsuffix@</value>
+		</constructor-arg>
+	</bean>
+
+	<bean id="metadataOntologyGroupInstPrefix" class="java.lang.String">
+		<constructor-arg>
+			<value>@metadataontologygroupinstprefix@</value>
+		</constructor-arg>
+	</bean>
+
+	<bean id="metadataOntologyGroupInstSuffix" class="java.lang.String">
+		<constructor-arg>
+			<value>@metadataontologygroupinstsuffix@</value>
 		</constructor-arg>
 	</bean>
 

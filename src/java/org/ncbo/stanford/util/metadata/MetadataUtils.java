@@ -38,6 +38,7 @@ public class MetadataUtils {
 	public static final String PROPERTY_OMV_NAME = PREFIX_OMV + "name";
 	public static final String PROPERTY_OMV_DESCRIPTION = PREFIX_OMV
 			+ "description";
+	public static final String PROPERTY_OMV_ACRONYM = PREFIX_OMV + "acronym";
 
 	public static final String PROPERTY_RDFS_LABEL = "rdfs:label";
 

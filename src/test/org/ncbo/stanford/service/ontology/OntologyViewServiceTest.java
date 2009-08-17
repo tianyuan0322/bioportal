@@ -275,6 +275,10 @@ public class OntologyViewServiceTest extends AbstractBioPortalTest {
 		categoryIds.add(2814);
 		bean.setCategoryIds(categoryIds);
 		
+		ArrayList<Integer> groupIds = new ArrayList<Integer>();
+		categoryIds.add(1);
+		bean.setGroupIds(groupIds);
+		
 		// set inputFilePath
 		//String inputFileStr = "/dev/cyoun/workspace/bioportal_resources/uploads/3000/0/pizza.owl";
 		String inputFileStr = "C:\\Program Files\\Protege_3.4\\examples\\pizza\\pizza.owl";

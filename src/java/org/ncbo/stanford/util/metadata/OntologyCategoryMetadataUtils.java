@@ -9,11 +9,10 @@ import edu.stanford.smi.protegex.owl.model.OWLModel;
 
 public class OntologyCategoryMetadataUtils extends MetadataUtils {
 
-	private static final String PROPERTY_OBO_FOUNDRY_ID = PREFIX_METADATA
-			+ "oboFoundryID";
-	private static final String PROPERTY_OMV_IS_SUB_DOMAIN_OF = PREFIX_OMV
-			+ "isSubDomainOf";
-	private static final String PROPERTY_OMV_NAME = PREFIX_OMV + "name";
+	public static final String PROPERTY_OMV_IS_SUB_DOMAIN_OF = PREFIX_OMV + "isSubDomainOf";
+
+	private static final String PROPERTY_OBO_FOUNDRY_ID = OntologyMetadataUtils.PROPERTY_OBO_FOUNDRY_ID;
+	private static final String CLASS_ONTOLOGY_DOMAIN = OntologyMetadataUtils.CLASS_OMV_ONTOLOGY_DOMAIN;
 
 	public static void fillInCategoryInstancePropertiesFromBean(
 			OWLIndividual ontologyInd, CategoryBean cb,
@@ -60,4 +59,10 @@ public class OntologyCategoryMetadataUtils extends MetadataUtils {
 			// + categoryInd);
 		}
 	}
+
+	public static OWLIndividual getOntologyDomainWithId(OWLModel metadata, Integer id) {
+		return getIndividualWithId(metadata, CLASS_ONTOLOGY_DOMAIN, id, false);
+	}
+	
 }
+

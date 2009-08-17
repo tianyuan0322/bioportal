@@ -9,7 +9,6 @@ import org.apache.commons.logging.LogFactory;
 import org.ncbo.stanford.bean.CategoryBean;
 import org.ncbo.stanford.manager.AbstractOntologyManagerProtege;
 import org.ncbo.stanford.manager.metadata.OntologyCategoryMetadataManager;
-import org.ncbo.stanford.util.metadata.MetadataUtils;
 import org.ncbo.stanford.util.metadata.OntologyCategoryMetadataUtils;
 import org.ncbo.stanford.util.metadata.OntologyMetadataUtils;
 
@@ -30,7 +29,7 @@ public class OntologyCategoryMetadataManagerProtegeImpl extends
 	private static final Log log = LogFactory
 			.getLog(OntologyCategoryMetadataManagerProtegeImpl.class);
 
-	private static final String CLASS_ONTOLOGY_DOMAIN = MetadataUtils.PREFIX_OMV + "OntologyDomain";
+	private static final String CLASS_ONTOLOGY_DOMAIN = OntologyMetadataUtils.CLASS_OMV_ONTOLOGY_DOMAIN;
 
 	private static final boolean CREATE_IF_MISSING = true;
 	private static final boolean DO_NOT_CREATE_IF_MISSING = false;
@@ -80,6 +79,14 @@ public class OntologyCategoryMetadataManagerProtegeImpl extends
 		
 		if (ontDomainInd == null && createIfMissing) {
 			ontDomainInd = createOntologyDomainInstance(metadata, ontDomainInstName);
+		}
+		
+		//alternative lookup
+		if (ontDomainInd == null) {
+			ontDomainInd = OntologyCategoryMetadataUtils.getOntologyDomainWithId(metadata, id);
+			if (ontDomainInd != null) {
+				log.warn("OntologyDomain instance for id: " + id + " has been found having non-standard name: " + ontDomainInd);
+			}
 		}
 		
 		return ontDomainInd;

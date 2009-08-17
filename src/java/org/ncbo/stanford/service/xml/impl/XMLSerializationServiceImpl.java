@@ -20,7 +20,9 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.commons.validator.GenericValidator;
 import org.ncbo.stanford.bean.CategoryBean;
+import org.ncbo.stanford.bean.GroupBean;
 import org.ncbo.stanford.bean.OntologyBean;
+import org.ncbo.stanford.bean.OntologyMetricsBean;
 import org.ncbo.stanford.bean.OntologyViewBean;
 import org.ncbo.stanford.bean.UserBean;
 import org.ncbo.stanford.bean.concept.ClassBean;
@@ -455,6 +457,8 @@ public class XMLSerializationServiceImpl implements XMLSerializationService {
 				OntologyBean.class);
 		xmlSerializer.alias(MessageUtils.getMessage("entity.ontologyviewbean"),
 				OntologyViewBean.class);
+		xmlSerializer.alias(MessageUtils.getMessage("entity.ontologymetricsbean"),
+				OntologyMetricsBean.class);
 		xmlSerializer.alias(MessageUtils.getMessage("entity.userbean"),
 				UserBean.class);
 
@@ -464,6 +468,8 @@ public class XMLSerializationServiceImpl implements XMLSerializationService {
 				ClassBean.class);
 		xmlSerializer.alias(MessageUtils.getMessage("entity.categorybean"),
 				CategoryBean.class);
+		xmlSerializer.alias(MessageUtils.getMessage("entity.groupbean"),
+				GroupBean.class);
 		xmlSerializer.alias(MessageUtils.getMessage("entity.propertybean"),
 				PropertyBean.class);
 		xmlSerializer.alias(MessageUtils.getMessage("entity.instancebean"),

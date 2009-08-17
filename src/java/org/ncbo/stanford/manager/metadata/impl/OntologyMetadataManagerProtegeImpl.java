@@ -42,12 +42,12 @@ public class OntologyMetadataManagerProtegeImpl extends
 	private static final Log log = LogFactory
 			.getLog(OntologyMetadataManagerProtegeImpl.class);
 
-	private static final String CLASS_ONTOLOGY = MetadataUtils.PREFIX_OMV + "Ontology";
-	//private static final String CLASS_ONTOLOGY_VIEW = MetadataUtils.PREFIX_OMV + "OntologyView";
-	private static final String CLASS_VIRTUAL_ONTOLOGY = MetadataUtils.PREFIX_METADATA + "VirtualOntology";
-	//private static final String CLASS_VIRTUAL_VIEW = MetadataUtils.PREFIX_METADATA + "VirtualView";
-	private static final String CLASS_USER = MetadataUtils.PREFIX_METADATA + "BioPortalUser";
-	//private static final String CLASS_ONTOLOGY_DOMAIN = MetadataUtils.PREFIX_OMV + "OntologyDomain";
+	private static final String CLASS_ONTOLOGY = OntologyMetadataUtils.CLASS_OMV_ONTOLOGY;
+	private static final String CLASS_ONTOLOGY_VIEW = OntologyMetadataUtils.CLASS_ONTOLOGY_VIEW;
+	private static final String CLASS_VIRTUAL_ONTOLOGY = OntologyMetadataUtils.CLASS_VIRTUAL_ONTOLOGY;
+	//private static final String CLASS_VIRTUAL_VIEW = OntologyMetadataUtils.CLASS_VIRTUAL_VIEW;
+	private static final String CLASS_USER = OntologyMetadataUtils.CLASS_BIOPORTAL_USER;
+	//private static final String CLASS_ONTOLOGY_DOMAIN = OntologyMetadataUtils.CLASS_OMV_ONTOLOGY_DOMAIN;
 	
 	private static final String QUERY_MAX_ONTOLOGY_ID = "Query-Max-Ontology-ID";
 	private static final String QUERY_MAX_VIRTUAL_ONTOLOGY_ID = "Query-Max-VirtualOntology-ID";
@@ -89,7 +89,7 @@ public class OntologyMetadataManagerProtegeImpl extends
 		OWLIndividual vOntInd = getVirtualOntologyInstance(metadata, ob.getOntologyId());
 		OWLIndividual userInd = getUserInstance(metadata, ob.getUserId());
 		Collection<OWLIndividual> domainInd = getOntologyDomainInstances(metadata, ob.getCategoryIds());
-		Collection<OWLIndividual> viewInd = getOntologyDomainInstances(metadata, ob.getHasViews());
+		Collection<OWLIndividual> viewInd = getOntologyViewInstances(metadata, ob.getHasViews());
 
 		OntologyMetadataUtils.ensureOntologyBeanDoesNotInvalidateOntologyInstance(ontVerInd, ob, vOntInd);
 		
@@ -534,6 +534,45 @@ public class OntologyMetadataManagerProtegeImpl extends
 		String ontDomainInstName = getOntologyDomainIndividualName(id);
 		OWLIndividual ontDomainInd = metadata.getOWLIndividual(ontDomainInstName);
 		return ontDomainInd;
+	}
+
+	
+	private OWLIndividual getOntologyViewInstance(OWLModel metadata, int id, boolean createIfMissing) {
+		String ontInstName = getOntologyViewIndividualName(id);
+		OWLIndividual ontInd = metadata.getOWLIndividual(ontInstName);
+		if (ontInd == null && createIfMissing) {
+			ontInd = createOntologyViewInstance(metadata, ontInstName);
+		}
+		//alternative lookup
+		if (ontInd == null) {
+			ontInd = OntologyMetadataUtils.getOntologyViewWithId(metadata, id);
+			if (ontInd != null) {
+				log.warn("Ontology view instance for id: " + id + " has been found having non-standard name: " + ontInd);
+			}
+		}
+		return ontInd;
+	}
+	
+	private OWLIndividual createOntologyViewInstance(OWLModel metadata, String indName) {
+		OWLNamedClass ontClass = metadata.getOWLNamedClass(CLASS_ONTOLOGY_VIEW);
+		return ontClass.createOWLIndividual(indName);
+	}
+	
+	private Collection<OWLIndividual> getOntologyViewInstances(OWLModel metadata,
+			List<Integer> ontViewVerIds) {
+		HashSet<OWLIndividual> res = new HashSet<OWLIndividual>();
+		for (Integer ontViewVerId : ontViewVerIds) {
+			OWLIndividual ontViewInd = getOntologyViewInstance(metadata, ontViewVerId, DO_NOT_CREATE_IF_MISSING);
+			if (ontViewInd != null) {
+				res.add(ontViewInd);
+			}
+			else {
+				//TODO what to do?
+				//throw Exception?
+				log.error("No metadata:OntologyView individual found for view ID: " + ontViewVerId);
+			}
+		}
+		return res;
 	}
 
 }

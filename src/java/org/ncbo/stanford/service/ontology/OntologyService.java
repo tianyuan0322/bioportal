@@ -4,6 +4,7 @@ import java.io.File;
 import java.util.List;
 
 import org.ncbo.stanford.bean.CategoryBean;
+import org.ncbo.stanford.bean.GroupBean;
 import org.ncbo.stanford.bean.OntologyBean;
 import org.ncbo.stanford.util.ontologyfile.pathhandler.FilePathHandler;
 
@@ -31,6 +32,13 @@ public interface OntologyService {
 	 */
 	public List<Integer> findCategoryIdsByOBOFoundryNames(
 			String[] oboFoundryNames);
+
+	/**
+	 * Return the list of all groups
+	 * 
+	 * @return
+	 */
+	public List<GroupBean> findAllGroups();
 
 	/**
 	 * Returns the latest version of an ontology using its obo foundry id

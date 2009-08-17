@@ -55,6 +55,8 @@ public abstract class AbstractOntologyManagerProtege {
 	protected String metadataUserRoleInstSuffix;
 	protected String metadataOntologyDomainInstPrefix;
 	protected String metadataOntologyDomainInstSuffix;
+	protected String metadataOntologyGroupInstPrefix;
+	protected String metadataOntologyGroupInstSuffix;
 	protected String metadataOntologyInstPrefix;
 	protected String metadataOntologyInstSuffix;
 	protected String metadataOntologyViewInstPrefix;
@@ -242,18 +244,26 @@ public abstract class AbstractOntologyManagerProtege {
 	}
 
 	/**
-	 * Gets the BioPortalUserRole individual name associated with a user id.
+	 * Gets the BioPortalUserRole individual name associated with a user role id.
 	 */
 	protected String getUserRoleIndividualName(Integer userId) {
 		return metadataUserRoleInstPrefix + userId + metadataUserRoleInstSuffix;
 	}
 
 	/**
-	 * Gets the OMV:OntologyDomain individual name associated with a user id.
+	 * Gets the OMV:OntologyDomain individual name associated with a category id.
 	 */
-	protected String getOntologyDomainIndividualName(Integer userId) {
-		return metadataOntologyDomainInstPrefix + userId
+	protected String getOntologyDomainIndividualName(Integer catId) {
+		return metadataOntologyDomainInstPrefix + catId
 				+ metadataOntologyDomainInstSuffix;
+	}
+	
+	/**
+	 * Gets the OntologyGroup individual name associated with a group id.
+	 */
+	protected String getOntologyGroupIndividualName(Integer groupId) {
+		return metadataOntologyGroupInstPrefix + groupId
+		+ metadataOntologyGroupInstSuffix;
 	}
 
 	/**
@@ -487,6 +497,38 @@ public abstract class AbstractOntologyManagerProtege {
 	public void setMetadataOntologyDomainInstSuffix(
 			String metadataOntologyDomainInstSuffix) {
 		this.metadataOntologyDomainInstSuffix = metadataOntologyDomainInstSuffix;
+	}
+	
+	/**
+	 * @return the metadataOntologyGroupInstPrefix
+	 */
+	public String getMetadataOntologyGroupInstPrefix() {
+		return metadataOntologyGroupInstPrefix;
+	}
+	
+	/**
+	 * @param metadataOntologyGroupInstPrefix
+	 *            the metadataOntologyGroupInstPrefix to set
+	 */
+	public void setMetadataOntologyGroupInstPrefix(
+			String metadataOntologyGroupInstPrefix) {
+		this.metadataOntologyGroupInstPrefix = metadataOntologyGroupInstPrefix;
+	}
+	
+	/**
+	 * @return the metadataOntologyGroupInstSuffix
+	 */
+	public String getMetadataOntologyGroupInstSuffix() {
+		return metadataOntologyGroupInstSuffix;
+	}
+	
+	/**
+	 * @param metadataOntologyGroupInstSuffix
+	 *            the metadataOntologyGroupInstSuffix to set
+	 */
+	public void setMetadataOntologyGroupInstSuffix(
+			String metadataOntologyGroupInstSuffix) {
+		this.metadataOntologyGroupInstSuffix = metadataOntologyGroupInstSuffix;
 	}
 
 	/**

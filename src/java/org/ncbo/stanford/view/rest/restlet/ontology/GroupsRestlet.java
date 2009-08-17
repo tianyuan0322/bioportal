@@ -4,16 +4,16 @@ import java.util.List;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.ncbo.stanford.bean.CategoryBean;
+import org.ncbo.stanford.bean.GroupBean;
 import org.ncbo.stanford.service.ontology.OntologyService;
 import org.ncbo.stanford.view.rest.restlet.AbstractBaseRestlet;
 import org.restlet.data.Request;
 import org.restlet.data.Response;
 import org.restlet.data.Status;
 
-public class CategoriesRestlet extends AbstractBaseRestlet {
+public class GroupsRestlet extends AbstractBaseRestlet {
 
-	private static final Log log = LogFactory.getLog(CategoriesRestlet.class);
+	private static final Log log = LogFactory.getLog(GroupsRestlet.class);
 	private OntologyService ontologyService;
 
 	/**
@@ -21,20 +21,20 @@ public class CategoriesRestlet extends AbstractBaseRestlet {
 	 */
 	@Override
 	public void getRequest(Request request, Response response) {
-		listCategories(request, response);
+		listGroups(request, response);
 	}
 
 	/**
-	 * Return to the response a listing of categories
+	 * Return to the response a listing of groups
 	 * 
 	 * @param request
 	 * @param response
 	 */
-	private void listCategories(Request request, Response response) {
-		List<CategoryBean> categoryList = null;
+	private void listGroups(Request request, Response response) {
+		List<GroupBean> groupsList = null;
 
 		try {
-			categoryList = ontologyService.findAllCategories();
+			groupsList = ontologyService.findAllGroups();
 		} catch (Exception e) {
 			response.setStatus(Status.SERVER_ERROR_INTERNAL, e.getMessage());
 			e.printStackTrace();
@@ -42,7 +42,7 @@ public class CategoriesRestlet extends AbstractBaseRestlet {
 		} finally {
 			// generate response XML with XSL
 			xmlSerializationService.generateXMLResponse(request, response,
-					categoryList);
+					groupsList);
 		}
 	}
 

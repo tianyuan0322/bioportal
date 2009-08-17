@@ -111,6 +111,7 @@ public class BeanHelper {
 	public static void populateOntologyBeanFromRequest(OntologyBean bean,
 			Request request) {
 		List<Integer> categoryIds = new ArrayList<Integer>(0);
+		List<Integer> groupIds = new ArrayList<Integer>(0);
 		List<Integer> hasViewIds = new ArrayList<Integer>(0);
 		HttpServletRequest httpServletRequest = RequestUtils
 				.getHttpServletRequest(request);
@@ -278,6 +279,15 @@ public class BeanHelper {
 		if (categoryIdValues != null) {
 			categoryIds = RequestUtils.parseIntegerListParam(categoryIdValues);
 			bean.setCategoryIds(categoryIds);
+		}
+
+		String[] groupIdValues = httpServletRequest
+				.getParameterValues(MessageUtils
+						.getMessage("form.ontology.groupId"));
+		
+		if (groupIdValues != null) {
+			groupIds = RequestUtils.parseIntegerListParam(groupIdValues);
+			bean.setCategoryIds(groupIds);
 		}
 
 		// set file attribute in ontologyBean

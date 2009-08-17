@@ -54,6 +54,9 @@ public class OntologyBean {
 	// category id(s)
 	private List<Integer> categoryIds = new ArrayList<Integer>(0);
 
+	// category id(s)
+	private List<Integer> groupIds = new ArrayList<Integer>(0);
+	
 	// file name(s)
 	private List<String> filenames = new ArrayList<String>(0);
 
@@ -507,6 +510,39 @@ public class OntologyBean {
 	 */
 	public boolean addCategoryIds(Collection<? extends Integer> c) {
 		return categoryIds.addAll(c);
+	}
+	
+	/**
+	 * @return the groupIds
+	 */
+	public List<Integer> getGroupIds() {
+		return groupIds;
+	}
+	
+	/**
+	 * @param groupIds
+	 *            the groupIds to set
+	 */
+	public void setGroupIds(List<Integer> groupIds) {
+		this.groupIds = groupIds;
+	}
+	
+	/**
+	 * @param arg0
+	 * @return
+	 * @see java.util.List#add(java.lang.Object)
+	 */
+	public boolean addGroupId(Integer arg0) {
+		return groupIds.add(arg0);
+	}
+	
+	/**
+	 * @param c
+	 * @return
+	 * @see java.util.List#addAll(java.util.Collection)
+	 */
+	public boolean addGroupIds(Collection<? extends Integer> c) {
+		return groupIds.addAll(c);
 	}
 
 	/**

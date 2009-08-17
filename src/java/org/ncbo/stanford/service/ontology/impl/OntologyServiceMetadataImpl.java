@@ -5,10 +5,12 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.ncbo.stanford.bean.CategoryBean;
+import org.ncbo.stanford.bean.GroupBean;
 import org.ncbo.stanford.bean.OntologyBean;
 import org.ncbo.stanford.domain.generated.NcboOntologyFile;
 import org.ncbo.stanford.domain.generated.NcboOntologyLoadQueue;
 import org.ncbo.stanford.manager.metadata.OntologyCategoryMetadataManager;
+import org.ncbo.stanford.manager.metadata.OntologyGroupMetadataManager;
 import org.ncbo.stanford.manager.metadata.OntologyMetadataManager;
 import org.ncbo.stanford.service.ontology.AbstractOntologyService;
 import org.ncbo.stanford.service.ontology.OntologyService;
@@ -21,6 +23,7 @@ public class OntologyServiceMetadataImpl extends AbstractOntologyService impleme
 
 	private OntologyMetadataManager ontologyMetadataManager;
 	private OntologyCategoryMetadataManager ontologyCategoryMetadataManager;
+	private OntologyGroupMetadataManager ontologyGroupMetadataManager;
 
 	public void cleanupOntologyCategory(OntologyBean ontologyBean) {
 		// This method was created in the original implementation where
@@ -136,6 +139,10 @@ public class OntologyServiceMetadataImpl extends AbstractOntologyService impleme
 		return ontologyCategoryMetadataManager.findAllCategories();
 	}
 
+	public List<GroupBean> findAllGroups() {
+		return ontologyGroupMetadataManager.findAllGroups();
+	}
+	
 	public List<OntologyBean> findAllOntologyVersionsByOntologyId(
 			Integer ontologyId) {
 		try {
