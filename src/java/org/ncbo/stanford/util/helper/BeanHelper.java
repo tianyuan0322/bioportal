@@ -287,7 +287,7 @@ public class BeanHelper {
 		
 		if (groupIdValues != null) {
 			groupIds = RequestUtils.parseIntegerListParam(groupIdValues);
-			bean.setCategoryIds(groupIds);
+			bean.setGroupIds(groupIds);
 		}
 
 		// set file attribute in ontologyBean
