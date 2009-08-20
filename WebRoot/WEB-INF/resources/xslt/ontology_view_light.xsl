@@ -12,9 +12,10 @@
 		</success>
 	</xsl:template>
 
-	<xsl:template match="ontologyViewBean">
+	<xsl:template match="ontologyBean">
 		<ontologyViewBean>
 			<xsl:copy-of select="id" />
+			<xsl:copy-of select="isView" />
 			<xsl:copy-of select="ontologyId" />
 			<xsl:copy-of select="displayLabel" />
 			<xsl:copy-of select="description" />

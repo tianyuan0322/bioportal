@@ -30,7 +30,7 @@ public class OntologyRetrievalManagerProtegeTest extends AbstractBioPortalTest {
 	@Test
 	public void testPathToRoot() throws Exception {
 		OntologyBean version = ontologyMetadataManagerProtege
-				.findOntologyById(TEST_ONT_VERSION_ID);
+				.findOntologyOrViewVersionById(TEST_ONT_VERSION_ID);
 		ClassBean conceptBean = ocMgr.findPathFromRoot(version, "SpicyPizza",
 				false);
 
@@ -72,7 +72,7 @@ public class OntologyRetrievalManagerProtegeTest extends AbstractBioPortalTest {
 	@Test
 	public void testGetRootNode() throws Exception {
 		OntologyBean version = ontologyMetadataManagerProtege
-				.findOntologyById(TEST_ONT_VERSION_ID);
+				.findOntologyOrViewVersionById(TEST_ONT_VERSION_ID);
 		ClassBean conceptBean = ocMgr.findRootConcept(version);
 
 		System.out.println("ROOT");

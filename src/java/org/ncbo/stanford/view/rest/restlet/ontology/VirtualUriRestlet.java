@@ -58,18 +58,22 @@ public class VirtualUriRestlet extends AbstractBaseRestlet {
 
 			if (conceptId == null) {
 				returnObject = ontologyService
-						.findLatestOntologyVersion(ontologyIdInt);
+						.findLatestOntologyOrViewVersion(ontologyIdInt);
 
 				if (returnObject == null) {
+					//TODO if we could test whether the virtual id is for an ontology or for a view
+					//     we could return more appropriate message (i.e. "msg.error.ontologyViewNotFound")
 					response.setStatus(Status.CLIENT_ERROR_NOT_FOUND,
 							MessageUtils
 									.getMessage("msg.error.ontologyNotFound"));
 				}
 			} else {
 				OntologyBean ontBean = ontologyService
-						.findLatestActiveOntologyVersion(ontologyIdInt);
+						.findLatestActiveOntologyOrViewVersion(ontologyIdInt);
 
 				if (ontBean == null) {
+					//TODO if we could test whether the virtual id is for an ontology or for a view
+					//     we could return more appropriate message (i.e. "msg.error.ontologyViewNotFound")
 					response.setStatus(Status.CLIENT_ERROR_NOT_FOUND,
 							MessageUtils
 									.getMessage("msg.error.ontologyNotFound"));

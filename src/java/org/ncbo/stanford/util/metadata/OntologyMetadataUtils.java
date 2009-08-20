@@ -12,7 +12,6 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.ncbo.stanford.bean.OntologyBean;
 import org.ncbo.stanford.bean.OntologyMetricsBean;
-import org.ncbo.stanford.bean.OntologyViewBean;
 import org.ncbo.stanford.exception.MetadataException;
 import org.ncbo.stanford.util.MessageUtils;
 
@@ -78,6 +77,7 @@ public class OntologyMetadataUtils extends MetadataUtils {
 
 	public static final String PROPERTY_BELONGS_TO_GROUP = PREFIX_METADATA + "belongsToGroup";
 	public static final String PROPERTY_HAS_VIEW = PREFIX_METADATA + "hasView";
+	public static final String PROPERTY_HAS_VIRTUAL_VIEW = PREFIX_METADATA + "hasVirtualView";
 
 	public static final String PROPERTY_DOCUMENTATION_PROPERTY = PREFIX_METADATA + "documentationProperty";
 	public static final String PROPERTY_AUTHOR_PROPERTY = PREFIX_METADATA + "authorProperty";
@@ -177,19 +177,12 @@ public class OntologyMetadataUtils extends MetadataUtils {
 		}
 	}
 	
-	public static void ensureOntologyViewBeanDoesNotInvalidateOntologyViewInstance(
-			OWLIndividual ontologyViewInd, OntologyViewBean ob, OWLIndividual vViewInd) throws Exception {
-		
-		ensureOntologyBeanDoesNotInvalidateOntologyInstance(ontologyViewInd, ob, vViewInd);
-		
-		//TODO continue
-	}
-	
 	
 	public static void fillInOntologyInstancePropertiesFromBean(OWLIndividual ontologyInd,
 			OntologyBean ob, OWLIndividual vOntInd, OWLIndividual userInd, 
 			Collection<OWLIndividual> domainIndividuals, 
-			Collection<OWLIndividual> viewIndividuals) throws MetadataException {
+			Collection<OWLIndividual> viewIndividuals,
+			Collection<OWLIndividual> viewOnOntologyIndividuals) throws MetadataException {
 		
 		if (ontologyInd == null || ob == null) {
 			throw new MetadataException("The method fillInOntologyInstancePropertiesFromBean can't take null arguments. Please make sure that both arguments are properly initialized.");
@@ -246,6 +239,11 @@ public class OntologyMetadataUtils extends MetadataUtils {
 		//ob.getOntologyId();
 		setPropertyValue(owlModel, ontologyInd, PROPERTY_IS_VERSION_OF_VIRTUAL_ONTOLOGY, vOntInd);
 
+		//ob.getVirtualViewIds();
+		//We don't have to explicitly set the virtual view versions as belonging to the virtual ontology
+		//but we create this relation when uploading/updating a view (See below the
+		//	updateIsViewOnOntologyVersionProperty(...) call)
+		
 		setPropertyValue(owlModel, ontologyInd, PROPERTY_PREFERRED_NAME_PROPERTY, ob.getPreferredNameSlot());
 		setPropertyValue(owlModel, ontologyInd, PROPERTY_URL_PUBLICATIONS, ob.getPublication());
 		setPropertyValue(owlModel, ontologyInd, PROPERTY_STATUS_ID, ob.getStatusId());
@@ -265,47 +263,75 @@ public class OntologyMetadataUtils extends MetadataUtils {
 		setPropertyValue(owlModel, ontologyInd, PROPERTY_METRICS_PREFERRED_MAXIMUM_SUBCLASS_LIMIT, ob.getPreferredMaximumSubclassLimit());
 		
 		setPropertyValue(owlModel, ontologyInd, PROPERTY_HAS_VIEW, viewIndividuals);
-	}
+		
+		if (ob.isView()) {
+			if ( ! isOntologyViewIndividual(ontologyInd) ) {
+				throw new MetadataException("The method fillInOntologyInstancePropertiesFromBean must take an OntologyVersion individual when othe ontologyBean has the flag isView set to true. Please make sure that both arguments are properly initialized.");
+			}
+			
+			//setPropertyValue(owlModel, ontologyInd, PROPERTY_IS_VIEW_ON_ONTOLOGY_VERSION, viewOnOntologyIndividuals);
+			updateIsViewOnOntologyVersionProperty(owlModel, ontologyInd, viewOnOntologyIndividuals);
 
-	public static void fillInOntologyViewInstancePropertiesFromBean(OWLIndividual ontologyViewInd,
-			OntologyViewBean ob, OWLIndividual vViewInd, OWLIndividual userInd, 
-			Collection<OWLIndividual> domainIndividuals, 
-			Collection<OWLIndividual> viewIndividuals, 
-			Collection<OWLIndividual> ontologyIndividuals) throws MetadataException {
-		
-		fillInOntologyInstancePropertiesFromBean(ontologyViewInd, ob, vViewInd, userInd, domainIndividuals, viewIndividuals);
-		
-		OWLModel owlModel = ontologyViewInd.getOWLModel();
-		
-		setPropertyValue(owlModel, ontologyViewInd, PROPERTY_IS_VIEW_ON_ONTOLOGY_VERSION, ontologyIndividuals);
-
-		setPropertyValue(owlModel, ontologyViewInd, PROPERTY_VIEW_DEFINITION, ob.getViewDefinition());
-		RDFIndividual viewDefLangInd = getViewDefinitionLanguageInstance(owlModel, ob.getViewDefinitionLanguage());
-		
-		if (viewDefLangInd != null) {
-			setPropertyValue(owlModel, ontologyViewInd, PROPERTY_VIEW_DEFINITION_LANGUAGE, viewDefLangInd);
+			setPropertyValue(owlModel, ontologyInd, PROPERTY_VIEW_DEFINITION, ob.getViewDefinition());
+			RDFIndividual viewDefLangInd = getViewDefinitionLanguageInstance(owlModel, ob.getViewDefinitionLanguage());
+			
+			if (viewDefLangInd != null) {
+				setPropertyValue(owlModel, ontologyInd, PROPERTY_VIEW_DEFINITION_LANGUAGE, viewDefLangInd);
+			}
+			else {
+				//TODO what to do?
+				//throw Exception?
+				//log.error("No metadata:ViewDefinitionLanguage individual found for ontology view: " + ontologyInd);
+			}
+			
+			OWLIndividual viewGenEngInd = getViewGenerationEngineInstance(owlModel, ob.getViewGenerationEngine());
+			
+			if (viewGenEngInd != null) {
+				setPropertyValue(owlModel, ontologyInd, PROPERTY_VIEW_GENERATION_ENGINE, viewGenEngInd);
+			}
+			else {
+				//TODO what to do?
+				//throw Exception?
+				//log.error("No metadata:ViewGenerationEngine individual found for ontology view: " + ontologyViewInd);
+			}
+			
+			//TODO see if we have to deal with virtualViewOf property or not
 		}
-		else {
-			//TODO what to do?
-			//throw Exception?
-			//log.error("No metadata:ViewDefinitionLanguage individual found for ontology view: " + ontologyViewInd);
-		}
-		
-		OWLIndividual viewGenEngInd = getViewGenerationEngineInstance(owlModel, ob.getViewGenerationEngine());
-		
-		if (viewGenEngInd != null) {
-			setPropertyValue(owlModel, ontologyViewInd, PROPERTY_VIEW_GENERATION_ENGINE, viewGenEngInd);
-		}
-		else {
-			//TODO what to do?
-			//throw Exception?
-			//log.error("No metadata:ViewGenerationEngine individual found for ontology view: " + ontologyViewInd);
-		}
-		
-		//TODO see if we have to deal with virtualViewOf property or not
 	}
 
 	
+	private static void updateIsViewOnOntologyVersionProperty(
+			OWLModel owlModel, OWLIndividual ontologyViewInd, 
+			Collection<OWLIndividual> viewOnOntologyIndividuals) throws MetadataException {
+		//this method replaces the more simple:
+		//	setPropertyValue(owlModel, ontologyViewInd, PROPERTY_IS_VIEW_ON_ONTOLOGY_VERSION, viewOnOntologyIndividuals);
+		//method call with a "remove old values" + "add new values" logic since we have to maintain the
+		//integrity of the relationships at the virtual ontology/view level
+		try {
+			OWLIndividual vViewInd = getPropertyValue(owlModel, ontologyViewInd, PROPERTY_IS_VERSION_OF_VIRTUAL_ONTOLOGY, OWLIndividual.class);
+	
+			List<OWLIndividual> currValueForViewsOnOntologyIndividuals = 
+				getPropertyValues(owlModel, ontologyViewInd, PROPERTY_IS_VIEW_ON_ONTOLOGY_VERSION, OWLIndividual.class);
+			
+			//remove all current values
+			for (OWLIndividual ontInd : currValueForViewsOnOntologyIndividuals) {
+				OWLIndividual vOntInd = getPropertyValue(owlModel, ontInd, PROPERTY_IS_VERSION_OF_VIRTUAL_ONTOLOGY, OWLIndividual.class);
+				removePropertyValue(owlModel, vViewInd, PROPERTY_VIRTUAL_VIEW_OF, vOntInd);
+			}
+			
+			setPropertyValue(owlModel, ontologyViewInd, PROPERTY_IS_VIEW_ON_ONTOLOGY_VERSION, viewOnOntologyIndividuals);
+			
+			//add all new values
+			for (OWLIndividual ontInd : viewOnOntologyIndividuals) {
+				OWLIndividual vOntInd = getPropertyValue(owlModel, ontInd, PROPERTY_IS_VERSION_OF_VIRTUAL_ONTOLOGY, OWLIndividual.class);
+				addPropertyValue(owlModel, vViewInd, PROPERTY_VIRTUAL_VIEW_OF, vOntInd);
+			}
+		} catch (Exception e) {
+			throw new MetadataException("updateIsViewOnOntologyVersionproperty failed", e);
+		}
+	}
+
+
 	public static void fillInOntologyInstancePropertiesFromBean(OWLIndividual ontologyInd,
 			OntologyMetricsBean mb) throws MetadataException {
 		
@@ -394,6 +420,9 @@ public class OntologyMetadataUtils extends MetadataUtils {
 //			// throw Exception?
 //			// log.error("No metadata:isVersionOfVirtualOntology individual found for ontology: " + ontologyInd);
 //		}
+		
+		ob.setVirtualViewIds(getPropertyValueIds(owlModel, vOntInd, PROPERTY_HAS_VIRTUAL_VIEW) );
+		
 		ob.setPreferredNameSlot( getPropertyValue(owlModel, ontologyInd, PROPERTY_PREFERRED_NAME_PROPERTY, String.class));
 		ob.setPublication( getPropertyValue(owlModel, ontologyInd, PROPERTY_URL_PUBLICATIONS, String.class));
 		ob.setStatusId( getPropertyValue(owlModel, ontologyInd, PROPERTY_STATUS_ID, Integer.class));
@@ -411,23 +440,22 @@ public class OntologyMetadataUtils extends MetadataUtils {
 		ob.setPreferredMaximumSubclassLimit( getPropertyValue(owlModel, ontologyInd, PROPERTY_METRICS_PREFERRED_MAXIMUM_SUBCLASS_LIMIT, Integer.class));
 
 		ob.setHasViews( getPropertyValueIds(owlModel, ontologyInd, PROPERTY_HAS_VIEW));
-	}
 
-	public static void fillInOntologyViewBeanFromInstance(OntologyViewBean ob,
-			OWLIndividual ontologyViewInd) throws Exception {
-		
-		fillInOntologyBeanFromInstance(ob, ontologyViewInd);
-		
-		OWLModel owlModel = ontologyViewInd.getOWLModel();
-		
-		ob.setViewOnOntologyVersionId( getPropertyValueIds(owlModel, ontologyViewInd, PROPERTY_IS_VIEW_ON_ONTOLOGY_VERSION));
-		ob.setViewDefinition( getPropertyValue(owlModel, ontologyViewInd, PROPERTY_VIEW_DEFINITION, String.class));
-		ob.setViewDefinitionLanguage( getViewDefinitionLanguageValue(
-				owlModel, getPropertyValue(owlModel, ontologyViewInd, PROPERTY_VIEW_DEFINITION_LANGUAGE, RDFIndividual.class)) );
-		ob.setViewGenerationEngine( getViewGenerationEngineValue(
-				owlModel, getPropertyValue(owlModel, ontologyViewInd, PROPERTY_VIEW_GENERATION_ENGINE, RDFIndividual.class)) );
-		
-		//TODO see if we have to deal with virtualViewOf property or not
+		//set view specific properties
+		if (isOntologyViewIndividual(ontologyInd)) {
+			ob.setView(true);
+			ob.setViewOnOntologyVersionId( getPropertyValueIds(owlModel, ontologyInd, PROPERTY_IS_VIEW_ON_ONTOLOGY_VERSION));
+			ob.setViewDefinition( getPropertyValue(owlModel, ontologyInd, PROPERTY_VIEW_DEFINITION, String.class));
+			ob.setViewDefinitionLanguage( getViewDefinitionLanguageValue(
+					owlModel, getPropertyValue(owlModel, ontologyInd, PROPERTY_VIEW_DEFINITION_LANGUAGE, RDFIndividual.class)) );
+			ob.setViewGenerationEngine( getViewGenerationEngineValue(
+					owlModel, getPropertyValue(owlModel, ontologyInd, PROPERTY_VIEW_GENERATION_ENGINE, RDFIndividual.class)) );
+			
+			//TODO see if we have to deal with virtualViewOf property or not
+		}
+		else {
+			ob.setView(false);
+		}
 	}
 	
 	public static void fillInMetricsBeanFromInstance(OntologyMetricsBean mb,
@@ -443,6 +471,18 @@ public class OntologyMetadataUtils extends MetadataUtils {
 		mb.setNumberOfProperties( getPropertyValue(owlModel, ontologyInd, PROPERTY_OMV_NUMBER_OF_PROPERTIES, Integer.class));
 	}
 	
+	
+	public static boolean isOntologyViewIndividual(OWLIndividual ind) {
+		OWLModel owlModel = ind.getOWLModel();
+		OWLNamedClass ontViewClass = owlModel.getOWLNamedClass(CLASS_ONTOLOGY_VIEW);
+		return ind.hasRDFType(ontViewClass);
+	}
+	
+	public static boolean isVirtualViewIndividual(OWLIndividual ind) {
+		OWLModel owlModel = ind.getOWLModel();
+		OWLNamedClass vrtViewClass = owlModel.getOWLNamedClass(CLASS_VIRTUAL_VIEW);
+		return ind.hasRDFType(vrtViewClass);
+	}
 	
 	private static Byte convertBooleanToByte(Boolean boolValue) {
 		if (boolValue == null) {
@@ -598,10 +638,11 @@ public class OntologyMetadataUtils extends MetadataUtils {
 	}
 
 
-	public static List<Integer> getAllVirtualOntologyIDs(OWLModel metadata) {
+	public static List<Integer> getAllVirtualOntologyIDs(
+			OWLModel metadata, boolean includeSubclasses) {
 		OWLNamedClass vOntClass = metadata.getOWLNamedClass(CLASS_VIRTUAL_ONTOLOGY);
 		List<Integer> res = new ArrayList<Integer>();
-		Collection<?> vOntologies = vOntClass.getInstances(true);
+		Collection<?> vOntologies = vOntClass.getInstances(includeSubclasses);
 		for (Object vOnt : vOntologies) {
 			if (vOnt instanceof RDFIndividual) {
 				RDFIndividual vOntInst = (RDFIndividual)vOnt;
@@ -764,31 +805,31 @@ public class OntologyMetadataUtils extends MetadataUtils {
 		return getIndividualWithId(metadata, CLASS_ONTOLOGY_VIEW, id, false);
 	}
 
-	public static List<OWLIndividual> searchOntologyMetadata(OWLModel metadata, String query) {
-		return searchMetadataOnClass(metadata, CLASS_OMV_ONTOLOGY, query);
+	public static List<OWLIndividual> searchOntologyMetadata(OWLModel metadata, String query, boolean includeViews) {
+		return searchMetadataOnClass(metadata, CLASS_OMV_ONTOLOGY, query, includeViews);
 	}
 	
 	public static List<OWLIndividual> searchOntologyViewMetadata(OWLModel metadata, String query) {
-		return searchMetadataOnClass(metadata, CLASS_ONTOLOGY_VIEW, query);
+		return searchMetadataOnClass(metadata, CLASS_ONTOLOGY_VIEW, query, false);
 	}
 	
 	public static List<OWLIndividual> searchMetadataOnClass(OWLModel metadata,
-			String class_name, String query) {
+			String class_name, String query, boolean includeSubclasses) {
 		HashSet<OWLIndividual> res = new HashSet<OWLIndividual>();
 
 		res.addAll(getIndividualsWithMatchingProperty(metadata, class_name,
-				PROPERTY_URL_PUBLICATIONS, query, false));
+				PROPERTY_URL_PUBLICATIONS, query, includeSubclasses));
 		res.addAll(getIndividualsWithMatchingProperty(metadata, class_name,
-				PROPERTY_URL_HOMEPAGE, query, false));
+				PROPERTY_URL_HOMEPAGE, query, includeSubclasses));
 		res.addAll(getIndividualsWithMatchingProperty(metadata, class_name,
-				PROPERTY_HAS_CONTACT_EMAIL, query, false));
+				PROPERTY_HAS_CONTACT_EMAIL, query, includeSubclasses));
 		res.addAll(getIndividualsWithMatchingProperty(metadata, class_name,
-				PROPERTY_HAS_CONTACT_NAME, query, false));
+				PROPERTY_HAS_CONTACT_NAME, query, includeSubclasses));
 		// TODO check corresponding properties for displayLabel and format!
 		res.addAll(getIndividualsWithMatchingProperty(metadata, class_name,
-				PROPERTY_OMV_NAME, query, false));
+				PROPERTY_OMV_NAME, query, includeSubclasses));
 		// res.addAll(getIndividualsWithMatchingProperty(metadata, class_name,
-		// 		PROPERTY_format????, query, false));
+		// 		PROPERTY_format????, query, includeSubclasses));
 
 		return new ArrayList<OWLIndividual>(res);
 	}

@@ -42,13 +42,15 @@ public class OntologyVersionsRestlet extends AbstractBaseRestlet {
 
 		try {
 			ontologyList = ontologyService
-					.findAllOntologyVersionsByOntologyId(Integer
+					.findAllOntologyOrViewVersionsByVirtualId(Integer
 							.parseInt(ontologyId));
 
 			response.setStatus(Status.SUCCESS_OK);
 
 			// if no data is not found, set Error in the Status object
 			if (ontologyList == null || ontologyList.isEmpty()) {
+				//TODO if we could test whether the virtual id is for an ontology or for a view
+				//     we could return more appropriate message (i.e. "msg.error.ontologyViewNotFound")
 				response.setStatus(Status.CLIENT_ERROR_NOT_FOUND, MessageUtils
 						.getMessage("msg.error.ontologyNotFound"));
 			}

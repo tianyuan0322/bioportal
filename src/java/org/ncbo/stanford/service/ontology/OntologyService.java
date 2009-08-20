@@ -6,6 +6,7 @@ import java.util.List;
 import org.ncbo.stanford.bean.CategoryBean;
 import org.ncbo.stanford.bean.GroupBean;
 import org.ncbo.stanford.bean.OntologyBean;
+import org.ncbo.stanford.bean.OntologyMetricsBean;
 import org.ncbo.stanford.util.ontologyfile.pathhandler.FilePathHandler;
 
 /**
@@ -73,40 +74,46 @@ public interface OntologyService {
 	 * 
 	 * @return list of Ontology beans
 	 */
-	public List<OntologyBean> findAllOntologyVersionsByOntologyId(
-			Integer ontologyId);
+	public List<OntologyBean> findAllOntologyOrViewVersionsByVirtualId(
+			Integer ontologyOrViewId);
 
 	/**
-	 * Searches Ontology Metadata
+	 * Searches common fields from ontology or view metadata for an arbitrary
+	 * query string
 	 * 
-	 * 
-	 * @return list of Ontology beans
+	 * @param query search a string
+	 * @param includeViews if set to true search will include also the metadata
+	 * 			of views, otherwise it searches only in metadata of ontologies (no views)
+	 * @return list of ontology beans that have metadata matching the query string
 	 */
-	public List<OntologyBean> searchOntologyMetadata(String query);
+	public List<OntologyBean> searchOntologyMetadata(String query, boolean includeViews);
 
 	/**
 	 * Returns a single ontology version record
 	 * 
 	 * @param ontologyVersionId
 	 * @return
+	 * @throws Exception 
 	 */
-	public OntologyBean findOntology(Integer ontologyVersionId);
+	public OntologyBean findOntologyOrView(Integer ontologyVersionId) throws Exception;
 
 	/**
 	 * Finds the latest version of a given ontology
 	 * 
 	 * @param ontologyId
 	 * @return
+	 * @throws Exception 
 	 */
-	public OntologyBean findLatestOntologyVersion(Integer ontologyId);
+	public OntologyBean findLatestOntologyOrViewVersion(Integer ontologyId) throws Exception;
 
 	/**
 	 * Finds the latest "active" version of a given ontology
 	 * 
 	 * @param ontologyId
 	 * @return
+	 * @throws Exception 
 	 */
-	public OntologyBean findLatestActiveOntologyVersion(Integer ontologyId);
+	public OntologyBean findLatestActiveOntologyOrViewVersion(Integer ontologyId) throws Exception;
 
 	/**
 	 * Create an ontology
@@ -114,7 +121,7 @@ public interface OntologyService {
 	 * @param ontologyBean
 	 * @return
 	 */
-	public void createOntology(OntologyBean ontologyBean,
+	public void createOntologyOrView(OntologyBean ontologyBean,
 			FilePathHandler filePathHander) throws Exception;
 
 	/**
@@ -123,7 +130,7 @@ public interface OntologyService {
 	 * @param ontologyBean
 	 * @return
 	 */
-	public void updateOntology(OntologyBean ontologyBean) throws Exception;
+	public void updateOntologyOrView(OntologyBean ontologyBean) throws Exception;
 
 	/**
 	 * Update an ontology Category
@@ -139,7 +146,7 @@ public interface OntologyService {
 	 * @param ontologyVersionId
 	 * @return
 	 */
-	public void deleteOntology(Integer ontologyVersionId) throws Exception;
+	public void deleteOntologyOrView(Integer ontologyVersionId) throws Exception;
 
 	/**
 	 * Delete several ontologies
@@ -147,7 +154,7 @@ public interface OntologyService {
 	 * @param ontologyVersionIds
 	 * @return
 	 */
-	public void deleteOntologies(List<Integer> ontologyVersionIds)
+	public void deleteOntologiesOrViews(List<Integer> ontologyVersionIds)
 			throws Exception;
 
 	/**
@@ -157,4 +164,33 @@ public interface OntologyService {
 	 * @return
 	 */
 	public File getOntologyFile(OntologyBean ontologyBean) throws Exception;
+	
+	/**
+	 * Get the ontology metrics bean belonging to an ontology or view
+	 * 
+	 * @param ontologyBean
+	 * @return
+	 */
+	public OntologyMetricsBean getOntologyMetrics(OntologyBean ontologyBean) throws Exception;
+
+	
+	//******************** view specific methods ********************
+
+	/**
+	 * Returns a single record for each ontology view in the system. If more than one
+	 * version of ontology view exists, return the latest version.
+	 * 
+	 * @return list of ontology beans
+	 */
+	public List<OntologyBean> findLatestOntologyViewVersions();
+
+	/**
+	 * Returns a single record for each ontology view which is active in the system.
+	 * If more than one version of ontology view exists, return the latest and active
+	 * version. "active" meaning parse status is "ready" or "not applicable".
+	 * 
+	 * @return list of ontology beans
+	 */
+	public List<OntologyBean> findLatestActiveOntologyViewVersions();
+
 }

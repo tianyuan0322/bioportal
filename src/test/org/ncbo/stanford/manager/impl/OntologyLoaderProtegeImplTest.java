@@ -66,7 +66,7 @@ public class OntologyLoaderProtegeImplTest extends AbstractBioPortalTest {
 		System.out.println("Starting testNoStreamPizzaLoad");
 		loadManagerProtege.setProtegeBigFileThreshold(TEST_NOT_STREAM_SIZE);
 
-		OntologyBean ontologyBean = new OntologyBean();
+		OntologyBean ontologyBean = new OntologyBean(false);
 		ontologyBean.setId(TEST_NOT_STREAM_ID);
 
 		try {
@@ -86,7 +86,7 @@ public class OntologyLoaderProtegeImplTest extends AbstractBioPortalTest {
 
 		loadManagerProtege.setProtegeBigFileThreshold(TEST_STREAM_SIZE);
 
-		OntologyBean ontologyBean = new OntologyBean();
+		OntologyBean ontologyBean = new OntologyBean(false);
 		ontologyBean.setId(TEST_STREAM_ID);
 
 		try {

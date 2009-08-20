@@ -26,6 +26,15 @@
 		</property>
 	</bean>
 
+	<bean id="abstractOntologyBaseRestlet"
+		class="org.ncbo.stanford.view.rest.restlet.AbstractOntologyBaseRestlet"
+		abstract="true"
+		parent="abstractBaseRestlet">
+		<property name="ontologyService">
+			<ref bean="ontologyService" />
+		</property>
+	</bean>
+
 	<bean id="authenticationRestlet"
 		class="org.ncbo.stanford.view.rest.authentication.AuthenticationRestlet"
 		parent="abstractBaseRestlet">
@@ -42,10 +51,7 @@
 
 	<bean id="ontologyRestlet"
 		class="org.ncbo.stanford.view.rest.restlet.ontology.OntologyRestlet"
-		parent="abstractBaseRestlet">
-		<property name="ontologyService">
-			<ref bean="ontologyService" />
-		</property>
+		parent="abstractOntologyBaseRestlet">
 	</bean>
 
 	<bean id="virtualRestlet"
@@ -53,25 +59,6 @@
 		parent="abstractBaseRestlet">
 		<property name="ontologyService">
 			<ref bean="ontologyService" />
-		</property>
-		<property name="conceptService">
-			<ref bean="conceptService" />
-		</property>
-	</bean>
-
-	<bean id="ontologyViewRestlet"
-		class="org.ncbo.stanford.view.rest.restlet.ontology.OntologyViewRestlet"
-		parent="abstractBaseRestlet">
-		<property name="ontologyViewService">
-			<ref bean="ontologyViewService" />
-		</property>
-	</bean>
-
-	<bean id="virtualViewRestlet"
-		class="org.ncbo.stanford.view.rest.restlet.ontology.VirtualViewUriRestlet"
-		parent="abstractBaseRestlet">
-		<property name="ontologyViewService">
-			<ref bean="ontologyViewService" />
 		</property>
 		<property name="conceptService">
 			<ref bean="conceptService" />
@@ -225,24 +212,16 @@
 	<bean id="ontologyViewsRestlet"
 		class="org.ncbo.stanford.view.rest.restlet.ontology.OntologyViewsRestlet"
 		parent="abstractBaseRestlet">
-		<property name="ontologyViewService">
-			<ref bean="ontologyViewService" />
+		<property name="ontologyService">
+			<ref bean="ontologyService" />
 		</property>
 	</bean>
 
 	<bean id="ontologyViewsActiveRestlet"
 		class="org.ncbo.stanford.view.rest.restlet.ontology.OntologyViewsActiveRestlet"
 		parent="abstractBaseRestlet">
-		<property name="ontologyViewService">
-			<ref bean="ontologyViewService" />
-		</property>
-	</bean>
-
-	<bean id="ontologyViewVersionsRestlet"
-		class="org.ncbo.stanford.view.rest.restlet.ontology.OntologyViewVersionsRestlet"
-		parent="abstractBaseRestlet">
-		<property name="ontologyViewService">
-			<ref bean="ontologyViewService" />
+		<property name="ontologyService">
+			<ref bean="ontologyService" />
 		</property>
 	</bean>
 
@@ -254,12 +233,19 @@
 		</property>
 	</bean>
 
+	<bean id="ontologyViewListRestlet"
+		class="org.ncbo.stanford.view.rest.restlet.ontology.OntologyViewListRestlet"
+		parent="abstractOntologyBaseRestlet">
+	</bean>
+
+	<bean id="ontologyMetricsRestlet"
+		class="org.ncbo.stanford.view.rest.restlet.ontology.OntologyMetricsRestlet"
+		parent="abstractOntologyBaseRestlet">
+	</bean>
+
 	<bean id="ontologyDownloadRestlet"
 		class="org.ncbo.stanford.view.rest.restlet.ontology.OntologyDownloadRestlet"
-		parent="abstractBaseRestlet">
-		<property name="ontologyService">
-			<ref bean="ontologyService" />
-		</property>
+		parent="abstractOntologyBaseRestlet">
 	</bean>
 
 	<bean id="diffRestlet"
@@ -346,7 +332,7 @@
 						<entry key="/ontologies/active/">
 							<ref local="ontologiesActiveRestlet" />
 						</entry>
-						<entry key="/ontologies/views/active/">
+						<entry key="/views/active/">
 							<ref local="ontologyViewsActiveRestlet" />
 						</entry>						
 						<entry key="/ontologies/index/">
@@ -358,28 +344,25 @@
 						<entry key="/ontologies/delete/">
 							<ref local="ontologyRestlet" />
 						</entry>
-						<entry key="/ontologies/views/delete/">
-							<ref local="ontologyViewRestlet" />
-						</entry>
 						<entry key="/ontologies">
 							<ref local="ontologiesRestlet" />
 						</entry>
-						<entry key="/ontologies/views">
+						<entry key="/views">
 							<ref local="ontologyViewsRestlet" />
+						</entry>
+						<entry key="/views/versions/{ontologyid}">
+							<ref local="ontologyViewListRestlet" />
 						</entry>
 						<entry key="/ontologies/{ontologyversionid}">
 							<ref local="ontologyRestlet" />
-						</entry>
-						<entry key="/ontologies/view/{ontologyversionid}">
-							<ref local="ontologyViewRestlet" />
 						</entry>
 						<entry
 							key="/ontologies/versions/{ontologyid}">
 							<ref local="ontologyVersionsRestlet" />
 						</entry>
 						<entry
-							key="/ontologies/view/versions/{ontologyid}">
-							<ref local="ontologyViewVersionsRestlet" />
+							key="/ontologies/metrics/{ontologyversionid}">
+							<ref local="ontologyMetricsRestlet" />
 						</entry>
 						<entry
 							key="/ontologies/download/{ontologyversionid}">
@@ -466,13 +449,6 @@
 						</entry>
 						<entry key="/virtual/ontology/{ontologyid}">
 							<ref local="virtualRestlet" />
-						</entry>
-						<entry key="/virtual/view/{ontologyid}">
-							<ref local="virtualViewRestlet" />
-						</entry>
-						<entry
-							key="/virtual/view/{ontologyid}/{conceptid}">
-							<ref local="virtualViewRestlet" />
 						</entry>
 						<entry
 							key="/virtual/ontology/{ontologyid}/{conceptid}">

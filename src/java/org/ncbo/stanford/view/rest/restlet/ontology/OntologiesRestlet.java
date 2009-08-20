@@ -76,14 +76,14 @@ public class OntologiesRestlet extends AbstractBaseRestlet {
 		try {
 			// no file handler for remote case since there is no file to upload.
 			if (ontologyBean.isRemote()) {
-				ontologyService.createOntology(ontologyBean, null);
+				ontologyService.createOntologyOrView(ontologyBean, null);
 			} else {
 				FilePathHandler filePathHandler = new CommonsFileUploadFilePathHandlerImpl(
 						CompressedFileHandlerFactory
 								.createFileHandler(ontologyBean.getFormat()),
 						ontologyBean.getFileItem());
 
-				ontologyService.createOntology(ontologyBean, filePathHandler);
+				ontologyService.createOntologyOrView(ontologyBean, filePathHandler);
 			}
 		} catch (Exception e) {
 			response.setStatus(Status.SERVER_ERROR_INTERNAL, e.getMessage());

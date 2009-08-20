@@ -505,11 +505,6 @@
 		parent="abstractOntologyManagerProtege">
 	</bean>
 
-	<bean id="ontologyViewMetadataManagerProtege"
-		class="org.ncbo.stanford.manager.metadata.impl.OntologyViewMetadataManagerProtegeImpl"
-		parent="abstractOntologyManagerProtege">
-	</bean>
-
 	<bean id="ontologyCategoryMetadataManagerProtege"
 		class="org.ncbo.stanford.manager.metadata.impl.OntologyCategoryMetadataManagerProtegeImpl"
 		parent="abstractOntologyManagerProtege">
@@ -573,14 +568,6 @@
 		</property>
 	</bean>
 
-	<bean id="ontologyViewService"
-		class="org.ncbo.stanford.service.ontology.impl.OntologyViewServiceMetadataImpl"
-		parent="abstractOntologyService">
-		<property name="ontologyViewMetadataManager">
-			<ref bean="ontologyViewMetadataManagerProtege" />
-		</property>
-	</bean>
-
 	<bean id="ontologyService"
 		class="org.ncbo.stanford.service.ontology.impl.OntologyServiceMetadataImpl"
 		parent="abstractOntologyService">
@@ -624,9 +611,6 @@
 		</property>
 		<property name="ontologyMetadataManagerProtege">
 			<ref bean="ontologyMetadataManagerProtege" />
-		</property>
-		<property name="ontologyViewMetadataManagerProtege">
-			<ref bean="ontologyViewMetadataManagerProtege" />
 		</property>
 		<property name="ontologyFormatHandlerMap">
 			<ref local="ontologyFormatHandlerMap" />

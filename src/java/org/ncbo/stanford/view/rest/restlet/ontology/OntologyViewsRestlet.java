@@ -4,8 +4,8 @@ import java.util.List;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.ncbo.stanford.bean.OntologyViewBean;
-import org.ncbo.stanford.service.ontology.OntologyViewService;
+import org.ncbo.stanford.bean.OntologyBean;
+import org.ncbo.stanford.service.ontology.OntologyService;
 import org.ncbo.stanford.util.MessageUtils;
 import org.ncbo.stanford.util.helper.BeanHelper;
 import org.ncbo.stanford.util.ontologyfile.compressedfilehandler.impl.CompressedFileHandlerFactory;
@@ -19,7 +19,7 @@ import org.restlet.data.Status;
 public class OntologyViewsRestlet extends AbstractBaseRestlet {
 
 	private static final Log log = LogFactory.getLog(OntologyViewsRestlet.class);
-	private OntologyViewService ontologyViewService;
+	private OntologyService ontologyService;
 
 	/**
 	 * Handle GET calls here
@@ -46,10 +46,10 @@ public class OntologyViewsRestlet extends AbstractBaseRestlet {
 	 * @param response
 	 */
 	private void listOntologyViews(Request request, Response response) {
-		List<OntologyViewBean> ontologyList = null;
+		List<OntologyBean> ontologyList = null;
 
 		try {
-			ontologyList = ontologyViewService.findLatestOntologyViewVersions();
+			ontologyList = ontologyService.findLatestOntologyViewVersions();
 		} catch (Exception e) {
 			response.setStatus(Status.SERVER_ERROR_INTERNAL, e.getMessage());
 			e.printStackTrace();
@@ -69,21 +69,24 @@ public class OntologyViewsRestlet extends AbstractBaseRestlet {
 	 *            response
 	 */
 	private void createOntologyView(Request request, Response response) {
-		OntologyViewBean ontologyViewBean = BeanHelper
-				.populateOntologyViewBeanFromRequest(request);
+		OntologyBean ontologyViewBean = BeanHelper
+				.populateOntologyBeanFromRequest(request);
 
+		//if this RESTlet got called we set the isView flag to true explicitly 
+		ontologyViewBean.setView(true);
+		
 		// create the ontology
 		try {
 			// no file handler for remote case since there is no file to upload.
 			if (ontologyViewBean.isRemote()) {
-				ontologyViewService.createOntologyView(ontologyViewBean, null);
+				ontologyService.createOntologyOrView(ontologyViewBean, null);
 			} else {
 				FilePathHandler filePathHandler = new CommonsFileUploadFilePathHandlerImpl(
 						CompressedFileHandlerFactory
 								.createFileHandler(ontologyViewBean.getFormat()),
 						ontologyViewBean.getFileItem());
 
-				ontologyViewService.createOntologyView(ontologyViewBean, filePathHandler);
+				ontologyService.createOntologyOrView(ontologyViewBean, filePathHandler);
 			}
 		} catch (Exception e) {
 			response.setStatus(Status.SERVER_ERROR_INTERNAL, e.getMessage());
@@ -97,10 +100,10 @@ public class OntologyViewsRestlet extends AbstractBaseRestlet {
 	}
 
 	/**
-	 * @param ontologyViewService
-	 *            the ontologyViewService to set
+	 * @param ontologyService
+	 *            the ontologyService to set
 	 */
-	public void setOntologyViewService(OntologyViewService ontologyViewService) {
-		this.ontologyViewService = ontologyViewService;
+	public void setOntologyService(OntologyService ontologyService) {
+		this.ontologyService = ontologyService;
 	}
 }

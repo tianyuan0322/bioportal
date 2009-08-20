@@ -13,7 +13,6 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.ncbo.stanford.bean.OntologyMetricsBean;
 import org.ncbo.stanford.bean.OntologyBean;
-import org.ncbo.stanford.bean.OntologyViewBean;
 import org.ncbo.stanford.domain.custom.dao.CustomNcboOntologyLoadQueueDAO;
 import org.ncbo.stanford.domain.generated.NcboLStatus;
 import org.ncbo.stanford.domain.generated.NcboOntologyLoadQueue;
@@ -23,7 +22,6 @@ import org.ncbo.stanford.exception.OntologyNotFoundException;
 import org.ncbo.stanford.manager.diff.OntologyDiffManager;
 import org.ncbo.stanford.manager.load.OntologyLoadManager;
 import org.ncbo.stanford.manager.metadata.OntologyMetadataManager;
-import org.ncbo.stanford.manager.metadata.OntologyViewMetadataManager;
 import org.ncbo.stanford.service.loader.scheduler.OntologyLoadSchedulerService;
 import org.ncbo.stanford.service.search.IndexSearchService;
 import org.ncbo.stanford.util.CompressionUtils;
@@ -55,7 +53,6 @@ public class OntologyLoadSchedulerServiceImpl implements
 	private IndexSearchService indexService;
 	private CustomNcboOntologyLoadQueueDAO ncboOntologyLoadQueueDAO;
 	private OntologyMetadataManager ontologyMetadataManagerProtege;
-	private OntologyViewMetadataManager ontologyViewMetadataManagerProtege;
 
 	private Map<String, String> ontologyFormatHandlerMap = new HashMap<String, String>(
 			0);
@@ -102,7 +99,7 @@ public class OntologyLoadSchedulerServiceImpl implements
 		for (Integer ontologyVersionId : ontologyVersionIdList) {
 			try {
 				ob = ontologyMetadataManagerProtege
-						.findOntologyOrOntologyViewById(ontologyVersionId);
+						.findOntologyOrViewVersionById(ontologyVersionId);
 
 				if (ob == null) {
 					continue;
@@ -168,7 +165,7 @@ public class OntologyLoadSchedulerServiceImpl implements
 			// retrieve it from backend
 			if (ontologyBean == null) {
 				ontologyBean = ontologyMetadataManagerProtege
-						.findOntologyOrOntologyViewById(ontologyVersionId);
+						.findOntologyOrViewVersionById(ontologyVersionId);
 			}
 
 			if (ontologyBean == null) {
@@ -303,12 +300,7 @@ public class OntologyLoadSchedulerServiceImpl implements
 		// update ontology metadata
 		ontologyBean.setStatusId(statusId);
 
-		if (ontologyBean.isView()) {
-			ontologyViewMetadataManagerProtege
-					.saveOntologyView((OntologyViewBean) ontologyBean);
-		} else {
-			ontologyMetadataManagerProtege.saveOntology(ontologyBean);
-		}
+		ontologyMetadataManagerProtege.saveOntologyOrView(ontologyBean);
 
 		// update loadQueue table
 		loadQueue.setErrorMessage(errorMessage);
@@ -401,13 +393,8 @@ public class OntologyLoadSchedulerServiceImpl implements
 
 		OntologyMetricsBean metricsBean = getLoadManager(ontologyBean, formatHandler).extractOntologyMetrics(ontologyBean);
 		
-		if (ontologyBean.isView()) {
-			ontologyViewMetadataManagerProtege.updateOntologyViewMetrics(
-					(OntologyViewBean) ontologyBean, metricsBean);
-		} else {
-			ontologyMetadataManagerProtege.updateOntologyMetrics(ontologyBean,
+		ontologyMetadataManagerProtege.updateOntologyMetrics(ontologyBean,
 					metricsBean);
-		}
 
 		if (log.isDebugEnabled()) {
 			log.debug("..................calculateMetrics END");
@@ -530,14 +517,5 @@ public class OntologyLoadSchedulerServiceImpl implements
 	public void setOntologyMetadataManagerProtege(
 			OntologyMetadataManager ontologyMetadataManagerProtege) {
 		this.ontologyMetadataManagerProtege = ontologyMetadataManagerProtege;
-	}
-
-	/**
-	 * @param ontologyViewMetadataManagerProtege
-	 *            the ontologyViewMetadataManagerProtege to set
-	 */
-	public void setOntologyViewMetadataManagerProtege(
-			OntologyViewMetadataManager ontologyViewMetadataManagerProtege) {
-		this.ontologyViewMetadataManagerProtege = ontologyViewMetadataManagerProtege;
 	}
 }

@@ -107,10 +107,11 @@ public abstract class AbstractOntologyManagerLexGrid {
 	 * @param ontologyVersionId
 	 * @return The LexGrid urn and version information that is stored by
 	 *         concatenating the urn, "|" and version
+	 * @throws Exception 
 	 */
-	protected String getLexGridUrnAndVersion(Integer ontologyVersionId) {
+	protected String getLexGridUrnAndVersion(Integer ontologyVersionId) throws Exception {
 		OntologyBean ncboOntology = ontologyMetadataManagerProtege
-				.findOntologyById(ontologyVersionId);
+				.findOntologyOrViewVersionById(ontologyVersionId);
 
 		if (ncboOntology != null) {
 			return (ncboOntology.getCodingScheme());

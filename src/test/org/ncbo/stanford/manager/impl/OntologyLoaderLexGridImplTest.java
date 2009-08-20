@@ -72,7 +72,7 @@ public class OntologyLoaderLexGridImplTest extends AbstractBioPortalTest {
 		// populate file field in ontologyBean
 		ontologyBean.setFilePath(TEST_OBO_CELL_PATHNAME);
 		// create - pass FileHandler
-		ontologyService.createOntology(ontologyBean,
+		ontologyService.createOntologyOrView(ontologyBean,
 				getFilePathHandler(ontologyBean));
 		if (ontologyBean != null)
 			System.out.println("Created OntologyBean with ID = "
@@ -92,7 +92,7 @@ public class OntologyLoaderLexGridImplTest extends AbstractBioPortalTest {
 		// populate file field in ontologyBean
 		ontologyBean.setFilePath(TEST_OBO_CELL_OLD_PATHNAME);
 		// create - pass FileHandler
-		ontologyService.createOntology(ontologyBean,
+		ontologyService.createOntologyOrView(ontologyBean,
 				getFilePathHandler(ontologyBean));
 
 		if (ontologyBean != null)
@@ -113,7 +113,7 @@ public class OntologyLoaderLexGridImplTest extends AbstractBioPortalTest {
 		// populate file field in ontologyBean
 		ontologyBean.setFilePath(TEST_OBO_DICTYOSTELIUM_PATHNAME);
 		// create - pass FileHandler
-		ontologyService.createOntology(ontologyBean,
+		ontologyService.createOntologyOrView(ontologyBean,
 				getFilePathHandler(ontologyBean));
 
 		if (ontologyBean != null)
@@ -135,7 +135,7 @@ public class OntologyLoaderLexGridImplTest extends AbstractBioPortalTest {
 		// populate file field in ontologyBean
 		ontologyBean.setFilePath(TEST_OBO_INFECTIOUS_DISEASE_PATHNAME);
 		// create - pass FileHandler
-		ontologyService.createOntology(ontologyBean,
+		ontologyService.createOntologyOrView(ontologyBean,
 				getFilePathHandler(ontologyBean));
 
 		if (ontologyBean != null)
@@ -156,7 +156,7 @@ public class OntologyLoaderLexGridImplTest extends AbstractBioPortalTest {
 		// populate file related field in ontologyBean
 		ontologyBean.setFilePath(TEST_OWL_PATHNAME);
 		// create - pass FileHandler
-		ontologyService.createOntology(ontologyBean,
+		ontologyService.createOntologyOrView(ontologyBean,
 				getFilePathHandler(ontologyBean));
 		if (ontologyBean != null)
 			System.out.println("Created OntologyBean with ID = "
@@ -176,7 +176,7 @@ public class OntologyLoaderLexGridImplTest extends AbstractBioPortalTest {
 		// populate file related field in ontologyBean
 		ontologyBean.setFilePath(TEST_LEXGRID_XML_PATHNAME);
 		// create - pass FileHandler
-		ontologyService.createOntology(ontologyBean,
+		ontologyService.createOntologyOrView(ontologyBean,
 				getFilePathHandler(ontologyBean));
 
 		if (ontologyBean != null)
@@ -197,7 +197,7 @@ public class OntologyLoaderLexGridImplTest extends AbstractBioPortalTest {
 		// populate file related field in ontologyBean
 		ontologyBean.setFilePath(TEST_UMLS_PATHNAME + "sampleUMLS-AIR.zip");
 		// create - pass FileHandler
-		ontologyService.createOntology(ontologyBean,
+		ontologyService.createOntologyOrView(ontologyBean,
 				getFilePathHandler(ontologyBean));
 		if (ontologyBean != null)
 			System.out.println("Created OntologyBean with ID = "
@@ -217,7 +217,7 @@ public class OntologyLoaderLexGridImplTest extends AbstractBioPortalTest {
 		// populate file field in ontologyBean
 		ontologyBean.setFilePath(TEST_OBO_FUNGAL_PATHNAME);
 		// create - pass FileHandler
-		ontologyService.createOntology(ontologyBean,
+		ontologyService.createOntologyOrView(ontologyBean,
 				getFilePathHandler(ontologyBean));
 		if (ontologyBean != null)
 			System.out.println("Created OntologyBean with ID = "
@@ -320,7 +320,7 @@ public class OntologyLoaderLexGridImplTest extends AbstractBioPortalTest {
 	}
 
 	private OntologyBean createOntolgyBeanBase() {
-		OntologyBean bean = new OntologyBean();
+		OntologyBean bean = new OntologyBean(false);
 		// bean.setOntologyId(3000);
 		// OntologyId gets automatically generated.
 		bean.setIsManual(ApplicationConstants.FALSE);

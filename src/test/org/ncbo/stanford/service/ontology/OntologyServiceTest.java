@@ -11,7 +11,6 @@ import java.util.List;
 import org.junit.Test;
 import org.ncbo.stanford.AbstractBioPortalTest;
 import org.ncbo.stanford.bean.OntologyBean;
-import org.ncbo.stanford.bean.OntologyViewBean;
 import org.ncbo.stanford.util.ontologyfile.compressedfilehandler.impl.CompressedFileHandlerFactory;
 import org.ncbo.stanford.util.ontologyfile.pathhandler.FilePathHandler;
 import org.ncbo.stanford.util.ontologyfile.pathhandler.impl.PhysicalDirectoryFilePathHandlerImpl;
@@ -22,23 +21,23 @@ import org.springframework.beans.factory.annotation.Autowired;
  * 
  */
 
-public class OntologyViewServiceTest extends AbstractBioPortalTest {
+public class OntologyServiceTest extends AbstractBioPortalTest {
 	
 	@Autowired
-	OntologyViewService ontologyViewService;
+	OntologyService ontologyService;
 	
 /* * /
 	@Test
-	public void testPerformanceFindOntology() {
+	public void testPerformanceFindOntologyOrView() {
 		
 		System.out
-				.println("OntologyServiceTest: testPerformanceFindOntology()..........................BEGIN");
+				.println("OntologyServiceTest: testPerformanceFindOntologyOrView()..........................BEGIN");
 
 		try {
 			for (int i = 0; i < 5000; i++) {
 				Thread.currentThread().sleep(100);
 
-				getOntologyService().findOntology(new Integer(3905));
+				getOntologyService().findOntologyOrView(new Integer(3905));
 
 			}
 		} catch (Exception e) {
@@ -47,10 +46,10 @@ public class OntologyViewServiceTest extends AbstractBioPortalTest {
 		}
 
 		System.out
-				.println("OntologyServiceTest: testPerformanceFindOntology()...........................DONE");
+				.println("OntologyServiceTest: testPerformanceFindOntologyOrView()...........................DONE");
 		
 	}
-/** /
+/* * /
 
 	@Test
 	public void testfindLatestOntologyVersions() {
@@ -86,38 +85,48 @@ public class OntologyViewServiceTest extends AbstractBioPortalTest {
 	
 /*	*/
 	@Test
-	public void testfindAllOntologyViewVersions() {
+	public void testfindAllOntologyOrViewVersions() {
 
-		System.out.println ("OntologyViewServiceTest: testfindAllOntologyViewVersions().......................BEGIN");
+		System.out.println ("OntologyServiceTest: testfindAllOntologyOrViewVersions().......................BEGIN");
 		
-		List<OntologyViewBean> ontologies = getOntologyViewService().findAllOntologyViewVersionsByVirtualViewId(new Integer(6000));
+		List<OntologyBean> ontologies = getOntologyService().findAllOntologyOrViewVersionsByVirtualId(new Integer(6000));
 
-		for (OntologyViewBean ontology : ontologies) {
+		for (OntologyBean ontology : ontologies) {
 
 			System.out.println(ontology.toString());
 		}
 		
-		System.out.println ("OntologyViewServiceTest: testfindAllOntologyViewVersions().........................DONE");
+		System.out.println ("OntologyServiceTest: testfindAllOntologyOrViewVersions().........................DONE");
 
 	}
 
 	
 	//@Test
+	public void testSearchOntologyView(){	
+		List<OntologyBean> ontologies = getOntologyService().searchOntologyMetadata("Liver", false);
+		
+		for (OntologyBean ontology : ontologies) {
+			
+			System.out.println(ontology.toString());
+		}		
+	}
+	
+	//@Test
 	public void testSearchOntologyViewMetadata(){	
-		List<OntologyViewBean> ontologies = getOntologyViewService().searchOntologyViewMetadata("Mouse");
+		List<OntologyBean> ontologies = getOntologyService().searchOntologyMetadata("Mouse", true);
 
-		for (OntologyViewBean ontology : ontologies) {
+		for (OntologyBean ontology : ontologies) {
 
 			System.out.println(ontology.toString());
 		}		
 	}
 	
 	@Test
-	public void testFindOntologyView() {
+	public void testFindOntologyOrView() throws Exception {
 		
-		System.out.println ("OntologyViewServiceTest: testFindOntologyView()..........................BEGIN");
+		System.out.println ("OntologyServiceTest: testFindOntologyOrView()..........................BEGIN");
 		
-		OntologyViewBean ontologyBean = getOntologyViewService().findOntologyView(new Integer(50000));
+		OntologyBean ontologyBean = getOntologyService().findOntologyOrView(new Integer(50000));
 		
 		System.out.println(ontologyBean);
 		
@@ -127,7 +136,7 @@ public class OntologyViewServiceTest extends AbstractBioPortalTest {
 			System.out.println (".....ContactName: " +  ontologyBean.getContactName());
 		}
 		
-		System.out.println ("OntologyViewServiceTest: testFindOntologyView()...........................DONE");
+		System.out.println ("OntologyServiceTest: testFindOntologyOrView()...........................DONE");
 		
 	}
 		
@@ -136,13 +145,13 @@ public class OntologyViewServiceTest extends AbstractBioPortalTest {
 	@Test
 	public void testCreateOntologyView() throws Exception {
 		
-		System.out.println ("OntologyViewServiceTest: testCreateOntologyView()........................BEGIN");
+		System.out.println ("OntologyServiceTest: testCreateOntologyView()........................BEGIN");
 			
-		OntologyViewBean ontologyBean = createOntolgyViewBean();
+		OntologyBean ontologyBean = createOntolgyViewBean();
 		
-		getOntologyViewService().createOntologyView(ontologyBean, OntologyViewServiceTest.getFilePathHandler(ontologyBean));
+		getOntologyService().createOntologyOrView(ontologyBean, OntologyServiceTest.getFilePathHandler(ontologyBean));
 		
-		System.out.println ("OntologyViewServiceTest: testCreateOntologyView().........................DONE");
+		System.out.println ("OntologyServiceTest: testCreateOntologyView().........................DONE");
 	}
 /**/
 
@@ -153,7 +162,7 @@ public class OntologyViewServiceTest extends AbstractBioPortalTest {
 			
 		OntologyBean ontologyBean = createOntolgyBeanManual();
 		
-		getOntologyService().createOntology(ontologyBean, OntologyServiceTest.getFilePathHandler(ontologyBean));
+		getOntologyService().createOntologyOrView(ontologyBean, OntologyServiceTest.getFilePathHandler(ontologyBean));
 		
 		System.out.println ("OntologyServiceTest: testCreateManualOntology().........................DONE");
 	}
@@ -165,7 +174,7 @@ public class OntologyViewServiceTest extends AbstractBioPortalTest {
 			
 		OntologyBean ontologyBean = createOntolgyBeanRemote();
 		
-		getOntologyService().createOntology(ontologyBean, null);
+		getOntologyService().createOntologyOrView(ontologyBean, null);
 		
 		System.out.println ("OntologyServiceTest: testCreateRemoteOntology().........................DONE");
 	}
@@ -173,11 +182,11 @@ public class OntologyViewServiceTest extends AbstractBioPortalTest {
 	
 
 /* * /
-	public void testCleanupOntologyCategory() {
+	public void testCleanupOntologyCategory() throws Exception {
 		
 		System.out.println ("OntologyServiceTest: testCleanupOntologyCategory()........................BEGIN");
 		
-		OntologyBean ontologyBean = getOntologyService().findOntology(new Integer(34280));
+		OntologyBean ontologyBean = getOntologyService().findOntologyOrView(new Integer(34280));
 		
 		if (ontologyBean != null) {
 
@@ -190,11 +199,11 @@ public class OntologyViewServiceTest extends AbstractBioPortalTest {
 	}
 	
 	
-	public void testUpdateOntology() {
+	public void testUpdateOntology() throws Exception {
 		
 		System.out.println ("OntologyServiceTest: testUpdateOntology().......................BEGIN");
 		
-		OntologyBean ontologyBean = getOntologyService().findOntology(new Integer(3905));
+		OntologyBean ontologyBean = getOntologyService().findOntologyOrView(new Integer(3905));
 	
 		// test updating some properties
 		if (ontologyBean != null) {
@@ -208,7 +217,7 @@ public class OntologyViewServiceTest extends AbstractBioPortalTest {
 			System.out.println (".....ContactEmail: " +  ontologyBean.getContactEmail());
 			System.out.println (".....ContactName: " +  ontologyBean.getContactName());
 			
-			getOntologyService().updateOntology(ontologyBean);
+			getOntologyService().updateOntologyOrView(ontologyBean);
 		}
 		else {
 			System.out.println (".....No matching record found!");
@@ -221,21 +230,13 @@ public class OntologyViewServiceTest extends AbstractBioPortalTest {
 
 	
 	
-	public void testDeleteOntology() {
+	public void testDeleteOntology() throws Exception {
 		
 		System.out.println ("OntologyServiceTest: testDeleteOntology()........................BEGIN");
 		
-		OntologyBean ontologyBean = getOntologyService().findOntology(new Integer(34321));
-				
-		if (ontologyBean != null) {
-			
-			System.out.println (".....Deleting Ontology where internal ID = 34321");
-			
-			getOntologyService().deleteOntology(ontologyBean);
-		}
-		else {
-			System.out.println (".....No matching record found!");
-		}
+		System.out.println (".....Deleting Ontology where internal ID = 34321");
+		
+		getOntologyService().deleteOntologyOrView(new Integer(34321));
 		
 		System.out.println ("OntologyServiceTest: testDeleteOntology().........................DONE");
 		
@@ -244,14 +245,52 @@ public class OntologyViewServiceTest extends AbstractBioPortalTest {
 /**/
 	
 	
-	private OntologyViewService getOntologyViewService() {
-			return ontologyViewService;
+	private OntologyService getOntologyService() {
+			return ontologyService;
 		}
 	
 	
-	private OntologyViewBean createOntolgyViewBean() {
+	private OntologyBean createOntolgyBean() {
 		
-		OntologyViewBean bean = new OntologyViewBean();
+		OntologyBean bean = new OntologyBean(false);
+		
+		bean.setUserId(2850);
+		bean.setIsManual(new Byte("0"));
+		
+		bean.setVersionNumber("1.0");
+		//default status Id should be populated upon creation
+		//bean.setStatusId(new Integer(1));
+		bean.setVersionStatus("pre-production");
+		bean.setIsRemote(new Byte("0"));
+		bean.setIsReviewed(new Byte("1"));
+		bean.setDateCreated(new Date());
+		bean.setDateReleased(new Date());
+		bean.setContactEmail("test111@email.com");
+		bean.setContactName("TesterFirst TesterLastName");
+		bean.setDisplayLabel("FMA");
+		bean.setFormat("OWL-DL");
+		bean.setIsFoundry(new Byte("0"));
+		
+		ArrayList<Integer> categoryIds = new ArrayList<Integer>();
+		categoryIds.add(2810);
+		categoryIds.add(2814);
+		bean.setCategoryIds(categoryIds);
+		
+		ArrayList<Integer> groupIds = new ArrayList<Integer>();
+		groupIds.add(6001);
+		bean.setGroupIds(groupIds);
+		
+		// set inputFilePath
+		//String inputFileStr = "/dev/cyoun/workspace/bioportal_resources/uploads/3000/0/pizza.owl";
+		String inputFileStr = "C:\\Program Files\\Protege_3.4\\examples\\pizza\\pizza.owl";
+		bean.setFilePath(inputFileStr);
+		
+		return bean;
+	}
+	
+	private OntologyBean createOntolgyViewBean() {
+		
+		OntologyBean bean = new OntologyBean(true);
 		
 		bean.setUserId(2850);
 		bean.setIsManual(new Byte("0"));
@@ -276,7 +315,7 @@ public class OntologyViewServiceTest extends AbstractBioPortalTest {
 		bean.setCategoryIds(categoryIds);
 		
 		ArrayList<Integer> groupIds = new ArrayList<Integer>();
-		categoryIds.add(1);
+		groupIds.add(6001);
 		bean.setGroupIds(groupIds);
 		
 		// set inputFilePath
@@ -296,7 +335,7 @@ public class OntologyViewServiceTest extends AbstractBioPortalTest {
 
 	
 	private OntologyBean createOntolgyBeanManual() {	
-		OntologyBean bean = createOntolgyViewBean();
+		OntologyBean bean = createOntolgyBean();
 
 		bean.setIsFoundry(new Byte("1"));
 						
@@ -304,7 +343,7 @@ public class OntologyViewServiceTest extends AbstractBioPortalTest {
 	}	
 	
 	private OntologyBean createOntolgyBeanRemote() {	
-		OntologyBean bean = createOntolgyViewBean();
+		OntologyBean bean = createOntolgyBean();
 
 		bean.setIsRemote(new Byte("1"));
 		bean.setFilePath(null);

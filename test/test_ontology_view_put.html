@@ -20,7 +20,7 @@
   	<script language="JavaScript">
 	function OnSubmitForm()
 	{	
-   		document.ontologyviewform.action ="/bioportal/ontologies/view/" + document.ontologyviewform.id.value;
+   		document.ontologyviewform.action ="/bioportal/ontologies/" + document.ontologyviewform.id.value;
 		alert("document.ontologyviewform.action=" + document.ontologyviewform.action);
 	
   		return true;
@@ -41,7 +41,7 @@
 
 <DIV CLASS="indented">
 
-	<!-- form action="http://localhost:8080/bioportal/rest/ontologies/view/34320" method="POST" -->
+	<!-- form action="http://localhost:8080/bioportal/rest/ontologies/34320" method="POST" -->
 	<form name="ontologyviewform" onSubmit="return OnSubmitForm();" method="POST">
 
 
@@ -129,6 +129,7 @@
     	-->
 
 
+		<input type="hidden" name="isView" value="true" />  
     	<input type="hidden" name="sessionid" value="9c188a9b8de0fe0c21b9322b72255fb939a68bb2" /> 
 		<!--  <input type="hidden" name="applicationid" value="4ea81d74-8960-4525-810b-fa1baab576ff" /> -->
 		<input type="hidden" name="method" value="PUT" />

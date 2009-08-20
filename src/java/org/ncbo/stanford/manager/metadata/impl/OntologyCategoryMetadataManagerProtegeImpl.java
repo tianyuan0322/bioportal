@@ -7,7 +7,7 @@ import java.util.List;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.ncbo.stanford.bean.CategoryBean;
-import org.ncbo.stanford.manager.AbstractOntologyManagerProtege;
+import org.ncbo.stanford.manager.AbstractMetadataOntologyManagerProtege;
 import org.ncbo.stanford.manager.metadata.OntologyCategoryMetadataManager;
 import org.ncbo.stanford.util.metadata.OntologyCategoryMetadataUtils;
 import org.ncbo.stanford.util.metadata.OntologyMetadataUtils;
@@ -15,7 +15,6 @@ import org.ncbo.stanford.util.metadata.OntologyMetadataUtils;
 import edu.emory.mathcs.backport.java.util.Collections;
 import edu.stanford.smi.protegex.owl.model.OWLIndividual;
 import edu.stanford.smi.protegex.owl.model.OWLModel;
-import edu.stanford.smi.protegex.owl.model.OWLNamedClass;
 
 /**
  * Provides the functionality to deal with ontology category metadata
@@ -24,12 +23,10 @@ import edu.stanford.smi.protegex.owl.model.OWLNamedClass;
  * 
  */
 public class OntologyCategoryMetadataManagerProtegeImpl extends
-		AbstractOntologyManagerProtege implements OntologyCategoryMetadataManager {
+		AbstractMetadataOntologyManagerProtege implements OntologyCategoryMetadataManager {
 
 	private static final Log log = LogFactory
 			.getLog(OntologyCategoryMetadataManagerProtegeImpl.class);
-
-	private static final String CLASS_ONTOLOGY_DOMAIN = OntologyMetadataUtils.CLASS_OMV_ONTOLOGY_DOMAIN;
 
 	private static final boolean CREATE_IF_MISSING = true;
 	private static final boolean DO_NOT_CREATE_IF_MISSING = false;
@@ -56,6 +53,7 @@ public class OntologyCategoryMetadataManagerProtegeImpl extends
 			OntologyCategoryMetadataUtils.fillInCategoryBeanFromInstance(cb, ontDomaimInd);
 			return cb;
 		} catch (Exception e) {
+			log.error("Ontology domain with category id " + categoryId + " was not found.");
 			return null;
 		}
 	}
@@ -71,31 +69,6 @@ public class OntologyCategoryMetadataManagerProtegeImpl extends
 		}
 		
 		return res;
-	}
-	
-	private OWLIndividual getOntologyDomainInstance(OWLModel metadata, int id, boolean createIfMissing) {
-		String ontDomainInstName = getOntologyDomainIndividualName(id);
-		OWLIndividual ontDomainInd = metadata.getOWLIndividual(ontDomainInstName);
-		
-		if (ontDomainInd == null && createIfMissing) {
-			ontDomainInd = createOntologyDomainInstance(metadata, ontDomainInstName);
-		}
-		
-		//alternative lookup
-		if (ontDomainInd == null) {
-			ontDomainInd = OntologyCategoryMetadataUtils.getOntologyDomainWithId(metadata, id);
-			if (ontDomainInd != null) {
-				log.warn("OntologyDomain instance for id: " + id + " has been found having non-standard name: " + ontDomainInd);
-			}
-		}
-		
-		return ontDomainInd;
-	}
-	
-	private OWLIndividual createOntologyDomainInstance(OWLModel metadata, String indName) {
-		OWLNamedClass ontClass = metadata.getOWLNamedClass(CLASS_ONTOLOGY_DOMAIN);
-
-		return ontClass.createOWLIndividual(indName);
 	}
 	
 }

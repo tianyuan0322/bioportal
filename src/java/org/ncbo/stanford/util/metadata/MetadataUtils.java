@@ -41,6 +41,32 @@ public class MetadataUtils {
 	public static final String PROPERTY_OMV_ACRONYM = PREFIX_OMV + "acronym";
 
 	public static final String PROPERTY_RDFS_LABEL = "rdfs:label";
+	
+	protected static void addPropertyValue(OWLModel owlModel,
+			RDFResource owlInd, String propName, Object value) throws MetadataException {
+		OWLProperty prop = owlModel.getOWLProperty(propName);
+		
+		if (prop == null) {
+			throw new MetadataException("Metadata ontology does not contain property "
+					+ propName);
+		}
+		
+		if ( ! owlInd.hasPropertyValue(prop, value) ) {
+			owlInd.addPropertyValue(prop, value);
+		}
+	}
+	
+	protected static void removePropertyValue(OWLModel owlModel,
+			RDFResource owlInd, String propName, Object value) throws MetadataException {
+		OWLProperty prop = owlModel.getOWLProperty(propName);
+		
+		if (prop == null) {
+			throw new MetadataException("Metadata ontology does not contain property "
+					+ propName);
+		}
+		
+		owlInd.removePropertyValue(prop, value);
+	}
 
 	protected static void setPropertyValue(OWLModel owlModel,
 			RDFResource owlInd, String propName, Object value) throws MetadataException {

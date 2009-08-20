@@ -154,14 +154,14 @@ public class OBOCVSPullServiceImpl implements OBOCVSPullService {
 									.createFileHandler(format), new File(repo
 									.getCheckoutdir()
 									+ "/" + cf.getPath() + "/" + filename));
-					ontologyService.createOntology(ont, filePathHandler);
+					ontologyService.createOntologyOrView(ont, filePathHandler);
 					break;
 				case CREATE_REMOTE_ACTION:
-					ontologyService.createOntology(ont, null);
+					ontologyService.createOntologyOrView(ont, null);
 					break;
 				case UPDATE_ACTION:
 					ontologyService.cleanupOntologyCategory(ont);
-					ontologyService.updateOntology(ont);
+					ontologyService.updateOntologyOrView(ont);
 					break;
 				}
 			} catch (Exception e) {
@@ -217,7 +217,7 @@ public class OBOCVSPullServiceImpl implements OBOCVSPullService {
 				// new ontology
 				action = (isRemote == ApplicationConstants.TRUE) ? ActionEnum.CREATE_REMOTE_ACTION
 						: ActionEnum.CREATE_LOCAL_ACTION;
-				ont = new OntologyBean();
+				ont = new OntologyBean(false);
 			} else if (ont.getIsManual().byteValue() != ApplicationConstants.TRUE) {
 				if (isRemote == ApplicationConstants.TRUE) {
 					if (ont.isRemote()) {
@@ -237,6 +237,8 @@ public class OBOCVSPullServiceImpl implements OBOCVSPullService {
 					boolean categoriesUpdated = isCategoryUpdated(
 							oldCategoryIds, newCategoryIds);
 
+					//TODO What about groups??? Do we need to check that here also?
+					
 					if (categoriesUpdated) {
 						action = ActionEnum.UPDATE_ACTION;
 					}
@@ -287,6 +289,8 @@ public class OBOCVSPullServiceImpl implements OBOCVSPullService {
 				ont.addFilename(OntologyDescriptorParser.getFileName(mfb
 						.getDownload()));
 				ont.setCategoryIds(newCategoryIds);
+				//TODO: What does this part of the method do??? (Csongor)
+				//We need to deal with information about groups, too 
 			}
 
 			if (action != ActionEnum.UPDATE_ACTION) {

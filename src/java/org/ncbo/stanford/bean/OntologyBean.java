@@ -19,6 +19,8 @@ public class OntologyBean {
 
 	private Integer id;
 	private Integer ontologyId;
+	//virtual view id(s) on the virtual ontology
+	private List<Integer> virtualViewIds = new ArrayList<Integer>(0); 
 	private Integer internalVersionNumber;
 	private Integer userId;
 	private String versionNumber;
@@ -49,12 +51,13 @@ public class OntologyBean {
 	private String authorSlot;
 	private String slotWithUniqueValue;
 	private Integer preferredMaximumSubclassLimit;
-	protected boolean isView = false;
+	
+	private boolean isView = false;
 
 	// category id(s)
 	private List<Integer> categoryIds = new ArrayList<Integer>(0);
 
-	// category id(s)
+	// group id(s)
 	private List<Integer> groupIds = new ArrayList<Integer>(0);
 	
 	// file name(s)
@@ -66,9 +69,20 @@ public class OntologyBean {
 	// destination directory
 	private String filePath;
 
-	// views
+	// views on this ontology version
 	private List<Integer> hasViews = new ArrayList<Integer>(0); 
 
+	// view specific properties
+	private List<Integer> viewOnOntologyVersionId = new ArrayList<Integer>(0);
+	private String viewDefinition;
+	private String viewDefinitionLanguage;
+	private String viewGenerationEngine;
+
+	
+	public OntologyBean(boolean isView) {
+		this.isView = isView;
+	}
+	
 	/**
 	 * Populates the OntologyBean to a NcboOntologyFile Entity. OntologyVersion
 	 * should have been populated from OntologyBean before making this call.
@@ -136,8 +150,18 @@ public class OntologyBean {
 	}
 
 	public String toString() {
-		return "{Id: " + this.getId() + ", Ontology Id: "
-				+ this.getOntologyId() + ", Remote: " + this.getIsRemote()
+		final int max = 80;
+		String viewDef = this.getViewDefinition();
+
+		if (viewDef != null && viewDef.length() > max) {
+			viewDef = viewDef.substring(0, max) + "...";
+		}
+		
+		String name = isView ? "OntologyView" : "Ontology";
+
+		return name + "{Id: " + this.getId() + ", Ontology Id: "
+				+ this.getOntologyId() + ", Virtual View Ids: "
+				+ this.getVirtualViewIds() + ", Remote: " + this.getIsRemote()
 				+ ", Obo Foundry Id: " + this.getOboFoundryId()
 				+ ", Internal Version Number: "
 				+ this.getInternalVersionNumber() + ", User Id: "
@@ -153,7 +177,12 @@ public class OntologyBean {
 				+ this.getCodingScheme() + ", Target Terminologies: "
 				+ this.getTargetTerminologies() + ", Synonym Slot: "
 				+ this.getSynonymSlot() + ", Preferred Name Slot: "
-				+ this.getPreferredNameSlot() + "}";
+				+ this.getPreferredNameSlot() + ", View Definition: " + viewDef
+				+ ", View Definition Language: "
+				+ this.getViewDefinitionLanguage()
+				+ ", View Generation Engine: " + this.getViewGenerationEngine()
+				+ ", View on Ontology Versions: "
+				+ this.getViewOnOntologyVersionId() + "}";
 	}
 
 	/**
@@ -184,6 +213,20 @@ public class OntologyBean {
 	 */
 	public void setOntologyId(Integer ontologyId) {
 		this.ontologyId = ontologyId;
+	}
+
+	/**
+	 * @return the virtualViewIds
+	 */
+	public List<Integer> getVirtualViewIds() {
+		return virtualViewIds;
+	}
+
+	/**
+	 * @param virtualViewIds the virtualViewIds to set
+	 */
+	public void setVirtualViewIds(List<Integer> virtualViewIds) {
+		this.virtualViewIds = virtualViewIds;
 	}
 
 	/**
@@ -319,6 +362,13 @@ public class OntologyBean {
 	 */
 	public void setFormat(String format) {
 		this.format = format;
+	}
+
+	/**
+	 * @return the description
+	 */
+	public String getDescription() {
+		return description;
 	}
 
 	/**
@@ -778,17 +828,17 @@ public class OntologyBean {
 	}
 
 	/**
+	 * @return the isView
+	 */
+	public boolean isView() {
+		return isView;
+	}
+
+	/**
 	 * @param isView the isView to set
 	 */
 	public void setView(boolean isView) {
 		this.isView = isView;
-	}
-
-	/**
-	 * @return the description
-	 */
-	public String getDescription() {
-		return description;
 	}
 
 	/**
@@ -806,9 +856,62 @@ public class OntologyBean {
 	}
 
 	/**
-	 * @return the isView
+	 * @return the viewOnOntologyVersionId
 	 */
-	public boolean isView() {
-		return isView;
+	public List<Integer> getViewOnOntologyVersionId() {
+		return viewOnOntologyVersionId;
+	}
+
+	/**
+	 * @param viewOnOntologyVersionId
+	 *            the viewOnOntologyVersionId to set
+	 */
+	public void setViewOnOntologyVersionId(List<Integer> viewOnOntologyVersionId) {
+		this.viewOnOntologyVersionId = viewOnOntologyVersionId;
+	}
+
+	/**
+	 * @return the viewDefinition
+	 */
+	public String getViewDefinition() {
+		return viewDefinition;
+	}
+
+	/**
+	 * @param viewDefinition
+	 *            the viewDefinition to set
+	 */
+	public void setViewDefinition(String viewDefinition) {
+		this.viewDefinition = viewDefinition;
+	}
+
+	/**
+	 * @return the viewDefinitionLanguage
+	 */
+	public String getViewDefinitionLanguage() {
+		return viewDefinitionLanguage;
+	}
+
+	/**
+	 * @param viewDefinitionLanguage
+	 *            the viewDefinitionLanguage to set
+	 */
+	public void setViewDefinitionLanguage(String viewDefinitionLanguage) {
+		this.viewDefinitionLanguage = viewDefinitionLanguage;
+	}
+
+	/**
+	 * @return the viewGenerationEngine
+	 */
+	public String getViewGenerationEngine() {
+		return viewGenerationEngine;
+	}
+
+	/**
+	 * @param viewGenerationEngine
+	 *            the viewGenerationEngine to set
+	 */
+	public void setViewGenerationEngine(String viewGenerationEngine) {
+		this.viewGenerationEngine = viewGenerationEngine;
 	}
 }

@@ -8,7 +8,6 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.fileupload.FileItem;
 import org.ncbo.stanford.bean.OntologyBean;
-import org.ncbo.stanford.bean.OntologyViewBean;
 import org.ncbo.stanford.bean.UserBean;
 import org.ncbo.stanford.bean.logging.UsageLoggingBean;
 import org.ncbo.stanford.util.MessageUtils;
@@ -57,26 +56,6 @@ public class BeanHelper {
 	}
 
 	/**
-	 * Creates OntologyViewBean object and populate from Request object.
-	 * 
-	 * <ontology Id>, <internal_version_number> - will be determined at ontology
-	 * creation time <parent_id> - soon to be OBSOLETE
-	 * 
-	 * The following attributes are only for System or Admin. <statusId>,
-	 * <codingScheme> - updated by Scheduler <isReviewed> - updated by Admin
-	 * 
-	 * source: request, destination: ontologyViewBean
-	 * 
-	 * @param Request
-	 */
-	public static OntologyViewBean populateOntologyViewBeanFromRequest(
-			Request request) {
-		OntologyViewBean bean = new OntologyViewBean();
-		populateOntologyViewBeanFromRequest(bean, request);
-		return bean;
-	}
-
-	/**
 	 * Creates OntologyBean object and populate from Request object.
 	 * 
 	 * <ontology Id>, <internal_version_number> - will be determined at ontology
@@ -90,7 +69,7 @@ public class BeanHelper {
 	 * @param Request
 	 */
 	public static OntologyBean populateOntologyBeanFromRequest(Request request) {
-		OntologyBean bean = new OntologyBean();
+		OntologyBean bean = new OntologyBean(false);
 		populateOntologyBeanFromRequest(bean, request);
 		return bean;
 	}
@@ -116,6 +95,14 @@ public class BeanHelper {
 		HttpServletRequest httpServletRequest = RequestUtils
 				.getHttpServletRequest(request);
 
+		//first decide if it is a view or not
+		String isView = httpServletRequest.getParameter(MessageUtils
+				.getMessage("form.ontology.isView"));
+		if (!StringHelper.isNullOrNullString(isView)) {
+			bean.setView(Boolean.parseBoolean(isView));
+		}
+
+		
 		// for new version for existing ontology
 		String ontologyId = httpServletRequest.getParameter(MessageUtils
 				.getMessage("form.ontology.ontologyId"));
@@ -176,6 +163,11 @@ public class BeanHelper {
 			bean.setOntologyId(Integer.parseInt(ontologyId));
 		}
 
+		//bean.setVirtualViewIds(...)
+		//we do not set here the virtualViewIds of the ontology bean
+		//from the request, because that is only a read-only field, 
+		//calculated from the metadata ontology on a read operation 
+		
 		if (!StringHelper.isNullOrNullString(userId)) {
 			bean.setUserId(Integer.parseInt(userId));
 		}
@@ -309,62 +301,45 @@ public class BeanHelper {
 			hasViewIds = RequestUtils.parseIntegerListParam(hasViewIdValues);
 			bean.setHasViews(hasViewIds);
 		}
-	}
+		
+		
+		//populate view specific values
+		if (bean.isView()) {
+			// for new version for existing ontology view
+			String viewDefinition = httpServletRequest.getParameter(MessageUtils
+					.getMessage("form.ontology.viewDefinition"));
+			String viewDefinitionLanguage = httpServletRequest
+					.getParameter(MessageUtils
+							.getMessage("form.ontology.viewDefinitionLanguage"));
+			String viewGenerationEngine = httpServletRequest
+					.getParameter(MessageUtils
+							.getMessage("form.ontology.viewGenerationEngine"));
 
-	/**
-	 * Takes an OntologyViewBean object and populates it from Request object.
-	 * 
-	 * <ontology Id>, <internal_version_number> - will be determined at ontology
-	 * creation time
-	 * 
-	 * The following attributes are only for System or Admin. <statusId>,
-	 * <codingScheme> - updated by Scheduler <isReviewed> - updated by Admin
-	 * 
-	 * source: request, destination: ontologyBean
-	 * 
-	 * @param Request
-	 */
-	public static void populateOntologyViewBeanFromRequest(
-			OntologyViewBean bean, Request request) {
-		populateOntologyBeanFromRequest(bean, request);
+			List<Integer> ontVerIds = new ArrayList<Integer>();
 
-		HttpServletRequest httpServletRequest = RequestUtils
-				.getHttpServletRequest(request);
+			String[] ontVerIdsStr = httpServletRequest
+					.getParameterValues(MessageUtils
+							.getMessage("form.ontology.viewOnOntologyVersionId"));
 
-		// for new version for existing ontology view
-		String viewDefinition = httpServletRequest.getParameter(MessageUtils
-				.getMessage("form.ontology.viewDefinition"));
-		String viewDefinitionLanguage = httpServletRequest
-				.getParameter(MessageUtils
-						.getMessage("form.ontology.viewDefinitionLanguage"));
-		String viewGenerationEngine = httpServletRequest
-				.getParameter(MessageUtils
-						.getMessage("form.ontology.viewGenerationEngine"));
-
-		List<Integer> ontVerIds = new ArrayList<Integer>();
-
-		String[] ontVerIdsStr = httpServletRequest
-				.getParameterValues(MessageUtils
-						.getMessage("form.ontology.viewOnOntologyVersionId"));
-
-		if (ontVerIdsStr != null) {
-			ontVerIds = RequestUtils.parseIntegerListParam(ontVerIdsStr);
-			if (ontVerIds.size() > 0) {
-				bean.setViewOnOntologyVersionId(ontVerIds);
+			if (ontVerIdsStr != null) {
+				ontVerIds = RequestUtils.parseIntegerListParam(ontVerIdsStr);
+				if (ontVerIds.size() > 0) {
+					bean.setViewOnOntologyVersionId(ontVerIds);
+				}
 			}
-		}
 
-		// now populate the OntologyViewBean
-		if (!StringHelper.isNullOrNullString(viewDefinition)) {
-			bean.setViewDefinition(viewDefinition);
-		}
+			// now populate the OntologyViewBean
+			if (!StringHelper.isNullOrNullString(viewDefinition)) {
+				bean.setViewDefinition(viewDefinition);
+			}
 
-		if (!StringHelper.isNullOrNullString(viewDefinitionLanguage)) {
-			bean.setViewDefinitionLanguage(viewDefinitionLanguage);
-		}
+			if (!StringHelper.isNullOrNullString(viewDefinitionLanguage)) {
+				bean.setViewDefinitionLanguage(viewDefinitionLanguage);
+			}
 
-		if (!StringHelper.isNullOrNullString(viewGenerationEngine)) {
-			bean.setViewGenerationEngine(viewGenerationEngine);
+			if (!StringHelper.isNullOrNullString(viewGenerationEngine)) {
+				bean.setViewGenerationEngine(viewGenerationEngine);
+			}
 		}
 	}
 

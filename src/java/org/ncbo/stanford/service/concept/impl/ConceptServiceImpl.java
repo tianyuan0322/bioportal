@@ -51,7 +51,7 @@ public class ConceptServiceImpl implements ConceptService {
 	public ClassBean findRootConcept(Integer ontologyVersionId,
 			Integer maxNumChildren) throws Exception {
 		OntologyBean ontology = ontologyMetadataManagerProtege
-				.findOntologyOrOntologyViewById(ontologyVersionId);
+				.findOntologyOrViewVersionById(ontologyVersionId);
 
 		if (ontology == null) {
 			throw new OntologyNotFoundException(
@@ -80,7 +80,7 @@ public class ConceptServiceImpl implements ConceptService {
 	public ClassBean findConcept(Integer ontologyVersionId, String conceptId,
 			Integer maxNumChildren) throws Exception {
 		OntologyBean ontology = ontologyMetadataManagerProtege
-				.findOntologyOrOntologyViewById(ontologyVersionId);
+				.findOntologyOrViewVersionById(ontologyVersionId);
 
 		if (ontology == null) {
 			throw new OntologyNotFoundException(
@@ -110,7 +110,7 @@ public class ConceptServiceImpl implements ConceptService {
 			String conceptId, boolean light, Integer maxNumChildren)
 			throws Exception {
 		OntologyBean ontology = ontologyMetadataManagerProtege
-				.findOntologyOrOntologyViewById(ontologyVersionId);
+				.findOntologyOrViewVersionById(ontologyVersionId);
 
 		if (ontology == null) {
 			throw new OntologyNotFoundException(

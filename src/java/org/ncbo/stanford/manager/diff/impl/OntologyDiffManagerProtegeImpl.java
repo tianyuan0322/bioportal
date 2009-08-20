@@ -80,7 +80,7 @@ public class OntologyDiffManagerProtegeImpl extends
 	public void createDiffForTwoLatestVersions(Integer ontologyId)
 			throws Exception {
 		List<OntologyBean> allVersions = ontologyMetadataManagerProtege
-				.findAllOntologyOrOntologyViewVersionsById(ontologyId);
+				.findAllOntologyOrViewVersionsById(ontologyId);
 
 		// get a list of version ids, filtering out ontologies that are not
 		// active
@@ -106,9 +106,9 @@ public class OntologyDiffManagerProtegeImpl extends
 		// version
 
 		OntologyBean newVersion = ontologyMetadataManagerProtege
-				.findOntologyOrOntologyViewById(newVersionId);
+				.findOntologyOrViewVersionById(newVersionId);
 		OntologyBean oldVersion = ontologyMetadataManagerProtege
-				.findOntologyOrOntologyViewById(oldVersionId);
+				.findOntologyOrViewVersionById(oldVersionId);
 
 		if (newVersion == null) {
 			throw new OntologyNotFoundException(
@@ -271,9 +271,9 @@ public class OntologyDiffManagerProtegeImpl extends
 	private String getDiffFileName(Integer ontologyVersionId1,
 			Integer ontologyVersionId2) throws FileNotFoundException, Exception {
 		OntologyBean ontologyVersion1 = ontologyMetadataManagerProtege
-				.findOntologyOrOntologyViewById(ontologyVersionId1);
+				.findOntologyOrViewVersionById(ontologyVersionId1);
 		OntologyBean ontologyVersion2 = ontologyMetadataManagerProtege
-				.findOntologyOrOntologyViewById(ontologyVersionId2);
+				.findOntologyOrViewVersionById(ontologyVersionId2);
 
 		if (ontologyVersion1 == null) {
 			throw new OntologyNotFoundException(

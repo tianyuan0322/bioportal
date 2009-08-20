@@ -32,7 +32,7 @@
 <DIV CLASS="indented">
 
     <!-- enctype="multipart/form-data" is to submit file -->
-    <form name="testForm" method="post" action="/bioportal/ontologies/views" enctype="multipart/form-data">
+    <form name="testForm" method="post" action="/bioportal/ontologies" enctype="multipart/form-data">
 
 
 		<b>System/Admin/Scheduler attributes </b><br />
@@ -115,6 +115,7 @@
     	<br /><br />
     	
 
+		<input type="hidden" name="isView" value="true" />  
 		<input type="hidden" name="userId" value="2850" />  
    		<input type="hidden" name="sessionid" value="9c188a9b8de0fe0c21b9322b72255fb939a68bb2" />  
     	<!--  <input type="hidden" name="applicationid" value="4ea81d74-8960-4525-810b-fa1baab576ff" /> -->

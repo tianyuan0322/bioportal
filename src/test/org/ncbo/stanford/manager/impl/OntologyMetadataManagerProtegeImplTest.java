@@ -40,7 +40,7 @@ public class OntologyMetadataManagerProtegeImplTest extends
 		try {
 			OntologyBean ontologyBean = createOntologyBean(
 					ID_ONTOLOGY_VERSION_2, ID_ONTOLOGY_2, ID_USER_1);
-			ontMetadataManagerProtege.saveOntology(ontologyBean);
+			ontMetadataManagerProtege.saveOntologyOrView(ontologyBean);
 		} catch (Exception e) {
 			System.out.println("Exception: " + e.getMessage());
 			e.printStackTrace();
@@ -56,7 +56,7 @@ public class OntologyMetadataManagerProtegeImplTest extends
 
 		try {
 			OntologyBean ob = ontMetadataManagerProtege
-					.findOntologyById(ID_ONTOLOGY_VERSION_2);
+					.findOntologyOrViewVersionById(ID_ONTOLOGY_VERSION_2);
 
 			System.out.println("OntologyBean: " + ob);
 			assertNotNull("Retrieving ontology metadata by ID has failed", ob);
@@ -94,7 +94,7 @@ public class OntologyMetadataManagerProtegeImplTest extends
 	}
 
 	private OntologyBean createOntologyBeanBase() {
-		OntologyBean bean = new OntologyBean();
+		OntologyBean bean = new OntologyBean(false);
 		// bean.setOntologyId(3000);
 		// OntologyId gets automatically generated.
 		bean.setIsManual(ApplicationConstants.FALSE);

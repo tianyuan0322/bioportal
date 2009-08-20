@@ -70,7 +70,7 @@ public class DiffServiceImpl implements DiffService {
 	private OntologyBean findOntologyBeanByOntologyId(Integer ontologyId)
 			throws Exception {
 		OntologyBean ontologyBean = ontologyService
-				.findLatestOntologyVersion(ontologyId);
+				.findLatestOntologyOrViewVersion(ontologyId);
 		if (ontologyBean == null) {
 			throw new Exception();
 		}
@@ -80,7 +80,7 @@ public class DiffServiceImpl implements DiffService {
 	private OntologyBean findOntologyBeanByOntologyVersionId(
 			Integer ontologyVersionId) throws Exception {
 		OntologyBean ontologyBean = ontologyService
-				.findOntology(ontologyVersionId);
+				.findOntologyOrView(ontologyVersionId);
 		if (ontologyBean == null) {
 			throw new Exception();
 		}

@@ -7,19 +7,15 @@ import javax.servlet.http.HttpServletRequest;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.ncbo.stanford.bean.OntologyBean;
-import org.ncbo.stanford.service.ontology.OntologyService;
-import org.ncbo.stanford.util.MessageUtils;
 import org.ncbo.stanford.util.RequestUtils;
 import org.ncbo.stanford.util.helper.BeanHelper;
-import org.ncbo.stanford.view.rest.restlet.AbstractBaseRestlet;
 import org.restlet.data.Request;
 import org.restlet.data.Response;
 import org.restlet.data.Status;
 
-public class OntologyRestlet extends AbstractBaseRestlet {
+public class OntologyRestlet extends AbstractOntologyBaseRestlet {
 
 	private static final Log log = LogFactory.getLog(OntologyRestlet.class);
-	private OntologyService ontologyService;
 
 	/**
 	 * Handle GET calls here
@@ -30,7 +26,7 @@ public class OntologyRestlet extends AbstractBaseRestlet {
 	@Override
 	public void getRequest(Request request, Response response) {
 		// Handle GET calls here
-		findOntology(request, response);
+		findOntologyOrView(request, response);
 	}
 
 	/**
@@ -42,7 +38,7 @@ public class OntologyRestlet extends AbstractBaseRestlet {
 	@Override
 	public void putRequest(Request request, Response response) {
 		// Handle PUT calls here
-		updateOntology(request, response);
+		updateOntologyOrView(request, response);
 	}
 
 	/**
@@ -54,7 +50,7 @@ public class OntologyRestlet extends AbstractBaseRestlet {
 	@Override
 	public void deleteRequest(Request request, Response response) {
 		// Handle DELETE calls here
-		deleteOntologies(request, response);
+		deleteOntologiesOrViews(request, response);
 	}
 
 	/**
@@ -63,7 +59,7 @@ public class OntologyRestlet extends AbstractBaseRestlet {
 	 * @param request
 	 * @param response
 	 */
-	private void findOntology(Request request, Response response) {
+	private void findOntologyOrView(Request request, Response response) {
 		// find the OntologyBean from request
 		OntologyBean ontologyBean = findOntologyBean(request, response);
 
@@ -78,7 +74,7 @@ public class OntologyRestlet extends AbstractBaseRestlet {
 	 * @param request
 	 * @param response
 	 */
-	private void updateOntology(Request request, Response response) {
+	private void updateOntologyOrView(Request request, Response response) {
 		// find the OntologyBean from request
 		OntologyBean ontologyBean = findOntologyBean(request, response);
 
@@ -89,7 +85,7 @@ public class OntologyRestlet extends AbstractBaseRestlet {
 
 			// 2. now update the ontology
 			try {
-				ontologyService.updateOntology(ontologyBean);
+				ontologyService.updateOntologyOrView(ontologyBean);
 			} catch (Exception e) {
 				response
 						.setStatus(Status.SERVER_ERROR_INTERNAL, e.getMessage());
@@ -109,14 +105,14 @@ public class OntologyRestlet extends AbstractBaseRestlet {
 	 * @param request
 	 * @param response
 	 */
-	private void deleteOntologies(Request request, Response response) {
+	private void deleteOntologiesOrViews(Request request, Response response) {
 		try {
 			HttpServletRequest httpRequest = RequestUtils
 					.getHttpServletRequest(request);
 			List<Integer> ontologyVersionIds = getOntologyVersionIds(httpRequest);
 
 			if (ontologyVersionIds != null) {
-				ontologyService.deleteOntologies(ontologyVersionIds);
+				ontologyService.deleteOntologiesOrViews(ontologyVersionIds);
 			} else {
 				response.setStatus(Status.CLIENT_ERROR_BAD_REQUEST,
 						"No valid parameters supplied");
@@ -130,48 +126,5 @@ public class OntologyRestlet extends AbstractBaseRestlet {
 			xmlSerializationService
 					.generateStatusXMLResponse(request, response);
 		}
-	}
-
-	/**
-	 * Returns a specified OntologyBean and set the response status if there is
-	 * an error. This is used for find, findAll, update, delete.
-	 * 
-	 * @param request
-	 * @param response
-	 */
-	private OntologyBean findOntologyBean(Request request, Response response) {
-		OntologyBean ontologyBean = null;
-		String ontologyVersionId = (String) request.getAttributes().get(
-				MessageUtils.getMessage("entity.ontologyversionid"));
-
-		try {
-			Integer intId = Integer.parseInt(ontologyVersionId);
-			ontologyBean = ontologyService.findOntology(intId);
-
-			response.setStatus(Status.SUCCESS_OK);
-
-			// if ontologyBean is not found, set Error in the Status object
-			if (ontologyBean == null || ontologyBean.getId() == null) {
-				response.setStatus(Status.CLIENT_ERROR_NOT_FOUND, MessageUtils
-						.getMessage("msg.error.ontologyNotFound"));
-			}
-		} catch (NumberFormatException nfe) {
-			response.setStatus(Status.CLIENT_ERROR_BAD_REQUEST, nfe
-					.getMessage());
-		} catch (Exception e) {
-			response.setStatus(Status.SERVER_ERROR_INTERNAL, e.getMessage());
-			e.printStackTrace();
-			log.error(e);
-		}
-
-		return ontologyBean;
-	}
-
-	/**
-	 * @param ontologyService
-	 *            the ontologyService to set
-	 */
-	public void setOntologyService(OntologyService ontologyService) {
-		this.ontologyService = ontologyService;
 	}
 }
