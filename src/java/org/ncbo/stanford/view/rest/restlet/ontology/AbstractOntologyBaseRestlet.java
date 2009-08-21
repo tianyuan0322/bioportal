@@ -1,24 +1,11 @@
 package org.ncbo.stanford.view.rest.restlet.ontology;
 
-import java.util.List;
-
-import javax.servlet.http.HttpServletRequest;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.ncbo.stanford.bean.OntologyBean;
-import org.ncbo.stanford.bean.logging.UsageLoggingBean;
-import org.ncbo.stanford.service.logging.UsageLoggingService;
 import org.ncbo.stanford.service.ontology.OntologyService;
-import org.ncbo.stanford.service.xml.XMLSerializationService;
 import org.ncbo.stanford.util.MessageUtils;
-import org.ncbo.stanford.util.RequestUtils;
-import org.ncbo.stanford.util.helper.BeanHelper;
-import org.ncbo.stanford.util.helper.StringHelper;
 import org.ncbo.stanford.view.rest.restlet.AbstractBaseRestlet;
-import org.ncbo.stanford.view.util.constants.RequestParamConstants;
-import org.restlet.Restlet;
-import org.restlet.data.Method;
 import org.restlet.data.Request;
 import org.restlet.data.Response;
 import org.restlet.data.Status;
