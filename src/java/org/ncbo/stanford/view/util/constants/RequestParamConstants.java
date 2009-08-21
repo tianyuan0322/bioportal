@@ -63,6 +63,7 @@ public interface RequestParamConstants {
 	public static final String PARAM_PAGENUM = "pagenum";
 	public static final String PARAM_MAXNUMHITS = "maxnumhits";
 	public static final String PARAM_QUERY = "query";
+	public static final String PARAM_INCLUDEVIEWS = "includeviews";
 
 	/**
 	 * Search index parameters
