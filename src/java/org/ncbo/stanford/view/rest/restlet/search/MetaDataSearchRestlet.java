@@ -2,11 +2,15 @@ package org.ncbo.stanford.view.rest.restlet.search;
 
 import java.util.List;
 
+import javax.servlet.http.HttpServletRequest;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.ncbo.stanford.bean.OntologyBean;
 import org.ncbo.stanford.service.ontology.OntologyService;
+import org.ncbo.stanford.util.RequestUtils;
 import org.ncbo.stanford.view.rest.restlet.AbstractBaseRestlet;
+import org.ncbo.stanford.view.util.constants.RequestParamConstants;
 import org.restlet.data.Reference;
 import org.restlet.data.Request;
 import org.restlet.data.Response;
@@ -35,32 +39,30 @@ public class MetaDataSearchRestlet extends AbstractBaseRestlet {
 	 */
 	private void searchConcept(Request request, Response response) {
 		List<OntologyBean> ontologies = null;
-		String query = (String) request.getAttributes().get("query");
-		String includeView = (String) request.getAttributes().get("includeViews");
+
+		String query = (String) request.getAttributes().get(
+				RequestParamConstants.PARAM_QUERY);
+		HttpServletRequest httpRequest = RequestUtils
+				.getHttpServletRequest(request);
+		String includeViews = (String) httpRequest
+				.getParameter(RequestParamConstants.PARAM_INCLUDEVIEWS);
+		Boolean includeViewsBool = RequestUtils.parseBooleanParam(includeViews);
 		query = Reference.decode(query);
 
 		try {
-			boolean inclViews = false;
-			if (includeView != null) {
-				inclViews = Boolean.parseBoolean(includeView);
-			}
-			ontologies = ontologyService.searchOntologyMetadata(query, inclViews);
-
-			if (ontologies.isEmpty()) {
-				response.setStatus(Status.CLIENT_ERROR_NOT_FOUND,
-						"Query not found");
-			}
+			ontologies = ontologyService.searchOntologyMetadata(query,
+					includeViewsBool);
 		} catch (NumberFormatException nfe) {
-			nfe.printStackTrace();
 			response.setStatus(Status.CLIENT_ERROR_BAD_REQUEST, nfe
 					.getMessage());
 		} catch (Exception e) {
 			e.printStackTrace();
 			response.setStatus(Status.SERVER_ERROR_INTERNAL, e.getMessage());
+			log.error(e);
+		} finally {
+			xmlSerializationService.generateXMLResponse(request, response,
+					ontologies);
 		}
-
-		xmlSerializationService.generateXMLResponse(request, response,
-				ontologies);
 	}
 
 	/**
