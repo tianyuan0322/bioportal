@@ -69,7 +69,8 @@ public abstract class AbstractOntologyManagerProtege {
 	protected ExpirationSystem<Integer, KnowledgeBase> protegeKnowledgeBases = null;
 	private String METADATA_TABLE_NAME = "metadata";
 	private int METADATA_KB_ID = -5; // must be a negative value in order not
-										// to
+										// to collide with the user-uploaded
+										// Protege tables
 
 	protected Slot getSynonymSlot(KnowledgeBase kb, String synonymSlot) {
 		if (!StringHelper.isNullOrNullString(synonymSlot)) {
