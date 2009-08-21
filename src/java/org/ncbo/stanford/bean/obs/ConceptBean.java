@@ -3,10 +3,9 @@ package org.ncbo.stanford.bean.obs;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ConceptBean {
+public class ConceptBean extends AbstractConceptBean {
 
-	private String localConceptID;
-	private String localOntologyID;
+	private String localOntologyId;
 	private Byte isTopLevel;
 
 	private String preferredName;
@@ -15,42 +14,12 @@ public class ConceptBean {
 			0);
 
 	public String toString() {
-		return "[localConceptID: " + this.getLocalConceptID()
-				+ ", localOntologyID: " + this.getLocalOntologyID()
-				+ ", isTopLevel: " + this.getIsTopLevel() + ", preferredName: "
+		return "[" + super.toString() + ", localOntologyId: "
+				+ this.getLocalOntologyId() + ", isTopLevel: "
+				+ this.getIsTopLevel() + ", preferredName: "
 				+ this.getPreferredName() + ", synonyms: " + this.getSynonyms()
 				+ ", semanticTypes: " + this.getSemanticTypes().toString()
 				+ "]";
-	}
-
-	/**
-	 * @return the localConceptID
-	 */
-	public String getLocalConceptID() {
-		return localConceptID;
-	}
-
-	/**
-	 * @param localConceptID
-	 *            the localConceptID to set
-	 */
-	public void setLocalConceptID(String localConceptID) {
-		this.localConceptID = localConceptID;
-	}
-
-	/**
-	 * @return the localOntologyID
-	 */
-	public String getLocalOntologyID() {
-		return localOntologyID;
-	}
-
-	/**
-	 * @param localOntologyID
-	 *            the localOntologyID to set
-	 */
-	public void setLocalOntologyID(String localOntologyID) {
-		this.localOntologyID = localOntologyID;
 	}
 
 	/**
@@ -119,5 +88,20 @@ public class ConceptBean {
 	 */
 	public void setSemanticTypes(List<SemanticTypeBean> semanticTypes) {
 		this.semanticTypes = semanticTypes;
+	}
+
+	/**
+	 * @return the localOntologyId
+	 */
+	public String getLocalOntologyId() {
+		return localOntologyId;
+	}
+
+	/**
+	 * @param localOntologyId
+	 *            the localOntologyId to set
+	 */
+	public void setLocalOntologyId(String localOntologyId) {
+		this.localOntologyId = localOntologyId;
 	}
 }

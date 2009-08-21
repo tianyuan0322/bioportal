@@ -24,4 +24,7 @@ public interface OBSManager {
 
 	public List<ClassBean> findLeaves(String ontologyVersionId,
 			String conceptId, Integer offset, Integer limit) throws Exception;
+
+	public List<ClassBean> findAllConcepts(String ontologyVersionId,
+			Integer offset, Integer limit) throws Exception;
 }

@@ -25,7 +25,7 @@ public interface ConceptService {
 	public ClassBean findPathFromRoot(Integer ontologyVersionId,
 			String conceptId, boolean light, Integer maxNumChildren)
 			throws Exception;
-	
+
 	public List<ClassBean> findParents(OntologyVersionIdBean ontologyVersionId,
 			String conceptId, Integer level, Integer offset, Integer limit)
 			throws Exception;
@@ -61,4 +61,11 @@ public interface ConceptService {
 
 	public List<ClassBean> findLeaves(OntologyIdBean ontologyVersionId,
 			String conceptId, Integer offset, Integer limit) throws Exception;
+
+	public List<ClassBean> findAllConcepts(
+			OntologyVersionIdBean ontologyVersionId, Integer offset,
+			Integer limit) throws Exception;
+
+	public List<ClassBean> findAllConcepts(OntologyIdBean ontologyId,
+			Integer offset, Integer limit) throws Exception;
 }

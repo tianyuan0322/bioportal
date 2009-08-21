@@ -15,6 +15,7 @@ import org.ncbo.stanford.bean.obs.ConceptBean;
 import org.ncbo.stanford.bean.obs.OntologyBean;
 import org.ncbo.stanford.bean.obs.ParentBean;
 import org.ncbo.stanford.bean.obs.PathBean;
+import org.ncbo.stanford.bean.obs.SemanticTypeBean;
 import org.ncbo.stanford.bean.obs.SiblingBean;
 import org.ncbo.stanford.bean.response.AbstractResponseBean;
 import org.ncbo.stanford.bean.response.ErrorStatusBean;
@@ -37,10 +38,10 @@ public class OBSManagerImpl implements OBSManager {
 	private XMLSerializationService xmlSerializationService;
 
 	public String findLatestOntologyVersion(String ontologyId) throws Exception {
+		String ontologyVersionId = null;
 		AbstractResponseBean response = xmlSerializationService.processGet(
 				MessageUtils.getMessage("obs.rest.virtual.ontology.url")
 						+ ontologyId, null);
-		String ontologyVersionId = null;
 
 		if (response.isResponseSuccess()) {
 			String data = ((SuccessBean) response).getDataXml();
@@ -55,14 +56,47 @@ public class OBSManagerImpl implements OBSManager {
 	}
 
 	@SuppressWarnings("unchecked")
+	public List<ClassBean> findAllConcepts(String ontologyVersionId,
+			Integer offset, Integer limit) throws Exception {
+		List<ClassBean> allConcepts = null;
+		AbstractResponseBean response = xmlSerializationService.processGet(
+				MessageUtils.getMessage("obs.rest.allconcepts.url")
+						+ ontologyVersionId, assembleGetParameters(null,
+						offset, limit));
+
+		if (response.isResponseSuccess()) {
+			String data = ((SuccessBean) response).getDataXml();
+			List<ConceptBean> obsAllConcepts = (ArrayList<ConceptBean>) xmlSerializationService
+					.fromXML(data);
+			allConcepts = new ArrayList<ClassBean>(0);
+
+			for (ConceptBean obsConcept : obsAllConcepts) {
+				ClassBean concept = new ClassBean();
+				populateBaseClassBean(obsConcept, concept);
+				concept.setLabel(obsConcept.getPreferredName());
+				concept.setIsTopLevel(obsConcept.getIsTopLevel());
+				concept.addRelation(ApplicationConstants.SYNONYM, obsConcept
+						.getSynonyms());
+				concept.addRelation(ApplicationConstants.SEMANTIC_TYPES,
+						obsConcept.getSemanticTypes());
+				allConcepts.add(concept);
+			}
+		} else {
+			handleError(response);
+		}
+
+		return allConcepts;
+	}
+
+	@SuppressWarnings("unchecked")
 	public List<ClassBean> findParents(String ontologyVersionId,
 			String conceptId, Integer level, Integer offset, Integer limit)
 			throws Exception {
+		List<ClassBean> parents = null;
 		AbstractResponseBean response = xmlSerializationService.processGet(
 				MessageUtils.getMessage("obs.rest.parents.url")
 						+ ontologyVersionId + "/" + conceptId,
 				assembleGetParameters(level, offset, limit));
-		List<ClassBean> parents = null;
 
 		if (response.isResponseSuccess()) {
 			String data = ((SuccessBean) response).getDataXml();
@@ -88,11 +122,11 @@ public class OBSManagerImpl implements OBSManager {
 	public List<ClassBean> findChildren(String ontologyVersionId,
 			String conceptId, Integer level, Integer offset, Integer limit)
 			throws Exception {
+		List<ClassBean> children = null;
 		AbstractResponseBean response = xmlSerializationService.processGet(
 				MessageUtils.getMessage("obs.rest.children.url")
 						+ ontologyVersionId + "/" + conceptId,
 				assembleGetParameters(level, offset, limit));
-		List<ClassBean> children = null;
 
 		if (response.isResponseSuccess()) {
 			String data = ((SuccessBean) response).getDataXml();
@@ -117,11 +151,11 @@ public class OBSManagerImpl implements OBSManager {
 	@SuppressWarnings("unchecked")
 	public List<ClassBean> findRootPaths(String ontologyVersionId,
 			String conceptId, Integer offset, Integer limit) throws Exception {
+		List<ClassBean> rootPaths = null;
 		AbstractResponseBean response = xmlSerializationService.processGet(
 				MessageUtils.getMessage("obs.rest.rootpath.url")
 						+ ontologyVersionId + "/" + conceptId,
 				assembleGetParameters(null, offset, limit));
-		List<ClassBean> rootPaths = null;
 
 		if (response.isResponseSuccess()) {
 			String data = ((SuccessBean) response).getDataXml();
@@ -146,11 +180,11 @@ public class OBSManagerImpl implements OBSManager {
 	@SuppressWarnings("unchecked")
 	public List<ClassBean> findSiblings(String ontologyVersionId,
 			String conceptId, Integer level, Integer offset) throws Exception {
+		List<ClassBean> siblings = null;
 		AbstractResponseBean response = xmlSerializationService.processGet(
 				MessageUtils.getMessage("obs.rest.siblings.url")
 						+ ontologyVersionId + "/" + conceptId,
 				assembleGetParameters(level, offset, null));
-		List<ClassBean> siblings = null;
 
 		if (response.isResponseSuccess()) {
 			String data = ((SuccessBean) response).getDataXml();
@@ -175,11 +209,11 @@ public class OBSManagerImpl implements OBSManager {
 	@SuppressWarnings("unchecked")
 	public List<ClassBean> findLeaves(String ontologyVersionId,
 			String conceptId, Integer offset, Integer limit) throws Exception {
+		List<ClassBean> leaves = null;
 		AbstractResponseBean response = xmlSerializationService.processGet(
 				MessageUtils.getMessage("obs.rest.leafpath.url")
 						+ ontologyVersionId + "/" + conceptId,
 				assembleGetParameters(null, offset, limit));
-		List<ClassBean> leaves = null;
 
 		if (response.isResponseSuccess()) {
 			String data = ((SuccessBean) response).getDataXml();
@@ -212,6 +246,9 @@ public class OBSManagerImpl implements OBSManager {
 				.getMessage("entity.obs.ontologybean"), OntologyBean.class);
 		xmlSerializationService.alias(MessageUtils
 				.getMessage("entity.obs.conceptbean"), ConceptBean.class);
+		xmlSerializationService.alias(MessageUtils
+				.getMessage("entity.obs.semantictypebean"),
+				SemanticTypeBean.class);
 		xmlSerializationService.alias(MessageUtils
 				.getMessage("entity.obs.parentbean"), ParentBean.class);
 		xmlSerializationService.aliasField(MessageUtils

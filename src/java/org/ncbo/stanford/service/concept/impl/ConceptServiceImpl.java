@@ -223,7 +223,7 @@ public class ConceptServiceImpl implements ConceptService {
 			subClasses.add(dummyClass);
 		}
 	}
-	
+
 	public List<ClassBean> findParents(OntologyVersionIdBean ontologyVersionId,
 			String conceptId, Integer level, Integer offset, Integer limit)
 			throws Exception {
@@ -305,6 +305,21 @@ public class ConceptServiceImpl implements ConceptService {
 
 		return obsManager.findLeaves(ontologyVersionId, conceptId, offset,
 				limit);
+	}
+
+	public List<ClassBean> findAllConcepts(
+			OntologyVersionIdBean ontologyVersionId, Integer offset,
+			Integer limit) throws Exception {
+		return obsManager.findAllConcepts(ontologyVersionId
+				.getOntologyVersionId(), offset, limit);
+	}
+
+	public List<ClassBean> findAllConcepts(OntologyIdBean ontologyId,
+			Integer offset, Integer limit) throws Exception {
+		String ontologyVersionId = obsManager
+				.findLatestOntologyVersion(ontologyId.getOntologyId());
+
+		return obsManager.findAllConcepts(ontologyVersionId, offset, limit);
 	}
 
 	//
