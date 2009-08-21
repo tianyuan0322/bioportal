@@ -29,6 +29,7 @@ public class OntologyMetadataUtils extends MetadataUtils {
 
 	private static final Log log = LogFactory.getLog(OntologyMetadataUtils.class);
 
+	private static final int INVALID_ID = -5;
 	public static final String CLASS_OMV_ONTOLOGY = PREFIX_OMV + "Ontology";
 	public static final String CLASS_OMV_ONTOLOGY_DOMAIN = PREFIX_OMV + "OntologyDomain";
 	public static final String CLASS_OMV_ONTOLOGY_LANGUAGE = PREFIX_OMV + "OntologyLanguage";
@@ -737,7 +738,7 @@ public class OntologyMetadataUtils extends MetadataUtils {
 			return newId;
 		} catch (Exception e) {
 			e.printStackTrace();
-			return -5;
+			return INVALID_ID;
 		}
 	}
 
@@ -750,7 +751,7 @@ public class OntologyMetadataUtils extends MetadataUtils {
 			return newId;
 		} catch (Exception e) {
 			e.printStackTrace();
-			return -5;
+			return INVALID_ID;
 		}
 	}
 	
@@ -764,7 +765,7 @@ public class OntologyMetadataUtils extends MetadataUtils {
 			return newId;
 		} catch (Exception e) {
 			e.printStackTrace();
-			return -5;
+			return INVALID_ID;
 		}
 	}
 	
@@ -777,7 +778,7 @@ public class OntologyMetadataUtils extends MetadataUtils {
 			return newId;
 		} catch (Exception e) {
 			e.printStackTrace();
-			return -5;
+			return INVALID_ID;
 		}
 	}
 	
