@@ -55,6 +55,10 @@ public class OntologyMetadataManagerProtegeImpl extends
 	private static final boolean INCLUDE_SUBCLASSES = true;
 	private static final boolean DO_NOT_INCLUDE_SUBCLASSES = (! INCLUDE_SUBCLASSES);
 	
+	private static final int SQWRL_EXCEPTION_ERROR_CODE = -1;
+	private static final int SWRL_PARSE_EXCEPTION_ERROR_CODE = -2;
+	private static final int SWRL_FACTORY_EXCEPTION_ERROR_CODE = -3;
+
 	public void saveOntologyOrView(OntologyBean ob) throws Exception {
 		OWLModel metadata = getMetadataOWLModel();
 		OWLIndividual ontOrViewVerInd;
@@ -404,13 +408,13 @@ public class OntologyMetadataManagerProtegeImpl extends
 			
 		} catch (SQWRLException e) {
 			e.printStackTrace();
-			return -1;
+			return SQWRL_EXCEPTION_ERROR_CODE;
 		} catch (SWRLParseException e) {
 			e.printStackTrace();
-			return -2;
+			return SWRL_PARSE_EXCEPTION_ERROR_CODE;
 		} catch (SWRLFactoryException e) {
 			e.printStackTrace();
-			return -3;
+			return SWRL_FACTORY_EXCEPTION_ERROR_CODE;
 		}
 	}
 
@@ -484,15 +488,19 @@ public class OntologyMetadataManagerProtegeImpl extends
 		OWLModel metadata = getMetadataOWLModel();
 		List<OWLIndividual> matchingIndividuals = OntologyMetadataUtils.searchOntologyMetadata(metadata, query, includeViews);
 		List<OntologyBean> res = new ArrayList<OntologyBean>();
+		
 		for (OWLIndividual ontInd : matchingIndividuals) {
 			OntologyBean ob = new OntologyBean(false);
+			
 			try {
 				OntologyMetadataUtils.fillInOntologyBeanFromInstance(ob, ontInd);
 				res.add(ob);
 			} catch (Exception e) {
-				return null;
+				e.printStackTrace();
+				log.error(e);
 			}
 		}
+		
 		return res;
 	}
 
@@ -501,15 +509,19 @@ public class OntologyMetadataManagerProtegeImpl extends
 		OWLModel metadata = getMetadataOWLModel();
 		List<OWLIndividual> matchingIndividuals = OntologyMetadataUtils.searchOntologyViewMetadata(metadata, query);
 		List<OntologyBean> res = new ArrayList<OntologyBean>();
+		
 		for (OWLIndividual ontInd : matchingIndividuals) {
 			OntologyBean ob = new OntologyBean(true);
+			
 			try {
 				OntologyMetadataUtils.fillInOntologyBeanFromInstance(ob, ontInd);
 				res.add(ob);
 			} catch (Exception e) {
-				return null;
+				e.printStackTrace();
+				log.error(e);
 			}
 		}
+
 		return res;
 	}
 
@@ -524,8 +536,6 @@ public class OntologyMetadataManagerProtegeImpl extends
 				res.add(ontViewInd);
 			}
 			else {
-				//TODO what to do?
-				//throw Exception?
 				log.error("No metadata:OntologyView individual found for view ID: " + ontViewVerId);
 			}
 		}
@@ -544,10 +554,7 @@ public class OntologyMetadataManagerProtegeImpl extends
 				ontInd = getOntologyViewInstance(metadata, ontVerId, DO_NOT_CREATE_IF_MISSING);
 				if (ontInd != null) {
 					res.add(ontInd);
-				}
-				else {
-					//TODO what to do?
-					//throw Exception?
+				} else {
 					log.error("No OMV:Ontology individual found for ontology version ID: " + ontVerId);
 				}
 			}
