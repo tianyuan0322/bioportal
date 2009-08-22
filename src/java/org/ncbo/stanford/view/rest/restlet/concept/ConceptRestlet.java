@@ -60,22 +60,32 @@ public class ConceptRestlet extends AbstractBaseRestlet {
 		try {
 			Integer ontologyVersionIdInt = Integer.parseInt(ontologyVersionId);
 
-			if (!StringHelper.isNullOrNullString(conceptId)
-					&& conceptId
-							.equalsIgnoreCase(RequestParamConstants.PARAM_ROOT_CONCEPT)) {
+			if (StringHelper.isNullOrNullString(conceptId)) {
+				response.setStatus(Status.CLIENT_ERROR_BAD_REQUEST,
+						"Concept Id is a required parameter");
+			} else if (conceptId
+					.equalsIgnoreCase(RequestParamConstants.PARAM_ROOT_CONCEPT)) {
+				// root concept
 				concept = conceptService.findRootConcept(ontologyVersionIdInt,
 						maxNumChildrenInt);
-			} else if (!StringHelper.isNullOrNullString(conceptId)) {
+			} else if (conceptId
+					.equalsIgnoreCase(RequestParamConstants.PARAM_ALL_CONCEPTS)) {
+				// all concepts
+				concept = conceptService.findAllConcepts(
+						new OntologyVersionIdBean(ontologyVersionId),
+						offsetInt, limitInt);
+			} else {
+				// specific concept
 				// URL Decode the concept Id
 				conceptId = URLDecoder.decode(conceptId, MessageUtils
 						.getMessage("default.encoding"));
 				concept = conceptService.findConcept(ontologyVersionIdInt,
 						conceptId, maxNumChildrenInt);
-			} else {
-				// get all concepts
-				concept = conceptService.findAllConcepts(
-						new OntologyVersionIdBean(ontologyVersionId),
-						offsetInt, limitInt);
+			}
+
+			if (concept == null) {
+				response.setStatus(Status.CLIENT_ERROR_NOT_FOUND,
+						"Concept(s) not found");
 			}
 		} catch (NumberFormatException nfe) {
 			response.setStatus(Status.CLIENT_ERROR_BAD_REQUEST, nfe

@@ -34,7 +34,7 @@ public class UsageLoggingRestlet extends AbstractBaseRestlet {
 				.populateUsageLoggingBeanFromRequestForDataExtraction(request);
 
 		if (usageBean.isEmpty()) {
-			response.setStatus(Status.SERVER_ERROR_INTERNAL,
+			response.setStatus(Status.CLIENT_ERROR_BAD_REQUEST,
 					NO_PARAMETERS_EXCEPTION);
 		} else {
 			usageData = usageLoggingService.extractUsage(usageBean);

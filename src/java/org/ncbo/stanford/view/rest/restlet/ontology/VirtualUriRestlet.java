@@ -7,6 +7,7 @@ import javax.servlet.http.HttpServletRequest;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.ncbo.stanford.bean.OntologyBean;
+import org.ncbo.stanford.bean.OntologyIdBean;
 import org.ncbo.stanford.exception.OntologyNotFoundException;
 import org.ncbo.stanford.service.concept.ConceptService;
 import org.ncbo.stanford.service.ontology.OntologyService;
@@ -50,8 +51,14 @@ public class VirtualUriRestlet extends AbstractBaseRestlet {
 				.getHttpServletRequest(request);
 		String maxNumChildren = (String) httpRequest
 				.getParameter(RequestParamConstants.PARAM_MAXNUMCHILDREN);
+		String offset = (String) httpRequest
+				.getParameter(RequestParamConstants.PARAM_OFFSET);
+		String limit = (String) httpRequest
+				.getParameter(RequestParamConstants.PARAM_LIMIT);
 		Integer maxNumChildrenInt = RequestUtils
 				.parseIntegerParam(maxNumChildren);
+		Integer offsetInt = RequestUtils.parseIntegerParam(offset);
+		Integer limitInt = RequestUtils.parseIntegerParam(limit);
 
 		try {
 			Integer ontologyIdInt = Integer.parseInt(ontologyId);
@@ -61,8 +68,10 @@ public class VirtualUriRestlet extends AbstractBaseRestlet {
 						.findLatestOntologyOrViewVersion(ontologyIdInt);
 
 				if (returnObject == null) {
-					//TODO if we could test whether the virtual id is for an ontology or for a view
-					//     we could return more appropriate message (i.e. "msg.error.ontologyViewNotFound")
+					// TODO if we could test whether the virtual id is for an
+					// ontology or for a view
+					// we could return more appropriate message (i.e.
+					// "msg.error.ontologyViewNotFound")
 					response.setStatus(Status.CLIENT_ERROR_NOT_FOUND,
 							MessageUtils
 									.getMessage("msg.error.ontologyNotFound"));
@@ -72,8 +81,10 @@ public class VirtualUriRestlet extends AbstractBaseRestlet {
 						.findLatestActiveOntologyOrViewVersion(ontologyIdInt);
 
 				if (ontBean == null) {
-					//TODO if we could test whether the virtual id is for an ontology or for a view
-					//     we could return more appropriate message (i.e. "msg.error.ontologyViewNotFound")
+					// TODO if we could test whether the virtual id is for an
+					// ontology or for a view
+					// we could return more appropriate message (i.e.
+					// "msg.error.ontologyViewNotFound")
 					response.setStatus(Status.CLIENT_ERROR_NOT_FOUND,
 							MessageUtils
 									.getMessage("msg.error.ontologyNotFound"));
@@ -82,6 +93,11 @@ public class VirtualUriRestlet extends AbstractBaseRestlet {
 							.equalsIgnoreCase(RequestParamConstants.PARAM_ROOT_CONCEPT)) {
 						returnObject = conceptService.findRootConcept(ontBean
 								.getId(), maxNumChildrenInt);
+					} else if (conceptId
+							.equalsIgnoreCase(RequestParamConstants.PARAM_ALL_CONCEPTS)) {
+						returnObject = conceptService.findAllConcepts(
+								new OntologyIdBean(ontologyId), offsetInt,
+								limitInt);
 					} else {
 						// URL Decode the concept Id
 						conceptId = URLDecoder.decode(conceptId, MessageUtils
