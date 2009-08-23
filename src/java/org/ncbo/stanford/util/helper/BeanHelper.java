@@ -158,6 +158,14 @@ public class BeanHelper {
 				.getMessage("form.ontology.synonymSlot"));
 		String preferredNameSlot = httpServletRequest.getParameter(MessageUtils
 				.getMessage("form.ontology.preferredNameSlot"));
+		String documentationSlot = httpServletRequest.getParameter(MessageUtils
+				.getMessage("form.ontology.documentationSlot"));
+		String authorSlot = httpServletRequest.getParameter(MessageUtils
+				.getMessage("form.ontology.authorSlot"));
+		String slotWithUniqueValue = httpServletRequest.getParameter(MessageUtils
+				.getMessage("form.ontology.slotWithUniqueValue"));
+		String preferredMaximumSubclassLimit = httpServletRequest.getParameter(MessageUtils
+				.getMessage("form.ontology.preferredMaximumSubclassLimit"));
 
 		if (!StringHelper.isNullOrNullString(ontologyId)) {
 			bean.setOntologyId(Integer.parseInt(ontologyId));
@@ -228,6 +236,22 @@ public class BeanHelper {
 			bean.setSynonymSlot(synonymSlot);
 		}
 
+		if (documentationSlot != null) {
+			bean.setDocumentationSlot(documentationSlot);
+		}
+		
+		if (authorSlot != null) {
+			bean.setAuthorSlot(authorSlot);
+		}
+		
+		if (slotWithUniqueValue != null) {
+			bean.setSlotWithUniqueValue(slotWithUniqueValue);
+		}
+		
+		if (!StringHelper.isNullOrNullString(userId)) {
+			bean.setPreferredMaximumSubclassLimit(Integer.parseInt(preferredMaximumSubclassLimit));
+		}
+		
 		if (contactName != null) {
 			bean.setContactName(contactName);
 		}
