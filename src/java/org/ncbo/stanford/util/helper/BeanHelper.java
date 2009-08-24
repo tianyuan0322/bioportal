@@ -248,7 +248,7 @@ public class BeanHelper {
 			bean.setSlotWithUniqueValue(slotWithUniqueValue);
 		}
 		
-		if (!StringHelper.isNullOrNullString(userId)) {
+		if (!StringHelper.isNullOrNullString(preferredMaximumSubclassLimit)) {
 			bean.setPreferredMaximumSubclassLimit(Integer.parseInt(preferredMaximumSubclassLimit));
 		}
 		
