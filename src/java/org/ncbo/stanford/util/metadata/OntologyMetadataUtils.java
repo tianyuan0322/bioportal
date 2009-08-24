@@ -381,7 +381,7 @@ public class OntologyMetadataUtils extends MetadataUtils {
 		
 		ob.setAbbreviation( getPropertyValue(owlModel, ontologyInd, PROPERTY_OMV_ACRONYM, String.class));
 		ob.setCategoryIds( getPropertyValueIds(owlModel, ontologyInd, PROPERTY_OMV_HAS_DOMAIN));
-		ob.setGroupIds( getPropertyValueIds(owlModel, ontologyInd, PROPERTY_BELONGS_TO_GROUP));
+		//groups will be set below after we retrieve the virtual ontology instance
 		ob.setCodingScheme( getPropertyValue(owlModel, ontologyInd, PROPERTY_CODING_SCHEME, String.class));
 		ob.setContactEmail( getPropertyValue(owlModel, ontologyInd, PROPERTY_HAS_CONTACT_EMAIL, String.class));
 		ob.setContactName( getPropertyValue(owlModel, ontologyInd, PROPERTY_HAS_CONTACT_NAME, String.class));
@@ -407,6 +407,7 @@ public class OntologyMetadataUtils extends MetadataUtils {
 		OWLIndividual vOntInd = getPropertyValue(owlModel, ontologyInd, PROPERTY_IS_VERSION_OF_VIRTUAL_ONTOLOGY, OWLIndividual.class);
 		ob.setIsManual( convertBooleanToByte(getPropertyValue(owlModel, vOntInd, PROPERTY_IS_MANUAL, Boolean.class)) );
 		ob.setIsRemote( convertBooleanToByte(getPropertyValue(owlModel, ontologyInd, PROPERTY_IS_REMOTE, Boolean.class)) );
+		ob.setGroupIds( getPropertyValueIds(owlModel, vOntInd, PROPERTY_BELONGS_TO_GROUP));
 		
 		//ob.setIsReviewed(null);
 		

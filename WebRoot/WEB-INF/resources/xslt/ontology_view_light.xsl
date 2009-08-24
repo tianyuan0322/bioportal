@@ -28,6 +28,7 @@
 			<xsl:copy-of select="contactEmail" />
 			<xsl:copy-of select="statusId" />
 			<xsl:copy-of select="categoryIds" />
+			<xsl:copy-of select="groupIds" />
 			<xsl:copy-of select="dateCreated" />
 			<xsl:copy-of select="viewOnOntologyVersionId" />
 			<xsl:copy-of select="viewDefinitionLanguage" />
