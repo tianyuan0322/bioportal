@@ -98,10 +98,6 @@ public class BeanHelper {
 		//first decide if it is a view or not
 		String isView = httpServletRequest.getParameter(MessageUtils
 				.getMessage("form.ontology.isView"));
-		if (!StringHelper.isNullOrNullString(isView)) {
-			bean.setView(Boolean.parseBoolean(isView));
-		}
-
 		
 		// for new version for existing ontology
 		String ontologyId = httpServletRequest.getParameter(MessageUtils
@@ -166,6 +162,10 @@ public class BeanHelper {
 				.getMessage("form.ontology.slotWithUniqueValue"));
 		String preferredMaximumSubclassLimit = httpServletRequest.getParameter(MessageUtils
 				.getMessage("form.ontology.preferredMaximumSubclassLimit"));
+
+		if (!StringHelper.isNullOrNullString(isView)) {
+			bean.setView(RequestUtils.parseBooleanParam(isView));
+		}
 
 		if (!StringHelper.isNullOrNullString(ontologyId)) {
 			bean.setOntologyId(Integer.parseInt(ontologyId));
