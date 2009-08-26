@@ -213,7 +213,7 @@ public class BeanHelper {
 		}
 
 		if (format != null) {
-			bean.setFormat(format);
+			bean.setFormat(format.toUpperCase());
 		}
 
 		if (versionNumber != null) {
