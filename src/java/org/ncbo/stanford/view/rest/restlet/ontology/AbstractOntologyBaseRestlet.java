@@ -5,6 +5,7 @@ import org.apache.commons.logging.LogFactory;
 import org.ncbo.stanford.bean.OntologyBean;
 import org.ncbo.stanford.service.ontology.OntologyService;
 import org.ncbo.stanford.util.MessageUtils;
+import org.ncbo.stanford.util.RequestUtils;
 import org.ncbo.stanford.view.rest.restlet.AbstractBaseRestlet;
 import org.restlet.data.Request;
 import org.restlet.data.Response;
@@ -20,9 +21,9 @@ import org.restlet.data.Status;
 public abstract class AbstractOntologyBaseRestlet extends AbstractBaseRestlet {
 
 	@SuppressWarnings("unused")
-	private static final Log log = LogFactory.getLog(AbstractOntologyBaseRestlet.class);
+	private static final Log log = LogFactory
+			.getLog(AbstractOntologyBaseRestlet.class);
 	protected OntologyService ontologyService;
-
 
 	/**
 	 * Returns a specified OntologyBean and set the response status if there is
@@ -35,25 +36,36 @@ public abstract class AbstractOntologyBaseRestlet extends AbstractBaseRestlet {
 		OntologyBean ontologyBean = null;
 		String ontologyVersionId = (String) request.getAttributes().get(
 				MessageUtils.getMessage("entity.ontologyversionid"));
+		Integer ontologyVersionIdInt = RequestUtils
+				.parseIntegerParam(ontologyVersionId);
+		Integer ontologyIdInt = null;
 
 		try {
-			Integer intId = Integer.parseInt(ontologyVersionId);
-			ontologyBean = ontologyService.findOntologyOrView(intId);
+			if (ontologyVersionIdInt == null) {
+				String ontologyId = (String) request.getAttributes().get(
+						MessageUtils.getMessage("entity.ontologyid"));
+				ontologyIdInt = RequestUtils.parseIntegerParam(ontologyId);
 
-			response.setStatus(Status.SUCCESS_OK);
+				if (ontologyIdInt == null) {
+					response.setStatus(Status.CLIENT_ERROR_BAD_REQUEST,
+							"Invalid id parameter specified");
+				} else {
+					ontologyBean = ontologyService
+							.findLatestOntologyOrViewVersion(ontologyIdInt);
+				}
+			} else {
+				ontologyBean = ontologyService
+						.findOntologyOrView(ontologyVersionIdInt);
+			}
 
-			// if ontologyBean is not found, set Error in the Status object
 			if (ontologyBean == null || ontologyBean.getId() == null) {
-				//TODO if we could test whether the virtual id is for an ontology or for a view
-				//     we could return more appropriate message (i.e. "msg.error.ontologyViewNotFound")
+				// TODO if we could test whether the virtual id is for an
+				// ontology or for a view
+				// we could return more appropriate message (i.e.
+				// "msg.error.ontologyViewNotFound")
 				response.setStatus(Status.CLIENT_ERROR_NOT_FOUND, MessageUtils
 						.getMessage("msg.error.ontologyNotFound"));
 			}
-		} catch (NumberFormatException nfe) {
-			response.setStatus(Status.CLIENT_ERROR_BAD_REQUEST, nfe
-					.getMessage());
-			nfe.printStackTrace();
-			log.error(nfe);
 		} catch (Exception e) {
 			response.setStatus(Status.SERVER_ERROR_INTERNAL, e.getMessage());
 			e.printStackTrace();

@@ -28,8 +28,7 @@
 
 	<bean id="abstractOntologyBaseRestlet"
 		class="org.ncbo.stanford.view.rest.restlet.ontology.AbstractOntologyBaseRestlet"
-		abstract="true"
-		parent="abstractBaseRestlet">
+		abstract="true" parent="abstractBaseRestlet">
 		<property name="ontologyService">
 			<ref bean="ontologyService" />
 		</property>
@@ -334,7 +333,7 @@
 						</entry>
 						<entry key="/views/active/">
 							<ref local="ontologyViewsActiveRestlet" />
-						</entry>						
+						</entry>
 						<entry key="/ontologies/index/">
 							<ref local="indexRestlet" />
 						</entry>
@@ -449,6 +448,10 @@
 						</entry>
 						<entry key="/virtual/ontology/{ontologyid}">
 							<ref local="virtualRestlet" />
+						</entry>
+						<entry
+							key="/virtual/download/{ontologyid}">
+							<ref local="ontologyDownloadRestlet" />
 						</entry>
 						<entry
 							key="/virtual/ontology/{ontologyid}/{conceptid}">
