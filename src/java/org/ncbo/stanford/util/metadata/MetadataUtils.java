@@ -21,7 +21,6 @@ import edu.stanford.smi.protegex.owl.model.RDFResource;
 import edu.stanford.smi.protegex.owl.model.RDFSDatatype;
 import edu.stanford.smi.protegex.owl.model.RDFSLiteral;
 import edu.stanford.smi.protegex.owl.model.impl.XMLSchemaDatatypes;
-import edu.stanford.smi.protegex.owl.ui.widget.OWLDateWidget;
 
 /**
  * Super class of all ...MetadataUtil classes defining some commonly used
@@ -124,7 +123,7 @@ public class MetadataUtils {
 					if (owlModel.getXSDdate().equals(datatype)
 							|| owlModel.getXSDtime().equals(datatype)
 							|| owlModel.getXSDdateTime().equals(datatype)) {
-						val = OWLDateWidget.getDate(lit.getString());
+						val = convertStringToDate(lit.getString());
 					}
 				}
 			}
@@ -204,6 +203,18 @@ public class MetadataUtils {
 		RDFSDatatype datatype = owlModel.getRDFSDatatypeByURI(
 				XSDDatatype.XSDdateTime.getURI());
 		return owlModel.createRDFSLiteral(str, datatype);
+	}
+	
+	protected static Date convertStringToDate(String dateString) {
+		return XMLSchemaDatatypes.getDate(dateString);
+	}
+
+	protected static String convertDateToDateString(Date date) {
+		return XMLSchemaDatatypes.getDateString(date);
+	}
+	
+	protected static String convertDateToDateTimeString(Date date) {
+		return XMLSchemaDatatypes.getDateTimeString(date);
 	}
 
 	protected static Integer getId(OWLModel owlModel, RDFResource owlInd)

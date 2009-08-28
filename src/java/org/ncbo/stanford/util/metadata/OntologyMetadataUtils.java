@@ -24,7 +24,6 @@ import edu.stanford.smi.protegex.owl.model.RDFIndividual;
 import edu.stanford.smi.protegex.owl.model.RDFProperty;
 import edu.stanford.smi.protegex.owl.model.RDFSLiteral;
 import edu.stanford.smi.protegex.owl.model.impl.DefaultRDFSLiteral;
-import edu.stanford.smi.protegex.owl.ui.widget.OWLDateWidget;
 
 public class OntologyMetadataUtils extends MetadataUtils {
 
@@ -203,7 +202,8 @@ public class OntologyMetadataUtils extends MetadataUtils {
 		//RDFSLiteral litDateCreated = owlModel.createRDFSLiteral(ob.getDateCreated().toString(), owlModel.getXSDdate());
 		RDFSLiteral litDateCreated = createXsdDateTimePropertyValue(owlModel, ob.getDateCreated());
 		setPropertyValue(owlModel, ontologyInd, PROPERTY_UPLOAD_DATE, litDateCreated);
-		setPropertyValue(owlModel, ontologyInd, PROPERTY_OMV_CREATION_DATE, ob.getDateReleased().toString());
+		//setPropertyValue(owlModel, ontologyInd, PROPERTY_OMV_CREATION_DATE, ob.getDateReleased().toString());
+		setPropertyValue(owlModel, ontologyInd, PROPERTY_OMV_CREATION_DATE, convertDateToDateTimeString(ob.getDateReleased()));//or maybe just convertDateToDateString(ob.getDateReleased())
 		setPropertyValue(owlModel, ontologyInd, PROPERTY_OMV_NAME, ob.getDisplayLabel());
 		setPropertyValue(owlModel, ontologyInd, PROPERTY_OMV_DESCRIPTION, ob.getDescription());
 		setPropertyValue(owlModel, ontologyInd, PROPERTY_OMV_DOCUMENTATION, ob.getDocumentation());
@@ -388,7 +388,8 @@ public class OntologyMetadataUtils extends MetadataUtils {
 		ob.setContactName( getPropertyValue(owlModel, ontologyInd, PROPERTY_HAS_CONTACT_NAME, String.class));
 		ob.setDateCreated( getPropertyValue(owlModel, ontologyInd, PROPERTY_UPLOAD_DATE, Date.class));
 		//ob.setDateReleased( new Date(Date.parse(getPropertyValue(owlModel, ontologyInd, PROPERTY_OMV_CREATION_DATE, String.class))));
-		ob.setDateReleased( OWLDateWidget.getDate(getPropertyValue(owlModel, ontologyInd, PROPERTY_OMV_CREATION_DATE, String.class)));
+		//ob.setDateReleased( OWLDateWidget.getDate(getPropertyValue(owlModel, ontologyInd, PROPERTY_OMV_CREATION_DATE, String.class)));
+		ob.setDateReleased( convertStringToDate(getPropertyValue(owlModel, ontologyInd, PROPERTY_OMV_CREATION_DATE, String.class)));
 		ob.setDisplayLabel( getPropertyValue(owlModel, ontologyInd, PROPERTY_OMV_NAME, String.class));
 		ob.setDescription( getPropertyValue(owlModel, ontologyInd, PROPERTY_OMV_DESCRIPTION, String.class));
 		ob.setDocumentation( getPropertyValue(owlModel, ontologyInd, PROPERTY_OMV_DOCUMENTATION, String.class));
