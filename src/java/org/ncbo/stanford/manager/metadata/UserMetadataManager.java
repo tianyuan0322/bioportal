@@ -1,7 +1,5 @@
 package org.ncbo.stanford.manager.metadata;
 
-import org.ncbo.stanford.bean.CategoryBean;
-import org.ncbo.stanford.bean.OntologyBean;
 import org.ncbo.stanford.bean.UserBean;
 
 /**

@@ -199,7 +199,8 @@ public class OntologyMetadataUtils extends MetadataUtils {
 		setPropertyValue(owlModel, ontologyInd, PROPERTY_CODING_SCHEME, ob.getCodingScheme());
 		setPropertyValue(owlModel, ontologyInd, PROPERTY_HAS_CONTACT_EMAIL, ob.getContactEmail());
 		setPropertyValue(owlModel, ontologyInd, PROPERTY_HAS_CONTACT_NAME, ob.getContactName());
-		RDFSLiteral litDateCreated = owlModel.createRDFSLiteral(ob.getDateCreated().toString(), owlModel.getXSDdate());
+		//RDFSLiteral litDateCreated = owlModel.createRDFSLiteral(ob.getDateCreated().toString(), owlModel.getXSDdate());
+		RDFSLiteral litDateCreated = createXsdDateTimePropertyValue(owlModel, ob.getDateCreated());
 		setPropertyValue(owlModel, ontologyInd, PROPERTY_UPLOAD_DATE, litDateCreated);
 		setPropertyValue(owlModel, ontologyInd, PROPERTY_OMV_CREATION_DATE, ob.getDateReleased().toString());
 		setPropertyValue(owlModel, ontologyInd, PROPERTY_OMV_NAME, ob.getDisplayLabel());
@@ -807,6 +808,34 @@ public class OntologyMetadataUtils extends MetadataUtils {
 		return getIndividualWithId(metadata, CLASS_ONTOLOGY_VIEW, id, false);
 	}
 
+
+	public static OntologyBean findLatestOntologyVersionByOboFoundryId(
+			OWLModel metadata, String oboFoundryId, boolean onlyActive) {
+		OntologyBean res = null;
+		List<OWLIndividual> vOntIndividuals = 
+			getIndividualsWithMatchingProperty(metadata, 
+				CLASS_VIRTUAL_ONTOLOGY, PROPERTY_OBO_FOUNDRY_ID, 
+				oboFoundryId, false);//choose "true" if we will return also ontology views (and rename methods appropriately)
+		if ( vOntIndividuals != null && (! vOntIndividuals.isEmpty()) ) {
+			if (vOntIndividuals.size() > 1) {
+				log.error("");
+			}
+			OWLIndividual vOntInd = vOntIndividuals.get(0);
+			boolean isView = OntologyMetadataUtils.isVirtualViewIndividual(vOntInd);
+			res = new OntologyBean(isView);
+			try {
+				OWLIndividual ontologyInd = OntologyMetadataUtils.getLatestVersion(vOntInd, onlyActive);
+				OntologyMetadataUtils.fillInOntologyBeanFromInstance(res, ontologyInd);
+			} catch (Exception e) {
+				e.printStackTrace();
+				log.error("Exception while getting the last version on " + vOntInd, e);
+				res = null;
+			}
+		}
+		return res;
+	}
+
+	
 	public static List<OWLIndividual> searchOntologyMetadata(OWLModel metadata, String query, boolean includeViews) {
 		return searchMetadataOnClass(metadata, CLASS_OMV_ONTOLOGY, query, includeViews);
 	}

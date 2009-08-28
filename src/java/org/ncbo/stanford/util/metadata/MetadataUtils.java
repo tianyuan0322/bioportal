@@ -2,12 +2,15 @@ package org.ncbo.stanford.util.metadata;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.ncbo.stanford.exception.MetadataException;
+
+import com.hp.hpl.jena.datatypes.xsd.XSDDatatype;
 
 import edu.stanford.smi.protegex.owl.model.OWLClass;
 import edu.stanford.smi.protegex.owl.model.OWLIndividual;
@@ -17,6 +20,7 @@ import edu.stanford.smi.protegex.owl.model.OWLProperty;
 import edu.stanford.smi.protegex.owl.model.RDFResource;
 import edu.stanford.smi.protegex.owl.model.RDFSDatatype;
 import edu.stanford.smi.protegex.owl.model.RDFSLiteral;
+import edu.stanford.smi.protegex.owl.model.impl.XMLSchemaDatatypes;
 import edu.stanford.smi.protegex.owl.ui.widget.OWLDateWidget;
 
 /**
@@ -174,6 +178,31 @@ public class MetadataUtils {
 		
 		return idList;
 	}
+	
+	/**
+	 * this method is marked deprecated because to alert the engineers that they probably
+	 * want to use the {@link #createXsdDateTimePropertyValue(OWLModel, Date)} method, 
+	 * because currently there is no case where this method should be used. In case there 
+	 * will be use cases for this method, drop the "deprecation" flag.
+	 * 
+	 * @param owlModel
+	 * @param date
+	 * @return
+	 */
+	@Deprecated		  
+	protected static RDFSLiteral createXsdDatePropertyValue(OWLModel owlModel, Date date) {
+        String value = XMLSchemaDatatypes.getDateString(date);
+        RDFSDatatype datatype = owlModel.getRDFSDatatypeByURI(XSDDatatype.XSDdate.getURI());
+        return owlModel.createRDFSLiteral(value, datatype);
+
+	}
+	
+	protected static RDFSLiteral createXsdDateTimePropertyValue(OWLModel owlModel, Date date) {
+		String str = XMLSchemaDatatypes.getDateTimeString(date);
+		RDFSDatatype datatype = owlModel.getRDFSDatatypeByURI(
+				XSDDatatype.XSDdateTime.getURI());
+		return owlModel.createRDFSLiteral(str, datatype);
+	}
 
 	protected static Integer getId(OWLModel owlModel, RDFResource owlInd)
 			throws Exception {
@@ -225,7 +254,7 @@ public class MetadataUtils {
 		return filterMatchingResourcesForOWLIndividuals(matchingResources);
 	}
 
-	protected static Collection<OWLIndividual> getMatchingOWLIndividuals(
+	private static Collection<OWLIndividual> getMatchingOWLIndividuals(
 			OWLModel owlModel, OWLProperty property, String query) {
 		Collection<?> matchingResources = owlModel.getMatchingResources(
 				property, query, -1);

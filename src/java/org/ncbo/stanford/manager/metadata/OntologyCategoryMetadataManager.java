@@ -30,6 +30,15 @@ public interface OntologyCategoryMetadataManager {
 	public CategoryBean findCategoryById(Integer categoryId);
 	
 	/**
+	 * Return the list of category beans that correspond to the given obo foundry
+	 * names
+	 * 
+	 * @param oboFoundryNames
+	 * @return
+	 */
+	public List<CategoryBean> findCategoriesByOBOFoundryNames(String[] oboFoundryNames);
+	
+	/**
 	 * Returns the list of categoryBeans, one for each category in the metadata.
 	 *  
 	 * @return the list of category beans

@@ -19,7 +19,7 @@ import org.ncbo.stanford.bean.OntologyBean;
 public interface OntologyMetadataManager {
 
 	/**
-	 * Saves the ontology metadata specified by the ontologyBean representing an ontology version.
+	 * Saves the ontology metadata specified by the ontologyBean representing an ontology/view version.
 	 * 
 	 * @param ontologyBean
 	 * @throws Exception
@@ -27,7 +27,7 @@ public interface OntologyMetadataManager {
 	public void saveOntologyOrView(OntologyBean ontologyBean) throws Exception;
 
 	/**
-	 * Updates the ontology metadata specified by the ontologyBean representing an ontology version.
+	 * Updates the ontology metadata specified by the ontologyBean representing an ontology/view version.
 	 * 
 	 * @param ontologyBean
 	 * @throws Exception
@@ -55,7 +55,8 @@ public interface OntologyMetadataManager {
 	public OntologyMetricsBean getOntologyMetrics(OntologyBean ontologyBean) throws Exception;
 	
 	/**
-	 * Deletes the ontology metadata specified by the ontologyBean representing an ontology version.
+	 * Deletes the ontology metadata specified by the ontologyBean representing an 
+	 * ontology or view version.
 	 * 
 	 * @param ontologyBean
 	 * @throws Exception
@@ -165,6 +166,14 @@ public interface OntologyMetadataManager {
 	public int getNextAvailableOntologyVersionId();
 
 	/**
+	 * Returns the latest version of an ontology using its obo foundry id
+	 * 
+	 * @param oboFoundryId
+	 * @return
+	 */
+	public OntologyBean findLatestOntologyVersionByOboFoundryId(String oboFoundryId);
+
+	/**
 	 * Returns list of ontology beans for all ontology versions that have some 
 	 * properties that matches the argument
 	 * 
@@ -222,4 +231,5 @@ public interface OntologyMetadataManager {
 	 * @return list of matching ontology view beans
 	 */
 	public List<OntologyBean> searchOntologyViewMetadata(String query);
+
 }

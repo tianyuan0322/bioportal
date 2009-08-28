@@ -1,9 +1,12 @@
 package org.ncbo.stanford.service.ontology.impl;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.ncbo.stanford.bean.CategoryBean;
 import org.ncbo.stanford.bean.GroupBean;
 import org.ncbo.stanford.bean.OntologyBean;
@@ -16,11 +19,14 @@ import org.ncbo.stanford.manager.metadata.OntologyMetadataManager;
 import org.ncbo.stanford.service.ontology.AbstractOntologyService;
 import org.ncbo.stanford.service.ontology.OntologyService;
 import org.ncbo.stanford.util.MessageUtils;
+import org.ncbo.stanford.util.ontologyfile.pathhandler.AbstractFilePathHandler;
 import org.ncbo.stanford.util.ontologyfile.pathhandler.FilePathHandler;
 import org.springframework.transaction.annotation.Transactional;
 
 @Transactional
 public class OntologyServiceMetadataImpl extends AbstractOntologyService implements OntologyService {
+
+	private static final Log log = LogFactory.getLog(OntologyServiceMetadataImpl.class);
 
 	private OntologyMetadataManager ontologyMetadataManager;
 	private OntologyCategoryMetadataManager ontologyCategoryMetadataManager;
@@ -165,8 +171,15 @@ public class OntologyServiceMetadataImpl extends AbstractOntologyService impleme
 
 	public List<Integer> findCategoryIdsByOBOFoundryNames(
 			String[] oboFoundryNames) {
-		// TODO Auto-generated method stub
-		return null;
+		List<Integer> categoryIds = new ArrayList<Integer>(1);
+		List<CategoryBean> categories = ontologyCategoryMetadataManager
+				.findCategoriesByOBOFoundryNames(oboFoundryNames);
+
+		for (CategoryBean cat : categories) {
+			categoryIds.add(cat.getId());
+		}
+
+		return categoryIds;
 	}
 
 	public List<OntologyBean> findLatestActiveOntologyVersions() {
@@ -186,8 +199,8 @@ public class OntologyServiceMetadataImpl extends AbstractOntologyService impleme
 
 	public OntologyBean findLatestOntologyVersionByOboFoundryId(
 			String oboFoundryId) {
-		// TODO Auto-generated method stub
-		return null;
+		return ontologyMetadataManager
+				.findLatestOntologyVersionByOboFoundryId(oboFoundryId);
 	}
 
 	/**
@@ -212,8 +225,21 @@ public class OntologyServiceMetadataImpl extends AbstractOntologyService impleme
 	}
 
 	public File getOntologyFile(OntologyBean ontologyBean) throws Exception {
-		// TODO Auto-generated method stub
-		return null;
+		List<String> fileNames = ontologyBean.getFilenames();
+		File file = null;
+
+		if (fileNames.size() > 0) {
+			String fileName = (String) ontologyBean.getFilenames().toArray()[0];
+			file = new File(AbstractFilePathHandler.getOntologyFilePath(
+					ontologyBean, fileName));
+		}
+
+		if (file == null) {
+			log.error("Missing ontology file to download.");
+			throw new FileNotFoundException("Missing ontology file to load");
+		}
+
+		return file;
 	}
 
 	public List<OntologyBean> searchOntologyMetadata(String query, boolean includeViews) {
