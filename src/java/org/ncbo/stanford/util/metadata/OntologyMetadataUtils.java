@@ -14,6 +14,7 @@ import org.ncbo.stanford.bean.OntologyBean;
 import org.ncbo.stanford.bean.OntologyMetricsBean;
 import org.ncbo.stanford.exception.MetadataException;
 import org.ncbo.stanford.util.MessageUtils;
+import org.ncbo.stanford.util.helper.StringHelper;
 
 import edu.stanford.smi.protegex.owl.model.OWLClass;
 import edu.stanford.smi.protegex.owl.model.OWLIndividual;
@@ -286,7 +287,7 @@ public class OntologyMetadataUtils extends MetadataUtils {
 				//log.error("No metadata:ViewDefinitionLanguage individual found for ontology view: " + ontologyInd);
 			}
 			
-			OWLIndividual viewGenEngInd = getViewGenerationEngineInstance(owlModel, ob.getViewGenerationEngine());
+			RDFIndividual viewGenEngInd = getViewGenerationEngineInstance(owlModel, ob.getViewGenerationEngine());
 			
 			if (viewGenEngInd != null) {
 				setPropertyValue(owlModel, ontologyInd, PROPERTY_VIEW_GENERATION_ENGINE, viewGenEngInd);
@@ -370,7 +371,6 @@ public class OntologyMetadataUtils extends MetadataUtils {
 		setPropertyValue(owlModel, ontologyInd, PROPERTY_METRICS_CLASSES_WITH_MORE_THAN_ONE_PROPERTY_VALUE_FOR_PROPERTY_WITH_UNIQUE_VALUE, mb.getClassesWithMoreThanOnePropertyValue());
 	}
 	
-	@SuppressWarnings("deprecation")
 	public static void fillInOntologyBeanFromInstance(OntologyBean ob,
 			OWLIndividual ontologyInd) throws Exception {
 		
@@ -496,34 +496,36 @@ public class OntologyMetadataUtils extends MetadataUtils {
 		}
 	}
 	
-	private static OWLIndividual getOntologyLanguageInstance(OWLModel metadata,
+	private static RDFIndividual getOntologyLanguageInstance(OWLModel metadata,
 			String format) {
 		return getInstanceWithName(metadata, CLASS_OMV_ONTOLOGY_LANGUAGE, format);
 	}
 	
-	private static OWLIndividual getViewDefinitionLanguageInstance(OWLModel metadata,
+	private static RDFIndividual getViewDefinitionLanguageInstance(OWLModel metadata,
 			String viewDefLanguage) {
 		return getInstanceWithName(metadata, CLASS_VIEW_DEFINITION_LANGUAGE, viewDefLanguage);
 	}
 	
-	private static OWLIndividual getViewGenerationEngineInstance(OWLModel metadata,
+	private static RDFIndividual getViewGenerationEngineInstance(OWLModel metadata,
 			String viewGenEngine) {
 		return getInstanceWithName(metadata, CLASS_VIEW_GENERATION_ENGINE, viewGenEngine);
 	}
 	
-	private static OWLIndividual getInstanceWithName(OWLModel metadata,
+	private static RDFIndividual getInstanceWithName(OWLModel metadata,
 			String className, String name) {
-		OWLIndividual instance = null;
+		RDFIndividual instance = null;
 
 		if (name != null) {
 			OWLNamedClass owlClass = metadata.getOWLNamedClass(className);
 			RDFProperty nameProp = metadata.getRDFProperty(PROPERTY_OMV_NAME);
 			RDFProperty labelProp = metadata
 					.getRDFProperty(PROPERTY_RDFS_LABEL);
+			RDFProperty acronymProp = metadata
+					.getRDFProperty(PROPERTY_OMV_ACRONYM);
 
 			Collection<?> matchingResources = metadata.getMatchingResources(
 					nameProp, name, -1);
-			OWLIndividual matchingInd = getIndividualWithType(
+			RDFIndividual matchingInd = getIndividualWithType(
 					matchingResources, owlClass);
 
 			if (matchingInd != null) {
@@ -539,8 +541,15 @@ public class OntologyMetadataUtils extends MetadataUtils {
 				if (matchingInd != null) {
 					instance = matchingInd;
 				} else {
-					// TODO check for acronyms too!
-					instance = metadata.getOWLIndividual(name);
+					matchingResources = metadata.getMatchingResources(acronymProp,
+							name, -1);
+					matchingInd = getIndividualWithType(matchingResources, owlClass);
+
+					if (matchingInd != null) {
+						instance = matchingInd;
+					} else {
+						instance = metadata.getOWLIndividual(name);
+					}
 				}
 			}
 		}
@@ -548,10 +557,10 @@ public class OntologyMetadataUtils extends MetadataUtils {
 		return instance;
 	}
 
-	private static OWLIndividual getIndividualWithType(Collection<?> matchingResources, OWLClass type) {
+	private static RDFIndividual getIndividualWithType(Collection<?> matchingResources, OWLClass type) {
 		for (Object matchingRes : matchingResources) {
-			if (matchingRes instanceof OWLIndividual) {
-				OWLIndividual res = (OWLIndividual) matchingRes;
+			if (matchingRes instanceof RDFIndividual) {
+				RDFIndividual res = (RDFIndividual) matchingRes;
 				if (res.hasRDFType(type)) {
 					return res;
 				}
@@ -562,27 +571,41 @@ public class OntologyMetadataUtils extends MetadataUtils {
 	}
 	
 	private static String getOntologyFormatValue(OWLModel metadata, RDFIndividual ontologyLanguageInd) throws Exception {
-		return getNameOfIndividual(metadata, ontologyLanguageInd);
+		return getNameOfIndividual(metadata, ontologyLanguageInd, AcronymUsagePolicy.AcronymAsNamePreferred);
 	}
 
 	private static String getViewDefinitionLanguageValue(OWLModel metadata, RDFIndividual viewDefLanguageInd) throws Exception {
-		return getNameOfIndividual(metadata, viewDefLanguageInd);
+		return getNameOfIndividual(metadata, viewDefLanguageInd, AcronymUsagePolicy.AcronymIfNoName);
 	}
 	
 	private static String getViewGenerationEngineValue(OWLModel metadata, RDFIndividual viewGenEngineInd) throws Exception {
-		return getNameOfIndividual(metadata, viewGenEngineInd);
+		return getNameOfIndividual(metadata, viewGenEngineInd, AcronymUsagePolicy.AcronymIfNoName);
 	}
 	
-	private static String getNameOfIndividual(OWLModel metadata, RDFIndividual ind) throws Exception {
+	private static String getNameOfIndividual(OWLModel metadata, RDFIndividual ind, AcronymUsagePolicy acronymUsagePolicy) throws Exception {
 		if (ind == null) {
 			return null;
 		}
 		String res;
-		res = getPropertyValue(metadata, ind, PROPERTY_OMV_NAME, String.class);
-		if (res != null) {
-			return res;
+		if (acronymUsagePolicy == AcronymUsagePolicy.AcronymAsNamePreferred) {
+			res = getPropertyValue(metadata, ind, PROPERTY_OMV_ACRONYM, String.class);
+			if ( ! StringHelper.isNullOrNullString(res) ) {
+				return res;
+			}
 		}
 		
+		res = getPropertyValue(metadata, ind, PROPERTY_OMV_NAME, String.class);
+		if ( ! StringHelper.isNullOrNullString(res) ) {
+			return res;
+		}
+
+		if (acronymUsagePolicy == AcronymUsagePolicy.AcronymIfNoName) {
+			res = getPropertyValue(metadata, ind, PROPERTY_OMV_ACRONYM, String.class);
+			if ( ! StringHelper.isNullOrNullString(res) ) {
+				return res;
+			}
+		}
+
 //		res = getPropertyValue(metadata, ind, PROPERTY_RDFS_LABEL, String.class);
 //		if (res != null) {
 //			return res;
@@ -594,9 +617,14 @@ public class OntologyMetadataUtils extends MetadataUtils {
 				return label1.toString();
 			}
 		}
-		
-		//TODO check for acronyms too!
-		
+
+		if (acronymUsagePolicy == AcronymUsagePolicy.AcronymAsLastResort) {
+			res = getPropertyValue(metadata, ind, PROPERTY_OMV_ACRONYM, String.class);
+			if ( ! StringHelper.isNullOrNullString(res) ) {
+				return res;
+			}
+		}
+
 		return ind.getLocalName();
 	}
 	

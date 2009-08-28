@@ -34,6 +34,8 @@ public class MetadataUtils {
 
 	private static final Log log = LogFactory.getLog(MetadataUtils.class);
 
+	protected enum AcronymUsagePolicy {AcronymAsNamePreferred, AcronymIfNoName, AcronymAsLastResort}
+
 	public static final String PREFIX_OMV = "OMV:";
 	public static final String PREFIX_METADATA = "metadata:";
 	public static final String PREFIX_METRICS = "metrics:";
