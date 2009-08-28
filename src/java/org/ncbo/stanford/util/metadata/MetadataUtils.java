@@ -344,7 +344,7 @@ public class MetadataUtils {
 		}
 	}
 
-	protected static int getNextAvailableIdForClass(OWLClass cls)
+	protected static int getNextAvailableIdForClass(OWLClass cls, Integer startId)
 			throws Exception {
 		OWLModel owlModel = cls.getOWLModel();
 		Collection<?> instances = cls.getInstances(false);
@@ -365,7 +365,11 @@ public class MetadataUtils {
 			}
 		}
 
-		// TODO here we could test for 0 and set the constant starting values
+		//check for 0, which means that there was no instance of the class found
+		if (max == 0 && startId != null) {
+			max = startId.intValue();
+		}
+		
 		return max + 1;
 	}
 }

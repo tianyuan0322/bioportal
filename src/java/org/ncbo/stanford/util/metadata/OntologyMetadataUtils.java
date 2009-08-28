@@ -733,7 +733,8 @@ public class OntologyMetadataUtils extends MetadataUtils {
 	
 	public static int getNextAvailableVirtualOntologyId(OWLModel metadata) {
 		try {
-			Integer newId = getNextAvailableIdForClass(metadata.getOWLNamedClass(CLASS_VIRTUAL_ONTOLOGY));
+			Integer startId = Integer.valueOf(MessageUtils.getMessage("config.db.ontology.virtualOntologyIdStart"));
+			Integer newId = getNextAvailableIdForClass(metadata.getOWLNamedClass(CLASS_VIRTUAL_ONTOLOGY), startId);
 			while (getVirtualViewWithId(metadata, newId) != null) {
 				newId = ((newId + 1500) / 1000) * 1000;
 			}
@@ -746,7 +747,8 @@ public class OntologyMetadataUtils extends MetadataUtils {
 
 	public static int getNextAvailableVirtualViewId(OWLModel metadata) {
 		try {
-			Integer newId = getNextAvailableIdForClass(metadata.getOWLNamedClass(CLASS_VIRTUAL_VIEW));
+			Integer startId = Integer.valueOf(MessageUtils.getMessage("config.db.ontology.virtualOntologyIdStart"));
+			Integer newId = getNextAvailableIdForClass(metadata.getOWLNamedClass(CLASS_VIRTUAL_VIEW), startId);
 			while (getVirtualOntologyWithId(metadata, newId) != null) {
 				newId = ((newId + 1500) / 1000) * 1000;
 			}
@@ -760,7 +762,8 @@ public class OntologyMetadataUtils extends MetadataUtils {
 	
 	public static int getNextAvailableOntologyVersionId(OWLModel metadata) {
 		try {
-			Integer newId = getNextAvailableIdForClass(metadata.getOWLNamedClass(CLASS_OMV_ONTOLOGY));
+			Integer startId = Integer.valueOf(MessageUtils.getMessage("config.db.ontology.ontologyVersionIdStart"));
+			Integer newId = getNextAvailableIdForClass(metadata.getOWLNamedClass(CLASS_OMV_ONTOLOGY), startId);
 			while (getOntologyViewWithId(metadata, newId) != null) {
 				newId = ((newId + 1500) / 1000) * 1000;
 			}
@@ -773,7 +776,8 @@ public class OntologyMetadataUtils extends MetadataUtils {
 	
 	public static int getNextAvailableOntologyViewVersionId(OWLModel metadata) {
 		try {
-			Integer newId = getNextAvailableIdForClass(metadata.getOWLNamedClass(CLASS_ONTOLOGY_VIEW));
+			Integer startId = Integer.valueOf(MessageUtils.getMessage("config.db.ontology.ontologyVersionIdStart"));
+			Integer newId = getNextAvailableIdForClass(metadata.getOWLNamedClass(CLASS_ONTOLOGY_VIEW), startId);
 			while (getOntologyWithId(metadata, newId) != null) {
 				newId = ((newId + 1500) / 1000) * 1000;
 			}
