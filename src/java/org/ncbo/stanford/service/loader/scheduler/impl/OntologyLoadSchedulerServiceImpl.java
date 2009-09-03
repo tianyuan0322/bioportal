@@ -11,8 +11,8 @@ import java.util.Map;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.ncbo.stanford.bean.OntologyMetricsBean;
 import org.ncbo.stanford.bean.OntologyBean;
+import org.ncbo.stanford.bean.OntologyMetricsBean;
 import org.ncbo.stanford.domain.custom.dao.CustomNcboOntologyLoadQueueDAO;
 import org.ncbo.stanford.domain.generated.NcboLStatus;
 import org.ncbo.stanford.domain.generated.NcboOntologyLoadQueue;
@@ -228,6 +228,14 @@ public class OntologyLoadSchedulerServiceImpl implements
 					errorMessage);
 			e.printStackTrace();
 			log.error(e);
+
+			try {
+				updateOntologyStatus(loadQueue, ontologyBean, status,
+						errorMessage);
+			} catch (Exception e1) {
+				e.printStackTrace();
+				log.error(e);
+			}			
 		}
 	}
 
