@@ -1,0 +1,6 @@
+database:com.mysql.jdbc.Driver,jdbc:mysql://ncbo-db-dev1.sunet:3306/bioportal_protege,metadata,metadata,metadata
+[Dublin Core DL Redirect]
+http://protege.stanford.edu/ontologies/metadata/BioPortalMetadata.owl
+http://protege.stanford.edu/ontologies/ChAO/changes.rdfs
+http://protege.stanford.edu/ontologies/mappings/mappings.rdfs
+http://omv.ontoware.org/2005/05/ontology
