@@ -7,6 +7,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import org.apache.commons.logging.Log;
@@ -194,12 +195,12 @@ public class OntologyRetrievalManagerProtegeImpl extends
 	}
 
 	private List<ClassBean> convertClasses(Collection<Cls> protegeClses,
-			boolean recursive, Slot synonymSlot) {
+			boolean recursive, Slot synonymSlot, Map<Cls, ClassBean> recursionMap) {
 		List<ClassBean> beans = new ArrayList<ClassBean>();
 
 		for (Cls cls : protegeClses) {
 			if (cls.isVisible())
-				beans.add(createClassBean(cls, recursive, synonymSlot));
+				beans.add(createClassBean(cls, recursive, synonymSlot, recursionMap));
 		}
 
 		return beans;
@@ -223,6 +224,15 @@ public class OntologyRetrievalManagerProtegeImpl extends
 
 	private ClassBean createClassBean(Cls cls, boolean recursive,
 			Slot synonymSlot) {
+		return createClassBean(cls, recursive,
+				synonymSlot, new HashMap<Cls, ClassBean>());
+	}
+	
+	private ClassBean createClassBean(Cls cls, boolean recursive,
+			Slot synonymSlot, Map<Cls, ClassBean> recursionMap) {
+		if (recursionMap.containsKey(cls)) {
+			return recursionMap.get(cls);
+		}
 		boolean isOwl = cls.getKnowledgeBase() instanceof OWLModel;
 
 		ClassBean classBean = new ClassBean();
@@ -231,6 +241,8 @@ public class OntologyRetrievalManagerProtegeImpl extends
 
 		classBean.setLabel(getBrowserText(cls));
 
+		recursionMap.put(cls, classBean);
+		
 		// add properties
 		Collection<Slot> slots;
 
@@ -287,7 +299,7 @@ public class OntologyRetrievalManagerProtegeImpl extends
 
 		if (recursive) {
 			classBean.addRelation(ApplicationConstants.SUB_CLASS,
-					convertClasses(subclasses, false, synonymSlot));
+					convertClasses(subclasses, false, synonymSlot, recursionMap));
 
 			// add superclasses
 			if (cls instanceof OWLNamedClass) {
@@ -298,14 +310,14 @@ public class OntologyRetrievalManagerProtegeImpl extends
 			}
 
 			classBean.addRelation(ApplicationConstants.SUPER_CLASS,
-					convertClasses(superclasses, false, synonymSlot));
+					convertClasses(superclasses, false, synonymSlot, recursionMap));
 		}
 
 		// add RDF type
 		if (cls instanceof OWLNamedClass) {
 			classBean.addRelation(ApplicationConstants.RDF_TYPE,
 					convertClasses(getUniqueClasses(((OWLNamedClass) cls)
-							.getRDFTypes()), false, synonymSlot));
+							.getRDFTypes()), false, synonymSlot, recursionMap));
 		}
 
 		return classBean;
