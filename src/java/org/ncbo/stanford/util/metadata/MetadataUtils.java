@@ -120,10 +120,13 @@ public class MetadataUtils {
 					// try to extract some non-standard values like date, time,
 					// datetime, etc.
 					RDFSDatatype datatype = lit.getDatatype();
+					
 					if (owlModel.getXSDdate().equals(datatype)
 							|| owlModel.getXSDtime().equals(datatype)
 							|| owlModel.getXSDdateTime().equals(datatype)) {
 						val = convertStringToDate(lit.getString());
+					} else if (owlModel.getXSDinteger().equals(datatype)) {
+						val = Integer.parseInt(lit.toString());
 					}
 				}
 			}

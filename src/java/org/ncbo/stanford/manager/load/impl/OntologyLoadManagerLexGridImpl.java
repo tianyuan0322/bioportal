@@ -281,6 +281,8 @@ public class OntologyLoadManagerLexGridImpl extends
 			throws Exception {
 		OntologyMetricsBean res = new OntologyMetricsBean();
 		// TODO: fill in
+		res.setId(ontologyBean.getId());
+
 		return res;
 	}
 }

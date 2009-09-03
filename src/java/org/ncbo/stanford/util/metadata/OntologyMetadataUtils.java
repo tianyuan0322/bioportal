@@ -7,6 +7,7 @@ import java.util.Date;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -367,8 +368,12 @@ public class OntologyMetadataUtils extends MetadataUtils {
 		setPropertyValue(owlModel, ontologyInd, PROPERTY_METRICS_CLASSES_WITH_NO_DOCUMENTATION, mb.getClassesWithNoDocumentation());
 		setPropertyValue(owlModel, ontologyInd, PROPERTY_METRICS_CLASSES_WITH_NO_AUTHOR, mb.getClassesWithNoAuthor());
 		setPropertyValue(owlModel, ontologyInd, PROPERTY_METRICS_CLASSES_WITH_SINGLE_SUBCLASS, mb.getClassesWithOneSubclass());
-		setPropertyValue(owlModel, ontologyInd, PROPERTY_METRICS_CLASSES_WITH_MORE_THAN_X_SUBCLASSES, mb.getClassesWithMoreThanXSubclasses().keySet());
-		setPropertyValue(owlModel, ontologyInd, PROPERTY_METRICS_CLASSES_WITH_MORE_THAN_ONE_PROPERTY_VALUE_FOR_PROPERTY_WITH_UNIQUE_VALUE, mb.getClassesWithMoreThanOnePropertyValue());
+		
+		Map<String, Integer> classesWithMoreThanXSubclasses = mb.getClassesWithMoreThanXSubclasses();
+		setPropertyValue(owlModel, ontologyInd, PROPERTY_METRICS_CLASSES_WITH_MORE_THAN_X_SUBCLASSES, 
+				(classesWithMoreThanXSubclasses == null) ? null : classesWithMoreThanXSubclasses.keySet());
+		setPropertyValue(owlModel, ontologyInd, PROPERTY_METRICS_CLASSES_WITH_MORE_THAN_ONE_PROPERTY_VALUE_FOR_PROPERTY_WITH_UNIQUE_VALUE, 
+				mb.getClassesWithMoreThanOnePropertyValue());
 	}
 	
 	public static void fillInOntologyBeanFromInstance(OntologyBean ob,
