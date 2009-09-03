@@ -18,121 +18,209 @@
     <owl:imports rdf:resource="http://sqwrl.stanford.edu/ontologies/built-ins/3.4/sqwrl.owl"/>
     <owl:imports rdf:resource="http://swrl.stanford.edu/ontologies/3.3/swrla.owl"/>
   </owl:Ontology>
-  <swrl:Imp rdf:ID="AllOntologiesAndViewsWithStatus4">
-    <swrl:body>
+  <swrl:Imp rdf:ID="MultipleVirtualOntologies">
+    <swrl:head>
       <swrl:AtomList>
-        <rdf:first>
-          <swrl:ClassAtom>
-            <swrl:argument1>
-              <swrl:Variable rdf:ID="o"/>
-            </swrl:argument1>
-            <swrl:classPredicate rdf:resource="http://omv.ontoware.org/2005/05/ontology#Ontology"/>
-          </swrl:ClassAtom>
-        </rdf:first>
         <rdf:rest>
           <swrl:AtomList>
-            <rdf:first>
-              <swrl:DatavaluedPropertyAtom>
-                <swrl:propertyPredicate rdf:resource="http://protege.stanford.edu/ontologies/metadata/BioPortalMetadata.owl#statusID"/>
-                <swrl:argument2>
-                  <swrl:Variable rdf:ID="v"/>
-                </swrl:argument2>
-                <swrl:argument1 rdf:resource="#o"/>
-              </swrl:DatavaluedPropertyAtom>
-            </rdf:first>
             <rdf:rest>
               <swrl:AtomList>
+                <rdf:rest rdf:resource="http://www.w3.org/1999/02/22-rdf-syntax-ns#nil"/>
                 <rdf:first>
                   <swrl:BuiltinAtom>
+                    <swrl:builtin rdf:resource="http://sqwrl.stanford.edu/ontologies/built-ins/3.4/sqwrl.owl#orderBy"/>
                     <swrl:arguments>
                       <rdf:List>
-                        <rdf:first rdf:resource="#v"/>
                         <rdf:rest>
                           <rdf:List>
-                            <rdf:first rdf:datatype="http://www.w3.org/2001/XMLSchema#int"
-                            >4</rdf:first>
+                            <rdf:first>
+                              <swrl:Variable rdf:ID="o"/>
+                            </rdf:first>
                             <rdf:rest rdf:resource="http://www.w3.org/1999/02/22-rdf-syntax-ns#nil"/>
                           </rdf:List>
                         </rdf:rest>
+                        <rdf:first>
+                          <swrl:Variable rdf:ID="vo1"/>
+                        </rdf:first>
                       </rdf:List>
                     </swrl:arguments>
-                    <swrl:builtin rdf:resource="http://www.w3.org/2003/11/swrlb#equal"/>
                   </swrl:BuiltinAtom>
                 </rdf:first>
-                <rdf:rest rdf:resource="http://www.w3.org/1999/02/22-rdf-syntax-ns#nil"/>
               </swrl:AtomList>
             </rdf:rest>
-          </swrl:AtomList>
-        </rdf:rest>
-      </swrl:AtomList>
-    </swrl:body>
-    <swrl:head>
-      <swrl:AtomList>
-        <rdf:rest rdf:resource="http://www.w3.org/1999/02/22-rdf-syntax-ns#nil"/>
-        <rdf:first>
-          <swrl:BuiltinAtom>
-            <swrl:builtin rdf:resource="http://sqwrl.stanford.edu/ontologies/built-ins/3.4/sqwrl.owl#select"/>
-            <swrl:arguments>
-              <rdf:List>
-                <rdf:rest>
+            <rdf:first>
+              <swrl:BuiltinAtom>
+                <swrl:arguments>
                   <rdf:List>
                     <rdf:rest rdf:resource="http://www.w3.org/1999/02/22-rdf-syntax-ns#nil"/>
-                    <rdf:first rdf:resource="#v"/>
+                    <rdf:first rdf:resource="#vo1"/>
                   </rdf:List>
-                </rdf:rest>
+                </swrl:arguments>
+                <swrl:builtin rdf:resource="http://sqwrl.stanford.edu/ontologies/built-ins/3.4/sqwrl.owl#count"/>
+              </swrl:BuiltinAtom>
+            </rdf:first>
+          </swrl:AtomList>
+        </rdf:rest>
+        <rdf:first>
+          <swrl:BuiltinAtom>
+            <swrl:arguments>
+              <rdf:List>
+                <rdf:rest rdf:resource="http://www.w3.org/1999/02/22-rdf-syntax-ns#nil"/>
                 <rdf:first rdf:resource="#o"/>
               </rdf:List>
             </swrl:arguments>
+            <swrl:builtin rdf:resource="http://sqwrl.stanford.edu/ontologies/built-ins/3.4/sqwrl.owl#select"/>
           </swrl:BuiltinAtom>
         </rdf:first>
       </swrl:AtomList>
     </swrl:head>
-  </swrl:Imp>
-  <swrl:Imp rdf:ID="AllOntologiesAndViews">
     <swrl:body>
       <swrl:AtomList>
-        <rdf:rest>
-          <swrl:AtomList>
-            <rdf:rest rdf:resource="http://www.w3.org/1999/02/22-rdf-syntax-ns#nil"/>
-            <rdf:first>
-              <swrl:DatavaluedPropertyAtom>
-                <swrl:argument1 rdf:resource="#o"/>
-                <swrl:argument2>
-                  <swrl:Variable rdf:ID="name"/>
-                </swrl:argument2>
-                <swrl:propertyPredicate rdf:resource="http://omv.ontoware.org/2005/05/ontology#name"/>
-              </swrl:DatavaluedPropertyAtom>
-            </rdf:first>
-          </swrl:AtomList>
-        </rdf:rest>
         <rdf:first>
           <swrl:ClassAtom>
             <swrl:classPredicate rdf:resource="http://omv.ontoware.org/2005/05/ontology#Ontology"/>
             <swrl:argument1 rdf:resource="#o"/>
           </swrl:ClassAtom>
         </rdf:first>
+        <rdf:rest>
+          <swrl:AtomList>
+            <rdf:first>
+              <swrl:ClassAtom>
+                <swrl:argument1 rdf:resource="#vo1"/>
+                <swrl:classPredicate rdf:resource="http://protege.stanford.edu/ontologies/metadata/BioPortalMetadata.owl#VirtualOntology"/>
+              </swrl:ClassAtom>
+            </rdf:first>
+            <rdf:rest>
+              <swrl:AtomList>
+                <rdf:rest rdf:resource="http://www.w3.org/1999/02/22-rdf-syntax-ns#nil"/>
+                <rdf:first>
+                  <swrl:IndividualPropertyAtom>
+                    <swrl:propertyPredicate rdf:resource="http://protege.stanford.edu/ontologies/metadata/BioPortalMetadata.owl#isVersionOfVirtualOntology"/>
+                    <swrl:argument2 rdf:resource="#vo1"/>
+                    <swrl:argument1 rdf:resource="#o"/>
+                  </swrl:IndividualPropertyAtom>
+                </rdf:first>
+              </swrl:AtomList>
+            </rdf:rest>
+          </swrl:AtomList>
+        </rdf:rest>
+      </swrl:AtomList>
+    </swrl:body>
+  </swrl:Imp>
+  <swrl:Imp rdf:ID="AllOntologiesAndViewsWithStatus4">
+    <swrl:body>
+      <swrl:AtomList>
+        <rdf:first>
+          <swrl:ClassAtom>
+            <swrl:classPredicate rdf:resource="http://omv.ontoware.org/2005/05/ontology#Ontology"/>
+            <swrl:argument1 rdf:resource="#o"/>
+          </swrl:ClassAtom>
+        </rdf:first>
+        <rdf:rest>
+          <swrl:AtomList>
+            <rdf:rest>
+              <swrl:AtomList>
+                <rdf:first>
+                  <swrl:BuiltinAtom>
+                    <swrl:builtin rdf:resource="http://www.w3.org/2003/11/swrlb#equal"/>
+                    <swrl:arguments>
+                      <rdf:List>
+                        <rdf:rest>
+                          <rdf:List>
+                            <rdf:rest rdf:resource="http://www.w3.org/1999/02/22-rdf-syntax-ns#nil"/>
+                            <rdf:first rdf:datatype="http://www.w3.org/2001/XMLSchema#int"
+                            >4</rdf:first>
+                          </rdf:List>
+                        </rdf:rest>
+                        <rdf:first>
+                          <swrl:Variable rdf:ID="v"/>
+                        </rdf:first>
+                      </rdf:List>
+                    </swrl:arguments>
+                  </swrl:BuiltinAtom>
+                </rdf:first>
+                <rdf:rest rdf:resource="http://www.w3.org/1999/02/22-rdf-syntax-ns#nil"/>
+              </swrl:AtomList>
+            </rdf:rest>
+            <rdf:first>
+              <swrl:DatavaluedPropertyAtom>
+                <swrl:propertyPredicate rdf:resource="http://protege.stanford.edu/ontologies/metadata/BioPortalMetadata.owl#statusID"/>
+                <swrl:argument1 rdf:resource="#o"/>
+                <swrl:argument2 rdf:resource="#v"/>
+              </swrl:DatavaluedPropertyAtom>
+            </rdf:first>
+          </swrl:AtomList>
+        </rdf:rest>
+      </swrl:AtomList>
+    </swrl:body>
+    <swrl:head>
+      <swrl:AtomList>
+        <rdf:first>
+          <swrl:BuiltinAtom>
+            <swrl:builtin rdf:resource="http://sqwrl.stanford.edu/ontologies/built-ins/3.4/sqwrl.owl#select"/>
+            <swrl:arguments>
+              <rdf:List>
+                <rdf:first rdf:resource="#o"/>
+                <rdf:rest>
+                  <rdf:List>
+                    <rdf:rest rdf:resource="http://www.w3.org/1999/02/22-rdf-syntax-ns#nil"/>
+                    <rdf:first rdf:resource="#v"/>
+                  </rdf:List>
+                </rdf:rest>
+              </rdf:List>
+            </swrl:arguments>
+          </swrl:BuiltinAtom>
+        </rdf:first>
+        <rdf:rest rdf:resource="http://www.w3.org/1999/02/22-rdf-syntax-ns#nil"/>
+      </swrl:AtomList>
+    </swrl:head>
+  </swrl:Imp>
+  <swrl:Imp rdf:ID="AllOntologiesAndViews">
+    <swrl:body>
+      <swrl:AtomList>
+        <rdf:first>
+          <swrl:ClassAtom>
+            <swrl:argument1 rdf:resource="#o"/>
+            <swrl:classPredicate rdf:resource="http://omv.ontoware.org/2005/05/ontology#Ontology"/>
+          </swrl:ClassAtom>
+        </rdf:first>
+        <rdf:rest>
+          <swrl:AtomList>
+            <rdf:rest rdf:resource="http://www.w3.org/1999/02/22-rdf-syntax-ns#nil"/>
+            <rdf:first>
+              <swrl:DatavaluedPropertyAtom>
+                <swrl:propertyPredicate rdf:resource="http://omv.ontoware.org/2005/05/ontology#name"/>
+                <swrl:argument2>
+                  <swrl:Variable rdf:ID="name"/>
+                </swrl:argument2>
+                <swrl:argument1 rdf:resource="#o"/>
+              </swrl:DatavaluedPropertyAtom>
+            </rdf:first>
+          </swrl:AtomList>
+        </rdf:rest>
       </swrl:AtomList>
     </swrl:body>
     <swrl:head>
       <swrl:AtomList>
         <rdf:rest>
           <swrl:AtomList>
+            <rdf:rest rdf:resource="http://www.w3.org/1999/02/22-rdf-syntax-ns#nil"/>
             <rdf:first>
               <swrl:BuiltinAtom>
-                <swrl:builtin rdf:resource="http://sqwrl.stanford.edu/ontologies/built-ins/3.4/sqwrl.owl#orderBy"/>
                 <swrl:arguments>
                   <rdf:List>
                     <rdf:rest rdf:resource="http://www.w3.org/1999/02/22-rdf-syntax-ns#nil"/>
                     <rdf:first rdf:resource="#name"/>
                   </rdf:List>
                 </swrl:arguments>
+                <swrl:builtin rdf:resource="http://sqwrl.stanford.edu/ontologies/built-ins/3.4/sqwrl.owl#orderBy"/>
               </swrl:BuiltinAtom>
             </rdf:first>
-            <rdf:rest rdf:resource="http://www.w3.org/1999/02/22-rdf-syntax-ns#nil"/>
           </swrl:AtomList>
         </rdf:rest>
         <rdf:first>
           <swrl:BuiltinAtom>
+            <swrl:builtin rdf:resource="http://sqwrl.stanford.edu/ontologies/built-ins/3.4/sqwrl.owl#select"/>
             <swrl:arguments>
               <rdf:List>
                 <rdf:first rdf:resource="#o"/>
@@ -144,7 +232,6 @@
                 </rdf:rest>
               </rdf:List>
             </swrl:arguments>
-            <swrl:builtin rdf:resource="http://sqwrl.stanford.edu/ontologies/built-ins/3.4/sqwrl.owl#select"/>
           </swrl:BuiltinAtom>
         </rdf:first>
       </swrl:AtomList>
