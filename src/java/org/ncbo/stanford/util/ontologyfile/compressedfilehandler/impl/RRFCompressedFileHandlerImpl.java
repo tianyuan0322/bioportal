@@ -10,6 +10,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.ncbo.stanford.bean.OntologyBean;
+import org.ncbo.stanford.util.constants.ApplicationConstants;
 import org.ncbo.stanford.util.ontologyfile.compressedfilehandler.AbstractCompressedFileHandler;
 
 /**
@@ -27,7 +28,7 @@ public class RRFCompressedFileHandlerImpl extends AbstractCompressedFileHandler 
 		String uploadedFile = relevantFiles.get(0);
 		relevantFiles = new ArrayList<String>(0);
 		relevantFiles.add(uploadedFile);
-		relevantFiles.add("");
+		relevantFiles.add(ApplicationConstants.DIR);
 
 		return relevantFiles;
 	}
