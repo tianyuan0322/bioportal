@@ -194,22 +194,18 @@ public class OntologyMetadataUtils extends MetadataUtils {
 		
 		setPropertyValue(owlModel, ontologyInd, PROPERTY_OMV_ACRONYM, ob.getAbbreviation());
 		
-		//ob.getCategoryIds();
+		//CategoryIds;
 		setPropertyValue(owlModel, ontologyInd, PROPERTY_OMV_HAS_DOMAIN, domainIndividuals);
 		
 		setPropertyValue(owlModel, ontologyInd, PROPERTY_CODING_SCHEME, ob.getCodingScheme());
 		setPropertyValue(owlModel, ontologyInd, PROPERTY_HAS_CONTACT_EMAIL, ob.getContactEmail());
 		setPropertyValue(owlModel, ontologyInd, PROPERTY_HAS_CONTACT_NAME, ob.getContactName());
-		//RDFSLiteral litDateCreated = owlModel.createRDFSLiteral(ob.getDateCreated().toString(), owlModel.getXSDdate());
 		RDFSLiteral litDateCreated = createXsdDateTimePropertyValue(owlModel, ob.getDateCreated());
 		setPropertyValue(owlModel, ontologyInd, PROPERTY_UPLOAD_DATE, litDateCreated);
-		//setPropertyValue(owlModel, ontologyInd, PROPERTY_OMV_CREATION_DATE, ob.getDateReleased().toString());
 		setPropertyValue(owlModel, ontologyInd, PROPERTY_OMV_CREATION_DATE, convertDateToDateTimeString(ob.getDateReleased()));//or maybe just convertDateToDateString(ob.getDateReleased())
 		setPropertyValue(owlModel, ontologyInd, PROPERTY_OMV_NAME, ob.getDisplayLabel());
 		setPropertyValue(owlModel, ontologyInd, PROPERTY_OMV_DESCRIPTION, ob.getDescription());
 		setPropertyValue(owlModel, ontologyInd, PROPERTY_OMV_DOCUMENTATION, ob.getDocumentation());
-		
-		//ob.getFileItem();
 		
 		setPropertyValue(owlModel, ontologyInd, PROPERTY_FILE_NAMES, ob.getFilenames());
 		setPropertyValue(owlModel, ontologyInd, PROPERTY_FILE_PATH, ob.getFilePath());
@@ -219,12 +215,8 @@ public class OntologyMetadataUtils extends MetadataUtils {
 			setPropertyValue(owlModel, ontologyInd, PROPERTY_OMV_HAS_ONTOLOGY_LANGUAGE, ontLangInd);
 		}
 		else {
-			//TODO what to do?
-			//throw Exception?
-			//log.error("No OMV:OntologyLanguage individual found for ontology: " + ontologyInd);
+			log.error("No OMV:OntologyLanguage individual found for ontology " + ontologyInd + ": " + ob.getFormat());
 		}
-		
-		//ob.getHasViews();//FIXME
 		
 		setPropertyValue(owlModel, ontologyInd, PROPERTY_URL_HOMEPAGE, ob.getHomepage());
 		setPropertyValue(owlModel, ontologyInd, PROPERTY_ID, ob.getId());
@@ -236,14 +228,12 @@ public class OntologyMetadataUtils extends MetadataUtils {
 		RDFSLiteral litIsRemote = owlModel.createRDFSLiteral(ob.getIsRemote()==0 ? "false" : "true", owlModel.getXSDboolean());
 		setPropertyValue(owlModel, ontologyInd, PROPERTY_IS_REMOTE, litIsRemote);
 		
-		//ob.getIsReviewed();
-		
 		setPropertyValue(owlModel, vOntInd, PROPERTY_OBO_FOUNDRY_ID, ob.getOboFoundryId());
 		
-		//ob.getOntologyId();
+		//OntologyId;
 		setPropertyValue(owlModel, ontologyInd, PROPERTY_IS_VERSION_OF_VIRTUAL_ONTOLOGY, vOntInd);
 
-		//ob.getVirtualViewIds();
+		//VirtualViewIds;
 		//We don't have to explicitly set the virtual view versions as belonging to the virtual ontology
 		//but we create this relation when uploading/updating a view (See below the
 		//	updateIsViewOnOntologyVersionProperty(...) call)
@@ -255,7 +245,7 @@ public class OntologyMetadataUtils extends MetadataUtils {
 		setPropertyValue(owlModel, ontologyInd, PROPERTY_TARGET_TERMINOLOGIES, ob.getTargetTerminologies());
 		setPropertyValue(owlModel, ontologyInd, PROPERTY_OMV_URI, ob.getUrn());
 		
-		//ob.getUserId();
+		//UserId;
 		setPropertyValue(owlModel, ontologyInd, PROPERTY_ADMINISTERED_BY, userInd);
 		
 		setPropertyValue(owlModel, ontologyInd, PROPERTY_OMV_VERSION, ob.getVersionNumber());
@@ -283,9 +273,7 @@ public class OntologyMetadataUtils extends MetadataUtils {
 				setPropertyValue(owlModel, ontologyInd, PROPERTY_VIEW_DEFINITION_LANGUAGE, viewDefLangInd);
 			}
 			else {
-				//TODO what to do?
-				//throw Exception?
-				//log.error("No metadata:ViewDefinitionLanguage individual found for ontology view: " + ontologyInd);
+				log.error("No metadata:ViewDefinitionLanguage individual found for ontology view " + ontologyInd + ": " + ob.getViewDefinitionLanguage());
 			}
 			
 			RDFIndividual viewGenEngInd = getViewGenerationEngineInstance(owlModel, ob.getViewGenerationEngine());
@@ -294,12 +282,8 @@ public class OntologyMetadataUtils extends MetadataUtils {
 				setPropertyValue(owlModel, ontologyInd, PROPERTY_VIEW_GENERATION_ENGINE, viewGenEngInd);
 			}
 			else {
-				//TODO what to do?
-				//throw Exception?
-				//log.error("No metadata:ViewGenerationEngine individual found for ontology view: " + ontologyViewInd);
+				log.error("No metadata:ViewGenerationEngine individual found for ontology view " +  ontologyInd + ": " + ob.getViewGenerationEngine());
 			}
-			
-			//TODO see if we have to deal with virtualViewOf property or not
 		}
 	}
 
@@ -392,14 +376,10 @@ public class OntologyMetadataUtils extends MetadataUtils {
 		ob.setContactEmail( getPropertyValue(owlModel, ontologyInd, PROPERTY_HAS_CONTACT_EMAIL, String.class));
 		ob.setContactName( getPropertyValue(owlModel, ontologyInd, PROPERTY_HAS_CONTACT_NAME, String.class));
 		ob.setDateCreated( getPropertyValue(owlModel, ontologyInd, PROPERTY_UPLOAD_DATE, Date.class));
-		//ob.setDateReleased( new Date(Date.parse(getPropertyValue(owlModel, ontologyInd, PROPERTY_OMV_CREATION_DATE, String.class))));
-		//ob.setDateReleased( OWLDateWidget.getDate(getPropertyValue(owlModel, ontologyInd, PROPERTY_OMV_CREATION_DATE, String.class)));
 		ob.setDateReleased( convertStringToDate(getPropertyValue(owlModel, ontologyInd, PROPERTY_OMV_CREATION_DATE, String.class)));
 		ob.setDisplayLabel( getPropertyValue(owlModel, ontologyInd, PROPERTY_OMV_NAME, String.class));
 		ob.setDescription( getPropertyValue(owlModel, ontologyInd, PROPERTY_OMV_DESCRIPTION, String.class));
 		ob.setDocumentation( getPropertyValue(owlModel, ontologyInd, PROPERTY_OMV_DOCUMENTATION, String.class));
-		
-		//ob.setFileItem(null);
 		
 		ob.setFilenames( getPropertyValues(owlModel, ontologyInd, PROPERTY_FILE_NAMES, String.class));
 		ob.setFilePath( getPropertyValue(owlModel, ontologyInd, PROPERTY_FILE_PATH, String.class));
@@ -416,19 +396,8 @@ public class OntologyMetadataUtils extends MetadataUtils {
 		ob.setIsRemote( convertBooleanToByte(getPropertyValue(owlModel, ontologyInd, PROPERTY_IS_REMOTE, Boolean.class)) );
 		ob.setGroupIds( getPropertyValueIds(owlModel, vOntInd, PROPERTY_BELONGS_TO_GROUP));
 		
-		//ob.setIsReviewed(null);
-		
 		ob.setOboFoundryId( getPropertyValue(owlModel, vOntInd, PROPERTY_OBO_FOUNDRY_ID, String.class));
 		ob.setOntologyId( getPropertyValue(owlModel, vOntInd, PROPERTY_ID, Integer.class));
-//		Integer virtOntId = getFirstElement(getPropertyValueIds(owlModel, ontologyInd, PROPERTY_IS_VERSION_OF_VIRTUAL_ONTOLOGY));
-//		if (virtOntId != null) {
-//			ob.setOntologyId( virtOntId);
-//		}
-//		else {
-//			// TODO what to do?
-//			// throw Exception?
-//			// log.error("No metadata:isVersionOfVirtualOntology individual found for ontology: " + ontologyInd);
-//		}
 		
 		ob.setVirtualViewIds(getPropertyValueIds(owlModel, vOntInd, PROPERTY_HAS_VIRTUAL_VIEW) );
 		
@@ -854,13 +823,16 @@ public class OntologyMetadataUtils extends MetadataUtils {
 			getIndividualsWithMatchingProperty(metadata, 
 				CLASS_VIRTUAL_ONTOLOGY, PROPERTY_OBO_FOUNDRY_ID, 
 				oboFoundryId, false);//choose "true" if we will return also ontology views (and rename methods appropriately)
+		
 		if ( vOntIndividuals != null && (! vOntIndividuals.isEmpty()) ) {
 			if (vOntIndividuals.size() > 1) {
-				log.error("");
+				log.error("Multiple virtual ontology individuals attached to ontology version: " + oboFoundryId);
 			}
+			
 			OWLIndividual vOntInd = vOntIndividuals.get(0);
 			boolean isView = OntologyMetadataUtils.isVirtualViewIndividual(vOntInd);
 			res = new OntologyBean(isView);
+			
 			try {
 				OWLIndividual ontologyInd = OntologyMetadataUtils.getLatestVersion(vOntInd, onlyActive);
 				OntologyMetadataUtils.fillInOntologyBeanFromInstance(res, ontologyInd);
@@ -870,6 +842,7 @@ public class OntologyMetadataUtils extends MetadataUtils {
 				res = null;
 			}
 		}
+		
 		return res;
 	}
 
