@@ -115,14 +115,14 @@ public abstract class AbstractSearchService {
 
 				uniqueDocs.add(uniqueIdent);
 
-				System.out.println(hits[i].score + " | "
-						+ searchResult.getContents() + ", Type: "
-						+ searchResult.getRecordType() + ", PrefName: "
-						+ searchResult.getPreferredName() + ", Ontology: "
-						+ searchResult.getOntologyDisplayLabel()
-						+ ", Concept Id: " + searchResult.getConceptId()
-						+ ", Concept Id Short: "
-						+ searchResult.getConceptIdShort());
+//				System.out.println(hits[i].score + " | "
+//						+ searchResult.getContents() + ", Type: "
+//						+ searchResult.getRecordType() + ", PrefName: "
+//						+ searchResult.getPreferredName() + ", Ontology: "
+//						+ searchResult.getOntologyDisplayLabel()
+//						+ ", Concept Id: " + searchResult.getConceptId()
+//						+ ", Concept Id Short: "
+//						+ searchResult.getConceptIdShort());
 			}
 		}
 		
