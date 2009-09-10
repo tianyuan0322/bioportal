@@ -11,8 +11,8 @@ import java.util.Map;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.ncbo.stanford.bean.OntologyMetricsBean;
 import org.ncbo.stanford.bean.OntologyBean;
+import org.ncbo.stanford.bean.OntologyMetricsBean;
 import org.ncbo.stanford.domain.custom.dao.CustomNcboOntologyLoadQueueDAO;
 import org.ncbo.stanford.domain.generated.NcboLStatus;
 import org.ncbo.stanford.domain.generated.NcboOntologyLoadQueue;
@@ -26,6 +26,7 @@ import org.ncbo.stanford.service.loader.scheduler.OntologyLoadSchedulerService;
 import org.ncbo.stanford.service.search.IndexSearchService;
 import org.ncbo.stanford.util.CompressionUtils;
 import org.ncbo.stanford.util.MessageUtils;
+import org.ncbo.stanford.util.constants.ApplicationConstants;
 import org.ncbo.stanford.util.helper.StringHelper;
 import org.ncbo.stanford.util.ontologyfile.pathhandler.AbstractFilePathHandler;
 import org.springframework.transaction.annotation.Propagation;
@@ -228,6 +229,14 @@ public class OntologyLoadSchedulerServiceImpl implements
 					errorMessage);
 			e.printStackTrace();
 			log.error(e);
+
+			try {
+				updateOntologyStatus(loadQueue, ontologyBean, status,
+						errorMessage);
+			} catch (Exception e1) {
+				e.printStackTrace();
+				log.error(e);
+			}			
 		}
 	}
 
@@ -330,6 +339,8 @@ public class OntologyLoadSchedulerServiceImpl implements
 
 		// for UMLS, pass empty string to LexGrid to indicate a directory
 		for (String filename : filenames) {
+			filename = filename.replace(ApplicationConstants.DIR, "");
+
 			if (!CompressionUtils.isCompressed(filename)) {
 				log.debug("......loading filename " + filename);
 				String filePath = AbstractFilePathHandler.getOntologyFilePath(

@@ -481,6 +481,13 @@ public class OntologyMetadataManagerProtegeImpl extends
 		//return getNextAvailableIdWithSQWRL(QUERY_MAX_ONTOLOGY_VIEW_ID, CLASS_ONTOLOGY);
 		return OntologyMetadataUtils.getNextAvailableOntologyViewVersionId(getMetadataOWLModel());
 	}
+	
+	public OntologyBean findLatestOntologyVersionByOboFoundryId(
+			String oboFoundryId) {
+		return OntologyMetadataUtils.
+				findLatestOntologyVersionByOboFoundryId(getMetadataOWLModel(), oboFoundryId, ALL_VERSIONS);
+	}
+
 	//*****************************************
 	
 	

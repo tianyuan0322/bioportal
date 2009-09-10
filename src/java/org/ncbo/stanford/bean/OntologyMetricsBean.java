@@ -1,7 +1,8 @@
 package org.ncbo.stanford.bean;
 
 import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * <pre>
@@ -22,11 +23,11 @@ public class OntologyMetricsBean {
 	private Integer maximumDepth;
 	private Integer maximumNumberOfSiblings;
 	private Integer averageNumberOfSiblings;
-	private ArrayList<String> classesWithOneSubclass;
-	private HashMap<String, Integer> classesWithMoreThanXSubclasses;
-	private ArrayList<String> classesWithNoDocumentation;
-	private ArrayList<String> classesWithNoAuthor;
-	private ArrayList<String> classesWithMoreThanOnePropertyValue;
+	private List<String> classesWithOneSubclass;
+	private Map<String, Integer> classesWithMoreThanXSubclasses;
+	private List<String> classesWithNoDocumentation;
+	private List<String> classesWithNoAuthor;
+	private List<String> classesWithMoreThanOnePropertyValue;
 
 	/**
 	 * @return the id
@@ -151,21 +152,21 @@ public class OntologyMetricsBean {
 	/**
 	 * @return the classesWithOneSubclass
 	 */
-	public ArrayList<String> getClassesWithOneSubclass() {
+	public List<String> getClassesWithOneSubclass() {
 		return classesWithOneSubclass;
 	}
 
 	/**
 	 * @param classesWithOneSubclass the classesWithOneSubclass to set
 	 */
-	public void setClassesWithOneSubclass(ArrayList<String> classesWithOneSubclass) {
+	public void setClassesWithOneSubclass(List<String> classesWithOneSubclass) {
 		this.classesWithOneSubclass = classesWithOneSubclass;
 	}
 
 	/**
 	 * @return the classesWithMoreThanXSubclasses
 	 */
-	public HashMap<String, Integer> getClassesWithMoreThanXSubclasses() {
+	public Map<String, Integer> getClassesWithMoreThanXSubclasses() {
 		return classesWithMoreThanXSubclasses;
 	}
 
@@ -173,14 +174,14 @@ public class OntologyMetricsBean {
 	 * @param classesWithMoreThanXSubclasses the classesWithMoreThanXSubclasses to set
 	 */
 	public void setClassesWithMoreThanXSubclasses(
-			HashMap<String, Integer> classesWithMoreThanXSubclasses) {
+			Map<String, Integer> classesWithMoreThanXSubclasses) {
 		this.classesWithMoreThanXSubclasses = classesWithMoreThanXSubclasses;
 	}
 
 	/**
 	 * @return the classesWithNoDocumentation
 	 */
-	public ArrayList<String> getClassesWithNoDocumentation() {
+	public List<String> getClassesWithNoDocumentation() {
 		return classesWithNoDocumentation;
 	}
 
@@ -188,28 +189,28 @@ public class OntologyMetricsBean {
 	 * @param classesWithNoDocumentation the classesWithNoDocumentation to set
 	 */
 	public void setClassesWithNoDocumentation(
-			ArrayList<String> classesWithNoDocumentation) {
+			List<String> classesWithNoDocumentation) {
 		this.classesWithNoDocumentation = classesWithNoDocumentation;
 	}
 
 	/**
 	 * @return the classesWithNoAuthor
 	 */
-	public ArrayList<String> getClassesWithNoAuthor() {
+	public List<String> getClassesWithNoAuthor() {
 		return classesWithNoAuthor;
 	}
 
 	/**
 	 * @param classesWithNoAuthor the classesWithNoAuthor to set
 	 */
-	public void setClassesWithNoAuthor(ArrayList<String> classesWithNoAuthor) {
+	public void setClassesWithNoAuthor(List<String> classesWithNoAuthor) {
 		this.classesWithNoAuthor = classesWithNoAuthor;
 	}
 
 	/**
 	 * @return the classesWithMoreThanOnePropertyValue
 	 */
-	public ArrayList<String> getClassesWithMoreThanOnePropertyValue() {
+	public List<String> getClassesWithMoreThanOnePropertyValue() {
 		return classesWithMoreThanOnePropertyValue;
 	}
 

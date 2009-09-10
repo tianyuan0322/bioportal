@@ -22,3 +22,6 @@ DROP TABLE ncbo_ontology;
 DROP VIEW v_ncbo_ontology;
 
 DROP PROCEDURE IF EXISTS sp_remove_ontology_by_display_label;
+
+ALTER TABLE ncbo_usage_log MODIFY request_parameters VARCHAR(2048);
+

@@ -32,6 +32,7 @@ public class OntologyCategoryMetadataManagerProtegeImpl extends
 	private static final boolean DO_NOT_CREATE_IF_MISSING = false;
 
 
+	@SuppressWarnings("unchecked")
 	public void saveOntologyCategory(CategoryBean cb) throws Exception {
 		OWLModel metadata = getMetadataOWLModel();
 		OWLIndividual ontDomainInd = getOntologyDomainInstance(metadata, cb.getId(), CREATE_IF_MISSING);
@@ -56,6 +57,29 @@ public class OntologyCategoryMetadataManagerProtegeImpl extends
 			log.error("Ontology domain with category id " + categoryId + " was not found.");
 			return null;
 		}
+	}
+
+	public List<CategoryBean> findCategoriesByOBOFoundryNames(
+			String[] oboFoundryNames) {
+		List<CategoryBean> res = new ArrayList<CategoryBean>();
+		//for (int i = 0; i <obo)
+		for (String oboFoundryName : oboFoundryNames) {
+			List<OWLIndividual> matchingOntDomains = OntologyCategoryMetadataUtils.getOntologyDomainWithOboFoundryName(
+					getMetadataOWLModel(), oboFoundryName);
+			if (matchingOntDomains != null) {
+				//matchingDomains should contain only one instance
+				for (OWLIndividual ontDomainInd : matchingOntDomains) {
+					CategoryBean cb = new CategoryBean();
+					try {
+						OntologyCategoryMetadataUtils.fillInCategoryBeanFromInstance(cb, ontDomainInd);
+						res.add(cb);
+					} catch (Exception e) {
+						log.error("Error in filling in CategoryBean from OntologyDomain instance " + ontDomainInd);
+					}
+				}
+			}
+		}
+		return res;
 	}
 
 	public List<CategoryBean> findAllCategories() {

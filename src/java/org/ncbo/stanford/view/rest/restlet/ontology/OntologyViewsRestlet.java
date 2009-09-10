@@ -29,16 +29,19 @@ public class OntologyViewsRestlet extends AbstractBaseRestlet {
 		listOntologyViews(request, response);
 	}
 
-	/**
-	 * Handle POST calls here
-	 * 
-	 * @param request
-	 * @param response
-	 */
-	@Override
-	public void postRequest(Request request, Response response) {
-		createOntologyView(request, response);
-	}
+	//TODO I think we don't need this anymore (Csongor)
+	//delete this and its implementation once we are sure 
+	//it works
+//	/**
+//	 * Handle POST calls here
+//	 * 
+//	 * @param request
+//	 * @param response
+//	 */
+//	@Override
+//	public void postRequest(Request request, Response response) {
+//		createOntologyView(request, response);
+//	}
 
 	/**
 	 * Return to the response a listing of ontologies
@@ -62,42 +65,42 @@ public class OntologyViewsRestlet extends AbstractBaseRestlet {
 		}
 	}
 
-	/**
-	 * Return to the response creating Ontology
-	 * 
-	 * @param request
-	 *            response
-	 */
-	private void createOntologyView(Request request, Response response) {
-		OntologyBean ontologyViewBean = BeanHelper
-				.populateOntologyBeanFromRequest(request);
-
-		//if this RESTlet got called we set the isView flag to true explicitly 
-		ontologyViewBean.setView(true);
-		
-		// create the ontology
-		try {
-			// no file handler for remote case since there is no file to upload.
-			if (ontologyViewBean.isRemote()) {
-				ontologyService.createOntologyOrView(ontologyViewBean, null);
-			} else {
-				FilePathHandler filePathHandler = new CommonsFileUploadFilePathHandlerImpl(
-						CompressedFileHandlerFactory
-								.createFileHandler(ontologyViewBean.getFormat()),
-						ontologyViewBean.getFileItem());
-
-				ontologyService.createOntologyOrView(ontologyViewBean, filePathHandler);
-			}
-		} catch (Exception e) {
-			response.setStatus(Status.SERVER_ERROR_INTERNAL, e.getMessage());
-			e.printStackTrace();
-			log.error(e);
-		} finally {
-			// generate response XML
-			xmlSerializationService.generateXMLResponse(request, response,
-					ontologyViewBean);
-		}
-	}
+//	/**
+//	 * Return to the response creating Ontology
+//	 * 
+//	 * @param request
+//	 *            response
+//	 */
+//	private void createOntologyView(Request request, Response response) {
+//		OntologyBean ontologyViewBean = BeanHelper
+//				.populateOntologyBeanFromRequest(request);
+//
+//		//if this RESTlet got called we set the isView flag to true explicitly 
+//		ontologyViewBean.setView(true);
+//		
+//		// create the ontology
+//		try {
+//			// no file handler for remote case since there is no file to upload.
+//			if (ontologyViewBean.isRemote()) {
+//				ontologyService.createOntologyOrView(ontologyViewBean, null);
+//			} else {
+//				FilePathHandler filePathHandler = new CommonsFileUploadFilePathHandlerImpl(
+//						CompressedFileHandlerFactory
+//								.createFileHandler(ontologyViewBean.getFormat()),
+//						ontologyViewBean.getFileItem());
+//
+//				ontologyService.createOntologyOrView(ontologyViewBean, filePathHandler);
+//			}
+//		} catch (Exception e) {
+//			response.setStatus(Status.SERVER_ERROR_INTERNAL, e.getMessage());
+//			e.printStackTrace();
+//			log.error(e);
+//		} finally {
+//			// generate response XML
+//			xmlSerializationService.generateXMLResponse(request, response,
+//					ontologyViewBean);
+//		}
+//	}
 
 	/**
 	 * @param ontologyService

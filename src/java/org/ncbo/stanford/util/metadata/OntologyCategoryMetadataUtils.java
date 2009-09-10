@@ -1,6 +1,7 @@
 package org.ncbo.stanford.util.metadata;
 
 import java.util.Collection;
+import java.util.List;
 
 import org.ncbo.stanford.bean.CategoryBean;
 
@@ -10,6 +11,7 @@ import edu.stanford.smi.protegex.owl.model.OWLModel;
 public class OntologyCategoryMetadataUtils extends MetadataUtils {
 
 	public static final String PROPERTY_OMV_IS_SUB_DOMAIN_OF = PREFIX_OMV + "isSubDomainOf";
+	public static final String PROPERTY_OBO_FOUNDRY_NAME = PREFIX_METADATA + "oboFoundryName";
 
 	private static final String PROPERTY_OBO_FOUNDRY_ID = OntologyMetadataUtils.PROPERTY_OBO_FOUNDRY_ID;
 	private static final String CLASS_ONTOLOGY_DOMAIN = OntologyMetadataUtils.CLASS_OMV_ONTOLOGY_DOMAIN;
@@ -63,6 +65,12 @@ public class OntologyCategoryMetadataUtils extends MetadataUtils {
 	public static OWLIndividual getOntologyDomainWithId(OWLModel metadata, Integer id) {
 		return getIndividualWithId(metadata, CLASS_ONTOLOGY_DOMAIN, id, false);
 	}
-	
+
+
+	public static List<OWLIndividual> getOntologyDomainWithOboFoundryName(OWLModel metadata, String oboFoundryName) {
+		return getIndividualsWithMatchingProperty(metadata, CLASS_ONTOLOGY_DOMAIN,
+				PROPERTY_OBO_FOUNDRY_NAME, oboFoundryName, false);
+	}
+
 }
 

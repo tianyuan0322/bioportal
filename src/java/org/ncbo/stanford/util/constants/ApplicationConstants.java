@@ -132,4 +132,6 @@ public interface ApplicationConstants {
 	 * The name of the root tag of response xml response message
 	 */
 	public static final String RESPONSE_XML_TAG_NAME = "response";
+
+	public static final String DIR = "######DIR######";
 }
