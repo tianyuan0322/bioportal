@@ -267,22 +267,23 @@ public class OntologyMetadataUtils extends MetadataUtils {
 			updateIsViewOnOntologyVersionProperty(owlModel, ontologyInd, viewOnOntologyIndividuals);
 
 			setPropertyValue(owlModel, ontologyInd, PROPERTY_VIEW_DEFINITION, ob.getViewDefinition());
-			RDFIndividual viewDefLangInd = getViewDefinitionLanguageInstance(owlModel, ob.getViewDefinitionLanguage());
 			
-			if (viewDefLangInd != null) {
+			String viewDefinitionLanguage = ob.getViewDefinitionLanguage();
+			RDFIndividual viewDefLangInd = getViewDefinitionLanguageInstance(owlModel, viewDefinitionLanguage);
+				
+			if (viewDefinitionLanguage == null || viewDefLangInd != null) {
 				setPropertyValue(owlModel, ontologyInd, PROPERTY_VIEW_DEFINITION_LANGUAGE, viewDefLangInd);
-			}
-			else {
-				log.error("No metadata:ViewDefinitionLanguage individual found for ontology view " + ontologyInd + ": " + ob.getViewDefinitionLanguage());
-			}
+			} else {
+				log.error("No metadata:ViewDefinitionLanguage individual found for ontology view " + ontologyInd + ": " + viewDefinitionLanguage);
+			}			
 			
-			RDFIndividual viewGenEngInd = getViewGenerationEngineInstance(owlModel, ob.getViewGenerationEngine());
+			String viewGenerationEngine = ob.getViewGenerationEngine();
+			RDFIndividual viewGenEngInd = getViewGenerationEngineInstance(owlModel, viewGenerationEngine);
 			
-			if (viewGenEngInd != null) {
+			if (viewGenerationEngine == null || viewGenEngInd != null) {
 				setPropertyValue(owlModel, ontologyInd, PROPERTY_VIEW_GENERATION_ENGINE, viewGenEngInd);
-			}
-			else {
-				log.error("No metadata:ViewGenerationEngine individual found for ontology view " +  ontologyInd + ": " + ob.getViewGenerationEngine());
+			} else {
+				log.error("No metadata:ViewGenerationEngine individual found for ontology view " +  ontologyInd + ": " + viewGenerationEngine);
 			}
 		}
 	}
