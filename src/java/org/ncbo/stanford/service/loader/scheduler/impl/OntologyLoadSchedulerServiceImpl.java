@@ -202,7 +202,7 @@ public class OntologyLoadSchedulerServiceImpl implements
 				status = StatusEnum.STATUS_READY;
 
 				// calculate ontology metrics
-				calculateMetrics(ontologyBean, formatHandler);
+//				calculateMetrics(ontologyBean, formatHandler);
 				
 				// ******************************************
 				// We will call create Diff when we are ready to include this
