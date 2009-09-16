@@ -129,9 +129,13 @@ public abstract class AbstractBaseRestlet extends Restlet {
 	}
 
 	private void logRequest(Request request) {
-		UsageLoggingBean usageLoggingBean = BeanHelper
+		
+		
+		//TODO - should be able to turn ON or OFF from property file.
+/* Commented by Cherie Youn to disable DB logging and help performance temporarily.		
+ * 		UsageLoggingBean usageLoggingBean = BeanHelper
 				.populateUsageLoggingBeanFromRequestForLogging(request);
-		usageLoggingService.logUsage(usageLoggingBean);
+		usageLoggingService.logUsage(usageLoggingBean);*/
 	}
 
 	/**
