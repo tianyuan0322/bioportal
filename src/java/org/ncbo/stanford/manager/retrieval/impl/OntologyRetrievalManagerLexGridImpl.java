@@ -17,6 +17,7 @@ import org.LexGrid.LexBIG.DataModel.Core.CodingSchemeVersionOrTag;
 import org.LexGrid.LexBIG.DataModel.Core.ConceptReference;
 import org.LexGrid.LexBIG.DataModel.Core.ResolvedConceptReference;
 import org.LexGrid.LexBIG.Exceptions.LBException;
+import org.LexGrid.LexBIG.Exceptions.LBParameterException;
 import org.LexGrid.LexBIG.Extensions.Generic.LexBIGServiceConvenienceMethods;
 import org.LexGrid.LexBIG.Impl.LexBIGServiceImpl;
 import org.LexGrid.LexBIG.Impl.dataAccess.WriteLockManager;
@@ -26,6 +27,7 @@ import org.LexGrid.LexBIG.LexBIGService.LexBIGService;
 import org.LexGrid.LexBIG.LexBIGService.CodedNodeSet.ActiveOption;
 import org.LexGrid.LexBIG.Utility.Constructors;
 import org.LexGrid.LexBIG.Utility.ConvenienceMethods;
+import org.LexGrid.LexBIG.Utility.Iterators.ResolvedConceptReferencesIterator;
 import org.LexGrid.codingSchemes.CodingScheme;
 import org.LexGrid.commonTypes.EntityDescription;
 import org.LexGrid.commonTypes.Property;
@@ -191,30 +193,24 @@ public class OntologyRetrievalManagerLexGridImpl extends
 	 * @return
 	 * @throws Exception
 	 */
-	public ClassBean findConceptOld(OntologyBean ncboOntology, String conceptId)
-			throws Exception {
+	public List<ClassBean> findAllConcepts(OntologyBean ncboOntology,
+			Integer offset, Integer limit) throws Exception {
 		String schemeName = getLexGridCodingSchemeName(ncboOntology);
 		CodingSchemeVersionOrTag csvt = getLexGridCodingSchemeVersion(ncboOntology);
-		ResolvedConceptReferenceList matches = lbs.getNodeGraph(schemeName,
-				csvt, null).resolveAsList(
-				ConvenienceMethods
-						.createConceptReference(conceptId, schemeName), true,
-				true, 0, 1, null, null, null, -1);
-		// Analyze the result ...
-		if (matches.getResolvedConceptReferenceCount() > 0) {
-			ResolvedConceptReference ref = (ResolvedConceptReference) matches
-					.enumerateResolvedConceptReference().nextElement();
-			// Add the children
-			ClassBean classBean = createClassBeanWithChildCount(ref, true);
-
-			// Add the parents
-			AssociationList parentList = getHierarchyLevelPrev(schemeName,
-					csvt, conceptId);
-			addAssociationListInfoToClassBean(parentList, classBean,
-					ApplicationConstants.SUPER_CLASS, false);
-			return classBean;
+		try {
+			ResolvedConceptReferencesIterator iterator = lbs
+					.getCodingSchemeConcepts(schemeName, csvt).resolve(null,
+							null, null, null, false);
+			// Analyze the result ...
+			ResolvedConceptReferenceList rcrl = iterator.get(offset, offset
+					+ limit);
+			ArrayList<ClassBean> classBeanList = createClassBeanArray(rcrl,
+					false);
+			return classBeanList;
+		} catch (LBParameterException ex) {
+			return null;
 		}
-		return null;
+
 	}
 
 	/*
@@ -1118,6 +1114,9 @@ public class OntologyRetrievalManagerLexGridImpl extends
 		for (int i = 0; i < count; i++) {
 			p = entry.getPresentation(i);
 			if (!p.getIsPreferred().booleanValue()) {
+				//Add a abstraction for getting all the Synonyms..gforge #1351
+				addStringToHashMapsArrayList(map, ApplicationConstants.SYNONYM, p.getValue()
+						.getContent());
 				if (StringUtils.isNotBlank(p.getDegreeOfFidelity())) {
 					String key = p.getDegreeOfFidelity() + " SYNONYM";
 					addStringToHashMapsArrayList(map, key, p.getValue()

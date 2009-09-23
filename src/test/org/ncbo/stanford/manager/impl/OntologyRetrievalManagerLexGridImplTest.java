@@ -398,4 +398,32 @@ public class OntologyRetrievalManagerLexGridImplTest extends
 		System.out.println("\n");
 		assertTrue(pathBean != null);
 	}
+	
+	@Test
+	public void testOBOGetAllConcepts()
+			throws Exception {
+		System.out
+				.println("testOBOGetAllConcepts()");
+
+		OntologyBean ncboOntology = retrievalManager.getLatestNcboOntology(TEST_OBO_CELL_DISPLAY_LABEL);
+		int startPosition=0;
+		int offset= 100;
+		boolean hasMoreResults= true;
+		while (hasMoreResults) {
+			System.out.println("Retrieving results starting at "+ startPosition);
+		    List<ClassBean> beans = retrievalManager.findAllConcepts(ncboOntology, startPosition, offset);		    
+		    if (beans == null || beans.size() != offset) {
+		    	hasMoreResults= false;
+		    	if (beans != null) {
+		    	   System.out.println("Retrieved results till "+ (startPosition+ beans.size()));
+		    	}
+		    }
+		    startPosition+= offset;
+		}		
+		System.out.println("\n");
+		assertTrue(startPosition != 0);
+	}	
+	
+	
+	
 }
