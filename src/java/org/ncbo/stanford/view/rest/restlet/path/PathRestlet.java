@@ -55,19 +55,15 @@ public class PathRestlet extends AbstractBaseRestlet {
 		Integer maxNumChildrenInt = RequestUtils
 				.parseIntegerParam(maxNumChildren);
 		
-		String conceptId = (String) request.getAttributes().get(
-				MessageUtils.getMessage("entity.conceptid"));
-
-		// See if concept ID is being passed through param for full URL ID
+		// See if concept id is being passed through param for full URL id
 		// concepts
-		if (StringHelper.isNullOrNullString(source) && StringHelper.isNullOrNullString(target)) {
-
+		if (StringHelper.isNullOrNullString(source)
+				&& StringHelper.isNullOrNullString(target)) {
 			source = (String) httpRequest
 					.getParameter(RequestParamConstants.PARAM_SOURCE);
 			target = (String) httpRequest
-			.getParameter(RequestParamConstants.PARAM_TARGET);
+					.getParameter(RequestParamConstants.PARAM_TARGET);
 		}
-
 		
 		try {
 			Integer ontologyVersionIdInt = Integer.parseInt(ontologyVersionId);
