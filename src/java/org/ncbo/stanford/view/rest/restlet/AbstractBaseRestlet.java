@@ -78,10 +78,11 @@ public abstract class AbstractBaseRestlet extends Restlet {
 			isValidRequest = handleDeleteRequest(request, response, logOnlyBool);
 		}
 
-		if (logRequests() && isValidRequest
-				&& response.getStatus().equals(Status.SUCCESS_OK)) {
-			logRequest(request);
-		}
+		// disabling logging temporarily because of performance issues
+//		if (logRequests() && isValidRequest
+//				&& response.getStatus().equals(Status.SUCCESS_OK)) {
+//			logRequest(request);
+//		}
 	}
 
 	private boolean handleDeleteRequest(Request request, Response response,
@@ -129,13 +130,9 @@ public abstract class AbstractBaseRestlet extends Restlet {
 	}
 
 	private void logRequest(Request request) {
-		
-		
-		//TODO - should be able to turn ON or OFF from property file.
-/* Commented by Cherie Youn to disable DB logging and help performance temporarily.		
- * 		UsageLoggingBean usageLoggingBean = BeanHelper
+		UsageLoggingBean usageLoggingBean = BeanHelper
 				.populateUsageLoggingBeanFromRequestForLogging(request);
-		usageLoggingService.logUsage(usageLoggingBean);*/
+		usageLoggingService.logUsage(usageLoggingBean);
 	}
 
 	/**
