@@ -19,6 +19,8 @@ import java.util.Iterator;
 public interface HashbeltContainer<K, V> {
 	public V get(K key);
 
+	public K removeLeastRecentlyUsed();
+
 	public V remove(K key);
 
 	public V removeShallow(K key);
@@ -32,4 +34,8 @@ public interface HashbeltContainer<K, V> {
 	public Iterator<K> getKeys();
 
 	public int size();
+	
+	public boolean isEmpty();
+
+	public String toString();
 }

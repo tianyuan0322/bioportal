@@ -75,40 +75,40 @@ public abstract class AbstractHashbeltExpirationSystem<K, V> extends
 
 	public Set<K> getKeys() {
 		Set<K> keys = new HashSet<K>(0);
-		
+
 		for (int index = 0; index < numberOfContainers; index++) {
 			Iterator<K> keysIter = containers[index].getKeys();
 
 			while (keysIter.hasNext()) {
 				K key = keysIter.next();
-				
+
 				if (key != null) {
 					keys.add(key);
 				}
 			}
 		}
-		
+
 		return keys;
 	}
-	
+
 	public Collection<V> getValues() {
 		Collection<V> values = new ArrayList<V>(0);
-		
+
 		for (int index = 0; index < numberOfContainers; index++) {
 			Iterator<V> valuesIter = containers[index].getValues();
 
 			while (valuesIter.hasNext()) {
 				V value = valuesIter.next();
-				
+
 				if (value != null) {
 					values.add(value);
 				}
 			}
 		}
-		
+
 		return values;
 	}
-	
+
 	public void remove(K key) {
 		HashbeltContainer<K, V> container = findContainer(key);
 
@@ -117,11 +117,13 @@ public abstract class AbstractHashbeltExpirationSystem<K, V> extends
 		}
 	}
 
-	protected void expireObjects() {
+	protected HashbeltContainer<K, V> expireObjects() {
 		HashbeltContainer<K, V> newContainer = hashbeltContainerFactory
 				.getNewContainer();
 		HashbeltContainer<K, V> expiredContainer = rotateContainers(newContainer);
 		expirationHandler.handleExpiredContainer(expiredContainer);
+		
+		return expiredContainer;
 	}
 
 	protected synchronized HashbeltContainer<K, V> findContainer(K key) {
@@ -132,6 +134,15 @@ public abstract class AbstractHashbeltExpirationSystem<K, V> extends
 		}
 
 		return null;
+	}
+
+	protected void removeLeastRecentlyUsed() {
+		for (int index = numberOfContainers - 1; index >= 0; index--) {
+			if (!containers[index].isEmpty()) {
+				containers[index].removeLeastRecentlyUsed();
+				return;
+			}
+		}
 	}
 
 	protected synchronized V findObjectForKey(K key) {

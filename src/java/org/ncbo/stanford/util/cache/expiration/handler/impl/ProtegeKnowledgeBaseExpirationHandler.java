@@ -15,7 +15,7 @@ public class ProtegeKnowledgeBaseExpirationHandler extends
 	@Override
 	protected void timeExpired(KnowledgeBase object) {
 		if (object != null) {
-			log.debug("Disposing of the knowledgebase: " + object.getName());
+			log.debug("timeExpired: Disposing of the knowledgebase: " + object.getName());
 			object.getProject().dispose();
 		}
 	}
