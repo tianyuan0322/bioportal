@@ -1,5 +1,7 @@
 package org.ncbo.stanford.util.cache.expiration.system;
 
+import org.ncbo.stanford.util.cache.container.HashbeltContainer;
+
 /**
  * An abstract superclass for ExpirationSystems. Holds some common code and
  * useful methods.
@@ -9,7 +11,7 @@ package org.ncbo.stanford.util.cache.expiration.system;
 public abstract class AbstractExpirationSystem<K, V> implements
 		ExpirationSystem<K, V> {
 
-	protected abstract void expireObjects();
+	protected abstract HashbeltContainer<K, V> expireObjects();
 
 	private ExpirationThread expirationThread;
 
