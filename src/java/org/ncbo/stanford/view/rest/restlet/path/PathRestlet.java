@@ -9,6 +9,7 @@ import org.ncbo.stanford.exception.OntologyNotFoundException;
 import org.ncbo.stanford.service.concept.ConceptService;
 import org.ncbo.stanford.util.MessageUtils;
 import org.ncbo.stanford.util.RequestUtils;
+import org.ncbo.stanford.util.helper.StringHelper;
 import org.ncbo.stanford.view.rest.restlet.AbstractBaseRestlet;
 import org.ncbo.stanford.view.util.constants.RequestParamConstants;
 import org.restlet.data.Request;
@@ -53,6 +54,16 @@ public class PathRestlet extends AbstractBaseRestlet {
 		Boolean lightBool = RequestUtils.parseBooleanParam(light);
 		Integer maxNumChildrenInt = RequestUtils
 				.parseIntegerParam(maxNumChildren);
+
+		// See if concept id is being passed through param for full URL id
+		// concepts
+		if (StringHelper.isNullOrNullString(source)
+				&& StringHelper.isNullOrNullString(target)) {
+			source = (String) httpRequest
+					.getParameter(RequestParamConstants.PARAM_SOURCE);
+			target = (String) httpRequest
+					.getParameter(RequestParamConstants.PARAM_TARGET);
+		}
 
 		try {
 			Integer ontologyVersionIdInt = Integer.parseInt(ontologyVersionId);
