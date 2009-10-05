@@ -47,7 +47,7 @@ public class UpdatingHashbeltExpirationSystem<K, V> extends
 		HashbeltContainer<K, V> container = findContainer(key);
 
 		if (null != container) {
-			container.remove(key);
+			container.removeShallow(key);
 		}
 
 		containers[0].put(key, expirableObject);
