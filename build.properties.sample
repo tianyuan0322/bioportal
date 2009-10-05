@@ -163,9 +163,11 @@ protege.jdbc.password=yourprotegedbpassword
 # Total timeout = .cache.timeout * .cache.numcontainers
 #
 # Timeout per "bucket" for inactive knowledgebases (in milliseconds)
-protege.knowledgebase.cache.timeout=21600000
+protege.knowledgebase.cache.timeout=360000
 # Number of "buckets" to allocate for knowledgebase storage
-protege.knowledgebase.cache.numcontainers=4
+protege.knowledgebase.cache.numcontainers=5
+# Maximum number of knowledgebases  to allow to be cached
+protege.knowledgebase.cache.maxobjects=50
 
 # table name prefix/suffix
 protege.table.prefix=tbl_
