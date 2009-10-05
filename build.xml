@@ -198,6 +198,7 @@
 				<filter token="metadatavirtualviewinstsuffix" value="${metadata.virtualview.inst.suffix}" />
 				<filter token="protegeknowledgebasecachetimeout" value="${protege.knowledgebase.cache.timeout}" />
 				<filter token="protegeknowledgebasecachenumcontainers" value="${protege.knowledgebase.cache.numcontainers}" />
+				<filter token="protegeknowledgebasecachemaxobjects" value="${protege.knowledgebase.cache.maxobjects}" />
 				<filter token="obosourceforgecvsusername" value="${obo.sourceforge.cvs.username}" />
 				<filter token="obosourceforgecvspassword" value="${obo.sourceforge.cvs.password}" />
 				<filter token="obosourceforgecvshostname" value="${obo.sourceforge.cvs.hostname}" />
