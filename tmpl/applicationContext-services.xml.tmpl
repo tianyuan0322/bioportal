@@ -794,7 +794,7 @@
 	</bean>
 
 	<bean id="protegeKnowledgeBaseCache"
-		class="org.ncbo.stanford.util.cache.expiration.system.impl.UpdatingHashbeltExpirationSystem">
+		class="org.ncbo.stanford.util.cache.expiration.system.impl.LimitHashbeltExpirationSystem">
 		<constructor-arg index="0">
 			<value>@protegeknowledgebasecachenumcontainers@</value>
 		</constructor-arg>
@@ -806,6 +806,9 @@
 		</constructor-arg>
 		<constructor-arg index="3">
 			<ref bean="protegeKnowledgeBaseContainerFactory" />
+		</constructor-arg>
+		<constructor-arg index="4">
+			<value>@protegeknowledgebasecachemaxobjects@</value>
 		</constructor-arg>
 	</bean>
 
