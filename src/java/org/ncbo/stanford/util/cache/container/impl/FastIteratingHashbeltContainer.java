@@ -25,11 +25,12 @@ import org.ncbo.stanford.util.cache.container.HashbeltContainer;
 public class FastIteratingHashbeltContainer<K, V> implements
 		HashbeltContainer<K, V> {
 	private HashMap<K, V> keysToExpirableObjects = new HashMap<K, V>();
-	private ArrayList<V> values = new ArrayList<V>();
 	private ArrayList<K> keys = new ArrayList<K>();
+	private ArrayList<V> values = new ArrayList<V>();
 
 	public synchronized void clear() {
 		keysToExpirableObjects.clear();
+		keys.clear();
 		values.clear();
 	}
 
@@ -37,12 +38,23 @@ public class FastIteratingHashbeltContainer<K, V> implements
 		return keysToExpirableObjects.get(key);
 	}
 
+	public synchronized K removeLeastRecentlyUsed() {
+		K key = null;
+
+		if (!keys.isEmpty()) {
+			key = keys.get(0);
+			remove(key);
+		}
+
+		return key;
+	}
+
 	public synchronized V remove(K key) {
 		V returnValue = keysToExpirableObjects.remove(key);
 
 		if (null != returnValue) {
-			values.remove(returnValue);
 			keys.remove(key);
+			values.remove(returnValue);
 		}
 
 		return returnValue;
@@ -59,12 +71,14 @@ public class FastIteratingHashbeltContainer<K, V> implements
 			if (currentValue.equals(value)) {
 				return;
 			}
+
 			values.remove(currentValue);
+		} else {
+			keys.add(key);
 		}
 
 		keysToExpirableObjects.put(key, value);
 		values.add(value);
-		keys.add(key);
 	}
 
 	public synchronized Iterator<V> getValues() {
@@ -77,5 +91,14 @@ public class FastIteratingHashbeltContainer<K, V> implements
 
 	public int size() {
 		return values.size();
+	}
+
+	public boolean isEmpty() {
+		return keysToExpirableObjects.isEmpty();
+	}
+	
+	@Override
+	public String toString() {
+		return keys.toString();
 	}
 }
