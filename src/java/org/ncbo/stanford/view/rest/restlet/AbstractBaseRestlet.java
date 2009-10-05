@@ -78,10 +78,11 @@ public abstract class AbstractBaseRestlet extends Restlet {
 			isValidRequest = handleDeleteRequest(request, response, logOnlyBool);
 		}
 
-		if (logRequests() && isValidRequest
-				&& response.getStatus().equals(Status.SUCCESS_OK)) {
-			logRequest(request);
-		}
+		// disabling logging temporarily because of performance issues
+//		if (logRequests() && isValidRequest
+//				&& response.getStatus().equals(Status.SUCCESS_OK)) {
+//			logRequest(request);
+//		}
 	}
 
 	private boolean handleDeleteRequest(Request request, Response response,
