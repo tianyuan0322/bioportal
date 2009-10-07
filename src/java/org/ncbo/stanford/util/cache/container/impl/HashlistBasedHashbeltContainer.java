@@ -34,17 +34,16 @@ public class HashlistBasedHashbeltContainer<K, V> implements
 		return keysToExpirableObjects.get(key);
 	}
 
-	public synchronized K removeLeastRecentlyUsed() {
-		K key = null;
-		
+	public synchronized V removeLeastRecentlyUsed() {
+		V returnValue = null;
+
 		if (!expirableKeys.isEmpty()) {
-			key = expirableKeys.get(0);
-			remove(key);
+			returnValue = remove(expirableKeys.get(0));
 		}
-		
-		return key;
+
+		return returnValue;
 	}
-	
+
 	public synchronized V remove(K key) {
 		V returnValue = keysToExpirableObjects.remove(key);
 
@@ -69,16 +68,16 @@ public class HashlistBasedHashbeltContainer<K, V> implements
 			if (currentValue.equals(value)) {
 				return;
 			}
-			
+
 			expirableObjects.remove(currentValue);
 		} else {
 			expirableKeys.add(key);
 		}
-		
+
 		keysToExpirableObjects.put(key, value);
 		expirableObjects.add(value);
 	}
-	
+
 	public synchronized Iterator<V> getValues() {
 		return expirableObjects.iterator();
 	}
