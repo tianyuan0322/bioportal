@@ -38,15 +38,14 @@ public class FastIteratingHashbeltContainer<K, V> implements
 		return keysToExpirableObjects.get(key);
 	}
 
-	public synchronized K removeLeastRecentlyUsed() {
-		K key = null;
+	public synchronized V removeLeastRecentlyUsed() {
+		V returnValue = null;
 
 		if (!keys.isEmpty()) {
-			key = keys.get(0);
-			remove(key);
+			returnValue = remove(keys.get(0));
 		}
 
-		return key;
+		return returnValue;
 	}
 
 	public synchronized V remove(K key) {
@@ -96,7 +95,7 @@ public class FastIteratingHashbeltContainer<K, V> implements
 	public boolean isEmpty() {
 		return keysToExpirableObjects.isEmpty();
 	}
-	
+
 	@Override
 	public String toString() {
 		return keys.toString();
