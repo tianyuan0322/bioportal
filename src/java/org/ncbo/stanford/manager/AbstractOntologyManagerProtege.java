@@ -69,8 +69,9 @@ public abstract class AbstractOntologyManagerProtege {
 	protected ExpirationSystem<Integer, KnowledgeBase> protegeKnowledgeBases = null;
 	private String METADATA_TABLE_NAME = "metadata";
 	private int METADATA_KB_ID = -5; // must be a negative value in order not
-										// to collide with the user-uploaded
-										// Protege tables
+
+	// to collide with the user-uploaded
+	// Protege tables
 
 	protected Slot getSynonymSlot(KnowledgeBase kb, String synonymSlot) {
 		if (!StringHelper.isNullOrNullString(synonymSlot)) {
@@ -128,12 +129,26 @@ public abstract class AbstractOntologyManagerProtege {
 	 * Returns a singleton KnowledgeBase instance for given ontologyVersion.
 	 */
 	protected KnowledgeBase getKnowledgeBase(OntologyBean ontology) {
-		KnowledgeBase kb = (KnowledgeBase) protegeKnowledgeBases.get(ontology
-				.getId());
+		KnowledgeBase kb;
+
+		synchronized (protegeKnowledgeBases) {
+			kb = (KnowledgeBase) protegeKnowledgeBases.get(ontology.getId());
+		}
 
 		if (kb == null) {
 			kb = createKnowledgeBaseInstance(ontology);
-			protegeKnowledgeBases.put(ontology.getId(), kb);
+			
+			synchronized (protegeKnowledgeBases) {
+				KnowledgeBase other = protegeKnowledgeBases.get(ontology
+						.getId());
+
+				if (other == null) {
+					protegeKnowledgeBases.put(ontology.getId(), kb);
+				} else {
+					kb.dispose();
+					kb = other;
+				}
+			}
 		}
 
 		return kb;
@@ -171,48 +186,61 @@ public abstract class AbstractOntologyManagerProtege {
 	}
 
 	@SuppressWarnings("unchecked")
-	protected OWLModel getMetadataOWLModel() {
-		KnowledgeBase kb = protegeKnowledgeBases.get(METADATA_KB_ID);
+	protected synchronized OWLModel getMetadataOWLModel() {
+		KnowledgeBase kb;
+
+		synchronized (protegeKnowledgeBases) {
+			kb = protegeKnowledgeBases.get(METADATA_KB_ID);
+		}
 
 		if (kb != null && kb instanceof OWLModel) {
 			return (OWLModel) kb;
-		} else {			
-			// TODO this solution is a temporary hack. 
+		} else {
+			// TODO this solution is a temporary hack.
 			// We should use the creator after migration to Protege 3.4.1
-			//start...
+			// start...
 			DatabaseKnowledgeBaseFactory factory = new OWLDatabaseKnowledgeBaseFactory();
 
 			List errors = new ArrayList();
-	        Project project = Project.createBuildProject(factory, errors);
+			Project project = Project.createBuildProject(factory, errors);
 			DatabaseKnowledgeBaseFactory.setSources(project.getSources(),
 					protegeJdbcDriver, protegeJdbcUrl, METADATA_TABLE_NAME,
 					protegeJdbcUsername, protegeJdbcPassword);
-	        project.createDomainKnowledgeBase(factory, errors, false);
-	        kb = project.getKnowledgeBase();
-	        OWLModel owlModel = (OWLModel) kb;
-	        
-	        Repository repository = new LocalFolderRepository(new File(MessageUtils.getMessage("bioportal.metadata.includes.path")), true);
-	        owlModel.getRepositoryManager().addProjectRepository(repository);
-	        
-	        MergingNarrowFrameStore mnfs = MergingNarrowFrameStore.get(owlModel);
-	        owlModel.setGenerateEventsEnabled(false);
-	        NarrowFrameStore nfs = factory.createNarrowFrameStore("<new>");
-	        mnfs.addActiveFrameStore(nfs);
-	        factory.loadKnowledgeBase(owlModel, project.getSources(), errors);	        
-	        owlModel.setGenerateEventsEnabled(true);
-	        owlModel.setChanged(false);
-	        project.getInternalProjectKnowledgeBase().setChanged(false);
-	        //end
-	        
-	        if (!errors.isEmpty()) {
-	        	log.error("Errors during Protege metadata project creation: " + errors);
-	        }
+			project.createDomainKnowledgeBase(factory, errors, false);
+			kb = project.getKnowledgeBase();
+			OWLModel owlModel = (OWLModel) kb;
+
+			Repository repository = new LocalFolderRepository(
+					new File(MessageUtils
+							.getMessage("bioportal.metadata.includes.path")),
+					true);
+			owlModel.getRepositoryManager().addProjectRepository(repository);
+
+			MergingNarrowFrameStore mnfs = MergingNarrowFrameStore
+					.get(owlModel);
+			owlModel.setGenerateEventsEnabled(false);
+			NarrowFrameStore nfs = factory.createNarrowFrameStore("<new>");
+			mnfs.addActiveFrameStore(nfs);
+			factory.loadKnowledgeBase(owlModel, project.getSources(), errors);
+			owlModel.setGenerateEventsEnabled(true);
+			owlModel.setChanged(false);
+			project.getInternalProjectKnowledgeBase().setChanged(false);
+			// end
+
+			if (!errors.isEmpty()) {
+				log.error("Errors during Protege metadata project creation: "
+						+ errors);
+			}
 
 			if (log.isDebugEnabled()) {
-				log.debug("Created new metadata knowledgebase: " + kb.getName());
+				log
+						.debug("Created new metadata knowledgebase: "
+								+ kb.getName());
 			}
-			
-			protegeKnowledgeBases.put(METADATA_KB_ID, kb);
+
+			synchronized (protegeKnowledgeBases) {
+				protegeKnowledgeBases.put(METADATA_KB_ID, kb);
+			}
 
 			return owlModel;
 		}
@@ -245,26 +273,28 @@ public abstract class AbstractOntologyManagerProtege {
 	}
 
 	/**
-	 * Gets the BioPortalUserRole individual name associated with a user role id.
+	 * Gets the BioPortalUserRole individual name associated with a user role
+	 * id.
 	 */
 	protected String getUserRoleIndividualName(Integer userId) {
 		return metadataUserRoleInstPrefix + userId + metadataUserRoleInstSuffix;
 	}
 
 	/**
-	 * Gets the OMV:OntologyDomain individual name associated with a category id.
+	 * Gets the OMV:OntologyDomain individual name associated with a category
+	 * id.
 	 */
 	protected String getOntologyDomainIndividualName(Integer catId) {
 		return metadataOntologyDomainInstPrefix + catId
 				+ metadataOntologyDomainInstSuffix;
 	}
-	
+
 	/**
 	 * Gets the OntologyGroup individual name associated with a group id.
 	 */
 	protected String getOntologyGroupIndividualName(Integer groupId) {
 		return metadataOntologyGroupInstPrefix + groupId
-		+ metadataOntologyGroupInstSuffix;
+				+ metadataOntologyGroupInstSuffix;
 	}
 
 	/**
@@ -499,14 +529,14 @@ public abstract class AbstractOntologyManagerProtege {
 			String metadataOntologyDomainInstSuffix) {
 		this.metadataOntologyDomainInstSuffix = metadataOntologyDomainInstSuffix;
 	}
-	
+
 	/**
 	 * @return the metadataOntologyGroupInstPrefix
 	 */
 	public String getMetadataOntologyGroupInstPrefix() {
 		return metadataOntologyGroupInstPrefix;
 	}
-	
+
 	/**
 	 * @param metadataOntologyGroupInstPrefix
 	 *            the metadataOntologyGroupInstPrefix to set
@@ -515,14 +545,14 @@ public abstract class AbstractOntologyManagerProtege {
 			String metadataOntologyGroupInstPrefix) {
 		this.metadataOntologyGroupInstPrefix = metadataOntologyGroupInstPrefix;
 	}
-	
+
 	/**
 	 * @return the metadataOntologyGroupInstSuffix
 	 */
 	public String getMetadataOntologyGroupInstSuffix() {
 		return metadataOntologyGroupInstSuffix;
 	}
-	
+
 	/**
 	 * @param metadataOntologyGroupInstSuffix
 	 *            the metadataOntologyGroupInstSuffix to set
