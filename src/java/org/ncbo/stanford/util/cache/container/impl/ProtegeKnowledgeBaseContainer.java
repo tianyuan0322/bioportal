@@ -34,8 +34,20 @@ public class ProtegeKnowledgeBaseContainer implements
 		return baseContainer.get(key);
 	}
 
-	public synchronized Integer removeLeastRecentlyUsed() {
-		return baseContainer.removeLeastRecentlyUsed();
+	public synchronized KnowledgeBase removeLeastRecentlyUsed() {
+		KnowledgeBase oldValue = baseContainer.removeLeastRecentlyUsed();
+
+		if (oldValue != null) {
+			if (log.isDebugEnabled()) {
+				log
+						.debug("removeLeastRecentlyUsed: Disposing of the knowledgebase: "
+								+ oldValue.getName());
+			}
+
+			oldValue.getProject().dispose();
+		}
+
+		return oldValue;
 	}
 
 	public Iterator<Integer> getKeys() {
@@ -50,11 +62,15 @@ public class ProtegeKnowledgeBaseContainer implements
 		baseContainer.put(key, value);
 	}
 
-	public KnowledgeBase remove(Integer key) {
+	public synchronized KnowledgeBase remove(Integer key) {
 		KnowledgeBase oldValue = baseContainer.remove(key);
 
 		if (oldValue != null) {
-			log.debug("remove: Disposing of the knowledgebase: " + oldValue.getName());
+			if (log.isDebugEnabled()) {
+				log.debug("remove: Disposing of the knowledgebase: "
+						+ oldValue.getName());
+			}
+
 			oldValue.getProject().dispose();
 		}
 
