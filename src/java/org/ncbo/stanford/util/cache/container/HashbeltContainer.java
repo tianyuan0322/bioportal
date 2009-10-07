@@ -19,7 +19,7 @@ import java.util.Iterator;
 public interface HashbeltContainer<K, V> {
 	public V get(K key);
 
-	public K removeLeastRecentlyUsed();
+	public V removeLeastRecentlyUsed();
 
 	public V remove(K key);
 

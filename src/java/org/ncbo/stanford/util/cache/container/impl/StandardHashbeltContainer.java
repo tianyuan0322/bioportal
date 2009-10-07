@@ -26,17 +26,16 @@ public class StandardHashbeltContainer<K, V> implements HashbeltContainer<K, V> 
 		return keysToExpirableObjects.get(key);
 	}
 
-	public synchronized K removeLeastRecentlyUsed() {
-		K key = null;
+	public synchronized V removeLeastRecentlyUsed() {
+		V returnValue = null;
 
 		if (!keysToExpirableObjects.isEmpty()) {
 			ArrayList<K> keyList = new ArrayList<K>(keysToExpirableObjects
 					.keySet());
-			key = keyList.get(0);
-			remove(key);
+			returnValue = remove(keyList.get(0));
 		}
 
-		return key;
+		return returnValue;
 	}
 
 	public synchronized V remove(K key) {

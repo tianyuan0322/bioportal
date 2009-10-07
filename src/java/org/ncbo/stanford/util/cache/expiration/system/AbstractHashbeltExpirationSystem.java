@@ -122,7 +122,7 @@ public abstract class AbstractHashbeltExpirationSystem<K, V> extends
 				.getNewContainer();
 		HashbeltContainer<K, V> expiredContainer = rotateContainers(newContainer);
 		expirationHandler.handleExpiredContainer(expiredContainer);
-		
+
 		return expiredContainer;
 	}
 
@@ -136,13 +136,17 @@ public abstract class AbstractHashbeltExpirationSystem<K, V> extends
 		return null;
 	}
 
-	protected void removeLeastRecentlyUsed() {
+	protected V removeLeastRecentlyUsed() {
+		V returnValue = null;
+
 		for (int index = numberOfContainers - 1; index >= 0; index--) {
 			if (!containers[index].isEmpty()) {
-				containers[index].removeLeastRecentlyUsed();
-				return;
+				returnValue = containers[index].removeLeastRecentlyUsed();
+				break;
 			}
 		}
+
+		return returnValue;
 	}
 
 	protected synchronized V findObjectForKey(K key) {
