@@ -55,8 +55,10 @@ public class LimitHashbeltExpirationSystem<K, V> extends
 	public void put(K key, V expirableObject) {
 		HashbeltContainer<K, V> container = findContainer(key);
 
-		log.debug("adding knowledgebase: " + key);
-		
+		if (log.isDebugEnabled()) {
+			log.debug("Adding knowledgebase: " + key);
+		}
+
 		if (null != container) {
 			// element already exists, just replacing old
 			container.removeShallow(key);
@@ -64,23 +66,25 @@ public class LimitHashbeltExpirationSystem<K, V> extends
 			// brand new element
 			// need to check if numObjects exceeds maxObjects
 			if (numObjects >= maxObjects) {
-				
-				
-				log.debug("NumObjects: " + numObjects + ", MaxObjects: " + maxObjects + ". Removing least recently used object");
-				
-				
-				removeLeastRecentlyUsed();
-				
+				V oldValue = removeLeastRecentlyUsed();
 
-				printContainers("Containers after LRU:");			
-				
-				
+				if (log.isDebugEnabled()) {
+					log.debug("NumObjects: " + numObjects + ", MaxObjects: "
+							+ maxObjects
+							+ ". Removing least recently used object: "
+							+ oldValue);
+				}
+
+				if (log.isDebugEnabled()) {
+					printContainers("Containers after LRU:");
+				}
 			} else {
 				numObjects++;
-				
-				log.debug("Incremented numObjects: " + numObjects);
-				
-			}			
+
+				if (log.isDebugEnabled()) {
+					log.debug("Incremented numObjects: " + numObjects);
+				}
+			}
 		}
 
 		containers[0].put(key, expirableObject);
@@ -91,7 +95,7 @@ public class LimitHashbeltExpirationSystem<K, V> extends
 		super.clear();
 		numObjects = 0;
 	}
-	
+
 	@Override
 	public void remove(K key) {
 		HashbeltContainer<K, V> container = findContainer(key);
@@ -101,7 +105,7 @@ public class LimitHashbeltExpirationSystem<K, V> extends
 			numObjects--;
 		}
 	}
-	
+
 	public V get(K key) {
 		HashbeltContainer<K, V> container = findContainer(key);
 
@@ -115,26 +119,31 @@ public class LimitHashbeltExpirationSystem<K, V> extends
 
 		return returnValue;
 	}
-	
+
 	@Override
 	protected HashbeltContainer<K, V> expireObjects() {
 		HashbeltContainer<K, V> expiredContainer = super.expireObjects();
 		numObjects -= expiredContainer.size();
 
-		log.debug("numObjects after expire: " + numObjects);
-		
-		printContainers("Containers after expire:");			
-		
+		if (log.isDebugEnabled()) {
+			log.debug("numObjects after expire: " + numObjects);
+			printContainers("Containers after expire:");
+		}
+
 		return expiredContainer;
 	}
 
 	private void printContainers(String label) {
-		System.out.print(label + " {");
-		
+		StringBuffer sb = new StringBuffer();
+
+		sb.append(label + " {");
+
 		for (int i = 0; i < containers.length; i++) {
-			System.out.print(containers[i]);			
+			sb.append(containers[i]);
 		}
-		
-		System.out.print("}\n");
+
+		sb.append("}\n");
+
+		log.debug(sb.toString());
 	}
 }
