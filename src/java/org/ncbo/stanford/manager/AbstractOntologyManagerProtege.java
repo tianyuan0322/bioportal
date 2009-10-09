@@ -67,8 +67,9 @@ public abstract class AbstractOntologyManagerProtege {
 	protected String metadataVirtualViewInstSuffix;
 
 	protected ExpirationSystem<Integer, KnowledgeBase> protegeKnowledgeBases = null;
+	private OWLModel owlModel = null;
+	private Object createOwlModelLock = new Object();
 	private String METADATA_TABLE_NAME = "metadata";
-	private int METADATA_KB_ID = -5; // must be a negative value in order not
 
 	// to collide with the user-uploaded
 	// Protege tables
@@ -137,7 +138,7 @@ public abstract class AbstractOntologyManagerProtege {
 
 		if (kb == null) {
 			kb = createKnowledgeBaseInstance(ontology);
-			
+
 			synchronized (protegeKnowledgeBases) {
 				KnowledgeBase other = protegeKnowledgeBases.get(ontology
 						.getId());
@@ -172,7 +173,16 @@ public abstract class AbstractOntologyManagerProtege {
 		DatabaseKnowledgeBaseFactory.setSources(prj.getSources(),
 				protegeJdbcDriver, protegeJdbcUrl, getTableName(ontology
 						.getId()), protegeJdbcUsername, protegeJdbcPassword);
-		prj.createDomainKnowledgeBase(factory, errors, true);
+
+		// there is a bug in Protege that leaves a connectionReaper open
+		// even if the project threw a RuntimeExceptoin
+		try {
+			prj.createDomainKnowledgeBase(factory, errors, true);
+		} catch (RuntimeException re) {
+			prj.dispose();
+			throw re;
+		}
+
 		KnowledgeBase kb = prj.getKnowledgeBase();
 
 		setBrowserSlotByPreferredNameSlot(kb, getPreferredNameSlot(kb, ontology
@@ -185,65 +195,59 @@ public abstract class AbstractOntologyManagerProtege {
 		return kb;
 	}
 
+	/**
+	 * Gets the Metadata ontology instance
+	 */
 	@SuppressWarnings("unchecked")
-	protected synchronized OWLModel getMetadataOWLModel() {
-		KnowledgeBase kb;
+	private OWLModel createMetadataKnowledgeBaseInstance() {
+		// TODO this solution is a temporary hack.
+		// We should use the creator after migration to Protege 3.4.1
+		// start...
+		DatabaseKnowledgeBaseFactory factory = new OWLDatabaseKnowledgeBaseFactory();
 
-		synchronized (protegeKnowledgeBases) {
-			kb = protegeKnowledgeBases.get(METADATA_KB_ID);
+		List errors = new ArrayList();
+		Project project = Project.createBuildProject(factory, errors);
+		DatabaseKnowledgeBaseFactory.setSources(project.getSources(),
+				protegeJdbcDriver, protegeJdbcUrl, METADATA_TABLE_NAME,
+				protegeJdbcUsername, protegeJdbcPassword);
+		project.createDomainKnowledgeBase(factory, errors, false);
+		KnowledgeBase kb = project.getKnowledgeBase();
+		OWLModel owlModel = (OWLModel) kb;
+		Repository repository = new LocalFolderRepository(new File(MessageUtils
+				.getMessage("bioportal.metadata.includes.path")), true);
+		owlModel.getRepositoryManager().addProjectRepository(repository);
+
+		MergingNarrowFrameStore mnfs = MergingNarrowFrameStore.get(owlModel);
+		owlModel.setGenerateEventsEnabled(false);
+		NarrowFrameStore nfs = factory.createNarrowFrameStore("<new>");
+		mnfs.addActiveFrameStore(nfs);
+		factory.loadKnowledgeBase(owlModel, project.getSources(), errors);
+		owlModel.setGenerateEventsEnabled(true);
+		owlModel.setChanged(false);
+		project.getInternalProjectKnowledgeBase().setChanged(false);
+		// end
+
+		if (!errors.isEmpty()) {
+			log.error("Errors during Protege metadata project creation: "
+					+ errors);
 		}
 
-		if (kb != null && kb instanceof OWLModel) {
-			return (OWLModel) kb;
-		} else {
-			// TODO this solution is a temporary hack.
-			// We should use the creator after migration to Protege 3.4.1
-			// start...
-			DatabaseKnowledgeBaseFactory factory = new OWLDatabaseKnowledgeBaseFactory();
-
-			List errors = new ArrayList();
-			Project project = Project.createBuildProject(factory, errors);
-			DatabaseKnowledgeBaseFactory.setSources(project.getSources(),
-					protegeJdbcDriver, protegeJdbcUrl, METADATA_TABLE_NAME,
-					protegeJdbcUsername, protegeJdbcPassword);
-			project.createDomainKnowledgeBase(factory, errors, false);
-			kb = project.getKnowledgeBase();
-			OWLModel owlModel = (OWLModel) kb;
-
-			Repository repository = new LocalFolderRepository(
-					new File(MessageUtils
-							.getMessage("bioportal.metadata.includes.path")),
-					true);
-			owlModel.getRepositoryManager().addProjectRepository(repository);
-
-			MergingNarrowFrameStore mnfs = MergingNarrowFrameStore
-					.get(owlModel);
-			owlModel.setGenerateEventsEnabled(false);
-			NarrowFrameStore nfs = factory.createNarrowFrameStore("<new>");
-			mnfs.addActiveFrameStore(nfs);
-			factory.loadKnowledgeBase(owlModel, project.getSources(), errors);
-			owlModel.setGenerateEventsEnabled(true);
-			owlModel.setChanged(false);
-			project.getInternalProjectKnowledgeBase().setChanged(false);
-			// end
-
-			if (!errors.isEmpty()) {
-				log.error("Errors during Protege metadata project creation: "
-						+ errors);
-			}
-
-			if (log.isDebugEnabled()) {
-				log
-						.debug("Created new metadata knowledgebase: "
-								+ kb.getName());
-			}
-
-			synchronized (protegeKnowledgeBases) {
-				protegeKnowledgeBases.put(METADATA_KB_ID, kb);
-			}
-
-			return owlModel;
+		if (log.isDebugEnabled()) {
+			log.debug("Created new metadata knowledgebase: " + kb.getName());
 		}
+
+		return owlModel;
+	}
+
+	@SuppressWarnings("unchecked")
+	protected OWLModel getMetadataOWLModel() {
+		synchronized (createOwlModelLock) {
+			if (owlModel == null) {
+				owlModel = createMetadataKnowledgeBaseInstance();
+			}
+		}
+
+		return owlModel;
 	}
 
 	protected SQWRLQueryEngine getMetadataSQWRLEngine() throws SQWRLException {
