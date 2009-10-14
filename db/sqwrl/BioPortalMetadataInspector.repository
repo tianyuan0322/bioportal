@@ -1,4 +1,4 @@
-database:com.mysql.jdbc.Driver,jdbc:mysql://ncbo-db-dev1.sunet:3306/bioportal_protege,metadata,metadata,metadata
+database:com.mysql.jdbc.Driver,jdbc:mysql://ncbo-db-stage1.sunet:3306/bioportal_protege,metadata,metadata,metadata
 [Dublin Core DL Redirect]
 http://protege.stanford.edu/ontologies/metadata/BioPortalMetadata.owl
 http://protege.stanford.edu/ontologies/ChAO/changes.rdfs
