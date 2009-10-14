@@ -293,25 +293,31 @@ public class OntologyServiceMetadataImpl extends AbstractOntologyService impleme
 	 */
 	private void populateInternalVersionNumber(OntologyBean ontologyBean) throws Exception {
 		Integer ontologyId = ontologyBean.getOntologyId();
-
+		Integer internalVersionNumber = null;
+		
 		if (ontologyId == null) {
 			if (ontologyBean.isView()) {
 				ontologyBean.setOntologyId(ontologyMetadataManager
 						.getNextAvailableVirtualViewId());
-			}
-			else {
+			} else {
 				ontologyBean.setOntologyId(ontologyMetadataManager
 						.getNextAvailableOntologyId());
 			}
-			ontologyBean
-					.setInternalVersionNumber(Integer
-							.parseInt(MessageUtils
-									.getMessage("config.db.ontology.internalVersionNumberStart")));
-		} else {
-			Integer lastInternalVersion = findLatestOntologyOrViewVersion(ontologyId)
-					.getInternalVersionNumber();
-			ontologyBean.setInternalVersionNumber(lastInternalVersion + 1);
+			
+			internalVersionNumber = Integer.parseInt(MessageUtils
+									.getMessage("config.db.ontology.internalVersionNumberStart"));
+		} else {			
+			OntologyBean ob = findLatestOntologyOrViewVersion(ontologyId);
+			
+			if (ob == null) {
+				internalVersionNumber = Integer.parseInt(MessageUtils
+						.getMessage("config.db.ontology.internalVersionNumberStart"));
+			} else {
+				internalVersionNumber = ob.getInternalVersionNumber() + 1;
+			}
 		}
+
+		ontologyBean.setInternalVersionNumber(internalVersionNumber);
 	}
 
 	/**
