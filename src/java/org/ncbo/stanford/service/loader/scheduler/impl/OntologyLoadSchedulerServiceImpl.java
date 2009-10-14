@@ -200,6 +200,7 @@ public class OntologyLoadSchedulerServiceImpl implements
 				loadOntology(ontologyBean, formatHandler);
 
 				status = StatusEnum.STATUS_READY;
+				updateOntologyStatus(loadQueue, ontologyBean, status, errorMessage);
 
 				// calculate ontology metrics
 //				calculateMetrics(ontologyBean, formatHandler);
@@ -213,8 +214,6 @@ public class OntologyLoadSchedulerServiceImpl implements
 				//
 				// ************************************
 			}
-
-			updateOntologyStatus(loadQueue, ontologyBean, status, errorMessage);
 
 			// index ontology
 			if (status == StatusEnum.STATUS_READY) {
