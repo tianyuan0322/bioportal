@@ -209,7 +209,11 @@ public class MetadataUtils {
 	}
 	
 	protected static Date convertStringToDate(String dateString) {
-		return XMLSchemaDatatypes.getDate(dateString);
+		if (dateString != null) {		
+			return XMLSchemaDatatypes.getDate(dateString);
+		}
+		
+		return null;
 	}
 
 	protected static String convertDateToDateString(Date date) {
