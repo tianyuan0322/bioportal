@@ -32,6 +32,7 @@ import org.ncbo.stanford.util.cvs.CVSFile;
 import org.ncbo.stanford.util.cvs.CVSUtils;
 import org.ncbo.stanford.util.helper.StringHelper;
 import org.ncbo.stanford.util.helper.reflection.ReflectionHelper;
+import org.ncbo.stanford.util.metadata.OntologyMetadataUtils;
 import org.ncbo.stanford.util.ontologyfile.OntologyDescriptorParser;
 import org.ncbo.stanford.util.ontologyfile.compressedfilehandler.impl.CompressedFileHandlerFactory;
 import org.ncbo.stanford.util.ontologyfile.pathhandler.FilePathHandler;
@@ -87,14 +88,15 @@ public class OBOCVSPullServiceImpl implements OBOCVSPullService {
 						.getPassword(), repo.getHostname(), repo.getModule(),
 						repo.getRootdirectory(), repo.getArgumentstring(), repo
 								.getCheckoutdir(), tempDir);
-
 				cvsUtils.cvsCheckout();
 				HashMap<String, CVSFile> updateFiles = cvsUtils
 						.getAllCVSEntries();
 				processRecords(repo, updateFiles);
 			}
 
-			log.debug("**** OBO Pull completed successfully *****");
+			if (log.isDebugEnabled()) {
+				log.debug("**** OBO Pull completed successfully *****");
+			}
 		} catch (Exception e) {
 			log.error(e);
 			e.printStackTrace();
@@ -220,15 +222,15 @@ public class OBOCVSPullServiceImpl implements OBOCVSPullService {
 				ont = new OntologyBean(false);
 			} else if (ont.getIsManual().byteValue() != ApplicationConstants.TRUE) {
 				if (isRemote == ApplicationConstants.TRUE) {
-					if (ont.isRemote()) {
+					if (hasVersions(ont) && ont.isRemote()) {
 						// existing ontology that had been and remains remote
 						action = ActionEnum.UPDATE_ACTION;
 					} else {
 						// existing ontology that had been local but is now
-						// remote
+						// remote or an ontology with no versions
 						action = ActionEnum.CREATE_REMOTE_ACTION;
 					}
-				} else if (cf != null
+				} else if (hasVersions(ont) && cf != null
 						&& cf.getVersion().equals(ont.getVersionNumber())) {
 					// existing ontology local; no new version
 					// no new version found; check if categories have been
@@ -237,8 +239,9 @@ public class OBOCVSPullServiceImpl implements OBOCVSPullService {
 					boolean categoriesUpdated = isCategoryUpdated(
 							oldCategoryIds, newCategoryIds);
 
-					//TODO What about groups??? Do we need to check that here also?
-					
+					// TODO What about groups??? Do we need to check that here
+					// also?
+
 					if (categoriesUpdated) {
 						action = ActionEnum.UPDATE_ACTION;
 					}
@@ -251,7 +254,21 @@ public class OBOCVSPullServiceImpl implements OBOCVSPullService {
 			populateOntologyBean(mfb, cf, action, ont, newCategoryIds, isRemote);
 		}
 
-		return new OntologyAction(action, ont);
+		OntologyAction ontologyAction = new OntologyAction(action, ont);
+
+		if (log.isDebugEnabled()) {
+			if (ont == null) {
+				log.debug("[*** " + action + ": " + oboFoundryId + " ***]");
+			} else {
+				log.debug(ontologyAction);
+			}
+		}
+
+		return ontologyAction;
+	}
+
+	private boolean hasVersions(OntologyBean ob) {
+		return ob.getId() != OntologyMetadataUtils.INVALID_ID;
 	}
 
 	/**
@@ -289,8 +306,8 @@ public class OBOCVSPullServiceImpl implements OBOCVSPullService {
 				ont.addFilename(OntologyDescriptorParser.getFileName(mfb
 						.getDownload()));
 				ont.setCategoryIds(newCategoryIds);
-				//TODO: What does this part of the method do??? (Csongor)
-				//We need to deal with information about groups, too 
+				// TODO: What does this part of the method do??? (Csongor)
+				// We need to deal with information about groups, too
 			}
 
 			if (action != ActionEnum.UPDATE_ACTION) {

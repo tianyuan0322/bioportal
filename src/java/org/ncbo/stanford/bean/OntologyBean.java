@@ -157,7 +157,7 @@ public class OntologyBean {
 			viewDef = viewDef.substring(0, max) + "...";
 		}
 		
-		String name = isView ? "OntologyView" : "Ontology";
+		String name = isView ? "OntologyView " : "Ontology ";
 
 		return name + "{Id: " + this.getId() + ", Ontology Id: "
 				+ this.getOntologyId() + ", Virtual View Ids: "
