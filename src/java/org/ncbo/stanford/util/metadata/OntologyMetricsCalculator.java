@@ -181,21 +181,10 @@ public class OntologyMetricsCalculator {
     	String docTag = "";
     	String authorTag = "";
     	String annotTag = "";
-    	if(documentationProperty == null){
-    		docTag = "rdfs:comment";
-    	} else {
-    		docTag = documentationProperty;
-    	}
-    	if(authorProperty == null){
-    		authorTag = "rdfs:comment";
-    	} else {
-    		authorTag = authorProperty;
-    	}
-    	if(annotationProperty == null){
-    		annotTag = "rdfs:comment";
-    	} else {
-    		annotTag = annotationProperty;
-    	}
+    	
+    	docTag = documentationProperty;
+    	authorTag = authorProperty;
+   		annotTag = annotationProperty;
     	matchTags(currCls, docTag, authorTag, annotTag, noDocClses);
     	Iterator <RDFSNamedClass> it = subclasses.iterator();
     	int count = 0;
@@ -228,14 +217,14 @@ public class OntologyMetricsCalculator {
     	Iterator <RDFProperty> it = properties.iterator();
     	while(it.hasNext()){           //iterate through rdf properties
     		RDFProperty prop = it.next();
-    		if(prop.getBrowserText().equals(docTag)){   //matching the documentation tag
+    		if(docTag != null && prop.getBrowserText().equals(docTag)){   //matching the documentation tag
     			docTagFound = true;
     		}
-    		if(prop.getBrowserText().equals(authorTag) && !cls.getName().equals("owl:Thing")){  //matching the author tag, want to add author/concept to hashmap
+    		if(authorTag != null && prop.getBrowserText().equals(authorTag) && !cls.getName().equals("owl:Thing")){  //matching the author tag, want to add author/concept to hashmap
     			authorTagFound = true;
     			addClsToConceptAuthorRelationship(cls, prop);
     		}
-    		if(prop.getBrowserText().equals(annotTag)){
+    		if(annotTag != null && prop.getBrowserText().equals(annotTag)){
     			Collection props = cls.getPropertyValues(prop, false);
     			Iterator it2 = props.iterator();
     			while(it2.hasNext()){
