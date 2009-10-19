@@ -424,6 +424,20 @@ public class OntologyRetrievalManagerLexGridImplTest extends
 		assertTrue(startPosition != 0);
 	}	
 	
+	@Test
+	public void testRefresh()	throws Exception {
+		System.out.println("testRefresh()");
+		assertTrue(retrievalManager.refresh());
+	}
 	
+	@Test
+	public void testHasParent()	throws Exception {
+		System.out.println("testHasParent()");
+		OntologyBean ncboOntology = retrievalManager.getLatestNcboOntology(TEST_OBO_CELL_DISPLAY_LABEL);
+		assertTrue( retrievalManager.hasParent(ncboOntology, "CL:0000255", "CL:0000000"));
+		
+		
+		
+	}	
 	
 }
