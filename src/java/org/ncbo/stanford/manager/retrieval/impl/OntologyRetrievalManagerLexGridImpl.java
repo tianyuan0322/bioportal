@@ -22,6 +22,7 @@ import org.LexGrid.LexBIG.Extensions.Generic.LexBIGServiceConvenienceMethods;
 import org.LexGrid.LexBIG.Impl.LexBIGServiceImpl;
 import org.LexGrid.LexBIG.Impl.dataAccess.WriteLockManager;
 import org.LexGrid.LexBIG.Impl.helpers.CountConceptReference;
+import org.LexGrid.LexBIG.LexBIGService.CodedNodeGraph;
 import org.LexGrid.LexBIG.LexBIGService.CodedNodeSet;
 import org.LexGrid.LexBIG.LexBIGService.LexBIGService;
 import org.LexGrid.LexBIG.LexBIGService.CodedNodeSet.ActiveOption;
@@ -378,6 +379,34 @@ public class OntologyRetrievalManagerLexGridImpl extends
 				conceptClass, ApplicationConstants.SUB_CLASS, false);
 
 		return classBeans;
+	}
+	
+	public boolean hasParent(OntologyBean ncboOntology, String childConceptId, String parentConceptId) throws Exception {
+		boolean isRelated= false;
+		String schemeName = getLexGridCodingSchemeName(ncboOntology);
+		CodingSchemeVersionOrTag csvt = getLexGridCodingSchemeVersion(ncboOntology);
+		String hierarchyId = getDefaultHierarchyId(schemeName, csvt);
+		SupportedHierarchy[] supHiers = lbscm.getSupportedHierarchies(
+				schemeName, csvt, hierarchyId);
+		SupportedHierarchy sh = supHiers[0];
+		for (String associationName : sh.getAssociationNames()) {
+			// We need to be careful about the direction flag
+			 CodedNodeGraph cng = lbs.getNodeGraph(schemeName, csvt, null);
+			 boolean related= false;
+			 if (sh.isIsForwardNavigable()) {
+				 related= cng.areCodesRelated(ConvenienceMethods.createNameAndValue(associationName, schemeName),
+			                ConvenienceMethods.createConceptReference(parentConceptId, schemeName), ConvenienceMethods
+			                        .createConceptReference(childConceptId, schemeName), false);
+			 } else {
+		        related= cng.areCodesRelated(ConvenienceMethods.createNameAndValue(associationName, schemeName),
+		                ConvenienceMethods.createConceptReference(childConceptId, schemeName), ConvenienceMethods
+		                        .createConceptReference(parentConceptId, schemeName), false);
+			 }
+			 if (related)  {
+				 return related;
+			 }
+		}		
+		return isRelated;
 	}
 
 	public boolean refresh() throws Exception {
