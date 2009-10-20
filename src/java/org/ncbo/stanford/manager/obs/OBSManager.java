@@ -1,6 +1,7 @@
 package org.ncbo.stanford.manager.obs;
 
 import java.util.List;
+import java.util.Set;
 
 import org.ncbo.stanford.bean.concept.ClassBean;
 
@@ -13,6 +14,10 @@ public interface OBSManager {
 			throws Exception;
 
 	public List<ClassBean> findChildren(String ontologyVersionId,
+			String conceptId, Integer level, Integer offset, Integer limit)
+			throws Exception;
+
+	public Set<String> findChildrenConceptIds(String ontologyVersionId,
 			String conceptId, Integer level, Integer offset, Integer limit)
 			throws Exception;
 

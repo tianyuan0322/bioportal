@@ -2,7 +2,9 @@ package org.ncbo.stanford.manager.obs.impl;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -149,6 +151,34 @@ public class OBSManagerImpl implements OBSManager {
 	}
 
 	@SuppressWarnings("unchecked")
+	public Set<String> findChildrenConceptIds(String ontologyVersionId,
+			String conceptId, Integer level, Integer offset, Integer limit)
+			throws Exception {
+		Set<String> childrenConceptIds = null;
+		AbstractResponseBean response = xmlSerializationService.processGet(
+				MessageUtils.getMessage("obs.rest.children.url")
+						+ ontologyVersionId + "/" + conceptId,
+				assembleGetParameters(level, offset, limit));
+
+		if (response.isResponseSuccess()) {
+			String data = ((SuccessBean) response).getDataXml();
+			List<ChildBean> obsChildren = (ArrayList<ChildBean>) xmlSerializationService
+					.fromXML(data);
+			childrenConceptIds = new HashSet<String>(0);
+
+			for (ChildBean obsChild : obsChildren) {
+				List<String> parsedConceptId = parseOBSConceptId(obsChild
+						.getLocalConceptId());
+				childrenConceptIds.add(parsedConceptId.get(0));
+			}
+		} else {
+			handleError(response);
+		}
+
+		return childrenConceptIds;
+	}
+
+	@SuppressWarnings("unchecked")
 	public List<ClassBean> findRootPaths(String ontologyVersionId,
 			String conceptId, Integer offset, Integer limit) throws Exception {
 		List<ClassBean> rootPaths = null;
@@ -267,16 +297,32 @@ public class OBSManagerImpl implements OBSManager {
 	private void populateBaseClassBean(AbstractConceptBean obsBean,
 			ClassBean classBean) {
 		String fullConceptId = obsBean.getLocalConceptId();
+		List<String> parsedConceptId = parseOBSConceptId(fullConceptId);
+
+		if (parsedConceptId.size() > 1) {
+			classBean.setOntologyVersionId(parsedConceptId.get(1));
+			classBean.setId(parsedConceptId.get(0));
+		} else {
+			classBean.setId(fullConceptId);
+		}
+	}
+
+	private List<String> parseOBSConceptId(String fullConceptId) {
+		List<String> obsConceptId = new ArrayList<String>(0);
 		Pattern mask = Pattern.compile(OBS_CONCEPT_ID_PATTERN);
 		Matcher matcher = mask.matcher(fullConceptId);
 		matcher.find();
 
 		if (matcher.matches() && matcher.groupCount() > 1) {
-			classBean.setOntologyVersionId(matcher.group(1));
-			classBean.setId(matcher.group(2));
+			// the first element = concept id
+			// the second element = ontology version id
+			obsConceptId.add(matcher.group(2));
+			obsConceptId.add(matcher.group(1));
 		} else {
-			classBean.setId(fullConceptId);
+			obsConceptId.add(fullConceptId);
 		}
+
+		return obsConceptId;
 	}
 
 	private void handleError(AbstractResponseBean response) throws Exception {
