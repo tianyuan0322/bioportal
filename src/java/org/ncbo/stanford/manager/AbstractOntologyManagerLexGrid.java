@@ -13,7 +13,6 @@ import org.LexGrid.codingSchemes.CodingScheme;
 import org.apache.commons.lang.StringUtils;
 import org.ncbo.stanford.bean.OntologyBean;
 import org.ncbo.stanford.manager.metadata.OntologyMetadataManager;
-import org.ncbo.stanford.util.helper.StringHelper;
 
 /**
  * Abstract class to encapsulate functionality common for both LexGrid loader
