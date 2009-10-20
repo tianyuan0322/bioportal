@@ -195,12 +195,14 @@ public class OntologyRetrievalManagerProtegeImpl extends
 	}
 
 	private List<ClassBean> convertClasses(Collection<Cls> protegeClses,
-			boolean recursive, Slot synonymSlot, Map<Cls, ClassBean> recursionMap) {
+			boolean recursive, Slot synonymSlot,
+			Map<Cls, ClassBean> recursionMap) {
 		List<ClassBean> beans = new ArrayList<ClassBean>();
 
 		for (Cls cls : protegeClses) {
 			if (cls.isVisible())
-				beans.add(createClassBean(cls, recursive, synonymSlot, recursionMap));
+				beans.add(createClassBean(cls, recursive, synonymSlot,
+						recursionMap));
 		}
 
 		return beans;
@@ -224,10 +226,10 @@ public class OntologyRetrievalManagerProtegeImpl extends
 
 	private ClassBean createClassBean(Cls cls, boolean recursive,
 			Slot synonymSlot) {
-		return createClassBean(cls, recursive,
-				synonymSlot, new HashMap<Cls, ClassBean>());
+		return createClassBean(cls, recursive, synonymSlot,
+				new HashMap<Cls, ClassBean>());
 	}
-	
+
 	private ClassBean createClassBean(Cls cls, boolean recursive,
 			Slot synonymSlot, Map<Cls, ClassBean> recursionMap) {
 		if (recursionMap.containsKey(cls)) {
@@ -242,7 +244,7 @@ public class OntologyRetrievalManagerProtegeImpl extends
 		classBean.setLabel(getBrowserText(cls));
 
 		recursionMap.put(cls, classBean);
-		
+
 		// add properties
 		Collection<Slot> slots;
 
@@ -298,8 +300,10 @@ public class OntologyRetrievalManagerProtegeImpl extends
 		}
 
 		if (recursive) {
-			classBean.addRelation(ApplicationConstants.SUB_CLASS,
-					convertClasses(subclasses, false, synonymSlot, recursionMap));
+			classBean
+					.addRelation(ApplicationConstants.SUB_CLASS,
+							convertClasses(subclasses, false, synonymSlot,
+									recursionMap));
 
 			// add superclasses
 			if (cls instanceof OWLNamedClass) {
@@ -310,7 +314,8 @@ public class OntologyRetrievalManagerProtegeImpl extends
 			}
 
 			classBean.addRelation(ApplicationConstants.SUPER_CLASS,
-					convertClasses(superclasses, false, synonymSlot, recursionMap));
+					convertClasses(superclasses, false, synonymSlot,
+							recursionMap));
 		}
 
 		// add RDF type
@@ -375,16 +380,17 @@ public class OntologyRetrievalManagerProtegeImpl extends
 		return bpProps;
 	}
 
-	public boolean hasParent(OntologyBean ontologyVersion, String childConceptId,
-			String parentConceptId) throws Exception {
+	public boolean hasParent(OntologyBean ontologyVersion,
+			String childConceptId, String parentConceptId) throws Exception {
 		KnowledgeBase kb = getKnowledgeBase(ontologyVersion);
 		Cls clsChild = getCls(childConceptId, kb);
 		Cls clsParent = getCls(parentConceptId, kb);
-		
-		if (clsChild.hasSuperclass(clsParent)) {
+
+		if (clsChild != null && clsParent != null
+				&& clsChild.hasSuperclass(clsParent)) {
 			return true;
 		}
-		
+
 		return false;
 	}
 }
