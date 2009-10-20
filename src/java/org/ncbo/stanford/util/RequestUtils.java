@@ -277,6 +277,14 @@ public class RequestUtils {
 
 		return val;
 	}
+	
+	public static String parseStringParam(String value) {
+		if (value != null) {
+			value = value.trim();
+		}
+		
+		return value;
+	}	
 
 	public static Date parseDateParam(String dateVal) {
 		return DateHelper.getDateFrom(StringHelper.removeSpaces(dateVal));
