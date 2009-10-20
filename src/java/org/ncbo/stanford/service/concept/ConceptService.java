@@ -4,6 +4,7 @@
 package org.ncbo.stanford.service.concept;
 
 import java.util.List;
+import java.util.Set;
 
 import org.ncbo.stanford.bean.OntologyIdBean;
 import org.ncbo.stanford.bean.OntologyVersionIdBean;
@@ -39,6 +40,10 @@ public interface ConceptService {
 			Integer level, Integer offset, Integer limit) throws Exception;
 
 	public List<ClassBean> findChildren(OntologyIdBean ontologyId,
+			String conceptId, Integer level, Integer offset, Integer limit)
+			throws Exception;
+
+	public Set<String> findChildrenConceptIds(OntologyIdBean ontologyId,
 			String conceptId, Integer level, Integer offset, Integer limit)
 			throws Exception;
 
