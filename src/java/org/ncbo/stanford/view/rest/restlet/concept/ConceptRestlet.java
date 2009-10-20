@@ -62,7 +62,7 @@ public class ConceptRestlet extends AbstractBaseRestlet {
 
 			if (StringHelper.isNullOrNullString(conceptId)) {
 				response.setStatus(Status.CLIENT_ERROR_BAD_REQUEST,
-						"Concept Id is a required parameter");
+						MessageUtils.getMessage("msg.error.conceptidrequired"));
 			} else if (conceptId
 					.equalsIgnoreCase(RequestParamConstants.PARAM_ROOT_CONCEPT)) {
 				// root concept
@@ -85,7 +85,7 @@ public class ConceptRestlet extends AbstractBaseRestlet {
 
 			if (concept == null) {
 				response.setStatus(Status.CLIENT_ERROR_NOT_FOUND,
-						"Concept(s) not found");
+						MessageUtils.getMessage("msg.error.conceptNotFound"));
 			}
 		} catch (NumberFormatException nfe) {
 			response.setStatus(Status.CLIENT_ERROR_BAD_REQUEST, nfe
