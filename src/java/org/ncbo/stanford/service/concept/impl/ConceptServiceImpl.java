@@ -8,6 +8,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.ListIterator;
 import java.util.Map;
+import java.util.Set;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -257,6 +258,16 @@ public class ConceptServiceImpl implements ConceptService {
 
 		return obsManager.findChildren(ontologyVersionId, conceptId, level,
 				offset, limit);
+	}
+
+	public Set<String> findChildrenConceptIds(OntologyIdBean ontologyId,
+			String conceptId, Integer level, Integer offset, Integer limit)
+			throws Exception {
+		String ontologyVersionId = obsManager
+				.findLatestOntologyVersion(ontologyId.getOntologyId());
+
+		return obsManager.findChildrenConceptIds(ontologyVersionId, conceptId,
+				level, offset, limit);
 	}
 
 	public List<ClassBean> findRootPaths(
