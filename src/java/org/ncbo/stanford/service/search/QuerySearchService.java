@@ -5,6 +5,7 @@ import java.util.Collection;
 
 import org.apache.lucene.search.Query;
 import org.ncbo.stanford.bean.search.SearchBean;
+import org.ncbo.stanford.bean.search.SearchResultListBean;
 import org.ncbo.stanford.util.paginator.impl.Page;
 
 /**
@@ -46,8 +47,8 @@ public interface QuerySearchService {
 	 * @throws Exception
 	 */
 	public Page<SearchBean> executeQuery(String expr,
-			boolean includeProperties, boolean isExactMatch, Integer maxNumHits)
-			throws Exception;
+			boolean includeProperties, boolean isExactMatch,
+			Integer maxNumHits) throws Exception;
 
 	/**
 	 * Execute a search query for a given expression, limiting search to the
@@ -62,30 +63,36 @@ public interface QuerySearchService {
 	 * @param pageSize
 	 * @param pageNum
 	 * @param maxNumHits
+	 * @param subtreeRootConceptId -
+	 *            optional root concept id for sub-tree search
 	 * @return
 	 * @throws Exception
 	 */
 	public Page<SearchBean> executeQuery(String expr,
 			Collection<Integer> ontologyIds, boolean includeProperties,
 			boolean isExactMatch, Integer pageSize, Integer pageNum,
-			Integer maxNumHits) throws Exception;
+			Integer maxNumHits, String subtreeRootConceptId) throws Exception;
 
 	/**
 	 * Execute a search query for a given expression, limiting search to the
 	 * specific ontologies. Return ALL results in a form of a single page. If
-	 * maxNumHits is null, the default value from the configuration file is used.
+	 * maxNumHits is null, the default value from the configuration file is
+	 * used.
 	 * 
 	 * @param expr
 	 * @param ontologyIds
 	 * @param includeProperties
 	 * @param isExactMatch
 	 * @param maxNumHits
+	 * @param subtreeRootConceptId -
+	 *            optional root concept id for sub-tree search
 	 * @return
 	 * @throws Exception
 	 */
 	public Page<SearchBean> executeQuery(String expr,
 			Collection<Integer> ontologyIds, boolean includeProperties,
-			boolean isExactMatch, Integer maxNumHits) throws Exception;
+			boolean isExactMatch, Integer maxNumHits,
+			String subtreeRootConceptId) throws Exception;
 
 	/**
 	 * Execute a search from an already constructed Query object. Return ALL
@@ -96,11 +103,14 @@ public interface QuerySearchService {
 	 * @param pageSize
 	 * @param pageNum
 	 * @param maxNumHits
+	 * @param subtreeRootConceptId -
+	 *            optional root concept id for sub-tree search
 	 * @return
 	 * @throws Exception
 	 */
 	public Page<SearchBean> executeQuery(Query query, Integer pageSize,
-			Integer pageNum, Integer maxNumHits) throws Exception;
+			Integer pageNum, Integer maxNumHits, String subtreeRootConceptId)
+			throws Exception;
 
 	/**
 	 * Execute a search from an already constructed Query object. Return results
@@ -109,11 +119,13 @@ public interface QuerySearchService {
 	 * 
 	 * @param query
 	 * @param maxNumHits
+	 * @param subtreeRootConceptId -
+	 *            optional root concept id for sub-tree search
 	 * @return
 	 * @throws Exception
 	 */
-	public Page<SearchBean> executeQuery(Query query, Integer maxNumHits)
-			throws Exception;
+	public Page<SearchBean> executeQuery(Query query, Integer maxNumHits,
+			String subtreeRootConceptId) throws Exception;
 
 	/**
 	 * Generate a search query from the expression and optional ontology ids
@@ -128,4 +140,17 @@ public interface QuerySearchService {
 	public Query generateLuceneSearchQuery(Collection<Integer> ontologyIds,
 			String expr, boolean includeProperties, boolean isExactMatch)
 			throws IOException;
+
+	/**
+	 * Executes a query against the Lucene index. Does not use caching
+	 * 
+	 * @param query
+	 * @param maxNumHits
+	 * @param subtreeRootConceptId -
+	 *            optional root concept id for sub-tree search
+	 * @return
+	 * @throws Exception
+	 */
+	public SearchResultListBean runQuery(Query query, Integer maxNumHits,
+			String subtreeRootConceptId) throws Exception;
 }

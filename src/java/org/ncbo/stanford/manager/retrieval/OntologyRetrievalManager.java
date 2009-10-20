@@ -20,4 +20,7 @@ public interface OntologyRetrievalManager {
 
 	public ClassBean findPathFromRoot(OntologyBean ob, String conceptId,
 			boolean light) throws Exception;
+
+	public boolean hasParent(OntologyBean ob, String childConceptId,
+			String parentConceptId) throws Exception;
 }

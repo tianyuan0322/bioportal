@@ -1,12 +1,10 @@
 package org.ncbo.stanford.service.search.impl;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.Collection;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.lucene.analysis.standard.StandardAnalyzer;
 import org.apache.lucene.index.Term;
 import org.apache.lucene.search.BooleanClause;
 import org.apache.lucene.search.BooleanQuery;
@@ -38,79 +36,31 @@ public class QuerySearchServiceImpl extends AbstractSearchService implements
 	private static final Log log = LogFactory
 			.getLog(QuerySearchServiceImpl.class);
 
-	public static void main(String[] args) {
-		try {
-//			String expr = "DOID:1909";
-//			String expr = "blood";
-//			String expr = "Blue_Nevus-Like_Melanoma";
-//			String expr = "Interferon-Alfa_Lu-177-Monoclonal-Antibody-CC49_Pa";
-//			String expr = "Swiss_Albinos_City_of_Hope_Med_Ctr";
-			String expr = "language";
-//			String expr = "lun";
-//			String expr = "algorith";
-//			String expr = "monadic                    	Quality of an object*";
-//			String expr = "CHEBI:16069";
-//			String expr = "blood-vein";
-//			String expr = "Interferon-Alfa_Lu-177-Monoclonal-Antibody-CC49";
-//			String expr = "*Clarke's nu*";
-//			String expr = "multiply";
-			Collection<Integer> ontologyIds = new ArrayList<Integer>(0);
-//			ontologyIds.add(1032);
-//			ontologyIds.add(1104);
-			// ontologyIds.add(1070);
-			// ontologyIds.add(1107);
-			 ontologyIds.add(1321); //Nemo
-
-			boolean includeProperties = false;
-			boolean isExactMatch = false;
-			Integer maxNumHits = 250;
-
-			String indexPath = "/apps/bmir.apps/bioportal_resources/searchindex";
-			QuerySearchServiceImpl ss = new QuerySearchServiceImpl();
-			ss.setAnalyzer(new StandardAnalyzer());
-			ss.setIndexPath(indexPath);
-
-			Query q = ss.generateLuceneSearchQuery(ontologyIds, expr,
-					includeProperties, isExactMatch);
-			System.out.println("q: " + q);
-
-			long start = System.currentTimeMillis();
-			SearchResultListBean results = ss.runQuery(q, maxNumHits);
-			long stop = System.currentTimeMillis();
-
-			System.out.println("Excecution Time: " + (double) (stop - start)
-					/ 1000 + " seconds.");
-		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-	}
-	
-//	public static void main(String[] args) {
-//		try {
-//			IndexSearcher searcher = new IndexSearcher(
-//					"/apps/bmir.apps/bioportal_resources/searchindex");
-//			TermEnum terms = searcher.getIndexReader().terms(
-//					new Term("conceptId", ""));
-//			int numTerms = 0;
-//
-//			while ("conceptId".equals(terms.term().field())) {
-//				numTerms++;
-//
-//				if (!terms.next())
-//					break;
-//			}
-//
-//			terms.close();
-//
-//			System.out.println("Num Concepts: " + numTerms);
-//
-//		} catch (CorruptIndexException e) { // TODO Auto-generated catch block
-//			e.printStackTrace();
-//		} catch (IOException e) { // TODO Auto-generated
-//			e.printStackTrace();
-//		}
-//	}
+	// public static void main(String[] args) {
+	// try {
+	// IndexSearcher searcher = new IndexSearcher(
+	// "/apps/bmir.apps/bioportal_resources/searchindex");
+	// TermEnum terms = searcher.getIndexReader().terms(
+	// new Term("conceptId", ""));
+	// int numTerms = 0;
+	//
+	// while ("conceptId".equals(terms.term().field())) {
+	// numTerms++;
+	//
+	// if (!terms.next())
+	// break;
+	// }
+	//
+	// terms.close();
+	//
+	// System.out.println("Num Concepts: " + numTerms);
+	//
+	// } catch (CorruptIndexException e) { // TODO Auto-generated catch block
+	// e.printStackTrace();
+	// } catch (IOException e) { // TODO Auto-generated
+	// e.printStackTrace();
+	// }
+	// }
 
 	/**
 	 * Execute a search query for a given expression and return results in a
@@ -130,7 +80,7 @@ public class QuerySearchServiceImpl extends AbstractSearchService implements
 			boolean includeProperties, boolean isExactMatch, Integer pageSize,
 			Integer pageNum, Integer maxNumHits) throws Exception {
 		return executeQuery(expr, null, includeProperties, isExactMatch,
-				pageSize, pageNum, maxNumHits);
+				pageSize, pageNum, maxNumHits, null);
 	}
 
 	/**
@@ -149,7 +99,7 @@ public class QuerySearchServiceImpl extends AbstractSearchService implements
 			boolean includeProperties, boolean isExactMatch, Integer maxNumHits)
 			throws Exception {
 		return executeQuery(expr, null, includeProperties, isExactMatch,
-				maxNumHits);
+				maxNumHits, null);
 	}
 
 	/**
@@ -165,17 +115,20 @@ public class QuerySearchServiceImpl extends AbstractSearchService implements
 	 * @param pageSize
 	 * @param pageNum
 	 * @param maxNumHits
+	 * @param subtreeRootConceptId -
+	 *            optional root concept id for sub-tree search
 	 * @return
 	 * @throws Exception
 	 */
 	public Page<SearchBean> executeQuery(String expr,
 			Collection<Integer> ontologyIds, boolean includeProperties,
 			boolean isExactMatch, Integer pageSize, Integer pageNum,
-			Integer maxNumHits) throws Exception {
+			Integer maxNumHits, String subtreeRootConceptId) throws Exception {
 		Query query = generateLuceneSearchQuery(ontologyIds, expr,
 				includeProperties, isExactMatch);
 
-		return executeQuery(query, pageSize, pageNum, maxNumHits);
+		return executeQuery(query, pageSize, pageNum, maxNumHits,
+				subtreeRootConceptId);
 	}
 
 	/**
@@ -188,31 +141,19 @@ public class QuerySearchServiceImpl extends AbstractSearchService implements
 	 * @param includeProperties
 	 * @param isExactMatch
 	 * @param maxNumHits
+	 * @param subtreeRootConceptId -
+	 *            optional root concept id for sub-tree search
 	 * @return
 	 * @throws Exception
 	 */
 	public Page<SearchBean> executeQuery(String expr,
 			Collection<Integer> ontologyIds, boolean includeProperties,
-			boolean isExactMatch, Integer maxNumHits) throws Exception {
+			boolean isExactMatch, Integer maxNumHits,
+			String subtreeRootConceptId) throws Exception {
 		Query query = generateLuceneSearchQuery(ontologyIds, expr,
 				includeProperties, isExactMatch);
 
-		return executeQuery(query, maxNumHits);
-	}
-
-	/**
-	 * Execute a search from an already constructed Query object. Return results
-	 * in a form of a single page (of specified size). If maxNumHits is null,
-	 * the default value from the configuation file is used.
-	 * 
-	 * @param query
-	 * @param maxNumHits
-	 * @return
-	 * @throws Exception
-	 */
-	public Page<SearchBean> executeQuery(Query query, Integer maxNumHits)
-			throws Exception {
-		return executeQuery(query, null, null, maxNumHits);
+		return executeQuery(query, maxNumHits, subtreeRootConceptId);
 	}
 
 	/**
@@ -221,21 +162,42 @@ public class QuerySearchServiceImpl extends AbstractSearchService implements
 	 * value from the configuation file is used.
 	 * 
 	 * @param query
+	 * @param maxNumHits
+	 * @param subtreeRootConceptId -
+	 *            optional root concept id for sub-tree search
+	 * @return
+	 * @throws Exception
+	 */
+	public Page<SearchBean> executeQuery(Query query, Integer maxNumHits,
+			String subtreeRootConceptId) throws Exception {
+		return executeQuery(query, null, null, maxNumHits, subtreeRootConceptId);
+	}
+
+	/**
+	 * Execute a search from an already constructed Query object. Return results
+	 * in a form of a single page (of specified size). If maxNumHits is null,
+	 * the default value from the configuation file is used.
+	 * 
+	 * @param query
 	 * @param pageSize
 	 * @param pageNum
 	 * @param maxNumHits
+	 * @param subtreeRootConceptId -
+	 *            optional root concept id for sub-tree search
 	 * @return
 	 * @throws Exception
 	 */
 	public Page<SearchBean> executeQuery(Query query, Integer pageSize,
-			Integer pageNum, Integer maxNumHits) throws Exception {
+			Integer pageNum, Integer maxNumHits, String subtreeRootConceptId)
+			throws Exception {
 		long start = System.currentTimeMillis();
-		String resultsKey = composeCacheKey(query, maxNumHits);
+		String resultsKey = composeCacheKey(query, maxNumHits,
+				subtreeRootConceptId);
 		boolean fromCache = true;
 		SearchResultListBean searchResults = searchResultCache.get(resultsKey);
 
 		if (searchResults == null) {
-			searchResults = runQuery(query, maxNumHits);
+			searchResults = runQuery(query, maxNumHits, subtreeRootConceptId);
 			fromCache = false;
 			searchResultCache.put(resultsKey, searchResults);
 		}
@@ -256,9 +218,8 @@ public class QuerySearchServiceImpl extends AbstractSearchService implements
 			page = p.getNextPage(pageNum - 1);
 		}
 
-		long stop = System.currentTimeMillis();
-
 		if (log.isDebugEnabled()) {
+			long stop = System.currentTimeMillis();
 			log.debug("Query: " + query);
 			log.debug("Cached?: " + (fromCache ? "Yes" : "No"));
 			log.debug("Number of Hits: " + searchResults.size());

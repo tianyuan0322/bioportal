@@ -374,4 +374,17 @@ public class OntologyRetrievalManagerProtegeImpl extends
 
 		return bpProps;
 	}
+
+	public boolean hasParent(OntologyBean ontologyVersion, String childConceptId,
+			String parentConceptId) throws Exception {
+		KnowledgeBase kb = getKnowledgeBase(ontologyVersion);
+		Cls clsChild = getCls(childConceptId, kb);
+		Cls clsParent = getCls(parentConceptId, kb);
+		
+		if (clsChild.hasSuperclass(clsParent)) {
+			return true;
+		}
+		
+		return false;
+	}
 }

@@ -4,7 +4,9 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -26,7 +28,12 @@ import org.ncbo.stanford.bean.search.SearchBean;
 import org.ncbo.stanford.bean.search.SearchIndexBean;
 import org.ncbo.stanford.bean.search.SearchResultListBean;
 import org.ncbo.stanford.enumeration.SearchRecordTypeEnum;
+import org.ncbo.stanford.exception.OntologyNotFoundException;
+import org.ncbo.stanford.manager.metadata.OntologyMetadataManager;
+import org.ncbo.stanford.manager.retrieval.OntologyRetrievalManager;
+import org.ncbo.stanford.manager.search.OntologySearchManager;
 import org.ncbo.stanford.util.cache.expiration.system.ExpirationSystem;
+import org.ncbo.stanford.util.helper.StringHelper;
 
 /**
  * Abstract class to contain functionality common to both query and indexing
@@ -45,12 +52,19 @@ public abstract class AbstractSearchService {
 	/**
 	 * Separates the query from the maxNumHits in the cache key
 	 */
-	private static final String CACHE_KEY_SEPARATOR = "|#|";
+	private static final String CACHE_KEY_SEPARATOR = "@@@@@";
 
 	protected Analyzer analyzer;
 	protected String indexPath;
 	protected int defMaxNumHits;
 	protected ExpirationSystem<String, SearchResultListBean> searchResultCache;
+	protected OntologyMetadataManager ontologyMetadataManagerProtege;
+	protected Map<String, OntologyRetrievalManager> ontologyRetrievalHandlerMap = new HashMap<String, OntologyRetrievalManager>(
+			0);
+	protected Map<String, String> ontologyFormatHandlerMap = new HashMap<String, String>(
+			0);
+	protected Map<String, OntologySearchManager> ontologySearchHandlerMap = new HashMap<String, OntologySearchManager>(
+			0);
 
 	// non-injected properties
 	protected IndexSearcher searcher = null;
@@ -58,14 +72,17 @@ public abstract class AbstractSearchService {
 	private Object createSearcherLock = new Object();
 
 	/**
-	 * Executes a query against the Lucene index
+	 * Executes a query against the Lucene index. Does not use caching
 	 * 
 	 * @param query
+	 * @param maxNumHits
+	 * @param subtreeRootConceptId -
+	 *            optional root concept id for sub-tree search
 	 * @return
 	 * @throws Exception
 	 */
-	protected SearchResultListBean runQuery(Query query, Integer maxNumHits)
-			throws Exception {
+	public SearchResultListBean runQuery(Query query, Integer maxNumHits,
+			String subtreeRootConceptId) throws Exception {
 		// check whether the index has changed and if so, reloads the searcher
 		// reloading searcher must be synchronized to avoid null searchers
 		synchronized (createSearcherLock) {
@@ -84,10 +101,26 @@ public abstract class AbstractSearchService {
 		}
 
 		ScoreDoc[] hits = docs.scoreDocs;
-
-		List<String> uniqueDocs = new ArrayList<String>();
 		SearchResultListBean searchResults = new SearchResultListBean(0);
-		
+
+		if (StringHelper.isNullOrNullString(subtreeRootConceptId)) {
+			populateSearchResults(hits, searchResults);
+		} else {
+			populateSearchResults(hits, searchResults, subtreeRootConceptId);
+		}
+
+		if (log.isDebugEnabled()) {
+			log.debug("Total All Hits: " + hits.length);
+			log.debug("Total Unique Hits: " + searchResults.size());
+		}
+
+		return searchResults;
+	}
+
+	private void populateSearchResults(ScoreDoc[] hits,
+			SearchResultListBean searchResults) throws Exception {
+		List<String> uniqueDocs = new ArrayList<String>(0);
+
 		for (int i = 0; i < hits.length; i++) {
 			int docId = hits[i].doc;
 			Document doc = searcher.doc(docId);
@@ -115,21 +148,83 @@ public abstract class AbstractSearchService {
 
 				uniqueDocs.add(uniqueIdent);
 
-//				System.out.println(hits[i].score + " | "
-//						+ searchResult.getContents() + ", Type: "
-//						+ searchResult.getRecordType() + ", PrefName: "
-//						+ searchResult.getPreferredName() + ", Ontology: "
-//						+ searchResult.getOntologyDisplayLabel()
-//						+ ", Concept Id: " + searchResult.getConceptId()
-//						+ ", Concept Id Short: "
-//						+ searchResult.getConceptIdShort());
+				if (log.isDebugEnabled()) {
+					log.debug(getHitAsString(hits[i].score, searchResult));
+				}
 			}
 		}
-		
-		System.out.println("Total All Hits: " + hits.length);
-		System.out.println("Total Unique Hits: " + uniqueDocs.size());
+	}
 
-		return searchResults;
+	private void populateSearchResults(ScoreDoc[] hits,
+			SearchResultListBean searchResults, String subtreeRootConceptId)
+			throws Exception {
+		List<String> uniqueDocs = new ArrayList<String>(0);
+
+		if (hits.length > 0) {
+			int docId = hits[0].doc;
+			Document doc = searcher.doc(docId);
+			Integer ontologyVersionId = new Integer(doc
+					.get(SearchIndexBean.ONTOLOGY_VERSION_ID_FIELD_LABEL));
+			OntologyBean ob = ontologyMetadataManagerProtege
+					.findOntologyOrViewVersionById(ontologyVersionId);
+
+			if (ob == null) {
+				throw new OntologyNotFoundException(
+						OntologyNotFoundException.DEFAULT_MESSAGE
+								+ " (Version Id: " + ontologyVersionId + ")");
+			}
+
+			OntologyRetrievalManager mgr = getRetrievalManager(ob);
+
+			for (int i = 0; i < hits.length; i++) {
+				docId = hits[i].doc;
+				doc = searcher.doc(docId);
+				ontologyVersionId = new Integer(doc
+						.get(SearchIndexBean.ONTOLOGY_VERSION_ID_FIELD_LABEL));
+				String conceptId = doc
+						.get(SearchIndexBean.CONCEPT_ID_FIELD_LABEL);
+				Integer ontologyId = new Integer(doc
+						.get(SearchIndexBean.ONTOLOGY_ID_FIELD_LABEL));
+				String ontologyDisplayLabel = doc
+						.get(SearchIndexBean.ONTOLOGY_DISPLAY_LABEL_FIELD_LABEL);
+				String uniqueIdent = ontologyId + "_" + conceptId;
+
+				if (!uniqueDocs.contains(uniqueIdent)
+						&& (subtreeRootConceptId.equalsIgnoreCase(conceptId) || mgr
+								.hasParent(ob, conceptId, subtreeRootConceptId))) {
+					SearchBean searchResult = new SearchBean(
+							ontologyVersionId,
+							ontologyId,
+							ontologyDisplayLabel,
+							SearchRecordTypeEnum
+									.getFromLabel(doc
+											.get(SearchIndexBean.RECORD_TYPE_FIELD_LABEL)),
+							conceptId,
+							doc
+									.get(SearchIndexBean.CONCEPT_ID_SHORT_FIELD_LABEL),
+							doc.get(SearchIndexBean.PREFERRED_NAME_FIELD_LABEL),
+							doc.get(SearchIndexBean.CONTENTS_FIELD_LABEL));
+					searchResults.add(searchResult);
+					searchResults.addOntologyHit(ontologyVersionId, ontologyId,
+							ontologyDisplayLabel);
+
+					uniqueDocs.add(uniqueIdent);
+
+					if (log.isDebugEnabled()) {
+						log.debug(getHitAsString(hits[i].score, searchResult));
+					}
+				}
+			}
+		}
+	}
+
+	private String getHitAsString(float score, SearchBean searchResult) {
+		return score + " | " + searchResult.getContents() + ", Type: "
+				+ searchResult.getRecordType() + ", PrefName: "
+				+ searchResult.getPreferredName() + ", Ontology: "
+				+ searchResult.getOntologyDisplayLabel() + ", Concept Id: "
+				+ searchResult.getConceptId() + ", Concept Id Short: "
+				+ searchResult.getConceptIdShort();
 	}
 
 	/**
@@ -208,8 +303,10 @@ public abstract class AbstractSearchService {
 		return cacheKey.split(CACHE_KEY_SEPARATOR);
 	}
 
-	protected String composeCacheKey(Query query, Integer maxNumHits) {
-		return query + CACHE_KEY_SEPARATOR + getMaxNumHits(maxNumHits);
+	protected String composeCacheKey(Query query, Integer maxNumHits,
+			String subtreeRootConceptId) {
+		return query + CACHE_KEY_SEPARATOR + getMaxNumHits(maxNumHits)
+				+ CACHE_KEY_SEPARATOR + subtreeRootConceptId;
 	}
 
 	/**
@@ -336,5 +433,47 @@ public abstract class AbstractSearchService {
 	 */
 	private Date getCurrentIndexDate() throws IOException {
 		return new Date(IndexReader.getCurrentVersion(indexPath));
+	}
+
+	private OntologyRetrievalManager getRetrievalManager(OntologyBean ontology) {
+		String formatHandler = ontologyFormatHandlerMap.get(ontology
+				.getFormat().toUpperCase());
+		return ontologyRetrievalHandlerMap.get(formatHandler);
+	}
+
+	/**
+	 * @param ontologyMetadataManagerProtege
+	 *            the ontologyMetadataManagerProtege to set
+	 */
+	public void setOntologyMetadataManagerProtege(
+			OntologyMetadataManager ontologyMetadataManagerProtege) {
+		this.ontologyMetadataManagerProtege = ontologyMetadataManagerProtege;
+	}
+
+	/**
+	 * @param ontologyRetrievalHandlerMap
+	 *            the ontologyRetrievalHandlerMap to set
+	 */
+	public void setOntologyRetrievalHandlerMap(
+			Map<String, OntologyRetrievalManager> ontologyRetrievalHandlerMap) {
+		this.ontologyRetrievalHandlerMap = ontologyRetrievalHandlerMap;
+	}
+
+	/**
+	 * @param ontologyFormatHandlerMap
+	 *            the ontologyFormatHandlerMap to set
+	 */
+	public void setOntologyFormatHandlerMap(
+			Map<String, String> ontologyFormatHandlerMap) {
+		this.ontologyFormatHandlerMap = ontologyFormatHandlerMap;
+	}
+
+	/**
+	 * @param ontologySearchHandlerMap
+	 *            the ontologySearchHandlerMap to set
+	 */
+	public void setOntologySearchHandlerMap(
+			Map<String, OntologySearchManager> ontologySearchHandlerMap) {
+		this.ontologySearchHandlerMap = ontologySearchHandlerMap;
 	}
 }

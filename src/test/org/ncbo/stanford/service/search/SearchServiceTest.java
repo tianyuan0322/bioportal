@@ -3,11 +3,15 @@ package org.ncbo.stanford.service.search;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.fail;
 
+import java.util.ArrayList;
+import java.util.Collection;
+
 import org.apache.lucene.search.Query;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.ncbo.stanford.AbstractBioPortalTest;
 import org.ncbo.stanford.bean.search.SearchBean;
+import org.ncbo.stanford.bean.search.SearchResultListBean;
 import org.ncbo.stanford.util.constants.ApplicationConstants;
 import org.ncbo.stanford.util.paginator.impl.Page;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,6 +28,7 @@ public class SearchServiceTest extends AbstractBioPortalTest {
 	QuerySearchService queryService;
 
 	@Test
+	@Ignore
 	public void testIndexOntology() throws Exception {
 		System.out
 				.println("SearchServiceTest: indexOntology().......................BEGIN");
@@ -40,6 +45,63 @@ public class SearchServiceTest extends AbstractBioPortalTest {
 	}
 
 	@Test
+	public void testSearchBranch() throws Exception {
+		System.out
+				.println("SearchServiceTest: testSearchBranch().......................BEGIN");
+
+		try {
+			String expr;
+			expr = "DOID:1909";
+			expr = "family";
+			// expr = "Blue_Nevus-Like_Melanoma";
+			// expr = "Interferon-Alfa_Lu-177-Monoclonal-Antibody-CC49_Pa";
+			// expr = "Swiss_Albinos_City_of_Hope_Med_Ctr";
+			// expr = "language";
+			// expr = "lun";
+			// expr = "algorith";
+			// expr = "monadic Quality of an object*";
+			// expr = "CHEBI:16069";
+			// expr = "blood-vein";
+			// expr = "Interferon-Alfa_Lu-177-Monoclonal-Antibody-CC49";
+			// expr = "*Clarke's nu*";
+			// expr = "multiply";
+
+			String subtreeRootConceptId;
+			subtreeRootConceptId = "Gene";
+			// subtreeRootConceptId = null;
+
+			Collection<Integer> ontologyIds = new ArrayList<Integer>(0);
+			ontologyIds.add(1032);
+			// ontologyIds.add(1104);
+			// ontologyIds.add(1070);
+			// ontologyIds.add(1107);
+			// ontologyIds.add(1321); // Nemo
+
+			boolean includeProperties = false;
+			boolean isExactMatch = false;
+			Integer maxNumHits = 250;
+
+			Query q = queryService.generateLuceneSearchQuery(ontologyIds, expr,
+					includeProperties, isExactMatch);
+			System.out.println("q: " + q);
+
+			long start = System.currentTimeMillis();
+			SearchResultListBean results = queryService.runQuery(q, maxNumHits,
+					subtreeRootConceptId);
+			long stop = System.currentTimeMillis();
+
+			System.out.println("Excecution Time: " + (double) (stop - start)
+					/ 1000 + " seconds.");
+		} catch (Exception exc) {
+			exc.printStackTrace();
+			fail(exc.getMessage());
+		}
+
+		System.out
+				.println("SearchServiceTest: testSearchBranch().........................DONE");
+	}
+
+	@Test
 	@Repeat(2)
 	@Ignore
 	public void testSearchAllOntologies() throws Exception {
@@ -51,7 +113,7 @@ public class SearchServiceTest extends AbstractBioPortalTest {
 			Query query = queryService.generateLuceneSearchQuery(null, "cell",
 					true, false);
 			Page<SearchBean> results = queryService.executeQuery(query,
-					maxNumHits);
+					maxNumHits, null);
 
 			assertNotNull(results);
 		} catch (Exception exc) {
@@ -74,7 +136,7 @@ public class SearchServiceTest extends AbstractBioPortalTest {
 			Query query = queryService.generateLuceneSearchQuery(null, "lead",
 					true, false);
 			Page<SearchBean> results = queryService.executeQuery(query,
-					maxNumHits);
+					maxNumHits, null);
 
 			assertNotNull(results);
 
@@ -101,7 +163,7 @@ public class SearchServiceTest extends AbstractBioPortalTest {
 		Query query = queryService.generateLuceneSearchQuery(null, "blood",
 				true, false);
 		Page<SearchBean> results = queryService.executeQuery(query, 3, 6,
-				maxNumHits);
+				maxNumHits, null);
 
 		assertNotNull(results);
 

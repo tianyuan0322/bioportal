@@ -65,6 +65,7 @@ public interface RequestParamConstants {
 	public static final String PARAM_MAXNUMHITS = "maxnumhits";
 	public static final String PARAM_QUERY = "query";
 	public static final String PARAM_INCLUDEVIEWS = "includeviews";
+	public static final String PARAM_SUBTREEROOTCONCEPTID = "subtreerootconceptid";
 
 	/**
 	 * Search index parameters

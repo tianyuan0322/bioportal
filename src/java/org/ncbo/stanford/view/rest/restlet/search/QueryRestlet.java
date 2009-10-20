@@ -1,5 +1,6 @@
 package org.ncbo.stanford.view.rest.restlet.search;
 
+import java.net.URLDecoder;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
@@ -8,7 +9,9 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.ncbo.stanford.bean.search.SearchBean;
 import org.ncbo.stanford.service.search.QuerySearchService;
+import org.ncbo.stanford.util.MessageUtils;
 import org.ncbo.stanford.util.RequestUtils;
+import org.ncbo.stanford.util.helper.StringHelper;
 import org.ncbo.stanford.util.paginator.impl.Page;
 import org.ncbo.stanford.view.rest.restlet.AbstractBaseRestlet;
 import org.ncbo.stanford.view.util.constants.RequestParamConstants;
@@ -57,6 +60,9 @@ public class QueryRestlet extends AbstractBaseRestlet {
 				.getParameter(RequestParamConstants.PARAM_PAGENUM);
 		String maxNumHits = (String) httpRequest
 				.getParameter(RequestParamConstants.PARAM_MAXNUMHITS);
+		String subtreeRootConceptId = RequestUtils
+				.parseStringParam((String) httpRequest
+						.getParameter(RequestParamConstants.PARAM_SUBTREEROOTCONCEPTID));
 
 		String query = Reference.decode((String) request.getAttributes().get(
 				RequestParamConstants.PARAM_QUERY));
@@ -71,9 +77,21 @@ public class QueryRestlet extends AbstractBaseRestlet {
 		Page<SearchBean> searchResults = null;
 
 		try {
+			// subtreeRootConceptId requires one and ONLY one ontology id passed
+			// in as a parameter
+			if (!StringHelper.isNullOrNullString(subtreeRootConceptId)
+					&& ontologyIdsInt.size() != 1) {
+				response.setStatus(Status.CLIENT_ERROR_BAD_REQUEST,
+						MessageUtils
+								.getMessage("msg.error.branchsingleontology"));
+			} else if (!StringHelper.isNullOrNullString(subtreeRootConceptId)) {
+				subtreeRootConceptId = URLDecoder.decode(subtreeRootConceptId,
+						MessageUtils.getMessage("default.encoding"));
+			}
+
 			searchResults = queryService.executeQuery(query, ontologyIdsInt,
 					includePropertiesBool, isExactMatchBool, pageSizeInt,
-					pageNumInt, maxNumHitsInt);
+					pageNumInt, maxNumHitsInt, subtreeRootConceptId);
 		} catch (Exception e) {
 			response.setStatus(Status.SERVER_ERROR_INTERNAL, e.getMessage());
 			e.printStackTrace();

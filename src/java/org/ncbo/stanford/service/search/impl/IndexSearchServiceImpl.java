@@ -2,9 +2,7 @@ package org.ncbo.stanford.service.search.impl;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 
 import org.apache.commons.logging.Log;
@@ -15,7 +13,6 @@ import org.apache.lucene.search.Query;
 import org.ncbo.stanford.bean.OntologyBean;
 import org.ncbo.stanford.bean.search.SearchIndexBean;
 import org.ncbo.stanford.bean.search.SearchResultListBean;
-import org.ncbo.stanford.manager.metadata.OntologyMetadataManager;
 import org.ncbo.stanford.manager.search.OntologySearchManager;
 import org.ncbo.stanford.service.search.AbstractSearchService;
 import org.ncbo.stanford.service.search.IndexSearchService;
@@ -38,11 +35,6 @@ public class IndexSearchServiceImpl extends AbstractSearchService implements
 	private String indexBackupPath;
 	private int indexMergeFactor;
 	private int indexMaxMergeDocs;
-	private OntologyMetadataManager ontologyMetadataManagerProtege;
-	private Map<String, String> ontologyFormatHandlerMap = new HashMap<String, String>(
-			0);
-	private Map<String, OntologySearchManager> ontologySearchHandlerMap = new HashMap<String, OntologySearchManager>(
-			0);
 
 	/**
 	 * Recreate the index of all ontologies, overwriting the existing one
@@ -54,7 +46,7 @@ public class IndexSearchServiceImpl extends AbstractSearchService implements
 	public void indexAllOntologies(boolean doBackup, boolean doOptimize)
 			throws Exception {
 		long start = System.currentTimeMillis();
-		
+
 		List<OntologyBean> ontologies = ontologyMetadataManagerProtege
 				.findLatestActiveOntologyOrOntologyViewVersions();
 
@@ -120,12 +112,12 @@ public class IndexSearchServiceImpl extends AbstractSearchService implements
 				indexPath, analyzer);
 		writer.setMergeFactor(indexMergeFactor);
 		writer.setMaxMergeDocs(indexMaxMergeDocs);
-		
+
 		List<OntologyBean> ontologies = ontologyMetadataManagerProtege
 				.findLatestActiveOntologyOrOntologyViewVersions(ontologyIdList);
 
 		removeOntologies(writer, ontologyIdList, doBackup, false, true);
-		
+
 		if (!ontologies.isEmpty()) {
 			indexOntologies(writer, ontologies, false, doOptimize);
 		}
@@ -399,7 +391,7 @@ public class IndexSearchServiceImpl extends AbstractSearchService implements
 
 			try {
 				results = runQuery(parser.parse(splitKey[0]), Integer
-						.parseInt(splitKey[1]));
+						.parseInt(splitKey[1]), splitKey[2]);
 			} catch (Exception e) {
 				results = null;
 				e.printStackTrace();
@@ -465,31 +457,5 @@ public class IndexSearchServiceImpl extends AbstractSearchService implements
 	 */
 	public void setIndexMaxMergeDocs(int indexMaxMergeDocs) {
 		this.indexMaxMergeDocs = indexMaxMergeDocs;
-	}
-
-	/**
-	 * @param ontologyFormatHandlerMap
-	 *            the ontologyFormatHandlerMap to set
-	 */
-	public void setOntologyFormatHandlerMap(
-			Map<String, String> ontologyFormatHandlerMap) {
-		this.ontologyFormatHandlerMap = ontologyFormatHandlerMap;
-	}
-
-	/**
-	 * @param ontologySearchHandlerMap
-	 *            the ontologySearchHandlerMap to set
-	 */
-	public void setOntologySearchHandlerMap(
-			Map<String, OntologySearchManager> ontologySearchHandlerMap) {
-		this.ontologySearchHandlerMap = ontologySearchHandlerMap;
-	}
-
-	/**
-	 * @param ontologyMetadataManagerProtege the ontologyMetadataManagerProtege to set
-	 */
-	public void setOntologyMetadataManagerProtege(
-			OntologyMetadataManager ontologyMetadataManagerProtege) {
-		this.ontologyMetadataManagerProtege = ontologyMetadataManagerProtege;
 	}
 }

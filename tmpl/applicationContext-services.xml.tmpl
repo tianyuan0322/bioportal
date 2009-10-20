@@ -664,6 +664,18 @@
 		<property name="searchResultCache">
 			<ref bean="paginatableCache" />
 		</property>
+		<property name="ontologyMetadataManagerProtege">
+			<ref bean="ontologyMetadataManagerProtege" />
+		</property>
+		<property name="ontologyRetrievalHandlerMap">
+			<ref local="ontologyRetrievalHandlerMap" />
+		</property>
+		<property name="ontologyFormatHandlerMap">
+			<ref local="ontologyFormatHandlerMap" />
+		</property>
+		<property name="ontologySearchHandlerMap">
+			<ref local="ontologySearchHandlerMap" />
+		</property>
 	</bean>
 
 	<bean id="querySearchService"
@@ -682,15 +694,6 @@
 		</property>
 		<property name="indexMaxMergeDocs">
 			<value>@bioportalsearchindexmaxmergedocs@</value>
-		</property>
-		<property name="ontologyMetadataManagerProtege">
-			<ref bean="ontologyMetadataManagerProtege" />
-		</property>
-		<property name="ontologyFormatHandlerMap">
-			<ref local="ontologyFormatHandlerMap" />
-		</property>
-		<property name="ontologySearchHandlerMap">
-			<ref local="ontologySearchHandlerMap" />
 		</property>
 	</bean>
 
@@ -1137,25 +1140,29 @@
 		</constructor-arg>
 	</bean>
 
-	<bean id="metadataOntologyDomainInstPrefix" class="java.lang.String">
+	<bean id="metadataOntologyDomainInstPrefix"
+		class="java.lang.String">
 		<constructor-arg>
 			<value>@metadataontologydomaininstprefix@</value>
 		</constructor-arg>
 	</bean>
 
-	<bean id="metadataOntologyDomainInstSuffix" class="java.lang.String">
+	<bean id="metadataOntologyDomainInstSuffix"
+		class="java.lang.String">
 		<constructor-arg>
 			<value>@metadataontologydomaininstsuffix@</value>
 		</constructor-arg>
 	</bean>
 
-	<bean id="metadataOntologyGroupInstPrefix" class="java.lang.String">
+	<bean id="metadataOntologyGroupInstPrefix"
+		class="java.lang.String">
 		<constructor-arg>
 			<value>@metadataontologygroupinstprefix@</value>
 		</constructor-arg>
 	</bean>
 
-	<bean id="metadataOntologyGroupInstSuffix" class="java.lang.String">
+	<bean id="metadataOntologyGroupInstSuffix"
+		class="java.lang.String">
 		<constructor-arg>
 			<value>@metadataontologygroupinstsuffix@</value>
 		</constructor-arg>
@@ -1173,25 +1180,29 @@
 		</constructor-arg>
 	</bean>
 
-	<bean id="metadataOntologyViewInstPrefix" class="java.lang.String">
+	<bean id="metadataOntologyViewInstPrefix"
+		class="java.lang.String">
 		<constructor-arg>
 			<value>@metadataontologyviewinstprefix@</value>
 		</constructor-arg>
 	</bean>
 
-	<bean id="metadataOntologyViewInstSuffix" class="java.lang.String">
+	<bean id="metadataOntologyViewInstSuffix"
+		class="java.lang.String">
 		<constructor-arg>
 			<value>@metadataontologyviewinstsuffix@</value>
 		</constructor-arg>
 	</bean>
 
-	<bean id="metadataVirtualOntologyInstPrefix" class="java.lang.String">
+	<bean id="metadataVirtualOntologyInstPrefix"
+		class="java.lang.String">
 		<constructor-arg>
 			<value>@metadatavirtualontologyinstprefix@</value>
 		</constructor-arg>
 	</bean>
 
-	<bean id="metadataVirtualOntologyInstSuffix" class="java.lang.String">
+	<bean id="metadataVirtualOntologyInstSuffix"
+		class="java.lang.String">
 		<constructor-arg>
 			<value>@metadatavirtualontologyinstsuffix@</value>
 		</constructor-arg>
@@ -1213,5 +1224,5 @@
 		<constructor-arg>
 			<value>@oborepositoriesconfigfilepath@</value>
 		</constructor-arg>
-	</bean>	
+	</bean>
 </beans>
