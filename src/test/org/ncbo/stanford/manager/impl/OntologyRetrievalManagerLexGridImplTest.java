@@ -124,6 +124,22 @@ public class OntologyRetrievalManagerLexGridImplTest extends
 	}
 
 	@Test
+	public void testOBOFindLightConceptCell() throws Exception {
+		System.out.println("testOBOFindConceptCell()");
+
+		OntologyBean ncboOntology = retrievalManager
+				.getLatestNcboOntology(TEST_OBO_CELL_DISPLAY_LABEL);
+		String conceptID = "CL:0000255";
+		ClassBean classBean = retrievalManager.findLightConcept(ncboOntology,
+				conceptID);
+		System.out.println("Concept " + conceptID + " of cell ontology is \n"
+				+ classBean);
+		System.out.println("\n");
+		assertTrue(classBean.getId().equalsIgnoreCase(conceptID));
+	}
+
+	
+	@Test
 	public void testOBOFindConceptNonExistentCell() throws Exception {
 		System.out.println("testOBOFindConceptNonExistentCell()");
 
