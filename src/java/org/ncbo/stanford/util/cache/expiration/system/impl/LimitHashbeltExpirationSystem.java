@@ -76,7 +76,7 @@ public class LimitHashbeltExpirationSystem<K, V> extends
 				}
 
 				if (log.isDebugEnabled()) {
-					printContainers("Containers after LRU:");
+					log.debug(getContainersAsString("Containers after LRU:"));
 				}
 			} else {
 				numObjects++;
@@ -125,15 +125,15 @@ public class LimitHashbeltExpirationSystem<K, V> extends
 		HashbeltContainer<K, V> expiredContainer = super.expireObjects();
 		numObjects -= expiredContainer.size();
 
-		if (log.isDebugEnabled()) {
-			log.debug("numObjects after expire: " + numObjects);
-			printContainers("Containers after expire:");
+		if (log.isInfoEnabled()) {
+			log.info("numObjects after expire: " + numObjects);
+			log.info(getContainersAsString("Containers after expire:"));
 		}
 
 		return expiredContainer;
 	}
 
-	private void printContainers(String label) {
+	private String getContainersAsString(String label) {
 		StringBuffer sb = new StringBuffer();
 
 		sb.append(label + " {");
@@ -144,6 +144,6 @@ public class LimitHashbeltExpirationSystem<K, V> extends
 
 		sb.append("}\n");
 
-		log.debug(sb.toString());
+		return sb.toString();
 	}
 }
