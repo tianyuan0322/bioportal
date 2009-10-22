@@ -105,8 +105,8 @@ public class OntologyRetrievalManagerLexGridImpl extends
 		ResolvedConceptReferenceList rcrl = getHierarchyRootConcepts(
 				schemeName, csvt, light);
 		return createThingClassBeanWithCount(rcrl);
-	}	
-	
+	}
+
 	/**
 	 * Get the root concept for the specified ontology.
 	 */
@@ -152,18 +152,40 @@ public class OntologyRetrievalManagerLexGridImpl extends
 		}
 		return null;
 	}
-	
+
 	/**
-	 * Find just the concept with only the subClass relation populated. Makes use of the
-	 * CodedNodeSet and the hierarchy API of LexBIG to implement
+	 * Find just the concept with all the relations. Makes use of the
+	 * CodedNodeGraph of LexBIG to implement
 	 * 
 	 * @param ncboOntology
 	 * @param conceptId
 	 * @return
 	 * @throws Exception
 	 */
-	public ClassBean findLightConcept(OntologyBean ncboOntology, String conceptId)
-			throws Exception {
+	public ClassBean findConcept(OntologyBean ncboOntology, String conceptId,
+			boolean light) throws Exception {
+		ClassBean concept = null;
+
+		if (light) {
+			concept = findLightConcept(ncboOntology, conceptId);
+		} else {
+			concept = findConcept(ncboOntology, conceptId);
+		}
+
+		return concept;
+	}
+
+	/**
+	 * Find just the concept with only the subClass relation populated. Makes
+	 * use of the CodedNodeSet and the hierarchy API of LexBIG to implement
+	 * 
+	 * @param ncboOntology
+	 * @param conceptId
+	 * @return
+	 * @throws Exception
+	 */
+	public ClassBean findLightConcept(OntologyBean ncboOntology,
+			String conceptId) throws Exception {
 		log.debug("findLightConcept= " + conceptId);
 		long startTime = System.currentTimeMillis();
 		String schemeName = getLexGridCodingSchemeName(ncboOntology);
@@ -176,23 +198,23 @@ public class OntologyRetrievalManagerLexGridImpl extends
 			log.warn("Can not process request when the conceptId is blank");
 			return null;
 		}
-		ResolvedConceptReference rcr= getLightResolvedConceptReference(ncboOntology, conceptId);
+		ResolvedConceptReference rcr = getLightResolvedConceptReference(
+				ncboOntology, conceptId);
 		long endTime = System.currentTimeMillis();
 		log.debug("Time to resolve codednodeset=" + (endTime - startTime));
 		// Analyze the result ...
-		if (rcr != null ) {			
+		if (rcr != null) {
 			// Add the children
 			ClassBean classBean = createClassBeanWithChildCount(rcr, true);
 			log.debug("Time to create classBean="
 					+ (System.currentTimeMillis() - endTime));
-			classBean= createSimpleSubClassOnlyClassBean(classBean, false);			
+			classBean = createSimpleSubClassOnlyClassBean(classBean, false);
 			log.debug("return findLightConcept= " + conceptId + " Time taken="
 					+ (System.currentTimeMillis() - startTime));
 			return classBean;
 		}
 		return null;
 	}
-	
 
 	/**
 	 * Find just the concept with all the relations. Makes use of the
@@ -438,9 +460,10 @@ public class OntologyRetrievalManagerLexGridImpl extends
 
 		return classBeans;
 	}
-	
-	public boolean hasParent(OntologyBean ncboOntology, String childConceptId, String parentConceptId) throws Exception {
-		boolean isRelated= false;
+
+	public boolean hasParent(OntologyBean ncboOntology, String childConceptId,
+			String parentConceptId) throws Exception {
+		boolean isRelated = false;
 		String schemeName = getLexGridCodingSchemeName(ncboOntology);
 		CodingSchemeVersionOrTag csvt = getLexGridCodingSchemeVersion(ncboOntology);
 		String hierarchyId = getDefaultHierarchyId(schemeName, csvt);
@@ -449,21 +472,27 @@ public class OntologyRetrievalManagerLexGridImpl extends
 		SupportedHierarchy sh = supHiers[0];
 		for (String associationName : sh.getAssociationNames()) {
 			// We need to be careful about the direction flag
-			 CodedNodeGraph cng = lbs.getNodeGraph(schemeName, csvt, null);
-			 boolean related= false;
-			 if (sh.isIsForwardNavigable()) {
-				 related= cng.areCodesRelated(ConvenienceMethods.createNameAndValue(associationName, schemeName),
-			                ConvenienceMethods.createConceptReference(parentConceptId, schemeName), ConvenienceMethods
-			                        .createConceptReference(childConceptId, schemeName), false);
-			 } else {
-		        related= cng.areCodesRelated(ConvenienceMethods.createNameAndValue(associationName, schemeName),
-		                ConvenienceMethods.createConceptReference(childConceptId, schemeName), ConvenienceMethods
-		                        .createConceptReference(parentConceptId, schemeName), false);
-			 }
-			 if (related)  {
-				 return related;
-			 }
-		}		
+			CodedNodeGraph cng = lbs.getNodeGraph(schemeName, csvt, null);
+			boolean related = false;
+			if (sh.isIsForwardNavigable()) {
+				related = cng.areCodesRelated(ConvenienceMethods
+						.createNameAndValue(associationName, schemeName),
+						ConvenienceMethods.createConceptReference(
+								parentConceptId, schemeName),
+						ConvenienceMethods.createConceptReference(
+								childConceptId, schemeName), false);
+			} else {
+				related = cng.areCodesRelated(ConvenienceMethods
+						.createNameAndValue(associationName, schemeName),
+						ConvenienceMethods.createConceptReference(
+								childConceptId, schemeName), ConvenienceMethods
+								.createConceptReference(parentConceptId,
+										schemeName), false);
+			}
+			if (related) {
+				return related;
+			}
+		}
 		return isRelated;
 	}
 
@@ -654,7 +683,8 @@ public class OntologyRetrievalManagerLexGridImpl extends
 	 * @throws Exception
 	 */
 	private ResolvedConceptReferenceList getHierarchyRootConcepts(
-			String schemeName, CodingSchemeVersionOrTag csvt, boolean light) throws Exception {
+			String schemeName, CodingSchemeVersionOrTag csvt, boolean light)
+			throws Exception {
 		// Iterate through all hierarchies ...
 		String hierarchyId = getDefaultHierarchyId(schemeName, csvt);
 		ResolvedConceptReferenceList rcrl = lbscm.getHierarchyRoots(schemeName,
@@ -1201,9 +1231,9 @@ public class OntologyRetrievalManagerLexGridImpl extends
 		for (int i = 0; i < count; i++) {
 			p = entry.getPresentation(i);
 			if (!p.getIsPreferred().booleanValue()) {
-				//Add a abstraction for getting all the Synonyms..gforge #1351
-				addStringToHashMapsArrayList(map, ApplicationConstants.SYNONYM, p.getValue()
-						.getContent());
+				// Add a abstraction for getting all the Synonyms..gforge #1351
+				addStringToHashMapsArrayList(map, ApplicationConstants.SYNONYM,
+						p.getValue().getContent());
 				if (StringUtils.isNotBlank(p.getDegreeOfFidelity())) {
 					String key = p.getDegreeOfFidelity() + " SYNONYM";
 					addStringToHashMapsArrayList(map, key, p.getValue()

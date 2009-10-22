@@ -50,7 +50,7 @@ public class ConceptServiceImpl implements ConceptService {
 	 */
 	@SuppressWarnings("unchecked")
 	public ClassBean findRootConcept(Integer ontologyVersionId,
-			Integer maxNumChildren) throws Exception {
+			Integer maxNumChildren, boolean light) throws Exception {
 		OntologyBean ontology = ontologyMetadataManagerProtege
 				.findOntologyOrViewVersionById(ontologyVersionId);
 
@@ -61,7 +61,7 @@ public class ConceptServiceImpl implements ConceptService {
 		}
 
 		ClassBean concept = getRetrievalManager(ontology).findRootConcept(
-				ontology);
+				ontology, light);
 
 		// temporary fix to remove long list of siblings
 		if (concept != null && maxNumChildren != null) {
@@ -79,7 +79,7 @@ public class ConceptServiceImpl implements ConceptService {
 
 	@SuppressWarnings("unchecked")
 	public ClassBean findConcept(Integer ontologyVersionId, String conceptId,
-			Integer maxNumChildren) throws Exception {
+			Integer maxNumChildren, boolean light) throws Exception {
 		OntologyBean ontology = ontologyMetadataManagerProtege
 				.findOntologyOrViewVersionById(ontologyVersionId);
 
@@ -90,7 +90,7 @@ public class ConceptServiceImpl implements ConceptService {
 		}
 
 		ClassBean concept = getRetrievalManager(ontology).findConcept(ontology,
-				conceptId);
+				conceptId, light);
 
 		// temporary fix to remove long list of siblings
 		if (concept != null && maxNumChildren != null) {

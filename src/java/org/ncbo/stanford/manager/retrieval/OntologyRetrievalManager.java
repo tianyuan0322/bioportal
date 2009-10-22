@@ -13,10 +13,11 @@ import org.ncbo.stanford.bean.concept.ClassBean;
  * @author Michael Dorf
  */
 public interface OntologyRetrievalManager {
-	public ClassBean findConcept(OntologyBean ob, String conceptId)
-			throws Exception;
+	public ClassBean findConcept(OntologyBean ob, String conceptId,
+			boolean light) throws Exception;
 
-	public ClassBean findRootConcept(OntologyBean ob) throws Exception;
+	public ClassBean findRootConcept(OntologyBean ob, boolean light)
+			throws Exception;
 
 	public ClassBean findPathFromRoot(OntologyBean ob, String conceptId,
 			boolean light) throws Exception;

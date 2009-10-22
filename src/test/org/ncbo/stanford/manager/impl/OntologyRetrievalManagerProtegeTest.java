@@ -17,7 +17,7 @@ import org.springframework.beans.factory.annotation.Autowired;
  * @author Benjamin Dai
  */
 public class OntologyRetrievalManagerProtegeTest extends AbstractBioPortalTest {
-	private final static int TEST_ONT_VERSION_ID = 38657;
+	private final static int TEST_ONT_VERSION_ID = 13578;
 	private final static String TEST_CONCEPT_ID = "http://www.w3.org/2002/07/owl#Class";
 	private final static String TEST_CONCEPT_NAME = "http://www.co-ode.org/ontologies/pizza/2005/10/18/pizza.owl#Pizza";
 
@@ -73,7 +73,7 @@ public class OntologyRetrievalManagerProtegeTest extends AbstractBioPortalTest {
 	public void testGetRootNode() throws Exception {
 		OntologyBean version = ontologyMetadataManagerProtege
 				.findOntologyOrViewVersionById(TEST_ONT_VERSION_ID);
-		ClassBean conceptBean = ocMgr.findRootConcept(version);
+		ClassBean conceptBean = ocMgr.findRootConcept(version, false);
 
 		System.out.println("ROOT");
 

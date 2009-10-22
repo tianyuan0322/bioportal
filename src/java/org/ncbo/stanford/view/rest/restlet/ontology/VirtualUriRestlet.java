@@ -1,7 +1,5 @@
 package org.ncbo.stanford.view.rest.restlet.ontology;
 
-import java.net.URLDecoder;
-
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.logging.Log;
@@ -92,18 +90,15 @@ public class VirtualUriRestlet extends AbstractBaseRestlet {
 					if (conceptId
 							.equalsIgnoreCase(RequestParamConstants.PARAM_ROOT_CONCEPT)) {
 						returnObject = conceptService.findRootConcept(ontBean
-								.getId(), maxNumChildrenInt);
+								.getId(), maxNumChildrenInt, false);
 					} else if (conceptId
 							.equalsIgnoreCase(RequestParamConstants.PARAM_ALL_CONCEPTS)) {
 						returnObject = conceptService.findAllConcepts(
 								new OntologyIdBean(ontologyId), offsetInt,
 								limitInt);
 					} else {
-						// URL Decode the concept Id
-						conceptId = URLDecoder.decode(conceptId, MessageUtils
-								.getMessage("default.encoding"));
 						returnObject = conceptService.findConcept(ontBean
-								.getId(), conceptId, maxNumChildrenInt);
+								.getId(), conceptId, maxNumChildrenInt, false);
 					}
 
 					if (returnObject == null) {

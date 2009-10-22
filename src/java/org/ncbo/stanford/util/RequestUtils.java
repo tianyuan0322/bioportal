@@ -3,8 +3,10 @@ package org.ncbo.stanford.util;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStreamWriter;
+import java.io.UnsupportedEncodingException;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.net.URLDecoder;
 import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.Date;
@@ -210,15 +212,15 @@ public class RequestUtils {
 	public static void setHttpServletResponse(Response response,
 			Status statusCode, MediaType mediaType, String content) {
 		response.setStatus(statusCode);
-		
-		Representation r = new StringRepresentation(content, mediaType);	
+
+		Representation r = new StringRepresentation(content, mediaType);
 		HttpServletResponse servletResponse = getHttpServletResponse(response);
 		String charEncoding = servletResponse.getCharacterEncoding();
-		
+
 		if (charEncoding != null) {
 			r.setCharacterSet(new CharacterSet(charEncoding));
 		}
-		
+
 		response.setEntity(r);
 	}
 
@@ -277,14 +279,14 @@ public class RequestUtils {
 
 		return val;
 	}
-	
+
 	public static String parseStringParam(String value) {
 		if (value != null) {
 			value = value.trim();
 		}
-		
+
 		return value;
-	}	
+	}
 
 	public static Date parseDateParam(String dateVal) {
 		return DateHelper.getDateFrom(StringHelper.removeSpaces(dateVal));
@@ -310,24 +312,49 @@ public class RequestUtils {
 
 	public static List<Integer> parseIntegerListParam(String[] integerListParam) {
 		List<Integer> integerList = new ArrayList<Integer>(0);
-		
+
 		for (String integerParam : integerListParam) {
 			if (!StringHelper.isNullOrNullString(integerParam)) {
 				integerParam = StringHelper.removeSpaces(integerParam);
 				try {
-					//simplified solution: just parses the String input to an Integer 
-					//Integer integerParamInt = Integer.parseInt(integerParam);
-					//integerList.add(integerParamInt);
-					
-					//combining the two solutions (i.e. also parsing each string input for multiple Integer values)
+					// simplified solution: just parses the String input to an
+					// Integer
+					// Integer integerParamInt = Integer.parseInt(integerParam);
+					// integerList.add(integerParamInt);
+
+					// combining the two solutions (i.e. also parsing each
+					// string input for multiple Integer values)
 					List<Integer> integerParamInts = parseIntegerListParam(integerParam);
 					integerList.addAll(integerParamInts);
 				} catch (NumberFormatException e) {
 				}
 			}
 		}
-		
+
 		return integerList;
+	}
+
+	public static String getAttributeOrRequestParam(String name, Request request) {
+		String param = (String) request.getAttributes().get(name);
+
+		// See if the param being passed via query string
+		if (StringHelper.isNullOrNullString(param)) {
+			HttpServletRequest httpRequest = getHttpServletRequest(request);
+			param = (String) httpRequest
+					.getParameter(RequestParamConstants.PARAM_CONCEPT_ID);
+		}
+
+		if (param != null) {
+			try {
+				param = URLDecoder.decode(param, MessageUtils
+						.getMessage("default.encoding"));
+			} catch (UnsupportedEncodingException e) {
+				// this shouldn't happen
+				e.printStackTrace();
+			}
+		}
+
+		return param;
 	}
 
 	/**

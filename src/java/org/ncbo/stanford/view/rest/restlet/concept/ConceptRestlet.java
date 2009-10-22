@@ -1,7 +1,5 @@
 package org.ncbo.stanford.view.rest.restlet.concept;
 
-import java.net.URLDecoder;
-
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.logging.Log;
@@ -50,12 +48,15 @@ public class ConceptRestlet extends AbstractBaseRestlet {
 				.getParameter(RequestParamConstants.PARAM_OFFSET);
 		String limit = (String) httpRequest
 				.getParameter(RequestParamConstants.PARAM_LIMIT);
+		String light = (String) httpRequest
+				.getParameter(RequestParamConstants.PARAM_LIGHT);
 
 		String conceptId = getConceptId(request);
 		Integer maxNumChildrenInt = RequestUtils
 				.parseIntegerParam(maxNumChildren);
 		Integer offsetInt = RequestUtils.parseIntegerParam(offset);
 		Integer limitInt = RequestUtils.parseIntegerParam(limit);
+		Boolean lightBool = RequestUtils.parseBooleanParam(light);
 
 		try {
 			Integer ontologyVersionIdInt = Integer.parseInt(ontologyVersionId);
@@ -67,7 +68,7 @@ public class ConceptRestlet extends AbstractBaseRestlet {
 					.equalsIgnoreCase(RequestParamConstants.PARAM_ROOT_CONCEPT)) {
 				// root concept
 				concept = conceptService.findRootConcept(ontologyVersionIdInt,
-						maxNumChildrenInt);
+						maxNumChildrenInt, lightBool);
 			} else if (conceptId
 					.equalsIgnoreCase(RequestParamConstants.PARAM_ALL_CONCEPTS)) {
 				// all concepts
@@ -76,16 +77,13 @@ public class ConceptRestlet extends AbstractBaseRestlet {
 						offsetInt, limitInt);
 			} else {
 				// specific concept
-				// URL Decode the concept Id
-				conceptId = URLDecoder.decode(conceptId, MessageUtils
-						.getMessage("default.encoding"));
 				concept = conceptService.findConcept(ontologyVersionIdInt,
-						conceptId, maxNumChildrenInt);
+						conceptId, maxNumChildrenInt, lightBool);
 			}
 
 			if (concept == null) {
-				response.setStatus(Status.CLIENT_ERROR_NOT_FOUND,
-						MessageUtils.getMessage("msg.error.conceptNotFound"));
+				response.setStatus(Status.CLIENT_ERROR_NOT_FOUND, MessageUtils
+						.getMessage("msg.error.conceptNotFound"));
 			}
 		} catch (NumberFormatException nfe) {
 			response.setStatus(Status.CLIENT_ERROR_BAD_REQUEST, nfe

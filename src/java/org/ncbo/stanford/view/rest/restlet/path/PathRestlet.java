@@ -38,10 +38,11 @@ public class PathRestlet extends AbstractBaseRestlet {
 	 */
 	private void findPathFromRoot(Request request, Response response) {
 		ClassBean concept = null;
-		String source = (String) request.getAttributes().get(
-				RequestParamConstants.PARAM_SOURCE);
-		String target = (String) request.getAttributes().get(
-				RequestParamConstants.PARAM_TARGET);
+
+		String source = RequestUtils.getAttributeOrRequestParam(
+				RequestParamConstants.PARAM_SOURCE, request);
+		String target = RequestUtils.getAttributeOrRequestParam(
+				RequestParamConstants.PARAM_TARGET, request);
 		String ontologyVersionId = (String) request.getAttributes().get(
 				MessageUtils.getMessage("entity.ontologyversionid"));
 		HttpServletRequest httpRequest = RequestUtils
@@ -55,44 +56,45 @@ public class PathRestlet extends AbstractBaseRestlet {
 		Integer maxNumChildrenInt = RequestUtils
 				.parseIntegerParam(maxNumChildren);
 
-		// See if concept id is being passed through param for full URL id
-		// concepts
 		if (StringHelper.isNullOrNullString(source)
-				&& StringHelper.isNullOrNullString(target)) {
-			source = (String) httpRequest
-					.getParameter(RequestParamConstants.PARAM_SOURCE);
-			target = (String) httpRequest
-					.getParameter(RequestParamConstants.PARAM_TARGET);
-		}
+				|| StringHelper.isNullOrNullString(target)) {
+			response.setStatus(Status.CLIENT_ERROR_BAD_REQUEST, MessageUtils
+					.getMessage("msg.error.sourcetargetrequired"));
+		} else {
+			try {
+				Integer ontologyVersionIdInt = Integer
+						.parseInt(ontologyVersionId);
 
-		try {
-			Integer ontologyVersionIdInt = Integer.parseInt(ontologyVersionId);
+				if (target
+						.equalsIgnoreCase(RequestParamConstants.PARAM_ROOT_CONCEPT)) {
+					concept = conceptService.findPathFromRoot(
+							ontologyVersionIdInt, source, lightBool,
+							maxNumChildrenInt);
+				} else {
+					// This is for when you are finding path from source to
+					// target--
+					// Not Implemented Yet
+				}
 
-			if (target
-					.equalsIgnoreCase(RequestParamConstants.PARAM_ROOT_CONCEPT)) {
-				concept = conceptService.findPathFromRoot(ontologyVersionIdInt,
-						source, lightBool, maxNumChildrenInt);
-			} else {
-				// This is for when you are finding path from source to target--
-				// Not Implemented Yet
+				if (concept == null) {
+					response.setStatus(Status.CLIENT_ERROR_NOT_FOUND,
+							MessageUtils
+									.getMessage("msg.error.conceptNotFound"));
+				}
+			} catch (NumberFormatException nfe) {
+				response.setStatus(Status.CLIENT_ERROR_BAD_REQUEST, nfe
+						.getMessage());
+			} catch (OntologyNotFoundException onfe) {
+				response.setStatus(Status.CLIENT_ERROR_BAD_REQUEST, onfe
+						.getMessage());
+			} catch (Exception e) {
+				e.printStackTrace();
+				response.setStatus(Status.CLIENT_ERROR_BAD_REQUEST, e
+						.getMessage());
+			} finally {
+				xmlSerializationService.generateXMLResponse(request, response,
+						concept);
 			}
-
-			if (concept == null) {
-				response.setStatus(Status.CLIENT_ERROR_NOT_FOUND,
-						"Concept not found");
-			}
-		} catch (NumberFormatException nfe) {
-			response.setStatus(Status.CLIENT_ERROR_BAD_REQUEST, nfe
-					.getMessage());
-		} catch (OntologyNotFoundException onfe) {
-			response.setStatus(Status.CLIENT_ERROR_BAD_REQUEST, onfe
-					.getMessage());
-		} catch (Exception e) {
-			e.printStackTrace();
-			response.setStatus(Status.CLIENT_ERROR_BAD_REQUEST, e.getMessage());
-		} finally {
-			xmlSerializationService.generateXMLResponse(request, response,
-					concept);
 		}
 	}
 

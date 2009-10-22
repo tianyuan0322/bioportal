@@ -12,7 +12,6 @@ import org.ncbo.stanford.service.xml.XMLSerializationService;
 import org.ncbo.stanford.util.MessageUtils;
 import org.ncbo.stanford.util.RequestUtils;
 import org.ncbo.stanford.util.helper.BeanHelper;
-import org.ncbo.stanford.util.helper.StringHelper;
 import org.ncbo.stanford.view.util.constants.RequestParamConstants;
 import org.restlet.Restlet;
 import org.restlet.data.Method;
@@ -79,10 +78,10 @@ public abstract class AbstractBaseRestlet extends Restlet {
 		}
 
 		// disabling logging temporarily because of performance issues
-//		if (logRequests() && isValidRequest
-//				&& response.getStatus().equals(Status.SUCCESS_OK)) {
-//			logRequest(request);
-//		}
+		// if (logRequests() && isValidRequest
+		// && response.getStatus().equals(Status.SUCCESS_OK)) {
+		// logRequest(request);
+		// }
 	}
 
 	private boolean handleDeleteRequest(Request request, Response response,
@@ -197,19 +196,8 @@ public abstract class AbstractBaseRestlet extends Restlet {
 	}
 
 	protected String getConceptId(Request request) {
-		String conceptId = (String) request.getAttributes().get(
-				MessageUtils.getMessage("entity.conceptid"));
-
-		// See if concept ID is being passed through param for full URL ID
-		// concepts
-		if (StringHelper.isNullOrNullString(conceptId)) {
-			HttpServletRequest httpRequest = RequestUtils
-					.getHttpServletRequest(request);
-			conceptId = (String) httpRequest
-					.getParameter(RequestParamConstants.PARAM_CONCEPT_ID);
-		}
-
-		return conceptId;
+		return RequestUtils.getAttributeOrRequestParam(MessageUtils
+				.getMessage("entity.conceptid"), request);
 	}
 
 	private List<Integer> getIntegerList(HttpServletRequest httpRequest,

@@ -63,31 +63,42 @@ public class OntologyRetrievalManagerProtegeImpl extends
 	/**
 	 * Get the root concept for the specified ontology.
 	 */
-	public ClassBean findRootConcept(OntologyBean ontologyVersion) {
+	public ClassBean findRootConcept(OntologyBean ontologyVersion, boolean light) {
 		KnowledgeBase kb = getKnowledgeBase(ontologyVersion);
 		Slot synonymSlot = getSynonymSlot(kb, ontologyVersion.getSynonymSlot());
+		ClassBean targetClass = null;
 
 		// Get all root nodes associated with this ontology. Then iterate
 		// through the collection, returning the first one.
 		Cls oThing = kb.getRootCls();
 
 		if (oThing != null) {
-			return createClassBean(oThing, true, synonymSlot);
+			if (light) {
+				targetClass = buildLightConcept(oThing);
+			} else {
+				targetClass = createClassBean(oThing, true, synonymSlot);
+			}
 		}
 
-		return null;
+		return targetClass;
 	}
 
-	public ClassBean findConcept(OntologyBean ontologyVersion, String conceptId) {
+	public ClassBean findConcept(OntologyBean ontologyVersion,
+			String conceptId, boolean light) {
 		KnowledgeBase kb = getKnowledgeBase(ontologyVersion);
 		Slot synonymSlot = getSynonymSlot(kb, ontologyVersion.getSynonymSlot());
 		Cls owlClass = getCls(conceptId, kb);
+		ClassBean targetClass = null;
 
 		if (owlClass != null) {
-			return createClassBean(owlClass, true, synonymSlot);
+			if (light) {
+				targetClass = buildLightConcept(owlClass);
+			} else {
+				targetClass = createClassBean(owlClass, true, synonymSlot);
+			}
 		}
 
-		return null;
+		return targetClass;
 	}
 
 	public ClassBean findPathFromRoot(OntologyBean ontologyVersion,
@@ -139,6 +150,15 @@ public class OntologyRetrievalManagerProtegeImpl extends
 		return cls;
 	}
 
+	private ClassBean buildLightConcept(Cls cls) {
+		ClassBean targetClass = createLightClassBean(cls);
+		List<ClassBean> children = convertLightBeans(getUniqueClasses(cls
+				.getDirectSubclasses()));
+		targetClass.addRelation(ApplicationConstants.SUB_CLASS, children);
+
+		return targetClass;
+	}
+
 	private ClassBean buildPath(Collection nodes, boolean light) {
 		ClassBean rootBean = null;
 		ClassBean currentBean = null;
@@ -187,8 +207,9 @@ public class OntologyRetrievalManagerProtegeImpl extends
 		List<ClassBean> beans = new ArrayList<ClassBean>();
 
 		for (Cls cls : protegeClses) {
-			if (cls.isVisible())
+			if (cls.isVisible()) {
 				beans.add(createLightClassBean(cls));
+			}
 		}
 
 		return beans;
@@ -200,9 +221,10 @@ public class OntologyRetrievalManagerProtegeImpl extends
 		List<ClassBean> beans = new ArrayList<ClassBean>();
 
 		for (Cls cls : protegeClses) {
-			if (cls.isVisible())
+			if (cls.isVisible()) {
 				beans.add(createClassBean(cls, recursive, synonymSlot,
 						recursionMap));
+			}
 		}
 
 		return beans;
@@ -235,6 +257,7 @@ public class OntologyRetrievalManagerProtegeImpl extends
 		if (recursionMap.containsKey(cls)) {
 			return recursionMap.get(cls);
 		}
+
 		boolean isOwl = cls.getKnowledgeBase() instanceof OWLModel;
 
 		ClassBean classBean = new ClassBean();
