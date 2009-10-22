@@ -53,6 +53,7 @@ public class SearchServiceTest extends AbstractBioPortalTest {
 			String expr;
 			expr = "DOID:1909";
 			expr = "family";
+			expr = "hydro";
 			// expr = "Blue_Nevus-Like_Melanoma";
 			// expr = "Interferon-Alfa_Lu-177-Monoclonal-Antibody-CC49_Pa";
 			// expr = "Swiss_Albinos_City_of_Hope_Med_Ctr";
@@ -68,12 +69,13 @@ public class SearchServiceTest extends AbstractBioPortalTest {
 
 			String subtreeRootConceptId;
 			subtreeRootConceptId = "Gene";
-			// subtreeRootConceptId = null;
+			subtreeRootConceptId = "GO:0012501";
+			subtreeRootConceptId = null;
 
 			Collection<Integer> ontologyIds = new ArrayList<Integer>(0);
-			ontologyIds.add(1032);
+			// ontologyIds.add(1032);
 			// ontologyIds.add(1104);
-			// ontologyIds.add(1070);
+			ontologyIds.add(1070);
 			// ontologyIds.add(1107);
 			// ontologyIds.add(1321); // Nemo
 
