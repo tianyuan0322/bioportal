@@ -120,6 +120,7 @@ public abstract class AbstractSearchService {
 	private void populateSearchResults(ScoreDoc[] hits,
 			SearchResultListBean searchResults) throws Exception {
 		List<String> uniqueDocs = new ArrayList<String>(0);
+		long start = System.currentTimeMillis();
 
 		for (int i = 0; i < hits.length; i++) {
 			int docId = hits[i].doc;
@@ -153,12 +154,19 @@ public abstract class AbstractSearchService {
 				}
 			}
 		}
+
+		if (log.isDebugEnabled()) {
+			long stop = System.currentTimeMillis();
+			log.debug("Search Result Population Time (no branch): "
+					+ (double) (stop - start) / 1000 + " seconds.");
+		}
 	}
 
 	private void populateSearchResults(ScoreDoc[] hits,
 			SearchResultListBean searchResults, String subtreeRootConceptId)
 			throws Exception {
 		List<String> uniqueDocs = new ArrayList<String>(0);
+		long start = System.currentTimeMillis();
 
 		if (hits.length > 0) {
 			int docId = hits[0].doc;
@@ -215,6 +223,12 @@ public abstract class AbstractSearchService {
 					}
 				}
 			}
+		}
+
+		if (log.isDebugEnabled()) {
+			long stop = System.currentTimeMillis();
+			log.debug("Search Result Population Time (branch): "
+					+ (double) (stop - start) / 1000 + " seconds.");
 		}
 	}
 
