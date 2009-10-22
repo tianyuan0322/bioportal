@@ -46,6 +46,18 @@ public class OntologyRetrievalManagerLexGridImplTest extends
 	}
 
 	@Test
+	public void testFindOBORootConceptLightCell() throws Exception {
+		System.out.println("testFindOBORootConceptLightCell()");
+
+		OntologyBean ncboOntology = retrievalManager
+				.getLatestNcboOntology(TEST_OBO_CELL_DISPLAY_LABEL);
+		ClassBean classBean = retrievalManager.findRootConcept(ncboOntology, true);
+		System.out.println("Root concept is \n" + classBean);
+		System.out.println("\n");
+		assertTrue(classBean != null);
+	}
+	
+	@Test
 	public void testFindOBORootConceptCellOld() throws Exception {
 		System.out.println("testFindOBORootConceptCellOld()");
 

@@ -93,6 +93,23 @@ public class OntologyRetrievalManagerLexGridImpl extends
 	/**
 	 * Get the root concept for the specified ontology.
 	 */
+	public ClassBean findRootConcept(OntologyBean ncboOntology, boolean light)
+			throws Exception {
+		String schemeName = getLexGridCodingSchemeName(ncboOntology);
+		if (StringUtils.isBlank(schemeName)) {
+			log
+					.warn("Can not process request when the codingSchemeURI is blank");
+			return null;
+		}
+		CodingSchemeVersionOrTag csvt = getLexGridCodingSchemeVersion(ncboOntology);
+		ResolvedConceptReferenceList rcrl = getHierarchyRootConcepts(
+				schemeName, csvt, light);
+		return createThingClassBeanWithCount(rcrl);
+	}	
+	
+	/**
+	 * Get the root concept for the specified ontology.
+	 */
 	public ClassBean findRootConcept(OntologyBean ncboOntology)
 			throws Exception {
 		String schemeName = getLexGridCodingSchemeName(ncboOntology);
@@ -103,7 +120,7 @@ public class OntologyRetrievalManagerLexGridImpl extends
 		}
 		CodingSchemeVersionOrTag csvt = getLexGridCodingSchemeVersion(ncboOntology);
 		ResolvedConceptReferenceList rcrl = getHierarchyRootConcepts(
-				schemeName, csvt);
+				schemeName, csvt, false);
 		return createThingClassBeanWithCount(rcrl);
 	}
 
@@ -309,7 +326,7 @@ public class OntologyRetrievalManagerLexGridImpl extends
 			// Check if the conceptId is the root itself. If so, we want to add
 			// the root concept to the classBeans list
 			ResolvedConceptReferenceList hier_rcrl = getHierarchyRootConcepts(
-					schemeName, csvt);
+					schemeName, csvt, false);
 			Enumeration<ResolvedConceptReference> refEnum = hier_rcrl
 					.enumerateResolvedConceptReference();
 			ResolvedConceptReference ref = null;
@@ -331,7 +348,7 @@ public class OntologyRetrievalManagerLexGridImpl extends
 		ClassBean thingBean = createThingClassBean(classBeans);
 		if (includeChildren) {
 			ResolvedConceptReferenceList rcrl = getHierarchyRootConcepts(
-					schemeName, csvt);
+					schemeName, csvt, false);
 			ArrayList<ClassBean> rootConceptList = createClassBeanArray(rcrl,
 					true);
 			ArrayList<ClassBean> mergedConceptList = mergeListsEliminatingDuplicates(
@@ -637,11 +654,11 @@ public class OntologyRetrievalManagerLexGridImpl extends
 	 * @throws Exception
 	 */
 	private ResolvedConceptReferenceList getHierarchyRootConcepts(
-			String schemeName, CodingSchemeVersionOrTag csvt) throws Exception {
+			String schemeName, CodingSchemeVersionOrTag csvt, boolean light) throws Exception {
 		// Iterate through all hierarchies ...
 		String hierarchyId = getDefaultHierarchyId(schemeName, csvt);
 		ResolvedConceptReferenceList rcrl = lbscm.getHierarchyRoots(schemeName,
-				csvt, hierarchyId);
+				csvt, hierarchyId, !light);
 		return rcrl;
 	}
 
