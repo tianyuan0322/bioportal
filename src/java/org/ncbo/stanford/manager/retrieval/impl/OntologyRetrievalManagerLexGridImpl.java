@@ -135,6 +135,47 @@ public class OntologyRetrievalManagerLexGridImpl extends
 		}
 		return null;
 	}
+	
+	/**
+	 * Find just the concept with only the subClass relation populated. Makes use of the
+	 * CodedNodeSet and the hierarchy API of LexBIG to implement
+	 * 
+	 * @param ncboOntology
+	 * @param conceptId
+	 * @return
+	 * @throws Exception
+	 */
+	public ClassBean findLightConcept(OntologyBean ncboOntology, String conceptId)
+			throws Exception {
+		log.debug("findLightConcept= " + conceptId);
+		long startTime = System.currentTimeMillis();
+		String schemeName = getLexGridCodingSchemeName(ncboOntology);
+		if (StringUtils.isBlank(schemeName)) {
+			log
+					.warn("Can not process request when the codingSchemeURI is blank");
+			return null;
+		}
+		if (StringUtils.isBlank(conceptId)) {
+			log.warn("Can not process request when the conceptId is blank");
+			return null;
+		}
+		ResolvedConceptReference rcr= getLightResolvedConceptReference(ncboOntology, conceptId);
+		long endTime = System.currentTimeMillis();
+		log.debug("Time to resolve codednodeset=" + (endTime - startTime));
+		// Analyze the result ...
+		if (rcr != null ) {			
+			// Add the children
+			ClassBean classBean = createClassBeanWithChildCount(rcr, true);
+			log.debug("Time to create classBean="
+					+ (System.currentTimeMillis() - endTime));
+			classBean= createSimpleSubClassOnlyClassBean(classBean, false);			
+			log.debug("return findLightConcept= " + conceptId + " Time taken="
+					+ (System.currentTimeMillis() - startTime));
+			return classBean;
+		}
+		return null;
+	}
+	
 
 	/**
 	 * Find just the concept with all the relations. Makes use of the
