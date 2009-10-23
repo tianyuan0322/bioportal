@@ -69,16 +69,18 @@ public class OntologyLoadManagerProtegeImpl extends
 					+ filePath);
 		}
 
-		log.debug("Loading ontology file: " + ontologyFile.getName());
+		if (log.isDebugEnabled()) {
+			log.debug("Loading ontology file: " + ontologyFile.getName());
+		}
 
 		// If the ontology file is small, use the fast non-streaming Protege
 		// load code.
 		List errors = new ArrayList();
-		Integer ontologyId = ob.getId();
-		String tableName = getTableName(ontologyId);
+		Integer ontologyVersionId = ob.getId();
+		String tableName = getTableName(ontologyVersionId);
 
 		// Clear knowledgebase cache for this item
-		protegeKnowledgeBases.remove(ontologyId);
+		protegeKnowledgeBases.remove(ontologyVersionId);
 
 		Project dbProject = null;
 
@@ -111,7 +113,12 @@ public class OntologyLoadManagerProtegeImpl extends
 						.getSources(), protegeJdbcDriver, protegeJdbcUrl,
 						tableName, protegeJdbcUsername, protegeJdbcPassword);
 
-				dbProject.createDomainKnowledgeBase(factory, errors, true);
+				try {
+					dbProject.createDomainKnowledgeBase(factory, errors, true);
+				} catch (RuntimeException re) {
+					dbProject.dispose();
+					throw re;
+				}
 
 				try {
 					FactoryUtils.writeOntologyAndPrefixInfo(
@@ -163,6 +170,10 @@ public class OntologyLoadManagerProtegeImpl extends
 			dbProject.save(errors);
 		}
 
+		if (dbProject != null) {
+			dbProject.dispose();
+		}
+
 		// If errors are found during the load, log the errors and throw an
 		// exception.
 		if (errors.size() > 0) {
@@ -173,39 +184,45 @@ public class OntologyLoadManagerProtegeImpl extends
 	}
 
 	public void cleanup(OntologyBean ontologyBean) throws Exception {
-		Integer ontologyId = ontologyBean.getId();
-		if (ontologyId == null) {
-			throw new Exception("cleanup method called with invalid ontologyBean: ontologyId is null!");
-		}
-		String tableName = getTableName(ontologyId);
+		Integer ontologyVersionId = ontologyBean.getId();
 		
+		if (ontologyVersionId == null) {
+			throw new Exception(
+					"cleanup method called with invalid ontologyBean: ontologyVersionId is null!");
+		}
+
+		String tableName = getTableName(ontologyVersionId);
+		// Clear knowledgebase cache for this item
+		protegeKnowledgeBases.remove(ontologyVersionId);
+
 		Exception ex = null;
 		Connection c = null;
+		
 		try {
-			c = DriverManager.getConnection(protegeJdbcUrl, protegeJdbcUsername, protegeJdbcPassword);
+			c = DriverManager.getConnection(protegeJdbcUrl,
+					protegeJdbcUsername, protegeJdbcPassword);
 			Statement stmt;
 			stmt = c.createStatement();
 			stmt.execute("DROP TABLE IF EXISTS " + tableName);
 		} catch (Exception e) {
-			//e.printStackTrace();
+			// e.printStackTrace();
 			ex = e;
-		}
-		finally {
+		} finally {
 			try {
-				if ( c != null && (! c.isClosed()) ) {
+				if (c != null && (!c.isClosed())) {
 					c.close();
 				}
 			} catch (SQLException e) {
-				//e.printStackTrace();
+				// e.printStackTrace();
 				ex = e;
 			}
-			
+
 			if (ex != null) {
 				throw ex;
 			}
 		}
 	}
-	
+
 	public OntologyMetricsBean extractOntologyMetrics(OntologyBean ontologyBean)
 			throws Exception {
 		KnowledgeBase kb = getKnowledgeBase(ontologyBean);
@@ -214,13 +231,14 @@ public class OntologyLoadManagerProtegeImpl extends
 		String documentationProperty = ontologyBean.getDocumentationSlot();
 		String authorProperty = ontologyBean.getAuthorSlot();
 		String propertyWithUniqueValue = ontologyBean.getSlotWithUniqueValue();
-		Integer preferredMaximumSubclassLimit = ontologyBean.getPreferredMaximumSubclassLimit();
-		
+		Integer preferredMaximumSubclassLimit = ontologyBean
+				.getPreferredMaximumSubclassLimit();
+
 		OntologyMetricsCalculator ontologyMetricsCalculator = new OntologyMetricsCalculator(
 				kb, documentationProperty, authorProperty,
 				propertyWithUniqueValue, preferredMaximumSubclassLimit);
 		ontologyMetricsCalculator.populateOntologyMetrics(mb);
-		
+
 		mb.setId(ontologyBean.getId());
 		return mb;
 	}
