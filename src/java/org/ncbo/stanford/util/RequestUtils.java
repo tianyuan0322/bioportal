@@ -340,8 +340,7 @@ public class RequestUtils {
 		// See if the param being passed via query string
 		if (StringHelper.isNullOrNullString(param)) {
 			HttpServletRequest httpRequest = getHttpServletRequest(request);
-			param = (String) httpRequest
-					.getParameter(RequestParamConstants.PARAM_CONCEPT_ID);
+			param = (String) httpRequest.getParameter(name);
 		}
 
 		if (param != null) {
