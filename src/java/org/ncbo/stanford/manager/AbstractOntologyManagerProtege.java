@@ -146,7 +146,7 @@ public abstract class AbstractOntologyManagerProtege {
 				if (other == null) {
 					protegeKnowledgeBases.put(ontology.getId(), kb);
 				} else {
-					kb.dispose();
+					kb.getProject().dispose();
 					kb = other;
 				}
 			}
