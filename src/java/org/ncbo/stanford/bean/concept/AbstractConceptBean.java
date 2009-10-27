@@ -5,6 +5,8 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import org.ncbo.stanford.util.constants.ApplicationConstants;
+
 /**
  * Abstract class that represents the base bean for any ontology concept (class,
  * property or instance)
@@ -18,6 +20,7 @@ public abstract class AbstractConceptBean {
 	protected String fullId;
 	protected String label;
 	protected Byte isTopLevel;
+	protected Byte isBrowsable = new Byte(ApplicationConstants.TRUE);
 	protected HashMap<Object, Object> relations = new HashMap<Object, Object>();
 
 	/**
@@ -191,6 +194,21 @@ public abstract class AbstractConceptBean {
 		this.isTopLevel = isTopLevel;
 	}
 
+	/**
+	 * @return the isBrowsable
+	 */
+	public Byte getIsBrowsable() {
+		return isBrowsable;
+	}
+
+	/**
+	 * @param isBrowsable
+	 *            the isBrowsable to set
+	 */
+	public void setIsBrowsable(Byte isBrowsable) {
+		this.isBrowsable = isBrowsable;
+	}
+
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -202,6 +220,8 @@ public abstract class AbstractConceptBean {
 		int result = 1;
 		result = prime * result + ((fullId == null) ? 0 : fullId.hashCode());
 		result = prime * result + ((id == null) ? 0 : id.hashCode());
+		result = prime * result
+				+ ((isBrowsable == null) ? 0 : isBrowsable.hashCode());
 		result = prime * result
 				+ ((isTopLevel == null) ? 0 : isTopLevel.hashCode());
 		result = prime * result + ((label == null) ? 0 : label.hashCode());
@@ -235,6 +255,11 @@ public abstract class AbstractConceptBean {
 			if (other.id != null)
 				return false;
 		} else if (!id.equals(other.id))
+			return false;
+		if (isBrowsable == null) {
+			if (other.isBrowsable != null)
+				return false;
+		} else if (!isBrowsable.equals(other.isBrowsable))
 			return false;
 		if (isTopLevel == null) {
 			if (other.isTopLevel != null)
