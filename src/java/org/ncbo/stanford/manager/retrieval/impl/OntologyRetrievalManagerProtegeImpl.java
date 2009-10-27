@@ -87,14 +87,17 @@ public class OntologyRetrievalManagerProtegeImpl extends
 			String conceptId, boolean light) {
 		KnowledgeBase kb = getKnowledgeBase(ontologyVersion);
 		Slot synonymSlot = getSynonymSlot(kb, ontologyVersion.getSynonymSlot());
-		Cls owlClass = getCls(conceptId, kb);
+		Frame owlClass = getFrame(conceptId, kb);
 		ClassBean targetClass = null;
 
 		if (owlClass != null) {
-			if (light) {
-				targetClass = buildLightConcept(owlClass);
+			if (!(owlClass instanceof Cls)) {
+				targetClass = createBaseClassBean(owlClass);
+				targetClass.setIsBrowsable(ApplicationConstants.FALSE);
+			} else if (light) {
+				targetClass = buildLightConcept((Cls) owlClass);
 			} else {
-				targetClass = createClassBean(owlClass, true, synonymSlot);
+				targetClass = createClassBean((Cls) owlClass, true, synonymSlot);
 			}
 		}
 
@@ -103,11 +106,16 @@ public class OntologyRetrievalManagerProtegeImpl extends
 
 	public ClassBean findPathFromRoot(OntologyBean ontologyVersion,
 			String conceptId, boolean light) {
+		ClassBean rootPath = null;
 		KnowledgeBase kb = getKnowledgeBase(ontologyVersion);
-		Cls cls = getCls(conceptId, kb);
-		Collection nodes = ModelUtilities.getPathToRoot(cls);
+		Frame cls = getFrame(conceptId, kb);
 
-		return buildPath(nodes, light);
+		if (cls instanceof Cls) {
+			Collection nodes = ModelUtilities.getPathToRoot((Cls) cls);
+			rootPath = buildPath(nodes, light);
+		}
+
+		return rootPath;
 	}
 
 	public ClassBean findParent(String id, Integer ontologyVersionId) {
@@ -128,7 +136,7 @@ public class OntologyRetrievalManagerProtegeImpl extends
 	//
 
 	// This is to remove the URI reference that is used by protege for IDs
-	private String getId(Cls node) {
+	private String getId(Frame node) {
 		if (node instanceof RDFResource) {
 			RDFResource rdfNode = (RDFResource) node;
 			return NamespaceUtil.getPrefixedName(rdfNode.getOWLModel(), rdfNode
@@ -138,16 +146,24 @@ public class OntologyRetrievalManagerProtegeImpl extends
 		}
 	}
 
-	private Cls getCls(String conceptId, KnowledgeBase kb) {
-		Cls cls = null;
+	private Frame getFrame(String conceptId, KnowledgeBase kb) {
+		Frame frame = null;
 
 		if (kb instanceof OWLModel) {
-			cls = ((OWLModel) kb).getRDFSNamedClass(conceptId);
+			frame = ((OWLModel) kb).getRDFSNamedClass(conceptId);
+
+			if (frame == null) {
+				frame = ((OWLModel) kb).getRDFResource(conceptId);
+			}
 		} else {
-			cls = kb.getCls(conceptId);
+			frame = kb.getCls(conceptId);
+
+			if (frame == null) {
+				frame = kb.getFrame(conceptId);
+			}
 		}
 
-		return cls;
+		return frame;
 	}
 
 	private ClassBean buildLightConcept(Cls cls) {
@@ -235,13 +251,18 @@ public class OntologyRetrievalManagerProtegeImpl extends
 	}
 
 	private ClassBean createLightClassBean(Cls cls) {
-		ClassBean classBean = new ClassBean();
-		classBean.setId(getId(cls));
-		classBean.setFullId(cls.getName());
-
-		classBean.setLabel(getBrowserText(cls));
+		ClassBean classBean = createBaseClassBean(cls);
 		classBean.addRelation(ApplicationConstants.CHILD_COUNT,
 				getUniqueClasses(cls.getDirectSubclasses()).size());
+
+		return classBean;
+	}
+
+	private ClassBean createBaseClassBean(Frame frame) {
+		ClassBean classBean = new ClassBean();
+		classBean.setId(getId(frame));
+		classBean.setFullId(frame.getName());
+		classBean.setLabel(getBrowserText(frame));
 
 		return classBean;
 	}
@@ -260,12 +281,7 @@ public class OntologyRetrievalManagerProtegeImpl extends
 
 		boolean isOwl = cls.getKnowledgeBase() instanceof OWLModel;
 
-		ClassBean classBean = new ClassBean();
-		classBean.setId(getId(cls));
-		classBean.setFullId(cls.getName());
-
-		classBean.setLabel(getBrowserText(cls));
-
+		ClassBean classBean = createBaseClassBean(cls);
 		recursionMap.put(cls, classBean);
 
 		// add properties
@@ -406,11 +422,12 @@ public class OntologyRetrievalManagerProtegeImpl extends
 	public boolean hasParent(OntologyBean ontologyVersion,
 			String childConceptId, String parentConceptId) throws Exception {
 		KnowledgeBase kb = getKnowledgeBase(ontologyVersion);
-		Cls clsChild = getCls(childConceptId, kb);
-		Cls clsParent = getCls(parentConceptId, kb);
+		Frame clsChild = getFrame(childConceptId, kb);
+		Frame clsParent = getFrame(parentConceptId, kb);
 
-		if (clsChild != null && clsParent != null
-				&& clsChild.hasSuperclass(clsParent)) {
+		if (clsChild != null && clsParent != null && clsChild instanceof Cls
+				&& clsParent instanceof Cls
+				&& ((Cls) clsChild).hasSuperclass((Cls) clsParent)) {
 			return true;
 		}
 
