@@ -31,7 +31,7 @@ public class IndexRestlet extends AbstractBaseRestlet {
 	 */
 	@Override
 	public void postRequest(Request request, Response response) {
-//		indexAllOntologies(request, response);
+		indexAllOntologies(request, response);
 	}
 
 	/**
