@@ -71,6 +71,22 @@ public abstract class AbstractOntologyManagerProtege {
 	private Object createOwlModelLock = new Object();
 	private String METADATA_TABLE_NAME = "metadata";
 
+	/**
+	 * Programmatically reloads the metadata ontology stored in the memory
+	 */
+	public void reloadMetadataOWLModel() {
+		if (log.isDebugEnabled()) {
+			log.debug("Reloading metadata...");
+		}
+
+		synchronized (createOwlModelLock) {
+			if (owlModel != null) {
+				owlModel.getProject().dispose();
+				owlModel = createMetadataKnowledgeBaseInstance();
+			}
+		}
+	}
+
 	// to collide with the user-uploaded
 	// Protege tables
 
@@ -239,7 +255,6 @@ public abstract class AbstractOntologyManagerProtege {
 		return owlModel;
 	}
 
-	@SuppressWarnings("unchecked")
 	protected OWLModel getMetadataOWLModel() {
 		synchronized (createOwlModelLock) {
 			if (owlModel == null) {
