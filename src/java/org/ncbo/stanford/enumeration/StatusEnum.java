@@ -15,7 +15,8 @@ public enum StatusEnum {
 			new Integer(MessageUtils.getMessage("ncbo.status.ready"))), STATUS_PARSING(
 			new Integer(MessageUtils.getMessage("ncbo.status.parsing"))), STATUS_ERROR(
 			new Integer(MessageUtils.getMessage("ncbo.status.error"))), STATUS_NOTAPPLICABLE(
-			new Integer(MessageUtils.getMessage("ncbo.status.notapplicable")));
+			new Integer(MessageUtils.getMessage("ncbo.status.notapplicable"))), STATUS_DEPRECATED(
+			new Integer(MessageUtils.getMessage("ncbo.status.deprecated")));
 
 	private final Integer status;
 

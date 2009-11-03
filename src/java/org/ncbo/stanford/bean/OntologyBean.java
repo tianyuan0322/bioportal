@@ -12,15 +12,15 @@ import org.apache.commons.fileupload.FileItem;
 import org.ncbo.stanford.domain.generated.NcboLStatus;
 import org.ncbo.stanford.domain.generated.NcboOntologyFile;
 import org.ncbo.stanford.domain.generated.NcboOntologyLoadQueue;
-import org.ncbo.stanford.util.MessageUtils;
+import org.ncbo.stanford.enumeration.StatusEnum;
 import org.ncbo.stanford.util.constants.ApplicationConstants;
 
 public class OntologyBean {
 
 	private Integer id;
 	private Integer ontologyId;
-	//virtual view id(s) on the virtual ontology
-	private List<Integer> virtualViewIds = new ArrayList<Integer>(0); 
+	// virtual view id(s) on the virtual ontology
+	private List<Integer> virtualViewIds = new ArrayList<Integer>(0);
 	private Integer internalVersionNumber;
 	private Integer userId;
 	private String versionNumber;
@@ -51,7 +51,7 @@ public class OntologyBean {
 	private String authorSlot;
 	private String slotWithUniqueValue;
 	private Integer preferredMaximumSubclassLimit;
-	
+
 	private boolean isView = false;
 
 	// category id(s)
@@ -59,7 +59,7 @@ public class OntologyBean {
 
 	// group id(s)
 	private List<Integer> groupIds = new ArrayList<Integer>(0);
-	
+
 	// file name(s)
 	private List<String> filenames = new ArrayList<String>(0);
 
@@ -70,7 +70,7 @@ public class OntologyBean {
 	private String filePath;
 
 	// views on this ontology version
-	private List<Integer> hasViews = new ArrayList<Integer>(0); 
+	private List<Integer> hasViews = new ArrayList<Integer>(0);
 
 	// view specific properties
 	private List<Integer> viewOnOntologyVersionId = new ArrayList<Integer>(0);
@@ -78,11 +78,10 @@ public class OntologyBean {
 	private String viewDefinitionLanguage;
 	private String viewGenerationEngine;
 
-	
 	public OntologyBean(boolean isView) {
 		this.isView = isView;
 	}
-	
+
 	/**
 	 * Populates the OntologyBean to a NcboOntologyFile Entity. OntologyVersion
 	 * should have been populated from OntologyBean before making this call.
@@ -90,7 +89,7 @@ public class OntologyBean {
 	 * @param ontologyFileList
 	 */
 
-	public void populateToFileEntity(List<NcboOntologyFile> ontologyFileList) {		
+	public void populateToFileEntity(List<NcboOntologyFile> ontologyFileList) {
 		for (String fileName : filenames) {
 			NcboOntologyFile ontologyFile = new NcboOntologyFile();
 			ontologyFile.setFilename(fileName);
@@ -100,28 +99,30 @@ public class OntologyBean {
 	}
 
 	/**
-	 * This method should execute all the updates necessary in the ontological metadata implementation
-	 * that were previously done in {@link #populateToVersionEntity(NcboOntologyVersion)} method
+	 * This method should execute all the updates necessary in the ontological
+	 * metadata implementation that were previously done in
+	 * {@link #populateToVersionEntity(NcboOntologyVersion)} method
 	 */
 	public void updateIfNecessary() {
-		//TODO: implement
+		// TODO: implement
 	}
 
 	/**
-	 * NOTE: This method should replicate the {@link #populateDefaultStatus(NcboLStatus)}
-	 * method an is to be used in the ontological metadata implementation
-	 *  
-	 * Returns default status, i.e. "1"(waiting) for local
-	 * upload, "5"(notapplicable) for remote.
+	 * NOTE: This method should replicate the
+	 * {@link #populateDefaultStatus(NcboLStatus)} method an is to be used in
+	 * the ontological metadata implementation
+	 * 
+	 * Returns default status, i.e. "1"(waiting) for local upload,
+	 * "5"(notapplicable) for remote.
 	 */
 	public Integer getDefaultStatus() {
 		if (this.isRemote()) {
-			return new Integer(MessageUtils.getMessage("ncbo.status.notapplicable"));
+			return StatusEnum.STATUS_NOTAPPLICABLE.getStatus();
 		} else {
-			return new Integer(MessageUtils.getMessage("ncbo.status.waiting"));
+			return StatusEnum.STATUS_WAITING.getStatus();
 		}
 	}
-	
+
 	/**
 	 * Populates a NcboOntologyLoadQueue Entity from this ontologyBean.
 	 * OntologyVersion should have been populated from OntologyBean before
@@ -156,7 +157,7 @@ public class OntologyBean {
 		if (viewDef != null && viewDef.length() > max) {
 			viewDef = viewDef.substring(0, max) + "...";
 		}
-		
+
 		String name = isView ? "OntologyView " : "Ontology ";
 
 		return name + "{Id: " + this.getId() + ", Ontology Id: "
@@ -223,7 +224,8 @@ public class OntologyBean {
 	}
 
 	/**
-	 * @param virtualViewIds the virtualViewIds to set
+	 * @param virtualViewIds
+	 *            the virtualViewIds to set
 	 */
 	public void setVirtualViewIds(List<Integer> virtualViewIds) {
 		this.virtualViewIds = virtualViewIds;
@@ -561,14 +563,14 @@ public class OntologyBean {
 	public boolean addCategoryIds(Collection<? extends Integer> c) {
 		return categoryIds.addAll(c);
 	}
-	
+
 	/**
 	 * @return the groupIds
 	 */
 	public List<Integer> getGroupIds() {
 		return groupIds;
 	}
-	
+
 	/**
 	 * @param groupIds
 	 *            the groupIds to set
@@ -576,7 +578,7 @@ public class OntologyBean {
 	public void setGroupIds(List<Integer> groupIds) {
 		this.groupIds = groupIds;
 	}
-	
+
 	/**
 	 * @param arg0
 	 * @return
@@ -585,7 +587,7 @@ public class OntologyBean {
 	public boolean addGroupId(Integer arg0) {
 		return groupIds.add(arg0);
 	}
-	
+
 	/**
 	 * @param c
 	 * @return
@@ -692,11 +694,9 @@ public class OntologyBean {
 	 */
 	public void populateDefaultStatus(NcboLStatus status) {
 		if (this.isRemote()) {
-			status.setId(new Integer(MessageUtils
-					.getMessage("ncbo.status.notapplicable")));
+			status.setId(StatusEnum.STATUS_NOTAPPLICABLE.getStatus());
 		} else {
-			status.setId(new Integer(MessageUtils
-					.getMessage("ncbo.status.waiting")));
+			status.setId(StatusEnum.STATUS_WAITING.getStatus());
 		}
 	}
 
@@ -779,7 +779,8 @@ public class OntologyBean {
 	}
 
 	/**
-	 * @param documentationSlot the documentationSlot to set
+	 * @param documentationSlot
+	 *            the documentationSlot to set
 	 */
 	public void setDocumentationSlot(String documentationSlot) {
 		this.documentationSlot = documentationSlot;
@@ -793,7 +794,8 @@ public class OntologyBean {
 	}
 
 	/**
-	 * @param authorSlot the authorSlot to set
+	 * @param authorSlot
+	 *            the authorSlot to set
 	 */
 	public void setAuthorSlot(String authorSlot) {
 		this.authorSlot = authorSlot;
@@ -807,7 +809,8 @@ public class OntologyBean {
 	}
 
 	/**
-	 * @param slotWithUniqueValue the slotWithUniqueValue to set
+	 * @param slotWithUniqueValue
+	 *            the slotWithUniqueValue to set
 	 */
 	public void setSlotWithUniqueValue(String slotWithUniqueValue) {
 		this.slotWithUniqueValue = slotWithUniqueValue;
@@ -821,9 +824,11 @@ public class OntologyBean {
 	}
 
 	/**
-	 * @param preferredMaximumSubclassLimit the preferredMaximumSubclassLimit to set
+	 * @param preferredMaximumSubclassLimit
+	 *            the preferredMaximumSubclassLimit to set
 	 */
-	public void setPreferredMaximumSubclassLimit(Integer preferredMaximumSubclassLimit) {
+	public void setPreferredMaximumSubclassLimit(
+			Integer preferredMaximumSubclassLimit) {
 		this.preferredMaximumSubclassLimit = preferredMaximumSubclassLimit;
 	}
 
@@ -835,7 +840,8 @@ public class OntologyBean {
 	}
 
 	/**
-	 * @param isView the isView to set
+	 * @param isView
+	 *            the isView to set
 	 */
 	public void setView(boolean isView) {
 		this.isView = isView;
@@ -849,7 +855,8 @@ public class OntologyBean {
 	}
 
 	/**
-	 * @param hasViews the hasViews to set
+	 * @param hasViews
+	 *            the hasViews to set
 	 */
 	public void setHasViews(List<Integer> hasViews) {
 		this.hasViews = hasViews;
