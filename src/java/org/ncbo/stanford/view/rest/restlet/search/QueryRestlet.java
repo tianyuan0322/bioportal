@@ -40,6 +40,14 @@ public class QueryRestlet extends AbstractBaseRestlet {
 	}
 
 	/**
+	 * Handle PUT calls here
+	 */
+	@Override
+	public void putRequest(Request request, Response response) {
+		reloadSearchCache(request, response);
+	}
+	
+	/**
 	 * Execute search
 	 * 
 	 * @param request
@@ -100,6 +108,20 @@ public class QueryRestlet extends AbstractBaseRestlet {
 			// generate response XML
 			xmlSerializationService.generateXMLResponse(request, response,
 					searchResults);
+		}
+	}
+
+	private void reloadSearchCache(Request request, Response response) {
+		try {
+			queryService.reloadSearchCache();
+		} catch (Exception e) {
+			response.setStatus(Status.SERVER_ERROR_INTERNAL, e.getMessage());
+			e.printStackTrace();
+			log.error(e);
+		} finally {
+			// generate response XML
+			xmlSerializationService
+					.generateStatusXMLResponse(request, response);
 		}
 	}
 

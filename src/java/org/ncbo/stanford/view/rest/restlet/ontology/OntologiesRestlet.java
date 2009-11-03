@@ -41,6 +41,14 @@ public class OntologiesRestlet extends AbstractBaseRestlet {
 	}
 
 	/**
+	 * Handle PUT calls here
+	 */
+	@Override
+	public void putRequest(Request request, Response response) {
+		reloadMetadataOntology(request, response);
+	}
+
+	/**
 	 * Return to the response a listing of ontologies
 	 * 
 	 * @param response
@@ -83,7 +91,8 @@ public class OntologiesRestlet extends AbstractBaseRestlet {
 								.createFileHandler(ontologyBean.getFormat()),
 						ontologyBean.getFileItem());
 
-				ontologyService.createOntologyOrView(ontologyBean, filePathHandler);
+				ontologyService.createOntologyOrView(ontologyBean,
+						filePathHandler);
 			}
 		} catch (Exception e) {
 			response.setStatus(Status.SERVER_ERROR_INTERNAL, e.getMessage());
@@ -93,6 +102,20 @@ public class OntologiesRestlet extends AbstractBaseRestlet {
 			// generate response XML
 			xmlSerializationService.generateXMLResponse(request, response,
 					ontologyBean);
+		}
+	}
+
+	private void reloadMetadataOntology(Request request, Response response) {
+		try {
+			ontologyService.reloadMetadataOntology();
+		} catch (Exception e) {
+			response.setStatus(Status.SERVER_ERROR_INTERNAL, e.getMessage());
+			e.printStackTrace();
+			log.error(e);
+		} finally {
+			// generate response XML
+			xmlSerializationService
+					.generateStatusXMLResponse(request, response);
 		}
 	}
 

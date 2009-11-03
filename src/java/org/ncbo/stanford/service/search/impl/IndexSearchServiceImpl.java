@@ -3,16 +3,12 @@ package org.ncbo.stanford.service.search.impl;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.lucene.index.Term;
-import org.apache.lucene.queryParser.QueryParser;
 import org.apache.lucene.search.Query;
 import org.ncbo.stanford.bean.OntologyBean;
-import org.ncbo.stanford.bean.search.SearchIndexBean;
-import org.ncbo.stanford.bean.search.SearchResultListBean;
 import org.ncbo.stanford.manager.search.OntologySearchManager;
 import org.ncbo.stanford.service.search.AbstractSearchService;
 import org.ncbo.stanford.service.search.IndexSearchService;
@@ -222,7 +218,7 @@ public class IndexSearchServiceImpl extends AbstractSearchService implements
 						+ (double) (stop - start) / 1000 / 60 + " minutes.\n");
 			}
 
-			reloadCache();
+			reloadSearchCache();
 
 			if (doOptimize) {
 				optimizeIndex(writer);
@@ -305,7 +301,7 @@ public class IndexSearchServiceImpl extends AbstractSearchService implements
 		}
 
 		if (reloadCache) {
-			reloadCache();
+			reloadSearchCache();
 		}
 
 		if (doOptimize) {
@@ -364,49 +360,6 @@ public class IndexSearchServiceImpl extends AbstractSearchService implements
 			stop = System.currentTimeMillis(); // stop timing
 			log.debug("Finished optimizing index in " + (double) (stop - start)
 					/ 1000 / 60 + " minutes.");
-		}
-	}
-
-	/**
-	 * Reload search results cache by re-running all queries in it and
-	 * re-populating it with new results
-	 */
-	private void reloadCache() {
-		long start = 0;
-		long stop = 0;
-
-		if (log.isDebugEnabled()) {
-			log.debug("Reloading cache...");
-			start = System.currentTimeMillis();
-		}
-
-		QueryParser parser = new QueryParser(
-				SearchIndexBean.CONTENTS_FIELD_LABEL, analyzer);
-		Set<String> keys = searchResultCache.getKeys();
-		searchResultCache.clear();
-
-		for (String fullKey : keys) {
-			SearchResultListBean results = null;
-			String[] splitKey = parseCacheKey(fullKey);
-
-			try {
-				results = runQuery(parser.parse(splitKey[0]), Integer
-						.parseInt(splitKey[1]), splitKey[2]);
-			} catch (Exception e) {
-				results = null;
-				e.printStackTrace();
-				log.error("Error while reloading cache: " + e);
-			}
-
-			if (results != null) {
-				searchResultCache.put(fullKey, results);
-			}
-		}
-
-		if (log.isDebugEnabled()) {
-			stop = System.currentTimeMillis(); // stop timing
-			log.debug("Finished reloading cache in " + (double) (stop - start)
-					/ 1000 + " seconds.");
 		}
 	}
 
