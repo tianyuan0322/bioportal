@@ -36,7 +36,7 @@ INSERT  INTO `ncbo_l_role`(`id`,`name`,`description`) VALUES (2822,'ROLE_DEVELOP
 
 /*Data for the table `ncbo_l_status` */
 
-INSERT  INTO `ncbo_l_status`(`id`,`status`,`description`) VALUES (1,'Waiting','The action has not been taken'),(2,'Parsing','The action is in progress'),(3,'Ready','The action has completed successfully'),(4,'Error','The action has encountered an error while executing'),(5,'Not Applicable','The action does not apply to this record');
+INSERT  INTO `ncbo_l_status`(`id`,`status`,`description`) VALUES (1,'Waiting','The action has not been taken'),(2,'Parsing','The action is in progress'),(3,'Ready','The action has completed successfully'),(4,'Error','The action has encountered an error while executing'),(5,'Not Applicable','The action does not apply to this record'),(6,'Deprecated','This record has been deprecated');
 
 /*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
 /*!40014 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS */;
