@@ -47,8 +47,8 @@ public interface QuerySearchService {
 	 * @throws Exception
 	 */
 	public Page<SearchBean> executeQuery(String expr,
-			boolean includeProperties, boolean isExactMatch,
-			Integer maxNumHits) throws Exception;
+			boolean includeProperties, boolean isExactMatch, Integer maxNumHits)
+			throws Exception;
 
 	/**
 	 * Execute a search query for a given expression, limiting search to the
@@ -153,4 +153,10 @@ public interface QuerySearchService {
 	 */
 	public SearchResultListBean runQuery(Query query, Integer maxNumHits,
 			String subtreeRootConceptId) throws Exception;
+
+	/**
+	 * Reload search results cache by re-running all queries in it and
+	 * re-populating it with new results
+	 */
+	public void reloadSearchCache();
 }

@@ -7,6 +7,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -14,6 +15,7 @@ import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.index.IndexReader;
 import org.apache.lucene.index.Term;
+import org.apache.lucene.queryParser.QueryParser;
 import org.apache.lucene.search.BooleanClause;
 import org.apache.lucene.search.BooleanQuery;
 import org.apache.lucene.search.IndexSearcher;
@@ -115,6 +117,49 @@ public abstract class AbstractSearchService {
 		}
 
 		return searchResults;
+	}
+
+	/**
+	 * Reload search results cache by re-running all queries in it and
+	 * re-populating it with new results
+	 */
+	public void reloadSearchCache() {
+		long start = 0;
+		long stop = 0;
+
+		if (log.isDebugEnabled()) {
+			log.debug("Reloading cache...");
+			start = System.currentTimeMillis();
+		}
+
+		QueryParser parser = new QueryParser(
+				SearchIndexBean.CONTENTS_FIELD_LABEL, analyzer);
+		Set<String> keys = searchResultCache.getKeys();
+		searchResultCache.clear();
+
+		for (String fullKey : keys) {
+			SearchResultListBean results = null;
+			String[] splitKey = parseCacheKey(fullKey);
+
+			try {
+				results = runQuery(parser.parse(splitKey[0]), Integer
+						.parseInt(splitKey[1]), splitKey[2]);
+			} catch (Exception e) {
+				results = null;
+				e.printStackTrace();
+				log.error("Error while reloading cache: " + e);
+			}
+
+			if (results != null) {
+				searchResultCache.put(fullKey, results);
+			}
+		}
+
+		if (log.isDebugEnabled()) {
+			stop = System.currentTimeMillis(); // stop timing
+			log.debug("Finished reloading cache in " + (double) (stop - start)
+					/ 1000 + " seconds.");
+		}
 	}
 
 	private void populateSearchResults(ScoreDoc[] hits,
