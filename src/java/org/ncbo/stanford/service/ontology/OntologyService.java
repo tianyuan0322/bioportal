@@ -81,39 +81,47 @@ public interface OntologyService {
 	 * Searches common fields from ontology or view metadata for an arbitrary
 	 * query string
 	 * 
-	 * @param query search a string
-	 * @param includeViews if set to true search will include also the metadata
-	 * 			of views, otherwise it searches only in metadata of ontologies (no views)
-	 * @return list of ontology beans that have metadata matching the query string
+	 * @param query
+	 *            search a string
+	 * @param includeViews
+	 *            if set to true search will include also the metadata of views,
+	 *            otherwise it searches only in metadata of ontologies (no
+	 *            views)
+	 * @return list of ontology beans that have metadata matching the query
+	 *         string
 	 */
-	public List<OntologyBean> searchOntologyMetadata(String query, boolean includeViews);
+	public List<OntologyBean> searchOntologyMetadata(String query,
+			boolean includeViews);
 
 	/**
 	 * Returns a single ontology version record
 	 * 
 	 * @param ontologyVersionId
 	 * @return
-	 * @throws Exception 
+	 * @throws Exception
 	 */
-	public OntologyBean findOntologyOrView(Integer ontologyVersionId) throws Exception;
+	public OntologyBean findOntologyOrView(Integer ontologyVersionId)
+			throws Exception;
 
 	/**
 	 * Finds the latest version of a given ontology
 	 * 
 	 * @param ontologyId
 	 * @return
-	 * @throws Exception 
+	 * @throws Exception
 	 */
-	public OntologyBean findLatestOntologyOrViewVersion(Integer ontologyId) throws Exception;
+	public OntologyBean findLatestOntologyOrViewVersion(Integer ontologyId)
+			throws Exception;
 
 	/**
 	 * Finds the latest "active" version of a given ontology
 	 * 
 	 * @param ontologyId
 	 * @return
-	 * @throws Exception 
+	 * @throws Exception
 	 */
-	public OntologyBean findLatestActiveOntologyOrViewVersion(Integer ontologyId) throws Exception;
+	public OntologyBean findLatestActiveOntologyOrViewVersion(Integer ontologyId)
+			throws Exception;
 
 	/**
 	 * Create an ontology
@@ -130,7 +138,8 @@ public interface OntologyService {
 	 * @param ontologyBean
 	 * @return
 	 */
-	public void updateOntologyOrView(OntologyBean ontologyBean) throws Exception;
+	public void updateOntologyOrView(OntologyBean ontologyBean)
+			throws Exception;
 
 	/**
 	 * Update an ontology Category
@@ -146,7 +155,8 @@ public interface OntologyService {
 	 * @param ontologyVersionId
 	 * @return
 	 */
-	public void deleteOntologyOrView(Integer ontologyVersionId) throws Exception;
+	public void deleteOntologyOrView(Integer ontologyVersionId)
+			throws Exception;
 
 	/**
 	 * Delete several ontologies
@@ -164,33 +174,38 @@ public interface OntologyService {
 	 * @return
 	 */
 	public File getOntologyFile(OntologyBean ontologyBean) throws Exception;
-	
+
 	/**
 	 * Get the ontology metrics bean belonging to an ontology or view
 	 * 
 	 * @param ontologyBean
 	 * @return
 	 */
-	public OntologyMetricsBean getOntologyMetrics(OntologyBean ontologyBean) throws Exception;
+	public OntologyMetricsBean getOntologyMetrics(OntologyBean ontologyBean)
+			throws Exception;
 
-	
-	//******************** view specific methods ********************
+	// ******************** view specific methods ********************
 
 	/**
-	 * Returns a single record for each ontology view in the system. If more than one
-	 * version of ontology view exists, return the latest version.
+	 * Returns a single record for each ontology view in the system. If more
+	 * than one version of ontology view exists, return the latest version.
 	 * 
 	 * @return list of ontology beans
 	 */
 	public List<OntologyBean> findLatestOntologyViewVersions();
 
 	/**
-	 * Returns a single record for each ontology view which is active in the system.
-	 * If more than one version of ontology view exists, return the latest and active
-	 * version. "active" meaning parse status is "ready" or "not applicable".
+	 * Returns a single record for each ontology view which is active in the
+	 * system. If more than one version of ontology view exists, return the
+	 * latest and active version. "active" meaning parse status is "ready" or
+	 * "not applicable".
 	 * 
 	 * @return list of ontology beans
 	 */
 	public List<OntologyBean> findLatestActiveOntologyViewVersions();
 
+	/**
+	 * Programmatically reloads the metadata ontology stored in the memory
+	 */
+	public void reloadMetadataOntology();
 }

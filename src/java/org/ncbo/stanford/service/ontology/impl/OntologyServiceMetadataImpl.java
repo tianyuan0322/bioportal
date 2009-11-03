@@ -279,8 +279,12 @@ public class OntologyServiceMetadataImpl extends AbstractOntologyService impleme
 		return ontologyMetadataManager.findLatestOntologyViewVersions();
 	}
 
-
-	
+	/**
+	 * Programmatically reloads the metadata ontology stored in the memory
+	 */
+	public void reloadMetadataOntology() {
+		ontologyMetadataManager.reloadMetadataOWLModel();
+	}
 	
 	// Utility methods
 
