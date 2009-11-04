@@ -150,21 +150,27 @@ public interface OntologyService {
 	public void cleanupOntologyCategory(OntologyBean ontologyBean);
 
 	/**
-	 * Delete an ontology
+	 * Delete/Deprecate an ontology
 	 * 
 	 * @param ontologyVersionId
+	 * @param removeMetadata
+	 * @param removeOntologyFiles
 	 * @return
 	 */
-	public void deleteOntologyOrView(Integer ontologyVersionId)
+	public void deleteOntologyOrView(Integer ontologyVersionId,
+			boolean removeMetadata, boolean removeOntologyFiles)
 			throws Exception;
 
 	/**
-	 * Delete several ontologies
+	 * Delete/Deprecate an ontology
 	 * 
 	 * @param ontologyVersionIds
+	 * @param removeMetadata
+	 * @param removeOntologyFiles
 	 * @return
 	 */
-	public void deleteOntologiesOrViews(List<Integer> ontologyVersionIds)
+	public void deleteOntologiesOrViews(List<Integer> ontologyVersionIds,
+			boolean removeMetadata, boolean removeOntologyFiles)
 			throws Exception;
 
 	/**

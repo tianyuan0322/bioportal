@@ -61,14 +61,15 @@ public interface OntologyMetadataManager {
 			throws Exception;
 
 	/**
-	 * Deletes the ontology metadata specified by the ontologyBean representing
-	 * an ontology or view version.
+	 * Deletes or "deprecates" the ontology metadata specified by the
+	 * ontologyBean representing an ontology or view version.
 	 * 
 	 * @param ontologyBean
+	 * @param removeMetadata
 	 * @throws Exception
 	 */
-	public void deleteOntologyOrView(OntologyBean ontologyBean)
-			throws Exception;
+	public void deleteOntologyOrView(OntologyBean ontologyBean,
+			boolean removeMetadata) throws Exception;
 
 	/**
 	 * Retrieves the ontologyBean representing an ontology or a view version for

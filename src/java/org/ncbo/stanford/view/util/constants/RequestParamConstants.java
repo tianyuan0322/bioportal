@@ -84,7 +84,7 @@ public interface RequestParamConstants {
 	public static final String PARAM_LEVEL = "level";
 	public static final String PARAM_OFFSET = "offset";
 	public static final String PARAM_LIMIT = "limit";
-	
+
 	/**
 	 * Parameter for overriding default ontology load handler (parser)
 	 */
@@ -98,4 +98,10 @@ public interface RequestParamConstants {
 	public static final String PARAM_RESOURCE_PARAMETERS = "resourceparameters";
 	public static final String PARAM_START_DATE_ACCESSED = "startdateaccessed";
 	public static final String PARAM_END_DATE_ACCESSED = "enddateaccessed";
+
+	/**
+	 * Ontology deletion/deprecation parameters
+	 */
+	public static final String PARAM_REMOVE_METADATA = "removemetadata";
+	public static final String PARAM_REMOVE_ONTOLOGY_FILES = "removeontologyfiles";
 }

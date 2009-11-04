@@ -858,8 +858,9 @@ public class OntologyMetadataUtils extends MetadataUtils {
 		for (Iterator<OWLIndividual> it = propValues.iterator(); it.hasNext();) {
 			OWLIndividual ontologyInd = (OWLIndividual) it.next();
 			Integer verNr = getPropertyValue(owlModel, ontologyInd,
-					PROPERTY_INTERNAL_VERSION_NUMBER, Integer.class);
-			if ((doNotFilterForActive || isReady(ontologyInd))
+					PROPERTY_INTERNAL_VERSION_NUMBER, Integer.class);			
+			
+			if (!isDeprecated(ontologyInd) && (doNotFilterForActive || isReady(ontologyInd)) 
 					&& (latest == null || verNr > maxVerNr)) {
 				latest = ontologyInd;
 				maxVerNr = verNr;
@@ -882,6 +883,13 @@ public class OntologyMetadataUtils extends MetadataUtils {
 				PROPERTY_STATUS_ID, Integer.class);
 		return status.equals(StatusEnum.STATUS_READY.getStatus())
 				|| status.equals(StatusEnum.STATUS_NOTAPPLICABLE.getStatus());
+	}
+
+	private static boolean isDeprecated(OWLIndividual ontologyInd) throws Exception {
+		OWLModel owlModel = ontologyInd.getOWLModel();
+		Integer status = getPropertyValue(owlModel, ontologyInd,
+				PROPERTY_STATUS_ID, Integer.class);
+		return status.equals(StatusEnum.STATUS_DEPRECATED.getStatus());
 	}
 
 	public static List<Integer> getAllOntologyVersionIDs(OWLModel metadata,

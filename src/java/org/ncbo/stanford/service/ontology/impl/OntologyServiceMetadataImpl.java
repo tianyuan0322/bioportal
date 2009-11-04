@@ -24,9 +24,11 @@ import org.ncbo.stanford.util.ontologyfile.pathhandler.FilePathHandler;
 import org.springframework.transaction.annotation.Transactional;
 
 @Transactional
-public class OntologyServiceMetadataImpl extends AbstractOntologyService implements OntologyService {
+public class OntologyServiceMetadataImpl extends AbstractOntologyService
+		implements OntologyService {
 
-	private static final Log log = LogFactory.getLog(OntologyServiceMetadataImpl.class);
+	private static final Log log = LogFactory
+			.getLog(OntologyServiceMetadataImpl.class);
 
 	private OntologyMetadataManager ontologyMetadataManager;
 	private OntologyCategoryMetadataManager ontologyCategoryMetadataManager;
@@ -65,8 +67,7 @@ public class OntologyServiceMetadataImpl extends AbstractOntologyService impleme
 		if (ontologyBean.isView()) {
 			newVersionId = ontologyMetadataManager
 					.getNextAvailableOntologyViewVersionId();
-		}
-		else {
+		} else {
 			newVersionId = ontologyMetadataManager
 					.getNextAvailableOntologyVersionId();
 		}
@@ -98,21 +99,36 @@ public class OntologyServiceMetadataImpl extends AbstractOntologyService impleme
 		ncboOntologyLoadQueueDAO.save(loadQueue);
 	}
 
-	/*
-	 * (non-Javadoc)
+	/**
+	 * Delete/Deprecate several ontologies
 	 * 
-	 * @see org.ncbo.stanford.service.ontology.OntologyService#deleteOntologies(java.util.List)
+	 * @param ontologyVersionIds
+	 * @param removeMetadata
+	 * @param removeOntologyFiles
+	 * @return
 	 */
-	public void deleteOntologiesOrViews(List<Integer> ontologyVersionIds)
+	public void deleteOntologiesOrViews(List<Integer> ontologyVersionIds,
+			boolean removeMetadata, boolean removeOntologyFiles)
 			throws Exception {
 		for (Integer ontologyVersionId : ontologyVersionIds) {
-			deleteOntologyOrView(ontologyVersionId);
+			deleteOntologyOrView(ontologyVersionId, removeMetadata,
+					removeOntologyFiles);
 		}
 	}
 
+	/**
+	 * Delete/Deprecate a single ontology
+	 * 
+	 * @param ontologyVersionId
+	 * @param removeMetadata
+	 * @param removeOntologyFiles
+	 * @return
+	 */
 	@SuppressWarnings("unchecked")
 	@Transactional(rollbackFor = Exception.class)
-	public void deleteOntologyOrView(Integer ontologyVersionId) throws Exception {
+	public void deleteOntologyOrView(Integer ontologyVersionId,
+			boolean removeMetadata, boolean removeOntologyFiles)
+			throws Exception {
 		OntologyBean ontologyBean = findOntologyOrView(ontologyVersionId);
 
 		if (ontologyBean == null) {
@@ -122,26 +138,32 @@ public class OntologyServiceMetadataImpl extends AbstractOntologyService impleme
 		// 1. Remove ontology from the backend
 		if (!ontologyBean.isRemote()) {
 			getLoadManager(ontologyBean).cleanup(ontologyBean);
-			deleteOntologyFile(ontologyBean);
-		}
-		
-		// 2. Remove ontology metadata
-		ontologyMetadataManager.deleteOntologyOrView(ontologyBean);
-		
-		// 3. Remove ontologyFile records from DB
-		List<NcboOntologyFile> ontologyFileSet = ncboOntologyFileDAO.findByOntologyVersionId(ontologyVersionId);
 
-		for (NcboOntologyFile ontologyFile : ontologyFileSet) {
-			ncboOntologyFileDAO.delete(ontologyFile);
+			if (removeOntologyFiles) {
+				deleteOntologyFile(ontologyBean);
+
+				// 3. Remove ontologyFile records from DB
+				List<NcboOntologyFile> ontologyFileSet = ncboOntologyFileDAO
+						.findByOntologyVersionId(ontologyVersionId);
+
+				for (NcboOntologyFile ontologyFile : ontologyFileSet) {
+					ncboOntologyFileDAO.delete(ontologyFile);
+				}
+			}
+
+			// 4. Remove ontologyQueue record from DB
+			NcboOntologyLoadQueue ontologyLoadQueue = ncboOntologyLoadQueueDAO
+					.findByOntologyVersionId(ontologyVersionId);
+
+			if (ontologyLoadQueue != null) {
+				ncboOntologyLoadQueueDAO.delete(ontologyLoadQueue);
+			}
 		}
 
-		// 4. Remove ontologyQueue record from DB
-		NcboOntologyLoadQueue ontologyLoadQueue = ncboOntologyLoadQueueDAO.findByOntologyVersionId(ontologyVersionId);
+		// 2. Remove or "deprecate" ontology metadata
+		ontologyMetadataManager.deleteOntologyOrView(ontologyBean,
+				removeMetadata);
 
-		if (ontologyLoadQueue != null) {
-			ncboOntologyLoadQueueDAO.delete(ontologyLoadQueue);
-		}
-		
 		// 5. Reindex the latest version of ontology (this operation removes
 		// this version from the index). Do not backup or optimize the index (it
 		// will be backed up and optimized on the next ontology indexing
@@ -156,7 +178,7 @@ public class OntologyServiceMetadataImpl extends AbstractOntologyService impleme
 	public List<GroupBean> findAllGroups() {
 		return ontologyGroupMetadataManager.findAllGroups();
 	}
-	
+
 	public List<OntologyBean> findAllOntologyOrViewVersionsByVirtualId(
 			Integer ontologyId) {
 		try {
@@ -183,16 +205,17 @@ public class OntologyServiceMetadataImpl extends AbstractOntologyService impleme
 	}
 
 	public List<OntologyBean> findLatestActiveOntologyVersions() {
-		return ontologyMetadataManager
-				.findLatestActiveOntologyVersions();
+		return ontologyMetadataManager.findLatestActiveOntologyVersions();
 	}
 
-	public OntologyBean findLatestActiveOntologyOrViewVersion(Integer ontologyId) throws Exception {
+	public OntologyBean findLatestActiveOntologyOrViewVersion(Integer ontologyId)
+			throws Exception {
 		return ontologyMetadataManager
 				.findLatestActiveOntologyOrViewVersionById(ontologyId);
 	}
 
-	public OntologyBean findLatestOntologyOrViewVersion(Integer ontologyId) throws Exception {
+	public OntologyBean findLatestOntologyOrViewVersion(Integer ontologyId)
+			throws Exception {
 		return ontologyMetadataManager
 				.findLatestOntologyOrViewVersionById(ontologyId);
 	}
@@ -218,10 +241,12 @@ public class OntologyServiceMetadataImpl extends AbstractOntologyService impleme
 	 * 
 	 * @param ontologyVersionId
 	 * @return
-	 * @throws Exception 
+	 * @throws Exception
 	 */
-	public OntologyBean findOntologyOrView(Integer ontologyVersionId) throws Exception {
-		return ontologyMetadataManager.findOntologyOrViewVersionById(ontologyVersionId);
+	public OntologyBean findOntologyOrView(Integer ontologyVersionId)
+			throws Exception {
+		return ontologyMetadataManager
+				.findOntologyOrViewVersionById(ontologyVersionId);
 	}
 
 	public File getOntologyFile(OntologyBean ontologyBean) throws Exception {
@@ -242,36 +267,41 @@ public class OntologyServiceMetadataImpl extends AbstractOntologyService impleme
 		return file;
 	}
 
-	public List<OntologyBean> searchOntologyMetadata(String query, boolean includeViews) {
+	public List<OntologyBean> searchOntologyMetadata(String query,
+			boolean includeViews) {
 		// TODO check if we want separate metadata search for
 		// ontologies and view
-		return ontologyMetadataManager.searchOntologyMetadata(query, includeViews);
+		return ontologyMetadataManager.searchOntologyMetadata(query,
+				includeViews);
 	}
 
 	@Transactional(rollbackFor = Exception.class)
-	public void updateOntologyOrView(OntologyBean ontologyBean) throws Exception {
+	public void updateOntologyOrView(OntologyBean ontologyBean)
+			throws Exception {
 		ontologyMetadataManager.updateOntologyOrView(ontologyBean);
 	}
 
-	public OntologyMetricsBean getOntologyMetrics(OntologyBean ontologyBean) throws Exception {
+	public OntologyMetricsBean getOntologyMetrics(OntologyBean ontologyBean)
+			throws Exception {
 		return ontologyMetadataManager.getOntologyMetrics(ontologyBean);
 	}
-	
-	//******************** view specific methods ********************
+
+	// ******************** view specific methods ********************
 
 	public List<OntologyBean> findLatestActiveOntologyViewVersions() {
 		return ontologyMetadataManager.findLatestActiveOntologyViewVersions();
 	}
 
-//	public OntologyBean findLatestOntologyViewVersionByOboFoundryId(
-//			String oboFoundryId) {
-//		// TODO see if we need this method. If yes, add it also to the OntologyService interface
-//		return null;
-//	}
+	// public OntologyBean findLatestOntologyViewVersionByOboFoundryId(
+	// String oboFoundryId) {
+	// // TODO see if we need this method. If yes, add it also to the
+	// OntologyService interface
+	// return null;
+	// }
 
 	/**
-	 * Returns a single record for each ontology view in the system. If more than one
-	 * version of view exists, return the latest version.
+	 * Returns a single record for each ontology view in the system. If more
+	 * than one version of view exists, return the latest version.
 	 * 
 	 * @return list of Ontology view beans
 	 */
@@ -285,7 +315,7 @@ public class OntologyServiceMetadataImpl extends AbstractOntologyService impleme
 	public void reloadMetadataOntology() {
 		ontologyMetadataManager.reloadMetadataOWLModel();
 	}
-	
+
 	// Utility methods
 
 	/**
@@ -293,12 +323,13 @@ public class OntologyServiceMetadataImpl extends AbstractOntologyService impleme
 	 * 
 	 * @param OntologyBean
 	 *            ontologyBean
-	 * @throws Exception 
+	 * @throws Exception
 	 */
-	private void populateInternalVersionNumber(OntologyBean ontologyBean) throws Exception {
+	private void populateInternalVersionNumber(OntologyBean ontologyBean)
+			throws Exception {
 		Integer ontologyId = ontologyBean.getOntologyId();
 		Integer internalVersionNumber = null;
-		
+
 		if (ontologyId == null) {
 			if (ontologyBean.isView()) {
 				ontologyBean.setOntologyId(ontologyMetadataManager
@@ -307,15 +338,17 @@ public class OntologyServiceMetadataImpl extends AbstractOntologyService impleme
 				ontologyBean.setOntologyId(ontologyMetadataManager
 						.getNextAvailableOntologyId());
 			}
-			
-			internalVersionNumber = Integer.parseInt(MessageUtils
-									.getMessage("config.db.ontology.internalVersionNumberStart"));
-		} else {			
+
+			internalVersionNumber = Integer
+					.parseInt(MessageUtils
+							.getMessage("config.db.ontology.internalVersionNumberStart"));
+		} else {
 			OntologyBean ob = findLatestOntologyOrViewVersion(ontologyId);
-			
+
 			if (ob == null) {
-				internalVersionNumber = Integer.parseInt(MessageUtils
-						.getMessage("config.db.ontology.internalVersionNumberStart"));
+				internalVersionNumber = Integer
+						.parseInt(MessageUtils
+								.getMessage("config.db.ontology.internalVersionNumberStart"));
 			} else {
 				internalVersionNumber = ob.getInternalVersionNumber() + 1;
 			}
@@ -341,7 +374,7 @@ public class OntologyServiceMetadataImpl extends AbstractOntologyService impleme
 			OntologyCategoryMetadataManager ontologyCategoryMetadataManager) {
 		this.ontologyCategoryMetadataManager = ontologyCategoryMetadataManager;
 	}
-	
+
 	/**
 	 * @param ontologyGroupMetadataManager
 	 *            the ontologyGroupMetadataManager to set

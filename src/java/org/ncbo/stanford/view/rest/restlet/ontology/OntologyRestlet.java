@@ -9,6 +9,7 @@ import org.apache.commons.logging.LogFactory;
 import org.ncbo.stanford.bean.OntologyBean;
 import org.ncbo.stanford.util.RequestUtils;
 import org.ncbo.stanford.util.helper.BeanHelper;
+import org.ncbo.stanford.view.util.constants.RequestParamConstants;
 import org.restlet.data.Request;
 import org.restlet.data.Response;
 import org.restlet.data.Status;
@@ -106,13 +107,23 @@ public class OntologyRestlet extends AbstractOntologyBaseRestlet {
 	 * @param response
 	 */
 	private void deleteOntologiesOrViews(Request request, Response response) {
+		HttpServletRequest httpRequest = RequestUtils
+				.getHttpServletRequest(request);
+		String removeMetadata = (String) httpRequest
+				.getParameter(RequestParamConstants.PARAM_REMOVE_METADATA);
+		String removeOntologyFiles = (String) httpRequest
+				.getParameter(RequestParamConstants.PARAM_REMOVE_ONTOLOGY_FILES);
+
 		try {
-			HttpServletRequest httpRequest = RequestUtils
-					.getHttpServletRequest(request);
 			List<Integer> ontologyVersionIds = getOntologyVersionIds(httpRequest);
+			boolean removeMetadataBool = RequestUtils
+					.parseBooleanParam(removeMetadata);
+			boolean removeOntologyFilesBool = RequestUtils
+					.parseBooleanParam(removeOntologyFiles);
 
 			if (ontologyVersionIds != null) {
-				ontologyService.deleteOntologiesOrViews(ontologyVersionIds);
+				ontologyService.deleteOntologiesOrViews(ontologyVersionIds,
+						removeMetadataBool, removeOntologyFilesBool);
 			} else {
 				response.setStatus(Status.CLIENT_ERROR_BAD_REQUEST,
 						"No valid parameters supplied");

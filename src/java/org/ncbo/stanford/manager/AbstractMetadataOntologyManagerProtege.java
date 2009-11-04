@@ -45,17 +45,21 @@ public abstract class AbstractMetadataOntologyManagerProtege extends
 	protected OWLIndividual getOntologyOrViewInstance(OWLModel metadata, int id) {
 		String ontInstName = getOntologyIndividualName(id);
 		OWLIndividual ontInd = metadata.getOWLIndividual(ontInstName);
+		
 		if (ontInd == null) {
 			String viewInstName = getOntologyViewIndividualName(id);
 			ontInd = metadata.getOWLIndividual(viewInstName);
 		}
+		
 		//alternative lookup
 		if (ontInd == null) {
 			ontInd = OntologyMetadataUtils.getOntologyOrViewWithId(metadata, id);
+			
 			if (ontInd != null) {
 				log.warn("Ontology or view instance for id: " + id + " has been found having non-standard name: " + ontInd);
 			}
 		}
+		
 		return ontInd;
 	}
 	
