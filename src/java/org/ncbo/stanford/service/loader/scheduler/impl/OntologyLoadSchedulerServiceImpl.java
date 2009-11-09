@@ -95,8 +95,9 @@ public class OntologyLoadSchedulerServiceImpl implements
 			String formatHandler) {
 		OntologyBean ob = null;
 		errorOntologies.clear();
-		List<Integer> errorVersionIdList = new ArrayList<Integer>(ontologyVersionIdList);
-		
+		List<Integer> errorVersionIdList = new ArrayList<Integer>(
+				ontologyVersionIdList);
+
 		for (Integer ontologyVersionId : ontologyVersionIdList) {
 			try {
 				ob = ontologyMetadataManagerProtege
@@ -201,11 +202,12 @@ public class OntologyLoadSchedulerServiceImpl implements
 
 				status = StatusEnum.STATUS_READY;
 
-				updateOntologyStatus(loadQueue, ontologyBean, status, errorMessage);
+				updateOntologyStatus(loadQueue, ontologyBean, status,
+						errorMessage);
 
 				// calculate ontology metrics
-//				calculateMetrics(ontologyBean, formatHandler);
-				
+				// calculateMetrics(ontologyBean, formatHandler);
+
 				// ******************************************
 				// We will call create Diff when we are ready to include this
 				// process in the scheduler
@@ -216,8 +218,10 @@ public class OntologyLoadSchedulerServiceImpl implements
 				// ************************************
 			}
 
-			// index ontology
-			if (status == StatusEnum.STATUS_READY) {
+			// index ontology but only when the loader (formatHandler) is not
+			// explicitly overridden
+			if (isDefaultFormatHandler(ontologyBean, formatHandler)
+					&& status == StatusEnum.STATUS_READY) {
 				errorMessage = indexOntology(errorMessage, ontologyBean);
 				updateOntologyStatus(loadQueue, ontologyBean, status,
 						errorMessage);
@@ -236,7 +240,7 @@ public class OntologyLoadSchedulerServiceImpl implements
 			} catch (Exception e1) {
 				e.printStackTrace();
 				log.error(e);
-			}			
+			}
 		}
 	}
 
@@ -378,40 +382,47 @@ public class OntologyLoadSchedulerServiceImpl implements
 				.get(formatHandler);
 
 		if (loadManager == null) {
-			log.error("Cannot find formatHandler for "
-					+ ontologyBean.getFormat());
-			throw new InvalidOntologyFormatException(
-					"Cannot find formatHandler for " + ontologyBean.getFormat());
+			String msg = "Cannot find formatHandler for "
+					+ ontologyBean.getFormat();
+			log.error(msg);
+			throw new InvalidOntologyFormatException(msg);
 		}
 
 		return loadManager;
 	}
 
+	private boolean isDefaultFormatHandler(OntologyBean ontologyBean,
+			String formatHandler) {
+		return (formatHandler == null || formatHandler
+				.equals(ontologyFormatHandlerMap.get(ontologyBean.getFormat())));
+	}
+
 	/**
 	 * Calculate ontology metrics for the specified ontology. The minimum
-	 * requirement is that the ontology is parsed and exists in the
-	 * Bioportal repository.
+	 * requirement is that the ontology is parsed and exists in the Bioportal
+	 * repository.
 	 * 
 	 * @param ontologyBean
 	 * @param formatHandler
 	 * @throws Exception
 	 */
-	private void calculateMetrics(OntologyBean ontologyBean, String formatHandler)
-			throws Exception {
+	private void calculateMetrics(OntologyBean ontologyBean,
+			String formatHandler) throws Exception {
 		if (log.isDebugEnabled()) {
 			log.debug("calculateMetrics BEGIN..............");
 		}
 
-		OntologyMetricsBean metricsBean = getLoadManager(ontologyBean, formatHandler).extractOntologyMetrics(ontologyBean);
-		
+		OntologyMetricsBean metricsBean = getLoadManager(ontologyBean,
+				formatHandler).extractOntologyMetrics(ontologyBean);
+
 		ontologyMetadataManagerProtege.updateOntologyMetrics(ontologyBean,
-					metricsBean);
+				metricsBean);
 
 		if (log.isDebugEnabled()) {
 			log.debug("..................calculateMetrics END");
 		}
 	}
-	
+
 	/**
 	 * Creates a diff between the two latest versions of the specified ontology
 	 * This method is called after the ontology has been successfully parsed.
