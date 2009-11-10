@@ -59,6 +59,14 @@ public interface OntologyService {
 	public List<OntologyBean> findLatestOntologyVersions();
 
 	/**
+	 * Returns the list of the latest versions of auto-pulled ontologies.
+	 * 
+	 * @return the list of ontology beans corresponding to the latest version of
+	 *         each ontology
+	 */
+	public List<OntologyBean> findLatestAutoPulledOntologyVersions();
+
+	/**
 	 * Returns a single record for each ontology which is active in the system.
 	 * If more than one version of ontology exists, return the latest and active
 	 * version. "active" meaning parse status is "ready".

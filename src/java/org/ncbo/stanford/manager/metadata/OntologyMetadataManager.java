@@ -99,14 +99,14 @@ public interface OntologyMetadataManager {
 	 */
 	public List<OntologyBean> findLatestOntologyVersions();
 
-	// /**
-	// * Retrieves the ontologyBean representing the latest active version for a
-	// specific ontology id.
-	// *
-	// * @param ontologyId a (virtual) ontology id
-	// */
-	// public OntologyBean findLatestActiveOntologyVersionById(Integer
-	// ontologyId);
+	/**
+	 * Returns the list of ontologyBeans for the latest versions of auto-pulled
+	 * ontologies.
+	 * 
+	 * @return the list of ontology beans corresponding to the latest version of
+	 *         each virtual ontology
+	 */
+	public List<OntologyBean> findLatestAutoPulledOntologyVersions();
 
 	/**
 	 * Retrieves the ontologyBean representing the latest version for a specific
@@ -149,17 +149,6 @@ public interface OntologyMetadataManager {
 	 */
 	public List<OntologyBean> findLatestActiveOntologyOrOntologyViewVersions()
 			throws Exception;
-
-	// /**
-	// * Returns the list of ontologyBeans, one for each ontology's latest
-	// active version.
-	// *
-	// * @param ontologyIds a list of (virtual) ontology ids
-	// * @return the list of ontology beans corresponding to the latest active
-	// version of each virtual ontology
-	// */
-	// public List<OntologyBean> findLatestActiveOntologyVersions(List<Integer>
-	// ontologyIds);
 
 	/**
 	 * Returns the list of ontology(View)Beans, one for each ontology's/view's

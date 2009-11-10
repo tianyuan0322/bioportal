@@ -237,6 +237,16 @@ public class OntologyServiceMetadataImpl extends AbstractOntologyService
 	}
 
 	/**
+	 * Returns the list of the latest versions of auto-pulled ontologies.
+	 * 
+	 * @return the list of ontology beans corresponding to the latest version of
+	 *         each ontology
+	 */
+	public List<OntologyBean> findLatestAutoPulledOntologyVersions() {
+		return ontologyMetadataManager.findLatestAutoPulledOntologyVersions();
+	}
+
+	/**
 	 * Returns a single ontology version record
 	 * 
 	 * @param ontologyVersionId
