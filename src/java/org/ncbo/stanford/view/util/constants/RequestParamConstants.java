@@ -104,4 +104,12 @@ public interface RequestParamConstants {
 	 */
 	public static final String PARAM_REMOVE_METADATA = "removemetadata";
 	public static final String PARAM_REMOVE_ONTOLOGY_FILES = "removeontologyfiles";
+
+	/**
+	 * Params for different types of ontology lists
+	 */
+	public static final String PARAM_ONTOLOGIES = "ontologies";
+	public static final String PARAM_VIEWS = "views";
+	public static final String PARAM_ACTIVE = "active";
+	public static final String PARAM_PULLED = "pulled";
 }
