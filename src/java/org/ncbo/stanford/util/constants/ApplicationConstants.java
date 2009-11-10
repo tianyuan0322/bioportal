@@ -17,7 +17,7 @@ public interface ApplicationConstants {
 	 * UTF-8 Encoding
 	 */
 	public static final String UTF_8 = "UTF-8";
-	
+
 	/**
 	 * File extensions
 	 */
@@ -28,7 +28,7 @@ public interface ApplicationConstants {
 	public static final String ZIP_EXTENSION = "zip";
 	public static final String JAR_EXTENSION = "jar";
 	public static final String TAR_EXTENSION = "tar";
-	
+
 	/**
 	 * Search Record Types
 	 */
