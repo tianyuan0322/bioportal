@@ -22,6 +22,7 @@ public interface XMLSerializationService {
 	 * Generate an XML representation of a specific error
 	 * 
 	 * @param errorType
+	 * @param accessedResource
 	 * @return
 	 */
 	public String getErrorAsXML(ErrorTypeEnum errorType, String accessedResource);
@@ -49,17 +50,14 @@ public interface XMLSerializationService {
 
 	/**
 	 * Generate an XML representation of a successfully processed request with
-	 * XSL Transformation. This should only be used when no other XML response
-	 * is expected (i.e. authentication).
+	 * XSL Transformation.
 	 * 
-	 * @param sessionId
-	 * @param accessedResource
+	 * @param request
 	 * @param data
 	 * @param xsltFile
-	 * @return String
 	 * @throws TransformerException
 	 */
-	public String applyXSL(Object data, String xsltFile)
+	public String applyXSL(Request request, Object data, String xsltFile)
 			throws TransformerException;
 
 	public void generateXMLResponse(Request request, Response response,

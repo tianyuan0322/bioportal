@@ -4,12 +4,16 @@
 
 	<xsl:template match="/">
 		<success>
-			<data>
-				<list>
-					<xsl:apply-templates />
-				</list>
-			</data>
+			<xsl:apply-templates />
 		</success>
+	</xsl:template>
+
+	<xsl:template match="data">
+		<data>
+			<list>
+				<xsl:apply-templates match="ontologyBean" />
+			</list>
+		</data>
 	</xsl:template>
 
 	<xsl:template match="ontologyBean">
@@ -31,5 +35,17 @@
 			<xsl:copy-of select="isFoundry" />
 			<xsl:copy-of select="dateCreated" />
 		</ontologyBean>
+	</xsl:template>
+
+	<xsl:template match="accessedResource">
+		<accessedResource>
+			<xsl:value-of select="." />
+		</accessedResource>
+	</xsl:template>
+
+	<xsl:template match="accessDate">
+		<accessDate>
+			<xsl:value-of select="." />
+		</accessDate>
 	</xsl:template>
 </xsl:stylesheet>

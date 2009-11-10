@@ -4,7 +4,6 @@ import java.io.File;
 import java.io.StringWriter;
 import java.io.UnsupportedEncodingException;
 import java.io.Writer;
-import java.util.Arrays;
 import java.util.HashMap;
 
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -76,6 +75,7 @@ public class XMLSerializationServiceImpl implements XMLSerializationService {
 	 * retire when ErrorTypeEnum is replaced with Restlet.Status object - cyoun
 	 * 
 	 * @param errorType
+	 * @param accessedResource
 	 * @return
 	 */
 	public String getErrorAsXML(ErrorTypeEnum errorType, String accessedResource) {
@@ -113,7 +113,7 @@ public class XMLSerializationServiceImpl implements XMLSerializationService {
 	 * should only be used when no other XML response is expected (i.e.
 	 * authentication).
 	 * 
-	 * @param successBean
+	 * @param errorStatusBean
 	 * @return String
 	 */
 	public String getErrorAsXML(ErrorStatusBean errorStatusBean) {
@@ -194,26 +194,21 @@ public class XMLSerializationServiceImpl implements XMLSerializationService {
 
 	/**
 	 * Generate an XML representation of a successfully processed request with
-	 * XSL Transformation. This should only be used when no other XML response
-	 * is expected (i.e. authentication).
+	 * XSL Transformation.
 	 * 
+	 * @param request
 	 * @param data
 	 * @param xsltFile
 	 * @return String
 	 * @throws TransformerException
 	 */
-	public String applyXSL(Object data, String xsltFile)
+	public String applyXSL(Request request, Object data, String xsltFile)
 			throws TransformerException {
-		// SuccessBean is not being used in findAll type of restlet requests....
-		// - cyoun
-
+		SuccessBean sb = getSuccessBean(request, data);
 		// create source
-		TraxSource traxSource = new TraxSource(data, xmlSerializer);
-		traxSource.setSourceAsList(Arrays.asList(data));
-
+		TraxSource traxSource = new TraxSource(sb, xmlSerializer);
 		// create buffer for XML output
 		Writer buffer = new StringWriter();
-
 		getTransformerInstance(xsltFile).transform(traxSource,
 				new StreamResult(buffer));
 
@@ -225,7 +220,7 @@ public class XMLSerializationServiceImpl implements XMLSerializationService {
 	 * or fail. session id and access resource info is included.
 	 * 
 	 * @param request
-	 *            response the userService to set
+	 * @param response
 	 */
 	public void generateStatusXMLResponse(Request request, Response response) {
 		if (!response.getStatus().isError()) {
@@ -244,7 +239,8 @@ public class XMLSerializationServiceImpl implements XMLSerializationService {
 	 * Error info is displayed.
 	 * 
 	 * @param request
-	 *            response data
+	 * @param response
+	 * @param data
 	 */
 
 	public void generateXMLResponse(Request request, Response response,
@@ -267,17 +263,18 @@ public class XMLSerializationServiceImpl implements XMLSerializationService {
 	 * If SUCCESS - Entity info is displayed. else - Error info is displayed.
 	 * 
 	 * @param request
-	 *            response data
+	 * @param response
+	 * @param data
+	 * @param xsltFile
 	 */
-
 	public void generateXMLResponse(Request request, Response response,
 			Object data, String xsltFile) {
 		// if SUCCESS, include the bean info
 		if (!response.getStatus().isError()) {
 			try {
 				RequestUtils.setHttpServletResponse(response,
-						Status.SUCCESS_OK, MediaType.TEXT_XML, applyXSL(data,
-								xsltFile));
+						Status.SUCCESS_OK, MediaType.TEXT_XML, applyXSL(
+								request, data, xsltFile));
 			} catch (TransformerException e) {
 				// XML parse ERROR
 				response
@@ -292,6 +289,13 @@ public class XMLSerializationServiceImpl implements XMLSerializationService {
 		}
 	}
 
+	/**
+	 * Process a get request and return a response
+	 * 
+	 * @param baseUrl
+	 * @param getParams
+	 * @throws Exception
+	 */
 	public AbstractResponseBean processGet(String baseUrl,
 			HashMap<String, String> getParams) throws Exception {
 		AbstractResponseBean responseBean = null;
@@ -454,7 +458,8 @@ public class XMLSerializationServiceImpl implements XMLSerializationService {
 	private void setAliases(XStream xmlSerializer) {
 		xmlSerializer.alias(MessageUtils.getMessage("entity.ontologybean"),
 				OntologyBean.class);
-		xmlSerializer.alias(MessageUtils.getMessage("entity.ontologymetricsbean"),
+		xmlSerializer.alias(MessageUtils
+				.getMessage("entity.ontologymetricsbean"),
 				OntologyMetricsBean.class);
 		xmlSerializer.alias(MessageUtils.getMessage("entity.userbean"),
 				UserBean.class);
