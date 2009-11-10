@@ -16,6 +16,7 @@ import org.ncbo.stanford.bean.OntologyMetricsBean;
 import org.ncbo.stanford.enumeration.StatusEnum;
 import org.ncbo.stanford.exception.MetadataException;
 import org.ncbo.stanford.util.MessageUtils;
+import org.ncbo.stanford.util.constants.ApplicationConstants;
 import org.ncbo.stanford.util.helper.StringHelper;
 
 import edu.stanford.smi.protegex.owl.model.OWLClass;
@@ -304,18 +305,18 @@ public class OntologyMetadataUtils extends MetadataUtils {
 		setPropertyValue(owlModel, ontologyInd, PROPERTY_ID, ob.getId());
 		setPropertyValue(owlModel, ontologyInd,
 				PROPERTY_INTERNAL_VERSION_NUMBER, ob.getInternalVersionNumber());
-		RDFSLiteral litIsFoundry = owlModel.createRDFSLiteral(
-				ob.getIsFoundry() == 0 ? "false" : "true", owlModel
-						.getXSDboolean());
+		RDFSLiteral litIsFoundry = owlModel.createRDFSLiteral(ob.getIsFoundry()
+				.byteValue() == ApplicationConstants.FALSE ? "false" : "true",
+				owlModel.getXSDboolean());
 		setPropertyValue(owlModel, ontologyInd, PROPERTY_IS_FOUNDRY,
 				litIsFoundry); // TODO check this for correct type conversion
-		RDFSLiteral litIsManual = owlModel.createRDFSLiteral(
-				ob.getIsManual() == 0 ? "false" : "true", owlModel
-						.getXSDboolean());
+		RDFSLiteral litIsManual = owlModel.createRDFSLiteral(ob.getIsManual()
+				.byteValue() == ApplicationConstants.FALSE ? "false" : "true",
+				owlModel.getXSDboolean());
 		setPropertyValue(owlModel, vOntInd, PROPERTY_IS_MANUAL, litIsManual);
-		RDFSLiteral litIsRemote = owlModel.createRDFSLiteral(
-				ob.getIsRemote() == 0 ? "false" : "true", owlModel
-						.getXSDboolean());
+		RDFSLiteral litIsRemote = owlModel.createRDFSLiteral(ob.getIsRemote()
+				.byteValue() == ApplicationConstants.FALSE ? "false" : "true",
+				owlModel.getXSDboolean());
 		setPropertyValue(owlModel, ontologyInd, PROPERTY_IS_REMOTE, litIsRemote);
 
 		setPropertyValue(owlModel, vOntInd, PROPERTY_OBO_FOUNDRY_ID, ob
@@ -858,9 +859,10 @@ public class OntologyMetadataUtils extends MetadataUtils {
 		for (Iterator<OWLIndividual> it = propValues.iterator(); it.hasNext();) {
 			OWLIndividual ontologyInd = (OWLIndividual) it.next();
 			Integer verNr = getPropertyValue(owlModel, ontologyInd,
-					PROPERTY_INTERNAL_VERSION_NUMBER, Integer.class);			
-			
-			if (!isDeprecated(ontologyInd) && (doNotFilterForActive || isReady(ontologyInd)) 
+					PROPERTY_INTERNAL_VERSION_NUMBER, Integer.class);
+
+			if (!isDeprecated(ontologyInd)
+					&& (doNotFilterForActive || isReady(ontologyInd))
 					&& (latest == null || verNr > maxVerNr)) {
 				latest = ontologyInd;
 				maxVerNr = verNr;
@@ -870,12 +872,12 @@ public class OntologyMetadataUtils extends MetadataUtils {
 		return latest;
 	}
 
-//	 public static void setLatestVersion(OWLIndividual virtualOntologyInd,
-//			OWLIndividual ontologyInd) throws Exception {
-//		OWLModel owlModel = virtualOntologyInd.getOWLModel();
-//		setPropertyValue(owlModel, virtualOntologyInd,
-//				PROPERTY_CURRENT_VERSION, ontologyInd);
-//	}
+	// public static void setLatestVersion(OWLIndividual virtualOntologyInd,
+	// OWLIndividual ontologyInd) throws Exception {
+	// OWLModel owlModel = virtualOntologyInd.getOWLModel();
+	// setPropertyValue(owlModel, virtualOntologyInd,
+	// PROPERTY_CURRENT_VERSION, ontologyInd);
+	// }
 
 	private static boolean isReady(OWLIndividual ontologyInd) throws Exception {
 		OWLModel owlModel = ontologyInd.getOWLModel();
@@ -885,7 +887,8 @@ public class OntologyMetadataUtils extends MetadataUtils {
 				|| status.equals(StatusEnum.STATUS_NOTAPPLICABLE.getStatus());
 	}
 
-	private static boolean isDeprecated(OWLIndividual ontologyInd) throws Exception {
+	private static boolean isDeprecated(OWLIndividual ontologyInd)
+			throws Exception {
 		OWLModel owlModel = ontologyInd.getOWLModel();
 		Integer status = getPropertyValue(owlModel, ontologyInd,
 				PROPERTY_STATUS_ID, Integer.class);
