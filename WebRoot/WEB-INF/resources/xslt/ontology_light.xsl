@@ -11,7 +11,7 @@
 	<xsl:template match="data">
 		<data>
 			<list>
-				<xsl:apply-templates match="ontologyBean" />
+				<xsl:apply-templates />
 			</list>
 		</data>
 	</xsl:template>
