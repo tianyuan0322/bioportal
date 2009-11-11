@@ -400,11 +400,14 @@ public class OntologyMetadataManagerProtegeImpl extends
 			try {
 				OntologyBean ob = findLatestOntologyOrViewVersionById(ontologyId);
 
-				if (ob != null
-						&& !StringHelper.isNullOrNullString(ob
-								.getOboFoundryId())
-						&& ob.getIsManual().byteValue() != ApplicationConstants.TRUE) {
-					res.add(ob);
+				if (ob != null) {
+					Byte isManual = ob.getIsManual();
+
+					if (!StringHelper.isNullOrNullString(ob.getOboFoundryId())
+							&& isManual != null
+							&& isManual.byteValue() == ApplicationConstants.FALSE) {
+						res.add(ob);
+					}
 				}
 			} catch (Exception e) {
 				log.error("Error while getting latest version for ontology "
