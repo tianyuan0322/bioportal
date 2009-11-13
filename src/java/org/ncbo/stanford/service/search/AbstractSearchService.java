@@ -120,6 +120,17 @@ public abstract class AbstractSearchService {
 	}
 
 	/**
+	 * Empty search results cache
+	 */
+	public void emptySearchCache() {
+		if (log.isDebugEnabled()) {
+			log.debug("Emptying cache...");
+		}
+
+		searchResultCache.clear();
+	}
+
+	/**
 	 * Reload search results cache by re-running all queries in it and
 	 * re-populating it with new results
 	 */
@@ -359,7 +370,13 @@ public abstract class AbstractSearchService {
 	}
 
 	protected String[] parseCacheKey(String cacheKey) {
-		return cacheKey.split(CACHE_KEY_SEPARATOR);
+		String[] keys = cacheKey.split(CACHE_KEY_SEPARATOR);
+
+		if (keys.length > 2 && keys[2] != null && keys[2].equals("null")) {
+			keys[2] = null;
+		}
+
+		return keys;
 	}
 
 	protected String composeCacheKey(Query query, Integer maxNumHits,
