@@ -135,6 +135,9 @@ public class OntologyServiceMetadataImpl extends AbstractOntologyService
 			return;
 		}
 
+		Integer ontologyId = ontologyBean.getOntologyId();
+		OntologyBean latestOntologyBean = findLatestActiveOntologyOrViewVersion(ontologyId);
+
 		// 1. Remove ontology from the backend
 		if (!ontologyBean.isRemote()) {
 			getLoadManager(ontologyBean).cleanup(ontologyBean);
@@ -164,11 +167,15 @@ public class OntologyServiceMetadataImpl extends AbstractOntologyService
 		ontologyMetadataManager.deleteOntologyOrView(ontologyBean,
 				removeMetadata);
 
-		// 5. Reindex the latest version of ontology (this operation removes
-		// this version from the index). Do not backup or optimize the index (it
+		// 5. Reindex the latest version of ontology but only if the version we
+		// are removing IS the latest. This operation removes
+		// this version from the index. Do not backup or optimize the index (it
 		// will be backed up and optimized on the next ontology indexing
 		// operation).
-		indexService.indexOntology(ontologyBean.getOntologyId(), false, false);
+		if (latestOntologyBean != null
+				&& ontologyVersionId.equals(latestOntologyBean.getId())) {
+			indexService.indexOntology(ontologyId, false, false);
+		}
 	}
 
 	public List<CategoryBean> findAllCategories() {
