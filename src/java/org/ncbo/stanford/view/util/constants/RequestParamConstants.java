@@ -72,6 +72,7 @@ public interface RequestParamConstants {
 	 */
 	public static final String PARAM_DOBACKUP = "dobackup";
 	public static final String PARAM_DOOPTIMIZE = "dooptimize";
+	public static final String PARAM_RELOADCACHE = "reloadcache";
 
 	/**
 	 * Diff download parameters
