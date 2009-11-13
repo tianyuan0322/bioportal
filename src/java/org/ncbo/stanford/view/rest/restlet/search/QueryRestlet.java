@@ -44,9 +44,9 @@ public class QueryRestlet extends AbstractBaseRestlet {
 	 */
 	@Override
 	public void putRequest(Request request, Response response) {
-		reloadSearchCache(request, response);
+		emptyOrReloadSearchCache(request, response);
 	}
-	
+
 	/**
 	 * Execute search
 	 * 
@@ -111,9 +111,19 @@ public class QueryRestlet extends AbstractBaseRestlet {
 		}
 	}
 
-	private void reloadSearchCache(Request request, Response response) {
+	private void emptyOrReloadSearchCache(Request request, Response response) {
+		HttpServletRequest httpRequest = RequestUtils
+				.getHttpServletRequest(request);
+		String reloadCache = (String) httpRequest
+				.getParameter(RequestParamConstants.PARAM_RELOADCACHE);
+		boolean reloadCacheBool = RequestUtils.parseBooleanParam(reloadCache);
+
 		try {
-			queryService.reloadSearchCache();
+			if (reloadCacheBool) {
+				queryService.reloadSearchCache();
+			} else {
+				queryService.emptySearchCache();
+			}
 		} catch (Exception e) {
 			response.setStatus(Status.SERVER_ERROR_INTERNAL, e.getMessage());
 			e.printStackTrace();
