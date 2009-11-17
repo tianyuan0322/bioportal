@@ -96,7 +96,6 @@ public class RequestUtils {
 	 * @return boolean
 	 * @throws
 	 */
-	@SuppressWarnings("unchecked")
 	public static boolean isEmptyRequest(HttpServletRequest request) {
 		return request.getParameterNames().hasMoreElements();
 	}
