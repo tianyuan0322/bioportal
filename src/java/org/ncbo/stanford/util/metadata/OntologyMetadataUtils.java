@@ -25,6 +25,7 @@ import edu.stanford.smi.protegex.owl.model.OWLModel;
 import edu.stanford.smi.protegex.owl.model.OWLNamedClass;
 import edu.stanford.smi.protegex.owl.model.RDFIndividual;
 import edu.stanford.smi.protegex.owl.model.RDFProperty;
+import edu.stanford.smi.protegex.owl.model.RDFResource;
 import edu.stanford.smi.protegex.owl.model.RDFSLiteral;
 import edu.stanford.smi.protegex.owl.model.impl.DefaultRDFSLiteral;
 
@@ -887,7 +888,7 @@ public class OntologyMetadataUtils extends MetadataUtils {
 				|| status.equals(StatusEnum.STATUS_NOTAPPLICABLE.getStatus());
 	}
 
-	private static boolean isDeprecated(OWLIndividual ontologyInd)
+	private static boolean isDeprecated(RDFResource ontologyInd)
 			throws Exception {
 		OWLModel owlModel = ontologyInd.getOWLModel();
 		Integer status = getPropertyValue(owlModel, ontologyInd,
@@ -902,15 +903,12 @@ public class OntologyMetadataUtils extends MetadataUtils {
 
 		if (excludeDeprecated) {
 			allVersionIds = new ArrayList<Integer>(0);
-			List<OWLIndividual> propValues = getPropertyValues(metadata,
-					virtualOntologyInd, PROPERTY_HAS_VERSION,
-					OWLIndividual.class);
+			List<RDFResource> propValues = getPropertyValues(metadata,
+					virtualOntologyInd, PROPERTY_HAS_VERSION, RDFResource.class);
 
-			for (OWLIndividual ontologyVersionInd : propValues) {
+			for (RDFResource ontologyVersionInd : propValues) {
 				if (!isDeprecated(ontologyVersionInd)) {
-					allVersionIds.add(getPropertyValue(metadata,
-							ontologyVersionInd, PROPERTY_HAS_VERSION,
-							Integer.class));
+					allVersionIds.add(getId(metadata, ontologyVersionInd));
 				}
 			}
 		} else {
