@@ -47,7 +47,6 @@ import org.ncbo.stanford.util.helper.StringHelper;
  */
 public abstract class AbstractSearchService {
 
-	@SuppressWarnings("unused")
 	private static final Log log = LogFactory
 			.getLog(AbstractSearchService.class);
 
@@ -78,8 +77,8 @@ public abstract class AbstractSearchService {
 	 * 
 	 * @param query
 	 * @param maxNumHits
-	 * @param subtreeRootConceptId -
-	 *            optional root concept id for sub-tree search
+	 * @param subtreeRootConceptId
+	 *            - optional root concept id for sub-tree search
 	 * @return
 	 * @throws Exception
 	 */
