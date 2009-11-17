@@ -9,13 +9,14 @@ public class OBORepositoryInfoHolder {
 	String argumentstring;
 	String checkoutdir;
 	String descriptorlocation;
+	String repositoryType;
 
 	public String toString() {
 		return "username: " + username + ", password: " + password
 				+ ", hostname: " + hostname + ", module: " + module
 				+ ", rootdirectory: " + rootdirectory + ", argumentstring: "
 				+ argumentstring + ", checkoutdir: " + checkoutdir
-				+ ", descriptorlocation: " + descriptorlocation;
+				+ ", descriptorlocation: " + descriptorlocation+" ,repositoryType : "+repositoryType;
 	}
 
 	/**
@@ -137,4 +138,13 @@ public class OBORepositoryInfoHolder {
 	public void setDescriptorlocation(String descriptorlocation) {
 		this.descriptorlocation = descriptorlocation;
 	}
+
+	public String getRepositoryType() {
+		return repositoryType;
+	}
+
+	public void setRepositoryType(String repositoryType) {
+		this.repositoryType = repositoryType;
+	}
+		
 }

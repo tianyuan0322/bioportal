@@ -37,10 +37,12 @@ import org.ncbo.stanford.util.ontologyfile.OntologyDescriptorParser;
 import org.ncbo.stanford.util.ontologyfile.compressedfilehandler.impl.CompressedFileHandlerFactory;
 import org.ncbo.stanford.util.ontologyfile.pathhandler.FilePathHandler;
 import org.ncbo.stanford.util.ontologyfile.pathhandler.impl.PhysicalDirectoryFilePathHandlerImpl;
+import org.ncbo.stanford.util.svn.SVNUtils;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
+import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
@@ -83,15 +85,26 @@ public class OBOCVSPullServiceImpl implements OBOCVSPullService {
 		try {
 			List<OBORepositoryInfoHolder> repos = parseRepositoryConfigFile();
 
+			HashMap<String , CVSFile> updateFiles=null;
 			for (OBORepositoryInfoHolder repo : repos) {
-				CVSUtils cvsUtils = new CVSUtils(repo.getUsername(), repo
-						.getPassword(), repo.getHostname(), repo.getModule(),
-						repo.getRootdirectory(), repo.getArgumentstring(), repo
-								.getCheckoutdir(), tempDir);
-				cvsUtils.cvsCheckout();
-				HashMap<String, CVSFile> updateFiles = cvsUtils
-						.getAllCVSEntries();
-				processRecords(repo, updateFiles);
+				
+				if (repo.getRepositoryType().equals("SVN")) {
+					SVNUtils svnUtils = new SVNUtils(repo.getUsername(), repo
+							.getPassword(), repo.getHostname(), repo.getModule(),
+							repo.getRootdirectory(), repo.getArgumentstring(), repo
+									.getCheckoutdir(), tempDir);
+					svnUtils.svnCheckout();
+					updateFiles=svnUtils.listEntries();
+				} else {			
+					CVSUtils cvsUtils = new CVSUtils(repo.getUsername(), repo
+							.getPassword(), repo.getHostname(), repo.getModule(),
+							repo.getRootdirectory(), repo.getArgumentstring(), repo
+									.getCheckoutdir(), tempDir);
+					cvsUtils.cvsCheckout();
+					updateFiles = cvsUtils.getAllCVSEntries();
+				}
+			  // process repository data.
+			  processRecords(repo, updateFiles);
 			}
 
 			if (log.isDebugEnabled()) {
@@ -506,9 +519,20 @@ public class OBOCVSPullServiceImpl implements OBOCVSPullService {
 		for (Node child = root.getFirstChild(); child != null; child = child
 				.getNextSibling()) {
 			if (child.getNodeType() == Node.ELEMENT_NODE) {
+				
 				NodeList repoInfo = child.getChildNodes();
 				OBORepositoryInfoHolder infoHolder = new OBORepositoryInfoHolder();
-
+				NamedNodeMap attributes=child.getAttributes();
+				
+				if(attributes != null){
+						for (int i = 0; i < attributes.getLength(); i++) {
+						Node attribute = attributes.item(i);
+						if (attribute.getNodeName().toString().equals("type")) {
+							infoHolder.setRepositoryType(attribute.getNodeValue());
+						}
+					}
+				}
+				
 				for (int i = 0; i < repoInfo.getLength(); i++) {
 					Node node = repoInfo.item(i);
 
