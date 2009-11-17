@@ -2,21 +2,24 @@ package org.ncbo.stanford.view.rest.restlet.ontology;
 
 import java.util.List;
 
+import javax.servlet.http.HttpServletRequest;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.ncbo.stanford.bean.OntologyBean;
-import org.ncbo.stanford.service.ontology.OntologyService;
+import org.ncbo.stanford.exception.InvalidInputException;
+import org.ncbo.stanford.exception.OntologyNotFoundException;
 import org.ncbo.stanford.util.MessageUtils;
-import org.ncbo.stanford.view.rest.restlet.AbstractBaseRestlet;
+import org.ncbo.stanford.util.RequestUtils;
+import org.ncbo.stanford.view.util.constants.RequestParamConstants;
 import org.restlet.data.Request;
 import org.restlet.data.Response;
 import org.restlet.data.Status;
 
-public class OntologyVersionsRestlet extends AbstractBaseRestlet {
+public class OntologyVersionsRestlet extends AbstractOntologyBaseRestlet {
 
 	private static final Log log = LogFactory
 			.getLog(OntologyVersionsRestlet.class);
-	private OntologyService ontologyService;
 
 	/**
 	 * Handle GET calls here
@@ -39,24 +42,37 @@ public class OntologyVersionsRestlet extends AbstractBaseRestlet {
 		String ontologyId = (String) request.getAttributes().get(
 				MessageUtils.getMessage("entity.ontologyid"));
 		List<OntologyBean> ontologyList = null;
-
+		HttpServletRequest httpRequest = RequestUtils
+				.getHttpServletRequest(request);
+		String excludeDeprecated = (String) httpRequest
+				.getParameter(RequestParamConstants.PARAM_EXCLUDE_DEPRECATED);
+		boolean excludeDeprecatedBool = RequestUtils
+				.parseBooleanParam(excludeDeprecated);
+		Integer ontologyIdInt = RequestUtils.parseIntegerParam(ontologyId);
+		
 		try {
-			ontologyList = ontologyService
-					.findAllOntologyOrViewVersionsByVirtualId(Integer
-							.parseInt(ontologyId));
+			if (ontologyIdInt == null) {
+				throw new InvalidInputException(MessageUtils
+						.getMessage("msg.error.ontologyidinvalid"));
+			}
 
-			response.setStatus(Status.SUCCESS_OK);
+			ontologyList = ontologyService
+					.findAllOntologyOrViewVersionsByVirtualId(ontologyIdInt,
+							excludeDeprecatedBool);
 
 			// if no data is not found, set Error in the Status object
 			if (ontologyList == null || ontologyList.isEmpty()) {
-				//TODO if we could test whether the virtual id is for an ontology or for a view
-				//     we could return more appropriate message (i.e. "msg.error.ontologyViewNotFound")
-				response.setStatus(Status.CLIENT_ERROR_NOT_FOUND, MessageUtils
+				// TODO if we could test whether the virtual id is for an
+				// ontology or for a view
+				// we could return more appropriate message (i.e.
+				// "msg.error.ontologyViewNotFound")
+				throw new OntologyNotFoundException(MessageUtils
 						.getMessage("msg.error.ontologyNotFound"));
 			}
-		} catch (NumberFormatException nfe) {
-			response.setStatus(Status.CLIENT_ERROR_BAD_REQUEST, nfe
-					.getMessage());
+		} catch (InvalidInputException e) {
+			response.setStatus(Status.CLIENT_ERROR_BAD_REQUEST, e.getMessage());
+		} catch (OntologyNotFoundException e) {
+			response.setStatus(Status.CLIENT_ERROR_NOT_FOUND, e.getMessage());
 		} catch (Exception e) {
 			response.setStatus(Status.SERVER_ERROR_INTERNAL, e.getMessage());
 			e.printStackTrace();
@@ -66,13 +82,5 @@ public class OntologyVersionsRestlet extends AbstractBaseRestlet {
 			xmlSerializationService.generateXMLResponse(request, response,
 					ontologyList);
 		}
-	}
-
-	/**
-	 * @param ontologyService
-	 *            the ontologyService to set
-	 */
-	public void setOntologyService(OntologyService ontologyService) {
-		this.ontologyService = ontologyService;
 	}
 }
