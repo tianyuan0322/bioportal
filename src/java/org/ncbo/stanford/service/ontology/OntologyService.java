@@ -83,7 +83,8 @@ public interface OntologyService {
 	 * @return list of Ontology beans
 	 */
 	public List<OntologyBean> findAllOntologyOrViewVersionsByVirtualId(
-			Integer ontologyOrViewId);
+			Integer ontologyOrViewId, boolean excludeDeprecated)
+			throws Exception;
 
 	/**
 	 * Searches common fields from ontology or view metadata for an arbitrary

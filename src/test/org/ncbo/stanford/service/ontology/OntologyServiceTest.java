@@ -85,11 +85,11 @@ public class OntologyServiceTest extends AbstractBioPortalTest {
 	
 /*	*/
 	@Test
-	public void testfindAllOntologyOrViewVersions() {
+	public void testfindAllOntologyOrViewVersions() throws Exception {
 
 		System.out.println ("OntologyServiceTest: testfindAllOntologyOrViewVersions().......................BEGIN");
 		
-		List<OntologyBean> ontologies = getOntologyService().findAllOntologyOrViewVersionsByVirtualId(new Integer(6000));
+		List<OntologyBean> ontologies = getOntologyService().findAllOntologyOrViewVersionsByVirtualId(new Integer(6000), false);
 
 		for (OntologyBean ontology : ontologies) {
 

@@ -352,17 +352,19 @@ public class OntologyMetadataManagerProtegeImpl extends
 	}
 
 	public List<OntologyBean> findAllOntologyOrViewVersionsById(
-			Integer ontologyOrViewId) throws Exception {
+			Integer ontologyOrViewId, boolean excludeDeprecated)
+			throws Exception {
 		OWLModel metadata = getMetadataOWLModel();
 		List<OntologyBean> res = new ArrayList<OntologyBean>();
 		OWLIndividual vOntInd = getVirtualOntologyOrViewInstance(metadata,
 				ontologyOrViewId);
 
 		if (vOntInd != null) {
-			List<Integer> ontologyIds = OntologyMetadataUtils
-					.getAllOntologyVersionIDs(metadata, vOntInd);
+			List<Integer> ontologyVersionIds = OntologyMetadataUtils
+					.getAllOntologyVersionIDs(metadata, vOntInd,
+							excludeDeprecated);
 
-			for (Integer id : ontologyIds) {
+			for (Integer id : ontologyVersionIds) {
 				res.add(findOntologyOrViewVersionById(id));
 			}
 		}

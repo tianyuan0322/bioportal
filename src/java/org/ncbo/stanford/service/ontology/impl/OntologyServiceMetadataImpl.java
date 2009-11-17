@@ -187,15 +187,9 @@ public class OntologyServiceMetadataImpl extends AbstractOntologyService
 	}
 
 	public List<OntologyBean> findAllOntologyOrViewVersionsByVirtualId(
-			Integer ontologyId) {
-		try {
-			return ontologyMetadataManager
-					.findAllOntologyOrViewVersionsById(ontologyId);
-		} catch (Exception e) {
-			// TODO see if this is the way we want to deal with exceptions
-			e.printStackTrace();
-			return null;
-		}
+			Integer ontologyId, boolean excludeDeprecated) throws Exception {
+		return ontologyMetadataManager.findAllOntologyOrViewVersionsById(
+				ontologyId, excludeDeprecated);
 	}
 
 	public List<Integer> findCategoryIdsByOBOFoundryNames(

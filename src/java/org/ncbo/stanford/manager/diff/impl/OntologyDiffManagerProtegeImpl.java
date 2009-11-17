@@ -44,8 +44,8 @@ public class OntologyDiffManagerProtegeImpl extends
 	 * Creates a diff between two ontology versions. Calls Prompt to do that and
 	 * saves the diff in a file
 	 * 
-	 * @param ontologyVersionOld,
-	 *            ontologyVersionNew
+	 * @param ontologyVersionOld
+	 *            , ontologyVersionNew
 	 * 
 	 * @throws Exception
 	 */
@@ -79,8 +79,10 @@ public class OntologyDiffManagerProtegeImpl extends
 
 	public void createDiffForTwoLatestVersions(Integer ontologyId)
 			throws Exception {
+		// get all versions, including deprecated ones (excludeDeprecated =
+		// false)
 		List<OntologyBean> allVersions = ontologyMetadataManagerProtege
-				.findAllOntologyOrViewVersionsById(ontologyId);
+				.findAllOntologyOrViewVersionsById(ontologyId, false);
 
 		// get a list of version ids, filtering out ontologies that are not
 		// active
@@ -156,8 +158,8 @@ public class OntologyDiffManagerProtegeImpl extends
 	 * Returns the file for the diff between two ontology versions in th
 	 * specified format (in any order)
 	 * 
-	 * @param ontologyVersionId1,
-	 *            ontologyVersionId2
+	 * @param ontologyVersionId1
+	 *            , ontologyVersionId2
 	 * @throws FileNotFoundException
 	 */
 	public File getDiffFileForOntologyVersions(Integer ontologyVersionId1,

@@ -169,12 +169,14 @@ public interface OntologyMetadataManager {
 	 * 
 	 * @param ontologyOrViewId
 	 *            a (virtual) ontology/view id
+	 * @param excludeDeprecated
 	 * @return the list of ontology/view beans corresponding to the versions of
 	 *         the virtual ontology/view with ID <code>ontologyOrViewId</code>
 	 * @throws Exception
 	 */
 	public List<OntologyBean> findAllOntologyOrViewVersionsById(
-			Integer ontologyOrViewId) throws Exception;
+			Integer ontologyOrViewId, boolean excludeDeprecated)
+			throws Exception;
 
 	/**
 	 * Returns the next available (i.e. not already in use) virtual ontology ID
