@@ -20,7 +20,6 @@ import org.restlet.data.Status;
  */
 public abstract class AbstractOntologyBaseRestlet extends AbstractBaseRestlet {
 
-	@SuppressWarnings("unused")
 	private static final Log log = LogFactory
 			.getLog(AbstractOntologyBaseRestlet.class);
 	protected OntologyService ontologyService;
