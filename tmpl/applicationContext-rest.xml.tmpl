@@ -1,9 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <beans xmlns="http://www.springframework.org/schema/beans"
-	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xmlns:util="http://www.springframework.org/schema/util"
-	xmlns:aop="http://www.springframework.org/schema/aop"
-	xmlns:tx="http://www.springframework.org/schema/tx"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:util="http://www.springframework.org/schema/util"
+	xmlns:aop="http://www.springframework.org/schema/aop" xmlns:tx="http://www.springframework.org/schema/tx"
 	xsi:schemaLocation="
        http://www.springframework.org/schema/beans 
        http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
@@ -15,8 +13,7 @@
        http://www.springframework.org/schema/aop/spring-aop-2.5.xsd">
 
 	<!-- Wire all restlets -->
-	<bean id="abstractBaseRestlet"
-		class="org.ncbo.stanford.view.rest.restlet.AbstractBaseRestlet"
+	<bean id="abstractBaseRestlet" class="org.ncbo.stanford.view.rest.restlet.AbstractBaseRestlet"
 		abstract="true">
 		<property name="xmlSerializationService">
 			<ref bean="xmlSerializationService" />
@@ -152,16 +149,14 @@
 		</property>
 	</bean>
 
-	<bean id="queryRestlet"
-		class="org.ncbo.stanford.view.rest.restlet.search.QueryRestlet"
+	<bean id="queryRestlet" class="org.ncbo.stanford.view.rest.restlet.search.QueryRestlet"
 		parent="abstractBaseRestlet">
 		<property name="queryService">
 			<ref bean="querySearchService" />
 		</property>
 	</bean>
 
-	<bean id="indexRestlet"
-		class="org.ncbo.stanford.view.rest.restlet.search.IndexRestlet"
+	<bean id="indexRestlet" class="org.ncbo.stanford.view.rest.restlet.search.IndexRestlet"
 		parent="abstractBaseRestlet">
 		<property name="indexService">
 			<ref bean="indexSearchService" />
@@ -176,8 +171,7 @@
 		</property>
 	</bean>
 
-	<bean id="pathRestlet"
-		class="org.ncbo.stanford.view.rest.restlet.path.PathRestlet"
+	<bean id="pathRestlet" class="org.ncbo.stanford.view.rest.restlet.path.PathRestlet"
 		parent="abstractBaseRestlet">
 		<property name="conceptService">
 			<ref bean="conceptService" />
@@ -194,10 +188,7 @@
 
 	<bean id="ontologyVersionsRestlet"
 		class="org.ncbo.stanford.view.rest.restlet.ontology.OntologyVersionsRestlet"
-		parent="abstractBaseRestlet">
-		<property name="ontologyService">
-			<ref bean="ontologyService" />
-		</property>
+		parent="abstractOntologyBaseRestlet">
 	</bean>
 
 	<bean id="ontologyViewsRestlet"
@@ -231,8 +222,7 @@
 		parent="abstractOntologyBaseRestlet">
 	</bean>
 
-	<bean id="diffRestlet"
-		class="org.ncbo.stanford.view.rest.restlet.diff.DiffRestlet"
+	<bean id="diffRestlet" class="org.ncbo.stanford.view.rest.restlet.diff.DiffRestlet"
 		parent="abstractBaseRestlet">
 		<property name="diffService">
 			<ref bean="diffService" />
@@ -263,16 +253,14 @@
 		</property>
 	</bean>
 
-	<bean id="usersRestlet"
-		class="org.ncbo.stanford.view.rest.restlet.user.UsersRestlet"
+	<bean id="usersRestlet" class="org.ncbo.stanford.view.rest.restlet.user.UsersRestlet"
 		parent="abstractBaseRestlet">
 		<property name="userService">
 			<ref bean="userService" />
 		</property>
 	</bean>
 
-	<bean id="userRestlet"
-		class="org.ncbo.stanford.view.rest.restlet.user.UserRestlet"
+	<bean id="userRestlet" class="org.ncbo.stanford.view.rest.restlet.user.UserRestlet"
 		parent="abstractBaseRestlet">
 		<property name="userService">
 			<ref bean="userService" />
@@ -303,8 +291,7 @@
 		</property>
 	</bean>
 	<!-- All mappings: -->
-	<bean id="restManager"
-		class="org.ncbo.stanford.view.rest.base.RestManager">
+	<bean id="restManager" class="org.ncbo.stanford.view.rest.base.RestManager">
 		<property name="resourceMappings">
 			<bean class="java.util.HashMap">
 				<constructor-arg>
@@ -339,20 +326,16 @@
 						<entry key="/ontologies/{ontologyversionid}">
 							<ref local="ontologyRestlet" />
 						</entry>
-						<entry
-							key="/ontologies/versions/{ontologyid}">
+						<entry key="/ontologies/versions/{ontologyid}">
 							<ref local="ontologyVersionsRestlet" />
 						</entry>
-						<entry
-							key="/ontologies/metrics/{ontologyversionid}">
+						<entry key="/ontologies/metrics/{ontologyversionid}">
 							<ref local="ontologyMetricsRestlet" />
 						</entry>
-						<entry
-							key="/ontologies/download/{ontologyversionid}">
+						<entry key="/ontologies/download/{ontologyversionid}">
 							<ref local="ontologyDownloadRestlet" />
 						</entry>
-						<entry
-							key="/diffs/download/{ontologyversionid1}/{ontologyversionid2}">
+						<entry key="/diffs/download/{ontologyversionid1}/{ontologyversionid2}">
 							<ref local="diffDownloadRestlet" />
 						</entry>
 						<entry key="/diffs/{ontologyid}">
@@ -367,48 +350,37 @@
 						<entry key="/concepts/{ontologyversionid}">
 							<ref local="conceptRestlet" />
 						</entry>
-						<entry
-							key="/concepts/{ontologyversionid}/{conceptid}">
+						<entry key="/concepts/{ontologyversionid}/{conceptid}">
 							<ref local="conceptRestlet" />
 						</entry>
-						<entry
-							key="/concepts/parents/{ontologyversionid}/{conceptid}">
+						<entry key="/concepts/parents/{ontologyversionid}/{conceptid}">
 							<ref local="conceptParentsRestlet" />
 						</entry>
-						<entry
-							key="/virtual/parents/{ontologyid}/{conceptid}">
+						<entry key="/virtual/parents/{ontologyid}/{conceptid}">
 							<ref local="conceptParentsVirtualRestlet" />
 						</entry>
-						<entry
-							key="/concepts/children/{ontologyversionid}/{conceptid}">
+						<entry key="/concepts/children/{ontologyversionid}/{conceptid}">
 							<ref local="conceptChildrenRestlet" />
 						</entry>
-						<entry
-							key="/virtual/children/{ontologyid}/{conceptid}">
+						<entry key="/virtual/children/{ontologyid}/{conceptid}">
 							<ref local="conceptChildrenVirtualRestlet" />
 						</entry>
-						<entry
-							key="/concepts/rootpath/{ontologyversionid}/{conceptid}">
+						<entry key="/concepts/rootpath/{ontologyversionid}/{conceptid}">
 							<ref local="conceptRootPathRestlet" />
 						</entry>
-						<entry
-							key="/virtual/rootpath/{ontologyid}/{conceptid}">
+						<entry key="/virtual/rootpath/{ontologyid}/{conceptid}">
 							<ref local="conceptRootPathVirtualRestlet" />
 						</entry>
-						<entry
-							key="/concepts/siblings/{ontologyversionid}/{conceptid}">
+						<entry key="/concepts/siblings/{ontologyversionid}/{conceptid}">
 							<ref local="conceptSiblingsRestlet" />
 						</entry>
-						<entry
-							key="/virtual/siblings/{ontologyid}/{conceptid}">
+						<entry key="/virtual/siblings/{ontologyid}/{conceptid}">
 							<ref local="conceptSiblingsVirtualRestlet" />
 						</entry>
-						<entry
-							key="/concepts/leafpath/{ontologyversionid}/{conceptid}">
+						<entry key="/concepts/leafpath/{ontologyversionid}/{conceptid}">
 							<ref local="conceptLeavesRestlet" />
 						</entry>
-						<entry
-							key="/virtual/leafpath/{ontologyid}/{conceptid}">
+						<entry key="/virtual/leafpath/{ontologyid}/{conceptid}">
 							<ref local="conceptLeavesVirtualRestlet" />
 						</entry>
 						<entry key="/users">
@@ -423,8 +395,7 @@
 						<entry key="/path/{ontologyversionid}">
 							<ref local="pathRestlet" />
 						</entry>
-						<entry
-							key="/path/{ontologyversionid}/{source}/{target}">
+						<entry key="/path/{ontologyversionid}/{source}/{target}">
 							<ref local="pathRestlet" />
 						</entry>
 						<entry key="/search/{query}">
@@ -439,8 +410,7 @@
 						<entry key="/virtual/download/{ontologyid}">
 							<ref local="ontologyDownloadRestlet" />
 						</entry>
-						<entry
-							key="/virtual/ontology/{ontologyid}/{conceptid}">
+						<entry key="/virtual/ontology/{ontologyid}/{conceptid}">
 							<ref local="virtualRestlet" />
 						</entry>
 						<entry key="/obopull">
