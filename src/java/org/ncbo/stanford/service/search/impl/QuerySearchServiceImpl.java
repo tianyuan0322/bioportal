@@ -32,7 +32,6 @@ import org.springframework.transaction.annotation.Transactional;
 public class QuerySearchServiceImpl extends AbstractSearchService implements
 		QuerySearchService {
 
-	@SuppressWarnings("unused")
 	private static final Log log = LogFactory
 			.getLog(QuerySearchServiceImpl.class);
 
@@ -115,8 +114,8 @@ public class QuerySearchServiceImpl extends AbstractSearchService implements
 	 * @param pageSize
 	 * @param pageNum
 	 * @param maxNumHits
-	 * @param subtreeRootConceptId -
-	 *            optional root concept id for sub-tree search
+	 * @param subtreeRootConceptId
+	 *            - optional root concept id for sub-tree search
 	 * @return
 	 * @throws Exception
 	 */
@@ -141,8 +140,8 @@ public class QuerySearchServiceImpl extends AbstractSearchService implements
 	 * @param includeProperties
 	 * @param isExactMatch
 	 * @param maxNumHits
-	 * @param subtreeRootConceptId -
-	 *            optional root concept id for sub-tree search
+	 * @param subtreeRootConceptId
+	 *            - optional root concept id for sub-tree search
 	 * @return
 	 * @throws Exception
 	 */
@@ -163,8 +162,8 @@ public class QuerySearchServiceImpl extends AbstractSearchService implements
 	 * 
 	 * @param query
 	 * @param maxNumHits
-	 * @param subtreeRootConceptId -
-	 *            optional root concept id for sub-tree search
+	 * @param subtreeRootConceptId
+	 *            - optional root concept id for sub-tree search
 	 * @return
 	 * @throws Exception
 	 */
@@ -182,8 +181,8 @@ public class QuerySearchServiceImpl extends AbstractSearchService implements
 	 * @param pageSize
 	 * @param pageNum
 	 * @param maxNumHits
-	 * @param subtreeRootConceptId -
-	 *            optional root concept id for sub-tree search
+	 * @param subtreeRootConceptId
+	 *            - optional root concept id for sub-tree search
 	 * @return
 	 * @throws Exception
 	 */
