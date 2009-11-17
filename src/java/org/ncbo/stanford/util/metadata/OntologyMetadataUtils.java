@@ -896,10 +896,29 @@ public class OntologyMetadataUtils extends MetadataUtils {
 	}
 
 	public static List<Integer> getAllOntologyVersionIDs(OWLModel metadata,
-			OWLIndividual virtualOntologyInd) throws Exception {
-		// List<Integer> res = new ArrayList<Integer>();
-		return getPropertyValueIds(metadata, virtualOntologyInd,
-				PROPERTY_HAS_VERSION);
+			OWLIndividual virtualOntologyInd, boolean excludeDeprecated)
+			throws Exception {
+		List<Integer> allVersionIds;
+
+		if (excludeDeprecated) {
+			allVersionIds = new ArrayList<Integer>(0);
+			List<OWLIndividual> propValues = getPropertyValues(metadata,
+					virtualOntologyInd, PROPERTY_HAS_VERSION,
+					OWLIndividual.class);
+
+			for (OWLIndividual ontologyVersionInd : propValues) {
+				if (!isDeprecated(ontologyVersionInd)) {
+					allVersionIds.add(getPropertyValue(metadata,
+							ontologyVersionInd, PROPERTY_HAS_VERSION,
+							Integer.class));
+				}
+			}
+		} else {
+			allVersionIds = getPropertyValueIds(metadata, virtualOntologyInd,
+					PROPERTY_HAS_VERSION);
+		}
+
+		return allVersionIds;
 	}
 
 	public static List<Integer> getAllVirtualOntologyIDs(OWLModel metadata,
