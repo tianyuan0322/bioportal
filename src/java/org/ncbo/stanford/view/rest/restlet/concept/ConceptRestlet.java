@@ -5,6 +5,7 @@ import javax.servlet.http.HttpServletRequest;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.ncbo.stanford.bean.OntologyVersionIdBean;
+import org.ncbo.stanford.exception.ConceptNotFoundException;
 import org.ncbo.stanford.exception.OntologyNotFoundException;
 import org.ncbo.stanford.service.concept.ConceptService;
 import org.ncbo.stanford.util.MessageUtils;
@@ -18,7 +19,6 @@ import org.restlet.data.Status;
 
 public class ConceptRestlet extends AbstractBaseRestlet {
 
-	@SuppressWarnings("unused")
 	private static final Log log = LogFactory.getLog(ConceptRestlet.class);
 	private ConceptService conceptService;
 
@@ -62,8 +62,8 @@ public class ConceptRestlet extends AbstractBaseRestlet {
 			Integer ontologyVersionIdInt = Integer.parseInt(ontologyVersionId);
 
 			if (StringHelper.isNullOrNullString(conceptId)) {
-				response.setStatus(Status.CLIENT_ERROR_BAD_REQUEST,
-						MessageUtils.getMessage("msg.error.conceptidrequired"));
+				throw new ConceptNotFoundException(MessageUtils
+						.getMessage("msg.error.conceptidrequired"));
 			} else if (conceptId
 					.equalsIgnoreCase(RequestParamConstants.PARAM_ROOT_CONCEPT)) {
 				// root concept
@@ -85,6 +85,8 @@ public class ConceptRestlet extends AbstractBaseRestlet {
 				response.setStatus(Status.CLIENT_ERROR_NOT_FOUND, MessageUtils
 						.getMessage("msg.error.conceptNotFound"));
 			}
+		} catch (ConceptNotFoundException e) {
+			response.setStatus(Status.CLIENT_ERROR_BAD_REQUEST, e.getMessage());
 		} catch (NumberFormatException nfe) {
 			response.setStatus(Status.CLIENT_ERROR_BAD_REQUEST, nfe
 					.getMessage());
@@ -92,8 +94,9 @@ public class ConceptRestlet extends AbstractBaseRestlet {
 			response.setStatus(Status.CLIENT_ERROR_BAD_REQUEST, onfe
 					.getMessage());
 		} catch (Exception e) {
+			response.setStatus(Status.SERVER_ERROR_INTERNAL, e.getMessage());
 			e.printStackTrace();
-			response.setStatus(Status.CLIENT_ERROR_BAD_REQUEST, e.getMessage());
+			log.error(e);
 		} finally {
 			xmlSerializationService.generateXMLResponse(request, response,
 					concept);
