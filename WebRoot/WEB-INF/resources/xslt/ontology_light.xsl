@@ -48,4 +48,10 @@
 			<xsl:value-of select="." />
 		</accessDate>
 	</xsl:template>
+	
+	<xsl:template match="sessionId">
+		<sessionId>
+			<xsl:value-of select="." />
+		</sessionId>
+	</xsl:template>
 </xsl:stylesheet>
