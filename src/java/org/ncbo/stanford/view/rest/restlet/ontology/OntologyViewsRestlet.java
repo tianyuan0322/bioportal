@@ -50,7 +50,7 @@ public class OntologyViewsRestlet extends AbstractBaseRestlet {
 		} finally {
 			// generate response XML with XSL
 			String xslFile = MessageUtils
-					.getMessage("xsl.ontology.view.findall");
+					.getMessage("xsl.ontology.findall");
 			xmlSerializationService.generateXMLResponse(request, response,
 					ontologyList, xslFile);
 		}
