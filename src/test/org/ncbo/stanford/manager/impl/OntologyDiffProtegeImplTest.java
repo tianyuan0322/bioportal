@@ -24,7 +24,7 @@ public class OntologyDiffProtegeImplTest extends AbstractBioPortalTest {
 	private final static int ONTOLOGY_ID = 1262;
 
 	@Autowired
-	private OntologyMetadataManager ontologyMetadataManagerProtege;
+	private OntologyMetadataManager ontologyMetadataManager;
 
 	@Autowired
 	private OntologyDiffManagerProtegeImpl diffManagerProtege;
@@ -33,10 +33,10 @@ public class OntologyDiffProtegeImplTest extends AbstractBioPortalTest {
 	public void testDiff() throws Exception {
 		System.out.println("Starting diff test.");
 
-		OntologyBean oldVersion = ontologyMetadataManagerProtege
+		OntologyBean oldVersion = ontologyMetadataManager
 				.findOntologyOrViewVersionById(OLD_VERSION_ID);
 
-		OntologyBean newVersion = ontologyMetadataManagerProtege
+		OntologyBean newVersion = ontologyMetadataManager
 				.findOntologyOrViewVersionById(NEW_VERSION_ID);
 
 		System.out.println("old: " + oldVersion + ", new: " + newVersion);

@@ -184,7 +184,7 @@ public class OntologyLoadManagerLexGridImpl extends
 			ob.setCodingScheme(urnAndVersion);
 			log.debug("Updating the NcboOntologyMetadata with the codingScheme name="
 							+ urnAndVersion);
-			ontologyMetadataManagerProtege.saveOntologyOrView(ob);
+			ontologyMetadataManager.saveOntologyOrView(ob);
 		} else {
 			if (status.getErrorsLogged().booleanValue()) {
 				String error_message = "";
@@ -229,7 +229,7 @@ public class OntologyLoadManagerLexGridImpl extends
 			lbsm.deactivateCodingSchemeVersion(acsvr, null);
 			lbsm.removeCodingSchemeVersion(acsvr);
 			ontologyBean.setCodingScheme(null);
-			ontologyMetadataManagerProtege.saveOntologyOrView(ontologyBean);
+			ontologyMetadataManager.saveOntologyOrView(ontologyBean);
 		}
 	}
 

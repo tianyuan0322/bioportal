@@ -38,14 +38,14 @@ public class OntologyDiffManagerProtegeImpl extends
 	private static final Log log = LogFactory
 			.getLog(OntologyDiffManagerProtegeImpl.class);
 
-	private OntologyMetadataManager ontologyMetadataManagerProtege;
+	private OntologyMetadataManager ontologyMetadataManager;
 
 	/**
 	 * Creates a diff between two ontology versions. Calls Prompt to do that and
 	 * saves the diff in a file
 	 * 
-	 * @param ontologyVersionOld
-	 *            , ontologyVersionNew
+	 * @param ontologyVersionOld,
+	 *            ontologyVersionNew
 	 * 
 	 * @throws Exception
 	 */
@@ -79,9 +79,7 @@ public class OntologyDiffManagerProtegeImpl extends
 
 	public void createDiffForTwoLatestVersions(Integer ontologyId)
 			throws Exception {
-		// get all versions, including deprecated ones (excludeDeprecated =
-		// false)
-		List<OntologyBean> allVersions = ontologyMetadataManagerProtege
+		List<OntologyBean> allVersions = ontologyMetadataManager
 				.findAllOntologyOrViewVersionsById(ontologyId, false);
 
 		// get a list of version ids, filtering out ontologies that are not
@@ -107,9 +105,9 @@ public class OntologyDiffManagerProtegeImpl extends
 		Integer oldVersionId = versionIds.get(versionIds.size() - 2); // previous
 		// version
 
-		OntologyBean newVersion = ontologyMetadataManagerProtege
+		OntologyBean newVersion = ontologyMetadataManager
 				.findOntologyOrViewVersionById(newVersionId);
-		OntologyBean oldVersion = ontologyMetadataManagerProtege
+		OntologyBean oldVersion = ontologyMetadataManager
 				.findOntologyOrViewVersionById(oldVersionId);
 
 		if (newVersion == null) {
@@ -158,8 +156,8 @@ public class OntologyDiffManagerProtegeImpl extends
 	 * Returns the file for the diff between two ontology versions in th
 	 * specified format (in any order)
 	 * 
-	 * @param ontologyVersionId1
-	 *            , ontologyVersionId2
+	 * @param ontologyVersionId1,
+	 *            ontologyVersionId2
 	 * @throws FileNotFoundException
 	 */
 	public File getDiffFileForOntologyVersions(Integer ontologyVersionId1,
@@ -272,9 +270,9 @@ public class OntologyDiffManagerProtegeImpl extends
 	 */
 	private String getDiffFileName(Integer ontologyVersionId1,
 			Integer ontologyVersionId2) throws FileNotFoundException, Exception {
-		OntologyBean ontologyVersion1 = ontologyMetadataManagerProtege
+		OntologyBean ontologyVersion1 = ontologyMetadataManager
 				.findOntologyOrViewVersionById(ontologyVersionId1);
-		OntologyBean ontologyVersion2 = ontologyMetadataManagerProtege
+		OntologyBean ontologyVersion2 = ontologyMetadataManager
 				.findOntologyOrViewVersionById(ontologyVersionId2);
 
 		if (ontologyVersion1 == null) {
@@ -360,11 +358,11 @@ public class OntologyDiffManagerProtegeImpl extends
 	}
 
 	/**
-	 * @param ontologyMetadataManagerProtege
-	 *            the ontologyMetadataManagerProtege to set
+	 * @param ontologyMetadataManager
+	 *            the ontologyMetadataManager to set
 	 */
-	public void setOntologyMetadataManagerProtege(
-			OntologyMetadataManager ontologyMetadataManagerProtege) {
-		this.ontologyMetadataManagerProtege = ontologyMetadataManagerProtege;
+	public void setOntologyMetadataManager(
+			OntologyMetadataManager ontologyMetadataManager) {
+		this.ontologyMetadataManager = ontologyMetadataManager;
 	}
 }

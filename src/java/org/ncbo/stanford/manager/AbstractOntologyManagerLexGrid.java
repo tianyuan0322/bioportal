@@ -23,7 +23,7 @@ import org.ncbo.stanford.manager.metadata.OntologyMetadataManager;
  */
 public abstract class AbstractOntologyManagerLexGrid {
 
-	protected OntologyMetadataManager ontologyMetadataManagerProtege;
+	protected OntologyMetadataManager ontologyMetadataManager;
 
 	protected CodingSchemeRendering getCodingSchemeRendering(LexBIGService lbs,
 			String urnAndVersion) throws Exception {
@@ -89,7 +89,7 @@ public abstract class AbstractOntologyManagerLexGrid {
 	 * @return
 	 */
 	public OntologyBean getLatestNcboOntology(String displayLabel) {
-		List<OntologyBean> list = ontologyMetadataManagerProtege
+		List<OntologyBean> list = ontologyMetadataManager
 				.findLatestOntologyVersions();
 
 		for (OntologyBean ncboOntology : list) {
@@ -109,7 +109,7 @@ public abstract class AbstractOntologyManagerLexGrid {
 	 * @throws Exception 
 	 */
 	protected String getLexGridUrnAndVersion(Integer ontologyVersionId) throws Exception {
-		OntologyBean ncboOntology = ontologyMetadataManagerProtege
+		OntologyBean ncboOntology = ontologyMetadataManager
 				.findOntologyOrViewVersionById(ontologyVersionId);
 
 		if (ncboOntology != null) {
@@ -169,10 +169,11 @@ public abstract class AbstractOntologyManagerLexGrid {
 	}
 
 	/**
-	 * @param ontologyMetadataManagerProtege the ontologyMetadataManagerProtege to set
+	 * @param ontologyMetadataManager the ontologyMetadataManager to set
 	 */
-	public void setOntologyMetadataManagerProtege(
-			OntologyMetadataManager ontologyMetadataManagerProtege) {
-		this.ontologyMetadataManagerProtege = ontologyMetadataManagerProtege;
+	public void setOntologyMetadataManager(
+			OntologyMetadataManager ontologyMetadataManager) {
+		this.ontologyMetadataManager = ontologyMetadataManager;
 	}
+
 }

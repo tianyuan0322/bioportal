@@ -43,7 +43,7 @@ public class ConceptServiceImpl implements ConceptService {
 	private Map<String, OntologyRetrievalManager> ontologyRetrievalHandlerMap = new HashMap<String, OntologyRetrievalManager>(
 			0);
 	private OBSManager obsManager;
-	private OntologyMetadataManager ontologyMetadataManagerProtege;
+	private OntologyMetadataManager ontologyMetadataManager;
 
 	/**
 	 * Get the root concept for the specified ontology.
@@ -51,7 +51,7 @@ public class ConceptServiceImpl implements ConceptService {
 	@SuppressWarnings("unchecked")
 	public ClassBean findRootConcept(Integer ontologyVersionId,
 			Integer maxNumChildren, boolean light) throws Exception {
-		OntologyBean ontology = ontologyMetadataManagerProtege
+		OntologyBean ontology = ontologyMetadataManager
 				.findOntologyOrViewVersionById(ontologyVersionId);
 
 		if (ontology == null) {
@@ -80,7 +80,7 @@ public class ConceptServiceImpl implements ConceptService {
 	@SuppressWarnings("unchecked")
 	public ClassBean findConcept(Integer ontologyVersionId, String conceptId,
 			Integer maxNumChildren, boolean light) throws Exception {
-		OntologyBean ontology = ontologyMetadataManagerProtege
+		OntologyBean ontology = ontologyMetadataManager
 				.findOntologyOrViewVersionById(ontologyVersionId);
 
 		if (ontology == null) {
@@ -110,7 +110,7 @@ public class ConceptServiceImpl implements ConceptService {
 	public ClassBean findPathFromRoot(Integer ontologyVersionId,
 			String conceptId, boolean light, Integer maxNumChildren)
 			throws Exception {
-		OntologyBean ontology = ontologyMetadataManagerProtege
+		OntologyBean ontology = ontologyMetadataManager
 				.findOntologyOrViewVersionById(ontologyVersionId);
 
 		if (ontology == null) {
@@ -370,11 +370,11 @@ public class ConceptServiceImpl implements ConceptService {
 	}
 
 	/**
-	 * @param ontologyMetadataManagerProtege
-	 *            the ontologyMetadataManagerProtege to set
+	 * @param ontologyMetadataManager
+	 *            the ontologyMetadataManager to set
 	 */
-	public void setOntologyMetadataManagerProtege(
-			OntologyMetadataManager ontologyMetadataManagerProtege) {
-		this.ontologyMetadataManagerProtege = ontologyMetadataManagerProtege;
+	public void setOntologyMetadataManager(
+			OntologyMetadataManager ontologyMetadataManager) {
+		this.ontologyMetadataManager = ontologyMetadataManager;
 	}
 }

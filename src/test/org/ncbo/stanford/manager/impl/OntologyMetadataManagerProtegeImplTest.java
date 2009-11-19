@@ -9,13 +9,13 @@ import org.junit.Test;
 import org.ncbo.stanford.AbstractBioPortalTest;
 import org.ncbo.stanford.bean.OntologyBean;
 import org.ncbo.stanford.enumeration.StatusEnum;
-import org.ncbo.stanford.manager.metadata.impl.OntologyMetadataManagerProtegeImpl;
+import org.ncbo.stanford.manager.metadata.impl.OntologyMetadataManagerImpl;
 import org.ncbo.stanford.util.constants.ApplicationConstants;
 import org.springframework.beans.factory.annotation.Autowired;
 
 /**
  * Tests ontology metadata related operations using the
- * OntologyMetadataManagerProtegeImpl
+ * OntologyMetadataManagerImpl
  * 
  * @author Csongor Nyulas
  */
@@ -31,7 +31,7 @@ public class OntologyMetadataManagerProtegeImplTest extends
 	private static int ID_USER_1 = 1005;
 
 	@Autowired
-	OntologyMetadataManagerProtegeImpl ontMetadataManagerProtege;
+	OntologyMetadataManagerImpl ontMetadataManagerProtege;
 
 	@Test
 	public void testSaveOntologyMetadata() {

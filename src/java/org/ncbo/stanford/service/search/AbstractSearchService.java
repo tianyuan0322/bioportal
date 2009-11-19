@@ -59,7 +59,7 @@ public abstract class AbstractSearchService {
 	protected String indexPath;
 	protected int defMaxNumHits;
 	protected ExpirationSystem<String, SearchResultListBean> searchResultCache;
-	protected OntologyMetadataManager ontologyMetadataManagerProtege;
+	protected OntologyMetadataManager ontologyMetadataManager;
 	protected Map<String, OntologyRetrievalManager> ontologyRetrievalHandlerMap = new HashMap<String, OntologyRetrievalManager>(
 			0);
 	protected Map<String, String> ontologyFormatHandlerMap = new HashMap<String, String>(
@@ -228,7 +228,7 @@ public abstract class AbstractSearchService {
 			Document doc = searcher.doc(docId);
 			Integer ontologyVersionId = new Integer(doc
 					.get(SearchIndexBean.ONTOLOGY_VERSION_ID_FIELD_LABEL));
-			OntologyBean ob = ontologyMetadataManagerProtege
+			OntologyBean ob = ontologyMetadataManager
 					.findOntologyOrViewVersionById(ontologyVersionId);
 
 			if (ob == null) {
@@ -517,12 +517,12 @@ public abstract class AbstractSearchService {
 	}
 
 	/**
-	 * @param ontologyMetadataManagerProtege
-	 *            the ontologyMetadataManagerProtege to set
+	 * @param ontologyMetadataManager
+	 *            the ontologyMetadataManager to set
 	 */
-	public void setOntologyMetadataManagerProtege(
-			OntologyMetadataManager ontologyMetadataManagerProtege) {
-		this.ontologyMetadataManagerProtege = ontologyMetadataManagerProtege;
+	public void setOntologyMetadataManager(
+			OntologyMetadataManager ontologyMetadataManager) {
+		this.ontologyMetadataManager = ontologyMetadataManager;
 	}
 
 	/**

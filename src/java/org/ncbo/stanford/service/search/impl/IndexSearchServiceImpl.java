@@ -43,7 +43,7 @@ public class IndexSearchServiceImpl extends AbstractSearchService implements
 			throws Exception {
 		long start = System.currentTimeMillis();
 
-		List<OntologyBean> ontologies = ontologyMetadataManagerProtege
+		List<OntologyBean> ontologies = ontologyMetadataManager
 				.findLatestActiveOntologyOrOntologyViewVersions();
 
 		if (doBackup) {
@@ -109,7 +109,7 @@ public class IndexSearchServiceImpl extends AbstractSearchService implements
 		writer.setMergeFactor(indexMergeFactor);
 		writer.setMaxMergeDocs(indexMaxMergeDocs);
 
-		List<OntologyBean> ontologies = ontologyMetadataManagerProtege
+		List<OntologyBean> ontologies = ontologyMetadataManager
 				.findLatestActiveOntologyOrOntologyViewVersions(ontologyIdList);
 
 		removeOntologies(writer, ontologyIdList, doBackup, false, true);
