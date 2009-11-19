@@ -16,6 +16,7 @@ import org.ncbo.stanford.domain.generated.NcboOntologyLoadQueue;
 import org.ncbo.stanford.manager.metadata.OntologyCategoryMetadataManager;
 import org.ncbo.stanford.manager.metadata.OntologyGroupMetadataManager;
 import org.ncbo.stanford.manager.metadata.OntologyMetadataManager;
+import org.ncbo.stanford.service.metrics.MetricsService;
 import org.ncbo.stanford.service.ontology.AbstractOntologyService;
 import org.ncbo.stanford.service.ontology.OntologyService;
 import org.ncbo.stanford.util.MessageUtils;
@@ -31,6 +32,7 @@ public class OntologyServiceMetadataImpl extends AbstractOntologyService
 			.getLog(OntologyServiceMetadataImpl.class);
 
 	private OntologyMetadataManager ontologyMetadataManager;
+	private MetricsService metricsService;
 	private OntologyCategoryMetadataManager ontologyCategoryMetadataManager;
 	private OntologyGroupMetadataManager ontologyGroupMetadataManager;
 
@@ -294,7 +296,7 @@ public class OntologyServiceMetadataImpl extends AbstractOntologyService
 
 	public OntologyMetricsBean getOntologyMetrics(OntologyBean ontologyBean)
 			throws Exception {
-		return ontologyMetadataManager.getOntologyMetrics(ontologyBean);
+		return metricsService.getOntologyMetrics(ontologyBean);
 	}
 
 	// ******************** view specific methods ********************

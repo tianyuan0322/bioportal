@@ -4,12 +4,14 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.ncbo.stanford.bean.OntologyBean;
 import org.ncbo.stanford.bean.OntologyMetricsBean;
+import org.ncbo.stanford.service.metrics.MetricsService;
 import org.restlet.data.Request;
 import org.restlet.data.Response;
 import org.restlet.data.Status;
 
 public class OntologyMetricsRestlet extends AbstractOntologyBaseRestlet {
 
+	private MetricsService metricsService;
 	private static final Log log = LogFactory.getLog(OntologyMetricsRestlet.class);
 
 	/**
@@ -34,7 +36,7 @@ public class OntologyMetricsRestlet extends AbstractOntologyBaseRestlet {
 		// if "find" was successful, proceed to update
 		if (!response.getStatus().isError()) {
 			try {
-				ontologyMetricsBean = ontologyService.getOntologyMetrics(ontologyBean);
+				ontologyMetricsBean = metricsService.getOntologyMetrics(ontologyBean);
 
 			} catch (Exception e) {
 				response
@@ -47,6 +49,13 @@ public class OntologyMetricsRestlet extends AbstractOntologyBaseRestlet {
 						ontologyMetricsBean);
 			}
 		}
+	}
+
+	/**
+	 * @param metricsService the metricsService to set
+	 */
+	public void setMetricsService(MetricsService metricsService) {
+		this.metricsService = metricsService;
 	}
 
 }

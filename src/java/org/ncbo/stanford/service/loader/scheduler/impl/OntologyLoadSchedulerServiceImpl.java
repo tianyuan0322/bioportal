@@ -22,7 +22,9 @@ import org.ncbo.stanford.exception.OntologyNotFoundException;
 import org.ncbo.stanford.manager.diff.OntologyDiffManager;
 import org.ncbo.stanford.manager.load.OntologyLoadManager;
 import org.ncbo.stanford.manager.metadata.OntologyMetadataManager;
+import org.ncbo.stanford.manager.metrics.OntologyMetricsManager;
 import org.ncbo.stanford.service.loader.scheduler.OntologyLoadSchedulerService;
+import org.ncbo.stanford.service.metrics.MetricsService;
 import org.ncbo.stanford.service.search.IndexSearchService;
 import org.ncbo.stanford.util.CompressionUtils;
 import org.ncbo.stanford.util.MessageUtils;
@@ -53,7 +55,8 @@ public class OntologyLoadSchedulerServiceImpl implements
 
 	private IndexSearchService indexService;
 	private CustomNcboOntologyLoadQueueDAO ncboOntologyLoadQueueDAO;
-	private OntologyMetadataManager ontologyMetadataManagerProtege;
+	private OntologyMetadataManager ontologyMetadataManager;
+	private MetricsService metricsService;
 
 	private Map<String, String> ontologyFormatHandlerMap = new HashMap<String, String>(
 			0);
@@ -61,6 +64,8 @@ public class OntologyLoadSchedulerServiceImpl implements
 			0);
 	private List<String> errorOntologies = new ArrayList<String>(0);
 	private Map<String, OntologyDiffManager> ontologyDiffHandlerMap = new HashMap<String, OntologyDiffManager>(
+			0);
+	private Map<String, OntologyMetricsManager> ontologyMetricsHandlerMap = new HashMap<String, OntologyMetricsManager>(
 			0);
 
 	/**
@@ -100,7 +105,7 @@ public class OntologyLoadSchedulerServiceImpl implements
 
 		for (Integer ontologyVersionId : ontologyVersionIdList) {
 			try {
-				ob = ontologyMetadataManagerProtege
+				ob = ontologyMetadataManager
 						.findOntologyOrViewVersionById(ontologyVersionId);
 
 				if (ob == null) {
@@ -166,7 +171,7 @@ public class OntologyLoadSchedulerServiceImpl implements
 			// in some cases the ontologyBean is passed as null, so we need to
 			// retrieve it from backend
 			if (ontologyBean == null) {
-				ontologyBean = ontologyMetadataManagerProtege
+				ontologyBean = ontologyMetadataManager
 						.findOntologyOrViewVersionById(ontologyVersionId);
 			}
 
@@ -206,7 +211,7 @@ public class OntologyLoadSchedulerServiceImpl implements
 						errorMessage);
 
 				// calculate ontology metrics
-				// calculateMetrics(ontologyBean, formatHandler);
+				//calculateMetrics(ontologyBean, formatHandler);
 
 				// ******************************************
 				// We will call create Diff when we are ready to include this
@@ -313,7 +318,7 @@ public class OntologyLoadSchedulerServiceImpl implements
 		// update ontology metadata
 		ontologyBean.setStatusId(statusId);
 
-		ontologyMetadataManagerProtege.saveOntologyOrView(ontologyBean);
+		ontologyMetadataManager.saveOntologyOrView(ontologyBean);
 
 		// update loadQueue table
 		loadQueue.setErrorMessage(errorMessage);
@@ -408,21 +413,39 @@ public class OntologyLoadSchedulerServiceImpl implements
 	 */
 	private void calculateMetrics(OntologyBean ontologyBean,
 			String formatHandler) throws Exception {
+
 		if (log.isDebugEnabled()) {
 			log.debug("calculateMetrics BEGIN..............");
 		}
 
-		OntologyMetricsBean metricsBean = getLoadManager(ontologyBean,
-				formatHandler).extractOntologyMetrics(ontologyBean);
+		OntologyMetricsBean metricsBean = getMetricsManager(ontologyBean)
+				.extractOntologyMetrics(ontologyBean);
 
-		ontologyMetadataManagerProtege.updateOntologyMetrics(ontologyBean,
-				metricsBean);
+		metricsService.updateOntologyMetrics(ontologyBean, metricsBean);
 
 		if (log.isDebugEnabled()) {
 			log.debug("..................calculateMetrics END");
 		}
 	}
 
+	private OntologyMetricsManager getMetricsManager(OntologyBean ontologyBean)
+			throws Exception {
+		String formatHandler = ontologyFormatHandlerMap.get(ontologyBean
+				.getFormat());
+		OntologyMetricsManager metricsManager = ontologyMetricsHandlerMap
+				.get(formatHandler);
+		
+		if (metricsManager == null) {
+			log
+					.error("Cannot find metricsManager for "
+							+ ontologyBean.getFormat());
+			throw new InvalidOntologyFormatException(
+					"Cannot find formatHandler for " + ontologyBean.getFormat());
+		}
+		
+		return metricsManager;
+	}
+	
 	/**
 	 * Creates a diff between the two latest versions of the specified ontology
 	 * This method is called after the ontology has been successfully parsed.
@@ -517,6 +540,15 @@ public class OntologyLoadSchedulerServiceImpl implements
 	}
 
 	/**
+	 * @param ontologyMetricsHandlerMap
+	 *            the ontologyMetricsHandlerMap to set
+	 */
+	public void setOntologyMetricsHandlerMap(
+			Map<String, OntologyMetricsManager> ontologyMetricsHandlerMap) {
+		this.ontologyMetricsHandlerMap = ontologyMetricsHandlerMap;
+	}
+
+	/**
 	 * @return the errorOntologies
 	 */
 	public List<String> getErrorOntologies() {
@@ -533,11 +565,18 @@ public class OntologyLoadSchedulerServiceImpl implements
 	}
 
 	/**
-	 * @param ontologyMetadataManagerProtege
-	 *            the ontologyMetadataManagerProtege to set
+	 * @param ontologyMetadataManager
+	 *            the ontologyMetadataManager to set
 	 */
-	public void setOntologyMetadataManagerProtege(
-			OntologyMetadataManager ontologyMetadataManagerProtege) {
-		this.ontologyMetadataManagerProtege = ontologyMetadataManagerProtege;
+	public void setOntologyMetadataManager(
+			OntologyMetadataManager ontologyMetadataManager) {
+		this.ontologyMetadataManager = ontologyMetadataManager;
+	}
+
+	/**
+	 * @param metricsService the metricsService to set
+	 */
+	public void setMetricsService(MetricsService metricsService) {
+		this.metricsService = metricsService;
 	}
 }

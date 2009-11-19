@@ -13,13 +13,10 @@ import java.util.List;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.ncbo.stanford.bean.OntologyBean;
-import org.ncbo.stanford.bean.OntologyMetricsBean;
 import org.ncbo.stanford.manager.AbstractOntologyManagerProtege;
 import org.ncbo.stanford.manager.load.OntologyLoadManager;
 import org.ncbo.stanford.util.constants.ApplicationConstants;
-import org.ncbo.stanford.util.metadata.OntologyMetricsCalculator;
 
-import edu.stanford.smi.protege.model.KnowledgeBase;
 import edu.stanford.smi.protege.model.Project;
 import edu.stanford.smi.protege.storage.database.DatabaseKnowledgeBaseFactory;
 import edu.stanford.smi.protege.util.ApplicationProperties;
@@ -223,23 +220,4 @@ public class OntologyLoadManagerProtegeImpl extends
 		}
 	}
 
-	public OntologyMetricsBean extractOntologyMetrics(OntologyBean ontologyBean)
-			throws Exception {
-		KnowledgeBase kb = getKnowledgeBase(ontologyBean);
-		OntologyMetricsBean mb = new OntologyMetricsBean();
-
-		String documentationProperty = ontologyBean.getDocumentationSlot();
-		String authorProperty = ontologyBean.getAuthorSlot();
-		String propertyWithUniqueValue = ontologyBean.getSlotWithUniqueValue();
-		Integer preferredMaximumSubclassLimit = ontologyBean
-				.getPreferredMaximumSubclassLimit();
-
-		OntologyMetricsCalculator ontologyMetricsCalculator = new OntologyMetricsCalculator(
-				kb, documentationProperty, authorProperty,
-				propertyWithUniqueValue, preferredMaximumSubclassLimit);
-		ontologyMetricsCalculator.populateOntologyMetrics(mb);
-
-		mb.setId(ontologyBean.getId());
-		return mb;
-	}
 }

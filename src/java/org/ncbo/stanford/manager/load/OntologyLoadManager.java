@@ -39,12 +39,4 @@ public interface OntologyLoadManager {
 	 */
 	public void cleanup(OntologyBean ontologyBean) throws Exception;
 
-	/**
-	 * Extracts ontology metrics of a given ontology version
-	 * 
-	 * @param ontologyBean
-	 * @return an ontology metrics bean filled in with metrics values
-	 * @throws Exception
-	 */
-	public OntologyMetricsBean extractOntologyMetrics(OntologyBean ontologyBean) throws Exception;
 }

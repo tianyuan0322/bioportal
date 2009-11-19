@@ -215,6 +215,9 @@
 	<bean id="ontologyMetricsRestlet"
 		class="org.ncbo.stanford.view.rest.restlet.ontology.OntologyMetricsRestlet"
 		parent="abstractOntologyBaseRestlet">
+		<property name="metricsService">
+			<ref bean="metricsService" />
+		</property>
 	</bean>
 
 	<bean id="ontologyDownloadRestlet"

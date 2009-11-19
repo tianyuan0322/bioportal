@@ -2,8 +2,10 @@ package org.ncbo.stanford.manager.metadata;
 
 import java.util.List;
 
-import org.ncbo.stanford.bean.OntologyMetricsBean;
 import org.ncbo.stanford.bean.OntologyBean;
+
+import edu.stanford.smi.protegex.owl.model.OWLIndividual;
+import edu.stanford.smi.protegex.owl.model.OWLModel;
 
 /**
  * An interface for all API specific ontology metadata managers to conform to. This allows
@@ -35,29 +37,6 @@ public interface OntologyMetadataManager {
 	 * @throws Exception
 	 */
 	public void updateOntologyOrView(OntologyBean ontologyBean)
-			throws Exception;
-
-	/**
-	 * Updates the metadata of an ontology version specified by the ontologyBean
-	 * with ontology metrics information specified by metricsBean.
-	 * 
-	 * @param ontologyBean
-	 * @param metricsBean
-	 * @throws Exception
-	 */
-	public void updateOntologyMetrics(OntologyBean ontologyBean,
-			OntologyMetricsBean metricsBean) throws Exception;
-
-	/**
-	 * Returns the OntologyMetricsBean belonging to the ontology or view
-	 * represented by the argument.
-	 * 
-	 * @param ontologyBean
-	 *            and OntologyBean representing an ontology or a view version
-	 * @return the metrics bean corresponding to an ontology or view
-	 * @throws Exception
-	 */
-	public OntologyMetricsBean getOntologyMetrics(OntologyBean ontologyBean)
 			throws Exception;
 
 	/**
@@ -273,4 +252,15 @@ public interface OntologyMetadataManager {
 	 * Programmatically reloads the metadata ontology stored in the memory
 	 */
 	public void reloadMetadataOWLModel();
+
+	/**
+	 * Interface method for a method in the AbstractOntologyMetadataManager class.
+	 */
+	public OWLIndividual getOntologyOrViewInstance(OWLModel metadata, int id);
+
+	/**
+	 * Interface method for a method in the AbstractOntologyManagerProtege class.
+	 */
+	public OWLModel getMetadataOWLModel();
+
 }

@@ -255,7 +255,7 @@ public abstract class AbstractOntologyManagerProtege {
 		return owlModel;
 	}
 
-	protected OWLModel getMetadataOWLModel() {
+	public OWLModel getMetadataOWLModel() {
 		synchronized (createOwlModelLock) {
 			if (owlModel == null) {
 				owlModel = createMetadataKnowledgeBaseInstance();

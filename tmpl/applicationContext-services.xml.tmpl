@@ -384,8 +384,8 @@
 	<bean id="abstractOntologyManagerLexGrid"
 		class="org.ncbo.stanford.manager.AbstractOntologyManagerLexGrid"
 		abstract="true">
-		<property name="ontologyMetadataManagerProtege">
-			<ref bean="ontologyMetadataManagerProtege" />
+		<property name="ontologyMetadataManager">
+			<ref bean="ontologyMetadataManager" />
 		</property>
 	</bean>
 
@@ -483,13 +483,23 @@
 	<bean id="ontologyDiffManagerProtege"
 		class="org.ncbo.stanford.manager.diff.impl.OntologyDiffManagerProtegeImpl"
 		parent="abstractOntologyManagerProtege">
-		<property name="ontologyMetadataManagerProtege">
-			<ref bean="ontologyMetadataManagerProtege" />
+		<property name="ontologyMetadataManager">
+			<ref bean="ontologyMetadataManager" />
 		</property>
 	</bean>
 
 	<bean id="ontologyDiffManagerLexGrid"
 		class="org.ncbo.stanford.manager.diff.impl.OntologyDiffManagerLexGridImpl"
+		parent="abstractOntologyManagerLexGrid">
+	</bean>
+
+	<bean id="ontologyMetricsManagerProtege"
+		class="org.ncbo.stanford.manager.metrics.impl.OntologyMetricsManagerProtegeImpl"
+		parent="abstractOntologyManagerProtege">
+	</bean>
+
+	<bean id="ontologyMetricsManagerLexGrid"
+		class="org.ncbo.stanford.manager.metrics.impl.OntologyMetricsManagerLexGridImpl"
 		parent="abstractOntologyManagerLexGrid">
 	</bean>
 
@@ -500,18 +510,18 @@
 		</property>
 	</bean>
 
-	<bean id="ontologyMetadataManagerProtege"
-		class="org.ncbo.stanford.manager.metadata.impl.OntologyMetadataManagerProtegeImpl"
+	<bean id="ontologyMetadataManager"
+		class="org.ncbo.stanford.manager.metadata.impl.OntologyMetadataManagerImpl"
 		parent="abstractOntologyManagerProtege">
 	</bean>
 
-	<bean id="ontologyCategoryMetadataManagerProtege"
-		class="org.ncbo.stanford.manager.metadata.impl.OntologyCategoryMetadataManagerProtegeImpl"
+	<bean id="ontologyCategoryMetadataManager"
+		class="org.ncbo.stanford.manager.metadata.impl.OntologyCategoryMetadataManagerImpl"
 		parent="abstractOntologyManagerProtege">
 	</bean>
 
-	<bean id="ontologyGroupMetadataManagerProtege"
-		class="org.ncbo.stanford.manager.metadata.impl.OntologyGroupMetadataManagerProtegeImpl"
+	<bean id="ontologyGroupMetadataManager"
+		class="org.ncbo.stanford.manager.metadata.impl.OntologyGroupMetadataManagerImpl"
 		parent="abstractOntologyManagerProtege">
 	</bean>
 
@@ -543,8 +553,8 @@
 		<property name="obsManager">
 			<ref local="obsManager" />
 		</property>
-		<property name="ontologyMetadataManagerProtege">
-			<ref local="ontologyMetadataManagerProtege" />
+		<property name="ontologyMetadataManager">
+			<ref local="ontologyMetadataManager" />
 		</property>
 	</bean>
 
@@ -572,13 +582,13 @@
 		class="org.ncbo.stanford.service.ontology.impl.OntologyServiceMetadataImpl"
 		parent="abstractOntologyService">
 		<property name="ontologyMetadataManager">
-			<ref bean="ontologyMetadataManagerProtege" />
+			<ref bean="ontologyMetadataManager" />
 		</property>
 		<property name="ontologyCategoryMetadataManager">
-			<ref bean="ontologyCategoryMetadataManagerProtege" />
+			<ref bean="ontologyCategoryMetadataManager" />
 		</property>
 		<property name="ontologyGroupMetadataManager">
-			<ref bean="ontologyGroupMetadataManagerProtege" />
+			<ref bean="ontologyGroupMetadataManager" />
 		</property>
 	</bean>
 
@@ -592,6 +602,13 @@
 		</property>
 		<property name="ontologyDiffHandlerMap">
 			<ref local="ontologyDiffHandlerMap" />
+		</property>
+	</bean>
+
+	<bean id="metricsService"
+		class="org.ncbo.stanford.service.metrics.impl.MetricsServiceImpl">
+		<property name="ontologyMetadataManager">
+			<ref bean="ontologyMetadataManager" />
 		</property>
 	</bean>
 
@@ -609,8 +626,8 @@
 		<property name="ncboOntologyLoadQueueDAO">
 			<ref bean="NcboOntologyLoadQueueDAO" />
 		</property>
-		<property name="ontologyMetadataManagerProtege">
-			<ref bean="ontologyMetadataManagerProtege" />
+		<property name="ontologyMetadataManager">
+			<ref bean="ontologyMetadataManager" />
 		</property>
 		<property name="ontologyFormatHandlerMap">
 			<ref local="ontologyFormatHandlerMap" />
@@ -620,6 +637,12 @@
 		</property>
 		<property name="ontologyDiffHandlerMap">
 			<ref local="ontologyDiffHandlerMap" />
+		</property>
+		<property name="ontologyMetricsHandlerMap">
+			<ref local="ontologyMetricsHandlerMap" />
+		</property>
+		<property name="metricsService">
+			<ref local="metricsService" />
 		</property>
 	</bean>
 
@@ -664,8 +687,8 @@
 		<property name="searchResultCache">
 			<ref bean="paginatableCache" />
 		</property>
-		<property name="ontologyMetadataManagerProtege">
-			<ref bean="ontologyMetadataManagerProtege" />
+		<property name="ontologyMetadataManager">
+			<ref bean="ontologyMetadataManager" />
 		</property>
 		<property name="ontologyRetrievalHandlerMap">
 			<ref local="ontologyRetrievalHandlerMap" />
@@ -727,6 +750,24 @@
 					static-field="org.ncbo.stanford.util.constants.ApplicationConstants.FORMAT_HANDLER_PROTEGE" />
 			</key>
 			<ref local="ontologyDiffManagerProtege" />
+		</entry>
+	</util:map>
+
+	<util:map id="ontologyMetricsHandlerMap"
+		map-class="java.util.HashMap">
+		<entry>
+			<key>
+				<util:constant
+					static-field="org.ncbo.stanford.util.constants.ApplicationConstants.FORMAT_HANDLER_LEXGRID" />
+			</key>
+			<ref local="ontologyMetricsManagerLexGrid" />
+		</entry>
+		<entry>
+			<key>
+				<util:constant
+					static-field="org.ncbo.stanford.util.constants.ApplicationConstants.FORMAT_HANDLER_PROTEGE" />
+			</key>
+			<ref local="ontologyMetricsManagerProtege" />
 		</entry>
 	</util:map>
 

@@ -6,7 +6,6 @@ import java.util.List;
 import org.ncbo.stanford.bean.CategoryBean;
 import org.ncbo.stanford.bean.GroupBean;
 import org.ncbo.stanford.bean.OntologyBean;
-import org.ncbo.stanford.bean.OntologyMetricsBean;
 import org.ncbo.stanford.util.ontologyfile.pathhandler.FilePathHandler;
 
 /**
@@ -189,15 +188,6 @@ public interface OntologyService {
 	 * @return
 	 */
 	public File getOntologyFile(OntologyBean ontologyBean) throws Exception;
-
-	/**
-	 * Get the ontology metrics bean belonging to an ontology or view
-	 * 
-	 * @param ontologyBean
-	 * @return
-	 */
-	public OntologyMetricsBean getOntologyMetrics(OntologyBean ontologyBean)
-			throws Exception;
 
 	// ******************** view specific methods ********************
 
