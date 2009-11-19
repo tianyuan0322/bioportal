@@ -15,14 +15,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 public class OntologyMetricsManagerLexGridImplTest extends
 		AbstractBioPortalTest {
 
-	// Test ontology display labels
-    //TEST_OWL_DISPLAY_LABEL = "pizza.owl";
-    //TEST_OBO_CELL_DISPLAY_LABEL = "cell";
-    //TEST_OBO_CELL_OLD_DISPLAY_LABEL = "cell_old";
-    //TEST_OBO_DICTYOSTELIUM_DISPLAY_LABEL = "DICTYOSTELIUM_ANATOMY";
-    //TEST_OBO_INFECTIOUS_DISEASE_DISPLAY_LABEL = "INFECTIOUS_DISEASE";
-    //TEST_LEXGRID_DISPLAY_LABEL = "Automobiles.xml";
-    //TEST_UMLS_DISPLAY_LABEL = "AIR";
+
 	
 	@Autowired
 	OntologyMetricsManagerLexGridImpl metricsManager;

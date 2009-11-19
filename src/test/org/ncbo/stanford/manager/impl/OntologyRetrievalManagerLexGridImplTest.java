@@ -22,13 +22,13 @@ public class OntologyRetrievalManagerLexGridImplTest extends
 		AbstractBioPortalTest {
 
 	// Test ontology display labels
-	private final static String TEST_OWL_DISPLAY_LABEL = "pizza.owl";
-	private final static String TEST_OBO_CELL_DISPLAY_LABEL = "cell";
-	private final static String TEST_OBO_CELL_OLD_DISPLAY_LABEL = "cell_old";
-	private final static String TEST_OBO_DICTYOSTELIUM_DISPLAY_LABEL = "DICTYOSTELIUM_ANATOMY";
-	private final static String TEST_OBO_INFECTIOUS_DISEASE_DISPLAY_LABEL = "INFECTIOUS_DISEASE";
-	private final static String TEST_LEXGRID_DISPLAY_LABEL = "Automobiles.xml";
-	private final static String TEST_UMLS_DISPLAY_LABEL = "AIR";
+	public final static String TEST_OWL_DISPLAY_LABEL = "pizza.owl";
+	public final static String TEST_OBO_CELL_DISPLAY_LABEL = "cell";
+	public final static String TEST_OBO_CELL_OLD_DISPLAY_LABEL = "cell_old";
+	public final static String TEST_OBO_DICTYOSTELIUM_DISPLAY_LABEL = "DICTYOSTELIUM_ANATOMY";
+	public final static String TEST_OBO_INFECTIOUS_DISEASE_DISPLAY_LABEL = "INFECTIOUS_DISEASE";
+	public final static String TEST_LEXGRID_DISPLAY_LABEL = "Automobiles.xml";
+	public final static String TEST_UMLS_DISPLAY_LABEL = "AIR";
 
 	@Autowired
 	OntologyRetrievalManagerLexGridImpl retrievalManager;
