@@ -2,6 +2,8 @@ package org.ncbo.stanford.manager.impl;
 
 import static org.junit.Assert.assertTrue;
 
+import java.util.Date;
+
 import org.junit.Test;
 import org.ncbo.stanford.AbstractBioPortalTest;
 import org.ncbo.stanford.bean.OntologyBean;
@@ -13,43 +15,77 @@ import org.springframework.beans.factory.annotation.Autowired;
  * @author Pradip Kanjamala
  */
 public class OntologyMetricsManagerLexGridImplTest extends
-		AbstractBioPortalTest {
+        AbstractBioPortalTest {
 
-
-	
-	@Autowired
-	OntologyMetricsManagerLexGridImpl metricsManager;
-
-	@Test
-	public void testGetOntologyMetricsBean() throws Exception {
-		System.out.println("testGetOntologyMetricsBean()");
-
-		
-		OntologyBean ncboOntology = metricsManager
-				.getLatestNcboOntology(OntologyRetrievalManagerLexGridImplTest.TEST_OBO_DICTYOSTELIUM_DISPLAY_LABEL);
-		OntologyMetricsBean omb = metricsManager.extractOntologyMetrics(ncboOntology);
-		System.out.println("OBO_DICTYOSTELIUM_ANATOMY");
-		System.out.println(omb.toString());
-
-        ncboOntology = metricsManager
-                .getLatestNcboOntology(OntologyRetrievalManagerLexGridImplTest.TEST_OBO_CELL_DISPLAY_LABEL);
-        omb = metricsManager.extractOntologyMetrics(ncboOntology);
+    @Autowired
+    OntologyMetricsManagerLexGridImpl metricsManager_;
+    OntologyMetricsBean metricsBean_;
+    OntologyBean ontologyBean_;
+    Date startDate_;
+    Date endDate_;
+    
+    @Test
+    public void testExtractDictyosteliumAnatomyMetricsBean() throws Exception {
+        System.out.println("OBO_DICTYOSTELIUM_ANATOMY");
+        startDate_ = new Date();
+        
+        ontologyBean_ = metricsManager_
+                .getLatestNcboOntology(OntologyRetrievalManagerLexGridImplTest.TEST_OBO_DICTYOSTELIUM_DISPLAY_LABEL);
+        metricsBean_ = metricsManager_.extractOntologyMetrics(ontologyBean_);
+        
+        endDate_ = new Date();
+        System.out.println(metricsBean_.toString());
+        System.out.println(endDate_.getTime() - startDate_.getTime() +" ms");
+        
+        assertTrue(metricsBean_ != null);
+    }
+    
+    @Test
+    public void testExtractCellMetricsBean() throws Exception {
         System.out.println("OBO_CELL");
-        System.out.println(omb.toString());
+        startDate_ = new Date();
         
-        ncboOntology = metricsManager
-                .getLatestNcboOntology(OntologyRetrievalManagerLexGridImplTest.TEST_OBO_INFECTIOUS_DISEASE_DISPLAY_LABEL);
-        omb = metricsManager.extractOntologyMetrics(ncboOntology);
+        ontologyBean_ = metricsManager_
+                .getLatestNcboOntology(OntologyRetrievalManagerLexGridImplTest.TEST_OBO_CELL_DISPLAY_LABEL);
+        metricsBean_ = metricsManager_.extractOntologyMetrics(ontologyBean_);
+
+        endDate_ = new Date();
+        System.out.println(metricsBean_.toString());
+        System.out.println(endDate_.getTime() - startDate_.getTime() +" ms");
+        
+        assertTrue(metricsBean_ != null);
+    }
+    
+    @Test
+    public void testExtractInfectiousDiseaseMetricsBean() throws Exception {
         System.out.println("OBO_INFECTIOUS_DISEASE");
-        System.out.println(omb.toString());
+        startDate_ = new Date();
         
-        ncboOntology = metricsManager
-                .getLatestNcboOntology(OntologyRetrievalManagerLexGridImplTest.TEST_OWL_DISPLAY_LABEL);
-        omb = metricsManager.extractOntologyMetrics(ncboOntology);
+        ontologyBean_ = metricsManager_
+                .getLatestNcboOntology(OntologyRetrievalManagerLexGridImplTest.TEST_OBO_INFECTIOUS_DISEASE_DISPLAY_LABEL);
+        metricsBean_ = metricsManager_.extractOntologyMetrics(ontologyBean_);
+
+        endDate_ = new Date();
+        System.out.println(metricsBean_.toString());
+        System.out.println(endDate_.getTime() - startDate_.getTime() +" ms");
+        
+        assertTrue(metricsBean_ != null);
+    }
+        
+    @Test
+    public void testExtractPizzaMetricsBean() throws Exception {
         System.out.println("OWL_PIZZA");
-        System.out.println(omb.toString());
-	        
-		assertTrue(omb != null);
-	}
+        startDate_ = new Date();
+        
+        ontologyBean_ = metricsManager_
+                .getLatestNcboOntology(OntologyRetrievalManagerLexGridImplTest.TEST_OWL_DISPLAY_LABEL);
+        metricsBean_ = metricsManager_.extractOntologyMetrics(ontologyBean_);
+
+        endDate_ = new Date();
+        System.out.println(metricsBean_.toString());
+        System.out.println(endDate_.getTime() - startDate_.getTime() +" ms");
+        
+        assertTrue(metricsBean_ != null);
+    }
 
 }
