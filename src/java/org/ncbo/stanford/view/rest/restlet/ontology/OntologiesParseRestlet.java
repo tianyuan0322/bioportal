@@ -16,7 +16,6 @@ import org.restlet.data.Status;
 
 public class OntologiesParseRestlet extends AbstractBaseRestlet {
 
-	@SuppressWarnings("unused")
 	private static final Log log = LogFactory
 			.getLog(OntologiesParseRestlet.class);
 	private OntologyLoadSchedulerService ontologyLoadSchedulerService;

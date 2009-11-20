@@ -20,6 +20,7 @@ import org.ncbo.stanford.bean.concept.ClassBean;
 import org.ncbo.stanford.manager.AbstractOntologyManagerLexGrid;
 import org.ncbo.stanford.manager.metrics.OntologyMetricsManager;
 import org.ncbo.stanford.manager.retrieval.impl.OntologyRetrievalManagerLexGridImpl;
+
 /**
  * A implementation of the OntologyMetricsManager for ontologies stored in
  * LexGrid.
@@ -30,98 +31,101 @@ import org.ncbo.stanford.manager.retrieval.impl.OntologyRetrievalManagerLexGridI
  */
 
 public class OntologyMetricsManagerLexGridImpl extends
-        AbstractOntologyManagerLexGrid implements OntologyMetricsManager {
+		AbstractOntologyManagerLexGrid implements OntologyMetricsManager {
 
-    private int maxSubClasses_;
-    
-    @SuppressWarnings("unused")
-    private static final Log log = LogFactory
-            .getLog(OntologyMetricsManagerLexGridImpl.class);
-    private LexBIGService lbs;
-    LexBIGServiceConvenienceMethods lbscm;
+	private int maxSubClasses_;
 
-    public OntologyMetricsManagerLexGridImpl() throws Exception {
-        lbs = LexBIGServiceImpl.defaultInstance();
-        lbscm = (LexBIGServiceConvenienceMethods) lbs
-                .getGenericExtension("LexBIGServiceConvenienceMethods");
-    }
-    
-    public OntologyMetricsBean extractOntologyMetrics(OntologyBean ob)
-            throws Exception  {
-        maxSubClasses_ = OntologyMetricsManager.GOOD_DESIGN_SUBCLASS_LIMIT;
-        
-        OntologyMetricsBean omb = new OntologyMetricsBean();
+	@SuppressWarnings("unused")
+	private static final Log log = LogFactory
+			.getLog(OntologyMetricsManagerLexGridImpl.class);
+	private LexBIGService lbs;
+	LexBIGServiceConvenienceMethods lbscm;
 
-        String schemeName = getLexGridCodingSchemeName(ob);
-        CodingSchemeVersionOrTag csvt = getLexGridCodingSchemeVersion(ob);
-        ResolvedConceptReferencesIterator iterator = lbs
-                .getCodingSchemeConcepts(schemeName, csvt).resolve(null,
-                        null, null, null, false);
+	public OntologyMetricsManagerLexGridImpl() throws Exception {
+		lbs = LexBIGServiceImpl.defaultInstance();
+		lbscm = (LexBIGServiceConvenienceMethods) lbs
+				.getGenericExtension("LexBIGServiceConvenienceMethods");
+	}
 
-        omb.setNumberOfProperties(findNumberOfProperties(ob));
-        
-        OntologyRetrievalManagerLexGridImpl retrieveMan = new OntologyRetrievalManagerLexGridImpl();
-        ArrayList<String> noDescConcepts = new ArrayList<String>();
-        ArrayList<String> oneSubConcepts = new ArrayList<String>();
-        HashMap<String, Integer> manySubConcepts = new HashMap<String,Integer>();
-        String description = "";
-        int numberOfSiblings = 0;
-        int maxNumberOfSiblings = 0;
-        int totalNumberSiblings = 0;
-        int totalNumberParents = 0;
-        while (iterator.hasNext()) {
-            ResolvedConceptReference ref = iterator.next();
-            List<ClassBean> childrenBean = retrieveMan.findChildren(ob, ref.getCode());
-            ClassBean childBean = childrenBean.get(0);
-            
-            numberOfSiblings = (Integer)childBean.getRelation("ChildCount");
-            totalNumberSiblings = totalNumberSiblings +numberOfSiblings;
-            if(numberOfSiblings > maxNumberOfSiblings)
-            {
-                maxNumberOfSiblings = numberOfSiblings;
-            }
-            if(numberOfSiblings == 1)
-            {
-                oneSubConcepts.add(ref.getCode());
-            }
-            if(numberOfSiblings > maxSubClasses_)
-            {
-                manySubConcepts.put(ref.getCode(), numberOfSiblings);
-            }
-            totalNumberParents++;
-            
-            description = ref.getEntityDescription().getContent();  
-            if(description==null || description.equals(""))  {
-                noDescConcepts.add(ref.getCode());
-            }
-        }
-        
-        omb.setId(ob.getId());
-        omb.setNumberOfClasses(totalNumberParents);
-        omb.setClassesWithNoDocumentation(noDescConcepts);
-        omb.setMaximumNumberOfSiblings(maxNumberOfSiblings);
-        omb.setAverageNumberOfSiblings(totalNumberSiblings /totalNumberParents);
-        omb.setClassesWithOneSubclass(oneSubConcepts);
-        omb.setClassesWithMoreThanXSubclasses(manySubConcepts);
-        
-        // not done
-        omb.setNumberOfAxioms(0);
-        omb.setNumberOfIndividuals(0);
-        omb.setMaximumDepth(0);
-        omb.setClassesWithNoAuthor(new ArrayList<String>());
-        omb.setClassesWithMoreThanOnePropertyValue(new ArrayList<String>());
-        
-        return omb;
-    }
+	public OntologyMetricsBean extractOntologyMetrics(OntologyBean ob)
+			throws Exception {
+		maxSubClasses_ = OntologyMetricsManager.GOOD_DESIGN_SUBCLASS_LIMIT;
 
-    public int findNumberOfProperties(OntologyBean ob)
-            throws Exception  {
-        String urnAndVersion = ob.getCodingScheme();
-        String urnVersionArray[] = splitUrnAndVersion(urnAndVersion);
-        CodingScheme cs = getCodingScheme(lbs, urnVersionArray[0],
-                urnVersionArray[1]);
-        SupportedProperty[] sp = cs.getMappings().getSupportedProperty(); 
+		OntologyMetricsBean omb = new OntologyMetricsBean();
 
-        return sp.length;
-    }
+		String schemeName = getLexGridCodingSchemeName(ob);
+		CodingSchemeVersionOrTag csvt = getLexGridCodingSchemeVersion(ob);
+		ResolvedConceptReferencesIterator iterator = lbs
+				.getCodingSchemeConcepts(schemeName, csvt).resolve(null, null,
+						null, null, false);
+
+		omb.setNumberOfProperties(findNumberOfProperties(ob));
+
+		OntologyRetrievalManagerLexGridImpl retrieveMan = new OntologyRetrievalManagerLexGridImpl();
+		ArrayList<String> noDescConcepts = new ArrayList<String>();
+		ArrayList<String> oneSubConcepts = new ArrayList<String>();
+		HashMap<String, Integer> manySubConcepts = new HashMap<String, Integer>();
+		String description = "";
+		int numberOfSiblings = 0;
+		int maxNumberOfSiblings = 0;
+		int totalNumberSiblings = 0;
+		int totalNumberParents = 0;
+		
+		while (iterator.hasNext()) {
+			ResolvedConceptReference ref = iterator.next();
+			List<ClassBean> childrenBean = retrieveMan.findChildren(ob, ref
+					.getCode());
+			ClassBean childBean = childrenBean.get(0);
+
+			numberOfSiblings = (Integer) childBean.getRelation("ChildCount");
+			totalNumberSiblings = totalNumberSiblings + numberOfSiblings;
+			if (numberOfSiblings > maxNumberOfSiblings) {
+				maxNumberOfSiblings = numberOfSiblings;
+			}
+			
+			if (numberOfSiblings == 1) {
+				oneSubConcepts.add(ref.getCode());
+			}
+			
+			if (numberOfSiblings > maxSubClasses_) {
+				manySubConcepts.put(ref.getCode(), numberOfSiblings);
+			}
+			totalNumberParents++;
+
+			description = ref.getEntityDescription().getContent();
+			
+			if (description == null || description.equals("")) {
+				noDescConcepts.add(ref.getCode());
+			}
+		}
+
+		omb.setId(ob.getId());
+		omb.setNumberOfClasses(totalNumberParents);
+		omb.setClassesWithNoDocumentation(noDescConcepts);
+		omb.setMaximumNumberOfSiblings(maxNumberOfSiblings);
+		omb
+				.setAverageNumberOfSiblings(totalNumberSiblings
+						/ totalNumberParents);
+		omb.setClassesWithOneSubclass(oneSubConcepts);
+		omb.setClassesWithMoreThanXSubclasses(manySubConcepts);
+
+		// not done
+		omb.setNumberOfAxioms(0);
+		omb.setNumberOfIndividuals(0);
+		omb.setMaximumDepth(0);
+		omb.setClassesWithNoAuthor(new ArrayList<String>());
+		omb.setClassesWithMoreThanOnePropertyValue(new ArrayList<String>());
+
+		return omb;
+	}
+
+	public int findNumberOfProperties(OntologyBean ob) throws Exception {
+		String urnAndVersion = ob.getCodingScheme();
+		String urnVersionArray[] = splitUrnAndVersion(urnAndVersion);
+		CodingScheme cs = getCodingScheme(lbs, urnVersionArray[0],
+				urnVersionArray[1]);
+		SupportedProperty[] sp = cs.getMappings().getSupportedProperty();
+
+		return sp.length;
+	}
 }
