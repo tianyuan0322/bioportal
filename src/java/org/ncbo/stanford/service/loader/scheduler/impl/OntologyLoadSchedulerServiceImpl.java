@@ -378,7 +378,7 @@ public class OntologyLoadSchedulerServiceImpl implements
 	private OntologyLoadManager getLoadManager(OntologyBean ontologyBean,
 			String formatHandler) throws Exception {
 		if (formatHandler == null
-				|| !ontologyFormatHandlerMap.containsKey(formatHandler)) {
+				|| !ontologyLoadHandlerMap.containsKey(formatHandler)) {
 			formatHandler = ontologyFormatHandlerMap.get(ontologyBean
 					.getFormat());
 		}
