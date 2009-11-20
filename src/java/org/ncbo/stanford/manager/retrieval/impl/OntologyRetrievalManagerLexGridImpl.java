@@ -59,7 +59,6 @@ import org.ncbo.stanford.util.constants.ApplicationConstants;
 public class OntologyRetrievalManagerLexGridImpl extends
 		AbstractOntologyManagerLexGrid implements OntologyRetrievalManager {
 
-	@SuppressWarnings("unused")
 	private static final Log log = LogFactory
 			.getLog(OntologyRetrievalManagerLexGridImpl.class);
 	private LexBIGService lbs;
@@ -297,9 +296,10 @@ public class OntologyRetrievalManagerLexGridImpl extends
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.ncbo.stanford.manager.OntologyRetrievalManager#findPathFromRoot(org
-	 *      .ncbo.stanford.domain.custom.entity.VNcboOntology, java.lang.String,
-	 *      boolean)
+	 * @see
+	 * org.ncbo.stanford.manager.OntologyRetrievalManager#findPathFromRoot(org
+	 * .ncbo.stanford.domain.custom.entity.VNcboOntology, java.lang.String,
+	 * boolean)
 	 */
 	public ClassBean findPathFromRoot(OntologyBean ncboOntology,
 			String conceptId, boolean light) throws Exception {
@@ -1350,7 +1350,6 @@ public class OntologyRetrievalManagerLexGridImpl extends
 		return cb;
 	}
 
-	@SuppressWarnings("unchecked")
 	private ClassBean createSimpleStrippedDownClassBean(ClassBean classBean) {
 		ClassBean cb = new ClassBean();
 		cb.setId(classBean.getId());
