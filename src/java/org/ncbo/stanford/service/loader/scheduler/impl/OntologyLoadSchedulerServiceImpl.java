@@ -177,33 +177,39 @@ public class OntologyLoadSchedulerServiceImpl implements
 			}
 
 			status = StatusEnum.STATUS_WAITING;
-
-			updateOntologyStatus(loadQueue, ontologyBean, status, errorMessage);
+			updateOntologyStatus(loadQueue, ontologyBean, formatHandler,
+					status, errorMessage);
 
 			List<String> filenames = ontologyBean.getFilenames();
 
 			if (filenames.isEmpty()) {
 				status = StatusEnum.STATUS_ERROR;
-
 				updateOntologyStatus(
 						loadQueue,
 						ontologyBean,
+						formatHandler,
 						status,
 						MessageUtils
 								.getMessage("msg.error.noontologyfilessubmitted"));
+
+				String error = addErrorOntology(
+						ontologyVersionId.toString(),
+						ontologyBean,
+						MessageUtils
+								.getMessage("msg.error.noontologyfilessubmitted"));
+				log.error(error);
 			} else {
 				// set the status as "Parsing"
 				status = StatusEnum.STATUS_PARSING;
-				updateOntologyStatus(loadQueue, ontologyBean, status,
-						errorMessage);
+				updateOntologyStatus(loadQueue, ontologyBean, formatHandler,
+						status, errorMessage);
 
 				// load ontology
 				loadOntology(ontologyBean, formatHandler);
 
 				status = StatusEnum.STATUS_READY;
-
-				updateOntologyStatus(loadQueue, ontologyBean, status,
-						errorMessage);
+				updateOntologyStatus(loadQueue, ontologyBean, formatHandler,
+						status, errorMessage);
 
 				// calculate ontology metrics
 				// calculateMetrics(ontologyBean, formatHandler);
@@ -223,8 +229,8 @@ public class OntologyLoadSchedulerServiceImpl implements
 			if (isDefaultFormatHandler(ontologyBean, formatHandler)
 					&& status == StatusEnum.STATUS_READY) {
 				errorMessage = indexOntology(errorMessage, ontologyBean);
-				updateOntologyStatus(loadQueue, ontologyBean, status,
-						errorMessage);
+				updateOntologyStatus(loadQueue, ontologyBean, formatHandler,
+						status, errorMessage);
 			}
 		} catch (Exception e) {
 			status = StatusEnum.STATUS_ERROR;
@@ -235,8 +241,8 @@ public class OntologyLoadSchedulerServiceImpl implements
 			log.error(e);
 
 			try {
-				updateOntologyStatus(loadQueue, ontologyBean, status,
-						errorMessage);
+				updateOntologyStatus(loadQueue, ontologyBean, formatHandler,
+						status, errorMessage);
 			} catch (Exception e1) {
 				e.printStackTrace();
 				log.error(e);
@@ -304,22 +310,23 @@ public class OntologyLoadSchedulerServiceImpl implements
 	}
 
 	private void updateOntologyStatus(NcboOntologyLoadQueue loadQueue,
-			OntologyBean ontologyBean, StatusEnum status, String errorMessage)
-			throws Exception {
-		NcboLStatus ncboStatus = new NcboLStatus();
-		Integer statusId = status.getStatus();
-		ncboStatus.setId(statusId);
+			OntologyBean ontologyBean, String formatHandler, StatusEnum status,
+			String errorMessage) throws Exception {
+		if (isDefaultFormatHandler(ontologyBean, formatHandler)) {
+			NcboLStatus ncboStatus = new NcboLStatus();
+			Integer statusId = status.getStatus();
+			ncboStatus.setId(statusId);
+			// update ontology metadata
+			ontologyBean.setStatusId(statusId);
 
-		// update ontology metadata
-		ontologyBean.setStatusId(statusId);
+			ontologyMetadataManagerProtege.saveOntologyOrView(ontologyBean);
 
-		ontologyMetadataManagerProtege.saveOntologyOrView(ontologyBean);
-
-		// update loadQueue table
-		loadQueue.setErrorMessage(errorMessage);
-		loadQueue.setDateProcessed(Calendar.getInstance().getTime());
-		loadQueue.setNcboLStatus(ncboStatus);
-		ncboOntologyLoadQueueDAO.saveNcboOntologyLoadQueue(loadQueue);
+			// update loadQueue table
+			loadQueue.setErrorMessage(errorMessage);
+			loadQueue.setDateProcessed(Calendar.getInstance().getTime());
+			loadQueue.setNcboLStatus(ncboStatus);
+			ncboOntologyLoadQueueDAO.saveNcboOntologyLoadQueue(loadQueue);
+		}
 	}
 
 	/**
