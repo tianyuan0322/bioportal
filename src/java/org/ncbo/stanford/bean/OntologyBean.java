@@ -128,8 +128,8 @@ public class OntologyBean {
 	 * OntologyVersion should have been populated from OntologyBean before
 	 * making this call.
 	 * 
-	 * @param NcboOntologyLoadQueue,
-	 *            NcboOntologyVersion
+	 * @param NcboOntologyLoadQueue
+	 *            , NcboOntologyVersion
 	 */
 	public void populateToLoadQueueEntity(NcboOntologyLoadQueue loadQueue,
 			Integer ontologyVersionId) {
@@ -165,14 +165,14 @@ public class OntologyBean {
 				+ this.getVirtualViewIds() + ", Remote: " + this.getIsRemote()
 				+ ", Obo Foundry Id: " + this.getOboFoundryId()
 				+ ", Internal Version Number: "
-				+ this.getInternalVersionNumber() + ", User Id: "
-				+ this.getUserId() + ", Version Number: "
-				+ this.getVersionNumber() + ", Version Status: "
-				+ this.getVersionStatus() + ", Display Label: "
-				+ this.getDisplayLabel() + ", Description: "
-				+ this.getDescription() + ", Abbreviation: "
-				+ this.getAbbreviation() + ", Format: " + this.getFormat()
-				+ ", Contact Name: " + this.getContactName()
+				+ this.getInternalVersionNumber() + ", Date Created: "
+				+ this.getDateCreated() + ", User Id: " + this.getUserId()
+				+ ", Version Number: " + this.getVersionNumber()
+				+ ", Version Status: " + this.getVersionStatus()
+				+ ", Display Label: " + this.getDisplayLabel()
+				+ ", Description: " + this.getDescription()
+				+ ", Abbreviation: " + this.getAbbreviation() + ", Format: "
+				+ this.getFormat() + ", Contact Name: " + this.getContactName()
 				+ ", Contact Email: " + this.getContactEmail() + ", Foundry: "
 				+ this.getIsFoundry() + " Coding Scheme: "
 				+ this.getCodingScheme() + ", Target Terminologies: "
