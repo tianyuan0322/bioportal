@@ -3,10 +3,15 @@ package org.ncbo.stanford.manager;
 import java.util.List;
 import java.util.StringTokenizer;
 
+import org.LexGrid.LexBIG.DataModel.Collections.AssociatedConceptList;
+import org.LexGrid.LexBIG.DataModel.Collections.AssociationList;
 import org.LexGrid.LexBIG.DataModel.Collections.CodingSchemeRenderingList;
+import org.LexGrid.LexBIG.DataModel.Collections.ResolvedConceptReferenceList;
+import org.LexGrid.LexBIG.DataModel.Core.Association;
 import org.LexGrid.LexBIG.DataModel.Core.CodingSchemeSummary;
 import org.LexGrid.LexBIG.DataModel.Core.CodingSchemeVersionOrTag;
 import org.LexGrid.LexBIG.DataModel.InterfaceElements.CodingSchemeRendering;
+import org.LexGrid.LexBIG.Extensions.Generic.LexBIGServiceConvenienceMethods;
 import org.LexGrid.LexBIG.LexBIGService.LexBIGService;
 import org.LexGrid.LexBIG.Utility.Constructors;
 import org.LexGrid.codingSchemes.CodingScheme;
@@ -24,6 +29,8 @@ import org.ncbo.stanford.manager.metadata.OntologyMetadataManager;
 public abstract class AbstractOntologyManagerLexGrid {
 
 	protected OntologyMetadataManager ontologyMetadataManager;
+	protected LexBIGService lbs;
+	protected LexBIGServiceConvenienceMethods lbscm;
 
 	protected CodingSchemeRendering getCodingSchemeRendering(LexBIGService lbs,
 			String urnAndVersion) throws Exception {
@@ -175,5 +182,90 @@ public abstract class AbstractOntologyManagerLexGrid {
 			OntologyMetadataManager ontologyMetadataManager) {
 		this.ontologyMetadataManager = ontologyMetadataManager;
 	}
+	/**
+	 * A helper method that returns the ResolvedConceptReferenceList of root
+	 * concepts.
+	 * 
+	 * @param schemeName
+	 * @param csvt
+	 * @return
+	 * @throws Exception
+	 */
+	protected ResolvedConceptReferenceList getHierarchyRootConcepts(
+			String schemeName, CodingSchemeVersionOrTag csvt, boolean light)
+			throws Exception {
+		// Iterate through all hierarchies ...
+		String hierarchyId = getDefaultHierarchyId(schemeName, csvt);
+		ResolvedConceptReferenceList rcrl = lbscm.getHierarchyRoots(schemeName,
+				csvt, hierarchyId, !light);
+		return rcrl;
+	}
 
+	/**
+	 * A helper method that returns the next level of the hierarchy of a
+	 * conceptId
+	 * 
+	 * @param schemeName
+	 * @param csvt
+	 * @param conceptId
+	 * @return
+	 * @throws Exception
+	 */
+	protected AssociationList getHierarchyLevelPrev(String schemeName,
+			CodingSchemeVersionOrTag csvt, String conceptId) throws Exception {
+		String hierarchyId = getDefaultHierarchyId(schemeName, csvt);
+		AssociationList associations = lbscm.getHierarchyLevelPrev(schemeName,
+				csvt, hierarchyId, conceptId, false, false, null);
+		return associations;
+	}
+
+	protected String getDefaultHierarchyId(String schemeName,
+			CodingSchemeVersionOrTag csvt) throws Exception {
+		String[] hierarchyIDs = lbscm.getHierarchyIDs(schemeName, csvt);
+		String hierarchyId = (hierarchyIDs.length > 0) ? hierarchyIDs[0] : null;
+
+		for (String hierarchy : hierarchyIDs) {
+			if (hierarchy.equalsIgnoreCase("IS_A")) {
+				hierarchyId = hierarchy;
+				break;
+			}
+		}
+		return hierarchyId;
+	}
+
+	/**
+	 * A helper method that returns the previous level of the hierarchy of a
+	 * conceptId
+	 * 
+	 * @param schemeName
+	 * @param csvt
+	 * @param conceptId
+	 * @return
+	 * @throws Exception
+	 */
+	protected AssociationList getHierarchyLevelNext(String schemeName,
+			CodingSchemeVersionOrTag csvt, String conceptId) throws Exception {
+		String hierarchyId = getDefaultHierarchyId(schemeName, csvt);
+		AssociationList associations = lbscm.getHierarchyLevelNext(schemeName,
+				csvt, hierarchyId, conceptId, false, false, null);
+		return associations;
+	}
+
+	/**
+	 * 
+	 * @param list
+	 * @return
+	 */
+	protected int getChildCount(AssociationList list) {
+		int count = 0;
+		if (list == null)
+			return count;
+		for (Association association : list.getAssociation()) {
+			AssociatedConceptList assocConceptList = association
+					.getAssociatedConcepts();
+			count += assocConceptList.getAssociatedConceptCount();
+		}
+		return count;
+
+	}
 }

@@ -61,8 +61,7 @@ public class OntologyRetrievalManagerLexGridImpl extends
 
 	private static final Log log = LogFactory
 			.getLog(OntologyRetrievalManagerLexGridImpl.class);
-	private LexBIGService lbs;
-	LexBIGServiceConvenienceMethods lbscm;
+	
 
 	public OntologyRetrievalManagerLexGridImpl() throws Exception {
 		lbs = LexBIGServiceImpl.defaultInstance();
@@ -70,9 +69,9 @@ public class OntologyRetrievalManagerLexGridImpl extends
 				.getGenericExtension("LexBIGServiceConvenienceMethods");
 	}
 
-	public List<String> findProperties(OntologyBean ncboOntology)
+	public List<String> findProperties(OntologyBean ontologyBean)
 			throws Exception {
-		String urnAndVersion = ncboOntology.getCodingScheme();
+		String urnAndVersion = ontologyBean.getCodingScheme();
 		String urnVersionArray[] = splitUrnAndVersion(urnAndVersion);
 		CodingScheme cs = getCodingScheme(lbs, urnVersionArray[0],
 				urnVersionArray[1]);
@@ -92,15 +91,15 @@ public class OntologyRetrievalManagerLexGridImpl extends
 	/**
 	 * Get the root concept for the specified ontology.
 	 */
-	public ClassBean findRootConcept(OntologyBean ncboOntology, boolean light)
+	public ClassBean findRootConcept(OntologyBean ontologyBean, boolean light)
 			throws Exception {
-		String schemeName = getLexGridCodingSchemeName(ncboOntology);
+		String schemeName = getLexGridCodingSchemeName(ontologyBean);
 		if (StringUtils.isBlank(schemeName)) {
 			log
 					.warn("Can not process request when the codingSchemeURI is blank");
 			return null;
 		}
-		CodingSchemeVersionOrTag csvt = getLexGridCodingSchemeVersion(ncboOntology);
+		CodingSchemeVersionOrTag csvt = getLexGridCodingSchemeVersion(ontologyBean);
 		ResolvedConceptReferenceList rcrl = getHierarchyRootConcepts(
 				schemeName, csvt, light);
 		return createThingClassBeanWithCount(rcrl);
@@ -109,15 +108,15 @@ public class OntologyRetrievalManagerLexGridImpl extends
 	/**
 	 * Get the root concept for the specified ontology.
 	 */
-	public ClassBean findRootConcept(OntologyBean ncboOntology)
+	public ClassBean findRootConcept(OntologyBean ontologyBean)
 			throws Exception {
-		String schemeName = getLexGridCodingSchemeName(ncboOntology);
+		String schemeName = getLexGridCodingSchemeName(ontologyBean);
 		if (StringUtils.isBlank(schemeName)) {
 			log
 					.warn("Can not process request when the codingSchemeURI is blank");
 			return null;
 		}
-		CodingSchemeVersionOrTag csvt = getLexGridCodingSchemeVersion(ncboOntology);
+		CodingSchemeVersionOrTag csvt = getLexGridCodingSchemeVersion(ontologyBean);
 		ResolvedConceptReferenceList rcrl = getHierarchyRootConcepts(
 				schemeName, csvt, false);
 		return createThingClassBeanWithCount(rcrl);
@@ -127,15 +126,15 @@ public class OntologyRetrievalManagerLexGridImpl extends
 	 * Find just the concept without the relations. Makes use of the
 	 * CodedNodeSet of LexBIG to implement
 	 * 
-	 * @param ncboOntology
+	 * @param ontologyBean
 	 * @param conceptId
 	 * @return
 	 * @throws Exception
 	 */
 	public ClassBean findConceptIncludeChildCountNoRelations(
-			OntologyBean ncboOntology, String conceptId) throws Exception {
-		String schemeName = getLexGridCodingSchemeName(ncboOntology);
-		CodingSchemeVersionOrTag csvt = getLexGridCodingSchemeVersion(ncboOntology);
+			OntologyBean ontologyBean, String conceptId) throws Exception {
+		String schemeName = getLexGridCodingSchemeName(ontologyBean);
+		CodingSchemeVersionOrTag csvt = getLexGridCodingSchemeVersion(ontologyBean);
 		// Perform the query ...
 		ConceptReferenceList crefs = ConvenienceMethods
 				.createConceptReferenceList(new String[] { conceptId },
@@ -156,19 +155,19 @@ public class OntologyRetrievalManagerLexGridImpl extends
 	 * Find just the concept with all the relations. Makes use of the
 	 * CodedNodeGraph of LexBIG to implement
 	 * 
-	 * @param ncboOntology
+	 * @param ontologyBean
 	 * @param conceptId
 	 * @return
 	 * @throws Exception
 	 */
-	public ClassBean findConcept(OntologyBean ncboOntology, String conceptId,
+	public ClassBean findConcept(OntologyBean ontologyBean, String conceptId,
 			boolean light) throws Exception {
 		ClassBean concept = null;
 
 		if (light) {
-			concept = findLightConcept(ncboOntology, conceptId);
+			concept = findLightConcept(ontologyBean, conceptId);
 		} else {
-			concept = findConcept(ncboOntology, conceptId);
+			concept = findConcept(ontologyBean, conceptId);
 		}
 
 		return concept;
@@ -178,16 +177,16 @@ public class OntologyRetrievalManagerLexGridImpl extends
 	 * Find just the concept with only the subClass relation populated. Makes
 	 * use of the CodedNodeSet and the hierarchy API of LexBIG to implement
 	 * 
-	 * @param ncboOntology
+	 * @param ontologyBean
 	 * @param conceptId
 	 * @return
 	 * @throws Exception
 	 */
-	public ClassBean findLightConcept(OntologyBean ncboOntology,
+	public ClassBean findLightConcept(OntologyBean ontologyBean,
 			String conceptId) throws Exception {
 		log.debug("findLightConcept= " + conceptId);
 		long startTime = System.currentTimeMillis();
-		String schemeName = getLexGridCodingSchemeName(ncboOntology);
+		String schemeName = getLexGridCodingSchemeName(ontologyBean);
 		if (StringUtils.isBlank(schemeName)) {
 			log
 					.warn("Can not process request when the codingSchemeURI is blank");
@@ -198,7 +197,7 @@ public class OntologyRetrievalManagerLexGridImpl extends
 			return null;
 		}
 		ResolvedConceptReference rcr = getLightResolvedConceptReference(
-				ncboOntology, conceptId);
+				ontologyBean, conceptId);
 		long endTime = System.currentTimeMillis();
 		log.debug("Time to resolve codednodeset=" + (endTime - startTime));
 		// Analyze the result ...
@@ -219,16 +218,16 @@ public class OntologyRetrievalManagerLexGridImpl extends
 	 * Find just the concept with all the relations. Makes use of the
 	 * CodedNodeGraph of LexBIG to implement
 	 * 
-	 * @param ncboOntology
+	 * @param ontologyBean
 	 * @param conceptId
 	 * @return
 	 * @throws Exception
 	 */
-	public ClassBean findConcept(OntologyBean ncboOntology, String conceptId)
+	public ClassBean findConcept(OntologyBean ontologyBean, String conceptId)
 			throws Exception {
 		log.debug("findConcept= " + conceptId);
 		long startTime = System.currentTimeMillis();
-		String schemeName = getLexGridCodingSchemeName(ncboOntology);
+		String schemeName = getLexGridCodingSchemeName(ontologyBean);
 		if (StringUtils.isBlank(schemeName)) {
 			log
 					.warn("Can not process request when the codingSchemeURI is blank");
@@ -238,7 +237,7 @@ public class OntologyRetrievalManagerLexGridImpl extends
 			log.warn("Can not process request when the conceptId is blank");
 			return null;
 		}
-		CodingSchemeVersionOrTag csvt = getLexGridCodingSchemeVersion(ncboOntology);
+		CodingSchemeVersionOrTag csvt = getLexGridCodingSchemeVersion(ontologyBean);
 		ResolvedConceptReferenceList matches = lbs.getNodeGraph(schemeName,
 				csvt, null).resolveAsList(
 				ConvenienceMethods
@@ -268,15 +267,15 @@ public class OntologyRetrievalManagerLexGridImpl extends
 	 * Find just the concept with all the relations. Makes use of the
 	 * CodedNodeGraph of LexBIG to implement
 	 * 
-	 * @param ncboOntology
+	 * @param ontologyBean
 	 * @param conceptId
 	 * @return
 	 * @throws Exception
 	 */
-	public List<ClassBean> findAllConcepts(OntologyBean ncboOntology,
+	public List<ClassBean> findAllConcepts(OntologyBean ontologyBean,
 			Integer offset, Integer limit) throws Exception {
-		String schemeName = getLexGridCodingSchemeName(ncboOntology);
-		CodingSchemeVersionOrTag csvt = getLexGridCodingSchemeVersion(ncboOntology);
+		String schemeName = getLexGridCodingSchemeName(ontologyBean);
+		CodingSchemeVersionOrTag csvt = getLexGridCodingSchemeVersion(ontologyBean);
 		try {
 			ResolvedConceptReferencesIterator iterator = lbs
 					.getCodingSchemeConcepts(schemeName, csvt).resolve(null,
@@ -301,9 +300,9 @@ public class OntologyRetrievalManagerLexGridImpl extends
 	 * .ncbo.stanford.domain.custom.entity.VNcboOntology, java.lang.String,
 	 * boolean)
 	 */
-	public ClassBean findPathFromRoot(OntologyBean ncboOntology,
+	public ClassBean findPathFromRoot(OntologyBean ontologyBean,
 			String conceptId, boolean light) throws Exception {
-		String schemeName = getLexGridCodingSchemeName(ncboOntology);
+		String schemeName = getLexGridCodingSchemeName(ontologyBean);
 		if (StringUtils.isBlank(schemeName)) {
 			log.warn("Can not proceed when the codingSchemeURI is blank");
 			return null;
@@ -313,7 +312,7 @@ public class OntologyRetrievalManagerLexGridImpl extends
 			return null;
 		}
 
-		CodingSchemeVersionOrTag csvt = getLexGridCodingSchemeVersion(ncboOntology);
+		CodingSchemeVersionOrTag csvt = getLexGridCodingSchemeVersion(ontologyBean);
 		String hierarchyId = getDefaultHierarchyId(schemeName, csvt);
 		AssociationList pathToRoot = lbscm.getHierarchyPathToRoot(schemeName,
 				csvt, hierarchyId, conceptId, false,
@@ -324,7 +323,7 @@ public class OntologyRetrievalManagerLexGridImpl extends
 		AssociationList pathFromRoot = new AssociationList();
 		HashMap<String, EntityDescription> codeToEntityDescriptionMap = new HashMap<String, EntityDescription>();
 		for (int i = pathToRoot.getAssociationCount() - 1; i >= 0; i--) {
-			reverseAssoc(ncboOntology, pathToRoot.getAssociation(i),
+			reverseAssoc(ontologyBean, pathToRoot.getAssociation(i),
 					pathFromRoot, codeToEntityDescriptionMap);
 		}
 		// log.debug(ObjectToString.toString(pathFromRoot));
@@ -333,7 +332,7 @@ public class OntologyRetrievalManagerLexGridImpl extends
 		for (int i = 0; i < pathFromRoot.getAssociationCount(); i++) {
 			Association association = pathFromRoot.getAssociation(i);
 			ConceptReference cr = association.getAssociationReference();
-			ClassBean classBean = createClassBeanWithChildCount(ncboOntology,
+			ClassBean classBean = createClassBeanWithChildCount(ontologyBean,
 					cr, includeChildren);
 
 			classBeans.add(classBean);
@@ -360,7 +359,7 @@ public class OntologyRetrievalManagerLexGridImpl extends
 				if (ref.getConceptCode().equals(conceptId)) {
 					// We need a lightweight classBean....
 					ResolvedConceptReference rcr = getLightResolvedConceptReference(
-							ncboOntology, conceptId);
+							ontologyBean, conceptId);
 					bean = createClassBeanWithChildCount(rcr, false);
 					classBeans.add(bean);
 				}
@@ -385,16 +384,16 @@ public class OntologyRetrievalManagerLexGridImpl extends
 
 	/**
 	 * 
-	 * @param ncboOntology
+	 * @param ontologyBean
 	 * @param conceptId
 	 * @param light
 	 * @return
 	 * @throws Exception
 	 */
-	public ClassBean findPathToRoot(OntologyBean ncboOntology,
+	public ClassBean findPathToRoot(OntologyBean ontologyBean,
 			String conceptId, boolean light) throws Exception {
-		String schemeName = getLexGridCodingSchemeName(ncboOntology);
-		CodingSchemeVersionOrTag csvt = getLexGridCodingSchemeVersion(ncboOntology);
+		String schemeName = getLexGridCodingSchemeName(ontologyBean);
+		CodingSchemeVersionOrTag csvt = getLexGridCodingSchemeVersion(ontologyBean);
 
 		String hierarchyId = getDefaultHierarchyId(schemeName, csvt);
 		AssociationList associations = lbscm.getHierarchyPathToRoot(schemeName,
@@ -402,7 +401,7 @@ public class OntologyRetrievalManagerLexGridImpl extends
 				LexBIGServiceConvenienceMethods.HierarchyPathResolveOption.ALL,
 				null);
 		ClassBean conceptClass = findConceptIncludeChildCountNoRelations(
-				ncboOntology, conceptId);
+				ontologyBean, conceptId);
 		boolean includeChildren = !light;
 		addAssociationListInfoToClassBean(associations, conceptClass,
 				ApplicationConstants.SUPER_CLASS, includeChildren);
@@ -411,24 +410,24 @@ public class OntologyRetrievalManagerLexGridImpl extends
 
 	/**
 	 * 
-	 * @param ncboOntology
+	 * @param ontologyBean
 	 * @param conceptId
 	 * @return
 	 * @throws Exception
 	 */
-	public List<ClassBean> findParent(OntologyBean ncboOntology,
+	public List<ClassBean> findParent(OntologyBean ontologyBean,
 			String conceptId) throws Exception {
-		String schemeName = getLexGridCodingSchemeName(ncboOntology);
+		String schemeName = getLexGridCodingSchemeName(ontologyBean);
 		if (StringUtils.isBlank(schemeName)) {
 			log
 					.warn("Can not process request when the codingSchemeURI is blank");
 			return null;
 		}
-		CodingSchemeVersionOrTag csvt = getLexGridCodingSchemeVersion(ncboOntology);
+		CodingSchemeVersionOrTag csvt = getLexGridCodingSchemeVersion(ontologyBean);
 		AssociationList associations = getHierarchyLevelPrev(schemeName, csvt,
 				conceptId);
 		ClassBean conceptClass = findConceptIncludeChildCountNoRelations(
-				ncboOntology, conceptId);
+				ontologyBean, conceptId);
 		ArrayList<ClassBean> classBeans = createClassBeanArray(associations,
 				conceptClass, ApplicationConstants.SUPER_CLASS, false);
 
@@ -437,35 +436,35 @@ public class OntologyRetrievalManagerLexGridImpl extends
 
 	/**
 	 * 
-	 * @param ncboOntology
+	 * @param ontologyBean
 	 * @param conceptId
 	 * @return
 	 * @throws Exception
 	 */
-	public List<ClassBean> findChildren(OntologyBean ncboOntology,
+	public List<ClassBean> findChildren(OntologyBean ontologyBean,
 			String conceptId) throws Exception {
-		String schemeName = getLexGridCodingSchemeName(ncboOntology);
+		String schemeName = getLexGridCodingSchemeName(ontologyBean);
 		if (StringUtils.isBlank(schemeName)) {
 			log
 					.warn("Can not process request when the codingSchemeURI is blank");
 			return null;
 		}
-		CodingSchemeVersionOrTag csvt = getLexGridCodingSchemeVersion(ncboOntology);
+		CodingSchemeVersionOrTag csvt = getLexGridCodingSchemeVersion(ontologyBean);
 		AssociationList associations = getHierarchyLevelNext(schemeName, csvt,
 				conceptId);
 		ClassBean conceptClass = findConceptIncludeChildCountNoRelations(
-				ncboOntology, conceptId);
+				ontologyBean, conceptId);
 		ArrayList<ClassBean> classBeans = createClassBeanArray(associations,
 				conceptClass, ApplicationConstants.SUB_CLASS, false);
 
 		return classBeans;
 	}
 
-	public boolean hasParent(OntologyBean ncboOntology, String childConceptId,
+	public boolean hasParent(OntologyBean ontologyBean, String childConceptId,
 			String parentConceptId) throws Exception {
 		boolean isRelated = false;
-		String schemeName = getLexGridCodingSchemeName(ncboOntology);
-		CodingSchemeVersionOrTag csvt = getLexGridCodingSchemeVersion(ncboOntology);
+		String schemeName = getLexGridCodingSchemeName(ontologyBean);
+		CodingSchemeVersionOrTag csvt = getLexGridCodingSchemeVersion(ontologyBean);
 		String hierarchyId = getDefaultHierarchyId(schemeName, csvt);
 		SupportedHierarchy[] supHiers = lbscm.getSupportedHierarchies(
 				schemeName, csvt, hierarchyId);
@@ -519,15 +518,15 @@ public class OntologyRetrievalManagerLexGridImpl extends
 	 * Return a bare bone resolvedConceptReference with none of the details of
 	 * the concept filled in.
 	 * 
-	 * @param ncboOntology
+	 * @param ontologyBean
 	 * @param conceptId
 	 * @return
 	 * @throws Exception
 	 */
 	private ResolvedConceptReference getLightResolvedConceptReference(
-			OntologyBean ncboOntology, String conceptId) throws Exception {
-		String schemeName = getLexGridCodingSchemeName(ncboOntology);
-		CodingSchemeVersionOrTag csvt = getLexGridCodingSchemeVersion(ncboOntology);
+			OntologyBean ontologyBean, String conceptId) throws Exception {
+		String schemeName = getLexGridCodingSchemeName(ontologyBean);
+		CodingSchemeVersionOrTag csvt = getLexGridCodingSchemeVersion(ontologyBean);
 
 		// Perform the query ...
 		ConceptReferenceList crefs = ConvenienceMethods
@@ -574,15 +573,15 @@ public class OntologyRetrievalManagerLexGridImpl extends
 	/**
 	 * Return the entityDescription of the conceptId
 	 * 
-	 * @param ncboOntology
+	 * @param ontologyBean
 	 * @param conceptId
 	 * @return
 	 */
-	private EntityDescription getEntityDescription(OntologyBean ncboOntology,
+	private EntityDescription getEntityDescription(OntologyBean ontologyBean,
 			String conceptId) {
 		try {
 			ResolvedConceptReference rcr = getLightResolvedConceptReference(
-					ncboOntology, conceptId);
+					ontologyBean, conceptId);
 			return rcr.getEntityDescription();
 
 		} catch (Exception ex) {
@@ -595,17 +594,17 @@ public class OntologyRetrievalManagerLexGridImpl extends
 	 * Recursive call to reverse order of the given association, adding results
 	 * to the given list.
 	 * 
-	 * @param ncboOntology
+	 * @param ontologyBean
 	 * @param assoc
 	 * @param addTo
 	 * @param codeToEntityDescriptionMap
 	 * @return Position in the given association list for recursive adds.
 	 */
-	protected AssociationList reverseAssoc(OntologyBean ncboOntology,
+	protected AssociationList reverseAssoc(OntologyBean ontologyBean,
 			Association assoc, AssociationList addTo,
 			Map<String, EntityDescription> codeToEntityDescriptionMap) {
-		String schemeName = getLexGridCodingSchemeName(ncboOntology);
-		CodingSchemeVersionOrTag csvt = getLexGridCodingSchemeVersion(ncboOntology);
+		String schemeName = getLexGridCodingSchemeName(ontologyBean);
+		CodingSchemeVersionOrTag csvt = getLexGridCodingSchemeVersion(ontologyBean);
 
 		ConceptReference acRef = assoc.getAssociationReference();
 		AssociatedConcept acFromRef = new AssociatedConcept();
@@ -624,7 +623,7 @@ public class OntologyRetrievalManagerLexGridImpl extends
 					.getConceptCode()));
 		// Otherwise retrieve on demand ...
 		else {
-			EntityDescription ed = getEntityDescription(ncboOntology, acRef
+			EntityDescription ed = getEntityDescription(ontologyBean, acRef
 					.getConceptCode());
 			acFromRef.setEntityDescription(ed);
 		}
@@ -663,7 +662,7 @@ public class OntologyRetrievalManagerLexGridImpl extends
 			AssociationList sourceOf = ac.getSourceOf();
 			if (sourceOf != null)
 				for (Association sourceAssoc : sourceOf.getAssociation()) {
-					AssociationList pos = reverseAssoc(ncboOntology,
+					AssociationList pos = reverseAssoc(ontologyBean,
 							sourceAssoc, addTo, codeToEntityDescriptionMap);
 					pos.addAssociation(rAssoc);
 				}
@@ -673,94 +672,26 @@ public class OntologyRetrievalManagerLexGridImpl extends
 		return acSources;
 	}
 
-	/**
-	 * A helper method that returns the ResolvedConceptReferenceList of root
-	 * concepts.
-	 * 
-	 * @param schemeName
-	 * @param csvt
-	 * @return
-	 * @throws Exception
-	 */
-	private ResolvedConceptReferenceList getHierarchyRootConcepts(
-			String schemeName, CodingSchemeVersionOrTag csvt, boolean light)
-			throws Exception {
-		// Iterate through all hierarchies ...
-		String hierarchyId = getDefaultHierarchyId(schemeName, csvt);
-		ResolvedConceptReferenceList rcrl = lbscm.getHierarchyRoots(schemeName,
-				csvt, hierarchyId, !light);
-		return rcrl;
-	}
-
-	/**
-	 * A helper method that returns the next level of the hierarchy of a
-	 * conceptId
-	 * 
-	 * @param schemeName
-	 * @param csvt
-	 * @param conceptId
-	 * @return
-	 * @throws Exception
-	 */
-	private AssociationList getHierarchyLevelPrev(String schemeName,
-			CodingSchemeVersionOrTag csvt, String conceptId) throws Exception {
-		String hierarchyId = getDefaultHierarchyId(schemeName, csvt);
-		AssociationList associations = lbscm.getHierarchyLevelPrev(schemeName,
-				csvt, hierarchyId, conceptId, false, false, null);
-		return associations;
-	}
-
-	private String getDefaultHierarchyId(String schemeName,
-			CodingSchemeVersionOrTag csvt) throws Exception {
-		String[] hierarchyIDs = lbscm.getHierarchyIDs(schemeName, csvt);
-		String hierarchyId = (hierarchyIDs.length > 0) ? hierarchyIDs[0] : null;
-
-		for (String hierarchy : hierarchyIDs) {
-			if (hierarchy.equalsIgnoreCase("IS_A")) {
-				hierarchyId = hierarchy;
-				break;
-			}
-		}
-		return hierarchyId;
-	}
-
-	/**
-	 * A helper method that returns the previous level of the hierarchy of a
-	 * conceptId
-	 * 
-	 * @param schemeName
-	 * @param csvt
-	 * @param conceptId
-	 * @return
-	 * @throws Exception
-	 */
-	private AssociationList getHierarchyLevelNext(String schemeName,
-			CodingSchemeVersionOrTag csvt, String conceptId) throws Exception {
-		String hierarchyId = getDefaultHierarchyId(schemeName, csvt);
-		AssociationList associations = lbscm.getHierarchyLevelNext(schemeName,
-				csvt, hierarchyId, conceptId, false, false, null);
-		return associations;
-	}
 
 	/**
 	 * 
-	 * @param ncboOntology
+	 * @param ontologyBean
 	 * @param cr
 	 * @return
 	 */
-	private ClassBean createClassBeanWithChildCount(OntologyBean ncboOntology,
+	private ClassBean createClassBeanWithChildCount(OntologyBean ontologyBean,
 			ConceptReference cr, boolean includeChildren) {
 
-		CodingSchemeVersionOrTag csvt = getLexGridCodingSchemeVersion(ncboOntology);
+		CodingSchemeVersionOrTag csvt = getLexGridCodingSchemeVersion(ontologyBean);
 		ResolvedConceptReference rcr = new ResolvedConceptReference();
 		rcr.setCodingSchemeName(cr.getCodingSchemeName());
 		rcr.setConceptCode(cr.getConceptCode());
 		rcr.setCodingSchemeVersion(csvt.getVersion());
-		EntityDescription ed = getEntityDescription(ncboOntology, cr
+		EntityDescription ed = getEntityDescription(ontologyBean, cr
 				.getConceptCode());
 		rcr.setEntityDescription(ed);
 		try {
-			rcr = getLightResolvedConceptReference(ncboOntology, cr
+			rcr = getLightResolvedConceptReference(ontologyBean, cr
 					.getConceptCode());
 		} catch (Exception ex) {
 			ex.printStackTrace();
@@ -1055,23 +986,7 @@ public class OntologyRetrievalManagerLexGridImpl extends
 
 	}
 
-	/**
-	 * 
-	 * @param list
-	 * @return
-	 */
-	int getChildCount(AssociationList list) {
-		int count = 0;
-		if (list == null)
-			return count;
-		for (Association association : list.getAssociation()) {
-			AssociatedConceptList assocConceptList = association
-					.getAssociatedConcepts();
-			count += assocConceptList.getAssociatedConceptCount();
-		}
-		return count;
 
-	}
 
 	/**
 	 * This function adds the association information to the current class bean.
