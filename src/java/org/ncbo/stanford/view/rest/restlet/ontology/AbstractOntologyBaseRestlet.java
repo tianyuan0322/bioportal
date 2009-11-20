@@ -3,6 +3,7 @@ package org.ncbo.stanford.view.rest.restlet.ontology;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.ncbo.stanford.bean.OntologyBean;
+import org.ncbo.stanford.exception.InvalidInputException;
 import org.ncbo.stanford.service.ontology.OntologyService;
 import org.ncbo.stanford.util.MessageUtils;
 import org.ncbo.stanford.util.RequestUtils;
@@ -46,8 +47,8 @@ public abstract class AbstractOntologyBaseRestlet extends AbstractBaseRestlet {
 				ontologyIdInt = RequestUtils.parseIntegerParam(ontologyId);
 
 				if (ontologyIdInt == null) {
-					response.setStatus(Status.CLIENT_ERROR_BAD_REQUEST,
-							"Invalid id parameter specified");
+					throw new InvalidInputException(MessageUtils
+							.getMessage("msg.error.idinvalid"));
 				} else {
 					ontologyBean = ontologyService
 							.findLatestOntologyOrViewVersion(ontologyIdInt);
@@ -65,6 +66,8 @@ public abstract class AbstractOntologyBaseRestlet extends AbstractBaseRestlet {
 				response.setStatus(Status.CLIENT_ERROR_NOT_FOUND, MessageUtils
 						.getMessage("msg.error.ontologyNotFound"));
 			}
+		} catch (InvalidInputException e) {
+			response.setStatus(Status.CLIENT_ERROR_BAD_REQUEST, e.getMessage());
 		} catch (Exception e) {
 			response.setStatus(Status.SERVER_ERROR_INTERNAL, e.getMessage());
 			e.printStackTrace();
