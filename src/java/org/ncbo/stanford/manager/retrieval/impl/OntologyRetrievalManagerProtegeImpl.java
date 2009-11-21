@@ -150,17 +150,9 @@ public class OntologyRetrievalManagerProtegeImpl extends
 		Frame frame = null;
 
 		if (kb instanceof OWLModel) {
-			frame = ((OWLModel) kb).getRDFSNamedClass(conceptId);
-
-			if (frame == null) {
-				frame = ((OWLModel) kb).getRDFResource(conceptId);
-			}
+			frame = ((OWLModel) kb).getRDFResource(conceptId);
 		} else {
-			frame = kb.getCls(conceptId);
-
-			if (frame == null) {
-				frame = kb.getFrame(conceptId);
-			}
+			frame = kb.getFrame(conceptId);
 		}
 
 		return frame;
@@ -389,7 +381,7 @@ public class OntologyRetrievalManagerProtegeImpl extends
 
 		// add properties
 		for (Slot slot : slots) {
-			Collection classes = (isOwl && slot instanceof RDFProperty) ? ((RDFSNamedClass) concept)
+			Collection classes = (isOwl && slot instanceof RDFProperty && concept instanceof RDFResource) ? ((RDFResource) concept)
 					.getPropertyValues((RDFProperty) slot)
 					: concept.getOwnSlotValues(slot);
 			List vals = getUniqueClasses(classes);
