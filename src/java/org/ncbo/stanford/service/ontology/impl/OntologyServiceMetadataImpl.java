@@ -32,7 +32,6 @@ public class OntologyServiceMetadataImpl extends AbstractOntologyService
 
 	private OntologyCategoryMetadataManager ontologyCategoryMetadataManager;
 	private OntologyGroupMetadataManager ontologyGroupMetadataManager;
-	private List<String> errorOntologies = new ArrayList<String>(0);
 
 	public void cleanupOntologyCategory(OntologyBean ontologyBean) {
 		// This method was created in the original implementation where
@@ -411,12 +410,5 @@ public class OntologyServiceMetadataImpl extends AbstractOntologyService
 	public void setOntologyGroupMetadataManager(
 			OntologyGroupMetadataManager ontologyGroupMetadataManager) {
 		this.ontologyGroupMetadataManager = ontologyGroupMetadataManager;
-	}
-
-	/**
-	 * @return the errorOntologies
-	 */
-	public List<String> getErrorOntologies() {
-		return errorOntologies;
 	}
 }

@@ -45,7 +45,6 @@ public class OntologyLoadSchedulerServiceImpl extends AbstractOntologyService
 	private static final String ONTOLOGY_VERSION_DOES_NOT_EXIST_ERROR = "Ontology version with the given id does not exist";
 	private static final String ONTOLOGY_QUEUE_DOES_NOT_EXIST_ERROR = "No load queue record exists for the ontology";
 
-	private List<String> errorOntologies = new ArrayList<String>(0);
 	private Map<String, OntologyDiffManager> ontologyDiffHandlerMap = new HashMap<String, OntologyDiffManager>(
 			0);
 	private Map<String, OntologyMetricsManager> ontologyMetricsHandlerMap = new HashMap<String, OntologyMetricsManager>(
@@ -445,13 +444,6 @@ public class OntologyLoadSchedulerServiceImpl extends AbstractOntologyService
 	public void setOntologyMetricsHandlerMap(
 			Map<String, OntologyMetricsManager> ontologyMetricsHandlerMap) {
 		this.ontologyMetricsHandlerMap = ontologyMetricsHandlerMap;
-	}
-
-	/**
-	 * @return the errorOntologies
-	 */
-	public List<String> getErrorOntologies() {
-		return errorOntologies;
 	}
 
 	/**

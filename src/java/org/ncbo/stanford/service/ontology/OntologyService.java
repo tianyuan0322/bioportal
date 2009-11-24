@@ -215,9 +215,9 @@ public interface OntologyService {
 	public void reloadMetadataOntology();
 
 	/**
-	 * Returns the list of error ontologies
+	 * Returns info about ontologies that did not process successfully
 	 * 
-	 * @return a list of strings
+	 * @return
 	 */
 	public List<String> getErrorOntologies();
 }
