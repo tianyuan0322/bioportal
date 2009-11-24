@@ -38,6 +38,8 @@ public abstract class AbstractOntologyService {
 	protected MetricsService metricsService;
 	protected OntologyMetadataManager ontologyMetadataManager;
 
+	protected List<String> errorOntologies = new ArrayList<String>(0);
+
 	protected boolean deleteOntologyFile(OntologyBean ontologyBean) {
 		String dirPath = AbstractFilePathHandler
 				.getFullOntologyDirPath(ontologyBean);
@@ -141,6 +143,13 @@ public abstract class AbstractOntologyService {
 		errorMessage += newErrorMessage;
 
 		return errorMessage;
+	}
+
+	/**
+	 * @return the errorOntologies
+	 */
+	public List<String> getErrorOntologies() {
+		return errorOntologies;
 	}
 
 	/**
