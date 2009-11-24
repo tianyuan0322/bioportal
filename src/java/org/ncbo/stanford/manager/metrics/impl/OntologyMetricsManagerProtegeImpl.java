@@ -30,6 +30,7 @@ public class OntologyMetricsManagerProtegeImpl extends
 
 	// Used in calculations
 	private KnowledgeBase kb;
+	private OntologyMetricsBean mb;
 	private int maxDepth, maxSiblings;
 	private HashMap<String, ArrayList<String>> conceptAuthors;
 	private ArrayList<String> noAuthorConcepts, xAnnotConcepts;
@@ -41,7 +42,7 @@ public class OntologyMetricsManagerProtegeImpl extends
 
 	public OntologyMetricsBean extractOntologyMetrics(OntologyBean ontologyBean)
 			throws Exception {
-		OntologyMetricsBean mb = new OntologyMetricsBean();
+		mb = new OntologyMetricsBean();
 
 		kb = getKnowledgeBase(ontologyBean);
 		documentationProperty = ontologyBean.getDocumentationSlot();
@@ -51,13 +52,13 @@ public class OntologyMetricsManagerProtegeImpl extends
 				.getPreferredMaximumSubclassLimit() == null ? GOOD_DESIGN_SUBCLASS_LIMIT
 				: ontologyBean.getPreferredMaximumSubclassLimit());
 
-		populateOntologyMetrics(mb);
+		populateOntologyMetrics();
 
 		mb.setId(ontologyBean.getId());
 		return mb;
 	}
 
-	private void populateOntologyMetrics(OntologyMetricsBean mb) {
+	private void populateOntologyMetrics() {
 		ArrayList<String> oneSubClses = new ArrayList<String>();
 		HashMap<String, Integer> xSubClses = new HashMap<String, Integer>();
 		ArrayList<String> noDocClses = new ArrayList<String>();
@@ -66,16 +67,15 @@ public class OntologyMetricsManagerProtegeImpl extends
 		maxDepth = 1;
 
 		if (kb instanceof OWLModel) {
-			owlBasicAnalysis(mb, oneSubClses, xSubClses, noDocClses);
+			owlBasicAnalysis(oneSubClses, xSubClses, noDocClses);
 		} else {
-			basicAnalysis(mb, oneSubClses, xSubClses, noDocClses);
+			basicAnalysis(oneSubClses, xSubClses, noDocClses);
 		}
 
-		fillInCommonFields(mb, oneSubClses, xSubClses, noDocClses);
+		fillInCommonFields(oneSubClses, xSubClses, noDocClses);
 	}
 
-	private void owlBasicAnalysis(OntologyMetricsBean mb,
-			ArrayList<String> oneSubClses, HashMap<String, Integer> xSubClses,
+	private void owlBasicAnalysis(ArrayList<String> oneSubClses, HashMap<String, Integer> xSubClses,
 			ArrayList<String> noDocClses) {
 		conceptAuthors = new HashMap<String, ArrayList<String>>();
 		noAuthorConcepts = new ArrayList<String>();
@@ -112,8 +112,7 @@ public class OntologyMetricsManagerProtegeImpl extends
 		mb.setClassesWithMoreThanOnePropertyValue(xAnnotConcepts);
 	}
 
-	private void basicAnalysis(OntologyMetricsBean mb,
-			ArrayList<String> oneSubClses, HashMap<String, Integer> xSubClses,
+	private void basicAnalysis(ArrayList<String> oneSubClses, HashMap<String, Integer> xSubClses,
 			ArrayList<String> noDocClses) {
 		ArrayList<Integer> sibCounts = new ArrayList<Integer>();
 		clsIterate(kb.getRootCls(), 1, oneSubClses, xSubClses, noDocClses,
@@ -135,14 +134,13 @@ public class OntologyMetricsManagerProtegeImpl extends
 		for (int i = 0; i < sibCounts.size(); i++) {
 			sum += sibCounts.get(i);
 		}
-		int avgSiblings = sum / sibCounts.size();
+		int avgSiblings = (sum == 0) ? 0 : sum / sibCounts.size();
 		mb.setAverageNumberOfSiblings(avgSiblings);
 		// calculate max siblings
 		mb.setMaximumNumberOfSiblings(maxSiblings);
 	}
 
-	private void fillInCommonFields(OntologyMetricsBean mb,
-			ArrayList<String> oneSubClses, HashMap<String, Integer> xSubClses,
+	private void fillInCommonFields(ArrayList<String> oneSubClses, HashMap<String, Integer> xSubClses,
 			ArrayList<String> noDocClses) {
 		// fill in classesWithOneSubclass, classesWithMoreThanXSubclasses and
 		// classesWithNoDocumentation
@@ -292,14 +290,14 @@ public class OntologyMetricsManagerProtegeImpl extends
 			annotTagMatches = 0;
 		}
 		if (!cls.isSystem() && !cls.isIncluded()) {
-			if (!docTagFound && !cls.getName().equals("owl:Thing")) {
+			if (docTagFound && !cls.getName().equals("owl:Thing")) {
 				String identifier = cls.getBrowserText() + "(" + cls.getName()
 						+ ")";
 				if (!noDocClses.contains(identifier))
 					noDocClses.add(identifier); // if the doc tag has not been
 												// matched for this class...
 			}
-			if (!authorTagFound && !cls.getName().equals("owl:Thing")) {
+			if (authorTagFound && !cls.getName().equals("owl:Thing")) {
 				String identifier = cls.getBrowserText() + "(" + cls.getName()
 						+ ")";
 				if (!noAuthorConcepts.contains(identifier))

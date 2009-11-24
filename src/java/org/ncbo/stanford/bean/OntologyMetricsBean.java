@@ -218,7 +218,7 @@ public class OntologyMetricsBean {
 	 * @param classesWithMoreThanOnePropertyValue the classesWithMoreThanOnePropertyValue to set
 	 */
 	public void setClassesWithMoreThanOnePropertyValue(
-			ArrayList<String> classesWithMoreThanOnePropertyValue) {
+			List<String> classesWithMoreThanOnePropertyValue) {
 		this.classesWithMoreThanOnePropertyValue = classesWithMoreThanOnePropertyValue;
 	}
 
