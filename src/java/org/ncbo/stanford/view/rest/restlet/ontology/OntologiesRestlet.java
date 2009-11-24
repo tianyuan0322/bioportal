@@ -7,6 +7,7 @@ import javax.servlet.http.HttpServletRequest;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.ncbo.stanford.bean.OntologyBean;
+import org.ncbo.stanford.exception.InvalidInputException;
 import org.ncbo.stanford.service.ontology.OntologyService;
 import org.ncbo.stanford.util.MessageUtils;
 import org.ncbo.stanford.util.RequestUtils;
@@ -73,12 +74,10 @@ public class OntologiesRestlet extends AbstractBaseRestlet {
 		String lastSegment = request.getResourceRef().getLastSegment();
 
 		try {
-			if (lastSegment
-					.equals(RequestParamConstants.PARAM_ACTIVE)) {
+			if (lastSegment.equals(RequestParamConstants.PARAM_ACTIVE)) {
 				ontologyList = ontologyService
 						.findLatestActiveOntologyVersions();
-			} else if (lastSegment
-					.equals(RequestParamConstants.PARAM_PULLED)) {
+			} else if (lastSegment.equals(RequestParamConstants.PARAM_PULLED)) {
 				ontologyList = ontologyService
 						.findLatestAutoPulledOntologyVersions();
 			} else {
@@ -169,10 +168,20 @@ public class OntologiesRestlet extends AbstractBaseRestlet {
 			if (ontologyVersionIds != null) {
 				ontologyService.deleteOntologiesOrViews(ontologyVersionIds,
 						removeMetadataBool, removeOntologyFilesBool);
+				List<String> errorOntologies = ontologyService
+						.getErrorOntologies();
+
+				if (!errorOntologies.isEmpty()) {
+					throw new Exception(
+							"Error Deprecating/Deleting Ontologies: "
+									+ errorOntologies);
+				}
 			} else {
-				response.setStatus(Status.CLIENT_ERROR_BAD_REQUEST,
-						"No valid parameters supplied");
+				throw new InvalidInputException(MessageUtils
+						.getMessage("msg.error.ontologyversionidsinvalid"));
 			}
+		} catch (InvalidInputException e) {
+			response.setStatus(Status.CLIENT_ERROR_BAD_REQUEST, e.getMessage());
 		} catch (Exception e) {
 			response.setStatus(Status.SERVER_ERROR_INTERNAL, e.getMessage());
 			e.printStackTrace();

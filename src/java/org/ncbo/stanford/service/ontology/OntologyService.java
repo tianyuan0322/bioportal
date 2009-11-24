@@ -213,4 +213,11 @@ public interface OntologyService {
 	 * Programmatically reloads the metadata ontology stored in the memory
 	 */
 	public void reloadMetadataOntology();
+
+	/**
+	 * Returns the list of error ontologies
+	 * 
+	 * @return a list of strings
+	 */
+	public List<String> getErrorOntologies();
 }

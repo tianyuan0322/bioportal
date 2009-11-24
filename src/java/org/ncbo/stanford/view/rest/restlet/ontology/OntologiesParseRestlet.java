@@ -6,7 +6,9 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.ncbo.stanford.exception.InvalidInputException;
 import org.ncbo.stanford.service.loader.scheduler.OntologyLoadSchedulerService;
+import org.ncbo.stanford.util.MessageUtils;
 import org.ncbo.stanford.util.RequestUtils;
 import org.ncbo.stanford.view.rest.restlet.AbstractBaseRestlet;
 import org.ncbo.stanford.view.util.constants.RequestParamConstants;
@@ -46,15 +48,22 @@ public class OntologiesParseRestlet extends AbstractBaseRestlet {
 			String formatHandler = (String) httpRequest
 					.getParameter(RequestParamConstants.PARAM_ONTOLOGYPARSER);
 
-			ontologyLoadSchedulerService.parseOntologies(ontologyVersionIds,
-					formatHandler);
-			List<String> errorOntologies = ontologyLoadSchedulerService
-					.getErrorOntologies();
+			if (ontologyVersionIds != null) {
+				ontologyLoadSchedulerService.parseOntologies(
+						ontologyVersionIds, formatHandler);
+				List<String> errorOntologies = ontologyLoadSchedulerService
+						.getErrorOntologies();
 
-			if (!errorOntologies.isEmpty()) {
-				throw new Exception("Error Parsing Ontologies: "
-						+ errorOntologies);
+				if (!errorOntologies.isEmpty()) {
+					throw new Exception("Error Parsing Ontologies: "
+							+ errorOntologies);
+				}
+			} else {
+				throw new InvalidInputException(MessageUtils
+						.getMessage("msg.error.ontologyversionidsinvalid"));
 			}
+		} catch (InvalidInputException e) {
+			response.setStatus(Status.CLIENT_ERROR_BAD_REQUEST, e.getMessage());
 		} catch (Exception e) {
 			response.setStatus(Status.SERVER_ERROR_INTERNAL, e.getMessage());
 			e.printStackTrace();

@@ -15,13 +15,12 @@ import org.ncbo.stanford.domain.generated.NcboOntologyFile;
 import org.ncbo.stanford.domain.generated.NcboOntologyLoadQueue;
 import org.ncbo.stanford.manager.metadata.OntologyCategoryMetadataManager;
 import org.ncbo.stanford.manager.metadata.OntologyGroupMetadataManager;
-import org.ncbo.stanford.manager.metadata.OntologyMetadataManager;
-import org.ncbo.stanford.service.metrics.MetricsService;
 import org.ncbo.stanford.service.ontology.AbstractOntologyService;
 import org.ncbo.stanford.service.ontology.OntologyService;
 import org.ncbo.stanford.util.MessageUtils;
 import org.ncbo.stanford.util.ontologyfile.pathhandler.AbstractFilePathHandler;
 import org.ncbo.stanford.util.ontologyfile.pathhandler.FilePathHandler;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 @Transactional
@@ -31,10 +30,9 @@ public class OntologyServiceMetadataImpl extends AbstractOntologyService
 	private static final Log log = LogFactory
 			.getLog(OntologyServiceMetadataImpl.class);
 
-	private OntologyMetadataManager ontologyMetadataManager;
-	private MetricsService metricsService;
 	private OntologyCategoryMetadataManager ontologyCategoryMetadataManager;
 	private OntologyGroupMetadataManager ontologyGroupMetadataManager;
+	private List<String> errorOntologies = new ArrayList<String>(0);
 
 	public void cleanupOntologyCategory(OntologyBean ontologyBean) {
 		// This method was created in the original implementation where
@@ -109,12 +107,22 @@ public class OntologyServiceMetadataImpl extends AbstractOntologyService
 	 * @param removeOntologyFiles
 	 * @return
 	 */
+	@Transactional(propagation = Propagation.NEVER)
 	public void deleteOntologiesOrViews(List<Integer> ontologyVersionIds,
 			boolean removeMetadata, boolean removeOntologyFiles)
 			throws Exception {
+		errorOntologies.clear();
+
 		for (Integer ontologyVersionId : ontologyVersionIds) {
-			deleteOntologyOrView(ontologyVersionId, removeMetadata,
-					removeOntologyFiles);
+			try {
+				deleteOntologyOrView(ontologyVersionId, removeMetadata,
+						removeOntologyFiles, true);
+			} catch (Exception e) {
+				addErrorOntology(errorOntologies, ontologyVersionId.toString(),
+						null, e.getMessage());
+				e.printStackTrace();
+				log.error(e);
+			}
 		}
 	}
 
@@ -126,11 +134,28 @@ public class OntologyServiceMetadataImpl extends AbstractOntologyService
 	 * @param removeOntologyFiles
 	 * @return
 	 */
-	@SuppressWarnings("unchecked")
 	@Transactional(rollbackFor = Exception.class)
 	public void deleteOntologyOrView(Integer ontologyVersionId,
 			boolean removeMetadata, boolean removeOntologyFiles)
 			throws Exception {
+		deleteOntologyOrView(ontologyVersionId, removeMetadata,
+				removeOntologyFiles, true);
+	}
+
+	/**
+	 * Delete/Deprecate a single ontology
+	 * 
+	 * @param ontologyVersionId
+	 * @param removeMetadata
+	 * @param removeOntologyFiles
+	 * @param dummyFlag
+	 *            - used just to alter the signature
+	 * @return
+	 */
+	@SuppressWarnings("unchecked")
+	private void deleteOntologyOrView(Integer ontologyVersionId,
+			boolean removeMetadata, boolean removeOntologyFiles,
+			boolean dummyFlag) throws Exception {
 		OntologyBean ontologyBean = findOntologyOrView(ontologyVersionId);
 
 		if (ontologyBean == null) {
@@ -371,15 +396,6 @@ public class OntologyServiceMetadataImpl extends AbstractOntologyService
 	}
 
 	/**
-	 * @param ontologyMetadataManager
-	 *            the ontologyMetadataManager to set
-	 */
-	public void setOntologyMetadataManager(
-			OntologyMetadataManager ontologyMetadataManager) {
-		this.ontologyMetadataManager = ontologyMetadataManager;
-	}
-
-	/**
 	 * @param ontologyCategoryMetadataManager
 	 *            the ontologyCategoryMetadataManager to set
 	 */
@@ -395,5 +411,12 @@ public class OntologyServiceMetadataImpl extends AbstractOntologyService
 	public void setOntologyGroupMetadataManager(
 			OntologyGroupMetadataManager ontologyGroupMetadataManager) {
 		this.ontologyGroupMetadataManager = ontologyGroupMetadataManager;
+	}
+
+	/**
+	 * @return the errorOntologies
+	 */
+	public List<String> getErrorOntologies() {
+		return errorOntologies;
 	}
 }
