@@ -67,6 +67,8 @@ public class SVNUtils {
 		SVNRepository repository = null;
 		ISVNAuthenticationManager authManager;
 		File dstPath = null;
+		
+		svnHostname=svnHostname+svnRootDirectory;
 		try {
 			// encode host URL.
 			SVNURL svnurl = SVNURL.parseURIEncoded(svnHostname);
