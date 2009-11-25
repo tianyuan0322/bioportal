@@ -42,7 +42,6 @@ public class OntologyLoadSchedulerServiceImpl extends AbstractOntologyService
 
 	private static final Log log = LogFactory
 			.getLog(OntologyLoadSchedulerServiceImpl.class);
-	private static final String ONTOLOGY_VERSION_DOES_NOT_EXIST_ERROR = "Ontology version with the given id does not exist";
 	private static final String ONTOLOGY_QUEUE_DOES_NOT_EXIST_ERROR = "No load queue record exists for the ontology";
 
 	private Map<String, OntologyDiffManager> ontologyDiffHandlerMap = new HashMap<String, OntologyDiffManager>(

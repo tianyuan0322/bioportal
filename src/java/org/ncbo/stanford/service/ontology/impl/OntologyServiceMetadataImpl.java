@@ -110,10 +110,20 @@ public class OntologyServiceMetadataImpl extends AbstractOntologyService
 	public void deleteOntologiesOrViews(List<Integer> ontologyVersionIds,
 			boolean removeMetadata, boolean removeOntologyFiles) {
 		errorOntologies.clear();
+		List<Integer> errorVersionIdList = new ArrayList<Integer>(
+				ontologyVersionIds);
 
 		for (Integer ontologyVersionId : ontologyVersionIds) {
 			try {
-				deleteOntologyOrView(ontologyVersionId, removeMetadata,
+				OntologyBean ontologyBean = findOntologyOrView(ontologyVersionId);
+
+				if (ontologyBean == null) {
+					continue;
+				}
+
+				errorVersionIdList.remove(ontologyVersionId);
+
+				deleteOntologyOrView(ontologyBean, removeMetadata,
 						removeOntologyFiles, true);
 			} catch (Exception e) {
 				addErrorOntology(errorOntologies, ontologyVersionId.toString(),
@@ -121,6 +131,12 @@ public class OntologyServiceMetadataImpl extends AbstractOntologyService
 				e.printStackTrace();
 				log.error(e);
 			}
+		}
+
+		for (Integer errorVersionId : errorVersionIdList) {
+			String error = addErrorOntology(errorOntologies, errorVersionId
+					.toString(), null, ONTOLOGY_VERSION_DOES_NOT_EXIST_ERROR);
+			log.error(error);
 		}
 	}
 
@@ -136,8 +152,18 @@ public class OntologyServiceMetadataImpl extends AbstractOntologyService
 	public void deleteOntologyOrView(Integer ontologyVersionId,
 			boolean removeMetadata, boolean removeOntologyFiles)
 			throws Exception {
-		deleteOntologyOrView(ontologyVersionId, removeMetadata,
-				removeOntologyFiles, true);
+		errorOntologies.clear();
+		OntologyBean ontologyBean = findOntologyOrView(ontologyVersionId);
+
+		if (ontologyBean == null) {
+			String error = addErrorOntology(errorOntologies, ontologyVersionId
+					.toString(), null, ONTOLOGY_VERSION_DOES_NOT_EXIST_ERROR);
+			log.error(error);
+			return;
+		}
+
+		deleteOntologyOrView(ontologyBean, removeMetadata, removeOntologyFiles,
+				true);
 	}
 
 	/**
@@ -151,15 +177,10 @@ public class OntologyServiceMetadataImpl extends AbstractOntologyService
 	 * @return
 	 */
 	@SuppressWarnings("unchecked")
-	private void deleteOntologyOrView(Integer ontologyVersionId,
+	private void deleteOntologyOrView(OntologyBean ontologyBean,
 			boolean removeMetadata, boolean removeOntologyFiles,
 			boolean dummyFlag) throws Exception {
-		OntologyBean ontologyBean = findOntologyOrView(ontologyVersionId);
-
-		if (ontologyBean == null) {
-			return;
-		}
-
+		Integer ontologyVersionId = ontologyBean.getId();
 		Integer ontologyId = ontologyBean.getOntologyId();
 		OntologyBean latestOntologyBean = findLatestActiveOntologyOrViewVersion(ontologyId);
 

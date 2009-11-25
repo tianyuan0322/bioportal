@@ -178,8 +178,7 @@ public interface OntologyService {
 	 * @return
 	 */
 	public void deleteOntologiesOrViews(List<Integer> ontologyVersionIds,
-			boolean removeMetadata, boolean removeOntologyFiles)
-			throws Exception;
+			boolean removeMetadata, boolean removeOntologyFiles);
 
 	/**
 	 * Get File object for a specific ontology

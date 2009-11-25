@@ -28,7 +28,8 @@ public abstract class AbstractOntologyService {
 			.getLog(AbstractOntologyService.class);
 
 	private static final int LONG_ERROR_MESSAGE_LENGTH = 1000;
-	private static final int SHORT_ERROR_MESSAGE_LENGTH = 100;
+	private static final int SHORT_ERROR_MESSAGE_LENGTH = 500;
+	protected static final String ONTOLOGY_VERSION_DOES_NOT_EXIST_ERROR = "Ontology version with the given id does not exist";
 
 	protected Map<String, String> ontologyFormatHandlerMap = new HashMap<String, String>();
 	protected Map<String, OntologyLoadManager> ontologyLoadHandlerMap = new HashMap<String, OntologyLoadManager>();
