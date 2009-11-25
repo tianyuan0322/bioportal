@@ -108,8 +108,7 @@ public class OntologyServiceMetadataImpl extends AbstractOntologyService
 	 */
 	@Transactional(propagation = Propagation.NEVER)
 	public void deleteOntologiesOrViews(List<Integer> ontologyVersionIds,
-			boolean removeMetadata, boolean removeOntologyFiles)
-			throws Exception {
+			boolean removeMetadata, boolean removeOntologyFiles) {
 		errorOntologies.clear();
 
 		for (Integer ontologyVersionId : ontologyVersionIds) {
