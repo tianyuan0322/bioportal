@@ -14,6 +14,7 @@ import org.ncbo.stanford.manager.metrics.OntologyMetricsManager;
 import edu.stanford.smi.protege.model.Cls;
 import edu.stanford.smi.protege.model.FrameCounts;
 import edu.stanford.smi.protege.model.KnowledgeBase;
+import edu.stanford.smi.protege.model.Slot;
 import edu.stanford.smi.protegex.owl.model.OWLModel;
 import edu.stanford.smi.protegex.owl.model.RDFProperty;
 import edu.stanford.smi.protegex.owl.model.RDFSNamedClass;
@@ -62,8 +63,8 @@ public class OntologyMetricsManagerProtegeImpl extends
 		ArrayList<String> oneSubClses = new ArrayList<String>();
 		HashMap<String, Integer> xSubClses = new HashMap<String, Integer>();
 		ArrayList<String> noDocClses = new ArrayList<String>();
-		
-		// TODO: why 1?
+
+		// Initialize to default value, will be overwritten during traversal
 		maxDepth = 1;
 
 		if (kb instanceof OWLModel) {
@@ -75,8 +76,8 @@ public class OntologyMetricsManagerProtegeImpl extends
 		fillInCommonFields(oneSubClses, xSubClses, noDocClses);
 	}
 
-	private void owlBasicAnalysis(ArrayList<String> oneSubClses, HashMap<String, Integer> xSubClses,
-			ArrayList<String> noDocClses) {
+	private void owlBasicAnalysis(ArrayList<String> oneSubClses,
+			HashMap<String, Integer> xSubClses, ArrayList<String> noDocClses) {
 		conceptAuthors = new HashMap<String, ArrayList<String>>();
 		noAuthorConcepts = new ArrayList<String>();
 		xAnnotConcepts = new ArrayList<String>();
@@ -112,11 +113,12 @@ public class OntologyMetricsManagerProtegeImpl extends
 		mb.setClassesWithMoreThanOnePropertyValue(xAnnotConcepts);
 	}
 
-	private void basicAnalysis(ArrayList<String> oneSubClses, HashMap<String, Integer> xSubClses,
-			ArrayList<String> noDocClses) {
+	private void basicAnalysis(ArrayList<String> oneSubClses,
+			HashMap<String, Integer> xSubClses, ArrayList<String> noDocClses) {
 		ArrayList<Integer> sibCounts = new ArrayList<Integer>();
+		Slot docSlot = kb.getSlot(documentationProperty);
 		clsIterate(kb.getRootCls(), 1, oneSubClses, xSubClses, noDocClses,
-				sibCounts);
+				docSlot, sibCounts);
 		FrameCounts frameCounts = kb.getFrameCounts();
 		// count classes
 		int clsCount = frameCounts.getDirectClsCount();
@@ -140,8 +142,8 @@ public class OntologyMetricsManagerProtegeImpl extends
 		mb.setMaximumNumberOfSiblings(maxSiblings);
 	}
 
-	private void fillInCommonFields(ArrayList<String> oneSubClses, HashMap<String, Integer> xSubClses,
-			ArrayList<String> noDocClses) {
+	private void fillInCommonFields(ArrayList<String> oneSubClses,
+			HashMap<String, Integer> xSubClses, ArrayList<String> noDocClses) {
 		// fill in classesWithOneSubclass, classesWithMoreThanXSubclasses and
 		// classesWithNoDocumentation
 		Collections.sort(oneSubClses);
@@ -157,20 +159,26 @@ public class OntologyMetricsManagerProtegeImpl extends
 	 * each class, adding those with only one subclass to an arraylist and those
 	 * with too many subclasses to another arraylist.
 	 */
+	@SuppressWarnings("unchecked")
 	private void clsIterate(Cls currCls, int currDepth,
 			ArrayList<String> oneSubClses, HashMap<String, Integer> xSubClses,
-			ArrayList<String> noDocClses, ArrayList<Integer> sibCounts) {
-		// System.out.println(currCls.getName() + " " + currDepth);
+			ArrayList<String> noDocClses, Slot docSlot,
+			ArrayList<Integer> sibCounts) {
+
 		if (currDepth > maxDepth)
 			maxDepth = currDepth;
 		Collection<Cls> subclasses = currCls.getDirectSubclasses();
-		Collection doc = currCls.getDocumentation();
-		if (doc.isEmpty() && !currCls.getName().equals(":THING")) {
-			String identifier = currCls.getBrowserText() + "("
-					+ currCls.getName() + ")";
-			if (!noDocClses.contains(identifier))
-				noDocClses.add(identifier);
+		
+		if (docSlot != null) {
+			Collection doc = currCls.getOwnSlotValues(docSlot);
+			if (doc.isEmpty() && !currCls.getName().equals(":THING")) {
+				String identifier = currCls.getBrowserText() + "("
+						+ currCls.getName() + ")";
+				if (!noDocClses.contains(identifier))
+					noDocClses.add(identifier);
+			}
 		}
+		
 		Iterator<Cls> it = subclasses.iterator();
 		int count = 0;
 		while (it.hasNext()) {
@@ -196,7 +204,7 @@ public class OntologyMetricsManagerProtegeImpl extends
 					}
 				}
 				clsIterate(nextCls, currDepth + 1, oneSubClses, xSubClses,
-						noDocClses, sibCounts);
+						noDocClses, docSlot, sibCounts);
 			}
 		}
 	}
@@ -263,17 +271,17 @@ public class OntologyMetricsManagerProtegeImpl extends
 		while (it.hasNext()) { // iterate through rdf properties
 			RDFProperty prop = it.next();
 			if (docTag != null && prop.getBrowserText().equals(docTag)) { // matching
-																			// the
-																			// documentation
-																			// tag
+				// the
+				// documentation
+				// tag
 				docTagFound = true;
 			}
 			if (authorTag != null && prop.getBrowserText().equals(authorTag)
 					&& !cls.getName().equals("owl:Thing")) { // matching the
-																// author tag,
-																// want to add
-																// author/concept
-																// to hashmap
+				// author tag,
+				// want to add
+				// author/concept
+				// to hashmap
 				authorTagFound = true;
 				addClsToConceptAuthorRelationship(cls, prop);
 			}
@@ -295,7 +303,7 @@ public class OntologyMetricsManagerProtegeImpl extends
 						+ ")";
 				if (!noDocClses.contains(identifier))
 					noDocClses.add(identifier); // if the doc tag has not been
-												// matched for this class...
+				// matched for this class...
 			}
 			if (authorTagFound && !cls.getName().equals("owl:Thing")) {
 				String identifier = cls.getBrowserText() + "(" + cls.getName()
@@ -319,16 +327,16 @@ public class OntologyMetricsManagerProtegeImpl extends
 		while (it.hasNext()) {
 			String key = it.next().toString();
 			if (conceptAuthors.containsKey(key)) { // if author already in map,
-													// add to his/her list of
-													// concepts
+				// add to his/her list of
+				// concepts
 				ArrayList<String> values = conceptAuthors.get(key);
 				if (!values.contains(cls.getBrowserText()))
 					values.add(cls.getBrowserText());
 				conceptAuthors.put(key, values);
 			} else {
 				ArrayList<String> values = new ArrayList(); // otherwise, create
-															// a new arraylist
-															// for this author
+				// a new arraylist
+				// for this author
 				values.add(cls.getBrowserText());
 				conceptAuthors.put(key, values);
 			}
