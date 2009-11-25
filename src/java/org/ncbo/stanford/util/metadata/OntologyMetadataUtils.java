@@ -513,10 +513,10 @@ public class OntologyMetadataUtils extends MetadataUtils {
 
 		Map<String, Integer> classesWithMoreThanXSubclasses = mb
 				.getClassesWithMoreThanXSubclasses();
-		setPropertyValue(owlModel, ontologyInd,
+		setPropertyValuesFromMap(owlModel, ontologyInd,
 				PROPERTY_METRICS_CLASSES_WITH_MORE_THAN_X_SUBCLASSES,
-				(classesWithMoreThanXSubclasses == null) ? null
-						: classesWithMoreThanXSubclasses.keySet());
+				classesWithMoreThanXSubclasses);
+		
 		setPropertyValue(
 				owlModel,
 				ontologyInd,
@@ -656,6 +656,7 @@ public class OntologyMetadataUtils extends MetadataUtils {
 				vOntologyInd, PROPERTY_IS_MANUAL, Boolean.class)));
 	}
 
+	@SuppressWarnings("unchecked")
 	public static void fillInMetricsBeanFromInstance(OntologyMetricsBean mb,
 			OWLIndividual ontologyInd) throws Exception {
 
@@ -672,6 +673,30 @@ public class OntologyMetadataUtils extends MetadataUtils {
 				PROPERTY_OMV_NUMBER_OF_INDIVIDUALS, Integer.class));
 		mb.setNumberOfProperties(getPropertyValue(owlModel, ontologyInd,
 				PROPERTY_OMV_NUMBER_OF_PROPERTIES, Integer.class));
+		mb.setMaximumDepth(getPropertyValue(owlModel, ontologyInd,
+				PROPERTY_METRICS_MAXIMUM_DEPTH, Integer.class));
+		mb.setMaximumNumberOfSiblings(getPropertyValue(owlModel, ontologyInd,
+				PROPERTY_METRICS_MAXIMUM_NUMBER_OF_SIBLINGS, Integer.class));
+		mb.setAverageNumberOfSiblings(getPropertyValue(owlModel, ontologyInd,
+				PROPERTY_METRICS_AVERAGE_NUMBER_OF_SIBLINGS, Integer.class));
+		mb.setClassesWithOneSubclass(getPropertyValues(owlModel, ontologyInd,
+				PROPERTY_METRICS_CLASSES_WITH_SINGLE_SUBCLASS, String.class));
+		mb.setClassesWithMoreThanXSubclasses(getPropertyValuesAsMap(owlModel,
+				ontologyInd,
+				PROPERTY_METRICS_CLASSES_WITH_MORE_THAN_X_SUBCLASSES,
+				String.class, Integer.class));
+		mb.setClassesWithNoDocumentation(getPropertyValues(owlModel,
+				ontologyInd, PROPERTY_METRICS_CLASSES_WITH_NO_DOCUMENTATION,
+				String.class));
+		mb.setClassesWithNoAuthor(getPropertyValues(owlModel, ontologyInd,
+				PROPERTY_METRICS_CLASSES_WITH_NO_AUTHOR, String.class));
+		mb
+				.setClassesWithMoreThanOnePropertyValue(getPropertyValues(
+						owlModel,
+						ontologyInd,
+						PROPERTY_METRICS_CLASSES_WITH_MORE_THAN_ONE_PROPERTY_VALUE_FOR_PROPERTY_WITH_UNIQUE_VALUE,
+						String.class));
+
 	}
 
 	public static boolean isOntologyViewIndividual(OWLIndividual ind) {

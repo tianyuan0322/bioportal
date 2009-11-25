@@ -3,9 +3,13 @@ package org.ncbo.stanford.util.metadata;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
+import org.apache.commons.lang.StringEscapeUtils;
+import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.ncbo.stanford.exception.MetadataException;
@@ -33,7 +37,9 @@ public class MetadataUtils {
 
 	private static final Log log = LogFactory.getLog(MetadataUtils.class);
 
-	protected enum AcronymUsagePolicy {AcronymAsNamePreferred, AcronymIfNoName, AcronymAsLastResort}
+	protected enum AcronymUsagePolicy {
+		AcronymAsNamePreferred, AcronymIfNoName, AcronymAsLastResort
+	}
 
 	public static final String PREFIX_OMV = "OMV:";
 	public static final String PREFIX_METADATA = "metadata:";
@@ -46,51 +52,84 @@ public class MetadataUtils {
 	public static final String PROPERTY_OMV_ACRONYM = PREFIX_OMV + "acronym";
 
 	public static final String PROPERTY_RDFS_LABEL = "rdfs:label";
-	
+	private static Map map;
+
 	protected static void addPropertyValue(OWLModel owlModel,
-			RDFResource owlInd, String propName, Object value) throws MetadataException {
+			RDFResource owlInd, String propName, Object value)
+			throws MetadataException {
 		OWLProperty prop = owlModel.getOWLProperty(propName);
-		
+
 		if (prop == null) {
-			throw new MetadataException("Metadata ontology does not contain property "
-					+ propName);
+			throw new MetadataException(
+					"Metadata ontology does not contain property " + propName);
 		}
-		
-		if ( ! owlInd.hasPropertyValue(prop, value) ) {
+
+		if (!owlInd.hasPropertyValue(prop, value)) {
 			owlInd.addPropertyValue(prop, value);
 		}
 	}
-	
+
 	protected static void removePropertyValue(OWLModel owlModel,
-			RDFResource owlInd, String propName, Object value) throws MetadataException {
+			RDFResource owlInd, String propName, Object value)
+			throws MetadataException {
 		OWLProperty prop = owlModel.getOWLProperty(propName);
-		
+
 		if (prop == null) {
-			throw new MetadataException("Metadata ontology does not contain property "
-					+ propName);
+			throw new MetadataException(
+					"Metadata ontology does not contain property " + propName);
 		}
-		
+
 		owlInd.removePropertyValue(prop, value);
 	}
 
 	protected static void setPropertyValue(OWLModel owlModel,
-			RDFResource owlInd, String propName, Object value) throws MetadataException {
+			RDFResource owlInd, String propName, Object value)
+			throws MetadataException {
 		OWLProperty prop = owlModel.getOWLProperty(propName);
-		
+
 		if (prop == null) {
-			throw new MetadataException("Metadata ontology does not contain property "
-					+ propName);
+			throw new MetadataException(
+					"Metadata ontology does not contain property " + propName);
 		}
-		
+
 		if (value instanceof Collection && ((Collection<?>) value).isEmpty()) {
 			value = null;
 		}
-		
+
 		if (value instanceof Collection) {
 			owlInd.setPropertyValues(prop, (Collection<?>) value);
 		} else {
 			owlInd.setPropertyValue(prop, value);
 		}
+	}
+
+	@SuppressWarnings("unchecked")
+	protected static <K, V> void setPropertyValuesFromMap(OWLModel owlModel,
+			RDFResource owlInd, String propName, Map<K, V> valuesMap) throws MetadataException {
+		// Basic error checking
+		if (valuesMap == null)
+			return;
+
+		// Use comma as default token
+		String token = ",";
+
+		OWLProperty prop = owlModel.getOWLProperty(propName);
+
+		if (prop == null) {
+			throw new MetadataException(
+					"Metadata ontology does not contain property " + propName);
+		}
+
+		// Break HashMap into tokenized strings and set the property value
+		for (Iterator it = valuesMap.entrySet().iterator(); it.hasNext();) {
+			Map.Entry<K, V> pair = (Map.Entry<K, V>) it.next();
+			String value = StringEscapeUtils
+					.escapeCsv(pair.getKey().toString())
+					+ "\"" + token + "\""
+					+ StringEscapeUtils.escapeCsv(pair.getValue().toString());
+			owlInd.setPropertyValue(prop, value);
+		}
+
 	}
 
 	@SuppressWarnings("unchecked")
@@ -100,8 +139,8 @@ public class MetadataUtils {
 		OWLProperty prop = owlModel.getOWLProperty(propName);
 
 		if (prop == null) {
-			throw new MetadataException("Metadata ontology does not contain property "
-					+ propName);
+			throw new MetadataException(
+					"Metadata ontology does not contain property " + propName);
 		}
 
 		Collection<?> propVals = owlInd.getPropertyValues(prop);
@@ -120,7 +159,7 @@ public class MetadataUtils {
 					// try to extract some non-standard values like date, time,
 					// datetime, etc.
 					RDFSDatatype datatype = lit.getDatatype();
-					
+
 					if (owlModel.getXSDdate().equals(datatype)
 							|| owlModel.getXSDtime().equals(datatype)
 							|| owlModel.getXSDdateTime().equals(datatype)) {
@@ -147,8 +186,8 @@ public class MetadataUtils {
 		OWLProperty prop = owlModel.getOWLProperty(propName);
 
 		if (prop == null) {
-			throw new MetadataException("Metadata ontology does not contain property "
-					+ propName);
+			throw new MetadataException(
+					"Metadata ontology does not contain property " + propName);
 		}
 
 		Collection<?> propVals = owlInd.getPropertyValues(prop);
@@ -157,6 +196,36 @@ public class MetadataUtils {
 		if (propVals != null) {
 			for (Object propVal : propVals) {
 				res.add((T) propVal);
+			}
+		}
+		return res;
+	}
+
+	@SuppressWarnings("unchecked")
+	protected static <K, V> Map<K, V> getPropertyValuesAsMap(OWLModel owlModel,
+			RDFResource owlInd, String propName, Class<K> keyType,
+			Class<V> valueType) throws MetadataException {
+		OWLProperty prop = owlModel.getOWLProperty(propName);
+
+		if (prop == null) {
+			throw new MetadataException(
+					"Metadata ontology does not contain property " + propName);
+		}
+
+		Collection<String> propVals = owlInd.getPropertyValues(prop);
+		Map<K, V> res = new HashMap<K, V>();
+
+		if (propVals != null) {
+			for (String propVal : propVals) {
+				// Detokenize the HashMap key/value pair
+				String[] values = propVal.split("\",\"");
+				// Unescape the text
+				for (int i = 0; i < values.length; i++) {
+					values[i] = StringEscapeUtils.unescapeCsv(values[i]);
+				}
+				// Cast the strings to their expected type and put into
+				// the returned HashMap
+				res.put((K) values[0], (V) values[1]);
 			}
 		}
 		return res;
@@ -175,51 +244,57 @@ public class MetadataUtils {
 					idList.add((Integer) getPropertyValue(owlModel, ind,
 							PROPERTY_ID, Integer.class));
 				} else {
-					 log.error("UNEXPECTED ERROR: Non-RDFResource value attached to " + owlInd + " through property " + propName);
+					log
+							.error("UNEXPECTED ERROR: Non-RDFResource value attached to "
+									+ owlInd + " through property " + propName);
 				}
 			}
 		}
-		
+
 		return idList;
 	}
-	
+
 	/**
-	 * this method is marked deprecated because to alert the engineers that they probably
-	 * want to use the {@link #createXsdDateTimePropertyValue(OWLModel, Date)} method, 
-	 * because currently there is no case where this method should be used. In case there 
-	 * will be use cases for this method, drop the "deprecation" flag.
+	 * this method is marked deprecated because to alert the engineers that they
+	 * probably want to use the
+	 * {@link #createXsdDateTimePropertyValue(OWLModel, Date)} method, because
+	 * currently there is no case where this method should be used. In case
+	 * there will be use cases for this method, drop the "deprecation" flag.
 	 * 
 	 * @param owlModel
 	 * @param date
 	 * @return
 	 */
-	@Deprecated		  
-	protected static RDFSLiteral createXsdDatePropertyValue(OWLModel owlModel, Date date) {
-        String value = XMLSchemaDatatypes.getDateString(date);
-        RDFSDatatype datatype = owlModel.getRDFSDatatypeByURI(XSDDatatype.XSDdate.getURI());
-        return owlModel.createRDFSLiteral(value, datatype);
+	@Deprecated
+	protected static RDFSLiteral createXsdDatePropertyValue(OWLModel owlModel,
+			Date date) {
+		String value = XMLSchemaDatatypes.getDateString(date);
+		RDFSDatatype datatype = owlModel
+				.getRDFSDatatypeByURI(XSDDatatype.XSDdate.getURI());
+		return owlModel.createRDFSLiteral(value, datatype);
 
 	}
-	
-	protected static RDFSLiteral createXsdDateTimePropertyValue(OWLModel owlModel, Date date) {
+
+	protected static RDFSLiteral createXsdDateTimePropertyValue(
+			OWLModel owlModel, Date date) {
 		String str = XMLSchemaDatatypes.getDateTimeString(date);
-		RDFSDatatype datatype = owlModel.getRDFSDatatypeByURI(
-				XSDDatatype.XSDdateTime.getURI());
+		RDFSDatatype datatype = owlModel
+				.getRDFSDatatypeByURI(XSDDatatype.XSDdateTime.getURI());
 		return owlModel.createRDFSLiteral(str, datatype);
 	}
-	
+
 	protected static Date convertStringToDate(String dateString) {
-		if (dateString != null) {		
+		if (dateString != null) {
 			return XMLSchemaDatatypes.getDate(dateString);
 		}
-		
+
 		return null;
 	}
 
 	protected static String convertDateToDateString(Date date) {
 		return XMLSchemaDatatypes.getDateString(date);
 	}
-	
+
 	protected static String convertDateToDateTimeString(Date date) {
 		return XMLSchemaDatatypes.getDateTimeString(date);
 	}
@@ -242,21 +317,24 @@ public class MetadataUtils {
 			}
 		}
 	}
-	
-	protected static Collection<RDFResource> getRDFResourcesWithId(OWLModel owlModel, Integer id) {
-		
+
+	protected static Collection<RDFResource> getRDFResourcesWithId(
+			OWLModel owlModel, Integer id) {
+
 		Collection<RDFResource> res = new ArrayList<RDFResource>();
-		Collection<?> matchingResources = owlModel.getRDFResourcesWithPropertyValue(owlModel.getOWLProperty(PROPERTY_ID), id);
-		
+		Collection<?> matchingResources = owlModel
+				.getRDFResourcesWithPropertyValue(owlModel
+						.getOWLProperty(PROPERTY_ID), id);
+
 		if (matchingResources == null) {
 			res = null;
 		} else {
 			for (Object resource : matchingResources) {
 				if (resource instanceof RDFResource) {
-					res.add((RDFResource)resource);
-				}
-				else {
-					log.error("Matching resource for id: " + id + " is not an RDFResource: " + resource);
+					res.add((RDFResource) resource);
+				} else {
+					log.error("Matching resource for id: " + id
+							+ " is not an RDFResource: " + resource);
 				}
 			}
 		}
@@ -280,7 +358,7 @@ public class MetadataUtils {
 				property, query, -1);
 		return filterMatchingResourcesForOWLIndividuals(matchingResources);
 	}
-	
+
 	private static Collection<OWLIndividual> filterMatchingResourcesForOWLIndividuals(
 			Collection<?> matchingResources) {
 		Collection<OWLIndividual> res = new ArrayList<OWLIndividual>();
@@ -289,7 +367,7 @@ public class MetadataUtils {
 		} else {
 			for (Object resource : matchingResources) {
 				if (resource instanceof OWLIndividual) {
-					res.add((OWLIndividual)resource);
+					res.add((OWLIndividual) resource);
 				}
 			}
 		}
@@ -298,7 +376,7 @@ public class MetadataUtils {
 		}
 		return res;
 	}
-	
+
 	protected static OWLIndividual getIndividualWithId(OWLModel metadata,
 			String class_name, Integer id, boolean transitive) {
 		OWLIndividual res = null;
@@ -311,28 +389,31 @@ public class MetadataUtils {
 					if (ind.hasRDFType(type, transitive)) {
 						if (res == null) {
 							res = ind;
-						}
-						else {
-							log.warn("Multiple individuals match class: " + type + 
-									" with id: " + id + " transitive: " + transitive + 
-									": " + ind);
+						} else {
+							log
+									.warn("Multiple individuals match class: "
+											+ type + " with id: " + id
+											+ " transitive: " + transitive
+											+ ": " + ind);
 						}
 					}
 				}
 			}
-		}
-		else {
-			log.error("Invalid class name specified for the method getIndividualWithId:" + class_name);
+		} else {
+			log
+					.error("Invalid class name specified for the method getIndividualWithId:"
+							+ class_name);
 		}
 		return res;
 	}
-	
-	protected static List<OWLIndividual> getIndividualsWithMatchingProperty(OWLModel metadata,
-			String class_name, String property_name, String value, boolean transitive) {
+
+	protected static List<OWLIndividual> getIndividualsWithMatchingProperty(
+			OWLModel metadata, String class_name, String property_name,
+			String value, boolean transitive) {
 		List<OWLIndividual> res = null;
 		OWLNamedClass type = metadata.getOWLNamedClass(class_name);
 		OWLProperty prop = metadata.getOWLProperty(property_name);
-		
+
 		if (type != null && prop != null) {
 			res = new ArrayList<OWLIndividual>();
 			Collection<OWLIndividual> individualsWithId = getMatchingOWLIndividuals(
@@ -344,13 +425,16 @@ public class MetadataUtils {
 					}
 				}
 			}
-		}
-		else {
+		} else {
 			if (type == null) {
-				log.error("Invalid class name specified in the method getIndividualWithId:" + class_name);
+				log
+						.error("Invalid class name specified in the method getIndividualWithId:"
+								+ class_name);
 			}
 			if (prop == null) {
-				log.error("Invalid property name specified in the method getIndividualWithId:" + property_name);
+				log
+						.error("Invalid property name specified in the method getIndividualWithId:"
+								+ property_name);
 			}
 		}
 		return res;
@@ -364,8 +448,8 @@ public class MetadataUtils {
 		}
 	}
 
-	protected static int getNextAvailableIdForClass(OWLClass cls, Integer startId)
-			throws Exception {
+	protected static int getNextAvailableIdForClass(OWLClass cls,
+			Integer startId) throws Exception {
 		OWLModel owlModel = cls.getOWLModel();
 		Collection<?> instances = cls.getInstances(false);
 		int max = 0;
@@ -385,11 +469,12 @@ public class MetadataUtils {
 			}
 		}
 
-		//check for 0, which means that there was no instance of the class found
+		// check for 0, which means that there was no instance of the class
+		// found
 		if (max == 0 && startId != null) {
 			max = startId.intValue();
 		}
-		
+
 		return max + 1;
 	}
 }
