@@ -34,39 +34,17 @@
 		</property>
 		<property name="mappingResources">
 			<list>
-				<value>
-					org/ncbo/stanford/domain/custom/NcboTypeDef.hbm.xml
-				</value>
-				<value>
-					org/ncbo/stanford/domain/generated/NcboOntologyFile.hbm.xml
-				</value>
-				<value>
-					org/ncbo/stanford/domain/generated/NcboUser.hbm.xml
-				</value>
-				<value>
-					org/ncbo/stanford/domain/generated/NcboUserRole.hbm.xml
-				</value>
-				<value>
-					org/ncbo/stanford/domain/generated/NcboLRole.hbm.xml
-				</value>
-				<value>
-					org/ncbo/stanford/domain/generated/NcboAdminApplication.hbm.xml
-				</value>
-				<value>
-					org/ncbo/stanford/domain/generated/NcboLAppTextDatatype.hbm.xml
-				</value>
-				<value>
-					org/ncbo/stanford/domain/generated/NcboAppText.hbm.xml
-				</value>
-				<value>
-					org/ncbo/stanford/domain/generated/NcboOntologyLoadQueue.hbm.xml
-				</value>
-				<value>
-					org/ncbo/stanford/domain/generated/NcboLStatus.hbm.xml
-				</value>
-				<value>
-					org/ncbo/stanford/domain/generated/NcboUsageLog.hbm.xml
-				</value>
+				<value>org/ncbo/stanford/domain/custom/NcboTypeDef.hbm.xml</value>
+				<value>org/ncbo/stanford/domain/generated/NcboOntologyFile.hbm.xml</value>
+				<value>org/ncbo/stanford/domain/generated/NcboUser.hbm.xml</value>
+				<value>org/ncbo/stanford/domain/generated/NcboUserRole.hbm.xml</value>
+				<value>org/ncbo/stanford/domain/generated/NcboLRole.hbm.xml</value>
+				<value>org/ncbo/stanford/domain/generated/NcboAdminApplication.hbm.xml</value>
+				<value>org/ncbo/stanford/domain/generated/NcboLAppTextDatatype.hbm.xml</value>
+				<value>org/ncbo/stanford/domain/generated/NcboAppText.hbm.xml</value>
+				<value>org/ncbo/stanford/domain/generated/NcboOntologyLoadQueue.hbm.xml</value>
+				<value>org/ncbo/stanford/domain/generated/NcboLStatus.hbm.xml</value>
+				<value>org/ncbo/stanford/domain/generated/NcboUsageLog.hbm.xml</value>
 			</list>
 		</property>
 	</bean>
@@ -656,8 +634,7 @@
 			<ref bean="searchIndexPath" />
 		</property>
 		<property name="defMaxNumHits">
-			<value>@bioportalsearchdefmaxnumhits@
-			</value>
+			<value>@bioportalsearchdefmaxnumhits@</value>
 		</property>
 		<property name="searchResultCache">
 			<ref bean="paginatableCache" />
@@ -688,12 +665,10 @@
 			<ref bean="searchIndexBackupPath" />
 		</property>
 		<property name="indexMergeFactor">
-			<value>@bioportalsearchindexmergefactor@
-			</value>
+			<value>@bioportalsearchindexmergefactor@</value>
 		</property>
 		<property name="indexMaxMergeDocs">
-			<value>@bioportalsearchindexmaxmergedocs@
-			</value>
+			<value>@bioportalsearchindexmaxmergedocs@</value>
 		</property>
 	</bean>
 
@@ -707,8 +682,7 @@
 
 	<bean id="searchIndexBackupPath" class="java.lang.String">
 		<constructor-arg>
-			<value>@bioportalsearchindexbackuppath@
-			</value>
+			<value>@bioportalsearchindexbackuppath@</value>
 		</constructor-arg>
 	</bean>
 
@@ -786,12 +760,10 @@
 	<bean id="paginatableCache"
 		class="org.ncbo.stanford.util.cache.expiration.system.impl.UpdatingHashbeltExpirationSystem">
 		<constructor-arg index="0">
-			<value>@bioportalpaginatablecachenumcontainers@
-			</value>
+			<value>@bioportalpaginatablecachenumcontainers@</value>
 		</constructor-arg>
 		<constructor-arg index="1">
-			<value>@bioportalpaginatablecachetimeout@
-			</value>
+			<value>@bioportalpaginatablecachetimeout@</value>
 		</constructor-arg>
 		<constructor-arg index="2">
 			<ref bean="paginatableExpirationHandler" />
@@ -818,12 +790,10 @@
 	<bean id="protegeKnowledgeBaseCache"
 		class="org.ncbo.stanford.util.cache.expiration.system.impl.LimitHashbeltExpirationSystem">
 		<constructor-arg index="0">
-			<value>@protegeknowledgebasecachenumcontainers@
-			</value>
+			<value>@protegeknowledgebasecachenumcontainers@</value>
 		</constructor-arg>
 		<constructor-arg index="1">
-			<value>@protegeknowledgebasecachetimeout@
-			</value>
+			<value>@protegeknowledgebasecachetimeout@</value>
 		</constructor-arg>
 		<constructor-arg index="2">
 			<ref bean="protegeKnowledgeBaseExpirationHandler" />
@@ -832,8 +802,7 @@
 			<ref bean="protegeKnowledgeBaseContainerFactory" />
 		</constructor-arg>
 		<constructor-arg index="4">
-			<value>@protegeknowledgebasecachemaxobjects@
-			</value>
+			<value>@protegeknowledgebasecachemaxobjects@</value>
 		</constructor-arg>
 	</bean>
 
@@ -847,8 +816,7 @@
 	<bean id="sessionService"
 		class="org.ncbo.stanford.service.session.impl.SessionServiceImpl">
 		<constructor-arg index="0">
-			<value>@bioportalsessionnumcontainers@
-			</value>
+			<value>@bioportalsessionnumcontainers@</value>
 		</constructor-arg>
 		<constructor-arg index="1">
 			<value>@bioportalsessiontimeout@</value>
@@ -891,8 +859,7 @@
 	<bean id="ontologyParseCronTrigger" class="org.springframework.scheduling.quartz.CronTriggerBean">
 		<property name="jobDetail" ref="ontologyParseSchedulerJobDetailBean" />
 		<property name="cronExpression">
-			<value>@ontologyparseschedulercronexpression@
-			</value>
+			<value>@ontologyparseschedulercronexpression@</value>
 		</property>
 	</bean>
 
@@ -917,8 +884,7 @@
 
 	<bean id="ontologyParseSchedulerAutoStartup" class="java.lang.Boolean">
 		<constructor-arg>
-			<value>@ontologyparseschedulerenabled@
-			</value>
+			<value>@ontologyparseschedulerenabled@</value>
 		</constructor-arg>
 	</bean>
 
@@ -933,8 +899,7 @@
 	<bean id="oboPullCronTrigger" class="org.springframework.scheduling.quartz.CronTriggerBean">
 		<property name="jobDetail" ref="oboPullSchedulerJobDetailBean" />
 		<property name="cronExpression">
-			<value>@obopullschedulercronexpression@
-			</value>
+			<value>@obopullschedulercronexpression@</value>
 		</property>
 	</bean>
 
@@ -1163,92 +1128,79 @@
 
 	<bean id="metadataOntologyDomainInstPrefix" class="java.lang.String">
 		<constructor-arg>
-			<value>@metadataontologydomaininstprefix@
-			</value>
+			<value>@metadataontologydomaininstprefix@</value>
 		</constructor-arg>
 	</bean>
 
 	<bean id="metadataOntologyDomainInstSuffix" class="java.lang.String">
 		<constructor-arg>
-			<value>@metadataontologydomaininstsuffix@
-			</value>
+			<value>@metadataontologydomaininstsuffix@</value>
 		</constructor-arg>
 	</bean>
 
 	<bean id="metadataOntologyGroupInstPrefix" class="java.lang.String">
 		<constructor-arg>
-			<value>@metadataontologygroupinstprefix@
-			</value>
+			<value>@metadataontologygroupinstprefix@</value>
 		</constructor-arg>
 	</bean>
 
 	<bean id="metadataOntologyGroupInstSuffix" class="java.lang.String">
 		<constructor-arg>
-			<value>@metadataontologygroupinstsuffix@
-			</value>
+			<value>@metadataontologygroupinstsuffix@</value>
 		</constructor-arg>
 	</bean>
 
 	<bean id="metadataOntologyInstPrefix" class="java.lang.String">
 		<constructor-arg>
-			<value>@metadataontologyinstprefix@
-			</value>
+			<value>@metadataontologyinstprefix@</value>
 		</constructor-arg>
 	</bean>
 
 	<bean id="metadataOntologyInstSuffix" class="java.lang.String">
 		<constructor-arg>
-			<value>@metadataontologyinstsuffix@
-			</value>
+			<value>@metadataontologyinstsuffix@</value>
 		</constructor-arg>
 	</bean>
 
 	<bean id="metadataOntologyViewInstPrefix" class="java.lang.String">
 		<constructor-arg>
-			<value>@metadataontologyviewinstprefix@
-			</value>
+			<value>@metadataontologyviewinstprefix@</value>
 		</constructor-arg>
 	</bean>
 
 	<bean id="metadataOntologyViewInstSuffix" class="java.lang.String">
 		<constructor-arg>
-			<value>@metadataontologyviewinstsuffix@
-			</value>
+			<value>@metadataontologyviewinstsuffix@</value>
 		</constructor-arg>
 	</bean>
 
 	<bean id="metadataVirtualOntologyInstPrefix" class="java.lang.String">
 		<constructor-arg>
-			<value>@metadatavirtualontologyinstprefix@
-			</value>
+			<value>@metadatavirtualontologyinstprefix@</value>
 		</constructor-arg>
 	</bean>
 
 	<bean id="metadataVirtualOntologyInstSuffix" class="java.lang.String">
 		<constructor-arg>
-			<value>@metadatavirtualontologyinstsuffix@
-			</value>
+			<value>@metadatavirtualontologyinstsuffix@</value>
 		</constructor-arg>
 	</bean>
 
 	<bean id="metadataVirtualViewInstPrefix" class="java.lang.String">
 		<constructor-arg>
-			<value>@metadatavirtualviewinstprefix@
-			</value>
+			<value>@metadatavirtualviewinstprefix@</value>
 		</constructor-arg>
 	</bean>
 
 	<bean id="metadataVirtualViewInstSuffix" class="java.lang.String">
 		<constructor-arg>
-			<value>@metadatavirtualviewinstsuffix@
-			</value>
+			<value>@metadatavirtualviewinstsuffix@</value>
 		</constructor-arg>
 	</bean>
 
 	<bean id="oboRepositoriesConfigFilepath" class="java.lang.String">
 		<constructor-arg>
-			<value>@oborepositoriesconfigfilepath@
-			</value>
+			<value>@oborepositoriesconfigfilepath@</value>
 		</constructor-arg>
 	</bean>
 </beans>
