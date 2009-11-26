@@ -5,6 +5,7 @@ import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.LexGrid.LexBIG.Exceptions.LBParameterException;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.ncbo.stanford.bean.CategoryBean;
@@ -184,9 +185,23 @@ public class OntologyServiceMetadataImpl extends AbstractOntologyService
 		Integer ontologyId = ontologyBean.getOntologyId();
 		OntologyBean latestOntologyBean = findLatestActiveOntologyOrViewVersion(ontologyId);
 
+		log
+				.info("Deleting ontology: "
+						+ getOntologyDisplay(ontologyVersionId.toString(),
+								ontologyBean) + ", Remove Metadata: "
+						+ removeMetadata + ", Remove Files: "
+						+ removeOntologyFiles);
+
 		// 1. Remove ontology from the backend
 		if (!ontologyBean.isRemote()) {
-			getLoadManager(ontologyBean).cleanup(ontologyBean);
+			try {
+				getLoadManager(ontologyBean).cleanup(ontologyBean);
+			} catch (LBParameterException e) {
+				String error = addErrorOntology(errorOntologies,
+						ontologyVersionId.toString(), ontologyBean, e
+								.getMessage());
+				log.error(error);
+			}
 
 			if (removeOntologyFiles) {
 				deleteOntologyFile(ontologyBean);
