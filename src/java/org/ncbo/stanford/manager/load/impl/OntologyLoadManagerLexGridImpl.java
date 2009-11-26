@@ -30,25 +30,24 @@ import org.LexGrid.LexBIG.DataModel.Core.AbsoluteCodingSchemeVersionReference;
 import org.LexGrid.LexBIG.DataModel.InterfaceElements.CodingSchemeRendering;
 import org.LexGrid.LexBIG.DataModel.InterfaceElements.LoadStatus;
 import org.LexGrid.LexBIG.DataModel.InterfaceElements.types.ProcessState;
+import org.LexGrid.LexBIG.Exceptions.LBParameterException;
 import org.LexGrid.LexBIG.Extensions.Load.LexGrid_Loader;
 import org.LexGrid.LexBIG.Extensions.Load.Loader;
 import org.LexGrid.LexBIG.Extensions.Load.OBO_Loader;
 import org.LexGrid.LexBIG.Extensions.Load.OWL_Loader;
-import org.LexGrid.LexBIG.Extensions.Load.UMLS_Loader;
 import org.LexGrid.LexBIG.Extensions.Load.UmlsBatchLoader;
 import org.LexGrid.LexBIG.Impl.LexBIGServiceImpl;
 import org.LexGrid.LexBIG.LexBIGService.LexBIGService;
 import org.LexGrid.LexBIG.LexBIGService.LexBIGServiceManager;
 import org.LexGrid.LexBIG.Utility.Constructors;
-import org.LexGrid.LexBIG.Utility.ObjectToString;
 import org.LexGrid.LexOnt.CodingSchemeManifest;
 import org.LexGrid.LexOnt.CsmfCodingSchemeURI;
 import org.LexGrid.LexOnt.CsmfFormalName;
 import org.LexGrid.LexOnt.CsmfVersion;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.ncbo.stanford.bean.OntologyMetricsBean;
 import org.ncbo.stanford.bean.OntologyBean;
+import org.ncbo.stanford.bean.OntologyMetricsBean;
 import org.ncbo.stanford.manager.AbstractOntologyManagerLexGrid;
 import org.ncbo.stanford.manager.load.OntologyLoadManager;
 import org.ncbo.stanford.util.constants.ApplicationConstants;
@@ -103,7 +102,11 @@ public class OntologyLoadManagerLexGridImpl extends
 		LexBIGServiceManager lbsm = lbs.getServiceManager(null);
 
 		// remove existing scheme if it exists before parsing...
-		cleanup(ob);
+		try {
+			cleanup(ob);
+		} catch (LBParameterException e) {
+			// ignore this exception, coding scheme not found
+		}
 
 		Loader loader = null;
 		CodingSchemeManifest csm = createCodingSchemeManifest(ob);
@@ -117,17 +120,19 @@ public class OntologyLoadManagerLexGridImpl extends
 			// Load UMLS
 		} else if (ob.getFormat().equalsIgnoreCase(
 				ApplicationConstants.FORMAT_UMLS_RRF)) {
-			loader = lbsm.getLoader(org.LexGrid.LexBIG.Extensions.Load.UmlsBatchLoader.NAME);
-			((UmlsBatchLoader) loader).loadUmls(ontologyUri, ob.getTargetTerminologies());
-			
-			/*
 			loader = lbsm
-					.getLoader(org.LexGrid.LexBIG.Impl.loaders.UMLSLoaderImpl.name);
-			LocalNameList lnl = getLocalNameListFromTargetTerminologies(ob);
-			log.debug("Using the UMLS loader. Target terminology= "
-					+ ObjectToString.toString(lnl));
-			((UMLS_Loader) loader).load(ontologyUri, lnl, stopOnErrors, async);
-			*/
+					.getLoader(org.LexGrid.LexBIG.Extensions.Load.UmlsBatchLoader.NAME);
+			((UmlsBatchLoader) loader).loadUmls(ontologyUri, ob
+					.getTargetTerminologies());
+
+			/*
+			 * loader = lbsm
+			 * .getLoader(org.LexGrid.LexBIG.Impl.loaders.UMLSLoaderImpl.name);
+			 * LocalNameList lnl = getLocalNameListFromTargetTerminologies(ob);
+			 * log.debug("Using the UMLS loader. Target terminology= " +
+			 * ObjectToString.toString(lnl)); ((UMLS_Loader)
+			 * loader).load(ontologyUri, lnl, stopOnErrors, async);
+			 */
 			// Load LEXGRID XML
 		} else if (ob.getFormat().equalsIgnoreCase(
 				ApplicationConstants.FORMAT_LEXGRID_XML)) {
@@ -151,8 +156,9 @@ public class OntologyLoadManagerLexGridImpl extends
 				((OWL_Loader) loader).loadNCI(ontologyUri, null, false,
 						stopOnErrors, async);
 			} else {
-				int memSafe=1;
-				((OWL_Loader) loader).load(ontologyUri, null, memSafe, stopOnErrors, async);
+				int memSafe = 1;
+				((OWL_Loader) loader).load(ontologyUri, null, memSafe,
+						stopOnErrors, async);
 			}
 		}
 
@@ -182,7 +188,8 @@ public class OntologyLoadManagerLexGridImpl extends
 
 			String urnAndVersion = urn + "|" + version;
 			ob.setCodingScheme(urnAndVersion);
-			log.debug("Updating the NcboOntologyMetadata with the codingScheme name="
+			log
+					.debug("Updating the NcboOntologyMetadata with the codingScheme name="
 							+ urnAndVersion);
 			ontologyMetadataManager.saveOntologyOrView(ob);
 		} else {
@@ -219,8 +226,9 @@ public class OntologyLoadManagerLexGridImpl extends
 		LexBIGServiceManager lbsm = lbs.getServiceManager(null);
 
 		// remove existing scheme if it exists before parsing...
+		String codingSchemeName = ontologyBean.getCodingScheme();
 		CodingSchemeRendering csRendering = getCodingSchemeRendering(lbs,
-				ontologyBean.getCodingScheme());
+				codingSchemeName);
 
 		if (csRendering != null) {
 			AbsoluteCodingSchemeVersionReference acsvr = Constructors
@@ -230,6 +238,11 @@ public class OntologyLoadManagerLexGridImpl extends
 			lbsm.removeCodingSchemeVersion(acsvr);
 			ontologyBean.setCodingScheme(null);
 			ontologyMetadataManager.saveOntologyOrView(ontologyBean);
+		} else {
+			throw new LBParameterException(
+					"No coding scheme could be located for the values you provided",
+					"codingSchemeName", (new StringBuilder()).append(
+							codingSchemeName).toString());
 		}
 	}
 
@@ -263,7 +276,8 @@ public class OntologyLoadManagerLexGridImpl extends
 			String strCodingSchemeURI = "http://www.bioontology.org/"
 					+ ontology_bean.getId().toString() + "/"
 					+ ontology_bean.getDisplayLabel();
-			//CodingSchemeManifest needs an id for it to be valid...set the id value
+			// CodingSchemeManifest needs an id for it to be valid...set the id
+			// value
 			csm.setId(strCodingSchemeURI);
 			CsmfCodingSchemeURI csmfCSURI = new CsmfCodingSchemeURI();
 			csmfCSURI.setContent(strCodingSchemeURI);
