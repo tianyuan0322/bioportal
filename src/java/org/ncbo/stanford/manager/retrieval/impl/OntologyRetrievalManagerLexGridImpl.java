@@ -6,6 +6,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.NoSuchElementException;
 
 import org.LexGrid.LexBIG.DataModel.Collections.AssociatedConceptList;
 import org.LexGrid.LexBIG.DataModel.Collections.AssociationList;
@@ -17,7 +18,9 @@ import org.LexGrid.LexBIG.DataModel.Core.CodingSchemeVersionOrTag;
 import org.LexGrid.LexBIG.DataModel.Core.ConceptReference;
 import org.LexGrid.LexBIG.DataModel.Core.ResolvedConceptReference;
 import org.LexGrid.LexBIG.Exceptions.LBException;
+import org.LexGrid.LexBIG.Exceptions.LBInvocationException;
 import org.LexGrid.LexBIG.Exceptions.LBParameterException;
+import org.LexGrid.LexBIG.Exceptions.LBResourceUnavailableException;
 import org.LexGrid.LexBIG.Extensions.Generic.LexBIGServiceConvenienceMethods;
 import org.LexGrid.LexBIG.Impl.LexBIGServiceImpl;
 import org.LexGrid.LexBIG.Impl.dataAccess.WriteLockManager;
@@ -43,6 +46,8 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.ncbo.stanford.bean.OntologyBean;
 import org.ncbo.stanford.bean.concept.ClassBean;
+import org.ncbo.stanford.exception.BPRuntimeException;
+import org.ncbo.stanford.exception.OntologyVersionNotFoundException;
 import org.ncbo.stanford.manager.AbstractOntologyManagerLexGrid;
 import org.ncbo.stanford.manager.retrieval.OntologyRetrievalManager;
 import org.ncbo.stanford.util.constants.ApplicationConstants;
@@ -291,6 +296,49 @@ public class OntologyRetrievalManagerLexGridImpl extends
 		}
 
 	}
+	
+	@Override
+	public Iterator<ClassBean> listAllClasses(final OntologyBean ob) throws Exception {
+		// Convert ontology (BP) to coding scheme (LexBIG)
+		final String schemeName = getLexGridCodingSchemeName(ob);
+		final CodingSchemeVersionOrTag csvt = getLexGridCodingSchemeVersion(ob);
+		if (StringUtils.isBlank(schemeName) || (csvt == null)) {
+			throw new OntologyVersionNotFoundException("Could not resolve ontology in LexBIG service: "+ob);
+		}
+		// Fetch all concepts -- delay conversion to ClassBean
+		CodedNodeSet cns = lbs.getCodingSchemeConcepts(schemeName, csvt);
+		final ResolvedConceptReferencesIterator rcrIt = cns.resolve(null, null, null, null, true);
+		
+		return new Iterator<ClassBean>() {
+			public boolean hasNext() { 
+				try {
+					return rcrIt.hasNext();
+				} catch (LBResourceUnavailableException e) {
+					throw new BPRuntimeException("Problem encountered in LexBIG Service", e);
+				}
+			}
+			public void remove() {
+				throw new UnsupportedOperationException();
+			}
+			public ClassBean next() {
+				try {
+					// Get a basic version of the LexBIG concept
+					ResolvedConceptReference rcr = rcrIt.next(); // throws LBException
+					// Get a fleshed out ClassBean
+					// This seems like an unfortunate hack -- I already hit the db to get the RCR object, 
+					// now I'm going back and fetching it all over again.  But I haven't yet figured
+					// out how to get the full set of relations into the ClassBean from the RCR I 
+					// have here.  Perhaps 'getCodingSchemeConcepts' doesn't return a graph, and one
+					// needs a graph in order to resolve the relations? --TL
+					return findConcept(ob, rcr.getConceptCode());
+				} catch (Exception e) {
+					// Note neither subtype of LBException that could get us here is specific enough
+					// to justify throwing a NoSuchElementException.  
+					throw new BPRuntimeException("Problem encountered in LexBIG Service", e);
+				}
+			}};
+	}
+
 
 	/*
 	 * (non-Javadoc)

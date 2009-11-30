@@ -1,6 +1,8 @@
 package org.ncbo.stanford.manager.impl;
 
 import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
 
 import org.junit.Test;
 import org.ncbo.stanford.AbstractBioPortalTest;
@@ -113,6 +115,20 @@ public class OntologyRetrievalManagerProtegeTest extends AbstractBioPortalTest {
 		// "CheeseyVegetableTopping");
 
 		outputConcept(classBean);
+	}
+	
+	@Test
+	public void testFindAllClasses() throws Exception {
+		final int ONT_VERSION_ID = 10007;
+		OntologyBean oBean = ontologyMetadataManager.findOntologyOrViewVersionById(ONT_VERSION_ID);
+		Iterator<ClassBean> clsIt = ocMgr.listAllClasses(oBean);
+		
+		int numClasses = 0;
+		for (; clsIt.hasNext(); ) {
+			ClassBean cb = clsIt.next();
+			numClasses++;
+		}
+		System.out.println("Number of classes: "+numClasses);
 	}
 
 	//

@@ -30,6 +30,7 @@ import edu.stanford.smi.protegex.owl.model.OWLModel;
 import edu.stanford.smi.protegex.owl.model.OWLNamedClass;
 import edu.stanford.smi.protegex.owl.model.RDFProperty;
 import edu.stanford.smi.protegex.owl.model.RDFResource;
+import edu.stanford.smi.protegex.owl.model.RDFSClass;
 import edu.stanford.smi.protegex.owl.model.RDFSNamedClass;
 
 /**
@@ -102,6 +103,42 @@ public class OntologyRetrievalManagerProtegeImpl extends
 		}
 
 		return targetClass;
+	}
+
+	@Override
+	public Iterator<ClassBean> listAllClasses(OntologyBean ob) throws Exception {
+		KnowledgeBase kb = getKnowledgeBase(ob);
+		final Slot synonymSlot = getSynonymSlot(kb, ob.getSynonymSlot());
+		ArrayList<Cls> allClasses = new ArrayList<Cls>();
+		
+		if (kb instanceof OWLModel) {
+			// RDF/OWL format
+			Iterator clsIt = ((OWLModel)kb).listOWLNamedClasses();
+			for (; clsIt.hasNext(); ) {
+				RDFSClass cls = (RDFSClass)clsIt.next();
+				if (!cls.isSystem()) {
+					allClasses.add(cls);
+				}
+			}			
+		} else {
+			// Protege format
+			Collection clses = kb.getClses();
+			for (Iterator clsIt = clses.iterator(); clsIt.hasNext(); ) {
+				Cls cls = (Cls)clsIt.next();
+				if (!cls.isSystem()) {
+					allClasses.add(cls);
+				}
+			}
+		}
+		// There could be very many classes in the results.  Hopefully clients
+		// to this method will use them one at a time.  So inflate ClassBean objects
+		// one at a time.
+		final Iterator<Cls> resultIt = allClasses.iterator();
+		return new Iterator<ClassBean>() {
+			public boolean hasNext() { return resultIt.hasNext(); }
+			public ClassBean next() { return createClassBean(resultIt.next(), true, synonymSlot); }
+			public void remove() { throw new UnsupportedOperationException(); }
+		};
 	}
 
 	public ClassBean findPathFromRoot(OntologyBean ontologyVersion,
@@ -381,9 +418,14 @@ public class OntologyRetrievalManagerProtegeImpl extends
 
 		// add properties
 		for (Slot slot : slots) {
-			Collection classes = (isOwl && slot instanceof RDFProperty && concept instanceof RDFResource) ? ((RDFResource) concept)
-					.getPropertyValues((RDFProperty) slot)
-					: concept.getOwnSlotValues(slot);
+			// Why not just call getOwnSlotValues?
+			// In the RDF (OWL) case, the values may be RDFSLiteral objects, and when you get those back
+			// via getOwnSlotValues, they mix in the language tag, e.g. "~#en".  
+			// So instead fetch those values via getPropertyValues, and the RDFSLiteral will do the right
+			// thing later when you call toString on it.
+			Collection classes = (isOwl && slot instanceof RDFProperty && concept instanceof RDFResource) ? 
+									((RDFResource) concept).getPropertyValues((RDFProperty) slot) :
+									concept.getOwnSlotValues(slot);
 			List vals = getUniqueClasses(classes);
 
 			if (vals.isEmpty()) {

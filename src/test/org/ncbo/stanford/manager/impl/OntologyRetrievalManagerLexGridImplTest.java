@@ -2,7 +2,9 @@ package org.ncbo.stanford.manager.impl;
 
 import static org.junit.Assert.assertTrue;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Iterator;
 import java.util.List;
 
 import org.junit.Test;
@@ -29,6 +31,7 @@ public class OntologyRetrievalManagerLexGridImplTest extends
 	public final static String TEST_OBO_INFECTIOUS_DISEASE_DISPLAY_LABEL = "INFECTIOUS_DISEASE";
 	public final static String TEST_LEXGRID_DISPLAY_LABEL = "Automobiles.xml";
 	public final static String TEST_UMLS_DISPLAY_LABEL = "AIR";
+	public final static String TEST_ATMO_DISPLAY_LABEL = "African Traditional Medicine";
 
 	@Autowired
 	OntologyRetrievalManagerLexGridImpl retrievalManager;
@@ -467,5 +470,17 @@ public class OntologyRetrievalManagerLexGridImplTest extends
 		
 		
 	}	
+
+	@Test
+	public void testListAllClasses() throws Exception {
+		OntologyBean ob = retrievalManager.getLatestNcboOntology(TEST_ATMO_DISPLAY_LABEL);
+		Iterator<ClassBean> cbIt = retrievalManager.listAllClasses(ob);
+		int numClasses = 0;
+		for (; cbIt.hasNext(); ) {
+			numClasses++;
+			ClassBean cb = cbIt.next();
+		}
+		System.out.println("Found "+numClasses+" classes.");
+	}
 	
 }
