@@ -41,6 +41,17 @@ public class OntologyMetricsManagerProtegeImpl extends
 	private String propertyWithUniqueValue;
 	private int preferredMaximumSubclassLimit;
 
+	// Counters for tracking classes in various metrics categories
+	private Integer noDocClsesTotal = 0;
+	private Integer noAuthorConceptsTotal = 0;
+	private Integer xAnnotConceptsTotal = 0;
+	private Integer xSubClsesTotal = 0;
+	private Integer oneSubClsesTotal = 0;
+	// The number of classes to store for the above metrics categories.
+	// Classes found after this number will be counted but their names
+	// will not be added to the list.
+	private final Integer CLASS_LIST_LIMIT = 201;
+
 	public OntologyMetricsBean extractOntologyMetrics(OntologyBean ontologyBean)
 			throws Exception {
 		mb = new OntologyMetricsBean();
@@ -168,17 +179,23 @@ public class OntologyMetricsManagerProtegeImpl extends
 		if (currDepth > maxDepth)
 			maxDepth = currDepth;
 		Collection<Cls> subclasses = currCls.getDirectSubclasses();
-		
+
 		if (docSlot != null) {
 			Collection doc = currCls.getOwnSlotValues(docSlot);
 			if (doc.isEmpty() && !currCls.getName().equals(":THING")) {
 				String identifier = currCls.getBrowserText() + "("
 						+ currCls.getName() + ")";
-				if (!noDocClses.contains(identifier))
-					noDocClses.add(identifier);
+				if (!noDocClses.contains(identifier)) {
+					if (noDocClsesTotal < CLASS_LIST_LIMIT) {
+						noDocClses.add(identifier);
+						noDocClsesTotal++;
+					} else {
+						noDocClsesTotal++;
+					}
+				}
 			}
 		}
-		
+
 		Iterator<Cls> it = subclasses.iterator();
 		int count = 0;
 		while (it.hasNext()) {
@@ -192,14 +209,26 @@ public class OntologyMetricsManagerProtegeImpl extends
 						sibCounts.add(new Integer(count));
 					}
 					if (count == 1
-							&& !oneSubClses.contains(currCls.getBrowserText()))
-						oneSubClses.add(currCls.getBrowserText());
+							&& !oneSubClses.contains(currCls.getBrowserText())) {
+						if (oneSubClsesTotal < CLASS_LIST_LIMIT) {
+							oneSubClses.add(currCls.getBrowserText());
+							oneSubClsesTotal++;
+						} else {
+							oneSubClsesTotal++;
+						}
+					}
 					try {
 						if (count > preferredMaximumSubclassLimit
 								&& !currCls.getName().equals(":THING")
 								&& !xSubClses.containsKey(currCls
-										.getBrowserText()))
-							xSubClses.put(currCls.getBrowserText(), count);
+										.getBrowserText())) {
+							if (xSubClsesTotal < CLASS_LIST_LIMIT) {
+								xSubClses.put(currCls.getBrowserText(), count);
+								xSubClsesTotal++;
+							} else {
+								xSubClsesTotal++;
+							}
+						}
 					} catch (NumberFormatException ignored) {
 					}
 				}
@@ -268,23 +297,22 @@ public class OntologyMetricsManagerProtegeImpl extends
 		int annotTagMatches = 0;
 		Collection<RDFProperty> properties = cls.getRDFProperties();
 		Iterator<RDFProperty> it = properties.iterator();
-		while (it.hasNext()) { // iterate through rdf properties
+		// iterate through RDF properties
+		while (it.hasNext()) {
 			RDFProperty prop = it.next();
-			if (docTag != null && prop.getBrowserText().equals(docTag)) { // matching
-				// the
-				// documentation
-				// tag
+
+			// Matching the documentation tag
+			if (docTag != null && prop.getBrowserText().equals(docTag)) {
 				docTagFound = true;
 			}
+			
+			// Matching the author tag, want to add author/concept to HashMap
 			if (authorTag != null && prop.getBrowserText().equals(authorTag)
-					&& !cls.getName().equals("owl:Thing")) { // matching the
-				// author tag,
-				// want to add
-				// author/concept
-				// to hashmap
+					&& !cls.getName().equals("owl:Thing")) {
 				authorTagFound = true;
 				addClsToConceptAuthorRelationship(cls, prop);
 			}
+			
 			if (annotTag != null && prop.getBrowserText().equals(annotTag)) {
 				Collection props = cls.getPropertyValues(prop, false);
 				Iterator it2 = props.iterator();
@@ -297,25 +325,47 @@ public class OntologyMetricsManagerProtegeImpl extends
 			}
 			annotTagMatches = 0;
 		}
+		
 		if (!cls.isSystem() && !cls.isIncluded()) {
-			if (docTagFound && !cls.getName().equals("owl:Thing")) {
+			// We found a missing documentation tag
+			if (!docTagFound && !cls.getName().equals("owl:Thing")) {
 				String identifier = cls.getBrowserText() + "(" + cls.getName()
 						+ ")";
-				if (!noDocClses.contains(identifier))
-					noDocClses.add(identifier); // if the doc tag has not been
-				// matched for this class...
+				if (!noDocClses.contains(identifier)) {
+					if (noDocClsesTotal < CLASS_LIST_LIMIT) {
+						noDocClses.add(identifier);
+						noDocClsesTotal++;
+					} else {
+						noDocClsesTotal++;
+					}
+				}
 			}
-			if (authorTagFound && !cls.getName().equals("owl:Thing")) {
+			
+			// We found a missing author tag
+			if (!authorTagFound && !cls.getName().equals("owl:Thing")) {
 				String identifier = cls.getBrowserText() + "(" + cls.getName()
 						+ ")";
-				if (!noAuthorConcepts.contains(identifier))
-					noAuthorConcepts.add(identifier);
+				if (!noAuthorConcepts.contains(identifier)) {
+					if (noAuthorConceptsTotal < CLASS_LIST_LIMIT) {
+						noAuthorConcepts.add(identifier);
+						noAuthorConceptsTotal++;
+					} else {
+						noAuthorConceptsTotal++;
+					}
+				}
 			}
+			
 			if (annotTagDoubleMatched && !cls.getName().equals("owl:Thing")) {
 				String identifier = cls.getBrowserText() + "(" + cls.getName()
 						+ ")";
-				if (!xAnnotConcepts.contains(identifier))
-					xAnnotConcepts.add(identifier);
+				if (!xAnnotConcepts.contains(identifier)) {
+					if (xAnnotConceptsTotal < CLASS_LIST_LIMIT) {
+						xAnnotConcepts.add(identifier);
+						xAnnotConceptsTotal++;
+					} else {
+						xAnnotConceptsTotal++;
+					}
+				}
 			}
 		}
 	}
@@ -326,17 +376,15 @@ public class OntologyMetricsManagerProtegeImpl extends
 		Iterator it = props.iterator();
 		while (it.hasNext()) {
 			String key = it.next().toString();
-			if (conceptAuthors.containsKey(key)) { // if author already in map,
-				// add to his/her list of
-				// concepts
+			// If author already in map, add to his/her list of concepts
+			if (conceptAuthors.containsKey(key)) {
 				ArrayList<String> values = conceptAuthors.get(key);
 				if (!values.contains(cls.getBrowserText()))
 					values.add(cls.getBrowserText());
 				conceptAuthors.put(key, values);
 			} else {
-				ArrayList<String> values = new ArrayList(); // otherwise, create
-				// a new arraylist
-				// for this author
+				// Otherwise, create a new ArrayList for this author
+				ArrayList<String> values = new ArrayList();
 				values.add(cls.getBrowserText());
 				conceptAuthors.put(key, values);
 			}
