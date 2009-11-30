@@ -299,6 +299,15 @@
 			<ref bean="usageLoggingService" />
 		</property>
 	</bean>
+	
+	<bean id="dumpRdfRestlet"
+		class="org.ncbo.stanford.view.rest.restlet.ontology.DumpRDFRestlet"
+		parent="abstractBaseRestlet">
+		<property name="dumpRDFService">
+			<ref bean="dumpRDFService" />
+		</property>
+	</bean>
+	
 	<!-- All mappings: -->
 	<bean id="restManager" class="org.ncbo.stanford.view.rest.base.RestManager">
 		<property name="resourceMappings">
@@ -427,6 +436,9 @@
 						</entry>
 						<entry key="/usage">
 							<ref local="usageLoggingRestlet" />
+						</entry>
+						<entry key="/ontology/dump_n3/{ontologyversionid}">
+							<ref local="dumpRdfRestlet" />
 						</entry>
 					</map>
 				</constructor-arg>
