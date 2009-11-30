@@ -526,6 +526,11 @@
 		</property>
 	</bean>
 
+	<bean id="dumpRDFService"
+	    class="org.ncbo.stanford.service.concept.impl.DumpRDFServiceImpl"
+	    parent="conceptService">
+	</bean>
+
 	<bean id="abstractOntologyService"
 		class="org.ncbo.stanford.service.ontology.AbstractOntologyService"
 		abstract="true">

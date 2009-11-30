@@ -38,12 +38,10 @@ public class ConceptServiceImpl implements ConceptService {
 	private static final String DUMMY_CONCEPT_ID = "0";
 	private static final String DUMMY_CONCEPT_LABEL = "*** Too many children...";
 
-	private Map<String, String> ontologyFormatHandlerMap = new HashMap<String, String>(
-			0);
-	private Map<String, OntologyRetrievalManager> ontologyRetrievalHandlerMap = new HashMap<String, OntologyRetrievalManager>(
-			0);
-	private OBSManager obsManager;
-	private OntologyMetadataManager ontologyMetadataManager;
+	protected Map<String, String> ontologyFormatHandlerMap = new HashMap<String, String>(0);
+	protected Map<String, OntologyRetrievalManager> ontologyRetrievalHandlerMap = new HashMap<String, OntologyRetrievalManager>(0);
+	protected OBSManager obsManager;
+	protected OntologyMetadataManager ontologyMetadataManager;
 
 	/**
 	 * Get the root concept for the specified ontology.
@@ -337,7 +335,7 @@ public class ConceptServiceImpl implements ConceptService {
 	// Non interface methods
 	//
 
-	private OntologyRetrievalManager getRetrievalManager(OntologyBean ontology) {
+	protected OntologyRetrievalManager getRetrievalManager(OntologyBean ontology) {
 		String formatHandler = ontologyFormatHandlerMap.get(ontology
 				.getFormat().toUpperCase());
 		return ontologyRetrievalHandlerMap.get(formatHandler);
