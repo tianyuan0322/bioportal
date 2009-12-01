@@ -5,8 +5,8 @@ import java.util.List;
 import org.ncbo.stanford.bean.GroupBean;
 
 /**
- * An interface for all API specific user metadata managers to conform to. This allows
- * for a seamless Spring injection.
+ * An interface for all API specific user metadata managers to conform to. This
+ * allows for a seamless Spring injection.
  * 
  * @author Csongor Nyulas
  * 
@@ -21,19 +21,20 @@ public interface OntologyGroupMetadataManager {
 	 */
 	public void saveOntologyGroup(GroupBean groupBean) throws Exception;
 
-	
 	/**
-	 * Retrieves the groupBean representing an ontology group for a specific group id.
+	 * Retrieves the groupBean representing an ontology group for a specific
+	 * group id.
 	 * 
 	 * @param groupId
+	 * @throws Exception
 	 */
-	public GroupBean findGroupById(Integer groupId);
-	
+	public GroupBean findGroupById(Integer groupId) throws Exception;
+
 	/**
 	 * Returns the list of groupBeans, one for each group in the metadata.
-	 *  
+	 * 
 	 * @return the list of group beans
-	 * @throws Exception 
+	 * @throws Exception
 	 */
-	public List<GroupBean> findAllGroups();
+	public List<GroupBean> findAllGroups() throws Exception;
 }

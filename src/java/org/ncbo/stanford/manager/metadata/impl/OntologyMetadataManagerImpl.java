@@ -36,8 +36,7 @@ import edu.stanford.smi.protegex.owl.swrl.sqwrl.exceptions.SQWRLException;
  * 
  */
 public class OntologyMetadataManagerImpl extends
-		AbstractOntologyMetadataManager implements
-		OntologyMetadataManager {
+		AbstractOntologyMetadataManager implements OntologyMetadataManager {
 
 	private static final Log log = LogFactory
 			.getLog(OntologyMetadataManagerImpl.class);
@@ -229,24 +228,19 @@ public class OntologyMetadataManagerImpl extends
 	// }
 	// }
 
-	private OntologyBean findLatestActiveOntologyVersionById(Integer ontologyId) {
+	private OntologyBean findLatestActiveOntologyVersionById(Integer ontologyId)
+			throws Exception {
 		// WARNING: Any modification to this method should be replicated
 		// in the findLatestOntologyVersionById() method
 		OWLModel metadata = getMetadataOWLModel();
-
 		OWLIndividual vOntInd = getVirtualOntologyInstance(metadata,
 				ontologyId, DO_NOT_CREATE_IF_MISSING);
 		OntologyBean ob = new OntologyBean(false);
+		OWLIndividual ontInd = OntologyMetadataUtils.getLatestVersion(vOntInd,
+				ONLY_ACTIVE_VERSIONS);
+		OntologyMetadataUtils.fillInOntologyBeanFromInstance(ob, ontInd);
 
-		try {
-			OWLIndividual ontInd = OntologyMetadataUtils.getLatestVersion(
-					vOntInd, ONLY_ACTIVE_VERSIONS);
-			OntologyMetadataUtils.fillInOntologyBeanFromInstance(ob, ontInd);
-
-			return ob;
-		} catch (Exception e) {
-			return null;
-		}
+		return ob;
 	}
 
 	public OntologyBean findLatestOntologyOrViewVersionById(
@@ -315,14 +309,19 @@ public class OntologyMetadataManagerImpl extends
 							excludeDeprecated);
 
 			for (Integer id : ontologyVersionIds) {
-				res.add(findOntologyOrViewVersionById(id));
+				try {
+					res.add(findOntologyOrViewVersionById(id));
+				} catch (Exception e) {
+					e.printStackTrace();
+					log.error("Error while getting ontology version: " + id, e);
+				}
 			}
 		}
 
 		return res;
 	}
 
-	public List<OntologyBean> findLatestOntologyVersions() {
+	public List<OntologyBean> findLatestOntologyVersions() throws Exception {
 		// WARNING: Any modification to this method should be replicated
 		// in the findLatestActiveOntologyVersions() method
 		OWLModel metadata = getMetadataOWLModel();
@@ -334,6 +333,7 @@ public class OntologyMetadataManagerImpl extends
 			try {
 				res.add(findLatestOntologyOrViewVersionById(ontologyId));
 			} catch (Exception e) {
+				e.printStackTrace();
 				log.error("Error while getting latest version for ontology "
 						+ ontologyId, e);
 			}
@@ -342,7 +342,8 @@ public class OntologyMetadataManagerImpl extends
 		return res;
 	}
 
-	public List<OntologyBean> findLatestAutoPulledOntologyVersions() {
+	public List<OntologyBean> findLatestAutoPulledOntologyVersions()
+			throws Exception {
 		OWLModel metadata = getMetadataOWLModel();
 		List<Integer> ontologyIds = OntologyMetadataUtils
 				.getAllVirtualOntologyIDs(metadata, DO_NOT_INCLUDE_SUBCLASSES);
@@ -362,6 +363,7 @@ public class OntologyMetadataManagerImpl extends
 					}
 				}
 			} catch (Exception e) {
+				e.printStackTrace();
 				log.error("Error while getting latest version for ontology "
 						+ ontologyId, e);
 			}
@@ -370,7 +372,8 @@ public class OntologyMetadataManagerImpl extends
 		return res;
 	}
 
-	public List<OntologyBean> findLatestActiveOntologyVersions() {
+	public List<OntologyBean> findLatestActiveOntologyVersions()
+			throws Exception {
 		// WARNING: Any modification to this method should be replicated
 		// in the findLatestOntologyVersions() method
 		OWLModel metadata = getMetadataOWLModel();
@@ -396,11 +399,14 @@ public class OntologyMetadataManagerImpl extends
 	private List<OntologyBean> findLatestActiveOntologyVersions(
 			List<Integer> ontologyIds) {
 		List<OntologyBean> res = new ArrayList<OntologyBean>();
-		OntologyBean ob;
 
 		for (Integer ontologyId : ontologyIds) {
-			if ((ob = findLatestActiveOntologyVersionById(ontologyId)) != null) {
-				res.add(ob);
+			try {
+				res.add(findLatestActiveOntologyVersionById(ontologyId));
+			} catch (Exception e) {
+				e.printStackTrace();
+				log.error("Error while getting latest version for ontology: "
+						+ ontologyId, e);
 			}
 		}
 
@@ -410,32 +416,38 @@ public class OntologyMetadataManagerImpl extends
 	public List<OntologyBean> findLatestActiveOntologyOrOntologyViewVersions(
 			List<Integer> ontologyOrViewIds) throws Exception {
 		List<OntologyBean> res = new ArrayList<OntologyBean>();
-		OntologyBean ob;
 
 		for (Integer ontologyOrViewId : ontologyOrViewIds) {
-			if ((ob = findLatestActiveOntologyOrViewVersionById(ontologyOrViewId)) != null) {
-				res.add(ob);
+			try {
+				res
+						.add(findLatestActiveOntologyOrViewVersionById(ontologyOrViewId));
+			} catch (Exception e) {
+				e.printStackTrace();
+				log.error(
+						"Error while getting latest version for ontology/view: "
+								+ ontologyOrViewId, e);
 			}
 		}
 
 		return res;
 	}
 
-	public int getNextAvailableOntologyId() {
+	public int getNextAvailableOntologyId() throws Exception {
 		// return getNextAvailableIdWithSQWRL(QUERY_MAX_VIRTUAL_ONTOLOGY_ID,
 		// CLASS_VIRTUAL_ONTOLOGY);
 		return OntologyMetadataUtils
 				.getNextAvailableVirtualOntologyId(getMetadataOWLModel());
 	}
 
-	public int getNextAvailableOntologyVersionId() {
+	public int getNextAvailableOntologyVersionId() throws Exception {
 		// return getNextAvailableIdWithSQWRL(QUERY_MAX_ONTOLOGY_ID,
 		// CLASS_ONTOLOGY);
 		return OntologyMetadataUtils
 				.getNextAvailableOntologyVersionId(getMetadataOWLModel());
 	}
 
-	private int getNextAvailableIdWithSQWRL(String queryName, String className) {
+	private int getNextAvailableIdWithSQWRL(String queryName, String className)
+			throws Exception {
 		// TODO check this
 		try {
 			SQWRLQueryEngine queryEngine = getMetadataSQWRLEngine();
@@ -473,7 +485,8 @@ public class OntologyMetadataManagerImpl extends
 
 	// ***************** view specific methods ************************
 
-	public OntologyBean findLatestActiveOntologyViewVersionById(Integer viewId) {
+	public OntologyBean findLatestActiveOntologyViewVersionById(Integer viewId)
+			throws Exception {
 		// WARNING: Any modification to this method should be replicated
 		// in the findLatestOntologyViewVersionById() method
 		OWLModel metadata = getMetadataOWLModel();
@@ -481,60 +494,65 @@ public class OntologyMetadataManagerImpl extends
 				DO_NOT_CREATE_IF_MISSING);
 		OntologyBean ob = new OntologyBean(true);
 
-		try {
-			OWLIndividual ontInd = OntologyMetadataUtils.getLatestVersion(
-					vOntInd, ONLY_ACTIVE_VERSIONS);
-			OntologyMetadataUtils.fillInOntologyBeanFromInstance(ob, ontInd);
-			return ob;
-		} catch (Exception e) {
-			return null;
-		}
+		OWLIndividual ontInd = OntologyMetadataUtils.getLatestVersion(vOntInd,
+				ONLY_ACTIVE_VERSIONS);
+		OntologyMetadataUtils.fillInOntologyBeanFromInstance(ob, ontInd);
+
+		return ob;
 	}
 
-	public List<OntologyBean> findLatestOntologyViewVersions() {
+	public List<OntologyBean> findLatestOntologyViewVersions() throws Exception {
 		// WARNING: Any modification to this method should be replicated
 		// in the findLatestActiveOntologyViewVersions() method
 		OWLModel metadata = getMetadataOWLModel();
-		List<Integer> ontologyIds = OntologyMetadataUtils
+		List<Integer> viewIds = OntologyMetadataUtils
 				.getAllVirtualViewIDs(metadata);
 		List<OntologyBean> res = new ArrayList<OntologyBean>();
 
-		for (Integer ontologyId : ontologyIds) {
+		for (Integer viewId : viewIds) {
 			try {
-				res.add(findLatestOntologyOrViewVersionById(ontologyId));
+				res.add(findLatestOntologyOrViewVersionById(viewId));
 			} catch (Exception e) {
+				e.printStackTrace();
 				log.error(
 						"Error while getting latest version for ontology view "
-								+ ontologyId, e);
+								+ viewId, e);
 			}
 		}
 
 		return res;
 	}
 
-	public List<OntologyBean> findLatestActiveOntologyViewVersions() {
+	public List<OntologyBean> findLatestActiveOntologyViewVersions()
+			throws Exception {
 		// WARNING: Any modification to this method should be replicated
 		// in the findLatestOntologyViewVersions() method
 		OWLModel metadata = getMetadataOWLModel();
-		List<Integer> ontologyIds = OntologyMetadataUtils
+		List<Integer> viewIds = OntologyMetadataUtils
 				.getAllVirtualViewIDs(metadata);
 		List<OntologyBean> res = new ArrayList<OntologyBean>();
 
-		for (Integer ontologyId : ontologyIds) {
-			res.add(findLatestActiveOntologyViewVersionById(ontologyId));
+		for (Integer viewId : viewIds) {
+			try {
+				res.add(findLatestActiveOntologyViewVersionById(viewId));
+			} catch (Exception e) {
+				e.printStackTrace();
+				log.error("Error while getting latest version for view "
+						+ viewId, e);
+			}
 		}
 
 		return res;
 	}
 
-	public int getNextAvailableVirtualViewId() {
+	public int getNextAvailableVirtualViewId() throws Exception {
 		// return getNextAvailableIdWithSQWRL(QUERY_MAX_VIRTUAL_VIEW_ID,
 		// CLASS_VIRTUAL_ONTOLOGY);
 		return OntologyMetadataUtils
 				.getNextAvailableVirtualViewId(getMetadataOWLModel());
 	}
 
-	public int getNextAvailableOntologyViewVersionId() {
+	public int getNextAvailableOntologyViewVersionId() throws Exception {
 		// return getNextAvailableIdWithSQWRL(QUERY_MAX_ONTOLOGY_VIEW_ID,
 		// CLASS_ONTOLOGY);
 		return OntologyMetadataUtils
@@ -542,7 +560,7 @@ public class OntologyMetadataManagerImpl extends
 	}
 
 	public OntologyBean findLatestOntologyVersionByOboFoundryId(
-			String oboFoundryId) {
+			String oboFoundryId) throws Exception {
 		return OntologyMetadataUtils.findLatestOntologyVersionByOboFoundryId(
 				getMetadataOWLModel(), oboFoundryId, ALL_VERSIONS);
 	}
@@ -550,7 +568,7 @@ public class OntologyMetadataManagerImpl extends
 	// *****************************************
 
 	public List<OntologyBean> searchOntologyMetadata(String query,
-			boolean includeViews) {
+			boolean includeViews) throws Exception {
 		OWLModel metadata = getMetadataOWLModel();
 		List<OWLIndividual> matchingIndividuals = OntologyMetadataUtils
 				.searchOntologyMetadata(metadata, query, includeViews);
@@ -572,7 +590,8 @@ public class OntologyMetadataManagerImpl extends
 		return res;
 	}
 
-	public List<OntologyBean> searchOntologyViewMetadata(String query) {
+	public List<OntologyBean> searchOntologyViewMetadata(String query)
+			throws Exception {
 		OWLModel metadata = getMetadataOWLModel();
 		List<OWLIndividual> matchingIndividuals = OntologyMetadataUtils
 				.searchOntologyViewMetadata(metadata, query);
@@ -642,5 +661,4 @@ public class OntologyMetadataManagerImpl extends
 
 		return res;
 	}
-
 }

@@ -94,8 +94,10 @@ public abstract class AbstractOntologyManagerLexGrid {
 	 * 
 	 * @param displayLabel
 	 * @return
+	 * @throws Exception
 	 */
-	public OntologyBean getLatestNcboOntology(String displayLabel) {
+	public OntologyBean getLatestNcboOntology(String displayLabel)
+			throws Exception {
 		List<OntologyBean> list = ontologyMetadataManager
 				.findLatestOntologyVersions();
 
@@ -113,9 +115,10 @@ public abstract class AbstractOntologyManagerLexGrid {
 	 * @param ontologyVersionId
 	 * @return The LexGrid urn and version information that is stored by
 	 *         concatenating the urn, "|" and version
-	 * @throws Exception 
+	 * @throws Exception
 	 */
-	protected String getLexGridUrnAndVersion(Integer ontologyVersionId) throws Exception {
+	protected String getLexGridUrnAndVersion(Integer ontologyVersionId)
+			throws Exception {
 		OntologyBean ncboOntology = ontologyMetadataManager
 				.findOntologyOrViewVersionById(ontologyVersionId);
 
@@ -176,12 +179,14 @@ public abstract class AbstractOntologyManagerLexGrid {
 	}
 
 	/**
-	 * @param ontologyMetadataManager the ontologyMetadataManager to set
+	 * @param ontologyMetadataManager
+	 *            the ontologyMetadataManager to set
 	 */
 	public void setOntologyMetadataManager(
 			OntologyMetadataManager ontologyMetadataManager) {
 		this.ontologyMetadataManager = ontologyMetadataManager;
 	}
+
 	/**
 	 * A helper method that returns the ResolvedConceptReferenceList of root
 	 * concepts.

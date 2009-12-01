@@ -75,8 +75,9 @@ public interface OntologyMetadataManager {
 	 * 
 	 * @return the list of ontology beans corresponding to the latest version of
 	 *         each virtual ontology
+	 * @throws Exception
 	 */
-	public List<OntologyBean> findLatestOntologyVersions();
+	public List<OntologyBean> findLatestOntologyVersions() throws Exception;
 
 	/**
 	 * Returns the list of ontologyBeans for the latest versions of auto-pulled
@@ -84,8 +85,10 @@ public interface OntologyMetadataManager {
 	 * 
 	 * @return the list of ontology beans corresponding to the latest version of
 	 *         each virtual ontology
+	 * @throws Exception
 	 */
-	public List<OntologyBean> findLatestAutoPulledOntologyVersions();
+	public List<OntologyBean> findLatestAutoPulledOntologyVersions()
+			throws Exception;
 
 	/**
 	 * Retrieves the ontologyBean representing the latest version for a specific
@@ -115,8 +118,10 @@ public interface OntologyMetadataManager {
 	 * 
 	 * @return the list of ontology beans corresponding to the latest active
 	 *         version of each virtual ontology
+	 * @throws Exception
 	 */
-	public List<OntologyBean> findLatestActiveOntologyVersions();
+	public List<OntologyBean> findLatestActiveOntologyVersions()
+			throws Exception;
 
 	/**
 	 * Returns the list of ontology(View)Beans, one for each ontology's/view's
@@ -161,24 +166,27 @@ public interface OntologyMetadataManager {
 	 * Returns the next available (i.e. not already in use) virtual ontology ID
 	 * 
 	 * @return
+	 * @throws Exception
 	 */
-	public int getNextAvailableOntologyId();
+	public int getNextAvailableOntologyId() throws Exception;
 
 	/**
 	 * Returns the next available (i.e. not already in use) ontology version ID
 	 * 
 	 * @return
+	 * @throws Exception
 	 */
-	public int getNextAvailableOntologyVersionId();
+	public int getNextAvailableOntologyVersionId() throws Exception;
 
 	/**
 	 * Returns the latest version of an ontology using its obo foundry id
 	 * 
 	 * @param oboFoundryId
 	 * @return
+	 * @throws Exception
 	 */
-	public OntologyBean findLatestOntologyVersionByOboFoundryId(
-			String oboFoundryId);
+	public OntologyBean findLatestOntologyVersionByOboFoundryId(String oboFoundryId)
+			throws Exception;
 
 	/**
 	 * Returns list of ontology beans for all ontology versions that have some
@@ -190,9 +198,10 @@ public interface OntologyMetadataManager {
 	 *            true if views should be also included in the search, false if
 	 *            only ontology metadata should be searched.
 	 * @return list of matching ontology beans
+	 * @throws Exception
 	 */
 	public List<OntologyBean> searchOntologyMetadata(String query,
-			boolean includeViews);
+			boolean includeViews) throws Exception;
 
 	// ******************** view specific methods ********************
 
@@ -202,8 +211,9 @@ public interface OntologyMetadataManager {
 	 * 
 	 * @return the list of ontology beans corresponding to the latest version of
 	 *         each virtual view
+	 * @throws Exception
 	 */
-	public List<OntologyBean> findLatestOntologyViewVersions();
+	public List<OntologyBean> findLatestOntologyViewVersions() throws Exception;
 
 	/**
 	 * Retrieves the ontologyBean representing the latest active version for a
@@ -211,8 +221,10 @@ public interface OntologyMetadataManager {
 	 * 
 	 * @param viewId
 	 *            a (virtual) view id
+	 * @throws Exception
 	 */
-	public OntologyBean findLatestActiveOntologyViewVersionById(Integer viewId);
+	public OntologyBean findLatestActiveOntologyViewVersionById(Integer viewId)
+			throws Exception;
 
 	/**
 	 * Returns the list of ontologyBeans, one for each ontology view's latest
@@ -220,23 +232,27 @@ public interface OntologyMetadataManager {
 	 * 
 	 * @return the list of ontology beans corresponding to the latest active
 	 *         version of each virtual view
+	 * @throws Exception
 	 */
-	public List<OntologyBean> findLatestActiveOntologyViewVersions();
+	public List<OntologyBean> findLatestActiveOntologyViewVersions()
+			throws Exception;
 
 	/**
 	 * Returns the next available (i.e. not already in use) virtual view ID
 	 * 
 	 * @return
+	 * @throws Exception
 	 */
-	public int getNextAvailableVirtualViewId();
+	public int getNextAvailableVirtualViewId() throws Exception;
 
 	/**
 	 * Returns the next available (i.e. not already in use) ontology view
 	 * version ID
 	 * 
 	 * @return
+	 * @throws Exception
 	 */
-	public int getNextAvailableOntologyViewVersionId();
+	public int getNextAvailableOntologyViewVersionId() throws Exception;
 
 	/**
 	 * Returns list of ontology beans for all ontology view versions that have
@@ -245,22 +261,25 @@ public interface OntologyMetadataManager {
 	 * @param query
 	 *            a String that is searched for in the metadata
 	 * @return list of matching ontology view beans
+	 * @throws Exception
 	 */
-	public List<OntologyBean> searchOntologyViewMetadata(String query);
+	public List<OntologyBean> searchOntologyViewMetadata(String query)
+			throws Exception;
 
 	/**
 	 * Programmatically reloads the metadata ontology stored in the memory
 	 */
-	public void reloadMetadataOWLModel();
+	public void reloadMetadataOWLModel() throws Exception;
 
 	/**
-	 * Interface method for a method in the AbstractOntologyMetadataManager class.
+	 * Interface method for a method in the AbstractOntologyMetadataManager
+	 * class.
 	 */
 	public OWLIndividual getOntologyOrViewInstance(OWLModel metadata, int id);
 
 	/**
-	 * Interface method for a method in the AbstractOntologyManagerProtege class.
+	 * Interface method for a method in the AbstractOntologyManagerProtege
+	 * class.
 	 */
-	public OWLModel getMetadataOWLModel();
-
+	public OWLModel getMetadataOWLModel() throws Exception;
 }

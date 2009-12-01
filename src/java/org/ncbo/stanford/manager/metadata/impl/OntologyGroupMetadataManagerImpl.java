@@ -37,7 +37,7 @@ public class OntologyGroupMetadataManagerImpl extends
 		OntologyGroupMetadataUtils.fillInGroupInstancePropertiesFromBean(ontGroupInd, gb);
 	}
 
-	public GroupBean findGroupById(Integer groupId) {
+	public GroupBean findGroupById(Integer groupId) throws Exception {
 		OWLModel metadata = getMetadataOWLModel();
 
 		OWLIndividual ontGroupInd = getOntologyGroupInstance(metadata, groupId, DO_NOT_CREATE_IF_MISSING);
@@ -52,7 +52,7 @@ public class OntologyGroupMetadataManagerImpl extends
 		}
 	}
 
-	public List<GroupBean> findAllGroups() {
+	public List<GroupBean> findAllGroups() throws Exception {
 		OWLModel metadata = getMetadataOWLModel();
 		
 		List<Integer> ontologyIds = OntologyMetadataUtils.getAllGroupIDs(metadata);
