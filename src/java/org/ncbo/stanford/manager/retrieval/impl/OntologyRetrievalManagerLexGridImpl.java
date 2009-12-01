@@ -6,7 +6,6 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.NoSuchElementException;
 
 import org.LexGrid.LexBIG.DataModel.Collections.AssociatedConceptList;
 import org.LexGrid.LexBIG.DataModel.Collections.AssociationList;
@@ -18,7 +17,6 @@ import org.LexGrid.LexBIG.DataModel.Core.CodingSchemeVersionOrTag;
 import org.LexGrid.LexBIG.DataModel.Core.ConceptReference;
 import org.LexGrid.LexBIG.DataModel.Core.ResolvedConceptReference;
 import org.LexGrid.LexBIG.Exceptions.LBException;
-import org.LexGrid.LexBIG.Exceptions.LBInvocationException;
 import org.LexGrid.LexBIG.Exceptions.LBParameterException;
 import org.LexGrid.LexBIG.Exceptions.LBResourceUnavailableException;
 import org.LexGrid.LexBIG.Extensions.Generic.LexBIGServiceConvenienceMethods;
@@ -27,7 +25,6 @@ import org.LexGrid.LexBIG.Impl.dataAccess.WriteLockManager;
 import org.LexGrid.LexBIG.Impl.helpers.CountConceptReference;
 import org.LexGrid.LexBIG.LexBIGService.CodedNodeGraph;
 import org.LexGrid.LexBIG.LexBIGService.CodedNodeSet;
-import org.LexGrid.LexBIG.LexBIGService.LexBIGService;
 import org.LexGrid.LexBIG.LexBIGService.CodedNodeSet.ActiveOption;
 import org.LexGrid.LexBIG.Utility.Constructors;
 import org.LexGrid.LexBIG.Utility.ConvenienceMethods;
@@ -46,6 +43,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.ncbo.stanford.bean.OntologyBean;
 import org.ncbo.stanford.bean.concept.ClassBean;
+import org.ncbo.stanford.enumeration.ConceptTypeEnum;
 import org.ncbo.stanford.exception.BPRuntimeException;
 import org.ncbo.stanford.exception.OntologyVersionNotFoundException;
 import org.ncbo.stanford.manager.AbstractOntologyManagerLexGrid;
@@ -66,7 +64,8 @@ public class OntologyRetrievalManagerLexGridImpl extends
 
 	private static final Log log = LogFactory
 			.getLog(OntologyRetrievalManagerLexGridImpl.class);
-	
+
+	private static final String ROOT_CLASS_ID = "THING";
 
 	public OntologyRetrievalManagerLexGridImpl() throws Exception {
 		lbs = LexBIGServiceImpl.defaultInstance();
@@ -214,8 +213,10 @@ public class OntologyRetrievalManagerLexGridImpl extends
 			classBean = createSimpleSubClassOnlyClassBean(classBean, false);
 			log.debug("return findLightConcept= " + conceptId + " Time taken="
 					+ (System.currentTimeMillis() - startTime));
+
 			return classBean;
 		}
+
 		return null;
 	}
 
@@ -263,8 +264,10 @@ public class OntologyRetrievalManagerLexGridImpl extends
 			addSuperClassRelationToClassBean(schemeName, csvt, classBean);
 			log.debug("return findConcept= " + conceptId + " Time taken="
 					+ (System.currentTimeMillis() - startTime));
+
 			return classBean;
 		}
+
 		return null;
 	}
 
@@ -281,6 +284,7 @@ public class OntologyRetrievalManagerLexGridImpl extends
 			Integer offset, Integer limit) throws Exception {
 		String schemeName = getLexGridCodingSchemeName(ontologyBean);
 		CodingSchemeVersionOrTag csvt = getLexGridCodingSchemeVersion(ontologyBean);
+
 		try {
 			ResolvedConceptReferencesIterator iterator = lbs
 					.getCodingSchemeConcepts(schemeName, csvt).resolve(null,
@@ -294,51 +298,62 @@ public class OntologyRetrievalManagerLexGridImpl extends
 		} catch (LBParameterException ex) {
 			return null;
 		}
-
 	}
-	
-	@Override
-	public Iterator<ClassBean> listAllClasses(final OntologyBean ob) throws Exception {
+
+	public Iterator<ClassBean> listAllClasses(final OntologyBean ob)
+			throws Exception {
 		// Convert ontology (BP) to coding scheme (LexBIG)
 		final String schemeName = getLexGridCodingSchemeName(ob);
 		final CodingSchemeVersionOrTag csvt = getLexGridCodingSchemeVersion(ob);
 		if (StringUtils.isBlank(schemeName) || (csvt == null)) {
-			throw new OntologyVersionNotFoundException("Could not resolve ontology in LexBIG service: "+ob);
+			throw new OntologyVersionNotFoundException(
+					"Could not resolve ontology in LexBIG service: " + ob);
 		}
 		// Fetch all concepts -- delay conversion to ClassBean
 		CodedNodeSet cns = lbs.getCodingSchemeConcepts(schemeName, csvt);
-		final ResolvedConceptReferencesIterator rcrIt = cns.resolve(null, null, null, null, true);
-		
+		final ResolvedConceptReferencesIterator rcrIt = cns.resolve(null, null,
+				null, null, true);
+
 		return new Iterator<ClassBean>() {
-			public boolean hasNext() { 
+			public boolean hasNext() {
 				try {
 					return rcrIt.hasNext();
 				} catch (LBResourceUnavailableException e) {
-					throw new BPRuntimeException("Problem encountered in LexBIG Service", e);
+					throw new BPRuntimeException(
+							"Problem encountered in LexBIG Service", e);
 				}
 			}
+
 			public void remove() {
 				throw new UnsupportedOperationException();
 			}
+
 			public ClassBean next() {
 				try {
 					// Get a basic version of the LexBIG concept
-					ResolvedConceptReference rcr = rcrIt.next(); // throws LBException
+					ResolvedConceptReference rcr = rcrIt.next(); // throws
+																	// LBException
 					// Get a fleshed out ClassBean
-					// This seems like an unfortunate hack -- I already hit the db to get the RCR object, 
-					// now I'm going back and fetching it all over again.  But I haven't yet figured
-					// out how to get the full set of relations into the ClassBean from the RCR I 
-					// have here.  Perhaps 'getCodingSchemeConcepts' doesn't return a graph, and one
+					// This seems like an unfortunate hack -- I already hit the
+					// db to get the RCR object,
+					// now I'm going back and fetching it all over again. But I
+					// haven't yet figured
+					// out how to get the full set of relations into the
+					// ClassBean from the RCR I
+					// have here. Perhaps 'getCodingSchemeConcepts' doesn't
+					// return a graph, and one
 					// needs a graph in order to resolve the relations? --TL
 					return findConcept(ob, rcr.getConceptCode());
 				} catch (Exception e) {
-					// Note neither subtype of LBException that could get us here is specific enough
-					// to justify throwing a NoSuchElementException.  
-					throw new BPRuntimeException("Problem encountered in LexBIG Service", e);
+					// Note neither subtype of LBException that could get us
+					// here is specific enough
+					// to justify throwing a NoSuchElementException.
+					throw new BPRuntimeException(
+							"Problem encountered in LexBIG Service", e);
 				}
-			}};
+			}
+		};
 	}
-
 
 	/*
 	 * (non-Javadoc)
@@ -351,10 +366,12 @@ public class OntologyRetrievalManagerLexGridImpl extends
 	public ClassBean findPathFromRoot(OntologyBean ontologyBean,
 			String conceptId, boolean light) throws Exception {
 		String schemeName = getLexGridCodingSchemeName(ontologyBean);
+
 		if (StringUtils.isBlank(schemeName)) {
 			log.warn("Can not proceed when the codingSchemeURI is blank");
 			return null;
 		}
+
 		if (StringUtils.isBlank(conceptId)) {
 			log.warn("Can not process request when the conceptId is blank");
 			return null;
@@ -615,7 +632,6 @@ public class OntologyRetrievalManagerLexGridImpl extends
 		rcr.setEntityDescription(ac.getEntityDescription());
 
 		return rcr;
-
 	}
 
 	/**
@@ -630,11 +646,12 @@ public class OntologyRetrievalManagerLexGridImpl extends
 		try {
 			ResolvedConceptReference rcr = getLightResolvedConceptReference(
 					ontologyBean, conceptId);
-			return rcr.getEntityDescription();
 
+			return rcr.getEntityDescription();
 		} catch (Exception ex) {
 			ex.printStackTrace();
 		}
+
 		return null;
 	}
 
@@ -719,7 +736,6 @@ public class OntologyRetrievalManagerLexGridImpl extends
 		}
 		return acSources;
 	}
-
 
 	/**
 	 * 
@@ -886,12 +902,14 @@ public class OntologyRetrievalManagerLexGridImpl extends
 	 * @return
 	 */
 	private ClassBean createClassBean(ResolvedConceptReference rcr) {
-		ClassBean bean = new ClassBean();
-		bean.setId(rcr.getConceptCode());
+		ClassBean bean = createBaseClassBean(rcr.getConceptCode(), null);
+
 		if (rcr.getEntityDescription() != null) {
 			bean.setLabel(rcr.getEntityDescription().getContent());
 		}
+
 		Concept entry = rcr.getReferencedEntry();
+
 		if (entry == null) {
 			// bean.setLight(true);
 		} else if (entry.getIsAnonymous() == null
@@ -903,8 +921,10 @@ public class OntologyRetrievalManagerLexGridImpl extends
 				bean.setLabel(getPreferredPresentation(entry));
 			}
 		}
+
 		addAssociationListInfoToClassBean(rcr.getSourceOf(), bean, null, false);
 		addAssociationListInfoToClassBean(rcr.getTargetOf(), bean, null, false);
+
 		return bean;
 	}
 
@@ -925,12 +945,20 @@ public class OntologyRetrievalManagerLexGridImpl extends
 	 * @return
 	 */
 	private ClassBean createThingClassBean(ArrayList<ClassBean> classBeans) {
-		ClassBean classBean = new ClassBean();
-		classBean.setId("THING");
-		classBean.setLabel("THING");
+		ClassBean classBean = createBaseClassBean(ROOT_CLASS_ID, ROOT_CLASS_ID);
 		classBean.addRelation(ApplicationConstants.SUB_CLASS, classBeans);
 		classBean.addRelation(ApplicationConstants.CHILD_COUNT, classBeans
 				.size());
+		return classBean;
+	}
+
+	private ClassBean createBaseClassBean(String id, String label) {
+		ClassBean classBean = new ClassBean();
+		classBean.setId(id);
+		classBean.setFullId(id);
+		classBean.setLabel(label);
+		classBean.setType(ConceptTypeEnum.CONCEPT_TYPE_CLASS);
+
 		return classBean;
 	}
 
@@ -986,10 +1014,12 @@ public class OntologyRetrievalManagerLexGridImpl extends
 	private static void addStringToHashMapsArrayList(
 			HashMap<Object, Object> map, String key, String value) {
 		List list = (List) map.get(key);
+
 		if (list == null) {
 			list = new ArrayList<Object>();
 			map.put(key, list);
 		}
+
 		if (StringUtils.isNotBlank(value) && !list.contains(value)) {
 			list.add(value);
 		}
@@ -1033,8 +1063,6 @@ public class OntologyRetrievalManagerLexGridImpl extends
 		}
 
 	}
-
-
 
 	/**
 	 * This function adds the association information to the current class bean.
@@ -1195,8 +1223,8 @@ public class OntologyRetrievalManagerLexGridImpl extends
 			p = entry.getPresentation(i);
 			if (!p.getIsPreferred().booleanValue()) {
 				// Add a abstraction for getting all the Synonyms..gforge #1351
-				addStringToHashMapsArrayList(map, ApplicationConstants.SYNONYM,
-						p.getValue().getContent());
+				bean.addSynonym(p.getValue().getContent());
+
 				if (StringUtils.isNotBlank(p.getDegreeOfFidelity())) {
 					String key = p.getDegreeOfFidelity() + " SYNONYM";
 					addStringToHashMapsArrayList(map, key, p.getValue()
@@ -1226,8 +1254,7 @@ public class OntologyRetrievalManagerLexGridImpl extends
 		count = entry.getDefinitionCount();
 		for (int i = 0; i < count; i++) {
 			d = entry.getDefinition(i);
-			addStringToHashMapsArrayList(map, "Definition", d.getValue()
-					.getContent());
+			bean.addDefinition(d.getValue().getContent());
 		}
 
 		// handle concept properties
@@ -1247,9 +1274,9 @@ public class OntologyRetrievalManagerLexGridImpl extends
 	@SuppressWarnings("unchecked")
 	private ClassBean createSimpleSubClassOnlyClassBean(ClassBean classBean,
 			boolean includeChildren) {
-		ClassBean cb = new ClassBean();
-		cb.setId(classBean.getId());
-		cb.setLabel(classBean.getLabel());
+		ClassBean cb = createBaseClassBean(classBean.getId(), classBean
+				.getLabel());
+
 		Integer childCount = (Integer) classBean.getRelations().get(
 				ApplicationConstants.CHILD_COUNT);
 		if (childCount != null) {
@@ -1314,9 +1341,8 @@ public class OntologyRetrievalManagerLexGridImpl extends
 	}
 
 	private ClassBean createSimpleStrippedDownClassBean(ClassBean classBean) {
-		ClassBean cb = new ClassBean();
-		cb.setId(classBean.getId());
-		cb.setLabel(classBean.getLabel());
+		ClassBean cb = createBaseClassBean(classBean.getId(), classBean
+				.getLabel());
 		Integer childCount = (Integer) classBean.getRelations().get(
 				ApplicationConstants.CHILD_COUNT);
 		if (childCount != null) {
