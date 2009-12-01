@@ -19,7 +19,6 @@ public class DumpRDFServiceImpl extends ConceptServiceImpl implements DumpRDFSer
 	public static final String XREF_RELATION_NAME = "xref";
 	public static final String DEFN_RELATION_NAME = "Definition"; // Temporary guess!
 
-	@Override
 	public String generateRDFDump(Integer ontologyVersionID) throws Exception {
 		OntologyBean ontoBean = 
 			ontologyMetadataManager.findOntologyOrViewVersionById(ontologyVersionID);
