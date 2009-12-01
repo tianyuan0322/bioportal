@@ -85,26 +85,28 @@ public class OBOCVSPullServiceImpl implements OBOCVSPullService {
 		try {
 			List<OBORepositoryInfoHolder> repos = parseRepositoryConfigFile();
 
-			HashMap<String , CVSFile> updateFiles=null;
+			HashMap<String, CVSFile> updateFiles = null;
 			for (OBORepositoryInfoHolder repo : repos) {
-				
+
 				if (repo.getRepositoryType().equals("SVN")) {
 					SVNUtils svnUtils = new SVNUtils(repo.getUsername(), repo
-							.getPassword(), repo.getHostname(), repo.getModule(),
-							repo.getRootdirectory(), repo.getArgumentstring(), repo
-									.getCheckoutdir(), tempDir);
+							.getPassword(), repo.getHostname(), repo
+							.getModule(), repo.getRootdirectory(), repo
+							.getArgumentstring(), repo.getCheckoutdir(),
+							tempDir);
 					svnUtils.svnCheckout();
-					updateFiles=svnUtils.listEntries();
-				} else {			
+					updateFiles = svnUtils.listEntries();
+				} else {
 					CVSUtils cvsUtils = new CVSUtils(repo.getUsername(), repo
-							.getPassword(), repo.getHostname(), repo.getModule(),
-							repo.getRootdirectory(), repo.getArgumentstring(), repo
-									.getCheckoutdir(), tempDir);
+							.getPassword(), repo.getHostname(), repo
+							.getModule(), repo.getRootdirectory(), repo
+							.getArgumentstring(), repo.getCheckoutdir(),
+							tempDir);
 					cvsUtils.cvsCheckout();
 					updateFiles = cvsUtils.getAllCVSEntries();
 				}
-			  // process repository data.
-			  processRecords(repo, updateFiles);
+				// process repository data.
+				processRecords(repo, updateFiles);
 			}
 
 			if (log.isDebugEnabled()) {
@@ -195,7 +197,7 @@ public class OBOCVSPullServiceImpl implements OBOCVSPullService {
 	 * @throws InvalidDataException
 	 */
 	private OntologyAction determineOntologyAction(MetadataFileBean mfb,
-			CVSFile cf, String cvsHostname) throws InvalidDataException {
+			CVSFile cf, String cvsHostname) throws Exception {
 		ActionEnum action = ActionEnum.NO_ACTION;
 		String oboFoundryId = mfb.getId();
 
@@ -379,7 +381,8 @@ public class OBOCVSPullServiceImpl implements OBOCVSPullService {
 	 * @param downloadUrl
 	 * @return
 	 */
-	private List<Integer> findCategoryIdsByOBONames(String downloadUrl) {
+	private List<Integer> findCategoryIdsByOBONames(String downloadUrl)
+			throws Exception {
 		List<Integer> categoryIds = new ArrayList<Integer>(1);
 
 		if (!StringHelper.isNullOrNullString(downloadUrl)) {
@@ -519,20 +522,21 @@ public class OBOCVSPullServiceImpl implements OBOCVSPullService {
 		for (Node child = root.getFirstChild(); child != null; child = child
 				.getNextSibling()) {
 			if (child.getNodeType() == Node.ELEMENT_NODE) {
-				
+
 				NodeList repoInfo = child.getChildNodes();
 				OBORepositoryInfoHolder infoHolder = new OBORepositoryInfoHolder();
-				NamedNodeMap attributes=child.getAttributes();
-				
-				if(attributes != null){
-						for (int i = 0; i < attributes.getLength(); i++) {
+				NamedNodeMap attributes = child.getAttributes();
+
+				if (attributes != null) {
+					for (int i = 0; i < attributes.getLength(); i++) {
 						Node attribute = attributes.item(i);
 						if (attribute.getNodeName().toString().equals("type")) {
-							infoHolder.setRepositoryType(attribute.getNodeValue());
+							infoHolder.setRepositoryType(attribute
+									.getNodeValue());
 						}
 					}
 				}
-				
+
 				for (int i = 0; i < repoInfo.getLength(); i++) {
 					Node node = repoInfo.item(i);
 

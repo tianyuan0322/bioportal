@@ -20,8 +20,9 @@ public interface OntologyService {
 	 * Return the list of all categories
 	 * 
 	 * @return
+	 * @throws Exception 
 	 */
-	public List<CategoryBean> findAllCategories();
+	public List<CategoryBean> findAllCategories() throws Exception;
 
 	/**
 	 * Return the list of category Ids that correspond to the given obo foundry
@@ -29,41 +30,46 @@ public interface OntologyService {
 	 * 
 	 * @param oboFoundryNames
 	 * @return
+	 * @throws Exception 
 	 */
 	public List<Integer> findCategoryIdsByOBOFoundryNames(
-			String[] oboFoundryNames);
+			String[] oboFoundryNames) throws Exception;
 
 	/**
 	 * Return the list of all groups
 	 * 
 	 * @return
+	 * @throws Exception 
 	 */
-	public List<GroupBean> findAllGroups();
+	public List<GroupBean> findAllGroups() throws Exception;
 
 	/**
 	 * Returns the latest version of an ontology using its obo foundry id
 	 * 
 	 * @param oboFoundryId
 	 * @return
+	 * @throws Exception 
 	 */
 	public OntologyBean findLatestOntologyVersionByOboFoundryId(
-			String oboFoundryId);
+			String oboFoundryId) throws Exception;
 
 	/**
 	 * Returns a single record for each ontology in the system. If more than one
 	 * version of ontology exists, return the latest version.
 	 * 
 	 * @return list of Ontology beans
+	 * @throws Exception 
 	 */
-	public List<OntologyBean> findLatestOntologyVersions();
+	public List<OntologyBean> findLatestOntologyVersions() throws Exception;
 
 	/**
 	 * Returns the list of the latest versions of auto-pulled ontologies.
 	 * 
 	 * @return the list of ontology beans corresponding to the latest version of
 	 *         each ontology
+	 * @throws Exception 
 	 */
-	public List<OntologyBean> findLatestAutoPulledOntologyVersions();
+	public List<OntologyBean> findLatestAutoPulledOntologyVersions() throws Exception;
 
 	/**
 	 * Returns a single record for each ontology which is active in the system.
@@ -71,8 +77,9 @@ public interface OntologyService {
 	 * version. "active" meaning parse status is "ready".
 	 * 
 	 * @return list of Ontology beans
+	 * @throws Exception 
 	 */
-	public List<OntologyBean> findLatestActiveOntologyVersions();
+	public List<OntologyBean> findLatestActiveOntologyVersions() throws Exception;
 
 	/**
 	 * Returns all versions for given ontology. Two steps : 1. Get list of
@@ -97,9 +104,10 @@ public interface OntologyService {
 	 *            views)
 	 * @return list of ontology beans that have metadata matching the query
 	 *         string
+	 * @throws Exception 
 	 */
 	public List<OntologyBean> searchOntologyMetadata(String query,
-			boolean includeViews);
+			boolean includeViews) throws Exception;
 
 	/**
 	 * Returns a single ontology version record
@@ -195,8 +203,9 @@ public interface OntologyService {
 	 * than one version of ontology view exists, return the latest version.
 	 * 
 	 * @return list of ontology beans
+	 * @throws Exception 
 	 */
-	public List<OntologyBean> findLatestOntologyViewVersions();
+	public List<OntologyBean> findLatestOntologyViewVersions() throws Exception;
 
 	/**
 	 * Returns a single record for each ontology view which is active in the
@@ -205,13 +214,16 @@ public interface OntologyService {
 	 * "not applicable".
 	 * 
 	 * @return list of ontology beans
+	 * @throws Exception 
 	 */
-	public List<OntologyBean> findLatestActiveOntologyViewVersions();
+	public List<OntologyBean> findLatestActiveOntologyViewVersions() throws Exception;
 
 	/**
 	 * Programmatically reloads the metadata ontology stored in the memory
+	 * 
+	 * @throws Exception
 	 */
-	public void reloadMetadataOntology();
+	public void reloadMetadataOntology() throws Exception;
 
 	/**
 	 * Returns info about ontologies that did not process successfully

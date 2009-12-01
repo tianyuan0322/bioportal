@@ -239,11 +239,11 @@ public class OntologyServiceMetadataImpl extends AbstractOntologyService
 		}
 	}
 
-	public List<CategoryBean> findAllCategories() {
+	public List<CategoryBean> findAllCategories() throws Exception {
 		return ontologyCategoryMetadataManager.findAllCategories();
 	}
 
-	public List<GroupBean> findAllGroups() {
+	public List<GroupBean> findAllGroups() throws Exception {
 		return ontologyGroupMetadataManager.findAllGroups();
 	}
 
@@ -254,7 +254,7 @@ public class OntologyServiceMetadataImpl extends AbstractOntologyService
 	}
 
 	public List<Integer> findCategoryIdsByOBOFoundryNames(
-			String[] oboFoundryNames) {
+			String[] oboFoundryNames) throws Exception {
 		List<Integer> categoryIds = new ArrayList<Integer>(1);
 		List<CategoryBean> categories = ontologyCategoryMetadataManager
 				.findCategoriesByOBOFoundryNames(oboFoundryNames);
@@ -266,7 +266,8 @@ public class OntologyServiceMetadataImpl extends AbstractOntologyService
 		return categoryIds;
 	}
 
-	public List<OntologyBean> findLatestActiveOntologyVersions() {
+	public List<OntologyBean> findLatestActiveOntologyVersions()
+			throws Exception {
 		return ontologyMetadataManager.findLatestActiveOntologyVersions();
 	}
 
@@ -283,7 +284,7 @@ public class OntologyServiceMetadataImpl extends AbstractOntologyService
 	}
 
 	public OntologyBean findLatestOntologyVersionByOboFoundryId(
-			String oboFoundryId) {
+			String oboFoundryId) throws Exception {
 		return ontologyMetadataManager
 				.findLatestOntologyVersionByOboFoundryId(oboFoundryId);
 	}
@@ -294,7 +295,7 @@ public class OntologyServiceMetadataImpl extends AbstractOntologyService
 	 * 
 	 * @return list of Ontology beans
 	 */
-	public List<OntologyBean> findLatestOntologyVersions() {
+	public List<OntologyBean> findLatestOntologyVersions() throws Exception {
 		return ontologyMetadataManager.findLatestOntologyVersions();
 	}
 
@@ -304,7 +305,8 @@ public class OntologyServiceMetadataImpl extends AbstractOntologyService
 	 * @return the list of ontology beans corresponding to the latest version of
 	 *         each ontology
 	 */
-	public List<OntologyBean> findLatestAutoPulledOntologyVersions() {
+	public List<OntologyBean> findLatestAutoPulledOntologyVersions()
+			throws Exception {
 		return ontologyMetadataManager.findLatestAutoPulledOntologyVersions();
 	}
 
@@ -340,7 +342,7 @@ public class OntologyServiceMetadataImpl extends AbstractOntologyService
 	}
 
 	public List<OntologyBean> searchOntologyMetadata(String query,
-			boolean includeViews) {
+			boolean includeViews) throws Exception {
 		// TODO check if we want separate metadata search for
 		// ontologies and view
 		return ontologyMetadataManager.searchOntologyMetadata(query,
@@ -360,7 +362,8 @@ public class OntologyServiceMetadataImpl extends AbstractOntologyService
 
 	// ******************** view specific methods ********************
 
-	public List<OntologyBean> findLatestActiveOntologyViewVersions() {
+	public List<OntologyBean> findLatestActiveOntologyViewVersions()
+			throws Exception {
 		return ontologyMetadataManager.findLatestActiveOntologyViewVersions();
 	}
 
@@ -377,14 +380,14 @@ public class OntologyServiceMetadataImpl extends AbstractOntologyService
 	 * 
 	 * @return list of Ontology view beans
 	 */
-	public List<OntologyBean> findLatestOntologyViewVersions() {
+	public List<OntologyBean> findLatestOntologyViewVersions() throws Exception {
 		return ontologyMetadataManager.findLatestOntologyViewVersions();
 	}
 
 	/**
 	 * Programmatically reloads the metadata ontology stored in the memory
 	 */
-	public void reloadMetadataOntology() {
+	public void reloadMetadataOntology() throws Exception {
 		ontologyMetadataManager.reloadMetadataOWLModel();
 	}
 
