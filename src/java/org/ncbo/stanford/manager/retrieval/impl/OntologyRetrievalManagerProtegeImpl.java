@@ -14,6 +14,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.ncbo.stanford.bean.OntologyBean;
 import org.ncbo.stanford.bean.concept.ClassBean;
+import org.ncbo.stanford.enumeration.ConceptTypeEnum;
 import org.ncbo.stanford.manager.AbstractOntologyManagerProtege;
 import org.ncbo.stanford.manager.retrieval.OntologyRetrievalManager;
 import org.ncbo.stanford.util.constants.ApplicationConstants;
@@ -67,6 +68,10 @@ public class OntologyRetrievalManagerProtegeImpl extends
 	public ClassBean findRootConcept(OntologyBean ontologyVersion, boolean light) {
 		KnowledgeBase kb = getKnowledgeBase(ontologyVersion);
 		Slot synonymSlot = getSynonymSlot(kb, ontologyVersion.getSynonymSlot());
+		Slot definitionSlot = getDefinitionSlot(kb, ontologyVersion
+				.getDocumentationSlot());
+		Slot authorSlot = getAuthorSlot(kb, ontologyVersion.getAuthorSlot());
+
 		ClassBean targetClass = null;
 
 		// Get all root nodes associated with this ontology. Then iterate
@@ -77,7 +82,8 @@ public class OntologyRetrievalManagerProtegeImpl extends
 			if (light) {
 				targetClass = buildLightConcept(oThing);
 			} else {
-				targetClass = createClassBean(oThing, true, synonymSlot);
+				targetClass = createClassBean(oThing, true, synonymSlot,
+						definitionSlot, authorSlot);
 			}
 		}
 
@@ -88,56 +94,71 @@ public class OntologyRetrievalManagerProtegeImpl extends
 			String conceptId, boolean light) {
 		KnowledgeBase kb = getKnowledgeBase(ontologyVersion);
 		Slot synonymSlot = getSynonymSlot(kb, ontologyVersion.getSynonymSlot());
+		Slot definitionSlot = getDefinitionSlot(kb, ontologyVersion
+				.getDocumentationSlot());
+		Slot authorSlot = getAuthorSlot(kb, ontologyVersion.getAuthorSlot());
 		Frame owlClass = getFrame(conceptId, kb);
 		ClassBean targetClass = null;
 
 		if (owlClass != null) {
 			if (!(owlClass instanceof Cls)) {
 				targetClass = createBaseClassBean(owlClass);
-				targetClass.setIsBrowsable(ApplicationConstants.FALSE);
 			} else if (light) {
 				targetClass = buildLightConcept((Cls) owlClass);
 			} else {
-				targetClass = createClassBean((Cls) owlClass, true, synonymSlot);
+				targetClass = createClassBean((Cls) owlClass, true,
+						synonymSlot, definitionSlot, authorSlot);
 			}
 		}
 
 		return targetClass;
 	}
 
-	@Override
 	public Iterator<ClassBean> listAllClasses(OntologyBean ob) throws Exception {
 		KnowledgeBase kb = getKnowledgeBase(ob);
 		final Slot synonymSlot = getSynonymSlot(kb, ob.getSynonymSlot());
+		final Slot definitionSlot = getDefinitionSlot(kb, ob
+				.getDocumentationSlot());
+		final Slot authorSlot = getAuthorSlot(kb, ob.getAuthorSlot());
 		ArrayList<Cls> allClasses = new ArrayList<Cls>();
-		
+
 		if (kb instanceof OWLModel) {
 			// RDF/OWL format
-			Iterator clsIt = ((OWLModel)kb).listOWLNamedClasses();
-			for (; clsIt.hasNext(); ) {
-				RDFSClass cls = (RDFSClass)clsIt.next();
+			Iterator clsIt = ((OWLModel) kb).listOWLNamedClasses();
+			for (; clsIt.hasNext();) {
+				RDFSClass cls = (RDFSClass) clsIt.next();
 				if (!cls.isSystem()) {
 					allClasses.add(cls);
 				}
-			}			
+			}
 		} else {
 			// Protege format
 			Collection clses = kb.getClses();
-			for (Iterator clsIt = clses.iterator(); clsIt.hasNext(); ) {
-				Cls cls = (Cls)clsIt.next();
+			for (Iterator clsIt = clses.iterator(); clsIt.hasNext();) {
+				Cls cls = (Cls) clsIt.next();
 				if (!cls.isSystem()) {
 					allClasses.add(cls);
 				}
 			}
 		}
-		// There could be very many classes in the results.  Hopefully clients
-		// to this method will use them one at a time.  So inflate ClassBean objects
+		// There could be very many classes in the results. Hopefully clients
+		// to this method will use them one at a time. So inflate ClassBean
+		// objects
 		// one at a time.
 		final Iterator<Cls> resultIt = allClasses.iterator();
 		return new Iterator<ClassBean>() {
-			public boolean hasNext() { return resultIt.hasNext(); }
-			public ClassBean next() { return createClassBean(resultIt.next(), true, synonymSlot); }
-			public void remove() { throw new UnsupportedOperationException(); }
+			public boolean hasNext() {
+				return resultIt.hasNext();
+			}
+
+			public ClassBean next() {
+				return createClassBean(resultIt.next(), true, synonymSlot,
+						definitionSlot, authorSlot);
+			}
+
+			public void remove() {
+				throw new UnsupportedOperationException();
+			}
 		};
 	}
 
@@ -210,9 +231,8 @@ public class OntologyRetrievalManagerProtegeImpl extends
 		Cls previousNode = null;
 
 		for (Object nodeObj : nodes) {
-			ClassBean clsBean = new ClassBean();
 			Cls node = (Cls) nodeObj;
-			clsBean.setId(getId(node));
+			ClassBean clsBean = createBaseClassBean(node);
 
 			if (currentBean != null) {
 				if (light) {
@@ -261,14 +281,14 @@ public class OntologyRetrievalManagerProtegeImpl extends
 	}
 
 	private List<ClassBean> convertClasses(Collection<Cls> protegeClses,
-			boolean recursive, Slot synonymSlot,
-			Map<Cls, ClassBean> recursionMap) {
+			boolean recursive, Slot synonymSlot, Slot definitionSlot,
+			Slot authorSlot, Map<Cls, ClassBean> recursionMap) {
 		List<ClassBean> beans = new ArrayList<ClassBean>();
 
 		for (Cls cls : protegeClses) {
 			if (cls.isVisible()) {
 				beans.add(createClassBean(cls, recursive, synonymSlot,
-						recursionMap));
+						definitionSlot, authorSlot, recursionMap));
 			}
 		}
 
@@ -293,17 +313,28 @@ public class OntologyRetrievalManagerProtegeImpl extends
 		classBean.setFullId(frame.getName());
 		classBean.setLabel(getBrowserText(frame));
 
+		ConceptTypeEnum protegeType = ConceptTypeEnum.CONCEPT_TYPE_INDIVIDUAL;
+
+		if (frame instanceof Cls) {
+			protegeType = ConceptTypeEnum.CONCEPT_TYPE_CLASS;
+		} else if (frame instanceof Slot) {
+			protegeType = ConceptTypeEnum.CONCEPT_TYPE_PROPERTY;
+		}
+
+		classBean.setType(protegeType);
+
 		return classBean;
 	}
 
 	private ClassBean createClassBean(Cls cls, boolean recursive,
-			Slot synonymSlot) {
-		return createClassBean(cls, recursive, synonymSlot,
-				new HashMap<Cls, ClassBean>());
+			Slot synonymSlot, Slot definitionSlot, Slot authorSlot) {
+		return createClassBean(cls, recursive, synonymSlot, definitionSlot,
+				authorSlot, new HashMap<Cls, ClassBean>());
 	}
 
 	private ClassBean createClassBean(Cls cls, boolean recursive,
-			Slot synonymSlot, Map<Cls, ClassBean> recursionMap) {
+			Slot synonymSlot, Slot definitionSlot, Slot authorSlot,
+			Map<Cls, ClassBean> recursionMap) {
 		if (recursionMap.containsKey(cls)) {
 			return recursionMap.get(cls);
 		}
@@ -311,6 +342,10 @@ public class OntologyRetrievalManagerProtegeImpl extends
 		boolean isOwl = cls.getKnowledgeBase() instanceof OWLModel;
 
 		ClassBean classBean = createBaseClassBean(cls);
+		addSynonyms(cls, synonymSlot, classBean);
+		addDefinitions(cls, definitionSlot, classBean);
+		addAuthors(cls, authorSlot, classBean);
+
 		recursionMap.put(cls, classBean);
 
 		// add properties
@@ -359,19 +394,10 @@ public class OntologyRetrievalManagerProtegeImpl extends
 		classBean.addRelation(ApplicationConstants.CHILD_COUNT, subclasses
 				.size());
 
-		// Adds synonyms to a constant
-		// 2/23/09 Had to change method signatures for createClass() and its
-		// related methods
-		if (synonymSlot != null) {
-			classBean.addRelation(ApplicationConstants.SYNONYM, cls
-					.getOwnSlotValues(synonymSlot));
-		}
-
 		if (recursive) {
-			classBean
-					.addRelation(ApplicationConstants.SUB_CLASS,
-							convertClasses(subclasses, false, synonymSlot,
-									recursionMap));
+			classBean.addRelation(ApplicationConstants.SUB_CLASS,
+					convertClasses(subclasses, false, synonymSlot,
+							definitionSlot, authorSlot, recursionMap));
 
 			// add superclasses
 			if (cls instanceof OWLNamedClass) {
@@ -383,17 +409,73 @@ public class OntologyRetrievalManagerProtegeImpl extends
 
 			classBean.addRelation(ApplicationConstants.SUPER_CLASS,
 					convertClasses(superclasses, false, synonymSlot,
-							recursionMap));
+							definitionSlot, authorSlot, recursionMap));
 		}
 
 		// add RDF type
 		if (cls instanceof OWLNamedClass) {
 			classBean.addRelation(ApplicationConstants.RDF_TYPE,
 					convertClasses(getUniqueClasses(((OWLNamedClass) cls)
-							.getRDFTypes()), false, synonymSlot, recursionMap));
+							.getRDFTypes()), false, synonymSlot,
+							definitionSlot, authorSlot, recursionMap));
 		}
 
 		return classBean;
+	}
+
+	private void addSynonyms(Cls cls, Slot synonymSlot, ClassBean classBean) {
+		if (synonymSlot != null) {
+			Collection<?> synonyms = cls.getOwnSlotValues(synonymSlot);
+
+			for (Object synonym : synonyms) {
+				String synonymStr;
+
+				if (synonym instanceof Frame) {
+					synonymStr = ((Frame) synonym).getBrowserText();
+				} else {
+					synonymStr = synonym.toString();
+				}
+
+				classBean.addSynonym(synonymStr);
+			}
+		}
+	}
+
+	private void addDefinitions(Cls cls, Slot definitionSlot,
+			ClassBean classBean) {
+		if (definitionSlot != null) {
+			Collection<?> definitions = cls.getOwnSlotValues(definitionSlot);
+
+			for (Object definition : definitions) {
+				String definitionStr;
+
+				if (definition instanceof Frame) {
+					definitionStr = ((Frame) definition).getBrowserText();
+				} else {
+					definitionStr = definition.toString();
+				}
+
+				classBean.addDefinition(definitionStr);
+			}
+		}
+	}
+
+	private void addAuthors(Cls cls, Slot authorSlot, ClassBean classBean) {
+		if (authorSlot != null) {
+			Collection<?> authors = cls.getOwnSlotValues(authorSlot);
+
+			for (Object author : authors) {
+				String authorStr;
+
+				if (author instanceof Frame) {
+					authorStr = ((Frame) author).getBrowserText();
+				} else {
+					authorStr = author.toString();
+				}
+
+				classBean.addAuthor(authorStr);
+			}
+		}
 	}
 
 	private List getUniqueClasses(Collection classes) {
@@ -419,13 +501,15 @@ public class OntologyRetrievalManagerProtegeImpl extends
 		// add properties
 		for (Slot slot : slots) {
 			// Why not just call getOwnSlotValues?
-			// In the RDF (OWL) case, the values may be RDFSLiteral objects, and when you get those back
-			// via getOwnSlotValues, they mix in the language tag, e.g. "~#en".  
-			// So instead fetch those values via getPropertyValues, and the RDFSLiteral will do the right
+			// In the RDF (OWL) case, the values may be RDFSLiteral objects, and
+			// when you get those back
+			// via getOwnSlotValues, they mix in the language tag, e.g. "~#en".
+			// So instead fetch those values via getPropertyValues, and the
+			// RDFSLiteral will do the right
 			// thing later when you call toString on it.
-			Collection classes = (isOwl && slot instanceof RDFProperty && concept instanceof RDFResource) ? 
-									((RDFResource) concept).getPropertyValues((RDFProperty) slot) :
-									concept.getOwnSlotValues(slot);
+			Collection classes = (isOwl && slot instanceof RDFProperty && concept instanceof RDFResource) ? ((RDFResource) concept)
+					.getPropertyValues((RDFProperty) slot)
+					: concept.getOwnSlotValues(slot);
 			List vals = getUniqueClasses(classes);
 
 			if (vals.isEmpty()) {

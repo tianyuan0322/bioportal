@@ -1,11 +1,12 @@
 package org.ncbo.stanford.bean.concept;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-import org.ncbo.stanford.util.constants.ApplicationConstants;
+import org.ncbo.stanford.enumeration.ConceptTypeEnum;
 
 /**
  * Abstract class that represents the base bean for any ontology concept (class,
@@ -20,7 +21,12 @@ public abstract class AbstractConceptBean {
 	protected String fullId;
 	protected String label;
 	protected Byte isTopLevel;
-	protected Byte isBrowsable = new Byte(ApplicationConstants.TRUE);
+	protected ConceptTypeEnum type;
+	protected List<String> synonyms;
+	protected List<String> definitions;
+	protected List<String> authors;
+	protected Byte isObsolete = null;
+
 	protected HashMap<Object, Object> relations = new HashMap<Object, Object>();
 
 	/**
@@ -195,87 +201,116 @@ public abstract class AbstractConceptBean {
 	}
 
 	/**
-	 * @return the isBrowsable
+	 * @return the synonyms
 	 */
-	public Byte getIsBrowsable() {
-		return isBrowsable;
+	public List<String> getSynonyms() {
+		return synonyms;
 	}
 
 	/**
-	 * @param isBrowsable
-	 *            the isBrowsable to set
+	 * @param synonyms
+	 *            the synonyms to set
 	 */
-	public void setIsBrowsable(Byte isBrowsable) {
-		this.isBrowsable = isBrowsable;
+	public void setSynonyms(List<String> synonyms) {
+		this.synonyms = synonyms;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see java.lang.Object#hashCode()
+	/**
+	 * @return the definitions
 	 */
-	@Override
-	public int hashCode() {
-		final int prime = 31;
-		int result = 1;
-		result = prime * result + ((fullId == null) ? 0 : fullId.hashCode());
-		result = prime * result + ((id == null) ? 0 : id.hashCode());
-		result = prime * result
-				+ ((isBrowsable == null) ? 0 : isBrowsable.hashCode());
-		result = prime * result
-				+ ((isTopLevel == null) ? 0 : isTopLevel.hashCode());
-		result = prime * result + ((label == null) ? 0 : label.hashCode());
-		result = prime
-				* result
-				+ ((ontologyVersionId == null) ? 0 : ontologyVersionId
-						.hashCode());
-		return result;
+	public List<String> getDefinitions() {
+		return definitions;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see java.lang.Object#equals(java.lang.Object)
+	/**
+	 * @return the authors
 	 */
-	@Override
-	public boolean equals(Object obj) {
-		if (this == obj)
-			return true;
-		if (obj == null)
-			return false;
-		if (getClass() != obj.getClass())
-			return false;
-		final AbstractConceptBean other = (AbstractConceptBean) obj;
-		if (fullId == null) {
-			if (other.fullId != null)
-				return false;
-		} else if (!fullId.equals(other.fullId))
-			return false;
-		if (id == null) {
-			if (other.id != null)
-				return false;
-		} else if (!id.equals(other.id))
-			return false;
-		if (isBrowsable == null) {
-			if (other.isBrowsable != null)
-				return false;
-		} else if (!isBrowsable.equals(other.isBrowsable))
-			return false;
-		if (isTopLevel == null) {
-			if (other.isTopLevel != null)
-				return false;
-		} else if (!isTopLevel.equals(other.isTopLevel))
-			return false;
-		if (label == null) {
-			if (other.label != null)
-				return false;
-		} else if (!label.equals(other.label))
-			return false;
-		if (ontologyVersionId == null) {
-			if (other.ontologyVersionId != null)
-				return false;
-		} else if (!ontologyVersionId.equals(other.ontologyVersionId))
-			return false;
-		return true;
+	public List<String> getAuthors() {
+		return authors;
+	}
+
+	/**
+	 * @param definitions
+	 *            the definitions to set
+	 */
+	public void setDefinitions(List<String> definitions) {
+		this.definitions = definitions;
+	}
+
+	/**
+	 * @param authors
+	 *            the authors to set
+	 */
+	public void setAuthors(List<String> authors) {
+		this.authors = authors;
+	}
+
+	/**
+	 * @param arg0
+	 * @return
+	 * @see java.util.List#add(java.lang.Object)
+	 */
+	public boolean addSynonym(String arg0) {
+		if (synonyms == null) {
+			synonyms = new ArrayList<String>(1);
+		}
+
+		return synonyms.add(arg0);
+	}
+
+	/**
+	 * @param arg0
+	 * @return
+	 * @see java.util.List#add(java.lang.Object)
+	 */
+	public boolean addDefinition(String arg0) {
+		if (definitions == null) {
+			definitions = new ArrayList<String>(1);
+		}
+
+		return definitions.add(arg0);
+	}
+
+	/**
+	 * @param arg0
+	 * @return
+	 * @see java.util.List#add(java.lang.Object)
+	 */
+	public boolean addAuthor(String arg0) {
+		if (authors == null) {
+			authors = new ArrayList<String>(1);
+		}
+
+		return authors.add(arg0);
+	}
+
+	/**
+	 * @return the isObsolete
+	 */
+	public Byte getIsObsolete() {
+		return isObsolete;
+	}
+
+	/**
+	 * @param isObsolete
+	 *            the isObsolete to set
+	 */
+	public void setIsObsolete(Byte isObsolete) {
+		this.isObsolete = isObsolete;
+	}
+
+	/**
+	 * @return the type
+	 */
+	public ConceptTypeEnum getType() {
+		return type;
+	}
+
+	/**
+	 * @param type
+	 *            the type to set
+	 */
+	public void setType(ConceptTypeEnum type) {
+		this.type = type;
 	}
 }

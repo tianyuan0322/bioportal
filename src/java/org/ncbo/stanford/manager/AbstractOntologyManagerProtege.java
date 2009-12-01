@@ -18,17 +18,15 @@ import edu.stanford.smi.protege.model.Cls;
 import edu.stanford.smi.protege.model.KnowledgeBase;
 import edu.stanford.smi.protege.model.Project;
 import edu.stanford.smi.protege.model.Slot;
-import edu.stanford.smi.protege.model.framestore.MergingNarrowFrameStore;
-import edu.stanford.smi.protege.model.framestore.NarrowFrameStore;
 import edu.stanford.smi.protege.storage.database.DatabaseKnowledgeBaseFactory;
 import edu.stanford.smi.protegex.owl.database.OWLDatabaseKnowledgeBaseFactory;
+import edu.stanford.smi.protegex.owl.database.creator.OwlDatabaseCreator;
 import edu.stanford.smi.protegex.owl.model.OWLModel;
 import edu.stanford.smi.protegex.owl.repository.Repository;
 import edu.stanford.smi.protegex.owl.repository.impl.LocalFolderRepository;
 import edu.stanford.smi.protegex.owl.swrl.model.SWRLFactory;
 import edu.stanford.smi.protegex.owl.swrl.sqwrl.SQWRLQueryEngine;
 import edu.stanford.smi.protegex.owl.swrl.sqwrl.SQWRLQueryEngineFactory;
-import edu.stanford.smi.protegex.owl.swrl.sqwrl.exceptions.SQWRLException;
 
 /**
  * Abstract class to incorporate functionality common between Protege loader and
@@ -74,7 +72,7 @@ public abstract class AbstractOntologyManagerProtege {
 	/**
 	 * Programmatically reloads the metadata ontology stored in the memory
 	 */
-	public void reloadMetadataOWLModel() {
+	public void reloadMetadataOWLModel() throws Exception {
 		if (log.isDebugEnabled()) {
 			log.debug("Reloading metadata...");
 		}
@@ -117,6 +115,42 @@ public abstract class AbstractOntologyManagerProtege {
 		return slot;
 	}
 
+	protected Slot getDefinitionSlot(KnowledgeBase kb, String definitionSlotName) {
+		Slot slot = null;
+
+		if (!StringHelper.isNullOrNullString(definitionSlotName)) {
+			slot = kb instanceof OWLModel ? ((OWLModel) kb)
+					.getRDFProperty(definitionSlotName) : kb
+					.getSlot(definitionSlotName);
+		}
+
+		if (slot == null) {
+			slot = kb instanceof OWLModel ? ((OWLModel) kb)
+					.getRDFProperty(OntologyBean.DEFAULT_DEFINITION_SLOT) : kb
+					.getSystemFrames().getDocumentationSlot();
+		}
+
+		return slot;
+	}
+
+	protected Slot getAuthorSlot(KnowledgeBase kb, String authorSlotName) {
+		Slot slot = null;
+
+		if (!StringHelper.isNullOrNullString(authorSlotName)) {
+			slot = kb instanceof OWLModel ? ((OWLModel) kb)
+					.getRDFProperty(authorSlotName) : kb
+					.getSlot(authorSlotName);
+		}
+
+		if (slot == null) {
+			slot = kb instanceof OWLModel ? ((OWLModel) kb)
+					.getRDFProperty(OntologyBean.DEFAULT_AUTHOR_SLOT) : kb
+					.getSystemFrames().getCreatorSlot();
+		}
+
+		return slot;
+	}
+
 	private void setBrowserSlotByPreferredNameSlot(KnowledgeBase kb,
 			Slot preferredNameSlot) {
 		Set<Cls> types = new HashSet<Cls>();
@@ -151,6 +185,8 @@ public abstract class AbstractOntologyManagerProtege {
 		synchronized (protegeKnowledgeBases) {
 			kb = (KnowledgeBase) protegeKnowledgeBases.get(ontology.getId());
 		}
+
+		kb = null;
 
 		if (kb == null) {
 			kb = createKnowledgeBaseInstance(ontology);
@@ -215,47 +251,34 @@ public abstract class AbstractOntologyManagerProtege {
 	 * Gets the Metadata ontology instance
 	 */
 	@SuppressWarnings("unchecked")
-	private OWLModel createMetadataKnowledgeBaseInstance() {
-		// TODO this solution is a temporary hack.
-		// We should use the creator after migration to Protege 3.4.1
-		// start...
-		DatabaseKnowledgeBaseFactory factory = new OWLDatabaseKnowledgeBaseFactory();
-
+	private OWLModel createMetadataKnowledgeBaseInstance() throws Exception {
 		List errors = new ArrayList();
-		Project project = Project.createBuildProject(factory, errors);
-		DatabaseKnowledgeBaseFactory.setSources(project.getSources(),
-				protegeJdbcDriver, protegeJdbcUrl, METADATA_TABLE_NAME,
-				protegeJdbcUsername, protegeJdbcPassword);
-		project.createDomainKnowledgeBase(factory, errors, false);
-		KnowledgeBase kb = project.getKnowledgeBase();
-		OWLModel owlModel = (OWLModel) kb;
 		Repository repository = new LocalFolderRepository(new File(MessageUtils
-				.getMessage("bioportal.metadata.includes.path")), true);
-		owlModel.getRepositoryManager().addProjectRepository(repository);
-
-		MergingNarrowFrameStore mnfs = MergingNarrowFrameStore.get(owlModel);
-		owlModel.setGenerateEventsEnabled(false);
-		NarrowFrameStore nfs = factory.createNarrowFrameStore("<new>");
-		mnfs.addActiveFrameStore(nfs);
-		factory.loadKnowledgeBase(owlModel, project.getSources(), errors);
-		owlModel.setGenerateEventsEnabled(true);
+				.getMessage("bioportal.metadata.includes.path")));
+		OwlDatabaseCreator creator = new OwlDatabaseCreator(false);
+		creator.setDriver(protegeJdbcDriver);
+		creator.setUsername(protegeJdbcUsername);
+		creator.setPassword(protegeJdbcPassword);
+		creator.setURL(protegeJdbcUrl);
+		creator.setTable(METADATA_TABLE_NAME);
+		creator.addRepository(repository);
+		creator.create(errors);
+		OWLModel owlModel = creator.getOwlModel();
 		owlModel.setChanged(false);
-		project.getInternalProjectKnowledgeBase().setChanged(false);
-		// end
 
 		if (!errors.isEmpty()) {
-			log.error("Errors during Protege metadata project creation: "
+			log.error("Errors during creation of Protege metadata OWL model: "
 					+ errors);
 		}
 
 		if (log.isDebugEnabled()) {
-			log.debug("Created new metadata knowledgebase: " + kb.getName());
+			log.debug("Created new metadata model: " + owlModel.getName());
 		}
 
 		return owlModel;
 	}
 
-	public OWLModel getMetadataOWLModel() {
+	public OWLModel getMetadataOWLModel() throws Exception {
 		synchronized (createOwlModelLock) {
 			if (owlModel == null) {
 				owlModel = createMetadataKnowledgeBaseInstance();
@@ -265,13 +288,13 @@ public abstract class AbstractOntologyManagerProtege {
 		return owlModel;
 	}
 
-	protected SQWRLQueryEngine getMetadataSQWRLEngine() throws SQWRLException {
+	protected SQWRLQueryEngine getMetadataSQWRLEngine() throws Exception {
 		OWLModel owlModel = getMetadataOWLModel();
 
 		return SQWRLQueryEngineFactory.create(owlModel);
 	}
 
-	protected SWRLFactory getMetadataSWRLFactory() throws SQWRLException {
+	protected SWRLFactory getMetadataSWRLFactory() throws Exception {
 		OWLModel owlModel = getMetadataOWLModel();
 
 		return new SWRLFactory(owlModel);
