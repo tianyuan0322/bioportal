@@ -140,7 +140,7 @@ public class ConceptServiceImpl implements ConceptService {
 		return path;
 	}
 
-	@SuppressWarnings( { "unchecked", "unused" })
+	@SuppressWarnings("unchecked")
 	private void removeExtraSiblingsOneIteration(
 			ArrayList<ClassBean> subClasses, String conceptId,
 			Integer parentChildCount, Integer maxNumChildren) {
