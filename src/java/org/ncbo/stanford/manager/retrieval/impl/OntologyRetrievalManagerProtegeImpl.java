@@ -80,7 +80,8 @@ public class OntologyRetrievalManagerProtegeImpl extends
 
 		if (oThing != null) {
 			if (light) {
-				targetClass = buildLightConcept(oThing);
+				targetClass = buildLightConcept(oThing, synonymSlot,
+						definitionSlot, authorSlot);
 			} else {
 				targetClass = createClassBean(oThing, true, synonymSlot,
 						definitionSlot, authorSlot);
@@ -104,7 +105,8 @@ public class OntologyRetrievalManagerProtegeImpl extends
 			if (!(owlClass instanceof Cls)) {
 				targetClass = createBaseClassBean(owlClass);
 			} else if (light) {
-				targetClass = buildLightConcept((Cls) owlClass);
+				targetClass = buildLightConcept((Cls) owlClass, synonymSlot,
+						definitionSlot, authorSlot);
 			} else {
 				targetClass = createClassBean((Cls) owlClass, true,
 						synonymSlot, definitionSlot, authorSlot);
@@ -216,8 +218,13 @@ public class OntologyRetrievalManagerProtegeImpl extends
 		return frame;
 	}
 
-	private ClassBean buildLightConcept(Cls cls) {
+	private ClassBean buildLightConcept(Cls cls, Slot synonymSlot,
+			Slot definitionSlot, Slot authorSlot) {
 		ClassBean targetClass = createLightClassBean(cls);
+		addSynonyms(cls, synonymSlot, targetClass);
+		addDefinitions(cls, definitionSlot, targetClass);
+		addAuthors(cls, authorSlot, targetClass);
+
 		List<ClassBean> children = convertLightBeans(getUniqueClasses(cls
 				.getDirectSubclasses()));
 		targetClass.addRelation(ApplicationConstants.SUB_CLASS, children);
