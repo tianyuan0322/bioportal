@@ -218,12 +218,6 @@
 		<property name="metricsService">
 			<ref bean="metricsService" />
 		</property>
-		<property name="ontologyFormatHandlerMap">
-			<ref bean="ontologyFormatHandlerMap" />
-		</property>
-		<property name="ontologyMetricsHandlerMap">
-			<ref bean="ontologyMetricsHandlerMap" />
-		</property>
 	</bean>
 
 	<bean id="ontologyDownloadRestlet"
@@ -346,6 +340,9 @@
 						</entry>
 						<entry key="/ontologies/versions/{ontologyid}">
 							<ref local="ontologyVersionsRestlet" />
+						</entry>
+						<entry key="/ontologies/metrics/">
+							<ref local="ontologyMetricsRestlet" />
 						</entry>
 						<entry key="/ontologies/metrics/{ontologyversionid}">
 							<ref local="ontologyMetricsRestlet" />
