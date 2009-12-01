@@ -98,14 +98,17 @@ public class OntologyRetrievalManagerLexGridImpl extends
 	public ClassBean findRootConcept(OntologyBean ontologyBean, boolean light)
 			throws Exception {
 		String schemeName = getLexGridCodingSchemeName(ontologyBean);
+		
 		if (StringUtils.isBlank(schemeName)) {
 			log
 					.warn("Can not process request when the codingSchemeURI is blank");
 			return null;
 		}
+		
 		CodingSchemeVersionOrTag csvt = getLexGridCodingSchemeVersion(ontologyBean);
 		ResolvedConceptReferenceList rcrl = getHierarchyRootConcepts(
 				schemeName, csvt, light);
+		
 		return createThingClassBeanWithCount(rcrl);
 	}
 
@@ -114,16 +117,7 @@ public class OntologyRetrievalManagerLexGridImpl extends
 	 */
 	public ClassBean findRootConcept(OntologyBean ontologyBean)
 			throws Exception {
-		String schemeName = getLexGridCodingSchemeName(ontologyBean);
-		if (StringUtils.isBlank(schemeName)) {
-			log
-					.warn("Can not process request when the codingSchemeURI is blank");
-			return null;
-		}
-		CodingSchemeVersionOrTag csvt = getLexGridCodingSchemeVersion(ontologyBean);
-		ResolvedConceptReferenceList rcrl = getHierarchyRootConcepts(
-				schemeName, csvt, false);
-		return createThingClassBeanWithCount(rcrl);
+		return findRootConcept(ontologyBean, false);
 	}
 
 	/**
@@ -146,12 +140,14 @@ public class OntologyRetrievalManagerLexGridImpl extends
 		ResolvedConceptReferenceList matches = lbs.getCodingSchemeConcepts(
 				schemeName, csvt).restrictToStatus(ActiveOption.ALL, null)
 				.restrictToCodes(crefs).resolveToList(null, null, null, 1);
+		
 		// Analyze the result ...
 		if (matches.getResolvedConceptReferenceCount() > 0) {
 			ResolvedConceptReference rcr = (ResolvedConceptReference) matches
 					.enumerateResolvedConceptReference().nextElement();
 			return createClassBeanWithChildCount(rcr, false);
 		}
+		
 		return null;
 	}
 
@@ -191,11 +187,13 @@ public class OntologyRetrievalManagerLexGridImpl extends
 		log.debug("findLightConcept= " + conceptId);
 		long startTime = System.currentTimeMillis();
 		String schemeName = getLexGridCodingSchemeName(ontologyBean);
+		
 		if (StringUtils.isBlank(schemeName)) {
 			log
 					.warn("Can not process request when the codingSchemeURI is blank");
 			return null;
 		}
+		
 		if (StringUtils.isBlank(conceptId)) {
 			log.warn("Can not process request when the conceptId is blank");
 			return null;
@@ -204,6 +202,7 @@ public class OntologyRetrievalManagerLexGridImpl extends
 				ontologyBean, conceptId);
 		long endTime = System.currentTimeMillis();
 		log.debug("Time to resolve codednodeset=" + (endTime - startTime));
+		
 		// Analyze the result ...
 		if (rcr != null) {
 			// Add the children
@@ -332,7 +331,7 @@ public class OntologyRetrievalManagerLexGridImpl extends
 				try {
 					// Get a basic version of the LexBIG concept
 					ResolvedConceptReference rcr = rcrIt.next(); // throws
-																	// LBException
+					// LBException
 					// Get a fleshed out ClassBean
 					// This seems like an unfortunate hack -- I already hit the
 					// db to get the RCR object,
@@ -1215,60 +1214,81 @@ public class OntologyRetrievalManagerLexGridImpl extends
 	 * @param bean
 	 */
 	private void addConceptPropertyValueOld(Concept entry, ClassBean bean) {
-		HashMap<Object, Object> map = bean.getRelations();
-		Presentation p = null;
+		HashMap<Object, Object> relationMap = bean.getRelations();
+		// handle synonyms
+		addSynonyms(relationMap, entry, bean, false);
+		// handle comments
+		addComments(relationMap, entry, bean);
+		// handle definitions
+		addDefinitions(relationMap, entry, bean);
+		// handle concept properties
+		addProperties(relationMap, entry, bean);
+	}
+
+	private void addSynonyms(HashMap<Object, Object> relationMap,
+			Concept entry, ClassBean bean, boolean light) {
 		int count = entry.getPresentationCount();
 
 		for (int i = 0; i < count; i++) {
-			p = entry.getPresentation(i);
+			Presentation p = entry.getPresentation(i);
+
 			if (!p.getIsPreferred().booleanValue()) {
 				// Add a abstraction for getting all the Synonyms..gforge #1351
 				bean.addSynonym(p.getValue().getContent());
 
-				if (StringUtils.isNotBlank(p.getDegreeOfFidelity())) {
-					String key = p.getDegreeOfFidelity() + " SYNONYM";
-					addStringToHashMapsArrayList(map, key, p.getValue()
-							.getContent());
-				} else if (StringUtils.isNotBlank(p.getRepresentationalForm())) {
-					String key = "SYNONYM " + p.getRepresentationalForm();
-					addStringToHashMapsArrayList(map, key, p.getValue()
-							.getContent());
-				} else {
-					addStringToHashMapsArrayList(map, "SYNONYM", p.getValue()
-							.getContent());
+				if (!light) {
+					if (StringUtils.isNotBlank(p.getDegreeOfFidelity())) {
+						String key = p.getDegreeOfFidelity() + " SYNONYM";
+						addStringToHashMapsArrayList(relationMap, key, p
+								.getValue().getContent());
+					} else if (StringUtils.isNotBlank(p
+							.getRepresentationalForm())) {
+						String key = "SYNONYM " + p.getRepresentationalForm();
+						addStringToHashMapsArrayList(relationMap, key, p
+								.getValue().getContent());
+					} else {
+						addStringToHashMapsArrayList(relationMap, "SYNONYM", p
+								.getValue().getContent());
+					}
 				}
 			}
 		}
+	}
 
-		// handle comment
-		Comment c = null;
-		count = entry.getCommentCount();
+	private void addComments(HashMap<Object, Object> relationMap,
+			Concept entry, ClassBean bean) {
+		int count = entry.getCommentCount();
+
 		for (int i = 0; i < count; i++) {
-			c = entry.getComment(i);
-			addStringToHashMapsArrayList(map, "Comment", c.getValue()
+			Comment c = entry.getComment(i);
+			addStringToHashMapsArrayList(relationMap, "Comment", c.getValue()
 					.getContent());
 		}
+	}
 
-		// handle definitions
-		Definition d = null;
-		count = entry.getDefinitionCount();
+	private void addDefinitions(HashMap<Object, Object> relationMap,
+			Concept entry, ClassBean bean) {
+		int count = entry.getDefinitionCount();
+
 		for (int i = 0; i < count; i++) {
-			d = entry.getDefinition(i);
+			Definition d = entry.getDefinition(i);
 			bean.addDefinition(d.getValue().getContent());
 		}
+	}
 
-		// handle concept properties
-		Property prop = null;
-		count = entry.getPropertyCount();
+	private void addProperties(HashMap<Object, Object> relationMap,
+			Concept entry, ClassBean bean) {
+		int count = entry.getPropertyCount();
+
 		for (int i = 0; i < count; i++) {
-			prop = entry.getProperty(i);
+			Property prop = entry.getProperty(i);
 			String key = prop.getPropertyName();
+
 			if (StringUtils.isNotBlank(key)) {
-				addStringToHashMapsArrayList(map, key, prop.getValue()
+				addStringToHashMapsArrayList(relationMap, key, prop.getValue()
 						.getContent());
 			}
 		}
-
 	}
 
 	@SuppressWarnings("unchecked")
