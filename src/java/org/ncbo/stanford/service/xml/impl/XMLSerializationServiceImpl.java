@@ -34,6 +34,7 @@ import org.ncbo.stanford.bean.response.ErrorStatusBean;
 import org.ncbo.stanford.bean.response.SuccessBean;
 import org.ncbo.stanford.bean.search.OntologyHitBean;
 import org.ncbo.stanford.bean.search.SearchBean;
+import org.ncbo.stanford.enumeration.ConceptTypeEnum;
 import org.ncbo.stanford.enumeration.ErrorTypeEnum;
 import org.ncbo.stanford.service.xml.XMLSerializationService;
 import org.ncbo.stanford.service.xml.converters.OntologyHitMapConverter;
@@ -53,6 +54,7 @@ import org.w3c.dom.NodeList;
 import org.w3c.dom.Text;
 
 import com.thoughtworks.xstream.XStream;
+import com.thoughtworks.xstream.converters.enums.EnumSingleValueConverter;
 import com.thoughtworks.xstream.io.xml.TraxSource;
 
 /**
@@ -450,6 +452,8 @@ public class XMLSerializationServiceImpl implements XMLSerializationService {
 				xmlSerializer.getMapper()));
 		xmlSerializer.registerConverter(new SearchResultListBeanConverter(
 				xmlSerializer.getMapper()));
+		xmlSerializer.registerConverter(new EnumSingleValueConverter(
+				ConceptTypeEnum.class));
 	}
 
 	/**
