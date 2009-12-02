@@ -364,6 +364,13 @@ public class OntologyRetrievalManagerProtegeImpl extends
 			slots = cls.getOwnSlots();
 		}
 
+		// remove slots already defined as properties of the bean
+		Set<Slot> reservedSlots = new HashSet<Slot>(3);
+		reservedSlots.add(synonymSlot);
+		reservedSlots.add(definitionSlot);
+		reservedSlots.add(authorSlot);
+		slots.removeAll(reservedSlots);
+
 		classBean.addRelations(convertProperties(cls, slots, isOwl));
 
 		// add subclasses
