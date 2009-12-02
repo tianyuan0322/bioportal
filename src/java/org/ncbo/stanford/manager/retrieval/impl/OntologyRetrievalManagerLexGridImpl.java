@@ -1034,13 +1034,13 @@ public class OntologyRetrievalManagerLexGridImpl extends
 	 */
 	private String getPreferredPresentation(Concept entry) {
 		Presentation[] presentations = entry.getPresentation();
-		
+
 		for (int i = 0; i < presentations.length; i++) {
 			if (presentations[i].getIsPreferred().booleanValue()) {
 				return presentations[i].getValue().getContent();
 			}
 		}
-		
+
 		return "";
 	}
 
@@ -1080,7 +1080,7 @@ public class OntologyRetrievalManagerLexGridImpl extends
 		addAssociationListInfoToClassBean(list, current_classBean,
 				hierarchy_relationName, includeChildren);
 		classBeans.add(current_classBean);
-		
+
 		return classBeans;
 	}
 
@@ -1141,7 +1141,7 @@ public class OntologyRetrievalManagerLexGridImpl extends
 								.getSourceOf().getAssociationCount() == 0))) {
 					includeChildren = false;
 				}
-				
+
 				ResolvedConceptReference rcr_without_relations = getResolvedConceptReferenceWithoutRelations(assocConcept);
 				ClassBean classBean = createClassBeanWithChildCount(
 						rcr_without_relations, countMap, includeChildren);
@@ -1153,7 +1153,7 @@ public class OntologyRetrievalManagerLexGridImpl extends
 
 				// Find and recurse printing for next batch ...
 				AssociationList nextLevel = assocConcept.getSourceOf();
-				
+
 				if (nextLevel != null && nextLevel.getAssociationCount() != 0) {
 					for (int j = 0; j < nextLevel.getAssociationCount(); j++) {
 						addAssociationInfoToClassBean(nextLevel
@@ -1209,7 +1209,7 @@ public class OntologyRetrievalManagerLexGridImpl extends
 
 		if (value != null && value instanceof ArrayList) {
 			ArrayList valueList = (ArrayList) value;
-			
+
 			if (!valueList.isEmpty() && valueList.get(0) instanceof ClassBean) {
 				List<ClassBean> list = mergeListsEliminatingDuplicates(
 						(ArrayList<ClassBean>) value, beanlist);
@@ -1247,9 +1247,9 @@ public class OntologyRetrievalManagerLexGridImpl extends
 				}
 			}
 		}
-		
+
 		srcList.addAll(addOverideList);
-		
+
 		return srcList;
 	}
 
@@ -1353,14 +1353,18 @@ public class OntologyRetrievalManagerLexGridImpl extends
 			for (Object key : classBean.getRelations().keySet()) {
 				if (key instanceof String) {
 					String keyString = (String) key;
-					if (keyString.equals(ApplicationConstants.SUB_CLASS))
+
+					if (keyString.equals(ApplicationConstants.SUB_CLASS)) {
 						continue;
+					}
+
 					Object value_obj = classBean.getRelations().get(keyString);
 					// We only want to add the association information. So we
 					// check for List of classbeans and add only those.
 					if (value_obj != null && value_obj instanceof List) {
 						List value_list = (List) value_obj;
 						List<ClassBean> newClasses = new ArrayList<ClassBean>();
+
 						for (Object element_obj : value_list) {
 							if (element_obj instanceof ClassBean) {
 								ClassBean classB = (ClassBean) element_obj;
@@ -1368,6 +1372,7 @@ public class OntologyRetrievalManagerLexGridImpl extends
 								newClasses.add(newClassB);
 							}
 						}
+
 						if (!newClasses.isEmpty()) {
 							cb.addRelation(keyString, newClasses);
 						}
