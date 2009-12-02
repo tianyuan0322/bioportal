@@ -16,7 +16,7 @@ import org.ncbo.stanford.bean.concept.ClassBean;
  */
 public interface OntologyRetrievalManager {
 	public ClassBean findConcept(OntologyBean ob, String conceptId,
-			boolean light) throws Exception;
+			boolean light, boolean noRelations) throws Exception;
 
 	public ClassBean findRootConcept(OntologyBean ob, boolean light)
 			throws Exception;

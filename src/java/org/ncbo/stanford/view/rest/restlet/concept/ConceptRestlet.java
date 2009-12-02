@@ -6,6 +6,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.ncbo.stanford.bean.OntologyVersionIdBean;
 import org.ncbo.stanford.exception.ConceptNotFoundException;
+import org.ncbo.stanford.exception.InvalidInputException;
 import org.ncbo.stanford.exception.OntologyNotFoundException;
 import org.ncbo.stanford.service.concept.ConceptService;
 import org.ncbo.stanford.util.MessageUtils;
@@ -50,6 +51,8 @@ public class ConceptRestlet extends AbstractBaseRestlet {
 				.getParameter(RequestParamConstants.PARAM_LIMIT);
 		String light = (String) httpRequest
 				.getParameter(RequestParamConstants.PARAM_LIGHT);
+		String noRelations = (String) httpRequest
+				.getParameter(RequestParamConstants.PARAM_NORELATIONS);
 
 		String conceptId = getConceptId(request);
 		Integer maxNumChildrenInt = RequestUtils
@@ -57,12 +60,13 @@ public class ConceptRestlet extends AbstractBaseRestlet {
 		Integer offsetInt = RequestUtils.parseIntegerParam(offset);
 		Integer limitInt = RequestUtils.parseIntegerParam(limit);
 		Boolean lightBool = RequestUtils.parseBooleanParam(light);
+		Boolean noRelationsBool = RequestUtils.parseBooleanParam(noRelations);
 
 		try {
 			Integer ontologyVersionIdInt = Integer.parseInt(ontologyVersionId);
 
 			if (StringHelper.isNullOrNullString(conceptId)) {
-				throw new ConceptNotFoundException(MessageUtils
+				throw new InvalidInputException(MessageUtils
 						.getMessage("msg.error.conceptidrequired"));
 			} else if (conceptId
 					.equalsIgnoreCase(RequestParamConstants.PARAM_ROOT_CONCEPT)) {
@@ -78,20 +82,24 @@ public class ConceptRestlet extends AbstractBaseRestlet {
 			} else {
 				// specific concept
 				concept = conceptService.findConcept(ontologyVersionIdInt,
-						conceptId, maxNumChildrenInt, lightBool);
+						conceptId, maxNumChildrenInt, lightBool,
+						noRelationsBool);
 			}
 
 			if (concept == null) {
 				response.setStatus(Status.CLIENT_ERROR_NOT_FOUND, MessageUtils
 						.getMessage("msg.error.conceptNotFound"));
 			}
-		} catch (ConceptNotFoundException e) {
+		} catch (InvalidInputException e) {
 			response.setStatus(Status.CLIENT_ERROR_BAD_REQUEST, e.getMessage());
 		} catch (NumberFormatException nfe) {
 			response.setStatus(Status.CLIENT_ERROR_BAD_REQUEST, nfe
 					.getMessage());
 		} catch (OntologyNotFoundException onfe) {
 			response.setStatus(Status.CLIENT_ERROR_BAD_REQUEST, onfe
+					.getMessage());
+		} catch (ConceptNotFoundException cnfe) {
+			response.setStatus(Status.CLIENT_ERROR_BAD_REQUEST, cnfe
 					.getMessage());
 		} catch (Exception e) {
 			response.setStatus(Status.SERVER_ERROR_INTERNAL, e.getMessage());

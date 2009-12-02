@@ -21,7 +21,8 @@ public interface ConceptService {
 			Integer maxNumChildren, boolean light) throws Exception;
 
 	public ClassBean findConcept(Integer ontologyVersionId, String conceptId,
-			Integer maxNumChildren, boolean light) throws Exception;
+			Integer maxNumChildren, boolean light, boolean noRelations)
+			throws Exception;
 
 	public ClassBean findPathFromRoot(Integer ontologyVersionId,
 			String conceptId, boolean light, Integer maxNumChildren)

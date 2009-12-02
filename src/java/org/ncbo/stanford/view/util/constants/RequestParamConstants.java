@@ -45,6 +45,7 @@ public interface RequestParamConstants {
 	 */
 	public static final String PARAM_CONCEPT_ID = "conceptid";
 	public static final String PARAM_MAXNUMCHILDREN = "maxnumchildren";
+	public static final String PARAM_NORELATIONS = "norelations";
 
 	/**
 	 * Path Restlet parameters

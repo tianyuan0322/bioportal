@@ -38,8 +38,10 @@ public class ConceptServiceImpl implements ConceptService {
 	private static final String DUMMY_CONCEPT_ID = "0";
 	private static final String DUMMY_CONCEPT_LABEL = "*** Too many children...";
 
-	protected Map<String, String> ontologyFormatHandlerMap = new HashMap<String, String>(0);
-	protected Map<String, OntologyRetrievalManager> ontologyRetrievalHandlerMap = new HashMap<String, OntologyRetrievalManager>(0);
+	protected Map<String, String> ontologyFormatHandlerMap = new HashMap<String, String>(
+			0);
+	protected Map<String, OntologyRetrievalManager> ontologyRetrievalHandlerMap = new HashMap<String, OntologyRetrievalManager>(
+			0);
 	protected OBSManager obsManager;
 	protected OntologyMetadataManager ontologyMetadataManager;
 
@@ -77,7 +79,8 @@ public class ConceptServiceImpl implements ConceptService {
 
 	@SuppressWarnings("unchecked")
 	public ClassBean findConcept(Integer ontologyVersionId, String conceptId,
-			Integer maxNumChildren, boolean light) throws Exception {
+			Integer maxNumChildren, boolean light, boolean noRelations)
+			throws Exception {
 		OntologyBean ontology = ontologyMetadataManager
 				.findOntologyOrViewVersionById(ontologyVersionId);
 
@@ -88,7 +91,7 @@ public class ConceptServiceImpl implements ConceptService {
 		}
 
 		ClassBean concept = getRetrievalManager(ontology).findConcept(ontology,
-				conceptId, light);
+				conceptId, light, noRelations);
 
 		// temporary fix to remove long list of siblings
 		if (concept != null && maxNumChildren != null) {

@@ -6,6 +6,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.ncbo.stanford.bean.OntologyBean;
 import org.ncbo.stanford.bean.OntologyIdBean;
+import org.ncbo.stanford.exception.ConceptNotFoundException;
 import org.ncbo.stanford.exception.OntologyNotFoundException;
 import org.ncbo.stanford.service.concept.ConceptService;
 import org.ncbo.stanford.service.ontology.OntologyService;
@@ -53,10 +54,17 @@ public class VirtualUriRestlet extends AbstractBaseRestlet {
 				.getParameter(RequestParamConstants.PARAM_OFFSET);
 		String limit = (String) httpRequest
 				.getParameter(RequestParamConstants.PARAM_LIMIT);
+		String light = (String) httpRequest
+				.getParameter(RequestParamConstants.PARAM_LIGHT);
+		String noRelations = (String) httpRequest
+				.getParameter(RequestParamConstants.PARAM_NORELATIONS);
+
 		Integer maxNumChildrenInt = RequestUtils
 				.parseIntegerParam(maxNumChildren);
 		Integer offsetInt = RequestUtils.parseIntegerParam(offset);
 		Integer limitInt = RequestUtils.parseIntegerParam(limit);
+		Boolean lightBool = RequestUtils.parseBooleanParam(light);
+		Boolean noRelationsBool = RequestUtils.parseBooleanParam(noRelations);
 
 		try {
 			Integer ontologyIdInt = Integer.parseInt(ontologyId);
@@ -70,9 +78,8 @@ public class VirtualUriRestlet extends AbstractBaseRestlet {
 					// ontology or for a view
 					// we could return more appropriate message (i.e.
 					// "msg.error.ontologyViewNotFound")
-					response.setStatus(Status.CLIENT_ERROR_NOT_FOUND,
-							MessageUtils
-									.getMessage("msg.error.ontologyNotFound"));
+					throw new OntologyNotFoundException(MessageUtils
+							.getMessage("msg.error.ontologyNotFound"));
 				}
 			} else {
 				OntologyBean ontBean = ontologyService
@@ -83,9 +90,8 @@ public class VirtualUriRestlet extends AbstractBaseRestlet {
 					// ontology or for a view
 					// we could return more appropriate message (i.e.
 					// "msg.error.ontologyViewNotFound")
-					response.setStatus(Status.CLIENT_ERROR_NOT_FOUND,
-							MessageUtils
-									.getMessage("msg.error.ontologyNotFound"));
+					throw new OntologyNotFoundException(MessageUtils
+							.getMessage("msg.error.ontologyNotFound"));
 				} else {
 					if (conceptId
 							.equalsIgnoreCase(RequestParamConstants.PARAM_ROOT_CONCEPT)) {
@@ -98,7 +104,8 @@ public class VirtualUriRestlet extends AbstractBaseRestlet {
 								limitInt);
 					} else {
 						returnObject = conceptService.findConcept(ontBean
-								.getId(), conceptId, maxNumChildrenInt, false);
+								.getId(), conceptId, maxNumChildrenInt,
+								lightBool, noRelationsBool);
 					}
 
 					if (returnObject == null) {
@@ -113,6 +120,8 @@ public class VirtualUriRestlet extends AbstractBaseRestlet {
 		} catch (OntologyNotFoundException onfe) {
 			response.setStatus(Status.CLIENT_ERROR_BAD_REQUEST, onfe
 					.getMessage());
+		} catch (ConceptNotFoundException e) {
+			response.setStatus(Status.CLIENT_ERROR_BAD_REQUEST, e.getMessage());
 		} catch (Exception e) {
 			response.setStatus(Status.SERVER_ERROR_INTERNAL, e.getMessage());
 			e.printStackTrace();

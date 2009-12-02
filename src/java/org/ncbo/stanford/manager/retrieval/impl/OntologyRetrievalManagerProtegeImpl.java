@@ -80,7 +80,7 @@ public class OntologyRetrievalManagerProtegeImpl extends
 
 		if (oThing != null) {
 			if (light) {
-				targetClass = buildLightConcept(oThing, synonymSlot,
+				targetClass = buildConceptLight(oThing, synonymSlot,
 						definitionSlot, authorSlot);
 			} else {
 				targetClass = createClassBean(oThing, true, synonymSlot,
@@ -92,7 +92,7 @@ public class OntologyRetrievalManagerProtegeImpl extends
 	}
 
 	public ClassBean findConcept(OntologyBean ontologyVersion,
-			String conceptId, boolean light) {
+			String conceptId, boolean light, boolean noRelations) {
 		KnowledgeBase kb = getKnowledgeBase(ontologyVersion);
 		Slot synonymSlot = getSynonymSlot(kb, ontologyVersion.getSynonymSlot());
 		Slot definitionSlot = getDefinitionSlot(kb, ontologyVersion
@@ -104,8 +104,11 @@ public class OntologyRetrievalManagerProtegeImpl extends
 		if (owlClass != null) {
 			if (!(owlClass instanceof Cls)) {
 				targetClass = createBaseClassBean(owlClass);
+			} else if (noRelations) {
+				targetClass = buildConceptNoRelations((Cls) owlClass,
+						synonymSlot, definitionSlot, authorSlot);
 			} else if (light) {
-				targetClass = buildLightConcept((Cls) owlClass, synonymSlot,
+				targetClass = buildConceptLight((Cls) owlClass, synonymSlot,
 						definitionSlot, authorSlot);
 			} else {
 				targetClass = createClassBean((Cls) owlClass, true,
@@ -129,6 +132,7 @@ public class OntologyRetrievalManagerProtegeImpl extends
 			Iterator clsIt = ((OWLModel) kb).listOWLNamedClasses();
 			for (; clsIt.hasNext();) {
 				RDFSClass cls = (RDFSClass) clsIt.next();
+
 				if (!cls.isSystem()) {
 					allClasses.add(cls);
 				}
@@ -136,8 +140,10 @@ public class OntologyRetrievalManagerProtegeImpl extends
 		} else {
 			// Protege format
 			Collection clses = kb.getClses();
+
 			for (Iterator clsIt = clses.iterator(); clsIt.hasNext();) {
 				Cls cls = (Cls) clsIt.next();
+
 				if (!cls.isSystem()) {
 					allClasses.add(cls);
 				}
@@ -218,16 +224,27 @@ public class OntologyRetrievalManagerProtegeImpl extends
 		return frame;
 	}
 
-	private ClassBean buildLightConcept(Cls cls, Slot synonymSlot,
+	private ClassBean buildConceptLight(Cls cls, Slot synonymSlot,
 			Slot definitionSlot, Slot authorSlot) {
-		ClassBean targetClass = createLightClassBean(cls);
-		addSynonyms(cls, synonymSlot, targetClass);
-		addDefinitions(cls, definitionSlot, targetClass);
-		addAuthors(cls, authorSlot, targetClass);
+		ClassBean targetClass = buildConceptNoRelations(cls, synonymSlot,
+				definitionSlot, authorSlot);
+
+		targetClass.addRelation(ApplicationConstants.CHILD_COUNT,
+				getUniqueClasses(cls.getDirectSubclasses()).size());
 
 		List<ClassBean> children = convertLightBeans(getUniqueClasses(cls
 				.getDirectSubclasses()));
 		targetClass.addRelation(ApplicationConstants.SUB_CLASS, children);
+
+		return targetClass;
+	}
+
+	private ClassBean buildConceptNoRelations(Cls cls, Slot synonymSlot,
+			Slot definitionSlot, Slot authorSlot) {
+		ClassBean targetClass = createBaseClassBean(cls);
+		addSynonyms(cls, synonymSlot, targetClass);
+		addDefinitions(cls, definitionSlot, targetClass);
+		addAuthors(cls, authorSlot, targetClass);
 
 		return targetClass;
 	}
@@ -280,7 +297,10 @@ public class OntologyRetrievalManagerProtegeImpl extends
 
 		for (Cls cls : protegeClses) {
 			if (cls.isVisible()) {
-				beans.add(createLightClassBean(cls));
+				ClassBean classBean = createBaseClassBean(cls);
+				classBean.addRelation(ApplicationConstants.CHILD_COUNT,
+						getUniqueClasses(cls.getDirectSubclasses()).size());
+				beans.add(classBean);
 			}
 		}
 
@@ -304,14 +324,6 @@ public class OntologyRetrievalManagerProtegeImpl extends
 
 	private String getBrowserText(Frame frame) {
 		return StringHelper.unSingleQuote(frame.getBrowserText());
-	}
-
-	private ClassBean createLightClassBean(Cls cls) {
-		ClassBean classBean = createBaseClassBean(cls);
-		classBean.addRelation(ApplicationConstants.CHILD_COUNT,
-				getUniqueClasses(cls.getDirectSubclasses()).size());
-
-		return classBean;
 	}
 
 	private ClassBean createBaseClassBean(Frame frame) {
