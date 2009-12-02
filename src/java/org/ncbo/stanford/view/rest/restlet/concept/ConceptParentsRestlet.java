@@ -19,7 +19,6 @@ import org.restlet.data.Status;
 
 public class ConceptParentsRestlet extends AbstractBaseRestlet {
 
-	@SuppressWarnings("unused")
 	private static final Log log = LogFactory
 			.getLog(ConceptParentsRestlet.class);
 

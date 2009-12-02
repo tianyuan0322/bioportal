@@ -8,7 +8,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.ncbo.stanford.bean.OntologyVersionIdBean;
 import org.ncbo.stanford.bean.concept.ClassBean;
-import org.ncbo.stanford.exception.InvalidParameterException;
+import org.ncbo.stanford.exception.InvalidInputException;
 import org.ncbo.stanford.service.concept.ConceptService;
 import org.ncbo.stanford.util.MessageUtils;
 import org.ncbo.stanford.util.RequestUtils;
@@ -21,7 +21,6 @@ import org.restlet.data.Status;
 
 public class ConceptSiblingsRestlet extends AbstractBaseRestlet {
 
-	@SuppressWarnings("unused")
 	private static final Log log = LogFactory
 			.getLog(ConceptSiblingsRestlet.class);
 
@@ -52,17 +51,18 @@ public class ConceptSiblingsRestlet extends AbstractBaseRestlet {
 
 		try {
 			if (StringHelper.isNullOrNullString(level)) {
-				throw new InvalidParameterException(
-						"No level parameter specified");
+				throw new InvalidInputException("No level parameter specified");
 			}
 
 			if (levelInt == null) {
-				throw new InvalidParameterException(
+				throw new InvalidInputException(
 						"Invalid level parameter specified");
 			}
 
 			siblings = conceptService.findSiblings(new OntologyVersionIdBean(
 					ontologyVersionId), conceptId, levelInt, offsetInt);
+		} catch (InvalidInputException e) {
+			response.setStatus(Status.CLIENT_ERROR_BAD_REQUEST, e.getMessage());
 		} catch (Exception e) {
 			response.setStatus(Status.SERVER_ERROR_INTERNAL, e.getMessage());
 			e.printStackTrace();
