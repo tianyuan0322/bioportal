@@ -17,7 +17,6 @@ import org.ncbo.stanford.util.constants.ApplicationConstants;
 public class DumpRDFServiceImpl extends ConceptServiceImpl implements DumpRDFService {
 	
 	public static final String XREF_RELATION_NAME = "xref";
-	public static final String DEFN_RELATION_NAME = "Definition"; // Temporary guess!
 
 	public String generateRDFDump(Integer ontologyVersionID) throws Exception {
 		OntologyBean ontoBean = 
@@ -46,7 +45,7 @@ public class DumpRDFServiceImpl extends ConceptServiceImpl implements DumpRDFSer
 		output.append("<http://bio2rdf.org/"+id+"> <http://bio2rdf.org/ns/obo#name> \""+name+"\" .\n");
 
 		// Definition
-		ArrayList<String> defns = (ArrayList<String>)classBean.getRelation((Object)DEFN_RELATION_NAME);
+		ArrayList<String> defns = (ArrayList<String>)classBean.getDefinitions();
 		if (defns != null) {
 			for (String defn: defns) {
 				output.append("<http://bio2rdf.org/"+id+"> <http://bio2rdf.org/ns/obo#definition> \""+defn+"\" .\n");
