@@ -18,7 +18,6 @@ import org.restlet.data.Status;
 
 public class MetaDataSearchRestlet extends AbstractBaseRestlet {
 
-	@SuppressWarnings("unused")
 	private static final Log log = LogFactory
 			.getLog(MetaDataSearchRestlet.class);
 	private OntologyService ontologyService;

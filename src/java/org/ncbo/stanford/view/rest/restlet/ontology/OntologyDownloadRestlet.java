@@ -51,7 +51,7 @@ public class OntologyDownloadRestlet extends AbstractOntologyBaseRestlet {
 						.getFilenames()));
 
 				if (splitFilename == null) {
-					response.setStatus(Status.SERVER_ERROR_INTERNAL,
+					response.setStatus(Status.CLIENT_ERROR_NOT_FOUND,
 							"No file found for ontology "
 									+ ontologyBean.getDisplayLabel() + " (Id: "
 									+ ontologyBean.getId() + ")");

@@ -5,6 +5,7 @@ import javax.servlet.http.HttpServletRequest;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.ncbo.stanford.bean.concept.ClassBean;
+import org.ncbo.stanford.exception.InvalidInputException;
 import org.ncbo.stanford.exception.OntologyNotFoundException;
 import org.ncbo.stanford.service.concept.ConceptService;
 import org.ncbo.stanford.util.MessageUtils;
@@ -55,13 +56,12 @@ public class PathRestlet extends AbstractBaseRestlet {
 		Boolean lightBool = RequestUtils.parseBooleanParam(light);
 		Integer maxNumChildrenInt = RequestUtils
 				.parseIntegerParam(maxNumChildren);
-
-		if (StringHelper.isNullOrNullString(source)
-				|| StringHelper.isNullOrNullString(target)) {
-			response.setStatus(Status.CLIENT_ERROR_BAD_REQUEST, MessageUtils
-					.getMessage("msg.error.sourcetargetrequired"));
-		} else {
-			try {
+		try {
+			if (StringHelper.isNullOrNullString(source)
+					|| StringHelper.isNullOrNullString(target)) {
+				throw new InvalidInputException(MessageUtils
+						.getMessage("msg.error.sourcetargetrequired"));
+			} else {
 				Integer ontologyVersionIdInt = Integer
 						.parseInt(ontologyVersionId);
 
@@ -81,20 +81,22 @@ public class PathRestlet extends AbstractBaseRestlet {
 							MessageUtils
 									.getMessage("msg.error.conceptNotFound"));
 				}
-			} catch (NumberFormatException nfe) {
-				response.setStatus(Status.CLIENT_ERROR_BAD_REQUEST, nfe
-						.getMessage());
-			} catch (OntologyNotFoundException onfe) {
-				response.setStatus(Status.CLIENT_ERROR_BAD_REQUEST, onfe
-						.getMessage());
-			} catch (Exception e) {
-				e.printStackTrace();
-				response.setStatus(Status.CLIENT_ERROR_BAD_REQUEST, e
-						.getMessage());
-			} finally {
-				xmlSerializationService.generateXMLResponse(request, response,
-						concept);
 			}
+		} catch (NumberFormatException nfe) {
+			response.setStatus(Status.CLIENT_ERROR_BAD_REQUEST, nfe
+					.getMessage());
+		} catch (InvalidInputException nfe) {
+			response.setStatus(Status.CLIENT_ERROR_BAD_REQUEST, nfe
+					.getMessage());
+		} catch (OntologyNotFoundException onfe) {
+			response
+					.setStatus(Status.CLIENT_ERROR_NOT_FOUND, onfe.getMessage());
+		} catch (Exception e) {
+			e.printStackTrace();
+			response.setStatus(Status.CLIENT_ERROR_BAD_REQUEST, e.getMessage());
+		} finally {
+			xmlSerializationService.generateXMLResponse(request, response,
+					concept);
 		}
 	}
 

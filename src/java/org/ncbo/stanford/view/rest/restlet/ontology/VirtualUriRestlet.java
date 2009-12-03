@@ -109,8 +109,8 @@ public class VirtualUriRestlet extends AbstractBaseRestlet {
 					}
 
 					if (returnObject == null) {
-						response.setStatus(Status.CLIENT_ERROR_NOT_FOUND,
-								"Concept not found");
+						throw new ConceptNotFoundException(MessageUtils
+								.getMessage("msg.error.conceptNotFound"));
 					}
 				}
 			}
@@ -118,10 +118,10 @@ public class VirtualUriRestlet extends AbstractBaseRestlet {
 			response.setStatus(Status.CLIENT_ERROR_BAD_REQUEST, nfe
 					.getMessage());
 		} catch (OntologyNotFoundException onfe) {
-			response.setStatus(Status.CLIENT_ERROR_BAD_REQUEST, onfe
-					.getMessage());
+			response
+					.setStatus(Status.CLIENT_ERROR_NOT_FOUND, onfe.getMessage());
 		} catch (ConceptNotFoundException e) {
-			response.setStatus(Status.CLIENT_ERROR_BAD_REQUEST, e.getMessage());
+			response.setStatus(Status.CLIENT_ERROR_NOT_FOUND, e.getMessage());
 		} catch (Exception e) {
 			response.setStatus(Status.SERVER_ERROR_INTERNAL, e.getMessage());
 			e.printStackTrace();

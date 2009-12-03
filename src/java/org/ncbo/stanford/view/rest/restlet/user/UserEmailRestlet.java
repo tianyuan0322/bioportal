@@ -3,6 +3,7 @@ package org.ncbo.stanford.view.rest.restlet.user;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.ncbo.stanford.bean.UserBean;
+import org.ncbo.stanford.exception.UserNotFoundException;
 import org.ncbo.stanford.service.user.UserService;
 import org.ncbo.stanford.util.MessageUtils;
 import org.ncbo.stanford.view.rest.restlet.AbstractBaseRestlet;
@@ -38,9 +39,12 @@ public class UserEmailRestlet extends AbstractBaseRestlet {
 
 			// if user is not found, set Error in the Status object
 			if (userBean == null || userBean.getId() == null) {
-				response.setStatus(Status.CLIENT_ERROR_NOT_FOUND, MessageUtils
+				throw new UserNotFoundException(MessageUtils
 						.getMessage("msg.error.userNotFound"));
 			}
+		} catch (UserNotFoundException unfe) {
+			response
+					.setStatus(Status.CLIENT_ERROR_NOT_FOUND, unfe.getMessage());
 		} catch (Exception e) {
 			response.setStatus(Status.SERVER_ERROR_INTERNAL, e.getMessage());
 			e.printStackTrace();

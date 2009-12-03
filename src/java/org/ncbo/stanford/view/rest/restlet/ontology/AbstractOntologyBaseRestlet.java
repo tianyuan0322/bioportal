@@ -4,6 +4,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.ncbo.stanford.bean.OntologyBean;
 import org.ncbo.stanford.exception.InvalidInputException;
+import org.ncbo.stanford.exception.OntologyNotFoundException;
 import org.ncbo.stanford.service.ontology.OntologyService;
 import org.ncbo.stanford.util.MessageUtils;
 import org.ncbo.stanford.util.RequestUtils;
@@ -63,11 +64,14 @@ public abstract class AbstractOntologyBaseRestlet extends AbstractBaseRestlet {
 				// ontology or for a view
 				// we could return more appropriate message (i.e.
 				// "msg.error.ontologyViewNotFound")
-				response.setStatus(Status.CLIENT_ERROR_NOT_FOUND, MessageUtils
+				throw new OntologyNotFoundException(MessageUtils
 						.getMessage("msg.error.ontologyNotFound"));
 			}
 		} catch (InvalidInputException e) {
 			response.setStatus(Status.CLIENT_ERROR_BAD_REQUEST, e.getMessage());
+		} catch (OntologyNotFoundException onfe) {
+			response
+					.setStatus(Status.CLIENT_ERROR_NOT_FOUND, onfe.getMessage());
 		} catch (Exception e) {
 			response.setStatus(Status.SERVER_ERROR_INTERNAL, e.getMessage());
 			e.printStackTrace();

@@ -8,6 +8,7 @@ import javax.servlet.http.HttpServletRequest;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.ncbo.stanford.bean.search.SearchBean;
+import org.ncbo.stanford.exception.InvalidInputException;
 import org.ncbo.stanford.service.search.QuerySearchService;
 import org.ncbo.stanford.util.MessageUtils;
 import org.ncbo.stanford.util.RequestUtils;
@@ -89,9 +90,8 @@ public class QueryRestlet extends AbstractBaseRestlet {
 			// in as a parameter
 			if (!StringHelper.isNullOrNullString(subtreeRootConceptId)
 					&& ontologyIdsInt.size() != 1) {
-				response.setStatus(Status.CLIENT_ERROR_BAD_REQUEST,
-						MessageUtils
-								.getMessage("msg.error.branchsingleontology"));
+				throw new InvalidInputException(MessageUtils
+						.getMessage("msg.error.branchsingleontology"));
 			} else if (!StringHelper.isNullOrNullString(subtreeRootConceptId)) {
 				subtreeRootConceptId = URLDecoder.decode(subtreeRootConceptId,
 						MessageUtils.getMessage("default.encoding"));
@@ -100,6 +100,8 @@ public class QueryRestlet extends AbstractBaseRestlet {
 			searchResults = queryService.executeQuery(query, ontologyIdsInt,
 					includePropertiesBool, isExactMatchBool, pageSizeInt,
 					pageNumInt, maxNumHitsInt, subtreeRootConceptId);
+		} catch (InvalidInputException e) {
+			response.setStatus(Status.CLIENT_ERROR_BAD_REQUEST, e.getMessage());
 		} catch (Exception e) {
 			response.setStatus(Status.SERVER_ERROR_INTERNAL, e.getMessage());
 			e.printStackTrace();

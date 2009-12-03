@@ -87,7 +87,7 @@ public class ConceptRestlet extends AbstractBaseRestlet {
 			}
 
 			if (concept == null) {
-				response.setStatus(Status.CLIENT_ERROR_NOT_FOUND, MessageUtils
+				throw new ConceptNotFoundException(MessageUtils
 						.getMessage("msg.error.conceptNotFound"));
 			}
 		} catch (InvalidInputException e) {
@@ -96,10 +96,10 @@ public class ConceptRestlet extends AbstractBaseRestlet {
 			response.setStatus(Status.CLIENT_ERROR_BAD_REQUEST, nfe
 					.getMessage());
 		} catch (OntologyNotFoundException onfe) {
-			response.setStatus(Status.CLIENT_ERROR_BAD_REQUEST, onfe
+			response.setStatus(Status.CLIENT_ERROR_NOT_FOUND, onfe
 					.getMessage());
 		} catch (ConceptNotFoundException cnfe) {
-			response.setStatus(Status.CLIENT_ERROR_BAD_REQUEST, cnfe
+			response.setStatus(Status.CLIENT_ERROR_NOT_FOUND, cnfe
 					.getMessage());
 		} catch (Exception e) {
 			response.setStatus(Status.SERVER_ERROR_INTERNAL, e.getMessage());

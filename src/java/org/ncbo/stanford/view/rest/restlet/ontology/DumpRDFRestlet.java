@@ -25,8 +25,7 @@ public class DumpRDFRestlet extends AbstractBaseRestlet {
 		generateRDF(request, response);
 	}
 
-	private void generateRDF(Request request, Response response) {
-		
+	private void generateRDF(Request request, Response response) {		
 		// Pick the ontology version off of the URL
 		String ontologyVersionId = 
 			(String)request.getAttributes().get(MessageUtils.getMessage("entity.ontologyversionid"));
@@ -44,7 +43,7 @@ public class DumpRDFRestlet extends AbstractBaseRestlet {
 			response.setStatus(Status.CLIENT_ERROR_BAD_REQUEST, nfe.getMessage());
 			xmlSerializationService.generateStatusXMLResponse(request, response);
 		} catch (OntologyNotFoundException onfe) {
-			response.setStatus(Status.CLIENT_ERROR_BAD_REQUEST, onfe.getMessage());
+			response.setStatus(Status.CLIENT_ERROR_NOT_FOUND, onfe.getMessage());
 			xmlSerializationService.generateStatusXMLResponse(request, response);
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -53,12 +52,10 @@ public class DumpRDFRestlet extends AbstractBaseRestlet {
 		}
 	}	
 	
-	
 	/**
 	 * Setter for Spring IoC
 	 */
 	public void setDumpRDFService(DumpRDFService dumpRDFService) {
 		this.dumpRDFService = dumpRDFService;
 	}
-
 }
