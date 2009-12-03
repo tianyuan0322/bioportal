@@ -53,7 +53,7 @@ public class DumpRDFServiceImpl extends ConceptServiceImpl implements DumpRDFSer
 		}
 		
 		// Synonyms
-		ArrayList<String> synonyms = (ArrayList<String>)classBean.getRelation((Object)ApplicationConstants.SYNONYM);
+		ArrayList<String> synonyms = (ArrayList<String>)classBean.getSynonyms();
 		if (synonyms != null) {
 			for (String synonym: synonyms) {
 				if (!synonym.equals(name)) {

@@ -77,8 +77,7 @@ public class OBSManagerImpl implements OBSManager {
 				populateBaseClassBean(obsConcept, concept);
 				concept.setLabel(obsConcept.getPreferredName());
 				concept.setIsTopLevel(obsConcept.getIsTopLevel());
-				concept.addRelation(ApplicationConstants.SYNONYM, obsConcept
-						.getSynonyms());
+				concept.setSynonyms(obsConcept.getSynonyms());				
 				concept.addRelation(ApplicationConstants.SEMANTIC_TYPES,
 						obsConcept.getSemanticTypes());
 				allConcepts.add(concept);
