@@ -137,7 +137,7 @@ public class OntologyRetrievalManagerLexGridImpl extends
 
 		return concept;
 	}
-
+	
 	private ClassBean findConceptNoRelations(OntologyBean ontologyBean,
 			String conceptId) throws Exception {
 		ClassBean classBean = null;
@@ -150,13 +150,13 @@ public class OntologyRetrievalManagerLexGridImpl extends
 			log.warn("Can not process request when the conceptId is blank");
 		} else {
 			CodingSchemeVersionOrTag csvt = getLexGridCodingSchemeVersion(ontologyBean);
-			ResolvedConceptReferenceList matches = lbs.getNodeGraph(schemeName,
-					csvt, null)
-					.resolveAsList(
-							ConvenienceMethods.createConceptReference(
-									conceptId, schemeName), true, true, 0, 1,
-							null, null, null, -1);
-
+			// Perform the query ...
+			ConceptReferenceList crefs = ConvenienceMethods
+					.createConceptReferenceList(new String[] { conceptId },
+							schemeName);
+			ResolvedConceptReferenceList matches = lbs.getCodingSchemeConcepts(
+					schemeName, csvt).restrictToCodes(crefs).resolveToList(null, null, null, 1);
+			
 			// Analyze the result ...
 			if (matches.getResolvedConceptReferenceCount() > 0) {
 				ResolvedConceptReference ref = (ResolvedConceptReference) matches
@@ -167,6 +167,8 @@ public class OntologyRetrievalManagerLexGridImpl extends
 
 		return classBean;
 	}
+
+
 
 	/**
 	 * Find just the concept with only the subClass relation populated. Makes
@@ -188,13 +190,14 @@ public class OntologyRetrievalManagerLexGridImpl extends
 		} else if (StringUtils.isBlank(conceptId)) {
 			log.warn("Can not process request when the conceptId is blank");
 		} else {
+			
 			CodingSchemeVersionOrTag csvt = getLexGridCodingSchemeVersion(ontologyBean);
-			ResolvedConceptReferenceList matches = lbs.getNodeGraph(schemeName,
-					csvt, null)
-					.resolveAsList(
-							ConvenienceMethods.createConceptReference(
-									conceptId, schemeName), true, true, 0, 1,
-							null, null, null, -1);
+			// Perform the query ...
+			ConceptReferenceList crefs = ConvenienceMethods
+					.createConceptReferenceList(new String[] { conceptId },
+							schemeName);
+			ResolvedConceptReferenceList matches = lbs.getCodingSchemeConcepts(
+					schemeName, csvt).restrictToCodes(crefs).resolveToList(null, null, null, 1);
 
 			// Analyze the result ...
 			if (matches.getResolvedConceptReferenceCount() > 0) {
@@ -325,7 +328,7 @@ public class OntologyRetrievalManagerLexGridImpl extends
 		// Fetch all concepts -- delay conversion to ClassBean
 		CodedNodeSet cns = lbs.getCodingSchemeConcepts(schemeName, csvt);
 		final ResolvedConceptReferencesIterator rcrIt = cns.resolve(null, null,
-				null, null, true);
+				null, null, false);
 
 		return new Iterator<ClassBean>() {
 			public boolean hasNext() {
