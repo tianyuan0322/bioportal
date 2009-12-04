@@ -3,7 +3,6 @@ package org.ncbo.stanford.manager.metrics.impl;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedList;
 
@@ -11,12 +10,14 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.ncbo.stanford.bean.OntologyBean;
 import org.ncbo.stanford.bean.OntologyMetricsBean;
+import org.ncbo.stanford.bean.OntologyMetricsProtegeCalculationBean;
+import org.ncbo.stanford.bean.OntologyMetricsProtegeCalculationBean.OwlQueueItem;
+import org.ncbo.stanford.bean.OntologyMetricsProtegeCalculationBean.QueueItem;
 import org.ncbo.stanford.manager.AbstractOntologyManagerProtege;
 import org.ncbo.stanford.manager.metrics.OntologyMetricsManager;
 
 import edu.stanford.smi.protege.model.Cls;
 import edu.stanford.smi.protege.model.FrameCounts;
-import edu.stanford.smi.protege.model.KnowledgeBase;
 import edu.stanford.smi.protege.model.Slot;
 import edu.stanford.smi.protegex.owl.model.OWLModel;
 import edu.stanford.smi.protegex.owl.model.RDFProperty;
@@ -32,31 +33,6 @@ import edu.stanford.smi.protegex.owl.model.util.ModelMetrics;
 public class OntologyMetricsManagerProtegeImpl extends
 		AbstractOntologyManagerProtege implements OntologyMetricsManager {
 
-	// Used in calculations
-	private KnowledgeBase kb;
-	private OntologyMetricsBean mb;
-	private int maxDepth, maxSiblings;
-	private HashMap<String, ArrayList<String>> conceptAuthors;
-	private ArrayList<String> noAuthorConcepts, xAnnotConcepts;
-	private String documentationProperty;
-	private String authorProperty;
-	private String annotationProperty;
-	private String propertyWithUniqueValue;
-	private int preferredMaximumSubclassLimit;
-	private ArrayList<String> oneSubClses;
-	private HashMap<String, Integer> xSubClses;
-	private ArrayList<String> noDocClses;
-
-	private LinkedList<OwlQueueItem> owlQueue;
-	private LinkedList<QueueItem> queue;
-	private HashMap<String, Integer> seenClasses;
-
-	// Counters for tracking classes in various metrics categories
-	private Integer noDocClsesTotal;
-	private Integer noAuthorConceptsTotal;
-	private Integer xAnnotConceptsTotal;
-	private Integer xSubClsesTotal;
-	private Integer oneSubClsesTotal;
 	// The number of classes to store for the above metrics categories.
 	// Classes found after this number will be counted but their names
 	// will not be added to the list.
@@ -70,124 +46,129 @@ public class OntologyMetricsManagerProtegeImpl extends
 	 */
 	public OntologyMetricsBean extractOntologyMetrics(OntologyBean ontologyBean)
 			throws Exception {
-		mb = new OntologyMetricsBean();
+		OntologyMetricsProtegeCalculationBean calcBean = new OntologyMetricsProtegeCalculationBean();
 
-		kb = getKnowledgeBase(ontologyBean);
-		documentationProperty = ontologyBean.getDocumentationSlot();
-		authorProperty = ontologyBean.getAuthorSlot();
-		propertyWithUniqueValue = ontologyBean.getSlotWithUniqueValue();
-		preferredMaximumSubclassLimit = (ontologyBean
-				.getPreferredMaximumSubclassLimit() == null ? GOOD_DESIGN_SUBCLASS_LIMIT
-				: ontologyBean.getPreferredMaximumSubclassLimit());
+		calcBean.setMb(new OntologyMetricsBean());
 
-		populateOntologyMetrics();
+		calcBean.setKb(getKnowledgeBase(ontologyBean));
+		calcBean.setDocumentationProperty(ontologyBean.getDocumentationSlot());
+		calcBean.setAuthorProperty(ontologyBean.getAuthorSlot());
+		calcBean.setPropertyWithUniqueValue(ontologyBean
+				.getSlotWithUniqueValue());
+		calcBean
+				.setPreferredMaximumSubclassLimit((ontologyBean
+						.getPreferredMaximumSubclassLimit() == null ? GOOD_DESIGN_SUBCLASS_LIMIT
+						: ontologyBean.getPreferredMaximumSubclassLimit()));
 
-		mb.setId(ontologyBean.getId());
-		return mb;
+		populateOntologyMetrics(calcBean);
+
+		calcBean.getMb().setId(ontologyBean.getId());
+		return calcBean.getMb();
 	}
 
 	/**
 	 * Determines if the ontology is OWL or Frame, calls appropriate analysis,
 	 * and handles common data.
 	 */
-	private void populateOntologyMetrics() {
-		oneSubClses = new ArrayList<String>();
-		xSubClses = new HashMap<String, Integer>();
-		noDocClses = new ArrayList<String>();
-
+	private void populateOntologyMetrics(
+			OntologyMetricsProtegeCalculationBean calcBean) {
 		// Initialize to default value, will be overwritten during traversal
-		maxDepth = 1;
+		calcBean.setMaxDepth(1);
 
-		if (kb instanceof OWLModel) {
-			owlBasicAnalysis();
+		if (calcBean.getKb() instanceof OWLModel) {
+			owlBasicAnalysis(calcBean);
 		} else {
-			basicAnalysis();
+			basicAnalysis(calcBean);
 		}
 
-		fillInCommonFields();
+		fillInCommonFields(calcBean);
 	}
 
 	/**
 	 * Calculates overall metrics and manages the queue of classes for
 	 * processing for OWL ontologies.
 	 */
-	private void owlBasicAnalysis() {
-		resetDefaultValues();
-
+	private void owlBasicAnalysis(OntologyMetricsProtegeCalculationBean calcBean) {
 		// do metrics calculations
-		ModelMetrics met = new ModelMetrics((OWLModel) kb);
+		ModelMetrics met = new ModelMetrics((OWLModel) calcBean.getKb());
+		
+		log.debug("Starting ModelMetrics calculation");
 		met.calculateMetrics();
-		// count classes
-		int clsCount = met.getNamedClassCount();
-		mb.setNumberOfClasses(clsCount);
-		// count instances
-		int instanceCount = met.getOwlIndividualCount();
-		mb.setNumberOfIndividuals(instanceCount);
-		// count properties
-		int propertyCount = met.getPropertyCount();
-		mb.setNumberOfProperties(propertyCount);
-		// calculate maximum depth
-		mb.setMaximumDepth(maxDepth);
-		// calculate average siblings
-		int avgSib = met.getMeanSiblings();
-		mb.setAverageNumberOfSiblings(avgSib);
-		// calculate max siblings
-		maxSiblings = met.getMaxSiblings();
-		mb.setMaximumNumberOfSiblings(maxSiblings);
 
 		// Add first item to queue and trigger processing
-		OwlQueueItem owlItem = new OwlQueueItem(((OWLModel) kb)
-				.getOWLThingClass(), 1);
-		owlQueue.addLast(owlItem);
-		while (!owlQueue.isEmpty()) {
-			if (seenClasses.size() % 1000 == 0)
-				log.debug("Processing class " + seenClasses.size());
-			OwlQueueItem currCls = owlQueue.remove();
-			owlClsIterate(currCls.nextCls, currCls.newDepth);
+		OwlQueueItem owlItem = calcBean.new OwlQueueItem(((OWLModel) calcBean
+				.getKb()).getOWLThingClass(), 1);
+		calcBean.getOwlQueue().addLast(owlItem);
+		while (!calcBean.getOwlQueue().isEmpty()) {
+			if (calcBean.getSeenClasses().size() % 1000 == 0)
+				log.debug("Processing class "
+						+ calcBean.getSeenClasses().size());
+			OwlQueueItem currCls = calcBean.getOwlQueue().remove();
+			owlClsIterate(calcBean, currCls.nextCls, currCls.newDepth);
 		}
+		
+		// count classes
+		int clsCount = met.getNamedClassCount();
+		calcBean.getMb().setNumberOfClasses(clsCount);
+		// count instances
+		int instanceCount = met.getOwlIndividualCount();
+		calcBean.getMb().setNumberOfIndividuals(instanceCount);
+		// count properties
+		int propertyCount = met.getPropertyCount();
+		calcBean.getMb().setNumberOfProperties(propertyCount);
+		// calculate maximum depth
+		calcBean.getMb().setMaximumDepth(calcBean.getMaxDepth());
+		// calculate average siblings
+		int avgSib = met.getMeanSiblings();
+		calcBean.getMb().setAverageNumberOfSiblings(avgSib);
+		// calculate max siblings
+		calcBean.setMaxSiblings(met.getMaxSiblings());
+		calcBean.getMb().setMaximumNumberOfSiblings(calcBean.getMaxSiblings());
 
-		postProcessLists();
+		postProcessLists(calcBean);
 
 		// fill out author/concept relationships table
-		Collections.sort(noAuthorConcepts);
-		mb.setClassesWithNoAuthor(noAuthorConcepts);
-		Collections.sort(xAnnotConcepts);
-		mb.setClassesWithMoreThanOnePropertyValue(xAnnotConcepts);
+		Collections.sort(calcBean.getNoAuthorConcepts());
+		calcBean.getMb().setClassesWithNoAuthor(calcBean.getNoAuthorConcepts());
+		Collections.sort(calcBean.getXAnnotConcepts());
+		calcBean.getMb().setClassesWithMoreThanOnePropertyValue(
+				calcBean.getXAnnotConcepts());
 	}
 
 	/**
 	 * Calculates overall metrics and manages the queue of classes for
 	 * processing for Frames ontologies.
 	 */
-	private void basicAnalysis() {
+	private void basicAnalysis(OntologyMetricsProtegeCalculationBean calcBean) {
 		ArrayList<Integer> sibCounts = new ArrayList<Integer>();
-		Slot docSlot = getDefinitionSlot(kb, documentationProperty);
-
-		resetDefaultValues();
-
-		FrameCounts frameCounts = kb.getFrameCounts();
-		// count classes
-		int clsCount = frameCounts.getDirectClsCount();
-		mb.setNumberOfClasses(clsCount);
-		// count instances
-		int instanceCount = kb.getSimpleInstanceCount();
-		mb.setNumberOfIndividuals(instanceCount);
-		// count properties
-		int propertyCount = kb.getSlotCount();
-		mb.setNumberOfProperties(propertyCount);
-		// calculate maximum depth
-		mb.setMaximumDepth(maxDepth);
+		Slot docSlot = getDefinitionSlot(calcBean.getKb(), calcBean
+				.getDocumentationProperty());
 
 		// Add first item to queue and trigger processing
-		QueueItem item = new QueueItem(kb.getRootCls(), 1, docSlot, sibCounts);
-		queue.addLast(item);
-		while (!queue.isEmpty()) {
-			QueueItem currCls = queue.remove();
-			clsIterate(currCls.nextCls, currCls.newDepth, currCls.docSlot,
-					currCls.sibCounts);
+		QueueItem item = calcBean.new QueueItem(calcBean.getKb().getRootCls(),
+				1, docSlot, sibCounts);
+		calcBean.setQueue(new LinkedList<QueueItem>());
+		calcBean.getQueue().addLast(item);
+		while (!calcBean.getQueue().isEmpty()) {
+			QueueItem currCls = calcBean.getQueue().remove();
+			clsIterate(calcBean, currCls.nextCls, currCls.newDepth,
+					currCls.docSlot, currCls.sibCounts);
 		}
 
-		postProcessLists();
+		FrameCounts frameCounts = calcBean.getKb().getFrameCounts();
+		// count classes
+		int clsCount = frameCounts.getDirectClsCount();
+		calcBean.getMb().setNumberOfClasses(clsCount);
+		// count instances
+		int instanceCount = calcBean.getKb().getSimpleInstanceCount();
+		calcBean.getMb().setNumberOfIndividuals(instanceCount);
+		// count properties
+		int propertyCount = calcBean.getKb().getSlotCount();
+		calcBean.getMb().setNumberOfProperties(propertyCount);
+		// calculate maximum depth
+		calcBean.getMb().setMaximumDepth(calcBean.getMaxDepth());
+
+		postProcessLists(calcBean);
 
 		// calculate average siblings
 		int sum = 0;
@@ -195,9 +176,9 @@ public class OntologyMetricsManagerProtegeImpl extends
 			sum += sibCounts.get(i);
 		}
 		int avgSiblings = (sum == 0) ? 0 : sum / sibCounts.size();
-		mb.setAverageNumberOfSiblings(avgSiblings);
+		calcBean.getMb().setAverageNumberOfSiblings(avgSiblings);
 		// calculate max siblings
-		mb.setMaximumNumberOfSiblings(maxSiblings);
+		calcBean.getMb().setMaximumNumberOfSiblings(calcBean.getMaxSiblings());
 
 	}
 
@@ -212,9 +193,11 @@ public class OntologyMetricsManagerProtegeImpl extends
 	 * getBrowserText lookups.
 	 */
 	@SuppressWarnings("unchecked")
-	private void owlClsIterate(RDFSNamedClass currCls, Integer currDepth) {
-		if (currDepth > maxDepth)
-			maxDepth = currDepth;
+	private void owlClsIterate(OntologyMetricsProtegeCalculationBean calcBean,
+			RDFSNamedClass currCls, Integer currDepth) {
+		if (currDepth > calcBean.getMaxDepth()) {
+			calcBean.setMaxDepth(currDepth);
+		}
 		// Important: getNamedSubclasses(false) ignores transitive relationships
 		Collection<RDFSNamedClass> subclasses = currCls
 				.getNamedSubclasses(false);
@@ -222,14 +205,13 @@ public class OntologyMetricsManagerProtegeImpl extends
 		String authorTag = "";
 		String annotTag = "";
 
-		docTag = documentationProperty;
-		authorTag = authorProperty;
-		annotTag = annotationProperty;
-		matchTags(currCls, docTag, authorTag, annotTag);
+		docTag = calcBean.getDocumentationProperty();
+		authorTag = calcBean.getAuthorProperty();
+		annotTag = calcBean.getAnnotationProperty();
+		matchTags(calcBean, currCls, docTag, authorTag, annotTag);
 		Iterator<RDFSNamedClass> it = subclasses.iterator();
 
 		String currClsName = currCls.getPrefixedName();
-		String currClsLabel = currCls.getBrowserText();
 
 		int count = 0;
 		while (it.hasNext()) {
@@ -240,22 +222,40 @@ public class OntologyMetricsManagerProtegeImpl extends
 				String nextFullName = nextCls.getName();
 
 				if (!it.hasNext()) {
-					if (count == 1 && !oneSubClses.contains(currClsName))
-						oneSubClses.add(currClsLabel);
+					if (count == 1
+							&& !calcBean.getOneSubClses().contains(currClsName))
+						if (calcBean.getOneSubClsesTotal() < CLASS_LIST_LIMIT) {
+							calcBean.getOneSubClses().add(
+									currCls.getBrowserText());
+							calcBean.setOneSubClsesTotal(calcBean
+									.getOneSubClsesTotal() + 1);
+						} else {
+							calcBean.setOneSubClsesTotal(calcBean
+									.getOneSubClsesTotal() + 1);
+						}
 				}
 
-				if (count > preferredMaximumSubclassLimit
+				if (count > calcBean.getPreferredMaximumSubclassLimit()
 						&& !currClsName.equals("owl:Thing")
-						&& !xSubClses.containsKey(currClsName)) {
-					xSubClses.put(currClsLabel, count);
+						&& !calcBean.getXSubClses().containsKey(currClsName)) {
+					if (calcBean.getXSubClsesTotal() < CLASS_LIST_LIMIT) {
+						calcBean.getXSubClses().put(currCls.getBrowserText(),
+								count);
+						calcBean
+								.setXSubClsesTotal(calcBean.getXSubClsesTotal() + 1);
+					} else {
+						calcBean
+								.setXSubClsesTotal(calcBean.getXSubClsesTotal() + 1);
+					}
 				}
 
-				if (!seenClasses.containsKey(nextFullName)) {
-					seenClasses.put(nextFullName, count);
+				if (!calcBean.getSeenClasses().containsKey(nextFullName)) {
+					calcBean.getSeenClasses().put(nextFullName, count);
 					// Create new data object and add it to queue
 					Integer newDepth = currDepth + 1;
-					OwlQueueItem owlItem = new OwlQueueItem(nextCls, newDepth);
-					owlQueue.addLast(owlItem);
+					OwlQueueItem owlItem = calcBean.new OwlQueueItem(nextCls,
+							newDepth);
+					calcBean.getOwlQueue().addLast(owlItem);
 				}
 			}
 		}
@@ -271,11 +271,14 @@ public class OntologyMetricsManagerProtegeImpl extends
 	 * getBrowserText lookups.
 	 */
 	@SuppressWarnings("unchecked")
-	private void clsIterate(Cls currCls, int currDepth, Slot docSlot,
+	private void clsIterate(OntologyMetricsProtegeCalculationBean calcBean,
+			Cls currCls, int currDepth, Slot docSlot,
 			ArrayList<Integer> sibCounts) {
 
-		if (currDepth > maxDepth)
-			maxDepth = currDepth;
+		if (currDepth > calcBean.getMaxDepth()) {
+			calcBean.setMaxDepth(currDepth);
+		}
+
 		Collection<Cls> subclasses = currCls.getDirectSubclasses();
 
 		if (docSlot != null) {
@@ -283,12 +286,14 @@ public class OntologyMetricsManagerProtegeImpl extends
 			if (doc.isEmpty() && !currCls.getName().equals(":THING")) {
 				String identifier = currCls.getBrowserText() + "("
 						+ currCls.getName() + ")";
-				if (!noDocClses.contains(identifier)) {
-					if (noDocClsesTotal < CLASS_LIST_LIMIT) {
-						noDocClses.add(identifier);
-						noDocClsesTotal++;
+				if (!calcBean.getNoDocClses().contains(identifier)) {
+					if (calcBean.getNoDocClsesTotal() < CLASS_LIST_LIMIT) {
+						calcBean.getNoDocClses().add(identifier);
+						calcBean.setNoDocClsesTotal(calcBean
+								.getNoDocClsesTotal() + 1);
 					} else {
-						noDocClsesTotal++;
+						calcBean.setNoDocClsesTotal(calcBean
+								.getNoDocClsesTotal() + 1);
 					}
 				}
 			}
@@ -301,44 +306,52 @@ public class OntologyMetricsManagerProtegeImpl extends
 			String nextFullName = nextCls.getName();
 			if (!nextCls.isSystem() && !nextCls.isIncluded()) {
 				count++;
-				if (count > maxSiblings)
-					maxSiblings = count;
+				if (count > calcBean.getMaxSiblings()) {
+					calcBean.setMaxSiblings(count);
+				}
 				if (!it.hasNext()) {
 					for (int i = 0; i < count; i++) {
 						sibCounts.add(new Integer(count));
 					}
 					if (count == 1
-							&& !oneSubClses.contains(currCls.getBrowserText())) {
-						if (oneSubClsesTotal < CLASS_LIST_LIMIT) {
-							oneSubClses.add(currCls.getBrowserText());
-							oneSubClsesTotal++;
+							&& !calcBean.getOneSubClses().contains(
+									currCls.getBrowserText())) {
+						if (calcBean.getOneSubClsesTotal() < CLASS_LIST_LIMIT) {
+							calcBean.getOneSubClses().add(
+									currCls.getBrowserText());
+							calcBean.setOneSubClsesTotal(calcBean
+									.getOneSubClsesTotal() + 1);
 						} else {
-							oneSubClsesTotal++;
+							calcBean.setOneSubClsesTotal(calcBean
+									.getOneSubClsesTotal() + 1);
 						}
 					}
 					try {
-						if (count > preferredMaximumSubclassLimit
+						if (count > calcBean.getPreferredMaximumSubclassLimit()
 								&& !currCls.getName().equals(":THING")
-								&& !xSubClses.containsKey(currCls
-										.getBrowserText())) {
-							if (xSubClsesTotal < CLASS_LIST_LIMIT) {
-								xSubClses.put(currCls.getBrowserText(), count);
-								xSubClsesTotal++;
+								&& !calcBean.getXSubClses().containsKey(
+										currCls.getBrowserText())) {
+							if (calcBean.getXSubClsesTotal() < CLASS_LIST_LIMIT) {
+								calcBean.getXSubClses().put(
+										currCls.getBrowserText(), count);
+								calcBean.setXSubClsesTotal(calcBean
+										.getXSubClsesTotal() + 1);
 							} else {
-								xSubClsesTotal++;
+								calcBean.setXSubClsesTotal(calcBean
+										.getXSubClsesTotal() + 1);
 							}
 						}
 					} catch (NumberFormatException ignored) {
 					}
 				}
 
-				if (!seenClasses.containsKey(nextFullName)) {
-					seenClasses.put(nextFullName, count);
+				if (!calcBean.getSeenClasses().containsKey(nextFullName)) {
+					calcBean.getSeenClasses().put(nextFullName, count);
 					// Queue next class
 					Integer newDepth = currDepth + 1;
-					QueueItem item = new QueueItem(nextCls, newDepth, docSlot,
-							sibCounts);
-					queue.addLast(item);
+					QueueItem item = calcBean.new QueueItem(nextCls, newDepth,
+							docSlot, sibCounts);
+					calcBean.getQueue().addLast(item);
 				}
 			}
 		}
@@ -347,14 +360,17 @@ public class OntologyMetricsManagerProtegeImpl extends
 	/**
 	 * Fills in common fields for both OWL and Frames ontologies.
 	 */
-	private void fillInCommonFields() {
-		Collections.sort(oneSubClses);
-		mb.setClassesWithOneSubclass(oneSubClses);
+	private void fillInCommonFields(
+			OntologyMetricsProtegeCalculationBean calcBean) {
+		Collections.sort(calcBean.getOneSubClses());
+		calcBean.getMb().setClassesWithOneSubclass(calcBean.getOneSubClses());
 
-		mb.setClassesWithMoreThanXSubclasses(xSubClses);
+		calcBean.getMb().setClassesWithMoreThanXSubclasses(
+				calcBean.getXSubClses());
 
-		Collections.sort(noDocClses);
-		mb.setClassesWithNoDocumentation(noDocClses);
+		Collections.sort(calcBean.getNoDocClses());
+		calcBean.getMb()
+				.setClassesWithNoDocumentation(calcBean.getNoDocClses());
 	}
 
 	/*
@@ -366,8 +382,8 @@ public class OntologyMetricsManagerProtegeImpl extends
 	 * those properties match the specified tags.
 	 */
 	@SuppressWarnings("unchecked")
-	private void matchTags(RDFSNamedClass cls, String docTag, String authorTag,
-			String annotTag) {
+	private void matchTags(OntologyMetricsProtegeCalculationBean calcBean,
+			RDFSNamedClass cls, String docTag, String authorTag, String annotTag) {
 		boolean docTagFound = false;
 		boolean authorTagFound = false;
 		boolean annotTagDoubleMatched = false;
@@ -387,7 +403,7 @@ public class OntologyMetricsManagerProtegeImpl extends
 			if (authorTag != null && prop.getBrowserText().equals(authorTag)
 					&& !cls.getName().equals("owl:Thing")) {
 				authorTagFound = true;
-				addClsToConceptAuthorRelationship(cls, prop);
+				addClsToConceptAuthorRelationship(calcBean, cls, prop);
 			}
 
 			if (annotTag != null && prop.getBrowserText().equals(annotTag)) {
@@ -408,12 +424,14 @@ public class OntologyMetricsManagerProtegeImpl extends
 			if (!docTagFound && !cls.getName().equals("owl:Thing")) {
 				String identifier = cls.getPrefixedName() + "(" + cls.getName()
 						+ ")";
-				if (!noDocClses.contains(identifier)) {
-					if (noDocClsesTotal < CLASS_LIST_LIMIT) {
-						noDocClses.add(identifier);
-						noDocClsesTotal++;
+				if (!calcBean.getNoDocClses().contains(identifier)) {
+					if (calcBean.getNoDocClsesTotal() < CLASS_LIST_LIMIT) {
+						calcBean.getNoDocClses().add(identifier);
+						calcBean.setNoDocClsesTotal(calcBean
+								.getNoDocClsesTotal() + 1);
 					} else {
-						noDocClsesTotal++;
+						calcBean.setNoDocClsesTotal(calcBean
+								.getNoDocClsesTotal() + 1);
 					}
 				}
 			}
@@ -422,12 +440,14 @@ public class OntologyMetricsManagerProtegeImpl extends
 			if (!authorTagFound && !cls.getName().equals("owl:Thing")) {
 				String identifier = cls.getPrefixedName() + "(" + cls.getName()
 						+ ")";
-				if (!noAuthorConcepts.contains(identifier)) {
-					if (noAuthorConceptsTotal < CLASS_LIST_LIMIT) {
-						noAuthorConcepts.add(identifier);
-						noAuthorConceptsTotal++;
+				if (!calcBean.getNoAuthorConcepts().contains(identifier)) {
+					if (calcBean.getNoAuthorConceptsTotal() < CLASS_LIST_LIMIT) {
+						calcBean.getNoAuthorConcepts().add(identifier);
+						calcBean.setNoAuthorConceptsTotal(calcBean
+								.getNoAuthorConceptsTotal() + 1);
 					} else {
-						noAuthorConceptsTotal++;
+						calcBean.setNoAuthorConceptsTotal(calcBean
+								.getNoAuthorConceptsTotal() + 1);
 					}
 				}
 			}
@@ -435,12 +455,14 @@ public class OntologyMetricsManagerProtegeImpl extends
 			if (annotTagDoubleMatched && !cls.getName().equals("owl:Thing")) {
 				String identifier = cls.getBrowserText() + "(" + cls.getName()
 						+ ")";
-				if (!xAnnotConcepts.contains(identifier)) {
-					if (xAnnotConceptsTotal < CLASS_LIST_LIMIT) {
-						xAnnotConcepts.add(identifier);
-						xAnnotConceptsTotal++;
+				if (!calcBean.getXAnnotConcepts().contains(identifier)) {
+					if (calcBean.getXAnnotConceptsTotal() < CLASS_LIST_LIMIT) {
+						calcBean.getXAnnotConcepts().add(identifier);
+						calcBean.setXAnnotConceptsTotal(calcBean
+								.getXAnnotConceptsTotal() + 1);
 					} else {
-						xAnnotConceptsTotal++;
+						calcBean.setXAnnotConceptsTotal(calcBean
+								.getXAnnotConceptsTotal() + 1);
 					}
 				}
 			}
@@ -453,112 +475,74 @@ public class OntologyMetricsManagerProtegeImpl extends
 	 * @param prop
 	 */
 	@SuppressWarnings("unchecked")
-	private void addClsToConceptAuthorRelationship(RDFSNamedClass cls,
+	private void addClsToConceptAuthorRelationship(
+			OntologyMetricsProtegeCalculationBean calcBean, RDFSNamedClass cls,
 			RDFProperty prop) {
 		Collection props = cls.getPropertyValues(prop, false);
 		Iterator it = props.iterator();
 		while (it.hasNext()) {
 			String key = it.next().toString();
 			// If author already in map, add to his/her list of concepts
-			if (conceptAuthors.containsKey(key)) {
-				ArrayList<String> values = conceptAuthors.get(key);
+			if (calcBean.getConceptAuthors().containsKey(key)) {
+				ArrayList<String> values = calcBean.getConceptAuthors()
+						.get(key);
 				if (!values.contains(cls.getBrowserText()))
 					values.add(cls.getBrowserText());
-				conceptAuthors.put(key, values);
+				calcBean.getConceptAuthors().put(key, values);
 			} else {
 				// Otherwise, create a new ArrayList for this author
 				ArrayList<String> values = new ArrayList<String>();
 				values.add(cls.getBrowserText());
-				conceptAuthors.put(key, values);
+				calcBean.getConceptAuthors().put(key, values);
 			}
 		}
 	}
 
-	private void postProcessLists() {
+	private void postProcessLists(OntologyMetricsProtegeCalculationBean calcBean) {
+		final String ALL_TRIGGERED = "alltriggered";
+		final String LIMIT_PASSED = "limitpassed:";
+		
 		// Check to see if every seen class has no property
 		// If so, we're going to put a special message in the xml
 		// Then, if the classes have more than CLASS_LIST_SIZE items in the list
 		// Then clear the list and show how many were missing props
-		if (noDocClsesTotal >= seenClasses.size()) {
-			noDocClses.clear();
-			noDocClses.add("alldocmissing");
-		} else if (noDocClsesTotal >= CLASS_LIST_LIMIT) {
-			noDocClses.clear();
-			noDocClses.add("docmissing:" + noDocClsesTotal);
+		if (calcBean.getNoDocClsesTotal() >= calcBean.getSeenClasses().size()) {
+			calcBean.getNoDocClses().clear();
+			calcBean.getNoDocClses().add(ALL_TRIGGERED);
+		} else if (calcBean.getNoDocClsesTotal() >= CLASS_LIST_LIMIT) {
+			calcBean.getNoDocClses().clear();
+			calcBean.getNoDocClses().add(
+					LIMIT_PASSED + calcBean.getNoDocClsesTotal());
 		}
 
-		if (noAuthorConceptsTotal >= seenClasses.size()) {
-			noAuthorConcepts.clear();
-			noAuthorConcepts.add("allauthormissing");
-		} else if (noAuthorConceptsTotal >= CLASS_LIST_LIMIT) {
-			noAuthorConcepts.clear();
-			noAuthorConcepts.add("authormissing:" + noAuthorConceptsTotal);
+		if (calcBean.getNoAuthorConceptsTotal() >= calcBean.getSeenClasses()
+				.size()) {
+			calcBean.getNoAuthorConcepts().clear();
+			calcBean.getNoAuthorConcepts().add(ALL_TRIGGERED);
+		} else if (calcBean.getNoAuthorConceptsTotal() >= CLASS_LIST_LIMIT) {
+			calcBean.getNoAuthorConcepts().clear();
+			calcBean.getNoAuthorConcepts().add(
+					LIMIT_PASSED + calcBean.getNoAuthorConceptsTotal());
 		}
 
-		if (oneSubClsesTotal >= seenClasses.size()) {
-			oneSubClses.clear();
-			oneSubClses.add("allhaveonesubclass");
-		} else if (oneSubClsesTotal >= CLASS_LIST_LIMIT) {
-			oneSubClses.clear();
-			oneSubClses.add("haveonesubclass:" + oneSubClsesTotal);
+		if (calcBean.getOneSubClsesTotal() >= calcBean.getSeenClasses().size()) {
+			calcBean.getOneSubClses().clear();
+			calcBean.getOneSubClses().add(ALL_TRIGGERED);
+		} else if (calcBean.getOneSubClsesTotal() >= CLASS_LIST_LIMIT) {
+			calcBean.getOneSubClses().clear();
+			calcBean.getOneSubClses().add(
+					LIMIT_PASSED + calcBean.getOneSubClsesTotal());
 		}
 
-		if (xSubClsesTotal >= seenClasses.size()) {
-			xSubClses.clear();
-			xSubClses.put("allhavemorethanxsubclasses", 0);
-		} else if (xSubClsesTotal >= CLASS_LIST_LIMIT) {
-			xSubClses.clear();
-			xSubClses.put("allhavemorethanxsubclasses", xSubClsesTotal);
+		if (calcBean.getXSubClsesTotal() >= calcBean.getSeenClasses().size()) {
+			calcBean.getXSubClses().clear();
+			calcBean.getXSubClses().put(ALL_TRIGGERED, 0);
+		} else if (calcBean.getXSubClsesTotal() >= CLASS_LIST_LIMIT) {
+			calcBean.getXSubClses().clear();
+			calcBean.getXSubClses().put(LIMIT_PASSED,
+					calcBean.getXSubClsesTotal());
 		}
 
-	}
-
-	/**
-	 * Resets all common class variables to default values.
-	 */
-	private void resetDefaultValues() {
-		conceptAuthors = new HashMap<String, ArrayList<String>>();
-		noAuthorConcepts = new ArrayList<String>();
-		xAnnotConcepts = new ArrayList<String>();
-		owlQueue = new LinkedList<OwlQueueItem>();
-		queue = new LinkedList<QueueItem>();
-		seenClasses = new HashMap<String, Integer>();
-		noDocClsesTotal = 0;
-		noAuthorConceptsTotal = 0;
-		xAnnotConceptsTotal = 0;
-		xSubClsesTotal = 0;
-		oneSubClsesTotal = 0;
-	}
-
-	/**
-	 * Simple data class for storing queue items.
-	 */
-	private class QueueItem {
-		public Cls nextCls;
-		public Integer newDepth;
-		public Slot docSlot;
-		public ArrayList<Integer> sibCounts;
-
-		public QueueItem(Cls nextCls, Integer newDepth, Slot docSlot,
-				ArrayList<Integer> sibCounts) {
-			this.nextCls = nextCls;
-			this.newDepth = newDepth;
-			this.docSlot = docSlot;
-			this.sibCounts = sibCounts;
-		}
-	}
-
-	/**
-	 * Simple data class for storing OWL queue items.
-	 */
-	private class OwlQueueItem {
-		public RDFSNamedClass nextCls;
-		public Integer newDepth;
-
-		public OwlQueueItem(RDFSNamedClass nextCls, Integer newDepth) {
-			this.nextCls = nextCls;
-			this.newDepth = newDepth;
-		}
 	}
 
 }
