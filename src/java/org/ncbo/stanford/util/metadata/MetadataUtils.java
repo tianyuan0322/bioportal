@@ -120,16 +120,19 @@ public class MetadataUtils {
 					"Metadata ontology does not contain property " + propName);
 		}
 
-		// Break HashMap into tokenized strings and set the property value
+		// Collection to store converted Map
+		ArrayList<String> convertedMap = new ArrayList<String>();
+		// Break Map into tokenized strings and set the property value
 		for (Iterator it = valuesMap.entrySet().iterator(); it.hasNext();) {
 			Map.Entry<K, V> pair = (Map.Entry<K, V>) it.next();
 			String value = StringEscapeUtils
 					.escapeCsv(pair.getKey().toString())
 					+ "\"" + token + "\""
 					+ StringEscapeUtils.escapeCsv(pair.getValue().toString());
-			owlInd.setPropertyValue(prop, value);
+			convertedMap.add(value);
 		}
-
+		// Add converted map to metadata ontology
+		owlInd.setPropertyValues(prop, convertedMap);
 	}
 
 	@SuppressWarnings("unchecked")
