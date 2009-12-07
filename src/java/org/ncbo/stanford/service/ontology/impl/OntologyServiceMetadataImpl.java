@@ -18,6 +18,7 @@ import org.ncbo.stanford.manager.metadata.OntologyCategoryMetadataManager;
 import org.ncbo.stanford.manager.metadata.OntologyGroupMetadataManager;
 import org.ncbo.stanford.service.ontology.AbstractOntologyService;
 import org.ncbo.stanford.service.ontology.OntologyService;
+import org.ncbo.stanford.util.CompressionUtils;
 import org.ncbo.stanford.util.MessageUtils;
 import org.ncbo.stanford.util.ontologyfile.pathhandler.AbstractFilePathHandler;
 import org.ncbo.stanford.util.ontologyfile.pathhandler.FilePathHandler;
@@ -327,15 +328,24 @@ public class OntologyServiceMetadataImpl extends AbstractOntologyService
 		List<String> fileNames = ontologyBean.getFilenames();
 		File file = null;
 
-		if (fileNames.size() > 0) {
+		for (String filename : fileNames) {
+			if (CompressionUtils.isCompressed(filename)) {
+				file = new File(AbstractFilePathHandler.getOntologyFilePath(
+						ontologyBean, filename));
+				break;
+			}
+		}
+
+		if (file == null && !fileNames.isEmpty()) {
 			String fileName = (String) ontologyBean.getFilenames().toArray()[0];
 			file = new File(AbstractFilePathHandler.getOntologyFilePath(
 					ontologyBean, fileName));
 		}
 
 		if (file == null) {
-			log.error("Missing ontology file to download.");
-			throw new FileNotFoundException("Missing ontology file to load");
+			String errorMsg = "Missing ontology file to download";
+			log.error(errorMsg);
+			throw new FileNotFoundException(errorMsg);
 		}
 
 		return file;
