@@ -94,6 +94,7 @@ public class OntologyLoadManagerProtegeImpl extends
 		}
 	}
 
+	@SuppressWarnings("unchecked")
 	private void loadOWL(URI ontologyUri, OntologyBean ob, Collection errors)
 			throws OntologyLoadException {
 		if (ontologyUri.toString().endsWith(".pprj")) {
@@ -120,6 +121,7 @@ public class OntologyLoadManagerProtegeImpl extends
 
 	}
 
+	@SuppressWarnings("unchecked")
 	private void loadOWLStreaming(URI ontologyUri, OntologyBean ob,
 			Collection errors) {
 		log.debug("Using streaming mode. OWL Ontology: " + ob.getDisplayLabel()
@@ -145,6 +147,7 @@ public class OntologyLoadManagerProtegeImpl extends
 		}
 	}
 
+	@SuppressWarnings("unchecked")
 	private void loadOWLNonStreaming(URI ontologyUri, OntologyBean ob,
 			Collection errors) throws OntologyLoadException {
 		log.debug("Using non-streaming mode. OWL Ontology: "
@@ -190,6 +193,7 @@ public class OntologyLoadManagerProtegeImpl extends
 		}
 	}
 
+	@SuppressWarnings("unchecked")
 	private void loadFrames(URI ontologyUri, OntologyBean ob, Collection errors) {
 		log.debug("Parsing Frames ontology: " + ob.getDisplayLabel() + " ("
 				+ ob.getId() + ")");
