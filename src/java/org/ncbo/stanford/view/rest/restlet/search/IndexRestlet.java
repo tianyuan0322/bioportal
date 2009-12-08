@@ -6,6 +6,7 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.ncbo.stanford.exception.InvalidInputException;
 import org.ncbo.stanford.service.search.IndexSearchService;
 import org.ncbo.stanford.util.RequestUtils;
 import org.ncbo.stanford.view.rest.restlet.AbstractBaseRestlet;
@@ -22,7 +23,6 @@ import org.restlet.data.Status;
  */
 public class IndexRestlet extends AbstractBaseRestlet {
 
-	@SuppressWarnings("unused")
 	private static final Log log = LogFactory.getLog(IndexRestlet.class);
 	private IndexSearchService indexService;
 
@@ -96,9 +96,10 @@ public class IndexRestlet extends AbstractBaseRestlet {
 			} else if (doOptimize) {
 				indexService.optimizeIndex();
 			} else {
-				response.setStatus(Status.CLIENT_ERROR_BAD_REQUEST,
-						"No valid parameters supplied");
+				throw new InvalidInputException("No valid parameters supplied");
 			}
+		} catch (InvalidInputException e) {
+			response.setStatus(Status.CLIENT_ERROR_BAD_REQUEST, e.getMessage());
 		} catch (Exception e) {
 			response.setStatus(Status.SERVER_ERROR_INTERNAL, e.getMessage());
 			e.printStackTrace();
