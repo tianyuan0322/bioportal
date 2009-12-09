@@ -145,10 +145,7 @@ public class OntologyMetricsManagerLexGridImpl extends
 		
 		//Reverse this list to get actual topological list
 		Collections.reverse(topologicalList);
-		System.out.println("Topological List= "+ topologicalList);
-		maxDepth= dagLongestPath(schemeName, csvt, topologicalList);
-		
-
+		maxDepth = dagLongestPath(schemeName, csvt, topologicalList);
 	}	
 	
 	
