@@ -238,7 +238,12 @@ public class OntologyMetadataManagerImpl extends
 		OntologyBean ob = new OntologyBean(false);
 		OWLIndividual ontInd = OntologyMetadataUtils.getLatestVersion(vOntInd,
 				ONLY_ACTIVE_VERSIONS);
-		OntologyMetadataUtils.fillInOntologyBeanFromInstance(ob, ontInd);
+
+		try {
+			OntologyMetadataUtils.fillInOntologyBeanFromInstance(ob, ontInd);
+		} catch (MetadataException e) {
+			return null;
+		}
 
 		return ob;
 	}
@@ -310,7 +315,11 @@ public class OntologyMetadataManagerImpl extends
 
 			for (Integer id : ontologyVersionIds) {
 				try {
-					res.add(findOntologyOrViewVersionById(id));
+					OntologyBean ob = findOntologyOrViewVersionById(id);
+
+					if (ob != null) {
+						res.add(ob);
+					}
 				} catch (Exception e) {
 					e.printStackTrace();
 					log.error("Error while getting ontology version: " + id, e);
@@ -331,7 +340,11 @@ public class OntologyMetadataManagerImpl extends
 
 		for (Integer ontologyId : ontologyIds) {
 			try {
-				res.add(findLatestOntologyOrViewVersionById(ontologyId));
+				OntologyBean ob = findLatestOntologyOrViewVersionById(ontologyId);
+
+				if (ob != null) {
+					res.add(ob);
+				}
 			} catch (Exception e) {
 				e.printStackTrace();
 				log.error("Error while getting latest version for ontology "
@@ -402,7 +415,11 @@ public class OntologyMetadataManagerImpl extends
 
 		for (Integer ontologyId : ontologyIds) {
 			try {
-				res.add(findLatestActiveOntologyVersionById(ontologyId));
+				OntologyBean ob = findLatestActiveOntologyVersionById(ontologyId);
+
+				if (ob != null) {
+					res.add(ob);
+				}
 			} catch (Exception e) {
 				e.printStackTrace();
 				log.error("Error while getting latest version for ontology: "
@@ -419,8 +436,11 @@ public class OntologyMetadataManagerImpl extends
 
 		for (Integer ontologyOrViewId : ontologyOrViewIds) {
 			try {
-				res
-						.add(findLatestActiveOntologyOrViewVersionById(ontologyOrViewId));
+				OntologyBean ob = findLatestActiveOntologyOrViewVersionById(ontologyOrViewId);
+
+				if (ob != null) {
+					res.add(ob);
+				}
 			} catch (Exception e) {
 				e.printStackTrace();
 				log.error(
@@ -496,7 +516,12 @@ public class OntologyMetadataManagerImpl extends
 
 		OWLIndividual ontInd = OntologyMetadataUtils.getLatestVersion(vOntInd,
 				ONLY_ACTIVE_VERSIONS);
-		OntologyMetadataUtils.fillInOntologyBeanFromInstance(ob, ontInd);
+
+		try {
+			OntologyMetadataUtils.fillInOntologyBeanFromInstance(ob, ontInd);
+		} catch (MetadataException e) {
+			return null;
+		}
 
 		return ob;
 	}
@@ -511,7 +536,11 @@ public class OntologyMetadataManagerImpl extends
 
 		for (Integer viewId : viewIds) {
 			try {
-				res.add(findLatestOntologyOrViewVersionById(viewId));
+				OntologyBean ob = findLatestOntologyOrViewVersionById(viewId);
+
+				if (ob != null) {
+					res.add(ob);
+				}
 			} catch (Exception e) {
 				e.printStackTrace();
 				log.error(
@@ -534,7 +563,11 @@ public class OntologyMetadataManagerImpl extends
 
 		for (Integer viewId : viewIds) {
 			try {
-				res.add(findLatestActiveOntologyViewVersionById(viewId));
+				OntologyBean ob = findLatestActiveOntologyViewVersionById(viewId);
+
+				if (ob != null) {
+					res.add(ob);
+				}
 			} catch (Exception e) {
 				e.printStackTrace();
 				log.error("Error while getting latest version for view "
