@@ -239,9 +239,6 @@ public class OntologyMetricsManagerLexGridImpl extends
 		for (ResolvedConceptReference rcr : rcrl.getResolvedConceptReference()) {
 			HashSet<String> visitedSet = new HashSet<String>();
 			depricatedGetMaxDepth(schemeName, csvt, rcr, 1, visitedSet);
-	
 		}
-	
 	}
-
 }
