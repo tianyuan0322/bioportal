@@ -41,7 +41,8 @@ public class OntologyRetrievalManagerLexGridImplTest extends
 
 		OntologyBean ncboOntology = retrievalManager
 				.getLatestNcboOntology(TEST_OBO_CELL_DISPLAY_LABEL);
-		ClassBean classBean = retrievalManager.findRootConcept(ncboOntology, false);
+		ClassBean classBean = retrievalManager.findRootConcept(ncboOntology,
+				false);
 		System.out.println("Root concept is \n" + classBean);
 		System.out.println("\n");
 		assertTrue(classBean != null);
@@ -53,19 +54,21 @@ public class OntologyRetrievalManagerLexGridImplTest extends
 
 		OntologyBean ncboOntology = retrievalManager
 				.getLatestNcboOntology(TEST_OBO_CELL_DISPLAY_LABEL);
-		ClassBean classBean = retrievalManager.findRootConcept(ncboOntology, true);
+		ClassBean classBean = retrievalManager.findRootConcept(ncboOntology,
+				true);
 		System.out.println("Root concept is \n" + classBean);
 		System.out.println("\n");
 		assertTrue(classBean != null);
 	}
-	
+
 	@Test
 	public void testFindOBORootConceptCellOld() throws Exception {
 		System.out.println("testFindOBORootConceptCellOld()");
 
 		OntologyBean ncboOntology = retrievalManager
 				.getLatestNcboOntology(TEST_OBO_CELL_OLD_DISPLAY_LABEL);
-		ClassBean classBean = retrievalManager.findRootConcept(ncboOntology, false);
+		ClassBean classBean = retrievalManager.findRootConcept(ncboOntology,
+				false);
 		System.out.println("Root concept is \n" + classBean);
 		System.out.println("\n");
 		assertTrue(classBean != null);
@@ -77,7 +80,8 @@ public class OntologyRetrievalManagerLexGridImplTest extends
 
 		OntologyBean ncboOntology = retrievalManager
 				.getLatestNcboOntology(TEST_OWL_DISPLAY_LABEL);
-		ClassBean classBean = retrievalManager.findRootConcept(ncboOntology, false);
+		ClassBean classBean = retrievalManager.findRootConcept(ncboOntology,
+				false);
 		System.out.println("Root concept is \n" + classBean);
 		System.out.println("\n");
 		assertTrue(classBean != null);
@@ -89,7 +93,8 @@ public class OntologyRetrievalManagerLexGridImplTest extends
 
 		OntologyBean ncboOntology = retrievalManager
 				.getLatestNcboOntology(TEST_LEXGRID_DISPLAY_LABEL);
-		ClassBean classBean = retrievalManager.findRootConcept(ncboOntology, false);
+		ClassBean classBean = retrievalManager.findRootConcept(ncboOntology,
+				false);
 		System.out.println("Root concept is \n" + classBean);
 		System.out.println("\n");
 		assertTrue(classBean != null);
@@ -101,7 +106,8 @@ public class OntologyRetrievalManagerLexGridImplTest extends
 
 		OntologyBean ncboOntology = retrievalManager
 				.getLatestNcboOntology(TEST_UMLS_DISPLAY_LABEL);
-		ClassBean classBean = retrievalManager.findRootConcept(ncboOntology, false);
+		ClassBean classBean = retrievalManager.findRootConcept(ncboOntology,
+				false);
 		System.out.println("Root concept is \n" + classBean);
 		System.out.println("\n");
 		assertTrue(classBean != null);
@@ -152,7 +158,6 @@ public class OntologyRetrievalManagerLexGridImplTest extends
 		assertTrue(classBean.getId().equalsIgnoreCase(conceptID));
 	}
 
-	
 	@Test
 	public void testOBOFindConceptNonExistentCell() throws Exception {
 		System.out.println("testOBOFindConceptNonExistentCell()");
@@ -165,9 +170,8 @@ public class OntologyRetrievalManagerLexGridImplTest extends
 		System.out.println("Concept " + conceptID + " of cell ontology is \n"
 				+ classBean);
 		System.out.println("\n");
-		assertTrue(classBean == null );
+		assertTrue(classBean == null);
 	}
-	
 
 	@Test
 	public void testOBOFindConceptTwoRelationDictyostelium() throws Exception {
@@ -178,12 +182,12 @@ public class OntologyRetrievalManagerLexGridImplTest extends
 		String conceptID = "DDANAT:0000004";
 		ClassBean classBean = retrievalManager.findConcept(ncboOntology,
 				conceptID, false, false);
-		System.out.println("Concept " + conceptID + " of Dictyostelium ontology(2 relations) is \n"
-				+ classBean);
+		System.out.println("Concept " + conceptID
+				+ " of Dictyostelium ontology(2 relations) is \n" + classBean);
 		System.out.println("\n");
 		assertTrue(classBean.getId().equalsIgnoreCase(conceptID));
 	}
-	
+
 	@Test
 	public void testOBOFindConceptOrphanedDictyostelium() throws Exception {
 		System.out.println("testOBOFindConceptOrphanedDictyostelium()");
@@ -193,27 +197,32 @@ public class OntologyRetrievalManagerLexGridImplTest extends
 		String conceptID = "DDANAT:0000430";
 		ClassBean classBean = retrievalManager.findConcept(ncboOntology,
 				conceptID, false, false);
-		System.out.println("Concept " + conceptID + " of Dictyostelium ontology(obsolete) is \n"
-				+ classBean);
+		System.out.println("Concept " + conceptID
+				+ " of Dictyostelium ontology(obsolete) is \n" + classBean);
 		System.out.println("\n");
 		assertTrue(classBean.getId().equalsIgnoreCase(conceptID));
-	}	
-	
+	}
+
 	@Test
-	public void testUMLSFindConceptBothDirectionalNamesPopulated() throws Exception {
-		System.out.println("testUMLSFindConceptBothDirectionalNamesPopulated()");
+	public void testUMLSFindConceptBothDirectionalNamesPopulated()
+			throws Exception {
+		System.out
+				.println("testUMLSFindConceptBothDirectionalNamesPopulated()");
 
 		OntologyBean ncboOntology = retrievalManager
 				.getLatestNcboOntology(TEST_UMLS_DISPLAY_LABEL);
 		String conceptID = "MFART";
 		ClassBean classBean = retrievalManager.findConcept(ncboOntology,
 				conceptID, false, false);
-		System.out.println("Concept " + conceptID + " of UMLS AIR ontology that has both directionalNames polulated \n"
-				+ classBean);
+		System.out
+				.println("Concept "
+						+ conceptID
+						+ " of UMLS AIR ontology that has both directionalNames polulated \n"
+						+ classBean);
 		System.out.println("\n");
 		assertTrue(classBean.getId().equalsIgnoreCase(conceptID));
-	}		
-	
+	}
+
 	@Test
 	public void testOBOFindChildrenCell() throws Exception {
 		System.out.println("testOBOFindChildrenCell()");
@@ -325,7 +334,7 @@ public class OntologyRetrievalManagerLexGridImplTest extends
 		OntologyBean ncboOntology = retrievalManager
 				.getLatestNcboOntology(TEST_OBO_CELL_DISPLAY_LABEL);
 		String conceptID = "CL:0000255";
-		//String conceptID = "CL:0000003"; 
+		// String conceptID = "CL:0000003";
 		ClassBean pathBean = retrievalManager.findPathFromRoot(ncboOntology,
 				conceptID, false);
 		System.out.println("Paths to root for concept " + conceptID
@@ -424,58 +433,60 @@ public class OntologyRetrievalManagerLexGridImplTest extends
 		System.out.println("\n");
 		assertTrue(pathBean != null);
 	}
-	
-	@Test
-	public void testOBOGetAllConcepts()
-			throws Exception {
-		System.out
-				.println("testOBOGetAllConcepts()");
 
-		OntologyBean ncboOntology = retrievalManager.getLatestNcboOntology(TEST_OBO_CELL_DISPLAY_LABEL);
-		int startPosition=0;
-		int offset= 100;
-		boolean hasMoreResults= true;
-		while (hasMoreResults) {
-			System.out.println("Retrieving results starting at "+ startPosition);
-		    List<ClassBean> beans = retrievalManager.findAllConcepts(ncboOntology, startPosition, offset);		    
-		    if (beans == null || beans.size() != offset) {
-		    	hasMoreResults= false;
-		    	if (beans != null) {
-		    	   System.out.println("Retrieved results till "+ (startPosition+ beans.size()));
-		    	}
-		    }
-		    startPosition+= offset;
-		}		
-		System.out.println("\n");
-		assertTrue(startPosition != 0);
-	}	
-	
 	@Test
-	public void testRefresh()	throws Exception {
+	public void testOBOGetAllConcepts() throws Exception {
+		System.out.println("testOBOGetAllConcepts()");
+
+		OntologyBean ncboOntology = retrievalManager
+				.getLatestNcboOntology(TEST_OBO_CELL_DISPLAY_LABEL);
+		int offset = 0;
+		int limit = 100;
+		boolean hasMoreResults = true;
+		while (hasMoreResults) {
+			System.out.println("Retrieving results starting at " + offset);
+			List<ClassBean> beans = retrievalManager.findAllConcepts(
+					ncboOntology, offset, limit);
+			if (beans == null || beans.size() != limit) {
+				hasMoreResults = false;
+				if (beans != null) {
+					System.out.println("Retrieved results till "
+							+ (offset + beans.size()));
+				}
+			}
+			offset += limit;
+		}
+		System.out.println("\n");
+		assertTrue(offset != 0);
+	}
+
+	@Test
+	public void testRefresh() throws Exception {
 		System.out.println("testRefresh()");
 		assertTrue(retrievalManager.refresh());
 	}
-	
+
 	@Test
-	public void testHasParent()	throws Exception {
+	public void testHasParent() throws Exception {
 		System.out.println("testHasParent()");
-		OntologyBean ncboOntology = retrievalManager.getLatestNcboOntology(TEST_OBO_CELL_DISPLAY_LABEL);
-		assertTrue( retrievalManager.hasParent(ncboOntology, "CL:0000255", "CL:0000000"));
-		
-		
-		
-	}	
+		OntologyBean ncboOntology = retrievalManager
+				.getLatestNcboOntology(TEST_OBO_CELL_DISPLAY_LABEL);
+		assertTrue(retrievalManager.hasParent(ncboOntology, "CL:0000255",
+				"CL:0000000"));
+
+	}
 
 	@Test
 	public void testListAllClasses() throws Exception {
-		OntologyBean ob = retrievalManager.getLatestNcboOntology(TEST_ATMO_DISPLAY_LABEL);
+		OntologyBean ob = retrievalManager
+				.getLatestNcboOntology(TEST_ATMO_DISPLAY_LABEL);
 		Iterator<ClassBean> cbIt = retrievalManager.listAllClasses(ob);
 		int numClasses = 0;
-		for (; cbIt.hasNext(); ) {
+		for (; cbIt.hasNext();) {
 			numClasses++;
 			ClassBean cb = cbIt.next();
 		}
-		System.out.println("Found "+numClasses+" classes.");
+		System.out.println("Found " + numClasses + " classes.");
 	}
-	
+
 }
