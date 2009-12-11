@@ -77,6 +77,7 @@ public class OntologyMetricsManagerLexGridImpl extends
 		int maxNumberOfSiblings = 0;
 		int totalNumberSiblings = 0;
 		int totalNumberParents = 0;
+		
 		while (iterator.hasNext()) {
 			ResolvedConceptReference ref = iterator.next();			
 			AssociationList al = getHierarchyLevelNext(schemeName, csvt, ref.getCode());
@@ -138,6 +139,7 @@ public class OntologyMetricsManagerLexGridImpl extends
 				schemeName, csvt, true);
 		List<String> topologicalList= new ArrayList<String>();
 		Set<String> visitedSet= new HashSet<String>();
+		
 		for (ResolvedConceptReference rcr : rcrl.getResolvedConceptReference()) {
 			topologicalSort(schemeName, csvt, rcr, visitedSet,  topologicalList);
 
@@ -145,10 +147,7 @@ public class OntologyMetricsManagerLexGridImpl extends
 		
 		//Reverse this list to get actual topological list
 		Collections.reverse(topologicalList);
-		System.out.println("Topological List= "+ topologicalList);
-		maxDepth= dagLongestPath(schemeName, csvt, topologicalList);
-		
-
+		maxDepth = dagLongestPath(schemeName, csvt, topologicalList);
 	}	
 	
 	
@@ -195,8 +194,7 @@ public class OntologyMetricsManagerLexGridImpl extends
 						if (lengthMap.get(targetCode) <= lengthMap.get(sourceConceptId) + 1) {
 							lengthMap.put(targetCode, lengthMap.get(sourceConceptId) + 1);
 						}
-					}
-	
+					}	
 				}
 			}
 		}
@@ -229,8 +227,7 @@ public class OntologyMetricsManagerLexGridImpl extends
 	
 				}
 			}
-		}
-	
+		}	
 	}
 
 	private void deprecatedComputeMaxDepth(OntologyBean ontologyBean) throws Exception {
@@ -242,9 +239,6 @@ public class OntologyMetricsManagerLexGridImpl extends
 		for (ResolvedConceptReference rcr : rcrl.getResolvedConceptReference()) {
 			HashSet<String> visitedSet = new HashSet<String>();
 			depricatedGetMaxDepth(schemeName, csvt, rcr, 1, visitedSet);
-	
 		}
-	
 	}
-
 }
