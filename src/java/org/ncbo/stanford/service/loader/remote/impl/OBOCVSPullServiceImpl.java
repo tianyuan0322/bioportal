@@ -170,7 +170,7 @@ public class OBOCVSPullServiceImpl implements OBOCVSPullService {
 							CompressedFileHandlerFactory
 									.createFileHandler(format), new File(repo
 									.getCheckoutdir()
-									+ "/" + cf.getPath() + "/" + filename));
+									+ "/" + cf.getPath()));
 					ontologyService.createOntologyOrView(ont, filePathHandler);
 					break;
 				case CREATE_REMOTE_ACTION:
@@ -435,8 +435,9 @@ public class OBOCVSPullServiceImpl implements OBOCVSPullService {
 	private String getFormat(String str) {
 		String format = ApplicationConstants.FORMAT_INVALID;
 
-		if (ontologyFormatToOBOFoundryMap.containsKey(str)) {
-			format = ontologyFormatToOBOFoundryMap.get(str);
+		if (!StringHelper.isNullOrNullString(str)
+				&& ontologyFormatToOBOFoundryMap.containsKey(str.toLowerCase())) {
+			format = ontologyFormatToOBOFoundryMap.get(str.toLowerCase());
 		}
 
 		return format;
