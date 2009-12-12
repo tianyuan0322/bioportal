@@ -137,7 +137,7 @@ public class OntologyRetrievalManagerLexGridImpl extends
 
 		return concept;
 	}
-	
+
 	private ClassBean findConceptNoRelations(OntologyBean ontologyBean,
 			String conceptId) throws Exception {
 		ClassBean classBean = null;
@@ -155,8 +155,9 @@ public class OntologyRetrievalManagerLexGridImpl extends
 					.createConceptReferenceList(new String[] { conceptId },
 							schemeName);
 			ResolvedConceptReferenceList matches = lbs.getCodingSchemeConcepts(
-					schemeName, csvt).restrictToCodes(crefs).resolveToList(null, null, null, 1);
-			
+					schemeName, csvt).restrictToCodes(crefs).resolveToList(
+					null, null, null, 1);
+
 			// Analyze the result ...
 			if (matches.getResolvedConceptReferenceCount() > 0) {
 				ResolvedConceptReference ref = (ResolvedConceptReference) matches
@@ -167,8 +168,6 @@ public class OntologyRetrievalManagerLexGridImpl extends
 
 		return classBean;
 	}
-
-
 
 	/**
 	 * Find just the concept with only the subClass relation populated. Makes
@@ -190,14 +189,15 @@ public class OntologyRetrievalManagerLexGridImpl extends
 		} else if (StringUtils.isBlank(conceptId)) {
 			log.warn("Can not process request when the conceptId is blank");
 		} else {
-			
+
 			CodingSchemeVersionOrTag csvt = getLexGridCodingSchemeVersion(ontologyBean);
 			// Perform the query ...
 			ConceptReferenceList crefs = ConvenienceMethods
 					.createConceptReferenceList(new String[] { conceptId },
 							schemeName);
 			ResolvedConceptReferenceList matches = lbs.getCodingSchemeConcepts(
-					schemeName, csvt).restrictToCodes(crefs).resolveToList(null, null, null, 1);
+					schemeName, csvt).restrictToCodes(crefs).resolveToList(
+					null, null, null, 1);
 
 			// Analyze the result ...
 			if (matches.getResolvedConceptReferenceCount() > 0) {
@@ -1282,21 +1282,24 @@ public class OntologyRetrievalManagerLexGridImpl extends
 
 			if (!p.getIsPreferred().booleanValue()) {
 				// Add a abstraction for getting all the Synonyms..gforge #1351
-				bean.addSynonym(p.getValue().getContent());
+				String synVal = p.getValue().getContent();
+
+				// remove duplicates
+				if (!bean.getSynonyms().contains(synVal)) {
+					bean.addSynonym(synVal);
+				}
 
 				if (addRelations) {
 					if (StringUtils.isNotBlank(p.getDegreeOfFidelity())) {
 						String key = p.getDegreeOfFidelity() + " SYNONYM";
-						addStringToHashMapsArrayList(relationMap, key, p
-								.getValue().getContent());
+						addStringToHashMapsArrayList(relationMap, key, synVal);
 					} else if (StringUtils.isNotBlank(p
 							.getRepresentationalForm())) {
 						String key = "SYNONYM " + p.getRepresentationalForm();
-						addStringToHashMapsArrayList(relationMap, key, p
-								.getValue().getContent());
+						addStringToHashMapsArrayList(relationMap, key, synVal);
 					} else {
-						addStringToHashMapsArrayList(relationMap, "SYNONYM", p
-								.getValue().getContent());
+						addStringToHashMapsArrayList(relationMap, "SYNONYM",
+								synVal);
 					}
 				}
 			}
