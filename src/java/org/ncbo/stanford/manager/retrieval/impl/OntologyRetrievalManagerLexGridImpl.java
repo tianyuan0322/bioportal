@@ -1285,7 +1285,9 @@ public class OntologyRetrievalManagerLexGridImpl extends
 				String synVal = p.getValue().getContent();
 
 				// remove duplicates
-				if (!bean.getSynonyms().contains(synVal)) {
+				List<String> synonyms = bean.getSynonyms();
+				
+				if (synonyms != null && !synonyms.contains(synVal)) {
 					bean.addSynonym(synVal);
 				}
 
