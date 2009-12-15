@@ -108,8 +108,8 @@ public class OBOCVSPullServiceImpl implements OBOCVSPullService {
 				processRecords(repo, updateFiles);
 			}
 
-			if (log.isDebugEnabled()) {
-				log.debug("**** OBO Pull completed successfully *****");
+			if (log.isInfoEnabled()) {
+				log.info("**** OBO Pull completed successfully *****");
 			}
 		} catch (Exception e) {
 			log.error(e);
