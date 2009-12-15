@@ -17,7 +17,6 @@ import org.ncbo.stanford.util.constants.ApplicationConstants;
 
 public class OntologyBean {
 
-	public static final String DEFAULT_PREFERRED_NAME_SLOT = "rdfs:label";
 	public static final String DEFAULT_DEFINITION_SLOT = "http://www.w3.org/2004/02/skos/core#definition";
 	public static final String DEFAULT_AUTHOR_SLOT = "http://purl.org/dc/elements/1.1/creator";
 
