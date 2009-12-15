@@ -22,6 +22,8 @@ public class OntologiesParseRestlet extends AbstractBaseRestlet {
 			.getLog(OntologiesParseRestlet.class);
 	private OntologyLoadSchedulerService ontologyLoadSchedulerService;
 
+	private static final String DEFAULT_PARSER = "default";
+
 	/**
 	 * Handle PUT calls here
 	 * 
@@ -48,6 +50,10 @@ public class OntologiesParseRestlet extends AbstractBaseRestlet {
 			String formatHandler = (String) httpRequest
 					.getParameter(RequestParamConstants.PARAM_ONTOLOGYPARSER);
 
+			if (formatHandler != null && formatHandler.equalsIgnoreCase(DEFAULT_PARSER)) {
+				formatHandler = null;
+			}
+			
 			if (ontologyVersionIds != null) {
 				ontologyLoadSchedulerService.parseOntologies(
 						ontologyVersionIds, formatHandler);
