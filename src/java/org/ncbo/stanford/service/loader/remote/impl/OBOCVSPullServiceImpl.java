@@ -87,7 +87,6 @@ public class OBOCVSPullServiceImpl implements OBOCVSPullService {
 
 			HashMap<String, CVSFile> updateFiles = null;
 			for (OBORepositoryInfoHolder repo : repos) {
-
 				if (repo.getRepositoryType().equals("SVN")) {
 					SVNUtils svnUtils = new SVNUtils(repo.getUsername(), repo
 							.getPassword(), repo.getHostname(), repo
@@ -166,11 +165,17 @@ public class OBOCVSPullServiceImpl implements OBOCVSPullService {
 										+ filename + "] is missing");
 					}
 
+					String path = cf.getPath();
+					String checkoutdir = repo.getCheckoutdir();
+
+					if (!path.contains(checkoutdir)) {
+						path = checkoutdir + "/" + path;
+					}
+
 					FilePathHandler filePathHandler = new PhysicalDirectoryFilePathHandlerImpl(
 							CompressedFileHandlerFactory
-									.createFileHandler(format), new File(repo
-									.getCheckoutdir()
-									+ "/" + cf.getPath()));
+									.createFileHandler(format), new File(path));
+
 					ontologyService.createOntologyOrView(ont, filePathHandler);
 					break;
 				case CREATE_REMOTE_ACTION:
