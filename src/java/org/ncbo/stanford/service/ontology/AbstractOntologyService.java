@@ -120,7 +120,8 @@ public abstract class AbstractOntologyService {
 		StringWriter sw = new StringWriter();
 		e.printStackTrace(new PrintWriter(sw));
 		String stackTrace = sw.toString().replace(
-				System.getProperty("line.separator"), " ");
+				System.getProperty("line.separator"), " ").replace("\n", " ")
+				.replace("\r", " ");
 		int stackTraceLen = stackTrace.length();
 		int messageLen = (stackTraceLen < LONG_ERROR_MESSAGE_LENGTH) ? stackTraceLen
 				: LONG_ERROR_MESSAGE_LENGTH;
