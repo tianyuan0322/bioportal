@@ -209,6 +209,7 @@
 				<filter token="obosourceforgecvsdescriptorfile" value="${obo.sourceforge.cvs.descriptor.file}" />
 				<filter token="bioportaltempdir" value="${bioportal.tempdir}" />
 				<filter token="oborepositoriesconfigfilepath" value="${obo.repositories.config.filepath}" />
+				<filter token="returnUrl" value="${openId.return.url}" />
 			</filterset>
 		</copy>
 

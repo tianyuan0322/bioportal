@@ -19,6 +19,7 @@ appserver.home=/apps/Tomcat5.5
 appserver.lib=${appserver.home}/common/lib
 appserver.logs=${appserver.home}/logs
 deploy.path=${appserver.home}/webapps
+openId.return.url=http://localhost:8080/bioportal/openIdAuthRes
 #appserver.home=/apps/jboss-4.0.5.GA
 #appserver.lib=${appserver.home}/server/default/lib
 #appserver.logs=${appserver.home}/server/default/log
