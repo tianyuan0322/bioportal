@@ -6,9 +6,7 @@ import java.util.Set;
 
 /**
  * AbstractNcboUser entity provides the base persistence definition of the
- * NcboUser entity.
- * 
- * @author MyEclipse Persistence Tools
+ * NcboUser entity. @author MyEclipse Persistence Tools
  */
 
 public abstract class AbstractNcboUser implements java.io.Serializable {
@@ -19,6 +17,7 @@ public abstract class AbstractNcboUser implements java.io.Serializable {
 	private String username;
 	private String password;
 	private String email;
+	private String openId;
 	private String firstname;
 	private String lastname;
 	private String phone;
@@ -44,11 +43,12 @@ public abstract class AbstractNcboUser implements java.io.Serializable {
 
 	/** full constructor */
 	public AbstractNcboUser(String username, String password, String email,
-			String firstname, String lastname, String phone, Date dateCreated,
-			Set ncboUserRoles) {
+			String openId, String firstname, String lastname, String phone,
+			Date dateCreated, Set ncboUserRoles) {
 		this.username = username;
 		this.password = password;
 		this.email = email;
+		this.openId = openId;
 		this.firstname = firstname;
 		this.lastname = lastname;
 		this.phone = phone;
@@ -88,6 +88,14 @@ public abstract class AbstractNcboUser implements java.io.Serializable {
 
 	public void setEmail(String email) {
 		this.email = email;
+	}
+
+	public String getOpenId() {
+		return this.openId;
+	}
+
+	public void setOpenId(String openId) {
+		this.openId = openId;
 	}
 
 	public String getFirstname() {

@@ -11,11 +11,6 @@ import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.acegisecurity.AccessDeniedException;
-import org.acegisecurity.AuthenticationException;
-import org.acegisecurity.AuthenticationTrustResolver;
-import org.acegisecurity.AuthenticationTrustResolverImpl;
-import org.acegisecurity.context.SecurityContextHolder;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.ncbo.stanford.enumeration.ErrorTypeEnum;
@@ -23,6 +18,11 @@ import org.ncbo.stanford.service.xml.XMLSerializationService;
 import org.ncbo.stanford.util.RequestUtils;
 import org.restlet.Restlet;
 import org.springframework.beans.factory.InitializingBean;
+import org.springframework.security.AccessDeniedException;
+import org.springframework.security.AuthenticationException;
+import org.springframework.security.AuthenticationTrustResolver;
+import org.springframework.security.AuthenticationTrustResolverImpl;
+import org.springframework.security.context.SecurityContextHolder;
 import org.springframework.util.Assert;
 
 /**

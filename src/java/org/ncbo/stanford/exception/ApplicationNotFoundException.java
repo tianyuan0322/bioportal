@@ -1,7 +1,8 @@
 package org.ncbo.stanford.exception;
 
-import org.acegisecurity.BadCredentialsException;
-import org.acegisecurity.userdetails.UserDetailsService;
+import org.springframework.security.BadCredentialsException;
+import org.springframework.security.userdetails.UserDetailsService;
+
 
 /**
  * Thrown if an {@link UserDetailsService} implementation cannot locate an

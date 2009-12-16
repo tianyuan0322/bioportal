@@ -3,12 +3,12 @@ package org.ncbo.stanford.util.security.providers.dao.cache;
 import net.sf.ehcache.CacheException;
 import net.sf.ehcache.Element;
 
-import org.acegisecurity.providers.dao.cache.EhCacheBasedUserCache;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.ncbo.stanford.bean.ApplicationBean;
 import org.ncbo.stanford.util.security.providers.dao.UserApplicationCache;
 import org.springframework.dao.DataRetrievalFailureException;
+import org.springframework.security.providers.dao.cache.EhCacheBasedUserCache;
 
 /**
  * Caches <code>ApplicationBean</code> objects using a Spring IoC defined <A

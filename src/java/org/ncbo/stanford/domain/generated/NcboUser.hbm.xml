@@ -6,29 +6,32 @@
 -->
 <hibernate-mapping>
     <class name="org.ncbo.stanford.domain.generated.NcboUser" table="ncbo_user" catalog="bioportal">
-        <id name="id" type="java.lang.Integer">
+        <id name="id" type="integer">
             <column name="id" />
             <generator class="identity" />
         </id>
-        <property name="username" type="java.lang.String">
+        <property name="username" type="string">
             <column name="username" length="64" not-null="true" unique="true" />
         </property>
-        <property name="password" type="java.lang.String">
+        <property name="password" type="string">
             <column name="password" length="128" not-null="true" />
         </property>
-        <property name="email" type="java.lang.String">
+        <property name="email" type="string">
             <column name="email" length="128" not-null="true" />
         </property>
-        <property name="firstname" type="java.lang.String">
+        <property name="openId" type="string">
+            <column name="openId" length="128" />
+        </property>
+        <property name="firstname" type="string">
             <column name="firstname" length="64" not-null="true" />
         </property>
-        <property name="lastname" type="java.lang.String">
+        <property name="lastname" type="string">
             <column name="lastname" length="64" not-null="true" />
         </property>
-        <property name="phone" type="java.lang.String">
+        <property name="phone" type="string">
             <column name="phone" length="32" />
         </property>
-        <property name="dateCreated" type="java.util.Date">
+        <property name="dateCreated" type="timestamp">
             <column name="date_created" length="19" not-null="true" />
         </property>
         <set name="ncboUserRoles" inverse="true">

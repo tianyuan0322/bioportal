@@ -2,15 +2,6 @@ package org.ncbo.stanford.view.rest.authentication;
 
 import javax.servlet.http.HttpServletRequest;
 
-import org.acegisecurity.Authentication;
-import org.acegisecurity.AuthenticationException;
-import org.acegisecurity.AuthenticationManager;
-import org.acegisecurity.AuthenticationServiceException;
-import org.acegisecurity.context.HttpSessionContextIntegrationFilter;
-import org.acegisecurity.context.SecurityContext;
-import org.acegisecurity.context.SecurityContextHolder;
-import org.acegisecurity.providers.UsernamePasswordAuthenticationToken;
-import org.acegisecurity.ui.webapp.AuthenticationProcessingFilter;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.ncbo.stanford.bean.UserBean;
@@ -26,6 +17,15 @@ import org.restlet.data.MediaType;
 import org.restlet.data.Request;
 import org.restlet.data.Response;
 import org.restlet.data.Status;
+import org.springframework.security.Authentication;
+import org.springframework.security.AuthenticationException;
+import org.springframework.security.AuthenticationManager;
+import org.springframework.security.AuthenticationServiceException;
+import org.springframework.security.context.HttpSessionContextIntegrationFilter;
+import org.springframework.security.context.SecurityContext;
+import org.springframework.security.context.SecurityContextHolder;
+import org.springframework.security.providers.UsernamePasswordAuthenticationToken;
+import org.springframework.security.ui.webapp.AuthenticationProcessingFilter;
 
 /**
  * Handles Acegi form based authentication. Simulates the the Acegi's
@@ -80,7 +80,7 @@ public final class AuthenticationRestlet extends AbstractBaseRestlet {
 			session.setApplicationId(applicationId);
 			session
 					.setAttribute(
-							AuthenticationProcessingFilter.ACEGI_SECURITY_LAST_USERNAME_KEY,
+							AuthenticationProcessingFilter.SPRING_SECURITY_LAST_USERNAME_KEY,
 							username);
 			/*
 			 * initialize the security context.
@@ -89,7 +89,7 @@ public final class AuthenticationRestlet extends AbstractBaseRestlet {
 			secCtx.setAuthentication(auth);
 			session
 					.setAttribute(
-							HttpSessionContextIntegrationFilter.ACEGI_SECURITY_CONTEXT_KEY,
+							HttpSessionContextIntegrationFilter.SPRING_SECURITY_CONTEXT_KEY,
 							secCtx);
 			// add user and session info to the response
 			UserBean userBean = userService.findUser(username);

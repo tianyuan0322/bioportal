@@ -1,8 +1,8 @@
 package org.ncbo.stanford.util.security.providers.dao.cache;
 
-import org.acegisecurity.userdetails.UserDetails;
 import org.ncbo.stanford.bean.ApplicationBean;
 import org.ncbo.stanford.util.security.providers.dao.UserApplicationCache;
+import org.springframework.security.userdetails.UserDetails;
 
 /**
  * Does not perform any caching.

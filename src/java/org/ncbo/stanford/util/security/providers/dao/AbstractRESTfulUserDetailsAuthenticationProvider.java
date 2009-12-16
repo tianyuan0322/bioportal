@@ -1,19 +1,5 @@
 package org.ncbo.stanford.util.security.providers.dao;
 
-import org.acegisecurity.AccountExpiredException;
-import org.acegisecurity.AcegiMessageSource;
-import org.acegisecurity.Authentication;
-import org.acegisecurity.AuthenticationException;
-import org.acegisecurity.BadCredentialsException;
-import org.acegisecurity.CredentialsExpiredException;
-import org.acegisecurity.DisabledException;
-import org.acegisecurity.LockedException;
-import org.acegisecurity.providers.AuthenticationProvider;
-import org.acegisecurity.providers.UsernamePasswordAuthenticationToken;
-import org.acegisecurity.providers.dao.UserCache;
-import org.acegisecurity.userdetails.UserDetails;
-import org.acegisecurity.userdetails.UserDetailsService;
-import org.acegisecurity.userdetails.UsernameNotFoundException;
 import org.ncbo.stanford.bean.ApplicationBean;
 import org.ncbo.stanford.exception.ApplicationNotFoundException;
 import org.ncbo.stanford.util.security.providers.dao.cache.NullUserApplicationCache;
@@ -22,6 +8,20 @@ import org.springframework.beans.factory.InitializingBean;
 import org.springframework.context.MessageSource;
 import org.springframework.context.MessageSourceAware;
 import org.springframework.context.support.MessageSourceAccessor;
+import org.springframework.security.AccountExpiredException;
+import org.springframework.security.Authentication;
+import org.springframework.security.AuthenticationException;
+import org.springframework.security.BadCredentialsException;
+import org.springframework.security.CredentialsExpiredException;
+import org.springframework.security.DisabledException;
+import org.springframework.security.LockedException;
+import org.springframework.security.SpringSecurityMessageSource;
+import org.springframework.security.providers.AuthenticationProvider;
+import org.springframework.security.providers.UsernamePasswordAuthenticationToken;
+import org.springframework.security.providers.dao.UserCache;
+import org.springframework.security.userdetails.UserDetails;
+import org.springframework.security.userdetails.UserDetailsService;
+import org.springframework.security.userdetails.UsernameNotFoundException;
 import org.springframework.util.Assert;
 
 /**
@@ -62,7 +62,7 @@ public abstract class AbstractRESTfulUserDetailsAuthenticationProvider
 	// ~ Instance fields
 	// ================================================================================================
 
-	protected MessageSourceAccessor messages = AcegiMessageSource.getAccessor();
+	protected MessageSourceAccessor messages = SpringSecurityMessageSource.getAccessor();
 	private UserApplicationCache userApplicationCache = new NullUserApplicationCache();
 	private boolean forcePrincipalAsString = false;
 	protected boolean hideUserNotFoundExceptions = true;

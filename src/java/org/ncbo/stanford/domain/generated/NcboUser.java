@@ -4,9 +4,7 @@ import java.util.Date;
 import java.util.Set;
 
 /**
- * NcboUser entity.
- * 
- * @author MyEclipse Persistence Tools
+ * NcboUser entity. @author MyEclipse Persistence Tools
  */
 public class NcboUser extends AbstractNcboUser implements java.io.Serializable {
 
@@ -24,9 +22,9 @@ public class NcboUser extends AbstractNcboUser implements java.io.Serializable {
 
 	/** full constructor */
 	public NcboUser(String username, String password, String email,
-			String firstname, String lastname, String phone, Date dateCreated,
-			Set ncboUserRoles) {
-		super(username, password, email, firstname, lastname, phone,
+			String openId, String firstname, String lastname, String phone,
+			Date dateCreated, Set ncboUserRoles) {
+		super(username, password, email, openId, firstname, lastname, phone,
 				dateCreated, ncboUserRoles);
 	}
 

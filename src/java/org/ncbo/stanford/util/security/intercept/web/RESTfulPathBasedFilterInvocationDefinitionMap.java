@@ -1,17 +1,16 @@
 package org.ncbo.stanford.util.security.intercept.web;
 
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 import java.util.Vector;
 
-import org.acegisecurity.ConfigAttributeDefinition;
-import org.acegisecurity.intercept.web.AbstractFilterInvocationDefinitionSource;
-import org.acegisecurity.intercept.web.FilterInvocation;
-import org.acegisecurity.intercept.web.FilterInvocationDefinition;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.springframework.security.ConfigAttributeDefinition;
+import org.springframework.security.intercept.web.FilterInvocation;
 import org.springframework.util.AntPathMatcher;
 import org.springframework.util.PathMatcher;
 
@@ -23,8 +22,7 @@ import org.springframework.util.PathMatcher;
  * 
  */
 public class RESTfulPathBasedFilterInvocationDefinitionMap extends
-		AbstractFilterInvocationDefinitionSource implements
-		FilterInvocationDefinition {
+		AbstractFilterInvocationDefinitionSource {
 
 	@SuppressWarnings("unused")
 	private static Log log = LogFactory
@@ -50,7 +48,7 @@ public class RESTfulPathBasedFilterInvocationDefinitionMap extends
 				"addSecureUrl(String, ConfigAttributeDefinition) is INVALID for RESTfulDefinitionSource");
 	}
 
-	public Iterator<ConfigAttributeDefinition> getConfigAttributeDefinitions() {
+	public Collection<ConfigAttributeDefinition> getConfigAttributeDefinitions() {
 		Set<ConfigAttributeDefinition> set = new HashSet<ConfigAttributeDefinition>();
 		Iterator<EntryHolder> iter = requestMap.iterator();
 
@@ -59,7 +57,7 @@ public class RESTfulPathBasedFilterInvocationDefinitionMap extends
 			set.add(entryHolder.getConfigAttributeDefinition());
 		}
 
-		return set.iterator();
+		return set;
 	}
 
 	public int getMapSize() {
@@ -78,8 +76,8 @@ public class RESTfulPathBasedFilterInvocationDefinitionMap extends
 	/**
 	 * override the method in AbstractFilterInvocationDefinitionSource
 	 */
-	public ConfigAttributeDefinition getAttributes(Object object)
-			throws IllegalArgumentException {
+	public org.springframework.security.ConfigAttributeDefinition getAttributes(
+			Object object) throws IllegalArgumentException {
 		if ((object == null) || !this.supports(object.getClass())) {
 			throw new IllegalArgumentException(
 					"Object must be a FilterInvocation");
@@ -170,5 +168,10 @@ public class RESTfulPathBasedFilterInvocationDefinitionMap extends
 		public ConfigAttributeDefinition getConfigAttributeDefinition() {
 			return configAttributeDefinition;
 		}
+	}
+
+	@SuppressWarnings("unchecked")
+	public boolean supports(Class clazz) {
+		return FilterInvocation.class.isAssignableFrom(clazz);
 	}
 }

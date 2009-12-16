@@ -4,16 +4,17 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.StringReader;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 
-import org.acegisecurity.ConfigAttributeDefinition;
-import org.acegisecurity.SecurityConfig;
-import org.acegisecurity.intercept.web.FilterInvocation;
-import org.acegisecurity.intercept.web.FilterInvocationDefinitionSource;
-import org.acegisecurity.util.StringSplitUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.springframework.security.ConfigAttributeDefinition;
+import org.springframework.security.SecurityConfig;
+import org.springframework.security.intercept.web.FilterInvocation;
+import org.springframework.security.intercept.web.FilterInvocationDefinitionSource;
+import org.springframework.security.util.StringSplitUtils;
 import org.springframework.util.StringUtils;
 
 /**
@@ -66,8 +67,7 @@ public class RESTfulDefinitionSource implements
 		return delegate.lookupAttributes(url, method);
 	}
 
-	@SuppressWarnings("unchecked")
-	public Iterator getConfigAttributeDefinitions() {
+	public Collection<ConfigAttributeDefinition> getConfigAttributeDefinitions() {
 		return delegate.getConfigAttributeDefinitions();
 	}
 
@@ -217,21 +217,23 @@ public class RESTfulDefinitionSource implements
 		setMappings(mappings);
 	}
 
+	@SuppressWarnings("unchecked")
 	public void setMappings(List<RESTfulDefinitionSourceMapping> mappings) {
 		Iterator<RESTfulDefinitionSourceMapping> it = mappings.iterator();
 
 		while (it.hasNext()) {
 			RESTfulDefinitionSourceMapping mapping = it.next();
-			ConfigAttributeDefinition configDefinition = new ConfigAttributeDefinition();
-
-			Iterator<String> configAttributesIt = mapping.getConfigAttributes()
-					.iterator();
-
+			Iterator<String> configAttributesIt = mapping.getConfigAttributes().iterator();
+			List list=new ArrayList();
+			
+			//List<SecurityConfig> list2=new ArrayList<SecurityConfig>();
+			
 			while (configAttributesIt.hasNext()) {
 				String s = configAttributesIt.next();
-				configDefinition.addConfigAttribute(new SecurityConfig(s));
+				//list2.add(new SecurityConfig(s));
+				list.add(new SecurityConfig(s));
 			}
-
+			ConfigAttributeDefinition configDefinition = new ConfigAttributeDefinition(list);
 			delegate.addSecureUrl(mapping.getUrl(), mapping.getHttpMethods(),
 					configDefinition);
 		}

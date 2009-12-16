@@ -9,7 +9,8 @@ import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.HashMap;
 
-import org.acegisecurity.ui.savedrequest.Enumerator;
+import org.springframework.security.ui.savedrequest.Enumerator;
+
 
 /**
  * Emulates the behavior of standard HttpSession (StandardSession

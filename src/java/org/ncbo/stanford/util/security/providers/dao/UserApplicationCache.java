@@ -1,7 +1,7 @@
 package org.ncbo.stanford.util.security.providers.dao;
 
-import org.acegisecurity.providers.dao.UserCache;
 import org.ncbo.stanford.bean.ApplicationBean;
+import org.springframework.security.providers.dao.UserCache;
 
 /**
  * Provides a cache of {@link ApplicationBean} objects.

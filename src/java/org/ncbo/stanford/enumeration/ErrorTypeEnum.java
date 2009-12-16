@@ -14,7 +14,8 @@ public enum ErrorTypeEnum {
 			"ACCESS_DENIED",
 			"You do not possess sufficient privileges to access this resource"), RUNTIME_ERROR(
 			"RUNTIME_ERROR", "A runtime error has occurred"), INVALID_FILE(
-			"INVALID_FILE", "The uploaded file is invalid");
+			"INVALID_FILE", "The uploaded file is invalid"), INVALID_OPENID(
+			"INVALID_OPENID", "OpenId not exist in Bioportal database");
 
 	private final String errorCode;
 	private final String defErrorMessage;

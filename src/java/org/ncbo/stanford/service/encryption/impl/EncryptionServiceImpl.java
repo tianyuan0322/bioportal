@@ -5,8 +5,8 @@ import java.net.URLDecoder;
 import java.net.URLEncoder;
 import java.util.HashMap;
 
-import org.acegisecurity.providers.encoding.PasswordEncoder;
 import org.jasypt.encryption.pbe.StandardPBEStringEncryptor;
+import org.jasypt.spring.security2.PasswordEncoder;
 import org.ncbo.stanford.service.encryption.EncryptionService;
 import org.ncbo.stanford.util.MessageUtils;
 import org.ncbo.stanford.util.RequestUtils;

@@ -27,6 +27,7 @@ public class NcboUserDAO extends HibernateDaoSupport {
 	public static final String USERNAME = "username";
 	public static final String PASSWORD = "password";
 	public static final String EMAIL = "email";
+	public static final String OPEN_ID = "openId";
 	public static final String FIRSTNAME = "firstname";
 	public static final String LASTNAME = "lastname";
 	public static final String PHONE = "phone";
@@ -105,6 +106,10 @@ public class NcboUserDAO extends HibernateDaoSupport {
 
 	public List findByEmail(Object email) {
 		return findByProperty(EMAIL, email);
+	}
+
+	public List findByOpenId(Object openId) {
+		return findByProperty(OPEN_ID, openId);
 	}
 
 	public List findByFirstname(Object firstname) {

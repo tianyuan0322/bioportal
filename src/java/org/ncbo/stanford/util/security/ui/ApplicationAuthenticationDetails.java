@@ -2,7 +2,8 @@ package org.ncbo.stanford.util.security.ui;
 
 import javax.servlet.http.HttpServletRequest;
 
-import org.acegisecurity.ui.WebAuthenticationDetails;
+import org.springframework.security.ui.WebAuthenticationDetails;
+
 
 /**
  * Extends Acegi's WebAuthenticationDetails class to allow storing of
@@ -25,10 +26,6 @@ public class ApplicationAuthenticationDetails extends WebAuthenticationDetails {
 			String applicationId) {
 		super(request);
 		this.applicationId = applicationId;
-	}
-
-	protected ApplicationAuthenticationDetails() {
-		throw new IllegalArgumentException("Cannot use default constructor");
 	}
 
 	/**

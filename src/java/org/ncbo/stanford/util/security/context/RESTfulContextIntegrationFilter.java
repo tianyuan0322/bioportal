@@ -13,15 +13,15 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpServletResponseWrapper;
 
-import org.acegisecurity.context.SecurityContext;
-import org.acegisecurity.context.SecurityContextHolder;
-import org.acegisecurity.context.SecurityContextImpl;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.ncbo.stanford.service.session.RESTfulSession;
 import org.ncbo.stanford.service.session.SessionService;
 import org.ncbo.stanford.view.util.constants.RequestParamConstants;
 import org.springframework.beans.factory.InitializingBean;
+import org.springframework.security.context.SecurityContext;
+import org.springframework.security.context.SecurityContextHolder;
+import org.springframework.security.context.SecurityContextImpl;
 import org.springframework.util.Assert;
 import org.springframework.util.ReflectionUtils;
 
@@ -93,7 +93,7 @@ public class RESTfulContextIntegrationFilter implements InitializingBean,
 	protected static final Log logger = LogFactory
 			.getLog(RESTfulContextIntegrationFilter.class);
 	static final String FILTER_APPLIED = "__acegi_session_integration_filter_applied";
-	public static final String ACEGI_SECURITY_CONTEXT_KEY = "ACEGI_SECURITY_CONTEXT";
+	public static final String ACEGI_SECURITY_CONTEXT_KEY = "SPRING_SECURITY_CONTEXT";
 
 	// ~ Instance fields
 	// ================================================================================================

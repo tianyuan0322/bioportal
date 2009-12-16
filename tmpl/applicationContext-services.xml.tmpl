@@ -205,13 +205,13 @@
 		</property>
 	</bean>
 
-	<bean id="jasyptPasswordEncryptor" class="org.jasypt.util.password.StrongPasswordEncryptor" />
+    <bean id="jasyptPasswordEncryptor" class="org.jasypt.util.password.StrongPasswordEncryptor" />
 
-	<bean id="passwordEncoder" class="org.jasypt.spring.security.PasswordEncoder">
-		<property name="passwordEncryptor">
-			<ref bean="jasyptPasswordEncryptor" />
-		</property>
-	</bean>
+   <bean id="passwordEncoder" class="org.jasypt.spring.security2.PasswordEncoder">
+      <property name="passwordEncryptor">
+        <ref bean="jasyptPasswordEncryptor" />
+      </property>
+   </bean>
 
 	<!-- Hibernate String Encryptor -->
 	<bean id="hibernateStringEncryptor"
@@ -1214,4 +1214,10 @@
 			<value>@oborepositoriesconfigfilepath@</value>
 		</constructor-arg>
 	</bean>
+	<bean id="returnUrl" class="java.lang.String">
+		<constructor-arg>
+			<value>@returnUrl@</value>
+		</constructor-arg>
+	</bean>
+	
 </beans>
