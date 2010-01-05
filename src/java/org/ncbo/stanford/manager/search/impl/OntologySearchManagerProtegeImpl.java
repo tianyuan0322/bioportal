@@ -52,7 +52,6 @@ public class OntologySearchManagerProtegeImpl extends
 	 * @param ontology
 	 * @throws Exception
 	 */
-	@SuppressWarnings("unchecked")
 	public void indexOntology(LuceneIndexWriterWrapper writer,
 			OntologyBean ontology) throws Exception {
 		KnowledgeBase kb = getKnowledgeBaseInstance(ontology);
@@ -258,7 +257,6 @@ public class OntologySearchManagerProtegeImpl extends
 	 * @param owlMode
 	 * @throws IOException
 	 */
-	@SuppressWarnings("unchecked")
 	private void addNameSlotToIndex(LuceneIndexWriterWrapper writer,
 			SearchIndexBean doc, KnowledgeBase kb, NarrowFrameStore nfs,
 			ProtegeSearchFrame protegeFrame, String preferredName,
