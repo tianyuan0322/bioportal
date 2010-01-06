@@ -1220,4 +1220,18 @@
 		</constructor-arg>
 	</bean>
 	
+	<!-- View extractor -->
+	<bean id="ncboProperties" class="org.ncbo.stanford.view.rest.restlet.extractor.NcboProperties">
+		<property name="props">
+		     <props>
+				 <prop key="bioportal.delay.ms">@bioportaldelayms@</prop>
+				 <prop key="bioportal.filter.relations">@bioportalfilterrelations@</prop>
+				 <prop key="target.ontology.file">@targetontologyfile@</prop>
+				 <prop key="target.ontology.name">@targetontologyname@</prop>
+				 <prop key="target.append.existing.ontology">@targetappendexistingontology@</prop>
+				 <prop key="log.count">@logcount@</prop>
+				 <prop key="save.count">@savecount@</prop>
+		     </props>
+		</property> 
+	</bean>
 </beans>

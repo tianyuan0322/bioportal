@@ -324,6 +324,17 @@
 		</property>
 	</bean>
 	
+	<bean id="viewExtractionRestlet"
+		class="org.ncbo.stanford.view.rest.restlet.extractor.ViewExtractionRestlet"
+		parent="abstractBaseRestlet">
+		<property name="ncboProperties">
+			<ref bean="ncboProperties" />
+		</property>
+		<property name="conceptService">
+			<ref bean="conceptService" />
+		</property>
+	</bean>
+	
 	<!-- All mappings: -->
 	<bean id="restManager" class="org.ncbo.stanford.view.rest.base.RestManager">
 		<property name="resourceMappings">
@@ -465,6 +476,9 @@
 						<entry key="/ontology/dump_n3/{ontologyversionid}">
 							<ref local="dumpRdfRestlet" />
 						</entry>
+						<entry key="/viewextractor/{ontologyversionid}">
+							<ref local="viewExtractionRestlet" />
+						</entry>						
 					</map>
 				</constructor-arg>
 			</bean>
