@@ -1,6 +1,6 @@
 /*
 SQLyog Enterprise - MySQL GUI v8.12 
-MySQL - 5.0.83-community : Database - bioportal
+MySQL - 5.0.81-community-nt : Database - bioportal
 *********************************************************************
 */
 
@@ -101,7 +101,7 @@ CREATE TABLE `ncbo_ontology_file` (
   PRIMARY KEY  (`id`),
   UNIQUE KEY `ind_ontology_id_filename` (`ontology_version_id`,`filename`),
   KEY `ontology_id_2` (`ontology_version_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=40355 DEFAULT CHARSET=latin1 CHECKSUM=1 DELAY_KEY_WRITE=1 ROW_FORMAT=DYNAMIC;
+) ENGINE=InnoDB AUTO_INCREMENT=40889 DEFAULT CHARSET=latin1 CHECKSUM=1 DELAY_KEY_WRITE=1 ROW_FORMAT=DYNAMIC;
 
 /*Table structure for table `ncbo_ontology_load_queue` */
 
@@ -118,7 +118,7 @@ CREATE TABLE `ncbo_ontology_load_queue` (
   KEY `FK_ncbo_ontology_load_queue_ontology_version_id` (`ontology_version_id`),
   KEY `FK_ncbo_ontology_load_queue_status_id` (`status_id`),
   CONSTRAINT `FK_ncbo_ontology_load_queue_status_id` FOREIGN KEY (`status_id`) REFERENCES `ncbo_l_status` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=3103 DEFAULT CHARSET=latin1 CHECKSUM=1 DELAY_KEY_WRITE=1 ROW_FORMAT=DYNAMIC;
+) ENGINE=InnoDB AUTO_INCREMENT=3626 DEFAULT CHARSET=latin1 CHECKSUM=1 DELAY_KEY_WRITE=1 ROW_FORMAT=DYNAMIC;
 
 /*Table structure for table `ncbo_usage_log` */
 
@@ -141,7 +141,7 @@ CREATE TABLE `ncbo_usage_log` (
   KEY `idx_application_id` (`application_id`),
   KEY `idx_request_parameters` (`request_parameters`),
   KEY `idx_resource_parameters` (`resource_parameters`)
-) ENGINE=InnoDB AUTO_INCREMENT=2930580 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 /*Table structure for table `ncbo_user` */
 
@@ -150,6 +150,7 @@ DROP TABLE IF EXISTS `ncbo_user`;
 CREATE TABLE `ncbo_user` (
   `id` int(11) NOT NULL auto_increment,
   `username` varchar(64) NOT NULL,
+  `open_id` varchar(256) default NULL,
   `password` varchar(128) NOT NULL,
   `email` varchar(128) NOT NULL,
   `firstname` varchar(64) NOT NULL,
@@ -158,7 +159,7 @@ CREATE TABLE `ncbo_user` (
   `date_created` timestamp NOT NULL default CURRENT_TIMESTAMP,
   PRIMARY KEY  (`id`),
   UNIQUE KEY `idx_unique_username` (`username`)
-) ENGINE=InnoDB AUTO_INCREMENT=38393 DEFAULT CHARSET=latin1 CHECKSUM=1 DELAY_KEY_WRITE=1 ROW_FORMAT=DYNAMIC;
+) ENGINE=InnoDB AUTO_INCREMENT=38472 DEFAULT CHARSET=latin1 CHECKSUM=1 DELAY_KEY_WRITE=1 ROW_FORMAT=DYNAMIC;
 
 /*Table structure for table `ncbo_user_role` */
 
@@ -173,46 +174,15 @@ CREATE TABLE `ncbo_user_role` (
   KEY `ncbo_user_role_fk1_new` (`role_id`),
   CONSTRAINT `ncbo_user_role_fk1_new` FOREIGN KEY (`role_id`) REFERENCES `ncbo_l_role` (`id`),
   CONSTRAINT `ncbo_user_role_fk_new` FOREIGN KEY (`user_id`) REFERENCES `ncbo_user` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=38396 DEFAULT CHARSET=latin1 CHECKSUM=1 DELAY_KEY_WRITE=1 ROW_FORMAT=DYNAMIC;
+) ENGINE=InnoDB AUTO_INCREMENT=38470 DEFAULT CHARSET=latin1 CHECKSUM=1 DELAY_KEY_WRITE=1 ROW_FORMAT=DYNAMIC;
 
-/* Trigger structure for table `ncbo_app_text` */
+/*Table structure for table `temp_path` */
 
-DELIMITER $$
+DROP TABLE IF EXISTS `temp_path`;
 
-/*!50003 DROP TRIGGER*//*!50032 IF EXISTS */ /*!50003 `trg_create_ncbo_app_text_revision_after_insert` */$$
-
-/*!50003 CREATE */ /*!50017 DEFINER = 'ncboadmin'@'%' */ /*!50003 TRIGGER `trg_create_ncbo_app_text_revision_after_insert` AFTER INSERT ON `ncbo_app_text` FOR EACH ROW BEGIN
-	INSERT INTO ncbo_app_text_revision (
-		identifier, description, text_content, datatype_code, date_revised)
-	SELECT NEW.identifier, NEW.description, NEW.text_content, NEW.datatype_code, CURRENT_TIMESTAMP;
-END */$$
-
-
-DELIMITER ;
-
-/* Trigger structure for table `ncbo_app_text` */
-
-DELIMITER $$
-
-/*!50003 DROP TRIGGER*//*!50032 IF EXISTS */ /*!50003 `trg_create_ncbo_app_text_revision_after_update` */$$
-
-/*!50003 CREATE */ /*!50017 DEFINER = 'ncboadmin'@'%' */ /*!50003 TRIGGER `trg_create_ncbo_app_text_revision_after_update` AFTER UPDATE ON `ncbo_app_text` FOR EACH ROW BEGIN
-	DECLARE strNewTextIdent VARCHAR(128);
-	DECLARE strOldTextIdent VARCHAR(128);	
-	SELECT LOWER(NEW.identifier) INTO strNewTextIdent;
-	SELECT LOWER(OLD.identifier) INTO strOldTextIdent;
-	IF strNewTextIdent != strOldTextIdent THEN
-		UPDATE ncbo_app_text_revision
-		SET identifier = strNewTextIdent
-		WHERE LOWER(identifier) = strOldTextIdent;
-	END IF;
-	INSERT INTO ncbo_app_text_revision (
-		identifier, description, text_content, datatype_code, date_revised)
-	SELECT strNewTextIdent, NEW.description, NEW.text_content, NEW.datatype_code, CURRENT_TIMESTAMP;
-END */$$
-
-
-DELIMITER ;
+CREATE TABLE `temp_path` (
+  `id` int(11) default NULL
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 /* Procedure structure for procedure `sp_insert_app_text_record` */
 
@@ -390,6 +360,18 @@ BEGIN
 	END IF;
 	COMMIT;
 	SET p_strMessage := "SUCCESS"; 
+END */$$
+DELIMITER ;
+
+/* Procedure structure for procedure `test_SP` */
+
+/*!50003 DROP PROCEDURE IF EXISTS  `test_SP` */;
+
+DELIMITER $$
+
+/*!50003 CREATE DEFINER=`root`@`localhost` PROCEDURE `test_SP`()
+BEGIN
+                INSERT INTO temp_path VALUES (4321);
 END */$$
 DELIMITER ;
 
