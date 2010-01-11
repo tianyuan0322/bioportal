@@ -20,7 +20,7 @@
             <column name="email" length="128" not-null="true" />
         </property>
         <property name="openId" type="string">
-            <column name="openId" length="128" />
+            <column name="open_id" length="256" />
         </property>
         <property name="firstname" type="string">
             <column name="firstname" length="64" not-null="true" />
