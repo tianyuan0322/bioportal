@@ -324,6 +324,7 @@
 		</property>
 	</bean>
 	
+	<!-- commenting for now until this funcitonality is ready for release
 	<bean id="viewExtractionRestlet"
 		class="org.ncbo.stanford.view.rest.restlet.extractor.ViewExtractionRestlet"
 		parent="abstractBaseRestlet">
@@ -334,6 +335,7 @@
 			<ref bean="conceptService" />
 		</property>
 	</bean>
+	-->
 	
 	<!-- All mappings: -->
 	<bean id="restManager" class="org.ncbo.stanford.view.rest.base.RestManager">
@@ -476,9 +478,11 @@
 						<entry key="/ontology/dump_n3/{ontologyversionid}">
 							<ref local="dumpRdfRestlet" />
 						</entry>
+						<!-- 
 						<entry key="/viewextractor/{ontologyversionid}">
 							<ref local="viewExtractionRestlet" />
-						</entry>						
+						</entry>
+						 -->						
 					</map>
 				</constructor-arg>
 			</bean>
