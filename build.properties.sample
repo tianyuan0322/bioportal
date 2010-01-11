@@ -19,11 +19,13 @@ appserver.home=/apps/Tomcat5.5
 appserver.lib=${appserver.home}/common/lib
 appserver.logs=${appserver.home}/logs
 deploy.path=${appserver.home}/webapps
-openId.return.url=http://localhost:8080/bioportal/openIdAuthRes
 #appserver.home=/apps/jboss-4.0.5.GA
 #appserver.lib=${appserver.home}/server/default/lib
 #appserver.logs=${appserver.home}/server/default/log
 #deploy.path=${appserver.home}/server/default/deploy
+
+# Open ID return url
+openId.return.url=http://localhost:8080/bioportal/openIdAuthRes
 
 # Path to static resources such as XSLT files and OWL includes
 bioportal.static.resource.path=${deploy.path}/${app.name}/WEB-INF/resources
@@ -154,7 +156,7 @@ bioportal.upload.maxfilesize=10485760
 ################## Protege Configuration ##################
 
 # db connection
-protege.jdbc.url=jdbc:mysql://localhost/bioportal_protege
+protege.jdbc.url=jdbc:mysql://localhost/bioportal_protege?useUnicode=true&amp;characterEncoding=UTF-8
 protege.jdbc.driver=com.mysql.jdbc.Driver
 protege.jdbc.username=yourprotegedbuser
 protege.jdbc.password=yourprotegedbpassword
@@ -393,13 +395,16 @@ test.jdbc.driver=${bioportal.jdbc.driver}
 test.db.user=root
 test.db.password=yourrootpassword
 test.sql.dir=db/sql
+
 ###################################
-bioportal.delay.ms=0
+# these properties should be removed when the new view extraction code is in place
+#bioportal.delay.ms=0
 #bioportal.ontology.ref=http://stagerest.bioontology.org/bioportal/concepts/35686
 #bioportal.top.concept.id=V01-V86.99
-bioportal.filter.relations=PAR,isa,CHD,inverse_isa,SUBSETMEMBER,SubClass,SuperClass,[R]SIB,SIB
-target.ontology.file=/tmp/icd9.owl
-target.ontology.name=http://who.int/icd9
-target.append.existing.ontology=true
-log.count=100
-save.count=1000
+#bioportal.filter.relations=PAR,isa,CHD,inverse_isa,SUBSETMEMBER,SubClass,SuperClass,[R]SIB,SIB
+#target.ontology.file=/tmp/icd9.owl
+#target.ontology.name=http://who.int/icd9
+#target.append.existing.ontology=true
+#log.count=100
+#save.count=1000
+###################################
