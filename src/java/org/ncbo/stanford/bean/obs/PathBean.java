@@ -1,25 +1,28 @@
 package org.ncbo.stanford.bean.obs;
 
-public class PathBean extends AbstractConceptBean {
+import java.util.ArrayList;
+import java.util.List;
 
-	private String path;
+public class PathBean {
+
+	private List<ConceptBean> conceptBeans = new ArrayList<ConceptBean>(0);
 
 	/**
-	 * @return the path
+	 * @return the conceptBeans
 	 */
-	public String getPath() {
-		return path;
+	public List<ConceptBean> getConceptBeans() {
+		return conceptBeans;
 	}
 
 	/**
-	 * @param path
-	 *            the path to set
+	 * @param paths
+	 *            the paths to set
 	 */
-	public void setPath(String path) {
-		this.path = path;
+	public void setConceptBeans(List<ConceptBean> conceptBeans) {
+		this.conceptBeans = conceptBeans;
 	}
 
 	public String toString() {
-		return "[" + super.toString() + " path: " + path + "]";
+		return "[" + super.toString() + " conceptBeans: " + conceptBeans + "]";
 	}
 }

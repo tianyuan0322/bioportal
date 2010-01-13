@@ -2,58 +2,58 @@ package org.ncbo.stanford.bean.obs;
 
 public class SemanticTypeBean {
 
-	private String conceptId;
-	private String localSemanticTypeId;
-	private String name;
+	private String id;
+	private String semanticType;
+	private String description;
 
 	public String toString() {
-		return "[conceptId: " + this.getConceptId() + "obsSemanticType: "
-				+ this.getLocalSemanticTypeId() + ", name: " + this.getName()
-				+ "]";
+		return "[id: " + this.getId() + "obsSemanticType: "
+				+ this.getSemanticType() + ", description: "
+				+ this.getDescription() + "]";
 	}
 
 	/**
-	 * @return the localSemanticTypeId
+	 * @return the semanticType
 	 */
-	public String getLocalSemanticTypeId() {
-		return localSemanticTypeId;
+	public String getSemanticType() {
+		return semanticType;
 	}
 
 	/**
-	 * @param localSemanticTypeId
-	 *            the localSemanticTypeId to set
+	 * @param semanticType
+	 *            the semanticType to set
 	 */
-	public void setLocalSemanticTypeId(String localSemanticTypeId) {
-		this.localSemanticTypeId = localSemanticTypeId;
+	public void setSemanticType(String semanticType) {
+		this.semanticType = semanticType;
 	}
 
 	/**
-	 * @return the name
+	 * @return the description
 	 */
-	public String getName() {
-		return name;
+	public String getDescription() {
+		return description;
 	}
 
 	/**
 	 * @param name
-	 *            the name to set
+	 *            the description to set
 	 */
-	public void setName(String name) {
-		this.name = name;
+	public void setDescription(String description) {
+		this.description = description;
 	}
 
 	/**
-	 * @return the conceptId
+	 * @return the id
 	 */
-	public String getConceptId() {
-		return conceptId;
+	public String getId() {
+		return id;
 	}
 
 	/**
-	 * @param conceptId
-	 *            the conceptId to set
+	 * @param id
+	 *            the id to set
 	 */
-	public void setConceptId(String conceptId) {
-		this.conceptId = conceptId;
+	public void setId(String id) {
+		this.id = id;
 	}
 }

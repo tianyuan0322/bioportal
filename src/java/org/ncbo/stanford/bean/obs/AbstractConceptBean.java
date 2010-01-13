@@ -2,6 +2,7 @@ package org.ncbo.stanford.bean.obs;
 
 public abstract class AbstractConceptBean {
 
+	protected String id;
 	protected String localConceptId;
 
 	/**
@@ -20,6 +21,21 @@ public abstract class AbstractConceptBean {
 	}
 
 	public String toString() {
-		return "localConceptId: " + localConceptId;
+		return "id: " + id + " localConceptId: " + localConceptId;
+	}
+
+	/**
+	 * @return the id
+	 */
+	public String getId() {
+		return id;
+	}
+
+	/**
+	 * @param id
+	 *            the id to set
+	 */
+	public void setId(String id) {
+		this.id = id;
 	}
 }

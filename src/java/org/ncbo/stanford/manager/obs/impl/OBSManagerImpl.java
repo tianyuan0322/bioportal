@@ -12,13 +12,11 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.ncbo.stanford.bean.concept.ClassBean;
 import org.ncbo.stanford.bean.obs.AbstractConceptBean;
-import org.ncbo.stanford.bean.obs.ChildBean;
 import org.ncbo.stanford.bean.obs.ConceptBean;
 import org.ncbo.stanford.bean.obs.OntologyBean;
-import org.ncbo.stanford.bean.obs.ParentBean;
 import org.ncbo.stanford.bean.obs.PathBean;
+import org.ncbo.stanford.bean.obs.RelationBean;
 import org.ncbo.stanford.bean.obs.SemanticTypeBean;
-import org.ncbo.stanford.bean.obs.SiblingBean;
 import org.ncbo.stanford.bean.response.AbstractResponseBean;
 import org.ncbo.stanford.bean.response.ErrorStatusBean;
 import org.ncbo.stanford.bean.response.SuccessBean;
@@ -106,13 +104,13 @@ public class OBSManagerImpl implements OBSManager {
 
 		if (response.isResponseSuccess()) {
 			String data = ((SuccessBean) response).getDataXml();
-			List<ParentBean> obsParents = (ArrayList<ParentBean>) xmlSerializationService
+			List<RelationBean> obsParents = (ArrayList<RelationBean>) xmlSerializationService
 					.fromXML(data);
 			parents = new ArrayList<ClassBean>(0);
 
-			for (ParentBean obsParent : obsParents) {
+			for (RelationBean obsParent : obsParents) {
 				ClassBean parent = new ClassBean();
-				populateBaseClassBean(obsParent, parent);
+				populateBaseClassBean(obsParent.getConcept(), parent);
 				parent.addRelation(ApplicationConstants.LEVEL, obsParent
 						.getLevel());
 				parents.add(parent);
@@ -136,13 +134,13 @@ public class OBSManagerImpl implements OBSManager {
 
 		if (response.isResponseSuccess()) {
 			String data = ((SuccessBean) response).getDataXml();
-			List<ChildBean> obsChildren = (ArrayList<ChildBean>) xmlSerializationService
+			List<RelationBean> obsChildren = (ArrayList<RelationBean>) xmlSerializationService
 					.fromXML(data);
 			children = new ArrayList<ClassBean>(0);
 
-			for (ChildBean obsChild : obsChildren) {
+			for (RelationBean obsChild : obsChildren) {
 				ClassBean child = new ClassBean();
-				populateBaseClassBean(obsChild, child);
+				populateBaseClassBean(obsChild.getConcept(), child);
 				child.addRelation(ApplicationConstants.LEVEL, obsChild
 						.getLevel());
 				children.add(child);
@@ -166,13 +164,13 @@ public class OBSManagerImpl implements OBSManager {
 
 		if (response.isResponseSuccess()) {
 			String data = ((SuccessBean) response).getDataXml();
-			List<ChildBean> obsChildren = (ArrayList<ChildBean>) xmlSerializationService
+			List<RelationBean> obsChildren = (ArrayList<RelationBean>) xmlSerializationService
 					.fromXML(data);
 			childrenConceptIds = new HashSet<String>(0);
 
-			for (ChildBean obsChild : obsChildren) {
+			for (RelationBean obsChild : obsChildren) {
 				List<String> parsedConceptId = parseOBSConceptId(obsChild
-						.getLocalConceptId());
+						.getConcept().getLocalConceptId());
 				childrenConceptIds.add(parsedConceptId.get(0));
 			}
 		} else {
@@ -199,9 +197,11 @@ public class OBSManagerImpl implements OBSManager {
 
 			for (PathBean obsRootPath : obsRootPaths) {
 				ClassBean rootPath = new ClassBean();
-				populateBaseClassBean(obsRootPath, rootPath);
-				rootPath.addRelation(ApplicationConstants.PATH, obsRootPath
-						.getPath().replaceAll(OBS_ONTOLOGY_ID_PATTERN, ""));
+				rootPath.setOntologyVersionId(ontologyVersionId);
+				rootPath.setId(conceptId);
+				List<ConceptBean> conceptBeans = obsRootPath.getConceptBeans();
+				rootPath.addRelation(ApplicationConstants.PATH,
+						extractPath(conceptBeans));
 				rootPaths.add(rootPath);
 			}
 		} else {
@@ -222,13 +222,13 @@ public class OBSManagerImpl implements OBSManager {
 
 		if (response.isResponseSuccess()) {
 			String data = ((SuccessBean) response).getDataXml();
-			List<SiblingBean> obsSiblings = (ArrayList<SiblingBean>) xmlSerializationService
+			List<RelationBean> obsSiblings = (ArrayList<RelationBean>) xmlSerializationService
 					.fromXML(data);
 			siblings = new ArrayList<ClassBean>(0);
 
-			for (SiblingBean obsSibling : obsSiblings) {
+			for (RelationBean obsSibling : obsSiblings) {
 				ClassBean sibling = new ClassBean();
-				populateBaseClassBean(obsSibling, sibling);
+				populateBaseClassBean(obsSibling.getConcept(), sibling);
 				sibling.addRelation(ApplicationConstants.LEVEL, obsSibling
 						.getLevel());
 				siblings.add(sibling);
@@ -257,9 +257,11 @@ public class OBSManagerImpl implements OBSManager {
 
 			for (PathBean obsLeaf : obsLeaves) {
 				ClassBean leaf = new ClassBean();
-				populateBaseClassBean(obsLeaf, leaf);
-				leaf.addRelation(ApplicationConstants.PATH, obsLeaf.getPath()
-						.replaceAll(OBS_ONTOLOGY_ID_PATTERN, ""));
+				leaf.setOntologyVersionId(ontologyVersionId);
+				leaf.setId(conceptId);
+				List<ConceptBean> conceptBeans = obsLeaf.getConceptBeans();
+				leaf.addRelation(ApplicationConstants.PATH,
+						extractPath(conceptBeans));
 				leaves.add(leaf);
 			}
 		} else {
@@ -267,6 +269,21 @@ public class OBSManagerImpl implements OBSManager {
 		}
 
 		return leaves;
+	}
+
+	private String extractPath(List<ConceptBean> paths) {
+		String strPath = "";
+
+		for (ConceptBean path : paths) {
+			strPath += path.getLocalConceptId().replaceAll(
+					OBS_ONTOLOGY_ID_PATTERN, "") + '.';
+		}
+
+		if (strPath.length() > 0) {
+			strPath = strPath.substring(0, strPath.length() - 1);
+		}
+
+		return strPath;
 	}
 
 	/**
@@ -284,17 +301,9 @@ public class OBSManagerImpl implements OBSManager {
 				.getMessage("entity.obs.semantictypebean"),
 				SemanticTypeBean.class);
 		xmlSerializationService.alias(MessageUtils
-				.getMessage("entity.obs.parentbean"), ParentBean.class);
-		xmlSerializationService.aliasField(MessageUtils
-				.getMessage("property.obs.parentlocalconceptid"),
-				ParentBean.class, MessageUtils
-						.getMessage("property.obs.localconceptid"));
-		xmlSerializationService.alias(MessageUtils
-				.getMessage("entity.obs.childbean"), ChildBean.class);
-		xmlSerializationService.alias(MessageUtils
-				.getMessage("entity.obs.pathbean"), PathBean.class);
-		xmlSerializationService.alias(MessageUtils
-				.getMessage("entity.obs.siblingbean"), SiblingBean.class);
+				.getMessage("entity.obs.relationbean"), RelationBean.class);
+		 xmlSerializationService.alias(MessageUtils
+		 .getMessage("entity.obs.pathbean"), PathBean.class);
 		this.xmlSerializationService = xmlSerializationService;
 	}
 
