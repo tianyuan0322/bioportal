@@ -89,12 +89,19 @@ public abstract class AbstractOntologyManagerProtege {
 	// Protege tables
 
 	protected Slot getSynonymSlot(KnowledgeBase kb, String synonymSlot) {
+		Slot slot = null;
+
 		if (!StringHelper.isNullOrNullString(synonymSlot)) {
-			return (kb instanceof OWLModel ? ((OWLModel) kb)
+			slot = (kb instanceof OWLModel ? ((OWLModel) kb)
 					.getRDFProperty(synonymSlot) : kb.getSlot(synonymSlot));
 		}
 
-		return null;
+		if (slot == null && kb instanceof OWLModel) {
+			slot = ((OWLModel) kb)
+					.getRDFProperty(OntologyBean.DEFAULT_SYNONYM_SLOT);
+		}
+
+		return slot;
 	}
 
 	protected Slot getPreferredNameSlot(KnowledgeBase kb,
@@ -105,6 +112,11 @@ public abstract class AbstractOntologyManagerProtege {
 			slot = kb instanceof OWLModel ? ((OWLModel) kb)
 					.getRDFProperty(preferredNameSlotName) : kb
 					.getSlot(preferredNameSlotName);
+		}
+
+		if (slot == null && kb instanceof OWLModel) {
+			slot = ((OWLModel) kb)
+					.getRDFProperty(OntologyBean.DEFAULT_PREFERRED_NAME_SLOT);
 		}
 
 		if (slot == null) {
