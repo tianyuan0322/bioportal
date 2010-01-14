@@ -69,7 +69,7 @@ public class ConceptRestlet extends AbstractBaseRestlet {
 				throw new InvalidInputException(MessageUtils
 						.getMessage("msg.error.conceptidrequired"));
 			} else if (conceptId
-					.equalsIgnoreCase(RequestParamConstants.PARAM_ROOT_CONCEPT)) {
+					.equals(RequestParamConstants.PARAM_ROOT_CONCEPT)) {
 				// root concept
 				concept = conceptService.findRootConcept(ontologyVersionIdInt,
 						maxNumChildrenInt, lightBool);
@@ -96,11 +96,11 @@ public class ConceptRestlet extends AbstractBaseRestlet {
 			response.setStatus(Status.CLIENT_ERROR_BAD_REQUEST, nfe
 					.getMessage());
 		} catch (OntologyNotFoundException onfe) {
-			response.setStatus(Status.CLIENT_ERROR_NOT_FOUND, onfe
-					.getMessage());
+			response
+					.setStatus(Status.CLIENT_ERROR_NOT_FOUND, onfe.getMessage());
 		} catch (ConceptNotFoundException cnfe) {
-			response.setStatus(Status.CLIENT_ERROR_NOT_FOUND, cnfe
-					.getMessage());
+			response
+					.setStatus(Status.CLIENT_ERROR_NOT_FOUND, cnfe.getMessage());
 		} catch (Exception e) {
 			response.setStatus(Status.SERVER_ERROR_INTERNAL, e.getMessage());
 			e.printStackTrace();
