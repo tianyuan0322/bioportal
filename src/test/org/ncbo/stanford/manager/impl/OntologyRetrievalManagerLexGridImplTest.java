@@ -479,7 +479,7 @@ public class OntologyRetrievalManagerLexGridImplTest extends
 	@Test
 	public void testListAllClasses() throws Exception {
 		OntologyBean ob = retrievalManager
-				.getLatestNcboOntology(TEST_ATMO_DISPLAY_LABEL);
+				.getLatestNcboOntology(TEST_OBO_CELL_DISPLAY_LABEL);
 		Iterator<ClassBean> cbIt = retrievalManager.listAllClasses(ob);
 		int numClasses = 0;
 		for (; cbIt.hasNext();) {
