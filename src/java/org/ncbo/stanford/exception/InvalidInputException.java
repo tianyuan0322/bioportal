@@ -1,5 +1,8 @@
 package org.ncbo.stanford.exception;
 
+/**
+ * Input into an API is invalid, for example a URL parameter does not parse.
+ */
 public class InvalidInputException extends Exception {
 	/**
 	 * 

@@ -324,6 +324,30 @@
 		</property>
 	</bean>
 	
+	<bean id="reviewRestlet"
+		class="org.ncbo.stanford.view.rest.restlet.review.ReviewRestlet"
+		parent="abstractBaseRestlet">
+		<property name="ontologyAnnotationService">
+			<ref bean="ontologyAnnotationService" />
+		</property>	
+	</bean>
+	
+	<bean id="projectRestlet"
+		class="org.ncbo.stanford.view.rest.restlet.metadata.ProjectRestlet"
+		parent="abstractBaseRestlet">
+		<property name="projectMetadataService">
+			<ref bean="projectMetadataService" />
+		</property>
+	</bean>
+	
+	<bean id="projectListRestlet"
+		class="org.ncbo.stanford.view.rest.restlet.metadata.ProjectListRestlet"
+		parent="abstractBaseRestlet">
+		<property name="projectMetadataService">
+			<ref bean="projectMetadataService" />
+		</property>
+	</bean>
+	
 	<!-- commenting for now until this funcitonality is ready for release
 	<bean id="viewExtractionRestlet"
 		class="org.ncbo.stanford.view.rest.restlet.extractor.ViewExtractionRestlet"
@@ -483,6 +507,16 @@
 							<ref local="viewExtractionRestlet" />
 						</entry>
 						 -->						
+						<!-- ========== Metadata ========== -->
+						<entry key="/review/{reviewid}">
+							<ref local="reviewRestlet" />
+						</entry>
+						<entry key="/project/{projectid}">
+							<ref local="projectRestlet" />
+						</entry>
+						<entry key="/projects">
+							<ref local="projectListRestlet" />
+						</entry>
 					</map>
 				</constructor-arg>
 			</bean>

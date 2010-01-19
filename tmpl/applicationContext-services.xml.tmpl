@@ -493,6 +493,16 @@
 		class="org.ncbo.stanford.manager.metadata.impl.OntologyGroupMetadataManagerImpl"
 		parent="abstractOntologyManagerProtege">
 	</bean>
+	
+	<bean id="ontologyAnnotationManager"
+		class="org.ncbo.stanford.manager.metadata.impl.OntologyAnnotationManagerImpl"
+		parent="abstractOntologyManagerProtege">
+	</bean>
+	
+	<bean id="projectMetadataManager"
+		class="org.ncbo.stanford.manager.metadata.impl.ProjectMetadataManagerImpl"
+		parent="abstractOntologyManagerProtege">
+	</bean>
 
 	<!-- Application Services -->
 	<bean id="userService" class="org.ncbo.stanford.service.user.impl.UserServiceImpl">
@@ -632,6 +642,20 @@
 		</property>
 		<property name="oboRepositoriesConfigFilepath">
 			<ref bean="oboRepositoriesConfigFilepath" />
+		</property>
+	</bean>
+	
+	<bean id="ontologyAnnotationService"
+		class="org.ncbo.stanford.service.annotation.impl.OntologyAnnotationServiceImpl">
+		<property name="ontologyAnnotationManager">
+			<ref bean="ontologyAnnotationManager" />
+		</property>
+	</bean>
+	
+	<bean id="projectMetadataService"
+		class="org.ncbo.stanford.service.metadata.impl.ProjectMetadataServiceImpl">
+		<property name="projectMetadataManager">
+			<ref bean="projectMetadataManager" />
 		</property>
 	</bean>
 
