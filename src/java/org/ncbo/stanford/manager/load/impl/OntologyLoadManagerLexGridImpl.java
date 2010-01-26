@@ -275,7 +275,7 @@ public class OntologyLoadManagerLexGridImpl extends
 			// Override registered name using metadata from the ontology bean
 			String strCodingSchemeURI = "http://www.bioontology.org/"
 					+ ontology_bean.getId().toString() + "/"
-					+ ontology_bean.getDisplayLabel();
+					+ ontology_bean.getDisplayLabel().trim();
 			// CodingSchemeManifest needs an id for it to be valid...set the id
 			// value
 			csm.setId(strCodingSchemeURI);
