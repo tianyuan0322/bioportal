@@ -90,7 +90,15 @@
 			<ref bean="conceptService" />
 		</property>
 	</bean>
-
+	
+	<bean id="conceptPropertyRestlet"
+		class="org.ncbo.stanford.view.rest.restlet.concept.ConceptPropertyRestlet"
+		parent="abstractBaseRestlet">
+		<property name="conceptPropertyService">
+			<ref bean="conceptPropertyService" />
+		</property>
+	</bean>
+	
 	<bean id="conceptParentsRestlet"
 		class="org.ncbo.stanford.view.rest.restlet.concept.ConceptParentsRestlet"
 		parent="abstractBaseRestlet">
@@ -408,6 +416,9 @@
 						</entry>
 						<entry key="/concepts/{ontologyversionid}/{conceptid}">
 							<ref local="conceptRestlet" />
+						</entry>
+						<entry key="/concepts/property/{property}">
+							<ref local="conceptPropertyRestlet" />
 						</entry>
 						<entry key="/concepts/parents/{ontologyversionid}/{conceptid}">
 							<ref local="conceptParentsRestlet" />

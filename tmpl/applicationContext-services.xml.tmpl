@@ -525,6 +525,25 @@
 			<ref local="ontologyMetadataManager" />
 		</property>
 	</bean>
+	
+	<bean id="conceptPropertyService"
+		class="org.ncbo.stanford.service.cuiconcept.impl.ConceptPropertyServiceImpl">
+		<property name="ontologyFormatHandlerMap">
+			<ref local="ontologyFormatHandlerMap" />
+		</property>
+		<property name="ontologyRetrievalHandlerMap">
+			<ref local="ontologyRetrievalHandlerMap" />
+		</property>
+		<property name="ontologyMetadataManager">
+			<ref local="ontologyMetadataManager" />
+		</property>
+		<property name="conceptService">
+			<ref local="conceptService" />
+		</property>
+		<property name="queryService">
+			<ref bean="querySearchService" />
+		</property>
+	</bean>
 
 	<bean id="dumpRDFService"
 	    class="org.ncbo.stanford.service.concept.impl.DumpRDFServiceImpl"

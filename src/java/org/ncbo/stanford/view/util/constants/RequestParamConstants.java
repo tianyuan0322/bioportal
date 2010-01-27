@@ -24,6 +24,8 @@ public interface RequestParamConstants {
 	public static final String PARAM_OPENId="openId";
 	public static final String PARAM_ROOT_CONCEPT = "root";
 	public static final String PARAM_ALL_CONCEPTS = "all";
+	public static final String PARAM_PROPERTY_VALUE = "val";
+	
 
 	/**
 	 * A mandatory parameter required to be included in all encrypted URL query
