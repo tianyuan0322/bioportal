@@ -396,15 +396,3 @@ test.db.user=root
 test.db.password=yourrootpassword
 test.sql.dir=db/sql
 
-###################################
-# these properties should be removed when the new view extraction code is in place
-#bioportal.delay.ms=0
-#bioportal.ontology.ref=http://stagerest.bioontology.org/bioportal/concepts/35686
-#bioportal.top.concept.id=V01-V86.99
-#bioportal.filter.relations=PAR,isa,CHD,inverse_isa,SUBSETMEMBER,SubClass,SuperClass,[R]SIB,SIB
-#target.ontology.file=/tmp/icd9.owl
-#target.ontology.name=http://who.int/icd9
-#target.append.existing.ontology=true
-#log.count=100
-#save.count=1000
-###################################

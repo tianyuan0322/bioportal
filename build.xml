@@ -210,21 +210,12 @@
 				<filter token="bioportaltempdir" value="${bioportal.tempdir}" />
 				<filter token="oborepositoriesconfigfilepath" value="${obo.repositories.config.filepath}" />
 				<filter token="returnUrl" value="${openId.return.url}" />
-				<!-- view extractor properties-->
-				<!-- commented until view extractor is ready for release
-				<filter token="bioportaldelayms" value="${bioportal.delay.ms}" />
-				<filter token="bioportalfilterrelations" value="${bioportal.filter.relations}" />
-				<filter token="targetontologyfile" value="${target.ontology.file}" />
-				<filter token="targetontologyname" value="${target.ontology.name}" />
-				<filter token="targetappendexistingontology" value="${target.append.existing.ontology}" />
-				<filter token="logcount" value="${log.count}" />
-				<filter token="savecount" value="${save.count}" />
-				-->
 			</filterset>
 		</copy>
 
 		<copy file="${tmpl.dir}/applicationContext-rest.xml.tmpl" tofile="${conf.dir.generated}/applicationContext-rest.xml" overwrite="true">
 			<filterset>
+				<filter token="bioportalresourcetempfilepath" value="${bioportal.resource.tempfile.path}" />
 			</filterset>
 		</copy>
 

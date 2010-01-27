@@ -117,4 +117,14 @@ public interface RequestParamConstants {
 	public static final String PARAM_VIEWS = "views";
 	public static final String PARAM_ACTIVE = "active";
 	public static final String PARAM_PULLED = "pulled";
+	
+	/*
+	 * view extractor
+	 */
+	public static final String PARAM_DELAY = "delay";
+	public static final String PARAM_FILTERRELATIONS = "filterrelations";
+	public static final String PARAM_ONTOLOGYNAME = "ontologyname";
+	public static final String PARAM_EXISTONTOLOGY = "existontology";
+	public static final String PARAM_LOGCOUNT = "logcount";
+	public static final String PARAM_SAVECOUNT = "savecount";
 }

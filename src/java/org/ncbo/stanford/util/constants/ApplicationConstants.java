@@ -18,6 +18,7 @@ public interface ApplicationConstants {
 	 */
 	public static final String UTF_8 = "UTF-8";
 
+	public static final Integer TIMETOLIVE=60;
 	/**
 	 * File extensions
 	 */
