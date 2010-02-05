@@ -136,7 +136,7 @@ public class OntologyRetrievalManagerLexGridImplTest extends
 				.getLatestNcboOntology(TEST_OBO_CELL_DISPLAY_LABEL);
 		String conceptID = "CL:0000255";
 		ClassBean classBean = retrievalManager.findConcept(ncboOntology,
-				conceptID, false, false);
+				conceptID, false, false,true);
 		System.out.println("Concept " + conceptID + " of cell ontology is \n"
 				+ classBean);
 		System.out.println("\n");
@@ -166,7 +166,7 @@ public class OntologyRetrievalManagerLexGridImplTest extends
 				.getLatestNcboOntology(TEST_OBO_CELL_DISPLAY_LABEL);
 		String conceptID = "CL:ABCDXYZ";
 		ClassBean classBean = retrievalManager.findConcept(ncboOntology,
-				conceptID, false, false);
+				conceptID, false, false,true);
 		System.out.println("Concept " + conceptID + " of cell ontology is \n"
 				+ classBean);
 		System.out.println("\n");
@@ -181,7 +181,7 @@ public class OntologyRetrievalManagerLexGridImplTest extends
 				.getLatestNcboOntology(TEST_OBO_DICTYOSTELIUM_DISPLAY_LABEL);
 		String conceptID = "DDANAT:0000004";
 		ClassBean classBean = retrievalManager.findConcept(ncboOntology,
-				conceptID, false, false);
+				conceptID, false, false,true);
 		System.out.println("Concept " + conceptID
 				+ " of Dictyostelium ontology(2 relations) is \n" + classBean);
 		System.out.println("\n");
@@ -196,7 +196,7 @@ public class OntologyRetrievalManagerLexGridImplTest extends
 				.getLatestNcboOntology(TEST_OBO_DICTYOSTELIUM_DISPLAY_LABEL);
 		String conceptID = "DDANAT:0000430";
 		ClassBean classBean = retrievalManager.findConcept(ncboOntology,
-				conceptID, false, false);
+				conceptID, false, false,true);
 		System.out.println("Concept " + conceptID
 				+ " of Dictyostelium ontology(obsolete) is \n" + classBean);
 		System.out.println("\n");
@@ -213,7 +213,7 @@ public class OntologyRetrievalManagerLexGridImplTest extends
 				.getLatestNcboOntology(TEST_UMLS_DISPLAY_LABEL);
 		String conceptID = "MFART";
 		ClassBean classBean = retrievalManager.findConcept(ncboOntology,
-				conceptID, false, false);
+				conceptID, false, false,true);
 		System.out
 				.println("Concept "
 						+ conceptID

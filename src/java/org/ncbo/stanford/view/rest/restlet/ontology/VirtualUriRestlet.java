@@ -110,7 +110,7 @@ public class VirtualUriRestlet extends AbstractBaseRestlet {
 					} else {
 						returnObject = conceptService.findConcept(ontBean
 								.getId(), conceptId, maxNumChildrenInt,
-								lightBool, noRelationsBool);
+								lightBool, noRelationsBool,true);
 					}
 
 					if (returnObject == null) {

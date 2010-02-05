@@ -91,6 +91,13 @@
 		</property>
 	</bean>
 	
+	<bean id="instanceRestlet"
+		class="org.ncbo.stanford.view.rest.restlet.instance.InstanceRestlet"
+		parent="abstractBaseRestlet">
+		<property name="conceptService">
+			<ref bean="conceptService" />
+		</property>
+	</bean>
 	<bean id="conceptPropertyRestlet"
 		class="org.ncbo.stanford.view.rest.restlet.concept.ConceptPropertyRestlet"
 		parent="abstractBaseRestlet">
@@ -491,6 +498,9 @@
 						</entry>
 						<entry key="/viewextractor/{ontologyversionid}">
 							<ref local="viewExtractionRestlet" />
+						</entry>
+						<entry key="/concepts/instances/{ontologyVersionId}">
+							<ref local="instanceRestlet" />
 						</entry>
 					</map>
 				</constructor-arg>

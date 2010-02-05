@@ -43,6 +43,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.ncbo.stanford.bean.OntologyBean;
 import org.ncbo.stanford.bean.concept.ClassBean;
+import org.ncbo.stanford.bean.concept.InstanceBean;
 import org.ncbo.stanford.enumeration.ConceptTypeEnum;
 import org.ncbo.stanford.exception.BPRuntimeException;
 import org.ncbo.stanford.exception.OntologyVersionNotFoundException;
@@ -124,7 +125,8 @@ public class OntologyRetrievalManagerLexGridImpl extends
 	 * @throws Exception
 	 */
 	public ClassBean findConcept(OntologyBean ontologyBean, String conceptId,
-			boolean light, boolean noRelations) throws Exception {
+			boolean light, boolean noRelations, boolean isIncludeInstances)
+			throws Exception {
 		ClassBean concept = null;
 
 		if (noRelations) {
@@ -209,6 +211,12 @@ public class OntologyRetrievalManagerLexGridImpl extends
 		}
 
 		return classBean;
+	}
+
+	// TODO: need to implement
+	public InstanceBean findInstanceById(OntologyBean ontologyBean,
+			String instanceId) throws Exception {
+		return null;
 	}
 
 	/**
@@ -1286,7 +1294,7 @@ public class OntologyRetrievalManagerLexGridImpl extends
 
 				// remove duplicates
 				List<String> synonyms = bean.getSynonyms();
-				
+
 				if (synonyms == null || !synonyms.contains(synVal)) {
 					bean.addSynonym(synVal);
 				}

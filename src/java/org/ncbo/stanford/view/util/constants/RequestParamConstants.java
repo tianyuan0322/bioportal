@@ -21,11 +21,10 @@ public interface RequestParamConstants {
 	public static final String PARAM_PASSWORD = "password";
 	public static final String PARAM_APPLICATIONID = "applicationid";
 	public static final String PARAM_SESSIONID = "sessionid";
-	public static final String PARAM_OPENId="openId";
+	public static final String PARAM_OPENId = "openId";
 	public static final String PARAM_ROOT_CONCEPT = "root";
 	public static final String PARAM_ALL_CONCEPTS = "all";
 	public static final String PARAM_PROPERTY_VALUE = "val";
-	
 
 	/**
 	 * A mandatory parameter required to be included in all encrypted URL query
@@ -48,6 +47,7 @@ public interface RequestParamConstants {
 	public static final String PARAM_CONCEPT_ID = "conceptid";
 	public static final String PARAM_MAXNUMCHILDREN = "maxnumchildren";
 	public static final String PARAM_NORELATIONS = "norelations";
+	public static final String PARAM_INCLUDEINSTANCES = "includeinstances";
 
 	/**
 	 * Path Restlet parameters
@@ -117,7 +117,7 @@ public interface RequestParamConstants {
 	public static final String PARAM_VIEWS = "views";
 	public static final String PARAM_ACTIVE = "active";
 	public static final String PARAM_PULLED = "pulled";
-	
+
 	/*
 	 * view extractor
 	 */

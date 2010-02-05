@@ -14,9 +14,12 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.ncbo.stanford.bean.OntologyBean;
 import org.ncbo.stanford.bean.concept.ClassBean;
+import org.ncbo.stanford.bean.concept.InstanceBean;
 import org.ncbo.stanford.enumeration.ConceptTypeEnum;
+import org.ncbo.stanford.exception.InvalidInputException;
 import org.ncbo.stanford.manager.AbstractOntologyManagerProtege;
 import org.ncbo.stanford.manager.retrieval.OntologyRetrievalManager;
+import org.ncbo.stanford.util.MessageUtils;
 import org.ncbo.stanford.util.constants.ApplicationConstants;
 import org.ncbo.stanford.util.helper.StringHelper;
 
@@ -92,7 +95,8 @@ public class OntologyRetrievalManagerProtegeImpl extends
 	}
 
 	public ClassBean findConcept(OntologyBean ontologyVersion,
-			String conceptId, boolean light, boolean noRelations) {
+			String conceptId, boolean light, boolean noRelations,
+			boolean isIncludeInstances) {
 		KnowledgeBase kb = getKnowledgeBase(ontologyVersion);
 		Slot synonymSlot = getSynonymSlot(kb, ontologyVersion.getSynonymSlot());
 		Slot definitionSlot = getDefinitionSlot(kb, ontologyVersion
@@ -113,6 +117,56 @@ public class OntologyRetrievalManagerProtegeImpl extends
 			} else {
 				targetClass = createClassBean((Cls) owlClass, true,
 						synonymSlot, definitionSlot, authorSlot);
+				if (isIncludeInstances) {
+					// TODO: start
+					Cls clsObj = (Cls) owlClass;
+
+					// get instance from KnowledgeBase
+					// TODO: need to verify about using getDirectInstances() or
+					// getInstances()
+					Collection<Instance> instances = clsObj
+							.getDirectInstances();
+
+					List<InstanceBean> resultInstance = new ArrayList<InstanceBean>();
+
+					for (Instance instance : instances) {
+						// prepare instance object.
+						InstanceBean inst = new InstanceBean();
+						inst.setId(getId(instance));
+						inst.setFullId(instance.getName());
+						inst.setLabel(getBrowserText(instance));
+
+						inst.setInstanceTypes(instance.getDirectTypes());
+
+						Collection<Slot> properties = instance.getOwnSlots();
+						Map<String, List<String>> pairs = new HashMap<String, List<String>>();
+
+						Iterator<Slot> p = properties.iterator();
+						while (p.hasNext()) {
+							Slot nextProperty = p.next();
+							List<String> pairValues = new ArrayList<String>();
+							Collection values = instance
+									.getOwnSlotValues(nextProperty);
+							if (values != null && !values.isEmpty()) {
+								for (Object val : values)
+									// generate the property-value pair in the
+									// bean
+									// where property name is nextProperty and
+									// values are rendered in the list above
+									pairValues.add((String) val.toString());
+
+							}
+							pairs.put(getBrowserText(nextProperty), pairValues);
+						}
+
+						inst.addRelations(pairs);
+						resultInstance.add(inst);
+					}
+					targetClass.setInstances(resultInstance);
+					/*targetClass.setInstanceCount(((Cls) owlClass)
+							.getInstanceCount());*/
+					// TODO: end
+				}
 			}
 		}
 
@@ -168,6 +222,86 @@ public class OntologyRetrievalManagerProtegeImpl extends
 				throw new UnsupportedOperationException();
 			}
 		};
+	}
+
+	public InstanceBean findInstanceById(OntologyBean ontologyVersion,
+			String instanceId) throws Exception {
+
+		KnowledgeBase kb = getKnowledgeBase(ontologyVersion);
+		Frame owlClass = getFrame(instanceId, kb);
+		if (owlClass instanceof Cls) {
+			throw new InvalidInputException(MessageUtils
+					.getMessage("msg.error.invalidinstanceid"));
+		}
+		// return populateInstanceBean(instance);
+		// populate classBean and return to caller.
+		return createInstanceBean(owlClass);
+	}
+
+	private InstanceBean createInstanceBean(Frame frame) {
+
+		InstanceBean instanceBean = new InstanceBean();
+		instanceBean.setId(getId(frame));
+		instanceBean.setFullId(frame.getName());
+		instanceBean.setLabel(getBrowserText(frame));
+
+		ConceptTypeEnum protegeType = ConceptTypeEnum.CONCEPT_TYPE_INDIVIDUAL;
+
+		if (frame instanceof Slot) {
+			protegeType = ConceptTypeEnum.CONCEPT_TYPE_PROPERTY;
+		}
+
+		if (frame instanceof Instance) {
+			// instanceBean.setInstanceTypes(frame.getDirectTypes());
+			instanceBean.setInstanceTypes(((Instance) frame).getDirectTypes());
+		}
+		// create map to set relations
+		HashMap<Object, Object> relations = new HashMap<Object, Object>();
+
+		Collection<Slot> properties = frame.getOwnSlots();
+		Iterator p = properties.iterator();
+		while (p.hasNext()) {
+			Slot nextProperty = (Slot) p.next();
+			Collection values = frame.getOwnSlotValues(nextProperty);
+			if (values != null && !values.isEmpty()) {
+				// generate the property-value pair in the bean where property
+				// name is nextProperty and values are rendered in the list
+				// above
+				relations.put(getBrowserText(nextProperty), values);
+			}
+		}
+		instanceBean.addRelations(relations);
+		instanceBean.setType(protegeType);
+
+		return instanceBean;
+	}
+
+	private InstanceBean populateInstanceBean(Instance instance) {
+
+		InstanceBean instanceBean = new InstanceBean();
+		// populate InstanceBean values
+		instanceBean.setFullId(instance.getName());
+		instanceBean.setId(getId(instance));
+		instanceBean.setLabel(getBrowserText(instance));
+		// TODO : need to verify
+		instanceBean.setInstanceTypes(instance.getDirectTypes());
+
+		HashMap<Object, Object> relations = new HashMap<Object, Object>();
+
+		Collection<Slot> properties = instance.getOwnSlots();
+		Iterator p = properties.iterator();
+		while (p.hasNext()) {
+			Slot nextProperty = (Slot) p.next();
+			Collection values = instance.getOwnSlotValues(nextProperty);
+			if (values != null && !values.isEmpty()) {
+				// generate the property-value pair in the bean where property
+				// name is nextProperty and values are rendered in the list
+				// above
+				relations.put(getBrowserText(nextProperty), values);
+			}
+		}
+		instanceBean.addRelations(relations);
+		return instanceBean;
 	}
 
 	public ClassBean findPathFromRoot(OntologyBean ontologyVersion,
@@ -364,6 +498,10 @@ public class OntologyRetrievalManagerProtegeImpl extends
 		addSynonyms(cls, synonymSlot, classBean);
 		addDefinitions(cls, definitionSlot, classBean);
 		addAuthors(cls, authorSlot, classBean);
+
+		// TODO: need to check
+		// set instance count
+		// classBean.setInstanceCount(cls.getInstanceCount());
 
 		recursionMap.put(cls, classBean);
 

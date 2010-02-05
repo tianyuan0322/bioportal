@@ -5,6 +5,7 @@ package org.ncbo.stanford.service.concept.impl;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.ListIterator;
 import java.util.Map;
@@ -16,12 +17,17 @@ import org.ncbo.stanford.bean.OntologyBean;
 import org.ncbo.stanford.bean.OntologyIdBean;
 import org.ncbo.stanford.bean.OntologyVersionIdBean;
 import org.ncbo.stanford.bean.concept.ClassBean;
+import org.ncbo.stanford.bean.concept.InstanceBean;
+import org.ncbo.stanford.bean.search.ClassBeanResultList;
 import org.ncbo.stanford.exception.OntologyNotFoundException;
 import org.ncbo.stanford.manager.metadata.OntologyMetadataManager;
 import org.ncbo.stanford.manager.obs.OBSManager;
 import org.ncbo.stanford.manager.retrieval.OntologyRetrievalManager;
 import org.ncbo.stanford.service.concept.ConceptService;
 import org.ncbo.stanford.util.constants.ApplicationConstants;
+import org.ncbo.stanford.util.paginator.Paginator;
+import org.ncbo.stanford.util.paginator.impl.Page;
+import org.ncbo.stanford.util.paginator.impl.PaginatorImpl;
 import org.springframework.transaction.annotation.Transactional;
 
 /**
@@ -79,8 +85,8 @@ public class ConceptServiceImpl implements ConceptService {
 
 	@SuppressWarnings("unchecked")
 	public ClassBean findConcept(Integer ontologyVersionId, String conceptId,
-			Integer maxNumChildren, boolean light, boolean noRelations)
-			throws Exception {
+			Integer maxNumChildren, boolean light, boolean noRelations,
+			boolean isIncludeInstances) throws Exception {
 		OntologyBean ontology = ontologyMetadataManager
 				.findOntologyOrViewVersionById(ontologyVersionId);
 
@@ -91,7 +97,7 @@ public class ConceptServiceImpl implements ConceptService {
 		}
 
 		ClassBean concept = getRetrievalManager(ontology).findConcept(ontology,
-				conceptId, light, noRelations);
+				conceptId, light, noRelations, isIncludeInstances);
 
 		// temporary fix to remove long list of siblings
 		if (concept != null && maxNumChildren != null) {
@@ -105,6 +111,20 @@ public class ConceptServiceImpl implements ConceptService {
 		}
 
 		return concept;
+	}
+
+	public InstanceBean findInstanceById(Integer ontologyVerId,
+			String instanceId) throws Exception {
+		OntologyBean ontology = ontologyMetadataManager
+				.findOntologyOrViewVersionById(ontologyVerId);
+
+		if (ontology == null) {
+			throw new OntologyNotFoundException(
+					OntologyNotFoundException.DEFAULT_MESSAGE
+							+ " (Version Id: " + ontologyVerId + ")");
+		}
+		return getRetrievalManager(ontology).findInstanceById(ontology,
+				instanceId);
 	}
 
 	@SuppressWarnings("unchecked")
@@ -319,18 +339,61 @@ public class ConceptServiceImpl implements ConceptService {
 				limit);
 	}
 
-	public List<ClassBean> findAllConcepts(
+	// TODO : return page
+	public Page<ClassBean> findAllConcepts(
 			OntologyVersionIdBean ontologyVersionId, Integer offset,
 			Integer limit) throws Exception {
-		return obsManager.findAllConcepts(ontologyVersionId
-				.getOntologyVersionId(), offset, limit);
+		// get ontologyBean from versionId
+		OntologyBean ontology = ontologyMetadataManager
+				.findOntologyOrViewVersionById(ontologyVersionId
+						.getOntologyVersionId());
+		if (ontology == null) {
+			throw new OntologyNotFoundException(
+					OntologyNotFoundException.DEFAULT_MESSAGE
+							+ " (Version Id: " + ontologyVersionId + ")");
+		}
+
+		// get all classBeans
+		Iterator<ClassBean> classIter = getRetrievalManager(ontology)
+				.listAllClasses(ontology);
+
+		List<ClassBean> classBeanList = new ArrayList<ClassBean>();
+		while (classIter.hasNext()) {
+			ClassBean clsBean = classIter.next();
+			classBeanList.add(clsBean);
+		}
+
+		// create ClassBeanResultList to return result as page
+		ClassBeanResultList classBeanResultList = new ClassBeanResultList(
+				classBeanList);
+
+		int resultsSize = classBeanResultList.size();
+
+		if (limit == null || limit <= 0) {
+			limit = resultsSize;
+		}
+
+		Paginator<ClassBean> p = new PaginatorImpl<ClassBean>(
+				classBeanResultList, limit);
+
+		Page<ClassBean> page;
+		if (offset == null || offset <= 1) {
+			page = p.getFirstPage();
+		} else {
+			page = p.getNextPage(offset - 1);
+		}
+
+		// TODO : make it as portage Api.
+		// return
+		// obsManager.findAllConcepts(ontologyVersionId.getOntologyVersionId(),
+		// offset, limit);
+		return page;
 	}
 
 	public List<ClassBean> findAllConcepts(OntologyIdBean ontologyId,
 			Integer offset, Integer limit) throws Exception {
 		Integer ontologyVersionId = obsManager
 				.findLatestOntologyVersion(ontologyId.getOntologyId());
-
 		return obsManager.findAllConcepts(ontologyVersionId, offset, limit);
 	}
 

@@ -9,6 +9,8 @@ import java.util.Set;
 import org.ncbo.stanford.bean.OntologyIdBean;
 import org.ncbo.stanford.bean.OntologyVersionIdBean;
 import org.ncbo.stanford.bean.concept.ClassBean;
+import org.ncbo.stanford.bean.concept.InstanceBean;
+import org.ncbo.stanford.util.paginator.impl.Page;
 
 /**
  * @author nickgriffith
@@ -21,8 +23,8 @@ public interface ConceptService {
 			Integer maxNumChildren, boolean light) throws Exception;
 
 	public ClassBean findConcept(Integer ontologyVersionId, String conceptId,
-			Integer maxNumChildren, boolean light, boolean noRelations)
-			throws Exception;
+			Integer maxNumChildren, boolean light, boolean noRelations,
+			boolean isIncludeInstances) throws Exception;
 
 	public ClassBean findPathFromRoot(Integer ontologyVersionId,
 			String conceptId, boolean light, Integer maxNumChildren)
@@ -68,10 +70,13 @@ public interface ConceptService {
 	public List<ClassBean> findLeaves(OntologyIdBean ontologyVersionId,
 			String conceptId, Integer offset, Integer limit) throws Exception;
 
-	public List<ClassBean> findAllConcepts(
+	public Page<ClassBean> findAllConcepts(
 			OntologyVersionIdBean ontologyVersionId, Integer offset,
 			Integer limit) throws Exception;
 
 	public List<ClassBean> findAllConcepts(OntologyIdBean ontologyId,
 			Integer offset, Integer limit) throws Exception;
+
+	public InstanceBean findInstanceById(Integer ontologyVerId,
+			String instanceId) throws Exception;
 }

@@ -53,6 +53,11 @@ public class ConceptRestlet extends AbstractBaseRestlet {
 				.getParameter(RequestParamConstants.PARAM_LIGHT);
 		String noRelations = (String) httpRequest
 				.getParameter(RequestParamConstants.PARAM_NORELATIONS);
+		// get includeInstance value
+		String includeInstances = (String) httpRequest
+				.getParameter(RequestParamConstants.PARAM_INCLUDEINSTANCES);
+		Boolean isIncludeInstances = RequestUtils
+				.parseBooleanParam(includeInstances);
 
 		String conceptId = getConceptId(request);
 		Integer maxNumChildrenInt = RequestUtils
@@ -88,7 +93,7 @@ public class ConceptRestlet extends AbstractBaseRestlet {
 				// specific concept
 				concept = conceptService.findConcept(ontologyVersionIdInt,
 						conceptId, maxNumChildrenInt, lightBool,
-						noRelationsBool);
+						noRelationsBool, isIncludeInstances);
 			}
 
 			if (concept == null) {

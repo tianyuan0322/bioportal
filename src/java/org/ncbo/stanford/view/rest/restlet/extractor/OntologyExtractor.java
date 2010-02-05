@@ -263,7 +263,7 @@ public class OntologyExtractor {
 				// TODO:
 				try {
 					cb = conceptService.findConcept(ontologyVersionId, name,
-							null, false, false);
+							null, false, false,false);
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
