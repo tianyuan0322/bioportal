@@ -233,7 +233,6 @@ public class OntologyRetrievalManagerProtegeImpl extends
 			throw new InvalidInputException(MessageUtils
 					.getMessage("msg.error.invalidinstanceid"));
 		}
-		// return populateInstanceBean(instance);
 		// populate classBean and return to caller.
 		return createInstanceBean(owlClass);
 	}
@@ -252,7 +251,6 @@ public class OntologyRetrievalManagerProtegeImpl extends
 		}
 
 		if (frame instanceof Instance) {
-			// instanceBean.setInstanceTypes(frame.getDirectTypes());
 			instanceBean.setInstanceTypes(((Instance) frame).getDirectTypes());
 		}
 		// create map to set relations
@@ -273,34 +271,6 @@ public class OntologyRetrievalManagerProtegeImpl extends
 		instanceBean.addRelations(relations);
 		instanceBean.setType(protegeType);
 
-		return instanceBean;
-	}
-
-	private InstanceBean populateInstanceBean(Instance instance) {
-
-		InstanceBean instanceBean = new InstanceBean();
-		// populate InstanceBean values
-		instanceBean.setFullId(instance.getName());
-		instanceBean.setId(getId(instance));
-		instanceBean.setLabel(getBrowserText(instance));
-		// TODO : need to verify
-		instanceBean.setInstanceTypes(instance.getDirectTypes());
-
-		HashMap<Object, Object> relations = new HashMap<Object, Object>();
-
-		Collection<Slot> properties = instance.getOwnSlots();
-		Iterator p = properties.iterator();
-		while (p.hasNext()) {
-			Slot nextProperty = (Slot) p.next();
-			Collection values = instance.getOwnSlotValues(nextProperty);
-			if (values != null && !values.isEmpty()) {
-				// generate the property-value pair in the bean where property
-				// name is nextProperty and values are rendered in the list
-				// above
-				relations.put(getBrowserText(nextProperty), values);
-			}
-		}
-		instanceBean.addRelations(relations);
 		return instanceBean;
 	}
 
