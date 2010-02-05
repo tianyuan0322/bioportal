@@ -8,6 +8,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.ncbo.stanford.bean.OntologyIdBean;
 import org.ncbo.stanford.bean.concept.ClassBean;
+import org.ncbo.stanford.exception.InvalidInputException;
 import org.ncbo.stanford.service.concept.ConceptService;
 import org.ncbo.stanford.util.MessageUtils;
 import org.ncbo.stanford.util.RequestUtils;
@@ -46,10 +47,18 @@ public class ConceptSiblingsVirtualRestlet extends AbstractBaseRestlet {
 				.getParameter(RequestParamConstants.PARAM_OFFSET);
 		Integer levelInt = RequestUtils.parseIntegerParam(level);
 		Integer offsetInt = RequestUtils.parseIntegerParam(offset);
+		Integer ontologyIdInt = RequestUtils.parseIntegerParam(ontologyId);
 
 		try {
+			if (ontologyIdInt == null) {
+				throw new InvalidInputException(MessageUtils
+						.getMessage("msg.error.ontologyidinvalid"));
+			}
+
 			siblings = conceptService.findSiblings(new OntologyIdBean(
-					ontologyId), conceptId, levelInt, offsetInt);
+					ontologyIdInt), conceptId, levelInt, offsetInt);
+		} catch (InvalidInputException e) {
+			response.setStatus(Status.CLIENT_ERROR_BAD_REQUEST, e.getMessage());
 		} catch (Exception e) {
 			response.setStatus(Status.SERVER_ERROR_INTERNAL, e.getMessage());
 			e.printStackTrace();
