@@ -61,9 +61,14 @@ public class ConceptRestlet extends AbstractBaseRestlet {
 		Integer limitInt = RequestUtils.parseIntegerParam(limit);
 		Boolean lightBool = RequestUtils.parseBooleanParam(light);
 		Boolean noRelationsBool = RequestUtils.parseBooleanParam(noRelations);
+		Integer ontologyVersionIdInt = RequestUtils
+				.parseIntegerParam(ontologyVersionId);
 
 		try {
-			Integer ontologyVersionIdInt = Integer.parseInt(ontologyVersionId);
+			if (ontologyVersionIdInt == null) {
+				throw new InvalidInputException(MessageUtils
+						.getMessage("msg.error.ontologyversionidinvalid"));
+			}
 
 			if (StringHelper.isNullOrNullString(conceptId)) {
 				throw new InvalidInputException(MessageUtils
@@ -77,7 +82,7 @@ public class ConceptRestlet extends AbstractBaseRestlet {
 					.equalsIgnoreCase(RequestParamConstants.PARAM_ALL_CONCEPTS)) {
 				// all concepts
 				concept = conceptService.findAllConcepts(
-						new OntologyVersionIdBean(ontologyVersionId),
+						new OntologyVersionIdBean(ontologyVersionIdInt),
 						offsetInt, limitInt);
 			} else {
 				// specific concept
@@ -92,9 +97,6 @@ public class ConceptRestlet extends AbstractBaseRestlet {
 			}
 		} catch (InvalidInputException e) {
 			response.setStatus(Status.CLIENT_ERROR_BAD_REQUEST, e.getMessage());
-		} catch (NumberFormatException nfe) {
-			response.setStatus(Status.CLIENT_ERROR_BAD_REQUEST, nfe
-					.getMessage());
 		} catch (OntologyNotFoundException onfe) {
 			response
 					.setStatus(Status.CLIENT_ERROR_NOT_FOUND, onfe.getMessage());
