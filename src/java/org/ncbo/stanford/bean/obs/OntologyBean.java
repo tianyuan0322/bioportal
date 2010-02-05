@@ -1,68 +1,132 @@
 package org.ncbo.stanford.bean.obs;
 
 public class OntologyBean {
-	private String localOntologyID;
-	private String virtualOntologyID;
-	private String ontologyName;
-	private String ontologyVersion;
+	private Integer id;
+	private Integer localOntologyId;
+	private String name;
+	private String version;
+	private String description;
+	private String status;
+	private String virtualOntologyId;
+	private String format;
 
 	/**
-	 * @return the localOntologyID
+	 * @return the id
 	 */
-	public String getLocalOntologyID() {
-		return localOntologyID;
+	public Integer getId() {
+		return id;
 	}
 
 	/**
-	 * @param localOntologyID
-	 *            the localOntologyID to set
+	 * @param id
+	 *            the id to set
 	 */
-	public void setLocalOntologyID(String localOntologyID) {
-		this.localOntologyID = localOntologyID;
+	public void setId(Integer id) {
+		this.id = id;
 	}
 
 	/**
-	 * @return the virtualOntologyID
+	 * @return the localOntologyId
 	 */
-	public String getVirtualOntologyID() {
-		return virtualOntologyID;
+	public Integer getLocalOntologyId() {
+		return localOntologyId;
 	}
 
 	/**
-	 * @param virtualOntologyID
-	 *            the virtualOntologyID to set
+	 * @param localOntologyId
+	 *            the localOntologyId to set
 	 */
-	public void setVirtualOntologyID(String virtualOntologyID) {
-		this.virtualOntologyID = virtualOntologyID;
+	public void setLocalOntologyId(Integer localOntologyId) {
+		this.localOntologyId = localOntologyId;
 	}
 
 	/**
-	 * @return the ontologyName
+	 * @return the name
 	 */
-	public String getOntologyName() {
-		return ontologyName;
+	public String getName() {
+		return name;
 	}
 
 	/**
-	 * @param ontologyName
-	 *            the ontologyName to set
+	 * @param name
+	 *            the name to set
 	 */
-	public void setOntologyName(String ontologyName) {
-		this.ontologyName = ontologyName;
+	public void setName(String name) {
+		this.name = name;
 	}
 
 	/**
-	 * @return the ontologyVersion
+	 * @return the version
 	 */
-	public String getOntologyVersion() {
-		return ontologyVersion;
+	public String getVersion() {
+		return version;
 	}
 
 	/**
-	 * @param ontologyVersion
-	 *            the ontologyVersion to set
+	 * @param version
+	 *            the version to set
 	 */
-	public void setOntologyVersion(String ontologyVersion) {
-		this.ontologyVersion = ontologyVersion;
+	public void setVersion(String version) {
+		this.version = version;
+	}
+
+	/**
+	 * @return the description
+	 */
+	public String getDescription() {
+		return description;
+	}
+
+	/**
+	 * @param description
+	 *            the description to set
+	 */
+	public void setDescription(String description) {
+		this.description = description;
+	}
+
+	/**
+	 * @return the status
+	 */
+	public String getStatus() {
+		return status;
+	}
+
+	/**
+	 * @param status
+	 *            the status to set
+	 */
+	public void setStatus(String status) {
+		this.status = status;
+	}
+
+	/**
+	 * @return the virtualOntologyId
+	 */
+	public String getVirtualOntologyId() {
+		return virtualOntologyId;
+	}
+
+	/**
+	 * @param virtualOntologyId
+	 *            the virtualOntologyId to set
+	 */
+	public void setVirtualOntologyId(String virtualOntologyId) {
+		this.virtualOntologyId = virtualOntologyId;
+	}
+
+	/**
+	 * @return the format
+	 */
+	public String getFormat() {
+		return format;
+	}
+
+	/**
+	 * @param format
+	 *            the format to set
+	 */
+	public void setFormat(String format) {
+		this.format = format;
 	}
 }

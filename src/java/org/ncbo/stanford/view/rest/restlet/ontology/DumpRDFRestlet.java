@@ -1,5 +1,6 @@
 package org.ncbo.stanford.view.rest.restlet.ontology;
 
+import org.ncbo.stanford.exception.InvalidInputException;
 import org.ncbo.stanford.exception.OntologyNotFoundException;
 import org.ncbo.stanford.service.concept.DumpRDFService;
 import org.ncbo.stanford.util.MessageUtils;
@@ -11,47 +12,57 @@ import org.restlet.data.Response;
 import org.restlet.data.Status;
 
 /**
- * This restlet is meant to dump an ontology's classes and subclass relationships
- * to RDF N-triples format.  Cross references, definitions, and synonyms added as well.
+ * This restlet is meant to dump an ontology's classes and subclass
+ * relationships to RDF N-triples format. Cross references, definitions, and
+ * synonyms added as well.
  * 
  * @author <a href="mailto:tony@loeser.name">Tony Loeser</a>
  */
 public class DumpRDFRestlet extends AbstractBaseRestlet {
-	
+
 	private DumpRDFService dumpRDFService;
-	
+
 	@Override
 	public void getRequest(Request request, Response response) {
 		generateRDF(request, response);
 	}
 
-	private void generateRDF(Request request, Response response) {		
+	private void generateRDF(Request request, Response response) {
 		// Pick the ontology version off of the URL
-		String ontologyVersionId = 
-			(String)request.getAttributes().get(MessageUtils.getMessage("entity.ontologyversionid"));
-		
+		String ontologyVersionId = (String) request.getAttributes().get(
+				MessageUtils.getMessage("entity.ontologyversionid"));
+
 		try {
-			Integer ontologyVersionIdInt = Integer.parseInt(ontologyVersionId);
-			
+			Integer ontologyVersionIdInt = RequestUtils
+					.parseIntegerParam(ontologyVersionId);
+
+			if (ontologyVersionIdInt == null) {
+				throw new InvalidInputException(MessageUtils
+						.getMessage("msg.error.ontologyversionidinvalid"));
+			}
+
 			// Generate the file contents
-			String myResponse = dumpRDFService.generateRDFDump(ontologyVersionIdInt);
+			String myResponse = dumpRDFService
+					.generateRDFDump(ontologyVersionIdInt);
 
 			// Add the contents to the response
-			RequestUtils.setHttpServletResponse(response, Status.SUCCESS_OK, MediaType.TEXT_RDF_N3, myResponse);
-			
-		} catch (NumberFormatException nfe) {
-			response.setStatus(Status.CLIENT_ERROR_BAD_REQUEST, nfe.getMessage());
-			xmlSerializationService.generateStatusXMLResponse(request, response);
+			RequestUtils.setHttpServletResponse(response, Status.SUCCESS_OK,
+					MediaType.TEXT_RDF_N3, myResponse);
+		} catch (InvalidInputException e) {
+			response.setStatus(Status.CLIENT_ERROR_BAD_REQUEST, e.getMessage());
 		} catch (OntologyNotFoundException onfe) {
-			response.setStatus(Status.CLIENT_ERROR_NOT_FOUND, onfe.getMessage());
-			xmlSerializationService.generateStatusXMLResponse(request, response);
+			response
+					.setStatus(Status.CLIENT_ERROR_NOT_FOUND, onfe.getMessage());
+			xmlSerializationService
+					.generateStatusXMLResponse(request, response);
 		} catch (Exception e) {
 			e.printStackTrace();
 			response.setStatus(Status.CLIENT_ERROR_BAD_REQUEST, e.getMessage());
-			xmlSerializationService.generateStatusXMLResponse(request, response);
+			xmlSerializationService
+					.generateStatusXMLResponse(request, response);
 		}
-	}	
-	
+	}
+
 	/**
 	 * Setter for Spring IoC
 	 */

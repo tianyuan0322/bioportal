@@ -2,34 +2,20 @@ package org.ncbo.stanford.bean;
 
 public abstract class AbstractIdBean {
 
-	private String id = null;
-	private boolean isUmls = false;
+	private Integer id = null;
 
 	/**
 	 * @param id
 	 */
-	public AbstractIdBean(String id) {
+	public AbstractIdBean(Integer id) {
 		super();
 		this.id = id;
-
-		try {
-			Integer.parseInt(id);
-		} catch (NumberFormatException e) {
-			isUmls = true;
-		}
 	}
 
 	/**
 	 * @return the id
 	 */
-	protected String getId() {
+	protected Integer getId() {
 		return id;
-	}
-
-	/**
-	 * @return the isUmls
-	 */
-	public boolean isUmls() {
-		return isUmls;
 	}
 }

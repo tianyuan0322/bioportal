@@ -8,6 +8,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.ncbo.stanford.bean.OntologyVersionIdBean;
 import org.ncbo.stanford.bean.concept.ClassBean;
+import org.ncbo.stanford.exception.InvalidInputException;
 import org.ncbo.stanford.service.concept.ConceptService;
 import org.ncbo.stanford.util.MessageUtils;
 import org.ncbo.stanford.util.RequestUtils;
@@ -49,11 +50,20 @@ public class ConceptParentsRestlet extends AbstractBaseRestlet {
 		Integer levelInt = RequestUtils.parseIntegerParam(level);
 		Integer offsetInt = RequestUtils.parseIntegerParam(offset);
 		Integer limitInt = RequestUtils.parseIntegerParam(limit);
+		Integer ontologyVersionIdInt = RequestUtils
+				.parseIntegerParam(ontologyVersionId);
 
 		try {
+			if (ontologyVersionIdInt == null) {
+				throw new InvalidInputException(MessageUtils
+						.getMessage("msg.error.ontologyversionidinvalid"));
+			}
+
 			parentConcepts = conceptService.findParents(
-					new OntologyVersionIdBean(ontologyVersionId), conceptId,
+					new OntologyVersionIdBean(ontologyVersionIdInt), conceptId,
 					levelInt, offsetInt, limitInt);
+		} catch (InvalidInputException e) {
+			response.setStatus(Status.CLIENT_ERROR_BAD_REQUEST, e.getMessage());
 		} catch (Exception e) {
 			response.setStatus(Status.SERVER_ERROR_INTERNAL, e.getMessage());
 			e.printStackTrace();

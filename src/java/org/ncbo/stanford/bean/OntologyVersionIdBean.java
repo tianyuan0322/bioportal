@@ -5,14 +5,14 @@ public class OntologyVersionIdBean extends AbstractIdBean {
 	/**
 	 * @param ontologyVersionId
 	 */
-	public OntologyVersionIdBean(String ontologyVersionId) {
+	public OntologyVersionIdBean(Integer ontologyVersionId) {
 		super(ontologyVersionId);
 	}
 
 	/**
 	 * @return the ontologyVersionId
 	 */
-	public String getOntologyVersionId() {
+	public Integer getOntologyVersionId() {
 		return getId();
 	}
 }

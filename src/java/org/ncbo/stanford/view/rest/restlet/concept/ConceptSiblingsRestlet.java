@@ -48,8 +48,15 @@ public class ConceptSiblingsRestlet extends AbstractBaseRestlet {
 				.getParameter(RequestParamConstants.PARAM_OFFSET);
 		Integer levelInt = RequestUtils.parseIntegerParam(level);
 		Integer offsetInt = RequestUtils.parseIntegerParam(offset);
+		Integer ontologyVersionIdInt = RequestUtils
+				.parseIntegerParam(ontologyVersionId);
 
 		try {
+			if (ontologyVersionIdInt == null) {
+				throw new InvalidInputException(MessageUtils
+						.getMessage("msg.error.ontologyversionidinvalid"));
+			}
+
 			if (StringHelper.isNullOrNullString(level)) {
 				throw new InvalidInputException("No level parameter specified");
 			}
@@ -60,7 +67,7 @@ public class ConceptSiblingsRestlet extends AbstractBaseRestlet {
 			}
 
 			siblings = conceptService.findSiblings(new OntologyVersionIdBean(
-					ontologyVersionId), conceptId, levelInt, offsetInt);
+					ontologyVersionIdInt), conceptId, levelInt, offsetInt);
 		} catch (InvalidInputException e) {
 			response.setStatus(Status.CLIENT_ERROR_BAD_REQUEST, e.getMessage());
 		} catch (Exception e) {

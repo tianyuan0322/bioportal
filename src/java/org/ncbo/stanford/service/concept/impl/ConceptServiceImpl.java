@@ -236,7 +236,7 @@ public class ConceptServiceImpl implements ConceptService {
 	public List<ClassBean> findParents(OntologyIdBean ontologyId,
 			String conceptId, Integer level, Integer offset, Integer limit)
 			throws Exception {
-		String ontologyVersionId = obsManager
+		Integer ontologyVersionId = obsManager
 				.findLatestOntologyVersion(ontologyId.getOntologyId());
 
 		return obsManager.findParents(ontologyVersionId, conceptId, level,
@@ -254,7 +254,7 @@ public class ConceptServiceImpl implements ConceptService {
 	public List<ClassBean> findChildren(OntologyIdBean ontologyId,
 			String conceptId, Integer level, Integer offset, Integer limit)
 			throws Exception {
-		String ontologyVersionId = obsManager
+		Integer ontologyVersionId = obsManager
 				.findLatestOntologyVersion(ontologyId.getOntologyId());
 
 		return obsManager.findChildren(ontologyVersionId, conceptId, level,
@@ -264,7 +264,7 @@ public class ConceptServiceImpl implements ConceptService {
 	public Set<String> findChildrenConceptIds(OntologyIdBean ontologyId,
 			String conceptId, Integer level, Integer offset, Integer limit)
 			throws Exception {
-		String ontologyVersionId = obsManager
+		Integer ontologyVersionId = obsManager
 				.findLatestOntologyVersion(ontologyId.getOntologyId());
 
 		return obsManager.findChildrenConceptIds(ontologyVersionId, conceptId,
@@ -280,7 +280,7 @@ public class ConceptServiceImpl implements ConceptService {
 
 	public List<ClassBean> findRootPaths(OntologyIdBean ontologyId,
 			String conceptId, Integer offset, Integer limit) throws Exception {
-		String ontologyVersionId = obsManager
+		Integer ontologyVersionId = obsManager
 				.findLatestOntologyVersion(ontologyId.getOntologyId());
 
 		return obsManager.findRootPaths(ontologyVersionId, conceptId, offset,
@@ -297,7 +297,7 @@ public class ConceptServiceImpl implements ConceptService {
 
 	public List<ClassBean> findSiblings(OntologyIdBean ontologyId,
 			String conceptId, Integer level, Integer offset) throws Exception {
-		String ontologyVersionId = obsManager
+		Integer ontologyVersionId = obsManager
 				.findLatestOntologyVersion(ontologyId.getOntologyId());
 
 		return obsManager.findSiblings(ontologyVersionId, conceptId, level,
@@ -312,7 +312,7 @@ public class ConceptServiceImpl implements ConceptService {
 
 	public List<ClassBean> findLeaves(OntologyIdBean ontologyId,
 			String conceptId, Integer offset, Integer limit) throws Exception {
-		String ontologyVersionId = obsManager
+		Integer ontologyVersionId = obsManager
 				.findLatestOntologyVersion(ontologyId.getOntologyId());
 
 		return obsManager.findLeaves(ontologyVersionId, conceptId, offset,
@@ -328,7 +328,7 @@ public class ConceptServiceImpl implements ConceptService {
 
 	public List<ClassBean> findAllConcepts(OntologyIdBean ontologyId,
 			Integer offset, Integer limit) throws Exception {
-		String ontologyVersionId = obsManager
+		Integer ontologyVersionId = obsManager
 				.findLatestOntologyVersion(ontologyId.getOntologyId());
 
 		return obsManager.findAllConcepts(ontologyVersionId, offset, limit);

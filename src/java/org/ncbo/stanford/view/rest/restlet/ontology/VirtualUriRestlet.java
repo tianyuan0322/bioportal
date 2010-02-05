@@ -7,6 +7,7 @@ import org.apache.commons.logging.LogFactory;
 import org.ncbo.stanford.bean.OntologyBean;
 import org.ncbo.stanford.bean.OntologyIdBean;
 import org.ncbo.stanford.exception.ConceptNotFoundException;
+import org.ncbo.stanford.exception.InvalidInputException;
 import org.ncbo.stanford.exception.OntologyNotFoundException;
 import org.ncbo.stanford.service.concept.ConceptService;
 import org.ncbo.stanford.service.ontology.OntologyService;
@@ -65,9 +66,13 @@ public class VirtualUriRestlet extends AbstractBaseRestlet {
 		Integer limitInt = RequestUtils.parseIntegerParam(limit);
 		Boolean lightBool = RequestUtils.parseBooleanParam(light);
 		Boolean noRelationsBool = RequestUtils.parseBooleanParam(noRelations);
+		Integer ontologyIdInt = RequestUtils.parseIntegerParam(ontologyId);
 
 		try {
-			Integer ontologyIdInt = Integer.parseInt(ontologyId);
+			if (ontologyIdInt == null) {
+				throw new InvalidInputException(MessageUtils
+						.getMessage("msg.error.ontologyidinvalid"));
+			}
 
 			if (conceptId == null) {
 				returnObject = ontologyService
@@ -100,7 +105,7 @@ public class VirtualUriRestlet extends AbstractBaseRestlet {
 					} else if (conceptId
 							.equalsIgnoreCase(RequestParamConstants.PARAM_ALL_CONCEPTS)) {
 						returnObject = conceptService.findAllConcepts(
-								new OntologyIdBean(ontologyId), offsetInt,
+								new OntologyIdBean(ontologyIdInt), offsetInt,
 								limitInt);
 					} else {
 						returnObject = conceptService.findConcept(ontBean
@@ -114,9 +119,8 @@ public class VirtualUriRestlet extends AbstractBaseRestlet {
 					}
 				}
 			}
-		} catch (NumberFormatException nfe) {
-			response.setStatus(Status.CLIENT_ERROR_BAD_REQUEST, nfe
-					.getMessage());
+		} catch (InvalidInputException e) {
+			response.setStatus(Status.CLIENT_ERROR_BAD_REQUEST, e.getMessage());
 		} catch (OntologyNotFoundException onfe) {
 			response
 					.setStatus(Status.CLIENT_ERROR_NOT_FOUND, onfe.getMessage());
