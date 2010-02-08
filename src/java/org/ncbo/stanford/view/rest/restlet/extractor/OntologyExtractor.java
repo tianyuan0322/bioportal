@@ -15,6 +15,7 @@ import java.util.Set;
 import org.apache.log4j.Logger;
 import org.ncbo.stanford.bean.concept.ClassBean;
 import org.ncbo.stanford.service.concept.ConceptService;
+import org.ncbo.stanford.util.constants.ApplicationConstants;
 import org.semanticweb.owlapi.io.RDFXMLOntologyFormat;
 import org.semanticweb.owlapi.model.IRI;
 import org.semanticweb.owlapi.model.OWLAnnotationProperty;
@@ -191,7 +192,7 @@ public class OntologyExtractor {
 			URISyntaxException, OWLOntologyChangeException {
 		OWLDataFactory factory = manager.getOWLDataFactory();
 		ClassBean b = c.getBean();
-		Object o = b.getRelations().get(ClassBean.SUB_CLASS_PROPERTY);
+		Object o = b.getRelations().get(ApplicationConstants.SUB_CLASS);
 		if (o == null || !(o instanceof List)) {
 			return;
 		}
