@@ -3,6 +3,8 @@ package org.ncbo.stanford.bean.obs;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.ncbo.stanford.bean.concept.AbstractConceptBean;
+
 public class ConceptBean extends AbstractConceptBean {
 
 	private String localOntologyId;
