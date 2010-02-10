@@ -10,7 +10,6 @@ import org.restlet.data.Status;
 
 public class OBOCVSPullRestlet extends AbstractBaseRestlet {
 
-	@SuppressWarnings("unused")
 	private static final Log log = LogFactory.getLog(OBOCVSPullRestlet.class);
 	private OBOCVSPullService oboCVSPullService;
 
