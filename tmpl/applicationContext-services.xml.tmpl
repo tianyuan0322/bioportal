@@ -461,6 +461,9 @@
 	<bean id="ontologyDiffManagerLexGrid"
 		class="org.ncbo.stanford.manager.diff.impl.OntologyDiffManagerLexGridImpl"
 		parent="abstractOntologyManagerLexGrid">
+		<property name="ontologyDiffManagerProtege">
+			<ref bean="ontologyDiffManagerProtege" />
+		</property>
 	</bean>
 
 	<bean id="ontologyMetricsManagerProtege"
