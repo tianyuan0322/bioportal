@@ -39,6 +39,7 @@ import org.ncbo.stanford.enumeration.StatusEnum;
 import org.ncbo.stanford.exception.OntologyNotFoundException;
 import org.ncbo.stanford.manager.AbstractOntologyManagerLexGrid;
 import org.ncbo.stanford.manager.diff.OntologyDiffManager;
+import org.ncbo.stanford.manager.metadata.OntologyMetadataManager;
 import org.ncbo.stanford.util.difffile.pathhandler.DiffFilePathHandler;
 import org.ncbo.stanford.util.difffile.pathhandler.impl.DiffFilePathHandlerImpl;
 
@@ -66,11 +67,13 @@ public class OntologyDiffManagerLexGridImpl extends
 	private KnowledgeBase changesKb;
 	private ChangeFactory changeFactory;
 	private OntologyComponentFactory componentFactory;
+	private OntologyDiffManagerProtegeImpl ontologyDiffManagerProtege;
 
 	public OntologyDiffManagerLexGridImpl() throws Exception {
 		lbs = LexBIGServiceImpl.defaultInstance();
 		lbscm = (LexBIGServiceConvenienceMethods) lbs
 				.getGenericExtension("LexBIGServiceConvenienceMethods");
+		
 	}
 
 	public void createDiff(OntologyBean ontologyVersionOld,
@@ -131,13 +134,13 @@ public class OntologyDiffManagerLexGridImpl extends
 	}
 
 	public List<ArrayList<String>> getAllDiffsForOntology(Integer ontologyId) {
-		return null; // we do not have diffs for LexGrid ontologies currently
+		return ontologyDiffManagerProtege.getAllDiffsForOntology(ontologyId);
 	}
 
 	public File getDiffFileForOntologyVersions(Integer ontologyVerisonId1,
 			Integer ontologyVersionId2, String format)
-			throws FileNotFoundException {
-		return null; // we do not have diffs for LexGrid ontologies currently
+			throws FileNotFoundException, Exception {
+		return ontologyDiffManagerProtege.getDiffFileForOntologyVersions(ontologyVerisonId1, ontologyVersionId2, format);
 	}
 
 	public boolean diffExists(OntologyBean ontologyVersionOld,
@@ -876,4 +879,12 @@ public class OntologyDiffManagerLexGridImpl extends
 		return propChange;
 	}
 
+	/**
+	 * @param ontologyMetadataManager
+	 *            the ontologyMetadataManager to set
+	 */
+	public void setOntologyDiffManagerProtege(
+			OntologyDiffManagerProtegeImpl ontologyDiffManagerProtege) {
+		this.ontologyMetadataManager = ontologyMetadataManager;
+	}
 }
