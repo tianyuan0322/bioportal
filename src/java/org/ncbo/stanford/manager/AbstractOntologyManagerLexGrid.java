@@ -100,14 +100,16 @@ public abstract class AbstractOntologyManagerLexGrid {
 			throws Exception {
 		List<OntologyBean> list = ontologyMetadataManager
 				.findLatestOntologyVersions();
-
+		OntologyBean ob= null;
 		for (OntologyBean ncboOntology : list) {
 			if (ncboOntology.getDisplayLabel().equalsIgnoreCase(displayLabel)) {
-				return ncboOntology;
+				if (ob== null || ncboOntology.getId() > ob.getId()) {
+					ob= ncboOntology;
+				}
 			}
 		}
 
-		return null;
+		return ob;
 	}
 
 	/**
