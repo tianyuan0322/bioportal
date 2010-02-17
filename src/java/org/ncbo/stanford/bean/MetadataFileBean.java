@@ -1,5 +1,9 @@
 package org.ncbo.stanford.bean;
 
+import java.util.ArrayList;
+
+import org.ncbo.stanford.service.xml.parse.ExportBean;
+
 /**
  * <pre>
  * Class that contains metadata for a single ontology. The
@@ -44,11 +48,48 @@ public class MetadataFileBean {
 	private String consider;
 	private String xrefsTo;
 
+	private ArrayList<ExportBean> export;
+	private String url;
+	private String pathotype;
+	private String relevantorganism;
+
+	public String getRelevantorganism() {
+		return relevantorganism;
+	}
+
+	public void setRelevantorganism(String relevantorganism) {
+		this.relevantorganism = relevantorganism;
+	}
+
+	public String getPathotype() {
+		return pathotype;
+	}
+
+	public void setPathotype(String pathotype) {
+		this.pathotype = pathotype;
+	}
+
+	public ArrayList<ExportBean> getExport() {
+		return export;
+	}
+
+	public void setExport(ArrayList<ExportBean> export) {
+		this.export = export;
+	}
+
 	/**
 	 * @return the application
 	 */
 	public String getApplication() {
 		return application;
+	}
+
+	public String getUrl() {
+		return url;
+	}
+
+	public void setUrl(String url) {
+		this.url = url;
 	}
 
 	/**

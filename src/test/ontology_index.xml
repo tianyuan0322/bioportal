@@ -1,0 +1,161 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<obo_metadata>
+  <time_started unix="1263595503">Fri Jan 15 14:45:03 2010</time_started>
+  <ont id="adult_mouse_anatomy">
+    <source>ftp://ftp.informatics.jax.org/pub/reports/adult_mouse_anatomy.obo</source>
+    <granularity>organismal</granularity>
+    <status>Production and review</status>
+    <subtypes_of>CARO:0000000</subtypes_of>
+    <contact>Anatomy at JAX	anatomy	informatics.jax.org</contact>
+    <foundry>Yes</foundry>
+    <domain>anatomy</domain>
+    <documentation></documentation>
+    <url>http://obo.cvs.sourceforge.net/*checkout*/obo/obo/ontology/anatomy/gross_anatomy/animal_gross_anatomy/mouse/adult_mouse_anatomy.obo</url>
+    <patho_type>canonical</patho_type>
+    <home>Mouse Anatomy Dictionary|http://www.informatics.jax.org/searches/AMA_form.shtml</home>
+    <namespace>MA</namespace>
+    <description>A structured controlled vocabulary of the adult anatomy of the mouse (Mus).</description>
+    <format>obo</format>
+    <title>Mouse adult gross anatomy</title>
+    <relevant_organism>NCBITaxon:10088|Mus</relevant_organism>
+    <download>http://obo.cvs.sourceforge.net/*checkout*/obo/obo/ontology/anatomy/gross_anatomy/animal_gross_anatomy/mouse/adult_mouse_anatomy.obo</download>
+    <export format="obo_xml" path="obo-all/adult_mouse_anatomy/adult_mouse_anatomy.obo_xml" md5="9c9c8da47433d7df6d25a09ecda3b598" timestamp="1260649507" time_generated="1263595504" time_taken_to_generate="0" size="657971">
+    </export>
+    <export format="obo" path="obo-all/adult_mouse_anatomy/adult_mouse_anatomy.obo" md5="acaf241406512d210e6ca53d2da90c42" timestamp="1263595504" time_generated="1263595504" time_taken_to_generate="0" size="316334">
+    </export>
+    <export format="owl" path="obo-all/adult_mouse_anatomy/adult_mouse_anatomy.owl" md5="c4cb66705eb21798ad76da7829aac890" timestamp="1260649561" time_generated="1263595504" time_taken_to_generate="0" size="1433557">
+    </export>
+    <export format="chadoxml" path="obo-all/adult_mouse_anatomy/adult_mouse_anatomy.chadoxml" md5="9c9110fc243df405a6465ea8941be315" timestamp="1260649573" time_generated="1263595504" time_taken_to_generate="0" size="1791315">
+    </export>
+    <export format="godb_prestore" path="obo-all/adult_mouse_anatomy/adult_mouse_anatomy.godb_prestore" md5="a393467a97046b2f68f34b3e1e460076" timestamp="1260649575" time_generated="1263595504" time_taken_to_generate="0" size="1659514">
+    </export>
+    <export format="rdf" path="obo-all/adult_mouse_anatomy/adult_mouse_anatomy.rdf" md5="c2194797608e1880cfdcc0a8ad7274a5" timestamp="1260649579" time_generated="1263595504" time_taken_to_generate="0" size="911201">
+    </export>
+    <export format="tbl" path="obo-all/adult_mouse_anatomy/adult_mouse_anatomy.tbl" md5="d676b9e13e1fb8336ab0b23e8cd9c8e1" timestamp="1260649581" time_generated="1263595504" time_taken_to_generate="0" size="104351">
+    </export>
+    <export format="prolog" path="obo-all/adult_mouse_anatomy/adult_mouse_anatomy.pro" md5="438e72249db5cee1b91f158066418ff6" timestamp="1263418630" time_generated="1263595504" time_taken_to_generate="0" size="749791">
+    </export>
+    <export format="error_report" problem="true">
+    </export>
+    <export format="validation_report" path="obo-all/adult_mouse_anatomy/adult_mouse_anatomy.validation_report" md5="dd8677e865829f7ee201be5c4625e28f" timestamp="1260649590" time_generated="1263595507" time_taken_to_generate="0" size="2807">
+    </export>
+    <export format="stats" path="obo-all/adult_mouse_anatomy/adult_mouse_anatomy.stats" md5="b6cd4b5a40819abb77a145d27dc31972" timestamp="1260649592" time_generated="1263595507" time_taken_to_generate="0" size="52">
+    </export>
+    <export format="xref" problem="true">
+    </export>
+    <export format="imports.obo" problem="true">
+    </export>
+    <export format="obo.html" path="obo-all/adult_mouse_anatomy/adult_mouse_anatomy.obo.html" md5="51867f3fa5d3af5b104706f671b1a238" timestamp="1260649592" time_generated="1263595507" time_taken_to_generate="0" size="1911956">
+    </export>
+    <export format="linkfile" problem="true">
+    </export>
+    <export format="imports.owl" problem="true">
+    </export>
+    <export format="imports-local.obo" problem="true">
+    </export>
+    <export format="xp.html" problem="true">
+    </export>
+    <export format="imports-local.owl" problem="true">
+    </export>
+    <export format="owl-classified-by-pellet2" problem="true">
+    </export>
+    <export format="obo-classified-by-oboedit" problem="true">
+    </export>
+    <export format="obo-classified-by-blip" problem="true">
+    </export>
+    <export format="abduced-links.txt" problem="true">
+    </export>
+  </ont>
+  <ont id="amphibian_anatomy">
+    <source></source>
+    <granularity>organismal</granularity>
+    <status>Discussion and review</status>
+    <subtypes_of>CARO:0000000</subtypes_of>
+    <contact>AmphiAnat mailing list	sbhdbe	mst.edu</contact>
+    <foundry>Yes</foundry>
+    <domain>anatomy</domain>
+    <documentation></documentation>
+    <url>http://obo.cvs.sourceforge.net/*checkout*/obo/obo/ontology/anatomy/gross_anatomy/animal_gross_anatomy/amphibian/amphibian_anatomy.obo</url>
+    <patho_type>canonical</patho_type>
+    <home>Amphibian Anatomy|http://www.amphibanat.org</home>
+    <namespace>AAO</namespace>
+    <description>A structured controlled vocabulary of the anatomy of Amphibians.</description>
+    <format>obo</format>
+    <title>Amphibian gross anatomy</title>
+    <relevant_organism>NCBITaxon:8292|Amphibia</relevant_organism>
+    <download>http://obo.cvs.sourceforge.net/*checkout*/obo/obo/ontology/anatomy/gross_anatomy/animal_gross_anatomy/amphibian/amphibian_anatomy.obo</download>
+    <export format="obo_xml" path="obo-all/amphibian_anatomy/amphibian_anatomy.obo_xml" md5="c6d9b255d4a8dd7a25da197a20e85c69" timestamp="1260649596" time_generated="1263595509" time_taken_to_generate="0" size="297452">
+    </export>
+    <export format="obo" path="obo-all/amphibian_anatomy/amphibian_anatomy.obo" md5="a8fa65c7443cfc5e22f82abfd1d33e70" timestamp="1263595509" time_generated="1263595509" time_taken_to_generate="0" size="151792">
+    </export>
+    <export format="owl" path="obo-all/amphibian_anatomy/amphibian_anatomy.owl" md5="c5d734169b731f8939204384969c174b" timestamp="1260649600" time_generated="1263595509" time_taken_to_generate="0" size="677654">
+    </export>
+    <export format="chadoxml" path="obo-all/amphibian_anatomy/amphibian_anatomy.chadoxml" md5="2c8d757f92f338b808a0de3c4cbbd81e" timestamp="1260649601" time_generated="1263595509" time_taken_to_generate="0" size="708142">
+    </export>
+    <export format="godb_prestore" path="obo-all/amphibian_anatomy/amphibian_anatomy.godb_prestore" md5="0795141f3a12d2c2f18225e171438ee2" timestamp="1260649602" time_generated="1263595509" time_taken_to_generate="0" size="602583">
+    </export>
+    <export format="rdf" path="obo-all/amphibian_anatomy/amphibian_anatomy.rdf" md5="8d32047f52e2ff5a4d48a1708ef8f09a" timestamp="1260649603" time_generated="1263595509" time_taken_to_generate="0" size="297086">
+    </export>
+    <export format="tbl" path="obo-all/amphibian_anatomy/amphibian_anatomy.tbl" md5="f1dbfad3b9e380d700f74a79beaba400" timestamp="1260649604" time_generated="1263595509" time_taken_to_generate="0" size="87746">
+    </export>
+    <export format="prolog" path="obo-all/amphibian_anatomy/amphibian_anatomy.pro" md5="d42044b9a10c967cd8606fe53f91d2ec" timestamp="1263427472" time_generated="1263595509" time_taken_to_generate="0" size="288638">
+    </export>
+    <export format="error_report" problem="true">
+    </export>
+    <export format="validation_report" path="obo-all/amphibian_anatomy/amphibian_anatomy.validation_report" md5="201a3711c4c4c5291ddc78943b3254a2" timestamp="1260649607" time_generated="1263595510" time_taken_to_generate="0" size="20">
+    </export>
+    <export format="stats" path="obo-all/amphibian_anatomy/amphibian_anatomy.stats" md5="b6cd4b5a40819abb77a145d27dc31972" timestamp="1260649608" time_generated="1263595510" time_taken_to_generate="0" size="52">
+    </export>
+    <export format="xref" problem="true">
+    </export>
+    <export format="imports.obo" problem="true">
+    </export>
+    <export format="obo.html" path="obo-all/amphibian_anatomy/amphibian_anatomy.obo.html" md5="252bbe2a764a09dfd862395a3df6f55e" timestamp="1260649609" time_generated="1263595510" time_taken_to_generate="0" size="653286">
+    </export>
+    <export format="linkfile" problem="true">
+    </export>
+    <export format="imports.owl" problem="true">
+    </export>
+    <export format="imports-local.obo" problem="true">
+    </export>
+    <export format="xp.html" problem="true">
+    </export>
+    <export format="imports-local.owl" problem="true">
+    </export>
+    <export format="owl-classified-by-pellet2" problem="true">
+    </export>
+    <export format="obo-classified-by-oboedit" problem="true">
+    </export>
+    <export format="obo-classified-by-blip" problem="true">
+    </export>
+    <export format="abduced-links.txt" problem="true">
+    </export>
+  </ont>
+  <ont id="amphibian_taxonomy">
+    <source></source>
+    <granularity>organismal</granularity>
+    <status>Discussion and review</status>
+    <subtypes_of>CARO:0000000</subtypes_of>
+    <contact>AmphiAnat mailing list	sbhdbe	mst.edu</contact>
+    <foundry>Yes</foundry>
+    <domain>anatomy</domain>
+    <documentation></documentation>
+    <url>http://ontology1.srv.mst.edu/sarah/amphibian_taxonomy.obo</url>
+    <home>Amphibian Anatomy|http://www.amphibanat.org</home>
+    <xrefs_to>ncbi_taxonomy</xrefs_to>
+    <namespace>ATO</namespace>
+    <description>A taxonomy of Amphibia</description>
+    <format>obo</format>
+    <title>Amphibian taxonomy</title>
+    <relevant_organism>NCBITaxon:8292|Amphibia</relevant_organism>
+    <download>http://ontology1.srv.mst.edu/sarah/amphibian_taxonomy.obo</download>
+    <export format="obo-classified-by-oboedit" problem="true">
+    </export>
+    <export format="obo-classified-by-blip" problem="true">
+    </export>
+    <export format="abduced-links.txt" problem="true">
+    </export>
+  </ont>
+  <ontologies_not_indexed>8</ontologies_not_indexed>
+  <time_completed unix="1263957278" total_time="361775">Tue Jan 19 19:14:38 2010</time_completed>
+  </obo_metadata>
