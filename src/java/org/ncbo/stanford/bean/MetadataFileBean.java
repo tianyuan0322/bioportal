@@ -2,8 +2,6 @@ package org.ncbo.stanford.bean;
 
 import java.util.ArrayList;
 
-import org.ncbo.stanford.service.xml.parse.ExportBean;
-
 /**
  * <pre>
  * Class that contains metadata for a single ontology. The

@@ -1,8 +1,7 @@
 /**
  * 
  */
-package org.ncbo.stanford.service.xml.parse;
-
+package org.ncbo.stanford.bean;
 /**
  * @author s.reddy
  * 

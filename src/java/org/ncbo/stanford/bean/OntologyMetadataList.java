@@ -1,11 +1,8 @@
 /**
  * 
  */
-package org.ncbo.stanford.service.xml.parse;
-
+package org.ncbo.stanford.bean;
 import java.util.ArrayList;
-
-import org.ncbo.stanford.bean.MetadataFileBean;
 
 /**
  * @author s.reddy

@@ -8,9 +8,9 @@ import java.util.ArrayList;
 
 import org.junit.Test;
 import org.ncbo.stanford.AbstractBioPortalTest;
+import org.ncbo.stanford.bean.ExportBean;
 import org.ncbo.stanford.bean.MetadataFileBean;
-import org.ncbo.stanford.service.xml.parse.ExportBean;
-import org.ncbo.stanford.service.xml.parse.OntologyMetadataList;
+import org.ncbo.stanford.bean.OntologyMetadataList;
 
 import com.thoughtworks.xstream.XStream;
 import com.thoughtworks.xstream.io.xml.DomDriver;
