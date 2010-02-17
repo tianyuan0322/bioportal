@@ -1,13 +1,14 @@
-#
-#Mon May 18 12:18:08 PDT 2009
-genBasicCompId=false
+#MyEclipse Hibernate Properties
+#Tue Feb 09 18:00:33 PST 2010
 sessionFactoryName=
+genBasicCompId=false
 profile=
 daoSFId=sessionFactory
 version=3.1
 jndiPath=
 detectM2M=false
 reStrategyClass=
+detectO2O=false
 springDaoFile=WebRoot/WEB-INF/conf/generated/applicationContext-services.xml
 useJavaTypes=true
 keyGenerator=identity
@@ -16,6 +17,7 @@ addLibs2Project=false
 genVersionTag=false
 sessionFactoryId=sessionFactory
 basePersistenceClass=
+genAnnotations=false
 reSettingsFile=
 configFile=/bioportal/WebRoot/WEB-INF/conf/generated/applicationContext-services.xml
 createConfigFile=false
