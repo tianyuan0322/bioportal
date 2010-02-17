@@ -44,7 +44,8 @@
 				<value>org/ncbo/stanford/domain/generated/NcboAppText.hbm.xml</value>
 				<value>org/ncbo/stanford/domain/generated/NcboOntologyLoadQueue.hbm.xml</value>
 				<value>org/ncbo/stanford/domain/generated/NcboLStatus.hbm.xml</value>
-				<value>org/ncbo/stanford/domain/generated/NcboUsageLog.hbm.xml</value>
+				<value>org/ncbo/stanford/domain/generated/NcboUsageLog.hbm.xml</value>				
+				<value>org/ncbo/stanford/domain/generated/NcboLUsageEventType.hbm.xml</value>
 			</list>
 		</property>
 	</bean>
@@ -194,6 +195,14 @@
 			<ref bean="hibernateTemplate" />
 		</property>
 	</bean>
+	
+	<bean id="NcboLUsageEventTypeDAO"
+		class="org.ncbo.stanford.domain.custom.dao.CustomNcboLUsageEventTypeDAO">
+		<property name="hibernateTemplate">
+			<ref bean="hibernateTemplate" />
+		</property>
+	</bean>
+	
 	<!-- Encryption -->
 
 	<bean id="stringEncryptor" class="org.jasypt.encryption.pbe.StandardPBEStringEncryptor">
@@ -619,6 +628,9 @@
 		class="org.ncbo.stanford.service.logging.impl.UsageLoggingServiceImpl">
 		<property name="ncboUsageLogDAO">
 			<ref bean="NcboUsageLogDAO" />
+		</property>
+		<property name="ncboLUsageEventTypeDAO">
+			<ref bean="NcboLUsageEventTypeDAO" />
 		</property>
 	</bean>
 	<bean id="ontologyLoadSchedulerService"

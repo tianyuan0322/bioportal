@@ -99,9 +99,18 @@ public interface RequestParamConstants {
 	 */
 	public static final String PARAM_LOGONLY = "logonly";
 	public static final String PARAM_REQUEST_URL = "requesturl";
-	public static final String PARAM_RESOURCE_PARAMETERS = "resourceparameters";
 	public static final String PARAM_START_DATE_ACCESSED = "startdateaccessed";
 	public static final String PARAM_END_DATE_ACCESSED = "enddateaccessed";
+	public static final String PARAM_EVENT_TYPE = "eventtype";
+	public static final String PARAM_METHOD = "method";
+	public static final String PARAM_USER_ID = "userid";
+	public static final String PARAM_ONTOLOGY_ID = "ontologyid";
+	public static final String PARAM_ONTOLOGY_VERSION_ID = "ontologyversionid";
+	public static final String PARAM_ONTOLOGY_NAME = "ontologyname";
+	public static final String PARAM_CONCEPT_NAME = "conceptname";
+	public static final String PARAM_SEARCH_PARAMETERS = "searchparameters";
+	public static final String PARAM_NUM_SEARCH_RESULTS = "numsearchresults";
+	public static final String PARAM_IP_ADDRESS = "ipaddress";
 
 	/**
 	 * Ontology deletion/deprecation parameters

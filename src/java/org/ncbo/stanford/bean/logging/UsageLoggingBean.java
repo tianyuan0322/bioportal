@@ -1,36 +1,174 @@
 package org.ncbo.stanford.bean.logging;
 
+import java.sql.Timestamp;
 import java.util.Date;
 
+import org.ncbo.stanford.domain.custom.dao.CustomNcboLUsageEventTypeDAO;
+import org.ncbo.stanford.domain.generated.NcboLUsageEventType;
 import org.ncbo.stanford.domain.generated.NcboUsageLog;
 import org.ncbo.stanford.util.helper.StringHelper;
 
+import com.ibm.icu.util.Calendar;
+
 public class UsageLoggingBean {
 	private String applicationId;
+	private String eventType;
 	private String requestUrl;
 	private String httpMethod;
-	private String resourceParameters;
-	private String requestParameters;
 	private Integer userId;
-	private Integer hitCount;
+	private String sessionId;
+	private String ipAddress;
+	private Integer ontologyVersionId;
+	private Integer ontologyId;
+	private String ontologyName;
+	private String conceptId;
+	private String conceptName;
+	private String searchQuery;
+	private String searchParameters;
+	private Integer numSearchResults;
 	private Date dateAccessed;
 	private Date startDateAccessed;
 	private Date endDateAccessed;
+	private boolean isEmpty = true;
 
-	private static final int EMPTY_HASHCODE = -196513505;
+	/**
+	 * 
+	 */
+	public UsageLoggingBean() {
+		super();
+	}
+
+	/**
+	 * @param applicationId
+	 * @param eventType
+	 * @param requestUrl
+	 * @param httpMethod
+	 * @param userId
+	 * @param sessionId
+	 * @param ipAddress
+	 * @param ontologyVersionId
+	 * @param ontologyId
+	 * @param ontologyName
+	 * @param conceptId
+	 * @param conceptName
+	 * @param searchQuery
+	 * @param searchParameters
+	 * @param numSearchResults
+	 * @param dateAccessed
+	 */
+	public UsageLoggingBean(String applicationId, String eventType,
+			String requestUrl, String httpMethod, String userId,
+			String sessionId, String ipAddress, String ontologyVersionId,
+			String ontologyId, String ontologyName, String conceptId,
+			String conceptName, String searchQuery, String searchParameters,
+			String numSearchResults, Date dateAccessed) {
+		super();
+		this.applicationId = (StringHelper.isNullOrNullString(applicationId)) ? null
+				: applicationId;
+		this.eventType = (StringHelper.isNullOrNullString(eventType)) ? null
+				: eventType;
+		this.requestUrl = (StringHelper.isNullOrNullString(requestUrl)) ? null
+				: requestUrl;
+		this.httpMethod = (StringHelper.isNullOrNullString(httpMethod)) ? null
+				: httpMethod;
+
+		try {
+			this.userId = Integer.parseInt(userId);
+		} catch (NumberFormatException nfe) {
+			this.userId = null;
+		}
+
+		this.sessionId = (StringHelper.isNullOrNullString(sessionId)) ? null
+				: sessionId;
+		this.ipAddress = (StringHelper.isNullOrNullString(ipAddress)) ? null
+				: ipAddress;
+
+		try {
+			this.ontologyVersionId = Integer.parseInt(ontologyVersionId);
+		} catch (NumberFormatException nfe) {
+			this.ontologyVersionId = null;
+		}
+
+		try {
+			this.ontologyId = Integer.parseInt(ontologyId);
+		} catch (NumberFormatException nfe) {
+			this.ontologyId = null;
+		}
+
+		this.ontologyName = (StringHelper.isNullOrNullString(ontologyName)) ? null
+				: ontologyName;
+		this.conceptId = (StringHelper.isNullOrNullString(conceptId)) ? null
+				: conceptId;
+		this.conceptName = (StringHelper.isNullOrNullString(conceptName)) ? null
+				: conceptName;
+		this.searchQuery = (StringHelper.isNullOrNullString(searchQuery)) ? null
+				: searchQuery;
+		this.searchParameters = (StringHelper
+				.isNullOrNullString(searchParameters)) ? null
+				: searchParameters;
+
+		try {
+			this.numSearchResults = Integer.parseInt(numSearchResults);
+		} catch (NumberFormatException nfe) {
+			this.numSearchResults = null;
+		}
+
+		this.dateAccessed = dateAccessed;
+		this.isEmpty = false;
+	}
+
+	/**
+	 * @param applicationId
+	 * @param eventType
+	 * @param requestUrl
+	 * @param httpMethod
+	 * @param userId
+	 * @param sessionId
+	 * @param ipAddress
+	 * @param ontologyVersionId
+	 * @param ontologyId
+	 * @param ontologyName
+	 * @param conceptId
+	 * @param conceptName
+	 * @param searchQuery
+	 * @param searchParameters
+	 * @param numSearchResults
+	 */
+	public UsageLoggingBean(String applicationId, String eventType,
+			String requestUrl, String httpMethod, String userId,
+			String sessionId, String ipAddress, String ontologyVersionId,
+			String ontologyId, String ontologyName, String conceptId,
+			String conceptName, String searchQuery, String searchParameters,
+			String numSearchResults) {
+		this(applicationId, eventType, requestUrl, httpMethod, userId,
+				sessionId, ipAddress, ontologyVersionId, ontologyId,
+				ontologyName, conceptId, conceptName, searchQuery,
+				searchParameters, numSearchResults, Calendar.getInstance()
+						.getTime());
+	}
 
 	/**
 	 * Populates a NcboUsageLog entity from this UsageLoggingBean.
 	 * 
-	 * @param usageLog -
-	 *            the entity bean to populate
+	 * @param usageLog
+	 *            - the entity bean to populate
 	 */
-	public void populateToEntity(NcboUsageLog usageLog) {
+	public void populateToEntity(CustomNcboLUsageEventTypeDAO eventTypeDao,
+			NcboUsageLog usageLog) {
 		if (usageLog != null) {
 			if (applicationId != null) {
 				usageLog.setApplicationId(StringHelper
 						.isNullOrNullString(applicationId) ? null
 						: applicationId);
+			}
+
+			if (eventType != null) {
+				NcboLUsageEventType dbEventType = eventTypeDao
+						.findEventTypeByName(eventType);
+
+				if (dbEventType != null) {
+					usageLog.setNcboLUsageEventType(dbEventType);
+				}
 			}
 
 			if (requestUrl != null) {
@@ -43,142 +181,90 @@ public class UsageLoggingBean {
 						.isNullOrNullString(httpMethod) ? null : httpMethod);
 			}
 
-			if (resourceParameters != null) {
-				usageLog.setResourceParameters(StringHelper
-						.isNullOrNullString(resourceParameters) ? null
-						: resourceParameters);
-			}
-
-			if (requestParameters != null) {
-				usageLog.setRequestParameters(StringHelper
-						.isNullOrNullString(requestParameters) ? null
-						: requestParameters);
-			}
-
 			if (userId != null) {
 				usageLog.setUserId(userId);
 			}
 
-			usageLog.setHashCode(hashCode());
-			usageLog.setHitCount(hitCount);
-			usageLog.setDateAccessed(dateAccessed);
+			if (sessionId != null) {
+				usageLog.setSessionId(StringHelper
+						.isNullOrNullString(sessionId) ? null : sessionId);
+			}
+
+			if (ipAddress != null) {
+				usageLog.setIpAddress(StringHelper
+						.isNullOrNullString(ipAddress) ? null : ipAddress);
+			}
+
+			if (ontologyVersionId != null) {
+				usageLog.setOntologyVersionId(ontologyVersionId);
+			}
+
+			if (ontologyId != null) {
+				usageLog.setOntologyId(ontologyId);
+			}
+
+			if (ontologyName != null) {
+				usageLog
+						.setOntologyName(StringHelper
+								.isNullOrNullString(ontologyName) ? null
+								: ontologyName);
+			}
+
+			if (conceptId != null) {
+				usageLog.setConceptId(StringHelper
+						.isNullOrNullString(conceptId) ? null : conceptId);
+			}
+
+			if (conceptName != null) {
+				usageLog.setConceptName(StringHelper
+						.isNullOrNullString(conceptName) ? null : conceptName);
+			}
+
+			if (searchQuery != null) {
+				usageLog.setSearchQuery(StringHelper
+						.isNullOrNullString(searchQuery) ? null : searchQuery);
+			}
+
+			if (searchParameters != null) {
+				usageLog.setSearchParameters(StringHelper
+						.isNullOrNullString(searchParameters) ? null
+						: searchParameters);
+			}
+
+			if (numSearchResults != null) {
+				usageLog.setNumSearchResults(numSearchResults);
+			}
+
+			usageLog.setDateAccessed(new Timestamp(dateAccessed.getTime()));
 		}
 	}
 
 	/**
 	 * Populates this bean using the NcboUsageLog entity
 	 * 
-	 * @param usageLog -
-	 *            the entity bean from which to populate
+	 * @param usageLog
+	 *            - the entity bean from which to populate
 	 */
 	public void populateFromEntity(NcboUsageLog usageLog) {
 		if (usageLog != null) {
 			setApplicationId(usageLog.getApplicationId());
+			setEventType(usageLog.getNcboLUsageEventType().getEventName());
 			setRequestUrl(usageLog.getRequestUrl());
 			setHttpMethod(usageLog.getHttpMethod());
-			setResourceParameters(usageLog.getResourceParameters());
-			setRequestParameters(usageLog.getRequestParameters());
 			setUserId(usageLog.getUserId());
-			setHitCount(usageLog.getHitCount());
+			setSessionId(usageLog.getSessionId());
+			setIpAddress(usageLog.getIpAddress());
+			setOntologyVersionId(usageLog.getOntologyVersionId());
+			setOntologyId(usageLog.getOntologyId());
+			setOntologyName(usageLog.getOntologyName());
+			setConceptId(usageLog.getConceptId());
+			setConceptName(usageLog.getConceptName());
+			setSearchQuery(usageLog.getSearchQuery());
+			setSearchParameters(usageLog.getSearchParameters());
+			setNumSearchResults(usageLog.getNumSearchResults());
 			setDateAccessed(usageLog.getDateAccessed());
+			this.isEmpty = false;
 		}
-	}
-
-	/* (non-Javadoc)
-	 * @see java.lang.Object#hashCode()
-	 */
-	@Override
-	public int hashCode() {
-		final int prime = 31;
-		int result = 1;
-		result = prime * result
-				+ ((applicationId == null) ? 0 : applicationId.hashCode());
-		result = prime * result
-				+ ((dateAccessed == null) ? 0 : dateAccessed.hashCode());
-		result = prime * result
-				+ ((endDateAccessed == null) ? 0 : endDateAccessed.hashCode());
-		result = prime * result
-				+ ((httpMethod == null) ? 0 : httpMethod.hashCode());
-		result = prime
-				* result
-				+ ((requestParameters == null) ? 0 : requestParameters
-						.hashCode());
-		result = prime * result
-				+ ((requestUrl == null) ? 0 : requestUrl.hashCode());
-		result = prime
-				* result
-				+ ((resourceParameters == null) ? 0 : resourceParameters
-						.hashCode());
-		result = prime
-				* result
-				+ ((startDateAccessed == null) ? 0 : startDateAccessed
-						.hashCode());
-		result = prime * result + ((userId == null) ? 0 : userId.hashCode());
-		return result;
-	}
-
-	public boolean isEmpty() {
-		return hashCode() == EMPTY_HASHCODE;
-	}
-
-	/* (non-Javadoc)
-	 * @see java.lang.Object#equals(java.lang.Object)
-	 */
-	@Override
-	public boolean equals(Object obj) {
-		if (this == obj)
-			return true;
-		if (obj == null)
-			return false;
-		if (getClass() != obj.getClass())
-			return false;
-		final UsageLoggingBean other = (UsageLoggingBean) obj;
-		if (applicationId == null) {
-			if (other.applicationId != null)
-				return false;
-		} else if (!applicationId.equals(other.applicationId))
-			return false;
-		if (dateAccessed == null) {
-			if (other.dateAccessed != null)
-				return false;
-		} else if (!dateAccessed.equals(other.dateAccessed))
-			return false;
-		if (endDateAccessed == null) {
-			if (other.endDateAccessed != null)
-				return false;
-		} else if (!endDateAccessed.equals(other.endDateAccessed))
-			return false;
-		if (httpMethod == null) {
-			if (other.httpMethod != null)
-				return false;
-		} else if (!httpMethod.equals(other.httpMethod))
-			return false;
-		if (requestParameters == null) {
-			if (other.requestParameters != null)
-				return false;
-		} else if (!requestParameters.equals(other.requestParameters))
-			return false;
-		if (requestUrl == null) {
-			if (other.requestUrl != null)
-				return false;
-		} else if (!requestUrl.equals(other.requestUrl))
-			return false;
-		if (resourceParameters == null) {
-			if (other.resourceParameters != null)
-				return false;
-		} else if (!resourceParameters.equals(other.resourceParameters))
-			return false;
-		if (startDateAccessed == null) {
-			if (other.startDateAccessed != null)
-				return false;
-		} else if (!startDateAccessed.equals(other.startDateAccessed))
-			return false;
-		if (userId == null) {
-			if (other.userId != null)
-				return false;
-		} else if (!userId.equals(other.userId))
-			return false;
-		return true;
 	}
 
 	/**
@@ -194,6 +280,21 @@ public class UsageLoggingBean {
 	 */
 	public void setApplicationId(String applicationId) {
 		this.applicationId = applicationId;
+	}
+
+	/**
+	 * @return the eventType
+	 */
+	public String getEventType() {
+		return eventType;
+	}
+
+	/**
+	 * @param eventType
+	 *            the eventType to set
+	 */
+	public void setEventType(String eventType) {
+		this.eventType = eventType;
 	}
 
 	/**
@@ -227,36 +328,6 @@ public class UsageLoggingBean {
 	}
 
 	/**
-	 * @return the resourceParameters
-	 */
-	public String getResourceParameters() {
-		return resourceParameters;
-	}
-
-	/**
-	 * @param resourceParameters
-	 *            the resourceParameters to set
-	 */
-	public void setResourceParameters(String resourceParameters) {
-		this.resourceParameters = resourceParameters;
-	}
-
-	/**
-	 * @return the requestParameters
-	 */
-	public String getRequestParameters() {
-		return requestParameters;
-	}
-
-	/**
-	 * @param requestParameters
-	 *            the requestParameters to set
-	 */
-	public void setRequestParameters(String requestParameters) {
-		this.requestParameters = requestParameters;
-	}
-
-	/**
 	 * @return the userId
 	 */
 	public Integer getUserId() {
@@ -272,6 +343,156 @@ public class UsageLoggingBean {
 	}
 
 	/**
+	 * @return the sessionId
+	 */
+	public String getSessionId() {
+		return sessionId;
+	}
+
+	/**
+	 * @param sessionId
+	 *            the sessionId to set
+	 */
+	public void setSessionId(String sessionId) {
+		this.sessionId = sessionId;
+	}
+
+	/**
+	 * @return the ipAddress
+	 */
+	public String getIpAddress() {
+		return ipAddress;
+	}
+
+	/**
+	 * @param ipAddress
+	 *            the ipAddress to set
+	 */
+	public void setIpAddress(String ipAddress) {
+		this.ipAddress = ipAddress;
+	}
+
+	/**
+	 * @return the ontologyVersionId
+	 */
+	public Integer getOntologyVersionId() {
+		return ontologyVersionId;
+	}
+
+	/**
+	 * @param ontologyVersionId
+	 *            the ontologyVersionId to set
+	 */
+	public void setOntologyVersionId(Integer ontologyVersionId) {
+		this.ontologyVersionId = ontologyVersionId;
+	}
+
+	/**
+	 * @return the ontologyId
+	 */
+	public Integer getOntologyId() {
+		return ontologyId;
+	}
+
+	/**
+	 * @param ontologyId
+	 *            the ontologyId to set
+	 */
+	public void setOntologyId(Integer ontologyId) {
+		this.ontologyId = ontologyId;
+	}
+
+	/**
+	 * @return the ontologyName
+	 */
+	public String getOntologyName() {
+		return ontologyName;
+	}
+
+	/**
+	 * @param ontologyName
+	 *            the ontologyName to set
+	 */
+	public void setOntologyName(String ontologyName) {
+		this.ontologyName = ontologyName;
+	}
+
+	/**
+	 * @return the conceptId
+	 */
+	public String getConceptId() {
+		return conceptId;
+	}
+
+	/**
+	 * @param conceptId
+	 *            the conceptId to set
+	 */
+	public void setConceptId(String conceptId) {
+		this.conceptId = conceptId;
+	}
+
+	/**
+	 * @return the conceptName
+	 */
+	public String getConceptName() {
+		return conceptName;
+	}
+
+	/**
+	 * @param conceptName
+	 *            the conceptName to set
+	 */
+	public void setConceptName(String conceptName) {
+		this.conceptName = conceptName;
+	}
+
+	/**
+	 * @return the searchQuery
+	 */
+	public String getSearchQuery() {
+		return searchQuery;
+	}
+
+	/**
+	 * @param searchQuery
+	 *            the searchQuery to set
+	 */
+	public void setSearchQuery(String searchQuery) {
+		this.searchQuery = searchQuery;
+	}
+
+	/**
+	 * @return the searchParameters
+	 */
+	public String getSearchParameters() {
+		return searchParameters;
+	}
+
+	/**
+	 * @param searchParameters
+	 *            the searchParameters to set
+	 */
+	public void setSearchParameters(String searchParameters) {
+		this.searchParameters = searchParameters;
+	}
+
+	/**
+	 * @return the numSearchResults
+	 */
+	public Integer getNumSearchResults() {
+		return numSearchResults;
+	}
+
+	/**
+	 * @param numSearchResults
+	 *            the numSearchResults to set
+	 */
+	public void setNumSearchResults(Integer numSearchResults) {
+		this.numSearchResults = numSearchResults;
+	}
+
+	/**
 	 * @return the dateAccessed
 	 */
 	public Date getDateAccessed() {
@@ -284,21 +505,6 @@ public class UsageLoggingBean {
 	 */
 	public void setDateAccessed(Date dateAccessed) {
 		this.dateAccessed = dateAccessed;
-	}
-
-	/**
-	 * @return the hitCount
-	 */
-	public Integer getHitCount() {
-		return hitCount;
-	}
-
-	/**
-	 * @param hitCount
-	 *            the hitCount to set
-	 */
-	public void setHitCount(Integer hitCount) {
-		this.hitCount = hitCount;
 	}
 
 	/**
@@ -329,5 +535,12 @@ public class UsageLoggingBean {
 	 */
 	public void setEndDateAccessed(Date endDateAccessed) {
 		this.endDateAccessed = endDateAccessed;
+	}
+
+	/**
+	 * @return the isEmpty
+	 */
+	public boolean isEmpty() {
+		return isEmpty;
 	}
 }

@@ -10,6 +10,8 @@ CREATE TABLE `ncbo_l_usage_event_type` (
   PRIMARY KEY  (`id`)
 ) ENGINE=INNODB DEFAULT CHARSET=latin1;
 
+CREATE UNIQUE INDEX `idx_event_name_unique` ON ncbo_l_usage_event_type(`event_name`);
+
 INSERT INTO ncbo_l_usage_event_type (id, event_name, event_description) VALUE (1000, 'show_all_ontologies', 'Show all ontologies');
 INSERT INTO ncbo_l_usage_event_type (id, event_name, event_description) VALUE (1001, 'show_ontology', 'Show ontology');
 INSERT INTO ncbo_l_usage_event_type (id, event_name, event_description) VALUE (1002, 'show_virtual_ontology', 'Show virtual ontology');
@@ -38,6 +40,8 @@ CREATE TABLE `ncbo_usage_log` (
   `request_url` VARCHAR(256) DEFAULT NULL,
   `http_method` VARCHAR(8) DEFAULT NULL,
   `user_id` INT(11) DEFAULT NULL,
+  `session_id` VARCHAR(256) DEFAULT NULL,
+  `ip_address` VARCHAR(32) DEFAULT NULL,
   `ontology_version_id` INT(11) DEFAULT NULL,
   `ontology_id` INT(11) DEFAULT NULL,
   `ontology_name` VARCHAR(128) DEFAULT NULL,
@@ -50,6 +54,8 @@ CREATE TABLE `ncbo_usage_log` (
   PRIMARY KEY  (`id`),
   KEY `idx_application_id` (`application_id`),
   KEY `idx_request_url` (`request_url`),
+  KEY `idx_session_id` (`session_id`),
+  KEY `idx_ip_address` (`ip_address`),
   KEY `idx_ontology_name` (`ontology_name`),
   KEY `idx_concept_id` (`concept_id`),
   KEY `idx_concept_name` (`concept_name`),

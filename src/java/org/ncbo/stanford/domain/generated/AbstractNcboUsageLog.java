@@ -1,12 +1,10 @@
 package org.ncbo.stanford.domain.generated;
 
-import java.util.Date;
+import java.sql.Timestamp;
 
 /**
  * AbstractNcboUsageLog entity provides the base persistence definition of the
- * NcboUsageLog entity.
- * 
- * @author MyEclipse Persistence Tools
+ * NcboUsageLog entity. @author MyEclipse Persistence Tools
  */
 
 public abstract class AbstractNcboUsageLog implements java.io.Serializable {
@@ -14,15 +12,22 @@ public abstract class AbstractNcboUsageLog implements java.io.Serializable {
 	// Fields
 
 	private Integer id;
-	private Integer hashCode;
+	private NcboLUsageEventType ncboLUsageEventType;
 	private String applicationId;
 	private String requestUrl;
 	private String httpMethod;
-	private String resourceParameters;
-	private String requestParameters;
 	private Integer userId;
-	private Integer hitCount;
-	private Date dateAccessed;
+	private String sessionId;
+	private String ipAddress;
+	private Integer ontologyVersionId;
+	private Integer ontologyId;
+	private String ontologyName;
+	private String conceptId;
+	private String conceptName;
+	private String searchQuery;
+	private String searchParameters;
+	private Integer numSearchResults;
+	private Timestamp dateAccessed;
 
 	// Constructors
 
@@ -31,26 +36,35 @@ public abstract class AbstractNcboUsageLog implements java.io.Serializable {
 	}
 
 	/** minimal constructor */
-	public AbstractNcboUsageLog(Integer hashCode, Integer hitCount,
-			Date dateAccessed) {
-		this.hashCode = hashCode;
-		this.hitCount = hitCount;
+	public AbstractNcboUsageLog(NcboLUsageEventType ncboLUsageEventType,
+			Timestamp dateAccessed) {
+		this.ncboLUsageEventType = ncboLUsageEventType;
 		this.dateAccessed = dateAccessed;
 	}
 
 	/** full constructor */
-	public AbstractNcboUsageLog(Integer hashCode, String applicationId,
-			String requestUrl, String httpMethod, String resourceParameters,
-			String requestParameters, Integer userId, Integer hitCount,
-			Date dateAccessed) {
-		this.hashCode = hashCode;
+	public AbstractNcboUsageLog(NcboLUsageEventType ncboLUsageEventType,
+			String applicationId, String requestUrl, String httpMethod,
+			Integer userId, String sessionId, String ipAddress,
+			Integer ontologyVersionId, Integer ontologyId, String ontologyName,
+			String conceptId, String conceptName, String searchQuery,
+			String searchParameters, Integer numSearchResults,
+			Timestamp dateAccessed) {
+		this.ncboLUsageEventType = ncboLUsageEventType;
 		this.applicationId = applicationId;
 		this.requestUrl = requestUrl;
 		this.httpMethod = httpMethod;
-		this.resourceParameters = resourceParameters;
-		this.requestParameters = requestParameters;
 		this.userId = userId;
-		this.hitCount = hitCount;
+		this.sessionId = sessionId;
+		this.ipAddress = ipAddress;
+		this.ontologyVersionId = ontologyVersionId;
+		this.ontologyId = ontologyId;
+		this.ontologyName = ontologyName;
+		this.conceptId = conceptId;
+		this.conceptName = conceptName;
+		this.searchQuery = searchQuery;
+		this.searchParameters = searchParameters;
+		this.numSearchResults = numSearchResults;
 		this.dateAccessed = dateAccessed;
 	}
 
@@ -64,12 +78,12 @@ public abstract class AbstractNcboUsageLog implements java.io.Serializable {
 		this.id = id;
 	}
 
-	public Integer getHashCode() {
-		return this.hashCode;
+	public NcboLUsageEventType getNcboLUsageEventType() {
+		return this.ncboLUsageEventType;
 	}
 
-	public void setHashCode(Integer hashCode) {
-		this.hashCode = hashCode;
+	public void setNcboLUsageEventType(NcboLUsageEventType ncboLUsageEventType) {
+		this.ncboLUsageEventType = ncboLUsageEventType;
 	}
 
 	public String getApplicationId() {
@@ -96,22 +110,6 @@ public abstract class AbstractNcboUsageLog implements java.io.Serializable {
 		this.httpMethod = httpMethod;
 	}
 
-	public String getResourceParameters() {
-		return this.resourceParameters;
-	}
-
-	public void setResourceParameters(String resourceParameters) {
-		this.resourceParameters = resourceParameters;
-	}
-
-	public String getRequestParameters() {
-		return this.requestParameters;
-	}
-
-	public void setRequestParameters(String requestParameters) {
-		this.requestParameters = requestParameters;
-	}
-
 	public Integer getUserId() {
 		return this.userId;
 	}
@@ -120,19 +118,91 @@ public abstract class AbstractNcboUsageLog implements java.io.Serializable {
 		this.userId = userId;
 	}
 
-	public Integer getHitCount() {
-		return this.hitCount;
+	public String getSessionId() {
+		return this.sessionId;
 	}
 
-	public void setHitCount(Integer hitCount) {
-		this.hitCount = hitCount;
+	public void setSessionId(String sessionId) {
+		this.sessionId = sessionId;
 	}
 
-	public Date getDateAccessed() {
+	public String getIpAddress() {
+		return this.ipAddress;
+	}
+
+	public void setIpAddress(String ipAddress) {
+		this.ipAddress = ipAddress;
+	}
+
+	public Integer getOntologyVersionId() {
+		return this.ontologyVersionId;
+	}
+
+	public void setOntologyVersionId(Integer ontologyVersionId) {
+		this.ontologyVersionId = ontologyVersionId;
+	}
+
+	public Integer getOntologyId() {
+		return this.ontologyId;
+	}
+
+	public void setOntologyId(Integer ontologyId) {
+		this.ontologyId = ontologyId;
+	}
+
+	public String getOntologyName() {
+		return this.ontologyName;
+	}
+
+	public void setOntologyName(String ontologyName) {
+		this.ontologyName = ontologyName;
+	}
+
+	public String getConceptId() {
+		return this.conceptId;
+	}
+
+	public void setConceptId(String conceptId) {
+		this.conceptId = conceptId;
+	}
+
+	public String getConceptName() {
+		return this.conceptName;
+	}
+
+	public void setConceptName(String conceptName) {
+		this.conceptName = conceptName;
+	}
+
+	public String getSearchQuery() {
+		return this.searchQuery;
+	}
+
+	public void setSearchQuery(String searchQuery) {
+		this.searchQuery = searchQuery;
+	}
+
+	public String getSearchParameters() {
+		return this.searchParameters;
+	}
+
+	public void setSearchParameters(String searchParameters) {
+		this.searchParameters = searchParameters;
+	}
+
+	public Integer getNumSearchResults() {
+		return this.numSearchResults;
+	}
+
+	public void setNumSearchResults(Integer numSearchResults) {
+		this.numSearchResults = numSearchResults;
+	}
+
+	public Timestamp getDateAccessed() {
 		return this.dateAccessed;
 	}
 
-	public void setDateAccessed(Date dateAccessed) {
+	public void setDateAccessed(Timestamp dateAccessed) {
 		this.dateAccessed = dateAccessed;
 	}
 

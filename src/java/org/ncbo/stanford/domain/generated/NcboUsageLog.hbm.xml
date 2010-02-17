@@ -10,32 +10,53 @@
             <column name="id" />
             <generator class="identity" />
         </id>
-        <property name="hashCode" type="java.lang.Integer">
-            <column name="hash_code" not-null="true" unique="true" />
-        </property>
+        <many-to-one name="ncboLUsageEventType" class="org.ncbo.stanford.domain.generated.NcboLUsageEventType" fetch="select">
+            <column name="event_type" not-null="true" />
+        </many-to-one>
         <property name="applicationId" type="java.lang.String">
             <column name="application_id" length="64" />
         </property>
         <property name="requestUrl" type="java.lang.String">
-            <column name="request_url" length="128" />
+            <column name="request_url" length="256" />
         </property>
         <property name="httpMethod" type="java.lang.String">
             <column name="http_method" length="8" />
         </property>
-        <property name="resourceParameters" type="java.lang.String">
-            <column name="resource_parameters" length="512" />
-        </property>
-        <property name="requestParameters" type="java.lang.String">
-            <column name="request_parameters" length="512" />
-        </property>
         <property name="userId" type="java.lang.Integer">
             <column name="user_id" />
         </property>
-        <property name="hitCount" type="java.lang.Integer">
-            <column name="hit_count" not-null="true" />
+        <property name="sessionId" type="java.lang.String">
+            <column name="session_id" length="256" />
         </property>
-        <property name="dateAccessed" type="java.util.Date">
-            <column name="date_accessed" length="10" not-null="true" />
+        <property name="ipAddress" type="java.lang.String">
+            <column name="ip_address" length="32" />
+        </property>
+        <property name="ontologyVersionId" type="java.lang.Integer">
+            <column name="ontology_version_id" />
+        </property>
+        <property name="ontologyId" type="java.lang.Integer">
+            <column name="ontology_id" />
+        </property>
+        <property name="ontologyName" type="java.lang.String">
+            <column name="ontology_name" length="128" />
+        </property>
+        <property name="conceptId" type="java.lang.String">
+            <column name="concept_id" length="512" />
+        </property>
+        <property name="conceptName" type="java.lang.String">
+            <column name="concept_name" length="512" />
+        </property>
+        <property name="searchQuery" type="java.lang.String">
+            <column name="search_query" length="128" />
+        </property>
+        <property name="searchParameters" type="java.lang.String">
+            <column name="search_parameters" length="64" />
+        </property>
+        <property name="numSearchResults" type="java.lang.Integer">
+            <column name="num_search_results" />
+        </property>
+        <property name="dateAccessed" type="java.sql.Timestamp">
+            <column name="date_accessed" length="19" not-null="true" />
         </property>
     </class>
 </hibernate-mapping>

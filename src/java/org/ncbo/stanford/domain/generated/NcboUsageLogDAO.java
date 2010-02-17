@@ -1,6 +1,6 @@
 package org.ncbo.stanford.domain.generated;
 
-import java.util.Date;
+import java.sql.Timestamp;
 import java.util.List;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -23,14 +23,20 @@ import org.springframework.orm.hibernate3.support.HibernateDaoSupport;
 public class NcboUsageLogDAO extends HibernateDaoSupport {
 	private static final Log log = LogFactory.getLog(NcboUsageLogDAO.class);
 	// property constants
-	public static final String HASH_CODE = "hashCode";
 	public static final String APPLICATION_ID = "applicationId";
 	public static final String REQUEST_URL = "requestUrl";
 	public static final String HTTP_METHOD = "httpMethod";
-	public static final String RESOURCE_PARAMETERS = "resourceParameters";
-	public static final String REQUEST_PARAMETERS = "requestParameters";
 	public static final String USER_ID = "userId";
-	public static final String HIT_COUNT = "hitCount";
+	public static final String SESSION_ID = "sessionId";
+	public static final String IP_ADDRESS = "ipAddress";
+	public static final String ONTOLOGY_VERSION_ID = "ontologyVersionId";
+	public static final String ONTOLOGY_ID = "ontologyId";
+	public static final String ONTOLOGY_NAME = "ontologyName";
+	public static final String CONCEPT_ID = "conceptId";
+	public static final String CONCEPT_NAME = "conceptName";
+	public static final String SEARCH_QUERY = "searchQuery";
+	public static final String SEARCH_PARAMETERS = "searchParameters";
+	public static final String NUM_SEARCH_RESULTS = "numSearchResults";
 
 	protected void initDao() {
 		// do nothing
@@ -96,10 +102,6 @@ public class NcboUsageLogDAO extends HibernateDaoSupport {
 		}
 	}
 
-	public List findByHashCode(Object hashCode) {
-		return findByProperty(HASH_CODE, hashCode);
-	}
-
 	public List findByApplicationId(Object applicationId) {
 		return findByProperty(APPLICATION_ID, applicationId);
 	}
@@ -112,20 +114,48 @@ public class NcboUsageLogDAO extends HibernateDaoSupport {
 		return findByProperty(HTTP_METHOD, httpMethod);
 	}
 
-	public List findByResourceParameters(Object resourceParameters) {
-		return findByProperty(RESOURCE_PARAMETERS, resourceParameters);
-	}
-
-	public List findByRequestParameters(Object requestParameters) {
-		return findByProperty(REQUEST_PARAMETERS, requestParameters);
-	}
-
 	public List findByUserId(Object userId) {
 		return findByProperty(USER_ID, userId);
 	}
 
-	public List findByHitCount(Object hitCount) {
-		return findByProperty(HIT_COUNT, hitCount);
+	public List findBySessionId(Object sessionId) {
+		return findByProperty(SESSION_ID, sessionId);
+	}
+
+	public List findByIpAddress(Object ipAddress) {
+		return findByProperty(IP_ADDRESS, ipAddress);
+	}
+
+	public List findByOntologyVersionId(Object ontologyVersionId) {
+		return findByProperty(ONTOLOGY_VERSION_ID, ontologyVersionId);
+	}
+
+	public List findByOntologyId(Object ontologyId) {
+		return findByProperty(ONTOLOGY_ID, ontologyId);
+	}
+
+	public List findByOntologyName(Object ontologyName) {
+		return findByProperty(ONTOLOGY_NAME, ontologyName);
+	}
+
+	public List findByConceptId(Object conceptId) {
+		return findByProperty(CONCEPT_ID, conceptId);
+	}
+
+	public List findByConceptName(Object conceptName) {
+		return findByProperty(CONCEPT_NAME, conceptName);
+	}
+
+	public List findBySearchQuery(Object searchQuery) {
+		return findByProperty(SEARCH_QUERY, searchQuery);
+	}
+
+	public List findBySearchParameters(Object searchParameters) {
+		return findByProperty(SEARCH_PARAMETERS, searchParameters);
+	}
+
+	public List findByNumSearchResults(Object numSearchResults) {
+		return findByProperty(NUM_SEARCH_RESULTS, numSearchResults);
 	}
 
 	public List findAll() {

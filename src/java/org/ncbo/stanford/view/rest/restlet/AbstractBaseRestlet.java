@@ -6,12 +6,10 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.ncbo.stanford.bean.logging.UsageLoggingBean;
 import org.ncbo.stanford.service.logging.UsageLoggingService;
 import org.ncbo.stanford.service.xml.XMLSerializationService;
 import org.ncbo.stanford.util.MessageUtils;
 import org.ncbo.stanford.util.RequestUtils;
-import org.ncbo.stanford.util.helper.BeanHelper;
 import org.ncbo.stanford.view.util.constants.RequestParamConstants;
 import org.restlet.Restlet;
 import org.restlet.data.Method;
@@ -42,96 +40,30 @@ public abstract class AbstractBaseRestlet extends Restlet {
 		HttpServletRequest httpServletRequest = RequestUtils
 				.getHttpServletRequest(request);
 
-		// first, check for http param "logonly=true". If present, ignore
-		// normal execution, just log the request
-		String logOnly = (String) httpServletRequest
-				.getParameter(RequestParamConstants.PARAM_LOGONLY);
-		boolean logOnlyBool = RequestUtils.parseBooleanParam(logOnly);
-		boolean isValidRequest = false;
-
 		if (request.getMethod().equals(Method.GET)) {
-			isValidRequest = handleGetRequest(request, response, logOnlyBool);
+			getRequest(request, response);
 		} else if (request.getMethod().equals(Method.POST)) {
 			String method = httpServletRequest.getParameter(MessageUtils
 					.getMessage("http.param.method"));
 
 			if (method == null) {
-				isValidRequest = handlePostRequest(request, response,
-						logOnlyBool);
+				postRequest(request, response);
 			} else {
 				if (method
 						.equalsIgnoreCase(MessageUtils.getMessage("http.put"))) {
-					isValidRequest = handlePutRequest(request, response,
-							logOnlyBool);
+					putRequest(request, response);
 				} else if (method.equalsIgnoreCase(MessageUtils
 						.getMessage("http.delete"))) {
-					isValidRequest = handleDeleteRequest(request, response,
-							logOnlyBool);
+					deleteRequest(request, response);
 				}
 			}
 		} else if (request.getMethod().equals(
 				MessageUtils.getMessage("http.put"))) {
-			isValidRequest = handlePutRequest(request, response, logOnlyBool);
+			putRequest(request, response);
 		} else if (request.getMethod().equals(
 				MessageUtils.getMessage("http.delete"))) {
-			isValidRequest = handleDeleteRequest(request, response, logOnlyBool);
-		}
-
-		// disabling logging temporarily because of performance issues
-		// if (logRequests() && isValidRequest
-		// && response.getStatus().equals(Status.SUCCESS_OK)) {
-		// logRequest(request);
-		// }
-	}
-
-	private boolean handleDeleteRequest(Request request, Response response,
-			boolean logOnlyBool) {
-		boolean isValidRequest = isDeleteRequestOverridden();
-
-		if (!isValidRequest || !logOnlyBool) {
 			deleteRequest(request, response);
 		}
-
-		return isValidRequest;
-	}
-
-	private boolean handlePutRequest(Request request, Response response,
-			boolean logOnlyBool) {
-		boolean isValidRequest = isPutRequestOverridden();
-
-		if (!isValidRequest || !logOnlyBool) {
-			putRequest(request, response);
-		}
-
-		return isValidRequest;
-	}
-
-	private boolean handlePostRequest(Request request, Response response,
-			boolean logOnlyBool) {
-		boolean isValidRequest = isPostRequestOverridden();
-
-		if (!isValidRequest || !logOnlyBool) {
-			postRequest(request, response);
-		}
-
-		return isValidRequest;
-	}
-
-	private boolean handleGetRequest(Request request, Response response,
-			boolean logOnlyBool) {
-		boolean isValidRequest = isGetRequestOverridden();
-
-		if (!isValidRequest || !logOnlyBool) {
-			getRequest(request, response);
-		}
-
-		return isValidRequest;
-	}
-
-	private void logRequest(Request request) {
-		UsageLoggingBean usageLoggingBean = BeanHelper
-				.populateUsageLoggingBeanFromRequestForLogging(request);
-		usageLoggingService.logUsage(usageLoggingBean);
 	}
 
 	/**
@@ -245,10 +177,6 @@ public abstract class AbstractBaseRestlet extends Restlet {
 		}
 
 		return this.getClass().equals(handler.getDeclaringClass());
-	}
-
-	protected boolean logRequests() {
-		return true;
 	}
 
 	/**

@@ -26,8 +26,7 @@ public class CustomNcboUsageLogDAO extends NcboUsageLogDAO {
 
 	@SuppressWarnings("unchecked")
 	public List<NcboUsageLog> findUsageLogByCriteria(String applicationId,
-			String requestUrl, String resourceParameters, Date startDate,
-			Date endDate) {
+			String requestUrl, Date startDate, Date endDate) {
 		Criteria criteria = getSession().createCriteria(NcboUsageLog.class);
 
 		if (applicationId != null) {
@@ -44,15 +43,6 @@ public class CustomNcboUsageLogDAO extends NcboUsageLogDAO {
 			} else {
 				criteria.add(Expression.like("requestUrl",
 						'%' + requestUrl + '%'));
-			}
-		}
-
-		if (resourceParameters != null) {
-			if (StringHelper.isNullOrNullString(resourceParameters)) {
-				criteria.add(Expression.isNull("resourceParameters"));
-			} else {
-				criteria.add(Expression.like("resourceParameters",
-						'%' + resourceParameters + '%'));
 			}
 		}
 

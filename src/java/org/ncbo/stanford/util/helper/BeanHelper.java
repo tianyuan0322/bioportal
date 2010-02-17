@@ -95,10 +95,10 @@ public class BeanHelper {
 		HttpServletRequest httpServletRequest = RequestUtils
 				.getHttpServletRequest(request);
 
-		//first decide if it is a view or not
+		// first decide if it is a view or not
 		String isView = httpServletRequest.getParameter(MessageUtils
 				.getMessage("form.ontology.isView"));
-		
+
 		// for new version for existing ontology
 		String ontologyId = httpServletRequest.getParameter(MessageUtils
 				.getMessage("form.ontology.ontologyId"));
@@ -158,10 +158,12 @@ public class BeanHelper {
 				.getMessage("form.ontology.documentationSlot"));
 		String authorSlot = httpServletRequest.getParameter(MessageUtils
 				.getMessage("form.ontology.authorSlot"));
-		String slotWithUniqueValue = httpServletRequest.getParameter(MessageUtils
-				.getMessage("form.ontology.slotWithUniqueValue"));
-		String preferredMaximumSubclassLimit = httpServletRequest.getParameter(MessageUtils
-				.getMessage("form.ontology.preferredMaximumSubclassLimit"));
+		String slotWithUniqueValue = httpServletRequest
+				.getParameter(MessageUtils
+						.getMessage("form.ontology.slotWithUniqueValue"));
+		String preferredMaximumSubclassLimit = httpServletRequest
+				.getParameter(MessageUtils
+						.getMessage("form.ontology.preferredMaximumSubclassLimit"));
 
 		if (!StringHelper.isNullOrNullString(isView)) {
 			bean.setView(RequestUtils.parseBooleanParam(isView));
@@ -171,11 +173,11 @@ public class BeanHelper {
 			bean.setOntologyId(Integer.parseInt(ontologyId));
 		}
 
-		//bean.setVirtualViewIds(...)
-		//we do not set here the virtualViewIds of the ontology bean
-		//from the request, because that is only a read-only field, 
-		//calculated from the metadata ontology on a read operation 
-		
+		// bean.setVirtualViewIds(...)
+		// we do not set here the virtualViewIds of the ontology bean
+		// from the request, because that is only a read-only field,
+		// calculated from the metadata ontology on a read operation
+
 		if (!StringHelper.isNullOrNullString(userId)) {
 			bean.setUserId(Integer.parseInt(userId));
 		}
@@ -239,19 +241,20 @@ public class BeanHelper {
 		if (documentationSlot != null) {
 			bean.setDocumentationSlot(documentationSlot);
 		}
-		
+
 		if (authorSlot != null) {
 			bean.setAuthorSlot(authorSlot);
 		}
-		
+
 		if (slotWithUniqueValue != null) {
 			bean.setSlotWithUniqueValue(slotWithUniqueValue);
 		}
-		
+
 		if (!StringHelper.isNullOrNullString(preferredMaximumSubclassLimit)) {
-			bean.setPreferredMaximumSubclassLimit(Integer.parseInt(preferredMaximumSubclassLimit));
+			bean.setPreferredMaximumSubclassLimit(Integer
+					.parseInt(preferredMaximumSubclassLimit));
 		}
-		
+
 		if (contactName != null) {
 			bean.setContactName(contactName);
 		}
@@ -300,7 +303,7 @@ public class BeanHelper {
 		String[] groupIdValues = httpServletRequest
 				.getParameterValues(MessageUtils
 						.getMessage("form.ontology.groupId"));
-		
+
 		if (groupIdValues != null) {
 			groupIds = RequestUtils.parseIntegerListParam(groupIdValues);
 			bean.setGroupIds(groupIds);
@@ -313,25 +316,27 @@ public class BeanHelper {
 		if (fileItem != null) {
 			bean.setFileItem(fileItem);
 		}
-		
-		//specifying this in the request is optional. Views should be added to a
-		//version by specifying value for the "viewOnOntologyVersionId" parameter
-		//on a create/update view request
+
+		// specifying this in the request is optional. Views should be added to
+		// a
+		// version by specifying value for the "viewOnOntologyVersionId"
+		// parameter
+		// on a create/update view request
 		String[] hasViewIdValues = httpServletRequest
-		.getParameterValues(MessageUtils
-				.getMessage("form.ontology.hasView"));
-		
+				.getParameterValues(MessageUtils
+						.getMessage("form.ontology.hasView"));
+
 		if (hasViewIdValues != null) {
 			hasViewIds = RequestUtils.parseIntegerListParam(hasViewIdValues);
 			bean.setHasViews(hasViewIds);
 		}
-		
-		
-		//populate view specific values
+
+		// populate view specific values
 		if (bean.isView()) {
 			// for new version for existing ontology view
-			String viewDefinition = httpServletRequest.getParameter(MessageUtils
-					.getMessage("form.ontology.viewDefinition"));
+			String viewDefinition = httpServletRequest
+					.getParameter(MessageUtils
+							.getMessage("form.ontology.viewDefinition"));
 			String viewDefinitionLanguage = httpServletRequest
 					.getParameter(MessageUtils
 							.getMessage("form.ontology.viewDefinitionLanguage"));
@@ -376,34 +381,43 @@ public class BeanHelper {
 	 */
 	public static UsageLoggingBean populateUsageLoggingBeanFromRequestForLogging(
 			Request request) {
-		UsageLoggingBean usageLoggingBean = new UsageLoggingBean();
-		HttpServletRequest httpServletRequest = RequestUtils
+		HttpServletRequest httpRequest = RequestUtils
 				.getHttpServletRequest(request);
 
 		String applicationId = RequestUtils.getApplicationId(request);
-		String resourceParameters = RequestUtils
-				.getResourceAttributesAsString(request);
-		String requestParameters = RequestUtils
-				.getRequestParametersAsString(httpServletRequest);
+		String eventType = (String) httpRequest
+				.getParameter(RequestParamConstants.PARAM_EVENT_TYPE);
+		String requestUrl = (String) httpRequest
+				.getParameter(RequestParamConstants.PARAM_REQUEST_URL);
+		String httpMethod = (String) httpRequest
+				.getParameter(RequestParamConstants.PARAM_METHOD);
+		String userId = (String) httpRequest
+				.getParameter(RequestParamConstants.PARAM_USER_ID);
+		String sessionId = (String) httpRequest
+				.getParameter(RequestParamConstants.PARAM_SESSIONID);
+		String ipAddress = (String) httpRequest
+				.getParameter(RequestParamConstants.PARAM_IP_ADDRESS);
+		String ontologyVersionId = (String) httpRequest
+				.getParameter(RequestParamConstants.PARAM_ONTOLOGY_VERSION_ID);
+		String ontologyId = (String) httpRequest
+				.getParameter(RequestParamConstants.PARAM_ONTOLOGY_ID);
+		String ontologyName = (String) httpRequest
+				.getParameter(RequestParamConstants.PARAM_ONTOLOGY_NAME);
+		String conceptId = (String) httpRequest
+				.getParameter(RequestParamConstants.PARAM_CONCEPT_ID);
+		String conceptName = (String) httpRequest
+				.getParameter(RequestParamConstants.PARAM_CONCEPT_NAME);
+		String searchQuery = (String) httpRequest
+				.getParameter(RequestParamConstants.PARAM_QUERY);
+		String searchParameters = (String) httpRequest
+				.getParameter(RequestParamConstants.PARAM_SEARCH_PARAMETERS);
+		String numSearchResults = (String) httpRequest
+				.getParameter(RequestParamConstants.PARAM_NUM_SEARCH_RESULTS);
 
-		if (applicationId != null) {
-			usageLoggingBean.setApplicationId(applicationId);
-		}
-
-		usageLoggingBean.setRequestUrl(httpServletRequest.getPathInfo());
-		usageLoggingBean.setHttpMethod(httpServletRequest.getMethod());
-
-		if (resourceParameters != null) {
-			usageLoggingBean.setResourceParameters(resourceParameters);
-		}
-
-		if (requestParameters != null) {
-			usageLoggingBean.setRequestParameters(requestParameters);
-		}
-
-		usageLoggingBean.setDateAccessed(DateHelper.getTodaysDate());
-
-		return usageLoggingBean;
+		return new UsageLoggingBean(applicationId, eventType, requestUrl,
+				httpMethod, userId, sessionId, ipAddress, ontologyVersionId,
+				ontologyId, ontologyName, conceptId, conceptName, searchQuery,
+				searchParameters, numSearchResults);
 	}
 
 	/**
@@ -415,15 +429,12 @@ public class BeanHelper {
 	 */
 	public static UsageLoggingBean populateUsageLoggingBeanFromRequestForDataExtraction(
 			Request request) {
-		UsageLoggingBean usageLoggingBean = new UsageLoggingBean();
 		HttpServletRequest httpServletRequest = RequestUtils
 				.getHttpServletRequest(request);
 
 		String applicationId = RequestUtils.getApplicationId(request);
 		String requestUrl = (String) httpServletRequest
 				.getParameter(RequestParamConstants.PARAM_REQUEST_URL);
-		String resourceParameters = (String) httpServletRequest
-				.getParameter(RequestParamConstants.PARAM_RESOURCE_PARAMETERS);
 		String startDateAccessed = (String) httpServletRequest
 				.getParameter(RequestParamConstants.PARAM_START_DATE_ACCESSED);
 		String endDateAccessed = (String) httpServletRequest
@@ -432,18 +443,11 @@ public class BeanHelper {
 		Date startDate = RequestUtils.parseDateParam(startDateAccessed);
 		Date endDate = RequestUtils.parseDateParam(endDateAccessed);
 
-		if (applicationId != null) {
-			usageLoggingBean.setApplicationId(applicationId);
-		}
-
-		if (requestUrl != null) {
-			usageLoggingBean.setRequestUrl(requestUrl);
-		}
-
-		if (resourceParameters != null) {
-			usageLoggingBean.setResourceParameters(resourceParameters);
-		}
-
+		UsageLoggingBean usageLoggingBean = new UsageLoggingBean(applicationId, null, requestUrl,
+				null, null, null, null, null,
+				null, null, null, null, null,
+				null, null);
+		
 		if (startDate != null) {
 			usageLoggingBean.setStartDateAccessed(startDate);
 		}
@@ -451,7 +455,7 @@ public class BeanHelper {
 		if (endDate != null) {
 			usageLoggingBean.setEndDateAccessed(endDate);
 		}
-
+		
 		return usageLoggingBean;
 	}
 }
