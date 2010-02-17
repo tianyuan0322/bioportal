@@ -33,6 +33,7 @@ public class OntologyXMLMetaDataFileParsingTest extends AbstractBioPortalTest {
 			xmlSerializer.alias("ont", MetadataFileBean.class);
 			xmlSerializer.alias("export", ExportBean.class);
 
+			
 			// xstream.aliasField("ont", OntologyMetadataList.class,
 			// "metadataFileBean");
 
