@@ -529,19 +529,6 @@
 		</property>
 	</bean>
 	
-	<bean id="instanceService"
-		class="org.ncbo.stanford.service.instance.impl.InstanceServiceImpl">
-		<property name="ontologyFormatHandlerMap">
-			<ref local="ontologyFormatHandlerMap" />
-		</property>
-		<property name="ontologyRetrievalHandlerMap">
-			<ref local="ontologyRetrievalHandlerMap" />
-		</property>
-		<property name="ontologyMetadataManager">
-			<ref local="ontologyMetadataManager" />
-		</property>
-	</bean>
-	
 	<bean id="conceptPropertyService"
 		class="org.ncbo.stanford.service.cuiconcept.impl.ConceptPropertyServiceImpl">
 		<property name="ontologyFormatHandlerMap">
