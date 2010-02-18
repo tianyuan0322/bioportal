@@ -96,7 +96,7 @@ public abstract class AbstractOntologyManagerLexGrid {
 	 * @return
 	 * @throws Exception
 	 */
-	public OntologyBean getLatestNcboOntology(String displayLabel)
+	public OntologyBean getLatestOntologyBean(String displayLabel)
 			throws Exception {
 		List<OntologyBean> list = ontologyMetadataManager
 				.findLatestOntologyVersions();
@@ -112,6 +112,28 @@ public abstract class AbstractOntologyManagerLexGrid {
 		return ob;
 	}
 
+	/**
+	 * return the latest NcboOntology that has the display_label provided
+	 * 
+	 * @param displayLabel
+	 * @return
+	 * @throws Exception
+	 */
+	public OntologyBean getOntologyBeanByOntologyId(String displayLabel, Integer ontologyId)
+			throws Exception {
+		List<OntologyBean> list = ontologyMetadataManager
+				.findAllOntologyOrViewVersionsById(ontologyId, false);
+		OntologyBean ob= null;
+		for (OntologyBean ncboOntology : list) {
+			if (ncboOntology.getDisplayLabel().equalsIgnoreCase(displayLabel)) {
+				if (ob== null || ncboOntology.getId() > ob.getId()) {
+					ob= ncboOntology;
+				}
+			}
+		}
+
+		return ob;
+	}
 	/**
 	 * 
 	 * @param ontologyVersionId

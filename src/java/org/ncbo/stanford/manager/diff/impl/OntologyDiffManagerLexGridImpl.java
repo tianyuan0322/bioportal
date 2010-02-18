@@ -885,6 +885,6 @@ public class OntologyDiffManagerLexGridImpl extends
 	 */
 	public void setOntologyDiffManagerProtege(
 			OntologyDiffManagerProtegeImpl ontologyDiffManagerProtege) {
-		this.ontologyMetadataManager = ontologyMetadataManager;
+		this.ontologyDiffManagerProtege = ontologyDiffManagerProtege;
 	}
 }
