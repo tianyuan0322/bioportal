@@ -3,6 +3,7 @@ package org.ncbo.stanford.manager.retrieval.impl;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -173,6 +174,10 @@ public class OntologyRetrievalManagerProtegeImpl extends
 		return targetClass;
 	}
 
+	/**
+	 * returns an ordered collection of classes; guarantees the order based on frame name
+	 * 
+	 */
 	public Iterator<ClassBean> listAllClasses(OntologyBean ob) throws Exception {
 		KnowledgeBase kb = getKnowledgeBase(ob);
 		final Slot synonymSlot = getSynonymSlot(kb, ob.getSynonymSlot());
@@ -180,29 +185,21 @@ public class OntologyRetrievalManagerProtegeImpl extends
 				.getDocumentationSlot());
 		final Slot authorSlot = getAuthorSlot(kb, ob.getAuthorSlot());
 		ArrayList<Cls> allClasses = new ArrayList<Cls>();
-
-		if (kb instanceof OWLModel) {
+		if (kb instanceof OWLModel)
 			// RDF/OWL format
-			Iterator clsIt = ((OWLModel) kb).listOWLNamedClasses();
-			for (; clsIt.hasNext();) {
-				RDFSClass cls = (RDFSClass) clsIt.next();
-
-				if (!cls.isSystem()) {
-					allClasses.add(cls);
-				}
-			}
-		} else {
+			allClasses.addAll(((OWLModel)kb).getUserDefinedOWLNamedClasses());
+		else {
 			// Protege format
-			Collection clses = kb.getClses();
-
-			for (Iterator clsIt = clses.iterator(); clsIt.hasNext();) {
-				Cls cls = (Cls) clsIt.next();
-
-				if (!cls.isSystem()) {
-					allClasses.add(cls);
-				}
-			}
+			allClasses.addAll(kb.getClses());
+			allClasses.removeAll((Collection<Cls>) kb.getSystemFrames());
 		}
+		
+		Collections.sort(allClasses, new Comparator<Cls> () {
+			public int compare(Cls o1, Cls o2) {
+				return o1.getName().compareTo(o2.getName());
+			}
+		});
+		
 		// There could be very many classes in the results. Hopefully clients
 		// to this method will use them one at a time. So inflate ClassBean
 		// objects
