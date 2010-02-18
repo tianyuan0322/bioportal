@@ -18,8 +18,11 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.commons.validator.GenericValidator;
 import org.ncbo.stanford.bean.CategoryBean;
+import org.ncbo.stanford.bean.ExportBean;
 import org.ncbo.stanford.bean.GroupBean;
+import org.ncbo.stanford.bean.MetadataFileBean;
 import org.ncbo.stanford.bean.OntologyBean;
+import org.ncbo.stanford.bean.OntologyMetadataList;
 import org.ncbo.stanford.bean.OntologyMetricsBean;
 import org.ncbo.stanford.bean.UserBean;
 import org.ncbo.stanford.bean.concept.ClassBean;
@@ -36,6 +39,7 @@ import org.ncbo.stanford.bean.search.SearchBean;
 import org.ncbo.stanford.enumeration.ConceptTypeEnum;
 import org.ncbo.stanford.enumeration.ErrorTypeEnum;
 import org.ncbo.stanford.service.xml.XMLSerializationService;
+import org.ncbo.stanford.service.xml.converters.ClassBeanResultListConverter;
 import org.ncbo.stanford.service.xml.converters.OntologyHitMapConverter;
 import org.ncbo.stanford.service.xml.converters.SearchResultListBeanConverter;
 import org.ncbo.stanford.util.MessageUtils;
@@ -439,6 +443,8 @@ public class XMLSerializationServiceImpl implements XMLSerializationService {
 				xmlSerializer.getMapper()));
 		xmlSerializer.registerConverter(new EnumSingleValueConverter(
 				ConceptTypeEnum.class));
+		xmlSerializer.registerConverter(new ClassBeanResultListConverter(
+				xmlSerializer.getMapper()));
 	}
 
 	/**

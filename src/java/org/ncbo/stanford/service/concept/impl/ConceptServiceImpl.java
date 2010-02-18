@@ -24,6 +24,7 @@ import org.ncbo.stanford.manager.metadata.OntologyMetadataManager;
 import org.ncbo.stanford.manager.obs.OBSManager;
 import org.ncbo.stanford.manager.retrieval.OntologyRetrievalManager;
 import org.ncbo.stanford.service.concept.ConceptService;
+import org.ncbo.stanford.util.cache.expiration.system.ExpirationSystem;
 import org.ncbo.stanford.util.constants.ApplicationConstants;
 import org.ncbo.stanford.util.paginator.Paginator;
 import org.ncbo.stanford.util.paginator.impl.Page;
@@ -50,6 +51,7 @@ public class ConceptServiceImpl implements ConceptService {
 			0);
 	protected OBSManager obsManager;
 	protected OntologyMetadataManager ontologyMetadataManager;
+	protected ExpirationSystem<String, ClassBeanResultList> classBeanResultListCache;
 
 	/**
 	 * Get the root concept for the specified ontology.
@@ -339,7 +341,6 @@ public class ConceptServiceImpl implements ConceptService {
 				limit);
 	}
 
-	// TODO : return page
 	public Page<ClassBean> findAllConcepts(
 			OntologyVersionIdBean ontologyVersionId, Integer offset,
 			Integer limit) throws Exception {
@@ -353,19 +354,26 @@ public class ConceptServiceImpl implements ConceptService {
 							+ " (Version Id: " + ontologyVersionId + ")");
 		}
 
-		// get all classBeans
-		Iterator<ClassBean> classIter = getRetrievalManager(ontology)
-				.listAllClasses(ontology);
+		Iterator<ClassBean> classIter;
+		ClassBeanResultList classBeanResultList;
+		String key = ontologyVersionId.getOntologyVersionId().toString();
 
-		List<ClassBean> classBeanList = new ArrayList<ClassBean>();
-		while (classIter.hasNext()) {
-			ClassBean clsBean = classIter.next();
-			classBeanList.add(clsBean);
+		classBeanResultList = classBeanResultListCache.get(key);
+
+		if (classBeanResultList == null) {
+			// get all classBeans
+			// TODO: need to get clarification from Natasha about using alternative
+			// method of listAllClasses in Portage API
+			classIter = getRetrievalManager(ontology).listAllClasses(ontology);
+			List<ClassBean> classBeanList = new ArrayList<ClassBean>();
+			while (classIter.hasNext()) {
+				ClassBean clsBean = classIter.next();
+				classBeanList.add(clsBean);
+			}
+			// create ClassBeanResultList to return result as page
+			classBeanResultList = new ClassBeanResultList(classBeanList);
+			classBeanResultListCache.put(key, classBeanResultList);
 		}
-
-		// create ClassBeanResultList to return result as page
-		ClassBeanResultList classBeanResultList = new ClassBeanResultList(
-				classBeanList);
 
 		int resultsSize = classBeanResultList.size();
 
@@ -382,11 +390,6 @@ public class ConceptServiceImpl implements ConceptService {
 		} else {
 			page = p.getNextPage(offset - 1);
 		}
-
-		// TODO : make it as portage Api.
-		// return
-		// obsManager.findAllConcepts(ontologyVersionId.getOntologyVersionId(),
-		// offset, limit);
 		return page;
 	}
 
@@ -441,4 +444,14 @@ public class ConceptServiceImpl implements ConceptService {
 			OntologyMetadataManager ontologyMetadataManager) {
 		this.ontologyMetadataManager = ontologyMetadataManager;
 	}
+
+	public ExpirationSystem<String, ClassBeanResultList> getClassBeanResultListCache() {
+		return classBeanResultListCache;
+	}
+
+	public void setClassBeanResultListCache(
+			ExpirationSystem<String, ClassBeanResultList> classBeanResultListCache) {
+		this.classBeanResultListCache = classBeanResultListCache;
+	}
+
 }
