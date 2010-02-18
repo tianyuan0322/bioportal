@@ -342,8 +342,8 @@ public class ConceptServiceImpl implements ConceptService {
 	}
 
 	public Page<ClassBean> findAllConcepts(
-			OntologyVersionIdBean ontologyVersionId, Integer offset,
-			Integer limit) throws Exception {
+			OntologyVersionIdBean ontologyVersionId, Integer pageSize,
+			Integer pageNum) throws Exception {
 		// get ontologyBean from versionId
 		OntologyBean ontology = ontologyMetadataManager
 				.findOntologyOrViewVersionById(ontologyVersionId
@@ -362,14 +362,17 @@ public class ConceptServiceImpl implements ConceptService {
 
 		if (classBeanResultList == null) {
 			// get all classBeans
-			// TODO: need to get clarification from Natasha about using alternative
+			// TODO: need to get clarification from Natasha about using
+			// alternative
 			// method of listAllClasses in Portage API
 			classIter = getRetrievalManager(ontology).listAllClasses(ontology);
 			List<ClassBean> classBeanList = new ArrayList<ClassBean>();
+
 			while (classIter.hasNext()) {
 				ClassBean clsBean = classIter.next();
 				classBeanList.add(clsBean);
 			}
+
 			// create ClassBeanResultList to return result as page
 			classBeanResultList = new ClassBeanResultList(classBeanList);
 			classBeanResultListCache.put(key, classBeanResultList);
@@ -377,19 +380,20 @@ public class ConceptServiceImpl implements ConceptService {
 
 		int resultsSize = classBeanResultList.size();
 
-		if (limit == null || limit <= 0) {
-			limit = resultsSize;
+		if (pageSize == null || pageSize <= 0) {
+			pageSize = resultsSize;
 		}
-
-		Paginator<ClassBean> p = new PaginatorImpl<ClassBean>(
-				classBeanResultList, limit);
 
 		Page<ClassBean> page;
-		if (offset == null || offset <= 1) {
+		Paginator<ClassBean> p = new PaginatorImpl<ClassBean>(
+				classBeanResultList, pageSize);
+
+		if (pageNum == null || pageNum <= 1) {
 			page = p.getFirstPage();
 		} else {
-			page = p.getNextPage(offset - 1);
+			page = p.getNextPage(pageNum - 1);
 		}
+
 		return page;
 	}
 

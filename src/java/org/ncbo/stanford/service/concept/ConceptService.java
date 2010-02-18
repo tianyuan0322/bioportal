@@ -71,8 +71,8 @@ public interface ConceptService {
 			String conceptId, Integer offset, Integer limit) throws Exception;
 
 	public Page<ClassBean> findAllConcepts(
-			OntologyVersionIdBean ontologyVersionId, Integer offset,
-			Integer limit) throws Exception;
+			OntologyVersionIdBean ontologyVersionId, Integer pageSize,
+			Integer pageNum) throws Exception;
 
 	public List<ClassBean> findAllConcepts(OntologyIdBean ontologyId,
 			Integer offset, Integer limit) throws Exception;
