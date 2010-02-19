@@ -5,7 +5,6 @@ package org.ncbo.stanford.service.concept.impl;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.ListIterator;
 import java.util.Map;
@@ -18,17 +17,12 @@ import org.ncbo.stanford.bean.OntologyIdBean;
 import org.ncbo.stanford.bean.OntologyVersionIdBean;
 import org.ncbo.stanford.bean.concept.ClassBean;
 import org.ncbo.stanford.bean.concept.InstanceBean;
-import org.ncbo.stanford.bean.search.ClassBeanResultList;
 import org.ncbo.stanford.exception.OntologyNotFoundException;
 import org.ncbo.stanford.manager.metadata.OntologyMetadataManager;
 import org.ncbo.stanford.manager.obs.OBSManager;
 import org.ncbo.stanford.manager.retrieval.OntologyRetrievalManager;
 import org.ncbo.stanford.service.concept.ConceptService;
-import org.ncbo.stanford.util.cache.expiration.system.ExpirationSystem;
 import org.ncbo.stanford.util.constants.ApplicationConstants;
-import org.ncbo.stanford.util.paginator.Paginator;
-import org.ncbo.stanford.util.paginator.impl.Page;
-import org.ncbo.stanford.util.paginator.impl.PaginatorImpl;
 import org.springframework.transaction.annotation.Transactional;
 
 /**
@@ -51,7 +45,6 @@ public class ConceptServiceImpl implements ConceptService {
 			0);
 	protected OBSManager obsManager;
 	protected OntologyMetadataManager ontologyMetadataManager;
-	protected ExpirationSystem<String, ClassBeanResultList> classBeanResultListCache;
 
 	/**
 	 * Get the root concept for the specified ontology.
@@ -341,60 +334,22 @@ public class ConceptServiceImpl implements ConceptService {
 				limit);
 	}
 
-	public Page<ClassBean> findAllConcepts(
-			OntologyVersionIdBean ontologyVersionId, Integer pageSize,
-			Integer pageNum) throws Exception {
+	public List<ClassBean> findAllConcepts(
+			OntologyVersionIdBean ontologyVersionId, Integer offset,
+			Integer limit) throws Exception {
 		// get ontologyBean from versionId
 		OntologyBean ontology = ontologyMetadataManager
 				.findOntologyOrViewVersionById(ontologyVersionId
 						.getOntologyVersionId());
+
 		if (ontology == null) {
 			throw new OntologyNotFoundException(
 					OntologyNotFoundException.DEFAULT_MESSAGE
 							+ " (Version Id: " + ontologyVersionId + ")");
 		}
 
-		Iterator<ClassBean> classIter;
-		ClassBeanResultList classBeanResultList;
-		String key = ontologyVersionId.getOntologyVersionId().toString();
-
-		classBeanResultList = classBeanResultListCache.get(key);
-
-		if (classBeanResultList == null) {
-			// get all classBeans
-			// TODO: need to get clarification from Natasha about using
-			// alternative
-			// method of listAllClasses in Portage API
-			classIter = getRetrievalManager(ontology).listAllClasses(ontology);
-			List<ClassBean> classBeanList = new ArrayList<ClassBean>();
-
-			while (classIter.hasNext()) {
-				ClassBean clsBean = classIter.next();
-				classBeanList.add(clsBean);
-			}
-
-			// create ClassBeanResultList to return result as page
-			classBeanResultList = new ClassBeanResultList(classBeanList);
-			classBeanResultListCache.put(key, classBeanResultList);
-		}
-
-		int resultsSize = classBeanResultList.size();
-
-		if (pageSize == null || pageSize <= 0) {
-			pageSize = resultsSize;
-		}
-
-		Page<ClassBean> page;
-		Paginator<ClassBean> p = new PaginatorImpl<ClassBean>(
-				classBeanResultList, pageSize);
-
-		if (pageNum == null || pageNum <= 1) {
-			page = p.getFirstPage();
-		} else {
-			page = p.getNextPage(pageNum - 1);
-		}
-
-		return page;
+		return getRetrievalManager(ontology).findAllConcepts(ontology, offset,
+				limit);
 	}
 
 	public List<ClassBean> findAllConcepts(OntologyIdBean ontologyId,
@@ -448,14 +403,4 @@ public class ConceptServiceImpl implements ConceptService {
 			OntologyMetadataManager ontologyMetadataManager) {
 		this.ontologyMetadataManager = ontologyMetadataManager;
 	}
-
-	public ExpirationSystem<String, ClassBeanResultList> getClassBeanResultListCache() {
-		return classBeanResultListCache;
-	}
-
-	public void setClassBeanResultListCache(
-			ExpirationSystem<String, ClassBeanResultList> classBeanResultListCache) {
-		this.classBeanResultListCache = classBeanResultListCache;
-	}
-
 }

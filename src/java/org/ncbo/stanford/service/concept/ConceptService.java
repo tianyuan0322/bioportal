@@ -10,7 +10,6 @@ import org.ncbo.stanford.bean.OntologyIdBean;
 import org.ncbo.stanford.bean.OntologyVersionIdBean;
 import org.ncbo.stanford.bean.concept.ClassBean;
 import org.ncbo.stanford.bean.concept.InstanceBean;
-import org.ncbo.stanford.util.paginator.impl.Page;
 
 /**
  * @author nickgriffith
@@ -70,7 +69,7 @@ public interface ConceptService {
 	public List<ClassBean> findLeaves(OntologyIdBean ontologyVersionId,
 			String conceptId, Integer offset, Integer limit) throws Exception;
 
-	public Page<ClassBean> findAllConcepts(
+	public List<ClassBean> findAllConcepts(
 			OntologyVersionIdBean ontologyVersionId, Integer pageSize,
 			Integer pageNum) throws Exception;
 

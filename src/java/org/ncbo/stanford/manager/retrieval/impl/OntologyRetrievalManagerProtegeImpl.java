@@ -35,7 +35,6 @@ import edu.stanford.smi.protegex.owl.model.OWLModel;
 import edu.stanford.smi.protegex.owl.model.OWLNamedClass;
 import edu.stanford.smi.protegex.owl.model.RDFProperty;
 import edu.stanford.smi.protegex.owl.model.RDFResource;
-import edu.stanford.smi.protegex.owl.model.RDFSClass;
 import edu.stanford.smi.protegex.owl.model.RDFSNamedClass;
 
 /**
@@ -164,8 +163,10 @@ public class OntologyRetrievalManagerProtegeImpl extends
 						resultInstance.add(inst);
 					}
 					targetClass.setInstances(resultInstance);
-					/*targetClass.setInstanceCount(((Cls) owlClass)
-							.getInstanceCount());*/
+					/*
+					 * targetClass.setInstanceCount(((Cls) owlClass)
+					 * .getInstanceCount());
+					 */
 					// TODO: end
 				}
 			}
@@ -175,7 +176,34 @@ public class OntologyRetrievalManagerProtegeImpl extends
 	}
 
 	/**
-	 * returns an ordered collection of classes; guarantees the order based on frame name
+	 * returns an ordered collection of classes; guarantees the order based on
+	 * frame name
+	 * 
+	 */
+	public List<ClassBean> findAllConcepts(OntologyBean ob, Integer offset,
+			Integer limit) throws Exception {
+		KnowledgeBase kb = getKnowledgeBase(ob);
+		final Slot synonymSlot = getSynonymSlot(kb, ob.getSynonymSlot());
+		final Slot definitionSlot = getDefinitionSlot(kb, ob
+				.getDocumentationSlot());
+		final Slot authorSlot = getAuthorSlot(kb, ob.getAuthorSlot());
+		ArrayList<Cls> allClasses = getAllClasses(kb);
+		List<ClassBean> allConcepts = new ArrayList<ClassBean>();
+
+		List<Cls> allConceptsLimited = allClasses.subList(offset, offset
+				+ limit);
+
+		for (Cls cls : allConceptsLimited) {
+			allConcepts.add(createClassBean(cls, true, synonymSlot,
+					definitionSlot, authorSlot));
+		}
+
+		return allConcepts;
+	}
+
+	/**
+	 * returns an ordered collection of classes; guarantees the order based on
+	 * frame name
 	 * 
 	 */
 	public Iterator<ClassBean> listAllClasses(OntologyBean ob) throws Exception {
@@ -184,22 +212,8 @@ public class OntologyRetrievalManagerProtegeImpl extends
 		final Slot definitionSlot = getDefinitionSlot(kb, ob
 				.getDocumentationSlot());
 		final Slot authorSlot = getAuthorSlot(kb, ob.getAuthorSlot());
-		ArrayList<Cls> allClasses = new ArrayList<Cls>();
-		if (kb instanceof OWLModel)
-			// RDF/OWL format
-			allClasses.addAll(((OWLModel)kb).getUserDefinedOWLNamedClasses());
-		else {
-			// Protege format
-			allClasses.addAll(kb.getClses());
-			allClasses.removeAll((Collection<Cls>) kb.getSystemFrames());
-		}
-		
-		Collections.sort(allClasses, new Comparator<Cls> () {
-			public int compare(Cls o1, Cls o2) {
-				return o1.getName().compareTo(o2.getName());
-			}
-		});
-		
+		ArrayList<Cls> allClasses = getAllClasses(kb);
+
 		// There could be very many classes in the results. Hopefully clients
 		// to this method will use them one at a time. So inflate ClassBean
 		// objects
@@ -211,6 +225,7 @@ public class OntologyRetrievalManagerProtegeImpl extends
 			}
 
 			public ClassBean next() {
+				// return createBaseClassBean(resultIt.next());
 				return createClassBean(resultIt.next(), true, synonymSlot,
 						definitionSlot, authorSlot);
 			}
@@ -219,6 +234,27 @@ public class OntologyRetrievalManagerProtegeImpl extends
 				throw new UnsupportedOperationException();
 			}
 		};
+	}
+
+	private ArrayList<Cls> getAllClasses(KnowledgeBase kb) {
+		ArrayList<Cls> allClasses = new ArrayList<Cls>();
+
+		if (kb instanceof OWLModel) {
+			// RDF/OWL format
+			allClasses.addAll(((OWLModel) kb).getUserDefinedOWLNamedClasses());
+		} else {
+			// Protege format
+			allClasses.addAll(kb.getClses());
+			allClasses.removeAll((Collection<Cls>) kb.getSystemFrames());
+		}
+
+		Collections.sort(allClasses, new Comparator<Cls>() {
+			public int compare(Cls o1, Cls o2) {
+				return o1.getName().compareTo(o2.getName());
+			}
+		});
+
+		return allClasses;
 	}
 
 	public InstanceBean findInstanceById(OntologyBean ontologyVersion,

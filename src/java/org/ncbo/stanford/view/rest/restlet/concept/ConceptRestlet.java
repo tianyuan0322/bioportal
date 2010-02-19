@@ -45,11 +45,10 @@ public class ConceptRestlet extends AbstractBaseRestlet {
 				.getHttpServletRequest(request);
 		String maxNumChildren = (String) httpRequest
 				.getParameter(RequestParamConstants.PARAM_MAXNUMCHILDREN);
-		String pageSize = (String) httpRequest
-				.getParameter(RequestParamConstants.PARAM_PAGESIZE);
-		String pageNum = (String) httpRequest
-				.getParameter(RequestParamConstants.PARAM_PAGENUM);
-
+		String offset = (String) httpRequest
+				.getParameter(RequestParamConstants.PARAM_OFFSET);
+		String limit = (String) httpRequest
+				.getParameter(RequestParamConstants.PARAM_LIMIT);
 		String light = (String) httpRequest
 				.getParameter(RequestParamConstants.PARAM_LIGHT);
 		String noRelations = (String) httpRequest
@@ -63,8 +62,8 @@ public class ConceptRestlet extends AbstractBaseRestlet {
 		String conceptId = getConceptId(request);
 		Integer maxNumChildrenInt = RequestUtils
 				.parseIntegerParam(maxNumChildren);
-		Integer pageSizeInt = RequestUtils.parseIntegerParam(pageSize);
-		Integer pageNumInt = RequestUtils.parseIntegerParam(pageNum);
+		Integer offsetInt = RequestUtils.parseIntegerParam(offset);
+		Integer limitInt = RequestUtils.parseIntegerParam(limit);
 		Boolean lightBool = RequestUtils.parseBooleanParam(light);
 		Boolean noRelationsBool = RequestUtils.parseBooleanParam(noRelations);
 		Integer ontologyVersionIdInt = RequestUtils
@@ -89,7 +88,7 @@ public class ConceptRestlet extends AbstractBaseRestlet {
 				// all concepts
 				concept = conceptService.findAllConcepts(
 						new OntologyVersionIdBean(ontologyVersionIdInt),
-						pageSizeInt, pageNumInt);
+						offsetInt, limitInt);
 			} else {
 				// specific concept
 				concept = conceptService.findConcept(ontologyVersionIdInt,

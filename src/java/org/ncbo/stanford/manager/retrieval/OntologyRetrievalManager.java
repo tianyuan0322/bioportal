@@ -1,6 +1,7 @@
 package org.ncbo.stanford.manager.retrieval;
 
 import java.util.Iterator;
+import java.util.List;
 
 import org.ncbo.stanford.bean.OntologyBean;
 import org.ncbo.stanford.bean.concept.ClassBean;
@@ -48,4 +49,7 @@ public interface OntologyRetrievalManager {
 
 	public InstanceBean findInstanceById(OntologyBean ontologyBean,
 			String instanceId) throws Exception;
+
+	public List<ClassBean> findAllConcepts(OntologyBean ob, Integer offset,
+			Integer limit) throws Exception;
 }

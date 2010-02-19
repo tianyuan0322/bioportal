@@ -323,7 +323,7 @@ public class OntologyRetrievalManagerLexGridImpl extends
 			return null;
 		}
 	}
-
+	
 	public Iterator<ClassBean> listAllClasses(final OntologyBean ob)
 			throws Exception {
 		// Convert ontology (BP) to coding scheme (LexBIG)
