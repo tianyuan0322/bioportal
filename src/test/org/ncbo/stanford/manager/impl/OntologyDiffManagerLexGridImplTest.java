@@ -26,10 +26,10 @@ public class OntologyDiffManagerLexGridImplTest extends AbstractBioPortalTest {
 	public void testCellDiff() throws Exception {
 		System.out.println("testCellDiff");
 		startDate_ = new Date();
-		OntologyBean ontologyOld = diffManager.getOntologyBeanByOntologyId(
+		OntologyBean ontologyOld = diffManager.getOntologyBeanByDisplayNameAndOntologyId(
 				OntologyLoaderLexGridImplTest.OBO_CELL_OLD_DISPLAY_LABEL,
 				OntologyLoaderLexGridImplTest.OBO_CELL_OLD_ONTOLOGY_ID);
-		OntologyBean ontologyNew = diffManager.getOntologyBeanByOntologyId(
+		OntologyBean ontologyNew = diffManager.getOntologyBeanByDisplayNameAndOntologyId(
 				OntologyLoaderLexGridImplTest.OBO_CELL_DISPLAY_LABEL,
 				OntologyLoaderLexGridImplTest.OBO_CELL_ONTOLOGY_ID);
 		// diffManager.printOntologyDiffs(ontologyOld, ontologyNew);
@@ -42,7 +42,7 @@ public class OntologyDiffManagerLexGridImplTest extends AbstractBioPortalTest {
 
 	@Test
 	public void testGetAllDiffsForOntology() throws Exception {
-		OntologyBean ontologyOld = diffManager.getOntologyBeanByOntologyId(
+		OntologyBean ontologyOld = diffManager.getOntologyBeanByDisplayNameAndOntologyId(
 				OntologyLoaderLexGridImplTest.OBO_CELL_OLD_DISPLAY_LABEL,
 				OntologyLoaderLexGridImplTest.OBO_CELL_OLD_ONTOLOGY_ID);
 		Integer ontology_id = ontologyOld.getOntologyId();
@@ -71,11 +71,11 @@ public class OntologyDiffManagerLexGridImplTest extends AbstractBioPortalTest {
 
 	@Test
 	public void testGetTextDiffFileForOntologyVersions() throws Exception {
-		OntologyBean ontologyOld = diffManager.getOntologyBeanByOntologyId(
+		OntologyBean ontologyOld = diffManager.getOntologyBeanByDisplayNameAndOntologyId(
 				OntologyLoaderLexGridImplTest.OBO_CELL_OLD_DISPLAY_LABEL,
 				OntologyLoaderLexGridImplTest.OBO_CELL_OLD_ONTOLOGY_ID);
 		Integer old_ov_id = ontologyOld.getId();
-		OntologyBean ontologyNew = diffManager.getOntologyBeanByOntologyId(
+		OntologyBean ontologyNew = diffManager.getOntologyBeanByDisplayNameAndOntologyId(
 				OntologyLoaderLexGridImplTest.OBO_CELL_DISPLAY_LABEL,
 				OntologyLoaderLexGridImplTest.OBO_CELL_ONTOLOGY_ID);
 		Integer new_ov_id = ontologyNew.getId();

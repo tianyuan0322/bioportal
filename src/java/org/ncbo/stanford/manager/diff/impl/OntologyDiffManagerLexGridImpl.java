@@ -73,7 +73,7 @@ public class OntologyDiffManagerLexGridImpl extends
 		lbs = LexBIGServiceImpl.defaultInstance();
 		lbscm = (LexBIGServiceConvenienceMethods) lbs
 				.getGenericExtension("LexBIGServiceConvenienceMethods");
-		
+
 	}
 
 	public void createDiff(OntologyBean ontologyVersionOld,
@@ -140,7 +140,8 @@ public class OntologyDiffManagerLexGridImpl extends
 	public File getDiffFileForOntologyVersions(Integer ontologyVerisonId1,
 			Integer ontologyVersionId2, String format)
 			throws FileNotFoundException, Exception {
-		return ontologyDiffManagerProtege.getDiffFileForOntologyVersions(ontologyVerisonId1, ontologyVersionId2, format);
+		return ontologyDiffManagerProtege.getDiffFileForOntologyVersions(
+				ontologyVerisonId1, ontologyVersionId2, format);
 	}
 
 	public boolean diffExists(OntologyBean ontologyVersionOld,
@@ -170,8 +171,9 @@ public class OntologyDiffManagerLexGridImpl extends
 		System.out.println("TabDelimited File location=" + fullDiffFileName);
 		BufferedWriter bufferedWriter = new BufferedWriter(new FileWriter(
 				fullDiffFileName));
+		bufferedWriter.write(ChangeHolder.toTabbedHeader() + "\n");
 		for (ChangeHolder ch : changeList) {
-			bufferedWriter.write(ch.toString() + "\n");
+			bufferedWriter.write(ch.toTabbedString() + "\n");
 		}
 
 	}
@@ -679,8 +681,53 @@ public class OntologyDiffManagerLexGridImpl extends
 					+ "  fieldName= " + fieldName + "  oldValue= " + oldValue
 					+ "  newValue= " + newValue;
 			return str;
+
 		}
 
+		public static String toTabbedHeader() {
+			StringBuffer strBuf = new StringBuffer();
+			strBuf.append("conceptCode").append("\t");
+			strBuf.append("label").append("\t");
+			strBuf.append("changeType").append("\t");
+			strBuf.append("propertyName").append("\t");
+			strBuf.append("propertyChangeType").append("\t");
+			strBuf.append("value");
+			return strBuf.toString();
+		}
+		
+		public String toTabbedString() {
+			StringBuffer strBuf = new StringBuffer();
+			switch (changeType) {
+			case ADD:
+			case DELETE:
+				strBuf.append(conceptCode).append("\t");
+				strBuf.append(entityDescription).append("\t");
+				strBuf.append(changeType);
+				break;
+
+			case MODIFY:
+				strBuf.append(conceptCode).append("\t");
+				strBuf.append(entityDescription).append("\t");
+				strBuf.append(changeType).append("\t");
+				strBuf.append(fieldName).append("\t");
+				strBuf.append(fieldChangeType).append("\t");
+				switch (fieldChangeType) {
+				case ADD:
+					strBuf.append(newValue);
+					break;
+				case DELETE:
+					strBuf.append(oldValue);
+					break;
+				case MODIFY:
+					strBuf.append("oldValue=").append(oldValue).append("\t");
+					strBuf.append("newValue=").append(newValue);
+					break;
+				}
+				
+				break;
+			}
+			return strBuf.toString();
+		}
 	}
 
 	public static void logErrors(Collection errors) {
@@ -716,7 +763,7 @@ public class OntologyDiffManagerLexGridImpl extends
 
 			System.out.println("URL of changes.pprj is" + url);
 			// load the standard changes project
-			Project changesProject = new Project(url.toString(), errors); 
+			Project changesProject = new Project(url.toString(), errors);
 			changesKb = changesProject.getKnowledgeBase();
 			if (!errors.isEmpty()) {
 				logErrors(errors);
@@ -726,9 +773,11 @@ public class OntologyDiffManagerLexGridImpl extends
 			// don't override the standard changes project
 			URI chaoURI = URIUtilities.createURI(fileNameOfpprj);
 			changesProject.setProjectURI(chaoURI);
-            
-			//The statements below are for setting the name of the rdf file that is generated.
-			//If these are not there, the name of the rdf file defaults to change.rdf
+
+			// The statements below are for setting the name of the rdf file
+			// that is generated.
+			// If these are not there, the name of the rdf file defaults to
+			// change.rdf
 			String rdfsFileName = FileUtilities.replaceExtension(URIUtilities
 					.getName(chaoURI), ".rdfs");
 			String rdfFileName = FileUtilities.replaceExtension(URIUtilities

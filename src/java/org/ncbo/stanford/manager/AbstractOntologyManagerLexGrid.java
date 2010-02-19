@@ -119,7 +119,7 @@ public abstract class AbstractOntologyManagerLexGrid {
 	 * @return
 	 * @throws Exception
 	 */
-	public OntologyBean getOntologyBeanByOntologyId(String displayLabel, Integer ontologyId)
+	public OntologyBean getOntologyBeanByDisplayNameAndOntologyId(String displayLabel, Integer ontologyId)
 			throws Exception {
 		List<OntologyBean> list = ontologyMetadataManager
 				.findAllOntologyOrViewVersionsById(ontologyId, false);
