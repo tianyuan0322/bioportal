@@ -132,39 +132,10 @@ public class OntologyRetrievalManagerProtegeImpl extends
 							.getDirectInstances();
 
 					List<InstanceBean> resultInstance = new ArrayList<InstanceBean>();
-
+					InstanceBean instanceBean;
 					for (Instance instance : instances) {
-						// prepare instance object.
-						InstanceBean inst = new InstanceBean();
-						inst.setId(getId(instance));
-						inst.setFullId(instance.getName());
-						inst.setLabel(getBrowserText(instance));
-
-						inst.setInstanceTypes(instance.getDirectTypes());
-
-						Collection<Slot> properties = instance.getOwnSlots();
-						Map<String, List<String>> pairs = new HashMap<String, List<String>>();
-
-						Iterator<Slot> p = properties.iterator();
-						while (p.hasNext()) {
-							Slot nextProperty = p.next();
-							List<String> pairValues = new ArrayList<String>();
-							Collection values = instance
-									.getOwnSlotValues(nextProperty);
-							if (values != null && !values.isEmpty()) {
-								for (Object val : values)
-									// generate the property-value pair in the
-									// bean
-									// where property name is nextProperty and
-									// values are rendered in the list above
-									pairValues.add((String) val.toString());
-
-							}
-							pairs.put(getBrowserText(nextProperty), pairValues);
-						}
-
-						inst.addRelations(pairs);
-						resultInstance.add(inst);
+						instanceBean = createInstanceBean(instance);
+						resultInstance.add(instanceBean);
 					}
 					targetClass.setInstances(resultInstance);
 					/*
@@ -205,9 +176,9 @@ public class OntologyRetrievalManagerProtegeImpl extends
 
 		int offset = pageNum * pageSize - pageSize;
 		int limit = (offset + pageSize > totalSize) ? totalSize : offset
-				+ pageSize;		
+				+ pageSize;
 		List<Cls> allConceptsLimited = allClasses.subList(offset, limit);
-		
+
 		for (Cls cls : allConceptsLimited) {
 			allConcepts.add(createClassBean(cls, true, synonymSlot,
 					definitionSlot, authorSlot));
@@ -279,6 +250,8 @@ public class OntologyRetrievalManagerProtegeImpl extends
 			String instanceId) throws Exception {
 
 		KnowledgeBase kb = getKnowledgeBase(ontologyVersion);
+
+		// get frame using instance Id
 		Frame owlClass = getFrame(instanceId, kb);
 		if (owlClass instanceof Cls) {
 			throw new InvalidInputException(MessageUtils
@@ -313,10 +286,22 @@ public class OntologyRetrievalManagerProtegeImpl extends
 			Slot nextProperty = (Slot) p.next();
 			Collection values = frame.getOwnSlotValues(nextProperty);
 			if (values != null && !values.isEmpty()) {
-				// generate the property-value pair in the bean where property
-				// name is nextProperty and values are rendered in the list
-				// above
-				relations.put(getBrowserText(nextProperty), values);
+
+				// to store all property values(for <list>)
+				List<Map<Object, Object>> entryList = new ArrayList<Map<Object, Object>>();
+
+				// key is fullid , value is property value (for <string
+				// fullid="http://...property">property value</string>)
+				Map<Object, Object> pairs = new HashMap<Object, Object>();
+				for (Object obj : values) {
+					if (obj instanceof Instance)
+						pairs.put(((Instance) obj).getName(), ((Instance) obj)
+								.getBrowserText());
+					else
+						pairs.put(obj, obj);
+				}
+				entryList.add(pairs);
+				relations.put(nextProperty.getName(), entryList);
 			}
 		}
 		instanceBean.addRelations(relations);
@@ -489,6 +474,7 @@ public class OntologyRetrievalManagerProtegeImpl extends
 
 		ConceptTypeEnum protegeType = ConceptTypeEnum.CONCEPT_TYPE_INDIVIDUAL;
 
+		// TODO : used this code as reference to identify Instance
 		if (frame instanceof Cls) {
 			protegeType = ConceptTypeEnum.CONCEPT_TYPE_CLASS;
 		} else if (frame instanceof Slot) {
