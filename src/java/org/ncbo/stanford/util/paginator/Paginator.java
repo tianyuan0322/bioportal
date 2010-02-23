@@ -33,6 +33,14 @@ public interface Paginator<E> {
 	public Page<E> getLastPage();
 
 	/**
+	 * Returns the current results page
+	 * 
+	 * @param currentPageNum
+	 * @return
+	 */
+	public Page<E> getCurrentPage(Integer currentPageNum);
+
+	/**
 	 * Returns the next page of results
 	 * 
 	 * @param currentPageNum

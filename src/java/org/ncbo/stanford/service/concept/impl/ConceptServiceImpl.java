@@ -23,6 +23,7 @@ import org.ncbo.stanford.manager.obs.OBSManager;
 import org.ncbo.stanford.manager.retrieval.OntologyRetrievalManager;
 import org.ncbo.stanford.service.concept.ConceptService;
 import org.ncbo.stanford.util.constants.ApplicationConstants;
+import org.ncbo.stanford.util.paginator.impl.Page;
 import org.springframework.transaction.annotation.Transactional;
 
 /**
@@ -334,9 +335,9 @@ public class ConceptServiceImpl implements ConceptService {
 				limit);
 	}
 
-	public List<ClassBean> findAllConcepts(
-			OntologyVersionIdBean ontologyVersionId, Integer offset,
-			Integer limit) throws Exception {
+	public Page<ClassBean> findAllConcepts(
+			OntologyVersionIdBean ontologyVersionId, Integer pageSize,
+			Integer pageNum) throws Exception {
 		// get ontologyBean from versionId
 		OntologyBean ontology = ontologyMetadataManager
 				.findOntologyOrViewVersionById(ontologyVersionId
@@ -348,15 +349,16 @@ public class ConceptServiceImpl implements ConceptService {
 							+ " (Version Id: " + ontologyVersionId + ")");
 		}
 
-		return getRetrievalManager(ontology).findAllConcepts(ontology, offset,
-				limit);
+		return getRetrievalManager(ontology).findAllConcepts(ontology,
+				pageSize, pageNum);
 	}
 
-	public List<ClassBean> findAllConcepts(OntologyIdBean ontologyId,
-			Integer offset, Integer limit) throws Exception {
+	public Page<ClassBean> findAllConcepts(OntologyIdBean ontologyId,
+			Integer pageSize, Integer pageNum) throws Exception {
 		Integer ontologyVersionId = obsManager
 				.findLatestOntologyVersion(ontologyId.getOntologyId());
-		return obsManager.findAllConcepts(ontologyVersionId, offset, limit);
+		return findAllConcepts(new OntologyVersionIdBean(ontologyVersionId),
+				pageSize, pageNum);
 	}
 
 	//

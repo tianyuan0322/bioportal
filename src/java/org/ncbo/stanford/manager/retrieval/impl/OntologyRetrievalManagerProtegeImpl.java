@@ -15,6 +15,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.ncbo.stanford.bean.OntologyBean;
 import org.ncbo.stanford.bean.concept.ClassBean;
+import org.ncbo.stanford.bean.concept.ClassBeanResultListBean;
 import org.ncbo.stanford.bean.concept.InstanceBean;
 import org.ncbo.stanford.enumeration.ConceptTypeEnum;
 import org.ncbo.stanford.exception.InvalidInputException;
@@ -23,6 +24,9 @@ import org.ncbo.stanford.manager.retrieval.OntologyRetrievalManager;
 import org.ncbo.stanford.util.MessageUtils;
 import org.ncbo.stanford.util.constants.ApplicationConstants;
 import org.ncbo.stanford.util.helper.StringHelper;
+import org.ncbo.stanford.util.paginator.Paginator;
+import org.ncbo.stanford.util.paginator.impl.Page;
+import org.ncbo.stanford.util.paginator.impl.PaginatorImpl;
 
 import edu.stanford.smi.protege.model.Cls;
 import edu.stanford.smi.protege.model.Frame;
@@ -180,25 +184,39 @@ public class OntologyRetrievalManagerProtegeImpl extends
 	 * frame name
 	 * 
 	 */
-	public List<ClassBean> findAllConcepts(OntologyBean ob, Integer offset,
-			Integer limit) throws Exception {
+	public Page<ClassBean> findAllConcepts(OntologyBean ob, Integer pageSize,
+			Integer pageNum) throws Exception {
 		KnowledgeBase kb = getKnowledgeBase(ob);
 		final Slot synonymSlot = getSynonymSlot(kb, ob.getSynonymSlot());
 		final Slot definitionSlot = getDefinitionSlot(kb, ob
 				.getDocumentationSlot());
 		final Slot authorSlot = getAuthorSlot(kb, ob.getAuthorSlot());
 		ArrayList<Cls> allClasses = getAllClasses(kb);
-		List<ClassBean> allConcepts = new ArrayList<ClassBean>();
+		ClassBeanResultListBean allConcepts = new ClassBeanResultListBean(0);
+		int totalSize = allClasses.size();
 
-		List<Cls> allConceptsLimited = allClasses.subList(offset, offset
-				+ limit);
+		if (pageSize == null || pageSize <= 0) {
+			pageSize = totalSize;
+		}
 
+		if (pageNum == null || pageNum <= 1) {
+			pageNum = 1;
+		}
+
+		int offset = pageNum * pageSize - pageSize;
+		int limit = (offset + pageSize > totalSize) ? totalSize : offset
+				+ pageSize;		
+		List<Cls> allConceptsLimited = allClasses.subList(offset, limit);
+		
 		for (Cls cls : allConceptsLimited) {
 			allConcepts.add(createClassBean(cls, true, synonymSlot,
 					definitionSlot, authorSlot));
 		}
 
-		return allConcepts;
+		Paginator<ClassBean> p = new PaginatorImpl<ClassBean>(allConcepts,
+				pageSize, pageNum, totalSize);
+
+		return p.getCurrentPage(pageNum);
 	}
 
 	/**

@@ -1,11 +1,11 @@
 package org.ncbo.stanford.manager.retrieval;
 
 import java.util.Iterator;
-import java.util.List;
 
 import org.ncbo.stanford.bean.OntologyBean;
 import org.ncbo.stanford.bean.concept.ClassBean;
 import org.ncbo.stanford.bean.concept.InstanceBean;
+import org.ncbo.stanford.util.paginator.impl.Page;
 
 /**
  * An interface designed to provide an abstraction layer to ontology and concept
@@ -50,6 +50,6 @@ public interface OntologyRetrievalManager {
 	public InstanceBean findInstanceById(OntologyBean ontologyBean,
 			String instanceId) throws Exception;
 
-	public List<ClassBean> findAllConcepts(OntologyBean ob, Integer offset,
-			Integer limit) throws Exception;
+	public Page<ClassBean> findAllConcepts(OntologyBean ob, Integer pageSize,
+			Integer pageNum) throws Exception;
 }

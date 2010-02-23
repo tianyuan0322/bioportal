@@ -43,6 +43,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.ncbo.stanford.bean.OntologyBean;
 import org.ncbo.stanford.bean.concept.ClassBean;
+import org.ncbo.stanford.bean.concept.ClassBeanResultListBean;
 import org.ncbo.stanford.bean.concept.InstanceBean;
 import org.ncbo.stanford.enumeration.ConceptTypeEnum;
 import org.ncbo.stanford.exception.BPRuntimeException;
@@ -50,6 +51,9 @@ import org.ncbo.stanford.exception.OntologyVersionNotFoundException;
 import org.ncbo.stanford.manager.AbstractOntologyManagerLexGrid;
 import org.ncbo.stanford.manager.retrieval.OntologyRetrievalManager;
 import org.ncbo.stanford.util.constants.ApplicationConstants;
+import org.ncbo.stanford.util.paginator.Paginator;
+import org.ncbo.stanford.util.paginator.impl.Page;
+import org.ncbo.stanford.util.paginator.impl.PaginatorImpl;
 
 /**
  * A implementation of the OntologyRetrievalManager for ontologies stored in
@@ -304,8 +308,8 @@ public class OntologyRetrievalManagerLexGridImpl extends
 	 * @return
 	 * @throws Exception
 	 */
-	public List<ClassBean> findAllConcepts(OntologyBean ontologyBean,
-			Integer offset, Integer limit) throws Exception {
+	public Page<ClassBean> findAllConcepts(OntologyBean ontologyBean,
+			Integer pageSize, Integer pageNum) throws Exception {
 		String schemeName = getLexGridCodingSchemeName(ontologyBean);
 		CodingSchemeVersionOrTag csvt = getLexGridCodingSchemeVersion(ontologyBean);
 
@@ -313,26 +317,43 @@ public class OntologyRetrievalManagerLexGridImpl extends
 			ResolvedConceptReferencesIterator iterator = lbs
 					.getCodingSchemeConcepts(schemeName, csvt).resolve(null,
 							null, null, null, false);
-			// Analyze the result ...
-			ResolvedConceptReferenceList rcrl = iterator.get(offset, offset
-					+ limit);
-			ArrayList<ClassBean> classBeanList = createClassBeanArray(rcrl,
-					false);
-			return classBeanList;
+			int totalResults = iterator.numberRemaining();
+
+			if (pageSize == null || pageSize <= 0) {
+				pageSize = totalResults;
+			}
+
+			if (pageNum == null || pageNum <= 1) {
+				pageNum = 1;
+			}
+
+			int offset = pageNum * pageSize - pageSize;
+			int limit = (offset + pageSize > totalResults) ? totalResults
+					: offset + pageSize;
+			ResolvedConceptReferenceList rcrl = iterator.get(offset, limit);
+			List<ClassBean> classBeanList = createClassBeanArray(rcrl, false);
+
+			Paginator<ClassBean> p = new PaginatorImpl<ClassBean>(
+					new ClassBeanResultListBean(classBeanList), pageSize,
+					pageNum, totalResults);
+
+			return p.getCurrentPage(pageNum);
 		} catch (LBParameterException ex) {
 			return null;
 		}
 	}
-	
+
 	public Iterator<ClassBean> listAllClasses(final OntologyBean ob)
 			throws Exception {
 		// Convert ontology (BP) to coding scheme (LexBIG)
 		final String schemeName = getLexGridCodingSchemeName(ob);
 		final CodingSchemeVersionOrTag csvt = getLexGridCodingSchemeVersion(ob);
+
 		if (StringUtils.isBlank(schemeName) || (csvt == null)) {
 			throw new OntologyVersionNotFoundException(
 					"Could not resolve ontology in LexBIG service: " + ob);
 		}
+
 		// Fetch all concepts -- delay conversion to ClassBean
 		CodedNodeSet cns = lbs.getCodingSchemeConcepts(schemeName, csvt);
 		final ResolvedConceptReferencesIterator rcrIt = cns.resolve(null, null,

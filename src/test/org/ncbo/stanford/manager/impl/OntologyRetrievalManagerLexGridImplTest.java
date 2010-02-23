@@ -11,6 +11,7 @@ import org.ncbo.stanford.AbstractBioPortalTest;
 import org.ncbo.stanford.bean.OntologyBean;
 import org.ncbo.stanford.bean.concept.ClassBean;
 import org.ncbo.stanford.manager.retrieval.impl.OntologyRetrievalManagerLexGridImpl;
+import org.ncbo.stanford.util.paginator.impl.Page;
 import org.springframework.beans.factory.annotation.Autowired;
 
 /**
@@ -462,22 +463,26 @@ public class OntologyRetrievalManagerLexGridImplTest extends
 				.getOntologyBeanByDisplayNameAndOntologyId(
 						OntologyLoaderLexGridImplTest.OBO_CELL_DISPLAY_LABEL,
 						OntologyLoaderLexGridImplTest.OBO_CELL_ONTOLOGY_ID);
+		int pageSize = 100;
+		int pageNum = 1;
 		int offset = 0;
-		int limit = 100;
 		boolean hasMoreResults = true;
 		while (hasMoreResults) {
-			System.out.println("Retrieving results starting at " + offset);
-			List<ClassBean> beans = retrievalManager.findAllConcepts(
-					ncboOntology, offset, limit);
-			if (beans == null || beans.size() != limit) {
+			System.out.println("Retrieving results starting at " + pageNum);
+			Page<ClassBean> beans = retrievalManager.findAllConcepts(
+					ncboOntology, pageSize, pageNum);
+			if (beans == null || beans.getNumResultsPage() <= pageSize) {
 				hasMoreResults = false;
+
 				if (beans != null) {
 					System.out.println("Retrieved results till "
-							+ (offset + beans.size()));
+							+ (offset + beans.getNumResultsPage()));
 				}
 			}
-			offset += limit;
+
+			offset += pageSize;
 		}
+
 		System.out.println("\n");
 		assertTrue(offset != 0);
 	}
