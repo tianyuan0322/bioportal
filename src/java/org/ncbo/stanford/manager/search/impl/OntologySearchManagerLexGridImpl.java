@@ -36,7 +36,6 @@ import org.ncbo.stanford.wrapper.LuceneIndexWriterWrapper;
 public class OntologySearchManagerLexGridImpl extends
 		AbstractOntologyManagerLexGrid implements OntologySearchManager {
 
-	@SuppressWarnings("unused")
 	private static final Log log = LogFactory
 			.getLog(OntologySearchManagerLexGridImpl.class);
 

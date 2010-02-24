@@ -243,7 +243,6 @@ public class OntologyRetrievalManagerLexGridImpl extends
 		} else if (StringUtils.isBlank(conceptId)) {
 			log.warn("Can not process request when the conceptId is blank");
 		} else {
-
 			CodingSchemeVersionOrTag csvt = getLexGridCodingSchemeVersion(ontologyBean);
 			ResolvedConceptReferenceList matches = lbs.getNodeGraph(schemeName,
 					csvt, null)
@@ -300,11 +299,15 @@ public class OntologyRetrievalManagerLexGridImpl extends
 	}
 
 	/**
-	 * Find just the concept with all the relations. Makes use of the
-	 * CodedNodeGraph of LexBIG to implement
+	 * Find all concepts for a given ontology. The pageNum and pageSize
+	 * parameters allow paginating over concepts for better performance
 	 * 
 	 * @param ontologyBean
 	 * @param conceptId
+	 * @param pageSize
+	 *            - the number of results to return
+	 * @param pageNum
+	 *            - the results offset
 	 * @return
 	 * @throws Exception
 	 */
@@ -327,15 +330,25 @@ public class OntologyRetrievalManagerLexGridImpl extends
 				pageNum = 1;
 			}
 
-			int offset = pageNum * pageSize - pageSize;
-			int limit = (offset + pageSize > totalResults) ? totalResults
-					: offset + pageSize;
-			ResolvedConceptReferenceList rcrl = iterator.get(offset, limit);
-			List<ClassBean> classBeanList = createClassBeanArray(rcrl, false);
+			int fromIndex = pageNum * pageSize - pageSize;
+			int toIndex = (fromIndex + pageSize > totalResults) ? totalResults
+					: fromIndex + pageSize;
+
+			ResolvedConceptReferenceList rcrl = iterator
+					.get(fromIndex, toIndex);
+
+			ClassBeanResultListBean classBeanList = new ClassBeanResultListBean(
+					0);
+
+			for (Iterator<ResolvedConceptReference> itr = rcrl
+					.iterateResolvedConceptReference(); itr.hasNext();) {
+				ResolvedConceptReference rcr = itr.next();
+				classBeanList.add(findConcept(ontologyBean, rcr
+						.getConceptCode()));
+			}
 
 			Paginator<ClassBean> p = new PaginatorImpl<ClassBean>(
-					new ClassBeanResultListBean(classBeanList), pageSize,
-					pageNum, totalResults);
+					classBeanList, pageSize, pageNum, totalResults);
 
 			return p.getCurrentPage(pageNum);
 		} catch (LBParameterException ex) {

@@ -163,8 +163,9 @@ public class OntologyRetrievalManagerProtegeImpl extends
 		final Slot definitionSlot = getDefinitionSlot(kb, ob
 				.getDocumentationSlot());
 		final Slot authorSlot = getAuthorSlot(kb, ob.getAuthorSlot());
-		ArrayList<Cls> allClasses = getAllClasses(kb);
+		List<Cls> allClasses = getAllClasses(kb);
 		ClassBeanResultListBean allConcepts = new ClassBeanResultListBean(0);
+
 		int totalSize = allClasses.size();
 
 		if (pageSize == null || pageSize <= 0) {
@@ -667,10 +668,10 @@ public class OntologyRetrievalManagerProtegeImpl extends
 	 * @param slots
 	 * @return
 	 */
-	private HashMap<String, List<String>> convertProperties(Cls concept,
+	private Map<String, List<String>> convertProperties(Cls concept,
 			Collection<Slot> slots, boolean isOwl) {
-		HashMap<String, List<String>> bpProps = new HashMap<String, List<String>>();
-		ArrayList<String> bpPropVals = new ArrayList<String>();
+		Map<String, List<String>> bpProps = new HashMap<String, List<String>>();
+		List<String> bpPropVals = new ArrayList<String>();
 
 		// add properties
 		for (Slot slot : slots) {

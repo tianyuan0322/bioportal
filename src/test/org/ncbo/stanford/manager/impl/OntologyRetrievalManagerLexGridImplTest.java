@@ -463,6 +463,7 @@ public class OntologyRetrievalManagerLexGridImplTest extends
 				.getOntologyBeanByDisplayNameAndOntologyId(
 						OntologyLoaderLexGridImplTest.OBO_CELL_DISPLAY_LABEL,
 						OntologyLoaderLexGridImplTest.OBO_CELL_ONTOLOGY_ID);
+		
 		int pageSize = 100;
 		int pageNum = 1;
 		int offset = 0;
