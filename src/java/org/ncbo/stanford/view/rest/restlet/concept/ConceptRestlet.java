@@ -4,7 +4,6 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.ncbo.stanford.bean.OntologyVersionIdBean;
 import org.ncbo.stanford.exception.ConceptNotFoundException;
 import org.ncbo.stanford.exception.InvalidInputException;
 import org.ncbo.stanford.exception.OntologyNotFoundException;
@@ -49,7 +48,6 @@ public class ConceptRestlet extends AbstractBaseRestlet {
 				.getParameter(RequestParamConstants.PARAM_PAGESIZE);
 		String pageNum = (String) httpRequest
 				.getParameter(RequestParamConstants.PARAM_PAGENUM);
-
 		String light = (String) httpRequest
 				.getParameter(RequestParamConstants.PARAM_LIGHT);
 		String noRelations = (String) httpRequest
@@ -87,8 +85,7 @@ public class ConceptRestlet extends AbstractBaseRestlet {
 			} else if (conceptId
 					.equalsIgnoreCase(RequestParamConstants.PARAM_ALL_CONCEPTS)) {
 				// all concepts
-				concept = conceptService.findAllConcepts(
-						new OntologyVersionIdBean(ontologyVersionIdInt),
+				concept = conceptService.findAllConcepts(ontologyVersionIdInt,
 						pageSizeInt, pageNumInt);
 			} else {
 				// specific concept

@@ -5,7 +5,6 @@ import javax.servlet.http.HttpServletRequest;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.ncbo.stanford.bean.OntologyBean;
-import org.ncbo.stanford.bean.OntologyIdBean;
 import org.ncbo.stanford.exception.ConceptNotFoundException;
 import org.ncbo.stanford.exception.InvalidInputException;
 import org.ncbo.stanford.exception.OntologyNotFoundException;
@@ -51,10 +50,10 @@ public class VirtualUriRestlet extends AbstractBaseRestlet {
 				.getHttpServletRequest(request);
 		String maxNumChildren = (String) httpRequest
 				.getParameter(RequestParamConstants.PARAM_MAXNUMCHILDREN);
-		String offset = (String) httpRequest
-				.getParameter(RequestParamConstants.PARAM_OFFSET);
-		String limit = (String) httpRequest
-				.getParameter(RequestParamConstants.PARAM_LIMIT);
+		String pageSize = (String) httpRequest
+				.getParameter(RequestParamConstants.PARAM_PAGESIZE);
+		String pageNum = (String) httpRequest
+				.getParameter(RequestParamConstants.PARAM_PAGENUM);
 		String light = (String) httpRequest
 				.getParameter(RequestParamConstants.PARAM_LIGHT);
 		String noRelations = (String) httpRequest
@@ -62,8 +61,8 @@ public class VirtualUriRestlet extends AbstractBaseRestlet {
 
 		Integer maxNumChildrenInt = RequestUtils
 				.parseIntegerParam(maxNumChildren);
-		Integer offsetInt = RequestUtils.parseIntegerParam(offset);
-		Integer limitInt = RequestUtils.parseIntegerParam(limit);
+		Integer pageSizeInt = RequestUtils.parseIntegerParam(pageSize);
+		Integer pageNumInt = RequestUtils.parseIntegerParam(pageNum);
 		Boolean lightBool = RequestUtils.parseBooleanParam(light);
 		Boolean noRelationsBool = RequestUtils.parseBooleanParam(noRelations);
 		Integer ontologyIdInt = RequestUtils.parseIntegerParam(ontologyId);
@@ -104,13 +103,12 @@ public class VirtualUriRestlet extends AbstractBaseRestlet {
 								.getId(), maxNumChildrenInt, false);
 					} else if (conceptId
 							.equalsIgnoreCase(RequestParamConstants.PARAM_ALL_CONCEPTS)) {
-						returnObject = conceptService.findAllConcepts(
-								new OntologyIdBean(ontologyIdInt), offsetInt,
-								limitInt);
+						returnObject = conceptService.findAllConcepts(ontBean
+								.getId(), pageSizeInt, pageNumInt);
 					} else {
 						returnObject = conceptService.findConcept(ontBean
 								.getId(), conceptId, maxNumChildrenInt,
-								lightBool, noRelationsBool,true);
+								lightBool, noRelationsBool, true);
 					}
 
 					if (returnObject == null) {

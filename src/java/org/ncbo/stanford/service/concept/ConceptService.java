@@ -70,11 +70,7 @@ public interface ConceptService {
 	public List<ClassBean> findLeaves(OntologyIdBean ontologyVersionId,
 			String conceptId, Integer offset, Integer limit) throws Exception;
 
-	public Page<ClassBean> findAllConcepts(
-			OntologyVersionIdBean ontologyVersionId, Integer pageSize,
-			Integer pageNum) throws Exception;
-
-	public Page<ClassBean> findAllConcepts(OntologyIdBean ontologyId,
+	public Page<ClassBean> findAllConcepts(Integer ontologyVersionId,
 			Integer pageSize, Integer pageNum) throws Exception;
 
 	public InstanceBean findInstanceById(Integer ontologyVerId,

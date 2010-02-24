@@ -335,13 +335,11 @@ public class ConceptServiceImpl implements ConceptService {
 				limit);
 	}
 
-	public Page<ClassBean> findAllConcepts(
-			OntologyVersionIdBean ontologyVersionId, Integer pageSize,
-			Integer pageNum) throws Exception {
+	public Page<ClassBean> findAllConcepts(Integer ontologyVersionId,
+			Integer pageSize, Integer pageNum) throws Exception {
 		// get ontologyBean from versionId
 		OntologyBean ontology = ontologyMetadataManager
-				.findOntologyOrViewVersionById(ontologyVersionId
-						.getOntologyVersionId());
+				.findOntologyOrViewVersionById(ontologyVersionId);
 
 		if (ontology == null) {
 			throw new OntologyNotFoundException(
@@ -350,14 +348,6 @@ public class ConceptServiceImpl implements ConceptService {
 		}
 
 		return getRetrievalManager(ontology).findAllConcepts(ontology,
-				pageSize, pageNum);
-	}
-
-	public Page<ClassBean> findAllConcepts(OntologyIdBean ontologyId,
-			Integer pageSize, Integer pageNum) throws Exception {
-		Integer ontologyVersionId = obsManager
-				.findLatestOntologyVersion(ontologyId.getOntologyId());
-		return findAllConcepts(new OntologyVersionIdBean(ontologyVersionId),
 				pageSize, pageNum);
 	}
 
