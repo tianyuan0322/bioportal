@@ -17,6 +17,7 @@ import org.ncbo.stanford.bean.OntologyBean;
 import org.ncbo.stanford.bean.concept.ClassBean;
 import org.ncbo.stanford.bean.concept.ClassBeanResultListBean;
 import org.ncbo.stanford.bean.concept.InstanceBean;
+import org.ncbo.stanford.bean.concept.PropertyBean;
 import org.ncbo.stanford.enumeration.ConceptTypeEnum;
 import org.ncbo.stanford.exception.InvalidInputException;
 import org.ncbo.stanford.manager.AbstractOntologyManagerProtege;
@@ -134,7 +135,7 @@ public class OntologyRetrievalManagerProtegeImpl extends
 					List<InstanceBean> resultInstance = new ArrayList<InstanceBean>();
 					InstanceBean instanceBean;
 					for (Instance instance : instances) {
-						instanceBean = createInstanceBean(instance);
+						instanceBean = createInstanceBean(instance, false);
 						resultInstance.add(instanceBean);
 					}
 					targetClass.setInstances(resultInstance);
@@ -258,56 +259,58 @@ public class OntologyRetrievalManagerProtegeImpl extends
 					.getMessage("msg.error.invalidinstanceid"));
 		}
 		// populate classBean and return to caller.
-		return createInstanceBean(owlClass);
+		return createInstanceBean(owlClass, true);
 	}
 
-	private InstanceBean createInstanceBean(Frame frame) {
+	private InstanceBean createInstanceBean(Frame frame,
+			Boolean includeRelations) {
 
 		InstanceBean instanceBean = new InstanceBean();
 		instanceBean.setId(getId(frame));
 		instanceBean.setFullId(frame.getName());
 		instanceBean.setLabel(getBrowserText(frame));
 
-		ConceptTypeEnum protegeType = ConceptTypeEnum.CONCEPT_TYPE_INDIVIDUAL;
-
-		if (frame instanceof Slot) {
-			protegeType = ConceptTypeEnum.CONCEPT_TYPE_PROPERTY;
-		}
-
 		if (frame instanceof Instance) {
 			instanceBean.setInstanceTypes(((Instance) frame).getDirectTypes());
 		}
-		// create map to set relations
-		HashMap<Object, Object> relations = new HashMap<Object, Object>();
+		if (includeRelations) {
 
-		Collection<Slot> properties = frame.getOwnSlots();
-		Iterator p = properties.iterator();
-		while (p.hasNext()) {
-			Slot nextProperty = (Slot) p.next();
-			Collection values = frame.getOwnSlotValues(nextProperty);
-			if (values != null && !values.isEmpty()) {
+			// create map to set relations
+			HashMap<Object, Object> relations = new HashMap<Object, Object>();
+			// get all properties
+			Collection<Slot> properties = frame.getOwnSlots();
+			Iterator p = properties.iterator();
+			while (p.hasNext()) {
+				Slot nextProperty = (Slot) p.next();
+				Collection values = frame.getOwnSlotValues(nextProperty);
+				if (values != null && !values.isEmpty()) {
+					// to store all property values(for <list>)
+					List<Object> entryList = new ArrayList<Object>();
 
-				// to store all property values(for <list>)
-				List<Map<Object, Object>> entryList = new ArrayList<Map<Object, Object>>();
-
-				// key is fullid , value is property value (for <string
-				// fullid="http://...property">property value</string>)
-				Map<Object, Object> pairs = new HashMap<Object, Object>();
-				for (Object obj : values) {
-					if (obj instanceof Instance)
-						pairs.put(((Instance) obj).getName(), ((Instance) obj)
-								.getBrowserText());
-					else
-						pairs.put(obj, obj);
+					for (Object obj : values) {
+						if (obj instanceof Instance) {
+							InstanceBean inst = createInstanceBean(
+									(Instance) obj, false);
+							entryList.add(inst);
+						} else {
+							entryList.add(obj);
+						}
+					}
+					PropertyBean propertyBean = createBasePropertyBean(nextProperty);
+					relations.put(propertyBean, entryList);
 				}
-				entryList.add(pairs);
-				relations.put(nextProperty.getName(), entryList);
 			}
+			instanceBean.addRelations(relations);
 		}
-		instanceBean.addRelations(relations);
-		instanceBean.setType(protegeType);
-
 		return instanceBean;
+	}
+
+	private PropertyBean createBasePropertyBean(Slot frame) {
+		PropertyBean propertyBean = new PropertyBean();
+		propertyBean.setId(getId(frame));
+		propertyBean.setFullId(frame.getName());
+		propertyBean.setLabel(getBrowserText(frame));
+		return propertyBean;
 	}
 
 	public ClassBean findPathFromRoot(OntologyBean ontologyVersion,
