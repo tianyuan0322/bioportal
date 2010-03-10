@@ -5,8 +5,8 @@ import java.util.Properties;
 
 import javax.servlet.http.HttpServletRequest;
 
-import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
+import org.ncbo.stanford.exception.ConceptNotFoundException;
 import org.ncbo.stanford.service.concept.ConceptService;
 import org.ncbo.stanford.util.MessageUtils;
 import org.ncbo.stanford.util.RequestUtils;
@@ -16,6 +16,7 @@ import org.ncbo.stanford.view.util.constants.RequestParamConstants;
 import org.restlet.data.MediaType;
 import org.restlet.data.Request;
 import org.restlet.data.Response;
+import org.restlet.data.Status;
 import org.restlet.resource.FileRepresentation;
 import org.semanticweb.owlapi.apibinding.OWLManager;
 import org.semanticweb.owlapi.model.IRI;
@@ -94,6 +95,11 @@ public class ViewExtractionRestlet extends AbstractBaseRestlet {
 
 			// perform extraction
 			extractor.extract(ontology, conceptId);
+			if (extractor.getConceptFound() == false) {
+				throw new ConceptNotFoundException(MessageUtils
+						.getMessage("msg.error.conceptNotFound"));
+			}
+			
 			String ontologyFilename = ontology.getOntologyID().toString();
 
 			String filename = ontologyFilename.substring(ontologyFilename
@@ -121,8 +127,13 @@ public class ViewExtractionRestlet extends AbstractBaseRestlet {
 			deleteTempfiles(filename);
 			// }
 
-		} catch (Throwable t) {
-			log.log(Level.ERROR, t.getMessage(), t);
+		} catch (ConceptNotFoundException cnfe) {
+			response
+					.setStatus(Status.CLIENT_ERROR_NOT_FOUND, cnfe.getMessage());
+		} catch (Exception e) {
+			response.setStatus(Status.SERVER_ERROR_INTERNAL, e.getMessage());
+			e.printStackTrace();
+			log.error(e);
 		}
 	}
 
