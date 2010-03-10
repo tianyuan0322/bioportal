@@ -274,17 +274,16 @@ public class OntologyRetrievalManagerProtegeImpl extends
 		instanceBean.setLabel(getBrowserText(frame));
 
 		if (frame instanceof Instance) {
-			//instanceBean.setInstanceTypes(((Instance) frame).getDirectTypes());
-			Collection  instanceTypes=((Instance) frame).getDirectTypes();
-			ArrayList<ClassBean> classBeans=new ArrayList<ClassBean>();
-			for(Object obj:instanceTypes){
-				DefaultOWLNamedClass defaultOWLNamedClass=(DefaultOWLNamedClass)obj;
-				ClassBean classBean=createBaseClassBean(defaultOWLNamedClass);
+			Collection instanceTypes = ((Instance) frame).getDirectTypes();
+			ArrayList<ClassBean> classBeans = new ArrayList<ClassBean>();
+			for (Object obj : instanceTypes) {
+				DefaultOWLNamedClass defaultOWLNamedClass = (DefaultOWLNamedClass) obj;
+				ClassBean classBean = createBaseClassBean(defaultOWLNamedClass);
 				classBeans.add(classBean);
 			}
-			InstanceTypesList list=new InstanceTypesList();
+			InstanceTypesList list = new InstanceTypesList();
 			list.setInstanceTypes(classBeans);
-			
+
 			instanceBean.setInstanceTypes(list);
 		}
 		if (includeRelations) {
