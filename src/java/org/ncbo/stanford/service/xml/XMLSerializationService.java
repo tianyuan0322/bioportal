@@ -10,6 +10,8 @@ import org.ncbo.stanford.enumeration.ErrorTypeEnum;
 import org.restlet.data.Request;
 import org.restlet.data.Response;
 
+import com.thoughtworks.xstream.XStream;
+
 /**
  * An interface that allows predefined structure of XML responses
  * 
@@ -84,4 +86,6 @@ public interface XMLSerializationService {
 	public void aliasField(String alias, Class definedIn, String fieldName);
 
 	public Object fromXML(String xml);
+	
+	public XStream getXmlSerializer();
 }

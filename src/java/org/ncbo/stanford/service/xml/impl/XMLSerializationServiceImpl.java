@@ -405,7 +405,9 @@ public class XMLSerializationServiceImpl implements XMLSerializationService {
 	public Object fromXML(String xml) {
 		return xmlSerializer.fromXML(xml);
 	}
-
+	public XStream getXmlSerializer() {
+		return xmlSerializer;
+	}
 	/**
 	 * Generate an XML representation of a request.
 	 * 
