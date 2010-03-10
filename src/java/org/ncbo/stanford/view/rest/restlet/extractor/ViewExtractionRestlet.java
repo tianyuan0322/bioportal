@@ -65,13 +65,18 @@ public class ViewExtractionRestlet extends AbstractBaseRestlet {
 
 			// set all request parameter to props obj
 			Properties properties = new Properties();
-			properties.setProperty("bioportal.delay.ms", delay);
-			properties.setProperty("bioportal.filter.relations", relations);
+			if (delay != null)
+				properties.setProperty("bioportal.delay.ms", delay);
+			if (relations != null)
+				properties.setProperty("bioportal.filter.relations", relations);
 			properties.setProperty("target.ontology.name", ontologyName);
-			properties.setProperty("target.append.existing.ontology",
-					existingOntology);
-			properties.setProperty("log.count", logCount);
-			properties.setProperty("save.count", saveCount);
+			if (existingOntology != null)
+				properties.setProperty("target.append.existing.ontology",
+						existingOntology);
+			if (logCount != null)
+				properties.setProperty("log.count", logCount);
+			if (saveCount != null)
+				properties.setProperty("save.count", saveCount);
 
 			ncboProperties = new NcboProperties();
 			ncboProperties.setProps(properties);
