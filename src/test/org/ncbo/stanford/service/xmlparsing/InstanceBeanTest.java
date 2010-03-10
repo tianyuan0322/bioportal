@@ -63,7 +63,7 @@ public class InstanceBeanTest extends AbstractBioPortalTest {
 
 		InstanceTypesList InstanceTypesList = new InstanceTypesList();
 		InstanceTypesList.setInstanceTypes(instanceTypes);
-		instanceBean.setInstanceTypes(InstanceTypesList);
+		instanceBean.setInstanceType(InstanceTypesList);
 
 		System.out.println(xmlSerializer.toXML(instanceBean));
 	}

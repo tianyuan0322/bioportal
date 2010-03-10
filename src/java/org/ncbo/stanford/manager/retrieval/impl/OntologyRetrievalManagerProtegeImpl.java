@@ -284,7 +284,7 @@ public class OntologyRetrievalManagerProtegeImpl extends
 			InstanceTypesList list = new InstanceTypesList();
 			list.setInstanceTypes(classBeans);
 
-			instanceBean.setInstanceTypes(list);
+			instanceBean.setInstanceType(list);
 		}
 		if (includeRelations) {
 

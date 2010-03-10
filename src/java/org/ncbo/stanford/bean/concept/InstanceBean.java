@@ -4,15 +4,16 @@ package org.ncbo.stanford.bean.concept;
 public class InstanceBean extends AbstractConceptBean {
 
 	// property to set instance types
-	private InstanceTypesList instanceTypes;
+	private InstanceTypesList instanceType;
 
 
-	public InstanceTypesList getInstanceTypes() {
-		return instanceTypes;
+
+	public InstanceTypesList getInstanceType() {
+		return instanceType;
 	}
 
-	public void setInstanceTypes(InstanceTypesList instanceTypes) {
-		this.instanceTypes = instanceTypes;
+	public void setInstanceType(InstanceTypesList instanceType) {
+		this.instanceType = instanceType;
 	}
 
 	public String toString() {
