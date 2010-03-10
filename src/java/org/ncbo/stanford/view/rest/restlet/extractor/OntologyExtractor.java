@@ -14,7 +14,9 @@ import java.util.Set;
 
 import org.apache.log4j.Logger;
 import org.ncbo.stanford.bean.concept.ClassBean;
+import org.ncbo.stanford.exception.ConceptNotFoundException;
 import org.ncbo.stanford.service.concept.ConceptService;
+import org.ncbo.stanford.util.MessageUtils;
 import org.ncbo.stanford.util.constants.ApplicationConstants;
 import org.semanticweb.owlapi.io.RDFXMLOntologyFormat;
 import org.semanticweb.owlapi.model.IRI;
@@ -44,6 +46,9 @@ public class OntologyExtractor {
 	private URI ontologyName;
 	private OWLOntology ontology;
 	private Set<OWLClass> traversed = new HashSet<OWLClass>();
+	
+	// Since we don't return any data, set this flag if we don't find a concept
+	private Boolean conceptFound = true;
 
 	private static int classesImported = 0;
 
@@ -87,6 +92,11 @@ public class OntologyExtractor {
 
 	private void addConcept(NcboConcept c) throws MalformedURLException,
 			URISyntaxException, OWLOntologyChangeException {
+		if (c.getBean() == null) {
+			conceptFound = false;
+			return;
+		}
+		
 		if (traversed.contains(c.getOwlClass())) {
 			return;
 		}
@@ -133,6 +143,11 @@ public class OntologyExtractor {
 	@SuppressWarnings("unchecked")
 	private void declareAndAttachAnnotations(NcboConcept c)
 			throws OWLOntologyChangeException, URISyntaxException {
+		if (c.getBean() == null) {
+			conceptFound = false;
+			return;
+		}
+		
 		attachLabel(c);
 
 		ClassBean conceptBean = c.getBean();
@@ -177,6 +192,11 @@ public class OntologyExtractor {
 	}
 
 	private void attachLabel(NcboConcept c) throws OWLOntologyChangeException {
+		if (c.getBean() == null) {
+			conceptFound = false;
+			return;
+		}
+		
 		OWLDataFactory factory = manager.getOWLDataFactory();
 		String label = c.getBean().getLabel();
 		OWLAnnotationProperty labelProperty = factory
@@ -296,6 +316,20 @@ public class OntologyExtractor {
 
 	public void setConceptService(ConceptService conceptService) {
 		this.conceptService = conceptService;
+	}
+
+	/**
+	 * @return the conceptFound
+	 */
+	public Boolean getConceptFound() {
+		return conceptFound;
+	}
+
+	/**
+	 * @param conceptFound the conceptFound to set
+	 */
+	public void setConceptFound(Boolean conceptFound) {
+		this.conceptFound = conceptFound;
 	}
 
 }

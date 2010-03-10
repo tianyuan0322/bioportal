@@ -5,8 +5,8 @@ import java.util.Properties;
 
 import javax.servlet.http.HttpServletRequest;
 
-import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
+import org.ncbo.stanford.exception.ConceptNotFoundException;
 import org.ncbo.stanford.service.concept.ConceptService;
 import org.ncbo.stanford.util.MessageUtils;
 import org.ncbo.stanford.util.RequestUtils;
@@ -16,6 +16,7 @@ import org.ncbo.stanford.view.util.constants.RequestParamConstants;
 import org.restlet.data.MediaType;
 import org.restlet.data.Request;
 import org.restlet.data.Response;
+import org.restlet.data.Status;
 import org.restlet.resource.FileRepresentation;
 import org.semanticweb.owlapi.apibinding.OWLManager;
 import org.semanticweb.owlapi.model.IRI;
@@ -65,13 +66,18 @@ public class ViewExtractionRestlet extends AbstractBaseRestlet {
 
 			// set all request parameter to props obj
 			Properties properties = new Properties();
-			properties.setProperty("bioportal.delay.ms", delay);
-			properties.setProperty("bioportal.filter.relations", relations);
+			if (delay != null)
+				properties.setProperty("bioportal.delay.ms", delay);
+			if (relations != null)
+				properties.setProperty("bioportal.filter.relations", relations);
 			properties.setProperty("target.ontology.name", ontologyName);
-			properties.setProperty("target.append.existing.ontology",
-					existingOntology);
-			properties.setProperty("log.count", logCount);
-			properties.setProperty("save.count", saveCount);
+			if (existingOntology != null)
+				properties.setProperty("target.append.existing.ontology",
+						existingOntology);
+			if (logCount != null)
+				properties.setProperty("log.count", logCount);
+			if (saveCount != null)
+				properties.setProperty("save.count", saveCount);
 
 			ncboProperties = new NcboProperties();
 			ncboProperties.setProps(properties);
@@ -89,10 +95,12 @@ public class ViewExtractionRestlet extends AbstractBaseRestlet {
 
 			// perform extraction
 			extractor.extract(ontology, conceptId);
-			String ontologyFilename = ontology.getOntologyID().toString();
-
-			String filename = ontologyFilename.substring(ontologyFilename
-					.lastIndexOf("/") + 1, ontologyFilename.length() - 1);
+			if (extractor.getConceptFound() == false) {
+				throw new ConceptNotFoundException(MessageUtils
+						.getMessage("msg.error.conceptNotFound"));
+			}
+			
+			String filename = ontologyName.toString();
 			if (!filename.contains(".owl")) {
 				filename = filename + ".owl";
 			}
@@ -116,8 +124,13 @@ public class ViewExtractionRestlet extends AbstractBaseRestlet {
 			deleteTempfiles(filename);
 			// }
 
-		} catch (Throwable t) {
-			log.log(Level.ERROR, t.getMessage(), t);
+		} catch (ConceptNotFoundException cnfe) {
+			response
+					.setStatus(Status.CLIENT_ERROR_NOT_FOUND, cnfe.getMessage());
+		} catch (Exception e) {
+			response.setStatus(Status.SERVER_ERROR_INTERNAL, e.getMessage());
+			e.printStackTrace();
+			log.error(e);
 		}
 	}
 
