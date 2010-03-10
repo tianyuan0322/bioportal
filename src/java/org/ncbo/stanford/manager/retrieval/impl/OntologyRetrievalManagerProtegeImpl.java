@@ -17,6 +17,7 @@ import org.ncbo.stanford.bean.OntologyBean;
 import org.ncbo.stanford.bean.concept.ClassBean;
 import org.ncbo.stanford.bean.concept.ClassBeanResultListBean;
 import org.ncbo.stanford.bean.concept.InstanceBean;
+import org.ncbo.stanford.bean.concept.InstanceTypesList;
 import org.ncbo.stanford.bean.concept.PropertyBean;
 import org.ncbo.stanford.enumeration.ConceptTypeEnum;
 import org.ncbo.stanford.exception.InvalidInputException;
@@ -41,6 +42,7 @@ import edu.stanford.smi.protegex.owl.model.OWLNamedClass;
 import edu.stanford.smi.protegex.owl.model.RDFProperty;
 import edu.stanford.smi.protegex.owl.model.RDFResource;
 import edu.stanford.smi.protegex.owl.model.RDFSNamedClass;
+import edu.stanford.smi.protegex.owl.model.impl.DefaultOWLNamedClass;
 
 /**
  * A default implementation to OntologyRetrievalManager interface designed to
@@ -272,7 +274,18 @@ public class OntologyRetrievalManagerProtegeImpl extends
 		instanceBean.setLabel(getBrowserText(frame));
 
 		if (frame instanceof Instance) {
-			instanceBean.setInstanceTypes(((Instance) frame).getDirectTypes());
+			//instanceBean.setInstanceTypes(((Instance) frame).getDirectTypes());
+			Collection  instanceTypes=((Instance) frame).getDirectTypes();
+			ArrayList<ClassBean> classBeans=new ArrayList<ClassBean>();
+			for(Object obj:instanceTypes){
+				DefaultOWLNamedClass defaultOWLNamedClass=(DefaultOWLNamedClass)obj;
+				ClassBean classBean=createBaseClassBean(defaultOWLNamedClass);
+				classBeans.add(classBean);
+			}
+			InstanceTypesList list=new InstanceTypesList();
+			list.setInstanceTypes(classBeans);
+			
+			instanceBean.setInstanceTypes(list);
 		}
 		if (includeRelations) {
 

@@ -1,17 +1,17 @@
 package org.ncbo.stanford.bean.concept;
 
-import java.util.Collection;
 
 public class InstanceBean extends AbstractConceptBean {
 
 	// property to set instance types
-	private Collection instanceTypes;
+	private InstanceTypesList instanceTypes;
 
-	public Collection getInstanceTypes() {
+
+	public InstanceTypesList getInstanceTypes() {
 		return instanceTypes;
 	}
 
-	public void setInstanceTypes(Collection instanceTypes) {
+	public void setInstanceTypes(InstanceTypesList instanceTypes) {
 		this.instanceTypes = instanceTypes;
 	}
 
