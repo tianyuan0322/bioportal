@@ -100,10 +100,7 @@ public class ViewExtractionRestlet extends AbstractBaseRestlet {
 						.getMessage("msg.error.conceptNotFound"));
 			}
 			
-			String ontologyFilename = ontology.getOntologyID().toString();
-
-			String filename = ontologyFilename.substring(ontologyFilename
-					.lastIndexOf("/") + 1, ontologyFilename.length() - 1);
+			String filename = ontologyName.toString();
 			if (!filename.contains(".owl")) {
 				filename = filename + ".owl";
 			}
