@@ -3,19 +3,23 @@
  */
 package org.ncbo.stanford.service.xmlparsing;
 
+import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
 import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.net.URL;
 import java.util.ArrayList;
+import java.util.List;
 
 import org.junit.Test;
 import org.ncbo.stanford.AbstractBioPortalTest;
 import org.ncbo.stanford.bean.ExportBean;
 import org.ncbo.stanford.bean.MetadataFileBean;
 import org.ncbo.stanford.bean.OntologyMetadataList;
+import org.ncbo.stanford.service.xml.XMLSerializationService;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import com.thoughtworks.xstream.XStream;
-import com.thoughtworks.xstream.io.xml.DomDriver;
-
-import edu.stanford.smi.protege.util.Assert;
 
 /**
  * @author s.reddy
@@ -23,88 +27,73 @@ import edu.stanford.smi.protege.util.Assert;
  */
 public class OntologyXMLMetaDataFileParsingTest extends AbstractBioPortalTest {
 
+	@Autowired
+	XMLSerializationService xmlSerializationService;
 
 	@Test
 	public void testParse() {
 		try {
-			XStream xmlSerializer = new XStream(new DomDriver());
-
-			xmlSerializer.alias("obo_metadata", OntologyMetadataList.class);
-			xmlSerializer.alias("ont", MetadataFileBean.class);
-			xmlSerializer.alias("export", ExportBean.class);
-
-			
-			// xstream.aliasField("ont", OntologyMetadataList.class,
-			// "metadataFileBean");
-
-			// set alias name for required fields.
-			xmlSerializer.aliasField("time_started",
-					OntologyMetadataList.class, "timestarted");
-			xmlSerializer.aliasField("ontologies_indexed",
-					OntologyMetadataList.class, "ontologiesindexed");
-			xmlSerializer.aliasField("ontologies_not_indexed",
-					OntologyMetadataList.class, "ontologiesnotindexed");
-
-			xmlSerializer.aliasField("subtypes_of", MetadataFileBean.class,
-					"subtypesOf");
-			xmlSerializer.aliasField("patho_type", MetadataFileBean.class,
-					"pathotype");
-			xmlSerializer.aliasField("relevant_organism",
-					MetadataFileBean.class, "relevantorganism");
-			xmlSerializer.aliasField("xrefs_to", MetadataFileBean.class,
-					"xrefsTo");
-			xmlSerializer.aliasField("time_completed",
-					OntologyMetadataList.class, "timecompletedvalue");
-
-			// set all alias attribute names.
-			xmlSerializer.aliasAttribute(MetadataFileBean.class, "id", "id");
-			xmlSerializer.aliasAttribute(ExportBean.class, "format", "format");
-			xmlSerializer.aliasAttribute(ExportBean.class, "path", "path");
-			xmlSerializer.aliasAttribute(ExportBean.class, "md5", "md5");
-			xmlSerializer.aliasAttribute(ExportBean.class, "timestamp",
-					"timestamp");
-			xmlSerializer.aliasAttribute(ExportBean.class, "timegenerated",
-					"time_generated");
-			xmlSerializer.aliasAttribute(ExportBean.class,
-					"timetakentogenerate", "time_taken_to_generate");
-			xmlSerializer.aliasAttribute(ExportBean.class, "size", "size");
-
-			xmlSerializer.addImplicitCollection(OntologyMetadataList.class,
-					"ont", MetadataFileBean.class);
-
-			xmlSerializer.addImplicitCollection(MetadataFileBean.class,
-					"export", ExportBean.class);
+			XStream xmlSerializer = xmlSerializationService.getXmlSerializer();
+			System.out.println(xmlSerializer);
 
 			String currentDir = System.getProperty("user.dir");
+			BufferedInputStream in = new BufferedInputStream(
+					new URL(
+							"http://www.berkeleybop.org/ontologies/obo-all/ontology_index.xml")
+							.openStream());
+			FileOutputStream fos = new FileOutputStream(currentDir
+					+ "/src/test/ontology_index.xml");
+			BufferedOutputStream bout = new BufferedOutputStream(fos, 1024);
+
+			byte data[] = new byte[1024];
+			int i;
+			while ((i = in.read(data, 0, 1024)) != -1) {
+				fos.write(data, 0, i);
+			}
+			bout.close();
+			in.close();
 
 			FileInputStream input = new FileInputStream(currentDir
 					+ "/src/test/ontology_index.xml");
+
 			OntologyMetadataList ontologyMetadataList = (OntologyMetadataList) xmlSerializer
 					.fromXML(input);
 
-			System.out.println(ontologyMetadataList.getTimecompletedvalue());
-			ArrayList<MetadataFileBean> list = ontologyMetadataList.getOnt();
-
+			System.out.println(ontologyMetadataList.getTimeCompletedValue());
+			List<MetadataFileBean> list = ontologyMetadataList
+					.getMetadataFileList();
 			// assert list size
-			Assert.assertEquals(3, list.size());
-
+			// Assert.assertEquals(175, list.size());
+			int j = 1;
 			for (MetadataFileBean metadataFileBean : list) {
 				ArrayList<ExportBean> list2 = metadataFileBean.getExport();
+				System.out.println("ontology :" + j++);
 				System.out.println("download :"
 						+ metadataFileBean.getDownload());
-				for (ExportBean exportBean : list2) {
-					System.out.println("format :" + exportBean.getFormat());
-					System.out.println("path :" + exportBean.getPath());
-					System.out.println("md5 :" + exportBean.getMd5());
-					System.out.println("size :" + exportBean.getSize());
-					System.out.println("time gen:"
-							+ exportBean.getTimegenerated());
-					System.out.println("tome stamp :"
-							+ exportBean.getTimestamp());
-					System.out.println("time taken gen :"
-							+ exportBean.getTimetakentogenerate());
-					System.out.println("====================");
+				List<String> list3 = (List<String>) metadataFileBean
+						.getExtend();
+				if (list3 != null && !list3.isEmpty()) {
+
+					if (list3.size() > 1) {
+						System.out.println("size :" + list3.size());
+					}
+					for (String str : list3)
+						System.out.println("extends :" + str);
 				}
+				if (list2 != null)
+					for (ExportBean exportBean : list2) {
+						System.out.println("format :" + exportBean.getFormat());
+						System.out.println("path :" + exportBean.getPath());
+						System.out.println("md5 :" + exportBean.getMd5());
+						System.out.println("size :" + exportBean.getSize());
+						System.out.println("time gen:"
+								+ exportBean.getTimeGenerated());
+						System.out.println("tome stamp :"
+								+ exportBean.getTimestamp());
+						System.out.println("time taken gen :"
+								+ exportBean.getTimeTakenToGenerate());
+					}
+				System.out.println("====================");
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
