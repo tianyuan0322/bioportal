@@ -59,9 +59,8 @@ public class OntologyXMLMetaDataFileParsingTest extends AbstractBioPortalTest {
 			OntologyMetadataList ontologyMetadataList = (OntologyMetadataList) xmlSerializer
 					.fromXML(input);
 
-			System.out.println(ontologyMetadataList.getTimeCompletedValue());
-			List<MetadataFileBean> list = ontologyMetadataList
-					.getMetadataFileList();
+			List<MetadataFileBean> list = null;/*ontologyMetadataList
+					.getMetadataFileList();*/
 			// assert list size
 			// Assert.assertEquals(175, list.size());
 			int j = 1;
@@ -70,8 +69,8 @@ public class OntologyXMLMetaDataFileParsingTest extends AbstractBioPortalTest {
 				System.out.println("ontology :" + j++);
 				System.out.println("download :"
 						+ metadataFileBean.getDownload());
-				List<String> list3 = (List<String>) metadataFileBean
-						.getExtend();
+				List<String> list3 = null;/*(List<String>) metadataFileBean
+						.getExtend();*/
 				if (list3 != null && !list3.isEmpty()) {
 
 					if (list3.size() > 1) {
@@ -86,12 +85,12 @@ public class OntologyXMLMetaDataFileParsingTest extends AbstractBioPortalTest {
 						System.out.println("path :" + exportBean.getPath());
 						System.out.println("md5 :" + exportBean.getMd5());
 						System.out.println("size :" + exportBean.getSize());
-						System.out.println("time gen:"
-								+ exportBean.getTimeGenerated());
+						/*System.out.println("time gen:"
+								+ exportBean.getTimeGenerated());*/
 						System.out.println("tome stamp :"
 								+ exportBean.getTimestamp());
-						System.out.println("time taken gen :"
-								+ exportBean.getTimeTakenToGenerate());
+						/*System.out.println("time taken gen :"
+								+ exportBean.getTimeTakenToGenerate());*/
 					}
 				System.out.println("====================");
 			}
