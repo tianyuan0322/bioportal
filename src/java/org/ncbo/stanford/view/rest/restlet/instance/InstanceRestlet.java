@@ -8,11 +8,13 @@ import javax.servlet.http.HttpServletRequest;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.ncbo.stanford.bean.concept.InstanceBean;
+import org.ncbo.stanford.exception.ConceptNotFoundException;
 import org.ncbo.stanford.exception.InvalidInputException;
 import org.ncbo.stanford.service.concept.ConceptService;
 import org.ncbo.stanford.util.MessageUtils;
 import org.ncbo.stanford.util.RequestUtils;
 import org.ncbo.stanford.view.rest.restlet.AbstractBaseRestlet;
+import org.ncbo.stanford.view.util.constants.RequestParamConstants;
 import org.restlet.data.Request;
 import org.restlet.data.Response;
 import org.restlet.data.Status;
@@ -40,13 +42,31 @@ public class InstanceRestlet extends AbstractBaseRestlet {
 
 		String instanceId = httpRequest.getParameter(MessageUtils
 				.getMessage("entity.instanceid"));
+		String conceptId = httpRequest.getParameter(MessageUtils
+				.getMessage("entity.conceptid"));
 
 		Integer ontologyVerId = Integer.parseInt(ontologyVersionId);
-		InstanceBean instanceBean = null;
+		Object instanceBean = null;
 		try {
+			if (instanceId != null) {
+				instanceBean = conceptService.findInstanceById(ontologyVerId,
+						instanceId);
+			} else if (conceptId != null) {
 
-			instanceBean = conceptService.findInstanceById(ontologyVerId,
-					instanceId);
+				String pageSize = (String) httpRequest
+						.getParameter(RequestParamConstants.PARAM_PAGESIZE);
+				String pageNum = (String) httpRequest
+						.getParameter(RequestParamConstants.PARAM_PAGENUM);
+				
+				Integer pageSizeInt = RequestUtils.parseIntegerParam(pageSize);
+				Integer pageNumInt = RequestUtils.parseIntegerParam(pageNum);
+
+				instanceBean = conceptService.findInstancesByConceptId(
+						ontologyVerId, conceptId,pageSizeInt, pageNumInt);
+
+			} else {
+				throw new InvalidInputException("invalid input");
+			}
 
 		} catch (InvalidInputException invalidInputEx) {
 			response.setStatus(Status.CLIENT_ERROR_BAD_REQUEST, invalidInputEx

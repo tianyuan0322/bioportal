@@ -223,6 +223,12 @@ public class OntologyRetrievalManagerLexGridImpl extends
 		return null;
 	}
 
+	public Page<InstanceBean> findInstancesByConceptId(
+			OntologyBean ontologyBean, String instanceId, Integer pageSize,
+			Integer pageNum) throws Exception {
+		return null;
+	}
+
 	/**
 	 * Find just the concept with all the relations. Makes use of the
 	 * CodedNodeGraph of LexBIG to implement

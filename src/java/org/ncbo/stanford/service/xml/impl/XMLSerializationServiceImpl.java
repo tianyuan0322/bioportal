@@ -24,6 +24,7 @@ import org.ncbo.stanford.bean.OntologyMetricsBean;
 import org.ncbo.stanford.bean.UserBean;
 import org.ncbo.stanford.bean.concept.ClassBean;
 import org.ncbo.stanford.bean.concept.InstanceBean;
+import org.ncbo.stanford.bean.concept.InstanceBeanResultListBean;
 import org.ncbo.stanford.bean.concept.PropertyBean;
 import org.ncbo.stanford.bean.http.HttpInputStreamWrapper;
 import org.ncbo.stanford.bean.logging.UsageLoggingBean;
@@ -38,6 +39,7 @@ import org.ncbo.stanford.enumeration.ErrorTypeEnum;
 import org.ncbo.stanford.service.xml.XMLSerializationService;
 import org.ncbo.stanford.service.xml.converters.ClassBeanListConverter;
 import org.ncbo.stanford.service.xml.converters.ClassBeanResultListBeanConverter;
+import org.ncbo.stanford.service.xml.converters.InstanceBeanResultListBeanConverter;
 import org.ncbo.stanford.service.xml.converters.OntologyHitMapConverter;
 import org.ncbo.stanford.service.xml.converters.SearchResultListBeanConverter;
 import org.ncbo.stanford.util.MessageUtils;
@@ -445,7 +447,12 @@ public class XMLSerializationServiceImpl implements XMLSerializationService {
 				ConceptTypeEnum.class));
 		xmlSerializer.registerConverter(new ClassBeanResultListBeanConverter(
 				xmlSerializer.getMapper()));
-		xmlSerializer.registerConverter(new ClassBeanListConverter(xmlSerializer.getMapper()));
+		xmlSerializer.registerConverter(new ClassBeanListConverter(
+				xmlSerializer.getMapper()));
+		xmlSerializer
+				.registerConverter(new InstanceBeanResultListBeanConverter(
+						xmlSerializer.getMapper()));
+
 	}
 
 	/**
@@ -479,6 +486,8 @@ public class XMLSerializationServiceImpl implements XMLSerializationService {
 		xmlSerializer.alias(MessageUtils.getMessage("entity.page"), Page.class);
 		xmlSerializer.alias(MessageUtils.getMessage("entity.ontologyhitbean"),
 				OntologyHitBean.class);
+
+		xmlSerializer.alias("contents", InstanceBeanResultListBean.class);
 
 		xmlSerializer.alias(ApplicationConstants.RESPONSE_XML_TAG_NAME,
 				SuccessBean.class);

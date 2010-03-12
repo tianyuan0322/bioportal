@@ -75,4 +75,8 @@ public interface ConceptService {
 
 	public InstanceBean findInstanceById(Integer ontologyVerId,
 			String instanceId) throws Exception;
+
+	public Page<InstanceBean> findInstancesByConceptId(Integer ontologyVerId,
+			String instanceId, Integer pageSize, Integer pageNum)
+			throws Exception;
 }

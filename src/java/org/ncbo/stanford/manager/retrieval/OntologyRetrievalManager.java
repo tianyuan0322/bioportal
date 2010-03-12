@@ -52,4 +52,8 @@ public interface OntologyRetrievalManager {
 
 	public Page<ClassBean> findAllConcepts(OntologyBean ob, Integer pageSize,
 			Integer pageNum) throws Exception;
+
+	public Page<InstanceBean> findInstancesByConceptId(
+			OntologyBean ontologyBean, String instanceId, Integer pageSize,
+			Integer pageNum) throws Exception;
 }

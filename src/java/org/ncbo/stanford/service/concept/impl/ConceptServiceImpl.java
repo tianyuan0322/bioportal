@@ -123,6 +123,23 @@ public class ConceptServiceImpl implements ConceptService {
 				instanceId);
 	}
 
+	public Page<InstanceBean> findInstancesByConceptId(Integer ontologyVerId,
+			String conceptId, Integer pageSize, Integer pageNum)
+			throws Exception {
+
+		OntologyBean ontology = ontologyMetadataManager
+				.findOntologyOrViewVersionById(ontologyVerId);
+
+		if (ontology == null) {
+			throw new OntologyNotFoundException(
+					OntologyNotFoundException.DEFAULT_MESSAGE
+							+ " (Version Id: " + ontologyVerId + ")");
+		}
+		return getRetrievalManager(ontology).findInstancesByConceptId(ontology,
+				conceptId, pageSize, pageNum);
+
+	}
+
 	@SuppressWarnings("unchecked")
 	public ClassBean findPathFromRoot(Integer ontologyVersionId,
 			String conceptId, boolean light, Integer maxNumChildren)
