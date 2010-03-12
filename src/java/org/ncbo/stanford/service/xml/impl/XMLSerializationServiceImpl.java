@@ -487,8 +487,6 @@ public class XMLSerializationServiceImpl implements XMLSerializationService {
 		xmlSerializer.alias(MessageUtils.getMessage("entity.ontologyhitbean"),
 				OntologyHitBean.class);
 
-		xmlSerializer.alias("contents", InstanceBeanResultListBean.class);
-
 		xmlSerializer.alias(ApplicationConstants.RESPONSE_XML_TAG_NAME,
 				SuccessBean.class);
 		xmlSerializer.alias(ApplicationConstants.ERROR_XML_TAG_NAME,
