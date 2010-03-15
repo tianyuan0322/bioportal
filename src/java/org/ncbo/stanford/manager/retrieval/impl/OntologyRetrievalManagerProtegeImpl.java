@@ -17,6 +17,7 @@ import org.ncbo.stanford.bean.OntologyBean;
 import org.ncbo.stanford.bean.concept.ClassBean;
 import org.ncbo.stanford.bean.concept.ClassBeanResultListBean;
 import org.ncbo.stanford.bean.concept.InstanceBean;
+import org.ncbo.stanford.bean.concept.InstanceBeanResultListBean;
 import org.ncbo.stanford.bean.concept.InstanceTypesList;
 import org.ncbo.stanford.bean.concept.PropertyBean;
 import org.ncbo.stanford.enumeration.ConceptTypeEnum;
@@ -263,6 +264,49 @@ public class OntologyRetrievalManagerProtegeImpl extends
 		}
 		// populate classBean and return to caller.
 		return createInstanceBean(owlClass, true);
+	}
+
+	public Page<InstanceBean> findInstancesByConceptId(
+			OntologyBean ontologyVersion, String conceptId, Integer pageSize,
+			Integer pageNum) throws Exception {
+
+		KnowledgeBase kb = getKnowledgeBase(ontologyVersion);
+		// get frame using conceptId
+		Frame owlClass = getFrame(conceptId, kb);
+		
+		InstanceBeanResultListBean allInstances = new InstanceBeanResultListBean(
+				0);
+		if (owlClass != null) {
+			// TODO: start
+			Cls clsObj = (Cls) owlClass;
+			// get instance from KnowledgeBase
+			// TODO: need to verify about using getDirectInstances() or
+			// getInstances()
+			Collection<Instance> instances = clsObj.getDirectInstances();
+			InstanceBean instanceBean;
+			for (Instance instance : instances) {
+				instanceBean = createInstanceBean(instance, false);
+				allInstances.add(instanceBean);
+			}
+		}
+
+		int resultsSize = allInstances.size();
+
+		if (pageSize == null || pageSize <= 0) {
+			pageSize = resultsSize;
+		}
+
+		Page<InstanceBean> page;
+		Paginator<InstanceBean> p = new PaginatorImpl<InstanceBean>(allInstances,
+				pageSize);
+
+		if (pageNum == null || pageNum <= 1) {
+			page = p.getFirstPage();
+		} else {
+			page = p.getNextPage(pageNum - 1);
+		}
+
+		return page;
 	}
 
 	private InstanceBean createInstanceBean(Frame frame,
