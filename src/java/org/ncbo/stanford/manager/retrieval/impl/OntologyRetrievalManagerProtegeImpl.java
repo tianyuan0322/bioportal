@@ -277,11 +277,8 @@ public class OntologyRetrievalManagerProtegeImpl extends
 		InstanceBeanResultListBean allInstances = new InstanceBeanResultListBean(
 				0);
 		if (owlClass != null) {
-			// TODO: start
 			Cls clsObj = (Cls) owlClass;
 			// get instance from KnowledgeBase
-			// TODO: need to verify about using getDirectInstances() or
-			// getInstances()
 			Collection<Instance> instances = clsObj.getDirectInstances();
 			InstanceBean instanceBean;
 			for (Instance instance : instances) {
