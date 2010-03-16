@@ -198,8 +198,6 @@ public abstract class AbstractOntologyManagerProtege {
 			kb = (KnowledgeBase) protegeKnowledgeBases.get(ontology.getId());
 		}
 
-		kb = null;
-
 		if (kb == null) {
 			kb = createKnowledgeBaseInstance(ontology);
 
