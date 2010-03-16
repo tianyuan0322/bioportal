@@ -215,7 +215,7 @@
 
 		<copy file="${tmpl.dir}/applicationContext-rest.xml.tmpl" tofile="${conf.dir.generated}/applicationContext-rest.xml" overwrite="true">
 			<filterset>
-				<filter token="bioportalresourcetempfilepath" value="${bioportal.resource.tempfile.path}" />
+				<filter token="bioportaltempdir" value="${bioportal.tempdir}" />
 			</filterset>
 		</copy>
 

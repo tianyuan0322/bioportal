@@ -29,7 +29,7 @@ public class ViewExtractionRestlet extends AbstractBaseRestlet {
 			.getLogger(ViewExtractionRestlet.class);
 
 	private ConceptService conceptService;
-	private String tempfile;
+	private String tempDir;
 
 	@Override
 	public void getRequest(Request request, Response response) {
@@ -105,7 +105,7 @@ public class ViewExtractionRestlet extends AbstractBaseRestlet {
 				filename = filename + ".owl";
 			}
 
-			File output = new File(tempfile + File.separator + filename);
+			File output = new File(tempDir + File.separator + filename);
 
 			// synchronized (this) {
 			// save ontology into local system
@@ -121,7 +121,7 @@ public class ViewExtractionRestlet extends AbstractBaseRestlet {
 			// sleep
 			// Thread.sleep(ApplicationConstants.TIMETOLIVE * 1000);
 			// delete tmp files
-			deleteTempfiles(filename);
+			deletetempDirs(filename);
 			// }
 
 		} catch (ConceptNotFoundException cnfe) {
@@ -134,9 +134,9 @@ public class ViewExtractionRestlet extends AbstractBaseRestlet {
 		}
 	}
 
-	private void deleteTempfiles(String filename) {
+	private void deletetempDirs(String filename) {
 
-		File directory = new File(tempfile);
+		File directory = new File(tempDir);
 		if (directory.exists()) {
 
 			File[] files = directory.listFiles();
@@ -159,12 +159,12 @@ public class ViewExtractionRestlet extends AbstractBaseRestlet {
 		this.conceptService = conceptService;
 	}
 
-	public String getTempfile() {
-		return tempfile;
+	public String getTempDir() {
+		return tempDir;
 	}
 
-	public void setTempfile(String tempfile) {
-		this.tempfile = tempfile;
+	public void setTempDir(String tempDir) {
+		this.tempDir = tempDir;
 	}
 
 }
