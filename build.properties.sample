@@ -156,7 +156,7 @@ bioportal.upload.maxfilesize=10485760
 ################## Protege Configuration ##################
 
 # db connection
-protege.jdbc.url=jdbc:mysql://localhost/bioportal_protege?useUnicode=true&amp;characterEncoding=UTF-8
+protege.jdbc.url=jdbc:mysql://localhost/bioportal_protege?useUnicode=true&amp;characterEncoding=UTF-8&amp;holdResultsOpenOverStatementClose=true
 protege.jdbc.driver=com.mysql.jdbc.Driver
 protege.jdbc.username=yourprotegedbuser
 protege.jdbc.password=yourprotegedbpassword
