@@ -17,6 +17,8 @@ import org.ncbo.stanford.bean.OntologyIdBean;
 import org.ncbo.stanford.bean.OntologyVersionIdBean;
 import org.ncbo.stanford.bean.concept.ClassBean;
 import org.ncbo.stanford.bean.concept.InstanceBean;
+import org.ncbo.stanford.enumeration.StatusEnum;
+import org.ncbo.stanford.exception.OntologyDeprecatedException;
 import org.ncbo.stanford.exception.OntologyNotFoundException;
 import org.ncbo.stanford.manager.metadata.OntologyMetadataManager;
 import org.ncbo.stanford.manager.obs.OBSManager;
@@ -60,6 +62,10 @@ public class ConceptServiceImpl implements ConceptService {
 			throw new OntologyNotFoundException(
 					OntologyNotFoundException.DEFAULT_MESSAGE
 							+ " (Version Id: " + ontologyVersionId + ")");
+		} else if (ontology.getStatusId().equals(StatusEnum.STATUS_DEPRECATED.getStatus())) {
+			throw new OntologyDeprecatedException(
+					OntologyDeprecatedException.DEFAULT_MESSAGE
+							+ " (Version Id: " + ontologyVersionId + ")");			
 		}
 
 		ClassBean concept = getRetrievalManager(ontology).findRootConcept(
@@ -90,6 +96,10 @@ public class ConceptServiceImpl implements ConceptService {
 			throw new OntologyNotFoundException(
 					OntologyNotFoundException.DEFAULT_MESSAGE
 							+ " (Version Id: " + ontologyVersionId + ")");
+		} else if (ontology.getStatusId().equals(StatusEnum.STATUS_DEPRECATED.getStatus())) {
+			throw new OntologyDeprecatedException(
+					OntologyDeprecatedException.DEFAULT_MESSAGE
+							+ " (Version Id: " + ontologyVersionId + ")");			
 		}
 
 		ClassBean concept = getRetrievalManager(ontology).findConcept(ontology,
