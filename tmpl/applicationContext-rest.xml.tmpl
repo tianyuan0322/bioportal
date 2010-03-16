@@ -346,11 +346,17 @@
 		<property name="conceptService">
 			<ref bean="conceptService" />
 		</property>
-		<property name="tempfile">
-			<value>@bioportalresourcetempfilepath@</value>
+		<property name="tempDir">
+			<ref bean="tempDir" />
 		</property>
 	</bean>
 	
+	<!-- Temporary directory on the server -->
+	<bean id="tempDir" class="java.lang.String">
+		<constructor-arg>
+			<value>@bioportaltempdir@</value>
+		</constructor-arg>
+	</bean>
 	
 	<!-- All mappings: -->
 	<bean id="restManager" class="org.ncbo.stanford.view.rest.base.RestManager">
