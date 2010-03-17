@@ -339,7 +339,6 @@
 		</property>
 	</bean>
 	
-	<!-- commenting for now until this funcitonality is ready for release -->
 	<bean id="viewExtractionRestlet"
 		class="org.ncbo.stanford.view.rest.restlet.extractor.ViewExtractionRestlet"
 		parent="abstractBaseRestlet">
@@ -348,6 +347,9 @@
 		</property>
 		<property name="tempDir">
 			<ref bean="tempDir" />
+		</property>
+		<property name="traversedConceptLimit">
+			<ref bean="traversedConceptLimit" />
 		</property>
 	</bean>
 	
@@ -358,6 +360,12 @@
 		</constructor-arg>
 	</bean>
 	
+	<bean id="traversedConceptLimit" class="java.lang.Integer">
+		<constructor-arg>
+			<value>@bioportaltraversedconceptlimit@</value>
+		</constructor-arg>
+	</bean>
+
 	<!-- All mappings: -->
 	<bean id="restManager" class="org.ncbo.stanford.view.rest.base.RestManager">
 		<property name="resourceMappings">

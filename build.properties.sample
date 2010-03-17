@@ -157,6 +157,9 @@ bioportal.tempdir=${bioportal.resource.path}/tmp
 # Max upload file size
 bioportal.upload.maxfilesize=10485760
 
+# Max number of traversed concepts for operations that do concept traversal
+bioportal.traversedConceptLimit=10000
+
 ################## Protege Configuration ##################
 
 # db connection
