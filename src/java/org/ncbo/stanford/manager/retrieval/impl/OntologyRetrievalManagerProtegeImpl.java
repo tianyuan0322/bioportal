@@ -287,7 +287,7 @@ public class OntologyRetrievalManagerProtegeImpl extends
 			Collection<Instance> instances = clsObj.getDirectInstances();
 			InstanceBean instanceBean;
 			for (Instance instance : instances) {
-				instanceBean = createInstanceBean(instance, false);
+				instanceBean = createInstanceBean(instance, true);
 				allInstances.add(instanceBean);
 			}
 		}
