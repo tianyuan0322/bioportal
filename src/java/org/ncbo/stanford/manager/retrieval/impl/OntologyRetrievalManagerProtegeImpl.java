@@ -175,6 +175,8 @@ public class OntologyRetrievalManagerProtegeImpl extends
 		if (pageSize == null || pageSize <= 0) {
 			pageSize = (totalResults <= allConceptsMaxPageSize) ? totalResults
 					: allConceptsMaxPageSize;
+		} else if (pageSize > allConceptsMaxPageSize) {
+			pageSize = allConceptsMaxPageSize;
 		}
 
 		Paginator<ClassBean> p = new PaginatorImpl<ClassBean>(pageConcepts,
