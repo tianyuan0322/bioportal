@@ -23,14 +23,14 @@ public class PaginatorImpl<E> implements Paginator<E> {
 	public static final int DEFAULT_PAGESIZE = 50;
 
 	public PaginatorImpl(final Paginatable<E> pageList, final int pageSize,
-			final int pageNum, final int totalSize) {
+			final int totalSize) {
 		if (pageSize < 0) {
 			throw new IllegalArgumentException(INVALID_PAGESIZE);
 		}
 
 		this.pageList = pageList;
-		this.totalSize = totalSize;
 		this.pageSize = pageSize;
+		this.totalSize = totalSize;
 	}
 
 	public PaginatorImpl(final Paginatable<E> originalList, final int pageSize)
@@ -40,8 +40,8 @@ public class PaginatorImpl<E> implements Paginator<E> {
 		}
 
 		this.originalList = originalList;
-		this.totalSize = originalList.size();
 		this.pageSize = pageSize;
+		this.totalSize = originalList.size();
 	}
 
 	public PaginatorImpl(final Paginatable<E> originalList) {
