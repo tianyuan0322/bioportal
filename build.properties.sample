@@ -58,6 +58,10 @@ bioportal.search.indexmaxmergedocs=2147483647
 bioportal.search.indexpath=${bioportal.resource.path}/searchindex
 bioportal.search.indexbackuppath=${bioportal.search.indexpath}/backup
 
+# Get all concepts service properties
+# Maximum number of concepts per page
+bioportal.allconcepts.maxpagesize=5000
+
 # Paginatable lists cache properties
 #
 # Total timeout = .cache.timeout * .cache.numcontainers
