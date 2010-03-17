@@ -62,6 +62,8 @@ public class OntologyRetrievalManagerProtegeImpl extends
 	private static final Log log = LogFactory
 			.getLog(OntologyRetrievalManagerProtegeImpl.class);
 
+	private Integer allConceptsMaxPageSize;
+
 	/**
 	 * Default Constructor
 	 */
@@ -166,30 +168,35 @@ public class OntologyRetrievalManagerProtegeImpl extends
 				.getDocumentationSlot());
 		final Slot authorSlot = getAuthorSlot(kb, ob.getAuthorSlot());
 		List<Cls> allClasses = getAllClasses(kb);
-		ClassBeanResultListBean allConcepts = new ClassBeanResultListBean(0);
-
-		int totalSize = allClasses.size();
+		ClassBeanResultListBean pageConcepts = new ClassBeanResultListBean(0);
+		int totalResults = allClasses.size();
 
 		if (pageSize == null || pageSize <= 0) {
-			pageSize = totalSize;
+			pageSize = (totalResults <= allConceptsMaxPageSize) ? totalResults
+					: allConceptsMaxPageSize;
+		} else if (pageSize > allConceptsMaxPageSize) {
+			pageSize = allConceptsMaxPageSize;
 		}
+
+		Paginator<ClassBean> p = new PaginatorImpl<ClassBean>(pageConcepts,
+				pageSize, totalResults);
 
 		if (pageNum == null || pageNum <= 1) {
 			pageNum = 1;
+		} else {
+			int numPages = p.getNumPages();
+			pageNum = (pageNum > numPages) ? numPages : pageNum;
 		}
 
 		int offset = pageNum * pageSize - pageSize;
-		int limit = (offset + pageSize > totalSize) ? totalSize : offset
+		int limit = (offset + pageSize > totalResults) ? totalResults : offset
 				+ pageSize;
 		List<Cls> allConceptsLimited = allClasses.subList(offset, limit);
 
 		for (Cls cls : allConceptsLimited) {
-			allConcepts.add(createClassBean(cls, true, synonymSlot,
+			pageConcepts.add(createClassBean(cls, true, synonymSlot,
 					definitionSlot, authorSlot));
 		}
-
-		Paginator<ClassBean> p = new PaginatorImpl<ClassBean>(allConcepts,
-				pageSize, pageNum, totalSize);
 
 		return p.getCurrentPage(pageNum);
 	}
@@ -737,5 +744,13 @@ public class OntologyRetrievalManagerProtegeImpl extends
 		}
 
 		return false;
+	}
+
+	/**
+	 * @param allConceptsMaxPageSize
+	 *            the allConceptsMaxPageSize to set
+	 */
+	public void setAllConceptsMaxPageSize(Integer allConceptsMaxPageSize) {
+		this.allConceptsMaxPageSize = allConceptsMaxPageSize;
 	}
 }
