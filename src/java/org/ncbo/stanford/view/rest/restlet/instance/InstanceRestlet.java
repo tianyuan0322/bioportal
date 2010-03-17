@@ -7,8 +7,6 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.ncbo.stanford.bean.concept.InstanceBean;
-import org.ncbo.stanford.exception.ConceptNotFoundException;
 import org.ncbo.stanford.exception.InvalidInputException;
 import org.ncbo.stanford.service.concept.ConceptService;
 import org.ncbo.stanford.util.MessageUtils;
