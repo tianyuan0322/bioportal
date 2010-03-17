@@ -46,14 +46,17 @@ public class OntologyExtractor {
 	private URI ontologyName;
 	private OWLOntology ontology;
 	private Set<OWLClass> traversed = new HashSet<OWLClass>();
-	
+
 	// Since we don't return any data, set this flag if we don't find a concept
 	private Boolean conceptFound = true;
 
 	private static int classesImported = 0;
 
 	int logCount; // default 100
+	private final int LOG_COUNT_DEFAULT = 1000;
+
 	int saveCount; // default 100
+	private final int SAVE_COUNT_DEFAULT = 1000;
 
 	private ConceptService conceptService;
 	private NcboProperties ncboProperties;
@@ -65,8 +68,8 @@ public class OntologyExtractor {
 		this.manager = manager;
 		this.ontologyServiceDescriptor = ontologyServiceDescriptor;
 		this.outputFile = output;
-		this.logCount = ncboProperties.getLogCount(100);
-		this.saveCount = ncboProperties.getSaveCount(100);
+		this.logCount = ncboProperties.getLogCount(LOG_COUNT_DEFAULT);
+		this.saveCount = ncboProperties.getSaveCount(SAVE_COUNT_DEFAULT);
 		this.ncboProperties = ncboProperties;
 	}
 
@@ -96,7 +99,7 @@ public class OntologyExtractor {
 			conceptFound = false;
 			return;
 		}
-		
+
 		if (traversed.contains(c.getOwlClass())) {
 			return;
 		}
@@ -112,13 +115,13 @@ public class OntologyExtractor {
 
 		classesImported++;
 
-		if (logCount > 0 && classesImported % logCount == 0) {
+		if (logCount > 0 && classesImported == logCount) {
 			log.info("Imported " + classesImported
 					+ " classes.\t Last imported class: " + c.getName()
 					+ " \t on " + new Date());
 		}
 
-		if (saveCount > 0 && classesImported % saveCount == 0) {
+		if (saveCount > 0 && classesImported == saveCount) {
 			long t0 = System.currentTimeMillis();
 			log.info("Saving ontology (" + classesImported
 					+ " classes imported) ... ");
@@ -147,7 +150,7 @@ public class OntologyExtractor {
 			conceptFound = false;
 			return;
 		}
-		
+
 		attachLabel(c);
 
 		ClassBean conceptBean = c.getBean();
@@ -196,7 +199,7 @@ public class OntologyExtractor {
 			conceptFound = false;
 			return;
 		}
-		
+
 		OWLDataFactory factory = manager.getOWLDataFactory();
 		String label = c.getBean().getLabel();
 		OWLAnnotationProperty labelProperty = factory
@@ -284,7 +287,7 @@ public class OntologyExtractor {
 				// TODO:
 				try {
 					cb = conceptService.findConcept(ontologyVersionId, name,
-							null, false, false,false);
+							null, false, false, false);
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
@@ -326,7 +329,8 @@ public class OntologyExtractor {
 	}
 
 	/**
-	 * @param conceptFound the conceptFound to set
+	 * @param conceptFound
+	 *            the conceptFound to set
 	 */
 	public void setConceptFound(Boolean conceptFound) {
 		this.conceptFound = conceptFound;

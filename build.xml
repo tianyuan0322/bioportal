@@ -217,6 +217,7 @@
 		<copy file="${tmpl.dir}/applicationContext-rest.xml.tmpl" tofile="${conf.dir.generated}/applicationContext-rest.xml" overwrite="true">
 			<filterset>
 				<filter token="bioportaltempdir" value="${bioportal.tempdir}" />
+				<filter token="bioportaltraversedconceptlimit" value="${bioportal.traversedConceptLimit}" />
 			</filterset>
 		</copy>
 

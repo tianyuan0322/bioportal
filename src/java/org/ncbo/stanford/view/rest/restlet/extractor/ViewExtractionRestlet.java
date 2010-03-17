@@ -22,6 +22,7 @@ import org.semanticweb.owlapi.apibinding.OWLManager;
 import org.semanticweb.owlapi.model.IRI;
 import org.semanticweb.owlapi.model.OWLOntology;
 import org.semanticweb.owlapi.model.OWLOntologyManager;
+import org.ncbo.stanford.exception.InvalidInputException;
 
 public class ViewExtractionRestlet extends AbstractBaseRestlet {
 
@@ -30,6 +31,9 @@ public class ViewExtractionRestlet extends AbstractBaseRestlet {
 
 	private ConceptService conceptService;
 	private String tempDir;
+
+	// Limits the total number of traversed concepts
+	private int traversedConceptLimit;
 
 	@Override
 	public void getRequest(Request request, Response response) {
@@ -41,7 +45,7 @@ public class ViewExtractionRestlet extends AbstractBaseRestlet {
 		try {
 			NcboProperties ncboProperties;
 			OWLOntologyManager manager = OWLManager.createOWLOntologyManager();
-
+			
 			// get conceptId and versionId from request
 			String conceptId = getConceptId(request);
 			String versionId = (String) request.getAttributes().get(
@@ -79,6 +83,15 @@ public class ViewExtractionRestlet extends AbstractBaseRestlet {
 			if (saveCount != null)
 				properties.setProperty("save.count", saveCount);
 
+			// Make sure saveCount is below appropriate limits
+			Integer checkCount = RequestUtils.parseIntegerParam(saveCount);
+			if (checkCount != null && checkCount > traversedConceptLimit) {
+				throw new InvalidInputException(MessageUtils.getMessage(
+						"msg.error.overConceptLimit").replaceAll(
+						"%CONCEPT_LIMIT%",
+						Integer.toString(traversedConceptLimit)));
+			}
+
 			ncboProperties = new NcboProperties();
 			ncboProperties.setProps(properties);
 
@@ -99,7 +112,7 @@ public class ViewExtractionRestlet extends AbstractBaseRestlet {
 				throw new ConceptNotFoundException(MessageUtils
 						.getMessage("msg.error.conceptNotFound"));
 			}
-			
+
 			String filename = ontologyName.toString();
 			if (!filename.contains(".owl")) {
 				filename = filename + ".owl";
@@ -127,6 +140,9 @@ public class ViewExtractionRestlet extends AbstractBaseRestlet {
 		} catch (ConceptNotFoundException cnfe) {
 			response
 					.setStatus(Status.CLIENT_ERROR_NOT_FOUND, cnfe.getMessage());
+		} catch (InvalidInputException iie) {
+			response
+			.setStatus(Status.CLIENT_ERROR_REQUEST_ENTITY_TOO_LARGE, iie.getMessage());
 		} catch (Exception e) {
 			response.setStatus(Status.SERVER_ERROR_INTERNAL, e.getMessage());
 			e.printStackTrace();
@@ -165,6 +181,20 @@ public class ViewExtractionRestlet extends AbstractBaseRestlet {
 
 	public void setTempDir(String tempDir) {
 		this.tempDir = tempDir;
+	}
+
+	/**
+	 * @return the traversedConceptLimit
+	 */
+	public int getTraversedConceptLimit() {
+		return traversedConceptLimit;
+	}
+
+	/**
+	 * @param traversedConceptLimit the traversedConceptLimit to set
+	 */
+	public void setTraversedConceptLimit(int traversedConceptLimit) {
+		this.traversedConceptLimit = traversedConceptLimit;
 	}
 
 }
