@@ -70,6 +70,8 @@ public class OntologyRetrievalManagerLexGridImpl extends
 	private static final Log log = LogFactory
 			.getLog(OntologyRetrievalManagerLexGridImpl.class);
 
+	private Integer allConceptsMaxPageSize;
+
 	private static final String ROOT_CLASS_ID = "THING";
 
 	public OntologyRetrievalManagerLexGridImpl() throws Exception {
@@ -326,14 +328,23 @@ public class OntologyRetrievalManagerLexGridImpl extends
 			ResolvedConceptReferencesIterator iterator = lbs
 					.getCodingSchemeConcepts(schemeName, csvt).resolve(null,
 							null, null, null, false);
+			ClassBeanResultListBean pageConcepts = new ClassBeanResultListBean(
+					0);
 			int totalResults = iterator.numberRemaining();
 
 			if (pageSize == null || pageSize <= 0) {
-				pageSize = totalResults;
+				pageSize = (totalResults <= allConceptsMaxPageSize) ? totalResults
+						: allConceptsMaxPageSize;
 			}
+
+			Paginator<ClassBean> p = new PaginatorImpl<ClassBean>(pageConcepts,
+					pageSize, totalResults);
 
 			if (pageNum == null || pageNum <= 1) {
 				pageNum = 1;
+			} else {
+				int numPages = p.getNumPages();
+				pageNum = (pageNum > numPages) ? numPages : pageNum;
 			}
 
 			int fromIndex = pageNum * pageSize - pageSize;
@@ -343,18 +354,12 @@ public class OntologyRetrievalManagerLexGridImpl extends
 			ResolvedConceptReferenceList rcrl = iterator
 					.get(fromIndex, toIndex);
 
-			ClassBeanResultListBean classBeanList = new ClassBeanResultListBean(
-					0);
-
 			for (Iterator<ResolvedConceptReference> itr = rcrl
 					.iterateResolvedConceptReference(); itr.hasNext();) {
 				ResolvedConceptReference rcr = itr.next();
-				classBeanList.add(findConcept(ontologyBean, rcr
-						.getConceptCode()));
+				pageConcepts
+						.add(findConcept(ontologyBean, rcr.getConceptCode()));
 			}
-
-			Paginator<ClassBean> p = new PaginatorImpl<ClassBean>(
-					classBeanList, pageSize, pageNum, totalResults);
 
 			return p.getCurrentPage(pageNum);
 		} catch (LBParameterException ex) {
@@ -1562,6 +1567,14 @@ public class OntologyRetrievalManagerLexGridImpl extends
 				schemeName, csvt) : lbscm.getAssociationReverseName(assoc,
 				schemeName, csvt);
 		return (StringUtils.isNotBlank(dirName) ? dirName : "[R]" + assoc);
+	}
+
+	/**
+	 * @param allConceptsMaxPageSize
+	 *            the allConceptsMaxPageSize to set
+	 */
+	public void setAllConceptsMaxPageSize(Integer allConceptsMaxPageSize) {
+		this.allConceptsMaxPageSize = allConceptsMaxPageSize;
 	}
 
 }
