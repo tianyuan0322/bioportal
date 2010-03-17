@@ -442,11 +442,17 @@
 	<bean id="ontologyRetrievalManagerLexGrid"
 		class="org.ncbo.stanford.manager.retrieval.impl.OntologyRetrievalManagerLexGridImpl"
 		parent="abstractOntologyManagerLexGrid">
+		<property name="allConceptsMaxPageSize">
+			<ref bean="allConceptsMaxPageSize" />
+		</property>
 	</bean>
 
 	<bean id="ontologyRetrievalManagerProtege"
 		class="org.ncbo.stanford.manager.retrieval.impl.OntologyRetrievalManagerProtegeImpl"
 		parent="abstractOntologyManagerProtege">
+		<property name="allConceptsMaxPageSize">
+			<ref bean="allConceptsMaxPageSize" />
+		</property>
 	</bean>
 
 	<bean id="ontologyLoadManagerLexGrid"
@@ -1248,10 +1254,16 @@
 			<value>@oborepositoriesconfigfilepath@</value>
 		</constructor-arg>
 	</bean>
+	
 	<bean id="returnUrl" class="java.lang.String">
 		<constructor-arg>
 			<value>@returnUrl@</value>
 		</constructor-arg>
 	</bean>
-	
+
+	<bean id="allConceptsMaxPageSize" class="java.lang.Integer">
+		<constructor-arg>
+			<value>@bioportalallconceptsmaxpagesize@</value>
+		</constructor-arg>
+	</bean>
 </beans>
