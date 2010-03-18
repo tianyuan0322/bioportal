@@ -37,6 +37,7 @@ import edu.stanford.smi.protege.model.Instance;
 import edu.stanford.smi.protege.model.KnowledgeBase;
 import edu.stanford.smi.protege.model.ModelUtilities;
 import edu.stanford.smi.protege.model.Slot;
+import edu.stanford.smi.protege.model.SystemFrames;
 import edu.stanford.smi.protegex.owl.model.NamespaceUtil;
 import edu.stanford.smi.protegex.owl.model.OWLModel;
 import edu.stanford.smi.protegex.owl.model.OWLNamedClass;
@@ -246,7 +247,7 @@ public class OntologyRetrievalManagerProtegeImpl extends
 		} else {
 			// Protege format
 			allClasses.addAll(kb.getClses());
-			allClasses.removeAll((Collection<Cls>) kb.getSystemFrames());
+			allClasses.removeAll(kb.getSystemFrames().getFrames());
 		}
 
 		Collections.sort(allClasses, new Comparator<Cls>() {
