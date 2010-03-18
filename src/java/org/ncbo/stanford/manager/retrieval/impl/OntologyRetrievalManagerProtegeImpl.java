@@ -245,7 +245,7 @@ public class OntologyRetrievalManagerProtegeImpl extends
 		} else {
 			// Protege format
 			allClasses.addAll(kb.getClses());
-			allClasses.removeAll((Collection<Cls>) kb.getSystemFrames());
+			allClasses.removeAll(kb.getSystemFrames().getFrames());
 		}
 
 		Collections.sort(allClasses, new Comparator<Cls>() {
