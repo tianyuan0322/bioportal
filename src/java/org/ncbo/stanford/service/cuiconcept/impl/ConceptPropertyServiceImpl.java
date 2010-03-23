@@ -58,21 +58,18 @@ public class ConceptPropertyServiceImpl implements ConceptPropertyService {
 						.getContents().iterator();
 				SearchBean searchResult;
 				ClassBean cuiConcept;
+
 				while (searchResults.hasNext()) {
 					searchResult = searchResults.next();
 
 					cuiConcept = conceptService.findConcept(searchResult
 							.getOntologyVersionId(), searchResult
-							.getConceptId(), null, false, false, true);
+							.getConceptId(), null, false, false);
 					cuiConcept.setOntologyVersionId(searchResult
 							.getOntologyVersionId().toString());
 					resultClassbeans.add(cuiConcept);
-
 				}
 			}
-			// }
-			// }
-
 		} catch (Exception ex) {
 			log.error("error while getting class beans", ex.getCause());
 		}

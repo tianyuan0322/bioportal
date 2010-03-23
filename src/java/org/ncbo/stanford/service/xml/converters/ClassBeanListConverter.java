@@ -3,7 +3,7 @@
  */
 package org.ncbo.stanford.service.xml.converters;
 
-import java.util.ArrayList;
+import java.util.List;
 
 import org.ncbo.stanford.bean.concept.ClassBean;
 import org.ncbo.stanford.bean.concept.InstanceTypesList;
@@ -36,11 +36,12 @@ public class ClassBeanListConverter extends CollectionConverter {
 			MarshallingContext context) {
 		InstanceTypesList ontologyHitMap = (InstanceTypesList) source;
 		writer.startNode("list");
-		ArrayList<ClassBean> collection = ontologyHitMap.getInstanceTypes();
+		List<ClassBean> collection = ontologyHitMap.getInstanceTypes();
 
 		for (ClassBean hit : collection) {
 			writeItem(hit, context, writer);
 		}
+		
 		writer.endNode();
 	}
 

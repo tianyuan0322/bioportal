@@ -75,6 +75,7 @@ public interface ApplicationConstants {
 	public static final String SUPER_CLASS = "SuperClass";
 	public static final String RDF_TYPE = "RdfType";
 	public static final String CHILD_COUNT = "ChildCount";
+	public static final String INSTANCE_COUNT = "InstanceCount";
 	public static final String SEMANTIC_TYPES = "SemanticTypes";
 	public static final String LEVEL = "Level";
 	public static final String PATH = "Path";

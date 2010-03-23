@@ -3,25 +3,21 @@
  */
 package org.ncbo.stanford.bean.concept;
 
-import java.util.ArrayList;
-
-import org.ncbo.stanford.bean.concept.ClassBean;
+import java.util.List;
 
 /**
  * @author s.reddy
- *
+ * 
  */
 public class InstanceTypesList {
-	
-	ArrayList<ClassBean> instanceTypes;
-	
-	public ArrayList<ClassBean> getInstanceTypes() {
+
+	List<ClassBean> instanceTypes;
+
+	public List<ClassBean> getInstanceTypes() {
 		return instanceTypes;
 	}
 
-	public void setInstanceTypes(ArrayList<ClassBean> instanceTypes) {
+	public void setInstanceTypes(List<ClassBean> instanceTypes) {
 		this.instanceTypes = instanceTypes;
 	}
-
-	
 }

@@ -62,10 +62,11 @@ public class ConceptServiceImpl implements ConceptService {
 			throw new OntologyNotFoundException(
 					OntologyNotFoundException.DEFAULT_MESSAGE
 							+ " (Version Id: " + ontologyVersionId + ")");
-		} else if (ontology.getStatusId().equals(StatusEnum.STATUS_DEPRECATED.getStatus())) {
+		} else if (ontology.getStatusId().equals(
+				StatusEnum.STATUS_DEPRECATED.getStatus())) {
 			throw new OntologyDeprecatedException(
 					OntologyDeprecatedException.DEFAULT_MESSAGE
-							+ " (Version Id: " + ontologyVersionId + ")");			
+							+ " (Version Id: " + ontologyVersionId + ")");
 		}
 
 		ClassBean concept = getRetrievalManager(ontology).findRootConcept(
@@ -87,8 +88,8 @@ public class ConceptServiceImpl implements ConceptService {
 
 	@SuppressWarnings("unchecked")
 	public ClassBean findConcept(Integer ontologyVersionId, String conceptId,
-			Integer maxNumChildren, boolean light, boolean noRelations,
-			boolean isIncludeInstances) throws Exception {
+			Integer maxNumChildren, boolean light, boolean noRelations)
+			throws Exception {
 		OntologyBean ontology = ontologyMetadataManager
 				.findOntologyOrViewVersionById(ontologyVersionId);
 
@@ -96,14 +97,15 @@ public class ConceptServiceImpl implements ConceptService {
 			throw new OntologyNotFoundException(
 					OntologyNotFoundException.DEFAULT_MESSAGE
 							+ " (Version Id: " + ontologyVersionId + ")");
-		} else if (ontology.getStatusId().equals(StatusEnum.STATUS_DEPRECATED.getStatus())) {
+		} else if (ontology.getStatusId().equals(
+				StatusEnum.STATUS_DEPRECATED.getStatus())) {
 			throw new OntologyDeprecatedException(
 					OntologyDeprecatedException.DEFAULT_MESSAGE
-							+ " (Version Id: " + ontologyVersionId + ")");			
+							+ " (Version Id: " + ontologyVersionId + ")");
 		}
 
 		ClassBean concept = getRetrievalManager(ontology).findConcept(ontology,
-				conceptId, light, noRelations, isIncludeInstances);
+				conceptId, light, noRelations);
 
 		// temporary fix to remove long list of siblings
 		if (concept != null && maxNumChildren != null) {

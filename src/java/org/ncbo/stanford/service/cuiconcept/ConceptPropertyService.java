@@ -15,5 +15,6 @@ import org.ncbo.stanford.enumeration.PropertyTypeEnum;
  */
 public interface ConceptPropertyService {
 
-	public List<ClassBean> findConceptsByProperty(PropertyTypeEnum type, String value, Collection<Integer> ontologyIds) ;
+	public List<ClassBean> findConceptsByProperty(PropertyTypeEnum type,
+			String value, Collection<Integer> ontologyIds);
 }

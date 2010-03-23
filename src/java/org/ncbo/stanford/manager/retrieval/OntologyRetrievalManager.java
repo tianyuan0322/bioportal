@@ -18,8 +18,7 @@ import org.ncbo.stanford.util.paginator.impl.Page;
  */
 public interface OntologyRetrievalManager {
 	public ClassBean findConcept(OntologyBean ob, String conceptId,
-			boolean light, boolean noRelations, boolean isIncludeInstances)
-			throws Exception;
+			boolean light, boolean noRelations) throws Exception;
 
 	public ClassBean findRootConcept(OntologyBean ob, boolean light)
 			throws Exception;

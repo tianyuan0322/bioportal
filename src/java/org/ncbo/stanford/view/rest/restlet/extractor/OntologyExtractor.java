@@ -14,9 +14,7 @@ import java.util.Set;
 
 import org.apache.log4j.Logger;
 import org.ncbo.stanford.bean.concept.ClassBean;
-import org.ncbo.stanford.exception.ConceptNotFoundException;
 import org.ncbo.stanford.service.concept.ConceptService;
-import org.ncbo.stanford.util.MessageUtils;
 import org.ncbo.stanford.util.constants.ApplicationConstants;
 import org.semanticweb.owlapi.io.RDFXMLOntologyFormat;
 import org.semanticweb.owlapi.model.IRI;
@@ -282,12 +280,11 @@ public class OntologyExtractor {
 				 * ://stagerest.bioontology.org/bioportal/concepts/35686/V59.71
 				 * http
 				 * ://stagerest.bioontology.org/bioportal/concepts/35686/V59.70
-				 * `
 				 */
 				// TODO:
 				try {
 					cb = conceptService.findConcept(ontologyVersionId, name,
-							null, false, false, false);
+							null, false, false);
 				} catch (Exception e) {
 					e.printStackTrace();
 				}

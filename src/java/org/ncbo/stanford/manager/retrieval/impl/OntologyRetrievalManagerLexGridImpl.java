@@ -1,6 +1,7 @@
 package org.ncbo.stanford.manager.retrieval.impl;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -74,6 +75,10 @@ public class OntologyRetrievalManagerLexGridImpl extends
 
 	private static final String ROOT_CLASS_ID = "THING";
 
+	// mdorf: hack for now to remove certain MSH relations
+	List<String> relationsToFilter = new ArrayList<String>(Arrays.asList("QB",
+			"CHD", "QA", "NH", "SIB", "AQ"));
+
 	public OntologyRetrievalManagerLexGridImpl() throws Exception {
 		lbs = LexBIGServiceImpl.defaultInstance();
 		lbscm = (LexBIGServiceConvenienceMethods) lbs
@@ -131,8 +136,7 @@ public class OntologyRetrievalManagerLexGridImpl extends
 	 * @throws Exception
 	 */
 	public ClassBean findConcept(OntologyBean ontologyBean, String conceptId,
-			boolean light, boolean noRelations, boolean isIncludeInstances)
-			throws Exception {
+			boolean light, boolean noRelations) throws Exception {
 		ClassBean concept = null;
 
 		if (noRelations) {
@@ -197,7 +201,6 @@ public class OntologyRetrievalManagerLexGridImpl extends
 		} else if (StringUtils.isBlank(conceptId)) {
 			log.warn("Can not process request when the conceptId is blank");
 		} else {
-
 			CodingSchemeVersionOrTag csvt = getLexGridCodingSchemeVersion(ontologyBean);
 			// Perform the query ...
 			ConceptReferenceList crefs = ConvenienceMethods
@@ -268,7 +271,9 @@ public class OntologyRetrievalManagerLexGridImpl extends
 						classBean);
 				addSuperClassRelationToClassBean(schemeName, csvt, classBean);
 
-				return classBean;
+				for (String relationToFilter : relationsToFilter) {
+					classBean.removeRelation(relationToFilter);
+				}
 			}
 		}
 

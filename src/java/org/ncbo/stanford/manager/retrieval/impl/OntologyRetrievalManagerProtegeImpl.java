@@ -37,7 +37,6 @@ import edu.stanford.smi.protege.model.Instance;
 import edu.stanford.smi.protege.model.KnowledgeBase;
 import edu.stanford.smi.protege.model.ModelUtilities;
 import edu.stanford.smi.protege.model.Slot;
-import edu.stanford.smi.protege.model.SystemFrames;
 import edu.stanford.smi.protegex.owl.model.NamespaceUtil;
 import edu.stanford.smi.protegex.owl.model.OWLModel;
 import edu.stanford.smi.protegex.owl.model.OWLNamedClass;
@@ -106,8 +105,7 @@ public class OntologyRetrievalManagerProtegeImpl extends
 	}
 
 	public ClassBean findConcept(OntologyBean ontologyVersion,
-			String conceptId, boolean light, boolean noRelations,
-			boolean isIncludeInstances) {
+			String conceptId, boolean light, boolean noRelations) {
 		KnowledgeBase kb = getKnowledgeBase(ontologyVersion);
 		Slot synonymSlot = getSynonymSlot(kb, ontologyVersion.getSynonymSlot());
 		Slot definitionSlot = getDefinitionSlot(kb, ontologyVersion
@@ -128,29 +126,6 @@ public class OntologyRetrievalManagerProtegeImpl extends
 			} else {
 				targetClass = createClassBean((Cls) owlClass, true,
 						synonymSlot, definitionSlot, authorSlot);
-				if (isIncludeInstances) {
-					// TODO: start
-					Cls clsObj = (Cls) owlClass;
-
-					// get instance from KnowledgeBase
-					// TODO: need to verify about using getDirectInstances() or
-					// getInstances()
-					Collection<Instance> instances = clsObj
-							.getDirectInstances();
-
-					List<InstanceBean> resultInstance = new ArrayList<InstanceBean>();
-					InstanceBean instanceBean;
-					for (Instance instance : instances) {
-						instanceBean = createInstanceBean(instance, false);
-						resultInstance.add(instanceBean);
-					}
-					targetClass.setInstances(resultInstance);
-					/*
-					 * targetClass.setInstanceCount(((Cls) owlClass)
-					 * .getInstanceCount());
-					 */
-					// TODO: end
-				}
 			}
 		}
 
@@ -316,7 +291,6 @@ public class OntologyRetrievalManagerProtegeImpl extends
 
 	private InstanceBean createInstanceBean(Frame frame,
 			Boolean includeRelations) {
-
 		InstanceBean instanceBean = new InstanceBean();
 		instanceBean.setId(getId(frame));
 		instanceBean.setFullId(frame.getName());
@@ -325,26 +299,29 @@ public class OntologyRetrievalManagerProtegeImpl extends
 		if (frame instanceof Instance) {
 			Collection instanceTypes = ((Instance) frame).getDirectTypes();
 			ArrayList<ClassBean> classBeans = new ArrayList<ClassBean>();
+
 			for (Object obj : instanceTypes) {
 				DefaultOWLNamedClass defaultOWLNamedClass = (DefaultOWLNamedClass) obj;
 				ClassBean classBean = createBaseClassBean(defaultOWLNamedClass);
 				classBeans.add(classBean);
 			}
+
 			InstanceTypesList list = new InstanceTypesList();
 			list.setInstanceTypes(classBeans);
-
 			instanceBean.setInstanceType(list);
 		}
-		if (includeRelations) {
 
+		if (includeRelations) {
 			// create map to set relations
 			HashMap<Object, Object> relations = new HashMap<Object, Object>();
 			// get all properties
 			Collection<Slot> properties = frame.getOwnSlots();
 			Iterator p = properties.iterator();
+
 			while (p.hasNext()) {
 				Slot nextProperty = (Slot) p.next();
 				Collection values = frame.getOwnSlotValues(nextProperty);
+
 				if (values != null && !values.isEmpty()) {
 					// to store all property values(for <list>)
 					List<Object> entryList = new ArrayList<Object>();
@@ -358,12 +335,15 @@ public class OntologyRetrievalManagerProtegeImpl extends
 							entryList.add(obj);
 						}
 					}
+
 					PropertyBean propertyBean = createBasePropertyBean(nextProperty);
 					relations.put(propertyBean, entryList);
 				}
 			}
+
 			instanceBean.addRelations(relations);
 		}
+
 		return instanceBean;
 	}
 
@@ -629,6 +609,8 @@ public class OntologyRetrievalManagerProtegeImpl extends
 
 		classBean.addRelation(ApplicationConstants.CHILD_COUNT, subclasses
 				.size());
+		classBean.addRelation(ApplicationConstants.INSTANCE_COUNT, cls
+				.getInstanceCount());
 
 		if (recursive) {
 			classBean.addRelation(ApplicationConstants.SUB_CLASS,
