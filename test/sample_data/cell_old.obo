@@ -5829,7 +5829,6 @@ is_a: CL:0000151 ! secretory cell
 id: CL:0001658
 name: visual pigment cell (sensu Nematoda and Protostomia)
 xref_analog: FBbt:00004230
-is_a: CL:0000149 ! visual pigment cell
 is_a: CL:0000341 ! pigment cell (sensu Nematoda and Protostomia)
 
 [Term]
@@ -5859,13 +5858,14 @@ def: "A cell that lines the tunnel of Corti in the mammalian cochlea. The tunnel
 related_synonym: "cochlear pillar cell" []
 exact_synonym: "pillar cell of cochlea" []
 xref_analog: FMA:75722
-is_a: CL:0000075 ! columnar/cuboidal epithelial cell
+relationship: part_of CL:0000075 ! columnar/cuboidal epithelial cell
 
 [Term]
 id: CL:1000274
 name: trophectodermal cell
 exact_synonym: "trophectoderm cell" []
 is_a: CL:0000349 ! extraembryonic cell
+is_a: CL:0000149 ! visual pigment cell
 
 [Typedef]
 id: develops_from

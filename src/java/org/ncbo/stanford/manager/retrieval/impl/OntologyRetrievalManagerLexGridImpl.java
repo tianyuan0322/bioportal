@@ -1,5 +1,6 @@
 package org.ncbo.stanford.manager.retrieval.impl;
 
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Enumeration;
@@ -77,7 +78,7 @@ public class OntologyRetrievalManagerLexGridImpl extends
 
 	// mdorf: hack for now to remove certain MSH relations
 	List<String> relationsToFilter = new ArrayList<String>(Arrays.asList("QB",
-			"CHD", "QA", "NH", "SIB", "AQ"));
+			 "QA", "NH", "SIB", "AQ"));
 
 	public OntologyRetrievalManagerLexGridImpl() throws Exception {
 		lbs = LexBIGServiceImpl.defaultInstance();
@@ -245,6 +246,7 @@ public class OntologyRetrievalManagerLexGridImpl extends
 	 */
 	private ClassBean findConcept(OntologyBean ontologyBean, String conceptId)
 			throws Exception {
+		
 		ClassBean classBean = null;
 		String schemeName = getLexGridCodingSchemeName(ontologyBean);
 
@@ -255,9 +257,9 @@ public class OntologyRetrievalManagerLexGridImpl extends
 			log.warn("Can not process request when the conceptId is blank");
 		} else {
 			CodingSchemeVersionOrTag csvt = getLexGridCodingSchemeVersion(ontologyBean);
-			ResolvedConceptReferenceList matches = lbs.getNodeGraph(schemeName,
-					csvt, null)
-					.resolveAsList(
+			CodedNodeGraph cng= lbs.getNodeGraph(schemeName, csvt, null);
+			addFilterRestrictionToCNG(cng, schemeName, csvt);
+			ResolvedConceptReferenceList matches = cng.resolveAsList(
 							ConvenienceMethods.createConceptReference(
 									conceptId, schemeName), true, true, 0, 1,
 							null, null, null, -1);
@@ -270,16 +272,30 @@ public class OntologyRetrievalManagerLexGridImpl extends
 				addSubClassRelationAndCountToClassBean(schemeName, csvt,
 						classBean);
 				addSuperClassRelationToClassBean(schemeName, csvt, classBean);
-
-				for (String relationToFilter : relationsToFilter) {
-					classBean.removeRelation(relationToFilter);
+                //If this is a UMLS ontology, Natasha wanted the hierarchy relations
+				// removed. The subClass relation would hold the same info.
+				if (ontologyBean.getFormat().equalsIgnoreCase(ApplicationConstants.FORMAT_UMLS_RRF)) {
+					List<String> umlsFilterList= getListOfSubClassDirectionalName(schemeName, csvt);
+					for (String relationToFilter : umlsFilterList) {
+						classBean.removeRelation(relationToFilter);
+					}
 				}
+				
 			}
 		}
 
 		return classBean;
 	}
 
+	private void addFilterRestrictionToCNG(CodedNodeGraph cng, String schemeName, CodingSchemeVersionOrTag csvt) throws Exception {
+		String assocNames[]= lbscm.getAssociationForwardNames(schemeName, csvt);
+		List<String> assocNameList= new ArrayList<String> (Arrays.asList(assocNames));
+		if (assocNameList.removeAll(relationsToFilter)) {
+			String[] assocRestrictions = (String[])assocNameList.toArray(new String[assocNameList.size()]);		    			
+			cng.restrictToAssociations(Constructors.createNameAndValueList(assocRestrictions), null);
+		}
+	}
+	
 	/**
 	 * Find just the concept without the relations. Makes use of the
 	 * CodedNodeSet of LexBIG to implement
@@ -1495,17 +1511,8 @@ public class OntologyRetrievalManagerLexGridImpl extends
 	private void addSubClassRelationAndCountToClassBean(String schemeName,
 			CodingSchemeVersionOrTag csvt, ClassBean classBean)
 			throws Exception {
-		ArrayList<String> hierarchyDirectionalNames = new ArrayList<String>();
-		String hierarchyId = getDefaultHierarchyId(schemeName, csvt);
-		SupportedHierarchy[] supHiers = lbscm.getSupportedHierarchies(
-				schemeName, csvt, hierarchyId);
-		SupportedHierarchy sh = supHiers[0];
-		for (String associationName : sh.getAssociationNames()) {
-			// We need to be careful about the direction flag
-			String dirName = getAssociationDirectionalName(schemeName, csvt,
-					associationName, sh.isIsForwardNavigable());
-			hierarchyDirectionalNames.add(dirName);
-		}
+		List<String> hierarchyDirectionalNames = getListOfSubClassDirectionalName(schemeName, csvt);
+		
 
 		for (String directionalName : hierarchyDirectionalNames) {
 			Object obj_beans = classBean.getRelations().get(directionalName);
@@ -1576,6 +1583,22 @@ public class OntologyRetrievalManagerLexGridImpl extends
 		return (StringUtils.isNotBlank(dirName) ? dirName : "[R]" + assoc);
 	}
 
+	private List<String> getListOfSubClassDirectionalName(String schemeName,
+			CodingSchemeVersionOrTag csvt)
+			throws Exception {
+		ArrayList<String> hierarchyDirectionalNames = new ArrayList<String>();
+		String hierarchyId = getDefaultHierarchyId(schemeName, csvt);
+		SupportedHierarchy[] supHiers = lbscm.getSupportedHierarchies(
+				schemeName, csvt, hierarchyId);
+		SupportedHierarchy sh = supHiers[0];
+		for (String associationName : sh.getAssociationNames()) {
+			// We need to be careful about the direction flag
+			String dirName = getAssociationDirectionalName(schemeName, csvt,
+					associationName, sh.isIsForwardNavigable());
+			hierarchyDirectionalNames.add(dirName);
+		}
+		return hierarchyDirectionalNames;
+	}	
 	/**
 	 * @param allConceptsMaxPageSize
 	 *            the allConceptsMaxPageSize to set
