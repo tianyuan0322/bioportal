@@ -12,7 +12,6 @@ import org.ncbo.stanford.service.concept.ConceptService;
 import org.ncbo.stanford.util.MessageUtils;
 import org.ncbo.stanford.util.RequestUtils;
 import org.ncbo.stanford.view.rest.restlet.AbstractBaseRestlet;
-import org.ncbo.stanford.view.util.constants.RequestParamConstants;
 import org.restlet.data.Request;
 import org.restlet.data.Response;
 import org.restlet.data.Status;
@@ -21,42 +20,31 @@ import org.restlet.data.Status;
  * @author s.reddy
  * 
  */
-public class InstanceRestlet extends AbstractBaseRestlet {
-
-	private static final Log log = LogFactory.getLog(InstanceRestlet.class);
+public class InstanceByIdRestlet extends AbstractBaseRestlet {
+	private static final Log log = LogFactory.getLog(InstanceByIdRestlet.class);
 
 	private ConceptService conceptService;
 
 	public void getRequest(Request request, Response response) {
-		findInstance(request, response);
+		findInstanceById(request, response);
 	}
 
-	private void findInstance(Request request, Response response) {
+	private void findInstanceById(Request request, Response response) {
 
 		String ontologyVersionId = (String) request.getAttributes().get(
 				MessageUtils.getMessage("entity.ontologyVersionid"));
 		HttpServletRequest httpRequest = RequestUtils
 				.getHttpServletRequest(request);
 
-		String conceptId = httpRequest.getParameter(MessageUtils
-				.getMessage("entity.conceptid"));
+		String instanceId = httpRequest.getParameter(MessageUtils
+				.getMessage("entity.instanceid"));
 
 		Integer ontologyVerId = Integer.parseInt(ontologyVersionId);
 		Object instanceBean = null;
 		try {
-			if (conceptId != null) {
-
-				String pageSize = (String) httpRequest
-						.getParameter(RequestParamConstants.PARAM_PAGESIZE);
-				String pageNum = (String) httpRequest
-						.getParameter(RequestParamConstants.PARAM_PAGENUM);
-
-				Integer pageSizeInt = RequestUtils.parseIntegerParam(pageSize);
-				Integer pageNumInt = RequestUtils.parseIntegerParam(pageNum);
-
-				instanceBean = conceptService.findInstancesByConceptId(
-						ontologyVerId, conceptId, pageSizeInt, pageNumInt);
-
+			if (instanceId != null) {
+				instanceBean = conceptService.findInstanceById(ontologyVerId,
+						instanceId);
 			} else {
 				throw new InvalidInputException("invalid input");
 			}
