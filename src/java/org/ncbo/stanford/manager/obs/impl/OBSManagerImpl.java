@@ -11,7 +11,6 @@ import java.util.regex.Pattern;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.ncbo.stanford.bean.concept.ClassBean;
-import org.ncbo.stanford.bean.obs.AbstractConceptBean;
 import org.ncbo.stanford.bean.obs.ConceptBean;
 import org.ncbo.stanford.bean.obs.OntologyBean;
 import org.ncbo.stanford.bean.obs.PathBean;
@@ -33,7 +32,7 @@ public class OBSManagerImpl implements OBSManager {
 	private static final Log log = LogFactory.getLog(OBSManagerImpl.class);
 
 	private static final String OBS_ONTOLOGY_ID_PATTERN = "\\w+/";
-	private static final String OBS_CONCEPT_ID_PATTERN = "^(.+)/(.+)$";
+	private static final String OBS_CONCEPT_ID_PATTERN = "^([^/]+)/(.+)$";
 
 	private XMLSerializationService xmlSerializationService;
 
@@ -308,8 +307,7 @@ public class OBSManagerImpl implements OBSManager {
 		this.xmlSerializationService = xmlSerializationService;
 	}
 
-	private void populateBaseClassBean(AbstractConceptBean obsBean,
-			ClassBean classBean) {
+	private void populateBaseClassBean(ConceptBean obsBean, ClassBean classBean) {
 		String fullConceptId = obsBean.getLocalConceptId();
 		List<String> parsedConceptId = parseOBSConceptId(fullConceptId);
 
@@ -319,6 +317,11 @@ public class OBSManagerImpl implements OBSManager {
 		} else {
 			classBean.setId(fullConceptId);
 		}
+
+		classBean.setLabel(obsBean.getPreferredName());
+		classBean.setFullId(obsBean.getFullId());
+		classBean.setSynonyms(obsBean.getSynonyms());
+		classBean.setDefinitions(obsBean.getDefinitions());
 	}
 
 	private List<String> parseOBSConceptId(String fullConceptId) {

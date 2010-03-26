@@ -3,23 +3,71 @@ package org.ncbo.stanford.bean.obs;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ConceptBean extends AbstractConceptBean {
+public class ConceptBean {
 
+	protected String id;
+	protected String localConceptId;
 	private String localOntologyId;
 	private Byte isTopLevel;
-
+	private String fullId;
 	private String preferredName;
 	private List<String> synonyms = new ArrayList<String>(0);
+	private List<String> definitions = new ArrayList<String>(0);
 	private List<SemanticTypeBean> semanticTypes = new ArrayList<SemanticTypeBean>(
 			0);
 
 	public String toString() {
-		return "[" + super.toString() + ", localOntologyId: "
-				+ this.getLocalOntologyId() + ", isTopLevel: "
-				+ this.getIsTopLevel() + ", preferredName: "
-				+ this.getPreferredName() + ", synonyms: " + this.getSynonyms()
-				+ ", semanticTypes: " + this.getSemanticTypes().toString()
+		return "[id: " + id + " localConceptId: " + localConceptId
+				+ ", localOntologyId: " + localOntologyId + ", fullId: "
+				+ fullId + ", isTopLevel: " + isTopLevel + ", preferredName: "
+				+ preferredName + ", synonyms: " + synonyms + ", definitions: "
+				+ definitions + ", semanticTypes: " + semanticTypes.toString()
 				+ "]";
+	}
+
+	/**
+	 * @return the id
+	 */
+	public String getId() {
+		return id;
+	}
+
+	/**
+	 * @param id
+	 *            the id to set
+	 */
+	public void setId(String id) {
+		this.id = id;
+	}
+
+	/**
+	 * @return the localConceptId
+	 */
+	public String getLocalConceptId() {
+		return localConceptId;
+	}
+
+	/**
+	 * @param localConceptId
+	 *            the localConceptId to set
+	 */
+	public void setLocalConceptId(String localConceptId) {
+		this.localConceptId = localConceptId;
+	}
+
+	/**
+	 * @return the localOntologyId
+	 */
+	public String getLocalOntologyId() {
+		return localOntologyId;
+	}
+
+	/**
+	 * @param localOntologyId
+	 *            the localOntologyId to set
+	 */
+	public void setLocalOntologyId(String localOntologyId) {
+		this.localOntologyId = localOntologyId;
 	}
 
 	/**
@@ -35,6 +83,21 @@ public class ConceptBean extends AbstractConceptBean {
 	 */
 	public void setIsTopLevel(Byte isTopLevel) {
 		this.isTopLevel = isTopLevel;
+	}
+
+	/**
+	 * @return the fullId
+	 */
+	public String getFullId() {
+		return fullId;
+	}
+
+	/**
+	 * @param fullId
+	 *            the fullId to set
+	 */
+	public void setFullId(String fullId) {
+		this.fullId = fullId;
 	}
 
 	/**
@@ -67,12 +130,19 @@ public class ConceptBean extends AbstractConceptBean {
 		this.synonyms = synonyms;
 	}
 
-	public boolean isTopLevel() {
-		if (this.getIsTopLevel().equals(true)) {
-			return true;
-		}
+	/**
+	 * @return the definitions
+	 */
+	public List<String> getDefinitions() {
+		return definitions;
+	}
 
-		return false;
+	/**
+	 * @param definitions
+	 *            the definitions to set
+	 */
+	public void setDefinitions(List<String> definitions) {
+		this.definitions = definitions;
 	}
 
 	/**
@@ -88,20 +158,5 @@ public class ConceptBean extends AbstractConceptBean {
 	 */
 	public void setSemanticTypes(List<SemanticTypeBean> semanticTypes) {
 		this.semanticTypes = semanticTypes;
-	}
-
-	/**
-	 * @return the localOntologyId
-	 */
-	public String getLocalOntologyId() {
-		return localOntologyId;
-	}
-
-	/**
-	 * @param localOntologyId
-	 *            the localOntologyId to set
-	 */
-	public void setLocalOntologyId(String localOntologyId) {
-		this.localOntologyId = localOntologyId;
 	}
 }
