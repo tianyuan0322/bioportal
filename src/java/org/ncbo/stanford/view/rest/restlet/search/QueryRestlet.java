@@ -73,7 +73,7 @@ public class QueryRestlet extends AbstractBaseRestlet {
 				.parseStringParam((String) httpRequest
 						.getParameter(RequestParamConstants.PARAM_SUBTREEROOTCONCEPTID));
 
-		String query = Reference.decode((String) request.getAttributes().get(
+		String query = Reference.decode((String) httpRequest.getParameter(
 				RequestParamConstants.PARAM_QUERY));
 		List<Integer> ontologyIdsInt = RequestUtils
 				.parseIntegerListParam(ontologyIds);
