@@ -168,14 +168,14 @@ public class OntologyDescriptorParser {
 	 * @return
 	 */
 	public static String getDocumentation(String documentationString) {
-		String documentation = null;
+		String documentation = documentationString;
 
 		if (!StringHelper.isNullOrNullString(documentationString)
 				&& documentationString.contains(VALUE_SEPARATOR)) {
 			documentation = documentationString.substring(documentationString
 					.indexOf(VALUE_SEPARATOR) + 1);
 		}
-
+		
 		return documentation;
 	}
 
@@ -186,7 +186,7 @@ public class OntologyDescriptorParser {
 	 * @return
 	 */
 	public static String getHomepage(String homepageString) {
-		String homepage = null;
+		String homepage = homepageString;
 
 		if (!StringHelper.isNullOrNullString(homepageString)
 				&& homepageString.contains(VALUE_SEPARATOR)) {
