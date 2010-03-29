@@ -16,7 +16,6 @@ import org.ncbo.stanford.util.helper.StringHelper;
 import org.ncbo.stanford.util.paginator.impl.Page;
 import org.ncbo.stanford.view.rest.restlet.AbstractBaseRestlet;
 import org.ncbo.stanford.view.util.constants.RequestParamConstants;
-import org.restlet.data.Reference;
 import org.restlet.data.Request;
 import org.restlet.data.Response;
 import org.restlet.data.Status;
@@ -73,8 +72,9 @@ public class QueryRestlet extends AbstractBaseRestlet {
 				.parseStringParam((String) httpRequest
 						.getParameter(RequestParamConstants.PARAM_SUBTREEROOTCONCEPTID));
 
-		String query = Reference.decode((String) httpRequest.getParameter(
-				RequestParamConstants.PARAM_QUERY));
+		String query = RequestUtils.getAttributeOrRequestParam(
+				RequestParamConstants.PARAM_QUERY, request);
+
 		List<Integer> ontologyIdsInt = RequestUtils
 				.parseIntegerListParam(ontologyIds);
 		boolean includePropertiesBool = RequestUtils
