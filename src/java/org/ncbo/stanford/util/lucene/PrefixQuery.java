@@ -1,6 +1,7 @@
 package org.ncbo.stanford.util.lucene;
 
 import java.util.Set;
+import java.util.StringTokenizer;
 import java.util.TreeSet;
 
 import org.apache.commons.logging.Log;
@@ -52,11 +53,11 @@ public class PrefixQuery extends BooleanQuery {
 
 	/**
 	 * Constructs a Lucene query that finds all possible matches for words or
-	 * phrases that contain a wildcard character at the end (i.e. "bloo*" or
-	 * "cutaneous mela*")
+	 * phrases in their order with wildcard character at the end of each(i.e.
+	 * "bloo*" or "cutaneo* mela*" or "epidermol* bullos* acquisi*")
 	 * 
-	 * @param field -
-	 *            field to search on
+	 * @param field
+	 *            - field to search on
 	 * @param expr
 	 * @throws Exception
 	 */
@@ -69,15 +70,11 @@ public class PrefixQuery extends BooleanQuery {
 			add(tq, BooleanClause.Occur.SHOULD);
 
 			MultiPhraseQuery mpq = new MultiPhraseQuery();
-			String[] words = expr.split(SPACES_PATTERN);
+			StringTokenizer st = new StringTokenizer(expr);
 
-			for (int i = 0; i < words.length; i++) {
-				if (i == words.length - 1) {
-					Term[] terms = expand(field, words[i]);
-					mpq.add(terms);
-				} else {
-					mpq.add(new Term(field, words[i]));
-				}
+			while (st.hasMoreTokens()) {
+				Term[] terms = expand(field, st.nextToken());
+				mpq.add(terms);
 			}
 
 			add(mpq, BooleanClause.Occur.SHOULD);
@@ -89,8 +86,8 @@ public class PrefixQuery extends BooleanQuery {
 	 * phrases that start with a word or expression and contain a wildcard
 	 * character at the end (i.e. "bloo*" or "cutaneous mela*")
 	 * 
-	 * @param field -
-	 *            field to search on
+	 * @param field
+	 *            - field to search on
 	 * @param expr
 	 */
 	public void parseStartsWithPrefixQuery(String field, String expr)
