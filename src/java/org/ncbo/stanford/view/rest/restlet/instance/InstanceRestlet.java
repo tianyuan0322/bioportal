@@ -58,7 +58,7 @@ public class InstanceRestlet extends AbstractBaseRestlet {
 						ontologyVerId, conceptId, pageSizeInt, pageNumInt);
 
 			} else {
-				throw new InvalidInputException("invalid input");
+				throw new InvalidInputException(InvalidInputException.DEFAULT_MESSAGE);
 			}
 
 		} catch (InvalidInputException invalidInputEx) {
