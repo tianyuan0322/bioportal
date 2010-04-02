@@ -59,6 +59,11 @@ public class OntologyLoaderLexGridImplTest extends AbstractBioPortalTest {
 	public final static String UMLS_PATHNAME = "test/sample_data/sampleUMLS-AIR/";
 	public final static String UMLS_URN_VERSION = "urn:oid:2.16.840.1.113883.6.110|1993.bvt";
 	public final static String UMLS_DISPLAY_LABEL = "AIR";
+	
+	public final static String LEXGRID_HL7_PATHNAME = "test/sample_data/RIM_0230.xml";
+	public final static String LEXGRID_HL7_URN_VERSION = "http://www.hl7.org/Library/data-model/RIM|V 02-30";
+	public final static String LEXGRID_HL7_DISPLAY_LABEL = "HL7";
+	
 
 	@Autowired
 	OntologyService ontologyService;
@@ -192,6 +197,27 @@ public class OntologyLoaderLexGridImplTest extends AbstractBioPortalTest {
 	}
 
 	@Test
+	public void testLoadLexGridHL7() throws Exception {
+		System.out
+				.println("OntologyLoaderLexGridImplTest: testLoadLexGridHL7().................. BEGIN");
+		OntologyBean ontologyBean = this.createOntolgyBeanLexgridHL7();
+		// populate file related field in ontologyBean
+		ontologyBean.setFilePath(LEXGRID_HL7_PATHNAME);
+		// create - pass FileHandler
+		ontologyService.createOntologyOrView(ontologyBean,
+				getFilePathHandler(ontologyBean));
+
+		if (ontologyBean != null)
+			System.out.println("Created OntologyBean with ID = "
+					+ ontologyBean.getId());
+		// load
+		loadOntology(ontologyBean, LEXGRID_HL7_PATHNAME);
+		assertTrue(ontologyBean.getCodingScheme() != null);
+		System.out
+				.println("OntologyLoaderLexGridImplTest: testLoadLexGridHL7().................... END");
+	}
+	
+	@Test
 	public void testLoadUMLS() throws Exception {
 		System.out
 				.println("OntologyLoaderLexGridImplTest: testLoadUMLS().................. BEGIN");
@@ -307,6 +333,16 @@ public class OntologyLoaderLexGridImplTest extends AbstractBioPortalTest {
 		bean.setFormat(ApplicationConstants.FORMAT_LEXGRID_XML);
 		bean.setCodingScheme(LEXGRID_XML_URN_VERSION);
 		bean.setDisplayLabel(LEXGRID_DISPLAY_LABEL);
+		bean.setContactEmail("lexgrid@email.com");
+		bean.setContactName("Lexgrid Name");
+		return bean;
+	}
+	
+	private OntologyBean createOntolgyBeanLexgridHL7() {
+		OntologyBean bean = createOntolgyBeanBase();
+		bean.setFormat(ApplicationConstants.FORMAT_LEXGRID_XML);
+		bean.setCodingScheme(LEXGRID_HL7_URN_VERSION);
+		bean.setDisplayLabel(LEXGRID_HL7_DISPLAY_LABEL);
 		bean.setContactEmail("lexgrid@email.com");
 		bean.setContactName("Lexgrid Name");
 		return bean;

@@ -209,6 +209,21 @@ public class OntologyRetrievalManagerLexGridImplTest extends
 	}
 
 	@Test
+	public void testLexGridXMLFindConceptOrphanedHL7() throws Exception {
+		System.out.println("testLexGridXMLFindConceptOrphanedHL7()");
+
+		OntologyBean ncboOntology = retrievalManager
+				.getLatestOntologyBean(OntologyLoaderLexGridImplTest.LEXGRID_HL7_DISPLAY_LABEL);
+		String conceptID = "19944:abcCodes";
+		ClassBean classBean = retrievalManager.findConcept(ncboOntology,
+				conceptID, false, false);
+		System.out.println("Concept " + conceptID
+				+ " of HL7 ontology(obsolete) is \n" + classBean);
+		System.out.println("\n");
+		assertTrue(classBean.getId().equalsIgnoreCase(conceptID));
+	}
+	
+	@Test
 	public void testUMLSFindConceptBothDirectionalNamesPopulated()
 			throws Exception {
 		System.out
