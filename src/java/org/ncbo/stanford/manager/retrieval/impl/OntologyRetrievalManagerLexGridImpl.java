@@ -78,7 +78,7 @@ public class OntologyRetrievalManagerLexGridImpl extends
 
 	// mdorf: hack for now to remove certain MSH relations
 	List<String> relationsToFilter = new ArrayList<String>(Arrays.asList("QB",
-			 "QA", "NH", "SIB", "AQ"));
+			"QA", "NH", "SIB", "AQ"));
 
 	public OntologyRetrievalManagerLexGridImpl() throws Exception {
 		lbs = LexBIGServiceImpl.defaultInstance();
@@ -122,7 +122,7 @@ public class OntologyRetrievalManagerLexGridImpl extends
 		ResolvedConceptReferenceList rcrl = getHierarchyRootConcepts(
 				schemeName, csvt, light);
 
-		return createThingClassBeanWithCount(rcrl);
+		return createThingClassBeanWithCount(ontologyBean, rcrl);
 	}
 
 	/**
@@ -175,7 +175,7 @@ public class OntologyRetrievalManagerLexGridImpl extends
 			if (matches.getResolvedConceptReferenceCount() > 0) {
 				ResolvedConceptReference ref = (ResolvedConceptReference) matches
 						.enumerateResolvedConceptReference().nextElement();
-				classBean = createClassBean(ref, false);
+				classBean = createClassBean(ontologyBean, ref, false);
 			}
 		}
 
@@ -215,7 +215,8 @@ public class OntologyRetrievalManagerLexGridImpl extends
 			if (matches.getResolvedConceptReferenceCount() > 0) {
 				ResolvedConceptReference rcr = (ResolvedConceptReference) matches
 						.enumerateResolvedConceptReference().nextElement();
-				classBean = createClassBeanWithChildCount(rcr, true);
+				classBean = createClassBeanWithChildCount(ontologyBean, rcr,
+						true);
 				classBean = createSimpleSubClassOnlyClassBean(classBean, false);
 			}
 		}
@@ -246,7 +247,7 @@ public class OntologyRetrievalManagerLexGridImpl extends
 	 */
 	private ClassBean findConcept(OntologyBean ontologyBean, String conceptId)
 			throws Exception {
-		
+
 		ClassBean classBean = null;
 		String schemeName = getLexGridCodingSchemeName(ontologyBean);
 
@@ -257,45 +258,53 @@ public class OntologyRetrievalManagerLexGridImpl extends
 			log.warn("Can not process request when the conceptId is blank");
 		} else {
 			CodingSchemeVersionOrTag csvt = getLexGridCodingSchemeVersion(ontologyBean);
-			CodedNodeGraph cng= lbs.getNodeGraph(schemeName, csvt, null);
+			CodedNodeGraph cng = lbs.getNodeGraph(schemeName, csvt, null);
 			addFilterRestrictionToCNG(cng, schemeName, csvt);
-			ResolvedConceptReferenceList matches = cng.resolveAsList(
-							ConvenienceMethods.createConceptReference(
-									conceptId, schemeName), true, true, 0, 1,
-							null, null, null, -1);
+			ResolvedConceptReferenceList matches = cng
+					.resolveAsList(ConvenienceMethods.createConceptReference(
+							conceptId, schemeName), true, true, 0, 1, null,
+							null, null, -1);
 
 			// Analyze the result ...
 			if (matches.getResolvedConceptReferenceCount() > 0) {
 				ResolvedConceptReference ref = (ResolvedConceptReference) matches
 						.enumerateResolvedConceptReference().nextElement();
-				classBean = createClassBean(ref, true);
+				classBean = createClassBean(ontologyBean, ref, true);
 				addSubClassRelationAndCountToClassBean(schemeName, csvt,
 						classBean);
 				addSuperClassRelationToClassBean(schemeName, csvt, classBean);
-                //If this is a UMLS ontology, Natasha wanted the hierarchy relations
+				// If this is a UMLS ontology, Natasha wanted the hierarchy
+				// relations
 				// removed. The subClass relation would hold the same info.
-				if (ontologyBean.getFormat().equalsIgnoreCase(ApplicationConstants.FORMAT_UMLS_RRF)) {
-					List<String> umlsFilterList= getListOfSubClassDirectionalName(schemeName, csvt);
+				if (ontologyBean.getFormat().equalsIgnoreCase(
+						ApplicationConstants.FORMAT_UMLS_RRF)) {
+					List<String> umlsFilterList = getListOfSubClassDirectionalName(
+							schemeName, csvt);
 					for (String relationToFilter : umlsFilterList) {
 						classBean.removeRelation(relationToFilter);
 					}
 				}
-				
+
 			}
 		}
 
 		return classBean;
 	}
 
-	private void addFilterRestrictionToCNG(CodedNodeGraph cng, String schemeName, CodingSchemeVersionOrTag csvt) throws Exception {
-		String assocNames[]= lbscm.getAssociationForwardNames(schemeName, csvt);
-		List<String> assocNameList= new ArrayList<String> (Arrays.asList(assocNames));
+	private void addFilterRestrictionToCNG(CodedNodeGraph cng,
+			String schemeName, CodingSchemeVersionOrTag csvt) throws Exception {
+		String assocNames[] = lbscm
+				.getAssociationForwardNames(schemeName, csvt);
+		List<String> assocNameList = new ArrayList<String>(Arrays
+				.asList(assocNames));
 		if (assocNameList.removeAll(relationsToFilter)) {
-			String[] assocRestrictions = (String[])assocNameList.toArray(new String[assocNameList.size()]);		    			
-			cng.restrictToAssociations(Constructors.createNameAndValueList(assocRestrictions), null);
+			String[] assocRestrictions = (String[]) assocNameList
+					.toArray(new String[assocNameList.size()]);
+			cng.restrictToAssociations(Constructors
+					.createNameAndValueList(assocRestrictions), null);
 		}
 	}
-	
+
 	/**
 	 * Find just the concept without the relations. Makes use of the
 	 * CodedNodeSet of LexBIG to implement
@@ -321,7 +330,7 @@ public class OntologyRetrievalManagerLexGridImpl extends
 		if (matches.getResolvedConceptReferenceCount() > 0) {
 			ResolvedConceptReference rcr = (ResolvedConceptReference) matches
 					.enumerateResolvedConceptReference().nextElement();
-			return createClassBeanWithChildCount(rcr, false);
+			return createClassBeanWithChildCount(ontologyBean, rcr, false);
 		}
 
 		return null;
@@ -495,8 +504,8 @@ public class OntologyRetrievalManagerLexGridImpl extends
 					cr, includeChildren);
 
 			classBeans.add(classBean);
-			addAssociationListInfoToClassBean(pathFromRoot, classBean,
-					ApplicationConstants.SUB_CLASS, includeChildren);
+			addAssociationListInfoToClassBean(ontologyBean, pathFromRoot,
+					classBean, ApplicationConstants.SUB_CLASS, includeChildren);
 
 		}
 
@@ -519,7 +528,8 @@ public class OntologyRetrievalManagerLexGridImpl extends
 					// We need a lightweight classBean....
 					ResolvedConceptReference rcr = getLightResolvedConceptReference(
 							ontologyBean, conceptId);
-					bean = createClassBeanWithChildCount(rcr, false);
+					bean = createClassBeanWithChildCount(ontologyBean, rcr,
+							false);
 					classBeans.add(bean);
 				}
 			}
@@ -530,8 +540,8 @@ public class OntologyRetrievalManagerLexGridImpl extends
 		if (includeChildren) {
 			ResolvedConceptReferenceList rcrl = getHierarchyRootConcepts(
 					schemeName, csvt, false);
-			ArrayList<ClassBean> rootConceptList = createClassBeanArray(rcrl,
-					true);
+			ArrayList<ClassBean> rootConceptList = createClassBeanArray(
+					ontologyBean, rcrl, true);
 			ArrayList<ClassBean> mergedConceptList = mergeListsEliminatingDuplicates(
 					rootConceptList, classBeans);
 			thingBean = createThingClassBean(mergedConceptList);
@@ -564,8 +574,8 @@ public class OntologyRetrievalManagerLexGridImpl extends
 		ClassBean conceptClass = findConceptIncludeChildCountNoRelations(
 				ontologyBean, conceptId);
 		boolean includeChildren = !light;
-		addAssociationListInfoToClassBean(associations, conceptClass,
-				ApplicationConstants.SUPER_CLASS, includeChildren);
+		addAssociationListInfoToClassBean(ontologyBean, associations,
+				conceptClass, ApplicationConstants.SUPER_CLASS, includeChildren);
 
 		return conceptClass;
 	}
@@ -592,8 +602,9 @@ public class OntologyRetrievalManagerLexGridImpl extends
 				conceptId);
 		ClassBean conceptClass = findConceptIncludeChildCountNoRelations(
 				ontologyBean, conceptId);
-		ArrayList<ClassBean> classBeans = createClassBeanArray(associations,
-				conceptClass, ApplicationConstants.SUPER_CLASS, false);
+		ArrayList<ClassBean> classBeans = createClassBeanArray(ontologyBean,
+				associations, conceptClass, ApplicationConstants.SUPER_CLASS,
+				false);
 
 		return classBeans;
 	}
@@ -620,8 +631,9 @@ public class OntologyRetrievalManagerLexGridImpl extends
 				conceptId);
 		ClassBean conceptClass = findConceptIncludeChildCountNoRelations(
 				ontologyBean, conceptId);
-		ArrayList<ClassBean> classBeans = createClassBeanArray(associations,
-				conceptClass, ApplicationConstants.SUB_CLASS, false);
+		ArrayList<ClassBean> classBeans = createClassBeanArray(ontologyBean,
+				associations, conceptClass, ApplicationConstants.SUB_CLASS,
+				false);
 
 		return classBeans;
 	}
@@ -873,7 +885,7 @@ public class OntologyRetrievalManagerLexGridImpl extends
 			ex.printStackTrace();
 		}
 
-		return createClassBeanWithChildCount(rcr, includeChildren);
+		return createClassBeanWithChildCount(ontologyBean, rcr, includeChildren);
 	}
 
 	/**
@@ -881,9 +893,9 @@ public class OntologyRetrievalManagerLexGridImpl extends
 	 * @param rcr
 	 * @return
 	 */
-	private ClassBean createClassBeanWithChildCount(
+	private ClassBean createClassBeanWithChildCount(OntologyBean ontologyBean,
 			ResolvedConceptReference rcr, boolean includeChildren) {
-		ClassBean bean = createClassBean(rcr, true);
+		ClassBean bean = createClassBean(ontologyBean, rcr, true);
 		// log.debug("createClassBeanWithChildCount for conceptCode "+
 		// rcr.getConceptCode());
 		// Add the children
@@ -899,8 +911,8 @@ public class OntologyRetrievalManagerLexGridImpl extends
 				bean.addRelation(ApplicationConstants.CHILD_COUNT,
 						getChildCount(childList));
 
-				addAssociationListInfoToClassBean(childList, bean,
-						ApplicationConstants.SUB_CLASS, false);
+				addAssociationListInfoToClassBean(ontologyBean, childList,
+						bean, ApplicationConstants.SUB_CLASS, false);
 			} else {
 				String hierarchyId = getDefaultHierarchyId(schemeName, csvt);
 				int count = lbscm.getHierarchyLevelNextCount(schemeName, csvt,
@@ -919,10 +931,10 @@ public class OntologyRetrievalManagerLexGridImpl extends
 	 * @param rcr
 	 * @return
 	 */
-	private ClassBean createClassBeanWithChildCount(
+	private ClassBean createClassBeanWithChildCount(OntologyBean ontologyBean,
 			ResolvedConceptReference rcr, HashMap<String, Integer> countMap,
 			boolean includeChildren) {
-		ClassBean bean = createClassBean(rcr, true);
+		ClassBean bean = createClassBean(ontologyBean, rcr, true);
 		// log.debug("createClassBeanWithChildCount for conceptCode "+
 		// rcr.getConceptCode());
 		// Add the children
@@ -938,8 +950,8 @@ public class OntologyRetrievalManagerLexGridImpl extends
 				bean.addRelation(ApplicationConstants.CHILD_COUNT,
 						getChildCount(childList));
 
-				addAssociationListInfoToClassBean(childList, bean,
-						ApplicationConstants.SUB_CLASS, false);
+				addAssociationListInfoToClassBean(ontologyBean, childList,
+						bean, ApplicationConstants.SUB_CLASS, false);
 			} else {
 				// Check for the count in the hashmap first
 				String key = getKey(rcr);
@@ -1015,9 +1027,10 @@ public class OntologyRetrievalManagerLexGridImpl extends
 	 * @param rcr
 	 * @return
 	 */
-	private ClassBean createClassBean(ResolvedConceptReference rcr,
-			boolean addRelations) {
-		ClassBean bean = createBaseClassBean(rcr.getConceptCode(), null);
+	private ClassBean createClassBean(OntologyBean ontologyBean,
+			ResolvedConceptReference rcr, boolean addRelations) {
+		String fullId = getFullId(ontologyBean, rcr.getConceptCode());
+		ClassBean bean = createBaseClassBean(rcr.getConceptCode(), fullId, null);
 
 		if (rcr.getEntityDescription() != null) {
 			bean.setLabel(rcr.getEntityDescription().getContent());
@@ -1049,10 +1062,10 @@ public class OntologyRetrievalManagerLexGridImpl extends
 		}
 
 		if (addRelations) {
-			addAssociationListInfoToClassBean(rcr.getSourceOf(), bean, null,
-					false);
-			addAssociationListInfoToClassBean(rcr.getTargetOf(), bean, null,
-					false);
+			addAssociationListInfoToClassBean(ontologyBean, rcr.getSourceOf(),
+					bean, null, false);
+			addAssociationListInfoToClassBean(ontologyBean, rcr.getTargetOf(),
+					bean, null, false);
 		}
 
 		return bean;
@@ -1063,9 +1076,10 @@ public class OntologyRetrievalManagerLexGridImpl extends
 	 * @param list
 	 * @return
 	 */
-	private ClassBean createThingClassBeanWithCount(
+	private ClassBean createThingClassBeanWithCount(OntologyBean ontologyBean,
 			ResolvedConceptReferenceList list) {
-		ArrayList<ClassBean> classBeans = createClassBeanArray(list, true);
+		ArrayList<ClassBean> classBeans = createClassBeanArray(ontologyBean,
+				list, true);
 
 		return createThingClassBean(classBeans);
 	}
@@ -1076,7 +1090,8 @@ public class OntologyRetrievalManagerLexGridImpl extends
 	 * @return
 	 */
 	private ClassBean createThingClassBean(ArrayList<ClassBean> classBeans) {
-		ClassBean classBean = createBaseClassBean(ROOT_CLASS_ID, ROOT_CLASS_ID);
+		ClassBean classBean = createBaseClassBean(ROOT_CLASS_ID, ROOT_CLASS_ID,
+				ROOT_CLASS_ID);
 		classBean.addRelation(ApplicationConstants.SUB_CLASS, classBeans);
 		classBean.addRelation(ApplicationConstants.CHILD_COUNT, classBeans
 				.size());
@@ -1084,10 +1099,10 @@ public class OntologyRetrievalManagerLexGridImpl extends
 		return classBean;
 	}
 
-	private ClassBean createBaseClassBean(String id, String label) {
+	private ClassBean createBaseClassBean(String id, String fullId, String label) {
 		ClassBean classBean = new ClassBean();
 		classBean.setId(id);
-		classBean.setFullId(id);
+		classBean.setFullId(fullId);
 		classBean.setLabel(label);
 		classBean.setType(ConceptTypeEnum.CONCEPT_TYPE_CLASS);
 
@@ -1101,7 +1116,8 @@ public class OntologyRetrievalManagerLexGridImpl extends
 	 * @return
 	 */
 	private ArrayList<ClassBean> createClassBeanArray(
-			ResolvedConceptReferenceList list, boolean includeCount) {
+			OntologyBean ontologyBean, ResolvedConceptReferenceList list,
+			boolean includeCount) {
 		ArrayList<ClassBean> classBeans = new ArrayList<ClassBean>();
 		Enumeration<ResolvedConceptReference> refEnum = list
 				.enumerateResolvedConceptReference();
@@ -1112,9 +1128,9 @@ public class OntologyRetrievalManagerLexGridImpl extends
 			ClassBean bean;
 
 			if (includeCount) {
-				bean = createClassBeanWithChildCount(ref, false);
+				bean = createClassBeanWithChildCount(ontologyBean, ref, false);
 			} else {
-				bean = createClassBean(ref, true);
+				bean = createClassBean(ontologyBean, ref, true);
 			}
 
 			classBeans.add(bean);
@@ -1169,12 +1185,13 @@ public class OntologyRetrievalManagerLexGridImpl extends
 	 * @param includeChildren
 	 * @return
 	 */
-	private ArrayList<ClassBean> createClassBeanArray(AssociationList list,
+	private ArrayList<ClassBean> createClassBeanArray(
+			OntologyBean ontologyBean, AssociationList list,
 			ClassBean current_classBean, String hierarchy_relationName,
 			boolean includeChildren) {
 		ArrayList<ClassBean> classBeans = new ArrayList<ClassBean>();
-		addAssociationListInfoToClassBean(list, current_classBean,
-				hierarchy_relationName, includeChildren);
+		addAssociationListInfoToClassBean(ontologyBean, list,
+				current_classBean, hierarchy_relationName, includeChildren);
 		classBeans.add(current_classBean);
 
 		return classBeans;
@@ -1187,16 +1204,16 @@ public class OntologyRetrievalManagerLexGridImpl extends
 	 * @param hierarchy_relationName
 	 * @param includeChildren
 	 */
-	private void addAssociationListInfoToClassBean(AssociationList list,
-			ClassBean current_classBean, String hierarchy_relationName,
-			boolean includeChildren) {
+	private void addAssociationListInfoToClassBean(OntologyBean ontologyBean,
+			AssociationList list, ClassBean current_classBean,
+			String hierarchy_relationName, boolean includeChildren) {
 		if (list == null || current_classBean == null) {
 			return;
 		}
 
 		for (Association association : list.getAssociation()) {
-			addAssociationInfoToClassBean(association, current_classBean,
-					hierarchy_relationName, includeChildren);
+			addAssociationInfoToClassBean(ontologyBean, association,
+					current_classBean, hierarchy_relationName, includeChildren);
 		}
 	}
 
@@ -1213,9 +1230,9 @@ public class OntologyRetrievalManagerLexGridImpl extends
 	 * @param hierarchy_relationName
 	 * @param includeChildren
 	 */
-	private void addAssociationInfoToClassBean(Association association,
-			ClassBean current_classBean, String hierarchy_relationName,
-			boolean includeChildren) {
+	private void addAssociationInfoToClassBean(OntologyBean ontologyBean,
+			Association association, ClassBean current_classBean,
+			String hierarchy_relationName, boolean includeChildren) {
 		AssociatedConceptList assocConceptList = association
 				.getAssociatedConcepts();
 		ArrayList<ClassBean> classBeans = new ArrayList<ClassBean>();
@@ -1240,7 +1257,8 @@ public class OntologyRetrievalManagerLexGridImpl extends
 
 				ResolvedConceptReference rcr_without_relations = getResolvedConceptReferenceWithoutRelations(assocConcept);
 				ClassBean classBean = createClassBeanWithChildCount(
-						rcr_without_relations, countMap, includeChildren);
+						ontologyBean, rcr_without_relations, countMap,
+						includeChildren);
 
 				// ClassBean classBean = createClassBeanWithChildCount(
 				// rcr_without_relations, includeChildren);
@@ -1252,7 +1270,7 @@ public class OntologyRetrievalManagerLexGridImpl extends
 
 				if (nextLevel != null && nextLevel.getAssociationCount() != 0) {
 					for (int j = 0; j < nextLevel.getAssociationCount(); j++) {
-						addAssociationInfoToClassBean(nextLevel
+						addAssociationInfoToClassBean(ontologyBean, nextLevel
 								.getAssociation(j), classBean,
 								hierarchy_relationName, includeChildren);
 					}
@@ -1262,7 +1280,7 @@ public class OntologyRetrievalManagerLexGridImpl extends
 				AssociationList prevLevel = assocConcept.getTargetOf();
 				if (prevLevel != null && prevLevel.getAssociationCount() != 0) {
 					for (int j = 0; j < prevLevel.getAssociationCount(); j++) {
-						addAssociationInfoToClassBean(prevLevel
+						addAssociationInfoToClassBean(ontologyBean, prevLevel
 								.getAssociation(j), classBean,
 								hierarchy_relationName, includeChildren);
 					}
@@ -1422,7 +1440,7 @@ public class OntologyRetrievalManagerLexGridImpl extends
 	private ClassBean createSimpleSubClassOnlyClassBean(ClassBean classBean,
 			boolean includeChildren) {
 		ClassBean cb = createBaseClassBean(classBean.getId(), classBean
-				.getLabel());
+				.getFullId(), classBean.getLabel());
 		cb.setSynonyms(classBean.getSynonyms());
 		cb.setDefinitions(classBean.getDefinitions());
 		cb.setAuthors(classBean.getAuthors());
@@ -1497,7 +1515,7 @@ public class OntologyRetrievalManagerLexGridImpl extends
 
 	private ClassBean createSimpleStrippedDownClassBean(ClassBean classBean) {
 		ClassBean cb = createBaseClassBean(classBean.getId(), classBean
-				.getLabel());
+				.getFullId(), classBean.getLabel());
 		Integer childCount = (Integer) classBean.getRelations().get(
 				ApplicationConstants.CHILD_COUNT);
 		if (childCount != null) {
@@ -1511,8 +1529,8 @@ public class OntologyRetrievalManagerLexGridImpl extends
 	private void addSubClassRelationAndCountToClassBean(String schemeName,
 			CodingSchemeVersionOrTag csvt, ClassBean classBean)
 			throws Exception {
-		List<String> hierarchyDirectionalNames = getListOfSubClassDirectionalName(schemeName, csvt);
-		
+		List<String> hierarchyDirectionalNames = getListOfSubClassDirectionalName(
+				schemeName, csvt);
 
 		for (String directionalName : hierarchyDirectionalNames) {
 			Object obj_beans = classBean.getRelations().get(directionalName);
@@ -1584,8 +1602,7 @@ public class OntologyRetrievalManagerLexGridImpl extends
 	}
 
 	private List<String> getListOfSubClassDirectionalName(String schemeName,
-			CodingSchemeVersionOrTag csvt)
-			throws Exception {
+			CodingSchemeVersionOrTag csvt) throws Exception {
 		ArrayList<String> hierarchyDirectionalNames = new ArrayList<String>();
 		String hierarchyId = getDefaultHierarchyId(schemeName, csvt);
 		SupportedHierarchy[] supHiers = lbscm.getSupportedHierarchies(
@@ -1598,7 +1615,31 @@ public class OntologyRetrievalManagerLexGridImpl extends
 			hierarchyDirectionalNames.add(dirName);
 		}
 		return hierarchyDirectionalNames;
-	}	
+	}
+
+	private String getFullId(OntologyBean ontologyBean, String code) {
+		String fullId = code;
+		String modCode = code.replace(':', '_');
+		if (ontologyBean != null) {
+			if (ApplicationConstants.FORMAT_OBO.equalsIgnoreCase(ontologyBean
+					.getFormat())) {
+				fullId = "http://purl.obolibrary.org/obo/" + modCode;
+			}
+			if (ApplicationConstants.FORMAT_UMLS_RRF
+					.equalsIgnoreCase(ontologyBean.getFormat())) {
+				fullId = "http://purl.bioontology.org/ontology/"
+						+ ontologyBean.getAbbreviation() + "/" + code;
+			}
+			if (ApplicationConstants.FORMAT_LEXGRID_XML
+					.equalsIgnoreCase(ontologyBean.getFormat())) {
+				fullId = "http://purl.bioontology.org/ontology/"
+						+ ontologyBean.getAbbreviation() + "/" + modCode;
+			}
+
+		}
+		return fullId;
+	}
+
 	/**
 	 * @param allConceptsMaxPageSize
 	 *            the allConceptsMaxPageSize to set
