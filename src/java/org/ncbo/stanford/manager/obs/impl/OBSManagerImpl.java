@@ -73,14 +73,8 @@ public class OBSManagerImpl implements OBSManager {
 			for (ConceptBean obsConcept : obsAllConcepts) {
 				ClassBean concept = new ClassBean();
 				populateBaseClassBean(obsConcept, concept);
-				concept.setLabel(obsConcept.getPreferredName());
 				concept.setIsTopLevel(obsConcept.getIsTopLevel());
-				List<String> synonyms = obsConcept.getSynonyms();
-
-				if (synonyms != null && !synonyms.isEmpty()) {
-					concept.setSynonyms(obsConcept.getSynonyms());
-				}
-
+				
 				concept.addRelation(ApplicationConstants.SEMANTIC_TYPES,
 						obsConcept.getSemanticTypes());
 				allConcepts.add(concept);
@@ -318,10 +312,23 @@ public class OBSManagerImpl implements OBSManager {
 			classBean.setId(fullConceptId);
 		}
 
-		classBean.setLabel(obsBean.getPreferredName());
-		classBean.setFullId(obsBean.getFullId());
-		classBean.setSynonyms(obsBean.getSynonyms());
-		classBean.setDefinitions(obsBean.getDefinitions());
+		String preferredName = obsBean.getPreferredName();
+		String fullId = obsBean.getFullId();
+		
+		classBean.setLabel(preferredName == null ? "" : preferredName);
+		classBean.setFullId(fullId == null ? "" : fullId);
+
+		List<String> synonyms = obsBean.getSynonyms();
+
+		if (synonyms != null && !synonyms.isEmpty()) {
+			classBean.setSynonyms(synonyms);
+		}
+
+		List<String> definitions = obsBean.getDefinitions();
+
+		if (definitions != null && !definitions.isEmpty()) {
+			classBean.setDefinitions(definitions);
+		}
 	}
 
 	private List<String> parseOBSConceptId(String fullConceptId) {
