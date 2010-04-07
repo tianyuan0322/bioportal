@@ -24,11 +24,12 @@ public class DumpRDFServiceImpl extends ConceptServiceImpl implements DumpRDFSer
 		OntologyRetrievalManager orm = getRetrievalManager(ontoBean);
 		// Set up the output content and write the header
 		StringBuilder output = new StringBuilder();
-		addNamespace(output, ontoBean.getAbbreviation());
+		String prefix = ontoBean.getAbbreviation();
+		addNamespace(output, prefix);
 		// Get the list of classes from OBS
 		// For each class, get the local ClassBean content and add it to the output
 		for (Iterator<ClassBean> classIter = orm.listAllClasses(ontoBean); classIter.hasNext(); ) {
-			addClassToOutput(classIter.next(), output);
+			addClassToOutput(classIter.next(), prefix, output);
 		}
 		return output.toString();
 	}
@@ -36,19 +37,28 @@ public class DumpRDFServiceImpl extends ConceptServiceImpl implements DumpRDFSer
 	// Pick the name, synonyms, subclasses, etc. off of the ClassBean and 
 	// add them to the RDF file content.
 	@SuppressWarnings("unchecked")
-	private void addClassToOutput(ClassBean classBean, StringBuilder output) {
+	private void addClassToOutput(ClassBean classBean, String idPrefix, StringBuilder output) {
+		
+		// Id
+		// Note that the ClassBean is inconsistent.  Sometimes getId returns a string with
+		// the ontology abbreviation prepended; sometimes it does not.
 		String id = classBean.getId();
+		if (!id.startsWith(idPrefix)) {
+			id = idPrefix+":"+id;
+		}
+		String n3Id = "<http://bio2rdf.org/"+id+">";
 		
 		// Name
 		String name = classBean.getLabel();
-		output.append("<http://bio2rdf.org/"+id+"> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://bio2rdf.org/ns/obo#term> .\n");
-		output.append("<http://bio2rdf.org/"+id+"> <http://bio2rdf.org/ns/obo#name> \""+name+"\" .\n");
+		output.append(n3Id+" <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://bio2rdf.org/obo#term> .\n");
+		output.append(n3Id+" <http://bio2rdf.org/ns/obo_resource:name> \""+name+"\" .\n");
+		output.append(n3Id+" rdfs:label \""+name+" ["+id+"]\" .\n");
 
 		// Definition
 		ArrayList<String> defns = (ArrayList<String>)classBean.getDefinitions();
 		if (defns != null) {
 			for (String defn: defns) {
-				output.append("<http://bio2rdf.org/"+id+"> <http://bio2rdf.org/ns/obo#definition> \""+defn+"\" .\n");
+				output.append(n3Id+" <http://bio2rdf.org/ns/obo#definition> \""+defn+"\" .\n");
 			}
 		}
 		
@@ -57,7 +67,7 @@ public class DumpRDFServiceImpl extends ConceptServiceImpl implements DumpRDFSer
 		if (synonyms != null) {
 			for (String synonym: synonyms) {
 				if (!synonym.equals(name)) {
-					output.append("<http://bio2rdf.org/"+id+"> <http://bio2rdf.org/ns/obo#synonym> \""+synonym+"\" .\n");
+					output.append(n3Id+" <http://bio2rdf.org/ns/obo#synonym> \""+synonym+"\" .\n");
 				}
 			}
 		}
@@ -66,7 +76,7 @@ public class DumpRDFServiceImpl extends ConceptServiceImpl implements DumpRDFSer
 		ArrayList<String> xrefs = (ArrayList<String>)classBean.getRelation((Object)XREF_RELATION_NAME);
 		if (xrefs != null) {
 			for (String xref: xrefs) {
-				output.append("<http://bio2rdf.org/"+id+"> <http://bio2rdf.org/ns/obo#xref> \""+xref+"\" .\n");				
+				output.append(n3Id+" <http://bio2rdf.org/ns/obo#xref> \""+xref+"\" .\n");				
 			}
 		}
 		
@@ -75,7 +85,7 @@ public class DumpRDFServiceImpl extends ConceptServiceImpl implements DumpRDFSer
 		if (subClasses != null) {
 			for (ClassBean subClass: subClasses) {
 				String subclassId = subClass.getId();
-				output.append("<http://bio2rdf.org/"+subclassId+"> <http://bio2rdf.org/ns/obo#is_a> <http://bio2rdf.org/"+id+"> .\n");
+				output.append("<http://bio2rdf.org/"+subclassId+"> <http://bio2rdf.org/ns/obo#is_a> "+n3Id+" .\n");
 			}
 		}
 	}
