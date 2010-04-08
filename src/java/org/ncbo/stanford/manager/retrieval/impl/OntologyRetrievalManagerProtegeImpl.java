@@ -218,7 +218,7 @@ public class OntologyRetrievalManagerProtegeImpl extends
 
 		if (kb instanceof OWLModel) {
 			// RDF/OWL format
-			allClasses.addAll(((OWLModel) kb).getUserDefinedOWLNamedClasses());
+			allClasses.addAll(((OWLModel) kb).getUserDefinedRDFSNamedClasses());
 		} else {
 			// Protege format
 			allClasses.addAll(kb.getClses());
@@ -551,10 +551,6 @@ public class OntologyRetrievalManagerProtegeImpl extends
 		addDefinitions(cls, definitionSlot, classBean);
 		addAuthors(cls, authorSlot, classBean);
 
-		// TODO: need to check
-		// set instance count
-		// classBean.setInstanceCount(cls.getInstanceCount());
-
 		recursionMap.put(cls, classBean);
 
 		// add properties
@@ -610,7 +606,7 @@ public class OntologyRetrievalManagerProtegeImpl extends
 		classBean.addRelation(ApplicationConstants.CHILD_COUNT, subclasses
 				.size());
 		classBean.addRelation(ApplicationConstants.INSTANCE_COUNT, cls
-				.getInstanceCount());
+				.getDirectInstanceCount());
 
 		if (recursive) {
 			classBean.addRelation(ApplicationConstants.SUB_CLASS,
