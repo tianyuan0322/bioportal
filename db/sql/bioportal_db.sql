@@ -1,6 +1,6 @@
 /*
 SQLyog Enterprise - MySQL GUI v8.12 
-MySQL - 5.1.39-community : Database - bioportal
+MySQL - 5.1.43-community : Database - bioportal
 *********************************************************************
 */
 
@@ -113,7 +113,7 @@ CREATE TABLE `ncbo_ontology_file` (
   PRIMARY KEY (`id`),
   UNIQUE KEY `ind_ontology_id_filename` (`ontology_version_id`,`filename`),
   KEY `ontology_id_2` (`ontology_version_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=40985 DEFAULT CHARSET=latin1 CHECKSUM=1 DELAY_KEY_WRITE=1 ROW_FORMAT=DYNAMIC;
+) ENGINE=InnoDB AUTO_INCREMENT=41417 DEFAULT CHARSET=latin1 CHECKSUM=1 DELAY_KEY_WRITE=1 ROW_FORMAT=DYNAMIC;
 
 /*Table structure for table `ncbo_ontology_load_queue` */
 
@@ -130,7 +130,7 @@ CREATE TABLE `ncbo_ontology_load_queue` (
   KEY `FK_ncbo_ontology_load_queue_ontology_version_id` (`ontology_version_id`),
   KEY `FK_ncbo_ontology_load_queue_status_id` (`status_id`),
   CONSTRAINT `FK_ncbo_ontology_load_queue_status_id` FOREIGN KEY (`status_id`) REFERENCES `ncbo_l_status` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=3718 DEFAULT CHARSET=latin1 CHECKSUM=1 DELAY_KEY_WRITE=1 ROW_FORMAT=DYNAMIC;
+) ENGINE=InnoDB AUTO_INCREMENT=4093 DEFAULT CHARSET=latin1 CHECKSUM=1 DELAY_KEY_WRITE=1 ROW_FORMAT=DYNAMIC;
 
 /*Table structure for table `ncbo_usage_log` */
 
@@ -166,7 +166,7 @@ CREATE TABLE `ncbo_usage_log` (
   KEY `idx_search_parameters` (`search_parameters`),
   KEY `FK_ncbo_usage_log_event_type` (`event_type`),
   CONSTRAINT `FK_ncbo_usage_log_event_type` FOREIGN KEY (`event_type`) REFERENCES `ncbo_l_usage_event_type` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=11 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=236525 DEFAULT CHARSET=latin1;
 
 /*Table structure for table `ncbo_user` */
 
@@ -175,6 +175,7 @@ DROP TABLE IF EXISTS `ncbo_user`;
 CREATE TABLE `ncbo_user` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `username` varchar(64) NOT NULL,
+  `open_id` varchar(256) DEFAULT NULL,
   `password` varchar(128) NOT NULL,
   `email` varchar(128) NOT NULL,
   `firstname` varchar(64) NOT NULL,
@@ -183,7 +184,7 @@ CREATE TABLE `ncbo_user` (
   `date_created` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`),
   UNIQUE KEY `idx_unique_username` (`username`)
-) ENGINE=InnoDB AUTO_INCREMENT=38489 DEFAULT CHARSET=latin1 CHECKSUM=1 DELAY_KEY_WRITE=1 ROW_FORMAT=DYNAMIC;
+) ENGINE=InnoDB AUTO_INCREMENT=38552 DEFAULT CHARSET=latin1 CHECKSUM=1 DELAY_KEY_WRITE=1 ROW_FORMAT=DYNAMIC;
 
 /*Table structure for table `ncbo_user_role` */
 
@@ -198,7 +199,7 @@ CREATE TABLE `ncbo_user_role` (
   KEY `ncbo_user_role_fk1_new` (`role_id`),
   CONSTRAINT `ncbo_user_role_fk1_new` FOREIGN KEY (`role_id`) REFERENCES `ncbo_l_role` (`id`),
   CONSTRAINT `ncbo_user_role_fk_new` FOREIGN KEY (`user_id`) REFERENCES `ncbo_user` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=38487 DEFAULT CHARSET=latin1 CHECKSUM=1 DELAY_KEY_WRITE=1 ROW_FORMAT=DYNAMIC;
+) ENGINE=InnoDB AUTO_INCREMENT=38548 DEFAULT CHARSET=latin1 CHECKSUM=1 DELAY_KEY_WRITE=1 ROW_FORMAT=DYNAMIC;
 
 /*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
 /*!40014 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS */;
