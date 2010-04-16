@@ -452,8 +452,8 @@ public class OntologyRetrievalManagerProtegeImpl extends
 					currentBean.addRelation(ApplicationConstants.CHILD_COUNT,
 							node.getDirectSubclassCount());
 				} else {
-					List<ClassBean> siblings = convertLightBeans(getUniqueClasses(previousNode
-							.getDirectSubclasses()));
+					List<ClassBean> siblings = convertLightBeans(removeAnnonymousClasses(getUniqueClasses(previousNode
+							.getDirectSubclasses())));
 
 					for (ClassBean sibling : siblings) {
 						if (sibling.getId().equals(clsBean.getId())) {
@@ -490,6 +490,19 @@ public class OntologyRetrievalManagerProtegeImpl extends
 		}
 
 		return beans;
+	}
+	
+	private Collection<Cls> removeAnnonymousClasses(Collection<Cls> protegeClasses){		
+		Iterator<Cls> it = protegeClasses.iterator();
+
+		while (it.hasNext()) {
+			Cls subclass = it.next();			 
+			if (subclass.isSystem()
+					|| subclass.getName().startsWith("@")) {
+				it.remove();
+			}
+		} 
+		return protegeClasses; 
 	}
 
 	private List<ClassBean> convertClasses(Collection<Cls> protegeClses,
