@@ -45,6 +45,7 @@ import com.noelios.restlet.http.HttpResponse;
  */
 public class RequestUtils {
 
+	private static final String BIOPORTAL_USER_AGENT = "BioPortal Core";
 	public static final String PARAM_SEPARATOR = "&";
 	private static final String RESTLET_RESERVED_ATTRIBUTE_PREFIX = "org.restlet";
 
@@ -440,6 +441,7 @@ public class RequestUtils {
 		URL url = new URL(baseUrl + ((getData.length() > 0) ? "?" : "")
 				+ getData);
 		HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+		conn.setRequestProperty("User-Agent", BIOPORTAL_USER_AGENT);
 
 		try {
 			is = conn.getInputStream();
