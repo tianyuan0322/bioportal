@@ -59,8 +59,6 @@ public class OntologyLoadSchedulerServiceImpl extends AbstractOntologyService
 		List<NcboOntologyLoadQueue> ontologiesToLoad = ncboOntologyLoadQueueDAO
 				.getOntologiesToLoad();
 
-		backupIndex();
-
 		for (NcboOntologyLoadQueue loadQueue : ontologiesToLoad) {
 			if (ncboOntologyLoadQueueDAO.needsParsing(loadQueue.getId())
 					.booleanValue()) {
