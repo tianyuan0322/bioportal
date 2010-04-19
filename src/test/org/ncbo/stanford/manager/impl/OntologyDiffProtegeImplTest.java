@@ -40,14 +40,14 @@ public class OntologyDiffProtegeImplTest extends AbstractBioPortalTest {
 				.findOntologyOrViewVersionById(NEW_VERSION_ID);
 
 		System.out.println("old: " + oldVersion + ", new: " + newVersion);
-		diffManagerProtege.createDiff(oldVersion, newVersion);
+		diffManagerProtege.createDiff(NEW_VERSION_ID, OLD_VERSION_ID);
 	}
 
 	@Test
 	public void testDiffByOntologyId() throws Exception {
 		System.out.println("Starting diff test.");
 
-		diffManagerProtege.createDiffForTwoLatestVersions(new Integer(
+		diffManagerProtege.createDiffForLatestActiveOntologyVersionPair(new Integer(
 				ONTOLOGY_ID));
 	}
 }

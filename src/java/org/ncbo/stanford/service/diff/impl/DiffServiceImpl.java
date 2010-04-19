@@ -21,13 +21,38 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Transactional
 public class DiffServiceImpl implements DiffService {
-
 	private static final Log log = LogFactory.getLog(DiffServiceImpl.class);
 	private OntologyService ontologyService;
 	private Map<String, String> ontologyFormatHandlerMap = new HashMap<String, String>(
 			0);
 	private Map<String, OntologyDiffManager> ontologyDiffHandlerMap = new HashMap<String, OntologyDiffManager>(
 			0);
+
+	
+	public void createDiff(Integer newOntologyVersionId,
+			Integer oldOntologyVersionId) throws Exception {
+		OntologyBean ontologyBean = findOntologyBeanByOntologyVersionId(newOntologyVersionId);
+		OntologyDiffManager ontologyDiffManager = getDiffManager(ontologyBean);
+		ontologyDiffManager.createDiff(newOntologyVersionId, oldOntologyVersionId);
+		
+	}
+
+	public void createDiffForAllActiveVersionsOfOntology(Integer ontologyId)
+			throws Exception {
+		OntologyBean ontologyBean = findOntologyBeanByOntologyId(ontologyId);
+		OntologyDiffManager ontologyDiffManager = getDiffManager(ontologyBean);
+		ontologyDiffManager.createDiffForAllActiveVersionsOfOntology(ontologyId);
+		
+	}
+
+	public void createDiffForLatestActiveOntologyVersionPair(Integer ontologyId)
+			throws Exception {
+		OntologyBean ontologyBean = findOntologyBeanByOntologyId(ontologyId);
+		OntologyDiffManager ontologyDiffManager = getDiffManager(ontologyBean);
+		ontologyDiffManager.createDiffForLatestActiveOntologyVersionPair(ontologyId);
+		
+	}
+
 
 	/**
 	 * Return the list of all diff pairs for a given ontology id

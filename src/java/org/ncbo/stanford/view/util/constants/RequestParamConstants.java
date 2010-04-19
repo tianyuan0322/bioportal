@@ -126,7 +126,13 @@ public interface RequestParamConstants {
 	public static final String PARAM_VIEWS = "views";
 	public static final String PARAM_ACTIVE = "active";
 	public static final String PARAM_PULLED = "pulled";
-
+	
+	/**
+	 * Params for creating diffs
+	 */
+	public static final String PARAM_LATEST = "latest";
+	public static final String PARAM_ALL = "all";
+	
 	/*
 	 * view extractor
 	 */

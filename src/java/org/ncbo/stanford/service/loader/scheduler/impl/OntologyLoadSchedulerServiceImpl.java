@@ -390,7 +390,7 @@ public class OntologyLoadSchedulerServiceImpl extends AbstractOntologyService
 			log.debug("createDiff BEGIN..............");
 		}
 
-		getDiffManager(ontologyBean).createDiffForTwoLatestVersions(
+		getDiffManager(ontologyBean).createDiffForLatestActiveOntologyVersionPair(
 				ontologyBean.getOntologyId());
 
 		if (log.isDebugEnabled()) {

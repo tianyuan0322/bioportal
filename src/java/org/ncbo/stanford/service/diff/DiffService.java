@@ -13,6 +13,38 @@ import java.util.List;
 public interface DiffService {
 
 	/**
+	 * Creates a diff between two ontology versions
+	 * 
+	 * @param newOntologyVersionId,
+	 *            oldOntologyVersionId
+	 * 
+	 * @throws Exception
+	 */
+	public void createDiff(Integer newOntologyVersionId,
+			Integer oldOntologyVersionId) throws Exception;
+	
+	/**
+	 * Creates a diff between the ontology that has just been loaded and its
+	 * previous active version(if one exists in BioPortal). Save the diff in a file
+	 * 
+	 * @param ontologyBean
+	 * 
+	 * @throws Exception
+	 */
+	public void createDiffForLatestActiveOntologyVersionPair(Integer ontologyId)
+			throws Exception;
+
+	/**
+	 * Create diffs between the active versions of an ontology
+	 * 
+	 * @param ontologyBean
+	 * 
+	 * @throws Exception
+	 */	
+	public void createDiffForAllActiveVersionsOfOntology(Integer ontologyId)
+	  throws Exception ;
+	
+	/**
 	 * Return the list of all diff pairs for a given ontology id
 	 * 
 	 * @param ontologyId

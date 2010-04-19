@@ -54,6 +54,7 @@ import edu.stanford.smi.protege.model.KnowledgeBase;
 import edu.stanford.smi.protege.model.Project;
 import edu.stanford.smi.protege.util.FileUtilities;
 import edu.stanford.smi.protege.util.URIUtilities;
+import edu.stanford.smi.protegex.prompt.promptDiff.PromptDiff;
 import edu.stanford.smi.protegex.storage.rdf.RDFBackend;
 
 public class OntologyDiffManagerLexGridImpl extends
@@ -76,6 +77,84 @@ public class OntologyDiffManagerLexGridImpl extends
 
 	}
 
+	
+	/**
+	 * Creates a diff between two ontology versions. Calls Prompt to do that and
+	 * saves the diff in a file
+	 * 
+	 * @param newOntologyVersionId
+	 *            , oldOntologyVersionId
+	 * 
+	 * @throws Exception
+	 */
+	public void createDiff(Integer newOntologyVersionId, Integer oldOntologyVersionId)
+			throws Exception {
+		OntologyBean ontologyVersionNew = ontologyMetadataManager
+				.findOntologyOrViewVersionById(newOntologyVersionId);
+		OntologyBean ontologyVersionOld = ontologyMetadataManager
+				.findOntologyOrViewVersionById(oldOntologyVersionId);
+
+		if (ontologyVersionNew == null) {
+			throw new OntologyNotFoundException(
+					OntologyNotFoundException.DEFAULT_MESSAGE
+							+ " (Version Id: " + newOntologyVersionId + ")");
+		}
+
+		if (ontologyVersionOld == null) {
+			throw new OntologyNotFoundException(
+					OntologyNotFoundException.DEFAULT_MESSAGE
+							+ " (Version Id: " + oldOntologyVersionId + ")");
+		}
+		if (log.isDebugEnabled()) {
+			log.debug("In create diff for " + ontologyVersionOld.getId()
+					+ " and " + ontologyVersionNew.getId());
+		}
+
+		List<ChangeHolder> changeList = processOntologyDiff(ontologyVersionOld,
+				ontologyVersionNew);
+		saveDiffToFiles(ontologyVersionOld, ontologyVersionNew, changeList);
+	}
+
+	/**
+	 * Creates a diff between the ontology that has just been loaded and its
+	 * previous version(if one exists in BioPortal). Calls Prompt to do that and
+	 * saves the diff in a file
+	 * 
+	 * @param onotlogyId
+	 * @throws Exception
+	 */
+
+	public void createDiffForLatestActiveOntologyVersionPair(Integer ontologyId)
+			throws Exception {
+
+		List<Integer> versionIds = ontologyDiffManagerProtege.getAllActiveVersionIdsForOntologyIdSortedDesc(ontologyId);
+		// there are fewer than two active versions -- nothing to compare
+		if (versionIds.size() < 2)
+			return;
+
+		// latest version
+		Integer newVersionId = versionIds.get(0);
+		// previous version
+		Integer oldVersionId = versionIds.get(1);
+		createDiff(newVersionId, oldVersionId);
+	}
+
+	/**
+	 * Create diffs between all the versions of an ontology
+	 * 
+	 * @param onotlogyId
+	 * @throws Exception 
+	 */
+	public void createDiffForAllActiveVersionsOfOntology(Integer ontologyId) throws Exception {
+		List<Integer> versionIds = ontologyDiffManagerProtege.getAllActiveVersionIdsForOntologyIdSortedDesc(ontologyId);
+		// there are fewer than two active versions -- nothing to compare
+		if (versionIds.size() < 2)
+			return;
+		for (int i=0; i < versionIds.size() -1; i++) {
+			createDiff(versionIds.get(i), versionIds.get(i+1));
+		}
+	}	
+	
 	public void createDiff(OntologyBean ontologyVersionOld,
 			OntologyBean ontologyVersionNew) throws Exception {
 		if (log.isDebugEnabled()) {
@@ -89,49 +168,6 @@ public class OntologyDiffManagerLexGridImpl extends
 
 	}
 
-	public void createDiffForTwoLatestVersions(Integer ontologyId)
-			throws Exception {
-		List<OntologyBean> allVersions = ontologyMetadataManager
-				.findAllOntologyOrViewVersionsById(ontologyId, false);
-
-		// get a list of version ids, filtering out ontologies that are not
-		// active (want to compare only active ontologies
-		List<Integer> versionIds = new ArrayList<Integer>(allVersions.size());
-
-		for (OntologyBean ontologyVersion : allVersions) {
-			if (ontologyVersion.getStatusId().equals(
-					StatusEnum.STATUS_READY.getStatus())) {
-				versionIds.add(ontologyVersion.getId());
-			}
-		}
-
-		// there are fewer than two active versions -- nothing to compare
-		if (versionIds.size() < 2)
-			return;
-
-		Collections.sort(versionIds);
-		// latest version
-		Integer newVersionId = versionIds.get(versionIds.size() - 1);
-		// previous version
-		Integer oldVersionId = versionIds.get(versionIds.size() - 2);
-
-		OntologyBean newVersion = ontologyMetadataManager
-				.findOntologyOrViewVersionById(newVersionId);
-		OntologyBean oldVersion = ontologyMetadataManager
-				.findOntologyOrViewVersionById(oldVersionId);
-
-		if (newVersion == null) {
-			throw new OntologyNotFoundException(
-					OntologyNotFoundException.DEFAULT_MESSAGE
-							+ " (Version Id: " + newVersionId + ")");
-		}
-		if (oldVersion == null) {
-			throw new OntologyNotFoundException(
-					OntologyNotFoundException.DEFAULT_MESSAGE
-							+ " (Version Id: " + oldVersionId + ")");
-		}
-		createDiff(oldVersion, newVersion);
-	}
 
 	public List<ArrayList<String>> getAllDiffsForOntology(Integer ontologyId) {
 		return ontologyDiffManagerProtege.getAllDiffsForOntology(ontologyId);

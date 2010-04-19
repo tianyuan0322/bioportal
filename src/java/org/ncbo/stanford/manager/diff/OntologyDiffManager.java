@@ -22,13 +22,13 @@ public interface OntologyDiffManager {
 	/**
 	 * Creates a diff between two ontology versions
 	 * 
-	 * @param ontologyVersionOld,
-	 *            ontologyVersionNew
+	 * @param newOntologyVersionId,
+	 *            oldOntologyVersionId
 	 * 
 	 * @throws Exception
 	 */
-	public void createDiff(OntologyBean ontologyVersionOld,
-			OntologyBean ontologyVersionNew) throws Exception;
+	public void createDiff(Integer newOntologyVersionId,
+			Integer oldOntologyVersionId) throws Exception;
 
 	/**
 	 * Creates a diff between the ontology that has just been loaded and its
@@ -38,9 +38,16 @@ public interface OntologyDiffManager {
 	 * 
 	 * @throws Exception
 	 */
-	public void createDiffForTwoLatestVersions(Integer ontologyId)
+	public void createDiffForLatestActiveOntologyVersionPair(Integer ontologyId)
 			throws Exception;
 
+	/**
+	 * Create diffs between the versions of an ontology
+	 * 
+	 */	
+	public void createDiffForAllActiveVersionsOfOntology(Integer ontologyId)
+	  throws Exception ;
+	
 	/**
 	 * Returns the file for the diff between two ontology versions in th
 	 * specified format (in any order)
