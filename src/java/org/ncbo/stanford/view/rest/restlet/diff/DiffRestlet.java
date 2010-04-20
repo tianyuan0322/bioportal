@@ -40,15 +40,17 @@ public class DiffRestlet extends AbstractBaseRestlet {
 	 * @param response
 	 */
 	@Override
-	public void putRequest(Request request, Response response) {
+	public void postRequest(Request request, Response response) {
 		// Handle PUT calls here
+		System.out.println("post request");
+		log.debug("post request");
 		parseDiff(request, response);
 	}
 
 	private void parseDiff(Request request, Response response) {
 		try {
 			String path = request.getResourceRef().getPath();
-
+            System.out.println("parseDiff path="+path);
 			if (path.contains(RequestParamConstants.PARAM_ALL)) {
 				String ontologyId = (String) request.getAttributes().get(
 						MessageUtils.getMessage("entity.ontologyid"));
