@@ -124,7 +124,7 @@ public class OntologyExtractor {
 			log.info("Saving ontology (" + classesImported
 					+ " classes imported) ... ");
 			try {
-				manager.saveOntology(ontology, outputFile.toURI());
+				manager.saveOntology(ontology, getIriFromUri(outputFile.toURI()));
 			} catch (UnknownOWLOntologyException e) {
 				log.error(e.getMessage(), e);
 			} catch (OWLOntologyStorageException e) {
@@ -230,12 +230,16 @@ public class OntologyExtractor {
 
 	private OWLClass makeClass(String fragment) throws URISyntaxException {
 		URI u = getUri(ncboProperties.getClassPrefix() + fragment);
-		return manager.getOWLDataFactory().getOWLClass(u);
+		return manager.getOWLDataFactory().getOWLClass(getIriFromUri(u));
 	}
 
 	private URI getUri(String fragment) throws URISyntaxException {
 		return new URI(ontologyName.getScheme(), ontologyName
 				.getSchemeSpecificPart(), fragment);
+	}
+
+	private IRI getIriFromUri(URI u) {
+		return IRI.create(u);
 	}
 
 	private void cleanUp() {

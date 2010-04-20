@@ -1,6 +1,7 @@
 package org.ncbo.stanford.view.rest.restlet.extractor;
 
 import java.io.File;
+import java.net.URI;
 import java.util.Properties;
 
 import javax.servlet.http.HttpServletRequest;
@@ -122,7 +123,7 @@ public class ViewExtractionRestlet extends AbstractBaseRestlet {
 
 			// synchronized (this) {
 			// save ontology into local system
-			manager.saveOntology(ontology, output.toURI());
+			manager.saveOntology(ontology, getIriFromUri(output.toURI()));
 
 			FileRepresentation fileRepresentation = new FileRepresentation(
 					output, MediaType.APPLICATION_ALL,
@@ -177,6 +178,10 @@ public class ViewExtractionRestlet extends AbstractBaseRestlet {
 
 	public String getTempDir() {
 		return tempDir;
+	}
+
+	private IRI getIriFromUri(URI u) {
+		return IRI.create(u);
 	}
 
 	public void setTempDir(String tempDir) {
