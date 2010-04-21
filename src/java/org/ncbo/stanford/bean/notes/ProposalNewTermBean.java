@@ -2,7 +2,7 @@ package org.ncbo.stanford.bean.notes;
 
 import java.util.List;
 
-public class ProposalNewTermBean extends ProposalBean {
+public class ProposalNewTermBean extends AbstractProposalBean {
 	private String definition;
 	private String id;
 	private List<String> parent;

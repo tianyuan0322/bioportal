@@ -2,7 +2,7 @@ package org.ncbo.stanford.bean.notes;
 
 import java.util.List;
 
-public class ProposalNewRelationshipBean extends ProposalBean {
+public class ProposalNewRelationshipBean extends AbstractProposalBean {
 	private String relationshipType;
 	private List<String> relationshipTarget;
 	private List<String> oldRelationshipTarget;

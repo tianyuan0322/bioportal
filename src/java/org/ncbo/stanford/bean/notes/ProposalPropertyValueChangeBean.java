@@ -1,7 +1,7 @@
 package org.ncbo.stanford.bean.notes;
 
 
-public class ProposalPropertyValueChangeBean extends ProposalBean {
+public class ProposalPropertyValueChangeBean extends AbstractProposalBean {
 	private String newValue;
 	private String oldValue;
 	private String propertyId;
