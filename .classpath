@@ -4,7 +4,6 @@
 	<classpathentry kind="src" path="classic_to_core_migration/src/java"/>
 	<classpathentry kind="src" path="WebRoot/WEB-INF/conf/generated"/>
 	<classpathentry kind="src" path="src/test"/>
-	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry kind="lib" path="WebRoot/WEB-INF/lib/org.restlet.jar"/>
 	<classpathentry kind="lib" path="WebRoot/WEB-INF/lib/org.restlet.ext.spring_2.5.jar"/>
 	<classpathentry kind="lib" path="WebRoot/WEB-INF/lib/org.restlet.ext.fileupload_1.2.jar"/>
@@ -20,7 +19,7 @@
 	<classpathentry kind="lib" path="WebRoot/WEB-INF/lib/javax.servlet.jsp.jar"/>
 	<classpathentry kind="lib" path="WebRoot/WEB-INF/lib/jta.jar"/>
 	<classpathentry kind="lib" path="WebRoot/WEB-INF/lib/log4j-1.2.15.jar"/>
-	<classpathentry kind="lib" path="WebRoot/WEB-INF/lib/spring.jar"/>
+	<classpathentry kind="lib" path="WebRoot/WEB-INF/lib/spring.jar" sourcepath="/Users/palexander/.m2/repository/org/springframework/spring/2.5.6/spring-2.5.6-sources.jar"/>
 	<classpathentry kind="lib" path="WebRoot/WEB-INF/lib/openid4java-0.9.5.jar"/>
 	<classpathentry kind="lib" path="WebRoot/WEB-INF/lib/spring-security-acl-2.0.0.jar"/>
 	<classpathentry kind="lib" path="WebRoot/WEB-INF/lib/spring-security-core-2.0.0.jar"/>
@@ -135,5 +134,8 @@
 	<classpathentry kind="lib" path="WebRoot/WEB-INF/lib/lexgrid/extLib/spring-oxm-1.5.7.jar"/>
 	<classpathentry kind="lib" path="WebRoot/WEB-INF/lib/lexgrid/extLib/spring-xml-1.5.7.jar"/>
 	<classpathentry kind="lib" path="WebRoot/WEB-INF/lib/lexgrid/lexbig.jar"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
+	<classpathentry kind="lib" path="WebRoot/WEB-INF/lib/notes-api.jar" sourcepath="/notes/src"/>
+	<classpathentry kind="lib" path="WebRoot/WEB-INF/lib/org.protege.owlapi.jar"/>
 	<classpathentry kind="output" path="WebRoot/WEB-INF/classes"/>
 </classpath>

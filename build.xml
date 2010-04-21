@@ -136,6 +136,7 @@
 				<filter token="bioportalontologyfilepath" value="${bioportal.ontology.filepath}" />
 				<filter token="bioportaldifffilepath" value="${bioportal.diff.filepath}" />
 				<filter token="bioportalmetadataincludespath" value="${bioportal.metadata.includes.path}" />
+				<filter token="bioportalnoteschangesincludespath" value="${bioportal.notes.changes.includes.path}" />
 				<filter token="obsrestbaseurl" value="${obs.rest.base.url}" />
 			</filterset>
 		</copy>
@@ -182,6 +183,10 @@
 				<filter token="protegetableprefix" value="${protege.table.prefix}" />
 				<filter token="protegetablesuffix" value="${protege.table.suffix}" />
 				<filter token="protegebigfilethreshold" value="${protege.big.file.threshold}" />
+				<filter token="notesjdbcurl" value="${notes.jdbc.url}" />
+				<filter token="notesjdbcdriver" value="${notes.jdbc.driver}" />
+				<filter token="notesjdbcusername" value="${notes.jdbc.username}" />
+				<filter token="notesjdbcpassword" value="${notes.jdbc.password}" />
 				<filter token="metadatauserinstprefix" value="${metadata.user.inst.prefix}" />
 				<filter token="metadatauserinstsuffix" value="${metadata.user.inst.suffix}" />
 				<filter token="metadataontologydomaininstprefix" value="${metadata.ontologydomain.inst.prefix}" />

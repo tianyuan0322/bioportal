@@ -266,6 +266,20 @@
 		</property>
 	</bean>
 
+	<bean id="notesRestlet"
+		class="org.ncbo.stanford.view.rest.restlet.notes.NotesRestlet"
+		parent="abstractOntologyBaseRestlet">
+		<property name="notesService">
+			<ref bean="notesService" />
+		</property>
+		<property name="ontologyService">
+			<ref bean="ontologyService" />
+		</property>
+		<property name="conceptService">
+			<ref bean="conceptService" />
+		</property>
+	</bean>
+
 	<bean id="ontologyDownloadRestlet"
 		class="org.ncbo.stanford.view.rest.restlet.ontology.OntologyDownloadRestlet"
 		parent="abstractOntologyBaseRestlet">
@@ -539,6 +553,15 @@
 						</entry>
 						<entry key="/instance/{ontologyVersionId}">
 							<ref local="instanceByIdRestlet" />
+						</entry>
+						<entry key="/notes/{ontologyid}">
+							<ref local="notesRestlet" />
+						</entry>
+						<entry key="/virtual/notes/{ontologyid}">
+							<ref local="notesRestlet" />
+						</entry>
+						<entry key="/ontologies/notes/{ontologyversionid}">
+							<ref local="notesRestlet" />
 						</entry>
 					</map>
 				</constructor-arg>

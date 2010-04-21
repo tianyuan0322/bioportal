@@ -310,6 +310,23 @@ public class RequestUtils {
 		return integerList;
 	}
 
+	public static List<String> parseStringListParam(String stringListParam) {
+		List<String> stringList = new ArrayList<String>(0);
+
+		if (!StringHelper.isNullOrNullString(stringListParam)) {
+			stringListParam = StringHelper.removeSpaces(stringListParam);
+
+			for (String stringParam : stringListParam.split(",")) {
+				try {
+					stringList.add(stringParam);
+				} catch (NumberFormatException e) {
+				}
+			}
+		}
+
+		return stringList;
+	}
+
 	public static List<Integer> parseIntegerListParam(String[] integerListParam) {
 		List<Integer> integerList = new ArrayList<Integer>(0);
 

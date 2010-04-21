@@ -142,4 +142,51 @@ public interface RequestParamConstants {
 	public static final String PARAM_EXISTONTOLOGY = "existontology";
 	public static final String PARAM_LOGCOUNT = "logcount";
 	public static final String PARAM_SAVECOUNT = "savecount";
+
+	/**
+	 * Notes parameters
+	 */
+	public static final String PARAM_APPLIES_TO = "appliesto";
+	public static final String PARAM_APPLIES_TO_TYPE = "appliestotype";
+	public static final String PARAM_NOTE_ID = "noteid";
+	public static final String PARAM_NOTE_TYPE = "type";
+	public static final String PARAM_NOTE_SUBJECT = "subject";
+	public static final String PARAM_NOTE_CONTENT = "content";
+	public static final String PARAM_NOTE_AUTHOR = "author";
+	public static final String PARAM_NOTE_THREADED = "threaded";
+	public static final String PARAM_NOTE_ASSOCIATED = "associated";
+	public static final String PARAM_NOTE_ARCHIVE = "archive";
+	public static final String PARAM_NOTE_ARCHIVE_THREAD = "archivethread";
+	public static final String PARAM_NOTE_UNARCHIVE = "unarchive";
+	public static final String PARAM_NOTE_UNARCHIVE_THREAD = "unarchivethread";
+	
+	/**
+	 * Notes: All proposals
+	 */
+	public static final String PARAM_REASON_FOR_CHANGE = "reasonforchange";
+	public static final String PARAM_CONTACT_INFO = "contactinfo";
+	
+	/**
+	 * Notes: New term proposal
+	 */
+	public static final String PARAM_NEW_TERM_DEFINITION = "newtermdefinition";
+	public static final String PARAM_NEW_TERM_ID = "newtermid";
+	public static final String PARAM_NEW_TERM_PARENT = "newtermparent";
+	public static final String PARAM_NEW_TERM_PREFERRED_NAME = "newtermpreferredname";
+	public static final String PARAM_NEW_TERM_SYNONYMS = "newtermsynonyms";
+	
+	/**
+	 * Notes: New relationship proposal
+	 */
+	public static final String PARAM_NEW_REL_TYPE = "relationshiptype";
+	public static final String PARAM_NEW_REL_TARGET = "relationshiptarget";
+	public static final String PARAM_NEW_REL_OLD_TARGET = "oldrelationshiptarget";
+	
+	/**
+	 * Notes: Property value change proposal
+	 */
+	public static final String PARAM_PROP_NEW_VALUE = "newpropertyvalue";
+	public static final String PARAM_PROP_OLD_VALUE = "oldpropertyvalue";
+	public static final String PARAM_PROP_ID = "propertyid";
+
 }

@@ -24,10 +24,13 @@ import org.ncbo.stanford.bean.OntologyMetricsBean;
 import org.ncbo.stanford.bean.UserBean;
 import org.ncbo.stanford.bean.concept.ClassBean;
 import org.ncbo.stanford.bean.concept.InstanceBean;
-import org.ncbo.stanford.bean.concept.InstanceBeanResultListBean;
 import org.ncbo.stanford.bean.concept.PropertyBean;
 import org.ncbo.stanford.bean.http.HttpInputStreamWrapper;
 import org.ncbo.stanford.bean.logging.UsageLoggingBean;
+import org.ncbo.stanford.bean.notes.NoteBean;
+import org.ncbo.stanford.bean.notes.ProposalNewRelationshipBean;
+import org.ncbo.stanford.bean.notes.ProposalNewTermBean;
+import org.ncbo.stanford.bean.notes.ProposalPropertyValueChangeBean;
 import org.ncbo.stanford.bean.response.AbstractResponseBean;
 import org.ncbo.stanford.bean.response.ErrorBean;
 import org.ncbo.stanford.bean.response.ErrorStatusBean;
@@ -486,6 +489,15 @@ public class XMLSerializationServiceImpl implements XMLSerializationService {
 		xmlSerializer.alias(MessageUtils.getMessage("entity.page"), Page.class);
 		xmlSerializer.alias(MessageUtils.getMessage("entity.ontologyhitbean"),
 				OntologyHitBean.class);
+
+		xmlSerializer.alias(MessageUtils.getMessage("entity.notebean"),
+				NoteBean.class);
+		xmlSerializer.alias(MessageUtils.getMessage("entity.proposalforpropertyvaluechange"),
+				ProposalPropertyValueChangeBean.class);
+		xmlSerializer.alias(MessageUtils.getMessage("entity.proposalfornewentity"),
+				ProposalNewTermBean.class);
+		xmlSerializer.alias(MessageUtils.getMessage("entity.proposalforchangehierarchy"),
+				ProposalNewRelationshipBean.class);
 
 		xmlSerializer.alias(ApplicationConstants.RESPONSE_XML_TAG_NAME,
 				SuccessBean.class);

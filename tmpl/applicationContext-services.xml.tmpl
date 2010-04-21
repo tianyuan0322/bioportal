@@ -502,6 +502,22 @@
 		parent="abstractOntologyManagerProtege">
 	</bean>
 
+	<bean id="notesPool"
+		class="org.ncbo.stanford.manager.notes.impl.NotesPoolImpl">
+		<property name="notesJdbcUrl">
+			<ref bean="notesJdbcUrl" />
+		</property>
+		<property name="notesJdbcDriver">
+			<ref bean="notesJdbcDriver" />
+		</property>
+		<property name="notesJdbcUsername">
+			<ref bean="notesJdbcUsername" />
+		</property>
+		<property name="notesJdbcPassword">
+			<ref bean="notesJdbcPassword" />
+		</property>
+	</bean>
+
 	<bean id="ontologyCategoryMetadataManager"
 		class="org.ncbo.stanford.manager.metadata.impl.OntologyCategoryMetadataManagerImpl"
 		parent="abstractOntologyManagerProtege">
@@ -627,6 +643,13 @@
 		</property>
 		<property name="ontologyMetricsHandlerMap">
 			<ref bean="ontologyMetricsHandlerMap" />
+		</property>
+	</bean>
+
+	<bean id="notesService"
+		class="org.ncbo.stanford.service.notes.impl.NotesServiceImpl">
+		<property name="notesPool">
+			<ref bean="notesPool" />
 		</property>
 	</bean>
 
@@ -1164,7 +1187,33 @@
 			<value>@protegebigfilethreshold@</value>
 		</constructor-arg>
 	</bean>
+	
+	<!-- Notes DB Configuration -->
+	<bean id="notesJdbcUrl" class="java.lang.String">
+		<constructor-arg>
+			<value>@notesjdbcurl@</value>
+		</constructor-arg>
+	</bean>
 
+	<bean id="notesJdbcDriver" class="java.lang.String">
+		<constructor-arg>
+			<value>@notesjdbcdriver@</value>
+		</constructor-arg>
+	</bean>
+
+	<bean id="notesJdbcUsername" class="java.lang.String">
+		<constructor-arg>
+			<value>@notesjdbcusername@</value>
+		</constructor-arg>
+	</bean>
+
+	<bean id="notesJdbcPassword" class="java.lang.String">
+		<constructor-arg>
+			<value>@notesjdbcpassword@</value>
+		</constructor-arg>
+	</bean>
+
+	<!-- Metadata configuration -->
 	<bean id="metadataUserInstPrefix" class="java.lang.String">
 		<constructor-arg>
 			<value>@metadatauserinstprefix@</value>

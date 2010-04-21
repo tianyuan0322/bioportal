@@ -403,3 +403,9 @@ test.db.user=root
 test.db.password=yourrootpassword
 test.sql.dir=db/sql
 
+############# Notes Configuration
+notes.jdbc.url=jdbc:mysql://localhost/bioportal_notes
+notes.jdbc.driver=com.mysql.jdbc.Driver
+notes.jdbc.username=yourprotegedbuser
+notes.jdbc.password=yourprotegedbpassword
+bioportal.notes.changes.includes.path=${bioportal.static.resource.path}/metadata/notes/changes.owl
