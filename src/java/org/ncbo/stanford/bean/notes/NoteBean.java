@@ -1,7 +1,6 @@
 package org.ncbo.stanford.bean.notes;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 
 public class NoteBean {
@@ -11,13 +10,13 @@ public class NoteBean {
 	private Integer author;
 	private Long created;
 	private Long updated;
-	private HashMap<String, String> appliesTo;
 	private String subject;
 	private String body;
 	private String status;
 	private Boolean archived;
 	private Integer createdInOntologyRevision;
 	private Integer archivedInOntologyRevision;
+	private List<AppliesToBean> appliesToList;
 	private List<NoteBean> associated;
 	private List<Object> values;
 
@@ -99,27 +98,27 @@ public class NoteBean {
 	/**
 	 * @return the appliesTo
 	 */
-	public HashMap<String, String> getAppliesTo() {
-		return appliesTo;
+	public List<AppliesToBean> getAppliesToList() {
+		return appliesToList;
 	}
 
 	/**
 	 * @param appliesTo
 	 *            the appliesTo to set
 	 */
-	public void setAppliesTo(HashMap<String, String> appliesTo) {
-		this.appliesTo = appliesTo;
+	public void setAppliesToList(List<AppliesToBean> appliesToList) {
+		this.appliesToList = appliesToList;
 	}
 
 	/**
 	 * @param appliesTo
 	 *            the appliesTo to add
 	 */
-	public void addAppliesTo(String appliesTo, String appliesToType) {
-		if (this.appliesTo == null) {
-			this.appliesTo = new HashMap<String, String>();
+	public void addAppliesToList(AppliesToBean appliesToList) {
+		if (this.appliesToList == null) {
+			this.appliesToList = new ArrayList<AppliesToBean>();
 		}
-		this.appliesTo.put(appliesTo, appliesToType);
+		this.appliesToList.add(appliesToList);
 	}
 
 	/**

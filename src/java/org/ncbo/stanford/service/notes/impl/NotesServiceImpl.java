@@ -8,6 +8,7 @@ import java.util.Set;
 
 import org.ncbo.stanford.bean.OntologyBean;
 import org.ncbo.stanford.bean.concept.ClassBean;
+import org.ncbo.stanford.bean.notes.AppliesToBean;
 import org.ncbo.stanford.bean.notes.NoteBean;
 import org.ncbo.stanford.bean.notes.ProposalNewRelationshipBean;
 import org.ncbo.stanford.bean.notes.ProposalNewTermBean;
@@ -340,7 +341,7 @@ public class NotesServiceImpl implements NotesService {
 			} else {
 				appliesToType = NoteAppliesToTypeEnum.Default.toString();
 			}
-			nb.addAppliesTo(appliesTo.getId(), appliesToType);
+			nb.addAppliesToList(new AppliesToBean(appliesTo.getId(), appliesToType));
 		}
 
 		nb.setOntologyId(ont.getOntologyId());

@@ -27,6 +27,7 @@ import org.ncbo.stanford.bean.concept.InstanceBean;
 import org.ncbo.stanford.bean.concept.PropertyBean;
 import org.ncbo.stanford.bean.http.HttpInputStreamWrapper;
 import org.ncbo.stanford.bean.logging.UsageLoggingBean;
+import org.ncbo.stanford.bean.notes.AppliesToBean;
 import org.ncbo.stanford.bean.notes.NoteBean;
 import org.ncbo.stanford.bean.notes.ProposalNewRelationshipBean;
 import org.ncbo.stanford.bean.notes.ProposalNewTermBean;
@@ -492,6 +493,8 @@ public class XMLSerializationServiceImpl implements XMLSerializationService {
 
 		xmlSerializer.alias(MessageUtils.getMessage("entity.notebean"),
 				NoteBean.class);
+		xmlSerializer.alias(MessageUtils.getMessage("entity.appliesto"),
+				AppliesToBean.class);
 		xmlSerializer.alias(MessageUtils.getMessage("entity.proposalforpropertyvaluechange"),
 				ProposalPropertyValueChangeBean.class);
 		xmlSerializer.alias(MessageUtils.getMessage("entity.proposalfornewentity"),
