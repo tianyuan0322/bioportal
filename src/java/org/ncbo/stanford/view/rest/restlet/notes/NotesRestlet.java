@@ -8,9 +8,11 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.ncbo.stanford.bean.OntologyBean;
 import org.ncbo.stanford.bean.concept.ClassBean;
+import org.ncbo.stanford.bean.concept.InstanceBean;
 import org.ncbo.stanford.bean.notes.NoteBean;
 import org.ncbo.stanford.enumeration.NoteAppliesToTypeEnum;
 import org.ncbo.stanford.exception.ConceptNotFoundException;
+import org.ncbo.stanford.exception.InstanceNotFoundException;
 import org.ncbo.stanford.exception.InvalidInputException;
 import org.ncbo.stanford.exception.NoteNotFoundException;
 import org.ncbo.stanford.exception.OntologyNotFoundException;
@@ -87,6 +89,8 @@ public class NotesRestlet extends AbstractBaseRestlet {
 		String ontologyVersionId = (String) httpRequest
 				.getParameter(RequestParamConstants.PARAM_ONTOLOGY_VERSION_ID);
 		String conceptId = getConceptId(request);
+		String instanceId = httpRequest.getParameter(MessageUtils
+				.getMessage("entity.instanceid"));
 
 		// Post-process parameters
 		Integer ontologyIdInt = RequestUtils.parseIntegerParam(ontologyId);
@@ -115,6 +119,8 @@ public class NotesRestlet extends AbstractBaseRestlet {
 				notesList = listNotesForConcept(ont, conceptId);
 			} else if (noteId != null) {
 				notesList = listNotesForNote(ont, noteId, threaded);
+			} else if (instanceId != null) {
+				notesList = listNotesForIndividual(ont, instanceId);
 			} else {
 				notesList = notesService.getAllNotesForOntology(ont);
 			}
@@ -144,10 +150,8 @@ public class NotesRestlet extends AbstractBaseRestlet {
 
 	private List<NoteBean> listNotesForConcept(OntologyBean ont,
 			String conceptId) throws Exception {
-		ClassBean concept = null;
-
-		concept = conceptService.findConcept(ont.getId(), conceptId, null,
-				false, false);
+		ClassBean concept = conceptService.findConcept(ont.getId(), conceptId,
+				null, false, false);
 
 		// Check to make sure the concept is valid
 		if (concept == null) {
@@ -169,9 +173,23 @@ public class NotesRestlet extends AbstractBaseRestlet {
 		return notesService.getAllNotesForNote(ont, noteId, threaded);
 	}
 
+	private List<NoteBean> listNotesForIndividual(OntologyBean ont,
+			String individualId) throws Exception {
+		InstanceBean instance = conceptService.findInstanceById(ont.getId(),
+				individualId);
+
+		if (instance == null) {
+			throw new InstanceNotFoundException();
+		}
+
+		return notesService.getAllNotesForIndividual(ont, individualId);
+	}
+
 	private void createNote(Request request, Response response) {
 		HttpServletRequest httpRequest = RequestUtils
 				.getHttpServletRequest(request);
+		String appliesTo = (String) httpRequest
+				.getParameter(RequestParamConstants.PARAM_APPLIES_TO);
 		String appliesToTypeStr = (String) httpRequest
 				.getParameter(RequestParamConstants.PARAM_APPLIES_TO_TYPE);
 		String noteTypeStr = (String) httpRequest
@@ -182,14 +200,14 @@ public class NotesRestlet extends AbstractBaseRestlet {
 				.getParameter(RequestParamConstants.PARAM_NOTE_CONTENT);
 		String author = (String) httpRequest
 				.getParameter(RequestParamConstants.PARAM_NOTE_AUTHOR);
-		String appliesTo = (String) httpRequest
-				.getParameter(RequestParamConstants.PARAM_APPLIES_TO);
 		String reasonForChange = (String) httpRequest
 				.getParameter(RequestParamConstants.PARAM_REASON_FOR_CHANGE);
 		String contactInfo = (String) httpRequest
 				.getParameter(RequestParamConstants.PARAM_CONTACT_INFO);
 		String ontologyId = (String) request.getAttributes().get(
 				MessageUtils.getMessage("entity.ontologyid"));
+		String ontologyVersionId = (String) httpRequest
+				.getParameter(RequestParamConstants.PARAM_ONTOLOGY_VERSION_ID);
 
 		// Get other parameters as needed
 		String termDefinition = (String) httpRequest
@@ -222,12 +240,18 @@ public class NotesRestlet extends AbstractBaseRestlet {
 		Integer ontologyIdInt = RequestUtils.parseIntegerParam(ontologyId);
 		List<String> synonymList = RequestUtils
 				.parseStringListParam(termSynonyms);
+		Integer ontologyVersionIdInt = RequestUtils
+				.parseIntegerParam(ontologyVersionId);
 
-		OntologyBean ont;
+		OntologyBean ont = null;
 		NoteBean noteBean = null;
 		try {
-			ont = ontologyService
-					.findLatestOntologyOrViewVersion(ontologyIdInt);
+			if (ontologyIdInt != null) {
+				ont = ontologyService
+						.findLatestOntologyOrViewVersion(ontologyIdInt);
+			} else if (ontologyVersionIdInt != null) {
+				ont = ontologyService.findOntologyOrView(ontologyVersionIdInt);
+			}
 
 			if (ont == null) {
 				throw new InvalidInputException(MessageUtils
@@ -235,28 +259,7 @@ public class NotesRestlet extends AbstractBaseRestlet {
 			}
 
 			// Check to make sure that the appliesTo is valid
-			switch (appliesToType) {
-			case Class:
-				ClassBean concept = conceptService.findConcept(ont.getId(),
-						appliesTo, null, false, false);
-				if (concept == null) {
-					throw new ConceptNotFoundException(MessageUtils
-							.getMessage("msg.error.conceptNotFound"));
-				}
-				break;
-			case Property:
-				// TODO: Add check for valid property
-				break;
-			case Individual:
-				// TODO: Add check for valid individual
-				break;
-			case Note:
-				Annotation note = notesService.getNote(ont, appliesTo);
-				if (note == null) {
-					throw new NoteNotFoundException();
-				}
-				break;
-			}
+			checkAppliesToValid(ont, appliesTo, appliesToType);
 
 			switch (noteType) {
 			case ProposalForNewEntity:
@@ -303,6 +306,36 @@ public class NotesRestlet extends AbstractBaseRestlet {
 		}
 	}
 
+	private void checkAppliesToValid(OntologyBean ont, String appliesTo,
+			NoteAppliesToTypeEnum appliesToType) throws Exception {
+		switch (appliesToType) {
+		case Class:
+			ClassBean concept = conceptService.findConcept(ont.getId(),
+					appliesTo, null, false, false);
+			if (concept == null) {
+				throw new ConceptNotFoundException(MessageUtils
+						.getMessage("msg.error.conceptNotFound"));
+			}
+			break;
+		case Property:
+			// TODO: Add check for valid property
+			break;
+		case Individual:
+			InstanceBean instance = conceptService.findInstanceById(
+					ont.getId(), appliesTo);
+			if (instance == null) {
+				throw new InstanceNotFoundException();
+			}
+			break;
+		case Note:
+			Annotation note = notesService.getNote(ont, appliesTo);
+			if (note == null) {
+				throw new NoteNotFoundException();
+			}
+			break;
+		}
+	}
+
 	private void updateNote(Request request, Response response) {
 		// TODO: The notes API currently does not support a method to
 		// handle updating notes. The only thing we can do here is
@@ -321,6 +354,18 @@ public class NotesRestlet extends AbstractBaseRestlet {
 				.getParameter(RequestParamConstants.PARAM_NOTE_UNARCHIVE_THREAD);
 		String ontologyId = (String) request.getAttributes().get(
 				MessageUtils.getMessage("entity.ontologyid"));
+		String appliesTo = (String) httpRequest
+				.getParameter(RequestParamConstants.PARAM_APPLIES_TO);
+		String appliesToTypeStr = (String) httpRequest
+				.getParameter(RequestParamConstants.PARAM_APPLIES_TO_TYPE);
+		String noteTypeStr = (String) httpRequest
+				.getParameter(RequestParamConstants.PARAM_NOTE_TYPE);
+		String subject = (String) httpRequest
+				.getParameter(RequestParamConstants.PARAM_NOTE_SUBJECT);
+		String content = (String) httpRequest
+				.getParameter(RequestParamConstants.PARAM_NOTE_CONTENT);
+		String author = (String) httpRequest
+				.getParameter(RequestParamConstants.PARAM_NOTE_AUTHOR);
 
 		// Post-process parameters
 		Boolean archiveBool = RequestUtils.parseBooleanParam(archive);
@@ -330,6 +375,16 @@ public class NotesRestlet extends AbstractBaseRestlet {
 		Boolean unarchiveThreadBool = RequestUtils
 				.parseBooleanParam(unarchiveThread);
 		Integer ontologyIdInt = RequestUtils.parseIntegerParam(ontologyId);
+
+		NoteType noteType = null;
+		if (noteTypeStr != null) {
+			noteType = NoteType.valueOf(noteTypeStr);
+		}
+
+		NoteAppliesToTypeEnum appliesToType = null;
+		if (appliesToTypeStr != null) {
+			appliesToType = NoteAppliesToTypeEnum.valueOf(appliesToTypeStr);
+		}
 
 		OntologyBean ont;
 		try {
@@ -359,6 +414,10 @@ public class NotesRestlet extends AbstractBaseRestlet {
 				} else {
 					notesService.unarchiveNote(ont, noteId);
 				}
+			} else {
+				// TODO: Set status properly (unclear how Notes-api handles this)
+				notesService.updateNote(ont, noteId, noteType, subject,
+						content, author, null, appliesTo, appliesToType);
 			}
 
 		} catch (NoteNotFoundException nnfe) {

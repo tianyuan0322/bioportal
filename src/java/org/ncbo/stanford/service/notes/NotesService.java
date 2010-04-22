@@ -1,6 +1,5 @@
 package org.ncbo.stanford.service.notes;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import org.ncbo.stanford.bean.OntologyBean;
@@ -10,6 +9,7 @@ import org.ncbo.stanford.enumeration.NoteAppliesToTypeEnum;
 import org.protege.notesapi.NotesException;
 import org.protege.notesapi.notes.Annotation;
 import org.protege.notesapi.notes.NoteType;
+import org.protege.notesapi.notes.Status;
 
 public interface NotesService {
 
@@ -40,8 +40,10 @@ public interface NotesService {
 			String propertyNewValue, String propertyOldValue, String propertyId)
 			throws NotesException;
 
-	public Annotation updateNote(OntologyBean ont, NoteType noteType,
-			String subject, String content, String author) throws Exception;
+	public NoteBean updateNote(OntologyBean ont, String noteId,
+			NoteType noteType, String subject, String content, String author,
+			Status status, String appliesTo, NoteAppliesToTypeEnum appliesToType)
+			throws Exception;
 
 	public void archiveNote(OntologyBean ont, String noteId);
 
@@ -66,6 +68,9 @@ public interface NotesService {
 
 	public List<NoteBean> getAllNotesForConcept(OntologyBean ont,
 			ClassBean concept);
+
+	public List<NoteBean> getAllNotesForIndividual(OntologyBean ont,
+			String instanceId);
 
 	public List<NoteBean> getAllNotesForNote(OntologyBean ont, String noteId,
 			Boolean threaded);

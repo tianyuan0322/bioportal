@@ -3,7 +3,6 @@ package org.ncbo.stanford.service.notes.impl;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Set;
 
@@ -25,6 +24,7 @@ import org.protege.notesapi.notes.NoteType;
 import org.protege.notesapi.notes.ProposalChangeHierarchy;
 import org.protege.notesapi.notes.ProposalNewEntity;
 import org.protege.notesapi.notes.ProposalPropertyValueChange;
+import org.protege.notesapi.notes.Status;
 import org.protege.notesapi.oc.OntologyClass;
 import org.protege.notesapi.oc.OntologyComponent;
 import org.protege.notesapi.oc.OntologyProperty;
@@ -195,9 +195,17 @@ public class NotesServiceImpl implements NotesService {
 		return notesList;
 	}
 
-	public Annotation getNote(OntologyBean ont, String iri) {
+	public List<NoteBean> getAllNotesForIndividual(OntologyBean ont, String instanceId) {
 		NotesManager notesManager = notesPool.getNotesManagerForOntology(ont);
-		return notesManager.getNote(iri);
+		OntologyComponent oc = notesManager.getOntologyIndividual(instanceId);
+		Collection<Annotation> annotations = oc.getAssociatedAnnotations();
+		
+		List<NoteBean> notesList = new ArrayList<NoteBean>();
+		for (Annotation annotation : annotations) {
+			notesList.add(convertAnnotationToNoteBean(annotation, ont));
+		}
+
+		return notesList;
 	}
 
 	public List<NoteBean> getAllNotesForNote(OntologyBean ont, String noteId,
@@ -216,6 +224,11 @@ public class NotesServiceImpl implements NotesService {
 		return noteList;
 	}
 
+	public Annotation getNote(OntologyBean ont, String iri) {
+		NotesManager notesManager = notesPool.getNotesManagerForOntology(ont);
+		return notesManager.getNote(iri);
+	}
+	
 	public void unarchiveNote(OntologyBean ont, String noteId) {
 		NotesManager notesManager = notesPool.getNotesManagerForOntology(ont);
 		notesManager.unarchiveNote(noteId);
@@ -226,10 +239,26 @@ public class NotesServiceImpl implements NotesService {
 		notesManager.unarchiveThread(rootNoteId);
 	}
 
-	public Annotation updateNote(OntologyBean ont, NoteType noteType,
-			String subject, String content, String author) throws Exception {
-		// TODO Auto-generated method stub
-		return null;
+	public NoteBean updateNote(OntologyBean ont, String noteId,
+			NoteType noteType, String subject, String content, String author,
+			Status status, String appliesTo, NoteAppliesToTypeEnum appliesToType)
+			throws Exception {
+		// TODO: Check to make sure this actually updates
+		NotesManager notesManager = notesPool.getNotesManagerForOntology(ont);
+		Annotation annotation = notesManager.getNote(noteId);
+		
+		if (status != null) annotation.setHasStatus(status);
+		if (content != null) annotation.setBody(content);
+		if (author != null) annotation.setAuthor(author);
+		if (subject != null) annotation.setSubject(subject);
+
+		if (appliesTo != null && appliesToType != null) {
+			AnnotatableThing annotated = getAnnotatableThing(notesManager,
+					appliesTo, appliesToType);
+			annotation.setAnnotates(Collections.singleton(annotated));
+		}
+		
+		return convertAnnotationToNoteBean(annotation, ont);
 	}
 
 	/**
