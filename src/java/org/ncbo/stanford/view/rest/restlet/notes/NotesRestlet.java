@@ -259,7 +259,40 @@ public class NotesRestlet extends AbstractBaseRestlet {
 			}
 
 			// Check to make sure that the appliesTo is valid
-			checkAppliesToValid(ont, appliesTo, appliesToType);
+			// We also set the appliesTo to use fullId in the case a shortId is
+			// passed by a user
+			switch (appliesToType) {
+			case Class:
+				ClassBean concept = conceptService.findConcept(ont.getId(),
+						appliesTo, null, false, false);
+				
+				appliesTo = concept.getFullId();
+				
+				if (concept == null) {
+					throw new ConceptNotFoundException(MessageUtils
+							.getMessage("msg.error.conceptNotFound"));
+				}
+				break;
+			case Property:
+				// TODO: Add check for valid property
+				break;
+			case Individual:
+				InstanceBean instance = conceptService.findInstanceById(ont
+						.getId(), appliesTo);
+				
+				appliesTo = instance.getFullId();
+				
+				if (instance == null) {
+					throw new InstanceNotFoundException();
+				}
+				break;
+			case Note:
+				Annotation note = notesService.getNote(ont, appliesTo);
+				if (note == null) {
+					throw new NoteNotFoundException();
+				}
+				break;
+			}
 
 			switch (noteType) {
 			case ProposalForNewEntity:
@@ -303,36 +336,6 @@ public class NotesRestlet extends AbstractBaseRestlet {
 		} finally {
 			xmlSerializationService.generateXMLResponse(request, response,
 					noteBean);
-		}
-	}
-
-	private void checkAppliesToValid(OntologyBean ont, String appliesTo,
-			NoteAppliesToTypeEnum appliesToType) throws Exception {
-		switch (appliesToType) {
-		case Class:
-			ClassBean concept = conceptService.findConcept(ont.getId(),
-					appliesTo, null, false, false);
-			if (concept == null) {
-				throw new ConceptNotFoundException(MessageUtils
-						.getMessage("msg.error.conceptNotFound"));
-			}
-			break;
-		case Property:
-			// TODO: Add check for valid property
-			break;
-		case Individual:
-			InstanceBean instance = conceptService.findInstanceById(
-					ont.getId(), appliesTo);
-			if (instance == null) {
-				throw new InstanceNotFoundException();
-			}
-			break;
-		case Note:
-			Annotation note = notesService.getNote(ont, appliesTo);
-			if (note == null) {
-				throw new NoteNotFoundException();
-			}
-			break;
 		}
 	}
 
@@ -415,7 +418,8 @@ public class NotesRestlet extends AbstractBaseRestlet {
 					notesService.unarchiveNote(ont, noteId);
 				}
 			} else {
-				// TODO: Set status properly (unclear how Notes-api handles this)
+				// TODO: Set status properly (unclear how Notes-api handles
+				// this)
 				notesService.updateNote(ont, noteId, noteType, subject,
 						content, author, null, appliesTo, appliesToType);
 			}
