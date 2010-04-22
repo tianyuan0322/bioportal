@@ -3,11 +3,14 @@ package org.ncbo.stanford.view.rest.restlet.diff;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.servlet.http.HttpServletRequest;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.ncbo.stanford.exception.InvalidInputException;
 import org.ncbo.stanford.service.diff.DiffService;
 import org.ncbo.stanford.util.MessageUtils;
+import org.ncbo.stanford.util.RequestUtils;
 import org.ncbo.stanford.view.rest.restlet.AbstractBaseRestlet;
 import org.ncbo.stanford.view.util.constants.RequestParamConstants;
 import org.restlet.data.Request;
@@ -42,38 +45,24 @@ public class DiffRestlet extends AbstractBaseRestlet {
 	@Override
 	public void postRequest(Request request, Response response) {
 		// Handle PUT calls here
-		System.out.println("post request");
-		log.debug("post request");
 		parseDiff(request, response);
 	}
 
 	private void parseDiff(Request request, Response response) {
 		try {
+			HttpServletRequest httpRequest = RequestUtils.getHttpServletRequest(request);
 			String path = request.getResourceRef().getPath();
             System.out.println("parseDiff path="+path);
-			if (path.contains(RequestParamConstants.PARAM_ALL)) {
-				String ontologyId = (String) request.getAttributes().get(
-						MessageUtils.getMessage("entity.ontologyid"));
-
-				Integer intId = Integer.parseInt(ontologyId);
-				diffService.createDiffForAllActiveVersionsOfOntology(intId);
+			if (path.contains(RequestParamConstants.PARAM_ALL)) {				
+				List<Integer> ontologyIds = getOntologyIds(httpRequest);
+				diffService.createDiffForAllActiveVersionsOfOntology(ontologyIds);
 			} else if (path.contains(RequestParamConstants.PARAM_LATEST)) {
-				String ontologyId = (String) request.getAttributes().get(
-						MessageUtils.getMessage("entity.ontologyid"));
-
-				Integer intId = Integer.parseInt(ontologyId);
-				diffService.createDiffForLatestActiveOntologyVersionPair(intId);
+				List<Integer> ontologyIds = getOntologyIds(httpRequest);				
+				diffService.createDiffForLatestActiveOntologyVersionPair(ontologyIds);
 			} else {
-				String ontologyVersionId1 = (String) request
-						.getAttributes()
-						.get(MessageUtils.getMessage("entity.ontologyversionid1"));
-				String ontologyVersionId2 = (String) request
-						.getAttributes()
-						.get(MessageUtils.getMessage("entity.ontologyversionid2"));
-
-				Integer intId1 = Integer.parseInt(ontologyVersionId1);
-				Integer intId2 = Integer.parseInt(ontologyVersionId2);
-				diffService.createDiff(intId1, intId2);
+				Integer ontologyVersionNew = getOntologyVersionId(httpRequest, RequestParamConstants.PARAM_ONTOLOGY_VERSION_NEW);
+				Integer ontologyVersionOld = getOntologyVersionId(httpRequest, RequestParamConstants.PARAM_ONTOLOGY_VERSION_OLD);					
+				diffService.createDiff(ontologyVersionNew, ontologyVersionOld);
 			}
 
 		} catch (InvalidInputException e) {
@@ -127,4 +116,10 @@ public class DiffRestlet extends AbstractBaseRestlet {
 	public void setDiffService(DiffService diffService) {
 		this.diffService = diffService;
 	}
+	
+	private Integer getOntologyVersionId(HttpServletRequest httpRequest, String parameter) {
+		String ontologyIdStr = (String) httpRequest.getParameter(parameter);
+		return RequestUtils.parseIntegerParam(ontologyIdStr);
+	}	
+	
 }

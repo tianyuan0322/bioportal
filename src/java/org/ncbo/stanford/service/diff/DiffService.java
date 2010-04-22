@@ -27,21 +27,23 @@ public interface DiffService {
 	 * Creates a diff between the ontology that has just been loaded and its
 	 * previous active version(if one exists in BioPortal). Save the diff in a file
 	 * 
-	 * @param ontologyBean
-	 * 
+	 * @param ontologyIds
+	 *            the list of ontologies to process.
+	 *             
 	 * @throws Exception
 	 */
-	public void createDiffForLatestActiveOntologyVersionPair(Integer ontologyId)
+	public void createDiffForLatestActiveOntologyVersionPair(List<Integer> ontologyIds)
 			throws Exception;
 
 	/**
 	 * Create diffs between the active versions of an ontology
 	 * 
-	 * @param ontologyBean
+	 * @param ontologyIds
+	 *            the list of ontologies to process.
 	 * 
 	 * @throws Exception
 	 */	
-	public void createDiffForAllActiveVersionsOfOntology(Integer ontologyId)
+	public void createDiffForAllActiveVersionsOfOntology(List<Integer> ontologyIds)
 	  throws Exception ;
 	
 	/**
@@ -67,4 +69,6 @@ public interface DiffService {
 	public File getDiffFileForOntologyVersions(Integer ontologyVerisonId1,
 			Integer ontologyVersionId2, String format)
 			throws FileNotFoundException, Exception;
+	
+
 }

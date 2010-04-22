@@ -132,6 +132,8 @@ public interface RequestParamConstants {
 	 */
 	public static final String PARAM_LATEST = "latest";
 	public static final String PARAM_ALL = "all";
+	public static final String PARAM_ONTOLOGY_VERSION_NEW = "ontologyversionnew";
+	public static final String PARAM_ONTOLOGY_VERSION_OLD = "ontologyversionold";
 	
 	/*
 	 * view extractor
