@@ -86,8 +86,8 @@ public class NotesRestlet extends AbstractBaseRestlet {
 				.parseBooleanParam(RequestParamConstants.PARAM_NOTE_THREADED);
 		String ontologyId = (String) request.getAttributes().get(
 				MessageUtils.getMessage("entity.ontologyid"));
-		String ontologyVersionId = (String) httpRequest
-				.getParameter(RequestParamConstants.PARAM_ONTOLOGY_VERSION_ID);
+		String ontologyVersionId = (String) request.getAttributes().get(
+				MessageUtils.getMessage("entity.ontologyversionid"));
 		String conceptId = getConceptId(request);
 		String instanceId = httpRequest.getParameter(MessageUtils
 				.getMessage("entity.instanceid"));
