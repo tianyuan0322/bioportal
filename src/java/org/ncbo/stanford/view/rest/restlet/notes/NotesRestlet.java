@@ -206,8 +206,8 @@ public class NotesRestlet extends AbstractBaseRestlet {
 				.getParameter(RequestParamConstants.PARAM_CONTACT_INFO);
 		String ontologyId = (String) request.getAttributes().get(
 				MessageUtils.getMessage("entity.ontologyid"));
-		String ontologyVersionId = (String) httpRequest
-				.getParameter(RequestParamConstants.PARAM_ONTOLOGY_VERSION_ID);
+		String ontologyVersionId = (String) request.getAttributes().get(
+				MessageUtils.getMessage("entity.ontologyversionid"));
 
 		// Get other parameters as needed
 		String termDefinition = (String) httpRequest
