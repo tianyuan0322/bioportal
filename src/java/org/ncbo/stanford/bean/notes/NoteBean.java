@@ -14,8 +14,8 @@ public class NoteBean {
 	private String body;
 	private String status;
 	private Boolean archived;
-	private Integer createdInOntologyRevision;
-	private Integer archivedInOntologyRevision;
+	private Integer createdInOntologyVersion;
+	private Integer archivedInOntologyVersion;
 	private List<AppliesToBean> appliesToList;
 	private List<NoteBean> associated;
 	private List<Object> values;
@@ -205,33 +205,33 @@ public class NoteBean {
 	}
 
 	/**
-	 * @return the createdInOntologyRevision
+	 * @return the createdInOntologyVersion
 	 */
-	public Integer getCreatedInOntologyRevision() {
-		return createdInOntologyRevision;
+	public Integer getCreatedInOntologyVersion() {
+		return createdInOntologyVersion;
 	}
 
 	/**
-	 * @param createdInOntologyRevision
-	 *            the createdInOntologyRevision to set
+	 * @param createdInOntologyVersion
+	 *            the createdInOntologyVersion to set
 	 */
-	public void setCreatedInOntologyRevision(Integer createdInOntologyRevision) {
-		this.createdInOntologyRevision = createdInOntologyRevision;
+	public void setCreatedInOntologyVersion(Integer createdInOntologyRevision) {
+		this.createdInOntologyVersion = createdInOntologyRevision;
 	}
 
 	/**
-	 * @return the archivedInOntologyRevision
+	 * @return the archivedInOntologyVersion
 	 */
-	public Integer getArchivedInOntologyRevision() {
-		return archivedInOntologyRevision;
+	public Integer getArchivedInOntologyVersion() {
+		return archivedInOntologyVersion;
 	}
 
 	/**
-	 * @param archivedInOntologyRevision
-	 *            the archivedInOntologyRevision to set
+	 * @param archivedInOntologyVersion
+	 *            the archivedInOntologyVersion to set
 	 */
-	public void setArchivedInOntologyRevision(Integer archivedInOntologyRevision) {
-		this.archivedInOntologyRevision = archivedInOntologyRevision;
+	public void setArchivedInOntologyVersion(Integer archivedInOntologyRevision) {
+		this.archivedInOntologyVersion = archivedInOntologyRevision;
 	}
 
 	/**
