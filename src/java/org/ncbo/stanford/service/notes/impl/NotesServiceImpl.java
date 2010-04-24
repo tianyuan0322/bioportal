@@ -56,8 +56,7 @@ public class NotesServiceImpl implements NotesService {
 				appliesTo, appliesToType);
 
 		Annotation newAnnotation = notesManager.createSimpleNote(noteType,
-				subject, content, author, annotated, ont
-						.getId());
+				subject, content, author, annotated, ont.getId());
 
 		return convertAnnotationToNoteBean(newAnnotation, ont);
 	}
@@ -217,7 +216,8 @@ public class NotesServiceImpl implements NotesService {
 
 		List<NoteBean> noteList;
 		if (threaded == true) {
-			noteList = buildThread(root, ont, threaded);
+			noteList = new ArrayList<NoteBean>();
+			noteList.add(convertAnnotationToNoteBean(root, ont, true, true));
 		} else {
 			noteList = new ArrayList<NoteBean>();
 			noteList.add(convertAnnotationToNoteBean(root, ont));
@@ -366,7 +366,6 @@ public class NotesServiceImpl implements NotesService {
 				.getArchivedInOntologyRevision());
 		nb.setCreatedInOntologyVersion(annotation
 				.getCreatedInOntologyRevision());
-		
 
 		// Add non-common values
 		nb.setValues(convertAdditionalProperties(ont, annotation));
@@ -383,26 +382,6 @@ public class NotesServiceImpl implements NotesService {
 		}
 
 		return nb;
-	}
-
-	/**
-	 * Builds a nested NoteBean.
-	 * 
-	 * @param annotation
-	 * @return
-	 */
-	private List<NoteBean> buildThread(Annotation root, OntologyBean ont,
-			Boolean threaded) {
-		List<NoteBean> noteThread = new ArrayList<NoteBean>();
-		if (root.getAssociatedAnnotations() != null) {
-			Collection<Annotation> associated = root.getAssociatedAnnotations();
-
-			for (Annotation subAnnotation : associated) {
-				noteThread.add(convertAnnotationToNoteBean(subAnnotation, ont,
-						true, true));
-			}
-		}
-		return noteThread;
 	}
 
 	/**
