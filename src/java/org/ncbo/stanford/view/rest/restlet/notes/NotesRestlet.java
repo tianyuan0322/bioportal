@@ -82,8 +82,8 @@ public class NotesRestlet extends AbstractBaseRestlet {
 		// Get necessary parameters
 		String noteId = (String) httpRequest
 				.getParameter(RequestParamConstants.PARAM_NOTE_ID);
-		Boolean threaded = RequestUtils
-				.parseBooleanParam(RequestParamConstants.PARAM_NOTE_THREADED);
+		Boolean threaded = RequestUtils.parseBooleanParam(httpRequest
+				.getParameter(RequestParamConstants.PARAM_NOTE_THREADED));
 		String ontologyId = (String) request.getAttributes().get(
 				MessageUtils.getMessage("entity.ontologyid"));
 		String ontologyVersionId = (String) request.getAttributes().get(
@@ -265,9 +265,9 @@ public class NotesRestlet extends AbstractBaseRestlet {
 			case Class:
 				ClassBean concept = conceptService.findConcept(ont.getId(),
 						appliesTo, null, false, false);
-				
+
 				appliesTo = concept.getFullId();
-				
+
 				if (concept == null) {
 					throw new ConceptNotFoundException(MessageUtils
 							.getMessage("msg.error.conceptNotFound"));
@@ -279,9 +279,9 @@ public class NotesRestlet extends AbstractBaseRestlet {
 			case Individual:
 				InstanceBean instance = conceptService.findInstanceById(ont
 						.getId(), appliesTo);
-				
+
 				appliesTo = instance.getFullId();
-				
+
 				if (instance == null) {
 					throw new InstanceNotFoundException();
 				}
