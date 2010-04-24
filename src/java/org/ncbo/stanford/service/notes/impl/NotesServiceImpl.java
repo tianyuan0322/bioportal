@@ -39,12 +39,12 @@ public class NotesServiceImpl implements NotesService {
 
 	public void archiveNote(OntologyBean ont, String noteId) {
 		NotesManager notesManager = notesPool.getNotesManagerForOntology(ont);
-		notesManager.archiveNote(noteId, ont.getInternalVersionNumber());
+		notesManager.archiveNote(noteId, ont.getId());
 	}
 
 	public void archiveThread(OntologyBean ont, String rootNoteId) {
 		NotesManager notesManager = notesPool.getNotesManagerForOntology(ont);
-		notesManager.archiveThread(rootNoteId, ont.getInternalVersionNumber());
+		notesManager.archiveThread(rootNoteId, ont.getId());
 	}
 
 	public NoteBean createNote(OntologyBean ont, String appliesTo,
@@ -57,7 +57,7 @@ public class NotesServiceImpl implements NotesService {
 
 		Annotation newAnnotation = notesManager.createSimpleNote(noteType,
 				subject, content, author, annotated, ont
-						.getInternalVersionNumber());
+						.getId());
 
 		return convertAnnotationToNoteBean(newAnnotation, ont);
 	}
@@ -196,11 +196,12 @@ public class NotesServiceImpl implements NotesService {
 		return notesList;
 	}
 
-	public List<NoteBean> getAllNotesForIndividual(OntologyBean ont, String instanceId) {
+	public List<NoteBean> getAllNotesForIndividual(OntologyBean ont,
+			String instanceId) {
 		NotesManager notesManager = notesPool.getNotesManagerForOntology(ont);
 		OntologyComponent oc = notesManager.getOntologyIndividual(instanceId);
 		Collection<Annotation> annotations = oc.getAssociatedAnnotations();
-		
+
 		List<NoteBean> notesList = new ArrayList<NoteBean>();
 		for (Annotation annotation : annotations) {
 			notesList.add(convertAnnotationToNoteBean(annotation, ont));
@@ -229,7 +230,7 @@ public class NotesServiceImpl implements NotesService {
 		NotesManager notesManager = notesPool.getNotesManagerForOntology(ont);
 		return notesManager.getNote(iri);
 	}
-	
+
 	public void unarchiveNote(OntologyBean ont, String noteId) {
 		NotesManager notesManager = notesPool.getNotesManagerForOntology(ont);
 		notesManager.unarchiveNote(noteId);
@@ -247,18 +248,22 @@ public class NotesServiceImpl implements NotesService {
 		// TODO: Check to make sure this actually updates
 		NotesManager notesManager = notesPool.getNotesManagerForOntology(ont);
 		Annotation annotation = notesManager.getNote(noteId);
-		
-		if (status != null) annotation.setHasStatus(status);
-		if (content != null) annotation.setBody(content);
-		if (author != null) annotation.setAuthor(author);
-		if (subject != null) annotation.setSubject(subject);
+
+		if (status != null)
+			annotation.setHasStatus(status);
+		if (content != null)
+			annotation.setBody(content);
+		if (author != null)
+			annotation.setAuthor(author);
+		if (subject != null)
+			annotation.setSubject(subject);
 
 		if (appliesTo != null && appliesToType != null) {
 			AnnotatableThing annotated = getAnnotatableThing(notesManager,
 					appliesTo, appliesToType);
 			annotation.setAnnotates(Collections.singleton(annotated));
 		}
-		
+
 		return convertAnnotationToNoteBean(annotation, ont);
 	}
 
@@ -341,7 +346,8 @@ public class NotesServiceImpl implements NotesService {
 			} else {
 				appliesToType = NoteAppliesToTypeEnum.Default.toString();
 			}
-			nb.addAppliesToList(new AppliesToBean(appliesTo.getId(), appliesToType));
+			nb.addAppliesToList(new AppliesToBean(appliesTo.getId(),
+					appliesToType));
 		}
 
 		nb.setOntologyId(ont.getOntologyId());
@@ -356,6 +362,11 @@ public class NotesServiceImpl implements NotesService {
 		nb.setType(annotation.getType().toString());
 		nb.setUpdated(annotation.getModifiedAt());
 		nb.setArchived(annotation.getArchived());
+		nb.setArchivedInOntologyVersion(annotation
+				.getArchivedInOntologyRevision());
+		nb.setCreatedInOntologyVersion(annotation
+				.getCreatedInOntologyRevision());
+		
 
 		// Add non-common values
 		nb.setValues(convertAdditionalProperties(ont, annotation));
