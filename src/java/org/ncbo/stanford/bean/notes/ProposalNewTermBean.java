@@ -7,7 +7,7 @@ public class ProposalNewTermBean extends AbstractProposalBean {
 	private String id;
 	private List<String> parent;
 	private String preferredName;
-	private List<String> synonym;
+	private List<String> synonyms;
 
 	/**
 	 * @return the definition
@@ -70,18 +70,18 @@ public class ProposalNewTermBean extends AbstractProposalBean {
 	}
 
 	/**
-	 * @return the synonym
+	 * @return the synonyms
 	 */
-	public List<String> getSynonym() {
-		return synonym;
+	public List<String> getSynonyms() {
+		return synonyms;
 	}
 
 	/**
-	 * @param synonym
-	 *            the synonym to set
+	 * @param synonyms
+	 *            the synonyms to set
 	 */
-	public void setSynonym(List<String> synonym) {
-		this.synonym = synonym;
+	public void setSynonyms(List<String> synonyms) {
+		this.synonyms = synonyms;
 	}
 
 }
