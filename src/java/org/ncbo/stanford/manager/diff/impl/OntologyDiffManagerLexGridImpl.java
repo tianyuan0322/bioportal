@@ -211,7 +211,8 @@ public class OntologyDiffManagerLexGridImpl extends
 		for (ChangeHolder ch : changeList) {
 			bufferedWriter.write(ch.toTabbedString() + "\n");
 		}
-
+		bufferedWriter.flush();
+		bufferedWriter.close();
 	}
 
 	private String getFileExtensionFromFormat(String format) {
