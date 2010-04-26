@@ -67,10 +67,10 @@ public interface NotesService {
 			Integer author);
 
 	public List<NoteBean> getAllNotesForConcept(OntologyBean ont,
-			ClassBean concept);
+			ClassBean concept, Boolean threaded);
 
 	public List<NoteBean> getAllNotesForIndividual(OntologyBean ont,
-			String instanceId);
+			String instanceId, Boolean threaded);
 
 	public List<NoteBean> getAllNotesForNote(OntologyBean ont, String noteId,
 			Boolean threaded);

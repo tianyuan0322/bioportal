@@ -181,29 +181,43 @@ public class NotesServiceImpl implements NotesService {
 	}
 
 	public List<NoteBean> getAllNotesForConcept(OntologyBean ont,
-			ClassBean concept) {
+			ClassBean concept, Boolean threaded) {
 		NotesManager notesManager = notesPool.getNotesManagerForOntology(ont);
 		OntologyComponent oc = notesManager.getOntologyComponent(concept
 				.getFullId());
 		Collection<Annotation> annotations = oc.getAssociatedAnnotations();
 
-		List<NoteBean> notesList = new ArrayList<NoteBean>();
+		List<NoteBean> notesList = null;
 		for (Annotation annotation : annotations) {
-			notesList.add(convertAnnotationToNoteBean(annotation, ont));
+			if (threaded == true) {
+				notesList = new ArrayList<NoteBean>();
+				notesList.add(convertAnnotationToNoteBean(annotation, ont,
+						true, true));
+			} else {
+				notesList = new ArrayList<NoteBean>();
+				notesList.add(convertAnnotationToNoteBean(annotation, ont));
+			}
 		}
 
 		return notesList;
 	}
 
 	public List<NoteBean> getAllNotesForIndividual(OntologyBean ont,
-			String instanceId) {
+			String instanceId, Boolean threaded) {
 		NotesManager notesManager = notesPool.getNotesManagerForOntology(ont);
 		OntologyComponent oc = notesManager.getOntologyIndividual(instanceId);
 		Collection<Annotation> annotations = oc.getAssociatedAnnotations();
 
-		List<NoteBean> notesList = new ArrayList<NoteBean>();
+		List<NoteBean> notesList = null;
 		for (Annotation annotation : annotations) {
-			notesList.add(convertAnnotationToNoteBean(annotation, ont));
+			if (threaded == true) {
+				notesList = new ArrayList<NoteBean>();
+				notesList.add(convertAnnotationToNoteBean(annotation, ont,
+						true, true));
+			} else {
+				notesList = new ArrayList<NoteBean>();
+				notesList.add(convertAnnotationToNoteBean(annotation, ont));
+			}
 		}
 
 		return notesList;
@@ -214,16 +228,16 @@ public class NotesServiceImpl implements NotesService {
 		NotesManager notesManager = notesPool.getNotesManagerForOntology(ont);
 		Annotation root = notesManager.getNote(noteId);
 
-		List<NoteBean> noteList;
+		List<NoteBean> notesList;
 		if (threaded == true) {
-			noteList = new ArrayList<NoteBean>();
-			noteList.add(convertAnnotationToNoteBean(root, ont, true, true));
+			notesList = new ArrayList<NoteBean>();
+			notesList.add(convertAnnotationToNoteBean(root, ont, true, true));
 		} else {
-			noteList = new ArrayList<NoteBean>();
-			noteList.add(convertAnnotationToNoteBean(root, ont));
+			notesList = new ArrayList<NoteBean>();
+			notesList.add(convertAnnotationToNoteBean(root, ont));
 		}
 
-		return noteList;
+		return notesList;
 	}
 
 	public Annotation getNote(OntologyBean ont, String iri) {
