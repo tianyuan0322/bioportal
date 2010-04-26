@@ -116,11 +116,11 @@ public class NotesRestlet extends AbstractBaseRestlet {
 			// Get a list of notes depending on whether user wants notes for
 			// concept, ont, or note
 			if (conceptId != null) {
-				notesList = listNotesForConcept(ont, conceptId);
+				notesList = listNotesForConcept(ont, conceptId, threaded);
 			} else if (noteId != null) {
 				notesList = listNotesForNote(ont, noteId, threaded);
 			} else if (instanceId != null) {
-				notesList = listNotesForIndividual(ont, instanceId);
+				notesList = listNotesForIndividual(ont, instanceId, threaded);
 			} else {
 				notesList = notesService.getAllNotesForOntology(ont);
 			}
@@ -149,7 +149,7 @@ public class NotesRestlet extends AbstractBaseRestlet {
 	}
 
 	private List<NoteBean> listNotesForConcept(OntologyBean ont,
-			String conceptId) throws Exception {
+			String conceptId, Boolean threaded) throws Exception {
 		ClassBean concept = conceptService.findConcept(ont.getId(), conceptId,
 				null, false, false);
 
@@ -159,7 +159,7 @@ public class NotesRestlet extends AbstractBaseRestlet {
 					.getMessage("msg.error.conceptNotFound"));
 		}
 
-		return notesService.getAllNotesForConcept(ont, concept);
+		return notesService.getAllNotesForConcept(ont, concept, threaded);
 	}
 
 	private List<NoteBean> listNotesForNote(OntologyBean ont, String noteId,
@@ -174,7 +174,7 @@ public class NotesRestlet extends AbstractBaseRestlet {
 	}
 
 	private List<NoteBean> listNotesForIndividual(OntologyBean ont,
-			String individualId) throws Exception {
+			String individualId, Boolean threaded) throws Exception {
 		InstanceBean instance = conceptService.findInstanceById(ont.getId(),
 				individualId);
 
@@ -182,7 +182,8 @@ public class NotesRestlet extends AbstractBaseRestlet {
 			throw new InstanceNotFoundException();
 		}
 
-		return notesService.getAllNotesForIndividual(ont, individualId);
+		return notesService.getAllNotesForIndividual(ont, individualId,
+				threaded);
 	}
 
 	private void createNote(Request request, Response response) {
