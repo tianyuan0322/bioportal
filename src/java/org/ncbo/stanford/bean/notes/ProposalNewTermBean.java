@@ -3,11 +3,11 @@ package org.ncbo.stanford.bean.notes;
 import java.util.List;
 
 public class ProposalNewTermBean extends AbstractProposalBean {
-	private String definition;
 	private String id;
-	private List<String> parent;
 	private String preferredName;
+	private String definition;
 	private List<String> synonyms;
+	private List<String> parent;
 
 	/**
 	 * @return the definition
