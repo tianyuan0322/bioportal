@@ -420,7 +420,7 @@ public class NotesServiceImpl implements NotesService {
 			newTerm.setId(newTermAnnot.getEntityId());
 			newTerm
 					.setPreferredName(newTermAnnot.getPreferredName()
-							.toString());
+							.getLabel());
 			newTerm.setReasonForChange(newTermAnnot.getReasonForChange());
 			newTerm.setContactInfo(newTermAnnot.getContactInformation());
 
@@ -432,7 +432,7 @@ public class NotesServiceImpl implements NotesService {
 
 			ArrayList<String> synonyms = new ArrayList<String>();
 			for (LinguisticEntity synonym : newTermAnnot.getSynonym()) {
-				parents.add(synonym.getLabel());
+				synonyms.add(synonym.getLabel());
 			}
 			newTerm.setSynonyms(synonyms);
 
