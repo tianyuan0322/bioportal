@@ -1,0 +1,35 @@
+<html>
+  <body>
+
+Implementation of the meta-kb object managers, based on the Protege-OWL kb back-end.
+Actual data transactions with the metadata kb are handled through Data Access Objects,
+in the package {@link org.ncbo.stanford.manager.metakb.protege.DAO}.  Classes in this
+package add a layer of additional functionality to implement the manager interfaces.
+<p>
+Implementation of a new manager interface will involve many of these steps:
+<ul>
+  <li>
+If there are new object types to be stored in the metadata kb, their classes and properties
+will need to be added to the kb definition.  Currently this is an OWL file called 
+BioPortalMetadata_v#.#.#.owl.  
+  </li>
+  <li>
+The new object type will need a corresponding java bean, for example see those in package
+{@link org.ncbo.stanford.bean}.  The java bean must be a subclass of
+{@link org.ncbo.stanford.bean.AbstractIdBean}, as this DAO objects use the ID to retrieve
+the individuals from the metadata KB.  If the object should be timestamped in the KB, create
+a subclass of {@link org.ncbo.stanford.bean.TimedIdBean} instead, and the base DAO class
+will take care of setting the timestamps correctly.
+  </li>
+  <li>
+A manager implementation typically will have one or more DAOs as data members, used for 
+saving or retrieving the different object types to or from the KB.
+  </li>
+  <li>
+The class {@link SimpleObjectManagerImpl} implements basic CRUD operations, useful as a 
+starting place for a manager implementation.
+  </li>
+</ul>
+
+  </body>
+</html>

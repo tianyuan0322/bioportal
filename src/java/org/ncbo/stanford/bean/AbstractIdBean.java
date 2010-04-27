@@ -15,7 +15,7 @@ public abstract class AbstractIdBean {
 	/**
 	 * @return the id
 	 */
-	protected Integer getId() {
+	public Integer getId() {
 		return id;
 	}
 }
