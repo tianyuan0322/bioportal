@@ -434,7 +434,7 @@ public class NotesServiceImpl implements NotesService {
 			for (LinguisticEntity synonym : newTermAnnot.getSynonym()) {
 				parents.add(synonym.getLabel());
 			}
-			newTerm.setSynonym(synonyms);
+			newTerm.setSynonyms(synonyms);
 
 			valueStore.add(newTerm);
 			break;
