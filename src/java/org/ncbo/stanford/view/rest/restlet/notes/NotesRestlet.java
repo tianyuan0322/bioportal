@@ -267,12 +267,13 @@ public class NotesRestlet extends AbstractBaseRestlet {
 				ClassBean concept = conceptService.findConcept(ont.getId(),
 						appliesTo, null, false, false);
 
-				appliesTo = concept.getFullId();
-
 				if (concept == null) {
 					throw new ConceptNotFoundException(MessageUtils
 							.getMessage("msg.error.conceptNotFound"));
 				}
+
+				appliesTo = concept.getFullId();
+
 				break;
 			case Property:
 				// TODO: Add check for valid property
@@ -281,11 +282,12 @@ public class NotesRestlet extends AbstractBaseRestlet {
 				InstanceBean instance = conceptService.findInstanceById(ont
 						.getId(), appliesTo);
 
-				appliesTo = instance.getFullId();
-
 				if (instance == null) {
 					throw new InstanceNotFoundException();
 				}
+
+				appliesTo = instance.getFullId();
+
 				break;
 			case Note:
 				Annotation note = notesService.getNote(ont, appliesTo);
