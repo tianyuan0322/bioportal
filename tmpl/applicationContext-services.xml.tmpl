@@ -527,6 +527,11 @@
 		class="org.ncbo.stanford.manager.metadata.impl.OntologyGroupMetadataManagerImpl"
 		parent="abstractOntologyManagerProtege">
 	</bean>
+	
+	<bean id="projectMetadataManager"
+		class="org.ncbo.stanford.manager.metakb.protege.ProjectMetadataManagerImpl"
+		parent="abstractOntologyManagerProtege">
+	</bean>
 
 	<!-- Application Services -->
 	<bean id="userService" class="org.ncbo.stanford.service.user.impl.UserServiceImpl">

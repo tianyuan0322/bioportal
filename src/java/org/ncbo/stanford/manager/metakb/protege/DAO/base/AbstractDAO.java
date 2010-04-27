@@ -50,11 +50,11 @@ public abstract class AbstractDAO<BeanType extends AbstractIdBean> {
 	
 	// Computed names
 	static final String INSTANCE_NAMESPACE = "http://protege.stanford.edu/ontologies/metadata/BioPortalMetadataKnowledgeBase.owl#";
-	protected String instanceNamePrefix = null;
+	protected final String instanceNamePrefix;
 	
-	// Objects from the KB will be set in the initialization step
-	protected OWLModel metadataKb = null;
-	protected OWLNamedClass kbClass = null;
+	// Objects from the KB will be set in the constructor
+	protected final OWLModel metadataKb;
+	protected final OWLNamedClass kbClass;
 	
 	// =====================================
 	// Members used when working with Timestamped beans
@@ -113,10 +113,8 @@ public abstract class AbstractDAO<BeanType extends AbstractIdBean> {
 		OWLIndividual instance = kbClass.createOWLIndividual(null);
 		// Extract the ID
 		Integer id = convertNameToId(instance.getName());
-		// Update the bean with the new id
+		// Create the bean using the new id
 		BeanType bean = newBean(id);
-		// Copy the property values into the bean
-		copyBeanPropertiesToIndividual(bean, instance);
 		// Handle timestamps, if appropriate
 		maybeSetDateCreatedAndModified(instance, bean);		
 		

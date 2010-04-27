@@ -189,7 +189,12 @@ public class PropertyMap {
 	 */
 	public void setBeanValue(Object bean, Object value) {
 		if (!checkValueType(value)) {
-			String msg = "Attempt to set value of type "+value.getClass().getName()+" on "+beanValueSetter.getName();
+			String msg;
+			if (value == null) {
+				msg = "Attempt to set null value on multivalued property "+beanValueSetter.getName();
+			} else {
+				msg = "Attempt to set value of type "+value.getClass().getName()+" on "+beanValueSetter.getName();
+			}
 			throw new BPRuntimeException(msg);
 		}
 		try {
@@ -242,7 +247,7 @@ public class PropertyMap {
 			}
 		} else {
 			// value should be singleValueType
-			return singleValueType.isInstance(value);
+			return value == null || singleValueType.isInstance(value);
 		}
 	}
 
