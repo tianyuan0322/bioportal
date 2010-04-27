@@ -30,7 +30,7 @@ public abstract class SimpleObjectManagerImpl<BeanType extends AbstractIdBean>
 	}
 	
 	// Implement interface
-	public BeanType createInstance(BeanType bean) throws MetadataException {
+	public BeanType createInstance() throws MetadataException {
 		return getAbstractDAO().createInstance();
 	}
 
