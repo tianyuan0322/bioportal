@@ -314,11 +314,11 @@ public class RequestUtils {
 		List<String> stringList = new ArrayList<String>(0);
 
 		if (!StringHelper.isNullOrNullString(stringListParam)) {
-			stringListParam = StringHelper.removeSpaces(stringListParam);
+			stringListParam = StringHelper.trimSpaces(stringListParam);
 
 			for (String stringParam : stringListParam.split(",")) {
 				try {
-					stringList.add(stringParam);
+					stringList.add(StringHelper.trimSpaces(stringParam));
 				} catch (NumberFormatException e) {
 				}
 			}
