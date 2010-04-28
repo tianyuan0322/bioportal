@@ -26,6 +26,7 @@ import org.protege.notesapi.notes.ProposalChangeHierarchy;
 import org.protege.notesapi.notes.ProposalNewEntity;
 import org.protege.notesapi.notes.ProposalPropertyValueChange;
 import org.protege.notesapi.notes.Status;
+import org.protege.notesapi.notes.impl.DefaultComment;
 import org.protege.notesapi.oc.OntologyClass;
 import org.protege.notesapi.oc.OntologyComponent;
 import org.protege.notesapi.oc.OntologyProperty;
@@ -347,21 +348,23 @@ public class NotesServiceImpl implements NotesService {
 
 		Collection<AnnotatableThing> annotates = annotation.getAnnotates();
 		for (AnnotatableThing appliesTo : annotates) {
-			String appliesToType = null;
 			Class<? extends AnnotatableThing> clas = appliesTo.getClass();
-			if (clas == Annotation.class) {
-				appliesToType = NoteAppliesToTypeEnum.Note.toString();
+			if (clas == DefaultComment.class) {
+				nb.addAppliesToList(new AppliesToBean(appliesTo.getId(),
+						NoteAppliesToTypeEnum.Note));
 			} else if (clas == DefaultOntologyClass.class) {
-				appliesToType = NoteAppliesToTypeEnum.Class.toString();
+				nb.addAppliesToList(new AppliesToBean(appliesTo.getId(),
+						NoteAppliesToTypeEnum.Class));
 			} else if (clas == DefaultOntologyIndividual.class) {
-				appliesToType = NoteAppliesToTypeEnum.Individual.toString();
+				nb.addAppliesToList(new AppliesToBean(appliesTo.getId(),
+						NoteAppliesToTypeEnum.Individual));
 			} else if (clas == DefaultOntologyProperty.class) {
-				appliesToType = NoteAppliesToTypeEnum.Property.toString();
+				nb.addAppliesToList(new AppliesToBean(appliesTo.getId(),
+						NoteAppliesToTypeEnum.Property));
 			} else {
-				appliesToType = NoteAppliesToTypeEnum.Default.toString();
+				nb.addAppliesToList(new AppliesToBean(appliesTo.getId(),
+						NoteAppliesToTypeEnum.Default));
 			}
-			nb.addAppliesToList(new AppliesToBean(appliesTo.getId(),
-					appliesToType));
 		}
 
 		nb.setOntologyId(ont.getOntologyId());
