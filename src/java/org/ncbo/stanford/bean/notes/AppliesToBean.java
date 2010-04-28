@@ -3,9 +3,7 @@ package org.ncbo.stanford.bean.notes;
 import org.ncbo.stanford.enumeration.NoteAppliesToTypeEnum;
 
 public class AppliesToBean {
-	private String noteId;
-	private String ontologyId;
-	private String fullId;
+	private String id;
 	private String type;
 
 	/**
@@ -16,43 +14,23 @@ public class AppliesToBean {
 	 * @param type
 	 */
 	public AppliesToBean(String id, NoteAppliesToTypeEnum appliesToType) {
-		switch (appliesToType) {
-		case Ontology:
-			this.ontologyId = id;
-			break;
-		case Class:
-			this.fullId = id;
-			break;
-		case Property:
-			this.fullId = id;
-			break;
-		case Individual:
-			this.fullId = id;
-			break;
-		case Note:
-			this.noteId = id;
-			break;
-		default:
-			this.ontologyId = id;
-			break;
-		}
-
+		this.id = id;
 		this.type = appliesToType.toString();
 	}
 
 	/**
-	 * @return the fullId
+	 * @return the id
 	 */
-	public String getFullId() {
-		return fullId;
+	public String getId() {
+		return id;
 	}
 
 	/**
-	 * @param fullId
-	 *            the fullId to set
+	 * @param id
+	 *            the id to set
 	 */
-	public void setFullId(String fullId) {
-		this.fullId = fullId;
+	public void setId(String id) {
+		this.id = id;
 	}
 
 	/**
@@ -70,33 +48,4 @@ public class AppliesToBean {
 		this.type = type;
 	}
 
-	/**
-	 * @return the noteId
-	 */
-	public String getNoteId() {
-		return noteId;
-	}
-
-	/**
-	 * @param noteId
-	 *            the noteId to set
-	 */
-	public void setNoteId(String noteId) {
-		this.noteId = noteId;
-	}
-
-	/**
-	 * @return the ontologyId
-	 */
-	public String getOntologyId() {
-		return ontologyId;
-	}
-
-	/**
-	 * @param ontologyId
-	 *            the ontologyId to set
-	 */
-	public void setOntologyId(String ontologyId) {
-		this.ontologyId = ontologyId;
-	}
 }
