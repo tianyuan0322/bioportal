@@ -238,9 +238,9 @@ public class NotesRestlet extends AbstractBaseRestlet {
 		NoteType noteType = NoteType.valueOf(noteTypeStr);
 		NoteAppliesToTypeEnum appliesToType = NoteAppliesToTypeEnum
 				.valueOf(appliesToTypeStr);
-		Integer ontologyIdInt = RequestUtils.parseIntegerParam(ontologyId);
 		List<String> synonymList = RequestUtils
 				.parseStringListParam(termSynonyms);
+		Integer ontologyIdInt = RequestUtils.parseIntegerParam(ontologyId);
 		Integer ontologyVersionIdInt = RequestUtils
 				.parseIntegerParam(ontologyVersionId);
 
@@ -452,14 +452,23 @@ public class NotesRestlet extends AbstractBaseRestlet {
 				.getParameter(RequestParamConstants.PARAM_NOTE_ID);
 		String ontologyId = (String) request.getAttributes().get(
 				MessageUtils.getMessage("entity.ontologyid"));
+		String ontologyVersionId = (String) request.getAttributes().get(
+				MessageUtils.getMessage("entity.ontologyversionid"));
 
 		// Post-process parameters
 		Integer ontologyIdInt = RequestUtils.parseIntegerParam(ontologyId);
+		Integer ontologyVersionIdInt = RequestUtils
+				.parseIntegerParam(ontologyVersionId);
 
-		OntologyBean ont;
+
+		OntologyBean ont = null;
 		try {
-			ont = ontologyService
-					.findLatestOntologyOrViewVersion(ontologyIdInt);
+			if (ontologyIdInt != null) {
+				ont = ontologyService
+						.findLatestOntologyOrViewVersion(ontologyIdInt);
+			} else if (ontologyVersionIdInt != null) {
+				ont = ontologyService.findOntologyOrView(ontologyVersionIdInt);
+			}
 
 			if (ont == null) {
 				throw new InvalidInputException(MessageUtils
