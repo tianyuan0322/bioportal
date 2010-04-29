@@ -83,6 +83,7 @@
 		<echo message="log4j path: = ${bioportal.app.logfilepath}" />
 
 		<mkdir dir="${bioportal.tempdir}" />
+		<mkdir dir="${bioportal.rdfdir}" />
 		<mkdir dir="${bioportal.ontology.filepath}" />
 		<mkdir dir="${bioportal.diff.filepath}" />
 		<mkdir dir="${bioportal.search.indexpath}" />
@@ -213,6 +214,7 @@
 				<filter token="obosourceforgecvscheckoutdir" value="${obo.sourceforge.cvs.checkoutdir}" />
 				<filter token="obosourceforgecvsdescriptorfile" value="${obo.sourceforge.cvs.descriptor.file}" />
 				<filter token="bioportaltempdir" value="${bioportal.tempdir}" />
+				<filter token="bioportalrdfdir" value="${bioportal.rdfdir}" />
 				<filter token="oborepositoriesconfigfilepath" value="${obo.repositories.config.filepath}" />
 				<filter token="returnUrl" value="${openId.return.url}" />
 				<filter token="bioportalallconceptsmaxpagesize" value="${bioportal.allconcepts.maxpagesize}" />				
@@ -222,6 +224,7 @@
 		<copy file="${tmpl.dir}/applicationContext-rest.xml.tmpl" tofile="${conf.dir.generated}/applicationContext-rest.xml" overwrite="true">
 			<filterset>
 				<filter token="bioportaltempdir" value="${bioportal.tempdir}" />
+				<filter token="bioportalrdfdir" value="${bioportal.rdfdir}" />
 				<filter token="bioportaltraversedconceptlimit" value="${bioportal.traversedConceptLimit}" />
 			</filterset>
 		</copy>

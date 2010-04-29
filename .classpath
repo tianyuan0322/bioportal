@@ -4,7 +4,7 @@
 	<classpathentry kind="src" path="classic_to_core_migration/src/java"/>
 	<classpathentry kind="src" path="WebRoot/WEB-INF/conf/generated"/>
 	<classpathentry kind="src" path="src/test"/>
-	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.launching.macosx.MacOSXType/JVM 1.6.0 (MacOS X Default)"/>
 	<classpathentry kind="lib" path="WebRoot/WEB-INF/lib/org.restlet.jar"/>
 	<classpathentry kind="lib" path="WebRoot/WEB-INF/lib/org.restlet.ext.spring_2.5.jar"/>
 	<classpathentry kind="lib" path="WebRoot/WEB-INF/lib/org.restlet.ext.fileupload_1.2.jar"/>

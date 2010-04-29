@@ -588,6 +588,11 @@
 	    class="org.ncbo.stanford.service.concept.impl.DumpRDFServiceImpl"
 	    parent="conceptService">
 	</bean>
+	
+	<bean id="rdfService"
+	    class="org.ncbo.stanford.service.concept.impl.RdfServiceImpl"
+	    parent="conceptService">
+	</bean>
 
 	<bean id="abstractOntologyService"
 		class="org.ncbo.stanford.service.ontology.AbstractOntologyService"
@@ -1147,6 +1152,13 @@
 	<bean id="tempDir" class="java.lang.String">
 		<constructor-arg>
 			<value>@bioportaltempdir@</value>
+		</constructor-arg>
+	</bean>
+	
+	<!-- RDF directory on the server -->
+	<bean id="rdfDir" class="java.lang.String">
+		<constructor-arg>
+			<value>@bioportalrdfdir@</value>
 		</constructor-arg>
 	</bean>
 

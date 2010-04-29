@@ -376,10 +376,31 @@
 		</property>
 	</bean>
 	
+	<bean id="rdfExtractionRestlet"
+		class="org.ncbo.stanford.view.rest.restlet.rdf.RdfExtractionRestlet"
+		parent="abstractBaseRestlet">
+		<property name="rdfService">
+			<ref bean="rdfService" />
+		</property>
+		<property name="ontologyService">
+			<ref bean="ontologyService" />
+		</property>		
+		<property name="rdfDir">
+			<ref bean="rdfDir" />
+		</property>
+	</bean>
+	
 	<!-- Temporary directory on the server -->
 	<bean id="tempDir" class="java.lang.String">
 		<constructor-arg>
 			<value>@bioportaltempdir@</value>
+		</constructor-arg>
+	</bean>
+	
+	<!-- RDF directory on the server -->
+	<bean id="rdfDir" class="java.lang.String">
+		<constructor-arg>
+			<value>@bioportalrdfdir@</value>
 		</constructor-arg>
 	</bean>
 	
@@ -547,6 +568,15 @@
 						</entry>
 						<entry key="/viewextractor/{ontologyversionid}">
 							<ref local="viewExtractionRestlet" />
+						</entry>
+						<entry key="/rdf">
+							<ref local="rdfExtractionRestlet" />
+						</entry>						
+						<entry key="/rdf/{ontologyversionid}">
+							<ref local="rdfExtractionRestlet" />
+						</entry>
+						<entry key="/rdf/{ontologyversionid}/{conceptid}">
+							<ref local="rdfExtractionRestlet" />
 						</entry>
 						<entry key="/concepts/instances/{ontologyVersionId}">
 							<ref local="instanceRestlet" />
