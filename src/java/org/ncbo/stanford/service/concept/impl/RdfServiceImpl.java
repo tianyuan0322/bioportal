@@ -29,7 +29,7 @@ import org.semanticweb.owlapi.model.OWLOntologyChangeException;
 import org.semanticweb.owlapi.model.OWLOntologyManager;
 import org.semanticweb.owlapi.vocab.OWLRDFVocabulary;
 
- 
+
 public class RdfServiceImpl extends ConceptServiceImpl implements RdfService {
 
 	private static final Log log = LogFactory.getLog(ConceptServiceImpl.class);
@@ -86,7 +86,7 @@ public class RdfServiceImpl extends ConceptServiceImpl implements RdfService {
 	public static final String skosNotation = SKOS_URI + "notation"; // for storing internal IDs
 	public static final String oboIsa = OBO_REL_URI + OBO_ISA;
 	
-	public void generateRdf(OWLOntologyManager manager, OntologyService ontologyService, String dir) throws Exception {
+	public void generateRdf(OWLOntologyManager manager, String dir, OntologyService ontologyService) throws Exception {
 		List<OntologyBean> ontologies = ontologyService.findLatestActiveOntologyVersions();
 		
 		System.out.println("********** PAEA ***" + ontologies.size() + " ontologies are in the processing queue.");
@@ -130,7 +130,7 @@ public class RdfServiceImpl extends ConceptServiceImpl implements RdfService {
 					System.out.println("********** PAEA ***" + ontoBean.getAbbreviation() + " is being skipped because it is flagged as isRemote=true.");
 				} else {
 					// generate the RDF file!
-					generateRdf(manager, dir, ontologyVersionId);
+					generateRdf(manager, dir, ontologyVersionId, false);
 				}
 				
 				System.out.println("********** PAEA ***" + ontoBean.getAbbreviation() + " has been successfully processed.");
@@ -141,31 +141,42 @@ public class RdfServiceImpl extends ConceptServiceImpl implements RdfService {
 		}
 	}
 	
-	public OWLOntology generateRdf(OWLOntologyManager manager, String dir, Integer ontologyVersionId) throws Exception {
-		// Pass an empty list of concepts. [Meaning, get ALL of them.]
-		return generateRdf(manager, dir, ontologyVersionId, (List<String>)null);
+	public OWLOntology generateRdf(OWLOntologyManager manager, String dir, Integer ontologyVersionId, boolean isVirtual) throws Exception {
+		// Pass an empty list of concepts. Meaning, get ALL of them.
+		return generateRdf(manager, dir, ontologyVersionId, isVirtual, (List<String>)null);
 	}
 	
-	public OWLOntology generateRdf(OWLOntologyManager manager, String dir, Integer ontologyVersionId, String conceptId) throws Exception {
+	public OWLOntology generateRdf(OWLOntologyManager manager, String dir, Integer ontologyVersionId, boolean isVirtual, String conceptId) throws Exception {
 		// Pass a singleton concept list.
 		ArrayList<String> conceptIds = new ArrayList<String>(1);
 		conceptIds.add(conceptId);
-		return generateRdf(manager, dir, ontologyVersionId, conceptIds);
+		return generateRdf(manager, dir, ontologyVersionId, isVirtual, conceptIds);
 	}
 
-	private OWLOntology generateRdf(OWLOntologyManager manager, String dir, Integer ontologyVersionId, List<String> conceptIds)
+	/**
+	 * Given a list (singleton, many, or NULL) of concepts, generate the RDF for a given ontology version.
+	 * 
+	 * @param manager
+	 * @param dir
+	 * @param ontologyVersionId
+	 * @param conceptIds
+	 * @return
+	 * @throws Exception
+	 */
+	private OWLOntology generateRdf(OWLOntologyManager manager, String dir, Integer ontologyVersionId, boolean isVirtual, List<String> conceptIds)
 			throws Exception {
 		
 		long startTime = System.currentTimeMillis();
 
 		// Get the ontology bean.
-		OntologyBean ontoBean = ontologyMetadataManager
-			.findOntologyOrViewVersionById(ontologyVersionId);
+		OntologyBean ontoBean = isVirtual ? 
+				ontologyMetadataManager.findLatestOntologyOrViewVersionById(ontologyVersionId) : 
+					ontologyMetadataManager.findOntologyOrViewVersionById(ontologyVersionId);
 		
 		OWLOntology ontology = manager.createOntology(IRI.create(getOntologyUri(ontoBean,conceptIds)));
 		File file = new File(dir + File.separator + getFileName(ontoBean));
 		
-		useOwlApi(manager, ontology, ontoBean, ontologyVersionId, conceptIds);
+		useOwlApi(manager, ontology, ontoBean, conceptIds);
 		
 		long owlTime = System.currentTimeMillis();
 		long owlElapsed = owlTime - startTime;
@@ -185,7 +196,7 @@ public class RdfServiceImpl extends ConceptServiceImpl implements RdfService {
 	}
 	
 	private void useOwlApi(OWLOntologyManager manager, OWLOntology ontology, 
-			OntologyBean ontoBean, Integer ontologyVersionId, List<String>conceptIds) throws Exception {
+			OntologyBean ontoBean, List<String>conceptIds) throws Exception {
 		
 		Hashtable<String,String> namedSlots = new Hashtable<String, String>();
 		
@@ -345,7 +356,7 @@ public class RdfServiceImpl extends ConceptServiceImpl implements RdfService {
 		if (conceptIds != null) {
 			// specified list (most likely a singleton) of conceptIds
 			for (String conceptId : conceptIds) {
-				ClassBean classBean = findConcept(ontologyVersionId, conceptId, null, false, false);
+				ClassBean classBean = findConcept(ontoBean.getId(), conceptId, null, false, false);
 				try {
 					addClassUsingOwlApi(manager, ontology, ontoBean, classBean, namedSlots);
 				} catch (Exception e) {

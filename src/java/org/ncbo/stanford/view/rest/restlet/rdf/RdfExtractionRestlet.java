@@ -35,27 +35,37 @@ public class RdfExtractionRestlet extends AbstractBaseRestlet {
 		try {
 			OWLOntologyManager manager = OWLManager.createOWLOntologyManager();
 			OWLOntology ontology;
+			boolean isVirtual = false;
 			
 			String conceptId = getConceptId(request);
+
+			// version id
 			String ontologyVersionId = (String) request.getAttributes().get(
 					MessageUtils.getMessage("entity.ontologyversionid"));
+			
+			// virtual id
+			if (StringHelper.isNullOrNullString(ontologyVersionId)) {
+				ontologyVersionId = (String) request.getAttributes().get(
+					MessageUtils.getMessage("entity.ontologyid"));
+				isVirtual = true;
+			}
 
 			String rdfOutput = "";
 
 			if (StringHelper.isNullOrNullString(ontologyVersionId)) {
 				// process ALL ontologies
-				rdfService.generateRdf(manager, ontologyService, rdfDir);
+				rdfService.generateRdf(manager, rdfDir, ontologyService);
 				rdfOutput = "files have been generated in: " + rdfDir;
 			} else {
 				Integer ontologyVersionIdInt = RequestUtils.parseIntegerParam(ontologyVersionId);
 
 				if (StringHelper.isNullOrNullString(conceptId)) {
 					// process ALL concepts
-					ontology = rdfService.generateRdf(manager, rdfDir, ontologyVersionIdInt);
+					ontology = rdfService.generateRdf(manager, rdfDir, ontologyVersionIdInt, isVirtual);
 					rdfOutput = "file has been generated in: " + rdfDir;
 				} else {
 					// process SPECIFIC concept
-					ontology = rdfService.generateRdf(manager, rdfDir, ontologyVersionIdInt, conceptId);
+					ontology = rdfService.generateRdf(manager, rdfDir, ontologyVersionIdInt, isVirtual, conceptId);
 					StringDocumentTarget outputString = new StringDocumentTarget();
 					manager.saveOntology(ontology, outputString);
 					rdfOutput = outputString.toString();

@@ -23,7 +23,7 @@ public interface RdfService {
 	 * @param manager
 	 * @throws Exception
 	 */
-	public void generateRdf(OWLOntologyManager manager, OntologyService ontologyService, String dir) throws Exception;
+	public void generateRdf(OWLOntologyManager manager, String dir, OntologyService ontologyService) throws Exception;
 	
 
 	/**
@@ -36,7 +36,7 @@ public interface RdfService {
 	 * @return ontology - the ontology is returned
 	 * @throws Exception
 	 */
-	public OWLOntology generateRdf(OWLOntologyManager manager, String dir, Integer ontologyVersionId) throws Exception;
+	public OWLOntology generateRdf(OWLOntologyManager manager, String dir, Integer ontologyVersionId, boolean isVirtual) throws Exception;
 
 	/**
 	 * Generate the RDF/XML representation for a specific concept from a given
@@ -50,6 +50,6 @@ public interface RdfService {
 	 * @return RDF representation of the concept from the ontology
 	 * @throws Exception
 	 */
-	public OWLOntology generateRdf(OWLOntologyManager manager, String dir, Integer ontologyVersionId, String conceptId)
+	public OWLOntology generateRdf(OWLOntologyManager manager, String dir, Integer ontologyVersionId, boolean isVirtual, String conceptId)
 			throws Exception;
 }
