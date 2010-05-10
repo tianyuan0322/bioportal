@@ -192,29 +192,38 @@ public class RdfServiceImpl extends ConceptServiceImpl implements RdfService {
 		OWLDataFactory factory = manager.getOWLDataFactory();
 		
 		// add ontology annotations
+		OWLLiteral ontologyInfoLiteral;
+		OWLAnnotation ontologyInfoAnnotation;
 		
 		// version
-		OWLLiteral ontologyInfoLiteral = factory.getOWLStringLiteral(ontoBean.getId().toString());
-		OWLAnnotation ontologyInfoAnnotation = factory.getOWLAnnotation(
-				factory.getOWLAnnotationProperty(IRI.create(BIOPORTAL_PURL_BASE + "bioportal/versionId")), 
-				ontologyInfoLiteral);
-		manager.applyChange(new AddOntologyAnnotation(ontology,ontologyInfoAnnotation));
+		if (ontoBean.getId() != null) {
+			ontologyInfoLiteral = factory.getOWLStringLiteral(ontoBean.getId().toString());
+			ontologyInfoAnnotation = factory.getOWLAnnotation(
+					factory.getOWLAnnotationProperty(IRI.create(BIOPORTAL_PURL_BASE + "bioportal/id")), 
+					ontologyInfoLiteral);
+			manager.applyChange(new AddOntologyAnnotation(ontology,ontologyInfoAnnotation));			
+		}
 
-		// display name
-		ontologyInfoLiteral = factory.getOWLStringLiteral(ontoBean.getDisplayLabel());
-		ontologyInfoAnnotation = factory.getOWLAnnotation(
-				factory.getOWLAnnotationProperty(IRI.create(BIOPORTAL_PURL_BASE + "bioportal/displayLabel")), 
-				ontologyInfoLiteral);
-		manager.applyChange(new AddOntologyAnnotation(ontology,ontologyInfoAnnotation));
+		// label
+		if (!StringHelper.isNullOrNullString(ontoBean.getDisplayLabel())) {
+			ontologyInfoLiteral = factory.getOWLStringLiteral(ontoBean.getDisplayLabel());
+			ontologyInfoAnnotation = factory.getOWLAnnotation(
+					factory.getOWLAnnotationProperty(IRI.create(BIOPORTAL_PURL_BASE + "bioportal/displayLabel")), 
+					ontologyInfoLiteral);
+			manager.applyChange(new AddOntologyAnnotation(ontology,ontologyInfoAnnotation));
+		}
 
 		// virtual ontology id
-		ontologyInfoLiteral = factory.getOWLStringLiteral(ontoBean.getOntologyId().toString());
-		ontologyInfoAnnotation = factory.getOWLAnnotation(
-				factory.getOWLAnnotationProperty(IRI.create(BIOPORTAL_PURL_BASE + "bioportal/virtualId")), 
-				ontologyInfoLiteral);
-		manager.applyChange(new AddOntologyAnnotation(ontology,ontologyInfoAnnotation));
+		if (ontoBean.getOntologyId() != null) {
+			ontologyInfoLiteral = factory.getOWLStringLiteral(ontoBean.getOntologyId().toString());
+			ontologyInfoAnnotation = factory.getOWLAnnotation(
+					factory.getOWLAnnotationProperty(IRI.create(BIOPORTAL_PURL_BASE + "bioportal/ontologyId")), 
+					ontologyInfoLiteral);
+			manager.applyChange(new AddOntologyAnnotation(ontology,ontologyInfoAnnotation));
+		}
 		
 		// ontology uri
+		// assert ontology URI not null
 		ontologyInfoLiteral = factory.getOWLStringLiteral(getOntologyUri(ontoBean,conceptIds));
 		ontologyInfoAnnotation = factory.getOWLAnnotation(
 				factory.getOWLAnnotationProperty(IRI.create(BIOPORTAL_PURL_BASE + "bioportal/uri")), 
@@ -222,21 +231,26 @@ public class RdfServiceImpl extends ConceptServiceImpl implements RdfService {
 		manager.applyChange(new AddOntologyAnnotation(ontology,ontologyInfoAnnotation));
 		
 		// version number
-		ontologyInfoLiteral = factory.getOWLStringLiteral(ontoBean.getVersionNumber());
-		ontologyInfoAnnotation = factory.getOWLAnnotation(
-				factory.getOWLAnnotationProperty(IRI.create(BIOPORTAL_PURL_BASE + "bioportal/version")), 
-				ontologyInfoLiteral);
-		manager.applyChange(new AddOntologyAnnotation(ontology,ontologyInfoAnnotation));
+		if (!StringHelper.isNullOrNullString(ontoBean.getVersionNumber())) {
+			ontologyInfoLiteral = factory.getOWLStringLiteral(ontoBean.getVersionNumber());
+			ontologyInfoAnnotation = factory.getOWLAnnotation(
+					factory.getOWLAnnotationProperty(IRI.create(BIOPORTAL_PURL_BASE + "bioportal/versionNumber")), 
+					ontologyInfoLiteral);
+			manager.applyChange(new AddOntologyAnnotation(ontology,ontologyInfoAnnotation));
+		}
 		
 		// description
-		ontologyInfoLiteral = factory.getOWLStringLiteral(ontoBean.getDescription());
-		ontologyInfoAnnotation = factory.getOWLAnnotation(
-				factory.getOWLAnnotationProperty(IRI.create(BIOPORTAL_PURL_BASE + "bioportal/description")), 
-				ontologyInfoLiteral);
-		manager.applyChange(new AddOntologyAnnotation(ontology,ontologyInfoAnnotation));
+		if (!StringHelper.isNullOrNullString(ontoBean.getDescription())) {
+			ontologyInfoLiteral = factory.getOWLStringLiteral(ontoBean.getDescription());
+			ontologyInfoAnnotation = factory.getOWLAnnotation(
+					factory.getOWLAnnotationProperty(IRI.create(BIOPORTAL_PURL_BASE + "bioportal/description")), 
+					ontologyInfoLiteral);
+			manager.applyChange(new AddOntologyAnnotation(ontology,ontologyInfoAnnotation));
+		}
 		
 		// date
 		Date today = new Date();
+		// assert date not null
 		ontologyInfoLiteral = factory.getOWLStringLiteral(today.toString());
 		ontologyInfoAnnotation = factory.getOWLAnnotation(
 				factory.getOWLAnnotationProperty(IRI.create(BIOPORTAL_PURL_BASE + "bioportal/date")), 
@@ -244,18 +258,22 @@ public class RdfServiceImpl extends ConceptServiceImpl implements RdfService {
 		manager.applyChange(new AddOntologyAnnotation(ontology,ontologyInfoAnnotation));
 		
 		// abbreviation
-		ontologyInfoLiteral = factory.getOWLStringLiteral(ontoBean.getAbbreviation());
-		ontologyInfoAnnotation = factory.getOWLAnnotation(
-				factory.getOWLAnnotationProperty(IRI.create(BIOPORTAL_PURL_BASE + "bioportal/abbreviation")), 
-				ontologyInfoLiteral);
-		manager.applyChange(new AddOntologyAnnotation(ontology,ontologyInfoAnnotation));
+		if (!StringHelper.isNullOrNullString(ontoBean.getAbbreviation())) {
+			ontologyInfoLiteral = factory.getOWLStringLiteral(ontoBean.getAbbreviation());
+			ontologyInfoAnnotation = factory.getOWLAnnotation(
+					factory.getOWLAnnotationProperty(IRI.create(BIOPORTAL_PURL_BASE + "bioportal/abbreviation")), 
+					ontologyInfoLiteral);
+			manager.applyChange(new AddOntologyAnnotation(ontology,ontologyInfoAnnotation));
+		}
 		
 		// format
-		ontologyInfoLiteral = factory.getOWLStringLiteral(ontoBean.getFormat());
-		ontologyInfoAnnotation = factory.getOWLAnnotation(
-				factory.getOWLAnnotationProperty(IRI.create(BIOPORTAL_PURL_BASE + "bioportal/format")), 
-				ontologyInfoLiteral);
-		manager.applyChange(new AddOntologyAnnotation(ontology,ontologyInfoAnnotation));
+		if (!StringHelper.isNullOrNullString(ontoBean.getFormat())) {
+			ontologyInfoLiteral = factory.getOWLStringLiteral(ontoBean.getFormat());
+			ontologyInfoAnnotation = factory.getOWLAnnotation(
+					factory.getOWLAnnotationProperty(IRI.create(BIOPORTAL_PURL_BASE + "bioportal/format")), 
+					ontologyInfoLiteral);
+			manager.applyChange(new AddOntologyAnnotation(ontology,ontologyInfoAnnotation));
+		}
 		
 		// add essential annotation properties
 		manager.addAxiom(ontology, factory.getOWLDeclarationAxiom(factory.getOWLAnnotationProperty(OWLRDFVocabulary.RDFS_LABEL.getIRI())));
