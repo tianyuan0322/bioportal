@@ -4,7 +4,6 @@
 	<classpathentry kind="src" path="classic_to_core_migration/src/java"/>
 	<classpathentry kind="src" path="WebRoot/WEB-INF/conf/generated"/>
 	<classpathentry kind="src" path="src/test"/>
-	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.launching.macosx.MacOSXType/JVM 1.6.0 (MacOS X Default)"/>
 	<classpathentry kind="lib" path="WebRoot/WEB-INF/lib/org.restlet.jar"/>
 	<classpathentry kind="lib" path="WebRoot/WEB-INF/lib/org.restlet.ext.spring_2.5.jar"/>
 	<classpathentry kind="lib" path="WebRoot/WEB-INF/lib/org.restlet.ext.fileupload_1.2.jar"/>
@@ -20,7 +19,7 @@
 	<classpathentry kind="lib" path="WebRoot/WEB-INF/lib/javax.servlet.jsp.jar"/>
 	<classpathentry kind="lib" path="WebRoot/WEB-INF/lib/jta.jar"/>
 	<classpathentry kind="lib" path="WebRoot/WEB-INF/lib/log4j-1.2.15.jar"/>
-	<classpathentry kind="lib" path="WebRoot/WEB-INF/lib/spring.jar" sourcepath="/Users/plependu/.m2/repository/org/springframework/spring/2.5.6/spring-2.5.6-sources.jar"/>
+	<classpathentry kind="lib" path="WebRoot/WEB-INF/lib/spring.jar"/>
 	<classpathentry kind="lib" path="WebRoot/WEB-INF/lib/openid4java-0.9.5.jar"/>
 	<classpathentry kind="lib" path="WebRoot/WEB-INF/lib/spring-security-acl-2.0.0.jar"/>
 	<classpathentry kind="lib" path="WebRoot/WEB-INF/lib/spring-security-core-2.0.0.jar"/>
@@ -55,6 +54,7 @@
 	<classpathentry kind="lib" path="WebRoot/WEB-INF/lib/jsr107cache-1.0.jar"/>
 	<classpathentry kind="lib" path="WebRoot/WEB-INF/lib/xercesImpl.jar"/>
 	<classpathentry kind="lib" path="WebRoot/WEB-INF/lib/xml-apis.jar"/>
+	<classpathentry kind="lib" path="WebRoot/WEB-INF/lib/mysql-connector-java-5.1.12-bin.jar"/>
 	<classpathentry kind="lib" path="WebRoot/WEB-INF/lib/lucene-core-2.4.1.jar"/>
 	<classpathentry kind="lib" path="WebRoot/WEB-INF/lib/lucene-regex-2.4.1.jar"/>
 	<classpathentry kind="lib" path="WebRoot/WEB-INF/lib/lucene-snowball-2.4.1.jar"/>
@@ -63,6 +63,7 @@
 	<classpathentry kind="lib" path="WebRoot/WEB-INF/lib/junit-4.4.jar"/>
 	<classpathentry kind="lib" path="WebRoot/WEB-INF/lib/svnkit.jar"/>
 	<classpathentry kind="lib" path="WebRoot/WEB-INF/lib/org.semanticweb.owl.owlapi.jar"/>
+	<classpathentry kind="lib" path="WebRoot/WEB-INF/lib/org.protege.owlapi.jar"/>
 	<classpathentry kind="lib" path="WebRoot/WEB-INF/lib/protege/protege.jar"/>
 	<classpathentry kind="lib" path="WebRoot/WEB-INF/lib/protege/plugins/edu.stanford.smi.protegex.changes/change-management.jar"/>
 	<classpathentry kind="lib" path="WebRoot/WEB-INF/lib/protege/plugins/edu.stanford.smi.protegex.changes/change-model.jar"/>
@@ -134,8 +135,6 @@
 	<classpathentry kind="lib" path="WebRoot/WEB-INF/lib/lexgrid/extLib/spring-oxm-1.5.7.jar"/>
 	<classpathentry kind="lib" path="WebRoot/WEB-INF/lib/lexgrid/extLib/spring-xml-1.5.7.jar"/>
 	<classpathentry kind="lib" path="WebRoot/WEB-INF/lib/lexgrid/lexbig.jar"/>
-	<classpathentry kind="lib" path="WebRoot/WEB-INF/lib/mysql-connector-java-5.1.12-bin.jar"/>
 	<classpathentry kind="lib" path="WebRoot/WEB-INF/lib/notes-api.jar"/>
-	<classpathentry kind="lib" path="WebRoot/WEB-INF/lib/org.protege.owlapi.jar"/>
 	<classpathentry kind="output" path="WebRoot/WEB-INF/classes"/>
 </classpath>
