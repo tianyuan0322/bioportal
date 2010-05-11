@@ -61,7 +61,7 @@ public class OBOCompressedFileHandlerImpl extends AbstractCompressedFileHandler 
 					+ File.separator + str);
 
 			while (fin.read(data) != -1) {
-				joinOut.write((new String(data)).trim());
+				joinOut.write(new String(data));
 				data = new byte[ApplicationConstants.BUFFER_SIZE];
 			}
 
