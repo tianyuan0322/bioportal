@@ -110,6 +110,10 @@ public class PrefixQuery extends BooleanQuery {
 		expr = expr.replaceAll(WILDCARD_LEADING_TRAILING_PATTERN, "");
 
 		QueryParser parser = new QueryParser(field, analyzer);
+
+//		expr = expr.replaceAll("\\(", "");
+//		expr = expr.replaceAll("\\)", "");
+		
 		Query query = parser.parse(expr);
 
 		expr = query.toString().replace(field + ":", "");
