@@ -11,7 +11,7 @@ import org.ncbo.stanford.bean.AbstractIdBean;
  * The created and modified dates are intended to correspond to when the bean
  * objects are saved to persistent store.
  * 
- * @author <a href="mailto:tony@loeser.name">Tony Loeser</a>
+ * @author Tony Loeser
  */
 
 public class TimedIdBean extends AbstractIdBean {

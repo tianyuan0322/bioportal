@@ -135,7 +135,7 @@ public interface RequestParamConstants {
 	public static final String PARAM_ONTOLOGY_VERSION_NEW = "ontologyversionnew";
 	public static final String PARAM_ONTOLOGY_VERSION_OLD = "ontologyversionold";
 	
-	/*
+	/**
 	 * view extractor
 	 */
 	public static final String PARAM_DELAY = "delay";
@@ -191,4 +191,8 @@ public interface RequestParamConstants {
 	public static final String PARAM_PROP_OLD_VALUE = "oldpropertyvalue";
 	public static final String PARAM_PROP_ID = "propertyid";
 
+	/**
+	 * Metadata: Various metadata object requests
+	 */
+	public static final String PARAM_META_USER_ID = "userid";
 }

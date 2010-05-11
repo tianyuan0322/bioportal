@@ -29,7 +29,7 @@ import edu.stanford.smi.protegex.owl.model.query.QueryResults;
  * The Bean plays the role of Transfer Object (in terms of the usual DAO pattern).  The 
  * metadata KB plays the role of the persistent store.
  * 
- * @author <a href="mailto:tony@loeser.name">Tony Loeser</a>
+ * @author Tony Loeser
  */
 public abstract class AbstractDAO<BeanType extends AbstractIdBean> {
 	
@@ -108,7 +108,7 @@ public abstract class AbstractDAO<BeanType extends AbstractIdBean> {
 	 * 
 	 * @throws MetadataException when there is an error setting property values.
 	 */
-	public BeanType createInstance() throws MetadataException {
+	public BeanType createObject() throws MetadataException {
 		// Create the individual in the MetaKB
 		OWLIndividual instance = kbClass.createOWLIndividual(null);
 		// Extract the ID
@@ -131,7 +131,7 @@ public abstract class AbstractDAO<BeanType extends AbstractIdBean> {
 	 * 
 	 * @throws Exception when there is a problem copying the property values.
 	 */
-	public BeanType retrieveInstance(Integer id)
+	public BeanType retreiveObject(Integer id)
 			throws MetadataObjectNotFoundException {
 		OWLIndividual instance = getInstance(id);
 		return convertIndividualToBean(instance);
@@ -146,7 +146,7 @@ public abstract class AbstractDAO<BeanType extends AbstractIdBean> {
 	 *         
 	 * @throws MetadataException when there is a problem copying the values into the kb.
 	 */
-	public void updateInstance(BeanType bean)
+	public void updateObject(BeanType bean)
 			throws MetadataObjectNotFoundException, MetadataException {
 		// Retrieve the matching instance
 		OWLIndividual instance = getInstance(bean.getId());
@@ -162,7 +162,7 @@ public abstract class AbstractDAO<BeanType extends AbstractIdBean> {
 	 * 
 	 * @throws MetadataObjectNotFoundException when there is no matching object in the metadata kb.
 	 */
-	public void deleteInstance(Integer id) throws MetadataObjectNotFoundException {
+	public void deleteObject(Integer id) throws MetadataObjectNotFoundException {
 		OWLIndividual instance = getInstance(id);
 		instance.delete();
 	}
@@ -175,7 +175,7 @@ public abstract class AbstractDAO<BeanType extends AbstractIdBean> {
 	 * DAO code.  We don't necessarily know what to do with any other random 
 	 * instances that may be lying around in the KB, so they are ignored. 
 	 */
-	public List<BeanType> getAllInstances() {
+	public List<BeanType> getAllObjects() {
 		Collection<?> allInstances = kbClass.getInstances(false);
 		List<BeanType> result = new ArrayList<BeanType>();
 		for (Iterator<?> allInstIt = allInstances.iterator(); allInstIt.hasNext(); ) {
@@ -204,10 +204,15 @@ public abstract class AbstractDAO<BeanType extends AbstractIdBean> {
 	 * DAO's KB class are ignored.</li>
 	 * </ul>
 	 * 
-	 * @throws Exception
+	 * @throws MetadataException when something goes wrong running the SPARQL query
 	 */
-	public List<BeanType> getInstancesForSPARQLQuery(String query) throws Exception {
-		QueryResults resultSets = metadataKb.executeSPARQLQuery(query);
+	public List<BeanType> getInstancesForSPARQLQuery(String query) throws MetadataException {
+		QueryResults resultSets = null;
+		try {
+			resultSets = metadataKb.executeSPARQLQuery(query);
+		} catch (Exception e) {
+			throw new MetadataException("Exception encountered running SPARQL query", e);
+		}
 		List<BeanType> resultBeans = new ArrayList<BeanType>();
 		for ( ; resultSets.hasNext(); ) {
 			Map<?,?> resultSet = resultSets.next();
@@ -268,7 +273,7 @@ public abstract class AbstractDAO<BeanType extends AbstractIdBean> {
 		String name = convertIdToName(id);
 		OWLIndividual individual = metadataKb.getOWLIndividual(name);
 		if (individual == null || individual.isDeleted() || individual.isBeingDeleted()) {
-			throw new MetadataObjectNotFoundException("Could not find"+qualifiedClassName+" instance id="+id+" in metadata knowledge base");
+			throw new MetadataObjectNotFoundException("Could not find "+qualifiedClassName+" instance (id="+id+") in metadata knowledge base");
 		}
 		return individual;
 	}
@@ -290,7 +295,7 @@ public abstract class AbstractDAO<BeanType extends AbstractIdBean> {
 		return id;
 	}
 	
-	private String convertIdToName(Integer id) {
+	protected String convertIdToName(Integer id) {
 		return instanceNamePrefix + id;
 	}
 

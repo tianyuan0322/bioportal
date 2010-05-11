@@ -126,10 +126,14 @@ public class OWLPropertyUtils {
 		if (javaValue instanceof String ||
 			javaValue instanceof Integer ||
 			javaValue instanceof OWLIndividual) {
-				owlValue = javaValue;
-			} else if (javaValue instanceof Date) {
-				owlValue = convertDateToDateTimeLiteral((Date)javaValue, owlModel);
-			}
+			owlValue = javaValue;
+		} else if (javaValue instanceof Date) {
+			owlValue = convertDateToDateTimeLiteral((Date)javaValue, owlModel);
+		} else if (javaValue == null) {
+			owlValue = null;
+		} else {
+			throw new IllegalArgumentException("Tried to convert Java value with unrecognized type: "+javaValue);
+		}
 		return owlValue;
 	}
 	

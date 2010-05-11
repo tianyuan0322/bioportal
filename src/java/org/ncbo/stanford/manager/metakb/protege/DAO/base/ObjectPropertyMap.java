@@ -23,10 +23,10 @@ import edu.stanford.smi.protegex.owl.model.OWLObjectProperty;
  * Note that copying an object value into the Protege OWL KB does not save that object
  * and its values into the KB.  It merely matches the id attribute of the java object
  * to an individual in the KB, and asserts that individual as the object property value.
- * Use the value's DAO to initial create it in the KB ({@link AbstractDAO#createInstance})
- * or to update its property values in the KB ({@link AbstractDAO#updateInstance}).
+ * Use the value's DAO to initial create it in the KB ({@link AbstractDAO#createObject})
+ * or to update its property values in the KB ({@link AbstractDAO#updateObject}).
  * 
- * @author <a href="mailto:loeser@cs.stanford.edu">Tony Loeser</a>
+ * @author Tony Loeser
  */
 public class ObjectPropertyMap extends PropertyMap {
 	
@@ -59,11 +59,11 @@ public class ObjectPropertyMap extends PropertyMap {
 	// =========================================================================
 	// OWL value conversion
 	
-	@Override
+	// Override
 	public Object convertJavaToOWLValue(Object value) throws MetadataException {
 		if (value instanceof AbstractIdBean) {
 			AbstractIdBean bean = (AbstractIdBean)value;
-			return valueDAO.retrieveInstance(bean.getId());
+			return valueDAO.getInstance(bean.getId());
 		} else {
 			String msg = "Attempt to set non-bean value ("+value+") on OWL Object Property ("+owlProperty.getName()+")";
 			return new BPRuntimeException(msg);
@@ -72,15 +72,17 @@ public class ObjectPropertyMap extends PropertyMap {
 
 	public Collection<?> convertJavaToOWLValues(Collection<?> values)
 			throws MetadataException {
-		List<Object> javaValues = new ArrayList<Object>(values.size());
+		List<Object> owlValues = new ArrayList<Object>(values.size());
 		for (Iterator<?> valIt = values.iterator(); valIt.hasNext(); ) {
-			javaValues.add(convertJavaToOWLValue((Object)valIt.next()));
+			owlValues.add(convertJavaToOWLValue((Object)valIt.next()));
 		}
-		return javaValues;
+		return owlValues;
 	}
 
 	public Object convertOWLToJavaValue(Object value) {
-		if (value instanceof OWLIndividual) {
+		if (value == null) {
+			return value;
+		} else if (value instanceof OWLIndividual) {
 			return valueDAO.convertIndividualToBean((OWLIndividual)value);
 		} else {
 			String msg = "Unexpected value type ("+value.getClass().getName()+") on OWL object property "+owlProperty.getName();

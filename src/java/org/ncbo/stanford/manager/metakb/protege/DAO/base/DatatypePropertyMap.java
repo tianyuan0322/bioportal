@@ -11,7 +11,7 @@ import edu.stanford.smi.protegex.owl.model.OWLModel;
  * value(s) for this property will be instances of String, Integer, or Date
  * on the java side.
  * 
- * @author <a href="mailto:loeser@cs.stanford.edu">Tony Loeser</a>
+ * @author Tony Loeser
  */
 public class DatatypePropertyMap extends PropertyMap {
 	

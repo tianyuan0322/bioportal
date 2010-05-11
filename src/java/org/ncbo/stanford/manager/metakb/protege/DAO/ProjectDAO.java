@@ -8,7 +8,7 @@ import edu.stanford.smi.protegex.owl.model.OWLModel;
 /**
  * Data access object for storing ProjectBean objects to the Metadata KB.
  * 
- * @author <a href="mailto:tony@loeser.name">Tony Loeser</a>
+ * @author Tony Loeser
  */
 public class ProjectDAO extends AbstractDAO<ProjectBean> {
 	

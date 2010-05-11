@@ -3,9 +3,10 @@ package org.ncbo.stanford.bean;
 import org.ncbo.stanford.bean.TimedIdBean;
 
 /**
- * Project objects describe people working on ontologies.
+ * Project objects describe the users' projects.
+ * People working on ontologies.
  * 
- * @author <a href="mailto:tony@loeser.name">Tony Loeser</a>
+ * @author Tony Loeser
  */
 public class ProjectBean extends TimedIdBean {
 	

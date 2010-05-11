@@ -3,6 +3,7 @@ package org.ncbo.stanford.manager.metakb.protege.DAO.base;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.Collection;
+import java.util.Collections;
 
 import org.ncbo.stanford.exception.BPRuntimeException;
 import org.ncbo.stanford.exception.MetadataException;
@@ -19,7 +20,7 @@ import edu.stanford.smi.protegex.owl.model.OWLProperty;
  * methods on this class deal with getting / setting the value of that property from
  * the corresponding beans and OWL individuals.
  * 
- * @author <a href="mailto:loeser@cs.stanford.edu">Tony Loeser</a>
+ * @author Tony Loeser
  */
 public class PropertyMap {
 	
@@ -130,7 +131,10 @@ public class PropertyMap {
 		}
 		if (isMultivalued) {
 			// This is a collection of values
-			if (Collection.class.isInstance(value)) {
+			if (value == null) {
+				Collection<?> owlValues = Collections.EMPTY_LIST;
+				OWLPropertyUtils.setPropertyValues(ind, owlProperty, owlValues);
+			} else if (Collection.class.isInstance(value)) {
 				Collection<?> owlValues = convertJavaToOWLValues((Collection<?>)value);
 				OWLPropertyUtils.setPropertyValues(ind, owlProperty, owlValues);
 			} else {
@@ -242,6 +246,8 @@ public class PropertyMap {
 				Collection<?> colValue = (Collection<?>)value;
 				return colValue.isEmpty() ||
 					   singleValueType.isInstance(colValue.iterator().next());
+			} else if (value == null) {
+				return true;
 			} else {
 				return false;
 			}

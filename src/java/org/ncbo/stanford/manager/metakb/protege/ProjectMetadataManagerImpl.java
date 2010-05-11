@@ -3,6 +3,7 @@ package org.ncbo.stanford.manager.metakb.protege;
 import java.util.List;
 
 import org.ncbo.stanford.bean.ProjectBean;
+import org.ncbo.stanford.exception.MetadataException;
 import org.ncbo.stanford.manager.metakb.ProjectMetadataManager;
 import org.ncbo.stanford.manager.metakb.protege.DAO.ProjectDAO;
 import org.ncbo.stanford.manager.metakb.protege.DAO.base.AbstractDAO;
@@ -25,17 +26,11 @@ public class ProjectMetadataManagerImpl extends SimpleObjectManagerImpl<ProjectB
 	
 	// Implement interface
 	public List<ProjectBean> getProjectsForUser(Integer userId)
-			throws Exception {
+			throws MetadataException {
 		String query = "SELECT ?obj " +
 		   "WHERE { ?obj <metadata:userId> \""+userId+"\"^^xsd:int . " +
 		   "        ?obj <rdf:type> <metadata:Project> . }";
 		return getProjectDAO().getInstancesForSPARQLQuery(query);
 	}
 	
-	// Implement interface
-	public List<ProjectBean> getAllProjects() throws Exception {
-		return getProjectDAO().getAllInstances();
-	}
-
-
 }

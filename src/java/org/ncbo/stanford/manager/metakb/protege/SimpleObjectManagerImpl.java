@@ -1,5 +1,7 @@
 package org.ncbo.stanford.manager.metakb.protege;
 
+import java.util.Collection;
+
 import org.ncbo.stanford.bean.AbstractIdBean;
 import org.ncbo.stanford.exception.BPRuntimeException;
 import org.ncbo.stanford.exception.MetadataException;
@@ -30,24 +32,28 @@ public abstract class SimpleObjectManagerImpl<BeanType extends AbstractIdBean>
 	}
 	
 	// Implement interface
-	public BeanType createInstance() throws MetadataException {
-		return getAbstractDAO().createInstance();
+	public BeanType createObject() throws MetadataException {
+		return getAbstractDAO().createObject();
 	}
 
 	// Implement interface
-	public void deleteInstance(Integer id) throws MetadataObjectNotFoundException {
-		getAbstractDAO().deleteInstance(id);
+	public void deleteObject(Integer id) throws MetadataObjectNotFoundException {
+		getAbstractDAO().deleteObject(id);
 	}
 
 	// Implement interface
-	public BeanType retrieveInstance(Integer id)
-			throws MetadataObjectNotFoundException, Exception {
-		return getAbstractDAO().retrieveInstance(id);
+	public BeanType retrieveObject(Integer id) throws MetadataObjectNotFoundException {
+		return getAbstractDAO().retreiveObject(id);
+	}
+	
+	// Implement interface
+	public Collection<BeanType> retrieveAllObjects() {
+		return getAbstractDAO().getAllObjects();
 	}
 
 	// Implement interface
-	public void updateInstance(BeanType bean)
+	public void updateObject(BeanType bean)
 			throws MetadataObjectNotFoundException, MetadataException {
-		getAbstractDAO().updateInstance(bean);
+		getAbstractDAO().updateObject(bean);
 	}
 }
