@@ -35,11 +35,11 @@
 	<p><code>POST -- /review/new</code></p>
 	<form action="http://localhost:8080/bioportal/review/new" method="post">
 		Text: <input name="text" type="text" /><br />
-		User ID: <input name="userId" type="text" /> <i>(integer)</i><br />
-		Project ID: <input name="projectId" type="text" /> <i>(integer)</i><br />
-		<i>For starters, we just track ontology id (like the database).  Next step is to give a choice
-		here of ontology id, virtual ontology id, or view id.</i><br />
-		&nbsp;&nbsp;&nbsp;Ontology ID: <input name="ontId" type="text" /> <i>(integer)</i><br />
+		User ID: <input name="userid" type="text" /> <i>(integer)</i><br />
+		Project ID: <input name="projectid" type="text" /> <i>(integer)</i><br />
+		<i>For starters, we just track ontology id (like the old database that we are replacing).
+		Next step is to give a choice here of ontology id, virtual ontology id, or view id.</i><br />
+		&nbsp;&nbsp;&nbsp;Ontology ID: <input name="ontologyid" type="text" /> <i>(integer)</i><br />
 		<input type="submit" value="POST" />
 	</form>
 
@@ -56,9 +56,9 @@
 	<form name="putForm" onSubmit="return SubmitPutForm()" method="post">
 		ID: <input name="id" type="text" /><i>(integer)</i><br />
 		Text: <input name="text" type="text" /><br />
-		User ID: <input name="userId" type="text" /> <i>(integer)</i><br />
-		Project ID: <input name="projectId" type="text" /> <i>(integer)</i><br />
-		Ontology ID: <input name="ontId" type="text" /> <i>(integer)</i><br />
+		User ID: <input name="userid" type="text" /> <i>(integer)</i><br />
+		Project ID: <input name="projectid" type="text" /> <i>(integer)</i><br />
+		Ontology ID: <input name="ontologyid" type="text" /> <i>(integer)</i><br />
 		<input name="method" type="hidden" value="put" />
 		<input type="submit" value="PUT" />
 	</form>
@@ -76,8 +76,8 @@
 	<h3>Create a new rating for a review</h3>
 	<p><code>POST -- /review/rating/new</code></p>
 	<form action="http://localhost:8080/bioportal/review/rating/new" method="post">
-		Review ID: <input name="userId" type="text" /> <i>(integer)</i><br />
-		Rating Type ID: <input name="typeId" type="text" /> <i>(integer)</i><br />
+		Review ID: <input name="reviewid" type="text" /> <i>(integer)</i><br />
+		Rating Type ID: <input name="typeid" type="text" /> <i>(integer)</i><br />
 		Value: <input name="value" type="text" /> <i>(integer where 1&le;i&le;5)</i><br />
 		<input type="submit" value="POST" />
 	</form>
@@ -101,7 +101,7 @@
   	<h3>Retrieve reviews for an ontology</h3>
 	<p><code>GET -- /reviews/</code></p>
 	<form action="http://localhost:8080/bioportal/rating/new" method="post">
-		Ontology ID: <input name="ontId" type="text" /> <i>(integer)</i><br />
+		Ontology ID: <input name="ontologyid" type="text" /> <i>(integer)</i><br />
 		<input type="submit" value="GET" />
 	</form>
 

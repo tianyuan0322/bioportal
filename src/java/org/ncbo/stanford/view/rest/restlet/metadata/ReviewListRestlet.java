@@ -11,6 +11,7 @@ import org.ncbo.stanford.exception.InvalidInputException;
 import org.ncbo.stanford.manager.metakb.ReviewMetadataManager;
 import org.ncbo.stanford.util.RequestUtils;
 import org.ncbo.stanford.view.rest.restlet.AbstractBaseRestlet;
+import org.ncbo.stanford.view.util.constants.RequestParamConstants;
 import org.restlet.data.Request;
 import org.restlet.data.Response;
 import org.restlet.data.Status;
@@ -30,7 +31,7 @@ public class ReviewListRestlet extends AbstractBaseRestlet {
 		
 		// Look for the ontology id
 		HttpServletRequest httpRequest = RequestUtils.getHttpServletRequest(request);
-		String ontologyIdString = (String)httpRequest.getParameter("ontId");
+		String ontologyIdString = (String)httpRequest.getParameter(RequestParamConstants.PARAM_META_ONT_ID);
 		Collection<ReviewBean> result = null;
 		try {
 			if (ontologyIdString == null) {

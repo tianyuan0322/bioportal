@@ -5,6 +5,7 @@ import org.ncbo.stanford.exception.InvalidInputException;
 import org.ncbo.stanford.exception.MetadataObjectNotFoundException;
 import org.ncbo.stanford.manager.metakb.SimpleObjectManager;
 import org.ncbo.stanford.view.rest.restlet.AbstractBaseRestlet;
+import org.ncbo.stanford.view.util.constants.RequestParamConstants;
 import org.restlet.data.Request;
 import org.restlet.data.Response;
 import org.restlet.data.Status;
@@ -12,8 +13,6 @@ import org.restlet.data.Status;
 // Note that the id part of the URL spec needs to be labeled "id".
 public abstract class AbstractCRUDRestlet<BeanType extends AbstractIdBean>
 		extends AbstractBaseRestlet {
-	
-	private static final String ID_PARAM = "id";
 	
 	// Implement to provide basic logging
 	protected abstract void logError(Exception e);
@@ -153,13 +152,13 @@ public abstract class AbstractCRUDRestlet<BeanType extends AbstractIdBean>
 	
 	private String extractIdString(Request request) {
 		// Get the string from the URL that is in the ID position
-		String idString = (String)request.getAttributes().get(ID_PARAM);
+		String idString = (String)request.getAttributes().get(RequestParamConstants.PARAM_META_ID);
 		return idString;
 	}
 	
 	private Integer extractId(Request request) throws InvalidInputException {
 		// Get the Project ID from the URL.
-		String intString = (String)request.getAttributes().get(ID_PARAM);
+		String intString = (String)request.getAttributes().get(RequestParamConstants.PARAM_META_ID);
 		Integer id = null;
 		try {
 			id = new Integer(intString);

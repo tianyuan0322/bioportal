@@ -29,10 +29,10 @@
 	<form action="http://localhost:8080/bioportal/project/new" method="post">
 		Name: <input name="name" type="text" /><br />
 		Description: <input name="description" type="text" /><br />
-		Home page: <input name="homePage" type="text" /><br />
+		Home page: <input name="homepage" type="text" /><br />
 		People: <input name="people" type="text" /><br />
 		Institution: <input name="institution" type="text" /><br />
-		User id: <input name="userId" type="text" value="1"/> <i>(integer)</i> <br />
+		User id: <input name="userid" type="text" value="1"/> <i>(integer)</i> <br />
 		<input type="submit" value="OK" />
 	</form>
 
@@ -40,7 +40,7 @@
 	<p><code>GET -- /project/{projectid}</code></p>
 	<p><i>(The query arguments appended to the URL are ignored.)</i></p>
 	<form name="getForm" onSubmit="return SubmitGetForm()" method="get">
-		ID: <input name="theId" type="text" /><i>(integer)</i><br />
+		ID: <input name="id" type="text" /><i>(integer)</i><br />
 		<input type="submit" value="OK" />
 	</form>
 
@@ -50,10 +50,10 @@
 		ID: <input name="id" type="text" /><i>(integer)</i><br />
 		Name: <input name="name" type="text" /><br />
 		Description: <input name="description" type="text" /><br />
-		Home page: <input name="homePage" type="text" /><br />
+		Home page: <input name="homepage" type="text" /><br />
 		People: <input name="people" type="text" /><br />
 		Institution: <input name="institution" type="text" /><br />
-		User id: <input name="userId" type="text" value="1"/> <i>(integer)</i> <br />
+		User id: <input name="userid" type="text" value="1"/> <i>(integer)</i> <br />
 		<input name="method" type="hidden" value="put" />
 		<input type="submit" value="OK" />
 	</form>

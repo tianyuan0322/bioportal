@@ -13,6 +13,7 @@ import org.ncbo.stanford.exception.MetadataObjectNotFoundException;
 import org.ncbo.stanford.manager.metakb.ReviewMetadataManager;
 import org.ncbo.stanford.util.RequestUtils;
 import org.ncbo.stanford.view.rest.restlet.AbstractBaseRestlet;
+import org.ncbo.stanford.view.util.constants.RequestParamConstants;
 import org.restlet.data.Request;
 import org.restlet.data.Response;
 import org.restlet.data.Status;
@@ -37,7 +38,7 @@ public class RatingRestlet extends AbstractBaseRestlet {
 
 			// Get the review id so we can create the rating bean
 			HttpServletRequest httpRequest = RequestUtils.getHttpServletRequest(request);
-			String reviewIdString = (String)httpRequest.getParameter("reviewId");
+			String reviewIdString = (String)httpRequest.getParameter(RequestParamConstants.PARAM_META_REV_ID);
 			if (reviewIdString == null || reviewIdString == "") {
 				throw new InvalidInputException("Missing reviewId parameter");
 			}
@@ -46,14 +47,14 @@ public class RatingRestlet extends AbstractBaseRestlet {
 			ratingBean = reviewMetadataManager.createRating(reviewBean);
 			
 			// Populate the rating bean
-			String ratingTypeIdString = (String)httpRequest.getParameter("typeId");
+			String ratingTypeIdString = (String)httpRequest.getParameter(RequestParamConstants.PARAM_META_RATE_TYPE_ID);
 			if (ratingTypeIdString == null || reviewIdString == "") {
 				throw new InvalidInputException("Missing ratingTypeId parameter");
 			}
 			Integer ratingTypeId = new Integer(ratingTypeIdString);
 			RatingTypeBean ratingTypeBean = reviewMetadataManager.retrieveRatingType(ratingTypeId);
 			ratingBean.setType(ratingTypeBean);
-			String valueString = (String)httpRequest.getParameter("value");
+			String valueString = (String)httpRequest.getParameter(RequestParamConstants.PARAM_META_VALUE);
 			if (valueString == null || valueString == "") {
 				throw new InvalidInputException("Missing value parameter");
 			}
@@ -87,7 +88,7 @@ public class RatingRestlet extends AbstractBaseRestlet {
 	public void deleteRequest(Request request, Response response) {
 		try {
 			// Get the id from the URL path
-			String idString = (String)request.getAttributes().get("id");
+			String idString = (String)request.getAttributes().get(RequestParamConstants.PARAM_META_ID);
 			Integer ratingId = new Integer(idString);
 			
 			reviewMetadataManager.deleteRating(ratingId);

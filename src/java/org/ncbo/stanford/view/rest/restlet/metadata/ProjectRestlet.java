@@ -9,6 +9,7 @@ import org.ncbo.stanford.manager.metakb.ProjectMetadataManager;
 import org.ncbo.stanford.manager.metakb.SimpleObjectManager;
 import org.ncbo.stanford.service.xml.XMLSerializationService;
 import org.ncbo.stanford.util.RequestUtils;
+import org.ncbo.stanford.view.util.constants.RequestParamConstants;
 import org.restlet.data.Request;
 
 /**
@@ -47,22 +48,22 @@ public class ProjectRestlet extends AbstractCRUDRestlet<ProjectBean> {
 	protected void populateBeanFromRequest(ProjectBean bean, Request request) {
 		HttpServletRequest httpServletRequest = RequestUtils.getHttpServletRequest(request);
 		
-		String name = httpServletRequest.getParameter("name");
+		String name = httpServletRequest.getParameter(RequestParamConstants.PARAM_META_NAME);
 		bean.setName(name);
 		
-		String description = httpServletRequest.getParameter("description");
+		String description = httpServletRequest.getParameter(RequestParamConstants.PARAM_META_DESC);
 		bean.setDescription(description);
 		
-		String homePage = httpServletRequest.getParameter("homePage");
+		String homePage = httpServletRequest.getParameter(RequestParamConstants.PARAM_META_HOME_PAGE);
 		bean.setHomePage(homePage);
 		
-		String people = httpServletRequest.getParameter("people");
+		String people = httpServletRequest.getParameter(RequestParamConstants.PARAM_META_PEOPLE);
 		bean.setPeople(people);
 		
-		String institution = httpServletRequest.getParameter("institution");
+		String institution = httpServletRequest.getParameter(RequestParamConstants.PARAM_META_INST);
 		bean.setInstitution(institution);
 		
-		String userIdString = httpServletRequest.getParameter("userId");
+		String userIdString = httpServletRequest.getParameter(RequestParamConstants.PARAM_META_USER_ID);
 		if (userIdString != null && !userIdString.equals("")) {
 			Integer userId = new Integer(userIdString);
 			bean.setUserId(userId);

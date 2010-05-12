@@ -194,5 +194,18 @@ public interface RequestParamConstants {
 	/**
 	 * Metadata: Various metadata object requests
 	 */
+	public static final String PARAM_META_ID = "id";
 	public static final String PARAM_META_USER_ID = "userid";
+	public static final String PARAM_META_ONT_ID = "ontologyid";
+	public static final String PARAM_META_PROJ_ID = "projectid";
+	public static final String PARAM_META_REV_ID = "reviewid";
+	public static final String PARAM_META_RATE_TYPE_ID = "typeid";
+	public static final String PARAM_META_DESC = "description";
+	public static final String PARAM_META_HOME_PAGE = "homepage";
+	public static final String PARAM_META_INST = "institution";
+	public static final String PARAM_META_NAME = "name";
+	public static final String PARAM_META_PEOPLE = "people";
+	public static final String PARAM_META_TEXT = "text";
+	public static final String PARAM_META_VALUE = "value";
+	
 }

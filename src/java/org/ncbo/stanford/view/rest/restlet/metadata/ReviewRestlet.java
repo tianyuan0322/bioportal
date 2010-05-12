@@ -8,6 +8,7 @@ import org.ncbo.stanford.bean.ReviewBean;
 import org.ncbo.stanford.manager.metakb.ReviewMetadataManager;
 import org.ncbo.stanford.manager.metakb.SimpleObjectManager;
 import org.ncbo.stanford.util.RequestUtils;
+import org.ncbo.stanford.view.util.constants.RequestParamConstants;
 import org.restlet.data.Request;
 
 public class ReviewRestlet extends AbstractCRUDRestlet<ReviewBean> {
@@ -32,22 +33,22 @@ public class ReviewRestlet extends AbstractCRUDRestlet<ReviewBean> {
 	protected void populateBeanFromRequest(ReviewBean bean, Request request) {
 		HttpServletRequest httpServletRequest = RequestUtils.getHttpServletRequest(request);
 		
-		String text = httpServletRequest.getParameter("text");
+		String text = httpServletRequest.getParameter(RequestParamConstants.PARAM_META_TEXT);
 		bean.setText(text);
 		
-		String userIdString = httpServletRequest.getParameter("userId");
+		String userIdString = httpServletRequest.getParameter(RequestParamConstants.PARAM_META_USER_ID);
 		if (userIdString != null && !userIdString.equals("")) {
 			Integer userId = new Integer(userIdString);
 			bean.setUserId(userId);
 		}
 
-		String projectIdString = httpServletRequest.getParameter("projectId");
+		String projectIdString = httpServletRequest.getParameter(RequestParamConstants.PARAM_META_PROJ_ID);
 		if (projectIdString != null && !projectIdString.equals("")) {
 			Integer projectId = new Integer(projectIdString);
 			bean.setProjectId(projectId);
 		}
 
-		String ontologyIdString = httpServletRequest.getParameter("ontologyId");
+		String ontologyIdString = httpServletRequest.getParameter(RequestParamConstants.PARAM_META_ONT_ID);
 		if (ontologyIdString != null && !ontologyIdString.equals("")) {
 			Integer ontologyId = new Integer(ontologyIdString);
 			bean.setOntologyId(ontologyId);
