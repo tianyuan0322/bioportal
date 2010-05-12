@@ -1,0 +1,81 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+  <head>
+  
+  	<script language="JavaScript">
+	function SubmitGetForm()
+	{	
+   		document.getForm.action = "http://localhost:8080/bioportal/project/" + document.getForm.theId.value;
+  		return true;
+	}
+	function SubmitPutForm()
+	{	
+   		document.putForm.action = "http://localhost:8080/bioportal/project/" + document.putForm.id.value;
+  		return true;
+	}
+	function SubmitDeleteForm()
+	{	
+   		document.deleteForm.action = "http://localhost:8080/bioportal/project/" + document.deleteForm.id.value;
+  		return true;
+	}
+  	</script>
+
+    <title>Projects REST API Test Page</title>
+  </head>
+  <body>
+
+  	<h3>Create a new project</h3>
+	<p><code>POST -- /project/new</code></p>
+	<form action="http://localhost:8080/bioportal/project/new" method="post">
+		Name: <input name="name" type="text" /><br />
+		Description: <input name="description" type="text" /><br />
+		Home page: <input name="homePage" type="text" /><br />
+		People: <input name="people" type="text" /><br />
+		Institution: <input name="institution" type="text" /><br />
+		User id: <input name="userId" type="text" value="1"/> <i>(integer)</i> <br />
+		<input type="submit" value="OK" />
+	</form>
+
+  	<h3>Retrieve a specific project</h3>
+	<p><code>GET -- /project/{projectid}</code></p>
+	<p><i>(The query arguments appended to the URL are ignored.)</i></p>
+	<form name="getForm" onSubmit="return SubmitGetForm()" method="get">
+		ID: <input name="theId" type="text" /><i>(integer)</i><br />
+		<input type="submit" value="OK" />
+	</form>
+
+  	<h3>Update a project</h3>
+	<p><code>PUT -- /project/{projectid}</code></p>
+	<form name="putForm" onSubmit="return SubmitPutForm()" method="post">
+		ID: <input name="id" type="text" /><i>(integer)</i><br />
+		Name: <input name="name" type="text" /><br />
+		Description: <input name="description" type="text" /><br />
+		Home page: <input name="homePage" type="text" /><br />
+		People: <input name="people" type="text" /><br />
+		Institution: <input name="institution" type="text" /><br />
+		User id: <input name="userId" type="text" value="1"/> <i>(integer)</i> <br />
+		<input name="method" type="hidden" value="put" />
+		<input type="submit" value="OK" />
+	</form>
+
+	<h3>Delete a project</h3>
+	<p><code>DELETE -- /project/{projectid}</code></p>
+	<form name="deleteForm" onSubmit="return SubmitDeleteForm()" method="post">
+		ID: <input name="id" type="text" /><i>(integer)</i><br />
+		<input name="method" type="hidden" value="delete" />
+		<input type="submit" value="OK" />
+	</form>
+	
+	<h3>Get all projects</h3>
+	<p><code>GET -- /projects</code></p>
+	<a href="http://localhost:8080/bioportal/projects">Get all projects</a>
+	
+	<h3>Get projects for user</h3>
+	<p><code>GET -- /projects?userid=[userid]</code></p>
+	<form action="http://localhost:8080/bioportal/projects" method="get">
+		User id: <input name="userid" type="text" /> <i>(integer)</i> <br />
+		<input type="submit" value="OK" />
+	</form>
+	
+  </body>
+</html>

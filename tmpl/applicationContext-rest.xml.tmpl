@@ -362,6 +362,46 @@
 		</property>
 	</bean>
 	
+	<bean id="projectRestlet"
+		class="org.ncbo.stanford.view.rest.restlet.metadata.ProjectRestlet"
+		parent="abstractBaseRestlet">
+		<property name="projectMetadataManager">
+			<ref bean="projectMetadataManager" />
+		</property>
+	</bean>
+
+	<bean id="projectListRestlet"
+		class="org.ncbo.stanford.view.rest.restlet.metadata.ProjectListRestlet"
+		parent="abstractBaseRestlet">
+		<property name="projectMetadataManager">
+			<ref bean="projectMetadataManager" />
+		</property>
+	</bean>
+	
+	<bean id="reviewRestlet"
+		class="org.ncbo.stanford.view.rest.restlet.metadata.ReviewRestlet"
+		parent="abstractBaseRestlet">
+		<property name="reviewMetadataManager">
+			<ref bean="reviewMetadataManager" />
+		</property>
+	</bean>
+	
+	<bean id="ratingRestlet"
+		class="org.ncbo.stanford.view.rest.restlet.metadata.RatingRestlet"
+		parent="abstractBaseRestlet">
+		<property name="reviewMetadataManager">
+			<ref bean="reviewMetadataManager" />
+		</property>
+	</bean>
+	
+	<bean id="ratingTypeRestlet"
+		class="org.ncbo.stanford.view.rest.restlet.metadata.RatingTypeRestlet"
+		parent="abstractBaseRestlet">
+		<property name="reviewMetadataManager">
+			<ref bean="reviewMetadataManager" />
+		</property>
+	</bean>
+	
 	<bean id="viewExtractionRestlet"
 		class="org.ncbo.stanford.view.rest.restlet.extractor.ViewExtractionRestlet"
 		parent="abstractBaseRestlet">
@@ -595,6 +635,22 @@
 						</entry>
 						<entry key="/virtual/notes/{ontologyid}">
 							<ref local="notesRestlet" />
+						</entry>
+						<!-- ========== Metadata ========== -->
+						<entry key="/project/{id}">
+							<ref local="projectRestlet" />
+						</entry>
+						<entry key="/projects">
+							<ref local="projectListRestlet" />
+						</entry>
+						<entry key="/review/{id}">
+							<ref local="reviewRestlet" />
+						</entry>
+						<entry key="/review/ratings">
+							<ref local="ratingTypeRestlet" />
+						</entry>
+						<entry key="/review/rating/{id}">
+							<ref local="ratingRestlet" />
 						</entry>
 					</map>
 				</constructor-arg>

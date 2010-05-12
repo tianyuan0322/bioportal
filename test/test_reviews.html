@@ -1,0 +1,109 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+  <head>
+  
+  	<script language="JavaScript">
+	function SubmitGetForm()
+	{	
+   		document.getForm.action = "http://localhost:8080/bioportal/review/" + document.getForm.id.value;
+  		return true;
+	}
+	function SubmitPutForm()
+	{	
+   		document.putForm.action = "http://localhost:8080/bioportal/review/" + document.putForm.id.value;
+  		return true;
+	}
+	function SubmitReviewDeleteForm()
+	{	
+   		document.reviewDeleteForm.action = "http://localhost:8080/bioportal/review/" + document.reviewDeleteForm.id.value;
+  		return true;
+	}
+	function SubmitRatingDeleteForm()
+	{
+		document.ratingDeleteForm.action = "http://localhost:8080/bioportal/review/rating/" + document.ratingDeleteForm.id.value;
+		return true;
+	}
+  	</script>
+
+    <title>Review REST API Test Page</title>
+  </head>
+  <body>
+  
+  	<h2>Review CRUD</h2>
+
+  	<h3>Create a new review</h3>
+	<p><code>POST -- /review/new</code></p>
+	<form action="http://localhost:8080/bioportal/review/new" method="post">
+		Text: <input name="text" type="text" /><br />
+		User ID: <input name="userId" type="text" /> <i>(integer)</i><br />
+		Project ID: <input name="projectId" type="text" /> <i>(integer)</i><br />
+		<i>For starters, we just track ontology id (like the database).  Next step is to give a choice
+		here of ontology id, virtual ontology id, or view id.</i><br />
+		&nbsp;&nbsp;&nbsp;Ontology ID: <input name="ontId" type="text" /> <i>(integer)</i><br />
+		<input type="submit" value="POST" />
+	</form>
+
+  	<h3>Retrieve a specific review</h3>
+	<p><code>GET -- /review/{reviewid}/</code></p>
+	<p><i>(The query arguments appended to the URL are ignored.)</i></p>
+	<form name="getForm" onSubmit="return SubmitGetForm()" method="get">
+		ID: <input name="id" type="text" /> <i>(integer)</i><br />
+		<input type="submit" value="GET" />
+	</form>
+
+  	<h3>Update a review</h3>
+	<p><code>PUT -- /review/{reviewid}/</code></p>
+	<form name="putForm" onSubmit="return SubmitPutForm()" method="post">
+		ID: <input name="id" type="text" /><i>(integer)</i><br />
+		Text: <input name="text" type="text" /><br />
+		User ID: <input name="userId" type="text" /> <i>(integer)</i><br />
+		Project ID: <input name="projectId" type="text" /> <i>(integer)</i><br />
+		Ontology ID: <input name="ontId" type="text" /> <i>(integer)</i><br />
+		<input name="method" type="hidden" value="put" />
+		<input type="submit" value="PUT" />
+	</form>
+
+	<h3>Delete a review</h3>
+	<p><code>DELETE -- /review/{reviewid}</code></p>
+	<form name="reviewDeleteForm" onSubmit="return SubmitReviewDeleteForm()" method="post">
+		ID: <input name="id" type="text" /> <i>(integer)</i><br />
+		<input name="method" type="hidden" value="delete" />
+		<input type="submit" value="DELETE" />
+	</form>
+	
+	<h2>Rating CRUD</h2>
+	
+	<h3>Create a new rating for a review</h3>
+	<p><code>POST -- /review/rating/new</code></p>
+	<form action="http://localhost:8080/bioportal/review/rating/new" method="post">
+		Review ID: <input name="userId" type="text" /> <i>(integer)</i><br />
+		Rating Type ID: <input name="typeId" type="text" /> <i>(integer)</i><br />
+		Value: <input name="value" type="text" /> <i>(integer where 1&le;i&le;5)</i><br />
+		<input type="submit" value="POST" />
+	</form>
+
+	<h3>Delete a rating</h3>
+	<p><code>DELETE -- /review/rating/{ratingid}</code></p>
+	<form name="ratingDeleteForm" onSubmit="return SubmitRatingDeleteForm()" method="post">
+		ID: <input name="id" type="text" /> <i>(integer)</i><br />
+		<input name="method" type="hidden" value="delete" />
+		<input type="submit" value="DELETE" />
+	</form>
+
+	<h3>Get all rating types</h3>
+	<p><code>GET -- /review/ratings/</code></p>
+	<form action="http://localhost:8080/bioportal/review/rating/types" method="post">
+		<input type="submit" value="GET" />
+	</form>
+	
+	<h2>Review lists</h2>
+
+  	<h3>Retrieve reviews for an ontology</h3>
+	<p><code>GET -- /reviews/</code></p>
+	<form action="http://localhost:8080/bioportal/rating/new" method="post">
+		Ontology ID: <input name="ontId" type="text" /> <i>(integer)</i><br />
+		<input type="submit" value="GET" />
+	</form>
+
+  </body>
+</html>

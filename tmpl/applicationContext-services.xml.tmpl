@@ -532,6 +532,11 @@
 		class="org.ncbo.stanford.manager.metakb.protege.ProjectMetadataManagerImpl"
 		parent="abstractOntologyManagerProtege">
 	</bean>
+	
+	<bean id="reviewMetadataManager"
+		class="org.ncbo.stanford.manager.metakb.protege.ReviewMetadataManagerImpl"
+		parent="abstractOntologyManagerProtege">
+	</bean>
 
 	<!-- Application Services -->
 	<bean id="userService" class="org.ncbo.stanford.service.user.impl.UserServiceImpl">
@@ -707,7 +712,7 @@
 			<ref bean="oboRepositoriesConfigFilepath" />
 		</property>
 	</bean>
-
+	
 	<!-- Search related beans -->
 	<bean id="abstractSearchService" class="org.ncbo.stanford.service.search.AbstractSearchService"
 		abstract="true">

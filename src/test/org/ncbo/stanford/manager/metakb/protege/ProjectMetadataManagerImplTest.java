@@ -13,9 +13,9 @@ import org.ncbo.stanford.exception.MetadataObjectNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 
 /**
- * Basic test for storing ProjectBean to the metadata kb.
+ * Basic test for storing ProjectBean in the metadata kb.
  * 
- * @author <a href="mailto:tony@loeser.name">Tony Loeser</a>
+ * @author Tony Loeser
  */
 public class ProjectMetadataManagerImplTest extends AbstractBioPortalTest {
 
@@ -27,7 +27,7 @@ public class ProjectMetadataManagerImplTest extends AbstractBioPortalTest {
 		
 		// == CREATE ==
 		
-		ProjectBean pb = projectMan.createInstance();
+		ProjectBean pb = projectMan.createObject();
 		Integer id = pb.getId();
 
 		pb.setName("name_1");
@@ -44,11 +44,11 @@ public class ProjectMetadataManagerImplTest extends AbstractBioPortalTest {
 		// == UPDATE == 
 		
 		pb.setName("name_2");
-		projectMan.updateInstance(pb);
+		projectMan.updateObject(pb);
 		
 		// == RETRIEVE ==
 		
-		ProjectBean pb_2 = projectMan.retrieveInstance(id);
+		ProjectBean pb_2 = projectMan.retrieveObject(id);
 		Assert.assertEquals("Retrieved properties didn't match", pb_2.getDescription(), pb.getDescription());
 		Assert.assertEquals("Retrieved properties didn't match", pb_2.getUserId(), pb.getUserId());
 		Assert.assertEquals("Update seems not to have worked", pb_2.getName(), pb.getName());
@@ -63,9 +63,9 @@ public class ProjectMetadataManagerImplTest extends AbstractBioPortalTest {
 		
 		// == DELETE ==
 		
-		projectMan.deleteInstance(id);
+		projectMan.deleteObject(id);
 		try {
-			projectMan.retrieveInstance(id);
+			projectMan.retrieveObject(id);
 			Assert.fail("Attempt to retrieve deleted project should throw exception");
 		} catch (MetadataObjectNotFoundException e) {
 			// OK
@@ -84,14 +84,14 @@ public class ProjectMetadataManagerImplTest extends AbstractBioPortalTest {
 		System.out.println("Got a few: "+results.size());
 	}
 	
-	@Test
-	public void cleanUpInstances() throws Exception {
-		Collection<ProjectBean> projects = projectMan.getAllProjects();
-		for (Iterator<ProjectBean> pIt = projects.iterator(); pIt.hasNext(); ) {
-			ProjectBean pBean = pIt.next();
-			projectMan.deleteInstance(pBean.getId());
-			System.out.println("Deleted instance id="+pBean.getId());
-		}
-		
-	}
+//	@Test
+//	public void cleanUpInstances() throws Exception {
+//		// delete all instances in the KB. CAREFUL
+//		Collection<ProjectBean> projects = projectMan.retrieveAllObjects();
+//		for (Iterator<ProjectBean> pIt = projects.iterator(); pIt.hasNext(); ) {
+//			ProjectBean pBean = pIt.next();
+//			projectMan.deleteObject(pBean.getId());
+//			System.out.println("Deleted instance id="+pBean.getId());
+//		}
+//	}
 }
