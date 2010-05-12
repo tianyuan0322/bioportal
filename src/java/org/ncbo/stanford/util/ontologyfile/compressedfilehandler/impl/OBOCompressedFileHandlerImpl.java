@@ -69,6 +69,7 @@ public class OBOCompressedFileHandlerImpl extends AbstractCompressedFileHandler 
 			joinOut.newLine();
 			joinOut.flush();
 			joinOut.close();
+			fin.close();
 		}
 
 		return getCompositeFilename(compressedFilename);
