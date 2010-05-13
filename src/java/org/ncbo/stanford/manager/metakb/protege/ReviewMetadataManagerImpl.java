@@ -67,10 +67,11 @@ public class ReviewMetadataManagerImpl extends SimpleObjectManagerImpl<ReviewBea
 	public Collection<ReviewBean> getReviewsForOntology(Integer id)
 			throws MetadataObjectNotFoundException, MetadataException {
 		String query = "SELECT ?obj " +
-					   "WHERE { ?obj <metadata:ontologyId . " +
+					   "WHERE { ?obj <metadata:ontologyId> \""+id+"\"^^xsd:int . " +
 					   "        ?obj <rdf:type> <metadata:Review> . }";
 		return getReviewDAO().getInstancesForSPARQLQuery(query);
 	}
+	
 	
 	// =========================================================================
 	// Rating Types

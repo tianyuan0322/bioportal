@@ -6,9 +6,12 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.ncbo.stanford.bean.RatingBean;
+import org.ncbo.stanford.bean.RatingTypeBean;
 import org.ncbo.stanford.bean.ReviewBean;
 import org.ncbo.stanford.exception.InvalidInputException;
 import org.ncbo.stanford.manager.metakb.ReviewMetadataManager;
+import org.ncbo.stanford.service.xml.XMLSerializationService;
 import org.ncbo.stanford.util.RequestUtils;
 import org.ncbo.stanford.view.rest.restlet.AbstractBaseRestlet;
 import org.ncbo.stanford.view.util.constants.RequestParamConstants;
@@ -51,7 +54,7 @@ public class ReviewListRestlet extends AbstractBaseRestlet {
 			iie.printStackTrace();
 			log.error(iie);
 		} catch (Exception e) {
-			response.setStatus(Status.SERVER_ERROR_INTERNAL);
+			response.setStatus(Status.SERVER_ERROR_INTERNAL, e.getMessage());
 			e.printStackTrace();
 			log.error(e);
 		} finally {
@@ -61,6 +64,14 @@ public class ReviewListRestlet extends AbstractBaseRestlet {
 	
 	// =========================================================================
 	// Accessors
+	
+	// Override AbstractBaseRestlet
+	public void setXmlSerializationService(XMLSerializationService xmlSerializationService) {
+		xmlSerializationService.alias("reviewBean", ReviewBean.class);
+		xmlSerializationService.alias("ratingBean", RatingBean.class);
+		xmlSerializationService.alias("ratingTypeBean", RatingTypeBean.class);
+		this.xmlSerializationService = xmlSerializationService;
+	}
 	
 	public void setReviewMetadataManager(ReviewMetadataManager reviewMetadataManager) {
 		this.reviewMetadataManager = reviewMetadataManager;

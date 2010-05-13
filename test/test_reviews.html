@@ -91,16 +91,14 @@
 	</form>
 
 	<h3>Get all rating types</h3>
-	<p><code>GET -- /review/ratings/</code></p>
-	<form action="http://localhost:8080/bioportal/review/rating/types" method="post">
-		<input type="submit" value="GET" />
-	</form>
+	<p><code>GET -- /review/ratingtypes</code></p>
+	<a href="http://localhost:8080/bioportal/review/ratingtypes">Get all rating types</a>
 	
 	<h2>Review lists</h2>
 
   	<h3>Retrieve reviews for an ontology</h3>
 	<p><code>GET -- /reviews/</code></p>
-	<form action="http://localhost:8080/bioportal/rating/new" method="post">
+	<form action="http://localhost:8080/bioportal/reviews" method="get">
 		Ontology ID: <input name="ontologyid" type="text" /> <i>(integer)</i><br />
 		<input type="submit" value="GET" />
 	</form>

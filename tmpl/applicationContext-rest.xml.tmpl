@@ -386,6 +386,14 @@
 		</property>
 	</bean>
 	
+	<bean id="reviewListRestlet"
+		class="org.ncbo.stanford.view.rest.restlet.metadata.ReviewListRestlet"
+		parent="abstractBaseRestlet">
+		<property name="reviewMetadataManager">
+			<ref bean="reviewMetadataManager" />
+		</property>
+	</bean>
+	
 	<bean id="ratingRestlet"
 		class="org.ncbo.stanford.view.rest.restlet.metadata.RatingRestlet"
 		parent="abstractBaseRestlet">
@@ -646,7 +654,10 @@
 						<entry key="/review/{id}">
 							<ref local="reviewRestlet" />
 						</entry>
-						<entry key="/review/ratings">
+						<entry key="/reviews">
+							<ref local="reviewListRestlet" />
+						</entry>
+						<entry key="/review/ratingtypes">
 							<ref local="ratingTypeRestlet" />
 						</entry>
 						<entry key="/review/rating/{id}">

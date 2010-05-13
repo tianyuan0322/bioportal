@@ -11,6 +11,7 @@ import org.ncbo.stanford.exception.InvalidInputException;
 import org.ncbo.stanford.exception.MetadataException;
 import org.ncbo.stanford.exception.MetadataObjectNotFoundException;
 import org.ncbo.stanford.manager.metakb.ReviewMetadataManager;
+import org.ncbo.stanford.service.xml.XMLSerializationService;
 import org.ncbo.stanford.util.RequestUtils;
 import org.ncbo.stanford.view.rest.restlet.AbstractBaseRestlet;
 import org.ncbo.stanford.view.util.constants.RequestParamConstants;
@@ -116,6 +117,13 @@ public class RatingRestlet extends AbstractBaseRestlet {
 	
 	// =========================================================================
 	// Accessors
+	
+	// Override AbstractBaseRestlet
+	public void setXmlSerializationService(XMLSerializationService xmlSerializationService) {
+		xmlSerializationService.alias("ratingBean", RatingBean.class);
+		xmlSerializationService.alias("ratingTypeBean", RatingTypeBean.class);
+		this.xmlSerializationService = xmlSerializationService;
+	}
 	
 	public void setReviewMetadataManager(ReviewMetadataManager reviewMetadataManager) {
 		this.reviewMetadataManager = reviewMetadataManager;

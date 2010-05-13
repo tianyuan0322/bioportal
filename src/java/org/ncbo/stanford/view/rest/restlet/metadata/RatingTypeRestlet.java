@@ -6,6 +6,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.ncbo.stanford.bean.RatingTypeBean;
 import org.ncbo.stanford.manager.metakb.ReviewMetadataManager;
+import org.ncbo.stanford.service.xml.XMLSerializationService;
 import org.ncbo.stanford.view.rest.restlet.AbstractBaseRestlet;
 import org.restlet.data.Request;
 import org.restlet.data.Response;
@@ -37,6 +38,12 @@ public class RatingTypeRestlet extends AbstractBaseRestlet {
 	
 	// =========================================================================
 	// Accessors
+	
+	// Override AbstractBaseRestlet
+	public void setXmlSerializationService(XMLSerializationService xmlSerializationService) {
+		xmlSerializationService.alias("ratingTypeBean", RatingTypeBean.class);
+		this.xmlSerializationService = xmlSerializationService;
+	}
 	
 	public void setReviewMetadataManager(ReviewMetadataManager reviewMetadataManager) {
 		this.reviewMetadataManager = reviewMetadataManager;

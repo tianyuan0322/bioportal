@@ -8,6 +8,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.ncbo.stanford.bean.ProjectBean;
 import org.ncbo.stanford.manager.metakb.ProjectMetadataManager;
+import org.ncbo.stanford.service.xml.XMLSerializationService;
 import org.ncbo.stanford.util.RequestUtils;
 import org.ncbo.stanford.view.rest.restlet.AbstractBaseRestlet;
 import org.ncbo.stanford.view.util.constants.RequestParamConstants;
@@ -53,6 +54,12 @@ public class ProjectListRestlet extends AbstractBaseRestlet {
 
 	// ============================================================
 	// Accessors
+	
+	// Override AbstractBaseRestlet
+	public void setXmlSerializationService(XMLSerializationService xmlSerializationService) {
+		xmlSerializationService.alias("projectBean", ProjectBean.class);
+		this.xmlSerializationService = xmlSerializationService;
+	}
 	
 	public void setProjectMetadataManager(
 			ProjectMetadataManager projectMetadataManager) {
