@@ -533,9 +533,23 @@
 		parent="abstractOntologyManagerProtege">
 	</bean>
 	
+	<bean id="projectMetadataService"
+		class="org.ncbo.stanford.service.metadata.impl.ProjectMetadataServiceImpl">
+		<property name="projectMetadataManager">
+			<ref bean="projectMetadataManager"/>
+		</property>
+	</bean>
+	
 	<bean id="reviewMetadataManager"
 		class="org.ncbo.stanford.manager.metakb.protege.ReviewMetadataManagerImpl"
 		parent="abstractOntologyManagerProtege">
+	</bean>
+	
+	<bean id="reviewMetadataService"
+		class="org.ncbo.stanford.service.metadata.impl.ReviewMetadataServiceImpl">
+		<property name="reviewMetadataManager">
+			<ref bean="reviewMetadataManager" />
+		</property>
 	</bean>
 
 	<!-- Application Services -->

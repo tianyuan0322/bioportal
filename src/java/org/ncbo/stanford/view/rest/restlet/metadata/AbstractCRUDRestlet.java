@@ -3,7 +3,7 @@ package org.ncbo.stanford.view.rest.restlet.metadata;
 import org.ncbo.stanford.bean.AbstractIdBean;
 import org.ncbo.stanford.exception.InvalidInputException;
 import org.ncbo.stanford.exception.MetadataObjectNotFoundException;
-import org.ncbo.stanford.manager.metakb.SimpleObjectManager;
+import org.ncbo.stanford.service.metadata.BeanCRUDService;
 import org.ncbo.stanford.view.rest.restlet.AbstractBaseRestlet;
 import org.ncbo.stanford.view.util.constants.RequestParamConstants;
 import org.restlet.data.Request;
@@ -17,8 +17,8 @@ public abstract class AbstractCRUDRestlet<BeanType extends AbstractIdBean>
 	// Implement to provide basic logging
 	protected abstract void logError(Exception e);
 	
-	// Implement to provide access to object persistence manager with basic CRUD capability
-	protected abstract SimpleObjectManager<BeanType> getSimpleObjectManager();
+	// Implement to provide access to object persistence service with basic CRUD capability
+	protected abstract BeanCRUDService<BeanType> getBeanCRUDService();
 	
 	// Implement to copy the parameters from the request into the bean
 	protected abstract void populateBeanFromRequest(BeanType bean, Request request);
@@ -35,7 +35,7 @@ public abstract class AbstractCRUDRestlet<BeanType extends AbstractIdBean>
 	private void createObject(Request request, Response response) {
 		BeanType newBean = null;
 		try {
-			newBean = getSimpleObjectManager().createObject();
+			newBean = getBeanCRUDService().createObject();
 			
 			// Verify that the "id" in the URL says "new"
 			String idString = extractIdString(request);
@@ -45,7 +45,7 @@ public abstract class AbstractCRUDRestlet<BeanType extends AbstractIdBean>
 			
 			// Fill in non-automatic data from the POST parameters, and update in store
 			populateBeanFromRequest(newBean, request);
-			getSimpleObjectManager().updateObject(newBean);
+			getBeanCRUDService().updateObject(newBean);
 
 		} catch (IllegalArgumentException iae) {
 			response.setStatus(Status.CLIENT_ERROR_BAD_REQUEST, iae.getMessage());
@@ -73,7 +73,7 @@ public abstract class AbstractCRUDRestlet<BeanType extends AbstractIdBean>
 		BeanType bean = null;
 		try {
 			Integer id = extractId(request);
-			bean = getSimpleObjectManager().retrieveObject(id);
+			bean = getBeanCRUDService().retrieveObject(id);
 		} catch (InvalidInputException iie) {
 			response.setStatus(Status.CLIENT_ERROR_BAD_REQUEST, iie.getMessage());
 			iie.printStackTrace();
@@ -103,7 +103,7 @@ public abstract class AbstractCRUDRestlet<BeanType extends AbstractIdBean>
 	private void deleteObject(Request request, Response response) {
 		try {
 			Integer id = extractId(request);
-			getSimpleObjectManager().deleteObject(id);
+			getBeanCRUDService().deleteObject(id);
 		} catch (MetadataObjectNotFoundException monfe) {
 			response.setStatus(Status.CLIENT_ERROR_NOT_FOUND, monfe.getMessage());
 			monfe.printStackTrace();
@@ -130,9 +130,9 @@ public abstract class AbstractCRUDRestlet<BeanType extends AbstractIdBean>
 		BeanType bean = null;
 		try {
 			Integer id = extractId(request);
-			bean = getSimpleObjectManager().retrieveObject(id);
+			bean = getBeanCRUDService().retrieveObject(id);
 			populateBeanFromRequest(bean, request);
-			getSimpleObjectManager().updateObject(bean);
+			getBeanCRUDService().updateObject(bean);
 		} catch (MetadataObjectNotFoundException monfe) {
 			response.setStatus(Status.CLIENT_ERROR_NOT_FOUND, monfe.getMessage());
 			monfe.printStackTrace();

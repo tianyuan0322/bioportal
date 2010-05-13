@@ -7,7 +7,7 @@ import javax.servlet.http.HttpServletRequest;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.ncbo.stanford.bean.ProjectBean;
-import org.ncbo.stanford.manager.metakb.ProjectMetadataManager;
+import org.ncbo.stanford.service.metadata.ProjectMetadataService;
 import org.ncbo.stanford.service.xml.XMLSerializationService;
 import org.ncbo.stanford.util.RequestUtils;
 import org.ncbo.stanford.view.rest.restlet.AbstractBaseRestlet;
@@ -19,7 +19,7 @@ import org.restlet.data.Status;
 public class ProjectListRestlet extends AbstractBaseRestlet {
 
 	private static final Log log = LogFactory.getLog(ProjectListRestlet.class);
-	private ProjectMetadataManager projectMetadataManager;
+	private ProjectMetadataService projectMetadataService;
 
 	// Override AbstractBaseRestlet
 	public void getRequest(Request request, Response response) {
@@ -33,11 +33,11 @@ public class ProjectListRestlet extends AbstractBaseRestlet {
 		try {
 			if (userIdString == null) {
 				// No parameters; return all projects
-				result = projectMetadataManager.retrieveAllObjects();
+				result = projectMetadataService.retrieveAllObjects();
 			} else {
 				// There is a user id parameter.
 				Integer userId = new Integer(userIdString);
-				result = projectMetadataManager.getProjectsForUser(userId);
+				result = projectMetadataService.getProjectsForUser(userId);
 			}
 		} catch (NumberFormatException nfe) {
 			response.setStatus(Status.CLIENT_ERROR_BAD_REQUEST, "Bad user id: "+nfe.getMessage());
@@ -61,8 +61,7 @@ public class ProjectListRestlet extends AbstractBaseRestlet {
 		this.xmlSerializationService = xmlSerializationService;
 	}
 	
-	public void setProjectMetadataManager(
-			ProjectMetadataManager projectMetadataManager) {
-		this.projectMetadataManager = projectMetadataManager;
+	public void setProjectMetadataService(ProjectMetadataService projectMetadataService) {
+		this.projectMetadataService = projectMetadataService;
 	}
 }

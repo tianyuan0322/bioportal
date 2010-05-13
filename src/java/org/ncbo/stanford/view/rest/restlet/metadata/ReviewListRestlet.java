@@ -10,7 +10,7 @@ import org.ncbo.stanford.bean.RatingBean;
 import org.ncbo.stanford.bean.RatingTypeBean;
 import org.ncbo.stanford.bean.ReviewBean;
 import org.ncbo.stanford.exception.InvalidInputException;
-import org.ncbo.stanford.manager.metakb.ReviewMetadataManager;
+import org.ncbo.stanford.service.metadata.ReviewMetadataService;
 import org.ncbo.stanford.service.xml.XMLSerializationService;
 import org.ncbo.stanford.util.RequestUtils;
 import org.ncbo.stanford.view.rest.restlet.AbstractBaseRestlet;
@@ -22,7 +22,7 @@ import org.restlet.data.Status;
 public class ReviewListRestlet extends AbstractBaseRestlet {
 	
 	private static final Log log = LogFactory.getLog(ReviewListRestlet.class);
-	private ReviewMetadataManager reviewMetadataManager;
+	private ReviewMetadataService reviewMetadataService;
 	
 	// =========================================================================
 	// Handle GET
@@ -43,7 +43,7 @@ public class ReviewListRestlet extends AbstractBaseRestlet {
 			} else {
 				// Got an ontology id.
 				Integer ontologyId = new Integer(ontologyIdString);
-				result = reviewMetadataManager.getReviewsForOntology(ontologyId);
+				result = reviewMetadataService.getReviewsForOntology(ontologyId);
 			}
 		} catch (NumberFormatException nfe) {
 			response.setStatus(Status.CLIENT_ERROR_BAD_REQUEST, "Bad ontology id: "+nfe.getMessage());
@@ -73,7 +73,7 @@ public class ReviewListRestlet extends AbstractBaseRestlet {
 		this.xmlSerializationService = xmlSerializationService;
 	}
 	
-	public void setReviewMetadataManager(ReviewMetadataManager reviewMetadataManager) {
-		this.reviewMetadataManager = reviewMetadataManager;
+	public void setReviewMetadataService(ReviewMetadataService reviewMetadataService) {
+		this.reviewMetadataService = reviewMetadataService;
 	}
 }

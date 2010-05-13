@@ -5,8 +5,8 @@ import javax.servlet.http.HttpServletRequest;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.ncbo.stanford.bean.ProjectBean;
-import org.ncbo.stanford.manager.metakb.ProjectMetadataManager;
-import org.ncbo.stanford.manager.metakb.SimpleObjectManager;
+import org.ncbo.stanford.service.metadata.BeanCRUDService;
+import org.ncbo.stanford.service.metadata.ProjectMetadataService;
 import org.ncbo.stanford.service.xml.XMLSerializationService;
 import org.ncbo.stanford.util.RequestUtils;
 import org.ncbo.stanford.view.util.constants.RequestParamConstants;
@@ -29,14 +29,14 @@ import org.restlet.data.Request;
 public class ProjectRestlet extends AbstractCRUDRestlet<ProjectBean> {
 	
 	private static final Log log = LogFactory.getLog(ProjectRestlet.class);
-	private ProjectMetadataManager projectMetadataManager;
+	private ProjectMetadataService projectMetadataService;
 	
 	// =========================================================================
 	// Implement helpers from abstract class
 	
 	// Implement AbstractCRUDRestlet
-	protected SimpleObjectManager<ProjectBean> getSimpleObjectManager() {
-		return projectMetadataManager;
+	protected BeanCRUDService<ProjectBean> getBeanCRUDService() {
+		return projectMetadataService;
 	}
 
 	// Implement AbstractCRUDRestlet
@@ -79,8 +79,8 @@ public class ProjectRestlet extends AbstractCRUDRestlet<ProjectBean> {
 		this.xmlSerializationService = xmlSerializationService;
 	}
 	
-	public void setProjectMetadataManager(ProjectMetadataManager projectMetadataManager) {
-		this.projectMetadataManager = projectMetadataManager;
+	public void setProjectMetadataService(ProjectMetadataService projectMetadataService) {
+		this.projectMetadataService = projectMetadataService;
 	}
 
 }
