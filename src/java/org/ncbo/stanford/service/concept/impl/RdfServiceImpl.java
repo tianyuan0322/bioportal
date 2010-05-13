@@ -184,7 +184,9 @@ public class RdfServiceImpl extends ConceptServiceImpl implements RdfService {
 		
 		// save ontology into file in RDF/XML format
 		if (file != null
-				&& (conceptIds == null || conceptIds.size() > 1)) {
+				&& (conceptIds == null || 
+						// TODO: if a list of IDs is passed, we should not necessarily save it.
+						conceptIds.size() > 1)) { 
 			manager.saveOntology(ontology, new RDFXMLOntologyFormat(), IRI.create(file.toURI()));
 		}
 		
