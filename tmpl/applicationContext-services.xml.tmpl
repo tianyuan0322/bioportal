@@ -1351,4 +1351,100 @@
 			<value>@bioportalallconceptsmaxpagesize@</value>
 		</constructor-arg>
 	</bean>
+	<!-- Notification Configuration -->
+	<bean id="ontologyservice" class="org.ncbo.stanford.aop.notification.Notification">
+
+	</bean>
+	<bean id="notificationService"
+		class="org.ncbo.stanford.service.notification.impl.NotificationServiceImpl">
+		<property name="notificationManagerMap">
+			<ref local="notificationManagerMap" />
+		</property>
+	</bean>
+	<!-- Maps contains the  notificationManagerEmail to the application -->
+	<util:map id="notificationManagerMap" map-class="java.util.HashMap">
+		<entry>
+			<key>
+				<util:constant
+					static-field="org.ncbo.stanford.util.constants.ApplicationConstants.EMAIL" />
+			</key>
+			<ref local="notificationManagerEmail" />
+		</entry>
+	</util:map>
+
+	<bean id="notificationManagerEmail"
+		class="org.ncbo.stanford.manager.notification.impl.NotificationManagerEmailImpl">
+		<property name="mailService">
+			<ref bean="mailService" />
+		</property>
+
+		<property name="ncboAppTextDAO">
+			<ref local="ncboAppTextDAO" />
+		</property>
+
+
+	</bean>
+
+
+	<bean id="ncboUserDAO" class="org.ncbo.stanford.domain.generated.NcboUserDAO">
+		<property name="hibernateTemplate">
+			<ref bean="hibernateTemplate" />
+		</property>
+	</bean>
+	<bean id="ncboOntologyFileDAO" class="org.ncbo.stanford.domain.generated.NcboOntologyFileDAO">
+		<property name="hibernateTemplate">
+			<ref bean="hibernateTemplate" />
+		</property>
+	</bean>
+
+	<bean id="ncboAppTextDAO" class="org.ncbo.stanford.domain.generated.NcboAppTextDAO">
+		<property name="hibernateTemplate">
+			<ref bean="hibernateTemplate" />
+		</property>
+
+
+	</bean>
+	<bean id="ncboAppText" class="org.ncbo.stanford.domain.generated.NcboAppText" />
+	<bean id="advice" class="org.ncbo.stanford.aop.notification.NotificationAdvice">
+		<property name="notificationService">
+			<ref local="notificationService" />
+		</property>
+
+	</bean>
+	<aop:config>
+		<aop:aspect ref="advice">
+			<aop:pointcut id="aroundService"
+				expression="execution(* org.ncbo.stanford.aop.notification.Notification.around(String,String))
+                    and args(ontologyVersion,ontologyId)" />
+
+			<aop:around pointcut-ref="aroundService" method="notify" />
+		</aop:aspect>
+	</aop:config>
+
+
+	<bean id="smtpAuthenticator"
+		class="org.ncbo.stanford.util.mail.authenticator.SmtpAuthenticator">
+		<constructor-arg value="email@optrasystems.com" />
+		<constructor-arg value="password" />
+	</bean>
+	<bean id="mailSession" class="javax.mail.Session" factory-method="getInstance">
+		<constructor-arg>
+			<props>
+				<prop key="mail.smptp.auth">true</prop>
+				<prop key="mail.smptp.socketFactory.port">25</prop>
+				<prop key="mail.smptp.socketFactory.class">javax.net.ssl.SSLSocketFactory
+				</prop>
+				<prop key="mail.smtp.socketFactory.fallback">false</prop>
+			</props>
+		</constructor-arg>
+		<constructor-arg ref="smtpAuthenticator" />
+	</bean>
+	<bean id="mailsender" class="org.springframework.mail.javamail.JavaMailSenderImpl">
+		<property name="host" value="mail.optrasystems.com" />
+		<property name="session" ref="mailSession" />
+
+	</bean>
+	<bean id="mailService" class="org.ncbo.stanford.util.mail.impl.MailServiceImpl">
+		<property name="mailsender" ref="mailsender" />
+	</bean>
 </beans>

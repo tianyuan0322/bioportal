@@ -79,6 +79,7 @@ public interface ApplicationConstants {
 	public static final String SEMANTIC_TYPES = "SemanticTypes";
 	public static final String LEVEL = "Level";
 	public static final String PATH = "Path";
+	public static final String EMAIL="Email";
 
 	/**
 	 * Ontology format handlers
