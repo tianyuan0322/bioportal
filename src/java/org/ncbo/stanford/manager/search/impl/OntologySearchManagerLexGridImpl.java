@@ -251,6 +251,7 @@ public class OntologySearchManagerLexGridImpl extends
 	 * 
 	 * @param writer
 	 * @param doc
+	 * @param ontology
 	 * @param ontologyVersionId
 	 * @param ontologyId
 	 * @param ontologyDisplayLabel
