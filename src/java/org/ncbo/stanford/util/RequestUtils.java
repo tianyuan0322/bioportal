@@ -280,6 +280,17 @@ public class RequestUtils {
 		return val;
 	}
 
+	public static Long parseLongParam(String longVal) {
+		Long val = null;
+
+		try {
+			val = Long.parseLong(StringHelper.removeSpaces(longVal));
+		} catch (NumberFormatException e) {
+		}
+
+		return val;
+	}
+
 	public static String parseStringParam(String value) {
 		if (value != null) {
 			value = value.trim();
@@ -317,10 +328,7 @@ public class RequestUtils {
 			stringListParam = StringHelper.trimSpaces(stringListParam);
 
 			for (String stringParam : stringListParam.split(",")) {
-				try {
-					stringList.add(StringHelper.trimSpaces(stringParam));
-				} catch (NumberFormatException e) {
-				}
+				stringList.add(StringHelper.trimSpaces(stringParam));
 			}
 		}
 

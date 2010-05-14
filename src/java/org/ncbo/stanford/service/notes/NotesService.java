@@ -13,15 +13,16 @@ import org.protege.notesapi.notes.Status;
 
 public interface NotesService {
 
-	// Create and update methods
+	// Create methods
 
 	public NoteBean createNote(OntologyBean ont, String appliesTo,
 			NoteAppliesToTypeEnum appliesToType, NoteType noteType,
-			String subject, String content, String author) throws Exception;
+			String subject, String content, String author, Long created)
+			throws Exception;
 
 	public NoteBean createNewTermProposal(OntologyBean ont, String appliesTo,
 			NoteAppliesToTypeEnum appliesToType, NoteType noteType,
-			String subject, String content, String author,
+			String subject, String content, String author, Long created,
 			String reasonForChange, String contactInfo, String termDefinition,
 			String termId, String termParent, String termPreferredName,
 			List<String> termSynonyms) throws NotesException;
@@ -29,21 +30,23 @@ public interface NotesService {
 	public NoteBean createNewRelationshipProposal(OntologyBean ont,
 			String appliesTo, NoteAppliesToTypeEnum appliesToType,
 			NoteType noteType, String subject, String content, String author,
-			String reasonForChange, String contactInfo,
+			Long created, String reasonForChange, String contactInfo,
 			String relationshipType, String relationshipTarget,
 			String relationshipOldTarget) throws NotesException;
 
 	public NoteBean createNewPropertyValueChangeProposal(OntologyBean ont,
 			String appliesTo, NoteAppliesToTypeEnum appliesToType,
 			NoteType noteType, String subject, String content, String author,
-			String reasonForChange, String contactInfo,
+			Long created, String reasonForChange, String contactInfo,
 			String propertyNewValue, String propertyOldValue, String propertyId)
 			throws NotesException;
 
+	// Update methods
+
 	public NoteBean updateNote(OntologyBean ont, String noteId,
 			NoteType noteType, String subject, String content, String author,
-			Status status, String appliesTo, NoteAppliesToTypeEnum appliesToType)
-			throws Exception;
+			Long created, Status status, String appliesTo,
+			NoteAppliesToTypeEnum appliesToType) throws Exception;
 
 	public void archiveNote(OntologyBean ont, String noteId);
 
@@ -61,7 +64,8 @@ public interface NotesService {
 
 	public Annotation getNote(OntologyBean ont, String iri);
 
-	public List<NoteBean> getAllNotesForOntology(OntologyBean ont);
+	public List<NoteBean> getAllNotesForOntology(OntologyBean ont,
+			Boolean threaded, Boolean topLevelOnly);
 
 	public List<NoteBean> getAllNotesForOntologyByAuthor(OntologyBean ont,
 			Integer author);

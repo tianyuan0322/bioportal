@@ -23,8 +23,8 @@ import org.protege.notesapi.notes.Annotation;
 import org.protege.notesapi.notes.LinguisticEntity;
 import org.protege.notesapi.notes.NoteType;
 import org.protege.notesapi.notes.ProposalChangeHierarchy;
-import org.protege.notesapi.notes.ProposalNewEntity;
-import org.protege.notesapi.notes.ProposalPropertyValueChange;
+import org.protege.notesapi.notes.ProposalChangePropertyValue;
+import org.protege.notesapi.notes.ProposalCreateEntity;
 import org.protege.notesapi.notes.Status;
 import org.protege.notesapi.notes.impl.DefaultComment;
 import org.protege.notesapi.oc.OntologyClass;
@@ -50,7 +50,8 @@ public class NotesServiceImpl implements NotesService {
 
 	public NoteBean createNote(OntologyBean ont, String appliesTo,
 			NoteAppliesToTypeEnum appliesToType, NoteType noteType,
-			String subject, String content, String author) throws Exception {
+			String subject, String content, String author, Long created)
+			throws Exception {
 		NotesManager notesManager = notesPool.getNotesManagerForOntology(ont);
 
 		AnnotatableThing annotated = getAnnotatableThing(notesManager,
@@ -59,13 +60,16 @@ public class NotesServiceImpl implements NotesService {
 		Annotation newAnnotation = notesManager.createSimpleNote(noteType,
 				subject, content, author, annotated, ont.getId());
 
+		if (created != null)
+			newAnnotation.setCreatedAt(created);
+
 		return convertAnnotationToNoteBean(newAnnotation, ont);
 	}
 
 	public NoteBean createNewPropertyValueChangeProposal(OntologyBean ont,
 			String appliesTo, NoteAppliesToTypeEnum appliesToType,
 			NoteType noteType, String subject, String content, String author,
-			String reasonForChange, String contactInfo,
+			Long created, String reasonForChange, String contactInfo,
 			String propertyNewValue, String propertyOldValue, String propertyId)
 			throws NotesException {
 		NotesManager notesManager = notesPool.getNotesManagerForOntology(ont);
@@ -73,9 +77,12 @@ public class NotesServiceImpl implements NotesService {
 		OntologyProperty property = notesManager
 				.getOntologyProperty(propertyId);
 
-		Annotation proposal = notesManager.createPropertyValueChangeProposal(
+		Annotation proposal = notesManager.createProposalChangePropertyValue(
 				subject, content, property, propertyOldValue, propertyNewValue,
 				reasonForChange, contactInfo);
+
+		if (created != null)
+			proposal.setCreatedAt(created);
 
 		proposal.addAnnotates(getAnnotatableThing(notesManager, appliesTo,
 				appliesToType));
@@ -87,7 +94,7 @@ public class NotesServiceImpl implements NotesService {
 	public NoteBean createNewRelationshipProposal(OntologyBean ont,
 			String appliesTo, NoteAppliesToTypeEnum appliesToType,
 			NoteType noteType, String subject, String content, String author,
-			String reasonForChange, String contactInfo,
+			Long created, String reasonForChange, String contactInfo,
 			String relationshipType, String relationshipTarget,
 			String relationshipOldTarget) throws NotesException {
 		NotesManager notesManager = notesPool.getNotesManagerForOntology(ont);
@@ -97,14 +104,17 @@ public class NotesServiceImpl implements NotesService {
 		OntologyComponent oldTarget = notesManager
 				.getOntologyClass(relationshipOldTarget);
 
-		Collection<OntologyComponent> targetCollection = Collections
+		Collection<? extends OntologyComponent> targetCollection = Collections
 				.singleton(target);
-		Collection<OntologyComponent> oldTargetCollection = Collections
+		Collection<? extends OntologyComponent> oldTargetCollection = Collections
 				.singleton(oldTarget);
 
 		Annotation proposal = notesManager.createProposalChangeHierarchy(
 				subject, content, oldTargetCollection, targetCollection,
-				reasonForChange, contactInfo);
+				relationshipType, reasonForChange, contactInfo);
+
+		if (created != null)
+			proposal.setCreatedAt(created);
 
 		proposal.addAnnotates(getAnnotatableThing(notesManager, appliesTo,
 				appliesToType));
@@ -115,7 +125,7 @@ public class NotesServiceImpl implements NotesService {
 
 	public NoteBean createNewTermProposal(OntologyBean ont, String appliesTo,
 			NoteAppliesToTypeEnum appliesToType, NoteType noteType,
-			String subject, String content, String author,
+			String subject, String content, String author, Long created,
 			String reasonForChange, String contactInfo, String termDefinition,
 			String termId, String termParent, String termPreferredName,
 			List<String> termSynonyms) throws NotesException {
@@ -136,9 +146,12 @@ public class NotesServiceImpl implements NotesService {
 		Collection<? extends OntologyClass> parent = Collections
 				.singleton(ontClass);
 
-		Annotation proposal = notesManager.createProposalNewEntity(subject,
+		Annotation proposal = notesManager.createProposalCreateClass(subject,
 				content, termId, preferredName, synonymsList, definition,
 				parent, reasonForChange, contactInfo);
+
+		if (created != null)
+			proposal.setCreatedAt(created);
 
 		proposal.addAnnotates(getAnnotatableThing(notesManager, appliesTo,
 				appliesToType));
@@ -152,16 +165,27 @@ public class NotesServiceImpl implements NotesService {
 		notesManager.deleteNote(noteId);
 	}
 
-	public List<NoteBean> getAllNotesForOntology(OntologyBean ont) {
+	public List<NoteBean> getAllNotesForOntology(OntologyBean ont,
+			Boolean threaded, Boolean topLevelOnly) {
 		NotesManager notesManager = notesPool.getNotesManagerForOntology(ont);
 
-		Set<Annotation> annotations = notesManager.getAllNotes();
+		Set<Annotation> annotations;
+		if (threaded || topLevelOnly) {
+			annotations = notesManager.getAllThreadStarterNotes();
+		} else {
+			annotations = notesManager.getAllNotes();
+		}
 
 		List<NoteBean> notes = new ArrayList<NoteBean>();
 
 		for (Annotation annotation : annotations) {
 			if (annotation != null) {
-				notes.add(convertAnnotationToNoteBean(annotation, ont));
+				if (threaded && !topLevelOnly) {
+					notes.add(convertAnnotationToNoteBean(annotation, ont,
+							true, true));
+				} else {
+					notes.add(convertAnnotationToNoteBean(annotation, ont));
+				}
 			}
 		}
 
@@ -184,18 +208,16 @@ public class NotesServiceImpl implements NotesService {
 	public List<NoteBean> getAllNotesForConcept(OntologyBean ont,
 			ClassBean concept, Boolean threaded) {
 		NotesManager notesManager = notesPool.getNotesManagerForOntology(ont);
-		OntologyComponent oc = notesManager.getOntologyComponent(concept
+		OntologyComponent oc = notesManager.getOntologyClass(concept
 				.getFullId());
 		Collection<Annotation> annotations = oc.getAssociatedAnnotations();
 
-		List<NoteBean> notesList = null;
+		List<NoteBean> notesList = new ArrayList<NoteBean>();
 		for (Annotation annotation : annotations) {
 			if (threaded == true) {
-				notesList = new ArrayList<NoteBean>();
 				notesList.add(convertAnnotationToNoteBean(annotation, ont,
 						true, true));
 			} else {
-				notesList = new ArrayList<NoteBean>();
 				notesList.add(convertAnnotationToNoteBean(annotation, ont));
 			}
 		}
@@ -258,8 +280,8 @@ public class NotesServiceImpl implements NotesService {
 
 	public NoteBean updateNote(OntologyBean ont, String noteId,
 			NoteType noteType, String subject, String content, String author,
-			Status status, String appliesTo, NoteAppliesToTypeEnum appliesToType)
-			throws Exception {
+			Long created, Status status, String appliesTo,
+			NoteAppliesToTypeEnum appliesToType) throws Exception {
 		// TODO: Check to make sure this actually updates
 		NotesManager notesManager = notesPool.getNotesManagerForOntology(ont);
 		Annotation annotation = notesManager.getNote(noteId);
@@ -272,6 +294,8 @@ public class NotesServiceImpl implements NotesService {
 			annotation.setAuthor(author);
 		if (subject != null)
 			annotation.setSubject(subject);
+		if (created != null)
+			annotation.setCreatedAt(created);
 
 		if (appliesTo != null && appliesToType != null) {
 			AnnotatableThing annotated = getAnnotatableThing(notesManager,
@@ -389,7 +413,7 @@ public class NotesServiceImpl implements NotesService {
 
 		// Convert associated annotations
 		if (annotation.hasAssociatedAnnotations() && root == true
-				|| threaded == true) {
+				&& threaded == true) {
 			Collection<Annotation> associated = annotation
 					.getAssociatedAnnotations();
 			for (Annotation subAnnotation : associated) {
@@ -416,8 +440,8 @@ public class NotesServiceImpl implements NotesService {
 		case Comment:
 			valueStore = null;
 			break;
-		case ProposalForNewEntity:
-			ProposalNewEntity newTermAnnot = (ProposalNewEntity) annotation;
+		case ProposalForCreateEntity:
+			ProposalCreateEntity newTermAnnot = (ProposalCreateEntity) annotation;
 			ProposalNewTermBean newTerm = new ProposalNewTermBean();
 			newTerm.setDefinition(newTermAnnot.getDefinition().getLabel());
 			newTerm.setId(newTermAnnot.getEntityId());
@@ -428,7 +452,7 @@ public class NotesServiceImpl implements NotesService {
 			newTerm.setContactInfo(newTermAnnot.getContactInformation());
 
 			ArrayList<String> parents = new ArrayList<String>();
-			for (OntologyClass parent : newTermAnnot.getParent()) {
+			for (OntologyComponent parent : newTermAnnot.getParents()) {
 				parents.add(parent.getId());
 			}
 			newTerm.setParent(parents);
@@ -467,8 +491,8 @@ public class NotesServiceImpl implements NotesService {
 
 			valueStore.add(newChangeHierarchy);
 			break;
-		case ProposalForPropertyValueChange:
-			ProposalPropertyValueChange propValueChangeAnnot = (ProposalPropertyValueChange) annotation;
+		case ProposalForChangePropertyValue:
+			ProposalChangePropertyValue propValueChangeAnnot = (ProposalChangePropertyValue) annotation;
 			ProposalPropertyValueChangeBean newValueChange = new ProposalPropertyValueChangeBean();
 			newValueChange.setNewValue(propValueChangeAnnot.getNewValue());
 			newValueChange.setOldValue(propValueChangeAnnot.getOldValue());

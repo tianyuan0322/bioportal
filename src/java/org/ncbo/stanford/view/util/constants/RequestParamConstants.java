@@ -155,12 +155,14 @@ public interface RequestParamConstants {
 	public static final String PARAM_NOTE_SUBJECT = "subject";
 	public static final String PARAM_NOTE_CONTENT = "content";
 	public static final String PARAM_NOTE_AUTHOR = "author";
+	public static final String PARAM_NOTE_CREATED = "created";
 	public static final String PARAM_NOTE_THREADED = "threaded";
 	public static final String PARAM_NOTE_ASSOCIATED = "associated";
 	public static final String PARAM_NOTE_ARCHIVE = "archive";
 	public static final String PARAM_NOTE_ARCHIVE_THREAD = "archivethread";
 	public static final String PARAM_NOTE_UNARCHIVE = "unarchive";
 	public static final String PARAM_NOTE_UNARCHIVE_THREAD = "unarchivethread";
+	public static final String PARAM_NOTE_TOP_LEVEL_ONLY = "toplevelonly";
 	
 	/**
 	 * Notes: All proposals
