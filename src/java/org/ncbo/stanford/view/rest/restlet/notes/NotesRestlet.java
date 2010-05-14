@@ -84,6 +84,8 @@ public class NotesRestlet extends AbstractBaseRestlet {
 				.getParameter(RequestParamConstants.PARAM_NOTE_ID);
 		Boolean threaded = RequestUtils.parseBooleanParam(httpRequest
 				.getParameter(RequestParamConstants.PARAM_NOTE_THREADED));
+		Boolean topLevelOnly = RequestUtils.parseBooleanParam(httpRequest
+				.getParameter(RequestParamConstants.PARAM_NOTE_TOP_LEVEL_ONLY));
 		String ontologyId = (String) request.getAttributes().get(
 				MessageUtils.getMessage("entity.ontologyid"));
 		String ontologyVersionId = (String) request.getAttributes().get(
@@ -122,10 +124,11 @@ public class NotesRestlet extends AbstractBaseRestlet {
 			} else if (instanceId != null) {
 				notesList = listNotesForIndividual(ont, instanceId, threaded);
 			} else {
-				notesList = notesService.getAllNotesForOntology(ont);
+				notesList = notesService.getAllNotesForOntology(ont, threaded,
+						topLevelOnly);
 			}
 
-			if (notesList == null) {
+			if (notesList == null || notesList.isEmpty()) {
 				throw new NoteNotFoundException();
 			}
 		} catch (NoteNotFoundException nnfe) {
@@ -233,6 +236,8 @@ public class NotesRestlet extends AbstractBaseRestlet {
 				.getParameter(RequestParamConstants.PARAM_PROP_OLD_VALUE);
 		String propertyId = (String) httpRequest
 				.getParameter(RequestParamConstants.PARAM_PROP_ID);
+		String created = (String) httpRequest
+				.getParameter(RequestParamConstants.PARAM_NOTE_CREATED);
 
 		// Post-process parameters
 		NoteType noteType = NoteType.valueOf(noteTypeStr);
@@ -243,6 +248,7 @@ public class NotesRestlet extends AbstractBaseRestlet {
 		Integer ontologyIdInt = RequestUtils.parseIntegerParam(ontologyId);
 		Integer ontologyVersionIdInt = RequestUtils
 				.parseIntegerParam(ontologyVersionId);
+		Long createdLong = RequestUtils.parseLongParam(created);
 
 		OntologyBean ont = null;
 		NoteBean noteBean = null;
@@ -298,28 +304,31 @@ public class NotesRestlet extends AbstractBaseRestlet {
 			}
 
 			switch (noteType) {
-			case ProposalForNewEntity:
+			case ProposalForCreateEntity:
 				noteBean = notesService.createNewTermProposal(ont,
 						appliesToTypeStr, appliesToType, noteType, subject,
-						content, author, reasonForChange, contactInfo,
-						termDefinition, termId, termParent, termPreferredName,
-						synonymList);
+						content, author, createdLong, reasonForChange,
+						contactInfo, termDefinition, termId, termParent,
+						termPreferredName, synonymList);
 				break;
 			case ProposalForChangeHierarchy:
 				noteBean = notesService.createNewRelationshipProposal(ont,
 						appliesTo, appliesToType, noteType, subject, content,
-						author, reasonForChange, contactInfo, relationshipType,
-						relationshipTarget, relationshipOldTarget);
+						author, createdLong, reasonForChange, contactInfo,
+						relationshipType, relationshipTarget,
+						relationshipOldTarget);
 				break;
-			case ProposalForPropertyValueChange:
+			case ProposalForChangePropertyValue:
 				noteBean = notesService.createNewPropertyValueChangeProposal(
 						ont, appliesTo, appliesToType, noteType, subject,
-						content, author, reasonForChange, contactInfo,
-						propertyNewValue, propertyOldValue, propertyId);
+						content, author, createdLong, reasonForChange,
+						contactInfo, propertyNewValue, propertyOldValue,
+						propertyId);
 				break;
 			default:
 				noteBean = notesService.createNote(ont, appliesTo,
-						appliesToType, noteType, subject, content, author);
+						appliesToType, noteType, subject, content, author,
+						createdLong);
 				break;
 			}
 
@@ -344,8 +353,8 @@ public class NotesRestlet extends AbstractBaseRestlet {
 
 	private void updateNote(Request request, Response response) {
 		// TODO: The notes API currently does not support a method to
-		// handle updating notes. The only thing we can do here is
-		// archive them.
+		// handle updating notes. We essentially retrieve the annotation
+		// and set individual properties.
 		HttpServletRequest httpRequest = RequestUtils
 				.getHttpServletRequest(request);
 		String noteId = (String) httpRequest
@@ -360,6 +369,8 @@ public class NotesRestlet extends AbstractBaseRestlet {
 				.getParameter(RequestParamConstants.PARAM_NOTE_UNARCHIVE_THREAD);
 		String ontologyId = (String) request.getAttributes().get(
 				MessageUtils.getMessage("entity.ontologyid"));
+		String ontologyVersionId = (String) request.getAttributes().get(
+				MessageUtils.getMessage("entity.ontologyversionid"));
 		String appliesTo = (String) httpRequest
 				.getParameter(RequestParamConstants.PARAM_APPLIES_TO);
 		String appliesToTypeStr = (String) httpRequest
@@ -372,6 +383,8 @@ public class NotesRestlet extends AbstractBaseRestlet {
 				.getParameter(RequestParamConstants.PARAM_NOTE_CONTENT);
 		String author = (String) httpRequest
 				.getParameter(RequestParamConstants.PARAM_NOTE_AUTHOR);
+		String created = (String) httpRequest
+				.getParameter(RequestParamConstants.PARAM_NOTE_CREATED);
 
 		// Post-process parameters
 		Boolean archiveBool = RequestUtils.parseBooleanParam(archive);
@@ -381,6 +394,9 @@ public class NotesRestlet extends AbstractBaseRestlet {
 		Boolean unarchiveThreadBool = RequestUtils
 				.parseBooleanParam(unarchiveThread);
 		Integer ontologyIdInt = RequestUtils.parseIntegerParam(ontologyId);
+		Integer ontologyVersionIdInt = RequestUtils
+				.parseIntegerParam(ontologyVersionId);
+		Long createdLong = RequestUtils.parseLongParam(created);
 
 		NoteType noteType = null;
 		if (noteTypeStr != null) {
@@ -392,10 +408,14 @@ public class NotesRestlet extends AbstractBaseRestlet {
 			appliesToType = NoteAppliesToTypeEnum.valueOf(appliesToTypeStr);
 		}
 
-		OntologyBean ont;
+		OntologyBean ont = null;
 		try {
-			ont = ontologyService
-					.findLatestOntologyOrViewVersion(ontologyIdInt);
+			if (ontologyIdInt != null) {
+				ont = ontologyService
+						.findLatestOntologyOrViewVersion(ontologyIdInt);
+			} else if (ontologyVersionIdInt != null) {
+				ont = ontologyService.findOntologyOrView(ontologyVersionIdInt);
+			}
 
 			if (ont == null) {
 				throw new InvalidInputException(MessageUtils
@@ -424,7 +444,8 @@ public class NotesRestlet extends AbstractBaseRestlet {
 				// TODO: Set status properly (unclear how Notes-api handles
 				// this)
 				notesService.updateNote(ont, noteId, noteType, subject,
-						content, author, null, appliesTo, appliesToType);
+						content, author, createdLong, null, appliesTo,
+						appliesToType);
 			}
 
 		} catch (NoteNotFoundException nnfe) {
@@ -459,7 +480,6 @@ public class NotesRestlet extends AbstractBaseRestlet {
 		Integer ontologyIdInt = RequestUtils.parseIntegerParam(ontologyId);
 		Integer ontologyVersionIdInt = RequestUtils
 				.parseIntegerParam(ontologyVersionId);
-
 
 		OntologyBean ont = null;
 		try {
