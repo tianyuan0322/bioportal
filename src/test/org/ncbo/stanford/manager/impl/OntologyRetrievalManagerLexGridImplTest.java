@@ -471,6 +471,23 @@ public class OntologyRetrievalManagerLexGridImplTest extends
 	}
 
 	@Test
+	public void testHL7FindPathFromRootForRootConceptIncludingChildren()
+			throws Exception {
+		System.out
+				.println("testHL7FindPathFromRootForRootConceptIncludingChildren()");
+
+		OntologyBean ncboOntology = retrievalManager
+		.getLatestOntologyBean(OntologyLoaderLexGridImplTest.LEXGRID_HL7_DISPLAY_LABEL);
+        String conceptID = "10128:ER";
+		ClassBean pathBean = retrievalManager.findPathFromRoot(ncboOntology,
+				conceptID, false);
+		System.out.println("Paths to root for concept " + conceptID
+				+ " of HL7 ontology are :");
+		System.out.println(pathBean);
+		System.out.println("\n");
+		assertTrue(pathBean != null);
+	}	
+	@Test
 	public void testOBOGetAllConcepts() throws Exception {
 		System.out.println("testOBOGetAllConcepts()");
 

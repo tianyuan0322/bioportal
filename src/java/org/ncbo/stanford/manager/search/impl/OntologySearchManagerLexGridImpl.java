@@ -74,7 +74,7 @@ public class OntologySearchManagerLexGridImpl extends
 					Concept concept = ref.getReferencedEntry();
 					String preferredName = getPreferredName(concept);
 
-					addConceptIds(writer, doc, ontologyVersionId, ontologyId,
+					addConceptIds(writer, doc, ontology, ontologyVersionId, ontologyId,
 							ontologyDisplayLabel, preferredName, concept);
 					addPresentationProperties(writer, doc, ontologyVersionId,
 							ontologyId, ontologyDisplayLabel, preferredName,
@@ -259,17 +259,18 @@ public class OntologySearchManagerLexGridImpl extends
 	 * @throws IOException
 	 */
 	private void addConceptIds(LuceneIndexWriterWrapper writer,
-			SearchIndexBean doc, Integer ontologyVersionId, Integer ontologyId,
+			SearchIndexBean doc, OntologyBean ontology, Integer ontologyVersionId, Integer ontologyId,
 			String ontologyDisplayLabel, String preferredName, Concept concept)
 			throws IOException {
 		String conceptId = concept.getEntityCode();
+		String fullId= getFullId(ontology, conceptId);
 
 		// add concept id to index only if concept id != preferredName to avoid
 		// duplication of data
 		if (!conceptId.equals(preferredName)) {
 			doc.populateInstance(ontologyVersionId, ontologyId,
 					ontologyDisplayLabel,
-					SearchRecordTypeEnum.RECORD_TYPE_CONCEPT_ID, conceptId,
+					SearchRecordTypeEnum.RECORD_TYPE_CONCEPT_ID, fullId,
 					conceptId, preferredName, conceptId);
 			writer.addDocument(doc);
 		}

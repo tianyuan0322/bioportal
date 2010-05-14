@@ -207,8 +207,8 @@ public class OntologyRetrievalManagerLexGridImpl extends
 			ConceptReferenceList crefs = ConvenienceMethods
 					.createConceptReferenceList(new String[] { conceptId },
 							schemeName);
-			ResolvedConceptReferenceList matches = lbs.getCodingSchemeConcepts(
-					schemeName, csvt).restrictToCodes(crefs).resolveToList(
+			ResolvedConceptReferenceList matches = lbs.getNodeSet(
+					schemeName, csvt, null).restrictToCodes(crefs).resolveToList(
 					null, null, null, 1);
 
 			// Analyze the result ...
@@ -715,7 +715,7 @@ public class OntologyRetrievalManagerLexGridImpl extends
 		ConceptReferenceList crefs = ConvenienceMethods
 				.createConceptReferenceList(new String[] { conceptId },
 						schemeName);
-		CodedNodeSet nodes = lbs.getCodingSchemeConcepts(schemeName, csvt)
+		CodedNodeSet nodes = lbs.getNodeSet(schemeName, csvt, null)
 				.restrictToCodes(crefs);
 		ResolvedConceptReferenceList matches = nodes.resolveToList(null, null,
 				null, null, false, -1);
@@ -1617,28 +1617,7 @@ public class OntologyRetrievalManagerLexGridImpl extends
 		return hierarchyDirectionalNames;
 	}
 
-	private String getFullId(OntologyBean ontologyBean, String code) {
-		String fullId = code;
-		String modCode = code.replace(':', '_');
-		if (ontologyBean != null) {
-			if (ApplicationConstants.FORMAT_OBO.equalsIgnoreCase(ontologyBean
-					.getFormat())) {
-				fullId = "http://purl.obolibrary.org/obo/" + modCode;
-			}
-			if (ApplicationConstants.FORMAT_UMLS_RRF
-					.equalsIgnoreCase(ontologyBean.getFormat())) {
-				fullId = "http://purl.bioontology.org/ontology/"
-						+ ontologyBean.getAbbreviation() + "/" + code;
-			}
-			if (ApplicationConstants.FORMAT_LEXGRID_XML
-					.equalsIgnoreCase(ontologyBean.getFormat())) {
-				fullId = "http://purl.bioontology.org/ontology/"
-						+ ontologyBean.getAbbreviation() + "/" + modCode;
-			}
 
-		}
-		return fullId;
-	}
 
 	/**
 	 * @param allConceptsMaxPageSize

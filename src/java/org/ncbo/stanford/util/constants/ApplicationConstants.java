@@ -65,6 +65,7 @@ public interface ApplicationConstants {
 	public static final String FORMAT_PROTEGE = "PROTEGE";
 	public static final String FORMAT_OBO = "OBO";
 	public static final String FORMAT_UMLS_RRF = "RRF";
+	public static final String FORMAT_META = "META";
 	public static final String FORMAT_LEXGRID_XML = "LEXGRID-XML";
 	public static final String FORMAT_INVALID = "Invalid";
 

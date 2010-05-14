@@ -18,6 +18,7 @@ import org.LexGrid.codingSchemes.CodingScheme;
 import org.apache.commons.lang.StringUtils;
 import org.ncbo.stanford.bean.OntologyBean;
 import org.ncbo.stanford.manager.metadata.OntologyMetadataManager;
+import org.ncbo.stanford.util.constants.ApplicationConstants;
 
 /**
  * Abstract class to encapsulate functionality common for both LexGrid loader
@@ -297,4 +298,27 @@ public abstract class AbstractOntologyManagerLexGrid {
 		return count;
 
 	}
+	
+	protected String getFullId(OntologyBean ontologyBean, String code) {
+		String fullId = code;
+		String modCode = code.replace(':', '_');
+		if (ontologyBean != null) {
+			if (ApplicationConstants.FORMAT_OBO.equalsIgnoreCase(ontologyBean
+					.getFormat())) {
+				fullId = "http://purl.obolibrary.org/obo/" + modCode;
+			}
+			if (ApplicationConstants.FORMAT_UMLS_RRF
+					.equalsIgnoreCase(ontologyBean.getFormat())) {
+				fullId = "http://purl.bioontology.org/ontology/"
+						+ ontologyBean.getAbbreviation() + "/" + code;
+			}
+			if (ApplicationConstants.FORMAT_LEXGRID_XML
+					.equalsIgnoreCase(ontologyBean.getFormat())) {
+				fullId = "http://purl.bioontology.org/ontology/"
+						+ ontologyBean.getAbbreviation() + "/" + modCode;
+			}
+
+		}
+		return fullId;
+	}	
 }

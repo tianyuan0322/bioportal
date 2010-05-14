@@ -33,6 +33,7 @@ import org.LexGrid.LexBIG.DataModel.InterfaceElements.types.ProcessState;
 import org.LexGrid.LexBIG.Exceptions.LBParameterException;
 import org.LexGrid.LexBIG.Extensions.Load.LexGrid_Loader;
 import org.LexGrid.LexBIG.Extensions.Load.Loader;
+import org.LexGrid.LexBIG.Extensions.Load.MetaBatchLoader;
 import org.LexGrid.LexBIG.Extensions.Load.OBO_Loader;
 import org.LexGrid.LexBIG.Extensions.Load.OWL_Loader;
 import org.LexGrid.LexBIG.Extensions.Load.UmlsBatchLoader;
@@ -123,18 +124,17 @@ public class OntologyLoadManagerLexGridImpl extends
 			loader = lbsm
 					.getLoader(org.LexGrid.LexBIG.Extensions.Load.UmlsBatchLoader.NAME);
 			((UmlsBatchLoader) loader).loadUmls(ontologyUri, ob
-					.getTargetTerminologies());
-
-			/*
-			 * loader = lbsm
-			 * .getLoader(org.LexGrid.LexBIG.Impl.loaders.UMLSLoaderImpl.name);
-			 * LocalNameList lnl = getLocalNameListFromTargetTerminologies(ob);
-			 * log.debug("Using the UMLS loader. Target terminology= " +
-			 * ObjectToString.toString(lnl)); ((UMLS_Loader)
-			 * loader).load(ontologyUri, lnl, stopOnErrors, async);
-			 */
-			// Load LEXGRID XML
-		} else if (ob.getFormat().equalsIgnoreCase(
+					.getTargetTerminologies());			
+		}
+		// Load META
+		else if (ob.getFormat().equalsIgnoreCase(
+				ApplicationConstants.FORMAT_META)) {
+			loader = lbsm
+					.getLoader(org.LexGrid.LexBIG.Extensions.Load.MetaBatchLoader.NAME);
+			((MetaBatchLoader) loader).loadMeta(ontologyUri);	
+		} 
+		// Load LEXGRID XML
+		else if (ob.getFormat().equalsIgnoreCase(
 				ApplicationConstants.FORMAT_LEXGRID_XML)) {
 			loader = lbsm
 					.getLoader(org.LexGrid.LexBIG.Impl.loaders.LexGridLoaderImpl.name);
