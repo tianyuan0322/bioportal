@@ -182,7 +182,7 @@ public class NotesServiceImpl implements NotesService {
 			if (annotation != null) {
 				if (threaded && !topLevelOnly) {
 					notes.add(convertAnnotationToNoteBean(annotation, ont,
-							true, true));
+							true));
 				} else {
 					notes.add(convertAnnotationToNoteBean(annotation, ont));
 				}
@@ -214,12 +214,8 @@ public class NotesServiceImpl implements NotesService {
 
 		List<NoteBean> notesList = new ArrayList<NoteBean>();
 		for (Annotation annotation : annotations) {
-			if (threaded == true) {
-				notesList.add(convertAnnotationToNoteBean(annotation, ont,
-						true, true));
-			} else {
-				notesList.add(convertAnnotationToNoteBean(annotation, ont));
-			}
+			notesList
+					.add(convertAnnotationToNoteBean(annotation, ont, threaded));
 		}
 
 		return notesList;
@@ -231,16 +227,10 @@ public class NotesServiceImpl implements NotesService {
 		OntologyComponent oc = notesManager.getOntologyIndividual(instanceId);
 		Collection<Annotation> annotations = oc.getAssociatedAnnotations();
 
-		List<NoteBean> notesList = null;
+		List<NoteBean> notesList = new ArrayList<NoteBean>();
 		for (Annotation annotation : annotations) {
-			if (threaded == true) {
-				notesList = new ArrayList<NoteBean>();
-				notesList.add(convertAnnotationToNoteBean(annotation, ont,
-						true, true));
-			} else {
-				notesList = new ArrayList<NoteBean>();
-				notesList.add(convertAnnotationToNoteBean(annotation, ont));
-			}
+			notesList
+					.add(convertAnnotationToNoteBean(annotation, ont, threaded));
 		}
 
 		return notesList;
@@ -251,14 +241,8 @@ public class NotesServiceImpl implements NotesService {
 		NotesManager notesManager = notesPool.getNotesManagerForOntology(ont);
 		Annotation root = notesManager.getNote(noteId);
 
-		List<NoteBean> notesList;
-		if (threaded == true) {
-			notesList = new ArrayList<NoteBean>();
-			notesList.add(convertAnnotationToNoteBean(root, ont, true, true));
-		} else {
-			notesList = new ArrayList<NoteBean>();
-			notesList.add(convertAnnotationToNoteBean(root, ont));
-		}
+		List<NoteBean> notesList = new ArrayList<NoteBean>();
+		notesList.add(convertAnnotationToNoteBean(root, ont, threaded));
 
 		return notesList;
 	}
@@ -351,7 +335,7 @@ public class NotesServiceImpl implements NotesService {
 	 */
 	private NoteBean convertAnnotationToNoteBean(Annotation annotation,
 			OntologyBean ont) {
-		return convertAnnotationToNoteBean(annotation, ont, false, true);
+		return convertAnnotationToNoteBean(annotation, ont, false);
 	}
 
 	/**
@@ -367,7 +351,7 @@ public class NotesServiceImpl implements NotesService {
 	 * @return
 	 */
 	private NoteBean convertAnnotationToNoteBean(Annotation annotation,
-			OntologyBean ont, Boolean threaded, Boolean root) {
+			OntologyBean ont, Boolean threaded) {
 		NoteBean nb = new NoteBean();
 
 		Collection<AnnotatableThing> annotates = annotation.getAnnotates();
@@ -412,13 +396,12 @@ public class NotesServiceImpl implements NotesService {
 		nb.setValues(convertAdditionalProperties(ont, annotation));
 
 		// Convert associated annotations
-		if (annotation.hasAssociatedAnnotations() && root == true
-				&& threaded == true) {
+		if (annotation.hasAssociatedAnnotations() && threaded == true) {
 			Collection<Annotation> associated = annotation
 					.getAssociatedAnnotations();
 			for (Annotation subAnnotation : associated) {
 				nb.addAssociated(convertAnnotationToNoteBean(subAnnotation,
-						ont, threaded, false));
+						ont, threaded));
 			}
 		}
 
