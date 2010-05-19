@@ -163,7 +163,7 @@ public class RdfServiceImpl extends ConceptServiceImpl implements RdfService {
 	 * @return
 	 * @throws Exception
 	 */
-	private OWLOntology generateRdf(OWLOntologyManager manager, String dir, Integer ontologyVersionId, boolean isVirtual, List<String> conceptIds)
+	public OWLOntology generateRdf(OWLOntologyManager manager, String dir, Integer ontologyVersionId, boolean isVirtual, List<String> conceptIds)
 			throws Exception {
 		
 		long startTime = System.currentTimeMillis();

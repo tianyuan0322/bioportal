@@ -132,6 +132,16 @@ public abstract class AbstractBaseRestlet extends Restlet {
 				.getMessage("entity.conceptid"), request);
 	}
 
+	/**
+	 * It will collect the Ids from the request 
+	 * @param request
+	 * @return
+	 */
+	protected List<String> getConceptIds(Request request) {
+		return RequestUtils.getAttributeOrRequestParams(MessageUtils
+				.getMessage("entity.conceptid"), request);
+	}
+
 	private List<Integer> getIntegerList(HttpServletRequest httpRequest,
 			String paramName) throws Exception {
 		List<Integer> integers = null;

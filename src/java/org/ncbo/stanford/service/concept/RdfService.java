@@ -1,6 +1,7 @@
 package org.ncbo.stanford.service.concept;
 
 import java.io.File;
+import java.util.List;
 
 import org.ncbo.stanford.service.ontology.OntologyService;
 import org.semanticweb.owlapi.model.OWLOntology;
@@ -52,4 +53,21 @@ public interface RdfService {
 	 */
 	public OWLOntology generateRdf(OWLOntologyManager manager, String dir, Integer ontologyVersionId, boolean isVirtual, String conceptId)
 			throws Exception;
+
+	/**
+	 * Given a list (singleton, many, or NULL) of concepts, generate the RDF for
+	 * a given ontology version.
+	 * 
+	 * @param manager
+	 * @param dir
+	 * @param ontologyVersionId
+	 * @param isVirtual
+	 * @param conceptIds
+	 * @return
+	 * @throws Exception
+	 */
+	public OWLOntology generateRdf(OWLOntologyManager manager, String dir,
+			Integer ontologyVersionId, boolean isVirtual,
+			List<String> conceptIds) throws Exception;
+
 }

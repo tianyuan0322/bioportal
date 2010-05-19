@@ -48,6 +48,7 @@ public class RequestUtils {
 	private static final String BIOPORTAL_USER_AGENT = "BioPortal Core";
 	public static final String PARAM_SEPARATOR = "&";
 	private static final String RESTLET_RESERVED_ATTRIBUTE_PREFIX = "org.restlet";
+	private static final String COMMA_DELIMITER = ",";
 
 	/**
 	 * Sends a redirect call to a specified URL
@@ -379,6 +380,50 @@ public class RequestUtils {
 		}
 
 		return param;
+	}
+
+	/**
+	 * Inside this we collect the value of Attributes and after Separating the
+	 * Id they Stored inside the List
+	 * 
+	 * @param name
+	 * @param request
+	 * @return
+	 */
+	public static List<String> getAttributeOrRequestParams(String name,
+			Request request) {
+
+		// Creating the List with the name of params of String type
+		List<String> paramList = new ArrayList<String>();
+
+		String paramData = (String) request.getAttributes().get(name);
+
+		if (StringHelper.isNullOrNullString(paramData)) {
+			HttpServletRequest httpRequest = getHttpServletRequest(request);
+			paramData = (String) httpRequest.getParameter(name);
+
+		}
+		if (paramData != null) {
+			try {
+				paramData = URLDecoder.decode(paramData, MessageUtils
+						.getMessage("default.encoding"));
+			} catch (UnsupportedEncodingException e) {
+				e.printStackTrace();
+			}
+		}
+
+		// Creating the Array of Type String with the name of Param
+
+		String[] paramFormat = StringHelper.split(paramData, COMMA_DELIMITER);
+
+		// Iterate the All Value of Params
+		for (int i = 0; i < paramFormat.length; i++) {
+
+			// Adding the All Value Inside The ArrayList
+			paramList.add(paramFormat[i]);
+		}
+
+		return paramList;
 	}
 
 	/**

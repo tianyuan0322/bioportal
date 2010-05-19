@@ -16,12 +16,13 @@ import org.semanticweb.owlapi.apibinding.OWLManager;
 import org.semanticweb.owlapi.io.StringDocumentTarget;
 import org.semanticweb.owlapi.model.OWLOntology;
 import org.semanticweb.owlapi.model.OWLOntologyManager;
+import java.util.List;
 
 public class RdfExtractionRestlet extends AbstractBaseRestlet {
 
 	private static transient Logger log = Logger
-		.getLogger(RdfExtractionRestlet.class);
-	
+			.getLogger(RdfExtractionRestlet.class);
+
 	private RdfService rdfService;
 	private OntologyService ontologyService;
 	private String rdfDir;
@@ -30,23 +31,26 @@ public class RdfExtractionRestlet extends AbstractBaseRestlet {
 	public void getRequest(Request request, Response response) {
 		generateRdf(request, response);
 	}
-	
+
 	private void generateRdf(Request request, Response response) {
 		try {
 			OWLOntologyManager manager = OWLManager.createOWLOntologyManager();
 			OWLOntology ontology;
 			boolean isVirtual = false;
-			
+
 			String conceptId = getConceptId(request);
+			
+			// Creating the List For conceptIds
+			List<String> conceptIds = getConceptIds(request);
 
 			// version id
 			String ontologyVersionId = (String) request.getAttributes().get(
 					MessageUtils.getMessage("entity.ontologyversionid"));
-			
+
 			// virtual id
 			if (StringHelper.isNullOrNullString(ontologyVersionId)) {
 				ontologyVersionId = (String) request.getAttributes().get(
-					MessageUtils.getMessage("entity.ontologyid"));
+						MessageUtils.getMessage("entity.ontologyid"));
 				isVirtual = true;
 			}
 
@@ -57,48 +61,68 @@ public class RdfExtractionRestlet extends AbstractBaseRestlet {
 				rdfService.generateRdf(manager, rdfDir, ontologyService);
 				rdfOutput = "files have been generated in: " + rdfDir;
 			} else {
-				Integer ontologyVersionIdInt = RequestUtils.parseIntegerParam(ontologyVersionId);
+				Integer ontologyVersionIdInt = RequestUtils
+						.parseIntegerParam(ontologyVersionId);
 
 				if (StringHelper.isNullOrNullString(conceptId)) {
 					// process ALL concepts
-					ontology = rdfService.generateRdf(manager, rdfDir, ontologyVersionIdInt, isVirtual);
+					ontology = rdfService.generateRdf(manager, rdfDir,
+							ontologyVersionIdInt, isVirtual);
 					rdfOutput = "file has been generated in: " + rdfDir;
 				} else {
 					// process SPECIFIC concept
-					ontology = rdfService.generateRdf(manager, rdfDir, ontologyVersionIdInt, isVirtual, conceptId);
+					ontology = rdfService.generateRdf(manager, rdfDir,
+							ontologyVersionIdInt, isVirtual, conceptId);
 					StringDocumentTarget outputString = new StringDocumentTarget();
 					manager.saveOntology(ontology, outputString);
 					rdfOutput = outputString.toString();
 				}
+
+				if (conceptIds.isEmpty()) {
+					// process ALL ontologies
+					ontology = rdfService.generateRdf(manager, rdfDir,
+							ontologyVersionIdInt, isVirtual);
+					rdfOutput = "file has been generated in: " + rdfDir;
+
+				} else {
+					// process SPECIFIC concept
+					ontology = rdfService.generateRdf(manager, rdfDir,
+							ontologyVersionIdInt, isVirtual, conceptIds);
+					StringDocumentTarget outputString = new StringDocumentTarget();
+					manager.saveOntology(ontology, outputString);
+					rdfOutput = outputString.toString();
+
+				}
 			}
-			
+
 			// Add the contents to the response
 			RequestUtils.setHttpServletResponse(response, Status.SUCCESS_OK,
 					MediaType.TEXT_PLAIN, rdfOutput);
-			
+
 		} catch (InvalidInputException iie) {
 			response.setStatus(Status.SERVER_ERROR_INTERNAL, iie.getMessage());
 			iie.printStackTrace();
 			log.error(iie);
-			xmlSerializationService.generateStatusXMLResponse(request, response);
+			xmlSerializationService
+					.generateStatusXMLResponse(request, response);
 		} catch (Exception e) {
 			response.setStatus(Status.SERVER_ERROR_INTERNAL, e.getMessage());
 			e.printStackTrace();
 			log.error(e);
-			xmlSerializationService.generateStatusXMLResponse(request, response);	
+			xmlSerializationService
+					.generateStatusXMLResponse(request, response);
 		}
 
 	}
-	
 
 	public RdfService getRdfService() {
 		return rdfService;
 	}
-	
+
 	public void setRdfService(RdfService rdfService) {
 		this.rdfService = rdfService;
 	}
-	
+
 	public String getRdfDir() {
 		return rdfDir;
 	}
@@ -106,7 +130,6 @@ public class RdfExtractionRestlet extends AbstractBaseRestlet {
 	public void setRdfDir(String rdfDir) {
 		this.rdfDir = rdfDir;
 	}
-	
 
 	public OntologyService getOntologyService() {
 		return ontologyService;
