@@ -169,11 +169,7 @@ public class NotesRestlet extends AbstractBaseRestlet {
 			Boolean threaded) throws NoteNotFoundException {
 		Annotation noteToList = notesService.getNote(ont, noteId);
 
-		if (noteToList == null) {
-			throw new NoteNotFoundException();
-		}
-
-		return notesService.getAllNotesForNote(ont, noteId, threaded);
+		return notesService.getAllNotesForNote(ont, noteToList.getId(), threaded);
 	}
 
 	private List<NoteBean> listNotesForIndividual(OntologyBean ont,
@@ -306,7 +302,7 @@ public class NotesRestlet extends AbstractBaseRestlet {
 			switch (noteType) {
 			case ProposalForCreateEntity:
 				noteBean = notesService.createNewTermProposal(ont,
-						appliesToTypeStr, appliesToType, noteType, subject,
+						appliesTo, appliesToType, noteType, subject,
 						content, author, createdLong, reasonForChange,
 						contactInfo, termDefinition, termId, termParent,
 						termPreferredName, synonymList);

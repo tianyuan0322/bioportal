@@ -32,6 +32,11 @@
       <owl:Class rdf:ID="Change"/>
     </rdfs:subClassOf>
   </owl:Class>
+  <owl:Class rdf:ID="Ontology">
+    <rdfs:subClassOf>
+      <owl:Class rdf:ID="Ontology_Component"/>
+    </rdfs:subClassOf>
+  </owl:Class>
   <owl:Class rdf:ID="Property_Created">
     <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
     >Property_Created</rdfs:label>
@@ -149,7 +154,7 @@
     <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
     >Ontology_Individual</rdfs:label>
     <rdfs:subClassOf>
-      <owl:Class rdf:ID="Ontology_Component"/>
+      <owl:Class rdf:about="#Ontology_Component"/>
     </rdfs:subClassOf>
   </owl:Class>
   <owl:Class rdf:ID="Maximum_Cardinality">
@@ -180,18 +185,18 @@
     <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
     >Individual_Change</rdfs:label>
   </owl:Class>
-  <owl:Class rdf:ID="MergeProposal">
-    <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
-    >MergeProposal</rdfs:label>
-    <rdfs:subClassOf>
-      <owl:Class rdf:about="#Proposal"/>
-    </rdfs:subClassOf>
-  </owl:Class>
   <owl:Class rdf:ID="Ontology_Property">
     <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
     >Ontology_Property</rdfs:label>
     <rdfs:subClassOf>
       <owl:Class rdf:about="#Ontology_Component"/>
+    </rdfs:subClassOf>
+  </owl:Class>
+  <owl:Class rdf:ID="MergeProposal">
+    <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+    >MergeProposal</rdfs:label>
+    <rdfs:subClassOf>
+      <owl:Class rdf:about="#Proposal"/>
     </rdfs:subClassOf>
   </owl:Class>
   <owl:Class rdf:ID="Property_Value">
@@ -353,10 +358,10 @@
     </rdfs:subClassOf>
     <rdfs:subClassOf>
       <owl:Restriction>
+        <owl:allValuesFrom rdf:resource="#ChangeStatus"/>
         <owl:onProperty>
           <owl:ObjectProperty rdf:about="#hasStatus"/>
         </owl:onProperty>
-        <owl:allValuesFrom rdf:resource="#ChangeStatus"/>
       </owl:Restriction>
     </rdfs:subClassOf>
     <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
@@ -415,15 +420,20 @@
     >Superclass_Added</rdfs:label>
     <rdfs:subClassOf rdf:resource="#Class_Change"/>
   </owl:Class>
+  <owl:Class rdf:ID="CreateEntityProposal">
+    <rdfs:subClassOf rdf:resource="#Proposal"/>
+    <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+    >CreateEntityProposal</rdfs:label>
+  </owl:Class>
   <owl:Class rdf:about="#Vote">
     <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
     >Vote</rdfs:label>
     <rdfs:subClassOf rdf:resource="#Annotation"/>
   </owl:Class>
-  <owl:Class rdf:ID="PropertyValueChangeProposal">
+  <owl:Class rdf:ID="ChangePropertyValueProposal">
     <rdfs:subClassOf rdf:resource="#Proposal"/>
     <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
-    >PropertyValueChangeProposal</rdfs:label>
+    >ChangePropertyValueProposal</rdfs:label>
   </owl:Class>
   <owl:Class rdf:ID="Annotation_Removed">
     <rdfs:subClassOf rdf:resource="#Annotation_Change"/>
@@ -479,11 +489,6 @@
     <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
     >Status</rdfs:label>
   </owl:Class>
-  <owl:Class rdf:ID="NewEntityProposal">
-    <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
-    >NewEntityProposal</rdfs:label>
-    <rdfs:subClassOf rdf:resource="#Proposal"/>
-  </owl:Class>
   <owl:Class rdf:ID="DomainProperty_Added">
     <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
     >DomainProperty_Added</rdfs:label>
@@ -530,7 +535,7 @@
     <rdfs:domain>
       <owl:Class>
         <owl:unionOf rdf:parseType="Collection">
-          <owl:Class rdf:about="#NewEntityProposal"/>
+          <owl:Class rdf:about="#CreateEntityProposal"/>
           <owl:Class rdf:about="#SplitProposal"/>
         </owl:unionOf>
       </owl:Class>
@@ -570,7 +575,7 @@
     <rdfs:range rdf:resource="#Annotation"/>
   </owl:ObjectProperty>
   <owl:ObjectProperty rdf:ID="synonym">
-    <rdfs:domain rdf:resource="#NewEntityProposal"/>
+    <rdfs:domain rdf:resource="#CreateEntityProposal"/>
     <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
     >synonym</rdfs:label>
     <rdfs:range rdf:resource="#LinguisticEntity"/>
@@ -616,12 +621,6 @@
     <rdfs:range rdf:resource="#Change"/>
     <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
     >subChanges</rdfs:label>
-  </owl:ObjectProperty>
-  <owl:ObjectProperty rdf:ID="parent">
-    <rdfs:range rdf:resource="#Ontology_Class"/>
-    <rdfs:domain rdf:resource="#NewEntityProposal"/>
-    <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
-    >parent</rdfs:label>
   </owl:ObjectProperty>
   <owl:ObjectProperty rdf:ID="created">
     <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
@@ -700,19 +699,19 @@
     <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#FunctionalProperty"/>
     <owl:inverseOf rdf:resource="#subChanges"/>
   </owl:ObjectProperty>
-  <owl:ObjectProperty rdf:ID="definition">
-    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#FunctionalProperty"/>
-    <rdfs:domain rdf:resource="#NewEntityProposal"/>
-    <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
-    >definition</rdfs:label>
-    <rdfs:range rdf:resource="#LinguisticEntity"/>
-  </owl:ObjectProperty>
   <owl:ObjectProperty rdf:ID="retiredEntity">
     <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
     >retiredEntity</rdfs:label>
     <rdfs:range rdf:resource="#Ontology_Component"/>
     <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#FunctionalProperty"/>
     <rdfs:domain rdf:resource="#RetireProposal"/>
+  </owl:ObjectProperty>
+  <owl:ObjectProperty rdf:ID="definition">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#FunctionalProperty"/>
+    <rdfs:domain rdf:resource="#CreateEntityProposal"/>
+    <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+    >definition</rdfs:label>
+    <rdfs:range rdf:resource="#LinguisticEntity"/>
   </owl:ObjectProperty>
   <owl:ObjectProperty rdf:ID="associatedProperty">
     <rdfs:domain>
@@ -729,9 +728,22 @@
     <rdfs:range rdf:resource="#Ontology_Property"/>
     <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#FunctionalProperty"/>
   </owl:ObjectProperty>
+  <owl:ObjectProperty rdf:ID="parents">
+    <rdfs:domain rdf:resource="#CreateEntityProposal"/>
+    <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+    >parent</rdfs:label>
+    <rdfs:range>
+      <owl:Class>
+        <owl:unionOf rdf:parseType="Collection">
+          <owl:Class rdf:about="#Ontology_Class"/>
+          <owl:Class rdf:about="#Ontology_Property"/>
+        </owl:unionOf>
+      </owl:Class>
+    </rdfs:range>
+  </owl:ObjectProperty>
   <owl:ObjectProperty rdf:ID="property">
     <rdfs:range rdf:resource="#Ontology_Property"/>
-    <rdfs:domain rdf:resource="#PropertyValueChangeProposal"/>
+    <rdfs:domain rdf:resource="#ChangePropertyValueProposal"/>
     <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
     >property</rdfs:label>
     <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#FunctionalProperty"/>
@@ -740,10 +752,10 @@
     <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
     >newValue</rdfs:label>
     <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#FunctionalProperty"/>
-    <rdfs:domain rdf:resource="#PropertyValueChangeProposal"/>
+    <rdfs:domain rdf:resource="#ChangePropertyValueProposal"/>
   </rdf:Property>
   <rdf:Property rdf:ID="oldValue">
-    <rdfs:domain rdf:resource="#PropertyValueChangeProposal"/>
+    <rdfs:domain rdf:resource="#ChangePropertyValueProposal"/>
     <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
     >oldValue</rdfs:label>
     <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#FunctionalProperty"/>
@@ -903,7 +915,7 @@
     <rdfs:domain>
       <owl:Class>
         <owl:unionOf rdf:parseType="Collection">
-          <owl:Class rdf:about="#NewEntityProposal"/>
+          <owl:Class rdf:about="#CreateEntityProposal"/>
           <owl:Class rdf:about="#SplitProposal"/>
         </owl:unionOf>
       </owl:Class>
@@ -1003,9 +1015,9 @@
     <rdfs:comment rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
     >Stores the ontology revision (for example BioPortal internal version id) on which the annotation instance was created.</rdfs:comment>
     <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#int"/>
+    <rdfs:domain rdf:resource="#Annotation"/>
     <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
     >createdInOntologyRevision</rdfs:label>
-    <rdfs:domain rdf:resource="#Annotation"/>
   </owl:FunctionalProperty>
   <Status rdf:ID="Under_review">
     <description rdf:datatype="http://www.w3.org/2001/XMLSchema#string"

@@ -173,11 +173,11 @@ public interface RequestParamConstants {
 	/**
 	 * Notes: New term proposal
 	 */
-	public static final String PARAM_NEW_TERM_DEFINITION = "newtermdefinition";
-	public static final String PARAM_NEW_TERM_ID = "newtermid";
-	public static final String PARAM_NEW_TERM_PARENT = "newtermparent";
-	public static final String PARAM_NEW_TERM_PREFERRED_NAME = "newtermpreferredname";
-	public static final String PARAM_NEW_TERM_SYNONYMS = "newtermsynonyms";
+	public static final String PARAM_NEW_TERM_DEFINITION = "termdefinition";
+	public static final String PARAM_NEW_TERM_ID = "termid";
+	public static final String PARAM_NEW_TERM_PARENT = "termparent";
+	public static final String PARAM_NEW_TERM_PREFERRED_NAME = "termpreferredname";
+	public static final String PARAM_NEW_TERM_SYNONYMS = "termsynonyms";
 	
 	/**
 	 * Notes: New relationship proposal

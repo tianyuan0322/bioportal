@@ -6,6 +6,7 @@ import org.ncbo.stanford.bean.OntologyBean;
 import org.ncbo.stanford.bean.concept.ClassBean;
 import org.ncbo.stanford.bean.notes.NoteBean;
 import org.ncbo.stanford.enumeration.NoteAppliesToTypeEnum;
+import org.ncbo.stanford.exception.NoteNotFoundException;
 import org.protege.notesapi.NotesException;
 import org.protege.notesapi.notes.Annotation;
 import org.protege.notesapi.notes.NoteType;
@@ -62,7 +63,8 @@ public interface NotesService {
 
 	// Retrieval methods
 
-	public Annotation getNote(OntologyBean ont, String iri);
+	public Annotation getNote(OntologyBean ont, String iri)
+			throws NoteNotFoundException;
 
 	public List<NoteBean> getAllNotesForOntology(OntologyBean ont,
 			Boolean threaded, Boolean topLevelOnly);
@@ -77,5 +79,5 @@ public interface NotesService {
 			String instanceId, Boolean threaded);
 
 	public List<NoteBean> getAllNotesForNote(OntologyBean ont, String noteId,
-			Boolean threaded);
+			Boolean threaded) throws NoteNotFoundException;
 }

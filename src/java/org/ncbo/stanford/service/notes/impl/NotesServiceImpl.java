@@ -14,6 +14,7 @@ import org.ncbo.stanford.bean.notes.ProposalNewRelationshipBean;
 import org.ncbo.stanford.bean.notes.ProposalNewTermBean;
 import org.ncbo.stanford.bean.notes.ProposalPropertyValueChangeBean;
 import org.ncbo.stanford.enumeration.NoteAppliesToTypeEnum;
+import org.ncbo.stanford.exception.NoteNotFoundException;
 import org.ncbo.stanford.manager.notes.NotesPool;
 import org.ncbo.stanford.service.notes.NotesService;
 import org.protege.notesapi.NotesException;
@@ -237,9 +238,14 @@ public class NotesServiceImpl implements NotesService {
 	}
 
 	public List<NoteBean> getAllNotesForNote(OntologyBean ont, String noteId,
-			Boolean threaded) {
+			Boolean threaded) throws NoteNotFoundException {
 		NotesManager notesManager = notesPool.getNotesManagerForOntology(ont);
+
 		Annotation root = notesManager.getNote(noteId);
+
+		if (root == null) {
+			throw new NoteNotFoundException();
+		}
 
 		List<NoteBean> notesList = new ArrayList<NoteBean>();
 		notesList.add(convertAnnotationToNoteBean(root, ont, threaded));
@@ -247,9 +253,17 @@ public class NotesServiceImpl implements NotesService {
 		return notesList;
 	}
 
-	public Annotation getNote(OntologyBean ont, String iri) {
+	public Annotation getNote(OntologyBean ont, String iri)
+			throws NoteNotFoundException {
 		NotesManager notesManager = notesPool.getNotesManagerForOntology(ont);
-		return notesManager.getNote(iri);
+
+		Annotation note = notesManager.getNote(iri);
+		
+		if (note == null) {
+			throw new NoteNotFoundException();
+		}
+
+		return note;
 	}
 
 	public void unarchiveNote(OntologyBean ont, String noteId) {
