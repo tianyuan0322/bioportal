@@ -14,6 +14,11 @@ import org.ncbo.stanford.manager.metakb.protege.DAO.RatingTypeDAO;
 import org.ncbo.stanford.manager.metakb.protege.DAO.ReviewDAO;
 import org.ncbo.stanford.manager.metakb.protege.DAO.base.AbstractDAO;
 
+/**
+ * Implementation of {@link ReviewMetadataManager} for Protege OWL metadata KB.
+ * 
+ * @author Tony Loeser
+ */
 public class ReviewMetadataManagerImpl extends SimpleObjectManagerImpl<ReviewBean>
 		implements ReviewMetadataManager {
 	

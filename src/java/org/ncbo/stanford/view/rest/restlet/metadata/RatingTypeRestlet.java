@@ -12,6 +12,12 @@ import org.restlet.data.Request;
 import org.restlet.data.Response;
 import org.restlet.data.Status;
 
+/**
+ * Supports retrieval of the (statically defined) rating type objects.  A GET request
+ * retrieves the list of objects.
+ * 
+ * @author Tony Loeser
+ */
 public class RatingTypeRestlet extends AbstractBaseRestlet {
 
 	private static final Log log = LogFactory.getLog(RatingTypeRestlet.class);

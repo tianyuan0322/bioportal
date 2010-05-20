@@ -16,6 +16,15 @@ import org.restlet.data.Request;
 import org.restlet.data.Response;
 import org.restlet.data.Status;
 
+/**
+ * Respond to POST requests by returning lists of projects.
+ * <ul>
+ *   <li>With no parameters: Return all projects.</li>
+ *   <li>With user id: Return all projects for that user.</li>
+ * </ul>
+ * 
+ * @author Tony Loeser
+ */
 public class ProjectListRestlet extends AbstractBaseRestlet {
 
 	private static final Log log = LogFactory.getLog(ProjectListRestlet.class);

@@ -5,6 +5,11 @@ import org.ncbo.stanford.manager.metakb.protege.DAO.base.AbstractDAO;
 
 import edu.stanford.smi.protegex.owl.model.OWLModel;
 
+/**
+ * Data access object for storing {@link RatingBean} objects to the metadta KB.
+ * 
+ * @author Tony Loeser
+ */
 public class RatingDAO extends AbstractDAO<RatingBean> {
 	
 	private static String OWL_CLASS_NAME = "metadata:Rating";

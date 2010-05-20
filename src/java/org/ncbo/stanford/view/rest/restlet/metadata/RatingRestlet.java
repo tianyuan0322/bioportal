@@ -19,6 +19,17 @@ import org.restlet.data.Request;
 import org.restlet.data.Response;
 import org.restlet.data.Status;
 
+/**
+ * REST API access to Rating metadata objects.
+ * <p>
+ * There are two actions:
+ * <ul>
+ *   <li>POST: Add a rating for a particular review.</li>
+ *   <li>DELETE: Delete a rating, determined by uid parameter.</li>
+ * </ul>
+ * 
+ * @author Tony Loeser
+ */
 public class RatingRestlet extends AbstractBaseRestlet {
 
 	private static final Log log = LogFactory.getLog(RatingRestlet.class);

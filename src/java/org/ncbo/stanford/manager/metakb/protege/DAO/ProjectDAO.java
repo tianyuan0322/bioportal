@@ -6,7 +6,7 @@ import org.ncbo.stanford.manager.metakb.protege.DAO.base.AbstractDAO;
 import edu.stanford.smi.protegex.owl.model.OWLModel;
 
 /**
- * Data access object for storing ProjectBean objects to the Metadata KB.
+ * Data access object for storing {@link ProjectBean} objects to the Metadata KB.
  * 
  * @author Tony Loeser
  */

@@ -15,15 +15,10 @@ import org.restlet.data.Request;
 /**
  * REST API access to Project metadata objects.
  * <p>
- * Action is determined by type of request.
- * <ul>
- * <li>POST: Create a new project.</li>
- * <li>GET: Retrieve a particular project.</li>
- * <li>DELETE: Delete the project.</li>
- * <li>PUT: Update the project with specified values.</li>
- * </ul>
+ * Action is determined by type of request.  For list of actions, see
+ * {@link AbstractCRUDRestlet}.
  * 
- * @author <a href="mailto:loeser@cs.stanford.edu">Tony Loeser</a>
+ * @author Tony Loeser
  *
  */
 public class ProjectRestlet extends AbstractCRUDRestlet<ProjectBean> {

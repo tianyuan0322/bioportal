@@ -14,6 +14,14 @@ import org.ncbo.stanford.util.RequestUtils;
 import org.ncbo.stanford.view.util.constants.RequestParamConstants;
 import org.restlet.data.Request;
 
+/**
+ * REST API access to Review metadata objects.
+ * <p>
+ * Action is determined by type of request.  For list of actions, see
+ * {@link AbstractCRUDRestlet}.
+ * 
+ * @author Tony Loeser
+ */
 public class ReviewRestlet extends AbstractCRUDRestlet<ReviewBean> {
 
 	private static final Log log = LogFactory.getLog(ReviewRestlet.class);

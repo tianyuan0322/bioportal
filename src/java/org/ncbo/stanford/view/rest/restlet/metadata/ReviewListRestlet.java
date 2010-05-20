@@ -19,6 +19,15 @@ import org.restlet.data.Request;
 import org.restlet.data.Response;
 import org.restlet.data.Status;
 
+/**
+ * Provides REST API for retrieval of Request metadata objects.  A GET request
+ * retrieves the list, depending on parameters.  (So far, just one parameter.)
+ * <ul>
+ *   <li>For ontology id parameter, retrieve all ratings for that ontology.</li>
+ * </ul>
+ * 
+ * @author Tony Loeser
+ */
 public class ReviewListRestlet extends AbstractBaseRestlet {
 	
 	private static final Log log = LogFactory.getLog(ReviewListRestlet.class);

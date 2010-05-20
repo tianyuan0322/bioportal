@@ -8,6 +8,11 @@ import org.ncbo.stanford.manager.metakb.ProjectMetadataManager;
 import org.ncbo.stanford.manager.metakb.protege.DAO.ProjectDAO;
 import org.ncbo.stanford.manager.metakb.protege.DAO.base.AbstractDAO;
 
+/**
+ * Implementation of {@link ProjectMetadataManager} for Protege OWL metadata KB.
+ * 
+ * @author Tony Loeser
+ */
 public class ProjectMetadataManagerImpl extends SimpleObjectManagerImpl<ProjectBean>
 		implements ProjectMetadataManager {
 

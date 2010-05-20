@@ -6,6 +6,13 @@ import org.ncbo.stanford.manager.metakb.protege.DAO.base.AbstractDAO;
 
 import edu.stanford.smi.protegex.owl.model.OWLModel;
 
+/**
+ * Data access object for accessing {@link RatingTypeBean} objects in the metadata KB.
+ * Note that this is a read-only DAO, since the rating types are static (at least, 
+ * defined in the KB rather than through java code).
+ * 
+ * @author Tony Loeser
+ */
 public class RatingTypeDAO extends AbstractDAO<RatingTypeBean> {
 
 	private static String OWL_CLASS_NAME = "metadata:RatingType";

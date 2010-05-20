@@ -10,7 +10,32 @@ import org.restlet.data.Request;
 import org.restlet.data.Response;
 import org.restlet.data.Status;
 
-// Note that the id part of the URL spec needs to be labeled "id".
+/**
+ * Base class that defines a REST API for the basic CRUD operations on a particular bean type.
+ * <p>
+ * To use, simply subclass and specialize to a particular bean.  Note that, for these
+ * operations to work, the URL patterns need to label the identifying parameter "id", e.g.: <br/>
+ * <code>
+ *   &lt;entry key="/foo/{id}"&gt; <br/>
+ *   &nbsp;&nbsp;&lt;ref local="fooRestlet" /&gt; <br/>
+ *   &lt;/entry&gt; <br/>
+ * </code>
+ * Then the <code>AbstractCRUDRestlet</code> expects <code>id</code> to be the integer 
+ * unique id of the object.  On a <code>POST</code> request, creating a new object, the restlet
+ * expects <code>id = "new"</code>.
+ * <p>
+ * The operations are:
+ * <ul>
+ *   <li>POST: Create a new object.</li>
+ *   <li>PUT: Update the object with given uid.</li>
+ *   <li>GET: Retrieve the object with given uid.</li>
+ *   <li>DELETE: Delete the object with given uid.</li>
+ * </ul>
+ * 
+ * @author Tony Loeser
+ *
+ * @param <BeanType> the type of object on which these CRUD methods are acting.
+ */
 public abstract class AbstractCRUDRestlet<BeanType extends AbstractIdBean>
 		extends AbstractBaseRestlet {
 	
