@@ -495,9 +495,9 @@ public class XMLSerializationServiceImpl implements XMLSerializationService {
 				NoteBean.class);
 		xmlSerializer.alias(MessageUtils.getMessage("entity.appliesto"),
 				AppliesToBean.class);
-		xmlSerializer.alias(MessageUtils.getMessage("entity.proposalforpropertyvaluechange"),
+		xmlSerializer.alias(MessageUtils.getMessage("entity.proposalforchangepropertyvalue"),
 				ProposalPropertyValueChangeBean.class);
-		xmlSerializer.alias(MessageUtils.getMessage("entity.proposalfornewentity"),
+		xmlSerializer.alias(MessageUtils.getMessage("entity.proposalforcreateentity"),
 				ProposalNewTermBean.class);
 		xmlSerializer.alias(MessageUtils.getMessage("entity.proposalforchangehierarchy"),
 				ProposalNewRelationshipBean.class);
