@@ -88,6 +88,7 @@ public class NotesServiceImpl implements NotesService {
 		proposal.addAnnotates(getAnnotatableThing(notesManager, appliesTo,
 				appliesToType));
 		proposal.setAuthor(author);
+		proposal.setCreatedInOntologyRevision(ont.getId());
 
 		return convertAnnotationToNoteBean(proposal, ont);
 	}
@@ -120,6 +121,7 @@ public class NotesServiceImpl implements NotesService {
 		proposal.addAnnotates(getAnnotatableThing(notesManager, appliesTo,
 				appliesToType));
 		proposal.setAuthor(author);
+		proposal.setCreatedInOntologyRevision(ont.getId());
 
 		return convertAnnotationToNoteBean(proposal, ont);
 	}
@@ -157,6 +159,7 @@ public class NotesServiceImpl implements NotesService {
 		proposal.addAnnotates(getAnnotatableThing(notesManager, appliesTo,
 				appliesToType));
 		proposal.setAuthor(author);
+		proposal.setCreatedInOntologyRevision(ont.getId());
 
 		return convertAnnotationToNoteBean(proposal, ont);
 	}
