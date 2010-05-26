@@ -1,7 +1,9 @@
 package org.ncbo.stanford.view.rest.restlet.rdf;
 
 import org.apache.log4j.Logger;
+import org.ncbo.stanford.exception.ConceptNotFoundException;
 import org.ncbo.stanford.exception.InvalidInputException;
+import org.ncbo.stanford.exception.OntologyNotFoundException;
 import org.ncbo.stanford.service.concept.RdfService;
 import org.ncbo.stanford.service.ontology.OntologyService;
 import org.ncbo.stanford.util.MessageUtils;
@@ -37,6 +39,7 @@ public class RdfExtractionRestlet extends AbstractBaseRestlet {
 			OWLOntologyManager manager = OWLManager.createOWLOntologyManager();
 			OWLOntology ontology;
 			boolean isVirtual = false;
+			String rdfOutput = "";
 
 			String conceptId = getConceptId(request);
 			
@@ -54,63 +57,67 @@ public class RdfExtractionRestlet extends AbstractBaseRestlet {
 				isVirtual = true;
 			}
 
-			String rdfOutput = "";
-
 			if (StringHelper.isNullOrNullString(ontologyVersionId)) {
+				throw new InvalidInputException(MessageUtils
+						.getMessage("msg.error.ontologyversionidinvalid"));
+				/*
+				 * TODO: this code needs to be protected behind ADMIN SERVICE as a POST.
+				 * SEE Tracker: #2159
+				 * 
 				// process ALL ontologies
 				rdfService.generateRdf(manager, rdfDir, ontologyService);
 				rdfOutput = "files have been generated in: " + rdfDir;
+				*/
 			} else {
 				Integer ontologyVersionIdInt = RequestUtils
 						.parseIntegerParam(ontologyVersionId);
 
 				if (StringHelper.isNullOrNullString(conceptId)) {
+					throw new InvalidInputException(MessageUtils
+							.getMessage("msg.error.conceptidrequired"));
+					/*
+					 *  TODO: this code needs to be protected behind ADMIN SERVICE as a POST.
+					 *  SEE Tracker: #2159
+					 *  
 					// process ALL concepts
 					ontology = rdfService.generateRdf(manager, rdfDir,
 							ontologyVersionIdInt, isVirtual);
 					rdfOutput = "file has been generated in: " + rdfDir;
+					*/
+				} else if (!conceptIds.isEmpty()) {
+					// process a LIST of concepts
+					ontology = rdfService.generateRdf(manager, rdfDir,
+							ontologyVersionIdInt, isVirtual, conceptIds);
+					StringDocumentTarget outputString = new StringDocumentTarget();
+					manager.saveOntology(ontology, outputString);
+					rdfOutput = outputString.toString();
 				} else {
-					// process SPECIFIC concept
+					// process a SPECIFIC concept
 					ontology = rdfService.generateRdf(manager, rdfDir,
 							ontologyVersionIdInt, isVirtual, conceptId);
 					StringDocumentTarget outputString = new StringDocumentTarget();
 					manager.saveOntology(ontology, outputString);
 					rdfOutput = outputString.toString();
 				}
-
-				if (conceptIds.isEmpty()) {
-					// process ALL ontologies
-					ontology = rdfService.generateRdf(manager, rdfDir,
-							ontologyVersionIdInt, isVirtual);
-					rdfOutput = "file has been generated in: " + rdfDir;
-
-				} else {
-					// process SPECIFIC concept
-					ontology = rdfService.generateRdf(manager, rdfDir,
-							ontologyVersionIdInt, isVirtual, conceptIds);
-					StringDocumentTarget outputString = new StringDocumentTarget();
-					manager.saveOntology(ontology, outputString);
-					rdfOutput = outputString.toString();
-
-				}
 			}
 
 			// Add the contents to the response
 			RequestUtils.setHttpServletResponse(response, Status.SUCCESS_OK,
 					MediaType.TEXT_PLAIN, rdfOutput);
-
-		} catch (InvalidInputException iie) {
-			response.setStatus(Status.SERVER_ERROR_INTERNAL, iie.getMessage());
-			iie.printStackTrace();
-			log.error(iie);
-			xmlSerializationService
-					.generateStatusXMLResponse(request, response);
+		} catch (InvalidInputException e) {
+			response.setStatus(Status.CLIENT_ERROR_BAD_REQUEST, e.getMessage());
+			xmlSerializationService.generateStatusXMLResponse(request, response);
+		} catch (OntologyNotFoundException onfe) {
+			response.setStatus(Status.CLIENT_ERROR_NOT_FOUND, onfe.getMessage());
+			xmlSerializationService.generateStatusXMLResponse(request, response);
+		} catch (ConceptNotFoundException cnfe) {
+			response.setStatus(Status.CLIENT_ERROR_NOT_FOUND, cnfe.getMessage());
+			xmlSerializationService.generateStatusXMLResponse(request, response);
 		} catch (Exception e) {
 			response.setStatus(Status.SERVER_ERROR_INTERNAL, e.getMessage());
+			xmlSerializationService.generateStatusXMLResponse(request, response);
 			e.printStackTrace();
 			log.error(e);
-			xmlSerializationService
-					.generateStatusXMLResponse(request, response);
 		}
 
 	}
