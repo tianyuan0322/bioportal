@@ -139,13 +139,30 @@ public class OntologyRetrievalManagerLexGridImpl extends
 	public ClassBean findConcept(OntologyBean ontologyBean, String conceptId,
 			boolean light, boolean noRelations) throws Exception {
 		ClassBean concept = null;
+		String schemeName = getLexGridCodingSchemeName(ontologyBean);
 
-		if (noRelations) {
-			concept = findConceptNoRelations(ontologyBean, conceptId);
-		} else if (light) {
-			concept = findConceptLight(ontologyBean, conceptId);
+		if (StringUtils.isBlank(schemeName)) {
+			log
+					.warn("Can not process request when the codingSchemeURI is blank");
+		} else if (StringUtils.isBlank(conceptId)) {
+			log.warn("Can not process request when the conceptId is blank");
 		} else {
-			concept = findConcept(ontologyBean, conceptId);
+			if (noRelations) {
+				concept = findConceptNoRelations(ontologyBean, conceptId);
+			} else if (light) {
+				concept = findConceptLight(ontologyBean, conceptId);
+			} else {
+				concept = findConcept(ontologyBean, conceptId);
+			}
+		}
+		
+		if (concept == null) {
+			//Try to find the concept after correcting the conceptId
+			//For example convert concept GO_12345 to GO:12345
+			String newId = getCorrectedConceptId(ontologyBean, conceptId);
+			if (!newId.equals(conceptId)) {
+				return findConcept(ontologyBean, newId, light, noRelations);
+			}
 		}
 
 		return concept;
@@ -156,27 +173,20 @@ public class OntologyRetrievalManagerLexGridImpl extends
 		ClassBean classBean = null;
 		String schemeName = getLexGridCodingSchemeName(ontologyBean);
 
-		if (StringUtils.isBlank(schemeName)) {
-			log
-					.warn("Can not process request when the codingSchemeURI is blank");
-		} else if (StringUtils.isBlank(conceptId)) {
-			log.warn("Can not process request when the conceptId is blank");
-		} else {
-			CodingSchemeVersionOrTag csvt = getLexGridCodingSchemeVersion(ontologyBean);
-			// Perform the query ...
-			ConceptReferenceList crefs = ConvenienceMethods
-					.createConceptReferenceList(new String[] { conceptId },
-							schemeName);
-			ResolvedConceptReferenceList matches = lbs.getCodingSchemeConcepts(
-					schemeName, csvt).restrictToCodes(crefs).resolveToList(
-					null, null, null, 1);
+		CodingSchemeVersionOrTag csvt = getLexGridCodingSchemeVersion(ontologyBean);
+		// Perform the query ...
+		ConceptReferenceList crefs = ConvenienceMethods
+				.createConceptReferenceList(new String[] { conceptId },
+						schemeName);
+		ResolvedConceptReferenceList matches = lbs.getCodingSchemeConcepts(
+				schemeName, csvt).restrictToCodes(crefs).resolveToList(null,
+				null, null, 1);
 
-			// Analyze the result ...
-			if (matches.getResolvedConceptReferenceCount() > 0) {
-				ResolvedConceptReference ref = (ResolvedConceptReference) matches
-						.enumerateResolvedConceptReference().nextElement();
-				classBean = createClassBean(ontologyBean, ref, false);
-			}
+		// Analyze the result ...
+		if (matches.getResolvedConceptReferenceCount() > 0) {
+			ResolvedConceptReference ref = (ResolvedConceptReference) matches
+					.enumerateResolvedConceptReference().nextElement();
+			classBean = createClassBean(ontologyBean, ref, false);
 		}
 
 		return classBean;
@@ -191,34 +201,25 @@ public class OntologyRetrievalManagerLexGridImpl extends
 	 * @return
 	 * @throws Exception
 	 */
-	public ClassBean findConceptLight(OntologyBean ontologyBean,
+	private ClassBean findConceptLight(OntologyBean ontologyBean,
 			String conceptId) throws Exception {
 		ClassBean classBean = null;
 		String schemeName = getLexGridCodingSchemeName(ontologyBean);
 
-		if (StringUtils.isBlank(schemeName)) {
-			log
-					.warn("Can not process request when the codingSchemeURI is blank");
-		} else if (StringUtils.isBlank(conceptId)) {
-			log.warn("Can not process request when the conceptId is blank");
-		} else {
-			CodingSchemeVersionOrTag csvt = getLexGridCodingSchemeVersion(ontologyBean);
-			// Perform the query ...
-			ConceptReferenceList crefs = ConvenienceMethods
-					.createConceptReferenceList(new String[] { conceptId },
-							schemeName);
-			ResolvedConceptReferenceList matches = lbs.getNodeSet(
-					schemeName, csvt, null).restrictToCodes(crefs).resolveToList(
-					null, null, null, 1);
+		CodingSchemeVersionOrTag csvt = getLexGridCodingSchemeVersion(ontologyBean);
+		// Perform the query ...
+		ConceptReferenceList crefs = ConvenienceMethods
+				.createConceptReferenceList(new String[] { conceptId },
+						schemeName);
+		ResolvedConceptReferenceList matches = lbs.getNodeSet(schemeName, csvt,
+				null).restrictToCodes(crefs).resolveToList(null, null, null, 1);
 
-			// Analyze the result ...
-			if (matches.getResolvedConceptReferenceCount() > 0) {
-				ResolvedConceptReference rcr = (ResolvedConceptReference) matches
-						.enumerateResolvedConceptReference().nextElement();
-				classBean = createClassBeanWithChildCount(ontologyBean, rcr,
-						true);
-				classBean = createSimpleSubClassOnlyClassBean(classBean, false);
-			}
+		// Analyze the result ...
+		if (matches.getResolvedConceptReferenceCount() > 0) {
+			ResolvedConceptReference rcr = (ResolvedConceptReference) matches
+					.enumerateResolvedConceptReference().nextElement();
+			classBean = createClassBeanWithChildCount(ontologyBean, rcr, true);
+			classBean = createSimpleSubClassOnlyClassBean(classBean, false);
 		}
 
 		return classBean;
@@ -251,41 +252,33 @@ public class OntologyRetrievalManagerLexGridImpl extends
 		ClassBean classBean = null;
 		String schemeName = getLexGridCodingSchemeName(ontologyBean);
 
-		if (StringUtils.isBlank(schemeName)) {
-			log
-					.warn("Can not process request when the codingSchemeURI is blank");
-		} else if (StringUtils.isBlank(conceptId)) {
-			log.warn("Can not process request when the conceptId is blank");
-		} else {
-			CodingSchemeVersionOrTag csvt = getLexGridCodingSchemeVersion(ontologyBean);
-			CodedNodeGraph cng = lbs.getNodeGraph(schemeName, csvt, null);
-			addFilterRestrictionToCNG(cng, schemeName, csvt);
-			ResolvedConceptReferenceList matches = cng
-					.resolveAsList(ConvenienceMethods.createConceptReference(
-							conceptId, schemeName), true, true, 0, 1, null,
-							null, null, -1);
+		CodingSchemeVersionOrTag csvt = getLexGridCodingSchemeVersion(ontologyBean);
+		CodedNodeGraph cng = lbs.getNodeGraph(schemeName, csvt, null);
+		addFilterRestrictionToCNG(cng, schemeName, csvt);
+		ResolvedConceptReferenceList matches = cng.resolveAsList(
+				ConvenienceMethods
+						.createConceptReference(conceptId, schemeName), true,
+				true, 0, 1, null, null, null, -1);
 
-			// Analyze the result ...
-			if (matches.getResolvedConceptReferenceCount() > 0) {
-				ResolvedConceptReference ref = (ResolvedConceptReference) matches
-						.enumerateResolvedConceptReference().nextElement();
-				classBean = createClassBean(ontologyBean, ref, true);
-				addSubClassRelationAndCountToClassBean(schemeName, csvt,
-						classBean);
-				addSuperClassRelationToClassBean(schemeName, csvt, classBean);
-				// If this is a UMLS ontology, Natasha wanted the hierarchy
-				// relations
-				// removed. The subClass relation would hold the same info.
-				if (ontologyBean.getFormat().equalsIgnoreCase(
-						ApplicationConstants.FORMAT_UMLS_RRF)) {
-					List<String> umlsFilterList = getListOfSubClassDirectionalName(
-							schemeName, csvt);
-					for (String relationToFilter : umlsFilterList) {
-						classBean.removeRelation(relationToFilter);
-					}
+		// Analyze the result ...
+		if (matches.getResolvedConceptReferenceCount() > 0) {
+			ResolvedConceptReference ref = (ResolvedConceptReference) matches
+					.enumerateResolvedConceptReference().nextElement();
+			classBean = createClassBean(ontologyBean, ref, true);
+			addSubClassRelationAndCountToClassBean(schemeName, csvt, classBean);
+			addSuperClassRelationToClassBean(schemeName, csvt, classBean);
+			// If this is a UMLS ontology, Natasha wanted the hierarchy
+			// relations
+			// removed. The subClass relation would hold the same info.
+			if (ontologyBean.getFormat().equalsIgnoreCase(
+					ApplicationConstants.FORMAT_UMLS_RRF)) {
+				List<String> umlsFilterList = getListOfSubClassDirectionalName(
+						schemeName, csvt);
+				for (String relationToFilter : umlsFilterList) {
+					classBean.removeRelation(relationToFilter);
 				}
-
 			}
+
 		}
 
 		return classBean;
@@ -477,7 +470,7 @@ public class OntologyRetrievalManagerLexGridImpl extends
 			log.warn("Can not process request when the conceptId is blank");
 			return null;
 		}
-
+        conceptId= getCorrectedConceptId(ontologyBean, conceptId);
 		CodingSchemeVersionOrTag csvt = getLexGridCodingSchemeVersion(ontologyBean);
 		String hierarchyId = getDefaultHierarchyId(schemeName, csvt);
 		AssociationList pathToRoot = lbscm.getHierarchyPathToRoot(schemeName,
@@ -1617,8 +1610,6 @@ public class OntologyRetrievalManagerLexGridImpl extends
 		return hierarchyDirectionalNames;
 	}
 
-
-
 	/**
 	 * @param allConceptsMaxPageSize
 	 *            the allConceptsMaxPageSize to set
@@ -1626,4 +1617,35 @@ public class OntologyRetrievalManagerLexGridImpl extends
 	public void setAllConceptsMaxPageSize(Integer allConceptsMaxPageSize) {
 		this.allConceptsMaxPageSize = allConceptsMaxPageSize;
 	}
+	
+	/**
+	 * if the conceptId that we got is in the form GO_123000, replace it 
+     * with GO:123000 and try again.  We need this conversion in order 
+     * to allow purls from obolibrary, which have the underscore, and 
+	 * not the ":" as in the OBO ids
+	 * @param ontologyBean
+	 * @param code
+	 * @return
+	 */
+	protected String getCorrectedConceptId(OntologyBean ontologyBean, String conceptId) throws Exception {
+		String modconceptId = conceptId;
+		if (conceptId != null && conceptId.contains("_")) {
+			//Only if the code has a "_" do we need to check if the code needs to be converted to
+			//a newId with the "_" replaced by a ":" We first check if the code as given exists.
+			
+			ResolvedConceptReference rcr= getLightResolvedConceptReference(ontologyBean, conceptId);
+			if (rcr== null) {
+				//The conceptId doesn't exist. Lets try modifying the code and do a lookup.
+				modconceptId = conceptId.replace('_', ':');
+				rcr= getLightResolvedConceptReference(ontologyBean, modconceptId);
+				if (rcr== null) {
+					//The modified code lookup also failed, lets not change the conceptId in this case.
+					modconceptId = conceptId;
+				}
+				
+			}
+		}
+		return modconceptId;
+	}		
+	
 }

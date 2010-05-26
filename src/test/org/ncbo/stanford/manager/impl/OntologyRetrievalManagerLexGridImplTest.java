@@ -153,8 +153,7 @@ public class OntologyRetrievalManagerLexGridImplTest extends
 						OntologyLoaderLexGridImplTest.OBO_CELL_DISPLAY_LABEL,
 						OntologyLoaderLexGridImplTest.OBO_CELL_ONTOLOGY_ID);
 		String conceptID = "CL:0000255";
-		ClassBean classBean = retrievalManager.findConceptLight(ncboOntology,
-				conceptID);
+		ClassBean classBean = retrievalManager.findConcept(ncboOntology, conceptID, true, false);
 		System.out.println("Concept " + conceptID + " of cell ontology is \n"
 				+ classBean);
 		System.out.println("\n");
@@ -178,6 +177,25 @@ public class OntologyRetrievalManagerLexGridImplTest extends
 		assertTrue(classBean == null);
 	}
 
+	@Test
+	public void testOBOFindCorrectedConceptCell() throws Exception {
+		System.out.println("testOBOFindCorrectedConceptCell()");
+
+		OntologyBean ncboOntology = retrievalManager
+				.getOntologyBeanByDisplayNameAndOntologyId(
+						OntologyLoaderLexGridImplTest.OBO_CELL_DISPLAY_LABEL,
+						OntologyLoaderLexGridImplTest.OBO_CELL_ONTOLOGY_ID);
+		String conceptID = "CL_0000255";
+		ClassBean classBean = retrievalManager.findConcept(ncboOntology,
+				conceptID, false, false);
+		String newId= conceptID.replace("_", ":");
+		System.out.println("Concept " + conceptID + " of cell ontology is \n"
+				+ classBean);
+		System.out.println("\n");
+		assertTrue(classBean.getId().equalsIgnoreCase(newId));
+	}
+
+	
 	@Test
 	public void testOBOFindConceptTwoRelationDictyostelium() throws Exception {
 		System.out.println("testOBOFindConceptTwoRelationDictyostelium()");
@@ -378,6 +396,24 @@ public class OntologyRetrievalManagerLexGridImplTest extends
 		assertTrue(pathBean != null);
 	}
 
+	@Test
+	public void testOBOFindPathFromRootIncludingChildrenCorrectedConceptCell() throws Exception {
+		System.out.println("testOBOFindPathFromRootIncludingChildrenCorrectedConceptCell()");
+
+		OntologyBean ncboOntology = retrievalManager
+				.getOntologyBeanByDisplayNameAndOntologyId(
+						OntologyLoaderLexGridImplTest.OBO_CELL_DISPLAY_LABEL,
+						OntologyLoaderLexGridImplTest.OBO_CELL_ONTOLOGY_ID);
+		String conceptID = "CL_0000255";
+		// String conceptID = "CL:0000003";
+		ClassBean pathBean = retrievalManager.findPathFromRoot(ncboOntology,
+				conceptID, false);
+		System.out.println("Paths to root for concept " + conceptID
+				+ " of cell ontology are :");
+		System.out.println(pathBean);
+		System.out.println("\n");
+		assertTrue(pathBean != null);
+	}	
 	@Test
 	public void testOBOFindPathFromRootForRootConceptIncludingChildrenCell()
 			throws Exception {

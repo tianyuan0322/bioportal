@@ -20,6 +20,7 @@ import org.springframework.beans.factory.annotation.Autowired;
  */
 public class OntologyRetrievalManagerProtegeTest extends AbstractBioPortalTest {
 	private final static int TEST_ONT_VERSION_ID = 13578;
+	private final static String TEST_PIZZA_DISPLAY_NAME = "Pizza";
 	private final static String TEST_CONCEPT_ID = "http://www.w3.org/2002/07/owl#Class";
 	private final static String TEST_CONCEPT_NAME = "http://www.co-ode.org/ontologies/pizza/2005/10/18/pizza.owl#Pizza";
 
@@ -31,14 +32,13 @@ public class OntologyRetrievalManagerProtegeTest extends AbstractBioPortalTest {
 
 	@Test
 	public void testPathToRoot() throws Exception {
-		OntologyBean version = ontologyMetadataManager
-				.findOntologyOrViewVersionById(TEST_ONT_VERSION_ID);
-		ClassBean conceptBean = ocMgr.findPathFromRoot(version, "SpicyPizza",
+		OntologyBean ontologyBean = getLatestOntologyBean(TEST_PIZZA_DISPLAY_NAME);
+		ClassBean conceptBean = ocMgr.findPathFromRoot(ontologyBean, "SpicyPizza",
 				false);
-
+		System.out.println("\n\ntestPathToRoot()");
 		System.out.println("Path");
 
-		// outputConcept(conceptBean);
+		outputConcept(conceptBean);
 
 		System.out.println("Subclasses");
 		ArrayList<ClassBean> subclasses = (ArrayList<ClassBean>) conceptBean
@@ -73,55 +73,45 @@ public class OntologyRetrievalManagerProtegeTest extends AbstractBioPortalTest {
 
 	@Test
 	public void testGetRootNode() throws Exception {
-		OntologyBean version = ontologyMetadataManager
-				.findOntologyOrViewVersionById(TEST_ONT_VERSION_ID);
-		ClassBean conceptBean = ocMgr.findRootConcept(version, false);
+		System.out.println("\n\ntestGetRootNode()");
+		OntologyBean ontologyBean = getLatestOntologyBean(TEST_PIZZA_DISPLAY_NAME);
+		ClassBean conceptBean = ocMgr.findRootConcept(ontologyBean, false);
 
 		System.out.println("ROOT");
 
-		// outputConcept(conceptBean);
+		outputConcept(conceptBean);
 
-		System.out.println("Subclasses");
-		ArrayList<ClassBean> subclasses = (ArrayList<ClassBean>) conceptBean
-				.getRelations().get(ApplicationConstants.SUB_CLASS);
-		System.out.println("Size:" + subclasses.size());
 
-		for (ClassBean subclass : subclasses) {
-			System.out.println(subclass.getLabel() + " " + subclass.getId());
-		}
 	}
 
 	@Test
 	public void testPizzaConcept() throws Exception {
+		System.out.println("\n\ntestPizzaConcept()");
 		System.out.println("Starting testGetConcept");
-		ClassBean conceptBean = null; // ocMgr.findConcept(TEST_ONT_ID,
-		// TEST_CONCEPT_NAME);
+		ClassBean conceptBean = null; 
+		OntologyBean ontologyBean = getLatestOntologyBean(TEST_PIZZA_DISPLAY_NAME);
+		conceptBean= ocMgr.findConcept(ontologyBean, TEST_CONCEPT_NAME, false, false);
 
 		outputConcept(conceptBean);
 
-		System.out.println("Subclasses");
-		ArrayList<ClassBean> subclasses = (ArrayList<ClassBean>) conceptBean
-				.getRelations().get(ApplicationConstants.SUB_CLASS);
-		System.out.println("Size:" + subclasses.size());
-		for (ClassBean subclass : subclasses) {
-			System.out.println(subclass.getLabel() + " " + subclass.getId());
-		}
+
 	}
 
 	@Test
 	public void testCheeseyVegetablePizzaConcept() throws Exception {
+		System.out.println("\n\ntestCheeseyVegetablePizzaConcept()");
 		System.out.println("Starting cheesyvegetablepizza concept");
-		ClassBean classBean = null; // ocMgr.findConcept(TEST_ONT_ID,
-		// "CheeseyVegetableTopping");
-
+		ClassBean classBean = null; 
+		OntologyBean ontologyBean = getLatestOntologyBean(TEST_PIZZA_DISPLAY_NAME);
+		classBean= ocMgr.findConcept(ontologyBean, "CheeseyVegetableTopping", false, false);
 		outputConcept(classBean);
 	}
 	
 	@Test
 	public void testFindAllClasses() throws Exception {
-		final int ONT_VERSION_ID = 10007;
-		OntologyBean oBean = ontologyMetadataManager.findOntologyOrViewVersionById(ONT_VERSION_ID);
-		Iterator<ClassBean> clsIt = ocMgr.listAllClasses(oBean);
+		System.out.println("\n\ntestFindAllClasses()");
+		OntologyBean ontologyBean = getLatestOntologyBean(TEST_PIZZA_DISPLAY_NAME);
+		Iterator<ClassBean> clsIt = ocMgr.listAllClasses(ontologyBean);
 		
 		int numClasses = 0;
 		for (; clsIt.hasNext(); ) {
@@ -141,4 +131,28 @@ public class OntologyRetrievalManagerProtegeTest extends AbstractBioPortalTest {
 	private void outputConcept(ClassBean classBean) {
 		System.out.println(classBean);
 	}
+	
+	/**
+	 * return the latest NcboOntology that has the display_label provided
+	 * 
+	 * @param displayLabel
+	 * @return
+	 * @throws Exception
+	 */
+	public OntologyBean getLatestOntologyBean(String displayLabel)
+			throws Exception {
+		List<OntologyBean> list = ontologyMetadataManager
+				.findLatestOntologyVersions();
+		OntologyBean ob= null;
+		for (OntologyBean ncboOntology : list) {
+			if (ncboOntology.getDisplayLabel().equalsIgnoreCase(displayLabel)) {
+				if (ob== null || ncboOntology.getId() > ob.getId()) {
+					ob= ncboOntology;
+				}
+			}
+		}
+
+		return ob;
+	}	
+	
 }
