@@ -416,4 +416,4 @@ bioportal.notes.changes.includes.path=${bioportal.static.resource.path}/metadata
 #
 # For Notification Service
 #
-notification.email.from=mdorf@stanford.edu
+notification.email.from=youremail@yourserver.edu
