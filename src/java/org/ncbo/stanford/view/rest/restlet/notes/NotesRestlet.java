@@ -121,6 +121,9 @@ public class NotesRestlet extends AbstractBaseRestlet {
 				notesList = listNotesForConcept(ont, conceptId, threaded);
 			} else if (noteId != null) {
 				notesList = listNotesForNote(ont, noteId, threaded);
+				if (notesList == null || notesList.isEmpty()) {
+					throw new NoteNotFoundException();
+				}
 			} else if (instanceId != null) {
 				notesList = listNotesForIndividual(ont, instanceId, threaded);
 			} else {
@@ -128,9 +131,6 @@ public class NotesRestlet extends AbstractBaseRestlet {
 						topLevelOnly);
 			}
 
-			if (notesList == null || notesList.isEmpty()) {
-				throw new NoteNotFoundException();
-			}
 		} catch (NoteNotFoundException nnfe) {
 			response
 					.setStatus(Status.CLIENT_ERROR_NOT_FOUND, nnfe.getMessage());
