@@ -412,3 +412,8 @@ notes.jdbc.driver=com.mysql.jdbc.Driver
 notes.jdbc.username=yourprotegedbuser
 notes.jdbc.password=yourprotegedbpassword
 bioportal.notes.changes.includes.path=${bioportal.static.resource.path}/metadata/notes/changes.owl
+
+#
+# For Notification Service
+#
+notification.email.from=mdorf@stanford.edu

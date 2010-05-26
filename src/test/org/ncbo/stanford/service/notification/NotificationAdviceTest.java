@@ -6,17 +6,30 @@ package org.ncbo.stanford.service.notification;
  */
 import org.junit.Test;
 import org.ncbo.stanford.AbstractBioPortalTest;
-import org.ncbo.stanford.aop.notification.Notification;
+import org.ncbo.stanford.bean.OntologyBean;
+import org.ncbo.stanford.manager.metadata.OntologyMetadataManager;
 import org.springframework.beans.factory.annotation.Autowired;
- 
+
 public class NotificationAdviceTest extends AbstractBioPortalTest {
 
 	@Autowired
-	private Notification notificationMail;
+	private OntologyMetadataManager ontologyMetadataManager;
 
 	@Test
-	public void testaround() {
-		notificationMail.around("3333", "5555");
+	public void testNotificationService() {
 
+		try {
+			ontologyMetadataManager.updateOntologyOrView(createOntolgyBean());
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
+	}
+
+	private OntologyBean createOntolgyBean() {
+		OntologyBean bean = new OntologyBean(false);
+		// NPO Ontology
+		bean.setId(42785);
+		return bean;
 	}
 }

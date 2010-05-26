@@ -46,6 +46,7 @@
 				<value>org/ncbo/stanford/domain/generated/NcboLStatus.hbm.xml</value>
 				<value>org/ncbo/stanford/domain/generated/NcboUsageLog.hbm.xml</value>				
 				<value>org/ncbo/stanford/domain/generated/NcboLUsageEventType.hbm.xml</value>
+				<value>org/ncbo/stanford/domain/generated/NcboUserSubscriptions.hbm.xml</value>			
 			</list>
 		</property>
 	</bean>
@@ -1351,16 +1352,25 @@
 			<value>@bioportalallconceptsmaxpagesize@</value>
 		</constructor-arg>
 	</bean>
-	<!-- Notification Configuration -->
-	<bean id="ontologyservice" class="org.ncbo.stanford.aop.notification.Notification">
-
-	</bean>
-	<bean id="notificationService"
+	 
+	 <!-- Notification Configuration -->
+	 
+	 <bean id="notificationService"
 		class="org.ncbo.stanford.service.notification.impl.NotificationServiceImpl">
 		<property name="notificationManagerMap">
 			<ref local="notificationManagerMap" />
 		</property>
+		<property name="ncboUserSubscriptionsDAO">
+		<ref local="NcboUserSubscriptionsDAO"/>
+		</property>
+		<property name="ncboUserDAO">
+		<ref local="NcboUserDAO"/>
+		</property>
+		<property name="textManager">
+		<ref local="textManager"/>
+		</property> 
 	</bean>
+	
 	<!-- Maps contains the  notificationManagerEmail to the application -->
 	<util:map id="notificationManagerMap" map-class="java.util.HashMap">
 		<entry>
@@ -1376,48 +1386,40 @@
 		class="org.ncbo.stanford.manager.notification.impl.NotificationManagerEmailImpl">
 		<property name="mailService">
 			<ref bean="mailService" />
-		</property>
-
-		<property name="ncboAppTextDAO">
-			<ref local="ncboAppTextDAO" />
-		</property>
-
+		</property> 
 
 	</bean>
 
-
-	<bean id="ncboUserDAO" class="org.ncbo.stanford.domain.generated.NcboUserDAO">
-		<property name="hibernateTemplate">
-			<ref bean="hibernateTemplate" />
-		</property>
-	</bean>
+	 
 	<bean id="ncboOntologyFileDAO" class="org.ncbo.stanford.domain.generated.NcboOntologyFileDAO">
 		<property name="hibernateTemplate">
 			<ref bean="hibernateTemplate" />
 		</property>
 	</bean>
-
-	<bean id="ncboAppTextDAO" class="org.ncbo.stanford.domain.generated.NcboAppTextDAO">
-		<property name="hibernateTemplate">
-			<ref bean="hibernateTemplate" />
+ 
+	<bean id="NcboUserSubscriptionsDAO"
+		class="org.ncbo.stanford.domain.generated.NcboUserSubscriptionsDAO">
+		<property name="sessionFactory">
+			<ref bean="sessionFactory" />
 		</property>
-
-
-	</bean>
-	<bean id="ncboAppText" class="org.ncbo.stanford.domain.generated.NcboAppText" />
+	</bean>  
+	
 	<bean id="advice" class="org.ncbo.stanford.aop.notification.NotificationAdvice">
 		<property name="notificationService">
 			<ref local="notificationService" />
 		</property>
 
 	</bean>
+	
 	<aop:config>
 		<aop:aspect ref="advice">
 			<aop:pointcut id="aroundService"
-				expression="execution(* org.ncbo.stanford.aop.notification.Notification.around(String,String))
-                    and args(ontologyVersion,ontologyId)" />
-
-			<aop:around pointcut-ref="aroundService" method="notify" />
+				expression="execution(* org.ncbo.stanford.manager.metadata.OntologyMetadataManager.updateOntologyOrView(org.ncbo.stanford.bean.OntologyBean))
+                    and args(ontologyBean)" />
+			
+			<aop:after-returning pointcut-ref="aroundService" method="adviceUpdateOntology" />
+			
+			
 		</aop:aspect>
 	</aop:config>
 
@@ -1427,6 +1429,7 @@
 		<constructor-arg value="email@optrasystems.com" />
 		<constructor-arg value="password" />
 	</bean>
+	
 	<bean id="mailSession" class="javax.mail.Session" factory-method="getInstance">
 		<constructor-arg>
 			<props>
@@ -1439,12 +1442,14 @@
 		</constructor-arg>
 		<constructor-arg ref="smtpAuthenticator" />
 	</bean>
+	
 	<bean id="mailsender" class="org.springframework.mail.javamail.JavaMailSenderImpl">
-		<property name="host" value="mail.optrasystems.com" />
+		<property name="host" value="@bioportalsmtpserver@" />
 		<property name="session" ref="mailSession" />
 
 	</bean>
+	
 	<bean id="mailService" class="org.ncbo.stanford.util.mail.impl.MailServiceImpl">
 		<property name="mailsender" ref="mailsender" />
-	</bean>
+	</bean>	
 </beans>

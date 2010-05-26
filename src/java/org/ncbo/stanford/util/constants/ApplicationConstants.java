@@ -105,6 +105,14 @@ public interface ApplicationConstants {
 	// Content retrieval constants
 	public static final int FROM_DB = 1200;
 	public static final int FROM_CACHE = 1201;
+	
+	/**
+	 * Notification Service constants
+	 */
+	// TAG Constants
+	public static final String ONTOLOGY_VERGION_ID = "ONTOLOGY_VERGION_ID";
+	public static final String USERNAME = "USERNAME";
+	public static final String SUBJECT_PREFIX = "_SUB";
 
 	/**
 	 * XML declaration

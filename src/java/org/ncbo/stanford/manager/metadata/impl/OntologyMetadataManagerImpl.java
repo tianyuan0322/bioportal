@@ -73,24 +73,24 @@ public class OntologyMetadataManagerImpl extends
 	}
 
 	public void updateOntologyOrView(OntologyBean ob) throws Exception {
-		OWLModel metadata = getMetadataOWLModel();
-		OWLIndividual ontOrViewVerInd;
-
-		if (ob.isView()) {
-			ontOrViewVerInd = getOntologyViewInstance(metadata, ob.getId(),
-					DO_NOT_CREATE_IF_MISSING);
-		} else {
-			ontOrViewVerInd = getOntologyInstance(metadata, ob.getId(),
-					DO_NOT_CREATE_IF_MISSING);
-		}
-
-		if (ontOrViewVerInd == null) {
-			throw new MetadataException("Metadata for ontology "
-					+ (ob.isView() ? "view" : "") + ob.getId()
-					+ " could not be updated because it could not be found!");
-		}
-
-		saveOrUpdate(metadata, ontOrViewVerInd, ob);
+//		OWLModel metadata = getMetadataOWLModel();
+//		OWLIndividual ontOrViewVerInd;
+//
+//		if (ob.isView()) {
+//			ontOrViewVerInd = getOntologyViewInstance(metadata, ob.getId(),
+//					DO_NOT_CREATE_IF_MISSING);
+//		} else {
+//			ontOrViewVerInd = getOntologyInstance(metadata, ob.getId(),
+//					DO_NOT_CREATE_IF_MISSING);
+//		}
+//
+//		if (ontOrViewVerInd == null) {
+//			throw new MetadataException("Metadata for ontology "
+//					+ (ob.isView() ? "view" : "") + ob.getId()
+//					+ " could not be updated because it could not be found!");
+//		}
+//
+//		saveOrUpdate(metadata, ontOrViewVerInd, ob);
 	}
 
 	/**

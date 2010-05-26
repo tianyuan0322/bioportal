@@ -1,6 +1,7 @@
 package org.ncbo.stanford.aop.notification;
 
-import org.aspectj.lang.ProceedingJoinPoint;
+import org.ncbo.stanford.bean.OntologyBean;
+import org.ncbo.stanford.enumeration.NotificationTypeEnum;
 import org.ncbo.stanford.service.notification.NotificationService;
 
 /**
@@ -9,14 +10,14 @@ import org.ncbo.stanford.service.notification.NotificationService;
  */
 
 public class NotificationAdvice {
+	
 	private NotificationService notificationService;
 
 	/**
 	 * 
 	 * @param notificationService
 	 */
-	public void setNotificationService(
-			NotificationService notificationService) {
+	public void setNotificationService(NotificationService notificationService) {
 		this.notificationService = notificationService;
 	}
 
@@ -28,16 +29,12 @@ public class NotificationAdvice {
 	 * @return
 	 * @throws Throwable
 	 */
-	public Object notify(ProceedingJoinPoint call, String ontologyVersion,
-			String ontologyId) throws Throwable {
+	public void adviceUpdateOntology(OntologyBean ontologyBean)
+			throws Throwable {
 		// This sendNotification() is implemented in NotificationService
-		notificationService.sendNotification();
-
-		try {
-			return call.proceed();
-		} finally {
-
-		}
+		notificationService.sendNotification(
+				NotificationTypeEnum.UPDATE_ONTOLOGY_NOTIFICATION, ontologyBean
+						.getId().toString());
 
 	}
 

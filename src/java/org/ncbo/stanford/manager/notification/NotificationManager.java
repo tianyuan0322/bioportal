@@ -1,5 +1,7 @@
 package org.ncbo.stanford.manager.notification;
 
+import org.ncbo.stanford.bean.UserBean;
+
 /**
  * An interface designed to provide an abstraction layer to notification
  * operations. The layer will consume this interface instead of directly calling
@@ -8,11 +10,15 @@ package org.ncbo.stanford.manager.notification;
  * @author g.prakash
  */
 public interface NotificationManager {
-	
+
 	/**
 	 * 
-	 * @return
+	 * @param subject
+	 * @param message
+	 * @param from
+	 * @param userBean
 	 */
-	public String sendNotification();
+	public void sendNotification(String subject, String message, String from,
+			UserBean userBean);
 
 }

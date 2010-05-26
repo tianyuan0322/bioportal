@@ -40,8 +40,7 @@ public class MailServiceImpl implements MailService {
 			msghelper.setFrom(from);
 			msghelper.setTo(email);
 			msghelper.setSubject(subject);
-			msghelper.setText(sendingMessage);
-			msghelper.setReplyTo("g.prakash@optrasystems.com");
+			msghelper.setText(sendingMessage, true); 
 
 			this.mailsender.send(message);
 		} catch (Exception ex) {
