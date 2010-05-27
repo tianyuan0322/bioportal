@@ -18,8 +18,8 @@ public class NcboUserSubscriptions extends AbstractNcboUserSubscriptions
 	}
 
 	/** full constructor */
-	public NcboUserSubscriptions(Integer userId, String ontologyVersionId) {
-		super(userId, ontologyVersionId);
+	public NcboUserSubscriptions(Integer userId, String ontologyId) {
+		super(userId, ontologyId);
 	}
 
 }

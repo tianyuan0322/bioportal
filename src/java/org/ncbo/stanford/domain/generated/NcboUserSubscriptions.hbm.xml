@@ -13,8 +13,8 @@
         <property name="userId" type="java.lang.Integer">
             <column name="user_id" not-null="true" />
         </property>
-        <property name="ontologyVersionId" type="java.lang.String">
-            <column name="ontology_version_id" length="11" />
+        <property name="ontologyId" type="java.lang.String">
+            <column name="ontology_id" length="11" />
         </property>
     </class>
 </hibernate-mapping>

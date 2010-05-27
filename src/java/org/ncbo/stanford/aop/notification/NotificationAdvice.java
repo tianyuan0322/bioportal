@@ -33,8 +33,7 @@ public class NotificationAdvice {
 			throws Throwable {
 		// This sendNotification() is implemented in NotificationService
 		notificationService.sendNotification(
-				NotificationTypeEnum.UPDATE_ONTOLOGY_NOTIFICATION, ontologyBean
-						.getId().toString());
+				NotificationTypeEnum.UPDATE_ONTOLOGY_NOTIFICATION, ontologyBean);
 
 	}
 

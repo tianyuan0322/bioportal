@@ -24,7 +24,7 @@ public class NcboUserSubscriptionsDAO extends HibernateDaoSupport {
 			.getLog(NcboUserSubscriptionsDAO.class);
 	// property constants
 	public static final String USER_ID = "userId";
-	public static final String ONTOLOGY_VERSION_ID = "ontologyVersionId";
+	public static final String ONTOLOGY_ID = "ontologyId";
 
 	protected void initDao() {
 		// do nothing
@@ -96,8 +96,8 @@ public class NcboUserSubscriptionsDAO extends HibernateDaoSupport {
 		return findByProperty(USER_ID, userId);
 	}
 
-	public List findByOntologyVersionId(Object ontologyVersionId) {
-		return findByProperty(ONTOLOGY_VERSION_ID, ontologyVersionId);
+	public List findByOntologyId(Object ontologyId) {
+		return findByProperty(ONTOLOGY_ID, ontologyId);
 	}
 
 	public List findAll() {

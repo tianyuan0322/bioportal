@@ -30,6 +30,7 @@ public class NotificationAdviceTest extends AbstractBioPortalTest {
 		OntologyBean bean = new OntologyBean(false);
 		// NPO Ontology
 		bean.setId(42785);
+		bean.setOntologyId(1083);
 		return bean;
 	}
 }

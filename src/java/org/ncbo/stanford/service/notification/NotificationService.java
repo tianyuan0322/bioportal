@@ -4,6 +4,7 @@
 package org.ncbo.stanford.service.notification;
 
 import org.ncbo.stanford.enumeration.NotificationTypeEnum;
+import org.ncbo.stanford.bean.OntologyBean;
 
 /**
  * @author g.prakash
@@ -21,5 +22,5 @@ public interface NotificationService {
 	 * @param ontology_id
 	 */
 	public void sendNotification(
-			NotificationTypeEnum notificationType, String ontology_id);
+			NotificationTypeEnum notificationType, OntologyBean ontologyBean);
 }

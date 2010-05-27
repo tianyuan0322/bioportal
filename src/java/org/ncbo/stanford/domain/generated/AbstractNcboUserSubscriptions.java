@@ -12,7 +12,7 @@ public abstract class AbstractNcboUserSubscriptions implements
 
 	private Integer id;
 	private Integer userId;
-	private String ontologyVersionId;
+	private String ontologyId;
 
 	// Constructors
 
@@ -26,10 +26,9 @@ public abstract class AbstractNcboUserSubscriptions implements
 	}
 
 	/** full constructor */
-	public AbstractNcboUserSubscriptions(Integer userId,
-			String ontologyVersionId) {
+	public AbstractNcboUserSubscriptions(Integer userId, String ontologyId) {
 		this.userId = userId;
-		this.ontologyVersionId = ontologyVersionId;
+		this.ontologyId = ontologyId;
 	}
 
 	// Property accessors
@@ -50,12 +49,12 @@ public abstract class AbstractNcboUserSubscriptions implements
 		this.userId = userId;
 	}
 
-	public String getOntologyVersionId() {
-		return this.ontologyVersionId;
+	public String getOntologyId() {
+		return this.ontologyId;
 	}
 
-	public void setOntologyVersionId(String ontologyVersionId) {
-		this.ontologyVersionId = ontologyVersionId;
+	public void setOntologyId(String ontologyId) {
+		this.ontologyId = ontologyId;
 	}
 
 }

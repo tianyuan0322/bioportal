@@ -15,6 +15,7 @@ import org.ncbo.stanford.service.notification.NotificationService;
 import org.ncbo.stanford.util.MessageUtils;
 import org.ncbo.stanford.util.constants.ApplicationConstants;
 import org.ncbo.stanford.util.textmanager.service.TextManager;
+import org.ncbo.stanford.bean.OntologyBean;
 
 /**
  * Implementation of NotificationService.
@@ -59,10 +60,10 @@ public class NotificationServiceImpl implements NotificationService {
 
 	@Override
 	public void sendNotification(NotificationTypeEnum notificationType,
-			String ontology_version_id) {
+			OntologyBean ontologyBean) {
 
 		List<NcboUserSubscriptions> ncboUserSubscriptions = ncboUserSubscriptionsDAO
-				.findByOntologyVersionId(ontology_version_id);
+				.findByOntologyId(ontologyBean.getOntologyId().toString());
 
 		for (NcboUserSubscriptions ncboUserSubscription : ncboUserSubscriptions) {
 			NcboUser ncboUser = ncboUserDAO.findById(ncboUserSubscription
@@ -76,8 +77,8 @@ public class NotificationServiceImpl implements NotificationService {
 			keywords = new HashMap<String, String>();
 
 			keywords.put(ApplicationConstants.ONTOLOGY_VERGION_ID,
-					ontology_version_id);
-			keywords.put(ApplicationConstants.USERNAME, ncboUser.getUsername());
+					ontologyBean.getId().toString());
+			keywords.put(ApplicationConstants.USERNAME, userBean.getUsername());
 
 			textManager.appendKeywords(keywords);
 			String message = textManager
