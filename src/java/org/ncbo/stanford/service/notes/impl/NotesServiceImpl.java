@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Set;
 
 import org.ncbo.stanford.bean.OntologyBean;
+import org.ncbo.stanford.bean.concept.AbstractConceptBean;
 import org.ncbo.stanford.bean.concept.ClassBean;
 import org.ncbo.stanford.bean.notes.AppliesToBean;
 import org.ncbo.stanford.bean.notes.NoteBean;
@@ -185,8 +186,9 @@ public class NotesServiceImpl implements NotesService {
 		for (Annotation annotation : annotations) {
 			if (annotation != null) {
 				if (threaded && !topLevelOnly) {
-					notes.add(convertAnnotationToNoteBean(annotation, ont,
-							true));
+					notes
+							.add(convertAnnotationToNoteBean(annotation, ont,
+									true));
 				} else {
 					notes.add(convertAnnotationToNoteBean(annotation, ont));
 				}
@@ -212,8 +214,7 @@ public class NotesServiceImpl implements NotesService {
 	public List<NoteBean> getAllNotesForConcept(OntologyBean ont,
 			ClassBean concept, Boolean threaded) {
 		NotesManager notesManager = notesPool.getNotesManagerForOntology(ont);
-		OntologyComponent oc = notesManager.getOntologyClass(concept
-				.getFullId());
+		OntologyComponent oc = notesManager.getOntologyClass(getFullIdProper(concept, ont));
 		Collection<Annotation> annotations = oc.getAssociatedAnnotations();
 
 		List<NoteBean> notesList = new ArrayList<NoteBean>();
@@ -261,7 +262,7 @@ public class NotesServiceImpl implements NotesService {
 		NotesManager notesManager = notesPool.getNotesManagerForOntology(ont);
 
 		Annotation note = notesManager.getNote(iri);
-		
+
 		if (note == null) {
 			throw new NoteNotFoundException();
 		}
@@ -506,6 +507,33 @@ public class NotesServiceImpl implements NotesService {
 			break;
 		}
 		return valueStore;
+	}
+
+	/**
+	 * Get an id based on the ontology type. OBO ontologies return the short id,
+	 * everything else uses the fullId.
+	 * 
+	 * This method exists in these classes:
+	 * NotesServiceImpl.java
+	 * NotesRestlet.java
+	 * 
+	 * @param concept
+	 * @param ont
+	 * @return
+	 */
+	private String getFullIdProper(AbstractConceptBean concept, OntologyBean ont) {
+		// This is a quick-and-dirty method to get the 'proper' id for a given
+		// concept. We're doing this because OBO ontologies aren't yet using a
+		// URI as their term ids. Once they start, we should remove this and
+		// just use the fullId.
+		if (ont.getFormat().equalsIgnoreCase("OBO")
+				|| ont.getFormat().equalsIgnoreCase("RRF")
+				|| ont.getFormat().equalsIgnoreCase("LEXGRID-XML")
+				|| ont.getFormat().equalsIgnoreCase("META")) {
+			return concept.getId();
+		} else {
+			return concept.getFullId();
+		}
 	}
 
 }

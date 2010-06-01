@@ -7,6 +7,7 @@ import javax.servlet.http.HttpServletRequest;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.ncbo.stanford.bean.OntologyBean;
+import org.ncbo.stanford.bean.concept.AbstractConceptBean;
 import org.ncbo.stanford.bean.concept.ClassBean;
 import org.ncbo.stanford.bean.concept.InstanceBean;
 import org.ncbo.stanford.bean.notes.NoteBean;
@@ -274,7 +275,7 @@ public class NotesRestlet extends AbstractBaseRestlet {
 							.getMessage("msg.error.conceptNotFound"));
 				}
 
-				appliesTo = concept.getFullId();
+				appliesTo = getFullIdProper(concept, ont);
 
 				break;
 			case Property:
@@ -288,7 +289,7 @@ public class NotesRestlet extends AbstractBaseRestlet {
 					throw new InstanceNotFoundException();
 				}
 
-				appliesTo = instance.getFullId();
+				appliesTo = getFullIdProper(instance, ont);
 
 				break;
 			case Note:
@@ -512,6 +513,33 @@ public class NotesRestlet extends AbstractBaseRestlet {
 		} finally {
 			xmlSerializationService
 					.generateStatusXMLResponse(request, response);
+		}
+	}
+
+	/**
+	 * Get an id based on the ontology type. OBO ontologies return the short id,
+	 * everything else uses the fullId.
+	 * 
+	 * This method exists in these classes:
+	 * NotesServiceImpl.java
+	 * NotesRestlet.java
+	 * 
+	 * @param concept
+	 * @param ont
+	 * @return
+	 */
+	private String getFullIdProper(AbstractConceptBean concept, OntologyBean ont) {
+		// This is a quick-and-dirty method to get the 'proper' id for a given
+		// concept. We're doing this because OBO ontologies aren't yet using a
+		// URI as their term ids. Once they start, we should remove this and
+		// just use the fullId.
+		if (ont.getFormat().equalsIgnoreCase("OBO")
+				|| ont.getFormat().equalsIgnoreCase("RRF")
+				|| ont.getFormat().equalsIgnoreCase("LEXGRID-XML")
+				|| ont.getFormat().equalsIgnoreCase("META")) {
+			return concept.getId();
+		} else {
+			return concept.getFullId();
 		}
 	}
 
