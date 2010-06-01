@@ -1,6 +1,9 @@
 package org.ncbo.stanford.manager;
 
+import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.StringTokenizer;
 
 import org.LexGrid.LexBIG.DataModel.Collections.AssociatedConceptList;
@@ -101,11 +104,11 @@ public abstract class AbstractOntologyManagerLexGrid {
 			throws Exception {
 		List<OntologyBean> list = ontologyMetadataManager
 				.findLatestOntologyVersions();
-		OntologyBean ob= null;
+		OntologyBean ob = null;
 		for (OntologyBean ncboOntology : list) {
 			if (ncboOntology.getDisplayLabel().equalsIgnoreCase(displayLabel)) {
-				if (ob== null || ncboOntology.getId() > ob.getId()) {
-					ob= ncboOntology;
+				if (ob == null || ncboOntology.getId() > ob.getId()) {
+					ob = ncboOntology;
 				}
 			}
 		}
@@ -120,21 +123,22 @@ public abstract class AbstractOntologyManagerLexGrid {
 	 * @return
 	 * @throws Exception
 	 */
-	public OntologyBean getOntologyBeanByDisplayNameAndOntologyId(String displayLabel, Integer ontologyId)
-			throws Exception {
+	public OntologyBean getOntologyBeanByDisplayNameAndOntologyId(
+			String displayLabel, Integer ontologyId) throws Exception {
 		List<OntologyBean> list = ontologyMetadataManager
 				.findAllOntologyOrViewVersionsById(ontologyId, false);
-		OntologyBean ob= null;
+		OntologyBean ob = null;
 		for (OntologyBean ncboOntology : list) {
 			if (ncboOntology.getDisplayLabel().equalsIgnoreCase(displayLabel)) {
-				if (ob== null || ncboOntology.getId() > ob.getId()) {
-					ob= ncboOntology;
+				if (ob == null || ncboOntology.getId() > ob.getId()) {
+					ob = ncboOntology;
 				}
 			}
 		}
 
 		return ob;
 	}
+
 	/**
 	 * 
 	 * @param ontologyVersionId
@@ -298,14 +302,14 @@ public abstract class AbstractOntologyManagerLexGrid {
 		return count;
 
 	}
-	
+
 	protected String getFullId(OntologyBean ontologyBean, String code) {
 		String fullId = code;
 		String modCode = code.replace(':', '_');
 		if (ontologyBean != null) {
 			if (ApplicationConstants.FORMAT_OBO.equalsIgnoreCase(ontologyBean
 					.getFormat())) {
-				fullId = "http://purl.obolibrary.org/obo/" + modCode;
+				fullId = getOBOFullId(ontologyBean, code);
 			}
 			if (ApplicationConstants.FORMAT_UMLS_RRF
 					.equalsIgnoreCase(ontologyBean.getFormat())) {
@@ -320,9 +324,69 @@ public abstract class AbstractOntologyManagerLexGrid {
 
 		}
 		return fullId;
-	}	
-	
-	
+	}
 
-	
+	private String getOBOFullId(OntologyBean ontologyBean, String code) {
+		String prefix = "";
+		String fullId ="";
+		String modCode = code.replace(':', '_');
+		String codeSplitArray[] = code.split(":");
+		if (codeSplitArray.length >= 2) {
+			prefix = codeSplitArray[0];
+		}
+		// The OBO FullId is generated based on which four categories the
+		// ontology id falls under.
+
+		// Category 4: The ontologies have no URIs. We create a default URI of
+		// the form: http://purl.bioontology.org/ontology/PREFIX/PREFIX_xxxx
+		if (StringUtils.isNotBlank(ontologyBean.getAbbreviation())) {
+		  fullId = "http://purl.bioontology.org/ontology/"
+				+ ontologyBean.getAbbreviation() + "/" + modCode;
+		} else {
+			fullId = "http://purl.bioontology.org/ontology/"
+				+ prefix + "/" + modCode;
+		}
+
+		// Category 1: Ontologies that have their own URI scheme
+		Integer category1_array[] = { 1072, 1073, 1074, 1075 };
+		Set<Integer> category1_set = new HashSet<Integer>(Arrays
+				.asList(category1_array));
+		if (category1_set.contains(ontologyBean.getOntologyId())) {
+			fullId = "http://www.cellcycleontology.org/ontology/owl/" + prefix
+					+ "#" + modCode;
+		}
+
+		// Category 2: The ontologies have transitioned to the new scheme such
+		// as (CHEBI and PRO)
+		// The url will be in the form:
+		// http://purl.obolibrary.org/obo/prefix_xxxxx
+		Integer category2_array[] = { 1007, 1062 };
+		Set<Integer> category2_set = new HashSet<Integer>(Arrays
+				.asList(category2_array));
+		if (category2_set.contains(ontologyBean.getOntologyId())) {
+			fullId = "http://purl.obolibrary.org/obo/" + modCode;
+		}
+
+		// Category 3: Some ontologies use the "legacy" purls of the form:
+		// http://purl.org/obo/owl/<prefix>#<prefix>_xxxxx
+
+		Integer category3_array[] = { 1090, 1370, 1222, 1114, 1023, 1005, 1049,
+				1048, 1067, 1006, 1047, 1001, 1037, 1063, 1144, 1008, 1016,
+				1015, 1069, 1012, 1013, 1064, 1017, 1019, 1397, 1070, 1021,
+				1022, 1009, 1125, 1362, 1050, 1311, 1025, 1105, 1395, 1027,
+				1152, 1029, 1030, 1077, 1000, 1010, 1031, 1026, 1132, 1328,
+				1094, 1035, 1107, 1014, 1043, 1036, 1038, 1493, 1108, 1492,
+				1490, 1041, 1040, 1500, 1044, 1109, 1078, 1091, 1224, 1046,
+				1419, 1110, 1081, 1065, 1111, 1404, 1112, 1095, 1115, 1051,
+
+		};
+		Set<Integer> category3_set = new HashSet<Integer>(Arrays
+				.asList(category3_array));
+		if (category3_set.contains(ontologyBean.getOntologyId())) {
+			fullId = "http://purl.org/obo/owl/" + prefix + "#" + modCode;
+		}
+
+		return fullId;
+	}
+
 }
