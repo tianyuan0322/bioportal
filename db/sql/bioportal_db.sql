@@ -201,5 +201,16 @@ CREATE TABLE `ncbo_user_role` (
   CONSTRAINT `ncbo_user_role_fk_new` FOREIGN KEY (`user_id`) REFERENCES `ncbo_user` (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=38548 DEFAULT CHARSET=latin1 CHECKSUM=1 DELAY_KEY_WRITE=1 ROW_FORMAT=DYNAMIC;
 
+/*Table structure for table `ncbo_user_subscriptions` */
+
+DROP TABLE IF EXISTS `ncbo_user_subscriptions`;
+
+CREATE TABLE `ncbo_user_subscriptions` (
+  `id` int(11) NOT NULL,
+  `user_id` int(11) NOT NULL,
+  `ontology_id` varchar(11) DEFAULT 'NULL',
+  PRIMARY KEY (`id`)
+) ENGINE=MyISAM DEFAULT CHARSET=latin1;
+
 /*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
 /*!40014 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS */;
