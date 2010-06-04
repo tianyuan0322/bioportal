@@ -92,8 +92,8 @@ public class RdfServiceImpl extends ConceptServiceImpl implements RdfService {
 		System.out.println("********** PAEA ***" + ontologies.size() + " ontologies are in the processing queue.");
 		
 		int i=0;
-		for (OntologyBean ontoBean : ontologies) {
-			Integer ontologyVersionId = ontoBean.getId();
+		for (OntologyBean ont : ontologies) {
+			Integer ontologyVersionId = ont.getId();
 			i++;
 			
 			System.out.println("********** PAEA ***" + " currently processing " + i + " (of " + ontologies.size() + ").");
@@ -102,55 +102,55 @@ public class RdfServiceImpl extends ConceptServiceImpl implements RdfService {
 				throw new Exception("ontology version id cannot be null");
 			
 			try {
-				System.out.println("********** PAEA ***" + ontoBean.getId() + " is currently being processed.");
-				File file = new File(dir + File.separator + getFileName(ontoBean));
+				System.out.println("********** PAEA ***" + ont.getId() + " is currently being processed.");
+				File file = new File(dir + File.separator + getFileName(ont));
 				
-				if (StringHelper.isNullOrNullString(ontoBean.getAbbreviation())) {
-					System.out.println("********** PAEA ***" + " warning: "+ ontoBean.getId() + " has no abbreviation.");
+				if (StringHelper.isNullOrNullString(ont.getAbbreviation())) {
+					System.out.println("********** PAEA ***" + " warning: "+ ont.getId() + " has no abbreviation.");
 				}
 				
 				if (file.exists() 
 						/*
 						|| 
-						(!StringHelper.isNullOrNullString(ontoBean.getAbbreviation()))
+						(!StringHelper.isNullOrNullString(ont.getAbbreviation()))
 						&& (
-								ontoBean.getAbbreviation().equals("GO") // don't re-process
-								|| ontoBean.getAbbreviation().equals("SO") // don't re-process
-								|| ontoBean.getAbbreviation().equals("CCO") // don't re-process
-								|| ontoBean.getAbbreviation().equals("SNOMED") // don't re-process
-								|| ontoBean.getAbbreviation().equals("TO") // don't re-process
-								|| ontoBean.getAbbreviation().equals("WBbt") // don't re-process
-								|| ontoBean.getAbbreviation().equals("MIRO") // don't re-process
+								ont.getAbbreviation().equals("GO") // don't re-process
+								|| ont.getAbbreviation().equals("SO") // don't re-process
+								|| ont.getAbbreviation().equals("CCO") // don't re-process
+								|| ont.getAbbreviation().equals("SNOMED") // don't re-process
+								|| ont.getAbbreviation().equals("TO") // don't re-process
+								|| ont.getAbbreviation().equals("WBbt") // don't re-process
+								|| ont.getAbbreviation().equals("MIRO") // don't re-process
 						)
 						*/
 						
 				) {
-					System.out.println("********** PAEA ***" + ontoBean.getAbbreviation() + " is being skipped because it was already saved.");
-				} else if (ontoBean.isRemote()) {
-					System.out.println("********** PAEA ***" + ontoBean.getAbbreviation() + " is being skipped because it is flagged as isRemote=true.");
+					System.out.println("********** PAEA ***" + ont.getAbbreviation() + " is being skipped because it was already saved.");
+				} else if (ont.isRemote()) {
+					System.out.println("********** PAEA ***" + ont.getAbbreviation() + " is being skipped because it is flagged as isRemote=true.");
 				} else {
 					// generate the RDF file!
-					generateRdf(manager, dir, ontologyVersionId, false);
+					generateRdf(manager, dir, ont);
 				}
 				
-				System.out.println("********** PAEA ***" + ontoBean.getAbbreviation() + " has been successfully processed.");
+				System.out.println("********** PAEA ***" + ont.getAbbreviation() + " has been successfully processed.");
 			} catch (Exception e) {
 				e.printStackTrace();
-				System.out.println("********** PAEA ***" + ontoBean.getId() + " could not be successfully processed.");
+				System.out.println("********** PAEA ***" + ont.getId() + " could not be successfully processed.");
 			}
 		}
 	}
 	
-	public OWLOntology generateRdf(OWLOntologyManager manager, String dir, Integer ontologyVersionId, boolean isVirtual) throws Exception {
+	public OWLOntology generateRdf(OWLOntologyManager manager, String dir, OntologyBean ont) throws Exception {
 		// Pass an empty list of concepts. Meaning, get ALL of them.
-		return generateRdf(manager, dir, ontologyVersionId, isVirtual, (List<String>)null);
+		return generateRdf(manager, dir, ont, (List<String>)null);
 	}
 	
-	public OWLOntology generateRdf(OWLOntologyManager manager, String dir, Integer ontologyVersionId, boolean isVirtual, String conceptId) throws Exception {
+	public OWLOntology generateRdf(OWLOntologyManager manager, String dir, OntologyBean ont, String conceptId) throws Exception {
 		// Pass a singleton concept list.
 		ArrayList<String> conceptIds = new ArrayList<String>(1);
 		conceptIds.add(conceptId);
-		return generateRdf(manager, dir, ontologyVersionId, isVirtual, conceptIds);
+		return generateRdf(manager, dir, ont, conceptIds);
 	}
 
 	/**
@@ -163,20 +163,15 @@ public class RdfServiceImpl extends ConceptServiceImpl implements RdfService {
 	 * @return
 	 * @throws Exception
 	 */
-	public OWLOntology generateRdf(OWLOntologyManager manager, String dir, Integer ontologyVersionId, boolean isVirtual, List<String> conceptIds)
+	public OWLOntology generateRdf(OWLOntologyManager manager, String dir, OntologyBean ont, List<String> conceptIds)
 			throws Exception {
 		
 		long startTime = System.currentTimeMillis();
 
-		// Get the ontology bean.
-		OntologyBean ontoBean = isVirtual ? 
-				ontologyMetadataManager.findLatestOntologyOrViewVersionById(ontologyVersionId) : 
-					ontologyMetadataManager.findOntologyOrViewVersionById(ontologyVersionId);
+		OWLOntology ontology = manager.createOntology(IRI.create(getOntologyUri(ont,conceptIds)));
+		File file = new File(dir + File.separator + getFileName(ont));
 		
-		OWLOntology ontology = manager.createOntology(IRI.create(getOntologyUri(ontoBean,conceptIds)));
-		File file = new File(dir + File.separator + getFileName(ontoBean));
-		
-		useOwlApi(manager, ontology, ontoBean, conceptIds);
+		useOwlApi(manager, ontology, ont, conceptIds);
 		
 		long owlTime = System.currentTimeMillis();
 		long owlElapsed = owlTime - startTime;
@@ -198,7 +193,7 @@ public class RdfServiceImpl extends ConceptServiceImpl implements RdfService {
 	}
 	
 	private void useOwlApi(OWLOntologyManager manager, OWLOntology ontology, 
-			OntologyBean ontoBean, List<String>conceptIds) throws Exception {
+			OntologyBean ont, List<String>conceptIds) throws Exception {
 		
 		Hashtable<String,String> namedSlots = new Hashtable<String, String>();
 		
@@ -209,8 +204,8 @@ public class RdfServiceImpl extends ConceptServiceImpl implements RdfService {
 		OWLAnnotation ontologyInfoAnnotation;
 		
 		// version
-		if (ontoBean.getId() != null) {
-			ontologyInfoLiteral = factory.getOWLStringLiteral(ontoBean.getId().toString());
+		if (ont.getId() != null) {
+			ontologyInfoLiteral = factory.getOWLStringLiteral(ont.getId().toString());
 			ontologyInfoAnnotation = factory.getOWLAnnotation(
 					factory.getOWLAnnotationProperty(IRI.create(BIOPORTAL_PURL_BASE + "bioportal/id")), 
 					ontologyInfoLiteral);
@@ -218,8 +213,8 @@ public class RdfServiceImpl extends ConceptServiceImpl implements RdfService {
 		}
 
 		// label
-		if (!StringHelper.isNullOrNullString(ontoBean.getDisplayLabel())) {
-			ontologyInfoLiteral = factory.getOWLStringLiteral(ontoBean.getDisplayLabel());
+		if (!StringHelper.isNullOrNullString(ont.getDisplayLabel())) {
+			ontologyInfoLiteral = factory.getOWLStringLiteral(ont.getDisplayLabel());
 			ontologyInfoAnnotation = factory.getOWLAnnotation(
 					factory.getOWLAnnotationProperty(IRI.create(BIOPORTAL_PURL_BASE + "bioportal/displayLabel")), 
 					ontologyInfoLiteral);
@@ -227,8 +222,8 @@ public class RdfServiceImpl extends ConceptServiceImpl implements RdfService {
 		}
 
 		// virtual ontology id
-		if (ontoBean.getOntologyId() != null) {
-			ontologyInfoLiteral = factory.getOWLStringLiteral(ontoBean.getOntologyId().toString());
+		if (ont.getOntologyId() != null) {
+			ontologyInfoLiteral = factory.getOWLStringLiteral(ont.getOntologyId().toString());
 			ontologyInfoAnnotation = factory.getOWLAnnotation(
 					factory.getOWLAnnotationProperty(IRI.create(BIOPORTAL_PURL_BASE + "bioportal/ontologyId")), 
 					ontologyInfoLiteral);
@@ -237,15 +232,15 @@ public class RdfServiceImpl extends ConceptServiceImpl implements RdfService {
 		
 		// ontology uri
 		// assert ontology URI not null
-		ontologyInfoLiteral = factory.getOWLStringLiteral(getOntologyUri(ontoBean,conceptIds));
+		ontologyInfoLiteral = factory.getOWLStringLiteral(getOntologyUri(ont,conceptIds));
 		ontologyInfoAnnotation = factory.getOWLAnnotation(
 				factory.getOWLAnnotationProperty(IRI.create(BIOPORTAL_PURL_BASE + "bioportal/uri")), 
 				ontologyInfoLiteral);
 		manager.applyChange(new AddOntologyAnnotation(ontology,ontologyInfoAnnotation));
 		
 		// version number
-		if (!StringHelper.isNullOrNullString(ontoBean.getVersionNumber())) {
-			ontologyInfoLiteral = factory.getOWLStringLiteral(ontoBean.getVersionNumber());
+		if (!StringHelper.isNullOrNullString(ont.getVersionNumber())) {
+			ontologyInfoLiteral = factory.getOWLStringLiteral(ont.getVersionNumber());
 			ontologyInfoAnnotation = factory.getOWLAnnotation(
 					factory.getOWLAnnotationProperty(IRI.create(BIOPORTAL_PURL_BASE + "bioportal/versionNumber")), 
 					ontologyInfoLiteral);
@@ -253,8 +248,8 @@ public class RdfServiceImpl extends ConceptServiceImpl implements RdfService {
 		}
 		
 		// description
-		if (!StringHelper.isNullOrNullString(ontoBean.getDescription())) {
-			ontologyInfoLiteral = factory.getOWLStringLiteral(ontoBean.getDescription());
+		if (!StringHelper.isNullOrNullString(ont.getDescription())) {
+			ontologyInfoLiteral = factory.getOWLStringLiteral(ont.getDescription());
 			ontologyInfoAnnotation = factory.getOWLAnnotation(
 					factory.getOWLAnnotationProperty(IRI.create(BIOPORTAL_PURL_BASE + "bioportal/description")), 
 					ontologyInfoLiteral);
@@ -271,8 +266,8 @@ public class RdfServiceImpl extends ConceptServiceImpl implements RdfService {
 		manager.applyChange(new AddOntologyAnnotation(ontology,ontologyInfoAnnotation));
 		
 		// abbreviation
-		if (!StringHelper.isNullOrNullString(ontoBean.getAbbreviation())) {
-			ontologyInfoLiteral = factory.getOWLStringLiteral(ontoBean.getAbbreviation());
+		if (!StringHelper.isNullOrNullString(ont.getAbbreviation())) {
+			ontologyInfoLiteral = factory.getOWLStringLiteral(ont.getAbbreviation());
 			ontologyInfoAnnotation = factory.getOWLAnnotation(
 					factory.getOWLAnnotationProperty(IRI.create(BIOPORTAL_PURL_BASE + "bioportal/abbreviation")), 
 					ontologyInfoLiteral);
@@ -280,8 +275,8 @@ public class RdfServiceImpl extends ConceptServiceImpl implements RdfService {
 		}
 		
 		// format
-		if (!StringHelper.isNullOrNullString(ontoBean.getFormat())) {
-			ontologyInfoLiteral = factory.getOWLStringLiteral(ontoBean.getFormat());
+		if (!StringHelper.isNullOrNullString(ont.getFormat())) {
+			ontologyInfoLiteral = factory.getOWLStringLiteral(ont.getFormat());
 			ontologyInfoAnnotation = factory.getOWLAnnotation(
 					factory.getOWLAnnotationProperty(IRI.create(BIOPORTAL_PURL_BASE + "bioportal/format")), 
 					ontologyInfoLiteral);
@@ -299,9 +294,9 @@ public class RdfServiceImpl extends ConceptServiceImpl implements RdfService {
 		manager.addAxiom(ontology, factory.getOWLDeclarationAxiom(factory.getOWLAnnotationProperty(IRI.create(skosNotation))));
 
 		// Use BioPortal metadata slots.
-		String synonymSlot = ontoBean.getSynonymSlot();
-		String preferredNameSlot = ontoBean.getPreferredNameSlot();
-		String definitionSlot = ontoBean.getDocumentationSlot();
+		String synonymSlot = ont.getSynonymSlot();
+		String preferredNameSlot = ont.getPreferredNameSlot();
+		String definitionSlot = ont.getDocumentationSlot();
 		
 		// Assert annotation sub-properties.
 		 
@@ -358,9 +353,9 @@ public class RdfServiceImpl extends ConceptServiceImpl implements RdfService {
 		if (conceptIds != null) {
 			// specified list (most likely a singleton) of conceptIds
 			for (String conceptId : conceptIds) {
-				ClassBean classBean = findConcept(ontoBean.getId(), conceptId, null, false, false);
+				ClassBean classBean = findConcept(ont.getId(), conceptId, null, false, false);
 				try {
-					addClassUsingOwlApi(manager, ontology, ontoBean, classBean, namedSlots);
+					addClassUsingOwlApi(manager, ontology, ont, classBean, namedSlots);
 				} catch (Exception e) {
 					System.out.println("********** PAEA ***" + "Unable to add class: " + conceptId);
 					e.printStackTrace();
@@ -369,12 +364,12 @@ public class RdfServiceImpl extends ConceptServiceImpl implements RdfService {
 			}
 		} else {
 			// all concepts from the ontology
-			OntologyRetrievalManager orm = getRetrievalManager(ontoBean);
+			OntologyRetrievalManager orm = getRetrievalManager(ont);
 			
 			i=0; // reset to 0
 			long start = System.currentTimeMillis();
 			
-			for (Iterator<ClassBean> classIter = orm.listAllClasses(ontoBean); classIter.hasNext(); ) {
+			for (Iterator<ClassBean> classIter = orm.listAllClasses(ont); classIter.hasNext(); ) {
 				if (i>0 && (i % 1000) == 0) {
 					long end = System.currentTimeMillis();
 					long elapsed = end - start;
@@ -383,7 +378,7 @@ public class RdfServiceImpl extends ConceptServiceImpl implements RdfService {
 				}
 				ClassBean classBean = classIter.next();
 				try {
-					addClassUsingOwlApi(manager, ontology, ontoBean, classBean, namedSlots);
+					addClassUsingOwlApi(manager, ontology, ont, classBean, namedSlots);
 				} catch (Exception e) {
 					System.out.println("********** PAEA ***" + "Unable to add class: " + i);
 					e.printStackTrace();
@@ -404,12 +399,12 @@ public class RdfServiceImpl extends ConceptServiceImpl implements RdfService {
 	}
 	
 	private void addClassUsingOwlApi(OWLOntologyManager manager, OWLOntology ontology, 
-			OntologyBean ontoBean, ClassBean classBean, Hashtable<String,String> namedSlots) throws Exception {
+			OntologyBean ont, ClassBean classBean, Hashtable<String,String> namedSlots) throws Exception {
 		
 		OWLDataFactory factory = manager.getOWLDataFactory();
 		
 		// Declare Class
-		OWLClass owlClass = factory.getOWLClass(IRI.create(getClassUri(ontoBean, classBean)));
+		OWLClass owlClass = factory.getOWLClass(IRI.create(getClassUri(ont, classBean)));
 		manager.addAxiom(ontology, factory.getOWLDeclarationAxiom(owlClass));
 		
 		// Internal ID (skos:notation)
@@ -481,7 +476,7 @@ public class RdfServiceImpl extends ConceptServiceImpl implements RdfService {
 		if (superClasses != null) {
 			for (ClassBean superClass: superClasses) {
 				manager.addAxiom(ontology, factory.getOWLSubClassOfAxiom(owlClass, 
-						factory.getOWLClass(IRI.create(getClassUri(ontoBean, superClass)))));
+						factory.getOWLClass(IRI.create(getClassUri(ont, superClass)))));
 				
 				// add skos:broader annotation
 				OWLAnnotation skosBroaderAnnotation = factory.getOWLAnnotation(factory.getOWLAnnotationProperty(IRI.create(skosBroader)),
@@ -490,7 +485,7 @@ public class RdfServiceImpl extends ConceptServiceImpl implements RdfService {
 
 				
 				// add OBO_ISA annotation
-				if (ontoBean.getFormat().toUpperCase().contains(OBO_FORMAT)) {
+				if (ont.getFormat().toUpperCase().contains(OBO_FORMAT)) {
 					OWLAnnotation oboIsaAnnotation = factory.getOWLAnnotation(factory.getOWLAnnotationProperty(IRI.create(oboIsa)),
 							factory.getOWLStringLiteral(superClass.getId()));
 					manager.addAxiom(ontology, factory.getOWLAnnotationAssertionAxiom(owlClass.getIRI(), oboIsaAnnotation));
@@ -502,10 +497,10 @@ public class RdfServiceImpl extends ConceptServiceImpl implements RdfService {
 		}
 		
 		// Other Annotations, such as UMLS CUI TUI and semanticType
-		getOtherAnnotationsUsingOwlApi(manager, ontology, factory, ontoBean, classBean, owlClass);
+		getOtherAnnotationsUsingOwlApi(manager, ontology, factory, ont, classBean, owlClass);
 	}
 	
-	private void getOtherAnnotationsUsingOwlApi(OWLOntologyManager manager, OWLOntology ontology, OWLDataFactory factory, OntologyBean ontoBean, ClassBean classBean, OWLClass owlClass) throws OWLOntologyChangeException {
+	private void getOtherAnnotationsUsingOwlApi(OWLOntologyManager manager, OWLOntology ontology, OWLDataFactory factory, OntologyBean ont, ClassBean classBean, OWLClass owlClass) throws OWLOntologyChangeException {
 		Set<Object> rels = classBean.getRelations().keySet();
 		for (Iterator<Object> iterator = rels.iterator(); iterator.hasNext();) {
 			Object relObj = iterator.next();
@@ -547,8 +542,8 @@ public class RdfServiceImpl extends ConceptServiceImpl implements RdfService {
 	 *  after careful negotiation and deliberation among Mayo and OBOFoundry representatives:
 	 *    https://docs.google.com/Doc?docid=0AaKiubd-CCXsZGRoemJoYndfMTFmNmpuN2hmdw&hl=en
 	 */
-	private String getClassUri(OntologyBean ontoBean, ClassBean classBean) {
-		String ontologyFormat = ontoBean.getFormat().toUpperCase();
+	private String getClassUri(OntologyBean ont, ClassBean classBean) {
+		String ontologyFormat = ont.getFormat().toUpperCase();
 		String classId = null;
 		String classIdPrefix = "";
 		String baseUri = null;
@@ -561,15 +556,15 @@ public class RdfServiceImpl extends ConceptServiceImpl implements RdfService {
 				classIdPrefix = oboId[0];
 				classId = oboId[1];
 			} else {
-				classIdPrefix = ontoBean.getOntologyId().toString();
+				classIdPrefix = ont.getOntologyId().toString();
 			}
 			classIdPrefix = getIRIFriendlyName(classIdPrefix);
 			classId = getIRIFriendlyName(classId);
 			fullUri = baseUri + classIdPrefix + "_" + classId;
 		} else if (ontologyFormat.contains("RRF") || ontologyFormat.contains("PROT")) {
 			baseUri = BIOPORTAL_PURL_BASE + "ontology/";
-			classIdPrefix = StringHelper.isNullOrNullString(ontoBean.getAbbreviation()) ?
-					ontoBean.getOntologyId().toString() : ontoBean.getAbbreviation();
+			classIdPrefix = StringHelper.isNullOrNullString(ont.getAbbreviation()) ?
+					ont.getOntologyId().toString() : ont.getAbbreviation();
 			classIdPrefix = getIRIFriendlyName(classIdPrefix);
 			classId = getIRIFriendlyName(classBean.getId());
 			fullUri = baseUri + classIdPrefix + "/" + classId;
@@ -596,11 +591,11 @@ public class RdfServiceImpl extends ConceptServiceImpl implements RdfService {
 	 * For a specific concept, we give a specific URI for it.
 	 * For many concepts, we return the general ontology URI for them.
 	 * 
-	 * @param ontoBean
+	 * @param ont
 	 * @param conceptIds
 	 * @return a PURLized ontology uri
 	 */
-	private String getOntologyUri(OntologyBean ontoBean, List<String> conceptIds) {
+	private String getOntologyUri(OntologyBean ont, List<String> conceptIds) {
 
 		// if a single concept's RDF is requested
 		String singleConceptId = null;
@@ -610,8 +605,8 @@ public class RdfServiceImpl extends ConceptServiceImpl implements RdfService {
 		}
 		
 		// use the ontology abbreviation, else it's virtual id
-		String prefix = StringHelper.isNullOrNullString(ontoBean.getAbbreviation()) ?
-				ontoBean.getOntologyId().toString() : ontoBean.getAbbreviation();
+		String prefix = StringHelper.isNullOrNullString(ont.getAbbreviation()) ?
+				ont.getOntologyId().toString() : ont.getAbbreviation();
 		
 		String uri = BIOPORTAL_PURL_BASE;
 		uri = uri + prefix;
@@ -624,9 +619,9 @@ public class RdfServiceImpl extends ConceptServiceImpl implements RdfService {
 	}
 	
 	
-	private String getFileName(OntologyBean ontoBean) {
+	private String getFileName(OntologyBean ont) {
 		// use the virtual ontology id because we are only keeping one RDF version, the latest version
-		return ontoBean.getOntologyId() + ".rdf";
+		return ont.getOntologyId() + ".rdf";
 	}
 
 }

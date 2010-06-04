@@ -1,8 +1,8 @@
 package org.ncbo.stanford.service.concept;
 
-import java.io.File;
 import java.util.List;
 
+import org.ncbo.stanford.bean.OntologyBean;
 import org.ncbo.stanford.service.ontology.OntologyService;
 import org.semanticweb.owlapi.model.OWLOntology;
 import org.semanticweb.owlapi.model.OWLOntologyManager;
@@ -24,12 +24,12 @@ public interface RdfService {
 	 * @param manager
 	 * @throws Exception
 	 */
-	public void generateRdf(OWLOntologyManager manager, String dir, OntologyService ontologyService) throws Exception;
-	
+	public void generateRdf(OWLOntologyManager manager, String dir,
+			OntologyService ontologyService) throws Exception;
 
 	/**
 	 * Generate an RDF/XML representation of all concepts for a single ontology.
-	 *  
+	 * 
 	 * @param manager
 	 * @param ontology
 	 * @param ontologyVersionId
@@ -37,7 +37,8 @@ public interface RdfService {
 	 * @return ontology - the ontology is returned
 	 * @throws Exception
 	 */
-	public OWLOntology generateRdf(OWLOntologyManager manager, String dir, Integer ontologyVersionId, boolean isVirtual) throws Exception;
+	public OWLOntology generateRdf(OWLOntologyManager manager, String dir,
+			OntologyBean ont) throws Exception;
 
 	/**
 	 * Generate the RDF/XML representation for a specific concept from a given
@@ -45,13 +46,15 @@ public interface RdfService {
 	 * 
 	 * 
 	 * @param manager
-	 * @param ontology - the ontology is returned
+	 * @param ontology
+	 *            - the ontology is returned
 	 * @param ontologyVersionId
 	 * @param conceptId
 	 * @return RDF representation of the concept from the ontology
 	 * @throws Exception
 	 */
-	public OWLOntology generateRdf(OWLOntologyManager manager, String dir, Integer ontologyVersionId, boolean isVirtual, String conceptId)
+	public OWLOntology generateRdf(OWLOntologyManager manager, String dir,
+			OntologyBean ont, String conceptId)
 			throws Exception;
 
 	/**
@@ -67,7 +70,7 @@ public interface RdfService {
 	 * @throws Exception
 	 */
 	public OWLOntology generateRdf(OWLOntologyManager manager, String dir,
-			Integer ontologyVersionId, boolean isVirtual,
-			List<String> conceptIds) throws Exception;
+			OntologyBean ont, List<String> conceptIds)
+			throws Exception;
 
 }
