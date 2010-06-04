@@ -146,7 +146,7 @@
 	<classpathentry kind="lib" path="WebRoot/WEB-INF/lib/lexgrid/extLib/spring-oxm-1.5.7.jar"/>
 	<classpathentry kind="lib" path="WebRoot/WEB-INF/lib/lexgrid/extLib/spring-xml-1.5.7.jar"/>
 	<classpathentry kind="lib" path="WebRoot/WEB-INF/lib/lexgrid/lexbig.jar"/>
-	<classpathentry kind="lib" path="WebRoot/WEB-INF/lib/notes-api.jar">
+	<classpathentry kind="lib" path="WebRoot/WEB-INF/lib/notes-api.jar"/>
     <classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry kind="output" path="WebRoot/WEB-INF/classes"/>
 </classpath>
