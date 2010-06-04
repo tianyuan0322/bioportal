@@ -24,7 +24,7 @@ import edu.stanford.smi.protegex.owl.swrl.model.SWRLFactory;
 import edu.stanford.smi.protegex.owl.swrl.model.SWRLImp;
 import edu.stanford.smi.protegex.owl.swrl.parser.SWRLParseException;
 import edu.stanford.smi.protegex.owl.swrl.parser.SWRLParser;
-import edu.stanford.smi.protegex.owl.swrl.sqwrl.DatatypeValue;
+import edu.stanford.smi.protegex.owl.swrl.sqwrl.DataValue;
 import edu.stanford.smi.protegex.owl.swrl.sqwrl.SQWRLQueryEngine;
 import edu.stanford.smi.protegex.owl.swrl.sqwrl.SQWRLResult;
 import edu.stanford.smi.protegex.owl.swrl.sqwrl.exceptions.SQWRLException;
@@ -488,7 +488,7 @@ public class OntologyMetadataManagerImpl extends
 				return 0;
 			}
 
-			DatatypeValue value = result.getDatatypeValue(0);
+			DataValue value = result.getDataValue(0);
 
 			return value.getInt() + 1;
 		} catch (SQWRLException e) {
