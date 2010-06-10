@@ -60,7 +60,10 @@ public class NotificationServiceImpl implements NotificationService {
 
 	@Override
 	public void sendNotification(NotificationTypeEnum notificationType,
-			OntologyBean ontologyBean) {
+			OntologyBean ontologyBean, HashMap<String, String> keywords) {
+		if (keywords == null) {
+			keywords = new HashMap<String, String>();
+		}
 
 		List<NcboUserSubscriptions> ncboUserSubscriptions = ncboUserSubscriptionsDAO
 				.findByOntologyId(ontologyBean.getOntologyId().toString());
@@ -69,14 +72,11 @@ public class NotificationServiceImpl implements NotificationService {
 			NcboUser ncboUser = ncboUserDAO.findById(ncboUserSubscription
 					.getUserId());
 
-			HashMap<String, String> keywords;
-
 			UserBean userBean = new UserBean();
 			userBean.populateFromEntity(ncboUser);
 			String from = MessageUtils.getMessage("notification.mail.from");
-			keywords = new HashMap<String, String>();
 
-			keywords.put(ApplicationConstants.ONTOLOGY_VERGION_ID,
+			keywords.put(ApplicationConstants.ONTOLOGY_VERSION_ID,
 					ontologyBean.getId().toString());
 			keywords.put(ApplicationConstants.USERNAME, userBean.getUsername());
 
@@ -84,7 +84,7 @@ public class NotificationServiceImpl implements NotificationService {
 			String message = textManager
 					.getTextContent(notificationType.name());
 			String subject = textManager.getTextContent(notificationType.name()
-					+ ApplicationConstants.SUBJECT_PREFIX);
+					+ ApplicationConstants.SUBJECT_SUFFIX);
 
 			notificationManagerMap.get(ApplicationConstants.EMAIL)
 					.sendNotification(subject, message, from, userBean);

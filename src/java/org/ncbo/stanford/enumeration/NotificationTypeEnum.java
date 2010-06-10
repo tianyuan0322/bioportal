@@ -20,6 +20,11 @@ public enum NotificationTypeEnum {
 			return "PARSE_ONTOLOGY_NOTIFICATION";
 		}
 	},
+	CREATE_NOTE_NOTIFICATION {
+		public String toString() {
+			return "CREATE_NOTE_NOTIFICATION";
+		}
+	},
 	 
 	;
 }

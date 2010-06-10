@@ -140,6 +140,11 @@
 				<filter token="bioportalnoteschangesincludespath" value="${bioportal.notes.changes.includes.path}" />
 				<filter token="obsrestbaseurl" value="${obs.rest.base.url}" />
 				<filter token="notificationemailfrom" value="${notification.email.from}" />
+				<filter token="uiurl" value="${ui.url}" />
+				<filter token="uipathnotesconcept" value="${ui.path.notes.concept}" />
+				<filter token="uipathnotesontology" value="${ui.path.notes.ontology}" />
+				<filter token="uipathnotesindividual" value="${ui.path.notes.individual}" />
+				<filter token="uipathnotesproperty" value="${ui.path.notes.property}" />
 			</filterset>
 		</copy>
 
