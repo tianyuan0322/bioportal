@@ -13,6 +13,7 @@ import org.ncbo.stanford.domain.generated.NcboUser;
 import org.ncbo.stanford.domain.generated.NcboUserDAO;
 import org.ncbo.stanford.enumeration.NoteAppliesToTypeEnum;
 import org.ncbo.stanford.enumeration.NotificationTypeEnum;
+import org.ncbo.stanford.exception.NoteNotFoundException;
 import org.ncbo.stanford.service.notes.NotesService;
 import org.ncbo.stanford.service.notification.NotificationService;
 import org.ncbo.stanford.service.ontology.OntologyService;
@@ -50,18 +51,56 @@ public class NotificationAdvice {
 
 	public void adviceCreateNote(NoteBean note) throws Throwable {
 		try {
-		
-		HashMap<String, String> keywords = new HashMap<String, String>();
 
-		// Add ontology keywords
-		OntologyBean ont = ontologyService
-				.findLatestActiveOntologyOrViewVersion(note.getOntologyId());
+			HashMap<String, String> keywords = new HashMap<String, String>();
 
-		keywords.put(ApplicationConstants.ONTOLOGY_VERSION_ID, ont.getId()
-				.toString());
-		keywords.put(ApplicationConstants.ONTOLOGY_DISPLAY_LABEL, ont
-				.getDisplayLabel());
+			// Add ontology keywords
+			OntologyBean ont = ontologyService
+					.findLatestActiveOntologyOrViewVersion(note.getOntologyId());
 
+			keywords.put(ApplicationConstants.ONTOLOGY_VERSION_ID, ont.getId()
+					.toString());
+			keywords.put(ApplicationConstants.ONTOLOGY_DISPLAY_LABEL, ont
+					.getDisplayLabel());
+
+			// Generate URL
+			keywords.put(ApplicationConstants.NOTE_URL, generateUrlForNote(
+					note, ont));
+
+			// Get UserBean for note author and add username if found
+			NcboUser ncboUser = ncboUserDAO.findById(note.getAuthor());
+			if (ncboUser != null) {
+				UserBean userBean = new UserBean();
+				userBean.populateFromEntity(ncboUser);
+				keywords.put(ApplicationConstants.NOTE_USERNAME, userBean
+						.getUsername());
+			}
+
+			// Get proposal information
+			List<Object> proposalList = note.getValues();
+			if (proposalList != null) {
+				AbstractProposalBean proposalBean = (AbstractProposalBean) proposalList
+						.get(0);
+				keywords.put(ApplicationConstants.NOTE_REASON_FOR_CHANGE,
+						proposalBean.getReasonForChange());
+			}
+
+			// Add note-specific keywords
+			keywords.put(ApplicationConstants.NOTE_SUBJECT, note.getSubject());
+			keywords.put(ApplicationConstants.NOTE_BODY, note.getBody());
+
+			// Send notification
+			notificationService.sendNotification(
+					NotificationTypeEnum.CREATE_NOTE_NOTIFICATION, ont,
+					keywords);
+
+		} catch (Exception e) {
+			log.error("Error sending notification for new note");
+		}
+	}
+
+	private String generateUrlForNote(NoteBean note, OntologyBean ont)
+			throws NoteNotFoundException {
 		// Add concept keywords
 
 		// Get note type using the first item in the list (should be only item)
@@ -71,6 +110,7 @@ public class NotificationAdvice {
 				.valueOf(note.getAppliesToList().get(0).getType());
 
 		String uiUrl = MessageUtils.getMessage("ui.url");
+		String noteUrl = null;
 
 		switch (appliesToType) {
 		case Class:
@@ -83,60 +123,22 @@ public class NotificationAdvice {
 					note.getAppliesToList().get(0).getId()).replaceAll(
 					"<" + ApplicationConstants.ONTOLOGY_VERSION_ID + ">",
 					ont.getId().toString());
-			keywords.put(ApplicationConstants.NOTE_URL, uiUrl
-					+ conceptPathReplaced);
+			noteUrl = uiUrl + conceptPathReplaced;
 			break;
 		case Note:
 			NoteBean rootNote = notesService.getRootNote(ont, note);
-			String conceptForNotePath = MessageUtils
-					.getMessage("ui.path.notes.concept");
-			String conceptForNoteReplaced = conceptForNotePath.replaceAll(
-					"<" + ApplicationConstants.CONCEPT_ID + ">",
-					rootNote.getAppliesToList().get(0).getId()).replaceAll(
-					"<" + ApplicationConstants.ONTOLOGY_VERSION_ID + ">",
-					ont.getId().toString());
-			keywords.put(ApplicationConstants.NOTE_URL, uiUrl
-					+ conceptForNoteReplaced);
+			noteUrl = generateUrlForNote(rootNote, ont);
 			break;
 		case Ontology:
 			String ontPath = MessageUtils.getMessage("ui.path.notes.ontology");
 			String ontPathReplaced = ontPath.replaceAll("<"
 					+ ApplicationConstants.ONTOLOGY_VERSION_ID + ">", ont
 					.getId().toString());
-			keywords
-					.put(ApplicationConstants.NOTE_URL, uiUrl + ontPathReplaced);
+			noteUrl = uiUrl + ontPathReplaced;
 			break;
 		}
-
-		// Get UserBean for note author and add username if found
-		NcboUser ncboUser = ncboUserDAO.findById(note.getAuthor());
-		if (ncboUser != null) {
-			UserBean userBean = new UserBean();
-			userBean.populateFromEntity(ncboUser);
-			keywords.put(ApplicationConstants.NOTE_USERNAME, userBean
-					.getUsername());
-		}
-
-		// Get proposal information
-		List<Object> proposalList = note.getValues();
-		if (proposalList != null) {
-			AbstractProposalBean proposalBean = (AbstractProposalBean) proposalList
-					.get(0);
-			keywords.put(ApplicationConstants.NOTE_REASON_FOR_CHANGE,
-					proposalBean.getReasonForChange());
-		}
-
-		// Add note-specific keywords
-		keywords.put(ApplicationConstants.NOTE_SUBJECT, note.getSubject());
-		keywords.put(ApplicationConstants.NOTE_BODY, note.getBody());
-
-		// Send notification
-		notificationService.sendNotification(
-				NotificationTypeEnum.CREATE_NOTE_NOTIFICATION, ont, keywords);
 		
-		} catch (Exception e) {
-			log.error("Error sending notification for new note");
-		}
+		return noteUrl;
 	}
 
 	/**

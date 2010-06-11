@@ -273,11 +273,10 @@ public class NotesServiceImpl implements NotesService {
 
 	public NoteBean getRootNote(OntologyBean ont, NoteBean note)
 			throws NoteNotFoundException {
-		if (note.getAppliesToList().get(0).getType() == "Note") {
-			getRootNote(ont, convertAnnotationToNoteBean(getNote(ont, note
+		while (note.getAppliesToList().get(0).getType().equalsIgnoreCase("Note")) {
+			note = getRootNote(ont, convertAnnotationToNoteBean(getNote(ont, note
 					.getAppliesToList().get(0).getId()), ont));
 		}
-
 		return note;
 	}
 
