@@ -3,6 +3,8 @@ package org.ncbo.stanford.aop.notification;
 import java.util.HashMap;
 import java.util.List;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.ncbo.stanford.bean.OntologyBean;
 import org.ncbo.stanford.bean.UserBean;
 import org.ncbo.stanford.bean.notes.AbstractProposalBean;
@@ -23,6 +25,8 @@ import org.ncbo.stanford.util.constants.ApplicationConstants;
  */
 
 public class NotificationAdvice {
+
+	private static final Log log = LogFactory.getLog(NotificationAdvice.class);
 
 	private NotificationService notificationService;
 	private OntologyService ontologyService;
@@ -45,6 +49,8 @@ public class NotificationAdvice {
 	}
 
 	public void adviceCreateNote(NoteBean note) throws Throwable {
+		try {
+		
 		HashMap<String, String> keywords = new HashMap<String, String>();
 
 		// Add ontology keywords
@@ -127,6 +133,10 @@ public class NotificationAdvice {
 		// Send notification
 		notificationService.sendNotification(
 				NotificationTypeEnum.CREATE_NOTE_NOTIFICATION, ont, keywords);
+		
+		} catch (Exception e) {
+			log.error("Error sending notification for new note");
+		}
 	}
 
 	/**
