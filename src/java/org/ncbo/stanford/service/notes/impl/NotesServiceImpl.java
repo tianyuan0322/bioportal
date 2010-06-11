@@ -214,7 +214,8 @@ public class NotesServiceImpl implements NotesService {
 	public List<NoteBean> getAllNotesForConcept(OntologyBean ont,
 			ClassBean concept, Boolean threaded) {
 		NotesManager notesManager = notesPool.getNotesManagerForOntology(ont);
-		OntologyComponent oc = notesManager.getOntologyClass(getFullIdProper(concept, ont));
+		OntologyComponent oc = notesManager.getOntologyClass(getFullIdProper(
+				concept, ont));
 		Collection<Annotation> annotations = oc.getAssociatedAnnotations();
 
 		List<NoteBean> notesList = new ArrayList<NoteBean>();
@@ -267,6 +268,15 @@ public class NotesServiceImpl implements NotesService {
 			throw new NoteNotFoundException();
 		}
 
+		return note;
+	}
+
+	public NoteBean getRootNote(OntologyBean ont, NoteBean note)
+			throws NoteNotFoundException {
+		while (note.getAppliesToList().get(0).getType().equalsIgnoreCase("Note")) {
+			note = getRootNote(ont, convertAnnotationToNoteBean(getNote(ont, note
+					.getAppliesToList().get(0).getId()), ont));
+		}
 		return note;
 	}
 
@@ -513,8 +523,7 @@ public class NotesServiceImpl implements NotesService {
 	 * Get an id based on the ontology type. OBO ontologies return the short id,
 	 * everything else uses the fullId.
 	 * 
-	 * This method exists in these classes:
-	 * NotesServiceImpl.java
+	 * This method exists in these classes: NotesServiceImpl.java
 	 * NotesRestlet.java
 	 * 
 	 * @param concept

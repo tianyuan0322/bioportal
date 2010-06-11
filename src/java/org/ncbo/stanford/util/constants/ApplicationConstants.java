@@ -110,10 +110,17 @@ public interface ApplicationConstants {
 	 * Notification Service constants
 	 */
 	// TAG Constants
-	public static final String ONTOLOGY_VERGION_ID = "ONTOLOGY_VERGION_ID";
+	public static final String ONTOLOGY_VERSION_ID = "ONTOLOGY_VERSION_ID";
+	public static final String ONTOLOGY_DISPLAY_LABEL = "ONTOLOGY_DISPLAY_LABEL";
+	public static final String CONCEPT_ID = "CONCEPT_ID";
 	public static final String USERNAME = "USERNAME";
-	public static final String SUBJECT_PREFIX = "_SUB";
-
+	public static final String SUBJECT_SUFFIX = "_SUB";
+	public static final String NOTE_SUBJECT = "NOTE_SUBJECT";
+	public static final String NOTE_BODY = "NOTE_BODY";
+	public static final String NOTE_REASON_FOR_CHANGE = "NOTE_REASON_FOR_CHANGE";
+	public static final String NOTE_USERNAME = "NOTE_USERNAME";
+	public static final String NOTE_URL = "NOTE_URL";
+	
 	/**
 	 * XML declaration
 	 */

@@ -113,15 +113,19 @@
 
 	<!--
 
-		<aop:config> <aop:pointcut id="ontologyLoadSchedulerMethods"
-		expression="execution(*
-		org.ncbo.stanford.service.loader.scheduler.OntologyLoadSchedulerService.*(..))"/>
-		<aop:advisor advice-ref="txAdvice"
-		pointcut-ref="ontologyLoadSchedulerMethods"/> </aop:config> <tx:advice
-		id="txAdvice" transaction-manager="transactionManager">
-		<tx:attributes> <tx:method name="parseOntologies"
-		propagation="NOT_SUPPORTED"/> <tx:method name="processRecord"
-		propagation="REQUIRES_NEW"/> </tx:attributes> </tx:advice>
+		<aop:config>
+			<aop:pointcut id="ontologyLoadSchedulerMethods"
+				expression="execution(*org.ncbo.stanford.service.loader.scheduler.OntologyLoadSchedulerService.*(..))"/>
+			<aop:advisor advice-ref="txAdvice"
+				pointcut-ref="ontologyLoadSchedulerMethods"/>
+		</aop:config>
+		
+		<tx:advice id="txAdvice" transaction-manager="transactionManager">
+			<tx:attributes>
+				<tx:method name="parseOntologies" propagation="NOT_SUPPORTED"/>
+				<tx:method name="processRecord"	propagation="REQUIRES_NEW"/>
+			</tx:attributes>
+		</tx:advice>
 	-->
 
 	<!--
@@ -933,7 +937,7 @@
 		</constructor-arg>
 	</bean>
 
-	<bean id="textManager"
+	<bean id="textManager" scope="prototype"
 		class="org.ncbo.stanford.util.textmanager.service.impl.TextManagerImpl">
 		<property name="ncboAppTextDAO">
 			<ref bean="NcboAppTextDAO" />
@@ -1387,9 +1391,7 @@
 		<property name="mailService">
 			<ref bean="mailService" />
 		</property> 
-
 	</bean>
-
 	 
 	<bean id="ncboOntologyFileDAO" class="org.ncbo.stanford.domain.generated.NcboOntologyFileDAO">
 		<property name="hibernateTemplate">
@@ -1404,25 +1406,40 @@
 		</property>
 	</bean>  
 	
-	<bean id="advice" class="org.ncbo.stanford.aop.notification.NotificationAdvice">
+	<bean id="notificationAdvice" class="org.ncbo.stanford.aop.notification.NotificationAdvice">
 		<property name="notificationService">
 			<ref local="notificationService" />
 		</property>
-
+		<property name="ontologyService">
+			<ref bean="ontologyService" />
+		</property>
+		<property name="notesService">
+			<ref bean="notesService" />
+		</property>
+		<property name="ncboUserDAO">
+			<ref bean="NcboUserDAO" />
+		</property>
 	</bean>
 	
 	<aop:config>
-		<aop:aspect ref="advice">
+		<aop:aspect ref="notificationAdvice">
 			<aop:pointcut id="aroundService"
 				expression="execution(* org.ncbo.stanford.manager.metadata.OntologyMetadataManager.updateOntologyOrView(org.ncbo.stanford.bean.OntologyBean))
                     and args(ontologyBean)" />
-			
 			<aop:after-returning pointcut-ref="aroundService" method="adviceUpdateOntology" />
-			
-			
 		</aop:aspect>
 	</aop:config>
 
+	<aop:config>
+		<aop:aspect id="afterCreateNote" ref="notificationAdvice">
+			<aop:pointcut id="afterReturnCreateNote"
+				expression="execution(* org.ncbo.stanford.service.notes.NotesService.create*(..))" />
+			<aop:after-returning
+				pointcut-ref="afterReturnCreateNote"
+				returning="note"
+				method="adviceCreateNote" />
+		</aop:aspect>
+	</aop:config>
 
 	<bean id="smtpAuthenticator"
 		class="org.ncbo.stanford.util.mail.authenticator.SmtpAuthenticator">

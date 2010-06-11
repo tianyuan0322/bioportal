@@ -413,6 +413,14 @@ notes.jdbc.username=yourprotegedbuser
 notes.jdbc.password=yourprotegedbpassword
 bioportal.notes.changes.includes.path=${bioportal.static.resource.path}/metadata/notes/changes.owl
 
+############# UI Configuration
+ui.url=http://rails-ui.example.org
+#### Links should point to the versioned address
+ui.path.notes.concept=/visualize/<ONTOLOGY_VERSION_ID>/?conceptid=<CONCEPT_ID>#notes
+ui.path.notes.ontology=/ontologies/<ONTOLOGY_VERSION_ID>#notes
+ui.path.notes.individual=/visualize/<ONTOLOGY_VERSION_ID>/?conceptid=<CONCEPT_ID>#notes
+ui.path.notes.property=/visualize/<ONTOLOGY_VERSION_ID>/?conceptid=<CONCEPT_ID>#notes
+
 #
 # For Notification Service
 #
