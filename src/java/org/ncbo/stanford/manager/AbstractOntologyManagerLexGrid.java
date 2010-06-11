@@ -1,5 +1,6 @@
 package org.ncbo.stanford.manager;
 
+import java.net.URLEncoder;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
@@ -35,26 +36,23 @@ public abstract class AbstractOntologyManagerLexGrid {
 	protected OntologyMetadataManager ontologyMetadataManager;
 	protected LexBIGService lbs;
 	protected LexBIGServiceConvenienceMethods lbscm;
-	
+
 	private final Set<Integer> ownUriSchemeOntologies = new HashSet<Integer>(
-			Arrays.asList(
-					1072, 1073, 1074, 1075));
-	
-	private final Set<Integer> newPurlOntologies = new HashSet<Integer>(
-			Arrays.asList(
-				1007, 1062));
+			Arrays.asList(1072, 1073, 1074, 1075));
+
+	private final Set<Integer> newPurlOntologies = new HashSet<Integer>(Arrays
+			.asList(1007, 1062));
 
 	private final Set<Integer> legacyPurlOntologies = new HashSet<Integer>(
-			Arrays.asList(
-				1090, 1370, 1222, 1114, 1023, 1005, 1049,
-				1048, 1067, 1006, 1047, 1001, 1037, 1063, 1144, 1008, 1016,
-				1015, 1069, 1012, 1013, 1064, 1017, 1019, 1397, 1070, 1021,
-				1022, 1009, 1125, 1362, 1050, 1311, 1025, 1105, 1395, 1027,
-				1152, 1029, 1030, 1077, 1000, 1010, 1031, 1026, 1132, 1328,
-				1094, 1035, 1107, 1014, 1043, 1036, 1038, 1493, 1108, 1492,
-				1490, 1041, 1040, 1500, 1044, 1109, 1078, 1091, 1224, 1046,
-				1419, 1110, 1081, 1065, 1111, 1404, 1112, 1095, 1115, 1051));	
-	
+			Arrays.asList(1090, 1370, 1222, 1114, 1023, 1005, 1049, 1048, 1067,
+					1006, 1047, 1001, 1037, 1063, 1144, 1008, 1016, 1015, 1069,
+					1012, 1013, 1064, 1017, 1019, 1397, 1070, 1021, 1022, 1009,
+					1125, 1362, 1050, 1311, 1025, 1105, 1395, 1027, 1152, 1029,
+					1030, 1077, 1000, 1010, 1031, 1026, 1132, 1328, 1094, 1035,
+					1107, 1014, 1043, 1036, 1038, 1493, 1108, 1492, 1490, 1041,
+					1040, 1500, 1044, 1109, 1078, 1091, 1224, 1046, 1419, 1110,
+					1081, 1065, 1111, 1404, 1112, 1095, 1115, 1051));
+
 	protected CodingSchemeRendering getCodingSchemeRendering(LexBIGService lbs,
 			String urnAndVersion) throws Exception {
 		if (StringUtils.isBlank(urnAndVersion)) {
@@ -325,6 +323,12 @@ public abstract class AbstractOntologyManagerLexGrid {
 	protected String getFullId(OntologyBean ontologyBean, String code) {
 		String fullId = code;
 		String modCode = code.replace(':', '_');
+		
+		try {
+			modCode= URLEncoder.encode(modCode, "UTF-8");
+		} catch (Exception ex) {
+			ex.printStackTrace();
+		}
 		if (ontologyBean != null) {
 			if (ApplicationConstants.FORMAT_OBO.equalsIgnoreCase(ontologyBean
 					.getFormat())) {
@@ -333,7 +337,7 @@ public abstract class AbstractOntologyManagerLexGrid {
 			if (ApplicationConstants.FORMAT_UMLS_RRF
 					.equalsIgnoreCase(ontologyBean.getFormat())) {
 				fullId = "http://purl.bioontology.org/ontology/"
-						+ ontologyBean.getAbbreviation() + "/" + code;
+						+ ontologyBean.getAbbreviation() + "/" + modCode;
 			}
 			if (ApplicationConstants.FORMAT_LEXGRID_XML
 					.equalsIgnoreCase(ontologyBean.getFormat())) {
@@ -342,29 +346,36 @@ public abstract class AbstractOntologyManagerLexGrid {
 			}
 
 		}
+		
 		return fullId;
 	}
 
 	private String getOBOFullId(OntologyBean ontologyBean, String code) {
 		String prefix = "";
-		String fullId ="";
+		String fullId = "";
 		String modCode = code.replace(':', '_');
+		try {
+			modCode= URLEncoder.encode(modCode, "UTF-8");
+		} catch (Exception ex) {
+			ex.printStackTrace();
+		}
 		String codeSplitArray[] = code.split(":");
 		Integer ontologyId = ontologyBean.getOntologyId();
-		
+
 		if (codeSplitArray.length >= 2) {
 			prefix = codeSplitArray[0];
 		}
 
 		// The OBO FullId is generated based on which four categories the
 		// ontology id falls under.
-		
+
 		if (ownUriSchemeOntologies.contains(ontologyId)) {
 			// Category 1: Ontologies that have their own URI scheme
 			fullId = "http://www.cellcycleontology.org/ontology/owl/" + prefix
 					+ "#" + modCode;
 		} else if (newPurlOntologies.contains(ontologyId)) {
-			// Category 2: The ontologies have transitioned to the new scheme such
+			// Category 2: The ontologies have transitioned to the new scheme
+			// such
 			// as (CHEBI and PRO)
 			// The url will be in the form:
 			// http://purl.obolibrary.org/obo/prefix_xxxxx
@@ -374,15 +385,16 @@ public abstract class AbstractOntologyManagerLexGrid {
 			// http://purl.org/obo/owl/<prefix>#<prefix>_xxxxx
 			fullId = "http://purl.org/obo/owl/" + prefix + "#" + modCode;
 		} else {
-			// Category 4: The ontologies have no URIs. We create a default URI of
+			// Category 4: The ontologies have no URIs. We create a default URI
+			// of
 			// the form: http://purl.bioontology.org/ontology/PREFIX/PREFIX_xxxx
 			if (StringUtils.isNotBlank(ontologyBean.getAbbreviation())) {
 				fullId = "http://purl.bioontology.org/ontology/"
 						+ ontologyBean.getAbbreviation() + "/" + modCode;
 			} else {
-				fullId = "http://purl.bioontology.org/ontology/"
-						+ prefix + "/" + modCode;
-			}			
+				fullId = "http://purl.bioontology.org/ontology/" + prefix + "/"
+						+ modCode;
+			}
 		}
 
 		return fullId;
