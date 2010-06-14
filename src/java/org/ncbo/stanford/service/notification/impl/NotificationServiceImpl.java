@@ -65,6 +65,14 @@ public class NotificationServiceImpl implements NotificationService {
 			keywords = new HashMap<String, String>();
 		}
 
+		// Totally broken way of getting additional params into this method
+		// TODO: figure out how we would like to handle situations where
+		// different notification methods will need different data
+		String messageId = (keywords.get("messageId") != null) ? keywords
+				.get("messageId") : null;
+		String inReplyTo = (keywords.get("inReplyTo") != null) ? keywords
+				.get("inReplyTo") : null;
+
 		List<NcboUserSubscriptions> ncboUserSubscriptions = ncboUserSubscriptionsDAO
 				.findByOntologyId(ontologyBean.getOntologyId().toString());
 
@@ -76,8 +84,8 @@ public class NotificationServiceImpl implements NotificationService {
 			userBean.populateFromEntity(ncboUser);
 			String from = MessageUtils.getMessage("notification.mail.from");
 
-			keywords.put(ApplicationConstants.ONTOLOGY_VERSION_ID,
-					ontologyBean.getId().toString());
+			keywords.put(ApplicationConstants.ONTOLOGY_VERSION_ID, ontologyBean
+					.getId().toString());
 			keywords.put(ApplicationConstants.USERNAME, userBean.getUsername());
 
 			textManager.appendKeywords(keywords);
@@ -87,8 +95,8 @@ public class NotificationServiceImpl implements NotificationService {
 					+ ApplicationConstants.SUBJECT_SUFFIX);
 
 			notificationManagerMap.get(ApplicationConstants.EMAIL)
-					.sendNotification(subject, message, from, userBean);
-
+					.sendNotification(subject, message, from, messageId,
+							inReplyTo, userBean);
 		}
 
 	}

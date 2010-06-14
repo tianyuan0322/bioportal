@@ -69,11 +69,37 @@ public class NotificationAdvice {
 
 			// Get UserBean for note author and add username if found
 			NcboUser ncboUser = ncboUserDAO.findById(note.getAuthor());
+			String authorName = "unknown";
 			if (ncboUser != null) {
 				UserBean userBean = new UserBean();
 				userBean.populateFromEntity(ncboUser);
 				keywords.put(ApplicationConstants.NOTE_USERNAME, userBean
 						.getUsername());
+				authorName = userBean.getUsername();
+			}
+
+			// Generate message ID
+			String messageId = getMessageIdForNote(note.getId(), authorName);
+			keywords.put("messageId", messageId);
+
+			// Generate in-reply-to ID (if needed)
+			if (getNoteType(note) == NoteAppliesToTypeEnum.Note) {
+				NoteBean parentNote = notesService.getNoteBean(ont, note
+						.getAppliesToList().get(0).getId());
+
+				// Get parent note user
+				NcboUser parentUser = ncboUserDAO.findById(parentNote
+						.getAuthor());
+				String parentAuthorName = "unknown";
+				if (parentUser != null) {
+					UserBean userBean = new UserBean();
+					userBean.populateFromEntity(parentUser);
+					parentAuthorName = userBean.getUsername();
+				}
+
+				String parentMessageId = getMessageIdForNote(
+						parentNote.getId(), parentAuthorName);
+				keywords.put("inReplyTo", parentMessageId);
 			}
 
 			// Get proposal information
@@ -99,6 +125,14 @@ public class NotificationAdvice {
 		}
 	}
 
+	/**
+	 * Returns the URL for the UI representation of a note.
+	 * 
+	 * @param note
+	 * @param ont
+	 * @return
+	 * @throws NoteNotFoundException
+	 */
 	private String generateUrlForNote(NoteBean note, OntologyBean ont)
 			throws NoteNotFoundException {
 		// Add concept keywords
@@ -106,8 +140,7 @@ public class NotificationAdvice {
 		// Get note type using the first item in the list (should be only item)
 		// TODO: If we start supporting multiple annotation targets this will
 		// need modification
-		NoteAppliesToTypeEnum appliesToType = NoteAppliesToTypeEnum
-				.valueOf(note.getAppliesToList().get(0).getType());
+		NoteAppliesToTypeEnum appliesToType = getNoteType(note);
 
 		String uiUrl = MessageUtils.getMessage("ui.url");
 		String noteUrl = null;
@@ -137,8 +170,30 @@ public class NotificationAdvice {
 			noteUrl = uiUrl + ontPathReplaced;
 			break;
 		}
-		
+
 		return noteUrl;
+	}
+
+	/**
+	 * Returns the enum type of a note using the first appliesTo target in the
+	 * list.
+	 * 
+	 * @param note
+	 * @return
+	 */
+	private NoteAppliesToTypeEnum getNoteType(NoteBean note) {
+		return NoteAppliesToTypeEnum.valueOf(note.getAppliesToList().get(0)
+				.getType());
+	}
+
+	/**
+	 * Generates a unique message id using the note's id.
+	 * 
+	 * @param note
+	 * @return
+	 */
+	private String getMessageIdForNote(String noteId, String authorName) {
+		return noteId + "." + authorName + "@" + "bioportal.bioontology.org";
 	}
 
 	/**

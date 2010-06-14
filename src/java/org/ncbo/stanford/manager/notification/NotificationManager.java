@@ -19,6 +19,6 @@ public interface NotificationManager {
 	 * @param userBean
 	 */
 	public void sendNotification(String subject, String message, String from,
-			UserBean userBean);
+			String messageId, String inReplyTo, UserBean userBean);
 
 }

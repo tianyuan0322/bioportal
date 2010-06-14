@@ -32,10 +32,11 @@ public class NotificationManagerEmailImpl implements NotificationManager {
 
 	@Override
 	public void sendNotification(String subject, String message, String from,
-			UserBean userBean) {
+			String messageId, String inReplyTo, UserBean userBean) {
 		log.info("Sending Notification Mail to User :" + userBean.getUsername()
 				+ " with email id :" + userBean.getEmail());
-		mailService.sendMail(from, userBean.getEmail(), subject, message);
+		mailService.sendMail(from, userBean.getEmail(), subject, messageId,
+				inReplyTo, message);
 
 	}
 
