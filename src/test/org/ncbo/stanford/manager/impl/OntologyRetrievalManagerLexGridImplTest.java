@@ -153,7 +153,8 @@ public class OntologyRetrievalManagerLexGridImplTest extends
 						OntologyLoaderLexGridImplTest.OBO_CELL_DISPLAY_LABEL,
 						OntologyLoaderLexGridImplTest.OBO_CELL_ONTOLOGY_ID);
 		String conceptID = "CL:0000255";
-		ClassBean classBean = retrievalManager.findConcept(ncboOntology, conceptID, true, false);
+		ClassBean classBean = retrievalManager.findConcept(ncboOntology,
+				conceptID, true, false);
 		System.out.println("Concept " + conceptID + " of cell ontology is \n"
 				+ classBean);
 		System.out.println("\n");
@@ -188,14 +189,13 @@ public class OntologyRetrievalManagerLexGridImplTest extends
 		String conceptID = "CL_0000255";
 		ClassBean classBean = retrievalManager.findConcept(ncboOntology,
 				conceptID, false, false);
-		String newId= conceptID.replace("_", ":");
+		String newId = conceptID.replace("_", ":");
 		System.out.println("Concept " + conceptID + " of cell ontology is \n"
 				+ classBean);
 		System.out.println("\n");
 		assertTrue(classBean.getId().equalsIgnoreCase(newId));
 	}
 
-	
 	@Test
 	public void testOBOFindConceptTwoRelationDictyostelium() throws Exception {
 		System.out.println("testOBOFindConceptTwoRelationDictyostelium()");
@@ -240,7 +240,7 @@ public class OntologyRetrievalManagerLexGridImplTest extends
 		System.out.println("\n");
 		assertTrue(classBean.getId().equalsIgnoreCase(conceptID));
 	}
-	
+
 	@Test
 	public void testUMLSFindConceptBothDirectionalNamesPopulated()
 			throws Exception {
@@ -397,8 +397,10 @@ public class OntologyRetrievalManagerLexGridImplTest extends
 	}
 
 	@Test
-	public void testOBOFindPathFromRootIncludingChildrenCorrectedConceptCell() throws Exception {
-		System.out.println("testOBOFindPathFromRootIncludingChildrenCorrectedConceptCell()");
+	public void testOBOFindPathFromRootIncludingChildrenCorrectedConceptCell()
+			throws Exception {
+		System.out
+				.println("testOBOFindPathFromRootIncludingChildrenCorrectedConceptCell()");
 
 		OntologyBean ncboOntology = retrievalManager
 				.getOntologyBeanByDisplayNameAndOntologyId(
@@ -413,7 +415,8 @@ public class OntologyRetrievalManagerLexGridImplTest extends
 		System.out.println(pathBean);
 		System.out.println("\n");
 		assertTrue(pathBean != null);
-	}	
+	}
+
 	@Test
 	public void testOBOFindPathFromRootForRootConceptIncludingChildrenCell()
 			throws Exception {
@@ -513,8 +516,8 @@ public class OntologyRetrievalManagerLexGridImplTest extends
 				.println("testHL7FindPathFromRootForRootConceptIncludingChildren()");
 
 		OntologyBean ncboOntology = retrievalManager
-		.getLatestOntologyBean(OntologyLoaderLexGridImplTest.LEXGRID_HL7_DISPLAY_LABEL);
-        String conceptID = "10128:ER";
+				.getLatestOntologyBean(OntologyLoaderLexGridImplTest.LEXGRID_HL7_DISPLAY_LABEL);
+		String conceptID = "10128:ER";
 		ClassBean pathBean = retrievalManager.findPathFromRoot(ncboOntology,
 				conceptID, false);
 		System.out.println("Paths to root for concept " + conceptID
@@ -522,7 +525,8 @@ public class OntologyRetrievalManagerLexGridImplTest extends
 		System.out.println(pathBean);
 		System.out.println("\n");
 		assertTrue(pathBean != null);
-	}	
+	}
+
 	@Test
 	public void testOBOGetAllConcepts() throws Exception {
 		System.out.println("testOBOGetAllConcepts()");
@@ -531,7 +535,7 @@ public class OntologyRetrievalManagerLexGridImplTest extends
 				.getOntologyBeanByDisplayNameAndOntologyId(
 						OntologyLoaderLexGridImplTest.OBO_CELL_DISPLAY_LABEL,
 						OntologyLoaderLexGridImplTest.OBO_CELL_ONTOLOGY_ID);
-		
+
 		int pageSize = 100;
 		int pageNum = 1;
 		int offset = 0;
@@ -554,6 +558,36 @@ public class OntologyRetrievalManagerLexGridImplTest extends
 
 		System.out.println("\n");
 		assertTrue(offset != 0);
+	}
+
+	@Test
+	public void testNonHierarchicalUMLSGetAllConcepts() throws Exception {
+		System.out.println("testNonHierarchicalUMLSGetAllConcepts()");
+
+		OntologyBean ncboOntology = retrievalManager
+				.getLatestOntologyBean(OntologyLoaderLexGridImplTest.UMLS_NOHIERACHY_DISPLAY_LABEL);
+
+		int pageSize = 3000;
+		int pageNum = 1;
+		int offset = 0;
+		boolean hasMoreResults = true;
+		while (hasMoreResults) {
+			System.out.println("Retrieving results starting at page " + pageNum);
+			Page<ClassBean> beans = retrievalManager.findAllConcepts(
+					ncboOntology, pageSize, pageNum);
+			if (beans == null || beans.getNumResultsPage() < pageSize) {
+				hasMoreResults = false;
+			}
+			if (beans != null) {
+				System.out.println("Retrieved results till "
+						+ ((pageNum-1)*pageSize + beans.getNumResultsPage()));
+			}
+			pageNum++;
+			
+		}
+
+		System.out.println("\n");
+		assertTrue(pageNum > 1);
 	}
 
 	@Test

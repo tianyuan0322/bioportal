@@ -1,11 +1,14 @@
 package org.ncbo.stanford.util.ontologyfile.pathhandler.impl;
 
+import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -50,8 +53,8 @@ public class PhysicalDirectoryFilePathHandlerImpl extends
 
 			File outputFile = new File(filePath, fileName);
 
-			FileOutputStream outputStream = new FileOutputStream(outputFile);
-			InputStream inputStream = new FileInputStream(file);
+			OutputStream outputStream = new BufferedOutputStream( new FileOutputStream(outputFile));
+			InputStream inputStream = new BufferedInputStream(new FileInputStream(file));
 
 			int c;
 

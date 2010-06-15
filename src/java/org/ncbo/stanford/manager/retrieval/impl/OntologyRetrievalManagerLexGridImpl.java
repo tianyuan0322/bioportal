@@ -155,10 +155,10 @@ public class OntologyRetrievalManagerLexGridImpl extends
 				concept = findConcept(ontologyBean, conceptId);
 			}
 		}
-		
+
 		if (concept == null) {
-			//Try to find the concept after correcting the conceptId
-			//For example convert concept GO_12345 to GO:12345
+			// Try to find the concept after correcting the conceptId
+			// For example convert concept GO_12345 to GO:12345
 			String newId = getCorrectedConceptId(ontologyBean, conceptId);
 			if (!newId.equals(conceptId)) {
 				return findConcept(ontologyBean, newId, light, noRelations);
@@ -470,7 +470,7 @@ public class OntologyRetrievalManagerLexGridImpl extends
 			log.warn("Can not process request when the conceptId is blank");
 			return null;
 		}
-        conceptId= getCorrectedConceptId(ontologyBean, conceptId);
+		conceptId = getCorrectedConceptId(ontologyBean, conceptId);
 		CodingSchemeVersionOrTag csvt = getLexGridCodingSchemeVersion(ontologyBean);
 		String hierarchyId = getDefaultHierarchyId(schemeName, csvt);
 		AssociationList pathToRoot = lbscm.getHierarchyPathToRoot(schemeName,
@@ -1560,12 +1560,14 @@ public class OntologyRetrievalManagerLexGridImpl extends
 		String hierarchyId = getDefaultHierarchyId(schemeName, csvt);
 		SupportedHierarchy[] supHiers = lbscm.getSupportedHierarchies(
 				schemeName, csvt, hierarchyId);
-		SupportedHierarchy sh = supHiers[0];
-		for (String associationName : sh.getAssociationNames()) {
-			// We need to be careful about the direction flag
-			String dirName = getAssociationDirectionalName(schemeName, csvt,
-					associationName, !sh.isIsForwardNavigable());
-			hierarchyDirectionalNames.add(dirName);
+		if (supHiers.length != 0) {
+			SupportedHierarchy sh = supHiers[0];
+			for (String associationName : sh.getAssociationNames()) {
+				// We need to be careful about the direction flag
+				String dirName = getAssociationDirectionalName(schemeName,
+						csvt, associationName, !sh.isIsForwardNavigable());
+				hierarchyDirectionalNames.add(dirName);
+			}
 		}
 
 		for (String directionalName : hierarchyDirectionalNames) {
@@ -1600,12 +1602,14 @@ public class OntologyRetrievalManagerLexGridImpl extends
 		String hierarchyId = getDefaultHierarchyId(schemeName, csvt);
 		SupportedHierarchy[] supHiers = lbscm.getSupportedHierarchies(
 				schemeName, csvt, hierarchyId);
-		SupportedHierarchy sh = supHiers[0];
-		for (String associationName : sh.getAssociationNames()) {
-			// We need to be careful about the direction flag
-			String dirName = getAssociationDirectionalName(schemeName, csvt,
-					associationName, sh.isIsForwardNavigable());
-			hierarchyDirectionalNames.add(dirName);
+		if (supHiers.length != 0) {
+			SupportedHierarchy sh = supHiers[0];
+			for (String associationName : sh.getAssociationNames()) {
+				// We need to be careful about the direction flag
+				String dirName = getAssociationDirectionalName(schemeName,
+						csvt, associationName, sh.isIsForwardNavigable());
+				hierarchyDirectionalNames.add(dirName);
+			}
 		}
 		return hierarchyDirectionalNames;
 	}
@@ -1617,35 +1621,43 @@ public class OntologyRetrievalManagerLexGridImpl extends
 	public void setAllConceptsMaxPageSize(Integer allConceptsMaxPageSize) {
 		this.allConceptsMaxPageSize = allConceptsMaxPageSize;
 	}
-	
+
 	/**
-	 * if the conceptId that we got is in the form GO_123000, replace it 
-     * with GO:123000 and try again.  We need this conversion in order 
-     * to allow purls from obolibrary, which have the underscore, and 
-	 * not the ":" as in the OBO ids
+	 * if the conceptId that we got is in the form GO_123000, replace it with
+	 * GO:123000 and try again. We need this conversion in order to allow purls
+	 * from obolibrary, which have the underscore, and not the ":" as in the OBO
+	 * ids
+	 * 
 	 * @param ontologyBean
 	 * @param code
 	 * @return
 	 */
-	protected String getCorrectedConceptId(OntologyBean ontologyBean, String conceptId) throws Exception {
+	protected String getCorrectedConceptId(OntologyBean ontologyBean,
+			String conceptId) throws Exception {
 		String modconceptId = conceptId;
 		if (conceptId != null && conceptId.contains("_")) {
-			//Only if the code has a "_" do we need to check if the code needs to be converted to
-			//a newId with the "_" replaced by a ":" We first check if the code as given exists.
-			
-			ResolvedConceptReference rcr= getLightResolvedConceptReference(ontologyBean, conceptId);
-			if (rcr== null) {
-				//The conceptId doesn't exist. Lets try modifying the code and do a lookup.
+			// Only if the code has a "_" do we need to check if the code needs
+			// to be converted to
+			// a newId with the "_" replaced by a ":" We first check if the code
+			// as given exists.
+
+			ResolvedConceptReference rcr = getLightResolvedConceptReference(
+					ontologyBean, conceptId);
+			if (rcr == null) {
+				// The conceptId doesn't exist. Lets try modifying the code and
+				// do a lookup.
 				modconceptId = conceptId.replace('_', ':');
-				rcr= getLightResolvedConceptReference(ontologyBean, modconceptId);
-				if (rcr== null) {
-					//The modified code lookup also failed, lets not change the conceptId in this case.
+				rcr = getLightResolvedConceptReference(ontologyBean,
+						modconceptId);
+				if (rcr == null) {
+					// The modified code lookup also failed, lets not change the
+					// conceptId in this case.
 					modconceptId = conceptId;
 				}
-				
+
 			}
 		}
 		return modconceptId;
-	}		
-	
+	}
+
 }
