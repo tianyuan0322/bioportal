@@ -32,7 +32,7 @@ public class MailServiceImpl implements MailService {
 	 * Declaring the Method For Controlling the Mail Message
 	 */
 	public void sendMail(String from, String email, String subject,
-			String sendingMessage)
+			String messageId, String inReplyTo, String sendingMessage)
 	{
 		try {
 			MimeMessage message = mailsender.createMimeMessage();
@@ -41,6 +41,15 @@ public class MailServiceImpl implements MailService {
 			msghelper.setTo(email);
 			msghelper.setSubject(subject);
 			msghelper.setText(sendingMessage, true); 
+			
+			// Set extra information if available
+			if (messageId != null) {
+				message.setHeader("Message-ID", messageId);
+			}
+			
+			if (inReplyTo != null) {
+				message.setHeader("In-Reply-To", inReplyTo);
+			}
 
 			this.mailsender.send(message);
 		} catch (Exception ex) {

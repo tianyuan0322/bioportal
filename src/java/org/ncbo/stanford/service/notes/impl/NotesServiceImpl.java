@@ -270,6 +270,11 @@ public class NotesServiceImpl implements NotesService {
 
 		return note;
 	}
+	
+	public NoteBean getNoteBean(OntologyBean ont, String noteId)
+			throws NoteNotFoundException {
+		return convertAnnotationToNoteBean(getNote(ont, noteId), ont);
+	}
 
 	public NoteBean getRootNote(OntologyBean ont, NoteBean note)
 			throws NoteNotFoundException {

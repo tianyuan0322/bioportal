@@ -117,7 +117,7 @@ public interface ApplicationConstants {
 	public static final String SUBJECT_SUFFIX = "_SUB";
 	public static final String NOTE_SUBJECT = "NOTE_SUBJECT";
 	public static final String NOTE_BODY = "NOTE_BODY";
-	public static final String NOTE_REASON_FOR_CHANGE = "NOTE_REASON_FOR_CHANGE";
+	public static final String NOTE_PROPOSAL_INFO = "NOTE_PROPOSAL_INFO";
 	public static final String NOTE_USERNAME = "NOTE_USERNAME";
 	public static final String NOTE_URL = "NOTE_URL";
 	

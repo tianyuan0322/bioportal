@@ -66,6 +66,9 @@ public interface NotesService {
 	public Annotation getNote(OntologyBean ont, String iri)
 			throws NoteNotFoundException;
 
+	public NoteBean getNoteBean(OntologyBean ont, String noteId)
+			throws NoteNotFoundException;
+
 	public NoteBean getRootNote(OntologyBean ont, NoteBean note)
 			throws NoteNotFoundException;
 

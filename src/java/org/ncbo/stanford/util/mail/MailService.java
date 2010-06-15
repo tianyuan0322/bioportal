@@ -13,5 +13,5 @@ public interface MailService {
 	 *      'message' is used for message which is going with the mail
 	 */
 	public void sendMail(String from, String email, String subject,
-			String message);
+			String messageId, String inReplyTo, String sendingMessage);
 }

@@ -1,7 +1,8 @@
 package org.ncbo.stanford.aop.notification;
 
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 import java.util.HashMap;
-import java.util.List;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -69,21 +70,41 @@ public class NotificationAdvice {
 
 			// Get UserBean for note author and add username if found
 			NcboUser ncboUser = ncboUserDAO.findById(note.getAuthor());
+			String authorName = "unknown";
 			if (ncboUser != null) {
 				UserBean userBean = new UserBean();
 				userBean.populateFromEntity(ncboUser);
-				keywords.put(ApplicationConstants.NOTE_USERNAME, userBean
-						.getUsername());
+				authorName = userBean.getUsername();
+			}
+			keywords.put(ApplicationConstants.NOTE_USERNAME, authorName);
+
+			// Generate message ID
+			String messageId = getMessageIdForNote(note.getId(), authorName);
+			keywords.put("messageId", messageId);
+
+			// Generate in-reply-to ID (if needed)
+			if (getAppliesToType(note) == NoteAppliesToTypeEnum.Note) {
+				NoteBean parentNote = notesService.getNoteBean(ont, note
+						.getAppliesToList().get(0).getId());
+
+				// Get parent note user
+				NcboUser parentUser = ncboUserDAO.findById(parentNote
+						.getAuthor());
+				String parentAuthorName = "unknown";
+				if (parentUser != null) {
+					UserBean userBean = new UserBean();
+					userBean.populateFromEntity(parentUser);
+					parentAuthorName = userBean.getUsername();
+				}
+
+				String parentMessageId = getMessageIdForNote(
+						parentNote.getId(), parentAuthorName);
+				keywords.put("inReplyTo", parentMessageId);
 			}
 
 			// Get proposal information
-			List<Object> proposalList = note.getValues();
-			if (proposalList != null) {
-				AbstractProposalBean proposalBean = (AbstractProposalBean) proposalList
-						.get(0);
-				keywords.put(ApplicationConstants.NOTE_REASON_FOR_CHANGE,
-						proposalBean.getReasonForChange());
-			}
+			keywords.put(ApplicationConstants.NOTE_PROPOSAL_INFO,
+					getProposalText(note));
 
 			// Add note-specific keywords
 			keywords.put(ApplicationConstants.NOTE_SUBJECT, note.getSubject());
@@ -99,15 +120,23 @@ public class NotificationAdvice {
 		}
 	}
 
+	/**
+	 * Returns the URL for the UI representation of a note.
+	 * 
+	 * @param note
+	 * @param ont
+	 * @return
+	 * @throws NoteNotFoundException
+	 * @throws UnsupportedEncodingException
+	 */
 	private String generateUrlForNote(NoteBean note, OntologyBean ont)
-			throws NoteNotFoundException {
+			throws NoteNotFoundException, UnsupportedEncodingException {
 		// Add concept keywords
 
 		// Get note type using the first item in the list (should be only item)
 		// TODO: If we start supporting multiple annotation targets this will
 		// need modification
-		NoteAppliesToTypeEnum appliesToType = NoteAppliesToTypeEnum
-				.valueOf(note.getAppliesToList().get(0).getType());
+		NoteAppliesToTypeEnum appliesToType = getAppliesToType(note);
 
 		String uiUrl = MessageUtils.getMessage("ui.url");
 		String noteUrl = null;
@@ -120,7 +149,8 @@ public class NotificationAdvice {
 					.getMessage("ui.path.notes.concept");
 			String conceptPathReplaced = conceptPath.replaceAll(
 					"<" + ApplicationConstants.CONCEPT_ID + ">",
-					note.getAppliesToList().get(0).getId()).replaceAll(
+					URLEncoder.encode(note.getAppliesToList().get(0).getId(),
+							"UTF-8")).replaceAll(
 					"<" + ApplicationConstants.ONTOLOGY_VERSION_ID + ">",
 					ont.getId().toString());
 			noteUrl = uiUrl + conceptPathReplaced;
@@ -137,8 +167,42 @@ public class NotificationAdvice {
 			noteUrl = uiUrl + ontPathReplaced;
 			break;
 		}
-		
+
 		return noteUrl;
+	}
+
+	private String getProposalText(NoteBean note) {
+		String proposalText = "";
+
+		if (note.getValues() != null && !note.getValues().isEmpty()) {
+			AbstractProposalBean proposal = (AbstractProposalBean) note
+					.getValues().get(0);
+			proposalText = proposal.toHTML();
+		}
+
+		return proposalText;
+	}
+
+	/**
+	 * Returns the enum type of a note using the first appliesTo target in the
+	 * list.
+	 * 
+	 * @param note
+	 * @return
+	 */
+	private NoteAppliesToTypeEnum getAppliesToType(NoteBean note) {
+		return NoteAppliesToTypeEnum.valueOf(note.getAppliesToList().get(0)
+				.getType());
+	}
+
+	/**
+	 * Generates a unique message id using the note's id.
+	 * 
+	 * @param note
+	 * @return
+	 */
+	private String getMessageIdForNote(String noteId, String authorName) {
+		return noteId + "." + authorName + "@" + "bioportal.bioontology.org";
 	}
 
 	/**
