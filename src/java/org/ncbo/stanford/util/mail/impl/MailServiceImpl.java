@@ -44,7 +44,7 @@ public class MailServiceImpl implements MailService {
 			
 			// Set extra information if available
 			if (messageId != null) {
-				message.setHeader("Message-Id", messageId);
+				message.setHeader("Message-ID", messageId);
 			}
 			
 			if (inReplyTo != null) {

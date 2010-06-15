@@ -51,5 +51,12 @@ public class ProposalNewRelationshipBean extends AbstractProposalBean {
 	public void setOldRelationshipTarget(List<String> oldRelationshipTarget) {
 		this.oldRelationshipTarget = oldRelationshipTarget;
 	}
+	
+	public String toHTML() {
+		return "<p>Relationship Type: " + this.relationshipType + "</p>" + 
+			"<p>Relationship Target: " + this.relationshipTarget + "</p>" +
+			"<p>Old Relationship Target: " + this.oldRelationshipTarget + "</p>" +
+			"<p>Reason for Change: " + this.reasonForChange + "</p>";
+	}
 
 }

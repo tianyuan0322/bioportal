@@ -2,6 +2,8 @@ package org.ncbo.stanford.bean.notes;
 
 import java.util.List;
 
+import org.apache.commons.lang.StringUtils;
+
 public class ProposalNewTermBean extends AbstractProposalBean {
 	private String id;
 	private String preferredName;
@@ -82,6 +84,12 @@ public class ProposalNewTermBean extends AbstractProposalBean {
 	 */
 	public void setSynonyms(List<String> synonyms) {
 		this.synonyms = synonyms;
+	}
+	
+	public String toHTML() {
+		return "<p>Definition: " + this.definition + "</p>" + 
+			"<p>Parent: " + StringUtils.join(this.parent, ", ") + "</p>" +
+			"<p>Reason for Change: " + this.reasonForChange + "</p>";
 	}
 
 }

@@ -1,7 +1,8 @@
 package org.ncbo.stanford.aop.notification;
 
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 import java.util.HashMap;
-import java.util.List;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -73,17 +74,16 @@ public class NotificationAdvice {
 			if (ncboUser != null) {
 				UserBean userBean = new UserBean();
 				userBean.populateFromEntity(ncboUser);
-				keywords.put(ApplicationConstants.NOTE_USERNAME, userBean
-						.getUsername());
 				authorName = userBean.getUsername();
 			}
+			keywords.put(ApplicationConstants.NOTE_USERNAME, authorName);
 
 			// Generate message ID
 			String messageId = getMessageIdForNote(note.getId(), authorName);
 			keywords.put("messageId", messageId);
 
 			// Generate in-reply-to ID (if needed)
-			if (getNoteType(note) == NoteAppliesToTypeEnum.Note) {
+			if (getAppliesToType(note) == NoteAppliesToTypeEnum.Note) {
 				NoteBean parentNote = notesService.getNoteBean(ont, note
 						.getAppliesToList().get(0).getId());
 
@@ -103,13 +103,8 @@ public class NotificationAdvice {
 			}
 
 			// Get proposal information
-			List<Object> proposalList = note.getValues();
-			if (proposalList != null) {
-				AbstractProposalBean proposalBean = (AbstractProposalBean) proposalList
-						.get(0);
-				keywords.put(ApplicationConstants.NOTE_REASON_FOR_CHANGE,
-						proposalBean.getReasonForChange());
-			}
+			keywords.put(ApplicationConstants.NOTE_PROPOSAL_INFO,
+					getProposalText(note));
 
 			// Add note-specific keywords
 			keywords.put(ApplicationConstants.NOTE_SUBJECT, note.getSubject());
@@ -132,15 +127,16 @@ public class NotificationAdvice {
 	 * @param ont
 	 * @return
 	 * @throws NoteNotFoundException
+	 * @throws UnsupportedEncodingException
 	 */
 	private String generateUrlForNote(NoteBean note, OntologyBean ont)
-			throws NoteNotFoundException {
+			throws NoteNotFoundException, UnsupportedEncodingException {
 		// Add concept keywords
 
 		// Get note type using the first item in the list (should be only item)
 		// TODO: If we start supporting multiple annotation targets this will
 		// need modification
-		NoteAppliesToTypeEnum appliesToType = getNoteType(note);
+		NoteAppliesToTypeEnum appliesToType = getAppliesToType(note);
 
 		String uiUrl = MessageUtils.getMessage("ui.url");
 		String noteUrl = null;
@@ -153,7 +149,8 @@ public class NotificationAdvice {
 					.getMessage("ui.path.notes.concept");
 			String conceptPathReplaced = conceptPath.replaceAll(
 					"<" + ApplicationConstants.CONCEPT_ID + ">",
-					note.getAppliesToList().get(0).getId()).replaceAll(
+					URLEncoder.encode(note.getAppliesToList().get(0).getId(),
+							"UTF-8")).replaceAll(
 					"<" + ApplicationConstants.ONTOLOGY_VERSION_ID + ">",
 					ont.getId().toString());
 			noteUrl = uiUrl + conceptPathReplaced;
@@ -174,6 +171,18 @@ public class NotificationAdvice {
 		return noteUrl;
 	}
 
+	private String getProposalText(NoteBean note) {
+		String proposalText = "";
+
+		if (note.getValues() != null && !note.getValues().isEmpty()) {
+			AbstractProposalBean proposal = (AbstractProposalBean) note
+					.getValues().get(0);
+			proposalText = proposal.toHTML();
+		}
+
+		return proposalText;
+	}
+
 	/**
 	 * Returns the enum type of a note using the first appliesTo target in the
 	 * list.
@@ -181,7 +190,7 @@ public class NotificationAdvice {
 	 * @param note
 	 * @return
 	 */
-	private NoteAppliesToTypeEnum getNoteType(NoteBean note) {
+	private NoteAppliesToTypeEnum getAppliesToType(NoteBean note) {
 		return NoteAppliesToTypeEnum.valueOf(note.getAppliesToList().get(0)
 				.getType());
 	}

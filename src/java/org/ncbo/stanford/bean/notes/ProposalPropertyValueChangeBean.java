@@ -50,5 +50,12 @@ public class ProposalPropertyValueChangeBean extends AbstractProposalBean {
 	public void setPropertyId(String propertyId) {
 		this.propertyId = propertyId;
 	}
+	
+	public String toHTML() {
+		return "<p>Property ID: " + this.propertyId + "</p>" + 
+			"<p>New Value: " + this.newValue + "</p>" +
+			"<p>Old Value: " + this.oldValue + "</p>" +
+			"<p>Reason for Change: " + this.reasonForChange + "</p>";
+	}
 
 }
