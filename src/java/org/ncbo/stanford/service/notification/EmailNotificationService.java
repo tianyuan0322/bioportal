@@ -12,7 +12,7 @@ import org.ncbo.stanford.bean.OntologyBean;
  * @author g.prakash
  * 
  */
-public interface NotificationService {
+public interface EmailNotificationService {
 
 	/**
 	 * 

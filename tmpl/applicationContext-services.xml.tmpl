@@ -1359,8 +1359,8 @@
 	 
 	 <!-- Notification Configuration -->
 	 
-	 <bean id="notificationService"
-		class="org.ncbo.stanford.service.notification.impl.NotificationServiceImpl">
+	 <bean id="emailNotificationService"
+		class="org.ncbo.stanford.service.notification.impl.EmailNotificationServiceImpl">
 		<property name="notificationManagerMap">
 			<ref local="notificationManagerMap" />
 		</property>
@@ -1407,8 +1407,8 @@
 	</bean>  
 	
 	<bean id="notificationAdvice" class="org.ncbo.stanford.aop.notification.NotificationAdvice">
-		<property name="notificationService">
-			<ref local="notificationService" />
+		<property name="emailNotificationService">
+			<ref local="emailNotificationService" />
 		</property>
 		<property name="ontologyService">
 			<ref bean="ontologyService" />

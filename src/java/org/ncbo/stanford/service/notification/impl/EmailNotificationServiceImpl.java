@@ -11,19 +11,19 @@ import org.ncbo.stanford.domain.generated.NcboUserSubscriptions;
 import org.ncbo.stanford.domain.generated.NcboUserSubscriptionsDAO;
 import org.ncbo.stanford.enumeration.NotificationTypeEnum;
 import org.ncbo.stanford.manager.notification.NotificationManager;
-import org.ncbo.stanford.service.notification.NotificationService;
+import org.ncbo.stanford.service.notification.EmailNotificationService;
 import org.ncbo.stanford.util.MessageUtils;
 import org.ncbo.stanford.util.constants.ApplicationConstants;
 import org.ncbo.stanford.util.textmanager.service.TextManager;
 import org.ncbo.stanford.bean.OntologyBean;
 
 /**
- * Implementation of NotificationService.
+ * Implementation of EmailNotificationService.
  * 
  * @author g.prakash
  */
 
-public class NotificationServiceImpl implements NotificationService {
+public class EmailNotificationServiceImpl implements EmailNotificationService {
 
 	private Map<String, NotificationManager> notificationManagerMap = new HashMap<String, NotificationManager>();
 
