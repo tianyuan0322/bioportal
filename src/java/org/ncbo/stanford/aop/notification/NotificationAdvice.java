@@ -16,7 +16,7 @@ import org.ncbo.stanford.enumeration.NoteAppliesToTypeEnum;
 import org.ncbo.stanford.enumeration.NotificationTypeEnum;
 import org.ncbo.stanford.exception.NoteNotFoundException;
 import org.ncbo.stanford.service.notes.NotesService;
-import org.ncbo.stanford.service.notification.NotificationService;
+import org.ncbo.stanford.service.notification.EmailNotificationService;
 import org.ncbo.stanford.service.ontology.OntologyService;
 import org.ncbo.stanford.util.MessageUtils;
 import org.ncbo.stanford.util.constants.ApplicationConstants;
@@ -30,7 +30,7 @@ public class NotificationAdvice {
 
 	private static final Log log = LogFactory.getLog(NotificationAdvice.class);
 
-	private NotificationService notificationService;
+	private EmailNotificationService emailNotificationService;
 	private OntologyService ontologyService;
 	private NotesService notesService;
 	private NcboUserDAO ncboUserDAO;
@@ -45,7 +45,7 @@ public class NotificationAdvice {
 	 */
 	public void adviceUpdateOntology(OntologyBean ontologyBean)
 			throws Throwable {
-		notificationService.sendNotification(
+		emailNotificationService.sendNotification(
 				NotificationTypeEnum.UPDATE_ONTOLOGY_NOTIFICATION,
 				ontologyBean, null);
 	}
@@ -111,7 +111,7 @@ public class NotificationAdvice {
 			keywords.put(ApplicationConstants.NOTE_BODY, note.getBody());
 
 			// Send notification
-			notificationService.sendNotification(
+			emailNotificationService.sendNotification(
 					NotificationTypeEnum.CREATE_NOTE_NOTIFICATION, ont,
 					keywords);
 
@@ -207,10 +207,10 @@ public class NotificationAdvice {
 
 	/**
 	 * 
-	 * @param notificationService
+	 * @param emailNotificationService
 	 */
-	public void setNotificationService(NotificationService notificationService) {
-		this.notificationService = notificationService;
+	public void setEmailNotificationService(EmailNotificationService emailNotificationService) {
+		this.emailNotificationService = emailNotificationService;
 	}
 
 	/**
