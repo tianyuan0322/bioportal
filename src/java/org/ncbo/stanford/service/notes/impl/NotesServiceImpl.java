@@ -29,6 +29,7 @@ import org.protege.notesapi.notes.ProposalChangePropertyValue;
 import org.protege.notesapi.notes.ProposalCreateEntity;
 import org.protege.notesapi.notes.Status;
 import org.protege.notesapi.notes.impl.DefaultComment;
+import org.protege.notesapi.notes.impl.DefaultProposal;
 import org.protege.notesapi.oc.OntologyClass;
 import org.protege.notesapi.oc.OntologyComponent;
 import org.protege.notesapi.oc.OntologyProperty;
@@ -270,7 +271,7 @@ public class NotesServiceImpl implements NotesService {
 
 		return note;
 	}
-	
+
 	public NoteBean getNoteBean(OntologyBean ont, String noteId)
 			throws NoteNotFoundException {
 		return convertAnnotationToNoteBean(getNote(ont, noteId), ont);
@@ -278,9 +279,10 @@ public class NotesServiceImpl implements NotesService {
 
 	public NoteBean getRootNote(OntologyBean ont, NoteBean note)
 			throws NoteNotFoundException {
-		while (note.getAppliesToList().get(0).getType().equalsIgnoreCase("Note")) {
-			note = getRootNote(ont, convertAnnotationToNoteBean(getNote(ont, note
-					.getAppliesToList().get(0).getId()), ont));
+		while (note.getAppliesToList().get(0).getType()
+				.equalsIgnoreCase("Note")) {
+			note = getRootNote(ont, convertAnnotationToNoteBean(getNote(ont,
+					note.getAppliesToList().get(0).getId()), ont));
 		}
 		return note;
 	}
@@ -390,7 +392,8 @@ public class NotesServiceImpl implements NotesService {
 		Collection<AnnotatableThing> annotates = annotation.getAnnotates();
 		for (AnnotatableThing appliesTo : annotates) {
 			Class<? extends AnnotatableThing> clas = appliesTo.getClass();
-			if (clas == DefaultComment.class) {
+			if (appliesTo instanceof DefaultComment
+					|| appliesTo instanceof DefaultProposal) {
 				nb.addAppliesToList(new AppliesToBean(appliesTo.getId(),
 						NoteAppliesToTypeEnum.Note));
 			} else if (clas == DefaultOntologyClass.class) {
