@@ -1,10 +1,5 @@
 package org.ncbo.stanford.manager.metakb.protege.DAO.base;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Iterator;
-import java.util.List;
-
 import org.ncbo.stanford.bean.AbstractIdBean;
 import org.ncbo.stanford.exception.BPRuntimeException;
 import org.ncbo.stanford.exception.MetadataException;
@@ -30,7 +25,7 @@ import edu.stanford.smi.protegex.owl.model.OWLObjectProperty;
  */
 public class ObjectPropertyMap extends PropertyMap {
 	
-	private AbstractDAO<?> valueDAO;
+	protected AbstractDAO<?> valueDAO;
 	
 	/**
 	 * Constructor. 
@@ -48,9 +43,28 @@ public class ObjectPropertyMap extends PropertyMap {
 							 boolean isMultivalued,
 							 OWLModel metadataKb,
 							 AbstractDAO<?> valueDAO) {
-		super(beanPropName, beanType, valueDAO.beanType, isMultivalued, owlPropName, metadataKb);
+		this(beanPropName,
+			 beanType,
+			 valueDAO.getBeanType(), // Values will be what the DAO creates on Java side.
+			 owlPropName,
+			 isMultivalued,
+			 metadataKb,
+			 valueDAO);
+	}
+	
+	// Same as public constructor, but explicit valueType allows subclass implementations where
+	// values are stored on the Java side as something other than the corresponding Java bean.
+	ObjectPropertyMap(String beanPropName,
+					  Class<?> beanType,
+					  Class<?> valueType, // What values are mapped to on the Java side
+					  String owlPropName,
+					  boolean isMultivalued,
+					  OWLModel metadataKb,
+					  AbstractDAO<?> valueDAO) {
+		super(beanPropName, beanType, valueType, isMultivalued, owlPropName, metadataKb);
 		if (!OWLObjectProperty.class.isInstance(owlProperty)) {
-			throw new BPRuntimeException("Error defining datatype property map: "+owlPropName+" is not a datatype property");
+			throw new BPRuntimeException("Error defining object property map: "+owlPropName+
+										 " is not a object property");
 		}
 		this.valueDAO = valueDAO;
 	}
@@ -59,26 +73,18 @@ public class ObjectPropertyMap extends PropertyMap {
 	// =========================================================================
 	// OWL value conversion
 	
-	// Override
+	@Override
 	public Object convertJavaToOWLValue(Object value) throws MetadataException {
 		if (value instanceof AbstractIdBean) {
 			AbstractIdBean bean = (AbstractIdBean)value;
-			return valueDAO.getInstance(bean.getId());
+			return valueDAO.getIndividualForId(bean.getId());
 		} else {
 			String msg = "Attempt to set non-bean value ("+value+") on OWL Object Property ("+owlProperty.getName()+")";
 			return new BPRuntimeException(msg);
 		}
 	}
 
-	public Collection<?> convertJavaToOWLValues(Collection<?> values)
-			throws MetadataException {
-		List<Object> owlValues = new ArrayList<Object>(values.size());
-		for (Iterator<?> valIt = values.iterator(); valIt.hasNext(); ) {
-			owlValues.add(convertJavaToOWLValue((Object)valIt.next()));
-		}
-		return owlValues;
-	}
-
+	@Override
 	public Object convertOWLToJavaValue(Object value) {
 		if (value == null) {
 			return value;
@@ -88,13 +94,5 @@ public class ObjectPropertyMap extends PropertyMap {
 			String msg = "Unexpected value type ("+value.getClass().getName()+") on OWL object property "+owlProperty.getName();
 			throw new BPRuntimeException(msg);
 		}
-	}
-
-	public Collection<?> convertOWLToJavaValues(Collection<?> values) {
-		List<Object> beanValues = new ArrayList<Object>(values.size());
-		for (Iterator<?> valIt = values.iterator(); valIt.hasNext(); ) {
-			beanValues.add(convertOWLToJavaValue((Object)valIt.next()));
-		}
-		return beanValues;
 	}
 }

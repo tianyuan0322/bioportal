@@ -33,7 +33,9 @@ public class DatatypePropertyMap extends PropertyMap {
 							   OWLModel metadataKb) {
 		super(beanPropName, beanType, singleValueType, isMultivalued, owlPropName, metadataKb);
 		if (!OWLDatatypeProperty.class.isInstance(owlProperty)) {
-			throw new BPRuntimeException("Error defining datatype property map: "+owlPropName+" is not a datatype property");
+			String msg = "Map requires a datatype property, but '"+owlPropName+"' is a "+
+						 owlProperty.getClass().getName();
+			throw new BPRuntimeException(msg);
 		}
 	}
 }

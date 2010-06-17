@@ -1,8 +1,6 @@
 package org.ncbo.stanford.manager.metakb.protege;
 
-import java.util.Collection;
 import java.util.Date;
-import java.util.Iterator;
 import java.util.List;
 
 import org.junit.Assert;
@@ -11,6 +9,10 @@ import org.ncbo.stanford.AbstractBioPortalTest;
 import org.ncbo.stanford.bean.ProjectBean;
 import org.ncbo.stanford.exception.MetadataObjectNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
+
+import edu.stanford.smi.protegex.owl.model.OWLModel;
+import edu.stanford.smi.protegex.owl.model.OWLProperty;
+import edu.stanford.smi.protegex.owl.model.RDFProperty;
 
 /**
  * Basic test for storing ProjectBean in the metadata kb.
@@ -77,11 +79,21 @@ public class ProjectMetadataManagerImplTest extends AbstractBioPortalTest {
 	public long convertDateToSeconds(Date date) {
 		return date.getTime() / 1000;
 	}
-
+	
 	@Test
 	public void testGetForUser() throws Exception {
 		List<ProjectBean> results = projectMan.getProjectsForUser(new Integer(12));
 		System.out.println("Got a few: "+results.size());
+	}
+
+	@Test
+	public void testPropertyStuff() throws Exception {
+		OWLModel metaKb = projectMan.getMetadataKb();
+		String pName = "http://protege.stanford.edu/ontologies/ChAO/changes.rdfs#oldName";
+		RDFProperty rProp = metaKb.getRDFProperty(pName);
+		System.out.println("RDFProperty type: "+rProp.getClass().getName());
+		OWLProperty oProp = metaKb.getOWLProperty(pName);
+		System.out.println("OWLProperty type: "+oProp.getClass().getName());
 	}
 	
 //	@Test

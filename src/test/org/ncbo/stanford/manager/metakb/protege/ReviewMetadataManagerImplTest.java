@@ -2,7 +2,6 @@ package org.ncbo.stanford.manager.metakb.protege;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Iterator;
 import java.util.List;
 
 import org.junit.Assert;
@@ -83,6 +82,7 @@ public class ReviewMetadataManagerImplTest extends AbstractBioPortalTest {
 	
 	@Test
 	public void testGetRatingTypes() throws Exception {
+		System.out.println("This should print before the kb loads.");
 		Collection<RatingTypeBean> ratingTypes = reviewMan.getAllRatingTypes();
 		Assert.assertEquals("Wrong number of rating types", 6, ratingTypes.size());
 	}

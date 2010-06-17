@@ -2,12 +2,15 @@ package org.ncbo.stanford.manager.metakb.protege.DAO.base;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Iterator;
+import java.util.List;
 
 import org.ncbo.stanford.exception.BPRuntimeException;
 import org.ncbo.stanford.exception.MetadataException;
-import org.ncbo.stanford.util.protege.OWLPropertyUtils;
+import org.ncbo.stanford.util.protege.PropertyUtils;
 
 import edu.stanford.smi.protegex.owl.model.OWLIndividual;
 import edu.stanford.smi.protegex.owl.model.OWLModel;
@@ -133,10 +136,10 @@ public class PropertyMap {
 			// This is a collection of values
 			if (value == null) {
 				Collection<?> owlValues = Collections.EMPTY_LIST;
-				OWLPropertyUtils.setPropertyValues(ind, owlProperty, owlValues);
+				PropertyUtils.setPropertyValues(ind, owlProperty, owlValues);
 			} else if (Collection.class.isInstance(value)) {
 				Collection<?> owlValues = convertJavaToOWLValues((Collection<?>)value);
-				OWLPropertyUtils.setPropertyValues(ind, owlProperty, owlValues);
+				PropertyUtils.setPropertyValues(ind, owlProperty, owlValues);
 			} else {
 				String msg = "Attempt to assert single value ("+value+") on a multivalued property ("+owlProperty.getName()+")";
 				throw new BPRuntimeException(msg);
@@ -144,7 +147,7 @@ public class PropertyMap {
 		} else {
 			// This is a single value
 			Object owlValue = convertJavaToOWLValue(value);
-			OWLPropertyUtils.setPropertyValue(ind, owlProperty, owlValue);
+			PropertyUtils.setPropertyValue(ind, owlProperty, owlValue);
 		}
 	}
 	
@@ -157,11 +160,11 @@ public class PropertyMap {
 	public Object getOWLValue(OWLIndividual ind) {
 		if (isMultivalued) {
 			// This is a collection of values
-			Collection<?> owlValues = OWLPropertyUtils.getPropertyValues(ind, owlProperty);
+			Collection<?> owlValues = PropertyUtils.getPropertyValues(ind, owlProperty);
 			return convertOWLToJavaValues(owlValues);
 		} else {
 			// This is a single value
-			Object owlValue = OWLPropertyUtils.getPropertyValue(ind, owlProperty);
+			Object owlValue = PropertyUtils.getPropertyValue(ind, owlProperty);
 			return convertOWLToJavaValue(owlValue);
 		}
 	}
@@ -173,8 +176,13 @@ public class PropertyMap {
 		return value;
 	}
 	
-	public Collection<?> convertJavaToOWLValues(Collection<?> values) throws MetadataException {
-		return values;
+	public Collection<?> convertJavaToOWLValues(Collection<?> values)
+			throws MetadataException {
+		List<Object> owlValues = new ArrayList<Object>(values.size());
+		for (Iterator<?> valIt = values.iterator(); valIt.hasNext(); ) {
+			owlValues.add(convertJavaToOWLValue((Object)valIt.next()));
+		}
+		return owlValues;
 	}
 	
 	public Object convertOWLToJavaValue(Object value) {
@@ -182,7 +190,11 @@ public class PropertyMap {
 	}
 	
 	public Collection<?> convertOWLToJavaValues(Collection<?> values) {
-		return values;
+		List<Object> beanValues = new ArrayList<Object>(values.size());
+		for (Iterator<?> valIt = values.iterator(); valIt.hasNext(); ) {
+			beanValues.add(convertOWLToJavaValue((Object)valIt.next()));
+		}
+		return beanValues;
 	}
 	
 	// =========================================================================

@@ -35,26 +35,24 @@ public abstract class AbstractDAO<BeanType extends AbstractIdBean> {
 	
 	// This is set to be the same as BeanType. (Done in the constructor.)
 	// Used for creating new beans.
-	protected final Class<BeanType> beanType;
+	private Class<BeanType> beanType;
 	
 	// Property maps -- used to move property values to/from bean/owl
-	protected List<PropertyMap> propMaps = new ArrayList<PropertyMap>();
+	private PropertyMapSet propMapSet;
 	
 	// Namespace prefixes from the metadata ontology
 	protected static final String PREFIX_OMV = "OMV:";
-	protected static final String PREFIX_METADATA = "metadata:"; 
-	
-	// Class name used to retrieve the kbClass and to name the instances
-	// Should be set by the subclass via the constructor.
-	protected final String qualifiedClassName;
+	protected static final String PREFIX_METADATA = "metadata:";
+	protected static final String PREFIX_METRICS = "metrics:";
 	
 	// Computed names
 	static final String INSTANCE_NAMESPACE = "http://protege.stanford.edu/ontologies/metadata/BioPortalMetadataKnowledgeBase.owl#";
-	protected final String instanceNamePrefix;
+	protected String instanceNamePrefix;
 	
 	// Objects from the KB will be set in the constructor
-	protected final OWLModel metadataKb;
-	protected final OWLNamedClass kbClass;
+	private DAOGroup daoGroup;
+	private OWLModel metadataKb;
+	private OWLNamedClass kbClass;
 	
 	// =====================================
 	// Members used when working with Timestamped beans
@@ -67,18 +65,19 @@ public abstract class AbstractDAO<BeanType extends AbstractIdBean> {
 	protected PropertyMap dateCreatedMap = null;
 	protected PropertyMap dateModifiedMap = null;
 	
-	
+
 	// =========================================================================
 	// Initialization
 	
 	@SuppressWarnings("unchecked")
-	protected AbstractDAO(String qualifiedClassName, OWLModel metadataKb) {
+	protected void initialize(OWLModel metadataKb, DAOGroup daoGroup) {
 		this.beanType = (Class<BeanType>) ((ParameterizedType) getClass().getGenericSuperclass()).getActualTypeArguments()[0];
 		// Initialize String values
-		this.qualifiedClassName = qualifiedClassName;
+		String qualifiedClassName = getQualifiedClassName();
 		int unqualifiedNameStart = qualifiedClassName.lastIndexOf(':') + 1;
 		String unqualifiedClassName = qualifiedClassName.substring(unqualifiedNameStart);
 		instanceNamePrefix = INSTANCE_NAMESPACE + unqualifiedClassName + "_";
+		this.daoGroup = daoGroup;
 		try {
 			this.metadataKb = metadataKb;
 			kbClass = metadataKb.getOWLNamedClass(qualifiedClassName);
@@ -87,13 +86,20 @@ public abstract class AbstractDAO<BeanType extends AbstractIdBean> {
 			e.printStackTrace();
 			throw new BPRuntimeException("Error encountered initializating metadata kb access layer.", e);
 		}
-		initializePropertyMaps();
+		propMapSet = new PropertyMapSet(beanType, metadataKb);
+		initializePropertyMaps(propMapSet);
 	}
+		
+	// Class name used to retrieve the kbClass and to name the instances
+	abstract protected String getQualifiedClassName();
 	
-	// Subclass initializes the property mappings
-	protected abstract void initializePropertyMaps();
+	protected static boolean COLLECTION = true;
+	protected static boolean SINGLE_VALUE = false;
+	
+	// Subclasses must implement this with calls to the PropertyMapSet
+	abstract protected void initializePropertyMaps(PropertyMapSet maps);
+	
 
-	
 	// =========================================================================
 	// Public API
 	
@@ -133,7 +139,7 @@ public abstract class AbstractDAO<BeanType extends AbstractIdBean> {
 	 */
 	public BeanType retreiveObject(Integer id)
 			throws MetadataObjectNotFoundException {
-		OWLIndividual instance = getInstance(id);
+		OWLIndividual instance = getIndividualForId(id);
 		return convertIndividualToBean(instance);
 	}
 	
@@ -149,7 +155,7 @@ public abstract class AbstractDAO<BeanType extends AbstractIdBean> {
 	public void updateObject(BeanType bean)
 			throws MetadataObjectNotFoundException, MetadataException {
 		// Retrieve the matching instance
-		OWLIndividual instance = getInstance(bean.getId());
+		OWLIndividual instance = getIndividualForId(bean.getId());
 		// Set the properties -- no need for a save step
 		copyBeanPropertiesToIndividual(bean, instance);
 		maybeSetDateModified(instance, bean);
@@ -163,7 +169,7 @@ public abstract class AbstractDAO<BeanType extends AbstractIdBean> {
 	 * @throws MetadataObjectNotFoundException when there is no matching object in the metadata kb.
 	 */
 	public void deleteObject(Integer id) throws MetadataObjectNotFoundException {
-		OWLIndividual instance = getInstance(id);
+		OWLIndividual instance = getIndividualForId(id);
 		instance.delete();
 	}
 
@@ -269,22 +275,38 @@ public abstract class AbstractDAO<BeanType extends AbstractIdBean> {
 	}
 	
 	// Retrieve an instance from the knowledge base
-	protected OWLIndividual getInstance(Integer id) throws MetadataObjectNotFoundException {
+	protected OWLIndividual getIndividualForId(Integer id) throws MetadataObjectNotFoundException {
 		String name = convertIdToName(id);
 		OWLIndividual individual = metadataKb.getOWLIndividual(name);
 		if (individual == null || individual.isDeleted() || individual.isBeingDeleted()) {
-			throw new MetadataObjectNotFoundException("Could not find "+qualifiedClassName+" instance (id="+id+") in metadata knowledge base");
+			String msg = "Could not find "+getQualifiedClassName()+" instance (id="+id+
+			  			 ") in metadata knowledge base";
+			throw new MetadataObjectNotFoundException(msg);
 		}
 		return individual;
 	}
+
+	// Extract the id from an instance
+	protected Integer getIdForIndividual(OWLIndividual inst) {
+		return convertNameToId(inst.getName());
+	}
 	
+
+	// =========================================================================
+	// Access to related DAO objects
+	
+	public <DAOType extends AbstractDAO<?>> DAOType
+	  getSiblingDAO(Class<DAOType> daoType) {
+		return daoGroup.getDAO(daoType);
+	}
+
 
 	// =========================================================================
 	// Name/ID conversion
 	
 	// 
 	// Note: Returns null if there is a format error.
-	private Integer convertNameToId(String name) {
+	protected Integer convertNameToId(String name) {
 		Integer id = null;
 		int numStart = name.lastIndexOf('_') + 1;
 		try {
@@ -302,68 +324,19 @@ public abstract class AbstractDAO<BeanType extends AbstractIdBean> {
 
 	// =========================================================================
 	// Value mapping helpers
-	
-	/**
-	 * Add an OWL Datatype Property to the list of properties that are copied between
-	 * the OWL KB and the java bean.  To be called by subclasses inside their implementation
-	 * of {@link AbstractDAO#initializePropertyMaps}.
-	 * 
-	 * @param beanPropName - Name of the data member on the bean.
-	 * @param singleValueType - Java type of a single property value.  e.g. <code>String.class</code>.
-	 * @param isMultivalued - If <code>true</code>, the bean data member's type is 
-	 *     <code>Collection&lt;singleValueType&gt;</code>.  (Otherwise the bean data 
-	 *     member's type is simply <code>singleValueType</code>.)
-	 * @param owlPropName - The qualified name of the OWL Datatype Property object.
-	 */
-	protected void addDatatypePropertyMap(String beanPropName,      // Name of the data member on the bean
-										  Class<?> singleValueType, // Java type of a single property value
-										  boolean isMultivalued,    // If true, bean data member type is
-										  							//   Collection<singleValueType>
-										  String owlPropName) {     // Name of the property object in the OWL KB
-		PropertyMap pMap = new DatatypePropertyMap(beanPropName, beanType, singleValueType,
-												   isMultivalued, owlPropName, metadataKb);
-		propMaps.add(pMap);
-	}
 
-	/**
-	 * Add an OWL Object Property to the list of properties that are copied between
-	 * the OWL KB and the java bean.  To be called by subclasses inside their implementation
-	 * of {@link AbstractDAO#initializePropertyMaps}.
-	 * 
-	 * @param beanPropName - Name of the data member on the bean.
-	 * @param isMultivalued - If <code>true</code>, the bean data member's type is 
-	 *     <code>Collection&lt;singleValueType&gt;</code>.  (Otherwise the bean data 
-	 *     member's type is simply <code>singleValueType</code>.)
-	 * @param owlPropName - The qualified name of the OWL Datatype Property object.
-	 * @param valueDAO - The {@link AbstractDAO} implementation that is used to convert
-	 *     this property's values between the java bean world and the OWL KB world.
-	 */
-	protected void addObjectPropertyMap(String beanPropName,
-										boolean isMultivalued,
-										String owlPropName,
-										AbstractDAO<?> valueDAO) {
-		PropertyMap pMap = new ObjectPropertyMap(beanPropName, beanType, owlPropName,
-												 isMultivalued, metadataKb, valueDAO);
-		propMaps.add(pMap);
-	}
 	
 	// Copy the property values from the BeanType object to the metadata KB instance.
 	// Does not copy the timestamps, as this operation represents a "create" or "update",
 	// and timestamps need to be handled accordingly.
 	protected void copyBeanPropertiesToIndividual(BeanType bean, OWLIndividual individual) throws MetadataException {
-		for (Iterator<PropertyMap> pmIt = propMaps.iterator(); pmIt.hasNext(); ) {
-			PropertyMap propertyMap = pmIt.next();
-			propertyMap.copyValueToIndividual(bean, individual);
-		}
+		propMapSet.copyBeanPropertiesToIndividual(bean, individual);
 	}
 
 	// Copy the property values from the metadata KB instance to the BeanType object.
 	// Copies timestamp values as well.
 	protected void copyIndividualPropertiesToBean(OWLIndividual individual, BeanType bean) {
-		for (Iterator<PropertyMap> pmIt = propMaps.iterator(); pmIt.hasNext(); ) {
-			PropertyMap propertyMap = pmIt.next();
-			propertyMap.copyValueToBean(individual, bean);
-		}
+		propMapSet.copyIndividualPropertiesToBean(individual, bean);
 		if (bean instanceof TimedIdBean) {
 			copyTimestampsToBean(individual, (TimedIdBean)bean);
 		}
@@ -379,7 +352,7 @@ public abstract class AbstractDAO<BeanType extends AbstractIdBean> {
 	// If the bean has dateCreated already, then we assume it was previously created
 	// in a different persistent store, and we keep that timestamp value.
 	//
-	private void maybeSetDateCreatedAndModified(OWLIndividual inst, BeanType bean) throws MetadataException {
+	protected void maybeSetDateCreatedAndModified(OWLIndividual inst, BeanType bean) throws MetadataException {
 		if (bean instanceof TimedIdBean) {
 			ensureTimestampMapInitialization();
 			TimedIdBean tBean = (TimedIdBean)bean;
@@ -401,7 +374,7 @@ public abstract class AbstractDAO<BeanType extends AbstractIdBean> {
 	
 	// Call this method in the case when the bean is being updated in the persistent
 	// store.  If appropriate, the dateModified property will be updated.
-	private void maybeSetDateModified(OWLIndividual inst, BeanType bean) throws MetadataException {
+	protected void maybeSetDateModified(OWLIndividual inst, BeanType bean) throws MetadataException {
 		if (bean instanceof TimedIdBean) {
 			ensureTimestampMapInitialization();
 			Date now = new Date();
@@ -430,5 +403,9 @@ public abstract class AbstractDAO<BeanType extends AbstractIdBean> {
 	
 	Class<BeanType> getBeanType() {
 		return beanType;
+	}
+	
+	OWLNamedClass getKbClass() {
+		return kbClass;
 	}
 }

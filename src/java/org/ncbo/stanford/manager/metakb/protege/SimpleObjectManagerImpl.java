@@ -3,57 +3,49 @@ package org.ncbo.stanford.manager.metakb.protege;
 import java.util.Collection;
 
 import org.ncbo.stanford.bean.AbstractIdBean;
-import org.ncbo.stanford.exception.BPRuntimeException;
 import org.ncbo.stanford.exception.MetadataException;
 import org.ncbo.stanford.exception.MetadataObjectNotFoundException;
-import org.ncbo.stanford.manager.AbstractOntologyManagerProtege;
 import org.ncbo.stanford.manager.metakb.SimpleObjectManager;
 import org.ncbo.stanford.manager.metakb.protege.DAO.base.AbstractDAO;
-
-import edu.stanford.smi.protegex.owl.model.OWLModel;
 
 /**
  * Basic form of object manager.  You can ask for a DAO.
  * 
- * @author tony
+ * @author Tony Loeser
  */
 public abstract class SimpleObjectManagerImpl<BeanType extends AbstractIdBean> 
-		extends AbstractOntologyManagerProtege
+		extends BaseProtegeMetadataManager
 		implements SimpleObjectManager<BeanType> {
 	
-	protected abstract AbstractDAO<BeanType> getAbstractDAO();
+	private final Class<? extends AbstractDAO<BeanType>> daoType;
 	
-	protected OWLModel getMetadataKb() {
-		try {
-			return getMetadataOWLModel();
-		} catch (Exception e) {
-			throw new BPRuntimeException("Could not initialize metadata Kb", e);
-		}
+	protected SimpleObjectManagerImpl(Class<? extends AbstractDAO<BeanType>> daoType) {
+		this.daoType = daoType;
 	}
 	
-	// Implement interface
+	@Override
 	public BeanType createObject() throws MetadataException {
-		return getAbstractDAO().createObject();
+		return getDAO(daoType).createObject();
 	}
 
-	// Implement interface
+	@Override
 	public void deleteObject(Integer id) throws MetadataObjectNotFoundException {
-		getAbstractDAO().deleteObject(id);
+		getDAO(daoType).deleteObject(id);
 	}
 
-	// Implement interface
+	@Override
 	public BeanType retrieveObject(Integer id) throws MetadataObjectNotFoundException {
-		return getAbstractDAO().retreiveObject(id);
+		return getDAO(daoType).retreiveObject(id);
 	}
 	
-	// Implement interface
+	@Override
 	public Collection<BeanType> retrieveAllObjects() {
-		return getAbstractDAO().getAllObjects();
+		return getDAO(daoType).getAllObjects();
 	}
 
-	// Implement interface
+	@Override
 	public void updateObject(BeanType bean)
 			throws MetadataObjectNotFoundException, MetadataException {
-		getAbstractDAO().updateObject(bean);
+		getDAO(daoType).updateObject(bean);
 	}
 }

@@ -3,8 +3,7 @@ package org.ncbo.stanford.manager.metakb.protege.DAO;
 import org.ncbo.stanford.bean.RatingTypeBean;
 import org.ncbo.stanford.exception.MetadataException;
 import org.ncbo.stanford.manager.metakb.protege.DAO.base.AbstractDAO;
-
-import edu.stanford.smi.protegex.owl.model.OWLModel;
+import org.ncbo.stanford.manager.metakb.protege.DAO.base.PropertyMapSet;
 
 /**
  * Data access object for accessing {@link RatingTypeBean} objects in the metadata KB.
@@ -17,18 +16,20 @@ public class RatingTypeDAO extends AbstractDAO<RatingTypeBean> {
 
 	private static String OWL_CLASS_NAME = "metadata:RatingType";
 	
-	public RatingTypeDAO(OWLModel metadataKb) {
-		super(OWL_CLASS_NAME, metadataKb);
+	@Override
+	protected String getQualifiedClassName() {
+		return OWL_CLASS_NAME;
 	}
+
 	
 	// ============================================================
-	// Properties
+	// Property maps
 
 	public static final String PROP_URI_NAME = PREFIX_OMV + "name";
 
 	// Override
-	protected void initializePropertyMaps() {
-		addDatatypePropertyMap("name", String.class, false, PROP_URI_NAME);
+	protected void initializePropertyMaps(PropertyMapSet maps) {
+		maps.addDatatypePropertyMap("name", String.class, SINGLE_VALUE, PROP_URI_NAME);
 	}
 
 	
@@ -50,6 +51,7 @@ public class RatingTypeDAO extends AbstractDAO<RatingTypeBean> {
 		throw new UnsupportedOperationException("RatingTypeDAO is a read-only DAO.");
 	}
 
+	
 	// ============================================================
 	// Fix instance name generation
 	
