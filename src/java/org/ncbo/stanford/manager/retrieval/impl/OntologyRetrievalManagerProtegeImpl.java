@@ -491,18 +491,18 @@ public class OntologyRetrievalManagerProtegeImpl extends
 
 		return beans;
 	}
-	
-	private Collection<Cls> removeAnnonymousClasses(Collection<Cls> protegeClasses){		
+
+	private Collection<Cls> removeAnnonymousClasses(
+			Collection<Cls> protegeClasses) {
 		Iterator<Cls> it = protegeClasses.iterator();
 
 		while (it.hasNext()) {
-			Cls subclass = it.next();			 
-			if (subclass.isSystem()
-					|| subclass.getName().startsWith("@")) {
+			Cls subclass = it.next();
+			if (subclass.isSystem() || subclass.getName().startsWith("@")) {
 				it.remove();
 			}
-		} 
-		return protegeClasses; 
+		}
+		return protegeClasses;
 	}
 
 	private List<ClassBean> convertClasses(Collection<Cls> protegeClses,
@@ -521,7 +521,23 @@ public class OntologyRetrievalManagerProtegeImpl extends
 	}
 
 	private String getBrowserText(Frame frame) {
-		return StringHelper.unSingleQuote(frame.getBrowserText());
+		String browserText = null;
+
+		// Protege should do this check, but it seems like it doesn't work for
+		// instances
+		if (frame.getKnowledgeBase() instanceof OWLModel) {
+			Collection labels = ((RDFResource) frame).getLabels();
+
+			if (labels != null && !labels.isEmpty()) {
+				browserText = (String) labels.iterator().next();
+			}
+		}
+
+		if (browserText == null) {
+			browserText = frame.getBrowserText();
+		}
+
+		return StringHelper.unSingleQuote(browserText);
 	}
 
 	private ClassBean createBaseClassBean(Frame frame) {
@@ -617,10 +633,10 @@ public class OntologyRetrievalManagerProtegeImpl extends
 		}
 
 		classBean.addRelation(ApplicationConstants.CHILD_COUNT, subclasses
-				.size());		
+				.size());
 		classBean.addRelation(ApplicationConstants.INSTANCE_COUNT, cls
 				.getDirectInstanceCount());
-		
+
 		if (recursive) {
 			classBean.addRelation(ApplicationConstants.SUB_CLASS,
 					convertClasses(subclasses, false, synonymSlot,
