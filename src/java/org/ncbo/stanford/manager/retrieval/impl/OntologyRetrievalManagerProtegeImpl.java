@@ -42,6 +42,7 @@ import edu.stanford.smi.protegex.owl.model.OWLModel;
 import edu.stanford.smi.protegex.owl.model.OWLNamedClass;
 import edu.stanford.smi.protegex.owl.model.RDFProperty;
 import edu.stanford.smi.protegex.owl.model.RDFResource;
+import edu.stanford.smi.protegex.owl.model.RDFSLiteral;
 import edu.stanford.smi.protegex.owl.model.RDFSNamedClass;
 import edu.stanford.smi.protegex.owl.model.impl.DefaultOWLNamedClass;
 
@@ -529,7 +530,13 @@ public class OntologyRetrievalManagerProtegeImpl extends
 			Collection labels = ((RDFResource) frame).getLabels();
 
 			if (labels != null && !labels.isEmpty()) {
-				browserText = (String) labels.iterator().next();
+				Object literal = labels.iterator().next();
+				
+				if (literal instanceof RDFSLiteral) {
+					browserText = ((RDFSLiteral) literal).getString();
+				} else {
+					browserText = labels.iterator().next().toString();
+				}
 			}
 		}
 
