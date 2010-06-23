@@ -8,7 +8,9 @@ import org.ncbo.stanford.bean.UserBean;
 import org.ncbo.stanford.domain.generated.NcboUser;
 import org.ncbo.stanford.domain.generated.NcboUserDAO;
 import org.ncbo.stanford.domain.generated.NcboUserSubscriptions;
-import org.ncbo.stanford.domain.generated.NcboUserSubscriptionsDAO;
+
+import org.ncbo.stanford.domain.custom.dao.CustomNcboUserSubscriptionsDAO;
+
 import org.ncbo.stanford.enumeration.NotificationTypeEnum;
 import org.ncbo.stanford.manager.notification.NotificationManager;
 import org.ncbo.stanford.service.notification.EmailNotificationService;
@@ -27,7 +29,8 @@ public class EmailNotificationServiceImpl implements EmailNotificationService {
 
 	private Map<String, NotificationManager> notificationManagerMap = new HashMap<String, NotificationManager>();
 
-	private NcboUserSubscriptionsDAO ncboUserSubscriptionsDAO;
+	private CustomNcboUserSubscriptionsDAO ncboUserSubscriptionsDAO;
+
 	private NcboUserDAO ncboUserDAO;
 
 	private TextManager textManager;
@@ -50,7 +53,7 @@ public class EmailNotificationServiceImpl implements EmailNotificationService {
 	}
 
 	public void setNcboUserSubscriptionsDAO(
-			NcboUserSubscriptionsDAO ncboUserSubscriptionsDAO) {
+			CustomNcboUserSubscriptionsDAO ncboUserSubscriptionsDAO) {
 		this.ncboUserSubscriptionsDAO = ncboUserSubscriptionsDAO;
 	}
 
@@ -73,31 +76,31 @@ public class EmailNotificationServiceImpl implements EmailNotificationService {
 		String inReplyTo = (keywords.get("inReplyTo") != null) ? keywords
 				.get("inReplyTo") : null;
 
+		// This List Contains the NcboUserSubscriptions Field according to the
+		// OntolgyId And NotificationType
 		List<NcboUserSubscriptions> ncboUserSubscriptions = ncboUserSubscriptionsDAO
-				.findByOntologyId(ontologyBean.getOntologyId().toString());
+				.findByOntologyIdAndNotificationType(ontologyBean
+						.getOntologyId().toString(), notificationType);
 
-		for (NcboUserSubscriptions ncboUserSubscription : ncboUserSubscriptions) {
-			NcboUser ncboUser = ncboUserDAO.findById(ncboUserSubscription
-					.getUserId());
+		NcboUser ncboUser = ncboUserDAO.findById(ncboUserSubscriptions.get(0)
+				.getUserId());
 
-			UserBean userBean = new UserBean();
-			userBean.populateFromEntity(ncboUser);
-			String from = MessageUtils.getMessage("notification.mail.from");
+		UserBean userBean = new UserBean();
+		userBean.populateFromEntity(ncboUser);
+		String from = MessageUtils.getMessage("notification.mail.from");
 
-			keywords.put(ApplicationConstants.ONTOLOGY_VERSION_ID, ontologyBean
-					.getId().toString());
-			keywords.put(ApplicationConstants.USERNAME, userBean.getUsername());
+		keywords.put(ApplicationConstants.ONTOLOGY_VERSION_ID, ontologyBean
+				.getId().toString());
+		keywords.put(ApplicationConstants.USERNAME, userBean.getUsername());
 
-			textManager.appendKeywords(keywords);
-			String message = textManager
-					.getTextContent(notificationType.name());
-			String subject = textManager.getTextContent(notificationType.name()
-					+ ApplicationConstants.SUBJECT_SUFFIX);
+		textManager.appendKeywords(keywords);
+		String message = textManager.getTextContent(notificationType.name());
+		String subject = textManager.getTextContent(notificationType.name()
+				+ ApplicationConstants.SUBJECT_SUFFIX);
 
-			notificationManagerMap.get(ApplicationConstants.EMAIL)
-					.sendNotification(subject, message, from, messageId,
-							inReplyTo, userBean);
-		}
+		notificationManagerMap.get(ApplicationConstants.EMAIL)
+				.sendNotification(subject, message, from, messageId, inReplyTo,
+						userBean);
 
 	}
 
