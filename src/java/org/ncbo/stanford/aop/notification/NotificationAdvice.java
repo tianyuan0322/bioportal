@@ -45,9 +45,10 @@ public class NotificationAdvice {
 	 */
 	public void adviceUpdateOntology(OntologyBean ontologyBean)
 			throws Throwable {
+		/** Reference implementaion. Disabled until needed.
 		emailNotificationService.sendNotification(
 				NotificationTypeEnum.UPDATE_ONTOLOGY_NOTIFICATION,
-				ontologyBean, null);
+				ontologyBean, null); **/
 	}
 
 	public void adviceCreateNote(NoteBean note) throws Throwable {

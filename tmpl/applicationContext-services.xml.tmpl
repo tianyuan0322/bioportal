@@ -1421,6 +1421,7 @@
 		</property>
 	</bean>
 	
+	<!-- Reference implementation, disabled until we need it
 	<aop:config>
 		<aop:aspect ref="notificationAdvice">
 			<aop:pointcut id="aroundService"
@@ -1429,6 +1430,7 @@
 			<aop:after-returning pointcut-ref="aroundService" method="adviceUpdateOntology" />
 		</aop:aspect>
 	</aop:config>
+	-->
 
 	<aop:config>
 		<aop:aspect id="afterCreateNote" ref="notificationAdvice">
