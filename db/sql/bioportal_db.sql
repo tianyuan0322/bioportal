@@ -205,12 +205,28 @@ CREATE TABLE `ncbo_user_role` (
 
 DROP TABLE IF EXISTS `ncbo_user_subscriptions`;
 
+/*Table structure for table `ncbo_user_subscriptions` */
+
+DROP TABLE IF EXISTS `ncbo_user_subscriptions`;
+
 CREATE TABLE `ncbo_user_subscriptions` (
-  `id` int(11) NOT NULL,
+  `id` int(11) NOT NULL AUTO_INCREMENT,
   `user_id` int(11) NOT NULL,
-  `ontology_id` varchar(11) DEFAULT 'NULL',
+  `ontology_id` varchar(25) CHARACTER SET utf8 NOT NULL,
+  `notification_type` int(11) NOT NULL,
+  PRIMARY KEY (`id`),
+  KEY `FK_ncbo_notification_type` (`notification_type`)
+) ENGINE=InnoDB AUTO_INCREMENT=17 DEFAULT CHARSET=latin1 CHECKSUM=1 DELAY_KEY_WRITE=1 ROW_FORMAT=DYNAMIC;
+
+/*Table structure for table `ncbo_l_notification_type` */
+
+DROP TABLE IF EXISTS `ncbo_l_notification_type`;
+
+CREATE TABLE `ncbo_l_notification_type` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `type` varchar(255) CHARACTER SET utf8 NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=MyISAM DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=latin1 CHECKSUM=1 DELAY_KEY_WRITE=1 ROW_FORMAT=DYNAMIC;
 
 /*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
 /*!40014 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS */;
