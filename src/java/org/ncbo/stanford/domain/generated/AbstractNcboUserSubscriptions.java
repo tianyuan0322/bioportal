@@ -11,6 +11,7 @@ public abstract class AbstractNcboUserSubscriptions implements
 	// Fields
 
 	private Integer id;
+	private NcboLNotificationType ncboLNotificationType;
 	private Integer userId;
 	private String ontologyId;
 
@@ -20,13 +21,11 @@ public abstract class AbstractNcboUserSubscriptions implements
 	public AbstractNcboUserSubscriptions() {
 	}
 
-	/** minimal constructor */
-	public AbstractNcboUserSubscriptions(Integer userId) {
-		this.userId = userId;
-	}
-
 	/** full constructor */
-	public AbstractNcboUserSubscriptions(Integer userId, String ontologyId) {
+	public AbstractNcboUserSubscriptions(
+			NcboLNotificationType ncboLNotificationType, Integer userId,
+			String ontologyId) {
+		this.ncboLNotificationType = ncboLNotificationType;
 		this.userId = userId;
 		this.ontologyId = ontologyId;
 	}
@@ -39,6 +38,15 @@ public abstract class AbstractNcboUserSubscriptions implements
 
 	public void setId(Integer id) {
 		this.id = id;
+	}
+
+	public NcboLNotificationType getNcboLNotificationType() {
+		return this.ncboLNotificationType;
+	}
+
+	public void setNcboLNotificationType(
+			NcboLNotificationType ncboLNotificationType) {
+		this.ncboLNotificationType = ncboLNotificationType;
 	}
 
 	public Integer getUserId() {
