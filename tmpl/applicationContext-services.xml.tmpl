@@ -222,6 +222,13 @@
 		</property>
 	</bean>
 
+	<bean id="NcboLNotificationTypeDAO"
+		class="org.ncbo.stanford.domain.custom.dao.CustomNcboLNotificationTypeDAO">
+		<property name="hibernateTemplate">
+			<ref bean="hibernateTemplate" />
+		</property>
+	</bean>
+	
 	<!-- Encryption -->
 
 	<bean id="stringEncryptor" class="org.jasypt.encryption.pbe.StandardPBEStringEncryptor">
