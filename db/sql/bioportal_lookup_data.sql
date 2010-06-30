@@ -40,3 +40,6 @@ INSERT  INTO `ncbo_l_status`(`id`,`status`,`description`) VALUES (1,'Waiting','T
 
 /*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
 /*!40014 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS */;
+
+INSERT INTO ncbo_l_notification_type VALUES(10, 'Notes');
+
