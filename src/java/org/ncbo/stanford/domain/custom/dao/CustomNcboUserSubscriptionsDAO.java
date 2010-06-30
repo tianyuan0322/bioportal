@@ -5,14 +5,18 @@ package org.ncbo.stanford.domain.custom.dao;
 
 import java.util.List;
 
-import org.hibernate.criterion.DetachedCriteria;
-import org.hibernate.criterion.Property;
+import org.hibernate.criterion.Expression;
+
 import org.hibernate.criterion.Restrictions;
-import org.hibernate.criterion.Subqueries;
-import org.ncbo.stanford.domain.generated.NcboLNotificationType;
+
+import org.hibernate.Criteria;
+
 import org.ncbo.stanford.domain.generated.NcboUserSubscriptions;
 import org.ncbo.stanford.domain.generated.NcboUserSubscriptionsDAO;
 import org.ncbo.stanford.enumeration.NotificationTypeEnum;
+import org.ncbo.stanford.util.constants.ApplicationConstants;
+
+import org.ncbo.stanford.util.constants.ApplicationConstants;
 
 /**
  * @author mdorf
@@ -36,6 +40,8 @@ public class CustomNcboUserSubscriptionsDAO extends NcboUserSubscriptionsDAO {
 	}
 
 	/**
+	 * This Method collect the information of userId, according to
+	 * ontologyId,notificationType and By Default Dummay OntologyId(99)
 	 * 
 	 * @param ontologyId
 	 * @param notificationType
@@ -44,18 +50,17 @@ public class CustomNcboUserSubscriptionsDAO extends NcboUserSubscriptionsDAO {
 	public List findByOntologyIdAndNotificationType(String ontologyId,
 			NotificationTypeEnum notificationType) {
 
-		DetachedCriteria notificationTypeCriteria = DetachedCriteria.forClass(
-				NcboLNotificationType.class).setProjection(
-				Property.forName("id")).add(
-				Property.forName("type").eq(notificationType.toString()));
+		Criteria criteria = getSession().createCriteria(
+				NcboUserSubscriptions.class).createAlias(
+				"ncboLNotificationType", "nt").add(
+				Expression.or(Expression.and(Restrictions.eq("ontologyId",
+						ontologyId), Expression.eq("nt.type", notificationType
+						.toString())), Restrictions.eq("ontologyId",
+						ApplicationConstants.ONTOLOGY_ID)));
 
-		DetachedCriteria detachedCriteria = DetachedCriteria.forClass(
-				NcboUserSubscriptions.class).add(
-				Property.forName("ontologyId").eq(ontologyId)).add(
-				Property.forName("notificationType").eq(
-						notificationTypeCriteria));
-		List result = getHibernateTemplate().findByCriteria(detachedCriteria);
+		List result = criteria.list();
 		return result;
+
 	}
 
 }

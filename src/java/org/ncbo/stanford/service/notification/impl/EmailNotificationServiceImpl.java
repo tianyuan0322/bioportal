@@ -4,12 +4,15 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.ncbo.stanford.bean.SubscriptionsBean;
 import org.ncbo.stanford.bean.UserBean;
 import org.ncbo.stanford.domain.generated.NcboUser;
 import org.ncbo.stanford.domain.generated.NcboUserDAO;
 import org.ncbo.stanford.domain.generated.NcboUserSubscriptions;
+import org.ncbo.stanford.domain.generated.NcboLNotificationType;
 
 import org.ncbo.stanford.domain.custom.dao.CustomNcboUserSubscriptionsDAO;
+import org.ncbo.stanford.domain.custom.dao.CustomNcboLNotificationTypeDAO;
 
 import org.ncbo.stanford.enumeration.NotificationTypeEnum;
 import org.ncbo.stanford.manager.notification.NotificationManager;
@@ -30,6 +33,12 @@ public class EmailNotificationServiceImpl implements EmailNotificationService {
 	private Map<String, NotificationManager> notificationManagerMap = new HashMap<String, NotificationManager>();
 
 	private CustomNcboUserSubscriptionsDAO ncboUserSubscriptionsDAO;
+	private CustomNcboLNotificationTypeDAO ncboLNotificationTypeDAO;
+
+	public void setNcboLNotificationTypeDAO(
+			CustomNcboLNotificationTypeDAO ncboLNotificationTypeDAO) {
+		this.ncboLNotificationTypeDAO = ncboLNotificationTypeDAO;
+	}
 
 	private NcboUserDAO ncboUserDAO;
 
@@ -77,7 +86,9 @@ public class EmailNotificationServiceImpl implements EmailNotificationService {
 				.get("inReplyTo") : null;
 
 		// This List Contains the NcboUserSubscriptions Field according to the
-		// OntolgyId And NotificationType
+		// OntolgyId And NotificationType and it also contains default Dummy
+		// OntologyID(99)
+
 		List<NcboUserSubscriptions> ncboUserSubscriptions = ncboUserSubscriptionsDAO
 				.findByOntologyIdAndNotificationType(ontologyBean
 						.getOntologyId().toString(), notificationType);
@@ -103,5 +114,4 @@ public class EmailNotificationServiceImpl implements EmailNotificationService {
 						userBean);
 
 	}
-
 }

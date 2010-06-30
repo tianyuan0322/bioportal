@@ -42,4 +42,4 @@ INSERT  INTO `ncbo_l_status`(`id`,`status`,`description`) VALUES (1,'Waiting','T
 /*!40014 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS */;
 
 INSERT INTO ncbo_l_notification_type VALUES(10, 'Notes');
-
+INSERT INTO ncbo_l_notification_type VALUES(3, 'ALL_NOTIFICATION');
