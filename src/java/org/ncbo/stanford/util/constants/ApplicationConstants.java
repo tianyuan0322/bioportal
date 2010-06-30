@@ -120,6 +120,8 @@ public interface ApplicationConstants {
 	public static final String NOTE_PROPOSAL_INFO = "NOTE_PROPOSAL_INFO";
 	public static final String NOTE_USERNAME = "NOTE_USERNAME";
 	public static final String NOTE_URL = "NOTE_URL";
+	public static final String NCBO_USER_SUBSCRIPTIONS="99 is a good candidate";
+	public static final String ONTOLOGY_ID="99";
 	
 	/**
 	 * XML declaration
@@ -152,4 +154,6 @@ public interface ApplicationConstants {
 	public static final String RESPONSE_XML_TAG_NAME = "response";
 
 	public static final String DIR = "######DIR######";
+	
+	public static final String NOTIFICATION_ID="99";
 }
