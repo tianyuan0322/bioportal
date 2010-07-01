@@ -1052,6 +1052,10 @@ public class OntologyRetrievalManagerLexGridImpl extends
 			if (StringUtils.isBlank(bean.getLabel())) {
 				bean.setLabel(getPreferredPresentation(entry));
 			}
+			//We have no label for this concept. We will create a label that has the same value as the id
+			if (StringUtils.isBlank(bean.getLabel())) {
+				bean.setLabel(bean.getId());
+			}
 		}
 
 		if (addRelations) {
