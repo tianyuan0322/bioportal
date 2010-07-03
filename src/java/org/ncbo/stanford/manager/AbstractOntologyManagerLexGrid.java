@@ -336,12 +336,12 @@ public abstract class AbstractOntologyManagerLexGrid {
 			}
 			if (ApplicationConstants.FORMAT_UMLS_RRF
 					.equalsIgnoreCase(ontologyBean.getFormat())) {
-				fullId = "http://purl.bioontology.org/ontology/"
+				fullId = ApplicationConstants.BASE_CONCEPT_NAMESPACE
 						+ ontologyBean.getAbbreviation() + "/" + modCode;
 			}
 			if (ApplicationConstants.FORMAT_LEXGRID_XML
 					.equalsIgnoreCase(ontologyBean.getFormat())) {
-				fullId = "http://purl.bioontology.org/ontology/"
+				fullId = ApplicationConstants.BASE_CONCEPT_NAMESPACE
 						+ ontologyBean.getAbbreviation() + "/" + modCode;
 			}
 
@@ -389,10 +389,10 @@ public abstract class AbstractOntologyManagerLexGrid {
 			// of
 			// the form: http://purl.bioontology.org/ontology/PREFIX/PREFIX_xxxx
 			if (StringUtils.isNotBlank(ontologyBean.getAbbreviation())) {
-				fullId = "http://purl.bioontology.org/ontology/"
+				fullId = ApplicationConstants.BASE_CONCEPT_NAMESPACE
 						+ ontologyBean.getAbbreviation() + "/" + modCode;
 			} else {
-				fullId = "http://purl.bioontology.org/ontology/" + prefix + "/"
+				fullId = ApplicationConstants.BASE_CONCEPT_NAMESPACE + prefix + "/"
 						+ modCode;
 			}
 		}
