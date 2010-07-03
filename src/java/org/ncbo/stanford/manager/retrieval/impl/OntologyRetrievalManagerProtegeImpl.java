@@ -42,7 +42,6 @@ import edu.stanford.smi.protegex.owl.model.OWLModel;
 import edu.stanford.smi.protegex.owl.model.OWLNamedClass;
 import edu.stanford.smi.protegex.owl.model.RDFProperty;
 import edu.stanford.smi.protegex.owl.model.RDFResource;
-import edu.stanford.smi.protegex.owl.model.RDFSLiteral;
 import edu.stanford.smi.protegex.owl.model.RDFSNamedClass;
 import edu.stanford.smi.protegex.owl.model.impl.DefaultOWLNamedClass;
 
@@ -79,12 +78,12 @@ public class OntologyRetrievalManagerProtegeImpl extends
 	/**
 	 * Get the root concept for the specified ontology.
 	 */
-	public ClassBean findRootConcept(OntologyBean ontologyVersion, boolean light) {
-		KnowledgeBase kb = getKnowledgeBase(ontologyVersion);
-		Slot synonymSlot = getSynonymSlot(kb, ontologyVersion.getSynonymSlot());
-		Slot definitionSlot = getDefinitionSlot(kb, ontologyVersion
+	public ClassBean findRootConcept(OntologyBean ontologyBean, boolean light) {
+		KnowledgeBase kb = getKnowledgeBase(ontologyBean);
+		Slot synonymSlot = getSynonymSlot(kb, ontologyBean.getSynonymSlot());
+		Slot definitionSlot = getDefinitionSlot(kb, ontologyBean
 				.getDocumentationSlot());
-		Slot authorSlot = getAuthorSlot(kb, ontologyVersion.getAuthorSlot());
+		Slot authorSlot = getAuthorSlot(kb, ontologyBean.getAuthorSlot());
 
 		ClassBean targetClass = null;
 
@@ -95,38 +94,38 @@ public class OntologyRetrievalManagerProtegeImpl extends
 		if (oThing != null) {
 			if (light) {
 				targetClass = buildConceptLight(oThing, synonymSlot,
-						definitionSlot, authorSlot);
+						definitionSlot, authorSlot, ontologyBean);
 			} else {
 				targetClass = createClassBean(oThing, true, synonymSlot,
-						definitionSlot, authorSlot);
+						definitionSlot, authorSlot, ontologyBean);
 			}
 		}
 
 		return targetClass;
 	}
 
-	public ClassBean findConcept(OntologyBean ontologyVersion,
-			String conceptId, boolean light, boolean noRelations) {
-		KnowledgeBase kb = getKnowledgeBase(ontologyVersion);
-		Slot synonymSlot = getSynonymSlot(kb, ontologyVersion.getSynonymSlot());
-		Slot definitionSlot = getDefinitionSlot(kb, ontologyVersion
+	public ClassBean findConcept(OntologyBean ontologyBean, String conceptId,
+			boolean light, boolean noRelations) {
+		KnowledgeBase kb = getKnowledgeBase(ontologyBean);
+		Slot synonymSlot = getSynonymSlot(kb, ontologyBean.getSynonymSlot());
+		Slot definitionSlot = getDefinitionSlot(kb, ontologyBean
 				.getDocumentationSlot());
-		Slot authorSlot = getAuthorSlot(kb, ontologyVersion.getAuthorSlot());
+		Slot authorSlot = getAuthorSlot(kb, ontologyBean.getAuthorSlot());
 		Frame owlClass = getFrame(conceptId, kb);
 		ClassBean targetClass = null;
 
 		if (owlClass != null) {
 			if (!(owlClass instanceof Cls)) {
-				targetClass = createBaseClassBean(owlClass);
+				targetClass = createBaseClassBean(owlClass, ontologyBean);
 			} else if (noRelations) {
 				targetClass = buildConceptNoRelations((Cls) owlClass,
-						synonymSlot, definitionSlot, authorSlot);
+						synonymSlot, definitionSlot, authorSlot, ontologyBean);
 			} else if (light) {
 				targetClass = buildConceptLight((Cls) owlClass, synonymSlot,
-						definitionSlot, authorSlot);
+						definitionSlot, authorSlot, ontologyBean);
 			} else {
 				targetClass = createClassBean((Cls) owlClass, true,
-						synonymSlot, definitionSlot, authorSlot);
+						synonymSlot, definitionSlot, authorSlot, ontologyBean);
 			}
 		}
 
@@ -138,13 +137,14 @@ public class OntologyRetrievalManagerProtegeImpl extends
 	 * frame name
 	 * 
 	 */
-	public Page<ClassBean> findAllConcepts(OntologyBean ob, Integer pageSize,
-			Integer pageNum) throws Exception {
-		KnowledgeBase kb = getKnowledgeBase(ob);
-		final Slot synonymSlot = getSynonymSlot(kb, ob.getSynonymSlot());
-		final Slot definitionSlot = getDefinitionSlot(kb, ob
+	public Page<ClassBean> findAllConcepts(OntologyBean ontologyBean,
+			Integer pageSize, Integer pageNum) throws Exception {
+		KnowledgeBase kb = getKnowledgeBase(ontologyBean);
+		final Slot synonymSlot = getSynonymSlot(kb, ontologyBean
+				.getSynonymSlot());
+		final Slot definitionSlot = getDefinitionSlot(kb, ontologyBean
 				.getDocumentationSlot());
-		final Slot authorSlot = getAuthorSlot(kb, ob.getAuthorSlot());
+		final Slot authorSlot = getAuthorSlot(kb, ontologyBean.getAuthorSlot());
 		List<Cls> allClasses = getAllClasses(kb);
 		ClassBeanResultListBean pageConcepts = new ClassBeanResultListBean(0);
 		int totalResults = allClasses.size();
@@ -173,7 +173,7 @@ public class OntologyRetrievalManagerProtegeImpl extends
 
 		for (Cls cls : allConceptsLimited) {
 			pageConcepts.add(createClassBean(cls, true, synonymSlot,
-					definitionSlot, authorSlot));
+					definitionSlot, authorSlot, ontologyBean));
 		}
 
 		return p.getCurrentPage(pageNum);
@@ -184,12 +184,14 @@ public class OntologyRetrievalManagerProtegeImpl extends
 	 * frame name
 	 * 
 	 */
-	public Iterator<ClassBean> listAllClasses(OntologyBean ob) throws Exception {
-		KnowledgeBase kb = getKnowledgeBase(ob);
-		final Slot synonymSlot = getSynonymSlot(kb, ob.getSynonymSlot());
-		final Slot definitionSlot = getDefinitionSlot(kb, ob
+	public Iterator<ClassBean> listAllClasses(final OntologyBean ontologyBean)
+			throws Exception {
+		KnowledgeBase kb = getKnowledgeBase(ontologyBean);
+		final Slot synonymSlot = getSynonymSlot(kb, ontologyBean
+				.getSynonymSlot());
+		final Slot definitionSlot = getDefinitionSlot(kb, ontologyBean
 				.getDocumentationSlot());
-		final Slot authorSlot = getAuthorSlot(kb, ob.getAuthorSlot());
+		final Slot authorSlot = getAuthorSlot(kb, ontologyBean.getAuthorSlot());
 		ArrayList<Cls> allClasses = getAllClasses(kb);
 
 		// There could be very many classes in the results. Hopefully clients
@@ -205,7 +207,7 @@ public class OntologyRetrievalManagerProtegeImpl extends
 			public ClassBean next() {
 				// return createBaseClassBean(resultIt.next());
 				return createClassBean(resultIt.next(), true, synonymSlot,
-						definitionSlot, authorSlot);
+						definitionSlot, authorSlot, ontologyBean);
 			}
 
 			public void remove() {
@@ -235,10 +237,10 @@ public class OntologyRetrievalManagerProtegeImpl extends
 		return allClasses;
 	}
 
-	public InstanceBean findInstanceById(OntologyBean ontologyVersion,
+	public InstanceBean findInstanceById(OntologyBean ontologyBean,
 			String instanceId) throws Exception {
 
-		KnowledgeBase kb = getKnowledgeBase(ontologyVersion);
+		KnowledgeBase kb = getKnowledgeBase(ontologyBean);
 
 		// get frame using instance Id
 		Frame owlClass = getFrame(instanceId, kb);
@@ -247,14 +249,14 @@ public class OntologyRetrievalManagerProtegeImpl extends
 					.getMessage("msg.error.invalidinstanceid"));
 		}
 		// populate classBean and return to caller.
-		return createInstanceBean(owlClass, true);
+		return createInstanceBean(owlClass, ontologyBean, true);
 	}
 
 	public Page<InstanceBean> findInstancesByConceptId(
-			OntologyBean ontologyVersion, String conceptId, Integer pageSize,
+			OntologyBean ontologyBean, String conceptId, Integer pageSize,
 			Integer pageNum) throws Exception {
 
-		KnowledgeBase kb = getKnowledgeBase(ontologyVersion);
+		KnowledgeBase kb = getKnowledgeBase(ontologyBean);
 		// get frame using conceptId
 		Frame owlClass = getFrame(conceptId, kb);
 
@@ -266,7 +268,7 @@ public class OntologyRetrievalManagerProtegeImpl extends
 			Collection<Instance> instances = clsObj.getDirectInstances();
 			InstanceBean instanceBean;
 			for (Instance instance : instances) {
-				instanceBean = createInstanceBean(instance, true);
+				instanceBean = createInstanceBean(instance, ontologyBean, true);
 				allInstances.add(instanceBean);
 			}
 		}
@@ -291,10 +293,10 @@ public class OntologyRetrievalManagerProtegeImpl extends
 	}
 
 	private InstanceBean createInstanceBean(Frame frame,
-			Boolean includeRelations) {
+			OntologyBean ontologyBean, Boolean includeRelations) {
 		InstanceBean instanceBean = new InstanceBean();
 		instanceBean.setId(getId(frame));
-		instanceBean.setFullId(frame.getName());
+		instanceBean.setFullId(getFullId(frame, ontologyBean));
 		instanceBean.setLabel(getBrowserText(frame));
 
 		if (frame instanceof Instance) {
@@ -303,7 +305,8 @@ public class OntologyRetrievalManagerProtegeImpl extends
 
 			for (Object obj : instanceTypes) {
 				DefaultOWLNamedClass defaultOWLNamedClass = (DefaultOWLNamedClass) obj;
-				ClassBean classBean = createBaseClassBean(defaultOWLNamedClass);
+				ClassBean classBean = createBaseClassBean(defaultOWLNamedClass,
+						ontologyBean);
 				classBeans.add(classBean);
 			}
 
@@ -330,14 +333,15 @@ public class OntologyRetrievalManagerProtegeImpl extends
 					for (Object obj : values) {
 						if (obj instanceof Instance) {
 							InstanceBean inst = createInstanceBean(
-									(Instance) obj, false);
+									(Instance) obj, ontologyBean, false);
 							entryList.add(inst);
 						} else {
 							entryList.add(obj);
 						}
 					}
 
-					PropertyBean propertyBean = createBasePropertyBean(nextProperty);
+					PropertyBean propertyBean = createBasePropertyBean(
+							nextProperty, ontologyBean);
 					relations.put(propertyBean, entryList);
 				}
 			}
@@ -348,23 +352,24 @@ public class OntologyRetrievalManagerProtegeImpl extends
 		return instanceBean;
 	}
 
-	private PropertyBean createBasePropertyBean(Slot frame) {
+	private PropertyBean createBasePropertyBean(Slot frame,
+			OntologyBean ontologyBean) {
 		PropertyBean propertyBean = new PropertyBean();
 		propertyBean.setId(getId(frame));
-		propertyBean.setFullId(frame.getName());
+		propertyBean.setFullId(getFullId(frame, ontologyBean));
 		propertyBean.setLabel(getBrowserText(frame));
 		return propertyBean;
 	}
 
-	public ClassBean findPathFromRoot(OntologyBean ontologyVersion,
+	public ClassBean findPathFromRoot(OntologyBean ontologyBean,
 			String conceptId, boolean light) {
 		ClassBean rootPath = null;
-		KnowledgeBase kb = getKnowledgeBase(ontologyVersion);
+		KnowledgeBase kb = getKnowledgeBase(ontologyBean);
 		Frame cls = getFrame(conceptId, kb);
 
 		if (cls instanceof Cls) {
 			Collection nodes = ModelUtilities.getPathToRoot((Cls) cls);
-			rootPath = buildPath(nodes, light);
+			rootPath = buildPath(nodes, ontologyBean, light);
 		}
 
 		return rootPath;
@@ -411,23 +416,23 @@ public class OntologyRetrievalManagerProtegeImpl extends
 	}
 
 	private ClassBean buildConceptLight(Cls cls, Slot synonymSlot,
-			Slot definitionSlot, Slot authorSlot) {
+			Slot definitionSlot, Slot authorSlot, OntologyBean ontologyBean) {
 		ClassBean targetClass = buildConceptNoRelations(cls, synonymSlot,
-				definitionSlot, authorSlot);
+				definitionSlot, authorSlot, ontologyBean);
 
 		targetClass.addRelation(ApplicationConstants.CHILD_COUNT,
 				getUniqueClasses(cls.getDirectSubclasses()).size());
 
 		List<ClassBean> children = convertLightBeans(getUniqueClasses(cls
-				.getDirectSubclasses()));
+				.getDirectSubclasses()), ontologyBean);
 		targetClass.addRelation(ApplicationConstants.SUB_CLASS, children);
 
 		return targetClass;
 	}
 
 	private ClassBean buildConceptNoRelations(Cls cls, Slot synonymSlot,
-			Slot definitionSlot, Slot authorSlot) {
-		ClassBean targetClass = createBaseClassBean(cls);
+			Slot definitionSlot, Slot authorSlot, OntologyBean ontologyBean) {
+		ClassBean targetClass = createBaseClassBean(cls, ontologyBean);
 		addSynonyms(cls, synonymSlot, targetClass);
 		addDefinitions(cls, definitionSlot, targetClass);
 		addAuthors(cls, authorSlot, targetClass);
@@ -435,14 +440,15 @@ public class OntologyRetrievalManagerProtegeImpl extends
 		return targetClass;
 	}
 
-	private ClassBean buildPath(Collection nodes, boolean light) {
+	private ClassBean buildPath(Collection nodes, OntologyBean ontologyBean,
+			boolean light) {
 		ClassBean rootBean = null;
 		ClassBean currentBean = null;
 		Cls previousNode = null;
 
 		for (Object nodeObj : nodes) {
 			Cls node = (Cls) nodeObj;
-			ClassBean clsBean = createBaseClassBean(node);
+			ClassBean clsBean = createBaseClassBean(node, ontologyBean);
 
 			if (currentBean != null) {
 				if (light) {
@@ -453,8 +459,9 @@ public class OntologyRetrievalManagerProtegeImpl extends
 					currentBean.addRelation(ApplicationConstants.CHILD_COUNT,
 							node.getDirectSubclassCount());
 				} else {
-					List<ClassBean> siblings = convertLightBeans(removeAnnonymousClasses(getUniqueClasses(previousNode
-							.getDirectSubclasses())));
+					List<ClassBean> siblings = convertLightBeans(
+							removeAnnonymousClasses(getUniqueClasses(previousNode
+									.getDirectSubclasses())), ontologyBean);
 
 					for (ClassBean sibling : siblings) {
 						if (sibling.getId().equals(clsBean.getId())) {
@@ -478,12 +485,13 @@ public class OntologyRetrievalManagerProtegeImpl extends
 		return rootBean;
 	}
 
-	private List<ClassBean> convertLightBeans(Collection<Cls> protegeClses) {
+	private List<ClassBean> convertLightBeans(Collection<Cls> protegeClses,
+			OntologyBean ontologyBean) {
 		List<ClassBean> beans = new ArrayList<ClassBean>();
 
 		for (Cls cls : protegeClses) {
 			if (cls.isVisible()) {
-				ClassBean classBean = createBaseClassBean(cls);
+				ClassBean classBean = createBaseClassBean(cls, ontologyBean);
 				classBean.addRelation(ApplicationConstants.CHILD_COUNT,
 						getUniqueClasses(cls.getDirectSubclasses()).size());
 				beans.add(classBean);
@@ -508,13 +516,16 @@ public class OntologyRetrievalManagerProtegeImpl extends
 
 	private List<ClassBean> convertClasses(Collection<Cls> protegeClses,
 			boolean recursive, Slot synonymSlot, Slot definitionSlot,
-			Slot authorSlot, Map<Cls, ClassBean> recursionMap) {
+			Slot authorSlot, OntologyBean ontologyBean,
+			Map<Cls, ClassBean> recursionMap) {
 		List<ClassBean> beans = new ArrayList<ClassBean>();
 
 		for (Cls cls : protegeClses) {
 			if (cls.isVisible()) {
-				beans.add(createClassBean(cls, recursive, synonymSlot,
-						definitionSlot, authorSlot, recursionMap));
+				beans
+						.add(createClassBean(cls, recursive, synonymSlot,
+								definitionSlot, authorSlot, ontologyBean,
+								recursionMap));
 			}
 		}
 
@@ -522,35 +533,13 @@ public class OntologyRetrievalManagerProtegeImpl extends
 	}
 
 	private String getBrowserText(Frame frame) {
-		String browserText = null;
-
-		// Protege should do this check, but it seems like it doesn't work for
-		// instances
-		if (frame.getKnowledgeBase() instanceof OWLModel) {
-			Collection labels = ((RDFResource) frame).getLabels();
-
-			if (labels != null && !labels.isEmpty()) {
-				Object literal = labels.iterator().next();
-				
-				if (literal instanceof RDFSLiteral) {
-					browserText = ((RDFSLiteral) literal).getString();
-				} else {
-					browserText = labels.iterator().next().toString();
-				}
-			}
-		}
-
-		if (browserText == null) {
-			browserText = frame.getBrowserText();
-		}
-
-		return StringHelper.unSingleQuote(browserText);
+		return StringHelper.unSingleQuote(frame.getBrowserText());
 	}
 
-	private ClassBean createBaseClassBean(Frame frame) {
+	private ClassBean createBaseClassBean(Frame frame, OntologyBean ontologyBean) {
 		ClassBean classBean = new ClassBean();
 		classBean.setId(getId(frame));
-		classBean.setFullId(frame.getName());
+		classBean.setFullId(getFullId(frame, ontologyBean));
 		classBean.setLabel(getBrowserText(frame));
 
 		ConceptTypeEnum protegeType = ConceptTypeEnum.CONCEPT_TYPE_INDIVIDUAL;
@@ -568,21 +557,22 @@ public class OntologyRetrievalManagerProtegeImpl extends
 	}
 
 	private ClassBean createClassBean(Cls cls, boolean recursive,
-			Slot synonymSlot, Slot definitionSlot, Slot authorSlot) {
+			Slot synonymSlot, Slot definitionSlot, Slot authorSlot,
+			OntologyBean ontologyBean) {
 		return createClassBean(cls, recursive, synonymSlot, definitionSlot,
-				authorSlot, new HashMap<Cls, ClassBean>());
+				authorSlot, ontologyBean, new HashMap<Cls, ClassBean>());
 	}
 
 	private ClassBean createClassBean(Cls cls, boolean recursive,
 			Slot synonymSlot, Slot definitionSlot, Slot authorSlot,
-			Map<Cls, ClassBean> recursionMap) {
+			OntologyBean ontologyBean, Map<Cls, ClassBean> recursionMap) {
 		if (recursionMap.containsKey(cls)) {
 			return recursionMap.get(cls);
 		}
 
 		boolean isOwl = cls.getKnowledgeBase() instanceof OWLModel;
 
-		ClassBean classBean = createBaseClassBean(cls);
+		ClassBean classBean = createBaseClassBean(cls, ontologyBean);
 		addSynonyms(cls, synonymSlot, classBean);
 		addDefinitions(cls, definitionSlot, classBean);
 		addAuthors(cls, authorSlot, classBean);
@@ -647,7 +637,8 @@ public class OntologyRetrievalManagerProtegeImpl extends
 		if (recursive) {
 			classBean.addRelation(ApplicationConstants.SUB_CLASS,
 					convertClasses(subclasses, false, synonymSlot,
-							definitionSlot, authorSlot, recursionMap));
+							definitionSlot, authorSlot, ontologyBean,
+							recursionMap));
 
 			// add superclasses
 			if (cls instanceof OWLNamedClass) {
@@ -659,7 +650,8 @@ public class OntologyRetrievalManagerProtegeImpl extends
 
 			classBean.addRelation(ApplicationConstants.SUPER_CLASS,
 					convertClasses(superclasses, false, synonymSlot,
-							definitionSlot, authorSlot, recursionMap));
+							definitionSlot, authorSlot, ontologyBean,
+							recursionMap));
 		}
 
 		// add RDF type
@@ -667,7 +659,8 @@ public class OntologyRetrievalManagerProtegeImpl extends
 			classBean.addRelation(ApplicationConstants.RDF_TYPE,
 					convertClasses(getUniqueClasses(((OWLNamedClass) cls)
 							.getRDFTypes()), false, synonymSlot,
-							definitionSlot, authorSlot, recursionMap));
+							definitionSlot, authorSlot, ontologyBean,
+							recursionMap));
 		}
 
 		return classBean;

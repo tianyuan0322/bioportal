@@ -15,6 +15,7 @@ import org.ncbo.stanford.util.constants.ApplicationConstants;
 import org.ncbo.stanford.util.helper.StringHelper;
 
 import edu.stanford.smi.protege.model.Cls;
+import edu.stanford.smi.protege.model.Frame;
 import edu.stanford.smi.protege.model.KnowledgeBase;
 import edu.stanford.smi.protege.model.Project;
 import edu.stanford.smi.protege.model.Slot;
@@ -22,6 +23,7 @@ import edu.stanford.smi.protege.storage.database.DatabaseKnowledgeBaseFactory;
 import edu.stanford.smi.protegex.owl.database.OWLDatabaseKnowledgeBaseFactory;
 import edu.stanford.smi.protegex.owl.database.creator.OwlDatabaseCreator;
 import edu.stanford.smi.protegex.owl.model.OWLModel;
+import edu.stanford.smi.protegex.owl.model.RDFResource;
 import edu.stanford.smi.protegex.owl.repository.Repository;
 import edu.stanford.smi.protegex.owl.repository.impl.LocalFolderRepository;
 import edu.stanford.smi.protegex.owl.swrl.model.SWRLFactory;
@@ -374,6 +376,16 @@ public abstract class AbstractOntologyManagerProtege {
 	protected String getVirtualOntologyIndividualName(Integer ontologyId) {
 		return metadataVirtualOntologyInstPrefix + ontologyId
 				+ metadataVirtualOntologyInstSuffix;
+	}
+
+	protected String getProtegeURI(String name, OntologyBean ontologyBean) {
+		return ApplicationConstants.BASE_CONCEPT_NAMESPACE
+				+ ontologyBean.getAbbreviation() + "/" + name;
+	}
+
+	protected String getFullId(Frame frame, OntologyBean ontologyBean) {
+		return (frame instanceof RDFResource) ? frame.getName()
+				: getProtegeURI(frame.getName(), ontologyBean);
 	}
 
 	/**
