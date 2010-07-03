@@ -378,6 +378,15 @@ public abstract class AbstractOntologyManagerProtege {
 				+ metadataVirtualOntologyInstSuffix;
 	}
 
+	/**
+	 * Gets the VirtualView individual name associated with a virtual ontology
+	 * view id.
+	 */
+	protected String getVirtualViewIndividualName(Integer ontologyViewId) {
+		return metadataVirtualViewInstPrefix + ontologyViewId
+				+ metadataVirtualViewInstSuffix;
+	}
+
 	protected String getProtegeURI(String name, OntologyBean ontologyBean) {
 		return ApplicationConstants.BASE_CONCEPT_NAMESPACE
 				+ ontologyBean.getAbbreviation() + "/" + name;
@@ -386,15 +395,6 @@ public abstract class AbstractOntologyManagerProtege {
 	protected String getFullId(Frame frame, OntologyBean ontologyBean) {
 		return (frame instanceof RDFResource) ? frame.getName()
 				: getProtegeURI(frame.getName(), ontologyBean);
-	}
-
-	/**
-	 * Gets the VirtualView individual name associated with a virtual ontology
-	 * view id.
-	 */
-	protected String getVirtualViewIndividualName(Integer ontologyViewId) {
-		return metadataVirtualViewInstPrefix + ontologyViewId
-				+ metadataVirtualViewInstSuffix;
 	}
 
 	/**
