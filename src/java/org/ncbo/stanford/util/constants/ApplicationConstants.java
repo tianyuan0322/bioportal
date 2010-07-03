@@ -152,4 +152,8 @@ public interface ApplicationConstants {
 	public static final String RESPONSE_XML_TAG_NAME = "response";
 
 	public static final String DIR = "######DIR######";
+
+	public static final String NOTIFICATION_ID = "99";
+
+	public static final String BASE_CONCEPT_NAMESPACE = "http://purl.bioontology.org/ontology/";
 }
