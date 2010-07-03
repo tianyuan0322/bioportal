@@ -4,23 +4,19 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.ncbo.stanford.bean.SubscriptionsBean;
+import org.ncbo.stanford.bean.OntologyBean;
 import org.ncbo.stanford.bean.UserBean;
+import org.ncbo.stanford.domain.custom.dao.CustomNcboLNotificationTypeDAO;
+import org.ncbo.stanford.domain.custom.dao.CustomNcboUserSubscriptionsDAO;
 import org.ncbo.stanford.domain.generated.NcboUser;
 import org.ncbo.stanford.domain.generated.NcboUserDAO;
 import org.ncbo.stanford.domain.generated.NcboUserSubscriptions;
-import org.ncbo.stanford.domain.generated.NcboLNotificationType;
-
-import org.ncbo.stanford.domain.custom.dao.CustomNcboUserSubscriptionsDAO;
-import org.ncbo.stanford.domain.custom.dao.CustomNcboLNotificationTypeDAO;
-
 import org.ncbo.stanford.enumeration.NotificationTypeEnum;
 import org.ncbo.stanford.manager.notification.NotificationManager;
 import org.ncbo.stanford.service.notification.EmailNotificationService;
 import org.ncbo.stanford.util.MessageUtils;
 import org.ncbo.stanford.util.constants.ApplicationConstants;
 import org.ncbo.stanford.util.textmanager.service.TextManager;
-import org.ncbo.stanford.bean.OntologyBean;
 
 /**
  * Implementation of EmailNotificationService.
