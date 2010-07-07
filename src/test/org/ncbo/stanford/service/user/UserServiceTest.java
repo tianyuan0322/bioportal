@@ -5,6 +5,7 @@ package org.ncbo.stanford.service.user;
 
 import java.util.Date;
 import java.util.List;
+import java.util.ArrayList;
 
 import org.junit.Test;
 import org.ncbo.stanford.AbstractBioPortalTest;
@@ -113,6 +114,11 @@ public class UserServiceTest extends AbstractBioPortalTest {
 		bean.setLastname("mylastname");
 		bean.setPhone("123-456-7890");
 		bean.setDateCreated(new Date());
+		//Adding this line for testing the creation of userAccount inside the metadata
+		ArrayList<String> roles = new ArrayList<String>();
+		roles.add("ROLE_DEVELOPER");
+		roles.add("ROLE_ADMIN");
+		bean.setRoles(roles);
 
 		return bean;
 	}

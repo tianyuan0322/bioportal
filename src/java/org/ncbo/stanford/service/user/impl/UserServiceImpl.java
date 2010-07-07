@@ -15,6 +15,7 @@ import org.ncbo.stanford.service.encryption.EncryptionService;
 import org.ncbo.stanford.service.user.UserService;
 import org.ncbo.stanford.util.helper.StringHelper;
 import org.springframework.transaction.annotation.Transactional;
+import org.ncbo.stanford.manager.metadata.UserMetadataManager;
 
 @Transactional
 public class UserServiceImpl implements UserService {
@@ -23,6 +24,11 @@ public class UserServiceImpl implements UserService {
 	private CustomNcboLRoleDAO ncboLRoleDAO = null;
 	private CustomNcboUserRoleDAO ncboUserRoleDAO = null;
 	private EncryptionService encryptionService = null;
+	private UserMetadataManager userMetadataManager = null;
+
+	public void setUserMetadataManager(UserMetadataManager userMetadataManager) {
+		this.userMetadataManager = userMetadataManager;
+	}
 
 	public UserBean findUser(Integer userId) {
 		UserBean userBean = null;
@@ -105,6 +111,13 @@ public class UserServiceImpl implements UserService {
 			ncboUserRole.setNcboUser(newNcboUser);
 			ncboUserRole.setNcboLRole(ncboLRole);
 			ncboUserRoleDAO.save(ncboUserRole);
+		}
+		// This code is adding for creating a new user account in the metadata
+		// ontology
+		try {
+			userMetadataManager.saveUser(userBean);
+		} catch (Exception e) {
+			e.printStackTrace();
 		}
 	}
 

@@ -592,6 +592,14 @@
 		<property name="encryptionService">
 			<ref bean="encryptionService" />
 		</property>
+		<property name="userMetadataManager">
+			<ref bean="userMetadataManager" />
+		</property>
+	</bean>
+	<!-- Adding For UserMetadata -->
+	<bean id="userMetadataManager"
+		class="org.ncbo.stanford.manager.metadata.impl.UserMetadataManagerImpl"
+		parent="abstractOntologyManagerProtege">
 	</bean>
 
 	<bean id="conceptService"
