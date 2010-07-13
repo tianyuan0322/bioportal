@@ -31,11 +31,13 @@ import org.ncbo.stanford.util.paginator.Paginator;
 import org.ncbo.stanford.util.paginator.impl.Page;
 import org.ncbo.stanford.util.paginator.impl.PaginatorImpl;
 
+import edu.stanford.smi.protege.model.BrowserSlotPattern;
 import edu.stanford.smi.protege.model.Cls;
 import edu.stanford.smi.protege.model.Frame;
 import edu.stanford.smi.protege.model.Instance;
 import edu.stanford.smi.protege.model.KnowledgeBase;
 import edu.stanford.smi.protege.model.ModelUtilities;
+import edu.stanford.smi.protege.model.SimpleInstance;
 import edu.stanford.smi.protege.model.Slot;
 import edu.stanford.smi.protegex.owl.model.NamespaceUtil;
 import edu.stanford.smi.protegex.owl.model.OWLModel;
@@ -44,6 +46,7 @@ import edu.stanford.smi.protegex.owl.model.RDFProperty;
 import edu.stanford.smi.protegex.owl.model.RDFResource;
 import edu.stanford.smi.protegex.owl.model.RDFSNamedClass;
 import edu.stanford.smi.protegex.owl.model.impl.DefaultOWLNamedClass;
+import edu.stanford.smi.protegex.owl.util.OWLBrowserSlotPattern;
 
 /**
  * A default implementation to OntologyRetrievalManager interface designed to
@@ -297,7 +300,7 @@ public class OntologyRetrievalManagerProtegeImpl extends
 		InstanceBean instanceBean = new InstanceBean();
 		instanceBean.setId(getId(frame));
 		instanceBean.setFullId(getFullId(frame, ontologyBean));
-		instanceBean.setLabel(getBrowserText(frame));
+		instanceBean.setLabel(getBrowserText(frame, ontologyBean));
 
 		if (frame instanceof Instance) {
 			Collection instanceTypes = ((Instance) frame).getDirectTypes();
@@ -357,7 +360,7 @@ public class OntologyRetrievalManagerProtegeImpl extends
 		PropertyBean propertyBean = new PropertyBean();
 		propertyBean.setId(getId(frame));
 		propertyBean.setFullId(getFullId(frame, ontologyBean));
-		propertyBean.setLabel(getBrowserText(frame));
+		propertyBean.setLabel(getBrowserText(frame, ontologyBean));
 		return propertyBean;
 	}
 
@@ -489,7 +492,6 @@ public class OntologyRetrievalManagerProtegeImpl extends
 			OntologyBean ontologyBean) {
 		List<ClassBean> beans = new ArrayList<ClassBean>();
 		List<Cls> subclasses = null;
-		List<Cls> superclasses = null;
 		for (Cls cls : protegeClses) {
 
 			ClassBean classBean = createBaseClassBean(cls, ontologyBean);
@@ -502,15 +504,7 @@ public class OntologyRetrievalManagerProtegeImpl extends
 				OWLModel owlModel = (OWLModel) cls.getKnowledgeBase();
 
 				if (cls.equals(owlModel.getOWLThingClass())) {
-					Iterator<Cls> it = subclasses.iterator();
-
-					while (it.hasNext()) {
-						Cls subclass = it.next();
-						if (subclass.isSystem()
-								|| subclass.getName().startsWith("@")) {
-							it.remove();
-						}
-					}
+					subclasses = removeAnnonymousClasses(subclasses);
 				}
 			} else {
 				// //Collecting the subclasses for Cls
@@ -526,16 +520,25 @@ public class OntologyRetrievalManagerProtegeImpl extends
 		return beans;
 	}
 
-	private Collection<Cls> removeAnnonymousClasses(
-			Collection<Cls> protegeClasses) {
+	/**
+	 * 2/23/09 Added subclass.getName().startsWith("@") to catch a protege bug
+	 * where non named classes got added Using .startsWith because protege team
+	 * suggested it as the best way
+	 * 
+	 * @param protegeClasses
+	 * @return
+	 */
+	private List<Cls> removeAnnonymousClasses(List<Cls> protegeClasses) {
 		Iterator<Cls> it = protegeClasses.iterator();
 
 		while (it.hasNext()) {
 			Cls subclass = it.next();
+
 			if (subclass.isSystem() || subclass.getName().startsWith("@")) {
 				it.remove();
 			}
 		}
+
 		return protegeClasses;
 	}
 
@@ -557,15 +560,25 @@ public class OntologyRetrievalManagerProtegeImpl extends
 		return beans;
 	}
 
-	private String getBrowserText(Frame frame) {
-		return StringHelper.unSingleQuote(frame.getBrowserText());
+	private String getBrowserText(Frame frame, OntologyBean ob) {
+		if (frame instanceof SimpleInstance) {
+			KnowledgeBase kb = frame.getKnowledgeBase();
+			Slot browserSlot = getPreferredNameSlot(kb, ob
+					.getPreferredNameSlot());
+			BrowserSlotPattern bsp = kb instanceof OWLModel ? new OWLBrowserSlotPattern(
+					browserSlot)
+					: new BrowserSlotPattern(browserSlot);
+			return bsp.getBrowserText((Instance) frame);
+		} else {
+			return StringHelper.unSingleQuote(frame.getBrowserText());
+		}
 	}
 
 	private ClassBean createBaseClassBean(Frame frame, OntologyBean ontologyBean) {
 		ClassBean classBean = new ClassBean();
 		classBean.setId(getId(frame));
 		classBean.setFullId(getFullId(frame, ontologyBean));
-		classBean.setLabel(getBrowserText(frame));
+		classBean.setLabel(getBrowserText(frame, ontologyBean));
 
 		ConceptTypeEnum protegeType = ConceptTypeEnum.CONCEPT_TYPE_INDIVIDUAL;
 
@@ -620,7 +633,8 @@ public class OntologyRetrievalManagerProtegeImpl extends
 		reservedSlots.add(authorSlot);
 		slots.removeAll(reservedSlots);
 
-		classBean.addRelations(convertProperties(cls, slots, isOwl));
+		classBean.addRelations(convertProperties(cls, slots, ontologyBean,
+				isOwl));
 
 		// add subclasses
 		// if OWLNamedClass, then use getNamedSubclasses/Superclasses,
@@ -632,23 +646,10 @@ public class OntologyRetrievalManagerProtegeImpl extends
 		if (cls instanceof OWLNamedClass) {
 			subclasses = getUniqueClasses(((OWLNamedClass) cls)
 					.getNamedSubclasses(false));
-
 			OWLModel owlModel = (OWLModel) cls.getKnowledgeBase();
 
 			if (cls.equals(owlModel.getOWLThingClass())) {
-				Iterator<Cls> it = subclasses.iterator();
-
-				while (it.hasNext()) {
-					Cls subclass = it.next();
-					// 2/23/09 Added subclass.getName().startsWith("@") to catch
-					// a protege bug where non named classes got added
-					// Using .startsWith because protege team suggested it as
-					// the best way
-					if (subclass.isSystem()
-							|| subclass.getName().startsWith("@")) {
-						it.remove();
-					}
-				}
+				subclasses = removeAnnonymousClasses(subclasses);
 			}
 		} else {
 			subclasses = getUniqueClasses(cls.getDirectSubclasses());
@@ -762,7 +763,7 @@ public class OntologyRetrievalManagerProtegeImpl extends
 	 * @return
 	 */
 	private Map<String, List<String>> convertProperties(Cls concept,
-			Collection<Slot> slots, boolean isOwl) {
+			Collection<Slot> slots, OntologyBean ontologyBean, boolean isOwl) {
 		Map<String, List<String>> bpProps = new HashMap<String, List<String>>();
 		List<String> bpPropVals = new ArrayList<String>();
 
@@ -786,7 +787,7 @@ public class OntologyRetrievalManagerProtegeImpl extends
 
 			for (Object val : vals) {
 				if (val instanceof Instance) {
-					String value = getBrowserText((Instance) val);
+					String value = getBrowserText((Instance) val, ontologyBean);
 
 					if (value != null) {
 						bpPropVals.add(value);
@@ -798,7 +799,7 @@ public class OntologyRetrievalManagerProtegeImpl extends
 				}
 			}
 
-			bpProps.put(getBrowserText(slot), bpPropVals);
+			bpProps.put(getBrowserText(slot, ontologyBean), bpPropVals);
 			bpPropVals = new ArrayList<String>();
 		}
 
