@@ -74,6 +74,9 @@ public class OntologyBean {
 	// destination directory
 	private String filePath;
 
+	// Download location of ontology
+	private String downloadLocation;
+	
 	// views on this ontology version
 	private List<Integer> hasViews = new ArrayList<Integer>(0);
 
@@ -294,6 +297,14 @@ public class OntologyBean {
 	 */
 	public void setFilePath(String filePath) {
 		this.filePath = filePath;
+	}
+
+	public String getDownloadLocation() {
+		return downloadLocation;
+	}
+
+	public void setDownloadLocation(String downloadLocation) {
+		this.downloadLocation = downloadLocation;
 	}
 
 	/**

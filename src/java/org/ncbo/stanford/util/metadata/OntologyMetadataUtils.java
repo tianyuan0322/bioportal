@@ -65,6 +65,8 @@ public class OntologyMetadataUtils extends MetadataUtils {
 			+ "fileNames";
 	public static final String PROPERTY_FILE_PATH = PREFIX_METADATA
 			+ "filePath";
+	public static final String PROPERTY_DOWNLOAD_LOCATION = PREFIX_METADATA
+	        + "downloadLocation";	
 	public static final String PROPERTY_HAS_CONTACT_EMAIL = PREFIX_METADATA
 			+ "hasContactEmail";
 	public static final String PROPERTY_HAS_CONTACT_NAME = PREFIX_METADATA
@@ -290,6 +292,8 @@ public class OntologyMetadataUtils extends MetadataUtils {
 				.getFilenames());
 		setPropertyValue(owlModel, ontologyInd, PROPERTY_FILE_PATH, ob
 				.getFilePath());
+		setPropertyValue(owlModel, ontologyInd, PROPERTY_DOWNLOAD_LOCATION, ob
+				.getDownloadLocation());
 		RDFIndividual ontLangInd = getOntologyLanguageInstance(owlModel, ob
 				.getFormat());
 
@@ -559,6 +563,8 @@ public class OntologyMetadataUtils extends MetadataUtils {
 				PROPERTY_FILE_NAMES, String.class));
 		ob.setFilePath(getPropertyValue(owlModel, ontologyInd,
 				PROPERTY_FILE_PATH, String.class));
+		ob.setDownloadLocation(getPropertyValue(owlModel, ontologyInd,
+				PROPERTY_DOWNLOAD_LOCATION, String.class));
 		ob.setFormat(getOntologyFormatValue(owlModel, getPropertyValue(
 				owlModel, ontologyInd, PROPERTY_OMV_HAS_ONTOLOGY_LANGUAGE,
 				RDFIndividual.class)));

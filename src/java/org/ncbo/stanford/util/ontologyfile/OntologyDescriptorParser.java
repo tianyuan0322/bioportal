@@ -212,6 +212,12 @@ public class OntologyDescriptorParser {
 			Matcher m = pat.matcher(url);
 			m.find();
 			t = m.group(1);
+			//For url's of the format "http://palea.cgrb.oregonstate.edu/viewsvn/Poc/trunk/ontology/OBO_format/po_anatomy.obo?view=co"
+			//We want to remove the stuff after the ?
+			int index= t.indexOf("?");
+			if (index > 0) {
+				t= t.substring(0, index);
+			}
 		} catch (Exception e) {
 			t = "";
 		}
