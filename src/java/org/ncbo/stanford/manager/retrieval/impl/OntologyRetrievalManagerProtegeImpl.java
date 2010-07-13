@@ -488,14 +488,39 @@ public class OntologyRetrievalManagerProtegeImpl extends
 	private List<ClassBean> convertLightBeans(Collection<Cls> protegeClses,
 			OntologyBean ontologyBean) {
 		List<ClassBean> beans = new ArrayList<ClassBean>();
-
+		List<Cls> subclasses = null;
+		List<Cls> superclasses = null;
 		for (Cls cls : protegeClses) {
-			if (cls.isVisible()) {
-				ClassBean classBean = createBaseClassBean(cls, ontologyBean);
-				classBean.addRelation(ApplicationConstants.CHILD_COUNT,
-						getUniqueClasses(cls.getDirectSubclasses()).size());
-				beans.add(classBean);
+
+			ClassBean classBean = createBaseClassBean(cls, ontologyBean);
+			// This code is used for removing the Anonymous classes
+			if (cls instanceof OWLNamedClass) {
+				// Collecting the subclasses for Cls
+				subclasses = getUniqueClasses(((OWLNamedClass) cls)
+						.getNamedSubclasses(false));
+
+				OWLModel owlModel = (OWLModel) cls.getKnowledgeBase();
+
+				if (cls.equals(owlModel.getOWLThingClass())) {
+					Iterator<Cls> it = subclasses.iterator();
+
+					while (it.hasNext()) {
+						Cls subclass = it.next();
+						if (subclass.isSystem()
+								|| subclass.getName().startsWith("@")) {
+							it.remove();
+						}
+					}
+				}
+			} else {
+				// //Collecting the subclasses for Cls
+				subclasses = getUniqueClasses(cls.getDirectSubclasses());
 			}
+			// It's adding the childCount Property after counting their
+			// subclases
+			classBean.addRelation(ApplicationConstants.CHILD_COUNT, subclasses
+					.size());
+			beans.add(classBean);
 		}
 
 		return beans;
