@@ -561,6 +561,8 @@ public class OntologyRetrievalManagerProtegeImpl extends
 	}
 
 	private String getBrowserText(Frame frame, OntologyBean ob) {
+		String browserText = "";
+		
 		if (frame instanceof SimpleInstance) {
 			KnowledgeBase kb = frame.getKnowledgeBase();
 			Slot browserSlot = getPreferredNameSlot(kb, ob
@@ -568,10 +570,12 @@ public class OntologyRetrievalManagerProtegeImpl extends
 			BrowserSlotPattern bsp = kb instanceof OWLModel ? new OWLBrowserSlotPattern(
 					browserSlot)
 					: new BrowserSlotPattern(browserSlot);
-			return bsp.getBrowserText((Instance) frame);
+			browserText = bsp.getBrowserText((Instance) frame);
 		} else {
-			return StringHelper.unSingleQuote(frame.getBrowserText());
+			browserText = frame.getBrowserText();
 		}
+		
+		return StringHelper.unSingleQuote(browserText);
 	}
 
 	private ClassBean createBaseClassBean(Frame frame, OntologyBean ontologyBean) {
