@@ -11,6 +11,7 @@ import org.ncbo.stanford.domain.custom.dao.CustomNcboUserSubscriptionsDAO;
 import org.ncbo.stanford.domain.generated.NcboUser;
 import org.ncbo.stanford.domain.generated.NcboUserDAO;
 import org.ncbo.stanford.domain.generated.NcboUserSubscriptions;
+import org.ncbo.stanford.domain.generated.NcboLNotificationType;
 import org.ncbo.stanford.enumeration.NotificationTypeEnum;
 import org.ncbo.stanford.manager.notification.NotificationManager;
 import org.ncbo.stanford.service.notification.EmailNotificationService;
@@ -69,6 +70,7 @@ public class EmailNotificationServiceImpl implements EmailNotificationService {
 	@Override
 	public void sendNotification(NotificationTypeEnum notificationType,
 			OntologyBean ontologyBean, HashMap<String, String> keywords) {
+		NcboUser ncboUser = new NcboUser();
 		if (keywords == null) {
 			keywords = new HashMap<String, String>();
 		}
@@ -88,26 +90,26 @@ public class EmailNotificationServiceImpl implements EmailNotificationService {
 		List<NcboUserSubscriptions> ncboUserSubscriptions = ncboUserSubscriptionsDAO
 				.findByOntologyIdAndNotificationType(ontologyBean
 						.getOntologyId().toString(), notificationType);
+		for (NcboUserSubscriptions userSubscriptions : ncboUserSubscriptions) {
+			ncboUser = ncboUserDAO.findById(userSubscriptions.getUserId());
 
-		NcboUser ncboUser = ncboUserDAO.findById(ncboUserSubscriptions.get(0)
-				.getUserId());
+			UserBean userBean = new UserBean();
+			userBean.populateFromEntity(ncboUser);
+			String from = MessageUtils.getMessage("notification.mail.from");
 
-		UserBean userBean = new UserBean();
-		userBean.populateFromEntity(ncboUser);
-		String from = MessageUtils.getMessage("notification.mail.from");
+			keywords.put(ApplicationConstants.ONTOLOGY_VERSION_ID, ontologyBean
+					.getId().toString());
+			keywords.put(ApplicationConstants.USERNAME, userBean.getUsername());
 
-		keywords.put(ApplicationConstants.ONTOLOGY_VERSION_ID, ontologyBean
-				.getId().toString());
-		keywords.put(ApplicationConstants.USERNAME, userBean.getUsername());
+			textManager.appendKeywords(keywords);
+			String message = textManager
+					.getTextContent(notificationType.name());
+			String subject = textManager.getTextContent(notificationType.name()
+					+ ApplicationConstants.SUBJECT_SUFFIX);
 
-		textManager.appendKeywords(keywords);
-		String message = textManager.getTextContent(notificationType.name());
-		String subject = textManager.getTextContent(notificationType.name()
-				+ ApplicationConstants.SUBJECT_SUFFIX);
-
-		notificationManagerMap.get(ApplicationConstants.EMAIL)
-				.sendNotification(subject, message, from, messageId, inReplyTo,
-						userBean);
-
+			notificationManagerMap.get(ApplicationConstants.EMAIL)
+					.sendNotification(subject, message, from, messageId,
+							inReplyTo, userBean);
+		}
 	}
 }

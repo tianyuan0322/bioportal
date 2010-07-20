@@ -4,6 +4,7 @@
 package org.ncbo.stanford.domain.custom.dao;
 
 import java.util.List;
+import java.util.ArrayList;
 
 import org.hibernate.criterion.Expression;
 
@@ -49,17 +50,22 @@ public class CustomNcboUserSubscriptionsDAO extends NcboUserSubscriptionsDAO {
 	 */
 	public List findByOntologyIdAndNotificationType(String ontologyId,
 			NotificationTypeEnum notificationType) {
-
+		List<String> ontologyList = new ArrayList<String>(2);
+		ontologyList.add(ontologyId);
+		ontologyList.add(ApplicationConstants.ONTOLOGY_ID);
+		List<String> typeEnum=new ArrayList<String>();
+		typeEnum.add(notificationType.toString());
+		typeEnum.add(NotificationTypeEnum.ALL_NOTIFICATION.toString());
 		Criteria criteria = getSession().createCriteria(
 				NcboUserSubscriptions.class).createAlias(
-				"ncboLNotificationType", "nt").add(
-				Expression.or(Expression.and(Restrictions.eq("ontologyId",
-						ontologyId), Expression.eq("nt.type", notificationType
-						.toString())), Restrictions.eq("ontologyId",
-						ApplicationConstants.ONTOLOGY_ID)));
-
+				"ncboLNotificationType", "ncboLNotificationType")
+				.add(Restrictions.in("ontologyId", ontologyList))
+				.add(Restrictions.in("ncboLNotificationType.type", typeEnum));
 		List result = criteria.list();
 		return result;
+
+		
+		
 
 	}
 
