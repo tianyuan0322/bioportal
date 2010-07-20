@@ -25,6 +25,11 @@ public enum NotificationTypeEnum {
 			return "CREATE_NOTE_NOTIFICATION";
 		}
 	},
+	ALL_NOTIFICATION {
+		public String toString() {
+			return "ALL_NOTIFICATION";
+		}
+	},
 	 
 	;
 }
