@@ -1,8 +1,8 @@
 package org.ncbo.stanford.service.loader.remote.impl;
 
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.net.URI;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
@@ -32,11 +32,13 @@ import org.ncbo.stanford.util.cvs.CVSFile;
 import org.ncbo.stanford.util.cvs.CVSUtils;
 import org.ncbo.stanford.util.helper.StringHelper;
 import org.ncbo.stanford.util.helper.reflection.ReflectionHelper;
+import org.ncbo.stanford.util.loader.LoaderUtils;
 import org.ncbo.stanford.util.metadata.OntologyMetadataUtils;
 import org.ncbo.stanford.util.ontologyfile.OntologyDescriptorParser;
 import org.ncbo.stanford.util.ontologyfile.compressedfilehandler.impl.CompressedFileHandlerFactory;
 import org.ncbo.stanford.util.ontologyfile.pathhandler.FilePathHandler;
 import org.ncbo.stanford.util.ontologyfile.pathhandler.impl.PhysicalDirectoryFilePathHandlerImpl;
+import org.ncbo.stanford.util.ontologyfile.pathhandler.impl.URIUploadFilePathHandlerImpl;
 import org.ncbo.stanford.util.svn.SVNUtils;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
@@ -157,24 +159,30 @@ public class OBOCVSPullServiceImpl implements OBOCVSPullService {
 										+ mfb.getId() + "]");
 					}
 
-					if (cf == null) {
-						throw new FileNotFoundException(
-								"An entry exists in the metadata descriptor for ["
-										+ mfb.getId()
-										+ "] ontology but the file ["
-										+ filename + "] is missing");
+					FilePathHandler filePathHandler;
+					if (cf != null) {
+
+						String path = cf.getPath();
+						String checkoutdir = repo.getCheckoutdir();
+
+						if (!path.contains(checkoutdir)) {
+							path = checkoutdir + "/" + path;
+						}
+
+						filePathHandler = new PhysicalDirectoryFilePathHandlerImpl(
+								CompressedFileHandlerFactory
+										.createFileHandler(format), new File(
+										path));
+					} else {
+						// The file is not in the local cvs/svn repository, but
+						// can be downloaded using the downloadLocation
+						String downloadLocation = ont.getDownloadLocation();
+						
+						filePathHandler = new URIUploadFilePathHandlerImpl(
+								CompressedFileHandlerFactory
+										.createFileHandler(format), new URI(
+										downloadLocation));
 					}
-
-					String path = cf.getPath();
-					String checkoutdir = repo.getCheckoutdir();
-
-					if (!path.contains(checkoutdir)) {
-						path = checkoutdir + "/" + path;
-					}
-
-					FilePathHandler filePathHandler = new PhysicalDirectoryFilePathHandlerImpl(
-							CompressedFileHandlerFactory
-									.createFileHandler(format), new File(path));
 
 					ontologyService.createOntologyOrView(ont, filePathHandler);
 					break;
@@ -269,6 +277,9 @@ public class OBOCVSPullServiceImpl implements OBOCVSPullService {
 				} else if (cf != null) {
 					// existing ontology local; new version
 					action = ActionEnum.CREATE_LOCAL_ACTION;
+				} else if (LoaderUtils.hasDownloadLocationBeenUpdated(
+						downloadUrl, ont)) {
+					action = ActionEnum.CREATE_LOCAL_ACTION;
 				}
 			}
 
@@ -315,15 +326,22 @@ public class OBOCVSPullServiceImpl implements OBOCVSPullService {
 				ont.setVersionNumber(MessageUtils
 						.getMessage("remote.ontology.version"));
 				ont.setDateReleased(now);
-
-				if (!StringHelper.isNullOrNullString(downloadUrl)) {
-					ont.setFilePath(downloadUrl);
-				} else if (!StringHelper.isNullOrNullString(sourceUrl)) {
-					ont.setFilePath(sourceUrl);
-				}
+				/**
+				 * Pradip: Don't think we need this anymore...We now populate
+				 * the downloadLocation instead if
+				 * (!StringHelper.isNullOrNullString(downloadUrl)) {
+				 * ont.setFilePath(downloadUrl); } else if
+				 * (!StringHelper.isNullOrNullString(sourceUrl)) {
+				 * ont.setFilePath(sourceUrl); }
+				 */
 			} else {
-				ont.setVersionNumber(cf.getVersion());
-				ont.setDateReleased(cf.getTimeStamp().getTime());
+				if (cf != null) {
+					ont.setVersionNumber(cf.getVersion());
+					ont.setDateReleased(cf.getTimeStamp().getTime());
+				} else {
+					ont.setVersionNumber("unknown");
+					ont.setDateReleased(now);
+				}
 				ont.addFilename(OntologyDescriptorParser.getFileName(mfb
 						.getDownload()));
 				ont.setCategoryIds(newCategoryIds);
@@ -341,6 +359,11 @@ public class OBOCVSPullServiceImpl implements OBOCVSPullService {
 			}
 
 			UserBean userBean = linkOntologyUser(mfb.getContact(), mfb.getId());
+			if (!StringHelper.isNullOrNullString(downloadUrl)) {
+				ont.setDownloadLocation(downloadUrl);
+			} else if (!StringHelper.isNullOrNullString(sourceUrl)) {
+				ont.setDownloadLocation(sourceUrl);
+			}
 			ont.setUserId(userBean.getId());
 			ont.setVersionStatus(getStatus(mfb.getStatus()));
 			ont.setIsRemote(new Byte(isRemote));
@@ -408,11 +431,28 @@ public class OBOCVSPullServiceImpl implements OBOCVSPullService {
 		byte isRemote = ApplicationConstants.TRUE;
 
 		if (!StringHelper.isNullOrNullString(downloadUrl)
-				&& downloadUrl.indexOf(cvsHostname) > -1) {
+				&& LoaderUtils.isValidDownloadLocation(downloadUrl)) {
 			isRemote = ApplicationConstants.FALSE;
 		}
 
 		return isRemote;
+	}
+
+	/**
+	 * Determines whether the ontology is in CVS
+	 * 
+	 * @param downloadUrl
+	 * @return
+	 */
+	private byte isInCVS(String downloadUrl, String cvsHostname) {
+		byte isInCVS = ApplicationConstants.FALSE;
+
+		if (!StringHelper.isNullOrNullString(downloadUrl)
+				&& downloadUrl.indexOf(cvsHostname) > -1) {
+			isInCVS = ApplicationConstants.TRUE;
+		}
+
+		return isInCVS;
 	}
 
 	/**

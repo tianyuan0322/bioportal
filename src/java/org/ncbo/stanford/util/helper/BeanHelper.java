@@ -145,6 +145,8 @@ public class BeanHelper {
 				.getMessage("form.ontology.urn"));
 		String codingScheme = httpServletRequest.getParameter(MessageUtils
 				.getMessage("form.ontology.codingScheme"));
+		String downloadLocation = httpServletRequest.getParameter(MessageUtils
+				.getMessage("form.ontology.downloadLocation"));
 		String isFoundry = httpServletRequest.getParameter(MessageUtils
 				.getMessage("form.ontology.isFoundry"));
 		String targetTerminologies = httpServletRequest
@@ -282,7 +284,11 @@ public class BeanHelper {
 		if (codingScheme != null) {
 			bean.setCodingScheme(codingScheme);
 		}
-
+		
+		if (downloadLocation != null) {
+			bean.setDownloadLocation(downloadLocation);
+		}
+		
 		if (!StringHelper.isNullOrNullString(isFoundry)) {
 			bean.setIsFoundry(Byte.parseByte(isFoundry));
 		}

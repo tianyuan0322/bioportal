@@ -1,9 +1,11 @@
 package org.ncbo.stanford.view.rest.restlet.ontology;
 
+import java.net.URI;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.ncbo.stanford.bean.OntologyBean;
@@ -15,6 +17,7 @@ import org.ncbo.stanford.util.helper.BeanHelper;
 import org.ncbo.stanford.util.ontologyfile.compressedfilehandler.impl.CompressedFileHandlerFactory;
 import org.ncbo.stanford.util.ontologyfile.pathhandler.FilePathHandler;
 import org.ncbo.stanford.util.ontologyfile.pathhandler.impl.CommonsFileUploadFilePathHandlerImpl;
+import org.ncbo.stanford.util.ontologyfile.pathhandler.impl.URIUploadFilePathHandlerImpl;
 import org.ncbo.stanford.view.rest.restlet.AbstractBaseRestlet;
 import org.ncbo.stanford.view.util.constants.RequestParamConstants;
 import org.restlet.data.Request;
@@ -108,17 +111,21 @@ public class OntologiesRestlet extends AbstractBaseRestlet {
 		// create the ontology
 		try {
 			// no file handler for remote case since there is no file to upload.
+			FilePathHandler filePathHandler= null;
 			if (ontologyBean.isRemote()) {
-				ontologyService.createOntologyOrView(ontologyBean, null);
+				filePathHandler= null;
+			} else if (StringUtils.isNotBlank(ontologyBean.getDownloadLocation())){
+				filePathHandler = new URIUploadFilePathHandlerImpl(
+						CompressedFileHandlerFactory
+								.createFileHandler(ontologyBean.getFormat()), new URI(
+										ontologyBean.getDownloadLocation()));
 			} else {
-				FilePathHandler filePathHandler = new CommonsFileUploadFilePathHandlerImpl(
+				 filePathHandler = new CommonsFileUploadFilePathHandlerImpl(
 						CompressedFileHandlerFactory
 								.createFileHandler(ontologyBean.getFormat()),
-						ontologyBean.getFileItem());
-
-				ontologyService.createOntologyOrView(ontologyBean,
-						filePathHandler);
+						ontologyBean.getFileItem());				
 			}
+			ontologyService.createOntologyOrView(ontologyBean, filePathHandler);
 		} catch (Exception e) {
 			response.setStatus(Status.SERVER_ERROR_INTERNAL, e.getMessage());
 			e.printStackTrace();

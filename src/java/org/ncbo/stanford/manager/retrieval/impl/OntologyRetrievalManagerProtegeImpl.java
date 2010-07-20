@@ -766,10 +766,10 @@ public class OntologyRetrievalManagerProtegeImpl extends
 	 * @param slots
 	 * @return
 	 */
-	private Map<String, List<String>> convertProperties(Cls concept,
+	private Map<String, List<? extends Object>> convertProperties(Cls concept,
 			Collection<Slot> slots, OntologyBean ontologyBean, boolean isOwl) {
-		Map<String, List<String>> bpProps = new HashMap<String, List<String>>();
-		List<String> bpPropVals = new ArrayList<String>();
+		Map<String, List<? extends Object>> bpProps = new HashMap<String, List<? extends Object>>();
+		List bpPropVals = new ArrayList();
 
 		// add properties
 		for (Slot slot : slots) {
@@ -790,13 +790,16 @@ public class OntologyRetrievalManagerProtegeImpl extends
 			}
 
 			for (Object val : vals) {
-				if (val instanceof Instance) {
-					String value = getBrowserText((Instance) val, ontologyBean);
+				if (val instanceof OWLNamedClass) {
+					ClassBean bean = createBaseClassBean((Frame) val, ontologyBean);
+					bpPropVals.add(bean);
 
+				} else 	if (val instanceof Instance) {
+					String value = getBrowserText((Instance) val, ontologyBean);
 					if (value != null) {
 						bpPropVals.add(value);
 					}
-				} else {
+				} else {				
 					// Tried to assume its a slot and failed, defaulting to
 					// toString
 					bpPropVals.add(val.toString());
@@ -804,7 +807,8 @@ public class OntologyRetrievalManagerProtegeImpl extends
 			}
 
 			bpProps.put(getBrowserText(slot, ontologyBean), bpPropVals);
-			bpPropVals = new ArrayList<String>();
+			bpPropVals = new ArrayList();
+
 		}
 
 		return bpProps;
