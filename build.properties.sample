@@ -165,6 +165,18 @@ bioportal.traversedConceptLimit=10000
 
 ################## Protege Configuration ##################
 
+# if protege.server.enabled is set to "true", 
+# the db connection section below can be ignored
+# when using a server, the database connection is
+# configured from the protege project of each
+# ontology loaded into the server
+protege.server.enabled=false
+protege.server.hostname=localhost
+protege.server.port=5100
+protege.server.username=protege_server_user
+protege.server.password=protege_server_pass
+protege.server.metaprojectname=BioPortal Metadata Project
+
 # db connection
 protege.jdbc.url=jdbc:mysql://localhost/bioportal_protege?useUnicode=true&amp;characterEncoding=UTF-8&amp;holdResultsOpenOverStatementClose=true
 protege.jdbc.driver=com.mysql.jdbc.Driver

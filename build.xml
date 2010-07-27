@@ -182,7 +182,13 @@
 				<filter token="obopullschedulerenabled" value="${obo.pull.scheduler.enabled}" />
 				<filter token="obopullschedulercronexpression" value="${obo.pull.scheduler.cronexpression}" />
 				<filter token="ontologyparseschedulerenabled" value="${ontology.parse.scheduler.enabled}" />
-				<filter token="ontologyparseschedulercronexpression" value="${ontology.parse.scheduler.cronexpression}" />
+				<filter token="ontologyparseschedulercronexpression" value="${ontology.parse.scheduler.cronexpression}" />				
+				<filter token="protegeserverenabled" value="${protege.server.enabled}" />
+				<filter token="protegeserverhostname" value="${protege.server.hostname}" />
+				<filter token="protegeserverport" value="${protege.server.port}" />
+				<filter token="protegeserverusername" value="${protege.server.username}" />
+				<filter token="protegeserverpassword" value="${protege.server.password}" />
+				<filter token="protegeservermetaprojectname" value="${protege.server.metaprojectname}" />
 				<filter token="protegejdbcurl" value="${protege.jdbc.url}" />
 				<filter token="protegejdbcdriver" value="${protege.jdbc.driver}" />
 				<filter token="protegejdbcusername" value="${protege.jdbc.username}" />

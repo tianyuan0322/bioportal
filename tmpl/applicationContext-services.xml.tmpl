@@ -1215,6 +1215,31 @@
 		</constructor-arg>
 	</bean>
 
+	<!-- Protege Server Configuation -->
+	<bean id="protegeServerEnabled" class="java.lang.String">
+		<constructor-arg value="@protegeserverenabled@"/>
+	</bean>
+
+	<bean id="protegeServerHostname" class="java.lang.String">
+		<constructor-arg value="@protegeserverhostname@"/>
+	</bean>
+	
+	<bean id="protegeServerPort" class="java.lang.String">
+		<constructor-arg value="@protegeserverport@"/>
+	</bean>
+	
+	<bean id="protegeServerUsername" class="java.lang.String">
+		<constructor-arg value="@protegeserverusername@"/>
+	</bean>
+	
+	<bean id="protegeServerPassword" class="java.lang.String">
+		<constructor-arg value="@protegeserverpassword@"/>
+	</bean>
+	
+	<bean id="protegeServerMetaProjectName" class="java.lang.String">
+		<constructor-arg value="@protegeservermetaprojectname@"/>
+	</bean>
+
 	<!-- Protege DB Configuation -->
 	<bean id="protegeJdbcUrl" class="java.lang.String">
 		<constructor-arg>

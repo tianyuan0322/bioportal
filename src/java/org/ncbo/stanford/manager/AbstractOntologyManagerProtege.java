@@ -19,6 +19,7 @@ import edu.stanford.smi.protege.model.Frame;
 import edu.stanford.smi.protege.model.KnowledgeBase;
 import edu.stanford.smi.protege.model.Project;
 import edu.stanford.smi.protege.model.Slot;
+import edu.stanford.smi.protege.server.RemoteProjectManager;
 import edu.stanford.smi.protege.storage.database.DatabaseKnowledgeBaseFactory;
 import edu.stanford.smi.protegex.owl.database.OWLDatabaseKnowledgeBaseFactory;
 import edu.stanford.smi.protegex.owl.database.creator.OwlDatabaseCreator;
@@ -42,6 +43,14 @@ public abstract class AbstractOntologyManagerProtege {
 	private static final Log log = LogFactory
 			.getLog(AbstractOntologyManagerProtege.class);
 
+	private static String METADATA_TABLE_NAME = "metadata";
+
+	protected String protegeServerEnabled;
+	protected String protegeServerHostname;
+	protected String protegeServerPort;
+	protected String protegeServerUsername;
+	protected String protegeServerPassword;
+	protected String protegeServerMetaProjectName;
 	protected String protegeJdbcUrl;
 	protected String protegeJdbcDriver;
 	protected String protegeJdbcUsername;
@@ -69,7 +78,6 @@ public abstract class AbstractOntologyManagerProtege {
 	protected ExpirationSystem<Integer, KnowledgeBase> protegeKnowledgeBases = null;
 	private OWLModel owlModel = null;
 	private Object createOwlModelLock = new Object();
-	private String METADATA_TABLE_NAME = "metadata";
 
 	/**
 	 * Programmatically reloads the metadata ontology stored in the memory
@@ -265,26 +273,43 @@ public abstract class AbstractOntologyManagerProtege {
 	@SuppressWarnings("unchecked")
 	private OWLModel createMetadataKnowledgeBaseInstance() throws Exception {
 		List errors = new ArrayList();
-		Repository repository = new LocalFolderRepository(new File(MessageUtils
-				.getMessage("bioportal.metadata.includes.path")));
-		OwlDatabaseCreator creator = new OwlDatabaseCreator(false);
-		creator.setDriver(protegeJdbcDriver);
-		creator.setUsername(protegeJdbcUsername);
-		creator.setPassword(protegeJdbcPassword);
-		creator.setURL(protegeJdbcUrl);
-		creator.setTable(METADATA_TABLE_NAME);
-		creator.addRepository(repository);
-		creator.create(errors);
-		OWLModel owlModel = creator.getOwlModel();
-		owlModel.setChanged(false);
+		OWLModel owlModel = null;
+		String serverPath = protegeServerHostname + ":" + protegeServerPort;
 
-		if (!errors.isEmpty()) {
-			log.error("Errors during creation of Protege metadata OWL model: "
-					+ errors);
-		}
+		if (Boolean.parseBoolean(protegeServerEnabled)) {
+			Project p = RemoteProjectManager.getInstance().getProject(
+					serverPath, protegeServerUsername, protegeServerPassword,
+					protegeServerMetaProjectName, true);
 
-		if (log.isDebugEnabled()) {
-			log.debug("Created new metadata model: " + owlModel.getName());
+			if (p != null) {
+				owlModel = (OWLModel) p.getKnowledgeBase();
+			} else if (log.isDebugEnabled()) {
+				log.debug("Unable to connect to protege server: " + serverPath);
+			}
+		} else {
+			Repository repository = new LocalFolderRepository(
+					new File(MessageUtils
+							.getMessage("bioportal.metadata.includes.path")));
+			OwlDatabaseCreator creator = new OwlDatabaseCreator(false);
+			creator.setDriver(protegeJdbcDriver);
+			creator.setUsername(protegeJdbcUsername);
+			creator.setPassword(protegeJdbcPassword);
+			creator.setURL(protegeJdbcUrl);
+			creator.setTable(METADATA_TABLE_NAME);
+			creator.addRepository(repository);
+			creator.create(errors);
+			owlModel = creator.getOwlModel();
+			owlModel.setChanged(false);
+
+			if (!errors.isEmpty()) {
+				log
+						.error("Errors during creation of Protege metadata OWL model: "
+								+ errors);
+			}
+
+			if (log.isDebugEnabled()) {
+				log.debug("Created new metadata model: " + owlModel.getName());
+			}
 		}
 
 		return owlModel;
@@ -398,10 +423,52 @@ public abstract class AbstractOntologyManagerProtege {
 	}
 
 	/**
-	 * @return the protegeJdbcUrl
+	 * @param protegeServerEnabled
+	 *            the protegeServerEnabled to set
 	 */
-	public String getProtegeJdbcUrl() {
-		return protegeJdbcUrl;
+	public void setProtegeServerEnabled(String protegeServerEnabled) {
+		this.protegeServerEnabled = protegeServerEnabled;
+	}
+
+	/**
+	 * @param protegeServerHostname
+	 *            the protegeServerHostname to set
+	 */
+	public void setProtegeServerHostname(String protegeServerHostname) {
+		this.protegeServerHostname = protegeServerHostname;
+	}
+
+	/**
+	 * @param protegeServerPort
+	 *            the protegeServerPort to set
+	 */
+	public void setProtegeServerPort(String protegeServerPort) {
+		this.protegeServerPort = protegeServerPort;
+	}
+
+	/**
+	 * @param protegeServerUsername
+	 *            the protegeServerUsername to set
+	 */
+	public void setProtegeServerUsername(String protegeServerUsername) {
+		this.protegeServerUsername = protegeServerUsername;
+	}
+
+	/**
+	 * @param protegeServerPassword
+	 *            the protegeServerPassword to set
+	 */
+	public void setProtegeServerPassword(String protegeServerPassword) {
+		this.protegeServerPassword = protegeServerPassword;
+	}
+
+	/**
+	 * @param protegeServerMetaProjectName
+	 *            the protegeServerMetaProjectName to set
+	 */
+	public void setProtegeServerMetaProjectName(
+			String protegeServerMetaProjectName) {
+		this.protegeServerMetaProjectName = protegeServerMetaProjectName;
 	}
 
 	/**
@@ -413,25 +480,11 @@ public abstract class AbstractOntologyManagerProtege {
 	}
 
 	/**
-	 * @return the protegeJdbcDriver
-	 */
-	public String getProtegeJdbcDriver() {
-		return protegeJdbcDriver;
-	}
-
-	/**
 	 * @param protegeJdbcDriver
 	 *            the protegeJdbcDriver to set
 	 */
 	public void setProtegeJdbcDriver(String protegeJdbcDriver) {
 		this.protegeJdbcDriver = protegeJdbcDriver;
-	}
-
-	/**
-	 * @return the protegeJdbcUsername
-	 */
-	public String getProtegeJdbcUsername() {
-		return protegeJdbcUsername;
 	}
 
 	/**
@@ -443,25 +496,11 @@ public abstract class AbstractOntologyManagerProtege {
 	}
 
 	/**
-	 * @return the protegeJdbcPassword
-	 */
-	public String getProtegeJdbcPassword() {
-		return protegeJdbcPassword;
-	}
-
-	/**
 	 * @param protegeJdbcPassword
 	 *            the protegeJdbcPassword to set
 	 */
 	public void setProtegeJdbcPassword(String protegeJdbcPassword) {
 		this.protegeJdbcPassword = protegeJdbcPassword;
-	}
-
-	/**
-	 * @return the protegeTablePrefix
-	 */
-	public String getProtegeTablePrefix() {
-		return protegeTablePrefix;
 	}
 
 	/**
@@ -473,25 +512,11 @@ public abstract class AbstractOntologyManagerProtege {
 	}
 
 	/**
-	 * @return the protegeTableSuffix
-	 */
-	public String getProtegeTableSuffix() {
-		return protegeTableSuffix;
-	}
-
-	/**
 	 * @param protegeTableSuffix
 	 *            the protegeTableSuffix to set
 	 */
 	public void setProtegeTableSuffix(String protegeTableSuffix) {
 		this.protegeTableSuffix = protegeTableSuffix;
-	}
-
-	/**
-	 * @return the protegeBigFileThreshold
-	 */
-	public Integer getProtegeBigFileThreshold() {
-		return protegeBigFileThreshold;
 	}
 
 	/**
@@ -503,25 +528,11 @@ public abstract class AbstractOntologyManagerProtege {
 	}
 
 	/**
-	 * @return the metadataUserInstPrefix
-	 */
-	public String getMetadataUserInstPrefix() {
-		return metadataUserInstPrefix;
-	}
-
-	/**
 	 * @param metadataUserInstPrefix
 	 *            the metadataUserInstPrefix to set
 	 */
 	public void setMetadataUserInstPrefix(String metadataUserInstPrefix) {
 		this.metadataUserInstPrefix = metadataUserInstPrefix;
-	}
-
-	/**
-	 * @return the metadataUserInstSuffix
-	 */
-	public String getMetadataUserInstSuffix() {
-		return metadataUserInstSuffix;
 	}
 
 	/**
@@ -533,13 +544,6 @@ public abstract class AbstractOntologyManagerProtege {
 	}
 
 	/**
-	 * @return the metadataUserRoleInstPrefix
-	 */
-	public String getMetadataUserRoleInstPrefix() {
-		return metadataUserRoleInstPrefix;
-	}
-
-	/**
 	 * @param metadataUserRoleInstPrefix
 	 *            the metadataUserRoleInstPrefix to set
 	 */
@@ -548,25 +552,11 @@ public abstract class AbstractOntologyManagerProtege {
 	}
 
 	/**
-	 * @return the metadataUserRoleInstSuffix
-	 */
-	public String getMetadataUserRoleInstSuffix() {
-		return metadataUserRoleInstSuffix;
-	}
-
-	/**
 	 * @param metadataUserRoleInstSuffix
 	 *            the metadataUserRoleInstSuffix to set
 	 */
 	public void setMetadataUserRoleInstSuffix(String metadataUserRoleInstSuffix) {
 		this.metadataUserRoleInstSuffix = metadataUserRoleInstSuffix;
-	}
-
-	/**
-	 * @return the metadataOntologyDomainInstPrefix
-	 */
-	public String getMetadataOntologyDomainInstPrefix() {
-		return metadataOntologyDomainInstPrefix;
 	}
 
 	/**
@@ -579,26 +569,12 @@ public abstract class AbstractOntologyManagerProtege {
 	}
 
 	/**
-	 * @return the metadataOntologyDomainInstSuffix
-	 */
-	public String getMetadataOntologyDomainInstSuffix() {
-		return metadataOntologyDomainInstSuffix;
-	}
-
-	/**
 	 * @param metadataOntologyDomainInstSuffix
 	 *            the metadataOntologyDomainInstSuffix to set
 	 */
 	public void setMetadataOntologyDomainInstSuffix(
 			String metadataOntologyDomainInstSuffix) {
 		this.metadataOntologyDomainInstSuffix = metadataOntologyDomainInstSuffix;
-	}
-
-	/**
-	 * @return the metadataOntologyGroupInstPrefix
-	 */
-	public String getMetadataOntologyGroupInstPrefix() {
-		return metadataOntologyGroupInstPrefix;
 	}
 
 	/**
@@ -611,26 +587,12 @@ public abstract class AbstractOntologyManagerProtege {
 	}
 
 	/**
-	 * @return the metadataOntologyGroupInstSuffix
-	 */
-	public String getMetadataOntologyGroupInstSuffix() {
-		return metadataOntologyGroupInstSuffix;
-	}
-
-	/**
 	 * @param metadataOntologyGroupInstSuffix
 	 *            the metadataOntologyGroupInstSuffix to set
 	 */
 	public void setMetadataOntologyGroupInstSuffix(
 			String metadataOntologyGroupInstSuffix) {
 		this.metadataOntologyGroupInstSuffix = metadataOntologyGroupInstSuffix;
-	}
-
-	/**
-	 * @return the metadataOntologyInstPrefix
-	 */
-	public String getMetadataOntologyInstPrefix() {
-		return metadataOntologyInstPrefix;
 	}
 
 	/**
@@ -642,25 +604,11 @@ public abstract class AbstractOntologyManagerProtege {
 	}
 
 	/**
-	 * @return the metadataOntologyInstSuffix
-	 */
-	public String getMetadataOntologyInstSuffix() {
-		return metadataOntologyInstSuffix;
-	}
-
-	/**
 	 * @param metadataOntologyInstSuffix
 	 *            the metadataOntologyInstSuffix to set
 	 */
 	public void setMetadataOntologyInstSuffix(String metadataOntologyInstSuffix) {
 		this.metadataOntologyInstSuffix = metadataOntologyInstSuffix;
-	}
-
-	/**
-	 * @return the metadataOntologyViewInstPrefix
-	 */
-	public String getMetadataOntologyViewInstPrefix() {
-		return metadataOntologyViewInstPrefix;
 	}
 
 	/**
@@ -673,26 +621,12 @@ public abstract class AbstractOntologyManagerProtege {
 	}
 
 	/**
-	 * @return the metadataOntologyViewInstSuffix
-	 */
-	public String getMetadataOntologyViewInstSuffix() {
-		return metadataOntologyViewInstSuffix;
-	}
-
-	/**
 	 * @param metadataOntologyViewInstSuffix
 	 *            the metadataOntologyViewInstSuffix to set
 	 */
 	public void setMetadataOntologyViewInstSuffix(
 			String metadataOntologyViewInstSuffix) {
 		this.metadataOntologyViewInstSuffix = metadataOntologyViewInstSuffix;
-	}
-
-	/**
-	 * @return the metadataVirtualOntologyInstPrefix
-	 */
-	public String getMetadataVirtualOntologyInstPrefix() {
-		return metadataVirtualOntologyInstPrefix;
 	}
 
 	/**
@@ -705,26 +639,12 @@ public abstract class AbstractOntologyManagerProtege {
 	}
 
 	/**
-	 * @return the metadataVirtualOntologyInstSuffix
-	 */
-	public String getMetadataVirtualOntologyInstSuffix() {
-		return metadataVirtualOntologyInstSuffix;
-	}
-
-	/**
 	 * @param metadataVirtualOntologyInstSuffix
 	 *            the metadataVirtualOntologyInstSuffix to set
 	 */
 	public void setMetadataVirtualOntologyInstSuffix(
 			String metadataVirtualOntologyInstSuffix) {
 		this.metadataVirtualOntologyInstSuffix = metadataVirtualOntologyInstSuffix;
-	}
-
-	/**
-	 * @return the metadataVirtualViewInstPrefix
-	 */
-	public String getMetadataVirtualViewInstPrefix() {
-		return metadataVirtualViewInstPrefix;
 	}
 
 	/**
@@ -737,26 +657,12 @@ public abstract class AbstractOntologyManagerProtege {
 	}
 
 	/**
-	 * @return the metadataVirtualViewInstSuffix
-	 */
-	public String getMetadataVirtualViewInstSuffix() {
-		return metadataVirtualViewInstSuffix;
-	}
-
-	/**
 	 * @param metadataVirtualViewInstSuffix
 	 *            the metadataVirtualViewInstSuffix to set
 	 */
 	public void setMetadataVirtualViewInstSuffix(
 			String metadataVirtualViewInstSuffix) {
 		this.metadataVirtualViewInstSuffix = metadataVirtualViewInstSuffix;
-	}
-
-	/**
-	 * @return the protegeKnowledgeBases
-	 */
-	public ExpirationSystem<Integer, KnowledgeBase> getProtegeKnowledgeBases() {
-		return protegeKnowledgeBases;
 	}
 
 	/**
