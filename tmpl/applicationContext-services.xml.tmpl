@@ -396,7 +396,25 @@
 
 	<bean id="abstractOntologyManagerProtege"
 		class="org.ncbo.stanford.manager.AbstractOntologyManagerProtege"
-		abstract="true">
+		abstract="true">		
+		<property name="protegeServerEnabled">
+			<ref bean="protegeServerEnabled"/>
+		</property>
+		<property name="protegeServerHostname">
+			<ref bean="protegeServerHostname"/>
+		</property>
+		<property name="protegeServerPort">
+			<ref bean="protegeServerPort"/>
+		</property>
+		<property name="protegeServerUsername">
+			<ref bean="protegeServerUsername"/>
+		</property>
+		<property name="protegeServerPassword">
+			<ref bean="protegeServerPassword"/>
+		</property>
+		<property name="protegeServerMetaProjectName">
+			<ref bean="protegeServerMetaProjectName"/>
+		</property>
 		<property name="protegeJdbcUrl">
 			<ref bean="protegeJdbcUrl" />
 		</property>
