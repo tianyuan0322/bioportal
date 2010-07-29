@@ -1,0 +1,60 @@
+
+
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+  <head>
+  
+  	<STYLE TYPE="text/css">
+	.indented
+   	{
+   	padding-left: 50pt;
+   	padding-right: 50pt;
+   	}
+   		BODY { 
+   			font-family: Verdana, Arial, Helvetica, sans-serif;  
+   			font-size: 10pt;
+   		}
+  	</STYLE>
+  	  
+  	<script language="JavaScript">
+	function OnSubmitForm()
+	{	
+   		document.userform.action ="http://localhost:8080/bioportal/subscriptions/user/6666/";
+	
+  		return true;
+	}
+  	</script>
+  	  
+    <title>test_subscriptions_delete.html</title>
+
+    <meta http-equiv="keywords" content="keyword1,keyword2,keyword3">
+    <meta http-equiv="description" content="this is my page">
+    <meta http-equiv="content-type" content="text/html; charset=ISO-8859-1">
+
+  </head>
+
+  <body>
+   
+    <h3> Test DELETE for User  </h3>  
+    <DIV CLASS="indented">
+   
+    <!-- enctype="multipart/form-data"  -->
+    <!-- enctype="text/plain" Use this only if request.getEntityAsForm() is used -->
+
+	<!-- form action="http://localhost:8080/bioportal/rest/user/34208" method="POST"-->
+	<form name="userform" onSubmit="return OnSubmitForm();" method="POST">
+
+    	User ID: <input type="text" id="userid" name="userid" value="6666" /><br />
+		Ontology ID: <input type="text" id="ontologyid" name="ontologyid" value="6666" /><br />
+		Notification Type: <input type="text" id="notificationtype" name="notificationtype" value="ALL_NOTIFICATION" /><br />
+		
+		
+		<!--  <input type="hidden" name="applicationid" value="4ea81d74-8960-4525-810b-fa1baab576ff" /> -->
+		<input type="hidden" name="method" value="DELETE" />
+    	<br /><br />
+    	<input type="submit" value="Delete Subscriptions" />
+    </form>
+    
+  </DIV>    
+  </body>
+</html>

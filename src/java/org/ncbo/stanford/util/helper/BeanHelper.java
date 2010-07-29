@@ -9,6 +9,8 @@ import javax.servlet.http.HttpServletRequest;
 import org.apache.commons.fileupload.FileItem;
 import org.ncbo.stanford.bean.OntologyBean;
 import org.ncbo.stanford.bean.UserBean;
+import org.ncbo.stanford.bean.SubscriptionsBean;
+import org.ncbo.stanford.enumeration.NotificationTypeEnum;
 import org.ncbo.stanford.bean.logging.UsageLoggingBean;
 import org.ncbo.stanford.util.MessageUtils;
 import org.ncbo.stanford.util.RequestUtils;
@@ -463,5 +465,26 @@ public class BeanHelper {
 		}
 		
 		return usageLoggingBean;
+	}
+	public static SubscriptionsBean populateSubscriptionsBeanFromRequest(Request request) {
+		HttpServletRequest httpServletRequest = RequestUtils
+				.getHttpServletRequest(request);
+
+		String userId = httpServletRequest.getParameter(MessageUtils
+				.getMessage("form.user.userId"));
+		String ontologyId = httpServletRequest.getParameter(MessageUtils
+				.getMessage("form.user.ontologyId"));
+		String notificationType = httpServletRequest.getParameter(MessageUtils
+				.getMessage("form.user.notificationType"));
+
+		SubscriptionsBean subscriptionsBean = new SubscriptionsBean();
+		subscriptionsBean.setUserId(RequestUtils.parseIntegerParam(userId));
+		subscriptionsBean.setOntologyId(ontologyId);
+		subscriptionsBean.setNotificationType(NotificationTypeEnum
+				.valueOf(notificationType));
+		
+		
+		
+		return subscriptionsBean;
 	}
 }

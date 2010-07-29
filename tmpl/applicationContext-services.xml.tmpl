@@ -614,6 +614,25 @@
 			<ref bean="userMetadataManager" />
 		</property>
 	</bean>
+	<!--Adding For SubscriptionsService-->
+	<bean id="subscriptionsService" class="org.ncbo.stanford.service.subscriptions.impl.SubscriptionsServiceImpl">
+		<property name="ncboUserSubscriptionsDAO">
+			<ref bean="NcboUserSubscriptionsDAO" />
+		</property>
+		<property name="ncboLNotificationTypeDAO">
+			<ref bean="NcboLNotificationTypeDAO" />
+		</property>
+		<property name="mailService">
+			<ref bean="mailService" />
+		</property> 
+		<property name="textManager">
+			<ref local="textManager"/>
+		</property>
+		<property name="ncboUserDAO">
+			<ref local="NcboUserDAO"/>
+		</property>  
+		
+	</bean>
 	<!-- Adding For UserMetadata -->
 	<bean id="userMetadataManager"
 		class="org.ncbo.stanford.manager.metadata.impl.UserMetadataManagerImpl"

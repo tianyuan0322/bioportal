@@ -36,10 +36,10 @@
 
 	<b>Ontology</b>
 	<ul> 
-			<li>GET(Find All Ontologies): <a href="http://171.65.32.42:8080/bioportal/rest/ontologies">
-				http://171.65.32.42:8080/bioportal/rest/ontologies</a></li>
-			<li>GET(Find a Ontology Sample): <a href="http://171.65.32.42:8080/bioportal/rest/ontology/2854">
-				http://171.65.32.42:8080/bioportal/rest/ontology/2854</a></li>				
+			<li>GET(Find All Ontologies): <a href="http://localhost:8080/bioportal/rest/ontologies">
+				http://localhost:8080/bioportal/rest/ontologies</a></li>
+			<li>GET(Find a Ontology Sample): <a href="http://localhost:8080/bioportal/rest/ontology/2854">
+				http://localhost:8080/bioportal/rest/ontology/2854</a></li>				
         	<li><a href="test_ontology_post.html">POST (create)</a></li>
 			<li><a href="test_ontology_put.html">PUST (update)</a></li>
 			<li><a href="test_ontology_delete.html">DELETE </a></li>
@@ -49,14 +49,37 @@
 	
 	<b>User</b>
 	<ul> 
-			<li>GET(Find All Users): <a href="http://171.65.32.42:8080/bioportal/rest/users">
-				http://171.65.32.42:8080/bioportal/rest/users</a></li>
-			<li>GET(Find a User Sample): <a href="http://171.65.32.42:8080/bioportal/rest/user/2850">
-				http://171.65.32.42:8080/bioportal/rest/user/2850</a></li>		
+			<li>GET(Find All Users): <a href="http://localhost:8080/bioportal/rest/users">
+				http://localhost:8080/bioportal/rest/users</a></li>
+			<li>GET(Find a User Sample): <a href="http://localhost:8080/bioportal/rest/user/2850">
+				http://localhost:8080/bioportal/rest/user/2850</a></li>		
         	<li><a href="test_user_post.html">POST (create)</a></li>
 			<li><a href="test_user_put.html">PUST (update)</a></li>
 			<li><a href="test_user_delete.html">DELETE </a></li>
-	</ul>	
+	</ul>
+	
+	<br><br>
+	
+	<b>Subscriptions</b>
+	<ul> 
+			
+			<li>GET(Find ): <a href="http://localhost:8080/bioportal/subscriptions/user/2850">
+				http://localhost:8080/bioportal/subscriptions/2850</a></li>		
+        	<li><a href="test_subscriptions_post.html">POST (create)</a></li>
+			<li><a href="test_subscriptions_update.html">PUT (update)</a></li>
+			<li><a href="test_subscriptions_delete.html">DELETE </a></li>
+	</ul>
+	
+	<b>SubscriptionsOntologies</b>
+	<ul> 
+			
+			<li>GET(Find ): <a href="http://localhost:8080/bioportal/subscriptions/ontologies/1083">
+				http://localhost:8080/bioportal/subscriptions/ontologies/1111</a></li>		
+        	<li><a href="test_subscriptions_ontologies_post.html">POST (create)</a></li>
+			<li><a href="test_subscriptions_ontologies_update.html">PUT (update)</a></li>
+			<li><a href="test_subscriptions_ontologies_delete.html">DELETE </a></li>
+			
+		
     </DIV>
   </body>
 </html>

@@ -18,6 +18,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.commons.validator.GenericValidator;
 import org.ncbo.stanford.bean.CategoryBean;
+import org.ncbo.stanford.bean.SubscriptionsBean;
 import org.ncbo.stanford.bean.GroupBean;
 import org.ncbo.stanford.bean.OntologyBean;
 import org.ncbo.stanford.bean.OntologyMetricsBean;
@@ -470,6 +471,8 @@ public class XMLSerializationServiceImpl implements XMLSerializationService {
 				OntologyMetricsBean.class);
 		xmlSerializer.alias(MessageUtils.getMessage("entity.userbean"),
 				UserBean.class);
+		xmlSerializer.alias(MessageUtils.getMessage("entity.subscriptionsbean"),
+				SubscriptionsBean.class);
 
 		xmlSerializer.omitField(UserBean.class, "password");
 

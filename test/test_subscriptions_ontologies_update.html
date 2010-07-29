@@ -1,0 +1,60 @@
+
+
+
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+  <head>
+  
+    <STYLE TYPE="text/css">
+	.indented
+   	{
+   	padding-left: 50pt;
+   	padding-right: 50pt;
+   	}
+   		BODY { 
+   			font-family: Verdana, Arial, Helvetica, sans-serif;  
+   			font-size: 10pt;
+   		}
+  	</STYLE>
+  	  
+  	<script language="JavaScript">
+	function OnSubmitForm()
+	{	
+   		document.userform.action ="http://localhost:8080/bioportal/subscriptions/ontologies/6666";
+	
+  		return true;
+	}
+  	</script>
+  
+    <title>test_subscriptions_ontologies_update.html</title>
+
+    <meta http-equiv="keywords" content="keyword1,keyword2,keyword3">
+    <meta http-equiv="description" content="this is my page">
+    <meta http-equiv="content-type" content="text/html; charset=ISO-8859-1">
+
+  </head>
+
+  <body>
+   
+    <h3> Test PUT (update) for Subscriptions  </h3>  
+    <DIV CLASS="indented">
+   
+		<form name="userform" onSubmit="return OnSubmitForm();" method="POST">
+
+		User ID: <input type="text" id="userid" name="userid" value="6666" /><br />
+		<br /><br />
+
+    	OntologyId: <input type="text" id="ontologyid" name="ontologyid" value="1083" /><br />
+    	Notification_Type: <input type="text" id="notificationtype" name="notificationtype" value="ALL_NOTIFICATION" /><br />
+    	
+
+		<input type="hidden" name="sessionid" value="9c188a9b8de0fe0c21b9322b72255fb939a68bb2" /> 
+		
+		<input type="hidden" name="method" value="PUT" />
+    	<br /><br />
+    	<input type="submit" value="Update User" />
+    </form>
+    
+    </DIV>
+  </body>
+</html>

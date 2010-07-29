@@ -440,6 +440,21 @@
 			<ref bean="rdfDir" />
 		</property>
 	</bean>
+	<!-- Adding For SubscriptionsRestlet-->
+	<bean id="subscriptionsRestlet" class="org.ncbo.stanford.view.rest.restlet.subscriptions.SubscritpionsRestlet"
+		parent="abstractBaseRestlet">
+		<property name="subscriptionsService">
+			<ref bean="subscriptionsService" />
+		</property>
+	</bean>
+
+	<bean id="subscriptionsOntologyRestlet"
+		class="org.ncbo.stanford.view.rest.restlet.subscriptions.SubscriptionsOntologyRestlet"
+		parent="abstractBaseRestlet">
+		<property name="subscriptionsService">
+			<ref bean="subscriptionsService" />
+		</property>
+	</bean>
 	
 	<!-- Temporary directory on the server -->
 	<bean id="tempDir" class="java.lang.String">
@@ -665,6 +680,16 @@
 						</entry>
 						<entry key="/review/rating/{id}">
 							<ref local="ratingRestlet" />
+						</entry>
+						<!--Adding For SubscriptionsRestlet-->
+						<entry key="/subscriptions">
+							<ref local="subscriptionsRestlet" />
+						</entry>
+						<entry key="/subscriptions/user/{userid}">
+							<ref local="subscriptionsRestlet" />
+						</entry>
+						<entry key="/subscriptions/ontologies/{ontologyid}">
+							<ref local="subscriptionsOntologyRestlet" />
 						</entry>
 					</map>
 				</constructor-arg>
