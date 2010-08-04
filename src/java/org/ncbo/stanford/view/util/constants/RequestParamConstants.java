@@ -162,6 +162,7 @@ public interface RequestParamConstants {
 	public static final String PARAM_NOTE_ARCHIVE_THREAD = "archivethread";
 	public static final String PARAM_NOTE_UNARCHIVE = "unarchive";
 	public static final String PARAM_NOTE_UNARCHIVE_THREAD = "unarchivethread";
+	public static final String PARAM_NOTE_STATUS = "status";
 	public static final String PARAM_NOTE_TOP_LEVEL_ONLY = "toplevelonly";
 	
 	/**

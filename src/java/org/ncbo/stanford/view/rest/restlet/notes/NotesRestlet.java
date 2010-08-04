@@ -170,7 +170,8 @@ public class NotesRestlet extends AbstractBaseRestlet {
 			Boolean threaded) throws NoteNotFoundException {
 		Annotation noteToList = notesService.getNote(ont, noteId);
 
-		return notesService.getAllNotesForNote(ont, noteToList.getId(), threaded);
+		return notesService.getAllNotesForNote(ont, noteToList.getId(),
+				threaded);
 	}
 
 	private List<NoteBean> listNotesForIndividual(OntologyBean ont,
@@ -235,6 +236,8 @@ public class NotesRestlet extends AbstractBaseRestlet {
 				.getParameter(RequestParamConstants.PARAM_PROP_ID);
 		String created = (String) httpRequest
 				.getParameter(RequestParamConstants.PARAM_NOTE_CREATED);
+		String status = (String) httpRequest
+				.getParameter(RequestParamConstants.PARAM_NOTE_STATUS);
 
 		// Post-process parameters
 		NoteType noteType = NoteType.valueOf(noteTypeStr);
@@ -302,30 +305,30 @@ public class NotesRestlet extends AbstractBaseRestlet {
 
 			switch (noteType) {
 			case ProposalForCreateEntity:
-				noteBean = notesService.createNewTermProposal(ont,
-						appliesTo, appliesToType, noteType, subject,
-						content, author, createdLong, reasonForChange,
-						contactInfo, termDefinition, termId, termParent,
-						termPreferredName, synonymList);
+				noteBean = notesService.createNewTermProposal(ont, appliesTo,
+						appliesToType, noteType, subject, content, author,
+						status, createdLong, reasonForChange, contactInfo,
+						termDefinition, termId, termParent, termPreferredName,
+						synonymList);
 				break;
 			case ProposalForChangeHierarchy:
 				noteBean = notesService.createNewRelationshipProposal(ont,
 						appliesTo, appliesToType, noteType, subject, content,
-						author, createdLong, reasonForChange, contactInfo,
-						relationshipType, relationshipTarget,
+						author, status, createdLong, reasonForChange,
+						contactInfo, relationshipType, relationshipTarget,
 						relationshipOldTarget);
 				break;
 			case ProposalForChangePropertyValue:
 				noteBean = notesService.createNewPropertyValueChangeProposal(
 						ont, appliesTo, appliesToType, noteType, subject,
-						content, author, createdLong, reasonForChange,
+						content, author, status, createdLong, reasonForChange,
 						contactInfo, propertyNewValue, propertyOldValue,
 						propertyId);
 				break;
 			default:
 				noteBean = notesService.createNote(ont, appliesTo,
 						appliesToType, noteType, subject, content, author,
-						createdLong);
+						status, createdLong);
 				break;
 			}
 
@@ -382,6 +385,8 @@ public class NotesRestlet extends AbstractBaseRestlet {
 				.getParameter(RequestParamConstants.PARAM_NOTE_AUTHOR);
 		String created = (String) httpRequest
 				.getParameter(RequestParamConstants.PARAM_NOTE_CREATED);
+		String status = (String) httpRequest
+				.getParameter(RequestParamConstants.PARAM_NOTE_STATUS);
 
 		// Post-process parameters
 		Boolean archiveBool = RequestUtils.parseBooleanParam(archive);
@@ -425,6 +430,7 @@ public class NotesRestlet extends AbstractBaseRestlet {
 				throw new NoteNotFoundException();
 			}
 
+			// Archive note if necessary
 			if (archiveBool) {
 				if (archiveThreadBool) {
 					notesService.archiveThread(ont, noteId);
@@ -437,13 +443,12 @@ public class NotesRestlet extends AbstractBaseRestlet {
 				} else {
 					notesService.unarchiveNote(ont, noteId);
 				}
-			} else {
-				// TODO: Set status properly (unclear how Notes-api handles
-				// this)
-				notesService.updateNote(ont, noteId, noteType, subject,
-						content, author, createdLong, null, appliesTo,
-						appliesToType);
 			}
+
+			// TODO: Set status properly (unclear how Notes-api handles
+			// this)
+			notesService.updateNote(ont, noteId, noteType, subject, content,
+					author, createdLong, status, appliesTo, appliesToType);
 
 		} catch (NoteNotFoundException nnfe) {
 			response
@@ -520,8 +525,7 @@ public class NotesRestlet extends AbstractBaseRestlet {
 	 * Get an id based on the ontology type. OBO ontologies return the short id,
 	 * everything else uses the fullId.
 	 * 
-	 * This method exists in these classes:
-	 * NotesServiceImpl.java
+	 * This method exists in these classes: NotesServiceImpl.java
 	 * NotesRestlet.java
 	 * 
 	 * @param concept

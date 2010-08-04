@@ -6,6 +6,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 
+import org.eclipse.emf.ecore.xml.type.internal.DataValue.URI;
 import org.ncbo.stanford.bean.OntologyBean;
 import org.ncbo.stanford.bean.concept.AbstractConceptBean;
 import org.ncbo.stanford.bean.concept.ClassBean;
@@ -40,6 +41,7 @@ import org.protege.notesapi.oc.impl.DefaultOntologyProperty;
 public class NotesServiceImpl implements NotesService {
 
 	private NotesPool notesPool;
+	private String CHAO_NAMESPACE = "http://protege.stanford.edu/ontologies/ChAO/changes.owl#";
 
 	public void archiveNote(OntologyBean ont, String noteId) {
 		NotesManager notesManager = notesPool.getNotesManagerForOntology(ont);
@@ -53,8 +55,8 @@ public class NotesServiceImpl implements NotesService {
 
 	public NoteBean createNote(OntologyBean ont, String appliesTo,
 			NoteAppliesToTypeEnum appliesToType, NoteType noteType,
-			String subject, String content, String author, Long created)
-			throws Exception {
+			String subject, String content, String author, String status,
+			Long created) throws Exception {
 		NotesManager notesManager = notesPool.getNotesManagerForOntology(ont);
 
 		AnnotatableThing annotated = getAnnotatableThing(notesManager,
@@ -66,15 +68,22 @@ public class NotesServiceImpl implements NotesService {
 		if (created != null)
 			newAnnotation.setCreatedAt(created);
 
+		// If status, create status object and set
+		if (status != null) {
+			String nameIRI = CHAO_NAMESPACE + URI.encode(status);
+			Status newStatus = notesManager.createStatus(nameIRI, status);
+			newAnnotation.setHasStatus(newStatus);
+		}
+
 		return convertAnnotationToNoteBean(newAnnotation, ont);
 	}
 
 	public NoteBean createNewPropertyValueChangeProposal(OntologyBean ont,
 			String appliesTo, NoteAppliesToTypeEnum appliesToType,
 			NoteType noteType, String subject, String content, String author,
-			Long created, String reasonForChange, String contactInfo,
-			String propertyNewValue, String propertyOldValue, String propertyId)
-			throws NotesException {
+			String status, Long created, String reasonForChange,
+			String contactInfo, String propertyNewValue,
+			String propertyOldValue, String propertyId) throws NotesException {
 		NotesManager notesManager = notesPool.getNotesManagerForOntology(ont);
 
 		OntologyProperty property = notesManager
@@ -92,15 +101,23 @@ public class NotesServiceImpl implements NotesService {
 		proposal.setAuthor(author);
 		proposal.setCreatedInOntologyRevision(ont.getId());
 
+		// If status, create status object and set
+		if (status != null) {
+			String nameIRI = CHAO_NAMESPACE + URI.encode(status);
+			Status newStatus = notesManager.createStatus(nameIRI, status);
+			proposal.setHasStatus(newStatus);
+		}
+
 		return convertAnnotationToNoteBean(proposal, ont);
 	}
 
 	public NoteBean createNewRelationshipProposal(OntologyBean ont,
 			String appliesTo, NoteAppliesToTypeEnum appliesToType,
 			NoteType noteType, String subject, String content, String author,
-			Long created, String reasonForChange, String contactInfo,
-			String relationshipType, String relationshipTarget,
-			String relationshipOldTarget) throws NotesException {
+			String status, Long created, String reasonForChange,
+			String contactInfo, String relationshipType,
+			String relationshipTarget, String relationshipOldTarget)
+			throws NotesException {
 		NotesManager notesManager = notesPool.getNotesManagerForOntology(ont);
 
 		OntologyComponent target = notesManager
@@ -125,15 +142,23 @@ public class NotesServiceImpl implements NotesService {
 		proposal.setAuthor(author);
 		proposal.setCreatedInOntologyRevision(ont.getId());
 
+		// If status, create status object and set
+		if (status != null) {
+			String nameIRI = CHAO_NAMESPACE + URI.encode(status);
+			Status newStatus = notesManager.createStatus(nameIRI, status);
+			proposal.setHasStatus(newStatus);
+		}
+
 		return convertAnnotationToNoteBean(proposal, ont);
 	}
 
 	public NoteBean createNewTermProposal(OntologyBean ont, String appliesTo,
 			NoteAppliesToTypeEnum appliesToType, NoteType noteType,
-			String subject, String content, String author, Long created,
-			String reasonForChange, String contactInfo, String termDefinition,
-			String termId, String termParent, String termPreferredName,
-			List<String> termSynonyms) throws NotesException {
+			String subject, String content, String author, String status,
+			Long created, String reasonForChange, String contactInfo,
+			String termDefinition, String termId, String termParent,
+			String termPreferredName, List<String> termSynonyms)
+			throws NotesException {
 		NotesManager notesManager = notesPool.getNotesManagerForOntology(ont);
 
 		LinguisticEntity preferredName = notesManager.createLinguisticEntity(
@@ -162,6 +187,13 @@ public class NotesServiceImpl implements NotesService {
 				appliesToType));
 		proposal.setAuthor(author);
 		proposal.setCreatedInOntologyRevision(ont.getId());
+
+		// If status, create status object and set
+		if (status != null) {
+			String nameIRI = CHAO_NAMESPACE + URI.encode(status);
+			Status newStatus = notesManager.createStatus(nameIRI, status);
+			proposal.setHasStatus(newStatus);
+		}
 
 		return convertAnnotationToNoteBean(proposal, ont);
 	}
@@ -299,14 +331,18 @@ public class NotesServiceImpl implements NotesService {
 
 	public NoteBean updateNote(OntologyBean ont, String noteId,
 			NoteType noteType, String subject, String content, String author,
-			Long created, Status status, String appliesTo,
+			Long created, String status, String appliesTo,
 			NoteAppliesToTypeEnum appliesToType) throws Exception {
-		// TODO: Check to make sure this actually updates
 		NotesManager notesManager = notesPool.getNotesManagerForOntology(ont);
 		Annotation annotation = notesManager.getNote(noteId);
 
-		if (status != null)
-			annotation.setHasStatus(status);
+		// If status, create status object and set
+		if (status != null) {
+			String nameIRI = CHAO_NAMESPACE + URI.encode(status);
+			Status newStatus = notesManager.createStatus(nameIRI, status);
+			annotation.setHasStatus(newStatus);
+		}
+
 		if (content != null)
 			annotation.setBody(content);
 		if (author != null)
@@ -415,6 +451,9 @@ public class NotesServiceImpl implements NotesService {
 		if (annotation.getAuthor() != null) {
 			nb.setAuthor(Integer.parseInt(annotation.getAuthor()));
 		}
+		
+		if (annotation.getHasStatus() != null)
+			nb.setStatus(annotation.getHasStatus().getDescription());
 
 		nb.setBody(annotation.getBody());
 		nb.setCreated(annotation.getCreatedAt());

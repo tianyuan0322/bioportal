@@ -10,7 +10,6 @@ import org.ncbo.stanford.exception.NoteNotFoundException;
 import org.protege.notesapi.NotesException;
 import org.protege.notesapi.notes.Annotation;
 import org.protege.notesapi.notes.NoteType;
-import org.protege.notesapi.notes.Status;
 
 public interface NotesService {
 
@@ -18,35 +17,37 @@ public interface NotesService {
 
 	public NoteBean createNote(OntologyBean ont, String appliesTo,
 			NoteAppliesToTypeEnum appliesToType, NoteType noteType,
-			String subject, String content, String author, Long created)
-			throws Exception;
+			String subject, String content, String author, String status,
+			Long created) throws Exception;
 
 	public NoteBean createNewTermProposal(OntologyBean ont, String appliesTo,
 			NoteAppliesToTypeEnum appliesToType, NoteType noteType,
-			String subject, String content, String author, Long created,
-			String reasonForChange, String contactInfo, String termDefinition,
-			String termId, String termParent, String termPreferredName,
-			List<String> termSynonyms) throws NotesException;
+			String subject, String content, String author, String status,
+			Long created, String reasonForChange, String contactInfo,
+			String termDefinition, String termId, String termParent,
+			String termPreferredName, List<String> termSynonyms)
+			throws NotesException;
 
 	public NoteBean createNewRelationshipProposal(OntologyBean ont,
 			String appliesTo, NoteAppliesToTypeEnum appliesToType,
 			NoteType noteType, String subject, String content, String author,
-			Long created, String reasonForChange, String contactInfo,
-			String relationshipType, String relationshipTarget,
-			String relationshipOldTarget) throws NotesException;
+			String status, Long created, String reasonForChange,
+			String contactInfo, String relationshipType,
+			String relationshipTarget, String relationshipOldTarget)
+			throws NotesException;
 
 	public NoteBean createNewPropertyValueChangeProposal(OntologyBean ont,
 			String appliesTo, NoteAppliesToTypeEnum appliesToType,
 			NoteType noteType, String subject, String content, String author,
-			Long created, String reasonForChange, String contactInfo,
-			String propertyNewValue, String propertyOldValue, String propertyId)
-			throws NotesException;
+			String status, Long created, String reasonForChange,
+			String contactInfo, String propertyNewValue,
+			String propertyOldValue, String propertyId) throws NotesException;
 
 	// Update methods
 
 	public NoteBean updateNote(OntologyBean ont, String noteId,
 			NoteType noteType, String subject, String content, String author,
-			Long created, Status status, String appliesTo,
+			Long created, String status, String appliesTo,
 			NoteAppliesToTypeEnum appliesToType) throws Exception;
 
 	public void archiveNote(OntologyBean ont, String noteId);
