@@ -13,6 +13,7 @@ import org.ncbo.stanford.util.MessageUtils;
 import org.ncbo.stanford.util.cache.expiration.system.ExpirationSystem;
 import org.ncbo.stanford.util.constants.ApplicationConstants;
 import org.ncbo.stanford.util.helper.StringHelper;
+import org.ncbo.stanford.util.protege.PingProtegeServerJob;
 
 import edu.stanford.smi.protege.model.Cls;
 import edu.stanford.smi.protege.model.Frame;
@@ -78,22 +79,6 @@ public abstract class AbstractOntologyManagerProtege {
 	protected ExpirationSystem<Integer, KnowledgeBase> protegeKnowledgeBases = null;
 	private OWLModel owlModel = null;
 	private Object createOwlModelLock = new Object();
-
-	/**
-	 * Programmatically reloads the metadata ontology stored in the memory
-	 */
-	public void reloadMetadataOWLModel() throws Exception {
-		if (log.isDebugEnabled()) {
-			log.debug("Reloading metadata...");
-		}
-
-		synchronized (createOwlModelLock) {
-			if (owlModel != null) {
-				owlModel.getProject().dispose();
-				owlModel = createMetadataKnowledgeBaseInstance();
-			}
-		}
-	}
 
 	// to collide with the user-uploaded
 	// Protege tables
@@ -274,17 +259,27 @@ public abstract class AbstractOntologyManagerProtege {
 	private OWLModel createMetadataKnowledgeBaseInstance() throws Exception {
 		List errors = new ArrayList();
 		OWLModel owlModel = null;
+		Project p = null;
 		String serverPath = protegeServerHostname + ":" + protegeServerPort;
 
 		if (Boolean.parseBoolean(protegeServerEnabled)) {
-			Project p = RemoteProjectManager.getInstance().getProject(
-					serverPath, protegeServerUsername, protegeServerPassword,
-					protegeServerMetaProjectName, true);
+			try {
+				p = RemoteProjectManager.getInstance().getProject(serverPath,
+						protegeServerUsername, protegeServerPassword,
+						protegeServerMetaProjectName, true);
+			} catch (Exception e) {
+				throw e;
+			} catch (Throwable e) {
+				throw new Exception(e);
+			}
 
 			if (p != null) {
 				owlModel = (OWLModel) p.getKnowledgeBase();
-			} else if (log.isDebugEnabled()) {
-				log.debug("Unable to connect to protege server: " + serverPath);
+			} else {
+				throw new Exception(
+						"Unable to retrieve remote project. ServerName: "
+								+ serverPath + ", Project: "
+								+ protegeServerMetaProjectName);
 			}
 		} else {
 			Repository repository = new LocalFolderRepository(
@@ -316,13 +311,36 @@ public abstract class AbstractOntologyManagerProtege {
 	}
 
 	public OWLModel getMetadataOWLModel() throws Exception {
+		boolean isServerEnabled = Boolean.parseBoolean(protegeServerEnabled);
+
 		synchronized (createOwlModelLock) {
-			if (owlModel == null) {
+			if (owlModel == null
+					|| (isServerEnabled && !PingProtegeServerJob.ping(owlModel))) {
 				owlModel = createMetadataKnowledgeBaseInstance();
 			}
 		}
 
 		return owlModel;
+	}
+
+	/**
+	 * Programmatically reloads the metadata ontology stored in the memory
+	 */
+	public void reloadMetadataOWLModel() throws Exception {
+		boolean isServerEnabled = Boolean.parseBoolean(protegeServerEnabled);
+
+		if (log.isDebugEnabled()) {
+			log.debug("Reloading metadata...");
+		}
+
+		synchronized (createOwlModelLock) {
+			if (owlModel == null
+					|| (isServerEnabled && !PingProtegeServerJob.ping(owlModel))) {
+				owlModel.getProject().dispose();
+			}
+
+			owlModel = createMetadataKnowledgeBaseInstance();
+		}
 	}
 
 	protected SQWRLQueryEngine getMetadataSQWRLEngine() throws Exception {

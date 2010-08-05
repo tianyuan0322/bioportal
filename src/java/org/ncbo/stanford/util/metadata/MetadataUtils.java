@@ -9,7 +9,6 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.lang.StringEscapeUtils;
-import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.ncbo.stanford.exception.MetadataException;
@@ -52,7 +51,6 @@ public class MetadataUtils {
 	public static final String PROPERTY_OMV_ACRONYM = PREFIX_OMV + "acronym";
 
 	public static final String PROPERTY_RDFS_LABEL = "rdfs:label";
-	private static Map map;
 
 	protected static void addPropertyValue(OWLModel owlModel,
 			RDFResource owlInd, String propName, Object value)
@@ -82,6 +80,7 @@ public class MetadataUtils {
 		owlInd.removePropertyValue(prop, value);
 	}
 
+	@SuppressWarnings("unchecked")
 	protected static void setPropertyValue(OWLModel owlModel,
 			RDFResource owlInd, String propName, Object value)
 			throws MetadataException {
@@ -105,7 +104,8 @@ public class MetadataUtils {
 
 	@SuppressWarnings("unchecked")
 	protected static <K, V> void setPropertyValuesFromMap(OWLModel owlModel,
-			RDFResource owlInd, String propName, Map<K, V> valuesMap) throws MetadataException {
+			RDFResource owlInd, String propName, Map<K, V> valuesMap)
+			throws MetadataException {
 		// Basic error checking
 		if (valuesMap == null)
 			return;
@@ -127,7 +127,9 @@ public class MetadataUtils {
 			Map.Entry<K, V> pair = (Map.Entry<K, V>) it.next();
 			String value = StringEscapeUtils
 					.escapeCsv(pair.getKey().toString())
-					+ "\"" + token + "\""
+					+ "\""
+					+ token
+					+ "\""
 					+ StringEscapeUtils.escapeCsv(pair.getValue().toString());
 			convertedMap.add(value);
 		}
