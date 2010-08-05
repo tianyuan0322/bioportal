@@ -6,6 +6,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 
+import org.apache.commons.lang.WordUtils;
 import org.eclipse.emf.ecore.xml.type.internal.DataValue.URI;
 import org.ncbo.stanford.bean.OntologyBean;
 import org.ncbo.stanford.bean.concept.AbstractConceptBean;
@@ -19,6 +20,7 @@ import org.ncbo.stanford.enumeration.NoteAppliesToTypeEnum;
 import org.ncbo.stanford.exception.NoteNotFoundException;
 import org.ncbo.stanford.manager.notes.NotesPool;
 import org.ncbo.stanford.service.notes.NotesService;
+import org.protege.notesapi.NotesConstants;
 import org.protege.notesapi.NotesException;
 import org.protege.notesapi.NotesManager;
 import org.protege.notesapi.notes.AnnotatableThing;
@@ -29,6 +31,7 @@ import org.protege.notesapi.notes.ProposalChangeHierarchy;
 import org.protege.notesapi.notes.ProposalChangePropertyValue;
 import org.protege.notesapi.notes.ProposalCreateEntity;
 import org.protege.notesapi.notes.Status;
+import org.protege.notesapi.notes.StatusAnnotation;
 import org.protege.notesapi.notes.impl.DefaultComment;
 import org.protege.notesapi.notes.impl.DefaultProposal;
 import org.protege.notesapi.oc.OntologyClass;
@@ -41,7 +44,6 @@ import org.protege.notesapi.oc.impl.DefaultOntologyProperty;
 public class NotesServiceImpl implements NotesService {
 
 	private NotesPool notesPool;
-	private String CHAO_NAMESPACE = "http://protege.stanford.edu/ontologies/ChAO/changes.owl#";
 
 	public void archiveNote(OntologyBean ont, String noteId) {
 		NotesManager notesManager = notesPool.getNotesManagerForOntology(ont);
@@ -70,9 +72,7 @@ public class NotesServiceImpl implements NotesService {
 
 		// If status, create status object and set
 		if (status != null) {
-			String nameIRI = CHAO_NAMESPACE + URI.encode(status);
-			Status newStatus = notesManager.createStatus(nameIRI, status);
-			newAnnotation.setHasStatus(newStatus);
+			newAnnotation.setHasStatus(getStatus(ont, notesManager, status));
 		}
 
 		return convertAnnotationToNoteBean(newAnnotation, ont);
@@ -103,9 +103,7 @@ public class NotesServiceImpl implements NotesService {
 
 		// If status, create status object and set
 		if (status != null) {
-			String nameIRI = CHAO_NAMESPACE + URI.encode(status);
-			Status newStatus = notesManager.createStatus(nameIRI, status);
-			proposal.setHasStatus(newStatus);
+			proposal.setHasStatus(getStatus(ont, notesManager, status));
 		}
 
 		return convertAnnotationToNoteBean(proposal, ont);
@@ -144,9 +142,7 @@ public class NotesServiceImpl implements NotesService {
 
 		// If status, create status object and set
 		if (status != null) {
-			String nameIRI = CHAO_NAMESPACE + URI.encode(status);
-			Status newStatus = notesManager.createStatus(nameIRI, status);
-			proposal.setHasStatus(newStatus);
+			proposal.setHasStatus(getStatus(ont, notesManager, status));
 		}
 
 		return convertAnnotationToNoteBean(proposal, ont);
@@ -190,9 +186,7 @@ public class NotesServiceImpl implements NotesService {
 
 		// If status, create status object and set
 		if (status != null) {
-			String nameIRI = CHAO_NAMESPACE + URI.encode(status);
-			Status newStatus = notesManager.createStatus(nameIRI, status);
-			proposal.setHasStatus(newStatus);
+			proposal.setHasStatus(getStatus(ont, notesManager, status));
 		}
 
 		return convertAnnotationToNoteBean(proposal, ont);
@@ -338,9 +332,7 @@ public class NotesServiceImpl implements NotesService {
 
 		// If status, create status object and set
 		if (status != null) {
-			String nameIRI = CHAO_NAMESPACE + URI.encode(status);
-			Status newStatus = notesManager.createStatus(nameIRI, status);
-			annotation.setHasStatus(newStatus);
+			annotation.setHasStatus(getStatus(ont, notesManager, status));
 		}
 
 		if (content != null)
@@ -451,7 +443,7 @@ public class NotesServiceImpl implements NotesService {
 		if (annotation.getAuthor() != null) {
 			nb.setAuthor(Integer.parseInt(annotation.getAuthor()));
 		}
-		
+
 		if (annotation.getHasStatus() != null)
 			nb.setStatus(annotation.getHasStatus().getDescription());
 
@@ -590,6 +582,33 @@ public class NotesServiceImpl implements NotesService {
 		} else {
 			return concept.getFullId();
 		}
+	}
+
+	/**
+	 * This method compares the provided status with known statuses in order to
+	 * re-use existing statuses in ChAO but also provide ontology authors with
+	 * the ability to use arbitrary ones.
+	 * 
+	 * @param status
+	 * @return
+	 * @throws NotesException
+	 */
+	private Status getStatus(OntologyBean ont, NotesManager notesManager,
+			String status) throws NotesException {
+		// Check to see if we're asking for a ChAO-provided status and return if
+		// found
+		Collection<StatusAnnotation> chaoStatuses = notesManager
+				.getAllChaoNoteStatuses();
+		for (StatusAnnotation chaoStatus : chaoStatuses) {
+			if (chaoStatus.getDescription().equalsIgnoreCase(status))
+				return chaoStatus;
+		}
+		
+		// Otherwise, generate a BioPortal ontology-specific status
+		String statusFormatted = URI.encode(WordUtils.uncapitalize(status));
+		String nameIRI = "http://bioportal.bioontology.org/ontologies/virtual/"
+				+ ont.getOntologyId() + "/note_status#" + statusFormatted;
+		return notesManager.createStatus(nameIRI, WordUtils.capitalizeFully(status));
 	}
 
 }
