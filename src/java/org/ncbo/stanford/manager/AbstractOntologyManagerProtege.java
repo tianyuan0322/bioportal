@@ -313,7 +313,10 @@ public abstract class AbstractOntologyManagerProtege {
 		boolean isServerEnabled = Boolean.parseBoolean(protegeServerEnabled);
 
 		synchronized (createOwlModelLock) {
-			if (owlModel == null || (isServerEnabled && !pingOwlModel())) {
+			if (owlModel == null) {
+				owlModel = createMetadataKnowledgeBaseInstance();
+			} else if (isServerEnabled && !pingOwlModel()) {
+				owlModel.getProject().dispose();
 				owlModel = createMetadataKnowledgeBaseInstance();
 			}
 		}
@@ -325,14 +328,12 @@ public abstract class AbstractOntologyManagerProtege {
 	 * Programmatically reloads the metadata ontology stored in the memory
 	 */
 	public void reloadMetadataOWLModel() throws Exception {
-		boolean isServerEnabled = Boolean.parseBoolean(protegeServerEnabled);
-
 		if (log.isDebugEnabled()) {
 			log.debug("Reloading metadata...");
 		}
 
 		synchronized (createOwlModelLock) {
-			if (owlModel == null || (isServerEnabled && !pingOwlModel())) {
+			if (owlModel != null) {
 				owlModel.getProject().dispose();
 			}
 
