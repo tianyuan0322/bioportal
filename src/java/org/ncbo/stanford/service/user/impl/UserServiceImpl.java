@@ -100,6 +100,7 @@ public class UserServiceImpl implements UserService {
 		ncboUser.setPassword(encodedPassword);
 		NcboUser newNcboUser = ncboUserDAO.saveUser(ncboUser);
 		userBean.setId(newNcboUser.getId());
+		userBean.setDateCreated(newNcboUser.getDateCreated());
 
 		if (userBean.getRoles().size() <= 0) {
 			userBean.generateDefaultRole();
