@@ -13,7 +13,6 @@ import org.ncbo.stanford.util.MessageUtils;
 import org.ncbo.stanford.util.cache.expiration.system.ExpirationSystem;
 import org.ncbo.stanford.util.constants.ApplicationConstants;
 import org.ncbo.stanford.util.helper.StringHelper;
-import org.ncbo.stanford.util.protege.PingProtegeServerJob;
 
 import edu.stanford.smi.protege.model.Cls;
 import edu.stanford.smi.protege.model.Frame;
@@ -314,8 +313,7 @@ public abstract class AbstractOntologyManagerProtege {
 		boolean isServerEnabled = Boolean.parseBoolean(protegeServerEnabled);
 
 		synchronized (createOwlModelLock) {
-			if (owlModel == null
-					|| (isServerEnabled && !PingProtegeServerJob.ping(owlModel))) {
+			if (owlModel == null || (isServerEnabled && !pingOwlModel())) {
 				owlModel = createMetadataKnowledgeBaseInstance();
 			}
 		}
@@ -334,12 +332,21 @@ public abstract class AbstractOntologyManagerProtege {
 		}
 
 		synchronized (createOwlModelLock) {
-			if (owlModel == null
-					|| (isServerEnabled && !PingProtegeServerJob.ping(owlModel))) {
+			if (owlModel == null || (isServerEnabled && !pingOwlModel())) {
 				owlModel.getProject().dispose();
 			}
 
 			owlModel = createMetadataKnowledgeBaseInstance();
+		}
+	}
+
+	public boolean pingOwlModel() {
+		try {
+			owlModel.flushEvents();
+			return true;
+		} catch (Throwable e) {
+			log.error("Protege server is down!!!");
+			return false;
 		}
 	}
 
