@@ -20,6 +20,7 @@ import edu.stanford.smi.protege.model.KnowledgeBase;
 import edu.stanford.smi.protege.model.Project;
 import edu.stanford.smi.protege.model.Slot;
 import edu.stanford.smi.protege.server.RemoteProjectManager;
+import edu.stanford.smi.protege.server.util.PingProtegeServerJob;
 import edu.stanford.smi.protege.storage.database.DatabaseKnowledgeBaseFactory;
 import edu.stanford.smi.protegex.owl.database.OWLDatabaseKnowledgeBaseFactory;
 import edu.stanford.smi.protegex.owl.database.creator.OwlDatabaseCreator;
@@ -44,6 +45,7 @@ public abstract class AbstractOntologyManagerProtege {
 			.getLog(AbstractOntologyManagerProtege.class);
 
 	private static String METADATA_TABLE_NAME = "metadata";
+	private static final long FIFTEEN_SECONDS = 15 * 1000;
 
 	protected String protegeServerEnabled;
 	protected String protegeServerHostname;
@@ -51,6 +53,7 @@ public abstract class AbstractOntologyManagerProtege {
 	protected String protegeServerUsername;
 	protected String protegeServerPassword;
 	protected String protegeServerMetaProjectName;
+	protected Long protegeServerPingInterval = FIFTEEN_SECONDS;
 	protected String protegeJdbcUrl;
 	protected String protegeJdbcDriver;
 	protected String protegeJdbcUsername;
@@ -75,6 +78,7 @@ public abstract class AbstractOntologyManagerProtege {
 	protected String metadataVirtualViewInstPrefix;
 	protected String metadataVirtualViewInstSuffix;
 
+	private Thread pingProtegeServerThread;
 	protected ExpirationSystem<Integer, KnowledgeBase> protegeKnowledgeBases = null;
 	private OWLModel owlModel = null;
 	private Object createOwlModelLock = new Object();
@@ -260,12 +264,8 @@ public abstract class AbstractOntologyManagerProtege {
 		Project p = null;
 		String serverPath = protegeServerHostname + ":" + protegeServerPort;
 		boolean isServerEnabled = Boolean.parseBoolean(protegeServerEnabled);
-		
+
 		if (owlModel != null) {
-			if (isServerEnabled) {
-				((KnowledgeBase) owlModel).setPollForEvents(false);
-			}
-			
 			owlModel.getProject().dispose();
 			owlModel = null;
 		}
@@ -288,6 +288,13 @@ public abstract class AbstractOntologyManagerProtege {
 						"Unable to retrieve remote project. ServerName: "
 								+ serverPath + ", Project: "
 								+ protegeServerMetaProjectName);
+			}
+
+			// start protege server ping thread
+			if (pingProtegeServerThread == null) {
+				pingProtegeServerThread = new Thread(new PingProtegeServerThread());
+				pingProtegeServerThread.setDaemon(true);
+				pingProtegeServerThread.start();
 			}
 		} else {
 			Repository repository = new LocalFolderRepository(
@@ -317,10 +324,8 @@ public abstract class AbstractOntologyManagerProtege {
 	}
 
 	public OWLModel getMetadataOWLModel() throws Exception {
-		boolean isServerEnabled = Boolean.parseBoolean(protegeServerEnabled);
-
 		synchronized (createOwlModelLock) {
-			if (owlModel == null || (isServerEnabled && !pingOwlModel())) {
+			if (owlModel == null) {
 				createMetadataKnowledgeBaseInstance();
 			}
 		}
@@ -341,13 +346,28 @@ public abstract class AbstractOntologyManagerProtege {
 		}
 	}
 
-	public boolean pingOwlModel() {
-		try {
-			owlModel.flushEvents();
-			return true;
-		} catch (Throwable e) {
-			log.error("Protege server is down!!!");
-			return false;
+	private class PingProtegeServerThread implements Runnable {
+		public void run() {
+			while (true) {
+				try {
+					Thread.sleep(protegeServerPingInterval);
+				} catch (InterruptedException ignored) {
+				}
+
+				System.out.println("PingProtegeServerThread ran!");
+
+				synchronized (createOwlModelLock) {
+					if (owlModel != null
+							&& !PingProtegeServerJob.ping(owlModel)) {
+						owlModel.getProject().dispose();
+						owlModel = null;
+
+						System.out
+								.println("Server appears to be down. Discarding Metadata OWL Model...");
+
+					}
+				}
+			}
 		}
 	}
 
@@ -495,6 +515,14 @@ public abstract class AbstractOntologyManagerProtege {
 	public void setProtegeServerMetaProjectName(
 			String protegeServerMetaProjectName) {
 		this.protegeServerMetaProjectName = protegeServerMetaProjectName;
+	}
+
+	/**
+	 * @param protegeServerPingInterval
+	 *            the protegeServerPingInterval to set
+	 */
+	public void setProtegeServerPingInterval(Long protegeServerPingInterval) {
+		this.protegeServerPingInterval = protegeServerPingInterval * 1000;
 	}
 
 	/**
