@@ -259,13 +259,18 @@ public abstract class AbstractOntologyManagerProtege {
 		List errors = new ArrayList();
 		Project p = null;
 		String serverPath = protegeServerHostname + ":" + protegeServerPort;
+		boolean isServerEnabled = Boolean.parseBoolean(protegeServerEnabled);
 		
 		if (owlModel != null) {
+			if (isServerEnabled) {
+				((KnowledgeBase) owlModel).setPollForEvents(false);
+			}
+			
 			owlModel.getProject().dispose();
 			owlModel = null;
 		}
 
-		if (Boolean.parseBoolean(protegeServerEnabled)) {
+		if (isServerEnabled) {
 			try {
 				p = RemoteProjectManager.getInstance().getProject(serverPath,
 						protegeServerUsername, protegeServerPassword,
