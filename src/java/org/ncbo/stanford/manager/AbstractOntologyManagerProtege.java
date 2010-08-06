@@ -255,11 +255,15 @@ public abstract class AbstractOntologyManagerProtege {
 	 * Gets the Metadata ontology instance
 	 */
 	@SuppressWarnings("unchecked")
-	private OWLModel createMetadataKnowledgeBaseInstance() throws Exception {
+	private void createMetadataKnowledgeBaseInstance() throws Exception {
 		List errors = new ArrayList();
-		OWLModel owlModel = null;
 		Project p = null;
 		String serverPath = protegeServerHostname + ":" + protegeServerPort;
+		
+		if (owlModel != null) {
+			owlModel.getProject().dispose();
+			owlModel = null;
+		}
 
 		if (Boolean.parseBoolean(protegeServerEnabled)) {
 			try {
@@ -305,19 +309,14 @@ public abstract class AbstractOntologyManagerProtege {
 				log.debug("Created new metadata model: " + owlModel.getName());
 			}
 		}
-
-		return owlModel;
 	}
 
 	public OWLModel getMetadataOWLModel() throws Exception {
 		boolean isServerEnabled = Boolean.parseBoolean(protegeServerEnabled);
 
 		synchronized (createOwlModelLock) {
-			if (owlModel == null) {
-				owlModel = createMetadataKnowledgeBaseInstance();
-			} else if (isServerEnabled && !pingOwlModel()) {
-				owlModel.getProject().dispose();
-				owlModel = createMetadataKnowledgeBaseInstance();
+			if (owlModel == null || (isServerEnabled && !pingOwlModel())) {
+				createMetadataKnowledgeBaseInstance();
 			}
 		}
 
@@ -333,11 +332,7 @@ public abstract class AbstractOntologyManagerProtege {
 		}
 
 		synchronized (createOwlModelLock) {
-			if (owlModel != null) {
-				owlModel.getProject().dispose();
-			}
-
-			owlModel = createMetadataKnowledgeBaseInstance();
+			createMetadataKnowledgeBaseInstance();
 		}
 	}
 
