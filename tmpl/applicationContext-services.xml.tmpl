@@ -415,6 +415,9 @@
 		<property name="protegeServerMetaProjectName">
 			<ref bean="protegeServerMetaProjectName"/>
 		</property>
+		<property name="protegeServerPingInterval">
+			<ref bean="protegeServerPingInterval"/>
+		</property>
 		<property name="protegeJdbcUrl">
 			<ref bean="protegeJdbcUrl" />
 		</property>
@@ -1275,6 +1278,10 @@
 	
 	<bean id="protegeServerMetaProjectName" class="java.lang.String">
 		<constructor-arg value="@protegeservermetaprojectname@"/>
+	</bean>
+
+	<bean id="protegeServerPingInterval" class="java.lang.Long">
+		<constructor-arg value="@protegeserverpinginterval@"/>
 	</bean>
 
 	<!-- Protege DB Configuation -->

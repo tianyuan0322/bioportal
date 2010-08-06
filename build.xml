@@ -188,7 +188,8 @@
 				<filter token="protegeserverport" value="${protege.server.port}" />
 				<filter token="protegeserverusername" value="${protege.server.username}" />
 				<filter token="protegeserverpassword" value="${protege.server.password}" />
-				<filter token="protegeservermetaprojectname" value="${protege.server.metaprojectname}" />
+				<filter token="protegeservermetaprojectname" value="${protege.server.metaprojectname}" />				
+				<filter token="protegeserverpinginterval" value="${protege.server.pinginterval}" />
 				<filter token="protegejdbcurl" value="${protege.jdbc.url}" />
 				<filter token="protegejdbcdriver" value="${protege.jdbc.driver}" />
 				<filter token="protegejdbcusername" value="${protege.jdbc.username}" />
