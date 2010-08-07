@@ -354,8 +354,6 @@ public abstract class AbstractOntologyManagerProtege {
 				} catch (InterruptedException ignored) {
 				}
 
-				System.out.println("PingProtegeServerThread ran!");
-
 				synchronized (createOwlModelLock) {
 					if (owlModel != null
 							&& !PingProtegeServerJob.ping(owlModel)) {
