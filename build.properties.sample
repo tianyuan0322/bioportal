@@ -166,7 +166,7 @@ bioportal.traversedConceptLimit=10000
 ################## Protege Configuration ##################
 
 # if protege.server.enabled is set to "true", 
-# the db connection section below can be ignored
+# the db connection section below can be ignored.
 # when using a server, the database connection is
 # configured from the protege project of each
 # ontology loaded into the server
@@ -176,9 +176,9 @@ protege.server.port=5100
 protege.server.username=protege_server_user
 protege.server.password=protege_server_pass
 protege.server.metaprojectname=BioPortal Metadata Project
-# interval in seconds at which to check whether 
-# the protege server is alive 
-protege.server.pinginterval=15
+# interval in milliseconds at which to check 
+# whether the protege server is alive 
+protege.server.pinginterval=15000
 
 # db connection
 protege.jdbc.url=jdbc:mysql://localhost/bioportal_protege?useUnicode=true&amp;characterEncoding=UTF-8&amp;holdResultsOpenOverStatementClose=true
