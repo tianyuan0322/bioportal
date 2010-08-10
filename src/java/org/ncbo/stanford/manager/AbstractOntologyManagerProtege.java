@@ -45,15 +45,13 @@ public abstract class AbstractOntologyManagerProtege {
 			.getLog(AbstractOntologyManagerProtege.class);
 
 	private static String METADATA_TABLE_NAME = "metadata";
-	private static final long FIFTEEN_SECONDS = 15 * 1000;
 
-	protected String protegeServerEnabled;
+	protected Boolean protegeServerEnabled;
 	protected String protegeServerHostname;
 	protected String protegeServerPort;
 	protected String protegeServerUsername;
 	protected String protegeServerPassword;
 	protected String protegeServerMetaProjectName;
-	protected Long protegeServerPingInterval = FIFTEEN_SECONDS;
 	protected String protegeJdbcUrl;
 	protected String protegeJdbcDriver;
 	protected String protegeJdbcUsername;
@@ -78,7 +76,7 @@ public abstract class AbstractOntologyManagerProtege {
 	protected String metadataVirtualViewInstPrefix;
 	protected String metadataVirtualViewInstSuffix;
 
-	private Thread pingProtegeServerThread;
+	// private Thread pingProtegeServerThread;
 	protected ExpirationSystem<Integer, KnowledgeBase> protegeKnowledgeBases = null;
 	private OWLModel owlModel = null;
 	private Object createOwlModelLock = new Object();
@@ -263,14 +261,13 @@ public abstract class AbstractOntologyManagerProtege {
 		List errors = new ArrayList();
 		Project p = null;
 		String serverPath = protegeServerHostname + ":" + protegeServerPort;
-		boolean isServerEnabled = Boolean.parseBoolean(protegeServerEnabled);
 
 		if (owlModel != null) {
 			owlModel.getProject().dispose();
 			owlModel = null;
 		}
 
-		if (isServerEnabled) {
+		if (protegeServerEnabled) {
 			try {
 				p = RemoteProjectManager.getInstance().getProject(serverPath,
 						protegeServerUsername, protegeServerPassword,
@@ -288,13 +285,6 @@ public abstract class AbstractOntologyManagerProtege {
 						"Unable to retrieve remote project. ServerName: "
 								+ serverPath + ", Project: "
 								+ protegeServerMetaProjectName);
-			}
-
-			// start protege server ping thread
-			if (pingProtegeServerThread == null) {
-				pingProtegeServerThread = new Thread(new PingProtegeServerThread());
-				pingProtegeServerThread.setDaemon(true);
-				pingProtegeServerThread.start();
 			}
 		} else {
 			Repository repository = new LocalFolderRepository(
@@ -346,25 +336,12 @@ public abstract class AbstractOntologyManagerProtege {
 		}
 	}
 
-	private class PingProtegeServerThread implements Runnable {
-		public void run() {
-			while (true) {
-				try {
-					Thread.sleep(protegeServerPingInterval);
-				} catch (InterruptedException ignored) {
-				}
-
-				synchronized (createOwlModelLock) {
-					if (owlModel != null
-							&& !PingProtegeServerJob.ping(owlModel)) {
-						owlModel.getProject().dispose();
-						owlModel = null;
-
-						System.out
-								.println("Server appears to be down. Discarding Metadata OWL Model...");
-
-					}
-				}
+	public void pingProtegeServer() {
+		synchronized (createOwlModelLock) {
+			if (owlModel != null && !PingProtegeServerJob.ping(owlModel)) {
+				owlModel.getProject().dispose();
+				log
+						.error("Protege server appears to be down. Discarding Metadata OWL model...");
 			}
 		}
 	}
@@ -470,7 +447,7 @@ public abstract class AbstractOntologyManagerProtege {
 	 * @param protegeServerEnabled
 	 *            the protegeServerEnabled to set
 	 */
-	public void setProtegeServerEnabled(String protegeServerEnabled) {
+	public void setProtegeServerEnabled(Boolean protegeServerEnabled) {
 		this.protegeServerEnabled = protegeServerEnabled;
 	}
 
@@ -513,14 +490,6 @@ public abstract class AbstractOntologyManagerProtege {
 	public void setProtegeServerMetaProjectName(
 			String protegeServerMetaProjectName) {
 		this.protegeServerMetaProjectName = protegeServerMetaProjectName;
-	}
-
-	/**
-	 * @param protegeServerPingInterval
-	 *            the protegeServerPingInterval to set
-	 */
-	public void setProtegeServerPingInterval(Long protegeServerPingInterval) {
-		this.protegeServerPingInterval = protegeServerPingInterval * 1000;
 	}
 
 	/**

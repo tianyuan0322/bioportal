@@ -415,9 +415,6 @@
 		<property name="protegeServerMetaProjectName">
 			<ref bean="protegeServerMetaProjectName"/>
 		</property>
-		<property name="protegeServerPingInterval">
-			<ref bean="protegeServerPingInterval"/>
-		</property>
 		<property name="protegeJdbcUrl">
 			<ref bean="protegeJdbcUrl" />
 		</property>
@@ -1025,6 +1022,49 @@
 
 	<!-- Scheduled Jobs -->
 
+	<!-- Ping Protege Server -->
+	<bean id="pingProtegeServerJobDetailBean" 
+		class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+		<property name="targetObject" ref="ontologyMetadataManager" />
+		<property name="targetMethod" value="pingProtegeServer" />
+		<property name="concurrent" value="false" />
+	</bean>
+
+	<bean id="pingProtegeServerSimpleTrigger" 
+		class="org.springframework.scheduling.quartz.SimpleTriggerBean">
+		<property name="jobDetail" ref="pingProtegeServerJobDetailBean" />
+		<!-- 30 seconds delay before first ping -->
+		<property name="startDelay" value="30000" />
+		<property name="repeatInterval">
+			<ref bean="protegeServerPingInterval"/>
+		</property>
+	</bean>
+
+	<bean id="pingProtegeServerAutoStartup" class="java.lang.Boolean">
+		<constructor-arg>
+			<ref bean="protegeServerEnabled"/>
+		</constructor-arg>
+	</bean>
+
+	<bean id="pingProtegeServerFactoryBean"
+		class="org.springframework.scheduling.quartz.SchedulerFactoryBean">
+		<property name="schedulerName" value="pingProtegeServerFactoryBean" />
+		<property name="overwriteExistingJobs">
+			<value>true</value>
+		</property>
+		<property name="waitForJobsToCompleteOnShutdown">
+			<value>true</value>
+		</property>
+		<property name="triggers">
+			<list>
+				<ref bean="pingProtegeServerSimpleTrigger" />
+			</list>
+		</property>
+		<property name="autoStartup">
+			<ref bean="pingProtegeServerAutoStartup" />
+		</property>
+	</bean>
+
 	<!-- Ontology parse scheduler -->
 	<bean id="ontologyParseSchedulerJobDetailBean"
 		class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
@@ -1038,6 +1078,12 @@
 		<property name="cronExpression">
 			<value>@ontologyparseschedulercronexpression@</value>
 		</property>
+	</bean>
+
+	<bean id="ontologyParseSchedulerAutoStartup" class="java.lang.Boolean">
+		<constructor-arg>
+			<value>@ontologyparseschedulerenabled@</value>
+		</constructor-arg>
 	</bean>
 
 	<bean id="ontologyParseSchedulerFactoryBean"
@@ -1059,12 +1105,6 @@
 		</property>
 	</bean>
 
-	<bean id="ontologyParseSchedulerAutoStartup" class="java.lang.Boolean">
-		<constructor-arg>
-			<value>@ontologyparseschedulerenabled@</value>
-		</constructor-arg>
-	</bean>
-
 	<!-- OBO CVS pull scheduler -->
 	<bean id="oboPullSchedulerJobDetailBean"
 		class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
@@ -1078,6 +1118,12 @@
 		<property name="cronExpression">
 			<value>@obopullschedulercronexpression@</value>
 		</property>
+	</bean>
+
+	<bean id="oboPullSchedulerAutoStartup" class="java.lang.Boolean">
+		<constructor-arg>
+			<value>@obopullschedulerenabled@</value>
+		</constructor-arg>
 	</bean>
 
 	<bean id="oboPullSchedulerFactoryBean"
@@ -1097,12 +1143,6 @@
 		<property name="autoStartup">
 			<ref bean="oboPullSchedulerAutoStartup" />
 		</property>
-	</bean>
-
-	<bean id="oboPullSchedulerAutoStartup" class="java.lang.Boolean">
-		<constructor-arg>
-			<value>@obopullschedulerenabled@</value>
-		</constructor-arg>
 	</bean>
 
 	<!-- Constants -->
@@ -1256,7 +1296,7 @@
 	</bean>
 
 	<!-- Protege Server Configuation -->
-	<bean id="protegeServerEnabled" class="java.lang.String">
+	<bean id="protegeServerEnabled" class="java.lang.Boolean">
 		<constructor-arg value="@protegeserverenabled@"/>
 	</bean>
 
