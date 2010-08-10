@@ -76,7 +76,6 @@ public abstract class AbstractOntologyManagerProtege {
 	protected String metadataVirtualViewInstPrefix;
 	protected String metadataVirtualViewInstSuffix;
 
-	// private Thread pingProtegeServerThread;
 	protected ExpirationSystem<Integer, KnowledgeBase> protegeKnowledgeBases = null;
 	private OWLModel owlModel = null;
 	private Object createOwlModelLock = new Object();
