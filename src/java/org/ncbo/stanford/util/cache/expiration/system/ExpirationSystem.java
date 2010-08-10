@@ -21,6 +21,4 @@ public interface ExpirationSystem<K, V> {
 	public Collection<V> getValues();
 
 	public Set<K> getKeys();
-
-	public void halt();
 }

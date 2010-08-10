@@ -6,6 +6,8 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.ncbo.stanford.util.cache.container.HashbeltContainer;
 import org.ncbo.stanford.util.cache.container.HashbeltContainerFactory;
 import org.ncbo.stanford.util.cache.container.impl.StandardHashbeltContainerFactory;
@@ -20,43 +22,45 @@ import org.ncbo.stanford.util.cache.expiration.handler.impl.NullExpirationHandle
  * @author Michael Dorf
  */
 @SuppressWarnings("unchecked")
-public abstract class AbstractHashbeltExpirationSystem<K, V> extends
-		AbstractExpirationSystem<K, V> {
+public abstract class AbstractHashbeltExpirationSystem<K, V> implements
+		ExpirationSystem<K, V> {
+	private static final Log log = LogFactory
+			.getLog(AbstractHashbeltExpirationSystem.class);
+
 	protected static final int DEFAULT_NUMBER_OF_CONTAINERS = 5;
 	protected static final long ONE_MINUTE = 60 * 1000;
-	protected static final long DEFAULT_ROTATION_TIME = ONE_MINUTE;
 
 	protected int numberOfContainers;
 	protected HashbeltContainer<K, V>[] containers;
 	protected ExpirationHandler<K, V> expirationHandler;
 	protected HashbeltContainerFactory<K, V> hashbeltContainerFactory;
+	protected String cacheName;
 
 	public abstract void put(K key, V expirableObject);
 
 	public abstract V get(K key);
 
-	public AbstractHashbeltExpirationSystem() {
-		this(DEFAULT_NUMBER_OF_CONTAINERS, DEFAULT_ROTATION_TIME);
+	public AbstractHashbeltExpirationSystem(String cacheName) {
+		this(cacheName, DEFAULT_NUMBER_OF_CONTAINERS);
 	}
 
-	public AbstractHashbeltExpirationSystem(int numberOfContainers,
-			long rotationTime) {
-		this(numberOfContainers, rotationTime,
-				new NullExpirationHandler<K, V>(),
+	public AbstractHashbeltExpirationSystem(String cacheName,
+			int numberOfContainers) {
+		this(cacheName, numberOfContainers, new NullExpirationHandler<K, V>(),
 				new StandardHashbeltContainerFactory<K, V>());
 	}
 
-	public AbstractHashbeltExpirationSystem(
+	public AbstractHashbeltExpirationSystem(String cacheName,
 			ExpirationHandler<K, V> expirationHandler,
 			HashbeltContainerFactory<K, V> hashbeltContainerFactory) {
-		this(DEFAULT_NUMBER_OF_CONTAINERS, DEFAULT_ROTATION_TIME,
-				expirationHandler, hashbeltContainerFactory);
+		this(cacheName, DEFAULT_NUMBER_OF_CONTAINERS, expirationHandler,
+				hashbeltContainerFactory);
 	}
 
-	public AbstractHashbeltExpirationSystem(int numContainers,
-			long rotationTime, ExpirationHandler<K, V> expHandler,
+	public AbstractHashbeltExpirationSystem(String cacheName,
+			int numContainers, ExpirationHandler<K, V> expHandler,
 			HashbeltContainerFactory<K, V> hashbeltContFactory) {
-		super(rotationTime);
+		this.cacheName = cacheName;
 		numberOfContainers = numContainers;
 		expirationHandler = expHandler;
 		hashbeltContainerFactory = hashbeltContFactory;
@@ -117,7 +121,11 @@ public abstract class AbstractHashbeltExpirationSystem<K, V> extends
 		}
 	}
 
-	protected HashbeltContainer<K, V> expireObjects() {
+	public HashbeltContainer<K, V> expireObjects() {
+		if (log.isInfoEnabled()) {
+			log.info("Running " + cacheName + " expiration job...");
+		}
+
 		HashbeltContainer<K, V> newContainer = hashbeltContainerFactory
 				.getNewContainer();
 		HashbeltContainer<K, V> expiredContainer = rotateContainers(newContainer);

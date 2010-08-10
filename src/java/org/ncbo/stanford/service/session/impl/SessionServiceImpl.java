@@ -1,5 +1,7 @@
 package org.ncbo.stanford.service.session.impl;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.ncbo.stanford.service.session.RESTfulSession;
 import org.ncbo.stanford.service.session.SessionService;
 import org.ncbo.stanford.util.cache.GloballyUniqueKey;
@@ -17,8 +19,12 @@ public class SessionServiceImpl extends
 		UpdatingHashbeltExpirationSystem<String, RESTfulSession> implements
 		SessionService {
 
+	@SuppressWarnings("unused")
+	private static final Log log = LogFactory.getLog(SessionServiceImpl.class);
+	private static final String CACHE_NAME = "UserSession";
+
 	public SessionServiceImpl() {
-		super();
+		super(CACHE_NAME);
 	}
 
 	/**
@@ -30,23 +36,21 @@ public class SessionServiceImpl extends
 	public SessionServiceImpl(
 			ExpirationHandler<String, RESTfulSession> handler,
 			HashbeltContainerFactory<String, RESTfulSession> hashbeltContainerFactory) {
-		super(handler, hashbeltContainerFactory);
+		super(CACHE_NAME, handler, hashbeltContainerFactory);
 	}
 
 	/**
 	 * Full constructor
 	 * 
 	 * @param numberOfContainers
-	 * @param rotationTime
 	 * @param expirationHandler
 	 * @param hashbeltContainerFactory
 	 */
 	public SessionServiceImpl(
 			int numberOfContainers,
-			long rotationTime,
 			ExpirationHandler<String, RESTfulSession> expirationHandler,
 			HashbeltContainerFactory<String, RESTfulSession> hashbeltContainerFactory) {
-		super(numberOfContainers, rotationTime, expirationHandler,
+		super(CACHE_NAME, numberOfContainers, expirationHandler,
 				hashbeltContainerFactory);
 	}
 
@@ -54,10 +58,9 @@ public class SessionServiceImpl extends
 	 * Allows to enter number of containers and rotation time
 	 * 
 	 * @param numberOfContainers
-	 * @param rotationTime
 	 */
-	public SessionServiceImpl(int numberOfContainers, long rotationTime) {
-		super(numberOfContainers, rotationTime);
+	public SessionServiceImpl(int numberOfContainers) {
+		super(CACHE_NAME, numberOfContainers);
 	}
 
 	/**

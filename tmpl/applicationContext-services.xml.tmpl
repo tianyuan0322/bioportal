@@ -921,6 +921,8 @@
 		parent="abstractOntologyManagerProtege">
 	</bean>
 
+	<!-- Caches -->
+
 	<!--
 		Cache to be used for all paginatable lists, such as ontology lists or
 		search results
@@ -934,10 +936,10 @@
 	<bean id="paginatableCache"
 		class="org.ncbo.stanford.util.cache.expiration.system.impl.UpdatingHashbeltExpirationSystem">
 		<constructor-arg index="0">
-			<value>@bioportalpaginatablecachenumcontainers@</value>
+			<value>PaginatableCache</value>
 		</constructor-arg>
 		<constructor-arg index="1">
-			<value>@bioportalpaginatablecachetimeout@</value>
+			<value>@bioportalpaginatablecachenumcontainers@</value>
 		</constructor-arg>
 		<constructor-arg index="2">
 			<ref bean="paginatableExpirationHandler" />
@@ -964,10 +966,10 @@
 	<bean id="protegeKnowledgeBaseCache"
 		class="org.ncbo.stanford.util.cache.expiration.system.impl.LimitHashbeltExpirationSystem">
 		<constructor-arg index="0">
-			<value>@protegeknowledgebasecachenumcontainers@</value>
+			<value>ProtegeKnowledgeBaseCache</value>
 		</constructor-arg>
 		<constructor-arg index="1">
-			<value>@protegeknowledgebasecachetimeout@</value>
+			<value>@protegeknowledgebasecachenumcontainers@</value>
 		</constructor-arg>
 		<constructor-arg index="2">
 			<ref bean="protegeKnowledgeBaseExpirationHandler" />
@@ -993,12 +995,9 @@
 			<value>@bioportalsessionnumcontainers@</value>
 		</constructor-arg>
 		<constructor-arg index="1">
-			<value>@bioportalsessiontimeout@</value>
-		</constructor-arg>
-		<constructor-arg index="2">
 			<ref bean="sessionExpirationHandler" />
 		</constructor-arg>
-		<constructor-arg index="3">
+		<constructor-arg index="2">
 			<ref bean="sessionHashbeltContainerFactory" />
 		</constructor-arg>
 	</bean>
@@ -1021,6 +1020,87 @@
 	</bean>
 
 	<!-- Scheduled Jobs -->
+
+	<!-- Paginatable Cache Expiration -->
+	<bean id="paginatableCacheJobDetailBean" 
+		class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+		<property name="targetObject" ref="paginatableCache" />
+		<property name="targetMethod" value="expireObjects" />
+		<property name="concurrent" value="false" />
+	</bean>
+
+	<bean id="paginatableCacheSimpleTrigger" 
+		class="org.springframework.scheduling.quartz.SimpleTriggerBean">
+		<property name="jobDetail" ref="paginatableCacheJobDetailBean" />
+		<property name="startDelay" value="@bioportalpaginatablecachetimeout@" />
+		<property name="repeatInterval" value="@bioportalpaginatablecachetimeout@" />
+	</bean>
+
+	<bean id="paginatableCacheFactoryBean"
+		class="org.springframework.scheduling.quartz.SchedulerFactoryBean">
+		<property name="schedulerName" value="paginatableCacheFactoryBean" />
+		<property name="overwriteExistingJobs" value="true" />
+		<property name="waitForJobsToCompleteOnShutdown" value="true" />
+		<property name="triggers">
+			<list>
+				<ref bean="paginatableCacheSimpleTrigger" />
+			</list>
+		</property>
+	</bean>
+
+	<!-- Protege KnowledgeBase Cache Expiration -->
+	<bean id="protegeKnowledgeBaseCacheJobDetailBean" 
+		class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+		<property name="targetObject" ref="protegeKnowledgeBaseCache" />
+		<property name="targetMethod" value="expireObjects" />
+		<property name="concurrent" value="false" />
+	</bean>
+
+	<bean id="protegeKnowledgeBaseCacheSimpleTrigger" 
+		class="org.springframework.scheduling.quartz.SimpleTriggerBean">
+		<property name="jobDetail" ref="protegeKnowledgeBaseCacheJobDetailBean" />
+		<property name="startDelay" value="@protegeknowledgebasecachetimeout@" />
+		<property name="repeatInterval" value="@protegeknowledgebasecachetimeout@" />
+	</bean>
+
+	<bean id="protegeKnowledgeBaseCacheFactoryBean"
+		class="org.springframework.scheduling.quartz.SchedulerFactoryBean">
+		<property name="schedulerName" value="protegeKnowledgeBaseCacheFactoryBean" />
+		<property name="overwriteExistingJobs" value="true" />
+		<property name="waitForJobsToCompleteOnShutdown" value="true" />
+		<property name="triggers">
+			<list>
+				<ref bean="protegeKnowledgeBaseCacheSimpleTrigger" />
+			</list>
+		</property>
+	</bean>
+
+	<!-- User Session Expiration -->
+	<bean id="userSessionJobDetailBean" 
+		class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+		<property name="targetObject" ref="sessionService" />
+		<property name="targetMethod" value="expireObjects" />
+		<property name="concurrent" value="false" />
+	</bean>
+
+	<bean id="userSessionSimpleTrigger" 
+		class="org.springframework.scheduling.quartz.SimpleTriggerBean">
+		<property name="jobDetail" ref="userSessionJobDetailBean" />
+		<property name="startDelay" value="@bioportalsessiontimeout@" />
+		<property name="repeatInterval" value="@bioportalsessiontimeout@" />
+	</bean>
+
+	<bean id="userSessionFactoryBean"
+		class="org.springframework.scheduling.quartz.SchedulerFactoryBean">
+		<property name="schedulerName" value="userSessionFactoryBean" />
+		<property name="overwriteExistingJobs" value="true" />
+		<property name="waitForJobsToCompleteOnShutdown" value="true" />
+		<property name="triggers">
+			<list>
+				<ref bean="userSessionSimpleTrigger" />
+			</list>
+		</property>
+	</bean>
 
 	<!-- Ping Protege Server -->
 	<bean id="pingProtegeServerJobDetailBean" 
@@ -1049,12 +1129,8 @@
 	<bean id="pingProtegeServerFactoryBean"
 		class="org.springframework.scheduling.quartz.SchedulerFactoryBean">
 		<property name="schedulerName" value="pingProtegeServerFactoryBean" />
-		<property name="overwriteExistingJobs">
-			<value>true</value>
-		</property>
-		<property name="waitForJobsToCompleteOnShutdown">
-			<value>true</value>
-		</property>
+		<property name="overwriteExistingJobs" value="true" />
+		<property name="waitForJobsToCompleteOnShutdown" value="true" />
 		<property name="triggers">
 			<list>
 				<ref bean="pingProtegeServerSimpleTrigger" />
@@ -1075,26 +1151,18 @@
 
 	<bean id="ontologyParseCronTrigger" class="org.springframework.scheduling.quartz.CronTriggerBean">
 		<property name="jobDetail" ref="ontologyParseSchedulerJobDetailBean" />
-		<property name="cronExpression">
-			<value>@ontologyparseschedulercronexpression@</value>
-		</property>
+		<property name="cronExpression" value="@ontologyparseschedulercronexpression@" />
 	</bean>
 
 	<bean id="ontologyParseSchedulerAutoStartup" class="java.lang.Boolean">
-		<constructor-arg>
-			<value>@ontologyparseschedulerenabled@</value>
-		</constructor-arg>
+		<constructor-arg value="@ontologyparseschedulerenabled@" />
 	</bean>
 
 	<bean id="ontologyParseSchedulerFactoryBean"
 		class="org.springframework.scheduling.quartz.SchedulerFactoryBean">
 		<property name="schedulerName" value="ontologyParseSchedulerFactoryBean" />
-		<property name="overwriteExistingJobs">
-			<value>true</value>
-		</property>
-		<property name="waitForJobsToCompleteOnShutdown">
-			<value>true</value>
-		</property>
+		<property name="overwriteExistingJobs" value="true" />
+		<property name="waitForJobsToCompleteOnShutdown" value="true" />
 		<property name="triggers">
 			<list>
 				<ref bean="ontologyParseCronTrigger" />
@@ -1115,26 +1183,18 @@
 
 	<bean id="oboPullCronTrigger" class="org.springframework.scheduling.quartz.CronTriggerBean">
 		<property name="jobDetail" ref="oboPullSchedulerJobDetailBean" />
-		<property name="cronExpression">
-			<value>@obopullschedulercronexpression@</value>
-		</property>
+		<property name="cronExpression" value="@obopullschedulercronexpression@" />
 	</bean>
 
 	<bean id="oboPullSchedulerAutoStartup" class="java.lang.Boolean">
-		<constructor-arg>
-			<value>@obopullschedulerenabled@</value>
-		</constructor-arg>
+		<constructor-arg value="@obopullschedulerenabled@" />
 	</bean>
 
 	<bean id="oboPullSchedulerFactoryBean"
 		class="org.springframework.scheduling.quartz.SchedulerFactoryBean">
 		<property name="schedulerName" value="oboPullSchedulerFactoryBean" />
-		<property name="overwriteExistingJobs">
-			<value>true</value>
-		</property>
-		<property name="waitForJobsToCompleteOnShutdown">
-			<value>true</value>
-		</property>
+		<property name="overwriteExistingJobs" value="true" />
+		<property name="waitForJobsToCompleteOnShutdown" value="true" />
 		<property name="triggers">
 			<list>
 				<ref bean="oboPullCronTrigger" />

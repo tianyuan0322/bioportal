@@ -13,25 +13,25 @@ import org.ncbo.stanford.util.cache.expiration.system.AbstractHashbeltExpiration
  */
 public class StandardHashbeltExpirationSystem<K, V> extends
 		AbstractHashbeltExpirationSystem<K, V> {
-	public StandardHashbeltExpirationSystem() {
-		super();
+	public StandardHashbeltExpirationSystem(String cacheName) {
+		super(cacheName);
 	}
 
-	public StandardHashbeltExpirationSystem(int numberOfContainers,
-			long rotationTime) {
-		super(numberOfContainers, rotationTime);
+	public StandardHashbeltExpirationSystem(String cacheName,
+			int numberOfContainers) {
+		super(cacheName, numberOfContainers);
 	}
 
-	public StandardHashbeltExpirationSystem(
+	public StandardHashbeltExpirationSystem(String cacheName,
 			ExpirationHandler<K, V> expirationHandler,
 			HashbeltContainerFactory<K, V> hashbeltContainerFactory) {
-		super(expirationHandler, hashbeltContainerFactory);
+		super(cacheName, expirationHandler, hashbeltContainerFactory);
 	}
 
-	public StandardHashbeltExpirationSystem(int numberOfContainers,
-			long rotationTime, ExpirationHandler<K, V> expirationHandler,
+	public StandardHashbeltExpirationSystem(String cacheName,
+			int numberOfContainers, ExpirationHandler<K, V> expirationHandler,
 			HashbeltContainerFactory<K, V> hashbeltContainerFactory) {
-		super(numberOfContainers, rotationTime, expirationHandler,
+		super(cacheName, numberOfContainers, expirationHandler,
 				hashbeltContainerFactory);
 	}
 

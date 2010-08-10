@@ -22,24 +22,25 @@ public class UpdatingHashbeltExpirationSystem<K, V> extends
 	private static final Log log = LogFactory
 			.getLog(UpdatingHashbeltExpirationSystem.class);
 
-	public UpdatingHashbeltExpirationSystem() {
-		super();
+	public UpdatingHashbeltExpirationSystem(String cacheName) {
+		super(cacheName);
 	}
 
-	public UpdatingHashbeltExpirationSystem(int numberOfContainers,
-			long rotationTime) {
-		super(numberOfContainers, rotationTime);
+	public UpdatingHashbeltExpirationSystem(String cacheName,
+			int numberOfContainers) {
+		super(cacheName, numberOfContainers);
 	}
 
-	public UpdatingHashbeltExpirationSystem(ExpirationHandler<K, V> handler,
+	public UpdatingHashbeltExpirationSystem(String cacheName,
+			ExpirationHandler<K, V> handler,
 			HashbeltContainerFactory<K, V> hashbeltContainerFactory) {
-		super(handler, hashbeltContainerFactory);
+		super(cacheName, handler, hashbeltContainerFactory);
 	}
 
-	public UpdatingHashbeltExpirationSystem(int numberOfContainers,
-			long rotationTime, ExpirationHandler<K, V> expirationHandler,
+	public UpdatingHashbeltExpirationSystem(String cacheName,
+			int numberOfContainers, ExpirationHandler<K, V> expirationHandler,
 			HashbeltContainerFactory<K, V> hashbeltContainerFactory) {
-		super(numberOfContainers, rotationTime, expirationHandler,
+		super(cacheName, numberOfContainers, expirationHandler,
 				hashbeltContainerFactory);
 	}
 

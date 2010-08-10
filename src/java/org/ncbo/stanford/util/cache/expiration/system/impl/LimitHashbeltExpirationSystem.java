@@ -18,36 +18,36 @@ import org.ncbo.stanford.util.cache.expiration.system.AbstractHashbeltExpiration
 public class LimitHashbeltExpirationSystem<K, V> extends
 		AbstractHashbeltExpirationSystem<K, V> {
 
-	@SuppressWarnings("unused")
 	private static final Log log = LogFactory
 			.getLog(LimitHashbeltExpirationSystem.class);
 
 	private int maxObjects;
 	private int numObjects = 0;
 
-	public LimitHashbeltExpirationSystem(int maxObjects) {
-		super();
+	public LimitHashbeltExpirationSystem(String cacheName, int maxObjects) {
+		super(cacheName);
 		this.maxObjects = maxObjects;
 	}
 
-	public LimitHashbeltExpirationSystem(int numberOfContainers,
-			long rotationTime, int maxObjects) {
-		super(numberOfContainers, rotationTime);
+	public LimitHashbeltExpirationSystem(String cacheName,
+			int numberOfContainers, int maxObjects) {
+		super(cacheName, numberOfContainers);
 		this.maxObjects = maxObjects;
 	}
 
-	public LimitHashbeltExpirationSystem(ExpirationHandler<K, V> handler,
+	public LimitHashbeltExpirationSystem(String cacheName,
+			ExpirationHandler<K, V> handler,
 			HashbeltContainerFactory<K, V> hashbeltContainerFactory,
 			int maxObjects) {
-		super(handler, hashbeltContainerFactory);
+		super(cacheName, handler, hashbeltContainerFactory);
 		this.maxObjects = maxObjects;
 	}
 
-	public LimitHashbeltExpirationSystem(int numberOfContainers,
-			long rotationTime, ExpirationHandler<K, V> expirationHandler,
+	public LimitHashbeltExpirationSystem(String cacheName,
+			int numberOfContainers, ExpirationHandler<K, V> expirationHandler,
 			HashbeltContainerFactory<K, V> hashbeltContainerFactory,
 			int maxObjects) {
-		super(numberOfContainers, rotationTime, expirationHandler,
+		super(cacheName, numberOfContainers, expirationHandler,
 				hashbeltContainerFactory);
 		this.maxObjects = maxObjects;
 	}
@@ -121,7 +121,7 @@ public class LimitHashbeltExpirationSystem<K, V> extends
 	}
 
 	@Override
-	protected HashbeltContainer<K, V> expireObjects() {
+	public HashbeltContainer<K, V> expireObjects() {
 		HashbeltContainer<K, V> expiredContainer = super.expireObjects();
 		numObjects -= expiredContainer.size();
 
