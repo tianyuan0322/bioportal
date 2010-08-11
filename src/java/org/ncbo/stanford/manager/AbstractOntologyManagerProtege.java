@@ -339,6 +339,7 @@ public abstract class AbstractOntologyManagerProtege {
 		synchronized (createOwlModelLock) {
 			if (owlModel != null && !PingProtegeServerJob.ping(owlModel)) {
 				owlModel.getProject().dispose();
+				owlModel = null;
 				log
 						.error("Protege server appears to be down. Discarding Metadata OWL model...");
 			}
