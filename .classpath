@@ -11,7 +11,7 @@
 	<classpathentry kind="lib" path="WebRoot/WEB-INF/lib/com.noelios.restlet.ext.httpclient_3.1.jar"/>
 	<classpathentry kind="lib" path="WebRoot/WEB-INF/lib/com.noelios.restlet.ext.servlet_2.5.jar"/>
 	<classpathentry kind="lib" path="WebRoot/WEB-INF/lib/com.noelios.restlet.ext.spring_2.5.jar"/>
-	<classpathentry kind="lib" path="WebRoot/WEB-INF/lib/commons-dbcp-1.2.2.jar"/>
+	<classpathentry kind="lib" path="WebRoot/WEB-INF/lib/commons-dbcp-1.4.jar"/>
 	<classpathentry kind="lib" path="WebRoot/WEB-INF/lib/dom4j-1.6.1.jar"/>
 	<classpathentry kind="lib" path="WebRoot/WEB-INF/lib/hibernate3.jar"/>
 	<classpathentry kind="lib" path="WebRoot/WEB-INF/lib/javax.servlet.jar"/>
