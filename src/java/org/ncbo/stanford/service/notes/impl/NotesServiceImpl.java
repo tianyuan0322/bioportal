@@ -5,6 +5,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.Set;
+import java.util.UUID;
 
 import org.apache.commons.lang.WordUtils;
 import org.eclipse.emf.ecore.xml.type.internal.DataValue.URI;
@@ -20,7 +21,6 @@ import org.ncbo.stanford.enumeration.NoteAppliesToTypeEnum;
 import org.ncbo.stanford.exception.NoteNotFoundException;
 import org.ncbo.stanford.manager.notes.NotesPool;
 import org.ncbo.stanford.service.notes.NotesService;
-import org.protege.notesapi.NotesConstants;
 import org.protege.notesapi.NotesException;
 import org.protege.notesapi.NotesManager;
 import org.protege.notesapi.notes.AnnotatableThing;
@@ -89,7 +89,7 @@ public class NotesServiceImpl implements NotesService {
 		OntologyProperty property = notesManager
 				.getOntologyProperty(propertyId);
 
-		Annotation proposal = notesManager.createProposalChangePropertyValue(
+		ProposalChangePropertyValue proposal = notesManager.createProposalChangePropertyValue(
 				subject, content, property, propertyOldValue, propertyNewValue,
 				reasonForChange, contactInfo);
 
@@ -105,7 +105,7 @@ public class NotesServiceImpl implements NotesService {
 		if (status != null) {
 			proposal.setHasStatus(getStatus(ont, notesManager, status));
 		}
-
+		
 		return convertAnnotationToNoteBean(proposal, ont);
 	}
 
@@ -128,7 +128,7 @@ public class NotesServiceImpl implements NotesService {
 		Collection<? extends OntologyComponent> oldTargetCollection = Collections
 				.singleton(oldTarget);
 
-		Annotation proposal = notesManager.createProposalChangeHierarchy(
+		ProposalChangeHierarchy proposal = notesManager.createProposalChangeHierarchy(
 				subject, content, oldTargetCollection, targetCollection,
 				relationshipType, reasonForChange, contactInfo);
 
@@ -152,7 +152,7 @@ public class NotesServiceImpl implements NotesService {
 			NoteAppliesToTypeEnum appliesToType, NoteType noteType,
 			String subject, String content, String author, String status,
 			Long created, String reasonForChange, String contactInfo,
-			String termDefinition, String termId, String termParent,
+			String termDefinition, String termParent,
 			String termPreferredName, List<String> termSynonyms)
 			throws NotesException {
 		NotesManager notesManager = notesPool.getNotesManagerForOntology(ont);
@@ -172,7 +172,10 @@ public class NotesServiceImpl implements NotesService {
 		Collection<? extends OntologyClass> parent = Collections
 				.singleton(ontClass);
 
-		Annotation proposal = notesManager.createProposalCreateClass(subject,
+		// Get a temporary id that we generate
+		String termId = getTemporaryTermId();
+
+		ProposalCreateEntity proposal = notesManager.createProposalCreateClass(subject,
 				content, termId, preferredName, synonymsList, definition,
 				parent, reasonForChange, contactInfo);
 
@@ -188,7 +191,7 @@ public class NotesServiceImpl implements NotesService {
 		if (status != null) {
 			proposal.setHasStatus(getStatus(ont, notesManager, status));
 		}
-
+		
 		return convertAnnotationToNoteBean(proposal, ont);
 	}
 
@@ -441,7 +444,7 @@ public class NotesServiceImpl implements NotesService {
 
 		nb.setOntologyId(ont.getOntologyId());
 		if (annotation.getAuthor() != null) {
-			nb.setAuthor(Integer.parseInt(annotation.getAuthor()));
+			nb.setAuthor(annotation.getAuthor());
 		}
 
 		if (annotation.getHasStatus() != null)
@@ -494,7 +497,7 @@ public class NotesServiceImpl implements NotesService {
 			ProposalCreateEntity newTermAnnot = (ProposalCreateEntity) annotation;
 			ProposalNewTermBean newTerm = new ProposalNewTermBean();
 			newTerm.setDefinition(newTermAnnot.getDefinition().getLabel());
-			newTerm.setId(newTermAnnot.getEntityId());
+			newTerm.setTemporaryTermId(newTermAnnot.getEntityId());
 			newTerm
 					.setPreferredName(newTermAnnot.getPreferredName()
 							.getLabel());
@@ -598,17 +601,29 @@ public class NotesServiceImpl implements NotesService {
 		// Check to see if we're asking for a ChAO-provided status and return if
 		// found
 		Collection<StatusAnnotation> chaoStatuses = notesManager
-				.getAllChaoNoteStatuses();
+				.getAllNoteStatuses();
 		for (StatusAnnotation chaoStatus : chaoStatuses) {
 			if (chaoStatus.getDescription().equalsIgnoreCase(status))
 				return chaoStatus;
 		}
-		
+
 		// Otherwise, generate a BioPortal ontology-specific status
 		String statusFormatted = URI.encode(WordUtils.uncapitalize(status));
 		String nameIRI = "http://bioportal.bioontology.org/ontologies/virtual/"
-				+ ont.getOntologyId() + "/note_status#" + statusFormatted;
-		return notesManager.createStatus(nameIRI, WordUtils.capitalizeFully(status));
+				+ ont.getOntologyId() + "#" + statusFormatted;
+		return notesManager.createStatus(nameIRI, WordUtils
+				.capitalizeFully(status));
+	}
+
+	/**
+	 * Generate a globally unique id for new terms to be used on a temporary
+	 * basis.
+	 * 
+	 * @param preferredName
+	 * @return
+	 */
+	private String getTemporaryTermId() {
+		return "http://purl.bioontology.org/temp/" + UUID.randomUUID();
 	}
 
 }

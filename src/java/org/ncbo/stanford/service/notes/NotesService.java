@@ -24,9 +24,8 @@ public interface NotesService {
 			NoteAppliesToTypeEnum appliesToType, NoteType noteType,
 			String subject, String content, String author, String status,
 			Long created, String reasonForChange, String contactInfo,
-			String termDefinition, String termId, String termParent,
-			String termPreferredName, List<String> termSynonyms)
-			throws NotesException;
+			String termDefinition, String termParent, String termPreferredName,
+			List<String> termSynonyms) throws NotesException;
 
 	public NoteBean createNewRelationshipProposal(OntologyBean ont,
 			String appliesTo, NoteAppliesToTypeEnum appliesToType,

@@ -45,10 +45,12 @@ public class NotificationAdvice {
 	 */
 	public void adviceUpdateOntology(OntologyBean ontologyBean)
 			throws Throwable {
-		/** Reference implementaion. Disabled until needed.
-		emailNotificationService.sendNotification(
-				NotificationTypeEnum.UPDATE_ONTOLOGY_NOTIFICATION,
-				ontologyBean, null); **/
+		/**
+		 * Reference implementaion. Disabled until needed.
+		 * emailNotificationService.sendNotification(
+		 * NotificationTypeEnum.UPDATE_ONTOLOGY_NOTIFICATION, ontologyBean,
+		 * null);
+		 **/
 	}
 
 	public void adviceCreateNote(NoteBean note) throws Throwable {
@@ -69,14 +71,8 @@ public class NotificationAdvice {
 			keywords.put(ApplicationConstants.NOTE_URL, generateUrlForNote(
 					note, ont));
 
-			// Get UserBean for note author and add username if found
-			NcboUser ncboUser = ncboUserDAO.findById(note.getAuthor());
-			String authorName = "unknown";
-			if (ncboUser != null) {
-				UserBean userBean = new UserBean();
-				userBean.populateFromEntity(ncboUser);
-				authorName = userBean.getUsername();
-			}
+			// Look for valid author name
+			String authorName = getAuthor(ncboUserDAO, note);
 			keywords.put(ApplicationConstants.NOTE_USERNAME, authorName);
 
 			// Generate message ID
@@ -88,15 +84,8 @@ public class NotificationAdvice {
 				NoteBean parentNote = notesService.getNoteBean(ont, note
 						.getAppliesToList().get(0).getId());
 
-				// Get parent note user
-				NcboUser parentUser = ncboUserDAO.findById(parentNote
-						.getAuthor());
-				String parentAuthorName = "unknown";
-				if (parentUser != null) {
-					UserBean userBean = new UserBean();
-					userBean.populateFromEntity(parentUser);
-					parentAuthorName = userBean.getUsername();
-				}
+				// Look for valid author name for parent note
+				String parentAuthorName = getAuthor(ncboUserDAO, parentNote);
 
 				String parentMessageId = getMessageIdForNote(
 						parentNote.getId(), parentAuthorName);
@@ -172,6 +161,12 @@ public class NotificationAdvice {
 		return noteUrl;
 	}
 
+	/**
+	 * Gets the generated proposal HTML from the bean.
+	 * 
+	 * @param note
+	 * @return
+	 */
 	private String getProposalText(NoteBean note) {
 		String proposalText = "";
 
@@ -182,6 +177,34 @@ public class NotificationAdvice {
 		}
 
 		return proposalText;
+	}
+
+	/**
+	 * Get UserBean for note author and add username if found Because we allow
+	 * arbitrary authors to be submitted, we try to parse an integer which we
+	 * assume is a BioPortal user id. If no integer is found (runtime exception)
+	 * then use the raw value.
+	 * 
+	 * @param ncboUserDAO
+	 * @param note
+	 * @return
+	 */
+	private String getAuthor(NcboUserDAO ncboUserDAO, NoteBean note) {
+		String authorName = "unknown";
+
+		try {
+			Integer userId = Integer.parseInt(note.getAuthor());
+			NcboUser ncboUser = ncboUserDAO.findById(userId);
+			if (ncboUser != null) {
+				UserBean userBean = new UserBean();
+				userBean.populateFromEntity(ncboUser);
+				authorName = userBean.getUsername();
+			}
+		} catch (NumberFormatException nfe) {
+			authorName = note.getAuthor();
+		}
+
+		return authorName;
 	}
 
 	/**
@@ -210,7 +233,8 @@ public class NotificationAdvice {
 	 * 
 	 * @param emailNotificationService
 	 */
-	public void setEmailNotificationService(EmailNotificationService emailNotificationService) {
+	public void setEmailNotificationService(
+			EmailNotificationService emailNotificationService) {
 		this.emailNotificationService = emailNotificationService;
 	}
 

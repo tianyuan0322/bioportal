@@ -308,7 +308,7 @@ public class NotesRestlet extends AbstractBaseRestlet {
 				noteBean = notesService.createNewTermProposal(ont, appliesTo,
 						appliesToType, noteType, subject, content, author,
 						status, createdLong, reasonForChange, contactInfo,
-						termDefinition, termId, termParent, termPreferredName,
+						termDefinition, termParent, termPreferredName,
 						synonymList);
 				break;
 			case ProposalForChangeHierarchy:

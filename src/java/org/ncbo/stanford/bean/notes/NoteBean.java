@@ -7,7 +7,7 @@ public class NoteBean {
 	private String id;
 	private Integer ontologyId;
 	private String type;
-	private Integer author;
+	private String author;
 	private Long created;
 	private Long updated;
 	private String subject;
@@ -53,7 +53,7 @@ public class NoteBean {
 	/**
 	 * @return the author
 	 */
-	public Integer getAuthor() {
+	public String getAuthor() {
 		return author;
 	}
 
@@ -61,7 +61,7 @@ public class NoteBean {
 	 * @param author
 	 *            the author to set
 	 */
-	public void setAuthor(Integer author) {
+	public void setAuthor(String author) {
 		this.author = author;
 	}
 
