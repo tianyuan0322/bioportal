@@ -799,10 +799,12 @@ public class OntologyRetrievalManagerProtegeImpl extends
 					bpPropVals.add(bean);
 
 				} else 	if (val instanceof Instance) {
-					String value = getBrowserText((Instance) val, ontologyBean);
-					if (value != null) {
-						bpPropVals.add(value);
-					} 
+					InstanceBean bean = createInstanceBean ((Frame)val, ontologyBean, false);
+					bpPropVals.add (bean);
+//					String value = getBrowserText((Instance) val, ontologyBean);
+//					if (value != null) {
+//						bpPropVals.add(value);
+//					} 
 				} else {				
 					// Tried to assume its a slot and failed, defaulting to
 					// toString
