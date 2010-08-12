@@ -15,10 +15,21 @@
        http://www.springframework.org/schema/aop/spring-aop-2.5.xsd">
 	
 	<!-- JNDI Data source info --> 
-	<bean id="dataSource"
-		class="org.springframework.jndi.JndiObjectFactoryBean">
-		<property name="jndiName">
-			<value>@bioportaldatasource@</value>
+	<bean id="dataSource" class="com.mchange.v2.c3p0.ComboPooledDataSource" destroy-method="close">
+		<property name="driverClass">
+			<value>com.mysql.jdbc.Driver</value></property>
+		<property name="jdbcUrl">
+			<value>jdbc:mysql://ncbostage-coredb1.sunet:3306/bioportal</value></property>
+		<property name="properties">
+			<props>
+				<prop key="user">bioportal_prd</prop>
+				<prop key="password">bioportal_prd$123</prop>
+				<prop key="c3p0.timeout">5000</prop>
+				<prop key="c3p0.idle_test_period">300</prop>
+				<prop key="c3p0.max_size">100</prop>
+				<prop key="c3p0.acquire_increment">2</prop>
+			</props>
 		</property>
 	</bean>
+
 </beans>
