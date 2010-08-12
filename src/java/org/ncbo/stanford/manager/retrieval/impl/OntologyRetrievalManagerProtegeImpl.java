@@ -33,6 +33,7 @@ import org.ncbo.stanford.util.paginator.impl.PaginatorImpl;
 
 import edu.stanford.smi.protege.model.BrowserSlotPattern;
 import edu.stanford.smi.protege.model.Cls;
+import edu.stanford.smi.protege.model.DefaultCls;
 import edu.stanford.smi.protege.model.Frame;
 import edu.stanford.smi.protege.model.Instance;
 import edu.stanford.smi.protege.model.KnowledgeBase;
@@ -45,7 +46,6 @@ import edu.stanford.smi.protegex.owl.model.OWLNamedClass;
 import edu.stanford.smi.protegex.owl.model.RDFProperty;
 import edu.stanford.smi.protegex.owl.model.RDFResource;
 import edu.stanford.smi.protegex.owl.model.RDFSNamedClass;
-import edu.stanford.smi.protegex.owl.model.impl.DefaultOWLNamedClass;
 import edu.stanford.smi.protegex.owl.util.OWLBrowserSlotPattern;
 
 /**
@@ -307,7 +307,7 @@ public class OntologyRetrievalManagerProtegeImpl extends
 			ArrayList<ClassBean> classBeans = new ArrayList<ClassBean>();
 
 			for (Object obj : instanceTypes) {
-				DefaultOWLNamedClass defaultOWLNamedClass = (DefaultOWLNamedClass) obj;
+				DefaultCls defaultOWLNamedClass = (DefaultCls) obj;
 				ClassBean classBean = createBaseClassBean(defaultOWLNamedClass,
 						ontologyBean);
 				classBeans.add(classBean);
