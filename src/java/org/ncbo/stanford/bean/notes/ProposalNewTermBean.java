@@ -5,7 +5,7 @@ import java.util.List;
 import org.apache.commons.lang.StringUtils;
 
 public class ProposalNewTermBean extends AbstractProposalBean {
-	private String id;
+	private String temporaryTermId;
 	private String preferredName;
 	private String definition;
 	private List<String> synonyms;
@@ -27,18 +27,18 @@ public class ProposalNewTermBean extends AbstractProposalBean {
 	}
 
 	/**
-	 * @return the id
+	 * @return the temporaryTermId
 	 */
-	public String getId() {
-		return id;
+	public String getTemporaryTermId() {
+		return temporaryTermId;
 	}
 
 	/**
-	 * @param id
-	 *            the id to set
+	 * @param temporaryTermId
+	 *            the temporaryTermId to set
 	 */
-	public void setId(String id) {
-		this.id = id;
+	public void setTemporaryTermId(String id) {
+		this.temporaryTermId = id;
 	}
 
 	/**
@@ -85,11 +85,14 @@ public class ProposalNewTermBean extends AbstractProposalBean {
 	public void setSynonyms(List<String> synonyms) {
 		this.synonyms = synonyms;
 	}
-	
-	public String toHTML() {
-		return "<p>Definition: " + this.definition + "</p>" + 
-			"<p>Parent: " + StringUtils.join(this.parent, ", ") + "</p>" +
-			"<p>Reason for Change: " + this.reasonForChange + "</p>";
-	}
 
+	/**
+	 * This method generates an HTML representation of the properties and is
+	 * used in the sending of notifications.
+	 */
+	public String toHTML() {
+		return "<p>Definition: " + this.definition + "</p>" + "<p>Parent: "
+				+ StringUtils.join(this.parent, ", ") + "</p>"
+				+ "<p>Reason for Change: " + this.reasonForChange + "</p>";
+	}
 }
