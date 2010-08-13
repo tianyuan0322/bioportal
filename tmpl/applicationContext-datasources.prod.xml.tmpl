@@ -14,7 +14,7 @@
        http://www.springframework.org/schema/aop 
        http://www.springframework.org/schema/aop/spring-aop-2.5.xsd">
 	
-	<!-- JNDI Data source info --> 
+	<!-- Data source info --> 
 	<bean id="dataSource" class="com.mchange.v2.c3p0.ComboPooledDataSource" destroy-method="close">
 		<property name="driverClass" value="@bioportaljdbcdriver@" />
 		<property name="jdbcUrl" value="@bioportaljdbcurl@" />
