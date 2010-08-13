@@ -32,7 +32,7 @@ public class ApplicationSessionFilter extends OpenSessionInViewFilter {
 	protected Session getSession(SessionFactory sessionFactory)
 			throws DataAccessResourceFailureException {
 		Session session = SessionFactoryUtils.getSession(sessionFactory, true);
-		session.setFlushMode(FlushMode.AUTO);
+		session.setFlushMode(FlushMode.COMMIT);
 		log.debug("ApplicationSessionFilter.getSession() invoked...");
 
 		return session;
