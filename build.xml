@@ -115,26 +115,6 @@
 
 		<copy file="${tmpl.dir}/log4j.dtd" tofile="${conf.dir.generated}/log4j.dtd" overwrite="true" />
 
-		<copy file="${tmpl.dir}/c3p0.properties.tmpl" tofile="${web.dir}/WEB-INF/classes/c3p0.properties" overwrite="true" />
-
-	<!-- Removed in favor of using c3p0, this configuration is here as an option. Uncomment and change the datasource to use.  
-		<copy file="${tmpl.dir}/context.xml.tmpl" tofile="${meta-inf.dir}/context.xml" overwrite="true">
-			<filterset>
-				<filter token="bioportaldatasourcename" value="${bioportal.datasource.name}" />
-				<filter token="bioportaldatasourceremoveabandoned" value="${bioportal.datasource.removeabandoned}" />
-				<filter token="bioportaldatasourceremoveabandonedtimeout" value="${bioportal.datasource.removeabandonedtimeout}" />
-				<filter token="bioportaldatasourcelogabandoned" value="${bioportal.datasource.logabandoned}" />
-				<filter token="bioportaljdbcdriver" value="${bioportal.jdbc.driver}" />
-				<filter token="bioportaljdbcurl" value="${bioportal.jdbc.url}" />
-				<filter token="bioportaljdbcusername" value="${bioportal.jdbc.username}" />
-				<filter token="bioportaljdbcpassword" value="${bioportal.jdbc.password}" />
-				<filter token="bioportaljdbcmaxactive" value="${bioportal.jdbc.maxactive}" />
-				<filter token="bioportaljdbcmaxidle" value="${bioportal.jdbc.maxidle}" />
-				<filter token="bioportaljdbcmaxwait" value="${bioportal.jdbc.maxwait}" />
-			</filterset>
-		</copy>
-	-->
-
 		<copy file="${tmpl.dir}/${bioportal.messagebundle.name}.properties.tmpl" tofile="${bioportal.messagebundle.path}/${bioportal.messagebundle.name}.properties" overwrite="true">
 			<filterset>
 				<filter token="bioportalxsltpath" value="${bioportal.xslt.path}" />
@@ -151,6 +131,8 @@
 				<filter token="uipathnotesproperty" value="${ui.path.notes.property}" />
 			</filterset>
 		</copy>
+		
+		<copy file="${tmpl.dir}/c3p0.properties.tmpl" tofile="${web.dir}/WEB-INF/classes/c3p0.properties" overwrite="true" />
 
 		<copy file="${tmpl.dir}/applicationContext-datasources.${bioportal.environment}.xml.tmpl" tofile="${conf.dir.generated}/applicationContext-datasources.xml" overwrite="true">
 			<filterset>
@@ -159,9 +141,15 @@
 				<filter token="bioportaljdbcurl" value="${bioportal.jdbc.url}" />
 				<filter token="bioportaljdbcusername" value="${bioportal.jdbc.username}" />
 				<filter token="bioportaljdbcpassword" value="${bioportal.jdbc.password}" />
+				<filter token="bioportaljdbcc3p0acquire_increment" value="${bioportal.jdbc.c3p0.acquire_increment}" />
+				<filter token="bioportaljdbcc3p0idle_test_period" value="${bioportal.jdbc.c3p0.idle_test_period}" />
+				<filter token="bioportaljdbcc3p0timeout" value="${bioportal.jdbc.c3p0.timeout}" />
+				<filter token="bioportaljdbcc3p0max_size" value="${bioportal.jdbc.c3p0.max_size}" />
+				<filter token="bioportaljdbcc3p0max_statements" value="${bioportal.jdbc.c3p0.max_statements}" />
+				<filter token="bioportaljdbcc3p0min_size" value="${bioportal.jdbc.c3p0.min_size}" />
 			</filterset>
 		</copy>
-
+		
 		<copy file="${tmpl.dir}/applicationContext-security.xml.tmpl" tofile="${conf.dir.generated}/applicationContext-security.xml" overwrite="true">
 			<filterset>
 				<filter token="applicationbyapplicationidquery" value="${bioportal.applicationbyapplicationid.query}" />
