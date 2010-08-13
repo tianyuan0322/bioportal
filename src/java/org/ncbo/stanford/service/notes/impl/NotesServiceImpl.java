@@ -173,7 +173,8 @@ public class NotesServiceImpl implements NotesService {
 				.singleton(ontClass);
 
 		// Get a temporary id that we generate
-		String termId = getTemporaryTermId();
+//		String termId = getTemporaryTermId();
+		String termId = "";
 
 		ProposalCreateEntity proposal = notesManager.createProposalCreateClass(subject,
 				content, termId, preferredName, synonymsList, definition,
@@ -497,7 +498,7 @@ public class NotesServiceImpl implements NotesService {
 			ProposalCreateEntity newTermAnnot = (ProposalCreateEntity) annotation;
 			ProposalNewTermBean newTerm = new ProposalNewTermBean();
 			newTerm.setDefinition(newTermAnnot.getDefinition().getLabel());
-			newTerm.setTemporaryTermId(newTermAnnot.getEntityId());
+			newTerm.setId(newTermAnnot.getEntityId());
 			newTerm
 					.setPreferredName(newTermAnnot.getPreferredName()
 							.getLabel());

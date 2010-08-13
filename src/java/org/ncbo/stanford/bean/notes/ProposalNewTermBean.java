@@ -5,7 +5,7 @@ import java.util.List;
 import org.apache.commons.lang.StringUtils;
 
 public class ProposalNewTermBean extends AbstractProposalBean {
-	private String temporaryTermId;
+	private String id;
 	private String preferredName;
 	private String definition;
 	private List<String> synonyms;
@@ -27,18 +27,18 @@ public class ProposalNewTermBean extends AbstractProposalBean {
 	}
 
 	/**
-	 * @return the temporaryTermId
+	 * @return the id
 	 */
-	public String getTemporaryTermId() {
-		return temporaryTermId;
+	public String getId() {
+		return id;
 	}
 
 	/**
-	 * @param temporaryTermId
-	 *            the temporaryTermId to set
+	 * @param id
+	 *            the id to set
 	 */
-	public void setTemporaryTermId(String id) {
-		this.temporaryTermId = id;
+	public void setId(String id) {
+		this.id = id;
 	}
 
 	/**
