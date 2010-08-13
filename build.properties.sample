@@ -132,7 +132,7 @@ bioportal.jdbc.c3p0.timeout=5000
 
 # Maximum number of Connections a pool will maintain 
 # at any given time.
-bioportal.jdbc.c3p0.max_size=300
+bioportal.jdbc.c3p0.max_size=100
 
 # The size of c3p0's global PreparedStatement cache. 
 # If both maxStatements and maxStatementsPerConnection
