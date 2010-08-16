@@ -19,7 +19,6 @@ import org.ncbo.stanford.manager.load.OntologyLoadManager;
 import org.ncbo.stanford.util.constants.ApplicationConstants;
 import org.ncbo.stanford.util.protege.ProtegeUtil;
 
-import edu.stanford.smi.protege.exception.OntologyLoadException;
 import edu.stanford.smi.protege.model.Project;
 import edu.stanford.smi.protege.storage.database.DatabaseKnowledgeBaseFactory;
 import edu.stanford.smi.protege.util.ApplicationProperties;
@@ -90,13 +89,14 @@ public class OntologyLoadManagerProtegeImpl extends
 		if (errors.size() > 0) {
 			log.error(errors);
 			throw new Exception("Error during loading "
-					+ ontologyUri.toString());
+					+ ontologyUri.toString() + ". Errors: " + errors.toString()
+					+ ".");
 		}
 	}
 
 	@SuppressWarnings("unchecked")
 	private void loadOWL(URI ontologyUri, OntologyBean ob, Collection errors)
-			throws OntologyLoadException {
+			throws Exception {
 		if (ontologyUri.toString().endsWith(".pprj")) {
 			if (ProtegeUtil.isOWLProject(ontologyUri)) {
 				// get the OWL file corresponding to this pprj file
@@ -113,83 +113,98 @@ public class OntologyLoadManagerProtegeImpl extends
 		}
 
 		File ontologyFile = new File(ontologyUri);
+
 		if (ontologyFile.length() < protegeBigFileThreshold) {
 			loadOWLStreaming(ontologyUri, ob, errors);
 		} else {
 			loadOWLNonStreaming(ontologyUri, ob, errors);
 		}
-
 	}
 
 	@SuppressWarnings("unchecked")
 	private void loadOWLStreaming(URI ontologyUri, OntologyBean ob,
-			Collection errors) {
+			Collection errors) throws Exception {
 		log.debug("Using streaming mode. OWL Ontology: " + ob.getDisplayLabel()
 				+ " (" + ob.getId() + ")");
-
 		Project dbProject = null;
 
-		CreateOWLDatabaseFromFileProjectPlugin creator = new CreateOWLDatabaseFromFileProjectPlugin();
-		creator.setKnowledgeBaseFactory(new OWLDatabaseKnowledgeBaseFactory());
-		creator.setDriver(protegeJdbcDriver);
-		creator.setURL(protegeJdbcUrl);
-		creator.setTable(getTableName(ob.getId()));
-		creator.setUsername(protegeJdbcUsername);
-		creator.setPassword(protegeJdbcPassword);
-		creator.setOntologyInputSource(ontologyUri);
-		creator.setUseExistingSources(true);
-		creator.setMergeImportMode(true);
-		dbProject = creator.createProject();
-		dbProject.save(errors);
+		try {
+			CreateOWLDatabaseFromFileProjectPlugin creator = new CreateOWLDatabaseFromFileProjectPlugin();
+			creator
+					.setKnowledgeBaseFactory(new OWLDatabaseKnowledgeBaseFactory());
+			creator.setDriver(protegeJdbcDriver);
+			creator.setURL(protegeJdbcUrl);
+			creator.setTable(getTableName(ob.getId()));
+			creator.setUsername(protegeJdbcUsername);
+			creator.setPassword(protegeJdbcPassword);
+			creator.setOntologyInputSource(ontologyUri);
+			creator.setUseExistingSources(true);
+			creator.setMergeImportMode(true);
+			dbProject = creator.createProject();
+			dbProject.save(errors);
 
-		if (dbProject != null) {
-			dbProject.dispose();
+			if (dbProject != null) {
+				dbProject.dispose();
+			}
+		} catch (Throwable e) {
+			e.printStackTrace();
+
+			if (dbProject != null) {
+				dbProject.dispose();
+			}
+
+			throw new Exception(e);
 		}
 	}
 
 	@SuppressWarnings("unchecked")
 	private void loadOWLNonStreaming(URI ontologyUri, OntologyBean ob,
-			Collection errors) throws OntologyLoadException {
+			Collection errors) throws Exception {
 		log.debug("Using non-streaming mode. OWL Ontology: "
 				+ ob.getDisplayLabel() + " (" + ob.getId() + ")");
 
-		// needed to merge all imports into one DB table
-		ApplicationProperties.setBoolean(
-				"protege.owl.parser.convert.file.merge.mode", true);
-
 		Project dbProject = null;
-		String tableName = getTableName(ob.getId());
-
-		OWLModel owlModel = ProtegeOWL.createJenaOWLModelFromURI(ontologyUri
-				.toString());
-		Project fileProject = owlModel.getProject();
-
-		OWLDatabaseKnowledgeBaseFactory factory = new OWLDatabaseKnowledgeBaseFactory();
-		PropertyList sources = PropertyList.create(fileProject
-				.getInternalProjectKnowledgeBase());
-
-		OWLDatabaseKnowledgeBaseFactory.setSources(sources, protegeJdbcDriver,
-				protegeJdbcUrl, tableName, protegeJdbcUsername,
-				protegeJdbcPassword);
-
-		factory.saveKnowledgeBase(fileProject.getKnowledgeBase(), sources,
-				errors);
-		fileProject.dispose();
-
-		dbProject = Project.createBuildProject(factory, errors);
-		OWLDatabaseKnowledgeBaseFactory.setSources(dbProject.getSources(),
-				protegeJdbcDriver, protegeJdbcUrl, tableName,
-				protegeJdbcUsername, protegeJdbcPassword);
+		OWLDatabaseKnowledgeBaseFactory factory;
 
 		try {
-			dbProject.createDomainKnowledgeBase(factory, errors, true);
-		} catch (RuntimeException re) {
-			dbProject.dispose();
-			throw re;
-		}
+			// needed to merge all imports into one DB table
+			ApplicationProperties.setBoolean(
+					"protege.owl.parser.convert.file.merge.mode", true);
+			String tableName = getTableName(ob.getId());
 
-		if (dbProject != null) {
-			dbProject.dispose();
+			OWLModel owlModel = ProtegeOWL
+					.createJenaOWLModelFromURI(ontologyUri.toString());
+			Project fileProject = owlModel.getProject();
+
+			factory = new OWLDatabaseKnowledgeBaseFactory();
+			PropertyList sources = PropertyList.create(fileProject
+					.getInternalProjectKnowledgeBase());
+
+			OWLDatabaseKnowledgeBaseFactory.setSources(sources,
+					protegeJdbcDriver, protegeJdbcUrl, tableName,
+					protegeJdbcUsername, protegeJdbcPassword);
+
+			factory.saveKnowledgeBase(fileProject.getKnowledgeBase(), sources,
+					errors);
+			fileProject.dispose();
+
+			dbProject = Project.createBuildProject(factory, errors);
+			OWLDatabaseKnowledgeBaseFactory.setSources(dbProject.getSources(),
+					protegeJdbcDriver, protegeJdbcUrl, tableName,
+					protegeJdbcUsername, protegeJdbcPassword);
+			dbProject.createDomainKnowledgeBase(factory, errors, true);
+
+			if (dbProject != null) {
+				dbProject.dispose();
+			}
+		} catch (Throwable e) {
+			e.printStackTrace();
+
+			if (dbProject != null) {
+				dbProject.dispose();
+			}
+
+			throw new Exception(e);
 		}
 	}
 
