@@ -218,7 +218,8 @@ public class OntologyLoadSchedulerServiceImpl extends AbstractOntologyService
 						status, errorMessage);
 			} catch (Exception e1) {
 				e.printStackTrace();
-				log.error(e);
+				log.error("Unable to update ontology status due to error: "
+						+ e.getMessage());
 			}
 		}
 	}
@@ -390,8 +391,9 @@ public class OntologyLoadSchedulerServiceImpl extends AbstractOntologyService
 			log.debug("createDiff BEGIN..............");
 		}
 
-		getDiffManager(ontologyBean).createDiffForLatestActiveOntologyVersionPair(
-				ontologyBean.getOntologyId());
+		getDiffManager(ontologyBean)
+				.createDiffForLatestActiveOntologyVersionPair(
+						ontologyBean.getOntologyId());
 
 		if (log.isDebugEnabled()) {
 			log.debug("..................createDiff END");
