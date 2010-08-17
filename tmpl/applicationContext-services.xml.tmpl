@@ -1351,13 +1351,6 @@
 		</constructor-arg>
 	</bean>
 	
-	<!-- RDF directory on the server -->
-	<bean id="rdfDir" class="java.lang.String">
-		<constructor-arg>
-			<value>@bioportalrdfdir@</value>
-		</constructor-arg>
-	</bean>
-
 	<!-- Protege Server Configuation -->
 	<bean id="protegeServerEnabled" class="java.lang.Boolean">
 		<constructor-arg value="@protegeserverenabled@"/>
@@ -1557,10 +1550,16 @@
 			<value>@bioportalallconceptsmaxpagesize@</value>
 		</constructor-arg>
 	</bean>
-	 
-	 <!-- Notification Configuration -->
-	 
-	 <bean id="emailNotificationService"
+	
+	<!-- RDF directory on the server -->
+	<bean id="rdfFilePath" class="java.lang.String">
+		<constructor-arg>
+			<value>@bioportalrdffilepath@</value>
+		</constructor-arg>
+	</bean>
+
+	<!-- Notification Configuration -->	 
+	<bean id="emailNotificationService"
 		class="org.ncbo.stanford.service.notification.impl.EmailNotificationServiceImpl">
 		<property name="notificationManagerMap">
 			<ref local="notificationManagerMap" />

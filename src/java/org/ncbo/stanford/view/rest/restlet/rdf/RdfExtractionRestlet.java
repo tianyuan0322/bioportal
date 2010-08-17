@@ -32,7 +32,7 @@ public class RdfExtractionRestlet extends AbstractBaseRestlet {
 	private RdfService rdfService;
 	private OntologyService ontologyService;
 	private ConceptService conceptService;
-	private String rdfDir;
+	private String rdfFilePath;
 
 	@Override
 	public void getRequest(Request request, Response response) {
@@ -51,8 +51,8 @@ public class RdfExtractionRestlet extends AbstractBaseRestlet {
 		try {
 			String rdfOutput = "";
 
-			rdfService.generateRdf(manager, rdfDir, ontologyService);
-			rdfOutput = "files have been generated in: " + rdfDir;
+			rdfService.generateRdf(manager, rdfFilePath, ontologyService);
+			rdfOutput = "files have been generated in: " + rdfFilePath;
 
 			// Add the contents to the response
 			RequestUtils.setHttpServletResponse(response, Status.SUCCESS_OK,
@@ -107,8 +107,8 @@ public class RdfExtractionRestlet extends AbstractBaseRestlet {
 				ont = ontologyService.findOntologyOrView(ontologyVersionIdInt);
 			}
 
-			rdfService.generateRdf(manager, rdfDir, ont);
-			rdfOutput = "file has been generated in: " + rdfDir;
+			rdfService.generateRdf(manager, rdfFilePath, ont);
+			rdfOutput = "file has been generated in: " + rdfFilePath;
 
 			// Add the contents to the response
 			RequestUtils.setHttpServletResponse(response, Status.SUCCESS_OK,
@@ -180,7 +180,8 @@ public class RdfExtractionRestlet extends AbstractBaseRestlet {
 			}
 
 			// Process concepts
-			ontology = rdfService.generateRdf(manager, rdfDir, ont, conceptIds);
+			ontology = rdfService.generateRdf(manager, rdfFilePath, ont,
+					conceptIds);
 			StringDocumentTarget outputString = new StringDocumentTarget();
 			manager.saveOntology(ontology, outputString);
 			rdfOutput = outputString.toString();
@@ -209,7 +210,6 @@ public class RdfExtractionRestlet extends AbstractBaseRestlet {
 			e.printStackTrace();
 			log.error(e);
 		}
-
 	}
 
 	public RdfService getRdfService() {
@@ -220,12 +220,8 @@ public class RdfExtractionRestlet extends AbstractBaseRestlet {
 		this.rdfService = rdfService;
 	}
 
-	public String getRdfDir() {
-		return rdfDir;
-	}
-
-	public void setRdfDir(String rdfDir) {
-		this.rdfDir = rdfDir;
+	public void setRdfFilePath(String rdfFilePath) {
+		this.rdfFilePath = rdfFilePath;
 	}
 
 	public OntologyService getOntologyService() {

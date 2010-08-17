@@ -68,9 +68,7 @@ public class RdfDownloadRestlet extends AbstractOntologyBaseRestlet {
 				if (file == null) {
 					response.setStatus(Status.CLIENT_ERROR_NOT_FOUND,
 							"do NOT try to generate it ");
-				}
-
-				else {
+				} else {
 					try {
 						FileRepresentation fileRepresentation = new FileRepresentation(
 								file, MediaType.APPLICATION_ALL, 60);
@@ -88,7 +86,6 @@ public class RdfDownloadRestlet extends AbstractOntologyBaseRestlet {
 						return;
 					}
 				}
-
 			} catch (Exception e) {
 				response
 						.setStatus(Status.SERVER_ERROR_INTERNAL, e.getMessage());
@@ -97,5 +94,4 @@ public class RdfDownloadRestlet extends AbstractOntologyBaseRestlet {
 			}
 		}
 	}
-
 }

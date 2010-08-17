@@ -441,8 +441,8 @@
 		<property name="ontologyService">
 			<ref bean="ontologyService" />
 		</property>		
-		<property name="rdfDir">
-			<ref bean="rdfDir" />
+		<property name="rdfFilePath">
+			<ref bean="rdfFilePath" />
 		</property>
 	</bean>
 	<!-- Adding For SubscriptionsRestlet-->
@@ -459,20 +459,6 @@
 		<property name="subscriptionsService">
 			<ref bean="subscriptionsService" />
 		</property>
-	</bean>
-	
-	<!-- Temporary directory on the server -->
-	<bean id="tempDir" class="java.lang.String">
-		<constructor-arg>
-			<value>@bioportaltempdir@</value>
-		</constructor-arg>
-	</bean>
-	
-	<!-- RDF directory on the server -->
-	<bean id="rdfDir" class="java.lang.String">
-		<constructor-arg>
-			<value>@bioportalrdfdir@</value>
-		</constructor-arg>
 	</bean>
 	
 	<bean id="traversedConceptLimit" class="java.lang.Integer">

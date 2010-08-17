@@ -120,6 +120,7 @@
 				<filter token="bioportalxsltpath" value="${bioportal.xslt.path}" />
 				<filter token="bioportalontologyfilepath" value="${bioportal.ontology.filepath}" />
 				<filter token="bioportaldifffilepath" value="${bioportal.diff.filepath}" />
+				<filter token="bioportalrdffilepath" value="${bioportal.rdf.filepath}" />
 				<filter token="bioportalmetadataincludespath" value="${bioportal.metadata.includes.path}" />
 				<filter token="bioportalnoteschangesincludespath" value="${bioportal.notes.changes.includes.path}" />
 				<filter token="obsrestbaseurl" value="${obs.rest.base.url}" />
@@ -218,20 +219,17 @@
 				<filter token="obosourceforgecvsargumentstring" value="${obo.sourceforge.cvs.argumentstring}" />
 				<filter token="obosourceforgecvscheckoutdir" value="${obo.sourceforge.cvs.checkoutdir}" />
 				<filter token="obosourceforgecvsdescriptorfile" value="${obo.sourceforge.cvs.descriptor.file}" />
-				<filter token="bioportaltempdir" value="${bioportal.tempdir}" />
-				<filter token="bioportalrdfdir" value="${bioportal.rdfdir}" />
 				<filter token="oborepositoriesconfigfilepath" value="${obo.repositories.config.filepath}" />
 				<filter token="returnUrl" value="${openId.return.url}" />
-				<filter token="bioportalallconceptsmaxpagesize" value="${bioportal.allconcepts.maxpagesize}" />	
+				<filter token="bioportaltempdir" value="${bioportal.tempdir}" />
+				<filter token="bioportalrdffilepath" value="${bioportal.rdf.filepath}" />
+				<filter token="bioportalallconceptsmaxpagesize" value="${bioportal.allconcepts.maxpagesize}" />
 				<filter token="bioportalsmtpserver" value="${bioportal.smtp.server}" />				
-				
 			</filterset>
 		</copy>
 
 		<copy file="${tmpl.dir}/applicationContext-rest.xml.tmpl" tofile="${conf.dir.generated}/applicationContext-rest.xml" overwrite="true">
 			<filterset>
-				<filter token="bioportaltempdir" value="${bioportal.tempdir}" />
-				<filter token="bioportalrdfdir" value="${bioportal.rdfdir}" />
 				<filter token="bioportaltraversedconceptlimit" value="${bioportal.traversedConceptLimit}" />
 			</filterset>
 		</copy>

@@ -178,7 +178,7 @@ bioportal.messagebundle.path=${src.dir}/org/ncbo/stanford/resource/generated
 bioportal.ontology.filepath=${bioportal.resource.path}/uploads
 
 # RDF directory for RDF/XML file storage and download
-bioportal.rdfdir=${bioportal.resource.path}/rdf
+bioportal.rdf.filepath=${bioportal.resource.path}/rdf
 
 # Diff Files
 bioportal.diff.filepath=${bioportal.resource.path}/diffs
