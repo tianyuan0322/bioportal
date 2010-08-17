@@ -231,4 +231,15 @@ public interface OntologyService {
 	 * @return
 	 */
 	public List<String> getErrorOntologies();
+	
+	/**
+	 * Get RdfFile object for a specific ontology
+	 * 
+	 * @param ontologyBean
+	 * @return
+	 */
+	
+	public File findRdfFileForOntology(OntologyBean ontologyBean) throws Exception;
+
+	
 }

@@ -35,6 +35,14 @@ public abstract class AbstractFilePathHandler implements FilePathHandler {
 		return MessageUtils.getMessage("bioportal.ontology.filepath")
 				+ ontologyBean.getOntologyDirPath();
 	}
+	
+	public static String getRdfFilePath(OntologyBean ontologyBean,String filename){
+		return getRdfDirPath(ontologyBean) + "/" + filename;
+	}
+	
+	public static String getRdfDirPath(OntologyBean ontologyBean){
+		return MessageUtils.getMessage("bioportal.resource.path");
+	}
 
 	public static boolean deleteDirectory(File path) {
 		if (path.exists()) {

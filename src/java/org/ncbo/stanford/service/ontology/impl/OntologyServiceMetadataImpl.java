@@ -341,9 +341,43 @@ public class OntologyServiceMetadataImpl extends AbstractOntologyService
 			file = new File(AbstractFilePathHandler.getOntologyFilePath(
 					ontologyBean, fileName));
 		}
+		
 
 		if (file == null) {
 			String errorMsg = "Missing ontology file to download";
+			log.error(errorMsg);
+			throw new FileNotFoundException(errorMsg);
+		}
+		
+		return file;
+	}
+	
+	/**
+	 * This method find the rdfFile.
+	 * If rdf file is available then they return the File otherwise send the errors.
+	 * 
+	 */
+	
+	public File findRdfFileForOntology(OntologyBean ontologyBean)
+			throws Exception {
+		//File name According to OntologyId
+		String filename = ontologyBean.getOntologyId() + ".rdf";
+		File file = null;
+		
+		if (CompressionUtils.isCompressed(filename)) {
+			file = new File(AbstractFilePathHandler.getRdfFilePath(
+					ontologyBean, filename));
+
+		}
+
+		if (file == null && !filename.isEmpty()) {
+			//Taking the Rdf File
+			file = new File(AbstractFilePathHandler.getRdfFilePath(
+					ontologyBean, filename));
+		}
+
+		if (file == null) {
+			String errorMsg = "do NOT try to generate it";
 			log.error(errorMsg);
 			throw new FileNotFoundException(errorMsg);
 		}

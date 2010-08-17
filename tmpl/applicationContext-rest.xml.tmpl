@@ -284,7 +284,12 @@
 		class="org.ncbo.stanford.view.rest.restlet.ontology.OntologyDownloadRestlet"
 		parent="abstractOntologyBaseRestlet">
 	</bean>
-
+	<!-- Added For rdfDownload -->
+	<bean id="rdfDownloadRestlet"
+		class="org.ncbo.stanford.view.rest.restlet.rdf.RdfDownloadRestlet"
+		parent="abstractOntologyBaseRestlet">
+	</bean>
+	
 	<bean id="diffRestlet" class="org.ncbo.stanford.view.rest.restlet.diff.DiffRestlet"
 		parent="abstractBaseRestlet">
 		<property name="diffService">
@@ -635,6 +640,12 @@
 						<entry key="/viewextractor/{ontologyversionid}">
 							<ref local="viewExtractionRestlet" />
 						</entry>
+						<entry key="/ontologies/rdf/download/{ontologyversionid}">
+							<ref local="rdfDownloadRestlet" />
+						</entry>
+						<entry key="/ontologies/virtual/rdf/download/{virtualid}">
+							<ref local="rdfDownloadRestlet" />
+						</entry>						
 						<entry key="/rdf">
 							<ref local="rdfExtractionRestlet" />
 						</entry>						
