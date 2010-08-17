@@ -12,19 +12,18 @@
 	<classpathentry kind="lib" path="WebRoot/WEB-INF/lib/com.noelios.restlet.ext.servlet_2.5.jar"/>
 	<classpathentry kind="lib" path="WebRoot/WEB-INF/lib/com.noelios.restlet.ext.spring_2.5.jar"/>
 	<classpathentry kind="lib" path="WebRoot/WEB-INF/lib/dom4j-1.6.1.jar"/>
-	<classpathentry kind="lib" path="WebRoot/WEB-INF/lib/hibernate3.jar" sourcepath="C:/Users/mdorf/.m2/repository/org/hibernate/hibernate/3.2.6.ga/hibernate-3.2.6.ga-sources.jar"/>
+	<classpathentry kind="lib" path="WebRoot/WEB-INF/lib/hibernate3.jar"/>
 	<classpathentry kind="lib" path="WebRoot/WEB-INF/lib/javax.servlet.jar"/>
 	<classpathentry kind="lib" path="WebRoot/WEB-INF/lib/javax.servlet.jsp.jar"/>
 	<classpathentry kind="lib" path="WebRoot/WEB-INF/lib/jta.jar"/>
 	<classpathentry kind="lib" path="WebRoot/WEB-INF/lib/log4j-1.2.15.jar"/>
-	<classpathentry kind="lib" path="WebRoot/WEB-INF/lib/spring.jar" sourcepath="C:/Users/mdorf/.m2/repository/org/springframework/spring/2.5.6/spring-2.5.6-sources.jar"/>
+	<classpathentry kind="lib" path="WebRoot/WEB-INF/lib/spring.jar"/>
 	<classpathentry kind="lib" path="WebRoot/WEB-INF/lib/openid4java-0.9.5.jar"/>
 	<classpathentry kind="lib" path="WebRoot/WEB-INF/lib/spring-security-acl-2.0.0.jar"/>
 	<classpathentry kind="lib" path="WebRoot/WEB-INF/lib/spring-security-core-2.0.0.jar"/>
 	<classpathentry kind="lib" path="WebRoot/WEB-INF/lib/spring-security-core-tiger-2.0.0.jar"/>
 	<classpathentry kind="lib" path="WebRoot/WEB-INF/lib/spring-security-taglibs-2.0.4.jar"/>
 	<classpathentry kind="lib" path="WebRoot/WEB-INF/lib/stax-api-1.0.1.jar"/>
-	<classpathentry kind="lib" path="WebRoot/WEB-INF/lib/commons-validator-1.3.1.jar"/>
 	<classpathentry kind="lib" path="WebRoot/WEB-INF/lib/quartz-1.6.0.jar"/>
 	<classpathentry kind="lib" path="WebRoot/WEB-INF/lib/aspectjrt.jar"/>
 	<classpathentry kind="lib" path="WebRoot/WEB-INF/lib/aspectjweaver.jar"/>
@@ -35,6 +34,7 @@
 	<classpathentry kind="lib" path="WebRoot/WEB-INF/lib/jasypt-1.5.jar"/>
 	<classpathentry kind="lib" path="WebRoot/WEB-INF/lib/c3p0-0.9.1.2.jar"/>
 	<classpathentry kind="lib" path="WebRoot/WEB-INF/lib/spring-test.jar"/>
+	<classpathentry kind="lib" path="WebRoot/WEB-INF/lib/commons-validator-1.3.1.jar"/>
 	<classpathentry kind="lib" path="WebRoot/WEB-INF/lib/commons-logging-1.1.1.jar"/>
 	<classpathentry kind="lib" path="WebRoot/WEB-INF/lib/commons-lang-2.4.jar"/>
 	<classpathentry kind="lib" path="WebRoot/WEB-INF/lib/commons-collections-3.2.1.jar"/>
@@ -42,6 +42,8 @@
 	<classpathentry kind="lib" path="WebRoot/WEB-INF/lib/commons-io-1.4.jar"/>
 	<classpathentry kind="lib" path="WebRoot/WEB-INF/lib/commons-pool-1.4.jar"/>
 	<classpathentry kind="lib" path="WebRoot/WEB-INF/lib/commons-httpclient-3.1.jar"/>
+	<classpathentry kind="lib" path="WebRoot/WEB-INF/lib/commons-codec-1.4.jar"/>
+	<classpathentry kind="lib" path="WebRoot/WEB-INF/lib/commons-dbcp-1.4.jar"/>
 	<classpathentry kind="lib" path="WebRoot/WEB-INF/lib/ehcache-1.4.1.jar"/>
 	<classpathentry kind="lib" path="WebRoot/WEB-INF/lib/xpp3_min-1.1.4c.jar"/>
 	<classpathentry kind="lib" path="WebRoot/WEB-INF/lib/xstream-1.3.1.jar"/>
@@ -63,7 +65,7 @@
 	<classpathentry kind="lib" path="WebRoot/WEB-INF/lib/svnkit.jar"/>
 	<classpathentry kind="lib" path="WebRoot/WEB-INF/lib/org.semanticweb.owl.owlapi.jar"/>
 	<classpathentry kind="lib" path="WebRoot/WEB-INF/lib/org.protege.owlapi.jar"/>
-	<classpathentry kind="lib" path="WebRoot/WEB-INF/lib/protege/protege.jar" sourcepath="/protege-core"/>
+	<classpathentry kind="lib" path="WebRoot/WEB-INF/lib/protege/protege.jar"/>
 	<classpathentry kind="lib" path="WebRoot/WEB-INF/lib/protege/plugins/edu.stanford.smi.protegex.changes/change-management.jar"/>
 	<classpathentry kind="lib" path="WebRoot/WEB-INF/lib/protege/plugins/edu.stanford.smi.protegex.changes/icu4j.jar"/>
 	<classpathentry kind="lib" path="WebRoot/WEB-INF/lib/protege/plugins/edu.stanford.smi.protegex.owl/antlr-2.7.5.jar"/>
@@ -136,7 +138,5 @@
 	<classpathentry kind="lib" path="WebRoot/WEB-INF/lib/lexgrid/lexbig.jar"/>
 	<classpathentry kind="lib" path="WebRoot/WEB-INF/lib/notes-api.jar"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
-	<classpathentry kind="lib" path="WebRoot/WEB-INF/lib/commons-codec-1.4.jar"/>
-	<classpathentry kind="lib" path="WebRoot/WEB-INF/lib/commons-dbcp-1.4.jar"/>
 	<classpathentry kind="output" path="WebRoot/WEB-INF/classes"/>
 </classpath>
