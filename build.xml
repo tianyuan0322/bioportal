@@ -83,9 +83,9 @@
 		<echo message="log4j path: = ${bioportal.app.logfilepath}" />
 
 		<mkdir dir="${bioportal.tempdir}" />
-		<mkdir dir="${bioportal.rdfdir}" />
 		<mkdir dir="${bioportal.ontology.filepath}" />
 		<mkdir dir="${bioportal.diff.filepath}" />
+		<mkdir dir="${bioportal.rdf.filepath}" />
 		<mkdir dir="${bioportal.search.indexpath}" />
 		<mkdir dir="${bioportal.search.indexbackuppath}" />
 		<mkdir dir="${lexgrid.index.location}" />
