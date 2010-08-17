@@ -40,7 +40,7 @@
 		<echo message="createwar --> Create a WAR file but don't deploy it to the server" />
 		<echo message="deploywar --> Deploy application as a WAR file" />
 		<echo message="test      --> Invoke selected unit tests (assumes test fixtures such as databases are setup).  Outputs to XML file." />
-		<echo message="testout    --> Invoke selected unit tests (assumes test fixtures such as databases are setup). Outputs to console." />
+		<echo message="testout   --> Invoke selected unit tests (assumes test fixtures such as databases are setup). Outputs to console." />
 		<echo message="" />
 	</target>
 

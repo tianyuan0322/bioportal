@@ -45,7 +45,7 @@ import com.noelios.restlet.http.HttpResponse;
  */
 public class RequestUtils {
 
-	private static final String BIOPORTAL_USER_AGENT = "BioPortal Core";
+	private static final String BIOPORTAL_USER_AGENT = "BioPortal-Core";
 	public static final String PARAM_SEPARATOR = "&";
 	private static final String RESTLET_RESERVED_ATTRIBUTE_PREFIX = "org.restlet";
 	private static final String COMMA_DELIMITER = ",";
