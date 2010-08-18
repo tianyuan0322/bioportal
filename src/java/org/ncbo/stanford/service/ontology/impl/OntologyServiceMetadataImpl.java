@@ -184,8 +184,12 @@ public class OntologyServiceMetadataImpl extends AbstractOntologyService
 			boolean dummyFlag) throws Exception {
 		Integer ontologyVersionId = ontologyBean.getId();
 		Integer ontologyId = ontologyBean.getOntologyId();
-		OntologyBean latestOntologyBean = findLatestActiveOntologyOrViewVersion(ontologyId);
-
+		OntologyBean latestOntologyBean = null;
+		
+		if (ontologyId != null) {
+			latestOntologyBean = findLatestActiveOntologyOrViewVersion(ontologyId);
+		}
+			
 		log
 				.info("Deleting ontology: "
 						+ getOntologyDisplay(ontologyVersionId.toString(),
