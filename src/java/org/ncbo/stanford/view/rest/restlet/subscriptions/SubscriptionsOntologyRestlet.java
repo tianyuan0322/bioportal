@@ -19,6 +19,7 @@ import org.ncbo.stanford.view.rest.restlet.AbstractBaseRestlet;
 
 import org.ncbo.stanford.bean.SubscriptionsBean;
 import org.ncbo.stanford.domain.generated.NcboLNotificationType;
+import org.ncbo.stanford.exception.NotificationNotFoundException;
 
 import org.restlet.data.Request;
 import org.restlet.data.Response;
@@ -73,7 +74,7 @@ public class SubscriptionsOntologyRestlet extends AbstractBaseRestlet {
 	 * @param request
 	 * @param response
 	 */
-	
+
 	@Override
 	public void putRequest(Request request, Response response) {
 		// Handle the calls for update Subscriptions
@@ -119,14 +120,27 @@ public class SubscriptionsOntologyRestlet extends AbstractBaseRestlet {
 			Response response) {
 		SubscriptionsBean subscriptionsBean = BeanHelper
 				.populateSubscriptionsBeanFromRequest(request);
-		// create the subscriptions
+		// List For OntologyIds
+		List<String> ontologyId = subscriptionsBean.getOntologyIds();
+
 		try {
+			if (subscriptionsBean.getUserId() == null || ontologyId.isEmpty()
+					|| subscriptionsBean.getNotificationType() == null) {
+				throw new NotificationNotFoundException(
+						NotificationNotFoundException.DEFAULT_MESSAGE);
+			}
+			// create the subscriptions
 			subscriptionsService.createSubscriptions(subscriptionsBean);
+		} catch (NotificationNotFoundException notificationNotFoundException) {
+			response.setStatus(Status.CLIENT_ERROR_NOT_FOUND,
+					notificationNotFoundException.getMessage());
 		} catch (Exception e) {
 			response.setStatus(Status.SERVER_ERROR_INTERNAL, e.getMessage());
 			e.printStackTrace();
 
-		} finally {
+		}
+
+		finally {
 			// generate response XML
 			xmlSerializationService.generateXMLResponse(request, response,
 					subscriptionsBean);
@@ -144,9 +158,19 @@ public class SubscriptionsOntologyRestlet extends AbstractBaseRestlet {
 			Response response) {
 		SubscriptionsBean subscriptionsBean = BeanHelper
 				.populateSubscriptionsBeanFromRequest(request);
-		// create the subscriptions
+		// List For OntologyIds
+		List<String> ontologyId = subscriptionsBean.getOntologyIds();
+
 		try {
+			if (subscriptionsBean.getUserId() == null || ontologyId.isEmpty()
+					|| subscriptionsBean.getNotificationType() == null) {
+				throw new NotificationNotFoundException(
+						NotificationNotFoundException.DEFAULT_MESSAGE);
+			}
 			subscriptionsService.removeSubscriptions(subscriptionsBean);
+		} catch (NotificationNotFoundException notificationNotFoundException) {
+			response.setStatus(Status.CLIENT_ERROR_NOT_FOUND,
+					notificationNotFoundException.getMessage());
 		} catch (Exception e) {
 			response.setStatus(Status.SERVER_ERROR_INTERNAL, e.getMessage());
 			e.printStackTrace();
@@ -183,7 +207,7 @@ public class SubscriptionsOntologyRestlet extends AbstractBaseRestlet {
 
 			subscriptionsBean.setUserId(integerId);
 			subscriptionsBean.setOntologyId(ontologyId);
-			//subscriptionsBean.setNcboLNotificationType(notificationType);
+			// subscriptionsBean.setNcboLNotificationType(notificationType);
 			// subscriptionsBean = subscriptionsService
 			// .findSubscriptions(ontologyId);
 		} catch (Exception e) {
@@ -202,13 +226,23 @@ public class SubscriptionsOntologyRestlet extends AbstractBaseRestlet {
 	 * @param request
 	 * @param resp
 	 */
-	
+
 	private void updateSubscriptionsForOntologyId(Request request,
 			Response response) {
 		SubscriptionsBean subscriptionsBean = BeanHelper
 				.populateSubscriptionsBeanFromRequest(request);
+		// List For OntologyIds
+		List<String> ontologyId = subscriptionsBean.getOntologyIds();
 		try {
+			if (subscriptionsBean.getUserId() == null || ontologyId.isEmpty()
+					|| subscriptionsBean.getNotificationType() == null) {
+				throw new NotificationNotFoundException(
+						NotificationNotFoundException.DEFAULT_MESSAGE);
+			}
 			subscriptionsService.updateSubscriptions(subscriptionsBean);
+		} catch (NotificationNotFoundException notificationNotFoundException) {
+			response.setStatus(Status.CLIENT_ERROR_NOT_FOUND,
+					notificationNotFoundException.getMessage());
 		} catch (Exception e) {
 			response.setStatus(Status.SERVER_ERROR_INTERNAL, e.getMessage());
 			e.printStackTrace();
@@ -218,6 +252,7 @@ public class SubscriptionsOntologyRestlet extends AbstractBaseRestlet {
 			xmlSerializationService.generateXMLResponse(request, response,
 					subscriptionsBean);
 		}
+
 	}
 
 	/**

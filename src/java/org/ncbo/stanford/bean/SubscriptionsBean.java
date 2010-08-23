@@ -3,6 +3,7 @@ package org.ncbo.stanford.bean;
 import org.ncbo.stanford.domain.generated.NcboUserSubscriptions;
 
 import org.ncbo.stanford.enumeration.NotificationTypeEnum;
+import java.util.List;
 
 /**
  * 
@@ -14,6 +15,7 @@ public class SubscriptionsBean {
 	private Integer userId;
 	private String ontologyId;
 	private NotificationTypeEnum notificationType;
+	private List<String> ontologyIds;
 
 	/**
 	 * 
@@ -64,6 +66,14 @@ public class SubscriptionsBean {
 		this.notificationType = notificationType;
 	}
 
+	public List<String> getOntologyIds() {
+		return ontologyIds;
+	}
+
+	public void setOntologyIds(List<String> ontologyIds) {
+		this.ontologyIds = ontologyIds;
+	}
+
 	/**
 	 * 
 	 * @param ncboUserSubscriptions
@@ -72,7 +82,9 @@ public class SubscriptionsBean {
 		if (ncboUserSubscriptions != null) {
 
 			ncboUserSubscriptions.setUserId(this.getUserId());
-			ncboUserSubscriptions.setOntologyId(this.ontologyId);
+			for(String ontologyId : ontologyIds){
+				ncboUserSubscriptions.setOntologyId(ontologyId);
+			}
 
 		}
 	}

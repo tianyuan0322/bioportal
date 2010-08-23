@@ -466,25 +466,39 @@ public class BeanHelper {
 		
 		return usageLoggingBean;
 	}
-	public static SubscriptionsBean populateSubscriptionsBeanFromRequest(Request request) {
+	public static SubscriptionsBean populateSubscriptionsBeanFromRequest(
+			Request request) {
 		HttpServletRequest httpServletRequest = RequestUtils
 				.getHttpServletRequest(request);
 
 		String userId = httpServletRequest.getParameter(MessageUtils
 				.getMessage("form.user.userId"));
-		String ontologyId = httpServletRequest.getParameter(MessageUtils
-				.getMessage("form.user.ontologyId"));
+		// String ontologyId = httpServletRequest.getParameter(MessageUtils
+		// .getMessage("form.user.ontologyId"));
+
 		String notificationType = httpServletRequest.getParameter(MessageUtils
 				.getMessage("form.user.notificationType"));
-
+		// Taking the OntologyIds in the List
+		List<String> ontologyId = getOntologyIds(request);
 		SubscriptionsBean subscriptionsBean = new SubscriptionsBean();
 		subscriptionsBean.setUserId(RequestUtils.parseIntegerParam(userId));
-		subscriptionsBean.setOntologyId(ontologyId);
+		subscriptionsBean.setOntologyIds(ontologyId);
 		subscriptionsBean.setNotificationType(NotificationTypeEnum
 				.valueOf(notificationType));
-		
-		
-		
+		// subscriptionsBean.setOntologyIds(ontologyIds);
+
 		return subscriptionsBean;
 	}
+	/**
+	 * It will collect the OntologyIds from the request 
+	 * @param request
+	 * @return
+	 */
+	public static List<String> getOntologyIds(Request request) {
+		return RequestUtils.getAttributeOrRequestParams(MessageUtils
+				.getMessage("entity.ontologyid"), request);
+	}
+	
+	
+	
 }

@@ -6,6 +6,11 @@ import org.ncbo.stanford.bean.SubscriptionsBean;
 
 import org.ncbo.stanford.domain.generated.NcboUserSubscriptions;
 
+/**
+ * @author g.prakash
+ * 
+ */
+
 public interface SubscriptionsService {
 	/**
 	 * 
@@ -38,16 +43,18 @@ public interface SubscriptionsService {
 	 * @return
 	 */
 	public SubscriptionsBean findSubscriptionsForUserId(Integer userId);
+
 	/**
 	 * 
 	 * @param userId
 	 * @return
 	 */
-	public List<SubscriptionsBean> listOfSubscriptionsForOntologyId(String ontologyId);
+	public List<SubscriptionsBean> listOfSubscriptionsForOntologyId(
+			String ontologyId);
 	/**
 	 * 
 	 * @param ontologyId
 	 * @return
 	 */
-	
+
 }
