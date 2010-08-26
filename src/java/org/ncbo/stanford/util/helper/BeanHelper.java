@@ -466,6 +466,12 @@ public class BeanHelper {
 		
 		return usageLoggingBean;
 	}
+	
+	/**
+	 * Create SubscriptionsBean object and populates from Request object.
+	 * @param request
+	 * @return
+	 */
 	public static SubscriptionsBean populateSubscriptionsBeanFromRequest(
 			Request request) {
 		HttpServletRequest httpServletRequest = RequestUtils
@@ -473,8 +479,6 @@ public class BeanHelper {
 
 		String userId = httpServletRequest.getParameter(MessageUtils
 				.getMessage("form.user.userId"));
-		// String ontologyId = httpServletRequest.getParameter(MessageUtils
-		// .getMessage("form.user.ontologyId"));
 
 		String notificationType = httpServletRequest.getParameter(MessageUtils
 				.getMessage("form.user.notificationType"));

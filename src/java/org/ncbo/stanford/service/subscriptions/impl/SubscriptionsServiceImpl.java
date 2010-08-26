@@ -81,8 +81,7 @@ public class SubscriptionsServiceImpl implements SubscriptionsService {
 		List<NcboUserSubscriptions> userSubscriptions = new ArrayList<NcboUserSubscriptions>();
 		NcboLNotificationType notificationType = new NcboLNotificationType();
 		// Adding For List Of OntologyIds
-		// List<String> ontologyIds = new ArrayList<String>();
-		// ontologyIds.containsAll(subscriptionsBean.getOntologyId());
+
 		List<String> ontologyIds = subscriptionsBean.getOntologyIds();
 
 		// Creating the List of NcboLNotificationType
@@ -99,11 +98,6 @@ public class SubscriptionsServiceImpl implements SubscriptionsService {
 				ncboUserSubscriptions
 						.setNcboLNotificationType(ncboLNotificationType);
 				// Checking for Duplicate Entry in the database
-				// userSubscriptions = ncboUserSubscriptionsDAO
-				// .findByUserIdAndOntologyId(subscriptionsBean
-				// .getOntologyId(),
-				// subscriptionsBean.getUserId(),
-				// ncboLNotificationType);
 
 				userSubscriptions = ncboUserSubscriptionsDAO
 						.findByListOfOntologyIds(ontologyIds, subscriptionsBean
@@ -212,8 +206,6 @@ public class SubscriptionsServiceImpl implements SubscriptionsService {
 
 		NcboUserSubscriptions ncboUserSubscriptions = new NcboUserSubscriptions();
 		List<NcboUserSubscriptions> listOfncboUserSubscritpions = new ArrayList<NcboUserSubscriptions>();
-		// List<NcboUserSubscriptions> listOfuserSubscriptions = new
-		// ArrayList<NcboUserSubscriptions>();
 
 		NcboLNotificationType ncboLnotificationType = new NcboLNotificationType();
 		// Creating the list of NcboLNotificationType

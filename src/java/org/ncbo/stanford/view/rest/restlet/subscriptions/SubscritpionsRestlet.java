@@ -176,32 +176,6 @@ public class SubscritpionsRestlet extends AbstractBaseRestlet {
 	}
 
 	/**
-	 * Returns a specified SubscriptionsBean and set the response status if
-	 * there is an error
-	 * 
-	 * 
-	 * @param request
-	 * @param response
-	 */
-	private SubscriptionsBean findSubscriptionsBean(Request request,
-			Response response) {
-		SubscriptionsBean subscriptionsBean = null;
-		String userId = (String) request.getAttributes().get(
-				MessageUtils.getMessage("entity.userid"));
-
-		try {
-			Integer userSubscriptionId = Integer.parseInt(userId);
-			subscriptionsBean = subscriptionsService
-					.findSubscriptionsForUserId(userSubscriptionId);
-		} catch (Exception e) {
-			response.setStatus(Status.SERVER_ERROR_INTERNAL, e.getMessage());
-
-		}
-
-		return subscriptionsBean;
-	}
-
-	/**
 	 * Update a specified SubscriptionsBean to the response
 	 * 
 	 * @param request

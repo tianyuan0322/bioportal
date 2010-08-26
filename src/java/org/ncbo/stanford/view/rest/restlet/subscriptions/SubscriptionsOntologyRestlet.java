@@ -184,42 +184,6 @@ public class SubscriptionsOntologyRestlet extends AbstractBaseRestlet {
 	}
 
 	/**
-	 * Returns a specified SubscriptionsBean and set the response status if
-	 * there is an error. This Method will be called when the request is coming
-	 * for findSubscriptionsBean
-	 * 
-	 * @param request
-	 * @param response
-	 */
-	private SubscriptionsBean findSubscriptionsBean(Request request,
-			Response response) {
-		SubscriptionsBean subscriptionsBean = null;
-		String userId = (String) request.getAttributes().get(
-				MessageUtils.getMessage("entity.userid"));
-		String ontologyId = (String) request.getAttributes().get(
-				MessageUtils.getMessage("entity.ontologyid"));
-		String ncboLNotificationType = (String) request.getAttributes().get(
-				MessageUtils.getMessage("entity.notificationType"));
-		NcboLNotificationType notificationType = new NcboLNotificationType();
-		notificationType.setType(ncboLNotificationType);
-		try {
-			Integer integerId = Integer.parseInt(userId);
-
-			subscriptionsBean.setUserId(integerId);
-			subscriptionsBean.setOntologyId(ontologyId);
-			// subscriptionsBean.setNcboLNotificationType(notificationType);
-			// subscriptionsBean = subscriptionsService
-			// .findSubscriptions(ontologyId);
-		} catch (Exception e) {
-			// set the response if there is any any Error
-			response.setStatus(Status.SERVER_ERROR_INTERNAL, e.getMessage());
-
-		}
-
-		return subscriptionsBean;
-	}
-
-	/**
 	 * Update a specified SubscriptionsBean to the response. This Method will be
 	 * called when the request is coming for updateSubscriptionsForOntologyId
 	 * 
