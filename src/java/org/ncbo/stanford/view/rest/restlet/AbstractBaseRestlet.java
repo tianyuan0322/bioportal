@@ -57,11 +57,9 @@ public abstract class AbstractBaseRestlet extends Restlet {
 					deleteRequest(request, response);
 				}
 			}
-		} else if (request.getMethod().equals(
-				MessageUtils.getMessage("http.put"))) {
+		} else if (request.getMethod().equals(Method.PUT)) {
 			putRequest(request, response);
-		} else if (request.getMethod().equals(
-				MessageUtils.getMessage("http.delete"))) {
+		} else if (request.getMethod().equals(Method.DELETE)) {
 			deleteRequest(request, response);
 		}
 	}
