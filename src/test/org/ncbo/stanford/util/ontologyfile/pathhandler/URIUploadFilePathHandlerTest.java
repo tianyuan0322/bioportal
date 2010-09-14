@@ -20,7 +20,12 @@ public class URIUploadFilePathHandlerTest extends AbstractBioPortalTest {
 	@Test
 	public void testURIUpload() throws Exception {
 		OntologyBean ontologyBean= createDummyOntolgyBean();
-		URI downloadUri= new URI("http://github.com/cmungall/uberon/raw/master/uberon_edit.obo");
+		//String downloadLocation= "http://github.com/cmungall/uberon/raw/master/uberon_edit.obo";
+		//String downloadLocation= "http://www.human-phenotype-ontology.org/human-phenotype-ontology.obo.gz";
+		String downloadLocation= "http://www.evocontology.org/uploads/Main/evoc_v2.7_obo.tar.gz";
+
+		URI downloadUri= new URI(downloadLocation);
+		ontologyBean.setDownloadLocation(downloadLocation);
 		FilePathHandler filePathHandler = new URIUploadFilePathHandlerImpl(
 				CompressedFileHandlerFactory.createFileHandler(ontologyBean
 						.getFormat()), downloadUri);

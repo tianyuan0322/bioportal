@@ -11,5 +11,5 @@ public interface OBOCVSPullService {
 	/**
 	 * Performs the pull of ontologies from OBO Sourceforge CVS
 	 */
-	public void doCVSPull();
+	public void doOntologyPull();
 }

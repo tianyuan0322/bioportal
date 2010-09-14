@@ -76,6 +76,8 @@ public class OntologyMetadataUtils extends MetadataUtils {
 			+ "internalVersionNumber";
 	public static final String PROPERTY_IS_FOUNDRY = PREFIX_METADATA
 			+ "isFoundry";
+	public static final String PROPERTY_IS_METADATAONLY = PREFIX_METADATA
+	+ "isMetadataOnly";
 	public static final String PROPERTY_IS_MANUAL = PREFIX_METADATA
 			+ "isManual";
 	public static final String PROPERTY_IS_REMOTE = PREFIX_METADATA
@@ -231,6 +233,16 @@ public class OntologyMetadataUtils extends MetadataUtils {
 			}
 		}
 
+		if (ob.getIsMetadataOnly() == null) {
+			Boolean isMetadataOnly = getPropertyValue(owlModel, ontologyInd,
+					PROPERTY_IS_METADATAONLY, Boolean.class);
+			if (isMetadataOnly != null) {
+				ob.setIsMetadataOnly(convertBooleanToByte(isMetadataOnly));
+			} else {
+				ob.setIsMetadataOnly((byte) 0);
+			}
+		}
+		
 		if (ob.getUserId() == null) {
 			// TODO temporary solution, until multiple administrators will be
 			// allowed:
@@ -315,6 +327,11 @@ public class OntologyMetadataUtils extends MetadataUtils {
 				owlModel.getXSDboolean());
 		setPropertyValue(owlModel, ontologyInd, PROPERTY_IS_FOUNDRY,
 				litIsFoundry); // TODO check this for correct type conversion
+		RDFSLiteral litIsMetadataOnly = owlModel.createRDFSLiteral(ob.getIsMetadataOnly()
+				.byteValue() == ApplicationConstants.FALSE ? "false" : "true",
+				owlModel.getXSDboolean());
+		setPropertyValue(owlModel, ontologyInd, PROPERTY_IS_METADATAONLY,
+				litIsMetadataOnly); 
 		RDFSLiteral litIsManual = owlModel.createRDFSLiteral(ob.getIsManual()
 				.byteValue() == ApplicationConstants.FALSE ? "false" : "true",
 				owlModel.getXSDboolean());
@@ -576,6 +593,8 @@ public class OntologyMetadataUtils extends MetadataUtils {
 				PROPERTY_INTERNAL_VERSION_NUMBER, Integer.class));
 		ob.setIsFoundry(convertBooleanToByte(getPropertyValue(owlModel,
 				ontologyInd, PROPERTY_IS_FOUNDRY, Boolean.class)));
+		ob.setIsMetadataOnly(convertBooleanToByte(getPropertyValue(owlModel,
+				ontologyInd, PROPERTY_IS_METADATAONLY, Boolean.class)));
 
 		OWLIndividual vOntInd = getPropertyValue(owlModel, ontologyInd,
 				PROPERTY_IS_VERSION_OF_VIRTUAL_ONTOLOGY, OWLIndividual.class);

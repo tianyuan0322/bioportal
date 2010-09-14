@@ -1,6 +1,7 @@
 package org.ncbo.stanford.util.loader;
 
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.assertFalse;
 
 import java.util.Date;
 
@@ -80,4 +81,21 @@ public class LoaderUtilsTest extends AbstractBioPortalTest {
 		System.out.println("Date of file at url= "+url+" is : "+ new Date(date_long));
 		
 	}	
+	
+	@Test
+	public void testUrlExists() {
+		String url= "http://obo.svn.sourceforge.net/viewvc/*checkout*/obo/fma-conversion/trunk/fma2_obo.obo";
+		boolean exists;			
+		exists= LoaderUtils.isValidDownloadLocation(url);			
+		assertTrue(exists);
+		url= "http://brebiou.cshl.edu/viewcvs/Poc/ontology/collaborators_ontology/gramene/temporal_gramene.obo";
+		exists= LoaderUtils.isValidDownloadLocation(url);			
+		assertFalse(exists);
+		url= "http://palea.cgrb.oregonstate.edu/viewsvn/Poc/trunk/ontology/OBO_format/po_anatomy.obo?view=co";
+		exists= LoaderUtils.isValidDownloadLocation(url);			
+		assertTrue(exists);
+		
+	}		
+	
+	
 }

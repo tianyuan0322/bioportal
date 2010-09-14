@@ -126,8 +126,8 @@ public class RdfServiceImpl extends ConceptServiceImpl implements RdfService {
 						
 				) {
 					System.out.println("********** PAEA ***" + ont.getAbbreviation() + " is being skipped because it was already saved.");
-				} else if (ont.isRemote()) {
-					System.out.println("********** PAEA ***" + ont.getAbbreviation() + " is being skipped because it is flagged as isRemote=true.");
+				} else if (ont.isMetadataOnly()) {
+					System.out.println("********** PAEA ***" + ont.getAbbreviation() + " is being skipped because it is flagged as isMataDataOnly=true.");
 				} else {
 					// generate the RDF file!
 					generateRdf(manager, dir, ont);

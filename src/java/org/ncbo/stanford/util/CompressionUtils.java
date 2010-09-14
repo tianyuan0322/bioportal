@@ -11,6 +11,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.jar.JarEntry;
 import java.util.jar.JarInputStream;
+import java.util.zip.GZIPInputStream;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
@@ -38,6 +39,8 @@ public class CompressionUtils {
 
 		if (isZip(filename)) {
 			allFiles = unzip(filePath, filename);
+		} else if (isGZip(filename)) {
+			allFiles = gunzip(filePath, filename);
 		} else if (isJar(filename)) {
 			allFiles = unjar(filePath, filename);
 		} else if (isTar(filename)) {
@@ -54,6 +57,39 @@ public class CompressionUtils {
 
 		return extractFiles(new ZipCompressedInputStream(fis), zipFilePath,
 				zipFileName);
+	}
+
+	public List<String> gunzip(String gzipFilePath, String gzipFileName)
+			throws FileNotFoundException, IOException {
+		List<String> lst = new ArrayList<String>(1);
+		BufferedOutputStream dest = null;
+		int count;
+		byte data[] = new byte[ApplicationConstants.BUFFER_SIZE];
+
+		FileInputStream fis = new FileInputStream(gzipFilePath + File.separator
+				+ gzipFileName);
+		GZIPInputStream gzis= new GZIPInputStream(new BufferedInputStream(fis));
+		//get filename without the .gz extension
+		String fileName = gzipFileName.substring(0, gzipFileName.length() - 3);
+		FileOutputStream fos = new FileOutputStream(gzipFilePath
+				+ File.separator + fileName);
+
+		
+		dest = new BufferedOutputStream(fos, ApplicationConstants.BUFFER_SIZE);
+
+		while ((count = gzis.read(data, 0, ApplicationConstants.BUFFER_SIZE)) != -1) {
+			dest.write(data, 0, count);
+		}
+
+		dest.flush();
+		dest.close();
+		if (isCompressed(fileName)) {
+			lst= uncompress(gzipFilePath, fileName);
+		} else {
+		  lst.add(fileName);
+		}
+		
+		return lst;
 	}
 
 	public List<String> untar(String tarFilePath, String tarFileName)
@@ -109,6 +145,11 @@ public class CompressionUtils {
 	public static boolean isZip(String filename) {
 		return filename.toLowerCase().endsWith(
 				ApplicationConstants.ZIP_EXTENSION);
+	}
+
+	public static boolean isGZip(String filename) {
+		return filename.toLowerCase().endsWith(
+				ApplicationConstants.GZIP_EXTENSION);
 	}
 
 	public static boolean isJar(String filename) {
