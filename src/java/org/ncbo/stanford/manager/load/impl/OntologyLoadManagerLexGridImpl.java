@@ -27,6 +27,7 @@ import org.LexGrid.LexOnt.CodingSchemeManifest;
 import org.LexGrid.LexOnt.CsmfCodingSchemeURI;
 import org.LexGrid.LexOnt.CsmfFormalName;
 import org.LexGrid.LexOnt.CsmfVersion;
+import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.ncbo.stanford.bean.OntologyBean;
@@ -170,6 +171,7 @@ public class OntologyLoadManagerLexGridImpl extends
 
 			String urnAndVersion = urn + "|" + version;
 			ob.setCodingScheme(urnAndVersion);
+			setOntologyBeanVersion(ob, version); 
 			log
 					.debug("Updating the NcboOntologyMetadata with the codingScheme name="
 							+ urnAndVersion);
@@ -209,6 +211,9 @@ public class OntologyLoadManagerLexGridImpl extends
 
 		// remove existing scheme if it exists before parsing...
 		String codingSchemeName = ontologyBean.getCodingScheme();
+		if (StringUtils.isBlank(codingSchemeName)) {
+			return;
+		}
 		CodingSchemeRendering csRendering = getCodingSchemeRendering(lbs,
 				codingSchemeName);
 
@@ -286,5 +291,17 @@ public class OntologyLoadManagerLexGridImpl extends
 		res.setId(ontologyBean.getId());
 
 		return res;
+	}
+	
+	private void setOntologyBeanVersion(OntologyBean ontologyBean, String version) {
+		if (StringUtils.isBlank(ontologyBean.getVersionNumber())) {
+			//The ontologyBean doesn't have a version...try and get a version number from the source
+			if (StringUtils.isNotBlank(version) && ! version.equalsIgnoreCase("UNASSIGNED")) {
+				ontologyBean.setVersionNumber(version);
+			} else {
+				ontologyBean.setVersionNumber("UNKNOWN");
+			}
+		}
+		
 	}
 }
