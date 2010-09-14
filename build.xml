@@ -142,12 +142,15 @@
 				<filter token="bioportaljdbcurl" value="${bioportal.jdbc.url}" />
 				<filter token="bioportaljdbcusername" value="${bioportal.jdbc.username}" />
 				<filter token="bioportaljdbcpassword" value="${bioportal.jdbc.password}" />
+				<filter token="bioportaljdbcc3p0initial_pool_size" value="${bioportal.jdbc.c3p0.initial_pool_size}" />
+				<filter token="bioportaljdbcc3p0min_size" value="${bioportal.jdbc.c3p0.min_size}" />
+				<filter token="bioportaljdbcc3p0max_size" value="${bioportal.jdbc.c3p0.max_size}" />
+				<filter token="bioportaljdbcc3p0acquire_retry_attempts" value="${bioportal.jdbc.c3p0.acquire_retry_attempts}" />
 				<filter token="bioportaljdbcc3p0acquire_increment" value="${bioportal.jdbc.c3p0.acquire_increment}" />
 				<filter token="bioportaljdbcc3p0idle_test_period" value="${bioportal.jdbc.c3p0.idle_test_period}" />
 				<filter token="bioportaljdbcc3p0timeout" value="${bioportal.jdbc.c3p0.timeout}" />
-				<filter token="bioportaljdbcc3p0max_size" value="${bioportal.jdbc.c3p0.max_size}" />
-				<filter token="bioportaljdbcc3p0max_statements" value="${bioportal.jdbc.c3p0.max_statements}" />
-				<filter token="bioportaljdbcc3p0min_size" value="${bioportal.jdbc.c3p0.min_size}" />
+				<filter token="bioportaljdbcc3p0max_connection_age" value="${bioportal.jdbc.c3p0.max_connection_age}" />
+				<filter token="bioportaljdbcc3p0preferred_test_query" value="${bioportal.jdbc.c3p0.preferred_test_query}" />
 			</filterset>
 		</copy>
 		

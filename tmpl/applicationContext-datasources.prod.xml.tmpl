@@ -18,17 +18,34 @@
 	<bean id="dataSource" class="com.mchange.v2.c3p0.ComboPooledDataSource" destroy-method="close">
 		<property name="driverClass" value="@bioportaljdbcdriver@" />
 		<property name="jdbcUrl" value="@bioportaljdbcurl@" />
-		<property name="properties">
-			<props>
-				<prop key="user">@bioportaljdbcusername@</prop>
-				<prop key="password">@bioportaljdbcpassword@</prop>
-				<prop key="hibernate.c3p0.acquire_increment">@bioportaljdbcc3p0acquire_increment@</prop>
-				<prop key="hibernate.c3p0.idle_test_period">@bioportaljdbcc3p0idle_test_period@</prop>
-				<prop key="hibernate.c3p0.timeout">@bioportaljdbcc3p0timeout@</prop>
-				<prop key="hibernate.c3p0.max_size">@bioportaljdbcc3p0max_size@</prop>
-				<prop key="hibernate.c3p0.max_statements">@bioportaljdbcc3p0max_statements@</prop>
-				<prop key="hibernate.c3p0.min_size">@bioportaljdbcc3p0min_size@</prop>				
-			</props>
+		<property name="user" value="@bioportaljdbcusername@" />
+		<property name="password" value="@bioportaljdbcpassword@" />
+		<property name="initialPoolSize">
+			<value>@bioportaljdbcc3p0initial_pool_size@</value>
 		</property>
-	</bean>
+		<property name="minPoolSize">
+			<value>@bioportaljdbcc3p0min_size@</value>
+		</property>
+		<property name="maxPoolSize">
+			<value>@bioportaljdbcc3p0max_size@</value>
+		</property>
+		<property name="acquireRetryAttempts">
+			<value>@bioportaljdbcc3p0acquire_retry_attempts@</value>
+		</property>
+		<property name="acquireIncrement">
+			<value>@bioportaljdbcc3p0acquire_increment@</value>
+		</property>
+		<property name="idleConnectionTestPeriod">
+			<value>@bioportaljdbcc3p0idle_test_period@</value>
+		</property>
+		<property name="maxIdleTime">
+			<value>@bioportaljdbcc3p0timeout@</value>
+		</property>
+		<property name="maxConnectionAge">
+			<value>@bioportaljdbcc3p0max_connection_age@</value>
+		</property>
+		<property name="preferredTestQuery">
+			<value>@bioportaljdbcc3p0preferred_test_query@</value>
+		</property>
+ 	</bean>
 </beans>
