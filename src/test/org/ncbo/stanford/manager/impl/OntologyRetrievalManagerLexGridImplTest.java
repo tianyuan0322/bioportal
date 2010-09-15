@@ -128,6 +128,24 @@ public class OntologyRetrievalManagerLexGridImplTest extends
 	}
 
 	@Test
+	public void testMTHCH_FindConceptCell() throws Exception {
+		System.out.println("testMTHCH_FindConceptCell()");
+
+		OntologyBean ncboOntology = retrievalManager
+				.getLatestOntologyBean(
+						OntologyLoaderLexGridImplTest.UMLS_MTHCH_DISPLAY_LABEL);
+		//String conceptID = "CL:0000255";
+		String conceptID = "Level 1: 0001T-9999T";
+		ClassBean classBean = retrievalManager.findConcept(ncboOntology,
+				conceptID, false, false);
+		System.out.println("Concept " + conceptID + " of MTHCH ontology is \n"
+				+ classBean);
+		System.out.println("\n");
+		assertTrue(classBean.getId().equalsIgnoreCase(conceptID));
+	}
+	
+	
+	@Test
 	public void testOBOFindConceptCell() throws Exception {
 		System.out.println("testOBOFindConceptCell()");
 

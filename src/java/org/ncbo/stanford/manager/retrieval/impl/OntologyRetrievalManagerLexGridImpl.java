@@ -1032,7 +1032,11 @@ public class OntologyRetrievalManagerLexGridImpl extends
 		Concept entry = rcr.getReferencedEntry();
 
 		if (entry == null) {
-			// bean.setLight(true);
+			//We have no label for this concept. We will create a label 
+			//that has the same value as the id
+			if (StringUtils.isBlank(bean.getLabel())) {
+				bean.setLabel(bean.getId());
+			}
 		} else if (entry.getIsAnonymous() == null
 				|| (entry.getIsAnonymous() != null && !entry.getIsAnonymous()
 						.booleanValue())) {

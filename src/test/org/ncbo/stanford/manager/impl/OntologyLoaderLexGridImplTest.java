@@ -70,6 +70,10 @@ public class OntologyLoaderLexGridImplTest extends AbstractBioPortalTest {
 	public final static String UMLS_NOHIERACHY_PATHNAME = "test/sample_data/CPT/";
 	public final static String UMLS_NOHIERACHY_URN_VERSION = "urn:oid:2.16.840.1.113883.6.12|2010";
 	public final static String UMLS_NOHIERACHY_DISPLAY_LABEL = "CPT";
+	
+	public final static String UMLS_MTHCH_PATHNAME = "test/sample_data/MTHCH/";
+	public final static String UMLS_MTHCH_URN_VERSION = "urn:oid:2.16.840.1.113883.6.190|2010";
+	public final static String UMLS_MTHCH_DISPLAY_LABEL = "MTHCH";	
 
 	public final static String LEXGRID_HL7_PATHNAME = "test/sample_data/RIM_0230.xml";
 	public final static String LEXGRID_HL7_URN_VERSION = "http://www.hl7.org/Library/data-model/RIM|V 02-30";
@@ -279,6 +283,27 @@ public class OntologyLoaderLexGridImplTest extends AbstractBioPortalTest {
 	}
 
 	@Test
+	public void testLoadUMLSMTHCH() throws Exception {
+		System.out
+				.println("OntologyLoaderLexGridImplTest: testLoadUMLSMTHCH().................. BEGIN");
+		OntologyBean ontologyBean = this.createOntolgyBeanUMLSMTHCH();
+		// populate file related field in ontologyBean
+		ontologyBean.setFilePath(UMLS_MTHCH_PATHNAME + "MTHCH_2010AA.zip");
+		// create - pass FileHandler
+		ontologyService.createOntologyOrView(ontologyBean,
+				getFilePathHandler(ontologyBean));
+		if (ontologyBean != null)
+			System.out.println("Created OntologyBean with ID = "
+					+ ontologyBean.getId());
+
+		ontologyLoadSchedulerService.parseOntologies(Arrays.asList(ontologyBean
+				.getId()), null);
+		assertTrue(ontologyBean.getCodingScheme() != null);
+		System.out
+				.println("OntologyLoaderLexGridImplTest: testLoadUMLSMTHCH().................... END");
+	}
+	
+	@Test
 	public void testLoadOboFungal() throws Exception {
 		System.out
 				.println("OntologyLoaderLexGridImplTest: testLoadOboFungal().................. BEGIN");
@@ -421,6 +446,7 @@ public class OntologyLoaderLexGridImplTest extends AbstractBioPortalTest {
 		return bean;
 	}
 
+	
 	private OntologyBean createOntolgyBeanUMLSNoHierarchy() {
 		OntologyBean bean = createOntolgyBeanBase();
 		bean.setFormat(ApplicationConstants.FORMAT_UMLS_RRF);
@@ -432,6 +458,17 @@ public class OntologyLoaderLexGridImplTest extends AbstractBioPortalTest {
 		return bean;
 	}
 
+	private OntologyBean createOntolgyBeanUMLSMTHCH() {
+		OntologyBean bean = createOntolgyBeanBase();
+		bean.setFormat(ApplicationConstants.FORMAT_UMLS_RRF);
+		bean.setCodingScheme(UMLS_MTHCH_URN_VERSION);
+		bean.setDisplayLabel(UMLS_MTHCH_DISPLAY_LABEL);
+		bean.setTargetTerminologies(UMLS_MTHCH_DISPLAY_LABEL);
+		bean.setContactEmail("umls@email.com");
+		bean.setContactName("Umls Name");
+		return bean;
+	}
+	
 	private OntologyBean createOntolgyBeanBase() {
 		OntologyBean bean = new OntologyBean(false);
 		// bean.setOntologyId(3000);
