@@ -139,7 +139,7 @@ public class OBOCVSPullServiceImpl implements OBOCVSPullService {
 	public void processCreateNewVersion(OntologyBean ont) {
 		try {
 			Date now = Calendar.getInstance().getTime();
-			ont.setVersionNumber("unknown");
+			//ont.setVersionNumber("unknown");
 			ont.setDateReleased(now);
 			// The file is not in the local cvs/svn repository, but
 			// can be downloaded using the downloadLocation
@@ -148,7 +148,7 @@ public class OBOCVSPullServiceImpl implements OBOCVSPullService {
 					CompressedFileHandlerFactory.createFileHandler(ont
 							.getFormat()), new URI(downloadLocation));
 			log.debug("[*** CREATE new version: " + ont + " ***]");
-			// ontologyService.createOntologyOrView(ont, filePathHandler);
+			ontologyService.createOntologyOrView(ont, filePathHandler);
 		} catch (Exception e) {
 			log.error(e);
 			e.printStackTrace();
