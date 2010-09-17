@@ -19,26 +19,27 @@ public class UserMetadataUtils extends MetadataUtils {
 			+ "hasContactName";
 	public static final String PROPERTY_HAS_CONTACT_EMAIL = PREFIX_METADATA
 			+ "hasContactEmail";
+	public static final String PROPERTY_USERNAME = PREFIX_METADATA + "username";
 
 	// This Method is set the UserInstance inside Metadata
 	public static void fillInOntologyInstancePropertiesFromBean(
 			OWLIndividual userInd, UserBean userBean) throws Exception {
 		if (userInd == null || userBean == null) {
 			throw new Exception(
-					"The method fillInUserInstancePropertiesFromBean can't take null arguments. Please make sure that both arguments are properly initialized.");
+					"The method fillInUserInstancePropertiesFromBean can't take null arguments."
+							+ "Please make sure that both arguments are properly initialized.");
 		}
 
 		OWLModel owlModel = userInd.getOWLModel();
 
-		setPropertyValue(owlModel, userInd, PROPERTY_HAS_CONTACT_NAME, userBean
+		setPropertyValue(owlModel, userInd, PROPERTY_USERNAME, userBean
 				.getUsername());
 
 		setPropertyValue(owlModel, userInd, PROPERTY_HAS_CONTACT_EMAIL,
 				userBean.getEmail());
 		setPropertyValue(owlModel, userInd, PROPERTY_HAS_CONTACT_NAME, userBean
-				.getFirstname());
-		setPropertyValue(owlModel, userInd, PROPERTY_HAS_CONTACT_NAME, userBean
-				.getLastname());
+				.getFirstname()
+				+ " " + userBean.getLastname());
 
 		RDFSLiteral litDateCreated = createXsdDateTimePropertyValue(owlModel,
 				userBean.getDateCreated());
