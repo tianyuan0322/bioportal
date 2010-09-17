@@ -128,8 +128,8 @@ public class OntologyRetrievalManagerLexGridImplTest extends
 	}
 
 	@Test
-	public void testMTHCH_FindConceptCell() throws Exception {
-		System.out.println("testMTHCH_FindConceptCell()");
+	public void testMTHCH_FindConcept() throws Exception {
+		System.out.println("testMTHCH_FindConcept()");
 
 		OntologyBean ncboOntology = retrievalManager
 				.getLatestOntologyBean(
