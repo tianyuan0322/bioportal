@@ -1,5 +1,8 @@
 package org.ncbo.stanford.util.constants;
 
+import org.openrdf.model.URI;
+import org.openrdf.model.impl.URIImpl;
+
 public interface ApplicationConstants {
 
 	/**
@@ -18,7 +21,7 @@ public interface ApplicationConstants {
 	 */
 	public static final String UTF_8 = "UTF-8";
 
-	public static final Integer TIMETOLIVE=60;
+	public static final Integer TIMETOLIVE = 60;
 	/**
 	 * File extensions
 	 */
@@ -81,7 +84,7 @@ public interface ApplicationConstants {
 	public static final String SEMANTIC_TYPES = "SemanticTypes";
 	public static final String LEVEL = "Level";
 	public static final String PATH = "Path";
-	public static final String EMAIL="Email";
+	public static final String EMAIL = "Email";
 
 	/**
 	 * Ontology format handlers
@@ -106,7 +109,7 @@ public interface ApplicationConstants {
 	// Content retrieval constants
 	public static final int FROM_DB = 1200;
 	public static final int FROM_CACHE = 1201;
-	
+
 	/**
 	 * Notification Service constants
 	 */
@@ -121,9 +124,9 @@ public interface ApplicationConstants {
 	public static final String NOTE_PROPOSAL_INFO = "NOTE_PROPOSAL_INFO";
 	public static final String NOTE_USERNAME = "NOTE_USERNAME";
 	public static final String NOTE_URL = "NOTE_URL";
-	public static final String NCBO_USER_SUBSCRIPTIONS="99 is a good candidate";
-	public static final String ONTOLOGY_ID="99";
-	
+	public static final String NCBO_USER_SUBSCRIPTIONS = "99 is a good candidate";
+	public static final String ONTOLOGY_ID = "99";
+
 	/**
 	 * XML declaration
 	 */
@@ -155,8 +158,24 @@ public interface ApplicationConstants {
 	public static final String RESPONSE_XML_TAG_NAME = "response";
 
 	public static final String DIR = "######DIR######";
-	
-	public static final String NOTIFICATION_ID="99";
+
+	public static final String NOTIFICATION_ID = "99";
 
 	public static final String BASE_CONCEPT_NAMESPACE = "http://purl.bioontology.org/ontology/";
+
+	/**
+	 * RDF and RDF store namespace constants.
+	 */
+	public static final String VIRTUOSO = "virtuoso";
+	public static final String MYSQL = "mysql";
+	public static final String MAPPING_PREFIX = "http://protege.stanford.edu/ontologies/mappings/mappings.rdfs#";
+
+	// This is equivalent to a named graph in an RDF store.
+	public static final String MAPPING_CONTEXT = "http://protege.stanford.edu/ontologies/mappings/mappings.rdfs";
+	public static final URI MAPPING_CONTEXT_URI = new URIImpl("http://protege.stanford.edu/ontologies/mappings/mappings.rdfs");
+	
+	// Common URIs
+	public static final URI MAPPING_ONE_TO_ONE_URI = new URIImpl(MAPPING_PREFIX + "One_To_One_Mapping");
+	public static final URI RDF_TYPE_URI = new URIImpl("http://www.w3.org/1999/02/22-rdf-syntax-ns#type");
+
 }

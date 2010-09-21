@@ -463,3 +463,21 @@ ui.path.notes.property=/visualize/<ONTOLOGY_VERSION_ID>/?conceptid=<CONCEPT_ID>#
 # For Notification Service
 #
 notification.email.from=youremail@yourserver.edu
+
+############# RDF Store Configuration
+## RDF Store Type options:
+#### virtuoso
+#### mysql
+rdf.store.type=mysql
+
+## Virtuoso Stores Only
+rdf.virtuoso.connection.string=jdbc:virtuoso://localhost:1111/
+rdf.virtuoso.user=dba
+rdf.virtuoso.password=dba
+
+## MySQL Stores Only
+rdf.mysql.store.server.name=localhost
+rdf.mysql.store.port.number=3306
+rdf.mysql.store.database.name=bioportal_rdf
+rdf.mysql.store.user=mysql_user
+rdf.mysql.store.password=mysql_password

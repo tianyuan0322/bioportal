@@ -1,0 +1,447 @@
+<?xml version="1.0"?>
+
+
+<!DOCTYPE rdf:RDF [
+    <!ENTITY owl "http://www.w3.org/2002/07/owl#" >
+    <!ENTITY xsd "http://www.w3.org/2001/XMLSchema#" >
+    <!ENTITY rdfs "http://www.w3.org/2000/01/rdf-schema#" >
+    <!ENTITY rdf "http://www.w3.org/1999/02/22-rdf-syntax-ns#" >
+    <!ENTITY mappings "http://protege.stanford.edu/ontologies/mappings/mappings.rdfs#" >
+]>
+
+
+<rdf:RDF xmlns="http://protege.stanford.edu/ontologies/mappings/mappings.rdfs#"
+     xml:base="http://protege.stanford.edu/ontologies/mappings/mappings.rdfs"
+     xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#"
+     xmlns:mappings="http://protege.stanford.edu/ontologies/mappings/mappings.rdfs#"
+     xmlns:owl="http://www.w3.org/2002/07/owl#"
+     xmlns:xsd="http://www.w3.org/2001/XMLSchema#"
+     xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#">
+    <owl:Ontology rdf:about="http://protege.stanford.edu/ontologies/mappings/mappings.rdfs"/>
+    
+
+
+    <!-- 
+    ///////////////////////////////////////////////////////////////////////////////////////
+    //
+    // Annotation properties
+    //
+    ///////////////////////////////////////////////////////////////////////////////////////
+     -->
+
+    <owl:AnnotationProperty rdf:about="&rdfs;label"/>
+    
+
+
+    <!-- 
+    ///////////////////////////////////////////////////////////////////////////////////////
+    //
+    // Object Properties
+    //
+    ///////////////////////////////////////////////////////////////////////////////////////
+     -->
+
+    
+
+
+    <!-- http://protege.stanford.edu/ontologies/mappings/mappings.rdfs#application_Context -->
+
+    <owl:ObjectProperty rdf:about="&mappings;application_Context">
+        <rdfs:label rdf:datatype="&xsd;string">mappings:application_context</rdfs:label>
+        <rdfs:domain rdf:resource="&mappings;Mapping_Metadata"/>
+        <rdfs:range rdf:resource="&rdfs;Literal"/>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://protege.stanford.edu/ontologies/mappings/mappings.rdfs#author -->
+
+    <owl:ObjectProperty rdf:about="&mappings;author">
+        <rdfs:label rdf:datatype="&xsd;string">mappings:author</rdfs:label>
+        <rdfs:range rdf:resource="&rdfs;Literal"/>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://protege.stanford.edu/ontologies/mappings/mappings.rdfs#comment -->
+
+    <owl:ObjectProperty rdf:about="&mappings;comment">
+        <rdfs:label rdf:datatype="&xsd;string">mappings:comment</rdfs:label>
+        <rdfs:domain rdf:resource="&mappings;Mapping_Metadata"/>
+        <rdfs:range rdf:resource="&rdfs;Literal"/>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://protege.stanford.edu/ontologies/mappings/mappings.rdfs#contact_info -->
+
+    <owl:ObjectProperty rdf:about="&mappings;contact_info">
+        <rdfs:label rdf:datatype="&xsd;string">mappings:contact_info</rdfs:label>
+        <rdfs:domain rdf:resource="&mappings;Mapping_Source"/>
+        <rdfs:subPropertyOf rdf:resource="&owl;topObjectProperty"/>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://protege.stanford.edu/ontologies/mappings/mappings.rdfs#created_in_source_ontology_version -->
+
+    <owl:ObjectProperty rdf:about="&mappings;created_in_source_ontology_version">
+        <rdfs:label rdf:datatype="&xsd;string">mappings:created_in_source_ontology_version</rdfs:label>
+        <rdfs:domain rdf:resource="&mappings;One_to_one_mapping"/>
+        <rdfs:range rdf:resource="&rdfs;Literal"/>
+        <rdfs:subPropertyOf rdf:resource="&owl;topObjectProperty"/>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://protege.stanford.edu/ontologies/mappings/mappings.rdfs#created_in_target_ontology_version -->
+
+    <owl:ObjectProperty rdf:about="&mappings;created_in_target_ontology_version">
+        <rdfs:label rdf:datatype="&xsd;string">mappings:created_in_target_ontology_version</rdfs:label>
+        <rdfs:domain rdf:resource="&mappings;One_to_one_mapping"/>
+        <rdfs:range rdf:resource="&rdfs;Literal"/>
+        <rdfs:subPropertyOf rdf:resource="&owl;topObjectProperty"/>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://protege.stanford.edu/ontologies/mappings/mappings.rdfs#date -->
+
+    <owl:ObjectProperty rdf:about="&mappings;date">
+        <rdfs:label rdf:datatype="&xsd;string">mappings:date</rdfs:label>
+        <rdfs:domain rdf:resource="&mappings;Mapping_Metadata"/>
+        <rdfs:range rdf:resource="&rdfs;Literal"/>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://protege.stanford.edu/ontologies/mappings/mappings.rdfs#dependency -->
+
+    <owl:ObjectProperty rdf:about="&mappings;dependency">
+        <rdfs:label rdf:datatype="&xsd;string">mappings:dependency</rdfs:label>
+        <rdfs:domain rdf:resource="&mappings;Mapping_Metadata"/>
+        <rdfs:range rdf:resource="&mappings;One_to_one_mapping"/>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://protege.stanford.edu/ontologies/mappings/mappings.rdfs#externalReferences -->
+
+    <owl:ObjectProperty rdf:about="&mappings;externalReferences">
+        <rdfs:label rdf:datatype="&xsd;string">mappings:external_references</rdfs:label>
+        <rdfs:domain rdf:resource="&mappings;Mapping_Metadata"/>
+        <rdfs:range rdf:resource="&rdfs;Literal"/>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://protege.stanford.edu/ontologies/mappings/mappings.rdfs#mapping_metadata -->
+
+    <owl:ObjectProperty rdf:about="&mappings;mapping_metadata">
+        <rdfs:label rdf:datatype="&xsd;string">mappings:mapping_metadata</rdfs:label>
+        <rdfs:range rdf:resource="&mappings;Mapping_Metadata"/>
+        <rdfs:domain rdf:resource="&mappings;One_to_one_mapping"/>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://protege.stanford.edu/ontologies/mappings/mappings.rdfs#mapping_source -->
+
+    <owl:ObjectProperty rdf:about="&mappings;mapping_source">
+        <rdfs:label>mappings:mapping_source</rdfs:label>
+        <rdfs:domain rdf:resource="&mappings;Mapping_Metadata"/>
+        <rdfs:range rdf:resource="&mappings;Mapping_Source"/>
+        <rdfs:subPropertyOf rdf:resource="&owl;topObjectProperty"/>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://protege.stanford.edu/ontologies/mappings/mappings.rdfs#relation -->
+
+    <owl:ObjectProperty rdf:about="&mappings;relation">
+        <rdfs:label rdf:datatype="&xsd;string">mappings:relation</rdfs:label>
+        <rdfs:domain rdf:resource="&mappings;One_to_one_mapping"/>
+        <rdfs:range rdf:resource="&rdfs;Literal"/>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://protege.stanford.edu/ontologies/mappings/mappings.rdfs#source -->
+
+    <owl:ObjectProperty rdf:about="&mappings;source">
+        <rdfs:label rdf:datatype="&xsd;string">mappings:source</rdfs:label>
+        <rdfs:domain rdf:resource="&mappings;One_to_one_mapping"/>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://protege.stanford.edu/ontologies/mappings/mappings.rdfs#source_algorithm -->
+
+    <owl:ObjectProperty rdf:about="&mappings;source_algorithm">
+        <rdfs:label rdf:datatype="&xsd;string">mappings:source_algorithm</rdfs:label>
+        <rdfs:domain rdf:resource="&mappings;Algorithm"/>
+        <rdfs:range rdf:resource="&rdfs;Literal"/>
+        <rdfs:subPropertyOf rdf:resource="&owl;topObjectProperty"/>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://protege.stanford.edu/ontologies/mappings/mappings.rdfs#source_name -->
+
+    <owl:ObjectProperty rdf:about="&mappings;source_name">
+        <rdfs:label rdf:datatype="&xsd;string">mappings:source_name</rdfs:label>
+        <rdfs:domain rdf:resource="&mappings;Mapping_Source"/>
+        <rdfs:range rdf:resource="&rdfs;Literal"/>
+        <rdfs:subPropertyOf rdf:resource="&owl;topObjectProperty"/>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://protege.stanford.edu/ontologies/mappings/mappings.rdfs#source_ontology_id -->
+
+    <owl:ObjectProperty rdf:about="&mappings;source_ontology_id">
+        <rdfs:label rdf:datatype="&xsd;string">mappings:source_ontology_id</rdfs:label>
+        <rdfs:domain rdf:resource="&mappings;One_to_one_mapping"/>
+        <rdfs:range rdf:resource="&rdfs;Literal"/>
+        <rdfs:subPropertyOf rdf:resource="&owl;topObjectProperty"/>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://protege.stanford.edu/ontologies/mappings/mappings.rdfs#source_url -->
+
+    <owl:ObjectProperty rdf:about="&mappings;source_url">
+        <rdfs:label rdf:datatype="&xsd;string">mappings:source_url</rdfs:label>
+        <rdfs:domain rdf:resource="&mappings;Mapping_Source"/>
+        <rdfs:range rdf:resource="&rdfs;Literal"/>
+        <rdfs:subPropertyOf rdf:resource="&owl;topObjectProperty"/>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://protege.stanford.edu/ontologies/mappings/mappings.rdfs#submittedBy -->
+
+    <owl:ObjectProperty rdf:about="&mappings;submittedBy">
+        <rdfs:label rdf:datatype="&xsd;string">mappings:submitted_by</rdfs:label>
+        <rdfs:domain rdf:resource="&mappings;Mapping_Metadata"/>
+        <rdfs:range rdf:resource="&rdfs;Literal"/>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://protege.stanford.edu/ontologies/mappings/mappings.rdfs#target -->
+
+    <owl:ObjectProperty rdf:about="&mappings;target">
+        <rdfs:label rdf:datatype="&xsd;string">mappings:target</rdfs:label>
+        <rdfs:domain rdf:resource="&mappings;One_to_one_mapping"/>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://protege.stanford.edu/ontologies/mappings/mappings.rdfs#target_ontology_id -->
+
+    <owl:ObjectProperty rdf:about="&mappings;target_ontology_id">
+        <rdfs:label rdf:datatype="&xsd;string">mappings:target_ontology_id</rdfs:label>
+        <rdfs:domain rdf:resource="&mappings;One_to_one_mapping"/>
+        <rdfs:range rdf:resource="&rdfs;Literal"/>
+        <rdfs:subPropertyOf rdf:resource="&owl;topObjectProperty"/>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://protege.stanford.edu/ontologies/mappings/mappings.rdfs#type -->
+
+    <owl:ObjectProperty rdf:about="&mappings;type">
+        <rdfs:label rdf:datatype="&xsd;string">mappings:type</rdfs:label>
+        <rdfs:domain rdf:resource="&mappings;Mapping_Metadata"/>
+        <rdfs:range rdf:resource="&rdfs;Literal"/>
+        <rdfs:subPropertyOf rdf:resource="&owl;topObjectProperty"/>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://protege.stanford.edu/ontologies/mappings/mappings.rdfs#verified -->
+
+    <owl:ObjectProperty rdf:about="&mappings;verified">
+        <rdfs:label rdf:datatype="&xsd;string">mappings:verified</rdfs:label>
+        <rdfs:domain rdf:resource="&mappings;Mapping_Metadata"/>
+        <rdfs:range rdf:resource="&mappings;Verification"/>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://protege.stanford.edu/ontologies/mappings/mappings.rdfs#verified_by -->
+
+    <owl:ObjectProperty rdf:about="&mappings;verified_by">
+        <rdfs:label rdf:datatype="&xsd;string">mappings:verified_by</rdfs:label>
+        <rdfs:domain rdf:resource="&mappings;Verification"/>
+        <rdfs:range rdf:resource="&rdfs;Literal"/>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://protege.stanford.edu/ontologies/mappings/mappings.rdfs#verified_on -->
+
+    <owl:ObjectProperty rdf:about="&mappings;verified_on">
+        <rdfs:label rdf:datatype="&xsd;string">mappings:verified_on</rdfs:label>
+        <rdfs:domain rdf:resource="&mappings;Verification"/>
+        <rdfs:range rdf:resource="&rdfs;Literal"/>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://www.w3.org/2002/07/owl#topObjectProperty -->
+
+    <owl:ObjectProperty rdf:about="&owl;topObjectProperty">
+        <rdfs:domain rdf:resource="&mappings;Mapping_Metadata"/>
+        <rdfs:range rdf:resource="&rdfs;Literal"/>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- 
+    ///////////////////////////////////////////////////////////////////////////////////////
+    //
+    // Data properties
+    //
+    ///////////////////////////////////////////////////////////////////////////////////////
+     -->
+
+    
+
+
+    <!-- http://protege.stanford.edu/ontologies/mappings/mappings.rdfs#component_name -->
+
+    <owl:DatatypeProperty rdf:about="&mappings;component_name">
+        <rdfs:label rdf:datatype="&xsd;string">mappings:component_name</rdfs:label>
+        <rdfs:range rdf:resource="&rdfs;Literal"/>
+    </owl:DatatypeProperty>
+    
+
+
+    <!-- http://protege.stanford.edu/ontologies/mappings/mappings.rdfs#component_source -->
+
+    <owl:DatatypeProperty rdf:about="&mappings;component_source">
+        <rdfs:label rdf:datatype="&xsd;string">mappings:component_source</rdfs:label>
+        <rdfs:range rdf:resource="&rdfs;Literal"/>
+    </owl:DatatypeProperty>
+    
+
+
+    <!-- http://protege.stanford.edu/ontologies/mappings/mappings.rdfs#component_type -->
+
+    <owl:DatatypeProperty rdf:about="&mappings;component_type">
+        <rdfs:label rdf:datatype="&xsd;string">mappings:component_type</rdfs:label>
+        <rdfs:range rdf:resource="&rdfs;Literal"/>
+    </owl:DatatypeProperty>
+    
+
+
+    <!-- 
+    ///////////////////////////////////////////////////////////////////////////////////////
+    //
+    // Classes
+    //
+    ///////////////////////////////////////////////////////////////////////////////////////
+     -->
+
+    
+
+
+    <!-- http://protege.stanford.edu/ontologies/mappings/mappings.rdfs#Algorithm -->
+
+    <owl:Class rdf:about="&mappings;Algorithm">
+        <rdfs:label rdf:datatype="&xsd;string">mappings:Algorithm</rdfs:label>
+        <rdfs:subClassOf rdf:resource="&mappings;Mapping_Source"/>
+    </owl:Class>
+    
+
+
+    <!-- http://protege.stanford.edu/ontologies/mappings/mappings.rdfs#Application -->
+
+    <owl:Class rdf:about="&mappings;Application">
+        <rdfs:label rdf:datatype="&xsd;string">mappings:Application</rdfs:label>
+        <rdfs:subClassOf rdf:resource="&mappings;Mapping_Source"/>
+    </owl:Class>
+    
+
+
+    <!-- http://protege.stanford.edu/ontologies/mappings/mappings.rdfs#Mapping_Metadata -->
+
+    <owl:Class rdf:about="&mappings;Mapping_Metadata">
+        <rdfs:label rdf:datatype="&xsd;string">mappings:Mapping_Metadata</rdfs:label>
+        <rdfs:subClassOf rdf:resource="&rdfs;Resource"/>
+    </owl:Class>
+    
+
+
+    <!-- http://protege.stanford.edu/ontologies/mappings/mappings.rdfs#Mapping_Source -->
+
+    <owl:Class rdf:about="&mappings;Mapping_Source">
+        <rdfs:label>mappings:Mapping_Source</rdfs:label>
+        <rdfs:subClassOf rdf:resource="&rdfs;Resource"/>
+    </owl:Class>
+    
+
+
+    <!-- http://protege.stanford.edu/ontologies/mappings/mappings.rdfs#One_to_one_mapping -->
+
+    <owl:Class rdf:about="&mappings;One_to_one_mapping">
+        <rdfs:label rdf:datatype="&xsd;string">mappings:One_To_One_Mapping</rdfs:label>
+        <rdfs:subClassOf rdf:resource="&rdfs;Resource"/>
+    </owl:Class>
+    
+
+
+    <!-- http://protege.stanford.edu/ontologies/mappings/mappings.rdfs#Organization -->
+
+    <owl:Class rdf:about="&mappings;Organization">
+        <rdfs:label rdf:datatype="&xsd;string">mappings:Organization</rdfs:label>
+        <rdfs:subClassOf rdf:resource="&mappings;Mapping_Source"/>
+    </owl:Class>
+    
+
+
+    <!-- http://protege.stanford.edu/ontologies/mappings/mappings.rdfs#Verification -->
+
+    <owl:Class rdf:about="&mappings;Verification">
+        <rdfs:label rdf:datatype="&xsd;string">mappings:Verification</rdfs:label>
+        <rdfs:subClassOf rdf:resource="&rdfs;Resource"/>
+    </owl:Class>
+    
+
+
+    <!-- http://www.w3.org/2000/01/rdf-schema#Literal -->
+
+    <owl:Class rdf:about="&rdfs;Literal"/>
+    
+
+
+    <!-- http://www.w3.org/2000/01/rdf-schema#Resource -->
+
+    <owl:Class rdf:about="&rdfs;Resource"/>
+    
+
+
+    <!-- 
+    ///////////////////////////////////////////////////////////////////////////////////////
+    //
+    // Individuals
+    //
+    ///////////////////////////////////////////////////////////////////////////////////////
+     -->
+
+    
+
+
+    <!-- http://protege.stanford.edu/ontologies/mappings/mappings.rdfs#test -->
+
+    <owl:NamedIndividual rdf:about="&mappings;test">
+        <rdf:type rdf:resource="&mappings;One_to_one_mapping"/>
+    </owl:NamedIndividual>
+</rdf:RDF>
+
+
+
+<!-- Generated by the OWL API (version 3.0.0.1469) http://owlapi.sourceforge.net -->
+

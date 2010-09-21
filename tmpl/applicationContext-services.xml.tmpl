@@ -388,6 +388,24 @@
 		</entry>
 	</util:map>
 
+	<!-- RDF store manager map -->
+	<util:map id="rdfStoreManagerMap" map-class="java.util.HashMap">
+		<entry>
+			<key>
+				<util:constant
+					static-field="org.ncbo.stanford.util.constants.ApplicationConstants.VIRTUOSO" />
+			</key>
+			<ref local="rdfStoreVirtuosoManager" />
+		</entry>
+		<entry>
+			<key>
+				<util:constant
+					static-field="org.ncbo.stanford.util.constants.ApplicationConstants.MYSQL" />
+			</key>
+			<ref local="rdfStoreMySqlManager" />
+		</entry>
+	</util:map>
+
 	<!-- Managers -->
 	<bean id="abstractOntologyManagerLexGrid"
 		class="org.ncbo.stanford.manager.AbstractOntologyManagerLexGrid"
@@ -567,7 +585,29 @@
 			<ref bean="notesJdbcPassword" />
 		</property>
 	</bean>
+	
+	<bean id="AbstractRDFStoreManager"
+		class="org.ncbo.stanford.manager.rdfstore.AbstractRDFStoreManager"
+		abstract="true">
+	</bean>
+	
+	<bean id="rdfStoreMySqlManager"
+		class="org.ncbo.stanford.manager.rdfstore.impl.RDFStoreManagerMySqlImpl"
+		parent="AbstractRDFStoreManager">
+	</bean>
 
+	<bean id="rdfStoreVirtuosoManager"
+		class="org.ncbo.stanford.manager.rdfstore.impl.RDFStoreManagerVirtuosoImpl"
+		parent="AbstractRDFStoreManager">
+	</bean>
+	
+	<bean id="CustomNcboMappingDAO"
+		class="org.ncbo.stanford.domain.custom.dao.CustomNcboMappingDAO">
+		<property name="rdfStoreManagerMap">
+			<ref bean="rdfStoreManagerMap" />
+		</property>
+	</bean>
+	
 	<bean id="ontologyCategoryMetadataManager"
 		class="org.ncbo.stanford.manager.metadata.impl.OntologyCategoryMetadataManagerImpl"
 		parent="abstractOntologyManagerProtege">
@@ -620,7 +660,8 @@
 			<ref bean="userMetadataManager" />
 		</property>
 	</bean>
-	<!--Adding For SubscriptionsService-->
+	
+	<!-- Subscriptions Services -->
 	<bean id="subscriptionsService" class="org.ncbo.stanford.service.subscriptions.impl.SubscriptionsServiceImpl">
 		<property name="ncboUserSubscriptionsDAO">
 			<ref bean="NcboUserSubscriptionsDAO" />
@@ -639,7 +680,8 @@
 		</property>  
 		
 	</bean>
-	<!-- Adding For UserMetadata -->
+	
+	<!-- User Metadata -->
 	<bean id="userMetadataManager"
 		class="org.ncbo.stanford.manager.metadata.impl.UserMetadataManagerImpl"
 		parent="abstractOntologyManagerProtege">

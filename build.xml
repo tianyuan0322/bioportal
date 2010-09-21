@@ -130,6 +130,15 @@
 				<filter token="uipathnotesontology" value="${ui.path.notes.ontology}" />
 				<filter token="uipathnotesindividual" value="${ui.path.notes.individual}" />
 				<filter token="uipathnotesproperty" value="${ui.path.notes.property}" />
+				<filter token="rdfstoretype" value="${rdf.store.type}" />
+				<filter token="rdfvirtuosoconnectionstring" value="${rdf.virtuoso.connection.string}" />
+				<filter token="rdfvirtuosouser" value="${rdf.virtuoso.user}" />
+				<filter token="rdfvirtuosopassword" value="${rdf.virtuoso.password}" />
+				<filter token="rdfmysqlstoreservername" value="${rdf.mysql.store.server.name}" />
+				<filter token="rdfmysqlstoreportnumber" value="${rdf.mysql.store.port.number}" />
+				<filter token="rdfmysqlstoredatabasename" value="${rdf.mysql.store.database.name}" />
+				<filter token="rdfmysqlstoreuser" value="${rdf.mysql.store.user}" />
+				<filter token="rdfmysqlstorepassword" value="${rdf.mysql.store.password}" />
 			</filterset>
 		</copy>
 		
