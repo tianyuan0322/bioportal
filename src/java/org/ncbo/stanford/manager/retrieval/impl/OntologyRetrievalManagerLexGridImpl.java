@@ -1,5 +1,6 @@
 package org.ncbo.stanford.manager.retrieval.impl;
 
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Enumeration;
@@ -33,7 +34,6 @@ import org.LexGrid.LexBIG.Utility.Iterators.ResolvedConceptReferencesIterator;
 import org.LexGrid.codingSchemes.CodingScheme;
 import org.LexGrid.commonTypes.EntityDescription;
 import org.LexGrid.commonTypes.Property;
-import org.LexGrid.commonTypes.Source;
 import org.LexGrid.concepts.Comment;
 import org.LexGrid.concepts.Concept;
 import org.LexGrid.concepts.Definition;
@@ -1040,23 +1040,23 @@ public class OntologyRetrievalManagerLexGridImpl extends
 		} else if (entry.getIsAnonymous() == null
 				|| (entry.getIsAnonymous() != null && !entry.getIsAnonymous()
 						.booleanValue())) {
+			HashMap<Object, Object> relationMap = bean.getRelations();
 			// handle synonyms
-			addSynonyms(ontologyBean, entry, bean, addRelations);
+			addSynonyms(relationMap, entry, bean, addRelations);
 			// handle definitions
-			addDefinitions(ontologyBean, entry, bean);
+			addDefinitions(entry, bean);
 			// handle comments
 
 			if (addRelations) {
-				addComments(ontologyBean, entry, bean);
+				addComments(relationMap, entry);
 				// handle concept properties
-				addProperties(ontologyBean, entry, bean);
+				addProperties(relationMap, entry);
 			}
 
 			if (StringUtils.isBlank(bean.getLabel())) {
 				bean.setLabel(getPreferredPresentation(entry));
 			}
-			//We have no label for this concept. We will create a label 
-			//that has the same value as the id
+			//We have no label for this concept. We will create a label that has the same value as the id
 			if (StringUtils.isBlank(bean.getLabel())) {
 				bean.setLabel(bean.getId());
 			}
@@ -1157,36 +1157,6 @@ public class OntologyRetrievalManagerLexGridImpl extends
 		return "";
 	}
 
-	private static void addPropertyToClassBean(OntologyBean ontologyBean, ClassBean classBean, String key, Property prop) {
-		HashMap<Object, Object> relationMap = classBean.getRelations();	
-		addStringToHashMapsArrayList(relationMap, key, prop.getValue().getContent());
-		addSourceToClassBean(ontologyBean, classBean, key, prop);
-		
-	}
-	
-	
-	private static void addSourceToClassBean(OntologyBean ontologyBean, ClassBean classBean, String key, Property prop) {
-		HashMap<Object, Object> relationMap = classBean.getRelations();	
-		String source_key;
-		if (prop.getSource() != null) {
-			for (Source s: prop.getSource()) {
-				String str= s.getContent();
-				if (StringUtils.isNotBlank(str)&& StringUtils.isNotBlank(s.getSubRef())) {
-					str+=":"+ s.getSubRef(); 
-				}
-				if (StringUtils.isNotBlank(str)) {
-					if (ontologyBean.getFormat().equalsIgnoreCase(ApplicationConstants.FORMAT_OBO)) {
-						source_key= "xref_" + key;
-					}
-					else {
-						source_key= "source_" + key;
-					}
-					addStringToHashMapsArrayList(relationMap, source_key, str);
-				}
-				
-			}
-		}
-	}
 	/**
 	 * 
 	 * @param map
@@ -1398,7 +1368,7 @@ public class OntologyRetrievalManagerLexGridImpl extends
 		return srcList;
 	}
 
-	private void addSynonyms(OntologyBean ontologyBean,
+	private void addSynonyms(HashMap<Object, Object> relationMap,
 			Concept entry, ClassBean bean, boolean addRelations) {
 		int count = entry.getPresentationCount();
 
@@ -1419,40 +1389,41 @@ public class OntologyRetrievalManagerLexGridImpl extends
 				if (addRelations) {
 					if (StringUtils.isNotBlank(p.getDegreeOfFidelity())) {
 						String key = p.getDegreeOfFidelity() + " SYNONYM";
-						addPropertyToClassBean(ontologyBean, bean, key, p);		
+						addStringToHashMapsArrayList(relationMap, key, synVal);
 					} else if (StringUtils.isNotBlank(p
 							.getRepresentationalForm())) {
 						String key = "SYNONYM " + p.getRepresentationalForm();
-						addPropertyToClassBean(ontologyBean, bean, key, p);		
+						addStringToHashMapsArrayList(relationMap, key, synVal);
 					} else {
-						addPropertyToClassBean(ontologyBean, bean, "SYNONYM", p);		
+						addStringToHashMapsArrayList(relationMap, "SYNONYM",
+								synVal);
 					}
 				}
 			}
 		}
 	}
 
-	private void addComments(OntologyBean ontologyBean,  Concept entry, ClassBean classBean) {
+	private void addComments(HashMap<Object, Object> relationMap, Concept entry) {
 		int count = entry.getCommentCount();
 
 		for (int i = 0; i < count; i++) {
 			Comment c = entry.getComment(i);
-			addPropertyToClassBean(ontologyBean, classBean, "Comment", c);			
+			addStringToHashMapsArrayList(relationMap, "Comment", c.getValue()
+					.getContent());
 		}
 	}
 
-	private void addDefinitions(OntologyBean ontologyBean, Concept entry, ClassBean bean) {
+	private void addDefinitions(Concept entry, ClassBean bean) {
 		int count = entry.getDefinitionCount();
 
 		for (int i = 0; i < count; i++) {
 			Definition d = entry.getDefinition(i);
-			bean.addDefinition(d.getValue().getContent());	
-			addSourceToClassBean(ontologyBean, bean, "definition", d);
+			bean.addDefinition(d.getValue().getContent());
 		}
 	}
 
-	private void addProperties(OntologyBean ontologyBean,  
-			Concept entry, ClassBean classBean) {
+	private void addProperties(HashMap<Object, Object> relationMap,
+			Concept entry) {
 		int count = entry.getPropertyCount();
 
 		for (int i = 0; i < count; i++) {
@@ -1460,7 +1431,8 @@ public class OntologyRetrievalManagerLexGridImpl extends
 			String key = prop.getPropertyName();
 
 			if (StringUtils.isNotBlank(key)) {
-				addPropertyToClassBean(ontologyBean, classBean, key, prop);
+				addStringToHashMapsArrayList(relationMap, key, prop.getValue()
+						.getContent());
 			}
 		}
 	}

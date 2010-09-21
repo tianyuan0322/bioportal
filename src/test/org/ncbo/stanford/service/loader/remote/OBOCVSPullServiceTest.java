@@ -11,6 +11,6 @@ public class OBOCVSPullServiceTest extends AbstractBioPortalTest {
 
 	@Test
 	public void testDoCVSPull() {
-		service.doOntologyPull();
+		service.doCVSPull();
 	}
 }

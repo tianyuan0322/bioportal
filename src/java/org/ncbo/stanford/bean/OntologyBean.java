@@ -13,7 +13,6 @@ import org.ncbo.stanford.domain.generated.NcboLStatus;
 import org.ncbo.stanford.domain.generated.NcboOntologyFile;
 import org.ncbo.stanford.domain.generated.NcboOntologyLoadQueue;
 import org.ncbo.stanford.enumeration.StatusEnum;
-import org.ncbo.stanford.util.MessageUtils;
 import org.ncbo.stanford.util.constants.ApplicationConstants;
 
 public class OntologyBean {
@@ -51,7 +50,6 @@ public class OntologyBean {
 	private String codingScheme;
 	private String targetTerminologies;
 	private Byte isFoundry;
-	private Byte isMetadataOnly;	
 	private String synonymSlot;
 	private String preferredNameSlot;
 	private String documentationSlot;
@@ -126,7 +124,7 @@ public class OntologyBean {
 	 * "5"(notapplicable) for remote.
 	 */
 	public Integer getDefaultStatus() {
-		if (this.isMetadataOnly()) {
+		if (this.isRemote()) {
 			return StatusEnum.STATUS_NOTAPPLICABLE.getStatus();
 		} else {
 			return StatusEnum.STATUS_WAITING.getStatus();
@@ -181,21 +179,19 @@ public class OntologyBean {
 				+ ", Version Status: " + this.getVersionStatus()
 				+ ", Display Label: " + this.getDisplayLabel()
 				+ ", Description: " + this.getDescription()
-				+ ", Abbreviation: " + this.getAbbreviation() 
-				+ ", Format: " + this.getFormat() 
-				+ ", Download Location: " + this.getDownloadLocation()
-				+ ", Contact Name: " + this.getContactName()
-				+ ", Contact Email: " + this.getContactEmail() 
-				+ ", Foundry: "	+ this.getIsFoundry() 
-				+ ", IsMetadataOnly: "	+ this.getIsMetadataOnly() 
-				+ ", Coding Scheme: "+ this.getCodingScheme() 
-				+ ", Target Terminologies: "+ this.getTargetTerminologies() 
-				+ ", Synonym Slot: "+ this.getSynonymSlot() 
-				+ ", Preferred Name Slot: "	+ this.getPreferredNameSlot() 
-				+ ", View Definition: " + viewDef
-				+ ", View Definition Language: "+ this.getViewDefinitionLanguage()
+				+ ", Abbreviation: " + this.getAbbreviation() + ", Format: "
+				+ this.getFormat() + ", Contact Name: " + this.getContactName()
+				+ ", Contact Email: " + this.getContactEmail() + ", Foundry: "
+				+ this.getIsFoundry() + " Coding Scheme: "
+				+ this.getCodingScheme() + ", Target Terminologies: "
+				+ this.getTargetTerminologies() + ", Synonym Slot: "
+				+ this.getSynonymSlot() + ", Preferred Name Slot: "
+				+ this.getPreferredNameSlot() + ", View Definition: " + viewDef
+				+ ", View Definition Language: "
+				+ this.getViewDefinitionLanguage()
 				+ ", View Generation Engine: " + this.getViewGenerationEngine()
-				+ ", View on Ontology Versions: "+ this.getViewOnOntologyVersionId() + "}";
+				+ ", View on Ontology Versions: "
+				+ this.getViewOnOntologyVersionId() + "}";
 	}
 
 	/**
@@ -521,14 +517,6 @@ public class OntologyBean {
 		this.isFoundry = isFoundry;
 	}
 
-	public Byte getIsMetadataOnly() {
-		return isMetadataOnly;
-	}
-
-	public void setIsMetadataOnly(Byte isMetadataOnly) {
-		this.isMetadataOnly = isMetadataOnly;
-	}
-
 	/**
 	 * @return the dateCreated
 	 */
@@ -716,24 +704,12 @@ public class OntologyBean {
 		this.oboFoundryId = oboFoundryId;
 	}
 
-	public boolean isMetadataOnly() {
-		if (this.isRemote() && this.getVersionNumber().equalsIgnoreCase(MessageUtils
-				.getMessage("remote.ontology.version"))) {
-			return true;
-		} else if  (this.getIsMetadataOnly()!= null && this.getIsMetadataOnly().equals(ApplicationConstants.TRUE)) {
-			return true;		
-		}
-		else {
-			return false;
-		}
-	}	
-	
 	/**
 	 * Populate default status in the bean Status is "1"(waiting) for local
 	 * upload, "5"(notapplicable) for remote.
 	 */
 	public void populateDefaultStatus(NcboLStatus status) {
-		if (this.isMetadataOnly()) {
+		if (this.isRemote()) {
 			status.setId(StatusEnum.STATUS_NOTAPPLICABLE.getStatus());
 		} else {
 			status.setId(StatusEnum.STATUS_WAITING.getStatus());

@@ -112,7 +112,7 @@ public class OntologiesRestlet extends AbstractBaseRestlet {
 		try {
 			// no file handler for remote case since there is no file to upload.
 			FilePathHandler filePathHandler= null;
-			if (ontologyBean.isMetadataOnly()) {
+			if (ontologyBean.isRemote()) {
 				filePathHandler= null;
 			} else if (StringUtils.isNotBlank(ontologyBean.getDownloadLocation())){
 				filePathHandler = new URIUploadFilePathHandlerImpl(

@@ -399,7 +399,7 @@
 
 	<bean id="abstractOntologyManagerProtege"
 		class="org.ncbo.stanford.manager.AbstractOntologyManagerProtege"
-		abstract="true">
+		abstract="true">		
 		<property name="protegeServerEnabled">
 			<ref bean="protegeServerEnabled"/>
 		</property>
@@ -510,9 +510,6 @@
 	<bean id="ontologyLoadManagerProtege"
 		class="org.ncbo.stanford.manager.load.impl.OntologyLoadManagerProtegeImpl"
 		parent="abstractOntologyManagerProtege">
-		<property name="ontologyMetadataManager">
-			<ref bean="ontologyMetadataManager" />
-		</property>
 	</bean>
 
 	<bean id="ontologyDiffManagerProtege"
@@ -1183,7 +1180,7 @@
 	<bean id="oboPullSchedulerJobDetailBean"
 		class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
 		<property name="targetObject" ref="oboCVSPullService" />
-		<property name="targetMethod" value="doOntologyPull" />
+		<property name="targetMethod" value="doCVSPull" />
 		<property name="concurrent" value="false" />
 	</bean>
 

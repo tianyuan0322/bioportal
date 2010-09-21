@@ -8,15 +8,12 @@ import java.util.Calendar;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import javax.xml.parsers.DocumentBuilderFactory;
 
 import org.apache.commons.collections.ListUtils;
-import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.ncbo.stanford.bean.ContactTypeBean;
@@ -79,93 +76,15 @@ public class OBOCVSPullServiceImpl implements OBOCVSPullService {
 	 * Used to the identify the action to be performed on an ontology
 	 */
 	private enum ActionEnum {
-		NO_ACTION, CREATE_ACTION, CREATE_METADATA_ONLY_ACTION, UPDATE_ACTION
+		NO_ACTION, CREATE_LOCAL_ACTION, CREATE_REMOTE_ACTION, UPDATE_ACTION
 	}
 
 	/**
 	 * Performs the pull of ontologies from OBO Sourceforge CVS
 	 */
 	@Transactional(propagation = Propagation.NEVER)
-	public void doOntologyPull() {
+	public void doCVSPull() {
 		try {
-			Set<String> processed_oboFoundryIds = doCVSPull();
-			// Set<String> processed_oboFoundryId_set= new HashSet<String>();
-			doRemoteOntologyPull(processed_oboFoundryIds);
-			if (log.isInfoEnabled()) {
-				log.info("**** Ontology Pull completed successfully *****");
-			}
-		} catch (Exception e) {
-			log.error(e);
-			e.printStackTrace();
-		}
-	}
-
-	private void doRemoteOntologyPull(Set<String> processed_oboFoundryIds) {
-		try {
-			List<OntologyBean> ont_list = ontologyService
-					.findLatestOntologyVersions();
-			if (log.isInfoEnabled()) {
-				log.info("**** Started Remote Ontology Pull *****");
-			}
-			for (OntologyBean ont : ont_list) {
-				if ((!processed_oboFoundryIds.contains(ont.getOboFoundryId()))
-						&& LoaderUtils.isValidDownloadLocation(ont
-								.getDownloadLocation())) {
-					// Process only the ontologies that are not marked manual
-					if (ont.getIsManual() != null
-							&& ont.getIsManual().byteValue() == ApplicationConstants.FALSE) {
-
-						if (LoaderUtils.hasDownloadLocationBeenUpdated(ont
-								.getDownloadLocation(), ont)) {
-							processCreateNewVersion(ont);
-
-						} else {
-							log.debug("[*** NO_ACTION: " + ont + " ***]");
-						}
-					}
-				}
-
-			}
-		} catch (Exception ex) {
-			log.error(ex);
-			ex.printStackTrace();
-		}
-		if (log.isInfoEnabled()) {
-			log.info("**** End Remote Ontology Pull *****");
-		}
-
-	}
-
-	public void processCreateNewVersion(OntologyBean ont) {
-		try {
-			Date now = Calendar.getInstance().getTime();
-			ont.setVersionNumber("unknown");
-			ont.setDateReleased(now);
-			// The file is not in the local cvs/svn repository, but
-			// can be downloaded using the downloadLocation
-			String downloadLocation = ont.getDownloadLocation();
-			FilePathHandler filePathHandler = new URIUploadFilePathHandlerImpl(
-					CompressedFileHandlerFactory.createFileHandler(ont
-							.getFormat()), new URI(downloadLocation));
-			log.debug("[*** CREATE new version: " + ont + " ***]");
-			// ontologyService.createOntologyOrView(ont, filePathHandler);
-		} catch (Exception e) {
-			log.error(e);
-			e.printStackTrace();
-		}
-
-	}
-
-	/**
-	 * Performs the pull of ontologies from OBO Sourceforge CVS
-	 */
-	private Set<String> doCVSPull() {
-		Set<String> processed_OboFoundryId_set = new HashSet<String>();
-
-		try {
-			if (log.isInfoEnabled()) {
-				log.info("**** Starting Repository Pull *****");
-			}
 			List<OBORepositoryInfoHolder> repos = parseRepositoryConfigFile();
 
 			HashMap<String, CVSFile> updateFiles = null;
@@ -188,27 +107,23 @@ public class OBOCVSPullServiceImpl implements OBOCVSPullService {
 					updateFiles = cvsUtils.getAllCVSEntries();
 				}
 				// process repository data.
-				Set<String> processed_set = processRecords(repo, updateFiles);
-				processed_OboFoundryId_set.addAll(processed_set);
+				processRecords(repo, updateFiles);
 			}
 
 			if (log.isInfoEnabled()) {
-				log.info("**** End of repository pull *****");
+				log.info("**** OBO Pull completed successfully *****");
 			}
 		} catch (Exception e) {
 			log.error(e);
 			e.printStackTrace();
 		}
-		return processed_OboFoundryId_set;
-
 	}
 
-	private Set<String> processRecords(OBORepositoryInfoHolder repo,
+	private void processRecords(OBORepositoryInfoHolder repo,
 			HashMap<String, CVSFile> updateFiles) throws IOException {
 		OntologyDescriptorParser odp = new OntologyDescriptorParser(repo
 				.getDescriptorlocation());
 		List<MetadataFileBean> ontologyList = odp.parseOntologyFile();
-		Set<String> processed_OboFoundryId_set = new HashSet<String>();
 
 		for (MetadataFileBean mfb : ontologyList) {
 			try {
@@ -222,8 +137,8 @@ public class OBOCVSPullServiceImpl implements OBOCVSPullService {
 				}
 
 				CVSFile cf = null;
-				String filename = OntologyDescriptorParser
-						.getFileName(getDownloadLocation(mfb));
+				String filename = OntologyDescriptorParser.getFileName(mfb
+						.getDownload());
 				boolean isEmptyFilename = StringHelper
 						.isNullOrNullString(filename);
 
@@ -235,13 +150,9 @@ public class OBOCVSPullServiceImpl implements OBOCVSPullService {
 						cf, repo.getHostname());
 				ActionEnum action = ontologyAction.getAction();
 				OntologyBean ont = ontologyAction.getOntotlogyBean();
-				if (ont != null
-						&& StringUtils.isNotEmpty(ont.getOboFoundryId())) {
-					processed_OboFoundryId_set.add(ont.getOboFoundryId());
-				}
 
 				switch (action) {
-				case CREATE_ACTION:
+				case CREATE_LOCAL_ACTION:
 					if (isEmptyFilename) {
 						throw new InvalidDataException(
 								"No filename is specified in the metadata descriptor file for ontology ["
@@ -266,7 +177,7 @@ public class OBOCVSPullServiceImpl implements OBOCVSPullService {
 						// The file is not in the local cvs/svn repository, but
 						// can be downloaded using the downloadLocation
 						String downloadLocation = ont.getDownloadLocation();
-
+						
 						filePathHandler = new URIUploadFilePathHandlerImpl(
 								CompressedFileHandlerFactory
 										.createFileHandler(format), new URI(
@@ -275,7 +186,7 @@ public class OBOCVSPullServiceImpl implements OBOCVSPullService {
 
 					ontologyService.createOntologyOrView(ont, filePathHandler);
 					break;
-				case CREATE_METADATA_ONLY_ACTION:
+				case CREATE_REMOTE_ACTION:
 					ontologyService.createOntologyOrView(ont, null);
 					break;
 				case UPDATE_ACTION:
@@ -283,14 +194,11 @@ public class OBOCVSPullServiceImpl implements OBOCVSPullService {
 					ontologyService.updateOntologyOrView(ont);
 					break;
 				}
-			} catch (InvalidOntologyFormatException ex) {
-				log.error(ex);
 			} catch (Exception e) {
 				log.error(e);
 				e.printStackTrace();
 			}
 		}
-		return processed_OboFoundryId_set;
 	}
 
 	/**
@@ -308,9 +216,9 @@ public class OBOCVSPullServiceImpl implements OBOCVSPullService {
 
 		OntologyBean ont = ontologyService
 				.findLatestOntologyVersionByOboFoundryId(oboFoundryId);
-		String downloadUrl = getDownloadLocation(mfb);
+		String downloadUrl = mfb.getDownload();
 		List<Integer> newCategoryIds = findCategoryIdsByOBONames(downloadUrl);
-		byte isMetadataOnly = isMetadataOnly(downloadUrl, cvsHostname);
+		byte isRemote = isRemote(downloadUrl, cvsHostname);
 
 		// is any action required?
 		// ____a. this is not cellular_component or molecular_function ontology
@@ -337,54 +245,45 @@ public class OBOCVSPullServiceImpl implements OBOCVSPullService {
 						.equalsIgnoreCase(MOLECULAR_FUNCTION_OBO_FOUNDRY_ID)) {
 			if (ont == null) {
 				// new ontology
-				action = (isMetadataOnly == ApplicationConstants.TRUE) ? ActionEnum.CREATE_METADATA_ONLY_ACTION
-						: ActionEnum.CREATE_ACTION;
+				action = (isRemote == ApplicationConstants.TRUE) ? ActionEnum.CREATE_REMOTE_ACTION
+						: ActionEnum.CREATE_LOCAL_ACTION;
 				ont = new OntologyBean(false);
 			} else if (ont.getIsManual() != null
 					&& ont.getIsManual().byteValue() == ApplicationConstants.FALSE) {
-				if (isMetadataOnly == ApplicationConstants.TRUE) {
-					if (hasVersions(ont) && ont.isMetadataOnly()) {
-						// existing ontology that had been and remains metadata
-						// only
+				if (isRemote == ApplicationConstants.TRUE) {
+					if (hasVersions(ont) && ont.isRemote()) {
+						// existing ontology that had been and remains remote
 						action = ActionEnum.UPDATE_ACTION;
 					} else {
 						// existing ontology that had been local but is now
 						// remote or an ontology with no versions
-						action = ActionEnum.CREATE_METADATA_ONLY_ACTION;
+						action = ActionEnum.CREATE_REMOTE_ACTION;
 					}
 				} else if (hasVersions(ont) && cf != null
 						&& cf.getVersion().equals(ont.getVersionNumber())) {
-					// existing ontology; no new version found
-					// check if categories and downloadLocation has been
+					// existing ontology local; no new version
+					// no new version found; check if categories have been
 					// updated
 					List<Integer> oldCategoryIds = ont.getCategoryIds();
 					boolean categoriesUpdated = isCategoryUpdated(
 							oldCategoryIds, newCategoryIds);
+
+					// TODO What about groups??? Do we need to check that here
+					// also?
+
 					if (categoriesUpdated) {
 						action = ActionEnum.UPDATE_ACTION;
 					}
-					// Check if the metadata needs to be updated
-					if (needsUpdateAction(ont, downloadUrl, isMetadataOnly)) {
-						action = ActionEnum.UPDATE_ACTION;
-
-					}
-
 				} else if (cf != null) {
 					// existing ontology local; new version
-					action = ActionEnum.CREATE_ACTION;
+					action = ActionEnum.CREATE_LOCAL_ACTION;
 				} else if (LoaderUtils.hasDownloadLocationBeenUpdated(
 						downloadUrl, ont)) {
-					action = ActionEnum.CREATE_ACTION;
+					action = ActionEnum.CREATE_LOCAL_ACTION;
 				}
-				if (needsUpdateAction(ont, downloadUrl, isMetadataOnly)) {
-					// Check if the metadata needs to be updated
-					action = ActionEnum.UPDATE_ACTION;
-				}
-
 			}
 
-			populateOntologyBean(mfb, cf, action, ont, newCategoryIds,
-					isMetadataOnly);
+			populateOntologyBean(mfb, cf, action, ont, newCategoryIds, isRemote);
 		}
 
 		OntologyAction ontologyAction = new OntologyAction(action, ont);
@@ -400,21 +299,6 @@ public class OBOCVSPullServiceImpl implements OBOCVSPullService {
 		return ontologyAction;
 	}
 
-	private String getDownloadLocation(MetadataFileBean mfb) {
-		String downloadLocation = mfb.getDownload();
-		if (StringHelper.isNullOrNullString(downloadLocation)) {
-			downloadLocation = mfb.getSource();
-			if (downloadLocation.contains("|")) {
-				int pipeIndex = downloadLocation.indexOf("|");
-				if (pipeIndex + 1 < downloadLocation.length()) {
-					downloadLocation = downloadLocation
-							.substring(pipeIndex + 1);
-				}
-			}
-		}
-		return downloadLocation;
-	}
-
 	private boolean hasVersions(OntologyBean ob) {
 		return ob.getId() != OntologyMetadataUtils.INVALID_ID;
 	}
@@ -427,17 +311,18 @@ public class OBOCVSPullServiceImpl implements OBOCVSPullService {
 	 * @param action
 	 * @param ont
 	 * @param newCategoryIds
-	 * @param isMetadataOnly
+	 * @param isRemote
 	 * @throws InvalidDataException
 	 */
 	private void populateOntologyBean(MetadataFileBean mfb, CVSFile cf,
 			ActionEnum action, OntologyBean ont, List<Integer> newCategoryIds,
-			byte isMetadataOnly) throws InvalidDataException {
+			byte isRemote) throws InvalidDataException {
 		Date now = Calendar.getInstance().getTime();
-		String downloadLocation = getDownloadLocation(mfb);
+		String downloadUrl = mfb.getDownload();
+		String sourceUrl = mfb.getSource();
 
 		if (action != ActionEnum.NO_ACTION) {
-			if (action == ActionEnum.CREATE_METADATA_ONLY_ACTION) {
+			if (isRemote == ApplicationConstants.TRUE) {
 				ont.setVersionNumber(MessageUtils
 						.getMessage("remote.ontology.version"));
 				ont.setDateReleased(now);
@@ -457,8 +342,8 @@ public class OBOCVSPullServiceImpl implements OBOCVSPullService {
 					ont.setVersionNumber("unknown");
 					ont.setDateReleased(now);
 				}
-				ont.addFilename(OntologyDescriptorParser
-						.getFileName(downloadLocation));
+				ont.addFilename(OntologyDescriptorParser.getFileName(mfb
+						.getDownload()));
 				ont.setCategoryIds(newCategoryIds);
 				// TODO: What does this part of the method do??? (Csongor)
 				// We need to deal with information about groups, too
@@ -474,12 +359,14 @@ public class OBOCVSPullServiceImpl implements OBOCVSPullService {
 			}
 
 			UserBean userBean = linkOntologyUser(mfb.getContact(), mfb.getId());
-			if (isMetadataOnly == ApplicationConstants.FALSE) {
-				ont.setDownloadLocation(downloadLocation);
+			if (!StringHelper.isNullOrNullString(downloadUrl)) {
+				ont.setDownloadLocation(downloadUrl);
+			} else if (!StringHelper.isNullOrNullString(sourceUrl)) {
+				ont.setDownloadLocation(sourceUrl);
 			}
 			ont.setUserId(userBean.getId());
 			ont.setVersionStatus(getStatus(mfb.getStatus()));
-			ont.setIsRemote(ApplicationConstants.TRUE);
+			ont.setIsRemote(new Byte(isRemote));
 			ont.setIsReviewed(ApplicationConstants.TRUE);
 			ont.setOboFoundryId(mfb.getId());
 			ont.setDisplayLabel(mfb.getTitle());
@@ -497,7 +384,6 @@ public class OBOCVSPullServiceImpl implements OBOCVSPullService {
 			ont.setPublication(OntologyDescriptorParser.getPublication(mfb
 					.getPublication()));
 			ont.setIsFoundry(new Byte(isFoundry(mfb.getFoundry())));
-			ont.setIsMetadataOnly(isMetadataOnly);
 			ont.setIsManual(ApplicationConstants.FALSE);
 		}
 	}
@@ -541,45 +427,32 @@ public class OBOCVSPullServiceImpl implements OBOCVSPullService {
 	 * @param downloadUrl
 	 * @return
 	 */
-	private byte isMetadataOnly(String downloadUrl, String cvsHostname) {
-		byte isMetadataOnly = ApplicationConstants.TRUE;
+	private byte isRemote(String downloadUrl, String cvsHostname) {
+		byte isRemote = ApplicationConstants.TRUE;
 
 		if (!StringHelper.isNullOrNullString(downloadUrl)
 				&& LoaderUtils.isValidDownloadLocation(downloadUrl)) {
-			isMetadataOnly = ApplicationConstants.FALSE;
+			isRemote = ApplicationConstants.FALSE;
 		}
 
-		return isMetadataOnly;
+		return isRemote;
 	}
 
 	/**
-	 * Determines whether the ontology's metadata needs to be updated
+	 * Determines whether the ontology is in CVS
 	 * 
 	 * @param downloadUrl
-	 * @param isMetadataOnly
 	 * @return
 	 */
-	private boolean needsUpdateAction(OntologyBean ont, String downloadUrl,
-			byte isMetadataOnly) {
-		boolean needsUpdate = false;
-		// Check if the download location has changed
-		if (StringUtils.isNotBlank(downloadUrl)) {
-			if (!downloadUrl.equalsIgnoreCase(ont.getDownloadLocation())) {
-				needsUpdate = true;
-			}
+	private byte isInCVS(String downloadUrl, String cvsHostname) {
+		byte isInCVS = ApplicationConstants.FALSE;
+
+		if (!StringHelper.isNullOrNullString(downloadUrl)
+				&& downloadUrl.indexOf(cvsHostname) > -1) {
+			isInCVS = ApplicationConstants.TRUE;
 		}
-		// Check if the ontology has isRemote=0; if so, we need to have it
-		// updated to 1
-		if (ont.getIsRemote() == null
-				|| ont.getIsRemote() == ApplicationConstants.FALSE) {
-			needsUpdate = true;
-		}
-		// Check if the ontology's getMetadataFlag== isMetadataFlag
-		if (ont.getIsMetadataOnly() == null
-				|| ont.getIsMetadataOnly() != isMetadataOnly) {
-			needsUpdate = true;
-		}
-		return needsUpdate;
+
+		return isInCVS;
 	}
 
 	/**

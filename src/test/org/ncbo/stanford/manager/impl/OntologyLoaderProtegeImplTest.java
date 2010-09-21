@@ -235,7 +235,7 @@ public class OntologyLoaderProtegeImplTest extends AbstractBioPortalTest {
 		bean.setFormat(ApplicationConstants.FORMAT_OWL_DL);
 		bean.setDisplayLabel(TEST_PIZZA_DISPLAY_NAME);
 		bean.setUserId(1000);
-		//bean.setVersionNumber("1.0");
+		bean.setVersionNumber("1.0");
 		bean.setStatusId(StatusEnum.STATUS_WAITING.getStatus());
 		bean.setVersionStatus("pre-production");
 		bean.setIsRemote(new Byte("0"));
