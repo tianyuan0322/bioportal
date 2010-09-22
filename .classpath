@@ -140,12 +140,8 @@
 	<classpathentry kind="lib" path="WebRoot/WEB-INF/lib/virtuoso/virt_sesame2.jar"/>
 	<classpathentry kind="lib" path="WebRoot/WEB-INF/lib/openrdf/openrdf-sesame-2.3.2-onejar.jar"/>
 	<classpathentry kind="lib" path="WebRoot/WEB-INF/lib/openrdf/openrdf-alibaba-2.0-beta3.jar"/>
-	<classpathentry kind="lib" path="WebRoot/WEB-INF/lib/virtuoso/virt_sesame2.jar"/>
-	<classpathentry kind="lib" path="WebRoot/WEB-INF/lib/virtuoso/virtjdbc3.jar"/>
-	<classpathentry kind="lib" path="WebRoot/WEB-INF/lib/httpcore-4.0.1.jar"/>
 	<classpathentry kind="lib" path="WebRoot/WEB-INF/lib/javassist.jar"/>
 	<classpathentry kind="lib" path="WebRoot/WEB-INF/lib/httpcore-4.0.1.jar"/>
-	<classpathentry kind="lib" path="WebRoot/WEB-INF/lib/javassist.jar"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry kind="output" path="WebRoot/WEB-INF/classes"/>
 </classpath>
