@@ -4,6 +4,8 @@ import org.castor.mapping.MappingSource;
 import org.ncbo.stanford.bean.mapping.OneToOneMappingBean;
 import org.ncbo.stanford.domain.custom.dao.CustomNcboMappingDAO;
 import org.ncbo.stanford.domain.custom.entity.mapping.OneToOneMapping;
+import org.ncbo.stanford.exception.MappingExistsException;
+import org.ncbo.stanford.exceptions.MappingMissingException;
 import org.openrdf.model.URI;
 
 public class MappingServiceImpl {
@@ -14,31 +16,35 @@ public class MappingServiceImpl {
 			Integer sourceOntologyId, Integer targetOntologyId,
 			Integer sourceOntologyVersion, Integer targetOntologyVersion,
 			Integer submittedBy, String comment, MappingSource mappingSource,
-			String mappingType) {
+			String mappingType) throws MappingExistsException {
 		return mappingDAO.createMapping(source, target, relation,
 				sourceOntologyId, targetOntologyId, sourceOntologyVersion,
 				targetOntologyVersion, submittedBy, comment, mappingSource,
 				mappingType);
 	}
 
-	public OneToOneMappingBean createMapping(OneToOneMappingBean mapping) {
+	public OneToOneMappingBean createMapping(OneToOneMappingBean mapping)
+			throws MappingExistsException {
 		OneToOneMapping newMapping = mappingDAO
 				.createMapping(convertToMappingEntity(mapping));
 		return convertToMappingBean(newMapping);
 	}
 
-	public OneToOneMappingBean getMapping(URI id) {
+	public OneToOneMappingBean getMapping(URI id)
+			throws MappingMissingException {
 		OneToOneMapping retrievedMapping = mappingDAO.getMapping(id);
 		return convertToMappingBean(retrievedMapping);
 	}
 
-	public OneToOneMappingBean updateMapping(URI id, OneToOneMappingBean mapping) {
-		OneToOneMapping updatedMapping = mappingDAO.updateMapping(id, convertToMappingEntity(mapping));
+	public OneToOneMappingBean updateMapping(URI id, OneToOneMappingBean mapping)
+			throws MappingMissingException {
+		OneToOneMapping updatedMapping = mappingDAO.updateMapping(id,
+				convertToMappingEntity(mapping));
 		return convertToMappingBean(updatedMapping);
 	}
 
-	public void deleteMapping(URI id) {
-
+	public void deleteMapping(URI id) throws MappingMissingException {
+		mappingDAO.deleteMapping(id);
 	}
 
 	// Private methods

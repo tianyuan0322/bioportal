@@ -3,6 +3,8 @@ package org.ncbo.stanford.service.mapping;
 import org.castor.mapping.MappingSource;
 import org.ncbo.stanford.bean.mapping.OneToOneMappingBean;
 import org.ncbo.stanford.domain.custom.entity.mapping.OneToOneMapping;
+import org.ncbo.stanford.exception.MappingExistsException;
+import org.ncbo.stanford.exceptions.MappingMissingException;
 import org.openrdf.model.URI;
 
 public interface MappingService {
@@ -27,37 +29,41 @@ public interface MappingService {
 			Integer sourceOntologyId, Integer targetOntologyId,
 			Integer sourceOntologyVersion, Integer targetOntologyVersion,
 			Integer submittedBy, String comment, MappingSource mappingSource,
-			String mappingType);
-	
+			String mappingType) throws MappingExistsException;
+
 	/**
 	 * Create a mapping by passing a mapping bean.
 	 * 
 	 * @param mapping
 	 * @return
 	 */
-	public OneToOneMappingBean createMapping(OneToOneMappingBean mapping);
-	
+	public OneToOneMappingBean createMapping(OneToOneMappingBean mapping)
+			throws MappingExistsException;
+
 	/**
 	 * Get a mapping with the given id.
 	 * 
 	 * @param id
 	 * @return
 	 */
-	public OneToOneMappingBean getMapping(URI id);
-	
+	public OneToOneMappingBean getMapping(URI id)
+			throws MappingMissingException;
+
 	/**
 	 * Update mapping with given id using a mapping bean.
+	 * 
 	 * @param id
 	 * @param mapping
 	 * @return
 	 */
-	public OneToOneMappingBean updateMapping(URI id, OneToOneMappingBean mapping);
-	
+	public OneToOneMappingBean updateMapping(URI id, OneToOneMappingBean mapping)
+			throws MappingMissingException;
+
 	/**
 	 * Delete mapping with given id.
 	 * 
 	 * @param id
 	 */
-	public void deleteMapping(URI id);
-	
+	public void deleteMapping(URI id) throws MappingMissingException;
+
 }

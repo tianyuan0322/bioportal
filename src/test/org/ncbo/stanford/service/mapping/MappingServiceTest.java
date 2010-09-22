@@ -1,32 +1,36 @@
-package org.ncbo.stanford.domain.custom.dao;
+package org.ncbo.stanford.service.mapping;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 import org.junit.Test;
 import org.ncbo.stanford.AbstractBioPortalTest;
-import org.ncbo.stanford.domain.custom.dao.CustomNcboMappingDAO;
+import org.ncbo.stanford.bean.mapping.OneToOneMappingBean;
 import org.ncbo.stanford.domain.custom.entity.mapping.OneToOneMapping;
 import org.ncbo.stanford.exception.MappingExistsException;
 import org.ncbo.stanford.exceptions.MappingMissingException;
+import org.ncbo.stanford.service.mapping.impl.MappingServiceImpl;
 import org.openrdf.model.URI;
 import org.openrdf.model.impl.URIImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 
 /**
- * Test RDF store connectivity.
+ * Test mappings service functionality. Requires a working RDF store.
+ * 
+ * @author palexander
  */
-public class CustomNcboMappingDAOTest extends AbstractBioPortalTest {
+public class MappingServiceTest extends AbstractBioPortalTest {
 
 	private static URI mappingId;
 
 	@Autowired
-	CustomNcboMappingDAO mappingDAO;
+	MappingServiceImpl mappingService;
 
 	@Test
 	public void testCreateMapping() {
 		OneToOneMapping mapping;
 		try {
-			mapping = mappingDAO
+			mapping = mappingService
 					.createMapping(
 							new URIImpl(
 									"http://purl.bioontology.org/ontology/ATMO/ATM_00000"),
@@ -39,7 +43,8 @@ public class CustomNcboMappingDAOTest extends AbstractBioPortalTest {
 
 			mappingId = mapping.getId();
 
-			OneToOneMapping retrievedMapping = mappingDAO.getMapping(mappingId);
+			OneToOneMappingBean retrievedMapping = mappingService
+					.getMapping(mappingId);
 
 			assertEquals(retrievedMapping.getId(), mapping.getId());
 		} catch (MappingExistsException e) {
@@ -53,9 +58,10 @@ public class CustomNcboMappingDAOTest extends AbstractBioPortalTest {
 
 	@Test
 	public void testRetrieveMapping() {
-		OneToOneMapping mapping;
+		OneToOneMappingBean mapping;
 		try {
-			mapping = mappingDAO.getMapping(mappingId);
+			mapping = mappingService.getMapping(mappingId);
+
 			assertTrue(mapping != null);
 			assertTrue(mapping.getId().toString().equalsIgnoreCase(
 					mappingId.toString()));
@@ -73,34 +79,36 @@ public class CustomNcboMappingDAOTest extends AbstractBioPortalTest {
 		Integer targetOntologyVersion = 10001;
 		String comment = "New test comment";
 
-		OneToOneMapping mapping;
-		try {
-			mapping = mappingDAO.updateMapping(mappingId, null,
-					null, null, sourceOntologyId, targetOntologyId,
-					sourceOntologyVersion, targetOntologyVersion, null, comment,
-					null, null);
+		OneToOneMappingBean mapping = new OneToOneMappingBean();
 
-			assertEquals(sourceOntologyId, mapping.getSourceOntologyId());
-			assertEquals(targetOntologyId, mapping.getTargetOntologyId());
-			assertEquals(sourceOntologyVersion, mapping
+		mapping.setSourceOntologyId(sourceOntologyId);
+		mapping.setTargetOntologyId(targetOntologyId);
+		mapping.setCreatedInSourceOntologyVersion(sourceOntologyVersion);
+		mapping.setCreatedInTargetOntologyVersion(targetOntologyVersion);
+		mapping.setComment(comment);
+
+		OneToOneMappingBean updatedMapping;
+		try {
+			updatedMapping = mappingService.updateMapping(
+					mappingId, mapping);
+
+			assertEquals(sourceOntologyId, updatedMapping.getSourceOntologyId());
+			assertEquals(targetOntologyId, updatedMapping.getTargetOntologyId());
+			assertEquals(sourceOntologyVersion, updatedMapping
 					.getCreatedInSourceOntologyVersion());
-			assertEquals(targetOntologyVersion, mapping
+			assertEquals(targetOntologyVersion, updatedMapping
 					.getCreatedInTargetOntologyVersion());
-			assertEquals(comment, mapping.getComment());
+			assertEquals(comment, updatedMapping.getComment());
 		} catch (MappingMissingException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}
 
-	@Test
-	public void deleteMapping() {
-		try {
-			mappingDAO.deleteMapping(mappingId);
-			assertNull(mappingDAO.getMapping(mappingId));
-		} catch (MappingMissingException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+	@Test(expected=MappingMissingException.class)
+	public void deleteMapping() throws MappingMissingException {
+		mappingService.deleteMapping(mappingId);
+		mappingService.getMapping(mappingId);
 	}
+
 }

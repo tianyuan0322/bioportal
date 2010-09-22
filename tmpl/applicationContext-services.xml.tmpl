@@ -601,10 +601,17 @@
 		parent="AbstractRDFStoreManager">
 	</bean>
 	
-	<bean id="CustomNcboMappingDAO"
+	<bean id="customNcboMappingDAO"
 		class="org.ncbo.stanford.domain.custom.dao.CustomNcboMappingDAO">
 		<property name="rdfStoreManagerMap">
 			<ref bean="rdfStoreManagerMap" />
+		</property>
+	</bean>
+	
+	<bean id="mappingService"
+		class="org.ncbo.stanford.service.mapping.impl.MappingServiceImpl">
+		<property name="mappingDAO">
+			<ref bean="customNcboMappingDAO" />
 		</property>
 	</bean>
 	

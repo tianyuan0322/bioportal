@@ -5,6 +5,8 @@ import java.util.Map;
 
 import org.castor.mapping.MappingSource;
 import org.ncbo.stanford.domain.custom.entity.mapping.OneToOneMapping;
+import org.ncbo.stanford.exception.MappingExistsException;
+import org.ncbo.stanford.exceptions.MappingMissingException;
 import org.ncbo.stanford.manager.rdfstore.RDFStoreManager;
 import org.ncbo.stanford.util.MessageUtils;
 import org.ncbo.stanford.util.constants.ApplicationConstants;
@@ -24,7 +26,7 @@ public class CustomNcboMappingDAO {
 			Integer sourceOntologyId, Integer targetOntologyId,
 			Integer sourceOntologyVersion, Integer targetOntologyVersion,
 			Integer submittedBy, String comment, MappingSource mappingSource,
-			String mappingType) {
+			String mappingType) throws MappingExistsException {
 
 		OneToOneMapping mapping = new OneToOneMapping();
 
@@ -44,15 +46,19 @@ public class CustomNcboMappingDAO {
 		mapping.setComment(comment);
 
 		createMapping(mapping);
-		
+
 		return mapping;
 	}
-	
-	public OneToOneMapping createMapping(OneToOneMapping newMapping) {
+
+	public OneToOneMapping createMapping(OneToOneMapping newMapping) throws MappingExistsException {
 		ObjectConnection con = getRdfStoreManager().getObjectConnection();
-		
+
 		OneToOneMapping mapping = new OneToOneMapping();
 		try {
+			if (hasMapping(newMapping.getId(), con)) {
+				throw new MappingExistsException();
+			}
+
 			con.addObject(newMapping.getId(), newMapping);
 			mapping = con.getObject(OneToOneMapping.class, newMapping.getId());
 		} catch (RepositoryException e) {
@@ -66,20 +72,16 @@ public class CustomNcboMappingDAO {
 		return mapping;
 	}
 
-
-	public OneToOneMapping getMapping(URI id) {
+	public OneToOneMapping getMapping(URI id) throws MappingMissingException {
 		ObjectConnection con = getRdfStoreManager().getObjectConnection();
 
 		// Attempt mapping retrieval, return null if failure
 		OneToOneMapping mapping = null;
 		try {
-			if (con.hasStatement(id, ApplicationConstants.RDF_TYPE_URI,
-					ApplicationConstants.MAPPING_ONE_TO_ONE_URI,
-					ApplicationConstants.MAPPING_CONTEXT_URI)) {
+			if (hasMapping(id, con)) {
 				mapping = con.getObject(OneToOneMapping.class, id);
 			} else {
-				// TODO: Throw an appropriate exception here.
-				return null;
+				throw new MappingMissingException();
 			}
 		} catch (RepositoryException e) {
 			// TODO Auto-generated catch block
@@ -98,10 +100,14 @@ public class CustomNcboMappingDAO {
 			URI relation, Integer sourceOntologyId, Integer targetOntologyId,
 			Integer sourceOntologyVersion, Integer targetOntologyVersion,
 			Integer submittedBy, String comment, MappingSource mappingSource,
-			String mappingType) {
+			String mappingType) throws MappingMissingException {
 		ObjectConnection con = getRdfStoreManager().getObjectConnection();
 
 		try {
+			if (!hasMapping(id, con)) {
+				throw new MappingMissingException();
+			}
+
 			OneToOneMapping mapping = con.getObject(OneToOneMapping.class, id);
 
 			deleteMapping(id);
@@ -138,8 +144,9 @@ public class CustomNcboMappingDAO {
 
 		return null;
 	}
-	
-	public OneToOneMapping updateMapping(URI id, OneToOneMapping mapping) {
+
+	public OneToOneMapping updateMapping(URI id, OneToOneMapping mapping)
+			throws MappingMissingException {
 		ObjectConnection con = getRdfStoreManager().getObjectConnection();
 
 		deleteMapping(id);
@@ -147,17 +154,17 @@ public class CustomNcboMappingDAO {
 		try {
 			// Save the new mapping
 			con.addObject(id, mapping);
-			
+
 			return mapping;
 		} catch (RepositoryException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		
+
 		return null;
 	}
 
-	public void deleteMapping(URI id) {
+	public void deleteMapping(URI id) throws MappingMissingException {
 		ObjectConnection con = getRdfStoreManager().getObjectConnection();
 		try {
 			/**
@@ -182,6 +189,11 @@ public class CustomNcboMappingDAO {
 
 			// Alternative method for removing mapping
 			// Get all triples with subject matching the id for this mapping
+
+			if (!hasMapping(id, con)) {
+				throw new MappingMissingException();
+			}
+
 			RepositoryResult<Statement> results = con.getStatements(id, null,
 					null, false, new URIImpl(
 							ApplicationConstants.MAPPING_CONTEXT));
@@ -194,6 +206,26 @@ public class CustomNcboMappingDAO {
 			e.printStackTrace();
 		}
 
+	}
+
+	/**
+	 * Checks the repository for a mapping using provided id.
+	 * 
+	 * @param id
+	 * @param con
+	 * @return
+	 */
+	private Boolean hasMapping(URI id, ObjectConnection con) {
+		try {
+			return con.hasStatement(id, ApplicationConstants.RDF_TYPE_URI,
+					ApplicationConstants.MAPPING_ONE_TO_ONE_URI,
+					ApplicationConstants.MAPPING_CONTEXT_URI);
+		} catch (RepositoryException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
+		return false;
 	}
 
 	/**
