@@ -63,6 +63,13 @@
 	<classpathentry kind="lib" path="WebRoot/WEB-INF/lib/looks-2.1.3.jar"/>
 	<classpathentry kind="lib" path="WebRoot/WEB-INF/lib/junit-4.4.jar"/>
 	<classpathentry kind="lib" path="WebRoot/WEB-INF/lib/svnkit.jar"/>
+	<classpathentry kind="lib" path="WebRoot/WEB-INF/lib/notes-api.jar"/>
+	<classpathentry kind="lib" path="WebRoot/WEB-INF/lib/virtuoso/virtjdbc3.jar"/>
+	<classpathentry kind="lib" path="WebRoot/WEB-INF/lib/virtuoso/virt_sesame2.jar"/>
+	<classpathentry kind="lib" path="WebRoot/WEB-INF/lib/openrdf/openrdf-sesame-2.3.2-onejar.jar"/>
+	<classpathentry kind="lib" path="WebRoot/WEB-INF/lib/openrdf/openrdf-alibaba-2.0-beta3.jar"/>
+	<classpathentry kind="lib" path="WebRoot/WEB-INF/lib/javassist.jar"/>
+	<classpathentry kind="lib" path="WebRoot/WEB-INF/lib/httpcore-4.0.1.jar"/>
 	<classpathentry kind="lib" path="WebRoot/WEB-INF/lib/org.semanticweb.owl.owlapi.jar"/>
 	<classpathentry kind="lib" path="WebRoot/WEB-INF/lib/org.protege.owlapi.jar"/>
 	<classpathentry kind="lib" path="WebRoot/WEB-INF/lib/protege/protege.jar"/>
@@ -135,13 +142,6 @@
 	<classpathentry kind="lib" path="WebRoot/WEB-INF/lib/lexgrid/extLib/spring-oxm-1.5.7.jar"/>
 	<classpathentry kind="lib" path="WebRoot/WEB-INF/lib/lexgrid/extLib/spring-xml-1.5.7.jar"/>
 	<classpathentry kind="lib" path="WebRoot/WEB-INF/lib/lexgrid/lexbig.jar"/>
-	<classpathentry kind="lib" path="WebRoot/WEB-INF/lib/notes-api.jar"/>
-	<classpathentry kind="lib" path="WebRoot/WEB-INF/lib/virtuoso/virtjdbc3.jar"/>
-	<classpathentry kind="lib" path="WebRoot/WEB-INF/lib/virtuoso/virt_sesame2.jar"/>
-	<classpathentry kind="lib" path="WebRoot/WEB-INF/lib/openrdf/openrdf-sesame-2.3.2-onejar.jar"/>
-	<classpathentry kind="lib" path="WebRoot/WEB-INF/lib/openrdf/openrdf-alibaba-2.0-beta3.jar"/>
-	<classpathentry kind="lib" path="WebRoot/WEB-INF/lib/javassist.jar"/>
-	<classpathentry kind="lib" path="WebRoot/WEB-INF/lib/httpcore-4.0.1.jar"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry kind="output" path="WebRoot/WEB-INF/classes"/>
 </classpath>
