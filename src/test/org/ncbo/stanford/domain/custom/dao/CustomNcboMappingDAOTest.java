@@ -6,6 +6,7 @@ import org.junit.Test;
 import org.ncbo.stanford.AbstractBioPortalTest;
 import org.ncbo.stanford.domain.custom.dao.CustomNcboMappingDAO;
 import org.ncbo.stanford.domain.custom.entity.mapping.OneToOneMapping;
+import org.ncbo.stanford.enumeration.MappingSourceEnum;
 import org.ncbo.stanford.exception.MappingExistsException;
 import org.ncbo.stanford.exceptions.MappingMissingException;
 import org.openrdf.model.URI;
@@ -34,8 +35,11 @@ public class CustomNcboMappingDAOTest extends AbstractBioPortalTest {
 									"http://purl.org/obo/owl/UBERON#UBERON_0001062"),
 							new URIImpl(
 									"http://protege.stanford.edu/ontologies/mappings/mappings.rdfs#owl:sameAs"),
-							1099, 1404, 44203, 44301, 99, "Test comment", null,
-							"Automatic");
+							1099, 1404, 44203, 44301, 99, "Test comment",
+							MappingSourceEnum.APPLICATION.toString(),
+							"Paul Alexander (palexander@stanford.edu)",
+							new URIImpl("http://test.com"),
+							"Unknown algorithm", "Automatic");
 
 			mappingId = mapping.getId();
 
@@ -75,9 +79,9 @@ public class CustomNcboMappingDAOTest extends AbstractBioPortalTest {
 
 		OneToOneMapping mapping;
 		try {
-			mapping = mappingDAO.updateMapping(mappingId, null,
-					null, null, sourceOntologyId, targetOntologyId,
-					sourceOntologyVersion, targetOntologyVersion, null, comment,
+			mapping = mappingDAO.updateMapping(mappingId, null, null, null,
+					sourceOntologyId, targetOntologyId, sourceOntologyVersion,
+					targetOntologyVersion, null, comment, null, null, null,
 					null, null);
 
 			assertEquals(sourceOntologyId, mapping.getSourceOntologyId());

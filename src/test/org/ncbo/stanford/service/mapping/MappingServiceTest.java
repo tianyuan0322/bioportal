@@ -7,6 +7,7 @@ import org.junit.Test;
 import org.ncbo.stanford.AbstractBioPortalTest;
 import org.ncbo.stanford.bean.mapping.OneToOneMappingBean;
 import org.ncbo.stanford.domain.custom.entity.mapping.OneToOneMapping;
+import org.ncbo.stanford.enumeration.MappingSourceEnum;
 import org.ncbo.stanford.exception.MappingExistsException;
 import org.ncbo.stanford.exceptions.MappingMissingException;
 import org.ncbo.stanford.service.mapping.impl.MappingServiceImpl;
@@ -33,13 +34,16 @@ public class MappingServiceTest extends AbstractBioPortalTest {
 			mapping = mappingService
 					.createMapping(
 							new URIImpl(
-									"http://purl.bioontology.org/ontology/ATMO/ATM_00000"),
-							new URIImpl(
-									"http://purl.org/obo/owl/UBERON#UBERON_0001062"),
-							new URIImpl(
-									"http://protege.stanford.edu/ontologies/mappings/mappings.rdfs#owl:sameAs"),
-							1099, 1404, 44203, 44301, 99, "Test comment", null,
-							"Automatic");
+							"http://purl.bioontology.org/ontology/ATMO/ATM_00000"),
+					new URIImpl(
+							"http://purl.org/obo/owl/UBERON#UBERON_0001062"),
+					new URIImpl(
+							"http://protege.stanford.edu/ontologies/mappings/mappings.rdfs#owl:sameAs"),
+					1099, 1404, 44203, 44301, 99, "Test comment",
+					MappingSourceEnum.APPLICATION,
+					"Paul Alexander (palexander@stanford.edu)",
+					new URIImpl("http://test.com"),
+					"Unknown algorithm", "Automatic");
 
 			mappingId = mapping.getId();
 

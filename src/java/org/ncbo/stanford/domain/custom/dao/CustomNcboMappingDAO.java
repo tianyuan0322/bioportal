@@ -3,7 +3,6 @@ package org.ncbo.stanford.domain.custom.dao;
 import java.util.Date;
 import java.util.Map;
 
-import org.castor.mapping.MappingSource;
 import org.ncbo.stanford.domain.custom.entity.mapping.OneToOneMapping;
 import org.ncbo.stanford.exception.MappingExistsException;
 import org.ncbo.stanford.exceptions.MappingMissingException;
@@ -25,8 +24,10 @@ public class CustomNcboMappingDAO {
 	public OneToOneMapping createMapping(URI source, URI target, URI relation,
 			Integer sourceOntologyId, Integer targetOntologyId,
 			Integer sourceOntologyVersion, Integer targetOntologyVersion,
-			Integer submittedBy, String comment, MappingSource mappingSource,
-			String mappingType) throws MappingExistsException {
+			Integer submittedBy, String comment, String mappingSource,
+			String mappingSourcecontactInfo, URI mappingSourceSite,
+			String mappingSourceAlgorithm, String mappingType)
+			throws MappingExistsException {
 
 		OneToOneMapping mapping = new OneToOneMapping();
 
@@ -45,12 +46,19 @@ public class CustomNcboMappingDAO {
 		mapping.setDate(new Date());
 		mapping.setComment(comment);
 
+		// Set mappingSource properties
+		mapping.setMappingSource(mappingSource);
+		mapping.setMappingSourcecontactInfo(mappingSourcecontactInfo);
+		mapping.setMappingSourceSite(mappingSourceSite);
+		mapping.setMappingSourceAlgorithm(mappingSourceAlgorithm);
+
 		createMapping(mapping);
 
 		return mapping;
 	}
 
-	public OneToOneMapping createMapping(OneToOneMapping newMapping) throws MappingExistsException {
+	public OneToOneMapping createMapping(OneToOneMapping newMapping)
+			throws MappingExistsException {
 		ObjectConnection con = getRdfStoreManager().getObjectConnection();
 
 		OneToOneMapping mapping = new OneToOneMapping();
@@ -99,8 +107,10 @@ public class CustomNcboMappingDAO {
 	public OneToOneMapping updateMapping(URI id, URI source, URI target,
 			URI relation, Integer sourceOntologyId, Integer targetOntologyId,
 			Integer sourceOntologyVersion, Integer targetOntologyVersion,
-			Integer submittedBy, String comment, MappingSource mappingSource,
-			String mappingType) throws MappingMissingException {
+			Integer submittedBy, String comment, String mappingSource,
+			String mappingSourcecontactInfo, String mappingSourceSite,
+			String mappingSourceAlgorithm, String mappingType)
+			throws MappingMissingException {
 		ObjectConnection con = getRdfStoreManager().getObjectConnection();
 
 		try {

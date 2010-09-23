@@ -1,9 +1,9 @@
 package org.ncbo.stanford.service.mapping.impl;
 
-import org.castor.mapping.MappingSource;
 import org.ncbo.stanford.bean.mapping.OneToOneMappingBean;
 import org.ncbo.stanford.domain.custom.dao.CustomNcboMappingDAO;
 import org.ncbo.stanford.domain.custom.entity.mapping.OneToOneMapping;
+import org.ncbo.stanford.enumeration.MappingSourceEnum;
 import org.ncbo.stanford.exception.MappingExistsException;
 import org.ncbo.stanford.exceptions.MappingMissingException;
 import org.openrdf.model.URI;
@@ -15,12 +15,15 @@ public class MappingServiceImpl {
 	public OneToOneMapping createMapping(URI source, URI target, URI relation,
 			Integer sourceOntologyId, Integer targetOntologyId,
 			Integer sourceOntologyVersion, Integer targetOntologyVersion,
-			Integer submittedBy, String comment, MappingSource mappingSource,
+			Integer submittedBy, String comment,
+			MappingSourceEnum mappingSource, String mappingSourcecontactInfo,
+			URI mappingSourceSite, String mappingSourceAlgorithm,
 			String mappingType) throws MappingExistsException {
 		return mappingDAO.createMapping(source, target, relation,
 				sourceOntologyId, targetOntologyId, sourceOntologyVersion,
-				targetOntologyVersion, submittedBy, comment, mappingSource,
-				mappingType);
+				targetOntologyVersion, submittedBy, comment, mappingSource
+						.toString(), mappingSourcecontactInfo,
+				mappingSourceSite, mappingSourceAlgorithm, mappingType);
 	}
 
 	public OneToOneMappingBean createMapping(OneToOneMappingBean mapping)
@@ -48,6 +51,7 @@ public class MappingServiceImpl {
 	}
 
 	// Private methods
+
 	private OneToOneMappingBean convertToMappingBean(OneToOneMapping mapping) {
 		OneToOneMappingBean mb = new OneToOneMappingBean();
 
@@ -60,6 +64,11 @@ public class MappingServiceImpl {
 		mb.setDate(mapping.getDate());
 		mb.setDependency(mapping.getDependency());
 		mb.setId(mapping.getId());
+		mb.setMappingSource(MappingSourceEnum.valueOf(mapping
+				.getMappingSource().toUpperCase()));
+		mb.setMappingSourceAlgorithm(mapping.getMappingSourceAlgorithm());
+		mb.setMappingSourcecontactInfo(mapping.getMappingSourcecontactInfo());
+		mb.setMappingSourceSite(mapping.getMappingSourceSite());
 		mb.setRelation(mapping.getRelation());
 		mb.setSource(mapping.getSource());
 		mb.setSourceOntologyId(mapping.getSourceOntologyId());
@@ -82,6 +91,10 @@ public class MappingServiceImpl {
 		otom.setDate(mapping.getDate());
 		otom.setDependency(mapping.getDependency());
 		otom.setId(mapping.getId());
+		otom.setMappingSource(mapping.getMappingSource().toString());
+		otom.setMappingSourceAlgorithm(mapping.getMappingSourceAlgorithm());
+		otom.setMappingSourcecontactInfo(mapping.getMappingSourcecontactInfo());
+		otom.setMappingSourceSite(mapping.getMappingSourceSite());
 		otom.setRelation(mapping.getRelation());
 		otom.setSource(mapping.getSource());
 		otom.setSourceOntologyId(mapping.getSourceOntologyId());

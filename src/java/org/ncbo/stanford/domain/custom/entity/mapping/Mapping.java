@@ -33,6 +33,18 @@ public abstract class Mapping implements Serializable {
 	@iri(ApplicationConstants.MAPPING_PREFIX + "dependency")
 	private URI dependency;
 
+	@iri(ApplicationConstants.MAPPING_PREFIX + "mapping_source")
+	private String mappingSource;
+
+	@iri(ApplicationConstants.MAPPING_PREFIX + "mapping_source_contact_info")
+	private String mappingSourcecontactInfo;
+
+	@iri(ApplicationConstants.MAPPING_PREFIX + "mapping_source_site")
+	private URI mappingSourceSite;
+
+	@iri(ApplicationConstants.MAPPING_PREFIX + "mapping_source_algorithm")
+	private String mappingSourceAlgorithm;
+
 	/**
 	 * Default no-arg constructor.
 	 */
@@ -171,6 +183,66 @@ public abstract class Mapping implements Serializable {
 	 */
 	public void setSubmittedBy(Integer submittedBy2) {
 		this.submittedBy = submittedBy2;
+	}
+
+	/**
+	 * @return the mappingSource
+	 */
+	public String getMappingSource() {
+		return mappingSource;
+	}
+
+	/**
+	 * @param mappingSource
+	 *            the mappingSource to set
+	 */
+	public void setMappingSource(String mappingSource) {
+		this.mappingSource = mappingSource;
+	}
+
+	/**
+	 * @return the mappingSourcecontactInfo
+	 */
+	public String getMappingSourcecontactInfo() {
+		return mappingSourcecontactInfo;
+	}
+
+	/**
+	 * @param mappingSourcecontactInfo
+	 *            the mappingSourcecontactInfo to set
+	 */
+	public void setMappingSourcecontactInfo(String mappingSourcecontactInfo) {
+		this.mappingSourcecontactInfo = mappingSourcecontactInfo;
+	}
+
+	/**
+	 * @return the mappingSourceSite
+	 */
+	public URI getMappingSourceSite() {
+		return mappingSourceSite;
+	}
+
+	/**
+	 * @param mappingSourceSite
+	 *            the mappingSourceSite to set
+	 */
+	public void setMappingSourceSite(URI mappingSourceSite) {
+		this.mappingSourceSite = mappingSourceSite;
+	}
+
+	/**
+	 * @return the mappingSourceAlgorithm
+	 */
+	public String getMappingSourceAlgorithm() {
+		return mappingSourceAlgorithm;
+	}
+
+	/**
+	 * @param mappingSourceAlgorithm
+	 *            the mappingSourceAlgorithm to set
+	 */
+	public void setMappingSourceAlgorithm(String mappingSourceAlgorithm) {
+		this.mappingSourceAlgorithm = mappingSourceAlgorithm;
 	}
 
 }

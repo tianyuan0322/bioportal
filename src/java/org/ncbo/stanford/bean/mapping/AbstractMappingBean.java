@@ -2,6 +2,7 @@ package org.ncbo.stanford.bean.mapping;
 
 import java.util.Date;
 
+import org.ncbo.stanford.enumeration.MappingSourceEnum;
 import org.openrdf.model.URI;
 
 public abstract class AbstractMappingBean {
@@ -11,6 +12,11 @@ public abstract class AbstractMappingBean {
 	private Date date;
 	private Integer submittedBy;
 	private URI dependency;
+	private MappingSourceEnum mappingSource;
+	private String mappingSourcecontactInfo;
+	private URI mappingSourceSite;
+	private String mappingSourceAlgorithm;
+
 
 	/**
 	 * Default no-arg constructor.
@@ -91,6 +97,62 @@ public abstract class AbstractMappingBean {
 	 */
 	public void setSubmittedBy(Integer submittedBy2) {
 		this.submittedBy = submittedBy2;
+	}
+
+	/**
+	 * @return the mappingSource
+	 */
+	public MappingSourceEnum getMappingSource() {
+		return mappingSource;
+	}
+
+	/**
+	 * @param mappingSource the mappingSource to set
+	 */
+	public void setMappingSource(MappingSourceEnum mappingSource) {
+		this.mappingSource = mappingSource;
+	}
+
+	/**
+	 * @return the mappingSourcecontactInfo
+	 */
+	public String getMappingSourcecontactInfo() {
+		return mappingSourcecontactInfo;
+	}
+
+	/**
+	 * @param mappingSourcecontactInfo the mappingSourcecontactInfo to set
+	 */
+	public void setMappingSourcecontactInfo(String mappingSourcecontactInfo) {
+		this.mappingSourcecontactInfo = mappingSourcecontactInfo;
+	}
+
+	/**
+	 * @return the mappingSourceSite
+	 */
+	public URI getMappingSourceSite() {
+		return mappingSourceSite;
+	}
+
+	/**
+	 * @param mappingSourceSite the mappingSourceSite to set
+	 */
+	public void setMappingSourceSite(URI mappingSourceSite) {
+		this.mappingSourceSite = mappingSourceSite;
+	}
+
+	/**
+	 * @return the mappingSourceAlgorithm
+	 */
+	public String getMappingSourceAlgorithm() {
+		return mappingSourceAlgorithm;
+	}
+
+	/**
+	 * @param mappingSourceAlgorithm the mappingSourceAlgorithm to set
+	 */
+	public void setMappingSourceAlgorithm(String mappingSourceAlgorithm) {
+		this.mappingSourceAlgorithm = mappingSourceAlgorithm;
 	}
 
 }
