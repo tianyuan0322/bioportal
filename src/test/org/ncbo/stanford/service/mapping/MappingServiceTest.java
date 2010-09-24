@@ -34,16 +34,16 @@ public class MappingServiceTest extends AbstractBioPortalTest {
 			mapping = mappingService
 					.createMapping(
 							new URIImpl(
-							"http://purl.bioontology.org/ontology/ATMO/ATM_00000"),
-					new URIImpl(
-							"http://purl.org/obo/owl/UBERON#UBERON_0001062"),
-					new URIImpl(
-							"http://protege.stanford.edu/ontologies/mappings/mappings.rdfs#owl:sameAs"),
-					1099, 1404, 44203, 44301, 99, "Test comment",
-					MappingSourceEnum.APPLICATION,
-					"Paul Alexander (palexander@stanford.edu)",
-					new URIImpl("http://test.com"),
-					"Unknown algorithm", "Automatic");
+									"http://purl.bioontology.org/ontology/ATMO/ATM_00000"),
+							new URIImpl(
+									"http://purl.org/obo/owl/UBERON#UBERON_0001062"),
+							new URIImpl(
+									"http://protege.stanford.edu/ontologies/mappings/mappings.rdfs#owl:sameAs"),
+							1099, 1404, 44203, 44301, 99, "Test comment",
+							MappingSourceEnum.APPLICATION, "Test Source Name",
+							"Paul Alexander (palexander@stanford.edu)",
+							new URIImpl("http://test.com"),
+							"Unknown algorithm", "Automatic");
 
 			mappingId = mapping.getId();
 
@@ -93,8 +93,7 @@ public class MappingServiceTest extends AbstractBioPortalTest {
 
 		OneToOneMappingBean updatedMapping;
 		try {
-			updatedMapping = mappingService.updateMapping(
-					mappingId, mapping);
+			updatedMapping = mappingService.updateMapping(mappingId, mapping);
 
 			assertEquals(sourceOntologyId, updatedMapping.getSourceOntologyId());
 			assertEquals(targetOntologyId, updatedMapping.getTargetOntologyId());
@@ -109,7 +108,7 @@ public class MappingServiceTest extends AbstractBioPortalTest {
 		}
 	}
 
-	@Test(expected=MappingMissingException.class)
+	@Test(expected = MappingMissingException.class)
 	public void deleteMapping() throws MappingMissingException {
 		mappingService.deleteMapping(mappingId);
 		mappingService.getMapping(mappingId);

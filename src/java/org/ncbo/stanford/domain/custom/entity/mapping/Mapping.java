@@ -33,8 +33,14 @@ public abstract class Mapping implements Serializable {
 	@iri(ApplicationConstants.MAPPING_PREFIX + "dependency")
 	private URI dependency;
 
+	@iri(ApplicationConstants.MAPPING_PREFIX + "mapping_type")
+	private String mappingType;
+
 	@iri(ApplicationConstants.MAPPING_PREFIX + "mapping_source")
 	private String mappingSource;
+
+	@iri(ApplicationConstants.MAPPING_PREFIX + "mapping_source_name")
+	private String mappingSourceName;
 
 	@iri(ApplicationConstants.MAPPING_PREFIX + "mapping_source_contact_info")
 	private String mappingSourcecontactInfo;
@@ -243,6 +249,36 @@ public abstract class Mapping implements Serializable {
 	 */
 	public void setMappingSourceAlgorithm(String mappingSourceAlgorithm) {
 		this.mappingSourceAlgorithm = mappingSourceAlgorithm;
+	}
+
+	/**
+	 * @return the mappingType
+	 */
+	public String getMappingType() {
+		return mappingType;
+	}
+
+	/**
+	 * @param mappingType
+	 *            the mappingType to set
+	 */
+	public void setMappingType(String mappingType) {
+		this.mappingType = mappingType;
+	}
+
+	/**
+	 * @return the mappingSourceName
+	 */
+	public String getMappingSourceName() {
+		return mappingSourceName;
+	}
+
+	/**
+	 * @param mappingSourceName
+	 *            the mappingSourceName to set
+	 */
+	public void setMappingSourceName(String mappingSourceName) {
+		this.mappingSourceName = mappingSourceName;
 	}
 
 }

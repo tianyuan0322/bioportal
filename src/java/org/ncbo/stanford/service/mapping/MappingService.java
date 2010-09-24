@@ -1,8 +1,8 @@
 package org.ncbo.stanford.service.mapping;
 
-import org.castor.mapping.MappingSource;
 import org.ncbo.stanford.bean.mapping.OneToOneMappingBean;
 import org.ncbo.stanford.domain.custom.entity.mapping.OneToOneMapping;
+import org.ncbo.stanford.enumeration.MappingSourceEnum;
 import org.ncbo.stanford.exception.MappingExistsException;
 import org.ncbo.stanford.exceptions.MappingMissingException;
 import org.openrdf.model.URI;
@@ -28,8 +28,11 @@ public interface MappingService {
 	public OneToOneMapping createMapping(URI source, URI target, URI relation,
 			Integer sourceOntologyId, Integer targetOntologyId,
 			Integer sourceOntologyVersion, Integer targetOntologyVersion,
-			Integer submittedBy, String comment, MappingSource mappingSource,
-			String mappingType) throws MappingExistsException;
+			Integer submittedBy, String comment,
+			MappingSourceEnum mappingSource, String mappingSourceName,
+			String mappingSourcecontactInfo, URI mappingSourceSite,
+			String mappingSourceAlgorithm, String mappingType)
+			throws MappingExistsException;
 
 	/**
 	 * Create a mapping by passing a mapping bean.

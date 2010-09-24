@@ -25,9 +25,9 @@ public class CustomNcboMappingDAO {
 			Integer sourceOntologyId, Integer targetOntologyId,
 			Integer sourceOntologyVersion, Integer targetOntologyVersion,
 			Integer submittedBy, String comment, String mappingSource,
-			String mappingSourcecontactInfo, URI mappingSourceSite,
-			String mappingSourceAlgorithm, String mappingType)
-			throws MappingExistsException {
+			String mappingSourceName, String mappingSourcecontactInfo,
+			URI mappingSourceSite, String mappingSourceAlgorithm,
+			String mappingType) throws MappingExistsException {
 
 		OneToOneMapping mapping = new OneToOneMapping();
 
@@ -45,9 +45,11 @@ public class CustomNcboMappingDAO {
 		mapping.setDependency(mapping.getId());
 		mapping.setDate(new Date());
 		mapping.setComment(comment);
+		mapping.setMappingType(mappingType);
 
 		// Set mappingSource properties
 		mapping.setMappingSource(mappingSource);
+		mapping.setMappingSourceName(mappingSourceName);
 		mapping.setMappingSourcecontactInfo(mappingSourcecontactInfo);
 		mapping.setMappingSourceSite(mappingSourceSite);
 		mapping.setMappingSourceAlgorithm(mappingSourceAlgorithm);
@@ -97,20 +99,19 @@ public class CustomNcboMappingDAO {
 		} catch (QueryEvaluationException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-		} catch (ClassCastException e) {
-			e.printStackTrace();
 		}
 
 		return mapping;
 	}
 
+	// TODO: This method is not working currently.
 	public OneToOneMapping updateMapping(URI id, URI source, URI target,
 			URI relation, Integer sourceOntologyId, Integer targetOntologyId,
 			Integer sourceOntologyVersion, Integer targetOntologyVersion,
 			Integer submittedBy, String comment, String mappingSource,
-			String mappingSourcecontactInfo, String mappingSourceSite,
-			String mappingSourceAlgorithm, String mappingType)
-			throws MappingMissingException {
+			String mappingSourceName, String mappingSourcecontactInfo,
+			String mappingSourceSite, String mappingSourceAlgorithm,
+			String mappingType) throws MappingMissingException {
 		ObjectConnection con = getRdfStoreManager().getObjectConnection();
 
 		try {

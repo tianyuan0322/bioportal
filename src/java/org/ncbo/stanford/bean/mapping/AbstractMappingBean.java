@@ -12,11 +12,12 @@ public abstract class AbstractMappingBean {
 	private Date date;
 	private Integer submittedBy;
 	private URI dependency;
+	private String mappingType;
 	private MappingSourceEnum mappingSource;
+	private String mappingSourceName;
 	private String mappingSourcecontactInfo;
 	private URI mappingSourceSite;
 	private String mappingSourceAlgorithm;
-
 
 	/**
 	 * Default no-arg constructor.
@@ -107,7 +108,8 @@ public abstract class AbstractMappingBean {
 	}
 
 	/**
-	 * @param mappingSource the mappingSource to set
+	 * @param mappingSource
+	 *            the mappingSource to set
 	 */
 	public void setMappingSource(MappingSourceEnum mappingSource) {
 		this.mappingSource = mappingSource;
@@ -121,7 +123,8 @@ public abstract class AbstractMappingBean {
 	}
 
 	/**
-	 * @param mappingSourcecontactInfo the mappingSourcecontactInfo to set
+	 * @param mappingSourcecontactInfo
+	 *            the mappingSourcecontactInfo to set
 	 */
 	public void setMappingSourcecontactInfo(String mappingSourcecontactInfo) {
 		this.mappingSourcecontactInfo = mappingSourcecontactInfo;
@@ -135,7 +138,8 @@ public abstract class AbstractMappingBean {
 	}
 
 	/**
-	 * @param mappingSourceSite the mappingSourceSite to set
+	 * @param mappingSourceSite
+	 *            the mappingSourceSite to set
 	 */
 	public void setMappingSourceSite(URI mappingSourceSite) {
 		this.mappingSourceSite = mappingSourceSite;
@@ -149,10 +153,41 @@ public abstract class AbstractMappingBean {
 	}
 
 	/**
-	 * @param mappingSourceAlgorithm the mappingSourceAlgorithm to set
+	 * @param mappingSourceAlgorithm
+	 *            the mappingSourceAlgorithm to set
 	 */
 	public void setMappingSourceAlgorithm(String mappingSourceAlgorithm) {
 		this.mappingSourceAlgorithm = mappingSourceAlgorithm;
+	}
+
+	/**
+	 * @return the mappingType
+	 */
+	public String getMappingType() {
+		return mappingType;
+	}
+
+	/**
+	 * @param mappingType
+	 *            the mappingType to set
+	 */
+	public void setMappingType(String mappingType) {
+		this.mappingType = mappingType;
+	}
+
+	/**
+	 * @return the mappingSourceName
+	 */
+	public String getMappingSourceName() {
+		return mappingSourceName;
+	}
+
+	/**
+	 * @param mappingSourceName
+	 *            the mappingSourceName to set
+	 */
+	public void setMappingSourceName(String mappingSourceName) {
+		this.mappingSourceName = mappingSourceName;
 	}
 
 }
