@@ -14,6 +14,7 @@ import org.openrdf.model.impl.StatementImpl;
 import org.openrdf.model.impl.URIImpl;
 import org.openrdf.repository.object.annotations.iri;
 
+@iri("http://protege.stanford.edu/ontologies/mappings/mappings.rdfs#Mapping")
 public abstract class Mapping implements Serializable {
 
 	private static final long serialVersionUID = -237079713755255918L;

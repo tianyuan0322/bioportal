@@ -4,7 +4,7 @@ import org.ncbo.stanford.bean.mapping.OneToOneMappingBean;
 import org.ncbo.stanford.domain.custom.entity.mapping.OneToOneMapping;
 import org.ncbo.stanford.enumeration.MappingSourceEnum;
 import org.ncbo.stanford.exception.MappingExistsException;
-import org.ncbo.stanford.exceptions.MappingMissingException;
+import org.ncbo.stanford.exception.MappingMissingException;
 import org.openrdf.model.URI;
 
 public interface MappingService {
