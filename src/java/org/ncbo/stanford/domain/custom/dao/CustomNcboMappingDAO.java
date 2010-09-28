@@ -1,18 +1,25 @@
 package org.ncbo.stanford.domain.custom.dao;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.Map;
 
 import org.ncbo.stanford.domain.custom.entity.mapping.OneToOneMapping;
 import org.ncbo.stanford.exception.MappingExistsException;
-import org.ncbo.stanford.exceptions.MappingMissingException;
+import org.ncbo.stanford.exception.MappingMissingException;
 import org.ncbo.stanford.manager.rdfstore.RDFStoreManager;
 import org.ncbo.stanford.util.MessageUtils;
 import org.ncbo.stanford.util.constants.ApplicationConstants;
 import org.openrdf.model.Statement;
 import org.openrdf.model.URI;
+import org.openrdf.model.ValueFactory;
 import org.openrdf.model.impl.URIImpl;
+import org.openrdf.query.BindingSet;
+import org.openrdf.query.MalformedQueryException;
 import org.openrdf.query.QueryEvaluationException;
+import org.openrdf.query.QueryLanguage;
+import org.openrdf.query.TupleQuery;
+import org.openrdf.query.TupleQueryResult;
 import org.openrdf.repository.RepositoryException;
 import org.openrdf.repository.RepositoryResult;
 import org.openrdf.repository.object.ObjectConnection;
@@ -102,6 +109,98 @@ public class CustomNcboMappingDAO {
 		}
 
 		return mapping;
+	}
+
+	public ArrayList<OneToOneMapping> getMappingsForOntology(
+			Integer ontologyId, Integer limit, Integer offset) {
+		// Safety check
+		if (limit == null || limit >= 50000) {
+			limit = 50000;
+		}
+
+		if (offset == null) {
+			offset = 0;
+		}
+
+		ObjectConnection con = getRdfStoreManager().getObjectConnection();
+		ValueFactory vf = getRdfStoreManager().getValueFactory();
+
+		try {
+			String queryString = "";
+
+			TupleQuery query = con.prepareTupleQuery(QueryLanguage.SPARQL,
+					queryString, ApplicationConstants.MAPPING_CONTEXT);
+			
+			Long start = System.currentTimeMillis();
+			TupleQueryResult result = query.evaluate();
+			System.out.println("Evaluate query time: " + (System.currentTimeMillis() - start));
+
+			ArrayList<OneToOneMapping> mappings = new ArrayList<OneToOneMapping>();
+			start = System.currentTimeMillis();
+			while (result.hasNext()) {
+				BindingSet bs = result.next();
+				URI mappingId = (URI) bs.getValue("mappingId");
+				URI object = (URI) bs.getValue("o");
+				URI predicate = (URI) bs.getValue("p");
+				
+				OneToOneMapping mapping = new OneToOneMapping();
+
+				// Set Mapping properties
+//				mapping.setSource((URI) bs.getValue("source"));
+//				mapping.setTarget((URI) bs.getValue("target"));
+//				mapping.setRelation((URI) bs.getValue("relation"));
+//				mapping.setSourceOntologyId(bs.getValue("sourceOntologyId");
+//				mapping.setTargetOntologyId(bs.getValue("targetOntologyId"));
+//				mapping.setCreatedInSourceOntologyVersion(bs.getValue("createdInSourceOntologyVersion"));
+//				mapping.setCreatedInTargetOntologyVersion(bs.getValue("createdInTargetOntologyVersion"));
+//
+//				// Set metadata properties
+//				mapping.setSubmittedBy(bs.getValue("submittedBy"));
+//				mapping.setDependency(bs.getValue("mappingId"));
+//				mapping.setDate(bs.getValue("date"));
+//				mapping.setComment(bs.getValue("comment"));
+//				mapping.setMappingType(bs.getValue("mappingType"));
+//
+//				// Set mappingSource properties
+//				mapping.setMappingSource(bs.getValue("mappingSource"));
+//				mapping.setMappingSourceName(bs.getValue("mappingSourceName"));
+//				mapping.setMappingSourcecontactInfo(bs.getValue("mappingSourcecontactInfo"));
+//				mapping.setMappingSourceSite(bs.getValue("mappingSourceSite"));
+//				mapping.setMappingSourceAlgorithm(bs.getValue("mappingSourceAlgorithm"));
+
+				mappings.add(mapping);
+			}
+			System.out.println("Create mapping id list time: " + (System.currentTimeMillis() - start));
+			
+			// Get all mapping triples for the above query
+			
+
+//			start = System.currentTimeMillis();
+//			while (result.hasNext()) {
+//				BindingSet bs = result.next();
+//				URI mappingId = (URI) bs.getValue("mapping");
+//				if (con.hasStatement(mappingId,
+//						ApplicationConstants.RDF_TYPE_URI,
+//						ApplicationConstants.MAPPING_ONE_TO_ONE_URI,
+//						ApplicationConstants.MAPPING_CONTEXT_URI)) {
+//					mappings.add(con.getObject(OneToOneMapping.class, mappingId));
+//				}
+//			}
+//			System.out.println("Get objects time: " + (System.currentTimeMillis() - start));
+
+			return mappings;
+		} catch (RepositoryException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (QueryEvaluationException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (MalformedQueryException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
+		return null;
 	}
 
 	// TODO: This method is not working currently.
