@@ -1,14 +1,16 @@
 package org.ncbo.stanford.domain.custom.dao;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+
+import java.util.ArrayList;
 
 import org.junit.Test;
 import org.ncbo.stanford.AbstractBioPortalTest;
-import org.ncbo.stanford.domain.custom.dao.CustomNcboMappingDAO;
 import org.ncbo.stanford.domain.custom.entity.mapping.OneToOneMapping;
 import org.ncbo.stanford.enumeration.MappingSourceEnum;
 import org.ncbo.stanford.exception.MappingExistsException;
-import org.ncbo.stanford.exceptions.MappingMissingException;
+import org.ncbo.stanford.exception.MappingMissingException;
 import org.openrdf.model.URI;
 import org.openrdf.model.impl.URIImpl;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -68,6 +70,12 @@ public class CustomNcboMappingDAOTest extends AbstractBioPortalTest {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+	}
+	
+	@Test
+	public void testRetrieveMappingsForOntology() {
+		ArrayList<OneToOneMapping> mappings = mappingDAO.getMappingsForOntology(1032, 10000, 0);
+		assertTrue(mappings != null);
 	}
 
 	@Test
