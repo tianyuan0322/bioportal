@@ -65,7 +65,8 @@ public class NcboProperties {
 
 	public Collection<String> getFilteredOutProperties() {
 		if (filteredProps == null) {
-			String allProps = props.getProperty(FILTERED_OUT_PROPERTIES);
+			String allProps = props.getProperty(FILTERED_OUT_PROPERTIES)
+					.toLowerCase();
 			if (allProps == null) {
 				return new ArrayList<String>();
 			}

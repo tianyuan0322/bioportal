@@ -154,13 +154,13 @@ public class OntologyExtractor {
 		ClassBean conceptBean = c.getBean();
 
 		Set<Object> rels = conceptBean.getRelations().keySet();
-
+		
 		for (Iterator iterator = rels.iterator(); iterator.hasNext();) {
 			Object relObj = (Object) iterator.next();
 			if (relObj instanceof String) {
 				String annotationName = (String) relObj;
 				if (!ncboProperties.getFilteredOutProperties().contains(
-						annotationName)) {
+						annotationName.toLowerCase())) {
 					NcboAnnotationProperty prop = getAnnotationProperty(annotationName);
 					prop.transferFromBioportal(c);
 				}
