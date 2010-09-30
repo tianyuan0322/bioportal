@@ -44,9 +44,6 @@
 	<classpathentry kind="lib" path="WebRoot/WEB-INF/lib/commons-httpclient-3.1.jar"/>
 	<classpathentry kind="lib" path="WebRoot/WEB-INF/lib/commons-codec-1.4.jar"/>
 	<classpathentry kind="lib" path="WebRoot/WEB-INF/lib/commons-dbcp-1.4.jar"/>
-	<classpathentry kind="lib" path="WebRoot/WEB-INF/lib/lucene/lucene-core-2.9.3.jar"/>
-	<classpathentry kind="lib" path="WebRoot/WEB-INF/lib/lucene/lucene-regex-2.9.3.jar"/>
-	<classpathentry kind="lib" path="WebRoot/WEB-INF/lib/lucene/lucene-snowball-2.9.3.jar"/>
 	<classpathentry kind="lib" path="WebRoot/WEB-INF/lib/ehcache-1.4.1.jar"/>
 	<classpathentry kind="lib" path="WebRoot/WEB-INF/lib/xpp3_min-1.1.4c.jar"/>
 	<classpathentry kind="lib" path="WebRoot/WEB-INF/lib/xstream-1.3.1.jar"/>
@@ -143,5 +140,8 @@
 	<classpathentry kind="lib" path="WebRoot/WEB-INF/lib/lexgrid/extLib/spring-xml-1.5.7.jar"/>
 	<classpathentry kind="lib" path="WebRoot/WEB-INF/lib/lexgrid/lexbig.jar"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
+	<classpathentry kind="lib" path="WebRoot/WEB-INF/lib/lucene-core-2.4.1.jar"/>
+	<classpathentry kind="lib" path="WebRoot/WEB-INF/lib/lucene-regex-2.4.1.jar"/>
+	<classpathentry kind="lib" path="WebRoot/WEB-INF/lib/lucene-snowball-2.4.1.jar"/>
 	<classpathentry kind="output" path="WebRoot/WEB-INF/classes"/>
 </classpath>
