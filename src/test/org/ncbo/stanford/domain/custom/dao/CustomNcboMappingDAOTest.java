@@ -9,6 +9,7 @@ import org.junit.Test;
 import org.ncbo.stanford.AbstractBioPortalTest;
 import org.ncbo.stanford.domain.custom.entity.mapping.OneToOneMapping;
 import org.ncbo.stanford.enumeration.MappingSourceEnum;
+import org.ncbo.stanford.exception.InvalidInputException;
 import org.ncbo.stanford.exception.MappingExistsException;
 import org.ncbo.stanford.exception.MappingMissingException;
 import org.openrdf.model.URI;
@@ -50,10 +51,8 @@ public class CustomNcboMappingDAOTest extends AbstractBioPortalTest {
 
 			assertEquals(retrievedMapping.getId(), mapping.getId());
 		} catch (MappingExistsException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} catch (MappingMissingException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}
@@ -67,15 +66,41 @@ public class CustomNcboMappingDAOTest extends AbstractBioPortalTest {
 			assertTrue(mapping.getId().toString().equalsIgnoreCase(
 					mappingId.toString()));
 		} catch (MappingMissingException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}
 	
 	@Test
 	public void testRetrieveMappingsForOntology() {
-		ArrayList<OneToOneMapping> mappings = mappingDAO.getMappingsForOntology(1032, 10000, 0);
-		assertTrue(mappings != null);
+		ArrayList<OneToOneMapping> mappings;
+		try {
+			mappings = mappingDAO.getAllMappingsForOntology(1032, 50000, 0);
+			assertTrue(mappings != null && mappings.size() > 0);
+			
+			mappings = mappingDAO.getMappingsFromOntology(1032, 50000, 0);
+			assertTrue(mappings != null && mappings.size() == 0);
+			
+			mappings = mappingDAO.getMappingsToOntology(1032, 50000, 0);
+			assertTrue(mappings != null && mappings.size() > 0);
+		} catch (InvalidInputException e) {
+			e.printStackTrace();
+		}
+	}
+	
+	@Test
+	public void testRetrieveMappingsCountForOntology()
+			throws InvalidInputException {
+		Integer count = mappingDAO.getAllMappingsForOntologyCount(1032);
+		System.out.println("All mappings count for ontology 1032: " + count);
+		assertTrue(count instanceof Integer && count > 0);
+		
+		count = mappingDAO.getMappingsFromOntologyCount(1032);
+		System.out.println("Mappings from count for ontology 1032: " + count);
+		assertTrue(count instanceof Integer && count >= 0);
+
+		count = mappingDAO.getMappingsToOntologyCount(1032);
+		System.out.println("Mappings to count for ontology 1032: " + count);
+		assertTrue(count instanceof Integer && count > 0);
 	}
 
 	@Test
@@ -101,7 +126,6 @@ public class CustomNcboMappingDAOTest extends AbstractBioPortalTest {
 					.getCreatedInTargetOntologyVersion());
 			assertEquals(comment, mapping.getComment());
 		} catch (MappingMissingException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}
