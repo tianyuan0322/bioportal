@@ -213,7 +213,25 @@ public class OntologyRetrievalManagerLexGridImplTest extends
 		System.out.println("\n");
 		assertTrue(classBean.getId().equalsIgnoreCase(newId));
 	}
+	
+	@Test
+	public void testOBOFindFullIdConceptCell() throws Exception {
+		System.out.println("testOBOFindCorrectedConceptCell()");
 
+		OntologyBean ncboOntology = retrievalManager
+				.getOntologyBeanByDisplayNameAndOntologyId(
+						OntologyLoaderLexGridImplTest.OBO_CELL_DISPLAY_LABEL,
+						OntologyLoaderLexGridImplTest.OBO_CELL_ONTOLOGY_ID);
+		String conceptID = "http://purl.bioontology.org/ontology/CL/CL_0000548";
+		ClassBean classBean = retrievalManager.findConcept(ncboOntology,
+				conceptID, false, false);
+		String newId = "CL:0000548";
+		System.out.println("Concept " + conceptID + " of cell ontology is \n"
+				+ classBean);
+		System.out.println("\n");
+		assertTrue(classBean.getId().equalsIgnoreCase(newId));
+	}
+	
 	@Test
 	public void testOBOFindConceptTwoRelationDictyostelium() throws Exception {
 		System.out.println("testOBOFindConceptTwoRelationDictyostelium()");
