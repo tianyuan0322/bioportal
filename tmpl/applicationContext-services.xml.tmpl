@@ -388,24 +388,6 @@
 		</entry>
 	</util:map>
 
-	<!-- RDF store manager map -->
-	<util:map id="rdfStoreManagerMap" map-class="java.util.HashMap">
-		<entry>
-			<key>
-				<util:constant
-					static-field="org.ncbo.stanford.util.constants.ApplicationConstants.VIRTUOSO" />
-			</key>
-			<ref local="rdfStoreVirtuosoManager" />
-		</entry>
-		<entry>
-			<key>
-				<util:constant
-					static-field="org.ncbo.stanford.util.constants.ApplicationConstants.MYSQL" />
-			</key>
-			<ref local="rdfStoreMySqlManager" />
-		</entry>
-	</util:map>
-
 	<!-- Managers -->
 	<bean id="abstractOntologyManagerLexGrid"
 		class="org.ncbo.stanford.manager.AbstractOntologyManagerLexGrid"
@@ -585,36 +567,7 @@
 			<ref bean="notesJdbcPassword" />
 		</property>
 	</bean>
-	
-	<bean id="AbstractRDFStoreManager"
-		class="org.ncbo.stanford.manager.rdfstore.AbstractRDFStoreManager"
-		abstract="true">
-	</bean>
-	
-	<bean id="rdfStoreMySqlManager"
-		class="org.ncbo.stanford.manager.rdfstore.impl.RDFStoreManagerMySqlImpl"
-		parent="AbstractRDFStoreManager">
-	</bean>
 
-	<bean id="rdfStoreVirtuosoManager"
-		class="org.ncbo.stanford.manager.rdfstore.impl.RDFStoreManagerVirtuosoImpl"
-		parent="AbstractRDFStoreManager">
-	</bean>
-	
-	<bean id="customNcboMappingDAO"
-		class="org.ncbo.stanford.domain.custom.dao.CustomNcboMappingDAO">
-		<property name="rdfStoreManagerMap">
-			<ref bean="rdfStoreManagerMap" />
-		</property>
-	</bean>
-	
-	<bean id="mappingService"
-		class="org.ncbo.stanford.service.mapping.impl.MappingServiceImpl">
-		<property name="mappingDAO">
-			<ref bean="customNcboMappingDAO" />
-		</property>
-	</bean>
-	
 	<bean id="ontologyCategoryMetadataManager"
 		class="org.ncbo.stanford.manager.metadata.impl.OntologyCategoryMetadataManagerImpl"
 		parent="abstractOntologyManagerProtege">
@@ -667,8 +620,7 @@
 			<ref bean="userMetadataManager" />
 		</property>
 	</bean>
-	
-	<!-- Subscriptions Services -->
+	<!--Adding For SubscriptionsService-->
 	<bean id="subscriptionsService" class="org.ncbo.stanford.service.subscriptions.impl.SubscriptionsServiceImpl">
 		<property name="ncboUserSubscriptionsDAO">
 			<ref bean="NcboUserSubscriptionsDAO" />
@@ -687,12 +639,43 @@
 		</property>  
 		
 	</bean>
-	
-	<!-- User Metadata -->
+	<!-- Adding For UserMetadata -->
 	<bean id="userMetadataManager"
 		class="org.ncbo.stanford.manager.metadata.impl.UserMetadataManagerImpl"
 		parent="abstractOntologyManagerProtege">
 	</bean>
+	
+	<!--Adding for csv-->
+	<bean id="uploadManager"
+		class="org.ncbo.stanford.manager.upload.impl.UploadManagerImpl">
+		<property name="ncboOntologyFileDAO">
+			<ref bean="NcboOntologyFileDAO" />
+		</property>
+		 <property name="mappingService">
+		  	  <ref local="mappingService" />
+		  </property>
+		 
+		
+	</bean>
+	
+	<bean id="uploadService"
+		  class="org.ncbo.stanford.service.upload.impl.UploadServiceImpl">
+		  <property name="uploadManager">
+		  	  <ref local="uploadManager" />
+		  </property>
+		 
+		  
+		  	  		
+	</bean>
+	<bean id="mappingService"
+	      class="org.ncbo.stanford.service.mapping.impl.MappingServiceImpl">
+	       <property name="mappingDAO">
+		  	  <ref local="mappingDAO" />
+		  </property>
+	</bean> 
+	<bean id="mappingDAO" class="org.ncbo.stanford.domain.custom.dao.CustomNcboMappingDAO">
+		
+	</bean>     
 
 	<bean id="conceptService"
 		class="org.ncbo.stanford.service.concept.impl.ConceptServiceImpl">

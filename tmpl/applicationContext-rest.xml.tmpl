@@ -334,6 +334,14 @@
 			<ref bean="userService" />
 		</property>
 	</bean>
+	
+	<!-- Adding for CSV -->
+	<bean id="mappingRestlet" class="org.ncbo.stanford.view.rest.restlet.mapping.MappingRestlet"
+		parent="abstractBaseRestlet">
+		<property name="uploadService">
+			<ref bean="uploadService"/>
+		</property>	
+	</bean>
 
 	<bean id="userEmailRestlet"
 		class="org.ncbo.stanford.view.rest.restlet.user.UserEmailRestlet"
@@ -658,6 +666,10 @@
 						</entry>
 						<entry key="/virtual/notes/{ontologyid}">
 							<ref local="notesRestlet" />
+						</entry>
+						<!-- ======CSVFile================-->
+						<entry key="/csv">
+							<ref local="mappingRestlet" />
 						</entry>
 						<!-- ========== Metadata ========== -->
 						<entry key="/project/{id}">

@@ -3,15 +3,7 @@
  */
 package org.ncbo.stanford.view.rest.restlet.rdf;
 
-/**
- * An RdfDownloadRestlet contains functionality 
- * handling for GET methods
- * @author g.prakash
- *
- */
-
 import java.io.File;
-import java.util.List;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -21,11 +13,19 @@ import org.restlet.data.Response;
 import org.restlet.data.Status;
 import org.restlet.resource.FileRepresentation;
 import org.ncbo.stanford.bean.OntologyBean;
-import org.ncbo.stanford.util.CompressionUtils;
+import org.ncbo.stanford.exception.InvalidInputException;
+
+import org.ncbo.stanford.util.MessageUtils;
 import org.ncbo.stanford.util.RequestUtils;
 import org.ncbo.stanford.util.helper.StringHelper;
 import org.ncbo.stanford.view.rest.restlet.ontology.AbstractOntologyBaseRestlet;
 
+/**
+ * An RdfDownloadRestlet contains functionality handling for GET methods
+ * 
+ * @author g.prakash
+ * 
+ */
 public class RdfDownloadRestlet extends AbstractOntologyBaseRestlet {
 
 	private static final Log log = LogFactory.getLog(RdfDownloadRestlet.class);
@@ -53,45 +53,71 @@ public class RdfDownloadRestlet extends AbstractOntologyBaseRestlet {
 	 * @param response
 	 */
 	public void downloadRdfFile(Request request, Response response) {
-		// find the OntologyBean from request
-		OntologyBean ontologyBean = findOntologyBean(request, response);
 
-		if (!response.getStatus().isError()) {
-			try {
-				// Finding the Rdf File
-				File file = ontologyService
-						.findRdfFileForOntology(ontologyBean);
+		try {
+			boolean isVirtual = false;
 
-				// If File Name is null then they set the Error Message as
-				// "do NOT try to generate it "
+			String ontologyId = null;
+			OntologyBean ont = null;
+			Integer ontologyVersionIdInt = null;
 
-				if (file == null) {
-					response.setStatus(Status.CLIENT_ERROR_NOT_FOUND,
-							"do NOT try to generate it ");
-				} else {
-					try {
-						FileRepresentation fileRepresentation = new FileRepresentation(
-								file, MediaType.APPLICATION_ALL, 60);
-						response.setEntity(fileRepresentation);
+			// Try to get OntologyVersionId
+			String ontologyVersionId = (String) request.getAttributes().get(
+					MessageUtils.getMessage("entity.ontologyversionid"));
 
-						String filename = ontologyBean.getOntologyId() + ".rdf";
-
-						RequestUtils.getHttpServletResponse(response)
-								.setHeader(
-										"Content-Disposition",
-										"attachment; filename=\"" + filename
-												+ "\";");
-					} catch (Exception e) {
-						e.printStackTrace();
-						return;
-					}
-				}
-			} catch (Exception e) {
-				response
-						.setStatus(Status.SERVER_ERROR_INTERNAL, e.getMessage());
-				e.printStackTrace();
-				log.error(e);
+			// Condition for VirtualId
+			if (StringHelper.isNullOrNullString(ontologyVersionId)) {
+				ontologyId = (String) request.getAttributes().get(
+						MessageUtils.getMessage("entity.ontologyid"));
+				isVirtual = true;
 			}
+			if (isVirtual) {
+
+				ontologyVersionIdInt = RequestUtils
+						.parseIntegerParam(ontologyId);
+				ont = ontologyService
+						.findLatestActiveOntologyOrViewVersion(ontologyVersionIdInt);
+				if (ont == null) {
+					throw new InvalidInputException(MessageUtils
+							.getMessage("msg.error.ontologyversionidinvalid"));
+
+				} else {
+					ontologyVersionIdInt = ont.getId();
+				}
+
+			} else {
+				ontologyVersionIdInt = RequestUtils
+						.parseIntegerParam(ontologyVersionId);
+				ont = ontologyService.findOntologyOrView(ontologyVersionIdInt);
+				if (ont == null) {
+					throw new InvalidInputException(MessageUtils
+							.getMessage("msg.error.ontologyversionidinvalid"));
+
+				}
+				// Finding the Rdf File
+				File file = ontologyService.findRdfFileForOntology(ont);
+
+				FileRepresentation fileRepresentation = new FileRepresentation(
+						file, MediaType.APPLICATION_RDF_XML, 60);
+				response.setEntity(fileRepresentation);
+
+				String filename = ont.getOntologyId() + ".rdf";
+				RequestUtils.getHttpServletResponse(response).setHeader(
+						"Content-Disposition",
+						"attachment; filename=\"" + filename + "\";");
+			}
+
+		} catch (InvalidInputException e) {
+			response.setStatus(Status.CLIENT_ERROR_BAD_REQUEST, e.getMessage());
+			xmlSerializationService
+					.generateStatusXMLResponse(request, response);
+		} catch (Exception e) {
+			response.setStatus(Status.SERVER_ERROR_INTERNAL, e.getMessage());
+			xmlSerializationService
+					.generateStatusXMLResponse(request, response);
+			e.printStackTrace();
+			log.error(e);
 		}
 	}
+
 }

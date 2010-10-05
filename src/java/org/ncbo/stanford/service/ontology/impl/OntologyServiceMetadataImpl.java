@@ -1,7 +1,9 @@
 package org.ncbo.stanford.service.ontology.impl;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -357,36 +359,45 @@ public class OntologyServiceMetadataImpl extends AbstractOntologyService
 	}
 	
 	/**
-	 * This method find the rdfFile.
-	 * If rdf file is available then they return the File otherwise send the errors.
+	 * This method find the rdfFile. If rdf file is available then they return
+	 * the File otherwise send the errors.
 	 * 
 	 */
-	
+
 	public File findRdfFileForOntology(OntologyBean ontologyBean)
-			throws Exception {
-		//File name According to OntologyId
+			throws FileNotFoundException {
+		// File name According to OntologyId
 		String filename = ontologyBean.getOntologyId() + ".rdf";
-		File file = null;
+		File file = new File(AbstractFilePathHandler.getRdfFilePath(
+				ontologyBean, filename));
 		
-		if (CompressionUtils.isCompressed(filename)) {
-			file = new File(AbstractFilePathHandler.getRdfFilePath(
-					ontologyBean, filename));
+		File outputFile = new File(filename);
 
+		try {
+			if (!file.exists()) {
+				String errorMsg = "Enter a valid ontology version id";
+				log.error(errorMsg);
+				throw new FileNotFoundException(errorMsg);
+			} else {
+				FileInputStream fileInputStream = new FileInputStream(file);
+				FileOutputStream fileOutputStream = new FileOutputStream(
+						outputFile);
+
+				int c;
+
+				while ((c = fileInputStream.read()) != -1) {
+					fileOutputStream.write(c);
+				}
+
+				fileInputStream.close();
+				fileOutputStream.close();
+
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
 		}
 
-		if (file == null && !filename.isEmpty()) {
-			//Taking the Rdf File
-			file = new File(AbstractFilePathHandler.getRdfFilePath(
-					ontologyBean, filename));
-		}
-
-		if (file == null) {
-			String errorMsg = "do NOT try to generate it";
-			log.error(errorMsg);
-			throw new FileNotFoundException(errorMsg);
-		}
-
-		return file;
+		return outputFile;
 	}
 
 	public List<OntologyBean> searchOntologyMetadata(String query,
