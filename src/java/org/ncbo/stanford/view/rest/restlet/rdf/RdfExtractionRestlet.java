@@ -39,6 +39,17 @@ public class RdfExtractionRestlet extends AbstractBaseRestlet {
 		generateRdf(request, response);
 	}
 
+	/**
+	 * Handle POST calls here
+	 * 
+	 * @param request
+	 * @param response
+	 */
+	@Override
+	public void postRequest(Request request, Response response) {
+		generateRdfForAllOntologies(request, response);
+	}
+
 	private void generateRdfForAllOntologies(Request request, Response response) {
 		OWLOntologyManager manager = OWLManager.createOWLOntologyManager();
 
@@ -75,7 +86,6 @@ public class RdfExtractionRestlet extends AbstractBaseRestlet {
 		 */
 
 		// process ALL concepts
-
 		try {
 			boolean isVirtual = false;
 			String rdfOutput = "";
