@@ -11,7 +11,7 @@ import org.openrdf.model.URI;
 
 public class MappingServiceImpl implements MappingService {
 
-	CustomNcboMappingDAO mappingDAO;
+	private CustomNcboMappingDAO mappingDAO;
 
 	public OneToOneMapping createMapping(URI source, URI target, URI relation,
 			Integer sourceOntologyId, Integer targetOntologyId,

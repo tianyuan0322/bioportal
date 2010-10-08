@@ -646,38 +646,60 @@
 	</bean>
 	
 	<!--Adding for csv-->
-	<bean id="uploadManager"
-		class="org.ncbo.stanford.manager.upload.impl.UploadManagerImpl">
+	<bean id="mappingManager"
+		class="org.ncbo.stanford.manager.mapping.impl.MappingManagerImpl">
 		<property name="ncboOntologyFileDAO">
 			<ref bean="NcboOntologyFileDAO" />
 		</property>
-		 <property name="mappingService">
-		  	  <ref local="mappingService" />
-		  </property>
-		 
-		
+		<property name="ncboUsageLogDAO">
+			<ref bean="NcboUsageLogDAO" />
+		</property>
+		<property name="mappingService">
+		  	 <ref local="mappingService" />
+		</property>
 	</bean>
 	
-	<bean id="uploadService"
-		  class="org.ncbo.stanford.service.upload.impl.UploadServiceImpl">
-		  <property name="uploadManager">
-		  	  <ref local="uploadManager" />
-		  </property>
-		 
-		  
-		  	  		
+	<util:map id="rdfStoreManagerMap" map-class="java.util.HashMap">
+		<entry>
+			<key>
+				<util:constant
+					static-field="org.ncbo.stanford.util.constants.ApplicationConstants.VIRTUOSO" />
+			</key>
+			<ref local="rdfStoreManagerVirtuosoImpl" />
+		</entry>
+	</util:map>
+	
+	<bean id="rdfStoreManagerVirtuosoImpl"
+	      class="org.ncbo.stanford.manager.rdfstore.impl.RDFStoreManagerVirtuosoImpl">
 	</bean>
+	
+	<bean id="mappingUploadService"
+		  class="org.ncbo.stanford.service.mapping.upload.impl.MappingUploadServiceImpl">
+		  <property name="mappingManager">
+		  	  <ref local="mappingManager" />
+		  </property>
+	</bean>
+	
 	<bean id="mappingService"
 	      class="org.ncbo.stanford.service.mapping.impl.MappingServiceImpl">
 	       <property name="mappingDAO">
 		  	  <ref local="mappingDAO" />
 		  </property>
 	</bean> 
+	
 	<bean id="mappingDAO" class="org.ncbo.stanford.domain.custom.dao.CustomNcboMappingDAO">
-		
-	</bean>     
-
-	<bean id="conceptService"
+		<property name="rdfStoreManagerMap">
+			<ref local="rdfStoreManagerMap" />
+		</property>
+	</bean>
+	
+	<bean id="rdfStoreType" class="java.lang.String">
+		<constructor-arg>
+			<value>@rdfstoretype@</value>
+		</constructor-arg>
+	</bean>
+    
+    <bean id="conceptService"
 		class="org.ncbo.stanford.service.concept.impl.ConceptServiceImpl">
 		<property name="ontologyFormatHandlerMap">
 			<ref local="ontologyFormatHandlerMap" />

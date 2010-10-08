@@ -338,8 +338,8 @@
 	<!-- Adding for CSV -->
 	<bean id="mappingRestlet" class="org.ncbo.stanford.view.rest.restlet.mapping.MappingRestlet"
 		parent="abstractBaseRestlet">
-		<property name="uploadService">
-			<ref bean="uploadService"/>
+		<property name="mappingUploadService">
+			<ref bean="mappingUploadService"/>
 		</property>	
 	</bean>
 
