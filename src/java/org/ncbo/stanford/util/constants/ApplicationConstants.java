@@ -178,4 +178,12 @@ public interface ApplicationConstants {
 	public static final URI MAPPING_ONE_TO_ONE_URI = new URIImpl(MAPPING_PREFIX + "One_To_One_Mapping");
 	public static final URI RDF_TYPE_URI = new URIImpl("http://www.w3.org/1999/02/22-rdf-syntax-ns#type");
 
+	
+	/**
+	 * File Uploading Constants
+	 */
+	public static final String CSVFile = ".csv";
+	public static final String RDFFile = ".rdf";
+	public static final String FileType = ".owl";
+	public static final String RDFStoreType="rdfStoreType";
 }

@@ -4,144 +4,146 @@
 	<classpathentry kind="src" path="classic_to_core_migration/src/java"/>
 	<classpathentry kind="src" path="WebRoot/WEB-INF/conf/generated"/>
 	<classpathentry kind="src" path="src/test"/>
-	<classpathentry kind="lib" path="WebRoot/WEB-INF/lib/org.restlet.jar"/>
-	<classpathentry kind="lib" path="WebRoot/WEB-INF/lib/org.restlet.ext.spring_2.5.jar"/>
-	<classpathentry kind="lib" path="WebRoot/WEB-INF/lib/org.restlet.ext.fileupload_1.2.jar"/>
-	<classpathentry kind="lib" path="WebRoot/WEB-INF/lib/com.noelios.restlet.jar"/>
-	<classpathentry kind="lib" path="WebRoot/WEB-INF/lib/com.noelios.restlet.ext.httpclient_3.1.jar"/>
-	<classpathentry kind="lib" path="WebRoot/WEB-INF/lib/com.noelios.restlet.ext.servlet_2.5.jar"/>
-	<classpathentry kind="lib" path="WebRoot/WEB-INF/lib/com.noelios.restlet.ext.spring_2.5.jar"/>
-	<classpathentry kind="lib" path="WebRoot/WEB-INF/lib/dom4j-1.6.1.jar"/>
-	<classpathentry kind="lib" path="WebRoot/WEB-INF/lib/hibernate3.jar"/>
-	<classpathentry kind="lib" path="WebRoot/WEB-INF/lib/javax.servlet.jar"/>
-	<classpathentry kind="lib" path="WebRoot/WEB-INF/lib/javax.servlet.jsp.jar"/>
-	<classpathentry kind="lib" path="WebRoot/WEB-INF/lib/jta.jar"/>
-	<classpathentry kind="lib" path="WebRoot/WEB-INF/lib/log4j-1.2.15.jar"/>
-	<classpathentry kind="lib" path="WebRoot/WEB-INF/lib/spring.jar"/>
-	<classpathentry kind="lib" path="WebRoot/WEB-INF/lib/openid4java-0.9.5.jar"/>
-	<classpathentry kind="lib" path="WebRoot/WEB-INF/lib/spring-security-acl-2.0.0.jar"/>
-	<classpathentry kind="lib" path="WebRoot/WEB-INF/lib/spring-security-core-2.0.0.jar"/>
-	<classpathentry kind="lib" path="WebRoot/WEB-INF/lib/spring-security-core-tiger-2.0.0.jar"/>
-	<classpathentry kind="lib" path="WebRoot/WEB-INF/lib/spring-security-taglibs-2.0.4.jar"/>
-	<classpathentry kind="lib" path="WebRoot/WEB-INF/lib/stax-api-1.0.1.jar"/>
-	<classpathentry kind="lib" path="WebRoot/WEB-INF/lib/quartz-1.6.0.jar"/>
-	<classpathentry kind="lib" path="WebRoot/WEB-INF/lib/aspectjrt.jar"/>
-	<classpathentry kind="lib" path="WebRoot/WEB-INF/lib/aspectjweaver.jar"/>
-	<classpathentry kind="lib" path="WebRoot/WEB-INF/lib/tar.jar"/>
-	<classpathentry kind="lib" path="WebRoot/WEB-INF/lib/antlr-2.7.5.jar"/>
-	<classpathentry kind="lib" path="WebRoot/WEB-INF/lib/jcvsii.jar"/>
-	<classpathentry kind="lib" path="WebRoot/WEB-INF/lib/j2ssh-core-0.2.9.jar"/>
-	<classpathentry kind="lib" path="WebRoot/WEB-INF/lib/jasypt-1.5.jar"/>
-	<classpathentry kind="lib" path="WebRoot/WEB-INF/lib/c3p0-0.9.1.2.jar"/>
-	<classpathentry kind="lib" path="WebRoot/WEB-INF/lib/spring-test.jar"/>
-	<classpathentry kind="lib" path="WebRoot/WEB-INF/lib/commons-validator-1.3.1.jar"/>
-	<classpathentry kind="lib" path="WebRoot/WEB-INF/lib/commons-logging-1.1.1.jar"/>
-	<classpathentry kind="lib" path="WebRoot/WEB-INF/lib/commons-lang-2.4.jar"/>
-	<classpathentry kind="lib" path="WebRoot/WEB-INF/lib/commons-collections-3.2.1.jar"/>
-	<classpathentry kind="lib" path="WebRoot/WEB-INF/lib/commons-discovery-0.4.jar"/>
-	<classpathentry kind="lib" path="WebRoot/WEB-INF/lib/commons-io-1.4.jar"/>
-	<classpathentry kind="lib" path="WebRoot/WEB-INF/lib/commons-pool-1.4.jar"/>
-	<classpathentry kind="lib" path="WebRoot/WEB-INF/lib/commons-httpclient-3.1.jar"/>
-	<classpathentry kind="lib" path="WebRoot/WEB-INF/lib/commons-codec-1.4.jar"/>
-	<classpathentry kind="lib" path="WebRoot/WEB-INF/lib/commons-dbcp-1.4.jar"/>
-	<classpathentry kind="lib" path="WebRoot/WEB-INF/lib/ehcache-1.4.1.jar"/>
-	<classpathentry kind="lib" path="WebRoot/WEB-INF/lib/xpp3_min-1.1.4c.jar"/>
-	<classpathentry kind="lib" path="WebRoot/WEB-INF/lib/xstream-1.3.1.jar"/>
-	<classpathentry kind="lib" path="WebRoot/WEB-INF/lib/jettison-1.0.1.jar"/>
-	<classpathentry kind="lib" path="WebRoot/WEB-INF/lib/cglib-nodep-2.2.jar"/>
-	<classpathentry kind="lib" path="WebRoot/WEB-INF/lib/commons-fileupload-1.2.1.jar"/>
-	<classpathentry kind="lib" path="WebRoot/WEB-INF/lib/hsqldb.jar"/>
-	<classpathentry kind="lib" path="WebRoot/WEB-INF/lib/backport-util-concurrent-3.0.jar"/>
-	<classpathentry kind="lib" path="WebRoot/WEB-INF/lib/jsr107cache-1.0.jar"/>
-	<classpathentry kind="lib" path="WebRoot/WEB-INF/lib/xercesImpl.jar"/>
-	<classpathentry kind="lib" path="WebRoot/WEB-INF/lib/xml-apis.jar"/>
-	<classpathentry kind="lib" path="WebRoot/WEB-INF/lib/mysql-connector-java-5.1.12-bin.jar"/>
-	<classpathentry kind="lib" path="WebRoot/WEB-INF/lib/concurrent.jar"/>
-	<classpathentry kind="lib" path="WebRoot/WEB-INF/lib/looks-2.1.3.jar"/>
-	<classpathentry kind="lib" path="WebRoot/WEB-INF/lib/junit-4.4.jar"/>
-	<classpathentry kind="lib" path="WebRoot/WEB-INF/lib/svnkit.jar"/>
-	<classpathentry kind="lib" path="WebRoot/WEB-INF/lib/notes-api.jar"/>
-	<classpathentry kind="lib" path="WebRoot/WEB-INF/lib/virtuoso/virtjdbc3.jar"/>
-	<classpathentry kind="lib" path="WebRoot/WEB-INF/lib/virtuoso/virt_sesame2.jar"/>
-	<classpathentry kind="lib" path="WebRoot/WEB-INF/lib/openrdf/openrdf-sesame-2.3.2-onejar.jar"/>
-	<classpathentry kind="lib" path="WebRoot/WEB-INF/lib/openrdf/openrdf-alibaba-2.0-beta3.jar"/>
-	<classpathentry kind="lib" path="WebRoot/WEB-INF/lib/javassist.jar"/>
-	<classpathentry kind="lib" path="WebRoot/WEB-INF/lib/httpcore-4.0.1.jar"/>
-	<classpathentry kind="lib" path="WebRoot/WEB-INF/lib/org.semanticweb.owl.owlapi.jar"/>
-	<classpathentry kind="lib" path="WebRoot/WEB-INF/lib/org.protege.owlapi.jar"/>
-	<classpathentry kind="lib" path="WebRoot/WEB-INF/lib/protege/protege.jar"/>
-	<classpathentry kind="lib" path="WebRoot/WEB-INF/lib/protege/plugins/edu.stanford.smi.protegex.changes/change-management.jar"/>
-	<classpathentry kind="lib" path="WebRoot/WEB-INF/lib/protege/plugins/edu.stanford.smi.protegex.changes/icu4j.jar"/>
-	<classpathentry kind="lib" path="WebRoot/WEB-INF/lib/protege/plugins/edu.stanford.smi.protegex.owl/antlr-2.7.5.jar"/>
-	<classpathentry kind="lib" path="WebRoot/WEB-INF/lib/protege/plugins/edu.stanford.smi.protegex.owl/arq-extra.jar"/>
-	<classpathentry kind="lib" path="WebRoot/WEB-INF/lib/protege/plugins/edu.stanford.smi.protegex.owl/arq.jar"/>
-	<classpathentry kind="lib" path="WebRoot/WEB-INF/lib/protege/plugins/edu.stanford.smi.protegex.owl/edtftpj-1.5.2.jar"/>
-	<classpathentry kind="lib" path="WebRoot/WEB-INF/lib/protege/plugins/edu.stanford.smi.protegex.owl/ekitspell.jar"/>
-	<classpathentry kind="lib" path="WebRoot/WEB-INF/lib/protege/plugins/edu.stanford.smi.protegex.owl/icu4j_3_4.jar"/>
-	<classpathentry kind="lib" path="WebRoot/WEB-INF/lib/protege/plugins/edu.stanford.smi.protegex.owl/iri.jar"/>
-	<classpathentry kind="lib" path="WebRoot/WEB-INF/lib/protege/plugins/edu.stanford.smi.protegex.owl/jcalendar.jar"/>
-	<classpathentry kind="lib" path="WebRoot/WEB-INF/lib/protege/plugins/edu.stanford.smi.protegex.owl/jdom.jar"/>
-	<classpathentry kind="lib" path="WebRoot/WEB-INF/lib/protege/plugins/edu.stanford.smi.protegex.owl/jena.jar"/>
-	<classpathentry kind="lib" path="WebRoot/WEB-INF/lib/protege/plugins/edu.stanford.smi.protegex.owl/jep-2.4.0.jar"/>
-	<classpathentry kind="lib" path="WebRoot/WEB-INF/lib/protege/plugins/edu.stanford.smi.protegex.owl/json.jar"/>
-	<classpathentry kind="lib" path="WebRoot/WEB-INF/lib/protege/plugins/edu.stanford.smi.protegex.owl/kazuki.jar"/>
-	<classpathentry kind="lib" path="WebRoot/WEB-INF/lib/protege/plugins/edu.stanford.smi.protegex.owl/orphanNodesAlg.jar"/>
-	<classpathentry kind="lib" path="WebRoot/WEB-INF/lib/protege/plugins/edu.stanford.smi.protegex.owl/owlsyntax.jar"/>
-	<classpathentry kind="lib" path="WebRoot/WEB-INF/lib/protege/plugins/edu.stanford.smi.protegex.owl/protege-owl.jar"/>
-	<classpathentry kind="lib" path="WebRoot/WEB-INF/lib/protege/plugins/edu.stanford.smi.protegex.owl/stax-api-1.0.jar"/>
-	<classpathentry kind="lib" path="WebRoot/WEB-INF/lib/protege/plugins/edu.stanford.smi.protegex.owl/swrl-jess-bridge.jar"/>
-	<classpathentry kind="lib" path="WebRoot/WEB-INF/lib/protege/plugins/edu.stanford.smi.protegex.owl/wstx-asl-3.0.0.jar"/>
-	<classpathentry kind="lib" path="WebRoot/WEB-INF/lib/protege/plugins/edu.stanford.smi.protegex.rdf_backend/rdf-api.jar"/>
-	<classpathentry kind="lib" path="WebRoot/WEB-INF/lib/protege/plugins/edu.stanford.smi.protegex.rdf_backend/rdf-backend.jar"/>
-	<classpathentry kind="lib" path="WebRoot/WEB-INF/lib/protege/plugins/edu.stanford.smi.protegex.prompt/prompt.jar"/>
-	<classpathentry kind="lib" path="WebRoot/WEB-INF/lib/protege/plugins/edu.stanford.smi.protegex.owl/axis.jar"/>
-	<classpathentry kind="lib" path="WebRoot/WEB-INF/lib/protege/plugins/edu.stanford.smi.protegex.changes/change-model.jar"/>
-	<classpathentry kind="lib" path="WebRoot/WEB-INF/lib/lexgrid/extLib/BlankAccessDB.jar"/>
-	<classpathentry kind="lib" path="WebRoot/WEB-INF/lib/lexgrid/extLib/activation-1.1.jar"/>
-	<classpathentry kind="lib" path="WebRoot/WEB-INF/lib/lexgrid/extLib/arq.jar"/>
-	<classpathentry kind="lib" path="WebRoot/WEB-INF/lib/lexgrid/extLib/caGrid-0.5.jar"/>
-	<classpathentry kind="lib" path="WebRoot/WEB-INF/lib/lexgrid/extLib/castor-1.2-anttasks.jar"/>
-	<classpathentry kind="lib" path="WebRoot/WEB-INF/lib/lexgrid/extLib/castor-1.2-codegen.jar"/>
-	<classpathentry kind="lib" path="WebRoot/WEB-INF/lib/lexgrid/extLib/castor-1.2-ddlgen.jar"/>
-	<classpathentry kind="lib" path="WebRoot/WEB-INF/lib/lexgrid/extLib/castor-1.2-xml-schema.jar"/>
-	<classpathentry kind="lib" path="WebRoot/WEB-INF/lib/lexgrid/extLib/castor-1.2-xml.jar"/>
-	<classpathentry kind="lib" path="WebRoot/WEB-INF/lib/lexgrid/extLib/castor-1.2.jar"/>
-	<classpathentry kind="lib" path="WebRoot/WEB-INF/lib/lexgrid/extLib/commons-cli-1.0.jar"/>
-	<classpathentry kind="lib" path="WebRoot/WEB-INF/lib/lexgrid/extLib/gnu-regexp-1.1.4.jar"/>
-	<classpathentry kind="lib" path="WebRoot/WEB-INF/lib/lexgrid/extLib/icu4j-3_6.jar"/>
-	<classpathentry kind="lib" path="WebRoot/WEB-INF/lib/lexgrid/extLib/iri.jar"/>
-	<classpathentry kind="lib" path="WebRoot/WEB-INF/lib/lexgrid/extLib/jakarta-regexp-1.4.jar"/>
-	<classpathentry kind="lib" path="WebRoot/WEB-INF/lib/lexgrid/extLib/jaxen-core-1.1.jar"/>
-	<classpathentry kind="lib" path="WebRoot/WEB-INF/lib/lexgrid/extLib/jaxen-jdom-1.1.jar"/>
-	<classpathentry kind="lib" path="WebRoot/WEB-INF/lib/lexgrid/extLib/jcalendar-1.3.1.jar"/>
-	<classpathentry kind="lib" path="WebRoot/WEB-INF/lib/lexgrid/extLib/jdbm-1.0.jar"/>
-	<classpathentry kind="lib" path="WebRoot/WEB-INF/lib/lexgrid/extLib/jdom-1.0.jar"/>
-	<classpathentry kind="lib" path="WebRoot/WEB-INF/lib/lexgrid/extLib/jena-2.5.4.jar"/>
-	<classpathentry kind="lib" path="WebRoot/WEB-INF/lib/lexgrid/extLib/mail-1.4.jar"/>
-	<classpathentry kind="lib" path="WebRoot/WEB-INF/lib/lexgrid/extLib/org.eclipse.core.commands_3.2.0.I20060327-0010.jar"/>
-	<classpathentry kind="lib" path="WebRoot/WEB-INF/lib/lexgrid/extLib/org.eclipse.core.runtime_3.2.0.v20060603.jar"/>
-	<classpathentry kind="lib" path="WebRoot/WEB-INF/lib/lexgrid/extLib/org.eclipse.emf.common_2.2.1.v200609210005.jar"/>
-	<classpathentry kind="lib" path="WebRoot/WEB-INF/lib/lexgrid/extLib/org.eclipse.emf.ecore.xmi_2.2.1.v200609210005.jar"/>
-	<classpathentry kind="lib" path="WebRoot/WEB-INF/lib/lexgrid/extLib/org.eclipse.emf.ecore_2.2.1.v200609210005.jar"/>
-	<classpathentry kind="lib" path="WebRoot/WEB-INF/lib/lexgrid/extLib/org.eclipse.equinox.common_3.2.0.v20060603.jar"/>
-	<classpathentry kind="lib" path="WebRoot/WEB-INF/lib/lexgrid/extLib/org.eclipse.equinox.preferences_3.2.0.v20060601.jar"/>
-	<classpathentry kind="lib" path="WebRoot/WEB-INF/lib/lexgrid/extLib/org.eclipse.osgi_3.2.0.v20060601.jar"/>
-	<classpathentry kind="lib" path="WebRoot/WEB-INF/lib/lexgrid/extLib/prefuse-2006.07.15-mod.jar"/>
-	<classpathentry kind="lib" path="WebRoot/WEB-INF/lib/lexgrid/extLib/saxpath-1.1.jar"/>
-	<classpathentry kind="lib" path="WebRoot/WEB-INF/lib/lexgrid/extLib/args4j-2.0.12.jar"/>
-	<classpathentry kind="lib" path="WebRoot/WEB-INF/lib/lexgrid/extLib/asm-3.2.jar"/>
-	<classpathentry kind="lib" path="WebRoot/WEB-INF/lib/lexgrid/extLib/commons-beanutils-1.8.0.jar"/>
-	<classpathentry kind="lib" path="WebRoot/WEB-INF/lib/lexgrid/extLib/hibernate-tools-3.2.3.GA.jar"/>
-	<classpathentry kind="lib" path="WebRoot/WEB-INF/lib/lexgrid/extLib/slf4j-api-1.5.6.jar"/>
-	<classpathentry kind="lib" path="WebRoot/WEB-INF/lib/lexgrid/extLib/slf4j-log4j12-1.5.6.jar"/>
-	<classpathentry kind="lib" path="WebRoot/WEB-INF/lib/lexgrid/extLib/spring-batch-core-2.0.1.RELEASE.jar"/>
-	<classpathentry kind="lib" path="WebRoot/WEB-INF/lib/lexgrid/extLib/spring-batch-infrastructure-2.0.1.RELEASE.jar"/>
-	<classpathentry kind="lib" path="WebRoot/WEB-INF/lib/lexgrid/extLib/spring-oxm-1.5.7.jar"/>
-	<classpathentry kind="lib" path="WebRoot/WEB-INF/lib/lexgrid/extLib/spring-xml-1.5.7.jar"/>
-	<classpathentry kind="lib" path="WebRoot/WEB-INF/lib/lexgrid/lexbig.jar"/>
-	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
-	<classpathentry kind="lib" path="WebRoot/WEB-INF/lib/lucene-core-2.4.1.jar"/>
-	<classpathentry kind="lib" path="WebRoot/WEB-INF/lib/lucene-regex-2.4.1.jar"/>
-	<classpathentry kind="lib" path="WebRoot/WEB-INF/lib/lucene-snowball-2.4.1.jar"/>
+	<classpathentry exported="true" kind="lib" path="WebRoot/WEB-INF/lib/org.restlet.jar"/>
+	<classpathentry exported="true" kind="lib" path="WebRoot/WEB-INF/lib/org.restlet.ext.spring_2.5.jar"/>
+	<classpathentry exported="true" kind="lib" path="WebRoot/WEB-INF/lib/org.restlet.ext.fileupload_1.2.jar"/>
+	<classpathentry exported="true" kind="lib" path="WebRoot/WEB-INF/lib/com.noelios.restlet.jar"/>
+	<classpathentry exported="true" kind="lib" path="WebRoot/WEB-INF/lib/com.noelios.restlet.ext.httpclient_3.1.jar"/>
+	<classpathentry exported="true" kind="lib" path="WebRoot/WEB-INF/lib/com.noelios.restlet.ext.servlet_2.5.jar"/>
+	<classpathentry exported="true" kind="lib" path="WebRoot/WEB-INF/lib/com.noelios.restlet.ext.spring_2.5.jar"/>
+	<classpathentry exported="true" kind="lib" path="WebRoot/WEB-INF/lib/dom4j-1.6.1.jar"/>
+	<classpathentry exported="true" kind="lib" path="WebRoot/WEB-INF/lib/hibernate3.jar"/>
+	<classpathentry exported="true" kind="lib" path="WebRoot/WEB-INF/lib/javax.servlet.jar"/>
+	<classpathentry exported="true" kind="lib" path="WebRoot/WEB-INF/lib/javax.servlet.jsp.jar"/>
+	<classpathentry exported="true" kind="lib" path="WebRoot/WEB-INF/lib/jta.jar"/>
+	<classpathentry exported="true" kind="lib" path="WebRoot/WEB-INF/lib/log4j-1.2.15.jar"/>
+	<classpathentry exported="true" kind="lib" path="WebRoot/WEB-INF/lib/spring.jar"/>
+	<classpathentry exported="true" kind="lib" path="WebRoot/WEB-INF/lib/openid4java-0.9.5.jar"/>
+	<classpathentry exported="true" kind="lib" path="WebRoot/WEB-INF/lib/spring-security-acl-2.0.0.jar"/>
+	<classpathentry exported="true" kind="lib" path="WebRoot/WEB-INF/lib/spring-security-core-2.0.0.jar"/>
+	<classpathentry exported="true" kind="lib" path="WebRoot/WEB-INF/lib/spring-security-core-tiger-2.0.0.jar"/>
+	<classpathentry exported="true" kind="lib" path="WebRoot/WEB-INF/lib/spring-security-taglibs-2.0.4.jar"/>
+	<classpathentry exported="true" kind="lib" path="WebRoot/WEB-INF/lib/stax-api-1.0.1.jar"/>
+	<classpathentry exported="true" kind="lib" path="WebRoot/WEB-INF/lib/quartz-1.6.0.jar"/>
+	<classpathentry exported="true" kind="lib" path="WebRoot/WEB-INF/lib/aspectjrt.jar"/>
+	<classpathentry exported="true" kind="lib" path="WebRoot/WEB-INF/lib/aspectjweaver.jar"/>
+	<classpathentry exported="true" kind="lib" path="WebRoot/WEB-INF/lib/tar.jar"/>
+	<classpathentry exported="true" kind="lib" path="WebRoot/WEB-INF/lib/antlr-2.7.5.jar"/>
+	<classpathentry exported="true" kind="lib" path="WebRoot/WEB-INF/lib/jcvsii.jar"/>
+	<classpathentry exported="true" kind="lib" path="WebRoot/WEB-INF/lib/j2ssh-core-0.2.9.jar"/>
+	<classpathentry exported="true" kind="lib" path="WebRoot/WEB-INF/lib/jasypt-1.5.jar"/>
+	<classpathentry exported="true" kind="lib" path="WebRoot/WEB-INF/lib/c3p0-0.9.1.2.jar"/>
+	<classpathentry exported="true" kind="lib" path="WebRoot/WEB-INF/lib/spring-test.jar"/>
+	<classpathentry exported="true" kind="lib" path="WebRoot/WEB-INF/lib/commons-validator-1.3.1.jar"/>
+	<classpathentry exported="true" kind="lib" path="WebRoot/WEB-INF/lib/commons-logging-1.1.1.jar"/>
+	<classpathentry exported="true" kind="lib" path="WebRoot/WEB-INF/lib/commons-lang-2.4.jar"/>
+	<classpathentry exported="true" kind="lib" path="WebRoot/WEB-INF/lib/commons-collections-3.2.1.jar"/>
+	<classpathentry exported="true" kind="lib" path="WebRoot/WEB-INF/lib/commons-discovery-0.4.jar"/>
+	<classpathentry exported="true" kind="lib" path="WebRoot/WEB-INF/lib/commons-io-1.4.jar"/>
+	<classpathentry exported="true" kind="lib" path="WebRoot/WEB-INF/lib/commons-pool-1.4.jar"/>
+	<classpathentry exported="true" kind="lib" path="WebRoot/WEB-INF/lib/commons-httpclient-3.1.jar"/>
+	<classpathentry exported="true" kind="lib" path="WebRoot/WEB-INF/lib/commons-codec-1.4.jar"/>
+	<classpathentry exported="true" kind="lib" path="WebRoot/WEB-INF/lib/commons-dbcp-1.4.jar"/>
+	<classpathentry exported="true" kind="lib" path="WebRoot/WEB-INF/lib/ehcache-1.4.1.jar"/>
+	<classpathentry exported="true" kind="lib" path="WebRoot/WEB-INF/lib/xpp3_min-1.1.4c.jar"/>
+	<classpathentry exported="true" kind="lib" path="WebRoot/WEB-INF/lib/xstream-1.3.1.jar"/>
+	<classpathentry exported="true" kind="lib" path="WebRoot/WEB-INF/lib/jettison-1.0.1.jar"/>
+	<classpathentry exported="true" kind="lib" path="WebRoot/WEB-INF/lib/cglib-nodep-2.2.jar"/>
+	<classpathentry exported="true" kind="lib" path="WebRoot/WEB-INF/lib/commons-fileupload-1.2.1.jar"/>
+	<classpathentry exported="true" kind="lib" path="WebRoot/WEB-INF/lib/hsqldb.jar"/>
+	<classpathentry exported="true" kind="lib" path="WebRoot/WEB-INF/lib/backport-util-concurrent-3.0.jar"/>
+	<classpathentry exported="true" kind="lib" path="WebRoot/WEB-INF/lib/jsr107cache-1.0.jar"/>
+	<classpathentry exported="true" kind="lib" path="WebRoot/WEB-INF/lib/xercesImpl.jar"/>
+	<classpathentry exported="true" kind="lib" path="WebRoot/WEB-INF/lib/xml-apis.jar"/>
+	<classpathentry exported="true" kind="lib" path="WebRoot/WEB-INF/lib/mysql-connector-java-5.1.12-bin.jar"/>
+	<classpathentry exported="true" kind="lib" path="WebRoot/WEB-INF/lib/concurrent.jar"/>
+	<classpathentry exported="true" kind="lib" path="WebRoot/WEB-INF/lib/looks-2.1.3.jar"/>
+	<classpathentry exported="true" kind="lib" path="WebRoot/WEB-INF/lib/junit-4.4.jar"/>
+	<classpathentry exported="true" kind="lib" path="WebRoot/WEB-INF/lib/svnkit.jar"/>
+	<classpathentry exported="true" kind="lib" path="WebRoot/WEB-INF/lib/notes-api.jar"/>
+	<classpathentry exported="true" kind="lib" path="WebRoot/WEB-INF/lib/virtuoso/virtjdbc3.jar"/>
+	<classpathentry exported="true" kind="lib" path="WebRoot/WEB-INF/lib/virtuoso/virt_sesame2.jar"/>
+	<classpathentry exported="true" kind="lib" path="WebRoot/WEB-INF/lib/openrdf/openrdf-sesame-2.3.2-onejar.jar"/>
+	<classpathentry exported="true" kind="lib" path="WebRoot/WEB-INF/lib/openrdf/openrdf-alibaba-2.0-beta3.jar"/>
+	<classpathentry exported="true" kind="lib" path="WebRoot/WEB-INF/lib/javassist.jar"/>
+	<classpathentry exported="true" kind="lib" path="WebRoot/WEB-INF/lib/httpcore-4.0.1.jar"/>
+	<classpathentry exported="true" kind="lib" path="WebRoot/WEB-INF/lib/org.semanticweb.owl.owlapi.jar"/>
+	<classpathentry exported="true" kind="lib" path="WebRoot/WEB-INF/lib/org.protege.owlapi.jar"/>
+	<classpathentry exported="true" kind="lib" path="WebRoot/WEB-INF/lib/protege/protege.jar"/>
+	<classpathentry exported="true" kind="lib" path="WebRoot/WEB-INF/lib/protege/plugins/edu.stanford.smi.protegex.changes/change-management.jar"/>
+	<classpathentry exported="true" kind="lib" path="WebRoot/WEB-INF/lib/protege/plugins/edu.stanford.smi.protegex.changes/icu4j.jar"/>
+	<classpathentry exported="true" kind="lib" path="WebRoot/WEB-INF/lib/protege/plugins/edu.stanford.smi.protegex.owl/antlr-2.7.5.jar"/>
+	<classpathentry exported="true" kind="lib" path="WebRoot/WEB-INF/lib/protege/plugins/edu.stanford.smi.protegex.owl/arq-extra.jar"/>
+	<classpathentry exported="true" kind="lib" path="WebRoot/WEB-INF/lib/protege/plugins/edu.stanford.smi.protegex.owl/arq.jar"/>
+	<classpathentry exported="true" kind="lib" path="WebRoot/WEB-INF/lib/protege/plugins/edu.stanford.smi.protegex.owl/edtftpj-1.5.2.jar"/>
+	<classpathentry exported="true" kind="lib" path="WebRoot/WEB-INF/lib/protege/plugins/edu.stanford.smi.protegex.owl/ekitspell.jar"/>
+	<classpathentry exported="true" kind="lib" path="WebRoot/WEB-INF/lib/protege/plugins/edu.stanford.smi.protegex.owl/icu4j_3_4.jar"/>
+	<classpathentry exported="true" kind="lib" path="WebRoot/WEB-INF/lib/protege/plugins/edu.stanford.smi.protegex.owl/iri.jar"/>
+	<classpathentry exported="true" kind="lib" path="WebRoot/WEB-INF/lib/protege/plugins/edu.stanford.smi.protegex.owl/jcalendar.jar"/>
+	<classpathentry exported="true" kind="lib" path="WebRoot/WEB-INF/lib/protege/plugins/edu.stanford.smi.protegex.owl/jdom.jar"/>
+	<classpathentry exported="true" kind="lib" path="WebRoot/WEB-INF/lib/protege/plugins/edu.stanford.smi.protegex.owl/jena.jar"/>
+	<classpathentry exported="true" kind="lib" path="WebRoot/WEB-INF/lib/protege/plugins/edu.stanford.smi.protegex.owl/jep-2.4.0.jar"/>
+	<classpathentry exported="true" kind="lib" path="WebRoot/WEB-INF/lib/protege/plugins/edu.stanford.smi.protegex.owl/json.jar"/>
+	<classpathentry exported="true" kind="lib" path="WebRoot/WEB-INF/lib/protege/plugins/edu.stanford.smi.protegex.owl/kazuki.jar"/>
+	<classpathentry exported="true" kind="lib" path="WebRoot/WEB-INF/lib/protege/plugins/edu.stanford.smi.protegex.owl/orphanNodesAlg.jar"/>
+	<classpathentry exported="true" kind="lib" path="WebRoot/WEB-INF/lib/protege/plugins/edu.stanford.smi.protegex.owl/owlsyntax.jar"/>
+	<classpathentry exported="true" kind="lib" path="WebRoot/WEB-INF/lib/protege/plugins/edu.stanford.smi.protegex.owl/protege-owl.jar"/>
+	<classpathentry exported="true" kind="lib" path="WebRoot/WEB-INF/lib/protege/plugins/edu.stanford.smi.protegex.owl/stax-api-1.0.jar"/>
+	<classpathentry exported="true" kind="lib" path="WebRoot/WEB-INF/lib/protege/plugins/edu.stanford.smi.protegex.owl/swrl-jess-bridge.jar"/>
+	<classpathentry exported="true" kind="lib" path="WebRoot/WEB-INF/lib/protege/plugins/edu.stanford.smi.protegex.owl/wstx-asl-3.0.0.jar"/>
+	<classpathentry exported="true" kind="lib" path="WebRoot/WEB-INF/lib/protege/plugins/edu.stanford.smi.protegex.rdf_backend/rdf-api.jar"/>
+	<classpathentry exported="true" kind="lib" path="WebRoot/WEB-INF/lib/protege/plugins/edu.stanford.smi.protegex.rdf_backend/rdf-backend.jar"/>
+	<classpathentry exported="true" kind="lib" path="WebRoot/WEB-INF/lib/protege/plugins/edu.stanford.smi.protegex.prompt/prompt.jar"/>
+	<classpathentry exported="true" kind="lib" path="WebRoot/WEB-INF/lib/protege/plugins/edu.stanford.smi.protegex.owl/axis.jar"/>
+	<classpathentry exported="true" kind="lib" path="WebRoot/WEB-INF/lib/protege/plugins/edu.stanford.smi.protegex.changes/change-model.jar"/>
+	<classpathentry exported="true" kind="lib" path="WebRoot/WEB-INF/lib/lexgrid/extLib/BlankAccessDB.jar"/>
+	<classpathentry exported="true" kind="lib" path="WebRoot/WEB-INF/lib/lexgrid/extLib/activation-1.1.jar"/>
+	<classpathentry exported="true" kind="lib" path="WebRoot/WEB-INF/lib/lexgrid/extLib/arq.jar"/>
+	<classpathentry exported="true" kind="lib" path="WebRoot/WEB-INF/lib/lexgrid/extLib/caGrid-0.5.jar"/>
+	<classpathentry exported="true" kind="lib" path="WebRoot/WEB-INF/lib/lexgrid/extLib/castor-1.2-anttasks.jar"/>
+	<classpathentry exported="true" kind="lib" path="WebRoot/WEB-INF/lib/lexgrid/extLib/castor-1.2-codegen.jar"/>
+	<classpathentry exported="true" kind="lib" path="WebRoot/WEB-INF/lib/lexgrid/extLib/castor-1.2-ddlgen.jar"/>
+	<classpathentry exported="true" kind="lib" path="WebRoot/WEB-INF/lib/lexgrid/extLib/castor-1.2-xml-schema.jar"/>
+	<classpathentry exported="true" kind="lib" path="WebRoot/WEB-INF/lib/lexgrid/extLib/castor-1.2-xml.jar"/>
+	<classpathentry exported="true" kind="lib" path="WebRoot/WEB-INF/lib/lexgrid/extLib/castor-1.2.jar"/>
+	<classpathentry exported="true" kind="lib" path="WebRoot/WEB-INF/lib/lexgrid/extLib/commons-cli-1.0.jar"/>
+	<classpathentry exported="true" kind="lib" path="WebRoot/WEB-INF/lib/lexgrid/extLib/gnu-regexp-1.1.4.jar"/>
+	<classpathentry exported="true" kind="lib" path="WebRoot/WEB-INF/lib/lexgrid/extLib/icu4j-3_6.jar"/>
+	<classpathentry exported="true" kind="lib" path="WebRoot/WEB-INF/lib/lexgrid/extLib/iri.jar"/>
+	<classpathentry exported="true" kind="lib" path="WebRoot/WEB-INF/lib/lexgrid/extLib/jakarta-regexp-1.4.jar"/>
+	<classpathentry exported="true" kind="lib" path="WebRoot/WEB-INF/lib/lexgrid/extLib/jaxen-core-1.1.jar"/>
+	<classpathentry exported="true" kind="lib" path="WebRoot/WEB-INF/lib/lexgrid/extLib/jaxen-jdom-1.1.jar"/>
+	<classpathentry exported="true" kind="lib" path="WebRoot/WEB-INF/lib/lexgrid/extLib/jcalendar-1.3.1.jar"/>
+	<classpathentry exported="true" kind="lib" path="WebRoot/WEB-INF/lib/lexgrid/extLib/jdbm-1.0.jar"/>
+	<classpathentry exported="true" kind="lib" path="WebRoot/WEB-INF/lib/lexgrid/extLib/jdom-1.0.jar"/>
+	<classpathentry exported="true" kind="lib" path="WebRoot/WEB-INF/lib/lexgrid/extLib/jena-2.5.4.jar"/>
+	<classpathentry exported="true" kind="lib" path="WebRoot/WEB-INF/lib/lexgrid/extLib/mail-1.4.jar"/>
+	<classpathentry exported="true" kind="lib" path="WebRoot/WEB-INF/lib/lexgrid/extLib/org.eclipse.core.commands_3.2.0.I20060327-0010.jar"/>
+	<classpathentry exported="true" kind="lib" path="WebRoot/WEB-INF/lib/lexgrid/extLib/org.eclipse.core.runtime_3.2.0.v20060603.jar"/>
+	<classpathentry exported="true" kind="lib" path="WebRoot/WEB-INF/lib/lexgrid/extLib/org.eclipse.emf.common_2.2.1.v200609210005.jar"/>
+	<classpathentry exported="true" kind="lib" path="WebRoot/WEB-INF/lib/lexgrid/extLib/org.eclipse.emf.ecore.xmi_2.2.1.v200609210005.jar"/>
+	<classpathentry exported="true" kind="lib" path="WebRoot/WEB-INF/lib/lexgrid/extLib/org.eclipse.emf.ecore_2.2.1.v200609210005.jar"/>
+	<classpathentry exported="true" kind="lib" path="WebRoot/WEB-INF/lib/lexgrid/extLib/org.eclipse.equinox.common_3.2.0.v20060603.jar"/>
+	<classpathentry exported="true" kind="lib" path="WebRoot/WEB-INF/lib/lexgrid/extLib/org.eclipse.equinox.preferences_3.2.0.v20060601.jar"/>
+	<classpathentry exported="true" kind="lib" path="WebRoot/WEB-INF/lib/lexgrid/extLib/org.eclipse.osgi_3.2.0.v20060601.jar"/>
+	<classpathentry exported="true" kind="lib" path="WebRoot/WEB-INF/lib/lexgrid/extLib/prefuse-2006.07.15-mod.jar"/>
+	<classpathentry exported="true" kind="lib" path="WebRoot/WEB-INF/lib/lexgrid/extLib/saxpath-1.1.jar"/>
+	<classpathentry exported="true" kind="lib" path="WebRoot/WEB-INF/lib/lexgrid/extLib/args4j-2.0.12.jar"/>
+	<classpathentry exported="true" kind="lib" path="WebRoot/WEB-INF/lib/lexgrid/extLib/asm-3.2.jar"/>
+	<classpathentry exported="true" kind="lib" path="WebRoot/WEB-INF/lib/lexgrid/extLib/commons-beanutils-1.8.0.jar"/>
+	<classpathentry exported="true" kind="lib" path="WebRoot/WEB-INF/lib/lexgrid/extLib/hibernate-tools-3.2.3.GA.jar"/>
+	<classpathentry exported="true" kind="lib" path="WebRoot/WEB-INF/lib/lexgrid/extLib/slf4j-api-1.5.6.jar"/>
+	<classpathentry exported="true" kind="lib" path="WebRoot/WEB-INF/lib/lexgrid/extLib/slf4j-log4j12-1.5.6.jar"/>
+	<classpathentry exported="true" kind="lib" path="WebRoot/WEB-INF/lib/lexgrid/extLib/spring-batch-core-2.0.1.RELEASE.jar"/>
+	<classpathentry exported="true" kind="lib" path="WebRoot/WEB-INF/lib/lexgrid/extLib/spring-batch-infrastructure-2.0.1.RELEASE.jar"/>
+	<classpathentry exported="true" kind="lib" path="WebRoot/WEB-INF/lib/lexgrid/extLib/spring-oxm-1.5.7.jar"/>
+	<classpathentry exported="true" kind="lib" path="WebRoot/WEB-INF/lib/lexgrid/extLib/spring-xml-1.5.7.jar"/>
+	<classpathentry exported="true" kind="lib" path="WebRoot/WEB-INF/lib/lexgrid/lexbig.jar"/>
+	<classpathentry exported="true" kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
+	<classpathentry exported="true" kind="lib" path="WebRoot/WEB-INF/lib/lucene-core-2.4.1.jar"/>
+	<classpathentry exported="true" kind="lib" path="WebRoot/WEB-INF/lib/lucene-regex-2.4.1.jar"/>
+	<classpathentry exported="true" kind="lib" path="WebRoot/WEB-INF/lib/lucene-snowball-2.4.1.jar"/>
+	<classpathentry exported="true" kind="lib" path="C:/apps/bmir.apps/bioportal/WebRoot/WEB-INF/lib/opencsv-2.2.jar"/>
+	<classpathentry kind="lib" path="WebRoot/WEB-INF/lib/opencsv-2.2.jar"/>
 	<classpathentry kind="output" path="WebRoot/WEB-INF/classes"/>
 </classpath>
