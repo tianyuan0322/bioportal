@@ -1,10 +1,12 @@
 package org.ncbo.stanford.service.mapping;
 
+import org.ncbo.stanford.bean.OntologyBean;
 import org.ncbo.stanford.bean.mapping.OneToOneMappingBean;
-import org.ncbo.stanford.domain.custom.entity.mapping.OneToOneMapping;
 import org.ncbo.stanford.enumeration.MappingSourceEnum;
+import org.ncbo.stanford.exception.InvalidInputException;
 import org.ncbo.stanford.exception.MappingExistsException;
 import org.ncbo.stanford.exception.MappingMissingException;
+import org.ncbo.stanford.util.paginator.impl.Page;
 import org.openrdf.model.URI;
 
 public interface MappingService {
@@ -25,7 +27,7 @@ public interface MappingService {
 	 * @param mappingType
 	 * @return
 	 */
-	public OneToOneMapping createMapping(URI source, URI target, URI relation,
+	public OneToOneMappingBean createMapping(URI source, URI target, URI relation,
 			Integer sourceOntologyId, Integer targetOntologyId,
 			Integer sourceOntologyVersion, Integer targetOntologyVersion,
 			Integer submittedBy, String comment,
@@ -69,4 +71,50 @@ public interface MappingService {
 	 */
 	public void deleteMapping(URI id) throws MappingMissingException;
 
+	/**
+	 * Get all mappings from a given ontology.
+	 * 
+	 * @param ont
+	 * @return
+	 * @throws InvalidInputException
+	 */
+	public Page<OneToOneMappingBean> getMappingsFromOntology(OntologyBean ont,
+			Integer pageSize, Integer pageNum) throws InvalidInputException;
+
+	/**
+	 * Get all mappings to a given ontology.
+	 * 
+	 * @param ont
+	 * @return
+	 * @throws InvalidInputException
+	 */
+	public Page<OneToOneMappingBean> getMappingsToOntology(OntologyBean ont,
+			Integer pageSize, Integer pageNum) throws InvalidInputException;
+
+	/**
+	 * Get mappings between two ontologies. Pass 'unidirectional' if you only
+	 * want one-way mappings.
+	 * 
+	 * @param sourceOnt
+	 * @param targetOnt
+	 * @param unidirectional
+	 * @return
+	 * @throws InvalidInputException
+	 */
+	public Page<OneToOneMappingBean> getMappingsBetweenOntologies(
+			OntologyBean sourceOnt, OntologyBean targetOnt, Integer pageSize,
+			Integer pageNum, Boolean unidirectional)
+			throws InvalidInputException;
+
+	/**
+	 * Get all mappings either from or to a given ontology.
+	 * 
+	 * @param ont
+	 * @return
+	 * @throws InvalidInputException
+	 */
+	public Page<OneToOneMappingBean> getMappingsForOntology(
+			OntologyBean ont, Integer pageSize, Integer pageNum)
+			throws InvalidInputException;
+	
 }
