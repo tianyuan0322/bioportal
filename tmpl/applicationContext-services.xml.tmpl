@@ -667,10 +667,21 @@
 			</key>
 			<ref local="rdfStoreManagerVirtuosoImpl" />
 		</entry>
+		<entry>
+			<key>
+				<util:constant
+					static-field="org.ncbo.stanford.util.constants.ApplicationConstants.MYSQL" />
+			</key>
+			<ref local="rdfStoreManagerMySqlImpl" />
+		</entry>
 	</util:map>
 	
 	<bean id="rdfStoreManagerVirtuosoImpl"
 	      class="org.ncbo.stanford.manager.rdfstore.impl.RDFStoreManagerVirtuosoImpl">
+	</bean>
+	
+	<bean id="rdfStoreManagerMySqlImpl"
+	      class="org.ncbo.stanford.manager.rdfstore.impl.RDFStoreManagerMySqlImpl">
 	</bean>
 	
 	<bean id="mappingUploadService"
