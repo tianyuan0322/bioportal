@@ -2,8 +2,10 @@ package org.ncbo.stanford.domain.custom.dao;
 
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.lang.StringUtils;
 import org.ncbo.stanford.domain.custom.entity.mapping.OneToOneMapping;
 import org.ncbo.stanford.exception.InvalidInputException;
 import org.ncbo.stanford.exception.MappingExistsException;
@@ -34,7 +36,7 @@ public class CustomNcboMappingDAO {
 	// be interpreted as mappings (IE it contains all mappings fields in every
 	// row). The %FILTER% token can be replaced with whatever filter is need to
 	// get specific results. %OFFSET% and %LIMIT% must be replaced as well.
-	private final static String mappingQuery = "SELECT DISTINCT "
+	private final static String mappingQuery = "SELECT  "
 			+ "?mappingId "
 			+ "?source "
 			+ "?target "
@@ -73,9 +75,8 @@ public class CustomNcboMappingDAO {
 			+ "  ?mappingId <http://protege.stanford.edu/ontologies/mappings/mappings.rdfs#mapping_source_algorithm> ?mappingSourceAlgorithm ."
 			+ "  FILTER (%FILTER%) } LIMIT %LIMIT% OFFSET %OFFSET%";
 
-	private final static String mappingCountQuery = "SELECT DISTINCT "
-			+ "count(?mappingId) as ?mappingCount "
-			+ "WHERE {"
+	private final static String mappingCountQuery = "SELECT  "
+			+ "count(?mappingId) as ?mappingCount " + "WHERE {"
 			+ "  ?mappingId <http://protege.stanford.edu/ontologies/mappings/mappings.rdfs#source> ?source ."
 			+ "  ?mappingId <http://protege.stanford.edu/ontologies/mappings/mappings.rdfs#target> ?target ."
 			+ "  ?mappingId <http://protege.stanford.edu/ontologies/mappings/mappings.rdfs#relation> ?relation ."
@@ -176,173 +177,6 @@ public class CustomNcboMappingDAO {
 		}
 
 		return mapping;
-	}
-
-	public Integer getMappingsFromOntologyCount(Integer ontologyId)
-			throws InvalidInputException {
-		return getMappingsCount(ontologyId, null, true);
-	}
-
-	public Integer getMappingsToOntologyCount(Integer ontologyId)
-			throws InvalidInputException {
-		return getMappingsCount(null, ontologyId, true);
-	}
-
-	public Integer getAllMappingsForOntologyCount(Integer ontologyId)
-			throws InvalidInputException {
-		return getMappingsCount(ontologyId, null, false);
-	}
-
-	private Integer getMappingsCount(Integer sourceOntology,
-			Integer targetOntology, Boolean unidirectional)
-			throws InvalidInputException {
-		ObjectConnection con = getRdfStoreManager().getObjectConnection();
-
-		String filter = generateSparqlFilter(sourceOntology, targetOntology,
-				unidirectional);
-
-		String queryString = mappingCountQuery.replaceAll("%FILTER%", filter);
-
-		try {
-			TupleQuery query = con.prepareTupleQuery(QueryLanguage.SPARQL,
-					queryString, ApplicationConstants.MAPPING_CONTEXT);
-			TupleQueryResult result = query.evaluate();
-			while (result.hasNext()) {
-				BindingSet bs = result.next();
-				return convertValueToInteger(bs.getValue("mappingCount"));
-			}
-		} catch (MalformedQueryException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (RepositoryException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (QueryEvaluationException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-
-		return null;
-	}
-
-	public ArrayList<OneToOneMapping> getMappingsFromOntology(
-			Integer ontologyId, Integer limit, Integer offset)
-			throws InvalidInputException {
-		return getMappings(ontologyId, null, true, limit, offset);
-	}
-
-	public ArrayList<OneToOneMapping> getMappingsToOntology(Integer ontologyId,
-			Integer limit, Integer offset) throws InvalidInputException {
-		return getMappings(null, ontologyId, true, limit, offset);
-	}
-
-	public ArrayList<OneToOneMapping> getAllMappingsForOntology(
-			Integer ontologyId, Integer limit, Integer offset)
-			throws InvalidInputException {
-		return getMappings(ontologyId, null, false, limit, offset);
-	}
-
-	private ArrayList<OneToOneMapping> getMappings(Integer sourceOntology,
-			Integer targetOntology, Boolean unidirectional, Integer limit,
-			Integer offset) throws InvalidInputException {
-		// Safety check
-		if (limit == null || limit >= 50000) {
-			limit = 50000;
-		}
-
-		if (offset == null) {
-			offset = 0;
-		}
-
-		ObjectConnection con = getRdfStoreManager().getObjectConnection();
-
-		// Get a filter for use in the query
-		String filter = generateSparqlFilter(sourceOntology, targetOntology,
-				unidirectional);
-
-		// Substitute tokens in the generic query string
-		String queryString = mappingQuery.replaceAll("%FILTER%", filter)
-				.replaceAll("%LIMIT%", limit.toString()).replaceAll("%OFFSET%",
-						offset.toString());
-
-		try {
-			TupleQuery query = con.prepareTupleQuery(QueryLanguage.SPARQL,
-					queryString, ApplicationConstants.MAPPING_CONTEXT);
-
-			Long start = System.currentTimeMillis();
-			TupleQueryResult result = query.evaluate();
-			System.out.println("Evaluate query time: "
-					+ (System.currentTimeMillis() - start));
-
-			ArrayList<OneToOneMapping> mappings = new ArrayList<OneToOneMapping>();
-			start = System.currentTimeMillis();
-			while (result.hasNext()) {
-				BindingSet bs = result.next();
-
-				OneToOneMapping mapping = new OneToOneMapping();
-
-				// Set Mapping properties
-				mapping.setSource(new URIImpl(bs.getValue("source")
-						.stringValue()));
-				mapping.setTarget(new URIImpl(bs.getValue("target")
-						.stringValue()));
-				mapping.setRelation(new URIImpl(bs.getValue("relation")
-						.stringValue()));
-				mapping.setSourceOntologyId(convertValueToInteger(bs
-						.getValue("sourceOntologyId")));
-				mapping.setTargetOntologyId(convertValueToInteger(bs
-						.getValue("targetOntologyId")));
-				mapping
-						.setCreatedInSourceOntologyVersion(convertValueToInteger(bs
-								.getValue("createdInSourceOntologyVersion")));
-				mapping
-						.setCreatedInTargetOntologyVersion(convertValueToInteger(bs
-								.getValue("createdInTargetOntologyVersion")));
-
-				// Set metadata properties
-				mapping.setSubmittedBy(convertValueToInteger(bs
-						.getValue("submittedBy")));
-				mapping.setDependency(new URIImpl(bs.getValue("mappingId")
-						.stringValue()));
-				mapping.setDate(convertValueToDate(bs.getValue("date")));
-				mapping.setComment(bs.getValue("comment").stringValue());
-				mapping
-						.setMappingType(bs.getValue("mappingType")
-								.stringValue());
-
-				// Set mappingSource properties
-				mapping.setMappingSource(bs.getValue("mappingSource")
-						.stringValue());
-				mapping.setMappingSourceName(bs.getValue("mappingSourceName")
-						.stringValue());
-				mapping.setMappingSourcecontactInfo(bs.getValue(
-						"mappingSourceContactInfo").stringValue());
-				mapping.setMappingSourceSite(new URIImpl(bs.getValue(
-						"mappingSourceSite").stringValue()));
-				mapping.setMappingSourceAlgorithm(bs.getValue(
-						"mappingSourceAlgorithm").stringValue());
-
-				mappings.add(mapping);
-			}
-			System.out.println("Create mappings list time: "
-					+ (System.currentTimeMillis() - start)
-					+ " || Result size: " + mappings.size());
-
-			result.close();
-
-			return mappings;
-		} catch (RepositoryException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (QueryEvaluationException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (MalformedQueryException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-
-		return null;
 	}
 
 	// TODO: This method is not working currently.
@@ -460,6 +294,226 @@ public class CustomNcboMappingDAO {
 
 	}
 
+	/*******************************************************************
+	 * 
+	 * Count methods
+	 * 
+	 *******************************************************************/
+
+	public Integer getCountMappingsFromOntology(Integer ontologyId)
+			throws InvalidInputException {
+		return getCount(ontologyId, null, true);
+	}
+
+	public Integer getCountMappingsToOntology(Integer ontologyId)
+			throws InvalidInputException {
+		return getCount(null, ontologyId, true);
+	}
+
+	public Integer getCountMappingsBetweenOntologies(Integer sourceOntology,
+			Integer targetOntology, Boolean unidirectional)
+			throws InvalidInputException {
+		return getCount(sourceOntology, targetOntology, unidirectional);
+	}
+
+	public Integer getCountMappingsForOntology(Integer ontologyId)
+			throws InvalidInputException {
+		return getCount(ontologyId, null, false);
+	}
+
+	private Integer getCount(Integer sourceOntology, Integer targetOntology,
+			Boolean unidirectional) throws InvalidInputException {
+		ObjectConnection con = getRdfStoreManager().getObjectConnection();
+
+		String filter = generateOntologySparqlFilter(sourceOntology,
+				targetOntology, unidirectional);
+
+		String queryString = mappingCountQuery.replaceAll("%FILTER%", filter);
+
+		try {
+			TupleQuery query = con.prepareTupleQuery(QueryLanguage.SPARQL,
+					queryString, ApplicationConstants.MAPPING_CONTEXT);
+			TupleQueryResult result = query.evaluate();
+			while (result.hasNext()) {
+				BindingSet bs = result.next();
+				return convertValueToInteger(bs.getValue("mappingCount"));
+			}
+		} catch (MalformedQueryException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (RepositoryException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (QueryEvaluationException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
+		return null;
+	}
+
+	/*******************************************************************
+	 * 
+	 * Mappings for ontologies
+	 * 
+	 *******************************************************************/
+
+	public ArrayList<OneToOneMapping> getMappingsFromOntology(
+			Integer ontologyId, Integer limit, Integer offset)
+			throws InvalidInputException {
+		return getMappings(ontologyId, null, true, limit, offset);
+	}
+
+	public ArrayList<OneToOneMapping> getMappingsToOntology(Integer ontologyId,
+			Integer limit, Integer offset) throws InvalidInputException {
+		return getMappings(null, ontologyId, true, limit, offset);
+	}
+
+	public ArrayList<OneToOneMapping> getMappingsBetweenOntologies(
+			Integer sourceOntology, Integer targetOntology,
+			Boolean unidirectional, Integer limit, Integer offset)
+			throws InvalidInputException {
+		return getMappings(sourceOntology, targetOntology, unidirectional,
+				limit, offset);
+	}
+
+	public ArrayList<OneToOneMapping> getMappingsForOntology(
+			Integer ontologyId, Integer limit, Integer offset)
+			throws InvalidInputException {
+		return getMappings(ontologyId, null, false, limit, offset);
+	}
+
+	private ArrayList<OneToOneMapping> getMappings(Integer sourceOntology,
+			Integer targetOntology, Boolean unidirectional, Integer limit,
+			Integer offset) throws InvalidInputException {
+		// Safety check
+		if (limit == null || limit >= 50000) {
+			limit = 50000;
+		}
+
+		if (offset == null) {
+			offset = 0;
+		}
+
+		ObjectConnection con = getRdfStoreManager().getObjectConnection();
+
+		// Get a filter for use in the query
+		String filter = generateOntologySparqlFilter(sourceOntology,
+				targetOntology, unidirectional);
+
+		// Substitute tokens in the generic query string
+		String queryString = mappingQuery.replaceAll("%FILTER%", filter)
+				.replaceAll("%LIMIT%", limit.toString()).replaceAll("%OFFSET%",
+						offset.toString());
+
+		try {
+			TupleQuery query = con.prepareTupleQuery(QueryLanguage.SPARQL,
+					queryString, ApplicationConstants.MAPPING_CONTEXT);
+
+			Long start = System.currentTimeMillis();
+			TupleQueryResult result = query.evaluate();
+			System.out.println("Evaluate query time: "
+					+ (System.currentTimeMillis() - start));
+
+			ArrayList<OneToOneMapping> mappings = new ArrayList<OneToOneMapping>();
+			start = System.currentTimeMillis();
+			while (result.hasNext()) {
+				BindingSet bs = result.next();
+
+				OneToOneMapping mapping = new OneToOneMapping();
+
+				// Set Mapping properties
+				mapping.setSource(new URIImpl(bs.getValue("source")
+						.stringValue()));
+				mapping.setTarget(new URIImpl(bs.getValue("target")
+						.stringValue()));
+				mapping.setRelation(new URIImpl(bs.getValue("relation")
+						.stringValue()));
+				mapping.setSourceOntologyId(convertValueToInteger(bs
+						.getValue("sourceOntologyId")));
+				mapping.setTargetOntologyId(convertValueToInteger(bs
+						.getValue("targetOntologyId")));
+				mapping
+						.setCreatedInSourceOntologyVersion(convertValueToInteger(bs
+								.getValue("createdInSourceOntologyVersion")));
+				mapping
+						.setCreatedInTargetOntologyVersion(convertValueToInteger(bs
+								.getValue("createdInTargetOntologyVersion")));
+
+				// Set metadata properties
+				mapping.setSubmittedBy(convertValueToInteger(bs
+						.getValue("submittedBy")));
+				mapping.setDependency(new URIImpl(bs.getValue("mappingId")
+						.stringValue()));
+				mapping.setDate(convertValueToDate(bs.getValue("date")));
+				mapping.setComment(bs.getValue("comment").stringValue());
+				mapping
+						.setMappingType(bs.getValue("mappingType")
+								.stringValue());
+
+				// Set mappingSource properties
+				mapping.setMappingSource(bs.getValue("mappingSource")
+						.stringValue());
+				mapping.setMappingSourceName(bs.getValue("mappingSourceName")
+						.stringValue());
+				mapping.setMappingSourcecontactInfo(bs.getValue(
+						"mappingSourceContactInfo").stringValue());
+				mapping.setMappingSourceSite(new URIImpl(bs.getValue(
+						"mappingSourceSite").stringValue()));
+				mapping.setMappingSourceAlgorithm(bs.getValue(
+						"mappingSourceAlgorithm").stringValue());
+
+				mappings.add(mapping);
+			}
+			System.out.println("Create mappings list time: "
+					+ (System.currentTimeMillis() - start)
+					+ " || Result size: " + mappings.size());
+
+			result.close();
+
+			return mappings;
+		} catch (RepositoryException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (QueryEvaluationException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (MalformedQueryException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
+		return null;
+	}
+
+	/*******************************************************************
+	 * 
+	 * Concept methods
+	 * 
+	 *******************************************************************/
+
+	public List<OneToOneMapping> getMappingsFromConcept(String conceptId) {
+
+		return null;
+	}
+
+	public List<OneToOneMapping> getMappingsToConcept(String conceptId) {
+
+		return null;
+	}
+
+	public List<OneToOneMapping> getMappingsBetweenConcept(
+			String fromConceptId, String toConceptId) {
+
+		return null;
+	}
+
+	/*******************************************************************
+	 * 
+	 * Private methods
+	 * 
+	 *******************************************************************/
+
 	/**
 	 * Generates a SPARQL filter for the given ontology ids.
 	 * 
@@ -469,7 +523,7 @@ public class CustomNcboMappingDAO {
 	 * @return
 	 * @throws InvalidInputException
 	 */
-	private String generateSparqlFilter(Integer sourceOntology,
+	private String generateOntologySparqlFilter(Integer sourceOntology,
 			Integer targetOntology, Boolean unidirectional)
 			throws InvalidInputException {
 		// Determine the SPARQL filter to use based on directionality
@@ -502,6 +556,62 @@ public class CustomNcboMappingDAO {
 		}
 
 		return filter;
+	}
+
+	/**
+	 * Generates a SPARQL filter for the given ontology ids.
+	 * 
+	 * @param sourceOntology
+	 * @param targetOntology
+	 * @param unidirectional
+	 * @return
+	 * @throws InvalidInputException
+	 */
+	private String generateOntologySparqlClause(Integer sourceOntology,
+			Integer targetOntology, Boolean unidirectional)
+			throws InvalidInputException {
+		String src = " <http://protege.stanford.edu/ontologies/mappings/mappings.rdfs#source_ontology_id> ";
+		String tgt = " <http://protege.stanford.edu/ontologies/mappings/mappings.rdfs#target_ontology_id> ";
+		String id = "?mappingId";
+
+		// Determine the SPARQL filter to use based on directionality
+		ArrayList<String> filter = new ArrayList<String>();
+
+		if (sourceOntology != null && targetOntology != null) {
+			if (unidirectional != null && unidirectional == true) {
+				// Unidirectional
+				filter.add(id + 1 + src + sourceOntology);
+				filter.add(id + 2 + tgt + targetOntology);
+			} else {
+				// Default is bidirectional
+				filter.add(id + 1 + src + sourceOntology);
+				filter.add(id + 2 + tgt + targetOntology);
+				filter.add(id + 3 + src + targetOntology);
+				filter.add(id + 4 + tgt + sourceOntology);
+			}
+		} else if (sourceOntology != null && targetOntology == null) {
+			if (unidirectional != null && unidirectional == true) {
+				// Unidirectional source ontology
+				filter.add(id + 1 + src + sourceOntology);
+			} else {
+				// Bidirectional one (source) ontology
+				filter.add(id + 1 + src + sourceOntology);
+				filter.add(id + 2 + tgt + sourceOntology);
+			}
+		} else if (sourceOntology == null && targetOntology != null) {
+			if (unidirectional != null && unidirectional == true) {
+				// Unidirectional target ontology
+				filter.add(id + 1 + tgt + targetOntology);
+			} else {
+				// Bidirectional one (target) ontology
+				filter.add(id + 1 + src + targetOntology);
+				filter.add(id + 2 + tgt + targetOntology);
+			}
+		} else {
+			throw new InvalidInputException();
+		}
+
+		return StringUtils.join(filter, " . ");
 	}
 
 	private Integer convertValueToInteger(Value val) {
@@ -545,7 +655,11 @@ public class CustomNcboMappingDAO {
 		return rdfStoreManagerMap.get(storeType);
 	}
 
-	// Auto-generated methods
+	/*******************************************************************
+	 * 
+	 * Auto-generated methods
+	 * 
+	 *******************************************************************/
 
 	/**
 	 * @param rdfStoreManagerMap

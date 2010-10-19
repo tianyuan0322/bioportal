@@ -74,7 +74,7 @@ public class CustomNcboMappingDAOTest extends AbstractBioPortalTest {
 	public void testRetrieveMappingsForOntology() {
 		ArrayList<OneToOneMapping> mappings;
 		try {
-			mappings = mappingDAO.getAllMappingsForOntology(1032, 50000, 0);
+			mappings = mappingDAO.getMappingsForOntology(1032, 50000, 0);
 			assertTrue(mappings != null && mappings.size() > 0);
 			
 			mappings = mappingDAO.getMappingsFromOntology(1032, 50000, 0);
@@ -90,17 +90,17 @@ public class CustomNcboMappingDAOTest extends AbstractBioPortalTest {
 	@Test
 	public void testRetrieveMappingsCountForOntology()
 			throws InvalidInputException {
-		Integer count = mappingDAO.getAllMappingsForOntologyCount(1032);
+		Integer count = mappingDAO.getCountMappingsForOntology(1032);
 		System.out.println("All mappings count for ontology 1032: " + count);
-		assertTrue(count instanceof Integer && count > 0);
+		assertTrue(count instanceof Integer && count >= 0);
 		
-		count = mappingDAO.getMappingsFromOntologyCount(1032);
+		count = mappingDAO.getCountMappingsFromOntology(1032);
 		System.out.println("Mappings from count for ontology 1032: " + count);
 		assertTrue(count instanceof Integer && count >= 0);
 
-		count = mappingDAO.getMappingsToOntologyCount(1032);
+		count = mappingDAO.getCountMappingsToOntology(1032);
 		System.out.println("Mappings to count for ontology 1032: " + count);
-		assertTrue(count instanceof Integer && count > 0);
+		assertTrue(count instanceof Integer && count >= 0);
 	}
 
 	@Test
