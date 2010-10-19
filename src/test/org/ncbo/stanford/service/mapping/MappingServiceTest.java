@@ -6,7 +6,6 @@ import static org.junit.Assert.assertTrue;
 import org.junit.Test;
 import org.ncbo.stanford.AbstractBioPortalTest;
 import org.ncbo.stanford.bean.mapping.OneToOneMappingBean;
-import org.ncbo.stanford.domain.custom.entity.mapping.OneToOneMapping;
 import org.ncbo.stanford.enumeration.MappingSourceEnum;
 import org.ncbo.stanford.exception.MappingExistsException;
 import org.ncbo.stanford.exception.MappingMissingException;
@@ -29,7 +28,7 @@ public class MappingServiceTest extends AbstractBioPortalTest {
 
 	@Test
 	public void testCreateMapping() {
-		OneToOneMapping mapping;
+		OneToOneMappingBean mapping;
 		try {
 			mapping = mappingService
 					.createMapping(
