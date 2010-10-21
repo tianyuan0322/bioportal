@@ -41,6 +41,7 @@ import edu.stanford.smi.protege.model.ModelUtilities;
 import edu.stanford.smi.protege.model.SimpleInstance;
 import edu.stanford.smi.protege.model.Slot;
 import edu.stanford.smi.protegex.owl.model.NamespaceUtil;
+import edu.stanford.smi.protegex.owl.model.OWLIndividual;
 import edu.stanford.smi.protegex.owl.model.OWLModel;
 import edu.stanford.smi.protegex.owl.model.OWLNamedClass;
 import edu.stanford.smi.protegex.owl.model.RDFProperty;
@@ -798,7 +799,7 @@ public class OntologyRetrievalManagerProtegeImpl extends
 								ontologyBean);
 						bpPropVals.add(bean);
 					}
-				} else if (val instanceof Instance) {
+				} else if (val instanceof OWLIndividual) {
 					// Avoid unnamed instances
 					if (!((Instance) val).getName().startsWith("@")) {
 						InstanceBean bean = createInstanceBean((Frame) val,
