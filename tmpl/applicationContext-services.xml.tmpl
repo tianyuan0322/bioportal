@@ -648,12 +648,6 @@
 	<!--Adding for csv-->
 	<bean id="mappingManager"
 		class="org.ncbo.stanford.manager.mapping.impl.MappingManagerImpl">
-		<property name="ncboOntologyFileDAO">
-			<ref bean="NcboOntologyFileDAO" />
-		</property>
-		<property name="ncboUsageLogDAO">
-			<ref bean="NcboUsageLogDAO" />
-		</property>
 		<property name="mappingService">
 		  	 <ref local="mappingService" />
 		</property>
@@ -684,12 +678,7 @@
 	      class="org.ncbo.stanford.manager.rdfstore.impl.RDFStoreManagerMySqlImpl">
 	</bean>
 	
-	<bean id="mappingUploadService"
-		  class="org.ncbo.stanford.service.mapping.upload.impl.MappingUploadServiceImpl">
-		  <property name="mappingManager">
-		  	  <ref local="mappingManager" />
-		  </property>
-	</bean>
+	
 	
 	<bean id="mappingService"
 	      class="org.ncbo.stanford.service.mapping.impl.MappingServiceImpl">

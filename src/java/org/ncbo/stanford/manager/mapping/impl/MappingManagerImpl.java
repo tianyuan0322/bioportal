@@ -12,27 +12,20 @@ import au.com.bytecode.opencsv.CSVReader;
 
 import au.com.bytecode.opencsv.bean.ColumnPositionMappingStrategy;
 import au.com.bytecode.opencsv.bean.CsvToBean;
+import org.ncbo.stanford.bean.mapping.OneToOneMappingBean;
+import org.ncbo.stanford.bean.mapping.upload.UploadedMappingBean;
+import org.ncbo.stanford.enumeration.MappingSourceEnum;
 
 import java.util.ArrayList;
-import java.util.Iterator;
+import java.util.Date;
 
 import java.util.List;
 
-import org.ncbo.stanford.bean.MappingBean;
-
 import org.ncbo.stanford.manager.mapping.MappingManager;
 
-import org.ncbo.stanford.domain.generated.NcboOntologyFileDAO;
-import org.ncbo.stanford.domain.generated.NcboUsageLogDAO;
-import org.ncbo.stanford.domain.generated.NcboOntologyFile;
-import org.ncbo.stanford.domain.generated.NcboUsageLog;
-import org.ncbo.stanford.domain.generated.NcboUser;
-import org.ncbo.stanford.domain.generated.NcboUserDAO;
 import org.ncbo.stanford.service.mapping.MappingService;
-
+import org.openrdf.model.URI;
 import org.openrdf.model.impl.URIImpl;
-import org.ncbo.stanford.enumeration.MappingSourceEnum;
-import org.ncbo.stanford.exception.InvalidInputException;
 
 /**
  * @author g.prakash
@@ -40,9 +33,6 @@ import org.ncbo.stanford.exception.InvalidInputException;
  */
 public class MappingManagerImpl implements MappingManager {
 	private static final Log log = LogFactory.getLog(MappingManagerImpl.class);
-	private NcboOntologyFileDAO ncboOntologyFileDAO;
-	private NcboUsageLogDAO ncboUsageLogDAO;
-	private NcboUserDAO ncboUserDAO;
 
 	private MappingService mappingService;
 
@@ -52,43 +42,46 @@ public class MappingManagerImpl implements MappingManager {
 	 * 
 	 * @param fileData
 	 */
-	public void parseCSVFile(String fileData) {
+	public List<UploadedMappingBean> parseCSVFile(String fileData) {
+
+		// List<MappingBean> listForFile = new ArrayList<MappingBean>();
+		List<UploadedMappingBean> listForFile = new ArrayList<UploadedMappingBean>();
+
 		try {
-			MappingBean mappingBean=new MappingBean();
+
 			// Creating CSVReader using a comma for the separator.
 			CSVReader reader = new CSVReader(new StringReader(fileData));
 			// Creating the ColumnPositionMappingStrategy object of CSVBean
-			ColumnPositionMappingStrategy<MappingBean> columnPositionMappingStrategy = new ColumnPositionMappingStrategy<MappingBean>();
+			ColumnPositionMappingStrategy<UploadedMappingBean> columnPositionMappingStrategy = new ColumnPositionMappingStrategy<UploadedMappingBean>();
 			// Setting the CSVBean
-			columnPositionMappingStrategy.setType(MappingBean.class);
+			// columnPositionMappingStrategy.setType(MappingBean.class);
+			columnPositionMappingStrategy.setType(UploadedMappingBean.class);
 			// Creating a String array which contains the Field of CSVBean
+
 			String[] columnsForCSVFields = new String[] { "submittedBy",
 					"source", "target", "relation", "mappingType",
 					"sourceOntologyId", "sourceCreatedInOntologyVersion",
 					"targetOntologyId", "targetCreatedInOntologyVersion",
 					"created", "mappingSource", "mappingSourceName",
 					"mappingSourceSite", "mappingSourceContactInfo",
-					"mappingSourceAlgorithm" };
+					"mappingSourceAlgorithm", "comment" };
 
 			// the fields to bind in CSVBean
 			columnPositionMappingStrategy.setColumnMapping(columnsForCSVFields);
 			// Creating a object for CsvToBean of CSVBean type
-			CsvToBean<MappingBean> csvToBean = new CsvToBean<MappingBean>();
+			// CsvToBean<MappingBean> csvToBean = new CsvToBean<MappingBean>();
+			CsvToBean<UploadedMappingBean> csvToBean = new CsvToBean<UploadedMappingBean>();
 			// Creating a list of CSVBean type its contains the Populated
 			// CSVBean
 
-			List<MappingBean> listForFile = new ArrayList<MappingBean>();
-
+			// populateMappingBean(myEntries);
 			listForFile = csvToBean
 					.parse(columnPositionMappingStrategy, reader);
-			int i=0;
-			while(i<listForFile.size()){
-			mappingBean = listForFile.get(i);
-			}
-			createMappingForUploadedFile(mappingBean);
+
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
+		return listForFile;
 
 	}
 
@@ -97,99 +90,68 @@ public class MappingManagerImpl implements MappingManager {
 	 * 
 	 * @param listOfFile
 	 */
-	private void createMappingForUploadedFile(MappingBean mappingBean) {
-		/**
-		NcboOntologyFile ncboOntologyFile = new NcboOntologyFile();
-		NcboUsageLog ncboUsageLog = new NcboUsageLog();
-		NcboUser ncboUser = new NcboUser();
-		// List for NcboUsageLog
-		List<NcboUsageLog> listForNcboUsageLog = new ArrayList<NcboUsageLog>();
-		List<NcboOntologyFile> listForNcboOntologyFile = new ArrayList<NcboOntologyFile>();
-		// MappingBean
-		
+	public OneToOneMappingBean createMappingForUploadedFile(
+			UploadedMappingBean uploadedMappingBean) {
+		OneToOneMappingBean oneToOneMappingBeanForMapping = new OneToOneMappingBean();
+		String source = uploadedMappingBean.getRelation() + "#"
+				+ uploadedMappingBean.getSource();
+		URI sourceURI = new URIImpl(source);
+		// Converting the target to TargetURI
+		String target = uploadedMappingBean.getRelation() + "#"
+				+ uploadedMappingBean.getTarget();
+		URI targetURI = new URIImpl(target);
+		String relation = uploadedMappingBean.getRelation();
+		URI relationURI = new URIImpl(relation);
+		// SourceOntologyId
+		Integer sourceOntologyId = Integer.parseInt(uploadedMappingBean
+				.getSourceOntologyId());
+
+		// TargetOntologyId
+		Integer targetOntologyId = Integer.parseInt(uploadedMappingBean
+				.getTargetOntologyId());
+
+		// createdInSourceOntologyVersion
+		Integer createdInSourceOntologyVersion = Integer
+				.parseInt(uploadedMappingBean
+						.getSourceCreatedInOntologyVersion());
+
+		// createdInTargetOntologyVersion
+		Integer createdInTargetOntologyVersion = Integer
+				.parseInt(uploadedMappingBean
+						.getTargetCreatedInOntologyVersion());
+
+		// submittedBy
+		Integer submittedBy = Integer.parseInt(uploadedMappingBean
+				.getSubmittedBy());
+
+		String enumType = uploadedMappingBean.getMappingSource();
+		MappingSourceEnum sourceEnum = null;
+		if (enumType.equals("organization")) {
+			sourceEnum = MappingSourceEnum.ORGANIZATION;
+		} else {
+			sourceEnum = MappingSourceEnum.APPLICATION;
+		}
+		String mappingSourceSite = uploadedMappingBean.getRelation() + "#"
+				+ uploadedMappingBean.getMappingSourceSite();
+		URI mappingSourceSiteURI = new URIImpl(mappingSourceSite);
+
 		try {
-			
-				// Taking the value which is available in List of NcboUsageLog
-				
-				// Validate users to make sure they exist in BioPortal
-				ncboUser = ncboUserDAO.findById(Integer.parseInt(mappingBean
-						.getSubmittedBy()));
-
-				// Validate concepts to make sure they exist in BioPortal
-				listForNcboUsageLog = ncboUsageLogDAO
-						.findByConceptId(Integer.parseInt(mappingBean.getSource()));
-				// Validate virtual ontology ids to make sure they exist in
-				// BioPortal
-				ncboUsageLog = ncboUsageLogDAO.findById(Integer
-						.parseInt(mappingBean.getSourceOntologyId()));
-				// Validate version ontology ids to make sure they exist in
-				// BioPortal
-				listForNcboOntologyFile = ncboOntologyFileDAO
-						.findByOntologyVersionId(Integer.parseInt(mappingBean
-								.getSourceCreatedInOntologyVersion()));
-				if (ncboUser.getId() == null && listForNcboUsageLog.isEmpty()
-						&& ncboUsageLog.getId() == null
-						&& listForNcboOntologyFile.isEmpty()) {
-					String errorMsg = "Enter a valid ontology version id";
-					throw new InvalidInputException(errorMsg);
-				} else {
-					// Converting the source to SourceURI
-					String source = mappingBean.getRelation() + "#"
-							+ mappingBean.getSource();
-					// Converting the target to TargetURI
-					String target = mappingBean.getRelation() + "#"
-							+ mappingBean.getTarget();
-					// Converting the mappingSourceSite to MappingSourceSiteUri
-					String mappingSourceSite = mappingBean.getRelation() + "#"
-							+ mappingBean.getMappingSourceSite();
-					// Calling the createMapping() method
-					mappingService
-							.createMapping(
-									new URIImpl(source),
-									new URIImpl(target),
-									new URIImpl(mappingBean.getRelation()),
-									Integer.parseInt(mappingBean
-											.getSourceOntologyId()),
-									Integer.parseInt(mappingBean
-											.getTargetOntologyId()),
-									Integer
-											.parseInt(mappingBean
-													.getSourceCreatedInOntologyVersion()),
-									Integer
-											.parseInt(mappingBean
-													.getTargetCreatedInOntologyVersion()),
-									Integer.parseInt(mappingBean
-											.getSubmittedBy()), "comment",
-									MappingSourceEnum.APPLICATION, mappingBean
-											.getMappingSourceName(),
-									mappingBean.getMappingSourceContactInfo(),
-									new URIImpl(mappingSourceSite), mappingBean
-											.getMappingSourceAlgorithm(),
-									mappingBean.getMappingType());
-
-				
-			}
+			// Calling the method for mapping
+			oneToOneMappingBeanForMapping = mappingService.createMapping(
+					sourceURI, targetURI, relationURI, sourceOntologyId,
+					targetOntologyId, createdInSourceOntologyVersion,
+					createdInTargetOntologyVersion, submittedBy,
+					uploadedMappingBean.getComment(), sourceEnum,
+					uploadedMappingBean.getMappingSourceName(),
+					uploadedMappingBean.getMappingSourceContactInfo(),
+					mappingSourceSiteURI, uploadedMappingBean
+							.getMappingSourceAlgorithm(), uploadedMappingBean
+							.getMappingType());
 
 		} catch (Exception e) {
-			e.printStackTrace();
+			log.error(e);
 		}
-		**/
-	}
-
-	/**
-	 * 
-	 * @param ncboOntologyFileDAO
-	 */
-	public void setNcboOntologyFileDAO(NcboOntologyFileDAO ncboOntologyFileDAO) {
-		this.ncboOntologyFileDAO = ncboOntologyFileDAO;
-	}
-
-	/**
-	 * 
-	 * @param ncboUsageLogDAO
-	 */
-	public void setNcboUsageLogDAO(NcboUsageLogDAO ncboUsageLogDAO) {
-		this.ncboUsageLogDAO = ncboUsageLogDAO;
+		return oneToOneMappingBeanForMapping;
 	}
 
 	/**
