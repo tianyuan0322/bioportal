@@ -41,7 +41,6 @@ import edu.stanford.smi.protege.model.ModelUtilities;
 import edu.stanford.smi.protege.model.SimpleInstance;
 import edu.stanford.smi.protege.model.Slot;
 import edu.stanford.smi.protegex.owl.model.NamespaceUtil;
-import edu.stanford.smi.protegex.owl.model.OWLIndividual;
 import edu.stanford.smi.protegex.owl.model.OWLModel;
 import edu.stanford.smi.protegex.owl.model.OWLNamedClass;
 import edu.stanford.smi.protegex.owl.model.RDFProperty;
@@ -792,30 +791,33 @@ public class OntologyRetrievalManagerProtegeImpl extends
 			}
 
 			for (Object val : vals) {
-				if (val instanceof OWLNamedClass) {
-					// Avoid unnamed classes
-					if (!((OWLNamedClass) val).getName().startsWith("@")) {
-						ClassBean bean = createBaseClassBean((Frame) val,
-								ontologyBean);
-						bpPropVals.add(bean);
-					}
-				} else if (val instanceof OWLIndividual) {
-					// Avoid unnamed instances
-					if (!((Instance) val).getName().startsWith("@")) {
+				// We're going to quietly squelch all exceptions here, which
+				// should have the result of bad relations not being processed
+				try {
+					if (val instanceof OWLNamedClass) {
+						// Avoid unnamed classes
+						if (!((OWLNamedClass) val).getName().startsWith("@")) {
+							ClassBean bean = createBaseClassBean((Frame) val,
+									ontologyBean);
+							bpPropVals.add(bean);
+						}
+					} else if (val instanceof Instance) {
 						InstanceBean bean = createInstanceBean((Frame) val,
 								ontologyBean, false);
 						bpPropVals.add(bean);
-					}
 
-					// String value = getBrowserText((Instance) val,
-					// ontologyBean);
-					// if (value != null) {
-					// bpPropVals.add(value);
-					// }
-				} else {
-					// Tried to assume its a slot and failed, defaulting to
-					// toString
-					bpPropVals.add(val.toString());
+						// String value = getBrowserText((Instance) val,
+						// ontologyBean);
+						// if (value != null) {
+						// bpPropVals.add(value);
+						// }
+					} else {
+						// Tried to assume its a slot and failed, defaulting to
+						// toString
+						bpPropVals.add(val.toString());
+					}
+				} catch (Exception e) {
+					// Do nothing
 				}
 			}
 
