@@ -27,6 +27,7 @@ public interface ApplicationConstants {
 	public static final String OWL_EXTENSION = "owl";
 	public static final String XML_EXTENSION = "xml";
 	public static final String ZIP_EXTENSION = "zip";
+	public static final String GZIP_EXTENSION = "gz";
 	public static final String JAR_EXTENSION = "jar";
 	public static final String TAR_EXTENSION = "tar";
 

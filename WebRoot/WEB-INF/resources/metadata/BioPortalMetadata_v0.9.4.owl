@@ -88,6 +88,15 @@
                         <owl:cardinality rdf:datatype="http://www.w3.org/2001/XMLSchema#int"
                         >1</owl:cardinality>
                         <owl:onProperty>
+                          <owl:FunctionalProperty rdf:ID="isMetadataOnly"/>
+                        </owl:onProperty>
+                      </owl:Restriction>
+                    </rdfs:subClassOf>
+                    <rdfs:subClassOf>
+                      <owl:Restriction>
+                        <owl:cardinality rdf:datatype="http://www.w3.org/2001/XMLSchema#int"
+                        >1</owl:cardinality>
+                        <owl:onProperty>
                           <owl:FunctionalProperty rdf:ID="id"/>
                         </owl:onProperty>
                       </owl:Restriction>
@@ -1179,6 +1188,11 @@ In case of ontology versions, this represents the date and time when it was uplo
     <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#DatatypeProperty"/>
   </owl:FunctionalProperty>
   <owl:FunctionalProperty rdf:about="#isFoundry">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#DatatypeProperty"/>
+    <rdfs:domain rdf:resource="http://omv.ontoware.org/2005/05/ontology#Ontology"/>
+    <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#boolean"/>
+  </owl:FunctionalProperty>
+    <owl:FunctionalProperty rdf:about="#isMetadataOnly">
     <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#DatatypeProperty"/>
     <rdfs:domain rdf:resource="http://omv.ontoware.org/2005/05/ontology#Ontology"/>
     <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#boolean"/>

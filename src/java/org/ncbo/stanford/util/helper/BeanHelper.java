@@ -151,6 +151,8 @@ public class BeanHelper {
 				.getMessage("form.ontology.downloadLocation"));
 		String isFoundry = httpServletRequest.getParameter(MessageUtils
 				.getMessage("form.ontology.isFoundry"));
+		String isMetadataOnly = httpServletRequest.getParameter(MessageUtils
+				.getMessage("form.ontology.isMetadataOnly"));
 		String targetTerminologies = httpServletRequest
 				.getParameter(MessageUtils
 						.getMessage("form.ontology.targetTerminologies"));
@@ -294,7 +296,11 @@ public class BeanHelper {
 		if (!StringHelper.isNullOrNullString(isFoundry)) {
 			bean.setIsFoundry(Byte.parseByte(isFoundry));
 		}
-
+		
+		if (!StringHelper.isNullOrNullString(isMetadataOnly)) {
+			bean.setIsMetadataOnly(Byte.parseByte(isMetadataOnly));
+		}
+		
 		if (targetTerminologies != null) {
 			bean.setTargetTerminologies(targetTerminologies);
 		}

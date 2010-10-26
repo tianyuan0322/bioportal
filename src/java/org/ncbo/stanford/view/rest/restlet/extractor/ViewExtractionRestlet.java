@@ -32,6 +32,7 @@ public class ViewExtractionRestlet extends AbstractBaseRestlet {
 
 	private ConceptService conceptService;
 	private String tempDir;
+	private final static String IGNORED_RELATIONS = "subclass,superclass,childcount,instancecount";
 
 	// Limits the total number of traversed concepts
 	private int traversedConceptLimit;
@@ -46,7 +47,7 @@ public class ViewExtractionRestlet extends AbstractBaseRestlet {
 		try {
 			NcboProperties ncboProperties;
 			OWLOntologyManager manager = OWLManager.createOWLOntologyManager();
-			
+
 			// get conceptId and versionId from request
 			String conceptId = getConceptId(request);
 			String versionId = (String) request.getAttributes().get(
@@ -68,6 +69,10 @@ public class ViewExtractionRestlet extends AbstractBaseRestlet {
 					.getParameter(RequestParamConstants.PARAM_LOGCOUNT);
 			String saveCount = httpRequest
 					.getParameter(RequestParamConstants.PARAM_SAVECOUNT);
+
+			// Add default ignored relations
+			relations = (relations == null || relations.isEmpty()) ? IGNORED_RELATIONS
+					: relations + "," + IGNORED_RELATIONS;
 
 			// set all request parameter to props obj
 			Properties properties = new Properties();
@@ -142,8 +147,8 @@ public class ViewExtractionRestlet extends AbstractBaseRestlet {
 			response
 					.setStatus(Status.CLIENT_ERROR_NOT_FOUND, cnfe.getMessage());
 		} catch (InvalidInputException iie) {
-			response
-			.setStatus(Status.CLIENT_ERROR_REQUEST_ENTITY_TOO_LARGE, iie.getMessage());
+			response.setStatus(Status.CLIENT_ERROR_REQUEST_ENTITY_TOO_LARGE,
+					iie.getMessage());
 		} catch (Exception e) {
 			response.setStatus(Status.SERVER_ERROR_INTERNAL, e.getMessage());
 			e.printStackTrace();
@@ -196,7 +201,8 @@ public class ViewExtractionRestlet extends AbstractBaseRestlet {
 	}
 
 	/**
-	 * @param traversedConceptLimit the traversedConceptLimit to set
+	 * @param traversedConceptLimit
+	 *            the traversedConceptLimit to set
 	 */
 	public void setTraversedConceptLimit(int traversedConceptLimit) {
 		this.traversedConceptLimit = traversedConceptLimit;

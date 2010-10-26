@@ -562,7 +562,7 @@ public class OntologyRetrievalManagerProtegeImpl extends
 
 	private String getBrowserText(Frame frame, OntologyBean ob) {
 		String browserText = "";
-		
+
 		if (frame instanceof SimpleInstance) {
 			KnowledgeBase kb = frame.getKnowledgeBase();
 			Slot browserSlot = getPreferredNameSlot(kb, ob
@@ -577,8 +577,7 @@ public class OntologyRetrievalManagerProtegeImpl extends
 		} else {
 			browserText = frame.getBrowserText();
 		}
-		
-		
+
 		return StringHelper.unSingleQuote(browserText);
 	}
 
@@ -777,13 +776,11 @@ public class OntologyRetrievalManagerProtegeImpl extends
 
 		// add properties
 		for (Slot slot : slots) {
-			// Why not just call getOwnSlotValues?
-			// In the RDF (OWL) case, the values may be RDFSLiteral objects, and
-			// when you get those back
+			// Why not just call getOwnSlotValues? In the RDF (OWL) case, the
+			// values may be RDFSLiteral objects, and when you get those back
 			// via getOwnSlotValues, they mix in the language tag, e.g. "~#en".
 			// So instead fetch those values via getPropertyValues, and the
 			// RDFSLiteral will do the right
-			// thing later when you call toString on it.
 			Collection classes = (isOwl && slot instanceof RDFProperty && concept instanceof RDFResource) ? ((RDFResource) concept)
 					.getPropertyValues((RDFProperty) slot)
 					: concept.getOwnSlotValues(slot);
@@ -794,21 +791,33 @@ public class OntologyRetrievalManagerProtegeImpl extends
 			}
 
 			for (Object val : vals) {
-				if (val instanceof OWLNamedClass) {
-					ClassBean bean = createBaseClassBean((Frame) val, ontologyBean);
-					bpPropVals.add(bean);
+				// We're going to quietly squelch all exceptions here, which
+				// should have the result of bad relations not being processed
+				try {
+					if (val instanceof OWLNamedClass) {
+						// Avoid unnamed classes
+						if (!((OWLNamedClass) val).getName().startsWith("@")) {
+							ClassBean bean = createBaseClassBean((Frame) val,
+									ontologyBean);
+							bpPropVals.add(bean);
+						}
+					} else if (val instanceof Instance) {
+						InstanceBean bean = createInstanceBean((Frame) val,
+								ontologyBean, false);
+						bpPropVals.add(bean);
 
-				} else 	if (val instanceof Instance) {
-					InstanceBean bean = createInstanceBean ((Frame)val, ontologyBean, false);
-					bpPropVals.add (bean);
-//					String value = getBrowserText((Instance) val, ontologyBean);
-//					if (value != null) {
-//						bpPropVals.add(value);
-//					} 
-				} else {				
-					// Tried to assume its a slot and failed, defaulting to
-					// toString
-					bpPropVals.add(val.toString());
+						// String value = getBrowserText((Instance) val,
+						// ontologyBean);
+						// if (value != null) {
+						// bpPropVals.add(value);
+						// }
+					} else {
+						// Tried to assume its a slot and failed, defaulting to
+						// toString
+						bpPropVals.add(val.toString());
+					}
+				} catch (Exception e) {
+					// Do nothing
 				}
 			}
 

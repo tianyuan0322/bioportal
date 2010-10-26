@@ -47,7 +47,7 @@ public class OntologyServiceMetadataImpl extends AbstractOntologyService
 
 	@Transactional(rollbackFor = Exception.class)
 	public void createOntologyOrView(OntologyBean ontologyBean,
-			FilePathHandler filePathHander) throws Exception {
+			FilePathHandler filePathHandler) throws Exception {
 		ArrayList<NcboOntologyFile> ontologyFileList = new ArrayList<NcboOntologyFile>();
 		NcboOntologyLoadQueue loadQueue = new NcboOntologyLoadQueue();
 
@@ -56,7 +56,7 @@ public class OntologyServiceMetadataImpl extends AbstractOntologyService
 		populateInternalVersionNumber(ontologyBean);
 
 		// set filepath in the bean
-		if (!ontologyBean.isRemote()) {
+		if (filePathHandler != null ) {
 			ontologyBean.setFilePath(ontologyBean.getOntologyDirPath());
 		}
 
@@ -74,16 +74,16 @@ public class OntologyServiceMetadataImpl extends AbstractOntologyService
 		}
 		ontologyBean.setId(newVersionId);
 
-		// if remote, do not continue to upload(i.e. ontologyFile and
+		// if there is no filePathHandler, do not continue to upload(i.e. ontologyFile and
 		// ontologyQueue)
-		if (ontologyBean.isRemote()) {
+		if (filePathHandler == null) {
 			ontologyMetadataManager.saveOntologyOrView(ontologyBean);
 			return;
 		}
 
 		// upload the fileItem
 		List<String> fileNames = uploadOntologyFile(ontologyBean,
-				filePathHander);
+				filePathHandler);
 		ontologyBean.setFilenames(fileNames);
 
 		// 4. <ontologyFile> - populate and save
@@ -198,7 +198,7 @@ public class OntologyServiceMetadataImpl extends AbstractOntologyService
 						+ removeOntologyFiles);
 
 		// 1. Remove ontology from the backend
-		if (!ontologyBean.isRemote()) {
+		if (!ontologyBean.isMetadataOnly()) {
 			try {
 				getLoadManager(ontologyBean).cleanup(ontologyBean);
 			} catch (LBParameterException e) {

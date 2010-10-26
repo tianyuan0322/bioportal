@@ -128,6 +128,24 @@ public class OntologyRetrievalManagerLexGridImplTest extends
 	}
 
 	@Test
+	public void testMTHCH_FindConcept() throws Exception {
+		System.out.println("testMTHCH_FindConcept()");
+
+		OntologyBean ncboOntology = retrievalManager
+				.getLatestOntologyBean(
+						OntologyLoaderLexGridImplTest.UMLS_MTHCH_DISPLAY_LABEL);
+		//String conceptID = "CL:0000255";
+		String conceptID = "Level 1: 0001T-9999T";
+		ClassBean classBean = retrievalManager.findConcept(ncboOntology,
+				conceptID, false, false);
+		System.out.println("Concept " + conceptID + " of MTHCH ontology is \n"
+				+ classBean);
+		System.out.println("\n");
+		assertTrue(classBean.getId().equalsIgnoreCase(conceptID));
+	}
+	
+	
+	@Test
 	public void testOBOFindConceptCell() throws Exception {
 		System.out.println("testOBOFindConceptCell()");
 
@@ -135,7 +153,8 @@ public class OntologyRetrievalManagerLexGridImplTest extends
 				.getOntologyBeanByDisplayNameAndOntologyId(
 						OntologyLoaderLexGridImplTest.OBO_CELL_DISPLAY_LABEL,
 						OntologyLoaderLexGridImplTest.OBO_CELL_ONTOLOGY_ID);
-		String conceptID = "CL:0000255";
+		//String conceptID = "CL:0000255";
+		String conceptID = "CL:0000254";
 		ClassBean classBean = retrievalManager.findConcept(ncboOntology,
 				conceptID, false, false);
 		System.out.println("Concept " + conceptID + " of cell ontology is \n"
@@ -195,7 +214,25 @@ public class OntologyRetrievalManagerLexGridImplTest extends
 		System.out.println("\n");
 		assertTrue(classBean.getId().equalsIgnoreCase(newId));
 	}
+	
+	@Test
+	public void testOBOFindFullIdConceptCell() throws Exception {
+		System.out.println("testOBOFindCorrectedConceptCell()");
 
+		OntologyBean ncboOntology = retrievalManager
+				.getOntologyBeanByDisplayNameAndOntologyId(
+						OntologyLoaderLexGridImplTest.OBO_CELL_DISPLAY_LABEL,
+						OntologyLoaderLexGridImplTest.OBO_CELL_ONTOLOGY_ID);
+		String conceptID = "http://purl.bioontology.org/ontology/CL/CL_0000548";
+		ClassBean classBean = retrievalManager.findConcept(ncboOntology,
+				conceptID, false, false);
+		String newId = "CL:0000548";
+		System.out.println("Concept " + conceptID + " of cell ontology is \n"
+				+ classBean);
+		System.out.println("\n");
+		assertTrue(classBean.getId().equalsIgnoreCase(newId));
+	}
+	
 	@Test
 	public void testOBOFindConceptTwoRelationDictyostelium() throws Exception {
 		System.out.println("testOBOFindConceptTwoRelationDictyostelium()");

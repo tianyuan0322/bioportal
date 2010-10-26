@@ -19,7 +19,7 @@ public class OBOCVSPullRestlet extends AbstractBaseRestlet {
 	@Override
 	public void putRequest(Request request, Response response) {
 		try {
-			oboCVSPullService.doCVSPull();
+			oboCVSPullService.doOntologyPull();
 		} catch (Exception e) {
 			response.setStatus(Status.SERVER_ERROR_INTERNAL, e.getMessage());
 			e.printStackTrace();

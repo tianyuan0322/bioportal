@@ -18,6 +18,7 @@ import java.util.List;
 
 import org.ncbo.stanford.bean.OntologyBean;
 import org.ncbo.stanford.util.MessageUtils;
+import org.ncbo.stanford.util.constants.ApplicationConstants;
 import org.ncbo.stanford.util.loader.LoaderUtils;
 import org.ncbo.stanford.util.ontologyfile.OntologyDescriptorParser;
 import org.ncbo.stanford.util.ontologyfile.compressedfilehandler.CompressedFileHandler;
@@ -40,11 +41,11 @@ public class URIUploadFilePathHandlerImpl extends AbstractFilePathHandler {
 		this.uri = uri;
 	}
 
-	public List<String> processOntologyFileUploadNew(OntologyBean ontologyBean)
+	public List<String> processOntologyFileUpload(OntologyBean ontologyBean)
 			throws FileNotFoundException, IOException, Exception {
 		// place holder for return object
 		List<String> fileNames = new ArrayList<String>(1);
-		int BUFFER = 1024;
+		
 
 		// validate inputfile
 		String filePath = AbstractFilePathHandler
@@ -64,21 +65,14 @@ public class URIUploadFilePathHandlerImpl extends AbstractFilePathHandler {
 			BufferedInputStream in = new BufferedInputStream(uri.toURL()
 					.openStream());
 
-			URLConnection uc = uri.toURL().openConnection();
-			// uc.setUseCaches(false);
-			Long timestamp = uc.getLastModified();
-			if (timestamp == 0) {
-				timestamp = uc.getDate();
-			}
-			System.out.println("Last modified date=" + new Date(timestamp));
-			outputFile.setLastModified(timestamp);
-
-			byte data[] = new byte[BUFFER];
+			URLConnection uc = uri.toURL().openConnection();			
+			byte data[] = new byte[ApplicationConstants.BUFFER_SIZE];
 			int count;
-			while ((count = in.read(data, 0, BUFFER)) != -1) {
+						
+			while ((count = in.read(data, 0, ApplicationConstants.BUFFER_SIZE)) != -1) {
 				out.write(data, 0, count);
 			}
-
+			
 			in.close();
 			out.flush();
 			out.close();
@@ -96,14 +90,15 @@ public class URIUploadFilePathHandlerImpl extends AbstractFilePathHandler {
 						"Error! - URIUploadFilePathHandlerImpl(): processOntologyFileUpload - "
 								+ errorMsg);
 			}
-
+			// Store the MD5 file
+			LoaderUtils.storeMd5ToFile(ontologyBean);
 			fileNames = compressedFileHandler.handle(outputFile, ontologyBean);
 		}
-
+		
 		return fileNames;
 	}
 
-	public List<String> processOntologyFileUpload(OntologyBean ontologyBean)
+	public List<String> processOntologyFileUploadOld(OntologyBean ontologyBean)
 			throws FileNotFoundException, IOException, Exception {
 		// place holder for return object
 		List<String> fileNames = new ArrayList<String>(1);
