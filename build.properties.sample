@@ -468,12 +468,15 @@ notification.email.from=youremail@yourserver.edu
 ## RDF Store Type options:
 #### virtuoso
 #### mysql
-rdf.store.type=mysql
+#rdf.store.type=mysql
+rdf.store.type=virtuoso
 
 ## Virtuoso Stores Only
+#rdf.virtuoso.connection.string=jdbc:virtuoso://ncbodev-ts1.stanford.edu:1111/
 rdf.virtuoso.connection.string=jdbc:virtuoso://localhost:1111/
 rdf.virtuoso.user=dba
 rdf.virtuoso.password=dba
+
 
 ## MySQL Stores Only
 rdf.mysql.store.server.name=localhost
