@@ -544,16 +544,14 @@ public class OntologyRetrievalManagerProtegeImpl extends
 
 	private List<ClassBean> convertClasses(Collection<Cls> protegeClses,
 			boolean recursive, Slot synonymSlot, Slot definitionSlot,
-			Slot authorSlot, OntologyBean ontologyBean,
-			Map<Cls, ClassBean> recursionMap) {
+			Slot authorSlot, OntologyBean ontologyBean) {
 		List<ClassBean> beans = new ArrayList<ClassBean>();
 
 		for (Cls cls : protegeClses) {
 			if (cls.isVisible()) {
 				beans
 						.add(createClassBean(cls, recursive, synonymSlot,
-								definitionSlot, authorSlot, ontologyBean,
-								recursionMap));
+								definitionSlot, authorSlot, ontologyBean));
 			}
 		}
 
@@ -601,28 +599,15 @@ public class OntologyRetrievalManagerProtegeImpl extends
 		return classBean;
 	}
 
-	private ClassBean createClassBean(Cls cls, boolean recursive,
+	private ClassBean createClassBean(Cls cls, boolean includeChildren,
 			Slot synonymSlot, Slot definitionSlot, Slot authorSlot,
 			OntologyBean ontologyBean) {
-		return createClassBean(cls, recursive, synonymSlot, definitionSlot,
-				authorSlot, ontologyBean, new HashMap<Cls, ClassBean>());
-	}
-
-	private ClassBean createClassBean(Cls cls, boolean recursive,
-			Slot synonymSlot, Slot definitionSlot, Slot authorSlot,
-			OntologyBean ontologyBean, Map<Cls, ClassBean> recursionMap) {
-		if (recursionMap.containsKey(cls)) {
-			return recursionMap.get(cls);
-		}
-
 		boolean isOwl = cls.getKnowledgeBase() instanceof OWLModel;
 
 		ClassBean classBean = createBaseClassBean(cls, ontologyBean);
 		addSynonyms(cls, synonymSlot, classBean);
 		addDefinitions(cls, definitionSlot, classBean);
 		addAuthors(cls, authorSlot, classBean);
-
-		recursionMap.put(cls, classBean);
 
 		// add properties
 		Collection<Slot> slots;
@@ -667,11 +652,10 @@ public class OntologyRetrievalManagerProtegeImpl extends
 		classBean.addRelation(ApplicationConstants.INSTANCE_COUNT, cls
 				.getDirectInstanceCount());
 
-		if (recursive) {
+		if (includeChildren) {
 			classBean.addRelation(ApplicationConstants.SUB_CLASS,
 					convertClasses(subclasses, false, synonymSlot,
-							definitionSlot, authorSlot, ontologyBean,
-							recursionMap));
+							definitionSlot, authorSlot, ontologyBean));
 
 			// add superclasses
 			if (cls instanceof OWLNamedClass) {
@@ -683,8 +667,7 @@ public class OntologyRetrievalManagerProtegeImpl extends
 
 			classBean.addRelation(ApplicationConstants.SUPER_CLASS,
 					convertClasses(superclasses, false, synonymSlot,
-							definitionSlot, authorSlot, ontologyBean,
-							recursionMap));
+							definitionSlot, authorSlot, ontologyBean));
 		}
 
 		// add RDF type
@@ -692,8 +675,7 @@ public class OntologyRetrievalManagerProtegeImpl extends
 			classBean.addRelation(ApplicationConstants.RDF_TYPE,
 					convertClasses(getUniqueClasses(((OWLNamedClass) cls)
 							.getRDFTypes()), false, synonymSlot,
-							definitionSlot, authorSlot, ontologyBean,
-							recursionMap));
+							definitionSlot, authorSlot, ontologyBean));
 		}
 
 		return classBean;
