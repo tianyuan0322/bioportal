@@ -71,41 +71,40 @@ public class RdfDownloadRestlet extends AbstractOntologyBaseRestlet {
 						MessageUtils.getMessage("entity.ontologyid"));
 				isVirtual = true;
 			}
+			
 			if (isVirtual) {
-
-				ontologyVersionIdInt = RequestUtils
+				Integer ontologyVirtualIdInt = RequestUtils
 						.parseIntegerParam(ontologyId);
 				ont = ontologyService
-						.findLatestActiveOntologyOrViewVersion(ontologyVersionIdInt);
+						.findLatestActiveOntologyOrViewVersion(ontologyVirtualIdInt);
+
 				if (ont == null) {
 					throw new InvalidInputException(MessageUtils
 							.getMessage("msg.error.ontologyversionidinvalid"));
-
-				} else {
-					ontologyVersionIdInt = ont.getId();
 				}
-
 			} else {
 				ontologyVersionIdInt = RequestUtils
 						.parseIntegerParam(ontologyVersionId);
 				ont = ontologyService.findOntologyOrView(ontologyVersionIdInt);
+
 				if (ont == null) {
 					throw new InvalidInputException(MessageUtils
 							.getMessage("msg.error.ontologyversionidinvalid"));
 
 				}
-				// Finding the Rdf File
-				File file = ontologyService.findRdfFileForOntology(ont);
-
-				FileRepresentation fileRepresentation = new FileRepresentation(
-						file, MediaType.APPLICATION_RDF_XML, 60);
-				response.setEntity(fileRepresentation);
-
-				String filename = ont.getOntologyId() + ".rdf";
-				RequestUtils.getHttpServletResponse(response).setHeader(
-						"Content-Disposition",
-						"attachment; filename=\"" + filename + "\";");
 			}
+
+			// Finding the Rdf File
+			File file = ontologyService.findRdfFileForOntology(ont);
+
+			FileRepresentation fileRepresentation = new FileRepresentation(
+					file, MediaType.APPLICATION_RDF_XML, 60);
+			response.setEntity(fileRepresentation);
+
+			String filename = ont.getOntologyId() + ".rdf";
+			RequestUtils.getHttpServletResponse(response).setHeader(
+					"Content-Disposition",
+					"attachment; filename=\"" + filename + "\";");
 
 		} catch (InvalidInputException e) {
 			response.setStatus(Status.CLIENT_ERROR_BAD_REQUEST, e.getMessage());
