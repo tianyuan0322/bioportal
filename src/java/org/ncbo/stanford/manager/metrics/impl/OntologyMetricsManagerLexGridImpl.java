@@ -77,12 +77,13 @@ public class OntologyMetricsManagerLexGridImpl extends
 		int maxNumberOfSiblings = 0;
 		int totalNumberSiblings = 0;
 		int totalNumberParents = 0;
-		
+
 		while (iterator.hasNext()) {
-			ResolvedConceptReference ref = iterator.next();			
-			AssociationList al = getHierarchyLevelNext(schemeName, csvt, ref.getCode());
-			numberOfSiblings= getChildCount(al);
-			totalNumberSiblings +=  numberOfSiblings;
+			ResolvedConceptReference ref = iterator.next();
+			AssociationList al = getHierarchyLevelNext(schemeName, csvt, ref
+					.getCode());
+			numberOfSiblings = getChildCount(al);
+			totalNumberSiblings += numberOfSiblings;
 			if (numberOfSiblings > maxNumberOfSiblings) {
 				maxNumberOfSiblings = numberOfSiblings;
 			}
@@ -105,15 +106,16 @@ public class OntologyMetricsManagerLexGridImpl extends
 		omb.setNumberOfClasses(totalNumberParents);
 		omb.setClassesWithNoDocumentation(noDescConcepts);
 		omb.setMaximumNumberOfSiblings(maxNumberOfSiblings);
-		int avgNumOfSiblings= (int)Math.round((float)totalNumberSiblings/ (float)totalNumberParents);
+		int avgNumOfSiblings = (int) Math.round((float) totalNumberSiblings
+				/ (float) totalNumberParents);
 		omb.setAverageNumberOfSiblings(avgNumOfSiblings);
 		omb.setClassesWithOneSubclass(oneSubConcepts);
 		omb.setClassesWithMoreThanXSubclasses(manySubConcepts);
 		omb.setMaximumDepth(maxDepth);
-		
+
 		// not done
 		omb.setNumberOfAxioms(0);
-		omb.setNumberOfIndividuals(0);		
+		omb.setNumberOfIndividuals(0);
 		omb.setClassesWithNoAuthor(new ArrayList<String>());
 		omb.setClassesWithMoreThanOnePropertyValue(new ArrayList<String>());
 
@@ -131,28 +133,29 @@ public class OntologyMetricsManagerLexGridImpl extends
 		return sp.length;
 	}
 
-	private void computeTopologicalMaxDepth(OntologyBean ontologyBean) throws Exception {
+	private void computeTopologicalMaxDepth(OntologyBean ontologyBean)
+			throws Exception {
 		maxDepth = 1;
 		String schemeName = getLexGridCodingSchemeName(ontologyBean);
 		CodingSchemeVersionOrTag csvt = getLexGridCodingSchemeVersion(ontologyBean);
 		ResolvedConceptReferenceList rcrl = getHierarchyRootConcepts(
 				schemeName, csvt, true);
-		List<String> topologicalList= new ArrayList<String>();
-		Set<String> visitedSet= new HashSet<String>();
-		
+		List<String> topologicalList = new ArrayList<String>();
+		Set<String> visitedSet = new HashSet<String>();
+
 		for (ResolvedConceptReference rcr : rcrl.getResolvedConceptReference()) {
-			topologicalSort(schemeName, csvt, rcr, visitedSet,  topologicalList);
+			topologicalSort(schemeName, csvt, rcr, visitedSet, topologicalList);
 
 		}
-		
-		//Reverse this list to get actual topological list
+
+		// Reverse this list to get actual topological list
 		Collections.reverse(topologicalList);
 		maxDepth = dagLongestPath(schemeName, csvt, topologicalList);
-	}	
-	
-	
-	//Algorithm from: http://en.wikipedia.org/wiki/Topological_sorting
-	//The topological list returned is in reverse order, so we would need to reverse this
+	}
+
+	// Algorithm from: http://en.wikipedia.org/wiki/Topological_sorting
+	// The topological list returned is in reverse order, so we would need to
+	// reverse this
 	private void topologicalSort(String schemeName,
 			CodingSchemeVersionOrTag csvt, ConceptReference cr,
 			Set<String> visitedSet, List<String> topologicalList)
@@ -175,8 +178,7 @@ public class OntologyMetricsManagerLexGridImpl extends
 		topologicalList.add(conceptId);
 	}
 
-	
-	//Algorithm from: http://en.wikipedia.org/wiki/Longest_path_problem
+	// Algorithm from: http://en.wikipedia.org/wiki/Longest_path_problem
 	int dagLongestPath(String schemeName, CodingSchemeVersionOrTag csvt,
 			List<String> topologicalOrder) throws Exception {
 		HashMap<String, Integer> lengthMap = new HashMap<String, Integer>();
@@ -190,47 +192,55 @@ public class OntologyMetricsManagerLexGridImpl extends
 				for (AssociatedConcept ac : association.getAssociatedConcepts()
 						.getAssociatedConcept()) {
 					if (ac != null) {
-						String targetCode= ac.getCode();
-						if (lengthMap.get(targetCode) <= lengthMap.get(sourceConceptId) + 1) {
-							lengthMap.put(targetCode, lengthMap.get(sourceConceptId) + 1);
+						String targetCode = ac.getCode();
+						if (lengthMap.get(targetCode) <= lengthMap
+								.get(sourceConceptId) + 1) {
+							lengthMap.put(targetCode, lengthMap
+									.get(sourceConceptId) + 1);
 						}
-					}	
+					}
 				}
 			}
 		}
-		return Collections.max(lengthMap.values()).intValue();
+		if (lengthMap.isEmpty()) {
+			return 0;
+		} else {
+			return Collections.max(lengthMap.values()).intValue();
+		}
 	}
 
-	private void depricatedGetMaxDepth(String schemeName, CodingSchemeVersionOrTag csvt,
-			ConceptReference cr, int currentDepth, Set<String> visitedSet)
-			throws Exception {
+	private void depricatedGetMaxDepth(String schemeName,
+			CodingSchemeVersionOrTag csvt, ConceptReference cr,
+			int currentDepth, Set<String> visitedSet) throws Exception {
 		String conceptId = cr.getCode();
 		if (visitedSet.contains(conceptId))
 			return;
-		//Set<String> newVisitedSet = ((Set<String>)((HashSet<String>)visitedSet).clone());
-	    
-		//Set<String> newVisitedSet= new HashSet<String>(visitedSet);
+		// Set<String> newVisitedSet =
+		// ((Set<String>)((HashSet<String>)visitedSet).clone());
+
+		// Set<String> newVisitedSet= new HashSet<String>(visitedSet);
 		Set<String> newVisitedSet = visitedSet;
 		newVisitedSet.add(conceptId);
-	
+
 		if (currentDepth > maxDepth) {
 			maxDepth = currentDepth;
 		}
-	
+
 		AssociationList al = getHierarchyLevelNext(schemeName, csvt, conceptId);
 		for (Association association : al.getAssociation()) {
 			for (AssociatedConcept ac : association.getAssociatedConcepts()
 					.getAssociatedConcept()) {
 				if (ac != null) {
-					depricatedGetMaxDepth(schemeName, csvt, ac, currentDepth + 1,
-							newVisitedSet);
-	
+					depricatedGetMaxDepth(schemeName, csvt, ac,
+							currentDepth + 1, newVisitedSet);
+
 				}
 			}
-		}	
+		}
 	}
 
-	private void deprecatedComputeMaxDepth(OntologyBean ontologyBean) throws Exception {
+	private void deprecatedComputeMaxDepth(OntologyBean ontologyBean)
+			throws Exception {
 		maxDepth = 1;
 		String schemeName = getLexGridCodingSchemeName(ontologyBean);
 		CodingSchemeVersionOrTag csvt = getLexGridCodingSchemeVersion(ontologyBean);

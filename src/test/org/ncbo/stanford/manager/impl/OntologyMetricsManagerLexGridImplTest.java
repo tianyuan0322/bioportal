@@ -88,4 +88,19 @@ public class OntologyMetricsManagerLexGridImplTest extends
 		assertTrue(metricsBean_ != null);
 	}
 
+	@Test
+	public void testExtractCPTMetricsBeanNoHierarchy() throws Exception {
+		System.out.println("testExtractCPTMetricsBeanNoHierarchy");
+		startDate_ = new Date();
+
+		ontologyBean_ = metricsManager_
+				.getLatestOntologyBean(OntologyLoaderLexGridImplTest.UMLS_NOHIERACHY_DISPLAY_LABEL);
+		metricsBean_ = metricsManager_.extractOntologyMetrics(ontologyBean_);
+
+		endDate_ = new Date();
+		System.out.println(metricsBean_.toString());
+		System.out.println(endDate_.getTime() - startDate_.getTime() + " ms");
+
+		assertTrue(metricsBean_ != null);
+	}	
 }
