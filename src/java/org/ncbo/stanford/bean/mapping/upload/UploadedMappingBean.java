@@ -3,9 +3,6 @@
  */
 package org.ncbo.stanford.bean.mapping.upload;
 
-import java.util.Date;
-
-import org.openrdf.model.URI;
 
 /**
  * @author g.prakash
