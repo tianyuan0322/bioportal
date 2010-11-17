@@ -1,7 +1,11 @@
 package org.ncbo.stanford.service.mapping;
 
+import java.util.List;
+
 import org.ncbo.stanford.bean.OntologyBean;
+import org.ncbo.stanford.bean.mapping.MappingParametersBean;
 import org.ncbo.stanford.bean.mapping.OneToOneMappingBean;
+import org.ncbo.stanford.bean.obs.ConceptBean;
 import org.ncbo.stanford.enumeration.MappingSourceEnum;
 import org.ncbo.stanford.exception.InvalidInputException;
 import org.ncbo.stanford.exception.MappingExistsException;
@@ -27,8 +31,8 @@ public interface MappingService {
 	 * @param mappingType
 	 * @return
 	 */
-	public OneToOneMappingBean createMapping(URI source, URI target, URI relation,
-			Integer sourceOntologyId, Integer targetOntologyId,
+	public OneToOneMappingBean createMapping(URI source, URI target,
+			URI relation, Integer sourceOntologyId, Integer targetOntologyId,
 			Integer sourceOntologyVersion, Integer targetOntologyVersion,
 			Integer submittedBy, String comment,
 			MappingSourceEnum mappingSource, String mappingSourceName,
@@ -79,7 +83,8 @@ public interface MappingService {
 	 * @throws InvalidInputException
 	 */
 	public Page<OneToOneMappingBean> getMappingsFromOntology(OntologyBean ont,
-			Integer pageSize, Integer pageNum) throws InvalidInputException;
+			Integer pageSize, Integer pageNum, MappingParametersBean parameters)
+			throws InvalidInputException;
 
 	/**
 	 * Get all mappings to a given ontology.
@@ -89,7 +94,8 @@ public interface MappingService {
 	 * @throws InvalidInputException
 	 */
 	public Page<OneToOneMappingBean> getMappingsToOntology(OntologyBean ont,
-			Integer pageSize, Integer pageNum) throws InvalidInputException;
+			Integer pageSize, Integer pageNum, MappingParametersBean parameters)
+			throws InvalidInputException;
 
 	/**
 	 * Get mappings between two ontologies. Pass 'unidirectional' if you only
@@ -103,8 +109,8 @@ public interface MappingService {
 	 */
 	public Page<OneToOneMappingBean> getMappingsBetweenOntologies(
 			OntologyBean sourceOnt, OntologyBean targetOnt, Integer pageSize,
-			Integer pageNum, Boolean unidirectional)
-			throws InvalidInputException;
+			Integer pageNum, Boolean unidirectional,
+			MappingParametersBean parameters) throws InvalidInputException;
 
 	/**
 	 * Get all mappings either from or to a given ontology.
@@ -113,8 +119,51 @@ public interface MappingService {
 	 * @return
 	 * @throws InvalidInputException
 	 */
-	public Page<OneToOneMappingBean> getMappingsForOntology(
-			OntologyBean ont, Integer pageSize, Integer pageNum)
+	public Page<OneToOneMappingBean> getMappingsForOntology(OntologyBean ont,
+			Integer pageSize, Integer pageNum, MappingParametersBean parameters)
 			throws InvalidInputException;
-	
+
+	/**
+	 * Get all mappings for a given concept.
+	 * 
+	 * @param concept
+	 * @return
+	 * @throws InvalidInputException
+	 */
+	public List<OneToOneMappingBean> getMappingsForConcept(ConceptBean concept,
+			MappingParametersBean parameters) throws InvalidInputException;
+
+	/**
+	 * Get all mappings from a given concept to other concepts.
+	 * 
+	 * @param concept
+	 * @return
+	 * @throws InvalidInputException
+	 */
+	public List<OneToOneMappingBean> getMappingsFromConcept(
+			ConceptBean concept, MappingParametersBean parameters)
+			throws InvalidInputException;
+
+	/**
+	 * Get all mappings from other concepts to a given concept.
+	 * 
+	 * @param concept
+	 * @return
+	 * @throws InvalidInputException
+	 */
+	public List<OneToOneMappingBean> getMappingsToConcept(ConceptBean concept,
+			MappingParametersBean parameters) throws InvalidInputException;
+
+	/**
+	 * Get all mappings between two given concepts.
+	 * 
+	 * @param sourceConcept
+	 * @param targetConcept
+	 * @return
+	 * @throws InvalidInputException
+	 */
+	public List<OneToOneMappingBean> getMappingsBetweenConcepts(
+			ConceptBean sourceConcept, ConceptBean targetConcept,
+			MappingParametersBean parameters) throws InvalidInputException;
+
 }

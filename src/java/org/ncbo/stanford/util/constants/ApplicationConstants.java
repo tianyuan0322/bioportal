@@ -177,6 +177,8 @@ public interface ApplicationConstants {
 	// Common URIs
 	public static final URI MAPPING_ONE_TO_ONE_URI = new URIImpl(MAPPING_PREFIX + "One_To_One_Mapping");
 	public static final URI RDF_TYPE_URI = new URIImpl("http://www.w3.org/1999/02/22-rdf-syntax-ns#type");
+	
+	public static final String TIMEZONE = "-07:00";
 
 	
 	/**

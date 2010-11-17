@@ -3,7 +3,7 @@ package org.ncbo.stanford.domain.custom.dao;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
-import java.util.ArrayList;
+import java.util.List;
 
 import org.junit.Test;
 import org.ncbo.stanford.AbstractBioPortalTest;
@@ -72,15 +72,15 @@ public class CustomNcboMappingDAOTest extends AbstractBioPortalTest {
 	
 	@Test
 	public void testRetrieveMappingsForOntology() {
-		ArrayList<OneToOneMapping> mappings;
+		List<OneToOneMapping> mappings;
 		try {
-			mappings = mappingDAO.getMappingsForOntology(1032, 50000, 0);
+			mappings = mappingDAO.getMappingsForOntology(1032, 50000, 0, null);
 			assertTrue(mappings != null && mappings.size() > 0);
 			
-			mappings = mappingDAO.getMappingsFromOntology(1032, 50000, 0);
+			mappings = mappingDAO.getMappingsFromOntology(1032, 50000, 0, null);
 			assertTrue(mappings != null && mappings.size() == 0);
 			
-			mappings = mappingDAO.getMappingsToOntology(1032, 50000, 0);
+			mappings = mappingDAO.getMappingsToOntology(1032, 50000, 0, null);
 			assertTrue(mappings != null && mappings.size() > 0);
 		} catch (InvalidInputException e) {
 			e.printStackTrace();
@@ -90,15 +90,15 @@ public class CustomNcboMappingDAOTest extends AbstractBioPortalTest {
 	@Test
 	public void testRetrieveMappingsCountForOntology()
 			throws InvalidInputException {
-		Integer count = mappingDAO.getCountMappingsForOntology(1032);
+		Integer count = mappingDAO.getCountMappingsForOntology(1032, null);
 		System.out.println("All mappings count for ontology 1032: " + count);
 		assertTrue(count instanceof Integer && count >= 0);
 		
-		count = mappingDAO.getCountMappingsFromOntology(1032);
+		count = mappingDAO.getCountMappingsFromOntology(1032, null);
 		System.out.println("Mappings from count for ontology 1032: " + count);
 		assertTrue(count instanceof Integer && count >= 0);
 
-		count = mappingDAO.getCountMappingsToOntology(1032);
+		count = mappingDAO.getCountMappingsToOntology(1032, null);
 		System.out.println("Mappings to count for ontology 1032: " + count);
 		assertTrue(count instanceof Integer && count >= 0);
 	}

@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
+import org.ncbo.stanford.bean.mapping.MappingParametersBean;
 import org.ncbo.stanford.domain.custom.entity.mapping.OneToOneMapping;
 import org.ncbo.stanford.exception.InvalidInputException;
 import org.ncbo.stanford.exception.MappingExistsException;
@@ -76,7 +77,7 @@ public class CustomNcboMappingDAO {
 			+ "  FILTER (%FILTER%) } LIMIT %LIMIT% OFFSET %OFFSET%";
 
 	private final static String mappingCountQuery = "SELECT  "
-			+ "count(?mappingId) as ?mappingCount " + "WHERE {"
+			+ "count(?mappingId) as ?mappingCount WHERE {"
 			+ "  ?mappingId <http://protege.stanford.edu/ontologies/mappings/mappings.rdfs#source> ?source ."
 			+ "  ?mappingId <http://protege.stanford.edu/ontologies/mappings/mappings.rdfs#target> ?target ."
 			+ "  ?mappingId <http://protege.stanford.edu/ontologies/mappings/mappings.rdfs#relation> ?relation ."
@@ -296,60 +297,14 @@ public class CustomNcboMappingDAO {
 
 	/*******************************************************************
 	 * 
-	 * Count methods
+	 * Mappings by parameter
 	 * 
 	 *******************************************************************/
 
-	public Integer getCountMappingsFromOntology(Integer ontologyId)
+	public List<OneToOneMapping> getMappingsForParameters(Integer limit,
+			Integer offset, MappingParametersBean parameters)
 			throws InvalidInputException {
-		return getCount(ontologyId, null, true);
-	}
-
-	public Integer getCountMappingsToOntology(Integer ontologyId)
-			throws InvalidInputException {
-		return getCount(null, ontologyId, true);
-	}
-
-	public Integer getCountMappingsBetweenOntologies(Integer sourceOntology,
-			Integer targetOntology, Boolean unidirectional)
-			throws InvalidInputException {
-		return getCount(sourceOntology, targetOntology, unidirectional);
-	}
-
-	public Integer getCountMappingsForOntology(Integer ontologyId)
-			throws InvalidInputException {
-		return getCount(ontologyId, null, false);
-	}
-
-	private Integer getCount(Integer sourceOntology, Integer targetOntology,
-			Boolean unidirectional) throws InvalidInputException {
-		ObjectConnection con = getRdfStoreManager().getObjectConnection();
-
-		String filter = generateOntologySparqlFilter(sourceOntology,
-				targetOntology, unidirectional);
-
-		String queryString = mappingCountQuery.replaceAll("%FILTER%", filter);
-
-		try {
-			TupleQuery query = con.prepareTupleQuery(QueryLanguage.SPARQL,
-					queryString, ApplicationConstants.MAPPING_CONTEXT);
-			TupleQueryResult result = query.evaluate();
-			while (result.hasNext()) {
-				BindingSet bs = result.next();
-				return convertValueToInteger(bs.getValue("mappingCount"));
-			}
-		} catch (MalformedQueryException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (RepositoryException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (QueryEvaluationException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-
-		return null;
+		return getMappings(limit, offset, null, parameters);
 	}
 
 	/*******************************************************************
@@ -358,34 +313,171 @@ public class CustomNcboMappingDAO {
 	 * 
 	 *******************************************************************/
 
-	public ArrayList<OneToOneMapping> getMappingsFromOntology(
-			Integer ontologyId, Integer limit, Integer offset)
+	public List<OneToOneMapping> getMappingsFromOntology(Integer ontologyId,
+			Integer limit, Integer offset, MappingParametersBean parameters)
 			throws InvalidInputException {
-		return getMappings(ontologyId, null, true, limit, offset);
+		String filter = generateOntologySparqlFilter(ontologyId, null, true);
+
+		return getMappings(limit, offset, filter, parameters);
 	}
 
-	public ArrayList<OneToOneMapping> getMappingsToOntology(Integer ontologyId,
-			Integer limit, Integer offset) throws InvalidInputException {
-		return getMappings(null, ontologyId, true, limit, offset);
+	public List<OneToOneMapping> getMappingsToOntology(Integer ontologyId,
+			Integer limit, Integer offset, MappingParametersBean parameters)
+			throws InvalidInputException {
+		String filter = generateOntologySparqlFilter(null, ontologyId, true);
+
+		return getMappings(limit, offset, filter, parameters);
 	}
 
-	public ArrayList<OneToOneMapping> getMappingsBetweenOntologies(
+	public List<OneToOneMapping> getMappingsBetweenOntologies(
 			Integer sourceOntology, Integer targetOntology,
-			Boolean unidirectional, Integer limit, Integer offset)
-			throws InvalidInputException {
-		return getMappings(sourceOntology, targetOntology, unidirectional,
-				limit, offset);
+			Boolean unidirectional, Integer limit, Integer offset,
+			MappingParametersBean parameters) throws InvalidInputException {
+		String filter = generateOntologySparqlFilter(sourceOntology,
+				targetOntology, unidirectional);
+
+		return getMappings(limit, offset, filter, parameters);
 	}
 
-	public ArrayList<OneToOneMapping> getMappingsForOntology(
-			Integer ontologyId, Integer limit, Integer offset)
+	public List<OneToOneMapping> getMappingsForOntology(Integer ontologyId,
+			Integer limit, Integer offset, MappingParametersBean parameters)
 			throws InvalidInputException {
-		return getMappings(ontologyId, null, false, limit, offset);
+		String filter = generateOntologySparqlFilter(ontologyId, null, false);
+
+		return getMappings(limit, offset, filter, parameters);
 	}
 
-	private ArrayList<OneToOneMapping> getMappings(Integer sourceOntology,
-			Integer targetOntology, Boolean unidirectional, Integer limit,
-			Integer offset) throws InvalidInputException {
+	/*******************************************************************
+	 * 
+	 * Mappings for concepts
+	 * 
+	 *******************************************************************/
+
+	public List<OneToOneMapping> getMappingsForConcept(String conceptId,
+			MappingParametersBean parameters) throws InvalidInputException {
+		String filter = generateConceptSparqlFilter(conceptId, null, false);
+
+		return getMappings(null, null, filter, parameters);
+	}
+
+	public List<OneToOneMapping> getMappingsFromConcept(String conceptId,
+			MappingParametersBean parameters) throws InvalidInputException {
+		String filter = generateConceptSparqlFilter(conceptId, null, true);
+
+		return getMappings(null, null, filter, parameters);
+	}
+
+	public List<OneToOneMapping> getMappingsToConcept(String conceptId,
+			MappingParametersBean parameters) throws InvalidInputException {
+		String filter = generateConceptSparqlFilter(conceptId, null, true);
+
+		return getMappings(null, null, filter, parameters);
+	}
+
+	public List<OneToOneMapping> getMappingsBetweenConcepts(
+			String fromConceptId, String toConceptId,
+			MappingParametersBean parameters) throws InvalidInputException {
+		String filter = generateConceptSparqlFilter(fromConceptId, toConceptId,
+				false);
+
+		return getMappings(null, null, filter, parameters);
+	}
+
+	/*******************************************************************
+	 * 
+	 * Count methods
+	 * 
+	 *******************************************************************/
+
+	public Integer getCountMappingsForParameters(
+			MappingParametersBean parameters) throws InvalidInputException {
+		return getCount(null, parameters);
+	}
+
+	public Integer getCountMappingsFromOntology(Integer ontologyId,
+			MappingParametersBean parameters) throws InvalidInputException {
+		String filter = generateOntologySparqlFilter(ontologyId, null, true);
+
+		return getCount(filter, parameters);
+	}
+
+	public Integer getCountMappingsToOntology(Integer ontologyId,
+			MappingParametersBean parameters) throws InvalidInputException {
+		String filter = generateOntologySparqlFilter(null, ontologyId, true);
+
+		return getCount(filter, parameters);
+	}
+
+	public Integer getCountMappingsBetweenOntologies(Integer sourceOntology,
+			Integer targetOntology, Boolean unidirectional,
+			MappingParametersBean parameters) throws InvalidInputException {
+		String filter = generateOntologySparqlFilter(sourceOntology,
+				targetOntology, unidirectional);
+
+		return getCount(filter, parameters);
+	}
+
+	public Integer getCountMappingsForOntology(Integer ontologyId,
+			MappingParametersBean parameters) throws InvalidInputException {
+		String filter = generateOntologySparqlFilter(ontologyId, null, false);
+
+		return getCount(filter, parameters);
+	}
+
+	public Integer getCountMappingsForConcept(String conceptId,
+			MappingParametersBean parameters) throws InvalidInputException {
+		String filter = generateConceptSparqlFilter(conceptId, null, false);
+
+		return getCount(filter, parameters);
+	}
+
+	public Integer getCountMappingsFromConcept(String conceptId,
+			MappingParametersBean parameters) throws InvalidInputException {
+		String filter = generateConceptSparqlFilter(conceptId, null, true);
+
+		return getCount(filter, parameters);
+	}
+
+	public Integer getCountMappingsToConcept(String conceptId,
+			MappingParametersBean parameters) throws InvalidInputException {
+		String filter = generateConceptSparqlFilter(conceptId, null, true);
+
+		return getCount(filter, parameters);
+	}
+
+	public Integer getCountMappingsBetweenConcepts(String fromConceptId,
+			String toConceptId, MappingParametersBean parameters)
+			throws InvalidInputException {
+		String filter = generateConceptSparqlFilter(fromConceptId, toConceptId,
+				false);
+
+		return getCount(filter, parameters);
+	}
+
+	/*******************************************************************
+	 * 
+	 * Generic SPARQL methods
+	 * 
+	 *******************************************************************/
+
+	/**
+	 * Generic getMappings call. Must provide a valid SPARQL filter (generated
+	 * via helper methods or elsewhere).
+	 * 
+	 * @param limit
+	 * @param offset
+	 * @param filter
+	 * @param parameters
+	 * @param sourceOntology
+	 * @param targetOntology
+	 * @param unidirectional
+	 * 
+	 * @return
+	 * @throws InvalidInputException
+	 */
+	private ArrayList<OneToOneMapping> getMappings(Integer limit,
+			Integer offset, String filter, MappingParametersBean parameters)
+			throws InvalidInputException {
 		// Safety check
 		if (limit == null || limit >= 50000) {
 			limit = 50000;
@@ -397,14 +489,19 @@ public class CustomNcboMappingDAO {
 
 		ObjectConnection con = getRdfStoreManager().getObjectConnection();
 
-		// Get a filter for use in the query
-		String filter = generateOntologySparqlFilter(sourceOntology,
-				targetOntology, unidirectional);
+		// Combine filters
+		String combinedFilters = "";
+		if (filter != null) {
+			combinedFilters = (parameters != null) ? filter + " "
+					+ parameters.toFilter() : filter;
+		} else {
+			combinedFilters = (parameters != null) ? parameters.toFilter() : "";
+		}
 
 		// Substitute tokens in the generic query string
-		String queryString = mappingQuery.replaceAll("%FILTER%", filter)
-				.replaceAll("%LIMIT%", limit.toString()).replaceAll("%OFFSET%",
-						offset.toString());
+		String queryString = mappingQuery.replaceAll("%FILTER%",
+				combinedFilters).replaceAll("%LIMIT%", limit.toString())
+				.replaceAll("%OFFSET%", offset.toString());
 
 		try {
 			TupleQuery query = con.prepareTupleQuery(QueryLanguage.SPARQL,
@@ -486,24 +583,51 @@ public class CustomNcboMappingDAO {
 		return null;
 	}
 
-	/*******************************************************************
+	/**
+	 * Generic getCount call. Must provide a valid SPARQL filter (generated via
+	 * helper methods or elsewhere).
 	 * 
-	 * Concept methods
-	 * 
-	 *******************************************************************/
+	 * @param sourceOntology
+	 * @param targetOntology
+	 * @param unidirectional
+	 * @param filter
+	 * @return
+	 * @throws InvalidInputException
+	 */
+	private Integer getCount(String filter, MappingParametersBean parameters)
+			throws InvalidInputException {
+		ObjectConnection con = getRdfStoreManager().getObjectConnection();
 
-	public List<OneToOneMapping> getMappingsFromConcept(String conceptId) {
+		// Combine filters
+		String combinedFilters = "";
+		if (filter != null) {
+			combinedFilters = (parameters != null) ? filter + " "
+					+ parameters.toFilter() : filter;
+		} else {
+			combinedFilters = (parameters != null) ? parameters.toFilter() : "";
+		}
 
-		return null;
-	}
+		String queryString = mappingCountQuery.replaceAll("%FILTER%",
+				combinedFilters);
 
-	public List<OneToOneMapping> getMappingsToConcept(String conceptId) {
-
-		return null;
-	}
-
-	public List<OneToOneMapping> getMappingsBetweenConcept(
-			String fromConceptId, String toConceptId) {
+		try {
+			TupleQuery query = con.prepareTupleQuery(QueryLanguage.SPARQL,
+					queryString, ApplicationConstants.MAPPING_CONTEXT);
+			TupleQueryResult result = query.evaluate();
+			while (result.hasNext()) {
+				BindingSet bs = result.next();
+				return convertValueToInteger(bs.getValue("mappingCount"));
+			}
+		} catch (MalformedQueryException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (RepositoryException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (QueryEvaluationException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 
 		return null;
 	}
@@ -550,6 +674,87 @@ public class CustomNcboMappingDAO {
 			} else {
 				filter = "?sourceOntologyId = " + targetOntology
 						+ " || ?targetOntologyId = " + targetOntology;
+			}
+		} else {
+			throw new InvalidInputException();
+		}
+
+		return filter;
+	}
+
+	/**
+	 * Generates a SPARQL filter for the given ontology ids.
+	 * 
+	 * @param sourceConcept
+	 * @param targetConcept
+	 * @param unidirectional
+	 * @return
+	 * @throws InvalidInputException
+	 */
+	private String generateConceptSparqlFilter(String sourceConcept,
+			String targetConcept, Boolean unidirectional)
+			throws InvalidInputException {
+		// Determine the SPARQL filter to use based on directionality
+		// Default is bidirectional
+		String filter = "?source = <" + sourceConcept + "> || ?target = <"
+				+ targetConcept + "> || ?source = <" + targetConcept
+				+ "> || ?target = <" + sourceConcept + ">";
+		if (sourceConcept != null && targetConcept != null) {
+			if (unidirectional != null && unidirectional == true) {
+				filter = "?source = <" + sourceConcept + "> && ?target = <"
+						+ targetConcept + ">";
+			}
+		} else if (sourceConcept != null && targetConcept == null) {
+			if (unidirectional != null && unidirectional == true) {
+				filter = "?source = <" + sourceConcept + ">";
+			} else {
+				filter = "?source = <" + sourceConcept + "> || ?target = <"
+						+ sourceConcept + ">";
+			}
+		} else if (sourceConcept == null && targetConcept != null) {
+			if (unidirectional != null && unidirectional == true) {
+				filter = "?target = <" + targetConcept + ">";
+			} else {
+				filter = "?source = <" + targetConcept + "> || ?target = <"
+						+ targetConcept + ">";
+			}
+		} else {
+			throw new InvalidInputException();
+		}
+
+		return filter;
+	}
+
+	private String generateConceptSparqlFilterRegex(String sourceConcept,
+			String targetConcept, Boolean unidirectional)
+			throws InvalidInputException {
+		// Determine the SPARQL filter to use based on directionality
+		// Default is bidirectional
+		String filter = "regex(str(?source), \"" + sourceConcept
+				+ "\") || regex(str(?target), \"" + targetConcept
+				+ "\") || regex(str(?source), \"" + targetConcept
+				+ "\") || regex(str(?target), \"" + sourceConcept + "\")";
+		if (sourceConcept != null && targetConcept != null) {
+			if (unidirectional != null && unidirectional == true) {
+				filter = "regex(str(?source), \"" + sourceConcept
+						+ "\") && regex(str(?target), \"" + targetConcept
+						+ "\")";
+			}
+		} else if (sourceConcept != null && targetConcept == null) {
+			if (unidirectional != null && unidirectional == true) {
+				filter = "regex(str(?source), \"" + sourceConcept + "\")";
+			} else {
+				filter = "regex(str(?source), \"" + sourceConcept
+						+ "\") || regex(str(?target), \"" + sourceConcept
+						+ "\")";
+			}
+		} else if (sourceConcept == null && targetConcept != null) {
+			if (unidirectional != null && unidirectional == true) {
+				filter = "regex(str(?target), \"" + targetConcept + "\")";
+			} else {
+				filter = "regex(str(?source), \"" + targetConcept
+						+ "\") || regex(str(?target), \"" + targetConcept
+						+ "\")";
 			}
 		} else {
 			throw new InvalidInputException();
