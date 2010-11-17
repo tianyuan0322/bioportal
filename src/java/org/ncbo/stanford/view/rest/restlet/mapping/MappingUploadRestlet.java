@@ -41,8 +41,8 @@ import org.restlet.data.Status;
  * @author g.prakash
  * 
  */
-public class MappingRestlet extends AbstractBaseRestlet {
-	private static final Log log = LogFactory.getLog(MappingRestlet.class);
+public class MappingUploadRestlet extends AbstractBaseRestlet {
+	private static final Log log = LogFactory.getLog(MappingUploadRestlet.class);
 	private OntologyService ontologyService;
 	private MappingManager mappingManager;
 	private ConceptService conceptService;

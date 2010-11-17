@@ -336,7 +336,7 @@
 	</bean>
 	
 	<!-- Adding for CSV -->
-	<bean id="mappingRestlet" class="org.ncbo.stanford.view.rest.restlet.mapping.MappingRestlet"
+	<bean id="mappingUploadRestlet" class="org.ncbo.stanford.view.rest.restlet.mapping.MappingUploadRestlet"
 		parent="abstractBaseRestlet">
 		<property name="mappingManager">
 			<ref bean="mappingManager"/>
@@ -675,7 +675,7 @@
 						</entry>
 						<!-- ======CSVFile================-->
 						<entry key="/csv">
-							<ref local="mappingRestlet" />
+							<ref local="mappingUploadRestlet" />
 						</entry>
 						<!-- ========== Metadata ========== -->
 						<entry key="/project/{id}">
