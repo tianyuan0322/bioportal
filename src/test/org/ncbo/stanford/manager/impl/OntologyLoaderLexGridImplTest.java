@@ -347,9 +347,15 @@ public class OntologyLoaderLexGridImplTest extends AbstractBioPortalTest {
 	public void testLoadAndCleanup() throws Exception {
 		System.out.println("testLoadAndCleanup()");
 
-		OntologyBean ob = loadManagerLexGrid
-				.getLatestOntologyBean(OBO_FUNGAL_DISPLAY_LABEL);
-		loadManagerLexGrid.cleanup(ob);
+//		OntologyBean ob = loadManagerLexGrid
+//				.getLatestOntologyBean(OBO_FUNGAL_DISPLAY_LABEL);
+		OntologyBean ob = loadManagerLexGrid.getOntologyBeanByDisplayNameAndOntologyId(
+		OntologyLoaderLexGridImplTest.OBO_CELL_DISPLAY_LABEL,
+		OntologyLoaderLexGridImplTest.OBO_CELL_ONTOLOGY_ID);
+		ontologyService.deleteOntologyOrView(ob.getId(), true, true);
+
+		
+//		loadManagerLexGrid.cleanup(ob);
 	}
 
 	private OntologyBean createOntolgyBeanOboCell() {
