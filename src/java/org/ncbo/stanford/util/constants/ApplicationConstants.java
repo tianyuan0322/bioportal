@@ -179,6 +179,9 @@ public interface ApplicationConstants {
 	public static final URI RDF_TYPE_URI = new URIImpl("http://www.w3.org/1999/02/22-rdf-syntax-ns#type");
 	
 	public static final String TIMEZONE = "-07:00";
+	
+	public static final Integer DEFAULT_PAGE_SIZE = 5000;
+	public static final Integer DEFAULT_PAGE_NUM = 1;
 
 	
 	/**

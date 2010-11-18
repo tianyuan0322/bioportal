@@ -1,5 +1,6 @@
 package org.ncbo.stanford.bean.mapping;
 
+import java.lang.reflect.Field;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
@@ -17,6 +18,12 @@ public class MappingParametersBean {
 	private List<URI> relationshipTypes;
 	private List<MappingSourceEnum> mappingSources;
 
+	/**
+	 * Creates proper syntax for use in a SPARQL filter using provided
+	 * parameters.
+	 * 
+	 * @return
+	 */
 	public String toFilter() {
 		String filter = "";
 
@@ -65,6 +72,25 @@ public class MappingParametersBean {
 		}
 
 		return filter;
+	}
+
+	public Boolean isEmpty() {
+		Field[] fields = this.getClass().getDeclaredFields();
+
+		for (Field field : fields) {
+			try {
+				if (field.get(this) != null
+						&& field.get(this).toString().length() > 0) {
+					return false;
+				}
+			} catch (IllegalArgumentException e) {
+				// Do nothing
+			} catch (IllegalAccessException e) {
+				// Do nothing
+			}
+		}
+
+		return true;
 	}
 
 	/**

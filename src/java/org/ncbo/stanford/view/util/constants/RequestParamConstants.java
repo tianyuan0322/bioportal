@@ -211,4 +211,14 @@ public interface RequestParamConstants {
 	public static final String PARAM_META_TEXT = "text";
 	public static final String PARAM_META_VALUE = "value";
 	
+	/**
+	 * Mappings parameters
+	 */
+	public static final String PARAM_SUBMITTERS = "submitters";
+	public static final String PARAM_START_DATE = "startdate";
+	public static final String PARAM_END_DATE = "enddate";
+	public static final String PARAM_RELATIONSHIPS = "relationships";
+	public static final String PARAM_MAPPING_SOURCES = "sources";
+	public static final String PARAM_MAPPING_TYPE = "type";
+	
 }

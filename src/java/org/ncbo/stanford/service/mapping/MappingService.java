@@ -124,6 +124,20 @@ public interface MappingService {
 			throws InvalidInputException;
 
 	/**
+	 * Get a page of mappings based on parameters-only (not using ontology id or
+	 * concept id).
+	 * 
+	 * @param pageSize
+	 * @param pageNum
+	 * @param parameters
+	 * @return
+	 * @throws InvalidInputException
+	 */
+	public Page<OneToOneMappingBean> getMappingsForParameters(Integer pageSize,
+			Integer pageNum, MappingParametersBean parameters)
+			throws InvalidInputException;
+
+	/**
 	 * Get all mappings for a given concept.
 	 * 
 	 * @param concept

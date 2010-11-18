@@ -335,7 +335,7 @@
 		</property>
 	</bean>
 	
-	<!-- Adding for CSV -->
+	<!-- Mappings -->
 	<bean id="mappingUploadRestlet" class="org.ncbo.stanford.view.rest.restlet.mapping.MappingUploadRestlet"
 		parent="abstractBaseRestlet">
 		<property name="mappingManager">
@@ -348,7 +348,14 @@
 			<ref bean="conceptService" />
 		</property>	
 	</bean>
-
+	
+	<bean id="mappingRestlet" class="org.ncbo.stanford.view.rest.restlet.mapping.MappingRestlet"
+		parent="abstractBaseRestlet">
+		<property name="mappingService">
+			<ref bean="mappingService" />
+		</property>
+	</bean>
+	
 	<bean id="userEmailRestlet"
 		class="org.ncbo.stanford.view.rest.restlet.user.UserEmailRestlet"
 		parent="abstractBaseRestlet">
@@ -673,9 +680,12 @@
 						<entry key="/virtual/notes/{ontologyid}">
 							<ref local="notesRestlet" />
 						</entry>
-						<!-- ======Mappings=================-->
+						<!-- ========== Mappings ========== -->
 						<entry key="/mappings/upload">
 							<ref local="mappingUploadRestlet" />
+						</entry>
+						<entry key="/mappings">
+							<ref local="mappingRestlet" />
 						</entry>
 						<!-- ========== Metadata ========== -->
 						<entry key="/project/{id}">
