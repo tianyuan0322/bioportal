@@ -1044,6 +1044,8 @@ public class OntologyRetrievalManagerLexGridImpl extends
 			addSynonyms(ontologyBean, entry, bean, addRelations);
 			// handle definitions
 			addDefinitions(ontologyBean, entry, bean);
+			//handle isActive flag
+			addInactiveStatus(ontologyBean, entry, bean);
 			// handle comments
 
 			if (addRelations) {
@@ -1209,6 +1211,27 @@ public class OntologyRetrievalManagerLexGridImpl extends
 
 		if (StringUtils.isNotBlank(value) && !list.contains(value)) {
 			list.add(value);
+		}
+	}
+
+	private static void addPropertyToClassBean(ClassBean classBean,
+			String propertyName, String propertyValue) {
+		if ((classBean != null) && StringUtils.isNotBlank(propertyName)
+				&& StringUtils.isNotBlank(propertyValue)) {
+			HashMap<Object, Object> relationMap = classBean.getRelations();
+			Object keyValue = relationMap.get(propertyName);
+			if (keyValue == null) {
+				relationMap.put(propertyName, propertyValue);
+			} else if (keyValue instanceof List) {
+				List keyList = (List) keyValue;
+				if (!keyList.contains(propertyValue)) {
+					keyList.add(propertyValue);
+				}
+
+			} else if (keyValue instanceof String) {
+				relationMap.put(propertyName, propertyValue);
+			}
+
 		}
 	}
 
@@ -1454,6 +1477,13 @@ public class OntologyRetrievalManagerLexGridImpl extends
 			Definition d = entry.getDefinition(i);
 			bean.addDefinition(d.getValue().getContent());
 			addSourceToClassBean(ontologyBean, bean, "definition", d);
+		}
+	}
+
+	private void addInactiveStatus(OntologyBean ontologyBean, Concept entry,
+			ClassBean bean) {
+		if (entry.getIsActive() != null && entry.getIsActive() == false) {
+			addPropertyToClassBean(bean, "is_obsolete", "true");
 		}
 	}
 
