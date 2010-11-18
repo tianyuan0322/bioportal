@@ -164,6 +164,24 @@ public class OntologyRetrievalManagerLexGridImplTest extends
 	}
 
 	@Test
+	public void testOBOFindConceptObsoleteCell() throws Exception {
+		System.out.println("testOBOFindConceptObsoleteCell()");
+
+		OntologyBean ncboOntology = retrievalManager
+				.getOntologyBeanByDisplayNameAndOntologyId(
+						OntologyLoaderLexGridImplTest.OBO_CELL_DISPLAY_LABEL,
+						OntologyLoaderLexGridImplTest.OBO_CELL_ONTOLOGY_ID);
+		//String conceptID = "CL:0000255";
+		String conceptID = "CL:0000045";
+		ClassBean classBean = retrievalManager.findConcept(ncboOntology,
+				conceptID, false, false);
+		System.out.println("Concept " + conceptID + " of cell ontology is \n"
+				+ classBean);
+		System.out.println("\n");
+		assertTrue(classBean.getId().equalsIgnoreCase(conceptID));
+	}
+	
+	@Test
 	public void testOBOFindLightConceptCell() throws Exception {
 		System.out.println("testOBOFindConceptCell()");
 
