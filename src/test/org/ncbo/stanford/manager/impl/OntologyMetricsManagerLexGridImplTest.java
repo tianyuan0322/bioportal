@@ -103,4 +103,22 @@ public class OntologyMetricsManagerLexGridImplTest extends
 
 		assertTrue(metricsBean_ != null);
 	}	
+
+	/*
+	@Test
+	public void testExtractOBORelationsOntology() throws Exception {
+		System.out.println("testExtractOBORelationsOntology");
+		startDate_ = new Date();
+
+		ontologyBean_ = new OntologyBean(false);
+		ontologyBean_.setCodingScheme("urn:lsid:bioontology.org:relationship|UNASSIGNED");	
+		metricsBean_ = metricsManager_.extractOntologyMetrics(ontologyBean_);
+
+		endDate_ = new Date();
+		System.out.println(metricsBean_.toString());
+		System.out.println(endDate_.getTime() - startDate_.getTime() + " ms");
+
+		assertTrue(metricsBean_ != null);
+	}	
+	*/	
 }
