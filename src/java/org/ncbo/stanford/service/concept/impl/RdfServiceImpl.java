@@ -30,6 +30,7 @@ import org.semanticweb.owlapi.model.OWLOntologyChangeException;
 import org.semanticweb.owlapi.model.OWLOntologyManager;
 import org.semanticweb.owlapi.model.OWLSubClassOfAxiom;
 import org.semanticweb.owlapi.vocab.OWLRDFVocabulary;
+import org.semanticweb.owlapi.vocab.SKOSVocabulary;
 
 
 public class RdfServiceImpl extends ConceptServiceImpl implements RdfService {
@@ -453,15 +454,16 @@ public class RdfServiceImpl extends ConceptServiceImpl implements RdfService {
 				manager.addAxiom(ontology, factory.getOWLSubClassOfAxiom(owlClass, 
 						factory.getOWLClass(IRI.create(getClassUri(ont, superClass)))));
 				// add skos:broader annotation
-				OWLAnnotation skosBroaderAnnotation = factory.getOWLAnnotation(factory.getOWLAnnotationProperty(IRI.create(skosBroader)),
-						factory.getOWLStringLiteral(superClass.getId()));
+				OWLAnnotation skosBroaderAnnotation = factory.getOWLAnnotation(factory.getOWLAnnotationProperty(IRI.create(SKOSVocabulary.BROADER.getURI())),
+						owlClass.getIRI());
 				manager.addAxiom(ontology, factory.getOWLAnnotationAssertionAxiom(owlClass.getIRI(), skosBroaderAnnotation));
 
 				
 				// add OBO_ISA annotation
 				if (ont.getFormat().toUpperCase().contains(OBO_FORMAT)) {
+
 					OWLAnnotation oboIsaAnnotation = factory.getOWLAnnotation(factory.getOWLAnnotationProperty(IRI.create(oboIsa)),
-							factory.getOWLStringLiteral(superClass.getId()));
+							owlClass.getIRI());
 					manager.addAxiom(ontology, factory.getOWLAnnotationAssertionAxiom(owlClass.getIRI(), oboIsaAnnotation));
 				}
 			}
