@@ -465,6 +465,8 @@ public class RdfServiceImpl extends ConceptServiceImpl implements RdfService {
 					OWLAnnotation oboIsaAnnotation = factory.getOWLAnnotation(factory.getOWLAnnotationProperty(IRI.create(oboIsa)),
 							owlClass.getIRI());
 					manager.addAxiom(ontology, factory.getOWLAnnotationAssertionAxiom(owlClass.getIRI(), oboIsaAnnotation));
+					OWLAnnotation oboIsaAnnotationForLiteral=factory.getOWLAnnotation(factory.getOWLAnnotationProperty(IRI.create(oboIsa)), factory.getOWLStringLiteral(superClass.getId()));
+					manager.addAxiom(ontology, factory.getOWLAnnotationAssertionAxiom(owlClass.getIRI(), oboIsaAnnotationForLiteral));
 				}
 			}
 		} else {
@@ -572,26 +574,21 @@ public class RdfServiceImpl extends ConceptServiceImpl implements RdfService {
 	 * @return a PURLized ontology uri
 	 */
 	private String getOntologyUri(OntologyBean ont, List<String> conceptIds) {
-
-		// if a single concept's RDF is requested
-		String singleConceptId = null;
-		if (conceptIds != null 
-				&& conceptIds.size() == 1) {
-			singleConceptId = conceptIds.get(0);
-		}
+		
 		
 		// use the ontology abbreviation, else it's virtual id
-		String prefix = StringHelper.isNullOrNullString(ont.getAbbreviation()) ?
-				ont.getOntologyId().toString() : ont.getAbbreviation();
-		
+		String prefix = StringHelper.isNullOrNullString(ont.getAbbreviation()) ? ont
+				.getOntologyId().toString()
+				: ont.getAbbreviation();
+
 		String uri = BIOPORTAL_PURL_BASE;
 		uri = uri + prefix;
-		
+
 		// provide a single-concept specific uri
-		if (!StringHelper.isNullOrNullString(singleConceptId))
-			uri = uri + "/" + singleConceptId;
-		
-		return uri + ".rdf";
+
+		return uri;
+
+
 	}
 	
 	
