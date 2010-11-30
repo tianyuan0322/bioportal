@@ -25,7 +25,6 @@ import org.springframework.transaction.annotation.Transactional;
 public class IndexSearchServiceImpl extends AbstractSearchService implements
 		IndexSearchService {
 
-	@SuppressWarnings("unused")
 	private static final Log log = LogFactory
 			.getLog(IndexSearchServiceImpl.class);
 	private String indexBackupPath;
