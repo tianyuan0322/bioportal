@@ -1,11 +1,9 @@
 package org.ncbo.stanford.service.mapping;
 
-import java.util.List;
-
 import org.ncbo.stanford.bean.OntologyBean;
+import org.ncbo.stanford.bean.concept.ClassBean;
 import org.ncbo.stanford.bean.mapping.MappingParametersBean;
 import org.ncbo.stanford.bean.mapping.OneToOneMappingBean;
-import org.ncbo.stanford.bean.obs.ConceptBean;
 import org.ncbo.stanford.enumeration.MappingSourceEnum;
 import org.ncbo.stanford.exception.InvalidInputException;
 import org.ncbo.stanford.exception.MappingExistsException;
@@ -144,7 +142,8 @@ public interface MappingService {
 	 * @return
 	 * @throws InvalidInputException
 	 */
-	public List<OneToOneMappingBean> getMappingsForConcept(ConceptBean concept,
+	public Page<OneToOneMappingBean> getMappingsForConcept(OntologyBean ont,
+			ClassBean concept, Integer pageSize, Integer pageNum,
 			MappingParametersBean parameters) throws InvalidInputException;
 
 	/**
@@ -154,9 +153,9 @@ public interface MappingService {
 	 * @return
 	 * @throws InvalidInputException
 	 */
-	public List<OneToOneMappingBean> getMappingsFromConcept(
-			ConceptBean concept, MappingParametersBean parameters)
-			throws InvalidInputException;
+	public Page<OneToOneMappingBean> getMappingsFromConcept(OntologyBean ont,
+			ClassBean concept, Integer pageSize, Integer pageNum,
+			MappingParametersBean parameters) throws InvalidInputException;
 
 	/**
 	 * Get all mappings from other concepts to a given concept.
@@ -165,7 +164,8 @@ public interface MappingService {
 	 * @return
 	 * @throws InvalidInputException
 	 */
-	public List<OneToOneMappingBean> getMappingsToConcept(ConceptBean concept,
+	public Page<OneToOneMappingBean> getMappingsToConcept(OntologyBean ont,
+			ClassBean concept, Integer pageSize, Integer pageNum,
 			MappingParametersBean parameters) throws InvalidInputException;
 
 	/**
@@ -176,8 +176,10 @@ public interface MappingService {
 	 * @return
 	 * @throws InvalidInputException
 	 */
-	public List<OneToOneMappingBean> getMappingsBetweenConcepts(
-			ConceptBean sourceConcept, ConceptBean targetConcept,
+	public Page<OneToOneMappingBean> getMappingsBetweenConcepts(
+			OntologyBean sourceOnt, OntologyBean targetOnt,
+			ClassBean sourceConcept, ClassBean targetConcept,
+			Boolean unidirectional, Integer pageSize, Integer pageNum,
 			MappingParametersBean parameters) throws InvalidInputException;
 
 }

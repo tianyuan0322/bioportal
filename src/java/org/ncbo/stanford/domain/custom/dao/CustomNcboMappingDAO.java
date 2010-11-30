@@ -297,7 +297,7 @@ public class CustomNcboMappingDAO {
 
 	/*******************************************************************
 	 * 
-	 * Mappings by parameter
+	 * Mappings for parameters
 	 * 
 	 *******************************************************************/
 
@@ -353,34 +353,46 @@ public class CustomNcboMappingDAO {
 	 * 
 	 *******************************************************************/
 
-	public List<OneToOneMapping> getMappingsForConcept(String conceptId,
+	public List<OneToOneMapping> getMappingsForConcept(Integer ontologyId,
+			String conceptId, Integer limit, Integer offset,
 			MappingParametersBean parameters) throws InvalidInputException {
 		String filter = generateConceptSparqlFilter(conceptId, null, false);
+		filter += " && "
+				+ generateOntologySparqlFilter(ontologyId, null, false);
 
-		return getMappings(null, null, filter, parameters);
+		return getMappings(limit, offset, filter, parameters);
 	}
 
-	public List<OneToOneMapping> getMappingsFromConcept(String conceptId,
+	public List<OneToOneMapping> getMappingsFromConcept(Integer ontologyId,
+			String conceptId, Integer limit, Integer offset,
 			MappingParametersBean parameters) throws InvalidInputException {
 		String filter = generateConceptSparqlFilter(conceptId, null, true);
+		filter += " && " + generateOntologySparqlFilter(ontologyId, null, true);
 
-		return getMappings(null, null, filter, parameters);
+		return getMappings(limit, offset, filter, parameters);
 	}
 
-	public List<OneToOneMapping> getMappingsToConcept(String conceptId,
+	public List<OneToOneMapping> getMappingsToConcept(Integer ontologyId,
+			String conceptId, Integer limit, Integer offset,
 			MappingParametersBean parameters) throws InvalidInputException {
 		String filter = generateConceptSparqlFilter(conceptId, null, true);
+		filter += " && " + generateOntologySparqlFilter(ontologyId, null, true);
 
-		return getMappings(null, null, filter, parameters);
+		return getMappings(limit, offset, filter, parameters);
 	}
 
 	public List<OneToOneMapping> getMappingsBetweenConcepts(
-			String fromConceptId, String toConceptId,
-			MappingParametersBean parameters) throws InvalidInputException {
+			Integer sourceOntologyId, Integer targetOntologyId,
+			String fromConceptId, String toConceptId, Boolean unidirectional,
+			Integer limit, Integer offset, MappingParametersBean parameters)
+			throws InvalidInputException {
 		String filter = generateConceptSparqlFilter(fromConceptId, toConceptId,
-				false);
+				unidirectional);
+		filter += " && "
+				+ generateOntologySparqlFilter(sourceOntologyId,
+						targetOntologyId, unidirectional);
 
-		return getMappings(null, null, filter, parameters);
+		return getMappings(limit, offset, filter, parameters);
 	}
 
 	/*******************************************************************
@@ -424,32 +436,43 @@ public class CustomNcboMappingDAO {
 		return getCount(filter, parameters);
 	}
 
-	public Integer getCountMappingsForConcept(String conceptId,
-			MappingParametersBean parameters) throws InvalidInputException {
+	public Integer getCountMappingsForConcept(Integer ontologyId,
+			String conceptId, MappingParametersBean parameters)
+			throws InvalidInputException {
 		String filter = generateConceptSparqlFilter(conceptId, null, false);
+		filter += " && "
+				+ generateOntologySparqlFilter(ontologyId, null, false);
 
 		return getCount(filter, parameters);
 	}
 
-	public Integer getCountMappingsFromConcept(String conceptId,
-			MappingParametersBean parameters) throws InvalidInputException {
+	public Integer getCountMappingsFromConcept(Integer ontologyId,
+			String conceptId, MappingParametersBean parameters)
+			throws InvalidInputException {
 		String filter = generateConceptSparqlFilter(conceptId, null, true);
+		filter += " && " + generateOntologySparqlFilter(ontologyId, null, true);
 
 		return getCount(filter, parameters);
 	}
 
-	public Integer getCountMappingsToConcept(String conceptId,
-			MappingParametersBean parameters) throws InvalidInputException {
+	public Integer getCountMappingsToConcept(Integer ontologyId,
+			String conceptId, MappingParametersBean parameters)
+			throws InvalidInputException {
 		String filter = generateConceptSparqlFilter(conceptId, null, true);
+		filter += " && " + generateOntologySparqlFilter(ontologyId, null, true);
 
 		return getCount(filter, parameters);
 	}
 
-	public Integer getCountMappingsBetweenConcepts(String fromConceptId,
-			String toConceptId, MappingParametersBean parameters)
+	public Integer getCountMappingsBetweenConcepts(Integer sourceOntologyId,
+			Integer targetOntologyId, String fromConceptId, String toConceptId,
+			Boolean unidirectional, MappingParametersBean parameters)
 			throws InvalidInputException {
 		String filter = generateConceptSparqlFilter(fromConceptId, toConceptId,
-				false);
+				unidirectional);
+		filter += " && "
+				+ generateOntologySparqlFilter(sourceOntologyId,
+						targetOntologyId, unidirectional);
 
 		return getCount(filter, parameters);
 	}

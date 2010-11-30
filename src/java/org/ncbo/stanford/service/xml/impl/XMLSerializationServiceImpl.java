@@ -3,7 +3,9 @@ package org.ncbo.stanford.service.xml.impl;
 import java.io.File;
 import java.io.StringWriter;
 import java.io.Writer;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.transform.OutputKeys;
@@ -18,16 +20,19 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.commons.validator.GenericValidator;
 import org.ncbo.stanford.bean.CategoryBean;
-import org.ncbo.stanford.bean.SubscriptionsBean;
 import org.ncbo.stanford.bean.GroupBean;
 import org.ncbo.stanford.bean.OntologyBean;
 import org.ncbo.stanford.bean.OntologyMetricsBean;
+import org.ncbo.stanford.bean.SubscriptionsBean;
 import org.ncbo.stanford.bean.UserBean;
 import org.ncbo.stanford.bean.concept.ClassBean;
 import org.ncbo.stanford.bean.concept.InstanceBean;
 import org.ncbo.stanford.bean.concept.PropertyBean;
 import org.ncbo.stanford.bean.http.HttpInputStreamWrapper;
 import org.ncbo.stanford.bean.logging.UsageLoggingBean;
+import org.ncbo.stanford.bean.mapping.AbstractMappingBean;
+import org.ncbo.stanford.bean.mapping.MappingResultListBean;
+import org.ncbo.stanford.bean.mapping.OneToOneMappingBean;
 import org.ncbo.stanford.bean.notes.AppliesToBean;
 import org.ncbo.stanford.bean.notes.NoteBean;
 import org.ncbo.stanford.bean.notes.ProposalNewRelationshipBean;
@@ -45,12 +50,16 @@ import org.ncbo.stanford.service.xml.XMLSerializationService;
 import org.ncbo.stanford.service.xml.converters.ClassBeanListConverter;
 import org.ncbo.stanford.service.xml.converters.ClassBeanResultListBeanConverter;
 import org.ncbo.stanford.service.xml.converters.InstanceBeanResultListBeanConverter;
+import org.ncbo.stanford.service.xml.converters.MappingResultListBeanConverter;
 import org.ncbo.stanford.service.xml.converters.OntologyHitMapConverter;
 import org.ncbo.stanford.service.xml.converters.SearchResultListBeanConverter;
 import org.ncbo.stanford.util.MessageUtils;
 import org.ncbo.stanford.util.RequestUtils;
 import org.ncbo.stanford.util.constants.ApplicationConstants;
 import org.ncbo.stanford.util.paginator.impl.Page;
+import org.ncbo.stanford.util.paginator.impl.PaginatableList;
+import org.openrdf.model.URI;
+import org.openrdf.model.impl.URIImpl;
 import org.restlet.data.MediaType;
 import org.restlet.data.Request;
 import org.restlet.data.Response;
@@ -412,9 +421,11 @@ public class XMLSerializationServiceImpl implements XMLSerializationService {
 	public Object fromXML(String xml) {
 		return xmlSerializer.fromXML(xml);
 	}
+
 	public XStream getXmlSerializer() {
 		return xmlSerializer;
 	}
+
 	/**
 	 * Generate an XML representation of a request.
 	 * 
@@ -457,6 +468,8 @@ public class XMLSerializationServiceImpl implements XMLSerializationService {
 		xmlSerializer
 				.registerConverter(new InstanceBeanResultListBeanConverter(
 						xmlSerializer.getMapper()));
+		xmlSerializer.registerConverter(new MappingResultListBeanConverter(
+				xmlSerializer.getMapper()));
 
 	}
 
@@ -471,7 +484,8 @@ public class XMLSerializationServiceImpl implements XMLSerializationService {
 				OntologyMetricsBean.class);
 		xmlSerializer.alias(MessageUtils.getMessage("entity.userbean"),
 				UserBean.class);
-		xmlSerializer.alias(MessageUtils.getMessage("entity.subscriptionsbean"),
+		xmlSerializer.alias(
+				MessageUtils.getMessage("entity.subscriptionsbean"),
 				SubscriptionsBean.class);
 
 		xmlSerializer.omitField(UserBean.class, "password");
@@ -498,11 +512,14 @@ public class XMLSerializationServiceImpl implements XMLSerializationService {
 				NoteBean.class);
 		xmlSerializer.alias(MessageUtils.getMessage("entity.appliesto"),
 				AppliesToBean.class);
-		xmlSerializer.alias(MessageUtils.getMessage("entity.proposalforchangepropertyvalue"),
+		xmlSerializer.alias(MessageUtils
+				.getMessage("entity.proposalforchangepropertyvalue"),
 				ProposalPropertyValueChangeBean.class);
-		xmlSerializer.alias(MessageUtils.getMessage("entity.proposalforcreateentity"),
+		xmlSerializer.alias(MessageUtils
+				.getMessage("entity.proposalforcreateentity"),
 				ProposalNewTermBean.class);
-		xmlSerializer.alias(MessageUtils.getMessage("entity.proposalforchangehierarchy"),
+		xmlSerializer.alias(MessageUtils
+				.getMessage("entity.proposalforchangehierarchy"),
 				ProposalNewRelationshipBean.class);
 
 		xmlSerializer.alias(ApplicationConstants.RESPONSE_XML_TAG_NAME,
@@ -513,5 +530,16 @@ public class XMLSerializationServiceImpl implements XMLSerializationService {
 				ErrorStatusBean.class);
 		xmlSerializer.alias(ApplicationConstants.SUCCESS_XML_TAG_NAME,
 				SuccessBean.class);
+
+		// Mapping aliases using annotations
+		xmlSerializer.processAnnotations(OneToOneMappingBean.class);
+		xmlSerializer.processAnnotations(AbstractMappingBean.class);
+		xmlSerializer.addDefaultImplementation(URIImpl.class, URI.class);
+		xmlSerializer.addDefaultImplementation(ArrayList.class, List.class);
+		xmlSerializer.addDefaultImplementation(PaginatableList.class,
+				List.class);
+		xmlSerializer.addDefaultImplementation(MappingResultListBean.class,
+				List.class);
+		
 	}
 }

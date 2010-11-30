@@ -1,15 +1,36 @@
 package org.ncbo.stanford.bean.mapping;
 
+import org.ncbo.stanford.service.xml.converters.URIConverter;
 import org.openrdf.model.URI;
 
+import com.thoughtworks.xstream.annotations.XStreamAlias;
+import com.thoughtworks.xstream.annotations.XStreamConverter;
+
+@XStreamAlias("mapping")
 public class OneToOneMappingBean extends AbstractMappingBean {
 
+	@XStreamAlias("source")
+	@XStreamConverter(URIConverter.class)
 	private URI source;
+
+	@XStreamAlias("target")
+	@XStreamConverter(URIConverter.class)
 	private URI target;
+
+	@XStreamAlias("relation")
+	@XStreamConverter(URIConverter.class)
 	private URI relation;
+	
+	@XStreamAlias("sourceOntologyId")
 	private Integer sourceOntologyId;
+	
+	@XStreamAlias("targetOntologyId")
 	private Integer targetOntologyId;
+	
+	@XStreamAlias("createdInSourceOntologyVersion")
 	private Integer createdInSourceOntologyVersion;
+	
+	@XStreamAlias("createdInTargetOntologyVersion")
 	private Integer createdInTargetOntologyVersion;
 
 	/**

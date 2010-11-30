@@ -3,20 +3,48 @@ package org.ncbo.stanford.bean.mapping;
 import java.util.Date;
 
 import org.ncbo.stanford.enumeration.MappingSourceEnum;
+import org.ncbo.stanford.service.xml.converters.URIConverter;
 import org.openrdf.model.URI;
+
+import com.thoughtworks.xstream.annotations.XStreamAlias;
+import com.thoughtworks.xstream.annotations.XStreamConverter;
 
 public abstract class AbstractMappingBean {
 
+	@XStreamAlias("id")
+	@XStreamConverter(URIConverter.class)
 	private URI id;
+	
+	@XStreamAlias("comment")
 	private String comment;
+	
+	@XStreamAlias("date")
 	private Date date;
+	
+	@XStreamAlias("submittedBy")
 	private Integer submittedBy;
+	
+	@XStreamAlias("dependency")
+	@XStreamConverter(URIConverter.class)
 	private URI dependency;
+	
+	@XStreamAlias("mappingType")
 	private String mappingType;
+
+	@XStreamAlias("mappingSource")
 	private MappingSourceEnum mappingSource;
+
+	@XStreamAlias("mappingSourceName")
 	private String mappingSourceName;
+
+	@XStreamAlias("mappingSourcecontactInfo")
 	private String mappingSourcecontactInfo;
+
+	@XStreamAlias("mappingSourceSite")
+	@XStreamConverter(URIConverter.class)
 	private URI mappingSourceSite;
+
+	@XStreamAlias("mappingSourceAlgorithm")
 	private String mappingSourceAlgorithm;
 
 	/**

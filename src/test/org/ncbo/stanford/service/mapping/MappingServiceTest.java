@@ -3,7 +3,6 @@ package org.ncbo.stanford.service.mapping;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -11,9 +10,9 @@ import java.util.List;
 import org.junit.Test;
 import org.ncbo.stanford.AbstractBioPortalTest;
 import org.ncbo.stanford.bean.OntologyBean;
+import org.ncbo.stanford.bean.concept.ClassBean;
 import org.ncbo.stanford.bean.mapping.MappingParametersBean;
 import org.ncbo.stanford.bean.mapping.OneToOneMappingBean;
-import org.ncbo.stanford.bean.obs.ConceptBean;
 import org.ncbo.stanford.enumeration.MappingSourceEnum;
 import org.ncbo.stanford.exception.InvalidInputException;
 import org.ncbo.stanford.exception.MappingExistsException;
@@ -174,7 +173,7 @@ public class MappingServiceTest extends AbstractBioPortalTest {
 	public void testGetMappingsToOntology() throws InvalidInputException {
 		// Mock ontology
 		OntologyBean ont = new OntologyBean(false);
-		ont.setOntologyId(1032);
+		ont.setOntologyId(1009);
 
 		int pageSize = 10000;
 		int pageNum = 1;
@@ -187,56 +186,92 @@ public class MappingServiceTest extends AbstractBioPortalTest {
 
 	@Test
 	public void testGetMappingsForConcept() throws InvalidInputException {
+		// Mock ontology
+		OntologyBean ont = new OntologyBean(false);
+		ont.setOntologyId(1009);
+
 		// Mock concept
-		ConceptBean concept = new ConceptBean();
+		ClassBean concept = new ClassBean();
 		concept.setFullId("http://purl.org/obo/owl/DOID#DOID_0000000");
 
-		List<OneToOneMappingBean> mappings = mappingService
-				.getMappingsForConcept(concept, null);
+		int pageSize = 10000;
+		int pageNum = 1;
+
+		Page<OneToOneMappingBean> mappings = mappingService
+				.getMappingsForConcept(ont, concept, pageSize, pageNum, null);
 
 		assertTrue(mappings != null);
 	}
 
 	@Test
 	public void testGetMappingsFromConcept() throws InvalidInputException {
+		// Mock ontology
+		OntologyBean ont = new OntologyBean(false);
+		ont.setOntologyId(1009);
+
 		// Mock concept
-		ConceptBean concept = new ConceptBean();
+		ClassBean concept = new ClassBean();
 		concept.setFullId("http://purl.org/obo/owl/DOID#DOID_0000000");
 
-		List<OneToOneMappingBean> mappings = mappingService
-				.getMappingsFromConcept(concept, null);
+		int pageSize = 10000;
+		int pageNum = 1;
+
+		Page<OneToOneMappingBean> mappings = mappingService
+				.getMappingsFromConcept(ont, concept, pageSize, pageNum, null);
 
 		assertTrue(mappings != null);
 	}
 
 	@Test
 	public void testGetMappingsToConcept() throws InvalidInputException {
+		// Mock ontology
+		OntologyBean ont = new OntologyBean(false);
+		ont.setOntologyId(1032);
+
 		// Mock concept
-		ConceptBean concept = new ConceptBean();
+		ClassBean concept = new ClassBean();
 		concept
 				.setFullId("http://ncicb.nci.nih.gov/xml/owl/EVS/Thesaurus.owl#Gallbladder_Disorder");
 
-		List<OneToOneMappingBean> mappings = mappingService
-				.getMappingsToConcept(concept, null);
+		int pageSize = 10000;
+		int pageNum = 1;
+
+		Page<OneToOneMappingBean> mappings = mappingService
+				.getMappingsToConcept(ont, concept, pageSize, pageNum, null);
 
 		assertTrue(mappings != null);
 	}
 
 	@Test
 	public void testGetMappingsBetweenConcepts() throws InvalidInputException {
+		// Mock source
+		OntologyBean sourceOnt = new OntologyBean(false);
+		sourceOnt.setOntologyId(1032);
+
+		// Mock target
+		OntologyBean targetOnt = new OntologyBean(false);
+		targetOnt.setOntologyId(1009);
+
 		// Mock concepts
-		ConceptBean sourceConcept = new ConceptBean();
+		ClassBean sourceConcept = new ClassBean();
 		sourceConcept
 				.setFullId("http://ncicb.nci.nih.gov/xml/owl/EVS/Thesaurus.owl#Gallbladder_Disorder");
-		ConceptBean targetConcept = new ConceptBean();
+		ClassBean targetConcept = new ClassBean();
 		targetConcept.setFullId("http://purl.org/obo/owl/DOID#DOID_0000000");
 
-		List<OneToOneMappingBean> mappings = mappingService
-				.getMappingsBetweenConcepts(sourceConcept, targetConcept, null);
+		int pageSize = 10000;
+		int pageNum = 1;
+		boolean unidirectional = true;
+
+		Page<OneToOneMappingBean> mappings = mappingService
+				.getMappingsBetweenConcepts(sourceOnt, targetOnt,
+						sourceConcept, targetConcept, unidirectional, pageSize,
+						pageNum, null);
 
 		assertTrue(mappings != null);
 	}
 
+	@SuppressWarnings("deprecation")
 	@Test
 	public void testGetMappingsByParameters() throws InvalidInputException {
 		// Mock ontology

@@ -1,33 +1,22 @@
 package org.ncbo.stanford.view.rest.restlet.mapping;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-
 import javax.servlet.http.HttpServletRequest;
-import javax.xml.bind.DatatypeConverter;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.ncbo.stanford.bean.mapping.MappingParametersBean;
 import org.ncbo.stanford.bean.mapping.OneToOneMappingBean;
-import org.ncbo.stanford.enumeration.MappingSourceEnum;
 import org.ncbo.stanford.exception.InvalidInputException;
 import org.ncbo.stanford.service.mapping.MappingService;
 import org.ncbo.stanford.util.RequestUtils;
 import org.ncbo.stanford.util.constants.ApplicationConstants;
 import org.ncbo.stanford.util.paginator.impl.Page;
-import org.ncbo.stanford.view.rest.restlet.AbstractBaseRestlet;
 import org.ncbo.stanford.view.util.constants.RequestParamConstants;
-import org.openrdf.model.URI;
-import org.openrdf.model.impl.URIImpl;
 import org.restlet.data.Request;
 import org.restlet.data.Response;
 import org.restlet.data.Status;
 
-import com.ibm.icu.util.Calendar;
-
-public class MappingRestlet extends AbstractBaseRestlet {
+public class MappingRestlet extends AbstractMappingRestlet {
 
 	private static final Log log = LogFactory.getLog(MappingRestlet.class);
 
@@ -56,14 +45,16 @@ public class MappingRestlet extends AbstractBaseRestlet {
 		// Post-process parameters
 		Integer pageSizeInt = RequestUtils.parseIntegerParam(pageSize);
 		Integer pageNumInt = RequestUtils.parseIntegerParam(pageNum);
-		
+
 		// Default values
-		if (pageSizeInt == null || pageSizeInt > 50000 || pageSizeInt < 1) {
-			pageSizeInt = ApplicationConstants.DEFAULT_PAGE_SIZE;
+		if (pageSizeInt == null
+				|| pageSizeInt > ApplicationConstants.MAPPINGS_MAX_PAGE_SIZE
+				|| pageSizeInt < 1) {
+			pageSizeInt = ApplicationConstants.DEFAULT_MAPPINGS_PAGE_SIZE;
 		}
-		
+
 		if (pageNumInt == null || pageNumInt < 1) {
-			pageNumInt = ApplicationConstants.DEFAULT_PAGE_NUM;
+			pageNumInt = ApplicationConstants.DEFAULT_MAPPINGS_PAGE_NUM;
 		}
 
 		// Process non-base parameters
@@ -90,80 +81,6 @@ public class MappingRestlet extends AbstractBaseRestlet {
 			xmlSerializationService.generateXMLResponse(request, response,
 					mappings);
 		}
-	}
-
-	private MappingParametersBean getMappingParameters(Request request,
-			Response response) {
-		HttpServletRequest httpRequest = RequestUtils
-				.getHttpServletRequest(request);
-
-		// Mapping submitters
-		List<Integer> submittedBy = RequestUtils
-				.parseIntegerListParam(httpRequest
-						.getParameter(RequestParamConstants.PARAM_SUBMITTERS));
-
-		// Mapping types
-		String mappingType = httpRequest
-				.getParameter(RequestParamConstants.PARAM_MAPPING_TYPE);
-
-		// Date parameters
-		String startDateStr = httpRequest
-				.getParameter(RequestParamConstants.PARAM_START_DATE);
-		String endDateStr = httpRequest
-				.getParameter(RequestParamConstants.PARAM_END_DATE);
-
-		Date startDate = null;
-		Date endDate = null;
-		if (startDateStr != null) {
-			startDate = DatatypeConverter.parseDateTime(startDateStr).getTime();
-		}
-
-		if (endDateStr != null) {
-			endDate = DatatypeConverter.parseDateTime(endDateStr).getTime();
-		} else if (startDateStr != null) {
-			endDate = Calendar.getInstance().getTime();
-		}
-
-		// Relationship types
-		List<String> relationshipTypesStr = RequestUtils
-				.parseStringListParam(httpRequest
-						.getParameter(RequestParamConstants.PARAM_RELATIONSHIPS));
-
-		List<URI> relationshipTypes = new ArrayList<URI>();
-		if (relationshipTypesStr != null) {
-			for (String relationshipType : relationshipTypesStr) {
-				relationshipTypes.add(new URIImpl(relationshipType));
-			}
-		}
-
-		// Mapping sources
-		List<String> mappingSourcesStr = RequestUtils
-				.parseStringListParam(httpRequest
-						.getParameter(RequestParamConstants.PARAM_MAPPING_SOURCES));
-
-		List<MappingSourceEnum> mappingSources = new ArrayList<MappingSourceEnum>();
-		if (mappingSourcesStr != null) {
-			for (String mappingSource : mappingSourcesStr) {
-				mappingSources.add(MappingSourceEnum.valueOf(mappingSource));
-			}
-		}
-
-		// Create parameters bean
-		MappingParametersBean parameters = new MappingParametersBean();
-		if (submittedBy != null && !submittedBy.isEmpty())
-			parameters.setSubmittedBy(submittedBy);
-		if (mappingType != null)
-			parameters.setMappingType(mappingType);
-		if (startDate != null && endDate != null) {
-			parameters.setStartDate(startDate);
-			parameters.setEndDate(endDate);
-		}
-		if (relationshipTypes != null && !relationshipTypes.isEmpty())
-			parameters.setRelationshipTypes(relationshipTypes);
-		if (mappingSources != null && !mappingSources.isEmpty())
-			parameters.setMappingSource(mappingSources);
-
-		return parameters;
 	}
 
 	/**

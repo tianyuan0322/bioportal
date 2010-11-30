@@ -180,8 +180,12 @@ public interface ApplicationConstants {
 	
 	public static final String TIMEZONE = "-07:00";
 	
-	public static final Integer DEFAULT_PAGE_SIZE = 5000;
-	public static final Integer DEFAULT_PAGE_NUM = 1;
+	/**
+	 * Mappings constants
+	 */
+	public static final Integer DEFAULT_MAPPINGS_PAGE_SIZE = 5000;
+	public static final Integer DEFAULT_MAPPINGS_PAGE_NUM = 1;
+	public static final Integer MAPPINGS_MAX_PAGE_SIZE = 50000;
 
 	
 	/**

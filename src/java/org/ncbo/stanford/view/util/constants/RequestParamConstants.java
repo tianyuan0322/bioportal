@@ -220,5 +220,20 @@ public interface RequestParamConstants {
 	public static final String PARAM_RELATIONSHIPS = "relationships";
 	public static final String PARAM_MAPPING_SOURCES = "sources";
 	public static final String PARAM_MAPPING_TYPE = "type";
-	
+	public static final String PARAM_SOURCE_ONT = "sourceontology";
+	public static final String PARAM_TARGET_ONT = "targetontology";
+	public static final String PARAM_UNIDIRECTIONAL = "unidirectional";
+	public static final String PARAM_SOURCE_ONT_ID = "sourceontologyid";
+	public static final String PARAM_TARGET_ONT_ID = "targetontologyid";
+	public static final String PARAM_SOURCE_VERSION_ONT_ID = "sourceontologyversionid";
+	public static final String PARAM_TARGET_VERSION_ONT_ID = "targetontologyversionid";
+	public static final String PARAM_SUBMITTED_BY = "submittedby";
+	public static final String PARAM_COMMENT = "comment";
+	public static final String PARAM_MAPPING_SOURCE = "source";
+	public static final String PARAM_MAPPING_SOURCE_NAME = "mappingsourcename";
+	public static final String PARAM_MAPPING_SOURCE_CONTACT_INFO = "mappingsourcecontactinfo";
+	public static final String PARAM_MAPPING_SOURCE_SITE = "mappingsourcesite";
+	public static final String PARAM_MAPPING_SOURCE_ALGORITHM = "mappingsourcealgorithm";
+	public static final String PARAM_RELATIONSHIP = "relationship";
+
 }

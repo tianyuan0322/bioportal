@@ -355,6 +355,29 @@
 			<ref bean="mappingService" />
 		</property>
 	</bean>
+
+	<bean id="mappingOntologyRestlet" class="org.ncbo.stanford.view.rest.restlet.mapping.MappingOntologyRestlet"
+		parent="abstractBaseRestlet">
+		<property name="mappingService">
+			<ref bean="mappingService" />
+		</property>
+		<property name="ontologyService">
+			<ref bean="ontologyService" />
+		</property>
+	</bean>
+	
+	<bean id="mappingConceptRestlet" class="org.ncbo.stanford.view.rest.restlet.mapping.MappingConceptRestlet"
+		parent="abstractBaseRestlet">
+		<property name="mappingService">
+			<ref bean="mappingService" />
+		</property>
+		<property name="ontologyService">
+			<ref bean="ontologyService" />
+		</property>
+		<property name="conceptService">
+			<ref bean="conceptService" />
+		</property>	
+	</bean>
 	
 	<bean id="userEmailRestlet"
 		class="org.ncbo.stanford.view.rest.restlet.user.UserEmailRestlet"
@@ -686,6 +709,18 @@
 						</entry>
 						<entry key="/mappings">
 							<ref local="mappingRestlet" />
+						</entry>
+						<entry key="/virtual/mappings/ontologies">
+							<ref local="mappingOntologyRestlet" />
+						</entry>
+						<entry key="/virtual/mappings/ontologies/{ontologyid}">
+							<ref local="mappingOntologyRestlet" />
+						</entry>
+						<entry key="/virtual/mappings/concepts">
+							<ref local="mappingConceptRestlet" />
+						</entry>
+						<entry key="/virtual/mappings/concepts/{ontologyid}">
+							<ref local="mappingConceptRestlet" />
 						</entry>
 						<!-- ========== Metadata ========== -->
 						<entry key="/project/{id}">

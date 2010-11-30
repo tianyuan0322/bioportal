@@ -5,19 +5,19 @@ import java.util.Collection;
 import org.ncbo.stanford.util.paginator.Paginatable;
 import org.ncbo.stanford.util.paginator.impl.PaginatableList;
 
-public class MappingBeanResultListBean extends
+public class MappingResultListBean extends
 		PaginatableList<OneToOneMappingBean> {
 
 	private static final long serialVersionUID = 815033586597984400L;
 
-	public MappingBeanResultListBean() {
+	public MappingResultListBean() {
 		super();
 	}
 
 	/**
 	 * @param c
 	 */
-	public MappingBeanResultListBean(Collection<OneToOneMappingBean> c) {
+	public MappingResultListBean(Collection<OneToOneMappingBean> c) {
 		super(c);
 	}
 
@@ -25,11 +25,11 @@ public class MappingBeanResultListBean extends
 	 * @param create
 	 *            object with initialCapacity
 	 */
-	public MappingBeanResultListBean(int initialCapacity) {
+	public MappingResultListBean(int initialCapacity) {
 		super(initialCapacity);
 	}
 
 	public Paginatable<OneToOneMappingBean> sublist(int fromIndex, int toIndex) {
-		return new MappingBeanResultListBean(super.subList(fromIndex, toIndex));
+		return new MappingResultListBean(super.subList(fromIndex, toIndex));
 	}
 }
