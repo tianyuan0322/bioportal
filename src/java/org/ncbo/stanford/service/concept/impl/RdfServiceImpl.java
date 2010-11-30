@@ -22,6 +22,7 @@ import org.semanticweb.owlapi.model.AddAxiom;
 import org.semanticweb.owlapi.model.AddOntologyAnnotation;
 import org.semanticweb.owlapi.model.IRI;
 import org.semanticweb.owlapi.model.OWLAnnotation;
+import org.semanticweb.owlapi.model.OWLAnnotationProperty;
 import org.semanticweb.owlapi.model.OWLClass;
 import org.semanticweb.owlapi.model.OWLDataFactory;
 import org.semanticweb.owlapi.model.OWLLiteral;
@@ -253,10 +254,12 @@ public class RdfServiceImpl extends ConceptServiceImpl implements RdfService {
 		// format
 		if (!StringHelper.isNullOrNullString(ont.getFormat())) {
 			ontologyInfoLiteral = factory.getOWLStringLiteral(ont.getFormat());
+			OWLClass omvClass=factory.getOWLClass(IRI.create(BIOPORTAL_PURL_BASE + "OMV/hasOntologyLanguage"));
 			ontologyInfoAnnotation = factory.getOWLAnnotation(
 					factory.getOWLAnnotationProperty(IRI.create(BIOPORTAL_PURL_BASE + "OMV/hasOntologyLanguage")), 
-					ontologyInfoLiteral);
+					omvClass.getIRI());
 			manager.applyChange(new AddOntologyAnnotation(ontology,ontologyInfoAnnotation));
+			
 		}
 		
 		// add essential annotation properties
