@@ -1,5 +1,6 @@
 package org.ncbo.stanford.service.search;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -25,6 +26,9 @@ import org.apache.lucene.search.Sort;
 import org.apache.lucene.search.SortField;
 import org.apache.lucene.search.TermQuery;
 import org.apache.lucene.search.TopFieldDocs;
+import org.apache.lucene.store.Directory;
+import org.apache.lucene.store.FSDirectory;
+import org.apache.lucene.util.Version;
 import org.ncbo.stanford.bean.OntologyBean;
 import org.ncbo.stanford.bean.search.SearchBean;
 import org.ncbo.stanford.bean.search.SearchIndexBean;
@@ -66,6 +70,7 @@ public abstract class AbstractSearchService {
 			0);
 	protected Map<String, OntologySearchManager> ontologySearchHandlerMap = new HashMap<String, OntologySearchManager>(
 			0);
+	protected Version luceneVersion = Version.LUCENE_24; // default to 2.4
 
 	// non-injected properties
 	protected IndexSearcher searcher = null;
@@ -142,7 +147,7 @@ public abstract class AbstractSearchService {
 			start = System.currentTimeMillis();
 		}
 
-		QueryParser parser = new QueryParser(
+		QueryParser parser = new QueryParser(luceneVersion,
 				SearchIndexBean.CONTENTS_FIELD_LABEL, analyzer);
 		Set<String> keys = searchResultCache.getKeys();
 		searchResultCache.clear();
@@ -434,23 +439,6 @@ public abstract class AbstractSearchService {
 	}
 
 	/**
-	 * Reloads the searcher, disposes of the old searcher
-	 * 
-	 * @throws IOException
-	 */
-	private void reloadSearcher() throws IOException {
-		if (log.isDebugEnabled()) {
-			log.debug("Index file has changed. Reloading searcher...");
-		}
-
-		if (searcher != null) {
-			searcher.close();
-		}
-
-		createSearcher();
-	}
-
-	/**
 	 * Method that always returns a valid maxNumHits
 	 * 
 	 * @param maxNumHits
@@ -483,8 +471,26 @@ public abstract class AbstractSearchService {
 	 * @throws IOException
 	 */
 	private void createSearcher() throws IOException {
-		searcher = new IndexSearcher(indexPath);
-		openIndexDate = getCurrentIndexDate();
+		FSDirectory dir = FSDirectory.open(new File(indexPath));
+		searcher = new IndexSearcher(dir, true);
+		openIndexDate = getCurrentIndexDate(dir);
+	}
+
+	/**
+	 * Reloads the searcher, disposes of the old searcher
+	 * 
+	 * @throws IOException
+	 */
+	private void reloadSearcher() throws IOException {
+		if (log.isDebugEnabled()) {
+			log.debug("Index file has changed. Reloading searcher...");
+		}
+
+		if (searcher != null) {
+			searcher.close();
+		}
+
+		createSearcher();
 	}
 
 	/**
@@ -493,21 +499,26 @@ public abstract class AbstractSearchService {
 	 * @return
 	 */
 	private boolean hasNewerIndexFile() {
+		boolean hasNewer = false;
 		try {
-			if (getCurrentIndexDate().after(openIndexDate)) {
-				return true;
+			FSDirectory dir = FSDirectory.open(new File(indexPath));
+	
+			if (getCurrentIndexDate(dir).after(openIndexDate)) {
+				hasNewer = true;
 			}
+			
+			dir.close();
 		} catch (Exception e) { // no index file found
 		}
 
-		return false;
+		return hasNewer;
 	}
 
 	/**
 	 * @return creation date of current used search index
 	 */
-	private Date getCurrentIndexDate() throws IOException {
-		return new Date(IndexReader.getCurrentVersion(indexPath));
+	private Date getCurrentIndexDate(Directory dir) throws IOException {
+		return new Date(IndexReader.getCurrentVersion(dir));
 	}
 
 	private OntologyRetrievalManager getRetrievalManager(OntologyBean ontology) {
@@ -550,5 +561,13 @@ public abstract class AbstractSearchService {
 	public void setOntologySearchHandlerMap(
 			Map<String, OntologySearchManager> ontologySearchHandlerMap) {
 		this.ontologySearchHandlerMap = ontologySearchHandlerMap;
+	}
+
+	/**
+	 * @param luceneVersion
+	 *            the luceneVersion to set
+	 */
+	public void setLuceneVersion(Version luceneVersion) {
+		this.luceneVersion = luceneVersion;
 	}
 }
