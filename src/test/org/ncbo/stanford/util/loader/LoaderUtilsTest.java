@@ -1,8 +1,9 @@
 package org.ncbo.stanford.util.loader;
 
-import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
+import java.io.BufferedInputStream;
 import java.util.Date;
 
 import org.junit.Test;
@@ -92,10 +93,30 @@ public class LoaderUtilsTest extends AbstractBioPortalTest {
 		exists= LoaderUtils.isValidDownloadLocation(url);			
 		assertFalse(exists);
 		url= "http://palea.cgrb.oregonstate.edu/viewsvn/Poc/trunk/ontology/OBO_format/po_anatomy.obo?view=co";
+		exists= LoaderUtils.isValidDownloadLocation(url);	
+		assertTrue(exists);
+		url= "http://github.com/cmungall/uberon/raw/master/uberon.obo";
 		exists= LoaderUtils.isValidDownloadLocation(url);			
 		assertTrue(exists);
 		
+		
 	}		
 	
+	@Test
+	public void testGetContent() {	
+		String url= "http://github.com/cmungall/uberon/raw/master/uberon.obo";
+		try {
+		BufferedInputStream in= new BufferedInputStream(LoaderUtils.getInputStream(url));
+		byte data[] = new byte[ApplicationConstants.BUFFER_SIZE];
+		int count;
+		while ((count = in.read(data, 0, ApplicationConstants.BUFFER_SIZE)) != -1) {
+			System.out.print(new String(data, 0, count));
+		}
+		
+		in.close();
+		} catch (Exception ex) {
+			
+		}
+	}
 	
 }

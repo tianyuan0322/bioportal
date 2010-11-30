@@ -79,7 +79,7 @@ public class OBOCVSPullServiceImpl implements OBOCVSPullService {
 	 * Used to the identify the action to be performed on an ontology
 	 */
 	private enum ActionEnum {
-		NO_ACTION, CREATE_ACTION, CREATE_METADATA_ONLY_ACTION, UPDATE_ACTION
+		NO_ACTION, CREATE_REPOSITORY_ACTION, CREATE_DOWNLOAD_ACTION, CREATE_METADATA_ONLY_ACTION, UPDATE_ACTION
 	}
 
 	/**
@@ -136,11 +136,16 @@ public class OBOCVSPullServiceImpl implements OBOCVSPullService {
 
 	}
 
-	public void processCreateNewVersion(OntologyBean ont) {
+	private void processCreateNewVersion(OntologyBean ont) {
 		try {
 			Date now = Calendar.getInstance().getTime();
-			//ont.setVersionNumber("unknown");
 			ont.setDateReleased(now);
+			ont.setDateCreated(now);
+			ont.setId(null);
+			// reset the status and coding scheme
+			ont.setStatusId(null);
+			ont.setCodingScheme(null);
+			ont.setVersionNumber(null);
 			// The file is not in the local cvs/svn repository, but
 			// can be downloaded using the downloadLocation
 			String downloadLocation = ont.getDownloadLocation();
@@ -240,38 +245,44 @@ public class OBOCVSPullServiceImpl implements OBOCVSPullService {
 					processed_OboFoundryId_set.add(ont.getOboFoundryId());
 				}
 
+				FilePathHandler filePathHandler;
 				switch (action) {
-				case CREATE_ACTION:
+
+				case CREATE_REPOSITORY_ACTION:
 					if (isEmptyFilename) {
 						throw new InvalidDataException(
 								"No filename is specified in the metadata descriptor file for ontology ["
 										+ mfb.getId() + "]");
 					}
 
-					FilePathHandler filePathHandler;
-					if (cf != null) {
+					String path = cf.getPath();
+					String checkoutdir = repo.getCheckoutdir();
 
-						String path = cf.getPath();
-						String checkoutdir = repo.getCheckoutdir();
-
-						if (!path.contains(checkoutdir)) {
-							path = checkoutdir + "/" + path;
-						}
-
-						filePathHandler = new PhysicalDirectoryFilePathHandlerImpl(
-								CompressedFileHandlerFactory
-										.createFileHandler(format), new File(
-										path));
-					} else {
-						// The file is not in the local cvs/svn repository, but
-						// can be downloaded using the downloadLocation
-						String downloadLocation = ont.getDownloadLocation();
-
-						filePathHandler = new URIUploadFilePathHandlerImpl(
-								CompressedFileHandlerFactory
-										.createFileHandler(format), new URI(
-										downloadLocation));
+					if (!path.contains(checkoutdir)) {
+						path = checkoutdir + "/" + path;
 					}
+
+					filePathHandler = new PhysicalDirectoryFilePathHandlerImpl(
+							CompressedFileHandlerFactory
+									.createFileHandler(format), new File(path));
+
+					ontologyService.createOntologyOrView(ont, filePathHandler);
+					break;
+				case CREATE_DOWNLOAD_ACTION:
+					if (isEmptyFilename) {
+						throw new InvalidDataException(
+								"No filename is specified in the metadata descriptor file for ontology ["
+										+ mfb.getId() + "]");
+					}
+
+					// The file is not in the local cvs/svn repository, but
+					// can be downloaded using the downloadLocation
+					String downloadLocation = ont.getDownloadLocation();
+
+					filePathHandler = new URIUploadFilePathHandlerImpl(
+							CompressedFileHandlerFactory
+									.createFileHandler(format), new URI(
+									downloadLocation));
 
 					ontologyService.createOntologyOrView(ont, filePathHandler);
 					break;
@@ -337,22 +348,33 @@ public class OBOCVSPullServiceImpl implements OBOCVSPullService {
 						.equalsIgnoreCase(MOLECULAR_FUNCTION_OBO_FOUNDRY_ID)) {
 			if (ont == null) {
 				// new ontology
-				action = (isMetadataOnly == ApplicationConstants.TRUE) ? ActionEnum.CREATE_METADATA_ONLY_ACTION
-						: ActionEnum.CREATE_ACTION;
+				if (isMetadataOnly == ApplicationConstants.TRUE) {
+					action =ActionEnum.CREATE_METADATA_ONLY_ACTION;
+				} else if (isHostedInCurrentRepository(downloadUrl, cvsHostname)) {
+					action =ActionEnum.CREATE_REPOSITORY_ACTION;
+				} else {
+					action =ActionEnum.CREATE_DOWNLOAD_ACTION;
+				}				
 				ont = new OntologyBean(false);
 			} else if (ont.getIsManual() != null
 					&& ont.getIsManual().byteValue() == ApplicationConstants.FALSE) {
 				if (isMetadataOnly == ApplicationConstants.TRUE) {
 					if (hasVersions(ont) && ont.isMetadataOnly()) {
 						// existing ontology that had been and remains metadata
-						// only
+						// only. We are updating to ensure that the isMetadata flag begins to get populated.
 						action = ActionEnum.UPDATE_ACTION;
 					} else {
 						// existing ontology that had been local but is now
 						// remote or an ontology with no versions
 						action = ActionEnum.CREATE_METADATA_ONLY_ACTION;
 					}
-				} else if (hasVersions(ont) && cf != null
+				} else if (!isHostedInCurrentRepository(downloadUrl, cvsHostname) ) {
+					if (LoaderUtils.hasDownloadLocationBeenUpdated(downloadUrl, ont)) {
+					   action = ActionEnum.CREATE_DOWNLOAD_ACTION;
+					}
+				}
+				
+				else if (hasVersions(ont) && cf != null
 						&& cf.getVersion().equals(ont.getVersionNumber())) {
 					// existing ontology; no new version found
 					// check if categories and downloadLocation has been
@@ -371,12 +393,8 @@ public class OBOCVSPullServiceImpl implements OBOCVSPullService {
 
 				} else if (cf != null) {
 					// existing ontology local; new version
-					action = ActionEnum.CREATE_ACTION;
-				} else if (LoaderUtils.hasDownloadLocationBeenUpdated(
-						downloadUrl, ont)) {
-					action = ActionEnum.CREATE_ACTION;
-				}
-				if (needsUpdateAction(ont, downloadUrl, isMetadataOnly)) {
+					action = ActionEnum.CREATE_REPOSITORY_ACTION; 
+				} else if (needsUpdateAction(ont, downloadUrl, isMetadataOnly)) {
 					// Check if the metadata needs to be updated
 					action = ActionEnum.UPDATE_ACTION;
 				}
@@ -450,13 +468,14 @@ public class OBOCVSPullServiceImpl implements OBOCVSPullService {
 				 * ont.setFilePath(sourceUrl); }
 				 */
 			} else {
-				if (cf != null) {
+				if (action == ActionEnum.CREATE_REPOSITORY_ACTION) {
 					ont.setVersionNumber(cf.getVersion());
 					ont.setDateReleased(cf.getTimeStamp().getTime());
-				} else {
-					ont.setVersionNumber("unknown");
+				} else if (action == ActionEnum.CREATE_DOWNLOAD_ACTION) {
+					ont.setVersionNumber(null);
 					ont.setDateReleased(now);
 				}
+				ont.getFilenames().clear();
 				ont.addFilename(OntologyDescriptorParser
 						.getFileName(downloadLocation));
 				ont.setCategoryIds(newCategoryIds);
@@ -536,9 +555,29 @@ public class OBOCVSPullServiceImpl implements OBOCVSPullService {
 	}
 
 	/**
-	 * Determines whether the ontology is hosted remotely
+	 * Determines whether the ontology is hosted in the current repository
 	 * 
 	 * @param downloadUrl
+	 * @param cvsHostname
+	 * @return
+	 */
+	private boolean isHostedInCurrentRepository(String downloadUrl,
+			String cvsHostname) {
+		boolean isHosted = false;
+
+		if (!StringHelper.isNullOrNullString(downloadUrl)
+				&& downloadUrl.indexOf(cvsHostname) > -1) {
+			isHosted = true;
+		}
+
+		return isHosted;
+	}
+
+	/**
+	 * Determines whether the ontology is metadataOnly
+	 * 
+	 * @param downloadUrl
+	 * @param cvsHostname
 	 * @return
 	 */
 	private byte isMetadataOnly(String downloadUrl, String cvsHostname) {

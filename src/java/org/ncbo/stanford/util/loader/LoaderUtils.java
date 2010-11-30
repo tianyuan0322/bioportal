@@ -7,6 +7,7 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.URI;
 import java.net.URL;
@@ -57,21 +58,7 @@ public class LoaderUtils {
 		return contentLength;
 	}
 
-	public static boolean isValidDownloadLocationOld(String url_location) {
-		boolean isValid = false;
-		try {
-			URL url = new URL(url_location);
-			URLConnection uc = url.openConnection();
-			int contentLength = uc.getContentLength();
-			if (contentLength != 0) {
-				isValid = true;
-			}
-		} catch (Exception ex) {
 
-		}
-
-		return isValid;
-	}
 
 	public static boolean isValidDownloadLocation(String url_location) {
 		boolean isValid = false;
@@ -79,15 +66,18 @@ public class LoaderUtils {
 			return false;
 		}
 		try {
-			// HttpURLConnection.setFollowRedirects(true);
+			HttpURLConnection.setFollowRedirects(true);
 			// note : you may also need
 			// HttpURLConnection.setInstanceFollowRedirects(false)
 			URL url = new URL(url_location);
 			if (url.getProtocol().toLowerCase().contains("http")) {
 				HttpURLConnection con = (HttpURLConnection) url
 						.openConnection();
+				con.setInstanceFollowRedirects(true);
 				// con.setRequestMethod("HEAD");
-				if (con.getResponseCode() == HttpURLConnection.HTTP_OK) {
+
+				if (con.getResponseCode() < HttpURLConnection.HTTP_BAD_REQUEST) {
+					//System.out.println("Header=\n" + con.getHeaderFields());
 					isValid = true;
 				}
 				con.disconnect();
@@ -106,15 +96,38 @@ public class LoaderUtils {
 		return isValid;
 	}
 
+	/**
+	 * This method is being added to deal with the case where the http response to
+	 * a request is a HTTP_MOVED_PERM or HTTP_MOVED_TEMP. If the move is from http to
+	 * https, the HttpURLConnection's followRedirects doesn't work. 
+	 * http://bugs.sun.com/bugdatabase/view_bug.do?bug_id=4620571
+	 * 
+	 * @param url_location
+	 * @return InputStream
+	 */
+	public static InputStream getInputStream(String url_location) throws IOException {		
+			URL url = new URL(url_location);			
+			URLConnection uc= url.openConnection();
+			InputStream in = uc.getInputStream();
+			if (uc instanceof HttpURLConnection) {
+				HttpURLConnection http_uc= (HttpURLConnection) uc;
+				if (http_uc.getResponseCode() == HttpURLConnection.HTTP_MOVED_PERM
+						|| http_uc.getResponseCode() == HttpURLConnection.HTTP_MOVED_TEMP) {
+					String location = http_uc.getHeaderField("Location");
+					if (StringUtils.isNotBlank(location)) {
+						return getInputStream(location);
+						
+					}
+				} 
+			}
+            return in;
+	}
+
 	public static String computeMD5(String downLoadLocation) {
 		String md5sum = null;
 		try {
 			// System.out.println("Time=" + new Date());
-
-			URI uri = new URI(downLoadLocation);
-
-			BufferedInputStream in = new BufferedInputStream(uri.toURL()
-					.openStream());
+			BufferedInputStream in = new BufferedInputStream(getInputStream(downLoadLocation));
 			md5sum = DigestUtils.md5Hex(in);
 			// System.out.println(md5sum);
 			in.close();

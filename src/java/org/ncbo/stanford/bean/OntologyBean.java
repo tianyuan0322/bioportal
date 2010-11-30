@@ -717,7 +717,7 @@ public class OntologyBean {
 	}
 
 	public boolean isMetadataOnly() {
-		if (this.isRemote() && this.getVersionNumber().equalsIgnoreCase(MessageUtils
+		if (this.isRemote() && this.getVersionNumber()!= null && this.getVersionNumber().equalsIgnoreCase(MessageUtils
 				.getMessage("remote.ontology.version"))) {
 			return true;
 		} else if  (this.getIsMetadataOnly()!= null && this.getIsMetadataOnly().equals(ApplicationConstants.TRUE)) {

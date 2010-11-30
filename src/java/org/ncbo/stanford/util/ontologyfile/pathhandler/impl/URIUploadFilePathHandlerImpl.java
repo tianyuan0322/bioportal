@@ -26,7 +26,7 @@ import org.ncbo.stanford.util.ontologyfile.pathhandler.AbstractFilePathHandler;
 
 /**
  * An implementation of FileHandler interface, where the ontology is uploaded
- * from a given physical directory (useful for testing)
+ * from a URI
  * 
  * @author Pradip Kanjamala
  * 
@@ -62,10 +62,8 @@ public class URIUploadFilePathHandlerImpl extends AbstractFilePathHandler {
 
 			BufferedOutputStream out = new BufferedOutputStream(
 					new FileOutputStream(outputFile));
-			BufferedInputStream in = new BufferedInputStream(uri.toURL()
-					.openStream());
+			BufferedInputStream in = new BufferedInputStream(LoaderUtils.getInputStream(uri.toString()));
 
-			URLConnection uc = uri.toURL().openConnection();			
 			byte data[] = new byte[ApplicationConstants.BUFFER_SIZE];
 			int count;
 						
@@ -95,68 +93,6 @@ public class URIUploadFilePathHandlerImpl extends AbstractFilePathHandler {
 			fileNames = compressedFileHandler.handle(outputFile, ontologyBean);
 		}
 		
-		return fileNames;
-	}
-
-	public List<String> processOntologyFileUploadOld(OntologyBean ontologyBean)
-			throws FileNotFoundException, IOException, Exception {
-		// place holder for return object
-		List<String> fileNames = new ArrayList<String>(1);
-
-		// validate inputfile
-		String filePath = AbstractFilePathHandler
-				.getFullOntologyDirPath(ontologyBean);
-		String fileName = OntologyDescriptorParser.getFileName(uri.toString());
-
-		// continue only if there is input file
-		if (filePath != null && fileName != null) {
-			// now create output file
-			File outputDirectories = new File(filePath);
-			outputDirectories.mkdirs();
-
-			File outputFile = new File(filePath, fileName);
-
-			BufferedWriter out = new BufferedWriter(new FileWriter(outputFile));
-			BufferedReader in = new BufferedReader(new InputStreamReader(uri
-					.toURL().openStream()));
-
-			URLConnection uc = uri.toURL().openConnection();
-			// uc.setUseCaches(false);
-			Long timestamp = uc.getLastModified();
-			if (timestamp == 0) {
-				timestamp = uc.getDate();
-			}
-			System.out.println("Last modified date=" + new Date(timestamp));
-			outputFile.setLastModified(timestamp);
-
-			String inputLine;
-
-			while ((inputLine = in.readLine()) != null) {
-				out.write(inputLine + System.getProperty("line.separator"));
-			}
-
-			in.close();
-			out.close();
-
-			// validate output file
-			if (!outputFile.exists()) {
-				String errorMsg = MessageUtils
-						.getMessage("msg.error.file.outputFileCreationError")
-						+ " filePath =  "
-						+ filePath
-						+ " fileName =  "
-						+ fileName;
-
-				throw new FileNotFoundException(
-						"Error! - URIUploadFilePathHandlerImpl(): processOntologyFileUpload - "
-								+ errorMsg);
-			}
-
-			// Store the MD5 file
-			LoaderUtils.storeMd5ToFile(ontologyBean);
-			fileNames = compressedFileHandler.handle(outputFile, ontologyBean);
-		}
-
 		return fileNames;
 	}
 
