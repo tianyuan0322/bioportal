@@ -14,10 +14,12 @@ import org.apache.lucene.queryParser.QueryParser;
 import org.apache.lucene.search.BooleanClause;
 import org.apache.lucene.search.BooleanQuery;
 import org.apache.lucene.search.MultiPhraseQuery;
+import org.apache.lucene.search.MultiTermQuery;
 import org.apache.lucene.search.Query;
 import org.apache.lucene.search.TermQuery;
 import org.apache.lucene.search.regex.SpanRegexQuery;
 import org.apache.lucene.search.spans.SpanFirstQuery;
+import org.apache.lucene.util.Version;
 
 /**
  * Class that handles the construction of Lucene "prefix" type queries (i.e.
@@ -43,10 +45,13 @@ public class PrefixQuery extends BooleanQuery {
 			+ WILDCARD_CHAR + "|\\" + WILDCARD_CHAR + "$";
 	private static final int EXACT_MATCH_BOOST = 10;
 
+	private Version luceneVersion;
 	private IndexReader reader;
 	private Analyzer analyzer;
 
-	public PrefixQuery(IndexReader reader, Analyzer analyzer) {
+	public PrefixQuery(Version luceneVersion, IndexReader reader,
+			Analyzer analyzer) {
+		this.luceneVersion = luceneVersion;
 		this.reader = reader;
 		this.analyzer = analyzer;
 	}
@@ -74,6 +79,7 @@ public class PrefixQuery extends BooleanQuery {
 
 			while (st.hasMoreTokens()) {
 				Term[] terms = expand(field, st.nextToken());
+
 				mpq.add(terms);
 			}
 
@@ -109,11 +115,11 @@ public class PrefixQuery extends BooleanQuery {
 			throws ParseException {
 		expr = expr.replaceAll(WILDCARD_LEADING_TRAILING_PATTERN, "");
 
-		QueryParser parser = new QueryParser(field, analyzer);
+		QueryParser parser = new QueryParser(luceneVersion, field, analyzer);
 
-//		expr = expr.replaceAll("\\(", "");
-//		expr = expr.replaceAll("\\)", "");
-		
+		// expr = expr.replaceAll("\\(", "");
+		// expr = expr.replaceAll("\\)", "");
+
 		Query query = parser.parse(expr);
 
 		expr = query.toString().replace(field + ":", "");
@@ -121,11 +127,11 @@ public class PrefixQuery extends BooleanQuery {
 		expr = expr.toLowerCase();
 		expr = expr.replaceAll(":", " ");
 
-		// replace single-letter words with empty strings
+		// // replace single-letter words with empty strings
 		// Pattern mask = Pattern.compile(SINGLE_LETTER_WORD_PATTERN);
 		// Matcher matcher = mask.matcher(expr);
 		// boolean found = matcher.find();
-		//
+		//		
 		// if (found) {
 		// expr = expr.replace(matcher.group(), "");
 		// }
@@ -134,13 +140,15 @@ public class PrefixQuery extends BooleanQuery {
 	}
 
 	private Term[] expand(String field, String prefix) throws Exception {
-		QueryParser parser = new QueryParser(field, analyzer);
-		Query queryExact = parser.parse(prefix + WILDCARD_CHAR);
+		QueryParser parser = new QueryParser(luceneVersion, field, analyzer);
+		org.apache.lucene.search.PrefixQuery queryExact = (org.apache.lucene.search.PrefixQuery) parser
+				.parse(prefix + WILDCARD_CHAR);
+		queryExact
+				.setRewriteMethod(MultiTermQuery.SCORING_BOOLEAN_QUERY_REWRITE);
 		Query queryRewritten = queryExact.rewrite(reader);
 
 		Set<Term> terms = new TreeSet<Term>();
 		terms.add(new Term(field, prefix));
-
 		queryRewritten.extractTerms(terms);
 
 		return (Term[]) terms.toArray(new Term[terms.size()]);
