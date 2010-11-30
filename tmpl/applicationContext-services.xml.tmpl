@@ -859,6 +859,9 @@
 	<!-- Search related beans -->
 	<bean id="abstractSearchService" class="org.ncbo.stanford.service.search.AbstractSearchService"
 		abstract="true">
+		<property name="luceneVersion">
+			<util:constant static-field="@bioportalsearchluceneversioncompatibility@" />		
+		</property>	
 		<property name="analyzer">
 			<ref bean="searchAnalyzer" />
 		</property>
@@ -904,7 +907,11 @@
 		</property>
 	</bean>
 
-	<bean id="searchAnalyzer" class="org.apache.lucene.analysis.standard.StandardAnalyzer" />
+	<bean id="searchAnalyzer" class="org.apache.lucene.analysis.standard.StandardAnalyzer">
+		<constructor-arg>
+			<util:constant static-field="@bioportalsearchluceneversioncompatibility@" />		
+		</constructor-arg>
+	</bean>
 
 	<bean id="searchIndexPath" class="java.lang.String">
 		<constructor-arg>
