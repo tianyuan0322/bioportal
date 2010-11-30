@@ -4,11 +4,10 @@ import org.ncbo.stanford.util.constants.ApplicationConstants;
 
 public enum SearchRecordTypeEnum {
 
-	RECORD_TYPE_PREFERRED_NAME(
-			ApplicationConstants.SEARCH_RECORD_TYPE_PREFERRED_NAME), RECORD_TYPE_CONCEPT_ID(
-			ApplicationConstants.SEARCH_RECORD_TYPE_CONCEPT_ID), RECORD_TYPE_SYNONYM(
-			ApplicationConstants.SEARCH_RECORD_TYPE_SYNONYM), RECORD_TYPE_PROPERTY(
-			ApplicationConstants.SEARCH_RECORD_TYPE_PROPERTY);
+	RECORD_TYPE_PREFERRED_NAME(ApplicationConstants.SEARCH_RECORD_TYPE_PREFERRED_NAME), 
+	RECORD_TYPE_CONCEPT_ID(ApplicationConstants.SEARCH_RECORD_TYPE_CONCEPT_ID), 
+	RECORD_TYPE_SYNONYM(ApplicationConstants.SEARCH_RECORD_TYPE_SYNONYM), 
+	RECORD_TYPE_PROPERTY(ApplicationConstants.SEARCH_RECORD_TYPE_PROPERTY);
 
 	private final String label;
 
