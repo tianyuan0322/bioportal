@@ -53,6 +53,7 @@ bioportal.session.numcontainers=11
 bioportal.search.defmaxnumhits=1000
 bioportal.search.indexmergefactor=10
 bioportal.search.indexmaxmergedocs=2147483647
+bioportal.search.luceneversioncompatibility=org.apache.lucene.util.Version.LUCENE_24
 
 #Search index path
 bioportal.search.indexpath=${bioportal.resource.path}/searchindex
