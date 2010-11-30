@@ -70,6 +70,11 @@
 	<classpathentry exported="true" kind="lib" path="WebRoot/WEB-INF/lib/org.semanticweb.owl.owlapi.jar"/>
 	<classpathentry exported="true" kind="lib" path="WebRoot/WEB-INF/lib/org.protege.owlapi.jar"/>
 	<classpathentry exported="true" kind="lib" path="WebRoot/WEB-INF/lib/opencsv-2.2.jar"/>
+	<classpathentry exported="true" kind="lib" path="WebRoot/WEB-INF/lib/jestr-1.1.jar"/>
+	<classpathentry exported="true" kind="lib" path="WebRoot/WEB-INF/lib/jakarta-oro-2.0.8.jar"/>
+	<classpathentry exported="true" kind="lib" path="WebRoot/WEB-INF/lib/lucene-core-2.9.3.jar"/>
+	<classpathentry exported="true" kind="lib" path="WebRoot/WEB-INF/lib/lucene-regex-2.9.3.jar"/>
+	<classpathentry exported="true" kind="lib" path="WebRoot/WEB-INF/lib/lucene-snowball-2.9.3.jar"/>
 	<classpathentry exported="true" kind="lib" path="WebRoot/WEB-INF/lib/protege/protege.jar"/>
 	<classpathentry exported="true" kind="lib" path="WebRoot/WEB-INF/lib/protege/plugins/edu.stanford.smi.protegex.changes/change-management.jar"/>
 	<classpathentry exported="true" kind="lib" path="WebRoot/WEB-INF/lib/protege/plugins/edu.stanford.smi.protegex.changes/icu4j.jar"/>
@@ -139,10 +144,7 @@
 	<classpathentry exported="true" kind="lib" path="WebRoot/WEB-INF/lib/lexgrid/extLib/spring-batch-infrastructure-2.0.1.RELEASE.jar"/>
 	<classpathentry exported="true" kind="lib" path="WebRoot/WEB-INF/lib/lexgrid/extLib/spring-oxm-1.5.7.jar"/>
 	<classpathentry exported="true" kind="lib" path="WebRoot/WEB-INF/lib/lexgrid/extLib/spring-xml-1.5.7.jar"/>
-	<classpathentry exported="true" kind="lib" path="WebRoot/WEB-INF/lib/lexgrid/lexbig.jar"/>
 	<classpathentry exported="true" kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
-	<classpathentry exported="true" kind="lib" path="WebRoot/WEB-INF/lib/lucene-core-2.4.1.jar"/>
-	<classpathentry exported="true" kind="lib" path="WebRoot/WEB-INF/lib/lucene-regex-2.4.1.jar"/>
-	<classpathentry exported="true" kind="lib" path="WebRoot/WEB-INF/lib/lucene-snowball-2.4.1.jar"/>
+	<classpathentry kind="lib" path="WebRoot/WEB-INF/lib/lexgrid/lexbig.jar"/>
 	<classpathentry kind="output" path="WebRoot/WEB-INF/classes"/>
 </classpath>
