@@ -18,14 +18,10 @@ import org.ncbo.stanford.manager.search.OntologySearchManager;
 import org.ncbo.stanford.util.helper.StringHelper;
 import org.ncbo.stanford.wrapper.LuceneIndexWriterWrapper;
 
-import edu.stanford.smi.protege.model.DefaultKnowledgeBase;
 import edu.stanford.smi.protege.model.Frame;
 import edu.stanford.smi.protege.model.KnowledgeBase;
 import edu.stanford.smi.protege.model.Slot;
 import edu.stanford.smi.protege.model.ValueType;
-import edu.stanford.smi.protege.model.framestore.FrameStore;
-import edu.stanford.smi.protege.model.framestore.NarrowFrameStore;
-import edu.stanford.smi.protege.model.framestore.SimpleFrameStore;
 import edu.stanford.smi.protegex.owl.model.NamespaceUtil;
 import edu.stanford.smi.protegex.owl.model.OWLModel;
 import edu.stanford.smi.protegex.owl.model.RDFResource;
@@ -55,14 +51,7 @@ public class OntologySearchManagerProtegeImpl extends
 			OntologyBean ontologyBean) throws Exception {
 		KnowledgeBase kb = getKnowledgeBaseInstance(ontologyBean);
 		boolean owlMode = kb instanceof OWLModel;
-		FrameStore fs = ((DefaultKnowledgeBase) kb).getTerminalFrameStore();
-		NarrowFrameStore nfs = ((SimpleFrameStore) fs).getHelper();
-		Set<Frame> frames;
-
-		synchronized (kb) {
-			frames = nfs.getFrames();
-		}
-
+		Collection<Frame> frames = kb.getFrames();
 		SearchIndexBean doc = new SearchIndexBean();
 
 		for (Frame frame : frames) {
@@ -86,7 +75,7 @@ public class OntologySearchManagerProtegeImpl extends
 
 			for (Slot prefNameSlot : preferredNameSlots) {
 				preferredName = addPreferredNameSlotToIndex(writer,
-						ontologyBean, doc, kb, nfs, protegeFrame, prefNameSlot,
+						ontologyBean, doc, kb, protegeFrame, prefNameSlot,
 						owlMode);
 
 				if (!StringHelper.isNullOrNullString(preferredName)) {
@@ -97,8 +86,8 @@ public class OntologySearchManagerProtegeImpl extends
 			// add name slot but only if the concept id != preferredName
 			protegeFrame
 					.setRecordType(SearchRecordTypeEnum.RECORD_TYPE_CONCEPT_ID);
-			addNameSlotToIndex(writer, ontologyBean, doc, kb, nfs,
-					protegeFrame, preferredName, owlMode);
+			addNameSlotToIndex(writer, ontologyBean, doc, kb, protegeFrame,
+					preferredName, owlMode);
 
 			// add synonym slot if exists
 			Slot synonymSlot = getSynonymSlot(kb, ontologyBean.getSynonymSlot());
@@ -106,8 +95,8 @@ public class OntologySearchManagerProtegeImpl extends
 			if (synonymSlot != null) {
 				protegeFrame
 						.setRecordType(SearchRecordTypeEnum.RECORD_TYPE_SYNONYM);
-				addSlotToIndex(writer, ontologyBean, doc, kb, nfs,
-						protegeFrame, synonymSlot, owlMode);
+				addSlotToIndex(writer, ontologyBean, doc, kb, protegeFrame,
+						synonymSlot, owlMode);
 			}
 
 			// add property slots
@@ -116,8 +105,8 @@ public class OntologySearchManagerProtegeImpl extends
 					.setRecordType(SearchRecordTypeEnum.RECORD_TYPE_PROPERTY);
 
 			for (Slot propertySlot : propertySlots) {
-				addSlotToIndex(writer, ontologyBean, doc, kb, nfs,
-						protegeFrame, propertySlot, owlMode);
+				addSlotToIndex(writer, ontologyBean, doc, kb, protegeFrame,
+						propertySlot, owlMode);
 			}
 		}
 	}
@@ -171,13 +160,9 @@ public class OntologySearchManagerProtegeImpl extends
 	@SuppressWarnings("unchecked")
 	private void addSlotToIndex(LuceneIndexWriterWrapper writer,
 			OntologyBean ontologyBean, SearchIndexBean doc, KnowledgeBase kb,
-			NarrowFrameStore nfs, ProtegeSearchFrame protegeFrame, Slot slot,
-			boolean owlMode) throws IOException {
-		Collection values;
-
-		synchronized (kb) {
-			values = nfs.getValues(protegeFrame.getFrame(), slot, null, false);
-		}
+			ProtegeSearchFrame protegeFrame, Slot slot, boolean owlMode)
+			throws IOException {
+		Collection values = kb.getOwnSlotValues(protegeFrame.getFrame(), slot);
 
 		for (Object value : values) {
 			if (!(value instanceof String)) {
@@ -206,8 +191,8 @@ public class OntologySearchManagerProtegeImpl extends
 	@SuppressWarnings("unchecked")
 	private String addPreferredNameSlotToIndex(LuceneIndexWriterWrapper writer,
 			OntologyBean ontologyBean, SearchIndexBean doc, KnowledgeBase kb,
-			NarrowFrameStore nfs, ProtegeSearchFrame protegeFrame,
-			Slot preferredNameSlot, boolean owlMode) throws IOException {
+			ProtegeSearchFrame protegeFrame, Slot preferredNameSlot,
+			boolean owlMode) throws IOException {
 		String preferredName = null;
 		Collection values = new ArrayList();
 
@@ -220,16 +205,15 @@ public class OntologySearchManagerProtegeImpl extends
 		// all values, unless its the name slot,
 		// then remove all the values and add just the local value'
 		// The size is to avoid 'oddball' frames that shouldnt be displayed
-		synchronized (kb) {
-			Frame frame = protegeFrame.getFrame();
-			values.addAll(nfs.getValues(frame, preferredNameSlot, null, false));
 
-			if (frame instanceof RDFResource
-					&& preferredNameSlot.equals(kb.getNameSlot())
-					&& values.size() > 0) {
-				values = new ArrayList();
-				values.add(((RDFResource) frame).getLocalName());
-			}
+		Frame frame = protegeFrame.getFrame();
+		values.addAll(kb.getOwnSlotValues(frame, preferredNameSlot));
+
+		if (frame instanceof RDFResource
+				&& preferredNameSlot.equals(kb.getNameSlot())
+				&& values.size() > 0) {
+			values = new ArrayList();
+			values.add(((RDFResource) frame).getLocalName());
 		}
 
 		for (Object value : values) {
@@ -262,21 +246,19 @@ public class OntologySearchManagerProtegeImpl extends
 	 */
 	private void addNameSlotToIndex(LuceneIndexWriterWrapper writer,
 			OntologyBean ontologyBean, SearchIndexBean doc, KnowledgeBase kb,
-			NarrowFrameStore nfs, ProtegeSearchFrame protegeFrame,
-			String preferredName, boolean owlMode) throws IOException {
-		synchronized (kb) {
-			Frame frame = protegeFrame.getFrame();
+			ProtegeSearchFrame protegeFrame, String preferredName,
+			boolean owlMode) throws IOException {
+		Frame frame = protegeFrame.getFrame();
 
-			if (frame instanceof RDFResource) {
-				String name = ((RDFResource) frame).getLocalName();
+		if (frame instanceof RDFResource) {
+			String name = ((RDFResource) frame).getLocalName();
 
-				// add name slot only if the concept id != preferredName to
-				// avoid duplication of data
-				if (!name.equals(preferredName)) {
-					populateIndexBean(doc, ontologyBean, protegeFrame, name,
-							owlMode);
-					writer.addDocument(doc);
-				}
+			// add name slot only if the concept id != preferredName to
+			// avoid duplication of data
+			if (!name.equals(preferredName)) {
+				populateIndexBean(doc, ontologyBean, protegeFrame, name,
+						owlMode);
+				writer.addDocument(doc);
 			}
 		}
 	}
