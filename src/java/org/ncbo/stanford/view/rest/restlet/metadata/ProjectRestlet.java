@@ -4,7 +4,7 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.ncbo.stanford.bean.ProjectBean;
+import org.ncbo.stanford.bean.metadata.ProjectBean;
 import org.ncbo.stanford.service.metadata.BeanCRUDService;
 import org.ncbo.stanford.service.metadata.ProjectMetadataService;
 import org.ncbo.stanford.service.xml.XMLSerializationService;

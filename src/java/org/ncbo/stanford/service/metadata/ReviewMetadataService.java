@@ -2,9 +2,9 @@ package org.ncbo.stanford.service.metadata;
 
 import java.util.Collection;
 
-import org.ncbo.stanford.bean.RatingBean;
-import org.ncbo.stanford.bean.RatingTypeBean;
-import org.ncbo.stanford.bean.ReviewBean;
+import org.ncbo.stanford.bean.metadata.RatingBean;
+import org.ncbo.stanford.bean.metadata.RatingTypeBean;
+import org.ncbo.stanford.bean.metadata.ReviewBean;
 import org.ncbo.stanford.exception.MetadataException;
 import org.ncbo.stanford.exception.MetadataObjectNotFoundException;
 
@@ -20,9 +20,9 @@ public interface ReviewMetadataService extends BeanCRUDService<ReviewBean> {
 	/**
 	 * Forward to corresponding manager method.
 	 * 
-	 * @see org.ncbo.stanford.manager.metakb.ReviewMetadataManager#createRating(ReviewBean)
+	 * @see org.ncbo.stanford.manager.metakb.ReviewMetadataManager#addRating(ReviewBean, RatingBean)
 	 */
-	public RatingBean createRating(ReviewBean reviewBean)
+	public void addRating(ReviewBean reviewBean, RatingBean ratingBean)
 		throws MetadataObjectNotFoundException, MetadataException;
 	
 	/**

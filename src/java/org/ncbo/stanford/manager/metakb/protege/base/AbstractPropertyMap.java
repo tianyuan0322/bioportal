@@ -1,4 +1,4 @@
-package org.ncbo.stanford.manager.metakb.protege.DAO.base;
+package org.ncbo.stanford.manager.metakb.protege.base;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -8,12 +8,12 @@ import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 
+import org.ncbo.stanford.bean.metadata.MetadataBean;
 import org.ncbo.stanford.exception.BPRuntimeException;
 import org.ncbo.stanford.exception.MetadataException;
 import org.ncbo.stanford.util.protege.PropertyUtils;
 
 import edu.stanford.smi.protegex.owl.model.OWLIndividual;
-import edu.stanford.smi.protegex.owl.model.OWLModel;
 import edu.stanford.smi.protegex.owl.model.OWLProperty;
 
 /**
@@ -25,45 +25,55 @@ import edu.stanford.smi.protegex.owl.model.OWLProperty;
  * 
  * @author Tony Loeser
  */
-public class PropertyMap {
+public abstract class AbstractPropertyMap {
 	
 	// Java side
-	protected final Method beanValueGetter;
-	protected final Method beanValueSetter;
+	private final String beanPropName;
+	private Method beanValueGetter;
+	private Method beanValueSetter;
 	
 	// OWL side
-	protected final OWLProperty owlProperty;
+	private final String owlPropName;
+	private OWLProperty owlProperty;
+	
+	// Overall layer that will contain this property map
+	private AbstractDALayer daLayer = null;
 	
 	// The type of value that will be transferred to/from Java/OWL
 	// If isMultivalued == true, then these values will be gathered into a collection,
-	//   i.e. the java bean data member should be Collection<valueType> 
-	protected final Class<?> singleValueType; // The java type of a single property value
-	protected final boolean isMultivalued;    // true iff valueType is a Collection
+	//   i.e. the java bean data member's type should be Collection<valueType> 
+	private final Class<?> singleValueType; // The java type of a single property value
+	private final boolean isMultivalued;    // true iff valueType is a Collection
 	
 	// =========================================================================
 	// Initialization
 	
-	protected PropertyMap(String beanPropName,      // Name of the data member on the java bean
-						  Class<?> beanType,        // Type of the java bean
-						  Class<?> singleValueType, // Java type of a single property value
-						  boolean isMultivalued,    // true iff bean property values are Collection<valueType>
-						  String owlPropName,       // Name of the property in the OWL KB
-						  OWLModel metadataKb) {
-		try {
-			// Set types
-			this.singleValueType = singleValueType;
-			this.isMultivalued = isMultivalued;
-			// Set up the Java side == accessor methods
-			String capName = capitalize(beanPropName);
-			beanValueGetter = myGetMethod(beanType, "get"+capName, (Class<?>[])null);
-			beanValueSetter = myGetMethod(beanType, "set"+capName, beanValueGetter.getReturnType());
-			// Set up the OWL side -- OWL Property
-			owlProperty = metadataKb.getOWLProperty(owlPropName);
-		} catch (StringIndexOutOfBoundsException e) {
-			String msg = "Tried to set up bean-to-metakb map with empty prop name for bean: " + beanType;
-			throw new BPRuntimeException(msg, e);
-		}
+	protected AbstractPropertyMap(String beanPropName,      // Name of the data member on the java bean
+			                      Class<?> singleValueType, // Java type of a single property value
+			                      boolean isMultivalued,    // true iff bean property values are Collection<valueType>
+			                      String owlPropName) {     // Name of the property in the OWL KB
+		this.beanPropName = beanPropName;
+		this.owlPropName = owlPropName;
+		this.singleValueType = singleValueType;
+		this.isMultivalued = isMultivalued;
 	}
+	
+	public void initialize(Class<?> beanType, AbstractDALayer daLayer) {
+		this.daLayer = daLayer;
+		// Set up the Java side -- accessor methods
+		String capName = capitalize(beanPropName);
+		beanValueGetter = myGetMethod(beanType, "get"+capName, (Class<?>[])null);
+		beanValueSetter = myGetMethod(beanType, "set"+capName, beanValueGetter.getReturnType());
+		// Set up the OWL side -- OWL Property
+		owlProperty = daLayer.getMetadataKb().getOWLProperty(owlPropName);
+		checkOWLProperty(owlProperty);
+	}
+	
+	public boolean isInitialized() {
+		return (daLayer == null);
+	}
+	
+	protected abstract void checkOWLProperty(OWLProperty prop);
 	
 	private static Method myGetMethod(Class<?> inClass, String methodName, Class<?>...argTypes) {
 		try {
@@ -78,8 +88,13 @@ public class PropertyMap {
 	}
 
 	private static String capitalize(String name) {
-		char first = name.charAt(0);
-		return Character.toUpperCase(first) + name.substring(1);
+		try {
+			char first = name.charAt(0);
+			return Character.toUpperCase(first) + name.substring(1);
+		} catch (StringIndexOutOfBoundsException e) {
+			String msg = "Empty java property name";
+			throw new BPRuntimeException(msg, e);
+		}
 	}
 	
 	// =========================================================================
@@ -137,8 +152,8 @@ public class PropertyMap {
 			if (value == null) {
 				Collection<?> owlValues = Collections.EMPTY_LIST;
 				PropertyUtils.setPropertyValues(ind, owlProperty, owlValues);
-			} else if (Collection.class.isInstance(value)) {
-				Collection<?> owlValues = convertJavaToOWLValues((Collection<?>)value);
+			} else if (value instanceof Collection<?>) {
+				Collection<?> owlValues = prepareValuesForOWL((Collection<?>)value);
 				PropertyUtils.setPropertyValues(ind, owlProperty, owlValues);
 			} else {
 				String msg = "Attempt to assert single value ("+value+") on a multivalued property ("+owlProperty.getName()+")";
@@ -146,7 +161,7 @@ public class PropertyMap {
 			}
 		} else {
 			// This is a single value
-			Object owlValue = convertJavaToOWLValue(value);
+			Object owlValue = prepareValueForOWL(value);
 			PropertyUtils.setPropertyValue(ind, owlProperty, owlValue);
 		}
 	}
@@ -161,38 +176,46 @@ public class PropertyMap {
 		if (isMultivalued) {
 			// This is a collection of values
 			Collection<?> owlValues = PropertyUtils.getPropertyValues(ind, owlProperty);
-			return convertOWLToJavaValues(owlValues);
+			return handleValuesFromOWL(owlValues);
 		} else {
 			// This is a single value
 			Object owlValue = PropertyUtils.getPropertyValue(ind, owlProperty);
-			return convertOWLToJavaValue(owlValue);
+			return handleValueFromOWL(owlValue);
 		}
 	}
 	
 	// =========================================================================
 	// OWL value conversion
 	
-	public Object convertJavaToOWLValue(Object value) throws MetadataException {
-		return value;
+	protected Object prepareValueForOWL(Object value) throws MetadataException {
+		if (value instanceof MetadataBean) {
+			return daLayer.retrieveIndividualForBean((MetadataBean)value);
+		} else {
+			return value;
+		}
 	}
 	
-	public Collection<?> convertJavaToOWLValues(Collection<?> values)
+	private Collection<?> prepareValuesForOWL(Collection<?> values)
 			throws MetadataException {
 		List<Object> owlValues = new ArrayList<Object>(values.size());
 		for (Iterator<?> valIt = values.iterator(); valIt.hasNext(); ) {
-			owlValues.add(convertJavaToOWLValue((Object)valIt.next()));
+			owlValues.add(prepareValueForOWL((Object)valIt.next()));
 		}
 		return owlValues;
 	}
 	
-	public Object convertOWLToJavaValue(Object value) {
-		return value;
+	protected Object handleValueFromOWL(Object value) {
+		if (value instanceof OWLIndividual) {
+			return daLayer.convertIndividualToBean((OWLIndividual)value);
+		} else {
+			return value;
+		}
 	}
-	
-	public Collection<?> convertOWLToJavaValues(Collection<?> values) {
+		
+	private Collection<?> handleValuesFromOWL(Collection<?> values) {
 		List<Object> beanValues = new ArrayList<Object>(values.size());
 		for (Iterator<?> valIt = values.iterator(); valIt.hasNext(); ) {
-			beanValues.add(convertOWLToJavaValue((Object)valIt.next()));
+			beanValues.add(handleValueFromOWL((Object)valIt.next()));
 		}
 		return beanValues;
 	}
@@ -269,4 +292,14 @@ public class PropertyMap {
 		}
 	}
 
+	// =========================================================================
+	// Accessors
+	
+	public AbstractDALayer getDaLayer() {
+		return daLayer;
+	}
+	
+	public OWLProperty getOwlProperty() {
+		return owlProperty;
+	}
 }

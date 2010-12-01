@@ -2,7 +2,7 @@ package org.ncbo.stanford.service.metadata;
 
 import java.util.List;
 
-import org.ncbo.stanford.bean.ProjectBean;
+import org.ncbo.stanford.bean.metadata.ProjectBean;
 
 /**
  * A thin service layer that forwards calls to 

@@ -1,8 +1,6 @@
-package org.ncbo.stanford.bean;
+package org.ncbo.stanford.bean.metadata;
 
 import java.util.Date;
-
-import org.ncbo.stanford.bean.AbstractIdBean;
 
 /**
  * Supertype of object beans that have dateCreated and dateModified properties
@@ -14,10 +12,16 @@ import org.ncbo.stanford.bean.AbstractIdBean;
  * @author Tony Loeser
  */
 
-public class TimedIdBean extends AbstractIdBean {
+public class TimedIdBean extends MetadataBean {
 
-	Date dateCreated = null;  // Timestamp when the object was first saved to persistent store
-	Date dateModified = null; // Timestamp when the object was most recently modified in persistent store
+	// Timestamp when the object was first saved to persistent store
+	private Date dateCreated = null;
+	// Timestamp when the object was most recently modified in persistent store
+	private Date dateModified = null;
+	
+	public TimedIdBean() {
+		super();
+	}
 	
 	public TimedIdBean(Integer id) {
 		super(id);

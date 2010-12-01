@@ -1,4 +1,4 @@
-package org.ncbo.stanford.service.metadata.impl;
+package org.ncbo.stanford.manager.metakb.protege.impl;
 
 import java.util.Collection;
 
@@ -6,38 +6,40 @@ import org.ncbo.stanford.bean.metadata.MetadataBean;
 import org.ncbo.stanford.exception.MetadataException;
 import org.ncbo.stanford.exception.MetadataObjectNotFoundException;
 import org.ncbo.stanford.manager.metakb.SimpleObjectManager;
-import org.ncbo.stanford.service.metadata.BeanCRUDService;
 
 /**
- * Implementation of {@link BeanCRUDService}.
+ * Basic form of object manager.  You can ask for a DAO.
  * 
  * @author Tony Loeser
  */
-public abstract class BeanCRUDServiceImpl<BeanType extends MetadataBean>
-		implements BeanCRUDService<BeanType> {
-
-	protected abstract SimpleObjectManager<BeanType> getObjectManager();
+public abstract class SimpleObjectManagerImpl<BeanType extends MetadataBean> 
+		extends BaseProtegeMetadataManager
+		implements SimpleObjectManager<BeanType> {
 	
-	public abstract BeanType newBean();
-
+	private final Class<BeanType> beanType;
+	
+	protected SimpleObjectManagerImpl(Class<BeanType> beanType) {
+		this.beanType = beanType;
+	}
+		
 	@Override
 	public void saveObject(BeanType bean)
 			throws MetadataObjectNotFoundException, MetadataException {
-		getObjectManager().saveObject(bean);
+		getDALayer().saveObject(bean);
 	}
 
 	@Override
 	public void deleteObject(Integer id) throws MetadataObjectNotFoundException {
-		getObjectManager().deleteObject(id);
+		getDALayer().deleteObject(beanType, id);
 	}
 
 	@Override
 	public BeanType retrieveObject(Integer id) throws MetadataObjectNotFoundException {
-		return getObjectManager().retrieveObject(id);
+		return getDALayer().retrieveObject(beanType, id);
 	}
-
+	
 	@Override
 	public Collection<BeanType> retrieveAllObjects() {
-		return getObjectManager().retrieveAllObjects();
+		return getDALayer().getAllObjects(beanType);
 	}
 }

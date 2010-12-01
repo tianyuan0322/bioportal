@@ -1,4 +1,4 @@
-package org.ncbo.stanford.bean;
+package org.ncbo.stanford.bean.metadata;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -15,6 +15,10 @@ public class ReviewBean extends TimedIdBean {
 	private Integer projectId = null;
 	private Integer ontologyId = null;
 	private Collection<RatingBean> ratings = new ArrayList<RatingBean>();
+	
+	public ReviewBean() {
+		super();
+	}
 	
 	public ReviewBean(Integer id) {
 		super(id);

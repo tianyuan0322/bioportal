@@ -1,6 +1,6 @@
 package org.ncbo.stanford.view.rest.restlet.metadata;
 
-import org.ncbo.stanford.bean.AbstractIdBean;
+import org.ncbo.stanford.bean.metadata.MetadataBean;
 import org.ncbo.stanford.exception.InvalidInputException;
 import org.ncbo.stanford.exception.MetadataObjectNotFoundException;
 import org.ncbo.stanford.service.metadata.BeanCRUDService;
@@ -36,7 +36,7 @@ import org.restlet.data.Status;
  *
  * @param <BeanType> the type of object on which these CRUD methods are acting.
  */
-public abstract class AbstractCRUDRestlet<BeanType extends AbstractIdBean>
+public abstract class AbstractCRUDRestlet<BeanType extends MetadataBean>
 		extends AbstractBaseRestlet {
 	
 	// Implement to provide basic logging
@@ -60,7 +60,7 @@ public abstract class AbstractCRUDRestlet<BeanType extends AbstractIdBean>
 	private void createObject(Request request, Response response) {
 		BeanType newBean = null;
 		try {
-			newBean = getBeanCRUDService().createObject();
+			newBean = getBeanCRUDService().newBean();
 			
 			// Verify that the "id" in the URL says "new"
 			String idString = extractIdString(request);
@@ -70,7 +70,7 @@ public abstract class AbstractCRUDRestlet<BeanType extends AbstractIdBean>
 			
 			// Fill in non-automatic data from the POST parameters, and update in store
 			populateBeanFromRequest(newBean, request);
-			getBeanCRUDService().updateObject(newBean);
+			getBeanCRUDService().saveObject(newBean);
 
 		} catch (IllegalArgumentException iae) {
 			response.setStatus(Status.CLIENT_ERROR_BAD_REQUEST, iae.getMessage());
@@ -157,7 +157,7 @@ public abstract class AbstractCRUDRestlet<BeanType extends AbstractIdBean>
 			Integer id = extractId(request);
 			bean = getBeanCRUDService().retrieveObject(id);
 			populateBeanFromRequest(bean, request);
-			getBeanCRUDService().updateObject(bean);
+			getBeanCRUDService().saveObject(bean);
 		} catch (MetadataObjectNotFoundException monfe) {
 			response.setStatus(Status.CLIENT_ERROR_NOT_FOUND, monfe.getMessage());
 			monfe.printStackTrace();

@@ -1,9 +1,10 @@
-package org.ncbo.stanford.manager.metakb.protege.DAO.base;
+package org.ncbo.stanford.manager.metakb.protege.base.prop;
 
 import org.ncbo.stanford.exception.BPRuntimeException;
+import org.ncbo.stanford.manager.metakb.protege.base.AbstractPropertyMap;
 
 import edu.stanford.smi.protegex.owl.model.OWLDatatypeProperty;
-import edu.stanford.smi.protegex.owl.model.OWLModel;
+import edu.stanford.smi.protegex.owl.model.OWLProperty;
 
 
 /**
@@ -13,28 +14,29 @@ import edu.stanford.smi.protegex.owl.model.OWLModel;
  * 
  * @author Tony Loeser
  */
-public class DatatypePropertyMap extends PropertyMap {
+public class DatatypePropertyMap extends AbstractPropertyMap {
 	
 	/**
 	 * Constructor. 
 	 * 
 	 * @param beanPropName - the name of the corresponding data member on the java bean.
-	 * @param beanType - the java type of the bean class that has the data member.
 	 * @param singleValueType - the java type of the data member.
 	 * @param isMultivalued - if <code>true</code>, bean property is a collection 
 	 * @param owlPropName - the fully qualified name of the Datatype Property in the OWL KB.
-	 * @param metadataKb - the KB itself.
 	 */
 	public DatatypePropertyMap(String beanPropName,
-							   Class<?> beanType,
 							   Class<?> singleValueType,
 							   boolean isMultivalued,
-							   String owlPropName,
-							   OWLModel metadataKb) {
-		super(beanPropName, beanType, singleValueType, isMultivalued, owlPropName, metadataKb);
-		if (!OWLDatatypeProperty.class.isInstance(owlProperty)) {
-			String msg = "Map requires a datatype property, but '"+owlPropName+"' is a "+
-						 owlProperty.getClass().getName();
+							   String owlPropName) {
+		super(beanPropName, singleValueType, isMultivalued, owlPropName);
+	}
+	
+	@Override
+	protected void checkOWLProperty(OWLProperty prop) {
+		if (!(prop instanceof OWLDatatypeProperty)) {
+			String msg = "Map requires a datatype property, but '"+
+			             prop.getName()+"' is a "+
+						 prop.getClass().getName();
 			throw new BPRuntimeException(msg);
 		}
 	}

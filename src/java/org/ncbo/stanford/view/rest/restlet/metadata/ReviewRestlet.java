@@ -4,9 +4,9 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.ncbo.stanford.bean.RatingBean;
-import org.ncbo.stanford.bean.RatingTypeBean;
-import org.ncbo.stanford.bean.ReviewBean;
+import org.ncbo.stanford.bean.metadata.RatingBean;
+import org.ncbo.stanford.bean.metadata.RatingTypeBean;
+import org.ncbo.stanford.bean.metadata.ReviewBean;
 import org.ncbo.stanford.service.metadata.BeanCRUDService;
 import org.ncbo.stanford.service.metadata.ReviewMetadataService;
 import org.ncbo.stanford.service.xml.XMLSerializationService;

@@ -2,7 +2,7 @@ package org.ncbo.stanford.service.metadata.impl;
 
 import java.util.List;
 
-import org.ncbo.stanford.bean.ProjectBean;
+import org.ncbo.stanford.bean.metadata.ProjectBean;
 import org.ncbo.stanford.manager.metakb.ProjectMetadataManager;
 import org.ncbo.stanford.manager.metakb.SimpleObjectManager;
 import org.ncbo.stanford.service.metadata.ProjectMetadataService;
@@ -20,6 +20,10 @@ public class ProjectMetadataServiceImpl extends BeanCRUDServiceImpl<ProjectBean>
 	// Implements BeanCRUDServiceImpl
 	protected SimpleObjectManager<ProjectBean> getObjectManager() {
 		return projectMetadataManager;
+	}
+	
+	public ProjectBean newBean() {
+		return new ProjectBean();
 	}
 
 	// Implements interface

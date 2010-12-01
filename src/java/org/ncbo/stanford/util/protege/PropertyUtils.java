@@ -77,8 +77,7 @@ public class PropertyUtils {
 	 */
 	public static void setPropertyValue(RDFResource res, RDFProperty prop,
 			Object value) {
-		Object owlValue = convertJavaValueToOWL(value, res
-				.getOWLModel());
+		Object owlValue = convertJavaValueToOWL(value, res.getOWLModel());
 		res.setPropertyValue(prop, owlValue);
 	}
 
@@ -182,9 +181,9 @@ public class PropertyUtils {
 	// Convert RDFSLiterals to their corresponding Java types
 	protected static Object convertRDFSLiteralToObject(RDFSLiteral rdfsLiteral) {
 		String typeString = rdfsLiteral.getDatatype().getName();
-		if (typeString == RDFSTYPE_NAME_BOOL) {
+		if (typeString.equals(RDFSTYPE_NAME_BOOL)) {
 			return new Boolean(rdfsLiteral.getBoolean());
-		} else if (typeString == RDFSTYPE_NAME_DATE) {
+		} else if (typeString.equals(RDFSTYPE_NAME_DATE)) {
 			return XMLSchemaDatatypes.getDate(rdfsLiteral.getString());
 		} else {
 			throw new IllegalArgumentException("RDFSLiteral with unrecognized type: "+typeString);

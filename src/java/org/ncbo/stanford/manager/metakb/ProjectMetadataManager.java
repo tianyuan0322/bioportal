@@ -2,7 +2,7 @@ package org.ncbo.stanford.manager.metakb;
 
 import java.util.List;
 
-import org.ncbo.stanford.bean.ProjectBean;
+import org.ncbo.stanford.bean.metadata.ProjectBean;
 import org.ncbo.stanford.exception.MetadataException;
 
 /**

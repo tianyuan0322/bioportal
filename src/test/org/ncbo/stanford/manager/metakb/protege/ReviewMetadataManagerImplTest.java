@@ -7,10 +7,11 @@ import java.util.List;
 import org.junit.Assert;
 import org.junit.Test;
 import org.ncbo.stanford.AbstractBioPortalTest;
-import org.ncbo.stanford.bean.RatingBean;
-import org.ncbo.stanford.bean.RatingTypeBean;
-import org.ncbo.stanford.bean.ReviewBean;
+import org.ncbo.stanford.bean.metadata.RatingBean;
+import org.ncbo.stanford.bean.metadata.RatingTypeBean;
+import org.ncbo.stanford.bean.metadata.ReviewBean;
 import org.ncbo.stanford.exception.MetadataObjectNotFoundException;
+import org.ncbo.stanford.manager.metakb.protege.impl.ReviewMetadataManagerImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 
 /**
@@ -28,7 +29,7 @@ public class ReviewMetadataManagerImplTest extends AbstractBioPortalTest {
 		
 		// == CREATE ==
 		
-		ReviewBean rBean = reviewMan.createObject();
+		ReviewBean rBean = new ReviewBean();
 		rBean.setText("Body_1");
 		rBean.setUserId(new Integer(12));
 		rBean.setOntologyId(new Integer(1000));
@@ -37,13 +38,13 @@ public class ReviewMetadataManagerImplTest extends AbstractBioPortalTest {
 		List<RatingBean> ratings = new ArrayList<RatingBean>();
 		rBean.setRatings(ratings);
 		
-		reviewMan.updateObject(rBean);
+		reviewMan.saveObject(rBean);
 		Integer id = rBean.getId();
 		
 		// == UPDATE == 
 		
 		rBean.setText("Body_2");
-		reviewMan.updateObject(rBean);
+		reviewMan.saveObject(rBean);
 		
 		// == RETRIEVE ==
 		
@@ -90,19 +91,19 @@ public class ReviewMetadataManagerImplTest extends AbstractBioPortalTest {
 	@Test
 	public void testRatings() throws Exception {
 		
-		ReviewBean reviewBean = reviewMan.createObject();
+		ReviewBean reviewBean = new ReviewBean();
 		Integer reviewId = reviewBean.getId();
 		reviewBean.setText("Text");
 		reviewBean.setProjectId(new Integer(12));
-		reviewMan.updateObject(reviewBean);
+		reviewMan.saveObject(reviewBean);
 		
 		RatingTypeBean ratingTypeBean = reviewMan.retrieveRatingType(new Integer(1));
 		
-		RatingBean ratingBean = reviewMan.createRating(reviewBean);
+		RatingBean ratingBean = new RatingBean();
 		Integer ratingId = ratingBean.getId();
 		ratingBean.setValue(new Integer(3));
 		ratingBean.setType(ratingTypeBean);
-		reviewMan.updateRating(ratingBean);
+		reviewMan.addRating(reviewBean, ratingBean);
 		
 		// Retrieve just the rating
 		RatingBean ratingBean_2 = reviewMan.retrieveRating(ratingId);
@@ -118,12 +119,12 @@ public class ReviewMetadataManagerImplTest extends AbstractBioPortalTest {
 		Assert.assertEquals("Problem with rating value", new Integer(3), ratingBean_3.getValue());
 		
 		// Add another rating
-		RatingBean ratingBean_4 = reviewMan.createRating(reviewBean_3);
+		RatingBean ratingBean_4 = new RatingBean();
 		Integer ratingId_4 = ratingBean_4.getId();
 		RatingTypeBean ratingTypeBean_4 = reviewMan.retrieveRatingType(new Integer(2));
 		ratingBean_4.setValue(new Integer(1));
 		ratingBean_4.setType(ratingTypeBean_4);
-		reviewMan.updateRating(ratingBean_4);
+		reviewMan.addRating(reviewBean_3, ratingBean_4);
 		Assert.assertEquals("Trouble adding rating", 2, reviewBean_3.getRatings().size());
 		
 		// Retrieve both the ratings

@@ -4,9 +4,9 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.ncbo.stanford.bean.RatingBean;
-import org.ncbo.stanford.bean.RatingTypeBean;
-import org.ncbo.stanford.bean.ReviewBean;
+import org.ncbo.stanford.bean.metadata.RatingBean;
+import org.ncbo.stanford.bean.metadata.RatingTypeBean;
+import org.ncbo.stanford.bean.metadata.ReviewBean;
 import org.ncbo.stanford.exception.InvalidInputException;
 import org.ncbo.stanford.exception.MetadataException;
 import org.ncbo.stanford.exception.MetadataObjectNotFoundException;
@@ -40,7 +40,7 @@ public class RatingRestlet extends AbstractBaseRestlet {
 
 	// Override AbstractBaseRestlet
 	public void postRequest(Request request, Response response) {
-		RatingBean ratingBean = null;
+		RatingBean ratingBean = new RatingBean();
 		try {
 			// Check that the "id" in the URL path says "new"
 			String idString = (String)request.getAttributes().get("id");
@@ -48,7 +48,7 @@ public class RatingRestlet extends AbstractBaseRestlet {
 				throw new InvalidInputException("Expected id=\"new\" for POST create-rating request");
 			}
 
-			// Get the review id so we can create the rating bean
+			// Get the review so we can add the rating to it
 			HttpServletRequest httpRequest = RequestUtils.getHttpServletRequest(request);
 			String reviewIdString = (String)httpRequest.getParameter(RequestParamConstants.PARAM_META_REV_ID);
 			if (reviewIdString == null || reviewIdString == "") {
@@ -56,7 +56,6 @@ public class RatingRestlet extends AbstractBaseRestlet {
 			}
 			Integer reviewId = new Integer(reviewIdString);
 			ReviewBean reviewBean = reviewMetadataService.retrieveObject(reviewId);
-			ratingBean = reviewMetadataService.createRating(reviewBean);
 			
 			// Populate the rating bean
 			String ratingTypeIdString = (String)httpRequest.getParameter(RequestParamConstants.PARAM_META_RATE_TYPE_ID);
@@ -73,7 +72,7 @@ public class RatingRestlet extends AbstractBaseRestlet {
 			Integer value = new Integer(valueString);
 			ratingBean.setValue(value);
 			
-			reviewMetadataService.updateRating(ratingBean);
+			reviewMetadataService.addRating(reviewBean, ratingBean);
 		} catch (InvalidInputException iie) {
 			response.setStatus(Status.CLIENT_ERROR_BAD_REQUEST,
 							   "Bad parameter input format: "+iie.getMessage());

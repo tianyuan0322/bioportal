@@ -1,6 +1,6 @@
-package org.ncbo.stanford.bean;
+package org.ncbo.stanford.bean.metadata;
 
-import org.ncbo.stanford.bean.TimedIdBean;
+import org.ncbo.stanford.bean.metadata.TimedIdBean;
 
 /**
  * Project objects describe the users' projects.
@@ -16,6 +16,10 @@ public class ProjectBean extends TimedIdBean {
 	private String name = null;
 	private String people = null;
 	private Integer userId = null;
+	
+	public ProjectBean() {
+		super();
+	}
 	
 	public ProjectBean(Integer id) {
 		super(id);

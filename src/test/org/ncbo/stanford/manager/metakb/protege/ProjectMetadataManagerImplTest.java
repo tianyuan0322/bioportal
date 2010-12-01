@@ -6,13 +6,10 @@ import java.util.List;
 import org.junit.Assert;
 import org.junit.Test;
 import org.ncbo.stanford.AbstractBioPortalTest;
-import org.ncbo.stanford.bean.ProjectBean;
+import org.ncbo.stanford.bean.metadata.ProjectBean;
 import org.ncbo.stanford.exception.MetadataObjectNotFoundException;
+import org.ncbo.stanford.manager.metakb.protege.impl.ProjectMetadataManagerImpl;
 import org.springframework.beans.factory.annotation.Autowired;
-
-import edu.stanford.smi.protegex.owl.model.OWLModel;
-import edu.stanford.smi.protegex.owl.model.OWLProperty;
-import edu.stanford.smi.protegex.owl.model.RDFProperty;
 
 /**
  * Basic test for storing ProjectBean in the metadata kb.
@@ -29,15 +26,15 @@ public class ProjectMetadataManagerImplTest extends AbstractBioPortalTest {
 		
 		// == CREATE ==
 		
-		ProjectBean pb = projectMan.createObject();
-		Integer id = pb.getId();
-
+		ProjectBean pb = new ProjectBean();
 		pb.setName("name_1");
 		pb.setDescription("description_1");
 		pb.setHomePage("homepage_1");
 		pb.setInstitution("institution_1");
 		pb.setPeople("people_1");
 		pb.setUserId(new Integer(12));
+		projectMan.saveObject(pb);
+		Integer id = pb.getId();
 		
 		
 		Assert.assertNotNull("Problem setting dateCreated", pb.getDateCreated());
@@ -46,7 +43,7 @@ public class ProjectMetadataManagerImplTest extends AbstractBioPortalTest {
 		// == UPDATE == 
 		
 		pb.setName("name_2");
-		projectMan.updateObject(pb);
+		projectMan.saveObject(pb);
 		
 		// == RETRIEVE ==
 		
@@ -86,15 +83,15 @@ public class ProjectMetadataManagerImplTest extends AbstractBioPortalTest {
 		System.out.println("Got a few: "+results.size());
 	}
 
-	@Test
-	public void testPropertyStuff() throws Exception {
-		OWLModel metaKb = projectMan.getMetadataKb();
-		String pName = "http://protege.stanford.edu/ontologies/ChAO/changes.rdfs#oldName";
-		RDFProperty rProp = metaKb.getRDFProperty(pName);
-		System.out.println("RDFProperty type: "+rProp.getClass().getName());
-		OWLProperty oProp = metaKb.getOWLProperty(pName);
-		System.out.println("OWLProperty type: "+oProp.getClass().getName());
-	}
+//	@Test
+//	public void testPropertyStuff() throws Exception {
+//		OWLModel metaKb = projectMan.getMetadataKb();
+//		String pName = "http://protege.stanford.edu/ontologies/ChAO/changes.rdfs#oldName";
+//		RDFProperty rProp = metaKb.getRDFProperty(pName);
+//		System.out.println("RDFProperty type: "+rProp.getClass().getName());
+//		OWLProperty oProp = metaKb.getOWLProperty(pName);
+//		System.out.println("OWLProperty type: "+oProp.getClass().getName());
+//	}
 	
 //	@Test
 //	public void cleanUpInstances() throws Exception {

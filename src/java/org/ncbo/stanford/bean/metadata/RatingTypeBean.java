@@ -1,4 +1,5 @@
-package org.ncbo.stanford.bean;
+package org.ncbo.stanford.bean.metadata;
+
 
 /**
  * Rating types are the axes along which ratings score ontologies.
@@ -6,7 +7,7 @@ package org.ncbo.stanford.bean;
  * 
  * @author Tony Loeser
  */
-public class RatingTypeBean extends AbstractIdBean {
+public class RatingTypeBean extends MetadataBean {
 
 	String name = null;
 	

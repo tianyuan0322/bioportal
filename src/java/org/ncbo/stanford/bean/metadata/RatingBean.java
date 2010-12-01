@@ -1,4 +1,4 @@
-package org.ncbo.stanford.bean;
+package org.ncbo.stanford.bean.metadata;
 
 /**
  * Ratings are an aspect of reviews; a numerical score along a named axis
@@ -10,6 +10,10 @@ public class RatingBean extends TimedIdBean {
 
 	private RatingTypeBean type = null;
 	private Integer value = null;
+	
+	public RatingBean() {
+		super();
+	}
 	
 	public RatingBean(Integer id) {
 		super(id);

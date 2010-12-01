@@ -1,17 +1,14 @@
-package org.ncbo.stanford.manager.metakb.protege;
+package org.ncbo.stanford.manager.metakb.protege.impl;
 
 import java.util.Collection;
 import java.util.Iterator;
 
-import org.ncbo.stanford.bean.RatingBean;
-import org.ncbo.stanford.bean.RatingTypeBean;
-import org.ncbo.stanford.bean.ReviewBean;
+import org.ncbo.stanford.bean.metadata.RatingBean;
+import org.ncbo.stanford.bean.metadata.RatingTypeBean;
+import org.ncbo.stanford.bean.metadata.ReviewBean;
 import org.ncbo.stanford.exception.MetadataException;
 import org.ncbo.stanford.exception.MetadataObjectNotFoundException;
 import org.ncbo.stanford.manager.metakb.ReviewMetadataManager;
-import org.ncbo.stanford.manager.metakb.protege.DAO.RatingDAO;
-import org.ncbo.stanford.manager.metakb.protege.DAO.RatingTypeDAO;
-import org.ncbo.stanford.manager.metakb.protege.DAO.ReviewDAO;
 
 /**
  * Implementation of {@link ReviewMetadataManager} for Protege OWL metadata KB.
@@ -22,7 +19,7 @@ public class ReviewMetadataManagerImpl extends SimpleObjectManagerImpl<ReviewBea
 		implements ReviewMetadataManager {
 	
 	public ReviewMetadataManagerImpl() {
-		super(ReviewDAO.class);
+		super(ReviewBean.class);
 	}
 	
 	// =========================================================================
@@ -35,7 +32,7 @@ public class ReviewMetadataManagerImpl extends SimpleObjectManagerImpl<ReviewBea
 	public void deleteObject(Integer id) throws MetadataObjectNotFoundException {
 		ReviewBean rBean = retrieveObject(id);
 		for (Iterator<RatingBean> rbIt = rBean.getRatings().iterator(); rbIt.hasNext(); ) {
-			getDAO(RatingDAO.class).deleteObject(rbIt.next().getId());
+			getDALayer().deleteObject(RatingBean.class, rbIt.next().getId());
 		}
 		super.deleteObject(id);
 	}
@@ -46,7 +43,7 @@ public class ReviewMetadataManagerImpl extends SimpleObjectManagerImpl<ReviewBea
 		String query = "SELECT ?obj " +
 					   "WHERE { ?obj <metadata:ontologyId> \""+id+"\"^^xsd:int . " +
 					   "        ?obj <rdf:type> <metadata:Review> . }";
-		return getDAO(ReviewDAO.class).getInstancesForSPARQLQuery(query);
+		return getDALayer().getDAOForBeanType(ReviewBean.class).getInstancesForSPARQLQuery(query);
 	}
 	
 	
@@ -55,45 +52,42 @@ public class ReviewMetadataManagerImpl extends SimpleObjectManagerImpl<ReviewBea
 
 	// Implement from ReviewMetadataManager
 	public Collection<RatingTypeBean> getAllRatingTypes() {
-		return getDAO(RatingTypeDAO.class).getAllObjects();
+		return getDALayer().getAllObjects(RatingTypeBean.class);
 	}
 	
 	// Implement from ReviewMetadataManager
 	public RatingTypeBean retrieveRatingType(Integer id)
 			throws MetadataObjectNotFoundException {
-		return getDAO(RatingTypeDAO.class).retreiveObject(id);
+		return getDALayer().retrieveObject(RatingTypeBean.class, id);
 	}
 
 	// =========================================================================
 	// Ratings
 	
-	// Implement from ReviewMetadataManager
-	public RatingBean createRating(ReviewBean reviewBean)
-			throws MetadataException, MetadataObjectNotFoundException {
-		// Create the new rating instance
-		RatingBean ratingBean = getDAO(RatingDAO.class).createObject();
-		// Add it to the review (both the bean and in the kb)
+	@Override
+	public void addRating(ReviewBean reviewBean, RatingBean ratingBean)
+			throws MetadataObjectNotFoundException, MetadataException {
+		getDALayer().saveObject(ratingBean);
 		Collection<RatingBean> ratings = reviewBean.getRatings();
 		ratings.add(ratingBean);
-		getDAO(ReviewDAO.class).updateObject(reviewBean);
-
-		return ratingBean;
+		getDALayer().saveObject(reviewBean);
 	}
 
-	// Implement from ReviewMetadataManager
-	public RatingBean retrieveRating(Integer id) throws MetadataObjectNotFoundException {
-		return getDAO(RatingDAO.class).retreiveObject(id);
+	@Override
+	public RatingBean retrieveRating(Integer id)
+			throws MetadataObjectNotFoundException {
+		return getDALayer().retrieveObject(RatingBean.class, id);
 	}
 
-	// Implement from ReviewMetadataManager
+	@Override
 	public void deleteRating(Integer ratingId)
 			throws MetadataObjectNotFoundException {
-		getDAO(RatingDAO.class).deleteObject(ratingId);
+		getDALayer().deleteObject(RatingBean.class, ratingId);
 	}
 
-	// Implement from ReviewMetadataManager
+	@Override
 	public void updateRating(RatingBean ratingBean)
 			throws MetadataException, MetadataObjectNotFoundException {
-		getDAO(RatingDAO.class).updateObject(ratingBean);
+		getDALayer().saveObject(ratingBean);
 	}
 }

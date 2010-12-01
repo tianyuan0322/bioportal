@@ -1,11 +1,11 @@
-package org.ncbo.stanford.manager.metakb.protege;
+package org.ncbo.stanford.manager.metakb.protege.impl;
 
 import java.util.List;
 
-import org.ncbo.stanford.bean.ProjectBean;
+import org.ncbo.stanford.bean.metadata.ProjectBean;
 import org.ncbo.stanford.exception.MetadataException;
 import org.ncbo.stanford.manager.metakb.ProjectMetadataManager;
-import org.ncbo.stanford.manager.metakb.protege.DAO.ProjectDAO;
+
 
 /**
  * Implementation of {@link ProjectMetadataManager} for Protege OWL metadata KB.
@@ -16,7 +16,7 @@ public class ProjectMetadataManagerImpl extends SimpleObjectManagerImpl<ProjectB
 		implements ProjectMetadataManager {
 
 	public ProjectMetadataManagerImpl() {
-		super(ProjectDAO.class);
+		super(ProjectBean.class);
 	}
 	
 	@Override
@@ -25,7 +25,7 @@ public class ProjectMetadataManagerImpl extends SimpleObjectManagerImpl<ProjectB
 		String query = "SELECT ?obj " +
 		   "WHERE { ?obj <metadata:userId> \""+userId+"\"^^xsd:int . " +
 		   "        ?obj <rdf:type> <metadata:Project> . }";
-		return getDAO(ProjectDAO.class).getInstancesForSPARQLQuery(query);
+		return getDALayer().getDAOForBeanType(ProjectBean.class).getInstancesForSPARQLQuery(query);
 	}
 	
 }

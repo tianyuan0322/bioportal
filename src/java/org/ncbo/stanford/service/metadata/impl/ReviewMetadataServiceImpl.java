@@ -2,9 +2,9 @@ package org.ncbo.stanford.service.metadata.impl;
 
 import java.util.Collection;
 
-import org.ncbo.stanford.bean.RatingBean;
-import org.ncbo.stanford.bean.RatingTypeBean;
-import org.ncbo.stanford.bean.ReviewBean;
+import org.ncbo.stanford.bean.metadata.RatingBean;
+import org.ncbo.stanford.bean.metadata.RatingTypeBean;
+import org.ncbo.stanford.bean.metadata.ReviewBean;
 import org.ncbo.stanford.exception.MetadataException;
 import org.ncbo.stanford.exception.MetadataObjectNotFoundException;
 import org.ncbo.stanford.manager.metakb.ReviewMetadataManager;
@@ -21,15 +21,20 @@ public class ReviewMetadataServiceImpl extends BeanCRUDServiceImpl<ReviewBean>
 	
 	ReviewMetadataManager reviewMetadataManager;
 
-	// Implement BeanCRUDServiceImpl
+	@Override
 	protected SimpleObjectManager<ReviewBean> getObjectManager() {
 		return reviewMetadataManager;
+	}
+	
+	@Override
+	public ReviewBean newBean() {
+		return new ReviewBean();
 	}
 	
 	// =========================================================================
 	// Rating types
 	
-	// Implement ReviewMetadataService
+	@Override
 	public Collection<RatingTypeBean> getAllRatingTypes() {
 		return reviewMetadataManager.getAllRatingTypes();
 	}
@@ -43,19 +48,21 @@ public class ReviewMetadataServiceImpl extends BeanCRUDServiceImpl<ReviewBean>
 	// =========================================================================
 	// Ratings
 
-	// Implement ReviewMetadataService
-	public RatingBean createRating(ReviewBean reviewBean)
+	@Override
+	public void addRating(ReviewBean reviewBean, RatingBean ratingBean)
 			throws MetadataObjectNotFoundException, MetadataException {
-		return reviewMetadataManager.createRating(reviewBean);
+		reviewMetadataManager.addRating(reviewBean, ratingBean);
 	}
+	
+	
 
-	// Implement ReviewMetadataService
+	@Override
 	public void updateRating(RatingBean ratingBean)
 			throws MetadataObjectNotFoundException, MetadataException {
 		reviewMetadataManager.updateRating(ratingBean);
 	}
 
-	// Implement ReviewMetadataService
+	@Override
 	public void deleteRating(Integer id)
 			throws MetadataObjectNotFoundException {
 		reviewMetadataManager.deleteRating(id);
@@ -65,7 +72,7 @@ public class ReviewMetadataServiceImpl extends BeanCRUDServiceImpl<ReviewBean>
 	// =========================================================================
 	// Reviews
 
-	// Implement ReviewMetadataService
+	@Override
 	public Collection<ReviewBean> getReviewsForOntology(Integer id) 
 			throws MetadataObjectNotFoundException, MetadataException {
 		return reviewMetadataManager.getReviewsForOntology(id);

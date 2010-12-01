@@ -2,9 +2,9 @@ package org.ncbo.stanford.manager.metakb;
 
 import java.util.Collection;
 
-import org.ncbo.stanford.bean.RatingBean;
-import org.ncbo.stanford.bean.RatingTypeBean;
-import org.ncbo.stanford.bean.ReviewBean;
+import org.ncbo.stanford.bean.metadata.RatingBean;
+import org.ncbo.stanford.bean.metadata.RatingTypeBean;
+import org.ncbo.stanford.bean.metadata.ReviewBean;
 import org.ncbo.stanford.exception.MetadataException;
 import org.ncbo.stanford.exception.MetadataObjectNotFoundException;
 
@@ -49,16 +49,19 @@ public interface ReviewMetadataManager extends SimpleObjectManager<ReviewBean> {
 	// ========== Ratings ==========
 
 	/**
-	 * Create a new rating, associated with the given review.
+	 * Save a new rating to the persistent store while adding it to a review.
 	 * 
-	 * @param reviewBean the review with which this rating will be (permanently) associated
-	 * @return the new, blank rating bean (to be filled in and updated)
-	 * @throws MetadataException when there is a problem creating the rating bean
-	 * @throws MetadataObjectNotFoundException when the corresponding review is not present
-	 *     in the persistent store.
+	 * @param reviewBean the review with which this rating will be (permanently)
+	 *     associated
+	 * @param ratingBean the rating to be created and added
+	 * 
+	 * @throws MetadataException when there is a problem creating the rating
+	 *     in the persistent store
+	 * @throws MetadataObjectNotFoundException when the corresponding objects
+	 *     are not present in the persistent store.
 	 */
-	public RatingBean createRating(ReviewBean reviewBean)
-		throws MetadataException, MetadataObjectNotFoundException;
+	public void addRating(ReviewBean reviewBean, RatingBean ratingBean)
+		throws MetadataObjectNotFoundException, MetadataException;
 	
 	/**
 	 * Retrieve the rating corresponding to a unique id.

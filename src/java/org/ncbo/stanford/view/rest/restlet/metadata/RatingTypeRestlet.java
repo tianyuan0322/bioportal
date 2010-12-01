@@ -4,7 +4,7 @@ import java.util.Collection;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.ncbo.stanford.bean.RatingTypeBean;
+import org.ncbo.stanford.bean.metadata.RatingTypeBean;
 import org.ncbo.stanford.service.metadata.ReviewMetadataService;
 import org.ncbo.stanford.service.xml.XMLSerializationService;
 import org.ncbo.stanford.view.rest.restlet.AbstractBaseRestlet;
