@@ -254,7 +254,7 @@ public class RdfServiceImpl extends ConceptServiceImpl implements RdfService {
 		// format
 		if (!StringHelper.isNullOrNullString(ont.getFormat())) {
 			ontologyInfoLiteral = factory.getOWLStringLiteral(ont.getFormat());
-			OWLClass omvClass=factory.getOWLClass(IRI.create(BIOPORTAL_PURL_BASE + "OMV/hasOntologyLanguage"));
+			OWLClass omvClass=factory.getOWLClass(IRI.create("OMV/hasOntologyLanguage"));
 			ontologyInfoAnnotation = factory.getOWLAnnotation(
 					factory.getOWLAnnotationProperty(IRI.create(BIOPORTAL_PURL_BASE + "OMV/hasOntologyLanguage")), 
 					omvClass.getIRI());
@@ -456,17 +456,20 @@ public class RdfServiceImpl extends ConceptServiceImpl implements RdfService {
 			for (ClassBean superClass: superClasses) {
 				manager.addAxiom(ontology, factory.getOWLSubClassOfAxiom(owlClass, 
 						factory.getOWLClass(IRI.create(getClassUri(ont, superClass)))));
+				//Class for Pointing the Reference for SKOS
+				OWLClass owlClassForSkosbroader=factory.getOWLClass(IRI.create(getClassUri(ont, superClass)));
 				// add skos:broader annotation
 				OWLAnnotation skosBroaderAnnotation = factory.getOWLAnnotation(factory.getOWLAnnotationProperty(IRI.create(SKOSVocabulary.BROADER.getURI())),
-						owlClass.getIRI());
+						owlClassForSkosbroader.getIRI());
 				manager.addAxiom(ontology, factory.getOWLAnnotationAssertionAxiom(owlClass.getIRI(), skosBroaderAnnotation));
 
 				
 				// add OBO_ISA annotation
 				if (ont.getFormat().toUpperCase().contains(OBO_FORMAT)) {
-
+					//Class for Pointing the Reference for OBO
+					OWLClass omvClassForObo=factory.getOWLClass(IRI.create(getClassUri(ont, superClass)));
 					OWLAnnotation oboIsaAnnotation = factory.getOWLAnnotation(factory.getOWLAnnotationProperty(IRI.create(oboIsa)),
-							owlClass.getIRI());
+							omvClassForObo.getIRI());
 					manager.addAxiom(ontology, factory.getOWLAnnotationAssertionAxiom(owlClass.getIRI(), oboIsaAnnotation));
 					OWLAnnotation oboIsaAnnotationForLiteral=factory.getOWLAnnotation(factory.getOWLAnnotationProperty(IRI.create(oboIsa)), factory.getOWLStringLiteral(superClass.getId()));
 					manager.addAxiom(ontology, factory.getOWLAnnotationAssertionAxiom(owlClass.getIRI(), oboIsaAnnotationForLiteral));
