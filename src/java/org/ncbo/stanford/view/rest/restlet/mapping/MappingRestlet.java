@@ -7,11 +7,13 @@ import org.apache.commons.logging.LogFactory;
 import org.ncbo.stanford.bean.mapping.MappingParametersBean;
 import org.ncbo.stanford.bean.mapping.OneToOneMappingBean;
 import org.ncbo.stanford.exception.InvalidInputException;
+import org.ncbo.stanford.exception.MappingMissingException;
 import org.ncbo.stanford.service.mapping.MappingService;
 import org.ncbo.stanford.util.RequestUtils;
 import org.ncbo.stanford.util.constants.ApplicationConstants;
 import org.ncbo.stanford.util.paginator.impl.Page;
 import org.ncbo.stanford.view.util.constants.RequestParamConstants;
+import org.openrdf.model.impl.URIImpl;
 import org.restlet.data.Request;
 import org.restlet.data.Response;
 import org.restlet.data.Status;
@@ -29,10 +31,37 @@ public class MappingRestlet extends AbstractMappingRestlet {
 	 * @param response
 	 */
 	public void getRequest(Request request, Response response) {
-		listMapping(request, response);
+		HttpServletRequest httpRequest = RequestUtils
+				.getHttpServletRequest(request);
+
+		// Process base parameters
+		String mappingId = (String) httpRequest
+				.getParameter(RequestParamConstants.PARAM_MAPPING_ID);
+
+		if (mappingId != null) {
+			listMapping(request, response, mappingId);
+		} else {
+			listMappings(request, response);
+		}
+
 	}
 
-	private void listMapping(Request request, Response response) {
+	private void listMapping(Request request, Response response,
+			String mappingId) {
+		OneToOneMappingBean mapping = null;
+		try {
+			mapping = mappingService.getMapping(new URIImpl(mappingId));
+		} catch (MappingMissingException e) {
+			response.setStatus(Status.CLIENT_ERROR_NOT_FOUND, e.getMessage());
+			e.printStackTrace();
+			log.error(e);
+		} finally {
+			xmlSerializationService.generateXMLResponse(request, response,
+					mapping);
+		}
+	}
+
+	private void listMappings(Request request, Response response) {
 		HttpServletRequest httpRequest = RequestUtils
 				.getHttpServletRequest(request);
 

@@ -1,7 +1,11 @@
 package org.ncbo.stanford.view.rest.restlet.mapping;
 
+import java.net.URLDecoder;
+import java.util.ArrayList;
+
 import javax.servlet.http.HttpServletRequest;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.ncbo.stanford.bean.OntologyBean;
@@ -11,6 +15,7 @@ import org.ncbo.stanford.bean.mapping.OneToOneMappingBean;
 import org.ncbo.stanford.enumeration.MappingSourceEnum;
 import org.ncbo.stanford.exception.ConceptNotFoundException;
 import org.ncbo.stanford.exception.InvalidInputException;
+import org.ncbo.stanford.exception.MappingMissingException;
 import org.ncbo.stanford.exception.OntologyNotFoundException;
 import org.ncbo.stanford.service.concept.ConceptService;
 import org.ncbo.stanford.service.mapping.MappingService;
@@ -151,7 +156,7 @@ public class MappingConceptRestlet extends AbstractMappingRestlet {
 					&& targetConceptId != null) {
 				sourceConcept = conceptService.findConcept(sourceOnt.getId(),
 						sourceConceptId, 0, true, true);
-				targetConcept = conceptService.findConcept(sourceOnt.getId(),
+				targetConcept = conceptService.findConcept(targetOnt.getId(),
 						targetConceptId, 0, true, true);
 			}
 
@@ -232,7 +237,7 @@ public class MappingConceptRestlet extends AbstractMappingRestlet {
 		String mappingSourceAlgorithm = (String) httpRequest
 				.getParameter(RequestParamConstants.PARAM_MAPPING_SOURCE_ALGORITHM);
 		String relationshipStr = (String) httpRequest
-				.getParameter(RequestParamConstants.PARAM_RELATIONSHIP);
+				.getParameter(RequestParamConstants.PARAM_RELATION);
 
 		// Post-process parameters
 		Integer sourceOntId = RequestUtils.parseIntegerParam(sourceOntStr);
@@ -245,25 +250,106 @@ public class MappingConceptRestlet extends AbstractMappingRestlet {
 		URI source = new URIImpl(sourceConceptId);
 		URI target = new URIImpl(targetConceptId);
 		URI relation = new URIImpl(relationshipStr);
-		URI mappingSourceSite = new URIImpl(mappingSourceSiteStr);
-		MappingSourceEnum mappingSource = MappingSourceEnum
-				.valueOf(mappingSourceStr);
 
+		URI mappingSourceSite = null;
+		if (mappingSourceSiteStr != null)
+			mappingSourceSite = new URIImpl(mappingSourceSiteStr);
+
+		MappingSourceEnum mappingSource = null;
+		if (mappingSourceStr != null)
+			mappingSource = MappingSourceEnum.valueOf(mappingSourceStr);
+
+		OneToOneMappingBean mapping = null;
+		OntologyBean sourceOnt = null;
+		OntologyBean targetOnt = null;
+		ClassBean sourceConcept = null;
+		ClassBean targetConcept = null;
 		try {
-			mappingService.createMapping(source, target, relation, sourceOntId,
-					targetOntId, sourceOntVersionId, targetOntVersionId,
-					submittedBy, comment, mappingSource, mappingSourceName,
-					mappingSourceContactInfo, mappingSourceSite,
-					mappingSourceAlgorithm, mappingType);
+			// Test for valid ontologies
+			if (sourceOntId != null && targetOntId != null) {
+				sourceOnt = ontologyService
+						.findLatestOntologyOrViewVersion(sourceOntId);
+				targetOnt = ontologyService
+						.findLatestOntologyOrViewVersion(targetOntId);
+			}
+
+			if (sourceOnt == null || targetOnt == null) {
+				throw new InvalidInputException(MessageUtils
+						.getMessage("You must provide a valid ontology id"));
+			}
+
+			// Test for valid concepts
+			if (sourceConceptId != null && targetConceptId != null) {
+				sourceConcept = conceptService.findConcept(sourceOnt.getId(),
+						sourceConceptId, 0, true, true);
+				targetConcept = conceptService.findConcept(targetOnt.getId(),
+						targetConceptId, 0, true, true);
+			}
+
+			if (sourceConcept == null || targetConcept == null) {
+				throw new ConceptNotFoundException(MessageUtils
+						.getMessage("msg.error.conceptNotFound"));
+			}
+
+			// Test to make sure required parameters exist
+			ArrayList<String> missingParams = new ArrayList<String>();
+
+			if (source == null)
+				missingParams.add("source");
+			if (target == null)
+				missingParams.add("target");
+			if (relation == null)
+				missingParams.add("relation");
+			if (mappingType == null)
+				missingParams.add("mappingType");
+			if (submittedBy == null)
+				missingParams.add("submittedBy");
+
+			if (!missingParams.isEmpty()) {
+				throw new InvalidInputException(
+						"The following required parameters were not provided: "
+								+ StringUtils.join(missingParams, ", "));
+			}
+
+			mapping = mappingService.createMapping(source, target, relation,
+					sourceOntId, targetOntId, sourceOntVersionId,
+					targetOntVersionId, submittedBy, comment, mappingSource,
+					mappingSourceName, mappingSourceContactInfo,
+					mappingSourceSite, mappingSourceAlgorithm, mappingType);
 		} catch (Exception e) {
 			response.setStatus(Status.SERVER_ERROR_INTERNAL, e.getMessage());
 			e.printStackTrace();
 			log.error(e);
+		} finally {
+			xmlSerializationService.generateXMLResponse(request, response,
+					mapping);
 		}
 	}
 
 	private void deleteMapping(Request request, Response response) {
+		HttpServletRequest httpRequest = RequestUtils
+				.getHttpServletRequest(request);
 
+		// Process base parameters
+		String mappingId = (String) httpRequest
+				.getParameter(RequestParamConstants.PARAM_MAPPING_ID);
+
+		try {
+			// The parameter isn't getting auto-decoded so do it here
+			mappingId = URLDecoder.decode(mappingId, "UTF-8");
+			
+			mappingService.deleteMapping(new URIImpl(mappingId));
+		} catch (MappingMissingException e) {
+			response.setStatus(Status.CLIENT_ERROR_NOT_FOUND, e.getMessage());
+			log.error(e);
+		} catch (Exception e) {
+			response.setStatus(Status.SERVER_ERROR_INTERNAL, e.getMessage());
+			e.printStackTrace();
+			log.error(e);
+		} finally {
+			xmlSerializationService
+					.generateStatusXMLResponse(request, response);
+		}
 	}
 
 	/**

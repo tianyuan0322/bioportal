@@ -31,10 +31,14 @@ public class MappingServiceImpl implements MappingService {
 			String mappingSourcecontactInfo, URI mappingSourceSite,
 			String mappingSourceAlgorithm, String mappingType)
 			throws MappingExistsException {
+		String mappingSourceStr = "";
+		if (mappingSource != null)
+			mappingSourceStr = mappingSource.toString();
+
 		return convertToMappingBean(mappingDAO.createMapping(source, target,
 				relation, sourceOntologyId, targetOntologyId,
 				sourceOntologyVersion, targetOntologyVersion, submittedBy,
-				comment, mappingSource.toString(), mappingSourceName,
+				comment, mappingSourceStr, mappingSourceName,
 				mappingSourcecontactInfo, mappingSourceSite,
 				mappingSourceAlgorithm, mappingType));
 	}
@@ -304,7 +308,6 @@ public class MappingServiceImpl implements MappingService {
 		mb.setCreatedInTargetOntologyVersion(mapping
 				.getCreatedInSourceOntologyVersion());
 		mb.setDate(mapping.getDate());
-		mb.setDependency(mapping.getDependency());
 		mb.setId(mapping.getId());
 		if (mapping.getMappingSource() != null
 				&& mapping.getMappingSource().length() > 0) {
@@ -336,7 +339,6 @@ public class MappingServiceImpl implements MappingService {
 		otom.setCreatedInTargetOntologyVersion(mapping
 				.getCreatedInSourceOntologyVersion());
 		otom.setDate(mapping.getDate());
-		otom.setDependency(mapping.getDependency());
 		otom.setId(mapping.getId());
 		otom.setMappingSource(mapping.getMappingSource().toString());
 		otom.setMappingSourceAlgorithm(mapping.getMappingSourceAlgorithm());

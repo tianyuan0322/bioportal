@@ -49,7 +49,6 @@ public class CustomNcboMappingDAO {
 			+ "?comment "
 			+ "?date "
 			+ "?submittedBy "
-			+ "?dependency "
 			+ "?mappingType "
 			+ "?mappingSource "
 			+ "?mappingSourceName "
@@ -67,7 +66,6 @@ public class CustomNcboMappingDAO {
 			+ "  ?mappingId <http://protege.stanford.edu/ontologies/mappings/mappings.rdfs#comment> ?comment ."
 			+ "  ?mappingId <http://protege.stanford.edu/ontologies/mappings/mappings.rdfs#date> ?date ."
 			+ "  ?mappingId <http://protege.stanford.edu/ontologies/mappings/mappings.rdfs#submitted_by> ?submittedBy ."
-			+ "  ?mappingId <http://protege.stanford.edu/ontologies/mappings/mappings.rdfs#dependency> ?dependency ."
 			+ "  ?mappingId <http://protege.stanford.edu/ontologies/mappings/mappings.rdfs#mapping_type> ?mappingType ."
 			+ "  ?mappingId <http://protege.stanford.edu/ontologies/mappings/mappings.rdfs#mapping_source> ?mappingSource ."
 			+ "  ?mappingId <http://protege.stanford.edu/ontologies/mappings/mappings.rdfs#mapping_source_name> ?mappingSourceName ."
@@ -88,7 +86,6 @@ public class CustomNcboMappingDAO {
 			+ "  ?mappingId <http://protege.stanford.edu/ontologies/mappings/mappings.rdfs#comment> ?comment ."
 			+ "  ?mappingId <http://protege.stanford.edu/ontologies/mappings/mappings.rdfs#date> ?date ."
 			+ "  ?mappingId <http://protege.stanford.edu/ontologies/mappings/mappings.rdfs#submitted_by> ?submittedBy ."
-			+ "  ?mappingId <http://protege.stanford.edu/ontologies/mappings/mappings.rdfs#dependency> ?dependency ."
 			+ "  ?mappingId <http://protege.stanford.edu/ontologies/mappings/mappings.rdfs#mapping_type> ?mappingType ."
 			+ "  ?mappingId <http://protege.stanford.edu/ontologies/mappings/mappings.rdfs#mapping_source> ?mappingSource ."
 			+ "  ?mappingId <http://protege.stanford.edu/ontologies/mappings/mappings.rdfs#mapping_source_name> ?mappingSourceName ."
@@ -118,7 +115,6 @@ public class CustomNcboMappingDAO {
 
 		// Set metadata properties
 		mapping.setSubmittedBy(submittedBy);
-		mapping.setDependency(mapping.getId());
 		mapping.setDate(new Date());
 		mapping.setComment(comment);
 		mapping.setMappingType(mappingType);
@@ -563,8 +559,6 @@ public class CustomNcboMappingDAO {
 				// Set metadata properties
 				mapping.setSubmittedBy(convertValueToInteger(bs
 						.getValue("submittedBy")));
-				mapping.setDependency(new URIImpl(bs.getValue("mappingId")
-						.stringValue()));
 				mapping.setDate(convertValueToDate(bs.getValue("date")));
 				mapping.setComment(bs.getValue("comment").stringValue());
 				mapping
