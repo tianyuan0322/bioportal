@@ -55,6 +55,10 @@ public interface ApplicationConstants {
 	public static final String COMPOSITE_FILENAME = "joined";
 
 	/**
+	 * Value used when the ontology version is not known
+	 */
+	public static final String UNKNOWN = "unknown";	
+	/**
 	 * Buffer size for compressed files
 	 */
 	public static final Integer BUFFER_SIZE = 2048;

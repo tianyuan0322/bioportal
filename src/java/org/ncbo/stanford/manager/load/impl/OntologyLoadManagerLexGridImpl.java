@@ -3,8 +3,11 @@ package org.ncbo.stanford.manager.load.impl;
 /**
  * Author: Pradip Kanjamala
  */
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.Reader;
 import java.net.URI;
 
 import org.LexGrid.LexBIG.DataModel.Collections.LocalNameList;
@@ -41,6 +44,9 @@ public class OntologyLoadManagerLexGridImpl extends
 
 	private static final Log log = LogFactory
 			.getLog(OntologyLoadManagerLexGridImpl.class);
+	public static String OBO_TERM = "[Term]";
+	public static String OBO_TYPEDEF = "[Typedef]";
+	public static String OBO_DATA_VERSION = "data-version:";
 
 	/**
 	 * A comma delimited list of UMLS terminologies to load. If null, all
@@ -107,15 +113,15 @@ public class OntologyLoadManagerLexGridImpl extends
 			loader = lbsm
 					.getLoader(org.LexGrid.LexBIG.Extensions.Load.UmlsBatchLoader.NAME);
 			((UmlsBatchLoader) loader).loadUmls(ontologyUri, ob
-					.getTargetTerminologies());			
+					.getTargetTerminologies());
 		}
 		// Load META
 		else if (ob.getFormat().equalsIgnoreCase(
 				ApplicationConstants.FORMAT_META)) {
 			loader = lbsm
 					.getLoader(org.LexGrid.LexBIG.Extensions.Load.MetaBatchLoader.NAME);
-			((MetaBatchLoader) loader).loadMeta(ontologyUri);	
-		} 
+			((MetaBatchLoader) loader).loadMeta(ontologyUri);
+		}
 		// Load LEXGRID XML
 		else if (ob.getFormat().equalsIgnoreCase(
 				ApplicationConstants.FORMAT_LEXGRID_XML)) {
@@ -171,7 +177,7 @@ public class OntologyLoadManagerLexGridImpl extends
 
 			String urnAndVersion = urn + "|" + version;
 			ob.setCodingScheme(urnAndVersion);
-			setOntologyBeanVersion(ob, version); 
+			setOntologyBeanVersion(ob, version, ontologyUri);
 			log
 					.debug("Updating the NcboOntologyMetadata with the codingScheme name="
 							+ urnAndVersion);
@@ -292,16 +298,46 @@ public class OntologyLoadManagerLexGridImpl extends
 
 		return res;
 	}
-	
-	private void setOntologyBeanVersion(OntologyBean ontologyBean, String version) {
+
+	private void setOntologyBeanVersion(OntologyBean ontologyBean,
+			String version, URI ontologyUri) {
 		if (StringUtils.isBlank(ontologyBean.getVersionNumber())) {
-			//The ontologyBean doesn't have a version...try and get a version number from the source
-			if (StringUtils.isNotBlank(version) && ! version.equalsIgnoreCase("UNASSIGNED")) {
+			if (ontologyBean.getFormat().equalsIgnoreCase(
+					ApplicationConstants.FORMAT_OBO)) {
+				//for obo ontologies, we read the file to find the version
+				version = ApplicationConstants.UNKNOWN;
+				File ontologyFile = new File(ontologyUri.getPath());
+				try {
+					BufferedReader reader = new BufferedReader(new FileReader(
+							ontologyFile));
+
+					String text = null;
+					while ((text = reader.readLine()) != null) {
+						if (text.startsWith(OBO_DATA_VERSION)) {
+							version = text.substring(OBO_DATA_VERSION.length())
+									.trim();
+							break;
+						}
+						if (text.contains(OBO_TERM)
+								|| text.contains(OBO_TYPEDEF)) {
+							// We have finished reading the header, no
+							// data-version found
+							break;
+						}
+
+					}
+				} catch (Exception ex) {
+					ex.printStackTrace();
+				}
+
+			}
+			
+			if (StringUtils.isNotBlank(version)) {
 				ontologyBean.setVersionNumber(version);
 			} else {
-				ontologyBean.setVersionNumber("UNKNOWN");
+				ontologyBean.setVersionNumber(ApplicationConstants.UNKNOWN);
 			}
 		}
-		
+
 	}
 }

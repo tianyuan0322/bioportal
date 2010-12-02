@@ -43,8 +43,8 @@ public class OntologyLoaderLexGridImplTest extends AbstractBioPortalTest {
 	public final static String OBO_FUNGAL_PATHNAME = "test/sample_data/fungal_anatomy.obo";
 	public final static String OBO_FUNGAL_URN_VERSION = "urn:lsid:bioontology.org:fungal|UNASSIGNED";
 	public final static String OBO_FUNGAL_DISPLAY_LABEL = "fungal";
-	
-	public final static String OBO_PLANT_ANATOMY_DISPLAY_LABEL ="po_anatomy";
+
+	public final static String OBO_PLANT_ANATOMY_DISPLAY_LABEL = "po_anatomy";
 
 	public final static String OBO_CELL_OLD_PATHNAME = "test/sample_data/cell_old.obo";
 	public final static String OBO_CELL_OLD_URN_VERSION = "urn:lsid:bioontology.org:cell|UNASSIGNED";
@@ -70,10 +70,10 @@ public class OntologyLoaderLexGridImplTest extends AbstractBioPortalTest {
 	public final static String UMLS_NOHIERACHY_PATHNAME = "test/sample_data/CPT/";
 	public final static String UMLS_NOHIERACHY_URN_VERSION = "urn:oid:2.16.840.1.113883.6.12|2010";
 	public final static String UMLS_NOHIERACHY_DISPLAY_LABEL = "CPT";
-	
+
 	public final static String UMLS_MTHCH_PATHNAME = "test/sample_data/MTHCH/";
 	public final static String UMLS_MTHCH_URN_VERSION = "urn:oid:2.16.840.1.113883.6.190|2010";
-	public final static String UMLS_MTHCH_DISPLAY_LABEL = "MTHCH";	
+	public final static String UMLS_MTHCH_DISPLAY_LABEL = "MTHCH";
 
 	public final static String LEXGRID_HL7_PATHNAME = "test/sample_data/RIM_0230.xml";
 	public final static String LEXGRID_HL7_URN_VERSION = "http://www.hl7.org/Library/data-model/RIM|V 02-30";
@@ -302,7 +302,7 @@ public class OntologyLoaderLexGridImplTest extends AbstractBioPortalTest {
 		System.out
 				.println("OntologyLoaderLexGridImplTest: testLoadUMLSMTHCH().................... END");
 	}
-	
+
 	@Test
 	public void testLoadOboFungal() throws Exception {
 		System.out
@@ -328,7 +328,7 @@ public class OntologyLoaderLexGridImplTest extends AbstractBioPortalTest {
 		System.out
 				.println("OntologyLoaderLexGridImplTest: testLoadOboFromURI().................. BEGIN");
 		OntologyBean ontologyBean = this.createOntolgyBeanOboURI();
-		
+
 		// create - pass FileHandler
 		ontologyService.createOntologyOrView(ontologyBean,
 				getFilePathHandler(ontologyBean));
@@ -338,7 +338,7 @@ public class OntologyLoaderLexGridImplTest extends AbstractBioPortalTest {
 		// load
 		ontologyLoadSchedulerService.parseOntologies(Arrays.asList(ontologyBean
 				.getId()), null);
-		assertTrue(ontologyBean.getCodingScheme() != null);		
+		assertTrue(ontologyBean.getCodingScheme() != null);
 		System.out
 				.println("OntologyLoaderLexGridImplTest: testLoadOboFromURI().................... END");
 	}
@@ -347,15 +347,15 @@ public class OntologyLoaderLexGridImplTest extends AbstractBioPortalTest {
 	public void testLoadAndCleanup() throws Exception {
 		System.out.println("testLoadAndCleanup()");
 
-//		OntologyBean ob = loadManagerLexGrid
-//				.getLatestOntologyBean(OBO_FUNGAL_DISPLAY_LABEL);
-		OntologyBean ob = loadManagerLexGrid.getOntologyBeanByDisplayNameAndOntologyId(
-		OntologyLoaderLexGridImplTest.OBO_CELL_DISPLAY_LABEL,
-		OntologyLoaderLexGridImplTest.OBO_CELL_ONTOLOGY_ID);
+		// OntologyBean ob = loadManagerLexGrid
+		// .getLatestOntologyBean(OBO_FUNGAL_DISPLAY_LABEL);
+		OntologyBean ob = loadManagerLexGrid
+				.getOntologyBeanByDisplayNameAndOntologyId(
+						OntologyLoaderLexGridImplTest.OBO_CELL_OLD_DISPLAY_LABEL,
+						OntologyLoaderLexGridImplTest.OBO_CELL_ONTOLOGY_ID);
 		ontologyService.deleteOntologyOrView(ob.getId(), true, true);
 
-		
-//		loadManagerLexGrid.cleanup(ob);
+		// loadManagerLexGrid.cleanup(ob);
 	}
 
 	private OntologyBean createOntolgyBeanOboCell() {
@@ -379,9 +379,10 @@ public class OntologyLoaderLexGridImplTest extends AbstractBioPortalTest {
 
 	private OntologyBean createOntolgyBeanOboURI() {
 		OntologyBean bean = createOntolgyBeanBase();
-		bean.setDownloadLocation("http://palea.cgrb.oregonstate.edu/viewsvn/Poc/trunk/ontology/OBO_format/po_anatomy.obo?view=co");
+		bean
+				.setDownloadLocation("http://palea.cgrb.oregonstate.edu/viewsvn/Poc/trunk/ontology/OBO_format/po_anatomy.obo?view=co");
 		bean.setFormat(ApplicationConstants.FORMAT_OBO);
-		//bean.setCodingScheme(OBO_FUNGAL_URN_VERSION);
+		// bean.setCodingScheme(OBO_FUNGAL_URN_VERSION);
 		bean.setDisplayLabel(OBO_PLANT_ANATOMY_DISPLAY_LABEL);
 		return bean;
 	}
@@ -452,7 +453,6 @@ public class OntologyLoaderLexGridImplTest extends AbstractBioPortalTest {
 		return bean;
 	}
 
-	
 	private OntologyBean createOntolgyBeanUMLSNoHierarchy() {
 		OntologyBean bean = createOntolgyBeanBase();
 		bean.setFormat(ApplicationConstants.FORMAT_UMLS_RRF);
@@ -474,7 +474,7 @@ public class OntologyLoaderLexGridImplTest extends AbstractBioPortalTest {
 		bean.setContactName("Umls Name");
 		return bean;
 	}
-	
+
 	private OntologyBean createOntolgyBeanBase() {
 		OntologyBean bean = new OntologyBean(false);
 		// bean.setOntologyId(3000);
@@ -484,7 +484,6 @@ public class OntologyLoaderLexGridImplTest extends AbstractBioPortalTest {
 		bean.setCodingScheme(OBO_CELL_URN_VERSION);
 		bean.setDisplayLabel(OBO_CELL_DISPLAY_LABEL);
 		bean.setUserId(1000);
-		bean.setVersionNumber("1.0");
 		bean.setStatusId(StatusEnum.STATUS_WAITING.getStatus());
 		bean.setVersionStatus("pre-production");
 		bean.setIsRemote(new Byte("0"));
