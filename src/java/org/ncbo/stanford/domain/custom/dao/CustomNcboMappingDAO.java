@@ -17,6 +17,7 @@ import org.ncbo.stanford.util.constants.ApplicationConstants;
 import org.openrdf.model.Statement;
 import org.openrdf.model.URI;
 import org.openrdf.model.Value;
+import org.openrdf.model.ValueFactory;
 import org.openrdf.model.impl.LiteralImpl;
 import org.openrdf.model.impl.URIImpl;
 import org.openrdf.query.BindingSet;
@@ -134,20 +135,22 @@ public class CustomNcboMappingDAO {
 	public OneToOneMapping createMapping(OneToOneMapping newMapping)
 			throws MappingExistsException {
 		ObjectConnection con = getRdfStoreManager().getObjectConnection();
-
-		OneToOneMapping mapping = new OneToOneMapping();
-		try {
-			if (hasMapping(newMapping.getId(), con)) {
-				throw new MappingExistsException();
+		ValueFactory vf = getRdfStoreManager().getValueFactory();
+		
+		ArrayList<Statement> statements = newMapping.toStatements(vf);
+		
+		for (Statement statement : statements) {
+			try {
+				con.add(statement, ApplicationConstants.MAPPING_CONTEXT_URI);
+			} catch (RepositoryException e) {
+				e.printStackTrace();
 			}
-
-			con.addObject(newMapping.getId(), newMapping);
-			mapping = con.getObject(OneToOneMapping.class, newMapping.getId());
-		} catch (RepositoryException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (QueryEvaluationException e) {
-			// TODO Auto-generated catch block
+		}
+		
+		OneToOneMapping mapping = null;
+		try {
+			mapping = getMapping(newMapping.getId());
+		} catch (MappingMissingException e) {
 			e.printStackTrace();
 		}
 
@@ -161,15 +164,17 @@ public class CustomNcboMappingDAO {
 		OneToOneMapping mapping = null;
 		try {
 			if (hasMapping(id, con)) {
-				mapping = con.getObject(OneToOneMapping.class, id);
+				ArrayList<OneToOneMapping> mappings = getMappings(1, 0,
+						"?mappingId = <" + id + ">", null);
+				if (mappings != null && !mappings.isEmpty()) {
+					mapping = mappings.get(0);
+				} else {
+					throw new MappingMissingException();
+				}
 			} else {
 				throw new MappingMissingException();
 			}
-		} catch (RepositoryException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (QueryEvaluationException e) {
-			// TODO Auto-generated catch block
+		} catch (InvalidInputException e) {
 			e.printStackTrace();
 		}
 
@@ -572,10 +577,17 @@ public class CustomNcboMappingDAO {
 						.stringValue());
 				mapping.setMappingSourcecontactInfo(bs.getValue(
 						"mappingSourceContactInfo").stringValue());
-				mapping.setMappingSourceSite(new URIImpl(bs.getValue(
-						"mappingSourceSite").stringValue()));
 				mapping.setMappingSourceAlgorithm(bs.getValue(
 						"mappingSourceAlgorithm").stringValue());
+
+				// Because this can be blank we have to deal with empty strings
+				String mappingSourceSite = bs.getValue("mappingSourceSite")
+						.stringValue();
+				URI mappingSourceSiteURI = null;
+				if (!mappingSourceSite.isEmpty()) {
+					mappingSourceSiteURI = new URIImpl(mappingSourceSite);
+				}
+				mapping.setMappingSourceSite(mappingSourceSiteURI);
 
 				mappings.add(mapping);
 			}

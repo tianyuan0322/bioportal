@@ -31,6 +31,7 @@ public class MappingServiceImpl implements MappingService {
 			String mappingSourcecontactInfo, URI mappingSourceSite,
 			String mappingSourceAlgorithm, String mappingType)
 			throws MappingExistsException {
+		// Verify that there's a string provided to avoid null pointer exception
 		String mappingSourceStr = "";
 		if (mappingSource != null)
 			mappingSourceStr = mappingSource.toString();
@@ -306,7 +307,7 @@ public class MappingServiceImpl implements MappingService {
 		mb.setCreatedInSourceOntologyVersion(mapping
 				.getCreatedInSourceOntologyVersion());
 		mb.setCreatedInTargetOntologyVersion(mapping
-				.getCreatedInSourceOntologyVersion());
+				.getCreatedInTargetOntologyVersion());
 		mb.setDate(mapping.getDate());
 		mb.setId(mapping.getId());
 		if (mapping.getMappingSource() != null

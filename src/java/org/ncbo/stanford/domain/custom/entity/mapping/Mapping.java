@@ -1,53 +1,51 @@
 package org.ncbo.stanford.domain.custom.entity.mapping;
 
 import java.io.Serializable;
-import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.UUID;
 
+import org.ncbo.stanford.annotation.IRI;
 import org.ncbo.stanford.util.constants.ApplicationConstants;
 import org.openrdf.model.Statement;
 import org.openrdf.model.URI;
-import org.openrdf.model.Value;
-import org.openrdf.model.impl.StatementImpl;
+import org.openrdf.model.ValueFactory;
 import org.openrdf.model.impl.URIImpl;
-import org.openrdf.repository.object.annotations.iri;
 
-@iri("http://protege.stanford.edu/ontologies/mappings/mappings.rdfs#Mapping")
+@IRI("http://protege.stanford.edu/ontologies/mappings/mappings.rdfs#Mapping")
 public abstract class Mapping implements Serializable {
 
 	private static final long serialVersionUID = -237079713755255918L;
 
-	@iri(ApplicationConstants.MAPPING_PREFIX + "id")
-	private URI id;
+	@IRI(ApplicationConstants.MAPPING_PREFIX + "id")
+	protected URI id;
 
-	@iri(ApplicationConstants.MAPPING_PREFIX + "comment")
-	private String comment;
+	@IRI(ApplicationConstants.MAPPING_PREFIX + "date")
+	protected Date date;
 
-	@iri(ApplicationConstants.MAPPING_PREFIX + "date")
-	private Date date;
+	@IRI(ApplicationConstants.MAPPING_PREFIX + "submitted_by")
+	protected Integer submittedBy;
 
-	@iri(ApplicationConstants.MAPPING_PREFIX + "submitted_by")
-	private Integer submittedBy;
+	@IRI(ApplicationConstants.MAPPING_PREFIX + "comment")
+	protected String comment;
 
-	@iri(ApplicationConstants.MAPPING_PREFIX + "mapping_type")
-	private String mappingType;
+	@IRI(ApplicationConstants.MAPPING_PREFIX + "mapping_type")
+	protected String mappingType;
 
-	@iri(ApplicationConstants.MAPPING_PREFIX + "mapping_source")
-	private String mappingSource;
+	@IRI(ApplicationConstants.MAPPING_PREFIX + "mapping_source")
+	protected String mappingSource;
 
-	@iri(ApplicationConstants.MAPPING_PREFIX + "mapping_source_name")
-	private String mappingSourceName;
+	@IRI(ApplicationConstants.MAPPING_PREFIX + "mapping_source_name")
+	protected String mappingSourceName;
 
-	@iri(ApplicationConstants.MAPPING_PREFIX + "mapping_source_contact_info")
-	private String mappingSourcecontactInfo;
+	@IRI(ApplicationConstants.MAPPING_PREFIX + "mapping_source_contact_info")
+	protected String mappingSourcecontactInfo;
 
-	@iri(ApplicationConstants.MAPPING_PREFIX + "mapping_source_site")
-	private URI mappingSourceSite;
+	@IRI(ApplicationConstants.MAPPING_PREFIX + "mapping_source_site")
+	protected URI mappingSourceSite;
 
-	@iri(ApplicationConstants.MAPPING_PREFIX + "mapping_source_algorithm")
-	private String mappingSourceAlgorithm;
+	@IRI(ApplicationConstants.MAPPING_PREFIX + "mapping_source_algorithm")
+	protected String mappingSourceAlgorithm;
 
 	/**
 	 * Default no-arg constructor.
@@ -78,41 +76,7 @@ public abstract class Mapping implements Serializable {
 	 * 
 	 * @return
 	 */
-	public ArrayList<Statement> toStatements() {
-		Field[] fields = Mapping.class.getDeclaredFields();
-		ArrayList<Statement> statements = new ArrayList<Statement>();
-		URI objectId = this.getId();
-
-		// Gather properties
-		for (Field field : fields) {
-			if (field.getAnnotation(iri.class) != null) {
-				URI type = new URIImpl(field.getAnnotation(iri.class).value());
-
-				Statement statement = null;
-				try {
-					statement = new StatementImpl(objectId, type, (Value) field
-							.get(this));
-				} catch (IllegalArgumentException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				} catch (IllegalAccessException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-
-				if (statement != null) {
-					statements.add(statement);
-				}
-			}
-		}
-
-		// Get the object type
-		URI objectType = new URIImpl(Mapping.class.getAnnotation(iri.class)
-				.value());
-		statements.add(new StatementImpl((objectId), null, objectType));
-
-		return statements;
-	}
+	public abstract ArrayList<Statement> toStatements(ValueFactory vf);
 
 	/**
 	 * @return the id

@@ -311,6 +311,15 @@ public class MappingConceptRestlet extends AbstractMappingRestlet {
 								+ StringUtils.join(missingParams, ", "));
 			}
 
+			// Default values
+			if (sourceOntVersionId == null) {
+				sourceOntVersionId = sourceOnt.getId();
+			}
+			
+			if (targetOntVersionId == null) {
+				targetOntVersionId = targetOnt.getId();
+			}
+			
 			mapping = mappingService.createMapping(source, target, relation,
 					sourceOntId, targetOntId, sourceOntVersionId,
 					targetOntVersionId, submittedBy, comment, mappingSource,

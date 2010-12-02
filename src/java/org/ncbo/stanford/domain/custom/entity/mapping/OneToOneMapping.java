@@ -3,7 +3,15 @@ package org.ncbo.stanford.domain.custom.entity.mapping;
 import java.io.Serializable;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
+import java.util.Date;
+import java.util.GregorianCalendar;
 
+import javax.xml.datatype.DatatypeConfigurationException;
+import javax.xml.datatype.DatatypeFactory;
+import javax.xml.datatype.XMLGregorianCalendar;
+
+import org.apache.commons.lang.ArrayUtils;
+import org.ncbo.stanford.annotation.IRI;
 import org.ncbo.stanford.util.constants.ApplicationConstants;
 import org.openrdf.model.Statement;
 import org.openrdf.model.URI;
@@ -11,33 +19,32 @@ import org.openrdf.model.Value;
 import org.openrdf.model.ValueFactory;
 import org.openrdf.model.impl.StatementImpl;
 import org.openrdf.model.impl.URIImpl;
-import org.openrdf.repository.object.annotations.iri;
 
-@iri(ApplicationConstants.MAPPING_PREFIX + "One_To_One_Mapping")
+@IRI(ApplicationConstants.MAPPING_PREFIX + "One_To_One_Mapping")
 public class OneToOneMapping extends Mapping implements Serializable {
 
 	private static final long serialVersionUID = 5668752344409465584L;
 
-	@iri(ApplicationConstants.MAPPING_PREFIX + "source")
+	@IRI(ApplicationConstants.MAPPING_PREFIX + "source")
 	private URI source;
 
-	@iri(ApplicationConstants.MAPPING_PREFIX + "target")
+	@IRI(ApplicationConstants.MAPPING_PREFIX + "target")
 	private URI target;
 
-	@iri(ApplicationConstants.MAPPING_PREFIX + "relation")
+	@IRI(ApplicationConstants.MAPPING_PREFIX + "relation")
 	private URI relation;
 
-	@iri(ApplicationConstants.MAPPING_PREFIX + "source_ontology_id")
+	@IRI(ApplicationConstants.MAPPING_PREFIX + "source_ontology_id")
 	private Integer sourceOntologyId;
 
-	@iri(ApplicationConstants.MAPPING_PREFIX + "target_ontology_id")
+	@IRI(ApplicationConstants.MAPPING_PREFIX + "target_ontology_id")
 	private Integer targetOntologyId;
 
-	@iri(ApplicationConstants.MAPPING_PREFIX
+	@IRI(ApplicationConstants.MAPPING_PREFIX
 			+ "created_in_source_ontology_version")
 	private Integer createdInSourceOntologyVersion;
 
-	@iri(ApplicationConstants.MAPPING_PREFIX
+	@IRI(ApplicationConstants.MAPPING_PREFIX
 			+ "created_in_target_ontology_version")
 	private Integer createdInTargetOntologyVersion;
 
@@ -57,39 +64,51 @@ public class OneToOneMapping extends Mapping implements Serializable {
 		super(id);
 	}
 
-	/**
-	 * Generate a list of Statements representing this object.
-	 * 
-	 * @return
-	 */
 	public ArrayList<Statement> toStatements(ValueFactory vf) {
-		Field[] fields = OneToOneMapping.class.getDeclaredFields();
+		Field[] thisFields = this.getClass().getDeclaredFields();
+		Field[] parentFields = this.getClass().getSuperclass()
+				.getDeclaredFields();
+		Field[] fields = (Field[]) ArrayUtils.addAll(thisFields, parentFields);
+
 		ArrayList<Statement> statements = new ArrayList<Statement>();
+		
 		URI objectId = this.getId();
 
 		// Gather properties
 		for (Field field : fields) {
-			if (field.getAnnotation(iri.class) != null) {
-				URI type = new URIImpl(field.getAnnotation(iri.class).value());
+			if (field.getAnnotation(IRI.class) != null) {
+				URI type = new URIImpl(field.getAnnotation(IRI.class).value());
 
 				Statement statement = null;
 				try {
 					// We need to convert primitives to proper RDF store types
 					Object value = field.get(this);
-					Value valueTyped;
-					if (value.getClass() == Integer.class) {
+					Value valueTyped = null;
+					if (value == null) {
+						valueTyped = vf.createLiteral((String) "");
+					} else if (value.getClass() == Integer.class) {
 						valueTyped = vf.createLiteral((Integer) value);
 					} else if (value.getClass() == String.class) {
 						valueTyped = vf.createLiteral((String) value);
+					} else if (value.getClass() == Date.class) {
+						Date date = (Date) value;
+						GregorianCalendar c = new GregorianCalendar();
+						c.setTime(date);
+						XMLGregorianCalendar XMLGregCal = DatatypeFactory
+								.newInstance().newXMLGregorianCalendar(c);
+						valueTyped = vf.createLiteral(XMLGregCal);
 					} else {
 						valueTyped = (Value) value;
 					}
-					
+
 					statement = new StatementImpl(objectId, type, valueTyped);
 				} catch (IllegalArgumentException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
 				} catch (IllegalAccessException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				} catch (DatatypeConfigurationException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
@@ -102,8 +121,9 @@ public class OneToOneMapping extends Mapping implements Serializable {
 
 		// Get the object type
 		URI objectType = new URIImpl(OneToOneMapping.class.getAnnotation(
-				iri.class).value());
-		statements.add(new StatementImpl((objectId), null, objectType));
+				IRI.class).value());
+		statements.add(new StatementImpl((objectId),
+				ApplicationConstants.RDF_TYPE_URI, objectType));
 
 		return statements;
 	}
