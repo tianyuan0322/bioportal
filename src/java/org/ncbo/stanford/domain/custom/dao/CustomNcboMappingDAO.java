@@ -567,6 +567,10 @@ public class CustomNcboMappingDAO {
 								.getValue("createdInTargetOntologyVersion")));
 
 				// Set metadata properties
+				if (!bs.getValue("dependency").stringValue().isEmpty()) {
+					mapping.setDependency(new URIImpl(bs.getValue("dependency")
+							.stringValue()));
+				}
 				mapping.setSubmittedBy(convertValueToInteger(bs
 						.getValue("submittedBy")));
 				mapping.setDate(convertValueToDate(bs.getValue("date")));
