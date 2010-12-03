@@ -471,8 +471,7 @@ public class RdfServiceImpl extends ConceptServiceImpl implements RdfService {
 					OWLAnnotation oboIsaAnnotation = factory.getOWLAnnotation(factory.getOWLAnnotationProperty(IRI.create(oboIsa)),
 							omvClassForObo.getIRI());
 					manager.addAxiom(ontology, factory.getOWLAnnotationAssertionAxiom(owlClass.getIRI(), oboIsaAnnotation));
-					OWLAnnotation oboIsaAnnotationForLiteral=factory.getOWLAnnotation(factory.getOWLAnnotationProperty(IRI.create(oboIsa)), factory.getOWLStringLiteral(superClass.getId()));
-					manager.addAxiom(ontology, factory.getOWLAnnotationAssertionAxiom(owlClass.getIRI(), oboIsaAnnotationForLiteral));
+					
 				}
 			}
 		} else {
