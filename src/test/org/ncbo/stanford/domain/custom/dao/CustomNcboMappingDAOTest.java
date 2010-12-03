@@ -38,7 +38,7 @@ public class CustomNcboMappingDAOTest extends AbstractBioPortalTest {
 									"http://purl.org/obo/owl/UBERON#UBERON_0001062"),
 							new URIImpl(
 									"http://protege.stanford.edu/ontologies/mappings/mappings.rdfs#owl:sameAs"),
-							1099, 1404, 44203, 44301, 99, "Test comment",
+							1099, 1404, 44203, 44301, 99, null, "Test comment",
 							MappingSourceEnum.APPLICATION.toString(),
 							"Test Source Name",
 							"Paul Alexander (palexander@stanford.edu)",
@@ -115,7 +115,7 @@ public class CustomNcboMappingDAOTest extends AbstractBioPortalTest {
 		try {
 			mapping = mappingDAO.updateMapping(mappingId, null, null, null,
 					sourceOntologyId, targetOntologyId, sourceOntologyVersion,
-					targetOntologyVersion, null, comment, null, null, null,
+					targetOntologyVersion, null, null, comment, null, null, null,
 					null, null, null);
 
 			assertEquals(sourceOntologyId, mapping.getSourceOntologyId());

@@ -26,11 +26,14 @@ public abstract class Mapping implements Serializable {
 	@IRI(ApplicationConstants.MAPPING_PREFIX + "submitted_by")
 	protected Integer submittedBy;
 
-	@IRI(ApplicationConstants.MAPPING_PREFIX + "comment")
-	protected String comment;
-
 	@IRI(ApplicationConstants.MAPPING_PREFIX + "mapping_type")
 	protected String mappingType;
+
+	@IRI(ApplicationConstants.MAPPING_PREFIX + "dependency")
+	protected URI dependency;
+
+	@IRI(ApplicationConstants.MAPPING_PREFIX + "comment")
+	protected String comment;
 
 	@IRI(ApplicationConstants.MAPPING_PREFIX + "mapping_source")
 	protected String mappingSource;
@@ -91,6 +94,21 @@ public abstract class Mapping implements Serializable {
 	 */
 	public void setId(URI id) {
 		this.id = id;
+	}
+
+	/**
+	 * @return the dependency
+	 */
+	public URI getDependency() {
+		return dependency;
+	}
+
+	/**
+	 * @param dependency
+	 *            the dependency to set
+	 */
+	public void setDependency(URI dependency) {
+		this.dependency = dependency;
 	}
 
 	/**

@@ -220,6 +220,8 @@ public class MappingConceptRestlet extends AbstractMappingRestlet {
 				.getParameter(RequestParamConstants.PARAM_SOURCE_VERSION_ONT_ID);
 		String targetOntVersionIdStr = (String) httpRequest
 				.getParameter(RequestParamConstants.PARAM_TARGET_VERSION_ONT_ID);
+		String unidirectionalStr = (String) httpRequest
+				.getParameter(RequestParamConstants.PARAM_UNIDIRECTIONAL);
 		String comment = (String) httpRequest
 				.getParameter(RequestParamConstants.PARAM_COMMENT);
 		String submittedByStr = (String) httpRequest
@@ -247,6 +249,8 @@ public class MappingConceptRestlet extends AbstractMappingRestlet {
 		Integer targetOntVersionId = RequestUtils
 				.parseIntegerParam(targetOntVersionIdStr);
 		Integer submittedBy = RequestUtils.parseIntegerParam(submittedByStr);
+		Boolean unidirectional = RequestUtils
+				.parseBooleanParam(unidirectionalStr);
 		URI source = new URIImpl(sourceConceptId);
 		URI target = new URIImpl(targetConceptId);
 		URI relation = new URIImpl(relationshipStr);
@@ -259,7 +263,9 @@ public class MappingConceptRestlet extends AbstractMappingRestlet {
 		if (mappingSourceStr != null)
 			mappingSource = MappingSourceEnum.valueOf(mappingSourceStr);
 
-		OneToOneMappingBean mapping = null;
+		OneToOneMappingBean mapping1 = null;
+		OneToOneMappingBean mapping2 = null;
+		ArrayList<OneToOneMappingBean> mappings = new ArrayList<OneToOneMappingBean>();
 		OntologyBean sourceOnt = null;
 		OntologyBean targetOnt = null;
 		ClassBean sourceConcept = null;
@@ -315,23 +321,43 @@ public class MappingConceptRestlet extends AbstractMappingRestlet {
 			if (sourceOntVersionId == null) {
 				sourceOntVersionId = sourceOnt.getId();
 			}
-			
+
 			if (targetOntVersionId == null) {
 				targetOntVersionId = targetOnt.getId();
 			}
-			
-			mapping = mappingService.createMapping(source, target, relation,
+
+			mapping1 = mappingService.createMapping(source, target, relation,
 					sourceOntId, targetOntId, sourceOntVersionId,
-					targetOntVersionId, submittedBy, comment, mappingSource,
-					mappingSourceName, mappingSourceContactInfo,
+					targetOntVersionId, submittedBy, null, comment,
+					mappingSource, mappingSourceName, mappingSourceContactInfo,
 					mappingSourceSite, mappingSourceAlgorithm, mappingType);
+			mappings.add(mapping1);
+
+			if (!unidirectional) {
+				// This creates the inverse mapping when a mapping is
+				// bidirectional (which is the default)
+				mapping2 = mappingService.createMapping(target, source,
+						relation, targetOntId, sourceOntId, targetOntVersionId,
+						sourceOntVersionId, submittedBy, mapping1
+								.getId(), comment, mappingSource,
+						mappingSourceName, mappingSourceContactInfo,
+						mappingSourceSite, mappingSourceAlgorithm, mappingType);
+
+				mapping1.setDependency(mapping2.getId());
+				OneToOneMappingBean updatedMapping1 = mappingService
+						.updateMapping(mapping1.getId(), mapping1);
+
+				mappings.removeAll(mappings);
+				mappings.add(updatedMapping1);
+				mappings.add(mapping2);
+			}
 		} catch (Exception e) {
 			response.setStatus(Status.SERVER_ERROR_INTERNAL, e.getMessage());
 			e.printStackTrace();
 			log.error(e);
 		} finally {
 			xmlSerializationService.generateXMLResponse(request, response,
-					mapping);
+					mappings);
 		}
 	}
 
@@ -346,7 +372,7 @@ public class MappingConceptRestlet extends AbstractMappingRestlet {
 		try {
 			// The parameter isn't getting auto-decoded so do it here
 			mappingId = URLDecoder.decode(mappingId, "UTF-8");
-			
+
 			mappingService.deleteMapping(new URIImpl(mappingId));
 		} catch (MappingMissingException e) {
 			response.setStatus(Status.CLIENT_ERROR_NOT_FOUND, e.getMessage());

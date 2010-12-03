@@ -141,7 +141,7 @@ public class MappingManagerImpl implements MappingManager {
 					sourceURI, targetURI, relationURI, sourceOntologyId,
 					targetOntologyId, createdInSourceOntologyVersion,
 					createdInTargetOntologyVersion, submittedBy,
-					uploadedMappingBean.getComment(), sourceEnum,
+					null, uploadedMappingBean.getComment(), sourceEnum,
 					uploadedMappingBean.getMappingSourceName(),
 					uploadedMappingBean.getMappingSourceContactInfo(),
 					mappingSourceSiteURI, uploadedMappingBean

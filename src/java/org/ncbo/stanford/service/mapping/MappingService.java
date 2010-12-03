@@ -32,7 +32,7 @@ public interface MappingService {
 	public OneToOneMappingBean createMapping(URI source, URI target,
 			URI relation, Integer sourceOntologyId, Integer targetOntologyId,
 			Integer sourceOntologyVersion, Integer targetOntologyVersion,
-			Integer submittedBy, String comment,
+			Integer submittedBy, URI dependency, String comment,
 			MappingSourceEnum mappingSource, String mappingSourceName,
 			String mappingSourcecontactInfo, URI mappingSourceSite,
 			String mappingSourceAlgorithm, String mappingType)

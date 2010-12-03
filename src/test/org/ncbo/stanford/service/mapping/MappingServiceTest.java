@@ -49,7 +49,7 @@ public class MappingServiceTest extends AbstractBioPortalTest {
 									"http://purl.org/obo/owl/UBERON#UBERON_0001062"),
 							new URIImpl(
 									"http://protege.stanford.edu/ontologies/mappings/mappings.rdfs#owl:sameAs"),
-							1099, 1404, 44203, 44301, 99, "Test comment",
+							1099, 1404, 44203, 44301, 99, null, "Test comment",
 							MappingSourceEnum.APPLICATION, "Test Source Name",
 							"Paul Alexander (palexander@stanford.edu)",
 							new URIImpl("http://test.com"),

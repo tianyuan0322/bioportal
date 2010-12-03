@@ -15,14 +15,18 @@ public abstract class AbstractMappingBean {
 	@XStreamConverter(URIConverter.class)
 	private URI id;
 	
-	@XStreamAlias("comment")
-	private String comment;
-	
 	@XStreamAlias("date")
 	private Date date;
 	
 	@XStreamAlias("submittedBy")
 	private Integer submittedBy;
+	
+	@XStreamAlias("dependency")
+	@XStreamConverter(URIConverter.class)
+	private URI dependency;
+	
+	@XStreamAlias("comment")
+	private String comment;
 	
 	@XStreamAlias("mappingType")
 	private String mappingType;
@@ -62,6 +66,21 @@ public abstract class AbstractMappingBean {
 	 */
 	public void setId(URI id) {
 		this.id = id;
+	}
+
+	/**
+	 * @return the dependency
+	 */
+	public URI getDependency() {
+		return dependency;
+	}
+
+	/**
+	 * @param dependency
+	 *            the dependency to set
+	 */
+	public void setDependency(URI dependency) {
+		this.dependency = dependency;
 	}
 
 	/**

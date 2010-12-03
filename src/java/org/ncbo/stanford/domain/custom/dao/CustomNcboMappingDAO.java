@@ -26,6 +26,7 @@ import org.openrdf.query.QueryEvaluationException;
 import org.openrdf.query.QueryLanguage;
 import org.openrdf.query.TupleQuery;
 import org.openrdf.query.TupleQueryResult;
+import org.openrdf.repository.RepositoryConnection;
 import org.openrdf.repository.RepositoryException;
 import org.openrdf.repository.RepositoryResult;
 import org.openrdf.repository.object.ObjectConnection;
@@ -50,6 +51,7 @@ public class CustomNcboMappingDAO {
 			+ "?comment "
 			+ "?date "
 			+ "?submittedBy "
+			+ "?dependency "
 			+ "?mappingType "
 			+ "?mappingSource "
 			+ "?mappingSourceName "
@@ -67,6 +69,7 @@ public class CustomNcboMappingDAO {
 			+ "  ?mappingId <http://protege.stanford.edu/ontologies/mappings/mappings.rdfs#comment> ?comment ."
 			+ "  ?mappingId <http://protege.stanford.edu/ontologies/mappings/mappings.rdfs#date> ?date ."
 			+ "  ?mappingId <http://protege.stanford.edu/ontologies/mappings/mappings.rdfs#submitted_by> ?submittedBy ."
+			+ "  ?mappingId <http://protege.stanford.edu/ontologies/mappings/mappings.rdfs#dependency> ?dependency ."
 			+ "  ?mappingId <http://protege.stanford.edu/ontologies/mappings/mappings.rdfs#mapping_type> ?mappingType ."
 			+ "  ?mappingId <http://protege.stanford.edu/ontologies/mappings/mappings.rdfs#mapping_source> ?mappingSource ."
 			+ "  ?mappingId <http://protege.stanford.edu/ontologies/mappings/mappings.rdfs#mapping_source_name> ?mappingSourceName ."
@@ -98,36 +101,45 @@ public class CustomNcboMappingDAO {
 	public OneToOneMapping createMapping(URI source, URI target, URI relation,
 			Integer sourceOntologyId, Integer targetOntologyId,
 			Integer sourceOntologyVersion, Integer targetOntologyVersion,
-			Integer submittedBy, String comment, String mappingSource,
-			String mappingSourceName, String mappingSourceContactInfo,
-			URI mappingSourceSite, String mappingSourceAlgorithm,
-			String mappingType) throws MappingExistsException {
+			Integer submittedBy, URI dependency, String comment,
+			String mappingSource, String mappingSourceName,
+			String mappingSourceContactInfo, URI mappingSourceSite,
+			String mappingSourceAlgorithm, String mappingType)
+			throws MappingExistsException {
 
-		OneToOneMapping mapping = new OneToOneMapping();
+		OneToOneMapping newMapping = new OneToOneMapping();
 
 		// Set Mapping properties
-		mapping.setSource(source);
-		mapping.setTarget(target);
-		mapping.setRelation(relation);
-		mapping.setSourceOntologyId(sourceOntologyId);
-		mapping.setTargetOntologyId(targetOntologyId);
-		mapping.setCreatedInSourceOntologyVersion(sourceOntologyVersion);
-		mapping.setCreatedInTargetOntologyVersion(targetOntologyVersion);
+		newMapping.setSource(source);
+		newMapping.setTarget(target);
+		newMapping.setRelation(relation);
+		newMapping.setSourceOntologyId(sourceOntologyId);
+		newMapping.setTargetOntologyId(targetOntologyId);
+		newMapping.setCreatedInSourceOntologyVersion(sourceOntologyVersion);
+		newMapping.setCreatedInTargetOntologyVersion(targetOntologyVersion);
 
 		// Set metadata properties
-		mapping.setSubmittedBy(submittedBy);
-		mapping.setDate(new Date());
-		mapping.setComment(comment);
-		mapping.setMappingType(mappingType);
+		newMapping.setDependency(dependency);
+		newMapping.setSubmittedBy(submittedBy);
+		newMapping.setDate(new Date());
+		newMapping.setComment(comment);
+		newMapping.setMappingType(mappingType);
 
 		// Set mappingSource properties
-		mapping.setMappingSource(mappingSource);
-		mapping.setMappingSourceName(mappingSourceName);
-		mapping.setMappingSourcecontactInfo(mappingSourceContactInfo);
-		mapping.setMappingSourceSite(mappingSourceSite);
-		mapping.setMappingSourceAlgorithm(mappingSourceAlgorithm);
+		newMapping.setMappingSource(mappingSource);
+		newMapping.setMappingSourceName(mappingSourceName);
+		newMapping.setMappingSourcecontactInfo(mappingSourceContactInfo);
+		newMapping.setMappingSourceSite(mappingSourceSite);
+		newMapping.setMappingSourceAlgorithm(mappingSourceAlgorithm);
 
-		createMapping(mapping);
+		createMapping(newMapping);
+
+		OneToOneMapping mapping = null;
+		try {
+			mapping = getMapping(newMapping.getId());
+		} catch (MappingMissingException e) {
+			e.printStackTrace();
+		}
 
 		return mapping;
 	}
@@ -136,9 +148,9 @@ public class CustomNcboMappingDAO {
 			throws MappingExistsException {
 		ObjectConnection con = getRdfStoreManager().getObjectConnection();
 		ValueFactory vf = getRdfStoreManager().getValueFactory();
-		
+
 		ArrayList<Statement> statements = newMapping.toStatements(vf);
-		
+
 		for (Statement statement : statements) {
 			try {
 				con.add(statement, ApplicationConstants.MAPPING_CONTEXT_URI);
@@ -146,7 +158,7 @@ public class CustomNcboMappingDAO {
 				e.printStackTrace();
 			}
 		}
-		
+
 		OneToOneMapping mapping = null;
 		try {
 			mapping = getMapping(newMapping.getId());
@@ -181,14 +193,14 @@ public class CustomNcboMappingDAO {
 		return mapping;
 	}
 
-	// TODO: This method is not working currently.
 	public OneToOneMapping updateMapping(URI id, URI source, URI target,
 			URI relation, Integer sourceOntologyId, Integer targetOntologyId,
 			Integer sourceOntologyVersion, Integer targetOntologyVersion,
-			Integer submittedBy, String comment, String mappingSource,
-			String mappingSourceName, String mappingSourcecontactInfo,
-			String mappingSourceSite, String mappingSourceAlgorithm,
-			String mappingType) throws MappingMissingException {
+			Integer submittedBy, URI dependency, String comment,
+			String mappingSource, String mappingSourceName,
+			String mappingSourcecontactInfo, URI mappingSourceSite,
+			String mappingSourceAlgorithm, String mappingType)
+			throws MappingMissingException {
 		ObjectConnection con = getRdfStoreManager().getObjectConnection();
 
 		try {
@@ -196,37 +208,27 @@ public class CustomNcboMappingDAO {
 				throw new MappingMissingException();
 			}
 
-			OneToOneMapping mapping = con.getObject(OneToOneMapping.class, id);
+			List<OneToOneMapping> mappings = new ArrayList<OneToOneMapping>();
 
+			OneToOneMapping mapping = getMapping(id);
+
+			OneToOneMapping updatedMapping = updateMappingEntity(mapping,
+					source, target, relation, sourceOntologyId,
+					targetOntologyId, sourceOntologyVersion,
+					targetOntologyVersion, submittedBy, dependency, comment,
+					mappingSource, mappingSourceName, mappingSourcecontactInfo,
+					mappingSourceSite, mappingSourceAlgorithm, mappingType);
+
+			// Remove old triples
 			deleteMapping(id);
 
-			// Retrieve mapping to update and set new information
-			if (sourceOntologyVersion != null)
-				mapping
-						.setCreatedInSourceOntologyVersion(sourceOntologyVersion);
-			if (targetOntologyVersion != null)
-				mapping
-						.setCreatedInTargetOntologyVersion(targetOntologyVersion);
-			if (relation != null)
-				mapping.setRelation(relation);
-			if (source != null)
-				mapping.setSource(source);
-			if (sourceOntologyId != null)
-				mapping.setSourceOntologyId(sourceOntologyId);
-			if (target != null)
-				mapping.setTarget(target);
-			if (targetOntologyId != null)
-				mapping.setTargetOntologyId(targetOntologyId);
+			// Create the new mapping
+			updatedMapping = createMapping(updatedMapping);
 
-			// Save the new mapping
-			con.addObject(id, mapping);
+			mappings.add(updatedMapping);
 
-			return mapping;
-		} catch (RepositoryException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (QueryEvaluationException e) {
-			// TODO Auto-generated catch block
+			return updatedMapping;
+		} catch (MappingExistsException e) {
 			e.printStackTrace();
 		}
 
@@ -235,17 +237,13 @@ public class CustomNcboMappingDAO {
 
 	public OneToOneMapping updateMapping(URI id, OneToOneMapping mapping)
 			throws MappingMissingException {
-		ObjectConnection con = getRdfStoreManager().getObjectConnection();
-
 		deleteMapping(id);
 
 		try {
-			// Save the new mapping
-			con.addObject(id, mapping);
+			OneToOneMapping updatedMapping = createMapping(mapping);
 
-			return mapping;
-		} catch (RepositoryException e) {
-			// TODO Auto-generated catch block
+			return updatedMapping;
+		} catch (MappingExistsException e) {
 			e.printStackTrace();
 		}
 
@@ -255,41 +253,46 @@ public class CustomNcboMappingDAO {
 	public void deleteMapping(URI id) throws MappingMissingException {
 		ObjectConnection con = getRdfStoreManager().getObjectConnection();
 		try {
-			/**
-			 * Commenting out until we see what AliBaba can fix. Currently their
-			 * recommended method for deletion doesn't work.
-			 */
-			// OneToOneMapping mapping = con.getObject(OneToOneMapping.class,
-			// id);
-			//
-			// // Set properties to null values (weird delete method w/ AliBaba)
-			// mapping.setId(null);
-			// mapping.setSource(null);
-			// mapping.setTarget(null);
-			// mapping.setRelation(null);
-			// mapping.setSourceOntologyId(null);
-			// mapping.setTargetOntologyId(null);
-			// mapping.setCreatedInSourceOntologyVersion(null);
-			// mapping.setCreatedInTargetOntologyVersion(null);
-			//
-			// // Delete the mapping and metadata
-			// con.removeDesignation(mapping, OneToOneMapping.class);
-
-			// Alternative method for removing mapping
-			// Get all triples with subject matching the id for this mapping
-
 			if (!hasMapping(id, con)) {
 				throw new MappingMissingException();
 			}
 
-			RepositoryResult<Statement> results = con.getStatements(id, null,
-					null, false, new URIImpl(
-							ApplicationConstants.MAPPING_CONTEXT));
-			// Remove all those triples
-			con.remove(results, new URIImpl(
-					ApplicationConstants.MAPPING_CONTEXT));
+			OneToOneMapping mapping = getMapping(id);
 
+			if (mapping.getDependency() != null) {
+				deleteFromTripleStore(con, mapping.getDependency());
+			}
+
+			// Check for dependencies that might not be specified. We do this
+			// because the 6mm mappings that we got from the UI database don't
+			// contain dependency information and inverse mappings should be
+			// removed when their counterpart is removed.
+			if (mapping.getDependency() == null) {
+				String filter = "?source = <" + mapping.getTarget() + ">";
+				filter += " && ?target = <" + mapping.getSource() + ">";
+				filter += " && ?sourceOntologyId = "
+						+ mapping.getTargetOntologyId();
+				filter += " && ?targetOntologyId = "
+						+ mapping.getSourceOntologyId();
+				filter += " && ?mappingSource = \""
+						+ mapping.getMappingSource() + "\"";
+				filter += " && ?submittedBy = " + mapping.getSubmittedBy();
+				filter += " && ?relation = <" + mapping.getRelation() + ">";
+
+				ArrayList<OneToOneMapping> inferredDependents = getMappings(
+						null, null, filter, null);
+
+				if (inferredDependents != null) {
+					for (OneToOneMapping dependent : inferredDependents) {
+						deleteFromTripleStore(con, dependent.getId());
+					}
+				}
+			}
+
+			deleteFromTripleStore(con, id);
 		} catch (RepositoryException e) {
+			e.printStackTrace();
+		} catch (InvalidInputException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
@@ -544,6 +547,8 @@ public class CustomNcboMappingDAO {
 				OneToOneMapping mapping = new OneToOneMapping();
 
 				// Set Mapping properties
+				mapping.setId(new URIImpl(bs.getValue("mappingId")
+						.stringValue()));
 				mapping.setSource(new URIImpl(bs.getValue("source")
 						.stringValue()));
 				mapping.setTarget(new URIImpl(bs.getValue("target")
@@ -599,13 +604,10 @@ public class CustomNcboMappingDAO {
 
 			return mappings;
 		} catch (RepositoryException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} catch (QueryEvaluationException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} catch (MalformedQueryException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 
@@ -648,13 +650,10 @@ public class CustomNcboMappingDAO {
 				return convertValueToInteger(bs.getValue("mappingCount"));
 			}
 		} catch (MalformedQueryException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} catch (RepositoryException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} catch (QueryEvaluationException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 
@@ -754,6 +753,7 @@ public class CustomNcboMappingDAO {
 		return filter;
 	}
 
+	@SuppressWarnings("unused")
 	private String generateConceptSparqlFilterRegex(String sourceConcept,
 			String targetConcept, Boolean unidirectional)
 			throws InvalidInputException {
@@ -801,6 +801,7 @@ public class CustomNcboMappingDAO {
 	 * @return
 	 * @throws InvalidInputException
 	 */
+	@SuppressWarnings("unused")
 	private String generateOntologySparqlClause(Integer sourceOntology,
 			Integer targetOntology, Boolean unidirectional)
 			throws InvalidInputException {
@@ -871,7 +872,6 @@ public class CustomNcboMappingDAO {
 					ApplicationConstants.MAPPING_ONE_TO_ONE_URI,
 					ApplicationConstants.MAPPING_CONTEXT_URI);
 		} catch (RepositoryException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 
@@ -887,6 +887,89 @@ public class CustomNcboMappingDAO {
 	private RDFStoreManager getRdfStoreManager() {
 		String storeType = MessageUtils.getMessage("rdf.store.type");
 		return rdfStoreManagerMap.get(storeType);
+	}
+
+	/**
+	 * This method does the actual delete action for removing mappings from the
+	 * triplestore. It removes all triples with a subject matching the mapping
+	 * id.
+	 * 
+	 * @param con
+	 * @param id
+	 * @throws RepositoryException
+	 */
+	private void deleteFromTripleStore(RepositoryConnection con, URI id)
+			throws RepositoryException {
+		RepositoryResult<Statement> results = con.getStatements(id, null, null,
+				false, new URIImpl(ApplicationConstants.MAPPING_CONTEXT));
+		// Remove all those triples
+		con.remove(results, new URIImpl(ApplicationConstants.MAPPING_CONTEXT));
+	}
+
+	/**
+	 * Look for valid values and update the provided mapping bean with them. For
+	 * use in re-creating a mapping as part of an update.
+	 * 
+	 * @param mapping
+	 * @param source
+	 * @param target
+	 * @param relation
+	 * @param sourceOntologyId
+	 * @param targetOntologyId
+	 * @param sourceOntologyVersion
+	 * @param targetOntologyVersion
+	 * @param submittedBy
+	 * @param dependency
+	 * @param comment
+	 * @param mappingSource
+	 * @param mappingSourceName
+	 * @param mappingSourcecontactInfo
+	 * @param mappingSourceSite
+	 * @param mappingSourceAlgorithm
+	 * @param mappingType
+	 * @return
+	 */
+	private OneToOneMapping updateMappingEntity(OneToOneMapping mapping,
+			URI source, URI target, URI relation, Integer sourceOntologyId,
+			Integer targetOntologyId, Integer sourceOntologyVersion,
+			Integer targetOntologyVersion, Integer submittedBy, URI dependency,
+			String comment, String mappingSource, String mappingSourceName,
+			String mappingSourcecontactInfo, URI mappingSourceSite,
+			String mappingSourceAlgorithm, String mappingType) {
+		if (source != null)
+			mapping.setSource(source);
+		if (target != null)
+			mapping.setTarget(target);
+		if (relation != null)
+			mapping.setRelation(relation);
+		if (sourceOntologyId != null)
+			mapping.setSourceOntologyId(sourceOntologyId);
+		if (targetOntologyId != null)
+			mapping.setTargetOntologyId(targetOntologyId);
+		if (sourceOntologyVersion != null)
+			mapping.setCreatedInSourceOntologyVersion(sourceOntologyVersion);
+		if (targetOntologyVersion != null)
+			mapping.setCreatedInTargetOntologyVersion(targetOntologyVersion);
+		if (submittedBy != null)
+			mapping.setSubmittedBy(submittedBy);
+		if (dependency != null)
+			mapping.setDependency(dependency);
+		if (comment != null)
+			mapping.setComment(comment);
+		if (mappingSource != null)
+			mapping.setMappingSource(mappingSource);
+		if (mappingSourceName != null)
+			mapping.setMappingSourceName(mappingSourceName);
+		if (mappingSourcecontactInfo != null)
+			mapping.setMappingSourcecontactInfo(mappingSourcecontactInfo);
+		if (mappingSourceSite != null)
+			mapping.setMappingSourceSite(mappingSourceSite);
+		if (mappingSourceAlgorithm != null)
+			mapping.setMappingSourceAlgorithm(mappingSourceAlgorithm);
+		if (mappingType != null)
+			mapping.setMappingType(mappingType);
+
+		return mapping;
 	}
 
 	/*******************************************************************

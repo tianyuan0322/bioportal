@@ -26,7 +26,7 @@ public class MappingServiceImpl implements MappingService {
 	public OneToOneMappingBean createMapping(URI source, URI target,
 			URI relation, Integer sourceOntologyId, Integer targetOntologyId,
 			Integer sourceOntologyVersion, Integer targetOntologyVersion,
-			Integer submittedBy, String comment,
+			Integer submittedBy, URI dependency, String comment,
 			MappingSourceEnum mappingSource, String mappingSourceName,
 			String mappingSourcecontactInfo, URI mappingSourceSite,
 			String mappingSourceAlgorithm, String mappingType)
@@ -39,7 +39,7 @@ public class MappingServiceImpl implements MappingService {
 		return convertToMappingBean(mappingDAO.createMapping(source, target,
 				relation, sourceOntologyId, targetOntologyId,
 				sourceOntologyVersion, targetOntologyVersion, submittedBy,
-				comment, mappingSourceStr, mappingSourceName,
+				dependency, comment, mappingSourceStr, mappingSourceName,
 				mappingSourcecontactInfo, mappingSourceSite,
 				mappingSourceAlgorithm, mappingType));
 	}
@@ -309,6 +309,7 @@ public class MappingServiceImpl implements MappingService {
 		mb.setCreatedInTargetOntologyVersion(mapping
 				.getCreatedInTargetOntologyVersion());
 		mb.setDate(mapping.getDate());
+		mb.setDependency(mapping.getDependency());
 		mb.setId(mapping.getId());
 		if (mapping.getMappingSource() != null
 				&& mapping.getMappingSource().length() > 0) {
@@ -338,10 +339,14 @@ public class MappingServiceImpl implements MappingService {
 		otom.setCreatedInSourceOntologyVersion(mapping
 				.getCreatedInSourceOntologyVersion());
 		otom.setCreatedInTargetOntologyVersion(mapping
-				.getCreatedInSourceOntologyVersion());
+				.getCreatedInTargetOntologyVersion());
 		otom.setDate(mapping.getDate());
+		otom.setDependency(mapping.getDependency());
 		otom.setId(mapping.getId());
-		otom.setMappingSource(mapping.getMappingSource().toString());
+		if (mapping.getMappingSource() != null
+				&& !mapping.getMappingSource().toString().isEmpty()) {
+			otom.setMappingSource(mapping.getMappingSource().toString());
+		}
 		otom.setMappingSourceAlgorithm(mapping.getMappingSourceAlgorithm());
 		otom.setMappingSourcecontactInfo(mapping.getMappingSourcecontactInfo());
 		otom.setMappingSourceSite(mapping.getMappingSourceSite());
