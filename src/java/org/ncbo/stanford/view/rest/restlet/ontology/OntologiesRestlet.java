@@ -127,7 +127,7 @@ public class OntologiesRestlet extends AbstractBaseRestlet {
 			}
 			ontologyService.createOntologyOrView(ontologyBean, filePathHandler);
 		} catch (Exception e) {
-			response.setStatus(Status.SERVER_ERROR_INTERNAL, e.getMessage());
+			response.setStatus(Status.SERVER_ERROR_INTERNAL, e.toString());
 			e.printStackTrace();
 			log.error(e);
 		} finally {
