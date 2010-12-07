@@ -309,7 +309,7 @@ public class CustomNcboMappingDAO {
 			throws InvalidInputException {
 		String orderBy = "?date";
 
-		return getMappings(500, 0, null, orderBy, null);
+		return getMappings(limit, 0, null, orderBy, null);
 	}
 
 	/*******************************************************************
