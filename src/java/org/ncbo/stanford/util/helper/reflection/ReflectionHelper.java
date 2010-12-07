@@ -233,8 +233,7 @@ public class ReflectionHelper {
 	/**
 	 * Gets the class short name
 	 * 
-	 * @param class
-	 *            c
+	 * @param class c
 	 * @return String
 	 */
 	public static String getClassShortName(Class c) {
@@ -249,6 +248,29 @@ public class ReflectionHelper {
 		index = className.lastIndexOf(".");
 
 		return className.substring(index + 1);
+	}
+
+	/**
+	 * Returns all fields/values for an object of a given class
+	 * 
+	 * @param o
+	 * @return
+	 */
+	public static List<Field> getAllNonStaticFields(Object o) {
+		List<Field> result = new ArrayList<Field>(0);
+		Field[] fields = o.getClass().getDeclaredFields();
+
+		for (int i = 0; i < fields.length; i++) {
+			Field field = fields[i];
+			int mod = field.getModifiers();
+
+			if (!"_objectClass".equals(field.getName())
+					&& !Modifier.isStatic(mod) && !Modifier.isFinal(mod)) {
+				result.add(field);
+			}
+		}
+
+		return result;
 	}
 
 	/**
