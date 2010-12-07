@@ -1,5 +1,7 @@
 package org.ncbo.stanford.service.mapping;
 
+import java.util.List;
+
 import org.ncbo.stanford.bean.OntologyBean;
 import org.ncbo.stanford.bean.concept.ClassBean;
 import org.ncbo.stanford.bean.mapping.MappingParametersBean;
@@ -181,5 +183,21 @@ public interface MappingService {
 			ClassBean sourceConcept, ClassBean targetConcept,
 			Boolean unidirectional, Integer pageSize, Integer pageNum,
 			MappingParametersBean parameters) throws InvalidInputException;
+
+	/*******************************************************************
+	 * 
+	 * Stats about mappings
+	 * 
+	 *******************************************************************/
+
+	/**
+	 * Get all recent mappings.
+	 * 
+	 * @param limit
+	 * @return
+	 * @throws InvalidInputException
+	 */
+	public List<OneToOneMappingBean> getRecentMappings(Integer limit)
+			throws InvalidInputException;
 
 }

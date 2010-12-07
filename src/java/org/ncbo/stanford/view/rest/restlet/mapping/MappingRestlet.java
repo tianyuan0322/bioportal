@@ -102,6 +102,8 @@ public class MappingRestlet extends AbstractMappingRestlet {
 		} catch (InvalidInputException iie) {
 			response.setStatus(Status.CLIENT_ERROR_BAD_REQUEST, iie
 					.getMessage());
+			iie.printStackTrace();
+			log.error(iie);
 		} catch (Exception e) {
 			response.setStatus(Status.SERVER_ERROR_INTERNAL, e.getMessage());
 			e.printStackTrace();

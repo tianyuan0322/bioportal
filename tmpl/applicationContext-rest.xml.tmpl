@@ -348,16 +348,27 @@
 			<ref bean="conceptService" />
 		</property>	
 	</bean>
-	
-	<bean id="mappingRestlet" class="org.ncbo.stanford.view.rest.restlet.mapping.MappingRestlet"
+
+	<bean id="abstractMappingRestlet" class="org.ncbo.stanford.view.rest.restlet.mapping.AbstractMappingRestlet"
 		parent="abstractBaseRestlet">
+	</bean>
+
+	<bean id="mappingRestlet" class="org.ncbo.stanford.view.rest.restlet.mapping.MappingRestlet"
+		parent="abstractMappingRestlet">
+		<property name="mappingService">
+			<ref bean="mappingService" />
+		</property>
+	</bean>
+
+	<bean id="mappingRecentRestlet" class="org.ncbo.stanford.view.rest.restlet.mapping.MappingRecentRestlet"
+		parent="abstractMappingRestlet">
 		<property name="mappingService">
 			<ref bean="mappingService" />
 		</property>
 	</bean>
 
 	<bean id="mappingOntologyRestlet" class="org.ncbo.stanford.view.rest.restlet.mapping.MappingOntologyRestlet"
-		parent="abstractBaseRestlet">
+		parent="abstractMappingRestlet">
 		<property name="mappingService">
 			<ref bean="mappingService" />
 		</property>
@@ -367,7 +378,7 @@
 	</bean>
 	
 	<bean id="mappingConceptRestlet" class="org.ncbo.stanford.view.rest.restlet.mapping.MappingConceptRestlet"
-		parent="abstractBaseRestlet">
+		parent="abstractMappingRestlet">
 		<property name="mappingService">
 			<ref bean="mappingService" />
 		</property>
@@ -704,11 +715,14 @@
 							<ref local="notesRestlet" />
 						</entry>
 						<!-- ========== Mappings ========== -->
-						<entry key="/mappings/upload">
-							<ref local="mappingUploadRestlet" />
-						</entry>
 						<entry key="/mappings">
 							<ref local="mappingRestlet" />
+						</entry>
+						<entry key="/mappings/recent">
+							<ref local="mappingRecentRestlet" />
+						</entry>
+						<entry key="/mappings/upload">
+							<ref local="mappingUploadRestlet" />
 						</entry>
 						<entry key="/virtual/mappings/ontologies">
 							<ref local="mappingOntologyRestlet" />

@@ -76,7 +76,7 @@ public class CustomNcboMappingDAO {
 			+ "  ?mappingId <http://protege.stanford.edu/ontologies/mappings/mappings.rdfs#mapping_source_contact_info> ?mappingSourceContactInfo ."
 			+ "  ?mappingId <http://protege.stanford.edu/ontologies/mappings/mappings.rdfs#mapping_source_site> ?mappingSourceSite ."
 			+ "  ?mappingId <http://protege.stanford.edu/ontologies/mappings/mappings.rdfs#mapping_source_algorithm> ?mappingSourceAlgorithm ."
-			+ "  FILTER (%FILTER%) } LIMIT %LIMIT% OFFSET %OFFSET%";
+			+ "  FILTER (%FILTER%) } %ORDERBY% LIMIT %LIMIT% OFFSET %OFFSET%";
 
 	private final static String mappingCountQuery = "SELECT  "
 			+ "count(?mappingId) as ?mappingCount WHERE {"
@@ -301,6 +301,19 @@ public class CustomNcboMappingDAO {
 
 	/*******************************************************************
 	 * 
+	 * Stats about mappings
+	 * 
+	 *******************************************************************/
+
+	public List<OneToOneMapping> getRecentMappings(Integer limit)
+			throws InvalidInputException {
+		String orderBy = "?date";
+
+		return getMappings(500, 0, null, orderBy, null);
+	}
+
+	/*******************************************************************
+	 * 
 	 * Mappings for parameters
 	 * 
 	 *******************************************************************/
@@ -487,6 +500,12 @@ public class CustomNcboMappingDAO {
 	 * 
 	 *******************************************************************/
 
+	private ArrayList<OneToOneMapping> getMappings(Integer limit,
+			Integer offset, String filter, MappingParametersBean parameters)
+			throws InvalidInputException {
+		return getMappings(limit, offset, filter, null, parameters);
+	}
+
 	/**
 	 * Generic getMappings call. Must provide a valid SPARQL filter (generated
 	 * via helper methods or elsewhere).
@@ -503,8 +522,8 @@ public class CustomNcboMappingDAO {
 	 * @throws InvalidInputException
 	 */
 	private ArrayList<OneToOneMapping> getMappings(Integer limit,
-			Integer offset, String filter, MappingParametersBean parameters)
-			throws InvalidInputException {
+			Integer offset, String filter, String orderBy,
+			MappingParametersBean parameters) throws InvalidInputException {
 		// Safety check
 		if (limit == null || limit >= 50000) {
 			limit = 50000;
@@ -529,6 +548,18 @@ public class CustomNcboMappingDAO {
 		String queryString = mappingQuery.replaceAll("%FILTER%",
 				combinedFilters).replaceAll("%LIMIT%", limit.toString())
 				.replaceAll("%OFFSET%", offset.toString());
+
+		if (orderBy != null && !orderBy.isEmpty()) {
+			queryString = queryString.replaceAll("%ORDERBY%", " ORDER BY DESC("
+					+ orderBy + ")");
+		} else {
+			queryString = queryString.replaceAll("%ORDERBY%", "");
+		}
+
+		// Remove filter if it's not used
+		if (filter == null || filter.isEmpty()) {
+			queryString = queryString.replaceAll("FILTER \\(\\) ", "");
+		}
 
 		try {
 			TupleQuery query = con.prepareTupleQuery(QueryLanguage.SPARQL,

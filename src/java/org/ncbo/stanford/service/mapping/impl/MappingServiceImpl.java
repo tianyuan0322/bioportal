@@ -1,5 +1,6 @@
 package org.ncbo.stanford.service.mapping.impl;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.ncbo.stanford.bean.OntologyBean;
@@ -284,6 +285,17 @@ public class MappingServiceImpl implements MappingService {
 		}
 
 		return p.getCurrentPage(pageNum);
+	}
+
+	public List<OneToOneMappingBean> getRecentMappings(Integer limit)
+			throws InvalidInputException {
+		ArrayList<OneToOneMappingBean> mappings = new ArrayList<OneToOneMappingBean>();
+
+		for (OneToOneMapping mapping : mappingDAO.getRecentMappings(limit)) {
+			mappings.add(convertToMappingBean(mapping));
+		}
+
+		return mappings;
 	}
 
 	public OneToOneMappingBean updateMapping(URI id, OneToOneMappingBean mapping)
