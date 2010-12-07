@@ -7,6 +7,8 @@ import java.util.List;
 
 import org.junit.Test;
 import org.ncbo.stanford.AbstractBioPortalTest;
+import org.ncbo.stanford.domain.custom.dao.mapping.CustomNcboMappingCountsDAO;
+import org.ncbo.stanford.domain.custom.dao.mapping.CustomNcboMappingDAO;
 import org.ncbo.stanford.domain.custom.entity.mapping.OneToOneMapping;
 import org.ncbo.stanford.enumeration.MappingSourceEnum;
 import org.ncbo.stanford.exception.InvalidInputException;
@@ -25,6 +27,7 @@ public class CustomNcboMappingDAOTest extends AbstractBioPortalTest {
 
 	@Autowired
 	CustomNcboMappingDAO mappingDAO;
+	CustomNcboMappingCountsDAO mappingCountsDAO;
 
 	@Test
 	public void testCreateMapping() {
@@ -90,15 +93,15 @@ public class CustomNcboMappingDAOTest extends AbstractBioPortalTest {
 	@Test
 	public void testRetrieveMappingsCountForOntology()
 			throws InvalidInputException {
-		Integer count = mappingDAO.getCountMappingsForOntology(1032, null);
+		Integer count = mappingCountsDAO.getCountMappingsForOntology(1032, null);
 		System.out.println("All mappings count for ontology 1032: " + count);
 		assertTrue(count instanceof Integer && count >= 0);
 		
-		count = mappingDAO.getCountMappingsFromOntology(1032, null);
+		count = mappingCountsDAO.getCountMappingsFromOntology(1032, null);
 		System.out.println("Mappings from count for ontology 1032: " + count);
 		assertTrue(count instanceof Integer && count >= 0);
 
-		count = mappingDAO.getCountMappingsToOntology(1032, null);
+		count = mappingCountsDAO.getCountMappingsToOntology(1032, null);
 		System.out.println("Mappings to count for ontology 1032: " + count);
 		assertTrue(count instanceof Integer && count >= 0);
 	}

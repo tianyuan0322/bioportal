@@ -683,12 +683,30 @@
 	       <property name="mappingDAO">
 		  	  <ref local="mappingDAO" />
 		  </property>
+	       <property name="mappingCountsDAO">
+		  	  <ref local="mappingCountsDAO" />
+		  </property>
+	       <property name="mappingStatsDAO">
+		  	  <ref local="mappingStatsDAO" />
+		  </property>
 	</bean> 
 	
-	<bean id="mappingDAO" class="org.ncbo.stanford.domain.custom.dao.CustomNcboMappingDAO">
+	<bean id="abstractMappingDAO" class="org.ncbo.stanford.domain.custom.dao.mapping.AbstractNcboMappingDAO">
 		<property name="rdfStoreManagerMap">
 			<ref local="rdfStoreManagerMap" />
 		</property>
+	</bean>
+	
+	<bean id="mappingDAO" class="org.ncbo.stanford.domain.custom.dao.mapping.CustomNcboMappingDAO"
+		parent="abstractMappingDAO">
+	</bean>
+	
+	<bean id="mappingCountsDAO" class="org.ncbo.stanford.domain.custom.dao.mapping.CustomNcboMappingCountsDAO"
+		parent="abstractMappingDAO">
+	</bean>
+	
+	<bean id="mappingStatsDAO" class="org.ncbo.stanford.domain.custom.dao.mapping.CustomNcboMappingStatsDAO"
+		parent="abstractMappingDAO">
 	</bean>
 	
 	<bean id="rdfStoreType" class="java.lang.String">

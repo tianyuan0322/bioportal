@@ -42,6 +42,11 @@ public class MappingRecentRestlet extends AbstractMappingRestlet {
 
 		// Post-process parameters
 		Integer limit = RequestUtils.parseIntegerParam(limitStr);
+		
+		// Default values
+		if (limit < 1 || limit > 100) {
+			limit = 5;
+		}
 
 		List<OneToOneMappingBean> mappings = null;
 		try {
