@@ -61,7 +61,7 @@ public class RdfServiceImpl extends ConceptServiceImpl implements RdfService {
 	
 	public static final String UMLS_SKOS_NS = "umls-skos";
 	public static final String UMLS_SKOS_URI = "http://purl.bioontology.org/ontology/umls-skos/";
-	
+	public static final String OMV_URI="http://omv.ontoware.org/2005/05/ontology#owl";
 	public static final String OBO_REL_NS = "obo-rel";
 	public static final String OBO_REL_URI = OBO_PURL_BASE + "obo/";
 	
@@ -89,6 +89,7 @@ public class RdfServiceImpl extends ConceptServiceImpl implements RdfService {
 	public static final String skosDefinition = SKOS_URI + "definition";
 	public static final String skosNotation = SKOS_URI + "notation"; // for storing internal IDs
 	public static final String oboIsa = OBO_REL_URI + OBO_ISA;
+	
 	
 	public void generateRdf(OWLOntologyManager manager, String dir, OntologyService ontologyService) throws Exception {
 		List<OntologyBean> ontologies = ontologyService.findLatestActiveOntologyVersions();
@@ -211,7 +212,7 @@ public class RdfServiceImpl extends ConceptServiceImpl implements RdfService {
 		if (ont.getId() != null) {
 			ontologyInfoLiteral = factory.getOWLStringLiteral(ont.getId().toString());
 			ontologyInfoAnnotation = factory.getOWLAnnotation(
-					factory.getOWLAnnotationProperty(IRI.create(BIOPORTAL_PURL_BASE + "BPMetadata#/id")), 
+					factory.getOWLAnnotationProperty(IRI.create(BIOPORTAL_PURL_BASE + "BPMetadata#id")), 
 					ontologyInfoLiteral);
 			manager.applyChange(new AddOntologyAnnotation(ontology,ontologyInfoAnnotation));			
 		}
@@ -227,10 +228,10 @@ public class RdfServiceImpl extends ConceptServiceImpl implements RdfService {
 		
 		// OMV uri
 		// assert ontology URI not null
-		ontologyInfoLiteral = factory.getOWLStringLiteral(getOntologyUri(ont,conceptIds));
+		OWLClass owlClass=factory.getOWLClass(IRI.create(getOntologyUri(ont,conceptIds)));
 		ontologyInfoAnnotation = factory.getOWLAnnotation(
 				factory.getOWLAnnotationProperty(IRI.create(BIOPORTAL_PURL_BASE + "OMV/URI")), 
-				ontologyInfoLiteral);
+				owlClass.getIRI());
 		manager.applyChange(new AddOntologyAnnotation(ontology,ontologyInfoAnnotation));
 		
 		// description
@@ -254,7 +255,7 @@ public class RdfServiceImpl extends ConceptServiceImpl implements RdfService {
 		// format
 		if (!StringHelper.isNullOrNullString(ont.getFormat())) {
 			ontologyInfoLiteral = factory.getOWLStringLiteral(ont.getFormat());
-			OWLClass omvClass=factory.getOWLClass(IRI.create("OMV/hasOntologyLanguage"));
+			OWLClass omvClass=factory.getOWLClass(IRI.create(OMV_URI));
 			ontologyInfoAnnotation = factory.getOWLAnnotation(
 					factory.getOWLAnnotationProperty(IRI.create(BIOPORTAL_PURL_BASE + "OMV/hasOntologyLanguage")), 
 					omvClass.getIRI());
