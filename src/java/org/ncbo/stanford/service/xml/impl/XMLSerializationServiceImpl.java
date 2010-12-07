@@ -46,6 +46,7 @@ import org.ncbo.stanford.bean.search.OntologyHitBean;
 import org.ncbo.stanford.bean.search.SearchBean;
 import org.ncbo.stanford.enumeration.ConceptTypeEnum;
 import org.ncbo.stanford.enumeration.ErrorTypeEnum;
+import org.ncbo.stanford.enumeration.SearchRecordTypeEnum;
 import org.ncbo.stanford.service.xml.XMLSerializationService;
 import org.ncbo.stanford.service.xml.converters.ClassBeanListConverter;
 import org.ncbo.stanford.service.xml.converters.ClassBeanResultListBeanConverter;
@@ -460,7 +461,9 @@ public class XMLSerializationServiceImpl implements XMLSerializationService {
 		xmlSerializer.registerConverter(new SearchResultListBeanConverter(
 				xmlSerializer.getMapper()));
 		xmlSerializer.registerConverter(new EnumSingleValueConverter(
-				ConceptTypeEnum.class));
+				SearchRecordTypeEnum.class));
+		xmlSerializer.registerConverter(new EnumSingleValueConverter(
+				ConceptTypeEnum.class));		
 		xmlSerializer.registerConverter(new ClassBeanResultListBeanConverter(
 				xmlSerializer.getMapper()));
 		xmlSerializer.registerConverter(new ClassBeanListConverter(
@@ -470,7 +473,6 @@ public class XMLSerializationServiceImpl implements XMLSerializationService {
 						xmlSerializer.getMapper()));
 		xmlSerializer.registerConverter(new MappingResultListBeanConverter(
 				xmlSerializer.getMapper()));
-
 	}
 
 	/**
