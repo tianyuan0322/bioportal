@@ -4,10 +4,11 @@ import org.ncbo.stanford.util.constants.ApplicationConstants;
 
 public enum SearchRecordTypeEnum {
 
-	RECORD_TYPE_PREFERRED_NAME(ApplicationConstants.SEARCH_RECORD_TYPE_PREFERRED_NAME), 
-	RECORD_TYPE_CONCEPT_ID(ApplicationConstants.SEARCH_RECORD_TYPE_CONCEPT_ID), 
-	RECORD_TYPE_SYNONYM(ApplicationConstants.SEARCH_RECORD_TYPE_SYNONYM), 
-	RECORD_TYPE_PROPERTY(ApplicationConstants.SEARCH_RECORD_TYPE_PROPERTY);
+	RECORD_TYPE_PREFERRED_NAME(
+			ApplicationConstants.SEARCH_RECORD_TYPE_PREFERRED_NAME), RECORD_TYPE_CONCEPT_ID(
+			ApplicationConstants.SEARCH_RECORD_TYPE_CONCEPT_ID), RECORD_TYPE_SYNONYM(
+			ApplicationConstants.SEARCH_RECORD_TYPE_SYNONYM), RECORD_TYPE_PROPERTY(
+			ApplicationConstants.SEARCH_RECORD_TYPE_PROPERTY);
 
 	private final String label;
 
@@ -18,18 +19,20 @@ public enum SearchRecordTypeEnum {
 	public static SearchRecordTypeEnum getFromLabel(String label) {
 		SearchRecordTypeEnum recordType = null;
 
-		if (label
-				.equals(ApplicationConstants.SEARCH_RECORD_TYPE_PREFERRED_NAME)) {
-			recordType = RECORD_TYPE_PREFERRED_NAME;
-		} else if (label
-				.equals(ApplicationConstants.SEARCH_RECORD_TYPE_CONCEPT_ID)) {
-			recordType = RECORD_TYPE_CONCEPT_ID;
-		} else if (label
-				.equals(ApplicationConstants.SEARCH_RECORD_TYPE_SYNONYM)) {
-			recordType = RECORD_TYPE_SYNONYM;
-		} else if (label
-				.equals(ApplicationConstants.SEARCH_RECORD_TYPE_PROPERTY)) {
-			recordType = RECORD_TYPE_PROPERTY;
+		if (label != null) {
+			if (label
+					.equals(ApplicationConstants.SEARCH_RECORD_TYPE_PREFERRED_NAME)) {
+				recordType = RECORD_TYPE_PREFERRED_NAME;
+			} else if (label
+					.equals(ApplicationConstants.SEARCH_RECORD_TYPE_CONCEPT_ID)) {
+				recordType = RECORD_TYPE_CONCEPT_ID;
+			} else if (label
+					.equals(ApplicationConstants.SEARCH_RECORD_TYPE_SYNONYM)) {
+				recordType = RECORD_TYPE_SYNONYM;
+			} else if (label
+					.equals(ApplicationConstants.SEARCH_RECORD_TYPE_PROPERTY)) {
+				recordType = RECORD_TYPE_PROPERTY;
+			}
 		}
 
 		return recordType;
