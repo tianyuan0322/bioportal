@@ -57,9 +57,9 @@ public class MappingOntologyRestlet extends AbstractMappingRestlet {
 		String unidirectionalStr = (String) httpRequest
 				.getParameter(RequestParamConstants.PARAM_UNIDIRECTIONAL);
 		String isSourceStr = (String) httpRequest
-				.getParameter(RequestParamConstants.PARAM_SOURCE_ONT_ID);
+				.getParameter(RequestParamConstants.PARAM_IS_SOURCE);
 		String isTargetStr = (String) httpRequest
-				.getParameter(RequestParamConstants.PARAM_TARGET_ONT_ID);
+				.getParameter(RequestParamConstants.PARAM_IS_TARGET);
 
 		// Post-process parameters
 		Integer ontologyId = RequestUtils.parseIntegerParam(ontologyIdStr);

@@ -89,9 +89,9 @@ public class MappingConceptRestlet extends AbstractMappingRestlet {
 		String unidirectionalStr = (String) httpRequest
 				.getParameter(RequestParamConstants.PARAM_UNIDIRECTIONAL);
 		String isSourceStr = (String) httpRequest
-				.getParameter(RequestParamConstants.PARAM_SOURCE_ONT_ID);
+				.getParameter(RequestParamConstants.PARAM_IS_SOURCE);
 		String isTargetStr = (String) httpRequest
-				.getParameter(RequestParamConstants.PARAM_TARGET_ONT_ID);
+				.getParameter(RequestParamConstants.PARAM_IS_TARGET);
 		String pageSizeStr = (String) httpRequest
 				.getParameter(RequestParamConstants.PARAM_PAGESIZE);
 		String pageNumStr = (String) httpRequest

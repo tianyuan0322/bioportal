@@ -224,8 +224,8 @@ public interface RequestParamConstants {
 	public static final String PARAM_SOURCE_ONT = "sourceontology";
 	public static final String PARAM_TARGET_ONT = "targetontology";
 	public static final String PARAM_UNIDIRECTIONAL = "unidirectional";
-	public static final String PARAM_SOURCE_ONT_ID = "sourceontologyid";
-	public static final String PARAM_TARGET_ONT_ID = "targetontologyid";
+	public static final String PARAM_IS_SOURCE = "issource";
+	public static final String PARAM_IS_TARGET = "istarget";
 	public static final String PARAM_SOURCE_VERSION_ONT_ID = "createdinsourceontologyversion";
 	public static final String PARAM_TARGET_VERSION_ONT_ID = "createdintargetontologyversion";
 	public static final String PARAM_SUBMITTED_BY = "submittedby";
