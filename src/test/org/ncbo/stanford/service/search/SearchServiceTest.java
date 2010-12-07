@@ -12,6 +12,7 @@ import org.junit.Test;
 import org.ncbo.stanford.AbstractBioPortalTest;
 import org.ncbo.stanford.bean.search.SearchBean;
 import org.ncbo.stanford.bean.search.SearchResultListBean;
+import org.ncbo.stanford.enumeration.ConceptTypeEnum;
 import org.ncbo.stanford.util.constants.ApplicationConstants;
 import org.ncbo.stanford.util.paginator.impl.Page;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -79,12 +80,15 @@ public class SearchServiceTest extends AbstractBioPortalTest {
 			// ontologyIds.add(1107);
 			// ontologyIds.add(1321); // Nemo
 
+			Collection<String> objectTypes = new ArrayList<String>(0);
+			objectTypes.add(ConceptTypeEnum.CONCEPT_TYPE_CLASS.getLabel());
+
 			boolean includeProperties = false;
 			boolean isExactMatch = false;
 			Integer maxNumHits = 250;
 
-			Query q = queryService.generateLuceneSearchQuery(ontologyIds, expr,
-					includeProperties, isExactMatch);
+			Query q = queryService.generateLuceneSearchQuery(ontologyIds,
+					objectTypes, expr, includeProperties, isExactMatch);
 			System.out.println("q: " + q);
 
 			long start = System.currentTimeMillis();
@@ -112,8 +116,8 @@ public class SearchServiceTest extends AbstractBioPortalTest {
 
 		try {
 			Integer maxNumHits = 50;
-			Query query = queryService.generateLuceneSearchQuery(null, "cell",
-					true, false);
+			Query query = queryService.generateLuceneSearchQuery(null, null,
+					"cell", true, false);
 			Page<SearchBean> results = queryService.executeQuery(query,
 					maxNumHits, null);
 
@@ -135,8 +139,8 @@ public class SearchServiceTest extends AbstractBioPortalTest {
 
 		try {
 			Integer maxNumHits = 98;
-			Query query = queryService.generateLuceneSearchQuery(null, "lead",
-					true, false);
+			Query query = queryService.generateLuceneSearchQuery(null, null,
+					"lead", true, false);
 			Page<SearchBean> results = queryService.executeQuery(query,
 					maxNumHits, null);
 
@@ -162,8 +166,8 @@ public class SearchServiceTest extends AbstractBioPortalTest {
 				.println("SearchServiceTest: searchAllOntologies().......................BEGIN");
 
 		Integer maxNumHits = 50;
-		Query query = queryService.generateLuceneSearchQuery(null, "blood",
-				true, false);
+		Query query = queryService.generateLuceneSearchQuery(null, null,
+				"blood", true, false);
 		Page<SearchBean> results = queryService.executeQuery(query, 3, 6,
 				maxNumHits, null);
 

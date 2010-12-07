@@ -58,6 +58,8 @@ public class QueryRestlet extends AbstractBaseRestlet {
 				.getHttpServletRequest(request);
 		String ontologyIds = (String) httpRequest
 				.getParameter(RequestParamConstants.PARAM_ONTOLOGY_IDS);
+		String objectTypes = (String) httpRequest
+				.getParameter(RequestParamConstants.PARAM_OBJECT_TYPES);
 		String includeProperties = (String) httpRequest
 				.getParameter(RequestParamConstants.PARAM_INCLUDEPROPERTIES);
 		String isExactMatch = (String) httpRequest
@@ -71,12 +73,13 @@ public class QueryRestlet extends AbstractBaseRestlet {
 		String subtreeRootConceptId = RequestUtils
 				.parseStringParam((String) httpRequest
 						.getParameter(RequestParamConstants.PARAM_SUBTREEROOTCONCEPTID));
-
 		String query = RequestUtils.getAttributeOrRequestParam(
 				RequestParamConstants.PARAM_QUERY, request);
 
 		List<Integer> ontologyIdsInt = RequestUtils
 				.parseIntegerListParam(ontologyIds);
+		List<String> objectTypesStr = RequestUtils
+				.parseStringListParam(objectTypes);
 		boolean includePropertiesBool = RequestUtils
 				.parseBooleanParam(includeProperties);
 		boolean isExactMatchBool = RequestUtils.parseBooleanParam(isExactMatch);
@@ -98,8 +101,9 @@ public class QueryRestlet extends AbstractBaseRestlet {
 			}
 
 			searchResults = queryService.executeQuery(query, ontologyIdsInt,
-					includePropertiesBool, isExactMatchBool, pageSizeInt,
-					pageNumInt, maxNumHitsInt, subtreeRootConceptId);
+					objectTypesStr, includePropertiesBool, isExactMatchBool,
+					pageSizeInt, pageNumInt, maxNumHitsInt,
+					subtreeRootConceptId);
 		} catch (InvalidInputException e) {
 			response.setStatus(Status.CLIENT_ERROR_BAD_REQUEST, e.getMessage());
 		} catch (Exception e) {

@@ -117,8 +117,8 @@ public class PrefixQuery extends BooleanQuery {
 
 		QueryParser parser = new QueryParser(luceneVersion, field, analyzer);
 
-		// expr = expr.replaceAll("\\(", "");
-		// expr = expr.replaceAll("\\)", "");
+		expr = expr.replaceAll("\\(", "");
+		expr = expr.replaceAll("\\)", "");
 
 		Query query = parser.parse(expr);
 

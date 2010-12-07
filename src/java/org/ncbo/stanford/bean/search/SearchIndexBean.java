@@ -1,12 +1,13 @@
 package org.ncbo.stanford.bean.search;
 
 import org.apache.lucene.document.Field;
+import org.ncbo.stanford.enumeration.ConceptTypeEnum;
 import org.ncbo.stanford.enumeration.SearchRecordTypeEnum;
 
 /**
  * A bean that contains information required for indexing a single search
  * record. This class overrides the SearchBean class with additional parameters
- * for each field, such as labels and lucine indexing attributes.
+ * for each field, such as labels and Lucene indexing attributes.
  * 
  * @author Michael Dorf
  * 
@@ -16,6 +17,7 @@ public class SearchIndexBean extends SearchBean {
 	public static final String ONTOLOGY_ID_FIELD_LABEL = "ontologyId";
 	public static final String ONTOLOGY_DISPLAY_LABEL_FIELD_LABEL = "ontologyDisplayLabel";
 	public static final String RECORD_TYPE_FIELD_LABEL = "recordType";
+	public static final String OBJECT_TYPE_FIELD_LABEL = "objectType";
 	public static final String CONCEPT_ID_FIELD_LABEL = "conceptId";
 	public static final String CONCEPT_ID_SHORT_FIELD_LABEL = "conceptIdShort";
 	public static final String PREFERRED_NAME_FIELD_LABEL = "preferredName";
@@ -32,6 +34,8 @@ public class SearchIndexBean extends SearchBean {
 			ONTOLOGY_DISPLAY_LABEL_FIELD_LABEL, Field.Store.YES,
 			Field.Index.NOT_ANALYZED);
 	private SearchField recordType = new SearchField(RECORD_TYPE_FIELD_LABEL,
+			Field.Store.YES, Field.Index.NOT_ANALYZED);
+	private SearchField objectType = new SearchField(OBJECT_TYPE_FIELD_LABEL,
 			Field.Store.YES, Field.Index.NOT_ANALYZED);
 	private SearchField conceptId = new SearchField(CONCEPT_ID_FIELD_LABEL,
 			Field.Store.YES, Field.Index.NOT_ANALYZED);
@@ -86,6 +90,16 @@ public class SearchIndexBean extends SearchBean {
 	public void setRecordType(SearchRecordTypeEnum recordType) {
 		super.setRecordType(recordType);
 		this.recordType.setContents((recordType == null) ? null : recordType
+				.getLabel());
+	}
+
+	/**
+	 * @param objectType
+	 *            the objectType to set
+	 */
+	public void setObjectType(ConceptTypeEnum objectType) {
+		super.setObjectType(objectType);
+		this.objectType.setContents((objectType == null) ? null : objectType
 				.getLabel());
 	}
 
@@ -155,6 +169,13 @@ public class SearchIndexBean extends SearchBean {
 	 */
 	public SearchField getRecordTypeField() {
 		return recordType;
+	}
+
+	/**
+	 * @return the objectType
+	 */
+	public SearchField getObjectTypeField() {
+		return objectType;
 	}
 
 	/**

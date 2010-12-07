@@ -9,6 +9,7 @@ import java.util.Set;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.ncbo.stanford.bean.OntologyBean;
+import org.ncbo.stanford.enumeration.ConceptTypeEnum;
 import org.ncbo.stanford.util.MessageUtils;
 import org.ncbo.stanford.util.cache.expiration.system.ExpirationSystem;
 import org.ncbo.stanford.util.constants.ApplicationConstants;
@@ -80,9 +81,17 @@ public abstract class AbstractOntologyManagerProtege {
 	private OWLModel owlModel = null;
 	private Object createOwlModelLock = new Object();
 
-	// to collide with the user-uploaded
-	// Protege tables
+	protected ConceptTypeEnum getConceptType(Frame frame) {
+		ConceptTypeEnum protegeType = ConceptTypeEnum.CONCEPT_TYPE_INDIVIDUAL;
 
+		if (frame instanceof Cls) {
+			protegeType = ConceptTypeEnum.CONCEPT_TYPE_CLASS;
+		} else if (frame instanceof Slot) {
+			protegeType = ConceptTypeEnum.CONCEPT_TYPE_PROPERTY;
+		}
+		return protegeType;
+	}
+	
 	protected Slot getSynonymSlot(KnowledgeBase kb, String synonymSlot) {
 		Slot slot = null;
 

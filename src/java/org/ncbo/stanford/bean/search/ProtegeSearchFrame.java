@@ -1,5 +1,6 @@
 package org.ncbo.stanford.bean.search;
 
+import org.ncbo.stanford.enumeration.ConceptTypeEnum;
 import org.ncbo.stanford.enumeration.SearchRecordTypeEnum;
 
 import edu.stanford.smi.protege.model.Frame;
@@ -18,14 +19,15 @@ public class ProtegeSearchFrame extends SearchBean {
 	 * @param ontologyId
 	 * @param ontologyDisplayLabel
 	 * @param recordType
+	 * @param objectType
 	 * @param preferredName
 	 * @param frame
 	 */
 	public ProtegeSearchFrame(Integer ontologyVersionId, Integer ontologyId,
 			String ontologyDisplayLabel, SearchRecordTypeEnum recordType,
-			String preferredName, Frame frame) {
+			ConceptTypeEnum objectType, String preferredName, Frame frame) {
 		super(ontologyVersionId, ontologyId, ontologyDisplayLabel, recordType,
-				preferredName);
+				objectType, preferredName);
 		this.frame = frame;
 	}
 

@@ -33,6 +33,7 @@ import org.ncbo.stanford.bean.OntologyBean;
 import org.ncbo.stanford.bean.search.SearchBean;
 import org.ncbo.stanford.bean.search.SearchIndexBean;
 import org.ncbo.stanford.bean.search.SearchResultListBean;
+import org.ncbo.stanford.enumeration.ConceptTypeEnum;
 import org.ncbo.stanford.enumeration.SearchRecordTypeEnum;
 import org.ncbo.stanford.exception.OntologyNotFoundException;
 import org.ncbo.stanford.manager.metadata.OntologyMetadataManager;
@@ -199,6 +200,8 @@ public abstract class AbstractSearchService {
 						ontologyId, ontologyDisplayLabel,
 						SearchRecordTypeEnum.getFromLabel(doc
 								.get(SearchIndexBean.RECORD_TYPE_FIELD_LABEL)),
+						ConceptTypeEnum.getFromLabel(doc
+								.get(SearchIndexBean.OBJECT_TYPE_FIELD_LABEL)),
 						conceptId,
 						doc.get(SearchIndexBean.CONCEPT_ID_SHORT_FIELD_LABEL),
 						doc.get(SearchIndexBean.PREFERRED_NAME_FIELD_LABEL),
@@ -267,6 +270,9 @@ public abstract class AbstractSearchService {
 							SearchRecordTypeEnum
 									.getFromLabel(doc
 											.get(SearchIndexBean.RECORD_TYPE_FIELD_LABEL)),
+							ConceptTypeEnum
+									.getFromLabel(doc
+											.get(SearchIndexBean.OBJECT_TYPE_FIELD_LABEL)),
 							conceptId,
 							doc
 									.get(SearchIndexBean.CONCEPT_ID_SHORT_FIELD_LABEL),
@@ -319,6 +325,24 @@ public abstract class AbstractSearchService {
 	}
 
 	/**
+	 * Constructs the query that limits the search to the given object types
+	 * (i.e. class, individual, property)
+	 * 
+	 * @param objectTypes
+	 * @return
+	 */
+	protected Query generateObjectTypesQuery(Collection<String> objectTypes) {
+		BooleanQuery query = new BooleanQuery();
+
+		for (String objectType : objectTypes) {
+			query.add(new TermQuery(generateObjectTypeTerm(objectType)),
+					BooleanClause.Occur.SHOULD);
+		}
+
+		return query;
+	}
+
+	/**
 	 * Constructs the term with the given ontology id
 	 * 
 	 * @param ontologyId
@@ -327,6 +351,16 @@ public abstract class AbstractSearchService {
 	protected Term generateOntologyIdTerm(Integer ontologyId) {
 		return new Term(SearchIndexBean.ONTOLOGY_ID_FIELD_LABEL, ontologyId
 				.toString());
+	}
+
+	/**
+	 * Constructs the term with the given object type
+	 * 
+	 * @param objectType
+	 * @return
+	 */
+	protected Term generateObjectTypeTerm(String objectType) {
+		return new Term(SearchIndexBean.OBJECT_TYPE_FIELD_LABEL, objectType);
 	}
 
 	/**
@@ -502,11 +536,11 @@ public abstract class AbstractSearchService {
 		boolean hasNewer = false;
 		try {
 			FSDirectory dir = FSDirectory.open(new File(indexPath));
-	
+
 			if (getCurrentIndexDate(dir).after(openIndexDate)) {
 				hasNewer = true;
 			}
-			
+
 			dir.close();
 		} catch (Exception e) { // no index file found
 		}

@@ -58,20 +58,22 @@ public interface QuerySearchService {
 	 * 
 	 * @param expr
 	 * @param ontologyIds
+	 * @param objectTypes
 	 * @param includeProperties
 	 * @param isExactMatch
 	 * @param pageSize
 	 * @param pageNum
 	 * @param maxNumHits
-	 * @param subtreeRootConceptId -
-	 *            optional root concept id for sub-tree search
+	 * @param subtreeRootConceptId
+	 *            - optional root concept id for sub-tree search
 	 * @return
 	 * @throws Exception
 	 */
 	public Page<SearchBean> executeQuery(String expr,
-			Collection<Integer> ontologyIds, boolean includeProperties,
-			boolean isExactMatch, Integer pageSize, Integer pageNum,
-			Integer maxNumHits, String subtreeRootConceptId) throws Exception;
+			Collection<Integer> ontologyIds, Collection<String> objectTypes,
+			boolean includeProperties, boolean isExactMatch, Integer pageSize,
+			Integer pageNum, Integer maxNumHits, String subtreeRootConceptId)
+			throws Exception;
 
 	/**
 	 * Execute a search query for a given expression, limiting search to the
@@ -81,18 +83,19 @@ public interface QuerySearchService {
 	 * 
 	 * @param expr
 	 * @param ontologyIds
+	 * @param objectTypes
 	 * @param includeProperties
 	 * @param isExactMatch
 	 * @param maxNumHits
-	 * @param subtreeRootConceptId -
-	 *            optional root concept id for sub-tree search
+	 * @param subtreeRootConceptId
+	 *            - optional root concept id for sub-tree search
 	 * @return
 	 * @throws Exception
 	 */
 	public Page<SearchBean> executeQuery(String expr,
-			Collection<Integer> ontologyIds, boolean includeProperties,
-			boolean isExactMatch, Integer maxNumHits,
-			String subtreeRootConceptId) throws Exception;
+			Collection<Integer> ontologyIds, Collection<String> objectTypes,
+			boolean includeProperties, boolean isExactMatch,
+			Integer maxNumHits, String subtreeRootConceptId) throws Exception;
 
 	/**
 	 * Execute a search from an already constructed Query object. Return ALL
@@ -103,8 +106,8 @@ public interface QuerySearchService {
 	 * @param pageSize
 	 * @param pageNum
 	 * @param maxNumHits
-	 * @param subtreeRootConceptId -
-	 *            optional root concept id for sub-tree search
+	 * @param subtreeRootConceptId
+	 *            - optional root concept id for sub-tree search
 	 * @return
 	 * @throws Exception
 	 */
@@ -119,8 +122,8 @@ public interface QuerySearchService {
 	 * 
 	 * @param query
 	 * @param maxNumHits
-	 * @param subtreeRootConceptId -
-	 *            optional root concept id for sub-tree search
+	 * @param subtreeRootConceptId
+	 *            - optional root concept id for sub-tree search
 	 * @return
 	 * @throws Exception
 	 */
@@ -131,6 +134,7 @@ public interface QuerySearchService {
 	 * Generate a search query from the expression and optional ontology ids
 	 * 
 	 * @param ontologyIds
+	 * @param objectTypes
 	 * @param expr
 	 * @param includeProperties
 	 * @param isExactMatch
@@ -138,16 +142,16 @@ public interface QuerySearchService {
 	 * @throws IOException
 	 */
 	public Query generateLuceneSearchQuery(Collection<Integer> ontologyIds,
-			String expr, boolean includeProperties, boolean isExactMatch)
-			throws IOException;
+			Collection<String> objectTypes, String expr,
+			boolean includeProperties, boolean isExactMatch) throws IOException;
 
 	/**
 	 * Executes a query against the Lucene index. Does not use caching
 	 * 
 	 * @param query
 	 * @param maxNumHits
-	 * @param subtreeRootConceptId -
-	 *            optional root concept id for sub-tree search
+	 * @param subtreeRootConceptId
+	 *            - optional root concept id for sub-tree search
 	 * @return
 	 * @throws Exception
 	 */

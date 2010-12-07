@@ -66,8 +66,8 @@ public class OntologySearchManagerProtegeImpl extends
 			ProtegeSearchFrame protegeFrame = new ProtegeSearchFrame(
 					ontologyBean.getId(), ontologyBean.getOntologyId(),
 					ontologyBean.getDisplayLabel(),
-					SearchRecordTypeEnum.RECORD_TYPE_PREFERRED_NAME, null,
-					frame);
+					SearchRecordTypeEnum.RECORD_TYPE_PREFERRED_NAME,
+					getConceptType(frame), null, frame);
 
 			// add preferred name slot
 			List<Slot> preferredNameSlots = getPreferredNameSlots(kb,
@@ -282,8 +282,8 @@ public class OntologySearchManagerProtegeImpl extends
 		doc.populateInstance(luceneProtegeFrame.getOntologyVersionId(),
 				luceneProtegeFrame.getOntologyId(), luceneProtegeFrame
 						.getOntologyDisplayLabel(), luceneProtegeFrame
-						.getRecordType(), getFullId(luceneProtegeFrame
-						.getFrame(), ontologyBean),
+						.getRecordType(), luceneProtegeFrame.getObjectType(),
+				getFullId(luceneProtegeFrame.getFrame(), ontologyBean),
 				getConceptIdShort(luceneProtegeFrame.getFrame()),
 				preferredName, value);
 	}

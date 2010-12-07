@@ -585,14 +585,7 @@ public class OntologyRetrievalManagerProtegeImpl extends
 		classBean.setFullId(getFullId(frame, ontologyBean));
 		classBean.setLabel(getBrowserText(frame, ontologyBean));
 
-		ConceptTypeEnum protegeType = ConceptTypeEnum.CONCEPT_TYPE_INDIVIDUAL;
-
-		// TODO : used this code as reference to identify Instance
-		if (frame instanceof Cls) {
-			protegeType = ConceptTypeEnum.CONCEPT_TYPE_CLASS;
-		} else if (frame instanceof Slot) {
-			protegeType = ConceptTypeEnum.CONCEPT_TYPE_PROPERTY;
-		}
+		ConceptTypeEnum protegeType = getConceptType(frame);
 
 		classBean.setType(protegeType);
 

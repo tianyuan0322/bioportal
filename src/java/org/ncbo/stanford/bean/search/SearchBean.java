@@ -1,5 +1,6 @@
 package org.ncbo.stanford.bean.search;
 
+import org.ncbo.stanford.enumeration.ConceptTypeEnum;
 import org.ncbo.stanford.enumeration.SearchRecordTypeEnum;
 
 /**
@@ -14,6 +15,7 @@ public class SearchBean {
 	private Integer ontologyId;
 	private String ontologyDisplayLabel;
 	private SearchRecordTypeEnum recordType;
+	private ConceptTypeEnum objectType;
 	private String conceptId;
 	private String conceptIdShort;
 	private String preferredName;
@@ -26,16 +28,11 @@ public class SearchBean {
 	 * @param ontologyVersionId
 	 * @param ontologyId
 	 * @param ontologyDisplayLabel
-	 * @param recordType
-	 * @param conceptId
-	 * @param conceptIdShort
-	 * @param preferredName
-	 * @param contents
 	 */
 	public SearchBean(Integer ontologyVersionId, Integer ontologyId,
 			String ontologyDisplayLabel) {
 		populateInstance(ontologyVersionId, ontologyId, ontologyDisplayLabel,
-				null, null, null, null, null);
+				null, null, null, null, null, null);
 	}
 
 	/**
@@ -43,6 +40,7 @@ public class SearchBean {
 	 * @param ontologyId
 	 * @param ontologyDisplayLabel
 	 * @param recordType
+	 * @param objectType
 	 * @param conceptId
 	 * @param conceptIdShort
 	 * @param preferredName
@@ -50,10 +48,11 @@ public class SearchBean {
 	 */
 	public SearchBean(Integer ontologyVersionId, Integer ontologyId,
 			String ontologyDisplayLabel, SearchRecordTypeEnum recordType,
-			String conceptId, String conceptIdShort, String preferredName,
-			String contents) {
+			ConceptTypeEnum objectType, String conceptId,
+			String conceptIdShort, String preferredName, String contents) {
 		populateInstance(ontologyVersionId, ontologyId, ontologyDisplayLabel,
-				recordType, conceptId, conceptIdShort, preferredName, contents);
+				recordType, objectType, conceptId, conceptIdShort,
+				preferredName, contents);
 	}
 
 	/**
@@ -61,13 +60,14 @@ public class SearchBean {
 	 * @param ontologyId
 	 * @param ontologyDisplayLabel
 	 * @param recordType
+	 * @param objectType
 	 * @param preferredName
 	 */
 	public SearchBean(Integer ontologyVersionId, Integer ontologyId,
 			String ontologyDisplayLabel, SearchRecordTypeEnum recordType,
-			String preferredName) {
+			ConceptTypeEnum objectType, String preferredName) {
 		populateInstance(ontologyVersionId, ontologyId, ontologyDisplayLabel,
-				recordType, null, null, preferredName, null);
+				recordType, objectType, null, null, preferredName, null);
 	}
 
 	/**
@@ -78,6 +78,7 @@ public class SearchBean {
 	 * @param ontologyId
 	 * @param ontologyDisplayLabel
 	 * @param recordType
+	 * @param objectType
 	 * @param conceptId
 	 * @param conceptIdShort
 	 * @param preferredName
@@ -85,12 +86,13 @@ public class SearchBean {
 	 */
 	public void populateInstance(Integer ontologyVersionId, Integer ontologyId,
 			String ontologyDisplayLabel, SearchRecordTypeEnum recordType,
-			String conceptId, String conceptIdShort, String preferredName,
-			String contents) {
+			ConceptTypeEnum objectType, String conceptId,
+			String conceptIdShort, String preferredName, String contents) {
 		setOntologyVersionId(ontologyVersionId);
 		setOntologyId(ontologyId);
 		setOntologyDisplayLabel(ontologyDisplayLabel);
 		setRecordType(recordType);
+		setObjectType(objectType);
 		setConceptId(conceptId);
 		setConceptIdShort(conceptIdShort);
 		setPreferredName(preferredName);
@@ -101,9 +103,9 @@ public class SearchBean {
 		return "VersionId: " + ontologyVersionId + " | OntologyId: "
 				+ ontologyId + " | ConceptId: " + conceptId + " | Contents: "
 				+ contents + " | RecordType: " + recordType.getLabel() + "\n"
-				+ " PreferedName: " + preferredName + " | ConceptIdShort: "
-				+ conceptIdShort + " | OntologyDisplayLabel: "
-				+ ontologyDisplayLabel + "\n";
+				+ " | ObjectType: " + objectType.getLabel() + " PreferedName: "
+				+ preferredName + " | ConceptIdShort: " + conceptIdShort
+				+ " | OntologyDisplayLabel: " + ontologyDisplayLabel + "\n";
 	}
 
 	/**
@@ -156,6 +158,21 @@ public class SearchBean {
 	 */
 	public SearchRecordTypeEnum getRecordType() {
 		return recordType;
+	}
+
+	/**
+	 * @param objectType
+	 *            the objectType to set
+	 */
+	public void setObjectType(ConceptTypeEnum objectType) {
+		this.objectType = objectType;
+	}
+
+	/**
+	 * @return the objectType
+	 */
+	public ConceptTypeEnum getObjectType() {
+		return objectType;
 	}
 
 	/**

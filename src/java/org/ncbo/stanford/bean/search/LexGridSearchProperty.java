@@ -1,7 +1,7 @@
 package org.ncbo.stanford.bean.search;
 
-
 import org.LexGrid.commonTypes.Property;
+import org.ncbo.stanford.enumeration.ConceptTypeEnum;
 import org.ncbo.stanford.enumeration.SearchRecordTypeEnum;
 
 /**
@@ -12,6 +12,10 @@ import org.ncbo.stanford.enumeration.SearchRecordTypeEnum;
  */
 public class LexGridSearchProperty extends SearchBean {
 	Property property;
+	// setting all LexGrid concept types to "Class".
+	// See GForge [#2740] Ability to search only classes, instances, or
+	// properties
+	private static final ConceptTypeEnum LEXGRID_OBJECT_TYPE = ConceptTypeEnum.CONCEPT_TYPE_CLASS;
 
 	/**
 	 * @param ontologyVersionId
@@ -25,7 +29,7 @@ public class LexGridSearchProperty extends SearchBean {
 			String ontologyDisplayLabel, SearchRecordTypeEnum recordType,
 			String preferredName, Property property) {
 		super(ontologyVersionId, ontologyId, ontologyDisplayLabel, recordType,
-				preferredName);
+				LEXGRID_OBJECT_TYPE, preferredName);
 		this.property = property;
 	}
 
