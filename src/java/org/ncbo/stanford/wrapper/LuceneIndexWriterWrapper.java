@@ -2,6 +2,7 @@ package org.ncbo.stanford.wrapper;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.List;
 
 import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.document.Document;
@@ -11,8 +12,10 @@ import org.apache.lucene.index.IndexWriter;
 import org.apache.lucene.index.Term;
 import org.apache.lucene.index.IndexWriter.MaxFieldLength;
 import org.apache.lucene.search.Query;
+import org.apache.lucene.store.FSDirectory;
 import org.ncbo.stanford.bean.search.SearchField;
 import org.ncbo.stanford.bean.search.SearchIndexBean;
+import org.ncbo.stanford.util.helper.reflection.ReflectionHelper;
 import org.ncbo.stanford.util.ontologyfile.pathhandler.AbstractFilePathHandler;
 
 public class LuceneIndexWriterWrapper {
@@ -31,7 +34,8 @@ public class LuceneIndexWriterWrapper {
 			boolean create) throws IOException {
 		super();
 		this.indexPath = indexPath;
-		writer = new IndexWriter(indexPath, analyzer, create, MAX_FIELD_LENGTH);
+		FSDirectory dir = FSDirectory.open(new File(indexPath));
+		writer = new IndexWriter(dir, analyzer, create, MAX_FIELD_LENGTH);
 	}
 
 	/**
@@ -43,7 +47,8 @@ public class LuceneIndexWriterWrapper {
 			throws IOException {
 		super();
 		this.indexPath = indexPath;
-		writer = new IndexWriter(indexPath, analyzer, MAX_FIELD_LENGTH);
+		FSDirectory dir = FSDirectory.open(new File(indexPath));
+		writer = new IndexWriter(dir, analyzer, MAX_FIELD_LENGTH);
 	}
 
 	public void addDocument(SearchIndexBean indexBean) throws IOException {
@@ -120,8 +125,10 @@ public class LuceneIndexWriterWrapper {
 			renameBackupIndex(backupFilePath);
 		}
 
-		IndexReader reader = IndexReader.open(indexPath);
-		IndexWriter backupWriter = new IndexWriter(backupPath, writer
+		FSDirectory dir = FSDirectory.open(new File(indexPath));
+		FSDirectory backupDir = FSDirectory.open(new File(backupPath));
+		IndexReader reader = IndexReader.open(dir, false);
+		IndexWriter backupWriter = new IndexWriter(backupDir, writer
 				.getAnalyzer(), true, MAX_FIELD_LENGTH);
 
 		backupWriter.addIndexes(new IndexReader[] { reader });
@@ -165,16 +172,22 @@ public class LuceneIndexWriterWrapper {
 	}
 
 	private void addFields(Document doc, SearchIndexBean indexBean) {
-		addField(doc, indexBean.getOntologyVersionIdField());
-		addField(doc, indexBean.getOntologyIdField());
-		addField(doc, indexBean.getOntologyDisplayLabelField());
-		addField(doc, indexBean.getRecordTypeField());
-		addField(doc, indexBean.getConceptIdField());
-		addField(doc, indexBean.getConceptIdShortField());
-		addField(doc, indexBean.getPreferredNameField());
-		addField(doc, indexBean.getPreferredNameLCField());
-		addField(doc, indexBean.getContentsField());
-		addField(doc, indexBean.getLiteralContentsField());
+		List<java.lang.reflect.Field> result = ReflectionHelper
+				.getAllNonStaticFields(indexBean);
+
+		for (java.lang.reflect.Field field : result) {
+			field.setAccessible(true);
+			SearchField value;
+
+			try {
+				value = (SearchField) field.get(indexBean);
+				addField(doc, value);
+			} catch (IllegalArgumentException e) {
+				e.printStackTrace();
+			} catch (IllegalAccessException e) {
+				e.printStackTrace();
+			}
+		}
 	}
 
 	private void addField(Document doc, SearchField field) {
