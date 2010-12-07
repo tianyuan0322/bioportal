@@ -43,6 +43,13 @@ public interface ApplicationConstants {
 	public static final String SEARCH_RECORD_TYPE_PROPERTY = "dproperty";
 
 	/**
+	 * Concept Types
+	 */
+	public static final String CONCEPT_TYPE_CLASS = "class";
+	public static final String CONCEPT_TYPE_INDIVIDUAL = "individual";
+	public static final String CONCEPT_TYPE_PROPERTY = "property";
+
+	/**
 	 * Ontology version status
 	 */
 	public static final String VERSION_STATUS_PREPRODUCTION = "pre_production";
