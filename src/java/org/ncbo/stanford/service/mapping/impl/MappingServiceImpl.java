@@ -5,6 +5,8 @@ import java.util.List;
 
 import org.ncbo.stanford.bean.OntologyBean;
 import org.ncbo.stanford.bean.concept.ClassBean;
+import org.ncbo.stanford.bean.mapping.MappingConceptStatsBean;
+import org.ncbo.stanford.bean.mapping.MappingOntologyStatsBean;
 import org.ncbo.stanford.bean.mapping.MappingParametersBean;
 import org.ncbo.stanford.bean.mapping.MappingResultListBean;
 import org.ncbo.stanford.bean.mapping.OneToOneMappingBean;
@@ -300,6 +302,22 @@ public class MappingServiceImpl implements MappingService {
 		}
 
 		return mappings;
+	}
+	
+	public Integer getTotalMappingsCount() {
+		return mappingStatsDAO.getTotalMappingsCount();
+	}
+	
+	public List<MappingOntologyStatsBean> getOntologiesMappingCount() {
+		return mappingStatsDAO.getOntologiesMappingCount();
+	}
+	
+	public List<MappingOntologyStatsBean> getOntologyMappingCount(Integer ontologyId) {
+		return mappingStatsDAO.getOntologyMappingCount(ontologyId);
+	}
+	
+	public List<MappingConceptStatsBean> getOntologyConceptsCount(Integer ontologyId, Integer limit) {
+		return mappingStatsDAO.getOntologyConceptsCount(ontologyId, limit);
 	}
 
 	public OneToOneMappingBean updateMapping(URI id, OneToOneMappingBean mapping)

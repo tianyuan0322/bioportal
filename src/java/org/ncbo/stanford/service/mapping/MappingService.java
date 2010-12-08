@@ -4,6 +4,8 @@ import java.util.List;
 
 import org.ncbo.stanford.bean.OntologyBean;
 import org.ncbo.stanford.bean.concept.ClassBean;
+import org.ncbo.stanford.bean.mapping.MappingConceptStatsBean;
+import org.ncbo.stanford.bean.mapping.MappingOntologyStatsBean;
 import org.ncbo.stanford.bean.mapping.MappingParametersBean;
 import org.ncbo.stanford.bean.mapping.OneToOneMappingBean;
 import org.ncbo.stanford.enumeration.MappingSourceEnum;
@@ -199,5 +201,38 @@ public interface MappingService {
 	 */
 	public List<OneToOneMappingBean> getRecentMappings(Integer limit)
 			throws InvalidInputException;
+
+	/**
+	 * Gets an integer representing total number of mappings in the system.
+	 * 
+	 * @return
+	 */
+	public Integer getTotalMappingsCount();
+
+	/**
+	 * Get a list of all ontologies and the number of mappings they have.
+	 * 
+	 * @return
+	 */
+	public List<MappingOntologyStatsBean> getOntologiesMappingCount();
+
+	/**
+	 * Get a list of all ontologies mapped to/from a given ontology with counts.
+	 * 
+	 * @param ontologyId
+	 * @return
+	 */
+	public List<MappingOntologyStatsBean> getOntologyMappingCount(
+			Integer ontologyId);
+
+	/**
+	 * Get a list of concepts and their mapping counts for a given ontology.
+	 * 
+	 * @param ontologyId
+	 * @param limit
+	 * @return
+	 */
+	public List<MappingConceptStatsBean> getOntologyConceptsCount(
+			Integer ontologyId, Integer limit);
 
 }

@@ -15,10 +15,10 @@ import org.restlet.data.Request;
 import org.restlet.data.Response;
 import org.restlet.data.Status;
 
-public class MappingRecentRestlet extends AbstractMappingRestlet {
+public class MappingStatsRecentRestlet extends AbstractMappingRestlet {
 
 	private static final Log log = LogFactory
-			.getLog(MappingRecentRestlet.class);
+			.getLog(MappingStatsRecentRestlet.class);
 
 	private MappingService mappingService;
 

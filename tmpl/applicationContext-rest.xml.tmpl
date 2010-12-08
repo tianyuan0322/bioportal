@@ -360,13 +360,6 @@
 		</property>
 	</bean>
 
-	<bean id="mappingRecentRestlet" class="org.ncbo.stanford.view.rest.restlet.mapping.MappingRecentRestlet"
-		parent="abstractMappingRestlet">
-		<property name="mappingService">
-			<ref bean="mappingService" />
-		</property>
-	</bean>
-
 	<bean id="mappingOntologyRestlet" class="org.ncbo.stanford.view.rest.restlet.mapping.MappingOntologyRestlet"
 		parent="abstractMappingRestlet">
 		<property name="mappingService">
@@ -390,6 +383,43 @@
 		</property>	
 	</bean>
 	
+	<!-- Mapping Stats -->
+	<bean id="mappingStatsRecentRestlet" class="org.ncbo.stanford.view.rest.restlet.mapping.MappingStatsRecentRestlet"
+		parent="abstractMappingRestlet">
+		<property name="mappingService">
+			<ref bean="mappingService" />
+		</property>
+	</bean>
+
+	<bean id="mappingStatsOntologyRestlet" class="org.ncbo.stanford.view.rest.restlet.mapping.MappingStatsOntologyRestlet"
+		parent="abstractMappingRestlet">
+		<property name="mappingService">
+			<ref bean="mappingService" />
+		</property>
+		<property name="ontologyService">
+			<ref bean="ontologyService" />
+		</property>
+	</bean>
+
+	<bean id="mappingStatsOntologiesRestlet" class="org.ncbo.stanford.view.rest.restlet.mapping.MappingStatsOntologiesRestlet"
+		parent="abstractMappingRestlet">
+		<property name="mappingService">
+			<ref bean="mappingService" />
+		</property>
+	</bean>
+
+	<bean id="mappingStatsOntologyConceptsRestlet" class="org.ncbo.stanford.view.rest.restlet.mapping.MappingStatsOntologyConceptsRestlet"
+		parent="abstractMappingRestlet">
+		<property name="mappingService">
+			<ref bean="mappingService" />
+		</property>
+		<property name="ontologyService">
+			<ref bean="ontologyService" />
+		</property>
+	</bean>
+	
+	<!-- Misc -->
+
 	<bean id="userEmailRestlet"
 		class="org.ncbo.stanford.view.rest.restlet.user.UserEmailRestlet"
 		parent="abstractBaseRestlet">
@@ -718,9 +748,6 @@
 						<entry key="/mappings">
 							<ref local="mappingRestlet" />
 						</entry>
-						<entry key="/mappings/recent">
-							<ref local="mappingRecentRestlet" />
-						</entry>
 						<entry key="/mappings/upload">
 							<ref local="mappingUploadRestlet" />
 						</entry>
@@ -735,6 +762,19 @@
 						</entry>
 						<entry key="/virtual/mappings/concepts/{ontologyid}">
 							<ref local="mappingConceptRestlet" />
+						</entry>
+						<!-- ======== Mappings Stats ====== -->
+						<entry key="/mappings/stats/recent">
+							<ref local="mappingStatsRecentRestlet" />
+						</entry>
+						<entry key="/virtual/mappings/stats/ontologies/{ontologyid}">
+							<ref local="mappingStatsOntologyRestlet" />
+						</entry>
+						<entry key="/mappings/stats/ontologies">
+							<ref local="mappingStatsOntologiesRestlet" />
+						</entry>
+						<entry key="/virtual/mappings/stats/ontologies/concepts/{ontologyid}">
+							<ref local="mappingStatsOntologyConceptsRestlet" />
 						</entry>
 						<!-- ========== Metadata ========== -->
 						<entry key="/project/{id}">

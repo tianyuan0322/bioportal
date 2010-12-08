@@ -31,6 +31,8 @@ import org.ncbo.stanford.bean.concept.PropertyBean;
 import org.ncbo.stanford.bean.http.HttpInputStreamWrapper;
 import org.ncbo.stanford.bean.logging.UsageLoggingBean;
 import org.ncbo.stanford.bean.mapping.AbstractMappingBean;
+import org.ncbo.stanford.bean.mapping.MappingConceptStatsBean;
+import org.ncbo.stanford.bean.mapping.MappingOntologyStatsBean;
 import org.ncbo.stanford.bean.mapping.MappingResultListBean;
 import org.ncbo.stanford.bean.mapping.OneToOneMappingBean;
 import org.ncbo.stanford.bean.notes.AppliesToBean;
@@ -536,6 +538,8 @@ public class XMLSerializationServiceImpl implements XMLSerializationService {
 		// Mapping aliases using annotations
 		xmlSerializer.processAnnotations(OneToOneMappingBean.class);
 		xmlSerializer.processAnnotations(AbstractMappingBean.class);
+		xmlSerializer.processAnnotations(MappingOntologyStatsBean.class);
+		xmlSerializer.processAnnotations(MappingConceptStatsBean.class);
 		xmlSerializer.addDefaultImplementation(URIImpl.class, URI.class);
 		xmlSerializer.addDefaultImplementation(ArrayList.class, List.class);
 		xmlSerializer.addDefaultImplementation(PaginatableList.class,
