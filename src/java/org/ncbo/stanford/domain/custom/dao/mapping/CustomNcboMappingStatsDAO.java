@@ -6,6 +6,7 @@ import java.util.List;
 
 import org.ncbo.stanford.bean.mapping.MappingConceptStatsBean;
 import org.ncbo.stanford.bean.mapping.MappingOntologyStatsBean;
+import org.ncbo.stanford.bean.mapping.MappingUserStatsBean;
 import org.ncbo.stanford.domain.custom.entity.mapping.OneToOneMapping;
 import org.ncbo.stanford.exception.InvalidInputException;
 import org.ncbo.stanford.util.constants.ApplicationConstants;
@@ -46,6 +47,13 @@ public class CustomNcboMappingStatsDAO extends AbstractNcboMappingDAO {
 			+ "UNION { ?mappingId <http://protege.stanford.edu/ontologies/mappings/mappings.rdfs#target_ontology_id> %ONT% . "
 			+ "?mappingId <http://protege.stanford.edu/ontologies/mappings/mappings.rdfs#target> ?conceptId . } "
 			+ "} ORDER BY DESC(?count) LIMIT %LIMIT%";
+	
+	private static final String userCount = "SELECT ?userId count(?mappingId) as ?count " +
+			"WHERE { { ?mappingId <http://protege.stanford.edu/ontologies/mappings/mappings.rdfs#source_ontology_id> %ONT% . " +
+			"?mappingId <http://protege.stanford.edu/ontologies/mappings/mappings.rdfs#submitted_by> ?userId . } " +
+			"UNION { ?mappingId <http://protege.stanford.edu/ontologies/mappings/mappings.rdfs#target_ontology_id> %ONT% . " +
+			"?mappingId <http://protege.stanford.edu/ontologies/mappings/mappings.rdfs#submitted_by> ?userId . } " +
+			"} ORDER BY DESC(?count)";
 
 	/**
 	 * Gets a list of recent mappings up to size of limit.
@@ -192,6 +200,45 @@ public class CustomNcboMappingStatsDAO extends AbstractNcboMappingDAO {
 		return concepts;
 	}
 
+	public List<MappingUserStatsBean> getOntologyUserCount(
+			Integer ontologyId) {
+		ObjectConnection con = getRdfStoreManager().getObjectConnection();
+		
+		List<MappingUserStatsBean> users = new ArrayList<MappingUserStatsBean>();
+
+		String userCountQuery = userCount.replaceAll("%ONT%",
+				ontologyId.toString());
+
+		TupleQuery query = null;
+		try {
+			// Source processing
+			query = con.prepareTupleQuery(QueryLanguage.SPARQL,
+					userCountQuery, ApplicationConstants.MAPPING_CONTEXT);
+			TupleQueryResult result = query.evaluate();
+
+			while (result.hasNext()) {
+				BindingSet bs = result.next();
+
+				Integer userId = convertValueToInteger(bs.getValue("userId"));
+				Integer count = convertValueToInteger(bs.getValue("count"));
+				
+				MappingUserStatsBean user = new MappingUserStatsBean();
+				user.setUserId(userId);
+				user.setMappingCount(count);
+				users.add(user);
+			}
+
+			result.close();
+		} catch (MalformedQueryException e) {
+			e.printStackTrace();
+		} catch (RepositoryException e) {
+			e.printStackTrace();
+		} catch (QueryEvaluationException e) {
+			e.printStackTrace();
+		}
+
+		return users;
+	}
 	/**
 	 * Private Methods
 	 */

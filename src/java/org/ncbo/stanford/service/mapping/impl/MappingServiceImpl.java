@@ -9,6 +9,7 @@ import org.ncbo.stanford.bean.mapping.MappingConceptStatsBean;
 import org.ncbo.stanford.bean.mapping.MappingOntologyStatsBean;
 import org.ncbo.stanford.bean.mapping.MappingParametersBean;
 import org.ncbo.stanford.bean.mapping.MappingResultListBean;
+import org.ncbo.stanford.bean.mapping.MappingUserStatsBean;
 import org.ncbo.stanford.bean.mapping.OneToOneMappingBean;
 import org.ncbo.stanford.domain.custom.dao.mapping.CustomNcboMappingCountsDAO;
 import org.ncbo.stanford.domain.custom.dao.mapping.CustomNcboMappingDAO;
@@ -318,6 +319,10 @@ public class MappingServiceImpl implements MappingService {
 	
 	public List<MappingConceptStatsBean> getOntologyConceptsCount(Integer ontologyId, Integer limit) {
 		return mappingStatsDAO.getOntologyConceptsCount(ontologyId, limit);
+	}
+	
+	public List<MappingUserStatsBean> getOntologyUserCount(Integer ontologyId) {
+		return mappingStatsDAO.getOntologyUserCount(ontologyId);
 	}
 
 	public OneToOneMappingBean updateMapping(URI id, OneToOneMappingBean mapping)

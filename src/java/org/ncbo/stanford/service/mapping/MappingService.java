@@ -7,6 +7,7 @@ import org.ncbo.stanford.bean.concept.ClassBean;
 import org.ncbo.stanford.bean.mapping.MappingConceptStatsBean;
 import org.ncbo.stanford.bean.mapping.MappingOntologyStatsBean;
 import org.ncbo.stanford.bean.mapping.MappingParametersBean;
+import org.ncbo.stanford.bean.mapping.MappingUserStatsBean;
 import org.ncbo.stanford.bean.mapping.OneToOneMappingBean;
 import org.ncbo.stanford.enumeration.MappingSourceEnum;
 import org.ncbo.stanford.exception.InvalidInputException;
@@ -234,5 +235,14 @@ public interface MappingService {
 	 */
 	public List<MappingConceptStatsBean> getOntologyConceptsCount(
 			Integer ontologyId, Integer limit);
+
+	/**
+	 * Get a list of users who have created mappings for an ontology plus counts
+	 * for how many mappings they've created.
+	 * 
+	 * @param ontologyId
+	 * @return
+	 */
+	public List<MappingUserStatsBean> getOntologyUserCount(Integer ontologyId);
 
 }
