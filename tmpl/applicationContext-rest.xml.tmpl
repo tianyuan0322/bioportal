@@ -418,6 +418,16 @@
 		</property>
 	</bean>
 	
+	<bean id="mappingStatsOntologyUserRestlet" class="org.ncbo.stanford.view.rest.restlet.mapping.MappingStatsOntologyUserRestlet"
+		parent="abstractMappingRestlet">
+		<property name="mappingService">
+			<ref bean="mappingService" />
+		</property>
+		<property name="ontologyService">
+			<ref bean="ontologyService" />
+		</property>
+	</bean>
+	
 	<!-- Misc -->
 
 	<bean id="userEmailRestlet"
@@ -775,6 +785,9 @@
 						</entry>
 						<entry key="/virtual/mappings/stats/ontologies/concepts/{ontologyid}">
 							<ref local="mappingStatsOntologyConceptsRestlet" />
+						</entry>
+						<entry key="/virtual/mappings/stats/ontologies/users/{ontologyid}">
+							<ref local="mappingStatsOntologyUserRestlet" />
 						</entry>
 						<!-- ========== Metadata ========== -->
 						<entry key="/project/{id}">

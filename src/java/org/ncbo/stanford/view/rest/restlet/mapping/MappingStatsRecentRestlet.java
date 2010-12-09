@@ -44,7 +44,7 @@ public class MappingStatsRecentRestlet extends AbstractMappingRestlet {
 		Integer limit = RequestUtils.parseIntegerParam(limitStr);
 		
 		// Default values
-		if (limit < 1 || limit > 100) {
+		if (limit == null || limit < 1 || limit > 100) {
 			limit = 5;
 		}
 
