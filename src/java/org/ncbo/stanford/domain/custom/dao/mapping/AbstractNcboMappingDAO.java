@@ -315,10 +315,10 @@ public class AbstractNcboMappingDAO {
 			throws InvalidInputException {
 		// Determine the SPARQL filter to use based on directionality
 		// Default is bidirectional
-		String filter = "?sourceOntologyId = " + sourceOntology
-				+ " || ?targetOntologyId = " + targetOntology
-				+ " || ?sourceOntologyId = " + targetOntology
-				+ " || ?targetOntologyId = " + sourceOntology;
+		String filter = "(?sourceOntologyId = " + sourceOntology
+				+ " && ?targetOntologyId = " + targetOntology
+				+ ") || (?sourceOntologyId = " + targetOntology
+				+ " && ?targetOntologyId = " + sourceOntology + ")";
 		if (sourceOntology != null && targetOntology != null) {
 			if (unidirectional != null && unidirectional == true) {
 				filter = "?sourceOntologyId = " + sourceOntology
@@ -359,9 +359,9 @@ public class AbstractNcboMappingDAO {
 			throws InvalidInputException {
 		// Determine the SPARQL filter to use based on directionality
 		// Default is bidirectional
-		String filter = "?source = <" + sourceConcept + "> || ?target = <"
-				+ targetConcept + "> || ?source = <" + targetConcept
-				+ "> || ?target = <" + sourceConcept + ">";
+		String filter = "(?source = <" + sourceConcept + "> && ?target = <"
+				+ targetConcept + ">) || (?source = <" + targetConcept
+				+ "> && ?target = <" + sourceConcept + ">)";
 		if (sourceConcept != null && targetConcept != null) {
 			if (unidirectional != null && unidirectional == true) {
 				filter = "?source = <" + sourceConcept + "> && ?target = <"
