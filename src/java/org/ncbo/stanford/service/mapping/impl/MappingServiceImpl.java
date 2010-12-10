@@ -357,7 +357,7 @@ public class MappingServiceImpl implements MappingService {
 		}
 		mb.setMappingSourceName(mapping.getMappingSourceName());
 		mb.setMappingSourceAlgorithm(mapping.getMappingSourceAlgorithm());
-		mb.setMappingSourcecontactInfo(mapping.getMappingSourcecontactInfo());
+		mb.setMappingSourceContactInfo(mapping.getMappingSourcecontactInfo());
 		mb.setMappingSourceSite(mapping.getMappingSourceSite());
 		mb.setMappingType(mapping.getMappingType());
 		mb.setRelation(mapping.getRelation());
@@ -387,7 +387,7 @@ public class MappingServiceImpl implements MappingService {
 			otom.setMappingSource(mapping.getMappingSource().toString());
 		}
 		otom.setMappingSourceAlgorithm(mapping.getMappingSourceAlgorithm());
-		otom.setMappingSourcecontactInfo(mapping.getMappingSourcecontactInfo());
+		otom.setMappingSourcecontactInfo(mapping.getMappingSourceContactInfo());
 		otom.setMappingSourceSite(mapping.getMappingSourceSite());
 		otom.setMappingType(mapping.getMappingType());
 		otom.setRelation(mapping.getRelation());

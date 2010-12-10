@@ -37,8 +37,8 @@ public abstract class AbstractMappingBean {
 	@XStreamAlias("mappingSourceName")
 	private String mappingSourceName;
 
-	@XStreamAlias("mappingSourcecontactInfo")
-	private String mappingSourcecontactInfo;
+	@XStreamAlias("mappingSourceContactInfo")
+	private String mappingSourceContactInfo;
 
 	@XStreamAlias("mappingSourceSite")
 	@XStreamConverter(URIConverter.class)
@@ -144,18 +144,18 @@ public abstract class AbstractMappingBean {
 	}
 
 	/**
-	 * @return the mappingSourcecontactInfo
+	 * @return the mappingSourceContactInfo
 	 */
-	public String getMappingSourcecontactInfo() {
-		return mappingSourcecontactInfo;
+	public String getMappingSourceContactInfo() {
+		return mappingSourceContactInfo;
 	}
 
 	/**
-	 * @param mappingSourcecontactInfo
-	 *            the mappingSourcecontactInfo to set
+	 * @param mappingSourceContactInfo
+	 *            the mappingSourceContactInfo to set
 	 */
-	public void setMappingSourcecontactInfo(String mappingSourcecontactInfo) {
-		this.mappingSourcecontactInfo = mappingSourcecontactInfo;
+	public void setMappingSourceContactInfo(String mappingSourcecontactInfo) {
+		this.mappingSourceContactInfo = mappingSourcecontactInfo;
 	}
 
 	/**
