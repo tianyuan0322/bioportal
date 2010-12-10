@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang.WordUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.ncbo.stanford.bean.OntologyBean;
@@ -261,7 +262,7 @@ public class MappingConceptRestlet extends AbstractMappingRestlet {
 
 		MappingSourceEnum mappingSource = null;
 		if (mappingSourceStr != null)
-			mappingSource = MappingSourceEnum.valueOf(mappingSourceStr);
+			mappingSource = MappingSourceEnum.valueOf(StringUtils.upperCase(mappingSourceStr));
 
 		OneToOneMappingBean mapping1 = null;
 		OneToOneMappingBean mapping2 = null;
