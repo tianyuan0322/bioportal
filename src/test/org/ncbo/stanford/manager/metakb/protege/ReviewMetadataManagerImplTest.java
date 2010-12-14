@@ -92,18 +92,18 @@ public class ReviewMetadataManagerImplTest extends AbstractBioPortalTest {
 	public void testRatings() throws Exception {
 		
 		ReviewBean reviewBean = new ReviewBean();
-		Integer reviewId = reviewBean.getId();
 		reviewBean.setText("Text");
 		reviewBean.setProjectId(new Integer(12));
 		reviewMan.saveObject(reviewBean);
+		Integer reviewId = reviewBean.getId();
 		
 		RatingTypeBean ratingTypeBean = reviewMan.retrieveRatingType(new Integer(1));
 		
 		RatingBean ratingBean = new RatingBean();
-		Integer ratingId = ratingBean.getId();
 		ratingBean.setValue(new Integer(3));
 		ratingBean.setType(ratingTypeBean);
 		reviewMan.addRating(reviewBean, ratingBean);
+		Integer ratingId = ratingBean.getId();
 		
 		// Retrieve just the rating
 		RatingBean ratingBean_2 = reviewMan.retrieveRating(ratingId);

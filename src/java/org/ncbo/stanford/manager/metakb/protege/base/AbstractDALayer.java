@@ -118,8 +118,10 @@ public abstract class AbstractDALayer {
 			synchronized(this) {
 				if (!kbClassDAOMapIsInitialized) {
 					for (AbstractDAO<?> dao : beanTypeDAOMap.values()) {
-						 
+						dao.ensureInitialization();
+						kbClassDAOMap.put(dao.getKbClass().getName(), dao);
 					}
+					kbClassDAOMapIsInitialized = true;
 				}
 			}
 		}
@@ -214,8 +216,13 @@ public abstract class AbstractDALayer {
 	// Object Access
 	
 	public MetadataBean convertIndividualToBean(OWLIndividual ind) {
+		// Get the name of the direct type class
 		String kbClassName = AbstractDAO.extractClassNameFromIndividualName(ind.getName());
+		kbClassName = ind.getProtegeType().getName();
+		// Use class name to look up DAO
+		ensureKbClassMapInitialized();
 		AbstractDAO<?> dao = getDAOForKbClass(kbClassName);
+		// The DAO does the conversion
 		MetadataBean bean = dao.convertIndividualToBean(ind);
 		return bean;
 	}

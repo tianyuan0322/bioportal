@@ -70,7 +70,7 @@ public abstract class AbstractPropertyMap {
 	}
 	
 	public boolean isInitialized() {
-		return (daLayer == null);
+		return (daLayer != null);
 	}
 	
 	protected abstract void checkOWLProperty(OWLProperty prop);
