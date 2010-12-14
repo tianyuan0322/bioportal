@@ -1,9 +1,7 @@
 package org.ncbo.stanford.service.concept.impl;
 
 import java.io.File;
-import java.net.URLEncoder;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.Iterator;
@@ -15,30 +13,23 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.ncbo.stanford.bean.OntologyBean;
 import org.ncbo.stanford.bean.concept.ClassBean;
-import org.ncbo.stanford.bean.notes.NoteBean;
-import org.ncbo.stanford.enumeration.RelationTypeEnum;
 import org.ncbo.stanford.manager.retrieval.OntologyRetrievalManager;
 import org.ncbo.stanford.service.concept.RdfService;
 import org.ncbo.stanford.service.ontology.OntologyService;
-import org.ncbo.stanford.util.MessageUtils;
 import org.ncbo.stanford.util.constants.ApplicationConstants;
 import org.ncbo.stanford.util.helper.StringHelper;
 import org.semanticweb.owlapi.io.RDFXMLOntologyFormat;
-import org.semanticweb.owlapi.model.AddAxiom;
 import org.semanticweb.owlapi.model.AddOntologyAnnotation;
 import org.semanticweb.owlapi.model.IRI;
 import org.semanticweb.owlapi.model.OWLAnnotation;
-import org.semanticweb.owlapi.model.OWLAnnotationProperty;
 import org.semanticweb.owlapi.model.OWLClass;
 import org.semanticweb.owlapi.model.OWLDataFactory;
 import org.semanticweb.owlapi.model.OWLLiteral;
 import org.semanticweb.owlapi.model.OWLOntology;
 import org.semanticweb.owlapi.model.OWLOntologyChangeException;
 import org.semanticweb.owlapi.model.OWLOntologyManager;
-import org.semanticweb.owlapi.model.OWLSubClassOfAxiom;
 import org.semanticweb.owlapi.vocab.OWLRDFVocabulary;
 import org.semanticweb.owlapi.vocab.SKOSVocabulary;
-import java.util.regex.Pattern;
 
 
 public class RdfServiceImpl extends ConceptServiceImpl implements RdfService {
@@ -87,6 +78,8 @@ public class RdfServiceImpl extends ConceptServiceImpl implements RdfService {
 
 	public static final String RDF_TYPE_RESOURCE = "RDF Resource";
 	public static final String RDF_TYPE_LITERAL = "RDF Literal";
+	public static final String IS_A_PROPERTY="is_a";
+	public static final String PART_OF_PROPERTY="part_of";
 	
 	public static final String rdfsLabel = RDFS_URI + "label";
 	public static final String rdfsSubClassOf = RDFS_URI + "subClassOf";
@@ -470,7 +463,7 @@ public class RdfServiceImpl extends ConceptServiceImpl implements RdfService {
 			for (Map.Entry<Object, Object> me : set) {
 				// Condition according to Key here Key contains the
 				// Properties(is_a or part_of)
-				if (me.getKey().equals("is_a")) {
+				if (me.getKey().equals(IS_A_PROPERTY)) {
 					// List for ClassBean according to Key value
 					ArrayList<ClassBean> listForISA = (ArrayList<ClassBean>) me.getValue();
 					for (ClassBean is_aProperty : listForISA) {
@@ -496,7 +489,7 @@ public class RdfServiceImpl extends ConceptServiceImpl implements RdfService {
 					}
 				}
 				// Condition according to Key here Key contains the Properties(is_a or part_of)
-				else if (me.getKey().equals("part_of")) {
+				else if (me.getKey().equals(PART_OF_PROPERTY)) {
 					ArrayList<ClassBean> beanForPARTOF = (ArrayList<ClassBean>) me.getValue();
 					for (ClassBean part_ofProperty : beanForPARTOF) {
 						// Condition for OBO_FORMAT
@@ -672,11 +665,13 @@ public class RdfServiceImpl extends ConceptServiceImpl implements RdfService {
 			classIdPrefix = getIRIFriendlyName(classIdPrefix);
 			classId = getIRIFriendlyName(id);
 			fullUri = baseUri + classIdPrefix + "/" + classId;
-		} else {
+		} 
+		/**
+		else {
 			// OWL -- use fullId URI
 			//fullUri = classBean.getFullId();
 		}
-		
+		**/
 		return fullUri;
 	}
 	
