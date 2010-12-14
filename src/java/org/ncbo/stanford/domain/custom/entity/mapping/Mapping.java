@@ -70,7 +70,7 @@ public abstract class Mapping implements Serializable {
 	 * Generate an id for this mapping.
 	 */
 	private void generateId() {
-		this.id = new URIImpl(ApplicationConstants.MAPPING_PREFIX
+		this.id = new URIImpl(ApplicationConstants.MAPPING_ID_PREFIX
 				+ UUID.randomUUID().toString());
 	}
 

@@ -75,6 +75,7 @@ import org.w3c.dom.NodeList;
 import org.w3c.dom.Text;
 
 import com.thoughtworks.xstream.XStream;
+import com.thoughtworks.xstream.converters.basic.DateConverter;
 import com.thoughtworks.xstream.converters.enums.EnumSingleValueConverter;
 import com.thoughtworks.xstream.io.xml.TraxSource;
 
@@ -466,7 +467,7 @@ public class XMLSerializationServiceImpl implements XMLSerializationService {
 		xmlSerializer.registerConverter(new EnumSingleValueConverter(
 				SearchRecordTypeEnum.class));
 		xmlSerializer.registerConverter(new EnumSingleValueConverter(
-				ConceptTypeEnum.class));		
+				ConceptTypeEnum.class));
 		xmlSerializer.registerConverter(new ClassBeanResultListBeanConverter(
 				xmlSerializer.getMapper()));
 		xmlSerializer.registerConverter(new ClassBeanListConverter(
@@ -548,6 +549,6 @@ public class XMLSerializationServiceImpl implements XMLSerializationService {
 				List.class);
 		xmlSerializer.addDefaultImplementation(MappingResultListBean.class,
 				List.class);
-		
+
 	}
 }

@@ -71,7 +71,7 @@ public class OneToOneMapping extends Mapping implements Serializable {
 		Field[] fields = (Field[]) ArrayUtils.addAll(thisFields, parentFields);
 
 		ArrayList<Statement> statements = new ArrayList<Statement>();
-		
+
 		URI objectId = this.getId();
 
 		// Gather properties
@@ -95,7 +95,8 @@ public class OneToOneMapping extends Mapping implements Serializable {
 						GregorianCalendar c = new GregorianCalendar();
 						c.setTime(date);
 						XMLGregorianCalendar XMLGregCal = DatatypeFactory
-								.newInstance().newXMLGregorianCalendar(c);
+								.newInstance().newXMLGregorianCalendar(c)
+								.normalize();
 						valueTyped = vf.createLiteral(XMLGregCal);
 					} else {
 						valueTyped = (Value) value;

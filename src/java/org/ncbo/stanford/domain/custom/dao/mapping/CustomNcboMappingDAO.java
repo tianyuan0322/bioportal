@@ -123,41 +123,33 @@ public class CustomNcboMappingDAO extends AbstractNcboMappingDAO {
 			throws MappingMissingException {
 		ObjectConnection con = getRdfStoreManager().getObjectConnection();
 
-		try {
-			if (!hasMapping(id, con)) {
-				throw new MappingMissingException();
-			}
-
-			List<OneToOneMapping> mappings = new ArrayList<OneToOneMapping>();
-
-			OneToOneMapping mapping = getMapping(id);
-
-			OneToOneMapping updatedMapping = updateMappingEntity(mapping,
-					source, target, relation, sourceOntologyId,
-					targetOntologyId, sourceOntologyVersion,
-					targetOntologyVersion, submittedBy, dependency, comment,
-					mappingSource, mappingSourceName, mappingSourcecontactInfo,
-					mappingSourceSite, mappingSourceAlgorithm, mappingType);
-
-			// Remove old triples
-			deleteMapping(id);
-
-			// Create the new mapping
-			updatedMapping = createMapping(updatedMapping);
-
-			mappings.add(updatedMapping);
-
-			return updatedMapping;
-		} catch (MappingExistsException e) {
-			e.printStackTrace();
+		if (!hasMapping(id, con)) {
+			throw new MappingMissingException();
 		}
 
-		return null;
+		OneToOneMapping mapping = getMapping(id);
+
+		OneToOneMapping updatedMapping = updateMappingEntity(mapping,
+				source, target, relation, sourceOntologyId,
+				targetOntologyId, sourceOntologyVersion,
+				targetOntologyVersion, submittedBy, dependency, comment,
+				mappingSource, mappingSourceName, mappingSourcecontactInfo,
+				mappingSourceSite, mappingSourceAlgorithm, mappingType);
+
+		updatedMapping = updateMapping(id, updatedMapping);
+		
+		return updatedMapping;
 	}
 
 	public OneToOneMapping updateMapping(URI id, OneToOneMapping mapping)
 			throws MappingMissingException {
-		deleteMapping(id);
+		ObjectConnection con = getRdfStoreManager().getObjectConnection();
+
+		if (!hasMapping(id, con)) {
+			throw new MappingMissingException();
+		}
+
+		deleteMappingForUpdate(id);
 
 		try {
 			OneToOneMapping updatedMapping = createMapping(mapping);
@@ -176,6 +168,7 @@ public class CustomNcboMappingDAO extends AbstractNcboMappingDAO {
 			if (!hasMapping(id, con)) {
 				throw new MappingMissingException();
 			}
+			System.out.println("Deleting mapping: " + id.toString());
 
 			OneToOneMapping mapping = getMapping(id);
 
@@ -183,40 +176,58 @@ public class CustomNcboMappingDAO extends AbstractNcboMappingDAO {
 				deleteFromTripleStore(con, mapping.getDependency());
 			}
 
-			// Check for dependencies that might not be specified. We do this
-			// because the 6mm mappings that we got from the UI database don't
-			// contain dependency information and inverse mappings should be
-			// removed when their counterpart is removed.
-			if (mapping.getDependency() == null) {
-				String filter = "?source = <" + mapping.getTarget() + ">";
-				filter += " && ?target = <" + mapping.getSource() + ">";
-				filter += " && ?sourceOntologyId = "
-						+ mapping.getTargetOntologyId();
-				filter += " && ?targetOntologyId = "
-						+ mapping.getSourceOntologyId();
-				filter += " && ?mappingSource = \""
-						+ mapping.getMappingSource() + "\"";
-				filter += " && ?submittedBy = " + mapping.getSubmittedBy();
-				filter += " && ?relation = <" + mapping.getRelation() + ">";
+			try {
+				// Check for dependencies that might not be specified. We do
+				// this because the 6mm mappings that we got from the UI
+				// database don't contain dependency information and inverse
+				// mappings should be removed when their counterpart is removed.
+				if (mapping.getDependency() == null) {
+					String filter = "?source = <" + mapping.getTarget() + ">";
+					filter += " && ?target = <" + mapping.getSource() + ">";
+					filter += " && ?sourceOntologyId = "
+							+ mapping.getTargetOntologyId();
+					filter += " && ?targetOntologyId = "
+							+ mapping.getSourceOntologyId();
+					filter += " && ?mappingSource = \""
+							+ mapping.getMappingSource() + "\"";
+					filter += " && ?submittedBy = " + mapping.getSubmittedBy();
+					filter += " && ?relation = <" + mapping.getRelation() + ">";
 
-				ArrayList<OneToOneMapping> inferredDependents = getMappings(
-						null, null, filter, null);
+					ArrayList<OneToOneMapping> inferredDependents = getMappings(
+							null, null, filter, null);
 
-				if (inferredDependents != null) {
-					for (OneToOneMapping dependent : inferredDependents) {
-						deleteFromTripleStore(con, dependent.getId());
+					if (inferredDependents != null) {
+						for (OneToOneMapping dependent : inferredDependents) {
+							deleteFromTripleStore(con, dependent.getId());
+						}
 					}
 				}
+			} catch (Exception e) {
+				// Quash all exceptions for potential dependencies
 			}
+		} catch (RepositoryException e) {
+			e.printStackTrace();
+		} finally {
+			try {
+				deleteFromTripleStore(con, id);
+			} catch (RepositoryException e) {
+				e.printStackTrace();
+			}
+		}
+	}
 
+	public void deleteMappingForUpdate(URI id) throws MappingMissingException {
+		ObjectConnection con = getRdfStoreManager().getObjectConnection();
+		if (!hasMapping(id, con)) {
+			throw new MappingMissingException();
+		}
+		System.out.println("Deleting mapping: " + id.toString());
+		
+		try {
 			deleteFromTripleStore(con, id);
 		} catch (RepositoryException e) {
 			e.printStackTrace();
-		} catch (InvalidInputException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
 		}
-
 	}
 
 	/*******************************************************************
