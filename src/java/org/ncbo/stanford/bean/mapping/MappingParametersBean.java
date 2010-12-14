@@ -48,9 +48,9 @@ public class MappingParametersBean {
 
 			filter += (filter.length() > 0) ? " && " : "";
 			filter += "xsd:dateTime (?date) >= xsd:dateTime (\"" + startDateStr
-					+ ApplicationConstants.TIMEZONE
+					+ ApplicationConstants.TIMEZONE_ID
 					+ "\") && xsd:dateTime (?date) <= xsd:dateTime (\""
-					+ endDateStr + ApplicationConstants.TIMEZONE + "\")";
+					+ endDateStr + ApplicationConstants.TIMEZONE_ID + "\")";
 		}
 
 		if (relationshipTypes != null) {

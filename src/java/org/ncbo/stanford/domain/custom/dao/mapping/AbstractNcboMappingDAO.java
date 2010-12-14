@@ -2,7 +2,9 @@ package org.ncbo.stanford.domain.custom.dao.mapping;
 
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.GregorianCalendar;
 import java.util.Map;
+import java.util.TimeZone;
 
 import org.apache.commons.lang.StringUtils;
 import org.ncbo.stanford.bean.mapping.MappingParametersBean;
@@ -491,7 +493,9 @@ public class AbstractNcboMappingDAO {
 
 	protected Date convertValueToDate(Value val) {
 		LiteralImpl dateVal = (LiteralImpl) val;
-		return dateVal.calendarValue().toGregorianCalendar().getTime();
+		GregorianCalendar cal = dateVal.calendarValue().toGregorianCalendar();
+		cal.setTimeZone(TimeZone.getTimeZone("GMT"));
+		return cal.getTime();
 	}
 
 	/**
@@ -536,9 +540,9 @@ public class AbstractNcboMappingDAO {
 	protected void deleteFromTripleStore(RepositoryConnection con, URI id)
 			throws RepositoryException {
 		RepositoryResult<Statement> results = con.getStatements(id, null, null,
-				false, new URIImpl(ApplicationConstants.MAPPING_CONTEXT));
+				false, ApplicationConstants.MAPPING_CONTEXT_URI);
 		// Remove all those triples
-		con.remove(results, new URIImpl(ApplicationConstants.MAPPING_CONTEXT));
+		con.remove(results, ApplicationConstants.MAPPING_CONTEXT_URI);
 	}
 
 	/**

@@ -9,10 +9,8 @@ import com.thoughtworks.xstream.io.HierarchicalStreamWriter;
 import com.thoughtworks.xstream.mapper.Mapper;
 
 /**
- * Implements an XStream converter that serializes the SearchResultListBean
+ * Implements an XStream converter that serializes the MappingResultListBean
  * objects into XML
- * 
- * @author Michael Dorf
  * 
  */
 public class MappingResultListBeanConverter extends CollectionConverter {
