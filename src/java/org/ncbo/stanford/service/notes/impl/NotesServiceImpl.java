@@ -230,10 +230,9 @@ public class NotesServiceImpl implements NotesService {
 	}
 
 	public List<NoteBean> getAllNotesForOntologyByAuthor(OntologyBean ont,
-			Integer author) {
+			String author) {
 		NotesManager notesManager = notesPool.getNotesManagerForOntology(ont);
-		Set<Annotation> annotations = notesManager.getAllNotesByAuthor(author
-				.toString());
+		Set<Annotation> annotations = notesManager.getAllNotesByAuthor(author);
 
 		List<NoteBean> notesList = new ArrayList<NoteBean>();
 		for (Annotation annotation : annotations) {

@@ -1700,6 +1700,15 @@
 	-->
 
 	<aop:config>
+		<aop:aspect id="afterProcessOnt" ref="notificationAdvice">
+			<aop:pointcut id="aroundService"
+				expression="execution(* org.ncbo.stanford.service.loader.scheduler.OntologyLoadSchedulerService.process*(..)) and 
+				args(loadQueue,formatHandler,ontologyBean)" />
+			<aop:after-returning 
+				pointcut-ref="aroundService" 
+				arg-names="loadQueue,formatHandler,ontologyBean"
+				method="afterReturnProcessOntology" />
+		</aop:aspect>
 		<aop:aspect id="afterCreateNote" ref="notificationAdvice">
 			<aop:pointcut id="afterReturnCreateNote"
 				expression="execution(* org.ncbo.stanford.service.notes.NotesService.create*(..))" />

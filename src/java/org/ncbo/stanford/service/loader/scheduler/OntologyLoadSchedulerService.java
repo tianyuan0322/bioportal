@@ -2,6 +2,9 @@ package org.ncbo.stanford.service.loader.scheduler;
 
 import java.util.List;
 
+import org.ncbo.stanford.bean.OntologyBean;
+import org.ncbo.stanford.domain.generated.NcboOntologyLoadQueue;
+
 /**
  * Interface to process (parse) an already loaded ontology using vendor API
  * (LexGrid, Protege etc.)
@@ -32,4 +35,13 @@ public interface OntologyLoadSchedulerService {
 	 * @return
 	 */
 	public List<String> getErrorOntologies();
+	
+	/**
+	 * 
+	 * @param loadQueue
+	 * @param formatHandler
+	 * @param ontologyBean
+	 */
+	public void processRecord(NcboOntologyLoadQueue loadQueue,
+			String formatHandler, OntologyBean ontologyBean);
 }

@@ -127,7 +127,7 @@ public class OntologyLoadSchedulerServiceImpl extends AbstractOntologyService
 	 * @param loadQueue
 	 * @param formatHandler
 	 */
-	private void processRecord(NcboOntologyLoadQueue loadQueue,
+	public void processRecord(NcboOntologyLoadQueue loadQueue,
 			String formatHandler, OntologyBean ontologyBean) {
 		String errorMessage = null;
 		Integer ontologyVersionId = loadQueue.getOntologyVersionId();

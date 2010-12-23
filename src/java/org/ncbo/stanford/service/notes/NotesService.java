@@ -76,7 +76,7 @@ public interface NotesService {
 			Boolean threaded, Boolean topLevelOnly);
 
 	public List<NoteBean> getAllNotesForOntologyByAuthor(OntologyBean ont,
-			Integer author);
+			String author);
 
 	public List<NoteBean> getAllNotesForConcept(OntologyBean ont,
 			ClassBean concept, Boolean threaded);
