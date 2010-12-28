@@ -1,0 +1,44 @@
+
+
+
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+  <head>
+  
+  <STYLE TYPE="text/css">
+
+.indented
+   {
+   padding-left: 50pt;
+   padding-right: 50pt;
+   }
+</STYLE>
+  
+    <title>test_post_generaterdf.html</title>
+
+    <meta http-equiv="keywords" content="keyword1,keyword2,keyword3">
+    <meta http-equiv="description" content="this is my page">
+    <meta http-equiv="content-type" content="text/html; charset=ISO-8859-1">
+
+  </head>
+
+  <body>
+   
+    <h3> Test POST for GENERATE RDF  </h3>  
+ 	<DIV CLASS="indented">
+   
+    <!-- enctype="multipart/form-data"  -->
+    <!-- enctype="text/plain" Use this only if request.getEntityAsForm() is used -->
+
+    <form name="testForm" method="post" action="http://localhost:8080/bioportal/rdf/13305">
+
+    	OntologyVersionId: <input type="text" id="ontologyVersionId" name="ontologyVersionId" value="13305" /><br />
+		<input type="hidden" name="sessionid" value="9c188a9b8de0fe0c21b9322b72255fb939a68bb2" />  
+    	<!--  <input type="hidden" name="applicationid" value="4ea81d74-8960-4525-810b-fa1baab576ff" /> -->
+    	<br /><br />
+    	<input type="submit" value="Post" />
+    </form>
+
+  </DIV>
+  </body>
+</html>

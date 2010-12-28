@@ -47,7 +47,7 @@ public class RdfExtractionRestlet extends AbstractBaseRestlet {
 	 */
 	@Override
 	public void postRequest(Request request, Response response) {
-		generateRdfForAllOntologies(request, response);
+		generateRdfForOntology(request, response);
 	}
 
 	private void generateRdfForAllOntologies(Request request, Response response) {
@@ -87,6 +87,7 @@ public class RdfExtractionRestlet extends AbstractBaseRestlet {
 
 		// process ALL concepts
 		try {
+			OWLOntology ontology;
 			boolean isVirtual = false;
 			String rdfOutput = "";
 			String ontologyId = null;
@@ -117,8 +118,10 @@ public class RdfExtractionRestlet extends AbstractBaseRestlet {
 				ont = ontologyService.findOntologyOrView(ontologyVersionIdInt);
 			}
 
-			rdfService.generateRdf(manager, rdfFilePath, ont);
-			rdfOutput = "file has been generated in: " + rdfFilePath;
+			ontology=rdfService.generateRdf(manager, rdfFilePath, ont);
+			StringDocumentTarget outputString = new StringDocumentTarget();
+			manager.saveOntology(ontology, outputString);
+			rdfOutput = outputString.toString();
 
 			// Add the contents to the response
 			RequestUtils.setHttpServletResponse(response, Status.SUCCESS_OK,
