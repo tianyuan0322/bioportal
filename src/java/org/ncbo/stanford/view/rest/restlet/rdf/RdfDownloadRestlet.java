@@ -15,6 +15,7 @@ import org.restlet.resource.FileRepresentation;
 import org.ncbo.stanford.bean.OntologyBean;
 import org.ncbo.stanford.exception.InvalidInputException;
 
+import org.ncbo.stanford.service.ontology.OntologyService;
 import org.ncbo.stanford.util.MessageUtils;
 import org.ncbo.stanford.util.RequestUtils;
 import org.ncbo.stanford.util.helper.StringHelper;
@@ -29,6 +30,7 @@ import org.ncbo.stanford.view.rest.restlet.ontology.AbstractOntologyBaseRestlet;
 public class RdfDownloadRestlet extends AbstractOntologyBaseRestlet {
 
 	private static final Log log = LogFactory.getLog(RdfDownloadRestlet.class);
+	private OntologyService ontologyService;
 
 	/**
 	 * Handle GET calls here
@@ -117,6 +119,13 @@ public class RdfDownloadRestlet extends AbstractOntologyBaseRestlet {
 			e.printStackTrace();
 			log.error(e);
 		}
+	}
+	/**
+	 * @param OntologyService 
+	 * 						ontologyService
+	 */
+	public void setOntologyService(OntologyService ontologyService) {
+		this.ontologyService = ontologyService;
 	}
 
 }
