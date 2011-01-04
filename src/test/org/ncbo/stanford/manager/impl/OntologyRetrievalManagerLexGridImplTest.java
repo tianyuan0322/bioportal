@@ -154,7 +154,8 @@ public class OntologyRetrievalManagerLexGridImplTest extends
 						OntologyLoaderLexGridImplTest.OBO_CELL_DISPLAY_LABEL,
 						OntologyLoaderLexGridImplTest.OBO_CELL_ONTOLOGY_ID);
 		//String conceptID = "CL:0000255";
-		String conceptID = "CL:0000254";
+		//String conceptID = "CL:0000254";
+		String conceptID = "CL:0000037";
 		ClassBean classBean = retrievalManager.findConcept(ncboOntology,
 				conceptID, false, false);
 		System.out.println("Concept " + conceptID + " of cell ontology is \n"

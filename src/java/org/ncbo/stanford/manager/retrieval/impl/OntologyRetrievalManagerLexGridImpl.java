@@ -1440,7 +1440,15 @@ public class OntologyRetrievalManagerLexGridImpl extends
 				List<String> synonyms = bean.getSynonyms();
 
 				if (synonyms == null || !synonyms.contains(synVal)) {
-					bean.addSynonym(synVal);
+					if (ontologyBean.getFormat().equalsIgnoreCase(
+							ApplicationConstants.FORMAT_OBO)) {
+						if (p.getDegreeOfFidelity()!= null && p.getDegreeOfFidelity().contains("EXACT")) {
+							bean.addSynonym(synVal);
+						}
+						
+					} else {
+					   bean.addSynonym(synVal);
+					}
 				}
 
 				if (addRelations) {
