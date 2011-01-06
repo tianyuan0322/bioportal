@@ -3,7 +3,6 @@ package org.ncbo.stanford.aop.notification;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.util.HashMap;
-import java.util.List;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -50,75 +49,28 @@ public class NotificationAdvice {
 	 * @param ontologyBean
 	 * @return
 	 */
-	public void afterReturnProcessOntology(NcboOntologyLoadQueue loadQueue,String formatHandler,OntologyBean ontologyBean) throws Throwable{
-		
+	public void afterReturnProcessOntology(NcboOntologyLoadQueue loadQueue,
+			String formatHandler, OntologyBean ontologyBean) throws Throwable {
+
+		// Map For Keywords
+		HashMap<String, String> keywords = new HashMap<String, String>();
 		try {
-			
-			// Map For Keywords
-			HashMap<String, String> keywords = new HashMap<String, String>();
-			
-			//List For NoteBean
-			List<NoteBean> notes = null;
-			
-			//information on the status of the loading of their ontology is 
-			//successful by Email Nitification
-			List<String> fileforOntology=ontologyBean.getFilenames();
-			
-			//Here OntologyBean is passed by dynamically following by Spring AOP
+			// Here OntologyBean is passed by dynamically following by Spring
+			// AOP
 			// Putting the OntologyId inside HashMap according to key
 			keywords.put(ApplicationConstants.ONTOLOGY_VERSION_ID, ontologyBean
 					.getId().toString());
-			
-			//Putting the DisplayLabel inside HashMap
-			keywords.put(ApplicationConstants.ONTOLOGY_DISPLAY_LABEL,
-					ontologyBean.getDisplayLabel());
-	
+
 			// Taking the UserName
-			String authorName = getAuthor(ncboUserDAO, ontologyBean);
-			
-			// Putting the UserName inside HahaMap according to UserName
-			// keywords
-			keywords.put(ApplicationConstants.USERNAME, "gyan");
-			
-			// Taking the MessageId
+			String userName = getUsername(ncboUserDAO, ontologyBean);
+			keywords.put("inReplyTo", userName);
 			String messageId = getMessageIdForOntology(ontologyBean.getId()
-					.toString(), "gyan");
-			
-			// Putting the messageId inside HashMap according to Key
+					.toString(), userName);
 			keywords.put("messageId", messageId);
-			
-			// Calling the sendNotification
-			notes = notesService.getAllNotesForOntologyByAuthor(ontologyBean,authorName);
-			//Iterating the List of NoteBean
-			for(NoteBean note: notes){
-			
-			// Generate in-reply-to ID (if needed)
-			if (getAppliesToType(note) == NoteAppliesToTypeEnum.Note) {
-				NoteBean parentNote = notesService.getNoteBean(ontologyBean, note
-						.getAppliesToList().get(0).getId());
-
-				// Look for valid author name for parent note
-				String parentAuthorName = getAuthor(ncboUserDAO, parentNote);
-
-				String parentMessageId = getMessageIdForNote(
-						parentNote.getId(), parentAuthorName);
-				keywords.put("inReplyTo", parentMessageId);
-			}
-
-			// Get proposal information
-			keywords.put(ApplicationConstants.NOTE_PROPOSAL_INFO,
-					getProposalText(note));
-
-			// Add note-specific keywords
-			keywords.put(ApplicationConstants.NOTE_SUBJECT, note.getSubject());
-			
-			keywords.put(ApplicationConstants.NOTE_BODY, note.getBody());
-			}
-			
-			emailNotificationService.sendNotification(
-					NotificationTypeEnum.PARSE_ONTOLOGY_NOTIFICATION,
+			emailNotificationService.sendNotificationForOntology(
+					NotificationTypeEnum.UPDATE_ONTOLOGY_NOTIFICATION,
 					ontologyBean, keywords);
-			
+
 		} catch (Exception e) {
 			e.printStackTrace();
 			log.error("Error sending notification for new Updation Ontology");
@@ -290,22 +242,20 @@ public class NotificationAdvice {
 	 * @param note
 	 * @return
 	 */
-	private String getAuthor(NcboUserDAO ncboUserDAO, OntologyBean ont) {
-		String authorName = "unknown";
+	private String getUsername(NcboUserDAO ncboUserDAO, OntologyBean ont) {
+		String userName = "unknown";
 
 		try {
 			Integer userId = ont.getUserId();
-			NcboUser ncboUser = ncboUserDAO.findById(userId);
+			NcboUser ncboUser= ncboUserDAO.findById(userId);
 			if (ncboUser != null) {
-				UserBean userBean = new UserBean();
-				userBean.populateFromEntity(ncboUser);
-				authorName = userBean.getUsername();
+				userName = ncboUser.getUsername();
 			}
 		} catch (NumberFormatException nfe) {
 			nfe.getMessage();
 		}
 
-		return authorName;
+		return userName;
 	}
 
 
@@ -349,8 +299,8 @@ public class NotificationAdvice {
 	 * @param note
 	 * @return
 	 */
-	private String getMessageIdForOntology(String noteId, String authorName) {
-		return noteId + "." + authorName + "@" + "bioportal.bioontology.org";
+	private String getMessageIdForOntology(String ontologyId, String authorName) {
+		return ontologyId + "." + authorName + "@" + "bioportal.bioontology.org";
 	}
 
 

@@ -6,12 +6,10 @@ import java.util.Map;
 
 import org.ncbo.stanford.bean.OntologyBean;
 import org.ncbo.stanford.bean.UserBean;
-import org.ncbo.stanford.domain.custom.dao.CustomNcboLNotificationTypeDAO;
 import org.ncbo.stanford.domain.custom.dao.CustomNcboUserSubscriptionsDAO;
 import org.ncbo.stanford.domain.generated.NcboUser;
 import org.ncbo.stanford.domain.generated.NcboUserDAO;
 import org.ncbo.stanford.domain.generated.NcboUserSubscriptions;
-import org.ncbo.stanford.domain.generated.NcboLNotificationType;
 import org.ncbo.stanford.enumeration.NotificationTypeEnum;
 import org.ncbo.stanford.manager.notification.NotificationManager;
 import org.ncbo.stanford.service.notification.EmailNotificationService;
@@ -30,12 +28,6 @@ public class EmailNotificationServiceImpl implements EmailNotificationService {
 	private Map<String, NotificationManager> notificationManagerMap = new HashMap<String, NotificationManager>();
 
 	private CustomNcboUserSubscriptionsDAO ncboUserSubscriptionsDAO;
-	private CustomNcboLNotificationTypeDAO ncboLNotificationTypeDAO;
-
-	public void setNcboLNotificationTypeDAO(
-			CustomNcboLNotificationTypeDAO ncboLNotificationTypeDAO) {
-		this.ncboLNotificationTypeDAO = ncboLNotificationTypeDAO;
-	}
 
 	private NcboUserDAO ncboUserDAO;
 
@@ -110,6 +102,57 @@ public class EmailNotificationServiceImpl implements EmailNotificationService {
 			notificationManagerMap.get(ApplicationConstants.EMAIL)
 					.sendNotification(subject, message, from, messageId,
 							inReplyTo, userBean);
+		}
+	}
+	
+	/**
+	 * This Method handle's the call for sending the EmailNotification to
+	 * OntoogySubmitter
+	 * 
+	 * @param notificationType
+	 * @param ontologyBean
+	 * @param keywords
+	 */
+	public void sendNotificationForOntology(
+			NotificationTypeEnum notificationType, OntologyBean ontologyBean,
+			HashMap<String, String> keywords) {
+		// Instantiate the NcboUser
+		NcboUser ncboUser = new NcboUser();
+		// Instantiate the UserBean
+		UserBean userBean = new UserBean();
+
+		try {
+			// Condition for param keywords is null or not
+			if (keywords == null) {
+				keywords = new HashMap<String, String>();
+			}
+			// Creating messageId
+			String messageId = (keywords.get("messageId") != null) ? keywords
+					.get("messageId") : null;
+			// Creating inReplyTo
+			String inReplyTo = (keywords.get("inReplyTo") != null) ? keywords
+					.get("inReplyTo") : null;
+			// Getting the NcboUser according to Id
+			ncboUser = ncboUserDAO.findById(ontologyBean.getId());
+			// Populating the UserBean
+			userBean.populateFromEntity(ncboUser);
+			// Getting the Address for Outgoing mail
+			String from = MessageUtils.getMessage("notification.mail.from");
+			keywords.put(ApplicationConstants.ONTOLOGY_VERSION_ID, ontologyBean
+					.getOntologyId().toString());
+			keywords.put(ApplicationConstants.USERNAME, userBean.getUsername());
+			textManager.appendKeywords(keywords);
+			// Creating the message
+			String message = textManager
+					.getTextContent(notificationType.name());
+			// Creating the Subject
+			String subject = textManager.getTextContent(notificationType.name()
+					+ ApplicationConstants.SUBJECT_SUFFIX);
+			notificationManagerMap.get(ApplicationConstants.EMAIL)
+					.sendNotification(subject, message, from, messageId,
+							inReplyTo, userBean);
+		} catch (Exception exception) {
+			exception.getMessage();
 		}
 	}
 }

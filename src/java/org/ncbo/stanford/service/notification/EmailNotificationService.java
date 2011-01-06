@@ -25,4 +25,14 @@ public interface EmailNotificationService {
 	 */
 	public void sendNotification(NotificationTypeEnum notificationType,
 			OntologyBean ontologyBean, HashMap<String, String> keywords);
+	
+	/**
+	 * 
+	 * @param notificationType
+	 * @param ontologyBean
+	 * @param keywords
+	 */
+	public void sendNotificationForOntology(
+			NotificationTypeEnum notificationType, OntologyBean ontologyBean,
+			HashMap<String, String> keywords);
 }
