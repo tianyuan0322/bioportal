@@ -23,13 +23,15 @@ public interface OBSManager {
 			throws Exception;
 
 	public List<ClassBean> findRootPaths(Integer ontologyVersionId,
-			String conceptId, Integer offset, Integer limit) throws Exception;
+			String conceptId, Integer offset, Integer limit, String delim)
+			throws Exception;
 
 	public List<ClassBean> findSiblings(Integer ontologyVersionId,
 			String conceptId, Integer level, Integer offset) throws Exception;
 
 	public List<ClassBean> findLeaves(Integer ontologyVersionId,
-			String conceptId, Integer offset, Integer limit) throws Exception;
+			String conceptId, Integer offset, Integer limit, String delim)
+			throws Exception;
 
 	public List<ClassBean> findAllConcepts(Integer ontologyVersionId,
 			Integer offset, Integer limit) throws Exception;

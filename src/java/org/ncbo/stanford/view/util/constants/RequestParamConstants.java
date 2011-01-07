@@ -48,6 +48,7 @@ public interface RequestParamConstants {
 	public static final String PARAM_MAXNUMCHILDREN = "maxnumchildren";
 	public static final String PARAM_NORELATIONS = "norelations";
 	public static final String PARAM_INCLUDEINSTANCES = "includeinstances";
+	public static final String PARAM_DELIMITER = "delim";
 
 	/**
 	 * Path Restlet parameters

@@ -2,7 +2,10 @@ package org.ncbo.stanford.view.rest.restlet.ontology;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.ncbo.stanford.bean.AbstractIdBean;
 import org.ncbo.stanford.bean.OntologyBean;
+import org.ncbo.stanford.bean.OntologyIdBean;
+import org.ncbo.stanford.bean.OntologyVersionIdBean;
 import org.ncbo.stanford.exception.InvalidInputException;
 import org.ncbo.stanford.exception.OntologyNotFoundException;
 import org.ncbo.stanford.service.ontology.OntologyService;
@@ -25,6 +28,44 @@ public abstract class AbstractOntologyBaseRestlet extends AbstractBaseRestlet {
 	private static final Log log = LogFactory
 			.getLog(AbstractOntologyBaseRestlet.class);
 	protected OntologyService ontologyService;
+
+	protected AbstractIdBean getOntologyVersionOrVirtualId(Request request)
+			throws InvalidInputException {
+		String idParam = (String) request.getAttributes().get(
+				MessageUtils.getMessage("entity.ontologyversionid"));
+		Integer idInt = null;
+		AbstractIdBean id = null;
+
+		if (idParam != null) {
+			idInt = RequestUtils.parseIntegerParam(idParam);
+
+			if (idInt == null) {
+				throw new InvalidInputException(MessageUtils
+						.getMessage("msg.error.ontologyversionidinvalid"));
+			}
+
+			id = new OntologyVersionIdBean(idInt);
+		} else {
+			idParam = (String) request.getAttributes().get(
+					MessageUtils.getMessage("entity.ontologyid"));
+
+			if (idParam != null) {
+				idInt = RequestUtils.parseIntegerParam(idParam);
+
+				if (idInt == null) {
+					throw new InvalidInputException(MessageUtils
+							.getMessage("msg.error.ontologyidinvalid"));
+				}
+
+				id = new OntologyIdBean(idInt);
+			} else {
+				throw new InvalidInputException(MessageUtils
+						.getMessage("msg.error.idinvalid"));
+			}
+		}
+
+		return id;
+	}
 
 	/**
 	 * Returns a specified OntologyBean and set the response status if there is

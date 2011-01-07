@@ -6,6 +6,7 @@ package org.ncbo.stanford.service.concept;
 import java.util.List;
 import java.util.Set;
 
+import org.ncbo.stanford.bean.AbstractIdBean;
 import org.ncbo.stanford.bean.OntologyIdBean;
 import org.ncbo.stanford.bean.OntologyVersionIdBean;
 import org.ncbo.stanford.bean.concept.ClassBean;
@@ -50,12 +51,8 @@ public interface ConceptService {
 			String conceptId, Integer level, Integer offset, Integer limit)
 			throws Exception;
 
-	public List<ClassBean> findRootPaths(
-			OntologyVersionIdBean ontologyVersionId, String conceptId,
-			Integer offset, Integer limit) throws Exception;
-
-	public List<ClassBean> findRootPaths(OntologyIdBean ontologyVersionId,
-			String conceptId, Integer offset, Integer limit) throws Exception;
+	public List<ClassBean> findRootPaths(AbstractIdBean id, String conceptId,
+			Integer offset, Integer limit, String delim) throws Exception;
 
 	public List<ClassBean> findSiblings(
 			OntologyVersionIdBean ontologyVersionId, String conceptId,
@@ -64,11 +61,8 @@ public interface ConceptService {
 	public List<ClassBean> findSiblings(OntologyIdBean ontologyId,
 			String conceptId, Integer level, Integer offset) throws Exception;
 
-	public List<ClassBean> findLeaves(OntologyVersionIdBean ontologyVersionId,
-			String conceptId, Integer offset, Integer limit) throws Exception;
-
-	public List<ClassBean> findLeaves(OntologyIdBean ontologyVersionId,
-			String conceptId, Integer offset, Integer limit) throws Exception;
+	public List<ClassBean> findLeaves(AbstractIdBean id, String conceptId,
+			Integer offset, Integer limit, String delim) throws Exception;
 
 	public Page<ClassBean> findAllConcepts(Integer ontologyVersionId,
 			Integer pageSize, Integer pageNum) throws Exception;

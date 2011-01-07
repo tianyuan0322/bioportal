@@ -155,14 +155,6 @@
 		</property>
 	</bean>
 
-	<bean id="conceptRootPathVirtualRestlet"
-		class="org.ncbo.stanford.view.rest.restlet.concept.ConceptRootPathVirtualRestlet"
-		parent="abstractBaseRestlet">
-		<property name="conceptService">
-			<ref bean="conceptService" />
-		</property>
-	</bean>
-
 	<bean id="conceptSiblingsRestlet"
 		class="org.ncbo.stanford.view.rest.restlet.concept.ConceptSiblingsRestlet"
 		parent="abstractBaseRestlet">
@@ -181,14 +173,6 @@
 
 	<bean id="conceptLeavesRestlet"
 		class="org.ncbo.stanford.view.rest.restlet.concept.ConceptLeavesRestlet"
-		parent="abstractBaseRestlet">
-		<property name="conceptService">
-			<ref bean="conceptService" />
-		</property>
-	</bean>
-
-	<bean id="conceptLeavesVirtualRestlet"
-		class="org.ncbo.stanford.view.rest.restlet.concept.ConceptLeavesVirtualRestlet"
 		parent="abstractBaseRestlet">
 		<property name="conceptService">
 			<ref bean="conceptService" />
@@ -668,7 +652,7 @@
 							<ref local="conceptRootPathRestlet" />
 						</entry>
 						<entry key="/virtual/rootpath/{ontologyid}/{conceptid}">
-							<ref local="conceptRootPathVirtualRestlet" />
+							<ref local="conceptRootPathRestlet" />
 						</entry>
 						<entry key="/concepts/siblings/{ontologyversionid}/{conceptid}">
 							<ref local="conceptSiblingsRestlet" />
@@ -680,7 +664,7 @@
 							<ref local="conceptLeavesRestlet" />
 						</entry>
 						<entry key="/virtual/leafpath/{ontologyid}/{conceptid}">
-							<ref local="conceptLeavesVirtualRestlet" />
+							<ref local="conceptLeavesRestlet" />
 						</entry>
 						<entry key="/users">
 							<ref local="usersRestlet" />

@@ -33,6 +33,7 @@ public class OBSManagerImpl implements OBSManager {
 
 	private static final String OBS_ONTOLOGY_ID_PATTERN = "\\w+/";
 	private static final String OBS_CONCEPT_ID_PATTERN = "^([^/]+)/(.+)$";
+	private static final String DEFAULT_DELIM = ".";
 
 	private XMLSerializationService xmlSerializationService;
 
@@ -74,7 +75,7 @@ public class OBSManagerImpl implements OBSManager {
 				ClassBean concept = new ClassBean();
 				populateBaseClassBean(obsConcept, concept);
 				concept.setIsTopLevel(obsConcept.getIsTopLevel());
-				
+
 				concept.addRelation(ApplicationConstants.SEMANTIC_TYPES,
 						obsConcept.getSemanticTypes());
 				allConcepts.add(concept);
@@ -176,7 +177,8 @@ public class OBSManagerImpl implements OBSManager {
 
 	@SuppressWarnings("unchecked")
 	public List<ClassBean> findRootPaths(Integer ontologyVersionId,
-			String conceptId, Integer offset, Integer limit) throws Exception {
+			String conceptId, Integer offset, Integer limit, String delim)
+			throws Exception {
 		List<ClassBean> rootPaths = null;
 		AbstractResponseBean response = xmlSerializationService.processGet(
 				MessageUtils.getMessage("obs.rest.rootpath.url")
@@ -194,8 +196,8 @@ public class OBSManagerImpl implements OBSManager {
 				rootPath.setOntologyVersionId(ontologyVersionId.toString());
 				rootPath.setId(conceptId);
 				List<ConceptBean> conceptBeans = obsRootPath.getConceptBeans();
-				rootPath.addRelation(ApplicationConstants.PATH,
-						extractPath(conceptBeans));
+				rootPath.addRelation(ApplicationConstants.PATH, extractPath(
+						conceptBeans, delim));
 				rootPaths.add(rootPath);
 			}
 		} else {
@@ -236,7 +238,8 @@ public class OBSManagerImpl implements OBSManager {
 
 	@SuppressWarnings("unchecked")
 	public List<ClassBean> findLeaves(Integer ontologyVersionId,
-			String conceptId, Integer offset, Integer limit) throws Exception {
+			String conceptId, Integer offset, Integer limit, String delim)
+			throws Exception {
 		List<ClassBean> leaves = null;
 		AbstractResponseBean response = xmlSerializationService.processGet(
 				MessageUtils.getMessage("obs.rest.leafpath.url")
@@ -254,8 +257,8 @@ public class OBSManagerImpl implements OBSManager {
 				leaf.setOntologyVersionId(ontologyVersionId.toString());
 				leaf.setId(conceptId);
 				List<ConceptBean> conceptBeans = obsLeaf.getConceptBeans();
-				leaf.addRelation(ApplicationConstants.PATH,
-						extractPath(conceptBeans));
+				leaf.addRelation(ApplicationConstants.PATH, extractPath(
+						conceptBeans, delim));
 				leaves.add(leaf);
 			}
 		} else {
@@ -265,16 +268,21 @@ public class OBSManagerImpl implements OBSManager {
 		return leaves;
 	}
 
-	private String extractPath(List<ConceptBean> paths) {
+	private String extractPath(List<ConceptBean> paths, String delim) {
 		String strPath = "";
+
+		if (StringHelper.isNullOrNullString(delim)) {
+			delim = DEFAULT_DELIM;
+		}
 
 		for (ConceptBean path : paths) {
 			strPath += path.getLocalConceptId().replaceAll(
-					OBS_ONTOLOGY_ID_PATTERN, "") + '.';
+					OBS_ONTOLOGY_ID_PATTERN, "")
+					+ delim;
 		}
 
 		if (strPath.length() > 0) {
-			strPath = strPath.substring(0, strPath.length() - 1);
+			strPath = strPath.substring(0, strPath.lastIndexOf(delim));
 		}
 
 		return strPath;
@@ -314,7 +322,7 @@ public class OBSManagerImpl implements OBSManager {
 
 		String preferredName = obsBean.getPreferredName();
 		String fullId = obsBean.getFullId();
-		
+
 		classBean.setLabel(preferredName == null ? "" : preferredName);
 		classBean.setFullId(fullId == null ? "" : fullId);
 

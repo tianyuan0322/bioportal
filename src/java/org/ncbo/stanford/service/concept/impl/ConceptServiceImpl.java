@@ -12,6 +12,7 @@ import java.util.Set;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.ncbo.stanford.bean.AbstractIdBean;
 import org.ncbo.stanford.bean.OntologyBean;
 import org.ncbo.stanford.bean.OntologyIdBean;
 import org.ncbo.stanford.bean.OntologyVersionIdBean;
@@ -316,20 +317,13 @@ public class ConceptServiceImpl implements ConceptService {
 				level, offset, limit);
 	}
 
-	public List<ClassBean> findRootPaths(
-			OntologyVersionIdBean ontologyVersionId, String conceptId,
-			Integer offset, Integer limit) throws Exception {
-		return obsManager.findRootPaths(ontologyVersionId
-				.getOntologyVersionId(), conceptId, offset, limit);
-	}
-
-	public List<ClassBean> findRootPaths(OntologyIdBean ontologyId,
-			String conceptId, Integer offset, Integer limit) throws Exception {
-		Integer ontologyVersionId = obsManager
-				.findLatestOntologyVersion(ontologyId.getOntologyId());
+	public List<ClassBean> findRootPaths(AbstractIdBean id, String conceptId,
+			Integer offset, Integer limit, String delim) throws Exception {
+		Integer ontologyVersionId = (id instanceof OntologyVersionIdBean) ? id
+				.getId() : obsManager.findLatestOntologyVersion(id.getId());
 
 		return obsManager.findRootPaths(ontologyVersionId, conceptId, offset,
-				limit);
+				limit, delim);
 	}
 
 	public List<ClassBean> findSiblings(
@@ -349,21 +343,15 @@ public class ConceptServiceImpl implements ConceptService {
 				offset);
 	}
 
-	public List<ClassBean> findLeaves(OntologyVersionIdBean ontologyVersionId,
-			String conceptId, Integer offset, Integer limit) throws Exception {
-		return obsManager.findLeaves(ontologyVersionId.getOntologyVersionId(),
-				conceptId, offset, limit);
-	}
-
-	public List<ClassBean> findLeaves(OntologyIdBean ontologyId,
-			String conceptId, Integer offset, Integer limit) throws Exception {
-		Integer ontologyVersionId = obsManager
-				.findLatestOntologyVersion(ontologyId.getOntologyId());
+	public List<ClassBean> findLeaves(AbstractIdBean id, String conceptId,
+			Integer offset, Integer limit, String delim) throws Exception {
+		Integer ontologyVersionId = (id instanceof OntologyVersionIdBean) ? id
+				.getId() : obsManager.findLatestOntologyVersion(id.getId());
 
 		return obsManager.findLeaves(ontologyVersionId, conceptId, offset,
-				limit);
+				limit, delim);
 	}
-
+	
 	public Page<ClassBean> findAllConcepts(Integer ontologyVersionId,
 			Integer pageSize, Integer pageNum) throws Exception {
 		// get ontologyBean from versionId
