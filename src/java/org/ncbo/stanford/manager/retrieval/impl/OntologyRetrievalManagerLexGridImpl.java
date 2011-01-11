@@ -56,6 +56,7 @@ import org.ncbo.stanford.util.constants.ApplicationConstants;
 import org.ncbo.stanford.util.paginator.Paginator;
 import org.ncbo.stanford.util.paginator.impl.Page;
 import org.ncbo.stanford.util.paginator.impl.PaginatorImpl;
+import org.springframework.beans.support.PagedListHolder;
 
 /**
  * A implementation of the OntologyRetrievalManager for ontologies stored in
@@ -75,6 +76,7 @@ public class OntologyRetrievalManagerLexGridImpl extends
 	private Integer allConceptsMaxPageSize;
 
 	private static final String ROOT_CLASS_ID = "THING";
+	private int PAGE_SIZE= 5000;
 
 	// mdorf: hack for now to remove certain MSH relations
 	List<String> relationsToFilter = new ArrayList<String>(Arrays.asList("QB",
@@ -989,16 +991,23 @@ public class OntologyRetrievalManagerLexGridImpl extends
 			CodingSchemeVersionOrTag csvt = Constructors
 					.createCodingSchemeVersionOrTagFromVersion(version);
 			String hierarchyId = getDefaultHierarchyId(schemeName, csvt);
+			PagedListHolder pagedList= new PagedListHolder(Arrays.asList(rcrs));
+			pagedList.setPageSize(PAGE_SIZE);
+			for (int i=0; i < pagedList.getPageCount(); i++) {
+				pagedList.setPage(i);
+				List paged_rcrs= pagedList.getPageList();
+				ConceptReferenceList crl = new ConceptReferenceList();
+				crl.setConceptReference((ResolvedConceptReference[]) paged_rcrs.toArray(new ResolvedConceptReference[paged_rcrs.size()]));
+				ConceptReferenceList countList = lbscm.getHierarchyLevelNextCount(
+						schemeName, csvt, hierarchyId, crl);
 
-			ConceptReferenceList crl = new ConceptReferenceList();
-			crl.setConceptReference(rcrs);
-			ConceptReferenceList countList = lbscm.getHierarchyLevelNextCount(
-					schemeName, csvt, hierarchyId, crl);
-
-			for (ConceptReference cr : countList.getConceptReference()) {
-				CountConceptReference ccr = (CountConceptReference) cr;
-				countMap.put(getKey(cr), ccr.getChildCount());
-			}
+				for (ConceptReference cr : countList.getConceptReference()) {
+					CountConceptReference ccr = (CountConceptReference) cr;
+					countMap.put(getKey(cr), ccr.getChildCount());
+				}
+				
+			} 
+			
 		} catch (Exception ex) {
 			ex.printStackTrace();
 		}
