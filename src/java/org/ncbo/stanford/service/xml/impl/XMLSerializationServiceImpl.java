@@ -545,10 +545,5 @@ public class XMLSerializationServiceImpl implements XMLSerializationService {
 		xmlSerializer.processAnnotations(MappingUserStatsBean.class);
 		xmlSerializer.addDefaultImplementation(URIImpl.class, URI.class);
 		xmlSerializer.addDefaultImplementation(ArrayList.class, List.class);
-		xmlSerializer.addDefaultImplementation(PaginatableList.class,
-				List.class);
-		xmlSerializer.addDefaultImplementation(MappingResultListBean.class,
-				List.class);
-
 	}
 }
