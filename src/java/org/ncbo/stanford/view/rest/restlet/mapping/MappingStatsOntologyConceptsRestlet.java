@@ -63,8 +63,7 @@ public class MappingStatsOntologyConceptsRestlet extends AbstractMappingRestlet 
 		OntologyBean ont = null;
 		try {
 			if (ontologyId != null) {
-				ont = ontologyService
-						.findLatestActiveOntologyOrViewVersion(ontologyId);
+				ont = ontologyService.findLatestOntologyOrViewVersion(ontologyId);
 			} else if (ontologyVersionId != null) {
 				ont = ontologyService.findOntologyOrView(ontologyVersionId);
 			}

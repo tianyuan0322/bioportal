@@ -45,7 +45,7 @@ public class MappingStatsOntologyUserRestlet extends AbstractMappingRestlet {
 		try {
 			if (ontologyId != null) {
 				ont = ontologyService
-						.findLatestActiveOntologyOrViewVersion(ontologyId);
+						.findLatestOntologyOrViewVersion(ontologyId);
 			} else {
 				throw new InvalidInputException(MessageUtils
 						.getMessage("msg.error.ontologyversionidinvalid"));
