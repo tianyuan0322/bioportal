@@ -30,6 +30,7 @@ import org.ncbo.stanford.util.helper.StringHelper;
 import org.ncbo.stanford.util.paginator.Paginator;
 import org.ncbo.stanford.util.paginator.impl.Page;
 import org.ncbo.stanford.util.paginator.impl.PaginatorImpl;
+import org.openrdf.model.vocabulary.RDFS;
 
 import edu.stanford.smi.protege.model.BrowserSlotPattern;
 import edu.stanford.smi.protege.model.Cls;
@@ -45,6 +46,7 @@ import edu.stanford.smi.protegex.owl.model.OWLModel;
 import edu.stanford.smi.protegex.owl.model.OWLNamedClass;
 import edu.stanford.smi.protegex.owl.model.RDFProperty;
 import edu.stanford.smi.protegex.owl.model.RDFResource;
+import edu.stanford.smi.protegex.owl.model.RDFSClass;
 import edu.stanford.smi.protegex.owl.model.RDFSNamedClass;
 import edu.stanford.smi.protegex.owl.util.OWLBrowserSlotPattern;
 
@@ -604,11 +606,11 @@ public class OntologyRetrievalManagerProtegeImpl extends
 
 		// add properties
 		Collection<Slot> slots;
-
+		
 		if (isOwl && cls instanceof RDFSNamedClass) {
-			slots = ((RDFSNamedClass) cls).getPossibleRDFProperties();
+			slots = ((RDFSNamedClass) cls).getUnionDomainProperties(true);
 		} else {
-			slots = cls.getOwnSlots();
+			slots = cls.getDirectTemplateSlots();
 		}
 
 		// remove slots already defined as properties of the bean
@@ -756,9 +758,9 @@ public class OntologyRetrievalManagerProtegeImpl extends
 			// via getOwnSlotValues, they mix in the language tag, e.g. "~#en".
 			// So instead fetch those values via getPropertyValues, and the
 			// RDFSLiteral will do the right
-			Collection classes = (isOwl && slot instanceof RDFProperty && concept instanceof RDFResource) ? ((RDFResource) concept)
-					.getPropertyValues((RDFProperty) slot)
-					: concept.getOwnSlotValues(slot);
+			Collection classes = (isOwl && slot instanceof RDFProperty && concept instanceof RDFSClass) ? ((RDFSClass) concept)
+					.getUnionDomainProperties(true)
+					: concept.getDirectTemplateSlots();
 			List vals = getUniqueClasses(classes);
 
 			if (vals.isEmpty()) {
