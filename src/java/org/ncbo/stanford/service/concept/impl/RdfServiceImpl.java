@@ -37,6 +37,7 @@ public class RdfServiceImpl extends ConceptServiceImpl implements RdfService {
 	private static final Log log = LogFactory.getLog(ConceptServiceImpl.class);
 	
 	public static final String BIOPORTAL_PURL_BASE = "http://purl.bioontology.org/ontology/";
+	public static final String OMV_PURL_BASE = "http://omv.ontoware.org/2005/05/ontology";
 	public static final String OBO_PURL_BASE = "http://purl.obolibrary.org/";
 
 	public static final String SKOS_NS = "skos";
@@ -59,7 +60,7 @@ public class RdfServiceImpl extends ConceptServiceImpl implements RdfService {
 	
 	public static final String UMLS_SKOS_NS = "umls-skos";
 	public static final String UMLS_SKOS_URI = "http://purl.bioontology.org/ontology/umls-skos/";
-	public static final String OMV_URI="http://omv.ontoware.org/2005/05/ontology#owl";
+	public static final String OMV_URI = "http://omv.ontoware.org/2005/05/ontology#owl";
 	public static final String OBO_REL_NS = "obo-rel";
 	public static final String OBO_REL_URI = OBO_PURL_BASE + "obo/";
 	
@@ -230,10 +231,10 @@ public class RdfServiceImpl extends ConceptServiceImpl implements RdfService {
 		
 		// OMV uri
 		// assert ontology URI not null
-		OWLClass owlClass=factory.getOWLClass(IRI.create(getOntologyUri(ont,conceptIds)));
-		ontologyInfoAnnotation = factory.getOWLAnnotation(
-				factory.getOWLAnnotationProperty(IRI.create(BIOPORTAL_PURL_BASE + "OMV/URI")), 
-				owlClass.getIRI());
+		OWLClass owlClassForOMV =factory.getOWLClass(IRI.create(OMV_PURL_BASE));
+		ontologyInfoAnnotation = factory.getOWLAnnotation(factory
+				.getOWLAnnotationProperty(IRI.create(BIOPORTAL_PURL_BASE + "OMV/URI")),
+				owlClassForOMV.getIRI());
 		manager.applyChange(new AddOntologyAnnotation(ontology,ontologyInfoAnnotation));
 		
 		// description
@@ -624,6 +625,23 @@ public class RdfServiceImpl extends ConceptServiceImpl implements RdfService {
 
 		return uri;
 
+
+	}
+	
+
+	private String getOntologyUriForOMV(OntologyBean ont, List<String> conceptIds) {
+
+		// use the ontology abbreviation, else it's virtual id
+		String prefix = StringHelper.isNullOrNullString(ont.getAbbreviation()) ? ont
+				.getOntologyId().toString()
+				: ont.getAbbreviation();
+
+		String uri = OMV_PURL_BASE;
+		uri = uri + prefix;
+
+		// provide a single-concept specific uri
+
+		return uri;
 
 	}
 	
