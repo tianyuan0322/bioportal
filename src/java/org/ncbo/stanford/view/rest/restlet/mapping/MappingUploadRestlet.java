@@ -138,7 +138,7 @@ public class MappingUploadRestlet extends AbstractBaseRestlet {
 						}
 						// Condition for validating the existence of a concept
 						if (conceptId != null)
-							concept = conceptService.findConcept(ontologyBean.getId(), conceptId, null, false, false);
+							concept = conceptService.findConcept(ontologyBean.getId(), conceptId, null, false, false, false);
 						//Condition for OntologyBean for null Values
 						if (ontologyBean == null) {
 							throw new InvalidInputException(

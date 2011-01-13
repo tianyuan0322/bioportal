@@ -56,6 +56,7 @@ public interface RequestParamConstants {
 	public static final String PARAM_SOURCE = "source";
 	public static final String PARAM_TARGET = "target";
 	public static final String PARAM_LIGHT = "light";
+	public static final String PARAM_CLASS_PROPERTIES = "classproperties";
 
 	/**
 	 * Search query parameters

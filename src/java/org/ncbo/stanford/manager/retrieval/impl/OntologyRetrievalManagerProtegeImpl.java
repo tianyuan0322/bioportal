@@ -48,6 +48,7 @@ import edu.stanford.smi.protegex.owl.model.RDFProperty;
 import edu.stanford.smi.protegex.owl.model.RDFResource;
 import edu.stanford.smi.protegex.owl.model.RDFSClass;
 import edu.stanford.smi.protegex.owl.model.RDFSNamedClass;
+import edu.stanford.smi.protegex.owl.model.impl.DefaultRDFProperty;
 import edu.stanford.smi.protegex.owl.util.OWLBrowserSlotPattern;
 
 /**
@@ -110,7 +111,7 @@ public class OntologyRetrievalManagerProtegeImpl extends
 	}
 
 	public ClassBean findConcept(OntologyBean ontologyBean, String conceptId,
-			boolean light, boolean noRelations) {
+			boolean light, boolean noRelations, boolean withClassProperties) {
 		KnowledgeBase kb = getKnowledgeBase(ontologyBean);
 		Slot synonymSlot = getSynonymSlot(kb, ontologyBean.getSynonymSlot());
 		Slot definitionSlot = getDefinitionSlot(kb, ontologyBean
@@ -128,6 +129,9 @@ public class OntologyRetrievalManagerProtegeImpl extends
 			} else if (light) {
 				targetClass = buildConceptLight((Cls) owlClass, synonymSlot,
 						definitionSlot, authorSlot, ontologyBean);
+			} else if (withClassProperties) {
+				targetClass = buildConceptWithProperties((Cls) owlClass, true,
+						synonymSlot, definitionSlot, authorSlot, ontologyBean);
 			} else {
 				targetClass = createClassBean((Cls) owlClass, true,
 						synonymSlot, definitionSlot, authorSlot, ontologyBean);
@@ -445,6 +449,37 @@ public class OntologyRetrievalManagerProtegeImpl extends
 		return targetClass;
 	}
 
+	private ClassBean buildConceptWithProperties(Cls cls,
+			boolean includeChildren, Slot synonymSlot, Slot definitionSlot,
+			Slot authorSlot, OntologyBean ontologyBean) {
+		ClassBean classBean = createClassBean(cls, true, synonymSlot,
+				definitionSlot, authorSlot, ontologyBean);
+		boolean isOwl = cls.getKnowledgeBase() instanceof OWLModel;
+
+		// add properties
+		Collection<Slot> classProperties;
+
+		if (isOwl && cls instanceof RDFSNamedClass) {
+			classProperties = ((RDFSNamedClass) cls)
+					.getUnionDomainProperties(true);
+		} else {
+			classProperties = cls.getDirectTemplateSlots();
+		}
+
+		// add class properties
+		List<InstanceBean> propertyInstances = new ArrayList<InstanceBean>();
+
+		for (Slot prop : classProperties) {
+			propertyInstances
+					.add(createInstanceBean(prop, ontologyBean, false));
+		}
+
+		classBean.addRelation(ApplicationConstants.CLASS_PROPERTIES,
+				propertyInstances);
+
+		return classBean;
+	}
+
 	private ClassBean buildPath(Collection nodes, OntologyBean ontologyBean,
 			boolean light) {
 		ClassBean rootBean = null;
@@ -551,9 +586,8 @@ public class OntologyRetrievalManagerProtegeImpl extends
 
 		for (Cls cls : protegeClses) {
 			if (cls.isVisible()) {
-				beans
-						.add(createClassBean(cls, recursive, synonymSlot,
-								definitionSlot, authorSlot, ontologyBean));
+				beans.add(createClassBean(cls, recursive, synonymSlot,
+						definitionSlot, authorSlot, ontologyBean));
 			}
 		}
 
@@ -606,11 +640,11 @@ public class OntologyRetrievalManagerProtegeImpl extends
 
 		// add properties
 		Collection<Slot> slots;
-		
+
 		if (isOwl && cls instanceof RDFSNamedClass) {
-			slots = ((RDFSNamedClass) cls).getUnionDomainProperties(true);
+			slots = ((RDFSNamedClass) cls).getPossibleRDFProperties();
 		} else {
-			slots = cls.getDirectTemplateSlots();
+			slots = cls.getOwnSlots();
 		}
 
 		// remove slots already defined as properties of the bean
@@ -758,9 +792,9 @@ public class OntologyRetrievalManagerProtegeImpl extends
 			// via getOwnSlotValues, they mix in the language tag, e.g. "~#en".
 			// So instead fetch those values via getPropertyValues, and the
 			// RDFSLiteral will do the right
-			Collection classes = (isOwl && slot instanceof RDFProperty && concept instanceof RDFSClass) ? ((RDFSClass) concept)
-					.getUnionDomainProperties(true)
-					: concept.getDirectTemplateSlots();
+			Collection classes = (isOwl && slot instanceof RDFProperty && concept instanceof RDFResource) ? ((RDFResource) concept)
+					.getPropertyValues((RDFProperty) slot)
+					: concept.getOwnSlotValues(slot);
 			List vals = getUniqueClasses(classes);
 
 			if (vals.isEmpty()) {

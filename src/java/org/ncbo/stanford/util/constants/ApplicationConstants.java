@@ -96,6 +96,7 @@ public interface ApplicationConstants {
 	public static final String LEVEL = "Level";
 	public static final String PATH = "Path";
 	public static final String EMAIL = "Email";
+	public static final String CLASS_PROPERTIES = "ClassProperties";
 
 	/**
 	 * Ontology format handlers

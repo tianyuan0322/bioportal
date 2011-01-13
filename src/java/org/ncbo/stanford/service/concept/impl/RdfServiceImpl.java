@@ -336,7 +336,7 @@ public class RdfServiceImpl extends ConceptServiceImpl implements RdfService {
 		if (conceptIds != null) {
 			// specified list (most likely a singleton) of conceptIds
 			for (String conceptId : conceptIds) {
-				ClassBean classBean = findConcept(ont.getId(), conceptId, null, false, false);
+				ClassBean classBean = findConcept(ont.getId(), conceptId, null, false, false, false);
 				try {
 					addClassUsingOwlApi(manager, ontology, ont, classBean, namedSlots);
 				} catch (Exception e) {

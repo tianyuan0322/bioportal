@@ -76,7 +76,7 @@ public class OntologyRetrievalManagerLexGridImpl extends
 	private Integer allConceptsMaxPageSize;
 
 	private static final String ROOT_CLASS_ID = "THING";
-	private int PAGE_SIZE= 5000;
+	private int PAGE_SIZE = 5000;
 
 	// mdorf: hack for now to remove certain MSH relations
 	List<String> relationsToFilter = new ArrayList<String>(Arrays.asList("QB",
@@ -139,7 +139,8 @@ public class OntologyRetrievalManagerLexGridImpl extends
 	 * @throws Exception
 	 */
 	public ClassBean findConcept(OntologyBean ontologyBean, String conceptId,
-			boolean light, boolean noRelations) throws Exception {
+			boolean light, boolean noRelations, boolean withClassProperties)
+			throws Exception {
 		ClassBean concept = null;
 		String schemeName = getLexGridCodingSchemeName(ontologyBean);
 
@@ -163,7 +164,8 @@ public class OntologyRetrievalManagerLexGridImpl extends
 			// For example convert concept GO_12345 to GO:12345
 			String newId = getCorrectedConceptId(ontologyBean, conceptId);
 			if (!newId.equals(conceptId)) {
-				return findConcept(ontologyBean, newId, light, noRelations);
+				return findConcept(ontologyBean, newId, light, noRelations,
+						withClassProperties);
 			}
 		}
 
@@ -991,23 +993,27 @@ public class OntologyRetrievalManagerLexGridImpl extends
 			CodingSchemeVersionOrTag csvt = Constructors
 					.createCodingSchemeVersionOrTagFromVersion(version);
 			String hierarchyId = getDefaultHierarchyId(schemeName, csvt);
-			PagedListHolder pagedList= new PagedListHolder(Arrays.asList(rcrs));
+			PagedListHolder pagedList = new PagedListHolder(Arrays.asList(rcrs));
 			pagedList.setPageSize(PAGE_SIZE);
-			for (int i=0; i < pagedList.getPageCount(); i++) {
+			for (int i = 0; i < pagedList.getPageCount(); i++) {
 				pagedList.setPage(i);
-				List paged_rcrs= pagedList.getPageList();
+				List paged_rcrs = pagedList.getPageList();
 				ConceptReferenceList crl = new ConceptReferenceList();
-				crl.setConceptReference((ResolvedConceptReference[]) paged_rcrs.toArray(new ResolvedConceptReference[paged_rcrs.size()]));
-				ConceptReferenceList countList = lbscm.getHierarchyLevelNextCount(
-						schemeName, csvt, hierarchyId, crl);
+				crl
+						.setConceptReference((ResolvedConceptReference[]) paged_rcrs
+								.toArray(new ResolvedConceptReference[paged_rcrs
+										.size()]));
+				ConceptReferenceList countList = lbscm
+						.getHierarchyLevelNextCount(schemeName, csvt,
+								hierarchyId, crl);
 
 				for (ConceptReference cr : countList.getConceptReference()) {
 					CountConceptReference ccr = (CountConceptReference) cr;
 					countMap.put(getKey(cr), ccr.getChildCount());
 				}
-				
-			} 
-			
+
+			}
+
 		} catch (Exception ex) {
 			ex.printStackTrace();
 		}
@@ -1053,7 +1059,7 @@ public class OntologyRetrievalManagerLexGridImpl extends
 			addSynonyms(ontologyBean, entry, bean, addRelations);
 			// handle definitions
 			addDefinitions(ontologyBean, entry, bean);
-			//handle isActive flag
+			// handle isActive flag
 			addInactiveStatus(ontologyBean, entry, bean);
 			// handle comments
 
@@ -1451,12 +1457,13 @@ public class OntologyRetrievalManagerLexGridImpl extends
 				if (synonyms == null || !synonyms.contains(synVal)) {
 					if (ontologyBean.getFormat().equalsIgnoreCase(
 							ApplicationConstants.FORMAT_OBO)) {
-						if (p.getDegreeOfFidelity()!= null && p.getDegreeOfFidelity().contains("EXACT")) {
+						if (p.getDegreeOfFidelity() != null
+								&& p.getDegreeOfFidelity().contains("EXACT")) {
 							bean.addSynonym(synVal);
 						}
-						
+
 					} else {
-					   bean.addSynonym(synVal);
+						bean.addSynonym(synVal);
 					}
 				}
 

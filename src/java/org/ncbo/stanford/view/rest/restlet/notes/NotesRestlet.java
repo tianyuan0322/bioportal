@@ -155,7 +155,7 @@ public class NotesRestlet extends AbstractBaseRestlet {
 	private List<NoteBean> listNotesForConcept(OntologyBean ont,
 			String conceptId, Boolean threaded) throws Exception {
 		ClassBean concept = conceptService.findConcept(ont.getId(), conceptId,
-				null, false, false);
+				null, false, false, false);
 
 		// Check to make sure the concept is valid
 		if (concept == null) {
@@ -271,7 +271,7 @@ public class NotesRestlet extends AbstractBaseRestlet {
 			switch (appliesToType) {
 			case Class:
 				ClassBean concept = conceptService.findConcept(ont.getId(),
-						appliesTo, null, false, false);
+						appliesTo, null, false, false, false);
 
 				if (concept == null) {
 					throw new ConceptNotFoundException(MessageUtils

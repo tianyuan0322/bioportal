@@ -64,7 +64,7 @@ public class ConceptPropertyServiceImpl implements ConceptPropertyService {
 
 					cuiConcept = conceptService.findConcept(searchResult
 							.getOntologyVersionId(), searchResult
-							.getConceptId(), null, false, false);
+							.getConceptId(), null, false, false, false);
 					cuiConcept.setOntologyVersionId(searchResult
 							.getOntologyVersionId().toString());
 					resultClassbeans.add(cuiConcept);

@@ -58,6 +58,8 @@ public class VirtualUriRestlet extends AbstractBaseRestlet {
 				.getParameter(RequestParamConstants.PARAM_LIGHT);
 		String noRelations = (String) httpRequest
 				.getParameter(RequestParamConstants.PARAM_NORELATIONS);
+		String withProperties = (String) httpRequest
+				.getParameter(RequestParamConstants.PARAM_CLASS_PROPERTIES);
 
 		Integer maxNumChildrenInt = RequestUtils
 				.parseIntegerParam(maxNumChildren);
@@ -65,6 +67,8 @@ public class VirtualUriRestlet extends AbstractBaseRestlet {
 		Integer pageNumInt = RequestUtils.parseIntegerParam(pageNum);
 		Boolean lightBool = RequestUtils.parseBooleanParam(light);
 		Boolean noRelationsBool = RequestUtils.parseBooleanParam(noRelations);
+		Boolean withPropertiesBool = RequestUtils
+				.parseBooleanParam(withProperties);
 		Integer ontologyIdInt = RequestUtils.parseIntegerParam(ontologyId);
 
 		try {
@@ -108,7 +112,7 @@ public class VirtualUriRestlet extends AbstractBaseRestlet {
 					} else {
 						returnObject = conceptService.findConcept(ontBean
 								.getId(), conceptId, maxNumChildrenInt,
-								lightBool, noRelationsBool);
+								lightBool, noRelationsBool, withPropertiesBool);
 					}
 
 					if (returnObject == null) {

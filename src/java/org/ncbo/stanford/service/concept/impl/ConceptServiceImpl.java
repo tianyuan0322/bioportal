@@ -89,8 +89,8 @@ public class ConceptServiceImpl implements ConceptService {
 
 	@SuppressWarnings("unchecked")
 	public ClassBean findConcept(Integer ontologyVersionId, String conceptId,
-			Integer maxNumChildren, boolean light, boolean noRelations)
-			throws Exception {
+			Integer maxNumChildren, boolean light, boolean noRelations,
+			boolean withClassProperties) throws Exception {
 		OntologyBean ontology = ontologyMetadataManager
 				.findOntologyOrViewVersionById(ontologyVersionId);
 
@@ -106,7 +106,7 @@ public class ConceptServiceImpl implements ConceptService {
 		}
 
 		ClassBean concept = getRetrievalManager(ontology).findConcept(ontology,
-				conceptId, light, noRelations);
+				conceptId, light, noRelations, withClassProperties);
 
 		// temporary fix to remove long list of siblings
 		if (concept != null && maxNumChildren != null) {
@@ -351,7 +351,7 @@ public class ConceptServiceImpl implements ConceptService {
 		return obsManager.findLeaves(ontologyVersionId, conceptId, offset,
 				limit, delim);
 	}
-	
+
 	public Page<ClassBean> findAllConcepts(Integer ontologyVersionId,
 			Integer pageSize, Integer pageNum) throws Exception {
 		// get ontologyBean from versionId

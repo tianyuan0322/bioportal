@@ -118,7 +118,7 @@ public class RdfExtractionRestlet extends AbstractBaseRestlet {
 				ont = ontologyService.findOntologyOrView(ontologyVersionIdInt);
 			}
 
-			ontology=rdfService.generateRdf(manager, rdfFilePath, ont);
+			ontology = rdfService.generateRdf(manager, rdfFilePath, ont);
 			StringDocumentTarget outputString = new StringDocumentTarget();
 			manager.saveOntology(ontology, outputString);
 			rdfOutput = outputString.toString();
@@ -185,7 +185,7 @@ public class RdfExtractionRestlet extends AbstractBaseRestlet {
 			// Check that passed conceptIds are valid
 			for (String conceptId : conceptIds) {
 				ClassBean concept = conceptService.findConcept(ont.getId(),
-						conceptId, null, false, false);
+						conceptId, null, false, false, false);
 				if (concept == null) {
 					throw new ConceptNotFoundException(MessageUtils
 							.getMessage("msg.error.conceptNotFound"));

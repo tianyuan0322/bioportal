@@ -137,7 +137,7 @@ public class OntologyRetrievalManagerLexGridImplTest extends
 		//String conceptID = "CL:0000255";
 		String conceptID = "Level 1: 0001T-9999T";
 		ClassBean classBean = retrievalManager.findConcept(ncboOntology,
-				conceptID, false, false);
+				conceptID, false, false, false);
 		System.out.println("Concept " + conceptID + " of MTHCH ontology is \n"
 				+ classBean);
 		System.out.println("\n");
@@ -157,7 +157,7 @@ public class OntologyRetrievalManagerLexGridImplTest extends
 		//String conceptID = "CL:0000254";
 		String conceptID = "CL:0000037";
 		ClassBean classBean = retrievalManager.findConcept(ncboOntology,
-				conceptID, false, false);
+				conceptID, false, false, false);
 		System.out.println("Concept " + conceptID + " of cell ontology is \n"
 				+ classBean);
 		System.out.println("\n");
@@ -175,7 +175,7 @@ public class OntologyRetrievalManagerLexGridImplTest extends
 		//String conceptID = "CL:0000255";
 		String conceptID = "CL:0000045";
 		ClassBean classBean = retrievalManager.findConcept(ncboOntology,
-				conceptID, false, false);
+				conceptID, false, false, false);
 		System.out.println("Concept " + conceptID + " of cell ontology is \n"
 				+ classBean);
 		System.out.println("\n");
@@ -192,7 +192,7 @@ public class OntologyRetrievalManagerLexGridImplTest extends
 						OntologyLoaderLexGridImplTest.OBO_CELL_ONTOLOGY_ID);
 		String conceptID = "CL:0000255";
 		ClassBean classBean = retrievalManager.findConcept(ncboOntology,
-				conceptID, true, false);
+				conceptID, true, false, false);
 		System.out.println("Concept " + conceptID + " of cell ontology is \n"
 				+ classBean);
 		System.out.println("\n");
@@ -209,7 +209,7 @@ public class OntologyRetrievalManagerLexGridImplTest extends
 						OntologyLoaderLexGridImplTest.OBO_CELL_ONTOLOGY_ID);
 		String conceptID = "CL:ABCDXYZ";
 		ClassBean classBean = retrievalManager.findConcept(ncboOntology,
-				conceptID, false, false);
+				conceptID, false, false, false);
 		System.out.println("Concept " + conceptID + " of cell ontology is \n"
 				+ classBean);
 		System.out.println("\n");
@@ -226,7 +226,7 @@ public class OntologyRetrievalManagerLexGridImplTest extends
 						OntologyLoaderLexGridImplTest.OBO_CELL_ONTOLOGY_ID);
 		String conceptID = "CL_0000255";
 		ClassBean classBean = retrievalManager.findConcept(ncboOntology,
-				conceptID, false, false);
+				conceptID, false, false, false);
 		String newId = conceptID.replace("_", ":");
 		System.out.println("Concept " + conceptID + " of cell ontology is \n"
 				+ classBean);
@@ -244,7 +244,7 @@ public class OntologyRetrievalManagerLexGridImplTest extends
 						OntologyLoaderLexGridImplTest.OBO_CELL_ONTOLOGY_ID);
 		String conceptID = "http://purl.bioontology.org/ontology/CL/CL_0000548";
 		ClassBean classBean = retrievalManager.findConcept(ncboOntology,
-				conceptID, false, false);
+				conceptID, false, false, false);
 		String newId = "CL:0000548";
 		System.out.println("Concept " + conceptID + " of cell ontology is \n"
 				+ classBean);
@@ -260,7 +260,7 @@ public class OntologyRetrievalManagerLexGridImplTest extends
 				.getLatestOntologyBean(OntologyLoaderLexGridImplTest.OBO_DICTYOSTELIUM_DISPLAY_LABEL);
 		String conceptID = "DDANAT:0000004";
 		ClassBean classBean = retrievalManager.findConcept(ncboOntology,
-				conceptID, false, false);
+				conceptID, false, false, false);
 		System.out.println("Concept " + conceptID
 				+ " of Dictyostelium ontology(2 relations) is \n" + classBean);
 		System.out.println("\n");
@@ -275,7 +275,7 @@ public class OntologyRetrievalManagerLexGridImplTest extends
 				.getLatestOntologyBean(OntologyLoaderLexGridImplTest.OBO_DICTYOSTELIUM_DISPLAY_LABEL);
 		String conceptID = "DDANAT:0000430";
 		ClassBean classBean = retrievalManager.findConcept(ncboOntology,
-				conceptID, false, false);
+				conceptID, false, false, false);
 		System.out.println("Concept " + conceptID
 				+ " of Dictyostelium ontology(obsolete) is \n" + classBean);
 		System.out.println("\n");
@@ -290,7 +290,7 @@ public class OntologyRetrievalManagerLexGridImplTest extends
 				.getLatestOntologyBean(OntologyLoaderLexGridImplTest.LEXGRID_HL7_DISPLAY_LABEL);
 		String conceptID = "19944:abcCodes";
 		ClassBean classBean = retrievalManager.findConcept(ncboOntology,
-				conceptID, false, false);
+				conceptID, false, false, false);
 		System.out.println("Concept " + conceptID
 				+ " of HL7 ontology(obsolete) is \n" + classBean);
 		System.out.println("\n");
@@ -307,7 +307,7 @@ public class OntologyRetrievalManagerLexGridImplTest extends
 				.getLatestOntologyBean(OntologyLoaderLexGridImplTest.UMLS_DISPLAY_LABEL);
 		String conceptID = "MFART";
 		ClassBean classBean = retrievalManager.findConcept(ncboOntology,
-				conceptID, false, false);
+				conceptID, false, false, false);
 		System.out
 				.println("Concept "
 						+ conceptID

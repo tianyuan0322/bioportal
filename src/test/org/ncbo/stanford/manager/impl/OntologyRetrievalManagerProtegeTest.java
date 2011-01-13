@@ -90,7 +90,7 @@ public class OntologyRetrievalManagerProtegeTest extends AbstractBioPortalTest {
 		System.out.println("Starting testGetConcept");
 		ClassBean conceptBean = null; 
 		OntologyBean ontologyBean = getLatestOntologyBean(TEST_PIZZA_DISPLAY_NAME);
-		conceptBean= ocMgr.findConcept(ontologyBean, TEST_CONCEPT_NAME, false, false);
+		conceptBean= ocMgr.findConcept(ontologyBean, TEST_CONCEPT_NAME, false, false, false);
 
 		outputConcept(conceptBean);
 
@@ -103,7 +103,7 @@ public class OntologyRetrievalManagerProtegeTest extends AbstractBioPortalTest {
 		System.out.println("Starting cheesyvegetablepizza concept");
 		ClassBean classBean = null; 
 		OntologyBean ontologyBean = getLatestOntologyBean(TEST_PIZZA_DISPLAY_NAME);
-		classBean= ocMgr.findConcept(ontologyBean, "CheeseyVegetableTopping", false, false);
+		classBean= ocMgr.findConcept(ontologyBean, "CheeseyVegetableTopping", false, false, false);
 		outputConcept(classBean);
 	}
 	

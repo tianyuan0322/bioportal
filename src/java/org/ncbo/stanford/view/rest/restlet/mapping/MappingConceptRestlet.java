@@ -151,13 +151,13 @@ public class MappingConceptRestlet extends AbstractMappingRestlet {
 			// Test for valid concept
 			if (conceptId != null) {
 				concept = conceptService.findConcept(ont.getId(), conceptId, 0,
-						true, true);
+						true, false, false);
 			} else if (conceptId == null && sourceConceptId != null
 					&& targetConceptId != null) {
 				sourceConcept = conceptService.findConcept(sourceOnt.getId(),
-						sourceConceptId, 0, true, true);
+						sourceConceptId, 0, true, false, false);
 				targetConcept = conceptService.findConcept(targetOnt.getId(),
-						targetConceptId, 0, true, true);
+						targetConceptId, 0, true, false, false);
 			}
 
 			if ((concept == null && sourceConcept == null && targetConcept == null)
@@ -287,9 +287,9 @@ public class MappingConceptRestlet extends AbstractMappingRestlet {
 			// Test for valid concepts
 			if (sourceConceptId != null && targetConceptId != null) {
 				sourceConcept = conceptService.findConcept(sourceOnt.getId(),
-						sourceConceptId, 0, true, true);
+						sourceConceptId, 0, true, false, false);
 				targetConcept = conceptService.findConcept(targetOnt.getId(),
-						targetConceptId, 0, true, true);
+						targetConceptId, 0, true, false, false);
 			}
 
 			if (sourceConcept == null || targetConcept == null) {

@@ -52,6 +52,8 @@ public class ConceptRestlet extends AbstractBaseRestlet {
 				.getParameter(RequestParamConstants.PARAM_LIGHT);
 		String noRelations = (String) httpRequest
 				.getParameter(RequestParamConstants.PARAM_NORELATIONS);
+		String withProperties = (String) httpRequest
+				.getParameter(RequestParamConstants.PARAM_CLASS_PROPERTIES);
 
 		String conceptId = getConceptId(request);
 		Integer maxNumChildrenInt = RequestUtils
@@ -60,6 +62,8 @@ public class ConceptRestlet extends AbstractBaseRestlet {
 		Integer pageNumInt = RequestUtils.parseIntegerParam(pageNum);
 		Boolean lightBool = RequestUtils.parseBooleanParam(light);
 		Boolean noRelationsBool = RequestUtils.parseBooleanParam(noRelations);
+		Boolean withPropertiesBool = RequestUtils
+				.parseBooleanParam(withProperties);
 		Integer ontologyVersionIdInt = RequestUtils
 				.parseIntegerParam(ontologyVersionId);
 
@@ -86,7 +90,7 @@ public class ConceptRestlet extends AbstractBaseRestlet {
 				// specific concept
 				concept = conceptService.findConcept(ontologyVersionIdInt,
 						conceptId, maxNumChildrenInt, lightBool,
-						noRelationsBool);
+						noRelationsBool, withPropertiesBool);
 			}
 
 			if (concept == null) {
