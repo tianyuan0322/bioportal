@@ -254,6 +254,8 @@ public abstract class AbstractSearchService {
 						.get(SearchIndexBean.ONTOLOGY_VERSION_ID_FIELD_LABEL));
 				String conceptId = doc
 						.get(SearchIndexBean.CONCEPT_ID_FIELD_LABEL);
+				String conceptShortId = doc
+				.get(SearchIndexBean.CONCEPT_ID_SHORT_FIELD_LABEL);
 				Integer ontologyId = new Integer(doc
 						.get(SearchIndexBean.ONTOLOGY_ID_FIELD_LABEL));
 				String ontologyDisplayLabel = doc
@@ -262,7 +264,7 @@ public abstract class AbstractSearchService {
 
 				if (!uniqueDocs.contains(uniqueIdent)
 						&& (subtreeRootConceptId.equalsIgnoreCase(conceptId) || mgr
-								.hasParent(ob, conceptId, subtreeRootConceptId))) {
+								.hasParent(ob, conceptShortId, subtreeRootConceptId))) {
 					SearchBean searchResult = new SearchBean(
 							ontologyVersionId,
 							ontologyId,
