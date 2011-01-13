@@ -446,6 +446,14 @@ public abstract class AbstractOntologyManagerProtege {
 		return ApplicationConstants.BASE_CONCEPT_NAMESPACE
 				+ ontologyBean.getAbbreviation() + "/" + name;
 	}
+	
+	protected String getIdFromProtegeURI(String fullId) {
+		if (fullId != null && fullId.lastIndexOf("/") != -1) {
+			fullId = fullId.substring(fullId.lastIndexOf("/") + 1);
+		}
+		
+		return fullId; 
+	}
 
 	protected String getFullId(Frame frame, OntologyBean ontologyBean) {
 		return (frame instanceof RDFResource) ? frame.getName()

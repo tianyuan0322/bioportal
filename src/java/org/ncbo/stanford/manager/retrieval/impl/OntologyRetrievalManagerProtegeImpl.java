@@ -120,6 +120,14 @@ public class OntologyRetrievalManagerProtegeImpl extends
 		Frame owlClass = getFrame(conceptId, kb);
 		ClassBean targetClass = null;
 
+		// This enables lookup using fullIds for Protege Frames ontologies
+		if (owlClass == null
+				&& ontologyBean.getFormat().equalsIgnoreCase(
+						ApplicationConstants.FORMAT_PROTEGE)) {
+			conceptId = getIdFromProtegeURI(conceptId);
+			owlClass = getFrame(conceptId, kb);
+		}
+
 		if (owlClass != null) {
 			if (!(owlClass instanceof Cls)) {
 				targetClass = createBaseClassBean(owlClass, ontologyBean);
