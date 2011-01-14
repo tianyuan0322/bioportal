@@ -78,9 +78,15 @@ public class OntologyRetrievalManagerLexGridImpl extends
 	private static final String ROOT_CLASS_ID = "THING";
 	private int PAGE_SIZE = 5000;
 
+	/**
+	 * Holds a map between long and short concept ids to minimize lookups
+	 */
+	private static HashMap<String, String> conceptIdMap = new HashMap<String, String>(
+			0);
+
 	// mdorf: hack for now to remove certain MSH relations
-	List<String> relationsToFilter = new ArrayList<String>(Arrays.asList("QB",
-			"QA", "NH", "SIB", "AQ"));
+	private List<String> relationsToFilter = new ArrayList<String>(Arrays
+			.asList("QB", "QA", "NH", "SIB", "AQ"));
 
 	public OntologyRetrievalManagerLexGridImpl() throws Exception {
 		lbs = LexBIGServiceImpl.defaultInstance();
@@ -637,6 +643,21 @@ public class OntologyRetrievalManagerLexGridImpl extends
 
 	public boolean hasParent(OntologyBean ontologyBean, String childConceptId,
 			String parentConceptId) throws Exception {
+		String shortChildId = conceptIdMap.get(childConceptId);
+
+		if (null == shortChildId) {
+			shortChildId = getCorrectedConceptId(ontologyBean, childConceptId);
+			conceptIdMap.put(childConceptId, shortChildId);
+		}
+
+		String shortParentId = conceptIdMap.get(parentConceptId);
+
+		if (null == shortParentId) {
+			shortParentId = getCorrectedConceptId(ontologyBean, parentConceptId);
+			conceptIdMap.put(parentConceptId, shortParentId);
+			conceptIdMap.put(shortParentId, shortParentId);
+		}
+
 		boolean isRelated = false;
 		String schemeName = getLexGridCodingSchemeName(ontologyBean);
 		CodingSchemeVersionOrTag csvt = getLexGridCodingSchemeVersion(ontologyBean);
@@ -654,15 +675,15 @@ public class OntologyRetrievalManagerLexGridImpl extends
 				related = cng.areCodesRelated(ConvenienceMethods
 						.createNameAndValue(associationName, schemeName),
 						ConvenienceMethods.createConceptReference(
-								parentConceptId, schemeName),
-						ConvenienceMethods.createConceptReference(
-								childConceptId, schemeName), false);
+								shortParentId, schemeName), ConvenienceMethods
+								.createConceptReference(shortChildId,
+										schemeName), false);
 			} else {
 				related = cng.areCodesRelated(ConvenienceMethods
 						.createNameAndValue(associationName, schemeName),
-						ConvenienceMethods.createConceptReference(
-								childConceptId, schemeName), ConvenienceMethods
-								.createConceptReference(parentConceptId,
+						ConvenienceMethods.createConceptReference(shortChildId,
+								schemeName), ConvenienceMethods
+								.createConceptReference(shortParentId,
 										schemeName), false);
 			}
 
@@ -976,6 +997,7 @@ public class OntologyRetrievalManagerLexGridImpl extends
 		return bean;
 	}
 
+	@SuppressWarnings("unchecked")
 	private HashMap<String, Integer> getHashMapWithChildCount(
 			ResolvedConceptReferenceList rcrl) {
 		HashMap<String, Integer> countMap = new HashMap<String, Integer>();
@@ -1229,6 +1251,7 @@ public class OntologyRetrievalManagerLexGridImpl extends
 		}
 	}
 
+	@SuppressWarnings("unchecked")
 	private static void addPropertyToClassBean(ClassBean classBean,
 			String propertyName, String propertyValue) {
 		if ((classBean != null) && StringUtils.isNotBlank(propertyName)
@@ -1680,7 +1703,6 @@ public class OntologyRetrievalManagerLexGridImpl extends
 						ApplicationConstants.SUPER_CLASS);
 			}
 		}
-
 	}
 
 	private String getAssociationDirectionalName(String schemeName,
@@ -1751,7 +1773,6 @@ public class OntologyRetrievalManagerLexGridImpl extends
 					if (rcr != null) {
 						foundCorrectedId = true;
 					}
-
 				}
 
 				if (!foundCorrectedId) {
@@ -1768,7 +1789,6 @@ public class OntologyRetrievalManagerLexGridImpl extends
 						}
 					}
 				}
-
 			}
 		}
 		if (foundCorrectedId)
