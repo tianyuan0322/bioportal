@@ -64,16 +64,16 @@ public class AbstractNcboMappingDAO {
 			+ "  ?mappingId <http://protege.stanford.edu/ontologies/mappings/mappings.rdfs#target_ontology_id> ?targetOntologyId ."
 			+ "  ?mappingId <http://protege.stanford.edu/ontologies/mappings/mappings.rdfs#created_in_source_ontology_version> ?createdInSourceOntologyVersion ."
 			+ "  ?mappingId <http://protege.stanford.edu/ontologies/mappings/mappings.rdfs#created_in_target_ontology_version> ?createdInTargetOntologyVersion ."
-			+ "  ?mappingId <http://protege.stanford.edu/ontologies/mappings/mappings.rdfs#comment> ?comment ."
 			+ "  ?mappingId <http://protege.stanford.edu/ontologies/mappings/mappings.rdfs#date> ?date ."
 			+ "  ?mappingId <http://protege.stanford.edu/ontologies/mappings/mappings.rdfs#submitted_by> ?submittedBy ."
-			+ "  ?mappingId <http://protege.stanford.edu/ontologies/mappings/mappings.rdfs#dependency> ?dependency ."
 			+ "  ?mappingId <http://protege.stanford.edu/ontologies/mappings/mappings.rdfs#mapping_type> ?mappingType ."
-			+ "  ?mappingId <http://protege.stanford.edu/ontologies/mappings/mappings.rdfs#mapping_source> ?mappingSource ."
-			+ "  ?mappingId <http://protege.stanford.edu/ontologies/mappings/mappings.rdfs#mapping_source_name> ?mappingSourceName ."
-			+ "  ?mappingId <http://protege.stanford.edu/ontologies/mappings/mappings.rdfs#mapping_source_contact_info> ?mappingSourceContactInfo ."
-			+ "  ?mappingId <http://protege.stanford.edu/ontologies/mappings/mappings.rdfs#mapping_source_site> ?mappingSourceSite ."
-			+ "  ?mappingId <http://protege.stanford.edu/ontologies/mappings/mappings.rdfs#mapping_source_algorithm> ?mappingSourceAlgorithm ."
+			+ "  OPTIONAL { ?mappingId <http://protege.stanford.edu/ontologies/mappings/mappings.rdfs#comment> ?comment . }"
+			+ "  OPTIONAL { ?mappingId <http://protege.stanford.edu/ontologies/mappings/mappings.rdfs#dependency> ?dependency .}"
+			+ "  OPTIONAL { ?mappingId <http://protege.stanford.edu/ontologies/mappings/mappings.rdfs#mapping_source> ?mappingSource .}"
+			+ "  OPTIONAL { ?mappingId <http://protege.stanford.edu/ontologies/mappings/mappings.rdfs#mapping_source_name> ?mappingSourceName .}"
+			+ "  OPTIONAL { ?mappingId <http://protege.stanford.edu/ontologies/mappings/mappings.rdfs#mapping_source_contact_info> ?mappingSourceContactInfo .}"
+			+ "  OPTIONAL { ?mappingId <http://protege.stanford.edu/ontologies/mappings/mappings.rdfs#mapping_source_site> ?mappingSourceSite .}"
+			+ "  OPTIONAL { ?mappingId <http://protege.stanford.edu/ontologies/mappings/mappings.rdfs#mapping_source_algorithm> ?mappingSourceAlgorithm .}"
 			+ "  FILTER (%FILTER%) } %ORDERBY% LIMIT %LIMIT% OFFSET %OFFSET%";
 
 	protected final static String mappingCountQuery = "SELECT  "
@@ -85,15 +85,16 @@ public class AbstractNcboMappingDAO {
 			+ "  ?mappingId <http://protege.stanford.edu/ontologies/mappings/mappings.rdfs#target_ontology_id> ?targetOntologyId ."
 			+ "  ?mappingId <http://protege.stanford.edu/ontologies/mappings/mappings.rdfs#created_in_source_ontology_version> ?createdInSourceOntologyVersion ."
 			+ "  ?mappingId <http://protege.stanford.edu/ontologies/mappings/mappings.rdfs#created_in_target_ontology_version> ?createdInTargetOntologyVersion ."
-			+ "  ?mappingId <http://protege.stanford.edu/ontologies/mappings/mappings.rdfs#comment> ?comment ."
 			+ "  ?mappingId <http://protege.stanford.edu/ontologies/mappings/mappings.rdfs#date> ?date ."
 			+ "  ?mappingId <http://protege.stanford.edu/ontologies/mappings/mappings.rdfs#submitted_by> ?submittedBy ."
 			+ "  ?mappingId <http://protege.stanford.edu/ontologies/mappings/mappings.rdfs#mapping_type> ?mappingType ."
-			+ "  ?mappingId <http://protege.stanford.edu/ontologies/mappings/mappings.rdfs#mapping_source> ?mappingSource ."
-			+ "  ?mappingId <http://protege.stanford.edu/ontologies/mappings/mappings.rdfs#mapping_source_name> ?mappingSourceName ."
-			+ "  ?mappingId <http://protege.stanford.edu/ontologies/mappings/mappings.rdfs#mapping_source_contact_info> ?mappingSourceContactInfo ."
-			+ "  ?mappingId <http://protege.stanford.edu/ontologies/mappings/mappings.rdfs#mapping_source_site> ?mappingSourceSite ."
-			+ "  ?mappingId <http://protege.stanford.edu/ontologies/mappings/mappings.rdfs#mapping_source_algorithm> ?mappingSourceAlgorithm ."
+			+ "  OPTIONAL { ?mappingId <http://protege.stanford.edu/ontologies/mappings/mappings.rdfs#comment> ?comment . }"
+			+ "  OPTIONAL { ?mappingId <http://protege.stanford.edu/ontologies/mappings/mappings.rdfs#dependency> ?dependency .}"
+			+ "  OPTIONAL { ?mappingId <http://protege.stanford.edu/ontologies/mappings/mappings.rdfs#mapping_source> ?mappingSource .}"
+			+ "  OPTIONAL { ?mappingId <http://protege.stanford.edu/ontologies/mappings/mappings.rdfs#mapping_source_name> ?mappingSourceName .}"
+			+ "  OPTIONAL { ?mappingId <http://protege.stanford.edu/ontologies/mappings/mappings.rdfs#mapping_source_contact_info> ?mappingSourceContactInfo .}"
+			+ "  OPTIONAL { ?mappingId <http://protege.stanford.edu/ontologies/mappings/mappings.rdfs#mapping_source_site> ?mappingSourceSite .}"
+			+ "  OPTIONAL { ?mappingId <http://protege.stanford.edu/ontologies/mappings/mappings.rdfs#mapping_source_algorithm> ?mappingSourceAlgorithm .}"
 			+ "  FILTER (%FILTER%) }";
 
 	/*******************************************************************
@@ -180,56 +181,84 @@ public class AbstractNcboMappingDAO {
 				OneToOneMapping mapping = new OneToOneMapping();
 
 				// Set Mapping properties
-				mapping.setId(new URIImpl(bs.getValue("mappingId")
-						.stringValue()));
-				mapping.setSource(new URIImpl(bs.getValue("source")
-						.stringValue()));
-				mapping.setTarget(new URIImpl(bs.getValue("target")
-						.stringValue()));
-				mapping.setRelation(new URIImpl(bs.getValue("relation")
-						.stringValue()));
-				mapping.setSourceOntologyId(convertValueToInteger(bs
-						.getValue("sourceOntologyId")));
-				mapping.setTargetOntologyId(convertValueToInteger(bs
-						.getValue("targetOntologyId")));
-				mapping
-						.setCreatedInSourceOntologyVersion(convertValueToInteger(bs
-								.getValue("createdInSourceOntologyVersion")));
-				mapping
-						.setCreatedInTargetOntologyVersion(convertValueToInteger(bs
-								.getValue("createdInTargetOntologyVersion")));
+				if (isValidValue(bs.getValue("mappingId")))
+					mapping.setId(new URIImpl(bs.getValue("mappingId")
+							.stringValue()));
+
+				if (isValidValue(bs.getValue("source")))
+					mapping.setSource(new URIImpl(bs.getValue("source")
+							.stringValue()));
+
+				if (isValidValue(bs.getValue("target")))
+					mapping.setTarget(new URIImpl(bs.getValue("target")
+							.stringValue()));
+
+				if (isValidValue(bs.getValue("relation")))
+					mapping.setRelation(new URIImpl(bs.getValue("relation")
+							.stringValue()));
+
+				if (isValidValue(bs.getValue("sourceOntologyId")))
+					mapping.setSourceOntologyId(convertValueToInteger(bs
+							.getValue("sourceOntologyId")));
+
+				if (isValidValue(bs.getValue("targetOntologyId")))
+					mapping.setTargetOntologyId(convertValueToInteger(bs
+							.getValue("targetOntologyId")));
+
+				if (isValidValue(bs.getValue("createdInSourceOntologyVersion")))
+					mapping
+							.setCreatedInSourceOntologyVersion(convertValueToInteger(bs
+									.getValue("createdInSourceOntologyVersion")));
+
+				if (isValidValue(bs.getValue("createdInTargetOntologyVersion")))
+					mapping
+							.setCreatedInTargetOntologyVersion(convertValueToInteger(bs
+									.getValue("createdInTargetOntologyVersion")));
 
 				// Set metadata properties
-				if (!bs.getValue("dependency").stringValue().isEmpty()) {
+				if (isValidValue(bs.getValue("dependency"))) {
 					mapping.setDependency(new URIImpl(bs.getValue("dependency")
 							.stringValue()));
 				}
-				mapping.setSubmittedBy(convertValueToInteger(bs
-						.getValue("submittedBy")));
-				mapping.setDate(convertValueToDate(bs.getValue("date")));
-				mapping.setComment(bs.getValue("comment").stringValue());
-				mapping
-						.setMappingType(bs.getValue("mappingType")
-								.stringValue());
+
+				if (isValidValue(bs.getValue("submittedBy")))
+					mapping.setSubmittedBy(convertValueToInteger(bs
+							.getValue("submittedBy")));
+
+				if (isValidValue(bs.getValue("date")))
+					mapping.setDate(convertValueToDate(bs.getValue("date")));
+
+				if (isValidValue(bs.getValue("comment")))
+					mapping.setComment(bs.getValue("comment").stringValue());
+
+				if (isValidValue(bs.getValue("mappingType")))
+					mapping.setMappingType(bs.getValue("mappingType")
+							.stringValue());
 
 				// Set mappingSource properties
-				mapping.setMappingSource(bs.getValue("mappingSource")
-						.stringValue());
-				mapping.setMappingSourceName(bs.getValue("mappingSourceName")
-						.stringValue());
-				mapping.setMappingSourcecontactInfo(bs.getValue(
-						"mappingSourceContactInfo").stringValue());
-				mapping.setMappingSourceAlgorithm(bs.getValue(
-						"mappingSourceAlgorithm").stringValue());
+				if (isValidValue(bs.getValue("mappingSource")))
+					mapping.setMappingSource(bs.getValue("mappingSource")
+							.stringValue());
+
+				if (isValidValue(bs.getValue("mappingSourceName")))
+					mapping.setMappingSourceName(bs.getValue(
+							"mappingSourceName").stringValue());
+
+				if (isValidValue(bs.getValue("mappingSourceContactInfo")))
+					mapping.setMappingSourcecontactInfo(bs.getValue(
+							"mappingSourceContactInfo").stringValue());
+
+				if (isValidValue(bs.getValue("mappingSourceAlgorithm")))
+					mapping.setMappingSourceAlgorithm(bs.getValue(
+							"mappingSourceAlgorithm").stringValue());
 
 				// Because this can be blank we have to deal with empty strings
-				String mappingSourceSite = bs.getValue("mappingSourceSite")
-						.stringValue();
-				URI mappingSourceSiteURI = null;
-				if (!mappingSourceSite.isEmpty()) {
-					mappingSourceSiteURI = new URIImpl(mappingSourceSite);
+				if (isValidValue(bs.getValue("mappingSourceSite"))) {
+					String mappingSourceSite = bs.getValue("mappingSourceSite")
+							.stringValue();
+					URI mappingSourceSiteURI = new URIImpl(mappingSourceSite);
+					mapping.setMappingSourceSite(mappingSourceSiteURI);
 				}
-				mapping.setMappingSourceSite(mappingSourceSiteURI);
 
 				mappings.add(mapping);
 			}
@@ -609,6 +638,10 @@ public class AbstractNcboMappingDAO {
 			mapping.setMappingType(mappingType);
 
 		return mapping;
+	}
+
+	protected boolean isValidValue(Value value) {
+		return value != null && !value.stringValue().isEmpty();
 	}
 
 	/*******************************************************************
