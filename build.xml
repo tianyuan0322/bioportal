@@ -66,6 +66,25 @@
 		<delete file="${bioportal.search.indexpath}/write.lock" />
 	</target>
 
+	<target name="clean_no_deploy">
+		<delete failonerror="false">
+			<fileset dir="${classes.dir}">
+				<include name="**/*.class" />
+				<include name="**/*.properties" />
+				<include name="**/*.xml" />
+			</fileset>
+		</delete>
+
+		<delete includeemptydirs="true" failonerror="false">
+			<fileset dir="${build.dir}">
+				<include name="**/*" />
+			</fileset>
+		</delete>
+
+		<delete file="${dist.dir}/${app.name}.war" />
+		<delete dir="${conf.dir.generated}" />
+	</target>
+
 	<!--- This target sets the registry.xml-is-present property if the registry file exists -->
 	<target name="check-registry.xml-is-present">
 		<condition property="registry.xml-is-present">
