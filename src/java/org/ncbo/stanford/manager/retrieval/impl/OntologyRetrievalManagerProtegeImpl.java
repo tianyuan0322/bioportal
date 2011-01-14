@@ -30,7 +30,6 @@ import org.ncbo.stanford.util.helper.StringHelper;
 import org.ncbo.stanford.util.paginator.Paginator;
 import org.ncbo.stanford.util.paginator.impl.Page;
 import org.ncbo.stanford.util.paginator.impl.PaginatorImpl;
-import org.openrdf.model.vocabulary.RDFS;
 
 import edu.stanford.smi.protege.model.BrowserSlotPattern;
 import edu.stanford.smi.protege.model.Cls;
@@ -46,9 +45,7 @@ import edu.stanford.smi.protegex.owl.model.OWLModel;
 import edu.stanford.smi.protegex.owl.model.OWLNamedClass;
 import edu.stanford.smi.protegex.owl.model.RDFProperty;
 import edu.stanford.smi.protegex.owl.model.RDFResource;
-import edu.stanford.smi.protegex.owl.model.RDFSClass;
 import edu.stanford.smi.protegex.owl.model.RDFSNamedClass;
-import edu.stanford.smi.protegex.owl.model.impl.DefaultRDFProperty;
 import edu.stanford.smi.protegex.owl.util.OWLBrowserSlotPattern;
 
 /**
@@ -282,7 +279,9 @@ public class OntologyRetrievalManagerProtegeImpl extends
 		if (owlClass != null) {
 			Cls clsObj = (Cls) owlClass;
 			// get instance from KnowledgeBase
-			Collection<Instance> instances = clsObj.getDirectInstances();
+			Collection<Instance> instances = removeAnnonymousClasses(clsObj
+					.getDirectInstances());
+
 			InstanceBean instanceBean;
 			for (Instance instance : instances) {
 				instanceBean = createInstanceBean(instance, ontologyBean, true);
@@ -341,7 +340,8 @@ public class OntologyRetrievalManagerProtegeImpl extends
 
 			while (p.hasNext()) {
 				Slot nextProperty = (Slot) p.next();
-				Collection values = frame.getOwnSlotValues(nextProperty);
+				Collection values = removeAnnonymousClasses(frame
+						.getOwnSlotValues(nextProperty));
 
 				if (values != null && !values.isEmpty()) {
 					// to store all property values(for <list>)
@@ -549,10 +549,10 @@ public class OntologyRetrievalManagerProtegeImpl extends
 				OWLModel owlModel = (OWLModel) cls.getKnowledgeBase();
 
 				if (cls.equals(owlModel.getOWLThingClass())) {
-					subclasses = removeAnnonymousClasses(subclasses);
+					subclasses = (List<Cls>) removeAnnonymousClasses(subclasses);
 				}
 			} else {
-				// //Collecting the subclasses for Cls
+				// Collecting the subclasses for Cls
 				subclasses = getUniqueClasses(cls.getDirectSubclasses());
 			}
 			// It's adding the childCount Property after counting their
@@ -573,14 +573,18 @@ public class OntologyRetrievalManagerProtegeImpl extends
 	 * @param protegeClasses
 	 * @return
 	 */
-	private List<Cls> removeAnnonymousClasses(List<Cls> protegeClasses) {
-		Iterator<Cls> it = protegeClasses.iterator();
+	private Collection removeAnnonymousClasses(Collection protegeClasses) {
+		Iterator it = protegeClasses.iterator();
 
 		while (it.hasNext()) {
-			Cls subclass = it.next();
+			Object next = it.next();
 
-			if (subclass.isSystem() || subclass.getName().startsWith("@")) {
-				it.remove();
+			if (next instanceof Instance || next instanceof Cls) {
+				Instance subclass = (Instance) next;
+
+				if (subclass.isSystem() || subclass.getName().startsWith("@")) {
+					it.remove();
+				}
 			}
 		}
 
@@ -678,7 +682,7 @@ public class OntologyRetrievalManagerProtegeImpl extends
 			OWLModel owlModel = (OWLModel) cls.getKnowledgeBase();
 
 			if (cls.equals(owlModel.getOWLThingClass())) {
-				subclasses = removeAnnonymousClasses(subclasses);
+				subclasses = (List<Cls>) removeAnnonymousClasses(subclasses);
 			}
 		} else {
 			subclasses = getUniqueClasses(cls.getDirectSubclasses());
@@ -803,7 +807,7 @@ public class OntologyRetrievalManagerProtegeImpl extends
 			Collection classes = (isOwl && slot instanceof RDFProperty && concept instanceof RDFResource) ? ((RDFResource) concept)
 					.getPropertyValues((RDFProperty) slot)
 					: concept.getOwnSlotValues(slot);
-			List vals = getUniqueClasses(classes);
+			Collection vals = removeAnnonymousClasses(getUniqueClasses(classes));
 
 			if (vals.isEmpty()) {
 				continue;
