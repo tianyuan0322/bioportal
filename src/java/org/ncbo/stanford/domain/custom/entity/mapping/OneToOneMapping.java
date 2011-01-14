@@ -85,7 +85,7 @@ public class OneToOneMapping extends Mapping implements Serializable {
 					Object value = field.get(this);
 					Value valueTyped = null;
 					if (value == null) {
-						valueTyped = vf.createLiteral((String) "");
+						continue;
 					} else if (value.getClass() == Integer.class) {
 						valueTyped = vf.createLiteral((Integer) value);
 					} else if (value.getClass() == String.class) {
@@ -104,13 +104,10 @@ public class OneToOneMapping extends Mapping implements Serializable {
 
 					statement = new StatementImpl(objectId, type, valueTyped);
 				} catch (IllegalArgumentException e) {
-					// TODO Auto-generated catch block
 					e.printStackTrace();
 				} catch (IllegalAccessException e) {
-					// TODO Auto-generated catch block
 					e.printStackTrace();
 				} catch (DatatypeConfigurationException e) {
-					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
 
