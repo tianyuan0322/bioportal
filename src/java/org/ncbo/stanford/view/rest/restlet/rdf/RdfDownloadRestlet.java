@@ -5,21 +5,21 @@ package org.ncbo.stanford.view.rest.restlet.rdf;
 
 import java.io.File;
 
+import javax.servlet.http.HttpServletResponse;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.ncbo.stanford.bean.OntologyBean;
+import org.ncbo.stanford.exception.InvalidInputException;
+import org.ncbo.stanford.util.MessageUtils;
+import org.ncbo.stanford.util.RequestUtils;
+import org.ncbo.stanford.util.helper.StringHelper;
+import org.ncbo.stanford.view.rest.restlet.ontology.AbstractOntologyBaseRestlet;
 import org.restlet.data.MediaType;
 import org.restlet.data.Request;
 import org.restlet.data.Response;
 import org.restlet.data.Status;
 import org.restlet.resource.FileRepresentation;
-import org.ncbo.stanford.bean.OntologyBean;
-import org.ncbo.stanford.exception.InvalidInputException;
-
-import org.ncbo.stanford.service.ontology.OntologyService;
-import org.ncbo.stanford.util.MessageUtils;
-import org.ncbo.stanford.util.RequestUtils;
-import org.ncbo.stanford.util.helper.StringHelper;
-import org.ncbo.stanford.view.rest.restlet.ontology.AbstractOntologyBaseRestlet;
 
 /**
  * An RdfDownloadRestlet contains functionality handling for GET methods
@@ -29,8 +29,8 @@ import org.ncbo.stanford.view.rest.restlet.ontology.AbstractOntologyBaseRestlet;
  */
 public class RdfDownloadRestlet extends AbstractOntologyBaseRestlet {
 
-	private static final Log log = LogFactory.getLog(RdfDownloadRestlet.class);
-	private OntologyService ontologyService;
+	private static final Log log = LogFactory
+			.getLog(AbstractOntologyBaseRestlet.class);
 
 	/**
 	 * Handle GET calls here
@@ -55,7 +55,6 @@ public class RdfDownloadRestlet extends AbstractOntologyBaseRestlet {
 	 * @param response
 	 */
 	public void downloadRdfFile(Request request, Response response) {
-
 		try {
 			boolean isVirtual = false;
 
@@ -73,7 +72,7 @@ public class RdfDownloadRestlet extends AbstractOntologyBaseRestlet {
 						MessageUtils.getMessage("entity.ontologyid"));
 				isVirtual = true;
 			}
-			
+
 			if (isVirtual) {
 				Integer ontologyVirtualIdInt = RequestUtils
 						.parseIntegerParam(ontologyId);
@@ -104,10 +103,12 @@ public class RdfDownloadRestlet extends AbstractOntologyBaseRestlet {
 			response.setEntity(fileRepresentation);
 
 			String filename = ont.getOntologyId() + ".rdf";
-			RequestUtils.getHttpServletResponse(response).setHeader(
-					"Content-Disposition",
-					"attachment; filename=\"" + filename + "\";");
 
+			HttpServletResponse httpResp = RequestUtils
+					.getHttpServletResponse(response);
+			httpResp.setContentType("application/rdf+xml");
+			httpResp.setHeader("Content-Disposition", "attachment; filename=\""
+					+ filename + "\";");
 		} catch (InvalidInputException e) {
 			response.setStatus(Status.CLIENT_ERROR_BAD_REQUEST, e.getMessage());
 			xmlSerializationService
@@ -120,12 +121,4 @@ public class RdfDownloadRestlet extends AbstractOntologyBaseRestlet {
 			log.error(e);
 		}
 	}
-	/**
-	 * @param OntologyService 
-	 * 						ontologyService
-	 */
-	public void setOntologyService(OntologyService ontologyService) {
-		this.ontologyService = ontologyService;
-	}
-
 }
