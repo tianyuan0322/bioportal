@@ -17,6 +17,7 @@ import org.openrdf.model.Statement;
 import org.openrdf.model.URI;
 import org.openrdf.model.Value;
 import org.openrdf.model.impl.LiteralImpl;
+import org.openrdf.model.impl.StatementImpl;
 import org.openrdf.model.impl.URIImpl;
 import org.openrdf.query.BindingSet;
 import org.openrdf.query.MalformedQueryException;
@@ -27,7 +28,6 @@ import org.openrdf.query.TupleQueryResult;
 import org.openrdf.repository.RepositoryConnection;
 import org.openrdf.repository.RepositoryException;
 import org.openrdf.repository.RepositoryResult;
-import org.openrdf.repository.object.ObjectConnection;
 
 public class AbstractNcboMappingDAO {
 
@@ -136,7 +136,8 @@ public class AbstractNcboMappingDAO {
 			offset = 0;
 		}
 
-		ObjectConnection con = getRdfStoreManager().getObjectConnection();
+		RepositoryConnection con = getRdfStoreManager()
+				.getRepositoryConnection();
 
 		// Combine filters
 		String combinedFilters = "";
@@ -277,7 +278,8 @@ public class AbstractNcboMappingDAO {
 	 */
 	protected Integer getCount(String filter, MappingParametersBean parameters)
 			throws InvalidInputException {
-		ObjectConnection con = getRdfStoreManager().getObjectConnection();
+		RepositoryConnection con = getRdfStoreManager()
+				.getRepositoryConnection();
 
 		// Combine filters
 		String combinedFilters = "";
@@ -518,10 +520,12 @@ public class AbstractNcboMappingDAO {
 	 * @param con
 	 * @return
 	 */
-	protected Boolean hasMapping(URI id, ObjectConnection con) {
+	protected Boolean hasMapping(URI id, RepositoryConnection con) {
 		try {
-			return con.hasStatement(id, ApplicationConstants.RDF_TYPE_URI,
-					ApplicationConstants.MAPPING_ONE_TO_ONE_URI,
+			Statement statement = new StatementImpl(id,
+					ApplicationConstants.RDF_TYPE_URI,
+					ApplicationConstants.MAPPING_ONE_TO_ONE_URI);
+			return con.hasStatement(statement, false,
 					ApplicationConstants.MAPPING_CONTEXT_URI);
 		} catch (RepositoryException e) {
 			e.printStackTrace();

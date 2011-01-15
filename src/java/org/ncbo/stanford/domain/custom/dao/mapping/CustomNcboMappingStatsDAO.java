@@ -75,7 +75,7 @@ public class CustomNcboMappingStatsDAO extends AbstractNcboMappingDAO {
 	 * @return
 	 */
 	public Integer getTotalMappingsCount() {
-		ObjectConnection con = getRdfStoreManager().getObjectConnection();
+		RepositoryConnection con = getRdfStoreManager().getRepositoryConnection();
 
 		TupleQuery query;
 		Integer totalMappingsCount = 0;
@@ -110,7 +110,7 @@ public class CustomNcboMappingStatsDAO extends AbstractNcboMappingDAO {
 	 * @return
 	 */
 	public List<MappingOntologyStatsBean> getOntologiesMappingCount() {
-		ObjectConnection con = getRdfStoreManager().getObjectConnection();
+		RepositoryConnection con = getRdfStoreManager().getRepositoryConnection();
 
 		TupleQuery sourceQuery = null;
 		TupleQuery targetQuery = null;
@@ -136,7 +136,7 @@ public class CustomNcboMappingStatsDAO extends AbstractNcboMappingDAO {
 	 */
 	public List<MappingOntologyStatsBean> getOntologyMappingCount(
 			Integer ontologyId) {
-		ObjectConnection con = getRdfStoreManager().getObjectConnection();
+		RepositoryConnection con = getRdfStoreManager().getRepositoryConnection();
 
 		String sourceMappingsQuery = sourceMappings.replaceAll("%ONT%",
 				ontologyId.toString());
@@ -162,7 +162,7 @@ public class CustomNcboMappingStatsDAO extends AbstractNcboMappingDAO {
 
 	public List<MappingConceptStatsBean> getOntologyConceptsCount(
 			Integer ontologyId, Integer limit) {
-		ObjectConnection con = getRdfStoreManager().getObjectConnection();
+		RepositoryConnection con = getRdfStoreManager().getRepositoryConnection();
 		
 		List<MappingConceptStatsBean> concepts = new ArrayList<MappingConceptStatsBean>();
 
@@ -202,7 +202,7 @@ public class CustomNcboMappingStatsDAO extends AbstractNcboMappingDAO {
 
 	public List<MappingUserStatsBean> getOntologyUserCount(
 			Integer ontologyId) {
-		ObjectConnection con = getRdfStoreManager().getObjectConnection();
+		RepositoryConnection con = getRdfStoreManager().getRepositoryConnection();
 		
 		List<MappingUserStatsBean> users = new ArrayList<MappingUserStatsBean>();
 

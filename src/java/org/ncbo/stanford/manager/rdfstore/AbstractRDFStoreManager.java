@@ -28,7 +28,6 @@ public abstract class AbstractRDFStoreManager implements RDFStoreManager {
 		try {
 			connection = repository.getConnection();
 		} catch (RepositoryException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 
@@ -50,10 +49,8 @@ public abstract class AbstractRDFStoreManager implements RDFStoreManager {
 				objectConnection = objectRepository.getConnection();
 			}
 		} catch (RepositoryConfigException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} catch (RepositoryException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 

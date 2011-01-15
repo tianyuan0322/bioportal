@@ -13,6 +13,7 @@ import org.ncbo.stanford.util.constants.ApplicationConstants;
 import org.openrdf.model.Statement;
 import org.openrdf.model.URI;
 import org.openrdf.model.ValueFactory;
+import org.openrdf.repository.RepositoryConnection;
 import org.openrdf.repository.RepositoryException;
 import org.openrdf.repository.object.ObjectConnection;
 
@@ -66,7 +67,7 @@ public class CustomNcboMappingDAO extends AbstractNcboMappingDAO {
 
 	public OneToOneMapping createMapping(OneToOneMapping newMapping)
 			throws MappingExistsException {
-		ObjectConnection con = getRdfStoreManager().getObjectConnection();
+		RepositoryConnection con = getRdfStoreManager().getRepositoryConnection();
 		ValueFactory vf = getRdfStoreManager().getValueFactory();
 
 		ArrayList<Statement> statements = newMapping.toStatements(vf);
@@ -90,7 +91,7 @@ public class CustomNcboMappingDAO extends AbstractNcboMappingDAO {
 	}
 
 	public OneToOneMapping getMapping(URI id) throws MappingMissingException {
-		ObjectConnection con = getRdfStoreManager().getObjectConnection();
+		RepositoryConnection con = getRdfStoreManager().getRepositoryConnection();
 
 		// Attempt mapping retrieval, return null if failure
 		OneToOneMapping mapping = null;
@@ -121,7 +122,7 @@ public class CustomNcboMappingDAO extends AbstractNcboMappingDAO {
 			String mappingSourcecontactInfo, URI mappingSourceSite,
 			String mappingSourceAlgorithm, String mappingType)
 			throws MappingMissingException {
-		ObjectConnection con = getRdfStoreManager().getObjectConnection();
+		RepositoryConnection con = getRdfStoreManager().getRepositoryConnection();
 
 		if (!hasMapping(id, con)) {
 			throw new MappingMissingException();
@@ -143,7 +144,7 @@ public class CustomNcboMappingDAO extends AbstractNcboMappingDAO {
 
 	public OneToOneMapping updateMapping(URI id, OneToOneMapping mapping)
 			throws MappingMissingException {
-		ObjectConnection con = getRdfStoreManager().getObjectConnection();
+		RepositoryConnection con = getRdfStoreManager().getRepositoryConnection();
 
 		if (!hasMapping(id, con)) {
 			throw new MappingMissingException();
@@ -163,7 +164,7 @@ public class CustomNcboMappingDAO extends AbstractNcboMappingDAO {
 	}
 
 	public void deleteMapping(URI id) throws MappingMissingException {
-		ObjectConnection con = getRdfStoreManager().getObjectConnection();
+		RepositoryConnection con = getRdfStoreManager().getRepositoryConnection();
 		try {
 			if (!hasMapping(id, con)) {
 				throw new MappingMissingException();
@@ -217,7 +218,7 @@ public class CustomNcboMappingDAO extends AbstractNcboMappingDAO {
 	}
 
 	public void deleteMappingForUpdate(URI id) throws MappingMissingException {
-		ObjectConnection con = getRdfStoreManager().getObjectConnection();
+		RepositoryConnection con = getRdfStoreManager().getRepositoryConnection();
 		if (!hasMapping(id, con)) {
 			throw new MappingMissingException();
 		}
