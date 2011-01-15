@@ -180,62 +180,50 @@ public class AbstractNcboMappingDAO {
 
 				OneToOneMapping mapping = new OneToOneMapping();
 
-				// Set Mapping properties
-				if (isValidValue(bs.getValue("mappingId")))
-					mapping.setId(new URIImpl(bs.getValue("mappingId")
-							.stringValue()));
+				// Set Mapping properties (required)
+				mapping.setId(new URIImpl(bs.getValue("mappingId")
+						.stringValue()));
 
-				if (isValidValue(bs.getValue("source")))
-					mapping.setSource(new URIImpl(bs.getValue("source")
-							.stringValue()));
+				mapping.setSource(new URIImpl(bs.getValue("source")
+						.stringValue()));
 
-				if (isValidValue(bs.getValue("target")))
-					mapping.setTarget(new URIImpl(bs.getValue("target")
-							.stringValue()));
+				mapping.setTarget(new URIImpl(bs.getValue("target")
+						.stringValue()));
 
-				if (isValidValue(bs.getValue("relation")))
-					mapping.setRelation(new URIImpl(bs.getValue("relation")
-							.stringValue()));
+				mapping.setRelation(new URIImpl(bs.getValue("relation")
+						.stringValue()));
 
-				if (isValidValue(bs.getValue("sourceOntologyId")))
-					mapping.setSourceOntologyId(convertValueToInteger(bs
-							.getValue("sourceOntologyId")));
+				mapping.setSourceOntologyId(convertValueToInteger(bs
+						.getValue("sourceOntologyId")));
 
-				if (isValidValue(bs.getValue("targetOntologyId")))
-					mapping.setTargetOntologyId(convertValueToInteger(bs
-							.getValue("targetOntologyId")));
+				mapping.setTargetOntologyId(convertValueToInteger(bs
+						.getValue("targetOntologyId")));
 
-				if (isValidValue(bs.getValue("createdInSourceOntologyVersion")))
-					mapping
-							.setCreatedInSourceOntologyVersion(convertValueToInteger(bs
-									.getValue("createdInSourceOntologyVersion")));
+				mapping
+						.setCreatedInSourceOntologyVersion(convertValueToInteger(bs
+								.getValue("createdInSourceOntologyVersion")));
 
-				if (isValidValue(bs.getValue("createdInTargetOntologyVersion")))
-					mapping
-							.setCreatedInTargetOntologyVersion(convertValueToInteger(bs
-									.getValue("createdInTargetOntologyVersion")));
+				mapping
+						.setCreatedInTargetOntologyVersion(convertValueToInteger(bs
+								.getValue("createdInTargetOntologyVersion")));
 
-				// Set metadata properties
-				if (isValidValue(bs.getValue("dependency"))) {
+				mapping.setSubmittedBy(convertValueToInteger(bs
+						.getValue("submittedBy")));
+
+				mapping
+						.setMappingType(bs.getValue("mappingType")
+								.stringValue());
+
+				mapping.setDate(convertValueToDate(bs.getValue("date")));
+
+				// Set mapping properties (optional)
+				if (isValidValue(bs.getValue("dependency")))
 					mapping.setDependency(new URIImpl(bs.getValue("dependency")
 							.stringValue()));
-				}
-
-				if (isValidValue(bs.getValue("submittedBy")))
-					mapping.setSubmittedBy(convertValueToInteger(bs
-							.getValue("submittedBy")));
-
-				if (isValidValue(bs.getValue("date")))
-					mapping.setDate(convertValueToDate(bs.getValue("date")));
 
 				if (isValidValue(bs.getValue("comment")))
 					mapping.setComment(bs.getValue("comment").stringValue());
 
-				if (isValidValue(bs.getValue("mappingType")))
-					mapping.setMappingType(bs.getValue("mappingType")
-							.stringValue());
-
-				// Set mappingSource properties
 				if (isValidValue(bs.getValue("mappingSource")))
 					mapping.setMappingSource(bs.getValue("mappingSource")
 							.stringValue());
@@ -252,13 +240,9 @@ public class AbstractNcboMappingDAO {
 					mapping.setMappingSourceAlgorithm(bs.getValue(
 							"mappingSourceAlgorithm").stringValue());
 
-				// Because this can be blank we have to deal with empty strings
-				if (isValidValue(bs.getValue("mappingSourceSite"))) {
-					String mappingSourceSite = bs.getValue("mappingSourceSite")
-							.stringValue();
-					URI mappingSourceSiteURI = new URIImpl(mappingSourceSite);
-					mapping.setMappingSourceSite(mappingSourceSiteURI);
-				}
+				if (isValidValue(bs.getValue("mappingSourceSite")))
+					mapping.setMappingSourceSite(new URIImpl(bs.getValue(
+							"mappingSourceSite").stringValue()));
 
 				mappings.add(mapping);
 			}
