@@ -514,6 +514,21 @@
 		</property>
 	</bean>
 	
+	<!-- For Generate RDF Dump -->
+	<bean id="generateRDFOntologyRestlet"
+		class="org.ncbo.stanford.view.rest.restlet.rdf.ontology.GenerateRDFOntologyRestlet"
+		parent="abstractBaseRestlet">
+		<property name="rdfService">
+			<ref bean="rdfService" />
+		</property>
+		<property name="ontologyService">
+			<ref bean="ontologyService" />
+		</property>
+		<property name="rdfFilePath">
+			<ref bean="rdfFilePath" />
+		</property>
+	</bean>	
+	
 	<bean id="rdfExtractionRestlet"
 		class="org.ncbo.stanford.view.rest.restlet.rdf.RdfExtractionRestlet"
 		parent="abstractBaseRestlet">
@@ -731,6 +746,16 @@
 						</entry>
 						<entry key="/virtual/rdf/{ontologyid}/{conceptid}">
 							<ref local="rdfExtractionRestlet" />
+						</entry>
+						<!-- Generate RDF for ALL Ontologies and for OntologyVeasionId -->
+						<entry key="/ontologies/rdf/generate">
+							<ref local="generateRDFOntologyRestlet" />
+						</entry>
+						<entry key="/ontologies/rdf/generate/{ontologyversionid}">
+							<ref local="generateRDFOntologyRestlet" />
+						</entry>
+						<entry key="/virtual/ontology/rdf/generate/{ontologyid}">
+							<ref local="generateRDFOntologyRestlet" />
 						</entry>						
 						<entry key="/concepts/instances/{ontologyVersionId}">
 							<ref local="instanceRestlet" />
