@@ -5,7 +5,7 @@ package org.ncbo.stanford.manager.mapping;
 
 import java.util.List;
 
-import org.ncbo.stanford.bean.mapping.OneToOneMappingBean;
+import org.ncbo.stanford.bean.mapping.MappingBean;
 import org.ncbo.stanford.bean.mapping.upload.UploadedMappingBean;
 
 /**
@@ -17,6 +17,6 @@ public interface MappingManager {
 	public List<UploadedMappingBean> parseCSVFile(String fileData);
 
 	// Method for Invoking the method of MappingService
-	public OneToOneMappingBean createMappingForUploadedFile(
+	public MappingBean createMappingForUploadedFile(
 			UploadedMappingBean uploadedMappingBean);
 }

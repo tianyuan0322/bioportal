@@ -4,28 +4,22 @@
 package org.ncbo.stanford.manager.mapping.impl;
 
 import java.io.StringReader;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-
-import au.com.bytecode.opencsv.CSVReader;
-
-import au.com.bytecode.opencsv.bean.ColumnPositionMappingStrategy;
-import au.com.bytecode.opencsv.bean.CsvToBean;
-import org.ncbo.stanford.bean.mapping.OneToOneMappingBean;
+import org.ncbo.stanford.bean.mapping.MappingBean;
 import org.ncbo.stanford.bean.mapping.upload.UploadedMappingBean;
 import org.ncbo.stanford.enumeration.MappingSourceEnum;
-
-import java.util.ArrayList;
-import java.util.Date;
-
-import java.util.List;
-
 import org.ncbo.stanford.manager.mapping.MappingManager;
-
 import org.ncbo.stanford.service.mapping.MappingService;
 import org.openrdf.model.URI;
 import org.openrdf.model.impl.URIImpl;
+
+import au.com.bytecode.opencsv.CSVReader;
+import au.com.bytecode.opencsv.bean.ColumnPositionMappingStrategy;
+import au.com.bytecode.opencsv.bean.CsvToBean;
 
 /**
  * @author g.prakash
@@ -90,18 +84,25 @@ public class MappingManagerImpl implements MappingManager {
 	 * 
 	 * @param listOfFile
 	 */
-	public OneToOneMappingBean createMappingForUploadedFile(
+	public MappingBean createMappingForUploadedFile(
 			UploadedMappingBean uploadedMappingBean) {
-		OneToOneMappingBean oneToOneMappingBeanForMapping = new OneToOneMappingBean();
+		MappingBean mappingBeanForMapping = new MappingBean();
+		
+		ArrayList<URI> sourceURIs = new ArrayList<URI>();
 		String source = uploadedMappingBean.getRelation() + "#"
 				+ uploadedMappingBean.getSource();
 		URI sourceURI = new URIImpl(source);
-		// Converting the target to TargetURI
+		sourceURIs.add(sourceURI);
+		
+		ArrayList<URI> targetURIs = new ArrayList<URI>();
 		String target = uploadedMappingBean.getRelation() + "#"
 				+ uploadedMappingBean.getTarget();
 		URI targetURI = new URIImpl(target);
+		targetURIs.add(targetURI);
+		
 		String relation = uploadedMappingBean.getRelation();
 		URI relationURI = new URIImpl(relation);
+		
 		// SourceOntologyId
 		Integer sourceOntologyId = Integer.parseInt(uploadedMappingBean
 				.getSourceOntologyId());
@@ -137,8 +138,8 @@ public class MappingManagerImpl implements MappingManager {
 
 		try {
 			// Calling the method for mapping
-			oneToOneMappingBeanForMapping = mappingService.createMapping(
-					sourceURI, targetURI, relationURI, sourceOntologyId,
+			mappingBeanForMapping = mappingService.createMapping(
+					sourceURIs, targetURIs, relationURI, sourceOntologyId,
 					targetOntologyId, createdInSourceOntologyVersion,
 					createdInTargetOntologyVersion, submittedBy,
 					null, uploadedMappingBean.getComment(), sourceEnum,
@@ -151,7 +152,7 @@ public class MappingManagerImpl implements MappingManager {
 		} catch (Exception e) {
 			log.error(e);
 		}
-		return oneToOneMappingBeanForMapping;
+		return mappingBeanForMapping;
 	}
 
 	/**

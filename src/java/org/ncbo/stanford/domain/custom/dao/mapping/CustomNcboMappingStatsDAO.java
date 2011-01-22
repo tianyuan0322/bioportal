@@ -7,7 +7,7 @@ import java.util.List;
 import org.ncbo.stanford.bean.mapping.MappingConceptStatsBean;
 import org.ncbo.stanford.bean.mapping.MappingOntologyStatsBean;
 import org.ncbo.stanford.bean.mapping.MappingUserStatsBean;
-import org.ncbo.stanford.domain.custom.entity.mapping.OneToOneMapping;
+import org.ncbo.stanford.domain.custom.entity.Mapping;
 import org.ncbo.stanford.exception.InvalidInputException;
 import org.ncbo.stanford.util.constants.ApplicationConstants;
 import org.openrdf.query.BindingSet;
@@ -62,7 +62,7 @@ public class CustomNcboMappingStatsDAO extends AbstractNcboMappingDAO {
 	 * @return
 	 * @throws InvalidInputException
 	 */
-	public List<OneToOneMapping> getRecentMappings(Integer limit)
+	public List<Mapping> getRecentMappings(Integer limit)
 			throws InvalidInputException {
 		String orderBy = "?date";
 

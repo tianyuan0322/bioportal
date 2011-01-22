@@ -24,6 +24,8 @@ import org.ncbo.stanford.bean.http.HttpInputStreamWrapper;
 import org.ncbo.stanford.util.helper.DateHelper;
 import org.ncbo.stanford.util.helper.StringHelper;
 import org.ncbo.stanford.view.util.constants.RequestParamConstants;
+import org.openrdf.model.URI;
+import org.openrdf.model.impl.URIImpl;
 import org.restlet.data.CharacterSet;
 import org.restlet.data.MediaType;
 import org.restlet.data.Request;
@@ -334,6 +336,21 @@ public class RequestUtils {
 		}
 
 		return stringList;
+	}
+	
+	public static List<URI> parseURIListParam(String URIListParam) {
+		List<String> URIs = parseStringListParam(URIListParam);
+		
+		ArrayList<URI> parsedURIs = new ArrayList<URI>();
+		for (String URI : URIs) {
+			try {
+				parsedURIs.add(new URIImpl(URI));
+			} catch (Exception e) {
+				// Quash errors
+			}
+		}
+		
+		return parsedURIs;
 	}
 
 	public static List<Integer> parseIntegerListParam(String[] integerListParam) {

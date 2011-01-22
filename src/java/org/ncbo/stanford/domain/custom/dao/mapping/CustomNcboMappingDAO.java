@@ -5,7 +5,7 @@ import java.util.Date;
 import java.util.List;
 
 import org.ncbo.stanford.bean.mapping.MappingParametersBean;
-import org.ncbo.stanford.domain.custom.entity.mapping.OneToOneMapping;
+import org.ncbo.stanford.domain.custom.entity.Mapping;
 import org.ncbo.stanford.exception.InvalidInputException;
 import org.ncbo.stanford.exception.MappingExistsException;
 import org.ncbo.stanford.exception.MappingMissingException;
@@ -15,12 +15,11 @@ import org.openrdf.model.URI;
 import org.openrdf.model.ValueFactory;
 import org.openrdf.repository.RepositoryConnection;
 import org.openrdf.repository.RepositoryException;
-import org.openrdf.repository.object.ObjectConnection;
 
 public class CustomNcboMappingDAO extends AbstractNcboMappingDAO {
 
-	public OneToOneMapping createMapping(URI source, URI target, URI relation,
-			Integer sourceOntologyId, Integer targetOntologyId,
+	public Mapping createMapping(List<URI> source, List<URI> target,
+			URI relation, Integer sourceOntologyId, Integer targetOntologyId,
 			Integer sourceOntologyVersion, Integer targetOntologyVersion,
 			Integer submittedBy, URI dependency, String comment,
 			String mappingSource, String mappingSourceName,
@@ -28,7 +27,7 @@ public class CustomNcboMappingDAO extends AbstractNcboMappingDAO {
 			String mappingSourceAlgorithm, String mappingType)
 			throws MappingExistsException {
 
-		OneToOneMapping newMapping = new OneToOneMapping();
+		Mapping newMapping = new Mapping();
 
 		// Set Mapping properties
 		newMapping.setSource(source);
@@ -55,7 +54,7 @@ public class CustomNcboMappingDAO extends AbstractNcboMappingDAO {
 
 		createMapping(newMapping);
 
-		OneToOneMapping mapping = null;
+		Mapping mapping = null;
 		try {
 			mapping = getMapping(newMapping.getId());
 		} catch (MappingMissingException e) {
@@ -65,9 +64,10 @@ public class CustomNcboMappingDAO extends AbstractNcboMappingDAO {
 		return mapping;
 	}
 
-	public OneToOneMapping createMapping(OneToOneMapping newMapping)
+	public Mapping createMapping(Mapping newMapping)
 			throws MappingExistsException {
-		RepositoryConnection con = getRdfStoreManager().getRepositoryConnection();
+		RepositoryConnection con = getRdfStoreManager()
+				.getRepositoryConnection();
 		ValueFactory vf = getRdfStoreManager().getValueFactory();
 
 		ArrayList<Statement> statements = newMapping.toStatements(vf);
@@ -80,7 +80,7 @@ public class CustomNcboMappingDAO extends AbstractNcboMappingDAO {
 			}
 		}
 
-		OneToOneMapping mapping = null;
+		Mapping mapping = null;
 		try {
 			mapping = getMapping(newMapping.getId());
 		} catch (MappingMissingException e) {
@@ -90,15 +90,16 @@ public class CustomNcboMappingDAO extends AbstractNcboMappingDAO {
 		return mapping;
 	}
 
-	public OneToOneMapping getMapping(URI id) throws MappingMissingException {
-		RepositoryConnection con = getRdfStoreManager().getRepositoryConnection();
+	public Mapping getMapping(URI id) throws MappingMissingException {
+		RepositoryConnection con = getRdfStoreManager()
+				.getRepositoryConnection();
 
 		// Attempt mapping retrieval, return null if failure
-		OneToOneMapping mapping = null;
+		Mapping mapping = null;
 		try {
 			if (hasMapping(id, con)) {
-				ArrayList<OneToOneMapping> mappings = getMappings(1, 0,
-						"?mappingId = <" + id + ">", null);
+				List<Mapping> mappings = getMappings(null, 0, "?mappingId = <"
+						+ id + ">", null);
 				if (mappings != null && !mappings.isEmpty()) {
 					mapping = mappings.get(0);
 				} else {
@@ -114,7 +115,7 @@ public class CustomNcboMappingDAO extends AbstractNcboMappingDAO {
 		return mapping;
 	}
 
-	public OneToOneMapping updateMapping(URI id, URI source, URI target,
+	public Mapping updateMapping(URI id, List<URI> source, List<URI> target,
 			URI relation, Integer sourceOntologyId, Integer targetOntologyId,
 			Integer sourceOntologyVersion, Integer targetOntologyVersion,
 			Integer submittedBy, URI dependency, String comment,
@@ -122,29 +123,31 @@ public class CustomNcboMappingDAO extends AbstractNcboMappingDAO {
 			String mappingSourcecontactInfo, URI mappingSourceSite,
 			String mappingSourceAlgorithm, String mappingType)
 			throws MappingMissingException {
-		RepositoryConnection con = getRdfStoreManager().getRepositoryConnection();
+		RepositoryConnection con = getRdfStoreManager()
+				.getRepositoryConnection();
 
 		if (!hasMapping(id, con)) {
 			throw new MappingMissingException();
 		}
 
-		OneToOneMapping mapping = getMapping(id);
+		Mapping mapping = getMapping(id);
 
-		OneToOneMapping updatedMapping = updateMappingEntity(mapping,
-				source, target, relation, sourceOntologyId,
-				targetOntologyId, sourceOntologyVersion,
-				targetOntologyVersion, submittedBy, dependency, comment,
-				mappingSource, mappingSourceName, mappingSourcecontactInfo,
-				mappingSourceSite, mappingSourceAlgorithm, mappingType);
+		Mapping updatedMapping = updateMappingEntity(mapping, source, target,
+				relation, sourceOntologyId, targetOntologyId,
+				sourceOntologyVersion, targetOntologyVersion, submittedBy,
+				dependency, comment, mappingSource, mappingSourceName,
+				mappingSourcecontactInfo, mappingSourceSite,
+				mappingSourceAlgorithm, mappingType);
 
 		updatedMapping = updateMapping(id, updatedMapping);
-		
+
 		return updatedMapping;
 	}
 
-	public OneToOneMapping updateMapping(URI id, OneToOneMapping mapping)
+	public Mapping updateMapping(URI id, Mapping mapping)
 			throws MappingMissingException {
-		RepositoryConnection con = getRdfStoreManager().getRepositoryConnection();
+		RepositoryConnection con = getRdfStoreManager()
+				.getRepositoryConnection();
 
 		if (!hasMapping(id, con)) {
 			throw new MappingMissingException();
@@ -153,7 +156,7 @@ public class CustomNcboMappingDAO extends AbstractNcboMappingDAO {
 		deleteMappingForUpdate(id);
 
 		try {
-			OneToOneMapping updatedMapping = createMapping(mapping);
+			Mapping updatedMapping = createMapping(mapping);
 
 			return updatedMapping;
 		} catch (MappingExistsException e) {
@@ -164,14 +167,15 @@ public class CustomNcboMappingDAO extends AbstractNcboMappingDAO {
 	}
 
 	public void deleteMapping(URI id) throws MappingMissingException {
-		RepositoryConnection con = getRdfStoreManager().getRepositoryConnection();
+		RepositoryConnection con = getRdfStoreManager()
+				.getRepositoryConnection();
 		try {
 			if (!hasMapping(id, con)) {
 				throw new MappingMissingException();
 			}
 			System.out.println("Deleting mapping: " + id.toString());
 
-			OneToOneMapping mapping = getMapping(id);
+			Mapping mapping = getMapping(id);
 
 			if (mapping.getDependency() != null) {
 				deleteFromTripleStore(con, mapping.getDependency());
@@ -194,11 +198,11 @@ public class CustomNcboMappingDAO extends AbstractNcboMappingDAO {
 					filter += " && ?submittedBy = " + mapping.getSubmittedBy();
 					filter += " && ?relation = <" + mapping.getRelation() + ">";
 
-					ArrayList<OneToOneMapping> inferredDependents = getMappings(
-							null, null, filter, null);
+					List<Mapping> inferredDependents = getMappings(null, null,
+							filter, null);
 
 					if (inferredDependents != null) {
-						for (OneToOneMapping dependent : inferredDependents) {
+						for (Mapping dependent : inferredDependents) {
 							deleteFromTripleStore(con, dependent.getId());
 						}
 					}
@@ -218,12 +222,13 @@ public class CustomNcboMappingDAO extends AbstractNcboMappingDAO {
 	}
 
 	public void deleteMappingForUpdate(URI id) throws MappingMissingException {
-		RepositoryConnection con = getRdfStoreManager().getRepositoryConnection();
+		RepositoryConnection con = getRdfStoreManager()
+				.getRepositoryConnection();
 		if (!hasMapping(id, con)) {
 			throw new MappingMissingException();
 		}
 		System.out.println("Deleting mapping: " + id.toString());
-		
+
 		try {
 			deleteFromTripleStore(con, id);
 		} catch (RepositoryException e) {
@@ -237,7 +242,7 @@ public class CustomNcboMappingDAO extends AbstractNcboMappingDAO {
 	 * 
 	 *******************************************************************/
 
-	public List<OneToOneMapping> getMappingsForParameters(Integer limit,
+	public List<Mapping> getMappingsForParameters(Integer limit,
 			Integer offset, MappingParametersBean parameters)
 			throws InvalidInputException {
 		return getMappings(limit, offset, null, parameters);
@@ -249,7 +254,7 @@ public class CustomNcboMappingDAO extends AbstractNcboMappingDAO {
 	 * 
 	 *******************************************************************/
 
-	public List<OneToOneMapping> getMappingsFromOntology(Integer ontologyId,
+	public List<Mapping> getMappingsFromOntology(Integer ontologyId,
 			Integer limit, Integer offset, MappingParametersBean parameters)
 			throws InvalidInputException {
 		String filter = generateOntologySparqlFilter(ontologyId, null, true);
@@ -257,7 +262,7 @@ public class CustomNcboMappingDAO extends AbstractNcboMappingDAO {
 		return getMappings(limit, offset, filter, parameters);
 	}
 
-	public List<OneToOneMapping> getMappingsToOntology(Integer ontologyId,
+	public List<Mapping> getMappingsToOntology(Integer ontologyId,
 			Integer limit, Integer offset, MappingParametersBean parameters)
 			throws InvalidInputException {
 		String filter = generateOntologySparqlFilter(null, ontologyId, true);
@@ -265,17 +270,17 @@ public class CustomNcboMappingDAO extends AbstractNcboMappingDAO {
 		return getMappings(limit, offset, filter, parameters);
 	}
 
-	public List<OneToOneMapping> getMappingsBetweenOntologies(
-			Integer sourceOntology, Integer targetOntology,
-			Boolean unidirectional, Integer limit, Integer offset,
-			MappingParametersBean parameters) throws InvalidInputException {
+	public List<Mapping> getMappingsBetweenOntologies(Integer sourceOntology,
+			Integer targetOntology, Boolean unidirectional, Integer limit,
+			Integer offset, MappingParametersBean parameters)
+			throws InvalidInputException {
 		String filter = generateOntologySparqlFilter(sourceOntology,
 				targetOntology, unidirectional);
 
 		return getMappings(limit, offset, filter, parameters);
 	}
 
-	public List<OneToOneMapping> getMappingsForOntology(Integer ontologyId,
+	public List<Mapping> getMappingsForOntology(Integer ontologyId,
 			Integer limit, Integer offset, MappingParametersBean parameters)
 			throws InvalidInputException {
 		String filter = generateOntologySparqlFilter(ontologyId, null, false);
@@ -289,7 +294,7 @@ public class CustomNcboMappingDAO extends AbstractNcboMappingDAO {
 	 * 
 	 *******************************************************************/
 
-	public List<OneToOneMapping> getMappingsForConcept(Integer ontologyId,
+	public List<Mapping> getMappingsForConcept(Integer ontologyId,
 			String conceptId, Integer limit, Integer offset,
 			MappingParametersBean parameters) throws InvalidInputException {
 		String filter = generateConceptSparqlFilter(conceptId, null, false);
@@ -299,7 +304,7 @@ public class CustomNcboMappingDAO extends AbstractNcboMappingDAO {
 		return getMappings(limit, offset, filter, parameters);
 	}
 
-	public List<OneToOneMapping> getMappingsFromConcept(Integer ontologyId,
+	public List<Mapping> getMappingsFromConcept(Integer ontologyId,
 			String conceptId, Integer limit, Integer offset,
 			MappingParametersBean parameters) throws InvalidInputException {
 		String filter = generateConceptSparqlFilter(conceptId, null, true);
@@ -308,7 +313,7 @@ public class CustomNcboMappingDAO extends AbstractNcboMappingDAO {
 		return getMappings(limit, offset, filter, parameters);
 	}
 
-	public List<OneToOneMapping> getMappingsToConcept(Integer ontologyId,
+	public List<Mapping> getMappingsToConcept(Integer ontologyId,
 			String conceptId, Integer limit, Integer offset,
 			MappingParametersBean parameters) throws InvalidInputException {
 		String filter = generateConceptSparqlFilter(conceptId, null, true);
@@ -317,11 +322,10 @@ public class CustomNcboMappingDAO extends AbstractNcboMappingDAO {
 		return getMappings(limit, offset, filter, parameters);
 	}
 
-	public List<OneToOneMapping> getMappingsBetweenConcepts(
-			Integer sourceOntologyId, Integer targetOntologyId,
-			String fromConceptId, String toConceptId, Boolean unidirectional,
-			Integer limit, Integer offset, MappingParametersBean parameters)
-			throws InvalidInputException {
+	public List<Mapping> getMappingsBetweenConcepts(Integer sourceOntologyId,
+			Integer targetOntologyId, String fromConceptId, String toConceptId,
+			Boolean unidirectional, Integer limit, Integer offset,
+			MappingParametersBean parameters) throws InvalidInputException {
 		String filter = generateConceptSparqlFilter(fromConceptId, toConceptId,
 				unidirectional);
 		filter += " && "

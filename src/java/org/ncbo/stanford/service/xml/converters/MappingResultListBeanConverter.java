@@ -1,7 +1,7 @@
 package org.ncbo.stanford.service.xml.converters;
 
 import org.ncbo.stanford.bean.mapping.MappingResultListBean;
-import org.ncbo.stanford.bean.mapping.OneToOneMappingBean;
+import org.ncbo.stanford.bean.mapping.MappingBean;
 
 import com.thoughtworks.xstream.converters.MarshallingContext;
 import com.thoughtworks.xstream.converters.collections.CollectionConverter;
@@ -31,7 +31,7 @@ public class MappingResultListBeanConverter extends CollectionConverter {
 		MappingResultListBean mappings = (MappingResultListBean) source;
 		writer.startNode("mappings");
 
-		for (OneToOneMappingBean mapping : mappings) {
+		for (MappingBean mapping : mappings) {
 			writeItem(mapping, context, writer);
 		}
 

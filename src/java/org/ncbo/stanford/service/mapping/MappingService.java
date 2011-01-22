@@ -8,7 +8,7 @@ import org.ncbo.stanford.bean.mapping.MappingConceptStatsBean;
 import org.ncbo.stanford.bean.mapping.MappingOntologyStatsBean;
 import org.ncbo.stanford.bean.mapping.MappingParametersBean;
 import org.ncbo.stanford.bean.mapping.MappingUserStatsBean;
-import org.ncbo.stanford.bean.mapping.OneToOneMappingBean;
+import org.ncbo.stanford.bean.mapping.MappingBean;
 import org.ncbo.stanford.enumeration.MappingSourceEnum;
 import org.ncbo.stanford.exception.InvalidInputException;
 import org.ncbo.stanford.exception.MappingExistsException;
@@ -34,7 +34,7 @@ public interface MappingService {
 	 * @param mappingType
 	 * @return
 	 */
-	public OneToOneMappingBean createMapping(URI source, URI target,
+	public MappingBean createMapping(List<URI> source, List<URI> target,
 			URI relation, Integer sourceOntologyId, Integer targetOntologyId,
 			Integer sourceOntologyVersion, Integer targetOntologyVersion,
 			Integer submittedBy, URI dependency, String comment,
@@ -49,7 +49,7 @@ public interface MappingService {
 	 * @param mapping
 	 * @return
 	 */
-	public OneToOneMappingBean createMapping(OneToOneMappingBean mapping)
+	public MappingBean createMapping(MappingBean mapping)
 			throws MappingExistsException;
 
 	/**
@@ -58,7 +58,7 @@ public interface MappingService {
 	 * @param id
 	 * @return
 	 */
-	public OneToOneMappingBean getMapping(URI id)
+	public MappingBean getMapping(URI id)
 			throws MappingMissingException;
 
 	/**
@@ -68,7 +68,7 @@ public interface MappingService {
 	 * @param mapping
 	 * @return
 	 */
-	public OneToOneMappingBean updateMapping(URI id, OneToOneMappingBean mapping)
+	public MappingBean updateMapping(URI id, MappingBean mapping)
 			throws MappingMissingException;
 
 	/**
@@ -85,7 +85,7 @@ public interface MappingService {
 	 * @return
 	 * @throws InvalidInputException
 	 */
-	public Page<OneToOneMappingBean> getMappingsFromOntology(OntologyBean ont,
+	public Page<MappingBean> getMappingsFromOntology(OntologyBean ont,
 			Integer pageSize, Integer pageNum, MappingParametersBean parameters)
 			throws InvalidInputException;
 
@@ -96,7 +96,7 @@ public interface MappingService {
 	 * @return
 	 * @throws InvalidInputException
 	 */
-	public Page<OneToOneMappingBean> getMappingsToOntology(OntologyBean ont,
+	public Page<MappingBean> getMappingsToOntology(OntologyBean ont,
 			Integer pageSize, Integer pageNum, MappingParametersBean parameters)
 			throws InvalidInputException;
 
@@ -110,7 +110,7 @@ public interface MappingService {
 	 * @return
 	 * @throws InvalidInputException
 	 */
-	public Page<OneToOneMappingBean> getMappingsBetweenOntologies(
+	public Page<MappingBean> getMappingsBetweenOntologies(
 			OntologyBean sourceOnt, OntologyBean targetOnt, Integer pageSize,
 			Integer pageNum, Boolean unidirectional,
 			MappingParametersBean parameters) throws InvalidInputException;
@@ -122,7 +122,7 @@ public interface MappingService {
 	 * @return
 	 * @throws InvalidInputException
 	 */
-	public Page<OneToOneMappingBean> getMappingsForOntology(OntologyBean ont,
+	public Page<MappingBean> getMappingsForOntology(OntologyBean ont,
 			Integer pageSize, Integer pageNum, MappingParametersBean parameters)
 			throws InvalidInputException;
 
@@ -136,7 +136,7 @@ public interface MappingService {
 	 * @return
 	 * @throws InvalidInputException
 	 */
-	public Page<OneToOneMappingBean> getMappingsForParameters(Integer pageSize,
+	public Page<MappingBean> getMappingsForParameters(Integer pageSize,
 			Integer pageNum, MappingParametersBean parameters)
 			throws InvalidInputException;
 
@@ -147,7 +147,7 @@ public interface MappingService {
 	 * @return
 	 * @throws InvalidInputException
 	 */
-	public Page<OneToOneMappingBean> getMappingsForConcept(OntologyBean ont,
+	public Page<MappingBean> getMappingsForConcept(OntologyBean ont,
 			ClassBean concept, Integer pageSize, Integer pageNum,
 			MappingParametersBean parameters) throws InvalidInputException;
 
@@ -158,7 +158,7 @@ public interface MappingService {
 	 * @return
 	 * @throws InvalidInputException
 	 */
-	public Page<OneToOneMappingBean> getMappingsFromConcept(OntologyBean ont,
+	public Page<MappingBean> getMappingsFromConcept(OntologyBean ont,
 			ClassBean concept, Integer pageSize, Integer pageNum,
 			MappingParametersBean parameters) throws InvalidInputException;
 
@@ -169,7 +169,7 @@ public interface MappingService {
 	 * @return
 	 * @throws InvalidInputException
 	 */
-	public Page<OneToOneMappingBean> getMappingsToConcept(OntologyBean ont,
+	public Page<MappingBean> getMappingsToConcept(OntologyBean ont,
 			ClassBean concept, Integer pageSize, Integer pageNum,
 			MappingParametersBean parameters) throws InvalidInputException;
 
@@ -181,7 +181,7 @@ public interface MappingService {
 	 * @return
 	 * @throws InvalidInputException
 	 */
-	public Page<OneToOneMappingBean> getMappingsBetweenConcepts(
+	public Page<MappingBean> getMappingsBetweenConcepts(
 			OntologyBean sourceOnt, OntologyBean targetOnt,
 			ClassBean sourceConcept, ClassBean targetConcept,
 			Boolean unidirectional, Integer pageSize, Integer pageNum,
@@ -200,7 +200,7 @@ public interface MappingService {
 	 * @return
 	 * @throws InvalidInputException
 	 */
-	public List<OneToOneMappingBean> getRecentMappings(Integer limit)
+	public List<MappingBean> getRecentMappings(Integer limit)
 			throws InvalidInputException;
 
 	/**

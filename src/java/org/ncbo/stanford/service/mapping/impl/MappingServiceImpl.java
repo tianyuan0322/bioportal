@@ -10,11 +10,11 @@ import org.ncbo.stanford.bean.mapping.MappingOntologyStatsBean;
 import org.ncbo.stanford.bean.mapping.MappingParametersBean;
 import org.ncbo.stanford.bean.mapping.MappingResultListBean;
 import org.ncbo.stanford.bean.mapping.MappingUserStatsBean;
-import org.ncbo.stanford.bean.mapping.OneToOneMappingBean;
+import org.ncbo.stanford.bean.mapping.MappingBean;
 import org.ncbo.stanford.domain.custom.dao.mapping.CustomNcboMappingCountsDAO;
 import org.ncbo.stanford.domain.custom.dao.mapping.CustomNcboMappingDAO;
 import org.ncbo.stanford.domain.custom.dao.mapping.CustomNcboMappingStatsDAO;
-import org.ncbo.stanford.domain.custom.entity.mapping.OneToOneMapping;
+import org.ncbo.stanford.domain.custom.entity.Mapping;
 import org.ncbo.stanford.enumeration.MappingSourceEnum;
 import org.ncbo.stanford.exception.InvalidInputException;
 import org.ncbo.stanford.exception.MappingExistsException;
@@ -31,7 +31,7 @@ public class MappingServiceImpl implements MappingService {
 	private CustomNcboMappingCountsDAO mappingCountsDAO;
 	private CustomNcboMappingStatsDAO mappingStatsDAO;
 
-	public OneToOneMappingBean createMapping(URI source, URI target,
+	public MappingBean createMapping(List<URI> source, List<URI> target,
 			URI relation, Integer sourceOntologyId, Integer targetOntologyId,
 			Integer sourceOntologyVersion, Integer targetOntologyVersion,
 			Integer submittedBy, URI dependency, String comment,
@@ -52,68 +52,68 @@ public class MappingServiceImpl implements MappingService {
 				mappingSourceAlgorithm, mappingType));
 	}
 
-	public OneToOneMappingBean createMapping(OneToOneMappingBean mapping)
+	public MappingBean createMapping(MappingBean mapping)
 			throws MappingExistsException {
-		OneToOneMapping newMapping = mappingDAO
+		Mapping newMapping = mappingDAO
 				.createMapping(convertToMappingEntity(mapping));
 		return convertToMappingBean(newMapping);
 	}
 
-	public OneToOneMappingBean getMapping(URI id)
+	public MappingBean getMapping(URI id)
 			throws MappingMissingException {
-		OneToOneMapping retrievedMapping = mappingDAO.getMapping(id);
+		Mapping retrievedMapping = mappingDAO.getMapping(id);
 		return convertToMappingBean(retrievedMapping);
 	}
 
-	public Page<OneToOneMappingBean> getMappingsFromOntology(OntologyBean ont,
+	public Page<MappingBean> getMappingsFromOntology(OntologyBean ont,
 			Integer pageSize, Integer pageNum, MappingParametersBean parameters)
 			throws InvalidInputException {
 		MappingResultListBean pageMappings = new MappingResultListBean(0);
 		Integer totalResults = mappingCountsDAO.getCountMappingsFromOntology(
 				ont.getOntologyId(), parameters);
 
-		Paginator<OneToOneMappingBean> p = new PaginatorImpl<OneToOneMappingBean>(
+		Paginator<MappingBean> p = new PaginatorImpl<MappingBean>(
 				pageMappings, pageSize, totalResults);
 
 		int offset = pageNum * pageSize - pageSize;
 		int limit = (offset + pageSize > totalResults) ? totalResults : offset
 				+ pageSize;
 
-		List<OneToOneMapping> mappings = mappingDAO.getMappingsFromOntology(ont
+		List<Mapping> mappings = mappingDAO.getMappingsFromOntology(ont
 				.getOntologyId(), limit, offset, parameters);
 
-		for (OneToOneMapping mapping : mappings) {
+		for (Mapping mapping : mappings) {
 			pageMappings.add(convertToMappingBean(mapping));
 		}
 
 		return p.getCurrentPage(pageNum);
 	}
 
-	public Page<OneToOneMappingBean> getMappingsToOntology(OntologyBean ont,
+	public Page<MappingBean> getMappingsToOntology(OntologyBean ont,
 			Integer pageSize, Integer pageNum, MappingParametersBean parameters)
 			throws InvalidInputException {
 		MappingResultListBean pageMappings = new MappingResultListBean(0);
 		Integer totalResults = mappingCountsDAO.getCountMappingsToOntology(ont
 				.getOntologyId(), parameters);
 
-		Paginator<OneToOneMappingBean> p = new PaginatorImpl<OneToOneMappingBean>(
+		Paginator<MappingBean> p = new PaginatorImpl<MappingBean>(
 				pageMappings, pageSize, totalResults);
 
 		int offset = pageNum * pageSize - pageSize;
 		int limit = (offset + pageSize > totalResults) ? totalResults : offset
 				+ pageSize;
 
-		List<OneToOneMapping> mappings = mappingDAO.getMappingsToOntology(ont
+		List<Mapping> mappings = mappingDAO.getMappingsToOntology(ont
 				.getOntologyId(), limit, offset, parameters);
 
-		for (OneToOneMapping mapping : mappings) {
+		for (Mapping mapping : mappings) {
 			pageMappings.add(convertToMappingBean(mapping));
 		}
 
 		return p.getCurrentPage(pageNum);
 	}
 
-	public Page<OneToOneMappingBean> getMappingsBetweenOntologies(
+	public Page<MappingBean> getMappingsBetweenOntologies(
 			OntologyBean sourceOnt, OntologyBean targetOnt, Integer pageSize,
 			Integer pageNum, Boolean unidirectional,
 			MappingParametersBean parameters) throws InvalidInputException {
@@ -122,149 +122,149 @@ public class MappingServiceImpl implements MappingService {
 				.getCountMappingsBetweenOntologies(sourceOnt.getOntologyId(),
 						targetOnt.getOntologyId(), unidirectional, parameters);
 
-		Paginator<OneToOneMappingBean> p = new PaginatorImpl<OneToOneMappingBean>(
+		Paginator<MappingBean> p = new PaginatorImpl<MappingBean>(
 				pageMappings, pageSize, totalResults);
 
 		int offset = pageNum * pageSize - pageSize;
 		int limit = (offset + pageSize > totalResults) ? totalResults : offset
 				+ pageSize;
 
-		List<OneToOneMapping> mappings = mappingDAO
+		List<Mapping> mappings = mappingDAO
 				.getMappingsBetweenOntologies(sourceOnt.getOntologyId(),
 						targetOnt.getOntologyId(), unidirectional, limit,
 						offset, parameters);
 
-		for (OneToOneMapping mapping : mappings) {
+		for (Mapping mapping : mappings) {
 			pageMappings.add(convertToMappingBean(mapping));
 		}
 
 		return p.getCurrentPage(pageNum);
 	}
 
-	public Page<OneToOneMappingBean> getMappingsForOntology(OntologyBean ont,
+	public Page<MappingBean> getMappingsForOntology(OntologyBean ont,
 			Integer pageSize, Integer pageNum, MappingParametersBean parameters)
 			throws InvalidInputException {
 		MappingResultListBean pageMappings = new MappingResultListBean(0);
 		Integer totalResults = mappingCountsDAO.getCountMappingsForOntology(ont
 				.getOntologyId(), parameters);
 
-		Paginator<OneToOneMappingBean> p = new PaginatorImpl<OneToOneMappingBean>(
+		Paginator<MappingBean> p = new PaginatorImpl<MappingBean>(
 				pageMappings, pageSize, totalResults);
 
 		int offset = pageNum * pageSize - pageSize;
 		int limit = (offset + pageSize > totalResults) ? totalResults : offset
 				+ pageSize;
 
-		List<OneToOneMapping> mappings = mappingDAO.getMappingsForOntology(ont
+		List<Mapping> mappings = mappingDAO.getMappingsForOntology(ont
 				.getOntologyId(), limit, offset, parameters);
 
-		for (OneToOneMapping mapping : mappings) {
+		for (Mapping mapping : mappings) {
 			pageMappings.add(convertToMappingBean(mapping));
 		}
 
 		return p.getCurrentPage(pageNum);
 	}
 
-	public Page<OneToOneMappingBean> getMappingsForParameters(Integer pageSize,
+	public Page<MappingBean> getMappingsForParameters(Integer pageSize,
 			Integer pageNum, MappingParametersBean parameters)
 			throws InvalidInputException {
 		MappingResultListBean pageMappings = new MappingResultListBean(0);
 		Integer totalResults = mappingCountsDAO
 				.getCountMappingsForParameters(parameters);
 
-		Paginator<OneToOneMappingBean> p = new PaginatorImpl<OneToOneMappingBean>(
+		Paginator<MappingBean> p = new PaginatorImpl<MappingBean>(
 				pageMappings, pageSize, totalResults);
 
 		int offset = pageNum * pageSize - pageSize;
 		int limit = (offset + pageSize > totalResults) ? totalResults : offset
 				+ pageSize;
 
-		List<OneToOneMapping> mappings = mappingDAO.getMappingsForParameters(
+		List<Mapping> mappings = mappingDAO.getMappingsForParameters(
 				limit, offset, parameters);
 
-		for (OneToOneMapping mapping : mappings) {
+		for (Mapping mapping : mappings) {
 			pageMappings.add(convertToMappingBean(mapping));
 		}
 
 		return p.getCurrentPage(pageNum);
 	}
 
-	public Page<OneToOneMappingBean> getMappingsForConcept(OntologyBean ont,
+	public Page<MappingBean> getMappingsForConcept(OntologyBean ont,
 			ClassBean concept, Integer pageSize, Integer pageNum,
 			MappingParametersBean parameters) throws InvalidInputException {
 		MappingResultListBean pageMappings = new MappingResultListBean(0);
 		Integer totalResults = mappingCountsDAO.getCountMappingsForConcept(ont
 				.getOntologyId(), concept.getFullId(), parameters);
 
-		Paginator<OneToOneMappingBean> p = new PaginatorImpl<OneToOneMappingBean>(
+		Paginator<MappingBean> p = new PaginatorImpl<MappingBean>(
 				pageMappings, pageSize, totalResults);
 
 		int offset = pageNum * pageSize - pageSize;
 		int limit = (offset + pageSize > totalResults) ? totalResults : offset
 				+ pageSize;
 
-		List<OneToOneMapping> mappings = mappingDAO.getMappingsForConcept(ont
+		List<Mapping> mappings = mappingDAO.getMappingsForConcept(ont
 				.getOntologyId(), concept.getFullId(), limit, offset,
 				parameters);
 
-		for (OneToOneMapping mapping : mappings) {
+		for (Mapping mapping : mappings) {
 			pageMappings.add(convertToMappingBean(mapping));
 		}
 
 		return p.getCurrentPage(pageNum);
 	}
 
-	public Page<OneToOneMappingBean> getMappingsFromConcept(OntologyBean ont,
+	public Page<MappingBean> getMappingsFromConcept(OntologyBean ont,
 			ClassBean concept, Integer pageSize, Integer pageNum,
 			MappingParametersBean parameters) throws InvalidInputException {
 		MappingResultListBean pageMappings = new MappingResultListBean(0);
 		Integer totalResults = mappingCountsDAO.getCountMappingsFromConcept(ont
 				.getOntologyId(), concept.getFullId(), parameters);
 
-		Paginator<OneToOneMappingBean> p = new PaginatorImpl<OneToOneMappingBean>(
+		Paginator<MappingBean> p = new PaginatorImpl<MappingBean>(
 				pageMappings, pageSize, totalResults);
 
 		int offset = pageNum * pageSize - pageSize;
 		int limit = (offset + pageSize > totalResults) ? totalResults : offset
 				+ pageSize;
 
-		List<OneToOneMapping> mappings = mappingDAO.getMappingsFromConcept(ont
+		List<Mapping> mappings = mappingDAO.getMappingsFromConcept(ont
 				.getOntologyId(), concept.getFullId(), limit, offset,
 				parameters);
 
-		for (OneToOneMapping mapping : mappings) {
+		for (Mapping mapping : mappings) {
 			pageMappings.add(convertToMappingBean(mapping));
 		}
 
 		return p.getCurrentPage(pageNum);
 	}
 
-	public Page<OneToOneMappingBean> getMappingsToConcept(OntologyBean ont,
+	public Page<MappingBean> getMappingsToConcept(OntologyBean ont,
 			ClassBean concept, Integer pageSize, Integer pageNum,
 			MappingParametersBean parameters) throws InvalidInputException {
 		MappingResultListBean pageMappings = new MappingResultListBean(0);
 		Integer totalResults = mappingCountsDAO.getCountMappingsToConcept(ont
 				.getOntologyId(), concept.getFullId(), parameters);
 
-		Paginator<OneToOneMappingBean> p = new PaginatorImpl<OneToOneMappingBean>(
+		Paginator<MappingBean> p = new PaginatorImpl<MappingBean>(
 				pageMappings, pageSize, totalResults);
 
 		int offset = pageNum * pageSize - pageSize;
 		int limit = (offset + pageSize > totalResults) ? totalResults : offset
 				+ pageSize;
 
-		List<OneToOneMapping> mappings = mappingDAO.getMappingsToConcept(ont
+		List<Mapping> mappings = mappingDAO.getMappingsToConcept(ont
 				.getOntologyId(), concept.getFullId(), limit, offset,
 				parameters);
 
-		for (OneToOneMapping mapping : mappings) {
+		for (Mapping mapping : mappings) {
 			pageMappings.add(convertToMappingBean(mapping));
 		}
 
 		return p.getCurrentPage(pageNum);
 	}
 
-	public Page<OneToOneMappingBean> getMappingsBetweenConcepts(
+	public Page<MappingBean> getMappingsBetweenConcepts(
 			OntologyBean sourceOnt, OntologyBean targetOnt,
 			ClassBean sourceConcept, ClassBean targetConcept,
 			Boolean unidirectional, Integer pageSize, Integer pageNum,
@@ -275,30 +275,30 @@ public class MappingServiceImpl implements MappingService {
 						targetOnt.getOntologyId(), sourceConcept.getFullId(),
 						targetConcept.getFullId(), unidirectional, parameters);
 
-		Paginator<OneToOneMappingBean> p = new PaginatorImpl<OneToOneMappingBean>(
+		Paginator<MappingBean> p = new PaginatorImpl<MappingBean>(
 				pageMappings, pageSize, totalResults);
 
 		int offset = pageNum * pageSize - pageSize;
 		int limit = (offset + pageSize > totalResults) ? totalResults : offset
 				+ pageSize;
 
-		List<OneToOneMapping> mappings = mappingDAO.getMappingsBetweenConcepts(
+		List<Mapping> mappings = mappingDAO.getMappingsBetweenConcepts(
 				sourceOnt.getOntologyId(), targetOnt.getOntologyId(),
 				sourceConcept.getFullId(), targetConcept.getFullId(),
 				unidirectional, limit, offset, parameters);
 
-		for (OneToOneMapping mapping : mappings) {
+		for (Mapping mapping : mappings) {
 			pageMappings.add(convertToMappingBean(mapping));
 		}
 
 		return p.getCurrentPage(pageNum);
 	}
 
-	public List<OneToOneMappingBean> getRecentMappings(Integer limit)
+	public List<MappingBean> getRecentMappings(Integer limit)
 			throws InvalidInputException {
-		ArrayList<OneToOneMappingBean> mappings = new ArrayList<OneToOneMappingBean>();
+		ArrayList<MappingBean> mappings = new ArrayList<MappingBean>();
 
-		for (OneToOneMapping mapping : mappingStatsDAO.getRecentMappings(limit)) {
+		for (Mapping mapping : mappingStatsDAO.getRecentMappings(limit)) {
 			mappings.add(convertToMappingBean(mapping));
 		}
 
@@ -325,9 +325,9 @@ public class MappingServiceImpl implements MappingService {
 		return mappingStatsDAO.getOntologyUserCount(ontologyId);
 	}
 
-	public OneToOneMappingBean updateMapping(URI id, OneToOneMappingBean mapping)
+	public MappingBean updateMapping(URI id, MappingBean mapping)
 			throws MappingMissingException {
-		OneToOneMapping updatedMapping = mappingDAO.updateMapping(id,
+		Mapping updatedMapping = mappingDAO.updateMapping(id,
 				convertToMappingEntity(mapping));
 		return convertToMappingBean(updatedMapping);
 	}
@@ -338,8 +338,8 @@ public class MappingServiceImpl implements MappingService {
 
 	// Private methods
 
-	private OneToOneMappingBean convertToMappingBean(OneToOneMapping mapping) {
-		OneToOneMappingBean mb = new OneToOneMappingBean();
+	private MappingBean convertToMappingBean(Mapping mapping) {
+		MappingBean mb = new MappingBean();
 
 		// Set all properties
 		mb.setComment(mapping.getComment());
@@ -366,12 +366,12 @@ public class MappingServiceImpl implements MappingService {
 		mb.setSubmittedBy(mapping.getSubmittedBy());
 		mb.setTarget(mapping.getTarget());
 		mb.setTargetOntologyId(mapping.getTargetOntologyId());
-
+		
 		return mb;
 	}
 
-	private OneToOneMapping convertToMappingEntity(OneToOneMappingBean mapping) {
-		OneToOneMapping otom = new OneToOneMapping();
+	private Mapping convertToMappingEntity(MappingBean mapping) {
+		Mapping otom = new Mapping();
 
 		// Set all properties
 		otom.setComment(mapping.getComment());

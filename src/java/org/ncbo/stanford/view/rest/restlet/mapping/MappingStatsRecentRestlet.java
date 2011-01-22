@@ -6,7 +6,7 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.ncbo.stanford.bean.mapping.OneToOneMappingBean;
+import org.ncbo.stanford.bean.mapping.MappingBean;
 import org.ncbo.stanford.exception.InvalidInputException;
 import org.ncbo.stanford.service.mapping.MappingService;
 import org.ncbo.stanford.util.RequestUtils;
@@ -48,7 +48,7 @@ public class MappingStatsRecentRestlet extends AbstractMappingRestlet {
 			limit = 5;
 		}
 
-		List<OneToOneMappingBean> mappings = null;
+		List<MappingBean> mappings = null;
 		try {
 			mappings = mappingService.getRecentMappings(limit);
 		} catch (InvalidInputException iie) {

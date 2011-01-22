@@ -6,7 +6,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.ncbo.stanford.bean.OntologyBean;
 import org.ncbo.stanford.bean.mapping.MappingParametersBean;
-import org.ncbo.stanford.bean.mapping.OneToOneMappingBean;
+import org.ncbo.stanford.bean.mapping.MappingBean;
 import org.ncbo.stanford.exception.ConceptNotFoundException;
 import org.ncbo.stanford.exception.InvalidInputException;
 import org.ncbo.stanford.exception.OntologyNotFoundException;
@@ -90,7 +90,7 @@ public class MappingOntologyRestlet extends AbstractMappingRestlet {
 		OntologyBean ont = null;
 		OntologyBean sourceOnt = null;
 		OntologyBean targetOnt = null;
-		Page<OneToOneMappingBean> mappings = null;
+		Page<MappingBean> mappings = null;
 		try {
 			// Test for valid ontology
 			if (ontologyId != null) {

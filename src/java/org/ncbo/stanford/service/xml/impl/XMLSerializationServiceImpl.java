@@ -30,12 +30,10 @@ import org.ncbo.stanford.bean.concept.InstanceBean;
 import org.ncbo.stanford.bean.concept.PropertyBean;
 import org.ncbo.stanford.bean.http.HttpInputStreamWrapper;
 import org.ncbo.stanford.bean.logging.UsageLoggingBean;
-import org.ncbo.stanford.bean.mapping.AbstractMappingBean;
+import org.ncbo.stanford.bean.mapping.MappingBean;
 import org.ncbo.stanford.bean.mapping.MappingConceptStatsBean;
 import org.ncbo.stanford.bean.mapping.MappingOntologyStatsBean;
-import org.ncbo.stanford.bean.mapping.MappingResultListBean;
 import org.ncbo.stanford.bean.mapping.MappingUserStatsBean;
-import org.ncbo.stanford.bean.mapping.OneToOneMappingBean;
 import org.ncbo.stanford.bean.notes.AppliesToBean;
 import org.ncbo.stanford.bean.notes.NoteBean;
 import org.ncbo.stanford.bean.notes.ProposalNewRelationshipBean;
@@ -61,7 +59,6 @@ import org.ncbo.stanford.util.MessageUtils;
 import org.ncbo.stanford.util.RequestUtils;
 import org.ncbo.stanford.util.constants.ApplicationConstants;
 import org.ncbo.stanford.util.paginator.impl.Page;
-import org.ncbo.stanford.util.paginator.impl.PaginatableList;
 import org.openrdf.model.URI;
 import org.openrdf.model.impl.URIImpl;
 import org.restlet.data.MediaType;
@@ -75,7 +72,6 @@ import org.w3c.dom.NodeList;
 import org.w3c.dom.Text;
 
 import com.thoughtworks.xstream.XStream;
-import com.thoughtworks.xstream.converters.basic.DateConverter;
 import com.thoughtworks.xstream.converters.enums.EnumSingleValueConverter;
 import com.thoughtworks.xstream.io.xml.TraxSource;
 
@@ -538,8 +534,7 @@ public class XMLSerializationServiceImpl implements XMLSerializationService {
 				SuccessBean.class);
 
 		// Mapping aliases using annotations
-		xmlSerializer.processAnnotations(OneToOneMappingBean.class);
-		xmlSerializer.processAnnotations(AbstractMappingBean.class);
+		xmlSerializer.processAnnotations(MappingBean.class);
 		xmlSerializer.processAnnotations(MappingOntologyStatsBean.class);
 		xmlSerializer.processAnnotations(MappingConceptStatsBean.class);
 		xmlSerializer.processAnnotations(MappingUserStatsBean.class);

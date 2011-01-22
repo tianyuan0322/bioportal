@@ -2,6 +2,7 @@ package org.ncbo.stanford.view.rest.restlet.mapping;
 
 import java.net.URLDecoder;
 import java.util.ArrayList;
+import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -10,8 +11,8 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.ncbo.stanford.bean.OntologyBean;
 import org.ncbo.stanford.bean.concept.ClassBean;
+import org.ncbo.stanford.bean.mapping.MappingBean;
 import org.ncbo.stanford.bean.mapping.MappingParametersBean;
-import org.ncbo.stanford.bean.mapping.OneToOneMappingBean;
 import org.ncbo.stanford.enumeration.MappingSourceEnum;
 import org.ncbo.stanford.exception.ConceptNotFoundException;
 import org.ncbo.stanford.exception.InvalidInputException;
@@ -129,7 +130,7 @@ public class MappingConceptRestlet extends AbstractMappingRestlet {
 		ClassBean concept = null;
 		ClassBean sourceConcept = null;
 		ClassBean targetConcept = null;
-		Page<OneToOneMappingBean> mappings = null;
+		Page<MappingBean> mappings = null;
 		try {
 			// Test for valid ontology
 			if (ontologyId != null) {
@@ -212,9 +213,9 @@ public class MappingConceptRestlet extends AbstractMappingRestlet {
 				.getParameter(RequestParamConstants.PARAM_SOURCE_ONT);
 		String targetOntStr = (String) httpRequest
 				.getParameter(RequestParamConstants.PARAM_TARGET_ONT);
-		String sourceConceptId = (String) httpRequest
+		String sourceConceptIds = (String) httpRequest
 				.getParameter(RequestParamConstants.PARAM_SOURCE);
-		String targetConceptId = (String) httpRequest
+		String targetConceptIds = (String) httpRequest
 				.getParameter(RequestParamConstants.PARAM_TARGET);
 		String sourceOntVersionIdStr = (String) httpRequest
 				.getParameter(RequestParamConstants.PARAM_SOURCE_VERSION_ONT_ID);
@@ -251,8 +252,8 @@ public class MappingConceptRestlet extends AbstractMappingRestlet {
 		Integer submittedBy = RequestUtils.parseIntegerParam(submittedByStr);
 		Boolean unidirectional = RequestUtils
 				.parseBooleanParam(unidirectionalStr);
-		URI source = new URIImpl(sourceConceptId);
-		URI target = new URIImpl(targetConceptId);
+		List<URI> source = RequestUtils.parseURIListParam(sourceConceptIds);
+		List<URI> target = RequestUtils.parseURIListParam(targetConceptIds);
 		URI relation = new URIImpl(relationshipStr);
 
 		URI mappingSourceSite = null;
@@ -261,15 +262,16 @@ public class MappingConceptRestlet extends AbstractMappingRestlet {
 
 		MappingSourceEnum mappingSource = null;
 		if (mappingSourceStr != null)
-			mappingSource = MappingSourceEnum.valueOf(StringUtils.upperCase(mappingSourceStr));
+			mappingSource = MappingSourceEnum.valueOf(StringUtils
+					.upperCase(mappingSourceStr));
 
-		OneToOneMappingBean mapping1 = null;
-		OneToOneMappingBean mapping2 = null;
-		ArrayList<OneToOneMappingBean> mappings = new ArrayList<OneToOneMappingBean>();
+		MappingBean mapping1 = null;
+		MappingBean mapping2 = null;
+		ArrayList<MappingBean> mappings = new ArrayList<MappingBean>();
 		OntologyBean sourceOnt = null;
 		OntologyBean targetOnt = null;
-		ClassBean sourceConcept = null;
-		ClassBean targetConcept = null;
+		ArrayList<ClassBean> sourceConcept = new ArrayList<ClassBean>();
+		ArrayList<ClassBean> targetConcept = new ArrayList<ClassBean>();
 		try {
 			// Test for valid ontologies
 			if (sourceOntId != null && targetOntId != null) {
@@ -285,17 +287,30 @@ public class MappingConceptRestlet extends AbstractMappingRestlet {
 			}
 
 			// Test for valid concepts
-			if (sourceConceptId != null && targetConceptId != null) {
-				sourceConcept = conceptService.findConcept(sourceOnt.getId(),
-						sourceConceptId, 0, true, false, false);
-				targetConcept = conceptService.findConcept(targetOnt.getId(),
-						targetConceptId, 0, true, false, false);
+			if (source != null && target != null && !source.isEmpty()
+					&& !target.isEmpty()) {
+				for (URI sourceConceptId : source) {
+					sourceConcept.add(conceptService.findConcept(sourceOnt
+							.getId(), sourceConceptId.toString(), 0, true,
+							false, false));
+				}
+
+				for (URI targetConceptId : target) {
+					targetConcept.add(conceptService.findConcept(targetOnt
+							.getId(), targetConceptId.toString(), 0, true,
+							false, false));
+				}
 			}
 
-			if (sourceConcept == null || targetConcept == null) {
+			if (sourceConcept == null || targetConcept == null
+					|| sourceConcept.isEmpty() || targetConcept.isEmpty()) {
 				throw new ConceptNotFoundException(MessageUtils
 						.getMessage("msg.error.conceptNotFound"));
 			}
+			
+			// If the mapping is many-to-many then we force unidirectional
+			if (source.size() > 1 || target.size() > 1)
+				unidirectional = true;
 
 			// Test to make sure required parameters exist
 			ArrayList<String> missingParams = new ArrayList<String>();
@@ -307,9 +322,9 @@ public class MappingConceptRestlet extends AbstractMappingRestlet {
 			if (relation == null)
 				missingParams.add("relation");
 			if (mappingType == null)
-				missingParams.add("mappingType");
+				missingParams.add("mappingtype");
 			if (submittedBy == null)
-				missingParams.add("submittedBy");
+				missingParams.add("submittedby");
 
 			if (!missingParams.isEmpty()) {
 				throw new InvalidInputException(
@@ -338,14 +353,14 @@ public class MappingConceptRestlet extends AbstractMappingRestlet {
 				// bidirectional (which is the default)
 				mapping2 = mappingService.createMapping(target, source,
 						relation, targetOntId, sourceOntId, targetOntVersionId,
-						sourceOntVersionId, submittedBy, mapping1
-								.getId(), comment, mappingSource,
-						mappingSourceName, mappingSourceContactInfo,
-						mappingSourceSite, mappingSourceAlgorithm, mappingType);
+						sourceOntVersionId, submittedBy, mapping1.getId(),
+						comment, mappingSource, mappingSourceName,
+						mappingSourceContactInfo, mappingSourceSite,
+						mappingSourceAlgorithm, mappingType);
 
 				mapping1.setDependency(mapping2.getId());
-				OneToOneMappingBean updatedMapping1 = mappingService
-						.updateMapping(mapping1.getId(), mapping1);
+				MappingBean updatedMapping1 = mappingService.updateMapping(
+						mapping1.getId(), mapping1);
 
 				mappings.removeAll(mappings);
 				mappings.add(updatedMapping1);

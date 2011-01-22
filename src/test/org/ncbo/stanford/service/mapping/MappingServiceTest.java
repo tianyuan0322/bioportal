@@ -12,7 +12,7 @@ import org.ncbo.stanford.AbstractBioPortalTest;
 import org.ncbo.stanford.bean.OntologyBean;
 import org.ncbo.stanford.bean.concept.ClassBean;
 import org.ncbo.stanford.bean.mapping.MappingParametersBean;
-import org.ncbo.stanford.bean.mapping.OneToOneMappingBean;
+import org.ncbo.stanford.bean.mapping.MappingBean;
 import org.ncbo.stanford.enumeration.MappingSourceEnum;
 import org.ncbo.stanford.exception.InvalidInputException;
 import org.ncbo.stanford.exception.MappingExistsException;
@@ -23,6 +23,8 @@ import org.ncbo.stanford.util.paginator.impl.Page;
 import org.openrdf.model.URI;
 import org.openrdf.model.impl.URIImpl;
 import org.springframework.beans.factory.annotation.Autowired;
+
+import edu.emory.mathcs.backport.java.util.Collections;
 
 /**
  * Test mappings service functionality. Requires a working RDF store.
@@ -37,16 +39,21 @@ public class MappingServiceTest extends AbstractBioPortalTest {
 	MappingServiceImpl mappingService;
 	OntologyService ontService;
 
+	@SuppressWarnings("unchecked")
 	@Test
 	public void testCreateMapping() {
-		OneToOneMappingBean mapping;
+		MappingBean mapping;
 		try {
 			mapping = mappingService
 					.createMapping(
-							new URIImpl(
-									"http://purl.bioontology.org/ontology/ATMO/ATM_00000"),
-							new URIImpl(
-									"http://purl.org/obo/owl/UBERON#UBERON_0001062"),
+							new ArrayList<URI>(
+									Collections
+											.singleton(new URIImpl(
+													"http://purl.bioontology.org/ontology/ATMO/ATM_00000"))),
+							new ArrayList<URI>(
+									Collections
+											.singleton(new URIImpl(
+													"http://purl.org/obo/owl/UBERON#UBERON_0001062"))),
 							new URIImpl(
 									"http://protege.stanford.edu/ontologies/mappings/mappings.rdfs#owl:sameAs"),
 							1099, 1404, 44203, 44301, 99, null, "Test comment",
@@ -57,8 +64,7 @@ public class MappingServiceTest extends AbstractBioPortalTest {
 
 			mappingId = mapping.getId();
 
-			OneToOneMappingBean retrievedMapping = mappingService
-					.getMapping(mappingId);
+			MappingBean retrievedMapping = mappingService.getMapping(mappingId);
 
 			assertEquals(retrievedMapping.getId(), mapping.getId());
 		} catch (MappingExistsException e) {
@@ -72,7 +78,7 @@ public class MappingServiceTest extends AbstractBioPortalTest {
 
 	@Test
 	public void testRetrieveMapping() {
-		OneToOneMappingBean mapping;
+		MappingBean mapping;
 		try {
 			mapping = mappingService.getMapping(mappingId);
 
@@ -93,7 +99,7 @@ public class MappingServiceTest extends AbstractBioPortalTest {
 		Integer targetOntologyVersion = 10001;
 		String comment = "New test comment";
 
-		OneToOneMappingBean mapping = new OneToOneMappingBean();
+		MappingBean mapping = new MappingBean();
 
 		mapping.setSourceOntologyId(sourceOntologyId);
 		mapping.setTargetOntologyId(targetOntologyId);
@@ -101,7 +107,7 @@ public class MappingServiceTest extends AbstractBioPortalTest {
 		mapping.setCreatedInTargetOntologyVersion(targetOntologyVersion);
 		mapping.setComment(comment);
 
-		OneToOneMappingBean updatedMapping;
+		MappingBean updatedMapping;
 		try {
 			updatedMapping = mappingService.updateMapping(mappingId, mapping);
 
@@ -127,8 +133,8 @@ public class MappingServiceTest extends AbstractBioPortalTest {
 		int pageSize = 10000;
 		int pageNum = 1;
 
-		Page<OneToOneMappingBean> mappings = mappingService
-				.getMappingsFromOntology(ont, pageSize, pageNum, null);
+		Page<MappingBean> mappings = mappingService.getMappingsFromOntology(
+				ont, pageSize, pageNum, null);
 
 		assertTrue(mappings != null);
 	}
@@ -147,7 +153,7 @@ public class MappingServiceTest extends AbstractBioPortalTest {
 		int pageNum = 1;
 		boolean unidirectional = false;
 
-		Page<OneToOneMappingBean> mappings = mappingService
+		Page<MappingBean> mappings = mappingService
 				.getMappingsBetweenOntologies(sourceOnt, targetOnt, pageSize,
 						pageNum, unidirectional, null);
 
@@ -163,8 +169,8 @@ public class MappingServiceTest extends AbstractBioPortalTest {
 		int pageSize = 10000;
 		int pageNum = 1;
 
-		Page<OneToOneMappingBean> mappings = mappingService
-				.getMappingsForOntology(ont, pageSize, pageNum, null);
+		Page<MappingBean> mappings = mappingService.getMappingsForOntology(ont,
+				pageSize, pageNum, null);
 
 		assertTrue(mappings != null);
 	}
@@ -178,8 +184,8 @@ public class MappingServiceTest extends AbstractBioPortalTest {
 		int pageSize = 10000;
 		int pageNum = 1;
 
-		Page<OneToOneMappingBean> mappings = mappingService
-				.getMappingsToOntology(ont, pageSize, pageNum, null);
+		Page<MappingBean> mappings = mappingService.getMappingsToOntology(ont,
+				pageSize, pageNum, null);
 
 		assertTrue(mappings != null);
 	}
@@ -197,8 +203,8 @@ public class MappingServiceTest extends AbstractBioPortalTest {
 		int pageSize = 10000;
 		int pageNum = 1;
 
-		Page<OneToOneMappingBean> mappings = mappingService
-				.getMappingsForConcept(ont, concept, pageSize, pageNum, null);
+		Page<MappingBean> mappings = mappingService.getMappingsForConcept(ont,
+				concept, pageSize, pageNum, null);
 
 		assertTrue(mappings != null);
 	}
@@ -216,8 +222,8 @@ public class MappingServiceTest extends AbstractBioPortalTest {
 		int pageSize = 10000;
 		int pageNum = 1;
 
-		Page<OneToOneMappingBean> mappings = mappingService
-				.getMappingsFromConcept(ont, concept, pageSize, pageNum, null);
+		Page<MappingBean> mappings = mappingService.getMappingsFromConcept(ont,
+				concept, pageSize, pageNum, null);
 
 		assertTrue(mappings != null);
 	}
@@ -236,8 +242,8 @@ public class MappingServiceTest extends AbstractBioPortalTest {
 		int pageSize = 10000;
 		int pageNum = 1;
 
-		Page<OneToOneMappingBean> mappings = mappingService
-				.getMappingsToConcept(ont, concept, pageSize, pageNum, null);
+		Page<MappingBean> mappings = mappingService.getMappingsToConcept(ont,
+				concept, pageSize, pageNum, null);
 
 		assertTrue(mappings != null);
 	}
@@ -263,10 +269,9 @@ public class MappingServiceTest extends AbstractBioPortalTest {
 		int pageNum = 1;
 		boolean unidirectional = true;
 
-		Page<OneToOneMappingBean> mappings = mappingService
-				.getMappingsBetweenConcepts(sourceOnt, targetOnt,
-						sourceConcept, targetConcept, unidirectional, pageSize,
-						pageNum, null);
+		Page<MappingBean> mappings = mappingService.getMappingsBetweenConcepts(
+				sourceOnt, targetOnt, sourceConcept, targetConcept,
+				unidirectional, pageSize, pageNum, null);
 
 		assertTrue(mappings != null);
 	}
@@ -285,8 +290,8 @@ public class MappingServiceTest extends AbstractBioPortalTest {
 		MappingParametersBean parameters = new MappingParametersBean();
 		parameters.setSubmittedBy(submittedBy);
 
-		Page<OneToOneMappingBean> mappings = mappingService
-				.getMappingsForParameters(50000, 1, parameters);
+		Page<MappingBean> mappings = mappingService.getMappingsForParameters(
+				50000, 1, parameters);
 
 		assertTrue(mappings != null);
 

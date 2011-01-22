@@ -18,9 +18,9 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.ncbo.stanford.bean.OntologyBean;
 import org.ncbo.stanford.bean.concept.ClassBean;
+import org.ncbo.stanford.bean.mapping.MappingBean;
 import org.ncbo.stanford.bean.mapping.MappingOntologyStatsBean;
 import org.ncbo.stanford.bean.mapping.MappingStatsBean;
-import org.ncbo.stanford.bean.mapping.OneToOneMappingBean;
 import org.ncbo.stanford.bean.mapping.upload.UploadedMappingBean;
 import org.ncbo.stanford.exception.ConceptNotFoundException;
 import org.ncbo.stanford.exception.InvalidInputException;
@@ -42,14 +42,14 @@ import org.restlet.data.Status;
  * 
  */
 public class MappingUploadRestlet extends AbstractBaseRestlet {
-	private static final Log log = LogFactory.getLog(MappingUploadRestlet.class);
-	
+	private static final Log log = LogFactory
+			.getLog(MappingUploadRestlet.class);
+
 	private OntologyService ontologyService;
 	private MappingManager mappingManager;
 	private ConceptService conceptService;
 	private MappingService mappingService;
 	List<MappingStatsBean> mappingBean = new ArrayList<MappingStatsBean>();
-	
 
 	@Override
 	public void postRequest(Request request, Response response) {
@@ -59,30 +59,30 @@ public class MappingUploadRestlet extends AbstractBaseRestlet {
 	}
 
 	/**
-	 * Return's the response after mapping 
+	 * Return's the response after mapping
 	 * 
 	 * @param request
 	 *            response
-	 * @throws FileUploadException 
+	 * @throws FileUploadException
 	 */
 	private void filesForMapping(Request request, Response response) {
 		HttpServletRequest httpServletRequest = RequestUtils
 				.getHttpServletRequest(request);
 		String fileName;
-		OneToOneMappingBean oneToOneMappingBean = null;
+		MappingBean oneToOneMappingBean = null;
 
 		UploadedMappingBean uploadedMappingBean = null;
 		OntologyBean ontologyBean = null;
 
 		ClassBean concept = null;
 		Integer importedMappingCount = 0;
-		Integer count=0;
+		Integer count = 0;
 		List<Integer> lineOfError = new ArrayList<Integer>();
 		// List for UploadedMappingBean
 		List<UploadedMappingBean> listForMappingBean = new ArrayList<UploadedMappingBean>();
 		List<MappingOntologyStatsBean> mappingStatusBean = null;
-		
-		MappingStatsBean  statsBean = new MappingStatsBean();
+
+		MappingStatsBean statsBean = new MappingStatsBean();
 		try {
 			// Condition for the HTTP request is encoded in multipart format
 			if (ServletFileUpload.isMultipartContent(httpServletRequest)) {
@@ -120,102 +120,121 @@ public class MappingUploadRestlet extends AbstractBaseRestlet {
 						// Parsing the CSV file and stores inside List
 						listForMappingBean = mappingManager.parseCSVFile(data);
 					}
-				
+
 					// Iterating the UploadedMappingBean from the list
 					for (int i = 1; i < listForMappingBean.size(); i++) {
 						uploadedMappingBean = listForMappingBean.get(i);
 						// OntologyIdInt from the UploadedOntologyBean
-						Integer ontologyIdInt = Integer.parseInt(uploadedMappingBean.getSourceOntologyId());
+						Integer ontologyIdInt = Integer
+								.parseInt(uploadedMappingBean
+										.getSourceOntologyId());
 						// OntologyVersionIdInt from the UploadedOntologyBean
-						Integer ontologyVersionIdInt = Integer.parseInt(uploadedMappingBean.getSourceCreatedInOntologyVersion());
+						Integer ontologyVersionIdInt = Integer
+								.parseInt(uploadedMappingBean
+										.getSourceCreatedInOntologyVersion());
 						// ConceptId from the UploadedOntologyBean
 						String conceptId = uploadedMappingBean.getSource();
-						// Condition for validating ontologies using ontologyIdInt
+						// Condition for validating ontologies using
+						// ontologyIdInt
 						if (ontologyIdInt != null) {
-							ontologyBean = ontologyService.findLatestOntologyOrViewVersion(ontologyIdInt);
+							ontologyBean = ontologyService
+									.findLatestOntologyOrViewVersion(ontologyIdInt);
 						}
-						// Condition for validating ontologies using ontologyVersionIdInt
+						// Condition for validating ontologies using
+						// ontologyVersionIdInt
 						else if (ontologyVersionIdInt != null) {
-							ontologyBean = ontologyService.findOntologyOrView(ontologyVersionIdInt);
+							ontologyBean = ontologyService
+									.findOntologyOrView(ontologyVersionIdInt);
 						}
 						// Condition for validating the existence of a concept
 						if (conceptId != null)
-							concept = conceptService.findConcept(ontologyBean.getId(), conceptId, null, false, false, false);
-						//Condition for OntologyBean for null Values
+							concept = conceptService.findConcept(ontologyBean
+									.getId(), conceptId, null, false, false,
+									false);
+						// Condition for OntologyBean for null Values
 						if (ontologyBean == null) {
 							throw new InvalidInputException(
 									MessageUtils
 											.getMessage("msg.error.ontologyversionidinvalid"));
 						}
-						//Condition for ConceptBean for null values
+						// Condition for ConceptBean for null values
 						if (concept == null) {
-							throw new ConceptNotFoundException(
-									MessageUtils.getMessage("msg.error.conceptNotFound"));
+							throw new ConceptNotFoundException(MessageUtils
+									.getMessage("msg.error.conceptNotFound"));
 						}
-						//Calling the createMappingForUploadFile 
-						oneToOneMappingBean=mappingManager.createMappingForUploadedFile(uploadedMappingBean);
-						
+						// Calling the createMappingForUploadFile
+						oneToOneMappingBean = mappingManager
+								.createMappingForUploadedFile(uploadedMappingBean);
+
 					}
-				
-					//Try to get the List for MappingStatusBean after Mapping	
-					mappingStatusBean = mappingService.getOntologiesMappingCount();
-						//Iterating the List of MappingStatusBean
-						for(MappingOntologyStatsBean mappingStatsBean : mappingStatusBean){
-							importedMappingCount = mappingStatsBean.getTargetMappings();
-							statsBean.setImportedMappingCount(importedMappingCount);
-							
-						}
-						//Iterating the List of Uploaded MappingBean
-						for (int i = 1; i < listForMappingBean.size(); i++) {
-							//Try to get the UploadedMappingBean from the List
-							uploadedMappingBean = listForMappingBean.get(i);
-							//Try to get the MappingStatusBean according to the TargetOntologyId from the CSV file
-							mappingStatusBean = mappingService.getOntologyMappingCount(Integer.parseInt(uploadedMappingBean
+
+					// Try to get the List for MappingStatusBean after Mapping
+					mappingStatusBean = mappingService
+							.getOntologiesMappingCount();
+					// Iterating the List of MappingStatusBean
+					for (MappingOntologyStatsBean mappingStatsBean : mappingStatusBean) {
+						importedMappingCount = mappingStatsBean
+								.getTargetMappings();
+						statsBean.setImportedMappingCount(importedMappingCount);
+
+					}
+					// Iterating the List of Uploaded MappingBean
+					for (int i = 1; i < listForMappingBean.size(); i++) {
+						// Try to get the UploadedMappingBean from the List
+						uploadedMappingBean = listForMappingBean.get(i);
+						// Try to get the MappingStatusBean according to the
+						// TargetOntologyId from the CSV file
+						mappingStatusBean = mappingService
+								.getOntologyMappingCount(Integer
+										.parseInt(uploadedMappingBean
 												.getTargetOntologyId()));
-							
-							//Checking the condition for null values for MappingStatusBean  
-							if (mappingStatusBean == null) {
-							//Finding the index of MappingStatusBean inside the List
-							count = listForMappingBean.indexOf(mappingStatusBean);
-							//Adding this index value inside the List of lineOfError
+
+						// Checking the condition for null values for
+						// MappingStatusBean
+						if (mappingStatusBean == null) {
+							// Finding the index of MappingStatusBean inside the
+							// List
+							count = listForMappingBean
+									.indexOf(mappingStatusBean);
+							// Adding this index value inside the List of
+							// lineOfError
 							lineOfError.add(count);
 							statsBean.setErrorMappingCount(count);
-							//set the line of error inside the MappingStatsBean
+							// set the line of error inside the MappingStatsBean
 							statsBean.setErrorLineNumber(lineOfError);
-							
-						}else{
+
+						} else {
 							statsBean.setErrorMappingCount(count);
 						}
 
 					}
-						mappingBean.add(statsBean);
+					mappingBean.add(statsBean);
 				}
 			}
-		}catch (MappingMissingException mappingMissingException) {
+		} catch (MappingMissingException mappingMissingException) {
 			mappingMissingException.getMessage();
-		}catch (FileUploadException fileUploadException) {
+		} catch (FileUploadException fileUploadException) {
 			fileUploadException.getMessage();
 		} catch (InputMismatchException inputOutputException) {
 			inputOutputException.getMessage();
 		} catch (IOException ioException) {
 			ioException.getMessage();
-		}catch (InvalidInputException e) {
+		} catch (InvalidInputException e) {
 			response.setStatus(Status.CLIENT_ERROR_BAD_REQUEST, e.getMessage());
-		}catch (ConceptNotFoundException cnfe) {
+		} catch (ConceptNotFoundException cnfe) {
 			response
 					.setStatus(Status.CLIENT_ERROR_NOT_FOUND, cnfe.getMessage());
 
-		}catch (Exception e) {
+		} catch (Exception e) {
 			xmlSerializationService.generateXMLResponse(request, response,
 					mappingBean);
-		} 
-		finally {
-			xmlSerializationService
-					.generateXMLResponse(request, response, statsBean);
+		} finally {
+			xmlSerializationService.generateXMLResponse(request, response,
+					statsBean);
 		}
 
 	}
-	
+
 	/**
 	 * 
 	 * @param mappingService
@@ -247,6 +266,5 @@ public class MappingUploadRestlet extends AbstractBaseRestlet {
 	public void setOntologyService(OntologyService ontologyService) {
 		this.ontologyService = ontologyService;
 	}
-	
-	
+
 }

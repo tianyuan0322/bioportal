@@ -3,12 +3,14 @@ package org.ncbo.stanford.domain.custom.dao.mapping;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.GregorianCalendar;
+import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.TimeZone;
 
 import org.apache.commons.lang.StringUtils;
 import org.ncbo.stanford.bean.mapping.MappingParametersBean;
-import org.ncbo.stanford.domain.custom.entity.mapping.OneToOneMapping;
+import org.ncbo.stanford.domain.custom.entity.Mapping;
 import org.ncbo.stanford.exception.InvalidInputException;
 import org.ncbo.stanford.manager.rdfstore.RDFStoreManager;
 import org.ncbo.stanford.util.MessageUtils;
@@ -103,8 +105,8 @@ public class AbstractNcboMappingDAO {
 	 * 
 	 *******************************************************************/
 
-	protected ArrayList<OneToOneMapping> getMappings(Integer limit,
-			Integer offset, String filter, MappingParametersBean parameters)
+	protected List<Mapping> getMappings(Integer limit, Integer offset,
+			String filter, MappingParametersBean parameters)
 			throws InvalidInputException {
 		return getMappings(limit, offset, filter, null, parameters);
 	}
@@ -124,9 +126,9 @@ public class AbstractNcboMappingDAO {
 	 * @return
 	 * @throws InvalidInputException
 	 */
-	protected ArrayList<OneToOneMapping> getMappings(Integer limit,
-			Integer offset, String filter, String orderBy,
-			MappingParametersBean parameters) throws InvalidInputException {
+	protected List<Mapping> getMappings(Integer limit, Integer offset,
+			String filter, String orderBy, MappingParametersBean parameters)
+			throws InvalidInputException {
 		// Safety check
 		if (limit == null || limit >= 50000) {
 			limit = 50000;
@@ -174,78 +176,106 @@ public class AbstractNcboMappingDAO {
 			System.out.println("Evaluate query time: "
 					+ (System.currentTimeMillis() - start));
 
-			ArrayList<OneToOneMapping> mappings = new ArrayList<OneToOneMapping>();
+			ArrayList<Mapping> mappings = new ArrayList<Mapping>();
 			start = System.currentTimeMillis();
+
+			HashMap<String, Mapping> resultMap = new HashMap<String, Mapping>();
+
 			while (result.hasNext()) {
 				BindingSet bs = result.next();
 
-				OneToOneMapping mapping = new OneToOneMapping();
-
-				// Set Mapping properties (required)
-				mapping.setId(new URIImpl(bs.getValue("mappingId")
-						.stringValue()));
-
-				mapping.setSource(new URIImpl(bs.getValue("source")
-						.stringValue()));
-
-				mapping.setTarget(new URIImpl(bs.getValue("target")
-						.stringValue()));
-
-				mapping.setRelation(new URIImpl(bs.getValue("relation")
-						.stringValue()));
-
-				mapping.setSourceOntologyId(convertValueToInteger(bs
-						.getValue("sourceOntologyId")));
-
-				mapping.setTargetOntologyId(convertValueToInteger(bs
-						.getValue("targetOntologyId")));
-
-				mapping
-						.setCreatedInSourceOntologyVersion(convertValueToInteger(bs
-								.getValue("createdInSourceOntologyVersion")));
-
-				mapping
-						.setCreatedInTargetOntologyVersion(convertValueToInteger(bs
-								.getValue("createdInTargetOntologyVersion")));
-
-				mapping.setSubmittedBy(convertValueToInteger(bs
-						.getValue("submittedBy")));
-
-				mapping
-						.setMappingType(bs.getValue("mappingType")
-								.stringValue());
-
-				mapping.setDate(convertValueToDate(bs.getValue("date")));
-
-				// Set mapping properties (optional)
-				if (isValidValue(bs.getValue("dependency")))
-					mapping.setDependency(new URIImpl(bs.getValue("dependency")
-							.stringValue()));
-
-				if (isValidValue(bs.getValue("comment")))
-					mapping.setComment(bs.getValue("comment").stringValue());
-
-				if (isValidValue(bs.getValue("mappingSource")))
-					mapping.setMappingSource(bs.getValue("mappingSource")
+				// Mapping results are returned with duplicate ids when
+				// many-to-many mappings are retrieved. We resolve this problem
+				// by hashing the mapping id and adding to an existing mapping
+				// when we come across a duplicate id.
+				if (resultMap.containsKey(bs.getValue("mappingId")
+						.stringValue())) {
+					Mapping mapping = resultMap.get(bs.getValue("mappingId")
 							.stringValue());
 
-				if (isValidValue(bs.getValue("mappingSourceName")))
-					mapping.setMappingSourceName(bs.getValue(
-							"mappingSourceName").stringValue());
+					URI sourceURI = new URIImpl(bs.getValue("source")
+							.stringValue());
+					URI targetURI = new URIImpl(bs.getValue("target")
+							.stringValue());
 
-				if (isValidValue(bs.getValue("mappingSourceContactInfo")))
-					mapping.setMappingSourcecontactInfo(bs.getValue(
-							"mappingSourceContactInfo").stringValue());
+					if (!mapping.getSource().contains(sourceURI))
+						mapping.addSource(sourceURI);
 
-				if (isValidValue(bs.getValue("mappingSourceAlgorithm")))
-					mapping.setMappingSourceAlgorithm(bs.getValue(
-							"mappingSourceAlgorithm").stringValue());
+					if (!mapping.getTarget().contains(targetURI))
+						mapping.addTarget(targetURI);
+				} else {
+					Mapping mapping = new Mapping();
 
-				if (isValidValue(bs.getValue("mappingSourceSite")))
-					mapping.setMappingSourceSite(new URIImpl(bs.getValue(
-							"mappingSourceSite").stringValue()));
+					// Set Mapping properties (required)
 
-				mappings.add(mapping);
+					mapping.setId(new URIImpl(bs.getValue("mappingId")
+							.stringValue()));
+
+					mapping.addSource(new URIImpl(bs.getValue("source")
+							.stringValue()));
+
+					mapping.addTarget(new URIImpl(bs.getValue("target")
+							.stringValue()));
+
+					mapping.setRelation(new URIImpl(bs.getValue("relation")
+							.stringValue()));
+
+					mapping.setSourceOntologyId(convertValueToInteger(bs
+							.getValue("sourceOntologyId")));
+
+					mapping.setTargetOntologyId(convertValueToInteger(bs
+							.getValue("targetOntologyId")));
+
+					mapping
+							.setCreatedInSourceOntologyVersion(convertValueToInteger(bs
+									.getValue("createdInSourceOntologyVersion")));
+
+					mapping
+							.setCreatedInTargetOntologyVersion(convertValueToInteger(bs
+									.getValue("createdInTargetOntologyVersion")));
+
+					mapping.setSubmittedBy(convertValueToInteger(bs
+							.getValue("submittedBy")));
+
+					mapping.setMappingType(bs.getValue("mappingType")
+							.stringValue());
+
+					mapping.setDate(convertValueToDate(bs.getValue("date")));
+
+					// Set mapping properties (optional)
+					if (isValidValue(bs.getValue("dependency")))
+						mapping.setDependency(new URIImpl(bs.getValue(
+								"dependency").stringValue()));
+
+					if (isValidValue(bs.getValue("comment")))
+						mapping
+								.setComment(bs.getValue("comment")
+										.stringValue());
+
+					if (isValidValue(bs.getValue("mappingSource")))
+						mapping.setMappingSource(bs.getValue("mappingSource")
+								.stringValue());
+
+					if (isValidValue(bs.getValue("mappingSourceName")))
+						mapping.setMappingSourceName(bs.getValue(
+								"mappingSourceName").stringValue());
+
+					if (isValidValue(bs.getValue("mappingSourceContactInfo")))
+						mapping.setMappingSourcecontactInfo(bs.getValue(
+								"mappingSourceContactInfo").stringValue());
+
+					if (isValidValue(bs.getValue("mappingSourceAlgorithm")))
+						mapping.setMappingSourceAlgorithm(bs.getValue(
+								"mappingSourceAlgorithm").stringValue());
+
+					if (isValidValue(bs.getValue("mappingSourceSite")))
+						mapping.setMappingSourceSite(new URIImpl(bs.getValue(
+								"mappingSourceSite").stringValue()));
+
+					resultMap.put(bs.getValue("mappingId").stringValue(),
+							mapping);
+				}
+
 			}
 			System.out.println("Create mappings list time: "
 					+ (System.currentTimeMillis() - start)
@@ -253,7 +283,7 @@ public class AbstractNcboMappingDAO {
 
 			result.close();
 
-			return mappings;
+			return new ArrayList<Mapping>(resultMap.values());
 		} catch (RepositoryException e) {
 			e.printStackTrace();
 		} catch (QueryEvaluationException e) {
@@ -585,8 +615,8 @@ public class AbstractNcboMappingDAO {
 	 * @param mappingType
 	 * @return
 	 */
-	protected OneToOneMapping updateMappingEntity(OneToOneMapping mapping,
-			URI source, URI target, URI relation, Integer sourceOntologyId,
+	protected Mapping updateMappingEntity(Mapping mapping, List<URI> source,
+			List<URI> target, URI relation, Integer sourceOntologyId,
 			Integer targetOntologyId, Integer sourceOntologyVersion,
 			Integer targetOntologyVersion, Integer submittedBy, URI dependency,
 			String comment, String mappingSource, String mappingSourceName,

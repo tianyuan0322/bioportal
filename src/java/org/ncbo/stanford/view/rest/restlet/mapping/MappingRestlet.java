@@ -5,7 +5,7 @@ import javax.servlet.http.HttpServletRequest;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.ncbo.stanford.bean.mapping.MappingParametersBean;
-import org.ncbo.stanford.bean.mapping.OneToOneMappingBean;
+import org.ncbo.stanford.bean.mapping.MappingBean;
 import org.ncbo.stanford.exception.InvalidInputException;
 import org.ncbo.stanford.exception.MappingMissingException;
 import org.ncbo.stanford.service.mapping.MappingService;
@@ -48,7 +48,7 @@ public class MappingRestlet extends AbstractMappingRestlet {
 
 	private void listMapping(Request request, Response response,
 			String mappingId) {
-		OneToOneMappingBean mapping = null;
+		MappingBean mapping = null;
 		try {
 			mapping = mappingService.getMapping(new URIImpl(mappingId));
 		} catch (MappingMissingException e) {
@@ -90,7 +90,7 @@ public class MappingRestlet extends AbstractMappingRestlet {
 		MappingParametersBean parameters = getMappingParameters(request,
 				response);
 
-		Page<OneToOneMappingBean> mappings = null;
+		Page<MappingBean> mappings = null;
 		try {
 			if (!parameters.isEmpty()) {
 				mappings = mappingService.getMappingsForParameters(pageSizeInt,
