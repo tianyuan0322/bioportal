@@ -3,12 +3,14 @@ package org.ncbo.stanford.service.loader.scheduler.impl;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.ncbo.stanford.aop.notification.NotificationProcessForOntology;
 import org.ncbo.stanford.bean.OntologyBean;
 import org.ncbo.stanford.bean.OntologyMetricsBean;
 import org.ncbo.stanford.domain.generated.NcboLStatus;
@@ -39,7 +41,7 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional
 public class OntologyLoadSchedulerServiceImpl extends AbstractOntologyService
 		implements OntologyLoadSchedulerService {
-
+	
 	private static final Log log = LogFactory
 			.getLog(OntologyLoadSchedulerServiceImpl.class);
 	private static final String ONTOLOGY_QUEUE_DOES_NOT_EXIST_ERROR = "No load queue record exists for the ontology";
@@ -48,6 +50,17 @@ public class OntologyLoadSchedulerServiceImpl extends AbstractOntologyService
 			0);
 	private Map<String, OntologyMetricsManager> ontologyMetricsHandlerMap = new HashMap<String, OntologyMetricsManager>(
 			0);
+	private NotificationProcessForOntology notificationProcessForOntology;
+
+	
+	/**
+	 * 
+	 * @param notificationProcessForOntology
+	 */
+	public void setNotificationProcessForOntology(
+			NotificationProcessForOntology notificationProcessForOntology) {
+		this.notificationProcessForOntology = notificationProcessForOntology;
+	}
 
 	/**
 	 * Gets the list of ontologies that need to be loaded and processed each
@@ -113,13 +126,13 @@ public class OntologyLoadSchedulerServiceImpl extends AbstractOntologyService
 		}
 
 		optimizeIndex();
-
+		
 		for (Integer errorVersionId : errorVersionIdList) {
 			String error = addErrorOntology(errorOntologies, errorVersionId
 					.toString(), null, ONTOLOGY_VERSION_DOES_NOT_EXIST_ERROR);
 			log.error(error);
 		}
-	}
+		}
 
 	/**
 	 * Parse a single record from the ontology load queue
@@ -131,6 +144,8 @@ public class OntologyLoadSchedulerServiceImpl extends AbstractOntologyService
 			String formatHandler, OntologyBean ontologyBean) {
 		String errorMessage = null;
 		Integer ontologyVersionId = loadQueue.getOntologyVersionId();
+		
+		
 		StatusEnum status = StatusEnum.STATUS_ERROR;
 
 		// parse
@@ -199,6 +214,11 @@ public class OntologyLoadSchedulerServiceImpl extends AbstractOntologyService
 				updateOntologyStatus(loadQueue, ontologyBean, formatHandler,
 						status, errorMessage);
 			}
+			// Calling the process method giving the support in AOP calling for
+			// Email
+			// notification
+			notificationProcessForOntology.processForOntologySubmitted(loadQueue,
+					formatHandler, ontologyBean);
 		} catch (Exception e) {
 			status = StatusEnum.STATUS_ERROR;
 			errorMessage = getLongErrorMessage(e);
@@ -206,7 +226,7 @@ public class OntologyLoadSchedulerServiceImpl extends AbstractOntologyService
 					ontologyBean, errorMessage);
 			e.printStackTrace();
 			log.error(e);
-
+			
 			try {
 				updateOntologyStatus(loadQueue, ontologyBean, formatHandler,
 						status, errorMessage);
@@ -215,7 +235,9 @@ public class OntologyLoadSchedulerServiceImpl extends AbstractOntologyService
 				log.error("Unable to update ontology status due to error: "
 						+ e.getMessage());
 			}
+			
 		}
+		
 	}
 
 	private String indexOntology(String errorMessage, OntologyBean ontologyBean) {
@@ -447,4 +469,18 @@ public class OntologyLoadSchedulerServiceImpl extends AbstractOntologyService
 			Map<String, OntologyDiffManager> ontologyDiffHandlerMap) {
 		this.ontologyDiffHandlerMap = ontologyDiffHandlerMap;
 	}
+	
+	private OntologyBean createOntologyBeanBase() {
+		OntologyBean bean = new OntologyBean(false);
+		bean.setOntologyId(13305);
+		bean.setId(13306);
+		// OntologyId gets automatically generated.
+		bean.setIsManual(ApplicationConstants.FALSE);
+		bean.setFormat(ApplicationConstants.FORMAT_OWL);
+		bean.setCodingScheme(null);
+		bean.setDisplayLabel("BioPortal Metadata Ontology");
+		
+		return bean;
+	}
+	
 }
