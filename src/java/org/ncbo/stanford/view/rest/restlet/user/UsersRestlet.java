@@ -5,6 +5,7 @@ import java.util.List;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.ncbo.stanford.bean.UserBean;
+import org.ncbo.stanford.exception.InvalidInputException;
 import org.ncbo.stanford.service.user.UserService;
 import org.ncbo.stanford.util.helper.BeanHelper;
 import org.ncbo.stanford.view.rest.restlet.AbstractBaseRestlet;
@@ -66,11 +67,13 @@ public class UsersRestlet extends AbstractBaseRestlet {
 	 *            response
 	 */
 	private void createUser(Request request, Response response) {
-		UserBean userBean = BeanHelper.populateUserBeanFromRequest(request);
+		UserBean userBean = null;
 
-		// create the user
 		try {
+			userBean = BeanHelper.populateUserBeanFromRequest(request);
 			userService.createUser(userBean);
+		} catch (InvalidInputException e) {
+			response.setStatus(Status.CLIENT_ERROR_BAD_REQUEST, e.getMessage());
 		} catch (Exception e) {
 			response.setStatus(Status.SERVER_ERROR_INTERNAL, e.getMessage());
 			e.printStackTrace();

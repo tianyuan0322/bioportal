@@ -3,6 +3,7 @@ package org.ncbo.stanford.view.rest.restlet.user;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.ncbo.stanford.bean.UserBean;
+import org.ncbo.stanford.exception.InvalidInputException;
 import org.ncbo.stanford.exception.UserNotFoundException;
 import org.ncbo.stanford.service.user.UserService;
 import org.ncbo.stanford.util.MessageUtils;
@@ -84,16 +85,16 @@ public class UserRestlet extends AbstractBaseRestlet {
 			// save the id for later
 			Integer id = userBean.getId();
 
-			// populate UserBean from Request object
-			// currently id is not provided in the request object
-			userBean = BeanHelper.populateUserBeanFromRequest(request);
-
-			// set the id
-			userBean.setId(id);
-
 			// now update the user
 			try {
+				// populate UserBean from Request object
+				// currently id is not provided in the request object
+				userBean = BeanHelper.populateUserBeanFromRequest(request);
+				userBean.setId(id);
 				userService.updateUser(userBean);
+			} catch (InvalidInputException e) {
+				response.setStatus(Status.CLIENT_ERROR_BAD_REQUEST, e
+						.getMessage());
 			} catch (Exception e) {
 				response
 						.setStatus(Status.SERVER_ERROR_INTERNAL, e.getMessage());

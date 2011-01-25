@@ -11,6 +11,7 @@ import org.ncbo.stanford.bean.OntologyBean;
 import org.ncbo.stanford.bean.UserBean;
 import org.ncbo.stanford.bean.SubscriptionsBean;
 import org.ncbo.stanford.enumeration.NotificationTypeEnum;
+import org.ncbo.stanford.exception.InvalidInputException;
 import org.ncbo.stanford.bean.logging.UsageLoggingBean;
 import org.ncbo.stanford.util.MessageUtils;
 import org.ncbo.stanford.util.RequestUtils;
@@ -26,7 +27,8 @@ public class BeanHelper {
 	 * 
 	 * @param Request
 	 */
-	public static UserBean populateUserBeanFromRequest(Request request) {
+	public static UserBean populateUserBeanFromRequest(Request request)
+			throws InvalidInputException {
 		HttpServletRequest httpServletRequest = RequestUtils
 				.getHttpServletRequest(request);
 
@@ -44,6 +46,12 @@ public class BeanHelper {
 				.getMessage("form.user.phone"));
 		String dateCreated = httpServletRequest.getParameter(MessageUtils
 				.getMessage("form.user.dateCreated"));
+
+		if (StringHelper.isNullOrNullString(username)
+				|| StringHelper.isNullOrNullString(password)
+				|| StringHelper.isNullOrNullString(email)) {
+			throw new InvalidInputException();
+		}
 
 		UserBean userBean = new UserBean();
 		userBean.setUsername(username);
@@ -288,19 +296,19 @@ public class BeanHelper {
 		if (codingScheme != null) {
 			bean.setCodingScheme(codingScheme);
 		}
-		
+
 		if (downloadLocation != null) {
 			bean.setDownloadLocation(downloadLocation);
 		}
-		
+
 		if (!StringHelper.isNullOrNullString(isFoundry)) {
 			bean.setIsFoundry(Byte.parseByte(isFoundry));
 		}
-		
+
 		if (!StringHelper.isNullOrNullString(isMetadataOnly)) {
 			bean.setIsMetadataOnly(Byte.parseByte(isMetadataOnly));
 		}
-		
+
 		if (targetTerminologies != null) {
 			bean.setTargetTerminologies(targetTerminologies);
 		}
@@ -457,11 +465,10 @@ public class BeanHelper {
 		Date startDate = RequestUtils.parseDateParam(startDateAccessed);
 		Date endDate = RequestUtils.parseDateParam(endDateAccessed);
 
-		UsageLoggingBean usageLoggingBean = new UsageLoggingBean(applicationId, null, requestUrl,
-				null, null, null, null, null,
-				null, null, null, null, null,
-				null, null);
-		
+		UsageLoggingBean usageLoggingBean = new UsageLoggingBean(applicationId,
+				null, requestUrl, null, null, null, null, null, null, null,
+				null, null, null, null, null);
+
 		if (startDate != null) {
 			usageLoggingBean.setStartDateAccessed(startDate);
 		}
@@ -469,12 +476,13 @@ public class BeanHelper {
 		if (endDate != null) {
 			usageLoggingBean.setEndDateAccessed(endDate);
 		}
-		
+
 		return usageLoggingBean;
 	}
-	
+
 	/**
 	 * Create SubscriptionsBean object and populates from Request object.
+	 * 
 	 * @param request
 	 * @return
 	 */
@@ -499,8 +507,10 @@ public class BeanHelper {
 
 		return subscriptionsBean;
 	}
+
 	/**
-	 * It will collect the OntologyIds from the request 
+	 * It will collect the OntologyIds from the request
+	 * 
 	 * @param request
 	 * @return
 	 */
@@ -508,7 +518,5 @@ public class BeanHelper {
 		return RequestUtils.getAttributeOrRequestParams(MessageUtils
 				.getMessage("entity.ontologyid"), request);
 	}
-	
-	
-	
+
 }
