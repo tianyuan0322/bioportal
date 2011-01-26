@@ -42,7 +42,7 @@ public class MappingStatsRecentRestlet extends AbstractMappingRestlet {
 
 		// Post-process parameters
 		Integer limit = RequestUtils.parseIntegerParam(limitStr);
-		
+
 		// Default values
 		if (limit == null || limit < 1 || limit > 100) {
 			limit = 5;
@@ -56,6 +56,10 @@ public class MappingStatsRecentRestlet extends AbstractMappingRestlet {
 					.getMessage());
 			iie.printStackTrace();
 			log.error(iie);
+		} catch (Exception e) {
+			response.setStatus(Status.CLIENT_ERROR_BAD_REQUEST, e.getMessage());
+			e.printStackTrace();
+			log.error(e);
 		} finally {
 			xmlSerializationService.generateXMLResponse(request, response,
 					mappings);

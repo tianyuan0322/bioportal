@@ -13,6 +13,8 @@ import org.ncbo.stanford.util.constants.ApplicationConstants;
 import org.openrdf.model.Statement;
 import org.openrdf.model.URI;
 import org.openrdf.model.ValueFactory;
+import org.openrdf.model.impl.StatementImpl;
+import org.openrdf.model.impl.URIImpl;
 import org.openrdf.repository.RepositoryConnection;
 import org.openrdf.repository.RepositoryException;
 
@@ -73,6 +75,22 @@ public class CustomNcboMappingDAO extends AbstractNcboMappingDAO {
 		ArrayList<Statement> statements = newMapping.toStatements(vf);
 
 		for (Statement statement : statements) {
+			try {
+				con.add(statement, ApplicationConstants.MAPPING_CONTEXT_URI);
+			} catch (RepositoryException e) {
+				e.printStackTrace();
+			}
+		}
+
+		// For mappings that are many-to-many, we add a triple to indicate this.
+		// It helps with the lookups while we are retrieving.
+		if (newMapping.getSource().size() > 1
+				|| newMapping.getTarget().size() > 1) {
+			URI predicate = new URIImpl(ApplicationConstants.MAPPING_PREFIX
+					+ "is_many_to_many");
+			Statement statement = new StatementImpl(newMapping.getId(),
+					predicate, vf.createLiteral(true));
+			
 			try {
 				con.add(statement, ApplicationConstants.MAPPING_CONTEXT_URI);
 			} catch (RepositoryException e) {

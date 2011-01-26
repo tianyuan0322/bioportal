@@ -3,7 +3,6 @@ package org.ncbo.stanford.domain.custom.dao.mapping;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.GregorianCalendar;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.TimeZone;
@@ -21,6 +20,7 @@ import org.openrdf.model.Value;
 import org.openrdf.model.impl.LiteralImpl;
 import org.openrdf.model.impl.StatementImpl;
 import org.openrdf.model.impl.URIImpl;
+import org.openrdf.model.util.LiteralUtil;
 import org.openrdf.query.BindingSet;
 import org.openrdf.query.MalformedQueryException;
 import org.openrdf.query.QueryEvaluationException;
@@ -39,10 +39,10 @@ public class AbstractNcboMappingDAO {
 	// be interpreted as mappings (IE it contains all mappings fields in every
 	// row). The %FILTER% token can be replaced with whatever filter is need to
 	// get specific results. %OFFSET% and %LIMIT% must be replaced as well.
-	protected final static String mappingQuery = "SELECT  "
+	protected final static String mappingQuery = "SELECT "
 			+ "?mappingId "
-			+ "?source "
-			+ "?target "
+			+ "MAX(?source) as ?source "
+			+ "MAX(?target) as ?target "
 			+ "?relation "
 			+ "?sourceOntologyId "
 			+ "?targetOntologyId "
@@ -58,7 +58,8 @@ public class AbstractNcboMappingDAO {
 			+ "?mappingSourceContactInfo "
 			+ "?mappingSourceSite "
 			+ "?mappingSourceAlgorithm "
-			+ "WHERE {"
+			+ "?manyToMany"
+			+ " {"
 			+ "  ?mappingId <http://protege.stanford.edu/ontologies/mappings/mappings.rdfs#source> ?source ."
 			+ "  ?mappingId <http://protege.stanford.edu/ontologies/mappings/mappings.rdfs#target> ?target ."
 			+ "  ?mappingId <http://protege.stanford.edu/ontologies/mappings/mappings.rdfs#relation> ?relation ."
@@ -76,9 +77,10 @@ public class AbstractNcboMappingDAO {
 			+ "  OPTIONAL { ?mappingId <http://protege.stanford.edu/ontologies/mappings/mappings.rdfs#mapping_source_contact_info> ?mappingSourceContactInfo .}"
 			+ "  OPTIONAL { ?mappingId <http://protege.stanford.edu/ontologies/mappings/mappings.rdfs#mapping_source_site> ?mappingSourceSite .}"
 			+ "  OPTIONAL { ?mappingId <http://protege.stanford.edu/ontologies/mappings/mappings.rdfs#mapping_source_algorithm> ?mappingSourceAlgorithm .}"
+			+ "  OPTIONAL { ?mappingId <http://protege.stanford.edu/ontologies/mappings/mappings.rdfs#is_many_to_many> ?manyToMany .}"
 			+ "  FILTER (%FILTER%) } %ORDERBY% LIMIT %LIMIT% OFFSET %OFFSET%";
 
-	protected final static String mappingCountQuery = "SELECT  "
+	protected final static String mappingCountQuery = "SELECT DISTINCT "
 			+ "count(?mappingId) as ?mappingCount WHERE {"
 			+ "  ?mappingId <http://protege.stanford.edu/ontologies/mappings/mappings.rdfs#source> ?source ."
 			+ "  ?mappingId <http://protege.stanford.edu/ontologies/mappings/mappings.rdfs#target> ?target ."
@@ -98,6 +100,13 @@ public class AbstractNcboMappingDAO {
 			+ "  OPTIONAL { ?mappingId <http://protege.stanford.edu/ontologies/mappings/mappings.rdfs#mapping_source_site> ?mappingSourceSite .}"
 			+ "  OPTIONAL { ?mappingId <http://protege.stanford.edu/ontologies/mappings/mappings.rdfs#mapping_source_algorithm> ?mappingSourceAlgorithm .}"
 			+ "  FILTER (%FILTER%) }";
+
+	protected final static String manyToManySourcesAndTargets = "SELECT DISTINCT "
+			+ " ?source ?target"
+			+ " WHERE { "
+			+ "  ?mappingId <http://protege.stanford.edu/ontologies/mappings/mappings.rdfs#source> ?source ."
+			+ "  ?mappingId <http://protege.stanford.edu/ontologies/mappings/mappings.rdfs#target> ?target ."
+			+ "  FILTER(%FILTER%) }";
 
 	/*******************************************************************
 	 * 
@@ -179,102 +188,115 @@ public class AbstractNcboMappingDAO {
 			ArrayList<Mapping> mappings = new ArrayList<Mapping>();
 			start = System.currentTimeMillis();
 
-			HashMap<String, Mapping> resultMap = new HashMap<String, Mapping>();
-
 			while (result.hasNext()) {
 				BindingSet bs = result.next();
 
-				// Mapping results are returned with duplicate ids when
-				// many-to-many mappings are retrieved. We resolve this problem
-				// by hashing the mapping id and adding to an existing mapping
-				// when we come across a duplicate id.
-				if (resultMap.containsKey(bs.getValue("mappingId")
-						.stringValue())) {
-					Mapping mapping = resultMap.get(bs.getValue("mappingId")
-							.stringValue());
+				Mapping mapping = new Mapping();
 
-					URI sourceURI = new URIImpl(bs.getValue("source")
-							.stringValue());
-					URI targetURI = new URIImpl(bs.getValue("target")
-							.stringValue());
+				String mappingId = bs.getValue("mappingId").stringValue();
 
-					if (!mapping.getSource().contains(sourceURI))
-						mapping.addSource(sourceURI);
+				// Check to see if this is a many-to-many mapping.
+				// If so, we need to make a query to get all of the sources
+				// and targets. We use a predicate, "is_many_to_many", to
+				// determine this.
+				boolean isManyToMany = LiteralUtil.getBooleanValue(bs
+						.getValue("manyToMany"), false);
 
-					if (!mapping.getTarget().contains(targetURI))
-						mapping.addTarget(targetURI);
-				} else {
-					Mapping mapping = new Mapping();
+				if (isManyToMany == true) {
+					String queryString1 = manyToManySourcesAndTargets
+							.replaceAll("%FILTER%", "?mappingId = <"
+									+ mappingId + ">");
 
-					// Set Mapping properties (required)
+					TupleQuery query1 = con.prepareTupleQuery(
+							QueryLanguage.SPARQL, queryString1,
+							ApplicationConstants.MAPPING_CONTEXT);
+					TupleQueryResult result1 = query1.evaluate();
 
-					mapping.setId(new URIImpl(bs.getValue("mappingId")
-							.stringValue()));
+					ArrayList<URI> source = new ArrayList<URI>();
+					ArrayList<URI> target = new ArrayList<URI>();
+					while (result1.hasNext()) {
+						BindingSet bs1 = result1.next();
 
-					mapping.addSource(new URIImpl(bs.getValue("source")
-							.stringValue()));
-
-					mapping.addTarget(new URIImpl(bs.getValue("target")
-							.stringValue()));
-
-					mapping.setRelation(new URIImpl(bs.getValue("relation")
-							.stringValue()));
-
-					mapping.setSourceOntologyId(convertValueToInteger(bs
-							.getValue("sourceOntologyId")));
-
-					mapping.setTargetOntologyId(convertValueToInteger(bs
-							.getValue("targetOntologyId")));
-
-					mapping
-							.setCreatedInSourceOntologyVersion(convertValueToInteger(bs
-									.getValue("createdInSourceOntologyVersion")));
-
-					mapping
-							.setCreatedInTargetOntologyVersion(convertValueToInteger(bs
-									.getValue("createdInTargetOntologyVersion")));
-
-					mapping.setSubmittedBy(convertValueToInteger(bs
-							.getValue("submittedBy")));
-
-					mapping.setMappingType(bs.getValue("mappingType")
-							.stringValue());
-
-					mapping.setDate(convertValueToDate(bs.getValue("date")));
-
-					// Set mapping properties (optional)
-					if (isValidValue(bs.getValue("dependency")))
-						mapping.setDependency(new URIImpl(bs.getValue(
-								"dependency").stringValue()));
-
-					if (isValidValue(bs.getValue("comment")))
-						mapping
-								.setComment(bs.getValue("comment")
-										.stringValue());
-
-					if (isValidValue(bs.getValue("mappingSource")))
-						mapping.setMappingSource(bs.getValue("mappingSource")
+						URI sourceURI = new URIImpl(bs1.getValue("source")
+								.stringValue());
+						URI targetURI = new URIImpl(bs1.getValue("target")
 								.stringValue());
 
-					if (isValidValue(bs.getValue("mappingSourceName")))
-						mapping.setMappingSourceName(bs.getValue(
-								"mappingSourceName").stringValue());
+						if (!source.contains(sourceURI))
+							source.add(sourceURI);
 
-					if (isValidValue(bs.getValue("mappingSourceContactInfo")))
-						mapping.setMappingSourcecontactInfo(bs.getValue(
-								"mappingSourceContactInfo").stringValue());
-
-					if (isValidValue(bs.getValue("mappingSourceAlgorithm")))
-						mapping.setMappingSourceAlgorithm(bs.getValue(
-								"mappingSourceAlgorithm").stringValue());
-
-					if (isValidValue(bs.getValue("mappingSourceSite")))
-						mapping.setMappingSourceSite(new URIImpl(bs.getValue(
-								"mappingSourceSite").stringValue()));
-
-					resultMap.put(bs.getValue("mappingId").stringValue(),
-							mapping);
+						if (!target.contains(targetURI))
+							target.add(targetURI);
+						
+						mapping.setSource(source);
+						mapping.setTarget(target);
+					}
+				} else {
+					mapping.addSource(new URIImpl(bs.getValue("source")
+							.stringValue()));
+					mapping.addTarget(new URIImpl(bs.getValue("target")
+							.stringValue()));
 				}
+
+				// Set Mapping properties (required)
+
+				mapping.setId(new URIImpl(mappingId));
+
+				mapping.setRelation(new URIImpl(bs.getValue("relation")
+						.stringValue()));
+
+				mapping.setSourceOntologyId(convertValueToInteger(bs
+						.getValue("sourceOntologyId")));
+
+				mapping.setTargetOntologyId(convertValueToInteger(bs
+						.getValue("targetOntologyId")));
+
+				mapping
+						.setCreatedInSourceOntologyVersion(convertValueToInteger(bs
+								.getValue("createdInSourceOntologyVersion")));
+
+				mapping
+						.setCreatedInTargetOntologyVersion(convertValueToInteger(bs
+								.getValue("createdInTargetOntologyVersion")));
+
+				mapping.setSubmittedBy(convertValueToInteger(bs
+						.getValue("submittedBy")));
+
+				mapping
+						.setMappingType(bs.getValue("mappingType")
+								.stringValue());
+
+				mapping.setDate(convertValueToDate(bs.getValue("date")));
+
+				// Set mapping properties (optional)
+				if (isValidValue(bs.getValue("dependency")))
+					mapping.setDependency(new URIImpl(bs.getValue("dependency")
+							.stringValue()));
+
+				if (isValidValue(bs.getValue("comment")))
+					mapping.setComment(bs.getValue("comment").stringValue());
+
+				if (isValidValue(bs.getValue("mappingSource")))
+					mapping.setMappingSource(bs.getValue("mappingSource")
+							.stringValue());
+
+				if (isValidValue(bs.getValue("mappingSourceName")))
+					mapping.setMappingSourceName(bs.getValue(
+							"mappingSourceName").stringValue());
+
+				if (isValidValue(bs.getValue("mappingSourceContactInfo")))
+					mapping.setMappingSourcecontactInfo(bs.getValue(
+							"mappingSourceContactInfo").stringValue());
+
+				if (isValidValue(bs.getValue("mappingSourceAlgorithm")))
+					mapping.setMappingSourceAlgorithm(bs.getValue(
+							"mappingSourceAlgorithm").stringValue());
+
+				if (isValidValue(bs.getValue("mappingSourceSite")))
+					mapping.setMappingSourceSite(new URIImpl(bs.getValue(
+							"mappingSourceSite").stringValue()));
+
+				mappings.add(mapping);
 
 			}
 			System.out.println("Create mappings list time: "
@@ -283,7 +305,7 @@ public class AbstractNcboMappingDAO {
 
 			result.close();
 
-			return new ArrayList<Mapping>(resultMap.values());
+			return mappings;
 		} catch (RepositoryException e) {
 			e.printStackTrace();
 		} catch (QueryEvaluationException e) {
