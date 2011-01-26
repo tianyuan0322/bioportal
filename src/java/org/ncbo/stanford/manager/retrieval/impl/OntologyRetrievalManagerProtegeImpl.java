@@ -613,12 +613,17 @@ public class OntologyRetrievalManagerProtegeImpl extends
 			KnowledgeBase kb = frame.getKnowledgeBase();
 			Slot browserSlot = getPreferredNameSlot(kb, ob
 					.getPreferredNameSlot());
-			BrowserSlotPattern bsp = kb instanceof OWLModel ? new OWLBrowserSlotPattern(
-					browserSlot)
-					: new BrowserSlotPattern(browserSlot);
-			browserText = bsp.getBrowserText((Instance) frame);
-			if (browserText == null) {
-				browserText = frame.getName();
+			if (browserSlot != null) {
+				BrowserSlotPattern bsp = kb instanceof OWLModel ? new OWLBrowserSlotPattern(
+						browserSlot)
+						: new BrowserSlotPattern(browserSlot);
+				browserText = bsp.getBrowserText((Instance) frame);
+			}
+
+			if (StringHelper.isNullOrNullString(browserText)) {
+				browserText = kb instanceof OWLModel ? NamespaceUtil
+						.getPrefixedName(((OWLModel) kb), frame.getName())
+						: frame.getName();
 			}
 		} else {
 			browserText = frame.getBrowserText();

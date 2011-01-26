@@ -91,7 +91,7 @@ public abstract class AbstractOntologyManagerProtege {
 		}
 		return protegeType;
 	}
-	
+
 	protected Slot getSynonymSlot(KnowledgeBase kb, String synonymSlot) {
 		Slot slot = null;
 
@@ -113,6 +113,11 @@ public abstract class AbstractOntologyManagerProtege {
 		Slot slot = null;
 
 		if (!StringHelper.isNullOrNullString(preferredNameSlotName)) {
+			if (preferredNameSlotName.equalsIgnoreCase("rdf:about")
+					|| preferredNameSlotName.equalsIgnoreCase("rdf:ID")
+					|| preferredNameSlotName.equalsIgnoreCase(":NAME")) {
+				return slot;
+			}
 			slot = kb instanceof OWLModel ? ((OWLModel) kb)
 					.getRDFProperty(preferredNameSlotName) : kb
 					.getSlot(preferredNameSlotName);
@@ -169,26 +174,28 @@ public abstract class AbstractOntologyManagerProtege {
 
 	private void setBrowserSlotByPreferredNameSlot(KnowledgeBase kb,
 			Slot preferredNameSlot) {
-		Set<Cls> types = new HashSet<Cls>();
+		if (preferredNameSlot != null) {
+			Set<Cls> types = new HashSet<Cls>();
 
-		if (kb instanceof OWLModel) {
-			OWLModel owlModel = (OWLModel) kb;
-			types.add(owlModel.getRDFSNamedClassClass());
-			types.add(owlModel.getOWLNamedClassClass());
+			if (kb instanceof OWLModel) {
+				OWLModel owlModel = (OWLModel) kb;
+				types.add(owlModel.getRDFSNamedClassClass());
+				types.add(owlModel.getOWLNamedClassClass());
 
-			types.add(owlModel.getRDFPropertyClass());
-			types.add(owlModel.getOWLObjectPropertyClass());
-			types.add(owlModel.getOWLDatatypePropertyClass());
+				types.add(owlModel.getRDFPropertyClass());
+				types.add(owlModel.getOWLObjectPropertyClass());
+				types.add(owlModel.getOWLDatatypePropertyClass());
 
-			types.add(owlModel.getRootCls());
-		} else {
-			types.add(kb.getRootClsMetaCls());
-			types.add(kb.getRootSlotMetaCls());
-			types.add(kb.getRootCls());
-		}
+				types.add(owlModel.getRootCls());
+			} else {
+				types.add(kb.getRootClsMetaCls());
+				types.add(kb.getRootSlotMetaCls());
+				types.add(kb.getRootCls());
+			}
 
-		for (Cls cls : types) {
-			cls.setDirectBrowserSlot(preferredNameSlot);
+			for (Cls cls : types) {
+				cls.setDirectBrowserSlot(preferredNameSlot);
+			}
 		}
 	}
 
@@ -446,13 +453,13 @@ public abstract class AbstractOntologyManagerProtege {
 		return ApplicationConstants.BASE_CONCEPT_NAMESPACE
 				+ ontologyBean.getAbbreviation() + "/" + name;
 	}
-	
+
 	protected String getIdFromProtegeURI(String fullId) {
 		if (fullId != null && fullId.lastIndexOf("/") != -1) {
 			fullId = fullId.substring(fullId.lastIndexOf("/") + 1);
 		}
-		
-		return fullId; 
+
+		return fullId;
 	}
 
 	protected String getFullId(Frame frame, OntologyBean ontologyBean) {
