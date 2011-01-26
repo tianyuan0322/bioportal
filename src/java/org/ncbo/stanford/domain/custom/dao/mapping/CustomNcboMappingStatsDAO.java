@@ -101,7 +101,7 @@ public class CustomNcboMappingStatsDAO extends AbstractNcboMappingDAO {
 		// Create a filter
 		String filter = StringUtils.join(mappingIds, " || ");
 
-		return getMappings(1000, 0, filter, orderBy, null);
+		return getMappings(limit, 0, filter, orderBy, null);
 	}
 
 	/**
