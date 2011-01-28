@@ -76,8 +76,7 @@ public class MappingServiceImpl implements MappingService {
 				pageMappings, pageSize, totalResults);
 
 		int offset = pageNum * pageSize - pageSize;
-		int limit = (offset + pageSize > totalResults) ? totalResults : offset
-				+ pageSize;
+		int limit = (offset + pageSize > totalResults) ? totalResults : pageSize;
 
 		List<Mapping> mappings = mappingDAO.getMappingsFromOntology(ont
 				.getOntologyId(), limit, offset, parameters);
@@ -100,8 +99,7 @@ public class MappingServiceImpl implements MappingService {
 				pageMappings, pageSize, totalResults);
 
 		int offset = pageNum * pageSize - pageSize;
-		int limit = (offset + pageSize > totalResults) ? totalResults : offset
-				+ pageSize;
+		int limit = (offset + pageSize > totalResults) ? totalResults : pageSize;
 
 		List<Mapping> mappings = mappingDAO.getMappingsToOntology(ont
 				.getOntologyId(), limit, offset, parameters);
@@ -126,8 +124,7 @@ public class MappingServiceImpl implements MappingService {
 				pageMappings, pageSize, totalResults);
 
 		int offset = pageNum * pageSize - pageSize;
-		int limit = (offset + pageSize > totalResults) ? totalResults : offset
-				+ pageSize;
+		int limit = (offset + pageSize > totalResults) ? totalResults : pageSize;
 
 		List<Mapping> mappings = mappingDAO
 				.getMappingsBetweenOntologies(sourceOnt.getOntologyId(),
@@ -152,8 +149,7 @@ public class MappingServiceImpl implements MappingService {
 				pageMappings, pageSize, totalResults);
 
 		int offset = pageNum * pageSize - pageSize;
-		int limit = (offset + pageSize > totalResults) ? totalResults : offset
-				+ pageSize;
+		int limit = (offset + pageSize > totalResults) ? totalResults : pageSize;
 
 		List<Mapping> mappings = mappingDAO.getMappingsForOntology(ont
 				.getOntologyId(), limit, offset, parameters);
@@ -176,8 +172,7 @@ public class MappingServiceImpl implements MappingService {
 				pageMappings, pageSize, totalResults);
 
 		int offset = pageNum * pageSize - pageSize;
-		int limit = (offset + pageSize > totalResults) ? totalResults : offset
-				+ pageSize;
+		int limit = (offset + pageSize > totalResults) ? totalResults : pageSize;
 
 		List<Mapping> mappings = mappingDAO.getMappingsForParameters(
 				limit, offset, parameters);
@@ -200,8 +195,7 @@ public class MappingServiceImpl implements MappingService {
 				pageMappings, pageSize, totalResults);
 
 		int offset = pageNum * pageSize - pageSize;
-		int limit = (offset + pageSize > totalResults) ? totalResults : offset
-				+ pageSize;
+		int limit = (offset + pageSize > totalResults) ? totalResults : pageSize;
 
 		List<Mapping> mappings = mappingDAO.getMappingsForConcept(ont
 				.getOntologyId(), concept.getFullId(), limit, offset,
@@ -225,8 +219,7 @@ public class MappingServiceImpl implements MappingService {
 				pageMappings, pageSize, totalResults);
 
 		int offset = pageNum * pageSize - pageSize;
-		int limit = (offset + pageSize > totalResults) ? totalResults : offset
-				+ pageSize;
+		int limit = (offset + pageSize > totalResults) ? totalResults : pageSize;
 
 		List<Mapping> mappings = mappingDAO.getMappingsFromConcept(ont
 				.getOntologyId(), concept.getFullId(), limit, offset,
@@ -250,8 +243,7 @@ public class MappingServiceImpl implements MappingService {
 				pageMappings, pageSize, totalResults);
 
 		int offset = pageNum * pageSize - pageSize;
-		int limit = (offset + pageSize > totalResults) ? totalResults : offset
-				+ pageSize;
+		int limit = (offset + pageSize > totalResults) ? totalResults : pageSize;
 
 		List<Mapping> mappings = mappingDAO.getMappingsToConcept(ont
 				.getOntologyId(), concept.getFullId(), limit, offset,
@@ -279,8 +271,7 @@ public class MappingServiceImpl implements MappingService {
 				pageMappings, pageSize, totalResults);
 
 		int offset = pageNum * pageSize - pageSize;
-		int limit = (offset + pageSize > totalResults) ? totalResults : offset
-				+ pageSize;
+		int limit = (offset + pageSize > totalResults) ? totalResults : pageSize;
 
 		List<Mapping> mappings = mappingDAO.getMappingsBetweenConcepts(
 				sourceOnt.getOntologyId(), targetOnt.getOntologyId(),
