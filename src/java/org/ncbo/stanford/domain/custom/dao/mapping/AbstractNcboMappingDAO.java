@@ -40,7 +40,7 @@ public class AbstractNcboMappingDAO {
 	// be interpreted as mappings (IE it contains all mappings fields in every
 	// row). The %FILTER% token can be replaced with whatever filter is need to
 	// get specific results. %OFFSET% and %LIMIT% must be replaced as well.
-	protected final static String mappingQuery = "SELECT "
+	protected final static String mappingQuery = "SELECT DISTINCT "
 			+ "?mappingId "
 			+ "?relation "
 			+ "?sourceOntologyId "
@@ -57,9 +57,10 @@ public class AbstractNcboMappingDAO {
 			+ "?mappingSourceContactInfo "
 			+ "?mappingSourceSite "
 			+ "?mappingSourceAlgorithm "
-			+ "?manyToMany"
 			+ " {"
 			+ "  ?mappingId <http://protege.stanford.edu/ontologies/mappings/mappings.rdfs#relation> ?relation ."
+			+ "  ?mappingId <http://protege.stanford.edu/ontologies/mappings/mappings.rdfs#source> ?source ."
+			+ "  ?mappingId <http://protege.stanford.edu/ontologies/mappings/mappings.rdfs#target> ?target ."
 			+ "  ?mappingId <http://protege.stanford.edu/ontologies/mappings/mappings.rdfs#source_ontology_id> ?sourceOntologyId ."
 			+ "  ?mappingId <http://protege.stanford.edu/ontologies/mappings/mappings.rdfs#target_ontology_id> ?targetOntologyId ."
 			+ "  ?mappingId <http://protege.stanford.edu/ontologies/mappings/mappings.rdfs#created_in_source_ontology_version> ?createdInSourceOntologyVersion ."
@@ -74,7 +75,6 @@ public class AbstractNcboMappingDAO {
 			+ "  OPTIONAL { ?mappingId <http://protege.stanford.edu/ontologies/mappings/mappings.rdfs#mapping_source_contact_info> ?mappingSourceContactInfo .}"
 			+ "  OPTIONAL { ?mappingId <http://protege.stanford.edu/ontologies/mappings/mappings.rdfs#mapping_source_site> ?mappingSourceSite .}"
 			+ "  OPTIONAL { ?mappingId <http://protege.stanford.edu/ontologies/mappings/mappings.rdfs#mapping_source_algorithm> ?mappingSourceAlgorithm .}"
-			+ "  OPTIONAL { ?mappingId <http://protege.stanford.edu/ontologies/mappings/mappings.rdfs#is_many_to_many> ?manyToMany .}"
 			+ "  FILTER (%FILTER%) } %ORDERBY% LIMIT %LIMIT% OFFSET %OFFSET%";
 
 	protected final static String mappingCountQuery = "SELECT DISTINCT "
@@ -97,13 +97,6 @@ public class AbstractNcboMappingDAO {
 			+ "  OPTIONAL { ?mappingId <http://protege.stanford.edu/ontologies/mappings/mappings.rdfs#mapping_source_site> ?mappingSourceSite .}"
 			+ "  OPTIONAL { ?mappingId <http://protege.stanford.edu/ontologies/mappings/mappings.rdfs#mapping_source_algorithm> ?mappingSourceAlgorithm .}"
 			+ "  FILTER (%FILTER%) }";
-
-	protected final static String manyToManySourcesAndTargets = "SELECT DISTINCT "
-			+ " ?source ?target"
-			+ " WHERE { "
-			+ "  ?mappingId <http://protege.stanford.edu/ontologies/mappings/mappings.rdfs#source> ?source ."
-			+ "  ?mappingId <http://protege.stanford.edu/ontologies/mappings/mappings.rdfs#target> ?target ."
-			+ "  FILTER(%FILTER%) }";
 
 	protected final static String sourcesAndTargetsForMappingIds = "SELECT DISTINCT ?mappingId ?source ?target {"
 			+ "  ?mappingId <http://protege.stanford.edu/ontologies/mappings/mappings.rdfs#source> ?source ."
@@ -254,40 +247,43 @@ public class AbstractNcboMappingDAO {
 				mappingResults.put(mapping.getId().toString(), mapping);
 			}
 
-			// This query will get all sources and targets for the mapping that
-			// were generated above
-			Set<String> mappingIds = mappingResults.keySet();
+			if (!mappingResults.isEmpty()) {
+				// This query will get all sources and targets for the mapping
+				// that were generated above
+				Set<String> mappingIds = mappingResults.keySet();
 
-			List<String> mappingIdsSparql = new ArrayList<String>();
-			for (String mappingId : mappingIds) {
-				mappingIdsSparql.add("<" + mappingId + ">");
-			}
+				List<String> mappingIdsSparql = new ArrayList<String>();
+				for (String mappingId : mappingIds) {
+					mappingIdsSparql.add("<" + mappingId + ">");
+				}
 
-			String queryString1 = sourcesAndTargetsForMappingIds.replaceAll(
-					"%MAPPING_IDS%", StringUtils.join(mappingIdsSparql, ", "));
+				String queryString1 = sourcesAndTargetsForMappingIds
+						.replaceAll("%MAPPING_IDS%", StringUtils.join(
+								mappingIdsSparql, ", "));
 
-			TupleQuery query1 = con.prepareTupleQuery(QueryLanguage.SPARQL,
-					queryString1, ApplicationConstants.MAPPING_CONTEXT);
-			TupleQueryResult result1 = query1.evaluate();
+				TupleQuery query1 = con.prepareTupleQuery(QueryLanguage.SPARQL,
+						queryString1, ApplicationConstants.MAPPING_CONTEXT);
+				TupleQueryResult result1 = query1.evaluate();
 
-			while (result1.hasNext()) {
-				BindingSet bs1 = result1.next();
+				while (result1.hasNext()) {
+					BindingSet bs1 = result1.next();
 
-				String mappingId = bs1.getValue("mappingId").stringValue();
-				URI sourceURI = new URIImpl(bs1.getValue("source")
-						.stringValue());
-				URI targetURI = new URIImpl(bs1.getValue("target")
-						.stringValue());
+					String mappingId = bs1.getValue("mappingId").stringValue();
+					URI sourceURI = new URIImpl(bs1.getValue("source")
+							.stringValue());
+					URI targetURI = new URIImpl(bs1.getValue("target")
+							.stringValue());
 
-				Mapping updatedMapping = mappingResults.get(mappingId);
+					Mapping updatedMapping = mappingResults.get(mappingId);
 
-				if (!updatedMapping.getSource().contains(sourceURI))
-					updatedMapping.addSource(sourceURI);
+					if (!updatedMapping.getSource().contains(sourceURI))
+						updatedMapping.addSource(sourceURI);
 
-				if (!updatedMapping.getTarget().contains(targetURI))
-					updatedMapping.addTarget(targetURI);
+					if (!updatedMapping.getTarget().contains(targetURI))
+						updatedMapping.addTarget(targetURI);
 
-				mappingResults.put(mappingId, updatedMapping);
+					mappingResults.put(mappingId, updatedMapping);
+				}
 			}
 
 			result.close();
