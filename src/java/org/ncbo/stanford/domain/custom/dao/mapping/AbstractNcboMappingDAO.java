@@ -78,7 +78,7 @@ public class AbstractNcboMappingDAO {
 			+ "  FILTER (%FILTER%) } %ORDERBY% LIMIT %LIMIT% OFFSET %OFFSET%";
 
 	protected final static String mappingCountQuery = "SELECT DISTINCT "
-			+ "count(?mappingId) as ?mappingCount WHERE {"
+			+ "count(DISTINCT ?mappingId) as ?mappingCount WHERE {"
 			+ "  ?mappingId <http://protege.stanford.edu/ontologies/mappings/mappings.rdfs#source> ?source ."
 			+ "  ?mappingId <http://protege.stanford.edu/ontologies/mappings/mappings.rdfs#target> ?target ."
 			+ "  ?mappingId <http://protege.stanford.edu/ontologies/mappings/mappings.rdfs#relation> ?relation ."
