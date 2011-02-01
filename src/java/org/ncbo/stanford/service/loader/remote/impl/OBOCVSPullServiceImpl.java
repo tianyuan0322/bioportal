@@ -583,8 +583,7 @@ public class OBOCVSPullServiceImpl implements OBOCVSPullService {
 	private byte isMetadataOnly(String downloadUrl, String cvsHostname) {
 		byte isMetadataOnly = ApplicationConstants.TRUE;
 
-		if (!StringHelper.isNullOrNullString(downloadUrl)
-				&& LoaderUtils.isValidDownloadLocation(downloadUrl)) {
+		if (!StringHelper.isNullOrNullString(downloadUrl)){
 			isMetadataOnly = ApplicationConstants.FALSE;
 		}
 
