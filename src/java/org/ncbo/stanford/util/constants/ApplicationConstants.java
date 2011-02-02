@@ -52,8 +52,11 @@ public interface ApplicationConstants {
 	/**
 	 * Ontology version status
 	 */
-	public static final String VERSION_STATUS_PREPRODUCTION = "pre_production";
+	public static final String VERSION_STATUS_PREPRODUCTION = "beta";
+	public static final String VERSION_STATUS_ALPHA = "alpha";
+	public static final String VERSION_STATUS_BETA = "beta";
 	public static final String VERSION_STATUS_PRODUCTION = "production";
+	public static final String VERSION_STATUS_INACTIVE = "inactive";
 
 	/**
 	 * Composite filename used for joining multiple ontologies into a single
