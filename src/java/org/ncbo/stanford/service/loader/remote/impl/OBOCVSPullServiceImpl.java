@@ -386,7 +386,7 @@ public class OBOCVSPullServiceImpl implements OBOCVSPullService {
 						action = ActionEnum.UPDATE_ACTION;
 					}
 					// Check if the metadata needs to be updated
-					if (needsUpdateAction(ont, downloadUrl, isMetadataOnly)) {
+					if (needsUpdateAction(ont, downloadUrl, isMetadataOnly, mfb)) {
 						action = ActionEnum.UPDATE_ACTION;
 
 					}
@@ -394,7 +394,7 @@ public class OBOCVSPullServiceImpl implements OBOCVSPullService {
 				} else if (cf != null) {
 					// existing ontology local; new version
 					action = ActionEnum.CREATE_REPOSITORY_ACTION; 
-				} else if (needsUpdateAction(ont, downloadUrl, isMetadataOnly)) {
+				} else if (needsUpdateAction(ont, downloadUrl, isMetadataOnly, mfb)) {
 					// Check if the metadata needs to be updated
 					action = ActionEnum.UPDATE_ACTION;
 				}
@@ -598,7 +598,7 @@ public class OBOCVSPullServiceImpl implements OBOCVSPullService {
 	 * @return
 	 */
 	private boolean needsUpdateAction(OntologyBean ont, String downloadUrl,
-			byte isMetadataOnly) {
+			byte isMetadataOnly, MetadataFileBean mfb) {
 		boolean needsUpdate = false;
 		// Check if the download location has changed
 		if (StringUtils.isNotBlank(downloadUrl)) {
@@ -615,6 +615,10 @@ public class OBOCVSPullServiceImpl implements OBOCVSPullService {
 		// Check if the ontology's getMetadataFlag== isMetadataFlag
 		if (ont.getIsMetadataOnly() == null
 				|| ont.getIsMetadataOnly() != isMetadataOnly) {
+			needsUpdate = true;
+		}
+		// The version status has changed
+		if (ont.getVersionStatus() != null && ! ont.getVersionStatus().equalsIgnoreCase(getStatus(mfb.getStatus()))) {
 			needsUpdate = true;
 		}
 		return needsUpdate;
