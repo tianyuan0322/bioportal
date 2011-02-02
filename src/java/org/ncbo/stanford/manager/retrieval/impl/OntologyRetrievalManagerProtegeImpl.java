@@ -579,15 +579,15 @@ public class OntologyRetrievalManagerProtegeImpl extends
 		while (it.hasNext()) {
 			Object next = it.next();
 
-			if (next instanceof Instance || next instanceof Cls) {
+			if (next instanceof Instance) {
 				Instance subclass = (Instance) next;
-
-				if (subclass.isSystem() || subclass.getName().startsWith("@")) {
+				String browserText = subclass.getBrowserText();
+				
+				if (subclass.isSystem() || browserText.startsWith("@")) {
 					it.remove();
 				}
 			}
 		}
-
 		return protegeClasses;
 	}
 
