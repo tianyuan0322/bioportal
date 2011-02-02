@@ -14,7 +14,7 @@ import org.ncbo.stanford.service.concept.RdfService;
 import org.ncbo.stanford.service.ontology.OntologyService;
 import org.ncbo.stanford.util.RequestUtils;
 import org.ncbo.stanford.view.rest.restlet.AbstractBaseRestlet;
-import org.restlet.data.MediaType;
+import org.ncbo.stanford.view.util.constants.RequestParamConstants;
 import org.restlet.data.Request;
 import org.restlet.data.Response;
 import org.restlet.data.Status;
@@ -28,6 +28,7 @@ import org.semanticweb.owlapi.model.OWLOntologyManager;
  * 
  */
 public class GenerateRDFOntologyRestlet extends AbstractBaseRestlet {
+
 	private RdfService rdfService;
 	private OntologyService ontologyService;
 	private String rdfFilePath;
@@ -36,22 +37,43 @@ public class GenerateRDFOntologyRestlet extends AbstractBaseRestlet {
 	 * This method handles the calls for POST request
 	 */
 	public void postRequest(Request request, Response response) {
-
 		HttpServletRequest httpRequest = RequestUtils
 				.getHttpServletRequest(request);
+
+		// Check for "all"
+		String processAllOntologiesStr = (String) httpRequest
+				.getParameter(RequestParamConstants.PARAM_ONTOLOGY_VERSION_IDS);
+		boolean processAllOntologies = (processAllOntologiesStr != null) ? processAllOntologiesStr
+				.equalsIgnoreCase(RequestParamConstants.PARAM_ALL_CONCEPTS)
+				: false;
+
 		List<Integer> ontologyVersionIds = null;
 		List<Integer> ontologyIds = null;
 		try {
-			ontologyVersionIds = getOntologyVersionIds(httpRequest);
-			ontologyIds = getOntologyIds(httpRequest);
+			ontologyVersionIds = RequestUtils
+					.parseIntegerListParam(RequestUtils
+							.getAttributeOrRequestParam(
+									RequestParamConstants.PARAM_ONTOLOGY_VERSION_IDS,
+									request));
+
+			ontologyIds = RequestUtils.parseIntegerListParam(RequestUtils
+					.getAttributeOrRequestParam(
+							RequestParamConstants.PARAM_ONTOLOGY_IDS, request));
+
 			if (ontologyVersionIds != null && !ontologyVersionIds.isEmpty()) {
 				generateRdfForOntology(request, response);
 			} else if (ontologyIds != null && !ontologyIds.isEmpty()) {
 				generateRdfForOntology(request, response);
-			} else {
+			} else if (processAllOntologies == true) {
 				generateRdfForAllOntologies(request, response);
-			}
+			} else {
+				response.setStatus(Status.SERVER_ERROR_INTERNAL,
+						"Invalid input");
+				xmlSerializationService.generateStatusXMLResponse(request,
+						response);
 
+				throw new InvalidInputException();
+			}
 		} catch (Exception e) {
 			e.getMessage();
 		}
@@ -65,24 +87,18 @@ public class GenerateRDFOntologyRestlet extends AbstractBaseRestlet {
 	 * @param response
 	 */
 	public void generateRdfForAllOntologies(Request request, Response response) {
-		// Instantiate the OWLOntologyManager
 		OWLOntologyManager manager = OWLManager.createOWLOntologyManager();
 
-		String rdfOutput = null;
-
 		try {
-
 			rdfService.generateRdf(manager, rdfFilePath, ontologyService);
-
-			// Add the contents to the response
-			RequestUtils.setHttpServletResponse(response, Status.SUCCESS_OK,
-					MediaType.TEXT_PLAIN, rdfOutput);
 		} catch (Exception e) {
 			response.setStatus(Status.SERVER_ERROR_INTERNAL, e.getMessage());
 			xmlSerializationService
 					.generateStatusXMLResponse(request, response);
 			e.printStackTrace();
-
+		} finally {
+			xmlSerializationService
+					.generateStatusXMLResponse(request, response);
 		}
 	}
 
@@ -98,12 +114,14 @@ public class GenerateRDFOntologyRestlet extends AbstractBaseRestlet {
 	public void generateRdfForOntology(Request request, Response response) {
 		// Creating the OWLOtnologyManager
 		OWLOntologyManager manager = OWLManager.createOWLOntologyManager();
+
+		String rdfOutput = "";
+
 		try {
 			// Creating the OWLOntology
 			OWLOntology ontology;
 			boolean isVirtual = false;
 			Integer ontId = null;
-			String rdfOutput = "";
 			OntologyBean ont = null;
 			Integer ontologyVersionIdInt = null;
 			// Creating the instance of HttpServletRequest
@@ -152,10 +170,6 @@ public class GenerateRDFOntologyRestlet extends AbstractBaseRestlet {
 			StringDocumentTarget outputString = new StringDocumentTarget();
 			manager.saveOntology(ontology, outputString);
 			rdfOutput = outputString.toString();
-
-			// Add the contents to the response
-			RequestUtils.setHttpServletResponse(response, Status.SUCCESS_OK,
-					MediaType.TEXT_PLAIN, rdfOutput);
 		} catch (InvalidInputException e) {
 			response.setStatus(Status.CLIENT_ERROR_BAD_REQUEST, e.getMessage());
 			xmlSerializationService
@@ -170,7 +184,9 @@ public class GenerateRDFOntologyRestlet extends AbstractBaseRestlet {
 			xmlSerializationService
 					.generateStatusXMLResponse(request, response);
 			e.printStackTrace();
-
+		} finally {
+			xmlSerializationService.generateXMLResponse(request, response,
+					rdfOutput);
 		}
 	}
 

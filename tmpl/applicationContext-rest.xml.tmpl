@@ -747,14 +747,14 @@
 						<entry key="/virtual/rdf/{ontologyid}/{conceptid}">
 							<ref local="rdfExtractionRestlet" />
 						</entry>
-						<!-- Generate RDF for ALL Ontologies and for OntologyVeasionId -->
+						<!-- Generate RDF for ALL Ontologies and for OntologyVersionId -->
 						<entry key="/ontologies/rdf/generate">
 							<ref local="generateRDFOntologyRestlet" />
 						</entry>
-						<entry key="/ontologies/rdf/generate/{ontologyversionid}">
+						<entry key="/ontologies/rdf/generate/{ontologyversionids}">
 							<ref local="generateRDFOntologyRestlet" />
 						</entry>
-						<entry key="/virtual/ontology/rdf/generate/{ontologyid}">
+						<entry key="/virtual/ontology/rdf/generate/{ontologyids}">
 							<ref local="generateRDFOntologyRestlet" />
 						</entry>						
 						<entry key="/concepts/instances/{ontologyVersionId}">
