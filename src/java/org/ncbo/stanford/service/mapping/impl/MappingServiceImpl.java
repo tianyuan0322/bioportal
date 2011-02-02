@@ -76,10 +76,9 @@ public class MappingServiceImpl implements MappingService {
 				pageMappings, pageSize, totalResults);
 
 		int offset = pageNum * pageSize - pageSize;
-		int limit = (offset + pageSize > totalResults) ? totalResults : pageSize;
 
 		List<Mapping> mappings = mappingDAO.getMappingsFromOntology(ont
-				.getOntologyId(), limit, offset, parameters);
+				.getOntologyId(), pageSize, offset, parameters);
 
 		for (Mapping mapping : mappings) {
 			pageMappings.add(convertToMappingBean(mapping));
@@ -99,10 +98,9 @@ public class MappingServiceImpl implements MappingService {
 				pageMappings, pageSize, totalResults);
 
 		int offset = pageNum * pageSize - pageSize;
-		int limit = (offset + pageSize > totalResults) ? totalResults : pageSize;
 
 		List<Mapping> mappings = mappingDAO.getMappingsToOntology(ont
-				.getOntologyId(), limit, offset, parameters);
+				.getOntologyId(), pageSize, offset, parameters);
 
 		for (Mapping mapping : mappings) {
 			pageMappings.add(convertToMappingBean(mapping));
@@ -124,11 +122,10 @@ public class MappingServiceImpl implements MappingService {
 				pageMappings, pageSize, totalResults);
 
 		int offset = pageNum * pageSize - pageSize;
-		int limit = (offset + pageSize > totalResults) ? totalResults : pageSize;
 
 		List<Mapping> mappings = mappingDAO
 				.getMappingsBetweenOntologies(sourceOnt.getOntologyId(),
-						targetOnt.getOntologyId(), unidirectional, limit,
+						targetOnt.getOntologyId(), unidirectional, pageSize,
 						offset, parameters);
 
 		for (Mapping mapping : mappings) {
@@ -149,10 +146,9 @@ public class MappingServiceImpl implements MappingService {
 				pageMappings, pageSize, totalResults);
 
 		int offset = pageNum * pageSize - pageSize;
-		int limit = (offset + pageSize > totalResults) ? totalResults : pageSize;
 
 		List<Mapping> mappings = mappingDAO.getMappingsForOntology(ont
-				.getOntologyId(), limit, offset, parameters);
+				.getOntologyId(), pageSize, offset, parameters);
 
 		for (Mapping mapping : mappings) {
 			pageMappings.add(convertToMappingBean(mapping));
@@ -172,10 +168,9 @@ public class MappingServiceImpl implements MappingService {
 				pageMappings, pageSize, totalResults);
 
 		int offset = pageNum * pageSize - pageSize;
-		int limit = (offset + pageSize > totalResults) ? totalResults : pageSize;
 
 		List<Mapping> mappings = mappingDAO.getMappingsForParameters(
-				limit, offset, parameters);
+				pageSize, offset, parameters);
 
 		for (Mapping mapping : mappings) {
 			pageMappings.add(convertToMappingBean(mapping));
@@ -195,10 +190,9 @@ public class MappingServiceImpl implements MappingService {
 				pageMappings, pageSize, totalResults);
 
 		int offset = pageNum * pageSize - pageSize;
-		int limit = (offset + pageSize > totalResults) ? totalResults : pageSize;
 
 		List<Mapping> mappings = mappingDAO.getMappingsForConcept(ont
-				.getOntologyId(), concept.getFullId(), limit, offset,
+				.getOntologyId(), concept.getFullId(), pageSize, offset,
 				parameters);
 
 		for (Mapping mapping : mappings) {
@@ -219,10 +213,9 @@ public class MappingServiceImpl implements MappingService {
 				pageMappings, pageSize, totalResults);
 
 		int offset = pageNum * pageSize - pageSize;
-		int limit = (offset + pageSize > totalResults) ? totalResults : pageSize;
 
 		List<Mapping> mappings = mappingDAO.getMappingsFromConcept(ont
-				.getOntologyId(), concept.getFullId(), limit, offset,
+				.getOntologyId(), concept.getFullId(), pageSize, offset,
 				parameters);
 
 		for (Mapping mapping : mappings) {
@@ -243,10 +236,9 @@ public class MappingServiceImpl implements MappingService {
 				pageMappings, pageSize, totalResults);
 
 		int offset = pageNum * pageSize - pageSize;
-		int limit = (offset + pageSize > totalResults) ? totalResults : pageSize;
 
 		List<Mapping> mappings = mappingDAO.getMappingsToConcept(ont
-				.getOntologyId(), concept.getFullId(), limit, offset,
+				.getOntologyId(), concept.getFullId(), pageSize, offset,
 				parameters);
 
 		for (Mapping mapping : mappings) {
@@ -271,12 +263,11 @@ public class MappingServiceImpl implements MappingService {
 				pageMappings, pageSize, totalResults);
 
 		int offset = pageNum * pageSize - pageSize;
-		int limit = (offset + pageSize > totalResults) ? totalResults : pageSize;
 
 		List<Mapping> mappings = mappingDAO.getMappingsBetweenConcepts(
 				sourceOnt.getOntologyId(), targetOnt.getOntologyId(),
 				sourceConcept.getFullId(), targetConcept.getFullId(),
-				unidirectional, limit, offset, parameters);
+				unidirectional, pageSize, offset, parameters);
 
 		for (Mapping mapping : mappings) {
 			pageMappings.add(convertToMappingBean(mapping));
