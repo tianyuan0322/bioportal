@@ -1359,7 +1359,7 @@
 				</bean>
 			</key>
 			<util:constant
-				static-field="org.ncbo.stanford.util.constants.ApplicationConstants.VERSION_STATUS_PREPRODUCTION" />
+				static-field="org.ncbo.stanford.util.constants.ApplicationConstants.VERSION_STATUS_INACTIVE" />
 		</entry>
 		<entry>
 			<key>
@@ -1381,7 +1381,7 @@
 				</bean>
 			</key>
 			<util:constant
-				static-field="org.ncbo.stanford.util.constants.ApplicationConstants.VERSION_STATUS_PREPRODUCTION" />
+				static-field="org.ncbo.stanford.util.constants.ApplicationConstants.VERSION_STATUS_BETA" />
 		</entry>
 		<entry>
 			<key>
@@ -1392,7 +1392,18 @@
 				</bean>
 			</key>
 			<util:constant
-				static-field="org.ncbo.stanford.util.constants.ApplicationConstants.VERSION_STATUS_PREPRODUCTION" />
+				static-field="org.ncbo.stanford.util.constants.ApplicationConstants.VERSION_STATUS_PRODUCTION" />
+		</entry>
+		<entry>
+			<key>
+				<bean class="java.lang.String">
+					<constructor-arg>
+						<value>Proposed</value>
+					</constructor-arg>
+				</bean>
+			</key>
+			<util:constant
+				static-field="org.ncbo.stanford.util.constants.ApplicationConstants.VERSION_STATUS_ALPHA" />
 		</entry>
 	</util:map>
 
