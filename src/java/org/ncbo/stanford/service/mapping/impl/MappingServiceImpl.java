@@ -368,6 +368,7 @@ public class MappingServiceImpl implements MappingService {
 				&& !mapping.getMappingSource().toString().isEmpty()) {
 			otom.setMappingSource(mapping.getMappingSource().toString());
 		}
+		otom.setMappingSourceName(mapping.getMappingSourceName());
 		otom.setMappingSourceAlgorithm(mapping.getMappingSourceAlgorithm());
 		otom.setMappingSourcecontactInfo(mapping.getMappingSourceContactInfo());
 		otom.setMappingSourceSite(mapping.getMappingSourceSite());
