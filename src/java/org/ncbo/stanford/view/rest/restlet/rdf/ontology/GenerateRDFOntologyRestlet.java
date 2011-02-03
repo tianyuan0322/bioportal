@@ -12,6 +12,7 @@ import org.ncbo.stanford.exception.InvalidInputException;
 import org.ncbo.stanford.exception.OntologyNotFoundException;
 import org.ncbo.stanford.service.concept.RdfService;
 import org.ncbo.stanford.service.ontology.OntologyService;
+import org.ncbo.stanford.util.MessageUtils;
 import org.ncbo.stanford.util.RequestUtils;
 import org.ncbo.stanford.view.rest.restlet.AbstractBaseRestlet;
 import org.ncbo.stanford.view.util.constants.RequestParamConstants;
@@ -19,8 +20,6 @@ import org.restlet.data.Request;
 import org.restlet.data.Response;
 import org.restlet.data.Status;
 import org.semanticweb.owlapi.apibinding.OWLManager;
-import org.semanticweb.owlapi.io.StringDocumentTarget;
-import org.semanticweb.owlapi.model.OWLOntology;
 import org.semanticweb.owlapi.model.OWLOntologyManager;
 
 /**
@@ -61,9 +60,10 @@ public class GenerateRDFOntologyRestlet extends AbstractBaseRestlet {
 							RequestParamConstants.PARAM_ONTOLOGY_IDS, request));
 
 			if (ontologyVersionIds != null && !ontologyVersionIds.isEmpty()) {
-				generateRdfForOntology(request, response);
+				generateRdfForOntology(request, response, ontologyVersionIds,
+						false);
 			} else if (ontologyIds != null && !ontologyIds.isEmpty()) {
-				generateRdfForOntology(request, response);
+				generateRdfForOntology(request, response, ontologyIds, true);
 			} else if (processAllOntologies == true) {
 				generateRdfForAllOntologies(request, response);
 			} else {
@@ -75,7 +75,7 @@ public class GenerateRDFOntologyRestlet extends AbstractBaseRestlet {
 				throw new InvalidInputException();
 			}
 		} catch (Exception e) {
-			e.getMessage();
+			e.printStackTrace();
 		}
 	}
 
@@ -111,65 +111,32 @@ public class GenerateRDFOntologyRestlet extends AbstractBaseRestlet {
 	 * @param response
 	 */
 
-	public void generateRdfForOntology(Request request, Response response) {
+	public void generateRdfForOntology(Request request, Response response,
+			List<Integer> ontologyIds, boolean isVirtual) {
 		// Creating the OWLOtnologyManager
 		OWLOntologyManager manager = OWLManager.createOWLOntologyManager();
 
-		String rdfOutput = "";
-
 		try {
-			// Creating the OWLOntology
-			OWLOntology ontology;
-			boolean isVirtual = false;
-			Integer ontId = null;
 			OntologyBean ont = null;
-			Integer ontologyVersionIdInt = null;
-			// Creating the instance of HttpServletRequest
-			HttpServletRequest httpRequest = RequestUtils
-					.getHttpServletRequest(request);
-			// Creating the List For conceptIds (this will also get just one id)
-			List<Integer> ontologyVersionIds = getOntologyVersionIds(httpRequest);
-
-			// Check to make sure a concept was passed
-			if (ontologyVersionIds != null) {
-				// Iterating the list of ontologyVersionId
-				for (Integer ontologyVersionId : ontologyVersionIds) {
-
-					// Try to get the OntologyBean
-					ont = ontologyService.findOntologyOrView(ontologyVersionId);
-					ontologyVersionIdInt = ont.getId();
-					// Check for valid ontology
-
-				}
-			}
-
-			// For Virtual
-			List<Integer> ontologyIds = getOntologyIds(httpRequest);
 			if (ontologyIds != null) {
-				for (Integer ontologyid : ontologyIds) {
+				for (Integer ontologyId : ontologyIds) {
+					// Try to get the OntologyBean
+					if (isVirtual) {
+						ont = ontologyService
+								.findLatestActiveOntologyOrViewVersion(ontologyId);
+					} else {
+						ont = ontologyService.findOntologyOrView(ontologyId);
+					}
 
-					ont = ontologyService
-							.findLatestActiveOntologyOrViewVersion(ontologyid);
-					ontId = ont.getOntologyId();
-					isVirtual = true;
+					if (ont == null) {
+						throw new InvalidInputException(
+								MessageUtils
+										.getMessage("msg.error.ontologyversionidinvalid"));
+					}
 
-				}
-
-				if (isVirtual) {
-					ont = ontologyService
-							.findLatestActiveOntologyOrViewVersion(ontId);
-					ontologyVersionIdInt = ont.getId();
-				} else {
-					ont = ontologyService
-							.findOntologyOrView(ontologyVersionIdInt);
-
+					rdfService.generateRdf(manager, rdfFilePath, ont);
 				}
 			}
-			ontology = rdfService.generateRdf(manager, rdfFilePath, ont);
-
-			StringDocumentTarget outputString = new StringDocumentTarget();
-			manager.saveOntology(ontology, outputString);
-			rdfOutput = outputString.toString();
 		} catch (InvalidInputException e) {
 			response.setStatus(Status.CLIENT_ERROR_BAD_REQUEST, e.getMessage());
 			xmlSerializationService
@@ -185,8 +152,8 @@ public class GenerateRDFOntologyRestlet extends AbstractBaseRestlet {
 					.generateStatusXMLResponse(request, response);
 			e.printStackTrace();
 		} finally {
-			xmlSerializationService.generateXMLResponse(request, response,
-					rdfOutput);
+			xmlSerializationService
+					.generateStatusXMLResponse(request, response);
 		}
 	}
 
