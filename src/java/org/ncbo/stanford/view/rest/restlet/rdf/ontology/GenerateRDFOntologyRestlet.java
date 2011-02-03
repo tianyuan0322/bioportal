@@ -5,8 +5,6 @@ package org.ncbo.stanford.view.rest.restlet.rdf.ontology;
 
 import java.util.List;
 
-import javax.servlet.http.HttpServletRequest;
-
 import org.ncbo.stanford.bean.OntologyBean;
 import org.ncbo.stanford.exception.InvalidInputException;
 import org.ncbo.stanford.exception.OntologyNotFoundException;
@@ -36,12 +34,11 @@ public class GenerateRDFOntologyRestlet extends AbstractBaseRestlet {
 	 * This method handles the calls for POST request
 	 */
 	public void postRequest(Request request, Response response) {
-		HttpServletRequest httpRequest = RequestUtils
-				.getHttpServletRequest(request);
-
 		// Check for "all"
-		String processAllOntologiesStr = (String) httpRequest
-				.getParameter(RequestParamConstants.PARAM_ONTOLOGY_VERSION_IDS);
+		String processAllOntologiesStr = (String) RequestUtils
+				.getAttributeOrRequestParam(
+						RequestParamConstants.PARAM_ONTOLOGY_VERSION_IDS,
+						request);
 		boolean processAllOntologies = (processAllOntologiesStr != null) ? processAllOntologiesStr
 				.equalsIgnoreCase(RequestParamConstants.PARAM_ALL_CONCEPTS)
 				: false;
