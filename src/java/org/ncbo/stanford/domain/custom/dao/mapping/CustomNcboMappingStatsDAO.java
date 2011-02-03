@@ -1,6 +1,7 @@
 package org.ncbo.stanford.domain.custom.dao.mapping;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 
@@ -19,6 +20,8 @@ import org.openrdf.query.TupleQuery;
 import org.openrdf.query.TupleQueryResult;
 import org.openrdf.repository.RepositoryConnection;
 import org.openrdf.repository.RepositoryException;
+
+import edu.emory.mathcs.backport.java.util.Collections;
 
 public class CustomNcboMappingStatsDAO extends AbstractNcboMappingDAO {
 
@@ -101,7 +104,15 @@ public class CustomNcboMappingStatsDAO extends AbstractNcboMappingDAO {
 		// Create a filter
 		String filter = StringUtils.join(mappingIds, " || ");
 
-		return getMappings(limit, 0, filter, orderBy, null);
+		List<Mapping> mappings = getMappings(limit, 0, filter, orderBy, null);
+
+		Collections.sort(mappings, new Comparator<Mapping>() {
+			public int compare(Mapping map1, Mapping map2) {
+				return map2.getDate().compareTo(map1.getDate());
+			}
+		});
+
+		return mappings;
 	}
 
 	/**
