@@ -726,12 +726,6 @@
 						<entry key="/viewextractor/{ontologyversionid}">
 							<ref local="viewExtractionRestlet" />
 						</entry>
-						<entry key="/ontologies/rdf/download/{ontologyversionid}">
-							<ref local="rdfDownloadRestlet" />
-						</entry>
-						<entry key="/ontologies/virtual/rdf/download/{ontologyid}">
-							<ref local="rdfDownloadRestlet" />
-						</entry>						
 						<entry key="/rdf">
 							<ref local="rdfExtractionRestlet" />
 						</entry>						
@@ -747,6 +741,12 @@
 						<entry key="/virtual/rdf/{ontologyid}/{conceptid}">
 							<ref local="rdfExtractionRestlet" />
 						</entry>
+						<entry key="/ontologies/rdf/download/{ontologyversionid}">
+							<ref local="rdfDownloadRestlet" />
+						</entry>
+						<entry key="/virtual/ontology/rdf/download/{ontologyid}">
+							<ref local="rdfDownloadRestlet" />
+						</entry>						
 						<!-- Generate RDF for ALL Ontologies and for OntologyVersionId -->
 						<entry key="/ontologies/rdf/generate">
 							<ref local="generateRDFOntologyRestlet" />
