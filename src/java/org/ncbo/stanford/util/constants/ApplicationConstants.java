@@ -56,7 +56,7 @@ public interface ApplicationConstants {
 	public static final String VERSION_STATUS_ALPHA = "alpha";
 	public static final String VERSION_STATUS_BETA = "beta";
 	public static final String VERSION_STATUS_PRODUCTION = "production";
-	public static final String VERSION_STATUS_INACTIVE = "inactive";
+	public static final String VERSION_STATUS_RETIRED = "retired";
 
 	/**
 	 * Composite filename used for joining multiple ontologies into a single
