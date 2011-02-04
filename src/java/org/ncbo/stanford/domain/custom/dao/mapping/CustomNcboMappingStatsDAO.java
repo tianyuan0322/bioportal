@@ -318,7 +318,7 @@ public class CustomNcboMappingStatsDAO extends AbstractNcboMappingDAO {
 				} else {
 					MappingOntologyStatsBean stats = countsMap
 							.get(sourceOntologyId);
-					stats.setTargetMappings(count);
+					stats.setTargetMappings(count + stats.getTargetMappings());
 					countsMap.put(sourceOntologyId, stats);
 				}
 			}
@@ -343,7 +343,7 @@ public class CustomNcboMappingStatsDAO extends AbstractNcboMappingDAO {
 				} else {
 					MappingOntologyStatsBean stats = countsMap
 							.get(targetOntologyId);
-					stats.setSourceMappings(count);
+					stats.setSourceMappings(count + stats.getSourceMappings());
 					countsMap.put(targetOntologyId, stats);
 				}
 			}
