@@ -2,11 +2,9 @@ package org.ncbo.stanford.service.concept.impl;
 
 import java.io.File;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 
 import org.apache.commons.logging.Log;
@@ -34,7 +32,8 @@ import org.semanticweb.owlapi.vocab.SKOSVocabulary;
 
 public class RdfServiceImpl extends ConceptServiceImpl implements RdfService {
 
-	private static final Log log = LogFactory.getLog(ConceptServiceImpl.class);
+	@SuppressWarnings("unused")
+	private static final Log log = LogFactory.getLog(RdfServiceImpl.class);
 	
 	public static final String BIOPORTAL_PURL_BASE = "http://purl.bioontology.org/ontology/";
 	public static final String OMV_PURL_BASE = "http://omv.ontoware.org/2005/05/ontology";
@@ -94,57 +93,28 @@ public class RdfServiceImpl extends ConceptServiceImpl implements RdfService {
 	public static final String oboPartof=OBO_REL_URI + OBO_PARTOF;
 	
 	
-	public void generateRdf(OWLOntologyManager manager, String dir, OntologyService ontologyService) throws Exception {
-		List<OntologyBean> ontologies = ontologyService.findLatestActiveOntologyVersions();
-		
-		System.out.println("********** PAEA ***" + ontologies.size() + " ontologies are in the processing queue.");
-		
-		int i=0;
+	public void generateRdf(OWLOntologyManager manager, String dir,
+			OntologyService ontologyService) throws Exception {
+		List<OntologyBean> ontologies = ontologyService
+				.findLatestActiveOntologyVersions();
+
+		int i = 0;
 		for (OntologyBean ont : ontologies) {
 			Integer ontologyVersionId = ont.getId();
 			i++;
-			
-			System.out.println("********** PAEA ***" + " currently processing " + i + " (of " + ontologies.size() + ").");
 
 			if (ontologyVersionId == null)
 				throw new Exception("ontology version id cannot be null");
-			
+
 			try {
-				System.out.println("********** PAEA ***" + ont.getId() + " is currently being processed.");
 				File file = new File(dir + File.separator + getFileName(ont));
-				
-				if (StringHelper.isNullOrNullString(ont.getAbbreviation())) {
-					System.out.println("********** PAEA ***" + " warning: "+ ont.getId() + " has no abbreviation.");
-				}
-				
-				if (file.exists() 
-						/*
-						|| 
-						(!StringHelper.isNullOrNullString(ont.getAbbreviation()))
-						&& (
-								ont.getAbbreviation().equals("GO") // don't re-process
-								|| ont.getAbbreviation().equals("SO") // don't re-process
-								|| ont.getAbbreviation().equals("CCO") // don't re-process
-								|| ont.getAbbreviation().equals("SNOMED") // don't re-process
-								|| ont.getAbbreviation().equals("TO") // don't re-process
-								|| ont.getAbbreviation().equals("WBbt") // don't re-process
-								|| ont.getAbbreviation().equals("MIRO") // don't re-process
-						)
-						*/
-						
-				) {
-					System.out.println("********** PAEA ***" + ont.getAbbreviation() + " is being skipped because it was already saved.");
-				} else if (ont.isMetadataOnly()) {
-					System.out.println("********** PAEA ***" + ont.getAbbreviation() + " is being skipped because it is flagged as isMataDataOnly=true.");
-				} else {
+
+				if (!file.exists() && !ont.isMetadataOnly()) {
 					// generate the RDF file!
 					generateRdf(manager, dir, ont);
 				}
-				
-				System.out.println("********** PAEA ***" + ont.getAbbreviation() + " has been successfully processed.");
 			} catch (Exception e) {
 				e.printStackTrace();
-				System.out.println("********** PAEA ***" + ont.getId() + " could not be successfully processed.");
 			}
 		}
 	}
@@ -172,18 +142,11 @@ public class RdfServiceImpl extends ConceptServiceImpl implements RdfService {
 	 * @throws Exception
 	 */
 	public OWLOntology generateRdf(OWLOntologyManager manager, String dir, OntologyBean ont, List<String> conceptIds)
-			throws Exception {
-		
-		long startTime = System.currentTimeMillis();
-
+			throws Exception {		
 		OWLOntology ontology = manager.createOntology(IRI.create(getOntologyUri(ont,conceptIds)));
 		File file = new File(dir + File.separator + getFileName(ont));
 		
 		useOwlApi(manager, ontology, ont, conceptIds);
-		
-		long owlTime = System.currentTimeMillis();
-		long owlElapsed = owlTime - startTime;
-		System.out.println("********** PAEA ***" + "time to create owl model: " + owlElapsed);
 		
 		// save ontology into file in RDF/XML format
 		if (file != null
@@ -193,18 +156,12 @@ public class RdfServiceImpl extends ConceptServiceImpl implements RdfService {
 			manager.saveOntology(ontology, new RDFXMLOntologyFormat(), IRI.create(file.toURI()));
 		}
 		
-		long endTime = System.currentTimeMillis();
-		long elapsed = endTime - startTime;
-		System.out.println("********** PAEA ***" + "time to create rdf: " + elapsed);
-		
 		return ontology;
 	}
 	
 	private void useOwlApi(OWLOntologyManager manager, OWLOntology ontology, 
-			OntologyBean ont, List<String>conceptIds) throws Exception {
-		
+			OntologyBean ont, List<String>conceptIds) throws Exception {		
 		Hashtable<String,String> namedSlots = new Hashtable<String, String>();
-		
 		OWLDataFactory factory = manager.getOWLDataFactory();
 		
 		// add ontology annotations
@@ -224,24 +181,16 @@ public class RdfServiceImpl extends ConceptServiceImpl implements RdfService {
 		if (!StringHelper.isNullOrNullString(ont.getDisplayLabel())) {
 			ontologyInfoLiteral = factory.getOWLStringLiteral(ont.getDisplayLabel());
 			ontologyInfoAnnotation = factory.getOWLAnnotation(
-					factory.getOWLAnnotationProperty(IRI.create(BIOPORTAL_PURL_BASE + "OMV/name")), 
+					factory.getOWLAnnotationProperty(IRI.create(OMV_PURL_BASE + "/name")), 
 					ontologyInfoLiteral);
 			manager.applyChange(new AddOntologyAnnotation(ontology,ontologyInfoAnnotation));
 		}
-		
-		// OMV uri
-		// assert ontology URI not null
-		OWLClass owlClassForOMV =factory.getOWLClass(IRI.create(OMV_PURL_BASE));
-		ontologyInfoAnnotation = factory.getOWLAnnotation(factory
-				.getOWLAnnotationProperty(IRI.create(BIOPORTAL_PURL_BASE + "OMV/URI")),
-				owlClassForOMV.getIRI());
-		manager.applyChange(new AddOntologyAnnotation(ontology,ontologyInfoAnnotation));
-		
+			
 		// description
 		if (!StringHelper.isNullOrNullString(ont.getDescription())) {
 			ontologyInfoLiteral = factory.getOWLStringLiteral(ont.getDescription());
 			ontologyInfoAnnotation = factory.getOWLAnnotation(
-					factory.getOWLAnnotationProperty(IRI.create(BIOPORTAL_PURL_BASE + "OMV/description")), 
+					factory.getOWLAnnotationProperty(IRI.create(OMV_PURL_BASE + "/description")), 
 					ontologyInfoLiteral);
 			manager.applyChange(new AddOntologyAnnotation(ontology,ontologyInfoAnnotation));
 		}
@@ -250,7 +199,7 @@ public class RdfServiceImpl extends ConceptServiceImpl implements RdfService {
 		if (!StringHelper.isNullOrNullString(ont.getAbbreviation())) {
 			ontologyInfoLiteral = factory.getOWLStringLiteral(ont.getAbbreviation());
 			ontologyInfoAnnotation = factory.getOWLAnnotation(
-					factory.getOWLAnnotationProperty(IRI.create(BIOPORTAL_PURL_BASE + "OMV/acronym")), 
+					factory.getOWLAnnotationProperty(IRI.create(OMV_PURL_BASE + "/acronym")), 
 					ontologyInfoLiteral);
 			manager.applyChange(new AddOntologyAnnotation(ontology,ontologyInfoAnnotation));
 		}
@@ -260,7 +209,7 @@ public class RdfServiceImpl extends ConceptServiceImpl implements RdfService {
 			ontologyInfoLiteral = factory.getOWLStringLiteral(ont.getFormat());
 			OWLClass omvClass=factory.getOWLClass(IRI.create(OMV_URI));
 			ontologyInfoAnnotation = factory.getOWLAnnotation(
-					factory.getOWLAnnotationProperty(IRI.create(BIOPORTAL_PURL_BASE + "OMV/hasOntologyLanguage")), 
+					factory.getOWLAnnotationProperty(IRI.create(OMV_PURL_BASE + "/hasOntologyLanguage")), 
 					omvClass.getIRI());
 			manager.applyChange(new AddOntologyAnnotation(ontology,ontologyInfoAnnotation));
 			
@@ -331,7 +280,6 @@ public class RdfServiceImpl extends ConceptServiceImpl implements RdfService {
 			}
 		}
 		
-		int i = 0;
 		// Iterate over concept beans specified for the ontology.
 		if (conceptIds != null) {
 			// specified list (most likely a singleton) of conceptIds
@@ -340,52 +288,27 @@ public class RdfServiceImpl extends ConceptServiceImpl implements RdfService {
 				try {
 					addClassUsingOwlApi(manager, ontology, ont, classBean, namedSlots);
 				} catch (Exception e) {
-					System.out.println("********** PAEA ***" + "Unable to add class: " + conceptId);
 					e.printStackTrace();
 				}
-				i++;
 			}
 		} else {
 			// all concepts from the ontology
 			OntologyRetrievalManager orm = getRetrievalManager(ont);
 			
-			i=0; // reset to 0
-			long start = System.currentTimeMillis();
-			
 			for (Iterator<ClassBean> classIter = orm.listAllClasses(ont); classIter.hasNext(); ) {
-				if (i>0 && (i % 1000) == 0) {
-					long end = System.currentTimeMillis();
-					long elapsed = end - start;
-					long avg = elapsed / i;
-					System.out.println("********** PAEA ***" + "Avg time to process single concept (lac): " + i + ": " + avg);
-				}
 				ClassBean classBean = classIter.next();
 				try {
 					addClassUsingOwlApi(manager, ontology, ont, classBean, namedSlots);
 				} catch (Exception e) {
-					System.out.println("********** PAEA ***" + "Unable to add class: " + i);
 					e.printStackTrace();
 				}
-				i++;
 			}
-			long end = System.currentTimeMillis();
-			long elapsed = end - start;
-			System.out.println("********** PAEA ***" + "time to iterate: " + elapsed);
-
-			
-			long timeToPage = System.currentTimeMillis();
-			long timeToPageElapsed = timeToPage - start;
-			System.out.println("********** PAEA ***" + "time to page: " + timeToPageElapsed);
 		}
-		System.out.println("********** PAEA ***" + "numClasses: " + i);
-
 	}
 	
 	private void addClassUsingOwlApi(OWLOntologyManager manager, OWLOntology ontology, 
-			OntologyBean ont, ClassBean classBean, Hashtable<String,String> namedSlots) throws Exception {
-		
+			OntologyBean ont, ClassBean classBean, Hashtable<String,String> namedSlots) throws Exception {	
 		OWLDataFactory factory = manager.getOWLDataFactory();
-		HashMap<Object, Object> mapForRelation=new HashMap<Object, Object>();
 		// Declare Class
 		OWLClass owlClass = factory.getOWLClass(IRI.create(getClassUri(ont, classBean)));
 		manager.addAxiom(ontology, factory.getOWLDeclarationAxiom(owlClass));
@@ -456,61 +379,48 @@ public class RdfServiceImpl extends ConceptServiceImpl implements RdfService {
 		
 		// Super Classes (rdfs:subClassOf)
 		ArrayList<ClassBean> superClasses = (ArrayList<ClassBean>)classBean.getRelation((Object) ApplicationConstants.SUPER_CLASS);
+		
 		if (superClasses != null) {
-			// Getting the Relation from ClassBean inside Map
-			mapForRelation = classBean.getRelations();
-			// Using the Set for Iterating the Map
-			Set<Map.Entry<Object, Object>> set = mapForRelation.entrySet();
-			for (Map.Entry<Object, Object> me : set) {
-				// Condition according to Key here Key contains the
-				// Properties(is_a or part_of)
-				if (me.getKey().equals(IS_A_PROPERTY)) {
-					// List for ClassBean according to Key value
-					ArrayList<ClassBean> listForISA = (ArrayList<ClassBean>) me.getValue();
-					for (ClassBean is_aProperty : listForISA) {
-						// Adding the Axiom inside OWLOntologyManager
-						manager.addAxiom(ontology, factory.getOWLSubClassOfAxiom(owlClass, factory.getOWLClass(IRI.create(getClassUri(ont, is_aProperty.getId())))));
-						// Class for Pointing the Reference for SKOS
-						OWLClass owlClassForSkosbroader = factory.getOWLClass(IRI.create(getClassUri(ont, is_aProperty.getId())));
-						// add skos:broader annotation
-						OWLAnnotation skosBroaderAnnotation = factory.getOWLAnnotation(factory.getOWLAnnotationProperty(IRI.create(SKOSVocabulary.BROADER.getURI())),
-								owlClassForSkosbroader.getIRI());
-						// Adding the skos:broader annotaion inside OWLOntologyManager
-						manager.addAxiom(ontology, factory.getOWLAnnotationAssertionAxiom(owlClass.getIRI(), skosBroaderAnnotation));
-						// Condition for OBO_FORMAT
-						if (ont.getFormat().toUpperCase().contains(OBO_FORMAT)) {
-							// Creating the OWLClass for OBO
-							OWLClass omvClassForObo = factory.getOWLClass(IRI.create(getClassUri(ont, is_aProperty.getId())));
-							// Creating the Annotation for OBO according to their property is_a
-							OWLAnnotation oboIsaAnnotation = factory.getOWLAnnotation(factory.getOWLAnnotationProperty(IRI.create(oboIsa)),
-									omvClassForObo.getIRI());
-							// Adding the OBO annotation property inside OWLOntologyManager as Axiom
-							manager.addAxiom(ontology, factory.getOWLAnnotationAssertionAxiom(owlClass.getIRI(), oboIsaAnnotation));
-						}
-					}
-				}
-				// Condition according to Key here Key contains the Properties(is_a or part_of)
-				else if (me.getKey().equals(PART_OF_PROPERTY)) {
-					ArrayList<ClassBean> beanForPARTOF = (ArrayList<ClassBean>) me.getValue();
-					for (ClassBean part_ofProperty : beanForPARTOF) {
-						// Condition for OBO_FORMAT
-						if (ont.getFormat().toUpperCase().contains(OBO_FORMAT)) {
-							// Creating the Class for OBO
-							OWLClass omvClassForObo = factory.getOWLClass(IRI.create(getClassUri(ont, part_ofProperty.getId())));
-							// Creating the Annotation according to part_of
-							OWLAnnotation oboPartOfAnnotation = factory.getOWLAnnotation(factory.getOWLAnnotationProperty(IRI.create(oboPartof)),
-									omvClassForObo.getIRI());
-							// Adding the part_of relation inside OWLOntologyManager as a Axiom
-							manager.addAxiom(ontology, factory.getOWLAnnotationAssertionAxiom(owlClass.getIRI(), oboPartOfAnnotation));
-						}
-					}
+			for (ClassBean superClass : superClasses) {
+				// Adding the Axiom inside OWLOntologyManager
+				manager.addAxiom(ontology, factory.getOWLSubClassOfAxiom(owlClass, factory.getOWLClass(IRI.create(getClassUri(ont, superClass)))));
+				// Class for Pointing the Reference for SKOS
+				OWLClass owlClassForSkosbroader = factory.getOWLClass(IRI.create(getClassUri(ont, superClass)));
+				// add skos:broader annotation
+				OWLAnnotation skosBroaderAnnotation = factory.getOWLAnnotation(factory.getOWLAnnotationProperty(IRI.create(SKOSVocabulary.BROADER.getURI())),
+						owlClassForSkosbroader.getIRI());
+				// Adding the skos:broader annotaion inside OWLOntologyManager
+				manager.addAxiom(ontology, factory.getOWLAnnotationAssertionAxiom(owlClass.getIRI(), skosBroaderAnnotation));
+				// Condition for OBO_FORMAT
+				if (ont.getFormat().toUpperCase().contains(OBO_FORMAT)) {
+					// Creating the OWLClass for OBO
+					OWLClass omvClassForObo = factory.getOWLClass(IRI.create(getClassUri(ont, superClass)));
+					// Creating the Annotation for OBO according to their property is_a
+					OWLAnnotation oboIsaAnnotation = factory.getOWLAnnotation(factory.getOWLAnnotationProperty(IRI.create(oboIsa)),
+							omvClassForObo.getIRI());
+					// Adding the OBO annotation property inside OWLOntologyManager as Axiom
+					manager.addAxiom(ontology, factory.getOWLAnnotationAssertionAxiom(owlClass.getIRI(), oboIsaAnnotation));
 				}
 			}
-		} else {
-			// if orphan, superClassOf owl:Thing? NO! Don't do this.
-			//manager.addAxiom(ontology, factory.getOWLSubClassOfAxiom(owlClass, factory.getOWLThing()));
 		}
 		
+		ArrayList<ClassBean> partOfRels = (ArrayList<ClassBean>)classBean.getRelation((Object) PART_OF_PROPERTY);
+		
+		if (partOfRels != null) {
+			for (ClassBean partOfRel : partOfRels) {
+				// Condition for OBO_FORMAT
+				if (ont.getFormat().toUpperCase().contains(OBO_FORMAT)) {
+					// Creating the Class for OBO
+					OWLClass omvClassForObo = factory.getOWLClass(IRI.create(getClassUri(ont, partOfRel)));
+					// Creating the Annotation according to part_of
+					OWLAnnotation oboPartOfAnnotation = factory.getOWLAnnotation(factory.getOWLAnnotationProperty(IRI.create(oboPartof)),
+							omvClassForObo.getIRI());
+					// Adding the part_of relation inside OWLOntologyManager as a Axiom
+					manager.addAxiom(ontology, factory.getOWLAnnotationAssertionAxiom(owlClass.getIRI(), oboPartOfAnnotation));
+				}
+			}
+		}
+
 		// Other Annotations, such as UMLS CUI TUI and semanticType
 		getOtherAnnotationsUsingOwlApi(manager, ontology, factory, ont, classBean, owlClass);
 	}
@@ -611,8 +521,6 @@ public class RdfServiceImpl extends ConceptServiceImpl implements RdfService {
 	 * @return a PURLized ontology uri
 	 */
 	private String getOntologyUri(OntologyBean ont, List<String> conceptIds) {
-		
-		
 		// use the ontology abbreviation, else it's virtual id
 		String prefix = StringHelper.isNullOrNullString(ont.getAbbreviation()) ? ont
 				.getOntologyId().toString()
@@ -621,78 +529,11 @@ public class RdfServiceImpl extends ConceptServiceImpl implements RdfService {
 		String uri = BIOPORTAL_PURL_BASE;
 		uri = uri + prefix;
 
-		// provide a single-concept specific uri
-
 		return uri;
-
-
 	}
-	
-
-	private String getOntologyUriForOMV(OntologyBean ont, List<String> conceptIds) {
-
-		// use the ontology abbreviation, else it's virtual id
-		String prefix = StringHelper.isNullOrNullString(ont.getAbbreviation()) ? ont
-				.getOntologyId().toString()
-				: ont.getAbbreviation();
-
-		String uri = OMV_PURL_BASE;
-		uri = uri + prefix;
-
-		// provide a single-concept specific uri
-
-		return uri;
-
-	}
-	
 	
 	private String getFileName(OntologyBean ont) {
 		// use the virtual ontology id because we are only keeping one RDF version, the latest version
 		return ont.getOntologyId() + ".rdf";
 	}
-	
-	/**
-	 * 
-	 * @param ont
-	 * @param id
-	 * @return
-	 */
-	private String getClassUri(OntologyBean ont, String id) {
-		String ontologyFormat = ont.getFormat().toUpperCase();
-		String classId = null;
-		String classIdPrefix = "";
-		String baseUri = null;
-		String fullUri = null;
-		
-		if (ontologyFormat.contains("OBO")) {
-			baseUri = OBO_PURL_BASE + "obo/";
-			if (id.contains(":")) {
-				String[] oboId = id.split(":", 2);
-				classIdPrefix = oboId[0];
-				classId = oboId[1];
-			} else {
-				classIdPrefix = ont.getOntologyId().toString();
-			}
-			classIdPrefix = getIRIFriendlyName(classIdPrefix);
-			classId = getIRIFriendlyName(classId);
-			fullUri = baseUri + classIdPrefix + "_" + classId;
-		} else if (ontologyFormat.contains("RRF") || ontologyFormat.contains("PROT")) {
-			baseUri = BIOPORTAL_PURL_BASE + "ontology/";
-			classIdPrefix = StringHelper.isNullOrNullString(ont.getAbbreviation()) ?
-					ont.getOntologyId().toString() : ont.getAbbreviation();
-			classIdPrefix = getIRIFriendlyName(classIdPrefix);
-			classId = getIRIFriendlyName(id);
-			fullUri = baseUri + classIdPrefix + "/" + classId;
-		} 
-		/**
-		else {
-			// OWL -- use fullId URI
-			//fullUri = classBean.getFullId();
-		}
-		**/
-		return fullUri;
-	}
-	
-	
-
 }
