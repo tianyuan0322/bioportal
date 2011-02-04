@@ -371,33 +371,17 @@ public class OntologyServiceMetadataImpl extends AbstractOntologyService
 		File file = new File(AbstractFilePathHandler.getRdfFilePath(
 				ontologyBean, filename));
 		
-		File outputFile = new File(filename);
-
 		try {
 			if (!file.exists()) {
 				String errorMsg = "Enter a valid ontology version id";
 				log.error(errorMsg);
 				throw new FileNotFoundException(errorMsg);
-			} else {
-				FileInputStream fileInputStream = new FileInputStream(file);
-				FileOutputStream fileOutputStream = new FileOutputStream(
-						outputFile);
-
-				int c;
-
-				while ((c = fileInputStream.read()) != -1) {
-					fileOutputStream.write(c);
-				}
-
-				fileInputStream.close();
-				fileOutputStream.close();
-
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
 
-		return outputFile;
+		return file;
 	}
 
 	public List<OntologyBean> searchOntologyMetadata(String query,
