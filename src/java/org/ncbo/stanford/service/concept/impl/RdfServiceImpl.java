@@ -62,10 +62,6 @@ public class RdfServiceImpl extends ConceptServiceImpl implements RdfService {
 	public static final String OMV_URI = "http://omv.ontoware.org/2005/05/ontology#owl";
 	public static final String OBO_REL_NS = "obo-rel";
 	public static final String OBO_REL_URI = OBO_PURL_BASE + "obo/";
-	
-	public static final String OWL_FORMAT = "OWL";
-	public static final String OBO_FORMAT = "OBO";
-	public static final String RRF_FORMAT = "RRF";
 
 	public static final String UMLS_CUI = "UMLS_CUI";
 	public static final String UMLS_TUI = "TUI";
@@ -78,8 +74,8 @@ public class RdfServiceImpl extends ConceptServiceImpl implements RdfService {
 
 	public static final String RDF_TYPE_RESOURCE = "RDF Resource";
 	public static final String RDF_TYPE_LITERAL = "RDF Literal";
-	public static final String IS_A_PROPERTY="is_a";
-	public static final String PART_OF_PROPERTY="part_of";
+	public static final String IS_A_PROPERTY = "is_a";
+	public static final String PART_OF_PROPERTY = "part_of";
 	
 	public static final String rdfsLabel = RDFS_URI + "label";
 	public static final String rdfsSubClassOf = RDFS_URI + "subClassOf";
@@ -378,7 +374,13 @@ public class RdfServiceImpl extends ConceptServiceImpl implements RdfService {
 		}
 		
 		// Super Classes (rdfs:subClassOf)
-		ArrayList<ClassBean> superClasses = (ArrayList<ClassBean>)classBean.getRelation((Object) ApplicationConstants.SUPER_CLASS);
+		ArrayList<ClassBean> superClasses = null;
+		
+		if (ont.getFormat().equalsIgnoreCase(ApplicationConstants.FORMAT_OBO)) {
+			superClasses = (ArrayList<ClassBean>)classBean.getRelation((Object) IS_A_PROPERTY);			
+		} else {			
+			superClasses = (ArrayList<ClassBean>)classBean.getRelation((Object) ApplicationConstants.SUPER_CLASS);
+		}
 		
 		if (superClasses != null) {
 			for (ClassBean superClass : superClasses) {
@@ -392,7 +394,7 @@ public class RdfServiceImpl extends ConceptServiceImpl implements RdfService {
 				// Adding the skos:broader annotaion inside OWLOntologyManager
 				manager.addAxiom(ontology, factory.getOWLAnnotationAssertionAxiom(owlClass.getIRI(), skosBroaderAnnotation));
 				// Condition for OBO_FORMAT
-				if (ont.getFormat().toUpperCase().contains(OBO_FORMAT)) {
+				if (ont.getFormat().toUpperCase().contains(ApplicationConstants.FORMAT_OBO)) {
 					// Creating the OWLClass for OBO
 					OWLClass omvClassForObo = factory.getOWLClass(IRI.create(getClassUri(ont, superClass)));
 					// Creating the Annotation for OBO according to their property is_a
@@ -409,7 +411,7 @@ public class RdfServiceImpl extends ConceptServiceImpl implements RdfService {
 		if (partOfRels != null) {
 			for (ClassBean partOfRel : partOfRels) {
 				// Condition for OBO_FORMAT
-				if (ont.getFormat().toUpperCase().contains(OBO_FORMAT)) {
+				if (ont.getFormat().toUpperCase().contains(ApplicationConstants.FORMAT_OBO)) {
 					// Creating the Class for OBO
 					OWLClass omvClassForObo = factory.getOWLClass(IRI.create(getClassUri(ont, partOfRel)));
 					// Creating the Annotation according to part_of
