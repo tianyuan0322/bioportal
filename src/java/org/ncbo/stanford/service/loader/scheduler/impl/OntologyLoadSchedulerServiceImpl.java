@@ -200,7 +200,8 @@ public class OntologyLoadSchedulerServiceImpl extends AbstractOntologyService
 				calculateMetrics(ontologyBean, formatHandler);
 
 				// create a diff of this version and the previous one
-				createDiff(ontologyBean);
+				// Disabled until we figure out why the workflow is broken
+				// createDiff(ontologyBean);
 			}
 
 			// index ontology but only when the loader (formatHandler) is not
