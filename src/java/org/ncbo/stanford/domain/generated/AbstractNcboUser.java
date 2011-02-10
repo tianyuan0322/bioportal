@@ -1,6 +1,6 @@
 package org.ncbo.stanford.domain.generated;
 
-import java.util.Date;
+import java.sql.Timestamp;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -15,13 +15,14 @@ public abstract class AbstractNcboUser implements java.io.Serializable {
 
 	private Integer id;
 	private String username;
+	private String apiKey;
+	private String openId;
 	private String password;
 	private String email;
-	private String openId;
 	private String firstname;
 	private String lastname;
 	private String phone;
-	private Date dateCreated;
+	private Timestamp dateCreated;
 	private Set ncboUserRoles = new HashSet(0);
 
 	// Constructors
@@ -31,9 +32,11 @@ public abstract class AbstractNcboUser implements java.io.Serializable {
 	}
 
 	/** minimal constructor */
-	public AbstractNcboUser(String username, String password, String email,
-			String firstname, String lastname, Date dateCreated) {
+	public AbstractNcboUser(String username, String apiKey, String password,
+			String email, String firstname, String lastname,
+			Timestamp dateCreated) {
 		this.username = username;
+		this.apiKey = apiKey;
 		this.password = password;
 		this.email = email;
 		this.firstname = firstname;
@@ -42,13 +45,14 @@ public abstract class AbstractNcboUser implements java.io.Serializable {
 	}
 
 	/** full constructor */
-	public AbstractNcboUser(String username, String password, String email,
-			String openId, String firstname, String lastname, String phone,
-			Date dateCreated, Set ncboUserRoles) {
+	public AbstractNcboUser(String username, String apiKey, String openId,
+			String password, String email, String firstname, String lastname,
+			String phone, Timestamp dateCreated, Set ncboUserRoles) {
 		this.username = username;
+		this.apiKey = apiKey;
+		this.openId = openId;
 		this.password = password;
 		this.email = email;
-		this.openId = openId;
 		this.firstname = firstname;
 		this.lastname = lastname;
 		this.phone = phone;
@@ -74,6 +78,22 @@ public abstract class AbstractNcboUser implements java.io.Serializable {
 		this.username = username;
 	}
 
+	public String getApiKey() {
+		return this.apiKey;
+	}
+
+	public void setApiKey(String apiKey) {
+		this.apiKey = apiKey;
+	}
+
+	public String getOpenId() {
+		return this.openId;
+	}
+
+	public void setOpenId(String openId) {
+		this.openId = openId;
+	}
+
 	public String getPassword() {
 		return this.password;
 	}
@@ -88,14 +108,6 @@ public abstract class AbstractNcboUser implements java.io.Serializable {
 
 	public void setEmail(String email) {
 		this.email = email;
-	}
-
-	public String getOpenId() {
-		return this.openId;
-	}
-
-	public void setOpenId(String openId) {
-		this.openId = openId;
 	}
 
 	public String getFirstname() {
@@ -122,11 +134,11 @@ public abstract class AbstractNcboUser implements java.io.Serializable {
 		this.phone = phone;
 	}
 
-	public Date getDateCreated() {
+	public Timestamp getDateCreated() {
 		return this.dateCreated;
 	}
 
-	public void setDateCreated(Date dateCreated) {
+	public void setDateCreated(Timestamp dateCreated) {
 		this.dateCreated = dateCreated;
 	}
 

@@ -117,16 +117,18 @@
 		<url-pattern>/*</url-pattern>
 	</filter-mapping>
 
-	<!-- Spring Security Filter -->
+	<!-- Security Filter 
 	<filter>
-		<filter-name>springSecurityFilterChain</filter-name>
-		<filter-class>org.springframework.web.filter.DelegatingFilterProxy</filter-class>
+		<filter-name>securityFilter</filter-name>
+		<filter-class>org.ncbo.stanford.util.security.AuthFilter</filter-class>
 	</filter>
 
 	<filter-mapping>
-		<filter-name>springSecurityFilterChain</filter-name>
+		<filter-name>securityFilter</filter-name>
 		<url-pattern>/*</url-pattern>
 	</filter-mapping>
+	-->
+
 
 	<!-- Multipart HttpServletRequests wrapper -->
 	<filter>

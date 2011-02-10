@@ -260,6 +260,17 @@ public class RequestUtils {
 				RequestParamConstants.PARAM_APPLICATIONID);
 	}
 
+	/**
+	 * Returns the API Key from a request
+	 * 
+	 * @param request
+	 * @return
+	 */
+	public static String getApiKey(Request request) {
+		return getHttpServletRequest(request).getParameter(
+				RequestParamConstants.PARAM_APIKEY);
+	}
+	
 	public static boolean parseBooleanParam(String booleanVal) {
 		boolean isPresent = false;
 

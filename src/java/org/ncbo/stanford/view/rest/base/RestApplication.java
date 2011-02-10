@@ -2,6 +2,7 @@ package org.ncbo.stanford.view.rest.base;
 
 import javax.servlet.ServletContext;
 
+import org.ncbo.stanford.util.security.AuthFilter;
 import org.restlet.Application;
 import org.restlet.Restlet;
 import org.restlet.Router;
@@ -24,13 +25,16 @@ public class RestApplication extends Application {
 
 		ServletContextAdapter adapter = (ServletContextAdapter) getContext();
 		ServletContext servletContext = adapter.getServletContext();
-		WebApplicationContext springApplicationContext = WebApplicationContextUtils
+		WebApplicationContext springAppContext = WebApplicationContextUtils
 				.getWebApplicationContext(servletContext);
 
-		RestManager manager = (RestManager) springApplicationContext
+		RestManager manager = (RestManager) springAppContext
 				.getBean("restManager");
 		manager.init(router);
 
-		return router;
+		AuthFilter authFilter = new AuthFilter(getContext(), springAppContext);
+		authFilter.setNext(router);
+		
+		return authFilter;
 	}
 }

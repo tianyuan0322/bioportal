@@ -26,6 +26,10 @@ public abstract class StringHelper {
 	private final static char SINGLE_QUOTE_CHAR = '\'';
 	private static final String UNDERSCORE_LETTER_PATTERN = "_+(\\w)";
 
+	/** Regex pattern for a UUID */
+	private static final Pattern uuidPattern =
+		Pattern.compile("^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$");
+
 	// public static void main(String[] args) {
 	// String k = "\"Hello World\"";
 	// String us = unSingleQuote(k);
@@ -35,6 +39,17 @@ public abstract class StringHelper {
 	// String ud = unDoubleQuote(k);
 	// System.out.println("Without Double Quotes: " + ud);
 	// }
+
+    /**
+	 * Returns true if and only if uuid matches the pattern for valid UUIDs.
+	 *
+	 * @param uuid the <code>String</code> to check.
+	 * @return <code>true</code> if and only if the specified.
+	 * <code>String</code> matches the pattern; <code>false</code> otherwise.
+	 */
+	public static boolean isValidUUID(String uuid) {
+		return uuidPattern.matcher(uuid).matches();
+    }
 
 	/**
 	 * Formats the number

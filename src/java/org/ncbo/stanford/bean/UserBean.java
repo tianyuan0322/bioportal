@@ -1,5 +1,6 @@
 package org.ncbo.stanford.bean;
 
+import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -73,12 +74,14 @@ public class UserBean {
 			ncboUser.setFirstname(this.getFirstname());
 			ncboUser.setLastname(this.getLastname());
 			ncboUser.setPhone(this.getPhone());
-			ncboUser.setDateCreated(this.getDateCreated());
 
-			// time stamp
-			if (ncboUser.getDateCreated() == null) {
-				ncboUser.setDateCreated(new Date());
+			Date dateCreated = this.getDateCreated();
+
+			if (dateCreated == null) {
+				dateCreated = new Date();
 			}
+
+			ncboUser.setDateCreated(new Timestamp(dateCreated.getTime()));
 		}
 	}
 

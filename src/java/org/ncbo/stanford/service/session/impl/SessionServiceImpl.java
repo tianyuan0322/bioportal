@@ -1,10 +1,11 @@
 package org.ncbo.stanford.service.session.impl;
 
+import java.util.UUID;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.ncbo.stanford.service.session.RESTfulSession;
 import org.ncbo.stanford.service.session.SessionService;
-import org.ncbo.stanford.util.cache.GloballyUniqueKey;
 import org.ncbo.stanford.util.cache.container.HashbeltContainerFactory;
 import org.ncbo.stanford.util.cache.expiration.handler.ExpirationHandler;
 import org.ncbo.stanford.util.cache.expiration.system.impl.UpdatingHashbeltExpirationSystem;
@@ -70,7 +71,7 @@ public class SessionServiceImpl extends
 	 */
 	public RESTfulSession createNewSession() {
 		RESTfulSession ses = new RESTfulSession();
-		String key = new GloballyUniqueKey().getKey();
+		String key = UUID.randomUUID().toString();
 		ses.setId(key);
 		ses.setValid(true);
 		put(key, ses);
