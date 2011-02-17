@@ -580,10 +580,15 @@ public class OntologyRetrievalManagerProtegeImpl extends
 			Object next = it.next();
 
 			if (next instanceof Instance) {
-				Instance subclass = (Instance) next;
-				String browserText = subclass.getBrowserText();
-				
-				if (subclass.isSystem() || browserText.startsWith("@")) {
+				try {
+					Instance subclass = (Instance) next;
+					String browserText = subclass.getBrowserText();
+
+					if (subclass.isSystem() || browserText.startsWith("@")) {
+						it.remove();
+					}
+				} catch (Exception e) {
+					// If we encounter problems with this class, remove it
 					it.remove();
 				}
 			}
