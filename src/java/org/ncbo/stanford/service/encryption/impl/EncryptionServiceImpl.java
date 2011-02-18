@@ -3,7 +3,7 @@ package org.ncbo.stanford.service.encryption.impl;
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
-import java.util.HashMap;
+import java.util.Map;
 
 import org.jasypt.encryption.pbe.StandardPBEStringEncryptor;
 import org.jasypt.spring.security2.PasswordEncoder;
@@ -88,7 +88,7 @@ public class EncryptionServiceImpl implements EncryptionService {
 	public String getParamFromEncryptedQueryString(String encrypted,
 			String paramName) throws UnsupportedEncodingException {
 		String decrypted = decryptQueryString(encrypted);
-		HashMap<String, String> params = RequestUtils
+		Map<String, String> params = RequestUtils
 				.parseQueryString(decrypted);
 
 		return params.get(paramName);
