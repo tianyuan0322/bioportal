@@ -48,6 +48,10 @@ bioportal.session.timeout=1800000
 # Number of "buckets" to allocate for session storage
 bioportal.session.numcontainers=11
 
+# Timeout (in milliseconds) for refreshing 
+# cached ontology Access Control List (ACL)
+bioportal.ontology.acl.cache.timeout=300000
+
 # Search properties
 # Default maximum number of results
 bioportal.search.defmaxnumhits=1000

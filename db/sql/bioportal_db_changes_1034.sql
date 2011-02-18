@@ -17,5 +17,8 @@ CREATE TABLE `ncbo_ontology_acl` (
   `user_id` int(11) NOT NULL,
   `is_owner` bit(1) NOT NULL,
   PRIMARY KEY (`id`),
-  UNIQUE KEY `idx_ontology_id_user_id_unique` (`ontology_id`,`user_id`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+  UNIQUE KEY `idx_ontology_id_user_id_unique` (`ontology_id`,`user_id`),
+  KEY `idx_ontology_id` (`ontology_id`),
+  KEY `idx_user_id` (`user_id`),
+  CONSTRAINT `FK_ncbo_ontology_acl_user_id` FOREIGN KEY (`user_id`) REFERENCES `ncbo_user` (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=1001 DEFAULT CHARSET=latin1 CHECKSUM=1 DELAY_KEY_WRITE=1 ROW_FORMAT=DYNAMIC;

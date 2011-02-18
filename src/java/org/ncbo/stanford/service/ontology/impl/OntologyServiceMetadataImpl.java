@@ -1,11 +1,12 @@
 package org.ncbo.stanford.service.ontology.impl;
 
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.util.ArrayList;
+import java.util.Hashtable;
 import java.util.List;
+import java.util.Map;
+import java.util.Vector;
 
 import org.LexGrid.LexBIG.Exceptions.LBParameterException;
 import org.apache.commons.logging.Log;
@@ -35,8 +36,26 @@ public class OntologyServiceMetadataImpl extends AbstractOntologyService
 			.getLog(OntologyServiceMetadataImpl.class);
 
 	private OntologyCategoryMetadataManager ontologyCategoryMetadataManager;
-	private OntologyGroupMetadataManager ontologyGroupMetadataManager;
+	private OntologyGroupMetadataManager ontologyGroupMetadataManager;	
+	private List<Integer> ontologyAcl = new Vector<Integer>(0);
+	private Map<Integer, Integer> ontologyVersionIdToVirtualIdMap = new Hashtable<Integer, Integer>(0);
 
+	public void populateAllOntologyAcl() {
+		ontologyAcl = ncboOntologyAclDAO.getAllOntologyIds();
+	}
+
+	
+	
+	
+	
+	public void populateVersionIdToVirtualIdMap() {
+
+	
+	
+	}
+	
+	
+	
 	public void cleanupOntologyCategory(OntologyBean ontologyBean) {
 		// This method was created in the original implementation where
 		// metadata was stored in databases.
@@ -101,7 +120,7 @@ public class OntologyServiceMetadataImpl extends AbstractOntologyService
 		ontologyBean.populateToLoadQueueEntity(loadQueue, newVersionId);
 		ncboOntologyLoadQueueDAO.save(loadQueue);
 	}
-
+	
 	/**
 	 * Delete/Deprecate several ontologies
 	 * 
@@ -491,5 +510,12 @@ public class OntologyServiceMetadataImpl extends AbstractOntologyService
 	public void setOntologyGroupMetadataManager(
 			OntologyGroupMetadataManager ontologyGroupMetadataManager) {
 		this.ontologyGroupMetadataManager = ontologyGroupMetadataManager;
+	}
+
+	/**
+	 * @return the ontologyAcl
+	 */
+	public List<Integer> getOntologyAcl() {
+		return ontologyAcl;
 	}
 }

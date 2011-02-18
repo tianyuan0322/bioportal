@@ -11,6 +11,8 @@ public interface UserService {
 
 	public UserBean findUserByEmail(String email);
 
+	public UserBean findUserByApiKey(String apiKey);
+	
 	public List<UserBean> findUsers();
 
 	public void createUser(UserBean userBean);

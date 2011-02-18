@@ -3,8 +3,11 @@ package org.ncbo.stanford.bean;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
+import org.ncbo.stanford.domain.generated.NcboOntologyAcl;
 import org.ncbo.stanford.domain.generated.NcboUser;
 import org.ncbo.stanford.domain.generated.NcboUserRole;
 import org.ncbo.stanford.util.MessageUtils;
@@ -15,19 +18,21 @@ public class UserBean {
 	private Integer id;
 	private String username;
 	private String password;
+	private String apiKey;
 	private String email;
 	private String firstname;
 	private String lastname;
 	private String phone;
 	private Date dateCreated;
 	private List<String> roles = new ArrayList<String>(0);
+	private Map<Integer, Boolean> ontologyAcl = new HashMap<Integer, Boolean>(0);
 
 	public String toString() {
 		return "{Id: " + this.getId() + ", Username: " + this.getUsername()
-				+ ", Password: " + this.getPassword() + ", Email: "
-				+ this.getEmail() + ", Firstname: " + this.getFirstname()
-				+ ", Lastname: " + this.getLastname() + ", Phone: "
-				+ this.getPhone() + "}";
+				+ ", API Key: " + this.getApiKey() + ", Password: "
+				+ this.getPassword() + ", Email: " + this.getEmail()
+				+ ", Firstname: " + this.getFirstname() + ", Lastname: "
+				+ this.getLastname() + ", Phone: " + this.getPhone() + "}";
 	}
 
 	/**
@@ -40,19 +45,21 @@ public class UserBean {
 			this.setId(ncboUser.getId());
 			this.setUsername(ncboUser.getUsername());
 			this.setPassword(ncboUser.getPassword());
+			this.setApiKey(ncboUser.getApiKey());
 			this.setEmail(ncboUser.getEmail());
 			this.setFirstname(ncboUser.getFirstname());
 			this.setLastname(ncboUser.getLastname());
 			this.setPhone(ncboUser.getPhone());
 			this.setDateCreated(ncboUser.getDateCreated());
 
-			List<String> roles = new ArrayList<String>(1);
-
 			for (Object role : ncboUser.getNcboUserRoles()) {
 				roles.add(((NcboUserRole) role).getNcboLRole().getName());
 			}
 
-			this.setRoles(roles);
+			for (Object ontAcl : ncboUser.getNcboOntologyAcls()) {
+				ontologyAcl.put(((NcboOntologyAcl) ontAcl).getOntologyId(),
+						((NcboOntologyAcl) ontAcl).getIsOwner());
+			}
 		}
 	}
 
@@ -65,6 +72,7 @@ public class UserBean {
 		if (ncboUser != null) {
 			ncboUser.setId(this.getId());
 			ncboUser.setUsername(this.getUsername());
+			ncboUser.setApiKey(this.getApiKey());
 
 			if (!StringHelper.isNullOrNullString(this.getPassword())) {
 				ncboUser.setPassword(this.getPassword());
@@ -232,5 +240,27 @@ public class UserBean {
 	 */
 	public void setRoles(List<String> roles) {
 		this.roles = roles;
+	}
+
+	/**
+	 * @return the apiKey
+	 */
+	public String getApiKey() {
+		return apiKey;
+	}
+
+	/**
+	 * @param apiKey
+	 *            the apiKey to set
+	 */
+	public void setApiKey(String apiKey) {
+		this.apiKey = apiKey;
+	}
+	
+	/**
+	 * @return the ontologyAcl
+	 */
+	public Map<Integer, Boolean> getOntologyAcl() {
+		return ontologyAcl;
 	}
 }

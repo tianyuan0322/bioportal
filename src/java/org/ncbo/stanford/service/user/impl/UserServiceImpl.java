@@ -58,7 +58,8 @@ public class UserServiceImpl implements UserService {
 
 	public UserBean findUserByEmail(String email) {
 		UserBean userBean = null;
-		List userList = ncboUserDAO.findByEmail(email);
+		List<NcboUser> userList = ncboUserDAO.findByEmail(email);
+		
 		if (userList.size() > 0) {
 			NcboUser user = (NcboUser) userList.toArray()[0];
 
@@ -72,6 +73,22 @@ public class UserServiceImpl implements UserService {
 		return userBean;
 	}
 
+	public UserBean findUserByApiKey(String apiKey) {
+		UserBean userBean = null;
+		List<NcboUser> userList = ncboUserDAO.findByApiKey(apiKey);
+		
+		if (userList.size() > 0) {
+			NcboUser user = (NcboUser) userList.toArray()[0];
+
+			if (user != null) {
+				userBean = new UserBean();
+				userBean.populateFromEntity(user);
+			}
+		}
+
+		return userBean;
+	}
+	
 	/**
 	 * @return List<UserBean>
 	 */

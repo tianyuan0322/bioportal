@@ -46,8 +46,6 @@ public class OntologyMetadataManagerImpl extends
 	private static final String QUERY_MAX_ONTOLOGY_ID = "Query-Max-Ontology-ID";
 	private static final String QUERY_MAX_VIRTUAL_ONTOLOGY_ID = "Query-Max-VirtualOntology-ID";
 
-	private static final boolean CREATE_IF_MISSING = true;
-	private static final boolean DO_NOT_CREATE_IF_MISSING = false;
 	private static final boolean ONLY_ACTIVE_VERSIONS = true;
 	private static final boolean ALL_VERSIONS = (!ONLY_ACTIVE_VERSIONS);
 	private static final boolean INCLUDE_SUBCLASSES = true;

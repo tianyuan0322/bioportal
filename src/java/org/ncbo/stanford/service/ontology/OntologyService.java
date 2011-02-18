@@ -17,6 +17,11 @@ import org.ncbo.stanford.util.ontologyfile.pathhandler.FilePathHandler;
 public interface OntologyService {
 
 	/**
+	 * Populates ontology Access Control List into memory
+	 */
+	public void populateAllOntologyAcl();
+	
+	/**
 	 * Return the list of all categories
 	 * 
 	 * @return

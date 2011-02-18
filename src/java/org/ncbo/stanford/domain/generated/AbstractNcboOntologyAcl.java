@@ -1,77 +1,65 @@
 package org.ncbo.stanford.domain.generated;
 
-
-
 /**
- * AbstractNcboOntologyAcl entity provides the base persistence definition of the NcboOntologyAcl entity. @author MyEclipse Persistence Tools
+ * AbstractNcboOntologyAcl entity provides the base persistence definition of
+ * the NcboOntologyAcl entity. @author MyEclipse Persistence Tools
  */
 
-public abstract class AbstractNcboOntologyAcl  implements java.io.Serializable {
+public abstract class AbstractNcboOntologyAcl implements java.io.Serializable {
 
+	// Fields
 
-    // Fields    
+	private Integer id;
+	private NcboUser ncboUser;
+	private Integer ontologyId;
+	private Boolean isOwner;
 
-     private Integer id;
-     private Integer ontologyId;
-     private Integer userId;
-     private Boolean isOwner;
+	// Constructors
 
+	/** default constructor */
+	public AbstractNcboOntologyAcl() {
+	}
 
-    // Constructors
+	/** full constructor */
+	public AbstractNcboOntologyAcl(NcboUser ncboUser, Integer ontologyId,
+			Boolean isOwner) {
+		this.ncboUser = ncboUser;
+		this.ontologyId = ontologyId;
+		this.isOwner = isOwner;
+	}
 
-    /** default constructor */
-    public AbstractNcboOntologyAcl() {
-    }
+	// Property accessors
 
-    
-    /** full constructor */
-    public AbstractNcboOntologyAcl(Integer ontologyId, Integer userId, Boolean isOwner) {
-        this.ontologyId = ontologyId;
-        this.userId = userId;
-        this.isOwner = isOwner;
-    }
+	public Integer getId() {
+		return this.id;
+	}
 
-   
-    // Property accessors
+	public void setId(Integer id) {
+		this.id = id;
+	}
 
-    public Integer getId() {
-        return this.id;
-    }
-    
-    public void setId(Integer id) {
-        this.id = id;
-    }
+	public NcboUser getNcboUser() {
+		return this.ncboUser;
+	}
 
-    public Integer getOntologyId() {
-        return this.ontologyId;
-    }
-    
-    public void setOntologyId(Integer ontologyId) {
-        this.ontologyId = ontologyId;
-    }
+	public void setNcboUser(NcboUser ncboUser) {
+		this.ncboUser = ncboUser;
+	}
 
-    public Integer getUserId() {
-        return this.userId;
-    }
-    
-    public void setUserId(Integer userId) {
-        this.userId = userId;
-    }
+	public Integer getOntologyId() {
+		return this.ontologyId;
+	}
 
-    public Boolean getIsOwner() {
-        return this.isOwner;
-    }
-    
-    public void setIsOwner(Boolean isOwner) {
-        this.isOwner = isOwner;
-    }
-   
+	public void setOntologyId(Integer ontologyId) {
+		this.ontologyId = ontologyId;
+	}
 
+	public Boolean getIsOwner() {
+		return this.isOwner;
+	}
 
-
-
-
-
-
+	public void setIsOwner(Boolean isOwner) {
+		this.isOwner = isOwner;
+	}
 
 }

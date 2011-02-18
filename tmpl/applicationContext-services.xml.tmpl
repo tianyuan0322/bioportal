@@ -783,6 +783,9 @@
 		<property name="ncboOntologyFileDAO">
 			<ref bean="NcboOntologyFileDAO" />
 		</property>
+		<property name="ncboOntologyAclDAO">
+			<ref bean="NcboOntologyAclDAO" />
+		</property>
 		<property name="indexService">
 			<ref bean="indexSearchService" />
 		</property>
@@ -1301,6 +1304,32 @@
 		</property>
 		<property name="autoStartup">
 			<ref bean="oboPullSchedulerAutoStartup" />
+		</property>
+	</bean>
+
+	<!-- Scheduler to populate a list of all ontologies in Access Control List (ACL) -->
+	<bean id="ontologyAclJobDetailBean"
+		class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+		<property name="targetObject" ref="ontologyService" />
+		<property name="targetMethod" value="populateAllOntologyAcl" />
+		<property name="concurrent" value="false" />
+	</bean>
+
+	<bean id="ontologyAclSimpleTrigger" 
+		class="org.springframework.scheduling.quartz.SimpleTriggerBean">
+		<property name="jobDetail" ref="ontologyAclJobDetailBean" />
+		<property name="repeatInterval" value="@bioportalontologyaclcachetimeout@" />
+	</bean>
+
+	<bean id="ontologyAclFactoryBean"
+		class="org.springframework.scheduling.quartz.SchedulerFactoryBean">
+		<property name="schedulerName" value="ontologyAclSchedulerFactoryBean" />
+		<property name="overwriteExistingJobs" value="true" />
+		<property name="waitForJobsToCompleteOnShutdown" value="true" />
+		<property name="triggers">
+			<list>
+				<ref bean="ontologyAclSimpleTrigger" />
+			</list>
 		</property>
 	</bean>
 

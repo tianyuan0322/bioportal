@@ -24,6 +24,7 @@ public abstract class AbstractNcboUser implements java.io.Serializable {
 	private String phone;
 	private Timestamp dateCreated;
 	private Set ncboUserRoles = new HashSet(0);
+	private Set ncboOntologyAcls = new HashSet(0);
 
 	// Constructors
 
@@ -47,7 +48,8 @@ public abstract class AbstractNcboUser implements java.io.Serializable {
 	/** full constructor */
 	public AbstractNcboUser(String username, String apiKey, String openId,
 			String password, String email, String firstname, String lastname,
-			String phone, Timestamp dateCreated, Set ncboUserRoles) {
+			String phone, Timestamp dateCreated, Set ncboUserRoles,
+			Set ncboOntologyAcls) {
 		this.username = username;
 		this.apiKey = apiKey;
 		this.openId = openId;
@@ -58,6 +60,7 @@ public abstract class AbstractNcboUser implements java.io.Serializable {
 		this.phone = phone;
 		this.dateCreated = dateCreated;
 		this.ncboUserRoles = ncboUserRoles;
+		this.ncboOntologyAcls = ncboOntologyAcls;
 	}
 
 	// Property accessors
@@ -148,6 +151,14 @@ public abstract class AbstractNcboUser implements java.io.Serializable {
 
 	public void setNcboUserRoles(Set ncboUserRoles) {
 		this.ncboUserRoles = ncboUserRoles;
+	}
+
+	public Set getNcboOntologyAcls() {
+		return this.ncboOntologyAcls;
+	}
+
+	public void setNcboOntologyAcls(Set ncboOntologyAcls) {
+		this.ncboOntologyAcls = ncboOntologyAcls;
 	}
 
 }

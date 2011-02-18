@@ -1,11 +1,14 @@
 package org.ncbo.stanford.manager;
 
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.ncbo.stanford.util.metadata.MetadataUtils;
 import org.ncbo.stanford.util.metadata.OntologyCategoryMetadataUtils;
 import org.ncbo.stanford.util.metadata.OntologyGroupMetadataUtils;
 import org.ncbo.stanford.util.metadata.OntologyMetadataUtils;
@@ -17,6 +20,9 @@ import edu.stanford.smi.protegex.owl.model.OWLNamedClass;
 public abstract class AbstractOntologyMetadataManager extends
 		AbstractOntologyManagerProtege {
 
+	protected static final boolean CREATE_IF_MISSING = true;
+	protected static final boolean DO_NOT_CREATE_IF_MISSING = false;
+	
 	private static final Log log = LogFactory
 			.getLog(AbstractOntologyMetadataManager.class);
 	
@@ -86,7 +92,7 @@ public abstract class AbstractOntologyMetadataManager extends
 		return ontClass.createOWLIndividual(indName);
 	}
 	
-	protected OWLIndividual getVirtualOntologyOrViewInstance(OWLModel metadata, int id) {//TODO
+	protected OWLIndividual getVirtualOntologyOrViewInstance(OWLModel metadata, int id) {
 		String ontInstName = getVirtualOntologyIndividualName(id);
 		OWLIndividual ontInd = metadata.getOWLIndividual(ontInstName);
 		if (ontInd == null) {
@@ -247,6 +253,75 @@ public abstract class AbstractOntologyMetadataManager extends
 	}
 	
 
+	
+	public void getVersionIdToVirtualIdMap(OWLModel metadata) {
+		List<Integer> ontologyIds = OntologyMetadataUtils.getAllVirtualOntologyIDs(metadata, false);
+		Map<Integer, Integer> map1 = new HashMap<Integer, Integer>();
+		Map<Integer, Integer> map2 = new HashMap<Integer, Integer>();
+
+		for (Integer ontologyId : ontologyIds) {
+			OWLIndividual vOntInd = getVirtualOntologyInstance(metadata, ontologyId, DO_NOT_CREATE_IF_MISSING);
+			//alternatively, if you decide to move this method in the OntologyMetadataUtils:
+			//OWLIndividual vOntInd = OntologyMetadataUtils.getVirtualOntologyWithId(metadata, ontologyId);
+
+			if (vOntInd != null) {
+				List<Integer> allOntologyVersionIDs;
+				try {
+					allOntologyVersionIDs = OntologyMetadataUtils.getAllOntologyVersionIDs(metadata, vOntInd, false);
+					for (Integer ontologyVersionId : allOntologyVersionIDs) {
+						map1.put(ontologyVersionId, ontologyId);
+					}				
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+			}
+		}
+		
+		//step2
+		List<Integer> ontologyViewIds = OntologyMetadataUtils.getAllVirtualViewIDs(metadata);
+
+		for (Integer viewId : ontologyViewIds) {
+			OWLIndividual vViewInd = getVirtualViewInstance(metadata, viewId, DO_NOT_CREATE_IF_MISSING);
+			//alternatively, if you decide to move this method in the OntologyMetadataUtils:
+			//OWLIndividual vViewInd = OntologyMetadataUtils.getVirtualViewWithId(metadata, viewId);
+
+			if (vViewInd != null) {
+				try {
+					List<Integer> allViewVersionIDs = OntologyMetadataUtils.getAllOntologyVersionIDs(metadata, vViewInd, false);
+					for (Integer viewVersionId : allViewVersionIDs) {
+						map2.put(viewVersionId, viewId);
+					}
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+				
+			}
+		}
+
+	}
+	
+
+	public void getViewIdToOntologyIdMap(OWLModel metadata) {
+		Map<Integer, List<Integer>> map3 = new HashMap<Integer, List<Integer>>();
+
+		List<Integer> ontologyViewIds = OntologyMetadataUtils.getAllVirtualViewIDs(metadata);
+
+		for (Integer viewId : ontologyViewIds) {
+			OWLIndividual vViewInd = getVirtualViewInstance(metadata, viewId, DO_NOT_CREATE_IF_MISSING);
+			//alternatively, if you decide to move this method in the OntologyMetadataUtils:
+			//OWLIndividual vViewInd = OntologyMetadataUtils.getVirtualViewWithId(metadata, viewId);
+
+			if (vViewInd != null) {
+				try {
+					List<Integer> vOntIds = MetadataUtils.getPropertyValueIds(metadata, vViewInd, 
+							OntologyMetadataUtils.PROPERTY_IS_VIEW_ON_ONTOLOGY_VERSION);
+					map3.put(viewId, vOntIds);
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+			}
+		}
+	}
 
 
 }

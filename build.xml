@@ -197,7 +197,8 @@
 				<filter token="encryptionkey" value="${bioportal.encryption.key}" />
 				<filter token="messagebundlepackage" value="${bioportal.messagebundle.package}" />
 				<filter token="bioportalsessionnumcontainers" value="${bioportal.session.numcontainers}" />
-				<filter token="bioportalsessiontimeout" value="${bioportal.session.timeout}" />
+				<filter token="bioportalsessiontimeout" value="${bioportal.session.timeout}" />		
+				<filter token="bioportalontologyaclcachetimeout" value="${bioportal.ontology.acl.cache.timeout}" />
 				<filter token="bioportalsearchdefmaxnumhits" value="${bioportal.search.defmaxnumhits}" />
 				<filter token="bioportalsearchindexmergefactor" value="${bioportal.search.indexmergefactor}" />
 				<filter token="bioportalsearchindexmaxmergedocs" value="${bioportal.search.indexmaxmergedocs}" />

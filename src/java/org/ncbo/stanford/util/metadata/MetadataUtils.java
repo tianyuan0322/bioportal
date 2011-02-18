@@ -236,7 +236,18 @@ public class MetadataUtils {
 		return res;
 	}
 
-	protected static List<Integer> getPropertyValueIds(OWLModel owlModel,
+	/**
+	 * This method returns the ids of the individuals that are the
+	 * property values of the <code>propName</code> property on
+	 * the <code>owlInd</code> individual.
+	 * 
+	 * @param owlModel
+	 * @param owlInd an OWL individual
+	 * @param propName the name of an OWL property
+	 * @return list of ids
+	 * @throws Exception
+	 */
+	public static List<Integer> getPropertyValueIds(OWLModel owlModel,
 			RDFResource owlInd, String propName) throws Exception {
 		Collection<?> propVals = getPropertyValues(owlModel, owlInd, propName,
 				Object.class);
