@@ -43,9 +43,9 @@ public class CustomNcboMappingCountsDAO extends AbstractNcboMappingDAO {
 	public Integer getCountMappingsForConcept(Integer ontologyId,
 			String conceptId, MappingParametersBean parameters)
 			throws InvalidInputException {
-		String filter = generateConceptSparqlFilter(conceptId, null, false);
-		filter += " && "
-				+ generateOntologySparqlFilter(ontologyId, null, false);
+		String filter = "(" + generateConceptSparqlFilter(conceptId, null, false) + ")";
+		filter += " && ("
+				+ generateOntologySparqlFilter(ontologyId, null, false) + ")";
 
 		return getCount(filter, parameters);
 	}

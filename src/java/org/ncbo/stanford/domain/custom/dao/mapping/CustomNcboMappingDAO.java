@@ -90,7 +90,7 @@ public class CustomNcboMappingDAO extends AbstractNcboMappingDAO {
 					+ "is_many_to_many");
 			Statement statement = new StatementImpl(newMapping.getId(),
 					predicate, vf.createLiteral(true));
-			
+
 			try {
 				con.add(statement, ApplicationConstants.MAPPING_CONTEXT_URI);
 			} catch (RepositoryException e) {
@@ -315,9 +315,10 @@ public class CustomNcboMappingDAO extends AbstractNcboMappingDAO {
 	public List<Mapping> getMappingsForConcept(Integer ontologyId,
 			String conceptId, Integer limit, Integer offset,
 			MappingParametersBean parameters) throws InvalidInputException {
-		String filter = generateConceptSparqlFilter(conceptId, null, false);
-		filter += " && "
-				+ generateOntologySparqlFilter(ontologyId, null, false);
+		String filter = "("
+				+ generateConceptSparqlFilter(conceptId, null, false) + ")";
+		filter += " && ("
+				+ generateOntologySparqlFilter(ontologyId, null, false) + ")";
 
 		return getMappings(limit, offset, filter, parameters);
 	}
