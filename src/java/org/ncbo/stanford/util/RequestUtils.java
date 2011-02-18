@@ -111,7 +111,7 @@ public class RequestUtils {
 	 * @param queryString
 	 * @return
 	 */
-	public static HashMap<String, String> parseQueryString(String queryString) {
+	public static Map<String, String> parseQueryString(String queryString) {
 		HashMap<String, String> parsed = new HashMap<String, String>(1);
 		StringTokenizer stAmpersand = new StringTokenizer(queryString,
 				PARAM_SEPARATOR);
@@ -420,7 +420,6 @@ public class RequestUtils {
 	 */
 	public static List<String> getAttributeOrRequestParams(String name,
 			Request request) {
-
 		// Creating the List with the name of params of String type
 		List<String> paramList = new ArrayList<String>();
 
@@ -429,8 +428,8 @@ public class RequestUtils {
 		if (StringHelper.isNullOrNullString(paramData)) {
 			HttpServletRequest httpRequest = getHttpServletRequest(request);
 			paramData = (String) httpRequest.getParameter(name);
-
 		}
+		
 		if (paramData != null) {
 			try {
 				paramData = URLDecoder.decode(paramData, MessageUtils
@@ -441,12 +440,10 @@ public class RequestUtils {
 		}
 
 		// Creating the Array of Type String with the name of Param
-
 		String[] paramFormat = StringHelper.split(paramData, COMMA_DELIMITER);
 
 		// Iterate the All Value of Params
 		for (int i = 0; i < paramFormat.length; i++) {
-
 			// Adding the All Value Inside The ArrayList
 			paramList.add(paramFormat[i]);
 		}
