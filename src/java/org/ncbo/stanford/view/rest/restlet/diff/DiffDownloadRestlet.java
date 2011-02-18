@@ -8,7 +8,6 @@ import javax.servlet.http.HttpServletRequest;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.ncbo.stanford.service.diff.DiffService;
-import org.ncbo.stanford.util.MessageUtils;
 import org.ncbo.stanford.util.RequestUtils;
 import org.ncbo.stanford.view.rest.restlet.AbstractBaseRestlet;
 import org.ncbo.stanford.view.util.constants.RequestParamConstants;
@@ -46,9 +45,9 @@ public class DiffDownloadRestlet extends AbstractBaseRestlet {
 
 	private void downloadDiff(Request request, Response response) {
 		String ontologyVersionId1 = (String) request.getAttributes().get(
-				MessageUtils.getMessage("entity.ontologyversionid1"));
+				RequestParamConstants.PARAM_ONTOLOGY_VERSION_ID_1);
 		String ontologyVersionId2 = (String) request.getAttributes().get(
-				MessageUtils.getMessage("entity.ontologyversionid2"));
+				RequestParamConstants.PARAM_ONTOLOGY_VERSION_ID_2);
 
 		try {
 			Integer intId1 = Integer.parseInt(ontologyVersionId1);

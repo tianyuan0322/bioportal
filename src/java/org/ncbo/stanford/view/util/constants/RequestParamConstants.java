@@ -85,6 +85,8 @@ public interface RequestParamConstants {
 	 * Diff download parameters
 	 */
 	public static final String PARAM_FORMAT = "format";
+	public static final String PARAM_ONTOLOGY_VERSION_ID_1 = "ontologyversionid1";
+	public static final String PARAM_ONTOLOGY_VERSION_ID_2 = "ontologyversionid2";
 
 	/**
 	 * Hierarchy parameters

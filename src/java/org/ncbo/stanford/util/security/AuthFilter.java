@@ -20,10 +20,8 @@ import org.restlet.Context;
 import org.restlet.Filter;
 import org.restlet.Route;
 import org.restlet.Router;
-import org.restlet.data.MediaType;
 import org.restlet.data.Request;
 import org.restlet.data.Response;
-import org.restlet.data.Status;
 import org.restlet.util.RouteList;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.util.Assert;
@@ -43,7 +41,9 @@ public class AuthFilter extends Filter implements InitializingBean {
 			RequestParamConstants.PARAM_ONTOLOGY_VERSION_ID,
 			RequestParamConstants.PARAM_ONTOLOGY_VERSION_IDS,
 			RequestParamConstants.PARAM_ONTOLOGY_VERSION_OLD,
-			RequestParamConstants.PARAM_ONTOLOGY_VERSION_NEW));
+			RequestParamConstants.PARAM_ONTOLOGY_VERSION_NEW,
+			RequestParamConstants.PARAM_ONTOLOGY_VERSION_ID_1,
+			RequestParamConstants.PARAM_ONTOLOGY_VERSION_ID_2));
 	
 	
 	
