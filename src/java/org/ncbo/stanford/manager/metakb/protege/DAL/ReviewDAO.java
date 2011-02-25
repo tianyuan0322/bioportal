@@ -3,7 +3,6 @@ package org.ncbo.stanford.manager.metakb.protege.DAL;
 import org.ncbo.stanford.bean.metadata.RatingBean;
 import org.ncbo.stanford.bean.metadata.ReviewBean;
 import org.ncbo.stanford.manager.metakb.protege.base.AbstractDALayer;
-import org.ncbo.stanford.manager.metakb.protege.base.PropertyMapSet;
 import org.ncbo.stanford.manager.metakb.protege.base.AbstractDAO;
 import org.ncbo.stanford.manager.metakb.protege.base.prop.DatatypePropertyMap;
 import org.ncbo.stanford.manager.metakb.protege.base.prop.ObjectPropertyMap;
@@ -32,11 +31,11 @@ public class ReviewDAO extends AbstractDAO<ReviewBean> {
 	private static final String PROP_URI_HAS_RATING = PREFIX_METADATA + "hasRating";
 
 	@Override
-	protected void initializePropertyMaps(PropertyMapSet maps) {
-		maps.add(new DatatypePropertyMap("text", String.class, SINGLE_VALUE, PROP_URI_TEXT));
-		maps.add(new DatatypePropertyMap("userId", Integer.class, SINGLE_VALUE, PROP_URI_USER_ID));
-		maps.add(new DatatypePropertyMap("projectId", Integer.class, SINGLE_VALUE, PROP_URI_PROJECT_ID));
-		maps.add(new DatatypePropertyMap("ontologyId", Integer.class, SINGLE_VALUE, PROP_URI_ONTOLOGY_ID));
-		maps.add(new ObjectPropertyMap("ratings", RatingBean.class, COLLECTION, PROP_URI_HAS_RATING));
+	protected void initializePropertyMaps() {
+		addMap(new DatatypePropertyMap("text", String.class, SINGLE_VALUE, PROP_URI_TEXT));
+		addMap(new DatatypePropertyMap("userId", Integer.class, SINGLE_VALUE, PROP_URI_USER_ID));
+		addMap(new DatatypePropertyMap("projectId", Integer.class, SINGLE_VALUE, PROP_URI_PROJECT_ID));
+		addMap(new DatatypePropertyMap("ontologyId", Integer.class, SINGLE_VALUE, PROP_URI_ONTOLOGY_ID));
+		addMap(new ObjectPropertyMap("ratings", RatingBean.class, COLLECTION, PROP_URI_HAS_RATING));
 	}
 }

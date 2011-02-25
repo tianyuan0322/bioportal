@@ -12,7 +12,14 @@ import org.ncbo.stanford.manager.metakb.protege.base.prop.DatatypePropertyMap;
 import edu.stanford.smi.protegex.owl.model.OWLIndividual;
 
 /**
- * XXX Fill this in.
+ * Abstract supertype adds timestamp handling to the basic {@link AbstractDAO}.
+ * Timestamp upkeep is added to the various CRUD operations.
+ * <p>
+ * On the Java side, the bean supertype is upgraded to a {@link TimedIdBean},
+ * which defines the created and modified data members.
+ * <p>
+ * On the KB side, the Individual will use the datatype properties from the
+ * metadata kb, "dateCreated", and "dateModified".
  * 
  * @author Tony Loeser
  *
@@ -26,8 +33,10 @@ public abstract class TimestampedDAO<BeanType extends TimedIdBean>
 	private final DatatypePropertyMap dateModifiedMap;
 	
 	// Standard slot names from the metadata ontology
-	protected static final String PROP_NAME_DATE_CREATED = PREFIX_METADATA + "dateCreated";
-	protected static final String PROP_NAME_DATE_MODIFIED = PREFIX_METADATA + "dateModified";
+	protected static final String PROP_NAME_DATE_CREATED = PREFIX_METADATA + 
+														   "dateCreated";
+	protected static final String PROP_NAME_DATE_MODIFIED = PREFIX_METADATA + 
+															"dateModified";
 	
 
 	// =========================================================================
@@ -64,24 +73,27 @@ public abstract class TimestampedDAO<BeanType extends TimedIdBean>
 	// Override the various methods where we need to assign timestamp values.
 	
 	@Override
-	public void saveObject(BeanType bean)
+	protected void createObject(BeanType bean) 
+			throws MetadataException {
+		// Create the object in the persistent store
+		OWLIndividual ind = getKbClass().createOWLIndividual(null);
+		// Update the bean with the id from the persistent store
+		bean.setId(getIdForIndividual(ind));
+		// Copy the property values into the persistent store
+		copyBeanPropertiesToIndividual(bean, ind);
+		// This part is different: set the date properties
+		setDateCreatedAndModified(ind, bean);
+	}
+	
+	@Override
+	protected void updateObject(BeanType bean) 
 			throws MetadataObjectNotFoundException, MetadataException {
-		// Check if this is a "create" operation before the super-method
-		// fills in the id.
-		boolean isNew = (bean.getId() == null);
-		super.saveObject(bean);
-		// Now that the KB Individual is definitely created, go ahead and set
-		// the timestamp properties (differently, depending on whether this is
-		// "create" or "update".
-		// Unfortunately, we have to fetch the individual again.
-		OWLIndividual ind = this.getIndividualForId(bean.getId());
-		if (isNew) {
-			// Create.
-			setDateCreatedAndModified(ind, bean);
-		} else {
-			// Update.
-			setDateModified(ind, bean);
-		}
+		// Retrieve the individual from the persistent store
+		OWLIndividual ind = getIndividualForId(bean.getId());
+		// Copy the property values into the persistent store
+		copyBeanPropertiesToIndividual(bean, ind);
+		// This part is different: set the date properties
+		setDateModified(ind, bean);
 	}
 
 	@Override
@@ -95,13 +107,15 @@ public abstract class TimestampedDAO<BeanType extends TimedIdBean>
 	// =========================================================================
 	// Timestamp helpers
 
-	// Call this method in the case when the bean is first created in the persistent
-	// store. If appropriate, the timestamp properties will be updated.
+	// Call this method in the case when the bean is first created in the
+	// persistent store. If appropriate, the timestamp properties will be
+	// updated.
 	//
-	// If the bean has dateCreated already, then we assume it was previously created
-	// in a different persistent store, and we keep that timestamp value.
-	//
-	protected void setDateCreatedAndModified(OWLIndividual inst, BeanType bean) throws MetadataException {
+	// If the bean has dateCreated already, then we assume it was previously
+	// created in a different persistent store, and we keep that timestamp
+	// value.
+	protected void setDateCreatedAndModified(OWLIndividual inst, BeanType bean)
+			throws MetadataException {
 		TimedIdBean tBean = (TimedIdBean)bean;
 		Date now = new Date();
 		if (tBean.getDateCreated() == null) {
@@ -110,23 +124,25 @@ public abstract class TimestampedDAO<BeanType extends TimedIdBean>
 			dateModifiedMap.setValueOnBoth(bean, inst, now);
 		} else {
 			// It was previously stored somewhere else
-			dateCreatedMap.setOWLValue(inst, tBean.getDateCreated());
+			dateCreatedMap.copyValueToIndividual(tBean, inst);
 			if (tBean.getDateModified() == null) {
 				tBean.setDateModified(now);
 			}
-			dateModifiedMap.setOWLValue(inst, tBean.getDateModified());
+			dateModifiedMap.copyValueToIndividual(tBean, inst);
 		}
 	}
 	
-	// Call this method in the case when the bean is being updated in the persistent
-	// store.  If appropriate, the dateModified property will be updated.
-	protected void setDateModified(OWLIndividual inst, BeanType bean) throws MetadataException {
+	// Call this method in the case when the bean is being updated in the
+	// persistent store.  If appropriate, the dateModified property will be
+	// updated.
+	protected void setDateModified(OWLIndividual inst, BeanType bean)
+			throws MetadataException {
 		Date now = new Date();
 		dateModifiedMap.setValueOnBoth(bean, inst, now);
 	}
 	
-	// Subclasses may need to use this method to set the timestamp properties when
-	// retrieving a bean from the persistent store
+	// Subclasses may need to use this method to set the timestamp properties
+	// when retrieving a bean from the persistent store
 	protected void copyTimestampsToBean(OWLIndividual inst, TimedIdBean tBean) {
 		dateCreatedMap.copyValueToBean(inst, tBean);
 		dateModifiedMap.copyValueToBean(inst, tBean);

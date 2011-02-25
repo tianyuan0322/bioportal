@@ -43,7 +43,7 @@ public class ReviewMetadataManagerImpl extends SimpleObjectManagerImpl<ReviewBea
 		String query = "SELECT ?obj " +
 					   "WHERE { ?obj <metadata:ontologyId> \""+id+"\"^^xsd:int . " +
 					   "        ?obj <rdf:type> <metadata:Review> . }";
-		return getDALayer().getDAOForBeanType(ReviewBean.class).getInstancesForSPARQLQuery(query);
+		return getDALayer().getObjectsForSPARQLQuery(ReviewBean.class, query);
 	}
 	
 	

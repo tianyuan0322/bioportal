@@ -2,20 +2,19 @@ package org.ncbo.stanford.manager.metakb.protege.base.prop;
 
 import org.ncbo.stanford.exception.BPRuntimeException;
 import org.ncbo.stanford.exception.MetadataException;
-import org.ncbo.stanford.exception.MetadataObjectNotFoundException;
 
 import edu.stanford.smi.protegex.owl.model.OWLIndividual;
 
 /**
- * A property map that corresponds to an object property in the KB, but that stores the value
- * on the Java side as the local (not qualified) name of the KB instance.
+ * A property map that corresponds to an object property in the KB, but that
+ * stores the value on the Java side as the local (not qualified) name of the KB
+ * instance.
  * <p>
  * The types are as follows:
  * <ul>
  * <li>On the Java side, the value is a {@link String}.</li>
  * <li>On the KB side, the value is an {@link OWLIndividual}.</li>
  * </ul>
-
  * 
  * @author Tony Loeser
  *
@@ -39,14 +38,10 @@ public class InstanceNamePropertyMap extends ObjectPropertyMap {
 	protected Object prepareValueForOWL(Object value) throws MetadataException {
 		if (value instanceof String) {
 			String qualifiedInstanceName = instancePrefix + (String)value;
-			OWLIndividual owlValue = getDaLayer().getMetadataKb().getOWLIndividual(qualifiedInstanceName);
-			if (owlValue == null) {
-				String msg = "Could not find instance: " + qualifiedInstanceName;
-				throw new MetadataObjectNotFoundException(msg);
-			}
-			return owlValue;
+			return retrieveIndividualForName(qualifiedInstanceName);
 		} else {
-			throw new BPRuntimeException("Should not reach here: instance name not a String");
+			String msg = "Should not reach here: instance name not a String";
+			throw new BPRuntimeException(msg);
 		}
 	}
 	

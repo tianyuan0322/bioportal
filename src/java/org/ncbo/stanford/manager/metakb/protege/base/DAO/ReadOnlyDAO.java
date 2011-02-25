@@ -27,7 +27,14 @@ public abstract class ReadOnlyDAO<BeanType extends MetadataBean>
 	// Eliminate write methods
 	
 	@Override
-	public void saveObject(BeanType bean)
+	public void createObject(BeanType bean)
+			throws MetadataObjectNotFoundException, MetadataException {
+		String msg = this.getClass().getSimpleName() + " is a read-only DAO.";
+		throw new UnsupportedOperationException(msg);
+	}
+
+	@Override
+	public void updateObject(BeanType bean)
 			throws MetadataObjectNotFoundException, MetadataException {
 		String msg = this.getClass().getSimpleName() + " is a read-only DAO.";
 		throw new UnsupportedOperationException(msg);

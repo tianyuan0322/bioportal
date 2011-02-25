@@ -2,7 +2,6 @@ package org.ncbo.stanford.manager.metakb.protege.DAL;
 
 import org.ncbo.stanford.bean.metadata.ProjectBean;
 import org.ncbo.stanford.manager.metakb.protege.base.AbstractDALayer;
-import org.ncbo.stanford.manager.metakb.protege.base.PropertyMapSet;
 import org.ncbo.stanford.manager.metakb.protege.base.DAO.TimestampedDAO;
 import org.ncbo.stanford.manager.metakb.protege.base.prop.DatatypePropertyMap;
 
@@ -31,13 +30,13 @@ public class ProjectDAO extends TimestampedDAO<ProjectBean> {
 	public static final String PROP_URI_USER_ID = PREFIX_METADATA + "userId";
 	
 	// Override
-	protected void initializePropertyMaps(PropertyMapSet maps) {
-		maps.add(new DatatypePropertyMap("name", String.class, SINGLE_VALUE, PROP_URI_NAME));
-		maps.add(new DatatypePropertyMap("institution", String.class, SINGLE_VALUE, PROP_URI_FROM_INSTITUTION));
-		maps.add(new DatatypePropertyMap("people", String.class, SINGLE_VALUE, PROP_URI_PEOPLE));
-		maps.add(new DatatypePropertyMap("homePage", String.class, SINGLE_VALUE, PROP_URI_HAS_HOME_PAGE));
-		maps.add(new DatatypePropertyMap("description", String.class, SINGLE_VALUE, PROP_URI_DESCRIPTION));
-		maps.add(new DatatypePropertyMap("userId", Integer.class, SINGLE_VALUE, PROP_URI_USER_ID));
+	protected void initializePropertyMaps() {
+		addMap(new DatatypePropertyMap("name", String.class, SINGLE_VALUE, PROP_URI_NAME));
+		addMap(new DatatypePropertyMap("institution", String.class, SINGLE_VALUE, PROP_URI_FROM_INSTITUTION));
+		addMap(new DatatypePropertyMap("people", String.class, SINGLE_VALUE, PROP_URI_PEOPLE));
+		addMap(new DatatypePropertyMap("homePage", String.class, SINGLE_VALUE, PROP_URI_HAS_HOME_PAGE));
+		addMap(new DatatypePropertyMap("description", String.class, SINGLE_VALUE, PROP_URI_DESCRIPTION));
+		addMap(new DatatypePropertyMap("userId", Integer.class, SINGLE_VALUE, PROP_URI_USER_ID));
 	}
 }
 

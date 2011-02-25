@@ -97,7 +97,7 @@ public abstract class SpecialIdDAO<BeanType extends MetadataBean>
 			int max = startId;
 			for (Object inst : instances) {
 				if (inst instanceof RDFResource) {
-					int id = AbstractDAO.extractIdFromIndividualName(((RDFResource)inst).getName()).intValue();
+					int id = AbstractDAO.convertNameToId(((RDFResource)inst).getName()).intValue();
 					if (id > max) {
 						max = id;
 					}
@@ -123,6 +123,14 @@ public abstract class SpecialIdDAO<BeanType extends MetadataBean>
 		}
 	}
 	
+	// If we are keeping the redundant ID property, set it to be in sync
+	// with the primary ID property.
+	private void maybeSetIdProperty(OWLIndividual ind, BeanType bean) {
+		if (hasIdProperty) {
+			PropertyUtils.setPropertyValue(ind, idProperty, bean.getId());
+		}
+	}
+	
 
 	// =========================================================================
 	// Save/Update support
@@ -130,29 +138,18 @@ public abstract class SpecialIdDAO<BeanType extends MetadataBean>
 	// SpecialIdDAO does this differently from AbstractDAO.  (See class javadocs.)
 	// First knock out the existing methods, then provide an alternative.
 	
-	/**
-	 * Save the bean, either updating an existing object in the metadata KB or
-	 * creating a new one.  If the object is new, it should have had its id
-	 * set (or initially obtained) via getNextAvailableId.  XXX Can we move that
-	 * into here?
-	 * 
-	 * @param bean the Java representation of the object to be saved to the KB.
-	 */
 	@Override
-	public void saveObject(BeanType bean) throws MetadataException {
-		// The code in here is essentially copied from the AbstractDAO methods
-		// createObject and updateObject.
-		// There are two cases; either this is a new object or it already exists in the KB.
-		OWLIndividual inst = findIndividualWithId(bean.getId());
-		if (inst == null) {
-			// Need to create this object in KB
-			inst = getKbClass().createOWLIndividual(localInstanceNamePrefix+bean.getId());
-			if (hasIdProperty) {
-				// If we are keeping the redundant ID property, this is the place
-				// (instance creation) where it needs to be set.
-				PropertyUtils.setPropertyValue(inst, idProperty, bean.getId());
-			}
-		}
-		copyBeanPropertiesToIndividual(bean, inst);		
+	protected void createObject(BeanType bean) 
+			throws MetadataException {
+		// Creation goes a little different, for this class.  We compute the
+		// ID first, set it, and then create the object in the persistent store.
+		// Yes, it is incorrect code, if only because it is not thread safe. 
+		// But it is necessary for the backwards compatibility.
+		bean.setId(getNextAvailableId());
+		// Now create the object in the persistent store
+		OWLIndividual ind = getKbClass().createOWLIndividual(localInstanceNamePrefix+bean.getId());
+		maybeSetIdProperty(ind, bean);
+		// Copy the property values into the persistent store
+		copyBeanPropertiesToIndividual(bean, ind);
 	}
 }

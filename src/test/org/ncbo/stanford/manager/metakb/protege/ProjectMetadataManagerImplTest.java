@@ -1,7 +1,7 @@
 package org.ncbo.stanford.manager.metakb.protege;
 
+import java.util.Collection;
 import java.util.Date;
-import java.util.List;
 
 import org.junit.Assert;
 import org.junit.Test;
@@ -79,7 +79,7 @@ public class ProjectMetadataManagerImplTest extends AbstractBioPortalTest {
 	
 	@Test
 	public void testGetForUser() throws Exception {
-		List<ProjectBean> results = projectMan.getProjectsForUser(new Integer(12));
+		Collection<ProjectBean> results = projectMan.getProjectsForUser(new Integer(12));
 		System.out.println("Got a few: "+results.size());
 	}
 

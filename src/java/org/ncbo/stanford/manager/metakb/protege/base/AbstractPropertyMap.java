@@ -11,17 +11,20 @@ import java.util.List;
 import org.ncbo.stanford.bean.metadata.MetadataBean;
 import org.ncbo.stanford.exception.BPRuntimeException;
 import org.ncbo.stanford.exception.MetadataException;
+import org.ncbo.stanford.exception.MetadataObjectNotFoundException;
 import org.ncbo.stanford.util.protege.PropertyUtils;
 
 import edu.stanford.smi.protegex.owl.model.OWLIndividual;
+import edu.stanford.smi.protegex.owl.model.OWLModel;
 import edu.stanford.smi.protegex.owl.model.OWLProperty;
 
 /**
- * Encapsulates a mapping of a single property between a java bean and an instance in
- * a Protege OWL knowledge base.  The property is set on initialization -- a data member
- * (with getter and setter) on the java bean, and a property for the owl class.  The
- * methods on this class deal with getting / setting the value of that property from
- * the corresponding beans and OWL individuals.
+ * Encapsulates a mapping of a single property between a java bean and an 
+ * individual in a Protege OWL knowledge base.  The property is set on
+ * initialization -- a data member (with getter and setter) on the java bean,
+ * and a property for the owl class.  The methods on this class deal with
+ * getting / setting the value of that property from the corresponding beans
+ * and OWL individuals.
  * 
  * @author Tony Loeser
  */
@@ -40,18 +43,30 @@ public abstract class AbstractPropertyMap {
 	private AbstractDALayer daLayer = null;
 	
 	// The type of value that will be transferred to/from Java/OWL
-	// If isMultivalued == true, then these values will be gathered into a collection,
-	//   i.e. the java bean data member's type should be Collection<valueType> 
-	private final Class<?> singleValueType; // The java type of a single property value
-	private final boolean isMultivalued;    // true iff valueType is a Collection
+	// If isMultivalued == true, then these values will be gathered into a
+	// collection, i.e. the java bean data member's type should be 
+	// Collection<valueType> 
+	private final Class<?> singleValueType;
+	private final boolean isMultivalued;
 	
 	// =========================================================================
 	// Initialization
 	
-	protected AbstractPropertyMap(String beanPropName,      // Name of the data member on the java bean
-			                      Class<?> singleValueType, // Java type of a single property value
-			                      boolean isMultivalued,    // true iff bean property values are Collection<valueType>
-			                      String owlPropName) {     // Name of the property in the OWL KB
+	/**
+	 * Standard constructor; sets defining parameters, but does not initialize
+	 * the KB objects.
+	 * 
+	 * @param beanPropName The name of the data member on the java bean.
+	 * @param singleValueType Java type of a single property value.
+	 * @param isMultivalued <code>true</code> iff the bean's data member's
+	 *     values are Collection&lt;singleValueType&gt; instead of plain
+	 *     singleValueType. 
+	 * @param owlPropName Name of the property in the OWL KB.
+	 */
+	protected AbstractPropertyMap(String beanPropName,
+			                      Class<?> singleValueType,
+			                      boolean isMultivalued,
+			                      String owlPropName) {
 		this.beanPropName = beanPropName;
 		this.owlPropName = owlPropName;
 		this.singleValueType = singleValueType;
@@ -62,8 +77,10 @@ public abstract class AbstractPropertyMap {
 		this.daLayer = daLayer;
 		// Set up the Java side -- accessor methods
 		String capName = capitalize(beanPropName);
-		beanValueGetter = myGetMethod(beanType, "get"+capName, (Class<?>[])null);
-		beanValueSetter = myGetMethod(beanType, "set"+capName, beanValueGetter.getReturnType());
+		beanValueGetter = myGetMethod(beanType, "get"+capName,
+									  (Class<?>[])null);
+		beanValueSetter = myGetMethod(beanType, "set"+capName,
+									  beanValueGetter.getReturnType());
 		// Set up the OWL side -- OWL Property
 		owlProperty = daLayer.getMetadataKb().getOWLProperty(owlPropName);
 		checkOWLProperty(owlProperty);
@@ -75,14 +92,17 @@ public abstract class AbstractPropertyMap {
 	
 	protected abstract void checkOWLProperty(OWLProperty prop);
 	
-	private static Method myGetMethod(Class<?> inClass, String methodName, Class<?>...argTypes) {
+	private static Method myGetMethod(Class<?> inClass, String methodName,
+									  Class<?>...argTypes) {
 		try {
 			return inClass.getMethod(methodName, argTypes);
 		} catch (SecurityException e) {
-			String msg = "Bad bean configuration ("+inClass+") -- private accessor: "+methodName;
+			String msg = "Bad bean configuration ("+inClass+
+						 ") -- private accessor: "+methodName;
 			throw new BPRuntimeException(msg, e);
 		} catch (NoSuchMethodException e) {
-			String msg = "Mismatch between spec and bean ("+inClass+") -- missing accessor: "+methodName;
+			String msg = "Mismatch between spec and bean ("+inClass+
+						 ") -- missing accessor: "+methodName;
 			throw new BPRuntimeException(msg, e);
 		}
 	}
@@ -101,8 +121,8 @@ public abstract class AbstractPropertyMap {
 	// Value manipulation helpers
 	
 	/**
-	 * Copy the value for this PropertyMap's property from the {@link OWLIndividual} to
-	 * the java bean.
+	 * Copy the value for this PropertyMap's property from the
+	 * {@link OWLIndividual} to the java bean.
 	 */
 	public void copyValueToBean(OWLIndividual ind, Object bean) {
 		Object value = getOWLValue(ind);
@@ -116,18 +136,21 @@ public abstract class AbstractPropertyMap {
 	 * @throws MetadataException when there is a problem asserting the value in
 	 * the OWL KB.
 	 */
-	public void copyValueToIndividual(Object bean, OWLIndividual ind) throws MetadataException {
+	public void copyValueToIndividual(Object bean, OWLIndividual ind)
+			throws MetadataException {
 		Object value = getBeanValue(bean);
 		setOWLValue(ind, value);
 	}
 	
 	/**
-	 * Assert the supplied value on both the java bean and the {@link OWLIndividual}.
+	 * Assert the supplied value on both the java bean and the
+	 * {@link OWLIndividual}.
 	 * 
 	 * @throws MetadataException when there is a problem asserting the value in
 	 * the OWL KB.
 	 */
-	public void setValueOnBoth(Object bean, OWLIndividual ind, Object value) throws MetadataException{
+	public void setValueOnBoth(Object bean, OWLIndividual ind, Object value)
+			throws MetadataException{
 		setOWLValue(ind, value);
 		setBeanValue(bean, value);
 	}
@@ -142,9 +165,12 @@ public abstract class AbstractPropertyMap {
 	 * @throws MetadataException when there is a problem asserting the value in
 	 * the OWL KB.
 	 */
-	public void setOWLValue(OWLIndividual ind, Object value) throws MetadataException {
+	private void setOWLValue(OWLIndividual ind, Object value)
+			throws MetadataException {
 		if (!checkValueType(value)) {
-			String msg = "Attempt to set value of type "+value.getClass().getName()+" on "+owlProperty.getName();
+			String msg = "Attempt to set value of type "+
+					     value.getClass().getName()+" on "+
+					     owlProperty.getName();
 			throw new BPRuntimeException(msg);
 		}
 		if (isMultivalued) {
@@ -156,7 +182,9 @@ public abstract class AbstractPropertyMap {
 				Collection<?> owlValues = prepareValuesForOWL((Collection<?>)value);
 				PropertyUtils.setPropertyValues(ind, owlProperty, owlValues);
 			} else {
-				String msg = "Attempt to assert single value ("+value+") on a multivalued property ("+owlProperty.getName()+")";
+				String msg = "Attempt to assert single value ("+value+
+							 ") on a multivalued property ("+
+							 owlProperty.getName()+")";
 				throw new BPRuntimeException(msg);
 			}
 		} else {
@@ -167,12 +195,12 @@ public abstract class AbstractPropertyMap {
 	}
 	
 	/**
-	 * Retrieve this PropertyMap's property's value, if any, asserted on the given
-	 * {@link OWLIndividual}.
+	 * Retrieve this PropertyMap's property's value, if any, asserted on the 
+	 * given {@link OWLIndividual}.
 	 * 
 	 * @return The value, or null if there is no value in the KB.
 	 */
-	public Object getOWLValue(OWLIndividual ind) {
+	private Object getOWLValue(OWLIndividual ind) {
 		if (isMultivalued) {
 			// This is a collection of values
 			Collection<?> owlValues = PropertyUtils.getPropertyValues(ind, owlProperty);
@@ -221,31 +249,65 @@ public abstract class AbstractPropertyMap {
 	}
 	
 	// =========================================================================
+	// Extra OWL value helpers
+	
+	// Extract the Integer ID from the Individual.
+	protected Integer getIdFromIndividual(OWLIndividual ind) {
+		return AbstractDAO.convertNameToId(ind.getName());
+	}
+	
+	// Given a fully qualified, expanded KB class name and an Integer ID, return
+	// the corresponding Individual from the KB.
+	protected OWLIndividual retrieveIndividualForId(String typeName, Integer id) 
+			throws MetadataObjectNotFoundException {
+		return daLayer.retrieveIndividualForId(typeName, id);
+	}
+	
+	// Given a fully qualified, expanded individual name, return that individual
+	// if it exists.
+	protected OWLIndividual retrieveIndividualForName(String indName)
+			throws MetadataObjectNotFoundException {
+		OWLModel metaKB = daLayer.getMetadataKb();
+		OWLIndividual owlValue = metaKB.getOWLIndividual(indName);
+		if (owlValue == null) {
+			String msg = "Could not find instance: " + indName;
+			throw new MetadataObjectNotFoundException(msg);
+		}
+		return owlValue;
+	}
+	
+	// =========================================================================
 	// Bean value accessors
 
 	/**
 	 * Set the given value on the java bean object.
 	 */
-	public void setBeanValue(Object bean, Object value) {
+	private void setBeanValue(Object bean, Object value) {
 		if (!checkValueType(value)) {
 			String msg;
 			if (value == null) {
-				msg = "Attempt to set null value on multivalued property "+beanValueSetter.getName();
+				msg = "Attempt to set null value on multivalued property "+
+					  beanValueSetter.getName();
 			} else {
-				msg = "Attempt to set value of type "+value.getClass().getName()+" on "+beanValueSetter.getName();
+				msg = "Attempt to set value of type "+
+					  value.getClass().getName()+" on "+
+					  beanValueSetter.getName();
 			}
 			throw new BPRuntimeException(msg);
 		}
 		try {
 			beanValueSetter.invoke(bean, value);
 		} catch (IllegalArgumentException e) {
-			String msg = "Setter "+beanValueSetter.getName()+" on type "+bean.getClass().getName()+" has incorrect arguments.";
+			String msg = "Setter "+beanValueSetter.getName()+" on type "+
+						 bean.getClass().getName()+" has incorrect arguments.";
 			throw new BPRuntimeException(msg, e);
 		} catch (IllegalAccessException e) {
-			String msg = "Setter "+beanValueSetter.getName()+" on type "+bean.getClass().getName()+" not public.";
+			String msg = "Setter "+beanValueSetter.getName()+" on type "+
+						 bean.getClass().getName()+" not public.";
 			throw new BPRuntimeException(msg, e);
 		} catch (InvocationTargetException e) {
-			String msg = "Setter "+beanValueSetter.getName()+" on type "+bean.getClass().getName()+" threw an exception.";
+			String msg = "Setter "+beanValueSetter.getName()+" on type "+
+						 bean.getClass().getName()+" threw an exception.";
 			throw new BPRuntimeException(msg, e);
 		}
 	}
@@ -256,17 +318,20 @@ public abstract class AbstractPropertyMap {
 	 * 
 	 * @return The value, which may be null.
 	 */
-	public Object getBeanValue(Object bean) {
+	private Object getBeanValue(Object bean) {
 		try {
 			return beanValueGetter.invoke(bean);
 		} catch (IllegalArgumentException e) {
-			String msg = "Getter "+beanValueGetter.getName()+" on type "+bean.getClass().getName()+" has arguments.";
+			String msg = "Getter "+beanValueGetter.getName()+" on type "+
+						 bean.getClass().getName()+" has arguments.";
 			throw new BPRuntimeException(msg, e);
 		} catch (IllegalAccessException e) {
-			String msg = "Getter "+beanValueGetter.getName()+" on type "+bean.getClass().getName()+" not public.";
+			String msg = "Getter "+beanValueGetter.getName()+" on type "+
+						 bean.getClass().getName()+" not public.";
 			throw new BPRuntimeException(msg, e);
 		} catch (InvocationTargetException e) {
-			String msg = "Getter "+beanValueGetter.getName()+" on type "+bean.getClass().getName()+" threw an exception.";
+			String msg = "Getter "+beanValueGetter.getName()+" on type "+
+						 bean.getClass().getName()+" threw an exception.";
 			throw new BPRuntimeException(msg, e);
 		}
 	}
@@ -295,11 +360,7 @@ public abstract class AbstractPropertyMap {
 	// =========================================================================
 	// Accessors
 	
-	public AbstractDALayer getDaLayer() {
-		return daLayer;
-	}
-	
-	public OWLProperty getOwlProperty() {
+	protected OWLProperty getOwlProperty() {
 		return owlProperty;
 	}
 }

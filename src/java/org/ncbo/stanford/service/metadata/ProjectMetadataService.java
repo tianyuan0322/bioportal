@@ -1,6 +1,6 @@
 package org.ncbo.stanford.service.metadata;
 
-import java.util.List;
+import java.util.Collection;
 
 import org.ncbo.stanford.bean.metadata.ProjectBean;
 
@@ -17,5 +17,5 @@ public interface ProjectMetadataService extends BeanCRUDService<ProjectBean> {
 	 * 
 	 * @see org.ncbo.stanford.manager.metakb.ProjectMetadataManager#getProjectsForUser(Integer)
 	 */
-	public List<ProjectBean> getProjectsForUser(Integer id) throws Exception;
+	public Collection<ProjectBean> getProjectsForUser(Integer id) throws Exception;
 }

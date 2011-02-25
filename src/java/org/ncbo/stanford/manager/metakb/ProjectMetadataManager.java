@@ -1,6 +1,6 @@
 package org.ncbo.stanford.manager.metakb;
 
-import java.util.List;
+import java.util.Collection;
 
 import org.ncbo.stanford.bean.metadata.ProjectBean;
 import org.ncbo.stanford.exception.MetadataException;
@@ -17,5 +17,5 @@ public interface ProjectMetadataManager extends SimpleObjectManager<ProjectBean>
 	 *
 	 * @throws MetadataException when there is a problem creating the project java beans
 	 */
-	public List<ProjectBean> getProjectsForUser(Integer userId) throws MetadataException;
+	public Collection<ProjectBean> getProjectsForUser(Integer userId) throws MetadataException;
 }

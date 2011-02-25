@@ -2,7 +2,6 @@ package org.ncbo.stanford.manager.metakb.protege.DAL;
 
 import org.ncbo.stanford.bean.metadata.RatingTypeBean;
 import org.ncbo.stanford.manager.metakb.protege.base.AbstractDALayer;
-import org.ncbo.stanford.manager.metakb.protege.base.PropertyMapSet;
 import org.ncbo.stanford.manager.metakb.protege.base.DAO.ReadOnlyDAO;
 import org.ncbo.stanford.manager.metakb.protege.base.prop.DatatypePropertyMap;
 
@@ -28,9 +27,9 @@ public class RatingTypeDAO extends ReadOnlyDAO<RatingTypeBean> {
 	public static final String PROP_URI_NAME = PREFIX_OMV + "name";
 
 	// Override
-	protected void initializePropertyMaps(PropertyMapSet maps) {
-		maps.add(new DatatypePropertyMap("name", String.class, SINGLE_VALUE,
-										 PROP_URI_NAME));
+	protected void initializePropertyMaps() {
+		addMap(new DatatypePropertyMap("name", String.class, SINGLE_VALUE,
+									   PROP_URI_NAME));
 	}
 
 	
