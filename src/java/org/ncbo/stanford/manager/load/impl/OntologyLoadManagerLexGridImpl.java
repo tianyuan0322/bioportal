@@ -114,7 +114,16 @@ public class OntologyLoadManagerLexGridImpl extends
 					.getLoader(org.LexGrid.LexBIG.Extensions.Load.UmlsBatchLoader.NAME);
 			((UmlsBatchLoader) loader).loadUmls(ontologyUri, ob
 					.getTargetTerminologies());
+			//Load UMLS based on RELA
+		} else if (ob.getFormat().equalsIgnoreCase(
+				ApplicationConstants.FORMAT_UMLS_RELA)) {
+			loader = lbsm
+					.getLoader(org.LexGrid.LexBIG.Extensions.Load.UmlsBatchLoader.NAME);
+			UmlsBatchLoader batchLoader= (UmlsBatchLoader) loader;
+			batchLoader.setRelType("RELA");
+			batchLoader.loadUmls(ontologyUri, ob.getTargetTerminologies());
 		}
+		
 		// Load META
 		else if (ob.getFormat().equalsIgnoreCase(
 				ApplicationConstants.FORMAT_META)) {
