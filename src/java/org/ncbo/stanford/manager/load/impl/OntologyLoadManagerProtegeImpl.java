@@ -120,9 +120,9 @@ public class OntologyLoadManagerProtegeImpl extends
 		File ontologyFile = new File(ontologyUri);
 
 		if (ontologyFile.length() < protegeBigFileThreshold) {
-			dbProject= loadOWLStreaming(ontologyUri, ob, errors);
+			dbProject = loadOWLStreaming(ontologyUri, ob, errors);
 		} else {
-			dbProject= loadOWLNonStreaming(ontologyUri, ob, errors);
+			dbProject = loadOWLNonStreaming(ontologyUri, ob, errors);
 		}
 		if (setOntologyBeanVersion(ob, dbProject)) {
 			ontologyMetadataManager.saveOntologyOrView(ob);
@@ -131,12 +131,12 @@ public class OntologyLoadManagerProtegeImpl extends
 	}
 
 	@SuppressWarnings("unchecked")
-	private Project  loadOWLStreaming(URI ontologyUri, OntologyBean ob,
+	private Project loadOWLStreaming(URI ontologyUri, OntologyBean ob,
 			Collection errors) throws Exception {
 		log.debug("Using streaming mode. OWL Ontology: " + ob.getDisplayLabel()
 				+ " (" + ob.getId() + ")");
 		Project dbProject = null;
-		
+
 		try {
 			CreateOWLDatabaseFromFileProjectPlugin creator = new CreateOWLDatabaseFromFileProjectPlugin();
 			creator
@@ -150,7 +150,7 @@ public class OntologyLoadManagerProtegeImpl extends
 			creator.setUseExistingSources(true);
 			creator.setMergeImportMode(true);
 			dbProject = creator.createProject();
-			dbProject.save(errors);			
+			dbProject.save(errors);
 			return dbProject;
 		} catch (Throwable e) {
 			e.printStackTrace();
@@ -283,26 +283,30 @@ public class OntologyLoadManagerProtegeImpl extends
 		}
 	}
 
-	private boolean setOntologyBeanVersion(OntologyBean ontologyBean,  Project dbProject) {
-        String version = "";
-        boolean didSet= false;
-        OWLModel owlModel_= (OWLModel) dbProject.getKnowledgeBase();
-        for (Iterator i = owlModel_.getDefaultOWLOntology().getVersionInfo().iterator(); i.hasNext();) {
-            String newVersion = i.next().toString().trim();
-            if (StringUtils.isBlank(version) && StringUtils.isNotBlank(newVersion))  {
-                version = newVersion;
-            }
-        }
-		
-		if (StringUtils.isBlank(ontologyBean.getVersionNumber())) {
-			//The ontologyBean doesn't have a version...try and get a version number from the source
-			if (StringUtils.isNotBlank(version)) {
-				ontologyBean.setVersionNumber(version);
-			} else {
-				ontologyBean.setVersionNumber("UNKNOWN");
+	private boolean setOntologyBeanVersion(OntologyBean ontologyBean,
+			Project dbProject) {
+		String version = "";
+		boolean didSet = false;
+		OWLModel owlModel_ = (OWLModel) dbProject.getKnowledgeBase();
+		for (Iterator i = owlModel_.getDefaultOWLOntology().getVersionInfo()
+				.iterator(); i.hasNext();) {
+			String newVersion = i.next().toString().trim();
+			if (StringUtils.isBlank(version)
+					&& StringUtils.isNotBlank(newVersion)) {
+				version = newVersion;
 			}
-			didSet= true;
 		}
+
+		// The ontologyBean doesn't have a version...try and get a version
+		// number from the source
+		if (StringUtils.isNotBlank(version)) {
+			ontologyBean.setVersionNumber(version);
+			didSet = true;
+		} else if (StringUtils.isBlank(ontologyBean.getVersionNumber())) {
+			ontologyBean.setVersionNumber(ApplicationConstants.UNKNOWN);
+			didSet = true;
+		}
+
 		return didSet;
 	}
 

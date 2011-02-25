@@ -301,37 +301,39 @@ public class OntologyLoadManagerLexGridImpl extends
 
 	private void setOntologyBeanVersion(OntologyBean ontologyBean,
 			String version, URI ontologyUri) {
-		if (StringUtils.isBlank(ontologyBean.getVersionNumber())) {
-			if (ontologyBean.getFormat().equalsIgnoreCase(
-					ApplicationConstants.FORMAT_OBO)) {
-				//for obo ontologies, we read the file to find the version
-				version = ApplicationConstants.UNKNOWN;
-				File ontologyFile = new File(ontologyUri.getPath());
-				try {
-					BufferedReader reader = new BufferedReader(new FileReader(
-							ontologyFile));
+		String file_version = "";
 
-					String text = null;
-					while ((text = reader.readLine()) != null) {
-						if (text.startsWith(OBO_DATA_VERSION)) {
-							version = text.substring(OBO_DATA_VERSION.length())
-									.trim();
-							break;
-						}
-						if (text.contains(OBO_TERM)
-								|| text.contains(OBO_TYPEDEF)) {
-							// We have finished reading the header, no
-							// data-version found
-							break;
-						}
+		if (ontologyBean.getFormat().equalsIgnoreCase(
+				ApplicationConstants.FORMAT_OBO)) {
+			// for obo ontologies, we read the file to find the version
+			File ontologyFile = new File(ontologyUri.getPath());
+			try {
+				BufferedReader reader = new BufferedReader(new FileReader(
+						ontologyFile));
 
+				String text = null;
+				while ((text = reader.readLine()) != null) {
+					if (text.startsWith(OBO_DATA_VERSION)) {
+						file_version = text
+								.substring(OBO_DATA_VERSION.length()).trim();
+						break;
 					}
-				} catch (Exception ex) {
-					ex.printStackTrace();
-				}
+					if (text.contains(OBO_TERM) || text.contains(OBO_TYPEDEF)) {
+						// We have finished reading the header, no
+						// data-version found
+						break;
+					}
 
+				}
+			} catch (Exception ex) {
+				ex.printStackTrace();
 			}
-			
+
+		}
+
+		if (StringUtils.isNotBlank(file_version)) {
+			ontologyBean.setVersionNumber(file_version);
+		} else if (StringUtils.isBlank(ontologyBean.getVersionNumber())) {
 			if (StringUtils.isNotBlank(version)) {
 				ontologyBean.setVersionNumber(version);
 			} else {
