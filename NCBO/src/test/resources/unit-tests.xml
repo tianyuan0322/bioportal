@@ -1,0 +1,13 @@
+<!DOCTYPE suite SYSTEM "http://testng.org/testng-1.0.dtd" >
+<suite name="ProtegeTestSuite" verbose="1">
+	<test name="TestNG-Tests">
+		<parameter name="size" value="194" />
+		<parameter name="weight" value="85" />
+		<parameter name="expected" value="22.0" />
+		<classes>
+		<!-- 
+			<class name="example.BmiCalculatorTest"></class>
+		 -->
+		</classes>
+	</test>
+</suite>

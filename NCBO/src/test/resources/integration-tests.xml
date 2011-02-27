@@ -1,0 +1,8 @@
+<!DOCTYPE suite SYSTEM "http://testng.org/testng-1.0.dtd" >
+<suite name="NCBO" verbose="1">
+	<test name="Find Ontology">
+		<classes>
+			<class name="selenium.FindOntology"></class>
+		</classes>
+	</test>
+</suite>
