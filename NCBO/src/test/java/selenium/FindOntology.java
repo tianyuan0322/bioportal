@@ -1,37 +1,20 @@
 package selenium;
 
 
-import org.apache.commons.configuration.Configuration;
-import org.apache.commons.configuration.ConfigurationException;
-import org.apache.commons.configuration.PropertiesConfiguration;
 import org.testng.Assert;
-import org.testng.annotations.AfterClass;
-import org.testng.annotations.BeforeClass;
+import org.testng.ITestContext;
 import org.testng.annotations.Test;
 
-import com.thoughtworks.selenium.DefaultSelenium;
 import com.thoughtworks.selenium.Selenium;
 
 public class FindOntology {
-	private Selenium selenium;
-	private Configuration config;
-
-	@BeforeClass
-	public void setUp() throws Exception {
-		try {
-			config = new PropertiesConfiguration("src/test/resources/configuration.properties");
-		} catch (ConfigurationException e) {
-			e.printStackTrace();
-		}
-		String host = config.getString("host") + ":"+ config.getString("port"); 
-		System.out.println("Found host " + host);
-
-		this.selenium = new DefaultSelenium("localhost", 4444, config.getString("browser"), host);
-		selenium.start();
-	}
+	private Selenium selenium = null;
 
 	@Test
-	public void search() throws Exception {
+	public void search(ITestContext context) throws Exception {
+		selenium = (Selenium)context.getAttribute("seleniuminstance");
+		System.out.println("Starting to search " + selenium);
+		
 		selenium.open("/");
 		selenium.click("find_ontology");
 		selenium.type("find_ontology", "Body System");
@@ -58,11 +41,5 @@ public class FindOntology {
 		selenium.click(target);
 
 		selenium.waitForPageToLoad("30000");
-	}
-
-	
-	@AfterClass
-	public void tearDown() throws Exception {
-		selenium.stop();
 	}
 }

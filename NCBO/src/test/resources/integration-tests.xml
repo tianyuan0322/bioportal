@@ -1,7 +1,8 @@
 <!DOCTYPE suite SYSTEM "http://testng.org/testng-1.0.dtd" >
 <suite name="NCBO" verbose="1">
-	<test name="Find Ontology">
+	<test name="Find Ontology" preserve-order="true">
 		<classes>
+			<class name="selenium.SetupAndTearDown"></class>
 			<class name="selenium.FindOntology"></class>
 		</classes>
 	</test>
