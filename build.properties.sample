@@ -93,6 +93,13 @@ ontology.parse.scheduler.enabled=false
 # Fire once every hour, at 30 past the hour: 0 30 * * * ? *
 ontology.parse.scheduler.cronexpression=0 30 * * * ? *
 
+# Ontology Integrity Fixer Scheduler properties
+# Enable/Disable scheduler service flag
+ontology.integrity.fixer.enabled=false
+# Scheduler cron expression
+# Fire at 11:30pm every day: 0 30 23 * * ? *
+ontology.integrity.fixer.cronexpression=0 30 23 * * ? *
+
 # Logging properties
 bioportal.app.log.deflevel=ERROR
 bioportal.app.log.bioportallevel=DEBUG

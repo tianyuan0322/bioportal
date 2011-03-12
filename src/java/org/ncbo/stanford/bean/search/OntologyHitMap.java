@@ -8,7 +8,7 @@ import java.util.TreeMap;
  * @author Michael Dorf
  * 
  */
-public class OntologyHitMap extends TreeMap<String, OntologyHitBean> {
+public class OntologyHitMap extends TreeMap<Integer, OntologyHitBean> {
 
 	/**
 	 * 

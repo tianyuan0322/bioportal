@@ -106,13 +106,16 @@ public interface QuerySearchService {
 	 * @param pageSize
 	 * @param pageNum
 	 * @param maxNumHits
+	 * @param ontologyIds
+	 *            - optional ontology ids list
 	 * @param subtreeRootConceptId
 	 *            - optional root concept id for sub-tree search
 	 * @return
 	 * @throws Exception
 	 */
 	public Page<SearchBean> executeQuery(Query query, Integer pageSize,
-			Integer pageNum, Integer maxNumHits, String subtreeRootConceptId)
+			Integer pageNum, Integer maxNumHits,
+			Collection<Integer> ontologyIds, String subtreeRootConceptId)
 			throws Exception;
 
 	/**
@@ -122,13 +125,16 @@ public interface QuerySearchService {
 	 * 
 	 * @param query
 	 * @param maxNumHits
+	 * @param ontologyIds
+	 *            - optional ontology ids list
 	 * @param subtreeRootConceptId
 	 *            - optional root concept id for sub-tree search
 	 * @return
 	 * @throws Exception
 	 */
 	public Page<SearchBean> executeQuery(Query query, Integer maxNumHits,
-			String subtreeRootConceptId) throws Exception;
+			Collection<Integer> ontologyIds, String subtreeRootConceptId)
+			throws Exception;
 
 	/**
 	 * Generate a search query from the expression and optional ontology ids
@@ -150,13 +156,16 @@ public interface QuerySearchService {
 	 * 
 	 * @param query
 	 * @param maxNumHits
+	 * @param ontologyIds
+	 *            - optional ontology ids list
 	 * @param subtreeRootConceptId
 	 *            - optional root concept id for sub-tree search
 	 * @return
 	 * @throws Exception
 	 */
 	public SearchResultListBean runQuery(Query query, Integer maxNumHits,
-			String subtreeRootConceptId) throws Exception;
+			Collection<Integer> ontologyIds, String subtreeRootConceptId)
+			throws Exception;
 
 	/**
 	 * Empty search results cache

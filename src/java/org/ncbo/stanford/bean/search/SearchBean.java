@@ -103,7 +103,7 @@ public class SearchBean {
 		return "VersionId: " + ontologyVersionId + " | OntologyId: "
 				+ ontologyId + " | ConceptId: " + conceptId + " | Contents: "
 				+ contents + " | RecordType: " + recordType.getLabel() + "\n"
-				+ " | ObjectType: " + objectType.getLabel() + " PreferedName: "
+				+ " | ObjectType: " + ((objectType != null) ? objectType.getLabel() : "") + " PreferedName: "
 				+ preferredName + " | ConceptIdShort: " + conceptIdShort
 				+ " | OntologyDisplayLabel: " + ontologyDisplayLabel + "\n";
 	}

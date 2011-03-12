@@ -2,6 +2,8 @@ package org.ncbo.stanford.service.search;
 
 import java.util.List;
 
+import org.ncbo.stanford.bean.search.OntologyHitBean;
+
 /**
  * Service responsible for creating and maintaining BioPortal search (Lucene)
  * index
@@ -80,4 +82,15 @@ public interface IndexSearchService {
 	 * @throws Exception
 	 */
 	public void optimizeIndex() throws Exception;
+
+	/**
+	 * Checks whether ontology is present in the index and returns 
+	 * basic info such as ontologyVersionId and ontologyDisplayLabel
+	 * 
+	 * @param ontologyId
+	 * @return
+	 * @throws Exception
+	 */
+	public OntologyHitBean checkOntologyInIndex(Integer ontologyId)
+			throws Exception;
 }

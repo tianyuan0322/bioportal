@@ -10,7 +10,7 @@ import org.ncbo.stanford.util.paginator.impl.PaginatableList;
  * Class that aggregates all search results
  * 
  * @author Michael Dorf
- *
+ * 
  */
 public class SearchResultListBean extends PaginatableList<SearchBean> {
 
@@ -18,7 +18,7 @@ public class SearchResultListBean extends PaginatableList<SearchBean> {
 	 * 
 	 */
 	private static final long serialVersionUID = 1067248571020887697L;
-	private Map<String, OntologyHitBean> hitsPerOntology = new OntologyHitMap();
+	private Map<Integer, OntologyHitBean> hitsPerOntology = new OntologyHitMap();
 
 	/**
 	 * 
@@ -41,23 +41,25 @@ public class SearchResultListBean extends PaginatableList<SearchBean> {
 		super(initialCapacity);
 	}
 
+	public void addEmptyOntologyHit(Integer ontologyId,
+			OntologyHitBean ontologyHit) {
+		ontologyHit.setNumHits(0);
+		hitsPerOntology.put(ontologyId, ontologyHit);
+	}
+
 	public void addOntologyHit(Integer ontologyVersionId, Integer ontologyId,
 			String ontologyDisplayLabel) {
-		String key = getKey(ontologyDisplayLabel);
-
-		if (hitsPerOntology.containsKey(key)) {
-			hitsPerOntology.get(key).addHit();
+		if (hitsPerOntology.containsKey(ontologyId)) {
+			hitsPerOntology.get(ontologyId).addHit();
 		} else {
-			hitsPerOntology.put(key, new OntologyHitBean(ontologyVersionId,
-					ontologyId, ontologyDisplayLabel, 1));
+			hitsPerOntology.put(ontologyId, new OntologyHitBean(
+					ontologyVersionId, ontologyId, ontologyDisplayLabel, 1));
 		}
 	}
 
-	public Integer getOntologyHits(String ontologyDisplayLabel) {
-		String key = getKey(ontologyDisplayLabel);
-
-		return hitsPerOntology.containsKey(key) ? hitsPerOntology.get(key)
-				.getNumHits() : 0;
+	public Integer getOntologyHits(Integer ontologyId) {
+		return hitsPerOntology.containsKey(ontologyId) ? hitsPerOntology.get(
+				ontologyId).getNumHits() : 0;
 	}
 
 	public Collection<OntologyHitBean> getAllHits() {
@@ -76,18 +78,15 @@ public class SearchResultListBean extends PaginatableList<SearchBean> {
 	 * @param hitsPerOntology
 	 *            the hitsPerOntology to set
 	 */
-	private void setHitsPerOntology(Map<String, OntologyHitBean> hitsPerOntology) {
+	private void setHitsPerOntology(
+			Map<Integer, OntologyHitBean> hitsPerOntology) {
 		this.hitsPerOntology = hitsPerOntology;
-	}
-
-	private String getKey(String ontologyDisplayLabel) {
-		return ontologyDisplayLabel.toLowerCase();
 	}
 
 	/**
 	 * @return the hitsPerOntology
 	 */
-	public Map<String, OntologyHitBean> getHitsPerOntology() {
+	public Map<Integer, OntologyHitBean> getHitsPerOntology() {
 		return hitsPerOntology;
 	}
 }

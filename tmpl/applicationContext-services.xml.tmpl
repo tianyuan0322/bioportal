@@ -901,6 +901,16 @@
 		</property>
 	</bean>
 	
+	<bean id="ontologyIntegrityFixerService"
+		class="org.ncbo.stanford.service.loader.fixer.impl.OntologyIntegrityFixerServiceImpl">
+		<property name="ontologyMetadataManager">
+			<ref bean="ontologyMetadataManager" />
+		</property>
+		<property name="indexSearchService">
+			<ref bean="indexSearchService" />
+		</property>		
+	</bean>
+	
 	<!-- Search related beans -->
 	<bean id="abstractSearchService" class="org.ncbo.stanford.service.search.AbstractSearchService"
 		abstract="true">
@@ -1251,7 +1261,7 @@
 		</property>
 	</bean>
 
-	<!-- Ontology parse scheduler -->
+	<!-- Ontology Parse Scheduler -->
 	<bean id="ontologyParseSchedulerJobDetailBean"
 		class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
 		<property name="targetObject" ref="ontologyLoadSchedulerService" />
@@ -1283,7 +1293,7 @@
 		</property>
 	</bean>
 
-	<!-- OBO CVS pull scheduler -->
+	<!-- OBO CVS pull Scheduler -->
 	<bean id="oboPullSchedulerJobDetailBean"
 		class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
 		<property name="targetObject" ref="oboCVSPullService" />
@@ -1312,6 +1322,38 @@
 		</property>
 		<property name="autoStartup">
 			<ref bean="oboPullSchedulerAutoStartup" />
+		</property>
+	</bean>
+
+	<!-- Ontology Integrity Fixer Scheduler -->
+	<bean id="ontologyIntegrityFixerJobDetailBean"
+		class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+		<property name="targetObject" ref="ontologyIntegrityFixerService" />
+		<property name="targetMethod" value="fixOntologies" />
+		<property name="concurrent" value="false" />
+	</bean>
+
+	<bean id="ontologyIntegrityFixerCronTrigger" class="org.springframework.scheduling.quartz.CronTriggerBean">
+		<property name="jobDetail" ref="ontologyIntegrityFixerJobDetailBean" />
+		<property name="cronExpression" value="@ontologyintegrityfixercronexpression@" />
+	</bean>
+
+	<bean id="ontologyIntegrityFixerAutoStartup" class="java.lang.Boolean">
+		<constructor-arg value="@ontologyintegrityfixerenabled@" />
+	</bean>
+
+	<bean id="ontologyIntegrityFixerFactoryBean"
+		class="org.springframework.scheduling.quartz.SchedulerFactoryBean">
+		<property name="schedulerName" value="ontologyIntegrityFixerFactoryBean" />
+		<property name="overwriteExistingJobs" value="true" />
+		<property name="waitForJobsToCompleteOnShutdown" value="true" />
+		<property name="triggers">
+			<list>
+				<ref bean="ontologyIntegrityFixerCronTrigger" />
+			</list>
+		</property>
+		<property name="autoStartup">
+			<ref bean="ontologyIntegrityFixerAutoStartup" />
 		</property>
 	</bean>
 

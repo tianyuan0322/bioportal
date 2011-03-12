@@ -10,6 +10,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.lucene.analysis.Analyzer;
@@ -25,11 +26,13 @@ import org.apache.lucene.search.ScoreDoc;
 import org.apache.lucene.search.Sort;
 import org.apache.lucene.search.SortField;
 import org.apache.lucene.search.TermQuery;
+import org.apache.lucene.search.TopDocs;
 import org.apache.lucene.search.TopFieldDocs;
 import org.apache.lucene.store.Directory;
 import org.apache.lucene.store.FSDirectory;
 import org.apache.lucene.util.Version;
 import org.ncbo.stanford.bean.OntologyBean;
+import org.ncbo.stanford.bean.search.OntologyHitBean;
 import org.ncbo.stanford.bean.search.SearchBean;
 import org.ncbo.stanford.bean.search.SearchIndexBean;
 import org.ncbo.stanford.bean.search.SearchResultListBean;
@@ -59,6 +62,8 @@ public abstract class AbstractSearchService {
 	 * Separates the query from the maxNumHits in the cache key
 	 */
 	private static final String CACHE_KEY_SEPARATOR = "@@@@@";
+	private static final String ONTOLOGY_IDS_DELIM = ",";
+	private static final String EMPTY_CACHE_KEY_PARAM = "null";
 
 	protected Analyzer analyzer;
 	protected String indexPath;
@@ -83,13 +88,16 @@ public abstract class AbstractSearchService {
 	 * 
 	 * @param query
 	 * @param maxNumHits
+	 * @param ontologyIds
+	 *            - optional list of ontology ids
 	 * @param subtreeRootConceptId
 	 *            - optional root concept id for sub-tree search
 	 * @return
 	 * @throws Exception
 	 */
 	public SearchResultListBean runQuery(Query query, Integer maxNumHits,
-			String subtreeRootConceptId) throws Exception {
+			Collection<Integer> ontologyIds, String subtreeRootConceptId)
+			throws Exception {
 		// check whether the index has changed and if so, reloads the searcher
 		// reloading searcher must be synchronized to avoid null searchers
 		synchronized (createSearcherLock) {
@@ -110,11 +118,17 @@ public abstract class AbstractSearchService {
 		ScoreDoc[] hits = docs.scoreDocs;
 		SearchResultListBean searchResults = new SearchResultListBean(0);
 
-		if (StringHelper.isNullOrNullString(subtreeRootConceptId)) {
-			populateSearchResults(hits, searchResults);
-		} else {
-			populateSearchResults(hits, searchResults, subtreeRootConceptId);
+		if (ontologyIds == null) {
+			ontologyIds = new ArrayList<Integer>(0);
 		}
+
+		if (StringHelper.isNullOrNullString(subtreeRootConceptId)) {
+			populateSearchResults(hits, searchResults, ontologyIds);
+		} else {
+			populateSearchResults(hits, searchResults, ontologyIds,
+					subtreeRootConceptId);
+		}
+		populateEmptyOntologyResults(searchResults, ontologyIds);
 
 		if (log.isDebugEnabled()) {
 			log.debug("Total All Hits: " + hits.length);
@@ -125,61 +139,48 @@ public abstract class AbstractSearchService {
 	}
 
 	/**
-	 * Empty search results cache
+	 * Checks whether ontology is present in the index and returns 
+	 * basic info such as ontologyVersionId and ontologyDisplayLabel
+	 * 
+	 * @param ontologyId
+	 * @return
+	 * @throws Exception
 	 */
-	public void emptySearchCache() {
-		if (log.isDebugEnabled()) {
-			log.debug("Emptying cache...");
+	public OntologyHitBean checkOntologyInIndex(Integer ontologyId)
+			throws Exception {
+		Integer ontologyVersionId = null;
+		String ontologyDisplayLabel = null;
+		BooleanQuery query = new BooleanQuery();
+		query.add(new TermQuery(generateOntologyIdTerm(ontologyId)),
+				BooleanClause.Occur.MUST);
+		TopDocs docs = searcher.search(query, null, 1);
+		ScoreDoc[] hits = docs.scoreDocs;
+
+		if (hits.length > 0) {
+			int docId = hits[0].doc;
+			Document doc = searcher.doc(docId);
+			ontologyVersionId = new Integer(doc
+					.get(SearchIndexBean.ONTOLOGY_VERSION_ID_FIELD_LABEL));
+			ontologyDisplayLabel = doc
+					.get(SearchIndexBean.ONTOLOGY_DISPLAY_LABEL_FIELD_LABEL);
 		}
 
-		searchResultCache.clear();
+		return new OntologyHitBean(ontologyVersionId, ontologyId,
+				ontologyDisplayLabel, null);
 	}
-
-	/**
-	 * Reload search results cache by re-running all queries in it and
-	 * re-populating it with new results
-	 */
-	public void reloadSearchCache() {
-		long start = 0;
-		long stop = 0;
-
-		if (log.isDebugEnabled()) {
-			log.debug("Reloading cache...");
-			start = System.currentTimeMillis();
-		}
-
-		QueryParser parser = new QueryParser(luceneVersion,
-				SearchIndexBean.CONTENTS_FIELD_LABEL, analyzer);
-		Set<String> keys = searchResultCache.getKeys();
-		searchResultCache.clear();
-
-		for (String fullKey : keys) {
-			SearchResultListBean results = null;
-			String[] splitKey = parseCacheKey(fullKey);
-
-			try {
-				results = runQuery(parser.parse(splitKey[0]), Integer
-						.parseInt(splitKey[1]), splitKey[2]);
-			} catch (Exception e) {
-				results = null;
-				e.printStackTrace();
-				log.error("Error while reloading cache: " + e);
-			}
-
-			if (results != null) {
-				searchResultCache.put(fullKey, results);
-			}
-		}
-
-		if (log.isDebugEnabled()) {
-			stop = System.currentTimeMillis(); // stop timing
-			log.debug("Finished reloading cache in " + (double) (stop - start)
-					/ 1000 + " seconds.");
+	
+	private void populateEmptyOntologyResults(
+			SearchResultListBean searchResults,
+			Collection<Integer> noHitsOntologyIds) throws Exception {
+		for (Integer ontologyId : noHitsOntologyIds) {
+			OntologyHitBean ontologyHit = checkOntologyInIndex(ontologyId);
+			searchResults.addEmptyOntologyHit(ontologyId, ontologyHit);
 		}
 	}
 
 	private void populateSearchResults(ScoreDoc[] hits,
-			SearchResultListBean searchResults) throws Exception {
+			SearchResultListBean searchResults, Collection<Integer> ontologyIds)
+			throws Exception {
 		List<String> uniqueDocs = new ArrayList<String>(0);
 		long start = System.currentTimeMillis();
 
@@ -189,13 +190,14 @@ public abstract class AbstractSearchService {
 			String conceptId = doc.get(SearchIndexBean.CONCEPT_ID_FIELD_LABEL);
 			Integer ontologyVersionId = new Integer(doc
 					.get(SearchIndexBean.ONTOLOGY_VERSION_ID_FIELD_LABEL));
-			Integer ontologyId = new Integer(doc
-					.get(SearchIndexBean.ONTOLOGY_ID_FIELD_LABEL));
 			String ontologyDisplayLabel = doc
 					.get(SearchIndexBean.ONTOLOGY_DISPLAY_LABEL_FIELD_LABEL);
+			Integer ontologyId = new Integer(doc
+					.get(SearchIndexBean.ONTOLOGY_ID_FIELD_LABEL));
 			String uniqueIdent = ontologyId + "_" + conceptId;
 
 			if (!uniqueDocs.contains(uniqueIdent)) {
+				ontologyIds.remove(ontologyId);
 				SearchBean searchResult = new SearchBean(ontologyVersionId,
 						ontologyId, ontologyDisplayLabel,
 						SearchRecordTypeEnum.getFromLabel(doc
@@ -209,7 +211,6 @@ public abstract class AbstractSearchService {
 				searchResults.add(searchResult);
 				searchResults.addOntologyHit(ontologyVersionId, ontologyId,
 						ontologyDisplayLabel);
-
 				uniqueDocs.add(uniqueIdent);
 
 				if (log.isDebugEnabled()) {
@@ -226,7 +227,8 @@ public abstract class AbstractSearchService {
 	}
 
 	private void populateSearchResults(ScoreDoc[] hits,
-			SearchResultListBean searchResults, String subtreeRootConceptId)
+			SearchResultListBean searchResults,
+			Collection<Integer> ontologyIds, String subtreeRootConceptId)
 			throws Exception {
 		List<String> uniqueDocs = new ArrayList<String>(0);
 		long start = System.currentTimeMillis();
@@ -254,15 +256,16 @@ public abstract class AbstractSearchService {
 						.get(SearchIndexBean.ONTOLOGY_VERSION_ID_FIELD_LABEL));
 				String conceptId = doc
 						.get(SearchIndexBean.CONCEPT_ID_FIELD_LABEL);
-				Integer ontologyId = new Integer(doc
-						.get(SearchIndexBean.ONTOLOGY_ID_FIELD_LABEL));
 				String ontologyDisplayLabel = doc
 						.get(SearchIndexBean.ONTOLOGY_DISPLAY_LABEL_FIELD_LABEL);
+				Integer ontologyId = new Integer(doc
+						.get(SearchIndexBean.ONTOLOGY_ID_FIELD_LABEL));
 				String uniqueIdent = ontologyId + "_" + conceptId;
 
 				if (!uniqueDocs.contains(uniqueIdent)
 						&& (subtreeRootConceptId.equalsIgnoreCase(conceptId) || mgr
 								.hasParent(ob, conceptId, subtreeRootConceptId))) {
+					ontologyIds.remove(ontologyId);
 					SearchBean searchResult = new SearchBean(
 							ontologyVersionId,
 							ontologyId,
@@ -298,15 +301,6 @@ public abstract class AbstractSearchService {
 		}
 	}
 
-	private String getHitAsString(float score, SearchBean searchResult) {
-		return score + " | " + searchResult.getContents() + ", Type: "
-				+ searchResult.getRecordType() + ", PrefName: "
-				+ searchResult.getPreferredName() + ", Ontology: "
-				+ searchResult.getOntologyDisplayLabel() + ", Concept Id: "
-				+ searchResult.getConceptId() + ", Concept Id Short: "
-				+ searchResult.getConceptIdShort();
-	}
-
 	/**
 	 * Constructs the query that limits the search to the given ontology ids
 	 * 
@@ -322,6 +316,85 @@ public abstract class AbstractSearchService {
 		}
 
 		return query;
+	}
+
+	/**
+	 * Empty search results cache
+	 */
+	public void emptySearchCache() {
+		if (log.isDebugEnabled()) {
+			log.debug("Emptying cache...");
+		}
+
+		searchResultCache.clear();
+	}
+
+	/**
+	 * Reload search results cache by re-running all queries in it and
+	 * re-populating it with new results
+	 */
+	public void reloadSearchCache() {
+		long start = 0;
+		long stop = 0;
+
+		if (log.isDebugEnabled()) {
+			log.debug("Reloading cache...");
+			start = System.currentTimeMillis();
+		}
+
+		QueryParser parser = new QueryParser(luceneVersion,
+				SearchIndexBean.CONTENTS_FIELD_LABEL, analyzer);
+		Set<String> keys = searchResultCache.getKeys();
+		searchResultCache.clear();
+
+		for (String fullKey : keys) {
+			SearchResultListBean results = null;
+			String[] splitKey = parseCacheKey(fullKey);
+			Collection<Integer> ontologyIds = extractOntologyIds(splitKey[2]);
+
+			try {
+				results = runQuery(parser.parse(splitKey[0]), new Integer(
+						splitKey[1]), ontologyIds, splitKey[3]);
+			} catch (Exception e) {
+				results = null;
+				e.printStackTrace();
+				log.error("Error while reloading cache: " + e);
+			}
+
+			if (results != null) {
+				searchResultCache.put(fullKey, results);
+			}
+		}
+
+		if (log.isDebugEnabled()) {
+			stop = System.currentTimeMillis(); // stop timing
+			log.debug("Finished reloading cache in " + (double) (stop - start)
+					/ 1000 + " seconds.");
+		}
+	}
+
+	private Collection<Integer> extractOntologyIds(String ontlogyIdsStr) {
+		Collection<Integer> ontologyIds = null;
+
+		if (ontlogyIdsStr != null) {
+			ontologyIds = new ArrayList<Integer>();
+			String[] ontologyIdsStr = ontlogyIdsStr.split(ONTOLOGY_IDS_DELIM);
+
+			for (int i = 0; i < ontologyIdsStr.length; i++) {
+				ontologyIds.add(new Integer(ontologyIdsStr[i]));
+			}
+		}
+		return ontologyIds;
+	}
+
+	private String getHitAsString(float score, SearchBean searchResult) {
+		return score + " | " + searchResult.getContents() + ", Type: "
+				+ searchResult.getRecordType() + ", OntologyId: "
+				+ searchResult.getOntologyId() + ", PrefName: "
+				+ searchResult.getPreferredName() + ", Ontology: "
+				+ searchResult.getOntologyDisplayLabel() + ", Concept Id: "
+				+ searchResult.getConceptId() + ", Concept Id Short: "
+				+ searchResult.getConceptIdShort();
 	}
 
 	/**
@@ -410,17 +483,32 @@ public abstract class AbstractSearchService {
 	protected String[] parseCacheKey(String cacheKey) {
 		String[] keys = cacheKey.split(CACHE_KEY_SEPARATOR);
 
-		if (keys.length > 2 && keys[2] != null && keys[2].equals("null")) {
-			keys[2] = null;
+		for (int i = 0; i < keys.length; i++) {
+			if (keys[i].equals(EMPTY_CACHE_KEY_PARAM)) {
+				keys[i] = null;
+			}
 		}
 
 		return keys;
 	}
 
 	protected String composeCacheKey(Query query, Integer maxNumHits,
-			String subtreeRootConceptId) {
-		return query + CACHE_KEY_SEPARATOR + getMaxNumHits(maxNumHits)
-				+ CACHE_KEY_SEPARATOR + subtreeRootConceptId;
+			Collection<Integer> ontologyIds, String subtreeRootConceptId) {
+		String key = query + CACHE_KEY_SEPARATOR + getMaxNumHits(maxNumHits);
+		String ontologyIdsStr = null;
+
+		if (ontologyIds == null || ontologyIds.isEmpty()) {
+			ontologyIdsStr = EMPTY_CACHE_KEY_PARAM;
+		} else {
+			ontologyIdsStr = StringUtils.join(ontologyIds, ONTOLOGY_IDS_DELIM);
+		}
+
+		if (StringHelper.isNullOrNullString(subtreeRootConceptId)) {
+			subtreeRootConceptId = EMPTY_CACHE_KEY_PARAM;
+		}
+
+		return key + CACHE_KEY_SEPARATOR + ontologyIdsStr + CACHE_KEY_SEPARATOR
+				+ subtreeRootConceptId;
 	}
 
 	/**
