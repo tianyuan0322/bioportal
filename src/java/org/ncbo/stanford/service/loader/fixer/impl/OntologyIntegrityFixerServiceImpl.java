@@ -1,7 +1,9 @@
 package org.ncbo.stanford.service.loader.fixer.impl;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -43,6 +45,9 @@ public class OntologyIntegrityFixerServiceImpl extends AbstractOntologyService
 			List<OntologyBean> ontologies = ontologyMetadataManager
 					.findLatestActiveOntologyOrOntologyViewVersions();
 			// fix index
+			if (log.isInfoEnabled()) {
+				log.info("Running search index fixer...");
+			}
 			fixSearchIndex(ontologies);
 		} catch (Exception e) {
 			log.error(e);
@@ -57,7 +62,8 @@ public class OntologyIntegrityFixerServiceImpl extends AbstractOntologyService
 	 * @param ontologies
 	 */
 	public void fixSearchIndex(List<OntologyBean> ontologies) {
-		List<Integer> problemOntologies = new ArrayList<Integer>(0);
+		Map<Integer, OntologyBean> problemOntologies = new HashMap<Integer, OntologyBean>(
+				0);
 
 		for (OntologyBean ontology : ontologies) {
 			try {
@@ -68,16 +74,35 @@ public class OntologyIntegrityFixerServiceImpl extends AbstractOntologyService
 
 				if (ontologyVersionId == null
 						|| !ontologyVersionId.equals(ontology.getId())) {
-					problemOntologies.add(ontologyId);
+					problemOntologies.put(ontologyId, ontology);
 				}
-				indexSearchService.indexOntologies(problemOntologies, false,
-						true);
 			} catch (Exception e) {
 				addErrorOntology(errorOntologies, ontology.getId().toString(),
 						ontology, e.getMessage());
 				log.error(e);
 				e.printStackTrace();
 			}
+		}
+
+		try {
+			if (log.isInfoEnabled()) {
+				StringBuffer sb = new StringBuffer();
+				sb
+						.append("The following ontologies were found to be out of sync with the search index and are being re-indexed:\n\n");
+
+				for (Map.Entry<Integer, OntologyBean> entry : problemOntologies
+						.entrySet()) {
+					sb.append(entry.getValue());
+					sb.append("\n\n");
+				}
+				log.info(sb.toString());
+			}
+			indexSearchService.indexOntologies(new ArrayList<Integer>(
+					problemOntologies.keySet()), false, true);
+		} catch (Exception e) {
+			log.error("Unable to fix search index due to the following error: "
+					+ e);
+			e.printStackTrace();
 		}
 	}
 
