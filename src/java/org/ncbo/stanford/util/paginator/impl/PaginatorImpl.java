@@ -64,6 +64,9 @@ public class PaginatorImpl<E> implements Paginator<E> {
 		if (originalList != null && totalSize > 0) {
 			result = new Page<E>(1, getNumPages(), pageSize, totalSize,
 					iterateFrom(0));
+		} else if (originalList != null) {
+			result = new Page<E>(1, 1, pageSize, totalSize,
+					originalList);		
 		}
 
 		return result;

@@ -67,13 +67,19 @@ public class SearchResultListBean extends PaginatableList<SearchBean> {
 	}
 
 	public Paginatable<SearchBean> sublist(int fromIndex, int toIndex) {
-		SearchResultListBean results = new SearchResultListBean(super.subList(
+		SearchResultListBean results;
+	
+		if (super.size() >= toIndex + 1) {
+			results = new SearchResultListBean(super.subList(
 				fromIndex, toIndex));
+		} else {
+			results = new SearchResultListBean(0);
+		}
 		results.setHitsPerOntology(hitsPerOntology);
 
 		return results;
 	}
-
+	
 	/**
 	 * @param hitsPerOntology
 	 *            the hitsPerOntology to set
