@@ -491,6 +491,7 @@ public class XMLSerializationServiceImpl implements XMLSerializationService {
 				SubscriptionsBean.class);
 
 		xmlSerializer.omitField(UserBean.class, "password");
+		xmlSerializer.omitField(UserBean.class, "apiKey");
 
 		xmlSerializer.alias(MessageUtils.getMessage("entity.classbean"),
 				ClassBean.class);
