@@ -69,7 +69,7 @@ public class SearchResultListBean extends PaginatableList<SearchBean> {
 	public Paginatable<SearchBean> sublist(int fromIndex, int toIndex) {
 		SearchResultListBean results;
 	
-		if (super.size() >= toIndex + 1) {
+		if (super.size() >= toIndex) {
 			results = new SearchResultListBean(super.subList(
 				fromIndex, toIndex));
 		} else {
