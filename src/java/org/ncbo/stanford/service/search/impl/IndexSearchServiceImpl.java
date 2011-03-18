@@ -57,10 +57,12 @@ public class IndexSearchServiceImpl extends AbstractSearchService implements
 		for (OntologyBean ontology : ontologies) {
 			try {
 				indexOntology(writer, ontology, false, false);
-
 				// commit changes to writer so they are visible to the searcher
 				writer.commit();
 			} catch (Exception e) {
+				log.error("An error occurred while indexing ontology: "
+						+ ontology);
+				e.printStackTrace();
 				log.error(e);
 			}
 		}
@@ -71,9 +73,9 @@ public class IndexSearchServiceImpl extends AbstractSearchService implements
 
 		closeWriter(writer);
 
-		if (log.isDebugEnabled()) {
+		if (log.isInfoEnabled()) {
 			long stop = System.currentTimeMillis(); // stop timing
-			log.debug("Finished indexing all ontologies in "
+			log.info("Finished indexing all ontologies in "
 					+ (double) (stop - start) / 1000 / 60 / 60 + " hours.");
 		}
 	}
@@ -247,7 +249,14 @@ public class IndexSearchServiceImpl extends AbstractSearchService implements
 			}
 
 			for (OntologyBean ontology : ontologies) {
-				indexOntology(writer, ontology, false, false);
+				try {
+					indexOntology(writer, ontology, false, false);
+				} catch (Exception e) {
+					log.error("An error occurred while indexing ontology: "
+							+ ontology);
+					e.printStackTrace();
+					log.error(e);
+				}
 			}
 
 			if (doOptimize) {
