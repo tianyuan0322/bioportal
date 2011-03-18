@@ -1360,6 +1360,32 @@ In case of ontology versions, this represents the date and time when it was uplo
     <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
     >RRF</rdfs:label>
   </OMV:OntologyLanguage>
+  <OMV:OntologyLanguage rdf:ID="UMLS-RELA">
+    <OMV:name rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+    >UMLS-RELA</OMV:name>
+    <OMV:acronym rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+    >UMLS-RELA</OMV:acronym>
+    <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+    >UMLS-RELA</rdfs:label>
+  </OMV:OntologyLanguage>
+
+  <OMV:OntologyLanguage rdf:ID="LOINC">
+    <OMV:name rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+    >LOINC</OMV:name>
+    <OMV:acronym rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+    >LOINC</OMV:acronym>
+    <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+    >LOINC</rdfs:label>
+  </OMV:OntologyLanguage>
+  <OMV:OntologyLanguage rdf:ID="RXNORM">
+    <OMV:name rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+    >RXNORM</OMV:name>
+    <OMV:acronym rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+    >RXNORM</OMV:acronym>
+    <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+    >RXNORM</rdfs:label>
+  </OMV:OntologyLanguage>
+
   <OMV:OntologyLanguage rdf:ID="Protege-Frames">
     <OMV:acronym rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
     >PROTEGE</OMV:acronym>

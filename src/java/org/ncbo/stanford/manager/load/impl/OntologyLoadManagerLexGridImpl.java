@@ -315,6 +315,7 @@ public class OntologyLoadManagerLexGridImpl extends
 		if (ontologyBean.getFormat().equalsIgnoreCase(
 				ApplicationConstants.FORMAT_OBO)) {
 			// for obo ontologies, we read the file to find the version
+			version = ApplicationConstants.UNKNOWN;
 			File ontologyFile = new File(ontologyUri.getPath());
 			try {
 				BufferedReader reader = new BufferedReader(new FileReader(
