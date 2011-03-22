@@ -20,6 +20,7 @@ public class CompressedFileHandlerFactory {
 	private static final Log log = LogFactory
 			.getLog(CompressedFileHandlerFactory.class);
 	private static final String FORMAT_LEXGRID_XML = "LEXGRID_XML";
+	private static final String FORMAT_UMLS_RELA = "UMLS_RELA";
 
 	public static CompressedFileHandler createFileHandler(String format)
 			throws InstantiationException, IllegalAccessException,
@@ -57,6 +58,9 @@ public class CompressedFileHandlerFactory {
 		} else if (format
 				.equalsIgnoreCase(ApplicationConstants.FORMAT_LEXGRID_XML)) {
 			prefix = FORMAT_LEXGRID_XML;
+		} else if (format
+				.equalsIgnoreCase(ApplicationConstants.FORMAT_UMLS_RELA)) {
+			prefix = FORMAT_UMLS_RELA;
 		}
 
 		return prefix;
