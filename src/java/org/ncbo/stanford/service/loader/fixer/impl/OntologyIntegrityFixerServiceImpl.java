@@ -49,6 +49,10 @@ public class OntologyIntegrityFixerServiceImpl extends AbstractOntologyService
 				log.info("Running search index fixer...");
 			}
 			fixSearchIndex(ontologies);
+			
+			if (log.isInfoEnabled()) {
+				log.info("Search index fixer run completed...");
+			}
 		} catch (Exception e) {
 			log.error(e);
 			e.printStackTrace();
