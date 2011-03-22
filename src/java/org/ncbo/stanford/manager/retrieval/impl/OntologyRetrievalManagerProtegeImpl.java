@@ -439,9 +439,9 @@ public class OntologyRetrievalManagerProtegeImpl extends
 
 		targetClass.addRelation(ApplicationConstants.CHILD_COUNT,
 				getUniqueClasses(cls.getDirectSubclasses()).size());
-
-		List<ClassBean> children = convertLightBeans(getUniqueClasses(cls
-				.getDirectSubclasses()), ontologyBean);
+		List<ClassBean> children = convertLightBeans(
+				removeAnnonymousClasses(getUniqueClasses(cls
+						.getDirectSubclasses())), ontologyBean);					
 		targetClass.addRelation(ApplicationConstants.SUB_CLASS, children);
 
 		return targetClass;
