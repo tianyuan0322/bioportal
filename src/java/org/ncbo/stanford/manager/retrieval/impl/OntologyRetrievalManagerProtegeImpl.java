@@ -439,12 +439,31 @@ public class OntologyRetrievalManagerProtegeImpl extends
 
 		targetClass.addRelation(ApplicationConstants.CHILD_COUNT,
 				getUniqueClasses(cls.getDirectSubclasses()).size());
-		List<ClassBean> children = convertLightBeans(
-				removeAnnonymousClasses(getUniqueClasses(cls
-						.getDirectSubclasses())), ontologyBean);					
+		List<ClassBean> children = convertLightBeans(getSubclasses(cls),
+				ontologyBean);
 		targetClass.addRelation(ApplicationConstants.SUB_CLASS, children);
 
 		return targetClass;
+	}
+
+	private List<Cls> getSubclasses(Cls cls) {
+		List<Cls> subclasses = new ArrayList<Cls>(0);
+		KnowledgeBase kb = cls.getKnowledgeBase();
+
+		if (kb instanceof OWLModel) {
+			if (cls instanceof RDFSNamedClass) {
+				subclasses = getUniqueClasses(((RDFSNamedClass) cls)
+						.getNamedSubclasses(false));
+				OWLModel owlModel = (OWLModel) cls.getKnowledgeBase();
+
+				if (cls.equals(owlModel.getOWLThingClass())) {
+					subclasses = (List<Cls>) removeAnnonymousClasses(subclasses);
+				}
+			}
+		} else {
+			subclasses = getUniqueClasses(cls.getDirectSubclasses());
+		}
+		return subclasses;
 	}
 
 	private ClassBean buildConceptNoRelations(Cls cls, Slot synonymSlot,
