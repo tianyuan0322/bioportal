@@ -14,11 +14,21 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 	private UserService userService;
 	private EncryptionService encryptionService;
 
-	public void authenticate(String apiKey) throws AuthenticationException {
+	public UserBean authenticate(String apiKey) throws AuthenticationException {
+		UserBean userBean = userService.findUserByApiKey(apiKey);
 
+		if (userBean == null) {
+			log
+					.error("There is no user in the system corresponding to apiKey: "
+							+ apiKey);
+			throw new AuthenticationException(
+					"Invalid credentials supplied: apiKey = " + apiKey);
+		}
+		
+		return userBean;
 	}
 
-	public void authenticate(String username, String password)
+	public UserBean authenticate(String username, String password)
 			throws AuthenticationException {
 		UserBean userBean = userService.findUser(username);
 
@@ -26,9 +36,15 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 			log
 					.error("There is no user in the system corresponding to username: "
 							+ username);
-			throw new AuthenticationException("Invalid credentials supplied");
+			throw new AuthenticationException();
 		}
 
+		if (!encryptionService
+				.isPasswordValid(userBean.getPassword(), password)) {
+			throw new AuthenticationException();
+		}
+
+		return userBean;
 	}
 
 	/**
