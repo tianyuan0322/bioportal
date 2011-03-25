@@ -153,7 +153,7 @@ public class XMLSerializationServiceImpl implements XMLSerializationService {
 	}
 
 	/**
-	 * returns SuccessBean with sessionId, accessedResource populated
+	 * returns ErrorStatusBean
 	 */
 	public ErrorStatusBean getErrorBean(Request request, Response response) {
 		String accessedResource = request.getResourceRef().getPath();
@@ -168,14 +168,14 @@ public class XMLSerializationServiceImpl implements XMLSerializationService {
 	}
 
 	/**
-	 * returns SuccessBean with sessionId, accessedResource populated
+	 * returns SuccessBean with apiKey, accessedResource populated
 	 */
 	public SuccessBean getSuccessBean(Request request) {
-		String sessionId = RequestUtils.getSessionId(request);
+		String apiKey = RequestUtils.getApiKey(request);
 		String accessedResource = request.getResourceRef().getPath();
 
 		SuccessBean successBean = new SuccessBean();
-		successBean.setSessionId(sessionId);
+		successBean.setApiKey(apiKey);
 
 		if (!GenericValidator.isBlankOrNull(accessedResource)) {
 			successBean.setAccessedResource(accessedResource);
@@ -185,7 +185,7 @@ public class XMLSerializationServiceImpl implements XMLSerializationService {
 	}
 
 	/**
-	 * returns SuccessBean with sessionId, accessedResource and data populated
+	 * returns SuccessBean with apiKey, accessedResource and data populated
 	 */
 	public SuccessBean getSuccessBean(Request request, Object data) {
 		SuccessBean successBean = getSuccessBean(request);
@@ -198,12 +198,12 @@ public class XMLSerializationServiceImpl implements XMLSerializationService {
 	}
 
 	/**
-	 * returns SuccessBean with sessionId, accessedResource and data populated
+	 * returns SuccessBean with apiKey, accessedResource and data populated
 	 */
-	public SuccessBean getSuccessBean(String sessionId, Request request,
+	public SuccessBean getSuccessBean(String apiKey, Request request,
 			Object data) {
 		SuccessBean successBean = getSuccessBean(request);
-		successBean.setSessionId(sessionId);
+		successBean.setApiKey(apiKey);
 
 		if (data != null) {
 			successBean.getData().add(data);
