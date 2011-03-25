@@ -227,17 +227,6 @@ public class RequestUtils {
 	}
 
 	/**
-	 * Returns the Session ID from a request
-	 * 
-	 * @param request
-	 * @return
-	 */
-	public static String getSessionId(Request request) {
-		return getHttpServletRequest(request).getParameter(
-				RequestParamConstants.PARAM_SESSIONID);
-	}
-
-	/**
 	 * Returns the user name from a request
 	 * 
 	 * @param request
