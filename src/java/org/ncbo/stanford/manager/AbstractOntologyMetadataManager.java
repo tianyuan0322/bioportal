@@ -26,6 +26,104 @@ public abstract class AbstractOntologyMetadataManager extends
 	private static final Log log = LogFactory
 			.getLog(AbstractOntologyMetadataManager.class);
 	
+	private Map<Integer, Integer> versionIdToOntologyIdMap = new HashMap<Integer, Integer>(0);
+	private Map<Integer, Integer> viewVersionIdToViewIdMap = new HashMap<Integer, Integer>(0);
+	private Map<Integer, List<Integer>> viewIdToOntologyIdsMap = new HashMap<Integer, List<Integer>>(0);
+	
+	/**
+	 * Returns the virtual ontology id corresponding to the given ontology
+	 * version id
+	 * 
+	 * @param versionId
+	 * @return
+	 */
+	public Integer getOntologyIdByVersionId(Integer versionId) {
+		return versionIdToOntologyIdMap.get(versionId);
+	}
+	
+	/**
+	 * Returns the virtual view id corresponding to the given view version id
+	 * 
+	 * @param viewVersionId
+	 * @return
+	 */
+	public Integer getViewIdByViewVersionId(Integer viewVersionId) {
+		return viewVersionIdToViewIdMap.get(viewVersionId);
+	}
+	
+	/**
+	 * Returns all virtual ontology ids corresponding to the given virtual view
+	 * id
+	 * 
+	 * @param viewId
+	 * @return
+	 */
+	public List<Integer> getOntologyIdsByViewId(Integer viewId) {
+		return viewIdToOntologyIdsMap.get(viewId);
+	}
+	
+	/**
+	 * Populates three global maps for quick ID translation:
+	 * 		versionIdToOntologyIdMap
+	 * 		viewVersionIdToViewIdMap
+	 * 		viewIdToOntologyIdsMap
+	 */
+	public void populateIdMaps() throws Exception {
+		OWLModel metadata = getMetadataOWLModel();
+		Map<Integer, Integer> versionIdToOntologyIdMap = new HashMap<Integer, Integer>(0);
+		Map<Integer, Integer> viewVersionIdToViewIdMap = new HashMap<Integer, Integer>(0);
+		Map<Integer, List<Integer>> viewIdToOntologyIdsMap = new HashMap<Integer, List<Integer>>(0);
+		List<Integer> ontologyIds = OntologyMetadataUtils.getAllVirtualOntologyIDs(metadata, false);
+		List<Integer> ontologyViewIds = OntologyMetadataUtils.getAllVirtualViewIDs(metadata);
+
+		for (Integer ontologyId : ontologyIds) {
+			OWLIndividual vOntInd = getVirtualOntologyInstance(metadata, ontologyId, DO_NOT_CREATE_IF_MISSING);
+			//alternatively, if you decide to move this method in the OntologyMetadataUtils:
+			//OWLIndividual vOntInd = OntologyMetadataUtils.getVirtualOntologyWithId(metadata, ontologyId);
+
+			// populate versionIdToOntologyIdMap
+			if (vOntInd != null) {
+				List<Integer> allOntologyVersionIds;
+				
+				try {
+					allOntologyVersionIds = OntologyMetadataUtils.getAllOntologyVersionIDs(metadata, vOntInd, false);
+					
+					for (Integer ontologyVersionId : allOntologyVersionIds) {
+						versionIdToOntologyIdMap.put(ontologyVersionId, ontologyId);
+					}				
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+			}
+		}
+
+		for (Integer viewId : ontologyViewIds) {
+			OWLIndividual vViewInd = getVirtualViewInstance(metadata, viewId, DO_NOT_CREATE_IF_MISSING);
+			//alternatively, if you decide to move this method in the OntologyMetadataUtils:
+			//OWLIndividual vViewInd = OntologyMetadataUtils.getVirtualViewWithId(metadata, viewId);
+
+			if (vViewInd != null) {
+				try {
+					List<Integer> allViewVersionIDs = OntologyMetadataUtils.getAllOntologyVersionIDs(metadata, vViewInd, false);
+					List<Integer> vOntIds = MetadataUtils.getPropertyValueIds(metadata, vViewInd, 
+							OntologyMetadataUtils.PROPERTY_VIRTUAL_VIEW_OF);
+
+					// populate viewVersionIdToViewIdMap
+					for (Integer viewVersionId : allViewVersionIDs) {
+						viewVersionIdToViewIdMap.put(viewVersionId, viewId);
+					}
+					// populate viewIdToOntologyIdsMap
+					viewIdToOntologyIdsMap.put(viewId, vOntIds);					
+				} catch (Exception e) {
+					e.printStackTrace();
+				}			
+			}
+		}
+		
+		this.versionIdToOntologyIdMap = versionIdToOntologyIdMap;
+		this.viewVersionIdToViewIdMap = viewVersionIdToViewIdMap;
+		this.viewIdToOntologyIdsMap = viewIdToOntologyIdsMap;		
+	}
 	
 	protected OWLIndividual getOntologyInstance(OWLModel metadata, int id, boolean createIfMissing) {
 		String ontInstName = getOntologyIndividualName(id);
@@ -251,77 +349,4 @@ public abstract class AbstractOntologyMetadataManager extends
 
 		return ontClass.createOWLIndividual(indName);
 	}
-	
-
-	
-	public void getVersionIdToVirtualIdMap(OWLModel metadata) {
-		List<Integer> ontologyIds = OntologyMetadataUtils.getAllVirtualOntologyIDs(metadata, false);
-		Map<Integer, Integer> map1 = new HashMap<Integer, Integer>();
-		Map<Integer, Integer> map2 = new HashMap<Integer, Integer>();
-
-		for (Integer ontologyId : ontologyIds) {
-			OWLIndividual vOntInd = getVirtualOntologyInstance(metadata, ontologyId, DO_NOT_CREATE_IF_MISSING);
-			//alternatively, if you decide to move this method in the OntologyMetadataUtils:
-			//OWLIndividual vOntInd = OntologyMetadataUtils.getVirtualOntologyWithId(metadata, ontologyId);
-
-			if (vOntInd != null) {
-				List<Integer> allOntologyVersionIDs;
-				try {
-					allOntologyVersionIDs = OntologyMetadataUtils.getAllOntologyVersionIDs(metadata, vOntInd, false);
-					for (Integer ontologyVersionId : allOntologyVersionIDs) {
-						map1.put(ontologyVersionId, ontologyId);
-					}				
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
-			}
-		}
-		
-		//step2
-		List<Integer> ontologyViewIds = OntologyMetadataUtils.getAllVirtualViewIDs(metadata);
-
-		for (Integer viewId : ontologyViewIds) {
-			OWLIndividual vViewInd = getVirtualViewInstance(metadata, viewId, DO_NOT_CREATE_IF_MISSING);
-			//alternatively, if you decide to move this method in the OntologyMetadataUtils:
-			//OWLIndividual vViewInd = OntologyMetadataUtils.getVirtualViewWithId(metadata, viewId);
-
-			if (vViewInd != null) {
-				try {
-					List<Integer> allViewVersionIDs = OntologyMetadataUtils.getAllOntologyVersionIDs(metadata, vViewInd, false);
-					for (Integer viewVersionId : allViewVersionIDs) {
-						map2.put(viewVersionId, viewId);
-					}
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
-				
-			}
-		}
-
-	}
-	
-
-	public void getViewIdToOntologyIdMap(OWLModel metadata) {
-		Map<Integer, List<Integer>> map3 = new HashMap<Integer, List<Integer>>();
-
-		List<Integer> ontologyViewIds = OntologyMetadataUtils.getAllVirtualViewIDs(metadata);
-
-		for (Integer viewId : ontologyViewIds) {
-			OWLIndividual vViewInd = getVirtualViewInstance(metadata, viewId, DO_NOT_CREATE_IF_MISSING);
-			//alternatively, if you decide to move this method in the OntologyMetadataUtils:
-			//OWLIndividual vViewInd = OntologyMetadataUtils.getVirtualViewWithId(metadata, viewId);
-
-			if (vViewInd != null) {
-				try {
-					List<Integer> vOntIds = MetadataUtils.getPropertyValueIds(metadata, vViewInd, 
-							OntologyMetadataUtils.PROPERTY_IS_VIEW_ON_ONTOLOGY_VERSION);
-					map3.put(viewId, vOntIds);
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
-			}
-		}
-	}
-
-
 }

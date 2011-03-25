@@ -3,10 +3,7 @@ package org.ncbo.stanford.service.ontology.impl;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
-import java.util.Hashtable;
 import java.util.List;
-import java.util.Map;
-import java.util.Vector;
 
 import org.LexGrid.LexBIG.Exceptions.LBParameterException;
 import org.apache.commons.logging.Log;
@@ -36,35 +33,7 @@ public class OntologyServiceMetadataImpl extends AbstractOntologyService
 			.getLog(OntologyServiceMetadataImpl.class);
 
 	private OntologyCategoryMetadataManager ontologyCategoryMetadataManager;
-	private OntologyGroupMetadataManager ontologyGroupMetadataManager;	
-	private List<Integer> ontologyAcl = new Vector<Integer>(0);
-	private Map<Integer, Integer> ontologyVersionIdToVirtualIdMap = new Hashtable<Integer, Integer>(0);
-
-	public void populateAllOntologyAcl() {
-		ontologyAcl = ncboOntologyAclDAO.getAllOntologyIds();
-	}
-
-	
-	
-	
-	
-	public void populateVersionIdToVirtualIdMap() {
-
-	
-	
-	}
-	
-	
-	
-	public void cleanupOntologyCategory(OntologyBean ontologyBean) {
-		// This method was created in the original implementation where
-		// metadata was stored in databases.
-		// The function of this method was to remove old table entries
-		// representing relations between ontology versions and categories.
-		//
-		// Since Protege takes care of the consistency of relationships
-		// automatically, this method in this class should have nothing to do.
-	}
+	private OntologyGroupMetadataManager ontologyGroupMetadataManager;
 
 	@Transactional(rollbackFor = Exception.class)
 	public void createOntologyOrView(OntologyBean ontologyBean,
@@ -77,7 +46,7 @@ public class OntologyServiceMetadataImpl extends AbstractOntologyService
 		populateInternalVersionNumber(ontologyBean);
 
 		// set filepath in the bean
-		if (filePathHandler != null ) {
+		if (filePathHandler != null) {
 			ontologyBean.setFilePath(ontologyBean.getOntologyDirPath());
 		}
 
@@ -95,7 +64,8 @@ public class OntologyServiceMetadataImpl extends AbstractOntologyService
 		}
 		ontologyBean.setId(newVersionId);
 
-		// if there is no filePathHandler, do not continue to upload(i.e. ontologyFile and
+		// if there is no filePathHandler, do not continue to upload(i.e.
+		// ontologyFile and
 		// ontologyQueue)
 		if (filePathHandler == null) {
 			ontologyMetadataManager.saveOntologyOrView(ontologyBean);
@@ -120,7 +90,7 @@ public class OntologyServiceMetadataImpl extends AbstractOntologyService
 		ontologyBean.populateToLoadQueueEntity(loadQueue, newVersionId);
 		ncboOntologyLoadQueueDAO.save(loadQueue);
 	}
-	
+
 	/**
 	 * Delete/Deprecate several ontologies
 	 * 
@@ -206,11 +176,11 @@ public class OntologyServiceMetadataImpl extends AbstractOntologyService
 		Integer ontologyVersionId = ontologyBean.getId();
 		Integer ontologyId = ontologyBean.getOntologyId();
 		OntologyBean latestOntologyBean = null;
-		
+
 		if (ontologyId != null) {
 			latestOntologyBean = findLatestActiveOntologyOrViewVersion(ontologyId);
 		}
-			
+
 		log
 				.info("Deleting ontology: "
 						+ getOntologyDisplay(ontologyVersionId.toString(),
@@ -366,17 +336,16 @@ public class OntologyServiceMetadataImpl extends AbstractOntologyService
 			file = new File(AbstractFilePathHandler.getOntologyFilePath(
 					ontologyBean, fileName));
 		}
-		
 
 		if (file == null) {
 			String errorMsg = "Missing ontology file to download";
 			log.error(errorMsg);
 			throw new FileNotFoundException(errorMsg);
 		}
-		
+
 		return file;
 	}
-	
+
 	/**
 	 * This method find the rdfFile. If rdf file is available then they return
 	 * the File otherwise send the errors.
@@ -389,7 +358,7 @@ public class OntologyServiceMetadataImpl extends AbstractOntologyService
 		String filename = ontologyBean.getOntologyId() + ".rdf";
 		File file = new File(AbstractFilePathHandler.getRdfFilePath(
 				ontologyBean, filename));
-		
+
 		try {
 			if (!file.exists()) {
 				String errorMsg = "Enter a valid ontology version id";
@@ -510,12 +479,5 @@ public class OntologyServiceMetadataImpl extends AbstractOntologyService
 	public void setOntologyGroupMetadataManager(
 			OntologyGroupMetadataManager ontologyGroupMetadataManager) {
 		this.ontologyGroupMetadataManager = ontologyGroupMetadataManager;
-	}
-
-	/**
-	 * @return the ontologyAcl
-	 */
-	public List<Integer> getOntologyAcl() {
-		return ontologyAcl;
 	}
 }

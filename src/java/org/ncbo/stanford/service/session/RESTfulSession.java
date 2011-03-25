@@ -56,11 +56,6 @@ public class RESTfulSession {
 	private String id = null;
 
 	/**
-	 * The application identifier of this Session.
-	 */
-	private String applicationId = null;
-
-	/**
 	 * The last accessed time for this Session.
 	 */
 	private long lastAccessedTime = creationTime;
@@ -110,21 +105,6 @@ public class RESTfulSession {
 	 */
 	public void setId(String id) {
 		this.id = id;
-	}
-
-	/**
-	 * @return the applicationId
-	 */
-	public String getApplicationId() {
-		return applicationId;
-	}
-
-	/**
-	 * @param applicationId
-	 *            the applicationId to set
-	 */
-	public void setApplicationId(String applicationId) {
-		this.applicationId = applicationId;
 	}
 
 	/**

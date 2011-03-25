@@ -8,17 +8,51 @@ import edu.stanford.smi.protegex.owl.model.OWLIndividual;
 import edu.stanford.smi.protegex.owl.model.OWLModel;
 
 /**
- * An interface for all API specific ontology metadata managers to conform to. This allows
- * for a seamless Spring injection.
+ * An interface for all API specific ontology metadata managers to conform to.
+ * This allows for a seamless Spring injection.
  * 
  * @author Csongor Nyulas
+ * @author Michael Dorf
  * 
  */
-/**
- * @author csnyulas
- * 
- */
+
 public interface OntologyMetadataManager {
+
+	/**
+	 * Returns the virtual ontology id corresponding to the given ontology
+	 * version id
+	 * 
+	 * @param versionId
+	 * @return
+	 */
+	public Integer getOntologyIdByVersionId(Integer versionId);
+
+	/**
+	 * Returns the virtual view id corresponding to the given view version id
+	 * 
+	 * @param viewVersionId
+	 * @return
+	 */
+	public Integer getViewIdByViewVersionId(Integer viewVersionId);
+
+	/**
+	 * Returns all virtual ontology ids corresponding to the given virtual view
+	 * id
+	 * 
+	 * @param viewId
+	 * @return
+	 */
+	public List<Integer> getOntologyIdsByViewId(Integer viewId);
+
+	/**
+	 * Populates three global maps for quick ID translation:
+	 * 		versionIdToOntologyIdMap
+	 * 		viewVersionIdToViewIdMap
+	 * 		viewIdToOntologyIdsMap
+	 * 
+	 * @throws Exception
+	 */
+	public void populateIdMaps() throws Exception;
 
 	/**
 	 * Saves the ontology metadata specified by the ontologyBean representing an
@@ -185,8 +219,8 @@ public interface OntologyMetadataManager {
 	 * @return
 	 * @throws Exception
 	 */
-	public OntologyBean findLatestOntologyVersionByOboFoundryId(String oboFoundryId)
-			throws Exception;
+	public OntologyBean findLatestOntologyVersionByOboFoundryId(
+			String oboFoundryId) throws Exception;
 
 	/**
 	 * Returns list of ontology beans for all ontology versions that have some

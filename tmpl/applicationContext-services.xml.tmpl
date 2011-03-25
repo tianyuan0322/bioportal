@@ -1361,7 +1361,7 @@
 	<bean id="ontologyAclJobDetailBean"
 		class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
 		<property name="targetObject" ref="ontologyService" />
-		<property name="targetMethod" value="populateAllOntologyAcl" />
+		<property name="targetMethod" value="populateOntologyAcl" />
 		<property name="concurrent" value="false" />
 	</bean>
 
@@ -1371,7 +1371,7 @@
 		<property name="repeatInterval" value="@bioportalontologyaclcachetimeout@" />
 	</bean>
 
-	<bean id="ontologyAclFactoryBean"
+	<bean id="ontologyAclSchedulerFactoryBean"
 		class="org.springframework.scheduling.quartz.SchedulerFactoryBean">
 		<property name="schedulerName" value="ontologyAclSchedulerFactoryBean" />
 		<property name="overwriteExistingJobs" value="true" />
@@ -1379,6 +1379,32 @@
 		<property name="triggers">
 			<list>
 				<ref bean="ontologyAclSimpleTrigger" />
+			</list>
+		</property>
+	</bean>
+
+	<!-- Scheduler to populate the maps between virtual and version ontology/view ids -->
+	<bean id="populateIdMapsJobDetailBean"
+		class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+		<property name="targetObject" ref="ontologyService" />
+		<property name="targetMethod" value="populateIdMaps" />
+		<property name="concurrent" value="false" />
+	</bean>
+
+	<bean id="populateIdMapsSimpleTrigger" 
+		class="org.springframework.scheduling.quartz.SimpleTriggerBean">
+		<property name="jobDetail" ref="populateIdMapsJobDetailBean" />
+		<property name="repeatInterval" value="@bioportalpopulateidmapsinterval@" />
+	</bean>
+
+	<bean id="populateIdMapsSchedulerFactoryBean"
+		class="org.springframework.scheduling.quartz.SchedulerFactoryBean">
+		<property name="schedulerName" value="populateIdMapsSchedulerFactoryBean" />
+		<property name="overwriteExistingJobs" value="true" />
+		<property name="waitForJobsToCompleteOnShutdown" value="true" />
+		<property name="triggers">
+			<list>
+				<ref bean="populateIdMapsSimpleTrigger" />
 			</list>
 		</property>
 	</bean>

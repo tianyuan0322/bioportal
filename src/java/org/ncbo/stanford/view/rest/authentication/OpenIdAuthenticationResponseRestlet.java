@@ -11,18 +11,13 @@ import javax.servlet.http.HttpSession;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.ncbo.stanford.bean.ApplicationBean;
-import org.ncbo.stanford.bean.UserBean;
 import org.ncbo.stanford.domain.custom.dao.CustomNcboUserDAO;
 import org.ncbo.stanford.domain.generated.NcboUser;
 import org.ncbo.stanford.domain.generated.NcboUserRole;
 import org.ncbo.stanford.enumeration.ErrorTypeEnum;
 import org.ncbo.stanford.exception.ApplicationNotFoundException;
-import org.ncbo.stanford.service.session.RESTfulSession;
 import org.ncbo.stanford.service.session.SessionService;
 import org.ncbo.stanford.util.RequestUtils;
-import org.ncbo.stanford.util.security.ui.ApplicationAuthenticationDetails;
-import org.ncbo.stanford.util.security.userdetails.ApplicationDetailsService;
 import org.ncbo.stanford.view.rest.restlet.AbstractBaseRestlet;
 import org.ncbo.stanford.view.util.constants.RequestParamConstants;
 import org.openid4java.consumer.ConsumerManager;
@@ -37,11 +32,7 @@ import org.restlet.data.Status;
 import org.springframework.security.AuthenticationException;
 import org.springframework.security.GrantedAuthority;
 import org.springframework.security.GrantedAuthorityImpl;
-import org.springframework.security.context.HttpSessionContextIntegrationFilter;
-import org.springframework.security.context.SecurityContext;
 import org.springframework.security.context.SecurityContextHolder;
-import org.springframework.security.providers.UsernamePasswordAuthenticationToken;
-import org.springframework.security.ui.webapp.AuthenticationProcessingFilter;
 
 /**
  * @author s.reddy
@@ -54,7 +45,6 @@ public class OpenIdAuthenticationResponseRestlet extends AbstractBaseRestlet {
 
 	private SessionService sessionService;
 	private CustomNcboUserDAO ncboUserDAO = null;
-	private ApplicationDetailsService applicationDetailsService;
 
 	@Override
 	public void handle(Request request, Response response) {
@@ -123,43 +113,48 @@ public class OpenIdAuthenticationResponseRestlet extends AbstractBaseRestlet {
 						}
 					}
 
+					
+					
+					//TODO: WORK ON!@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+					
+					
 					// create authentication object with granted roles.
-					final UsernamePasswordAuthenticationToken authReq = new UsernamePasswordAuthenticationToken(
-							user.getUsername(), user.getPassword(),
-							grantedAuthority);
-					authReq.setDetails(new ApplicationAuthenticationDetails(
-							httpRequest, applicationId));
-
-					final RESTfulSession session = sessionService
-							.createNewSession();
-					session.setApplicationId(applicationId);
-					session
-							.setAttribute(
-									AuthenticationProcessingFilter.SPRING_SECURITY_LAST_USERNAME_KEY,
-									user.getUsername());
-
-					// initialize the security context.
-					final SecurityContext secCtx = SecurityContextHolder
-							.getContext();
-					secCtx.setAuthentication(authReq);
-					// set SecurityContext to RESTfulSession obj
-					session
-							.setAttribute(
-									HttpSessionContextIntegrationFilter.SPRING_SECURITY_CONTEXT_KEY,
-									secCtx);
-					// load application from given applicationId
-					@SuppressWarnings("unused")
-					ApplicationBean applicationBean = applicationDetailsService
-							.loadApplicationByApplicationId(applicationId);
-					// add user and session info to the response
-					UserBean userBean = new UserBean();
-					userBean.populateFromEntity(user);
-					RequestUtils.setHttpServletResponse(response,
-							Status.SUCCESS_OK, MediaType.TEXT_XML,
-							xmlSerializationService
-									.getSuccessAsXML(xmlSerializationService
-											.getSuccessBean(session.getId(),
-													request, userBean)));
+//					final UsernamePasswordAuthenticationToken authReq = new UsernamePasswordAuthenticationToken(
+//							user.getUsername(), user.getPassword(),
+//							grantedAuthority);
+//					authReq.setDetails(new ApplicationAuthenticationDetails(
+//							httpRequest, applicationId));
+//
+//					final RESTfulSession session = sessionService
+//							.createNewSession();
+//					session.setApplicationId(applicationId);
+//					session
+//							.setAttribute(
+//									AuthenticationProcessingFilter.SPRING_SECURITY_LAST_USERNAME_KEY,
+//									user.getUsername());
+//
+//					// initialize the security context.
+//					final SecurityContext secCtx = SecurityContextHolder
+//							.getContext();
+//					secCtx.setAuthentication(authReq);
+//					// set SecurityContext to RESTfulSession obj
+//					session
+//							.setAttribute(
+//									HttpSessionContextIntegrationFilter.SPRING_SECURITY_CONTEXT_KEY,
+//									secCtx);
+//					// load application from given applicationId
+//					@SuppressWarnings("unused")
+//					ApplicationBean applicationBean = applicationDetailsService
+//							.loadApplicationByApplicationId(applicationId);
+//					// add user and session info to the response
+//					UserBean userBean = new UserBean();
+//					userBean.populateFromEntity(user);
+//					RequestUtils.setHttpServletResponse(response,
+//							Status.SUCCESS_OK, MediaType.TEXT_XML,
+//							xmlSerializationService
+//									.getSuccessAsXML(xmlSerializationService
+//											.getSuccessBean(session.getId(),
+//													request, userBean)));
 				} else {
 					// this will execute if openId not exist in bioportal
 					// database.
@@ -219,14 +214,5 @@ public class OpenIdAuthenticationResponseRestlet extends AbstractBaseRestlet {
 
 	public void setNcboUserDAO(CustomNcboUserDAO ncboUserDAO) {
 		this.ncboUserDAO = ncboUserDAO;
-	}
-
-	public ApplicationDetailsService getApplicationDetailsService() {
-		return applicationDetailsService;
-	}
-
-	public void setApplicationDetailsService(
-			ApplicationDetailsService applicationDetailsService) {
-		this.applicationDetailsService = applicationDetailsService;
 	}
 }

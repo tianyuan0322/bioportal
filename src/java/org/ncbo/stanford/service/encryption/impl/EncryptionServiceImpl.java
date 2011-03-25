@@ -3,6 +3,7 @@ package org.ncbo.stanford.service.encryption.impl;
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
+import java.util.HashMap;
 import java.util.Map;
 
 import org.jasypt.encryption.pbe.StandardPBEStringEncryptor;
@@ -29,6 +30,17 @@ public class EncryptionServiceImpl implements EncryptionService {
 	 */
 	public String encodePassword(String password) {
 		return passwordEncoder.encodePassword(password, null);
+	}
+
+	/**
+	 * Checks whether a given password is valid
+	 * 
+	 * @param encPass
+	 * @param rawPass
+	 * @return
+	 */
+	public boolean isPasswordValid(String encPass, String rawPass) {
+		return passwordEncoder.isPasswordValid(encPass, rawPass, null);
 	}
 
 	/**
@@ -87,11 +99,11 @@ public class EncryptionServiceImpl implements EncryptionService {
 	 */
 	public String getParamFromEncryptedQueryString(String encrypted,
 			String paramName) throws UnsupportedEncodingException {
+		Map<String, Object> params = new HashMap<String, Object>(0);
 		String decrypted = decryptQueryString(encrypted);
-		Map<String, String> params = RequestUtils
-				.parseQueryString(decrypted);
+		RequestUtils.parseQueryString(decrypted, params);
 
-		return params.get(paramName);
+		return (String) params.get(paramName);
 	}
 
 	/**

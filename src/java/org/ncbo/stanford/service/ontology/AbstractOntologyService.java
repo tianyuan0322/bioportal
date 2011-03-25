@@ -43,6 +43,73 @@ public abstract class AbstractOntologyService {
 	protected OntologyMetadataManager ontologyMetadataManager;
 
 	protected List<String> errorOntologies = new ArrayList<String>(0);
+	private List<Integer> ontologyAcl = new ArrayList<Integer>(0);
+
+	/**
+	 * Checks whether access is restricted to a given ontology by its virtual
+	 * ontology id
+	 * 
+	 * @param ontologyId
+	 * @return
+	 */
+	public boolean isInAcl(Integer ontologyId) {
+		return ontologyAcl.contains(ontologyId);
+	}
+
+	/**
+	 * This method is expected to be run by a scheduler process. Populates a
+	 * global list of ontology ids that have access restrictions
+	 */
+	public void populateOntologyAcl() {
+		ontologyAcl = ncboOntologyAclDAO.getAllOntologyIds();
+	}
+
+	/**
+	 * This method is expected to be run by a scheduler process. Populates three
+	 * global maps for quick ID translation: versionIdToOntologyIdMap
+	 * viewVersionIdToViewIdMap viewIdToOntologyIdsMap
+	 */
+	public void populateIdMaps() {
+		try {
+			ontologyMetadataManager.populateIdMaps();
+		} catch (Exception e) {
+			log
+					.error("Unable to re-populate ID Maps. See stack trace below for details.");
+			e.printStackTrace();
+		}
+	}
+
+	/**
+	 * Returns the virtual ontology id corresponding to the given ontology
+	 * version id
+	 * 
+	 * @param versionId
+	 * @return
+	 */
+	public Integer getOntologyIdByVersionId(Integer versionId) {
+		return ontologyMetadataManager.getOntologyIdByVersionId(versionId);
+	}
+
+	/**
+	 * Returns the virtual view id corresponding to the given view version id
+	 * 
+	 * @param viewVersionId
+	 * @return
+	 */
+	public Integer getViewIdByViewVersionId(Integer viewVersionId) {
+		return ontologyMetadataManager.getViewIdByViewVersionId(viewVersionId);
+	}
+
+	/**
+	 * Returns all virtual ontology ids corresponding to the given virtual view
+	 * id
+	 * 
+	 * @param viewId
+	 * @return
+	 */
+	public List<Integer> getOntologyIdsByViewId(Integer viewId) {
+		return ontologyMetadataManager.getOntologyIdsByViewId(viewId);
+	}
 
 	protected boolean deleteOntologyFile(OntologyBean ontologyBean) {
 		String dirPath = AbstractFilePathHandler
@@ -203,9 +270,11 @@ public abstract class AbstractOntologyService {
 	}
 
 	/**
-	 * @param ncboOntologyAclDAO the ncboOntologyAclDAO to set
+	 * @param ncboOntologyAclDAO
+	 *            the ncboOntologyAclDAO to set
 	 */
-	public void setNcboOntologyAclDAO(CustomNcboOntologyAclDAO ncboOntologyAclDAO) {
+	public void setNcboOntologyAclDAO(
+			CustomNcboOntologyAclDAO ncboOntologyAclDAO) {
 		this.ncboOntologyAclDAO = ncboOntologyAclDAO;
 	}
 

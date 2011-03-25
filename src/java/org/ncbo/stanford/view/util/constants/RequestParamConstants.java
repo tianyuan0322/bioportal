@@ -21,6 +21,7 @@ public interface RequestParamConstants {
 	public static final String PARAM_PASSWORD = "password";
 	public static final String PARAM_APPLICATIONID = "applicationid";
 	public static final String PARAM_APIKEY = "apikey";
+	public static final String PARAM_USER_APIKEY = "userapikey";
 	public static final String PARAM_SESSIONID = "sessionid";
 	public static final String PARAM_OPENId = "openId";
 	public static final String PARAM_ROOT_CONCEPT = "root";

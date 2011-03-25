@@ -13,156 +13,24 @@
        http://www.springframework.org/schema/tx/spring-tx-2.5.xsd
        http://www.springframework.org/schema/aop 
        http://www.springframework.org/schema/aop/spring-aop-2.5.xsd">
-       
-   <bean id="springSecurityFilterChain" class="org.springframework.security.util.FilterChainProxy">
-      <property name="filterInvocationDefinitionSource">
-         <value>
-            CONVERT_URL_TO_LOWERCASE_BEFORE_COMPARISON
-            PATTERN_TYPE_APACHE_ANT
-              /**=restfulContextIntegrationFilter,anonymousProcessingFilter,exceptionTranslationFilter,filterSecurityInterceptor   
-         </value>
-      </property>
-   </bean>
 
-
-	<bean id="restfulContextIntegrationFilter"
-		class="org.ncbo.stanford.util.security.context.RESTfulContextIntegrationFilter">
-		<property name="context"
-			value="org.springframework.security.context.SecurityContextImpl"/>
-		<property name="sessionService">
-			<ref bean="sessionService" />
+	<bean id="authenticationService"
+		class="org.ncbo.stanford.util.security.authentication.impl.AuthenticationServiceImpl">
+		<property name="userService">
+			<ref bean="userService" />
 		</property>
-		<property name="allowSessionCreation">
-			<value>false</value>
+		<property name="encryptionService">
+			<ref bean="encryptionService" />
 		</property>
 	</bean>
 
-	<bean id="securityContextHolderAwareRequestFilter"
-		class="org.springframework.security.wrapper.SecurityContextHolderAwareRequestFilter">
-		<property name="wrapperClass"
-			value="org.springframework.security.wrapper.SecurityContextHolderAwareRequestWrapper" />
-	</bean>
+	<util:list id="authenticationExceptionPaths" list-class="java.util.ArrayList">
+		<value>/auth</value>
+	</util:list>	
 
-	<bean id="exceptionTranslationFilter"
-		class="org.ncbo.stanford.util.security.ui.RESTfulExceptionTranslationFilter">
-		<property name="xmlSerializationService">
-			<ref bean="xmlSerializationService" />
-		</property>
-	</bean>
+	<util:list id="authorizationExceptionPaths" list-class="java.util.ArrayList">
+		<value>/auth</value>
+		<value>/search</value>
+	</util:list>	
 
-	<!-- 
-		/ontologies/**:POST,PUT=ROLE_LIBRARIAN
-		/ontologies/**:DELETE=ROLE_ADMINISTRATOR
-		/ontologies/index/**:DELETE,GET,POST,PUT=ROLE_ADMINISTRATOR
-		/ontologies/parse/**:DELETE,GET,POST,PUT=ROLE_ADMINISTRATOR
-		/users/**:POST,PUT=ROLE_ANONYMOUS
-		/users/**:DELETE=ROLE_ADMINISTRATOR
-		/auth:GET,POST=ROLE_ANONYMOUS
-		/**:GET=ROLE_ANONYMOUS
-	-->
-
-  <bean id="filterSecurityInterceptor" class="org.springframework.security.intercept.web.FilterSecurityInterceptor">
-      <property name="authenticationManager" ref="authenticationManager"/>
-      <property name="accessDecisionManager" ref="httpRequestAccessDecisionManager"/>
-      <property name="objectDefinitionSource" ref="filterDefinitionMap" />
-   </bean>
-
-	<bean id="filterDefinitionMap"
-		class="org.ncbo.stanford.util.security.intercept.web.RESTfulDefinitionSource">
-		<constructor-arg type="java.lang.String">
-			<value>
-				/rest/auth/:GET,POST=ROLE_ANONYMOUS
-				/rest/**:GET=ROLE_ANONYMOUS
-			</value>
-		</constructor-arg>
-	</bean>
-
-	<bean id="authenticationManager" class="org.springframework.security.providers.ProviderManager">
-		<property name="providers">
-			<list>
-				<ref local="daoAuthenticationProvider" />
-			</list>
-		</property>
-	</bean>
-
-	<bean id="daoAuthenticationProvider"
-		class="org.ncbo.stanford.util.security.providers.dao.RESTfulDaoAuthenticationProvider">
-		<property name="userDetailsService">
-			<ref local="jdbcDaoImpl" />
-		</property>
-		<property name="applicationDetailsService">
-			<ref local="jdbcApplicationDaoImpl" />
-		</property>
-		<property name="userApplicationCache">
-			<ref local="userApplicationCache" />
-		</property>
-		<property name="passwordEncoder">
-			<ref bean="passwordEncoder" />
-		</property>
-	</bean>
-
-	<bean id="jdbcDaoImpl"
-		class="org.springframework.security.userdetails.jdbc.JdbcDaoImpl">
-		<property name="dataSource">
-			<ref bean="dataSource" />
-		</property>
-		<property name="usersByUsernameQuery">
-			<value>@usersbyusernamequery@</value>
-		</property>
-		<property name="authoritiesByUsernameQuery">
-			<value>@authoritiesbyusernamequery@</value>
-		</property>
-	</bean>
-
-	<bean id="jdbcApplicationDaoImpl"
-		class="org.ncbo.stanford.util.security.userdetails.jdbc.JdbcApplicationDaoImpl">
-		<property name="dataSource">
-			<ref bean="dataSource" />
-		</property>
-		<property name="applicationByApplicationIdQuery">
-			<value>@applicationbyapplicationidquery@</value>
-		</property>
-	</bean>
-
-	<bean id="anonymousProcessingFilter"
-		class="org.springframework.security.providers.anonymous.AnonymousProcessingFilter">
-		<property name="key">
-			<ref bean="encryptionKey" />
-		</property>
-		<property name="userAttribute">
-			<value>anonymousUser,ROLE_ANONYMOUS</value>
-		</property>
-	</bean>
-
-	<bean id="cacheManager"
-		class="org.springframework.cache.ehcache.EhCacheManagerFactoryBean" />
-
-	<bean id="userCacheBackend"
-		class="org.springframework.cache.ehcache.EhCacheFactoryBean">
-		<property name="cacheManager">
-			<ref local="cacheManager" />
-		</property>
-		<property name="cacheName">
-			<value>userApplicationCache</value>
-		</property>
-	</bean>
-
-	<bean id="userApplicationCache"
-		class="org.ncbo.stanford.util.security.providers.dao.cache.EhCacheBasedUserApplicationCache">
-		<property name="cache">
-			<ref local="userCacheBackend" />
-		</property>
-	</bean>
-
-	<bean id="httpRequestAccessDecisionManager"
-		class="org.springframework.security.vote.AffirmativeBased">
-		<property name="allowIfAllAbstainDecisions" value="false" />
-		<property name="decisionVoters">
-			<list>
-				<ref local="roleVoter" />
-			</list>
-		</property>
-	</bean>
-
-	<bean id="roleVoter" class="org.springframework.security.vote.RoleVoter" />
 </beans>

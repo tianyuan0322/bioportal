@@ -17,9 +17,54 @@ import org.ncbo.stanford.util.ontologyfile.pathhandler.FilePathHandler;
 public interface OntologyService {
 
 	/**
-	 * Populates ontology Access Control List into memory
+	 * Returns the virtual ontology id corresponding to the given ontology
+	 * version id
+	 * 
+	 * @param versionId
+	 * @return
 	 */
-	public void populateAllOntologyAcl();
+	public Integer getOntologyIdByVersionId(Integer versionId);
+
+	/**
+	 * Returns the virtual view id corresponding to the given view version id
+	 * 
+	 * @param viewVersionId
+	 * @return
+	 */
+	public Integer getViewIdByViewVersionId(Integer viewVersionId);
+
+	/**
+	 * Returns all virtual ontology ids corresponding to the given virtual view
+	 * id
+	 * 
+	 * @param viewId
+	 * @return
+	 */
+	public List<Integer> getOntologyIdsByViewId(Integer viewId);
+	
+	/**
+	 * This method is expected to be run by a scheduler process. Populates three
+	 * global maps for quick ID translation: 
+	 * 		versionIdToOntologyIdMap
+	 * 		viewVersionIdToViewIdMap 
+	 * 		viewIdToOntologyIdsMap
+	 */
+	public void populateIdMaps();
+	
+	/**
+	 * Checks whether access is restricted to a given ontology by its virtual
+	 * ontology id
+	 * 
+	 * @param ontologyId
+	 * @return
+	 */
+	public boolean isInAcl(Integer ontologyId);
+
+	/**
+	 * This method is expected to be run by a scheduler process. Populates a
+	 * global list of ontology ids that have access restrictions
+	 */
+	public void populateOntologyAcl();
 	
 	/**
 	 * Return the list of all categories
@@ -163,14 +208,6 @@ public interface OntologyService {
 			throws Exception;
 
 	/**
-	 * Update an ontology Category
-	 * 
-	 * @param ontologyBean
-	 * @return
-	 */
-	public void cleanupOntologyCategory(OntologyBean ontologyBean);
-
-	/**
 	 * Delete/Deprecate an ontology
 	 * 
 	 * @param ontologyVersionId
@@ -245,6 +282,4 @@ public interface OntologyService {
 	 */
 	
 	public File findRdfFileForOntology(OntologyBean ontologyBean) throws Exception;
-
-	
 }

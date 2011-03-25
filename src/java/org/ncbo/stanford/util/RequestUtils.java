@@ -105,14 +105,16 @@ public class RequestUtils {
 	}
 
 	/**
-	 * Parses a query string and puts parameters in the HashMap of <Key, Value>
+	 * Parses a query string and puts parameters in the Map of <Key, Value>
 	 * pairs
 	 * 
 	 * @param queryString
+	 * @param an
+	 *            existing map to fill
 	 * @return
 	 */
-	public static Map<String, String> parseQueryString(String queryString) {
-		HashMap<String, String> parsed = new HashMap<String, String>(1);
+	public static void parseQueryString(String queryString,
+			Map<String, Object> parsed) {
 		StringTokenizer stAmpersand = new StringTokenizer(queryString,
 				PARAM_SEPARATOR);
 
@@ -134,14 +136,11 @@ public class RequestUtils {
 						if (stEqual.hasMoreTokens()) {
 							aValue = stEqual.nextToken();
 						}
-
 						parsed.put(aName, aValue);
 					}
 				}
 			}
 		}
-
-		return parsed;
 	}
 
 	/**
@@ -250,17 +249,6 @@ public class RequestUtils {
 	}
 
 	/**
-	 * Returns the applicationId from a request
-	 * 
-	 * @param request
-	 * @return
-	 */
-	public static String getApplicationId(Request request) {
-		return getHttpServletRequest(request).getParameter(
-				RequestParamConstants.PARAM_APPLICATIONID);
-	}
-
-	/**
 	 * Returns the API Key from a request
 	 * 
 	 * @param request
@@ -270,7 +258,7 @@ public class RequestUtils {
 		return getHttpServletRequest(request).getParameter(
 				RequestParamConstants.PARAM_APIKEY);
 	}
-	
+
 	public static boolean parseBooleanParam(String booleanVal) {
 		boolean isPresent = false;
 
@@ -348,10 +336,10 @@ public class RequestUtils {
 
 		return stringList;
 	}
-	
+
 	public static List<URI> parseURIListParam(String URIListParam) {
 		List<String> URIs = parseStringListParam(URIListParam);
-		
+
 		ArrayList<URI> parsedURIs = new ArrayList<URI>();
 		for (String URI : URIs) {
 			try {
@@ -360,7 +348,7 @@ public class RequestUtils {
 				// Quash errors
 			}
 		}
-		
+
 		return parsedURIs;
 	}
 
@@ -429,7 +417,7 @@ public class RequestUtils {
 			HttpServletRequest httpRequest = getHttpServletRequest(request);
 			paramData = (String) httpRequest.getParameter(name);
 		}
-		
+
 		if (paramData != null) {
 			try {
 				paramData = URLDecoder.decode(paramData, MessageUtils

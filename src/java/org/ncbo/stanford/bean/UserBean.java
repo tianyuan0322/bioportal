@@ -36,6 +36,17 @@ public class UserBean {
 	}
 
 	/**
+	 * Checks whether user has access to a given ontology (the ontology is
+	 * present in his/her ACL)
+	 * 
+	 * @param ontologyId
+	 * @return
+	 */
+	public boolean isInAcl(Integer ontologyId) {
+		return ontologyAcl.containsKey(ontologyId);
+	}
+
+	/**
 	 * Populates the OntologyBean with data from a NcboOntology
 	 * 
 	 * @param ncboOntology
@@ -256,7 +267,7 @@ public class UserBean {
 	public void setApiKey(String apiKey) {
 		this.apiKey = apiKey;
 	}
-	
+
 	/**
 	 * @return the ontologyAcl
 	 */

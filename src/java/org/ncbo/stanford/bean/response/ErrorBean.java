@@ -43,7 +43,7 @@ public class ErrorBean extends AbstractResponseBean {
 		super();
 		this.errorType = errorType;
 		this.errorCode = errorType.getErrorCode();
-		setShortMessage(errorType.getDefErrorMessage());
+		setShortMessage(errorType.getErrorMessage());
 	}
 
 	@Override

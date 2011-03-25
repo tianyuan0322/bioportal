@@ -34,9 +34,6 @@
 	<bean id="authenticationRestlet"
 		class="org.ncbo.stanford.view.rest.authentication.AuthenticationRestlet"
 		parent="abstractBaseRestlet">
-		<property name="authenticationManager">
-			<ref bean="authenticationManager" />
-		</property>
 		<property name="sessionService">
 			<ref bean="sessionService" />
 		</property>
@@ -44,7 +41,7 @@
 			<ref bean="userService" />
 		</property>
 	</bean>
-	
+<!-- 	
 	<bean id="openIdAuthenticationRestlet"
 		class="org.ncbo.stanford.view.rest.authentication.OpenIdAuthenticationRestlet"
 		parent="abstractBaseRestlet">
@@ -66,7 +63,7 @@
 			<ref bean="jdbcApplicationDaoImpl" />
 		</property>
 	</bean>
-
+ -->
 	<bean id="ontologyRestlet"
 		class="org.ncbo.stanford.view.rest.restlet.ontology.OntologyRestlet"
 		parent="abstractOntologyBaseRestlet">
@@ -576,12 +573,14 @@
 						<entry key="/auth">
 							<ref local="authenticationRestlet" />
 						</entry>
+						<!-- 
 						<entry key="/openIdAuth">
 							<ref local="openIdAuthenticationRestlet" />
 						</entry>
 						<entry key="/openIdAuthRes">
 							<ref local="openIdAuthenticationResponseRestlet" />
 						</entry>
+						 -->
 						<entry key="/ontologies/active/">
 							<ref local="ontologiesRestlet" />
 						</entry>

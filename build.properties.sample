@@ -52,6 +52,11 @@ bioportal.session.numcontainers=11
 # cached ontology Access Control List (ACL)
 bioportal.ontology.acl.cache.timeout=300000
 
+# Timeout (in milliseconds) for refreshing 
+# the ontology ids maps (map between virsion
+# and virtual ontology and view ids
+bioportal.populate.id.maps.interval=900000
+
 # Search properties
 # Default maximum number of results
 bioportal.search.defmaxnumhits=1000
@@ -165,15 +170,6 @@ bioportal.jdbc.c3p0.preferred_test_query=SELECT 1;
 
 # Encryption key for string encoding/decoding
 bioportal.encryption.key=yourencryptionkey
-
-# Users by username query used for authentication
-bioportal.usersbyusername.query=SELECT username, password, 1 AS enabled FROM ncbo_user WHERE username = ?
-
-# Application by application id query used for authentication
-bioportal.applicationbyapplicationid.query=SELECT application_id, application_name FROM ncbo_admin_application WHERE application_id = ?
-
-# Authorities by username query used for authorization
-bioportal.authoritiesbyusername.query=SELECT u.username AS username, r.name AS authority FROM ncbo_user u, ncbo_user_role ur, ncbo_l_role r WHERE u.id = ur.user_id AND ur.role_id = r.id AND u.username = ?
 
 # Message bundle
 bioportal.messagebundle.name=message

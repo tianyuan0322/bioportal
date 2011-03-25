@@ -41,11 +41,6 @@ public class OntologyMetadataManagerImpl extends
 	private static final Log log = LogFactory
 			.getLog(OntologyMetadataManagerImpl.class);
 
-	private static final String CLASS_ONTOLOGY = OntologyMetadataUtils.CLASS_OMV_ONTOLOGY;
-	private static final String CLASS_VIRTUAL_ONTOLOGY = OntologyMetadataUtils.CLASS_VIRTUAL_ONTOLOGY;
-	private static final String QUERY_MAX_ONTOLOGY_ID = "Query-Max-Ontology-ID";
-	private static final String QUERY_MAX_VIRTUAL_ONTOLOGY_ID = "Query-Max-VirtualOntology-ID";
-
 	private static final boolean ONLY_ACTIVE_VERSIONS = true;
 	private static final boolean ALL_VERSIONS = (!ONLY_ACTIVE_VERSIONS);
 	private static final boolean INCLUDE_SUBCLASSES = true;

@@ -10,9 +10,11 @@ public interface SessionService {
 	/**
 	 * Creates and returns a new session instance
 	 * 
+	 * @param key
+	 *            used to create a session id
 	 * @return new session
 	 */
-	public RESTfulSession createNewSession();
+	public RESTfulSession createNewSession(String key);
 
 	/**
 	 * Return the session using its session key
@@ -22,4 +24,11 @@ public interface SessionService {
 	 * @return
 	 */
 	public RESTfulSession get(String sessionKey);
+
+	/**
+	 * Invalidates a session with the given key
+	 * 
+	 * @param key
+	 */
+	public void invalidate(String key);
 }

@@ -406,7 +406,7 @@ public class BeanHelper {
 		HttpServletRequest httpRequest = RequestUtils
 				.getHttpServletRequest(request);
 
-		String applicationId = RequestUtils.getApplicationId(request);
+		String applicationId = RequestUtils.getApiKey(request);
 		String eventType = (String) httpRequest
 				.getParameter(RequestParamConstants.PARAM_EVENT_TYPE);
 		String requestUrl = (String) httpRequest
@@ -453,8 +453,7 @@ public class BeanHelper {
 			Request request) {
 		HttpServletRequest httpServletRequest = RequestUtils
 				.getHttpServletRequest(request);
-
-		String applicationId = RequestUtils.getApplicationId(request);
+		String applicationId = RequestUtils.getApiKey(request);
 		String requestUrl = (String) httpServletRequest
 				.getParameter(RequestParamConstants.PARAM_REQUEST_URL);
 		String startDateAccessed = (String) httpServletRequest

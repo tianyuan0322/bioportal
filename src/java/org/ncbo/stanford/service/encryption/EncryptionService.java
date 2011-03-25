@@ -19,6 +19,15 @@ public interface EncryptionService {
 	public String encodePassword(String password);
 
 	/**
+	 * Checks whether a given password is valid
+	 * 
+	 * @param encPass
+	 * @param rawPass
+	 * @return
+	 */
+	public boolean isPasswordValid(String encPass, String rawPass);
+
+	/**
 	 * Encrypts a specified string
 	 * 
 	 * @param decrypted

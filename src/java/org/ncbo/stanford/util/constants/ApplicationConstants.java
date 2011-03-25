@@ -5,6 +5,9 @@ import org.openrdf.model.impl.URIImpl;
 
 public interface ApplicationConstants {
 
+	public static final String USER_SESSION_NAME = "UserSession";
+	public static final String SECURITY_CONTEXT_KEY = "SECURITY_CONTEXT";
+	
 	/**
 	 * Standard "NO VALUE" constant
 	 */
