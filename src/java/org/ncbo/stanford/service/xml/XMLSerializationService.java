@@ -45,9 +45,9 @@ public interface XMLSerializationService {
 	public SuccessBean getSuccessBean(Request request, Object data);
 
 	/**
-	 * returns SuccessBean with sessionId, accessedResource and data populated
+	 * returns SuccessBean with apiKey, accessedResource and data populated
 	 */
-	public SuccessBean getSuccessBean(String sessionId, Request request,
+	public SuccessBean getSuccessBean(String apiKey, Request request,
 			Object data);
 
 	/**
