@@ -11,7 +11,7 @@ import java.util.List;
  */
 public class SuccessBean extends AbstractResponseBean {
 
-	private String sessionId;
+	private String apiKey;
 	private List<Object> data = new ArrayList<Object>(0);
 	private String dataXml;
 
@@ -33,18 +33,18 @@ public class SuccessBean extends AbstractResponseBean {
 	}
 
 	/**
-	 * @return the sessionId
+	 * @return the apiKey
 	 */
-	public String getSessionId() {
-		return sessionId;
+	public String getApiKey() {
+		return apiKey;
 	}
 
 	/**
-	 * @param sessionId
-	 *            the sessionId to set
+	 * @param apiKey
+	 *            the apiKey to set
 	 */
-	public void setSessionId(String sessionId) {
-		this.sessionId = sessionId;
+	public void setApiKey(String apiKey) {
+		this.apiKey = apiKey;
 	}
 
 	/**
@@ -70,7 +70,8 @@ public class SuccessBean extends AbstractResponseBean {
 	}
 
 	/**
-	 * @param dataXml the dataXml to set
+	 * @param dataXml
+	 *            the dataXml to set
 	 */
 	public void setDataXml(String dataXml) {
 		this.dataXml = dataXml;

@@ -16,7 +16,7 @@ public class UsageLoggingBean {
 	private String requestUrl;
 	private String httpMethod;
 	private Integer userId;
-	private String sessionId;
+	private String apiKey;
 	private String ipAddress;
 	private Integer ontologyVersionId;
 	private Integer ontologyId;
@@ -44,7 +44,7 @@ public class UsageLoggingBean {
 	 * @param requestUrl
 	 * @param httpMethod
 	 * @param userId
-	 * @param sessionId
+	 * @param apiKey
 	 * @param ipAddress
 	 * @param ontologyVersionId
 	 * @param ontologyId
@@ -58,7 +58,7 @@ public class UsageLoggingBean {
 	 */
 	public UsageLoggingBean(String applicationId, String eventType,
 			String requestUrl, String httpMethod, String userId,
-			String sessionId, String ipAddress, String ontologyVersionId,
+			String apiKey, String ipAddress, String ontologyVersionId,
 			String ontologyId, String ontologyName, String conceptId,
 			String conceptName, String searchQuery, String searchParameters,
 			String numSearchResults, Date dateAccessed) {
@@ -78,8 +78,8 @@ public class UsageLoggingBean {
 			this.userId = null;
 		}
 
-		this.sessionId = (StringHelper.isNullOrNullString(sessionId)) ? null
-				: sessionId;
+		this.apiKey = (StringHelper.isNullOrNullString(apiKey)) ? null
+				: apiKey;
 		this.ipAddress = (StringHelper.isNullOrNullString(ipAddress)) ? null
 				: ipAddress;
 
@@ -123,7 +123,7 @@ public class UsageLoggingBean {
 	 * @param requestUrl
 	 * @param httpMethod
 	 * @param userId
-	 * @param sessionId
+	 * @param apiKey
 	 * @param ipAddress
 	 * @param ontologyVersionId
 	 * @param ontologyId
@@ -136,12 +136,12 @@ public class UsageLoggingBean {
 	 */
 	public UsageLoggingBean(String applicationId, String eventType,
 			String requestUrl, String httpMethod, String userId,
-			String sessionId, String ipAddress, String ontologyVersionId,
+			String apiKey, String ipAddress, String ontologyVersionId,
 			String ontologyId, String ontologyName, String conceptId,
 			String conceptName, String searchQuery, String searchParameters,
 			String numSearchResults) {
 		this(applicationId, eventType, requestUrl, httpMethod, userId,
-				sessionId, ipAddress, ontologyVersionId, ontologyId,
+				apiKey, ipAddress, ontologyVersionId, ontologyId,
 				ontologyName, conceptId, conceptName, searchQuery,
 				searchParameters, numSearchResults, Calendar.getInstance()
 						.getTime());
@@ -185,9 +185,9 @@ public class UsageLoggingBean {
 				usageLog.setUserId(userId);
 			}
 
-			if (sessionId != null) {
+			if (apiKey != null) {
 				usageLog.setSessionId(StringHelper
-						.isNullOrNullString(sessionId) ? null : sessionId);
+						.isNullOrNullString(apiKey) ? null : apiKey);
 			}
 
 			if (ipAddress != null) {
@@ -252,7 +252,7 @@ public class UsageLoggingBean {
 			setRequestUrl(usageLog.getRequestUrl());
 			setHttpMethod(usageLog.getHttpMethod());
 			setUserId(usageLog.getUserId());
-			setSessionId(usageLog.getSessionId());
+			setApiKey(usageLog.getSessionId());
 			setIpAddress(usageLog.getIpAddress());
 			setOntologyVersionId(usageLog.getOntologyVersionId());
 			setOntologyId(usageLog.getOntologyId());
@@ -343,18 +343,18 @@ public class UsageLoggingBean {
 	}
 
 	/**
-	 * @return the sessionId
+	 * @return the apiKey
 	 */
-	public String getSessionId() {
-		return sessionId;
+	public String getApiKey() {
+		return apiKey;
 	}
 
 	/**
-	 * @param sessionId
-	 *            the sessionId to set
+	 * @param apiKey
+	 *            the apiKey to set
 	 */
-	public void setSessionId(String sessionId) {
-		this.sessionId = sessionId;
+	public void setApiKey(String apiKey) {
+		this.apiKey = apiKey;
 	}
 
 	/**
