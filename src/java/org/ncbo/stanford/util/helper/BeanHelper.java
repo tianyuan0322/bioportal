@@ -415,8 +415,8 @@ public class BeanHelper {
 				.getParameter(RequestParamConstants.PARAM_METHOD);
 		String userId = (String) httpRequest
 				.getParameter(RequestParamConstants.PARAM_USER_ID);
-		String sessionId = (String) httpRequest
-				.getParameter(RequestParamConstants.PARAM_SESSIONID);
+		String apiKey = (String) httpRequest
+				.getParameter(RequestParamConstants.PARAM_APIKEY);
 		String ipAddress = (String) httpRequest
 				.getParameter(RequestParamConstants.PARAM_IP_ADDRESS);
 		String ontologyVersionId = (String) httpRequest
@@ -437,7 +437,7 @@ public class BeanHelper {
 				.getParameter(RequestParamConstants.PARAM_NUM_SEARCH_RESULTS);
 
 		return new UsageLoggingBean(applicationId, eventType, requestUrl,
-				httpMethod, userId, sessionId, ipAddress, ontologyVersionId,
+				httpMethod, userId, apiKey, ipAddress, ontologyVersionId,
 				ontologyId, ontologyName, conceptId, conceptName, searchQuery,
 				searchParameters, numSearchResults);
 	}
