@@ -201,7 +201,7 @@ public class OpenIdAuthenticationResponseRestlet extends AbstractBaseRestlet {
 	}
 
 	public String obtainOpenId(HttpServletRequest req) {
-		return req.getParameter(RequestParamConstants.PARAM_OPENId);
+		return req.getParameter(RequestParamConstants.PARAM_OPENID);
 	}
 
 	protected String obtainApplicationId(HttpServletRequest req) {
