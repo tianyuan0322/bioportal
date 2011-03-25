@@ -1,20 +1,24 @@
 package org.ncbo.stanford.util.security.filter;
 
+import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Map;
 
+import javax.servlet.ServletInputStream;
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.ncbo.stanford.bean.UserBean;
 import org.ncbo.stanford.enumeration.ErrorTypeEnum;
+import org.ncbo.stanford.exception.AuthenticationException;
 import org.ncbo.stanford.service.session.RESTfulSession;
 import org.ncbo.stanford.service.session.SessionService;
-import org.ncbo.stanford.service.user.UserService;
 import org.ncbo.stanford.util.RequestUtils;
 import org.ncbo.stanford.util.constants.ApplicationConstants;
 import org.ncbo.stanford.util.helper.StringHelper;
 import org.ncbo.stanford.util.security.SecurityContextHolder;
+import org.ncbo.stanford.util.security.authentication.AuthenticationService;
 import org.ncbo.stanford.view.util.constants.RequestParamConstants;
 import org.restlet.Context;
 import org.restlet.data.MediaType;
@@ -31,23 +35,15 @@ public class AuthenticationFilter extends AbstractAuthFilter implements
 	private static final Log log = LogFactory
 			.getLog(AuthenticationFilter.class);
 
-	private UserService userService;
+	private AuthenticationService authenticationService;
 	private SessionService sessionService;
 
+	@SuppressWarnings("unchecked")
 	public AuthenticationFilter(Context context,
 			WebApplicationContext springAppContext) {
 		super(context, springAppContext);
-		
-		
-		
-		
-		//TODO: replace this object with authenticationService object @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-		userService = (UserService) springAppContext.getBean("userService",
-				UserService.class);
-		
-	
-		
-		
+		authenticationService = (AuthenticationService) springAppContext
+				.getBean("authenticationService", AuthenticationService.class);
 		sessionService = (SessionService) springAppContext.getBean(
 				"sessionService", SessionService.class);
 		exceptionPaths = (ArrayList<String>) springAppContext.getBean(
@@ -66,7 +62,7 @@ public class AuthenticationFilter extends AbstractAuthFilter implements
 		if (isException(ref)) {
 			return retVal;
 		}
-		
+
 		HttpServletRequest httpRequest = RequestUtils
 				.getHttpServletRequest(request);
 		ErrorTypeEnum error = null;
@@ -100,25 +96,15 @@ public class AuthenticationFilter extends AbstractAuthFilter implements
 			session = sessionService.get(apiKey);
 
 			if (session == null) {
-
-				
-				
-				
-				//TODO: this code must be moved to AuthenticationServiceImpl @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-				user = userService.findUserByApiKey(apiKey);
-
-				
-				
-				
-				
-				
-				if (user != null) {
+				try {
+					user = authenticationService.authenticate(apiKey);
 					session = sessionService.createNewSession(apiKey);
 					session.setAttribute(
 							ApplicationConstants.SECURITY_CONTEXT_KEY,
 							new SecurityContextHolder(apiKey, appApiKey, user));
-				} else {
+				} catch (AuthenticationException e) {
 					error = ErrorTypeEnum.INVALID_CREDENTIALS;
+					error.setErrorMessage(e.getMessage());
 				}
 			}
 		}
@@ -139,7 +125,8 @@ public class AuthenticationFilter extends AbstractAuthFilter implements
 	@Override
 	public void afterPropertiesSet() throws Exception {
 		super.afterPropertiesSet();
-		Assert.notNull(userService, "userService must be specified");
+		Assert.notNull(authenticationService,
+				"authenticationService must be specified");
 		Assert.notNull(sessionService, "sessionService must be specified");
 	}
 }

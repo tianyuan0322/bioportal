@@ -49,6 +49,7 @@ public class AuthorizationFilter extends AbstractAuthFilter implements
 					RequestParamConstants.PARAM_ONTOLOGY_VERSION_ID_1,
 					RequestParamConstants.PARAM_ONTOLOGY_VERSION_ID_2));
 
+	@SuppressWarnings("unchecked")
 	public AuthorizationFilter(Context context,
 			WebApplicationContext springAppContext) {
 		super(context, springAppContext);
@@ -60,13 +61,13 @@ public class AuthorizationFilter extends AbstractAuthFilter implements
 
 	@Override
 	protected int beforeHandle(Request request, Response response) {
-		int retVal = CONTINUE;	
+		int retVal = CONTINUE;
 		Reference ref = request.getResourceRef();
 
 		if (isException(ref)) {
 			return retVal;
 		}
-		
+
 		HttpServletRequest httpRequest = RequestUtils
 				.getHttpServletRequest(request);
 		extractAttributes(request, response);
