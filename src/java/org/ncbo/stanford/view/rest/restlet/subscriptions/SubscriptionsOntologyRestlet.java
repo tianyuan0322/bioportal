@@ -3,26 +3,16 @@
  */
 package org.ncbo.stanford.view.rest.restlet.subscriptions;
 
-import java.util.ArrayList;
 import java.util.List;
 
-import javax.servlet.http.HttpServletRequest;
-
-import org.ncbo.stanford.service.subscriptions.SubscriptionsService;
-
-import org.ncbo.stanford.util.MessageUtils;
-import org.ncbo.stanford.util.RequestUtils;
-
-import org.ncbo.stanford.util.helper.BeanHelper;
-
-import org.ncbo.stanford.view.rest.restlet.AbstractBaseRestlet;
-
 import org.ncbo.stanford.bean.SubscriptionsBean;
-import org.ncbo.stanford.domain.generated.NcboLNotificationType;
 import org.ncbo.stanford.exception.NotificationNotFoundException;
-
-import org.restlet.data.Request;
-import org.restlet.data.Response;
+import org.ncbo.stanford.service.subscriptions.SubscriptionsService;
+import org.ncbo.stanford.util.MessageUtils;
+import org.ncbo.stanford.util.helper.BeanHelper;
+import org.ncbo.stanford.view.rest.restlet.AbstractBaseRestlet;
+import org.restlet.Request;
+import org.restlet.Response;
 import org.restlet.data.Status;
 
 /**

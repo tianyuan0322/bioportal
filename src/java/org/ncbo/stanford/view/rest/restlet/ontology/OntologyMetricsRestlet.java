@@ -11,8 +11,8 @@ import org.ncbo.stanford.bean.OntologyMetricsBean;
 import org.ncbo.stanford.exception.InvalidInputException;
 import org.ncbo.stanford.service.metrics.MetricsService;
 import org.ncbo.stanford.util.RequestUtils;
-import org.restlet.data.Request;
-import org.restlet.data.Response;
+import org.restlet.Request;
+import org.restlet.Response;
 import org.restlet.data.Status;
 
 public class OntologyMetricsRestlet extends AbstractOntologyBaseRestlet {

@@ -1,3 +1,4 @@
+
 package org.ncbo.stanford.view.rest.restlet.metadata;
 
 import javax.servlet.http.HttpServletRequest;
@@ -12,7 +13,7 @@ import org.ncbo.stanford.service.metadata.ReviewMetadataService;
 import org.ncbo.stanford.service.xml.XMLSerializationService;
 import org.ncbo.stanford.util.RequestUtils;
 import org.ncbo.stanford.view.util.constants.RequestParamConstants;
-import org.restlet.data.Request;
+import org.restlet.Request;
 
 /**
  * REST API access to Review metadata objects.

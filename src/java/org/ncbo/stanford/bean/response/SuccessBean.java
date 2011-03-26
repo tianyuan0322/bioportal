@@ -11,7 +11,6 @@ import java.util.List;
  */
 public class SuccessBean extends AbstractResponseBean {
 
-	private String apiKey;
 	private List<Object> data = new ArrayList<Object>(0);
 	private String dataXml;
 
@@ -30,21 +29,6 @@ public class SuccessBean extends AbstractResponseBean {
 	@Override
 	public boolean isResponseSuccess() {
 		return true;
-	}
-
-	/**
-	 * @return the apiKey
-	 */
-	public String getApiKey() {
-		return apiKey;
-	}
-
-	/**
-	 * @param apiKey
-	 *            the apiKey to set
-	 */
-	public void setApiKey(String apiKey) {
-		this.apiKey = apiKey;
 	}
 
 	/**

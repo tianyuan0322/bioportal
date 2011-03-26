@@ -7,8 +7,8 @@ import javax.xml.transform.TransformerException;
 import org.ncbo.stanford.bean.response.AbstractResponseBean;
 import org.ncbo.stanford.bean.response.SuccessBean;
 import org.ncbo.stanford.enumeration.ErrorTypeEnum;
-import org.restlet.data.Request;
-import org.restlet.data.Response;
+import org.restlet.Request;
+import org.restlet.Response;
 
 import com.thoughtworks.xstream.XStream;
 
@@ -43,12 +43,6 @@ public interface XMLSerializationService {
 	public SuccessBean getSuccessBean(Request request);
 
 	public SuccessBean getSuccessBean(Request request, Object data);
-
-	/**
-	 * returns SuccessBean with apiKey, accessedResource and data populated
-	 */
-	public SuccessBean getSuccessBean(String apiKey, Request request,
-			Object data);
 
 	/**
 	 * Generate an XML representation of a successfully processed request with

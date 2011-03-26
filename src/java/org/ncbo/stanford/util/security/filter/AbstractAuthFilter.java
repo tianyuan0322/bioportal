@@ -4,8 +4,8 @@ import java.util.List;
 
 import org.ncbo.stanford.service.xml.XMLSerializationService;
 import org.restlet.Context;
-import org.restlet.Filter;
 import org.restlet.data.Reference;
+import org.restlet.routing.Filter;
 import org.springframework.util.Assert;
 import org.springframework.web.context.WebApplicationContext;
 

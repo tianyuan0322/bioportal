@@ -10,8 +10,10 @@ import javax.servlet.FilterConfig;
 import javax.servlet.ServletException;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
+import javax.servlet.http.HttpServletRequest;
 
 import org.ncbo.stanford.util.MessageUtils;
+import org.ncbo.stanford.view.util.constants.RequestParamConstants;
 
 /**
  * <p>
@@ -96,6 +98,8 @@ public class SetCharacterEncodingFilter implements Filter {
 	 */
 	public void doFilter(ServletRequest request, ServletResponse response,
 			FilterChain chain) throws IOException, ServletException {
+		((HttpServletRequest) request).getParameter(RequestParamConstants.PARAM_APIKEY);
+
 		// Conditionally select and set the character encoding to be used
 		if (ignore || (request.getCharacterEncoding() == null)) {
 			String encoding = selectEncoding(request);

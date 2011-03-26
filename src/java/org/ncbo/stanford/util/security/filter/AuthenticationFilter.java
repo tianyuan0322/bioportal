@@ -1,10 +1,7 @@
 package org.ncbo.stanford.util.security.filter;
 
-import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Map;
 
-import javax.servlet.ServletInputStream;
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.logging.Log;
@@ -21,10 +18,10 @@ import org.ncbo.stanford.util.security.SecurityContextHolder;
 import org.ncbo.stanford.util.security.authentication.AuthenticationService;
 import org.ncbo.stanford.view.util.constants.RequestParamConstants;
 import org.restlet.Context;
+import org.restlet.Request;
+import org.restlet.Response;
 import org.restlet.data.MediaType;
 import org.restlet.data.Reference;
-import org.restlet.data.Request;
-import org.restlet.data.Response;
 import org.restlet.data.Status;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.util.Assert;

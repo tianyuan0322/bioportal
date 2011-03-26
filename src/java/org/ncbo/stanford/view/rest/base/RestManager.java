@@ -4,7 +4,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.restlet.Restlet;
-import org.restlet.Router;
+import org.restlet.routing.Router;
 
 /**
  * @author Michael Dorf

@@ -26,18 +26,14 @@ import org.ncbo.stanford.util.helper.StringHelper;
 import org.ncbo.stanford.view.util.constants.RequestParamConstants;
 import org.openrdf.model.URI;
 import org.openrdf.model.impl.URIImpl;
+import org.restlet.Request;
+import org.restlet.Response;
 import org.restlet.data.CharacterSet;
 import org.restlet.data.MediaType;
-import org.restlet.data.Request;
-import org.restlet.data.Response;
 import org.restlet.data.Status;
-import org.restlet.resource.Representation;
-import org.restlet.resource.StringRepresentation;
-
-import com.noelios.restlet.ext.servlet.ServletCall;
-import com.noelios.restlet.http.HttpCall;
-import com.noelios.restlet.http.HttpRequest;
-import com.noelios.restlet.http.HttpResponse;
+import org.restlet.ext.servlet.ServletUtils;
+import org.restlet.representation.Representation;
+import org.restlet.representation.StringRepresentation;
 
 /**
  * Various utility methods for request and response processing
@@ -151,18 +147,7 @@ public class RequestUtils {
 	 * @return
 	 */
 	public static HttpServletRequest getHttpServletRequest(Request req) {
-		if (req instanceof HttpRequest) {
-			HttpRequest httpRequest = (HttpRequest) req;
-			HttpCall httpCall = httpRequest.getHttpCall();
-
-			if (httpCall instanceof ServletCall) {
-				HttpServletRequest httpServletRequest = ((ServletCall) httpCall)
-						.getRequest();
-				return httpServletRequest;
-			}
-		}
-
-		return null;
+		return ServletUtils.getRequest(req);
 	}
 
 	/**
@@ -173,18 +158,7 @@ public class RequestUtils {
 	 * @return
 	 */
 	public static HttpServletResponse getHttpServletResponse(Response res) {
-		if (res instanceof HttpResponse) {
-			HttpResponse httpResponse = (HttpResponse) res;
-			HttpCall httpCall = httpResponse.getHttpCall();
-
-			if (httpCall instanceof ServletCall) {
-				HttpServletResponse httpServletResponse = ((ServletCall) httpCall)
-						.getResponse();
-				return httpServletResponse;
-			}
-		}
-
-		return null;
+		return ServletUtils.getResponse(res);
 	}
 
 	/**

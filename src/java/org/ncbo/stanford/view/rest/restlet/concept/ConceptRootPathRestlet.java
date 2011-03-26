@@ -13,8 +13,8 @@ import org.ncbo.stanford.service.concept.ConceptService;
 import org.ncbo.stanford.util.RequestUtils;
 import org.ncbo.stanford.view.rest.restlet.ontology.AbstractOntologyBaseRestlet;
 import org.ncbo.stanford.view.util.constants.RequestParamConstants;
-import org.restlet.data.Request;
-import org.restlet.data.Response;
+import org.restlet.Request;
+import org.restlet.Response;
 import org.restlet.data.Status;
 
 public class ConceptRootPathRestlet extends AbstractOntologyBaseRestlet {

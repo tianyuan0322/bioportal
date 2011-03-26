@@ -6,8 +6,8 @@ import org.ncbo.stanford.exception.MetadataObjectNotFoundException;
 import org.ncbo.stanford.service.metadata.BeanCRUDService;
 import org.ncbo.stanford.view.rest.restlet.AbstractBaseRestlet;
 import org.ncbo.stanford.view.util.constants.RequestParamConstants;
-import org.restlet.data.Request;
-import org.restlet.data.Response;
+import org.restlet.Request;
+import org.restlet.Response;
 import org.restlet.data.Status;
 
 /**

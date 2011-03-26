@@ -15,11 +15,11 @@ import org.ncbo.stanford.util.MessageUtils;
 import org.ncbo.stanford.util.RequestUtils;
 import org.ncbo.stanford.util.helper.StringHelper;
 import org.ncbo.stanford.view.rest.restlet.ontology.AbstractOntologyBaseRestlet;
+import org.restlet.Request;
+import org.restlet.Response;
 import org.restlet.data.MediaType;
-import org.restlet.data.Request;
-import org.restlet.data.Response;
 import org.restlet.data.Status;
-import org.restlet.resource.FileRepresentation;
+import org.restlet.representation.FileRepresentation;
 
 /**
  * An RdfDownloadRestlet contains functionality handling for GET methods

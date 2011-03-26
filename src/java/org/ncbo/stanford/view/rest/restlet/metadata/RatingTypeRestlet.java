@@ -8,8 +8,8 @@ import org.ncbo.stanford.bean.metadata.RatingTypeBean;
 import org.ncbo.stanford.service.metadata.ReviewMetadataService;
 import org.ncbo.stanford.service.xml.XMLSerializationService;
 import org.ncbo.stanford.view.rest.restlet.AbstractBaseRestlet;
-import org.restlet.data.Request;
-import org.restlet.data.Response;
+import org.restlet.Request;
+import org.restlet.Response;
 import org.restlet.data.Status;
 
 /**

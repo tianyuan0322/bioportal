@@ -19,13 +19,13 @@ import org.ncbo.stanford.util.constants.ApplicationConstants;
 import org.ncbo.stanford.util.security.SecurityContextHolder;
 import org.ncbo.stanford.view.util.constants.RequestParamConstants;
 import org.restlet.Context;
-import org.restlet.Route;
-import org.restlet.Router;
+import org.restlet.Request;
+import org.restlet.Response;
 import org.restlet.data.MediaType;
 import org.restlet.data.Reference;
-import org.restlet.data.Request;
-import org.restlet.data.Response;
 import org.restlet.data.Status;
+import org.restlet.routing.Router;
+import org.restlet.routing.TemplateRoute;
 import org.restlet.util.RouteList;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.util.Assert;
@@ -82,7 +82,7 @@ public class AuthorizationFilter extends AbstractAuthFilter implements
 		if (session == null
 				|| (ctx = (SecurityContextHolder) session
 						.getAttribute(ApplicationConstants.SECURITY_CONTEXT_KEY)) == null
-				|| (user = ctx.getUser()) == null) {
+				|| (user = ctx.getUserBean()) == null) {
 			// This should never happen. NULL session means user failed to
 			// authenticate but somehow made it to this filter. The security
 			// context or user should not be null either.
@@ -241,7 +241,7 @@ public class AuthorizationFilter extends AbstractAuthFilter implements
 	private void extractAttributes(Request request, Response response) {
 		Router next = (Router) getNext();
 		RouteList routes = next.getRoutes();
-		Route best = routes.getBest(request, response, 0);
+		TemplateRoute best = routes.getBest(request, response, 0);
 
 		final String remainingPart = request.getResourceRef().getRemainingPart(
 				false, true);

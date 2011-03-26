@@ -8,15 +8,15 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.fileupload.FileItem;
 import org.ncbo.stanford.bean.OntologyBean;
-import org.ncbo.stanford.bean.UserBean;
 import org.ncbo.stanford.bean.SubscriptionsBean;
+import org.ncbo.stanford.bean.UserBean;
+import org.ncbo.stanford.bean.logging.UsageLoggingBean;
 import org.ncbo.stanford.enumeration.NotificationTypeEnum;
 import org.ncbo.stanford.exception.InvalidInputException;
-import org.ncbo.stanford.bean.logging.UsageLoggingBean;
 import org.ncbo.stanford.util.MessageUtils;
 import org.ncbo.stanford.util.RequestUtils;
 import org.ncbo.stanford.view.util.constants.RequestParamConstants;
-import org.restlet.data.Request;
+import org.restlet.Request;
 
 public class BeanHelper {
 

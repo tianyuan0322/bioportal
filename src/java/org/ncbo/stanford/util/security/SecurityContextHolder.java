@@ -5,13 +5,14 @@ import org.ncbo.stanford.bean.UserBean;
 public class SecurityContextHolder {
 	private String apiKey;
 	private String appApiKey;
-	private UserBean user;
+	private UserBean userBean;
 
-	public SecurityContextHolder(String apiKey, String appApiKey, UserBean user) {
+	public SecurityContextHolder(String apiKey, String appApiKey,
+			UserBean userBean) {
 		super();
 		this.apiKey = apiKey;
 		this.appApiKey = appApiKey;
-		this.user = user;
+		this.userBean = userBean;
 	}
 
 	/**
@@ -31,7 +32,7 @@ public class SecurityContextHolder {
 	/**
 	 * @return the user
 	 */
-	public UserBean getUser() {
-		return user;
+	public UserBean getUserBean() {
+		return userBean;
 	}
 }

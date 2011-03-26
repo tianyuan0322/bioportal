@@ -1,18 +1,18 @@
 package org.ncbo.stanford.service.concept;
 
-import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
 import java.io.IOException;
+import java.net.URLEncoder;
 
 import org.junit.Test;
 import org.ncbo.stanford.AbstractBioPortalTest;
 import org.restlet.Client;
 import org.restlet.data.Protocol;
-import org.restlet.data.Response;
-import java.net.URLEncoder;
+import org.restlet.representation.Representation;
+import org.restlet.resource.ClientResource;
 
 /**
  * Tests concept rest calls.
@@ -41,12 +41,12 @@ public class ConceptHTTPClientTest extends AbstractBioPortalTest {
 				.println("ConceptHTTPClientTest: testAminoConcept().......................BEGIN");
 
 		// Prepare HTTP client connector.
-		Client client = new Client(Protocol.HTTP);
-
-		Response response = client.get(BASE_URL + "concepts/" + AMINO_OID + "/" + AMINO_CID1);
-
+		ClientResource resource = new ClientResource(BASE_URL + "concepts/" + AMINO_OID + "/" + AMINO_CID1);
+		resource.setProtocol(Protocol.HTTP);
+		Representation rep = resource.get();
+		
 		try {
-			String xml = response.getEntity().getText();
+			String xml = rep.getText();
 			assertNotNull(xml);
 //			System.out.println(xml);
 			assertTrue(xml.contains("<label>" + AMINO_NAME));
@@ -67,12 +67,12 @@ public class ConceptHTTPClientTest extends AbstractBioPortalTest {
 				.println("ConceptHTTPClientTest: testAminoRoot().......................BEGIN");
 
 		// Prepare HTTP client connector.
-		Client client = new Client(Protocol.HTTP);
-
-		Response response = client.get(BASE_URL + "concepts/" + AMINO_OID + "/root");
-
+		ClientResource resource = new ClientResource(BASE_URL + "concepts/" + AMINO_OID + "/root");
+		resource.setProtocol(Protocol.HTTP);
+		Representation rep = resource.get();
+		
 		try {
-			String xml = response.getEntity().getText();
+			String xml = rep.getText();
 			assertNotNull(xml);
 //			System.out.println(xml);
 			assertTrue(xml.contains("<id>owl:Thing</id>"));
@@ -97,28 +97,32 @@ public class ConceptHTTPClientTest extends AbstractBioPortalTest {
 		try {
 			// Test CID with spaces
 			String encodedCID = URLEncoder.encode(TEST_CID2, "UTF-8");
-			Response response = client.get(BASE_URL + "concepts/" + TEST_OID2 + "/" + encodedCID);
-
-			String xml = response.getEntity().getText();
+			ClientResource resource = new ClientResource(BASE_URL + "concepts/" + TEST_OID2 + "/" + encodedCID);
+			resource.setProtocol(Protocol.HTTP);
+			Representation rep = resource.get();
+			
+			String xml = rep.getText();
 			assertNotNull(xml);
 //			System.out.println(xml);
 			assertTrue(xml.contains("<label>" + TEST_NAME2));
 			
 
 			// Test CID with spaces
-			encodedCID = URLEncoder.encode("Questionnaire Forms", "UTF-8");
-			response = client.get(BASE_URL + "concepts/" + 38563 + "/" + encodedCID);
-
-			xml = response.getEntity().getText();
+			encodedCID = URLEncoder.encode("Questionnaire Forms", "UTF-8");			
+			resource.setReference(BASE_URL + "concepts/" + 38563 + "/" + encodedCID);
+			rep = resource.get();
+			
+			xml = rep.getText();
 			assertNotNull(xml);
 //			System.out.println(xml);
 			assertTrue(xml.contains("<label>" + "Questionnaire Forms"));
 	
 			// Test CID with spaces
 			encodedCID = URLEncoder.encode("Symptom-Specific Treatment", "UTF-8");
-			response = client.get(BASE_URL + "concepts/" + 38563 + "/" + encodedCID);
-
-			xml = response.getEntity().getText();
+			resource.setReference(BASE_URL + "concepts/" + 38563 + "/" + encodedCID);
+			rep = resource.get();
+			
+			xml = rep.getText();			
 			assertNotNull(xml);
 	//		System.out.println(xml);
 			assertTrue(xml.contains("<label>" + "Symptom-Specific Treatment"));
@@ -145,19 +149,21 @@ public class ConceptHTTPClientTest extends AbstractBioPortalTest {
 		try {
 			// Test CID with spaces
 			String encodedCID = URLEncoder.encode("@_A116138", "UTF-8");
-			Response response = client.get(BASE_URL + "concepts/" + 32939 + "/" + encodedCID);
-
-			String xml = response.getEntity().getText();
+			ClientResource resource = new ClientResource(BASE_URL + "concepts/" + 32939 + "/" + encodedCID);
+			resource.setProtocol(Protocol.HTTP);
+			Representation rep = resource.get();
+			
+			String xml = rep.getText();
 			assertNotNull(xml);
 	//		System.out.println(xml);
 			assertTrue(xml.contains("<label>" + "UMLS_ICD9CM_2006_AUI:A8359098"));
 			
-
 			// Test CID with spaces
 			encodedCID = URLEncoder.encode("@_A116934", "UTF-8");
-			response = client.get(BASE_URL + "concepts/" + 35377 + "/" + encodedCID);
+			resource.setReference(BASE_URL + "concepts/" + 35377 + "/" + encodedCID);
+			rep = resource.get();
 
-			xml = response.getEntity().getText();
+			xml = rep.getText();
 			assertNotNull(xml);
 //			System.out.println(xml);
 			assertTrue(xml.contains("<label>" + "@_A116934"));

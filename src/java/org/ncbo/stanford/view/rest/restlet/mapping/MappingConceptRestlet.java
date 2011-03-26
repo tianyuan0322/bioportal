@@ -28,8 +28,8 @@ import org.ncbo.stanford.util.paginator.impl.Page;
 import org.ncbo.stanford.view.util.constants.RequestParamConstants;
 import org.openrdf.model.URI;
 import org.openrdf.model.impl.URIImpl;
-import org.restlet.data.Request;
-import org.restlet.data.Response;
+import org.restlet.Request;
+import org.restlet.Response;
 import org.restlet.data.Status;
 
 public class MappingConceptRestlet extends AbstractMappingRestlet {

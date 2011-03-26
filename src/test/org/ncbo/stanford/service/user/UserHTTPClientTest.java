@@ -11,9 +11,9 @@ import java.io.IOException;
 
 import org.junit.Test;
 import org.ncbo.stanford.AbstractBioPortalTest;
-import org.restlet.Client;
 import org.restlet.data.Protocol;
-import org.restlet.data.Response;
+import org.restlet.representation.Representation;
+import org.restlet.resource.ClientResource;
 
 /**
  * @author cyoun
@@ -27,12 +27,12 @@ public class UserHTTPClientTest extends AbstractBioPortalTest {
 				.println("UserHTTPClientTest: testTomcatBaseURL().......................BEGIN");
 
 		// Prepare HTTP client connector.
-		Client client = new Client(Protocol.HTTP);
-
-		Response response = client.get("http://localhost:8080");
-
+		ClientResource resource = new ClientResource("http://localhost:8080");
+		resource.setProtocol(Protocol.HTTP);
+		Representation rep = resource.get();
+		
 		try {
-			String xml = response.getEntity().getText();
+			String xml = rep.getText();
 			assertNotNull(xml);
 //			System.out.println(xml);
 			assertTrue(xml.contains("Apache Tomcat"));
@@ -53,12 +53,12 @@ public class UserHTTPClientTest extends AbstractBioPortalTest {
 				.println("UserHTTPClientTest: testHttpClientGETUsers().......................BEGIN");
 
 		// Prepare HTTP client connector.
-		Client client = new Client(Protocol.HTTP);
-		Response response = client
-				.get("http://localhost:8080/bioportal/users");
+		ClientResource resource = new ClientResource("http://localhost:8080/bioportal/users");
+		resource.setProtocol(Protocol.HTTP);
+		Representation rep = resource.get();
 
 		try {
-			String xml = response.getEntity().getText();
+			String xml = rep.getText();
 			assertNotNull(xml);
 			System.out.println(xml);
 			assertTrue(xml.contains("<success>"));
@@ -79,12 +79,12 @@ public class UserHTTPClientTest extends AbstractBioPortalTest {
 				.println("UserHTTPClientTest: testHttpClientGETUser().......................BEGIN");
 
 		// Prepare HTTP client connector.
-		Client client = new Client(Protocol.HTTP);
-		Response response = client
-				.get("http://localhost:8080/bioportal/users/2850");
+		ClientResource resource = new ClientResource("http://localhost:8080/bioportal/users/2850");
+		resource.setProtocol(Protocol.HTTP);
+		Representation rep = resource.get();
 
 		try {
-			String xml = response.getEntity().getText();
+			String xml = rep.getText();
 			assertNotNull(xml);
 			System.out.println(xml);
 			assertTrue(xml.contains("<accessedResource>"));

@@ -48,6 +48,7 @@ import org.ncbo.stanford.bean.search.SearchBean;
 import org.ncbo.stanford.enumeration.ConceptTypeEnum;
 import org.ncbo.stanford.enumeration.ErrorTypeEnum;
 import org.ncbo.stanford.enumeration.SearchRecordTypeEnum;
+import org.ncbo.stanford.service.session.RESTfulSession;
 import org.ncbo.stanford.service.xml.XMLSerializationService;
 import org.ncbo.stanford.service.xml.converters.ClassBeanListConverter;
 import org.ncbo.stanford.service.xml.converters.ClassBeanResultListBeanConverter;
@@ -59,11 +60,12 @@ import org.ncbo.stanford.util.MessageUtils;
 import org.ncbo.stanford.util.RequestUtils;
 import org.ncbo.stanford.util.constants.ApplicationConstants;
 import org.ncbo.stanford.util.paginator.impl.Page;
+import org.ncbo.stanford.util.security.SecurityContextHolder;
 import org.openrdf.model.URI;
 import org.openrdf.model.impl.URIImpl;
+import org.restlet.Request;
+import org.restlet.Response;
 import org.restlet.data.MediaType;
-import org.restlet.data.Request;
-import org.restlet.data.Response;
 import org.restlet.data.Status;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -171,11 +173,8 @@ public class XMLSerializationServiceImpl implements XMLSerializationService {
 	 * returns SuccessBean with apiKey, accessedResource populated
 	 */
 	public SuccessBean getSuccessBean(Request request) {
-		String apiKey = RequestUtils.getApiKey(request);
 		String accessedResource = request.getResourceRef().getPath();
-
 		SuccessBean successBean = new SuccessBean();
-		successBean.setApiKey(apiKey);
 
 		if (!GenericValidator.isBlankOrNull(accessedResource)) {
 			successBean.setAccessedResource(accessedResource);
@@ -189,21 +188,6 @@ public class XMLSerializationServiceImpl implements XMLSerializationService {
 	 */
 	public SuccessBean getSuccessBean(Request request, Object data) {
 		SuccessBean successBean = getSuccessBean(request);
-
-		if (data != null) {
-			successBean.getData().add(data);
-		}
-
-		return successBean;
-	}
-
-	/**
-	 * returns SuccessBean with apiKey, accessedResource and data populated
-	 */
-	public SuccessBean getSuccessBean(String apiKey, Request request,
-			Object data) {
-		SuccessBean successBean = getSuccessBean(request);
-		successBean.setApiKey(apiKey);
 
 		if (data != null) {
 			successBean.getData().add(data);
@@ -510,7 +494,11 @@ public class XMLSerializationServiceImpl implements XMLSerializationService {
 		xmlSerializer.alias(MessageUtils.getMessage("entity.page"), Page.class);
 		xmlSerializer.alias(MessageUtils.getMessage("entity.ontologyhitbean"),
 				OntologyHitBean.class);
-
+		xmlSerializer.alias(MessageUtils.getMessage("entity.restfulsession"),
+				RESTfulSession.class);
+		xmlSerializer.alias(MessageUtils
+				.getMessage("entity.securitycontextholder"),
+				SecurityContextHolder.class);
 		xmlSerializer.alias(MessageUtils.getMessage("entity.notebean"),
 				NoteBean.class);
 		xmlSerializer.alias(MessageUtils.getMessage("entity.appliesto"),
