@@ -29,13 +29,13 @@ public class RestApplication extends Application {
 		RestManager manager = (RestManager) springAppContext
 				.getBean("restManager");
 		manager.init(router);
-		AuthenticationFilter authentFilter = new AuthenticationFilter(
-				getContext(), springAppContext);
-		AuthorizationFilter authorizFilter = new AuthorizationFilter(
-				getContext(), springAppContext);
-		authentFilter.setNext(authorizFilter);
-		authorizFilter.setNext(router);
+//		AuthenticationFilter authentFilter = new AuthenticationFilter(
+//				getContext(), springAppContext);
+//		AuthorizationFilter authorizFilter = new AuthorizationFilter(
+//				getContext(), springAppContext);
+//		authentFilter.setNext(authorizFilter);
+//		authorizFilter.setNext(router);
 
-		return authentFilter;
+		return router;
 	}
 }
