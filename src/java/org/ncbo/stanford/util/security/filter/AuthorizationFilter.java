@@ -88,6 +88,11 @@ public class AuthorizationFilter extends AbstractAuthFilter implements
 			// context or user should not be null either.
 			error = ErrorTypeEnum.INVALID_SESSION;
 		} else {
+			// Admin has access to all ontologies 
+			if (user.isAdmin()) {
+				return retVal;
+			}
+			
 			StringBuffer sb = new StringBuffer(0);
 			Map<Integer, Integer> mapTranslated = new HashMap<Integer, Integer>(
 					0);
