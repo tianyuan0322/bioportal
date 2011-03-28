@@ -11,11 +11,12 @@ import org.ncbo.stanford.domain.custom.dao.CustomNcboUserRoleDAO;
 import org.ncbo.stanford.domain.generated.NcboLRole;
 import org.ncbo.stanford.domain.generated.NcboUser;
 import org.ncbo.stanford.domain.generated.NcboUserRole;
+import org.ncbo.stanford.enumeration.RoleEnum;
+import org.ncbo.stanford.manager.metadata.UserMetadataManager;
 import org.ncbo.stanford.service.encryption.EncryptionService;
 import org.ncbo.stanford.service.user.UserService;
 import org.ncbo.stanford.util.helper.StringHelper;
 import org.springframework.transaction.annotation.Transactional;
-import org.ncbo.stanford.manager.metadata.UserMetadataManager;
 
 @Transactional
 public class UserServiceImpl implements UserService {
@@ -59,7 +60,7 @@ public class UserServiceImpl implements UserService {
 	public UserBean findUserByEmail(String email) {
 		UserBean userBean = null;
 		List<NcboUser> userList = ncboUserDAO.findByEmail(email);
-		
+
 		if (userList.size() > 0) {
 			NcboUser user = (NcboUser) userList.toArray()[0];
 
@@ -76,7 +77,7 @@ public class UserServiceImpl implements UserService {
 	public UserBean findUserByApiKey(String apiKey) {
 		UserBean userBean = null;
 		List<NcboUser> userList = ncboUserDAO.findByApiKey(apiKey);
-		
+
 		if (userList.size() > 0) {
 			NcboUser user = (NcboUser) userList.toArray()[0];
 
@@ -88,7 +89,7 @@ public class UserServiceImpl implements UserService {
 
 		return userBean;
 	}
-	
+
 	/**
 	 * @return List<UserBean>
 	 */
@@ -123,13 +124,14 @@ public class UserServiceImpl implements UserService {
 			userBean.generateDefaultRole();
 		}
 
-		for (String roleName : userBean.getRoles()) {
+		for (RoleEnum role : userBean.getRoles()) {
 			NcboUserRole ncboUserRole = new NcboUserRole();
-			NcboLRole ncboLRole = ncboLRoleDAO.findRoleByName(roleName);
+			NcboLRole ncboLRole = ncboLRoleDAO.findRoleByName(role.getLabel());
 			ncboUserRole.setNcboUser(newNcboUser);
 			ncboUserRole.setNcboLRole(ncboLRole);
 			ncboUserRoleDAO.save(ncboUserRole);
 		}
+
 		// This code is adding for creating a new user account in the metadata
 		// ontology
 		try {

@@ -9,6 +9,15 @@ public interface ApplicationConstants {
 	public static final String SECURITY_CONTEXT_KEY = "SECURITY_CONTEXT";
 	
 	/**
+	 * User Roles
+	 */
+	public static final String USER_ROLE_DEVELOPER = "ROLE_DEVELOPER";
+	public static final String USER_ROLE_LIBRARIAN = "ROLE_LIBRARIAN";
+	public static final String USER_ROLE_ADMINISTRATOR = "ROLE_ADMINISTRATOR";
+	
+	public static final String DEFAULT_USER_ROLE = USER_ROLE_LIBRARIAN;
+	
+	/**
 	 * Standard "NO VALUE" constant
 	 */
 	public static final int NO_VAL = -1;

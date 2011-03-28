@@ -4,9 +4,9 @@ import org.ncbo.stanford.util.constants.ApplicationConstants;
 
 public enum ConceptTypeEnum {
 
-	CONCEPT_TYPE_CLASS(ApplicationConstants.CONCEPT_TYPE_CLASS), CONCEPT_TYPE_INDIVIDUAL(
-			ApplicationConstants.CONCEPT_TYPE_INDIVIDUAL), CONCEPT_TYPE_PROPERTY(
-			ApplicationConstants.CONCEPT_TYPE_PROPERTY);
+	CONCEPT_TYPE_CLASS(ApplicationConstants.CONCEPT_TYPE_CLASS), 
+	CONCEPT_TYPE_INDIVIDUAL(ApplicationConstants.CONCEPT_TYPE_INDIVIDUAL), 
+	CONCEPT_TYPE_PROPERTY(ApplicationConstants.CONCEPT_TYPE_PROPERTY);
 
 	private final String label;
 

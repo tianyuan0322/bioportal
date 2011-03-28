@@ -10,6 +10,7 @@ import java.util.ArrayList;
 import org.junit.Test;
 import org.ncbo.stanford.AbstractBioPortalTest;
 import org.ncbo.stanford.bean.UserBean;
+import org.ncbo.stanford.enumeration.RoleEnum;
 import org.springframework.beans.factory.annotation.Autowired;
 
 /**
@@ -115,9 +116,9 @@ public class UserServiceTest extends AbstractBioPortalTest {
 		bean.setPhone("123-456-7890");
 		bean.setDateCreated(new Date());
 		//Adding this line for testing the creation of userAccount inside the metadata
-		ArrayList<String> roles = new ArrayList<String>();
-		roles.add("ROLE_DEVELOPER");
-		roles.add("ROLE_ADMIN");
+		ArrayList<RoleEnum> roles = new ArrayList<RoleEnum>(2);
+		roles.add(RoleEnum.ROLE_DEVELOPER);
+		roles.add(RoleEnum.ROLE_ADMINISTRATOR);
 		bean.setRoles(roles);
 
 		return bean;

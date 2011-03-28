@@ -3,13 +3,12 @@
  */
 package org.ncbo.stanford.enumeration;
 
-
 /**
  * @author g.prakash
- *
+ * 
  */
 public enum NotificationTypeEnum {
-	
+
 	UPDATE_ONTOLOGY_NOTIFICATION {
 		public String toString() {
 			return "UPDATE_ONTOLOGY_NOTIFICATION";
@@ -29,9 +28,5 @@ public enum NotificationTypeEnum {
 		public String toString() {
 			return "ALL_NOTIFICATION";
 		}
-	},
-	 
-	;
+	};
 }
-
-	

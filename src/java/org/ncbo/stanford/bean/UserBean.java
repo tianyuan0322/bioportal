@@ -10,7 +10,9 @@ import java.util.Map;
 import org.ncbo.stanford.domain.generated.NcboOntologyAcl;
 import org.ncbo.stanford.domain.generated.NcboUser;
 import org.ncbo.stanford.domain.generated.NcboUserRole;
+import org.ncbo.stanford.enumeration.RoleEnum;
 import org.ncbo.stanford.util.MessageUtils;
+import org.ncbo.stanford.util.constants.ApplicationConstants;
 import org.ncbo.stanford.util.helper.StringHelper;
 
 public class UserBean {
@@ -24,7 +26,7 @@ public class UserBean {
 	private String lastname;
 	private String phone;
 	private Date dateCreated;
-	private List<String> roles = new ArrayList<String>(0);
+	private List<RoleEnum> roles = new ArrayList<RoleEnum>(0);
 	private Map<Integer, Boolean> ontologyAcl = new HashMap<Integer, Boolean>(0);
 
 	public String toString() {
@@ -32,7 +34,8 @@ public class UserBean {
 				+ ", API Key: " + this.getApiKey() + ", Password: "
 				+ this.getPassword() + ", Email: " + this.getEmail()
 				+ ", Firstname: " + this.getFirstname() + ", Lastname: "
-				+ this.getLastname() + ", Phone: " + this.getPhone() + "}";
+				+ this.getLastname() + ", Phone: " + this.getPhone() + ", "
+				+ "Roles: " + this.getRoles() + ", ACL: " + this.getOntologyAcl() + "}";
 	}
 
 	/**
@@ -44,6 +47,15 @@ public class UserBean {
 	 */
 	public boolean isInAcl(Integer ontologyId) {
 		return ontologyAcl.containsKey(ontologyId);
+	}
+
+	/**
+	 * Checks on whether the user has Administrator privileges
+	 * 
+	 * @return
+	 */
+	public boolean isAdmin() {
+		return roles.contains(RoleEnum.ROLE_ADMINISTRATOR);
 	}
 
 	/**
@@ -64,7 +76,8 @@ public class UserBean {
 			this.setDateCreated(ncboUser.getDateCreated());
 
 			for (Object role : ncboUser.getNcboUserRoles()) {
-				roles.add(((NcboUserRole) role).getNcboLRole().getName());
+				roles.add(RoleEnum.getFromLabel(((NcboUserRole) role)
+						.getNcboLRole().getName()));
 			}
 
 			for (Object ontAcl : ncboUser.getNcboOntologyAcls()) {
@@ -115,7 +128,9 @@ public class UserBean {
 	 * Extracts default passwords and sets it in the bean
 	 */
 	public void generateDefaultRole() {
-		roles.add(MessageUtils.getMessage("default.user.role"));
+		roles
+				.add(RoleEnum
+						.getFromLabel(ApplicationConstants.DEFAULT_USER_ROLE));
 	}
 
 	/**
@@ -241,7 +256,7 @@ public class UserBean {
 	/**
 	 * @return the roles
 	 */
-	public List<String> getRoles() {
+	public List<RoleEnum> getRoles() {
 		return roles;
 	}
 
@@ -249,7 +264,7 @@ public class UserBean {
 	 * @param roles
 	 *            the roles to set
 	 */
-	public void setRoles(List<String> roles) {
+	public void setRoles(List<RoleEnum> roles) {
 		this.roles = roles;
 	}
 
