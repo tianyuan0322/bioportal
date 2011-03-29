@@ -35,6 +35,9 @@ public class AuthenticationFilter extends AbstractAuthFilter implements
 	private AuthenticationService authenticationService;
 	private SessionService sessionService;
 
+	// TODO: to be removed later (see a note below in authenticateUser())
+	private static String TEMP_ADMIN_APIKEY = "fcc74490-5a25-11e0-9a6e-005056aa215e";
+
 	@SuppressWarnings("unchecked")
 	public AuthenticationFilter(Context context,
 			WebApplicationContext springAppContext) {
@@ -82,7 +85,19 @@ public class AuthenticationFilter extends AbstractAuthFilter implements
 				appApiKey = apiKey;
 				apiKey = userApiKey;
 			}
+		} else {
+			// TODO: @@@@@ mdorf: This "else" block is temporary to allow users
+			// to adjust to the new security structure. It forces users with API
+			// keys to go through the new authentication/authorization process,
+			// while users without API keys to be allowed access. Once this
+			// block is removed, no API-less access will be allowed.
+			log.info("A user identified by IP: "
+					+ request.getClientInfo().getAddress() + ", Referrer: "
+					+ request.getReferrerRef() + ", Accessed Resource: \"" + ref
+					+ "\" attempted access with an empty API Key.");
+			apiKey = TEMP_ADMIN_APIKEY;
 		}
+
 		UserBean user = null;
 
 		if (StringHelper.isNullOrNullString(apiKey)) {

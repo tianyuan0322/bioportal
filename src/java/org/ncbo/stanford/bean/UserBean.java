@@ -26,7 +26,7 @@ public class UserBean {
 	private String lastname;
 	private String phone;
 	private Date dateCreated;
-	private List<RoleEnum> roles = new ArrayList<RoleEnum>(0);
+	private List<String> roles = new ArrayList<String>(0);
 	private Map<Integer, Boolean> ontologyAcl = new HashMap<Integer, Boolean>(0);
 
 	public String toString() {
@@ -35,7 +35,8 @@ public class UserBean {
 				+ this.getPassword() + ", Email: " + this.getEmail()
 				+ ", Firstname: " + this.getFirstname() + ", Lastname: "
 				+ this.getLastname() + ", Phone: " + this.getPhone() + ", "
-				+ "Roles: " + this.getRoles() + ", ACL: " + this.getOntologyAcl() + "}";
+				+ "Roles: " + this.getRoles() + ", ACL: "
+				+ this.getOntologyAcl() + "}";
 	}
 
 	/**
@@ -55,7 +56,7 @@ public class UserBean {
 	 * @return
 	 */
 	public boolean isAdmin() {
-		return roles.contains(RoleEnum.ROLE_ADMINISTRATOR);
+		return roles.contains(RoleEnum.ROLE_ADMINISTRATOR.getLabel());
 	}
 
 	/**
@@ -76,8 +77,7 @@ public class UserBean {
 			this.setDateCreated(ncboUser.getDateCreated());
 
 			for (Object role : ncboUser.getNcboUserRoles()) {
-				roles.add(RoleEnum.getFromLabel(((NcboUserRole) role)
-						.getNcboLRole().getName()));
+				roles.add(((NcboUserRole) role).getNcboLRole().getName());
 			}
 
 			for (Object ontAcl : ncboUser.getNcboOntologyAcls()) {
@@ -128,9 +128,7 @@ public class UserBean {
 	 * Extracts default passwords and sets it in the bean
 	 */
 	public void generateDefaultRole() {
-		roles
-				.add(RoleEnum
-						.getFromLabel(ApplicationConstants.DEFAULT_USER_ROLE));
+		roles.add(ApplicationConstants.DEFAULT_USER_ROLE);
 	}
 
 	/**
@@ -256,7 +254,7 @@ public class UserBean {
 	/**
 	 * @return the roles
 	 */
-	public List<RoleEnum> getRoles() {
+	public List<String> getRoles() {
 		return roles;
 	}
 
@@ -264,7 +262,7 @@ public class UserBean {
 	 * @param roles
 	 *            the roles to set
 	 */
-	public void setRoles(List<RoleEnum> roles) {
+	public void setRoles(List<String> roles) {
 		this.roles = roles;
 	}
 

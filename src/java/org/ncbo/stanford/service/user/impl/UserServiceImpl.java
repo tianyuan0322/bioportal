@@ -11,7 +11,6 @@ import org.ncbo.stanford.domain.custom.dao.CustomNcboUserRoleDAO;
 import org.ncbo.stanford.domain.generated.NcboLRole;
 import org.ncbo.stanford.domain.generated.NcboUser;
 import org.ncbo.stanford.domain.generated.NcboUserRole;
-import org.ncbo.stanford.enumeration.RoleEnum;
 import org.ncbo.stanford.manager.metadata.UserMetadataManager;
 import org.ncbo.stanford.service.encryption.EncryptionService;
 import org.ncbo.stanford.service.user.UserService;
@@ -124,9 +123,9 @@ public class UserServiceImpl implements UserService {
 			userBean.generateDefaultRole();
 		}
 
-		for (RoleEnum role : userBean.getRoles()) {
+		for (String role : userBean.getRoles()) {
 			NcboUserRole ncboUserRole = new NcboUserRole();
-			NcboLRole ncboLRole = ncboLRoleDAO.findRoleByName(role.getLabel());
+			NcboLRole ncboLRole = ncboLRoleDAO.findRoleByName(role);
 			ncboUserRole.setNcboUser(newNcboUser);
 			ncboUserRole.setNcboLRole(ncboLRole);
 			ncboUserRoleDAO.save(ncboUserRole);
