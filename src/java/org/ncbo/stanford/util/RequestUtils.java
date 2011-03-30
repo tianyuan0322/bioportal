@@ -111,6 +111,9 @@ public class RequestUtils {
 	 */
 	public static void parseQueryString(String queryString,
 			Map<String, Object> parsed) {
+		if (queryString == null)
+			return;
+		
 		StringTokenizer stAmpersand = new StringTokenizer(queryString,
 				PARAM_SEPARATOR);
 
