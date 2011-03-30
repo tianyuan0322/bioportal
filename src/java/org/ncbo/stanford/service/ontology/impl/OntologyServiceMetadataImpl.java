@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import org.LexGrid.LexBIG.Exceptions.LBParameterException;
 import org.apache.commons.logging.Log;
@@ -12,8 +13,10 @@ import org.ncbo.stanford.bean.CategoryBean;
 import org.ncbo.stanford.bean.GroupBean;
 import org.ncbo.stanford.bean.OntologyBean;
 import org.ncbo.stanford.bean.OntologyMetricsBean;
+import org.ncbo.stanford.domain.generated.NcboOntologyAcl;
 import org.ncbo.stanford.domain.generated.NcboOntologyFile;
 import org.ncbo.stanford.domain.generated.NcboOntologyLoadQueue;
+import org.ncbo.stanford.domain.generated.NcboUser;
 import org.ncbo.stanford.manager.metadata.OntologyCategoryMetadataManager;
 import org.ncbo.stanford.manager.metadata.OntologyGroupMetadataManager;
 import org.ncbo.stanford.service.ontology.AbstractOntologyService;
@@ -50,11 +53,8 @@ public class OntologyServiceMetadataImpl extends AbstractOntologyService
 			ontologyBean.setFilePath(ontologyBean.getOntologyDirPath());
 		}
 
-		// executing actions previously in
-		// ontologyBean.populateToVersionEntity(ontologyVersion);
-		ontologyBean.updateIfNecessary();
-
 		Integer newVersionId;
+
 		if (ontologyBean.isView()) {
 			newVersionId = ontologyMetadataManager
 					.getNextAvailableOntologyViewVersionId();
@@ -64,31 +64,32 @@ public class OntologyServiceMetadataImpl extends AbstractOntologyService
 		}
 		ontologyBean.setId(newVersionId);
 
-		// if there is no filePathHandler, do not continue to upload(i.e.
-		// ontologyFile and
-		// ontologyQueue)
-		if (filePathHandler == null) {
-			ontologyMetadataManager.saveOntologyOrView(ontologyBean);
-			return;
-		}
+		// if there is no filePathHandler, do not continue to upload
+		// (i.e. ontologyFile and ontologyQueue)
+		if (filePathHandler != null) {
+			// upload the fileItem
+			List<String> fileNames = uploadOntologyFile(ontologyBean,
+					filePathHandler);
+			ontologyBean.setFilenames(fileNames);
 
-		// upload the fileItem
-		List<String> fileNames = uploadOntologyFile(ontologyBean,
-				filePathHandler);
-		ontologyBean.setFilenames(fileNames);
+			// <ontologyFile> - populate and save
+			ontologyBean.populateToFileEntity(ontologyFileList);
 
-		// 4. <ontologyFile> - populate and save
-		ontologyBean.populateToFileEntity(ontologyFileList);
+			for (NcboOntologyFile ontologyFile : ontologyFileList) {
+				ncboOntologyFileDAO.save(ontologyFile);
+			}
 
-		for (NcboOntologyFile ontologyFile : ontologyFileList) {
-			ncboOntologyFileDAO.save(ontologyFile);
+			// <ontologyQueue> - populate and save
+			ontologyBean.populateToLoadQueueEntity(loadQueue, newVersionId);
+			ncboOntologyLoadQueueDAO.save(loadQueue);
 		}
 
 		ontologyMetadataManager.saveOntologyOrView(ontologyBean);
 
-		// 5. <ontologyQueue> - populate and save
-		ontologyBean.populateToLoadQueueEntity(loadQueue, newVersionId);
-		ncboOntologyLoadQueueDAO.save(loadQueue);
+		if (!ontologyBean.isView()) {
+			// <userAcl> - populate and save
+			saveUserAcl(ontologyBean);
+		}
 	}
 
 	/**
@@ -209,15 +210,16 @@ public class OntologyServiceMetadataImpl extends AbstractOntologyService
 				for (NcboOntologyFile ontologyFile : ontologyFileSet) {
 					ncboOntologyFileDAO.delete(ontologyFile);
 				}
+
+				// 4. Remove ontologyQueue record from DB
+				NcboOntologyLoadQueue ontologyLoadQueue = ncboOntologyLoadQueueDAO
+						.findByOntologyVersionId(ontologyVersionId);
+
+				if (ontologyLoadQueue != null) {
+					ncboOntologyLoadQueueDAO.delete(ontologyLoadQueue);
+				}
 			}
 
-			// 4. Remove ontologyQueue record from DB
-			NcboOntologyLoadQueue ontologyLoadQueue = ncboOntologyLoadQueueDAO
-					.findByOntologyVersionId(ontologyVersionId);
-
-			if (ontologyLoadQueue != null) {
-				ncboOntologyLoadQueueDAO.delete(ontologyLoadQueue);
-			}
 		}
 
 		// 2. Remove or "deprecate" ontology metadata
@@ -384,6 +386,7 @@ public class OntologyServiceMetadataImpl extends AbstractOntologyService
 	public void updateOntologyOrView(OntologyBean ontologyBean)
 			throws Exception {
 		ontologyMetadataManager.updateOntologyOrView(ontologyBean);
+		saveUserAcl(ontologyBean);
 	}
 
 	public OntologyMetricsBean getOntologyMetrics(OntologyBean ontologyBean)
@@ -397,13 +400,6 @@ public class OntologyServiceMetadataImpl extends AbstractOntologyService
 			throws Exception {
 		return ontologyMetadataManager.findLatestActiveOntologyViewVersions();
 	}
-
-	// public OntologyBean findLatestOntologyViewVersionByOboFoundryId(
-	// String oboFoundryId) {
-	// // TODO see if we need this method. If yes, add it also to the
-	// OntologyService interface
-	// return null;
-	// }
 
 	/**
 	 * Returns a single record for each ontology view in the system. If more
@@ -423,6 +419,33 @@ public class OntologyServiceMetadataImpl extends AbstractOntologyService
 	}
 
 	// Utility methods
+
+	@SuppressWarnings("unchecked")
+	private void deleteExistingAcl(OntologyBean ontologyBean) {
+		List<NcboOntologyAcl> aclList = ncboOntologyAclDAO
+				.findByOntologyId(ontologyBean.getOntologyId());
+
+		for (NcboOntologyAcl acl : aclList) {
+			ncboOntologyAclDAO.delete(acl);
+		}
+	}
+
+	private void saveUserAcl(OntologyBean ontologyBean) {
+		deleteExistingAcl(ontologyBean);
+
+		for (Map.Entry<Integer, Boolean> entry : ontologyBean.getUserAcl()
+				.entrySet()) {
+			NcboUser ncboUser = ncboUserDAO.findById(entry.getKey());
+
+			if (ncboUser != null) {
+				NcboOntologyAcl acl = new NcboOntologyAcl();
+				acl.setNcboUser(ncboUser);
+				acl.setOntologyId(ontologyBean.getOntologyId());
+				acl.setIsOwner(entry.getValue());
+				ncboOntologyAclDAO.save(acl);
+			}
+		}
+	}
 
 	/**
 	 * Finds existing or creates new NcboOntology record

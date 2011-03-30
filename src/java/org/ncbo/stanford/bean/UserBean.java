@@ -51,6 +51,17 @@ public class UserBean {
 	}
 
 	/**
+	 * Adds an ontology Id to this user's access list (ACL)
+	 * 
+	 * @param ontologyId
+	 * @param isOwner
+	 * @return
+	 */
+	public boolean addOntologyToAcl(Integer ontologyId, Boolean isOwner) {
+		return ontologyAcl.put(ontologyId, isOwner);
+	}
+
+	/**
 	 * Checks on whether the user has Administrator privileges
 	 * 
 	 * @return

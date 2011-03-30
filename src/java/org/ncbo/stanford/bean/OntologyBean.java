@@ -4,8 +4,10 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collection;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import org.apache.commons.fileupload.FileItem;
@@ -19,7 +21,7 @@ import org.ncbo.stanford.util.constants.ApplicationConstants;
 public class OntologyBean {
 
 	public static final String DEFAULT_SYNONYM_SLOT = "http://www.w3.org/2004/02/skos/core#altLabel";
-	public static final String DEFAULT_PREFERRED_NAME_SLOT = "http://www.w3.org/2004/02/skos/core#prefLabel";		
+	public static final String DEFAULT_PREFERRED_NAME_SLOT = "http://www.w3.org/2004/02/skos/core#prefLabel";
 	public static final String DEFAULT_DEFINITION_SLOT = "http://www.w3.org/2004/02/skos/core#definition";
 	public static final String DEFAULT_AUTHOR_SLOT = "http://purl.org/dc/elements/1.1/creator";
 
@@ -51,13 +53,14 @@ public class OntologyBean {
 	private String codingScheme;
 	private String targetTerminologies;
 	private Byte isFoundry;
-	private Byte isMetadataOnly;	
+	private Byte isMetadataOnly;
 	private String synonymSlot;
 	private String preferredNameSlot;
 	private String documentationSlot;
 	private String authorSlot;
 	private String slotWithUniqueValue;
 	private Integer preferredMaximumSubclassLimit;
+	private Map<Integer, Boolean> userAcl = new HashMap<Integer, Boolean>(0);
 
 	private boolean isView = false;
 
@@ -78,7 +81,7 @@ public class OntologyBean {
 
 	// Download location of ontology
 	private String downloadLocation;
-	
+
 	// views on this ontology version
 	private List<Integer> hasViews = new ArrayList<Integer>(0);
 
@@ -90,6 +93,28 @@ public class OntologyBean {
 
 	public OntologyBean(boolean isView) {
 		this.isView = isView;
+	}
+
+	/**
+	 * Checks whether user has access to this ontology (the user id is present
+	 * in this ontology's ACL)
+	 * 
+	 * @param ontologyId
+	 * @return
+	 */
+	public boolean isInAcl(Integer userId) {
+		return userAcl.containsKey(userId);
+	}
+
+	/**
+	 * Adds an user Id to this ontology's access list (ACL)
+	 * 
+	 * @param userId
+	 * @param isOwner
+	 * @return
+	 */
+	public boolean addUserToAcl(Integer userId, Boolean isOwner) {
+		return userAcl.put(userId, isOwner);
 	}
 
 	/**
@@ -106,15 +131,6 @@ public class OntologyBean {
 			ontologyFile.setOntologyVersionId(id);
 			ontologyFileList.add(ontologyFile);
 		}
-	}
-
-	/**
-	 * This method should execute all the updates necessary in the ontological
-	 * metadata implementation that were previously done in
-	 * {@link #populateToVersionEntity(NcboOntologyVersion)} method
-	 */
-	public void updateIfNecessary() {
-		// TODO: implement
 	}
 
 	/**
@@ -181,21 +197,22 @@ public class OntologyBean {
 				+ ", Version Status: " + this.getVersionStatus()
 				+ ", Display Label: " + this.getDisplayLabel()
 				+ ", Description: " + this.getDescription()
-				+ ", Abbreviation: " + this.getAbbreviation() 
-				+ ", Format: " + this.getFormat() 
-				+ ", Download Location: " + this.getDownloadLocation()
-				+ ", Contact Name: " + this.getContactName()
-				+ ", Contact Email: " + this.getContactEmail() 
-				+ ", Foundry: "	+ this.getIsFoundry() 
-				+ ", IsMetadataOnly: "	+ this.getIsMetadataOnly() 
-				+ ", Coding Scheme: "+ this.getCodingScheme() 
-				+ ", Target Terminologies: "+ this.getTargetTerminologies() 
-				+ ", Synonym Slot: "+ this.getSynonymSlot() 
-				+ ", Preferred Name Slot: "	+ this.getPreferredNameSlot() 
+				+ ", Abbreviation: " + this.getAbbreviation() + ", Format: "
+				+ this.getFormat() + ", Download Location: "
+				+ this.getDownloadLocation() + ", Contact Name: "
+				+ this.getContactName() + ", Contact Email: "
+				+ this.getContactEmail() + ", Foundry: " + this.getIsFoundry()
+				+ ", IsMetadataOnly: " + this.getIsMetadataOnly()
+				+ ", Coding Scheme: " + this.getCodingScheme()
+				+ ", Target Terminologies: " + this.getTargetTerminologies()
+				+ ", Synonym Slot: " + this.getSynonymSlot()
+				+ ", Preferred Name Slot: " + this.getPreferredNameSlot()
 				+ ", View Definition: " + viewDef
-				+ ", View Definition Language: "+ this.getViewDefinitionLanguage()
+				+ ", View Definition Language: "
+				+ this.getViewDefinitionLanguage()
 				+ ", View Generation Engine: " + this.getViewGenerationEngine()
-				+ ", View on Ontology Versions: "+ this.getViewOnOntologyVersionId() + "}";
+				+ ", View on Ontology Versions: "
+				+ this.getViewOnOntologyVersionId() + "}";
 	}
 
 	/**
@@ -717,17 +734,19 @@ public class OntologyBean {
 	}
 
 	public boolean isMetadataOnly() {
-		if (this.isRemote() && this.getVersionNumber()!= null && this.getVersionNumber().equalsIgnoreCase(MessageUtils
-				.getMessage("remote.ontology.version"))) {
+		if (this.isRemote()
+				&& this.getVersionNumber() != null
+				&& this.getVersionNumber().equalsIgnoreCase(
+						MessageUtils.getMessage("remote.ontology.version"))) {
 			return true;
-		} else if  (this.getIsMetadataOnly()!= null && this.getIsMetadataOnly().equals(ApplicationConstants.TRUE)) {
-			return true;		
-		}
-		else {
+		} else if (this.getIsMetadataOnly() != null
+				&& this.getIsMetadataOnly().equals(ApplicationConstants.TRUE)) {
+			return true;
+		} else {
 			return false;
 		}
-	}	
-	
+	}
+
 	/**
 	 * Populate default status in the bean Status is "1"(waiting) for local
 	 * upload, "5"(notapplicable) for remote.
@@ -960,5 +979,12 @@ public class OntologyBean {
 	 */
 	public void setViewGenerationEngine(String viewGenerationEngine) {
 		this.viewGenerationEngine = viewGenerationEngine;
+	}
+
+	/**
+	 * @return the userAcl
+	 */
+	public Map<Integer, Boolean> getUserAcl() {
+		return userAcl;
 	}
 }

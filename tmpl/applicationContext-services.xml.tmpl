@@ -629,6 +629,9 @@
 		<property name="ncboUserRoleDAO">
 			<ref bean="NcboUserRoleDAO" />
 		</property>
+		<property name="ncboOntologyAclDAO">
+			<ref bean="NcboOntologyAclDAO" />
+		</property>
 		<property name="encryptionService">
 			<ref bean="encryptionService" />
 		</property>
@@ -636,6 +639,7 @@
 			<ref bean="userMetadataManager" />
 		</property>
 	</bean>
+	
 	<!--Adding For SubscriptionsService-->
 	<bean id="subscriptionsService" class="org.ncbo.stanford.service.subscriptions.impl.SubscriptionsServiceImpl">
 		<property name="ncboUserSubscriptionsDAO">
@@ -790,6 +794,9 @@
 		</property>
 		<property name="ncboOntologyFileDAO">
 			<ref bean="NcboOntologyFileDAO" />
+		</property>
+		<property name="ncboUserDAO">
+			<ref bean="NcboUserDAO" />
 		</property>
 		<property name="ncboOntologyAclDAO">
 			<ref bean="NcboOntologyAclDAO" />

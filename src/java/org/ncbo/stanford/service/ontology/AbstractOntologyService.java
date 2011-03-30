@@ -14,6 +14,7 @@ import org.ncbo.stanford.bean.OntologyBean;
 import org.ncbo.stanford.domain.custom.dao.CustomNcboOntologyAclDAO;
 import org.ncbo.stanford.domain.custom.dao.CustomNcboOntologyFileDAO;
 import org.ncbo.stanford.domain.custom.dao.CustomNcboOntologyLoadQueueDAO;
+import org.ncbo.stanford.domain.custom.dao.CustomNcboUserDAO;
 import org.ncbo.stanford.exception.InvalidOntologyFormatException;
 import org.ncbo.stanford.manager.load.OntologyLoadManager;
 import org.ncbo.stanford.manager.metadata.OntologyMetadataManager;
@@ -36,6 +37,7 @@ public abstract class AbstractOntologyService {
 	protected Map<String, OntologyLoadManager> ontologyLoadHandlerMap = new HashMap<String, OntologyLoadManager>();
 	protected CustomNcboOntologyLoadQueueDAO ncboOntologyLoadQueueDAO;
 	protected CustomNcboOntologyFileDAO ncboOntologyFileDAO;
+	protected CustomNcboUserDAO ncboUserDAO;
 	protected CustomNcboOntologyAclDAO ncboOntologyAclDAO;
 
 	protected IndexSearchService indexService;
@@ -267,6 +269,14 @@ public abstract class AbstractOntologyService {
 	public void setNcboOntologyLoadQueueDAO(
 			CustomNcboOntologyLoadQueueDAO ncboOntologyLoadQueueDAO) {
 		this.ncboOntologyLoadQueueDAO = ncboOntologyLoadQueueDAO;
+	}
+
+	/**
+	 * @param ncboUserDAO
+	 *            the ncboUserDAO to set
+	 */
+	public void setNcboUserDAO(CustomNcboUserDAO ncboUserDAO) {
+		this.ncboUserDAO = ncboUserDAO;
 	}
 
 	/**

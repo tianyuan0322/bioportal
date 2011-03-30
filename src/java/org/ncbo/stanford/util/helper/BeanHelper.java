@@ -36,22 +36,25 @@ public class BeanHelper {
 				.getMessage("form.user.username"));
 		String password = httpServletRequest.getParameter(MessageUtils
 				.getMessage("form.user.password"));
-		String firstname = httpServletRequest.getParameter(MessageUtils
-				.getMessage("form.user.firstname"));
-		String lastname = httpServletRequest.getParameter(MessageUtils
-				.getMessage("form.user.lastname"));
 		String email = httpServletRequest.getParameter(MessageUtils
 				.getMessage("form.user.email"));
-		String phone = httpServletRequest.getParameter(MessageUtils
-				.getMessage("form.user.phone"));
-		String dateCreated = httpServletRequest.getParameter(MessageUtils
-				.getMessage("form.user.dateCreated"));
 
 		if (StringHelper.isNullOrNullString(username)
 				|| StringHelper.isNullOrNullString(password)
 				|| StringHelper.isNullOrNullString(email)) {
 			throw new InvalidInputException();
 		}
+
+		String firstname = httpServletRequest.getParameter(MessageUtils
+				.getMessage("form.user.firstname"));
+		String lastname = httpServletRequest.getParameter(MessageUtils
+				.getMessage("form.user.lastname"));
+		String phone = httpServletRequest.getParameter(MessageUtils
+				.getMessage("form.user.phone"));
+		String dateCreated = httpServletRequest.getParameter(MessageUtils
+				.getMessage("form.user.dateCreated"));
+		String ontologyAcl = httpServletRequest.getParameter(MessageUtils
+				.getMessage("form.user.ontologyacl"));
 
 		UserBean userBean = new UserBean();
 		userBean.setUsername(username);
@@ -61,6 +64,13 @@ public class BeanHelper {
 		userBean.setLastname(lastname);
 		userBean.setPhone(phone);
 		userBean.setDateCreated(DateHelper.getDateFrom(dateCreated));
+
+		List<Integer> ontologyAclList = RequestUtils
+				.parseIntegerListParam(ontologyAcl);
+
+		for (Integer ontologyId : ontologyAclList) {
+			userBean.addOntologyToAcl(ontologyId, false);
+		}
 
 		return userBean;
 	}
@@ -177,10 +187,13 @@ public class BeanHelper {
 						.getMessage("form.ontology.slotWithUniqueValue"));
 		String preferredMaximumSubclassLimit = httpServletRequest
 				.getParameter(MessageUtils
-						.getMessage("form.ontology.preferredMaximumSubclassLimit"));
+						.getMessage("form.ontology.preferredMaximumSubclassLimit"));		
+		String userAcl = httpServletRequest.getParameter(MessageUtils.getMessage("form.ontology.useracl"));
+		
+		boolean isViewBool = RequestUtils.parseBooleanParam(isView);
 
 		if (!StringHelper.isNullOrNullString(isView)) {
-			bean.setView(RequestUtils.parseBooleanParam(isView));
+			bean.setView(isViewBool);
 		}
 
 		if (!StringHelper.isNullOrNullString(ontologyId)) {
@@ -193,7 +206,19 @@ public class BeanHelper {
 		// calculated from the metadata ontology on a read operation
 
 		if (!StringHelper.isNullOrNullString(userId)) {
-			bean.setUserId(Integer.parseInt(userId));
+			Integer userIdInt = Integer.parseInt(userId);
+			bean.setUserId(userIdInt);
+
+			// set user ACL if passed in
+			if (userAcl != null && !isViewBool) {
+				// add this user as the owner
+				bean.addUserToAcl(userIdInt, true);
+				List<Integer> userIds = RequestUtils.parseIntegerListParam(userAcl);
+				
+				for (Integer usrId : userIds) {
+					bean.addUserToAcl(usrId, false);
+				}				
+			}
 		}
 
 		if (!StringHelper.isNullOrNullString(isManual)) {
