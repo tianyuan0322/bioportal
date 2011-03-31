@@ -46,9 +46,7 @@ public interface OntologyMetadataManager {
 
 	/**
 	 * Populates three global maps for quick ID translation:
-	 * 		versionIdToOntologyIdMap
-	 * 		viewVersionIdToViewIdMap
-	 * 		viewIdToOntologyIdsMap
+	 * versionIdToOntologyIdMap viewVersionIdToViewIdMap viewIdToOntologyIdsMap
 	 * 
 	 * @throws Exception
 	 */
@@ -316,4 +314,9 @@ public interface OntologyMetadataManager {
 	 * class.
 	 */
 	public OWLModel getMetadataOWLModel() throws Exception;
+	
+	/**
+	 * Periodically checks whether Protege server is alive
+	 */
+	public void pingProtegeServer();	
 }
