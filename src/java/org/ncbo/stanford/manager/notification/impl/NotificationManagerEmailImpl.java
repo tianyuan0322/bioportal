@@ -3,10 +3,7 @@ package org.ncbo.stanford.manager.notification.impl;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.ncbo.stanford.bean.UserBean;
-import org.ncbo.stanford.domain.generated.NcboAppText;
-import org.ncbo.stanford.domain.generated.NcboAppTextDAO;
 import org.ncbo.stanford.manager.notification.NotificationManager;
-import org.ncbo.stanford.util.MessageUtils;
 import org.ncbo.stanford.util.mail.impl.MailServiceImpl;
 
 /**
