@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.UUID;
 
 import org.ncbo.stanford.bean.UserBean;
 import org.ncbo.stanford.domain.custom.dao.CustomNcboLRoleDAO;
@@ -121,6 +122,10 @@ public class UserServiceImpl implements UserService {
 		String encodedPassword = encryptionService.encodePassword(userBean
 				.getPassword());
 		ncboUser.setPassword(encodedPassword);
+		String uuid = UUID.randomUUID().toString();
+		ncboUser.setApiKey(uuid);
+		userBean.setApiKey(uuid);
+
 		NcboUser newNcboUser = ncboUserDAO.saveUser(ncboUser);
 		userBean.setId(newNcboUser.getId());
 		userBean.setDateCreated(newNcboUser.getDateCreated());
