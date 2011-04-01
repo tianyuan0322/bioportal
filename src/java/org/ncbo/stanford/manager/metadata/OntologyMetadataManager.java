@@ -316,6 +316,17 @@ public interface OntologyMetadataManager {
 	public OWLModel getMetadataOWLModel() throws Exception;
 	
 	/**
+	 * Fills an instance of OntologyBean with data gathered from the metadata
+	 * OWLIndividual object
+	 * 
+	 * @param ob
+	 * @param ontologyInd
+	 * @throws Exception
+	 */
+	public OntologyBean fillInOntologyBeanFromInstance(OntologyBean ob,
+			OWLIndividual ontologyInd) throws Exception;
+
+	/**
 	 * Periodically checks whether Protege server is alive
 	 */
 	public void pingProtegeServer();	
