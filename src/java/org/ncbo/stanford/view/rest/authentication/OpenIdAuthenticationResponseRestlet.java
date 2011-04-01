@@ -15,7 +15,6 @@ import org.ncbo.stanford.domain.custom.dao.CustomNcboUserDAO;
 import org.ncbo.stanford.domain.generated.NcboUser;
 import org.ncbo.stanford.domain.generated.NcboUserRole;
 import org.ncbo.stanford.enumeration.ErrorTypeEnum;
-import org.ncbo.stanford.exception.ApplicationNotFoundException;
 import org.ncbo.stanford.service.session.SessionService;
 import org.ncbo.stanford.util.RequestUtils;
 import org.ncbo.stanford.view.rest.restlet.AbstractBaseRestlet;
@@ -176,15 +175,6 @@ public class OpenIdAuthenticationResponseRestlet extends AbstractBaseRestlet {
 								ErrorTypeEnum.INVALID_CREDENTIALS,
 								accessedResource));
 			}
-		} catch (ApplicationNotFoundException notFound) {
-			// this will execute if applicationId not exist in bioportal
-			log.error(notFound.getMessage());
-			SecurityContextHolder.getContext().setAuthentication(null);
-			RequestUtils.setHttpServletResponse(response,
-					Status.CLIENT_ERROR_FORBIDDEN, MediaType.TEXT_XML,
-					xmlSerializationService
-							.getErrorAsXML(ErrorTypeEnum.INVALID_CREDENTIALS,
-									accessedResource));
 		} catch (Exception e) {
 			e.printStackTrace();
 			log.error(e);
