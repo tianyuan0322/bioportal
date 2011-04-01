@@ -66,7 +66,7 @@ public class OntologyMetadataUtils extends MetadataUtils {
 	public static final String PROPERTY_FILE_PATH = PREFIX_METADATA
 			+ "filePath";
 	public static final String PROPERTY_DOWNLOAD_LOCATION = PREFIX_METADATA
-	        + "downloadLocation";	
+			+ "downloadLocation";
 	public static final String PROPERTY_HAS_CONTACT_EMAIL = PREFIX_METADATA
 			+ "hasContactEmail";
 	public static final String PROPERTY_HAS_CONTACT_NAME = PREFIX_METADATA
@@ -77,7 +77,7 @@ public class OntologyMetadataUtils extends MetadataUtils {
 	public static final String PROPERTY_IS_FOUNDRY = PREFIX_METADATA
 			+ "isFoundry";
 	public static final String PROPERTY_IS_METADATAONLY = PREFIX_METADATA
-	+ "isMetadataOnly";
+			+ "isMetadataOnly";
 	public static final String PROPERTY_IS_MANUAL = PREFIX_METADATA
 			+ "isManual";
 	public static final String PROPERTY_IS_REMOTE = PREFIX_METADATA
@@ -242,7 +242,7 @@ public class OntologyMetadataUtils extends MetadataUtils {
 				ob.setIsMetadataOnly((byte) 0);
 			}
 		}
-		
+
 		if (ob.getUserId() == null) {
 			// TODO temporary solution, until multiple administrators will be
 			// allowed:
@@ -327,11 +327,12 @@ public class OntologyMetadataUtils extends MetadataUtils {
 				owlModel.getXSDboolean());
 		setPropertyValue(owlModel, ontologyInd, PROPERTY_IS_FOUNDRY,
 				litIsFoundry); // TODO check this for correct type conversion
-		RDFSLiteral litIsMetadataOnly = owlModel.createRDFSLiteral(ob.getIsMetadataOnly()
-				.byteValue() == ApplicationConstants.FALSE ? "false" : "true",
-				owlModel.getXSDboolean());
+		RDFSLiteral litIsMetadataOnly = owlModel
+				.createRDFSLiteral(
+						ob.getIsMetadataOnly().byteValue() == ApplicationConstants.FALSE ? "false"
+								: "true", owlModel.getXSDboolean());
 		setPropertyValue(owlModel, ontologyInd, PROPERTY_IS_METADATAONLY,
-				litIsMetadataOnly); 
+				litIsMetadataOnly);
 		RDFSLiteral litIsManual = owlModel.createRDFSLiteral(ob.getIsManual()
 				.byteValue() == ApplicationConstants.FALSE ? "false" : "true",
 				owlModel.getXSDboolean());
@@ -537,7 +538,7 @@ public class OntologyMetadataUtils extends MetadataUtils {
 		setPropertyValuesFromMap(owlModel, ontologyInd,
 				PROPERTY_METRICS_CLASSES_WITH_MORE_THAN_X_SUBCLASSES,
 				classesWithMoreThanXSubclasses);
-		
+
 		setPropertyValue(
 				owlModel,
 				ontologyInd,
@@ -665,7 +666,7 @@ public class OntologyMetadataUtils extends MetadataUtils {
 		}
 	}
 
-	private static void fillInDummyOntologyBeanFromVirtualOntology(
+	public static void fillInDummyOntologyBeanFromVirtualOntology(
 			OntologyBean ob, OWLIndividual vOntologyInd) throws Exception {
 		if (vOntologyInd == null || ob == null) {
 			throw new MetadataException(
@@ -681,7 +682,6 @@ public class OntologyMetadataUtils extends MetadataUtils {
 				vOntologyInd, PROPERTY_IS_MANUAL, Boolean.class)));
 	}
 
-	@SuppressWarnings("unchecked")
 	public static void fillInMetricsBeanFromInstance(OntologyMetricsBean mb,
 			OWLIndividual ontologyInd) throws Exception {
 
@@ -1153,47 +1153,6 @@ public class OntologyMetadataUtils extends MetadataUtils {
 	public static OWLIndividual getOntologyViewWithId(OWLModel metadata,
 			Integer id) {
 		return getIndividualWithId(metadata, CLASS_ONTOLOGY_VIEW, id, false);
-	}
-
-	public static OntologyBean findLatestOntologyVersionByOboFoundryId(
-			OWLModel metadata, String oboFoundryId, boolean onlyActive) {
-		OntologyBean res = null;
-		List<OWLIndividual> vOntIndividuals = getIndividualsWithMatchingProperty(
-				metadata, CLASS_VIRTUAL_ONTOLOGY, PROPERTY_OBO_FOUNDRY_ID,
-				oboFoundryId, false);// choose "true" if we will return also
-		// ontology views (and rename methods
-		// appropriately)
-
-		if (vOntIndividuals != null && (!vOntIndividuals.isEmpty())) {
-			if (vOntIndividuals.size() > 1) {
-				log
-						.error("Multiple virtual ontology individuals attached to ontology version: "
-								+ oboFoundryId);
-			}
-
-			OWLIndividual vOntInd = vOntIndividuals.get(0);
-			boolean isView = OntologyMetadataUtils
-					.isVirtualViewIndividual(vOntInd);
-			res = new OntologyBean(isView);
-
-			try {
-				OWLIndividual ontologyInd = OntologyMetadataUtils
-						.getLatestVersion(vOntInd, onlyActive);
-
-				if (ontologyInd == null) {
-					fillInDummyOntologyBeanFromVirtualOntology(res, vOntInd);
-				} else {
-					fillInOntologyBeanFromInstance(res, ontologyInd);
-				}
-			} catch (Exception e) {
-				e.printStackTrace();
-				log.error("Exception while getting the last version on "
-						+ vOntInd, e);
-				res = null;
-			}
-		}
-
-		return res;
 	}
 
 	public static List<OWLIndividual> searchOntologyMetadata(OWLModel metadata,
