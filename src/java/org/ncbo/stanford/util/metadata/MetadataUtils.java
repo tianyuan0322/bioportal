@@ -423,7 +423,7 @@ public class MetadataUtils {
 		return res;
 	}
 
-	protected static List<OWLIndividual> getIndividualsWithMatchingProperty(
+	public static List<OWLIndividual> getIndividualsWithMatchingProperty(
 			OWLModel metadata, String class_name, String property_name,
 			String value, boolean transitive) {
 		List<OWLIndividual> res = null;
