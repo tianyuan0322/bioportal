@@ -1,5 +1,7 @@
 USE `bioportal`;
 
+ALTER TABLE `ncbo_user` MODIFY COLUMN `api_key` VARCHAR(36) CHARACTER SET utf8 COLLATE utf8_bin NOT NULL DEFAULT 'UUID()';
+
 INSERT INTO ncbo_user (username, api_key, password, email, firstname, lastname)
 SELECT LOWER(application_name), application_id, 'MaT9mL6DdWI6s471OFTiJUEZlZz6Ycx0OjXfNZZPHFMic8n5uAeyd9GCLKPstDjQ', 
 	CONCAT(LOWER(application_name), '@', 'bioontology.org'), application_name, application_name
