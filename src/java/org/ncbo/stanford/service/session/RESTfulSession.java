@@ -6,10 +6,8 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.Enumeration;
 import java.util.HashMap;
 
-import org.springframework.security.ui.savedrequest.Enumerator;
 
 
 /**
@@ -266,24 +264,6 @@ public class RESTfulSession {
 		synchronized (attributes) {
 			return attributes.get(name);
 		}
-	}
-
-	/**
-	 * Return an <code>Enumeration</code> of <code>String</code> objects
-	 * containing the names of the objects bound to this session.
-	 * 
-	 * @exception IllegalStateException
-	 *                if this method is called on an invalidated session
-	 */
-	public Enumeration<?> getAttributeNames() {
-		if (!isValid) {
-			throw new IllegalStateException(ILLEGAL_STATE_EXCEPTION_MSG);
-		}
-
-		synchronized (attributes) {
-			return new Enumerator(attributes.keySet(), true);
-		}
-
 	}
 
 	/**
