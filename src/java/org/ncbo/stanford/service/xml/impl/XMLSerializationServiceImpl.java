@@ -25,6 +25,8 @@ import org.ncbo.stanford.bean.OntologyBean;
 import org.ncbo.stanford.bean.OntologyMetricsBean;
 import org.ncbo.stanford.bean.SubscriptionsBean;
 import org.ncbo.stanford.bean.UserBean;
+import org.ncbo.stanford.bean.acl.OntologyAcl;
+import org.ncbo.stanford.bean.acl.UserAcl;
 import org.ncbo.stanford.bean.concept.ClassBean;
 import org.ncbo.stanford.bean.concept.InstanceBean;
 import org.ncbo.stanford.bean.concept.PropertyBean;
@@ -54,8 +56,10 @@ import org.ncbo.stanford.service.xml.converters.ClassBeanListConverter;
 import org.ncbo.stanford.service.xml.converters.ClassBeanResultListBeanConverter;
 import org.ncbo.stanford.service.xml.converters.InstanceBeanResultListBeanConverter;
 import org.ncbo.stanford.service.xml.converters.MappingResultListBeanConverter;
+import org.ncbo.stanford.service.xml.converters.OntologyAclConverter;
 import org.ncbo.stanford.service.xml.converters.OntologyHitMapConverter;
 import org.ncbo.stanford.service.xml.converters.SearchResultListBeanConverter;
+import org.ncbo.stanford.service.xml.converters.UserAclConverter;
 import org.ncbo.stanford.util.MessageUtils;
 import org.ncbo.stanford.util.RequestUtils;
 import org.ncbo.stanford.util.constants.ApplicationConstants;
@@ -76,6 +80,7 @@ import org.w3c.dom.Text;
 import com.thoughtworks.xstream.XStream;
 import com.thoughtworks.xstream.converters.enums.EnumSingleValueConverter;
 import com.thoughtworks.xstream.io.xml.TraxSource;
+import com.thoughtworks.xstream.mapper.Mapper;
 
 /**
  * A default implementation of the XMLSerializationService
@@ -440,23 +445,24 @@ public class XMLSerializationServiceImpl implements XMLSerializationService {
 	 * set aliases for xmlSerializer
 	 */
 	private void registerConverters(XStream xmlSerializer) {
-		xmlSerializer.registerConverter(new OntologyHitMapConverter(
-				xmlSerializer.getMapper()));
+		Mapper mapper = xmlSerializer.getMapper();
+		xmlSerializer.registerConverter(new OntologyHitMapConverter(mapper));
 		xmlSerializer.registerConverter(new SearchResultListBeanConverter(
-				xmlSerializer.getMapper()));
+				mapper));
 		xmlSerializer.registerConverter(new EnumSingleValueConverter(
 				SearchRecordTypeEnum.class));
 		xmlSerializer.registerConverter(new EnumSingleValueConverter(
 				ConceptTypeEnum.class));
 		xmlSerializer.registerConverter(new ClassBeanResultListBeanConverter(
-				xmlSerializer.getMapper()));
-		xmlSerializer.registerConverter(new ClassBeanListConverter(
-				xmlSerializer.getMapper()));
+				mapper));
+		xmlSerializer.registerConverter(new ClassBeanListConverter(mapper));
 		xmlSerializer
 				.registerConverter(new InstanceBeanResultListBeanConverter(
-						xmlSerializer.getMapper()));
+						mapper));
 		xmlSerializer.registerConverter(new MappingResultListBeanConverter(
-				xmlSerializer.getMapper()));
+				mapper));
+		xmlSerializer.registerConverter(new UserAclConverter(mapper));
+		xmlSerializer.registerConverter(new OntologyAclConverter(mapper));
 	}
 
 	/**
@@ -521,6 +527,9 @@ public class XMLSerializationServiceImpl implements XMLSerializationService {
 				ErrorStatusBean.class);
 		xmlSerializer.alias(ApplicationConstants.SUCCESS_XML_TAG_NAME,
 				SuccessBean.class);
+		String aclAlias = MessageUtils.getMessage("entity.acl");
+		xmlSerializer.alias(aclAlias, OntologyAcl.class);
+		xmlSerializer.alias(aclAlias, UserAcl.class);
 
 		// Mapping aliases using annotations
 		xmlSerializer.processAnnotations(MappingBean.class);
