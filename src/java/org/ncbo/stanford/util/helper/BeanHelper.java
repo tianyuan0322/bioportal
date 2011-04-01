@@ -187,9 +187,10 @@ public class BeanHelper {
 						.getMessage("form.ontology.slotWithUniqueValue"));
 		String preferredMaximumSubclassLimit = httpServletRequest
 				.getParameter(MessageUtils
-						.getMessage("form.ontology.preferredMaximumSubclassLimit"));		
-		String userAcl = httpServletRequest.getParameter(MessageUtils.getMessage("form.ontology.useracl"));
-		
+						.getMessage("form.ontology.preferredMaximumSubclassLimit"));
+		String userAcl = httpServletRequest.getParameter(MessageUtils
+				.getMessage("form.ontology.useracl"));
+
 		boolean isViewBool = RequestUtils.parseBooleanParam(isView);
 
 		if (!StringHelper.isNullOrNullString(isView)) {
@@ -213,11 +214,13 @@ public class BeanHelper {
 			if (userAcl != null && !isViewBool) {
 				// add this user as the owner
 				bean.addUserToAcl(userIdInt, true);
-				List<Integer> userIds = RequestUtils.parseIntegerListParam(userAcl);
-				
+				List<Integer> userIds = RequestUtils
+						.parseIntegerListParam(userAcl);
+
 				for (Integer usrId : userIds) {
-					bean.addUserToAcl(usrId, false);
-				}				
+					bean.addUserToAcl(usrId, (usrId.equals(userIdInt)) ? true
+							: false);
+				}
 			}
 		}
 
