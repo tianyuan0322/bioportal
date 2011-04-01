@@ -133,7 +133,7 @@
 		</copy>
 
 		<copy file="${tmpl.dir}/log4j.dtd" tofile="${conf.dir.generated}/log4j.dtd" overwrite="true" />
-
+		
 		<copy file="${tmpl.dir}/${bioportal.messagebundle.name}.properties.tmpl" tofile="${bioportal.messagebundle.path}/${bioportal.messagebundle.name}.properties" overwrite="true">
 			<filterset>
 				<filter token="bioportalxsltpath" value="${bioportal.xslt.path}" />
@@ -164,7 +164,11 @@
 		<copy file="${tmpl.dir}/c3p0.properties.tmpl" tofile="${web.dir}/WEB-INF/classes/c3p0.properties" overwrite="true" />
 
 		<copy file="${tmpl.dir}/org.openrdf.concepts" tofile="${web.dir}/WEB-INF/classes/META-INF/org.openrdf.concepts" overwrite="true" />
+
+		<copy file="${tmpl.dir}/aop.xml.tmpl" tofile="${web.dir}/WEB-INF/classes/META-INF/aop.xml" overwrite="true" />
 		
+		<copy file="${tmpl.dir}/context.xml.tmpl" tofile="${meta-inf.dir}/context.xml" overwrite="true" />
+
 		<copy file="${tmpl.dir}/applicationContext-datasources.${bioportal.environment}.xml.tmpl" tofile="${conf.dir.generated}/applicationContext-datasources.xml" overwrite="true">
 			<filterset>
 				<filter token="bioportaldatasource" value="${bioportal.datasource}" />
