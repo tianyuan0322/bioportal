@@ -13,7 +13,6 @@ import edu.stanford.smi.protegex.owl.model.OWLModel;
 public class UserMetadataManagerImpl extends AbstractOntologyMetadataManager
 		implements UserMetadataManager {
 
-	@SuppressWarnings("unchecked")
 	public void saveUser(UserBean userBean) throws Exception {
 		// This will creates the metadata for user
 		OWLModel metadata = getMetadataOWLModel();
