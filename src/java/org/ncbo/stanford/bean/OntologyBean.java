@@ -212,7 +212,8 @@ public class OntologyBean {
 				+ this.getViewDefinitionLanguage()
 				+ ", View Generation Engine: " + this.getViewGenerationEngine()
 				+ ", View on Ontology Versions: "
-				+ this.getViewOnOntologyVersionId() + "}";
+				+ this.getViewOnOntologyVersionId() + ", ACL: "
+				+ this.getUserAcl() + "}";
 	}
 
 	/**
