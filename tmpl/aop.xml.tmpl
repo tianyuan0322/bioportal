@@ -1,0 +1,12 @@
+<!DOCTYPE aspectj PUBLIC
+        "-//AspectJ//DTD//EN" "http://www.eclipse.org/aspectj/dtd/aspectj.dtd">
+<aspectj>
+    <aspects>
+        <!-- weave in just this aspect -->        
+        <aspect name="org.ncbo.stanford.aop.ontology.OntologyMetadataAdvice"/>
+    </aspects>
+
+    <weaver>
+        <include within="org.ncbo.stanford.manager.metadata.impl.OntologyMetadataManagerImpl"/>
+    </weaver>
+</aspectj>

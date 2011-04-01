@@ -1,11 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<Context>
-	<Resource name="@bioportaldatasourcename@"
-		type="javax.sql.DataSource" driverClassName="@bioportaljdbcdriver@"
-		username="@bioportaljdbcusername@" password="@bioportaljdbcpassword@"
-		url="@bioportaljdbcurl@" maxActive="@bioportaljdbcmaxactive@"
-		maxIdle="@bioportaljdbcmaxidle@" maxWait="@bioportaljdbcmaxwait@"
-		removeAbandoned="@bioportaldatasourceremoveabandoned@"
-		removeAbandonedTimeout="@bioportaldatasourceremoveabandonedtimeout@"
-		logAbandoned="@bioportaldatasourcelogabandoned@" />
+<Context path="/bioportal">
+	<Loader
+		loaderClass="org.springframework.instrument.classloading.tomcat.TomcatInstrumentableClassLoader"
+		useSystemClassLoaderAsParent="false" />
 </Context>
