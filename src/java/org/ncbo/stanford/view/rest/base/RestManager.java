@@ -3,6 +3,7 @@ package org.ncbo.stanford.view.rest.base;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.restlet.Context;
 import org.restlet.Restlet;
 import org.restlet.routing.Router;
 
@@ -15,7 +16,14 @@ public class RestManager {
 
 	public void init(Router router) {
 		for (String key : resourceMappings.keySet()) {
-			router.attach(key, resourceMappings.get(key));
+			if (key.endsWith("/")) {
+				router.attach(key.substring(0, key.length() - 1),
+						resourceMappings.get(key));
+				router.attach(key, resourceMappings.get(key));
+			} else {
+				router.attach(key, resourceMappings.get(key));
+				router.attach(key + "/", resourceMappings.get(key));
+			}
 		}
 	}
 
