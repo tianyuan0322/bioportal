@@ -3,7 +3,6 @@ package org.ncbo.stanford.view.rest.base;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.restlet.Context;
 import org.restlet.Restlet;
 import org.restlet.routing.Router;
 
