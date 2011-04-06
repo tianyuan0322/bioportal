@@ -3,10 +3,10 @@ package org.ncbo.stanford.bean;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.ncbo.stanford.bean.acl.OntologyAcl;
 import org.ncbo.stanford.domain.generated.NcboOntologyAcl;
 import org.ncbo.stanford.domain.generated.NcboUser;
 import org.ncbo.stanford.domain.generated.NcboUserRole;
@@ -27,7 +27,7 @@ public class UserBean {
 	private String phone;
 	private Date dateCreated;
 	private List<String> roles = new ArrayList<String>(0);
-	private Map<Integer, Boolean> ontologyAcl = new HashMap<Integer, Boolean>(0);
+	private OntologyAcl ontologyAcl = new OntologyAcl(0);
 
 	public String toString() {
 		return "{Id: " + this.getId() + ", Username: " + this.getUsername()
@@ -57,8 +57,8 @@ public class UserBean {
 	 * @param isOwner
 	 * @return
 	 */
-	public boolean addOntologyToAcl(Integer ontologyId, Boolean isOwner) {
-		return ontologyAcl.put(ontologyId, isOwner);
+	public void addOntologyToAcl(Integer ontologyId, Boolean isOwner) {
+		ontologyAcl.put(ontologyId, isOwner);
 	}
 
 	/**

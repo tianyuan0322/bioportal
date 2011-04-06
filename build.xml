@@ -14,7 +14,7 @@
 	<property name="resources.dir" value="${web.dir}/WEB-INF/resources" />
 	<property name="conf.dir.generated" value="${conf.dir}/generated" />
 	<property name="tmpl.dir" value="tmpl" />
-
+	
 	<path id="master-classpath">
 		<fileset dir="${lib.dir}">
 			<include name="**/*.jar" />
@@ -97,7 +97,7 @@
 		<echo message="LexGrid registry.xml file is not present. Creating a default empty file..." />
 		<copy file="${tmpl.dir}/registry.xml.tmpl" tofile="${lexgrid.registry.file}" />
 	</target>
-
+	
 	<target name="prepare" description="Create configuration files using templates">
 		<echo message="log4j path: = ${bioportal.app.logfilepath}" />
 
@@ -357,6 +357,13 @@
 				<exclude name="javax.servlet.jar" />
 				<exclude name="javax.servlet.jsp.jar" />
 				<exclude name="servlet-api.jar" />
+			</fileset>
+		</copy>
+
+		<!-- Add any container dependent JARs -->
+		<copy todir="${appserver.lib}" flatten="true" overwrite="true">
+			<fileset dir="${resources.dir}/server_lib">
+				<include name="**/*.jar" />
 			</fileset>
 		</copy>
 	</target>

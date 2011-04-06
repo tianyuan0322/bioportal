@@ -3,25 +3,14 @@
  */
 package org.ncbo.stanford.view.rest.authentication;
 
-import java.util.List;
-
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.ncbo.stanford.enumeration.ErrorTypeEnum;
-import org.ncbo.stanford.util.RequestUtils;
 import org.ncbo.stanford.view.rest.restlet.AbstractBaseRestlet;
 import org.ncbo.stanford.view.util.constants.RequestParamConstants;
-import org.openid4java.consumer.ConsumerManager;
-import org.openid4java.discovery.DiscoveryInformation;
-import org.openid4java.message.AuthRequest;
 import org.restlet.Request;
 import org.restlet.Response;
-import org.restlet.data.MediaType;
-import org.restlet.data.Status;
-import org.springframework.security.context.SecurityContextHolder;
 
 /**
  * @author s.reddy
@@ -42,6 +31,7 @@ public class OpenIdAuthenticationRestlet extends AbstractBaseRestlet {
 
 	@SuppressWarnings("unchecked")
 	private void authenticate(Request request, Response response) {
+/*		
 		String accessedResource = request.getResourceRef().getPath();
 
 		try {
@@ -83,6 +73,7 @@ public class OpenIdAuthenticationRestlet extends AbstractBaseRestlet {
 					xmlSerializationService.getErrorAsXML(
 							ErrorTypeEnum.RUNTIME_ERROR, accessedResource));
 		}
+*/
 	}
 
 	public String obtainOpenId(HttpServletRequest req) {

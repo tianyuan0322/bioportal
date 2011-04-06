@@ -248,9 +248,11 @@ public class AuthorizationFilter extends AbstractAuthFilter implements
 		RouteList routes = next.getRoutes();
 		TemplateRoute best = routes.getBest(request, response, 0);
 
-		final String remainingPart = request.getResourceRef().getRemainingPart(
-				false, true);
-		best.getTemplate().parse(remainingPart, request.getAttributes());
+		if (best != null) {
+			final String remainingPart = request.getResourceRef().getRemainingPart(
+					false, true);
+			best.getTemplate().parse(remainingPart, request.getAttributes());
+		}
 	}
 
 	@Override

@@ -1,5 +1,7 @@
 package org.ncbo.stanford.util.security.filter;
 
+import java.net.InetAddress;
+import java.net.UnknownHostException;
 import java.util.ArrayList;
 
 import javax.servlet.http.HttpServletRequest;
@@ -91,10 +93,31 @@ public class AuthenticationFilter extends AbstractAuthFilter implements
 			// keys to go through the new authentication/authorization process,
 			// while users without API keys to be allowed access. Once this
 			// block is removed, no API-less access will be allowed.
-			log.info("A user identified by IP: "
-					+ request.getClientInfo().getAddress() + ", Referrer: "
-					+ request.getReferrerRef() + ", Accessed Resource: \"" + ref
+			String ip = null;
+			String hostname = null;
+
+			try {
+				InetAddress addr = InetAddress.getLocalHost();
+				ip = addr.getHostAddress();
+				hostname = addr.getCanonicalHostName();
+
+				log.info("A user identified by IP: "
+						+ InetAddress.getLocalHost().getHostAddress()
+						+ ", Hostname: "
+						+ InetAddress.getLocalHost().getCanonicalHostName()
+						+ ", and Referrer: " + request.getReferrerRef()
+						+ ", Accessed Resource: \"" + ref
+						+ "\" attempted access with an empty API Key.");
+			} catch (UnknownHostException e) {
+				ip = httpRequest.getRemoteAddr();
+				hostname = httpRequest.getRemoteHost();
+			}
+
+			log.info("A user identified by IP: " + ip + ", Hostname: "
+					+ hostname + ", and Referrer: " + request.getReferrerRef()
+					+ ", Accessed Resource: \"" + ref
 					+ "\" attempted access with an empty API Key.");
+
 			apiKey = TEMP_ADMIN_APIKEY;
 		}
 

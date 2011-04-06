@@ -17,11 +17,8 @@
 	<classpathentry exported="true" kind="lib" path="WebRoot/WEB-INF/lib/jta.jar"/>
 	<classpathentry exported="true" kind="lib" path="WebRoot/WEB-INF/lib/log4j-1.2.15.jar"/>
 	<classpathentry exported="true" kind="lib" path="WebRoot/WEB-INF/lib/spring.jar"/>
-	<classpathentry exported="true" kind="lib" path="WebRoot/WEB-INF/lib/openid4java-0.9.5.jar"/>
-	<classpathentry exported="true" kind="lib" path="WebRoot/WEB-INF/lib/spring-security-acl-2.0.0.jar"/>
 	<classpathentry exported="true" kind="lib" path="WebRoot/WEB-INF/lib/spring-security-core-2.0.0.jar"/>
-	<classpathentry exported="true" kind="lib" path="WebRoot/WEB-INF/lib/spring-security-core-tiger-2.0.0.jar"/>
-	<classpathentry exported="true" kind="lib" path="WebRoot/WEB-INF/lib/spring-security-taglibs-2.0.4.jar"/>
+	<classpathentry exported="true" kind="lib" path="WebRoot/WEB-INF/lib/openid4java-0.9.5.jar"/>
 	<classpathentry exported="true" kind="lib" path="WebRoot/WEB-INF/lib/stax-api-1.0.1.jar"/>
 	<classpathentry exported="true" kind="lib" path="WebRoot/WEB-INF/lib/quartz-1.6.0.jar"/>
 	<classpathentry exported="true" kind="lib" path="WebRoot/WEB-INF/lib/aspectjrt.jar"/>

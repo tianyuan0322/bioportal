@@ -1863,6 +1863,10 @@
 	</aop:config>
 
 	<context:load-time-weaver />
+    <context:annotation-config/>        
+
+	<!-- This declaration is required when using Spring Dependency Injection inside the aspect -->
+	<bean class="org.ncbo.stanford.aop.ontology.OntologyMetadataAdvice" factory-method="aspectOf" />
 
 	<bean id="smtpAuthenticator"
 		class="org.ncbo.stanford.util.mail.authenticator.SmtpAuthenticator">

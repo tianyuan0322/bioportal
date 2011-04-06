@@ -196,9 +196,10 @@ public class OntologyMetadataManagerImpl extends
 			return null;
 		}
 
-		boolean isView = OntologyMetadataUtils.isOntologyViewIndividual(ontologyInd);
+		boolean isView = OntologyMetadataUtils
+				.isOntologyViewIndividual(ontologyInd);
 		OntologyBean ob = new OntologyBean(isView);
-		ob = fillInOntologyBeanFromInstance(ob, ontologyInd);
+		fillInOntologyBeanFromInstance(ob, ontologyInd);
 
 		return ob;
 	}
@@ -211,8 +212,8 @@ public class OntologyMetadataManagerImpl extends
 		OWLIndividual vOntInd = getVirtualOntologyInstance(metadata,
 				ontologyId, DO_NOT_CREATE_IF_MISSING);
 		OntologyBean ob = new OntologyBean(false);
-		OWLIndividual ontologyInd = OntologyMetadataUtils.getLatestVersion(vOntInd,
-				ONLY_ACTIVE_VERSIONS);
+		OWLIndividual ontologyInd = OntologyMetadataUtils.getLatestVersion(
+				vOntInd, ONLY_ACTIVE_VERSIONS);
 
 		try {
 			fillInOntologyBeanFromInstance(ob, ontologyInd);
@@ -237,8 +238,8 @@ public class OntologyMetadataManagerImpl extends
 
 		boolean isView = OntologyMetadataUtils.isVirtualViewIndividual(vOntInd);
 		OntologyBean ob = new OntologyBean(isView);
-		OWLIndividual ontologyInd = OntologyMetadataUtils.getLatestVersion(vOntInd,
-				ALL_VERSIONS);
+		OWLIndividual ontologyInd = OntologyMetadataUtils.getLatestVersion(
+				vOntInd, ALL_VERSIONS);
 
 		try {
 			fillInOntologyBeanFromInstance(ob, ontologyInd);
@@ -263,8 +264,8 @@ public class OntologyMetadataManagerImpl extends
 
 		boolean isView = OntologyMetadataUtils.isVirtualViewIndividual(vOntInd);
 		OntologyBean ob = new OntologyBean(isView);
-		OWLIndividual ontologyInd = OntologyMetadataUtils.getLatestVersion(vOntInd,
-				ONLY_ACTIVE_VERSIONS);
+		OWLIndividual ontologyInd = OntologyMetadataUtils.getLatestVersion(
+				vOntInd, ONLY_ACTIVE_VERSIONS);
 
 		try {
 			fillInOntologyBeanFromInstance(ob, ontologyInd);
@@ -489,8 +490,8 @@ public class OntologyMetadataManagerImpl extends
 				DO_NOT_CREATE_IF_MISSING);
 		OntologyBean ob = new OntologyBean(true);
 
-		OWLIndividual ontologyInd = OntologyMetadataUtils.getLatestVersion(vOntInd,
-				ONLY_ACTIVE_VERSIONS);
+		OWLIndividual ontologyInd = OntologyMetadataUtils.getLatestVersion(
+				vOntInd, ONLY_ACTIVE_VERSIONS);
 
 		try {
 			fillInOntologyBeanFromInstance(ob, ontologyInd);
@@ -701,34 +702,12 @@ public class OntologyMetadataManagerImpl extends
 		return res;
 	}
 
-	
-
-	
-	
-	
-	
-	
-	
-	
-	
 	public OntologyBean fillInOntologyBeanFromInstance(OntologyBean ob,
 			OWLIndividual ontologyInd) throws Exception {
 		OntologyMetadataUtils.fillInOntologyBeanFromInstance(ob, ontologyInd);
 		return ob;
 	}
 
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
 	private void fillInDummyOntologyBeanFromVirtualOntology(OntologyBean ob,
 			OWLIndividual vOntologyInd) throws Exception {
 		OntologyMetadataUtils.fillInDummyOntologyBeanFromVirtualOntology(ob,

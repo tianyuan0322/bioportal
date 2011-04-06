@@ -3,21 +3,15 @@
  */
 package org.ncbo.stanford.domain.custom.dao;
 
-import java.util.List;
 import java.util.ArrayList;
-
-import org.hibernate.criterion.Expression;
-
-import org.hibernate.criterion.Restrictions;
+import java.util.List;
 
 import org.hibernate.Criteria;
-
+import org.hibernate.criterion.Restrictions;
 import org.ncbo.stanford.domain.generated.NcboLNotificationType;
 import org.ncbo.stanford.domain.generated.NcboUserSubscriptions;
 import org.ncbo.stanford.domain.generated.NcboUserSubscriptionsDAO;
 import org.ncbo.stanford.enumeration.NotificationTypeEnum;
-import org.ncbo.stanford.util.constants.ApplicationConstants;
-
 import org.ncbo.stanford.util.constants.ApplicationConstants;
 
 /**
@@ -62,12 +56,8 @@ public class CustomNcboUserSubscriptionsDAO extends NcboUserSubscriptionsDAO {
 				"ncboLNotificationType", "ncboLNotificationType")
 				.add(Restrictions.in("ontologyId", ontologyList))
 				.add(Restrictions.in("ncboLNotificationType.type", typeEnum));
-		List result = criteria.list();
-		return result;
 
-		
-		
-
+		return criteria.list();
 	}
 	/**
 	 * 
@@ -77,14 +67,13 @@ public class CustomNcboUserSubscriptionsDAO extends NcboUserSubscriptionsDAO {
 	 */
 	public List findByUserIdAndOntologyId(String ontologyId, Integer userId,
 			NcboLNotificationType notificationTypes) {
-		Criteria crit = getSession()
+		Criteria criteria = getSession()
 				.createCriteria(NcboUserSubscriptions.class); 
-		crit.add(Restrictions.eq("ontologyId", ontologyId));
-		crit.add(Restrictions.eq("userId", userId));
-		crit.add(Restrictions.eq("ncboLNotificationType", notificationTypes));
+		criteria.add(Restrictions.eq("ontologyId", ontologyId));
+		criteria.add(Restrictions.eq("userId", userId));
+		criteria.add(Restrictions.eq("ncboLNotificationType", notificationTypes));
 
-		List results = crit.list();
-		return results;
+		return criteria.list();
 	}
 	/**
 	 * Method For Finding the userId,notificationType according to List of OntologyId
@@ -104,7 +93,7 @@ public class CustomNcboUserSubscriptionsDAO extends NcboUserSubscriptionsDAO {
 				.add(Restrictions.in("ontologyId", ontologyIds))
 				.add(Restrictions.in("ncboLNotificationType.type", typeEnum))
 				.add(Restrictions.eq("userId", userIds));
-		List result = criteria.list();
-		return result;
+		
+		return criteria.list();
 	}
 }

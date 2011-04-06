@@ -4,13 +4,13 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collection;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
 import org.apache.commons.fileupload.FileItem;
+import org.ncbo.stanford.bean.acl.UserAcl;
 import org.ncbo.stanford.domain.generated.NcboLStatus;
 import org.ncbo.stanford.domain.generated.NcboOntologyFile;
 import org.ncbo.stanford.domain.generated.NcboOntologyLoadQueue;
@@ -60,7 +60,7 @@ public class OntologyBean {
 	private String authorSlot;
 	private String slotWithUniqueValue;
 	private Integer preferredMaximumSubclassLimit;
-	private Map<Integer, Boolean> userAcl = new HashMap<Integer, Boolean>(0);
+	private UserAcl userAcl = new UserAcl(0);
 
 	private boolean isView = false;
 
@@ -111,10 +111,9 @@ public class OntologyBean {
 	 * 
 	 * @param userId
 	 * @param isOwner
-	 * @return
 	 */
-	public boolean addUserToAcl(Integer userId, Boolean isOwner) {
-		return userAcl.put(userId, isOwner);
+	public void addUserToAcl(Integer userId, Boolean isOwner) {
+		userAcl.put(userId, isOwner);
 	}
 
 	/**
