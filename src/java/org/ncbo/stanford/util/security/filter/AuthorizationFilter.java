@@ -250,7 +250,7 @@ public class AuthorizationFilter extends AbstractAuthFilter implements
 
 		if (best != null) {
 			final String remainingPart = request.getResourceRef().getRemainingPart(
-					false, true);
+					false, false);
 			best.getTemplate().parse(remainingPart, request.getAttributes());
 		}
 	}

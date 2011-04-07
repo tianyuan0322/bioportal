@@ -113,8 +113,11 @@ public class AuthenticationFilter extends AbstractAuthFilter implements
 				hostname = httpRequest.getRemoteHost();
 			}
 
+			Reference referrer = request.getReferrerRef();
+
 			log.info("A user identified by IP: " + ip + ", Hostname: "
-					+ hostname + ", and Referrer: " + request.getReferrerRef()
+					+ hostname
+					+ ((referrer != null) ? ", and Referrer: " + referrer : "")
 					+ ", Accessed Resource: \"" + ref
 					+ "\" attempted access with an empty API Key.");
 
