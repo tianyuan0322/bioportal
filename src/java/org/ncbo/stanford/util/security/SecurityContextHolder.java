@@ -9,7 +9,6 @@ public class SecurityContextHolder {
 
 	public SecurityContextHolder(String apiKey, String appApiKey,
 			UserBean userBean) {
-		super();
 		this.apiKey = apiKey;
 		this.appApiKey = appApiKey;
 		this.userBean = userBean;

@@ -37,17 +37,17 @@ public class AuthorizationFilter extends AbstractAuthFilter implements
 
 	private OntologyService ontologyService;
 
-	private List<String> ontologyVirualParams = new ArrayList<String>(Arrays
-			.asList(RequestParamConstants.PARAM_ONTOLOGY_ID,
-					RequestParamConstants.PARAM_ONTOLOGY_IDS));
+	private List<String> ontologyVirualParams = Arrays.asList(
+			RequestParamConstants.PARAM_ONTOLOGY_ID,
+			RequestParamConstants.PARAM_ONTOLOGY_IDS);
 
-	private List<String> ontologyVersionParams = new ArrayList<String>(Arrays
-			.asList(RequestParamConstants.PARAM_ONTOLOGY_VERSION_ID,
-					RequestParamConstants.PARAM_ONTOLOGY_VERSION_IDS,
-					RequestParamConstants.PARAM_ONTOLOGY_VERSION_OLD,
-					RequestParamConstants.PARAM_ONTOLOGY_VERSION_NEW,
-					RequestParamConstants.PARAM_ONTOLOGY_VERSION_ID_1,
-					RequestParamConstants.PARAM_ONTOLOGY_VERSION_ID_2));
+	private List<String> ontologyVersionParams = Arrays.asList(
+			RequestParamConstants.PARAM_ONTOLOGY_VERSION_ID,
+			RequestParamConstants.PARAM_ONTOLOGY_VERSION_IDS,
+			RequestParamConstants.PARAM_ONTOLOGY_VERSION_OLD,
+			RequestParamConstants.PARAM_ONTOLOGY_VERSION_NEW,
+			RequestParamConstants.PARAM_ONTOLOGY_VERSION_ID_1,
+			RequestParamConstants.PARAM_ONTOLOGY_VERSION_ID_2);
 
 	@SuppressWarnings("unchecked")
 	public AuthorizationFilter(Context context,
@@ -88,11 +88,11 @@ public class AuthorizationFilter extends AbstractAuthFilter implements
 			// context or user should not be null either.
 			error = ErrorTypeEnum.INVALID_SESSION;
 		} else {
-			// Admin has access to all ontologies 
+			// Admin has access to all ontologies
 			if (user.isAdmin()) {
 				return retVal;
 			}
-			
+
 			StringBuffer sb = new StringBuffer(0);
 			Map<Integer, Integer> mapTranslated = new HashMap<Integer, Integer>(
 					0);
@@ -107,7 +107,7 @@ public class AuthorizationFilter extends AbstractAuthFilter implements
 			}
 
 			if (sb.length() > 0) {
-				error = ErrorTypeEnum.INVALID_SESSION;
+				error = ErrorTypeEnum.ACCESS_DENIED;
 				error
 						.setErrorMessage("You don't have sufficient privileges to access the following ontologies/views: "
 								+ sb.substring(0, sb.length() - 2));
@@ -249,8 +249,8 @@ public class AuthorizationFilter extends AbstractAuthFilter implements
 		TemplateRoute best = routes.getBest(request, response, 0);
 
 		if (best != null) {
-			final String remainingPart = request.getResourceRef().getRemainingPart(
-					false, false);
+			final String remainingPart = request.getResourceRef()
+					.getRemainingPart(false, false);
 			best.getTemplate().parse(remainingPart, request.getAttributes());
 		}
 	}
