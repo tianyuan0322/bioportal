@@ -40,7 +40,7 @@ public class OntologyAclConverter extends CollectionConverter {
 
 		for (Object obj : map.entrySet()) {
 			Entry entry = (Entry) obj;
-			writer.startNode("entry");
+			writer.startNode("ontologyEntry");
 			writer.startNode("ontologyId");
 			writer.setValue(entry.getKey().toString());
 			writer.endNode();

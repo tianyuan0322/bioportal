@@ -40,7 +40,7 @@ public class UserAclConverter extends CollectionConverter {
 
 		for (Object obj : map.entrySet()) {
 			Entry entry = (Entry) obj;
-			writer.startNode("entry");
+			writer.startNode("userEntry");
 			writer.startNode("userId");
 			writer.setValue(entry.getKey().toString());
 			writer.endNode();
