@@ -567,7 +567,7 @@
 	<!-- All mappings: -->
 	<bean id="restManager" class="org.ncbo.stanford.view.rest.base.RestManager">
 		<property name="resourceMappings">
-			<bean class="java.util.HashMap">
+			<bean class="java.util.LinkedHashMap">
 				<constructor-arg>
 					<map>
 						<entry key="/auth">

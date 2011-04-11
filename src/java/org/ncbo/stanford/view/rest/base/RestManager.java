@@ -1,6 +1,7 @@
 package org.ncbo.stanford.view.rest.base;
 
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 import org.restlet.Restlet;
@@ -11,7 +12,7 @@ import org.restlet.routing.Router;
  */
 public class RestManager {
 
-	private Map<String, Restlet> resourceMappings = new HashMap<String, Restlet>();
+	private Map<String, Restlet> resourceMappings = new LinkedHashMap<String, Restlet>();
 
 	public void init(Router router) {
 		for (String key : resourceMappings.keySet()) {
