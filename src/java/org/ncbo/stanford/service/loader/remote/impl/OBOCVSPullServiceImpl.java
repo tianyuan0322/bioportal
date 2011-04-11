@@ -175,26 +175,32 @@ public class OBOCVSPullServiceImpl implements OBOCVSPullService {
 
 			HashMap<String, CVSFile> updateFiles = null;
 			for (OBORepositoryInfoHolder repo : repos) {
-				if (repo.getRepositoryType().equals("SVN")) {
-					SVNUtils svnUtils = new SVNUtils(repo.getUsername(), repo
-							.getPassword(), repo.getHostname(), repo
-							.getModule(), repo.getRootdirectory(), repo
-							.getArgumentstring(), repo.getCheckoutdir(),
-							tempDir);
-					svnUtils.svnCheckout();
-					updateFiles = svnUtils.listEntries();
-				} else {
-					CVSUtils cvsUtils = new CVSUtils(repo.getUsername(), repo
-							.getPassword(), repo.getHostname(), repo
-							.getModule(), repo.getRootdirectory(), repo
-							.getArgumentstring(), repo.getCheckoutdir(),
-							tempDir);
-					cvsUtils.cvsCheckout();
-					updateFiles = cvsUtils.getAllCVSEntries();
+				try {
+					if (repo.getRepositoryType().equals("SVN")) {
+						SVNUtils svnUtils = new SVNUtils(repo.getUsername(),
+								repo.getPassword(), repo.getHostname(), repo
+										.getModule(), repo.getRootdirectory(),
+								repo.getArgumentstring(),
+								repo.getCheckoutdir(), tempDir);
+						svnUtils.svnCheckout();
+						updateFiles = svnUtils.listEntries();
+					} else {
+						CVSUtils cvsUtils = new CVSUtils(repo.getUsername(),
+								repo.getPassword(), repo.getHostname(), repo
+										.getModule(), repo.getRootdirectory(),
+								repo.getArgumentstring(),
+								repo.getCheckoutdir(), tempDir);
+						cvsUtils.cvsCheckout();
+						updateFiles = cvsUtils.getAllCVSEntries();
+					}
+					// process repository data.
+					Set<String> processed_set = processRecords(repo,
+							updateFiles);
+					processed_OboFoundryId_set.addAll(processed_set);
+				} catch (Exception e) {
+					log.error("Error while processing repo: "+ repo.getHostname()+ "Exception= "+e);
+					e.printStackTrace();
 				}
-				// process repository data.
-				Set<String> processed_set = processRecords(repo, updateFiles);
-				processed_OboFoundryId_set.addAll(processed_set);
 			}
 
 			if (log.isInfoEnabled()) {
@@ -348,31 +354,34 @@ public class OBOCVSPullServiceImpl implements OBOCVSPullService {
 			if (ont == null) {
 				// new ontology
 				if (isMetadataOnly == ApplicationConstants.TRUE) {
-					action =ActionEnum.CREATE_METADATA_ONLY_ACTION;
+					action = ActionEnum.CREATE_METADATA_ONLY_ACTION;
 				} else if (isHostedInCurrentRepository(downloadUrl, cvsHostname)) {
-					action =ActionEnum.CREATE_REPOSITORY_ACTION;
+					action = ActionEnum.CREATE_REPOSITORY_ACTION;
 				} else {
-					action =ActionEnum.CREATE_DOWNLOAD_ACTION;
-				}				
+					action = ActionEnum.CREATE_DOWNLOAD_ACTION;
+				}
 				ont = new OntologyBean(false);
 			} else if (ont.getIsManual() != null
 					&& ont.getIsManual().byteValue() == ApplicationConstants.FALSE) {
 				if (isMetadataOnly == ApplicationConstants.TRUE) {
 					if (hasVersions(ont) && ont.isMetadataOnly()) {
 						// existing ontology that had been and remains metadata
-						// only. We are updating to ensure that the isMetadata flag begins to get populated.
+						// only. We are updating to ensure that the isMetadata
+						// flag begins to get populated.
 						action = ActionEnum.UPDATE_ACTION;
 					} else {
 						// existing ontology that had been local but is now
 						// remote or an ontology with no versions
 						action = ActionEnum.CREATE_METADATA_ONLY_ACTION;
 					}
-				} else if (!isHostedInCurrentRepository(downloadUrl, cvsHostname) ) {
-					if (LoaderUtils.hasDownloadLocationBeenUpdated(downloadUrl, ont)) {
-					   action = ActionEnum.CREATE_DOWNLOAD_ACTION;
+				} else if (!isHostedInCurrentRepository(downloadUrl,
+						cvsHostname)) {
+					if (LoaderUtils.hasDownloadLocationBeenUpdated(downloadUrl,
+							ont)) {
+						action = ActionEnum.CREATE_DOWNLOAD_ACTION;
 					}
 				}
-				
+
 				else if (hasVersions(ont) && cf != null
 						&& cf.getVersion().equals(ont.getVersionNumber())) {
 					// existing ontology; no new version found
@@ -392,8 +401,9 @@ public class OBOCVSPullServiceImpl implements OBOCVSPullService {
 
 				} else if (cf != null) {
 					// existing ontology local; new version
-					action = ActionEnum.CREATE_REPOSITORY_ACTION; 
-				} else if (needsUpdateAction(ont, downloadUrl, isMetadataOnly, mfb)) {
+					action = ActionEnum.CREATE_REPOSITORY_ACTION;
+				} else if (needsUpdateAction(ont, downloadUrl, isMetadataOnly,
+						mfb)) {
 					// Check if the metadata needs to be updated
 					action = ActionEnum.UPDATE_ACTION;
 				}
@@ -582,7 +592,7 @@ public class OBOCVSPullServiceImpl implements OBOCVSPullService {
 	private byte isMetadataOnly(String downloadUrl, String cvsHostname) {
 		byte isMetadataOnly = ApplicationConstants.TRUE;
 
-		if (!StringHelper.isNullOrNullString(downloadUrl)){
+		if (!StringHelper.isNullOrNullString(downloadUrl)) {
 			isMetadataOnly = ApplicationConstants.FALSE;
 		}
 
@@ -617,7 +627,9 @@ public class OBOCVSPullServiceImpl implements OBOCVSPullService {
 			needsUpdate = true;
 		}
 		// The version status has changed
-		if (ont.getVersionStatus() != null && ! ont.getVersionStatus().equalsIgnoreCase(getStatus(mfb.getStatus()))) {
+		if (ont.getVersionStatus() != null
+				&& !ont.getVersionStatus().equalsIgnoreCase(
+						getStatus(mfb.getStatus()))) {
 			needsUpdate = true;
 		}
 		return needsUpdate;
