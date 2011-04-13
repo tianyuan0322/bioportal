@@ -83,7 +83,10 @@ public class AuthenticationFilter extends AbstractAuthFilter implements
 			String userApiKey = httpRequest
 					.getParameter(RequestParamConstants.PARAM_USER_APIKEY);
 
-			if (!StringHelper.isNullOrNullString(userApiKey)) {
+			// Both app and user api keys supplied. Verify that they are
+			// different and store
+			if (!StringHelper.isNullOrNullString(userApiKey)
+					&& !userApiKey.equals(apiKey)) {
 				appApiKey = apiKey;
 				apiKey = userApiKey;
 			}
@@ -130,11 +133,22 @@ public class AuthenticationFilter extends AbstractAuthFilter implements
 			error = ErrorTypeEnum.APIKEY_REQUIRED;
 		} else if (!StringHelper.isValidUUID(apiKey)) {
 			error = ErrorTypeEnum.INVALID_APIKEY;
+		} else if (appApiKey != null && !StringHelper.isValidUUID(appApiKey)) {
+			error = ErrorTypeEnum.INVALID_APPAPIKEY;
 		} else {
 			session = sessionService.get(apiKey);
 
 			if (session == null) {
 				try {
+					// Application API key supplied. Make sure it's valid!
+					// Authenticate it and create a its own session container.
+					// No need to store it anywhere at this point.
+					if (appApiKey != null
+							&& sessionService.get(appApiKey) == null) {
+						authenticationService.authenticate(appApiKey);
+						sessionService.createNewSession(appApiKey);
+					}
+
 					user = authenticationService.authenticate(apiKey);
 					session = sessionService.createNewSession(apiKey);
 					session.setAttribute(
