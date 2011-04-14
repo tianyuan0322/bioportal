@@ -38,7 +38,7 @@ public class AuthenticationFilter extends AbstractAuthFilter implements
 	private SessionService sessionService;
 
 	// TODO: to be removed later (see a note below in authenticateUser())
-	private static String TEMP_ADMIN_APIKEY = "fcc74490-5a25-11e0-9a6e-005056aa215e";
+	public static String TEMP_ADMIN_APIKEY = "fcc74490-5a25-11e0-9a6e-005056aa215e";
 
 	@SuppressWarnings("unchecked")
 	public AuthenticationFilter(Context context,
@@ -103,14 +103,6 @@ public class AuthenticationFilter extends AbstractAuthFilter implements
 				InetAddress addr = InetAddress.getLocalHost();
 				ip = addr.getHostAddress();
 				hostname = addr.getCanonicalHostName();
-
-				log.info("A user identified by IP: "
-						+ InetAddress.getLocalHost().getHostAddress()
-						+ ", Hostname: "
-						+ InetAddress.getLocalHost().getCanonicalHostName()
-						+ ", and Referrer: " + request.getReferrerRef()
-						+ ", Accessed Resource: \"" + ref
-						+ "\" attempted access with an empty API Key.");
 			} catch (UnknownHostException e) {
 				ip = httpRequest.getRemoteAddr();
 				hostname = httpRequest.getRemoteHost();
@@ -162,11 +154,10 @@ public class AuthenticationFilter extends AbstractAuthFilter implements
 		}
 
 		if (error != null) {
-			String path = ref.getPath();
 			retVal = STOP;
-			RequestUtils.setHttpServletResponse(response,
-					Status.CLIENT_ERROR_FORBIDDEN, MediaType.TEXT_XML,
-					xmlSerializationService.getErrorAsXML(error, path));
+			response.setStatus(Status.CLIENT_ERROR_FORBIDDEN, error
+					.getErrorMessage());
+			xmlSerializationService.generateXMLResponse(request, response, null);
 		} else {
 			request.getAttributes().put(ApplicationConstants.USER_SESSION_NAME,
 					session);
