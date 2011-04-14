@@ -171,6 +171,8 @@ public class MetadataUtils {
 						val = convertStringToDate(lit.getString());
 					} else if (owlModel.getXSDinteger().equals(datatype)) {
 						val = Integer.parseInt(lit.toString());
+					} else if (owlModel.getXSDstring().equals(datatype)) {
+						val = lit.getString();
 					}
 				}
 			}
