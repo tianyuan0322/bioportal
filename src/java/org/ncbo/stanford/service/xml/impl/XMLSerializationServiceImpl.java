@@ -316,7 +316,8 @@ public class XMLSerializationServiceImpl implements XMLSerializationService {
 		removeWhitespaceNodes(doc.getDocumentElement());
 
 		if (inputStreamWrapper.isError()) {
-			responseBean = populateErrorBean(doc);
+			responseBean = populateErrorBean(doc, inputStreamWrapper
+					.getResponseCode());
 		} else {
 			responseBean = populateSuccessBean(doc);
 		}
@@ -339,11 +340,14 @@ public class XMLSerializationServiceImpl implements XMLSerializationService {
 		}
 	}
 
-	private ErrorStatusBean populateErrorBean(Document doc)
+	private ErrorStatusBean populateErrorBean(Document doc, int responseCode)
 			throws TransformerException {
 		String node = getNodeAsXML(doc);
+		ErrorStatusBean errorBean = (ErrorStatusBean) xmlSerializer
+				.fromXML(node);
+		errorBean.setStatus(new Status(responseCode));
 
-		return (ErrorStatusBean) xmlSerializer.fromXML(node);
+		return errorBean;
 	}
 
 	private SuccessBean populateSuccessBean(Document doc)
