@@ -5,6 +5,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.TreeSet;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -22,7 +23,6 @@ import org.restlet.Context;
 import org.restlet.Request;
 import org.restlet.Response;
 import org.restlet.data.MediaType;
-import org.restlet.data.Reference;
 import org.restlet.data.Status;
 import org.restlet.routing.Router;
 import org.restlet.routing.TemplateRoute;
@@ -55,16 +55,15 @@ public class AuthorizationFilter extends AbstractAuthFilter implements
 		super(context, springAppContext);
 		ontologyService = (OntologyService) springAppContext
 				.getBean("ontologyService");
-		exceptionPaths = (ArrayList<String>) springAppContext.getBean(
-				"authorizationExceptionPaths", ArrayList.class);
+		addExceptionPaths((TreeSet<String>) springAppContext.getBean(
+				"authorizationExceptionPaths", TreeSet.class));
 	}
 
 	@Override
 	protected int beforeHandle(Request request, Response response) {
 		int retVal = CONTINUE;
-		Reference ref = request.getResourceRef();
 
-		if (isException(ref)) {
+		if (isException(request)) {
 			return retVal;
 		}
 

@@ -2,7 +2,6 @@ package org.ncbo.stanford.util.security.filter;
 
 import java.net.InetAddress;
 import java.net.UnknownHostException;
-import java.util.ArrayList;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -22,7 +21,6 @@ import org.ncbo.stanford.view.util.constants.RequestParamConstants;
 import org.restlet.Context;
 import org.restlet.Request;
 import org.restlet.Response;
-import org.restlet.data.MediaType;
 import org.restlet.data.Reference;
 import org.restlet.data.Status;
 import org.springframework.beans.factory.InitializingBean;
@@ -40,7 +38,6 @@ public class AuthenticationFilter extends AbstractAuthFilter implements
 	// TODO: to be removed later (see a note below in authenticateUser())
 	public static String TEMP_ADMIN_APIKEY = "fcc74490-5a25-11e0-9a6e-005056aa215e";
 
-	@SuppressWarnings("unchecked")
 	public AuthenticationFilter(Context context,
 			WebApplicationContext springAppContext) {
 		super(context, springAppContext);
@@ -48,8 +45,6 @@ public class AuthenticationFilter extends AbstractAuthFilter implements
 				.getBean("authenticationService", AuthenticationService.class);
 		sessionService = (SessionService) springAppContext.getBean(
 				"sessionService", SessionService.class);
-		exceptionPaths = (ArrayList<String>) springAppContext.getBean(
-				"authenticationExceptionPaths", ArrayList.class);
 	}
 
 	@Override
@@ -59,9 +54,8 @@ public class AuthenticationFilter extends AbstractAuthFilter implements
 
 	private int authenticateUser(Request request, Response response) {
 		int retVal = CONTINUE;
-		Reference ref = request.getResourceRef();
 
-		if (isException(ref)) {
+		if (isException(request)) {
 			return retVal;
 		}
 
@@ -113,7 +107,7 @@ public class AuthenticationFilter extends AbstractAuthFilter implements
 			log.info("A user identified by IP: " + ip + ", Hostname: "
 					+ hostname
 					+ ((referrer != null) ? ", and Referrer: " + referrer : "")
-					+ ", Accessed Resource: \"" + ref
+					+ ", Accessed Resource: \"" + request.getResourceRef()
 					+ "\" attempted access with an empty API Key.");
 
 			apiKey = TEMP_ADMIN_APIKEY;
@@ -157,7 +151,8 @@ public class AuthenticationFilter extends AbstractAuthFilter implements
 			retVal = STOP;
 			response.setStatus(Status.CLIENT_ERROR_FORBIDDEN, error
 					.getErrorMessage());
-			xmlSerializationService.generateXMLResponse(request, response, null);
+			xmlSerializationService
+					.generateXMLResponse(request, response, null);
 		} else {
 			request.getAttributes().put(ApplicationConstants.USER_SESSION_NAME,
 					session);

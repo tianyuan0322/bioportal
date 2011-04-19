@@ -24,12 +24,16 @@
 		</property>
 	</bean>
 
-	<util:list id="authenticationExceptionPaths" list-class="java.util.ArrayList">
-	</util:list>	
+	<util:set id="authenticationExceptionReferrers" set-class="java.util.TreeSet">
+		<value>http://www.bioontology.org/wiki/</value>
+	</util:set>	
 
-	<util:list id="authorizationExceptionPaths" list-class="java.util.ArrayList">
+	<util:set id="authenticationExceptionPaths" set-class="java.util.TreeSet">
+	</util:set>	
+
+	<util:set id="authorizationExceptionPaths" set-class="java.util.TreeSet">
 		<value>/auth</value>
 		<value>/search</value>
-	</util:list>	
+	</util:set>	
 
 </beans>
