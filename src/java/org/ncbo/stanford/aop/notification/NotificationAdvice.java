@@ -3,6 +3,7 @@ package org.ncbo.stanford.aop.notification;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.util.HashMap;
+import java.util.HashSet;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -24,6 +25,7 @@ import org.ncbo.stanford.service.notification.EmailNotificationService;
 import org.ncbo.stanford.service.ontology.OntologyService;
 import org.ncbo.stanford.util.MessageUtils;
 import org.ncbo.stanford.util.constants.ApplicationConstants;
+
 /**
  * @author g.prakash
  * 
@@ -40,10 +42,11 @@ public class NotificationAdvice {
 	protected CustomNcboOntologyLoadQueueDAO ncboOntologyLoadQueueDAO;
 	protected OntologyMetadataManager ontologyMetadataManager;
 	protected OntologyLoadSchedulerService ontologyLoadSchedulerService;
-	
+
 	/**
-	 * This method is applied for AOP for processOntology by using Spring "<aop:aspect>" 
-	 * "after-returning" 
+	 * This method is applied for AOP for processOntology by using Spring
+	 * "<aop:aspect>" "after-returning"
+	 * 
 	 * @param loadQueue
 	 * @param formatHandler
 	 * @param ontologyBean
@@ -77,11 +80,11 @@ public class NotificationAdvice {
 		}
 
 	}
-	
+
 	public void adviceCreateNote(NoteBean note) throws Throwable {
 		try {
-
 			HashMap<String, String> keywords = new HashMap<String, String>();
+			HashSet<String> additionalRecipients = new HashSet<String>();
 
 			// Add ontology keywords
 			OntologyBean ont = ontologyService
@@ -125,13 +128,19 @@ public class NotificationAdvice {
 			keywords.put(ApplicationConstants.NOTE_SUBJECT, note.getSubject());
 			keywords.put(ApplicationConstants.NOTE_BODY, note.getBody());
 
+			// Get the root note's original author and send message to them too
+			NoteBean rootNote = notesService.getRootNote(ont, note);
+			UserBean rootUser = getUserBeanForNote(ncboUserDAO, rootNote);
+			additionalRecipients.add(rootUser.getEmail());
+
 			// Send notification
 			emailNotificationService.sendNotification(
 					NotificationTypeEnum.CREATE_NOTE_NOTIFICATION, ont,
-					keywords);
+					keywords, additionalRecipients);
 
 		} catch (Exception e) {
-			log.error("Error sending notification for new note");
+			log.error("Error sending notification for new note: "
+					+ e.getMessage());
 		}
 	}
 
@@ -231,7 +240,20 @@ public class NotificationAdvice {
 
 		return authorName;
 	}
-	
+
+	private UserBean getUserBeanForNote(NcboUserDAO ncboUserDAO, NoteBean note) {
+		Integer userId = Integer.parseInt(note.getAuthor());
+		NcboUser ncboUser = ncboUserDAO.findById(userId);
+
+		if (ncboUser != null) {
+			UserBean userBean = new UserBean();
+			userBean.populateFromEntity(ncboUser);
+			return userBean;
+		}
+
+		return null;
+	}
+
 	/**
 	 * Get UserBean for note author and add username if found Because we allow
 	 * arbitrary authors to be submitted, we try to parse an integer which we
@@ -247,7 +269,7 @@ public class NotificationAdvice {
 
 		try {
 			Integer userId = ont.getUserId();
-			NcboUser ncboUser= ncboUserDAO.findById(userId);
+			NcboUser ncboUser = ncboUserDAO.findById(userId);
 			if (ncboUser != null) {
 				userName = ncboUser.getUsername();
 			}
@@ -257,7 +279,6 @@ public class NotificationAdvice {
 
 		return userName;
 	}
-
 
 	/**
 	 * Returns the enum type of a note using the first appliesTo target in the
@@ -270,7 +291,7 @@ public class NotificationAdvice {
 		return NoteAppliesToTypeEnum.valueOf(note.getAppliesToList().get(0)
 				.getType());
 	}
-	
+
 	/**
 	 * Returns the enum type of a note using the first appliesTo target in the
 	 * list.
@@ -279,10 +300,9 @@ public class NotificationAdvice {
 	 * @return
 	 */
 	/**
-	private OntologyAppliesToTypeEnum getAppliesToType(OntologyBean ont) {
-		return NoteAppliesToTypeEnum.valueOf(ont.getFormat());
-	}
-**/
+	 * private OntologyAppliesToTypeEnum getAppliesToType(OntologyBean ont) {
+	 * return NoteAppliesToTypeEnum.valueOf(ont.getFormat()); }
+	 **/
 	/**
 	 * Generates a unique message id using the note's id.
 	 * 
@@ -292,7 +312,7 @@ public class NotificationAdvice {
 	private String getMessageIdForNote(String noteId, String authorName) {
 		return noteId + "." + authorName + "@" + "bioportal.bioontology.org";
 	}
-	
+
 	/**
 	 * Generates a unique message id using the note's id.
 	 * 
@@ -300,9 +320,9 @@ public class NotificationAdvice {
 	 * @return
 	 */
 	private String getMessageIdForOntology(String ontologyId, String authorName) {
-		return ontologyId + "." + authorName + "@" + "bioportal.bioontology.org";
+		return ontologyId + "." + authorName + "@"
+				+ "bioportal.bioontology.org";
 	}
-
 
 	/**
 	 * 
@@ -336,7 +356,7 @@ public class NotificationAdvice {
 	public void setNcboUserDAO(NcboUserDAO ncboUserDAO) {
 		this.ncboUserDAO = ncboUserDAO;
 	}
-	
+
 	/**
 	 * 
 	 * @param ontologyMetadataManager
@@ -345,6 +365,7 @@ public class NotificationAdvice {
 			OntologyMetadataManager ontologyMetadataManager) {
 		this.ontologyMetadataManager = ontologyMetadataManager;
 	}
+
 	/**
 	 * 
 	 * @param ontologyLoadSchedulerService
@@ -353,7 +374,7 @@ public class NotificationAdvice {
 			OntologyLoadSchedulerService ontologyLoadSchedulerService) {
 		this.ontologyLoadSchedulerService = ontologyLoadSchedulerService;
 	}
-	
+
 	/**
 	 * 
 	 * @param ncboOntologyLoadQueueDAO

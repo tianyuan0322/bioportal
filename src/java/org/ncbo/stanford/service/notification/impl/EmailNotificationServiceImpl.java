@@ -3,6 +3,7 @@ package org.ncbo.stanford.service.notification.impl;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.ncbo.stanford.bean.OntologyBean;
 import org.ncbo.stanford.bean.UserBean;
@@ -59,10 +60,13 @@ public class EmailNotificationServiceImpl implements EmailNotificationService {
 		return notificationManagerMap;
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public void sendNotification(NotificationTypeEnum notificationType,
-			OntologyBean ontologyBean, HashMap<String, String> keywords) {
+			OntologyBean ontologyBean, HashMap<String, String> keywords,
+			Set<String> recipients) {
 		NcboUser ncboUser = new NcboUser();
+		
 		if (keywords == null) {
 			keywords = new HashMap<String, String>();
 		}
@@ -75,10 +79,18 @@ public class EmailNotificationServiceImpl implements EmailNotificationService {
 		String inReplyTo = (keywords.get("inReplyTo") != null) ? keywords
 				.get("inReplyTo") : null;
 
+		keywords.put(ApplicationConstants.ONTOLOGY_VERSION_ID, ontologyBean
+				.getId().toString());
+
+		textManager.appendKeywords(keywords);
+		String from = MessageUtils.getMessage("notification.mail.from");
+		String subject = textManager.getTextContent(notificationType.name()
+				+ ApplicationConstants.SUBJECT_SUFFIX);
+		String message = textManager.getTextContent(notificationType.name());
+
 		// This List Contains the NcboUserSubscriptions Field according to the
 		// OntolgyId And NotificationType and it also contains default Dummy
 		// OntologyID(99)
-
 		List<NcboUserSubscriptions> ncboUserSubscriptions = ncboUserSubscriptionsDAO
 				.findByOntologyIdAndNotificationType(ontologyBean
 						.getOntologyId().toString(), notificationType);
@@ -87,24 +99,21 @@ public class EmailNotificationServiceImpl implements EmailNotificationService {
 
 			UserBean userBean = new UserBean();
 			userBean.populateFromEntity(ncboUser);
-			String from = MessageUtils.getMessage("notification.mail.from");
 
-			keywords.put(ApplicationConstants.ONTOLOGY_VERSION_ID, ontologyBean
-					.getId().toString());
-			keywords.put(ApplicationConstants.USERNAME, userBean.getUsername());
-
-			textManager.appendKeywords(keywords);
-			String message = textManager
-					.getTextContent(notificationType.name());
-			String subject = textManager.getTextContent(notificationType.name()
-					+ ApplicationConstants.SUBJECT_SUFFIX);
-
-			notificationManagerMap.get(ApplicationConstants.EMAIL)
-					.sendNotification(subject, message, from, messageId,
-							inReplyTo, userBean);
+			recipients.add(userBean.getEmail());
 		}
+
+		// Send email to all recipients
+		if (recipients != null && recipients.size() > 0) {
+			for (String recipient : recipients) {
+				notificationManagerMap.get(ApplicationConstants.EMAIL)
+						.sendNotification(subject, message, from, messageId,
+								inReplyTo, recipient);
+			}
+		}
+
 	}
-	
+
 	/**
 	 * This Method handle's the call for sending the EmailNotification to
 	 * OntoogySubmitter
@@ -150,9 +159,10 @@ public class EmailNotificationServiceImpl implements EmailNotificationService {
 					+ ApplicationConstants.SUBJECT_SUFFIX);
 			notificationManagerMap.get(ApplicationConstants.EMAIL)
 					.sendNotification(subject, message, from, messageId,
-							inReplyTo, userBean);
+							inReplyTo, userBean.getEmail());
 		} catch (Exception exception) {
 			exception.getMessage();
 		}
 	}
+
 }

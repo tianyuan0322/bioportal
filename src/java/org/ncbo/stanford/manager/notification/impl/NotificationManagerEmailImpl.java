@@ -2,7 +2,6 @@ package org.ncbo.stanford.manager.notification.impl;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.ncbo.stanford.bean.UserBean;
 import org.ncbo.stanford.manager.notification.NotificationManager;
 import org.ncbo.stanford.util.mail.impl.MailServiceImpl;
 
@@ -29,10 +28,9 @@ public class NotificationManagerEmailImpl implements NotificationManager {
 
 	@Override
 	public void sendNotification(String subject, String message, String from,
-			String messageId, String inReplyTo, UserBean userBean) {
-		log.info("Sending Notification Mail to User :" + userBean.getUsername()
-				+ " with email id :" + userBean.getEmail());
-		mailService.sendMail(from, userBean.getEmail(), subject, messageId,
+			String messageId, String inReplyTo, String email) {
+		log.info("Sending Notification to:" + email);
+		mailService.sendMail(from, email, subject, messageId,
 				inReplyTo, message);
 
 	}

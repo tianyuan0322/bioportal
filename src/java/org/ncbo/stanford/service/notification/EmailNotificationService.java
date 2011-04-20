@@ -4,9 +4,10 @@
 package org.ncbo.stanford.service.notification;
 
 import java.util.HashMap;
+import java.util.Set;
 
-import org.ncbo.stanford.enumeration.NotificationTypeEnum;
 import org.ncbo.stanford.bean.OntologyBean;
+import org.ncbo.stanford.enumeration.NotificationTypeEnum;
 
 /**
  * @author g.prakash
@@ -24,7 +25,8 @@ public interface EmailNotificationService {
 	 * @param ontology_id
 	 */
 	public void sendNotification(NotificationTypeEnum notificationType,
-			OntologyBean ontologyBean, HashMap<String, String> keywords);
+			OntologyBean ontologyBean, HashMap<String, String> keywords,
+			Set<String> additionalRecipients);
 	
 	/**
 	 * 
