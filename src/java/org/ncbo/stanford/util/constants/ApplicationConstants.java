@@ -194,17 +194,24 @@ public interface ApplicationConstants {
 	/**
 	 * RDF and RDF store namespace constants.
 	 */
+	public static final String DEFAULT_RDF_PREFIX = "http://purl.bioontology.org/bioportal#";
+	public static final URI DEFAULT_RDF_TYPE = new URIImpl("http://purl.bioontology.org/bioportal#SPARQL_Bean");
 	public static final String VIRTUOSO = "virtuoso";
 	public static final String MYSQL = "mysql";
 	public static final String MAPPING_PREFIX = "http://protege.stanford.edu/ontologies/mappings/mappings.rdfs#";
 	public static final String MAPPING_ID_PREFIX = "http://purl.bioontology.org/mapping/";
+	public static final String PROVISIONAL_TERM_PREFIX = "http://purl.bioontology.org/ontology/provisional#";
+	public static final String PROVISIONAL_TERM_ID_PREFIX = "http://purl.bioontology.org/ontology/provisional/";
 
 	// This is equivalent to a named graph in an RDF store.
 	public static final String MAPPING_CONTEXT = "http://protege.stanford.edu/ontologies/mappings/mappings.rdfs";
-	public static final URI MAPPING_CONTEXT_URI = new URIImpl("http://protege.stanford.edu/ontologies/mappings/mappings.rdfs");
+	public static final URI MAPPING_CONTEXT_URI = new URIImpl(MAPPING_CONTEXT);
+	public static final String PROVISIONAL_TERM_CONTEXT = "http://purl.bioontology.org/ontology/provisional";
+	public static final URI PROVISIONAL_TERM_CONTEXT_URI = new URIImpl(PROVISIONAL_TERM_CONTEXT);
 	
 	// Common URIs
 	public static final URI MAPPING_ONE_TO_ONE_URI = new URIImpl(MAPPING_PREFIX + "One_To_One_Mapping");
+	public static final URI PROVISIONAL_TERM_URI = new URIImpl(PROVISIONAL_TERM_PREFIX + "Provisional_Term");
 	public static final URI RDF_TYPE_URI = new URIImpl("http://www.w3.org/1999/02/22-rdf-syntax-ns#type");
 	
 	public static final String TIMEZONE_ID = "Z";

@@ -1,20 +1,22 @@
-package org.ncbo.stanford.bean.mapping;
+package org.ncbo.stanford.util.sparql;
 
 import java.lang.reflect.Field;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 
+import org.apache.commons.lang.StringUtils;
 import org.ncbo.stanford.enumeration.MappingSourceEnum;
 import org.ncbo.stanford.util.constants.ApplicationConstants;
 import org.openrdf.model.URI;
 
-public class MappingParametersBean {
+public class SPARQLFilterGenerator {
 
 	private List<Integer> submittedBy;
 	private String mappingType;
 	private Date startDate;
 	private Date endDate;
+	private List<Integer> ontologyIds;
 	private List<URI> relationshipTypes;
 	private List<MappingSourceEnum> mappingSources;
 
@@ -34,6 +36,11 @@ public class MappingParametersBean {
 				filter += (submittedBy.indexOf(submitter) == submittedBy.size() - 1) ? ""
 						: " || ";
 			}
+		}
+		
+		if (ontologyIds != null) {
+			filter += (filter.length() > 0) ? " && " : "";
+			filter += "?ontologyId IN (" + StringUtils.join(ontologyIds, ", ") + ")";
 		}
 
 		if (mappingType != null) {

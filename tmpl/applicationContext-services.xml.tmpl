@@ -714,21 +714,21 @@
 		  </property>
 	</bean> 
 	
-	<bean id="abstractMappingDAO" class="org.ncbo.stanford.domain.custom.dao.mapping.AbstractNcboMappingDAO">
+	<bean id="abstractMappingDAO" class="org.ncbo.stanford.sparql.dao.mapping.AbstractNcboMappingDAO">
 		<property name="rdfStoreManagerMap">
 			<ref local="rdfStoreManagerMap" />
 		</property>
 	</bean>
 	
-	<bean id="mappingDAO" class="org.ncbo.stanford.domain.custom.dao.mapping.CustomNcboMappingDAO"
+	<bean id="mappingDAO" class="org.ncbo.stanford.sparql.dao.mapping.CustomNcboMappingDAO"
 		parent="abstractMappingDAO">
 	</bean>
 	
-	<bean id="mappingCountsDAO" class="org.ncbo.stanford.domain.custom.dao.mapping.CustomNcboMappingCountsDAO"
+	<bean id="mappingCountsDAO" class="org.ncbo.stanford.sparql.dao.mapping.CustomNcboMappingCountsDAO"
 		parent="abstractMappingDAO">
 	</bean>
 	
-	<bean id="mappingStatsDAO" class="org.ncbo.stanford.domain.custom.dao.mapping.CustomNcboMappingStatsDAO"
+	<bean id="mappingStatsDAO" class="org.ncbo.stanford.sparql.dao.mapping.CustomNcboMappingStatsDAO"
 		parent="abstractMappingDAO">
 	</bean>
 	
@@ -736,6 +736,18 @@
 		<constructor-arg>
 			<value>@rdfstoretype@</value>
 		</constructor-arg>
+	</bean>
+	
+	<bean id="provisionalTermDAO" class="org.ncbo.stanford.sparql.dao.provisional.ProvisionalTermDAO">
+		<property name="rdfStoreManagerMap">
+			<ref local="rdfStoreManagerMap" />
+		</property>
+	</bean>
+    
+	<bean id="provisionalTermService" class="org.ncbo.stanford.service.provisional.impl.ProvisionalTermServiceImpl">
+       <property name="provisionalTermDAO">
+	  	  <ref local="provisionalTermDAO" />
+	  </property>
 	</bean>
     
     <bean id="conceptService"

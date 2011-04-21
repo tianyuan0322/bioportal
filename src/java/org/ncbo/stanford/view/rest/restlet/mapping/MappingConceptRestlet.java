@@ -12,7 +12,6 @@ import org.apache.commons.logging.LogFactory;
 import org.ncbo.stanford.bean.OntologyBean;
 import org.ncbo.stanford.bean.concept.ClassBean;
 import org.ncbo.stanford.bean.mapping.MappingBean;
-import org.ncbo.stanford.bean.mapping.MappingParametersBean;
 import org.ncbo.stanford.enumeration.MappingSourceEnum;
 import org.ncbo.stanford.exception.ConceptNotFoundException;
 import org.ncbo.stanford.exception.InvalidInputException;
@@ -25,6 +24,7 @@ import org.ncbo.stanford.util.MessageUtils;
 import org.ncbo.stanford.util.RequestUtils;
 import org.ncbo.stanford.util.constants.ApplicationConstants;
 import org.ncbo.stanford.util.paginator.impl.Page;
+import org.ncbo.stanford.util.sparql.SPARQLFilterGenerator;
 import org.ncbo.stanford.view.util.constants.RequestParamConstants;
 import org.openrdf.model.URI;
 import org.openrdf.model.impl.URIImpl;
@@ -121,7 +121,7 @@ public class MappingConceptRestlet extends AbstractMappingRestlet {
 		}
 
 		// Process non-base parameters
-		MappingParametersBean parameters = getMappingParameters(request,
+		SPARQLFilterGenerator parameters = getMappingParameters(request,
 				response);
 
 		OntologyBean ont = null;

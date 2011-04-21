@@ -1,4 +1,4 @@
-package org.ncbo.stanford.domain.custom.dao.mapping;
+package org.ncbo.stanford.sparql.dao.mapping;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -10,12 +10,12 @@ import java.util.Set;
 import java.util.TimeZone;
 
 import org.apache.commons.lang.StringUtils;
-import org.ncbo.stanford.bean.mapping.MappingParametersBean;
-import org.ncbo.stanford.domain.custom.entity.Mapping;
 import org.ncbo.stanford.exception.InvalidInputException;
 import org.ncbo.stanford.manager.rdfstore.RDFStoreManager;
+import org.ncbo.stanford.sparql.bean.Mapping;
 import org.ncbo.stanford.util.MessageUtils;
 import org.ncbo.stanford.util.constants.ApplicationConstants;
+import org.ncbo.stanford.util.sparql.SPARQLFilterGenerator;
 import org.openrdf.model.Statement;
 import org.openrdf.model.URI;
 import org.openrdf.model.Value;
@@ -110,7 +110,7 @@ public class AbstractNcboMappingDAO {
 	 *******************************************************************/
 
 	protected List<Mapping> getMappings(Integer limit, Integer offset,
-			String filter, MappingParametersBean parameters)
+			String filter, SPARQLFilterGenerator parameters)
 			throws InvalidInputException {
 		return getMappings(limit, offset, filter, null, parameters);
 	}
@@ -131,7 +131,7 @@ public class AbstractNcboMappingDAO {
 	 * @throws InvalidInputException
 	 */
 	protected List<Mapping> getMappings(Integer limit, Integer offset,
-			String filter, String orderBy, MappingParametersBean parameters)
+			String filter, String orderBy, SPARQLFilterGenerator parameters)
 			throws InvalidInputException {
 		// Safety check
 		if (limit == null || limit >= 50000) {
@@ -311,7 +311,7 @@ public class AbstractNcboMappingDAO {
 	 * @return
 	 * @throws InvalidInputException
 	 */
-	protected Integer getCount(String filter, MappingParametersBean parameters)
+	protected Integer getCount(String filter, SPARQLFilterGenerator parameters)
 			throws InvalidInputException {
 		RepositoryConnection con = getRdfStoreManager()
 				.getRepositoryConnection();

@@ -6,7 +6,6 @@ import org.ncbo.stanford.bean.OntologyBean;
 import org.ncbo.stanford.bean.concept.ClassBean;
 import org.ncbo.stanford.bean.mapping.MappingConceptStatsBean;
 import org.ncbo.stanford.bean.mapping.MappingOntologyStatsBean;
-import org.ncbo.stanford.bean.mapping.MappingParametersBean;
 import org.ncbo.stanford.bean.mapping.MappingUserStatsBean;
 import org.ncbo.stanford.bean.mapping.MappingBean;
 import org.ncbo.stanford.enumeration.MappingSourceEnum;
@@ -14,6 +13,7 @@ import org.ncbo.stanford.exception.InvalidInputException;
 import org.ncbo.stanford.exception.MappingExistsException;
 import org.ncbo.stanford.exception.MappingMissingException;
 import org.ncbo.stanford.util.paginator.impl.Page;
+import org.ncbo.stanford.util.sparql.SPARQLFilterGenerator;
 import org.openrdf.model.URI;
 
 public interface MappingService {
@@ -86,7 +86,7 @@ public interface MappingService {
 	 * @throws InvalidInputException
 	 */
 	public Page<MappingBean> getMappingsFromOntology(OntologyBean ont,
-			Integer pageSize, Integer pageNum, MappingParametersBean parameters)
+			Integer pageSize, Integer pageNum, SPARQLFilterGenerator parameters)
 			throws InvalidInputException;
 
 	/**
@@ -97,7 +97,7 @@ public interface MappingService {
 	 * @throws InvalidInputException
 	 */
 	public Page<MappingBean> getMappingsToOntology(OntologyBean ont,
-			Integer pageSize, Integer pageNum, MappingParametersBean parameters)
+			Integer pageSize, Integer pageNum, SPARQLFilterGenerator parameters)
 			throws InvalidInputException;
 
 	/**
@@ -113,7 +113,7 @@ public interface MappingService {
 	public Page<MappingBean> getMappingsBetweenOntologies(
 			OntologyBean sourceOnt, OntologyBean targetOnt, Integer pageSize,
 			Integer pageNum, Boolean unidirectional,
-			MappingParametersBean parameters) throws InvalidInputException;
+			SPARQLFilterGenerator parameters) throws InvalidInputException;
 
 	/**
 	 * Get all mappings either from or to a given ontology.
@@ -123,7 +123,7 @@ public interface MappingService {
 	 * @throws InvalidInputException
 	 */
 	public Page<MappingBean> getMappingsForOntology(OntologyBean ont,
-			Integer pageSize, Integer pageNum, MappingParametersBean parameters)
+			Integer pageSize, Integer pageNum, SPARQLFilterGenerator parameters)
 			throws InvalidInputException;
 
 	/**
@@ -137,7 +137,7 @@ public interface MappingService {
 	 * @throws InvalidInputException
 	 */
 	public Page<MappingBean> getMappingsForParameters(Integer pageSize,
-			Integer pageNum, MappingParametersBean parameters)
+			Integer pageNum, SPARQLFilterGenerator parameters)
 			throws InvalidInputException;
 
 	/**
@@ -149,7 +149,7 @@ public interface MappingService {
 	 */
 	public Page<MappingBean> getMappingsForConcept(OntologyBean ont,
 			ClassBean concept, Integer pageSize, Integer pageNum,
-			MappingParametersBean parameters) throws InvalidInputException;
+			SPARQLFilterGenerator parameters) throws InvalidInputException;
 
 	/**
 	 * Get all mappings from a given concept to other concepts.
@@ -160,7 +160,7 @@ public interface MappingService {
 	 */
 	public Page<MappingBean> getMappingsFromConcept(OntologyBean ont,
 			ClassBean concept, Integer pageSize, Integer pageNum,
-			MappingParametersBean parameters) throws InvalidInputException;
+			SPARQLFilterGenerator parameters) throws InvalidInputException;
 
 	/**
 	 * Get all mappings from other concepts to a given concept.
@@ -171,7 +171,7 @@ public interface MappingService {
 	 */
 	public Page<MappingBean> getMappingsToConcept(OntologyBean ont,
 			ClassBean concept, Integer pageSize, Integer pageNum,
-			MappingParametersBean parameters) throws InvalidInputException;
+			SPARQLFilterGenerator parameters) throws InvalidInputException;
 
 	/**
 	 * Get all mappings between two given concepts.
@@ -185,7 +185,7 @@ public interface MappingService {
 			OntologyBean sourceOnt, OntologyBean targetOnt,
 			ClassBean sourceConcept, ClassBean targetConcept,
 			Boolean unidirectional, Integer pageSize, Integer pageNum,
-			MappingParametersBean parameters) throws InvalidInputException;
+			SPARQLFilterGenerator parameters) throws InvalidInputException;
 
 	/*******************************************************************
 	 * 

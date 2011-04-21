@@ -7,22 +7,22 @@ import org.ncbo.stanford.bean.OntologyBean;
 import org.ncbo.stanford.bean.concept.ClassBean;
 import org.ncbo.stanford.bean.mapping.MappingConceptStatsBean;
 import org.ncbo.stanford.bean.mapping.MappingOntologyStatsBean;
-import org.ncbo.stanford.bean.mapping.MappingParametersBean;
 import org.ncbo.stanford.bean.mapping.MappingResultListBean;
 import org.ncbo.stanford.bean.mapping.MappingUserStatsBean;
 import org.ncbo.stanford.bean.mapping.MappingBean;
-import org.ncbo.stanford.domain.custom.dao.mapping.CustomNcboMappingCountsDAO;
-import org.ncbo.stanford.domain.custom.dao.mapping.CustomNcboMappingDAO;
-import org.ncbo.stanford.domain.custom.dao.mapping.CustomNcboMappingStatsDAO;
-import org.ncbo.stanford.domain.custom.entity.Mapping;
 import org.ncbo.stanford.enumeration.MappingSourceEnum;
 import org.ncbo.stanford.exception.InvalidInputException;
 import org.ncbo.stanford.exception.MappingExistsException;
 import org.ncbo.stanford.exception.MappingMissingException;
 import org.ncbo.stanford.service.mapping.MappingService;
+import org.ncbo.stanford.sparql.bean.Mapping;
+import org.ncbo.stanford.sparql.dao.mapping.CustomNcboMappingCountsDAO;
+import org.ncbo.stanford.sparql.dao.mapping.CustomNcboMappingDAO;
+import org.ncbo.stanford.sparql.dao.mapping.CustomNcboMappingStatsDAO;
 import org.ncbo.stanford.util.paginator.Paginator;
 import org.ncbo.stanford.util.paginator.impl.Page;
 import org.ncbo.stanford.util.paginator.impl.PaginatorImpl;
+import org.ncbo.stanford.util.sparql.SPARQLFilterGenerator;
 import org.openrdf.model.URI;
 
 public class MappingServiceImpl implements MappingService {
@@ -66,7 +66,7 @@ public class MappingServiceImpl implements MappingService {
 	}
 
 	public Page<MappingBean> getMappingsFromOntology(OntologyBean ont,
-			Integer pageSize, Integer pageNum, MappingParametersBean parameters)
+			Integer pageSize, Integer pageNum, SPARQLFilterGenerator parameters)
 			throws InvalidInputException {
 		MappingResultListBean pageMappings = new MappingResultListBean(0);
 		Integer totalResults = mappingCountsDAO.getCountMappingsFromOntology(
@@ -88,7 +88,7 @@ public class MappingServiceImpl implements MappingService {
 	}
 
 	public Page<MappingBean> getMappingsToOntology(OntologyBean ont,
-			Integer pageSize, Integer pageNum, MappingParametersBean parameters)
+			Integer pageSize, Integer pageNum, SPARQLFilterGenerator parameters)
 			throws InvalidInputException {
 		MappingResultListBean pageMappings = new MappingResultListBean(0);
 		Integer totalResults = mappingCountsDAO.getCountMappingsToOntology(ont
@@ -112,7 +112,7 @@ public class MappingServiceImpl implements MappingService {
 	public Page<MappingBean> getMappingsBetweenOntologies(
 			OntologyBean sourceOnt, OntologyBean targetOnt, Integer pageSize,
 			Integer pageNum, Boolean unidirectional,
-			MappingParametersBean parameters) throws InvalidInputException {
+			SPARQLFilterGenerator parameters) throws InvalidInputException {
 		MappingResultListBean pageMappings = new MappingResultListBean(0);
 		Integer totalResults = mappingCountsDAO
 				.getCountMappingsBetweenOntologies(sourceOnt.getOntologyId(),
@@ -136,7 +136,7 @@ public class MappingServiceImpl implements MappingService {
 	}
 
 	public Page<MappingBean> getMappingsForOntology(OntologyBean ont,
-			Integer pageSize, Integer pageNum, MappingParametersBean parameters)
+			Integer pageSize, Integer pageNum, SPARQLFilterGenerator parameters)
 			throws InvalidInputException {
 		MappingResultListBean pageMappings = new MappingResultListBean(0);
 		Integer totalResults = mappingCountsDAO.getCountMappingsForOntology(ont
@@ -158,7 +158,7 @@ public class MappingServiceImpl implements MappingService {
 	}
 
 	public Page<MappingBean> getMappingsForParameters(Integer pageSize,
-			Integer pageNum, MappingParametersBean parameters)
+			Integer pageNum, SPARQLFilterGenerator parameters)
 			throws InvalidInputException {
 		MappingResultListBean pageMappings = new MappingResultListBean(0);
 		Integer totalResults = mappingCountsDAO
@@ -181,7 +181,7 @@ public class MappingServiceImpl implements MappingService {
 
 	public Page<MappingBean> getMappingsForConcept(OntologyBean ont,
 			ClassBean concept, Integer pageSize, Integer pageNum,
-			MappingParametersBean parameters) throws InvalidInputException {
+			SPARQLFilterGenerator parameters) throws InvalidInputException {
 		MappingResultListBean pageMappings = new MappingResultListBean(0);
 		Integer totalResults = mappingCountsDAO.getCountMappingsForConcept(ont
 				.getOntologyId(), concept.getFullId(), parameters);
@@ -204,7 +204,7 @@ public class MappingServiceImpl implements MappingService {
 
 	public Page<MappingBean> getMappingsFromConcept(OntologyBean ont,
 			ClassBean concept, Integer pageSize, Integer pageNum,
-			MappingParametersBean parameters) throws InvalidInputException {
+			SPARQLFilterGenerator parameters) throws InvalidInputException {
 		MappingResultListBean pageMappings = new MappingResultListBean(0);
 		Integer totalResults = mappingCountsDAO.getCountMappingsFromConcept(ont
 				.getOntologyId(), concept.getFullId(), parameters);
@@ -227,7 +227,7 @@ public class MappingServiceImpl implements MappingService {
 
 	public Page<MappingBean> getMappingsToConcept(OntologyBean ont,
 			ClassBean concept, Integer pageSize, Integer pageNum,
-			MappingParametersBean parameters) throws InvalidInputException {
+			SPARQLFilterGenerator parameters) throws InvalidInputException {
 		MappingResultListBean pageMappings = new MappingResultListBean(0);
 		Integer totalResults = mappingCountsDAO.getCountMappingsToConcept(ont
 				.getOntologyId(), concept.getFullId(), parameters);
@@ -252,7 +252,7 @@ public class MappingServiceImpl implements MappingService {
 			OntologyBean sourceOnt, OntologyBean targetOnt,
 			ClassBean sourceConcept, ClassBean targetConcept,
 			Boolean unidirectional, Integer pageSize, Integer pageNum,
-			MappingParametersBean parameters) throws InvalidInputException {
+			SPARQLFilterGenerator parameters) throws InvalidInputException {
 		MappingResultListBean pageMappings = new MappingResultListBean(0);
 		Integer totalResults = mappingCountsDAO
 				.getCountMappingsBetweenConcepts(sourceOnt.getOntologyId(),

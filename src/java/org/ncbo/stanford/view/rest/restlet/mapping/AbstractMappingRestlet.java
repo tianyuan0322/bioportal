@@ -7,9 +7,9 @@ import java.util.List;
 import javax.servlet.http.HttpServletRequest;
 import javax.xml.bind.DatatypeConverter;
 
-import org.ncbo.stanford.bean.mapping.MappingParametersBean;
 import org.ncbo.stanford.enumeration.MappingSourceEnum;
 import org.ncbo.stanford.util.RequestUtils;
+import org.ncbo.stanford.util.sparql.SPARQLFilterGenerator;
 import org.ncbo.stanford.view.rest.restlet.AbstractBaseRestlet;
 import org.ncbo.stanford.view.util.constants.RequestParamConstants;
 import org.openrdf.model.URI;
@@ -28,7 +28,7 @@ public class AbstractMappingRestlet extends AbstractBaseRestlet {
 	 * @param response
 	 * @return
 	 */
-	protected MappingParametersBean getMappingParameters(Request request,
+	protected SPARQLFilterGenerator getMappingParameters(Request request,
 			Response response) {
 		HttpServletRequest httpRequest = RequestUtils
 				.getHttpServletRequest(request);
@@ -85,7 +85,7 @@ public class AbstractMappingRestlet extends AbstractBaseRestlet {
 		}
 
 		// Create parameters bean
-		MappingParametersBean parameters = new MappingParametersBean();
+		SPARQLFilterGenerator parameters = new SPARQLFilterGenerator();
 		if (submittedBy != null && !submittedBy.isEmpty())
 			parameters.setSubmittedBy(submittedBy);
 		if (mappingType != null)

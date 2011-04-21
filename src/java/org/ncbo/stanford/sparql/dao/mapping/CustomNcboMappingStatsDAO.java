@@ -1,4 +1,4 @@
-package org.ncbo.stanford.domain.custom.dao.mapping;
+package org.ncbo.stanford.sparql.dao.mapping;
 
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -9,8 +9,8 @@ import org.apache.commons.lang.StringUtils;
 import org.ncbo.stanford.bean.mapping.MappingConceptStatsBean;
 import org.ncbo.stanford.bean.mapping.MappingOntologyStatsBean;
 import org.ncbo.stanford.bean.mapping.MappingUserStatsBean;
-import org.ncbo.stanford.domain.custom.entity.Mapping;
 import org.ncbo.stanford.exception.InvalidInputException;
+import org.ncbo.stanford.sparql.bean.Mapping;
 import org.ncbo.stanford.util.constants.ApplicationConstants;
 import org.openrdf.query.BindingSet;
 import org.openrdf.query.MalformedQueryException;

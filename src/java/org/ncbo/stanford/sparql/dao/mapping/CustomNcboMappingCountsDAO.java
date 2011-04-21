@@ -1,24 +1,24 @@
-package org.ncbo.stanford.domain.custom.dao.mapping;
+package org.ncbo.stanford.sparql.dao.mapping;
 
-import org.ncbo.stanford.bean.mapping.MappingParametersBean;
 import org.ncbo.stanford.exception.InvalidInputException;
+import org.ncbo.stanford.util.sparql.SPARQLFilterGenerator;
 
 public class CustomNcboMappingCountsDAO extends AbstractNcboMappingDAO {
 
 	public Integer getCountMappingsForParameters(
-			MappingParametersBean parameters) throws InvalidInputException {
+			SPARQLFilterGenerator parameters) throws InvalidInputException {
 		return getCount(null, parameters);
 	}
 
 	public Integer getCountMappingsFromOntology(Integer ontologyId,
-			MappingParametersBean parameters) throws InvalidInputException {
+			SPARQLFilterGenerator parameters) throws InvalidInputException {
 		String filter = generateOntologySparqlFilter(ontologyId, null, true);
 
 		return getCount(filter, parameters);
 	}
 
 	public Integer getCountMappingsToOntology(Integer ontologyId,
-			MappingParametersBean parameters) throws InvalidInputException {
+			SPARQLFilterGenerator parameters) throws InvalidInputException {
 		String filter = generateOntologySparqlFilter(null, ontologyId, true);
 
 		return getCount(filter, parameters);
@@ -26,7 +26,7 @@ public class CustomNcboMappingCountsDAO extends AbstractNcboMappingDAO {
 
 	public Integer getCountMappingsBetweenOntologies(Integer sourceOntology,
 			Integer targetOntology, Boolean unidirectional,
-			MappingParametersBean parameters) throws InvalidInputException {
+			SPARQLFilterGenerator parameters) throws InvalidInputException {
 		String filter = generateOntologySparqlFilter(sourceOntology,
 				targetOntology, unidirectional);
 
@@ -34,14 +34,14 @@ public class CustomNcboMappingCountsDAO extends AbstractNcboMappingDAO {
 	}
 
 	public Integer getCountMappingsForOntology(Integer ontologyId,
-			MappingParametersBean parameters) throws InvalidInputException {
+			SPARQLFilterGenerator parameters) throws InvalidInputException {
 		String filter = generateOntologySparqlFilter(ontologyId, null, false);
 
 		return getCount(filter, parameters);
 	}
 
 	public Integer getCountMappingsForConcept(Integer ontologyId,
-			String conceptId, MappingParametersBean parameters)
+			String conceptId, SPARQLFilterGenerator parameters)
 			throws InvalidInputException {
 		String filter = "(" + generateConceptSparqlFilter(conceptId, null, false) + ")";
 		filter += " && ("
@@ -51,7 +51,7 @@ public class CustomNcboMappingCountsDAO extends AbstractNcboMappingDAO {
 	}
 
 	public Integer getCountMappingsFromConcept(Integer ontologyId,
-			String conceptId, MappingParametersBean parameters)
+			String conceptId, SPARQLFilterGenerator parameters)
 			throws InvalidInputException {
 		String filter = generateConceptSparqlFilter(conceptId, null, true);
 		filter += " && " + generateOntologySparqlFilter(ontologyId, null, true);
@@ -60,7 +60,7 @@ public class CustomNcboMappingCountsDAO extends AbstractNcboMappingDAO {
 	}
 
 	public Integer getCountMappingsToConcept(Integer ontologyId,
-			String conceptId, MappingParametersBean parameters)
+			String conceptId, SPARQLFilterGenerator parameters)
 			throws InvalidInputException {
 		String filter = generateConceptSparqlFilter(conceptId, null, true);
 		filter += " && " + generateOntologySparqlFilter(ontologyId, null, true);
@@ -70,7 +70,7 @@ public class CustomNcboMappingCountsDAO extends AbstractNcboMappingDAO {
 
 	public Integer getCountMappingsBetweenConcepts(Integer sourceOntologyId,
 			Integer targetOntologyId, String fromConceptId, String toConceptId,
-			Boolean unidirectional, MappingParametersBean parameters)
+			Boolean unidirectional, SPARQLFilterGenerator parameters)
 			throws InvalidInputException {
 		String filter = generateConceptSparqlFilter(fromConceptId, toConceptId,
 				unidirectional);

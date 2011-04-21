@@ -1,4 +1,4 @@
-package org.ncbo.stanford.domain.custom.dao;
+package org.ncbo.stanford.sparql.dao.mapping;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
@@ -8,13 +8,13 @@ import java.util.List;
 
 import org.junit.Test;
 import org.ncbo.stanford.AbstractBioPortalTest;
-import org.ncbo.stanford.domain.custom.dao.mapping.CustomNcboMappingCountsDAO;
-import org.ncbo.stanford.domain.custom.dao.mapping.CustomNcboMappingDAO;
-import org.ncbo.stanford.domain.custom.entity.Mapping;
 import org.ncbo.stanford.enumeration.MappingSourceEnum;
 import org.ncbo.stanford.exception.InvalidInputException;
 import org.ncbo.stanford.exception.MappingExistsException;
 import org.ncbo.stanford.exception.MappingMissingException;
+import org.ncbo.stanford.sparql.bean.Mapping;
+import org.ncbo.stanford.sparql.dao.mapping.CustomNcboMappingCountsDAO;
+import org.ncbo.stanford.sparql.dao.mapping.CustomNcboMappingDAO;
 import org.openrdf.model.URI;
 import org.openrdf.model.impl.URIImpl;
 import org.springframework.beans.factory.annotation.Autowired;
