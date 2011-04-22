@@ -34,4 +34,17 @@ VALUES ('obs-user', '0de68a1e-662f-11e0-9d7b-005056aa3316', 'wgnDm3+21SHhwrJ22/v
 	
 INSERT INTO ncbo_user_role (user_id, role_id)
 SELECT id, 2824 FROM ncbo_user WHERE username = 'obs-user' AND api_key = '0de68a1e-662f-11e0-9d7b-005056aa3316';
+
+-- A user for Resource Index Application. Temporarily, grant this user admin privileges
+DELETE FROM ncbo_user_role WHERE user_id = (
+	SELECT id FROM ncbo_user WHERE username = 'ri-user' AND api_key = '77591c48-6d2b-11e0-9b85-005056bd0024'
+);
+
+DELETE FROM ncbo_user WHERE username = 'ri-user' AND api_key = '77591c48-6d2b-11e0-9b85-005056bd0024';
+
+INSERT INTO ncbo_user (username, api_key, PASSWORD, email, firstname, lastname)
+VALUES ('ri-user', '77591c48-6d2b-11e0-9b85-005056bd0024', '7ucUFJw/BODnH+L0N3s0E0+o85VHx65LS/wJBaQwO3xXhUVxlVNCPTH0wZaVm0qS',
+	'ri-user@bioontology.org', 'ResourceIndex', 'User');
 	
+INSERT INTO ncbo_user_role (user_id, role_id)
+SELECT id, 2824 FROM ncbo_user WHERE username = 'ri-user' AND api_key = '77591c48-6d2b-11e0-9b85-005056bd0024';
