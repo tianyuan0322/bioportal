@@ -273,7 +273,8 @@ public abstract class AbstractOntologyManagerLexGrid {
 	protected String getDefaultHierarchyId(String schemeName,
 			CodingSchemeVersionOrTag csvt) throws Exception {
 		String[] hierarchyIDs = lbscm.getHierarchyIDs(schemeName, csvt);
-		String hierarchyId = (hierarchyIDs.length > 0) ? hierarchyIDs[0] : null;
+		//String hierarchyId = (hierarchyIDs.length > 0) ? hierarchyIDs[0] : null;
+		String hierarchyId = null;
 
 		for (String hierarchy : hierarchyIDs) {
 			if (hierarchy.equalsIgnoreCase("IS_A")) {

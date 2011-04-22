@@ -182,7 +182,7 @@ public class OBOCVSPullServiceImpl implements OBOCVSPullService {
 										.getModule(), repo.getRootdirectory(),
 								repo.getArgumentstring(),
 								repo.getCheckoutdir(), tempDir);
-						//svnUtils.svnCheckout();
+						svnUtils.svnCheckout();
 						updateFiles = svnUtils.listEntries();
 					} else {
 						CVSUtils cvsUtils = new CVSUtils(repo.getUsername(),
@@ -190,7 +190,7 @@ public class OBOCVSPullServiceImpl implements OBOCVSPullService {
 										.getModule(), repo.getRootdirectory(),
 								repo.getArgumentstring(),
 								repo.getCheckoutdir(), tempDir);
-						//cvsUtils.cvsCheckout();
+						cvsUtils.cvsCheckout();
 						updateFiles = cvsUtils.getAllCVSEntries();
 					}
 					// process repository data.
