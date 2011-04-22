@@ -28,7 +28,7 @@ public abstract class StringHelper {
 
 	/** Regex pattern for a UUID */
 	private static final Pattern uuidPattern =
-		Pattern.compile("^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$");
+		Pattern.compile("^[0-9a-z]{8}-[0-9a-z]{4}-[0-9a-z]{4}-[0-9a-z]{4}-[0-9a-z]{12}$");
 
 	// public static void main(String[] args) {
 	// String k = "\"Hello World\"";
