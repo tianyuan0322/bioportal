@@ -58,6 +58,11 @@ public class OntologyLoaderLexGridImplTest extends AbstractBioPortalTest {
 	public final static String OBO_INFECTIOUS_DISEASE_PATHNAME = "test/sample_data/infectious_disease.obo";
 	public final static String OBO_INFECTIOUS_DISEASE_URN_VERSION = "urn:lsid:bioontology.org:infectious_discease|UNASSIGNED";
 	public final static String OBO_INFECTIOUS_DISEASE_DISPLAY_LABEL = "INFECTIOUS_DISEASE";
+	
+	public final static String OBO_PROTEIN_PATHNAME = "test/sample_data/pro_v1.29.obo";
+	public final static String OBO_PROTEIN_URN_VERSION = "urn:lsid:bioontology.org:pro|UNASSIGNED";
+	public final static String OBO_PROTEIN_DISPLAY_LABEL = "PROTEIN";
+	
 
 	public final static String LEXGRID_XML_PATHNAME = "test/sample_data/Automobiles.xml";
 	public final static String LEXGRID_XML_URN_VERSION = "urn:oid:11.11.0.1|1.0";
@@ -344,6 +349,27 @@ public class OntologyLoaderLexGridImplTest extends AbstractBioPortalTest {
 	}
 
 	@Test
+	public void testLoadOboProtein() throws Exception {
+		System.out
+				.println("OntologyLoaderLexGridImplTest: testLoadOboProtein().................. BEGIN");
+		OntologyBean ontologyBean = this.createOntolgyBeanOboProtein();
+		// populate file field in ontologyBean
+		ontologyBean.setFilePath(OBO_PROTEIN_PATHNAME);
+		// create - pass FileHandler
+		ontologyService.createOntologyOrView(ontologyBean,
+				getFilePathHandler(ontologyBean));
+		if (ontologyBean != null)
+			System.out.println("Created OntologyBean with ID = "
+					+ ontologyBean.getId());
+		// load
+		ontologyLoadSchedulerService.parseOntologies(Arrays.asList(ontologyBean
+				.getId()), null);
+		assertTrue(ontologyBean.getCodingScheme() != null);
+		System.out
+				.println("OntologyLoaderLexGridImplTest: testLoadOboProtein().................... END");
+	}
+	
+	@Test
 	public void testLoadAndCleanup() throws Exception {
 		System.out.println("testLoadAndCleanup()");
 
@@ -363,6 +389,7 @@ public class OntologyLoaderLexGridImplTest extends AbstractBioPortalTest {
 		bean.setOntologyId(5000);
 		bean.setFormat(ApplicationConstants.FORMAT_OBO);
 		bean.setCodingScheme(OBO_CELL_URN_VERSION);
+		bean.setVersionNumber("TEST");
 		bean.setDisplayLabel(OBO_CELL_DISPLAY_LABEL);
 		bean.setContactEmail("obo@email.com");
 		bean.setContactName("OBO Name");
@@ -387,6 +414,14 @@ public class OntologyLoaderLexGridImplTest extends AbstractBioPortalTest {
 		return bean;
 	}
 
+	private OntologyBean createOntolgyBeanOboProtein() {
+		OntologyBean bean = createOntolgyBeanBase();
+		bean.setFormat(ApplicationConstants.FORMAT_OBO);
+		bean.setCodingScheme(OBO_PROTEIN_URN_VERSION);
+		bean.setDisplayLabel(OBO_PROTEIN_DISPLAY_LABEL);
+		return bean;
+	}
+	
 	private OntologyBean createOntolgyBeanOboCellOld() {
 		OntologyBean bean = createOntolgyBeanBase();
 		bean.setFormat(ApplicationConstants.FORMAT_OBO);

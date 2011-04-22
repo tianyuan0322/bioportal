@@ -4,12 +4,12 @@ import java.io.BufferedInputStream;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
-import java.net.URI;
 import java.net.URL;
 import java.net.URLConnection;
 
@@ -30,13 +30,24 @@ public class LoaderUtils {
 		if (isValidDownloadLocation(url_location)) {
 			String url_md5 = computeMD5(url_location);
 			String latest_md5 = fetchMd5FromFile(latestOntology);
-			if (url_md5.equalsIgnoreCase(latest_md5)) {
+			if (url_md5 != null && url_md5.equalsIgnoreCase(latest_md5)) {
 				isUpdated = false;
 			}
 		} else {
 			isUpdated = false;
 		}
 
+		return isUpdated;
+	}
+
+	public static boolean hasRepositoryFileBeenUpdated(File repo_file,
+			OntologyBean latestOntology) {
+		boolean isUpdated = true;
+		String repo_md5 = computeMD5(repo_file);
+		String latest_md5 = fetchMd5FromFile(latestOntology);
+		if (repo_md5!= null && repo_md5.equalsIgnoreCase(latest_md5)) {
+			isUpdated = false;
+		}
 		return isUpdated;
 	}
 
@@ -58,8 +69,6 @@ public class LoaderUtils {
 		return contentLength;
 	}
 
-
-
 	public static boolean isValidDownloadLocation(String url_location) {
 		boolean isValid = false;
 		if (StringUtils.isBlank(url_location)) {
@@ -77,7 +86,7 @@ public class LoaderUtils {
 				// con.setRequestMethod("HEAD");
 
 				if (con.getResponseCode() < HttpURLConnection.HTTP_BAD_REQUEST) {
-					//System.out.println("Header=\n" + con.getHeaderFields());
+					// System.out.println("Header=\n" + con.getHeaderFields());
 					isValid = true;
 				}
 				con.disconnect();
@@ -97,37 +106,57 @@ public class LoaderUtils {
 	}
 
 	/**
-	 * This method is being added to deal with the case where the http response to
-	 * a request is a HTTP_MOVED_PERM or HTTP_MOVED_TEMP. If the move is from http to
-	 * https, the HttpURLConnection's followRedirects doesn't work. 
+	 * This method is being added to deal with the case where the http response
+	 * to a request is a HTTP_MOVED_PERM or HTTP_MOVED_TEMP. If the move is from
+	 * http to https, the HttpURLConnection's followRedirects doesn't work.
 	 * http://bugs.sun.com/bugdatabase/view_bug.do?bug_id=4620571
 	 * 
 	 * @param url_location
 	 * @return InputStream
 	 */
-	public static InputStream getInputStream(String url_location) throws IOException {		
-			URL url = new URL(url_location);			
-			URLConnection uc= url.openConnection();
-			InputStream in = uc.getInputStream();
-			if (uc instanceof HttpURLConnection) {
-				HttpURLConnection http_uc= (HttpURLConnection) uc;
-				if (http_uc.getResponseCode() == HttpURLConnection.HTTP_MOVED_PERM
-						|| http_uc.getResponseCode() == HttpURLConnection.HTTP_MOVED_TEMP) {
-					String location = http_uc.getHeaderField("Location");
-					if (StringUtils.isNotBlank(location)) {
-						return getInputStream(location);
-						
-					}
-				} 
+	public static InputStream getInputStream(String url_location)
+			throws IOException {
+		URL url = new URL(url_location);
+		URLConnection uc = url.openConnection();
+		InputStream in = uc.getInputStream();
+		if (uc instanceof HttpURLConnection) {
+			HttpURLConnection http_uc = (HttpURLConnection) uc;
+			if (http_uc.getResponseCode() == HttpURLConnection.HTTP_MOVED_PERM
+					|| http_uc.getResponseCode() == HttpURLConnection.HTTP_MOVED_TEMP) {
+				String location = http_uc.getHeaderField("Location");
+				if (StringUtils.isNotBlank(location)) {
+					return getInputStream(location);
+
+				}
 			}
-            return in;
+		}
+		return in;
+	}
+
+	public static String computeMD5(File file) {
+		String md5sum = null;
+		try {
+			// System.out.println("Time=" + new Date());
+			BufferedInputStream in = new BufferedInputStream(
+					new FileInputStream(file));
+			md5sum = DigestUtils.md5Hex(in);
+			// System.out.println(md5sum);
+			in.close();
+			// System.out.println("Time=" + new Date());
+
+		} catch (Exception ex) {
+			ex.printStackTrace();
+		}
+		return md5sum;
+
 	}
 
 	public static String computeMD5(String downLoadLocation) {
 		String md5sum = null;
 		try {
 			// System.out.println("Time=" + new Date());
-			BufferedInputStream in = new BufferedInputStream(getInputStream(downLoadLocation));
+			BufferedInputStream in = new BufferedInputStream(
+					getInputStream(downLoadLocation));
 			md5sum = DigestUtils.md5Hex(in);
 			// System.out.println(md5sum);
 			in.close();
@@ -150,6 +179,28 @@ public class LoaderUtils {
 				.getFullOntologyDirPath(ontologyBean);
 		String fileName = getMD5FileName(ontologyBean);
 		String md5 = computeMD5(ontologyBean);
+		// continue only if there is input file
+		if (filePath != null && fileName != null && md5 != null) {
+			// now create output file
+			File outputDirectories = new File(filePath);
+			outputDirectories.mkdirs();
+
+			File outputFile = new File(filePath, fileName);
+
+			BufferedWriter outputStream = new BufferedWriter(new FileWriter(
+					outputFile));
+			outputStream.write(md5);
+			outputStream.flush();
+			outputStream.close();
+		}
+	}
+
+	public static void storeMd5ToFile(OntologyBean ontologyBean, File file)
+			throws IOException {
+		String filePath = AbstractFilePathHandler
+				.getFullOntologyDirPath(ontologyBean);
+		String fileName = getMD5FileName(ontologyBean);
+		String md5 = computeMD5(file);
 		// continue only if there is input file
 		if (filePath != null && fileName != null && md5 != null) {
 			// now create output file

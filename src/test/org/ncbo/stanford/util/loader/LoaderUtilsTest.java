@@ -4,6 +4,7 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 import java.io.BufferedInputStream;
+import java.io.File;
 import java.util.Date;
 
 import org.junit.Test;
@@ -23,7 +24,14 @@ public class LoaderUtilsTest extends AbstractBioPortalTest {
 		LoaderUtils.storeMd5ToFile(ontologyBean);		
 	}
 	
-	
+	@Test
+	public void testStoreMd5FileUsingFile() throws Exception {
+		OntologyBean ontologyBean= createDummyOntolgyBean();
+		File inputFile = new File("C:/apps/bmir.apps/bioportal_resources/uploads/5070/7/mosquito_insecticide_resistance.obo");
+
+		LoaderUtils.storeMd5ToFile(ontologyBean, inputFile);		
+	}
+		
 	@Test
 	public void testFetchMd5File() throws Exception {
 		OntologyBean ontologyBean= createDummyOntolgyBean();
@@ -31,7 +39,35 @@ public class LoaderUtilsTest extends AbstractBioPortalTest {
 		System.out.println("MD5 value= "+str);
 		assertTrue(str!= null);
 		
-	}	
+	}
+	
+	@Test
+	public void testComputeMd5() throws Exception {
+		OntologyBean ontologyBean= createDummyOntolgyBean();
+		String str= LoaderUtils.computeMD5(ontologyBean);	
+		System.out.println("MD5 value= "+str);
+		str= LoaderUtils.computeMD5(ontologyBean);	
+		System.out.println("MD5 value= "+str);
+		str= LoaderUtils.computeMD5(ontologyBean);	
+		System.out.println("MD5 value= "+str);
+		assertTrue(str!= null);
+		
+	}
+	
+	@Test
+	public void testComputeMd5FromFile() throws Exception {
+		//File inputFile = new File(OntologyLoaderLexGridImplTest.OBO_CELL_PATHNAME);
+		File inputFile = new File("C:/apps/bmir.apps/bioportal_resources/uploads/5070/7/mosquito_insecticide_resistance.obo");
+		String str= LoaderUtils.computeMD5(inputFile);	
+		System.out.println("MD5 value= "+str);
+		inputFile = new File("C:/apps/bmir.apps/bioportal_resources/cvscheckout/obofoundry/obo/ontology/phenotype/mosquito_insecticide_resistance.obo");
+		str= LoaderUtils.computeMD5(inputFile);	
+		System.out.println("MD5 value= "+str);
+		OntologyBean ontologyBean= createDummyOntolgyBean();
+		str= LoaderUtils.computeMD5(ontologyBean);	
+		System.out.println("MD5 value= "+str);
+	}
+	
 	private OntologyBean createDummyOntolgyBean() {
 		OntologyBean bean = new OntologyBean(false);
 		bean.setOntologyId(6000);
@@ -41,6 +77,7 @@ public class LoaderUtilsTest extends AbstractBioPortalTest {
 		bean.setCodingScheme(OntologyLoaderLexGridImplTest.OBO_CELL_URN_VERSION);
 		bean.setDisplayLabel(OntologyLoaderLexGridImplTest.OBO_CELL_DISPLAY_LABEL);
 		bean.setDownloadLocation("http://github.com/cmungall/uberon/raw/master/uberon_edit.obo");
+		bean.setDownloadLocation("http://obo.cvs.sourceforge.net/*checkout*/obo/obo/ontology/phenotype/mosquito_insecticide_resistance.obo");
 		bean.setUserId(1000);
 		bean.setVersionNumber("1.0");
 		bean.setInternalVersionNumber(1);

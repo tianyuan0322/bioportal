@@ -17,7 +17,7 @@ public class OntologyLoadSchedulerServiceTest extends AbstractBioPortalTest {
 		// lexgrid sample: 3231
 		// protege samples: 34253, 34265
 		List<Integer> ontologies = new ArrayList<Integer>(1);
-		ontologies.add(10263);
+		ontologies.add(10426);
 		service.parseOntologies(ontologies, null);
 	}
 }

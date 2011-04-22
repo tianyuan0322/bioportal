@@ -182,7 +182,7 @@ public class OBOCVSPullServiceImpl implements OBOCVSPullService {
 										.getModule(), repo.getRootdirectory(),
 								repo.getArgumentstring(),
 								repo.getCheckoutdir(), tempDir);
-						svnUtils.svnCheckout();
+						//svnUtils.svnCheckout();
 						updateFiles = svnUtils.listEntries();
 					} else {
 						CVSUtils cvsUtils = new CVSUtils(repo.getUsername(),
@@ -190,7 +190,7 @@ public class OBOCVSPullServiceImpl implements OBOCVSPullService {
 										.getModule(), repo.getRootdirectory(),
 								repo.getArgumentstring(),
 								repo.getCheckoutdir(), tempDir);
-						cvsUtils.cvsCheckout();
+						//cvsUtils.cvsCheckout();
 						updateFiles = cvsUtils.getAllCVSEntries();
 					}
 					// process repository data.
@@ -243,7 +243,7 @@ public class OBOCVSPullServiceImpl implements OBOCVSPullService {
 				}
 
 				OntologyAction ontologyAction = determineOntologyAction(mfb,
-						cf, repo.getHostname());
+						cf, repo);
 				ActionEnum action = ontologyAction.getAction();
 				OntologyBean ont = ontologyAction.getOntotlogyBean();
 				if (ont != null
@@ -261,16 +261,11 @@ public class OBOCVSPullServiceImpl implements OBOCVSPullService {
 										+ mfb.getId() + "]");
 					}
 
-					String path = cf.getPath();
-					String checkoutdir = repo.getCheckoutdir();
-
-					if (!path.contains(checkoutdir)) {
-						path = checkoutdir + "/" + path;
-					}
+					File repoFile= getRepositoryFile(repo, cf);
 
 					filePathHandler = new PhysicalDirectoryFilePathHandlerImpl(
 							CompressedFileHandlerFactory
-									.createFileHandler(format), new File(path));
+									.createFileHandler(format), repoFile);
 
 					ontologyService.createOntologyOrView(ont, filePathHandler);
 					break;
@@ -309,6 +304,18 @@ public class OBOCVSPullServiceImpl implements OBOCVSPullService {
 		return processed_OboFoundryId_set;
 	}
 
+	
+	private File getRepositoryFile(OBORepositoryInfoHolder repo, CVSFile cf) {
+		String path = cf.getPath();
+		String checkoutdir = repo.getCheckoutdir();
+
+		if (!path.contains(checkoutdir)) {
+			path = checkoutdir + "/" + path;
+		}
+		return new File(path);
+	}
+	
+	
 	/**
 	 * Determines the action to be executed
 	 * 
@@ -318,7 +325,8 @@ public class OBOCVSPullServiceImpl implements OBOCVSPullService {
 	 * @throws InvalidDataException
 	 */
 	private OntologyAction determineOntologyAction(MetadataFileBean mfb,
-			CVSFile cf, String cvsHostname) throws Exception {
+			CVSFile cf, OBORepositoryInfoHolder repo) throws Exception {
+		String cvsHostname= repo.getHostname();
 		ActionEnum action = ActionEnum.NO_ACTION;
 		String oboFoundryId = mfb.getId();
 
@@ -382,8 +390,7 @@ public class OBOCVSPullServiceImpl implements OBOCVSPullService {
 					}
 				}
 
-				else if (hasVersions(ont) && cf != null
-						&& cf.getVersion().equals(ont.getVersionNumber())) {
+				else if (hasVersions(ont) &&  isRepositoryFileUnchanged(repo, cf, ont)) {
 					// existing ontology; no new version found
 					// check if categories and downloadLocation has been
 					// updated
@@ -425,6 +432,16 @@ public class OBOCVSPullServiceImpl implements OBOCVSPullService {
 		}
 
 		return ontologyAction;
+	}
+	
+	private boolean isRepositoryFileUnchanged(OBORepositoryInfoHolder repo, CVSFile cf, OntologyBean ont) {
+		boolean isUnchanged= false;
+		File repo_file= getRepositoryFile(repo, cf);
+		if (cf != null && (cf.getVersion().equals(ont.getVersionNumber()) 
+				|| ! LoaderUtils.hasRepositoryFileBeenUpdated(repo_file, ont))) {
+			isUnchanged=true;	
+		}
+		return isUnchanged;
 	}
 
 	private String getDownloadLocation(MetadataFileBean mfb) {

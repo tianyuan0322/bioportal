@@ -14,6 +14,7 @@ import java.util.List;
 
 import org.ncbo.stanford.bean.OntologyBean;
 import org.ncbo.stanford.util.MessageUtils;
+import org.ncbo.stanford.util.loader.LoaderUtils;
 import org.ncbo.stanford.util.ontologyfile.compressedfilehandler.CompressedFileHandler;
 import org.ncbo.stanford.util.ontologyfile.pathhandler.AbstractFilePathHandler;
 
@@ -78,7 +79,8 @@ public class PhysicalDirectoryFilePathHandlerImpl extends
 						"Error! - PhysicalDirectoryFilePathHandlerImpl(): processOntologyFileUpload - "
 								+ errorMsg);
 			}
-
+			// Store the MD5 file
+			LoaderUtils.storeMd5ToFile(ontologyBean, file);
 			fileNames = compressedFileHandler.handle(outputFile, ontologyBean);
 		}
 
