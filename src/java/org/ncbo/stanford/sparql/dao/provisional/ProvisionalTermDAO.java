@@ -104,12 +104,12 @@ public class ProvisionalTermDAO {
 	protected final static String synonymsForTerm = "PREFIX pid: <http://purl.bioontology.org/ontology/provisional#> "
 			+ "SELECT DISTINCT ?synonym {"
 			+ "  ?id <pid:synonym> ?synonym ."
-			+ "  FILTER ( ?id = %TERM_ID% ) }";
+			+ "  FILTER ( ?id = <%TERM_ID%> ) }";
 
 	protected final static String ontologyIdsForTerm = "PREFIX pid: <http://purl.bioontology.org/ontology/provisional#> "
 			+ "SELECT DISTINCT ?ontologyId {"
 			+ "  ?id <pid:ontology_id> ?ontologyId ."
-			+ "  FILTER ( ?id = %TERM_ID% ) }";
+			+ "  FILTER ( ?id = <%TERM_ID%> ) }";
 
 	/*******************************************************************
 	 * 

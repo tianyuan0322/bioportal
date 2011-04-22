@@ -4,12 +4,15 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import org.ncbo.stanford.bean.OntologyBean;
 import org.ncbo.stanford.bean.ProvisionalTermBean;
 import org.ncbo.stanford.bean.concept.ClassBean;
 import org.ncbo.stanford.bean.concept.ClassBeanResultListBean;
 import org.ncbo.stanford.exception.InvalidInputException;
 import org.ncbo.stanford.exception.ProvisionalTermExistsException;
 import org.ncbo.stanford.exception.ProvisionalTermMissingException;
+import org.ncbo.stanford.service.concept.ConceptService;
+import org.ncbo.stanford.service.ontology.OntologyService;
 import org.ncbo.stanford.service.provisional.ProvisionalTermService;
 import org.ncbo.stanford.sparql.bean.ProvisionalTerm;
 import org.ncbo.stanford.sparql.dao.provisional.ProvisionalTermDAO;
@@ -20,9 +23,13 @@ import org.ncbo.stanford.util.sparql.SPARQLFilterGenerator;
 import org.openrdf.model.URI;
 import org.openrdf.model.impl.URIImpl;
 
+import com.mysql.jdbc.StringUtils;
+
 public class ProvisionalTermServiceImpl implements ProvisionalTermService {
 
 	private ProvisionalTermDAO provisionalTermDAO;
+	private ConceptService conceptService;
+	private OntologyService ontologyService;
 
 	@Override
 	public ClassBean createProvisionalTerm(List<Integer> ontologyIds,
@@ -58,7 +65,7 @@ public class ProvisionalTermServiceImpl implements ProvisionalTermService {
 		if (pageNum <= 0 || pageNum == null) {
 			pageNum = 1;
 		}
-		
+
 		ClassBeanResultListBean pageTerms = new ClassBeanResultListBean(0);
 		Integer totalResults = provisionalTermDAO.getCount(null, parameters);
 
@@ -82,11 +89,11 @@ public class ProvisionalTermServiceImpl implements ProvisionalTermService {
 			throws ProvisionalTermMissingException {
 		URI URIid = new URIImpl(id);
 		ProvisionalTerm updatedTerm = provisionalTermDAO.updateProvisionalTerm(
-				URIid, term.getOntologyIds(), term.getLabel(), term.getSynonyms(),
-				term.getDefinition(), term.getProvisionalSubclassOf(), term
-						.getCreated(), term.getUpdated(),
-				term.getSubmittedBy(), term.getNoteId(), term.getStatus(), term
-						.getPermanentId());
+				URIid, term.getOntologyIds(), term.getLabel(), term
+						.getSynonyms(), term.getDefinition(), term
+						.getProvisionalSubclassOf(), term.getCreated(), term
+						.getUpdated(), term.getSubmittedBy(), term.getNoteId(),
+				term.getStatus(), term.getPermanentId());
 		return convertProvisionalTermToClassBean(updatedTerm);
 	}
 
@@ -125,14 +132,56 @@ public class ProvisionalTermServiceImpl implements ProvisionalTermService {
 	private ClassBean convertProvisionalTermToClassBean(ProvisionalTerm term) {
 		ClassBean concept = new ClassBean();
 
-		concept.setId(term.getId().toString());
-		concept.setFullId(term.getId().toString());
-		concept.setSynonyms(term.getSynonyms());
-		concept.setLabel(term.getLabel());
+		if (StringUtils.isNullOrEmpty(term.getPermanentId().toString())
+				&& term.getOntologyIds().size() == 1) {
+			concept.setId(term.getId().toString());
+			concept.setFullId(term.getId().toString());
+			concept.setSynonyms(term.getSynonyms());
+			concept.setLabel(term.getLabel());
 
-		List<String> definitions = new ArrayList<String>();
-		definitions.add(term.getDefinition());
-		concept.setDefinitions(definitions);
+			List<String> definitions = new ArrayList<String>();
+			definitions.add(term.getDefinition());
+			concept.setDefinitions(definitions);
+		} else {
+			// TODO: Should we be storing the implementedTermOntologyId? For now
+			// only end up here if there is one ontology id associated with a
+			// provisional id.
+			OntologyBean ont;
+			try {
+				ont = ontologyService
+						.findLatestActiveOntologyOrViewVersion(term
+								.getOntologyIds().get(0));
+				concept = conceptService
+						.findConcept(ont.getId(), term.getPermanentId()
+								.toString(), null, false, false, false);
+
+				// Add provisional info to relations in classBean
+				concept.addRelation("provisionalId", term.getId().toString());
+				concept.addRelation("provisionalFullId", term.getId()
+						.toString());
+				concept.addRelation("provisionalSynonyms", term.getSynonyms());
+				concept
+						.addRelation("provisionalPreferredName", term
+								.getLabel());
+
+				List<String> definitions = new ArrayList<String>();
+				definitions.add(term.getDefinition());
+				concept.addRelation("provisionalDefinition", definitions);
+
+			} catch (Exception e) {
+				// Try to recover and display a provisional term bean anyway
+				concept.setId(term.getId().toString());
+				concept.setFullId(term.getId().toString());
+				concept.setSynonyms(term.getSynonyms());
+				concept.setLabel(term.getLabel());
+
+				List<String> definitions = new ArrayList<String>();
+				definitions.add(term.getDefinition());
+				concept.setDefinitions(definitions);
+
+				e.printStackTrace();
+			}
+		}
 
 		// Add provisional-specific info to the relations
 		concept.addRelation("provisionalSubclassOf", term
@@ -149,6 +198,22 @@ public class ProvisionalTermServiceImpl implements ProvisionalTermService {
 
 	public void setProvisionalTermDAO(ProvisionalTermDAO provisionalTermDAO) {
 		this.provisionalTermDAO = provisionalTermDAO;
+	}
+
+	/**
+	 * @param conceptService
+	 *            the conceptService to set
+	 */
+	public void setConceptService(ConceptService conceptService) {
+		this.conceptService = conceptService;
+	}
+
+	/**
+	 * @param ontologyService
+	 *            the ontologyService to set
+	 */
+	public void setOntologyService(OntologyService ontologyService) {
+		this.ontologyService = ontologyService;
 	}
 
 }

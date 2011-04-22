@@ -47,7 +47,8 @@ public interface NotesService {
 	public NoteBean updateNote(OntologyBean ont, String noteId,
 			NoteType noteType, String subject, String content, String author,
 			Long created, String status, String appliesTo,
-			NoteAppliesToTypeEnum appliesToType) throws Exception;
+			NoteAppliesToTypeEnum appliesToType, String createdTermId)
+			throws Exception;
 
 	public void archiveNote(OntologyBean ont, String noteId);
 

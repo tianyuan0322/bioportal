@@ -745,9 +745,12 @@
 	</bean>
     
 	<bean id="provisionalTermService" class="org.ncbo.stanford.service.provisional.impl.ProvisionalTermServiceImpl">
-       <property name="provisionalTermDAO">
-	  	  <ref local="provisionalTermDAO" />
-	  </property>
+		<property name="provisionalTermDAO">
+	 	  <ref local="provisionalTermDAO" />
+		</property>
+		<property name="conceptService">
+			<ref local="conceptService" />
+		</property>
 	</bean>
     
     <bean id="conceptService"
@@ -868,6 +871,9 @@
 		<property name="notesPool">
 			<ref bean="notesPool" />
 		</property>
+       <property name="provisionalTermService">
+	  	  <ref local="provisionalTermService" />
+	  </property>
 	</bean>
 
 	<bean id="usageLoggingService"

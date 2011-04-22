@@ -214,8 +214,6 @@ public class NotesRestlet extends AbstractBaseRestlet {
 		// Get other parameters as needed
 		String termDefinition = (String) httpRequest
 				.getParameter(RequestParamConstants.PARAM_NEW_TERM_DEFINITION);
-		String termId = (String) httpRequest
-				.getParameter(RequestParamConstants.PARAM_NEW_TERM_ID);
 		String termParent = (String) httpRequest
 				.getParameter(RequestParamConstants.PARAM_NEW_TERM_PARENT);
 		String termPreferredName = (String) httpRequest
@@ -352,7 +350,7 @@ public class NotesRestlet extends AbstractBaseRestlet {
 	}
 
 	private void updateNote(Request request, Response response) {
-		// TODO: The notes API currently does not support a method to
+		// The notes API currently does not support a method to
 		// handle updating notes. We essentially retrieve the annotation
 		// and set individual properties.
 		HttpServletRequest httpRequest = RequestUtils
@@ -387,6 +385,8 @@ public class NotesRestlet extends AbstractBaseRestlet {
 				.getParameter(RequestParamConstants.PARAM_NOTE_CREATED);
 		String status = (String) httpRequest
 				.getParameter(RequestParamConstants.PARAM_NOTE_STATUS);
+		String createdTermId = (String) httpRequest
+				.getParameter(RequestParamConstants.PARAM_NOTE_CREATED_TERM_ID);
 
 		// Post-process parameters
 		Boolean archiveBool = RequestUtils.parseBooleanParam(archive);
@@ -445,10 +445,8 @@ public class NotesRestlet extends AbstractBaseRestlet {
 				}
 			}
 
-			// TODO: Set status properly (unclear how Notes-api handles
-			// this)
 			notesService.updateNote(ont, noteId, noteType, subject, content,
-					author, createdLong, status, appliesTo, appliesToType);
+					author, createdLong, status, appliesTo, appliesToType, createdTermId);
 
 		} catch (NoteNotFoundException nnfe) {
 			response

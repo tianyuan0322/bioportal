@@ -3,13 +3,14 @@ package org.ncbo.stanford.service.notes.impl;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Date;
 import java.util.List;
 import java.util.Set;
-import java.util.UUID;
 
 import org.apache.commons.lang.WordUtils;
 import org.eclipse.emf.ecore.xml.type.internal.DataValue.URI;
 import org.ncbo.stanford.bean.OntologyBean;
+import org.ncbo.stanford.bean.ProvisionalTermBean;
 import org.ncbo.stanford.bean.concept.AbstractConceptBean;
 import org.ncbo.stanford.bean.concept.ClassBean;
 import org.ncbo.stanford.bean.notes.AppliesToBean;
@@ -19,8 +20,11 @@ import org.ncbo.stanford.bean.notes.ProposalNewTermBean;
 import org.ncbo.stanford.bean.notes.ProposalPropertyValueChangeBean;
 import org.ncbo.stanford.enumeration.NoteAppliesToTypeEnum;
 import org.ncbo.stanford.exception.NoteNotFoundException;
+import org.ncbo.stanford.exception.ProvisionalTermExistsException;
 import org.ncbo.stanford.manager.notes.NotesPool;
 import org.ncbo.stanford.service.notes.NotesService;
+import org.ncbo.stanford.service.provisional.ProvisionalTermService;
+import org.openrdf.model.impl.URIImpl;
 import org.protege.notesapi.NotesException;
 import org.protege.notesapi.NotesManager;
 import org.protege.notesapi.notes.AnnotatableThing;
@@ -41,9 +45,12 @@ import org.protege.notesapi.oc.impl.DefaultOntologyClass;
 import org.protege.notesapi.oc.impl.DefaultOntologyIndividual;
 import org.protege.notesapi.oc.impl.DefaultOntologyProperty;
 
+import com.mysql.jdbc.StringUtils;
+
 public class NotesServiceImpl implements NotesService {
 
 	private NotesPool notesPool;
+	private ProvisionalTermService provisionalTermService;
 
 	public void archiveNote(OntologyBean ont, String noteId) {
 		NotesManager notesManager = notesPool.getNotesManagerForOntology(ont);
@@ -89,9 +96,10 @@ public class NotesServiceImpl implements NotesService {
 		OntologyProperty property = notesManager
 				.getOntologyProperty(propertyId);
 
-		ProposalChangePropertyValue proposal = notesManager.createProposalChangePropertyValue(
-				subject, content, property, propertyOldValue, propertyNewValue,
-				reasonForChange, contactInfo);
+		ProposalChangePropertyValue proposal = notesManager
+				.createProposalChangePropertyValue(subject, content, property,
+						propertyOldValue, propertyNewValue, reasonForChange,
+						contactInfo);
 
 		if (created != null)
 			proposal.setCreatedAt(created);
@@ -105,7 +113,7 @@ public class NotesServiceImpl implements NotesService {
 		if (status != null) {
 			proposal.setHasStatus(getStatus(ont, notesManager, status));
 		}
-		
+
 		return convertAnnotationToNoteBean(proposal, ont);
 	}
 
@@ -128,9 +136,10 @@ public class NotesServiceImpl implements NotesService {
 		Collection<? extends OntologyComponent> oldTargetCollection = Collections
 				.singleton(oldTarget);
 
-		ProposalChangeHierarchy proposal = notesManager.createProposalChangeHierarchy(
-				subject, content, oldTargetCollection, targetCollection,
-				relationshipType, reasonForChange, contactInfo);
+		ProposalChangeHierarchy proposal = notesManager
+				.createProposalChangeHierarchy(subject, content,
+						oldTargetCollection, targetCollection,
+						relationshipType, reasonForChange, contactInfo);
 
 		if (created != null)
 			proposal.setCreatedAt(created);
@@ -152,9 +161,8 @@ public class NotesServiceImpl implements NotesService {
 			NoteAppliesToTypeEnum appliesToType, NoteType noteType,
 			String subject, String content, String author, String status,
 			Long created, String reasonForChange, String contactInfo,
-			String termDefinition, String termParent,
-			String termPreferredName, List<String> termSynonyms)
-			throws NotesException {
+			String termDefinition, String termParent, String termPreferredName,
+			List<String> termSynonyms) throws NotesException {
 		NotesManager notesManager = notesPool.getNotesManagerForOntology(ont);
 
 		LinguisticEntity preferredName = notesManager.createLinguisticEntity(
@@ -172,13 +180,9 @@ public class NotesServiceImpl implements NotesService {
 		Collection<? extends OntologyClass> parent = Collections
 				.singleton(ontClass);
 
-		// Get a temporary id that we generate
-//		String termId = getTemporaryTermId();
-		String termId = "";
-
-		ProposalCreateEntity proposal = notesManager.createProposalCreateClass(subject,
-				content, termId, preferredName, synonymsList, definition,
-				parent, reasonForChange, contactInfo);
+		ProposalCreateEntity proposal = notesManager.createProposalCreateClass(
+				subject, content, null, preferredName, synonymsList,
+				definition, parent, reasonForChange, contactInfo);
 
 		if (created != null)
 			proposal.setCreatedAt(created);
@@ -192,7 +196,26 @@ public class NotesServiceImpl implements NotesService {
 		if (status != null) {
 			proposal.setHasStatus(getStatus(ont, notesManager, status));
 		}
-		
+
+		try {
+			// Create a provisional term and store its id in the note
+			Date createdDate = new Date(proposal.getCreatedAt());
+			ArrayList<Integer> ontologyIds = new ArrayList<Integer>();
+			ontologyIds.add(ont.getOntologyId());
+			Integer submittedBy = Integer.parseInt(author);
+			ClassBean provisionalTerm;
+
+			provisionalTerm = provisionalTermService.createProvisionalTerm(
+					ontologyIds, termPreferredName, termSynonyms,
+					termDefinition, new URIImpl(termParent), createdDate, null,
+					submittedBy, proposal.getId(), status, null);
+			proposal.setEntityId(provisionalTerm.getId());
+		} catch (ProvisionalTermExistsException e) {
+			// This shouldn't happen, but if it does delete the note :)
+			deleteNote(ont, proposal.getId());
+			e.printStackTrace();
+		}
+
 		return convertAnnotationToNoteBean(proposal, ont);
 	}
 
@@ -232,7 +255,8 @@ public class NotesServiceImpl implements NotesService {
 	public List<NoteBean> getAllNotesForOntologyByAuthor(OntologyBean ont,
 			Integer author) {
 		NotesManager notesManager = notesPool.getNotesManagerForOntology(ont);
-		Set<Annotation> annotations = notesManager.getAllNotesByAuthor(author.toString());
+		Set<Annotation> annotations = notesManager.getAllNotesByAuthor(author
+				.toString());
 
 		List<NoteBean> notesList = new ArrayList<NoteBean>();
 		for (Annotation annotation : annotations) {
@@ -329,7 +353,8 @@ public class NotesServiceImpl implements NotesService {
 	public NoteBean updateNote(OntologyBean ont, String noteId,
 			NoteType noteType, String subject, String content, String author,
 			Long created, String status, String appliesTo,
-			NoteAppliesToTypeEnum appliesToType) throws Exception {
+			NoteAppliesToTypeEnum appliesToType, String createdTermId)
+			throws Exception {
 		NotesManager notesManager = notesPool.getNotesManagerForOntology(ont);
 		Annotation annotation = notesManager.getNote(noteId);
 
@@ -351,6 +376,24 @@ public class NotesServiceImpl implements NotesService {
 			AnnotatableThing annotated = getAnnotatableThing(notesManager,
 					appliesTo, appliesToType);
 			annotation.setAnnotates(Collections.singleton(annotated));
+		}
+
+		if (!StringUtils.isNullOrEmpty(createdTermId)
+				&& annotation.getType() == NoteType.ProposalForCreateEntity) {
+			// Cast to a proposal
+			ProposalCreateEntity proposal = (ProposalCreateEntity) annotation;
+
+			// Set proposal with the created term
+			OntologyComponent createdTerm = (OntologyComponent) getAnnotatableThing(
+					notesManager, createdTermId, null);
+			proposal.setCreatedEntity(createdTerm);
+
+			// Update provisional id with permanent id
+			ProvisionalTermBean updatedTerm = new ProvisionalTermBean();
+			updatedTerm.setPermanentId(new URIImpl(createdTermId));
+
+			provisionalTermService.updateProvisionalTerm(
+					proposal.getEntityId(), updatedTerm);
 		}
 
 		return convertAnnotationToNoteBean(annotation, ont);
@@ -616,14 +659,12 @@ public class NotesServiceImpl implements NotesService {
 	}
 
 	/**
-	 * Generate a globally unique id for new terms to be used on a temporary
-	 * basis.
-	 * 
-	 * @param preferredName
-	 * @return
+	 * @param provisionalTermService
+	 *            the provisionalTermService to set
 	 */
-	private String getTemporaryTermId() {
-		return "http://purl.bioontology.org/temp/" + UUID.randomUUID();
+	public void setProvisionalTermService(
+			ProvisionalTermService provisionalTermService) {
+		this.provisionalTermService = provisionalTermService;
 	}
 
 }

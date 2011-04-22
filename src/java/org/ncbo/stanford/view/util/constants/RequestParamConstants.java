@@ -170,6 +170,7 @@ public interface RequestParamConstants {
 	public static final String PARAM_NOTE_UNARCHIVE_THREAD = "unarchivethread";
 	public static final String PARAM_NOTE_STATUS = "status";
 	public static final String PARAM_NOTE_TOP_LEVEL_ONLY = "toplevelonly";
+	public static final String PARAM_NOTE_CREATED_TERM_ID = "createdtermid";
 	
 	/**
 	 * Notes: All proposals
