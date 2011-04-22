@@ -12,7 +12,6 @@ import org.ncbo.stanford.bean.SubscriptionsBean;
 import org.ncbo.stanford.bean.UserBean;
 import org.ncbo.stanford.bean.logging.UsageLoggingBean;
 import org.ncbo.stanford.enumeration.NotificationTypeEnum;
-import org.ncbo.stanford.exception.InvalidInputException;
 import org.ncbo.stanford.util.MessageUtils;
 import org.ncbo.stanford.util.RequestUtils;
 import org.ncbo.stanford.view.util.constants.RequestParamConstants;
@@ -27,8 +26,7 @@ public class BeanHelper {
 	 * 
 	 * @param Request
 	 */
-	public static UserBean populateUserBeanFromRequest(Request request)
-			throws InvalidInputException {
+	public static UserBean populateUserBeanFromRequest(Request request) {
 		HttpServletRequest httpServletRequest = RequestUtils
 				.getHttpServletRequest(request);
 
@@ -38,12 +36,6 @@ public class BeanHelper {
 				.getMessage("form.user.password"));
 		String email = httpServletRequest.getParameter(MessageUtils
 				.getMessage("form.user.email"));
-
-		if (StringHelper.isNullOrNullString(username)
-				|| StringHelper.isNullOrNullString(password)
-				|| StringHelper.isNullOrNullString(email)) {
-			throw new InvalidInputException();
-		}
 
 		String firstname = httpServletRequest.getParameter(MessageUtils
 				.getMessage("form.user.firstname"));

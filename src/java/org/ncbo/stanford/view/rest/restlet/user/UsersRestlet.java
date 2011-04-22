@@ -8,6 +8,7 @@ import org.ncbo.stanford.bean.UserBean;
 import org.ncbo.stanford.exception.InvalidInputException;
 import org.ncbo.stanford.service.user.UserService;
 import org.ncbo.stanford.util.helper.BeanHelper;
+import org.ncbo.stanford.util.helper.StringHelper;
 import org.ncbo.stanford.view.rest.restlet.AbstractBaseRestlet;
 import org.restlet.Request;
 import org.restlet.Response;
@@ -71,6 +72,16 @@ public class UsersRestlet extends AbstractBaseRestlet {
 
 		try {
 			userBean = BeanHelper.populateUserBeanFromRequest(request);
+			String username = userBean.getUsername();
+			String password = userBean.getPassword();
+			String email = userBean.getEmail();
+			
+			if (StringHelper.isNullOrNullString(username)
+					|| StringHelper.isNullOrNullString(password)
+					|| StringHelper.isNullOrNullString(email)) {
+				throw new InvalidInputException();
+			}
+
 			userService.createUser(userBean);
 		} catch (InvalidInputException e) {
 			response.setStatus(Status.CLIENT_ERROR_BAD_REQUEST, e.getMessage());
