@@ -82,4 +82,28 @@ public interface ProvisionalTermService {
 	public ClassBean updateProvisionalTerm(String id, ProvisionalTermBean term)
 			throws ProvisionalTermMissingException;
 
+	/**
+	 * Update a provisional term by using parameters.
+	 * 
+	 * @param id
+	 * @param ontologyIds
+	 * @param label
+	 * @param synonyms
+	 * @param definition
+	 * @param provisionalSubclassOf
+	 * @param created
+	 * @param updated
+	 * @param submittedBy
+	 * @param noteId
+	 * @param status
+	 * @param permanentId
+	 * @return
+	 * @throws ProvisionalTermMissingException
+	 */
+	public ClassBean updateProvisionalTerm(String id,
+			List<Integer> ontologyIds, String label, List<String> synonyms,
+			String definition, URI provisionalSubclassOf, Date created,
+			Date updated, Integer submittedBy, String noteId, String status,
+			URI permanentId) throws ProvisionalTermMissingException;
+
 }

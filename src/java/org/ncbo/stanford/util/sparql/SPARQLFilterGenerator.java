@@ -16,6 +16,10 @@ public class SPARQLFilterGenerator {
 	private String mappingType;
 	private Date startDate;
 	private Date endDate;
+	private Date createdStartDate;
+	private Date createdEndDate;
+	private Date updatedStartDate;
+	private Date updatedEndDate;
 	private List<Integer> ontologyIds;
 	private List<URI> relationshipTypes;
 	private List<MappingSourceEnum> mappingSources;
@@ -37,10 +41,11 @@ public class SPARQLFilterGenerator {
 						: " || ";
 			}
 		}
-		
+
 		if (ontologyIds != null) {
 			filter += (filter.length() > 0) ? " && " : "";
-			filter += "?ontologyId IN (" + StringUtils.join(ontologyIds, ", ") + ")";
+			filter += "?ontologyId IN (" + StringUtils.join(ontologyIds, ", ")
+					+ ")";
 		}
 
 		if (mappingType != null) {
@@ -48,16 +53,40 @@ public class SPARQLFilterGenerator {
 			filter += "?mappingType = \"" + mappingType + "\"";
 		}
 
-		if (startDate != null && endDate != null) {
+		// Convert created/updated to regular date
+		String dateVariableName = null;
+		if (createdStartDate != null || createdEndDate != null) {
+			startDate = createdStartDate;
+			endDate = createdEndDate;
+			dateVariableName = "?created";
+		}
+
+		if (updatedStartDate != null || updatedEndDate != null) {
+			startDate = updatedStartDate;
+			endDate = updatedEndDate;
+			dateVariableName = "?updated";
+		}
+
+		if (startDate != null) {
+			dateVariableName = (dateVariableName == null) ? "?date"
+					: dateVariableName;
+
 			SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
 			String startDateStr = sdf.format(startDate);
-			String endDateStr = sdf.format(endDate);
+
+			String endDateStr;
+			if (endDate != null) {
+				endDateStr = sdf.format(endDate);
+			} else {
+				endDateStr = sdf.format(new Date());
+			}
 
 			filter += (filter.length() > 0) ? " && " : "";
 			filter += "xsd:dateTime (?date) >= xsd:dateTime (\"" + startDateStr
 					+ ApplicationConstants.TIMEZONE_ID
-					+ "\") && xsd:dateTime (?date) <= xsd:dateTime (\""
-					+ endDateStr + ApplicationConstants.TIMEZONE_ID + "\")";
+					+ "\") && xsd:dateTime (" + dateVariableName + ")"
+					+ " <= xsd:dateTime (\"" + endDateStr
+					+ ApplicationConstants.TIMEZONE_ID + "\")";
 		}
 
 		if (relationshipTypes != null) {
@@ -188,6 +217,90 @@ public class SPARQLFilterGenerator {
 	 */
 	public void setMappingSource(List<MappingSourceEnum> mappingSource) {
 		this.mappingSources = mappingSource;
+	}
+
+	/**
+	 * @return the createdStartDate
+	 */
+	public Date getCreatedStartDate() {
+		return createdStartDate;
+	}
+
+	/**
+	 * @param createdStartDate the createdStartDate to set
+	 */
+	public void setCreatedStartDate(Date createdStartDate) {
+		this.createdStartDate = createdStartDate;
+	}
+
+	/**
+	 * @return the createdEndDate
+	 */
+	public Date getCreatedEndDate() {
+		return createdEndDate;
+	}
+
+	/**
+	 * @param createdEndDate the createdEndDate to set
+	 */
+	public void setCreatedEndDate(Date createdEndDate) {
+		this.createdEndDate = createdEndDate;
+	}
+
+	/**
+	 * @return the updatedStartDate
+	 */
+	public Date getUpdatedStartDate() {
+		return updatedStartDate;
+	}
+
+	/**
+	 * @param updatedStartDate the updatedStartDate to set
+	 */
+	public void setUpdatedStartDate(Date updatedStartDate) {
+		this.updatedStartDate = updatedStartDate;
+	}
+
+	/**
+	 * @return the updatedEndDate
+	 */
+	public Date getUpdatedEndDate() {
+		return updatedEndDate;
+	}
+
+	/**
+	 * @param updatedEndDate the updatedEndDate to set
+	 */
+	public void setUpdatedEndDate(Date updatedEndDate) {
+		this.updatedEndDate = updatedEndDate;
+	}
+
+	/**
+	 * @return the ontologyIds
+	 */
+	public List<Integer> getOntologyIds() {
+		return ontologyIds;
+	}
+
+	/**
+	 * @param ontologyIds the ontologyIds to set
+	 */
+	public void setOntologyIds(List<Integer> ontologyIds) {
+		this.ontologyIds = ontologyIds;
+	}
+
+	/**
+	 * @return the mappingSources
+	 */
+	public List<MappingSourceEnum> getMappingSources() {
+		return mappingSources;
+	}
+
+	/**
+	 * @param mappingSources the mappingSources to set
+	 */
+	public void setMappingSources(List<MappingSourceEnum> mappingSources) {
+		this.mappingSources = mappingSources;
 	}
 
 }

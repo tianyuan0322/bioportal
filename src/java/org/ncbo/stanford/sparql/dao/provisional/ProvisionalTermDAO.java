@@ -31,7 +31,6 @@ import org.openrdf.query.TupleQuery;
 import org.openrdf.query.TupleQueryResult;
 import org.openrdf.repository.RepositoryConnection;
 import org.openrdf.repository.RepositoryException;
-import org.openrdf.repository.RepositoryResult;
 
 public class ProvisionalTermDAO {
 
@@ -45,12 +44,11 @@ public class ProvisionalTermDAO {
 	// fields in every row). The %FILTER% token can be replaced with whatever
 	// filter is need to get specific results. %OFFSET% and %LIMIT% must be
 	// replaced as well.
-	protected final static String provisionalTermQuery = "PREFIX pid: <http://purl.bioontology.org/ontology/provisional#> "
+	protected final static String provisionalTermQuery = ""
 			+ "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#> "
-			+ "SELECT DISTINCT " + "?id " + "?ontologyId " + "?"
+			+ "SELECT DISTINCT " + "?id " + "?label " + "?ontologyId " + "?"
 			+ MULT_IDS
 			+ " "
-			+ "?label "
 			+ "?synonym "
 			+ "?"
 			+ MULT_SYNONYMS
@@ -65,50 +63,50 @@ public class ProvisionalTermDAO {
 			+ "?permanentId "
 			+ "WHERE {"
 			+ "  ?id rdfs:label ?label ."
-			+ "  ?id pid:definition ?definition ."
-			+ "  ?id pid:created ?created ."
-			+ "  ?id pid:submitted_by ?submittedBy ."
-			+ "  { SELECT ?ontologyId { ?id pid:ontology_id ?ontologyId } LIMIT 1 }"
-			+ "  { SELECT ?synonym { OPTIONAL { ?id pid:synonym ?synonym }} LIMIT 1 }"
-			+ "  OPTIONAL { ?id pid:provisional_subclass_of ?provisionalSubclassOf }"
-			+ "  OPTIONAL { ?id pid:has_multiple_ontology_ids ?"
+			+ "  ?id <http://purl.bioontology.org/ontology/provisional#definition> ?definition ."
+			+ "  ?id <http://purl.bioontology.org/ontology/provisional#created> ?created ."
+			+ "  ?id <http://purl.bioontology.org/ontology/provisional#submitted_by> ?submittedBy ."
+			+ "  { SELECT ?ontologyId { ?id <http://purl.bioontology.org/ontology/provisional#ontology_id> ?ontologyId } LIMIT 1 }"
+			+ "  { SELECT ?synonym { OPTIONAL { ?id <http://purl.bioontology.org/ontology/provisional#synonym> ?synonym }} LIMIT 1 }"
+			+ "  OPTIONAL { ?id <http://purl.bioontology.org/ontology/provisional#provisional_subclass_of> ?provisionalSubclassOf }"
+			+ "  OPTIONAL { ?id <http://purl.bioontology.org/ontology/provisional#has_multiple_ontology_ids> ?"
 			+ MULT_IDS
 			+ " }"
-			+ "  OPTIONAL { ?id pid:has_multiple_synonyms ?"
+			+ "  OPTIONAL { ?id <http://purl.bioontology.org/ontology/provisional#has_multiple_synonyms> ?"
 			+ MULT_SYNONYMS
 			+ " }"
-			+ "  OPTIONAL { ?id pid:updated ?updated }"
-			+ "  OPTIONAL { ?id pid:note_id ?noteId }"
-			+ "  OPTIONAL { ?id pid:status ?status }"
-			+ "  OPTIONAL { ?id pid:permanent_id ?permanentId }"
+			+ "  OPTIONAL { ?id <http://purl.bioontology.org/ontology/provisional#updated> ?updated }"
+			+ "  OPTIONAL { ?id <http://purl.bioontology.org/ontology/provisional#note_id> ?noteId }"
+			+ "  OPTIONAL { ?id <http://purl.bioontology.org/ontology/provisional#status> ?status }"
+			+ "  OPTIONAL { ?id <http://purl.bioontology.org/ontology/provisional#permanent_id> ?permanentId }"
 			+ "  FILTER (%FILTER%) }"
 			+ "%ORDERBY% LIMIT %LIMIT% OFFSET %OFFSET%";
 
-	protected final static String provisionalTermCountQuery = "PREFIX pid: <http://purl.bioontology.org/ontology/provisional#> "
+	protected final static String provisionalTermCountQuery = ""
 			+ "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#> "
 			+ "SELECT DISTINCT "
 			+ "count(DISTINCT ?id) as ?provisionalTermCount WHERE {"
 			+ "  ?id rdfs:label ?label ."
-			+ "  ?id pid:definition ?definition ."
-			+ "  ?id pid:created ?created ."
-			+ "  ?id pid:submitted_by ?submittedBy ."
-			+ "  { SELECT ?ontologyId { ?id pid:ontology_id ?ontologyId } LIMIT 1 }"
-			+ "  { SELECT ?synonym { OPTIONAL { ?id pid:synonym ?synonym }} LIMIT 1 }"
-			+ "  OPTIONAL { ?id pid:provisional_subclass_of ?provisionalSubclassOf }"
-			+ "  OPTIONAL { ?id pid:updated ?updated }"
-			+ "  OPTIONAL { ?id pid:note_id ?noteId }"
-			+ "  OPTIONAL { ?id pid:status ?status }"
-			+ "  OPTIONAL { ?id pid:permanent_id ?permanentId }"
+			+ "  ?id <http://purl.bioontology.org/ontology/provisional#definition> ?definition ."
+			+ "  ?id <http://purl.bioontology.org/ontology/provisional#created> ?created ."
+			+ "  ?id <http://purl.bioontology.org/ontology/provisional#submitted_by> ?submittedBy ."
+			+ "  { SELECT ?ontologyId { ?id <http://purl.bioontology.org/ontology/provisional#ontology_id> ?ontologyId } LIMIT 1 }"
+			+ "  { SELECT ?synonym { OPTIONAL { ?id <http://purl.bioontology.org/ontology/provisional#synonym> ?synonym }} LIMIT 1 }"
+			+ "  OPTIONAL { ?id <http://purl.bioontology.org/ontology/provisional#provisional_subclass_of> ?provisionalSubclassOf }"
+			+ "  OPTIONAL { ?id <http://purl.bioontology.org/ontology/provisional#updated> ?updated }"
+			+ "  OPTIONAL { ?id <http://purl.bioontology.org/ontology/provisional#note_id> ?noteId }"
+			+ "  OPTIONAL { ?id <http://purl.bioontology.org/ontology/provisional#status> ?status }"
+			+ "  OPTIONAL { ?id <http://purl.bioontology.org/ontology/provisional#permanent_id> ?permanentId }"
 			+ "  FILTER (%FILTER%) }";
 
-	protected final static String synonymsForTerm = "PREFIX pid: <http://purl.bioontology.org/ontology/provisional#> "
+	protected final static String synonymsForTerm = ""
 			+ "SELECT DISTINCT ?synonym {"
-			+ "  ?id <pid:synonym> ?synonym ."
+			+ "  ?id <http://purl.bioontology.org/ontology/provisional#synonym> ?synonym ."
 			+ "  FILTER ( ?id = <%TERM_ID%> ) }";
 
 	protected final static String ontologyIdsForTerm = "PREFIX pid: <http://purl.bioontology.org/ontology/provisional#> "
 			+ "SELECT DISTINCT ?ontologyId {"
-			+ "  ?id <pid:ontology_id> ?ontologyId ."
+			+ "  ?id <http://purl.bioontology.org/ontology/provisional#ontology_id> ?ontologyId ."
 			+ "  FILTER ( ?id = <%TERM_ID%> ) }";
 
 	/*******************************************************************
@@ -370,6 +368,12 @@ public class ProvisionalTermDAO {
 			throws ProvisionalTermExistsException {
 		RepositoryConnection con = getRdfStoreManager()
 				.getRepositoryConnection();
+
+		// Fail if term exists
+		if (newTerm.getId() != null && hasProvisionalTerm(newTerm.getId(), con)) {
+			throw new ProvisionalTermExistsException();
+		}
+
 		ValueFactory vf = getRdfStoreManager().getValueFactory();
 
 		ArrayList<Statement> statements = newTerm.toStatements(vf);
@@ -458,6 +462,9 @@ public class ProvisionalTermDAO {
 		deleteProvisionalTerm(id);
 
 		try {
+			// Update date
+			term.setUpdated(new Date());
+
 			ProvisionalTerm updatedProvisionalTerm = createProvisionalTerm(term);
 
 			return updatedProvisionalTerm;
@@ -550,10 +557,9 @@ public class ProvisionalTermDAO {
 	 */
 	protected void deleteFromTripleStore(RepositoryConnection con, URI id)
 			throws RepositoryException {
-		RepositoryResult<Statement> results = con.getStatements(id, null, null,
-				false, ApplicationConstants.PROVISIONAL_TERM_CONTEXT_URI);
-		// Remove all those triples
-		con.remove(results, ApplicationConstants.PROVISIONAL_TERM_CONTEXT_URI);
+		// Remove all triples matching the given id
+		con.remove(id, null, null,
+				ApplicationConstants.PROVISIONAL_TERM_CONTEXT_URI);
 	}
 
 	/**
@@ -580,11 +586,11 @@ public class ProvisionalTermDAO {
 			Date updated, Integer submittedBy, String noteId, String status,
 			URI permanentId) {
 
-		if (ontologyIds != null)
+		if (ontologyIds != null && ontologyIds.size() > 0)
 			term.setOntologyIds(ontologyIds);
 		if (label != null)
 			term.setLabel(label);
-		if (synonyms != null)
+		if (synonyms != null && synonyms.size() > 0)
 			term.setSynonyms(synonyms);
 		if (definition != null)
 			term.setDefinition(definition);

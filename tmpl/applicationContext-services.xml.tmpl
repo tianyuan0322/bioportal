@@ -751,6 +751,9 @@
 		<property name="conceptService">
 			<ref local="conceptService" />
 		</property>
+		<property name="ontologyService">
+			<ref local="ontologyService" />
+		</property>
 	</bean>
     
     <bean id="conceptService"
@@ -1856,10 +1859,7 @@
                     and args(ontologyBean)" />
 			<aop:after-returning pointcut-ref="aroundService" method="adviceUpdateOntology" />
 		</aop:aspect>
-	</aop:config>
-	-->
-
-	<aop:config>
+		
 		<aop:aspect id="afterProcessOnt" ref="notificationAdvice">
 			<aop:pointcut id="afterProcessRecord"
 				expression="execution(* org.ncbo.stanford.aop.notification.NotificationProcessForOntology.process*(..)) and 
@@ -1869,7 +1869,10 @@
 				arg-names="loadQueue,formatHandler,ontologyBean"
 				method="afterReturnProcessOntology" />
 		</aop:aspect>
-		
+	</aop:config>
+	-->
+
+	<aop:config>
 		<aop:aspect id="afterCreateNote" ref="notificationAdvice">
 			<aop:pointcut id="afterReturnCreateNote"
 				expression="execution(* org.ncbo.stanford.service.notes.NotesService.create*(..))" />

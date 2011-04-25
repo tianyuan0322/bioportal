@@ -243,5 +243,21 @@ public interface RequestParamConstants {
 	public static final String PARAM_MAPPING_SOURCE_SITE = "mappingsourcesite";
 	public static final String PARAM_MAPPING_SOURCE_ALGORITHM = "mappingsourcealgorithm";
 	public static final String PARAM_RELATION = "relation";
+	
+	/**
+	 * Provisional Term Parameters
+	 */
+	public static final String PARAM_PROVISIONAL_TERM_ID = "termid";
+	public static final String PARAM_PROVISIONAL_TERM_LABEL = "preferredname";
+	public static final String PARAM_PROVISIONAL_TERM_SYNONYMS = "synonyms";
+	public static final String PARAM_PROVISIONAL_TERM_DEFINITION = "definition";
+	public static final String PARAM_PROVISIONAL_TERM_PROVISIONALSUBCLASSOF = "superclass";
+	public static final String PARAM_PROVISIONAL_TERM_SUBMITTEDBY = "submittedby";
+	public static final String PARAM_PROVISIONAL_TERM_STATUS = "status";
+	public static final String PARAM_PROVISIONAL_TERM_PERMANENTID = "permanentid";
+	public static final String PARAM_CREATED_START_DATE = "createdstartdate";
+	public static final String PARAM_CREATED_END_DATE = "createdenddate";
+	public static final String PARAM_UPDATED_START_DATE = "updatedstartdate";
+	public static final String PARAM_UPDATED_END_DATE = "updatedenddate";
 
 }
