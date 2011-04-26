@@ -106,13 +106,22 @@ public class UserBean {
 	public void populateToEntity(NcboUser ncboUser) {
 		if (ncboUser != null) {
 			ncboUser.setId(this.getId());
-			ncboUser.setUsername(this.getUsername());
-
-			if (!StringHelper.isNullOrNullString(this.getPassword())) {
-				ncboUser.setPassword(this.getPassword());
+			
+			String userName = this.getUsername();
+			if (!StringHelper.isNullOrNullString(userName)) {
+				ncboUser.setUsername(userName);
 			}
 
-			ncboUser.setEmail(this.getEmail());
+			String password = this.getPassword();
+			if (!StringHelper.isNullOrNullString(password)) {
+				ncboUser.setPassword(password);
+			}
+
+			String email = this.getEmail();
+			if (!StringHelper.isNullOrNullString(email)) {
+				ncboUser.setEmail(email);
+			}
+			
 			ncboUser.setFirstname(this.getFirstname());
 			ncboUser.setLastname(this.getLastname());
 			ncboUser.setPhone(this.getPhone());
