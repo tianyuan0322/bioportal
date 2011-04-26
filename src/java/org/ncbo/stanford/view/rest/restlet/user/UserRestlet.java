@@ -79,17 +79,11 @@ public class UserRestlet extends AbstractBaseRestlet {
 		UserBean userBean = findUserBean(request, response);
 
 		// if "find" was successful, proceed to update
-		// if ( userBean != null && userBean.getId() != null) {
 		if (!response.getStatus().isError()) {
-			// save the id for later
-			Integer id = userBean.getId();
-
 			// now update the user
 			try {
 				// populate UserBean from Request object
-				// currently id is not provided in the request object
 				BeanHelper.populateUserBeanFromRequest(request, userBean);
-				userBean.setId(id);
 				userService.updateUser(userBean);
 			} catch (Exception e) {
 				response
