@@ -83,8 +83,6 @@ public final class AuthenticationRestlet extends AbstractBaseRestlet {
 						"This application did not pass proper credentials to authenticate users.");
 			}
 
-			final String username = obtainUsername(httpServletRequest);
-			final String password = obtainPassword(httpServletRequest);
 			// TODO: @@@@@ mdorf: uncomment this call once the above temporary
 			// block is removed
 			// userApiKey = obtainUserApiKey(httpServletRequest);
@@ -94,6 +92,8 @@ public final class AuthenticationRestlet extends AbstractBaseRestlet {
 			// request has made it this far, it has already been successfully
 			// validated and authenticated by the AuthenticationFilter.
 			if (StringHelper.isNullOrNullString(userApiKey)) {
+				final String username = obtainUsername(httpServletRequest);
+				final String password = obtainPassword(httpServletRequest);
 				user = authenticationService.authenticate(username, password);
 				userApiKey = user.getApiKey();
 				sessionService.invalidate(userApiKey);

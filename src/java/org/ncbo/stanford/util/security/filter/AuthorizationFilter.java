@@ -27,12 +27,10 @@ import org.restlet.data.Status;
 import org.restlet.routing.Router;
 import org.restlet.routing.TemplateRoute;
 import org.restlet.util.RouteList;
-import org.springframework.beans.factory.InitializingBean;
 import org.springframework.util.Assert;
 import org.springframework.web.context.WebApplicationContext;
 
-public class AuthorizationFilter extends AbstractAuthFilter implements
-		InitializingBean {
+public class AuthorizationFilter extends AbstractAuthFilter {
 	private static final Log log = LogFactory.getLog(AuthorizationFilter.class);
 
 	private OntologyService ontologyService;

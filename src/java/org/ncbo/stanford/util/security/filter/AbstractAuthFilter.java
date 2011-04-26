@@ -8,10 +8,11 @@ import org.restlet.Context;
 import org.restlet.Request;
 import org.restlet.data.Reference;
 import org.restlet.routing.Filter;
+import org.springframework.beans.factory.InitializingBean;
 import org.springframework.util.Assert;
 import org.springframework.web.context.WebApplicationContext;
 
-public class AbstractAuthFilter extends Filter {
+public class AbstractAuthFilter extends Filter implements InitializingBean {
 
 	protected XMLSerializationService xmlSerializationService;
 	private Set<String> exceptionPaths;
@@ -24,8 +25,8 @@ public class AbstractAuthFilter extends Filter {
 		xmlSerializationService = (XMLSerializationService) springAppContext
 				.getBean("xmlSerializationService",
 						XMLSerializationService.class);
-		exceptionPaths = (TreeSet<String>) springAppContext.getBean(
-				"authenticationExceptionPaths", TreeSet.class);		
+		exceptionPaths = new TreeSet<String>((TreeSet<String>) springAppContext.getBean(
+				"authenticationExceptionPaths", TreeSet.class));
 		exceptionReferrers = (TreeSet<String>) springAppContext.getBean(
 				"authenticationExceptionReferrers", TreeSet.class);		
 	}
@@ -63,6 +64,7 @@ public class AbstractAuthFilter extends Filter {
 		return false;
 	}
 
+	@Override
 	public void afterPropertiesSet() throws Exception {
 		Assert.notNull(xmlSerializationService,
 				"xmlSerializationService must be specified");

@@ -23,12 +23,10 @@ import org.restlet.Request;
 import org.restlet.Response;
 import org.restlet.data.Reference;
 import org.restlet.data.Status;
-import org.springframework.beans.factory.InitializingBean;
 import org.springframework.util.Assert;
 import org.springframework.web.context.WebApplicationContext;
 
-public class AuthenticationFilter extends AbstractAuthFilter implements
-		InitializingBean {
+public class AuthenticationFilter extends AbstractAuthFilter {
 	private static final Log log = LogFactory
 			.getLog(AuthenticationFilter.class);
 
