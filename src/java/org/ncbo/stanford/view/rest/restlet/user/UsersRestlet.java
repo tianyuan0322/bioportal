@@ -68,10 +68,10 @@ public class UsersRestlet extends AbstractBaseRestlet {
 	 *            response
 	 */
 	private void createUser(Request request, Response response) {
-		UserBean userBean = null;
+		UserBean userBean = new UserBean();
 
 		try {
-			userBean = BeanHelper.populateUserBeanFromRequest(request);
+			BeanHelper.populateUserBeanFromRequest(request, userBean);
 			String username = userBean.getUsername();
 			String password = userBean.getPassword();
 			String email = userBean.getEmail();

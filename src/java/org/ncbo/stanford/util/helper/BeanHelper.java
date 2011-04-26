@@ -26,7 +26,8 @@ public class BeanHelper {
 	 * 
 	 * @param Request
 	 */
-	public static UserBean populateUserBeanFromRequest(Request request) {
+	public static void populateUserBeanFromRequest(Request request,
+			UserBean userBean) {
 		HttpServletRequest httpServletRequest = RequestUtils
 				.getHttpServletRequest(request);
 
@@ -48,14 +49,33 @@ public class BeanHelper {
 		String ontologyAcl = httpServletRequest.getParameter(MessageUtils
 				.getMessage("form.user.ontologyacl"));
 
-		UserBean userBean = new UserBean();
-		userBean.setUsername(username);
-		userBean.setPassword(password);
-		userBean.setEmail(email);
-		userBean.setFirstname(firstname);
-		userBean.setLastname(lastname);
-		userBean.setPhone(phone);
-		userBean.setDateCreated(DateHelper.getDateFrom(dateCreated));
+		if (!StringHelper.isNullOrNullString(username)) {
+			userBean.setUsername(username);
+		}
+
+		if (!StringHelper.isNullOrNullString(password)) {
+			userBean.setPassword(password);
+		}
+
+		if (!StringHelper.isNullOrNullString(email)) {
+			userBean.setEmail(email);
+		}
+
+		if (firstname != null) {
+			userBean.setFirstname(firstname);
+		}
+
+		if (lastname != null) {
+			userBean.setLastname(lastname);
+		}
+
+		if (phone != null) {
+			userBean.setPhone(phone);
+		}
+
+		if (!StringHelper.isNullOrNullString(dateCreated)) {
+			userBean.setDateCreated(DateHelper.getDateFrom(dateCreated));
+		}
 
 		List<Integer> ontologyAclList = RequestUtils
 				.parseIntegerListParam(ontologyAcl);
@@ -63,8 +83,6 @@ public class BeanHelper {
 		for (Integer ontologyId : ontologyAclList) {
 			userBean.addOntologyToAcl(ontologyId, false);
 		}
-
-		return userBean;
 	}
 
 	/**

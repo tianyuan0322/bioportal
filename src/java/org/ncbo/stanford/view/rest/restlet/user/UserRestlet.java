@@ -88,7 +88,7 @@ public class UserRestlet extends AbstractBaseRestlet {
 			try {
 				// populate UserBean from Request object
 				// currently id is not provided in the request object
-				userBean = BeanHelper.populateUserBeanFromRequest(request);
+				BeanHelper.populateUserBeanFromRequest(request, userBean);
 				userBean.setId(id);
 				userService.updateUser(userBean);
 			} catch (Exception e) {
