@@ -48,3 +48,7 @@ VALUES ('ri-user', '77591c48-6d2b-11e0-9b85-005056bd0024', '7ucUFJw/BODnH+L0N3s0
 	
 INSERT INTO ncbo_user_role (user_id, role_id)
 SELECT id, 2824 FROM ncbo_user WHERE username = 'ri-user' AND api_key = '77591c48-6d2b-11e0-9b85-005056bd0024';
+
+-- Set First and Last Names to Nullable in the ncbo_user table
+ALTER TABLE `ncbo_user` MODIFY COLUMN `firstname` VARCHAR(64) CHARACTER SET utf8 COLLATE utf8_bin;
+ALTER TABLE `ncbo_user` MODIFY COLUMN `lastname` VARCHAR(64) CHARACTER SET utf8 COLLATE utf8_bin;
