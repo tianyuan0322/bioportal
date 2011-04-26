@@ -34,14 +34,11 @@ public abstract class AbstractNcboUser implements java.io.Serializable {
 
 	/** minimal constructor */
 	public AbstractNcboUser(String username, String apiKey, String password,
-			String email, String firstname, String lastname,
-			Timestamp dateCreated) {
+			String email, Timestamp dateCreated) {
 		this.username = username;
 		this.apiKey = apiKey;
 		this.password = password;
 		this.email = email;
-		this.firstname = firstname;
-		this.lastname = lastname;
 		this.dateCreated = dateCreated;
 	}
 
