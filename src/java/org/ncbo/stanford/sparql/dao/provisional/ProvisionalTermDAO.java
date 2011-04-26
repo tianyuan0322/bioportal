@@ -241,7 +241,8 @@ public class ProvisionalTermDAO {
 							.evaluate();
 
 					while (getSynonymsResult.hasNext()) {
-						String synonym = bs.getValue("synonym").stringValue();
+						BindingSet bs1 = getSynonymsResult.next();
+						String synonym = bs1.getValue("synonym").stringValue();
 						if (!term.getSynonyms().contains(synonym)) {
 							term.addSynonyms(bs.getValue("synonym")
 									.stringValue());
@@ -260,7 +261,8 @@ public class ProvisionalTermDAO {
 							.evaluate();
 
 					while (getOntologyIdsResult.hasNext()) {
-						Integer ontologyId = convertValueToInteger(bs
+						BindingSet bs2 = getOntologyIdsResult.next();
+						Integer ontologyId = convertValueToInteger(bs2
 								.getValue("ontologyId"));
 						if (!term.getOntologyIds().contains(ontologyId)) {
 							term.addOntologyIds(ontologyId);
