@@ -753,7 +753,7 @@ public class OntologyRetrievalManagerProtegeImpl extends
 
 	private void addSynonyms(Cls cls, Slot synonymSlot, ClassBean classBean) {
 		if (synonymSlot != null) {
-			Collection<?> synonyms = cls.getOwnSlotValues(synonymSlot);
+			Collection<?> synonyms = getFixedSlotValues(cls, synonymSlot);
 
 			for (Object synonym : synonyms) {
 				String synonymStr;
@@ -772,7 +772,7 @@ public class OntologyRetrievalManagerProtegeImpl extends
 	private void addDefinitions(Cls cls, Slot definitionSlot,
 			ClassBean classBean) {
 		if (definitionSlot != null) {
-			Collection<?> definitions = cls.getOwnSlotValues(definitionSlot);
+			Collection<?> definitions = getFixedSlotValues(cls, definitionSlot);
 
 			for (Object definition : definitions) {
 				String definitionStr;
@@ -790,7 +790,7 @@ public class OntologyRetrievalManagerProtegeImpl extends
 
 	private void addAuthors(Cls cls, Slot authorSlot, ClassBean classBean) {
 		if (authorSlot != null) {
-			Collection<?> authors = cls.getOwnSlotValues(authorSlot);
+			Collection<?> authors = getFixedSlotValues(cls, authorSlot);
 
 			for (Object author : authors) {
 				String authorStr;
@@ -833,9 +833,7 @@ public class OntologyRetrievalManagerProtegeImpl extends
 			// via getOwnSlotValues, they mix in the language tag, e.g. "~#en".
 			// So instead fetch those values via getPropertyValues, and the
 			// RDFSLiteral will do the right
-			Collection classes = (isOwl && slot instanceof RDFProperty && concept instanceof RDFResource) ? ((RDFResource) concept)
-					.getPropertyValues((RDFProperty) slot)
-					: concept.getOwnSlotValues(slot);
+			Collection classes = getFixedSlotValues(concept, slot);
 			Collection vals = removeAnnonymousClasses(getUniqueClasses(classes));
 
 			if (vals.isEmpty()) {
@@ -894,6 +892,26 @@ public class OntologyRetrievalManagerProtegeImpl extends
 		}
 
 		return false;
+	}
+
+	/**
+	 * Uses the appropriate method to get values for a given slot. This bypasses
+	 * problems with retrieving values and having the ~#en showing in front of
+	 * the string, which is due to using getOwnSlotValues.
+	 * 
+	 * 
+	 * @param concept
+	 * @param slot
+	 * @return
+	 */
+	private Collection getFixedSlotValues(Cls concept, Slot slot) {
+		boolean isOwl = concept.getKnowledgeBase() instanceof OWLModel;
+
+		Collection classes = (isOwl && slot instanceof RDFProperty && concept instanceof RDFResource) ? ((RDFResource) concept)
+				.getPropertyValues((RDFProperty) slot)
+				: concept.getOwnSlotValues(slot);
+
+		return classes;
 	}
 
 	/**
