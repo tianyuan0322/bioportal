@@ -91,9 +91,11 @@ public final class AuthenticationRestlet extends AbstractBaseRestlet {
 			// When a user API key is supplied, the assumption is that if the
 			// request has made it this far, it has already been successfully
 			// validated and authenticated by the AuthenticationFilter.
-			if (StringHelper.isNullOrNullString(userApiKey)) {
-				final String username = obtainUsername(httpServletRequest);
-				final String password = obtainPassword(httpServletRequest);
+			final String username = obtainUsername(httpServletRequest);
+			final String password = obtainPassword(httpServletRequest);
+
+			if (StringHelper.isNullOrNullString(userApiKey)
+					|| !StringHelper.isNullOrNullString(username)) {
 				user = authenticationService.authenticate(username, password);
 				userApiKey = user.getApiKey();
 				sessionService.invalidate(userApiKey);
@@ -101,7 +103,6 @@ public final class AuthenticationRestlet extends AbstractBaseRestlet {
 				userSession.setAttribute(
 						ApplicationConstants.SECURITY_CONTEXT_KEY,
 						new SecurityContextHolder(userApiKey, appApiKey, user));
-
 			} else {
 				userSession = sessionService.get(userApiKey);
 
