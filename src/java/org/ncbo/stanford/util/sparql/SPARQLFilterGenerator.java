@@ -23,11 +23,12 @@ public class SPARQLFilterGenerator {
 	private List<Integer> ontologyIds;
 	private List<URI> relationshipTypes;
 	private List<MappingSourceEnum> mappingSources;
+	private Boolean permanentIdExists;
 
 	/**
 	 * Creates proper syntax for use in a SPARQL filter using provided
 	 * parameters.
-	 * 
+	 *
 	 * @return
 	 */
 	public String toFilter() {
@@ -82,7 +83,8 @@ public class SPARQLFilterGenerator {
 			}
 
 			filter += (filter.length() > 0) ? " && " : "";
-			filter += "xsd:dateTime (?date) >= xsd:dateTime (\"" + startDateStr
+			filter += "xsd:dateTime (" + dateVariableName
+					+ ") >= xsd:dateTime (\"" + startDateStr
 					+ ApplicationConstants.TIMEZONE_ID
 					+ "\") && xsd:dateTime (" + dateVariableName + ")"
 					+ " <= xsd:dateTime (\"" + endDateStr
@@ -105,6 +107,11 @@ public class SPARQLFilterGenerator {
 				filter += (mappingSources.indexOf(source) == mappingSources
 						.size() - 1) ? "" : " || ";
 			}
+		}
+
+		if (permanentIdExists == true) {
+			filter += (filter.length() > 0) ? " && " : "";
+			filter += "bound(?permanentId)";
 		}
 
 		return filter;
@@ -227,7 +234,8 @@ public class SPARQLFilterGenerator {
 	}
 
 	/**
-	 * @param createdStartDate the createdStartDate to set
+	 * @param createdStartDate
+	 *            the createdStartDate to set
 	 */
 	public void setCreatedStartDate(Date createdStartDate) {
 		this.createdStartDate = createdStartDate;
@@ -241,7 +249,8 @@ public class SPARQLFilterGenerator {
 	}
 
 	/**
-	 * @param createdEndDate the createdEndDate to set
+	 * @param createdEndDate
+	 *            the createdEndDate to set
 	 */
 	public void setCreatedEndDate(Date createdEndDate) {
 		this.createdEndDate = createdEndDate;
@@ -255,7 +264,8 @@ public class SPARQLFilterGenerator {
 	}
 
 	/**
-	 * @param updatedStartDate the updatedStartDate to set
+	 * @param updatedStartDate
+	 *            the updatedStartDate to set
 	 */
 	public void setUpdatedStartDate(Date updatedStartDate) {
 		this.updatedStartDate = updatedStartDate;
@@ -269,7 +279,8 @@ public class SPARQLFilterGenerator {
 	}
 
 	/**
-	 * @param updatedEndDate the updatedEndDate to set
+	 * @param updatedEndDate
+	 *            the updatedEndDate to set
 	 */
 	public void setUpdatedEndDate(Date updatedEndDate) {
 		this.updatedEndDate = updatedEndDate;
@@ -283,7 +294,8 @@ public class SPARQLFilterGenerator {
 	}
 
 	/**
-	 * @param ontologyIds the ontologyIds to set
+	 * @param ontologyIds
+	 *            the ontologyIds to set
 	 */
 	public void setOntologyIds(List<Integer> ontologyIds) {
 		this.ontologyIds = ontologyIds;
@@ -297,10 +309,25 @@ public class SPARQLFilterGenerator {
 	}
 
 	/**
-	 * @param mappingSources the mappingSources to set
+	 * @param mappingSources
+	 *            the mappingSources to set
 	 */
 	public void setMappingSources(List<MappingSourceEnum> mappingSources) {
 		this.mappingSources = mappingSources;
+	}
+
+	/**
+	 * @return the permanentIdExists
+	 */
+	public Boolean isPermanentIdExists() {
+		return permanentIdExists;
+	}
+
+	/**
+	 * @param permanentIdExists the permanentIdExists to set
+	 */
+	public void setPermanentIdExists(Boolean permanentIdExists) {
+		this.permanentIdExists = permanentIdExists;
 	}
 
 }

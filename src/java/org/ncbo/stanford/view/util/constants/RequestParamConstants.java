@@ -6,7 +6,7 @@ import java.util.Set;
 
 /**
  * Request parameter constants
- * 
+ *
  * @author Michael Dorf
  */
 public interface RequestParamConstants {
@@ -132,7 +132,7 @@ public interface RequestParamConstants {
 	public static final String PARAM_VIEWS = "views";
 	public static final String PARAM_ACTIVE = "active";
 	public static final String PARAM_PULLED = "pulled";
-	
+
 	/**
 	 * Params for creating diffs
 	 */
@@ -140,7 +140,7 @@ public interface RequestParamConstants {
 	public static final String PARAM_ALL = "all";
 	public static final String PARAM_ONTOLOGY_VERSION_NEW = "ontologyversionnew";
 	public static final String PARAM_ONTOLOGY_VERSION_OLD = "ontologyversionold";
-	
+
 	/**
 	 * view extractor
 	 */
@@ -171,13 +171,13 @@ public interface RequestParamConstants {
 	public static final String PARAM_NOTE_STATUS = "status";
 	public static final String PARAM_NOTE_TOP_LEVEL_ONLY = "toplevelonly";
 	public static final String PARAM_NOTE_CREATED_TERM_ID = "createdtermid";
-	
+
 	/**
 	 * Notes: All proposals
 	 */
 	public static final String PARAM_REASON_FOR_CHANGE = "reasonforchange";
 	public static final String PARAM_CONTACT_INFO = "contactinfo";
-	
+
 	/**
 	 * Notes: New term proposal
 	 */
@@ -186,14 +186,14 @@ public interface RequestParamConstants {
 	public static final String PARAM_NEW_TERM_PARENT = "termparent";
 	public static final String PARAM_NEW_TERM_PREFERRED_NAME = "termpreferredname";
 	public static final String PARAM_NEW_TERM_SYNONYMS = "termsynonyms";
-	
+
 	/**
 	 * Notes: New relationship proposal
 	 */
 	public static final String PARAM_NEW_REL_TYPE = "relationshiptype";
 	public static final String PARAM_NEW_REL_TARGET = "relationshiptarget";
 	public static final String PARAM_NEW_REL_OLD_TARGET = "oldrelationshiptarget";
-	
+
 	/**
 	 * Notes: Property value change proposal
 	 */
@@ -217,12 +217,12 @@ public interface RequestParamConstants {
 	public static final String PARAM_META_PEOPLE = "people";
 	public static final String PARAM_META_TEXT = "text";
 	public static final String PARAM_META_VALUE = "value";
-	
+
 	/**
 	 * Mappings parameters
 	 */
 	public static final String PARAM_MAPPING_ID = "mappingid";
-	public static final String PARAM_SUBMITTERS = "submitters";
+	public static final String PARAM_SUBMITTERS = "submittedby";
 	public static final String PARAM_START_DATE = "startdate";
 	public static final String PARAM_END_DATE = "enddate";
 	public static final String PARAM_RELATIONSHIPS = "relationships";
@@ -243,7 +243,7 @@ public interface RequestParamConstants {
 	public static final String PARAM_MAPPING_SOURCE_SITE = "mappingsourcesite";
 	public static final String PARAM_MAPPING_SOURCE_ALGORITHM = "mappingsourcealgorithm";
 	public static final String PARAM_RELATION = "relation";
-	
+
 	/**
 	 * Provisional Term Parameters
 	 */

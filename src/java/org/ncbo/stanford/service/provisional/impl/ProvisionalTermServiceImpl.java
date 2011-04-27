@@ -196,17 +196,18 @@ public class ProvisionalTermServiceImpl implements ProvisionalTermService {
 		}
 
 		// Add provisional-specific info to the relations
+		concept.addRelation("provisionalSubmittedBy", term.getSubmittedBy());
 		concept.addRelation("provisionalSubclassOf", term
 				.getProvisionalSubclassOf());
 		concept.addRelation("provisionalCreated", term.getCreated());
 		concept.addRelation("provisionalUpdated", term.getUpdated());
-		concept.addRelation("relatedOntologyIds", term.getOntologyIds());
-		concept.addRelation("relatedNoteId", term.getNoteId());
+		concept.addRelation("provisionalRelatedOntologyIds", term.getOntologyIds());
+		concept.addRelation("provisionalRelatedNoteId", term.getNoteId());
 		concept.addRelation("provisionalTermStatus", term.getStatus());
 
 		String permanentId = (term.getPermanentId() == null) ? null : term
 				.getPermanentId().toString();
-		concept.addRelation("permanentId", permanentId);
+		concept.addRelation("provisionalPermanentId", permanentId);
 
 		return concept;
 	}

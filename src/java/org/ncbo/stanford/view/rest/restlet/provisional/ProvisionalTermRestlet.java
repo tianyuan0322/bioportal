@@ -50,7 +50,7 @@ public class ProvisionalTermRestlet extends AbstractBaseRestlet {
 
 	/**
 	 * Handle POST calls here
-	 * 
+	 *
 	 * @param request
 	 * @param response
 	 */
@@ -69,7 +69,7 @@ public class ProvisionalTermRestlet extends AbstractBaseRestlet {
 
 	/**
 	 * Handle DELETE calls here
-	 * 
+	 *
 	 * @param request
 	 * @param response
 	 */
@@ -207,17 +207,19 @@ public class ProvisionalTermRestlet extends AbstractBaseRestlet {
 							.getMessage("msg.error.ontologyversionidinvalid"));
 				}
 			}
-			
+
 			// Check to make sure other required parameters are present
 			if (ontologyIds.size() == 0)
-				throw new InvalidInputException("A valid ontology id is required");
-			
-			if (submittedBy != null && userService.findUser(submittedBy) == null)
+				throw new InvalidInputException(
+						"A valid ontology id is required");
+
+			if (submittedBy != null
+					&& userService.findUser(submittedBy) == null)
 				throw new InvalidInputException("A valid user id is required");
-			
+
 			if (StringUtils.isNullOrEmpty(definition))
 				throw new InvalidInputException("A term definition is required");
-			
+
 			if (StringUtils.isNullOrEmpty(label))
 				throw new InvalidInputException("A preferred name is required");
 
@@ -360,6 +362,11 @@ public class ProvisionalTermRestlet extends AbstractBaseRestlet {
 				.getParameter(RequestParamConstants.PARAM_UPDATED_START_DATE);
 		String updatedEndDateStr = httpRequest
 				.getParameter(RequestParamConstants.PARAM_UPDATED_END_DATE);
+		String implementedOnlyStr = httpRequest
+				.getParameter("implementedtermsonly");
+
+		Boolean implementedOnly = RequestUtils
+				.parseBooleanParam(implementedOnlyStr);
 
 		Date createdStartDate = null;
 		Date createdEndDate = null;
@@ -389,12 +396,18 @@ public class ProvisionalTermRestlet extends AbstractBaseRestlet {
 
 		// Create parameters bean
 		SPARQLFilterGenerator parameters = new SPARQLFilterGenerator();
+
 		if (submittedBy != null && !submittedBy.isEmpty())
 			parameters.setSubmittedBy(submittedBy);
+
+		if (implementedOnly != null)
+			parameters.setPermanentIdExists(implementedOnly);
+
 		if (createdStartDate != null && createdEndDate != null) {
 			parameters.setCreatedStartDate(createdStartDate);
 			parameters.setCreatedEndDate(createdEndDate);
 		}
+
 		if (updatedStartDate != null && updatedEndDate != null) {
 			parameters.setUpdatedStartDate(updatedStartDate);
 			parameters.setUpdatedEndDate(updatedEndDate);
@@ -421,7 +434,8 @@ public class ProvisionalTermRestlet extends AbstractBaseRestlet {
 	}
 
 	/**
-	 * @param userService the userService to set
+	 * @param userService
+	 *            the userService to set
 	 */
 	public void setUserService(UserService userService) {
 		this.userService = userService;
