@@ -363,7 +363,7 @@ public class ProvisionalTermRestlet extends AbstractBaseRestlet {
 		String updatedEndDateStr = httpRequest
 				.getParameter(RequestParamConstants.PARAM_UPDATED_END_DATE);
 		String implementedOnlyStr = httpRequest
-				.getParameter("implementedtermsonly");
+				.getParameter(RequestParamConstants.PARAM_IMPLEMENTED_ONLY);
 
 		Boolean implementedOnly = RequestUtils
 				.parseBooleanParam(implementedOnlyStr);

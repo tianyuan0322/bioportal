@@ -259,5 +259,6 @@ public interface RequestParamConstants {
 	public static final String PARAM_CREATED_END_DATE = "createdenddate";
 	public static final String PARAM_UPDATED_START_DATE = "updatedstartdate";
 	public static final String PARAM_UPDATED_END_DATE = "updatedenddate";
+	public static final String PARAM_IMPLEMENTED_ONLY = "implementedtermsonly";
 
 }
