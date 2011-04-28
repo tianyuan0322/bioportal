@@ -55,6 +55,8 @@ public abstract class AbstractBaseRestlet extends Restlet {
 				} else if (method.equalsIgnoreCase(MessageUtils
 						.getMessage("http.delete"))) {
 					deleteRequest(request, response);
+				} else {
+					postRequest(request, response);
 				}
 			}
 		} else if (request.getMethod().equals(Method.PUT)) {
