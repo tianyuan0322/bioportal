@@ -6,11 +6,11 @@
 	xsi:schemaLocation="
        http://www.springframework.org/schema/beans
        http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
-       http://www.springframework.org/schema/util 
+       http://www.springframework.org/schema/util
        http://www.springframework.org/schema/util/spring-util-2.5.xsd
-       http://www.springframework.org/schema/tx 
+       http://www.springframework.org/schema/tx
        http://www.springframework.org/schema/tx/spring-tx-2.5.xsd
-       http://www.springframework.org/schema/aop 
+       http://www.springframework.org/schema/aop
        http://www.springframework.org/schema/aop/spring-aop-2.5.xsd
        http://www.springframework.org/schema/context
        http://www.springframework.org/schema/context/spring-context-2.5.xsd">
@@ -50,11 +50,11 @@
 				<value>org/ncbo/stanford/domain/generated/NcboAppText.hbm.xml</value>
 				<value>org/ncbo/stanford/domain/generated/NcboOntologyLoadQueue.hbm.xml</value>
 				<value>org/ncbo/stanford/domain/generated/NcboLStatus.hbm.xml</value>
-				<value>org/ncbo/stanford/domain/generated/NcboUsageLog.hbm.xml</value>				
+				<value>org/ncbo/stanford/domain/generated/NcboUsageLog.hbm.xml</value>
 				<value>org/ncbo/stanford/domain/generated/NcboLUsageEventType.hbm.xml</value>
-				<value>org/ncbo/stanford/domain/generated/NcboUserSubscriptions.hbm.xml</value>	
-				<value>org/ncbo/stanford/domain/generated/NcboLNotificationType.hbm.xml</value>				
-				<value>org/ncbo/stanford/domain/generated/NcboOntologyAcl.hbm.xml</value>				
+				<value>org/ncbo/stanford/domain/generated/NcboUserSubscriptions.hbm.xml</value>
+				<value>org/ncbo/stanford/domain/generated/NcboLNotificationType.hbm.xml</value>
+				<value>org/ncbo/stanford/domain/generated/NcboOntologyAcl.hbm.xml</value>
 			</list>
 		</property>
 	</bean>
@@ -127,7 +127,7 @@
 			<aop:advisor advice-ref="txAdvice"
 				pointcut-ref="ontologyLoadSchedulerMethods"/>
 		</aop:config>
-		
+
 		<tx:advice id="txAdvice" transaction-manager="transactionManager">
 			<tx:attributes>
 				<tx:method name="parseOntologies" propagation="NOT_SUPPORTED"/>
@@ -208,14 +208,14 @@
 			<ref bean="hibernateTemplate" />
 		</property>
 	</bean>
-	
+
 	<bean id="NcboLUsageEventTypeDAO"
 		class="org.ncbo.stanford.domain.custom.dao.CustomNcboLUsageEventTypeDAO">
 		<property name="hibernateTemplate">
 			<ref bean="hibernateTemplate" />
 		</property>
 	</bean>
-	
+
 	<bean id="ncboOntologyFileDAO" class="org.ncbo.stanford.domain.generated.NcboOntologyFileDAO">
 		<property name="hibernateTemplate">
 			<ref bean="hibernateTemplate" />
@@ -241,8 +241,8 @@
 		<property name="hibernateTemplate">
 			<ref bean="hibernateTemplate" />
 		</property>
-	</bean>	
-	
+	</bean>
+
 	<!-- Encryption -->
 
 	<bean id="stringEncryptor" class="org.jasypt.encryption.pbe.StandardPBEStringEncryptor">
@@ -596,24 +596,24 @@
 		class="org.ncbo.stanford.manager.metadata.impl.OntologyGroupMetadataManagerImpl"
 		parent="abstractOntologyManagerProtege">
 	</bean>
-	
+
 	<bean id="projectMetadataManager"
 		class="org.ncbo.stanford.manager.metakb.protege.impl.ProjectMetadataManagerImpl"
 		parent="abstractOntologyManagerProtege">
 	</bean>
-	
+
 	<bean id="projectMetadataService"
 		class="org.ncbo.stanford.service.metadata.impl.ProjectMetadataServiceImpl">
 		<property name="projectMetadataManager">
 			<ref bean="projectMetadataManager"/>
 		</property>
 	</bean>
-	
+
 	<bean id="reviewMetadataManager"
 		class="org.ncbo.stanford.manager.metakb.protege.impl.ReviewMetadataManagerImpl"
 		parent="abstractOntologyManagerProtege">
 	</bean>
-	
+
 	<bean id="reviewMetadataService"
 		class="org.ncbo.stanford.service.metadata.impl.ReviewMetadataServiceImpl">
 		<property name="reviewMetadataManager">
@@ -642,7 +642,7 @@
 			<ref bean="userMetadataManager" />
 		</property>
 	</bean>
-	
+
 	<!--Adding For SubscriptionsService-->
 	<bean id="subscriptionsService" class="org.ncbo.stanford.service.subscriptions.impl.SubscriptionsServiceImpl">
 		<property name="ncboUserSubscriptionsDAO">
@@ -653,21 +653,21 @@
 		</property>
 		<property name="mailService">
 			<ref bean="mailService" />
-		</property> 
+		</property>
 		<property name="textManager">
 			<ref local="textManager"/>
 		</property>
 		<property name="ncboUserDAO">
 			<ref local="NcboUserDAO"/>
-		</property>  
-		
+		</property>
+
 	</bean>
 	<!-- Adding For UserMetadata -->
 	<bean id="userMetadataManager"
 		class="org.ncbo.stanford.manager.metadata.impl.UserMetadataManagerImpl"
 		parent="abstractOntologyManagerProtege">
 	</bean>
-	
+
 	<!--Adding for csv-->
 	<bean id="mappingManager"
 		class="org.ncbo.stanford.manager.mapping.impl.MappingManagerImpl">
@@ -675,7 +675,7 @@
 		  	 <ref local="mappingService" />
 		</property>
 	</bean>
-	
+
 	<util:map id="rdfStoreManagerMap" map-class="java.util.HashMap">
 		<entry>
 			<key>
@@ -692,15 +692,15 @@
 			<ref local="rdfStoreManagerMySqlImpl" />
 		</entry>
 	</util:map>
-	
+
 	<bean id="rdfStoreManagerVirtuosoImpl"
 	      class="org.ncbo.stanford.manager.rdfstore.impl.RDFStoreManagerVirtuosoImpl">
 	</bean>
-	
+
 	<bean id="rdfStoreManagerMySqlImpl"
 	      class="org.ncbo.stanford.manager.rdfstore.impl.RDFStoreManagerMySqlImpl">
 	</bean>
-	
+
 	<bean id="mappingService"
 	      class="org.ncbo.stanford.service.mapping.impl.MappingServiceImpl">
 	       <property name="mappingDAO">
@@ -712,38 +712,38 @@
 	       <property name="mappingStatsDAO">
 		  	  <ref local="mappingStatsDAO" />
 		  </property>
-	</bean> 
-	
+	</bean>
+
 	<bean id="abstractMappingDAO" class="org.ncbo.stanford.sparql.dao.mapping.AbstractNcboMappingDAO">
 		<property name="rdfStoreManagerMap">
 			<ref local="rdfStoreManagerMap" />
 		</property>
 	</bean>
-	
+
 	<bean id="mappingDAO" class="org.ncbo.stanford.sparql.dao.mapping.CustomNcboMappingDAO"
 		parent="abstractMappingDAO">
 	</bean>
-	
+
 	<bean id="mappingCountsDAO" class="org.ncbo.stanford.sparql.dao.mapping.CustomNcboMappingCountsDAO"
 		parent="abstractMappingDAO">
 	</bean>
-	
+
 	<bean id="mappingStatsDAO" class="org.ncbo.stanford.sparql.dao.mapping.CustomNcboMappingStatsDAO"
 		parent="abstractMappingDAO">
 	</bean>
-	
+
 	<bean id="rdfStoreType" class="java.lang.String">
 		<constructor-arg>
 			<value>@rdfstoretype@</value>
 		</constructor-arg>
 	</bean>
-	
+
 	<bean id="provisionalTermDAO" class="org.ncbo.stanford.sparql.dao.provisional.ProvisionalTermDAO">
 		<property name="rdfStoreManagerMap">
 			<ref local="rdfStoreManagerMap" />
 		</property>
 	</bean>
-    
+
 	<bean id="provisionalTermService" class="org.ncbo.stanford.service.provisional.impl.ProvisionalTermServiceImpl">
 		<property name="provisionalTermDAO">
 	 	  <ref local="provisionalTermDAO" />
@@ -755,7 +755,7 @@
 			<ref local="ontologyService" />
 		</property>
 	</bean>
-    
+
     <bean id="conceptService"
 		class="org.ncbo.stanford.service.concept.impl.ConceptServiceImpl">
 		<property name="ontologyFormatHandlerMap">
@@ -771,7 +771,7 @@
 			<ref local="ontologyMetadataManager" />
 		</property>
 	</bean>
-	
+
 	<bean id="conceptPropertyService"
 		class="org.ncbo.stanford.service.cuiconcept.impl.ConceptPropertyServiceImpl">
 		<property name="ontologyFormatHandlerMap">
@@ -795,7 +795,7 @@
 	    class="org.ncbo.stanford.service.concept.impl.DumpRDFServiceImpl"
 	    parent="conceptService">
 	</bean>
-	
+
 	<bean id="rdfService"
 	    class="org.ncbo.stanford.service.concept.impl.RdfServiceImpl"
 	    parent="conceptService">
@@ -888,11 +888,11 @@
 			<ref bean="NcboLUsageEventTypeDAO" />
 		</property>
 	</bean>
-	
+
 	<bean id="notificationProcessForOntology"
 		class="org.ncbo.stanford.aop.notification.NotificationProcessForOntology">
 	</bean>
-	
+
 	<bean id="ontologyLoadSchedulerService"
 		class="org.ncbo.stanford.service.loader.scheduler.impl.OntologyLoadSchedulerServiceImpl"
 		parent="abstractOntologyService">
@@ -931,7 +931,7 @@
 			<ref bean="oboRepositoriesConfigFilepath" />
 		</property>
 	</bean>
-	
+
 	<bean id="ontologyIntegrityFixerService"
 		class="org.ncbo.stanford.service.loader.fixer.impl.OntologyIntegrityFixerServiceImpl">
 		<property name="ontologyMetadataManager">
@@ -939,15 +939,18 @@
 		</property>
 		<property name="indexSearchService">
 			<ref bean="indexSearchService" />
-		</property>		
+		</property>
+		<property name="metricsService">
+			<ref bean="metricsService" />
+		</property>
 	</bean>
-	
+
 	<!-- Search related beans -->
 	<bean id="abstractSearchService" class="org.ncbo.stanford.service.search.AbstractSearchService"
 		abstract="true">
 		<property name="luceneVersion">
-			<util:constant static-field="@bioportalsearchluceneversioncompatibility@" />		
-		</property>	
+			<util:constant static-field="@bioportalsearchluceneversioncompatibility@" />
+		</property>
 		<property name="analyzer">
 			<ref bean="searchAnalyzer" />
 		</property>
@@ -995,7 +998,7 @@
 
 	<bean id="searchAnalyzer" class="org.apache.lucene.analysis.standard.StandardAnalyzer">
 		<constructor-arg>
-			<util:constant static-field="@bioportalsearchluceneversioncompatibility@" />		
+			<util:constant static-field="@bioportalsearchluceneversioncompatibility@" />
 		</constructor-arg>
 	</bean>
 
@@ -1173,14 +1176,14 @@
 	<!-- Scheduled Jobs -->
 
 	<!-- Paginatable Cache Expiration -->
-	<bean id="paginatableCacheJobDetailBean" 
+	<bean id="paginatableCacheJobDetailBean"
 		class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
 		<property name="targetObject" ref="paginatableCache" />
 		<property name="targetMethod" value="expireObjects" />
 		<property name="concurrent" value="false" />
 	</bean>
 
-	<bean id="paginatableCacheSimpleTrigger" 
+	<bean id="paginatableCacheSimpleTrigger"
 		class="org.springframework.scheduling.quartz.SimpleTriggerBean">
 		<property name="jobDetail" ref="paginatableCacheJobDetailBean" />
 		<property name="startDelay" value="@bioportalpaginatablecachetimeout@" />
@@ -1200,14 +1203,14 @@
 	</bean>
 
 	<!-- Protege KnowledgeBase Cache Expiration -->
-	<bean id="protegeKnowledgeBaseCacheJobDetailBean" 
+	<bean id="protegeKnowledgeBaseCacheJobDetailBean"
 		class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
 		<property name="targetObject" ref="protegeKnowledgeBaseCache" />
 		<property name="targetMethod" value="expireObjects" />
 		<property name="concurrent" value="false" />
 	</bean>
 
-	<bean id="protegeKnowledgeBaseCacheSimpleTrigger" 
+	<bean id="protegeKnowledgeBaseCacheSimpleTrigger"
 		class="org.springframework.scheduling.quartz.SimpleTriggerBean">
 		<property name="jobDetail" ref="protegeKnowledgeBaseCacheJobDetailBean" />
 		<property name="startDelay" value="@protegeknowledgebasecachetimeout@" />
@@ -1227,14 +1230,14 @@
 	</bean>
 
 	<!-- User Session Expiration -->
-	<bean id="userSessionJobDetailBean" 
+	<bean id="userSessionJobDetailBean"
 		class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
 		<property name="targetObject" ref="sessionService" />
 		<property name="targetMethod" value="expireObjects" />
 		<property name="concurrent" value="false" />
 	</bean>
 
-	<bean id="userSessionSimpleTrigger" 
+	<bean id="userSessionSimpleTrigger"
 		class="org.springframework.scheduling.quartz.SimpleTriggerBean">
 		<property name="jobDetail" ref="userSessionJobDetailBean" />
 		<property name="startDelay" value="@bioportalsessiontimeout@" />
@@ -1254,14 +1257,14 @@
 	</bean>
 
 	<!-- Ping Protege Server -->
-	<bean id="pingProtegeServerJobDetailBean" 
+	<bean id="pingProtegeServerJobDetailBean"
 		class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
 		<property name="targetObject" ref="ontologyMetadataManager" />
 		<property name="targetMethod" value="pingProtegeServer" />
 		<property name="concurrent" value="false" />
 	</bean>
 
-	<bean id="pingProtegeServerSimpleTrigger" 
+	<bean id="pingProtegeServerSimpleTrigger"
 		class="org.springframework.scheduling.quartz.SimpleTriggerBean">
 		<property name="jobDetail" ref="pingProtegeServerJobDetailBean" />
 		<!-- 30 seconds delay before first ping -->
@@ -1396,7 +1399,7 @@
 		<property name="concurrent" value="false" />
 	</bean>
 
-	<bean id="ontologyAclSimpleTrigger" 
+	<bean id="ontologyAclSimpleTrigger"
 		class="org.springframework.scheduling.quartz.SimpleTriggerBean">
 		<property name="jobDetail" ref="ontologyAclJobDetailBean" />
 		<property name="repeatInterval" value="@bioportalontologyaclcachetimeout@" />
@@ -1422,7 +1425,7 @@
 		<property name="concurrent" value="false" />
 	</bean>
 
-	<bean id="populateIdMapsSimpleTrigger" 
+	<bean id="populateIdMapsSimpleTrigger"
 		class="org.springframework.scheduling.quartz.SimpleTriggerBean">
 		<property name="jobDetail" ref="populateIdMapsJobDetailBean" />
 		<property name="repeatInterval" value="@bioportalpopulateidmapsinterval@" />
@@ -1593,7 +1596,7 @@
 			<value>@bioportaltempdir@</value>
 		</constructor-arg>
 	</bean>
-	
+
 	<!-- Protege Server Configuation -->
 	<bean id="protegeServerEnabled" class="java.lang.Boolean">
 		<constructor-arg value="@protegeserverenabled@"/>
@@ -1602,19 +1605,19 @@
 	<bean id="protegeServerHostname" class="java.lang.String">
 		<constructor-arg value="@protegeserverhostname@"/>
 	</bean>
-	
+
 	<bean id="protegeServerPort" class="java.lang.String">
 		<constructor-arg value="@protegeserverport@"/>
 	</bean>
-	
+
 	<bean id="protegeServerUsername" class="java.lang.String">
 		<constructor-arg value="@protegeserverusername@"/>
 	</bean>
-	
+
 	<bean id="protegeServerPassword" class="java.lang.String">
 		<constructor-arg value="@protegeserverpassword@"/>
 	</bean>
-	
+
 	<bean id="protegeServerMetaProjectName" class="java.lang.String">
 		<constructor-arg value="@protegeservermetaprojectname@"/>
 	</bean>
@@ -1665,7 +1668,7 @@
 			<value>@protegebigfilethreshold@</value>
 		</constructor-arg>
 	</bean>
-	
+
 	<!-- Notes DB Configuration -->
 	<bean id="notesJdbcUrl" class="java.lang.String">
 		<constructor-arg>
@@ -1781,7 +1784,7 @@
 			<value>@oborepositoriesconfigfilepath@</value>
 		</constructor-arg>
 	</bean>
-	
+
 	<bean id="returnUrl" class="java.lang.String">
 		<constructor-arg>
 			<value>@returnUrl@</value>
@@ -1793,7 +1796,7 @@
 			<value>@bioportalallconceptsmaxpagesize@</value>
 		</constructor-arg>
 	</bean>
-	
+
 	<!-- RDF directory on the server -->
 	<bean id="rdfFilePath" class="java.lang.String">
 		<constructor-arg>
@@ -1801,7 +1804,7 @@
 		</constructor-arg>
 	</bean>
 
-	<!-- Notification Configuration -->	 
+	<!-- Notification Configuration -->
 	<bean id="emailNotificationService"
 		class="org.ncbo.stanford.service.notification.impl.EmailNotificationServiceImpl">
 		<property name="notificationManagerMap">
@@ -1815,9 +1818,9 @@
 		</property>
 		<property name="textManager">
 			<ref local="textManager"/>
-		</property> 
+		</property>
 	</bean>
-	
+
 	<!-- Maps contains the  notificationManagerEmail to the application -->
 	<util:map id="notificationManagerMap" map-class="java.util.HashMap">
 		<entry>
@@ -1833,9 +1836,9 @@
 		class="org.ncbo.stanford.manager.notification.impl.NotificationManagerEmailImpl">
 		<property name="mailService">
 			<ref bean="mailService" />
-		</property> 
+		</property>
 	</bean>
-	
+
 	<bean id="notificationAdvice" class="org.ncbo.stanford.aop.notification.NotificationAdvice">
 		<property name="emailNotificationService">
 			<ref local="emailNotificationService" />
@@ -1859,13 +1862,13 @@
                     and args(ontologyBean)" />
 			<aop:after-returning pointcut-ref="aroundService" method="adviceUpdateOntology" />
 		</aop:aspect>
-		
+
 		<aop:aspect id="afterProcessOnt" ref="notificationAdvice">
 			<aop:pointcut id="afterProcessRecord"
-				expression="execution(* org.ncbo.stanford.aop.notification.NotificationProcessForOntology.process*(..)) and 
+				expression="execution(* org.ncbo.stanford.aop.notification.NotificationProcessForOntology.process*(..)) and
 				args(loadQueue,formatHandler,ontologyBean)" />
-			<aop:after-returning 
-				pointcut-ref="afterProcessRecord" 
+			<aop:after-returning
+				pointcut-ref="afterProcessRecord"
 				arg-names="loadQueue,formatHandler,ontologyBean"
 				method="afterReturnProcessOntology" />
 		</aop:aspect>
@@ -1884,7 +1887,7 @@
 	</aop:config>
 
 	<context:load-time-weaver />
-    <context:annotation-config/>        
+    <context:annotation-config/>
 
 	<!-- This declaration is required when using Spring Dependency Injection inside the aspect -->
 	<bean class="org.ncbo.stanford.aop.ontology.OntologyMetadataAdvice" factory-method="aspectOf" />
@@ -1894,7 +1897,7 @@
 		<constructor-arg value="email@optrasystems.com" />
 		<constructor-arg value="password" />
 	</bean>
-	
+
 	<bean id="mailSession" class="javax.mail.Session" factory-method="getInstance">
 		<constructor-arg>
 			<props>
@@ -1907,14 +1910,14 @@
 		</constructor-arg>
 		<constructor-arg ref="smtpAuthenticator" />
 	</bean>
-	
+
 	<bean id="mailsender" class="org.springframework.mail.javamail.JavaMailSenderImpl">
 		<property name="host" value="@bioportalsmtpserver@" />
 		<property name="session" ref="mailSession" />
 
 	</bean>
-	
+
 	<bean id="mailService" class="org.ncbo.stanford.util.mail.impl.MailServiceImpl">
 		<property name="mailsender" ref="mailsender" />
-	</bean>	
+	</bean>
 </beans>

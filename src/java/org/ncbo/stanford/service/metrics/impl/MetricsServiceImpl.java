@@ -1,5 +1,5 @@
 /**
- * 
+ *
  */
 package org.ncbo.stanford.service.metrics.impl;
 
