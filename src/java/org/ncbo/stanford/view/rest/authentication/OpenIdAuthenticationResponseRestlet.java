@@ -28,7 +28,7 @@ public class OpenIdAuthenticationResponseRestlet extends AbstractBaseRestlet {
 	private CustomNcboUserDAO ncboUserDAO = null;
 
 	@Override
-	public void handle(Request request, Response response) {
+	public void anyMethodRequest(Request request, Response response) {
 		try {
 			authenticateOpenId(request, response);
 		} catch (AuthenticationException e) {

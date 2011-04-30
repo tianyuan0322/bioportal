@@ -33,37 +33,55 @@ public abstract class AbstractBaseRestlet extends Restlet {
 	protected UsageLoggingService usageLoggingService;
 
 	/**
-	 * Handle requests
+	 * Handle requests. Can't override this because we need to force all
+	 * restlets to execute this method before their own handling. If your
+	 * Restlet requires a handler for all methods, override
+	 * {@link #anyMethodRequest(Request, Response)}
 	 */
 	@Override
-	public void handle(Request request, Response response) {
+	public final void handle(Request request, Response response) {
 		HttpServletRequest httpServletRequest = RequestUtils
 				.getHttpServletRequest(request);
 
-		if (request.getMethod().equals(Method.GET)) {
-			getRequest(request, response);
-		} else if (request.getMethod().equals(Method.POST)) {
-			String method = httpServletRequest.getParameter(MessageUtils
-					.getMessage("http.param.method"));
+		if (isAnyMethodRequestOverridden()) {
+			anyMethodRequest(request, response);
+		} else {
+			if (request.getMethod().equals(Method.GET)) {
+				getRequest(request, response);
+			} else if (request.getMethod().equals(Method.POST)) {
+				String method = httpServletRequest.getParameter(MessageUtils
+						.getMessage("http.param.method"));
 
-			if (method == null) {
-				postRequest(request, response);
-			} else {
-				if (method
-						.equalsIgnoreCase(MessageUtils.getMessage("http.put"))) {
-					putRequest(request, response);
-				} else if (method.equalsIgnoreCase(MessageUtils
-						.getMessage("http.delete"))) {
-					deleteRequest(request, response);
-				} else {
+				if (method == null) {
 					postRequest(request, response);
+				} else {
+					if (method.equalsIgnoreCase(MessageUtils
+							.getMessage("http.put"))) {
+						putRequest(request, response);
+					} else if (method.equalsIgnoreCase(MessageUtils
+							.getMessage("http.delete"))) {
+						deleteRequest(request, response);
+					} else {
+						postRequest(request, response);
+					}
 				}
+			} else if (request.getMethod().equals(Method.PUT)) {
+				putRequest(request, response);
+			} else if (request.getMethod().equals(Method.DELETE)) {
+				deleteRequest(request, response);
 			}
-		} else if (request.getMethod().equals(Method.PUT)) {
-			putRequest(request, response);
-		} else if (request.getMethod().equals(Method.DELETE)) {
-			deleteRequest(request, response);
 		}
+	}
+
+	/**
+	 * Handle any of the GET/POST/PUT/DELETE requests. If this method is
+	 * defined, it gets executed instead of each individual method handler
+	 * 
+	 * @param request
+	 * @param response
+	 */
+	public void anyMethodRequest(Request request, Response response) {
+		unsupportedMethod(request, response);
 	}
 
 	/**
@@ -133,7 +151,8 @@ public abstract class AbstractBaseRestlet extends Restlet {
 	}
 
 	/**
-	 * It will collect the Ids from the request 
+	 * It will collect the Ids from the request
+	 * 
 	 * @param request
 	 * @return
 	 */
@@ -160,20 +179,8 @@ public abstract class AbstractBaseRestlet extends Restlet {
 		return integers;
 	}
 
-	private boolean isGetRequestOverridden() {
-		return isMethodOverridden("getRequest");
-	}
-
-	private boolean isPostRequestOverridden() {
-		return isMethodOverridden("postRequest");
-	}
-
-	private boolean isPutRequestOverridden() {
-		return isMethodOverridden("putRequest");
-	}
-
-	private boolean isDeleteRequestOverridden() {
-		return isMethodOverridden("deleteRequest");
+	private boolean isAnyMethodRequestOverridden() {
+		return isMethodOverridden("anyMethodRequest");
 	}
 
 	private boolean isMethodOverridden(String methodName) {

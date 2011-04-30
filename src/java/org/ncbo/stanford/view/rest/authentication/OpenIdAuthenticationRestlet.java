@@ -25,7 +25,7 @@ public class OpenIdAuthenticationRestlet extends AbstractBaseRestlet {
 	private String returnUrl;
 
 	@Override
-	public void handle(Request request, Response response) {
+	public void anyMethodRequest(Request request, Response response) {
 		authenticate(request, response);
 	}
 
