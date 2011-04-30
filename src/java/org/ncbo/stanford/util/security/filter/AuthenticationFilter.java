@@ -12,6 +12,7 @@ import org.ncbo.stanford.enumeration.ErrorTypeEnum;
 import org.ncbo.stanford.exception.AuthenticationException;
 import org.ncbo.stanford.service.session.RESTfulSession;
 import org.ncbo.stanford.service.session.SessionService;
+import org.ncbo.stanford.util.MessageUtils;
 import org.ncbo.stanford.util.RequestUtils;
 import org.ncbo.stanford.util.constants.ApplicationConstants;
 import org.ncbo.stanford.util.helper.StringHelper;
@@ -112,13 +113,22 @@ public class AuthenticationFilter extends AbstractAuthFilter {
 		}
 
 		UserBean user = null;
+		String apiKeyMsg = "Please visit " + MessageUtils.getMessage("ui.url")
+				+ "/account to get your API key.";
 
 		if (StringHelper.isNullOrNullString(apiKey)) {
 			error = ErrorTypeEnum.APIKEY_REQUIRED;
+			error
+					.setErrorMessage("A valid API key is required to call REST services. "
+							+ apiKeyMsg);
 		} else if (!StringHelper.isValidUUID(apiKey)) {
 			error = ErrorTypeEnum.INVALID_APIKEY;
+			error.setErrorMessage("The API key you supplied is invalid. "
+					+ apiKeyMsg);
 		} else if (appApiKey != null && !StringHelper.isValidUUID(appApiKey)) {
-			error = ErrorTypeEnum.INVALID_APPAPIKEY;
+			error = ErrorTypeEnum.INVALID_APPAPIKEY;			
+			error.setErrorMessage("The Application you are using to access BioPortal services supplied an invalid API key. "
+					+ apiKeyMsg);
 		} else {
 			session = sessionService.get(apiKey);
 

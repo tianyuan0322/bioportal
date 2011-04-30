@@ -6,6 +6,7 @@ import org.ncbo.stanford.bean.UserBean;
 import org.ncbo.stanford.exception.AuthenticationException;
 import org.ncbo.stanford.service.encryption.EncryptionService;
 import org.ncbo.stanford.service.user.UserService;
+import org.ncbo.stanford.util.MessageUtils;
 import org.ncbo.stanford.util.security.authentication.AuthenticationService;
 
 public class AuthenticationServiceImpl implements AuthenticationService {
@@ -16,13 +17,14 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 
 	public UserBean authenticate(String apiKey) throws AuthenticationException {
 		UserBean userBean = userService.findUserByApiKey(apiKey);
+		String apiKeyMsg = "Please visit " + MessageUtils.getMessage("ui.url") + "/account to get your API key.";
 
 		if (userBean == null) {
 			log
 					.error("There is no user in the system corresponding to apiKey: "
 							+ apiKey);
 			throw new AuthenticationException(
-					"Invalid credentials supplied: apiKey = " + apiKey);
+					"Invalid credentials supplied: apiKey = " + apiKey + ". " + apiKeyMsg);
 		}
 		
 		return userBean;

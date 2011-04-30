@@ -43,7 +43,7 @@ public final class AuthenticationRestlet extends AbstractBaseRestlet {
 	private AuthenticationService authenticationService;
 
 	@Override
-	public void handle(Request request, Response response) {
+	public void anyMethodRequest(Request request, Response response) {
 		authenticate(request, response);
 	}
 

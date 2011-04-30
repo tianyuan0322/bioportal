@@ -12,7 +12,7 @@ public enum ErrorTypeEnum {
 	INVALID_SESSION("INVALID_SESSION", "Your session information is invalid. Please check your API key and re-run your request."), 
 	APIKEY_REQUIRED("APIKEY_REQUIRED", "A valid API key is required to call REST services. Please see the developer documentation for more detail."),
 	INVALID_APIKEY("INVALID_APIKEY", "The API key you supplied is invalid."),
-	INVALID_APPAPIKEY("INVALID_APPAPIKEY", "The Application API key you supplied is invalid."),
+	INVALID_APPAPIKEY("INVALID_APPAPIKEY", "The Application you are using to access BioPortal services supplied an invalid API key."),
 	INVALID_CREDENTIALS("INVALID_CREDENTIALS", "The credentials you supplied are not valid."), 
 	ACCESS_DENIED("ACCESS_DENIED", "You don't have sufficient privileges to access this resource."), 
 	RUNTIME_ERROR("RUNTIME_ERROR", "A runtime error has occurred."), 
