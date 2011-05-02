@@ -109,7 +109,7 @@ public class SPARQLFilterGenerator {
 			}
 		}
 
-		if (permanentIdExists == true) {
+		if (permanentIdExists != null & permanentIdExists == true) {
 			filter += (filter.length() > 0) ? " && " : "";
 			filter += "bound(?permanentId)";
 		}
@@ -324,7 +324,8 @@ public class SPARQLFilterGenerator {
 	}
 
 	/**
-	 * @param permanentIdExists the permanentIdExists to set
+	 * @param permanentIdExists
+	 *            the permanentIdExists to set
 	 */
 	public void setPermanentIdExists(Boolean permanentIdExists) {
 		this.permanentIdExists = permanentIdExists;
