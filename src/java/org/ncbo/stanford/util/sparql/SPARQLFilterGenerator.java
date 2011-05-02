@@ -109,7 +109,7 @@ public class SPARQLFilterGenerator {
 			}
 		}
 
-		if (permanentIdExists != null & permanentIdExists == true) {
+		if (permanentIdExists != null && permanentIdExists == true) {
 			filter += (filter.length() > 0) ? " && " : "";
 			filter += "bound(?permanentId)";
 		}
