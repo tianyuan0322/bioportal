@@ -4,6 +4,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.ncbo.stanford.bean.UserBean;
 import org.ncbo.stanford.exception.UserNotFoundException;
+import org.ncbo.stanford.service.session.RESTfulSession;
 import org.ncbo.stanford.service.user.UserService;
 import org.ncbo.stanford.util.MessageUtils;
 import org.ncbo.stanford.util.helper.BeanHelper;
@@ -77,6 +78,7 @@ public class UserRestlet extends AbstractBaseRestlet {
 	private void updateUser(Request request, Response response) {
 		// find the UserBean from request
 		UserBean userBean = findUserBean(request, response);
+		RESTfulSession session = null;
 
 		// if "find" was successful, proceed to update
 		if (!response.getStatus().isError()) {
@@ -84,7 +86,7 @@ public class UserRestlet extends AbstractBaseRestlet {
 			try {
 				// populate UserBean from Request object
 				BeanHelper.populateUserBeanFromRequest(request, userBean);
-				userService.updateUser(userBean);
+				session = userService.updateUser(userBean);
 			} catch (Exception e) {
 				response
 						.setStatus(Status.SERVER_ERROR_INTERNAL, e.getMessage());
@@ -95,7 +97,7 @@ public class UserRestlet extends AbstractBaseRestlet {
 
 		// generate response XML
 		xmlSerializationService
-				.generateXMLResponse(request, response, userBean);
+				.generateXMLResponse(request, response, session);
 	}
 
 	/**

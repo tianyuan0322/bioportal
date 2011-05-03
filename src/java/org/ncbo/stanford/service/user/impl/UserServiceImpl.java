@@ -6,6 +6,8 @@ import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.ncbo.stanford.bean.UserBean;
 import org.ncbo.stanford.domain.custom.dao.CustomNcboLRoleDAO;
 import org.ncbo.stanford.domain.custom.dao.CustomNcboOntologyAclDAO;
@@ -15,20 +17,26 @@ import org.ncbo.stanford.domain.generated.NcboLRole;
 import org.ncbo.stanford.domain.generated.NcboOntologyAcl;
 import org.ncbo.stanford.domain.generated.NcboUser;
 import org.ncbo.stanford.domain.generated.NcboUserRole;
+import org.ncbo.stanford.exception.AuthenticationException;
 import org.ncbo.stanford.manager.metadata.UserMetadataManager;
 import org.ncbo.stanford.service.encryption.EncryptionService;
+import org.ncbo.stanford.service.session.RESTfulSession;
 import org.ncbo.stanford.service.user.UserService;
 import org.ncbo.stanford.util.helper.StringHelper;
+import org.ncbo.stanford.util.security.authentication.AuthenticationService;
 import org.springframework.transaction.annotation.Transactional;
 
 @Transactional
 public class UserServiceImpl implements UserService {
+	private static final Log log = LogFactory.getLog(UserServiceImpl.class);
 
 	private CustomNcboUserDAO ncboUserDAO = null;
 	private CustomNcboLRoleDAO ncboLRoleDAO = null;
 	private CustomNcboUserRoleDAO ncboUserRoleDAO = null;
 	private CustomNcboOntologyAclDAO ncboOntologyAclDAO = null;
 	private EncryptionService encryptionService = null;
+	private AuthenticationService authenticationService = null;
+
 	private UserMetadataManager userMetadataManager = null;
 
 	public void setUserMetadataManager(UserMetadataManager userMetadataManager) {
@@ -114,7 +122,8 @@ public class UserServiceImpl implements UserService {
 		return userBeanList;
 	}
 
-	public void createUser(UserBean userBean) {
+	public RESTfulSession createUser(UserBean userBean) {
+		RESTfulSession session = null;
 		// populate NcboUser from userBean
 		NcboUser ncboUser = new NcboUser();
 		userBean.populateToEntity(ncboUser);
@@ -151,11 +160,26 @@ public class UserServiceImpl implements UserService {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
+		
+		try {
+			session = authenticationService.authenticate(uuid);
+		} catch (AuthenticationException e) {
+			// this should never happen in this case
+			log.error("A really bizarre error occurred. "
+					+ "The created user failed to authenticate, "
+					+ " which can only mean the user is not in the database. "
+					+ "See stack trace below for details.");
+			e.printStackTrace();
+		}
+		
+		return session;
 	}
 
-	public void updateUser(UserBean userBean) {
+	public RESTfulSession updateUser(UserBean userBean) {
 		// get ncboUser DAO instance using user_id
 		NcboUser ncboUser = ncboUserDAO.findById(userBean.getId());
+		String userApiKey = ncboUser.getApiKey();
+		RESTfulSession session = null;
 
 		// populate NcboUser from userBean
 		userBean.populateToEntity(ncboUser);
@@ -176,12 +200,26 @@ public class UserServiceImpl implements UserService {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
+
+		try {
+			session = authenticationService.authenticate(userApiKey);
+		} catch (AuthenticationException e) {
+			// this should never happen in this case
+			log.error("A really bizarre error occurred. "
+					+ "The updated user failed to authenticate, "
+					+ " which can only mean the user is not in the database. "
+					+ "See stack trace below for details.");
+			e.printStackTrace();
+		}
+
+		return session;
 	}
 
 	@SuppressWarnings("unchecked")
 	public void deleteUser(UserBean userBean) {
 		// get ncboUser DAO instance using user_id
 		NcboUser ncboUser = ncboUserDAO.findById(userBean.getId());
+		String userApiKey = ncboUser.getApiKey();
 		Set<NcboUserRole> userRoles = ncboUser.getNcboUserRoles();
 
 		for (NcboUserRole userRole : userRoles) {
@@ -195,6 +233,7 @@ public class UserServiceImpl implements UserService {
 		}
 
 		ncboUserDAO.delete(ncboUser);
+		authenticationService.logout(userApiKey);
 	}
 
 	@SuppressWarnings("unchecked")
@@ -229,6 +268,15 @@ public class UserServiceImpl implements UserService {
 	 */
 	public void setEncryptionService(EncryptionService encryptionService) {
 		this.encryptionService = encryptionService;
+	}
+
+	/**
+	 * @param authenticationService
+	 *            the authenticationService to set
+	 */
+	public void setAuthenticationService(
+			AuthenticationService authenticationService) {
+		this.authenticationService = authenticationService;
 	}
 
 	/**

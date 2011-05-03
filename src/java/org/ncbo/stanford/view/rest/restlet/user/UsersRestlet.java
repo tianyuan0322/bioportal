@@ -6,6 +6,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.ncbo.stanford.bean.UserBean;
 import org.ncbo.stanford.exception.InvalidInputException;
+import org.ncbo.stanford.service.session.RESTfulSession;
 import org.ncbo.stanford.service.user.UserService;
 import org.ncbo.stanford.util.helper.BeanHelper;
 import org.ncbo.stanford.util.helper.StringHelper;
@@ -69,20 +70,21 @@ public class UsersRestlet extends AbstractBaseRestlet {
 	 */
 	private void createUser(Request request, Response response) {
 		UserBean userBean = new UserBean();
+		RESTfulSession session = null;
 
 		try {
 			BeanHelper.populateUserBeanFromRequest(request, userBean);
 			String username = userBean.getUsername();
 			String password = userBean.getPassword();
 			String email = userBean.getEmail();
-			
+
 			if (StringHelper.isNullOrNullString(username)
 					|| StringHelper.isNullOrNullString(password)
 					|| StringHelper.isNullOrNullString(email)) {
 				throw new InvalidInputException();
 			}
 
-			userService.createUser(userBean);
+			session = userService.createUser(userBean);
 		} catch (InvalidInputException e) {
 			response.setStatus(Status.CLIENT_ERROR_BAD_REQUEST, e.getMessage());
 		} catch (Exception e) {
@@ -92,7 +94,7 @@ public class UsersRestlet extends AbstractBaseRestlet {
 		} finally {
 			// generate response XML
 			xmlSerializationService.generateXMLResponse(request, response,
-					userBean);
+					session);
 		}
 	}
 

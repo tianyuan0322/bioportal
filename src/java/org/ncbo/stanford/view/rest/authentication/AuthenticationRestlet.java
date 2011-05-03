@@ -4,15 +4,12 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.ncbo.stanford.bean.UserBean;
 import org.ncbo.stanford.exception.AuthenticationException;
 import org.ncbo.stanford.exception.BPRuntimeException;
 import org.ncbo.stanford.service.session.RESTfulSession;
 import org.ncbo.stanford.service.session.SessionService;
 import org.ncbo.stanford.util.RequestUtils;
-import org.ncbo.stanford.util.constants.ApplicationConstants;
 import org.ncbo.stanford.util.helper.StringHelper;
-import org.ncbo.stanford.util.security.SecurityContextHolder;
 import org.ncbo.stanford.util.security.authentication.AuthenticationService;
 import org.ncbo.stanford.util.security.filter.AuthenticationFilter;
 import org.ncbo.stanford.view.rest.restlet.AbstractBaseRestlet;
@@ -86,7 +83,6 @@ public final class AuthenticationRestlet extends AbstractBaseRestlet {
 			// TODO: @@@@@ mdorf: uncomment this call once the above temporary
 			// block is removed
 			// userApiKey = obtainUserApiKey(httpServletRequest);
-			UserBean user = null;
 
 			// When a user API key is supplied, the assumption is that if the
 			// request has made it this far, it has already been successfully
@@ -96,13 +92,8 @@ public final class AuthenticationRestlet extends AbstractBaseRestlet {
 
 			if (StringHelper.isNullOrNullString(userApiKey)
 					|| !StringHelper.isNullOrNullString(username)) {
-				user = authenticationService.authenticate(username, password);
-				userApiKey = user.getApiKey();
-				sessionService.invalidate(userApiKey);
-				userSession = sessionService.createNewSession(userApiKey);
-				userSession.setAttribute(
-						ApplicationConstants.SECURITY_CONTEXT_KEY,
-						new SecurityContextHolder(userApiKey, appApiKey, user));
+				userSession = authenticationService.authenticate(username,
+						password);
 			} else {
 				userSession = sessionService.get(userApiKey);
 
@@ -118,6 +109,9 @@ public final class AuthenticationRestlet extends AbstractBaseRestlet {
 									+ "Please contact BioPortal support and report this message so we "
 									+ "can investiage it promptly.");
 				}
+
+				// this is required in order to invalidate the old session
+				userSession = authenticationService.authenticate(userApiKey);
 			}
 		} catch (BPRuntimeException re) {
 			if (userApiKey != null) {

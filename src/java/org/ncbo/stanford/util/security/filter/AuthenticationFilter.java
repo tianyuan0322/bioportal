@@ -7,7 +7,6 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.ncbo.stanford.bean.UserBean;
 import org.ncbo.stanford.enumeration.ErrorTypeEnum;
 import org.ncbo.stanford.exception.AuthenticationException;
 import org.ncbo.stanford.service.session.RESTfulSession;
@@ -16,7 +15,6 @@ import org.ncbo.stanford.util.MessageUtils;
 import org.ncbo.stanford.util.RequestUtils;
 import org.ncbo.stanford.util.constants.ApplicationConstants;
 import org.ncbo.stanford.util.helper.StringHelper;
-import org.ncbo.stanford.util.security.SecurityContextHolder;
 import org.ncbo.stanford.util.security.authentication.AuthenticationService;
 import org.ncbo.stanford.view.util.constants.RequestParamConstants;
 import org.restlet.Context;
@@ -112,7 +110,6 @@ public class AuthenticationFilter extends AbstractAuthFilter {
 			apiKey = TEMP_ADMIN_APIKEY;
 		}
 
-		UserBean user = null;
 		String apiKeyMsg = "Please visit " + MessageUtils.getMessage("ui.url")
 				+ "/account to get your API key.";
 
@@ -126,9 +123,10 @@ public class AuthenticationFilter extends AbstractAuthFilter {
 			error.setErrorMessage("The API key you supplied is invalid. "
 					+ apiKeyMsg);
 		} else if (appApiKey != null && !StringHelper.isValidUUID(appApiKey)) {
-			error = ErrorTypeEnum.INVALID_APPAPIKEY;			
-			error.setErrorMessage("The Application you are using to access BioPortal services supplied an invalid API key. "
-					+ apiKeyMsg);
+			error = ErrorTypeEnum.INVALID_APPAPIKEY;
+			error
+					.setErrorMessage("The Application you are using to access BioPortal services supplied an invalid API key. "
+							+ apiKeyMsg);
 		} else {
 			session = sessionService.get(apiKey);
 
@@ -140,14 +138,9 @@ public class AuthenticationFilter extends AbstractAuthFilter {
 					if (appApiKey != null
 							&& sessionService.get(appApiKey) == null) {
 						authenticationService.authenticate(appApiKey);
-						sessionService.createNewSession(appApiKey);
 					}
 
-					user = authenticationService.authenticate(apiKey);
-					session = sessionService.createNewSession(apiKey);
-					session.setAttribute(
-							ApplicationConstants.SECURITY_CONTEXT_KEY,
-							new SecurityContextHolder(apiKey, appApiKey, user));
+					session = authenticationService.authenticate(apiKey);
 				} catch (AuthenticationException e) {
 					error = ErrorTypeEnum.INVALID_CREDENTIALS;
 					error.setErrorMessage(e.getMessage());
@@ -165,6 +158,7 @@ public class AuthenticationFilter extends AbstractAuthFilter {
 			request.getAttributes().put(ApplicationConstants.USER_SESSION_NAME,
 					session);
 		}
+
 		return retVal;
 	}
 

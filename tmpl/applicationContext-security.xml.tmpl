@@ -22,6 +22,9 @@
 		<property name="encryptionService">
 			<ref bean="encryptionService" />
 		</property>
+		<property name="sessionService">
+			<ref bean="sessionService" />
+		</property>
 	</bean>
 
 	<util:set id="authenticationExceptionReferrers" set-class="java.util.TreeSet">
