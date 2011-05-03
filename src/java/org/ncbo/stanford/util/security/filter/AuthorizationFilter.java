@@ -22,7 +22,6 @@ import org.ncbo.stanford.view.util.constants.RequestParamConstants;
 import org.restlet.Context;
 import org.restlet.Request;
 import org.restlet.Response;
-import org.restlet.data.MediaType;
 import org.restlet.data.Status;
 import org.restlet.routing.Router;
 import org.restlet.routing.TemplateRoute;
@@ -111,12 +110,12 @@ public class AuthorizationFilter extends AbstractAuthFilter {
 			}
 		}
 
-		if (error != null) {
-			String path = request.getResourceRef().getPath();
+		if (error != null) {			
 			retVal = STOP;
-			RequestUtils.setHttpServletResponse(response,
-					Status.CLIENT_ERROR_FORBIDDEN, MediaType.TEXT_XML,
-					xmlSerializationService.getErrorAsXML(error, path));
+			response.setStatus(Status.CLIENT_ERROR_FORBIDDEN, error
+					.getErrorMessage());
+			xmlSerializationService
+					.generateXMLResponse(request, response, null);
 		}
 
 		return retVal;
