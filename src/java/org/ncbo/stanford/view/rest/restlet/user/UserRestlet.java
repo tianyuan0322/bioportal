@@ -3,6 +3,7 @@ package org.ncbo.stanford.view.rest.restlet.user;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.ncbo.stanford.bean.UserBean;
+import org.ncbo.stanford.exception.InvalidInputException;
 import org.ncbo.stanford.exception.UserNotFoundException;
 import org.ncbo.stanford.service.session.RESTfulSession;
 import org.ncbo.stanford.service.user.UserService;
@@ -20,7 +21,7 @@ public class UserRestlet extends AbstractBaseRestlet {
 
 	/**
 	 * Handle GET calls here
-	 * 
+	 *
 	 * @param request
 	 * @param response
 	 */
@@ -32,7 +33,7 @@ public class UserRestlet extends AbstractBaseRestlet {
 
 	/**
 	 * Handle PUT calls here
-	 * 
+	 *
 	 * @param request
 	 * @param response
 	 */
@@ -44,7 +45,7 @@ public class UserRestlet extends AbstractBaseRestlet {
 
 	/**
 	 * Handle DELETE calls here
-	 * 
+	 *
 	 * @param request
 	 * @param response
 	 */
@@ -56,7 +57,7 @@ public class UserRestlet extends AbstractBaseRestlet {
 
 	/**
 	 * Returns a specified UserBean to the response
-	 * 
+	 *
 	 * @param request
 	 * @param resp
 	 */
@@ -71,38 +72,47 @@ public class UserRestlet extends AbstractBaseRestlet {
 
 	/**
 	 * Update a specified UserBean to the response
-	 * 
+	 *
 	 * @param request
 	 * @param resp
 	 */
 	private void updateUser(Request request, Response response) {
 		// find the UserBean from request
-		UserBean userBean = findUserBean(request, response);
+		UserBean userBean = new UserBean();
 		RESTfulSession session = null;
 
-		// if "find" was successful, proceed to update
-		if (!response.getStatus().isError()) {
-			// now update the user
-			try {
-				// populate UserBean from Request object
-				BeanHelper.populateUserBeanFromRequest(request, userBean);
-				session = userService.updateUser(userBean);
-			} catch (Exception e) {
-				response
-						.setStatus(Status.SERVER_ERROR_INTERNAL, e.getMessage());
-				e.printStackTrace();
-				log.error(e);
-			}
-		}
+		try {
+			// check to see if user exists
+			UserBean checkedUser = findUserBean(request, response);
 
-		// generate response XML
-		xmlSerializationService
-				.generateXMLResponse(request, response, session);
+			if (checkedUser == null) {
+				throw new InvalidInputException("User with given id not found");
+			}
+
+			userBean.setId(checkedUser.getId());
+
+			// populate UserBean from Request object
+			// Some fields will be null, that's ok
+			BeanHelper.populateUserBeanFromRequest(request, userBean);
+			session = userService.updateUser(userBean);
+		} catch (InvalidInputException e) {
+			response.setStatus(Status.CLIENT_ERROR_NOT_FOUND, e.getMessage());
+			e.printStackTrace();
+			log.error(e);
+		} catch (Exception e) {
+			response.setStatus(Status.SERVER_ERROR_INTERNAL, e.getMessage());
+			e.printStackTrace();
+			log.error(e);
+		} finally {
+			// generate response XML
+			xmlSerializationService.generateXMLResponse(request, response,
+					session);
+		}
 	}
 
 	/**
 	 * Delete a specified UserBean to the response
-	 * 
+	 *
 	 * @param request
 	 * @param resp
 	 */
@@ -141,8 +151,8 @@ public class UserRestlet extends AbstractBaseRestlet {
 	/**
 	 * Returns a specified UserBean and set the response status if there is an
 	 * error
-	 * 
-	 * 
+	 *
+	 *
 	 * @param request
 	 * @param response
 	 */
@@ -179,7 +189,7 @@ public class UserRestlet extends AbstractBaseRestlet {
 
 	/**
 	 * @param userService
-	 * 
+	 *
 	 */
 	public void setUserService(UserService userService) {
 		this.userService = userService;

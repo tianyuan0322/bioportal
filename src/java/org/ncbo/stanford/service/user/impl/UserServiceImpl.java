@@ -160,7 +160,7 @@ public class UserServiceImpl implements UserService {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		
+
 		try {
 			session = authenticationService.authenticate(uuid);
 		} catch (AuthenticationException e) {
@@ -171,7 +171,7 @@ public class UserServiceImpl implements UserService {
 					+ "See stack trace below for details.");
 			e.printStackTrace();
 		}
-		
+
 		return session;
 	}
 
@@ -196,6 +196,9 @@ public class UserServiceImpl implements UserService {
 		// This code is adding for creating a new user account in the metadata
 		// ontology
 		try {
+			// Update userBean with info from entity
+			userBean.populateFromEntity(ncboUser);
+
 			userMetadataManager.saveUser(userBean);
 		} catch (Exception e) {
 			e.printStackTrace();
