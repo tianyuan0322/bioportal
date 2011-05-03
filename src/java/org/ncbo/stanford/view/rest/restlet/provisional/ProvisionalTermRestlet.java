@@ -190,9 +190,17 @@ public class ProvisionalTermRestlet extends AbstractBaseRestlet {
 		List<Integer> ontologyIds = RequestUtils
 				.parseIntegerListParam(ontologyIdsStr);
 		List<String> synonyms = RequestUtils.parseStringListParam(synonymsStr);
-		URI provisionalSubclassOf = new URIImpl(provisionalSubclassOfStr);
 		Integer submittedBy = RequestUtils.parseIntegerParam(submittedByStr);
-		URI permanentId = new URIImpl(permanentIdStr);
+
+		URI provisionalSubclassOf = null;
+		if (!StringUtils.isNullOrEmpty(provisionalSubclassOfStr)) {
+			provisionalSubclassOf = new URIImpl(provisionalSubclassOfStr);
+		}
+
+		URI permanentId = null;
+		if (!StringUtils.isNullOrEmpty(permanentIdStr)) {
+			permanentId = new URIImpl(permanentIdStr);
+		}
 
 		OntologyBean ont = null;
 		ClassBean classBean = null;
