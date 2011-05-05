@@ -422,6 +422,7 @@ public class RequestUtils {
 		// Send data
 		URL url = new URL(postUrl);
 		HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+		conn.setRequestProperty("User-Agent", BIOPORTAL_USER_AGENT);
 
 		// Construct post parameters
 		if (postParams != null) {
