@@ -93,7 +93,7 @@ public class SearchServiceTest extends AbstractBioPortalTest {
 
 			long start = System.currentTimeMillis();
 			SearchResultListBean results = queryService.runQuery(q, maxNumHits,
-					ontologyIds, subtreeRootConceptId);
+					ontologyIds, subtreeRootConceptId, false);
 			long stop = System.currentTimeMillis();
 
 			System.out.println("Excecution Time: " + (double) (stop - start)
@@ -119,7 +119,7 @@ public class SearchServiceTest extends AbstractBioPortalTest {
 			Query query = queryService.generateLuceneSearchQuery(null, null,
 					"cell", true, false);
 			Page<SearchBean> results = queryService.executeQuery(query,
-					maxNumHits, null, null);
+					maxNumHits, null, null, false);
 
 			assertNotNull(results);
 		} catch (Exception exc) {
@@ -142,7 +142,7 @@ public class SearchServiceTest extends AbstractBioPortalTest {
 			Query query = queryService.generateLuceneSearchQuery(null, null,
 					"lead", true, false);
 			Page<SearchBean> results = queryService.executeQuery(query,
-					maxNumHits, null, null);
+					maxNumHits, null, null, false);
 
 			assertNotNull(results);
 
@@ -169,7 +169,7 @@ public class SearchServiceTest extends AbstractBioPortalTest {
 		Query query = queryService.generateLuceneSearchQuery(null, null,
 				"blood", true, false);
 		Page<SearchBean> results = queryService.executeQuery(query, 3, 6,
-				maxNumHits, null, null);
+				maxNumHits, null, null, false);
 
 		assertNotNull(results);
 

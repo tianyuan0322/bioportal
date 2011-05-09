@@ -22,9 +22,9 @@ import org.restlet.data.Status;
 
 /**
  * Restlet responsible for executing search query operations
- * 
+ *
  * @author Michael Dorf
- * 
+ *
  */
 public class QueryRestlet extends AbstractBaseRestlet {
 
@@ -49,7 +49,7 @@ public class QueryRestlet extends AbstractBaseRestlet {
 
 	/**
 	 * Execute search
-	 * 
+	 *
 	 * @param request
 	 * @param response
 	 */
@@ -62,6 +62,8 @@ public class QueryRestlet extends AbstractBaseRestlet {
 				.getParameter(RequestParamConstants.PARAM_OBJECT_TYPES);
 		String includeProperties = (String) httpRequest
 				.getParameter(RequestParamConstants.PARAM_INCLUDEPROPERTIES);
+		String includeDefinitions = (String) httpRequest
+				.getParameter(RequestParamConstants.PARAM_INCLUDE_DEFINITIONS);
 		String isExactMatch = (String) httpRequest
 				.getParameter(RequestParamConstants.PARAM_ISEXACTMATCH);
 		String pageSize = (String) httpRequest
@@ -82,6 +84,8 @@ public class QueryRestlet extends AbstractBaseRestlet {
 				.parseStringListParam(objectTypes);
 		boolean includePropertiesBool = RequestUtils
 				.parseBooleanParam(includeProperties);
+		boolean includeDefinitionsBool = RequestUtils
+				.parseBooleanParam(includeDefinitions);
 		boolean isExactMatchBool = RequestUtils.parseBooleanParam(isExactMatch);
 		Integer pageSizeInt = RequestUtils.parseIntegerParam(pageSize);
 		Integer pageNumInt = RequestUtils.parseIntegerParam(pageNum);
@@ -103,7 +107,7 @@ public class QueryRestlet extends AbstractBaseRestlet {
 			searchResults = queryService.executeQuery(query, ontologyIdsInt,
 					objectTypesStr, includePropertiesBool, isExactMatchBool,
 					pageSizeInt, pageNumInt, maxNumHitsInt,
-					subtreeRootConceptId);
+					subtreeRootConceptId, includeDefinitionsBool);
 		} catch (InvalidInputException e) {
 			response.setStatus(Status.CLIENT_ERROR_BAD_REQUEST, e.getMessage());
 		} catch (Exception e) {

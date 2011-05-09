@@ -65,6 +65,7 @@ public interface RequestParamConstants {
 	public static final String PARAM_ONTOLOGY_IDS = "ontologyids";
 	public static final String PARAM_ONTOLOGY_VERSION_IDS = "ontologyversionids";
 	public static final String PARAM_INCLUDEPROPERTIES = "includeproperties";
+	public static final String PARAM_INCLUDE_DEFINITIONS = "includedefinitions";
 	public static final String PARAM_ISEXACTMATCH = "isexactmatch";
 	public static final String PARAM_PAGESIZE = "pagesize";
 	public static final String PARAM_PAGENUM = "pagenum";

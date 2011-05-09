@@ -5,9 +5,9 @@ import org.ncbo.stanford.enumeration.SearchRecordTypeEnum;
 
 /**
  * A base search bean that define a single search result entity
- * 
+ *
  * @author Michael Dorf
- * 
+ *
  */
 public class SearchBean {
 
@@ -20,6 +20,7 @@ public class SearchBean {
 	private String conceptIdShort;
 	private String preferredName;
 	private String contents;
+	private String definition;
 
 	public SearchBean() {
 	}
@@ -73,7 +74,7 @@ public class SearchBean {
 	/**
 	 * Populates this instance with data. This is the "official" function to use
 	 * to populate the bean. Do not create any custom population methods!!!
-	 * 
+	 *
 	 * @param ontologyVersionId
 	 * @param ontologyId
 	 * @param ontologyDisplayLabel
@@ -241,5 +242,19 @@ public class SearchBean {
 	 */
 	public void setContents(String contents) {
 		this.contents = contents;
+	}
+
+	/**
+	 * @return the definition
+	 */
+	public String getDefinition() {
+		return definition;
+	}
+
+	/**
+	 * @param definition the definition to set
+	 */
+	public void setDefinition(String definition) {
+		this.definition = definition;
 	}
 }

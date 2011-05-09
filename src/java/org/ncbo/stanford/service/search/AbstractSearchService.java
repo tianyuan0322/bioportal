@@ -32,6 +32,7 @@ import org.apache.lucene.store.Directory;
 import org.apache.lucene.store.FSDirectory;
 import org.apache.lucene.util.Version;
 import org.ncbo.stanford.bean.OntologyBean;
+import org.ncbo.stanford.bean.concept.ClassBean;
 import org.ncbo.stanford.bean.search.OntologyHitBean;
 import org.ncbo.stanford.bean.search.SearchBean;
 import org.ncbo.stanford.bean.search.SearchIndexBean;
@@ -42,16 +43,17 @@ import org.ncbo.stanford.exception.OntologyNotFoundException;
 import org.ncbo.stanford.manager.metadata.OntologyMetadataManager;
 import org.ncbo.stanford.manager.retrieval.OntologyRetrievalManager;
 import org.ncbo.stanford.manager.search.OntologySearchManager;
+import org.ncbo.stanford.service.concept.ConceptService;
 import org.ncbo.stanford.util.cache.expiration.system.ExpirationSystem;
 import org.ncbo.stanford.util.helper.StringHelper;
 
 /**
  * Abstract class to contain functionality common to both query and indexing
  * services
- * 
- * 
+ *
+ *
  * @author Michael Dorf
- * 
+ *
  */
 public abstract class AbstractSearchService {
 
@@ -70,6 +72,7 @@ public abstract class AbstractSearchService {
 	protected int defMaxNumHits;
 	protected ExpirationSystem<String, SearchResultListBean> searchResultCache;
 	protected OntologyMetadataManager ontologyMetadataManager;
+	protected ConceptService conceptService;
 	protected Map<String, OntologyRetrievalManager> ontologyRetrievalHandlerMap = new HashMap<String, OntologyRetrievalManager>(
 			0);
 	protected Map<String, String> ontologyFormatHandlerMap = new HashMap<String, String>(
@@ -85,7 +88,7 @@ public abstract class AbstractSearchService {
 
 	/**
 	 * Executes a query against the Lucene index. Does not use caching
-	 * 
+	 *
 	 * @param query
 	 * @param maxNumHits
 	 * @param ontologyIds
@@ -96,8 +99,8 @@ public abstract class AbstractSearchService {
 	 * @throws Exception
 	 */
 	public SearchResultListBean runQuery(Query query, Integer maxNumHits,
-			Collection<Integer> ontologyIds, String subtreeRootConceptId)
-			throws Exception {
+			Collection<Integer> ontologyIds, String subtreeRootConceptId,
+			Boolean includeDefinitions) throws Exception {
 		// check whether the index has changed and if so, reloads the searcher
 		// reloading searcher must be synchronized to avoid null searchers
 		synchronized (createSearcherLock) {
@@ -122,12 +125,9 @@ public abstract class AbstractSearchService {
 			ontologyIds = new ArrayList<Integer>(0);
 		}
 
-		if (StringHelper.isNullOrNullString(subtreeRootConceptId)) {
-			populateSearchResults(hits, searchResults, ontologyIds);
-		} else {
-			populateSearchResults(hits, searchResults, ontologyIds,
-					subtreeRootConceptId);
-		}
+		populateSearchResults(hits, searchResults, ontologyIds,
+				subtreeRootConceptId, includeDefinitions);
+
 		populateEmptyOntologyResults(searchResults, ontologyIds);
 
 		if (log.isDebugEnabled()) {
@@ -139,9 +139,9 @@ public abstract class AbstractSearchService {
 	}
 
 	/**
-	 * Checks whether ontology is present in the index and returns 
-	 * basic info such as ontologyVersionId and ontologyDisplayLabel
-	 * 
+	 * Checks whether ontology is present in the index and returns basic info
+	 * such as ontologyVersionId and ontologyDisplayLabel
+	 *
 	 * @param ontologyId
 	 * @return
 	 * @throws Exception
@@ -168,7 +168,7 @@ public abstract class AbstractSearchService {
 		return new OntologyHitBean(ontologyVersionId, ontologyId,
 				ontologyDisplayLabel, null);
 	}
-	
+
 	private void populateEmptyOntologyResults(
 			SearchResultListBean searchResults,
 			Collection<Integer> noHitsOntologyIds) throws Exception {
@@ -179,57 +179,9 @@ public abstract class AbstractSearchService {
 	}
 
 	private void populateSearchResults(ScoreDoc[] hits,
-			SearchResultListBean searchResults, Collection<Integer> ontologyIds)
-			throws Exception {
-		List<String> uniqueDocs = new ArrayList<String>(0);
-		long start = System.currentTimeMillis();
-
-		for (int i = 0; i < hits.length; i++) {
-			int docId = hits[i].doc;
-			Document doc = searcher.doc(docId);
-			String conceptId = doc.get(SearchIndexBean.CONCEPT_ID_FIELD_LABEL);
-			Integer ontologyVersionId = new Integer(doc
-					.get(SearchIndexBean.ONTOLOGY_VERSION_ID_FIELD_LABEL));
-			String ontologyDisplayLabel = doc
-					.get(SearchIndexBean.ONTOLOGY_DISPLAY_LABEL_FIELD_LABEL);
-			Integer ontologyId = new Integer(doc
-					.get(SearchIndexBean.ONTOLOGY_ID_FIELD_LABEL));
-			String uniqueIdent = ontologyId + "_" + conceptId;
-
-			if (!uniqueDocs.contains(uniqueIdent)) {
-				ontologyIds.remove(ontologyId);
-				SearchBean searchResult = new SearchBean(ontologyVersionId,
-						ontologyId, ontologyDisplayLabel,
-						SearchRecordTypeEnum.getFromLabel(doc
-								.get(SearchIndexBean.RECORD_TYPE_FIELD_LABEL)),
-						ConceptTypeEnum.getFromLabel(doc
-								.get(SearchIndexBean.OBJECT_TYPE_FIELD_LABEL)),
-						conceptId,
-						doc.get(SearchIndexBean.CONCEPT_ID_SHORT_FIELD_LABEL),
-						doc.get(SearchIndexBean.PREFERRED_NAME_FIELD_LABEL),
-						doc.get(SearchIndexBean.CONTENTS_FIELD_LABEL));
-				searchResults.add(searchResult);
-				searchResults.addOntologyHit(ontologyVersionId, ontologyId,
-						ontologyDisplayLabel);
-				uniqueDocs.add(uniqueIdent);
-
-				if (log.isDebugEnabled()) {
-					log.debug(getHitAsString(hits[i].score, searchResult));
-				}
-			}
-		}
-
-		if (log.isDebugEnabled()) {
-			long stop = System.currentTimeMillis();
-			log.debug("Search Result Population Time (no branch): "
-					+ (double) (stop - start) / 1000 + " seconds.");
-		}
-	}
-
-	private void populateSearchResults(ScoreDoc[] hits,
 			SearchResultListBean searchResults,
-			Collection<Integer> ontologyIds, String subtreeRootConceptId)
-			throws Exception {
+			Collection<Integer> ontologyIds, String subtreeRootConceptId,
+			Boolean includeDefinitions) throws Exception {
 		List<String> uniqueDocs = new ArrayList<String>(0);
 		long start = System.currentTimeMillis();
 
@@ -262,33 +214,51 @@ public abstract class AbstractSearchService {
 						.get(SearchIndexBean.ONTOLOGY_ID_FIELD_LABEL));
 				String uniqueIdent = ontologyId + "_" + conceptId;
 
-				if (!uniqueDocs.contains(uniqueIdent)
-						&& (subtreeRootConceptId.equalsIgnoreCase(conceptId) || mgr
-								.hasParent(ob, conceptId, subtreeRootConceptId))) {
-					ontologyIds.remove(ontologyId);
-					SearchBean searchResult = new SearchBean(
-							ontologyVersionId,
-							ontologyId,
-							ontologyDisplayLabel,
-							SearchRecordTypeEnum
-									.getFromLabel(doc
-											.get(SearchIndexBean.RECORD_TYPE_FIELD_LABEL)),
-							ConceptTypeEnum
-									.getFromLabel(doc
-											.get(SearchIndexBean.OBJECT_TYPE_FIELD_LABEL)),
-							conceptId,
-							doc
-									.get(SearchIndexBean.CONCEPT_ID_SHORT_FIELD_LABEL),
-							doc.get(SearchIndexBean.PREFERRED_NAME_FIELD_LABEL),
-							doc.get(SearchIndexBean.CONTENTS_FIELD_LABEL));
-					searchResults.add(searchResult);
-					searchResults.addOntologyHit(ontologyVersionId, ontologyId,
-							ontologyDisplayLabel);
+				if (!uniqueDocs.contains(uniqueIdent)) {
+					if (StringHelper.isNullOrNullString(subtreeRootConceptId)
+							|| (!StringHelper
+									.isNullOrNullString(subtreeRootConceptId) && (subtreeRootConceptId
+									.equalsIgnoreCase(conceptId) || mgr
+									.hasParent(ob, conceptId,
+											subtreeRootConceptId)))) {
+						ontologyIds.remove(ontologyId);
+						SearchBean searchResult = new SearchBean(
+								ontologyVersionId,
+								ontologyId,
+								ontologyDisplayLabel,
+								SearchRecordTypeEnum
+										.getFromLabel(doc
+												.get(SearchIndexBean.RECORD_TYPE_FIELD_LABEL)),
+								ConceptTypeEnum
+										.getFromLabel(doc
+												.get(SearchIndexBean.OBJECT_TYPE_FIELD_LABEL)),
+								conceptId,
+								doc
+										.get(SearchIndexBean.CONCEPT_ID_SHORT_FIELD_LABEL),
+								doc
+										.get(SearchIndexBean.PREFERRED_NAME_FIELD_LABEL),
+								doc.get(SearchIndexBean.CONTENTS_FIELD_LABEL));
 
-					uniqueDocs.add(uniqueIdent);
+						if (includeDefinitions) {
+							ClassBean concept = conceptService.findConcept(
+									ontologyVersionId, conceptId, null, false,
+									true, false);
 
-					if (log.isDebugEnabled()) {
-						log.debug(getHitAsString(hits[i].score, searchResult));
+							if (concept != null)
+								searchResult.setDefinition(StringUtils.join(
+										concept.getDefinitions(), ". "));
+						}
+
+						searchResults.add(searchResult);
+						searchResults.addOntologyHit(ontologyVersionId,
+								ontologyId, ontologyDisplayLabel);
+
+						uniqueDocs.add(uniqueIdent);
+
+						if (log.isDebugEnabled()) {
+							log.debug(getHitAsString(hits[i].score,
+									searchResult));
+						}
 					}
 				}
 			}
@@ -303,7 +273,7 @@ public abstract class AbstractSearchService {
 
 	/**
 	 * Constructs the query that limits the search to the given ontology ids
-	 * 
+	 *
 	 * @param ontologyIds
 	 * @return
 	 */
@@ -354,7 +324,7 @@ public abstract class AbstractSearchService {
 
 			try {
 				results = runQuery(parser.parse(splitKey[0]), new Integer(
-						splitKey[1]), ontologyIds, splitKey[3]);
+						splitKey[1]), ontologyIds, splitKey[3], null);
 			} catch (Exception e) {
 				results = null;
 				e.printStackTrace();
@@ -400,7 +370,7 @@ public abstract class AbstractSearchService {
 	/**
 	 * Constructs the query that limits the search to the given object types
 	 * (i.e. class, individual, property)
-	 * 
+	 *
 	 * @param objectTypes
 	 * @return
 	 */
@@ -417,7 +387,7 @@ public abstract class AbstractSearchService {
 
 	/**
 	 * Constructs the term with the given ontology id
-	 * 
+	 *
 	 * @param ontologyId
 	 * @return
 	 */
@@ -428,7 +398,7 @@ public abstract class AbstractSearchService {
 
 	/**
 	 * Constructs the term with the given object type
-	 * 
+	 *
 	 * @param objectType
 	 * @return
 	 */
@@ -438,7 +408,7 @@ public abstract class AbstractSearchService {
 
 	/**
 	 * Provides a display format for a list of ontologies
-	 * 
+	 *
 	 * @param ontologies
 	 * @return
 	 */
@@ -457,7 +427,7 @@ public abstract class AbstractSearchService {
 
 	/**
 	 * Provides a display format for a single ontology
-	 * 
+	 *
 	 * @param ontologyVersionId
 	 * @param ontologyId
 	 * @param displayLabel
@@ -513,7 +483,7 @@ public abstract class AbstractSearchService {
 
 	/**
 	 * Sets the index path and creates a new instance of searcher
-	 * 
+	 *
 	 * @param indexPath
 	 *            the indexPath to set
 	 */
@@ -562,7 +532,7 @@ public abstract class AbstractSearchService {
 
 	/**
 	 * Method that always returns a valid maxNumHits
-	 * 
+	 *
 	 * @param maxNumHits
 	 * @return
 	 */
@@ -573,7 +543,7 @@ public abstract class AbstractSearchService {
 
 	/**
 	 * Returns the sort fields for the query
-	 * 
+	 *
 	 * @return
 	 */
 	private Sort getSortFields() {
@@ -589,7 +559,7 @@ public abstract class AbstractSearchService {
 
 	/**
 	 * Creates a new instance of the searcher
-	 * 
+	 *
 	 * @throws IOException
 	 */
 	private void createSearcher() throws IOException {
@@ -600,7 +570,7 @@ public abstract class AbstractSearchService {
 
 	/**
 	 * Reloads the searcher, disposes of the old searcher
-	 * 
+	 *
 	 * @throws IOException
 	 */
 	private void reloadSearcher() throws IOException {
@@ -617,7 +587,7 @@ public abstract class AbstractSearchService {
 
 	/**
 	 * Determines whether the index file has changed
-	 * 
+	 *
 	 * @return
 	 */
 	private boolean hasNewerIndexFile() {
@@ -691,5 +661,13 @@ public abstract class AbstractSearchService {
 	 */
 	public void setLuceneVersion(Version luceneVersion) {
 		this.luceneVersion = luceneVersion;
+	}
+
+	/**
+	 * @param conceptService
+	 *            the conceptService to set
+	 */
+	public void setConceptService(ConceptService conceptService) {
+		this.conceptService = conceptService;
 	}
 }

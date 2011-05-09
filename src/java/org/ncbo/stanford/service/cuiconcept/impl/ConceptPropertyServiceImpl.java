@@ -1,5 +1,5 @@
 /**
- * 
+ *
  */
 package org.ncbo.stanford.service.cuiconcept.impl;
 
@@ -25,7 +25,7 @@ import org.ncbo.stanford.util.paginator.impl.Page;
 
 /**
  * @author s.reddy
- * 
+ *
  */
 public class ConceptPropertyServiceImpl implements ConceptPropertyService {
 
@@ -52,7 +52,7 @@ public class ConceptPropertyServiceImpl implements ConceptPropertyService {
 			 * if (concept != null) { resultClassbeans.add(concept); } else {
 			 */
 			Page<SearchBean> searchQueryResults = queryService.executeQuery(
-					value, ontologyIds, null, true, true, null, null);
+					value, ontologyIds, null, true, true, null, null, false);
 			if (searchQueryResults != null) {
 				Iterator<SearchBean> searchResults = searchQueryResults
 						.getContents().iterator();

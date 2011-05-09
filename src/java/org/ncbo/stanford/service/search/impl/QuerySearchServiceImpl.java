@@ -24,9 +24,9 @@ import org.springframework.transaction.annotation.Transactional;
 
 /**
  * A default implementation of the QuerySearchService
- * 
+ *
  * @author Michael Dorf
- * 
+ *
  */
 @Transactional
 public class QuerySearchServiceImpl extends AbstractSearchService implements
@@ -126,7 +126,7 @@ public class QuerySearchServiceImpl extends AbstractSearchService implements
 	 * Execute a search query for a given expression and return results in a
 	 * form of a single page (of specified size). If maxNumHits is null, the
 	 * default value from the configuration file is used.
-	 * 
+	 *
 	 * @param expr
 	 * @param includeProperties
 	 * @param isExactMatch
@@ -138,16 +138,17 @@ public class QuerySearchServiceImpl extends AbstractSearchService implements
 	 */
 	public Page<SearchBean> executeQuery(String expr,
 			boolean includeProperties, boolean isExactMatch, Integer pageSize,
-			Integer pageNum, Integer maxNumHits) throws Exception {
+			Integer pageNum, Integer maxNumHits,
+			Boolean includeDefinitions) throws Exception {
 		return executeQuery(expr, null, null, includeProperties, isExactMatch,
-				pageSize, pageNum, maxNumHits, null);
+				pageSize, pageNum, maxNumHits, null, includeDefinitions);
 	}
 
 	/**
 	 * Execute a search query for a given expression and return ALL results in a
 	 * form of a single page. If maxNumHits is null, the default value from the
 	 * configuration file is used.
-	 * 
+	 *
 	 * @param expr
 	 * @param includeProperties
 	 * @param isExactMatch
@@ -156,10 +157,11 @@ public class QuerySearchServiceImpl extends AbstractSearchService implements
 	 * @throws Exception
 	 */
 	public Page<SearchBean> executeQuery(String expr,
-			boolean includeProperties, boolean isExactMatch, Integer maxNumHits)
+			boolean includeProperties, boolean isExactMatch, Integer maxNumHits,
+			Boolean includeDefinitions)
 			throws Exception {
 		return executeQuery(expr, null, null, includeProperties, isExactMatch,
-				maxNumHits, null);
+				maxNumHits, null, includeDefinitions);
 	}
 
 	/**
@@ -167,7 +169,7 @@ public class QuerySearchServiceImpl extends AbstractSearchService implements
 	 * specific ontologies. Return results in a form of a single page (of
 	 * specified size). If maxNumHits is null, the default value from the
 	 * configuation file is used.
-	 * 
+	 *
 	 * @param expr
 	 * @param ontologyIds
 	 * @param objectTypes
@@ -184,20 +186,21 @@ public class QuerySearchServiceImpl extends AbstractSearchService implements
 	public Page<SearchBean> executeQuery(String expr,
 			Collection<Integer> ontologyIds, Collection<String> objectTypes,
 			boolean includeProperties, boolean isExactMatch, Integer pageSize,
-			Integer pageNum, Integer maxNumHits, String subtreeRootConceptId)
+			Integer pageNum, Integer maxNumHits, String subtreeRootConceptId,
+			Boolean includeDefinitions)
 			throws Exception {
 		Query query = generateLuceneSearchQuery(ontologyIds, objectTypes, expr,
 				includeProperties, isExactMatch);
 
 		return executeQuery(query, pageSize, pageNum, maxNumHits, ontologyIds,
-				subtreeRootConceptId);
+				subtreeRootConceptId, includeDefinitions);
 	}
 
 	/**
 	 * Execute a search query for a given expression, limiting search to the
 	 * specific ontologies. Return ALL results in a form of a single page. If
 	 * maxNumHits is null, the default value from the configuation file is used.
-	 * 
+	 *
 	 * @param expr
 	 * @param ontologyIds
 	 * @param objectTypes
@@ -212,19 +215,20 @@ public class QuerySearchServiceImpl extends AbstractSearchService implements
 	public Page<SearchBean> executeQuery(String expr,
 			Collection<Integer> ontologyIds, Collection<String> objectTypes,
 			boolean includeProperties, boolean isExactMatch,
-			Integer maxNumHits, String subtreeRootConceptId) throws Exception {
+			Integer maxNumHits, String subtreeRootConceptId,
+			Boolean includeDefinitions) throws Exception {
 		Query query = generateLuceneSearchQuery(ontologyIds, objectTypes, expr,
 				includeProperties, isExactMatch);
 
 		return executeQuery(query, maxNumHits, ontologyIds,
-				subtreeRootConceptId);
+				subtreeRootConceptId, includeDefinitions);
 	}
 
 	/**
 	 * Execute a search from an already constructed Query object. Return ALL
 	 * results in a form of a single page. If maxNumHits is null, the default
 	 * value from the configuation file is used.
-	 * 
+	 *
 	 * @param query
 	 * @param maxNumHits
 	 * @param ontologyIds
@@ -235,17 +239,18 @@ public class QuerySearchServiceImpl extends AbstractSearchService implements
 	 * @throws Exception
 	 */
 	public Page<SearchBean> executeQuery(Query query, Integer maxNumHits,
-			Collection<Integer> ontologyIds, String subtreeRootConceptId)
+			Collection<Integer> ontologyIds, String subtreeRootConceptId,
+			Boolean includeDefinitions)
 			throws Exception {
 		return executeQuery(query, null, null, maxNumHits, ontologyIds,
-				subtreeRootConceptId);
+				subtreeRootConceptId, includeDefinitions);
 	}
 
 	/**
 	 * Execute a search from an already constructed Query object. Return results
 	 * in a form of a single page (of specified size). If maxNumHits is null,
 	 * the default value from the configuation file is used.
-	 * 
+	 *
 	 * @param query
 	 * @param pageSize
 	 * @param pageNum
@@ -259,8 +264,8 @@ public class QuerySearchServiceImpl extends AbstractSearchService implements
 	 */
 	public Page<SearchBean> executeQuery(Query query, Integer pageSize,
 			Integer pageNum, Integer maxNumHits,
-			Collection<Integer> ontologyIds, String subtreeRootConceptId)
-			throws Exception {
+			Collection<Integer> ontologyIds, String subtreeRootConceptId,
+			Boolean includeDefinitions) throws Exception {
 		long start = System.currentTimeMillis();
 		String resultsKey = composeCacheKey(query, maxNumHits, ontologyIds,
 				subtreeRootConceptId);
@@ -269,7 +274,7 @@ public class QuerySearchServiceImpl extends AbstractSearchService implements
 
 		if (searchResults == null) {
 			searchResults = runQuery(query, maxNumHits, ontologyIds,
-					subtreeRootConceptId);
+					subtreeRootConceptId, includeDefinitions);
 			fromCache = false;
 			searchResultCache.put(resultsKey, searchResults);
 		}
@@ -303,7 +308,7 @@ public class QuerySearchServiceImpl extends AbstractSearchService implements
 
 	/**
 	 * Generate a search query from the expression and optional ontology ids
-	 * 
+	 *
 	 * @param ontologyIds
 	 * @param objectTypes
 	 * @param expr
@@ -334,7 +339,7 @@ public class QuerySearchServiceImpl extends AbstractSearchService implements
 	/**
 	 * Constructs the contents field clause for "regular (non-exact) match"
 	 * searches and adds it to the main query
-	 * 
+	 *
 	 * @param expr
 	 * @param query
 	 * @throws IOException
@@ -359,7 +364,7 @@ public class QuerySearchServiceImpl extends AbstractSearchService implements
 	/**
 	 * Constructs the contents field clause for "exact match" searches and adds
 	 * it to the main query
-	 * 
+	 *
 	 * @param expr
 	 * @param query
 	 * @throws IOException
@@ -375,7 +380,7 @@ public class QuerySearchServiceImpl extends AbstractSearchService implements
 	/**
 	 * Constructs the search clause for searching ontology properties and adds
 	 * it to the main query
-	 * 
+	 *
 	 * @param includeProperties
 	 * @param query
 	 */
@@ -391,7 +396,7 @@ public class QuerySearchServiceImpl extends AbstractSearchService implements
 	/**
 	 * Adds the clause that limits the search to the given ontology ids to the
 	 * main query
-	 * 
+	 *
 	 * @param ontologyIds
 	 * @param query
 	 */
@@ -406,7 +411,7 @@ public class QuerySearchServiceImpl extends AbstractSearchService implements
 	/**
 	 * Adds the clause that limits the search to the given object types (i.e.
 	 * class, individual, property)
-	 * 
+	 *
 	 * @param objectTypes
 	 * @param query
 	 */
