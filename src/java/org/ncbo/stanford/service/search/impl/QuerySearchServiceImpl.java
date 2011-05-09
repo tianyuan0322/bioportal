@@ -268,7 +268,7 @@ public class QuerySearchServiceImpl extends AbstractSearchService implements
 			Boolean includeDefinitions) throws Exception {
 		long start = System.currentTimeMillis();
 		String resultsKey = composeCacheKey(query, maxNumHits, ontologyIds,
-				subtreeRootConceptId);
+				subtreeRootConceptId, includeDefinitions);
 		boolean fromCache = true;
 		SearchResultListBean searchResults = searchResultCache.get(resultsKey);
 

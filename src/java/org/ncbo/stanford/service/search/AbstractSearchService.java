@@ -463,7 +463,8 @@ public abstract class AbstractSearchService {
 	}
 
 	protected String composeCacheKey(Query query, Integer maxNumHits,
-			Collection<Integer> ontologyIds, String subtreeRootConceptId) {
+			Collection<Integer> ontologyIds, String subtreeRootConceptId,
+			Boolean includeDefinitions) {
 		String key = query + CACHE_KEY_SEPARATOR + getMaxNumHits(maxNumHits);
 		String ontologyIdsStr = null;
 
@@ -478,7 +479,8 @@ public abstract class AbstractSearchService {
 		}
 
 		return key + CACHE_KEY_SEPARATOR + ontologyIdsStr + CACHE_KEY_SEPARATOR
-				+ subtreeRootConceptId;
+				+ subtreeRootConceptId + CACHE_KEY_SEPARATOR
+				+ includeDefinitions.toString();
 	}
 
 	/**
