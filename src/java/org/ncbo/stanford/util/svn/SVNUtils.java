@@ -138,7 +138,7 @@ public class SVNUtils {
 		} catch (SVNException svnEx) {
 			log.error("Error while getting file info :" + svnEx);
 			log.info("trying to get files info again");
-			return listEntries();
+			//return listEntries();
 		} catch (Exception ex) {
 			ex.printStackTrace();
 		}
