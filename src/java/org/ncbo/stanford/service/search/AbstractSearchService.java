@@ -240,13 +240,20 @@ public abstract class AbstractSearchService {
 								doc.get(SearchIndexBean.CONTENTS_FIELD_LABEL));
 
 						if (includeDefinitions) {
-							ClassBean concept = conceptService.findConcept(
-									ontologyVersionId, conceptId, null, false,
-									true, false);
+							// Make sure that getting the definition doesn't
+							// break the search call
+							try {
+								ClassBean concept = conceptService.findConcept(
+										ontologyVersionId, conceptId, null,
+										false, true, false);
 
-							if (concept != null)
-								searchResult.setDefinition(StringUtils.join(
-										concept.getDefinitions(), ". "));
+								if (concept != null)
+									searchResult.setDefinition(StringUtils
+											.join(concept.getDefinitions(),
+													". "));
+							} catch (Exception e) {
+								// Do nothing
+							}
 						}
 
 						searchResults.add(searchResult);
