@@ -119,6 +119,7 @@ public class PrefixQuery extends BooleanQuery {
 
 		expr = expr.replaceAll("\\(", "");
 		expr = expr.replaceAll("\\)", "");
+		expr = expr.replaceAll("\\s*\\-\\s*", "-");
 
 		Query query = parser.parse(expr);
 
@@ -141,10 +142,14 @@ public class PrefixQuery extends BooleanQuery {
 
 	private Term[] expand(String field, String prefix) throws Exception {
 		QueryParser parser = new QueryParser(luceneVersion, field, analyzer);
-		org.apache.lucene.search.PrefixQuery queryExact = (org.apache.lucene.search.PrefixQuery) parser
-				.parse(prefix + WILDCARD_CHAR);
-		queryExact
-				.setRewriteMethod(MultiTermQuery.SCORING_BOOLEAN_QUERY_REWRITE);
+
+		Query queryExact = parser.parse(prefix + WILDCARD_CHAR);
+
+		if (queryExact instanceof org.apache.lucene.search.PrefixQuery) {
+			((org.apache.lucene.search.PrefixQuery) queryExact)
+					.setRewriteMethod(MultiTermQuery.SCORING_BOOLEAN_QUERY_REWRITE);
+		}
+
 		Query queryRewritten = queryExact.rewrite(reader);
 
 		Set<Term> terms = new TreeSet<Term>();
