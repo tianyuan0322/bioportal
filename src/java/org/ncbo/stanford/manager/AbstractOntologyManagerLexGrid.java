@@ -334,17 +334,11 @@ public abstract class AbstractOntologyManagerLexGrid {
 			if (ApplicationConstants.FORMAT_OBO.equalsIgnoreCase(ontologyBean
 					.getFormat())) {
 				fullId = getOBOFullId(ontologyBean, code);
-			}
-			if (ApplicationConstants.FORMAT_UMLS_RRF
-					.equalsIgnoreCase(ontologyBean.getFormat())) {
+			} else  {
 				fullId = ApplicationConstants.BASE_CONCEPT_NAMESPACE
 						+ ontologyBean.getAbbreviation() + "/" + modCode;
 			}
-			if (ApplicationConstants.FORMAT_LEXGRID_XML
-					.equalsIgnoreCase(ontologyBean.getFormat())) {
-				fullId = ApplicationConstants.BASE_CONCEPT_NAMESPACE
-						+ ontologyBean.getAbbreviation() + "/" + modCode;
-			}
+			
 
 		}
 		
