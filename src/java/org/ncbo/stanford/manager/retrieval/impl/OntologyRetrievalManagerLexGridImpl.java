@@ -1542,7 +1542,7 @@ public class OntologyRetrievalManagerLexGridImpl extends
 			Property prop = entry.getProperty(i);
 			String key = prop.getPropertyName();
 
-			if (StringUtils.isNotBlank(key)) {
+			if (StringUtils.isNotBlank(key) && ! relationsToFilter.contains(key)) {
 				addPropertyToClassBean(ontologyBean, classBean, key, prop);
 			}
 		}
