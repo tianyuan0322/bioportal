@@ -934,8 +934,7 @@ public class OntologyMetadataUtils extends MetadataUtils {
 		OWLModel owlModel = ontologyInd.getOWLModel();
 		Integer status = getPropertyValue(owlModel, ontologyInd,
 				PROPERTY_STATUS_ID, Integer.class);
-		return status.equals(StatusEnum.STATUS_READY.getStatus())
-				|| status.equals(StatusEnum.STATUS_NOTAPPLICABLE.getStatus());
+		return status.equals(StatusEnum.STATUS_READY.getStatus());
 	}
 
 	private static boolean isDeprecated(RDFResource ontologyInd)
