@@ -58,7 +58,8 @@ public final class AuthenticationRestlet extends AbstractBaseRestlet {
 			HttpServletRequest httpServletRequest = RequestUtils
 					.getHttpServletRequest(request);
 
-			String appApiKey = obtainApiKey(httpServletRequest);
+			String appApiKey = RequestUtils.getRequestParameter(
+					httpServletRequest, RequestParamConstants.PARAM_APIKEY);
 
 			// TODO: @@@@@ mdorf: This block is temporary to allow users
 			// to adjust to the new security structure. It forces users with API
@@ -69,7 +70,9 @@ public final class AuthenticationRestlet extends AbstractBaseRestlet {
 				appApiKey = AuthenticationFilter.TEMP_ADMIN_APIKEY;
 				userApiKey = appApiKey;
 			} else {
-				userApiKey = obtainUserApiKey(httpServletRequest);
+				userApiKey = RequestUtils.getRequestParameter(
+						httpServletRequest,
+						RequestParamConstants.PARAM_USER_APIKEY);
 			}
 
 			// This has already gone through the AuthenticationFilter
@@ -87,8 +90,10 @@ public final class AuthenticationRestlet extends AbstractBaseRestlet {
 			// When a user API key is supplied, the assumption is that if the
 			// request has made it this far, it has already been successfully
 			// validated and authenticated by the AuthenticationFilter.
-			final String username = obtainUsername(httpServletRequest);
-			final String password = obtainPassword(httpServletRequest);
+			final String username = RequestUtils.getRequestParameter(
+					httpServletRequest, RequestParamConstants.PARAM_USERNAME);
+			final String password = RequestUtils.getRequestParameter(
+					httpServletRequest, RequestParamConstants.PARAM_PASSWORD);
 
 			if (StringHelper.isNullOrNullString(userApiKey)
 					|| !StringHelper.isNullOrNullString(username)) {
@@ -133,22 +138,6 @@ public final class AuthenticationRestlet extends AbstractBaseRestlet {
 			xmlSerializationService.generateXMLResponse(request, response,
 					userSession);
 		}
-	}
-
-	protected String obtainPassword(HttpServletRequest req) {
-		return req.getParameter(RequestParamConstants.PARAM_PASSWORD);
-	}
-
-	protected String obtainUsername(HttpServletRequest req) {
-		return req.getParameter(RequestParamConstants.PARAM_USERNAME);
-	}
-
-	protected String obtainApiKey(HttpServletRequest req) {
-		return req.getParameter(RequestParamConstants.PARAM_APIKEY);
-	}
-
-	protected String obtainUserApiKey(HttpServletRequest req) {
-		return req.getParameter(RequestParamConstants.PARAM_USER_APIKEY);
 	}
 
 	/**

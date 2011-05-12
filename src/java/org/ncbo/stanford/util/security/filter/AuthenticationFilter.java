@@ -62,17 +62,17 @@ public class AuthenticationFilter extends AbstractAuthFilter {
 		String appApiKey = null;
 		RESTfulSession session = null;
 
-		String apiKey = httpRequest
-				.getParameter(RequestParamConstants.PARAM_APIKEY);
+		String apiKey = RequestUtils.getRequestParameter(httpRequest,
+				RequestParamConstants.PARAM_APIKEY);
 
 		if (StringHelper.isNullOrNullString(apiKey)) {
-			apiKey = httpRequest
-					.getParameter(RequestParamConstants.PARAM_APPLICATIONID);
+			apiKey = RequestUtils.getRequestParameter(httpRequest,
+					RequestParamConstants.PARAM_APPLICATIONID);
 		}
 
 		if (!StringHelper.isNullOrNullString(apiKey)) {
-			String userApiKey = httpRequest
-					.getParameter(RequestParamConstants.PARAM_USER_APIKEY);
+			String userApiKey = RequestUtils.getRequestParameter(httpRequest,
+					RequestParamConstants.PARAM_USER_APIKEY);
 
 			// Both app and user api keys supplied. Verify that they are
 			// different and store

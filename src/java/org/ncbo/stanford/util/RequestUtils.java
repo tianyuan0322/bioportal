@@ -113,7 +113,7 @@ public class RequestUtils {
 			Map<String, Object> parsed) {
 		if (queryString == null)
 			return;
-		
+
 		StringTokenizer stAmpersand = new StringTokenizer(queryString,
 				PARAM_SEPARATOR);
 
@@ -535,6 +535,16 @@ public class RequestUtils {
 		}
 
 		return attrStr;
+	}
+
+	public static String getRequestParameter(
+			HttpServletRequest httpServletRequest, String paramName) {
+		String param = httpServletRequest.getParameter(paramName);
+
+		if (param != null) {
+			param = param.trim();
+		}
+		return param;
 	}
 
 	@SuppressWarnings("unchecked")
