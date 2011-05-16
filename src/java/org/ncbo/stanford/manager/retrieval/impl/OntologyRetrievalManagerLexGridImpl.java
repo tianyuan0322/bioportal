@@ -281,7 +281,8 @@ public class OntologyRetrievalManagerLexGridImpl extends
 			// relations
 			// removed. The subClass relation would hold the same info.
 			if (ontologyBean.getFormat().equalsIgnoreCase(
-					ApplicationConstants.FORMAT_UMLS_RRF)) {
+					ApplicationConstants.FORMAT_UMLS_RRF) || ontologyBean.getFormat().equalsIgnoreCase(
+							ApplicationConstants.FORMAT_UMLS_RELA)) {
 				List<String> umlsFilterList = getListOfSubClassDirectionalName(
 						schemeName, csvt);
 				for (String relationToFilter : umlsFilterList) {
