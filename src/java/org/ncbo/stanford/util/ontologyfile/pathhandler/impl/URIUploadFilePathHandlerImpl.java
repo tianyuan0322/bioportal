@@ -24,12 +24,14 @@ import org.ncbo.stanford.util.ontologyfile.OntologyDescriptorParser;
 import org.ncbo.stanford.util.ontologyfile.compressedfilehandler.CompressedFileHandler;
 import org.ncbo.stanford.util.ontologyfile.pathhandler.AbstractFilePathHandler;
 
+import com.mysql.jdbc.StringUtils;
+
 /**
  * An implementation of FileHandler interface, where the ontology is uploaded
  * from a URI
- * 
+ *
  * @author Pradip Kanjamala
- * 
+ *
  */
 public class URIUploadFilePathHandlerImpl extends AbstractFilePathHandler {
 
@@ -45,12 +47,16 @@ public class URIUploadFilePathHandlerImpl extends AbstractFilePathHandler {
 			throws FileNotFoundException, IOException, Exception {
 		// place holder for return object
 		List<String> fileNames = new ArrayList<String>(1);
-		
+
 
 		// validate inputfile
 		String filePath = AbstractFilePathHandler
 				.getFullOntologyDirPath(ontologyBean);
 		String fileName = OntologyDescriptorParser.getFileName(uri.toString());
+
+		if (StringUtils.isNullOrEmpty(fileName)) {
+			fileName = ontologyBean.getAbbreviation().toLowerCase();
+		}
 
 		// continue only if there is input file
 		if (filePath != null && fileName != null) {
@@ -66,11 +72,11 @@ public class URIUploadFilePathHandlerImpl extends AbstractFilePathHandler {
 
 			byte data[] = new byte[ApplicationConstants.BUFFER_SIZE];
 			int count;
-						
+
 			while ((count = in.read(data, 0, ApplicationConstants.BUFFER_SIZE)) != -1) {
 				out.write(data, 0, count);
 			}
-			
+
 			in.close();
 			out.flush();
 			out.close();
@@ -92,13 +98,13 @@ public class URIUploadFilePathHandlerImpl extends AbstractFilePathHandler {
 			LoaderUtils.storeMd5ToFile(ontologyBean);
 			fileNames = compressedFileHandler.handle(outputFile, ontologyBean);
 		}
-		
+
 		return fileNames;
 	}
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.ncbo.stanford.util.filehandler.FileHandler#getName()
 	 */
 	public String getName() {
