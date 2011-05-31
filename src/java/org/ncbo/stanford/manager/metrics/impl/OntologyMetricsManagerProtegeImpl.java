@@ -26,7 +26,7 @@ import edu.stanford.smi.protegex.owl.model.util.ModelMetrics;
 
 /**
  * This class handles Protege-based ontology extraction and retrieval.
- * 
+ *
  * @author Paul Alexander
  * @author Csongor Nyulas
  */
@@ -91,7 +91,7 @@ public class OntologyMetricsManagerProtegeImpl extends
 	private void owlBasicAnalysis(OntologyMetricsProtegeCalculationBean calcBean) {
 		// do metrics calculations
 		ModelMetrics met = new ModelMetrics((OWLModel) calcBean.getKb());
-		
+
 		log.debug("Starting ModelMetrics calculation");
 		met.calculateMetrics();
 
@@ -106,7 +106,7 @@ public class OntologyMetricsManagerProtegeImpl extends
 			OwlQueueItem currCls = calcBean.getOwlQueue().remove();
 			owlClsIterate(calcBean, currCls.nextCls, currCls.newDepth);
 		}
-		
+
 		// count classes
 		int clsCount = met.getNamedClassCount();
 		calcBean.getMb().setNumberOfClasses(clsCount);
@@ -188,7 +188,7 @@ public class OntologyMetricsManagerProtegeImpl extends
 	 * tags, and counts the number of subclasses for each class, adding those
 	 * with only one subclass to an arraylist and those with too many subclasses
 	 * to another arraylist.
-	 * 
+	 *
 	 * TODO: There may be some opportunities for optimization in the
 	 * getBrowserText lookups.
 	 */
@@ -201,14 +201,14 @@ public class OntologyMetricsManagerProtegeImpl extends
 		// Important: getNamedSubclasses(false) ignores transitive relationships
 		Collection<RDFSNamedClass> subclasses = currCls
 				.getNamedSubclasses(false);
-		String docTag = "";
-		String authorTag = "";
-		String annotTag = "";
 
-		docTag = calcBean.getDocumentationProperty();
-		authorTag = calcBean.getAuthorProperty();
-		annotTag = calcBean.getAnnotationProperty();
-		matchTags(calcBean, currCls, docTag, authorTag, annotTag);
+		// Get property objects for defined metadata slots
+		OWLModel om = (OWLModel) calcBean.getKb();
+		RDFProperty documentation = om.getRDFProperty(calcBean.getDocumentationProperty());
+		RDFProperty author = om.getRDFProperty(calcBean.getAuthorProperty());
+		RDFProperty annotation = om.getRDFProperty(calcBean.getAnnotationProperty());
+
+		matchTags(calcBean, currCls, documentation, author, annotation);
 		Iterator<RDFSNamedClass> it = subclasses.iterator();
 
 		String currClsName = currCls.getPrefixedName();
@@ -266,7 +266,7 @@ public class OntologyMetricsManagerProtegeImpl extends
 	 * for maxDepth and maxSiblings, and counts the number of subclasses for
 	 * each class, adding those with only one subclass to an arraylist and those
 	 * with too many subclasses to another arraylist.
-	 * 
+	 *
 	 * TODO: There may be some opportunities for optimization in the
 	 * getBrowserText lookups.
 	 */
@@ -383,7 +383,7 @@ public class OntologyMetricsManagerProtegeImpl extends
 	 */
 	@SuppressWarnings("unchecked")
 	private void matchTags(OntologyMetricsProtegeCalculationBean calcBean,
-			RDFSNamedClass cls, String docTag, String authorTag, String annotTag) {
+			RDFSNamedClass cls, RDFProperty docTag, RDFProperty authorTag, RDFProperty annotTag) {
 		boolean docTagFound = false;
 		boolean authorTagFound = false;
 		boolean annotTagDoubleMatched = false;
@@ -395,18 +395,18 @@ public class OntologyMetricsManagerProtegeImpl extends
 			RDFProperty prop = it.next();
 
 			// Matching the documentation tag
-			if (docTag != null && prop.getBrowserText().equals(docTag)) {
+			if (docTag != null && prop.equals(docTag)) {
 				docTagFound = true;
 			}
 
 			// Matching the author tag, want to add author/concept to HashMap
-			if (authorTag != null && prop.getBrowserText().equals(authorTag)
+			if (authorTag != null && prop.equals(authorTag)
 					&& !cls.getName().equals("owl:Thing")) {
 				authorTagFound = true;
 				addClsToConceptAuthorRelationship(calcBean, cls, prop);
 			}
 
-			if (annotTag != null && prop.getBrowserText().equals(annotTag)) {
+			if (annotTag != null && prop.equals(annotTag)) {
 				Collection props = cls.getPropertyValues(prop, false);
 				Iterator it2 = props.iterator();
 				while (it2.hasNext()) {
@@ -470,7 +470,7 @@ public class OntologyMetricsManagerProtegeImpl extends
 	}
 
 	/**
-	 * 
+	 *
 	 * @param cls
 	 * @param prop
 	 */
@@ -501,7 +501,7 @@ public class OntologyMetricsManagerProtegeImpl extends
 	private void postProcessLists(OntologyMetricsProtegeCalculationBean calcBean) {
 		final String ALL_TRIGGERED = "alltriggered";
 		final String LIMIT_PASSED = "limitpassed:";
-		
+
 		// Check to see if every seen class has no property
 		// If so, we're going to put a special message in the xml
 		// Then, if the classes have more than CLASS_LIST_SIZE items in the list
