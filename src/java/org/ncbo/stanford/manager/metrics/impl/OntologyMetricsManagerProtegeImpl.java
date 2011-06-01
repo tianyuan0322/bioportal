@@ -95,6 +95,24 @@ public class OntologyMetricsManagerProtegeImpl extends
 		log.debug("Starting ModelMetrics calculation");
 		met.calculateMetrics();
 
+		// Get property objects for defined metadata slots
+		OWLModel om = (OWLModel) calcBean.getKb();
+		RDFProperty documentation = om.getRDFProperty(calcBean
+				.getDocumentationProperty());
+		RDFProperty author = om.getRDFProperty(calcBean.getAuthorProperty());
+		RDFProperty annotation = om.getRDFProperty(calcBean
+				.getAnnotationProperty());
+
+		// Set slots to default values if they are null
+		if (documentation == null) {
+			documentation = om
+					.getRDFProperty(OntologyBean.DEFAULT_DEFINITION_SLOT);
+		}
+
+		if (author == null) {
+			author = om.getRDFProperty(OntologyBean.DEFAULT_AUTHOR_SLOT);
+		}
+
 		// Add first item to queue and trigger processing
 		OwlQueueItem owlItem = calcBean.new OwlQueueItem(((OWLModel) calcBean
 				.getKb()).getOWLThingClass(), 1);
@@ -104,7 +122,8 @@ public class OntologyMetricsManagerProtegeImpl extends
 				log.debug("Processing class "
 						+ calcBean.getSeenClasses().size());
 			OwlQueueItem currCls = calcBean.getOwlQueue().remove();
-			owlClsIterate(calcBean, currCls.nextCls, currCls.newDepth);
+			owlClsIterate(calcBean, currCls.nextCls, currCls.newDepth,
+					documentation, author, annotation);
 		}
 
 		// count classes
@@ -194,19 +213,15 @@ public class OntologyMetricsManagerProtegeImpl extends
 	 */
 	@SuppressWarnings("unchecked")
 	private void owlClsIterate(OntologyMetricsProtegeCalculationBean calcBean,
-			RDFSNamedClass currCls, Integer currDepth) {
+			RDFSNamedClass currCls, Integer currDepth,
+			RDFProperty documentation, RDFProperty author,
+			RDFProperty annotation) {
 		if (currDepth > calcBean.getMaxDepth()) {
 			calcBean.setMaxDepth(currDepth);
 		}
 		// Important: getNamedSubclasses(false) ignores transitive relationships
 		Collection<RDFSNamedClass> subclasses = currCls
 				.getNamedSubclasses(false);
-
-		// Get property objects for defined metadata slots
-		OWLModel om = (OWLModel) calcBean.getKb();
-		RDFProperty documentation = om.getRDFProperty(calcBean.getDocumentationProperty());
-		RDFProperty author = om.getRDFProperty(calcBean.getAuthorProperty());
-		RDFProperty annotation = om.getRDFProperty(calcBean.getAnnotationProperty());
 
 		matchTags(calcBean, currCls, documentation, author, annotation);
 		Iterator<RDFSNamedClass> it = subclasses.iterator();
@@ -383,7 +398,8 @@ public class OntologyMetricsManagerProtegeImpl extends
 	 */
 	@SuppressWarnings("unchecked")
 	private void matchTags(OntologyMetricsProtegeCalculationBean calcBean,
-			RDFSNamedClass cls, RDFProperty docTag, RDFProperty authorTag, RDFProperty annotTag) {
+			RDFSNamedClass cls, RDFProperty docTag, RDFProperty authorTag,
+			RDFProperty annotTag) {
 		boolean docTagFound = false;
 		boolean authorTagFound = false;
 		boolean annotTagDoubleMatched = false;
