@@ -253,9 +253,9 @@ public class CustomNcboMappingDAO extends AbstractNcboMappingDAO {
 	}
 
 	/*******************************************************************
-	 * 
+	 *
 	 * Mappings for parameters
-	 * 
+	 *
 	 *******************************************************************/
 
 	public List<Mapping> getMappingsForParameters(Integer limit,
@@ -265,9 +265,9 @@ public class CustomNcboMappingDAO extends AbstractNcboMappingDAO {
 	}
 
 	/*******************************************************************
-	 * 
+	 *
 	 * Mappings for ontologies
-	 * 
+	 *
 	 *******************************************************************/
 
 	public List<Mapping> getMappingsFromOntology(Integer ontologyId,
@@ -305,9 +305,9 @@ public class CustomNcboMappingDAO extends AbstractNcboMappingDAO {
 	}
 
 	/*******************************************************************
-	 * 
+	 *
 	 * Mappings for concepts
-	 * 
+	 *
 	 *******************************************************************/
 
 	public List<Mapping> getMappingsForConcept(Integer ontologyId,

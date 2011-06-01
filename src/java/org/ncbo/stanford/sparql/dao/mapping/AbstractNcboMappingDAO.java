@@ -6,7 +6,6 @@ import java.util.GregorianCalendar;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.TimeZone;
 
 import org.apache.commons.lang.StringUtils;
@@ -57,10 +56,11 @@ public class AbstractNcboMappingDAO {
 			+ "?mappingSourceContactInfo "
 			+ "?mappingSourceSite "
 			+ "?mappingSourceAlgorithm "
+			+ "?isManyToMany "
 			+ " {"
 			+ "  ?mappingId <http://protege.stanford.edu/ontologies/mappings/mappings.rdfs#relation> ?relation ."
-			+ "  ?mappingId <http://protege.stanford.edu/ontologies/mappings/mappings.rdfs#source> ?source ."
-			+ "  ?mappingId <http://protege.stanford.edu/ontologies/mappings/mappings.rdfs#target> ?target ."
+			+ "  { SELECT ?source { ?mappingId <http://protege.stanford.edu/ontologies/mappings/mappings.rdfs#source> ?source } LIMIT 1 }"
+			+ "  { SELECT ?target { ?mappingId <http://protege.stanford.edu/ontologies/mappings/mappings.rdfs#target> ?target } LIMIT 1 }"
 			+ "  ?mappingId <http://protege.stanford.edu/ontologies/mappings/mappings.rdfs#source_ontology_id> ?sourceOntologyId ."
 			+ "  ?mappingId <http://protege.stanford.edu/ontologies/mappings/mappings.rdfs#target_ontology_id> ?targetOntologyId ."
 			+ "  ?mappingId <http://protege.stanford.edu/ontologies/mappings/mappings.rdfs#created_in_source_ontology_version> ?createdInSourceOntologyVersion ."
@@ -68,7 +68,8 @@ public class AbstractNcboMappingDAO {
 			+ "  ?mappingId <http://protege.stanford.edu/ontologies/mappings/mappings.rdfs#date> ?date ."
 			+ "  ?mappingId <http://protege.stanford.edu/ontologies/mappings/mappings.rdfs#submitted_by> ?submittedBy ."
 			+ "  ?mappingId <http://protege.stanford.edu/ontologies/mappings/mappings.rdfs#mapping_type> ?mappingType ."
-			+ "  OPTIONAL { ?mappingId <http://protege.stanford.edu/ontologies/mappings/mappings.rdfs#comment> ?comment . }"
+			+ "  OPTIONAL { ?mappingId <http://protege.stanford.edu/ontologies/mappings/mappings.rdfs#is_many_to_many> ?isManyToMany .}"
+			+ "  OPTIONAL { ?mappingId <http://protege.stanford.edu/ontologies/mappings/mappings.rdfs#comment> ?comment .}"
 			+ "  OPTIONAL { ?mappingId <http://protege.stanford.edu/ontologies/mappings/mappings.rdfs#dependency> ?dependency .}"
 			+ "  OPTIONAL { ?mappingId <http://protege.stanford.edu/ontologies/mappings/mappings.rdfs#mapping_source> ?mappingSource .}"
 			+ "  OPTIONAL { ?mappingId <http://protege.stanford.edu/ontologies/mappings/mappings.rdfs#mapping_source_name> ?mappingSourceName .}"
@@ -79,8 +80,8 @@ public class AbstractNcboMappingDAO {
 
 	protected final static String mappingCountQuery = "SELECT DISTINCT "
 			+ "count(DISTINCT ?mappingId) as ?mappingCount WHERE {"
-			+ "  ?mappingId <http://protege.stanford.edu/ontologies/mappings/mappings.rdfs#source> ?source ."
-			+ "  ?mappingId <http://protege.stanford.edu/ontologies/mappings/mappings.rdfs#target> ?target ."
+			+ "  { SELECT ?source { ?mappingId <http://protege.stanford.edu/ontologies/mappings/mappings.rdfs#source> ?source } LIMIT 1 }"
+			+ "  { SELECT ?target { ?mappingId <http://protege.stanford.edu/ontologies/mappings/mappings.rdfs#target> ?target } LIMIT 1 }"
 			+ "  ?mappingId <http://protege.stanford.edu/ontologies/mappings/mappings.rdfs#relation> ?relation ."
 			+ "  ?mappingId <http://protege.stanford.edu/ontologies/mappings/mappings.rdfs#source_ontology_id> ?sourceOntologyId ."
 			+ "  ?mappingId <http://protege.stanford.edu/ontologies/mappings/mappings.rdfs#target_ontology_id> ?targetOntologyId ."
@@ -98,15 +99,15 @@ public class AbstractNcboMappingDAO {
 			+ "  OPTIONAL { ?mappingId <http://protege.stanford.edu/ontologies/mappings/mappings.rdfs#mapping_source_algorithm> ?mappingSourceAlgorithm .}"
 			+ "  FILTER (%FILTER%) }";
 
-	protected final static String sourcesAndTargetsForMappingIds = "SELECT DISTINCT ?mappingId ?source ?target {"
+	protected final static String sourcesAndTargetsForMappingIds = "SELECT DISTINCT ?source ?target {"
 			+ "  ?mappingId <http://protege.stanford.edu/ontologies/mappings/mappings.rdfs#source> ?source ."
 			+ "  ?mappingId <http://protege.stanford.edu/ontologies/mappings/mappings.rdfs#target> ?target ."
-			+ "  FILTER ( ?mappingId IN (%MAPPING_IDS%) ) }";
+			+ "  FILTER ( ?mappingId = <%MAPPING_ID%> ) }";
 
 	/*******************************************************************
-	 * 
+	 *
 	 * Generic SPARQL methods
-	 * 
+	 *
 	 *******************************************************************/
 
 	protected List<Mapping> getMappings(Integer limit, Integer offset,
@@ -118,7 +119,7 @@ public class AbstractNcboMappingDAO {
 	/**
 	 * Generic getMappings call. Must provide a valid SPARQL filter (generated
 	 * via helper methods or elsewhere).
-	 * 
+	 *
 	 * @param limit
 	 * @param offset
 	 * @param filter
@@ -126,7 +127,7 @@ public class AbstractNcboMappingDAO {
 	 * @param sourceOntology
 	 * @param targetOntology
 	 * @param unidirectional
-	 * 
+	 *
 	 * @return
 	 * @throws InvalidInputException
 	 */
@@ -244,46 +245,37 @@ public class AbstractNcboMappingDAO {
 					mapping.setMappingSourceSite(new URIImpl(bs.getValue(
 							"mappingSourceSite").stringValue()));
 
+				// Lookup additional source/target mappings if necessary
+				if (isValidValue(bs.getValue("isManyToMany"))) {
+					String getSourcesAndTargets = sourcesAndTargetsForMappingIds
+							.replaceAll("%MAPPING_ID%", mappingId);
+
+					TupleQuery getSourcesAndTargetsQuery = con
+							.prepareTupleQuery(QueryLanguage.SPARQL,
+									getSourcesAndTargets,
+									ApplicationConstants.MAPPING_CONTEXT);
+					TupleQueryResult getSourcesAndTargetsResult = getSourcesAndTargetsQuery
+							.evaluate();
+
+					while (getSourcesAndTargetsResult.hasNext()) {
+						BindingSet bs2 = getSourcesAndTargetsResult.next();
+
+						URI source = new URIImpl(bs2.getValue("source")
+								.stringValue());
+						URI target = new URIImpl(bs2.getValue("target")
+								.stringValue());
+
+						if (!mapping.getSource().contains(source)) {
+							mapping.addSource(source);
+						}
+
+						if (!mapping.getTarget().contains(target)) {
+							mapping.addTarget(target);
+						}
+					}
+				}
+
 				mappingResults.put(mapping.getId().toString(), mapping);
-			}
-
-			if (!mappingResults.isEmpty()) {
-				// This query will get all sources and targets for the mapping
-				// that were generated above
-				Set<String> mappingIds = mappingResults.keySet();
-
-				List<String> mappingIdsSparql = new ArrayList<String>();
-				for (String mappingId : mappingIds) {
-					mappingIdsSparql.add("<" + mappingId + ">");
-				}
-
-				String queryString1 = sourcesAndTargetsForMappingIds
-						.replaceAll("%MAPPING_IDS%", StringUtils.join(
-								mappingIdsSparql, ", "));
-
-				TupleQuery query1 = con.prepareTupleQuery(QueryLanguage.SPARQL,
-						queryString1, ApplicationConstants.MAPPING_CONTEXT);
-				TupleQueryResult result1 = query1.evaluate();
-
-				while (result1.hasNext()) {
-					BindingSet bs1 = result1.next();
-
-					String mappingId = bs1.getValue("mappingId").stringValue();
-					URI sourceURI = new URIImpl(bs1.getValue("source")
-							.stringValue());
-					URI targetURI = new URIImpl(bs1.getValue("target")
-							.stringValue());
-
-					Mapping updatedMapping = mappingResults.get(mappingId);
-
-					if (!updatedMapping.getSource().contains(sourceURI))
-						updatedMapping.addSource(sourceURI);
-
-					if (!updatedMapping.getTarget().contains(targetURI))
-						updatedMapping.addTarget(targetURI);
-
-					mappingResults.put(mappingId, updatedMapping);
-				}
 			}
 
 			result.close();
@@ -303,7 +295,7 @@ public class AbstractNcboMappingDAO {
 	/**
 	 * Generic getCount call. Must provide a valid SPARQL filter (generated via
 	 * helper methods or elsewhere).
-	 * 
+	 *
 	 * @param sourceOntology
 	 * @param targetOntology
 	 * @param unidirectional
@@ -348,14 +340,14 @@ public class AbstractNcboMappingDAO {
 	}
 
 	/*******************************************************************
-	 * 
+	 *
 	 * protected methods
-	 * 
+	 *
 	 *******************************************************************/
 
 	/**
 	 * Generates a SPARQL filter for the given ontology ids.
-	 * 
+	 *
 	 * @param sourceOntology
 	 * @param targetOntology
 	 * @param unidirectional
@@ -399,7 +391,7 @@ public class AbstractNcboMappingDAO {
 
 	/**
 	 * Generates a SPARQL filter for the given ontology ids.
-	 * 
+	 *
 	 * @param sourceConcept
 	 * @param targetConcept
 	 * @param unidirectional
@@ -481,7 +473,7 @@ public class AbstractNcboMappingDAO {
 
 	/**
 	 * Generates a SPARQL filter for the given ontology ids.
-	 * 
+	 *
 	 * @param sourceOntology
 	 * @param targetOntology
 	 * @param unidirectional
@@ -550,7 +542,7 @@ public class AbstractNcboMappingDAO {
 
 	/**
 	 * Checks the repository for a mapping using provided id.
-	 * 
+	 *
 	 * @param id
 	 * @param con
 	 * @return
@@ -572,7 +564,7 @@ public class AbstractNcboMappingDAO {
 	/**
 	 * Get a manager for the RDF store based on the configured options in
 	 * build.properties.
-	 * 
+	 *
 	 * @return
 	 */
 	protected RDFStoreManager getRdfStoreManager() {
@@ -584,7 +576,7 @@ public class AbstractNcboMappingDAO {
 	 * This method does the actual delete action for removing mappings from the
 	 * triplestore. It removes all triples with a subject matching the mapping
 	 * id.
-	 * 
+	 *
 	 * @param con
 	 * @param id
 	 * @throws RepositoryException
@@ -600,7 +592,7 @@ public class AbstractNcboMappingDAO {
 	/**
 	 * Look for valid values and update the provided mapping bean with them. For
 	 * use in re-creating a mapping as part of an update.
-	 * 
+	 *
 	 * @param mapping
 	 * @param source
 	 * @param target
@@ -668,9 +660,9 @@ public class AbstractNcboMappingDAO {
 	}
 
 	/*******************************************************************
-	 * 
+	 *
 	 * Auto-generated methods
-	 * 
+	 *
 	 *******************************************************************/
 
 	/**

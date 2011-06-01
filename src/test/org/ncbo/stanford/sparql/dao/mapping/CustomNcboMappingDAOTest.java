@@ -30,6 +30,8 @@ public class CustomNcboMappingDAOTest extends AbstractBioPortalTest {
 
 	@Autowired
 	CustomNcboMappingDAO mappingDAO;
+
+	@Autowired
 	CustomNcboMappingCountsDAO mappingCountsDAO;
 
 	@SuppressWarnings("unchecked")
@@ -87,7 +89,7 @@ public class CustomNcboMappingDAOTest extends AbstractBioPortalTest {
 			assertTrue(mappings != null && mappings.size() > 0);
 
 			mappings = mappingDAO.getMappingsFromOntology(1032, 50000, 0, null);
-			assertTrue(mappings != null && mappings.size() == 0);
+			assertTrue(mappings != null && mappings.size() > 0);
 
 			mappings = mappingDAO.getMappingsToOntology(1032, 50000, 0, null);
 			assertTrue(mappings != null && mappings.size() > 0);
