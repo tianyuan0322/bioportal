@@ -74,6 +74,8 @@ public class OntologyMetadataUtils extends MetadataUtils {
 	// public static final String PROPERTY_ID = PREFIX_METADATA + "id";
 	public static final String PROPERTY_INTERNAL_VERSION_NUMBER = PREFIX_METADATA
 			+ "internalVersionNumber";
+	public static final String PROPERTY_HAS_HIERARCHY = PREFIX_METADATA
+	+ "hasHierarchy";
 	public static final String PROPERTY_IS_FOUNDRY = PREFIX_METADATA
 			+ "isFoundry";
 	public static final String PROPERTY_IS_METADATAONLY = PREFIX_METADATA
@@ -222,7 +224,17 @@ public class OntologyMetadataUtils extends MetadataUtils {
 				ob.setIsRemote((byte) 0);
 			}
 		}
-
+		
+		if (ob.getHasHierarchy() == null) {
+			Boolean hasHierarchy = getPropertyValue(owlModel, ontologyInd,
+					PROPERTY_HAS_HIERARCHY, Boolean.class);
+			if (hasHierarchy != null) {
+				ob.setIsFoundry(convertBooleanToByte(hasHierarchy));
+			} else {
+				ob.setHasHierarchy((byte) 1);
+			}
+		}
+		
 		if (ob.getIsFoundry() == null) {
 			Boolean isFoundry = getPropertyValue(owlModel, ontologyInd,
 					PROPERTY_IS_FOUNDRY, Boolean.class);
@@ -322,6 +334,12 @@ public class OntologyMetadataUtils extends MetadataUtils {
 		setPropertyValue(owlModel, ontologyInd, PROPERTY_ID, ob.getId());
 		setPropertyValue(owlModel, ontologyInd,
 				PROPERTY_INTERNAL_VERSION_NUMBER, ob.getInternalVersionNumber());
+		RDFSLiteral litHasHierarchy = owlModel.createRDFSLiteral(ob.getHasHierarchy()
+				.byteValue() == ApplicationConstants.FALSE ? "false" : "true",
+				owlModel.getXSDboolean());
+		setPropertyValue(owlModel, ontologyInd, PROPERTY_HAS_HIERARCHY,
+				litHasHierarchy);
+		
 		RDFSLiteral litIsFoundry = owlModel.createRDFSLiteral(ob.getIsFoundry()
 				.byteValue() == ApplicationConstants.FALSE ? "false" : "true",
 				owlModel.getXSDboolean());
@@ -592,6 +610,8 @@ public class OntologyMetadataUtils extends MetadataUtils {
 				Integer.class));
 		ob.setInternalVersionNumber(getPropertyValue(owlModel, ontologyInd,
 				PROPERTY_INTERNAL_VERSION_NUMBER, Integer.class));
+		ob.setHasHierarchy(convertBooleanToByte(getPropertyValue(owlModel,
+				ontologyInd, PROPERTY_HAS_HIERARCHY, Boolean.class)));
 		ob.setIsFoundry(convertBooleanToByte(getPropertyValue(owlModel,
 				ontologyInd, PROPERTY_IS_FOUNDRY, Boolean.class)));
 		ob.setIsMetadataOnly(convertBooleanToByte(getPropertyValue(owlModel,

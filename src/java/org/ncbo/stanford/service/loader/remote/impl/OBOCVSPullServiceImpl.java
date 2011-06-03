@@ -26,7 +26,7 @@ import org.ncbo.stanford.bean.OntologyBean;
 import org.ncbo.stanford.bean.UserBean;
 import org.ncbo.stanford.exception.InvalidDataException;
 import org.ncbo.stanford.exception.InvalidOntologyFormatException;
-import org.ncbo.stanford.service.loader.remote.OBOCVSPullService;
+import org.ncbo.stanford.service.loader.remote.OntologyPullService;
 import org.ncbo.stanford.service.ontology.OntologyService;
 import org.ncbo.stanford.service.user.UserService;
 import org.ncbo.stanford.util.MessageUtils;
@@ -58,7 +58,7 @@ import org.w3c.dom.NodeList;
  * @author Michael Dorf
  */
 @Transactional
-public class OBOCVSPullServiceImpl implements OBOCVSPullService {
+public class OBOCVSPullServiceImpl implements OntologyPullService {
 
 	private static final Log log = LogFactory
 			.getLog(OBOCVSPullServiceImpl.class);

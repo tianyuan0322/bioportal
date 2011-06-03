@@ -52,6 +52,7 @@ public class OntologyBean {
 	private String urn;
 	private String codingScheme;
 	private String targetTerminologies;
+	private Byte hasHierarchy;
 	private Byte isFoundry;
 	private Byte isMetadataOnly;
 	private String synonymSlot;
@@ -196,11 +197,13 @@ public class OntologyBean {
 				+ ", Version Status: " + this.getVersionStatus()
 				+ ", Display Label: " + this.getDisplayLabel()
 				+ ", Description: " + this.getDescription()
-				+ ", Abbreviation: " + this.getAbbreviation() + ", Format: "
-				+ this.getFormat() + ", Download Location: "
-				+ this.getDownloadLocation() + ", Contact Name: "
-				+ this.getContactName() + ", Contact Email: "
-				+ this.getContactEmail() + ", Foundry: " + this.getIsFoundry()
+				+ ", Abbreviation: " + this.getAbbreviation()
+				+ ", Format: "+ this.getFormat() 
+				+ ", Download Location: "	+ this.getDownloadLocation()
+				+ ", Contact Name: "	+ this.getContactName() 
+				+ ", Contact Email: "	+ this.getContactEmail() 
+				+ ", hasHierarchy: " + this.getHasHierarchy()
+				+ ", Foundry: " + this.getIsFoundry()
 				+ ", IsMetadataOnly: " + this.getIsMetadataOnly()
 				+ ", Coding Scheme: " + this.getCodingScheme()
 				+ ", Target Terminologies: " + this.getTargetTerminologies()
@@ -521,6 +524,21 @@ public class OntologyBean {
 	 */
 	public void setUrn(String urn) {
 		this.urn = urn;
+	}
+
+	/**
+	 * 
+	 * @return the hasHierarchy
+	 */
+	public Byte getHasHierarchy() {
+		return hasHierarchy;
+	}
+   /**
+    * Set hasHierarchy
+    * @param hasHierarchy
+    */
+	public void setHasHierarchy(Byte hasHierarchy) {
+		this.hasHierarchy = hasHierarchy;
 	}
 
 	/**

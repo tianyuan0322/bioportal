@@ -136,7 +136,7 @@ public class OntologyServiceTest extends AbstractBioPortalTest {
 				.println("OntologyServiceTest: testFindOntologyOrView()..........................BEGIN");
 
 		OntologyBean ontologyBean = getOntologyService().findOntologyOrView(
-				new Integer(50000));
+				new Integer(10003));
 
 		System.out.println(ontologyBean);
 
@@ -172,37 +172,34 @@ public class OntologyServiceTest extends AbstractBioPortalTest {
 
 	/**/
 
-	/*
-	 * * / public void testCreateManualOntology() throws Exception {
-	 * 
-	 * System.out.println(
-	 * "OntologyServiceTest: testCreateManualOntology()........................BEGIN"
-	 * );
-	 * 
-	 * OntologyBean ontologyBean = createOntolgyBeanManual();
-	 * 
-	 * getOntologyService().createOntologyOrView(ontologyBean,
-	 * OntologyServiceTest.getFilePathHandler(ontologyBean));
-	 * 
-	 * System.out.println(
-	 * "OntologyServiceTest: testCreateManualOntology().........................DONE"
-	 * ); }
-	 * 
-	 * 
-	 * public void testCreateRemoteOntology() throws Exception {
-	 * 
-	 * System.out.println(
-	 * "OntologyServiceTest: testCreateRemoteOntology()........................BEGIN"
-	 * );
-	 * 
-	 * OntologyBean ontologyBean = createOntolgyBeanRemote();
-	 * 
-	 * getOntologyService().createOntologyOrView(ontologyBean, null);
-	 * 
-	 * System.out.println(
-	 * "OntologyServiceTest: testCreateRemoteOntology().........................DONE"
-	 * ); } /*
-	 */
+	@Test
+	public void testCreateManualOntology() throws Exception {
+
+		System.out
+				.println("OntologyServiceTest: testCreateManualOntology()........................BEGIN");
+
+		OntologyBean ontologyBean = createOntolgyBeanManual();
+
+		getOntologyService().createOntologyOrView(ontologyBean,
+				OntologyServiceTest.getFilePathHandler(ontologyBean));
+		System.out.println("Ontology Bean:"+ontologyBean);
+		System.out
+				.println("OntologyServiceTest: testCreateManualOntology().........................DONE");
+	}
+
+	@Test
+	public void testCreateRemoteOntology() throws Exception {
+
+		System.out
+				.println("OntologyServiceTest: testCreateRemoteOntology()........................BEGIN");
+
+		OntologyBean ontologyBean = createOntolgyBeanRemote();
+
+		getOntologyService().createOntologyOrView(ontologyBean, null);
+
+		System.out
+				.println("OntologyServiceTest: testCreateRemoteOntology().........................DONE");
+	}
 
 	/*
 	 * * / public void testCleanupOntologyCategory() throws Exception {
@@ -302,6 +299,7 @@ public class OntologyServiceTest extends AbstractBioPortalTest {
 		bean.setDisplayLabel("FMA");
 		bean.setFormat("OWL-DL");
 		bean.setIsFoundry(new Byte("0"));
+		bean.setHasHierarchy(new Byte("1"));
 
 		ArrayList<Integer> categoryIds = new ArrayList<Integer>();
 		categoryIds.add(2810);
@@ -315,7 +313,7 @@ public class OntologyServiceTest extends AbstractBioPortalTest {
 		// set inputFilePath
 		// String inputFileStr =
 		// "/dev/cyoun/workspace/bioportal_resources/uploads/3000/0/pizza.owl";
-		String inputFileStr = "C:\\Program Files\\Protege_3.4\\examples\\pizza\\pizza.owl";
+		String inputFileStr = "test/sample_data/pizza.owl";
 		bean.setFilePath(inputFileStr);
 
 		return bean;
@@ -354,7 +352,7 @@ public class OntologyServiceTest extends AbstractBioPortalTest {
 		// set inputFilePath
 		// String inputFileStr =
 		// "/dev/cyoun/workspace/bioportal_resources/uploads/3000/0/pizza.owl";
-		String inputFileStr = "C:\\Program Files\\Protege_3.4\\examples\\pizza\\pizza.owl";
+		String inputFileStr = "test/sample_data/pizza.owl";
 		bean.setFilePath(inputFileStr);
 
 		bean.setViewDefinition("SELECT smthg FROM TEST");

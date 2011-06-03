@@ -909,7 +909,7 @@
 			<ref local="notificationProcessForOntology" />
 		</property>
 	</bean>
-
+<!--
 	<bean id="oboCVSPullService"
 		class="org.ncbo.stanford.service.loader.remote.impl.OBOCVSPullServiceImpl">
 		<property name="ontologyService">
@@ -934,7 +934,14 @@
 			<ref bean="oboRepositoriesConfigFilepath" />
 		</property>
 	</bean>
-
+-->
+	<bean id="ontologyPullService"
+		class="org.ncbo.stanford.service.loader.remote.impl.OntologyPullServiceImpl">
+		<property name="ontologyService">
+			<ref bean="ontologyService" />
+		</property>
+	</bean>
+	
 	<bean id="ontologyIntegrityFixerService"
 		class="org.ncbo.stanford.service.loader.fixer.impl.OntologyIntegrityFixerServiceImpl">
 		<property name="ontologyMetadataManager">
@@ -1336,7 +1343,7 @@
 	<!-- OBO CVS pull Scheduler -->
 	<bean id="oboPullSchedulerJobDetailBean"
 		class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
-		<property name="targetObject" ref="oboCVSPullService" />
+		<property name="targetObject" ref="ontologyPullService" />
 		<property name="targetMethod" value="doOntologyPull" />
 		<property name="concurrent" value="false" />
 	</bean>

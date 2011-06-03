@@ -443,8 +443,8 @@
 	<bean id="oboCVSPullRestlet"
 		class="org.ncbo.stanford.view.rest.restlet.loader.remote.OBOCVSPullRestlet"
 		parent="abstractBaseRestlet">
-		<property name="oboCVSPullService">
-			<ref bean="oboCVSPullService" />
+		<property name="ontologyPullService">
+			<ref bean="ontologyPullService" />
 		</property>
 	</bean>
 

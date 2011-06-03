@@ -177,6 +177,8 @@ public class BeanHelper {
 				.getMessage("form.ontology.codingScheme"));
 		String downloadLocation = httpServletRequest.getParameter(MessageUtils
 				.getMessage("form.ontology.downloadLocation"));
+		String hasHierarchy = httpServletRequest.getParameter(MessageUtils
+				.getMessage("form.ontology.hasHierarchy"));
 		String isFoundry = httpServletRequest.getParameter(MessageUtils
 				.getMessage("form.ontology.isFoundry"));
 		String isMetadataOnly = httpServletRequest.getParameter(MessageUtils
@@ -338,7 +340,9 @@ public class BeanHelper {
 		if (downloadLocation != null) {
 			bean.setDownloadLocation(downloadLocation);
 		}
-
+		if (!StringHelper.isNullOrNullString(hasHierarchy)) {
+			bean.setHasHierarchy(Byte.parseByte(hasHierarchy));
+		}
 		if (!StringHelper.isNullOrNullString(isFoundry)) {
 			bean.setIsFoundry(Byte.parseByte(isFoundry));
 		}

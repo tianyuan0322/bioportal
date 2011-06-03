@@ -25,6 +25,14 @@ public class LoaderUtilsTest extends AbstractBioPortalTest {
 	}
 	
 	@Test
+	public void testStoreMd5InPullPath() throws Exception {
+		OntologyBean ontologyBean= createDummyOntolgyBean();
+		File inputFile = new File("C:/apps/bmir.apps/bioportal_resources/uploads/5070/7/mosquito_insecticide_resistance.obo");
+
+		LoaderUtils.storeMd5InPullPath(ontologyBean, inputFile);		
+	}
+	
+	@Test
 	public void testStoreMd5FileUsingFile() throws Exception {
 		OntologyBean ontologyBean= createDummyOntolgyBean();
 		File inputFile = new File("C:/apps/bmir.apps/bioportal_resources/uploads/5070/7/mosquito_insecticide_resistance.obo");
@@ -135,9 +143,23 @@ public class LoaderUtilsTest extends AbstractBioPortalTest {
 		url= "http://github.com/cmungall/uberon/raw/master/uberon.obo";
 		exists= LoaderUtils.isValidDownloadLocation(url);			
 		assertTrue(exists);
+		url= "ftp://rgd.mcw.edu/pub/data_release/pathway.obo";
+		exists= LoaderUtils.isValidDownloadLocation(url);			
+		assertFalse(exists);
+		url= "ftp://ftp.pir.georgetown.edu/databases/ontology/pro_obo/pro.obo";
+		exists= LoaderUtils.isValidDownloadLocation(url);			
+		assertTrue(exists);
 		
 		
 	}		
+	
+	@Test
+	public void testHasOntologyBeenRefreshed() throws Exception {
+		OntologyBean ontologyBean= createDummyOntolgyBean();
+		String url_location= "http://obo.cvs.sourceforge.net/*checkout*/obo/obo/ontology/phenotype/mosquito_insecticide_resistance.obo";
+		boolean isRefreshed= LoaderUtils.hasDownloadLocationContentBeenUpdated(url_location, ontologyBean);
+		assertFalse(isRefreshed);
+	}
 	
 	@Test
 	public void testGetContent() {	

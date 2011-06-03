@@ -1,10 +1,12 @@
 package org.ncbo.stanford.util.loader;
 
 import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -18,6 +20,7 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.ncbo.stanford.bean.OntologyBean;
+import org.ncbo.stanford.util.constants.ApplicationConstants;
 import org.ncbo.stanford.util.ontologyfile.OntologyDescriptorParser;
 import org.ncbo.stanford.util.ontologyfile.pathhandler.AbstractFilePathHandler;
 
@@ -40,12 +43,43 @@ public class LoaderUtils {
 		return isUpdated;
 	}
 
+	/**
+	 * This method downloads the content from the download location and checks
+	 * its md5 against that of the latest ontology. It returns true if the
+	 * content is different from that of the latest ontology currently in the
+	 * repository
+	 * 
+	 * @param url_location
+	 * @param latestOntology
+	 * @return
+	 */
+	public static boolean hasDownloadLocationContentBeenUpdated(
+			String url_location, OntologyBean latestOntology) {
+		boolean isUpdated = false;
+		try {
+			if (isValidDownloadLocation(url_location)) {
+				getPulledContent(url_location, latestOntology);
+				String pull_md5 = fetchMd5InPullPath(latestOntology);
+				String latest_md5 = fetchMd5FromFile(latestOntology);
+				if (pull_md5 != null && !pull_md5.equalsIgnoreCase(latest_md5)) {
+					isUpdated = true;
+				}
+			}
+		} catch (Exception ex) {
+			log.error("Error while pulling ontology content for ontology: "
+					+ latestOntology);
+			ex.printStackTrace();
+		}
+
+		return isUpdated;
+	}
+
 	public static boolean hasRepositoryFileBeenUpdated(File repo_file,
 			OntologyBean latestOntology) {
 		boolean isUpdated = true;
 		String repo_md5 = computeMD5(repo_file);
 		String latest_md5 = fetchMd5FromFile(latestOntology);
-		if (repo_md5!= null && repo_md5.equalsIgnoreCase(latest_md5)) {
+		if (repo_md5 != null && repo_md5.equalsIgnoreCase(latest_md5)) {
 			isUpdated = false;
 		}
 		return isUpdated;
@@ -93,7 +127,7 @@ public class LoaderUtils {
 			} else {
 				URLConnection uc = url.openConnection();
 				int contentLength = uc.getContentLength();
-				if (contentLength != 0) {
+				if (contentLength > 0) {
 					isValid = true;
 				}
 			}
@@ -131,6 +165,61 @@ public class LoaderUtils {
 			}
 		}
 		return in;
+	}
+
+	/**
+	 * Pull the content from the url_location and store it as a file in the
+	 * ontology's pullPath. The md5 value is also computed and stored in the
+	 * ontology pull path.
+	 * 
+	 * @param url_location
+	 * @param ontologyBean
+	 * @throws IOException
+	 */
+	public static void getPulledContent(String url_location,
+			OntologyBean ontologyBean) throws IOException {
+		// get fileName and filePath
+		String filePath = AbstractFilePathHandler
+				.getOntologyPullPath(ontologyBean);
+		String fileName = OntologyDescriptorParser.getFileName(url_location);
+
+		// continue only if there is input file
+		if (filePath != null && fileName != null) {
+			// now create pull directory
+			File pullDirectories = new File(filePath);
+			pullDirectories.mkdirs();
+
+			File outputFile = new File(filePath, fileName);
+			LoaderUtils.getContent(url_location, outputFile);
+			storeMd5InPullPath(ontologyBean, outputFile);
+		}
+	}
+
+	/**
+	 * * Pull the content from the url_location and store it in the
+	 * distinationFile
+	 * 
+	 * @param source_url
+	 * @param distinationFile
+	 * @throws IOException
+	 */
+	public static void getContent(String source_url, File distinationFile)
+			throws IOException {
+		BufferedOutputStream out = new BufferedOutputStream(
+				new FileOutputStream(distinationFile));
+		BufferedInputStream in = new BufferedInputStream(LoaderUtils
+				.getInputStream(source_url));
+
+		byte data[] = new byte[ApplicationConstants.BUFFER_SIZE];
+		int count;
+
+		while ((count = in.read(data, 0, ApplicationConstants.BUFFER_SIZE)) != -1) {
+			out.write(data, 0, count);
+		}
+
+		in.close();
+		out.flush();
+		out.close();
 	}
 
 	public static String computeMD5(File file) {
@@ -173,34 +262,57 @@ public class LoaderUtils {
 		return computeMD5(ontologyBean.getDownloadLocation());
 	}
 
+	/**
+	 * Store the computed md5 of the ontologyBean's downloadLocation in the
+	 * fullOntologyDirPath
+	 * 
+	 * @param ontologyBean
+	 * @throws IOException
+	 */
 	public static void storeMd5ToFile(OntologyBean ontologyBean)
 			throws IOException {
 		String filePath = AbstractFilePathHandler
 				.getFullOntologyDirPath(ontologyBean);
 		String fileName = getMD5FileName(ontologyBean);
 		String md5 = computeMD5(ontologyBean);
-		// continue only if there is input file
-		if (filePath != null && fileName != null && md5 != null) {
-			// now create output file
-			File outputDirectories = new File(filePath);
-			outputDirectories.mkdirs();
-
-			File outputFile = new File(filePath, fileName);
-
-			BufferedWriter outputStream = new BufferedWriter(new FileWriter(
-					outputFile));
-			outputStream.write(md5);
-			outputStream.flush();
-			outputStream.close();
-		}
+		writeMd5ToFile(filePath, fileName, md5);
 	}
 
+	/**
+	 * Store the computed md5 of the file in the fullOntologyDirPath of the
+	 * ontologyBean
+	 * 
+	 * @param ontologyBean
+	 * @param file
+	 * @throws IOException
+	 */
 	public static void storeMd5ToFile(OntologyBean ontologyBean, File file)
 			throws IOException {
 		String filePath = AbstractFilePathHandler
 				.getFullOntologyDirPath(ontologyBean);
 		String fileName = getMD5FileName(ontologyBean);
 		String md5 = computeMD5(file);
+		writeMd5ToFile(filePath, fileName, md5);
+	}
+
+	/**
+	 * Store the computed md5 of the file in the pullPath of the ontologyBean
+	 * 
+	 * @param ontologyBean
+	 * @param file
+	 * @throws IOException
+	 */
+	public static void storeMd5InPullPath(OntologyBean ontologyBean, File file)
+			throws IOException {
+		String filePath = AbstractFilePathHandler
+				.getOntologyPullPath(ontologyBean);
+		String fileName = getMD5FileName(ontologyBean);
+		String md5 = computeMD5(file);
+		writeMd5ToFile(filePath, fileName, md5);
+	}
+
+	private static void writeMd5ToFile(String filePath, String fileName,
+			String md5) throws IOException {
 		// continue only if there is input file
 		if (filePath != null && fileName != null && md5 != null) {
 			// now create output file
@@ -215,15 +327,12 @@ public class LoaderUtils {
 			outputStream.flush();
 			outputStream.close();
 		}
+
 	}
 
-	public static String fetchMd5FromFile(OntologyBean ontologyBean) {
-
+	private static String readMd5FromFile(String filePath, String fileName) {
 		String md5 = null;
 		try {
-			String filePath = AbstractFilePathHandler
-					.getFullOntologyDirPath(ontologyBean);
-			String fileName = getMD5FileName(ontologyBean);
 			// continue only if there is input file
 			if (filePath != null && fileName != null) {
 				File inputFile = new File(filePath, fileName);
@@ -235,6 +344,38 @@ public class LoaderUtils {
 		} catch (Exception ex) {
 
 		}
+		return md5;
+	}
+
+	/**
+	 * Read the md5 value from the md5 file that is in the fullOntologyDirPath
+	 * of the ontologyBean
+	 * 
+	 * @param ontologyBean
+	 * @return
+	 */
+	public static String fetchMd5FromFile(OntologyBean ontologyBean) {
+
+		String filePath = AbstractFilePathHandler
+				.getFullOntologyDirPath(ontologyBean);
+		String fileName = getMD5FileName(ontologyBean);
+		String md5 = readMd5FromFile(filePath, fileName);
+		return md5;
+	}
+
+	/**
+	 * Read the md5 value from the md5 file that is in the pullPath of the
+	 * ontologyBean
+	 * 
+	 * @param ontologyBean
+	 * @return
+	 */
+	public static String fetchMd5InPullPath(OntologyBean ontologyBean) {
+
+		String filePath = AbstractFilePathHandler
+				.getOntologyPullPath(ontologyBean);
+		String fileName = getMD5FileName(ontologyBean);
+		String md5 = readMd5FromFile(filePath, fileName);
 		return md5;
 	}
 

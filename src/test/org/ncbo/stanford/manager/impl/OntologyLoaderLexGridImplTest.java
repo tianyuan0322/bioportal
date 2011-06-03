@@ -406,11 +406,13 @@ public class OntologyLoaderLexGridImplTest extends AbstractBioPortalTest {
 
 	private OntologyBean createOntolgyBeanOboURI() {
 		OntologyBean bean = createOntolgyBeanBase();
+		//bean.setDownloadLocation("http://palea.cgrb.oregonstate.edu/viewsvn/Poc/trunk/ontology/OBO_format/po_anatomy.obo?view=co");
 		bean
-				.setDownloadLocation("http://palea.cgrb.oregonstate.edu/viewsvn/Poc/trunk/ontology/OBO_format/po_anatomy.obo?view=co");
+		.setDownloadLocation("http://obo.cvs.sourceforge.net/obo/obo/ontology/environmental/gaz.obo/");
 		bean.setFormat(ApplicationConstants.FORMAT_OBO);
 		// bean.setCodingScheme(OBO_FUNGAL_URN_VERSION);
 		bean.setDisplayLabel(OBO_PLANT_ANATOMY_DISPLAY_LABEL);
+		bean.setAbbreviation(OBO_PLANT_ANATOMY_DISPLAY_LABEL);
 		return bean;
 	}
 
