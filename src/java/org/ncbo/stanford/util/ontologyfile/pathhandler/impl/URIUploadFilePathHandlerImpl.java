@@ -1,37 +1,26 @@
 package org.ncbo.stanford.util.ontologyfile.pathhandler.impl;
 
-import java.io.BufferedInputStream;
-import java.io.BufferedOutputStream;
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.FileWriter;
 import java.io.IOException;
-import java.io.InputStreamReader;
 import java.net.URI;
-import java.net.URLConnection;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
+import org.apache.commons.lang.StringUtils;
 import org.ncbo.stanford.bean.OntologyBean;
 import org.ncbo.stanford.util.MessageUtils;
-import org.ncbo.stanford.util.constants.ApplicationConstants;
 import org.ncbo.stanford.util.loader.LoaderUtils;
 import org.ncbo.stanford.util.ontologyfile.OntologyDescriptorParser;
 import org.ncbo.stanford.util.ontologyfile.compressedfilehandler.CompressedFileHandler;
 import org.ncbo.stanford.util.ontologyfile.pathhandler.AbstractFilePathHandler;
 
-import com.mysql.jdbc.StringUtils;
-
 /**
  * An implementation of FileHandler interface, where the ontology is uploaded
  * from a URI
- *
+ * 
  * @author Pradip Kanjamala
- *
+ * 
  */
 public class URIUploadFilePathHandlerImpl extends AbstractFilePathHandler {
 
@@ -44,17 +33,17 @@ public class URIUploadFilePathHandlerImpl extends AbstractFilePathHandler {
 	}
 
 	public List<String> processOntologyFileUpload(OntologyBean ontologyBean)
-			throws FileNotFoundException, IOException, Exception {
+			throws FileNotFoundException, IOException {
 		// place holder for return object
 		List<String> fileNames = new ArrayList<String>(1);
-
+		
 
 		// validate inputfile
 		String filePath = AbstractFilePathHandler
 				.getFullOntologyDirPath(ontologyBean);
 		String fileName = OntologyDescriptorParser.getFileName(uri.toString());
 
-		if (StringUtils.isNullOrEmpty(fileName)) {
+		if (StringUtils.isBlank(fileName) && StringUtils.isNotBlank(ontologyBean.getAbbreviation())) {
 			fileName = ontologyBean.getAbbreviation().toLowerCase();
 		}
 
@@ -65,21 +54,21 @@ public class URIUploadFilePathHandlerImpl extends AbstractFilePathHandler {
 			outputDirectories.mkdirs();
 
 			File outputFile = new File(filePath, fileName);
-
-			BufferedOutputStream out = new BufferedOutputStream(
-					new FileOutputStream(outputFile));
-			BufferedInputStream in = new BufferedInputStream(LoaderUtils.getInputStream(uri.toString()));
-
-			byte data[] = new byte[ApplicationConstants.BUFFER_SIZE];
-			int count;
-
-			while ((count = in.read(data, 0, ApplicationConstants.BUFFER_SIZE)) != -1) {
-				out.write(data, 0, count);
-			}
-
-			in.close();
-			out.flush();
-			out.close();
+			LoaderUtils.getContent( uri.toString(), outputFile);
+//			BufferedOutputStream out = new BufferedOutputStream(
+//					new FileOutputStream(outputFile));
+//			BufferedInputStream in = new BufferedInputStream(LoaderUtils.getInputStream(uri.toString()));
+//
+//			byte data[] = new byte[ApplicationConstants.BUFFER_SIZE];
+//			int count;
+//						
+//			while ((count = in.read(data, 0, ApplicationConstants.BUFFER_SIZE)) != -1) {
+//				out.write(data, 0, count);
+//			}
+//			
+//			in.close();
+//			out.flush();
+//			out.close();
 
 			// validate output file
 			if (!outputFile.exists()) {
@@ -95,16 +84,16 @@ public class URIUploadFilePathHandlerImpl extends AbstractFilePathHandler {
 								+ errorMsg);
 			}
 			// Store the MD5 file
-			LoaderUtils.storeMd5ToFile(ontologyBean);
+			LoaderUtils.storeMd5ToFile(ontologyBean, outputFile);
 			fileNames = compressedFileHandler.handle(outputFile, ontologyBean);
 		}
-
+		
 		return fileNames;
 	}
 
 	/*
 	 * (non-Javadoc)
-	 *
+	 * 
 	 * @see org.ncbo.stanford.util.filehandler.FileHandler#getName()
 	 */
 	public String getName() {
