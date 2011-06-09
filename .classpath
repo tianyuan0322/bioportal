@@ -140,7 +140,7 @@
 	<classpathentry exported="true" kind="lib" path="WebRoot/WEB-INF/lib/lexgrid/extLib/spring-batch-infrastructure-2.0.1.RELEASE.jar"/>
 	<classpathentry exported="true" kind="lib" path="WebRoot/WEB-INF/lib/lexgrid/extLib/spring-oxm-1.5.7.jar"/>
 	<classpathentry exported="true" kind="lib" path="WebRoot/WEB-INF/lib/lexgrid/extLib/spring-xml-1.5.7.jar"/>
-	<classpathentry exported="true" kind="lib" path="WebRoot/WEB-INF/lib/lexgrid/lexbig.jar"/>
-	<classpathentry exported="true" kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
+	<classpathentry exported="true" kind="lib" path="WebRoot/WEB-INF/lib/lexgrid/lexbig.jar" sourcepath="/lbImpl"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/jdk1.6.0_18"/>
 	<classpathentry kind="output" path="WebRoot/WEB-INF/classes"/>
 </classpath>
