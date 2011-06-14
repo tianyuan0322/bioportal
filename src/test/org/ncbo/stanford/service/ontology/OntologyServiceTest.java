@@ -299,7 +299,7 @@ public class OntologyServiceTest extends AbstractBioPortalTest {
 		bean.setDisplayLabel("FMA");
 		bean.setFormat("OWL-DL");
 		bean.setIsFoundry(new Byte("0"));
-		bean.setHasHierarchy(new Byte("1"));
+		bean.setIsFlat(new Byte("0"));
 
 		ArrayList<Integer> categoryIds = new ArrayList<Integer>();
 		categoryIds.add(2810);

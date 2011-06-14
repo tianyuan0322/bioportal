@@ -88,7 +88,7 @@
                         <owl:cardinality rdf:datatype="http://www.w3.org/2001/XMLSchema#int"
                         >1</owl:cardinality>
                         <owl:onProperty>
-                          <owl:FunctionalProperty rdf:ID="hasHierarchy"/>
+                          <owl:FunctionalProperty rdf:ID="isFlat"/>
                         </owl:onProperty>
                       </owl:Restriction>
                     </rdfs:subClassOf>
@@ -1201,7 +1201,7 @@ In case of ontology versions, this represents the date and time when it was uplo
     <rdfs:domain rdf:resource="http://omv.ontoware.org/2005/05/ontology#Ontology"/>
     <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#boolean"/>
   </owl:FunctionalProperty>
-  <owl:FunctionalProperty rdf:about="#hasHierarchy">
+  <owl:FunctionalProperty rdf:about="#isFlat">
     <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#DatatypeProperty"/>
     <rdfs:domain rdf:resource="http://omv.ontoware.org/2005/05/ontology#Ontology"/>
     <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#boolean"/>

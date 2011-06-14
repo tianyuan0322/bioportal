@@ -33,7 +33,7 @@
 			<xsl:copy-of select="statusId" />
 			<xsl:copy-of select="categoryIds" />
 			<xsl:copy-of select="groupIds" />
-			<xsl:copy-of select="hasHierarchy" />
+			<xsl:copy-of select="isFlat" />
 			<xsl:copy-of select="isFoundry" />
 			<xsl:copy-of select="isMetadataOnly" />
 			<xsl:copy-of select="dateCreated" />

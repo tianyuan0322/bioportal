@@ -52,7 +52,7 @@ public class OntologyBean {
 	private String urn;
 	private String codingScheme;
 	private String targetTerminologies;
-	private Byte hasHierarchy;
+	private Byte isFlat;
 	private Byte isFoundry;
 	private Byte isMetadataOnly;
 	private String synonymSlot;
@@ -202,7 +202,7 @@ public class OntologyBean {
 				+ ", Download Location: "	+ this.getDownloadLocation()
 				+ ", Contact Name: "	+ this.getContactName() 
 				+ ", Contact Email: "	+ this.getContactEmail() 
-				+ ", hasHierarchy: " + this.getHasHierarchy()
+				+ ", isFlat: " + this.getIsFlat()
 				+ ", Foundry: " + this.getIsFoundry()
 				+ ", IsMetadataOnly: " + this.getIsMetadataOnly()
 				+ ", Coding Scheme: " + this.getCodingScheme()
@@ -528,17 +528,17 @@ public class OntologyBean {
 
 	/**
 	 * 
-	 * @return the hasHierarchy
+	 * @return the isFlat
 	 */
-	public Byte getHasHierarchy() {
-		return hasHierarchy;
+	public Byte getIsFlat() {
+		return isFlat;
 	}
    /**
-    * Set hasHierarchy
-    * @param hasHierarchy
+    * Set isFlat
+    * @param isFlat
     */
-	public void setHasHierarchy(Byte hasHierarchy) {
-		this.hasHierarchy = hasHierarchy;
+	public void setIsFlat(Byte isFlat) {
+		this.isFlat = isFlat;
 	}
 
 	/**
