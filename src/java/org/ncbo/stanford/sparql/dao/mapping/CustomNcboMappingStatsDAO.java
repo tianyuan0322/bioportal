@@ -64,7 +64,7 @@ public class CustomNcboMappingStatsDAO extends AbstractNcboMappingDAO {
 
 	/**
 	 * Gets a list of recent mappings up to size of limit.
-	 * 
+	 *
 	 * @param limit
 	 * @return
 	 * @throws InvalidInputException
@@ -73,13 +73,13 @@ public class CustomNcboMappingStatsDAO extends AbstractNcboMappingDAO {
 			throws InvalidInputException {
 		String orderBy = "?date";
 
-		RepositoryConnection con = getRdfStoreManager()
-				.getRepositoryConnection();
-
 		String queryString = mostRecentMappings.replaceAll("%LIMIT%", limit
 				.toString());
 
 		ArrayList<String> mappingIds = new ArrayList<String>();
+
+		RepositoryConnection con = getRdfStoreManager()
+				.getRepositoryConnection();
 
 		TupleQuery query;
 		try {
@@ -99,6 +99,8 @@ public class CustomNcboMappingStatsDAO extends AbstractNcboMappingDAO {
 			e.printStackTrace();
 		} catch (QueryEvaluationException e) {
 			e.printStackTrace();
+		} finally {
+			cleanup(con);
 		}
 
 		// Create a filter
@@ -117,7 +119,7 @@ public class CustomNcboMappingStatsDAO extends AbstractNcboMappingDAO {
 
 	/**
 	 * Returns the total number of mappings in the triplestore.
-	 * 
+	 *
 	 * @return
 	 */
 	public Integer getTotalMappingsCount() {
@@ -145,6 +147,8 @@ public class CustomNcboMappingStatsDAO extends AbstractNcboMappingDAO {
 			e.printStackTrace();
 		} catch (QueryEvaluationException e) {
 			e.printStackTrace();
+		} finally {
+			cleanup(con);
 		}
 
 		return totalMappingsCount;
@@ -153,7 +157,7 @@ public class CustomNcboMappingStatsDAO extends AbstractNcboMappingDAO {
 	/**
 	 * Returns an object with virtual ids and their source/target mapping
 	 * counts.
-	 * 
+	 *
 	 * @return
 	 */
 	public List<MappingOntologyStatsBean> getOntologiesMappingCount() {
@@ -171,6 +175,8 @@ public class CustomNcboMappingStatsDAO extends AbstractNcboMappingDAO {
 			e.printStackTrace();
 		} catch (RepositoryException e) {
 			e.printStackTrace();
+		} finally {
+			cleanup(con);
 		}
 
 		return getOntologyCountList(con, sourceQuery, targetQuery);
@@ -179,18 +185,18 @@ public class CustomNcboMappingStatsDAO extends AbstractNcboMappingDAO {
 	/**
 	 * Returns an object with virtual ids and their source/target mapping counts
 	 * that correspond to a particular ontology.
-	 * 
+	 *
 	 * @return
 	 */
 	public List<MappingOntologyStatsBean> getOntologyMappingCount(
 			Integer ontologyId) {
-		RepositoryConnection con = getRdfStoreManager()
-				.getRepositoryConnection();
-
 		String sourceMappingsQuery = sourceMappings.replaceAll("%ONT%",
 				ontologyId.toString());
 		String targetMappingsQuery = targetMappings.replaceAll("%ONT%",
 				ontologyId.toString());
+
+		RepositoryConnection con = getRdfStoreManager()
+				.getRepositoryConnection();
 
 		TupleQuery sourceQuery = null;
 		TupleQuery targetQuery = null;
@@ -204,6 +210,8 @@ public class CustomNcboMappingStatsDAO extends AbstractNcboMappingDAO {
 			e.printStackTrace();
 		} catch (RepositoryException e) {
 			e.printStackTrace();
+		} finally {
+			cleanup(con);
 		}
 
 		return getOntologyCountList(con, sourceQuery, targetQuery);
@@ -211,13 +219,13 @@ public class CustomNcboMappingStatsDAO extends AbstractNcboMappingDAO {
 
 	public List<MappingConceptStatsBean> getOntologyConceptsCount(
 			Integer ontologyId, Integer limit) {
-		RepositoryConnection con = getRdfStoreManager()
-				.getRepositoryConnection();
-
 		List<MappingConceptStatsBean> concepts = new ArrayList<MappingConceptStatsBean>();
 
 		String sourceMappingsQuery = conceptCount.replaceAll("%ONT%",
 				ontologyId.toString()).replaceAll("%LIMIT%", limit.toString());
+
+		RepositoryConnection con = getRdfStoreManager()
+				.getRepositoryConnection();
 
 		TupleQuery query = null;
 		try {
@@ -245,19 +253,21 @@ public class CustomNcboMappingStatsDAO extends AbstractNcboMappingDAO {
 			e.printStackTrace();
 		} catch (QueryEvaluationException e) {
 			e.printStackTrace();
+		} finally {
+			cleanup(con);
 		}
 
 		return concepts;
 	}
 
 	public List<MappingUserStatsBean> getOntologyUserCount(Integer ontologyId) {
-		RepositoryConnection con = getRdfStoreManager()
-				.getRepositoryConnection();
-
 		List<MappingUserStatsBean> users = new ArrayList<MappingUserStatsBean>();
 
 		String userCountQuery = userCount.replaceAll("%ONT%", ontologyId
 				.toString());
+
+		RepositoryConnection con = getRdfStoreManager()
+				.getRepositoryConnection();
 
 		TupleQuery query = null;
 		try {

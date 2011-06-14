@@ -3,7 +3,6 @@ package org.ncbo.stanford.sparql.dao.mapping;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.GregorianCalendar;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.TimeZone;
@@ -143,9 +142,6 @@ public class AbstractNcboMappingDAO {
 			offset = 0;
 		}
 
-		RepositoryConnection con = getRdfStoreManager()
-				.getRepositoryConnection();
-
 		// Combine filters
 		String combinedFilters = "";
 		if (filter != null) {
@@ -172,13 +168,16 @@ public class AbstractNcboMappingDAO {
 			queryString = queryString.replaceAll("FILTER \\(\\) ", "");
 		}
 
+		RepositoryConnection con = getRdfStoreManager()
+				.getRepositoryConnection();
+
 		try {
 			TupleQuery query = con.prepareTupleQuery(QueryLanguage.SPARQL,
 					queryString, ApplicationConstants.MAPPING_CONTEXT);
 
 			TupleQueryResult result = query.evaluate();
 
-			HashMap<String, Mapping> mappingResults = new HashMap<String, Mapping>();
+			List<Mapping> mappingResults = new ArrayList<Mapping>();
 
 			while (result.hasNext()) {
 				BindingSet bs = result.next();
@@ -275,18 +274,20 @@ public class AbstractNcboMappingDAO {
 					}
 				}
 
-				mappingResults.put(mapping.getId().toString(), mapping);
+				mappingResults.add(mapping);
 			}
 
 			result.close();
 
-			return new ArrayList<Mapping>(mappingResults.values());
+			return mappingResults;
 		} catch (RepositoryException e) {
 			e.printStackTrace();
 		} catch (QueryEvaluationException e) {
 			e.printStackTrace();
 		} catch (MalformedQueryException e) {
 			e.printStackTrace();
+		} finally {
+			cleanup(con);
 		}
 
 		return null;
@@ -305,9 +306,6 @@ public class AbstractNcboMappingDAO {
 	 */
 	protected Integer getCount(String filter, SPARQLFilterGenerator parameters)
 			throws InvalidInputException {
-		RepositoryConnection con = getRdfStoreManager()
-				.getRepositoryConnection();
-
 		// Combine filters
 		String combinedFilters = "";
 		if (filter != null) {
@@ -320,13 +318,17 @@ public class AbstractNcboMappingDAO {
 		String queryString = mappingCountQuery.replaceAll("%FILTER%",
 				combinedFilters);
 
+		RepositoryConnection con = getRdfStoreManager()
+				.getRepositoryConnection();
+
+		Integer count = null;
 		try {
 			TupleQuery query = con.prepareTupleQuery(QueryLanguage.SPARQL,
 					queryString, ApplicationConstants.MAPPING_CONTEXT);
 			TupleQueryResult result = query.evaluate();
 			while (result.hasNext()) {
 				BindingSet bs = result.next();
-				return convertValueToInteger(bs.getValue("mappingCount"));
+				count = convertValueToInteger(bs.getValue("mappingCount"));
 			}
 		} catch (MalformedQueryException e) {
 			e.printStackTrace();
@@ -334,9 +336,11 @@ public class AbstractNcboMappingDAO {
 			e.printStackTrace();
 		} catch (QueryEvaluationException e) {
 			e.printStackTrace();
+		} finally {
+			cleanup(con);
 		}
 
-		return null;
+		return count;
 	}
 
 	/*******************************************************************
@@ -657,6 +661,19 @@ public class AbstractNcboMappingDAO {
 
 	protected boolean isValidValue(Value value) {
 		return value != null && !value.stringValue().isEmpty();
+	}
+
+	/**
+	 * Cleanup repositories after use.
+	 *
+	 * @param con
+	 */
+	protected void cleanup(RepositoryConnection con) {
+		try {
+			con.close();
+		} catch (RepositoryException e) {
+			e.printStackTrace();
+		}
 	}
 
 	/*******************************************************************
