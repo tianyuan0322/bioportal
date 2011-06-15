@@ -1,8 +1,5 @@
 package org.ncbo.stanford.util.security.filter;
 
-import java.net.InetAddress;
-import java.net.UnknownHostException;
-
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.logging.Log;
@@ -20,20 +17,17 @@ import org.ncbo.stanford.view.util.constants.RequestParamConstants;
 import org.restlet.Context;
 import org.restlet.Request;
 import org.restlet.Response;
-import org.restlet.data.Reference;
 import org.restlet.data.Status;
 import org.springframework.util.Assert;
 import org.springframework.web.context.WebApplicationContext;
 
 public class AuthenticationFilter extends AbstractAuthFilter {
+	@SuppressWarnings("unused")
 	private static final Log log = LogFactory
 			.getLog(AuthenticationFilter.class);
 
 	private AuthenticationService authenticationService;
 	private SessionService sessionService;
-
-	// TODO: to be removed later (see a note below in authenticateUser())
-	public static String TEMP_ADMIN_APIKEY = "fcc74490-5a25-11e0-9a6e-005056aa215e";
 
 	public AuthenticationFilter(Context context,
 			WebApplicationContext springAppContext) {
@@ -81,33 +75,6 @@ public class AuthenticationFilter extends AbstractAuthFilter {
 				appApiKey = apiKey;
 				apiKey = userApiKey;
 			}
-		} else {
-			// TODO: @@@@@ mdorf: This "else" block is temporary to allow users
-			// to adjust to the new security structure. It forces users with API
-			// keys to go through the new authentication/authorization process,
-			// while users without API keys to be allowed access. Once this
-			// block is removed, no API-less access will be allowed.
-			String ip = null;
-			String hostname = null;
-
-			try {
-				InetAddress addr = InetAddress.getLocalHost();
-				ip = addr.getHostAddress();
-				hostname = addr.getCanonicalHostName();
-			} catch (UnknownHostException e) {
-				ip = httpRequest.getRemoteAddr();
-				hostname = httpRequest.getRemoteHost();
-			}
-
-			Reference referrer = request.getReferrerRef();
-
-			log.info("A user identified by IP: " + ip + ", Hostname: "
-					+ hostname
-					+ ((referrer != null) ? ", and Referrer: " + referrer : "")
-					+ ", Accessed Resource: \"" + request.getResourceRef()
-					+ "\" attempted access with an empty API Key.");
-
-			apiKey = TEMP_ADMIN_APIKEY;
 		}
 
 		String apiKeyMsg = "Please visit " + MessageUtils.getMessage("ui.url")

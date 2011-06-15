@@ -11,7 +11,6 @@ import org.ncbo.stanford.service.session.SessionService;
 import org.ncbo.stanford.util.RequestUtils;
 import org.ncbo.stanford.util.helper.StringHelper;
 import org.ncbo.stanford.util.security.authentication.AuthenticationService;
-import org.ncbo.stanford.util.security.filter.AuthenticationFilter;
 import org.ncbo.stanford.view.rest.restlet.AbstractBaseRestlet;
 import org.ncbo.stanford.view.util.constants.RequestParamConstants;
 import org.restlet.Request;
@@ -61,19 +60,9 @@ public final class AuthenticationRestlet extends AbstractBaseRestlet {
 			String appApiKey = RequestUtils.getRequestParameter(
 					httpServletRequest, RequestParamConstants.PARAM_APIKEY);
 
-			// TODO: @@@@@ mdorf: This block is temporary to allow users
-			// to adjust to the new security structure. It forces users with API
-			// keys to go through the new authentication/authorization process,
-			// while users without API keys to be allowed access. Once this
-			// block is removed, no API-less access will be allowed.
-			if (StringHelper.isNullOrNullString(appApiKey)) {
-				appApiKey = AuthenticationFilter.TEMP_ADMIN_APIKEY;
-				userApiKey = appApiKey;
-			} else {
-				userApiKey = RequestUtils.getRequestParameter(
-						httpServletRequest,
-						RequestParamConstants.PARAM_USER_APIKEY);
-			}
+			userApiKey = RequestUtils.getRequestParameter(
+					httpServletRequest,
+					RequestParamConstants.PARAM_USER_APIKEY);
 
 			// This has already gone through the AuthenticationFilter
 			// The code assumes that a valid session must exist for this API Key
@@ -82,10 +71,6 @@ public final class AuthenticationRestlet extends AbstractBaseRestlet {
 				throw new AuthenticationException(
 						"This application did not pass proper credentials to authenticate users.");
 			}
-
-			// TODO: @@@@@ mdorf: uncomment this call once the above temporary
-			// block is removed
-			// userApiKey = obtainUserApiKey(httpServletRequest);
 
 			// When a user API key is supplied, the assumption is that if the
 			// request has made it this far, it has already been successfully
