@@ -2,11 +2,13 @@ package org.ncbo.stanford.util.sparql;
 
 import java.lang.reflect.Field;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
 import org.ncbo.stanford.enumeration.MappingSourceEnum;
+import org.ncbo.stanford.sparql.bean.AbstractSPARQLBean;
 import org.ncbo.stanford.util.constants.ApplicationConstants;
 import org.openrdf.model.URI;
 
@@ -134,6 +136,45 @@ public class SPARQLFilterGenerator {
 		}
 
 		return true;
+	}
+
+	/**
+	 * This method generates triple patterns in the SPARQL syntax. It is used to
+	 * generate triples for parameters that have been provided for a particular
+	 * call.
+	 *
+	 * @param idVariableName
+	 * @param SPARQLBean
+	 * @return
+	 */
+	public List<String> generateTriplePatterns(String idVariableName,
+			AbstractSPARQLBean SPARQLBean) {
+		Field[] fields = this.getClass().getDeclaredFields();
+
+		List<String> triples = new ArrayList<String>();
+
+		for (Field field : fields) {
+			try {
+				if (field.get(this) != null
+						&& field.get(this).toString().length() > 0) {
+					String type = SPARQLBean.parameterMapping.get(field
+							.getName()).URI;
+					String variableName = SPARQLBean.parameterMapping.get(field
+							.getName()).variableName;
+
+					String triple = "?" + idVariableName + " <" + type + ">"
+							+ " ?" + variableName;
+
+					triples.add(triple);
+				}
+			} catch (IllegalArgumentException e) {
+				// Do nothing
+			} catch (IllegalAccessException e) {
+				// Do nothing
+			}
+		}
+
+		return triples;
 	}
 
 	/**

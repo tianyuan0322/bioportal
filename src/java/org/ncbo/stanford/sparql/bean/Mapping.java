@@ -1,7 +1,9 @@
 package org.ncbo.stanford.sparql.bean;
 
+import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 
 import org.ncbo.stanford.annotation.IRI;
@@ -11,10 +13,58 @@ import org.openrdf.model.URI;
 public class Mapping extends AbstractSPARQLBean {
 
 	private static final long serialVersionUID = 5668752344409465584L;
-	
+
 	private static final String PREFIX = ApplicationConstants.MAPPING_PREFIX;
 	private static final String ID_PREFIX = ApplicationConstants.MAPPING_ID_PREFIX;
 	private static final String RDF_TYPE = PREFIX + "One_To_One_Mapping";
+
+	/**
+	 * This Map can be used to tie a parameter to a URI and variable name when generating triples.
+	 */
+	public static HashMap<String, ParameterMap> parameterMapping = new HashMap<String, ParameterMap>();
+	static {
+		Field[] fields = Mapping.class.getDeclaredFields();
+
+		HashMap<String, Field> fieldMap = new HashMap<String, Field>();
+		for (Field field : fields) {
+			fieldMap.put(field.getName(), field);
+		}
+
+		ParameterMap submittedBy = new ParameterMap();
+		submittedBy.URI = fieldMap.get("submittedBy").getAnnotation(IRI.class)
+				.value();
+		submittedBy.variableName = "submittedBy";
+		parameterMapping.put("submittedBy", submittedBy);
+
+		ParameterMap mappingType = new ParameterMap();
+		submittedBy.URI = fieldMap.get("mappingType").getAnnotation(IRI.class)
+				.value();
+		submittedBy.variableName = "mappingType";
+		parameterMapping.put("mappingType", mappingType);
+
+		ParameterMap startDate = new ParameterMap();
+		submittedBy.URI = fieldMap.get("date").getAnnotation(IRI.class)
+				.value();
+		submittedBy.variableName = "date";
+		parameterMapping.put("startDate", startDate);
+
+		ParameterMap endDate = new ParameterMap();
+		submittedBy.URI = fieldMap.get("date").getAnnotation(IRI.class).value();
+		submittedBy.variableName = "date";
+		parameterMapping.put("endDate", endDate);
+
+		ParameterMap relationshipTypes = new ParameterMap();
+		submittedBy.URI = fieldMap.get("relation").getAnnotation(IRI.class)
+				.value();
+		submittedBy.variableName = "relation";
+		parameterMapping.put("relationshipTypes", relationshipTypes);
+
+		ParameterMap mappingSources = new ParameterMap();
+		submittedBy.URI = fieldMap.get("mappingSource")
+				.getAnnotation(IRI.class).value();
+		submittedBy.variableName = "mappingSource";
+		parameterMapping.put("mappingSources", mappingSources);
+	};
 
 	@IRI(PREFIX + "id")
 	protected URI id;
@@ -34,12 +84,10 @@ public class Mapping extends AbstractSPARQLBean {
 	@IRI(PREFIX + "target_ontology_id")
 	protected Integer targetOntologyId;
 
-	@IRI(PREFIX
-			+ "created_in_source_ontology_version")
+	@IRI(PREFIX + "created_in_source_ontology_version")
 	protected Integer createdInSourceOntologyVersion;
 
-	@IRI(PREFIX
-			+ "created_in_target_ontology_version")
+	@IRI(PREFIX + "created_in_target_ontology_version")
 	protected Integer createdInTargetOntologyVersion;
 
 	@IRI(PREFIX + "date")
@@ -245,7 +293,7 @@ public class Mapping extends AbstractSPARQLBean {
 	}
 
 	/**
-	 * 
+	 *
 	 * @param source
 	 *            the source to add
 	 */
@@ -269,7 +317,7 @@ public class Mapping extends AbstractSPARQLBean {
 	}
 
 	/**
-	 * 
+	 *
 	 * @param target
 	 *            the target to add
 	 */
