@@ -16,6 +16,7 @@ import org.ncbo.stanford.enumeration.SearchRecordTypeEnum;
 import org.ncbo.stanford.manager.AbstractOntologyManagerProtege;
 import org.ncbo.stanford.manager.search.OntologySearchManager;
 import org.ncbo.stanford.util.helper.StringHelper;
+import org.ncbo.stanford.util.protege.RemoveOWLOntologiesUtil;
 import org.ncbo.stanford.wrapper.LuceneIndexWriterWrapper;
 
 import edu.stanford.smi.protege.model.Frame;
@@ -36,7 +37,6 @@ import edu.stanford.smi.protegex.owl.model.RDFResource;
 public class OntologySearchManagerProtegeImpl extends
 		AbstractOntologyManagerProtege implements OntologySearchManager {
 
-	@SuppressWarnings("unused")
 	private static final Log log = LogFactory
 			.getLog(OntologySearchManagerProtegeImpl.class);
 
@@ -53,6 +53,18 @@ public class OntologySearchManagerProtegeImpl extends
 		boolean owlMode = kb instanceof OWLModel;
 		Collection<Frame> frames = kb.getFrames();
 		SearchIndexBean doc = new SearchIndexBean();
+
+		if (owlMode) {
+			try {
+				RemoveOWLOntologiesUtil.removeOWLOntologies((OWLModel) kb,
+						frames);
+			} catch (Exception e) {
+				log
+						.error("RemoveOWLOntologiesUtil.removeOWLOntologies threw an exception: "
+								+ e.getMessage());
+				e.printStackTrace();
+			}
+		}
 
 		for (Frame frame : frames) {
 			// exclude anonymous and system frames from being indexed
@@ -194,7 +206,7 @@ public class OntologySearchManagerProtegeImpl extends
 			ProtegeSearchFrame protegeFrame, Slot preferredNameSlot,
 			boolean owlMode) throws IOException {
 		String preferredName = null;
-		Collection values = new ArrayList();
+		Collection<String> values = new ArrayList<String>();
 
 		// add a local name to the index -- critical in cases where the rdf:ID
 		// is the only name we have for a resource add a local name to the index
@@ -212,7 +224,7 @@ public class OntologySearchManagerProtegeImpl extends
 		if (frame instanceof RDFResource
 				&& preferredNameSlot.equals(kb.getNameSlot())
 				&& values.size() > 0) {
-			values = new ArrayList();
+			values = new ArrayList<String>();
 			values.add(((RDFResource) frame).getLocalName());
 		}
 
