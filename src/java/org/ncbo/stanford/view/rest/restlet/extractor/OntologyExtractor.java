@@ -50,11 +50,11 @@ public class OntologyExtractor {
 
 	private static int classesImported = 0;
 
-	int logCount; // default 100
-	private final int LOG_COUNT_DEFAULT = 1000;
+	int logCount; // default 10000
+	private final int LOG_COUNT_DEFAULT = 10000;
 
-	int saveCount; // default 100
-	private final int SAVE_COUNT_DEFAULT = 1000;
+	int saveCount; // default 10000
+	private final int SAVE_COUNT_DEFAULT = 10000;
 
 	private ConceptService conceptService;
 	private NcboProperties ncboProperties;
@@ -66,8 +66,8 @@ public class OntologyExtractor {
 		this.manager = manager;
 		this.ontologyServiceDescriptor = ontologyServiceDescriptor;
 		this.outputFile = output;
-		this.logCount = ncboProperties.getLogCount(LOG_COUNT_DEFAULT);
-		this.saveCount = ncboProperties.getSaveCount(SAVE_COUNT_DEFAULT);
+		this.logCount = LOG_COUNT_DEFAULT;
+		this.saveCount = SAVE_COUNT_DEFAULT;
 		this.ncboProperties = ncboProperties;
 	}
 
@@ -154,7 +154,7 @@ public class OntologyExtractor {
 		ClassBean conceptBean = c.getBean();
 
 		Set<Object> rels = conceptBean.getRelations().keySet();
-		
+
 		for (Iterator iterator = rels.iterator(); iterator.hasNext();) {
 			Object relObj = (Object) iterator.next();
 			if (relObj instanceof String) {
@@ -257,7 +257,6 @@ public class OntologyExtractor {
 				URISyntaxException {
 			this.name = name;
 			bean = getClassBeanFromBP();
-			delayForBioportal(ncboProperties.getBioportalDelay());
 			owlClass = makeClass(name);
 		}
 
@@ -295,22 +294,11 @@ public class OntologyExtractor {
 				if (cb == null) {
 					log.warn("Failed attempt #" + i + " to retrieve concept "
 							+ name + ". Retry.");
-					delayForBioportal(10000);
 				} else {
 					return cb;
 				}
 			}
 			return null;
-		}
-
-		private void delayForBioportal(long delay) {
-			if (delay != 0) {
-				try {
-					Thread.sleep(ncboProperties.getBioportalDelay());
-				} catch (InterruptedException e) {
-					log.error("Stop prodding me! I need my sleep!", e);
-				}
-			}
 		}
 	}
 

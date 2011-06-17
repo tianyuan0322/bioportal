@@ -8,7 +8,6 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.apache.log4j.Logger;
 import org.ncbo.stanford.exception.ConceptNotFoundException;
-import org.ncbo.stanford.exception.InvalidInputException;
 import org.ncbo.stanford.service.concept.ConceptService;
 import org.ncbo.stanford.util.MessageUtils;
 import org.ncbo.stanford.util.RequestUtils;
@@ -40,7 +39,6 @@ public class ViewExtractionRestlet extends AbstractBaseRestlet {
 	@Override
 	public void getRequest(Request request, Response response) {
 		viewExtractor(request, response);
-
 	}
 
 	public void viewExtractor(Request request, Response response) {
@@ -56,19 +54,11 @@ public class ViewExtractionRestlet extends AbstractBaseRestlet {
 			HttpServletRequest httpRequest = RequestUtils
 					.getHttpServletRequest(request);
 
-			String delay = httpRequest
-					.getParameter(RequestParamConstants.PARAM_DELAY);
 			String relations = httpRequest
 					.getParameter(RequestParamConstants.PARAM_FILTERRELATIONS);
 
 			String ontologyName = httpRequest
 					.getParameter(RequestParamConstants.PARAM_ONTOLOGYNAME);
-			String existingOntology = httpRequest
-					.getParameter(RequestParamConstants.PARAM_EXISTONTOLOGY);
-			String logCount = httpRequest
-					.getParameter(RequestParamConstants.PARAM_LOGCOUNT);
-			String saveCount = httpRequest
-					.getParameter(RequestParamConstants.PARAM_SAVECOUNT);
 
 			// Add default ignored relations
 			relations = (relations == null || relations.isEmpty()) ? IGNORED_RELATIONS
@@ -76,27 +66,8 @@ public class ViewExtractionRestlet extends AbstractBaseRestlet {
 
 			// set all request parameter to props obj
 			Properties properties = new Properties();
-			if (delay != null)
-				properties.setProperty("bioportal.delay.ms", delay);
-			if (relations != null)
-				properties.setProperty("bioportal.filter.relations", relations);
+			properties.setProperty("bioportal.filter.relations", relations);
 			properties.setProperty("target.ontology.name", ontologyName);
-			if (existingOntology != null)
-				properties.setProperty("target.append.existing.ontology",
-						existingOntology);
-			if (logCount != null)
-				properties.setProperty("log.count", logCount);
-			if (saveCount != null)
-				properties.setProperty("save.count", saveCount);
-
-			// Make sure saveCount is below appropriate limits
-			Integer checkCount = RequestUtils.parseIntegerParam(saveCount);
-			if (checkCount != null && checkCount > traversedConceptLimit) {
-				throw new InvalidInputException(MessageUtils.getMessage(
-						"msg.error.overConceptLimit").replaceAll(
-						"%CONCEPT_LIMIT%",
-						Integer.toString(traversedConceptLimit)));
-			}
 
 			ncboProperties = new NcboProperties();
 			ncboProperties.setProps(properties);
@@ -126,29 +97,23 @@ public class ViewExtractionRestlet extends AbstractBaseRestlet {
 
 			File output = new File(tempDir + File.separator + filename);
 
-			// synchronized (this) {
 			// save ontology into local system
 			manager.saveOntology(ontology, getIriFromUri(output.toURI()));
 
 			FileRepresentation fileRepresentation = new FileRepresentation(
 					output, MediaType.APPLICATION_ALL,
 					ApplicationConstants.TIMETOLIVE);
+
 			response.setEntity(fileRepresentation);
+
 			RequestUtils.getHttpServletResponse(response).setHeader(
 					"Content-Disposition",
 					"attachment; filename=\"" + filename + "\";");
-			// sleep
-			// Thread.sleep(ApplicationConstants.TIMETOLIVE * 1000);
-			// delete tmp files
-			deletetempDirs(filename);
-			// }
 
+			deletetempDirs(filename);
 		} catch (ConceptNotFoundException cnfe) {
 			response
 					.setStatus(Status.CLIENT_ERROR_NOT_FOUND, cnfe.getMessage());
-		} catch (InvalidInputException iie) {
-			response.setStatus(Status.CLIENT_ERROR_REQUEST_ENTITY_TOO_LARGE,
-					iie.getMessage());
 		} catch (Exception e) {
 			response.setStatus(Status.SERVER_ERROR_INTERNAL, e.getMessage());
 			e.printStackTrace();
