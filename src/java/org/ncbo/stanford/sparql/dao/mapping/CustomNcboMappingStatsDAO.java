@@ -166,11 +166,14 @@ public class CustomNcboMappingStatsDAO extends AbstractNcboMappingDAO {
 
 		TupleQuery sourceQuery = null;
 		TupleQuery targetQuery = null;
+		List<MappingOntologyStatsBean> statsBean = null;
 		try {
 			sourceQuery = con.prepareTupleQuery(QueryLanguage.SPARQL,
 					ontologySourceCount, ApplicationConstants.MAPPING_CONTEXT);
 			targetQuery = con.prepareTupleQuery(QueryLanguage.SPARQL,
 					ontologyTargetCount, ApplicationConstants.MAPPING_CONTEXT);
+
+			statsBean = getOntologyCountList(con, sourceQuery, targetQuery);
 		} catch (MalformedQueryException e) {
 			e.printStackTrace();
 		} catch (RepositoryException e) {
@@ -179,7 +182,7 @@ public class CustomNcboMappingStatsDAO extends AbstractNcboMappingDAO {
 			cleanup(con);
 		}
 
-		return getOntologyCountList(con, sourceQuery, targetQuery);
+		return statsBean;
 	}
 
 	/**
