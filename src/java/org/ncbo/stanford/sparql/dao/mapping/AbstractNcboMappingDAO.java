@@ -6,6 +6,7 @@ import java.util.GregorianCalendar;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.TimeZone;
 
 import org.apache.commons.lang.StringUtils;
@@ -59,8 +60,6 @@ public class AbstractNcboMappingDAO {
 			+ "?isManyToMany "
 			+ " {"
 			+ "  ?mappingId <http://protege.stanford.edu/ontologies/mappings/mappings.rdfs#relation> ?relation ."
-			+ "  { SELECT ?source { ?mappingId <http://protege.stanford.edu/ontologies/mappings/mappings.rdfs#source> ?source } LIMIT 1 }"
-			+ "  { SELECT ?target { ?mappingId <http://protege.stanford.edu/ontologies/mappings/mappings.rdfs#target> ?target } LIMIT 1 }"
 			+ "  ?mappingId <http://protege.stanford.edu/ontologies/mappings/mappings.rdfs#source_ontology_id> ?sourceOntologyId ."
 			+ "  ?mappingId <http://protege.stanford.edu/ontologies/mappings/mappings.rdfs#target_ontology_id> ?targetOntologyId ."
 			+ "  ?mappingId <http://protege.stanford.edu/ontologies/mappings/mappings.rdfs#created_in_source_ontology_version> ?createdInSourceOntologyVersion ."
@@ -80,29 +79,14 @@ public class AbstractNcboMappingDAO {
 
 	protected final static String mappingCountQuery = "SELECT DISTINCT "
 			+ "count(DISTINCT ?mappingId) as ?mappingCount WHERE {"
-			+ "  { SELECT ?source { ?mappingId <http://protege.stanford.edu/ontologies/mappings/mappings.rdfs#source> ?source } LIMIT 1 }"
-			+ "  { SELECT ?target { ?mappingId <http://protege.stanford.edu/ontologies/mappings/mappings.rdfs#target> ?target } LIMIT 1 }"
-			+ "  ?mappingId <http://protege.stanford.edu/ontologies/mappings/mappings.rdfs#relation> ?relation ."
 			+ "  ?mappingId <http://protege.stanford.edu/ontologies/mappings/mappings.rdfs#source_ontology_id> ?sourceOntologyId ."
 			+ "  ?mappingId <http://protege.stanford.edu/ontologies/mappings/mappings.rdfs#target_ontology_id> ?targetOntologyId ."
-			+ "  ?mappingId <http://protege.stanford.edu/ontologies/mappings/mappings.rdfs#created_in_source_ontology_version> ?createdInSourceOntologyVersion ."
-			+ "  ?mappingId <http://protege.stanford.edu/ontologies/mappings/mappings.rdfs#created_in_target_ontology_version> ?createdInTargetOntologyVersion ."
-			+ "  ?mappingId <http://protege.stanford.edu/ontologies/mappings/mappings.rdfs#date> ?date ."
-			+ "  ?mappingId <http://protege.stanford.edu/ontologies/mappings/mappings.rdfs#submitted_by> ?submittedBy ."
-			+ "  ?mappingId <http://protege.stanford.edu/ontologies/mappings/mappings.rdfs#mapping_type> ?mappingType ."
-			+ "  OPTIONAL { ?mappingId <http://protege.stanford.edu/ontologies/mappings/mappings.rdfs#comment> ?comment . }"
-			+ "  OPTIONAL { ?mappingId <http://protege.stanford.edu/ontologies/mappings/mappings.rdfs#dependency> ?dependency .}"
-			+ "  OPTIONAL { ?mappingId <http://protege.stanford.edu/ontologies/mappings/mappings.rdfs#mapping_source> ?mappingSource .}"
-			+ "  OPTIONAL { ?mappingId <http://protege.stanford.edu/ontologies/mappings/mappings.rdfs#mapping_source_name> ?mappingSourceName .}"
-			+ "  OPTIONAL { ?mappingId <http://protege.stanford.edu/ontologies/mappings/mappings.rdfs#mapping_source_contact_info> ?mappingSourceContactInfo .}"
-			+ "  OPTIONAL { ?mappingId <http://protege.stanford.edu/ontologies/mappings/mappings.rdfs#mapping_source_site> ?mappingSourceSite .}"
-			+ "  OPTIONAL { ?mappingId <http://protege.stanford.edu/ontologies/mappings/mappings.rdfs#mapping_source_algorithm> ?mappingSourceAlgorithm .}"
-			+ "  FILTER (%FILTER%) }";
+			+ " %TRIPLES_FOR_PARAMS% " + "  FILTER (%FILTER%) }";
 
-	protected final static String sourcesAndTargetsForMappingIds = "SELECT DISTINCT ?source ?target {"
+	protected final static String sourcesAndTargetsForMappingIds = "SELECT DISTINCT ?mappingId ?source ?target {"
 			+ "  ?mappingId <http://protege.stanford.edu/ontologies/mappings/mappings.rdfs#source> ?source ."
 			+ "  ?mappingId <http://protege.stanford.edu/ontologies/mappings/mappings.rdfs#target> ?target ."
-			+ "  FILTER ( ?mappingId = <%MAPPING_ID%> ) }";
+			+ "  FILTER ( ?mappingId IN (%MAPPING_IDS%) ) }";
 
 	/*******************************************************************
 	 *
@@ -143,9 +127,6 @@ public class AbstractNcboMappingDAO {
 			offset = 0;
 		}
 
-		RepositoryConnection con = getRdfStoreManager()
-				.getRepositoryConnection();
-
 		// Combine filters
 		String combinedFilters = "";
 		if (filter != null) {
@@ -171,6 +152,9 @@ public class AbstractNcboMappingDAO {
 		if (filter == null || filter.isEmpty()) {
 			queryString = queryString.replaceAll("FILTER \\(\\) ", "");
 		}
+
+		RepositoryConnection con = getRdfStoreManager()
+				.getRepositoryConnection();
 
 		try {
 			TupleQuery query = con.prepareTupleQuery(QueryLanguage.SPARQL,
@@ -245,37 +229,46 @@ public class AbstractNcboMappingDAO {
 					mapping.setMappingSourceSite(new URIImpl(bs.getValue(
 							"mappingSourceSite").stringValue()));
 
-				// Lookup additional source/target mappings if necessary
-				if (isValidValue(bs.getValue("isManyToMany"))) {
-					String getSourcesAndTargets = sourcesAndTargetsForMappingIds
-							.replaceAll("%MAPPING_ID%", mappingId);
+				mappingResults.put(mapping.getId().toString(), mapping);
+			}
 
-					TupleQuery getSourcesAndTargetsQuery = con
-							.prepareTupleQuery(QueryLanguage.SPARQL,
-									getSourcesAndTargets,
-									ApplicationConstants.MAPPING_CONTEXT);
-					TupleQueryResult getSourcesAndTargetsResult = getSourcesAndTargetsQuery
-							.evaluate();
+			if (!mappingResults.isEmpty()) {
+				// This query will get all sources and targets for the mapping
+				// that were generated above
+				Set<String> mappingIds = mappingResults.keySet();
 
-					while (getSourcesAndTargetsResult.hasNext()) {
-						BindingSet bs2 = getSourcesAndTargetsResult.next();
-
-						URI source = new URIImpl(bs2.getValue("source")
-								.stringValue());
-						URI target = new URIImpl(bs2.getValue("target")
-								.stringValue());
-
-						if (!mapping.getSource().contains(source)) {
-							mapping.addSource(source);
-						}
-
-						if (!mapping.getTarget().contains(target)) {
-							mapping.addTarget(target);
-						}
-					}
+				List<String> mappingIdsSparql = new ArrayList<String>();
+				for (String mappingId : mappingIds) {
+					mappingIdsSparql.add("<" + mappingId + ">");
 				}
 
-				mappingResults.put(mapping.getId().toString(), mapping);
+				String queryString1 = sourcesAndTargetsForMappingIds
+						.replaceAll("%MAPPING_IDS%", StringUtils.join(
+								mappingIdsSparql, ", "));
+
+				TupleQuery query1 = con.prepareTupleQuery(QueryLanguage.SPARQL,
+						queryString1, ApplicationConstants.MAPPING_CONTEXT);
+				TupleQueryResult result1 = query1.evaluate();
+
+				while (result1.hasNext()) {
+					BindingSet bs1 = result1.next();
+
+					String mappingId = bs1.getValue("mappingId").stringValue();
+					URI sourceURI = new URIImpl(bs1.getValue("source")
+							.stringValue());
+					URI targetURI = new URIImpl(bs1.getValue("target")
+							.stringValue());
+
+					Mapping updatedMapping = mappingResults.get(mappingId);
+
+					if (!updatedMapping.getSource().contains(sourceURI))
+						updatedMapping.addSource(sourceURI);
+
+					if (!updatedMapping.getTarget().contains(targetURI))
+						updatedMapping.addTarget(targetURI);
+
+					mappingResults.put(mappingId, updatedMapping);
+				}
 			}
 
 			result.close();
@@ -287,6 +280,8 @@ public class AbstractNcboMappingDAO {
 			e.printStackTrace();
 		} catch (MalformedQueryException e) {
 			e.printStackTrace();
+		} finally {
+			cleanup(con);
 		}
 
 		return null;
@@ -305,9 +300,6 @@ public class AbstractNcboMappingDAO {
 	 */
 	protected Integer getCount(String filter, SPARQLFilterGenerator parameters)
 			throws InvalidInputException {
-		RepositoryConnection con = getRdfStoreManager()
-				.getRepositoryConnection();
-
 		// Combine filters
 		String combinedFilters = "";
 		if (filter != null) {
@@ -320,13 +312,28 @@ public class AbstractNcboMappingDAO {
 		String queryString = mappingCountQuery.replaceAll("%FILTER%",
 				combinedFilters);
 
+		// Replace triples placeholder with triples pattern generated from the
+		// user-provided parameters
+		if (parameters != null && !parameters.isEmpty()) {
+			List<String> triples = parameters.generateTriplePatterns(
+					"mappingId", new Mapping());
+			queryString = queryString.replaceAll("%TRIPLES_FOR_PARAMS%",
+					StringUtils.join(triples, " . "));
+		} else {
+			queryString = queryString.replaceAll("%TRIPLES_FOR_PARAMS%", "");
+		}
+
+		RepositoryConnection con = getRdfStoreManager()
+				.getRepositoryConnection();
+
+		Integer count = null;
 		try {
 			TupleQuery query = con.prepareTupleQuery(QueryLanguage.SPARQL,
 					queryString, ApplicationConstants.MAPPING_CONTEXT);
 			TupleQueryResult result = query.evaluate();
 			while (result.hasNext()) {
 				BindingSet bs = result.next();
-				return convertValueToInteger(bs.getValue("mappingCount"));
+				count = convertValueToInteger(bs.getValue("mappingCount"));
 			}
 		} catch (MalformedQueryException e) {
 			e.printStackTrace();
@@ -334,9 +341,11 @@ public class AbstractNcboMappingDAO {
 			e.printStackTrace();
 		} catch (QueryEvaluationException e) {
 			e.printStackTrace();
+		} finally {
+			cleanup(con);
 		}
 
-		return null;
+		return count;
 	}
 
 	/*******************************************************************
@@ -657,6 +666,19 @@ public class AbstractNcboMappingDAO {
 
 	protected boolean isValidValue(Value value) {
 		return value != null && !value.stringValue().isEmpty();
+	}
+
+	/**
+	 * Cleanup repositories after use.
+	 *
+	 * @param con
+	 */
+	protected void cleanup(RepositoryConnection con) {
+		try {
+			con.close();
+		} catch (RepositoryException e) {
+			e.printStackTrace();
+		}
 	}
 
 	/*******************************************************************

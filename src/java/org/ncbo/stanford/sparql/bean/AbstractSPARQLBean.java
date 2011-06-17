@@ -5,6 +5,7 @@ import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.GregorianCalendar;
+import java.util.HashMap;
 import java.util.List;
 import java.util.UUID;
 
@@ -32,6 +33,16 @@ public abstract class AbstractSPARQLBean implements Serializable {
 	protected URI type = ApplicationConstants.DEFAULT_RDF_TYPE;
 
 	/**
+	 * Parameter mappings
+	 */
+	public static class ParameterMap {
+		public String variableName;
+		public String URI;
+		public ParameterMap() {};
+	}
+	public HashMap<String, ParameterMap> parameterMapping = new HashMap<String, ParameterMap>();
+
+	/**
 	 * Default no-arg constructor.
 	 */
 	public AbstractSPARQLBean() {
@@ -40,7 +51,7 @@ public abstract class AbstractSPARQLBean implements Serializable {
 
 	/**
 	 * Constructor with a provided id prefix and/or type.
-	 * 
+	 *
 	 * @param id
 	 */
 	public AbstractSPARQLBean(String prefix, String type) {
@@ -74,7 +85,7 @@ public abstract class AbstractSPARQLBean implements Serializable {
 	/**
 	 * Generate a list of Statements representing this object. Also check for
 	 * supers that have IRI annotations, which we assume to be SPARQL Beans.
-	 * 
+	 *
 	 * @return
 	 */
 	private static ArrayList<Statement> toStatements(Object object,

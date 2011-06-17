@@ -68,11 +68,12 @@ public class CustomNcboMappingDAO extends AbstractNcboMappingDAO {
 
 	public Mapping createMapping(Mapping newMapping)
 			throws MappingExistsException {
-		RepositoryConnection con = getRdfStoreManager()
-				.getRepositoryConnection();
 		ValueFactory vf = getRdfStoreManager().getValueFactory();
 
 		ArrayList<Statement> statements = newMapping.toStatements(vf);
+
+		RepositoryConnection con = getRdfStoreManager()
+				.getRepositoryConnection();
 
 		for (Statement statement : statements) {
 			try {
@@ -103,6 +104,8 @@ public class CustomNcboMappingDAO extends AbstractNcboMappingDAO {
 			mapping = getMapping(newMapping.getId());
 		} catch (MappingMissingException e) {
 			e.printStackTrace();
+		} finally {
+			cleanup(con);
 		}
 
 		return mapping;
@@ -128,6 +131,8 @@ public class CustomNcboMappingDAO extends AbstractNcboMappingDAO {
 			}
 		} catch (InvalidInputException e) {
 			e.printStackTrace();
+		} finally {
+			cleanup(con);
 		}
 
 		return mapping;
@@ -159,6 +164,8 @@ public class CustomNcboMappingDAO extends AbstractNcboMappingDAO {
 
 		updatedMapping = updateMapping(id, updatedMapping);
 
+		cleanup(con);
+
 		return updatedMapping;
 	}
 
@@ -179,6 +186,8 @@ public class CustomNcboMappingDAO extends AbstractNcboMappingDAO {
 			return updatedMapping;
 		} catch (MappingExistsException e) {
 			e.printStackTrace();
+		} finally {
+			cleanup(con);
 		}
 
 		return null;
@@ -232,6 +241,8 @@ public class CustomNcboMappingDAO extends AbstractNcboMappingDAO {
 		} finally {
 			try {
 				deleteFromTripleStore(con, id);
+
+				cleanup(con);
 			} catch (RepositoryException e) {
 				e.printStackTrace();
 			}
@@ -241,12 +252,15 @@ public class CustomNcboMappingDAO extends AbstractNcboMappingDAO {
 	public void deleteMappingForUpdate(URI id) throws MappingMissingException {
 		RepositoryConnection con = getRdfStoreManager()
 				.getRepositoryConnection();
+
 		if (!hasMapping(id, con)) {
 			throw new MappingMissingException();
 		}
 
 		try {
 			deleteFromTripleStore(con, id);
+
+			cleanup(con);
 		} catch (RepositoryException e) {
 			e.printStackTrace();
 		}

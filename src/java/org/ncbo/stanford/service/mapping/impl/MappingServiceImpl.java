@@ -286,23 +286,23 @@ public class MappingServiceImpl implements MappingService {
 
 		return mappings;
 	}
-	
+
 	public Integer getTotalMappingsCount() {
 		return mappingStatsDAO.getTotalMappingsCount();
 	}
-	
+
 	public List<MappingOntologyStatsBean> getOntologiesMappingCount() {
 		return mappingStatsDAO.getOntologiesMappingCount();
 	}
-	
+
 	public List<MappingOntologyStatsBean> getOntologyMappingCount(Integer ontologyId) {
 		return mappingStatsDAO.getOntologyMappingCount(ontologyId);
 	}
-	
+
 	public List<MappingConceptStatsBean> getOntologyConceptsCount(Integer ontologyId, Integer limit) {
 		return mappingStatsDAO.getOntologyConceptsCount(ontologyId, limit);
 	}
-	
+
 	public List<MappingUserStatsBean> getOntologyUserCount(Integer ontologyId) {
 		return mappingStatsDAO.getOntologyUserCount(ontologyId);
 	}
@@ -348,7 +348,7 @@ public class MappingServiceImpl implements MappingService {
 		mb.setSubmittedBy(mapping.getSubmittedBy());
 		mb.setTarget(mapping.getTarget());
 		mb.setTargetOntologyId(mapping.getTargetOntologyId());
-		
+
 		return mb;
 	}
 
