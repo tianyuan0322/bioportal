@@ -31,21 +31,7 @@ public class ErrorStatusBean extends AbstractResponseBean {
 		this.errorCode = status.getCode();
 		setShortMessage(status.getName());
 		setLongMessage(status.getDescription());
-
-	}
-
-	/**
-	 * Instantiate using an exception object
-	 * 
-	 * @param e -
-	 *            exception object
-	 */
-	public ErrorStatusBean(Exception e) {
-		super();
-
-		this.errorCode = status.getCode();
-		setShortMessage(e.getLocalizedMessage());
-		setLongMessage(e.getMessage());
+		setStatus(status);
 	}
 
 	@Override
@@ -74,4 +60,13 @@ public class ErrorStatusBean extends AbstractResponseBean {
 		this.errorCode = errorCode;
 	}
 
+	public String toString() {		
+		return "{accessedResource: " + this.getAccessedResource()
+			+ ", accessedDate: " + this.getAccessDate()
+			+ ", shortMessage: " + this.getShortMessage() 
+			+ ", longMessage: " + this.getLongMessage() 
+			+ ", errorCode: " + this.getErrorCode() 
+			+ ", status: " + this.getStatus() 
+			+ "}";
+	}
 }

@@ -4,6 +4,9 @@ bioportal.environment=dev
 # App name
 app.name=${ant.project.name}
 
+# bioportal core API key
+bioportal.apikey=api key for bioportal core application
+
 # Web directory
 web.dir=WebRoot
 

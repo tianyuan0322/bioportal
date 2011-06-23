@@ -120,7 +120,7 @@ public class AuthenticationFilter extends AbstractAuthFilter {
 			response.setStatus(Status.CLIENT_ERROR_FORBIDDEN, error
 					.getErrorMessage());
 			xmlSerializationService
-					.generateXMLResponse(request, response, null);
+					.generateStatusXMLResponse(request, response);
 		} else {
 			request.getAttributes().put(ApplicationConstants.USER_SESSION_NAME,
 					session);

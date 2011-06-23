@@ -564,6 +564,9 @@
 		<property name="xmlSerializationService">
 			<ref bean="xmlSerializationService" />
 		</property>
+		<property name="bioportalCoreApiKey">
+			<ref bean="bioportalCoreApiKey" />
+		</property>
 	</bean>
 
 	<bean id="ontologyMetadataManager"
@@ -1807,6 +1810,12 @@
 	<bean id="allConceptsMaxPageSize" class="java.lang.Integer">
 		<constructor-arg>
 			<value>@bioportalallconceptsmaxpagesize@</value>
+		</constructor-arg>
+	</bean>
+
+	<bean id="bioportalCoreApiKey" class="java.lang.String">
+		<constructor-arg>
+			<value>@bioportalapikey@</value>
 		</constructor-arg>
 	</bean>
 

@@ -484,9 +484,6 @@ public class XMLSerializationServiceImpl implements XMLSerializationService {
 				MessageUtils.getMessage("entity.subscriptionsbean"),
 				SubscriptionsBean.class);
 
-		xmlSerializer.omitField(UserBean.class, "password");
-		xmlSerializer.omitField(UserBean.class, "apiKey");
-
 		xmlSerializer.alias(MessageUtils.getMessage("entity.classbean"),
 				ClassBean.class);
 		xmlSerializer.alias(MessageUtils.getMessage("entity.categorybean"),
@@ -534,6 +531,10 @@ public class XMLSerializationServiceImpl implements XMLSerializationService {
 		String aclAlias = MessageUtils.getMessage("entity.acl");
 		xmlSerializer.alias(aclAlias, OntologyAcl.class);
 		xmlSerializer.alias(aclAlias, UserAcl.class);
+
+		xmlSerializer.omitField(UserBean.class, "password");
+		xmlSerializer.omitField(UserBean.class, "apiKey");
+		xmlSerializer.omitField(ErrorStatusBean.class, "status");
 
 		// Mapping aliases using annotations
 		xmlSerializer.processAnnotations(MappingBean.class);

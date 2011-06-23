@@ -36,13 +36,14 @@ public class OBSManagerImpl implements OBSManager {
 	private static final String DEFAULT_DELIM = ".";
 
 	private XMLSerializationService xmlSerializationService;
+	private String bioportalCoreApiKey;
 
 	public Integer findLatestOntologyVersion(Integer ontologyId)
 			throws Exception {
 		Integer ontologyVersionId = null;
 		AbstractResponseBean response = xmlSerializationService.processGet(
 				MessageUtils.getMessage("obs.rest.virtual.ontology.url")
-						+ ontologyId, null);
+						+ ontologyId, assembleGetParameters(null, null, null));
 
 		if (response.isResponseSuccess()) {
 			String data = ((SuccessBean) response).getDataXml();
@@ -372,6 +373,8 @@ public class OBSManagerImpl implements OBSManager {
 			Integer offset, Integer limit) {
 		HashMap<String, String> getParams = new HashMap<String, String>(0);
 
+		getParams.put(RequestParamConstants.PARAM_APIKEY, bioportalCoreApiKey);
+
 		if (level != null) {
 			getParams.put(RequestParamConstants.PARAM_LEVEL, level.toString());
 		}
@@ -386,5 +389,13 @@ public class OBSManagerImpl implements OBSManager {
 		}
 
 		return getParams;
+	}
+
+	/**
+	 * @param bioportalCoreApiKey
+	 *            the bioportalCoreApiKey to set
+	 */
+	public void setBioportalCoreApiKey(String bioportalCoreApiKey) {
+		this.bioportalCoreApiKey = bioportalCoreApiKey;
 	}
 }
