@@ -655,9 +655,12 @@
 						</entry>
 						<entry key="/groups">
 							<ref local="groupsRestlet" />
-						</entry>						
+						</entry>
 						<entry key="/concepts/{ontologyversionid}">
 							<ref local="conceptRestlet" />
+						</entry>						
+						<entry key="/concepts/instances/{ontologyversionid}">
+							<ref local="instanceRestlet" />
 						</entry>
 						<entry key="/concepts/{ontologyversionid}/{conceptid}">
 							<ref local="conceptRestlet" />
@@ -667,30 +670,30 @@
 						</entry>
 						<entry key="/concepts/parents/{ontologyversionid}/{conceptid}">
 							<ref local="conceptParentsRestlet" />
-						</entry>
-						<entry key="/virtual/parents/{ontologyid}/{conceptid}">
-							<ref local="conceptParentsVirtualRestlet" />
-						</entry>
+						</entry>						
 						<entry key="/concepts/children/{ontologyversionid}/{conceptid}">
 							<ref local="conceptChildrenRestlet" />
 						</entry>
-						<entry key="/virtual/children/{ontologyid}/{conceptid}">
-							<ref local="conceptChildrenVirtualRestlet" />
-						</entry>
 						<entry key="/concepts/rootpath/{ontologyversionid}/{conceptid}">
-							<ref local="conceptRootPathRestlet" />
-						</entry>
-						<entry key="/virtual/rootpath/{ontologyid}/{conceptid}">
 							<ref local="conceptRootPathRestlet" />
 						</entry>
 						<entry key="/concepts/siblings/{ontologyversionid}/{conceptid}">
 							<ref local="conceptSiblingsRestlet" />
 						</entry>
-						<entry key="/virtual/siblings/{ontologyid}/{conceptid}">
-							<ref local="conceptSiblingsVirtualRestlet" />
-						</entry>
 						<entry key="/concepts/leafpath/{ontologyversionid}/{conceptid}">
 							<ref local="conceptLeavesRestlet" />
+						</entry>
+						<entry key="/virtual/parents/{ontologyid}/{conceptid}">
+							<ref local="conceptParentsVirtualRestlet" />
+						</entry>
+						<entry key="/virtual/children/{ontologyid}/{conceptid}">
+							<ref local="conceptChildrenVirtualRestlet" />
+						</entry>
+						<entry key="/virtual/rootpath/{ontologyid}/{conceptid}">
+							<ref local="conceptRootPathRestlet" />
+						</entry>
+						<entry key="/virtual/siblings/{ontologyid}/{conceptid}">
+							<ref local="conceptSiblingsVirtualRestlet" />
 						</entry>
 						<entry key="/virtual/leafpath/{ontologyid}/{conceptid}">
 							<ref local="conceptLeavesRestlet" />
@@ -771,10 +774,7 @@
 						<entry key="/virtual/ontology/rdf/generate/{ontologyids}">
 							<ref local="generateRDFOntologyRestlet" />
 						</entry>						
-						<entry key="/concepts/instances/{ontologyVersionId}">
-							<ref local="instanceRestlet" />
-						</entry>
-						<entry key="/instance/{ontologyVersionId}">
+						<entry key="/instance/{ontologyversionid}">
 							<ref local="instanceByIdRestlet" />
 						</entry>
 						<entry key="/notes/{ontologyversionid}">

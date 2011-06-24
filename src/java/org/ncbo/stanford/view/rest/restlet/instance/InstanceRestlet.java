@@ -34,7 +34,7 @@ public class InstanceRestlet extends AbstractBaseRestlet {
 	private void findInstance(Request request, Response response) {
 
 		String ontologyVersionId = (String) request.getAttributes().get(
-				MessageUtils.getMessage("entity.ontologyVersionid"));
+				MessageUtils.getMessage("entity.ontologyversionid"));
 		HttpServletRequest httpRequest = RequestUtils
 				.getHttpServletRequest(request);
 
