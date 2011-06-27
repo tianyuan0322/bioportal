@@ -15,11 +15,14 @@ import java.util.List;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.ncbo.owlapi.preprocess.OWL2Preprocessor;
 import org.ncbo.stanford.bean.OntologyBean;
 import org.ncbo.stanford.manager.AbstractOntologyManagerProtege;
 import org.ncbo.stanford.manager.load.OntologyLoadManager;
 import org.ncbo.stanford.manager.metadata.OntologyMetadataManager;
 import org.ncbo.stanford.util.constants.ApplicationConstants;
+import org.ncbo.stanford.util.helper.StringHelper;
+import org.ncbo.stanford.util.ontologyfile.pathhandler.AbstractFilePathHandler;
 import org.ncbo.stanford.util.protege.ProtegeUtil;
 
 import edu.stanford.smi.protege.model.Project;
@@ -44,6 +47,9 @@ public class OntologyLoadManagerProtegeImpl extends
 	private static final Log log = LogFactory
 			.getLog(OntologyLoadManagerProtegeImpl.class);
 
+	private static final String OWL2_PROCESSED_FILENAME_SUFFIX = "_OWL2_processed";
+	private static final String OWL2_REMOVED_FILENAME_SUFFIX = "_OWL2_removed";
+
 	/**
 	 * Loads the specified ontology into the BioPortal repository. If the
 	 * specified ontology identifier already exists, overwrite the ontology with
@@ -60,9 +66,10 @@ public class OntologyLoadManagerProtegeImpl extends
 	 *                catch all for all other ontlogy file load errors.
 	 */
 	@SuppressWarnings("unchecked")
-	public void loadOntology(URI ontologyUri, OntologyBean ob) throws Exception {
-		File ontologyFile = new File(ontologyUri.getPath());
-		String filePath = ontologyUri.getPath();
+	public void loadOntology(URI ontologyURI, OntologyBean ob) throws Exception {
+		File ontologyFile = new File(ontologyURI.getPath());
+		String filePath = ontologyURI.getPath();
+		URI outputURI = null;
 
 		if (ontologyFile == null) {
 			log.error("Missing ontology file to load: " + filePath);
@@ -74,6 +81,16 @@ public class OntologyLoadManagerProtegeImpl extends
 			log.debug("Loading ontology file: " + ontologyFile.getName());
 		}
 
+		boolean isOwl = ob.getFormat()
+				.contains(ApplicationConstants.FORMAT_OWL);
+
+		if (!ontologyURI.toString().endsWith(".pprj") && isOwl) {
+			File outputFile = stripOWL2Constructs(ontologyFile, ob);
+			outputURI = outputFile.toURI();
+		} else {
+			outputURI = ontologyURI;
+		}
+
 		// If the ontology file is small, use the fast non-streaming Protege
 		// load code.
 		List errors = new ArrayList();
@@ -82,10 +99,10 @@ public class OntologyLoadManagerProtegeImpl extends
 		// Clear knowledgebase cache for this item
 		protegeKnowledgeBases.remove(ontologyVersionId);
 
-		if (ob.getFormat().contains(ApplicationConstants.FORMAT_OWL)) {
-			loadOWL(ontologyUri, ob, errors);
+		if (isOwl) {
+			loadOWL(outputURI, ob, errors);
 		} else {
-			loadFrames(ontologyUri, ob, errors);
+			loadFrames(ontologyURI, ob, errors);
 		}
 
 		// If errors are found during the load, log the errors and throw an
@@ -93,9 +110,39 @@ public class OntologyLoadManagerProtegeImpl extends
 		if (errors.size() > 0) {
 			log.error(errors);
 			throw new Exception("Error during loading "
-					+ ontologyUri.toString() + ". Errors: " + errors.toString()
+					+ ontologyURI.toString() + ". Errors: " + errors.toString()
 					+ ".");
 		}
+	}
+
+	/**
+	 * Removes OWL2 constructs from the ontology, so it can be parsed by Protege
+	 * 
+	 * @param ontologyFile
+	 * @param ob
+	 * @return
+	 * @throws Exception
+	 */
+	private File stripOWL2Constructs(File ontologyFile, OntologyBean ob)
+			throws Exception {
+		String ontologyDir = AbstractFilePathHandler.getFullOntologyDirPath(ob);
+		String[] splitFilename = AbstractFilePathHandler
+				.splitFilename(ontologyFile.getName());
+		String outputFilename = splitFilename[0]
+				+ OWL2_PROCESSED_FILENAME_SUFFIX
+				+ (StringHelper.isNullOrNullString(splitFilename[1]) ? "" : ".")
+				+ splitFilename[1];
+		String removalFilename = splitFilename[0]
+				+ OWL2_REMOVED_FILENAME_SUFFIX
+				+ (StringHelper.isNullOrNullString(splitFilename[1]) ? "" : ".")
+				+ splitFilename[1];
+
+		File outputFile = new File(ontologyDir + "/" + outputFilename);
+		File removalFile = new File(ontologyDir + "/" + removalFilename);
+
+		new OWL2Preprocessor(ontologyFile, outputFile, removalFile).run();
+
+		return outputFile;
 	}
 
 	@SuppressWarnings("unchecked")
