@@ -9,6 +9,7 @@ import org.ncbo.stanford.bean.OntologyBean;
 import org.ncbo.stanford.util.CompressionUtils;
 import org.ncbo.stanford.util.RequestUtils;
 import org.ncbo.stanford.util.helper.StringHelper;
+import org.ncbo.stanford.util.ontologyfile.pathhandler.AbstractFilePathHandler;
 import org.restlet.Request;
 import org.restlet.Response;
 import org.restlet.data.MediaType;
@@ -47,8 +48,8 @@ public class OntologyDownloadRestlet extends AbstractOntologyBaseRestlet {
 				String versionNumber = ontologyBean.getVersionNumber();
 				versionNumber = (StringHelper.isNullOrNullString(versionNumber) ? ""
 						: versionNumber);
-				String[] splitFilename = splitFilename(getFilename(ontologyBean
-						.getFilenames()));
+				String[] splitFilename = AbstractFilePathHandler
+						.splitFilename(getFilename(ontologyBean.getFilenames()));
 
 				if (splitFilename == null) {
 					response.setStatus(Status.CLIENT_ERROR_NOT_FOUND,
@@ -91,25 +92,6 @@ public class OntologyDownloadRestlet extends AbstractOntologyBaseRestlet {
 		}
 
 		return "";
-	}
-
-	private String[] splitFilename(String filename) {
-		String[] splitFilename = null;
-
-		if (!StringHelper.isNullOrNullString(filename)) {
-			splitFilename = new String[2];
-			splitFilename[0] = filename;
-			splitFilename[1] = "";
-
-			int lastDot = filename.lastIndexOf('.');
-
-			if (lastDot > -1) {
-				splitFilename[0] = filename.substring(0, lastDot);
-				splitFilename[1] = filename.substring(lastDot + 1);
-			}
-		}
-
-		return splitFilename;
 	}
 
 	private String getFilename(List<String> filenames) {

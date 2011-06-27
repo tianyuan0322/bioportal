@@ -9,6 +9,7 @@ import java.io.OutputStream;
 
 import org.ncbo.stanford.bean.OntologyBean;
 import org.ncbo.stanford.util.MessageUtils;
+import org.ncbo.stanford.util.helper.StringHelper;
 import org.ncbo.stanford.util.ontologyfile.compressedfilehandler.CompressedFileHandler;
 
 /**
@@ -159,5 +160,24 @@ public abstract class AbstractFilePathHandler implements FilePathHandler {
 
 		in.close();
 		out.close();
+	}
+	
+	public static String[] splitFilename(String filename) {
+		String[] splitFilename = null;
+
+		if (!StringHelper.isNullOrNullString(filename)) {
+			splitFilename = new String[2];
+			splitFilename[0] = filename;
+			splitFilename[1] = "";
+
+			int lastDot = filename.lastIndexOf('.');
+
+			if (lastDot > -1) {
+				splitFilename[0] = filename.substring(0, lastDot);
+				splitFilename[1] = filename.substring(lastDot + 1);
+			}
+		}
+
+		return splitFilename;
 	}
 }
