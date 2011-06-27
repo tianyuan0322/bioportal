@@ -72,7 +72,7 @@
 	<classpathentry exported="true" kind="lib" path="WebRoot/WEB-INF/lib/org.semanticweb.owl.owlapi.jar"/>
 	<classpathentry exported="true" kind="lib" path="WebRoot/WEB-INF/lib/org.protege.owlapi.jar"/>
 	<classpathentry exported="true" kind="lib" path="WebRoot/WEB-INF/lib/protege/protege.jar"/>
-	<classpathentry exported="true" kind="lib" path="WebRoot/WEB-INF/lib/protege/preprocess.jar"/>	
+	<classpathentry exported="true" kind="lib" path="WebRoot/WEB-INF/lib/protege/preprocess.jar"/>
 	<classpathentry exported="true" kind="lib" path="WebRoot/WEB-INF/lib/protege/plugins/edu.stanford.smi.protegex.changes/change-management.jar"/>
 	<classpathentry exported="true" kind="lib" path="WebRoot/WEB-INF/lib/protege/plugins/edu.stanford.smi.protegex.changes/icu4j.jar"/>
 	<classpathentry exported="true" kind="lib" path="WebRoot/WEB-INF/lib/protege/plugins/edu.stanford.smi.protegex.owl/antlr-2.7.5.jar"/>
