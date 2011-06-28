@@ -328,9 +328,9 @@ public class CustomNcboMappingDAO extends AbstractNcboMappingDAO {
 	public List<Mapping> getMappingsForConcept(Integer ontologyId,
 			String conceptId, Integer limit, Integer offset,
 			SPARQLFilterGenerator parameters) throws InvalidInputException {
-		String filter = generateConceptSparqlFilter(conceptId, null, false);
-		filter += " && "
-				+ generateOntologySparqlFilter(ontologyId, null, false);
+		String filter = "(" + generateConceptSparqlFilter(conceptId, null, false);
+		filter += ") && ("
+				+ generateOntologySparqlFilter(ontologyId, null, false) + ")";
 
 		Set<String> mappingIds = getMappingIdsFromFilter(limit, offset, filter);
 		String mappingIdFilter = generateMappingIdINFilter(mappingIds);
