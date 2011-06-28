@@ -3,6 +3,7 @@ package org.ncbo.stanford.sparql.dao.mapping;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Set;
 
 import org.ncbo.stanford.exception.InvalidInputException;
 import org.ncbo.stanford.exception.MappingExistsException;
@@ -327,12 +328,14 @@ public class CustomNcboMappingDAO extends AbstractNcboMappingDAO {
 	public List<Mapping> getMappingsForConcept(Integer ontologyId,
 			String conceptId, Integer limit, Integer offset,
 			SPARQLFilterGenerator parameters) throws InvalidInputException {
-		String filter = "("
-				+ generateConceptSparqlFilter(conceptId, null, false) + ")";
-		filter += " && ("
-				+ generateOntologySparqlFilter(ontologyId, null, false) + ")";
+		String filter = generateConceptSparqlFilter(conceptId, null, false);
+		filter += " && "
+				+ generateOntologySparqlFilter(ontologyId, null, false);
 
-		return getMappings(limit, offset, filter, parameters);
+		Set<String> mappingIds = getMappingIdsFromFilter(limit, offset, filter);
+		String mappingIdFilter = generateMappingIdINFilter(mappingIds);
+
+		return getMappings(limit, offset, mappingIdFilter, parameters);
 	}
 
 	public List<Mapping> getMappingsFromConcept(Integer ontologyId,
@@ -341,7 +344,10 @@ public class CustomNcboMappingDAO extends AbstractNcboMappingDAO {
 		String filter = generateConceptSparqlFilter(conceptId, null, true);
 		filter += " && " + generateOntologySparqlFilter(ontologyId, null, true);
 
-		return getMappings(limit, offset, filter, parameters);
+		Set<String> mappingIds = getMappingIdsFromFilter(limit, offset, filter);
+		String mappingIdFilter = generateMappingIdINFilter(mappingIds);
+
+		return getMappings(limit, offset, mappingIdFilter, parameters);
 	}
 
 	public List<Mapping> getMappingsToConcept(Integer ontologyId,
@@ -350,7 +356,10 @@ public class CustomNcboMappingDAO extends AbstractNcboMappingDAO {
 		String filter = generateConceptSparqlFilter(conceptId, null, true);
 		filter += " && " + generateOntologySparqlFilter(ontologyId, null, true);
 
-		return getMappings(limit, offset, filter, parameters);
+		Set<String> mappingIds = getMappingIdsFromFilter(limit, offset, filter);
+		String mappingIdFilter = generateMappingIdINFilter(mappingIds);
+
+		return getMappings(limit, offset, mappingIdFilter, parameters);
 	}
 
 	public List<Mapping> getMappingsBetweenConcepts(Integer sourceOntologyId,
@@ -363,7 +372,10 @@ public class CustomNcboMappingDAO extends AbstractNcboMappingDAO {
 				+ generateOntologySparqlFilter(sourceOntologyId,
 						targetOntologyId, unidirectional);
 
-		return getMappings(limit, offset, filter, parameters);
+		Set<String> mappingIds = getMappingIdsFromFilter(limit, offset, filter);
+		String mappingIdFilter = generateMappingIdINFilter(mappingIds);
+
+		return getMappings(limit, offset, mappingIdFilter, parameters);
 	}
 
 }

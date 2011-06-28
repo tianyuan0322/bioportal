@@ -183,6 +183,7 @@ public class MappingServiceImpl implements MappingService {
 			ClassBean concept, Integer pageSize, Integer pageNum,
 			SPARQLFilterGenerator parameters) throws InvalidInputException {
 		MappingResultListBean pageMappings = new MappingResultListBean(0);
+
 		Integer totalResults = mappingCountsDAO.getCountMappingsForConcept(ont
 				.getOntologyId(), concept.getFullId(), parameters);
 

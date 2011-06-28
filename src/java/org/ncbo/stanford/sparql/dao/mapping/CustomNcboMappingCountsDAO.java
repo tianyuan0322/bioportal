@@ -1,5 +1,7 @@
 package org.ncbo.stanford.sparql.dao.mapping;
 
+import java.util.Set;
+
 import org.ncbo.stanford.exception.InvalidInputException;
 import org.ncbo.stanford.util.sparql.SPARQLFilterGenerator;
 
@@ -46,8 +48,11 @@ public class CustomNcboMappingCountsDAO extends AbstractNcboMappingDAO {
 		String filter = "(" + generateConceptSparqlFilter(conceptId, null, false) + ")";
 		filter += " && ("
 				+ generateOntologySparqlFilter(ontologyId, null, false) + ")";
+		filter += " " + parameters.toFilter();
 
-		return getCount(filter, parameters);
+		Set<String> mappingIds = getMappingIdsFromFilter(null, null, filter);
+
+		return mappingIds.size();
 	}
 
 	public Integer getCountMappingsFromConcept(Integer ontologyId,
@@ -55,8 +60,11 @@ public class CustomNcboMappingCountsDAO extends AbstractNcboMappingDAO {
 			throws InvalidInputException {
 		String filter = generateConceptSparqlFilter(conceptId, null, true);
 		filter += " && " + generateOntologySparqlFilter(ontologyId, null, true);
+		filter += " " + parameters.toFilter();
 
-		return getCount(filter, parameters);
+		Set<String> mappingIds = getMappingIdsFromFilter(null, null, filter);
+
+		return mappingIds.size();
 	}
 
 	public Integer getCountMappingsToConcept(Integer ontologyId,
@@ -64,8 +72,11 @@ public class CustomNcboMappingCountsDAO extends AbstractNcboMappingDAO {
 			throws InvalidInputException {
 		String filter = generateConceptSparqlFilter(conceptId, null, true);
 		filter += " && " + generateOntologySparqlFilter(ontologyId, null, true);
+		filter += " " + parameters.toFilter();
 
-		return getCount(filter, parameters);
+		Set<String> mappingIds = getMappingIdsFromFilter(null, null, filter);
+
+		return mappingIds.size();
 	}
 
 	public Integer getCountMappingsBetweenConcepts(Integer sourceOntologyId,
@@ -77,8 +88,11 @@ public class CustomNcboMappingCountsDAO extends AbstractNcboMappingDAO {
 		filter += " && "
 				+ generateOntologySparqlFilter(sourceOntologyId,
 						targetOntologyId, unidirectional);
+		filter += " " + parameters.toFilter();
 
-		return getCount(filter, parameters);
+		Set<String> mappingIds = getMappingIdsFromFilter(null, null, filter);
+
+		return mappingIds.size();
 	}
 
 }

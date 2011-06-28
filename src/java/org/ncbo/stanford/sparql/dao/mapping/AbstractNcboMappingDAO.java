@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -87,6 +88,13 @@ public class AbstractNcboMappingDAO {
 			+ "  ?mappingId <http://protege.stanford.edu/ontologies/mappings/mappings.rdfs#source> ?source ."
 			+ "  ?mappingId <http://protege.stanford.edu/ontologies/mappings/mappings.rdfs#target> ?target ."
 			+ "  FILTER ( ?mappingId IN (%MAPPING_IDS%) ) }";
+
+	protected final static String mappingIdFromSourceOrTarget = "SELECT DISTINCT ?mappingId {"
+			+ "  ?mappingId <http://protege.stanford.edu/ontologies/mappings/mappings.rdfs#source> ?source ."
+			+ "  ?mappingId <http://protege.stanford.edu/ontologies/mappings/mappings.rdfs#target> ?target ."
+			+ "  ?mappingId <http://protege.stanford.edu/ontologies/mappings/mappings.rdfs#source_ontology_id> ?sourceOntologyId ."
+			+ "  ?mappingId <http://protege.stanford.edu/ontologies/mappings/mappings.rdfs#target_ontology_id> ?targetOntologyId ."
+			+ "  FILTER ( %FILTER% ) } LIMIT %LIMIT% OFFSET %OFFSET%";
 
 	/*******************************************************************
 	 *
@@ -232,6 +240,8 @@ public class AbstractNcboMappingDAO {
 				mappingResults.put(mapping.getId().toString(), mapping);
 			}
 
+			result.close();
+
 			if (!mappingResults.isEmpty()) {
 				// This query will get all sources and targets for the mapping
 				// that were generated above
@@ -269,9 +279,9 @@ public class AbstractNcboMappingDAO {
 
 					mappingResults.put(mappingId, updatedMapping);
 				}
-			}
 
-			result.close();
+				result1.close();
+			}
 
 			return new ArrayList<Mapping>(mappingResults.values());
 		} catch (RepositoryException e) {
@@ -285,6 +295,48 @@ public class AbstractNcboMappingDAO {
 		}
 
 		return null;
+	}
+
+	protected HashSet<String> getMappingIdsFromFilter(Integer limit,
+			Integer offset, String filter) {
+
+		String queryString;
+		if (limit != null && offset != null) {
+			queryString = mappingIdFromSourceOrTarget.replaceAll("%FILTER%",
+					filter).replaceAll("%LIMIT%", limit.toString()).replaceAll(
+					"%OFFSET%", offset.toString());
+		} else {
+			queryString = mappingIdFromSourceOrTarget.replaceAll("%FILTER%",
+					filter).replaceAll("LIMIT %LIMIT% OFFSET %OFFSET%", "");
+		}
+
+		RepositoryConnection con = getRdfStoreManager()
+				.getRepositoryConnection();
+
+		HashSet<String> mappingIds = new HashSet<String>();
+
+		try {
+			TupleQuery query = con.prepareTupleQuery(QueryLanguage.SPARQL,
+					queryString, ApplicationConstants.MAPPING_CONTEXT);
+
+			TupleQueryResult result = query.evaluate();
+
+			while (result.hasNext()) {
+				BindingSet bs = result.next();
+				String mappingId = bs.getValue("mappingId").stringValue();
+				mappingIds.add("<" + mappingId + ">");
+			}
+		} catch (RepositoryException e) {
+			e.printStackTrace();
+		} catch (MalformedQueryException e) {
+			e.printStackTrace();
+		} catch (QueryEvaluationException e) {
+			e.printStackTrace();
+		} finally {
+			cleanup(con);
+		}
+
+		return mappingIds;
 	}
 
 	/**
@@ -347,12 +399,6 @@ public class AbstractNcboMappingDAO {
 
 		return count;
 	}
-
-	/*******************************************************************
-	 *
-	 * protected methods
-	 *
-	 *******************************************************************/
 
 	/**
 	 * Generates a SPARQL filter for the given ontology ids.
@@ -535,6 +581,22 @@ public class AbstractNcboMappingDAO {
 		}
 
 		return StringUtils.join(filter, " . ");
+	}
+
+	/**
+	 * Given a list of mapping ids this generates a SPARQL filter using the IN
+	 * clause.
+	 *
+	 * @param mappingIds
+	 * @return
+	 */
+	protected String generateMappingIdINFilter(Set<String> mappingIds) {
+		String mappingIdFilter = "?mappingId IN (%MAPPING_IDS%)";
+
+		mappingIdFilter = mappingIdFilter.replaceAll("%MAPPING_IDS%",
+				StringUtils.join(mappingIds, ", "));
+
+		return mappingIdFilter;
 	}
 
 	protected Integer convertValueToInteger(Value val) {
