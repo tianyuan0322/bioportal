@@ -1,5 +1,7 @@
 package org.ncbo.stanford.view.rest.restlet.notes;
 
+import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
@@ -46,7 +48,7 @@ public class NotesRestlet extends AbstractBaseRestlet {
 
 	/**
 	 * Handle POST calls here
-	 * 
+	 *
 	 * @param request
 	 * @param response
 	 */
@@ -65,7 +67,7 @@ public class NotesRestlet extends AbstractBaseRestlet {
 
 	/**
 	 * Handle DELETE calls here
-	 * 
+	 *
 	 * @param request
 	 * @param response
 	 */
@@ -99,6 +101,13 @@ public class NotesRestlet extends AbstractBaseRestlet {
 		Integer ontologyIdInt = RequestUtils.parseIntegerParam(ontologyId);
 		Integer ontologyVersionIdInt = RequestUtils
 				.parseIntegerParam(ontologyVersionId);
+
+		// conceptId isn't getting decoded so force it here
+		try {
+			conceptId = URLDecoder.decode(conceptId, "UTF-8");
+		} catch (UnsupportedEncodingException e1) {
+			e1.printStackTrace();
+		}
 
 		OntologyBean ont = null;
 		List<NoteBean> notesList = null;
@@ -522,10 +531,10 @@ public class NotesRestlet extends AbstractBaseRestlet {
 	/**
 	 * Get an id based on the ontology type. OBO ontologies return the short id,
 	 * everything else uses the fullId.
-	 * 
+	 *
 	 * This method exists in these classes: NotesServiceImpl.java
 	 * NotesRestlet.java
-	 * 
+	 *
 	 * @param concept
 	 * @param ont
 	 * @return
