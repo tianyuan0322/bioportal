@@ -1,7 +1,5 @@
 package org.ncbo.stanford.view.rest.restlet.notes;
 
-import java.io.UnsupportedEncodingException;
-import java.net.URLDecoder;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
@@ -101,13 +99,6 @@ public class NotesRestlet extends AbstractBaseRestlet {
 		Integer ontologyIdInt = RequestUtils.parseIntegerParam(ontologyId);
 		Integer ontologyVersionIdInt = RequestUtils
 				.parseIntegerParam(ontologyVersionId);
-
-		// conceptId isn't getting decoded so force it here
-		try {
-			conceptId = URLDecoder.decode(conceptId, "UTF-8");
-		} catch (UnsupportedEncodingException e1) {
-			e1.printStackTrace();
-		}
 
 		OntologyBean ont = null;
 		List<NoteBean> notesList = null;
