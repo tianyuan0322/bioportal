@@ -140,9 +140,10 @@ public class OntologyLoadManagerProtegeImpl extends
 		File outputFile = new File(ontologyDir + "/" + outputFilename);
 		File removalFile = new File(ontologyDir + "/" + removalFilename);
 
-		new OWL2Preprocessor(ontologyFile, outputFile, removalFile).run();
+		boolean removed = new OWL2Preprocessor(ontologyFile, outputFile,
+				removalFile).run();
 
-		return outputFile;
+		return ((removed) ? outputFile : ontologyFile);
 	}
 
 	@SuppressWarnings("unchecked")
