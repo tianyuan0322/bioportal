@@ -335,7 +335,12 @@ public class CustomNcboMappingDAO extends AbstractNcboMappingDAO {
 		Set<String> mappingIds = getMappingIdsFromFilter(limit, offset, filter);
 		String mappingIdFilter = generateMappingIdINFilter(mappingIds);
 
-		return getMappings(limit, offset, mappingIdFilter, parameters);
+		List<Mapping> mappings = new ArrayList<Mapping>();
+		if (mappingIds.size() > 0) {
+			mappings = getMappings(limit, offset, mappingIdFilter, parameters);
+		}
+
+		return mappings;
 	}
 
 	public List<Mapping> getMappingsFromConcept(Integer ontologyId,
@@ -347,7 +352,12 @@ public class CustomNcboMappingDAO extends AbstractNcboMappingDAO {
 		Set<String> mappingIds = getMappingIdsFromFilter(limit, offset, filter);
 		String mappingIdFilter = generateMappingIdINFilter(mappingIds);
 
-		return getMappings(limit, offset, mappingIdFilter, parameters);
+		List<Mapping> mappings = new ArrayList<Mapping>();
+		if (mappingIds.size() > 0) {
+			mappings = getMappings(limit, offset, mappingIdFilter, parameters);
+		}
+
+		return mappings;
 	}
 
 	public List<Mapping> getMappingsToConcept(Integer ontologyId,
@@ -359,7 +369,12 @@ public class CustomNcboMappingDAO extends AbstractNcboMappingDAO {
 		Set<String> mappingIds = getMappingIdsFromFilter(limit, offset, filter);
 		String mappingIdFilter = generateMappingIdINFilter(mappingIds);
 
-		return getMappings(limit, offset, mappingIdFilter, parameters);
+		List<Mapping> mappings = new ArrayList<Mapping>();
+		if (mappingIds.size() > 0) {
+			mappings = getMappings(limit, offset, mappingIdFilter, parameters);
+		}
+
+		return mappings;
 	}
 
 	public List<Mapping> getMappingsBetweenConcepts(Integer sourceOntologyId,
@@ -375,7 +390,12 @@ public class CustomNcboMappingDAO extends AbstractNcboMappingDAO {
 		Set<String> mappingIds = getMappingIdsFromFilter(limit, offset, filter);
 		String mappingIdFilter = generateMappingIdINFilter(mappingIds);
 
-		return getMappings(limit, offset, mappingIdFilter, parameters);
+		List<Mapping> mappings = new ArrayList<Mapping>();
+		if (mappingIds.size() > 0) {
+			mappings = getMappings(limit, offset, mappingIdFilter, parameters);
+		}
+
+		return mappings;
 	}
 
 }
