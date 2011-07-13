@@ -7,6 +7,7 @@ import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 import javax.xml.datatype.DatatypeConfigurationException;
@@ -40,7 +41,6 @@ public abstract class AbstractSPARQLBean implements Serializable {
 		public String URI;
 		public ParameterMap() {};
 	}
-	public HashMap<String, ParameterMap> parameterMapping = new HashMap<String, ParameterMap>();
 
 	/**
 	 * Default no-arg constructor.
@@ -191,4 +191,5 @@ public abstract class AbstractSPARQLBean implements Serializable {
 		this.id = id;
 	}
 
+    public abstract Map<String, ParameterMap> getParameterMapping();
 }

@@ -222,7 +222,19 @@ public interface ApplicationConstants {
 	public static final Integer DEFAULT_MAPPINGS_PAGE_SIZE = 5000;
 	public static final Integer DEFAULT_MAPPINGS_PAGE_NUM = 1;
 	public static final Integer MAPPINGS_MAX_PAGE_SIZE = 50000;
+    public static final Boolean GENERATE_UNION_SPARQL = true;
 
+
+    /**
+    * Mapping Predicates
+    **/
+    public static final String NS_MAPPING_PREFIX_URI = "http://protege.stanford.edu/ontologies/mappings/mappings.rdfs#";
+    public static final URI XSD_INTEGER = new URIImpl("http://www.w3.org/2001/XMLSchema#integer");
+    public static final String NS_MAPPING_PREFIX = "map";
+    public static final URI SOURCE_ONTOLOGY_ID = new URIImpl(NS_MAPPING_PREFIX +":source_ontology_id");
+    public static final URI TARGET_ONTOLOGY_ID = new URIImpl(NS_MAPPING_PREFIX +":target_ontology_id");
+    public static final URI SOURCE_TERM = new URIImpl(NS_MAPPING_PREFIX +":source");
+    public static final URI TARGET_TERM = new URIImpl(NS_MAPPING_PREFIX +":target");
 	
 	/**
 	 * File Uploading Constants

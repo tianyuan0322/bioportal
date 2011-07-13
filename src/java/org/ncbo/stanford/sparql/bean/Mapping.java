@@ -4,6 +4,7 @@ import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.Map;
 import java.util.List;
 
 import org.ncbo.stanford.annotation.IRI;
@@ -37,32 +38,32 @@ public class Mapping extends AbstractSPARQLBean {
 		parameterMapping.put("submittedBy", submittedBy);
 
 		ParameterMap mappingType = new ParameterMap();
-		submittedBy.URI = fieldMap.get("mappingType").getAnnotation(IRI.class)
+		mappingType.URI = fieldMap.get("mappingType").getAnnotation(IRI.class)
 				.value();
-		submittedBy.variableName = "mappingType";
+		mappingType.variableName = "mappingType";
 		parameterMapping.put("mappingType", mappingType);
 
 		ParameterMap startDate = new ParameterMap();
-		submittedBy.URI = fieldMap.get("date").getAnnotation(IRI.class)
+		startDate.URI = fieldMap.get("date").getAnnotation(IRI.class)
 				.value();
-		submittedBy.variableName = "date";
+		startDate.variableName = "date";
 		parameterMapping.put("startDate", startDate);
 
 		ParameterMap endDate = new ParameterMap();
-		submittedBy.URI = fieldMap.get("date").getAnnotation(IRI.class).value();
-		submittedBy.variableName = "date";
+		endDate.URI = fieldMap.get("date").getAnnotation(IRI.class).value();
+		endDate.variableName = "date";
 		parameterMapping.put("endDate", endDate);
 
 		ParameterMap relationshipTypes = new ParameterMap();
-		submittedBy.URI = fieldMap.get("relation").getAnnotation(IRI.class)
+		relationshipTypes.URI = fieldMap.get("relation").getAnnotation(IRI.class)
 				.value();
-		submittedBy.variableName = "relation";
+		relationshipTypes.variableName = "relation";
 		parameterMapping.put("relationshipTypes", relationshipTypes);
 
 		ParameterMap mappingSources = new ParameterMap();
-		submittedBy.URI = fieldMap.get("mappingSource")
+		mappingSources.URI = fieldMap.get("mappingSource")
 				.getAnnotation(IRI.class).value();
-		submittedBy.variableName = "mappingSource";
+		mappingSources.variableName = "mappingSource";
 		parameterMapping.put("mappingSources", mappingSources);
 	};
 
@@ -401,5 +402,9 @@ public class Mapping extends AbstractSPARQLBean {
 			Integer createdInTargetOntologyVersion) {
 		this.createdInTargetOntologyVersion = createdInTargetOntologyVersion;
 	}
+
+    public Map<String, ParameterMap> getParameterMapping() {
+        return Mapping.parameterMapping;
+    }
 
 }

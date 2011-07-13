@@ -4,6 +4,7 @@
 	<property file="build.properties" />
 
 	<property name="test.dir" value="src/test" />
+	<property name="test.dir.conf" value="src/test/conf" />
 	<property name="testresults.dir" value="testresults" />
 	<property name="build.dir" value="build" />
 	<property name="dist.dir" value="dist" />
@@ -421,6 +422,22 @@
 				<fileset dir="${classes.dir}" includes="**/search/Search*Test.class" />
 				<fileset dir="${classes.dir}" includes="**/concept/Concept*Test*.class" />
 			</batchtest>
+			<classpath refid="master-classpath" />
+		</junit>
+
+	</target>
+
+
+	<target name="testmap">
+        <copy todir="${classes.dir}">
+            <fileset dir="${test.dir.conf}"/>
+        </copy>
+		<junit printsummary="true" fork="yes" maxmemory="256m" haltonfailure="true" showoutput="true">
+            <jvmarg value="-javaagent:./WebRoot/WEB-INF/lib/spring-agent.jar" />
+			<batchtest todir="${testresults.dir}">
+				<fileset dir="${classes.dir}" includes="**/mapping/SimpleMappingTest.class" />
+			</batchtest>
+            <formatter type="xml" usefile="true" />
 			<classpath refid="master-classpath" />
 		</junit>
 

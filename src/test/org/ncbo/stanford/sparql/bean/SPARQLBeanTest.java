@@ -3,6 +3,8 @@ package org.ncbo.stanford.sparql.bean;
 import static org.junit.Assert.*;
 
 import java.util.ArrayList;
+import java.util.Hashtable;
+import java.util.Map;
 
 import org.junit.Test;
 import org.ncbo.stanford.AbstractBioPortalTest;
@@ -10,6 +12,7 @@ import org.ncbo.stanford.annotation.IRI;
 import org.ncbo.stanford.manager.rdfstore.impl.RDFStoreManagerVirtuosoImpl;
 import org.openrdf.model.Statement;
 import org.springframework.beans.factory.annotation.Autowired;
+
 
 public class SPARQLBeanTest extends AbstractBioPortalTest {
 
@@ -23,6 +26,9 @@ public class SPARQLBeanTest extends AbstractBioPortalTest {
 		
 		TestBeanLevel2() {
 		}
+        public Map<String, ParameterMap> getParameterMapping() {
+            return new Hashtable<String, ParameterMap>();
+        }
 	}
 	
 	public class TestBeanLevel3 extends TestBeanLevel2 {
@@ -32,6 +38,9 @@ public class SPARQLBeanTest extends AbstractBioPortalTest {
 		
 		TestBeanLevel3() {
 		}
+        public Map<String, ParameterMap> getParameterMapping() {
+            return new Hashtable<String, ParameterMap>();
+        }
 	}
 	
 	public class TestBeanDifferentPrefix extends AbstractSPARQLBean {
@@ -42,6 +51,9 @@ public class SPARQLBeanTest extends AbstractBioPortalTest {
 		TestBeanDifferentPrefix() {
 			super(PREFIX, RDF_TYPE);
 		}
+        public Map<String, ParameterMap> getParameterMapping() {
+            return new Hashtable<String, ParameterMap>();
+        }
 	}
 	
 	@Test

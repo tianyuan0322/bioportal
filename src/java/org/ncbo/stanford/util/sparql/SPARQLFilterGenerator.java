@@ -4,6 +4,7 @@ import java.lang.reflect.Field;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.Map;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
@@ -11,6 +12,8 @@ import org.ncbo.stanford.enumeration.MappingSourceEnum;
 import org.ncbo.stanford.sparql.bean.AbstractSPARQLBean;
 import org.ncbo.stanford.util.constants.ApplicationConstants;
 import org.openrdf.model.URI;
+
+import org.ncbo.stanford.sparql.bean.Mapping;
 
 public class SPARQLFilterGenerator {
 
@@ -154,12 +157,15 @@ public class SPARQLFilterGenerator {
 		List<String> triples = new ArrayList<String>();
 
 		for (Field field : fields) {
+            Map<String, AbstractSPARQLBean.ParameterMap> parameterMapping = SPARQLBean.getParameterMapping();
+
 			try {
 				if (field.get(this) != null
 						&& field.get(this).toString().length() > 0) {
-					String type = SPARQLBean.parameterMapping.get(field
+
+					String type = parameterMapping.get(field
 							.getName()).URI;
-					String variableName = SPARQLBean.parameterMapping.get(field
+					String variableName = parameterMapping.get(field
 							.getName()).variableName;
 
 					String triple = "?" + idVariableName + " <" + type + ">"

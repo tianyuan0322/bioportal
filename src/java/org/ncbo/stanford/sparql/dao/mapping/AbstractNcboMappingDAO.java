@@ -17,6 +17,7 @@ import org.ncbo.stanford.sparql.bean.Mapping;
 import org.ncbo.stanford.util.MessageUtils;
 import org.ncbo.stanford.util.constants.ApplicationConstants;
 import org.ncbo.stanford.util.sparql.SPARQLFilterGenerator;
+import org.ncbo.stanford.util.sparql.SPARQLUnionGenerator;
 import org.openrdf.model.Statement;
 import org.openrdf.model.URI;
 import org.openrdf.model.Value;
@@ -41,6 +42,40 @@ public class AbstractNcboMappingDAO {
 	// be interpreted as mappings (IE it contains all mappings fields in every
 	// row). The %FILTER% token can be replaced with whatever filter is need to
 	// get specific results. %OFFSET% and %LIMIT% must be replaced as well.
+
+	protected final static String mappingQueryBetweenOntolgies = "SELECT DISTINCT "
+			+ "?mappingId "
+			+ "?relation "
+			+ "?createdInSourceOntologyVersion "
+			+ "?createdInTargetOntologyVersion "
+			+ "?comment "
+			+ "?date "
+			+ "?submittedBy "
+			+ "?dependency "
+			+ "?mappingType "
+			+ "?mappingSource "
+			+ "?mappingSourceName "
+			+ "?mappingSourceContactInfo "
+			+ "?mappingSourceSite "
+			+ "?mappingSourceAlgorithm "
+			+ "?isManyToMany {"
+            + "  %ONTOLOGIES_MATCH_PATTERN% "
+			+ "  ?mappingId <http://protege.stanford.edu/ontologies/mappings/mappings.rdfs#relation> ?relation ."
+			+ "  ?mappingId <http://protege.stanford.edu/ontologies/mappings/mappings.rdfs#created_in_source_ontology_version> ?createdInSourceOntologyVersion ."
+			+ "  ?mappingId <http://protege.stanford.edu/ontologies/mappings/mappings.rdfs#created_in_target_ontology_version> ?createdInTargetOntologyVersion ."
+			+ "  ?mappingId <http://protege.stanford.edu/ontologies/mappings/mappings.rdfs#date> ?date ."
+			+ "  ?mappingId <http://protege.stanford.edu/ontologies/mappings/mappings.rdfs#submitted_by> ?submittedBy ."
+			+ "  ?mappingId <http://protege.stanford.edu/ontologies/mappings/mappings.rdfs#mapping_type> ?mappingType ."
+			+ "  OPTIONAL { ?mappingId <http://protege.stanford.edu/ontologies/mappings/mappings.rdfs#is_many_to_many> ?isManyToMany .}"
+			+ "  OPTIONAL { ?mappingId <http://protege.stanford.edu/ontologies/mappings/mappings.rdfs#comment> ?comment .}"
+			+ "  OPTIONAL { ?mappingId <http://protege.stanford.edu/ontologies/mappings/mappings.rdfs#dependency> ?dependency .}"
+			+ "  OPTIONAL { ?mappingId <http://protege.stanford.edu/ontologies/mappings/mappings.rdfs#mapping_source> ?mappingSource .}"
+			+ "  OPTIONAL { ?mappingId <http://protege.stanford.edu/ontologies/mappings/mappings.rdfs#mapping_source_name> ?mappingSourceName .}"
+			+ "  OPTIONAL { ?mappingId <http://protege.stanford.edu/ontologies/mappings/mappings.rdfs#mapping_source_contact_info> ?mappingSourceContactInfo .}"
+			+ "  OPTIONAL { ?mappingId <http://protege.stanford.edu/ontologies/mappings/mappings.rdfs#mapping_source_site> ?mappingSourceSite .}"
+			+ "  OPTIONAL { ?mappingId <http://protege.stanford.edu/ontologies/mappings/mappings.rdfs#mapping_source_algorithm> ?mappingSourceAlgorithm .}"
+			+ "  FILTER (%FILTER%) } LIMIT %LIMIT% OFFSET %OFFSET%";
+
 	protected final static String mappingQuery = "SELECT DISTINCT "
 			+ "?mappingId "
 			+ "?relation "
@@ -108,58 +143,7 @@ public class AbstractNcboMappingDAO {
 		return getMappings(limit, offset, filter, null, parameters);
 	}
 
-	/**
-	 * Generic getMappings call. Must provide a valid SPARQL filter (generated
-	 * via helper methods or elsewhere).
-	 *
-	 * @param limit
-	 * @param offset
-	 * @param filter
-	 * @param parameters
-	 * @param sourceOntology
-	 * @param targetOntology
-	 * @param unidirectional
-	 *
-	 * @return
-	 * @throws InvalidInputException
-	 */
-	protected List<Mapping> getMappings(Integer limit, Integer offset,
-			String filter, String orderBy, SPARQLFilterGenerator parameters)
-			throws InvalidInputException {
-		// Safety check
-		if (limit == null || limit >= 50000) {
-			limit = 50000;
-		}
-
-		if (offset == null) {
-			offset = 0;
-		}
-
-		// Combine filters
-		String combinedFilters = "";
-		if (filter != null) {
-			combinedFilters = (parameters != null) ? filter + " "
-					+ parameters.toFilter() : filter;
-		} else {
-			combinedFilters = (parameters != null) ? parameters.toFilter() : "";
-		}
-
-		// Substitute tokens in the generic query string
-		String queryString = mappingQuery.replaceAll("%FILTER%",
-				combinedFilters).replaceAll("%LIMIT%", limit.toString())
-				.replaceAll("%OFFSET%", offset.toString());
-
-		if (orderBy != null && !orderBy.isEmpty()) {
-			queryString = queryString.replaceAll("%ORDERBY%", " ORDER BY DESC("
-					+ orderBy + ")");
-		} else {
-			queryString = queryString.replaceAll("%ORDERBY%", "");
-		}
-
-		// Remove filter if it's not used
-		if (filter == null || filter.isEmpty()) {
-			queryString = queryString.replaceAll("FILTER \\(\\) ", "");
-		}
+    protected List<Mapping> getMappingsFromSPARQLQuery(String queryString) {
 
 		RepositoryConnection con = getRdfStoreManager()
 				.getRepositoryConnection();
@@ -185,12 +169,15 @@ public class AbstractNcboMappingDAO {
 
 				mapping.setRelation(new URIImpl(bs.getValue("relation")
 						.stringValue()));
-
-				mapping.setSourceOntologyId(convertValueToInteger(bs
+                
+                if (bs.getValue("sourceOntologyId")!=null) {
+                    mapping.setSourceOntologyId(convertValueToInteger(bs
 						.getValue("sourceOntologyId")));
-
-				mapping.setTargetOntologyId(convertValueToInteger(bs
+                }
+                if (bs.getValue("targetOntologyId")!=null) {
+                    mapping.setTargetOntologyId(convertValueToInteger(bs
 						.getValue("targetOntologyId")));
+                }
 
 				mapping
 						.setCreatedInSourceOntologyVersion(convertValueToInteger(bs
@@ -295,22 +282,184 @@ public class AbstractNcboMappingDAO {
 		}
 
 		return null;
-	}
+    }
+    
 
-	protected HashSet<String> getMappingIdsFromFilter(Integer limit,
-			Integer offset, String filter) {
+    private void populateSourceAndTargetOntologyId(List<Mapping> mappings) {
+        RepositoryConnection con = getRdfStoreManager()
+				.getRepositoryConnection();
+		try {
+			HashMap<String, Mapping> mappingResults = new HashMap<String, Mapping>();
+            String queryString = "SELECT * WHERE { "
+               + " ?mappingId <http://protege.stanford.edu/ontologies/mappings/mappings.rdfs#target_ontology_id> ?targetOntologyId . "
+               + " ?mappingId <http://protege.stanford.edu/ontologies/mappings/mappings.rdfs#source_ontology_id> ?sourceOntologyId . "
+               + " FILTER (?mappingId = <%mappingId%>) } LIMIT 1";
+            for (Mapping m : mappings) {
+                TupleQuery query = con.prepareTupleQuery(QueryLanguage.SPARQL,
+					queryString.replaceAll("%mappingId%",m.getId().toString()), ApplicationConstants.MAPPING_CONTEXT);
+	    		TupleQueryResult result = query.evaluate();
+                if (result.hasNext()) {
+                    BindingSet bs = result.next();
+                    m.setSourceOntologyId(convertValueToInteger(bs
+						.getValue("sourceOntologyId")));
+                    m.setTargetOntologyId(convertValueToInteger(bs
+						.getValue("targetOntologyId")));
+                }
+            }
+        } catch (RepositoryException e) {
+			e.printStackTrace();
+		} catch (QueryEvaluationException e) {
+			e.printStackTrace();
+		} catch (MalformedQueryException e) {
+			e.printStackTrace();
+		} finally {
+			cleanup(con);
+		}
+    }
 
-		String queryString;
-		if (limit != null && offset != null) {
-			queryString = mappingIdFromSourceOrTarget.replaceAll("%FILTER%",
-					filter).replaceAll("%LIMIT%", limit.toString()).replaceAll(
-					"%OFFSET%", offset.toString());
-		} else {
-			queryString = mappingIdFromSourceOrTarget.replaceAll("%FILTER%",
-					filter).replaceAll("LIMIT %LIMIT% OFFSET %OFFSET%", "");
+    /** specific case to run mapping query with a union for source and target.
+     * it performs better than the generalised case */
+    protected List<Mapping> getMappingsBetweenOntologies(Integer sourceOntology,
+			Integer targetOntology, Boolean unidirectional, Integer limit,
+			Integer offset, SPARQLFilterGenerator parameters) throws InvalidInputException {
+
+        // Safety check
+        if (limit == null || limit >= 50000) {
+            limit = 50000;
+        }
+
+        if (offset == null) {
+            offset = 0;
+        }
+
+        // Combine filters
+        String filter = (parameters != null) ? parameters.toFilter() : "";
+
+        // Substitute tokens in the generic query string
+        String queryString = mappingQueryBetweenOntolgies.replaceAll("%FILTER%",
+                filter).replaceAll("%LIMIT%", limit.toString())
+                .replaceAll("%OFFSET%", offset.toString());
+
+        // Remove filter if it's not used
+        if (filter == null || filter.isEmpty()) {
+            queryString = queryString.replaceAll("FILTER \\(\\) ", "");
+        }
+        String unionPattern = 
+            "{ ?mappingId <http://protege.stanford.edu/ontologies/mappings/mappings.rdfs#target_ontology_id> %ONTOLOGY_A% . "
+            + "?mappingId <http://protege.stanford.edu/ontologies/mappings/mappings.rdfs#source_ontology_id> %ONTOLOGY_B% . "
+            + "} ";
+        if (!unidirectional) {
+            unionPattern += "UNION { "
+            + "?mappingId <http://protege.stanford.edu/ontologies/mappings/mappings.rdfs#target_ontology_id> %ONTOLOGY_B% . "
+            + "?mappingId <http://protege.stanford.edu/ontologies/mappings/mappings.rdfs#source_ontology_id> %ONTOLOGY_A% . " 
+            + "} "; 
+        }
+
+        unionPattern = unionPattern.replaceAll("%ONTOLOGY_A%",Integer.toString(targetOntology)).replaceAll("%ONTOLOGY_B%",Integer.toString(sourceOntology));
+        queryString = queryString.replaceAll("%ONTOLOGIES_MATCH_PATTERN%",unionPattern);
+
+        List<Mapping> mappings = getMappingsFromSPARQLQuery(queryString);        
+        if (!unidirectional) {
+            populateSourceAndTargetOntologyId(mappings);
+        } else {
+            for (Mapping m : mappings) {
+                m.setTargetOntologyId(targetOntology);
+                m.setSourceOntologyId(sourceOntology);
+            }
+        }
+        return mappings;
+
+    }
+
+	/**
+	 * Generic getMappings call. Must provide a valid SPARQL filter (generated
+	 * via helper methods or elsewhere).
+	 *
+	 * @param limit
+	 * @param offset
+	 * @param filter
+	 * @param parameters
+	 * @param sourceOntology
+	 * @param targetOntology
+	 * @param unidirectional
+	 *
+	 * @return
+	 * @throws InvalidInputException
+	 */
+	protected List<Mapping> getMappings(Integer limit, Integer offset,
+			String filter, String orderBy, SPARQLFilterGenerator parameters)
+			throws InvalidInputException {
+		// Safety check
+		if (limit == null || limit >= 50000) {
+			limit = 50000;
 		}
 
-		RepositoryConnection con = getRdfStoreManager()
+		if (offset == null) {
+			offset = 0;
+		}
+
+		// Combine filters
+		String combinedFilters = "";
+		if (filter != null) {
+			combinedFilters = (parameters != null) ? filter + " "
+					+ parameters.toFilter() : filter;
+		} else {
+			combinedFilters = (parameters != null) ? parameters.toFilter() : "";
+		}
+
+		// Substitute tokens in the generic query string
+		String queryString = mappingQuery.replaceAll("%FILTER%",
+				combinedFilters).replaceAll("%LIMIT%", limit.toString())
+				.replaceAll("%OFFSET%", offset.toString());
+
+		if (orderBy != null && !orderBy.isEmpty()) {
+			queryString = queryString.replaceAll("%ORDERBY%", " ORDER BY DESC("
+					+ orderBy + ")");
+		} else {
+			queryString = queryString.replaceAll("%ORDERBY%", "");
+		}
+
+		// Remove filter if it's not used
+		if (filter == null || filter.isEmpty()) {
+			queryString = queryString.replaceAll("FILTER \\(\\) ", "");
+		}
+        
+        return getMappingsFromSPARQLQuery(queryString);
+	}
+
+
+    private Integer getMappingCountFromQuery(String queryString) {
+        RepositoryConnection con = getRdfStoreManager()
+				.getRepositoryConnection();
+
+		try {
+			TupleQuery query = con.prepareTupleQuery(QueryLanguage.SPARQL,
+					queryString, ApplicationConstants.MAPPING_CONTEXT);
+
+			TupleQueryResult result = query.evaluate();
+            
+            Integer count = 0;
+			while (result.hasNext()) {
+				BindingSet bs = result.next();
+				count = Integer.parseInt(bs.getValue("c").stringValue());
+			}
+            return count;
+		} catch (RepositoryException e) {
+			e.printStackTrace();
+		} catch (MalformedQueryException e) {
+			e.printStackTrace();
+		} catch (QueryEvaluationException e) {
+			e.printStackTrace();
+		} finally {
+			cleanup(con);
+		}
+        return null;
+    }
+
+
+
+    private Set<String> getMappingIdsFromQuery(String queryString) {
+        RepositoryConnection con = getRdfStoreManager()
 				.getRepositoryConnection();
 
 		HashSet<String> mappingIds = new HashSet<String>();
@@ -335,9 +484,37 @@ public class AbstractNcboMappingDAO {
 		} finally {
 			cleanup(con);
 		}
+        return mappingIds;
+    }
 
-		return mappingIds;
+    /** from a SPARQLUnionGenerator executes the call returning the count */
+    protected Integer getMappingCountFromUnion(SPARQLUnionGenerator unionGenerator) {
+        String queryString = unionGenerator.getSPARQLQuery();
+        return getMappingCountFromQuery(queryString);
+    }
+
+    /** from a SPARQLUnionGenerator executes the call and returns the set of mappgin IDs */
+    protected Set<String> getMappingIdsFromUnion(SPARQLUnionGenerator unionGenerator) {
+        String queryString = unionGenerator.getSPARQLQuery();
+        return getMappingIdsFromQuery(queryString);
+    }
+
+	protected Set<String> getMappingIdsFromFilter(Integer limit,
+			Integer offset, String filter) {
+
+		String queryString;
+		if (limit != null && offset != null) {
+			queryString = mappingIdFromSourceOrTarget.replaceAll("%FILTER%",
+					filter).replaceAll("%LIMIT%", limit.toString()).replaceAll(
+					"%OFFSET%", offset.toString());
+		} else {
+			queryString = mappingIdFromSourceOrTarget.replaceAll("%FILTER%",
+					filter).replaceAll("LIMIT %LIMIT% OFFSET %OFFSET%", "");
+		}
+
+		return getMappingIdsFromQuery(queryString);
 	}
+
 
 	/**
 	 * Generic getCount call. Must provide a valid SPARQL filter (generated via
@@ -374,10 +551,9 @@ public class AbstractNcboMappingDAO {
 		} else {
 			queryString = queryString.replaceAll("%TRIPLES_FOR_PARAMS%", "");
 		}
-
+        
 		RepositoryConnection con = getRdfStoreManager()
 				.getRepositoryConnection();
-
 		Integer count = null;
 		try {
 			TupleQuery query = con.prepareTupleQuery(QueryLanguage.SPARQL,
@@ -640,7 +816,7 @@ public class AbstractNcboMappingDAO {
 	 */
 	protected RDFStoreManager getRdfStoreManager() {
 		String storeType = MessageUtils.getMessage("rdf.store.type");
-		return rdfStoreManagerMap.get(storeType);
+		return rdfStoreManagerMap.get("virtuoso");
 	}
 
 	/**

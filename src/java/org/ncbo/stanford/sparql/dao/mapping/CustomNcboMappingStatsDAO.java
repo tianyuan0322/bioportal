@@ -86,7 +86,6 @@ public class CustomNcboMappingStatsDAO extends AbstractNcboMappingDAO {
 			query = con.prepareTupleQuery(QueryLanguage.SPARQL, queryString,
 					ApplicationConstants.MAPPING_CONTEXT);
 			TupleQueryResult result = query.evaluate();
-
 			while (result.hasNext()) {
 				BindingSet bs = result.next();
 
@@ -281,7 +280,6 @@ public class CustomNcboMappingStatsDAO extends AbstractNcboMappingDAO {
 			query = con.prepareTupleQuery(QueryLanguage.SPARQL, userCountQuery,
 					ApplicationConstants.MAPPING_CONTEXT);
 			TupleQueryResult result = query.evaluate();
-
 			while (result.hasNext()) {
 				BindingSet bs = result.next();
 

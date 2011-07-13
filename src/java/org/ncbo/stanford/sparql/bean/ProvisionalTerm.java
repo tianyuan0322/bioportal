@@ -3,6 +3,8 @@ package org.ncbo.stanford.sparql.bean;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
+import java.util.Hashtable;
 
 import org.ncbo.stanford.annotation.IRI;
 import org.ncbo.stanford.util.constants.ApplicationConstants;
@@ -260,5 +262,9 @@ public class ProvisionalTerm extends AbstractSPARQLBean {
 		return RDF_TYPE;
 	}
 
+    
+    public Map<String, ParameterMap> getParameterMapping() {
+        return new Hashtable<String, ParameterMap>();
+    }
 
 }

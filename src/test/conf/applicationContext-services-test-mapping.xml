@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:util="http://www.springframework.org/schema/util"
+	xmlns:aop="http://www.springframework.org/schema/aop" xmlns:tx="http://www.springframework.org/schema/tx"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xsi:schemaLocation="
+       http://www.springframework.org/schema/beans
+       http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
+       http://www.springframework.org/schema/util
+       http://www.springframework.org/schema/util/spring-util-2.5.xsd
+       http://www.springframework.org/schema/tx
+       http://www.springframework.org/schema/tx/spring-tx-2.5.xsd
+       http://www.springframework.org/schema/aop
+       http://www.springframework.org/schema/aop/spring-aop-2.5.xsd
+       http://www.springframework.org/schema/context
+       http://www.springframework.org/schema/context/spring-context-2.5.xsd">
+
+	<!-- Message bundle -->
+	<bean id="messageBundleName" class="java.lang.String">
+		<constructor-arg>
+			<value>org.ncbo.stanford.resource.generated.message</value>
+		</constructor-arg>
+	</bean>
+
+	<bean id="messageUtils" class="org.ncbo.stanford.util.MessageUtils">
+		<constructor-arg ref="messageBundleName" index="0" />
+	</bean>
+
+	<bean id="rdfStoreManagerVirtuosoImpl"
+	      class="org.ncbo.stanford.manager.rdfstore.impl.RDFStoreManagerVirtuosoImpl">
+	</bean>
+
+	<bean id="rdfStoreManagerMySqlImpl"
+	      class="org.ncbo.stanford.manager.rdfstore.impl.RDFStoreManagerMySqlImpl">
+	</bean>
+
+	<util:map id="rdfStoreManagerMap" map-class="java.util.HashMap">
+		<entry>
+			<key>
+				<util:constant
+					static-field="org.ncbo.stanford.util.constants.ApplicationConstants.VIRTUOSO" />
+			</key>
+			<ref local="rdfStoreManagerVirtuosoImpl" />
+		</entry>
+		<entry>
+			<key>
+				<util:constant
+					static-field="org.ncbo.stanford.util.constants.ApplicationConstants.MYSQL" />
+			</key>
+			<ref local="rdfStoreManagerMySqlImpl" />
+		</entry>
+	</util:map>
+
+	<bean id="abstractMappingDAO" class="org.ncbo.stanford.sparql.dao.mapping.AbstractNcboMappingDAO">
+		<property name="rdfStoreManagerMap">
+			<ref local="rdfStoreManagerMap" />
+		</property>
+	</bean>
+
+	<bean id="mappingDAO" class="org.ncbo.stanford.sparql.dao.mapping.CustomNcboMappingDAO"
+		parent="abstractMappingDAO">
+	</bean>
+
+	<bean id="mappingCountsDAO" class="org.ncbo.stanford.sparql.dao.mapping.CustomNcboMappingCountsDAO"
+		parent="abstractMappingDAO">
+	</bean>
+
+	<bean id="mappingStatsDAO" class="org.ncbo.stanford.sparql.dao.mapping.CustomNcboMappingStatsDAO"
+		parent="abstractMappingDAO">
+	</bean>
+
+</beans>
