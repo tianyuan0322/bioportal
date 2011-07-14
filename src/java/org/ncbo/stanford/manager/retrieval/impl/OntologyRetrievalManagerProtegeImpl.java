@@ -81,7 +81,8 @@ public class OntologyRetrievalManagerProtegeImpl extends
 	/**
 	 * Get the root concept for the specified ontology.
 	 */
-	public ClassBean findRootConcept(OntologyBean ontologyBean, boolean light) {
+	public ClassBean findRootConcept(OntologyBean ontologyBean,
+			Integer maxNumChildren, boolean light) {
 		KnowledgeBase kb = getKnowledgeBase(ontologyBean);
 		Slot synonymSlot = getSynonymSlot(kb, ontologyBean.getSynonymSlot());
 		Slot definitionSlot = getDefinitionSlot(kb, ontologyBean
@@ -99,8 +100,10 @@ public class OntologyRetrievalManagerProtegeImpl extends
 				targetClass = buildConceptLight(oThing, synonymSlot,
 						definitionSlot, authorSlot, ontologyBean);
 			} else {
-				targetClass = createClassBean(oThing, true, synonymSlot,
-						definitionSlot, authorSlot, ontologyBean);
+				int childCount = getSubclasses(oThing).size();
+				boolean includeChildren = (childCount <= maxNumChildren);
+				targetClass = createClassBean(oThing, includeChildren,
+						synonymSlot, definitionSlot, authorSlot, ontologyBean);
 			}
 		}
 
@@ -108,7 +111,8 @@ public class OntologyRetrievalManagerProtegeImpl extends
 	}
 
 	public ClassBean findConcept(OntologyBean ontologyBean, String conceptId,
-			boolean light, boolean noRelations, boolean withClassProperties) {
+			Integer maxNumChildren, boolean light, boolean noRelations,
+			boolean withClassProperties) {
 		KnowledgeBase kb = getKnowledgeBase(ontologyBean);
 		Slot synonymSlot = getSynonymSlot(kb, ontologyBean.getSynonymSlot());
 		Slot definitionSlot = getDefinitionSlot(kb, ontologyBean
@@ -138,7 +142,9 @@ public class OntologyRetrievalManagerProtegeImpl extends
 				targetClass = buildConceptWithProperties((Cls) owlClass, true,
 						synonymSlot, definitionSlot, authorSlot, ontologyBean);
 			} else {
-				targetClass = createClassBean((Cls) owlClass, true,
+				int childCount = getSubclasses((Cls) owlClass).size();
+				boolean includeChildren = (childCount <= maxNumChildren);
+				targetClass = createClassBean((Cls) owlClass, includeChildren,
 						synonymSlot, definitionSlot, authorSlot, ontologyBean);
 			}
 		}
@@ -152,7 +158,8 @@ public class OntologyRetrievalManagerProtegeImpl extends
 	 * 
 	 */
 	public Page<ClassBean> findAllConcepts(OntologyBean ontologyBean,
-			Integer pageSize, Integer pageNum) throws Exception {
+			Integer maxNumChildren, Integer pageSize, Integer pageNum)
+			throws Exception {
 		KnowledgeBase kb = getKnowledgeBase(ontologyBean);
 		final Slot synonymSlot = getSynonymSlot(kb, ontologyBean
 				.getSynonymSlot());
@@ -186,7 +193,9 @@ public class OntologyRetrievalManagerProtegeImpl extends
 		List<Cls> allConceptsLimited = allClasses.subList(offset, limit);
 
 		for (Cls cls : allConceptsLimited) {
-			pageConcepts.add(createClassBean(cls, true, synonymSlot,
+			int childCount = getSubclasses(cls).size();
+			boolean includeChildren = (childCount <= maxNumChildren);
+			pageConcepts.add(createClassBean(cls, includeChildren, synonymSlot,
 					definitionSlot, authorSlot, ontologyBean));
 		}
 
@@ -463,6 +472,7 @@ public class OntologyRetrievalManagerProtegeImpl extends
 		} else {
 			subclasses = getUniqueClasses(cls.getDirectSubclasses());
 		}
+
 		return subclasses;
 	}
 
@@ -479,8 +489,8 @@ public class OntologyRetrievalManagerProtegeImpl extends
 	private ClassBean buildConceptWithProperties(Cls cls,
 			boolean includeChildren, Slot synonymSlot, Slot definitionSlot,
 			Slot authorSlot, OntologyBean ontologyBean) {
-		ClassBean classBean = createClassBean(cls, true, synonymSlot,
-				definitionSlot, authorSlot, ontologyBean);
+		ClassBean classBean = createClassBean(cls, includeChildren,
+				synonymSlot, definitionSlot, authorSlot, ontologyBean);
 		boolean isOwl = cls.getKnowledgeBase() instanceof OWLModel;
 
 		// add properties
@@ -556,24 +566,11 @@ public class OntologyRetrievalManagerProtegeImpl extends
 			OntologyBean ontologyBean) {
 		List<ClassBean> beans = new ArrayList<ClassBean>();
 		List<Cls> subclasses = null;
+
 		for (Cls cls : protegeClses) {
-
 			ClassBean classBean = createBaseClassBean(cls, ontologyBean);
-			// This code is used for removing the Anonymous classes
-			if (cls instanceof OWLNamedClass) {
-				// Collecting the subclasses for Cls
-				subclasses = getUniqueClasses(((OWLNamedClass) cls)
-						.getNamedSubclasses(false));
+			subclasses = getSubclasses(cls);
 
-				OWLModel owlModel = (OWLModel) cls.getKnowledgeBase();
-
-				if (cls.equals(owlModel.getOWLThingClass())) {
-					subclasses = (List<Cls>) removeAnnonymousClasses(subclasses);
-				}
-			} else {
-				// Collecting the subclasses for Cls
-				subclasses = getUniqueClasses(cls.getDirectSubclasses());
-			}
 			// It's adding the childCount Property after counting their
 			// subclases
 			classBean.addRelation(ApplicationConstants.CHILD_COUNT, subclasses
@@ -673,6 +670,7 @@ public class OntologyRetrievalManagerProtegeImpl extends
 			Slot synonymSlot, Slot definitionSlot, Slot authorSlot,
 			OntologyBean ontologyBean) {
 		boolean isOwl = cls.getKnowledgeBase() instanceof OWLModel;
+		List<Cls> superclasses = null;
 
 		ClassBean classBean = createBaseClassBean(cls, ontologyBean);
 		addSynonyms(cls, synonymSlot, classBean);
@@ -695,50 +693,13 @@ public class OntologyRetrievalManagerProtegeImpl extends
 		reservedSlots.add(authorSlot);
 		slots.removeAll(reservedSlots);
 
+		// add all existing relations
 		classBean.addRelations(convertProperties(cls, slots, ontologyBean,
 				isOwl));
 
-		// add subclasses
-		// if OWLNamedClass, then use getNamedSubclasses/Superclasses,
-		// else use getDirectSubclasses/Superclasses (cast to
-		// Collection<Cls>)
-		List<Cls> subclasses = null;
-		List<Cls> superclasses = null;
-
-		if (cls instanceof OWLNamedClass) {
-			subclasses = getUniqueClasses(((OWLNamedClass) cls)
-					.getNamedSubclasses(false));
-			OWLModel owlModel = (OWLModel) cls.getKnowledgeBase();
-
-			if (cls.equals(owlModel.getOWLThingClass())) {
-				subclasses = (List<Cls>) removeAnnonymousClasses(subclasses);
-			}
-		} else {
-			subclasses = getUniqueClasses(cls.getDirectSubclasses());
-		}
-
-		classBean.addRelation(ApplicationConstants.CHILD_COUNT, subclasses
-				.size());
+		// add instance count
 		classBean.addRelation(ApplicationConstants.INSTANCE_COUNT, cls
 				.getDirectInstanceCount());
-
-		if (includeChildren) {
-			classBean.addRelation(ApplicationConstants.SUB_CLASS,
-					convertClasses(subclasses, false, synonymSlot,
-							definitionSlot, authorSlot, ontologyBean));
-
-			// add superclasses
-			if (cls instanceof OWLNamedClass) {
-				superclasses = getUniqueClasses(((OWLNamedClass) cls)
-						.getNamedSuperclasses(false));
-			} else {
-				superclasses = getUniqueClasses(cls.getDirectSuperclasses());
-			}
-
-			classBean.addRelation(ApplicationConstants.SUPER_CLASS,
-					convertClasses(superclasses, false, synonymSlot,
-							definitionSlot, authorSlot, ontologyBean));
-		}
 
 		// add RDF type
 		if (cls instanceof OWLNamedClass) {
@@ -746,6 +707,34 @@ public class OntologyRetrievalManagerProtegeImpl extends
 					convertClasses(getUniqueClasses(((OWLNamedClass) cls)
 							.getRDFTypes()), false, synonymSlot,
 							definitionSlot, authorSlot, ontologyBean));
+		}
+
+		// add superclasses
+		if (cls instanceof OWLNamedClass) {
+			superclasses = getUniqueClasses(((OWLNamedClass) cls)
+					.getNamedSuperclasses(false));
+		} else {
+			superclasses = getUniqueClasses(cls.getDirectSuperclasses());
+		}
+
+		classBean.addRelation(ApplicationConstants.SUPER_CLASS, convertClasses(
+				superclasses, false, synonymSlot, definitionSlot, authorSlot,
+				ontologyBean));
+
+		List<Cls> subclasses = getSubclasses(cls);
+
+		// add child count
+		classBean.addRelation(ApplicationConstants.CHILD_COUNT, subclasses
+				.size());
+
+		// add subclasses
+		if (includeChildren) {
+			classBean.addRelation(ApplicationConstants.SUB_CLASS,
+					convertClasses(subclasses, false, synonymSlot,
+							definitionSlot, authorSlot, ontologyBean));
+		} else {
+			classBean.addRelation(ApplicationConstants.SUB_CLASS,
+					new ArrayList<ClassBean>(0));
 		}
 
 		return classBean;

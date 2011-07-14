@@ -34,8 +34,9 @@ public class OntologyRetrievalManagerLexGridImplTest extends
 				.getOntologyBeanByDisplayNameAndOntologyId(
 						OntologyLoaderLexGridImplTest.OBO_CELL_DISPLAY_LABEL,
 						OntologyLoaderLexGridImplTest.OBO_CELL_ONTOLOGY_ID);
-		ClassBean classBean = retrievalManager.findRootConcept(ncboOntology,
-				false);
+		int maxNumChildren = 1000;
+		ClassBean classBean = retrievalManager.findRootConcept(ncboOntology, 
+				maxNumChildren, false);
 		System.out.println("Root concept is \n" + classBean);
 		System.out.println("\n");
 		assertTrue(classBean != null);
@@ -49,8 +50,9 @@ public class OntologyRetrievalManagerLexGridImplTest extends
 				.getOntologyBeanByDisplayNameAndOntologyId(
 						OntologyLoaderLexGridImplTest.OBO_CELL_DISPLAY_LABEL,
 						OntologyLoaderLexGridImplTest.OBO_CELL_ONTOLOGY_ID);
+		int maxNumChildren = 1000;
 		ClassBean classBean = retrievalManager.findRootConcept(ncboOntology,
-				true);
+				maxNumChildren, true);
 		System.out.println("Root concept is \n" + classBean);
 		System.out.println("\n");
 		assertTrue(classBean != null);
@@ -64,8 +66,9 @@ public class OntologyRetrievalManagerLexGridImplTest extends
 				.getOntologyBeanByDisplayNameAndOntologyId(
 						OntologyLoaderLexGridImplTest.OBO_CELL_OLD_DISPLAY_LABEL,
 						OntologyLoaderLexGridImplTest.OBO_CELL_OLD_ONTOLOGY_ID);
+		int maxNumChildren = 1000;
 		ClassBean classBean = retrievalManager.findRootConcept(ncboOntology,
-				false);
+				maxNumChildren, false);
 		System.out.println("Root concept is \n" + classBean);
 		System.out.println("\n");
 		assertTrue(classBean != null);
@@ -77,8 +80,9 @@ public class OntologyRetrievalManagerLexGridImplTest extends
 
 		OntologyBean ncboOntology = retrievalManager
 				.getLatestOntologyBean(OntologyLoaderLexGridImplTest.OWL_PIZZA_DISPLAY_LABEL);
+		int maxNumChildren = 1000;
 		ClassBean classBean = retrievalManager.findRootConcept(ncboOntology,
-				false);
+				maxNumChildren, false);
 		System.out.println("Root concept is \n" + classBean);
 		System.out.println("\n");
 		assertTrue(classBean != null);
@@ -90,8 +94,9 @@ public class OntologyRetrievalManagerLexGridImplTest extends
 
 		OntologyBean ncboOntology = retrievalManager
 				.getLatestOntologyBean(OntologyLoaderLexGridImplTest.LEXGRID_DISPLAY_LABEL);
+		int maxNumChildren = 1000;
 		ClassBean classBean = retrievalManager.findRootConcept(ncboOntology,
-				false);
+				maxNumChildren, false);
 		System.out.println("Root concept is \n" + classBean);
 		System.out.println("\n");
 		assertTrue(classBean != null);
@@ -103,8 +108,9 @@ public class OntologyRetrievalManagerLexGridImplTest extends
 
 		OntologyBean ncboOntology = retrievalManager
 				.getLatestOntologyBean(OntologyLoaderLexGridImplTest.UMLS_DISPLAY_LABEL);
+		int maxNumChildren = 1000;
 		ClassBean classBean = retrievalManager.findRootConcept(ncboOntology,
-				false);
+				maxNumChildren, false);
 		System.out.println("Root concept is \n" + classBean);
 		System.out.println("\n");
 		assertTrue(classBean != null);
@@ -136,8 +142,9 @@ public class OntologyRetrievalManagerLexGridImplTest extends
 						OntologyLoaderLexGridImplTest.UMLS_MTHCH_DISPLAY_LABEL);
 		//String conceptID = "CL:0000255";
 		String conceptID = "Level 1: 0001T-9999T";
+		int maxNumChildren = 1000;
 		ClassBean classBean = retrievalManager.findConcept(ncboOntology,
-				conceptID, false, false, false);
+				conceptID, maxNumChildren, false, false, false);
 		System.out.println("Concept " + conceptID + " of MTHCH ontology is \n"
 				+ classBean);
 		System.out.println("\n");
@@ -156,8 +163,9 @@ public class OntologyRetrievalManagerLexGridImplTest extends
 		//String conceptID = "CL:0000255";
 		//String conceptID = "CL:0000254";
 		String conceptID = "CL:0000037";
+		int maxNumChildren = 1000;
 		ClassBean classBean = retrievalManager.findConcept(ncboOntology,
-				conceptID, false, false, false);
+				conceptID, maxNumChildren, false, false, false);
 		System.out.println("Concept " + conceptID + " of cell ontology is \n"
 				+ classBean);
 		System.out.println("\n");
@@ -174,8 +182,9 @@ public class OntologyRetrievalManagerLexGridImplTest extends
 						OntologyLoaderLexGridImplTest.OBO_CELL_ONTOLOGY_ID);
 		//String conceptID = "CL:0000255";
 		String conceptID = "CL:0000045";
+		int maxNumChildren = 1000;
 		ClassBean classBean = retrievalManager.findConcept(ncboOntology,
-				conceptID, false, false, false);
+				conceptID, maxNumChildren, false, false, false);
 		System.out.println("Concept " + conceptID + " of cell ontology is \n"
 				+ classBean);
 		System.out.println("\n");
@@ -191,8 +200,9 @@ public class OntologyRetrievalManagerLexGridImplTest extends
 						OntologyLoaderLexGridImplTest.OBO_CELL_DISPLAY_LABEL,
 						OntologyLoaderLexGridImplTest.OBO_CELL_ONTOLOGY_ID);
 		String conceptID = "CL:0000255";
+		int maxNumChildren = 1000;
 		ClassBean classBean = retrievalManager.findConcept(ncboOntology,
-				conceptID, true, false, false);
+				conceptID, maxNumChildren, true, false, false);
 		System.out.println("Concept " + conceptID + " of cell ontology is \n"
 				+ classBean);
 		System.out.println("\n");
@@ -208,8 +218,9 @@ public class OntologyRetrievalManagerLexGridImplTest extends
 						OntologyLoaderLexGridImplTest.OBO_CELL_DISPLAY_LABEL,
 						OntologyLoaderLexGridImplTest.OBO_CELL_ONTOLOGY_ID);
 		String conceptID = "CL:ABCDXYZ";
+		int maxNumChildren = 1000;
 		ClassBean classBean = retrievalManager.findConcept(ncboOntology,
-				conceptID, false, false, false);
+				conceptID, maxNumChildren, false, false, false);
 		System.out.println("Concept " + conceptID + " of cell ontology is \n"
 				+ classBean);
 		System.out.println("\n");
@@ -225,8 +236,9 @@ public class OntologyRetrievalManagerLexGridImplTest extends
 						OntologyLoaderLexGridImplTest.OBO_CELL_DISPLAY_LABEL,
 						OntologyLoaderLexGridImplTest.OBO_CELL_ONTOLOGY_ID);
 		String conceptID = "CL_0000255";
+		int maxNumChildren = 1000;
 		ClassBean classBean = retrievalManager.findConcept(ncboOntology,
-				conceptID, false, false, false);
+				conceptID, maxNumChildren, false, false, false);
 		String newId = conceptID.replace("_", ":");
 		System.out.println("Concept " + conceptID + " of cell ontology is \n"
 				+ classBean);
@@ -243,8 +255,9 @@ public class OntologyRetrievalManagerLexGridImplTest extends
 						OntologyLoaderLexGridImplTest.OBO_CELL_DISPLAY_LABEL,
 						OntologyLoaderLexGridImplTest.OBO_CELL_ONTOLOGY_ID);
 		String conceptID = "http://purl.bioontology.org/ontology/CL/CL_0000548";
+		int maxNumChildren = 1000;
 		ClassBean classBean = retrievalManager.findConcept(ncboOntology,
-				conceptID, false, false, false);
+				conceptID, maxNumChildren, false, false, false);
 		String newId = "CL:0000548";
 		System.out.println("Concept " + conceptID + " of cell ontology is \n"
 				+ classBean);
@@ -259,8 +272,9 @@ public class OntologyRetrievalManagerLexGridImplTest extends
 		OntologyBean ncboOntology = retrievalManager
 				.getLatestOntologyBean(OntologyLoaderLexGridImplTest.OBO_DICTYOSTELIUM_DISPLAY_LABEL);
 		String conceptID = "DDANAT:0000004";
+		int maxNumChildren = 1000;
 		ClassBean classBean = retrievalManager.findConcept(ncboOntology,
-				conceptID, false, false, false);
+				conceptID, maxNumChildren, false, false, false);
 		System.out.println("Concept " + conceptID
 				+ " of Dictyostelium ontology(2 relations) is \n" + classBean);
 		System.out.println("\n");
@@ -274,8 +288,9 @@ public class OntologyRetrievalManagerLexGridImplTest extends
 		OntologyBean ncboOntology = retrievalManager
 				.getLatestOntologyBean(OntologyLoaderLexGridImplTest.OBO_DICTYOSTELIUM_DISPLAY_LABEL);
 		String conceptID = "DDANAT:0000430";
+		int maxNumChildren = 1000;
 		ClassBean classBean = retrievalManager.findConcept(ncboOntology,
-				conceptID, false, false, false);
+				conceptID, maxNumChildren, false, false, false);
 		System.out.println("Concept " + conceptID
 				+ " of Dictyostelium ontology(obsolete) is \n" + classBean);
 		System.out.println("\n");
@@ -289,8 +304,9 @@ public class OntologyRetrievalManagerLexGridImplTest extends
 		OntologyBean ncboOntology = retrievalManager
 				.getLatestOntologyBean(OntologyLoaderLexGridImplTest.LEXGRID_HL7_DISPLAY_LABEL);
 		String conceptID = "19944:abcCodes";
+		int maxNumChildren = 1000;
 		ClassBean classBean = retrievalManager.findConcept(ncboOntology,
-				conceptID, false, false, false);
+				conceptID, maxNumChildren, false, false, false);
 		System.out.println("Concept " + conceptID
 				+ " of HL7 ontology(obsolete) is \n" + classBean);
 		System.out.println("\n");
@@ -306,8 +322,9 @@ public class OntologyRetrievalManagerLexGridImplTest extends
 		OntologyBean ncboOntology = retrievalManager
 				.getLatestOntologyBean(OntologyLoaderLexGridImplTest.UMLS_DISPLAY_LABEL);
 		String conceptID = "MFART";
+		int maxNumChildren = 1000;
 		ClassBean classBean = retrievalManager.findConcept(ncboOntology,
-				conceptID, false, false, false);
+				conceptID, maxNumChildren, false, false, false);
 		System.out
 				.println("Concept "
 						+ conceptID
@@ -598,8 +615,9 @@ public class OntologyRetrievalManagerLexGridImplTest extends
 		boolean hasMoreResults = true;
 		while (hasMoreResults) {
 			System.out.println("Retrieving results starting at " + pageNum);
+			int maxNumChildren = 1000;
 			Page<ClassBean> beans = retrievalManager.findAllConcepts(
-					ncboOntology, pageSize, pageNum);
+					ncboOntology, maxNumChildren, pageSize, pageNum);
 			if (beans == null || beans.getNumResultsPage() <= pageSize) {
 				hasMoreResults = false;
 
@@ -629,8 +647,9 @@ public class OntologyRetrievalManagerLexGridImplTest extends
 		boolean hasMoreResults = true;
 		while (hasMoreResults) {
 			System.out.println("Retrieving results starting at page " + pageNum);
+			int maxNumChildren = 1000;
 			Page<ClassBean> beans = retrievalManager.findAllConcepts(
-					ncboOntology, pageSize, pageNum);
+					ncboOntology, maxNumChildren, pageSize, pageNum);
 			if (beans == null || beans.getNumResultsPage() < pageSize) {
 				hasMoreResults = false;
 			}

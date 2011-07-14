@@ -63,6 +63,10 @@ public class VirtualUriRestlet extends AbstractBaseRestlet {
 
 		Integer maxNumChildrenInt = RequestUtils
 				.parseIntegerParam(maxNumChildren);
+		if (maxNumChildrenInt == null) {
+			maxNumChildrenInt = Integer.MAX_VALUE;
+		}
+
 		Integer pageSizeInt = RequestUtils.parseIntegerParam(pageSize);
 		Integer pageNumInt = RequestUtils.parseIntegerParam(pageNum);
 		Boolean lightBool = RequestUtils.parseBooleanParam(light);
@@ -108,7 +112,8 @@ public class VirtualUriRestlet extends AbstractBaseRestlet {
 					} else if (conceptId
 							.equalsIgnoreCase(RequestParamConstants.PARAM_ALL_CONCEPTS)) {
 						returnObject = conceptService.findAllConcepts(ontBean
-								.getId(), pageSizeInt, pageNumInt);
+								.getId(), maxNumChildrenInt, pageSizeInt,
+								pageNumInt);
 					} else {
 						returnObject = conceptService.findConcept(ontBean
 								.getId(), conceptId, maxNumChildrenInt,

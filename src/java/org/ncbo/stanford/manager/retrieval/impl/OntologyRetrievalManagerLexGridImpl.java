@@ -116,8 +116,8 @@ public class OntologyRetrievalManagerLexGridImpl extends
 	/**
 	 * Get the root concept for the specified ontology.
 	 */
-	public ClassBean findRootConcept(OntologyBean ontologyBean, boolean light)
-			throws Exception {
+	public ClassBean findRootConcept(OntologyBean ontologyBean,
+			Integer maxNumChildren, boolean light) throws Exception {
 		String schemeName = getLexGridCodingSchemeName(ontologyBean);
 
 		if (StringUtils.isBlank(schemeName)) {
@@ -145,8 +145,8 @@ public class OntologyRetrievalManagerLexGridImpl extends
 	 * @throws Exception
 	 */
 	public ClassBean findConcept(OntologyBean ontologyBean, String conceptId,
-			boolean light, boolean noRelations, boolean withClassProperties)
-			throws Exception {
+			Integer maxNumChildren, boolean light, boolean noRelations,
+			boolean withClassProperties) throws Exception {
 		ClassBean concept = null;
 		String schemeName = getLexGridCodingSchemeName(ontologyBean);
 
@@ -170,8 +170,8 @@ public class OntologyRetrievalManagerLexGridImpl extends
 			// For example convert concept GO_12345 to GO:12345
 			String newId = getCorrectedConceptId(ontologyBean, conceptId);
 			if (!newId.equals(conceptId)) {
-				return findConcept(ontologyBean, newId, light, noRelations,
-						withClassProperties);
+				return findConcept(ontologyBean, newId, maxNumChildren, light,
+						noRelations, withClassProperties);
 			}
 		}
 
@@ -281,7 +281,8 @@ public class OntologyRetrievalManagerLexGridImpl extends
 			// relations
 			// removed. The subClass relation would hold the same info.
 			if (ontologyBean.getFormat().equalsIgnoreCase(
-					ApplicationConstants.FORMAT_UMLS_RRF) || ontologyBean.getFormat().equalsIgnoreCase(
+					ApplicationConstants.FORMAT_UMLS_RRF)
+					|| ontologyBean.getFormat().equalsIgnoreCase(
 							ApplicationConstants.FORMAT_UMLS_RELA)) {
 				List<String> umlsFilterList = getListOfSubClassDirectionalName(
 						schemeName, csvt);
@@ -354,7 +355,8 @@ public class OntologyRetrievalManagerLexGridImpl extends
 	 * @throws Exception
 	 */
 	public Page<ClassBean> findAllConcepts(OntologyBean ontologyBean,
-			Integer pageSize, Integer pageNum) throws Exception {
+			Integer maxNumChildren, Integer pageSize, Integer pageNum)
+			throws Exception {
 		String schemeName = getLexGridCodingSchemeName(ontologyBean);
 		CodingSchemeVersionOrTag csvt = getLexGridCodingSchemeVersion(ontologyBean);
 
@@ -1543,7 +1545,7 @@ public class OntologyRetrievalManagerLexGridImpl extends
 			Property prop = entry.getProperty(i);
 			String key = prop.getPropertyName();
 
-			if (StringUtils.isNotBlank(key) && ! relationsToFilter.contains(key)) {
+			if (StringUtils.isNotBlank(key) && !relationsToFilter.contains(key)) {
 				addPropertyToClassBean(ontologyBean, classBean, key, prop);
 			}
 		}

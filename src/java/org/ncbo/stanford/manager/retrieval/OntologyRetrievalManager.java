@@ -18,11 +18,11 @@ import org.ncbo.stanford.util.paginator.impl.Page;
  */
 public interface OntologyRetrievalManager {
 	public ClassBean findConcept(OntologyBean ob, String conceptId,
-			boolean light, boolean noRelations, boolean withClassProperties)
-			throws Exception;
+			Integer maxNumChildren, boolean light, boolean noRelations,
+			boolean withClassProperties) throws Exception;
 
-	public ClassBean findRootConcept(OntologyBean ob, boolean light)
-			throws Exception;
+	public ClassBean findRootConcept(OntologyBean ob, Integer maxNumChildren,
+			boolean light) throws Exception;
 
 	public ClassBean findPathFromRoot(OntologyBean ob, String conceptId,
 			boolean light) throws Exception;
@@ -50,8 +50,9 @@ public interface OntologyRetrievalManager {
 	public InstanceBean findInstanceById(OntologyBean ontologyBean,
 			String instanceId) throws Exception;
 
-	public Page<ClassBean> findAllConcepts(OntologyBean ob, Integer pageSize,
-			Integer pageNum) throws Exception;
+	public Page<ClassBean> findAllConcepts(OntologyBean ob,
+			Integer maxNumChildren, Integer pageSize, Integer pageNum)
+			throws Exception;
 
 	public Page<InstanceBean> findInstancesByConceptId(
 			OntologyBean ontologyBean, String instanceId, Integer pageSize,

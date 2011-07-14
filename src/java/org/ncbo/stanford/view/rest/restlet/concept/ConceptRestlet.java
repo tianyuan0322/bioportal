@@ -58,6 +58,10 @@ public class ConceptRestlet extends AbstractBaseRestlet {
 		String conceptId = getConceptId(request);
 		Integer maxNumChildrenInt = RequestUtils
 				.parseIntegerParam(maxNumChildren);
+		if (maxNumChildrenInt == null) {
+			maxNumChildrenInt = Integer.MAX_VALUE;
+		}
+		
 		Integer pageSizeInt = RequestUtils.parseIntegerParam(pageSize);
 		Integer pageNumInt = RequestUtils.parseIntegerParam(pageNum);
 		Boolean lightBool = RequestUtils.parseBooleanParam(light);
@@ -85,7 +89,7 @@ public class ConceptRestlet extends AbstractBaseRestlet {
 					.equalsIgnoreCase(RequestParamConstants.PARAM_ALL_CONCEPTS)) {
 				// all concepts
 				concept = conceptService.findAllConcepts(ontologyVersionIdInt,
-						pageSizeInt, pageNumInt);
+						maxNumChildrenInt, pageSizeInt, pageNumInt);
 			} else {
 				// specific concept
 				concept = conceptService.findConcept(ontologyVersionIdInt,

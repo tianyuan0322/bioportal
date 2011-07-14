@@ -75,7 +75,8 @@ public class OntologyRetrievalManagerProtegeTest extends AbstractBioPortalTest {
 	public void testGetRootNode() throws Exception {
 		System.out.println("\n\ntestGetRootNode()");
 		OntologyBean ontologyBean = getLatestOntologyBean(TEST_PIZZA_DISPLAY_NAME);
-		ClassBean conceptBean = ocMgr.findRootConcept(ontologyBean, false);
+		int maxNumChildren = 1000;
+		ClassBean conceptBean = ocMgr.findRootConcept(ontologyBean, maxNumChildren, false);
 
 		System.out.println("ROOT");
 
@@ -90,7 +91,8 @@ public class OntologyRetrievalManagerProtegeTest extends AbstractBioPortalTest {
 		System.out.println("Starting testGetConcept");
 		ClassBean conceptBean = null; 
 		OntologyBean ontologyBean = getLatestOntologyBean(TEST_PIZZA_DISPLAY_NAME);
-		conceptBean= ocMgr.findConcept(ontologyBean, TEST_CONCEPT_NAME, false, false, false);
+		int maxNumChildren = 1000;
+		conceptBean = ocMgr.findConcept(ontologyBean, TEST_CONCEPT_NAME, maxNumChildren, false, false, false);
 
 		outputConcept(conceptBean);
 
@@ -103,7 +105,8 @@ public class OntologyRetrievalManagerProtegeTest extends AbstractBioPortalTest {
 		System.out.println("Starting cheesyvegetablepizza concept");
 		ClassBean classBean = null; 
 		OntologyBean ontologyBean = getLatestOntologyBean(TEST_PIZZA_DISPLAY_NAME);
-		classBean= ocMgr.findConcept(ontologyBean, "CheeseyVegetableTopping", false, false, false);
+		int maxNumChildren = 1000;
+		classBean = ocMgr.findConcept(ontologyBean, "CheeseyVegetableTopping", maxNumChildren, false, false, false);
 		outputConcept(classBean);
 	}
 	

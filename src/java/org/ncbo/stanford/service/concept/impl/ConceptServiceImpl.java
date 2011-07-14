@@ -71,10 +71,11 @@ public class ConceptServiceImpl implements ConceptService {
 		}
 
 		ClassBean concept = getRetrievalManager(ontology).findRootConcept(
-				ontology, light);
+				ontology, maxNumChildren, light);
 
 		// temporary fix to remove long list of siblings
-		if (concept != null && maxNumChildren != null) {
+		if (concept != null && maxNumChildren != null
+				&& maxNumChildren < Integer.MAX_VALUE) {
 			removeExtraSiblingsOneIteration(
 					(ArrayList<ClassBean>) concept
 							.getRelation((Object) ApplicationConstants.SUB_CLASS),
@@ -106,10 +107,12 @@ public class ConceptServiceImpl implements ConceptService {
 		}
 
 		ClassBean concept = getRetrievalManager(ontology).findConcept(ontology,
-				conceptId, light, noRelations, withClassProperties);
+				conceptId, maxNumChildren, light, noRelations,
+				withClassProperties);
 
 		// temporary fix to remove long list of siblings
-		if (concept != null && maxNumChildren != null) {
+		if (concept != null && maxNumChildren != null
+				&& maxNumChildren < Integer.MAX_VALUE) {
 			removeExtraSiblingsOneIteration(
 					(ArrayList<ClassBean>) concept
 							.getRelation((Object) ApplicationConstants.SUB_CLASS),
@@ -170,7 +173,8 @@ public class ConceptServiceImpl implements ConceptService {
 				ontology, conceptId, light);
 
 		// temporary fix to remove long list of siblings
-		if (path != null && maxNumChildren != null && !light) {
+		if (!light && path != null && maxNumChildren != null
+				&& maxNumChildren < Integer.MAX_VALUE) {
 			// long start = System.currentTimeMillis();
 			// System.out.println("Start: " + start);
 			removeExtraSiblingsOneIteration(
@@ -194,6 +198,12 @@ public class ConceptServiceImpl implements ConceptService {
 			ArrayList<ClassBean> subClasses, String conceptId,
 			Integer parentChildCount, Integer maxNumChildren) {
 		if (subClasses == null) {
+			return;
+		}
+		
+		if (subClasses.isEmpty() && parentChildCount > maxNumChildren) {
+			ClassBean dummyClass = createDummyClass();
+			subClasses.add(dummyClass);
 			return;
 		}
 
@@ -222,12 +232,17 @@ public class ConceptServiceImpl implements ConceptService {
 			}
 
 			if (!listIterator.hasNext() && removed) {
-				ClassBean dummyClass = new ClassBean();
-				dummyClass.setId(DUMMY_CONCEPT_ID);
-				dummyClass.setLabel(DUMMY_CONCEPT_LABEL);
+				ClassBean dummyClass = createDummyClass();
 				listIterator.add(dummyClass);
 			}
 		}
+	}
+
+	private ClassBean createDummyClass() {
+		ClassBean dummyClass = new ClassBean();
+		dummyClass.setId(DUMMY_CONCEPT_ID);
+		dummyClass.setLabel(DUMMY_CONCEPT_LABEL);
+		return dummyClass;
 	}
 
 	@SuppressWarnings( { "unchecked", "unused" })
@@ -238,6 +253,12 @@ public class ConceptServiceImpl implements ConceptService {
 			return;
 		}
 
+		if (subClasses.isEmpty() && parentChildCount > maxNumChildren) {
+			ClassBean dummyClass = createDummyClass();
+			subClasses.add(dummyClass);
+			return;
+		}
+		
 		for (ClassBean subClass : subClasses) {
 			ArrayList<ClassBean> sub = (ArrayList<ClassBean>) subClass
 					.getRelation((Object) ApplicationConstants.SUB_CLASS);
@@ -265,9 +286,7 @@ public class ConceptServiceImpl implements ConceptService {
 				}
 			}
 
-			ClassBean dummyClass = new ClassBean();
-			dummyClass.setId(DUMMY_CONCEPT_ID);
-			dummyClass.setLabel(DUMMY_CONCEPT_LABEL);
+			ClassBean dummyClass = createDummyClass();
 			subClasses.add(dummyClass);
 		}
 	}
@@ -353,7 +372,8 @@ public class ConceptServiceImpl implements ConceptService {
 	}
 
 	public Page<ClassBean> findAllConcepts(Integer ontologyVersionId,
-			Integer pageSize, Integer pageNum) throws Exception {
+			Integer maxNumChildren, Integer pageSize, Integer pageNum)
+			throws Exception {
 		// get ontologyBean from versionId
 		OntologyBean ontology = ontologyMetadataManager
 				.findOntologyOrViewVersionById(ontologyVersionId);
@@ -365,7 +385,7 @@ public class ConceptServiceImpl implements ConceptService {
 		}
 
 		return getRetrievalManager(ontology).findAllConcepts(ontology,
-				pageSize, pageNum);
+				maxNumChildren, pageSize, pageNum);
 	}
 
 	//
