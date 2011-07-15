@@ -72,7 +72,7 @@ public class ConceptServiceImpl implements ConceptService {
 		}
 
 		ClassBean concept = getRetrievalManager(ontology).findRootConcept(
-				ontology,  maxNumChildren, light);
+				ontology, maxNumChildren, light);
 
 		// temporary fix to remove long list of siblings
 		if (concept != null && maxNumChildren != null
@@ -108,7 +108,7 @@ public class ConceptServiceImpl implements ConceptService {
 		}
 
 		ClassBean concept = getRetrievalManager(ontology).findConcept(ontology,
-				conceptId, maxNumChildren, light,  noRelations,
+				conceptId, maxNumChildren, light, noRelations,
 				withClassProperties);
 
 		// temporary fix to remove long list of siblings
@@ -201,7 +201,7 @@ public class ConceptServiceImpl implements ConceptService {
 		if (subClasses == null) {
 			return;
 		}
-		
+
 		if (subClasses.isEmpty() && parentChildCount > maxNumChildren) {
 			ClassBean dummyClass = createDummyClass();
 			subClasses.add(dummyClass);
@@ -246,28 +246,27 @@ public class ConceptServiceImpl implements ConceptService {
 		return dummyClass;
 	}
 
-	@SuppressWarnings( { "unchecked", "unused" })
-	private void removeExtraSiblingsFromPage(
-			Page<ClassBean> page, Integer maxNumChildren) {
-		Iterator<ClassBean> iter= page.getContents().iterator();
+	@SuppressWarnings("unchecked")
+	private void removeExtraSiblingsFromPage(Page<ClassBean> page,
+			Integer maxNumChildren) {
+		Iterator<ClassBean> iter = page.getContents().iterator();
+
 		while (iter.hasNext()) {
 			ClassBean concept = iter.next();
 			// temporary fix to remove long list of siblings
-			if (concept != null && maxNumChildren != null) {
+			if (concept != null && maxNumChildren != null
+					&& maxNumChildren < Integer.MAX_VALUE) {
 				removeExtraSiblingsOneIteration(
 						(ArrayList<ClassBean>) concept
 								.getRelation((Object) ApplicationConstants.SUB_CLASS),
-								concept.getId(),
+						concept.getId(),
 						(Integer) concept
 								.getRelation((Object) ApplicationConstants.CHILD_COUNT),
 						maxNumChildren);
 			}
-			
 		}
-		
-		
 	}
-			
+
 	@SuppressWarnings( { "unchecked", "unused" })
 	private void removeExtraSiblingsTwoIterations(
 			ArrayList<ClassBean> subClasses, String conceptId,
@@ -281,7 +280,7 @@ public class ConceptServiceImpl implements ConceptService {
 			subClasses.add(dummyClass);
 			return;
 		}
-		
+
 		for (ClassBean subClass : subClasses) {
 			ArrayList<ClassBean> sub = (ArrayList<ClassBean>) subClass
 					.getRelation((Object) ApplicationConstants.SUB_CLASS);
@@ -407,8 +406,8 @@ public class ConceptServiceImpl implements ConceptService {
 							+ " (Version Id: " + ontologyVersionId + ")");
 		}
 
-		Page<ClassBean> resultPage= getRetrievalManager(ontology).findAllConcepts(ontology,
-				 maxNumChildren, pageSize, pageNum);
+		Page<ClassBean> resultPage = getRetrievalManager(ontology)
+				.findAllConcepts(ontology, maxNumChildren, pageSize, pageNum);
 		removeExtraSiblingsFromPage(resultPage, maxNumChildren);
 		return resultPage;
 	}
