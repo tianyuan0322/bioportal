@@ -91,6 +91,7 @@ public class DumpRDFServiceImpl extends ConceptServiceImpl implements DumpRDFSer
 	}
 	
 	private void addNamespace(StringBuilder output, String nsId) {
+		output.append("@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .\n");
 		output.append("<http://bio2rdf.org/ns/"+nsId+"> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://bio2rdf.org/ns/bio2rdf#Namespace> .\n");
 		output.append("<http://bio2rdf.org/ns/"+nsId+"> <http://purl.org/dc/elements/1.1/identifier> \""+nsId+"\" .\n");
 		output.append("<http://bio2rdf.org/ns/"+nsId+"> <http://www.w3.org/2000/01/rdf-schema#label> \"Bio2RDF namespace "+nsId+"\" .\n");
