@@ -84,6 +84,8 @@ public class OntologyLoaderLexGridImplTest extends AbstractBioPortalTest {
 	public final static String LEXGRID_HL7_URN_VERSION = "http://www.hl7.org/Library/data-model/RIM|V 02-30";
 	public final static String LEXGRID_HL7_DISPLAY_LABEL = "HL7";
 
+	public final static String OWL_COGAT_DISPLAY_LABEL = "cogat";
+
 	@Autowired
 	OntologyService ontologyService;
 
@@ -349,6 +351,26 @@ public class OntologyLoaderLexGridImplTest extends AbstractBioPortalTest {
 	}
 
 	@Test
+	public void testLoadOwlHttpsURI() throws Exception {
+		System.out
+				.println("OntologyLoaderLexGridImplTest: testLoadOwlHttpsURI().................. BEGIN");
+		OntologyBean ontologyBean = this.createOntolgyBeanOwlHttpsURI();
+
+		// create - pass FileHandler
+		ontologyService.createOntologyOrView(ontologyBean,
+				getFilePathHandler(ontologyBean));
+		if (ontologyBean != null)
+			System.out.println("Created OntologyBean with ID = "
+					+ ontologyBean.getId());
+		// load
+		ontologyLoadSchedulerService.parseOntologies(Arrays.asList(ontologyBean
+				.getId()), null);
+		assertTrue(ontologyBean.getCodingScheme() != null);
+		System.out
+				.println("OntologyLoaderLexGridImplTest: testLoadOwlHttpsURI().................... END");
+	}
+	
+	@Test
 	public void testLoadOboProtein() throws Exception {
 		System.out
 				.println("OntologyLoaderLexGridImplTest: testLoadOboProtein().................. BEGIN");
@@ -415,6 +437,18 @@ public class OntologyLoaderLexGridImplTest extends AbstractBioPortalTest {
 		bean.setAbbreviation(OBO_PLANT_ANATOMY_DISPLAY_LABEL);
 		return bean;
 	}
+	
+	private OntologyBean createOntolgyBeanOwlHttpsURI() {
+		OntologyBean bean = createOntolgyBeanBase();
+		//bean.setDownloadLocation("http://palea.cgrb.oregonstate.edu/viewsvn/Poc/trunk/ontology/OBO_format/po_anatomy.obo?view=co");
+		bean
+		.setDownloadLocation("https://raw.github.com/poldrack/cogat/master/ontology/cogat.owl");
+		bean.setFormat(ApplicationConstants.FORMAT_OWL);
+		// bean.setCodingScheme(OBO_FUNGAL_URN_VERSION);
+		bean.setDisplayLabel(OWL_COGAT_DISPLAY_LABEL);
+		bean.setAbbreviation(OWL_COGAT_DISPLAY_LABEL);
+		return bean;
+	}	
 
 	private OntologyBean createOntolgyBeanOboProtein() {
 		OntologyBean bean = createOntolgyBeanBase();

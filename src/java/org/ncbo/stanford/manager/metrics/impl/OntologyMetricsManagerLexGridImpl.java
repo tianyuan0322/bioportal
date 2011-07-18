@@ -16,8 +16,11 @@ import org.LexGrid.LexBIG.DataModel.Core.ConceptReference;
 import org.LexGrid.LexBIG.DataModel.Core.ResolvedConceptReference;
 import org.LexGrid.LexBIG.Extensions.Generic.LexBIGServiceConvenienceMethods;
 import org.LexGrid.LexBIG.Impl.LexBIGServiceImpl;
+import org.LexGrid.LexBIG.LexBIGService.CodedNodeSet;
+import org.LexGrid.LexBIG.LexBIGService.CodedNodeSet.PropertyType;
 import org.LexGrid.LexBIG.Utility.Iterators.ResolvedConceptReferencesIterator;
 import org.LexGrid.codingSchemes.CodingScheme;
+import org.LexGrid.concepts.Concept;
 import org.LexGrid.naming.SupportedProperty;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
@@ -65,11 +68,12 @@ public class OntologyMetricsManagerLexGridImpl extends
 		OntologyMetricsBean omb = new OntologyMetricsBean();
 		ResolvedConceptReferencesIterator iterator = lbs
 				.getCodingSchemeConcepts(schemeName, csvt).resolve(null, null,
-						null, null, false);
+						null, new PropertyType[] { CodedNodeSet.PropertyType.DEFINITION});
+		
 
 		omb.setNumberOfProperties(findNumberOfProperties(ontologyBean));
 
-		ArrayList<String> noDescConcepts = new ArrayList<String>();
+		ArrayList<String> noDefinitionConcepts = new ArrayList<String>();
 		ArrayList<String> oneSubConcepts = new ArrayList<String>();
 		HashMap<String, Integer> manySubConcepts = new HashMap<String, Integer>();
 		String description = "";
@@ -80,6 +84,7 @@ public class OntologyMetricsManagerLexGridImpl extends
 
 		while (iterator.hasNext()) {
 			ResolvedConceptReference ref = iterator.next();
+			Concept concept = ref.getReferencedEntry();
 			AssociationList al = getHierarchyLevelNext(schemeName, csvt, ref
 					.getCode());
 			numberOfSiblings = getChildCount(al);
@@ -95,16 +100,19 @@ public class OntologyMetricsManagerLexGridImpl extends
 			}
 			totalNumberParents++;
 
-			description = ref.getEntityDescription().getContent();
-			if (description == null || description.equals("")) {
-				noDescConcepts.add(ref.getCode());
+			if (concept.getDefinition().length == 0) {
+				noDefinitionConcepts.add(ref.getCode());
 			}
+//			description = ref.getEntityDescription().getContent();
+//			if (description == null || description.equals("")) {
+//				noDescConcepts.add(ref.getCode());
+//			}
 		}
 
 		computeTopologicalMaxDepth(ontologyBean);
 		omb.setId(ontologyBean.getId());
 		omb.setNumberOfClasses(totalNumberParents);
-		omb.setClassesWithNoDocumentation(noDescConcepts);
+		omb.setClassesWithNoDocumentation(noDefinitionConcepts);
 		omb.setMaximumNumberOfSiblings(maxNumberOfSiblings);
 		int avgNumOfSiblings = (int) Math.round((float) totalNumberSiblings
 				/ (float) totalNumberParents);
@@ -118,8 +126,21 @@ public class OntologyMetricsManagerLexGridImpl extends
 		omb.setNumberOfIndividuals(0);
 		omb.setClassesWithNoAuthor(new ArrayList<String>());
 		omb.setClassesWithMoreThanOnePropertyValue(new ArrayList<String>());
-
+		postProcessOntologyMatric(omb);
 		return omb;
+	}
+	
+	private void postProcessOntologyMatric(OntologyMetricsBean omb) {
+		List<String> noDefinitionConcepts = omb.getClassesWithNoDocumentation();
+		int noDefinitionConceptsSize= noDefinitionConcepts.size();
+		if (noDefinitionConceptsSize  >= CLASS_LIST_LIMIT) {
+			omb.getClassesWithNoDocumentation().clear();
+			omb.getClassesWithNoDocumentation().add(
+					LIMIT_PASSED + noDefinitionConceptsSize);
+		}
+		omb.getClassesWithNoAuthor().add(
+				LIMIT_PASSED + omb.getNumberOfClasses());
+		
 	}
 
 	public int findNumberOfProperties(OntologyBean ontologyBean)

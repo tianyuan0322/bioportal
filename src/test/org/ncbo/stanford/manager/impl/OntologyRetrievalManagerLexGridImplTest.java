@@ -6,11 +6,14 @@ import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 
+import javax.annotation.Resource;
+
 import org.junit.Test;
 import org.ncbo.stanford.AbstractBioPortalTest;
 import org.ncbo.stanford.bean.OntologyBean;
 import org.ncbo.stanford.bean.concept.ClassBean;
 import org.ncbo.stanford.manager.retrieval.impl.OntologyRetrievalManagerLexGridImpl;
+import org.ncbo.stanford.service.concept.ConceptService;
 import org.ncbo.stanford.util.paginator.impl.Page;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -25,7 +28,18 @@ public class OntologyRetrievalManagerLexGridImplTest extends
 
 	@Autowired
 	OntologyRetrievalManagerLexGridImpl retrievalManager;
-
+	
+	ConceptService conceptService;
+	/**
+	 * Sets person.
+	 */
+	@Resource(name="conceptService")
+	public void setConceptService(ConceptService conceptService) {
+	    this.conceptService = conceptService;
+	    System.out.println("Autowiring of concept service.....");
+	    
+	}
+	   
 	@Test
 	public void testFindOBORootConceptCell() throws Exception {
 		System.out.println("testFindOBORootConceptCell()");
@@ -633,6 +647,46 @@ public class OntologyRetrievalManagerLexGridImplTest extends
 		System.out.println("\n");
 		assertTrue(offset != 0);
 	}
+	
+	@Test
+	public void testOBOGetAllConceptsWithMaxChildren() throws Exception {
+		System.out.println("testOBOGetAllConcepts()");
+		
+		OntologyBean ncboOntology = retrievalManager
+				.getOntologyBeanByDisplayNameAndOntologyId(
+						OntologyLoaderLexGridImplTest.OBO_CELL_DISPLAY_LABEL,
+						OntologyLoaderLexGridImplTest.OBO_CELL_ONTOLOGY_ID);
+
+		int pageSize = 10;
+		int pageNum = 1;
+		int offset = 0;
+		int maxChildren = 3;
+		boolean hasMoreResults = true;
+		while (hasMoreResults) {
+			System.out.println("Retrieving results starting at " + pageNum);
+			Page<ClassBean> bean_page = conceptService.findAllConcepts(ncboOntology.getId(),
+					maxChildren, pageSize, pageNum);
+			if (bean_page == null || bean_page.getNumResultsPage() <= pageSize) {
+				hasMoreResults = false;
+
+				if (bean_page != null) {
+					Iterator<ClassBean> iter= bean_page.getContents().iterator();
+					while (iter.hasNext()) {
+						ClassBean bean= iter.next();
+						System.out.println(bean);
+						
+					}
+					System.out.println("Retrieved results till "
+							+ (offset + bean_page.getNumResultsPage()));
+				}
+			}
+
+			offset += pageSize;
+		}
+
+		System.out.println("\n");
+		assertTrue(offset != 0);
+	}	
 
 	@Test
 	public void testNonHierarchicalUMLSGetAllConcepts() throws Exception {
