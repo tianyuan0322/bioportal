@@ -274,8 +274,10 @@ public class NotesServiceImpl implements NotesService {
 
 		List<NoteBean> notesList = new ArrayList<NoteBean>();
 		for (Annotation annotation : annotations) {
-			notesList
-					.add(convertAnnotationToNoteBean(annotation, ont, threaded));
+			if (annotation != null) {
+				notesList.add(convertAnnotationToNoteBean(annotation, ont,
+						threaded));
+			}
 		}
 
 		return notesList;
