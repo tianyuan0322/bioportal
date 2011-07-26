@@ -26,6 +26,8 @@ import edu.stanford.smi.protege.storage.database.DatabaseKnowledgeBaseFactory;
 import edu.stanford.smi.protegex.owl.database.OWLDatabaseKnowledgeBaseFactory;
 import edu.stanford.smi.protegex.owl.database.creator.OwlDatabaseCreator;
 import edu.stanford.smi.protegex.owl.model.OWLModel;
+import edu.stanford.smi.protegex.owl.model.ProtegeNames;
+import edu.stanford.smi.protegex.owl.model.RDFProperty;
 import edu.stanford.smi.protegex.owl.model.RDFResource;
 import edu.stanford.smi.protegex.owl.repository.Repository;
 import edu.stanford.smi.protegex.owl.repository.impl.LocalFolderRepository;
@@ -36,9 +38,9 @@ import edu.stanford.smi.protegex.owl.swrl.sqwrl.SQWRLQueryEngineFactory;
 /**
  * Abstract class to incorporate functionality common between Protege loader and
  * retrieval manager classes
- * 
+ *
  * @author Michael Dorf
- * 
+ *
  */
 public abstract class AbstractOntologyManagerProtege {
 
@@ -224,11 +226,22 @@ public abstract class AbstractOntologyManagerProtege {
 				}
 			}
 		}
-		
-//		if (kb instanceof OWLModel) {
-//		  RDFProperty defaultLanguage = ((OWLModel) kb).getRDFProperty(ProtegeNames.getDefaultLanguageSlotName());		
-//		  ((OWLModel) kb).getDefaultOWLOntology().setPropertyValue(defaultLanguage, "en");
-//		}
+
+		// Set the default language to English for all ontologies
+		// This can be set to other languages later if we start to support them
+		if (kb instanceof OWLModel) {
+			RDFProperty defaultLanguageProperty = ((OWLModel) kb)
+					.getRDFProperty(ProtegeNames.getDefaultLanguageSlotName());
+
+			if (defaultLanguageProperty == null) {
+				defaultLanguageProperty = ((OWLModel) kb)
+						.createRDFProperty(ProtegeNames
+								.getDefaultLanguageSlotName());
+			}
+
+			((OWLModel) kb).getDefaultOWLOntology().setPropertyValue(
+					defaultLanguageProperty, "en");
+		}
 
 		return kb;
 	}
