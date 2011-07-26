@@ -431,13 +431,13 @@ public class NotesRestlet extends AbstractBaseRestlet {
 			}
 
 			// Archive note if necessary
-			if (archiveBool) {
+			if (archiveBool || archiveThreadBool) {
 				if (archiveThreadBool) {
 					notesService.archiveThread(ont, noteId);
 				} else {
 					notesService.archiveNote(ont, noteId);
 				}
-			} else if (unarchiveBool) {
+			} else if (unarchiveBool || unarchiveThreadBool) {
 				if (unarchiveThreadBool) {
 					notesService.unarchiveThread(ont, noteId);
 				} else {
