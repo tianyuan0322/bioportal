@@ -1335,6 +1335,7 @@ public class OntologyRetrievalManagerLexGridImpl extends
 		AssociatedConceptList assocConceptList = association
 				.getAssociatedConcepts();
 		ArrayList<ClassBean> classBeans = new ArrayList<ClassBean>();
+		ArrayList<String> anonStrList = new ArrayList<String>();
 		ResolvedConceptReferenceList rcrl = new ResolvedConceptReferenceList();
 		rcrl.setResolvedConceptReference(assocConceptList
 				.getAssociatedConcept());
@@ -1359,29 +1360,33 @@ public class OntologyRetrievalManagerLexGridImpl extends
 						ontologyBean, rcr_without_relations, countMap,
 						includeChildren);
 
-				// ClassBean classBean = createClassBeanWithChildCount(
-				// rcr_without_relations, includeChildren);
+				if (classBean.getId().startsWith("_Anon")) {
+					anonStrList.add(classBean.getLabel());
+				} else {
 
-				classBeans.add(classBean);
+					classBeans.add(classBean);
 
-				// Find and recurse printing for next batch ...
-				AssociationList nextLevel = assocConcept.getSourceOf();
+					// Find and recurse printing for next batch ...
+					AssociationList nextLevel = assocConcept.getSourceOf();
 
-				if (nextLevel != null && nextLevel.getAssociationCount() != 0) {
-					for (int j = 0; j < nextLevel.getAssociationCount(); j++) {
-						addAssociationInfoToClassBean(ontologyBean, nextLevel
-								.getAssociation(j), classBean,
-								hierarchy_relationName, includeChildren);
+					if (nextLevel != null
+							&& nextLevel.getAssociationCount() != 0) {
+						for (int j = 0; j < nextLevel.getAssociationCount(); j++) {
+							addAssociationInfoToClassBean(ontologyBean,
+									nextLevel.getAssociation(j), classBean,
+									hierarchy_relationName, includeChildren);
+						}
 					}
-				}
 
-				// Find and recurse printing for previous batch ...
-				AssociationList prevLevel = assocConcept.getTargetOf();
-				if (prevLevel != null && prevLevel.getAssociationCount() != 0) {
-					for (int j = 0; j < prevLevel.getAssociationCount(); j++) {
-						addAssociationInfoToClassBean(ontologyBean, prevLevel
-								.getAssociation(j), classBean,
-								hierarchy_relationName, includeChildren);
+					// Find and recurse printing for previous batch ...
+					AssociationList prevLevel = assocConcept.getTargetOf();
+					if (prevLevel != null
+							&& prevLevel.getAssociationCount() != 0) {
+						for (int j = 0; j < prevLevel.getAssociationCount(); j++) {
+							addAssociationInfoToClassBean(ontologyBean,
+									prevLevel.getAssociation(j), classBean,
+									hierarchy_relationName, includeChildren);
+						}
 					}
 				}
 			}
@@ -1391,7 +1396,10 @@ public class OntologyRetrievalManagerLexGridImpl extends
 		if (StringUtils.isBlank(dirName)) {
 			dirName = "[R]" + association.getAssociationName();
 		}
-		// current_classBean.addRelation(dirName, classBeans);
+		if (!anonStrList.isEmpty()) {
+			current_classBean.addRelation(dirName, anonStrList);
+		}
+		
 		mergeClassBeansIntoClassBeanRelationsUsingRelationName(
 				current_classBean, classBeans, dirName);
 		mergeClassBeansIntoClassBeanRelationsUsingRelationName(
@@ -1414,7 +1422,7 @@ public class OntologyRetrievalManagerLexGridImpl extends
 			ClassBean bean, ArrayList<ClassBean> beanlist, String relation_name) {
 		// If no hierarchy_name is provided, we assume that special BioPortal
 		// relations do not have to be setup.
-		if (StringUtils.isBlank(relation_name)) {
+		if (StringUtils.isBlank(relation_name) || bean == null) {
 			return;
 		}
 

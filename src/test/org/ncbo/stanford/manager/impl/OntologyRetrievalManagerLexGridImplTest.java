@@ -206,6 +206,44 @@ public class OntologyRetrievalManagerLexGridImplTest extends
 	}
 	
 	@Test
+	public void testOBOFindConceptWithIntersection() throws Exception {
+		System.out.println("testOBOFindConceptWithIntersection()");
+
+		OntologyBean ncboOntology = retrievalManager
+				.getOntologyBeanByDisplayNameAndOntologyId(
+						OntologyLoaderLexGridImplTest.OBO_CELL_DISPLAY_LABEL,
+						OntologyLoaderLexGridImplTest.OBO_CELL_ONTOLOGY_ID);
+		//String conceptID = "CL:0000255";
+		String conceptID = "CL:0000763";
+		int maxNumChildren = 1000;
+		ClassBean classBean = retrievalManager.findConcept(ncboOntology,
+				conceptID, maxNumChildren, false, false, false);
+		System.out.println("Concept " + conceptID + " of cell ontology is \n"
+				+ classBean);
+		System.out.println("\n");
+		assertTrue(classBean.getId().equalsIgnoreCase(conceptID));
+	}
+	
+	@Test
+	public void testOBOFindConceptAnonymous() throws Exception {
+		System.out.println("testOBOFindConceptAnonymous()");
+
+		OntologyBean ncboOntology = retrievalManager
+				.getOntologyBeanByDisplayNameAndOntologyId(
+						OntologyLoaderLexGridImplTest.OBO_CELL_DISPLAY_LABEL,
+						OntologyLoaderLexGridImplTest.OBO_CELL_ONTOLOGY_ID);
+		//String conceptID = "CL:0000255";
+		String conceptID = "_Anon1";
+		int maxNumChildren = 1000;
+		ClassBean classBean = retrievalManager.findConcept(ncboOntology,
+				conceptID, maxNumChildren, false, false, false);
+		System.out.println("Concept " + conceptID + " of cell ontology is \n"
+				+ classBean);
+		System.out.println("\n");
+		assertTrue(classBean.getId().equalsIgnoreCase(conceptID));
+	}	
+	
+	@Test
 	public void testOBOFindLightConceptCell() throws Exception {
 		System.out.println("testOBOFindConceptCell()");
 
