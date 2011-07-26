@@ -91,6 +91,10 @@ public class OntologyRetrievalManagerProtegeImpl extends
 
 		ClassBean targetClass = null;
 
+		if (maxNumChildren == null) {
+			maxNumChildren = Integer.MAX_VALUE;
+		}
+
 		// Get all root nodes associated with this ontology. Then iterate
 		// through the collection, returning the first one.
 		Cls oThing = kb.getRootCls();
@@ -173,6 +177,10 @@ public class OntologyRetrievalManagerProtegeImpl extends
 		List<Cls> allClasses = getAllClasses(kb);
 		ClassBeanResultListBean pageConcepts = new ClassBeanResultListBean(0);
 		int totalResults = allClasses.size();
+
+		if (maxNumChildren == null) {
+			maxNumChildren = Integer.MAX_VALUE;
+		}
 
 		if (pageSize == null || pageSize <= 0) {
 			pageSize = (totalResults <= allConceptsMaxPageSize) ? totalResults
