@@ -54,8 +54,8 @@ import edu.stanford.smi.protegex.owl.util.OWLBrowserSlotPattern;
  * The service layer will consume this interface instead of directly calling a
  * specific implementation (i.e. LexGrid, Protege etc.). Do not use this class
  * directly in upper layers.
- * 
- * 
+ *
+ *
  * @author Michael Dorf
  */
 @SuppressWarnings("unchecked")
@@ -121,6 +121,10 @@ public class OntologyRetrievalManagerProtegeImpl extends
 		Frame owlClass = getFrame(conceptId, kb);
 		ClassBean targetClass = null;
 
+		if (maxNumChildren == null) {
+			maxNumChildren = Integer.MAX_VALUE;
+		}
+
 		// This enables lookup using fullIds for Protege Frames ontologies
 		if (owlClass == null
 				&& ontologyBean.getFormat().equalsIgnoreCase(
@@ -155,7 +159,7 @@ public class OntologyRetrievalManagerProtegeImpl extends
 	/**
 	 * returns an ordered collection of classes; guarantees the order based on
 	 * frame name
-	 * 
+	 *
 	 */
 	public Page<ClassBean> findAllConcepts(OntologyBean ontologyBean,
 			Integer maxNumChildren, Integer pageSize, Integer pageNum)
@@ -205,7 +209,7 @@ public class OntologyRetrievalManagerProtegeImpl extends
 	/**
 	 * returns an ordered collection of classes; guarantees the order based on
 	 * frame name
-	 * 
+	 *
 	 */
 	public Iterator<ClassBean> listAllClasses(final OntologyBean ontologyBean)
 			throws Exception {
@@ -585,7 +589,7 @@ public class OntologyRetrievalManagerProtegeImpl extends
 	 * 2/23/09 Added subclass.getName().startsWith("@") to catch a protege bug
 	 * where non named classes got added Using .startsWith because protege team
 	 * suggested it as the best way
-	 * 
+	 *
 	 * @param protegeClasses
 	 * @return
 	 */
@@ -806,7 +810,7 @@ public class OntologyRetrievalManagerProtegeImpl extends
 
 	/**
 	 * Converts collection of slots into a string representation of values
-	 * 
+	 *
 	 * @param slots
 	 * @return
 	 */
@@ -887,8 +891,8 @@ public class OntologyRetrievalManagerProtegeImpl extends
 	 * Uses the appropriate method to get values for a given slot. This bypasses
 	 * problems with retrieving values and having the ~#en showing in front of
 	 * the string, which is due to using getOwnSlotValues.
-	 * 
-	 * 
+	 *
+	 *
 	 * @param concept
 	 * @param slot
 	 * @return
