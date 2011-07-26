@@ -291,8 +291,10 @@ public class NotesServiceImpl implements NotesService {
 
 		List<NoteBean> notesList = new ArrayList<NoteBean>();
 		for (Annotation annotation : annotations) {
-			notesList
-					.add(convertAnnotationToNoteBean(annotation, ont, threaded));
+			if (annotation != null) {
+				notesList.add(convertAnnotationToNoteBean(annotation, ont,
+						threaded));
+			}
 		}
 
 		return notesList;
@@ -439,7 +441,7 @@ public class NotesServiceImpl implements NotesService {
 
 	/**
 	 * Method to convert Annotation to NoteBean.
-	 * 
+	 *
 	 * @param annotation
 	 *            The annotation to convert.
 	 * @return
@@ -452,7 +454,7 @@ public class NotesServiceImpl implements NotesService {
 	/**
 	 * Converts an Annotation object to a NoteBean. Includes options for
 	 * threading.
-	 * 
+	 *
 	 * @param annotation
 	 *            The annotation to convert.
 	 * @param threaded
@@ -515,8 +517,10 @@ public class NotesServiceImpl implements NotesService {
 			Collection<Annotation> associated = annotation
 					.getAssociatedAnnotations();
 			for (Annotation subAnnotation : associated) {
-				nb.addAssociated(convertAnnotationToNoteBean(subAnnotation,
-						ont, threaded));
+				if (subAnnotation != null) {
+					nb.addAssociated(convertAnnotationToNoteBean(subAnnotation,
+							ont, threaded));
+				}
 			}
 		}
 
@@ -525,7 +529,7 @@ public class NotesServiceImpl implements NotesService {
 
 	/**
 	 * Creates key/value pairs for non-common properties for the NoteBean.
-	 * 
+	 *
 	 * @param ont
 	 * @param annotation
 	 * @return
@@ -609,10 +613,10 @@ public class NotesServiceImpl implements NotesService {
 	/**
 	 * Get an id based on the ontology type. OBO ontologies return the short id,
 	 * everything else uses the fullId.
-	 * 
+	 *
 	 * This method exists in these classes: NotesServiceImpl.java
 	 * NotesRestlet.java
-	 * 
+	 *
 	 * @param concept
 	 * @param ont
 	 * @return
@@ -636,7 +640,7 @@ public class NotesServiceImpl implements NotesService {
 	 * This method compares the provided status with known statuses in order to
 	 * re-use existing statuses in ChAO but also provide ontology authors with
 	 * the ability to use arbitrary ones.
-	 * 
+	 *
 	 * @param status
 	 * @return
 	 * @throws NotesException
