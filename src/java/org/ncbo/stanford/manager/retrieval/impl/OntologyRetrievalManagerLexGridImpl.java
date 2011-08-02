@@ -1543,6 +1543,20 @@ public class OntologyRetrievalManagerLexGridImpl extends
 		if (entry.getIsActive() != null && entry.getIsActive() == false) {
 			addPropertyToClassBean(bean, "is_obsolete", "true");
 		}
+		
+		int count = entry.getPropertyCount();
+		for (int i = 0; i < count; i++) {
+			Property prop = entry.getProperty(i);
+			String key = prop.getPropertyName();
+
+			if (StringUtils.isNotBlank(key) && key.equalsIgnoreCase("CONCEPTSTATUS")) {
+				String value= prop.getValue().getContent();
+				List<String> inactiveList= Arrays.asList("1", "2", "3", "4", "5", "10");
+				if (StringUtils.isNotBlank(value)&& inactiveList.contains(value)) {
+					addPropertyToClassBean(bean, "is_obsolete", "true");
+				}
+			}
+		}
 	}
 
 	private void addProperties(OntologyBean ontologyBean, Concept entry,
