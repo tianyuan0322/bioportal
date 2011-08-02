@@ -13,7 +13,8 @@ import org.ncbo.stanford.bean.OntologyMetricsBean;
 public interface OntologyMetricsManager {
 
 	public static final int GOOD_DESIGN_SUBCLASS_LIMIT = 25;
-
+	public final Integer CLASS_LIST_LIMIT = 201;
+	public final String LIMIT_PASSED = "limitpassed:";
 	/**
 	 * Extracts ontology metrics of a given ontology version.
 	 * 
