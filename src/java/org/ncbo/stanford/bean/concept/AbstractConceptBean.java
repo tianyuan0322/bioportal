@@ -82,7 +82,7 @@ public abstract class AbstractConceptBean {
 	public String toString(String indent) {
 		String spacer = "   ";
 		String str = "Id: " + id + " FullId: " + fullId + " Label: " + label
-				+ " OntologyVersionId: " + ontologyVersionId + "\n";
+				+ " OntologyVersionId: " + ontologyVersionId + " isObsolete:"+ isObsolete+ "\n";
 		str += indent + "Relations:\n";
 
 		for (Object key : relations.keySet()) {

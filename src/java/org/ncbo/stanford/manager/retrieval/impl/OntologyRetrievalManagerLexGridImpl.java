@@ -1541,7 +1541,8 @@ public class OntologyRetrievalManagerLexGridImpl extends
 	private void addInactiveStatus(OntologyBean ontologyBean, Concept entry,
 			ClassBean bean) {
 		if (entry.getIsActive() != null && entry.getIsActive() == false) {
-			addPropertyToClassBean(bean, "is_obsolete", "true");
+			bean.setIsObsolete(ApplicationConstants.TRUE);
+			//addPropertyToClassBean(bean, "is_obsolete", "true");
 		}
 		
 		int count = entry.getPropertyCount();
@@ -1553,7 +1554,7 @@ public class OntologyRetrievalManagerLexGridImpl extends
 				String value= prop.getValue().getContent();
 				List<String> inactiveList= Arrays.asList("1", "2", "3", "4", "5", "10");
 				if (StringUtils.isNotBlank(value)&& inactiveList.contains(value)) {
-					addPropertyToClassBean(bean, "is_obsolete", "true");
+					bean.setIsObsolete(ApplicationConstants.TRUE);
 				}
 			}
 		}
