@@ -103,10 +103,8 @@ public class OntologyMetricsManagerLexGridImpl extends
 			if (concept.getDefinition().length == 0) {
 				noDefinitionConcepts.add(ref.getCode());
 			}
-//			description = ref.getEntityDescription().getContent();
-//			if (description == null || description.equals("")) {
-//				noDescConcepts.add(ref.getCode());
-//			}
+
+
 		}
 
 		computeTopologicalMaxDepth(ontologyBean);
