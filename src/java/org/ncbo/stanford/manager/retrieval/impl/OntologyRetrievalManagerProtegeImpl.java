@@ -721,18 +721,6 @@ public class OntologyRetrievalManagerProtegeImpl extends
 							definitionSlot, authorSlot, ontologyBean));
 		}
 
-		// add superclasses
-		if (cls instanceof OWLNamedClass) {
-			superclasses = getUniqueClasses(((OWLNamedClass) cls)
-					.getNamedSuperclasses(false));
-		} else {
-			superclasses = getUniqueClasses(cls.getDirectSuperclasses());
-		}
-
-		classBean.addRelation(ApplicationConstants.SUPER_CLASS, convertClasses(
-				superclasses, false, synonymSlot, definitionSlot, authorSlot,
-				ontologyBean));
-
 		List<Cls> subclasses = getSubclasses(cls);
 
 		// add child count
@@ -744,6 +732,18 @@ public class OntologyRetrievalManagerProtegeImpl extends
 			classBean.addRelation(ApplicationConstants.SUB_CLASS,
 					convertClasses(subclasses, false, synonymSlot,
 							definitionSlot, authorSlot, ontologyBean));
+			
+			// add superclasses
+			if (cls instanceof OWLNamedClass) {
+				superclasses = getUniqueClasses(((OWLNamedClass) cls)
+						.getNamedSuperclasses(false));
+			} else {
+				superclasses = getUniqueClasses(cls.getDirectSuperclasses());
+			}
+
+			classBean.addRelation(ApplicationConstants.SUPER_CLASS, convertClasses(
+					superclasses, false, synonymSlot, definitionSlot, authorSlot,
+					ontologyBean));			
 		} else {
 			classBean.addRelation(ApplicationConstants.SUB_CLASS,
 					new ArrayList<ClassBean>(0));
