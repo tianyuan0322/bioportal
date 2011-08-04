@@ -104,7 +104,7 @@ public class AuthenticationFilter extends AbstractAuthFilter {
 
 				// Application API key supplied. Make sure it's valid!
 				// Authenticate it and create a its own session container.
-				// No need to store it anywhere at this point.
+				// No need to store it in a local variable at this point.
 				if (appApiKey != null && sessionService.get(appApiKey) == null) {
 					authenticationService.authenticate(appApiKey);
 				}
