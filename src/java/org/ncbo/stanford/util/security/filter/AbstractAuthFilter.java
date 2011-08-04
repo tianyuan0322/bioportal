@@ -25,42 +25,42 @@ public class AbstractAuthFilter extends Filter implements InitializingBean {
 		xmlSerializationService = (XMLSerializationService) springAppContext
 				.getBean("xmlSerializationService",
 						XMLSerializationService.class);
-		exceptionPaths = new TreeSet<String>((TreeSet<String>) springAppContext.getBean(
-				"authenticationExceptionPaths", TreeSet.class));
+		exceptionPaths = new TreeSet<String>((TreeSet<String>) springAppContext
+				.getBean("authenticationExceptionPaths", TreeSet.class));
 		exceptionReferrers = (TreeSet<String>) springAppContext.getBean(
-				"authenticationExceptionReferrers", TreeSet.class);		
+				"authenticationExceptionReferrers", TreeSet.class);
 	}
 
 	protected void addExceptionPath(String path) {
 		exceptionPaths.add(path);
 	}
-	
+
 	protected void addExceptionPaths(Set<String> paths) {
 		exceptionPaths.addAll(paths);
 	}
 
 	protected boolean isException(Request request) {
 		Reference resourceRef = request.getResourceRef();
-		Reference referrerRef = request.getReferrerRef();	
-		
-		String part = resourceRef.getRemainingPart();		
+		Reference referrerRef = request.getReferrerRef();
+
+		String part = resourceRef.getRemainingPart();
 
 		for (String path : exceptionPaths) {
-			if (part.startsWith(path)) {
+			if (!path.isEmpty() && part.startsWith(path)) {
 				return true;
 			}
 		}
-		
+
 		if (referrerRef != null) {
 			String referrer = referrerRef.toString();
-			
+
 			for (String path : exceptionReferrers) {
-				if (referrer.startsWith(path)) {
+				if (!path.isEmpty() && referrer.startsWith(path)) {
 					return true;
 				}
 			}
-		}	
-		
+		}
+
 		return false;
 	}
 
@@ -69,6 +69,7 @@ public class AbstractAuthFilter extends Filter implements InitializingBean {
 		Assert.notNull(xmlSerializationService,
 				"xmlSerializationService must be specified");
 		Assert.notNull(exceptionPaths, "exceptionPaths must be specified");
-		Assert.notNull(exceptionReferrers, "exceptionReferrers must be specified");
+		Assert.notNull(exceptionReferrers,
+				"exceptionReferrers must be specified");
 	}
 }
