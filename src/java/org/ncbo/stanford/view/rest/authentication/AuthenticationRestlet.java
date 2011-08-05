@@ -60,14 +60,18 @@ public final class AuthenticationRestlet extends AbstractBaseRestlet {
 			String appApiKey = RequestUtils.getRequestParameter(
 					httpServletRequest, RequestParamConstants.PARAM_APIKEY);
 
-			userApiKey = RequestUtils.getRequestParameter(
-					httpServletRequest,
+			userApiKey = RequestUtils.getRequestParameter(httpServletRequest,
 					RequestParamConstants.PARAM_USER_APIKEY);
+
+			// if userApiKey passed in
+			boolean sessionExists = (StringHelper
+					.isNullOrNullString(userApiKey) ? sessionService
+					.get(appApiKey) != null
+					: sessionService.get(userApiKey) != null);
 
 			// This has already gone through the AuthenticationFilter
 			// The code assumes that a valid session must exist for this API Key
-			if (StringHelper.isNullOrNullString(appApiKey)
-					|| sessionService.get(appApiKey) == null) {
+			if (StringHelper.isNullOrNullString(appApiKey) || !sessionExists) {
 				throw new AuthenticationException(
 						"This application did not pass proper credentials to authenticate users.");
 			}

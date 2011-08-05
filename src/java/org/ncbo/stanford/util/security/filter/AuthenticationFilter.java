@@ -97,20 +97,24 @@ public class AuthenticationFilter extends AbstractAuthFilter {
 		} else {
 			session = sessionService.get(apiKey);
 
-			if (session == null) {
-				try {
-					// Application API key supplied. Make sure it's valid!
-					// Authenticate it and create a its own session container.
-					// No need to store it anywhere at this point.
-					if (appApiKey != null
-							&& sessionService.get(appApiKey) == null) {
-						authenticationService.authenticate(appApiKey);
-					}
-
+			try {
+				if (session == null) {
 					session = authenticationService.authenticate(apiKey);
-				} catch (AuthenticationException e) {
-					error = ErrorTypeEnum.INVALID_CREDENTIALS;
-					error.setErrorMessage(e.getMessage());
+				}
+
+				// Application API key supplied. Make sure it's valid!
+				// Authenticate it and create a its own session container.
+				// No need to store it in a local variable at this point.
+				if (appApiKey != null && sessionService.get(appApiKey) == null) {
+					authenticationService.authenticate(appApiKey);
+				}
+			} catch (AuthenticationException e) {
+				error = ErrorTypeEnum.INVALID_CREDENTIALS;
+				error.setErrorMessage(e.getMessage());			
+				authenticationService.logout(apiKey);
+				
+				if (appApiKey != null) {
+					authenticationService.logout(appApiKey);
 				}
 			}
 		}
