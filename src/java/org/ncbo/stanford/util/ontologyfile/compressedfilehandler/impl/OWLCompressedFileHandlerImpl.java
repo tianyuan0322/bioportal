@@ -1,5 +1,5 @@
 /**
- * 
+ *
  */
 package org.ncbo.stanford.util.ontologyfile.compressedfilehandler.impl;
 
@@ -9,13 +9,14 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.commons.lang.StringUtils;
 import org.ncbo.stanford.bean.OntologyBean;
 import org.ncbo.stanford.util.constants.ApplicationConstants;
 import org.ncbo.stanford.util.ontologyfile.compressedfilehandler.AbstractCompressedFileHandler;
 
 /**
  * @author Michael Dorf
- * 
+ *
  */
 public class OWLCompressedFileHandlerImpl extends AbstractCompressedFileHandler {
 
@@ -45,7 +46,24 @@ public class OWLCompressedFileHandlerImpl extends AbstractCompressedFileHandler 
 		}
 
 		if (!hasProjectFile && relevantFiles.size() > 1) {
-			String owlFile = relevantFiles.get(1);
+			String targetFile = StringUtils.stripEnd(uploadedFile,
+					ApplicationConstants.ZIP_EXTENSION);
+
+			String owlFile = null;
+			for (String filename : relevantFiles) {
+				String owlFileStripped = StringUtils.stripEnd(filename,
+						ApplicationConstants.OWL_EXTENSION);
+				if (owlFileStripped.equalsIgnoreCase(targetFile)) {
+					owlFile = filename;
+				}
+			}
+
+			// This is totally random, but nothing better to do
+			if (owlFile == null) {
+				// Use 1 because 0 is always the zip file
+				owlFile = relevantFiles.get(1);
+			}
+
 			relevantFiles = new ArrayList<String>(0);
 			relevantFiles.add(uploadedFile);
 			relevantFiles.add(owlFile);
