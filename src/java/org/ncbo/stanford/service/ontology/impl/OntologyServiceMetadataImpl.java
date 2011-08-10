@@ -421,7 +421,7 @@ public class OntologyServiceMetadataImpl extends AbstractOntologyService
 	// Utility methods
 
 	@SuppressWarnings("unchecked")
-	private void deleteExistingAcl(OntologyBean ontologyBean) {
+	private void deleteExistingUserAcl(OntologyBean ontologyBean) {
 		List<NcboOntologyAcl> aclList = ncboOntologyAclDAO
 				.findByOntologyId(ontologyBean.getOntologyId());
 
@@ -431,7 +431,7 @@ public class OntologyServiceMetadataImpl extends AbstractOntologyService
 	}
 
 	private void saveUserAcl(OntologyBean ontologyBean) {
-		deleteExistingAcl(ontologyBean);
+		deleteExistingUserAcl(ontologyBean);
 
 		for (Map.Entry<Integer, Boolean> entry : ontologyBean.getUserAcl()
 				.entrySet()) {
