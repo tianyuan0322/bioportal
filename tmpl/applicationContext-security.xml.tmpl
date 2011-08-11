@@ -5,13 +5,13 @@
 	xmlns:aop="http://www.springframework.org/schema/aop"
 	xmlns:tx="http://www.springframework.org/schema/tx"
 	xsi:schemaLocation="
-       http://www.springframework.org/schema/beans 
+       http://www.springframework.org/schema/beans
        http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
-       http://www.springframework.org/schema/util 
+       http://www.springframework.org/schema/util
        http://www.springframework.org/schema/util/spring-util-2.5.xsd
-       http://www.springframework.org/schema/tx 
+       http://www.springframework.org/schema/tx
        http://www.springframework.org/schema/tx/spring-tx-2.5.xsd
-       http://www.springframework.org/schema/aop 
+       http://www.springframework.org/schema/aop
        http://www.springframework.org/schema/aop/spring-aop-2.5.xsd">
 
 	<bean id="authenticationService"
@@ -29,13 +29,15 @@
 
 	<util:set id="authenticationExceptionReferrers" set-class="java.util.TreeSet">
 		<value>http://www.bioontology.org/wiki/</value>
-	</util:set>	
+	</util:set>
 
 	<util:set id="authenticationExceptionPaths" set-class="java.util.TreeSet">
-	</util:set>	
+	</util:set>
 
 	<util:set id="authorizationExceptionPaths" set-class="java.util.TreeSet">
 		<value>/auth</value>
 		<value>/search</value>
+		<value>/ontologies</value>
+		<value>/virtual/ontology</value>
 	</util:set>
 </beans>
