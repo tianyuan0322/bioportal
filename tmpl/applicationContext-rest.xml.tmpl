@@ -3,13 +3,13 @@
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:util="http://www.springframework.org/schema/util"
 	xmlns:aop="http://www.springframework.org/schema/aop" xmlns:tx="http://www.springframework.org/schema/tx"
 	xsi:schemaLocation="
-       http://www.springframework.org/schema/beans 
+       http://www.springframework.org/schema/beans
        http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
-       http://www.springframework.org/schema/util 
+       http://www.springframework.org/schema/util
        http://www.springframework.org/schema/util/spring-util-2.5.xsd
-       http://www.springframework.org/schema/tx 
+       http://www.springframework.org/schema/tx
        http://www.springframework.org/schema/tx/spring-tx-2.5.xsd
-       http://www.springframework.org/schema/aop 
+       http://www.springframework.org/schema/aop
        http://www.springframework.org/schema/aop/spring-aop-2.5.xsd">
 
 	<!-- Wire all restlets -->
@@ -41,7 +41,7 @@
 			<ref bean="authenticationService" />
 		</property>
 	</bean>
-<!-- 	
+<!--
 	<bean id="openIdAuthenticationRestlet"
 		class="org.ncbo.stanford.view.rest.authentication.OpenIdAuthenticationRestlet"
 		parent="abstractBaseRestlet">
@@ -49,7 +49,7 @@
 			<ref bean="returnUrl" />
 		</property>
 	</bean>
-	
+
 	<bean id="openIdAuthenticationResponseRestlet"
 		class="org.ncbo.stanford.view.rest.authentication.OpenIdAuthenticationResponseRestlet"
 		parent="abstractBaseRestlet">
@@ -87,7 +87,7 @@
 			<ref bean="conceptService" />
 		</property>
 	</bean>
-	
+
 	<bean id="instanceRestlet"
 		class="org.ncbo.stanford.view.rest.restlet.instance.InstanceRestlet"
 		parent="abstractBaseRestlet">
@@ -95,7 +95,7 @@
 			<ref bean="conceptService" />
 		</property>
 	</bean>
-	
+
 	<bean id="instanceByIdRestlet"
 		class="org.ncbo.stanford.view.rest.restlet.instance.InstanceByIdRestlet"
 		parent="abstractBaseRestlet">
@@ -103,7 +103,7 @@
 			<ref bean="conceptService" />
 		</property>
 	</bean>
-	
+
 	<bean id="conceptPropertyRestlet"
 		class="org.ncbo.stanford.view.rest.restlet.concept.ConceptPropertyRestlet"
 		parent="abstractBaseRestlet">
@@ -111,7 +111,7 @@
 			<ref bean="conceptPropertyService" />
 		</property>
 	</bean>
-	
+
 	<bean id="conceptParentsRestlet"
 		class="org.ncbo.stanford.view.rest.restlet.concept.ConceptParentsRestlet"
 		parent="abstractBaseRestlet">
@@ -273,7 +273,7 @@
 			<ref bean="ontologyService" />
 		</property>
 	</bean>
-	
+
 	<bean id="diffRestlet" class="org.ncbo.stanford.view.rest.restlet.diff.DiffRestlet"
 		parent="abstractBaseRestlet">
 		<property name="diffService">
@@ -318,7 +318,7 @@
 			<ref bean="userService" />
 		</property>
 	</bean>
-	
+
 	<!-- Mappings -->
 	<bean id="mappingUploadRestlet" class="org.ncbo.stanford.view.rest.restlet.mapping.MappingUploadRestlet"
 		parent="abstractBaseRestlet">
@@ -333,7 +333,7 @@
 		</property>
 		<property name="mappingService">
 			<ref bean="mappingService" />
-		</property>	
+		</property>
 	</bean>
 
 	<bean id="abstractMappingRestlet" class="org.ncbo.stanford.view.rest.restlet.mapping.AbstractMappingRestlet"
@@ -356,7 +356,7 @@
 			<ref bean="ontologyService" />
 		</property>
 	</bean>
-	
+
 	<bean id="mappingConceptRestlet" class="org.ncbo.stanford.view.rest.restlet.mapping.MappingConceptRestlet"
 		parent="abstractMappingRestlet">
 		<property name="mappingService">
@@ -367,9 +367,9 @@
 		</property>
 		<property name="conceptService">
 			<ref bean="conceptService" />
-		</property>	
+		</property>
 	</bean>
-	
+
 	<!-- Mapping Stats -->
 	<bean id="mappingStatsRecentRestlet" class="org.ncbo.stanford.view.rest.restlet.mapping.MappingStatsRecentRestlet"
 		parent="abstractMappingRestlet">
@@ -404,7 +404,7 @@
 			<ref bean="ontologyService" />
 		</property>
 	</bean>
-	
+
 	<bean id="mappingStatsOntologyUserRestlet" class="org.ncbo.stanford.view.rest.restlet.mapping.MappingStatsOntologyUserRestlet"
 		parent="abstractMappingRestlet">
 		<property name="mappingService">
@@ -414,7 +414,7 @@
 			<ref bean="ontologyService" />
 		</property>
 	</bean>
-	
+
 	<!-- Provisional Terms -->
 	<bean id="provisionalTermRestlet" class="org.ncbo.stanford.view.rest.restlet.provisional.ProvisionalTermRestlet"
 		parent="abstractMappingRestlet">
@@ -428,8 +428,8 @@
 			<ref bean="userService" />
 		</property>
 	</bean>
-	
-	
+
+
 	<!-- Misc -->
 
 	<bean id="userEmailRestlet"
@@ -455,7 +455,7 @@
 			<ref bean="usageLoggingService" />
 		</property>
 	</bean>
-	
+
 	<bean id="dumpRdfRestlet"
 		class="org.ncbo.stanford.view.rest.restlet.ontology.DumpRDFRestlet"
 		parent="abstractBaseRestlet">
@@ -463,7 +463,7 @@
 			<ref bean="dumpRDFService" />
 		</property>
 	</bean>
-	
+
 	<bean id="projectRestlet"
 		class="org.ncbo.stanford.view.rest.restlet.metadata.ProjectRestlet"
 		parent="abstractBaseRestlet">
@@ -479,7 +479,7 @@
 			<ref bean="projectMetadataService" />
 		</property>
 	</bean>
-	
+
 	<bean id="reviewRestlet"
 		class="org.ncbo.stanford.view.rest.restlet.metadata.ReviewRestlet"
 		parent="abstractBaseRestlet">
@@ -487,7 +487,7 @@
 			<ref bean="reviewMetadataService" />
 		</property>
 	</bean>
-	
+
 	<bean id="reviewListRestlet"
 		class="org.ncbo.stanford.view.rest.restlet.metadata.ReviewListRestlet"
 		parent="abstractBaseRestlet">
@@ -495,7 +495,7 @@
 			<ref bean="reviewMetadataService" />
 		</property>
 	</bean>
-	
+
 	<bean id="ratingRestlet"
 		class="org.ncbo.stanford.view.rest.restlet.metadata.RatingRestlet"
 		parent="abstractBaseRestlet">
@@ -503,7 +503,7 @@
 			<ref bean="reviewMetadataService" />
 		</property>
 	</bean>
-	
+
 	<bean id="ratingTypeRestlet"
 		class="org.ncbo.stanford.view.rest.restlet.metadata.RatingTypeRestlet"
 		parent="abstractBaseRestlet">
@@ -511,7 +511,7 @@
 			<ref bean="reviewMetadataService" />
 		</property>
 	</bean>
-	
+
 	<bean id="viewExtractionRestlet"
 		class="org.ncbo.stanford.view.rest.restlet.extractor.ViewExtractionRestlet"
 		parent="abstractBaseRestlet">
@@ -525,7 +525,7 @@
 			<ref bean="traversedConceptLimit" />
 		</property>
 	</bean>
-	
+
 	<!-- For Generate RDF Dump -->
 	<bean id="generateRDFOntologyRestlet"
 		class="org.ncbo.stanford.view.rest.restlet.rdf.ontology.GenerateRDFOntologyRestlet"
@@ -539,8 +539,8 @@
 		<property name="rdfFilePath">
 			<ref bean="rdfFilePath" />
 		</property>
-	</bean>	
-	
+	</bean>
+
 	<bean id="rdfExtractionRestlet"
 		class="org.ncbo.stanford.view.rest.restlet.rdf.RdfExtractionRestlet"
 		parent="abstractBaseRestlet">
@@ -549,10 +549,10 @@
 		</property>
 		<property name="conceptService">
 			<ref bean="conceptService" />
-		</property>		
+		</property>
 		<property name="ontologyService">
 			<ref bean="ontologyService" />
-		</property>		
+		</property>
 		<property name="rdfFilePath">
 			<ref bean="rdfFilePath" />
 		</property>
@@ -572,7 +572,7 @@
 			<ref bean="subscriptionsService" />
 		</property>
 	</bean>
-	
+
 	<bean id="traversedConceptLimit" class="java.lang.Integer">
 		<constructor-arg>
 			<value>@bioportaltraversedconceptlimit@</value>
@@ -588,7 +588,7 @@
 						<entry key="/auth">
 							<ref local="authenticationRestlet" />
 						</entry>
-						<!-- 
+						<!--
 						<entry key="/openIdAuth">
 							<ref local="openIdAuthenticationRestlet" />
 						</entry>
@@ -610,10 +610,10 @@
 						</entry>
 						<entry key="/ontologies/parse/">
 							<ref local="ontologiesParseRestlet" />
-						</entry>					
+						</entry>
 						<entry key="/ontologies">
 							<ref local="ontologiesRestlet" />
-						</entry>						
+						</entry>
 						<entry key="/views">
 							<ref local="ontologyViewsRestlet" />
 						</entry>
@@ -658,7 +658,7 @@
 						</entry>
 						<entry key="/concepts/{ontologyversionid}">
 							<ref local="conceptRestlet" />
-						</entry>						
+						</entry>
 						<entry key="/concepts/instances/{ontologyversionid}">
 							<ref local="instanceRestlet" />
 						</entry>
@@ -670,7 +670,7 @@
 						</entry>
 						<entry key="/concepts/parents/{ontologyversionid}/{conceptid}">
 							<ref local="conceptParentsRestlet" />
-						</entry>						
+						</entry>
 						<entry key="/concepts/children/{ontologyversionid}/{conceptid}">
 							<ref local="conceptChildrenRestlet" />
 						</entry>
@@ -745,7 +745,7 @@
 						</entry>
 						<entry key="/rdf">
 							<ref local="rdfExtractionRestlet" />
-						</entry>						
+						</entry>
 						<entry key="/rdf/{ontologyversionid}">
 							<ref local="rdfExtractionRestlet" />
 						</entry>
@@ -763,7 +763,7 @@
 						</entry>
 						<entry key="/virtual/ontology/rdf/download/{ontologyid}">
 							<ref local="rdfDownloadRestlet" />
-						</entry>						
+						</entry>
 						<!-- Generate RDF for ALL Ontologies and for OntologyVersionId -->
 						<entry key="/ontologies/rdf/generate">
 							<ref local="generateRDFOntologyRestlet" />
@@ -773,7 +773,7 @@
 						</entry>
 						<entry key="/virtual/ontology/rdf/generate/{ontologyids}">
 							<ref local="generateRDFOntologyRestlet" />
-						</entry>						
+						</entry>
 						<entry key="/instance/{ontologyversionid}">
 							<ref local="instanceByIdRestlet" />
 						</entry>
@@ -845,7 +845,7 @@
 						<entry key="/subscriptions">
 							<ref local="subscriptionsRestlet" />
 						</entry>
-						<entry key="/subscriptions/user/{userid}">
+						<entry key="/subscriptions/users/{userid}">
 							<ref local="subscriptionsRestlet" />
 						</entry>
 						<entry key="/subscriptions/ontologies/{ontologyid}">

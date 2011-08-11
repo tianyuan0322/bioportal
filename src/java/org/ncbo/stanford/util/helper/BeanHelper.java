@@ -7,6 +7,7 @@ import java.util.List;
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.fileupload.FileItem;
+import org.apache.commons.lang.StringUtils;
 import org.ncbo.stanford.bean.OntologyBean;
 import org.ncbo.stanford.bean.SubscriptionsBean;
 import org.ncbo.stanford.bean.UserBean;
@@ -532,8 +533,8 @@ public class BeanHelper {
 		HttpServletRequest httpServletRequest = RequestUtils
 				.getHttpServletRequest(request);
 
-		String userId = httpServletRequest.getParameter(MessageUtils
-				.getMessage("form.user.userId"));
+		String userId = RequestUtils.getAttributeOrRequestParam(MessageUtils
+				.getMessage("form.user.userId"), request);
 
 		String notificationType = httpServletRequest.getParameter(MessageUtils
 				.getMessage("form.user.notificationType"));
@@ -543,7 +544,7 @@ public class BeanHelper {
 		subscriptionsBean.setUserId(RequestUtils.parseIntegerParam(userId));
 		subscriptionsBean.setOntologyIds(ontologyId);
 		subscriptionsBean.setNotificationType(NotificationTypeEnum
-				.valueOf(notificationType));
+				.valueOf(StringUtils.upperCase(notificationType)));
 		// subscriptionsBean.setOntologyIds(ontologyIds);
 
 		return subscriptionsBean;

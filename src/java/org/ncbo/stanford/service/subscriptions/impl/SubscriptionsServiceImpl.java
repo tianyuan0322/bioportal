@@ -4,32 +4,27 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.ncbo.stanford.bean.SubscriptionsBean;
-
-import org.ncbo.stanford.service.subscriptions.SubscriptionsService;
-
-import org.ncbo.stanford.domain.custom.dao.CustomNcboLNotificationTypeDAO;
 import org.ncbo.stanford.domain.custom.dao.CustomNcboAppTextDAO;
+import org.ncbo.stanford.domain.custom.dao.CustomNcboLNotificationTypeDAO;
 import org.ncbo.stanford.domain.custom.dao.CustomNcboUserSubscriptionsDAO;
-
+import org.ncbo.stanford.domain.generated.NcboLNotificationType;
 import org.ncbo.stanford.domain.generated.NcboUser;
 import org.ncbo.stanford.domain.generated.NcboUserDAO;
 import org.ncbo.stanford.domain.generated.NcboUserSubscriptions;
-
-import org.ncbo.stanford.domain.generated.NcboLNotificationType;
-import org.ncbo.stanford.enumeration.NotificationTypeEnum;
 import org.ncbo.stanford.exception.NotificationNotFoundException;
+import org.ncbo.stanford.service.subscriptions.SubscriptionsService;
 import org.ncbo.stanford.util.MessageUtils;
 import org.ncbo.stanford.util.constants.ApplicationConstants;
 import org.ncbo.stanford.util.mail.impl.MailServiceImpl;
 import org.ncbo.stanford.util.textmanager.service.TextManager;
-import org.restlet.data.Status;
 
 /**
  * @author g.prakash
- * 
+ *
  */
 
 public class SubscriptionsServiceImpl implements SubscriptionsService {
@@ -45,114 +40,55 @@ public class SubscriptionsServiceImpl implements SubscriptionsService {
 	private TextManager textManager;
 	private CustomNcboAppTextDAO textDAO;
 
-	public void setTextManager(TextManager textManager) {
-		this.textManager = textManager;
-	}
-
-	public void setMailService(MailServiceImpl mailService) {
-		this.mailService = mailService;
-	}
-
-	public void setNcboUserSubscriptionsDAO(
-			CustomNcboUserSubscriptionsDAO ncboUserSubscriptionsDAO) {
-		this.ncboUserSubscriptionsDAO = ncboUserSubscriptionsDAO;
-	}
-
-	public void setNcboUserDAO(NcboUserDAO ncboUserDAO) {
-		this.ncboUserDAO = ncboUserDAO;
-	}
-
-	public void setNcboLNotificationTypeDAO(
-			CustomNcboLNotificationTypeDAO ncboLNotificationTypeDAO) {
-		this.ncboLNotificationTypeDAO = ncboLNotificationTypeDAO;
-	}
-
 	/**
 	 * This method creates the Subscriptions According to SubscriptionsBean
-	 * 
+	 *
 	 * @param subscriptionsBean
-	 * 
+	 *
 	 */
 
 	public void createSubscriptions(SubscriptionsBean subscriptionsBean) {
-
-		NcboUserSubscriptions ncboUserSubscriptions = new NcboUserSubscriptions();
-		// List for NcboUserSubscriptions According to database
-		List<NcboUserSubscriptions> userSubscriptions = new ArrayList<NcboUserSubscriptions>();
-		NcboLNotificationType notificationType = new NcboLNotificationType();
-		// Adding For List Of OntologyIds
-
+		List<NcboUserSubscriptions> existingSubs = new ArrayList<NcboUserSubscriptions>();
 		List<String> ontologyIds = subscriptionsBean.getOntologyIds();
-
-		// Creating the List of NcboLNotificationType
 		List<NcboLNotificationType> listOfNotificationType = new ArrayList<NcboLNotificationType>();
+
 		// Populating the NcboUserSubscriptions from SubscriptonsBean
 		try {
-			subscriptionsBean.populateToEntity(ncboUserSubscriptions);
-			// Populating the list of listOfNotificationType from the database
-			// accrding to the subscriptionsBean
 			listOfNotificationType = ncboLNotificationTypeDAO
 					.findByType(subscriptionsBean.getNotificationType()
 							.toString());
-			for (NcboLNotificationType ncboLNotificationType : listOfNotificationType) {
-				ncboUserSubscriptions
-						.setNcboLNotificationType(ncboLNotificationType);
-				// Checking for Duplicate Entry in the database
 
-				userSubscriptions = ncboUserSubscriptionsDAO
-						.findByListOfOntologyIds(ontologyIds, subscriptionsBean
-								.getUserId(), ncboLNotificationType);
+			for (NcboLNotificationType notificationType : listOfNotificationType) {
+				for (String ontologyId : ontologyIds) {
+					existingSubs = ncboUserSubscriptionsDAO
+							.findByUserIdAndOntologyId(ontologyId,
+									subscriptionsBean.getUserId(),
+									notificationType);
 
-				if (userSubscriptions.isEmpty()) {
-					ncboUserSubscriptionsDAO.save(ncboUserSubscriptions);
-				} else {
-					throw new NotificationNotFoundException(
-							NotificationNotFoundException.DEFAULT_MESSAGE);
+					if (existingSubs.isEmpty()) {
+						NcboUserSubscriptions ncboUserSubscriptions = new NcboUserSubscriptions();
+						subscriptionsBean
+								.populateToEntity(ncboUserSubscriptions);
+						ncboUserSubscriptions
+								.setNcboLNotificationType(notificationType);
+						ncboUserSubscriptions.setOntologyId(ontologyId);
+
+						// We don't want to add multiple of the same
+						// ontology/type for the user, so we only save if
+						// existingSubs is empty
+						ncboUserSubscriptionsDAO.save(ncboUserSubscriptions);
+					}
 				}
-
 			}
-
-			NcboUser ncboUser = ncboUserDAO.findById(subscriptionsBean
-					.getUserId());
-			// Creating the Map For messageId and for reply
-			HashMap<String, String> keywords = new HashMap<String, String>();
-
-			String messageId = (keywords.get("messageId") != null) ? keywords
-					.get("messageId") : null;
-
-			String inReplyTo = (keywords.get("inReplyTo") != null) ? keywords
-					.get("inReplyTo") : null;
-
-			String from = MessageUtils.getMessage("notification.mail.from");
-			// getting the email
-			String email = ApplicationConstants.EMAIL;
-			keywords.put(ApplicationConstants.ONTOLOGY_VERSION_ID,
-					subscriptionsBean.getOntologyId().toString());
-			keywords.put(ApplicationConstants.USERNAME, ncboUser.getUsername());
-
-			textManager.appendKeywords(keywords);
-
-			String message = textManager.getTextContent(subscriptionsBean
-					.getNotificationType().toString());
-			String subject = textManager.getTextContent(subscriptionsBean
-					.getNotificationType().toString()
-					+ ApplicationConstants.SUBJECT_SUFFIX);
-
-			mailService.sendMail(from, email, subject, messageId, inReplyTo,
-					message);
-		} catch (NotificationNotFoundException notificationNotFoundException) {
-			notificationNotFoundException.getMessage();
 		} catch (Exception ex) {
-
-			log.error(" Sending Mail is failed", ex);
-
+			log.error("Creating subscription failed", ex);
+			ex.printStackTrace();
 		}
-
 	}
 
 	/**
 	 * This methods creates the List Of All Subscriptions According to userId
-	 * 
+	 *
 	 * @param userId
 	 *@return subscriptionsBeanList
 	 */
@@ -177,10 +113,10 @@ public class SubscriptionsServiceImpl implements SubscriptionsService {
 	/**
 	 * This Method is called inside SubscriptionsRestlet Before Updating or
 	 * Deleting Subscriptions
-	 * 
+	 *
 	 * @param userId
 	 * @return subscriptionsBean
-	 * 
+	 *
 	 */
 	public SubscriptionsBean findSubscriptionsForUserId(Integer userId) {
 		SubscriptionsBean subscriptionsBean = null;
@@ -203,108 +139,60 @@ public class SubscriptionsServiceImpl implements SubscriptionsService {
 	 *            SubscriptionsBean
 	 */
 	public void updateSubscriptions(SubscriptionsBean subscriptionsBean) {
-
-		NcboUserSubscriptions ncboUserSubscriptions = new NcboUserSubscriptions();
-		List<NcboUserSubscriptions> listOfncboUserSubscritpions = new ArrayList<NcboUserSubscriptions>();
-
-		NcboLNotificationType ncboLnotificationType = new NcboLNotificationType();
-		// Creating the list of NcboLNotificationType
+		List<NcboUserSubscriptions> existingSubs = new ArrayList<NcboUserSubscriptions>();
 		List<NcboLNotificationType> ncboLNotificationtype = new ArrayList<NcboLNotificationType>();
-		// Creating the list of NcboUserSubscriptions
-		List<NcboUserSubscriptions> userSubscriptions = new ArrayList<NcboUserSubscriptions>();
 		List<String> ontologyIds = subscriptionsBean.getOntologyIds();
+
 		try {
-			// Populating the List Of NcboUserSubscriptions from the database
-			// according to the UserId of Subscriptions Bean
-			userSubscriptions = ncboUserSubscriptionsDAO
-					.findByUserId(subscriptionsBean.getUserId());
+			ncboLNotificationtype = ncboLNotificationTypeDAO
+					.findByType(subscriptionsBean.getNotificationType()
+							.toString());
 
-			for (NcboUserSubscriptions subscriptions : userSubscriptions) {
-				// Populating the NcboUserSubscriptions from the
-				// SubscriptionsBean
-				subscriptionsBean.populateToEntity(ncboUserSubscriptions);
+			for (NcboLNotificationType notificationType : ncboLNotificationtype) {
+				for (String ontologyId : ontologyIds) {
+					existingSubs = ncboUserSubscriptionsDAO
+							.findByUserIdAndOntologyId(ontologyId,
+									subscriptionsBean.getUserId(),
+									notificationType);
 
-				ncboLNotificationtype = ncboLNotificationTypeDAO
-						.findByType(subscriptionsBean.getNotificationType()
-								.toString());
-				for (NcboLNotificationType notificationType : ncboLNotificationtype) {
-					ncboUserSubscriptions
-							.setNcboLNotificationType(notificationType);
-					for (String ontologyId : ontologyIds) {
-						listOfncboUserSubscritpions = ncboUserSubscriptionsDAO
-								.findByUserIdAndOntologyId(ontologyId,
-										subscriptionsBean.getUserId(),
-										notificationType);
-					}
+					if (existingSubs.isEmpty()) {
+						NcboUserSubscriptions ncboUserSubscriptions = new NcboUserSubscriptions();
+						subscriptionsBean
+								.populateToEntity(ncboUserSubscriptions);
+						ncboUserSubscriptions
+								.setNcboLNotificationType(notificationType);
+						ncboUserSubscriptions.setOntologyId(ontologyId);
 
-					if (listOfncboUserSubscritpions.isEmpty()) {
+						// We don't want to add multiple of the same
+						// ontology/type for the user, so we only save if
+						// existingSubs is empty
 						ncboUserSubscriptionsDAO.save(ncboUserSubscriptions);
-					} else {
-						throw new NotificationNotFoundException(
-								NotificationNotFoundException.DEFAULT_MESSAGE);
-
 					}
-
 				}
-
-				// ncboUserSubscriptionsDAO.save(ncboUserSubscriptions);
 			}
-
-			NcboUser ncboUser = ncboUserDAO.findById(subscriptionsBean
-					.getUserId());
-			// Creating the Map For messageId and for reply
-			HashMap<String, String> keywords = new HashMap<String, String>();
-
-			String messageId = (keywords.get("messageId") != null) ? keywords
-					.get("messageId") : null;
-
-			String inReplyTo = (keywords.get("inReplyTo") != null) ? keywords
-					.get("inReplyTo") : null;
-
-			String from = MessageUtils.getMessage("notification.mail.from");
-			// getting the email
-			String email = ApplicationConstants.EMAIL;
-			keywords.put(ApplicationConstants.ONTOLOGY_VERSION_ID,
-					subscriptionsBean.getOntologyId().toString());
-			keywords.put(ApplicationConstants.USERNAME, ncboUser.getUsername());
-
-			textManager.appendKeywords(keywords);
-
-			String message = textManager.getTextContent(subscriptionsBean
-					.getNotificationType().toString());
-			String subject = textManager.getTextContent(subscriptionsBean
-					.getNotificationType().toString()
-					+ ApplicationConstants.SUBJECT_SUFFIX);
-
-			mailService.sendMail(from, email, subject, messageId, inReplyTo,
-					message);
 		} catch (Exception ex) {
-			log.error(" Sending Mail is failed", ex);
-
+			log.error("Problem updating subscription", ex);
+			ex.printStackTrace();
 		}
 	}
 
 	/**
 	 * @param subscriptionsBean
-	 * 
+	 *
 	 */
 	public void removeSubscriptions(SubscriptionsBean subscriptionsBean) {
-
-		NcboUserSubscriptions userSubscriptions = new NcboUserSubscriptions();
 		List<NcboUserSubscriptions> listOfSubscriptions = new ArrayList<NcboUserSubscriptions>();
-		NcboLNotificationType ncboLNotificationType = new NcboLNotificationType();
 		List<String> ontologyIds = subscriptionsBean.getOntologyIds();
+
 		for (String ontologyId : ontologyIds) {
 			listOfSubscriptions = ncboUserSubscriptionsDAO
 					.findByOntologyIdAndNotificationType(ontologyId,
 							subscriptionsBean.getNotificationType());
+
+			for (NcboUserSubscriptions subscriptions : listOfSubscriptions) {
+				ncboUserSubscriptionsDAO.delete(subscriptions);
+			}
 		}
-
-		for (NcboUserSubscriptions subscriptions : listOfSubscriptions) {
-
-			ncboUserSubscriptionsDAO.delete(subscriptions);
-		}
-
 	}
 
 	public List<SubscriptionsBean> listOfSubscriptionsForOntologyId(
@@ -324,6 +212,28 @@ public class SubscriptionsServiceImpl implements SubscriptionsService {
 		}
 
 		return subscriptionsBeanList;
+	}
+
+	public void setTextManager(TextManager textManager) {
+		this.textManager = textManager;
+	}
+
+	public void setMailService(MailServiceImpl mailService) {
+		this.mailService = mailService;
+	}
+
+	public void setNcboUserSubscriptionsDAO(
+			CustomNcboUserSubscriptionsDAO ncboUserSubscriptionsDAO) {
+		this.ncboUserSubscriptionsDAO = ncboUserSubscriptionsDAO;
+	}
+
+	public void setNcboUserDAO(NcboUserDAO ncboUserDAO) {
+		this.ncboUserDAO = ncboUserDAO;
+	}
+
+	public void setNcboLNotificationTypeDAO(
+			CustomNcboLNotificationTypeDAO ncboLNotificationTypeDAO) {
+		this.ncboLNotificationTypeDAO = ncboLNotificationTypeDAO;
 	}
 
 }
