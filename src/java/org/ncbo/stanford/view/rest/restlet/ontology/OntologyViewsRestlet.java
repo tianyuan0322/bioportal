@@ -6,7 +6,6 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.ncbo.stanford.bean.OntologyBean;
 import org.ncbo.stanford.service.ontology.OntologyService;
-import org.ncbo.stanford.util.MessageUtils;
 import org.ncbo.stanford.view.rest.restlet.AbstractBaseRestlet;
 import org.ncbo.stanford.view.util.constants.RequestParamConstants;
 import org.restlet.Request;
@@ -29,7 +28,7 @@ public class OntologyViewsRestlet extends AbstractBaseRestlet {
 
 	/**
 	 * Return to the response a listing of ontologies
-	 * 
+	 *
 	 * @param response
 	 */
 	private void listOntologyViews(Request request, Response response) {
@@ -49,10 +48,9 @@ public class OntologyViewsRestlet extends AbstractBaseRestlet {
 			log.error(e);
 		} finally {
 			// generate response XML with XSL
-			String xslFile = MessageUtils
-					.getMessage("xsl.ontology.findall");
+			// String xslFile = MessageUtils.getMessage("xsl.ontology.findall");
 			xmlSerializationService.generateXMLResponse(request, response,
-					ontologyList, xslFile);
+					ontologyList);
 		}
 	}
 

@@ -39,7 +39,7 @@ public class OntologiesRestlet extends AbstractBaseRestlet {
 
 	/**
 	 * Handle POST calls here
-	 * 
+	 *
 	 * @param request
 	 * @param response
 	 */
@@ -58,7 +58,7 @@ public class OntologiesRestlet extends AbstractBaseRestlet {
 
 	/**
 	 * Handle DELETE calls here
-	 * 
+	 *
 	 * @param request
 	 * @param response
 	 */
@@ -69,7 +69,7 @@ public class OntologiesRestlet extends AbstractBaseRestlet {
 
 	/**
 	 * Return to the response a listing of ontologies
-	 * 
+	 *
 	 * @param response
 	 */
 	private void listOntologies(Request request, Response response) {
@@ -92,15 +92,15 @@ public class OntologiesRestlet extends AbstractBaseRestlet {
 			log.error(e);
 		} finally {
 			// generate response XML with XSL
-			String xslFile = MessageUtils.getMessage("xsl.ontology.findall");
+			// String xslFile = MessageUtils.getMessage("xsl.ontology.findall");
 			xmlSerializationService.generateXMLResponse(request, response,
-					ontologyList, xslFile);
+					ontologyList);
 		}
 	}
 
 	/**
 	 * Return to the response creating Ontology
-	 * 
+	 *
 	 * @param request
 	 *            response
 	 */
@@ -111,19 +111,20 @@ public class OntologiesRestlet extends AbstractBaseRestlet {
 		// create the ontology
 		try {
 			// no file handler for remote case since there is no file to upload.
-			FilePathHandler filePathHandler= null;
+			FilePathHandler filePathHandler = null;
 			if (ontologyBean.isMetadataOnly()) {
-				filePathHandler= null;
-			} else if (StringUtils.isNotBlank(ontologyBean.getDownloadLocation())){
+				filePathHandler = null;
+			} else if (StringUtils.isNotBlank(ontologyBean
+					.getDownloadLocation())) {
 				filePathHandler = new URIUploadFilePathHandlerImpl(
 						CompressedFileHandlerFactory
-								.createFileHandler(ontologyBean.getFormat()), new URI(
-										ontologyBean.getDownloadLocation()));
+								.createFileHandler(ontologyBean.getFormat()),
+						new URI(ontologyBean.getDownloadLocation()));
 			} else {
-				 filePathHandler = new CommonsFileUploadFilePathHandlerImpl(
+				filePathHandler = new CommonsFileUploadFilePathHandlerImpl(
 						CompressedFileHandlerFactory
 								.createFileHandler(ontologyBean.getFormat()),
-						ontologyBean.getFileItem());				
+						ontologyBean.getFileItem());
 			}
 			ontologyService.createOntologyOrView(ontologyBean, filePathHandler);
 		} catch (Exception e) {
@@ -153,7 +154,7 @@ public class OntologiesRestlet extends AbstractBaseRestlet {
 
 	/**
 	 * Delete several ontologies4
-	 * 
+	 *
 	 * @param request
 	 * @param response
 	 */
