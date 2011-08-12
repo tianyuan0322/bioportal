@@ -2,15 +2,12 @@ package org.ncbo.stanford.view.rest.restlet.ontology;
 
 import java.util.List;
 
-import javax.servlet.http.HttpServletRequest;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.ncbo.stanford.bean.OntologyBean;
 import org.ncbo.stanford.bean.OntologyMetricsBean;
 import org.ncbo.stanford.exception.InvalidInputException;
 import org.ncbo.stanford.service.metrics.MetricsService;
-import org.ncbo.stanford.util.RequestUtils;
 import org.restlet.Request;
 import org.restlet.Response;
 import org.restlet.data.Status;
@@ -39,7 +36,7 @@ public class OntologyMetricsRestlet extends AbstractOntologyBaseRestlet {
 
 	/**
 	 * Return to the response an individual ontology
-	 * 
+	 *
 	 * @param request
 	 * @param response
 	 */
@@ -70,16 +67,18 @@ public class OntologyMetricsRestlet extends AbstractOntologyBaseRestlet {
 	/**
 	 * Extract metrics from the given ontology and store them into the metadata
 	 * ontology.
-	 * 
+	 *
 	 * @param request
 	 * @param response
 	 */
 	private void extractOntologyMetrics(Request request, Response response) {
-
 		try {
-			HttpServletRequest httpRequest = RequestUtils
-					.getHttpServletRequest(request);
-			List<Integer> ontologyVersionIds = getOntologyVersionIds(httpRequest);
+			List<Integer> ontologyVersionIds = getOntologyVersionIds(request);
+
+			if (ontologyVersionIds == null || ontologyVersionIds.isEmpty()) {
+				throw new InvalidInputException(
+						"You must provide a valid ontology id");
+			}
 
 			if (ontologyVersionIds != null) {
 				metricsService.extractOntologyMetrics(ontologyVersionIds);

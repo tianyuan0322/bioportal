@@ -20,9 +20,9 @@ import org.restlet.data.Status;
 /**
  * An abstract restlet that contains common functionality as well as default
  * handling for GET, POST, PUT, and DELETE methods
- * 
+ *
  * @author Michael Dorf
- * 
+ *
  */
 public abstract class AbstractBaseRestlet extends Restlet {
 
@@ -76,7 +76,7 @@ public abstract class AbstractBaseRestlet extends Restlet {
 	/**
 	 * Handle any of the GET/POST/PUT/DELETE requests. If this method is
 	 * defined, it gets executed instead of each individual method handler
-	 * 
+	 *
 	 * @param request
 	 * @param response
 	 */
@@ -86,7 +86,7 @@ public abstract class AbstractBaseRestlet extends Restlet {
 
 	/**
 	 * Handle GET calls here
-	 * 
+	 *
 	 * @param request
 	 * @param response
 	 */
@@ -97,7 +97,7 @@ public abstract class AbstractBaseRestlet extends Restlet {
 
 	/**
 	 * Handle POST calls here
-	 * 
+	 *
 	 * @param request
 	 * @param response
 	 */
@@ -108,7 +108,7 @@ public abstract class AbstractBaseRestlet extends Restlet {
 
 	/**
 	 * Handle PUT calls here
-	 * 
+	 *
 	 * @param request
 	 * @param response
 	 */
@@ -119,7 +119,7 @@ public abstract class AbstractBaseRestlet extends Restlet {
 
 	/**
 	 * Handle DELETE calls here
-	 * 
+	 *
 	 * @param request
 	 * @param response
 	 */
@@ -139,6 +139,14 @@ public abstract class AbstractBaseRestlet extends Restlet {
 				RequestParamConstants.PARAM_ONTOLOGY_VERSION_IDS);
 	}
 
+	protected List<Integer> getOntologyVersionIds(Request request)
+			throws Exception {
+		return RequestUtils.parseIntegerListParam(RequestUtils
+				.getAttributeOrRequestParam(
+						RequestParamConstants.PARAM_ONTOLOGY_VERSION_IDS,
+						request));
+	}
+
 	protected List<Integer> getOntologyIds(HttpServletRequest httpRequest)
 			throws Exception {
 		return getIntegerList(httpRequest,
@@ -152,7 +160,7 @@ public abstract class AbstractBaseRestlet extends Restlet {
 
 	/**
 	 * It will collect the Ids from the request
-	 * 
+	 *
 	 * @param request
 	 * @return
 	 */
