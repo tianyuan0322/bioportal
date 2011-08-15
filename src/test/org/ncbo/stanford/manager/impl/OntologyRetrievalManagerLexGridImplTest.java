@@ -251,7 +251,8 @@ public class OntologyRetrievalManagerLexGridImplTest extends
 				.getOntologyBeanByDisplayNameAndOntologyId(
 						OntologyLoaderLexGridImplTest.OBO_CELL_DISPLAY_LABEL,
 						OntologyLoaderLexGridImplTest.OBO_CELL_ONTOLOGY_ID);
-		String conceptID = "CL:0000255";
+		//String conceptID = "CL:0000255";
+		String conceptID = "CL:0000045";
 		int maxNumChildren = 1000;
 		ClassBean classBean = retrievalManager.findConcept(ncboOntology,
 				conceptID, maxNumChildren, true, false, false);

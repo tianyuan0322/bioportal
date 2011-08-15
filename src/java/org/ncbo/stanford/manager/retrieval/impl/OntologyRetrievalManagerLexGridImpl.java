@@ -1582,6 +1582,7 @@ public class OntologyRetrievalManagerLexGridImpl extends
 		cb.setSynonyms(classBean.getSynonyms());
 		cb.setDefinitions(classBean.getDefinitions());
 		cb.setAuthors(classBean.getAuthors());
+		cb.setIsObsolete(classBean.getIsObsolete());
 
 		Integer childCount = (Integer) classBean.getRelations().get(
 				ApplicationConstants.CHILD_COUNT);
