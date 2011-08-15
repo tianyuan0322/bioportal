@@ -42,15 +42,13 @@ public class OntologyMetricsRestlet extends AbstractOntologyBaseRestlet {
 	 */
 	private void getOntologyMetrics(Request request, Response response) {
 		// find the OntologyBean from request
-		OntologyBean ontologyBean = findOntologyBean(request, response);
+		List<OntologyBean> ontologyBean = findOntologyBeans(request, response);
 
 		OntologyMetricsBean ontologyMetricsBean = null;
-		// if "find" was successful, proceed to update
 		if (!response.getStatus().isError()) {
 			try {
 				ontologyMetricsBean = metricsService
-						.getOntologyMetrics(ontologyBean);
-
+						.getOntologyMetrics(ontologyBean.get(0));
 			} catch (Exception e) {
 				response
 						.setStatus(Status.SERVER_ERROR_INTERNAL, e.getMessage());
