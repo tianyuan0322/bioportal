@@ -225,6 +225,7 @@ public class BeanHelper {
 
 			// set user ACL if passed in
 			if (userAcl != null && !isViewBool) {
+				bean.emptyUserAcl();
 				// add this user as the owner
 				bean.addUserToAcl(userIdInt, true);
 				List<Integer> userIds = RequestUtils
