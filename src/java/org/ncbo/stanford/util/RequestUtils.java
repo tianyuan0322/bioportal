@@ -406,7 +406,7 @@ public class RequestUtils {
 	}
 
 	/**
-	 * Executes an HTTP post
+	 * Executes an HTTP POST
 	 * 
 	 * @param postUrl
 	 * @param postParams
@@ -462,34 +462,47 @@ public class RequestUtils {
 	}
 
 	/**
-	 * Executes an HTTP post
+	 * Executes an HTTP GET
 	 * 
 	 * @param baseUrl
-	 * @param getParams
+	 * @param params
 	 * @return
 	 * @throws IOException
 	 */
 	public static HttpInputStreamWrapper doHttpGet(String baseUrl,
-			HashMap<String, String> getParams) throws Exception {
+			HashMap<String, String> params) throws Exception {
 		InputStream is = null;
-		String getData = new String("");
+		String paramsStr = new String("");
 		String encoding = MessageUtils.getMessage("default.encoding");
+		URL base = new URL(baseUrl);
+		Map<String, Object> queryParams = new HashMap<String, Object>(0);
+		parseQueryString(base.getQuery(), queryParams);
 
-		// Construct get parameters
-		if (getParams != null) {
-			for (String key : getParams.keySet()) {
-				getData += URLEncoder.encode(key, encoding) + "="
-						+ URLEncoder.encode(getParams.get(key), encoding)
-						+ PARAM_SEPARATOR;
+		if (params != null) {
+			for (String key : params.keySet()) {
+				queryParams.put(key, params.get(key));
 			}
-
-			getData = (getData.length() > 0) ? getData.substring(0, getData
-					.length() - 1) : getData;
 		}
 
+		for (String key : queryParams.keySet()) {
+			String val = (String) queryParams.get(key);
+			paramsStr += URLEncoder.encode(key, encoding)
+					+ "="
+					+ (StringHelper.isNullOrNullString(val) ? "" : URLEncoder
+							.encode(val, encoding)) + "&";
+		}
+
+		paramsStr = (paramsStr.length() > 0) ? paramsStr.substring(0, paramsStr
+				.length() - 1) : paramsStr;
+
+		int port = base.getPort();
+		baseUrl = base.getProtocol() + "://" + base.getHost()
+				+ ((port > -1 && port != 80) ? ":" + port : "")
+				+ base.getPath();
+
 		// Send data
-		URL url = new URL(baseUrl + ((getData.length() > 0) ? "?" : "")
-				+ getData);
+		URL url = new URL(baseUrl + ((paramsStr.length() > 0) ? "?" : "")
+				+ paramsStr);
 		HttpURLConnection conn = (HttpURLConnection) url.openConnection();
 		conn.setRequestProperty("User-Agent", BIOPORTAL_USER_AGENT);
 
