@@ -426,7 +426,7 @@ public class OntologyServiceMetadataImpl extends AbstractOntologyService
 				.findByOntologyId(ontologyBean.getOntologyId());
 
 		for (NcboOntologyAcl acl : aclList) {
-			ncboOntologyAclDAO.delete(acl);
+			ncboOntologyAclDAO.deleteOntologyAcl(acl);
 		}
 	}
 

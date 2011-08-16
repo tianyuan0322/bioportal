@@ -118,12 +118,18 @@ public class OntologyBean {
 	}
 
 	/**
+	 * Emptys this ontology's access list (ACL)
+	 */
+	public void emptyUserAcl() {
+		userAcl.clear();
+	}
+
+	/**
 	 * Populates the OntologyBean to a NcboOntologyFile Entity. OntologyVersion
 	 * should have been populated from OntologyBean before making this call.
 	 * 
 	 * @param ontologyFileList
 	 */
-
 	public void populateToFileEntity(List<NcboOntologyFile> ontologyFileList) {
 		for (String fileName : filenames) {
 			NcboOntologyFile ontologyFile = new NcboOntologyFile();
@@ -197,19 +203,17 @@ public class OntologyBean {
 				+ ", Version Status: " + this.getVersionStatus()
 				+ ", Display Label: " + this.getDisplayLabel()
 				+ ", Description: " + this.getDescription()
-				+ ", Abbreviation: " + this.getAbbreviation()
-				+ ", Format: "+ this.getFormat() 
-				+ ", Download Location: "	+ this.getDownloadLocation()
-				+ ", Contact Name: "	+ this.getContactName() 
-				+ ", Contact Email: "	+ this.getContactEmail() 
-				+ ", isFlat: " + this.getIsFlat()
-				+ ", Foundry: " + this.getIsFoundry()
-				+ ", IsMetadataOnly: " + this.getIsMetadataOnly()
-				+ ", Coding Scheme: " + this.getCodingScheme()
-				+ ", Target Terminologies: " + this.getTargetTerminologies()
-				+ ", Synonym Slot: " + this.getSynonymSlot()
-				+ ", Preferred Name Slot: " + this.getPreferredNameSlot()
-				+ ", View Definition: " + viewDef
+				+ ", Abbreviation: " + this.getAbbreviation() + ", Format: "
+				+ this.getFormat() + ", Download Location: "
+				+ this.getDownloadLocation() + ", Contact Name: "
+				+ this.getContactName() + ", Contact Email: "
+				+ this.getContactEmail() + ", isFlat: " + this.getIsFlat()
+				+ ", Foundry: " + this.getIsFoundry() + ", IsMetadataOnly: "
+				+ this.getIsMetadataOnly() + ", Coding Scheme: "
+				+ this.getCodingScheme() + ", Target Terminologies: "
+				+ this.getTargetTerminologies() + ", Synonym Slot: "
+				+ this.getSynonymSlot() + ", Preferred Name Slot: "
+				+ this.getPreferredNameSlot() + ", View Definition: " + viewDef
 				+ ", View Definition Language: "
 				+ this.getViewDefinitionLanguage()
 				+ ", View Generation Engine: " + this.getViewGenerationEngine()
@@ -533,10 +537,12 @@ public class OntologyBean {
 	public Byte getIsFlat() {
 		return isFlat;
 	}
-   /**
-    * Set isFlat
-    * @param isFlat
-    */
+
+	/**
+	 * Set isFlat
+	 * 
+	 * @param isFlat
+	 */
 	public void setIsFlat(Byte isFlat) {
 		this.isFlat = isFlat;
 	}
