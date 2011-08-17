@@ -169,7 +169,7 @@ public class AbstractNcboMappingDAO {
 
 				mapping.setRelation(new URIImpl(bs.getValue("relation")
 						.stringValue()));
-                
+
                 if (bs.getValue("sourceOntologyId")!=null) {
                     mapping.setSourceOntologyId(convertValueToInteger(bs
 						.getValue("sourceOntologyId")));
@@ -283,7 +283,7 @@ public class AbstractNcboMappingDAO {
 
 		return null;
     }
-    
+
 
     private void populateSourceAndTargetOntologyId(List<Mapping> mappings) {
         RepositoryConnection con = getRdfStoreManager()
@@ -344,21 +344,21 @@ public class AbstractNcboMappingDAO {
         if (filter == null || filter.isEmpty()) {
             queryString = queryString.replaceAll("FILTER \\(\\) ", "");
         }
-        String unionPattern = 
+        String unionPattern =
             "{ ?mappingId <http://protege.stanford.edu/ontologies/mappings/mappings.rdfs#target_ontology_id> %ONTOLOGY_A% . "
             + "?mappingId <http://protege.stanford.edu/ontologies/mappings/mappings.rdfs#source_ontology_id> %ONTOLOGY_B% . "
             + "} ";
         if (!unidirectional) {
             unionPattern += "UNION { "
             + "?mappingId <http://protege.stanford.edu/ontologies/mappings/mappings.rdfs#target_ontology_id> %ONTOLOGY_B% . "
-            + "?mappingId <http://protege.stanford.edu/ontologies/mappings/mappings.rdfs#source_ontology_id> %ONTOLOGY_A% . " 
-            + "} "; 
+            + "?mappingId <http://protege.stanford.edu/ontologies/mappings/mappings.rdfs#source_ontology_id> %ONTOLOGY_A% . "
+            + "} ";
         }
 
         unionPattern = unionPattern.replaceAll("%ONTOLOGY_A%",Integer.toString(targetOntology)).replaceAll("%ONTOLOGY_B%",Integer.toString(sourceOntology));
         queryString = queryString.replaceAll("%ONTOLOGIES_MATCH_PATTERN%",unionPattern);
 
-        List<Mapping> mappings = getMappingsFromSPARQLQuery(queryString);        
+        List<Mapping> mappings = getMappingsFromSPARQLQuery(queryString);
         if (!unidirectional) {
             populateSourceAndTargetOntologyId(mappings);
         } else {
@@ -401,7 +401,7 @@ public class AbstractNcboMappingDAO {
 		// Combine filters
 		String combinedFilters = "";
 		if (filter != null) {
-			combinedFilters = (parameters != null) ? filter + " "
+			combinedFilters = (parameters != null) ? filter + " && "
 					+ parameters.toFilter() : filter;
 		} else {
 			combinedFilters = (parameters != null) ? parameters.toFilter() : "";
@@ -423,7 +423,7 @@ public class AbstractNcboMappingDAO {
 		if (filter == null || filter.isEmpty()) {
 			queryString = queryString.replaceAll("FILTER \\(\\) ", "");
 		}
-        
+
         return getMappingsFromSPARQLQuery(queryString);
 	}
 
@@ -437,7 +437,7 @@ public class AbstractNcboMappingDAO {
 					queryString, ApplicationConstants.MAPPING_CONTEXT);
 
 			TupleQueryResult result = query.evaluate();
-            
+
             Integer count = 0;
 			while (result.hasNext()) {
 				BindingSet bs = result.next();
@@ -551,7 +551,7 @@ public class AbstractNcboMappingDAO {
 		} else {
 			queryString = queryString.replaceAll("%TRIPLES_FOR_PARAMS%", "");
 		}
-        
+
 		RepositoryConnection con = getRdfStoreManager()
 				.getRepositoryConnection();
 		Integer count = null;
