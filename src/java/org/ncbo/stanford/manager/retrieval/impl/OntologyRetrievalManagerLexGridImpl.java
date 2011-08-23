@@ -759,7 +759,7 @@ public class OntologyRetrievalManagerLexGridImpl extends
 	 * @throws Exception
 	 */
 
-	private ResolvedConceptReference getResolvedConceptReferenceWithoutRelations(
+	private ResolvedConceptReference getResolvedConceptReferenceWithoutRelations(OntologyBean ontologyBean,
 			AssociatedConcept ac) {
 		ResolvedConceptReference rcr = new ResolvedConceptReference();
 		rcr.setReferencedEntry(ac.getReferencedEntry());
@@ -1357,7 +1357,16 @@ public class OntologyRetrievalManagerLexGridImpl extends
 					includeChildren = false;
 				}
 
-				ResolvedConceptReference rcr_without_relations = getResolvedConceptReferenceWithoutRelations(assocConcept);
+				ResolvedConceptReference rcr_without_relations;
+				try {
+				    rcr_without_relations = getLightResolvedConceptReference(ontologyBean, assocConcept.getCode());
+				    if (rcr_without_relations == null) {
+				    	rcr_without_relations = getResolvedConceptReferenceWithoutRelations(ontologyBean, assocConcept);
+				    }
+				} catch (Exception ex) {
+					ex.printStackTrace();
+					rcr_without_relations = getResolvedConceptReferenceWithoutRelations(ontologyBean, assocConcept);
+				}
 				ClassBean classBean = createClassBeanWithChildCount(
 						ontologyBean, rcr_without_relations, countMap,
 						includeChildren);
