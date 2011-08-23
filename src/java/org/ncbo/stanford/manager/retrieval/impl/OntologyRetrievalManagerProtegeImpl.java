@@ -121,6 +121,10 @@ public class OntologyRetrievalManagerProtegeImpl extends
 		Frame owlClass = getFrame(conceptId, kb);
 		ClassBean targetClass = null;
 
+		if (maxNumChildren == null) {
+			maxNumChildren = Integer.MAX_VALUE;
+		}
+
 		// This enables lookup using fullIds for Protege Frames ontologies
 		if (owlClass == null
 				&& ontologyBean.getFormat().equalsIgnoreCase(
