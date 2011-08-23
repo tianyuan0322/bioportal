@@ -738,8 +738,10 @@ public class OntologyRetrievalManagerLexGridImpl extends
 						schemeName);
 		CodedNodeSet nodes = lbs.getNodeSet(schemeName, csvt, null)
 				.restrictToCodes(crefs);
+//		ResolvedConceptReferenceList matches = nodes.resolveToList(null, null,
+//				null, null, false, -1);
 		ResolvedConceptReferenceList matches = nodes.resolveToList(null, null,
-				null, null, false, -1);
+				Constructors.createLocalNameList("CONCEPTSTATUS"), null,  -1);
 		ResolvedConceptReference rcr = null;
 
 		if (matches.getResolvedConceptReferenceCount() > 0) {
