@@ -401,7 +401,7 @@ public class AbstractNcboMappingDAO {
 		// Combine filters
 		String combinedFilters = "";
 		if (filter != null) {
-			combinedFilters = (parameters != null) ? filter + " && "
+			combinedFilters = (!parameters.isEmpty()) ? filter + " && "
 					+ parameters.toFilter() : filter;
 		} else {
 			combinedFilters = (parameters != null) ? parameters.toFilter() : "";
