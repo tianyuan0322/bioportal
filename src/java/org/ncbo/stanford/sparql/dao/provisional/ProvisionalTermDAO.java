@@ -110,9 +110,9 @@ public class ProvisionalTermDAO {
 			+ "  FILTER ( ?id = <%TERM_ID%> ) }";
 
 	/*******************************************************************
-	 * 
+	 *
 	 * Generic SPARQL methods
-	 * 
+	 *
 	 *******************************************************************/
 
 	public List<ProvisionalTerm> getProvisionalTerms(Integer limit,
@@ -124,7 +124,7 @@ public class ProvisionalTermDAO {
 	/**
 	 * Generic getProvisionalTerms call. Must provide a valid SPARQL filter
 	 * (generated via helper methods or elsewhere).
-	 * 
+	 *
 	 * @param limit
 	 * @param offset
 	 * @param filter
@@ -132,7 +132,7 @@ public class ProvisionalTermDAO {
 	 * @param sourceOntology
 	 * @param targetOntology
 	 * @param unidirectional
-	 * 
+	 *
 	 * @return
 	 * @throws InvalidInputException
 	 */
@@ -154,10 +154,13 @@ public class ProvisionalTermDAO {
 		// Combine filters
 		String combinedFilters = "";
 		if (filter != null) {
-			combinedFilters = (parameters != null) ? filter + " "
-					+ parameters.toFilter() : filter;
+			combinedFilters = (parameters != null && !parameters.isEmpty()) ? filter
+					+ " && " + parameters.toFilter()
+					: filter;
 		} else {
-			combinedFilters = (parameters != null) ? parameters.toFilter() : "";
+			combinedFilters = (parameters != null && !parameters.isEmpty()) ? parameters
+					.toFilter()
+					: "";
 		}
 
 		// Substitute tokens in the generic query string
@@ -290,7 +293,7 @@ public class ProvisionalTermDAO {
 	/**
 	 * Generic getCount call. Must provide a valid SPARQL filter (generated via
 	 * helper methods or elsewhere).
-	 * 
+	 *
 	 * @param sourceOntology
 	 * @param targetOntology
 	 * @param unidirectional
@@ -306,10 +309,13 @@ public class ProvisionalTermDAO {
 		// Combine filters
 		String combinedFilters = "";
 		if (filter != null) {
-			combinedFilters = (parameters != null) ? filter + " "
-					+ parameters.toFilter() : filter;
+			combinedFilters = (parameters != null && !parameters.isEmpty()) ? filter
+					+ " && " + parameters.toFilter()
+					: filter;
 		} else {
-			combinedFilters = (parameters != null) ? parameters.toFilter() : "";
+			combinedFilters = (parameters != null && !parameters.isEmpty()) ? parameters
+					.toFilter()
+					: "";
 		}
 
 		String queryString = provisionalTermCountQuery.replaceAll("%FILTER%",
@@ -499,9 +505,9 @@ public class ProvisionalTermDAO {
 	}
 
 	/*******************************************************************
-	 * 
+	 *
 	 * protected methods
-	 * 
+	 *
 	 *******************************************************************/
 
 	protected Integer convertValueToInteger(Value val) {
@@ -518,7 +524,7 @@ public class ProvisionalTermDAO {
 
 	/**
 	 * Checks the repository for a provisional term using provided id.
-	 * 
+	 *
 	 * @param id
 	 * @param con
 	 * @return
@@ -540,7 +546,7 @@ public class ProvisionalTermDAO {
 	/**
 	 * Get a manager for the RDF store based on the configured options in
 	 * build.properties.
-	 * 
+	 *
 	 * @return
 	 */
 	protected RDFStoreManager getRdfStoreManager() {
@@ -552,7 +558,7 @@ public class ProvisionalTermDAO {
 	 * This method does the actual delete action for removing provisional terms
 	 * from the triplestore. It removes all triples with a subject matching the
 	 * provisional term id.
-	 * 
+	 *
 	 * @param con
 	 * @param id
 	 * @throws RepositoryException
@@ -567,7 +573,7 @@ public class ProvisionalTermDAO {
 	/**
 	 * Look for valid values and update the provided provisional term bean with
 	 * them. For use in re-creating a provisional term as part of an update.
-	 * 
+	 *
 	 * @param term
 	 * @param ontologyIds
 	 * @param label
@@ -619,9 +625,9 @@ public class ProvisionalTermDAO {
 	}
 
 	/*******************************************************************
-	 * 
+	 *
 	 * Auto-generated methods
-	 * 
+	 *
 	 *******************************************************************/
 
 	/**
