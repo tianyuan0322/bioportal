@@ -1,6 +1,7 @@
 package org.ncbo.stanford.util.metadata;
 
 import org.ncbo.stanford.bean.UserBean;
+import org.springframework.util.StringUtils;
 
 import edu.stanford.smi.protegex.owl.model.OWLIndividual;
 import edu.stanford.smi.protegex.owl.model.OWLModel;
@@ -15,10 +16,14 @@ public class UserMetadataUtils extends MetadataUtils {
 			+ "isManual";
 	public static final String PROPERTY_UPLOAD_DATE = PREFIX_METADATA
 			+ "timestampCreation";
-	public static final String PROPERTY_HAS_CONTACT_NAME = PREFIX_METADATA
-			+ "hasContactName";
-	public static final String PROPERTY_HAS_CONTACT_EMAIL = PREFIX_METADATA
-			+ "hasContactEmail";
+	public static final String PROPERTY_HAS_FIRST_NAME = PREFIX_OMV
+			+ "firstName";
+	public static final String PROPERTY_HAS_LAST_NAME = PREFIX_OMV
+			+ "lastName";
+	public static final String PROPERTY_HAS_EMAIL = PREFIX_OMV
+			+ "eMail";
+	public static final String PROPERTY_HAS_PHONE = PREFIX_OMV
+			+ "phoneNumber";
 	public static final String PROPERTY_USERNAME = PREFIX_METADATA + "username";
 
 	// This Method is set the UserInstance inside Metadata
@@ -35,12 +40,15 @@ public class UserMetadataUtils extends MetadataUtils {
 		setPropertyValue(owlModel, userInd, PROPERTY_USERNAME, userBean
 				.getUsername());
 
-		setPropertyValue(owlModel, userInd, PROPERTY_HAS_CONTACT_EMAIL,
+		setPropertyValue(owlModel, userInd, PROPERTY_HAS_EMAIL,
 				userBean.getEmail());
-		setPropertyValue(owlModel, userInd, PROPERTY_HAS_CONTACT_NAME, userBean
-				.getFirstname()
-				+ " " + userBean.getLastname());
+		setPropertyValue(owlModel, userInd, PROPERTY_HAS_FIRST_NAME, userBean.getFirstname());
 
+		setPropertyValue(owlModel, userInd, PROPERTY_HAS_LAST_NAME, userBean.getLastname());
+
+		if (userBean.getPhone() != null && userBean.getPhone().trim().length() > 0)
+			setPropertyValue(owlModel, userInd, PROPERTY_HAS_PHONE, userBean.getPhone());
+		
 		RDFSLiteral litDateCreated = createXsdDateTimePropertyValue(owlModel,
 				userBean.getDateCreated());
 		setPropertyValue(owlModel, userInd, PROPERTY_UPLOAD_DATE,
