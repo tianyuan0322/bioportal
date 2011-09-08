@@ -895,10 +895,6 @@
 		</property>
 	</bean>
 
-	<bean id="notificationProcessForOntology"
-		class="org.ncbo.stanford.aop.notification.NotificationProcessForOntology">
-	</bean>
-
 	<bean id="ontologyLoadSchedulerService"
 		class="org.ncbo.stanford.service.loader.scheduler.impl.OntologyLoadSchedulerServiceImpl"
 		parent="abstractOntologyService">
@@ -907,9 +903,6 @@
 		</property>
 		<property name="ontologyMetricsHandlerMap">
 			<ref local="ontologyMetricsHandlerMap" />
-		</property>
-		<property name="notificationProcessForOntology">
-			<ref local="notificationProcessForOntology" />
 		</property>
 	</bean>
 <!--
@@ -944,7 +937,7 @@
 			<ref bean="ontologyService" />
 		</property>
 	</bean>
-	
+
 	<bean id="ontologyIntegrityFixerService"
 		class="org.ncbo.stanford.service.loader.fixer.impl.OntologyIntegrityFixerServiceImpl">
 		<property name="ontologyMetadataManager">
@@ -1861,7 +1854,7 @@
 		</property>
 	</bean>
 
-	<bean id="notificationAdvice" class="org.ncbo.stanford.aop.notification.NotificationAdvice">
+	<bean id="notificationAdvice" class="org.ncbo.stanford.aop.notification.NotificationAdvice" factory-method="aspectOf">
 		<property name="emailNotificationService">
 			<ref local="emailNotificationService" />
 		</property>
@@ -1884,20 +1877,11 @@
                     and args(ontologyBean)" />
 			<aop:after-returning pointcut-ref="aroundService" method="adviceUpdateOntology" />
 		</aop:aspect>
-
-		<aop:aspect id="afterProcessOnt" ref="notificationAdvice">
-			<aop:pointcut id="afterProcessRecord"
-				expression="execution(* org.ncbo.stanford.aop.notification.NotificationProcessForOntology.process*(..)) and
-				args(loadQueue,formatHandler,ontologyBean)" />
-			<aop:after-returning
-				pointcut-ref="afterProcessRecord"
-				arg-names="loadQueue,formatHandler,ontologyBean"
-				method="afterReturnProcessOntology" />
-		</aop:aspect>
 	</aop:config>
 	-->
 
 	<aop:config>
+
 		<aop:aspect id="afterCreateNote" ref="notificationAdvice">
 			<aop:pointcut id="afterReturnCreateNote"
 				expression="execution(* org.ncbo.stanford.service.notes.NotesService.create*(..))" />

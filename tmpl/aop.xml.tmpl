@@ -2,11 +2,13 @@
         "-//AspectJ//DTD//EN" "http://www.eclipse.org/aspectj/dtd/aspectj.dtd">
 <aspectj>
     <aspects>
-        <!-- weave in just this aspect -->        
+        <!-- weave in just this aspect -->
         <aspect name="org.ncbo.stanford.aop.ontology.OntologyMetadataAdvice"/>
+        <aspect name="org.ncbo.stanford.aop.notification.NotificationAdvice"/>
     </aspects>
 
     <weaver>
         <include within="org.ncbo.stanford.manager.metadata.impl.OntologyMetadataManagerImpl"/>
+        <include within="org.ncbo.stanford.service.loader.scheduler.impl.OntologyLoadSchedulerServiceImpl"/>
     </weaver>
 </aspectj>

@@ -8,9 +8,9 @@ import org.ncbo.stanford.domain.generated.NcboOntologyLoadQueue;
 /**
  * Interface to process (parse) an already loaded ontology using vendor API
  * (LexGrid, Protege etc.)
- * 
+ *
  * @author Michael Dorf
- * 
+ *
  */
 public interface OntologyLoadSchedulerService {
 
@@ -22,7 +22,7 @@ public interface OntologyLoadSchedulerService {
 
 	/**
 	 * Parses given ontologies
-	 * 
+	 *
 	 * @param ontologyVersionIdList
 	 * @param formatHandler
 	 */
@@ -31,17 +31,17 @@ public interface OntologyLoadSchedulerService {
 
 	/**
 	 * Returns info about ontologies that did not process successfully
-	 * 
+	 *
 	 * @return
 	 */
 	public List<String> getErrorOntologies();
-	
+
 	/**
-	 * 
+	 *
 	 * @param loadQueue
 	 * @param formatHandler
 	 * @param ontologyBean
 	 */
-	public void processRecord(NcboOntologyLoadQueue loadQueue,
+	public OntologyBean processRecord(NcboOntologyLoadQueue loadQueue,
 			String formatHandler, OntologyBean ontologyBean);
 }

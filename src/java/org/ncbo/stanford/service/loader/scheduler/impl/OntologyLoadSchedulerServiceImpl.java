@@ -9,7 +9,6 @@ import java.util.Map;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.ncbo.stanford.aop.notification.NotificationProcessForOntology;
 import org.ncbo.stanford.bean.OntologyBean;
 import org.ncbo.stanford.bean.OntologyMetricsBean;
 import org.ncbo.stanford.domain.generated.NcboLStatus;
@@ -33,9 +32,9 @@ import org.springframework.transaction.annotation.Transactional;
  * Implementation of the scheduler service that runs periodically, checking for
  * new ontologies that have been loaded into the system but not yet parsed by
  * the API.
- * 
+ *
  * @author Michael Dorf
- * 
+ *
  */
 @Transactional
 public class OntologyLoadSchedulerServiceImpl extends AbstractOntologyService
@@ -49,16 +48,6 @@ public class OntologyLoadSchedulerServiceImpl extends AbstractOntologyService
 			0);
 	private Map<String, OntologyMetricsManager> ontologyMetricsHandlerMap = new HashMap<String, OntologyMetricsManager>(
 			0);
-	private NotificationProcessForOntology notificationProcessForOntology;
-
-	/**
-	 * 
-	 * @param notificationProcessForOntology
-	 */
-	public void setNotificationProcessForOntology(
-			NotificationProcessForOntology notificationProcessForOntology) {
-		this.notificationProcessForOntology = notificationProcessForOntology;
-	}
 
 	/**
 	 * Gets the list of ontologies that need to be loaded and processed each
@@ -134,11 +123,11 @@ public class OntologyLoadSchedulerServiceImpl extends AbstractOntologyService
 
 	/**
 	 * Parse a single record from the ontology load queue
-	 * 
+	 *
 	 * @param loadQueue
 	 * @param formatHandler
 	 */
-	public void processRecord(NcboOntologyLoadQueue loadQueue,
+	public OntologyBean processRecord(NcboOntologyLoadQueue loadQueue,
 			String formatHandler, OntologyBean ontologyBean) {
 		String errorMessage = null;
 		Integer ontologyVersionId = loadQueue.getOntologyVersionId();
@@ -212,11 +201,6 @@ public class OntologyLoadSchedulerServiceImpl extends AbstractOntologyService
 				updateOntologyStatus(loadQueue, ontologyBean, formatHandler,
 						status, errorMessage);
 			}
-			// Calling the process method giving the support in AOP calling for
-			// Email
-			// notification
-			notificationProcessForOntology.processForOntologySubmitted(
-					loadQueue, formatHandler, ontologyBean);
 		} catch (Exception e) {
 			status = StatusEnum.STATUS_ERROR;
 			errorMessage = getLongErrorMessage(e);
@@ -236,6 +220,7 @@ public class OntologyLoadSchedulerServiceImpl extends AbstractOntologyService
 
 		}
 
+		return ontologyBean;
 	}
 
 	private String indexOntology(String errorMessage, OntologyBean ontologyBean) {
@@ -278,7 +263,7 @@ public class OntologyLoadSchedulerServiceImpl extends AbstractOntologyService
 	 * requirement is that the ontology file/uri exists and is in the right
 	 * format. If the ontology id already exists, the invocation assumes
 	 * overwrite of the existing ontology.
-	 * 
+	 *
 	 * @param ontologyBean
 	 *            bean
 	 * @param formatHandler
@@ -315,7 +300,7 @@ public class OntologyLoadSchedulerServiceImpl extends AbstractOntologyService
 	/**
 	 * Return the appropriate ontology load manager based on either the passed
 	 * in formatHandler or a default handler for a given ontology format
-	 * 
+	 *
 	 * @param ontologyBean
 	 * @param formatHandler
 	 * @return
@@ -352,7 +337,7 @@ public class OntologyLoadSchedulerServiceImpl extends AbstractOntologyService
 	 * Calculate ontology metrics for the specified ontology. The minimum
 	 * requirement is that the ontology is parsed and exists in the Bioportal
 	 * repository.
-	 * 
+	 *
 	 * @param ontologyBean
 	 * @param formatHandler
 	 * @throws Exception
@@ -395,7 +380,7 @@ public class OntologyLoadSchedulerServiceImpl extends AbstractOntologyService
 	 * Creates a diff between the two latest versions of the specified ontology
 	 * This method is called after the ontology has been successfully parsed.
 	 * So, one version is the bean that is being passed in
-	 * 
+	 *
 	 * @param ontologyBean
 	 *            bean
 	 * @throws Exception

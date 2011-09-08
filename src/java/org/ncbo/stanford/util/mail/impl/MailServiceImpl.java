@@ -1,5 +1,5 @@
 /**
- * 
+ *
  */
 package org.ncbo.stanford.util.mail.impl;
 
@@ -13,7 +13,7 @@ import org.springframework.mail.javamail.MimeMessageHelper;
 
 /**
  * @author g.prakash
- * 
+ *
  */
 public class MailServiceImpl implements MailService {
 	private static final Log log = LogFactory.getLog(MailServiceImpl.class);
@@ -21,7 +21,7 @@ public class MailServiceImpl implements MailService {
 	private JavaMailSender mailsender;
 
 	/**
-	 * 
+	 *
 	 * @param mailsender
 	 */
 	public void setMailsender(JavaMailSender mailsender) {
@@ -32,21 +32,20 @@ public class MailServiceImpl implements MailService {
 	 * Declaring the Method For Controlling the Mail Message
 	 */
 	public void sendMail(String from, String email, String subject,
-			String messageId, String inReplyTo, String sendingMessage)
-	{
+			String messageId, String inReplyTo, String sendingMessage) {
 		try {
 			MimeMessage message = mailsender.createMimeMessage();
 			MimeMessageHelper msghelper = new MimeMessageHelper(message, true);
 			msghelper.setFrom(from);
 			msghelper.setTo(email);
 			msghelper.setSubject(subject);
-			msghelper.setText(sendingMessage, true); 
-			
+			msghelper.setText(sendingMessage, true);
+
 			// Set extra information if available
 			if (messageId != null) {
 				message.setHeader("Message-ID", messageId);
 			}
-			
+
 			if (inReplyTo != null) {
 				message.setHeader("In-Reply-To", inReplyTo);
 			}
@@ -54,7 +53,7 @@ public class MailServiceImpl implements MailService {
 			this.mailsender.send(message);
 		} catch (Exception ex) {
 			log.error(" Sending Mail is failed", ex);
-			 
+
 		}
 	}
 }

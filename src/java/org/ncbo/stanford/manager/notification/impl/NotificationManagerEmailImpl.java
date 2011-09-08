@@ -8,9 +8,9 @@ import org.ncbo.stanford.util.mail.impl.MailServiceImpl;
 /**
  * A implementation of the NotificationManager for providing mail notification
  * on around() method .
- * 
+ *
  * @author g.prakash
- * 
+ *
  */
 public class NotificationManagerEmailImpl implements NotificationManager {
 	private static final Log log = LogFactory.getLog(MailServiceImpl.class);
@@ -18,7 +18,7 @@ public class NotificationManagerEmailImpl implements NotificationManager {
 	private MailServiceImpl mailService;
 
 	/**
-	 * 
+	 *
 	 * @param mailService
 	 */
 
@@ -29,7 +29,7 @@ public class NotificationManagerEmailImpl implements NotificationManager {
 	@Override
 	public void sendNotification(String subject, String message, String from,
 			String messageId, String inReplyTo, String email) {
-		log.info("Sending Notification to:" + email);
+		log.info("Sending Notification to: " + email);
 		mailService.sendMail(from, email, subject, messageId,
 				inReplyTo, message);
 

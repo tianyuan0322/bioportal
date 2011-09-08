@@ -7,19 +7,18 @@ import java.util.HashSet;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.aspectj.lang.annotation.AfterReturning;
+import org.aspectj.lang.annotation.Aspect;
+import org.aspectj.lang.annotation.Pointcut;
 import org.ncbo.stanford.bean.OntologyBean;
 import org.ncbo.stanford.bean.UserBean;
 import org.ncbo.stanford.bean.notes.AbstractProposalBean;
 import org.ncbo.stanford.bean.notes.NoteBean;
-import org.ncbo.stanford.domain.custom.dao.CustomNcboOntologyLoadQueueDAO;
-import org.ncbo.stanford.domain.generated.NcboOntologyLoadQueue;
 import org.ncbo.stanford.domain.generated.NcboUser;
 import org.ncbo.stanford.domain.generated.NcboUserDAO;
 import org.ncbo.stanford.enumeration.NoteAppliesToTypeEnum;
 import org.ncbo.stanford.enumeration.NotificationTypeEnum;
 import org.ncbo.stanford.exception.NoteNotFoundException;
-import org.ncbo.stanford.manager.metadata.OntologyMetadataManager;
-import org.ncbo.stanford.service.loader.scheduler.OntologyLoadSchedulerService;
 import org.ncbo.stanford.service.notes.NotesService;
 import org.ncbo.stanford.service.notification.EmailNotificationService;
 import org.ncbo.stanford.service.ontology.OntologyService;
@@ -28,9 +27,10 @@ import org.ncbo.stanford.util.constants.ApplicationConstants;
 
 /**
  * @author g.prakash
- * 
+ *
  */
 
+@Aspect
 public class NotificationAdvice {
 
 	private static final Log log = LogFactory.getLog(NotificationAdvice.class);
@@ -39,47 +39,31 @@ public class NotificationAdvice {
 	private OntologyService ontologyService;
 	private NotesService notesService;
 	private NcboUserDAO ncboUserDAO;
-	protected CustomNcboOntologyLoadQueueDAO ncboOntologyLoadQueueDAO;
-	protected OntologyMetadataManager ontologyMetadataManager;
-	protected OntologyLoadSchedulerService ontologyLoadSchedulerService;
 
 	/**
 	 * This method is applied for AOP for processOntology by using Spring
 	 * "<aop:aspect>" "after-returning"
-	 * 
+	 *
 	 * @param loadQueue
 	 * @param formatHandler
 	 * @param ontologyBean
 	 * @return
 	 */
-	public void afterReturnProcessOntology(NcboOntologyLoadQueue loadQueue,
-			String formatHandler, OntologyBean ontologyBean) throws Throwable {
-
-		// Map For Keywords
+	@AfterReturning(pointcut = "parseOntology()", returning = "ontologyBean")
+	public void afterReturnProcessOntology(OntologyBean ontologyBean) throws Throwable {
 		HashMap<String, String> keywords = new HashMap<String, String>();
 		try {
-			// Here OntologyBean is passed by dynamically following by Spring
-			// AOP
-			// Putting the OntologyId inside HashMap according to key
-			keywords.put(ApplicationConstants.ONTOLOGY_VERSION_ID, ontologyBean
-					.getId().toString());
-
-			// Taking the UserName
-			String userName = getUsername(ncboUserDAO, ontologyBean);
-			keywords.put("inReplyTo", userName);
-			String messageId = getMessageIdForOntology(ontologyBean.getId()
-					.toString(), userName);
-			keywords.put("messageId", messageId);
 			emailNotificationService.sendNotificationForOntology(
-					NotificationTypeEnum.UPDATE_ONTOLOGY_NOTIFICATION,
+					NotificationTypeEnum.PARSE_ONTOLOGY_NOTIFICATION,
 					ontologyBean, keywords);
-
 		} catch (Exception e) {
 			e.printStackTrace();
 			log.error("Error sending notification for new Updation Ontology");
 		}
-
 	}
+
+	@Pointcut("execution(* org.ncbo.stanford.service.loader.scheduler.impl.OntologyLoadSchedulerServiceImpl.processRecord(..))")
+	public void parseOntology() {}
 
 	public void adviceCreateNote(NoteBean note) throws Throwable {
 		try {
@@ -146,7 +130,7 @@ public class NotificationAdvice {
 
 	/**
 	 * Returns the URL for the UI representation of a note.
-	 * 
+	 *
 	 * @param note
 	 * @param ont
 	 * @return
@@ -197,7 +181,7 @@ public class NotificationAdvice {
 
 	/**
 	 * Gets the generated proposal HTML from the bean.
-	 * 
+	 *
 	 * @param note
 	 * @return
 	 */
@@ -218,7 +202,7 @@ public class NotificationAdvice {
 	 * arbitrary authors to be submitted, we try to parse an integer which we
 	 * assume is a BioPortal user id. If no integer is found (runtime exception)
 	 * then use the raw value.
-	 * 
+	 *
 	 * @param ncboUserDAO
 	 * @param note
 	 * @return
@@ -255,35 +239,9 @@ public class NotificationAdvice {
 	}
 
 	/**
-	 * Get UserBean for note author and add username if found Because we allow
-	 * arbitrary authors to be submitted, we try to parse an integer which we
-	 * assume is a BioPortal user id. If no integer is found (runtime exception)
-	 * then use the raw value.
-	 * 
-	 * @param ncboUserDAO
-	 * @param note
-	 * @return
-	 */
-	private String getUsername(NcboUserDAO ncboUserDAO, OntologyBean ont) {
-		String userName = "unknown";
-
-		try {
-			Integer userId = ont.getUserId();
-			NcboUser ncboUser = ncboUserDAO.findById(userId);
-			if (ncboUser != null) {
-				userName = ncboUser.getUsername();
-			}
-		} catch (NumberFormatException nfe) {
-			nfe.getMessage();
-		}
-
-		return userName;
-	}
-
-	/**
 	 * Returns the enum type of a note using the first appliesTo target in the
 	 * list.
-	 * 
+	 *
 	 * @param note
 	 * @return
 	 */
@@ -295,7 +253,7 @@ public class NotificationAdvice {
 	/**
 	 * Returns the enum type of a note using the first appliesTo target in the
 	 * list.
-	 * 
+	 *
 	 * @param note
 	 * @return
 	 */
@@ -305,7 +263,7 @@ public class NotificationAdvice {
 	 **/
 	/**
 	 * Generates a unique message id using the note's id.
-	 * 
+	 *
 	 * @param note
 	 * @return
 	 */
@@ -314,18 +272,7 @@ public class NotificationAdvice {
 	}
 
 	/**
-	 * Generates a unique message id using the note's id.
-	 * 
-	 * @param note
-	 * @return
-	 */
-	private String getMessageIdForOntology(String ontologyId, String authorName) {
-		return ontologyId + "." + authorName + "@"
-				+ "bioportal.bioontology.org";
-	}
-
-	/**
-	 * 
+	 *
 	 * @param emailNotificationService
 	 */
 	public void setEmailNotificationService(
@@ -355,33 +302,6 @@ public class NotificationAdvice {
 	 */
 	public void setNcboUserDAO(NcboUserDAO ncboUserDAO) {
 		this.ncboUserDAO = ncboUserDAO;
-	}
-
-	/**
-	 * 
-	 * @param ontologyMetadataManager
-	 */
-	public void setOntologyMetadataManager(
-			OntologyMetadataManager ontologyMetadataManager) {
-		this.ontologyMetadataManager = ontologyMetadataManager;
-	}
-
-	/**
-	 * 
-	 * @param ontologyLoadSchedulerService
-	 */
-	public void setOntologyLoadSchedulerService(
-			OntologyLoadSchedulerService ontologyLoadSchedulerService) {
-		this.ontologyLoadSchedulerService = ontologyLoadSchedulerService;
-	}
-
-	/**
-	 * 
-	 * @param ncboOntologyLoadQueueDAO
-	 */
-	public void setNcboOntologyLoadQueueDAO(
-			CustomNcboOntologyLoadQueueDAO ncboOntologyLoadQueueDAO) {
-		this.ncboOntologyLoadQueueDAO = ncboOntologyLoadQueueDAO;
 	}
 
 }
