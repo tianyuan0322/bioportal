@@ -12,6 +12,7 @@ import org.junit.Test;
 import org.ncbo.stanford.AbstractBioPortalTest;
 import org.ncbo.stanford.bean.OntologyBean;
 import org.ncbo.stanford.bean.concept.ClassBean;
+import org.ncbo.stanford.bean.concept.PropertyBean;
 import org.ncbo.stanford.manager.retrieval.impl.OntologyRetrievalManagerLexGridImpl;
 import org.ncbo.stanford.service.concept.ConceptService;
 import org.ncbo.stanford.util.paginator.impl.Page;
@@ -138,10 +139,10 @@ public class OntologyRetrievalManagerLexGridImplTest extends
 				.getOntologyBeanByDisplayNameAndOntologyId(
 						OntologyLoaderLexGridImplTest.OBO_CELL_DISPLAY_LABEL,
 						OntologyLoaderLexGridImplTest.OBO_CELL_ONTOLOGY_ID);
-		List<String> properties = retrievalManager.findProperties(ncboOntology);
+		List<PropertyBean> properties = retrievalManager.findProperties(ncboOntology);
 		System.out.println("Properties for cell ontology are :");
-		for (String str : properties) {
-			System.out.println(str);
+		for (PropertyBean prop : properties) {
+			System.out.println(prop);
 		}
 		System.out.println("\n");
 		assertTrue(properties != null);

@@ -86,6 +86,8 @@ public class OntologyLoaderLexGridImplTest extends AbstractBioPortalTest {
 
 	public final static String OWL_COGAT_DISPLAY_LABEL = "cogat";
 
+	public final static String OBO_PRO_DISPLAY_LABEL = "pro";
+	
 	@Autowired
 	OntologyService ontologyService;
 
@@ -371,6 +373,26 @@ public class OntologyLoaderLexGridImplTest extends AbstractBioPortalTest {
 	}
 	
 	@Test
+	public void testLoadOboFtpURI() throws Exception {
+		System.out
+				.println("OntologyLoaderLexGridImplTest: testLoadOboFtpURI().................. BEGIN");
+		OntologyBean ontologyBean = this.createOntolgyBeanOboFtpURI();
+
+		// create - pass FileHandler
+		ontologyService.createOntologyOrView(ontologyBean,
+				getFilePathHandler(ontologyBean));
+		if (ontologyBean != null)
+			System.out.println("Created OntologyBean with ID = "
+					+ ontologyBean.getId());
+		// load
+		ontologyLoadSchedulerService.parseOntologies(Arrays.asList(ontologyBean
+				.getId()), null);
+		assertTrue(ontologyBean.getCodingScheme() != null);
+		System.out
+				.println("OntologyLoaderLexGridImplTest: testLoadOboFtpURI().................... END");
+	}
+	
+	@Test
 	public void testLoadOboProtein() throws Exception {
 		System.out
 				.println("OntologyLoaderLexGridImplTest: testLoadOboProtein().................. BEGIN");
@@ -450,6 +472,18 @@ public class OntologyLoaderLexGridImplTest extends AbstractBioPortalTest {
 		return bean;
 	}	
 
+	private OntologyBean createOntolgyBeanOboFtpURI() {
+		OntologyBean bean = createOntolgyBeanBase();
+		//bean.setDownloadLocation("http://palea.cgrb.oregonstate.edu/viewsvn/Poc/trunk/ontology/OBO_format/po_anatomy.obo?view=co");
+		bean
+		.setDownloadLocation("ftp://ftp.pir.georgetown.edu/databases/ontology/pro_obo/pro_reasoned.obo");
+		bean.setFormat(ApplicationConstants.FORMAT_OBO);
+		// bean.setCodingScheme(OBO_FUNGAL_URN_VERSION);
+		bean.setDisplayLabel(OBO_PRO_DISPLAY_LABEL);
+		bean.setAbbreviation(OBO_PRO_DISPLAY_LABEL);
+		return bean;
+	}	
+	
 	private OntologyBean createOntolgyBeanOboProtein() {
 		OntologyBean bean = createOntolgyBeanBase();
 		bean.setFormat(ApplicationConstants.FORMAT_OBO);

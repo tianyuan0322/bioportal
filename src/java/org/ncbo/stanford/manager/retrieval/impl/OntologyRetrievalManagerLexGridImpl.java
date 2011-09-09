@@ -47,6 +47,7 @@ import org.ncbo.stanford.bean.OntologyBean;
 import org.ncbo.stanford.bean.concept.ClassBean;
 import org.ncbo.stanford.bean.concept.ClassBeanResultListBean;
 import org.ncbo.stanford.bean.concept.InstanceBean;
+import org.ncbo.stanford.bean.concept.PropertyBean;
 import org.ncbo.stanford.enumeration.ConceptTypeEnum;
 import org.ncbo.stanford.exception.BPRuntimeException;
 import org.ncbo.stanford.exception.OntologyVersionNotFoundException;
@@ -94,20 +95,21 @@ public class OntologyRetrievalManagerLexGridImpl extends
 				.getGenericExtension("LexBIGServiceConvenienceMethods");
 	}
 
-	public List<String> findProperties(OntologyBean ontologyBean)
+	public List<PropertyBean> findProperties(OntologyBean ontologyBean)
 			throws Exception {
 		String urnAndVersion = ontologyBean.getCodingScheme();
 		String urnVersionArray[] = splitUrnAndVersion(urnAndVersion);
 		CodingScheme cs = getCodingScheme(lbs, urnVersionArray[0],
 				urnVersionArray[1]);
-		ArrayList<String> list = new ArrayList<String>();
+		ArrayList<PropertyBean> list = new ArrayList<PropertyBean>();
 		SupportedProperty[] sp = cs.getMappings().getSupportedProperty();
 
 		for (int i = 0; i < sp.length; i++) {
 			SupportedProperty prop = sp[i];
 
 			if (prop != null && StringUtils.isNotBlank(prop.getLocalId())) {
-				list.add(prop.getLocalId());
+				PropertyBean pb= createBasePropertyBean(ontologyBean, prop.getLocalId());
+				list.add(pb);
 			}
 		}
 		return list;
@@ -1154,6 +1156,16 @@ public class OntologyRetrievalManagerLexGridImpl extends
 		return classBean;
 	}
 
+	private PropertyBean createBasePropertyBean(OntologyBean ontologyBean, String id) {
+		PropertyBean propBean = new PropertyBean();
+		propBean.setId(id);
+		String fullId= getFullId(ontologyBean, id);
+		propBean.setFullId(fullId);
+		propBean.setLabel(id);
+		propBean.setType(ConceptTypeEnum.CONCEPT_TYPE_PROPERTY);
+
+		return propBean;
+	}	
 	/**
 	 * 
 	 * @param list
