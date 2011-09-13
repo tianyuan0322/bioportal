@@ -51,11 +51,11 @@ bioportal.session.timeout=1800000
 # Number of "buckets" to allocate for session storage
 bioportal.session.numcontainers=11
 
-# Timeout (in milliseconds) for refreshing 
+# Timeout (in milliseconds) for refreshing
 # cached ontology Access Control List (ACL)
 bioportal.ontology.acl.cache.timeout=300000
 
-# Timeout (in milliseconds) for refreshing 
+# Timeout (in milliseconds) for refreshing
 # the ontology ids maps (map between virsion
 # and virtual ontology and view ids
 bioportal.populate.id.maps.interval=900000
@@ -127,8 +127,8 @@ bioportal.datasource.removeabandoned=true
 bioportal.datasource.removeabandonedtimeout=60
 bioportal.datasource.logabandoned=true
 
-# JDBC connection that should only be used during local 
-# development. Local development can also be done using a 
+# JDBC connection that should only be used during local
+# development. Local development can also be done using a
 # datasource simply by configuring a Tomcat datasource.
 # (for Dev only)
 bioportal.jdbc.url=jdbc:mysql://localhost:3306/bioportal
@@ -139,28 +139,28 @@ bioportal.jdbc.password=yourbioportaldbpassword
 # How big of a pool c3p0 should start with
 bioportal.jdbc.c3p0.initial_pool_size=15
 
-# Minimum number of Connections a pool will maintain at any 
+# Minimum number of Connections a pool will maintain at any
 # given time.
 bioportal.jdbc.c3p0.min_size=10
 
-# Maximum number of Connections a pool will maintain 
+# Maximum number of Connections a pool will maintain
 # at any given time.
 bioportal.jdbc.c3p0.max_size=100
 
 # How many times c3p0 should attempt to acquire a connection
 bioportal.jdbc.c3p0.acquire_retry_attempts=5
 
-# Determines how many connections at a time c3p0 will 
+# Determines how many connections at a time c3p0 will
 # try to acquire when the pool is exhausted.
 bioportal.jdbc.c3p0.acquire_increment=5
 
-# If this is a number greater than 0, c3p0 will test 
-# all idle, pooled but unchecked-out connections, 
+# If this is a number greater than 0, c3p0 will test
+# all idle, pooled but unchecked-out connections,
 # every this number of seconds.
 bioportal.jdbc.c3p0.idle_test_period=180
 
-# Seconds a Connection can remain pooled but unused 
-# before being discarded. Zero means idle connections 
+# Seconds a Connection can remain pooled but unused
+# before being discarded. Zero means idle connections
 # never expire.
 bioportal.jdbc.c3p0.timeout=28800
 
@@ -199,7 +199,7 @@ bioportal.traversedConceptLimit=10000
 
 ################## Protege Configuration ##################
 
-# if protege.server.enabled is set to "true", 
+# if protege.server.enabled is set to "true",
 # the db connection section below can be ignored.
 # when using a server, the database connection is
 # configured from the protege project of each
@@ -210,8 +210,8 @@ protege.server.port=5100
 protege.server.username=protege_server_user
 protege.server.password=protege_server_pass
 protege.server.metaprojectname=BioPortal Metadata Project
-# interval in milliseconds at which to check 
-# whether the protege server is alive 
+# interval in milliseconds at which to check
+# whether the protege server is alive
 protege.server.pinginterval=15000
 
 # db connection
@@ -255,47 +255,47 @@ protege.big.file.threshold=157286400
 ################## LexGrid Configuration ##################
 
 # LexGrid configuration directory
-# In order for LexGrid to recognize the configuration file, 
+# In order for LexGrid to recognize the configuration file,
 # it needs to reside on the same level or above the "lib"
 # directory and encased into "resources/config" directory
 # structure
 lexgrid.config.path=${bioportal.static.resource.path}/config
 #
-# The lexgrid.base.path variable is the location that 
-# LexGrid will use beginning for resolving 
-# any relative paths in its configuration file.  
+# The lexgrid.base.path variable is the location that
+# LexGrid will use beginning for resolving
+# any relative paths in its configuration file.
 lexgrid.base.path=
 #
-# The location of the folder that contains your SQL drivers and 
-# extensions.  This folder and its subfolders will be scanned for 
+# The location of the folder that contains your SQL drivers and
+# extensions.  This folder and its subfolders will be scanned for
 # .jar files to add to the classpath.
 #
-# This folder must also contain either the lbRuntime.jar file, or 
+# This folder must also contain either the lbRuntime.jar file, or
 # the lgUtility.jar file (from the runtime-components folder)
 #
-# This path can be relative to the location of lexgrid.base.path 
-# or absolute. You may put more than one folder here by separating 
+# This path can be relative to the location of lexgrid.base.path
+# or absolute. You may put more than one folder here by separating
 # the folders with a ';'.
 lexgrid.jarfile.location=../../lib
 #
 # The location of the file that will store information about
-# all loaded terminologies.  
-# This path can be relative to the location of 
+# all loaded terminologies.
+# This path can be relative to the location of
 # lexgrid.base.path or absolute.
 lexgrid.resource.path=${bioportal.resource.path}/lexgrid
 lexgrid.registry.path=${lexgrid.resource.path}/registry
 lexgrid.registry.file=${lexgrid.registry.path}/registry.xml
 #
-# The folder that will hold all of the generated system indexes.  
+# The folder that will hold all of the generated system indexes.
 # This path can be relative to the location of lexgrid.base.path
 # or absolute.
 lexgrid.index.location=${lexgrid.resource.path}/lbIndex
 #
-# The maximum number of SQL connections to open (and pool) per 
-# database. 
+# The maximum number of SQL connections to open (and pool) per
+# database.
 lexgrid.max.connections.per.db=50
 #
-# Size of the Dynamic Cache (this is used to cache frequently 
+# Size of the Dynamic Cache (this is used to cache frequently
 # accessed information)
 lexgrid.cache.size=500
 #
@@ -311,10 +311,10 @@ lexgrid.iterator.idle.time=5
 # can be returned per 'next' call.
 lexgrid.max.result.size=50000
 #
-# When lexgrid.single.db.mode is set to false, a new database will 
-# be created for each loaded terminology.  When 
-# lexgrid.single.db.mode is set to true, a new set of tables (with 
-# a unique prefix) will be created for each loaded terminology.  
+# When lexgrid.single.db.mode is set to false, a new database will
+# be created for each loaded terminology.  When
+# lexgrid.single.db.mode is set to true, a new set of tables (with
+# a unique prefix) will be created for each loaded terminology.
 # All terminologies will be held inside the same physical database.
 #
 # NOTE: This value should typically not be changed once content has
@@ -324,19 +324,19 @@ lexgrid.max.result.size=50000
 lexgrid.single.db.mode=true
 #
 # This is the address of the database server that will be used
-# when you load a new terminology through the LexBIG API.  
+# when you load a new terminology through the LexBIG API.
 #
 ######  READ THE NEXT LINES CAREFULLY!  ######
-# If you have set 'lexgrid.single.db.mode' to 'true', then this 
+# If you have set 'lexgrid.single.db.mode' to 'true', then this
 # variable _should_ contain the database name.
 #
-# If you have set 'lexgrid.single.db.mode' to 'false', then this 
-# variable _should NOT_ contain the database name. Instead, it 
-# should end at the end of the server address plus whatever 
-# character seperates the server name from the database name. 
+# If you have set 'lexgrid.single.db.mode' to 'false', then this
+# variable _should NOT_ contain the database name. Instead, it
+# should end at the end of the server address plus whatever
+# character seperates the server name from the database name.
 #
 # NOTE: Changes to the URL will only affect newly loaded content.
-# The URL's for content that is already loaded are stored in the 
+# The URL's for content that is already loaded are stored in the
 # registry.xml file.
 #
 # Examples for 'lexgrid.single.db.mode=false'
@@ -351,15 +351,15 @@ lexgrid.single.db.mode=true
 # lexgrid.db.url=jdbc:odbc:Driver={Microsoft Access Driver (*.mdb)};DBQ=C:/temp/LexBIG.mdb
 lexgrid.db.url=jdbc:mysql://localhost/bioportal_lexgrid
 #
-# The prefix to use on created tables or database names.  
-# If 'lexgrid.single.db.mode=true', this prefix will be used on 
+# The prefix to use on created tables or database names.
+# If 'lexgrid.single.db.mode=true', this prefix will be used on
 # the created tables.
-# If 'lexgrid.single.db.mode=false', this prefix will be used on 
+# If 'lexgrid.single.db.mode=false', this prefix will be used on
 # the created databases.
 #
-# WARNING - If you are using Oracle, this is not supported (because 
-# of length constraints on oracle table names.)  You must leave 
-# this value blank. On databases other than Oracle, there should be 
+# WARNING - If you are using Oracle, this is not supported (because
+# of length constraints on oracle table names.)  You must leave
+# this value blank. On databases other than Oracle, there should be
 # room for a reasonable (< 10) amount of characters.
 #
 # NOTE: This value MUST BE UNIQUE for each LexBIG runtime
@@ -367,20 +367,20 @@ lexgrid.db.url=jdbc:mysql://localhost/bioportal_lexgrid
 # NOTE: Do not use dashes '-' in the db_prefix value.
 # Recommended characters are alphanumeric (a-z, 0-9) and
 # underscore '_'.
-# NOTE: This variable should typically not be changed after content 
+# NOTE: This variable should typically not be changed after content
 # has been loaded.
 lexgrid.db.prefix=
 #
 # Optional parameters to append to the end of the database
 # connection string.  Access to some database environments
 # may require additional values to be passed in.
-# NOTE: Changes to this variable will only affect newly loaded 
-# content.  It will not be applied to content that has already 
+# NOTE: Changes to this variable will only affect newly loaded
+# content.  It will not be applied to content that has already
 # been loaded.
 lexgrid.db.param=
 #
 # The database driver.
-# NOTE: This should typically not be changed after content has 
+# NOTE: This should typically not be changed after content has
 # been loaded.
 #DB_DRIVER=org.postgresql.Driver
 #DB_DRIVER=org.hsqldb.jdbcDriver
@@ -389,22 +389,22 @@ lexgrid.db.driver=${bioportal.jdbc.driver}
 #
 # The database username and password.
 #
-# NOTE: If lexgrid.single.db.mode is set to false, the specified 
-# account MUST HAVE PERMISSION TO CREATE AND REMOVE DATABASES in 
+# NOTE: If lexgrid.single.db.mode is set to false, the specified
+# account MUST HAVE PERMISSION TO CREATE AND REMOVE DATABASES in
 # the database environment.
-# If lexgrid.single.db.mode is set to true, the specified account 
-# MUST HAVE permission to create and remove tables, indexes, and 
+# If lexgrid.single.db.mode is set to true, the specified account
+# MUST HAVE permission to create and remove tables, indexes, and
 # foreign keys in the database environment.
 lexgrid.db.user=yourlexgriddbuser
 lexgrid.db.password=yourlexgriddbpassword
 #
 ############# Logging Configuration
-# Location of the log files. This path can be relative to the 
-# location of lexgrid.base.path or absolute.  This name should 
+# Location of the log files. This path can be relative to the
+# location of lexgrid.base.path or absolute.  This name should
 # be a directory, which will be created if not present.
 lexgrid.log.file.location=${appserver.logs}/lexgrid
 #
-# API Call Logging - enabling API call logging will cause every 
+# API Call Logging - enabling API call logging will cause every
 # method call to be printed to the log file.
 lexgrid.api.log.enabled=false
 #
@@ -414,25 +414,25 @@ lexgrid.debug.enabled=false
 #
 # Indicates when a new log file should be started.
 # This can be a one of the following:
-# - A string indicating the rollover time period ('daily', 
+# - A string indicating the rollover time period ('daily',
 #   'weekly', or 'monthly').
-# - A number such as '10', which will be read as change log files 
+# - A number such as '10', which will be read as change log files
 #   after the file size reaches 10 MB.
 lexgrid.log.change=5
 #
 # Controls automated cleanup of log files.
-# If 'lexgrid.log.change' is set to 'daily', 'weekly', or 
-# 'monthly', this variable instructs the service to remove log 
-# files that have not been written to in X days (note: the unit 
-# is treated as days regardless of the lexgrid.log.change value.  
+# If 'lexgrid.log.change' is set to 'daily', 'weekly', or
+# 'monthly', this variable instructs the service to remove log
+# files that have not been written to in X days (note: the unit
+# is treated as days regardless of the lexgrid.log.change value.
 # In this case, cleanup will only occur on restart of the JVM.
 #
-# If 'lexgrid.log.change' is set to a number, this is the number 
+# If 'lexgrid.log.change' is set to a number, this is the number
 # of old log files that will be kept.
 lexgrid.erase.logs.after=5
 #
-# Controls e-mail notification of errors and warnings (true or 
-# false). NOTE: E-mail is rate-limited, so frequent or repetitive 
+# Controls e-mail notification of errors and warnings (true or
+# false). NOTE: E-mail is rate-limited, so frequent or repetitive
 # errors will not flood this address.
 lexgrid.email.errors=false
 #
@@ -445,7 +445,7 @@ lexgrid.smtp.server=${bioportal.smtp.server}
 # NOTE: Only applicable if lexgrid.email.errors is set to 'true'.
 lexgrid.email.to=youremail@yourserver.edu
 
-# 
+#
 # NCBO Test Fixture setup information.  Make adjustments to match your database
 # connection configuration.
 test.db.url=jdbc:mysql://localhost:3306
@@ -470,10 +470,11 @@ ui.path.notes.ontology=/ontologies/<ONTOLOGY_VERSION_ID>#notes
 ui.path.notes.individual=/visualize/<ONTOLOGY_VERSION_ID>/?conceptid=<CONCEPT_ID>#notes
 ui.path.notes.property=/visualize/<ONTOLOGY_VERSION_ID>/?conceptid=<CONCEPT_ID>#notes
 
-#
-# For Notification Service
-#
+############# Notification Service
 notification.email.from=youremail@yourserver.edu
+
+# Setting this email will override all outgoing email, forcing it to send to this address
+notification.mail.override=
 
 ############# RDF Store Configuration
 ## RDF Store Type options:

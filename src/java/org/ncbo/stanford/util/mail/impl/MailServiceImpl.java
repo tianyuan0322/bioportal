@@ -7,9 +7,12 @@ import javax.mail.internet.MimeMessage;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.ncbo.stanford.util.MessageUtils;
 import org.ncbo.stanford.util.mail.MailService;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
+
+import com.mysql.jdbc.StringUtils;
 
 /**
  * @author g.prakash
@@ -34,6 +37,14 @@ public class MailServiceImpl implements MailService {
 	public void sendMail(String from, String email, String subject,
 			String messageId, String inReplyTo, String sendingMessage) {
 		try {
+			// This allows an email address to be set in the build.properties
+			// file. This email will be used instead of the original recipient.
+			String overrideReceiver = MessageUtils
+					.getMessage("notification.mail.override");
+			if (!StringUtils.isNullOrEmpty(overrideReceiver)) {
+				email = overrideReceiver;
+			}
+
 			MimeMessage message = mailsender.createMimeMessage();
 			MimeMessageHelper msghelper = new MimeMessageHelper(message, true);
 			msghelper.setFrom(from);
@@ -52,7 +63,7 @@ public class MailServiceImpl implements MailService {
 
 			this.mailsender.send(message);
 		} catch (Exception ex) {
-			log.error(" Sending Mail is failed", ex);
+			log.error("Sending mail failed", ex);
 
 		}
 	}

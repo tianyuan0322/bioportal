@@ -15,7 +15,7 @@
 	<property name="resources.dir" value="${web.dir}/WEB-INF/resources" />
 	<property name="conf.dir.generated" value="${conf.dir}/generated" />
 	<property name="tmpl.dir" value="tmpl" />
-	
+
 	<path id="master-classpath">
 		<fileset dir="${lib.dir}">
 			<include name="**/*.jar" />
@@ -98,7 +98,7 @@
 		<echo message="LexGrid registry.xml file is not present. Creating a default empty file..." />
 		<copy file="${tmpl.dir}/registry.xml.tmpl" tofile="${lexgrid.registry.file}" />
 	</target>
-	
+
 	<target name="prepare" description="Create configuration files using templates">
 		<echo message="log4j path: = ${bioportal.app.logfilepath}" />
 
@@ -134,7 +134,7 @@
 		</copy>
 
 		<copy file="${tmpl.dir}/log4j.dtd" tofile="${conf.dir.generated}/log4j.dtd" overwrite="true" />
-		
+
 		<copy file="${tmpl.dir}/${bioportal.messagebundle.name}.properties.tmpl" tofile="${bioportal.messagebundle.path}/${bioportal.messagebundle.name}.properties" overwrite="true">
 			<filterset>
 				<filter token="bioportalxsltpath" value="${bioportal.xslt.path}" />
@@ -145,6 +145,7 @@
 				<filter token="bioportalnoteschangesincludespath" value="${bioportal.notes.changes.includes.path}" />
 				<filter token="obsrestbaseurl" value="${obs.rest.base.url}" />
 				<filter token="notificationemailfrom" value="${notification.email.from}" />
+				<filter token="notificationmailoverride" value="${notification.mail.override}" />
 				<filter token="uiurl" value="${ui.url}" />
 				<filter token="uipathnotesconcept" value="${ui.path.notes.concept}" />
 				<filter token="uipathnotesontology" value="${ui.path.notes.ontology}" />
@@ -161,13 +162,13 @@
 				<filter token="rdfmysqlstorepassword" value="${rdf.mysql.store.password}" />
 			</filterset>
 		</copy>
-		
+
 		<copy file="${tmpl.dir}/c3p0.properties.tmpl" tofile="${web.dir}/WEB-INF/classes/c3p0.properties" overwrite="true" />
 
 		<copy file="${tmpl.dir}/org.openrdf.concepts" tofile="${web.dir}/WEB-INF/classes/META-INF/org.openrdf.concepts" overwrite="true" />
 
 		<copy file="${tmpl.dir}/aop.xml.tmpl" tofile="${web.dir}/WEB-INF/classes/META-INF/aop.xml" overwrite="true" />
-		
+
 		<copy file="${tmpl.dir}/context.xml.tmpl" tofile="${meta-inf.dir}/context.xml" overwrite="true" />
 
 		<copy file="${tmpl.dir}/applicationContext-datasources.${bioportal.environment}.xml.tmpl" tofile="${conf.dir.generated}/applicationContext-datasources.xml" overwrite="true">
@@ -188,7 +189,7 @@
 				<filter token="bioportaljdbcc3p0preferred_test_query" value="${bioportal.jdbc.c3p0.preferred_test_query}" />
 			</filterset>
 		</copy>
-		
+
 		<copy file="${tmpl.dir}/applicationContext-security.xml.tmpl" tofile="${conf.dir.generated}/applicationContext-security.xml" overwrite="true">
 			<filterset>
 			</filterset>
@@ -199,8 +200,8 @@
 				<filter token="encryptionkey" value="${bioportal.encryption.key}" />
 				<filter token="messagebundlepackage" value="${bioportal.messagebundle.package}" />
 				<filter token="bioportalsessionnumcontainers" value="${bioportal.session.numcontainers}" />
-				<filter token="bioportalsessiontimeout" value="${bioportal.session.timeout}" />		
-				<filter token="bioportalontologyaclcachetimeout" value="${bioportal.ontology.acl.cache.timeout}" />				
+				<filter token="bioportalsessiontimeout" value="${bioportal.session.timeout}" />
+				<filter token="bioportalontologyaclcachetimeout" value="${bioportal.ontology.acl.cache.timeout}" />
 				<filter token="bioportalpopulateidmapsinterval" value="${bioportal.populate.id.maps.interval}" />
 				<filter token="bioportalsearchdefmaxnumhits" value="${bioportal.search.defmaxnumhits}" />
 				<filter token="bioportalsearchindexmergefactor" value="${bioportal.search.indexmergefactor}" />
@@ -213,7 +214,7 @@
 				<filter token="obopullschedulerenabled" value="${obo.pull.scheduler.enabled}" />
 				<filter token="obopullschedulercronexpression" value="${obo.pull.scheduler.cronexpression}" />
 				<filter token="ontologyparseschedulerenabled" value="${ontology.parse.scheduler.enabled}" />
-				<filter token="ontologyparseschedulercronexpression" value="${ontology.parse.scheduler.cronexpression}" />				
+				<filter token="ontologyparseschedulercronexpression" value="${ontology.parse.scheduler.cronexpression}" />
 				<filter token="ontologyintegrityfixerenabled" value="${ontology.integrity.fixer.enabled}" />
 				<filter token="ontologyintegrityfixercronexpression" value="${ontology.integrity.fixer.cronexpression}" />
 				<filter token="protegeserverenabled" value="${protege.server.enabled}" />
@@ -221,7 +222,7 @@
 				<filter token="protegeserverport" value="${protege.server.port}" />
 				<filter token="protegeserverusername" value="${protege.server.username}" />
 				<filter token="protegeserverpassword" value="${protege.server.password}" />
-				<filter token="protegeservermetaprojectname" value="${protege.server.metaprojectname}" />				
+				<filter token="protegeservermetaprojectname" value="${protege.server.metaprojectname}" />
 				<filter token="protegeserverpinginterval" value="${protege.server.pinginterval}" />
 				<filter token="protegejdbcurl" value="${protege.jdbc.url}" />
 				<filter token="protegejdbcdriver" value="${protege.jdbc.driver}" />
@@ -265,7 +266,7 @@
 				<filter token="bioportalrdffilepath" value="${bioportal.rdf.filepath}" />
 				<filter token="bioportalallconceptsmaxpagesize" value="${bioportal.allconcepts.maxpagesize}" />
 				<filter token="bioportalapikey" value="${bioportal.apikey}" />
-				<filter token="bioportalsmtpserver" value="${bioportal.smtp.server}" />				
+				<filter token="bioportalsmtpserver" value="${bioportal.smtp.server}" />
 			</filterset>
 		</copy>
 
