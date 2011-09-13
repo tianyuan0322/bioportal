@@ -60,13 +60,13 @@ public class OntologyIntegrityFixerServiceImpl extends AbstractOntologyService
 			}
 
 			// fix metrics
-//			if (log.isInfoEnabled())
-//				log.info("Running metrics fixer...");
-//
-//			fixMetrics(ontologies);
-//
-//			if (log.isInfoEnabled())
-//				log.info("Metrics fixer run completed...");
+			if (log.isInfoEnabled())
+				log.info("Running metrics fixer...");
+
+			fixMetrics(ontologies);
+
+			if (log.isInfoEnabled())
+				log.info("Metrics fixer run completed...");
 		} catch (Exception e) {
 			log.error(e);
 			e.printStackTrace();
@@ -133,7 +133,9 @@ public class OntologyIntegrityFixerServiceImpl extends AbstractOntologyService
 				OntologyMetricsBean metricsBean = metricsService
 						.getOntologyMetrics(ontology);
 
-				if (metricsBean == null || (metricsBean != null && metricsBean.getMaximumDepth() == null) ) {
+				if (metricsBean == null
+						|| (metricsBean != null && metricsBean
+								.getMaximumDepth() == null)) {
 					problemOntologies.put(ontology.getId(), ontology);
 				}
 			} catch (MetadataException e) {
