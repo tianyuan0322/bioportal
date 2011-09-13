@@ -24,7 +24,8 @@ public class OntologyBean {
 	public static final String DEFAULT_PREFERRED_NAME_SLOT = "http://www.w3.org/2004/02/skos/core#prefLabel";
 	public static final String DEFAULT_DEFINITION_SLOT = "http://www.w3.org/2004/02/skos/core#definition";
 	public static final String DEFAULT_AUTHOR_SLOT = "http://purl.org/dc/elements/1.1/creator";
-
+	public static final String DEFAULT_DEPRECATED_SLOT = "http://www.w3.org/2002/07/owl#deprecated";
+	
 	private Integer id;
 	private Integer ontologyId;
 	// virtual view id(s) on the virtual ontology
