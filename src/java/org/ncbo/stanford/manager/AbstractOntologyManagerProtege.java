@@ -109,7 +109,20 @@ public abstract class AbstractOntologyManagerProtege {
 
 		return slot;
 	}
+	
+	protected Slot getDeprecatedSlot(KnowledgeBase kb) {
+		Slot slot = null;
 
+		if (kb instanceof OWLModel) {
+			slot = ((OWLModel) kb)
+					.getRDFProperty(OntologyBean.DEFAULT_DEPRECATED_SLOT);
+		} else {
+			//TODO: fill in logic for getting deprecated slot from Frames
+		}
+
+		return slot;
+	}
+	
 	protected Slot getPreferredNameSlot(KnowledgeBase kb,
 			String preferredNameSlotName) {
 		Slot slot = null;
