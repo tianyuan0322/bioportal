@@ -25,7 +25,11 @@ import org.ncbo.stanford.util.helper.StringHelper;
 import org.ncbo.stanford.util.ontologyfile.pathhandler.AbstractFilePathHandler;
 import org.ncbo.stanford.util.protege.ProtegeUtil;
 
+import edu.stanford.smi.protege.model.Cls;
+import edu.stanford.smi.protege.model.Frame;
+import edu.stanford.smi.protege.model.KnowledgeBase;
 import edu.stanford.smi.protege.model.Project;
+import edu.stanford.smi.protege.model.Slot;
 import edu.stanford.smi.protege.storage.database.DatabaseKnowledgeBaseFactory;
 import edu.stanford.smi.protege.util.ApplicationProperties;
 import edu.stanford.smi.protege.util.PropertyList;
@@ -33,12 +37,13 @@ import edu.stanford.smi.protegex.owl.ProtegeOWL;
 import edu.stanford.smi.protegex.owl.database.CreateOWLDatabaseFromFileProjectPlugin;
 import edu.stanford.smi.protegex.owl.database.OWLDatabaseKnowledgeBaseFactory;
 import edu.stanford.smi.protegex.owl.model.OWLModel;
+import edu.stanford.smi.protegex.owl.model.RDFProperty;
 
 /**
  * Provides the functionality to load an ontology into the Protege back-end
- * 
+ *
  * @author Michael Dorf
- * 
+ *
  */
 public class OntologyLoadManagerProtegeImpl extends
 		AbstractOntologyManagerProtege implements OntologyLoadManager {
@@ -54,12 +59,12 @@ public class OntologyLoadManagerProtegeImpl extends
 	 * Loads the specified ontology into the BioPortal repository. If the
 	 * specified ontology identifier already exists, overwrite the ontology with
 	 * the new ontology file.
-	 * 
+	 *
 	 * @param ontologyId
 	 *            the ontology id for the specified ontology file.
 	 * @param ontologyFile
 	 *            the file containing the ontlogy to be loaded.
-	 * 
+	 *
 	 * @exception FileNotFoundException
 	 *                the ontology file to be loaded was not found.
 	 * @exception Exception
@@ -105,6 +110,14 @@ public class OntologyLoadManagerProtegeImpl extends
 			loadFrames(ontologyURI, ob, errors);
 		}
 
+		// Post-process ontology for obsolete terms. Ignore exceptions.
+		try {
+			processObsoleteTerms(ob);
+		} catch (Exception ignored) {
+			// Ignore exceptions
+			ignored.printStackTrace();
+		}
+
 		// If errors are found during the load, log the errors and throw an
 		// exception.
 		if (errors.size() > 0) {
@@ -117,7 +130,7 @@ public class OntologyLoadManagerProtegeImpl extends
 
 	/**
 	 * Removes OWL2 constructs from the ontology, so it can be parsed by Protege
-	 * 
+	 *
 	 * @param ontologyFile
 	 * @param ob
 	 * @return
@@ -144,6 +157,97 @@ public class OntologyLoadManagerProtegeImpl extends
 				removalFile).run();
 
 		return ((removed) ? outputFile : ontologyFile);
+	}
+
+	@SuppressWarnings("unchecked")
+	private void processObsoleteTerms(OntologyBean ob) {
+		KnowledgeBase kb = getKnowledgeBase(ob);
+
+		String obsoleteParentClassId = ob.getObsoleteParent();
+		String userDeprecatedPropertyId = ob.getObsoleteProperty();
+		String defaultDeprecatedPropertyId = OntologyBean.DEFAULT_DEPRECATED_SLOT;
+
+		Collection<Cls> obsoleteConcepts = new ArrayList<Cls>();
+
+		// Get obsolete classes based on a user-provided parent class
+		Cls obsoleteParent = null;
+		if (kb instanceof OWLModel) {
+			obsoleteParent = ((OWLModel) kb)
+					.getOWLNamedClass(obsoleteParentClassId);
+		} else {
+			obsoleteParent = kb.getCls(obsoleteParentClassId);
+		}
+
+		if (obsoleteParent != null) {
+			Collection<Cls> obsoleteConceptChildren = obsoleteParent
+					.getSubclasses();
+
+			obsoleteConcepts.addAll(obsoleteConceptChildren);
+		}
+
+		// Get obsolete classes based on a user-provided annotation property
+		Slot userDeprecatedProperty = null;
+		if (kb instanceof OWLModel) {
+			userDeprecatedProperty = ((OWLModel) kb)
+					.getRDFProperty(userDeprecatedPropertyId);
+		} else {
+			userDeprecatedProperty = kb.getSlot(userDeprecatedPropertyId);
+		}
+
+		Collection<Frame> obsoleteConceptsPropertyFrames = null;
+		if (userDeprecatedProperty != null) {
+			// Safer to check for clses only
+			if (kb instanceof OWLModel) {
+				obsoleteConceptsPropertyFrames = ((OWLModel) kb)
+						.getMatchingResources(
+								(RDFProperty) userDeprecatedProperty, "true",
+								Integer.MAX_VALUE);
+			} else {
+				obsoleteConceptsPropertyFrames = kb.getMatchingFrames(
+						userDeprecatedProperty, null, false, "true",
+						Integer.MAX_VALUE);
+			}
+
+			Collection<Cls> obsoleteConceptsProperty = new ArrayList<Cls>();
+			for (Frame frame : obsoleteConceptsPropertyFrames) {
+				if (frame instanceof Cls)
+					obsoleteConceptsProperty.add((Cls) frame);
+			}
+
+			obsoleteConcepts.addAll(obsoleteConceptsProperty);
+		}
+
+		// Don't create the deprecated property or use it unless we have
+		// obsolete concepts in the ontology
+		if (obsoleteConcepts.size() > 0) {
+			// Get default deprecated property, create if it doesn't exist
+			Slot defaultDeprecatedProperty = kb
+					.getSlot(defaultDeprecatedPropertyId);
+			if (defaultDeprecatedProperty == null) {
+				if (kb instanceof OWLModel) {
+					defaultDeprecatedProperty = ((OWLModel) kb)
+							.createAnnotationProperty(defaultDeprecatedPropertyId);
+				} else {
+					defaultDeprecatedProperty = kb
+							.createSlot(defaultDeprecatedPropertyId);
+
+					// Set the domain for the slot
+					// This is a hack, technically you aren't allowed to modify
+					// system frames, but Protege won't remove the information
+					// unless a re-parse is triggered
+					Cls standardClass = kb.getSystemFrames()
+							.getStandardClsMetaCls();
+					standardClass
+							.addDirectTemplateSlot(defaultDeprecatedProperty);
+				}
+			}
+
+			// Set the deprecated property on all classes
+			for (Cls obsoleteClass : obsoleteConcepts) {
+				obsoleteClass.setDirectOwnSlotValue(defaultDeprecatedProperty,
+						true);
+			}
+		}
 	}
 
 	@SuppressWarnings("unchecked")

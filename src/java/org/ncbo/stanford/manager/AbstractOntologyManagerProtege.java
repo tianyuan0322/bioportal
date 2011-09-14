@@ -109,7 +109,7 @@ public abstract class AbstractOntologyManagerProtege {
 
 		return slot;
 	}
-	
+
 	protected Slot getDeprecatedSlot(KnowledgeBase kb) {
 		Slot slot = null;
 
@@ -117,12 +117,31 @@ public abstract class AbstractOntologyManagerProtege {
 			slot = ((OWLModel) kb)
 					.getRDFProperty(OntologyBean.DEFAULT_DEPRECATED_SLOT);
 		} else {
-			//TODO: fill in logic for getting deprecated slot from Frames
+			slot = kb.getSlot(OntologyBean.DEFAULT_DEPRECATED_SLOT);
 		}
 
 		return slot;
 	}
-	
+
+	protected Boolean isObsolete(Slot deprecatedSlot, Frame frame) {
+		Boolean isObsolete = false;
+		Object deprecatedValue = frame.getDirectOwnSlotValue(deprecatedSlot);
+
+		if (deprecatedValue != null) {
+			if (deprecatedValue instanceof Boolean) {
+				isObsolete = (Boolean) deprecatedValue;
+			} else if (deprecatedValue instanceof String) {
+				isObsolete = ((String) deprecatedValue)
+						.equalsIgnoreCase("true");
+			} else {
+				isObsolete = deprecatedValue.toString()
+						.equalsIgnoreCase("true");
+			}
+		}
+
+		return isObsolete;
+	}
+
 	protected Slot getPreferredNameSlot(KnowledgeBase kb,
 			String preferredNameSlotName) {
 		Slot slot = null;
@@ -217,7 +236,7 @@ public abstract class AbstractOntologyManagerProtege {
 	/**
 	 * Returns a singleton KnowledgeBase instance for given ontologyVersion.
 	 */
-	protected KnowledgeBase getKnowledgeBase(OntologyBean ontology) {
+	public KnowledgeBase getKnowledgeBase(OntologyBean ontology) {
 		KnowledgeBase kb;
 
 		synchronized (protegeKnowledgeBases) {

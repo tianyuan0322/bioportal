@@ -25,7 +25,7 @@ public class OntologyBean {
 	public static final String DEFAULT_DEFINITION_SLOT = "http://www.w3.org/2004/02/skos/core#definition";
 	public static final String DEFAULT_AUTHOR_SLOT = "http://purl.org/dc/elements/1.1/creator";
 	public static final String DEFAULT_DEPRECATED_SLOT = "http://www.w3.org/2002/07/owl#deprecated";
-	
+
 	private Integer id;
 	private Integer ontologyId;
 	// virtual view id(s) on the virtual ontology
@@ -63,6 +63,8 @@ public class OntologyBean {
 	private String slotWithUniqueValue;
 	private Integer preferredMaximumSubclassLimit;
 	private UserAcl userAcl = new UserAcl(0);
+	private String obsoleteParent;
+	private String obsoleteProperty;
 
 	private boolean isView = false;
 
@@ -100,7 +102,7 @@ public class OntologyBean {
 	/**
 	 * Checks whether user has access to this ontology (the user id is present
 	 * in this ontology's ACL)
-	 * 
+	 *
 	 * @param ontologyId
 	 * @return
 	 */
@@ -110,7 +112,7 @@ public class OntologyBean {
 
 	/**
 	 * Adds an user Id to this ontology's access list (ACL)
-	 * 
+	 *
 	 * @param userId
 	 * @param isOwner
 	 */
@@ -128,7 +130,7 @@ public class OntologyBean {
 	/**
 	 * Populates the OntologyBean to a NcboOntologyFile Entity. OntologyVersion
 	 * should have been populated from OntologyBean before making this call.
-	 * 
+	 *
 	 * @param ontologyFileList
 	 */
 	public void populateToFileEntity(List<NcboOntologyFile> ontologyFileList) {
@@ -144,7 +146,7 @@ public class OntologyBean {
 	 * NOTE: This method should replicate the
 	 * {@link #populateDefaultStatus(NcboLStatus)} method an is to be used in
 	 * the ontological metadata implementation
-	 * 
+	 *
 	 * Returns default status, i.e. "1"(waiting) for local upload,
 	 * "5"(notapplicable) for remote.
 	 */
@@ -160,7 +162,7 @@ public class OntologyBean {
 	 * Populates a NcboOntologyLoadQueue Entity from this ontologyBean.
 	 * OntologyVersion should have been populated from OntologyBean before
 	 * making this call.
-	 * 
+	 *
 	 * @param NcboOntologyLoadQueue
 	 *            , NcboOntologyVersion
 	 */
@@ -220,7 +222,9 @@ public class OntologyBean {
 				+ ", View Generation Engine: " + this.getViewGenerationEngine()
 				+ ", View on Ontology Versions: "
 				+ this.getViewOnOntologyVersionId() + ", ACL: "
-				+ this.getUserAcl() + "}";
+				+ this.getUserAcl() + ", Parent of obsolete terms: "
+				+ this.getObsoleteParent() + ", Obsolete term property: "
+				+ this.getObsoleteProperty() + "}";
 	}
 
 	/**
@@ -532,7 +536,7 @@ public class OntologyBean {
 	}
 
 	/**
-	 * 
+	 *
 	 * @return the isFlat
 	 */
 	public Byte getIsFlat() {
@@ -541,7 +545,7 @@ public class OntologyBean {
 
 	/**
 	 * Set isFlat
-	 * 
+	 *
 	 * @param isFlat
 	 */
 	public void setIsFlat(Byte isFlat) {
@@ -1011,5 +1015,35 @@ public class OntologyBean {
 	 */
 	public Map<Integer, Boolean> getUserAcl() {
 		return userAcl;
+	}
+
+	/**
+	 * @return the obsoleteParent
+	 */
+	public String getObsoleteParent() {
+		return obsoleteParent;
+	}
+
+	/**
+	 * @param obsoleteParent
+	 *            the obsoleteParent to set
+	 */
+	public void setObsoleteParent(String obsoleteParent) {
+		this.obsoleteParent = obsoleteParent;
+	}
+
+	/**
+	 * @return the obsoleteProperty
+	 */
+	public String getObsoleteProperty() {
+		return obsoleteProperty;
+	}
+
+	/**
+	 * @param obsoleteProperty
+	 *            the obsoleteProperty to set
+	 */
+	public void setObsoleteProperty(String obsoleteProperty) {
+		this.obsoleteProperty = obsoleteProperty;
 	}
 }
