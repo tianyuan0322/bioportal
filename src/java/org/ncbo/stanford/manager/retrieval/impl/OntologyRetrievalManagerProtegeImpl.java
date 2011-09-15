@@ -670,6 +670,7 @@ public class OntologyRetrievalManagerProtegeImpl extends
 		classBean.setId(getId(frame));
 		classBean.setFullId(getFullId(frame, ontologyBean));
 		classBean.setLabel(getBrowserText(frame, ontologyBean));
+		addIsObsolete(frame, classBean);
 
 		ConceptTypeEnum protegeType = getConceptType(frame);
 
@@ -732,7 +733,7 @@ public class OntologyRetrievalManagerProtegeImpl extends
 			classBean.addRelation(ApplicationConstants.SUB_CLASS,
 					convertClasses(subclasses, false, synonymSlot,
 							definitionSlot, authorSlot, ontologyBean));
-			
+
 			// add superclasses
 			if (cls instanceof OWLNamedClass) {
 				superclasses = getUniqueClasses(((OWLNamedClass) cls)
@@ -741,15 +742,21 @@ public class OntologyRetrievalManagerProtegeImpl extends
 				superclasses = getUniqueClasses(cls.getDirectSuperclasses());
 			}
 
-			classBean.addRelation(ApplicationConstants.SUPER_CLASS, convertClasses(
-					superclasses, false, synonymSlot, definitionSlot, authorSlot,
-					ontologyBean));			
+			classBean.addRelation(ApplicationConstants.SUPER_CLASS,
+					convertClasses(superclasses, false, synonymSlot,
+							definitionSlot, authorSlot, ontologyBean));
 		} else {
 			classBean.addRelation(ApplicationConstants.SUB_CLASS,
 					new ArrayList<ClassBean>(0));
 		}
 
 		return classBean;
+	}
+
+	private void addIsObsolete(Frame frame, ClassBean classBean) {
+		Byte isObsolete = isObsolete(getDeprecatedSlot(frame.getKnowledgeBase()),
+				frame) ? (byte) 1 : (byte) 0;
+		classBean.setIsObsolete(isObsolete);
 	}
 
 	private void addSynonyms(Cls cls, Slot synonymSlot, ClassBean classBean) {

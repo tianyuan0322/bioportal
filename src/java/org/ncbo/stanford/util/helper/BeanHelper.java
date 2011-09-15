@@ -203,6 +203,14 @@ public class BeanHelper {
 						.getMessage("form.ontology.preferredMaximumSubclassLimit"));
 		String userAcl = httpServletRequest.getParameter(MessageUtils
 				.getMessage("form.ontology.useracl"));
+		String viewingRestriction = httpServletRequest
+				.getParameter(MessageUtils
+						.getMessage("form.ontology.viewingRestriction"));
+
+		String obsoleteParent = httpServletRequest.getParameter(MessageUtils
+				.getMessage("form.ontology.obsoleteParent"));
+		String obsoleteProperty = httpServletRequest.getParameter(MessageUtils
+				.getMessage("form.ontology.obsoleteProperty"));
 
 		boolean isViewBool = RequestUtils.parseBooleanParam(isView);
 
@@ -236,6 +244,10 @@ public class BeanHelper {
 							: false);
 				}
 			}
+		}
+
+		if (!StringHelper.isNullOrNullString(viewingRestriction)) {
+			bean.setViewingRestriction(viewingRestriction);
 		}
 
 		if (!StringHelper.isNullOrNullString(isManual)) {
@@ -309,6 +321,14 @@ public class BeanHelper {
 		if (!StringHelper.isNullOrNullString(preferredMaximumSubclassLimit)) {
 			bean.setPreferredMaximumSubclassLimit(Integer
 					.parseInt(preferredMaximumSubclassLimit));
+		}
+
+		if (!StringHelper.isNullOrNullString(obsoleteParent)) {
+			bean.setObsoleteParent(obsoleteParent);
+		}
+
+		if (!StringHelper.isNullOrNullString(obsoleteProperty)) {
+			bean.setObsoleteProperty(obsoleteProperty);
 		}
 
 		if (contactName != null) {

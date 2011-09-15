@@ -65,6 +65,7 @@ public class OntologyBean {
 	private UserAcl userAcl = new UserAcl(0);
 	private String obsoleteParent;
 	private String obsoleteProperty;
+	private String viewingRestriction;
 
 	private boolean isView = false;
 
@@ -222,7 +223,8 @@ public class OntologyBean {
 				+ ", View Generation Engine: " + this.getViewGenerationEngine()
 				+ ", View on Ontology Versions: "
 				+ this.getViewOnOntologyVersionId() + ", ACL: "
-				+ this.getUserAcl() + ", Parent of obsolete terms: "
+				+ this.getUserAcl() + ", Viewing restriction type: "
+				+ this.getViewingRestriction() + ", Parent of obsolete terms: "
 				+ this.getObsoleteParent() + ", Obsolete term property: "
 				+ this.getObsoleteProperty() + "}";
 	}
@@ -1045,5 +1047,20 @@ public class OntologyBean {
 	 */
 	public void setObsoleteProperty(String obsoleteProperty) {
 		this.obsoleteProperty = obsoleteProperty;
+	}
+
+	/**
+	 * @return the viewingRestriction
+	 */
+	public String getViewingRestriction() {
+		return viewingRestriction;
+	}
+
+	/**
+	 * @param viewingRestriction
+	 *            the viewingRestriction to set
+	 */
+	public void setViewingRestriction(String viewingRestriction) {
+		this.viewingRestriction = viewingRestriction;
 	}
 }

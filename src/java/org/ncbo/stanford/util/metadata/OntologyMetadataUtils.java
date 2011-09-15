@@ -74,8 +74,7 @@ public class OntologyMetadataUtils extends MetadataUtils {
 	// public static final String PROPERTY_ID = PREFIX_METADATA + "id";
 	public static final String PROPERTY_INTERNAL_VERSION_NUMBER = PREFIX_METADATA
 			+ "internalVersionNumber";
-	public static final String PROPERTY_IS_FLAT = PREFIX_METADATA
-	+ "isFlat";
+	public static final String PROPERTY_IS_FLAT = PREFIX_METADATA + "isFlat";
 	public static final String PROPERTY_IS_FOUNDRY = PREFIX_METADATA
 			+ "isFoundry";
 	public static final String PROPERTY_IS_METADATAONLY = PREFIX_METADATA
@@ -128,6 +127,12 @@ public class OntologyMetadataUtils extends MetadataUtils {
 	public static final String PROPERTY_HAS_VIRTUAL_VIEW = PREFIX_METADATA
 			+ "hasVirtualView";
 
+	// Ontology-specific information for defining obsolete terms
+	public static final String PROPERTY_OBSOLETE_PARENT = PREFIX_METADATA
+			+ "obsoleteParent";
+	public static final String PROPERTY_OBSOLETE_PROPERTY = PREFIX_METADATA
+			+ "obsoleteProperty";
+
 	public static final String PROPERTY_DOCUMENTATION_PROPERTY = PREFIX_METADATA
 			+ "documentationProperty";
 	public static final String PROPERTY_AUTHOR_PROPERTY = PREFIX_METADATA
@@ -174,6 +179,9 @@ public class OntologyMetadataUtils extends MetadataUtils {
 
 	public static final String PROPERTY_VIRTUAL_VIEW_OF = PREFIX_METADATA
 			+ "virtualViewOf";
+
+	public static final String PROPERTY_VIEWING_RESTRICTION = PREFIX_METADATA
+			+ "viewingRestriction";
 
 	public static void ensureOntologyBeanDoesNotInvalidateOntologyInstance(
 			OWLIndividual ontologyInd, OntologyBean ob, OWLIndividual vOntInd)
@@ -224,7 +232,7 @@ public class OntologyMetadataUtils extends MetadataUtils {
 				ob.setIsRemote((byte) 0);
 			}
 		}
-		
+
 		if (ob.getIsFlat() == null) {
 			Boolean isFlat = getPropertyValue(owlModel, ontologyInd,
 					PROPERTY_IS_FLAT, Boolean.class);
@@ -234,7 +242,7 @@ public class OntologyMetadataUtils extends MetadataUtils {
 				ob.setIsFlat((byte) 0);
 			}
 		}
-		
+
 		if (ob.getIsFoundry() == null) {
 			Boolean isFoundry = getPropertyValue(owlModel, ontologyInd,
 					PROPERTY_IS_FOUNDRY, Boolean.class);
@@ -337,9 +345,8 @@ public class OntologyMetadataUtils extends MetadataUtils {
 		RDFSLiteral litisFlat = owlModel.createRDFSLiteral(ob.getIsFlat()
 				.byteValue() == ApplicationConstants.FALSE ? "false" : "true",
 				owlModel.getXSDboolean());
-		setPropertyValue(owlModel, ontologyInd, PROPERTY_IS_FLAT,
-				litisFlat);
-		
+		setPropertyValue(owlModel, ontologyInd, PROPERTY_IS_FLAT, litisFlat);
+
 		RDFSLiteral litIsFoundry = owlModel.createRDFSLiteral(ob.getIsFoundry()
 				.byteValue() == ApplicationConstants.FALSE ? "false" : "true",
 				owlModel.getXSDboolean());
@@ -408,6 +415,14 @@ public class OntologyMetadataUtils extends MetadataUtils {
 
 		setPropertyValue(owlModel, ontologyInd, PROPERTY_HAS_VIEW,
 				viewIndividuals);
+
+		setPropertyValue(owlModel, ontologyInd, PROPERTY_OBSOLETE_PARENT, ob
+				.getObsoleteParent());
+		setPropertyValue(owlModel, ontologyInd, PROPERTY_OBSOLETE_PROPERTY, ob
+				.getObsoleteProperty());
+
+		setPropertyValue(owlModel, ontologyInd, PROPERTY_VIEWING_RESTRICTION,
+				ob.getViewingRestriction());
 
 		if (ob.isView()) {
 			if (!isOntologyViewIndividual(ontologyInd)) {
@@ -661,6 +676,14 @@ public class OntologyMetadataUtils extends MetadataUtils {
 		ob.setPreferredMaximumSubclassLimit(getPropertyValue(owlModel,
 				ontologyInd, PROPERTY_METRICS_PREFERRED_MAXIMUM_SUBCLASS_LIMIT,
 				Integer.class));
+
+		ob.setObsoleteParent(getPropertyValue(owlModel, ontologyInd,
+				PROPERTY_OBSOLETE_PARENT, String.class));
+		ob.setObsoleteProperty(getPropertyValue(owlModel, ontologyInd,
+				PROPERTY_OBSOLETE_PROPERTY, String.class));
+
+		ob.setViewingRestriction(getPropertyValue(owlModel, ontologyInd,
+				PROPERTY_VIEWING_RESTRICTION, String.class));
 
 		ob.setHasViews(getPropertyValueIds(owlModel, ontologyInd,
 				PROPERTY_HAS_VIEW));

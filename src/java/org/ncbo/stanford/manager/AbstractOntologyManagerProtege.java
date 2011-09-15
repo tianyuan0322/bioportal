@@ -124,6 +124,9 @@ public abstract class AbstractOntologyManagerProtege {
 	}
 
 	protected Boolean isObsolete(Slot deprecatedSlot, Frame frame) {
+		if (deprecatedSlot == null)
+			return false;
+
 		Boolean isObsolete = false;
 		Object deprecatedValue = frame.getDirectOwnSlotValue(deprecatedSlot);
 
@@ -131,6 +134,10 @@ public abstract class AbstractOntologyManagerProtege {
 			if (deprecatedValue instanceof Boolean) {
 				isObsolete = (Boolean) deprecatedValue;
 			} else if (deprecatedValue instanceof String) {
+				log
+						.info("Term "
+								+ frame.getFrameID()
+								+ " has a string value instead of boolean for obsolete property");
 				isObsolete = ((String) deprecatedValue)
 						.equalsIgnoreCase("true");
 			} else {
