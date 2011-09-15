@@ -206,6 +206,8 @@ public class BeanHelper {
 		String viewingRestriction = httpServletRequest
 				.getParameter(MessageUtils
 						.getMessage("form.ontology.viewingRestriction"));
+		String licenseInformation = httpServletRequest.getParameter(MessageUtils
+				.getMessage("form.ontology.licenseInformation"));
 
 		String obsoleteParent = httpServletRequest.getParameter(MessageUtils
 				.getMessage("form.ontology.obsoleteParent"));
@@ -248,6 +250,10 @@ public class BeanHelper {
 
 		if (!StringHelper.isNullOrNullString(viewingRestriction)) {
 			bean.setViewingRestriction(viewingRestriction);
+		}
+
+		if (!StringHelper.isNullOrNullString(licenseInformation)) {
+			bean.setLicenseInformation(licenseInformation);
 		}
 
 		if (!StringHelper.isNullOrNullString(isManual)) {

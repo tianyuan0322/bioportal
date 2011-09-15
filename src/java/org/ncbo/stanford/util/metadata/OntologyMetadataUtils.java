@@ -182,6 +182,8 @@ public class OntologyMetadataUtils extends MetadataUtils {
 
 	public static final String PROPERTY_VIEWING_RESTRICTION = PREFIX_METADATA
 			+ "viewingRestriction";
+	public static final String PROPERTY_LICENSE_INFORMATION = PREFIX_METADATA
+			+ "licenseInformation";
 
 	public static void ensureOntologyBeanDoesNotInvalidateOntologyInstance(
 			OWLIndividual ontologyInd, OntologyBean ob, OWLIndividual vOntInd)
@@ -423,6 +425,8 @@ public class OntologyMetadataUtils extends MetadataUtils {
 
 		setPropertyValue(owlModel, ontologyInd, PROPERTY_VIEWING_RESTRICTION,
 				ob.getViewingRestriction());
+		setPropertyValue(owlModel, ontologyInd, PROPERTY_LICENSE_INFORMATION,
+				ob.getLicenseInformation());
 
 		if (ob.isView()) {
 			if (!isOntologyViewIndividual(ontologyInd)) {
@@ -684,6 +688,8 @@ public class OntologyMetadataUtils extends MetadataUtils {
 
 		ob.setViewingRestriction(getPropertyValue(owlModel, ontologyInd,
 				PROPERTY_VIEWING_RESTRICTION, String.class));
+		ob.setLicenseInformation(getPropertyValue(owlModel, ontologyInd,
+				PROPERTY_LICENSE_INFORMATION, String.class));
 
 		ob.setHasViews(getPropertyValueIds(owlModel, ontologyInd,
 				PROPERTY_HAS_VIEW));

@@ -66,6 +66,7 @@ public class OntologyBean {
 	private String obsoleteParent;
 	private String obsoleteProperty;
 	private String viewingRestriction;
+	private String licenseInformation;
 
 	private boolean isView = false;
 
@@ -224,7 +225,8 @@ public class OntologyBean {
 				+ ", View on Ontology Versions: "
 				+ this.getViewOnOntologyVersionId() + ", ACL: "
 				+ this.getUserAcl() + ", Viewing restriction type: "
-				+ this.getViewingRestriction() + ", Parent of obsolete terms: "
+				+ this.getViewingRestriction() + ", License info: "
+				+ this.getLicenseInformation() + ", Parent of obsolete terms: "
 				+ this.getObsoleteParent() + ", Obsolete term property: "
 				+ this.getObsoleteProperty() + "}";
 	}
@@ -1062,5 +1064,20 @@ public class OntologyBean {
 	 */
 	public void setViewingRestriction(String viewingRestriction) {
 		this.viewingRestriction = viewingRestriction;
+	}
+
+	/**
+	 * @return the licenseInformation
+	 */
+	public String getLicenseInformation() {
+		return licenseInformation;
+	}
+
+	/**
+	 * @param licenseInformation
+	 *            the licenseInformation to set
+	 */
+	public void setLicenseInformation(String licenseInformation) {
+		this.licenseInformation = licenseInformation;
 	}
 }
