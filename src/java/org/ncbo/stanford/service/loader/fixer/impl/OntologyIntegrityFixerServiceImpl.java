@@ -210,7 +210,8 @@ public class OntologyIntegrityFixerServiceImpl extends AbstractOntologyService
 
 					// Get a single child of the obsolete parent to check
 					Collection<Cls> obsoleteChildren = new HashSet<Cls>();
-					if (StringUtils.isNullOrEmpty(ontology.getObsoleteParent())) {
+					if (!StringUtils
+							.isNullOrEmpty(ontology.getObsoleteParent())) {
 						Cls obsoleteParent = kb.getCls(ontology
 								.getObsoleteParent());
 						if (obsoleteParent != null) {
@@ -222,7 +223,7 @@ public class OntologyIntegrityFixerServiceImpl extends AbstractOntologyService
 					// Get a single class with the obsolete property set to
 					// check
 					Collection<Frame> obsoleteConceptsPropertyFrames = new HashSet<Frame>();
-					if (StringUtils.isNullOrEmpty(ontology
+					if (!StringUtils.isNullOrEmpty(ontology
 							.getObsoleteProperty())) {
 						Slot userDeprecatedProperty = kb.getSlot(ontology
 								.getObsoleteProperty());
