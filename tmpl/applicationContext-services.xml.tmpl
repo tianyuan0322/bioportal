@@ -939,7 +939,8 @@
 	</bean>
 
 	<bean id="ontologyIntegrityFixerService"
-		class="org.ncbo.stanford.service.loader.fixer.impl.OntologyIntegrityFixerServiceImpl">
+		class="org.ncbo.stanford.service.loader.fixer.impl.OntologyIntegrityFixerServiceImpl"
+		parent="abstractOntologyService">
 		<property name="ontologyMetadataManager">
 			<ref bean="ontologyMetadataManager" />
 		</property>

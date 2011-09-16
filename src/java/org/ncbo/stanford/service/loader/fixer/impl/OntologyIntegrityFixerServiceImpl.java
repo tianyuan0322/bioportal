@@ -1,7 +1,9 @@
 package org.ncbo.stanford.service.loader.fixer.impl;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 
@@ -190,6 +192,7 @@ public class OntologyIntegrityFixerServiceImpl extends AbstractOntologyService
 		}
 	}
 
+	@SuppressWarnings("unchecked")
 	private void fixProtegeObsoleteTerms(List<OntologyBean> ontologies) {
 		Map<Integer, OntologyBean> problemOntologies = new HashMap<Integer, OntologyBean>(
 				0);
@@ -208,21 +211,29 @@ public class OntologyIntegrityFixerServiceImpl extends AbstractOntologyService
 					// Get a single child of the obsolete parent to check
 					Cls obsoleteParent = kb
 							.getCls(ontology.getObsoleteParent());
-					Cls[] obsoleteChildren = (Cls[]) obsoleteParent
-							.getDirectSubclasses().toArray();
+					Collection<Cls> obsoleteChildren = new HashSet<Cls>();
+					if (obsoleteParent != null) {
+						obsoleteChildren = obsoleteParent.getDirectSubclasses();
+					}
 
 					// Get a single class with the obsolete property set to
 					// check
 					Slot userDeprecatedProperty = kb.getSlot(ontology
 							.getObsoleteProperty());
-					Frame[] obsoleteConceptsPropertyFrames = (Frame[]) kb
-							.getMatchingFrames(userDeprecatedProperty, null,
-									false, "true", Integer.MAX_VALUE).toArray();
+					Collection<Frame> obsoleteConceptsPropertyFrames = new HashSet<Frame>();
+					if (userDeprecatedProperty != null) {
+						obsoleteConceptsPropertyFrames = kb.getMatchingFrames(
+								userDeprecatedProperty, null, false, "true",
+								Integer.MAX_VALUE);
+					}
 
 					Slot deprecatedSlot = getDeprecatedSlot(kb);
-					if (!isObsolete(deprecatedSlot, obsoleteChildren[0])
-							|| isObsolete(deprecatedSlot,
-									obsoleteConceptsPropertyFrames[0])) {
+					if ((!obsoleteChildren.isEmpty() && !isObsolete(
+							deprecatedSlot, obsoleteChildren.iterator().next()))
+							|| (!obsoleteConceptsPropertyFrames.isEmpty() && !isObsolete(
+									deprecatedSlot,
+									obsoleteConceptsPropertyFrames.iterator()
+											.next()))) {
 						problemOntologies.put(ontology.getId(), ontology);
 					}
 
@@ -236,21 +247,23 @@ public class OntologyIntegrityFixerServiceImpl extends AbstractOntologyService
 		}
 
 		try {
-			if (log.isInfoEnabled()) {
-				StringBuffer sb = new StringBuffer();
-				sb
-						.append("The following ontologies were found to be missing obsolete terms and were processed:\n\n");
+			if (!problemOntologies.isEmpty()) {
+				if (log.isInfoEnabled()) {
+					StringBuffer sb = new StringBuffer();
+					sb
+							.append("The following ontologies were found to be missing obsolete terms and were processed:\n\n");
 
-				for (Map.Entry<Integer, OntologyBean> entry : problemOntologies
-						.entrySet()) {
-					sb.append(entry.getValue());
-					sb.append("\n\n");
+					for (Map.Entry<Integer, OntologyBean> entry : problemOntologies
+							.entrySet()) {
+						sb.append(entry.getValue());
+						sb.append("\n\n");
+					}
+					log.info(sb.toString());
 				}
-				log.info(sb.toString());
-			}
 
-			for (OntologyBean ontology : problemOntologies.values()) {
-				loadManagerProtege.processObsoleteTerms(ontology);
+				for (OntologyBean ontology : problemOntologies.values()) {
+					loadManagerProtege.processObsoleteTerms(ontology);
+				}
 			}
 		} catch (Exception e) {
 			log.error("Unable to fix search index due to the following error: "
