@@ -160,7 +160,7 @@ public class OntologyLoadManagerProtegeImpl extends
 	}
 
 	@SuppressWarnings("unchecked")
-	private void processObsoleteTerms(OntologyBean ob) {
+	public void processObsoleteTerms(OntologyBean ob) {
 		KnowledgeBase kb = getKnowledgeBase(ob);
 
 		String obsoleteParentClassId = ob.getObsoleteParent();

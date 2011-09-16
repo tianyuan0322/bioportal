@@ -11,12 +11,21 @@ import org.ncbo.stanford.bean.OntologyBean;
 import org.ncbo.stanford.bean.OntologyMetricsBean;
 import org.ncbo.stanford.bean.search.OntologyHitBean;
 import org.ncbo.stanford.exception.MetadataException;
+import org.ncbo.stanford.manager.load.impl.OntologyLoadManagerProtegeImpl;
 import org.ncbo.stanford.manager.metadata.OntologyMetadataManager;
 import org.ncbo.stanford.service.loader.fixer.OntologyIntegrityFixerService;
 import org.ncbo.stanford.service.metrics.MetricsService;
 import org.ncbo.stanford.service.ontology.AbstractOntologyService;
 import org.ncbo.stanford.service.search.IndexSearchService;
 import org.springframework.transaction.annotation.Transactional;
+
+import com.mysql.jdbc.StringUtils;
+
+import edu.stanford.smi.protege.model.Cls;
+import edu.stanford.smi.protege.model.Frame;
+import edu.stanford.smi.protege.model.KnowledgeBase;
+import edu.stanford.smi.protege.model.Slot;
+import edu.stanford.smi.protegex.owl.model.OWLModel;
 
 /**
  *
@@ -36,6 +45,7 @@ public class OntologyIntegrityFixerServiceImpl extends AbstractOntologyService
 	private OntologyMetadataManager ontologyMetadataManager;
 	private IndexSearchService indexSearchService;
 	private MetricsService metricsService;
+	private OntologyLoadManagerProtegeImpl loadManagerProtege;
 
 	/**
 	 * Goes through all latest versions of parsed ontologies and fixes dependent
@@ -67,6 +77,15 @@ public class OntologyIntegrityFixerServiceImpl extends AbstractOntologyService
 
 			if (log.isInfoEnabled())
 				log.info("Metrics fixer run completed...");
+
+			// fix protege obsolete terms
+			if (log.isInfoEnabled())
+				log.info("Running protege obsolete terms fixer...");
+
+			fixProtegeObsoleteTerms(ontologies);
+
+			if (log.isInfoEnabled())
+				log.info("Protege obsolete terms fixer run completed...");
 		} catch (Exception e) {
 			log.error(e);
 			e.printStackTrace();
@@ -171,6 +190,114 @@ public class OntologyIntegrityFixerServiceImpl extends AbstractOntologyService
 		}
 	}
 
+	private void fixProtegeObsoleteTerms(List<OntologyBean> ontologies) {
+		Map<Integer, OntologyBean> problemOntologies = new HashMap<Integer, OntologyBean>(
+				0);
+
+		for (OntologyBean ontology : ontologies) {
+			try {
+				if (ontologyFormatHandlerMap.get(ontology.getFormat())
+						.equalsIgnoreCase("protege")
+						&& (!StringUtils.isNullOrEmpty(ontology
+								.getObsoleteParent()) || !StringUtils
+								.isNullOrEmpty(ontology.getObsoleteProperty()))) {
+
+					KnowledgeBase kb = loadManagerProtege
+							.getKnowledgeBase(ontology);
+
+					// Get a single child of the obsolete parent to check
+					Cls obsoleteParent = kb
+							.getCls(ontology.getObsoleteParent());
+					Cls[] obsoleteChildren = (Cls[]) obsoleteParent
+							.getDirectSubclasses().toArray();
+
+					// Get a single class with the obsolete property set to
+					// check
+					Slot userDeprecatedProperty = kb.getSlot(ontology
+							.getObsoleteProperty());
+					Frame[] obsoleteConceptsPropertyFrames = (Frame[]) kb
+							.getMatchingFrames(userDeprecatedProperty, null,
+									false, "true", Integer.MAX_VALUE).toArray();
+
+					Slot deprecatedSlot = getDeprecatedSlot(kb);
+					if (!isObsolete(deprecatedSlot, obsoleteChildren[0])
+							|| isObsolete(deprecatedSlot,
+									obsoleteConceptsPropertyFrames[0])) {
+						problemOntologies.put(ontology.getId(), ontology);
+					}
+
+				}
+			} catch (Exception e) {
+				addErrorOntology(errorOntologies, ontology.getId().toString(),
+						ontology, e.getMessage());
+				log.error(e);
+				e.printStackTrace();
+			}
+		}
+
+		try {
+			if (log.isInfoEnabled()) {
+				StringBuffer sb = new StringBuffer();
+				sb
+						.append("The following ontologies were found to be missing obsolete terms and were processed:\n\n");
+
+				for (Map.Entry<Integer, OntologyBean> entry : problemOntologies
+						.entrySet()) {
+					sb.append(entry.getValue());
+					sb.append("\n\n");
+				}
+				log.info(sb.toString());
+			}
+
+			for (OntologyBean ontology : problemOntologies.values()) {
+				loadManagerProtege.processObsoleteTerms(ontology);
+			}
+		} catch (Exception e) {
+			log.error("Unable to fix search index due to the following error: "
+					+ e);
+			e.printStackTrace();
+		}
+	}
+
+	private Slot getDeprecatedSlot(KnowledgeBase kb) {
+		Slot slot = null;
+
+		if (kb instanceof OWLModel) {
+			slot = ((OWLModel) kb)
+					.getRDFProperty(OntologyBean.DEFAULT_DEPRECATED_SLOT);
+		} else {
+			slot = kb.getSlot(OntologyBean.DEFAULT_DEPRECATED_SLOT);
+		}
+
+		return slot;
+	}
+
+	private Boolean isObsolete(Slot deprecatedSlot, Frame frame) {
+		if (deprecatedSlot == null)
+			return false;
+
+		Boolean isObsolete = false;
+		Object deprecatedValue = frame.getDirectOwnSlotValue(deprecatedSlot);
+
+		if (deprecatedValue != null) {
+			if (deprecatedValue instanceof Boolean) {
+				isObsolete = (Boolean) deprecatedValue;
+			} else if (deprecatedValue instanceof String) {
+				log
+						.info("Term "
+								+ frame.getFrameID()
+								+ " has a string value instead of boolean for obsolete property");
+				isObsolete = ((String) deprecatedValue)
+						.equalsIgnoreCase("true");
+			} else {
+				isObsolete = deprecatedValue.toString()
+						.equalsIgnoreCase("true");
+			}
+		}
+
+		return isObsolete;
+	}
+
 	/**
 	 * @param ontologyMetadataManager
 	 *            the ontologyMetadataManager to set
@@ -194,5 +321,21 @@ public class OntologyIntegrityFixerServiceImpl extends AbstractOntologyService
 	 */
 	public void setMetricsService(MetricsService metricsService) {
 		this.metricsService = metricsService;
+	}
+
+	/**
+	 * @return the loadManagerProtege
+	 */
+	public OntologyLoadManagerProtegeImpl getLoadManagerProtege() {
+		return loadManagerProtege;
+	}
+
+	/**
+	 * @param loadManagerProtege
+	 *            the loadManagerProtege to set
+	 */
+	public void setLoadManagerProtege(
+			OntologyLoadManagerProtegeImpl loadManagerProtege) {
+		this.loadManagerProtege = loadManagerProtege;
 	}
 }
