@@ -209,22 +209,29 @@ public class OntologyIntegrityFixerServiceImpl extends AbstractOntologyService
 							.getKnowledgeBase(ontology);
 
 					// Get a single child of the obsolete parent to check
-					Cls obsoleteParent = kb
-							.getCls(ontology.getObsoleteParent());
 					Collection<Cls> obsoleteChildren = new HashSet<Cls>();
-					if (obsoleteParent != null) {
-						obsoleteChildren = obsoleteParent.getDirectSubclasses();
+					if (StringUtils.isNullOrEmpty(ontology.getObsoleteParent())) {
+						Cls obsoleteParent = kb.getCls(ontology
+								.getObsoleteParent());
+						if (obsoleteParent != null) {
+							obsoleteChildren = obsoleteParent
+									.getDirectSubclasses();
+						}
 					}
 
 					// Get a single class with the obsolete property set to
 					// check
-					Slot userDeprecatedProperty = kb.getSlot(ontology
-							.getObsoleteProperty());
 					Collection<Frame> obsoleteConceptsPropertyFrames = new HashSet<Frame>();
-					if (userDeprecatedProperty != null) {
-						obsoleteConceptsPropertyFrames = kb.getMatchingFrames(
-								userDeprecatedProperty, null, false, "true",
-								Integer.MAX_VALUE);
+					if (StringUtils.isNullOrEmpty(ontology
+							.getObsoleteProperty())) {
+						Slot userDeprecatedProperty = kb.getSlot(ontology
+								.getObsoleteProperty());
+						if (userDeprecatedProperty != null) {
+							obsoleteConceptsPropertyFrames = kb
+									.getMatchingFrames(userDeprecatedProperty,
+											null, false, "true",
+											Integer.MAX_VALUE);
+						}
 					}
 
 					Slot deprecatedSlot = getDeprecatedSlot(kb);
