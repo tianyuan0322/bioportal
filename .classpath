@@ -71,7 +71,7 @@
 	<classpathentry exported="true" kind="lib" path="WebRoot/WEB-INF/lib/notes-api.jar"/>
 	<classpathentry exported="true" kind="lib" path="WebRoot/WEB-INF/lib/org.semanticweb.owl.owlapi.jar"/>
 	<classpathentry exported="true" kind="lib" path="WebRoot/WEB-INF/lib/org.protege.owlapi.jar"/>
-	<classpathentry exported="true" kind="lib" path="WebRoot/WEB-INF/lib/protege/protege.jar"/>
+	<classpathentry exported="true" kind="lib" path="WebRoot/WEB-INF/lib/protege/protege.jar" sourcepath="/protege-core"/>
 	<classpathentry exported="true" kind="lib" path="WebRoot/WEB-INF/lib/protege/preprocess.jar"/>
 	<classpathentry exported="true" kind="lib" path="WebRoot/WEB-INF/lib/protege/plugins/edu.stanford.smi.protegex.changes/change-management.jar"/>
 	<classpathentry exported="true" kind="lib" path="WebRoot/WEB-INF/lib/protege/plugins/edu.stanford.smi.protegex.changes/icu4j.jar"/>
@@ -90,7 +90,7 @@
 	<classpathentry exported="true" kind="lib" path="WebRoot/WEB-INF/lib/protege/plugins/edu.stanford.smi.protegex.owl/kazuki.jar"/>
 	<classpathentry exported="true" kind="lib" path="WebRoot/WEB-INF/lib/protege/plugins/edu.stanford.smi.protegex.owl/orphanNodesAlg.jar"/>
 	<classpathentry exported="true" kind="lib" path="WebRoot/WEB-INF/lib/protege/plugins/edu.stanford.smi.protegex.owl/owlsyntax.jar"/>
-	<classpathentry exported="true" kind="lib" path="WebRoot/WEB-INF/lib/protege/plugins/edu.stanford.smi.protegex.owl/protege-owl.jar"/>
+	<classpathentry exported="true" kind="lib" path="WebRoot/WEB-INF/lib/protege/plugins/edu.stanford.smi.protegex.owl/protege-owl.jar" sourcepath="/protege-owl"/>
 	<classpathentry exported="true" kind="lib" path="WebRoot/WEB-INF/lib/protege/plugins/edu.stanford.smi.protegex.owl/stax-api-1.0.jar"/>
 	<classpathentry exported="true" kind="lib" path="WebRoot/WEB-INF/lib/protege/plugins/edu.stanford.smi.protegex.owl/swrl-jess-bridge.jar"/>
 	<classpathentry exported="true" kind="lib" path="WebRoot/WEB-INF/lib/protege/plugins/edu.stanford.smi.protegex.owl/wstx-asl-3.0.0.jar"/>
