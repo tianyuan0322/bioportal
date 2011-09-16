@@ -18,6 +18,7 @@ import org.ncbo.stanford.domain.custom.dao.CustomNcboUserDAO;
 import org.ncbo.stanford.exception.InvalidOntologyFormatException;
 import org.ncbo.stanford.manager.load.OntologyLoadManager;
 import org.ncbo.stanford.manager.metadata.OntologyMetadataManager;
+import org.ncbo.stanford.manager.retrieval.OntologyRetrievalManager;
 import org.ncbo.stanford.service.metrics.MetricsService;
 import org.ncbo.stanford.service.search.IndexSearchService;
 import org.ncbo.stanford.util.helper.StringHelper;
@@ -35,6 +36,8 @@ public abstract class AbstractOntologyService {
 
 	protected Map<String, String> ontologyFormatHandlerMap = new HashMap<String, String>();
 	protected Map<String, OntologyLoadManager> ontologyLoadHandlerMap = new HashMap<String, OntologyLoadManager>();
+	protected Map<String, OntologyRetrievalManager> ontologyRetrievalHandlerMap = new HashMap<String, OntologyRetrievalManager>();
+
 	protected CustomNcboOntologyLoadQueueDAO ncboOntologyLoadQueueDAO;
 	protected CustomNcboOntologyFileDAO ncboOntologyFileDAO;
 	protected CustomNcboUserDAO ncboUserDAO;
@@ -220,6 +223,12 @@ public abstract class AbstractOntologyService {
 		return errorMessage;
 	}
 
+	protected OntologyRetrievalManager getRetrievalManager(OntologyBean ontology) {
+		String formatHandler = ontologyFormatHandlerMap.get(ontology
+				.getFormat().toUpperCase());
+		return ontologyRetrievalHandlerMap.get(formatHandler);
+	}
+
 	/**
 	 * @return the errorOntologies
 	 */
@@ -303,5 +312,14 @@ public abstract class AbstractOntologyService {
 	public void setOntologyMetadataManager(
 			OntologyMetadataManager ontologyMetadataManager) {
 		this.ontologyMetadataManager = ontologyMetadataManager;
+	}
+
+	/**
+	 * @param ontologyRetrievalHandlerMap
+	 *            the ontologyRetrievalHandlerMap to set
+	 */
+	public void setOntologyRetrievalHandlerMap(
+			Map<String, OntologyRetrievalManager> ontologyRetrievalHandlerMap) {
+		this.ontologyRetrievalHandlerMap = ontologyRetrievalHandlerMap;
 	}
 }

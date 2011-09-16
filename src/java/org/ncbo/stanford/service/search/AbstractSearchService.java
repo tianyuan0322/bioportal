@@ -8,7 +8,6 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
@@ -17,7 +16,6 @@ import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.index.IndexReader;
 import org.apache.lucene.index.Term;
-import org.apache.lucene.queryParser.QueryParser;
 import org.apache.lucene.search.BooleanClause;
 import org.apache.lucene.search.BooleanQuery;
 import org.apache.lucene.search.IndexSearcher;
@@ -50,10 +48,10 @@ import org.ncbo.stanford.util.helper.StringHelper;
 /**
  * Abstract class to contain functionality common to both query and indexing
  * services
- *
- *
+ * 
+ * 
  * @author Michael Dorf
- *
+ * 
  */
 public abstract class AbstractSearchService {
 
@@ -64,8 +62,6 @@ public abstract class AbstractSearchService {
 	 * Separates the query from the maxNumHits in the cache key
 	 */
 	private static final String CACHE_KEY_SEPARATOR = "@@@@@";
-	private static final String ONTOLOGY_IDS_DELIM = ",";
-	private static final String EMPTY_CACHE_KEY_PARAM = "null";
 
 	protected Analyzer analyzer;
 	protected String indexPath;
@@ -88,7 +84,7 @@ public abstract class AbstractSearchService {
 
 	/**
 	 * Executes a query against the Lucene index. Does not use caching
-	 *
+	 * 
 	 * @param query
 	 * @param maxNumHits
 	 * @param ontologyIds
@@ -141,7 +137,7 @@ public abstract class AbstractSearchService {
 	/**
 	 * Checks whether ontology is present in the index and returns basic info
 	 * such as ontologyVersionId and ontologyDisplayLabel
-	 *
+	 * 
 	 * @param ontologyId
 	 * @return
 	 * @throws Exception
@@ -212,6 +208,15 @@ public abstract class AbstractSearchService {
 						.get(SearchIndexBean.ONTOLOGY_DISPLAY_LABEL_FIELD_LABEL);
 				Integer ontologyId = new Integer(doc
 						.get(SearchIndexBean.ONTOLOGY_ID_FIELD_LABEL));
+				Byte isObsolete = 0;
+
+				try {
+					isObsolete = new Byte(doc
+							.get(SearchIndexBean.IS_OBSOLETE_FIELD_LABEL));
+				} catch (NumberFormatException e) {
+					// Do nothing
+				}
+
 				String uniqueIdent = ontologyId + "_" + conceptId;
 
 				if (!uniqueDocs.contains(uniqueIdent)) {
@@ -237,7 +242,8 @@ public abstract class AbstractSearchService {
 										.get(SearchIndexBean.CONCEPT_ID_SHORT_FIELD_LABEL),
 								doc
 										.get(SearchIndexBean.PREFERRED_NAME_FIELD_LABEL),
-								doc.get(SearchIndexBean.CONTENTS_FIELD_LABEL));
+								doc.get(SearchIndexBean.CONTENTS_FIELD_LABEL),
+								null, isObsolete);
 
 						if (includeDefinitions) {
 							// Make sure that getting the definition doesn't
@@ -280,7 +286,7 @@ public abstract class AbstractSearchService {
 
 	/**
 	 * Constructs the query that limits the search to the given ontology ids
-	 *
+	 * 
 	 * @param ontologyIds
 	 * @return
 	 */
@@ -306,64 +312,6 @@ public abstract class AbstractSearchService {
 		searchResultCache.clear();
 	}
 
-	/**
-	 * Reload search results cache by re-running all queries in it and
-	 * re-populating it with new results
-	 */
-	public void reloadSearchCache() {
-		long start = 0;
-		long stop = 0;
-
-		if (log.isDebugEnabled()) {
-			log.debug("Reloading cache...");
-			start = System.currentTimeMillis();
-		}
-
-		QueryParser parser = new QueryParser(luceneVersion,
-				SearchIndexBean.CONTENTS_FIELD_LABEL, analyzer);
-		Set<String> keys = searchResultCache.getKeys();
-		searchResultCache.clear();
-
-		for (String fullKey : keys) {
-			SearchResultListBean results = null;
-			String[] splitKey = parseCacheKey(fullKey);
-			Collection<Integer> ontologyIds = extractOntologyIds(splitKey[2]);
-
-			try {
-				results = runQuery(parser.parse(splitKey[0]), new Integer(
-						splitKey[1]), ontologyIds, splitKey[3], null);
-			} catch (Exception e) {
-				results = null;
-				e.printStackTrace();
-				log.error("Error while reloading cache: " + e);
-			}
-
-			if (results != null) {
-				searchResultCache.put(fullKey, results);
-			}
-		}
-
-		if (log.isDebugEnabled()) {
-			stop = System.currentTimeMillis(); // stop timing
-			log.debug("Finished reloading cache in " + (double) (stop - start)
-					/ 1000 + " seconds.");
-		}
-	}
-
-	private Collection<Integer> extractOntologyIds(String ontlogyIdsStr) {
-		Collection<Integer> ontologyIds = null;
-
-		if (ontlogyIdsStr != null) {
-			ontologyIds = new ArrayList<Integer>();
-			String[] ontologyIdsStr = ontlogyIdsStr.split(ONTOLOGY_IDS_DELIM);
-
-			for (int i = 0; i < ontologyIdsStr.length; i++) {
-				ontologyIds.add(new Integer(ontologyIdsStr[i]));
-			}
-		}
-		return ontologyIds;
-	}
-
 	private String getHitAsString(float score, SearchBean searchResult) {
 		return score + " | " + searchResult.getContents() + ", Type: "
 				+ searchResult.getRecordType() + ", OntologyId: "
@@ -377,7 +325,7 @@ public abstract class AbstractSearchService {
 	/**
 	 * Constructs the query that limits the search to the given object types
 	 * (i.e. class, individual, property)
-	 *
+	 * 
 	 * @param objectTypes
 	 * @return
 	 */
@@ -394,7 +342,7 @@ public abstract class AbstractSearchService {
 
 	/**
 	 * Constructs the term with the given ontology id
-	 *
+	 * 
 	 * @param ontologyId
 	 * @return
 	 */
@@ -405,7 +353,7 @@ public abstract class AbstractSearchService {
 
 	/**
 	 * Constructs the term with the given object type
-	 *
+	 * 
 	 * @param objectType
 	 * @return
 	 */
@@ -415,7 +363,7 @@ public abstract class AbstractSearchService {
 
 	/**
 	 * Provides a display format for a list of ontologies
-	 *
+	 * 
 	 * @param ontologies
 	 * @return
 	 */
@@ -434,7 +382,7 @@ public abstract class AbstractSearchService {
 
 	/**
 	 * Provides a display format for a single ontology
-	 *
+	 * 
 	 * @param ontologyVersionId
 	 * @param ontologyId
 	 * @param displayLabel
@@ -457,42 +405,20 @@ public abstract class AbstractSearchService {
 		return sb.toString();
 	}
 
-	protected String[] parseCacheKey(String cacheKey) {
-		String[] keys = cacheKey.split(CACHE_KEY_SEPARATOR);
-
-		for (int i = 0; i < keys.length; i++) {
-			if (keys[i].equals(EMPTY_CACHE_KEY_PARAM)) {
-				keys[i] = null;
-			}
-		}
-
-		return keys;
-	}
-
 	protected String composeCacheKey(Query query, Integer maxNumHits,
-			Collection<Integer> ontologyIds, String subtreeRootConceptId,
-			Boolean includeDefinitions) {
-		String key = query + CACHE_KEY_SEPARATOR + getMaxNumHits(maxNumHits);
-		String ontologyIdsStr = null;
-
-		if (ontologyIds == null || ontologyIds.isEmpty()) {
-			ontologyIdsStr = EMPTY_CACHE_KEY_PARAM;
-		} else {
-			ontologyIdsStr = StringUtils.join(ontologyIds, ONTOLOGY_IDS_DELIM);
-		}
-
-		if (StringHelper.isNullOrNullString(subtreeRootConceptId)) {
-			subtreeRootConceptId = EMPTY_CACHE_KEY_PARAM;
-		}
-
-		return key + CACHE_KEY_SEPARATOR + ontologyIdsStr + CACHE_KEY_SEPARATOR
-				+ subtreeRootConceptId + CACHE_KEY_SEPARATOR
-				+ includeDefinitions.toString();
+			String subtreeRootConceptId, Boolean includeDefinitions) {
+		return query
+				+ CACHE_KEY_SEPARATOR
+				+ getMaxNumHits(maxNumHits)
+				+ CACHE_KEY_SEPARATOR
+				+ includeDefinitions.toString()
+				+ (StringHelper.isNullOrNullString(subtreeRootConceptId) ? ""
+						: CACHE_KEY_SEPARATOR + subtreeRootConceptId);
 	}
 
 	/**
 	 * Sets the index path and creates a new instance of searcher
-	 *
+	 * 
 	 * @param indexPath
 	 *            the indexPath to set
 	 */
@@ -541,7 +467,7 @@ public abstract class AbstractSearchService {
 
 	/**
 	 * Method that always returns a valid maxNumHits
-	 *
+	 * 
 	 * @param maxNumHits
 	 * @return
 	 */
@@ -552,7 +478,7 @@ public abstract class AbstractSearchService {
 
 	/**
 	 * Returns the sort fields for the query
-	 *
+	 * 
 	 * @return
 	 */
 	private Sort getSortFields() {
@@ -568,7 +494,7 @@ public abstract class AbstractSearchService {
 
 	/**
 	 * Creates a new instance of the searcher
-	 *
+	 * 
 	 * @throws IOException
 	 */
 	private void createSearcher() throws IOException {
@@ -579,7 +505,7 @@ public abstract class AbstractSearchService {
 
 	/**
 	 * Reloads the searcher, disposes of the old searcher
-	 *
+	 * 
 	 * @throws IOException
 	 */
 	private void reloadSearcher() throws IOException {
@@ -596,7 +522,7 @@ public abstract class AbstractSearchService {
 
 	/**
 	 * Determines whether the index file has changed
-	 *
+	 * 
 	 * @return
 	 */
 	private boolean hasNewerIndexFile() {

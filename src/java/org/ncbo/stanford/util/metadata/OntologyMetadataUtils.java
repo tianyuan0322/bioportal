@@ -14,6 +14,7 @@ import org.apache.commons.logging.LogFactory;
 import org.ncbo.stanford.bean.OntologyBean;
 import org.ncbo.stanford.bean.OntologyMetricsBean;
 import org.ncbo.stanford.enumeration.StatusEnum;
+import org.ncbo.stanford.enumeration.ViewingRestrictionEnum;
 import org.ncbo.stanford.exception.MetadataException;
 import org.ncbo.stanford.util.MessageUtils;
 import org.ncbo.stanford.util.constants.ApplicationConstants;
@@ -424,7 +425,7 @@ public class OntologyMetadataUtils extends MetadataUtils {
 				.getObsoleteProperty());
 
 		setPropertyValue(owlModel, ontologyInd, PROPERTY_VIEWING_RESTRICTION,
-				ob.getViewingRestriction());
+				ob.getViewingRestriction().toString());
 		setPropertyValue(owlModel, ontologyInd, PROPERTY_LICENSE_INFORMATION,
 				ob.getLicenseInformation());
 
@@ -686,8 +687,9 @@ public class OntologyMetadataUtils extends MetadataUtils {
 		ob.setObsoleteProperty(getPropertyValue(owlModel, ontologyInd,
 				PROPERTY_OBSOLETE_PROPERTY, String.class));
 
-		ob.setViewingRestriction(getPropertyValue(owlModel, ontologyInd,
-				PROPERTY_VIEWING_RESTRICTION, String.class));
+		ob.setViewingRestriction(ViewingRestrictionEnum
+				.getFromLabel(getPropertyValue(owlModel, ontologyInd,
+						PROPERTY_VIEWING_RESTRICTION, String.class)));
 		ob.setLicenseInformation(getPropertyValue(owlModel, ontologyInd,
 				PROPERTY_LICENSE_INFORMATION, String.class));
 

@@ -62,6 +62,12 @@ public interface ApplicationConstants {
 	public static final String CONCEPT_TYPE_PROPERTY = "property";
 
 	/**
+	 * Viewing Restrictions
+	 */
+	public static final String VIEWING_RESTRICTION_PRIVATE = "private";
+	public static final String VIEWING_RESTRICTION_LICENSED = "licensed";
+
+	/**
 	 * Ontology version status
 	 */
 	public static final String VERSION_STATUS_PREPRODUCTION = "beta";
@@ -105,6 +111,8 @@ public interface ApplicationConstants {
 	 */
 	public static final String SUB_CLASS = "SubClass";
 	public static final String SUPER_CLASS = "SuperClass";
+	public static final String SUB_PROPERTY = "SubProperty";
+	public static final String SUPER_PROPERTY = "SuperProperty";
 	public static final String RDF_TYPE = "RdfType";
 	public static final String CHILD_COUNT = "ChildCount";
 	public static final String INSTANCE_COUNT = "InstanceCount";
@@ -113,6 +121,8 @@ public interface ApplicationConstants {
 	public static final String PATH = "Path";
 	public static final String EMAIL = "Email";
 	public static final String CLASS_PROPERTIES = "ClassProperties";
+	public static final String RANGE = "Range";
+	public static final String DOMAIN = "Domain";
 
 	/**
 	 * Ontology format handlers

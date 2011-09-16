@@ -23,13 +23,14 @@ public class LexGridSearchProperty extends SearchBean {
 	 * @param ontologyDisplayLabel
 	 * @param recordType
 	 * @param preferredName
+	 * @param isObsolete
 	 * @param property
 	 */
 	public LexGridSearchProperty(Integer ontologyVersionId, Integer ontologyId,
 			String ontologyDisplayLabel, SearchRecordTypeEnum recordType,
-			String preferredName, Property property) {
+			String preferredName, Byte isObsolete, Property property) {
 		super(ontologyVersionId, ontologyId, ontologyDisplayLabel, recordType,
-				LEXGRID_OBJECT_TYPE, preferredName);
+				LEXGRID_OBJECT_TYPE, preferredName, isObsolete);
 		this.property = property;
 	}
 

@@ -1,10 +1,12 @@
 package org.ncbo.stanford.manager.retrieval;
 
 import java.util.Iterator;
+import java.util.List;
 
 import org.ncbo.stanford.bean.OntologyBean;
 import org.ncbo.stanford.bean.concept.ClassBean;
 import org.ncbo.stanford.bean.concept.InstanceBean;
+import org.ncbo.stanford.bean.concept.PropertyBean;
 import org.ncbo.stanford.util.paginator.impl.Page;
 
 /**
@@ -57,4 +59,15 @@ public interface OntologyRetrievalManager {
 	public Page<InstanceBean> findInstancesByConceptId(
 			OntologyBean ontologyBean, String instanceId, Integer pageSize,
 			Integer pageNum) throws Exception;
+
+	/**
+	 * Retrieve all available properties with their associate metadata for a
+	 * given ontology
+	 * 
+	 * @param ob
+	 * @return
+	 * 
+	 * @throws Exception
+	 */
+	public List<PropertyBean> findProperties(OntologyBean ob) throws Exception;
 }

@@ -21,13 +21,15 @@ public class ProtegeSearchFrame extends SearchBean {
 	 * @param recordType
 	 * @param objectType
 	 * @param preferredName
+	 * @param isObsolete
 	 * @param frame
 	 */
 	public ProtegeSearchFrame(Integer ontologyVersionId, Integer ontologyId,
 			String ontologyDisplayLabel, SearchRecordTypeEnum recordType,
-			ConceptTypeEnum objectType, String preferredName, Frame frame) {
+			ConceptTypeEnum objectType, String preferredName, Byte isObsolete,
+			Frame frame) {
 		super(ontologyVersionId, ontologyId, ontologyDisplayLabel, recordType,
-				objectType, preferredName);
+				objectType, preferredName, isObsolete);
 		this.frame = frame;
 	}
 

@@ -13,6 +13,7 @@ import org.ncbo.stanford.bean.SubscriptionsBean;
 import org.ncbo.stanford.bean.UserBean;
 import org.ncbo.stanford.bean.logging.UsageLoggingBean;
 import org.ncbo.stanford.enumeration.NotificationTypeEnum;
+import org.ncbo.stanford.enumeration.ViewingRestrictionEnum;
 import org.ncbo.stanford.util.MessageUtils;
 import org.ncbo.stanford.util.RequestUtils;
 import org.ncbo.stanford.view.util.constants.RequestParamConstants;
@@ -22,9 +23,9 @@ public class BeanHelper {
 
 	/**
 	 * Creates UserBean object and populate from Request object
-	 *
+	 * 
 	 * source: request, destination: userBean
-	 *
+	 * 
 	 * @param Request
 	 */
 	public static void populateUserBeanFromRequest(Request request,
@@ -88,15 +89,15 @@ public class BeanHelper {
 
 	/**
 	 * Creates OntologyBean object and populate from Request object.
-	 *
+	 * 
 	 * <ontology Id>, <internal_version_number> - will be determined at ontology
 	 * creation time <parent_id> - soon to be OBSOLETE
-	 *
+	 * 
 	 * The following attributes are only for System or Admin. <statusId>,
 	 * <codingScheme> - updated by Scheduler <isReviewed> - updated by Admin
-	 *
+	 * 
 	 * source: request, destination: ontologyBean
-	 *
+	 * 
 	 * @param Request
 	 */
 	public static OntologyBean populateOntologyBeanFromRequest(Request request) {
@@ -107,15 +108,15 @@ public class BeanHelper {
 
 	/**
 	 * Takes an OntologyBean object and populates it from Request object.
-	 *
+	 * 
 	 * <ontology Id>, <internal_version_number> - will be determined at ontology
 	 * creation time
-	 *
+	 * 
 	 * The following attributes are only for System or Admin. <statusId>,
 	 * <codingScheme> - updated by Scheduler <isReviewed> - updated by Admin
-	 *
+	 * 
 	 * source: request, destination: ontologyBean
-	 *
+	 * 
 	 * @param Request
 	 */
 	public static void populateOntologyBeanFromRequest(OntologyBean bean,
@@ -249,7 +250,8 @@ public class BeanHelper {
 		}
 
 		if (!StringHelper.isNullOrNullString(viewingRestriction)) {
-			bean.setViewingRestriction(viewingRestriction);
+			bean.setViewingRestriction(ViewingRestrictionEnum
+					.getFromLabel(viewingRestriction));
 		}
 
 		if (!StringHelper.isNullOrNullString(licenseInformation)) {
@@ -468,7 +470,7 @@ public class BeanHelper {
 	 * Creates UsageLoggingBean object and populates from Request object. This
 	 * method is used when populating for data recording purposes. source:
 	 * request, destination: usageLoggingBean
-	 *
+	 * 
 	 * @param Request
 	 */
 	public static UsageLoggingBean populateUsageLoggingBeanFromRequestForLogging(
@@ -516,7 +518,7 @@ public class BeanHelper {
 	 * Creates UsageLoggingBean object and populates from Request object. This
 	 * method is used when populating for logging data extraction. source:
 	 * request, destination: usageLoggingBean
-	 *
+	 * 
 	 * @param Request
 	 */
 	public static UsageLoggingBean populateUsageLoggingBeanFromRequestForDataExtraction(
@@ -551,7 +553,7 @@ public class BeanHelper {
 
 	/**
 	 * Create SubscriptionsBean object and populates from Request object.
-	 *
+	 * 
 	 * @param request
 	 * @return
 	 */
@@ -579,7 +581,7 @@ public class BeanHelper {
 
 	/**
 	 * It will collect the OntologyIds from the request
-	 *
+	 * 
 	 * @param request
 	 * @return
 	 */

@@ -36,7 +36,7 @@ public class OntologyMetricsRestlet extends AbstractOntologyBaseRestlet {
 
 	/**
 	 * Return to the response an individual ontology
-	 *
+	 * 
 	 * @param request
 	 * @param response
 	 */
@@ -45,6 +45,7 @@ public class OntologyMetricsRestlet extends AbstractOntologyBaseRestlet {
 		List<OntologyBean> ontologyBean = findOntologyBeans(request, response);
 
 		OntologyMetricsBean ontologyMetricsBean = null;
+
 		if (!response.getStatus().isError()) {
 			try {
 				ontologyMetricsBean = metricsService
@@ -54,18 +55,17 @@ public class OntologyMetricsRestlet extends AbstractOntologyBaseRestlet {
 						.setStatus(Status.SERVER_ERROR_INTERNAL, e.getMessage());
 				e.printStackTrace();
 				log.error(e);
-			} finally {
-				// generate response XML
-				xmlSerializationService.generateXMLResponse(request, response,
-						ontologyMetricsBean);
 			}
 		}
+		// generate response XML
+		xmlSerializationService.generateXMLResponse(request, response,
+				ontologyMetricsBean);
 	}
 
 	/**
 	 * Extract metrics from the given ontology and store them into the metadata
 	 * ontology.
-	 *
+	 * 
 	 * @param request
 	 * @param response
 	 */
@@ -111,5 +111,4 @@ public class OntologyMetricsRestlet extends AbstractOntologyBaseRestlet {
 	public void setMetricsService(MetricsService metricsService) {
 		this.metricsService = metricsService;
 	}
-
 }

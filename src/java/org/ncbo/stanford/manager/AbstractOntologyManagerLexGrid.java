@@ -19,6 +19,8 @@ import org.LexGrid.LexBIG.Extensions.Generic.LexBIGServiceConvenienceMethods;
 import org.LexGrid.LexBIG.LexBIGService.LexBIGService;
 import org.LexGrid.LexBIG.Utility.Constructors;
 import org.LexGrid.codingSchemes.CodingScheme;
+import org.LexGrid.commonTypes.Property;
+import org.LexGrid.concepts.Concept;
 import org.apache.commons.lang.StringUtils;
 import org.ncbo.stanford.bean.OntologyBean;
 import org.ncbo.stanford.manager.metadata.OntologyMetadataManager;
@@ -273,7 +275,8 @@ public abstract class AbstractOntologyManagerLexGrid {
 	protected String getDefaultHierarchyId(String schemeName,
 			CodingSchemeVersionOrTag csvt) throws Exception {
 		String[] hierarchyIDs = lbscm.getHierarchyIDs(schemeName, csvt);
-		//String hierarchyId = (hierarchyIDs.length > 0) ? hierarchyIDs[0] : null;
+		// String hierarchyId = (hierarchyIDs.length > 0) ? hierarchyIDs[0] :
+		// null;
 		String hierarchyId = null;
 
 		for (String hierarchy : hierarchyIDs) {
@@ -324,9 +327,9 @@ public abstract class AbstractOntologyManagerLexGrid {
 	protected String getFullId(OntologyBean ontologyBean, String code) {
 		String fullId = code;
 		String modCode = code.replace(':', '_');
-		
+
 		try {
-			modCode= URLEncoder.encode(modCode, "UTF-8");
+			modCode = URLEncoder.encode(modCode, "UTF-8");
 		} catch (Exception ex) {
 			ex.printStackTrace();
 		}
@@ -334,14 +337,13 @@ public abstract class AbstractOntologyManagerLexGrid {
 			if (ApplicationConstants.FORMAT_OBO.equalsIgnoreCase(ontologyBean
 					.getFormat())) {
 				fullId = getOBOFullId(ontologyBean, code);
-			} else  {
+			} else {
 				fullId = ApplicationConstants.BASE_CONCEPT_NAMESPACE
 						+ ontologyBean.getAbbreviation() + "/" + modCode;
 			}
-			
 
 		}
-		
+
 		return fullId;
 	}
 
@@ -350,7 +352,7 @@ public abstract class AbstractOntologyManagerLexGrid {
 		String fullId = "";
 		String modCode = code.replace(':', '_');
 		try {
-			modCode= URLEncoder.encode(modCode, "UTF-8");
+			modCode = URLEncoder.encode(modCode, "UTF-8");
 		} catch (Exception ex) {
 			ex.printStackTrace();
 		}
@@ -387,11 +389,48 @@ public abstract class AbstractOntologyManagerLexGrid {
 				fullId = ApplicationConstants.BASE_CONCEPT_NAMESPACE
 						+ ontologyBean.getAbbreviation() + "/" + modCode;
 			} else {
-				fullId = ApplicationConstants.BASE_CONCEPT_NAMESPACE + prefix + "/"
-						+ modCode;
+				fullId = ApplicationConstants.BASE_CONCEPT_NAMESPACE + prefix
+						+ "/" + modCode;
 			}
 		}
 
 		return fullId;
+	}
+
+	/**
+	 * Determines whether a given term is obsolete
+	 * 
+	 * @param entry
+	 * @return
+	 */
+	protected boolean isObsolete(Concept entry) {
+		Boolean isObsolete = entry.getIsActive();
+
+		if (isObsolete == null) {
+			isObsolete = new Boolean(false);
+		}
+
+		if (!isObsolete) {
+			int count = entry.getPropertyCount();
+
+			for (int i = 0; i < count; i++) {
+				Property prop = entry.getProperty(i);
+				String key = prop.getPropertyName();
+
+				if (StringUtils.isNotBlank(key)
+						&& key.equalsIgnoreCase("CONCEPTSTATUS")) {
+					String value = prop.getValue().getContent();
+					List<String> inactiveList = Arrays.asList("1", "2", "3",
+							"4", "5", "10");
+
+					if (StringUtils.isNotBlank(value)
+							&& inactiveList.contains(value)) {
+						isObsolete = true;
+					}
+				}
+			}
+		}
+
+		return isObsolete.booleanValue();
 	}
 }

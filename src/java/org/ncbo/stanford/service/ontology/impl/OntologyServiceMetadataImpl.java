@@ -13,6 +13,7 @@ import org.ncbo.stanford.bean.CategoryBean;
 import org.ncbo.stanford.bean.GroupBean;
 import org.ncbo.stanford.bean.OntologyBean;
 import org.ncbo.stanford.bean.OntologyMetricsBean;
+import org.ncbo.stanford.bean.concept.PropertyBean;
 import org.ncbo.stanford.domain.generated.NcboOntologyAcl;
 import org.ncbo.stanford.domain.generated.NcboOntologyFile;
 import org.ncbo.stanford.domain.generated.NcboOntologyLoadQueue;
@@ -346,6 +347,19 @@ public class OntologyServiceMetadataImpl extends AbstractOntologyService
 		}
 
 		return file;
+	}
+
+	/**
+	 * Retrieve all available properties with their associate metadata for a
+	 * given ontology
+	 * 
+	 * @param ob
+	 * @return List<PropertyBean>
+	 * 
+	 * @throws Exception
+	 */
+	public List<PropertyBean> findProperties(OntologyBean ob) throws Exception {
+		return getRetrievalManager(ob).findProperties(ob);
 	}
 
 	/**

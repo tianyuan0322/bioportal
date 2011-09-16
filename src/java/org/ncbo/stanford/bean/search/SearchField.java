@@ -4,7 +4,7 @@ import org.apache.lucene.document.Field.Index;
 import org.apache.lucene.document.Field.Store;
 
 /**
- * Defins a structure for a single search field in the index
+ * Defines a structure for a single search field in the index
  * 
  * @author Michael Dorf
  * 
@@ -14,32 +14,37 @@ public class SearchField {
 	private Store store;
 	private Index index;
 	private String contents;
+	private Class<?> type;
 
 	/**
 	 * @param label
 	 * @param store
 	 * @param index
+	 * @param type
 	 */
-	public SearchField(String label, Store store, Index index) {
+	public SearchField(String label, Store store, Index index, Class<?> type) {
 		super();
 		this.label = label;
 		this.store = store;
 		this.index = index;
+		this.type = type;
 	}
 
 	public String toString() {
 		return "Label: " + label + ", Store: " + store + ", Index: " + index
-				+ ", Contents: " + contents;
+				+ ", Contents: " + contents + ", Type: " + type;
 	}
 
 	/**
 	 * @param label
 	 * @param store
 	 * @param index
+	 * @param type
 	 * @param contents
 	 */
-	public SearchField(String label, Store store, Index index, String contents) {
-		this(label, store, index);
+	public SearchField(String label, Store store, Index index, Class<?> type,
+			String contents) {
+		this(label, store, index, type);
 		this.contents = contents;
 	}
 
@@ -62,6 +67,13 @@ public class SearchField {
 	 */
 	public Index getIndex() {
 		return index;
+	}
+
+	/**
+	 * @return the type
+	 */
+	public Class<?> getType() {
+		return type;
 	}
 
 	/**

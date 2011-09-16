@@ -6,6 +6,7 @@ import java.util.List;
 import org.ncbo.stanford.bean.CategoryBean;
 import org.ncbo.stanford.bean.GroupBean;
 import org.ncbo.stanford.bean.OntologyBean;
+import org.ncbo.stanford.bean.concept.PropertyBean;
 import org.ncbo.stanford.util.ontologyfile.pathhandler.FilePathHandler;
 
 /**
@@ -41,16 +42,14 @@ public interface OntologyService {
 	 * @return
 	 */
 	public List<Integer> getOntologyIdsByViewId(Integer viewId);
-	
+
 	/**
 	 * This method is expected to be run by a scheduler process. Populates three
-	 * global maps for quick ID translation: 
-	 * 		versionIdToOntologyIdMap
-	 * 		viewVersionIdToViewIdMap 
-	 * 		viewIdToOntologyIdsMap
+	 * global maps for quick ID translation: versionIdToOntologyIdMap
+	 * viewVersionIdToViewIdMap viewIdToOntologyIdsMap
 	 */
 	public void populateIdMaps();
-	
+
 	/**
 	 * Checks whether access is restricted to a given ontology by its virtual
 	 * ontology id
@@ -65,12 +64,12 @@ public interface OntologyService {
 	 * global list of ontology ids that have access restrictions
 	 */
 	public void populateOntologyAcl();
-	
+
 	/**
 	 * Return the list of all categories
 	 * 
 	 * @return
-	 * @throws Exception 
+	 * @throws Exception
 	 */
 	public List<CategoryBean> findAllCategories() throws Exception;
 
@@ -80,7 +79,7 @@ public interface OntologyService {
 	 * 
 	 * @param oboFoundryNames
 	 * @return
-	 * @throws Exception 
+	 * @throws Exception
 	 */
 	public List<Integer> findCategoryIdsByOBOFoundryNames(
 			String[] oboFoundryNames) throws Exception;
@@ -89,7 +88,7 @@ public interface OntologyService {
 	 * Return the list of all groups
 	 * 
 	 * @return
-	 * @throws Exception 
+	 * @throws Exception
 	 */
 	public List<GroupBean> findAllGroups() throws Exception;
 
@@ -98,7 +97,7 @@ public interface OntologyService {
 	 * 
 	 * @param oboFoundryId
 	 * @return
-	 * @throws Exception 
+	 * @throws Exception
 	 */
 	public OntologyBean findLatestOntologyVersionByOboFoundryId(
 			String oboFoundryId) throws Exception;
@@ -108,7 +107,7 @@ public interface OntologyService {
 	 * version of ontology exists, return the latest version.
 	 * 
 	 * @return list of Ontology beans
-	 * @throws Exception 
+	 * @throws Exception
 	 */
 	public List<OntologyBean> findLatestOntologyVersions() throws Exception;
 
@@ -117,9 +116,10 @@ public interface OntologyService {
 	 * 
 	 * @return the list of ontology beans corresponding to the latest version of
 	 *         each ontology
-	 * @throws Exception 
+	 * @throws Exception
 	 */
-	public List<OntologyBean> findLatestAutoPulledOntologyVersions() throws Exception;
+	public List<OntologyBean> findLatestAutoPulledOntologyVersions()
+			throws Exception;
 
 	/**
 	 * Returns a single record for each ontology which is active in the system.
@@ -127,9 +127,10 @@ public interface OntologyService {
 	 * version. "active" meaning parse status is "ready".
 	 * 
 	 * @return list of Ontology beans
-	 * @throws Exception 
+	 * @throws Exception
 	 */
-	public List<OntologyBean> findLatestActiveOntologyVersions() throws Exception;
+	public List<OntologyBean> findLatestActiveOntologyVersions()
+			throws Exception;
 
 	/**
 	 * Returns all versions for given ontology. Two steps : 1. Get list of
@@ -154,7 +155,7 @@ public interface OntologyService {
 	 *            views)
 	 * @return list of ontology beans that have metadata matching the query
 	 *         string
-	 * @throws Exception 
+	 * @throws Exception
 	 */
 	public List<OntologyBean> searchOntologyMetadata(String query,
 			boolean includeViews) throws Exception;
@@ -238,6 +239,17 @@ public interface OntologyService {
 	 */
 	public File getOntologyFile(OntologyBean ontologyBean) throws Exception;
 
+	/**
+	 * Retrieve all available properties with their associate metadata for a
+	 * given ontology
+	 * 
+	 * @param ob
+	 * @return List<PropertyBean>
+	 * 
+	 * @throws Exception
+	 */
+	public List<PropertyBean> findProperties(OntologyBean ob) throws Exception;
+	
 	// ******************** view specific methods ********************
 
 	/**
@@ -245,7 +257,7 @@ public interface OntologyService {
 	 * than one version of ontology view exists, return the latest version.
 	 * 
 	 * @return list of ontology beans
-	 * @throws Exception 
+	 * @throws Exception
 	 */
 	public List<OntologyBean> findLatestOntologyViewVersions() throws Exception;
 
@@ -256,9 +268,10 @@ public interface OntologyService {
 	 * "not applicable".
 	 * 
 	 * @return list of ontology beans
-	 * @throws Exception 
+	 * @throws Exception
 	 */
-	public List<OntologyBean> findLatestActiveOntologyViewVersions() throws Exception;
+	public List<OntologyBean> findLatestActiveOntologyViewVersions()
+			throws Exception;
 
 	/**
 	 * Programmatically reloads the metadata ontology stored in the memory
@@ -273,13 +286,14 @@ public interface OntologyService {
 	 * @return
 	 */
 	public List<String> getErrorOntologies();
-	
+
 	/**
 	 * Get RdfFile object for a specific ontology
 	 * 
 	 * @param ontologyBean
 	 * @return
 	 */
-	
-	public File findRdfFileForOntology(OntologyBean ontologyBean) throws Exception;
+
+	public File findRdfFileForOntology(OntologyBean ontologyBean)
+			throws Exception;
 }

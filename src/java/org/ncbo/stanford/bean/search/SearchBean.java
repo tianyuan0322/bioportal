@@ -5,9 +5,9 @@ import org.ncbo.stanford.enumeration.SearchRecordTypeEnum;
 
 /**
  * A base search bean that define a single search result entity
- *
+ * 
  * @author Michael Dorf
- *
+ * 
  */
 public class SearchBean {
 
@@ -21,6 +21,7 @@ public class SearchBean {
 	private String preferredName;
 	private String contents;
 	private String definition;
+	private Byte isObsolete;
 
 	public SearchBean() {
 	}
@@ -33,7 +34,7 @@ public class SearchBean {
 	public SearchBean(Integer ontologyVersionId, Integer ontologyId,
 			String ontologyDisplayLabel) {
 		populateInstance(ontologyVersionId, ontologyId, ontologyDisplayLabel,
-				null, null, null, null, null, null);
+				null, null, null, null, null, null, null, null);
 	}
 
 	/**
@@ -50,10 +51,11 @@ public class SearchBean {
 	public SearchBean(Integer ontologyVersionId, Integer ontologyId,
 			String ontologyDisplayLabel, SearchRecordTypeEnum recordType,
 			ConceptTypeEnum objectType, String conceptId,
-			String conceptIdShort, String preferredName, String contents) {
+			String conceptIdShort, String preferredName, String contents,
+			String definition, Byte isObsolete) {
 		populateInstance(ontologyVersionId, ontologyId, ontologyDisplayLabel,
 				recordType, objectType, conceptId, conceptIdShort,
-				preferredName, contents);
+				preferredName, contents, definition, isObsolete);
 	}
 
 	/**
@@ -63,18 +65,20 @@ public class SearchBean {
 	 * @param recordType
 	 * @param objectType
 	 * @param preferredName
+	 * @param isObsolete
 	 */
 	public SearchBean(Integer ontologyVersionId, Integer ontologyId,
 			String ontologyDisplayLabel, SearchRecordTypeEnum recordType,
-			ConceptTypeEnum objectType, String preferredName) {
+			ConceptTypeEnum objectType, String preferredName, Byte isObsolete) {
 		populateInstance(ontologyVersionId, ontologyId, ontologyDisplayLabel,
-				recordType, objectType, null, null, preferredName, null);
+				recordType, objectType, null, null, preferredName, null, null,
+				isObsolete);
 	}
 
 	/**
 	 * Populates this instance with data. This is the "official" function to use
 	 * to populate the bean. Do not create any custom population methods!!!
-	 *
+	 * 
 	 * @param ontologyVersionId
 	 * @param ontologyId
 	 * @param ontologyDisplayLabel
@@ -84,11 +88,14 @@ public class SearchBean {
 	 * @param conceptIdShort
 	 * @param preferredName
 	 * @param contents
+	 * @param definition
+	 * @param isObsolete
 	 */
 	public void populateInstance(Integer ontologyVersionId, Integer ontologyId,
 			String ontologyDisplayLabel, SearchRecordTypeEnum recordType,
 			ConceptTypeEnum objectType, String conceptId,
-			String conceptIdShort, String preferredName, String contents) {
+			String conceptIdShort, String preferredName, String contents,
+			String definition, Byte isObsolete) {
 		setOntologyVersionId(ontologyVersionId);
 		setOntologyId(ontologyId);
 		setOntologyDisplayLabel(ontologyDisplayLabel);
@@ -98,15 +105,20 @@ public class SearchBean {
 		setConceptIdShort(conceptIdShort);
 		setPreferredName(preferredName);
 		setContents(contents);
+		setDefinition(definition);
+		setIsObsolete(isObsolete);
 	}
 
 	public String toString() {
 		return "VersionId: " + ontologyVersionId + " | OntologyId: "
 				+ ontologyId + " | ConceptId: " + conceptId + " | Contents: "
 				+ contents + " | RecordType: " + recordType.getLabel() + "\n"
-				+ " | ObjectType: " + ((objectType != null) ? objectType.getLabel() : "") + " PreferedName: "
-				+ preferredName + " | ConceptIdShort: " + conceptIdShort
-				+ " | OntologyDisplayLabel: " + ontologyDisplayLabel + "\n";
+				+ " | ObjectType: "
+				+ ((objectType != null) ? objectType.getLabel() : "")
+				+ " PreferedName: " + preferredName + " | ConceptIdShort: "
+				+ conceptIdShort + " | OntologyDisplayLabel: "
+				+ ontologyDisplayLabel + " | Definition: " + definition
+				+ " | Obsolete?: " + isObsolete + "\n";
 	}
 
 	/**
@@ -252,9 +264,32 @@ public class SearchBean {
 	}
 
 	/**
-	 * @param definition the definition to set
+	 * @param definition
+	 *            the definition to set
 	 */
 	public void setDefinition(String definition) {
 		this.definition = definition;
+	}
+
+	/**
+	 * @return the isObsolete
+	 */
+	public Boolean isObsolete() {
+		return (isObsolete != null && isObsolete.byteValue() > 0);
+	}
+
+	/**
+	 * @return the isObsolete
+	 */
+	public Byte getIsObsolete() {
+		return isObsolete;
+	}
+
+	/**
+	 * @param isObsolete
+	 *            the isObsolete to set
+	 */
+	public void setIsObsolete(Byte isObsolete) {
+		this.isObsolete = isObsolete;
 	}
 }

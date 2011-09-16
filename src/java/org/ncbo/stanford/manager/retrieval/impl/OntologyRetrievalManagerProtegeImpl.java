@@ -14,6 +14,7 @@ import java.util.Set;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.ncbo.stanford.bean.OntologyBean;
+import org.ncbo.stanford.bean.concept.AbstractConceptBean;
 import org.ncbo.stanford.bean.concept.ClassBean;
 import org.ncbo.stanford.bean.concept.ClassBeanResultListBean;
 import org.ncbo.stanford.bean.concept.InstanceBean;
@@ -40,6 +41,7 @@ import edu.stanford.smi.protege.model.KnowledgeBase;
 import edu.stanford.smi.protege.model.ModelUtilities;
 import edu.stanford.smi.protege.model.SimpleInstance;
 import edu.stanford.smi.protege.model.Slot;
+import edu.stanford.smi.protege.model.ValueType;
 import edu.stanford.smi.protegex.owl.model.NamespaceUtil;
 import edu.stanford.smi.protegex.owl.model.OWLModel;
 import edu.stanford.smi.protegex.owl.model.OWLNamedClass;
@@ -54,8 +56,8 @@ import edu.stanford.smi.protegex.owl.util.OWLBrowserSlotPattern;
  * The service layer will consume this interface instead of directly calling a
  * specific implementation (i.e. LexGrid, Protege etc.). Do not use this class
  * directly in upper layers.
- *
- *
+ * 
+ * 
  * @author Michael Dorf
  */
 @SuppressWarnings("unchecked")
@@ -163,7 +165,7 @@ public class OntologyRetrievalManagerProtegeImpl extends
 	/**
 	 * returns an ordered collection of classes; guarantees the order based on
 	 * frame name
-	 *
+	 * 
 	 */
 	public Page<ClassBean> findAllConcepts(OntologyBean ontologyBean,
 			Integer maxNumChildren, Integer pageSize, Integer pageNum)
@@ -217,7 +219,7 @@ public class OntologyRetrievalManagerProtegeImpl extends
 	/**
 	 * returns an ordered collection of classes; guarantees the order based on
 	 * frame name
-	 *
+	 * 
 	 */
 	public Iterator<ClassBean> listAllClasses(final OntologyBean ontologyBean)
 			throws Exception {
@@ -390,15 +392,6 @@ public class OntologyRetrievalManagerProtegeImpl extends
 		return instanceBean;
 	}
 
-	private PropertyBean createBasePropertyBean(Slot frame,
-			OntologyBean ontologyBean) {
-		PropertyBean propertyBean = new PropertyBean();
-		propertyBean.setId(getId(frame));
-		propertyBean.setFullId(getFullId(frame, ontologyBean));
-		propertyBean.setLabel(getBrowserText(frame, ontologyBean));
-		return propertyBean;
-	}
-
 	public ClassBean findPathFromRoot(OntologyBean ontologyBean,
 			String conceptId, boolean light) {
 		ClassBean rootPath = null;
@@ -420,6 +413,207 @@ public class OntologyRetrievalManagerProtegeImpl extends
 	public ArrayList<ClassBean> findChildren(String id,
 			Integer ontologyVersionId) {
 		throw new UnsupportedOperationException();
+	}
+
+	public boolean hasParent(OntologyBean ontologyVersion,
+			String childConceptId, String parentConceptId) throws Exception {
+		KnowledgeBase kb = getKnowledgeBase(ontologyVersion);
+		Frame clsChild = getFrame(childConceptId, kb);
+		Frame clsParent = getFrame(parentConceptId, kb);
+
+		if (clsChild != null && clsParent != null && clsChild instanceof Cls
+				&& clsParent instanceof Cls
+				&& ((Cls) clsChild).hasSuperclass((Cls) clsParent)) {
+			return true;
+		}
+
+		return false;
+	}
+
+	/**
+	 * Retrieve all available properties with their associate metadata for a
+	 * given ontology
+	 * 
+	 * @param ontologyBean
+	 * @return
+	 * 
+	 * @throws Exception
+	 */
+	public List<PropertyBean> findProperties(OntologyBean ontologyBean)
+			throws Exception {
+		KnowledgeBase kb = getKnowledgeBase(ontologyBean);
+		Collection props;
+		List<PropertyBean> propList = new ArrayList<PropertyBean>(0);
+
+		if (kb instanceof OWLModel) {
+			OWLModel owlModel = (OWLModel) kb;
+			props = owlModel.getUserDefinedRDFProperties();
+
+			for (Object o : props) {
+				if (o instanceof RDFProperty) {
+					RDFProperty p = (RDFProperty) o;
+					propList.add(convertOWLPropertyBeans(p, kb, ontologyBean,
+							true));
+				}
+			}
+		} else {
+			props = kb.getSlots();
+
+			for (Object o : props) {
+				if (o instanceof Slot) {
+					Slot p = (Slot) o;
+					propList.add(convertFramePropertyBeans(p, kb, ontologyBean,
+							true));
+				}
+			}
+		}
+
+		return propList;
+	}
+
+	/**
+	 * Populates definitions, sub- and super- properties, range, and domain
+	 * recursively for a given property. This method is used for OWL only.
+	 * 
+	 * @param p
+	 *            - a given property
+	 * @param kb
+	 * @param ontologyBean
+	 * @param includeChildren
+	 * @return
+	 */
+	private PropertyBean convertOWLPropertyBeans(RDFProperty p,
+			KnowledgeBase kb, OntologyBean ontologyBean, boolean includeChildren) {
+		PropertyBean property = createBasePropertyBean(p, ontologyBean);
+
+		RDFResource range = p.getRange();
+
+		if (range != null) {
+			if (range instanceof RDFSNamedClass) {
+				ClassBean rangeClass = createBaseClassBean(range, ontologyBean);
+				property.addRelation(ApplicationConstants.RANGE, rangeClass);
+			} else {
+				property.addRelation(ApplicationConstants.RANGE, range
+						.getBrowserText());
+			}
+		}
+
+		RDFResource domain = p.getDomain(false);
+
+		if (domain != null && domain instanceof RDFSNamedClass) {
+			ClassBean rangeClass = createBaseClassBean(domain, ontologyBean);
+			property.addRelation(ApplicationConstants.DOMAIN, rangeClass);
+		}
+
+		if (includeChildren) {
+			Collection subProps = p.getSubproperties(false);
+
+			if (subProps != null) {
+				for (Object o : subProps) {
+					if (o instanceof RDFProperty) {
+						PropertyBean childProp = convertOWLPropertyBeans(
+								(RDFProperty) o, kb, ontologyBean, false);
+						property.addRelation(ApplicationConstants.SUB_PROPERTY,
+								childProp);
+
+					}
+				}
+			}
+
+			Collection superProps = p.getSuperproperties(false);
+
+			if (superProps != null) {
+				for (Object o : superProps) {
+					if (o instanceof RDFProperty) {
+						PropertyBean parentProp = convertOWLPropertyBeans(
+								(RDFProperty) o, kb, ontologyBean, false);
+						property
+								.addRelation(
+										ApplicationConstants.SUPER_PROPERTY,
+										parentProp);
+					}
+				}
+			}
+		}
+
+		Slot definitionSlot = getDefinitionSlot(kb, ontologyBean
+				.getDocumentationSlot());
+		addDefinitions(p, definitionSlot, property);
+
+		return property;
+	}
+
+	/**
+	 * Populates definitions, sub- and super- properties, range, and domain
+	 * recursively for a given property. This method is used for Frames only.
+	 * 
+	 * @param p
+	 *            - a given property
+	 * @param kb
+	 * @param ontologyBean
+	 * @param includeChildren
+	 * @return
+	 */
+	private PropertyBean convertFramePropertyBeans(Slot p, KnowledgeBase kb,
+			OntologyBean ontologyBean, boolean includeChildren) {
+		PropertyBean property = createBasePropertyBean(p, ontologyBean);
+
+		ValueType range = p.getValueType();
+
+		if (range != null) {
+			property.addRelation(ApplicationConstants.RANGE, range.toString());
+		}
+
+		Collection domains = p.getDomain();
+
+		if (domains != null) {
+			for (Object o : domains) {
+				if (o instanceof Cls) {
+					Cls domain = (Cls) o;
+					ClassBean rangeClass = createBaseClassBean(domain,
+							ontologyBean);
+					property.addRelation(ApplicationConstants.DOMAIN,
+							rangeClass);
+				}
+			}
+		}
+
+		if (includeChildren) {
+			Collection subProps = p.getSubslots();
+
+			if (subProps != null) {
+				for (Object o : subProps) {
+					if (o instanceof Slot) {
+						PropertyBean childProp = convertFramePropertyBeans(
+								(Slot) o, kb, ontologyBean, false);
+						property.addRelation(ApplicationConstants.SUB_PROPERTY,
+								childProp);
+
+					}
+				}
+			}
+
+			Collection superProps = p.getSuperslots();
+
+			if (superProps != null) {
+				for (Object o : superProps) {
+					if (o instanceof Slot) {
+						PropertyBean parentProp = convertFramePropertyBeans(
+								(Slot) o, kb, ontologyBean, false);
+						property
+								.addRelation(
+										ApplicationConstants.SUPER_PROPERTY,
+										parentProp);
+					}
+				}
+			}
+		}
+
+		Slot definitionSlot = getDefinitionSlot(kb, ontologyBean
+				.getDocumentationSlot());
+		addDefinitions(p, definitionSlot, property);
+
+		return property;
 	}
 
 	//
@@ -597,7 +791,7 @@ public class OntologyRetrievalManagerProtegeImpl extends
 	 * 2/23/09 Added subclass.getName().startsWith("@") to catch a protege bug
 	 * where non named classes got added Using .startsWith because protege team
 	 * suggested it as the best way
-	 *
+	 * 
 	 * @param protegeClasses
 	 * @return
 	 */
@@ -665,18 +859,30 @@ public class OntologyRetrievalManagerProtegeImpl extends
 		return StringHelper.unSingleQuote(browserText);
 	}
 
+	private PropertyBean createBasePropertyBean(Slot frame,
+			OntologyBean ontologyBean) {
+		PropertyBean propertyBean = new PropertyBean();
+		populateBaseConceptBean(frame, ontologyBean, propertyBean);
+
+		return propertyBean;
+	}
+
 	private ClassBean createBaseClassBean(Frame frame, OntologyBean ontologyBean) {
 		ClassBean classBean = new ClassBean();
-		classBean.setId(getId(frame));
-		classBean.setFullId(getFullId(frame, ontologyBean));
-		classBean.setLabel(getBrowserText(frame, ontologyBean));
-		addIsObsolete(frame, classBean);
-
-		ConceptTypeEnum protegeType = getConceptType(frame);
-
-		classBean.setType(protegeType);
+		populateBaseConceptBean(frame, ontologyBean, classBean);
 
 		return classBean;
+	}
+
+	private void populateBaseConceptBean(Frame frame,
+			OntologyBean ontologyBean, AbstractConceptBean conceptBean) {
+		conceptBean.setId(getId(frame));
+		conceptBean.setFullId(getFullId(frame, ontologyBean));
+		conceptBean.setLabel(getBrowserText(frame, ontologyBean));
+		addIsObsolete(frame, conceptBean);
+
+		ConceptTypeEnum protegeType = getConceptType(frame);
+		conceptBean.setType(protegeType);
 	}
 
 	private ClassBean createClassBean(Cls cls, boolean includeChildren,
@@ -753,10 +959,11 @@ public class OntologyRetrievalManagerProtegeImpl extends
 		return classBean;
 	}
 
-	private void addIsObsolete(Frame frame, ClassBean classBean) {
-		Byte isObsolete = isObsolete(getDeprecatedSlot(frame.getKnowledgeBase()),
-				frame) ? (byte) 1 : (byte) 0;
-		classBean.setIsObsolete(isObsolete);
+	private void addIsObsolete(Frame frame, AbstractConceptBean conceptBean) {
+		Byte isObsolete = isObsolete(
+				getDeprecatedSlot(frame.getKnowledgeBase()), frame) ? (byte) 1
+				: (byte) 0;
+		conceptBean.setIsObsolete(isObsolete);
 	}
 
 	private void addSynonyms(Cls cls, Slot synonymSlot, ClassBean classBean) {
@@ -777,10 +984,11 @@ public class OntologyRetrievalManagerProtegeImpl extends
 		}
 	}
 
-	private void addDefinitions(Cls cls, Slot definitionSlot,
-			ClassBean classBean) {
+	private void addDefinitions(Frame frame, Slot definitionSlot,
+			AbstractConceptBean conceptBean) {
 		if (definitionSlot != null) {
-			Collection<?> definitions = getFixedSlotValues(cls, definitionSlot);
+			Collection<?> definitions = getFixedSlotValues(frame,
+					definitionSlot);
 
 			for (Object definition : definitions) {
 				String definitionStr;
@@ -791,7 +999,7 @@ public class OntologyRetrievalManagerProtegeImpl extends
 					definitionStr = definition.toString();
 				}
 
-				classBean.addDefinition(definitionStr);
+				conceptBean.addDefinition(definitionStr);
 			}
 		}
 	}
@@ -825,7 +1033,7 @@ public class OntologyRetrievalManagerProtegeImpl extends
 
 	/**
 	 * Converts collection of slots into a string representation of values
-	 *
+	 * 
 	 * @param slots
 	 * @return
 	 */
@@ -887,32 +1095,16 @@ public class OntologyRetrievalManagerProtegeImpl extends
 		return bpProps;
 	}
 
-	public boolean hasParent(OntologyBean ontologyVersion,
-			String childConceptId, String parentConceptId) throws Exception {
-		KnowledgeBase kb = getKnowledgeBase(ontologyVersion);
-		Frame clsChild = getFrame(childConceptId, kb);
-		Frame clsParent = getFrame(parentConceptId, kb);
-
-		if (clsChild != null && clsParent != null && clsChild instanceof Cls
-				&& clsParent instanceof Cls
-				&& ((Cls) clsChild).hasSuperclass((Cls) clsParent)) {
-			return true;
-		}
-
-		return false;
-	}
-
 	/**
 	 * Uses the appropriate method to get values for a given slot. This bypasses
 	 * problems with retrieving values and having the ~#en showing in front of
 	 * the string, which is due to using getOwnSlotValues.
-	 *
-	 *
+	 * 
 	 * @param concept
 	 * @param slot
 	 * @return
 	 */
-	private Collection getFixedSlotValues(Cls concept, Slot slot) {
+	private Collection getFixedSlotValues(Frame concept, Slot slot) {
 		boolean isOwl = concept.getKnowledgeBase() instanceof OWLModel;
 
 		Collection classes = (isOwl && slot instanceof RDFProperty && concept instanceof RDFResource) ? ((RDFResource) concept)

@@ -22,9 +22,9 @@ import org.restlet.data.Status;
 
 /**
  * Restlet responsible for executing search query operations
- *
+ * 
  * @author Michael Dorf
- *
+ * 
  */
 public class QueryRestlet extends AbstractBaseRestlet {
 
@@ -44,12 +44,12 @@ public class QueryRestlet extends AbstractBaseRestlet {
 	 */
 	@Override
 	public void putRequest(Request request, Response response) {
-		emptyOrReloadSearchCache(request, response);
+		emptySearchCache(request, response);
 	}
 
 	/**
 	 * Execute search
-	 *
+	 * 
 	 * @param request
 	 * @param response
 	 */
@@ -121,19 +121,9 @@ public class QueryRestlet extends AbstractBaseRestlet {
 		}
 	}
 
-	private void emptyOrReloadSearchCache(Request request, Response response) {
-		HttpServletRequest httpRequest = RequestUtils
-				.getHttpServletRequest(request);
-		String reloadCache = (String) httpRequest
-				.getParameter(RequestParamConstants.PARAM_RELOADCACHE);
-		boolean reloadCacheBool = RequestUtils.parseBooleanParam(reloadCache);
-
+	private void emptySearchCache(Request request, Response response) {
 		try {
-			if (reloadCacheBool) {
-				queryService.reloadSearchCache();
-			} else {
-				queryService.emptySearchCache();
-			}
+			queryService.emptySearchCache();
 		} catch (Exception e) {
 			response.setStatus(Status.SERVER_ERROR_INTERNAL, e.getMessage());
 			e.printStackTrace();

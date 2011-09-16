@@ -15,6 +15,7 @@ import org.ncbo.stanford.domain.generated.NcboLStatus;
 import org.ncbo.stanford.domain.generated.NcboOntologyFile;
 import org.ncbo.stanford.domain.generated.NcboOntologyLoadQueue;
 import org.ncbo.stanford.enumeration.StatusEnum;
+import org.ncbo.stanford.enumeration.ViewingRestrictionEnum;
 import org.ncbo.stanford.util.MessageUtils;
 import org.ncbo.stanford.util.constants.ApplicationConstants;
 
@@ -65,9 +66,9 @@ public class OntologyBean {
 	private UserAcl userAcl = new UserAcl(0);
 	private String obsoleteParent;
 	private String obsoleteProperty;
-	private String viewingRestriction;
+	private ViewingRestrictionEnum viewingRestriction;
 	private String licenseInformation;
-
+	
 	private boolean isView = false;
 
 	// category id(s)
@@ -104,7 +105,7 @@ public class OntologyBean {
 	/**
 	 * Checks whether user has access to this ontology (the user id is present
 	 * in this ontology's ACL)
-	 *
+	 * 
 	 * @param ontologyId
 	 * @return
 	 */
@@ -114,7 +115,7 @@ public class OntologyBean {
 
 	/**
 	 * Adds an user Id to this ontology's access list (ACL)
-	 *
+	 * 
 	 * @param userId
 	 * @param isOwner
 	 */
@@ -132,7 +133,7 @@ public class OntologyBean {
 	/**
 	 * Populates the OntologyBean to a NcboOntologyFile Entity. OntologyVersion
 	 * should have been populated from OntologyBean before making this call.
-	 *
+	 * 
 	 * @param ontologyFileList
 	 */
 	public void populateToFileEntity(List<NcboOntologyFile> ontologyFileList) {
@@ -148,7 +149,7 @@ public class OntologyBean {
 	 * NOTE: This method should replicate the
 	 * {@link #populateDefaultStatus(NcboLStatus)} method an is to be used in
 	 * the ontological metadata implementation
-	 *
+	 * 
 	 * Returns default status, i.e. "1"(waiting) for local upload,
 	 * "5"(notapplicable) for remote.
 	 */
@@ -164,7 +165,7 @@ public class OntologyBean {
 	 * Populates a NcboOntologyLoadQueue Entity from this ontologyBean.
 	 * OntologyVersion should have been populated from OntologyBean before
 	 * making this call.
-	 *
+	 * 
 	 * @param NcboOntologyLoadQueue
 	 *            , NcboOntologyVersion
 	 */
@@ -540,7 +541,7 @@ public class OntologyBean {
 	}
 
 	/**
-	 *
+	 * 
 	 * @return the isFlat
 	 */
 	public Byte getIsFlat() {
@@ -549,7 +550,7 @@ public class OntologyBean {
 
 	/**
 	 * Set isFlat
-	 *
+	 * 
 	 * @param isFlat
 	 */
 	public void setIsFlat(Byte isFlat) {
@@ -1054,7 +1055,7 @@ public class OntologyBean {
 	/**
 	 * @return the viewingRestriction
 	 */
-	public String getViewingRestriction() {
+	public ViewingRestrictionEnum getViewingRestriction() {
 		return viewingRestriction;
 	}
 
@@ -1062,7 +1063,7 @@ public class OntologyBean {
 	 * @param viewingRestriction
 	 *            the viewingRestriction to set
 	 */
-	public void setViewingRestriction(String viewingRestriction) {
+	public void setViewingRestriction(ViewingRestrictionEnum viewingRestriction) {
 		this.viewingRestriction = viewingRestriction;
 	}
 

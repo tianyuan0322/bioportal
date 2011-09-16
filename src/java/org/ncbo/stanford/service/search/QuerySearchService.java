@@ -176,10 +176,4 @@ public interface QuerySearchService {
 	 * Empty search results cache
 	 */
 	public void emptySearchCache();
-
-	/**
-	 * Reload search results cache by re-running all queries in it and
-	 * re-populating it with new results
-	 */
-	public void reloadSearchCache();
 }

@@ -66,6 +66,12 @@ public class OntologySearchManagerProtegeImpl extends
 			}
 		}
 
+		Slot deprecatedSlot = getDeprecatedSlot(kb);
+		List<Slot> preferredNameSlots = getPreferredNameSlots(kb,
+				ontologyBean.getPreferredNameSlot());
+		Slot synonymSlot = getSynonymSlot(kb, ontologyBean.getSynonymSlot());
+		Set<Slot> propertySlots = getPropertySlots(kb);
+		
 		for (Frame frame : frames) {
 			// exclude anonymous and system frames from being indexed
 			if (frame.isSystem()
@@ -73,18 +79,16 @@ public class OntologySearchManagerProtegeImpl extends
 							.isAnonymous())) {
 				continue;
 			}
-
+			
+			Byte isObsolete = new Byte(isObsolete(deprecatedSlot, frame) ? (byte)1 : (byte)0);	
 			String preferredName = null;
 			ProtegeSearchFrame protegeFrame = new ProtegeSearchFrame(
 					ontologyBean.getId(), ontologyBean.getOntologyId(),
 					ontologyBean.getDisplayLabel(),
 					SearchRecordTypeEnum.RECORD_TYPE_PREFERRED_NAME,
-					getConceptType(frame), null, frame);
+					getConceptType(frame), null, isObsolete, frame);
 
 			// add preferred name slot
-			List<Slot> preferredNameSlots = getPreferredNameSlots(kb,
-					ontologyBean.getPreferredNameSlot());
-
 			for (Slot prefNameSlot : preferredNameSlots) {
 				preferredName = addPreferredNameSlotToIndex(writer,
 						ontologyBean, doc, kb, protegeFrame, prefNameSlot,
@@ -102,8 +106,6 @@ public class OntologySearchManagerProtegeImpl extends
 					preferredName, owlMode);
 
 			// add synonym slot if exists
-			Slot synonymSlot = getSynonymSlot(kb, ontologyBean.getSynonymSlot());
-
 			if (synonymSlot != null) {
 				protegeFrame
 						.setRecordType(SearchRecordTypeEnum.RECORD_TYPE_SYNONYM);
@@ -112,7 +114,6 @@ public class OntologySearchManagerProtegeImpl extends
 			}
 
 			// add property slots
-			Set<Slot> propertySlots = getPropertySlots(kb);
 			protegeFrame
 					.setRecordType(SearchRecordTypeEnum.RECORD_TYPE_PROPERTY);
 
@@ -297,7 +298,7 @@ public class OntologySearchManagerProtegeImpl extends
 						.getRecordType(), luceneProtegeFrame.getObjectType(),
 				getFullId(luceneProtegeFrame.getFrame(), ontologyBean),
 				getConceptIdShort(luceneProtegeFrame.getFrame()),
-				preferredName, value);
+				preferredName, value, null, luceneProtegeFrame.getIsObsolete());
 	}
 
 	/**

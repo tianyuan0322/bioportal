@@ -95,6 +95,15 @@ public class OntologyRetrievalManagerLexGridImpl extends
 				.getGenericExtension("LexBIGServiceConvenienceMethods");
 	}
 
+	/**
+	 * Retrieve all available properties with their associate metadata for a
+	 * given ontology
+	 * 
+	 * @param ob
+	 * @return List<PropertyBean>
+	 * 
+	 * @throws Exception
+	 */
 	public List<PropertyBean> findProperties(OntologyBean ontologyBean)
 			throws Exception {
 		String urnAndVersion = ontologyBean.getCodingScheme();
@@ -112,6 +121,7 @@ public class OntologyRetrievalManagerLexGridImpl extends
 				list.add(pb);
 			}
 		}
+		
 		return list;
 	}
 
@@ -1159,7 +1169,7 @@ public class OntologyRetrievalManagerLexGridImpl extends
 	private PropertyBean createBasePropertyBean(OntologyBean ontologyBean, String id) {
 		PropertyBean propBean = new PropertyBean();
 		propBean.setId(id);
-		String fullId= getFullId(ontologyBean, id);
+		String fullId = getFullId(ontologyBean, id);
 		propBean.setFullId(fullId);
 		propBean.setLabel(id);
 		propBean.setType(ConceptTypeEnum.CONCEPT_TYPE_PROPERTY);
@@ -1282,11 +1292,9 @@ public class OntologyRetrievalManagerLexGridImpl extends
 				if (!keyList.contains(propertyValue)) {
 					keyList.add(propertyValue);
 				}
-
 			} else if (keyValue instanceof String) {
 				relationMap.put(propertyName, propertyValue);
 			}
-
 		}
 	}
 
@@ -1562,24 +1570,9 @@ public class OntologyRetrievalManagerLexGridImpl extends
 	}
 
 	private void addInactiveStatus(OntologyBean ontologyBean, Concept entry,
-			ClassBean bean) {
-		if (entry.getIsActive() != null && entry.getIsActive() == false) {
+			ClassBean bean) {		
+		if (isObsolete(entry)) {
 			bean.setIsObsolete(ApplicationConstants.TRUE);
-			//addPropertyToClassBean(bean, "is_obsolete", "true");
-		}
-		
-		int count = entry.getPropertyCount();
-		for (int i = 0; i < count; i++) {
-			Property prop = entry.getProperty(i);
-			String key = prop.getPropertyName();
-
-			if (StringUtils.isNotBlank(key) && key.equalsIgnoreCase("CONCEPTSTATUS")) {
-				String value= prop.getValue().getContent();
-				List<String> inactiveList= Arrays.asList("1", "2", "3", "4", "5", "10");
-				if (StringUtils.isNotBlank(value)&& inactiveList.contains(value)) {
-					bean.setIsObsolete(ApplicationConstants.TRUE);
-				}
-			}
 		}
 	}
 

@@ -24,35 +24,38 @@ public class SearchIndexBean extends SearchBean {
 	public static final String PREFERRED_NAME_LC_FIELD_LABEL = "preferredNameLC";
 	public static final String CONTENTS_FIELD_LABEL = "contents";
 	public static final String LITERAL_CONTENTS_FIELD_LABEL = "literalContents";
+	public static final String IS_OBSOLETE_FIELD_LABEL = "isObsolete";
 
 	private SearchField ontologyVersionId = new SearchField(
 			ONTOLOGY_VERSION_ID_FIELD_LABEL, Field.Store.YES,
-			Field.Index.NOT_ANALYZED);
+			Field.Index.NOT_ANALYZED, Integer.TYPE);
 	private SearchField ontologyId = new SearchField(ONTOLOGY_ID_FIELD_LABEL,
-			Field.Store.YES, Field.Index.NOT_ANALYZED);
+			Field.Store.YES, Field.Index.NOT_ANALYZED, Integer.TYPE);
 	private SearchField ontologyDisplayLabel = new SearchField(
 			ONTOLOGY_DISPLAY_LABEL_FIELD_LABEL, Field.Store.YES,
-			Field.Index.NOT_ANALYZED);
+			Field.Index.NOT_ANALYZED, String.class);
 	private SearchField recordType = new SearchField(RECORD_TYPE_FIELD_LABEL,
-			Field.Store.YES, Field.Index.NOT_ANALYZED);
+			Field.Store.YES, Field.Index.NOT_ANALYZED, String.class);
 	private SearchField objectType = new SearchField(OBJECT_TYPE_FIELD_LABEL,
-			Field.Store.YES, Field.Index.NOT_ANALYZED);
+			Field.Store.YES, Field.Index.NOT_ANALYZED, String.class);
 	private SearchField conceptId = new SearchField(CONCEPT_ID_FIELD_LABEL,
-			Field.Store.YES, Field.Index.NOT_ANALYZED);
+			Field.Store.YES, Field.Index.NOT_ANALYZED, String.class);
 	private SearchField conceptIdShort = new SearchField(
 			CONCEPT_ID_SHORT_FIELD_LABEL, Field.Store.YES,
-			Field.Index.NOT_ANALYZED);
+			Field.Index.NOT_ANALYZED, String.class);
 	private SearchField preferredName = new SearchField(
 			PREFERRED_NAME_FIELD_LABEL, Field.Store.YES,
-			Field.Index.NOT_ANALYZED);
+			Field.Index.NOT_ANALYZED, String.class);
 	private SearchField preferredNameLC = new SearchField(
 			PREFERRED_NAME_LC_FIELD_LABEL, Field.Store.NO,
-			Field.Index.NOT_ANALYZED);
+			Field.Index.NOT_ANALYZED, String.class);
 	private SearchField contents = new SearchField(CONTENTS_FIELD_LABEL,
-			Field.Store.YES, Field.Index.ANALYZED);
+			Field.Store.YES, Field.Index.ANALYZED, String.class);
 	private SearchField literalContents = new SearchField(
 			LITERAL_CONTENTS_FIELD_LABEL, Field.Store.NO,
-			Field.Index.NOT_ANALYZED);
+			Field.Index.NOT_ANALYZED, String.class);
+	private SearchField isObsolete = new SearchField(IS_OBSOLETE_FIELD_LABEL,
+			Field.Store.YES, Field.Index.NOT_ANALYZED, Byte.TYPE);
 
 	/**
 	 * @param ontologyVersionId
@@ -144,6 +147,16 @@ public class SearchIndexBean extends SearchBean {
 	}
 
 	/**
+	 * @param isObsolete
+	 *            the isObsolete to set
+	 */
+	public void setIsObsolete(Byte isObsolete) {
+		super.setIsObsolete(isObsolete);
+		this.isObsolete.setContents((isObsolete == null) ? null : isObsolete
+				.toString());
+	}
+
+	/**
 	 * @return the ontologyVersionId
 	 */
 	public SearchField getOntologyVersionIdField() {
@@ -218,5 +231,12 @@ public class SearchIndexBean extends SearchBean {
 	 */
 	public SearchField getLiteralContentsField() {
 		return literalContents;
+	}
+
+	/**
+	 * @return the isObsolete
+	 */
+	public SearchField getIsObsoleteField() {
+		return isObsolete;
 	}
 }

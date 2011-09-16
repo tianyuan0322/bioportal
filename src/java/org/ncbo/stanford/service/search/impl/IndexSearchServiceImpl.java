@@ -113,7 +113,7 @@ public class IndexSearchServiceImpl extends AbstractSearchService implements
 		List<OntologyBean> ontologies = ontologyMetadataManager
 				.findLatestActiveOntologyOrOntologyViewVersions(ontologyIdList);
 
-		removeOntologies(writer, ontologyIdList, doBackup, false, true);
+		removeOntologies(writer, ontologyIdList, doBackup, false);
 
 		if (!ontologies.isEmpty()) {
 			indexOntologies(writer, ontologies, false, doOptimize);
@@ -151,7 +151,7 @@ public class IndexSearchServiceImpl extends AbstractSearchService implements
 			boolean doOptimize) throws Exception {
 		LuceneIndexWriterWrapper writer = new LuceneIndexWriterWrapper(
 				indexPath, analyzer);
-		removeOntologies(writer, ontologyIds, doBackup, doOptimize, true);
+		removeOntologies(writer, ontologyIds, doBackup, doOptimize);
 		closeWriter(writer);
 	}
 
@@ -200,7 +200,7 @@ public class IndexSearchServiceImpl extends AbstractSearchService implements
 		long stop = 0;
 
 		if (mgr != null) {
-			removeOntology(writer, ontologyId, doBackup, false, false);
+			removeOntology(writer, ontologyId, doBackup, false);
 
 			if (log.isDebugEnabled()) {
 				log.debug("Adding ontology to index: "
@@ -219,7 +219,7 @@ public class IndexSearchServiceImpl extends AbstractSearchService implements
 						+ (double) (stop - start) / 1000 / 60 + " minutes.\n");
 			}
 
-			reloadSearchCache();
+			emptySearchCache();
 
 			if (doOptimize) {
 				optimizeIndex(writer);
@@ -276,11 +276,11 @@ public class IndexSearchServiceImpl extends AbstractSearchService implements
 	 * @throws Exception
 	 */
 	private void removeOntology(LuceneIndexWriterWrapper writer,
-			Integer ontologyId, boolean doBackup, boolean doOptimize,
-			boolean reloadCache) throws Exception {
+			Integer ontologyId, boolean doBackup, boolean doOptimize)
+			throws Exception {
 		List<Integer> ontologyIds = new ArrayList<Integer>(1);
 		ontologyIds.add(ontologyId);
-		removeOntologies(writer, ontologyIds, doBackup, doOptimize, reloadCache);
+		removeOntologies(writer, ontologyIds, doBackup, doOptimize);
 	}
 
 	/**
@@ -294,8 +294,8 @@ public class IndexSearchServiceImpl extends AbstractSearchService implements
 	 * @throws Exception
 	 */
 	private void removeOntologies(LuceneIndexWriterWrapper writer,
-			List<Integer> ontologyIds, boolean doBackup, boolean doOptimize,
-			boolean reloadCache) throws Exception {
+			List<Integer> ontologyIds, boolean doBackup, boolean doOptimize)
+			throws Exception {
 		if (doBackup) {
 			backupIndex(writer);
 		}
@@ -308,9 +308,7 @@ public class IndexSearchServiceImpl extends AbstractSearchService implements
 			writer.deleteDocuments(ontologyIdsQuery);
 		}
 
-		if (reloadCache) {
-			reloadSearchCache();
-		}
+		emptySearchCache();
 
 		if (doOptimize) {
 			optimizeIndex(writer);
