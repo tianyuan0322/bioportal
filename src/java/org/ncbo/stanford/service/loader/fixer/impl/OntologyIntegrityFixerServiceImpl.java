@@ -274,7 +274,7 @@ public class OntologyIntegrityFixerServiceImpl extends AbstractOntologyService
 				}
 			}
 		} catch (Exception e) {
-			log.error("Unable to fix search index due to the following error: "
+			log.error("Unable to obsolete terms due to the following error: "
 					+ e);
 			e.printStackTrace();
 		}

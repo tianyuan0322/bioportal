@@ -424,9 +424,9 @@ public class OntologyMetadataUtils extends MetadataUtils {
 		setPropertyValue(owlModel, ontologyInd, PROPERTY_OBSOLETE_PROPERTY, ob
 				.getObsoleteProperty());
 
-		setPropertyValue(owlModel, ontologyInd, PROPERTY_VIEWING_RESTRICTION,
+		setPropertyValue(owlModel, vOntInd, PROPERTY_VIEWING_RESTRICTION,
 				ob.getViewingRestriction().toString());
-		setPropertyValue(owlModel, ontologyInd, PROPERTY_LICENSE_INFORMATION,
+		setPropertyValue(owlModel, vOntInd, PROPERTY_LICENSE_INFORMATION,
 				ob.getLicenseInformation());
 
 		if (ob.isView()) {
@@ -688,9 +688,9 @@ public class OntologyMetadataUtils extends MetadataUtils {
 				PROPERTY_OBSOLETE_PROPERTY, String.class));
 
 		ob.setViewingRestriction(ViewingRestrictionEnum
-				.getFromLabel(getPropertyValue(owlModel, ontologyInd,
+				.getFromLabel(getPropertyValue(owlModel, vOntInd,
 						PROPERTY_VIEWING_RESTRICTION, String.class)));
-		ob.setLicenseInformation(getPropertyValue(owlModel, ontologyInd,
+		ob.setLicenseInformation(getPropertyValue(owlModel, vOntInd,
 				PROPERTY_LICENSE_INFORMATION, String.class));
 
 		ob.setHasViews(getPropertyValueIds(owlModel, ontologyInd,

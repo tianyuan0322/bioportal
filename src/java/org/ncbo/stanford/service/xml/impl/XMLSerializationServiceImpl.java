@@ -50,6 +50,7 @@ import org.ncbo.stanford.bean.search.SearchBean;
 import org.ncbo.stanford.enumeration.ConceptTypeEnum;
 import org.ncbo.stanford.enumeration.ErrorTypeEnum;
 import org.ncbo.stanford.enumeration.SearchRecordTypeEnum;
+import org.ncbo.stanford.enumeration.ViewingRestrictionEnum;
 import org.ncbo.stanford.service.session.RESTfulSession;
 import org.ncbo.stanford.service.xml.XMLSerializationService;
 import org.ncbo.stanford.service.xml.converters.ClassBeanListConverter;
@@ -84,9 +85,9 @@ import com.thoughtworks.xstream.mapper.Mapper;
 
 /**
  * A default implementation of the XMLSerializationService
- * 
+ *
  * @author Michael Dorf
- * 
+ *
  */
 public class XMLSerializationServiceImpl implements XMLSerializationService {
 
@@ -100,7 +101,7 @@ public class XMLSerializationServiceImpl implements XMLSerializationService {
 	/**
 	 * Generate an XML representation of a specific error This is going to
 	 * retire when ErrorTypeEnum is replaced with Restlet.Status object - cyoun
-	 * 
+	 *
 	 * @param errorType
 	 * @param accessedResource
 	 * @return
@@ -118,7 +119,7 @@ public class XMLSerializationServiceImpl implements XMLSerializationService {
 
 	/**
 	 * Generate an XML representation of a specific error.
-	 * 
+	 *
 	 * @param request
 	 * @param response
 	 * @return
@@ -139,7 +140,7 @@ public class XMLSerializationServiceImpl implements XMLSerializationService {
 	 * Generate an XML representation of a successfully processed request. This
 	 * should only be used when no other XML response is expected (i.e.
 	 * authentication).
-	 * 
+	 *
 	 * @param errorStatusBean
 	 * @return String
 	 */
@@ -151,7 +152,7 @@ public class XMLSerializationServiceImpl implements XMLSerializationService {
 	 * Generate an XML representation of a successfully processed request. This
 	 * should only be used when no other XML response is expected (i.e.
 	 * authentication).
-	 * 
+	 *
 	 * @param successBean
 	 * @return String
 	 */
@@ -204,7 +205,7 @@ public class XMLSerializationServiceImpl implements XMLSerializationService {
 	/**
 	 * Generate an XML representation of a successfully processed request with
 	 * XSL Transformation.
-	 * 
+	 *
 	 * @param request
 	 * @param data
 	 * @param xsltFile
@@ -227,7 +228,7 @@ public class XMLSerializationServiceImpl implements XMLSerializationService {
 	/**
 	 * Generates Generic XML response which contains status info whether success
 	 * or fail. session id and access resource info is included.
-	 * 
+	 *
 	 * @param request
 	 * @param response
 	 */
@@ -246,7 +247,7 @@ public class XMLSerializationServiceImpl implements XMLSerializationService {
 	/**
 	 * Generates XML response. If SUCCESS - Entity info is displayed. else -
 	 * Error info is displayed.
-	 * 
+	 *
 	 * @param request
 	 * @param response
 	 * @param data
@@ -268,9 +269,9 @@ public class XMLSerializationServiceImpl implements XMLSerializationService {
 	/**
 	 * Generates XML response then apply XSL transformation. This is useful to
 	 * filter huge XML response such as findAll() Ontologies.
-	 * 
+	 *
 	 * If SUCCESS - Entity info is displayed. else - Error info is displayed.
-	 * 
+	 *
 	 * @param request
 	 * @param response
 	 * @param data
@@ -300,7 +301,7 @@ public class XMLSerializationServiceImpl implements XMLSerializationService {
 
 	/**
 	 * Process a get request and return a response
-	 * 
+	 *
 	 * @param baseUrl
 	 * @param getParams
 	 * @throws Exception
@@ -422,7 +423,7 @@ public class XMLSerializationServiceImpl implements XMLSerializationService {
 
 	/**
 	 * Generate an XML representation of a request.
-	 * 
+	 *
 	 * @param responseBean
 	 * @return String
 	 */
@@ -467,6 +468,8 @@ public class XMLSerializationServiceImpl implements XMLSerializationService {
 				mapper));
 		xmlSerializer.registerConverter(new UserAclConverter(mapper));
 		xmlSerializer.registerConverter(new OntologyAclConverter(mapper));
+		xmlSerializer.registerConverter(new EnumSingleValueConverter(
+				ViewingRestrictionEnum.class));
 	}
 
 	/**
