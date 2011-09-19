@@ -462,6 +462,15 @@ notes.jdbc.username=yourprotegedbuser
 notes.jdbc.password=yourprotegedbpassword
 bioportal.notes.changes.includes.path=${bioportal.static.resource.path}/metadata/notes/changes.owl
 
+############# Purl Configuration. If no purl server is present, set purl.configured=false
+purl.host=hostname
+purl.port=9080
+purl.username=yourpurluser
+purl.password=yourpurlpassword
+purl.maintainers=comma seperated list of maintainers
+purl.targeturlprefix=http://bioportal.bioontology.org
+purl.configured=true
+
 ############# UI Configuration
 ui.url=http://rails-ui.example.org
 #### Links should point to the versioned address

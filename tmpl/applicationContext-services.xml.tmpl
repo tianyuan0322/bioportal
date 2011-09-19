@@ -840,6 +840,9 @@
 		<property name="ontologyMetadataManager">
 			<ref bean="ontologyMetadataManager" />
 		</property>
+		<property name="purlClientManager">
+			<ref bean="purlClientManager" />
+		</property>
 	</bean>
 
 	<bean id="ontologyService"
@@ -887,6 +890,31 @@
 	  	  <ref local="provisionalTermService" />
 	  </property>
 	</bean>
+	
+	<bean id="purlClientManager"
+		class="org.ncbo.stanford.manager.purl.impl.PurlClientManagerImpl">
+		<property name="host">
+			<value>@bioportalpurlhost@</value>
+		</property>
+		<property name="port">
+			<value>@bioportalpurlport@</value>
+		</property>
+		<property name="userName">
+			<value>@bioportalpurlusername@</value>
+		</property>
+		<property name="password">
+			<value>@bioportalpurlpassword@</value>
+		</property>
+		<property name="maintainers">
+			<value>@bioportalpurlmaintainers@</value>
+		</property>
+		<property name="targetUrlPrefix">
+			<value>@bioportalpurltargeturlprefix@</value>
+		</property>
+		<property name="configured">
+			<value>@bioportalpurlconfigured@</value>
+		</property>
+	</bean>	
 
 	<bean id="usageLoggingService"
 		class="org.ncbo.stanford.service.logging.impl.UsageLoggingServiceImpl">

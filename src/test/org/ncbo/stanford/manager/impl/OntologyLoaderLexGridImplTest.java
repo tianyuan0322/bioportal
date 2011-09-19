@@ -435,6 +435,7 @@ public class OntologyLoaderLexGridImplTest extends AbstractBioPortalTest {
 		bean.setCodingScheme(OBO_CELL_URN_VERSION);
 		bean.setVersionNumber("TEST");
 		bean.setDisplayLabel(OBO_CELL_DISPLAY_LABEL);
+		bean.setAbbreviation(OBO_CELL_DISPLAY_LABEL);
 		bean.setContactEmail("obo@email.com");
 		bean.setContactName("OBO Name");
 		return bean;
@@ -445,6 +446,7 @@ public class OntologyLoaderLexGridImplTest extends AbstractBioPortalTest {
 		bean.setFormat(ApplicationConstants.FORMAT_OBO);
 		bean.setCodingScheme(OBO_FUNGAL_URN_VERSION);
 		bean.setDisplayLabel(OBO_FUNGAL_DISPLAY_LABEL);
+		bean.setAbbreviation(OBO_FUNGAL_DISPLAY_LABEL);
 		return bean;
 	}
 
@@ -489,6 +491,7 @@ public class OntologyLoaderLexGridImplTest extends AbstractBioPortalTest {
 		bean.setFormat(ApplicationConstants.FORMAT_OBO);
 		bean.setCodingScheme(OBO_PROTEIN_URN_VERSION);
 		bean.setDisplayLabel(OBO_PROTEIN_DISPLAY_LABEL);
+		bean.setAbbreviation(OBO_PROTEIN_DISPLAY_LABEL);
 		return bean;
 	}
 	
@@ -506,6 +509,7 @@ public class OntologyLoaderLexGridImplTest extends AbstractBioPortalTest {
 		bean.setFormat(ApplicationConstants.FORMAT_OBO);
 		bean.setCodingScheme(OBO_DICTYOSTELIUM_URN_VERSION);
 		bean.setDisplayLabel(OBO_DICTYOSTELIUM_DISPLAY_LABEL);
+		bean.setAbbreviation(OBO_DICTYOSTELIUM_DISPLAY_LABEL);
 		return bean;
 	}
 
@@ -514,6 +518,7 @@ public class OntologyLoaderLexGridImplTest extends AbstractBioPortalTest {
 		bean.setFormat(ApplicationConstants.FORMAT_OBO);
 		bean.setCodingScheme(OBO_INFECTIOUS_DISEASE_URN_VERSION);
 		bean.setDisplayLabel(OBO_INFECTIOUS_DISEASE_DISPLAY_LABEL);
+		bean.setAbbreviation(OBO_INFECTIOUS_DISEASE_DISPLAY_LABEL);
 		return bean;
 	}
 
@@ -542,6 +547,7 @@ public class OntologyLoaderLexGridImplTest extends AbstractBioPortalTest {
 		bean.setFormat(ApplicationConstants.FORMAT_LEXGRID_XML);
 		bean.setCodingScheme(LEXGRID_HL7_URN_VERSION);
 		bean.setDisplayLabel(LEXGRID_HL7_DISPLAY_LABEL);
+		bean.setAbbreviation(LEXGRID_HL7_DISPLAY_LABEL);
 		bean.setContactEmail("lexgrid@email.com");
 		bean.setContactName("Lexgrid Name");
 		return bean;

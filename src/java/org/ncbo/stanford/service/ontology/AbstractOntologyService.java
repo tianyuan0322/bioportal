@@ -18,6 +18,7 @@ import org.ncbo.stanford.domain.custom.dao.CustomNcboUserDAO;
 import org.ncbo.stanford.exception.InvalidOntologyFormatException;
 import org.ncbo.stanford.manager.load.OntologyLoadManager;
 import org.ncbo.stanford.manager.metadata.OntologyMetadataManager;
+import org.ncbo.stanford.manager.purl.PurlClientManager;
 import org.ncbo.stanford.manager.retrieval.OntologyRetrievalManager;
 import org.ncbo.stanford.service.metrics.MetricsService;
 import org.ncbo.stanford.service.search.IndexSearchService;
@@ -46,6 +47,7 @@ public abstract class AbstractOntologyService {
 	protected IndexSearchService indexService;
 	protected MetricsService metricsService;
 	protected OntologyMetadataManager ontologyMetadataManager;
+	protected PurlClientManager purlClientManager;
 
 	protected List<String> errorOntologies = new ArrayList<String>(0);
 	private List<Integer> ontologyAcl = new ArrayList<Integer>(0);
@@ -321,5 +323,17 @@ public abstract class AbstractOntologyService {
 	public void setOntologyRetrievalHandlerMap(
 			Map<String, OntologyRetrievalManager> ontologyRetrievalHandlerMap) {
 		this.ontologyRetrievalHandlerMap = ontologyRetrievalHandlerMap;
+	}
+
+	public PurlClientManager getPurlClientManager() {
+		return purlClientManager;
+	}
+	
+	/**
+	 * @param purlClientManager
+	 *            the purlClientManager to set
+	 */
+	public void setPurlClientManager(PurlClientManager purlClientManager) {
+		this.purlClientManager = purlClientManager;
 	}
 }

@@ -267,6 +267,13 @@
 				<filter token="bioportalallconceptsmaxpagesize" value="${bioportal.allconcepts.maxpagesize}" />
 				<filter token="bioportalapikey" value="${bioportal.apikey}" />
 				<filter token="bioportalsmtpserver" value="${bioportal.smtp.server}" />
+				<filter token="bioportalpurlhost" value="${purl.host}" />
+				<filter token="bioportalpurlport" value="${purl.port}" />
+				<filter token="bioportalpurlusername" value="${purl.username}" />
+				<filter token="bioportalpurlpassword" value="${purl.password}" />
+				<filter token="bioportalpurlmaintainers" value="${purl.maintainers}" />
+				<filter token="bioportalpurltargeturlprefix" value="${purl.targeturlprefix}" />
+				<filter token="bioportalpurlconfigured" value="${purl.configured}" />
 			</filterset>
 		</copy>
 

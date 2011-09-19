@@ -7,6 +7,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.ncbo.stanford.bean.OntologyBean;
@@ -184,7 +185,10 @@ public class OntologyLoadSchedulerServiceImpl extends AbstractOntologyService
 				status = StatusEnum.STATUS_READY;
 				updateOntologyStatus(loadQueue, ontologyBean, formatHandler,
 						status, errorMessage);
-
+				
+				//add an entry into the purl server for new ontologies
+                createPurlEntry(ontologyBean);
+                
 				// calculate ontology metrics
 				calculateMetrics(ontologyBean, formatHandler);
 
@@ -333,6 +337,21 @@ public class OntologyLoadSchedulerServiceImpl extends AbstractOntologyService
 				.equals(ontologyFormatHandlerMap.get(ontologyBean.getFormat())));
 	}
 
+/**
+ * Create a purl entry for a new ontology. If the internalVersionNumber=1 and 
+ * the ontology has a non blank abbreviation that isn't already in the purl server, we
+ * create a new entry.
+ */
+	private void createPurlEntry(OntologyBean ontologyBean) {
+		if (purlClientManager.isConfigured() && ontologyBean.getInternalVersionNumber()==1 && StringUtils.isNotBlank(ontologyBean.getAbbreviation())) {
+			String purl_path= "/ontology/"+ ontologyBean.getAbbreviation();
+			String targetPath= "/virtual/"+ ontologyBean.getOntologyId();
+			if (!purlClientManager.doesPurlExist(purl_path)) {
+				purlClientManager.createAdvancedPartialPurl(purl_path, targetPath);
+			}
+			
+		}
+	}
 	/**
 	 * Calculate ontology metrics for the specified ontology. The minimum
 	 * requirement is that the ontology is parsed and exists in the Bioportal
