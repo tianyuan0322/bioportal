@@ -10,6 +10,7 @@ import org.ncbo.stanford.bean.acl.OntologyAcl;
 import org.ncbo.stanford.bean.user.OntologyLicense;
 import org.ncbo.stanford.domain.generated.NcboOntologyAcl;
 import org.ncbo.stanford.domain.generated.NcboUser;
+import org.ncbo.stanford.domain.generated.NcboUserOntologyLicense;
 import org.ncbo.stanford.domain.generated.NcboUserRole;
 import org.ncbo.stanford.enumeration.RoleEnum;
 import org.ncbo.stanford.util.MessageUtils;
@@ -118,6 +119,14 @@ public class UserBean {
 			for (Object ontAcl : ncboUser.getNcboOntologyAcls()) {
 				ontologyAcl.put(((NcboOntologyAcl) ontAcl).getOntologyId(),
 						((NcboOntologyAcl) ontAcl).getIsOwner());
+			}
+
+			for (Object ontLicense : ncboUser.getNcboUserOntologyLicenses()) {
+				ontologyLicenses
+						.put(((NcboUserOntologyLicense) ontLicense)
+								.getOntologyId(),
+								((NcboUserOntologyLicense) ontLicense)
+										.getLicenseText());
 			}
 		}
 	}
