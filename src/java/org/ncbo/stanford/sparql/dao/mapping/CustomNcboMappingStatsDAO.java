@@ -61,6 +61,17 @@ public class CustomNcboMappingStatsDAO extends AbstractNcboMappingDAO {
 			+ "UNION { ?mappingId <http://protege.stanford.edu/ontologies/mappings/mappings.rdfs#target_ontology_id> %ONT% . "
 			+ "?mappingId <http://protege.stanford.edu/ontologies/mappings/mappings.rdfs#submitted_by> ?userId . } "
 			+ "} ORDER BY DESC(?count)";
+	
+	private static final String userCountWithTarget = "SELECT ?userId count(?mappingId) as ?count "
+			+ "WHERE { " +
+			"{ ?mappingId <http://protege.stanford.edu/ontologies/mappings/mappings.rdfs#source_ontology_id> %ONT% . " +
+			" ?mappingId <http://protege.stanford.edu/ontologies/mappings/mappings.rdfs#target_ontology_id> %TARG% . "
+			+ "?mappingId <http://protege.stanford.edu/ontologies/mappings/mappings.rdfs#submitted_by> ?userId . } "
+			+ "UNION { " +
+			"?mappingId <http://protege.stanford.edu/ontologies/mappings/mappings.rdfs#target_ontology_id> %ONT% . " +
+			"?mappingId <http://protege.stanford.edu/ontologies/mappings/mappings.rdfs#target_ontology_id> %TARG% . "
+			+ "?mappingId <http://protege.stanford.edu/ontologies/mappings/mappings.rdfs#submitted_by> ?userId . } "
+			+ "} ORDER BY DESC(?count)";
 
 	/**
 	 * Gets a list of recent mappings up to size of limit.
@@ -265,11 +276,17 @@ public class CustomNcboMappingStatsDAO extends AbstractNcboMappingDAO {
 		return concepts;
 	}
 
-	public List<MappingUserStatsBean> getOntologyUserCount(Integer ontologyId) {
+	public List<MappingUserStatsBean> getOntologyUserCount(Integer ontologyId,Integer targetOntology) {
 		List<MappingUserStatsBean> users = new ArrayList<MappingUserStatsBean>();
 
-		String userCountQuery = userCount.replaceAll("%ONT%", ontologyId
+		String queryTemplate = targetOntology == null ? userCount : userCountWithTarget;
+		
+		String userCountQuery = queryTemplate.replaceAll("%ONT%", ontologyId
 				.toString());
+
+		if (targetOntology != null)
+			userCountQuery = userCountQuery.replaceAll("%TARG%", targetOntology
+					.toString());
 
 		RepositoryConnection con = getRdfStoreManager()
 				.getRepositoryConnection();

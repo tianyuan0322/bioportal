@@ -2,6 +2,7 @@ package org.ncbo.stanford.view.rest.restlet.mapping;
 
 import java.util.List;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.ncbo.stanford.bean.OntologyBean;
@@ -40,8 +41,14 @@ public class MappingStatsOntologyUserRestlet extends AbstractMappingRestlet {
 		// Post-process parameters
 		Integer ontologyId = RequestUtils.parseIntegerParam(ontologyIdStr);
 
+		String targetontology = (String) request.getAttributes().get("targetontologyid");
+		Integer targetontologyId = null;
+		if (StringUtils.isNumeric(targetontology))
+			targetontologyId = Integer.parseInt(targetontology);
+			
 		List<MappingUserStatsBean> userCounts = null;
 		OntologyBean ont = null;
+		OntologyBean ontTarget = null;
 		try {
 			if (ontologyId != null) {
 				ont = ontologyService
@@ -55,9 +62,13 @@ public class MappingStatsOntologyUserRestlet extends AbstractMappingRestlet {
 				throw new InvalidInputException(MessageUtils
 						.getMessage("msg.error.ontologyversionidinvalid"));
 			}
-
+			if (targetontologyId != null) {
+				ontTarget = ontologyService
+						.findLatestOntologyOrViewVersion(targetontologyId);
+			}
 			userCounts = mappingService.getOntologyUserCount(ont
-					.getOntologyId());
+					.getOntologyId(), ontTarget != null ? ontTarget.getOntologyId() : null);
+			
 		} catch (InvalidInputException e) {
 			log.debug(e);
 			e.printStackTrace();

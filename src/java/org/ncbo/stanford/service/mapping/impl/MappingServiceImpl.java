@@ -305,9 +305,14 @@ public class MappingServiceImpl implements MappingService {
 	}
 
 	public List<MappingUserStatsBean> getOntologyUserCount(Integer ontologyId) {
-		return mappingStatsDAO.getOntologyUserCount(ontologyId);
+		return mappingStatsDAO.getOntologyUserCount(ontologyId,null);
 	}
 
+	public List<MappingUserStatsBean> getOntologyUserCount(Integer ontologyId,
+			Integer targetOntology) {
+		return mappingStatsDAO.getOntologyUserCount(ontologyId,targetOntology);
+	}
+	
 	public MappingBean updateMapping(URI id, MappingBean mapping)
 			throws MappingMissingException {
 		Mapping updatedMapping = mappingDAO.updateMapping(id,

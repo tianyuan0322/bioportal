@@ -245,4 +245,15 @@ public interface MappingService {
 	 */
 	public List<MappingUserStatsBean> getOntologyUserCount(Integer ontologyId);
 
+	
+	/**
+	 * Get a list of users who have created mappings for an ontology plus counts
+	 * for how many mappings they've created.
+	 * 
+	 * @param ontologyId
+	 * @param targetOntology
+	 * @return
+	 */
+	public List<MappingUserStatsBean> getOntologyUserCount(Integer ontologyId, Integer targetOntology);
+
 }
