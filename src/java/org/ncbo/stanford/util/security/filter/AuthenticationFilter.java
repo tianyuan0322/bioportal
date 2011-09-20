@@ -18,6 +18,7 @@ import org.restlet.Context;
 import org.restlet.Request;
 import org.restlet.Response;
 import org.restlet.data.Status;
+import org.restlet.routing.Router;
 import org.springframework.util.Assert;
 import org.springframework.web.context.WebApplicationContext;
 
@@ -30,8 +31,8 @@ public class AuthenticationFilter extends AbstractAuthFilter {
 	private SessionService sessionService;
 
 	public AuthenticationFilter(Context context,
-			WebApplicationContext springAppContext) {
-		super(context, springAppContext);
+			WebApplicationContext springAppContext, Router router) {
+		super(context, springAppContext, router);
 		authenticationService = (AuthenticationService) springAppContext
 				.getBean("authenticationService", AuthenticationService.class);
 		sessionService = (SessionService) springAppContext.getBean(
@@ -46,7 +47,7 @@ public class AuthenticationFilter extends AbstractAuthFilter {
 	private int authenticateUser(Request request, Response response) {
 		int retVal = CONTINUE;
 
-		if (isException(request)) {
+		if (isException(request, response)) {
 			return retVal;
 		}
 
@@ -110,9 +111,9 @@ public class AuthenticationFilter extends AbstractAuthFilter {
 				}
 			} catch (AuthenticationException e) {
 				error = ErrorTypeEnum.INVALID_CREDENTIALS;
-				error.setErrorMessage(e.getMessage());			
+				error.setErrorMessage(e.getMessage());
 				authenticationService.logout(apiKey);
-				
+
 				if (appApiKey != null) {
 					authenticationService.logout(appApiKey);
 				}

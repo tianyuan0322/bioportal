@@ -48,8 +48,8 @@ public class AuthorizationFilter extends AbstractAuthFilter {
 
 	@SuppressWarnings("unchecked")
 	public AuthorizationFilter(Context context,
-			WebApplicationContext springAppContext) {
-		super(context, springAppContext);
+			WebApplicationContext springAppContext, Router router) {
+		super(context, springAppContext, router);
 		ontologyService = (OntologyService) springAppContext
 				.getBean("ontologyService");
 		addExceptionPaths((TreeSet<String>) springAppContext.getBean(
@@ -60,7 +60,7 @@ public class AuthorizationFilter extends AbstractAuthFilter {
 	protected int beforeHandle(Request request, Response response) {
 		int retVal = CONTINUE;
 
-		if (isException(request)) {
+		if (isException(request, response)) {
 			return retVal;
 		}
 
@@ -110,7 +110,7 @@ public class AuthorizationFilter extends AbstractAuthFilter {
 			}
 		}
 
-		if (error != null) {			
+		if (error != null) {
 			retVal = STOP;
 			response.setStatus(Status.CLIENT_ERROR_FORBIDDEN, error
 					.getErrorMessage());
@@ -240,8 +240,7 @@ public class AuthorizationFilter extends AbstractAuthFilter {
 	}
 
 	private void extractAttributes(Request request, Response response) {
-		Router next = (Router) getNext();
-		RouteList routes = next.getRoutes();
+		RouteList routes = router.getRoutes();
 		TemplateRoute best = routes.getBest(request, response, 0);
 
 		if (best != null) {

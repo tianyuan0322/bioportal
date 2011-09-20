@@ -30,9 +30,9 @@ public class RestApplication extends Application {
 				.getBean("restManager");
 		manager.init(router);
 		AuthenticationFilter authentFilter = new AuthenticationFilter(
-				getContext(), springAppContext);
+				getContext(), springAppContext, router);
 		AuthorizationFilter authorizFilter = new AuthorizationFilter(
-				getContext(), springAppContext);
+				getContext(), springAppContext, router);
 		authentFilter.setNext(authorizFilter);
 		authorizFilter.setNext(router);
 
