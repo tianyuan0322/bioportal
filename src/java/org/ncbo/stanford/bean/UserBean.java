@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.ncbo.stanford.bean.acl.OntologyAcl;
+import org.ncbo.stanford.bean.user.OntologyLicense;
 import org.ncbo.stanford.domain.generated.NcboOntologyAcl;
 import org.ncbo.stanford.domain.generated.NcboUser;
 import org.ncbo.stanford.domain.generated.NcboUserRole;
@@ -28,6 +29,7 @@ public class UserBean {
 	private Date dateCreated;
 	private List<String> roles = new ArrayList<String>(0);
 	private OntologyAcl ontologyAcl = new OntologyAcl(0);
+	private OntologyLicense ontologyLicenses = new OntologyLicense(0);
 
 	public String toString() {
 		return "{Id: " + this.getId() + ", Username: " + this.getUsername()
@@ -36,7 +38,8 @@ public class UserBean {
 				+ ", Firstname: " + this.getFirstname() + ", Lastname: "
 				+ this.getLastname() + ", Phone: " + this.getPhone() + ", "
 				+ "Roles: " + this.getRoles() + ", ACL: "
-				+ this.getOntologyAcl() + "}";
+				+ this.getOntologyAcl() + ", Ontology Licenses: "
+				+ this.getOntologyLicenses() + "}";
 	}
 
 	/**
@@ -59,6 +62,27 @@ public class UserBean {
 	 */
 	public void addOntologyToAcl(Integer ontologyId, Boolean isOwner) {
 		ontologyAcl.put(ontologyId, isOwner);
+	}
+
+	/**
+	 * Checks whether user has a license for a given ontology
+	 * 
+	 * @param ontologyId
+	 * @return
+	 */
+	public boolean hasLicense(Integer ontologyId) {
+		return ontologyLicenses.containsKey(ontologyId);
+	}
+
+	/**
+	 * Adds an ontology Id to this user's list of licenses
+	 * 
+	 * @param ontologyId
+	 * @param licenseText
+	 * @return
+	 */
+	public void addOntologyLicense(Integer ontologyId, String licenseText) {
+		ontologyLicenses.put(ontologyId, licenseText);
 	}
 
 	/**
@@ -106,7 +130,7 @@ public class UserBean {
 	public void populateToEntity(NcboUser ncboUser) {
 		if (ncboUser != null) {
 			ncboUser.setId(this.getId());
-			
+
 			String userName = this.getUsername();
 			if (!StringHelper.isNullOrNullString(userName)) {
 				ncboUser.setUsername(userName);
@@ -121,7 +145,7 @@ public class UserBean {
 			if (!StringHelper.isNullOrNullString(email)) {
 				ncboUser.setEmail(email);
 			}
-			
+
 			ncboUser.setFirstname(this.getFirstname());
 			ncboUser.setLastname(this.getLastname());
 			ncboUser.setPhone(this.getPhone());
@@ -305,5 +329,12 @@ public class UserBean {
 	 */
 	public Map<Integer, Boolean> getOntologyAcl() {
 		return ontologyAcl;
+	}
+
+	/**
+	 * @return the ontologyLicenses
+	 */
+	public OntologyLicense getOntologyLicenses() {
+		return ontologyLicenses;
 	}
 }
