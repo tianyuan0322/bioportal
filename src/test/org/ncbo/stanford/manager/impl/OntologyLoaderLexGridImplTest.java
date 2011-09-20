@@ -326,7 +326,8 @@ public class OntologyLoaderLexGridImplTest extends AbstractBioPortalTest {
 			System.out.println("Created OntologyBean with ID = "
 					+ ontologyBean.getId());
 		// load
-		loadOntology(ontologyBean, OBO_FUNGAL_PATHNAME);
+		ontologyLoadSchedulerService.parseOntologies(Arrays.asList(ontologyBean
+				.getId()), null);
 		assertTrue(ontologyBean.getCodingScheme() != null);
 		System.out
 				.println("OntologyLoaderLexGridImplTest: testLoadOboFungal().................... END");
