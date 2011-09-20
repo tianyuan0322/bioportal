@@ -51,8 +51,8 @@ public class AbstractAuthFilter extends Filter implements InitializingBean {
 		RouteList routes = router.getRoutes();
 		TemplateRoute bestRoute = routes.getBest(request, response, 0);
 
-		// if best route isn't found (null), you have a bigger fish to fry leave
-		// for the caller to deal with it
+		// if best route isn't found (null), you have a bigger fish to fry, so
+		// leave it for the caller to deal with
 		if (bestRoute != null) {
 			Template template = bestRoute.getTemplate();
 			String pattern = template.getPattern();
