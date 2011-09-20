@@ -36,8 +36,13 @@
 
 	<util:set id="authorizationExceptionPaths" set-class="java.util.TreeSet">
 		<value>/auth</value>
-		<value>/search</value>
+		<value>/search</value>		
+		<value>/search/{query}</value>
+		<value>/search/meta/{query}</value>
 		<value>/ontologies</value>
-		<value>/virtual/ontology</value>
+		<value>/ontologies/active/</value>
+		<value>/ontologies/pulled/</value>
+		<value>/ontologies/{ontologyversionid}</value>
+		<value>/virtual/ontology/{ontologyid}</value>
 	</util:set>
 </beans>
