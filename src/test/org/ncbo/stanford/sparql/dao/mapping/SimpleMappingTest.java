@@ -1,38 +1,21 @@
 package org.ncbo.stanford.sparql.dao.mapping;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-
 import java.util.ArrayList;
-import java.util.List;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.Calendar;
-import java.util.Date;
+import java.util.List;
 
 import org.junit.Test;
-import org.ncbo.stanford.AbstractBioPortalTest;
-import org.ncbo.stanford.enumeration.MappingSourceEnum;
-import org.ncbo.stanford.exception.InvalidInputException;
-import org.ncbo.stanford.exception.MappingExistsException;
-import org.ncbo.stanford.exception.MappingMissingException;
-import org.ncbo.stanford.sparql.bean.Mapping;
-import org.ncbo.stanford.sparql.dao.mapping.CustomNcboMappingCountsDAO;
-import org.ncbo.stanford.sparql.dao.mapping.CustomNcboMappingDAO;
-import org.openrdf.model.URI;
-import org.openrdf.model.impl.URIImpl;
-import org.openrdf.model.impl.LiteralImpl;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.junit.runner.RunWith;
+import org.ncbo.stanford.bean.mapping.MappingUserStatsBean;
+import org.ncbo.stanford.sparql.bean.Mapping;
+import org.ncbo.stanford.util.sparql.SPARQLFilterGenerator;
+import org.ncbo.stanford.util.sparql.SPARQLUnionGenerator;
+import org.openrdf.model.URI;
+import org.openrdf.model.impl.LiteralImpl;
+import org.openrdf.model.impl.URIImpl;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
-
-import org.ncbo.stanford.manager.rdfstore.RDFStoreManager;
-import org.ncbo.stanford.util.constants.ApplicationConstants;
-import org.ncbo.stanford.manager.rdfstore.impl.RDFStoreManagerVirtuosoImpl;
-import org.ncbo.stanford.util.sparql.SPARQLFilterGenerator;
-import org.ncbo.stanford.bean.mapping.MappingUserStatsBean;
-import org.ncbo.stanford.util.sparql.SPARQLUnionGenerator;
 
 /**
  * Test RDF store connectivity.
@@ -54,7 +37,7 @@ public class SimpleMappingTest {
 	CustomNcboMappingStatsDAO mappingStatsDAO;
 
     //@SuppressWarnings("unchecked")
-	//@Test
+	@Test
 	public void testAllOK() throws Exception {
         //testUnionGenerator();
         //getMappingsForConceptTest();
@@ -62,7 +45,8 @@ public class SimpleMappingTest {
         //getMappingsToConceptTest();
         //getMappingsFromConceptTest();
         //getMappingsForOntologyTest();
-        //getMappingsBetweenOntologiesTest();
+		//int a = getMappingsBetweenOntologiesTest(1032);
+		getOntologyUserCountTest();
         //getMappingsToOntologyTest();
         //getCountMappingsBetweenConceptsTest();
         //getCountMappingsToConceptTest();
@@ -71,7 +55,7 @@ public class SimpleMappingTest {
         //getCountMappingsForOntologyTest();
         //getCountMappingsBetweenOntologiesTest();
         //getCountMappingsToOntologyTest();
-        getCountMappingsFromOntologyTest();
+        //getCountMappingsFromOntologyTest();
 	}
 
     public void testUnionGenerator() {
@@ -100,7 +84,7 @@ public class SimpleMappingTest {
 
     
     @SuppressWarnings("unchecked")
-	@Test
+	//@Test
     public void getMappingTest() throws Exception {
         try {
             long ts = System.currentTimeMillis();
@@ -117,7 +101,7 @@ public class SimpleMappingTest {
     }
 
     @SuppressWarnings("unchecked")
-	@Test
+	//@Test
     public void getMappingsToOntologyTest() throws Exception {
         try {
             long ts = System.currentTimeMillis();
@@ -133,15 +117,19 @@ public class SimpleMappingTest {
     }
 
     @SuppressWarnings("unchecked")
-	@Test
-    public void getMappingsBetweenOntologiesTest() throws Exception {
+	//@Test
+    public int getMappingsBetweenOntologiesTest(int user) throws Exception {
         try {
             long ts = System.currentTimeMillis();
             SPARQLFilterGenerator filter = new SPARQLFilterGenerator();
-            List<Mapping> mappings = this.mappingDAO.getMappingsBetweenOntologies(1032,1009,false,100,0,filter);
+            List<Integer> users = new ArrayList<Integer>();
+            users.add(user);
+            filter.setSubmittedBy(users);
+            List<Mapping> mappings = this.mappingDAO.getMappingsBetweenOntologies(1131,1136,true,1,0,filter);
             System.out.println("getMappingsBetweenOntologies --> "+ mappings.size());
             ts = System.currentTimeMillis() - ts;
             System.out.printf("getMappingsBetweenOntologies %.3f sec. elapsed time\n",ts/1000.0);
+            return mappings.size();
         } catch (Exception e) {
             e.printStackTrace();
             throw e;
@@ -149,7 +137,7 @@ public class SimpleMappingTest {
     }
 
     @SuppressWarnings("unchecked")
-	@Test
+	//@Test
     public void getMappingsForOntologyTest() throws Exception {
         try {
             long ts = System.currentTimeMillis();
@@ -166,7 +154,7 @@ public class SimpleMappingTest {
 
 
     @SuppressWarnings("unchecked")
-	@Test
+	//@Test
     public void getMappingsToConceptTest() throws Exception {
         try {
             long ts = System.currentTimeMillis();
@@ -183,7 +171,7 @@ public class SimpleMappingTest {
     }
 
     @SuppressWarnings("unchecked")
-	@Test
+	//@Test
     public void getMappingsFromConceptTest() throws Exception {
         try {
             long ts = System.currentTimeMillis();
@@ -201,7 +189,7 @@ public class SimpleMappingTest {
 
 
     @SuppressWarnings("unchecked")
-	@Test
+	//@Test
     public void getMappingsForConceptTest() throws Exception {
         try {
             long ts = System.currentTimeMillis();
@@ -219,7 +207,7 @@ public class SimpleMappingTest {
     }
 
     @SuppressWarnings("unchecked")
-	@Test
+	//@Test
     public void getMappingsBetweenConceptsTest() throws Exception {
         try {
             long ts = System.currentTimeMillis();
@@ -455,9 +443,13 @@ public class SimpleMappingTest {
         try {
             long ts = System.currentTimeMillis();
             SPARQLFilterGenerator filter = new SPARQLFilterGenerator();
-            Integer sourceOntologyId = 1009;
-             List<MappingUserStatsBean> x = this.mappingStatsDAO.getOntologyUserCount(sourceOntologyId);
+            Integer sourceOntologyId = 1131;
+            Integer targetOntologyId = 1136;
+             List<MappingUserStatsBean> x = this.mappingStatsDAO.getOntologyUserCount(sourceOntologyId,targetOntologyId);
             System.out.println("result --> "+ x.size());
+            for (MappingUserStatsBean u : x)
+                System.out.println("\t " + u.getUserId() + " --> "+ u.getMappingCount());
+            	
             ts = System.currentTimeMillis() - ts;
             System.out.printf("getOntologyUserCountTest %.3f sec. elapsed time\n",ts/1000.0);
         } catch (Exception e) {
