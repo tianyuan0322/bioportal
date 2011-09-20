@@ -55,6 +55,7 @@
 				<value>org/ncbo/stanford/domain/generated/NcboUserSubscriptions.hbm.xml</value>
 				<value>org/ncbo/stanford/domain/generated/NcboLNotificationType.hbm.xml</value>
 				<value>org/ncbo/stanford/domain/generated/NcboOntologyAcl.hbm.xml</value>
+				<value>org/ncbo/stanford/domain/generated/NcboUserOntologyLicense.hbm.xml</value>
 			</list>
 		</property>
 	</bean>
@@ -243,6 +244,13 @@
 		</property>
 	</bean>
 
+	<bean id="NcboUserOntologyLicenseDAO"
+		class="org.ncbo.stanford.domain.custom.dao.CustomNcboUserOntologyLicenseDAO">
+		<property name="hibernateTemplate">
+			<ref bean="hibernateTemplate" />
+		</property>
+	</bean>
+	
 	<!-- Encryption -->
 
 	<bean id="stringEncryptor" class="org.jasypt.encryption.pbe.StandardPBEStringEncryptor">

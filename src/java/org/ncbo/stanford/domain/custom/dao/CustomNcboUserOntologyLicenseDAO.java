@@ -4,32 +4,35 @@ import java.util.List;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.ncbo.stanford.domain.generated.NcboOntologyAcl;
-import org.ncbo.stanford.domain.generated.NcboOntologyAclDAO;
+import org.ncbo.stanford.domain.generated.NcboUserOntologyLicense;
+import org.ncbo.stanford.domain.generated.NcboUserOntologyLicenseDAO;
 
 /**
  * @author mdorf
  * 
  */
-public class CustomNcboOntologyAclDAO extends NcboOntologyAclDAO {
+public class CustomNcboUserOntologyLicenseDAO extends
+		NcboUserOntologyLicenseDAO {
 
 	private static final Log log = LogFactory
-			.getLog(CustomNcboOntologyAclDAO.class);
+			.getLog(CustomNcboUserOntologyLicenseDAO.class);
 
 	/**
 	 * 
 	 */
-	public CustomNcboOntologyAclDAO() {
+	public CustomNcboUserOntologyLicenseDAO() {
 		super();
 	}
 
 	@SuppressWarnings("unchecked")
 	public List<Integer> getAllOntologyIds() {
 		try {
-			String queryString = "SELECT distinct ontologyId FROM NcboOntologyAcl ORDER BY ontologyId";
+			String queryString = "SELECT distinct ontologyId FROM NcboUserOntologyLicense ORDER BY ontologyId";
 			return getHibernateTemplate().find(queryString);
 		} catch (RuntimeException re) {
-			log.error("error getting all ontologyIds from Acl " + re);
+			log
+					.error("error getting all ontologyIds from the user ontology license table "
+							+ re);
 			throw re;
 		}
 	}
@@ -38,7 +41,8 @@ public class CustomNcboOntologyAclDAO extends NcboOntologyAclDAO {
 	 * @param transientInstance
 	 * @return
 	 */
-	public void deleteOntologyAcl(NcboOntologyAcl transientInstance) {
+	public void deleteUserOntologyLicense(
+			NcboUserOntologyLicense transientInstance) {
 		try {
 			getHibernateTemplate().delete(transientInstance);
 			getHibernateTemplate().flush();
