@@ -1,6 +1,7 @@
 package org.ncbo.stanford.service.user.impl;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -12,10 +13,12 @@ import org.ncbo.stanford.bean.UserBean;
 import org.ncbo.stanford.domain.custom.dao.CustomNcboLRoleDAO;
 import org.ncbo.stanford.domain.custom.dao.CustomNcboOntologyAclDAO;
 import org.ncbo.stanford.domain.custom.dao.CustomNcboUserDAO;
+import org.ncbo.stanford.domain.custom.dao.CustomNcboUserOntologyLicenseDAO;
 import org.ncbo.stanford.domain.custom.dao.CustomNcboUserRoleDAO;
 import org.ncbo.stanford.domain.generated.NcboLRole;
 import org.ncbo.stanford.domain.generated.NcboOntologyAcl;
 import org.ncbo.stanford.domain.generated.NcboUser;
+import org.ncbo.stanford.domain.generated.NcboUserOntologyLicense;
 import org.ncbo.stanford.domain.generated.NcboUserRole;
 import org.ncbo.stanford.exception.AuthenticationException;
 import org.ncbo.stanford.manager.metadata.UserMetadataManager;
@@ -34,6 +37,7 @@ public class UserServiceImpl implements UserService {
 	private CustomNcboLRoleDAO ncboLRoleDAO = null;
 	private CustomNcboUserRoleDAO ncboUserRoleDAO = null;
 	private CustomNcboOntologyAclDAO ncboOntologyAclDAO = null;
+	private CustomNcboUserOntologyLicenseDAO ncboUserOntologyLicenseDAO = null;
 	private EncryptionService encryptionService = null;
 	private AuthenticationService authenticationService = null;
 
@@ -152,6 +156,7 @@ public class UserServiceImpl implements UserService {
 		}
 
 		saveOntologyAcl(userBean, newNcboUser);
+		saveOntologyLicenses(userBean, newNcboUser);
 
 		// This code is adding for creating a new user account in the metadata
 		// ontology
@@ -192,6 +197,7 @@ public class UserServiceImpl implements UserService {
 
 		ncboUserDAO.save(ncboUser);
 		saveOntologyAcl(userBean, ncboUser);
+		saveOntologyLicenses(userBean, ncboUser);
 
 		// This code is adding for creating a new user account in the metadata
 		// ontology
@@ -229,10 +235,19 @@ public class UserServiceImpl implements UserService {
 			ncboUserRoleDAO.delete(userRole);
 		}
 
+		// delete all acls for this user
 		Set<NcboOntologyAcl> acls = ncboUser.getNcboOntologyAcls();
 
 		for (NcboOntologyAcl acl : acls) {
 			ncboOntologyAclDAO.delete(acl);
+		}
+
+		// delete all ontology licenses for this user
+		Set<NcboUserOntologyLicense> licenses = ncboUser
+				.getNcboUserOntologyLicenses();
+
+		for (NcboUserOntologyLicense license : licenses) {
+			ncboUserOntologyLicenseDAO.delete(license);
 		}
 
 		ncboUserDAO.delete(ncboUser);
@@ -256,7 +271,37 @@ public class UserServiceImpl implements UserService {
 			ncboOntologyAclDAO.save(acl);
 		}
 	}
+	
+	@SuppressWarnings("unchecked")
+	private void saveOntologyLicenses(UserBean userBean, NcboUser ncboUser) {
+		Set<NcboUserOntologyLicense> existingLicenses = ncboUser
+				.getNcboUserOntologyLicenses();
+		Map<Integer, NcboUserOntologyLicense> ontologyIds = new HashMap<Integer, NcboUserOntologyLicense>(0);
 
+		for (NcboUserOntologyLicense lic : existingLicenses) {
+			ontologyIds.put(lic.getOntologyId(), lic);
+		}
+
+		for (Map.Entry<Integer, String> entry : userBean.getOntologyLicenses()
+				.entrySet()) {
+			Integer ontologyId = entry.getKey();
+			NcboUserOntologyLicense lic = null;
+			
+			if (ontologyIds.containsKey(ontologyId)) {
+				// license already exists, need to update
+				lic = ontologyIds.get(ontologyId);
+			} else {
+				// a new license already exists, need to insert
+				lic = new NcboUserOntologyLicense();
+				lic.setOntologyId(ontologyId);
+				lic.setNcboUser(ncboUser);
+			}
+			
+			lic.setLicenseText(entry.getValue());
+			ncboUserOntologyLicenseDAO.save(lic);
+		}
+	}
+	
 	/**
 	 * @param ncboUserDAO
 	 *            the ncboUserDAO to set
@@ -305,5 +350,14 @@ public class UserServiceImpl implements UserService {
 	public void setNcboOntologyAclDAO(
 			CustomNcboOntologyAclDAO ncboOntologyAclDAO) {
 		this.ncboOntologyAclDAO = ncboOntologyAclDAO;
+	}
+
+	/**
+	 * @param ncboUserOntologyLicenseDAO
+	 *            the ncboUserOntologyLicenseDAO to set
+	 */
+	public void setNcboUserOntologyLicenseDAO(
+			CustomNcboUserOntologyLicenseDAO ncboUserOntologyLicenseDAO) {
+		this.ncboUserOntologyLicenseDAO = ncboUserOntologyLicenseDAO;
 	}
 }

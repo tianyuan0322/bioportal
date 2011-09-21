@@ -87,6 +87,17 @@ public class BeanHelper {
 		}
 	}
 
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
 	/**
 	 * Creates OntologyBean object and populate from Request object.
 	 * 
