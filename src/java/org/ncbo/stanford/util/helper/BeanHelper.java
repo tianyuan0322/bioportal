@@ -49,19 +49,11 @@ public class BeanHelper {
 		String dateCreated = httpServletRequest.getParameter(MessageUtils
 				.getMessage("form.user.dateCreated"));
 		String ontologyAcl = httpServletRequest.getParameter(MessageUtils
-				.getMessage("form.user.ontologyacl"));
-		
-		
-		
-		
+				.getMessage("form.user.ontologyacl"));		
 		String license = httpServletRequest.getParameter(MessageUtils
-				.getMessage("form.user.ontologylicense"));
-		
+				.getMessage("form.user.ontologylicense"));		
 		String licenseText = httpServletRequest.getParameter(MessageUtils
 				.getMessage("form.user.ontologylicensetext"));
-		
-		
-		
 
 		if (!StringHelper.isNullOrNullString(username)) {
 			userBean.setUsername(username);
@@ -97,18 +89,13 @@ public class BeanHelper {
 		for (Integer ontologyId : ontologyAclList) {
 			userBean.addOntologyToAcl(ontologyId, false);
 		}
+		
+		Integer licenseInt = RequestUtils.parseIntegerParam(license);
+		
+		if (licenseInt != null) {
+			userBean.addOntologyLicense(licenseInt, licenseText);
+		}		
 	}
-
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
 	
 	/**
 	 * Creates OntologyBean object and populate from Request object.
