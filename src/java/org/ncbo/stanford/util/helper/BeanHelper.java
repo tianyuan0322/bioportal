@@ -288,23 +288,6 @@ public class BeanHelper {
 				}
 			}
 		}
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
 
 		if (!StringHelper.isNullOrNullString(isManual)) {
 			bean.setIsManual(Byte.parseByte(isManual));
