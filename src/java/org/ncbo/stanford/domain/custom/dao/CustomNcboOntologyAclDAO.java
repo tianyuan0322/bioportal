@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.hibernate.criterion.Expression;
 import org.ncbo.stanford.domain.generated.NcboOntologyAcl;
 import org.ncbo.stanford.domain.generated.NcboOntologyAclDAO;
 
@@ -32,6 +33,21 @@ public class CustomNcboOntologyAclDAO extends NcboOntologyAclDAO {
 			log.error("error getting all ontologyIds from Acl " + re);
 			throw re;
 		}
+	}
+
+	/**
+	 * Returns a single ACL record using a combo of userId and ontologyId
+	 * 
+	 * @param userId
+	 * @param ontologyId
+	 * @return NcboOntologyAcl
+	 */
+	public NcboOntologyAcl findByUserIdAndOntologyId(Integer userId,
+			Integer ontologyId) {
+		return (NcboOntologyAcl) getSession().createCriteria(
+				"org.ncbo.stanford.domain.generated.NcboOntologyAcl").add(
+				Expression.eq("ncboUser.id", userId)).add(
+				Expression.eq("ontologyId", ontologyId)).uniqueResult();
 	}
 
 	/**

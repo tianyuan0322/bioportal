@@ -3,8 +3,10 @@ package org.ncbo.stanford.enumeration;
 import org.ncbo.stanford.util.constants.ApplicationConstants;
 
 public enum ViewingRestrictionEnum {
-	VIEWING_RESTRICTION_PRIVATE(ApplicationConstants.VIEWING_RESTRICTION_PRIVATE), 
-	VIEWING_RESTRICTION_LICENSED(ApplicationConstants.VIEWING_RESTRICTION_LICENSED);
+	VIEWING_RESTRICTION_PRIVATE(
+			ApplicationConstants.VIEWING_RESTRICTION_PRIVATE), VIEWING_RESTRICTION_LICENSED(
+			ApplicationConstants.VIEWING_RESTRICTION_LICENSED), VIEWING_RESTRICTION_PUBLIC(
+			ApplicationConstants.VIEWING_RESTRICTION_PUBLIC);
 
 	private final String label;
 

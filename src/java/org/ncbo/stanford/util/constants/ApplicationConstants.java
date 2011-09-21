@@ -66,6 +66,7 @@ public interface ApplicationConstants {
 	 */
 	public static final String VIEWING_RESTRICTION_PRIVATE = "private";
 	public static final String VIEWING_RESTRICTION_LICENSED = "licensed";
+	public static final String VIEWING_RESTRICTION_PUBLIC = "public";
 
 	/**
 	 * Ontology version status

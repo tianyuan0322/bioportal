@@ -155,7 +155,7 @@ public class UserServiceImpl implements UserService {
 			ncboUserRoleDAO.save(ncboUserRole);
 		}
 
-		saveOntologyAcl(userBean, newNcboUser);
+		saveUserOntologyAcl(userBean, newNcboUser);
 		saveOntologyLicenses(userBean, newNcboUser);
 
 		// This code is adding for creating a new user account in the metadata
@@ -196,7 +196,7 @@ public class UserServiceImpl implements UserService {
 		}
 
 		ncboUserDAO.save(ncboUser);
-		saveOntologyAcl(userBean, ncboUser);
+		saveUserOntologyAcl(userBean, ncboUser);
 		saveOntologyLicenses(userBean, ncboUser);
 
 		// This code is adding for creating a new user account in the metadata
@@ -224,59 +224,86 @@ public class UserServiceImpl implements UserService {
 		return session;
 	}
 
-	@SuppressWarnings("unchecked")
 	public void deleteUser(UserBean userBean) {
 		// get ncboUser DAO instance using user_id
 		NcboUser ncboUser = ncboUserDAO.findById(userBean.getId());
 		String userApiKey = ncboUser.getApiKey();
-		Set<NcboUserRole> userRoles = ncboUser.getNcboUserRoles();
 
-		for (NcboUserRole userRole : userRoles) {
-			ncboUserRoleDAO.delete(userRole);
-		}
+		// delete all user roles
+		deleteAllUserRoles(ncboUser);
 
-		// delete all acls for this user
-		Set<NcboOntologyAcl> acls = ncboUser.getNcboOntologyAcls();
-
-		for (NcboOntologyAcl acl : acls) {
-			ncboOntologyAclDAO.delete(acl);
-		}
+		// delete the entire ACL for this user
+		deleteFullUserOntologyAcl(ncboUser);
 
 		// delete all ontology licenses for this user
-		Set<NcboUserOntologyLicense> licenses = ncboUser
-				.getNcboUserOntologyLicenses();
-
-		for (NcboUserOntologyLicense license : licenses) {
-			ncboUserOntologyLicenseDAO.delete(license);
-		}
+		deleteAllUserOntologyLicenses(ncboUser);
 
 		ncboUserDAO.delete(ncboUser);
 		authenticationService.logout(userApiKey);
 	}
 
 	@SuppressWarnings("unchecked")
-	private void saveOntologyAcl(UserBean userBean, NcboUser ncboUser) {
+	private void saveUserOntologyAcl(UserBean userBean, NcboUser ncboUser) {
+		Set<NcboOntologyAcl> existingAcl = ncboUser.getNcboOntologyAcls();
+		Map<Integer, NcboOntologyAcl> ontologyIds = new HashMap<Integer, NcboOntologyAcl>(
+				0);
+
+		for (NcboOntologyAcl aclEntry : existingAcl) {
+			ontologyIds.put(aclEntry.getOntologyId(), aclEntry);
+		}
+
+		for (Map.Entry<Integer, Boolean> entry : userBean.getOntologyAcl()
+				.entrySet()) {
+			Integer ontologyId = entry.getKey();
+			NcboOntologyAcl aclEntry = null;
+
+			if (ontologyIds.containsKey(ontologyId)) {
+				// ACL entry already exists, need to update
+				aclEntry = ontologyIds.get(ontologyId);
+			} else {
+				// a new ACL entry, need to insert
+				aclEntry = new NcboOntologyAcl();
+				aclEntry.setOntologyId(ontologyId);
+				aclEntry.setNcboUser(ncboUser);
+			}
+
+			aclEntry.setIsOwner(entry.getValue());
+			ncboOntologyAclDAO.save(aclEntry);
+		}
+	}
+
+	private void addOntologyToAcl(NcboUser ncboUser, Integer ontologyId,
+			Boolean isOwner) {
+		if (ncboUser != null && ontologyId != null && ontologyId > 0) {
+			NcboOntologyAcl aclEntry = ncboOntologyAclDAO
+					.findByUserIdAndOntologyId(ncboUser.getId(), ontologyId);
+
+			if (aclEntry == null) {
+				aclEntry = new NcboOntologyAcl();
+				aclEntry.setNcboUser(ncboUser);
+				aclEntry.setOntologyId(ontologyId);
+			}
+
+			aclEntry.setIsOwner(isOwner);
+			ncboOntologyAclDAO.save(aclEntry);
+		}
+	}
+
+	@SuppressWarnings("unchecked")
+	private void deleteFullUserOntologyAcl(NcboUser ncboUser) {
 		Set<NcboOntologyAcl> acls = ncboUser.getNcboOntologyAcls();
 
 		for (NcboOntologyAcl acl : acls) {
 			ncboOntologyAclDAO.delete(acl);
 		}
-
-		for (Map.Entry<Integer, Boolean> entry : userBean.getOntologyAcl()
-				.entrySet()) {
-			NcboOntologyAcl acl = new NcboOntologyAcl();
-			acl.setNcboUser(ncboUser);
-			acl.setOntologyId(entry.getKey());
-			acl.setIsOwner(entry.getValue());
-			ncboOntologyAclDAO.save(acl);
-		}
 	}
-	
+
 	@SuppressWarnings("unchecked")
 	private void saveOntologyLicenses(UserBean userBean, NcboUser ncboUser) {
 		Set<NcboUserOntologyLicense> existingLicenses = ncboUser
 				.getNcboUserOntologyLicenses();
-		Map<Integer, NcboUserOntologyLicense> ontologyIds = new HashMap<Integer, NcboUserOntologyLicense>(0);
+		Map<Integer, NcboUserOntologyLicense> ontologyIds = new HashMap<Integer, NcboUserOntologyLicense>(
+				0);
 
 		for (NcboUserOntologyLicense lic : existingLicenses) {
 			ontologyIds.put(lic.getOntologyId(), lic);
@@ -286,22 +313,44 @@ public class UserServiceImpl implements UserService {
 				.entrySet()) {
 			Integer ontologyId = entry.getKey();
 			NcboUserOntologyLicense lic = null;
-			
+
 			if (ontologyIds.containsKey(ontologyId)) {
 				// license already exists, need to update
 				lic = ontologyIds.get(ontologyId);
 			} else {
-				// a new license already exists, need to insert
+				// a new license, need to insert
 				lic = new NcboUserOntologyLicense();
 				lic.setOntologyId(ontologyId);
 				lic.setNcboUser(ncboUser);
 			}
-			
+
 			lic.setLicenseText(entry.getValue());
 			ncboUserOntologyLicenseDAO.save(lic);
+
+			// add ACL records for this combo of user/ontology
+			addOntologyToAcl(ncboUser, ontologyId, false);
 		}
 	}
-	
+
+	@SuppressWarnings("unchecked")
+	private void deleteAllUserOntologyLicenses(NcboUser ncboUser) {
+		Set<NcboUserOntologyLicense> licenses = ncboUser
+				.getNcboUserOntologyLicenses();
+
+		for (NcboUserOntologyLicense license : licenses) {
+			ncboUserOntologyLicenseDAO.delete(license);
+		}
+	}
+
+	@SuppressWarnings("unchecked")
+	private void deleteAllUserRoles(NcboUser ncboUser) {
+		Set<NcboUserRole> userRoles = ncboUser.getNcboUserRoles();
+
+		for (NcboUserRole userRole : userRoles) {
+			ncboUserRoleDAO.delete(userRole);
+		}
+	}
+
 	/**
 	 * @param ncboUserDAO
 	 *            the ncboUserDAO to set

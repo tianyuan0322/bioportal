@@ -423,9 +423,10 @@ public class OntologyMetadataUtils extends MetadataUtils {
 				.getObsoleteParent());
 		setPropertyValue(owlModel, ontologyInd, PROPERTY_OBSOLETE_PROPERTY, ob
 				.getObsoleteProperty());
-
+		
 		setPropertyValue(owlModel, vOntInd, PROPERTY_VIEWING_RESTRICTION,
 				(ob.getViewingRestriction() != null) ? ob.getViewingRestriction().toString(): null);
+		
 		setPropertyValue(owlModel, vOntInd, PROPERTY_LICENSE_INFORMATION,
 				ob.getLicenseInformation());
 
