@@ -423,12 +423,13 @@ public class OntologyMetadataUtils extends MetadataUtils {
 				.getObsoleteParent());
 		setPropertyValue(owlModel, ontologyInd, PROPERTY_OBSOLETE_PROPERTY, ob
 				.getObsoleteProperty());
-		
-		setPropertyValue(owlModel, vOntInd, PROPERTY_VIEWING_RESTRICTION,
-				(ob.getViewingRestriction() != null) ? ob.getViewingRestriction().toString(): null);
-		
-		setPropertyValue(owlModel, vOntInd, PROPERTY_LICENSE_INFORMATION,
-				ob.getLicenseInformation());
+
+		setPropertyValue(owlModel, vOntInd, PROPERTY_VIEWING_RESTRICTION, (ob
+				.getViewingRestriction() != null) ? ob.getViewingRestriction()
+				.toString() : null);
+
+		setPropertyValue(owlModel, vOntInd, PROPERTY_LICENSE_INFORMATION, ob
+				.getLicenseInformation());
 
 		if (ob.isView()) {
 			if (!isOntologyViewIndividual(ontologyInd)) {
@@ -665,8 +666,6 @@ public class OntologyMetadataUtils extends MetadataUtils {
 				PROPERTY_TARGET_TERMINOLOGIES, String.class));
 		ob.setUrn(getPropertyValue(owlModel, ontologyInd, PROPERTY_OMV_URI,
 				String.class));
-		// TODO temporary solution, until multiple administrators will be
-		// allowed:
 		ob.setUserId(getFirstElement(getPropertyValueIds(owlModel, ontologyInd,
 				PROPERTY_ADMINISTERED_BY)));
 		ob.setVersionNumber(getPropertyValue(owlModel, ontologyInd,
@@ -691,6 +690,7 @@ public class OntologyMetadataUtils extends MetadataUtils {
 		ob.setViewingRestriction(ViewingRestrictionEnum
 				.getFromLabel(getPropertyValue(owlModel, vOntInd,
 						PROPERTY_VIEWING_RESTRICTION, String.class)));
+
 		ob.setLicenseInformation(getPropertyValue(owlModel, vOntInd,
 				PROPERTY_LICENSE_INFORMATION, String.class));
 
@@ -712,6 +712,25 @@ public class OntologyMetadataUtils extends MetadataUtils {
 					getPropertyValue(owlModel, ontologyInd,
 							PROPERTY_VIEW_GENERATION_ENGINE,
 							RDFIndividual.class)));
+
+			List<OWLIndividual> vOntInds = getPropertyValues(owlModel, vOntInd,
+					PROPERTY_VIRTUAL_VIEW_OF, OWLIndividual.class);
+
+			// for simplicity, assume that a view can be attached to a single
+			// ontology
+			if (!vOntInds.isEmpty()) {
+				// find viewing restriction for the parent ontology and attach
+				// it to the view
+				ob.setViewingRestriction(ViewingRestrictionEnum
+						.getFromLabel(getPropertyValue(owlModel, vOntInds
+								.get(0), PROPERTY_VIEWING_RESTRICTION,
+								String.class)));
+				// find license info for the parent ontology and attach it to
+				// the view
+				ob.setLicenseInformation(getPropertyValue(owlModel, vOntInds
+						.get(0), PROPERTY_LICENSE_INFORMATION, String.class));
+			}
+
 			// TODO see if we have to deal with virtualViewOf property or not
 		} else {
 			ob.setView(false);
