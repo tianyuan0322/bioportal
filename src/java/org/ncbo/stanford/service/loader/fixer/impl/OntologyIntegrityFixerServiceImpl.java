@@ -60,25 +60,26 @@ public class OntologyIntegrityFixerServiceImpl extends AbstractOntologyService
 		try {
 			List<OntologyBean> ontologies = ontologyMetadataManager
 					.findLatestActiveOntologyOrOntologyViewVersions();
-			// fix index
-			if (log.isInfoEnabled()) {
-				log.info("Running search index fixer...");
-			}
-
-			fixSearchIndex(ontologies);
-
-			if (log.isInfoEnabled()) {
-				log.info("Search index fixer run completed...");
-			}
 
 			// fix protege obsolete terms
 			if (log.isInfoEnabled())
 				log.info("Running protege obsolete terms fixer...");
 
-			fixProtegeObsoleteTerms(ontologies);
+			Map<Integer, OntologyBean> obsoleteTermOntologyFixed = fixProtegeObsoleteTerms(ontologies);
 
 			if (log.isInfoEnabled())
 				log.info("Protege obsolete terms fixer run completed...");
+
+			// fix index
+			if (log.isInfoEnabled()) {
+				log.info("Running search index fixer...");
+			}
+
+			fixSearchIndex(ontologies, obsoleteTermOntologyFixed);
+
+			if (log.isInfoEnabled()) {
+				log.info("Search index fixer run completed...");
+			}
 
 			// fix metrics
 			if (log.isInfoEnabled())
@@ -99,8 +100,11 @@ public class OntologyIntegrityFixerServiceImpl extends AbstractOntologyService
 	 * the index or have a wrong version in the index
 	 *
 	 * @param ontologies
+	 * @param flaggedOntologies
+	 *            Ontologies that should have their index redone. Manually set.
 	 */
-	public void fixSearchIndex(List<OntologyBean> ontologies) {
+	public void fixSearchIndex(List<OntologyBean> ontologies,
+			Map<Integer, OntologyBean> flaggedOntologies) {
 		Map<Integer, OntologyBean> problemOntologies = new HashMap<Integer, OntologyBean>(
 				0);
 
@@ -120,6 +124,14 @@ public class OntologyIntegrityFixerServiceImpl extends AbstractOntologyService
 						ontology, e.getMessage());
 				log.error(e);
 				e.printStackTrace();
+			}
+		}
+
+		// Add the manually flagged ontologies so they all get re-indexed
+		for (Integer ontologyId : flaggedOntologies.keySet()) {
+			if (!problemOntologies.containsKey(ontologyId)) {
+				problemOntologies.put(ontologyId, flaggedOntologies
+						.get(ontologyId));
 			}
 		}
 
@@ -193,7 +205,8 @@ public class OntologyIntegrityFixerServiceImpl extends AbstractOntologyService
 	}
 
 	@SuppressWarnings("unchecked")
-	private void fixProtegeObsoleteTerms(List<OntologyBean> ontologies) {
+	private Map<Integer, OntologyBean> fixProtegeObsoleteTerms(
+			List<OntologyBean> ontologies) {
 		Map<Integer, OntologyBean> problemOntologies = new HashMap<Integer, OntologyBean>(
 				0);
 
@@ -278,6 +291,8 @@ public class OntologyIntegrityFixerServiceImpl extends AbstractOntologyService
 					+ e);
 			e.printStackTrace();
 		}
+
+		return problemOntologies;
 	}
 
 	private Slot getDeprecatedSlot(KnowledgeBase kb) {
