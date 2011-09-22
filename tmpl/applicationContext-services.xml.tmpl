@@ -250,7 +250,7 @@
 			<ref bean="hibernateTemplate" />
 		</property>
 	</bean>
-	
+
 	<!-- Encryption -->
 
 	<bean id="stringEncryptor" class="org.jasypt.encryption.pbe.StandardPBEStringEncryptor">
@@ -646,6 +646,9 @@
 		<property name="ncboOntologyAclDAO">
 			<ref bean="NcboOntologyAclDAO" />
 		</property>
+		<property name="ncboUserOntologyLicenseDAO">
+			<ref bean="NcboUserOntologyLicenseDAO" />
+		</property>
 		<property name="encryptionService">
 			<ref bean="encryptionService" />
 		</property>
@@ -898,7 +901,7 @@
 	  	  <ref local="provisionalTermService" />
 	  </property>
 	</bean>
-	
+
 	<bean id="purlClientManager"
 		class="org.ncbo.stanford.manager.purl.impl.PurlClientManagerImpl">
 		<property name="host">
@@ -922,7 +925,7 @@
 		<property name="configured">
 			<value>@bioportalpurlconfigured@</value>
 		</property>
-	</bean>	
+	</bean>
 
 	<bean id="usageLoggingService"
 		class="org.ncbo.stanford.service.logging.impl.UsageLoggingServiceImpl">
