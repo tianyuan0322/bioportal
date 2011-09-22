@@ -12,6 +12,7 @@ import org.ncbo.stanford.service.mapping.MappingService;
 import org.ncbo.stanford.service.ontology.OntologyService;
 import org.ncbo.stanford.util.MessageUtils;
 import org.ncbo.stanford.util.RequestUtils;
+import org.ncbo.stanford.view.util.constants.RequestParamConstants;
 import org.restlet.Request;
 import org.restlet.Response;
 import org.restlet.data.Status;
@@ -25,7 +26,7 @@ public class MappingStatsOntologyUserRestlet extends AbstractMappingRestlet {
 
 	/**
 	 * Handle GET calls here
-	 * 
+	 *
 	 * @param request
 	 * @param response
 	 */
@@ -41,11 +42,12 @@ public class MappingStatsOntologyUserRestlet extends AbstractMappingRestlet {
 		// Post-process parameters
 		Integer ontologyId = RequestUtils.parseIntegerParam(ontologyIdStr);
 
-		String targetontology = (String) request.getAttributes().get("targetontologyid");
+		String targetontology = (String) request.getAttributes().get(
+				RequestParamConstants.PARAM_TARGET_ONT);
 		Integer targetontologyId = null;
 		if (StringUtils.isNumeric(targetontology))
 			targetontologyId = Integer.parseInt(targetontology);
-			
+
 		List<MappingUserStatsBean> userCounts = null;
 		OntologyBean ont = null;
 		OntologyBean ontTarget = null;
@@ -67,8 +69,9 @@ public class MappingStatsOntologyUserRestlet extends AbstractMappingRestlet {
 						.findLatestOntologyOrViewVersion(targetontologyId);
 			}
 			userCounts = mappingService.getOntologyUserCount(ont
-					.getOntologyId(), ontTarget != null ? ontTarget.getOntologyId() : null);
-			
+					.getOntologyId(), ontTarget != null ? ontTarget
+					.getOntologyId() : null);
+
 		} catch (InvalidInputException e) {
 			log.debug(e);
 			e.printStackTrace();
