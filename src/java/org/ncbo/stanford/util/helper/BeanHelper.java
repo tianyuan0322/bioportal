@@ -49,9 +49,9 @@ public class BeanHelper {
 		String dateCreated = httpServletRequest.getParameter(MessageUtils
 				.getMessage("form.user.dateCreated"));
 		String ontologyAcl = httpServletRequest.getParameter(MessageUtils
-				.getMessage("form.user.ontologyacl"));		
+				.getMessage("form.user.ontologyacl"));
 		String license = httpServletRequest.getParameter(MessageUtils
-				.getMessage("form.user.ontologylicense"));		
+				.getMessage("form.user.ontologylicense"));
 		String licenseText = httpServletRequest.getParameter(MessageUtils
 				.getMessage("form.user.ontologylicensetext"));
 
@@ -89,14 +89,14 @@ public class BeanHelper {
 		for (Integer ontologyId : ontologyAclList) {
 			userBean.addOntologyToAcl(ontologyId, false);
 		}
-		
+
 		Integer licenseInt = RequestUtils.parseIntegerParam(license);
-		
+
 		if (licenseInt != null) {
 			userBean.addOntologyLicense(licenseInt, licenseText);
-		}		
+		}
 	}
-	
+
 	/**
 	 * Creates OntologyBean object and populate from Request object.
 	 * 
@@ -217,8 +217,9 @@ public class BeanHelper {
 		String viewingRestriction = httpServletRequest
 				.getParameter(MessageUtils
 						.getMessage("form.ontology.viewingRestriction"));
-		String licenseInformation = httpServletRequest.getParameter(MessageUtils
-				.getMessage("form.ontology.licenseInformation"));
+		String licenseInformation = httpServletRequest
+				.getParameter(MessageUtils
+						.getMessage("form.ontology.licenseInformation"));
 
 		String obsoleteParent = httpServletRequest.getParameter(MessageUtils
 				.getMessage("form.ontology.obsoleteParent"));
@@ -241,38 +242,40 @@ public class BeanHelper {
 		// calculated from the metadata ontology on a read operation
 
 		Integer userIdInt = bean.getUserId();
-		
+
 		if (!StringHelper.isNullOrNullString(userId)) {
 			userIdInt = Integer.parseInt(userId);
 			bean.setUserId(userIdInt);
 		}
 
-		if (!StringHelper.isNullOrNullString(viewingRestriction)) {		
-			if (viewingRestriction.equalsIgnoreCase(ViewingRestrictionEnum.VIEWING_RESTRICTION_PUBLIC.getLabel())) {
+		if (!StringHelper.isNullOrNullString(viewingRestriction) && !isViewBool) {
+			if (viewingRestriction
+					.equalsIgnoreCase(ViewingRestrictionEnum.VIEWING_RESTRICTION_PUBLIC
+							.getLabel())) {
 				bean.emptyUserAcl();
 				bean.setLicenseInformation(null);
 				bean.setViewingRestriction(null);
 			} else {
 				if (!StringHelper.isNullOrNullString(licenseInformation)) {
 					bean.setLicenseInformation(licenseInformation);
-				}				
-				
+				}
+
 				bean.setViewingRestriction(ViewingRestrictionEnum
 						.getFromLabel(viewingRestriction));
-				
+
 				// set user ACL if passed in
-				if (!StringHelper.isNullOrNullString(userAcl) && !isViewBool) {
+				if (!StringHelper.isNullOrNullString(userAcl)) {
 					bean.emptyUserAcl();
-					// add this user as the owner
-					bean.addUserToAcl(userIdInt, true);
 					List<Integer> userIds = RequestUtils
 							.parseIntegerListParam(userAcl);
 
 					for (Integer usrId : userIds) {
-						bean.addUserToAcl(usrId, (usrId.equals(userIdInt)) ? true
-								: false);
+						bean.addUserToAcl(usrId,
+								(usrId.equals(userIdInt)) ? true : false);
 					}
 				}
+				// add this user as the owner
+				bean.addUserToAcl(userIdInt, true);
 			}
 		}
 
