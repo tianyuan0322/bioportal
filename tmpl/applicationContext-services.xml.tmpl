@@ -1051,9 +1051,18 @@
 		</property>
 	</bean>
 
+	<util:set id="stopWordSet">
+		<value>a</value>
+		<value>an</value>
+		<value>the</value>
+	</util:set>
+
 	<bean id="searchAnalyzer" class="org.apache.lucene.analysis.standard.StandardAnalyzer">
 		<constructor-arg>
 			<util:constant static-field="@bioportalsearchluceneversioncompatibility@" />
+		</constructor-arg>
+		<constructor-arg>
+			<ref bean="stopWordSet" />
 		</constructor-arg>
 	</bean>
 

@@ -3,6 +3,7 @@ package org.ncbo.stanford.util.lucene;
 import java.util.Set;
 import java.util.StringTokenizer;
 import java.util.TreeSet;
+import java.util.regex.Pattern;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -43,7 +44,10 @@ public class PrefixQuery extends BooleanQuery {
 	private static final char WILDCARD_CHAR = '*';
 	private static final String WILDCARD_LEADING_TRAILING_PATTERN = "^\\"
 			+ WILDCARD_CHAR + "|\\" + WILDCARD_CHAR + "$";
-	private static final int EXACT_MATCH_BOOST = 10;
+	private static final int EXACT_MATCH_BOOST = 10;	
+	private static final String LUCENE_ESCAPE_CHARS = "[\\\\+\\-\\!\\(\\)\\:\\^\\]\\{\\}\\~\\*\\?]";
+	private static final Pattern LUCENE_PATTERN = Pattern.compile(LUCENE_ESCAPE_CHARS);
+	private static final String REPLACEMENT_STRING = "\\\\$0";
 
 	private Version luceneVersion;
 	private IndexReader reader;
@@ -114,13 +118,10 @@ public class PrefixQuery extends BooleanQuery {
 	private String prepareExpression(String expr, String field)
 			throws ParseException {
 		expr = expr.replaceAll(WILDCARD_LEADING_TRAILING_PATTERN, "");
-
-		QueryParser parser = new QueryParser(luceneVersion, field, analyzer);
-
-		expr = expr.replaceAll("\\(", "");
-		expr = expr.replaceAll("\\)", "");
 		expr = expr.replaceAll("\\s*\\-\\s*", "-");
-
+		expr = LUCENE_PATTERN.matcher(expr).replaceAll(REPLACEMENT_STRING);
+		
+		QueryParser parser = new QueryParser(luceneVersion, field, analyzer);
 		Query query = parser.parse(expr);
 
 		expr = query.toString().replace(field + ":", "");
