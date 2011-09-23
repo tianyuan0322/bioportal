@@ -249,7 +249,9 @@ public class OntologyIntegrityFixerServiceImpl extends AbstractOntologyService
 					}
 
 					Slot deprecatedSlot = getDeprecatedSlot(kb);
-					if ((!obsoleteChildren.isEmpty() && !isObsolete(
+					if (deprecatedSlot == null) {
+						problemOntologies.put(ontology.getId(), ontology);
+					} else if ((!obsoleteChildren.isEmpty() && !isObsolete(
 							deprecatedSlot, obsoleteChildren.iterator().next()))
 							|| (!obsoleteConceptsPropertyFrames.isEmpty() && !isObsolete(
 									deprecatedSlot,
