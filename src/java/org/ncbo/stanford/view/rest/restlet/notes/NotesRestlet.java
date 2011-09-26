@@ -20,6 +20,7 @@ import org.ncbo.stanford.exception.OntologyNotFoundException;
 import org.ncbo.stanford.service.concept.ConceptService;
 import org.ncbo.stanford.service.notes.NotesService;
 import org.ncbo.stanford.service.ontology.OntologyService;
+import org.ncbo.stanford.service.provisional.ProvisionalTermService;
 import org.ncbo.stanford.util.MessageUtils;
 import org.ncbo.stanford.util.RequestUtils;
 import org.ncbo.stanford.view.rest.restlet.AbstractBaseRestlet;
@@ -35,6 +36,7 @@ public class NotesRestlet extends AbstractBaseRestlet {
 	private NotesService notesService;
 	private OntologyService ontologyService;
 	private ConceptService conceptService;
+	private ProvisionalTermService provisionalTermService;
 
 	/**
 	 * Handle GET calls here
@@ -271,7 +273,14 @@ public class NotesRestlet extends AbstractBaseRestlet {
 				ClassBean concept = conceptService.findConcept(ont.getId(),
 						appliesTo, null, false, false, false);
 
+				// Try to get term from provisional service
 				if (concept == null) {
+					provisionalTermService.getProvisionalTerm(appliesTo);
+				}
+
+				if (concept == null) {
+					provisionalTermService.getProvisionalTerm(appliesTo);
+
 					throw new ConceptNotFoundException(MessageUtils
 							.getMessage("msg.error.conceptNotFound"));
 				}
@@ -446,7 +455,8 @@ public class NotesRestlet extends AbstractBaseRestlet {
 			}
 
 			notesService.updateNote(ont, noteId, noteType, subject, content,
-					author, createdLong, status, appliesTo, appliesToType, createdTermId);
+					author, createdLong, status, appliesTo, appliesToType,
+					createdTermId);
 
 		} catch (NoteNotFoundException nnfe) {
 			response
@@ -567,6 +577,22 @@ public class NotesRestlet extends AbstractBaseRestlet {
 	 */
 	public void setConceptService(ConceptService conceptService) {
 		this.conceptService = conceptService;
+	}
+
+	/**
+	 * @param provisionalTermService
+	 *            the provisionalTermService to set
+	 */
+	public void setProvisionalTermService(
+			ProvisionalTermService provisionalTermService) {
+		this.provisionalTermService = provisionalTermService;
+	}
+
+	/**
+	 * @return the provisionalTermService
+	 */
+	public ProvisionalTermService getProvisionalTermService() {
+		return provisionalTermService;
 	}
 
 }
