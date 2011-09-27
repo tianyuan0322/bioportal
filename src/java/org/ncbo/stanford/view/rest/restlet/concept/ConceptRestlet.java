@@ -6,6 +6,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.ncbo.stanford.exception.ConceptNotFoundException;
 import org.ncbo.stanford.exception.InvalidInputException;
+import org.ncbo.stanford.exception.OntologyDeprecatedException;
 import org.ncbo.stanford.exception.OntologyNotFoundException;
 import org.ncbo.stanford.service.concept.ConceptService;
 import org.ncbo.stanford.util.MessageUtils;
@@ -61,7 +62,7 @@ public class ConceptRestlet extends AbstractBaseRestlet {
 		if (maxNumChildrenInt == null) {
 			maxNumChildrenInt = Integer.MAX_VALUE;
 		}
-		
+
 		Integer pageSizeInt = RequestUtils.parseIntegerParam(pageSize);
 		Integer pageNumInt = RequestUtils.parseIntegerParam(pageNum);
 		Boolean lightBool = RequestUtils.parseBooleanParam(light);
@@ -103,12 +104,12 @@ public class ConceptRestlet extends AbstractBaseRestlet {
 			}
 		} catch (InvalidInputException e) {
 			response.setStatus(Status.CLIENT_ERROR_BAD_REQUEST, e.getMessage());
-		} catch (OntologyNotFoundException onfe) {
-			response
-					.setStatus(Status.CLIENT_ERROR_NOT_FOUND, onfe.getMessage());
-		} catch (ConceptNotFoundException cnfe) {
-			response
-					.setStatus(Status.CLIENT_ERROR_NOT_FOUND, cnfe.getMessage());
+		} catch (OntologyNotFoundException e) {
+			response.setStatus(Status.CLIENT_ERROR_NOT_FOUND, e.getMessage());
+		} catch (ConceptNotFoundException e) {
+			response.setStatus(Status.CLIENT_ERROR_NOT_FOUND, e.getMessage());
+		} catch (OntologyDeprecatedException e) {
+			response.setStatus(Status.CLIENT_ERROR_NOT_FOUND, e.getMessage());
 		} catch (Exception e) {
 			response.setStatus(Status.SERVER_ERROR_INTERNAL, e.getMessage());
 			e.printStackTrace();
