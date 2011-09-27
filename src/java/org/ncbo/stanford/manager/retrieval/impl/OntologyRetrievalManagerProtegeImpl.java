@@ -588,7 +588,6 @@ public class OntologyRetrievalManagerProtegeImpl extends
 								(Slot) o, kb, ontologyBean, false);
 						property.addRelation(ApplicationConstants.SUB_PROPERTY,
 								childProp);
-
 					}
 				}
 			}
@@ -906,11 +905,13 @@ public class OntologyRetrievalManagerProtegeImpl extends
 		}
 
 		// remove slots already defined as properties of the bean
-		Set<Slot> reservedSlots = new HashSet<Slot>(3);
-		reservedSlots.add(synonymSlot);
-		reservedSlots.add(definitionSlot);
-		reservedSlots.add(authorSlot);
-		slots.removeAll(reservedSlots);
+		// mdorf, 9/27/2011 - commenting this out per tracker
+		// [#3227] Original properties missing from class bean
+//		Set<Slot> reservedSlots = new HashSet<Slot>(3);
+//		reservedSlots.add(synonymSlot);
+//		reservedSlots.add(definitionSlot);
+//		reservedSlots.add(authorSlot);
+//		slots.removeAll(reservedSlots);
 
 		// add all existing relations
 		classBean.addRelations(convertProperties(cls, slots, ontologyBean,
