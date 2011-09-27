@@ -105,8 +105,10 @@ public class AuthorizationFilter extends AbstractAuthFilter {
 			if (sb.length() > 0) {
 				error = ErrorTypeEnum.ACCESS_DENIED;
 				error
-						.setErrorMessage("You don't have sufficient privileges to access the following ontologies/views: "
-								+ sb.substring(0, sb.length() - 2));
+						.setErrorMessage("This ontology is private and only those "
+								+ "who have been granted access by the ontology author "
+								+ "may download it. Please contact the ontology submitter "
+								+ "if you would like access.");
 			}
 		}
 
