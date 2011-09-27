@@ -346,6 +346,7 @@ public class OntologyLoadSchedulerServiceImpl extends AbstractOntologyService
 		if (purlClientManager.isConfigured() && ontologyBean.getInternalVersionNumber()==1 && StringUtils.isNotBlank(ontologyBean.getAbbreviation())) {
 			String purl_path= "/ontology/"+ ontologyBean.getAbbreviation();
 			String targetPath= "/virtual/"+ ontologyBean.getOntologyId();
+			log.debug("Attempting to create purl entry: purl_path="+ purl_path+ " with targetPath="+ targetPath);
 			if (!purlClientManager.doesPurlExist(purl_path)) {
 				purlClientManager.createAdvancedPartialPurl(purl_path, targetPath);
 			}

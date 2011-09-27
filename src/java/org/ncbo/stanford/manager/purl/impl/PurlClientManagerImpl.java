@@ -294,10 +294,12 @@ public class PurlClientManagerImpl implements PurlClientManager {
 			formParameters.put("type", "partial");
 			formParameters.put("target", targetUrl);
 			formParameters.put("maintainers", maintainers);
+			log.debug("formParameters="+ formParameters);
 			loginUser(userName, password);
 			PurlResponseWithStatus rs = client.createPurl(url, formParameters);
 			if (rs.getStatus().isSuccess()
 					&& rs.getResponseTxt().contains("status=\"1\"")) {
+				log.debug("Purl created Successfully. Response text="+ rs.getResponseTxt());
 				return true;
 			} else {
 				System.out.println("Purl creation failed. Response obtained: "
