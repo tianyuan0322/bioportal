@@ -94,23 +94,32 @@ public class AuthorizationFilter extends AbstractAuthFilter {
 					0);
 			List<Integer> ontologyIds = findOntologyIdsInRequest(params,
 					mapTranslated);
-			
-			Integer deniedOntologyId = 0;
-			
+
+			int deniedOntologyId = 0;
+
 			for (Integer ontologyId : ontologyIds) {
 				if (ontologyService.isInAcl(ontologyId)
 						&& !user.isInAcl(ontologyId)) {
 					sb.append(mapTranslated.get(ontologyId) + ", ");
-					deniedOntologyId = ontologyId;
+					
+					if (deniedOntologyId == 0) {
+						deniedOntologyId = ontologyId;
+					}
 				}
 			}
 
-			if (sb.length() > 0) {
+			if (deniedOntologyId > 0) {
+				String ontologyLink = "http://bioportal.bioontology.org/ontologies/"
+						+ deniedOntologyId + "?p=terms";
 				error = ErrorTypeEnum.ACCESS_DENIED;
 				error
-						.setErrorMessage("This ontology is either private or licensed. " +
-								"Please go to http://bioportal.bioontology.org/ontologies/" + deniedOntologyId + 
-								" to get access to the ontology.");
+						.setErrorMessage("This ontology is either private or licensed. Please go to "
+								+ "<a href='"
+								+ ontologyLink
+								+ "' target='_blank'>"
+								+ ontologyLink
+								+ "</a>"
+								+ " to get access to the ontology.");
 			}
 		}
 
