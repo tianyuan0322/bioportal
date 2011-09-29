@@ -101,7 +101,7 @@ public class AuthorizationFilter extends AbstractAuthFilter {
 				if (ontologyService.isInAcl(ontologyId)
 						&& !user.isInAcl(ontologyId)) {
 					sb.append(mapTranslated.get(ontologyId) + ", ");
-					
+
 					if (deniedOntologyId == 0) {
 						deniedOntologyId = ontologyId;
 					}
@@ -114,11 +114,7 @@ public class AuthorizationFilter extends AbstractAuthFilter {
 				error = ErrorTypeEnum.ACCESS_DENIED;
 				error
 						.setErrorMessage("This ontology is either private or licensed. Please go to "
-								+ "<a href='"
 								+ ontologyLink
-								+ "' target='_blank'>"
-								+ ontologyLink
-								+ "</a>"
 								+ " to get access to the ontology.");
 			}
 		}
