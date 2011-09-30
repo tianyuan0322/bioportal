@@ -42,8 +42,8 @@ public abstract class AbstractOntologyManagerLexGrid {
 	private final Set<Integer> ownUriSchemeOntologies = new HashSet<Integer>(
 			Arrays.asList(1072, 1073, 1074, 1075));
 
-	private final Set<Integer> newPurlOntologies = new HashSet<Integer>(Arrays
-			.asList(1007, 1062));
+	private final Set<Integer> newPurlOntologies = new HashSet<Integer>(
+			Arrays.asList(1007, 1062));
 
 	private final Set<Integer> legacyPurlOntologies = new HashSet<Integer>(
 			Arrays.asList(1090, 1370, 1222, 1114, 1023, 1005, 1049, 1048, 1067,
@@ -404,33 +404,30 @@ public abstract class AbstractOntologyManagerLexGrid {
 	 * @return
 	 */
 	protected boolean isObsolete(Concept entry) {
-		Boolean isObsolete = entry.getIsActive();
-
-		if (isObsolete == null) {
-			isObsolete = new Boolean(false);
+		boolean isObsolete = false;
+		if (entry.getIsActive() != null && entry.getIsActive() == false) {
+			return true;
 		}
 
-		if (!isObsolete) {
-			int count = entry.getPropertyCount();
+		int count = entry.getPropertyCount();
 
-			for (int i = 0; i < count; i++) {
-				Property prop = entry.getProperty(i);
-				String key = prop.getPropertyName();
+		for (int i = 0; i < count; i++) {
+			Property prop = entry.getProperty(i);
+			String key = prop.getPropertyName();
 
-				if (StringUtils.isNotBlank(key)
-						&& key.equalsIgnoreCase("CONCEPTSTATUS")) {
-					String value = prop.getValue().getContent();
-					List<String> inactiveList = Arrays.asList("1", "2", "3",
-							"4", "5", "10");
+			if (StringUtils.isNotBlank(key)
+					&& key.equalsIgnoreCase("CONCEPTSTATUS")) {
+				String value = prop.getValue().getContent();
+				List<String> inactiveList = Arrays.asList("1", "2", "3", "4",
+						"5", "10");
 
-					if (StringUtils.isNotBlank(value)
-							&& inactiveList.contains(value)) {
-						isObsolete = true;
-					}
+				if (StringUtils.isNotBlank(value)
+						&& inactiveList.contains(value)) {
+					isObsolete = true;
 				}
 			}
 		}
 
-		return isObsolete.booleanValue();
+		return isObsolete;
 	}
 }
