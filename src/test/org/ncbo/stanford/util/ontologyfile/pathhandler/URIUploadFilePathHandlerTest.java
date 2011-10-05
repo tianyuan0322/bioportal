@@ -1,6 +1,7 @@
 package org.ncbo.stanford.util.ontologyfile.pathhandler;
 
 import java.net.URI;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
@@ -42,7 +43,7 @@ public class URIUploadFilePathHandlerTest extends AbstractBioPortalTest {
 		bean.setFormat(ApplicationConstants.FORMAT_OBO);
 		bean.setCodingScheme(OntologyLoaderLexGridImplTest.OBO_CELL_URN_VERSION);
 		bean.setDisplayLabel(OntologyLoaderLexGridImplTest.OBO_CELL_DISPLAY_LABEL);
-		bean.setUserId(1000);
+		bean.setUserIds(Arrays.asList(1000));
 		bean.setVersionNumber("1.0");
 		bean.setInternalVersionNumber(1);
 		bean.setStatusId(StatusEnum.STATUS_WAITING.getStatus());

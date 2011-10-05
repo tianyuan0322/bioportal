@@ -5,6 +5,7 @@ import static org.junit.Assert.assertTrue;
 
 import java.io.BufferedInputStream;
 import java.io.File;
+import java.util.Arrays;
 import java.util.Date;
 
 import org.junit.Test;
@@ -14,6 +15,7 @@ import org.ncbo.stanford.enumeration.StatusEnum;
 import org.ncbo.stanford.manager.impl.OntologyLoaderLexGridImplTest;
 import org.ncbo.stanford.util.constants.ApplicationConstants;
 import org.ncbo.stanford.util.ontologyfile.OntologyDescriptorParser;
+
 
 public class LoaderUtilsTest extends AbstractBioPortalTest {
 
@@ -86,7 +88,7 @@ public class LoaderUtilsTest extends AbstractBioPortalTest {
 		bean.setDisplayLabel(OntologyLoaderLexGridImplTest.OBO_CELL_DISPLAY_LABEL);
 		bean.setDownloadLocation("http://github.com/cmungall/uberon/raw/master/uberon_edit.obo");
 		bean.setDownloadLocation("http://obo.cvs.sourceforge.net/*checkout*/obo/obo/ontology/phenotype/mosquito_insecticide_resistance.obo");
-		bean.setUserId(1000);
+		bean.setUserIds(Arrays.asList(1000));
 		bean.setVersionNumber("1.0");
 		bean.setInternalVersionNumber(1);
 		bean.setStatusId(StatusEnum.STATUS_WAITING.getStatus());

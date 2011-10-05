@@ -5,6 +5,7 @@ import static org.junit.Assert.fail;
 import java.io.File;
 import java.net.URI;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
@@ -234,7 +235,7 @@ public class OntologyLoaderProtegeImplTest extends AbstractBioPortalTest {
 		bean.setIsManual(ApplicationConstants.FALSE);
 		bean.setFormat(ApplicationConstants.FORMAT_OWL_DL);
 		bean.setDisplayLabel(TEST_PIZZA_DISPLAY_NAME);
-		bean.setUserId(1000);
+		bean.setUserIds(Arrays.asList(1000));
 		//bean.setVersionNumber("1.0");
 		bean.setStatusId(StatusEnum.STATUS_WAITING.getStatus());
 		bean.setVersionStatus("pre-production");

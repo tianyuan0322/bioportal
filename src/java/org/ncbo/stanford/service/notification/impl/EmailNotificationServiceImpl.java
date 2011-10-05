@@ -23,7 +23,7 @@ import org.ncbo.stanford.util.textmanager.service.TextManager;
 
 /**
  * Implementation of EmailNotificationService.
- *
+ * 
  * @author g.prakash
  */
 
@@ -35,7 +35,7 @@ public class EmailNotificationServiceImpl implements EmailNotificationService {
 	private TextManager textManager;
 
 	/**
-	 *
+	 * 
 	 * @param notificationManagerMap
 	 */
 	public void setNotificationManagerMap(
@@ -94,7 +94,7 @@ public class EmailNotificationServiceImpl implements EmailNotificationService {
 	/**
 	 * This Method handle's the call for sending the EmailNotification to
 	 * OntoogySubmitter
-	 *
+	 * 
 	 * @param notificationType
 	 * @param ontologyBean
 	 * @param keywords
@@ -117,8 +117,8 @@ public class EmailNotificationServiceImpl implements EmailNotificationService {
 
 		// Add necessary information to keywords for use in generating email
 		// body/subject
-		keywords.put(ApplicationConstants.ONTOLOGY_DISPLAY_LABEL, ontologyBean
-				.getDisplayLabel());
+		keywords.put(ApplicationConstants.ONTOLOGY_DISPLAY_LABEL,
+				ontologyBean.getDisplayLabel());
 
 		// Should we say that parse failed or succeeded?
 		String parseStatus = (parseFailed) ? "failed" : "was successful";
@@ -144,8 +144,10 @@ public class EmailNotificationServiceImpl implements EmailNotificationService {
 				+ ApplicationConstants.SUBJECT_SUFFIX);
 
 		Set<String> recipients = new HashSet<String>();
-		NcboUser submitter = ncboUserDAO.findById(ontologyBean.getUserId());
-		recipients.add(submitter.getEmail());
+		for (Integer userId : ontologyBean.getUserIds()) {
+			NcboUser submitter = ncboUserDAO.findById(userId);
+			recipients.add(submitter.getEmail());
+		}
 		addRecipients(ontologyBean, NotificationTypeEnum.ALL_NOTIFICATION,
 				recipients);
 
@@ -159,7 +161,7 @@ public class EmailNotificationServiceImpl implements EmailNotificationService {
 	 * This List Contains the NcboUserSubscriptions Field according to the
 	 * OntolgyId And NotificationType and it also contains default Dummy
 	 * OntologyID(99)
-	 *
+	 * 
 	 * @param ontologyBean
 	 * @param notificationType
 	 * @return
@@ -188,7 +190,7 @@ public class EmailNotificationServiceImpl implements EmailNotificationService {
 
 	/**
 	 * Sends an email to a list of recipients.
-	 *
+	 * 
 	 * @param subject
 	 * @param message
 	 * @param from

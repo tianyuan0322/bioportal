@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.IOException;
 import java.net.URI;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Collections;
 import java.util.Date;
@@ -50,6 +51,8 @@ import org.w3c.dom.Element;
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
+
+
 
 /**
  * A utility that runs as a scheduled process, connecting to OBO Sourceforge CVS
@@ -522,7 +525,7 @@ public class OBOCVSPullServiceImpl implements OntologyPullService {
 			if (isMetadataOnly == ApplicationConstants.FALSE) {
 				ont.setDownloadLocation(downloadLocation);
 			}
-			ont.setUserId(userBean.getId());
+			ont.setUserIds(Arrays.asList(userBean.getId()));
 			ont.setVersionStatus(getStatus(mfb.getStatus()));
 			ont.setIsRemote(ApplicationConstants.TRUE);
 			ont.setIsReviewed(ApplicationConstants.TRUE);

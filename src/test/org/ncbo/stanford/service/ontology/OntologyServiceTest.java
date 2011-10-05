@@ -5,6 +5,7 @@ package org.ncbo.stanford.service.ontology;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
@@ -283,7 +284,7 @@ public class OntologyServiceTest extends AbstractBioPortalTest {
 
 		OntologyBean bean = new OntologyBean(false);
 
-		bean.setUserId(2850);
+		bean.setUserIds(Arrays.asList(2850));
 		bean.setIsManual(new Byte("0"));
 
 		bean.setVersionNumber("1.0");
@@ -323,7 +324,7 @@ public class OntologyServiceTest extends AbstractBioPortalTest {
 
 		OntologyBean bean = new OntologyBean(true);
 
-		bean.setUserId(2850);
+		bean.setUserIds(Arrays.asList(2850));
 		bean.setIsManual(new Byte("0"));
 
 		bean.setVersionNumber("1.0");

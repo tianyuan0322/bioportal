@@ -107,7 +107,7 @@ public class OntologyMetadataManagerImpl extends
 					CREATE_IF_MISSING);
 		}
 
-		OWLIndividual userInd = getUserInstance(metadata, ob.getUserId());
+		Collection<OWLIndividual> userInd = getUserInstances(metadata, ob.getUserIds());
 		Collection<OWLIndividual> domainInd = getOntologyDomainInstances(
 				metadata, ob.getCategoryIds());
 		Collection<OWLIndividual> viewInd = getOntologyViewInstances(metadata,

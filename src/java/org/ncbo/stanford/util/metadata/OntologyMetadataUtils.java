@@ -266,13 +266,11 @@ public class OntologyMetadataUtils extends MetadataUtils {
 			}
 		}
 
-		if (ob.getUserId() == null) {
-			// TODO temporary solution, until multiple administrators will be
-			// allowed:
-			Integer userId = getFirstElement(getPropertyValueIds(owlModel,
-					ontologyInd, PROPERTY_ADMINISTERED_BY));
-			if (userId != null) {
-				ob.setUserId(userId);
+		if (ob.getUserIds() == null) {
+			List<Integer> userIds = getPropertyValueIds(owlModel,
+					ontologyInd, PROPERTY_ADMINISTERED_BY);
+			if (userIds != null) {
+				ob.setUserIds(userIds);
 			}
 		}
 
@@ -283,7 +281,7 @@ public class OntologyMetadataUtils extends MetadataUtils {
 
 	public static void fillInOntologyInstancePropertiesFromBean(
 			OWLIndividual ontologyInd, OntologyBean ob, OWLIndividual vOntInd,
-			OWLIndividual userInd, Collection<OWLIndividual> domainIndividuals,
+			Collection<OWLIndividual> userInd, Collection<OWLIndividual> domainIndividuals,
 			Collection<OWLIndividual> viewIndividuals,
 			Collection<OWLIndividual> viewOnOntologyIndividuals)
 			throws MetadataException {
@@ -666,8 +664,8 @@ public class OntologyMetadataUtils extends MetadataUtils {
 				PROPERTY_TARGET_TERMINOLOGIES, String.class));
 		ob.setUrn(getPropertyValue(owlModel, ontologyInd, PROPERTY_OMV_URI,
 				String.class));
-		ob.setUserId(getFirstElement(getPropertyValueIds(owlModel, ontologyInd,
-				PROPERTY_ADMINISTERED_BY)));
+		ob.setUserIds(getPropertyValueIds(owlModel, ontologyInd,
+				PROPERTY_ADMINISTERED_BY));
 		ob.setVersionNumber(getPropertyValue(owlModel, ontologyInd,
 				PROPERTY_OMV_VERSION, String.class));
 		ob.setVersionStatus(getPropertyValue(owlModel, ontologyInd,

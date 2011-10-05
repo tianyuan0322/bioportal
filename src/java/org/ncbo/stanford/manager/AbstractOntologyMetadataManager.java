@@ -253,6 +253,23 @@ public abstract class AbstractOntologyMetadataManager extends
 	}
 	
 	
+	protected Collection<OWLIndividual> getUserInstances(OWLModel metadata,
+			List<Integer> userIds) {
+		HashSet<OWLIndividual> res = new HashSet<OWLIndividual>();
+		for (Integer userId : userIds) {
+			OWLIndividual ontUserInd = getUserInstance(metadata, userId);
+			if (ontUserInd != null) {
+				res.add(ontUserInd);
+			}
+			else {
+				//TODO what to do?
+				//throw Exception?
+				log.error("No OMV:UserId individual found for user ID: " + userId);
+			}
+		}
+		return res;
+	}
+	
 	protected OWLIndividual getUserInstance(OWLModel metadata, Integer userId) {
 		OWLIndividual userInd = null;
 		

@@ -3,7 +3,9 @@ package org.ncbo.stanford.manager.impl;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.fail;
 
+import java.util.Arrays;
 import java.util.Date;
+import java.util.List;
 
 import org.junit.Test;
 import org.ncbo.stanford.AbstractBioPortalTest;
@@ -39,7 +41,7 @@ public class OntologyMetadataManagerProtegeImplTest extends
 
 		try {
 			OntologyBean ontologyBean = createOntologyBean(
-					ID_ONTOLOGY_VERSION_2, ID_ONTOLOGY_2, ID_USER_1);
+					ID_ONTOLOGY_VERSION_2, ID_ONTOLOGY_2, Arrays.asList(ID_USER_1));
 			ontMetadataManagerProtege.saveOntologyOrView(ontologyBean);
 		} catch (Exception e) {
 			System.out.println("Exception: " + e.getMessage());
@@ -75,9 +77,9 @@ public class OntologyMetadataManagerProtegeImplTest extends
 	}
 
 	private OntologyBean createOntologyBean(int onotVerId, int ontologyId,
-			int userId) {
+			List<Integer> userIds) {
 		OntologyBean ob = createOntologyBean(onotVerId, ontologyId);
-		ob.setUserId(userId);
+		ob.setUserIds(userIds);
 		return ob;
 	}
 
@@ -101,7 +103,7 @@ public class OntologyMetadataManagerProtegeImplTest extends
 		bean.setFormat(ApplicationConstants.FORMAT_OWL);
 		bean.setCodingScheme(null);
 		bean.setDisplayLabel("BioPortal Metadata Ontology");
-		bean.setUserId(ID_USER_DEFAULT);
+		bean.setUserIds(Arrays.asList(ID_USER_DEFAULT));
 		bean.setVersionNumber("1.0");
 		bean.setStatusId(StatusEnum.STATUS_WAITING.getStatus());
 		bean.setVersionStatus("pre-production");

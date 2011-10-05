@@ -134,6 +134,7 @@ public class BeanHelper {
 		List<Integer> categoryIds = new ArrayList<Integer>(0);
 		List<Integer> groupIds = new ArrayList<Integer>(0);
 		List<Integer> hasViewIds = new ArrayList<Integer>(0);
+		List<Integer> userIds = new ArrayList<Integer>(0);
 		HttpServletRequest httpServletRequest = RequestUtils
 				.getHttpServletRequest(request);
 
@@ -144,9 +145,7 @@ public class BeanHelper {
 		// for new version for existing ontology
 		String ontologyId = httpServletRequest.getParameter(MessageUtils
 				.getMessage("form.ontology.ontologyId"));
-		// get userId from request
-		String userId = httpServletRequest.getParameter(MessageUtils
-				.getMessage("http.param.userId"));
+
 		String isManual = httpServletRequest.getParameter(MessageUtils
 				.getMessage("form.ontology.isManual"));
 		String versionNumber = httpServletRequest.getParameter(MessageUtils
@@ -240,12 +239,15 @@ public class BeanHelper {
 		// we do not set here the virtualViewIds of the ontology bean
 		// from the request, because that is only a read-only field,
 		// calculated from the metadata ontology on a read operation
+		// get userId from request
 
-		Integer userIdInt = bean.getUserId();
+		String[] userIdValues = httpServletRequest
+				.getParameterValues(MessageUtils
+						.getMessage("form.ontology.userId"));
 
-		if (!StringHelper.isNullOrNullString(userId)) {
-			userIdInt = Integer.parseInt(userId);
-			bean.setUserId(userIdInt);
+		if (userIdValues != null) {
+			userIds = RequestUtils.parseIntegerListParam(userIdValues);
+			bean.setUserIds(userIds);
 		}
 
 		if (!StringHelper.isNullOrNullString(viewingRestriction) && !isViewBool) {
@@ -266,16 +268,19 @@ public class BeanHelper {
 				// set user ACL if passed in
 				if (!StringHelper.isNullOrNullString(userAcl)) {
 					bean.emptyUserAcl();
-					List<Integer> userIds = RequestUtils
+					List<Integer> userAclIds = RequestUtils
 							.parseIntegerListParam(userAcl);
 
-					for (Integer usrId : userIds) {
-						bean.addUserToAcl(usrId,
-								(usrId.equals(userIdInt)) ? true : false);
+					for (Integer usrAclId : userAclIds) {
+						if (!userIds.contains(usrAclId)) {
+							bean.addUserToAcl(usrAclId, false);
+						}
 					}
 				}
-				// add this user as the owner
-				bean.addUserToAcl(userIdInt, true);
+				for (Integer userId : userIds) {
+					// add admins as the owner
+					bean.addUserToAcl(userId, true);
+				}
 			}
 		}
 
@@ -583,8 +588,8 @@ public class BeanHelper {
 		HttpServletRequest httpServletRequest = RequestUtils
 				.getHttpServletRequest(request);
 
-		String userId = RequestUtils.getAttributeOrRequestParam(MessageUtils
-				.getMessage("form.user.userId"), request);
+		String userId = RequestUtils.getAttributeOrRequestParam(
+				MessageUtils.getMessage("form.user.userId"), request);
 
 		String notificationType = httpServletRequest.getParameter(MessageUtils
 				.getMessage("form.user.notificationType"));
@@ -607,8 +612,8 @@ public class BeanHelper {
 	 * @return
 	 */
 	public static List<String> getOntologyIds(Request request) {
-		return RequestUtils.getAttributeOrRequestParams(MessageUtils
-				.getMessage("entity.ontologyid"), request);
+		return RequestUtils.getAttributeOrRequestParams(
+				MessageUtils.getMessage("entity.ontologyid"), request);
 	}
 
 }

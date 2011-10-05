@@ -32,7 +32,7 @@ public class OntologyBean {
 	// virtual view id(s) on the virtual ontology
 	private List<Integer> virtualViewIds = new ArrayList<Integer>(0);
 	private Integer internalVersionNumber;
-	private Integer userId;
+	private List<Integer> userIds;
 	private String versionNumber;
 	private String versionStatus;
 	private Byte isRemote;
@@ -204,7 +204,7 @@ public class OntologyBean {
 				+ ", Obo Foundry Id: " + this.getOboFoundryId()
 				+ ", Internal Version Number: "
 				+ this.getInternalVersionNumber() + ", Date Created: "
-				+ this.getDateCreated() + ", User Id: " + this.getUserId()
+				+ this.getDateCreated() + ", User Ids: " + this.getUserIds()
 				+ ", Version Number: " + this.getVersionNumber()
 				+ ", Version Status: " + this.getVersionStatus()
 				+ ", Display Label: " + this.getDisplayLabel()
@@ -598,16 +598,16 @@ public class OntologyBean {
 	/**
 	 * @return the userId
 	 */
-	public Integer getUserId() {
-		return userId;
+	public List<Integer> getUserIds() {
+		return userIds;
 	}
 
 	/**
 	 * @param userId
 	 *            the userId to set
 	 */
-	public void setUserId(Integer userId) {
-		this.userId = userId;
+	public void setUserIds(List<Integer> userIds) {
+		this.userIds = userIds;
 	}
 
 	/**

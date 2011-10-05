@@ -42,7 +42,7 @@ public class OntologyLoaderLexGridImplTest extends AbstractBioPortalTest {
 
 	public final static String OBO_FUNGAL_PATHNAME = "test/sample_data/fungal_anatomy.obo";
 	public final static String OBO_FUNGAL_URN_VERSION = "urn:lsid:bioontology.org:fungal|UNASSIGNED";
-	public final static String OBO_FUNGAL_DISPLAY_LABEL = "fungal";
+	public final static String OBO_FUNGAL_DISPLAY_LABEL = "fungal_new";
 
 	public final static String OBO_PLANT_ANATOMY_DISPLAY_LABEL = "po_anatomy";
 
@@ -595,7 +595,7 @@ public class OntologyLoaderLexGridImplTest extends AbstractBioPortalTest {
 		bean.setFormat(ApplicationConstants.FORMAT_OBO);
 		bean.setCodingScheme(OBO_CELL_URN_VERSION);
 		bean.setDisplayLabel(OBO_CELL_DISPLAY_LABEL);
-		bean.setUserId(1000);
+		bean.setUserIds(Arrays.asList(1000));
 		bean.setStatusId(StatusEnum.STATUS_WAITING.getStatus());
 		bean.setVersionStatus("pre-production");
 		bean.setIsRemote(new Byte("0"));
