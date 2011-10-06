@@ -8,6 +8,7 @@ import org.ncbo.stanford.bean.OntologyBean;
 import org.ncbo.stanford.bean.OntologyMetricsBean;
 import org.ncbo.stanford.exception.InvalidInputException;
 import org.ncbo.stanford.service.metrics.MetricsService;
+import org.ncbo.stanford.util.MessageUtils;
 import org.restlet.Request;
 import org.restlet.Response;
 import org.restlet.data.Status;
@@ -42,24 +43,47 @@ public class OntologyMetricsRestlet extends AbstractOntologyBaseRestlet {
 	 */
 	private void getOntologyMetrics(Request request, Response response) {
 		// find the OntologyBean from request
-		List<OntologyBean> ontologyBean = findOntologyBeans(request, response);
+		String ontologyVersionId = (String) request.getAttributes().get(
+				MessageUtils.getMessage("entity.ontologyversionid"));
 
-		OntologyMetricsBean ontologyMetricsBean = null;
-
-		if (!response.getStatus().isError()) {
-			try {
-				ontologyMetricsBean = metricsService
-						.getOntologyMetrics(ontologyBean.get(0));
-			} catch (Exception e) {
-				response
-						.setStatus(Status.SERVER_ERROR_INTERNAL, e.getMessage());
-				e.printStackTrace();
-				log.error(e);
-			}
+		if (ontologyVersionId.equalsIgnoreCase("all")) {
+			listAllOntologyMetrics(request, response);
+		} else {
+			OntologyBean ontologyBean = findOntologyBean(request, response);
+			listSingleOntologyMetrics(request, response, ontologyBean);
 		}
-		// generate response XML
-		xmlSerializationService.generateXMLResponse(request, response,
-				ontologyMetricsBean);
+	}
+
+	private void listSingleOntologyMetrics(Request request, Response response,
+			OntologyBean ontologyBean) {
+		OntologyMetricsBean ontologyMetricsBean = null;
+		try {
+			ontologyMetricsBean = metricsService
+					.getOntologyMetrics(ontologyBean);
+		} catch (Exception e) {
+			response.setStatus(Status.SERVER_ERROR_INTERNAL, e.getMessage());
+			e.printStackTrace();
+			log.error(e);
+		} finally {
+			// generate response XML
+			xmlSerializationService.generateXMLResponse(request, response,
+					ontologyMetricsBean);
+		}
+	}
+
+	private void listAllOntologyMetrics(Request request, Response response) {
+		List<OntologyMetricsBean> ontologyMetricsBeans = null;
+		try {
+			ontologyMetricsBeans = metricsService.getAllOntologyMetrics();
+		} catch (Exception e) {
+			response.setStatus(Status.SERVER_ERROR_INTERNAL, e.getMessage());
+			e.printStackTrace();
+			log.error(e);
+		} finally {
+			// generate response XML
+			xmlSerializationService.generateXMLResponse(request, response,
+					ontologyMetricsBeans);
+		}
 	}
 
 	/**

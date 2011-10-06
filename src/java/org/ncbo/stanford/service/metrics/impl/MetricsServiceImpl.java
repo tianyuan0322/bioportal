@@ -56,6 +56,24 @@ public class MetricsServiceImpl extends AbstractOntologyService implements
 		return mb;
 	}
 
+	public List<OntologyMetricsBean> getAllOntologyMetrics() throws Exception {
+		OWLModel metadata = ontologyMetadataManager.getMetadataOWLModel();
+		List<OntologyBean> ontologies = ontologyMetadataManager
+				.findLatestActiveOntologyVersions();
+
+		List<OntologyMetricsBean> metrics = new ArrayList<OntologyMetricsBean>();
+		for (OntologyBean ob : ontologies) {
+			OWLIndividual ontVerInd = ontologyMetadataManager
+					.getOntologyOrViewInstance(metadata, ob.getId());
+
+			OntologyMetricsBean mb = new OntologyMetricsBean();
+			OntologyMetadataUtils.fillInMetricsBeanFromInstance(mb, ontVerInd);
+			metrics.add(mb);
+		}
+
+		return metrics;
+	}
+
 	public void updateOntologyMetrics(OntologyBean ob, OntologyMetricsBean mb)
 			throws Exception {
 		OWLModel metadata = ontologyMetadataManager.getMetadataOWLModel();
@@ -123,8 +141,9 @@ public class MetricsServiceImpl extends AbstractOntologyService implements
 
 		// Check for non-existant ontology ids
 		for (Integer errorVersionId : errorVersionIdList) {
-			String error = addErrorOntology(errorOntologies, errorVersionId
-					.toString(), null, ONTOLOGY_VERSION_DOES_NOT_EXIST_ERROR);
+			String error = addErrorOntology(errorOntologies,
+					errorVersionId.toString(), null,
+					ONTOLOGY_VERSION_DOES_NOT_EXIST_ERROR);
 			log.error(error);
 		}
 	}

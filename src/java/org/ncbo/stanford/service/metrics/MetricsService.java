@@ -36,6 +36,15 @@ public interface MetricsService {
 			throws Exception;
 
 	/**
+	 * Returns all latest ontologies that have metrics calculated.
+	 * 
+	 * @return list of metrics objects for all latest ontologies that have
+	 *         metrics calculated.
+	 * @throws Exception
+	 */
+	public List<OntologyMetricsBean> getAllOntologyMetrics() throws Exception;
+
+	/**
 	 * Extract metrics from the given ontology and store them into the metadata
 	 * ontology.
 	 * 
