@@ -1,6 +1,7 @@
 package org.ncbo.stanford.view.filter;
 
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 import java.util.Collections;
 import java.util.Enumeration;
 import java.util.HashMap;
@@ -20,6 +21,7 @@ import org.apache.commons.fileupload.FileItem;
 import org.apache.commons.fileupload.FileUploadException;
 import org.apache.commons.fileupload.disk.DiskFileItemFactory;
 import org.apache.commons.fileupload.servlet.ServletFileUpload;
+import org.ncbo.stanford.util.constants.ApplicationConstants;
 
 /**
  * Check for multipart HttpServletRequests and parse the multipart form data so
@@ -183,7 +185,12 @@ public class MultipartFilter implements Filter {
 	private void processFormField(FileItem formField,
 			Map<String, String[]> parameterMap) {
 		String name = formField.getFieldName();
-		String value = formField.getString();
+		String value;
+		try {
+			value = new String(formField.getString().getBytes("ISO-8859-1"), "UTF-8");
+		} catch (UnsupportedEncodingException e) {
+			value = formField.getString();
+		}
 		String[] values = parameterMap.get(name);
 
 		if (values == null) {
