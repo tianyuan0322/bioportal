@@ -244,6 +244,7 @@ public interface RequestParamConstants {
 	public static final String PARAM_MAPPING_SOURCE_SITE = "mappingsourcesite";
 	public static final String PARAM_MAPPING_SOURCE_ALGORITHM = "mappingsourcealgorithm";
 	public static final String PARAM_RELATION = "relation";
+	public static final String PARAM_RANKED = "ranked";
 
 	/**
 	 * Provisional Term Parameters

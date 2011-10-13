@@ -59,8 +59,7 @@ public class MappingServiceImpl implements MappingService {
 		return convertToMappingBean(newMapping);
 	}
 
-	public MappingBean getMapping(URI id)
-			throws MappingMissingException {
+	public MappingBean getMapping(URI id) throws MappingMissingException {
 		Mapping retrievedMapping = mappingDAO.getMapping(id);
 		return convertToMappingBean(retrievedMapping);
 	}
@@ -72,13 +71,13 @@ public class MappingServiceImpl implements MappingService {
 		Integer totalResults = mappingCountsDAO.getCountMappingsFromOntology(
 				ont.getOntologyId(), parameters);
 
-		Paginator<MappingBean> p = new PaginatorImpl<MappingBean>(
-				pageMappings, pageSize, totalResults);
+		Paginator<MappingBean> p = new PaginatorImpl<MappingBean>(pageMappings,
+				pageSize, totalResults);
 
 		int offset = pageNum * pageSize - pageSize;
 
-		List<Mapping> mappings = mappingDAO.getMappingsFromOntology(ont
-				.getOntologyId(), pageSize, offset, parameters);
+		List<Mapping> mappings = mappingDAO.getMappingsFromOntology(
+				ont.getOntologyId(), pageSize, offset, parameters);
 
 		for (Mapping mapping : mappings) {
 			pageMappings.add(convertToMappingBean(mapping));
@@ -91,16 +90,16 @@ public class MappingServiceImpl implements MappingService {
 			Integer pageSize, Integer pageNum, SPARQLFilterGenerator parameters)
 			throws InvalidInputException {
 		MappingResultListBean pageMappings = new MappingResultListBean(0);
-		Integer totalResults = mappingCountsDAO.getCountMappingsToOntology(ont
-				.getOntologyId(), parameters);
+		Integer totalResults = mappingCountsDAO.getCountMappingsToOntology(
+				ont.getOntologyId(), parameters);
 
-		Paginator<MappingBean> p = new PaginatorImpl<MappingBean>(
-				pageMappings, pageSize, totalResults);
+		Paginator<MappingBean> p = new PaginatorImpl<MappingBean>(pageMappings,
+				pageSize, totalResults);
 
 		int offset = pageNum * pageSize - pageSize;
 
-		List<Mapping> mappings = mappingDAO.getMappingsToOntology(ont
-				.getOntologyId(), pageSize, offset, parameters);
+		List<Mapping> mappings = mappingDAO.getMappingsToOntology(
+				ont.getOntologyId(), pageSize, offset, parameters);
 
 		for (Mapping mapping : mappings) {
 			pageMappings.add(convertToMappingBean(mapping));
@@ -118,15 +117,48 @@ public class MappingServiceImpl implements MappingService {
 				.getCountMappingsBetweenOntologies(sourceOnt.getOntologyId(),
 						targetOnt.getOntologyId(), unidirectional, parameters);
 
-		Paginator<MappingBean> p = new PaginatorImpl<MappingBean>(
-				pageMappings, pageSize, totalResults);
+		Paginator<MappingBean> p = new PaginatorImpl<MappingBean>(pageMappings,
+				pageSize, totalResults);
 
 		int offset = pageNum * pageSize - pageSize;
 
-		List<Mapping> mappings = mappingDAO
-				.getMappingsBetweenOntologies(sourceOnt.getOntologyId(),
-						targetOnt.getOntologyId(), unidirectional, pageSize,
-						offset, parameters);
+		List<Mapping> mappings = mappingDAO.getMappingsBetweenOntologies(
+				sourceOnt.getOntologyId(), targetOnt.getOntologyId(),
+				unidirectional, pageSize, offset, parameters);
+
+		for (Mapping mapping : mappings) {
+			pageMappings.add(convertToMappingBean(mapping));
+		}
+
+		return p.getCurrentPage(pageNum);
+	}
+
+	public Page<MappingBean> getRankedMappingsBetweenOntologies(
+			OntologyBean sourceOnt, OntologyBean targetOnt, Integer pageSize,
+			Integer pageNum, SPARQLFilterGenerator parameters)
+			throws InvalidInputException {
+		MappingResultListBean pageMappings = new MappingResultListBean(0);
+		Integer totalResults = mappingCountsDAO
+				.getCountMappingsBetweenOntologies(sourceOnt.getOntologyId(),
+						targetOnt.getOntologyId(), true, parameters);
+
+		int offset = pageNum * pageSize - pageSize;
+
+		List<Mapping> mappings = mappingDAO.getRankedMappingsBetweenOntologies(
+				sourceOnt.getOntologyId(), targetOnt.getOntologyId(), pageSize,
+				offset, parameters);
+
+		// This is a little hackish, but not a way around it
+		// The size may not match the size of the requested page size
+		// This is because we look up a pagesize worth of source terms and all
+		// of their mappings, so the actual number of returned results is:
+		// (N * number of total target terms for N) where N = pagesize
+		
+		// Disabling until someone complains
+		//		pageSize = mappings.size();
+
+		Paginator<MappingBean> p = new PaginatorImpl<MappingBean>(pageMappings,
+				pageSize, totalResults);
 
 		for (Mapping mapping : mappings) {
 			pageMappings.add(convertToMappingBean(mapping));
@@ -139,16 +171,16 @@ public class MappingServiceImpl implements MappingService {
 			Integer pageSize, Integer pageNum, SPARQLFilterGenerator parameters)
 			throws InvalidInputException {
 		MappingResultListBean pageMappings = new MappingResultListBean(0);
-		Integer totalResults = mappingCountsDAO.getCountMappingsForOntology(ont
-				.getOntologyId(), parameters);
+		Integer totalResults = mappingCountsDAO.getCountMappingsForOntology(
+				ont.getOntologyId(), parameters);
 
-		Paginator<MappingBean> p = new PaginatorImpl<MappingBean>(
-				pageMappings, pageSize, totalResults);
+		Paginator<MappingBean> p = new PaginatorImpl<MappingBean>(pageMappings,
+				pageSize, totalResults);
 
 		int offset = pageNum * pageSize - pageSize;
 
-		List<Mapping> mappings = mappingDAO.getMappingsForOntology(ont
-				.getOntologyId(), pageSize, offset, parameters);
+		List<Mapping> mappings = mappingDAO.getMappingsForOntology(
+				ont.getOntologyId(), pageSize, offset, parameters);
 
 		for (Mapping mapping : mappings) {
 			pageMappings.add(convertToMappingBean(mapping));
@@ -164,13 +196,13 @@ public class MappingServiceImpl implements MappingService {
 		Integer totalResults = mappingCountsDAO
 				.getCountMappingsForParameters(parameters);
 
-		Paginator<MappingBean> p = new PaginatorImpl<MappingBean>(
-				pageMappings, pageSize, totalResults);
+		Paginator<MappingBean> p = new PaginatorImpl<MappingBean>(pageMappings,
+				pageSize, totalResults);
 
 		int offset = pageNum * pageSize - pageSize;
 
-		List<Mapping> mappings = mappingDAO.getMappingsForParameters(
-				pageSize, offset, parameters);
+		List<Mapping> mappings = mappingDAO.getMappingsForParameters(pageSize,
+				offset, parameters);
 
 		for (Mapping mapping : mappings) {
 			pageMappings.add(convertToMappingBean(mapping));
@@ -184,16 +216,16 @@ public class MappingServiceImpl implements MappingService {
 			SPARQLFilterGenerator parameters) throws InvalidInputException {
 		MappingResultListBean pageMappings = new MappingResultListBean(0);
 
-		Integer totalResults = mappingCountsDAO.getCountMappingsForConcept(ont
-				.getOntologyId(), concept.getFullId(), parameters);
+		Integer totalResults = mappingCountsDAO.getCountMappingsForConcept(
+				ont.getOntologyId(), concept.getFullId(), parameters);
 
-		Paginator<MappingBean> p = new PaginatorImpl<MappingBean>(
-				pageMappings, pageSize, totalResults);
+		Paginator<MappingBean> p = new PaginatorImpl<MappingBean>(pageMappings,
+				pageSize, totalResults);
 
 		int offset = pageNum * pageSize - pageSize;
 
-		List<Mapping> mappings = mappingDAO.getMappingsForConcept(ont
-				.getOntologyId(), concept.getFullId(), pageSize, offset,
+		List<Mapping> mappings = mappingDAO.getMappingsForConcept(
+				ont.getOntologyId(), concept.getFullId(), pageSize, offset,
 				parameters);
 
 		for (Mapping mapping : mappings) {
@@ -207,16 +239,16 @@ public class MappingServiceImpl implements MappingService {
 			ClassBean concept, Integer pageSize, Integer pageNum,
 			SPARQLFilterGenerator parameters) throws InvalidInputException {
 		MappingResultListBean pageMappings = new MappingResultListBean(0);
-		Integer totalResults = mappingCountsDAO.getCountMappingsFromConcept(ont
-				.getOntologyId(), concept.getFullId(), parameters);
+		Integer totalResults = mappingCountsDAO.getCountMappingsFromConcept(
+				ont.getOntologyId(), concept.getFullId(), parameters);
 
-		Paginator<MappingBean> p = new PaginatorImpl<MappingBean>(
-				pageMappings, pageSize, totalResults);
+		Paginator<MappingBean> p = new PaginatorImpl<MappingBean>(pageMappings,
+				pageSize, totalResults);
 
 		int offset = pageNum * pageSize - pageSize;
 
-		List<Mapping> mappings = mappingDAO.getMappingsFromConcept(ont
-				.getOntologyId(), concept.getFullId(), pageSize, offset,
+		List<Mapping> mappings = mappingDAO.getMappingsFromConcept(
+				ont.getOntologyId(), concept.getFullId(), pageSize, offset,
 				parameters);
 
 		for (Mapping mapping : mappings) {
@@ -230,16 +262,16 @@ public class MappingServiceImpl implements MappingService {
 			ClassBean concept, Integer pageSize, Integer pageNum,
 			SPARQLFilterGenerator parameters) throws InvalidInputException {
 		MappingResultListBean pageMappings = new MappingResultListBean(0);
-		Integer totalResults = mappingCountsDAO.getCountMappingsToConcept(ont
-				.getOntologyId(), concept.getFullId(), parameters);
+		Integer totalResults = mappingCountsDAO.getCountMappingsToConcept(
+				ont.getOntologyId(), concept.getFullId(), parameters);
 
-		Paginator<MappingBean> p = new PaginatorImpl<MappingBean>(
-				pageMappings, pageSize, totalResults);
+		Paginator<MappingBean> p = new PaginatorImpl<MappingBean>(pageMappings,
+				pageSize, totalResults);
 
 		int offset = pageNum * pageSize - pageSize;
 
-		List<Mapping> mappings = mappingDAO.getMappingsToConcept(ont
-				.getOntologyId(), concept.getFullId(), pageSize, offset,
+		List<Mapping> mappings = mappingDAO.getMappingsToConcept(
+				ont.getOntologyId(), concept.getFullId(), pageSize, offset,
 				parameters);
 
 		for (Mapping mapping : mappings) {
@@ -249,19 +281,19 @@ public class MappingServiceImpl implements MappingService {
 		return p.getCurrentPage(pageNum);
 	}
 
-	public Page<MappingBean> getMappingsBetweenConcepts(
-			OntologyBean sourceOnt, OntologyBean targetOnt,
-			ClassBean sourceConcept, ClassBean targetConcept,
-			Boolean unidirectional, Integer pageSize, Integer pageNum,
-			SPARQLFilterGenerator parameters) throws InvalidInputException {
+	public Page<MappingBean> getMappingsBetweenConcepts(OntologyBean sourceOnt,
+			OntologyBean targetOnt, ClassBean sourceConcept,
+			ClassBean targetConcept, Boolean unidirectional, Integer pageSize,
+			Integer pageNum, SPARQLFilterGenerator parameters)
+			throws InvalidInputException {
 		MappingResultListBean pageMappings = new MappingResultListBean(0);
 		Integer totalResults = mappingCountsDAO
 				.getCountMappingsBetweenConcepts(sourceOnt.getOntologyId(),
 						targetOnt.getOntologyId(), sourceConcept.getFullId(),
 						targetConcept.getFullId(), unidirectional, parameters);
 
-		Paginator<MappingBean> p = new PaginatorImpl<MappingBean>(
-				pageMappings, pageSize, totalResults);
+		Paginator<MappingBean> p = new PaginatorImpl<MappingBean>(pageMappings,
+				pageSize, totalResults);
 
 		int offset = pageNum * pageSize - pageSize;
 
@@ -296,23 +328,25 @@ public class MappingServiceImpl implements MappingService {
 		return mappingStatsDAO.getOntologiesMappingCount();
 	}
 
-	public List<MappingOntologyStatsBean> getOntologyMappingCount(Integer ontologyId) {
+	public List<MappingOntologyStatsBean> getOntologyMappingCount(
+			Integer ontologyId) {
 		return mappingStatsDAO.getOntologyMappingCount(ontologyId);
 	}
 
-	public List<MappingConceptStatsBean> getOntologyConceptsCount(Integer ontologyId, Integer limit) {
+	public List<MappingConceptStatsBean> getOntologyConceptsCount(
+			Integer ontologyId, Integer limit) {
 		return mappingStatsDAO.getOntologyConceptsCount(ontologyId, limit);
 	}
 
 	public List<MappingUserStatsBean> getOntologyUserCount(Integer ontologyId) {
-		return mappingStatsDAO.getOntologyUserCount(ontologyId,null);
+		return mappingStatsDAO.getOntologyUserCount(ontologyId, null);
 	}
 
 	public List<MappingUserStatsBean> getOntologyUserCount(Integer ontologyId,
 			Integer targetOntology) {
-		return mappingStatsDAO.getOntologyUserCount(ontologyId,targetOntology);
+		return mappingStatsDAO.getOntologyUserCount(ontologyId, targetOntology);
 	}
-	
+
 	public MappingBean updateMapping(URI id, MappingBean mapping)
 			throws MappingMissingException {
 		Mapping updatedMapping = mappingDAO.updateMapping(id,

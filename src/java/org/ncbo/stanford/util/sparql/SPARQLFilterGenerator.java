@@ -4,16 +4,14 @@ import java.lang.reflect.Field;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.Map;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
 import org.ncbo.stanford.enumeration.MappingSourceEnum;
 import org.ncbo.stanford.sparql.bean.AbstractSPARQLBean;
 import org.ncbo.stanford.util.constants.ApplicationConstants;
 import org.openrdf.model.URI;
-
-import org.ncbo.stanford.sparql.bean.Mapping;
 
 public class SPARQLFilterGenerator {
 

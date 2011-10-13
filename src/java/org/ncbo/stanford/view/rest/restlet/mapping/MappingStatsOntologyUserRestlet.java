@@ -2,7 +2,8 @@ package org.ncbo.stanford.view.rest.restlet.mapping;
 
 import java.util.List;
 
-import org.apache.commons.lang.StringUtils;
+import javax.servlet.http.HttpServletRequest;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.ncbo.stanford.bean.OntologyBean;
@@ -35,18 +36,18 @@ public class MappingStatsOntologyUserRestlet extends AbstractMappingRestlet {
 	}
 
 	private void listMappings(Request request, Response response) {
+		HttpServletRequest httpRequest = RequestUtils
+				.getHttpServletRequest(request);
+
 		// Default parameters
 		String ontologyIdStr = (String) request.getAttributes().get(
 				MessageUtils.getMessage("entity.ontologyid"));
+		String targetOntologyIdStr = (String) httpRequest
+				.getParameter(RequestParamConstants.PARAM_TARGET_ONT);
 
 		// Post-process parameters
 		Integer ontologyId = RequestUtils.parseIntegerParam(ontologyIdStr);
-
-		String targetontology = (String) request.getAttributes().get(
-				RequestParamConstants.PARAM_TARGET_ONT);
-		Integer targetontologyId = null;
-		if (StringUtils.isNumeric(targetontology))
-			targetontologyId = Integer.parseInt(targetontology);
+		Integer targetOntologyId = RequestUtils.parseIntegerParam(targetOntologyIdStr);
 
 		List<MappingUserStatsBean> userCounts = null;
 		OntologyBean ont = null;
@@ -64,9 +65,9 @@ public class MappingStatsOntologyUserRestlet extends AbstractMappingRestlet {
 				throw new InvalidInputException(MessageUtils
 						.getMessage("msg.error.ontologyversionidinvalid"));
 			}
-			if (targetontologyId != null) {
+			if (targetOntologyId != null) {
 				ontTarget = ontologyService
-						.findLatestOntologyOrViewVersion(targetontologyId);
+						.findLatestOntologyOrViewVersion(targetOntologyId);
 			}
 			userCounts = mappingService.getOntologyUserCount(ont
 					.getOntologyId(), ontTarget != null ? ontTarget

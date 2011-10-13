@@ -350,6 +350,7 @@ public class AbstractNcboMappingDAO {
 		if (filter == null || filter.isEmpty()) {
 			queryString = queryString.replaceAll("FILTER \\(\\) ", "");
 		}
+
 		String unionPattern = "{ ?mappingId <http://protege.stanford.edu/ontologies/mappings/mappings.rdfs#target_ontology_id> %ONTOLOGY_A% . "
 				+ "?mappingId <http://protege.stanford.edu/ontologies/mappings/mappings.rdfs#source_ontology_id> %ONTOLOGY_B% . "
 				+ "} ";
@@ -367,6 +368,7 @@ public class AbstractNcboMappingDAO {
 				unionPattern);
 
 		List<Mapping> mappings = getMappingsFromSPARQLQuery(queryString);
+
 		if (!unidirectional) {
 			populateSourceAndTargetOntologyId(mappings);
 		} else {
@@ -375,8 +377,8 @@ public class AbstractNcboMappingDAO {
 				m.setSourceOntologyId(sourceOntology);
 			}
 		}
-		return mappings;
 
+		return mappings;
 	}
 
 	/**

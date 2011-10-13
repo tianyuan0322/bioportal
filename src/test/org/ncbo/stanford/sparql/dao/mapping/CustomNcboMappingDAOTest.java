@@ -35,18 +35,20 @@ public class CustomNcboMappingDAOTest extends AbstractBioPortalTest {
 	CustomNcboMappingCountsDAO mappingCountsDAO;
 
 	@SuppressWarnings("unchecked")
-	@Test
+//	@Test
 	public void testCreateMapping() {
 		Mapping mapping;
 		try {
 			mapping = mappingDAO
 					.createMapping(
 							new ArrayList<URI>(
-									Collections.singleton(new URIImpl(
-											"http://purl.bioontology.org/ontology/ATMO/ATM_00000"))),
+									Collections
+											.singleton(new URIImpl(
+													"http://purl.bioontology.org/ontology/ATMO/ATM_00000"))),
 							new ArrayList<URI>(
-									Collections.singleton(new URIImpl(
-											"http://purl.org/obo/owl/UBERON#UBERON_0001062"))),
+									Collections
+											.singleton(new URIImpl(
+													"http://purl.org/obo/owl/UBERON#UBERON_0001062"))),
 							new URIImpl(
 									"http://protege.stanford.edu/ontologies/mappings/mappings.rdfs#owl:sameAs"),
 							1099, 1404, 44203, 44301, 99, null, "Test comment",
@@ -68,20 +70,20 @@ public class CustomNcboMappingDAOTest extends AbstractBioPortalTest {
 		}
 	}
 
-	@Test
+//	@Test
 	public void testRetrieveMapping() {
 		Mapping mapping;
 		try {
 			mapping = mappingDAO.getMapping(mappingId);
 			assertTrue(mapping != null);
-			assertTrue(mapping.getId().toString().equalsIgnoreCase(
-					mappingId.toString()));
+			assertTrue(mapping.getId().toString()
+					.equalsIgnoreCase(mappingId.toString()));
 		} catch (MappingMissingException e) {
 			e.printStackTrace();
 		}
 	}
 
-	@Test
+//	@Test
 	public void testRetrieveMappingsForOntology() {
 		List<Mapping> mappings;
 		try {
@@ -98,7 +100,7 @@ public class CustomNcboMappingDAOTest extends AbstractBioPortalTest {
 		}
 	}
 
-	@Test
+//	@Test
 	public void testRetrieveMappingsCountForOntology()
 			throws InvalidInputException {
 		Integer count = mappingCountsDAO
@@ -116,6 +118,17 @@ public class CustomNcboMappingDAOTest extends AbstractBioPortalTest {
 	}
 
 	@Test
+	public void testRetrieveRankedMapping() throws InvalidInputException {
+		List<Mapping> mappings = mappingDAO.getRankedMappingsBetweenOntologies(
+				1053, 1055, 100, 0, null);
+		System.out.println("Ranked mappings count for ontology 1053 -> 1055: " + mappings.size());
+		
+		for (Mapping mapping : mappings) {
+			System.out.println(mapping.getSource().get(0) + "\t\t" + mapping.getTarget().get(0));
+		}
+	}
+
+//	@Test
 	public void testUpdateMapping() {
 		Integer sourceOntologyId = 1000;
 		Integer targetOntologyId = 1001;
@@ -132,17 +145,17 @@ public class CustomNcboMappingDAOTest extends AbstractBioPortalTest {
 
 			assertEquals(sourceOntologyId, mapping.getSourceOntologyId());
 			assertEquals(targetOntologyId, mapping.getTargetOntologyId());
-			assertEquals(sourceOntologyVersion, mapping
-					.getCreatedInSourceOntologyVersion());
-			assertEquals(targetOntologyVersion, mapping
-					.getCreatedInTargetOntologyVersion());
+			assertEquals(sourceOntologyVersion,
+					mapping.getCreatedInSourceOntologyVersion());
+			assertEquals(targetOntologyVersion,
+					mapping.getCreatedInTargetOntologyVersion());
 			assertEquals(comment, mapping.getComment());
 		} catch (MappingMissingException e) {
 			e.printStackTrace();
 		}
 	}
 
-	@Test(expected = MappingMissingException.class)
+//	@Test(expected = MappingMissingException.class)
 	public void deleteMapping() throws MappingMissingException {
 		mappingDAO.deleteMapping(mappingId);
 		mappingDAO.getMapping(mappingId);

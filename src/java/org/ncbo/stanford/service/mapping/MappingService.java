@@ -58,8 +58,7 @@ public interface MappingService {
 	 * @param id
 	 * @return
 	 */
-	public MappingBean getMapping(URI id)
-			throws MappingMissingException;
+	public MappingBean getMapping(URI id) throws MappingMissingException;
 
 	/**
 	 * Update mapping with given id using a mapping bean.
@@ -114,6 +113,22 @@ public interface MappingService {
 			OntologyBean sourceOnt, OntologyBean targetOnt, Integer pageSize,
 			Integer pageNum, Boolean unidirectional,
 			SPARQLFilterGenerator parameters) throws InvalidInputException;
+
+	/**
+	 * Get ranked mappings between two ontologies. Ranked mappings look for
+	 * terms that are mapped to multiple terms in the target ontology and sort
+	 * these first.
+	 * 
+	 * @param sourceOnt
+	 * @param targetOnt
+	 * @param unidirectional
+	 * @return
+	 * @throws InvalidInputException
+	 */
+	public Page<MappingBean> getRankedMappingsBetweenOntologies(
+			OntologyBean sourceOnt, OntologyBean targetOnt, Integer pageSize,
+			Integer pageNum, SPARQLFilterGenerator parameters)
+			throws InvalidInputException;
 
 	/**
 	 * Get all mappings either from or to a given ontology.
@@ -181,11 +196,11 @@ public interface MappingService {
 	 * @return
 	 * @throws InvalidInputException
 	 */
-	public Page<MappingBean> getMappingsBetweenConcepts(
-			OntologyBean sourceOnt, OntologyBean targetOnt,
-			ClassBean sourceConcept, ClassBean targetConcept,
-			Boolean unidirectional, Integer pageSize, Integer pageNum,
-			SPARQLFilterGenerator parameters) throws InvalidInputException;
+	public Page<MappingBean> getMappingsBetweenConcepts(OntologyBean sourceOnt,
+			OntologyBean targetOnt, ClassBean sourceConcept,
+			ClassBean targetConcept, Boolean unidirectional, Integer pageSize,
+			Integer pageNum, SPARQLFilterGenerator parameters)
+			throws InvalidInputException;
 
 	/*******************************************************************
 	 * 
@@ -245,7 +260,6 @@ public interface MappingService {
 	 */
 	public List<MappingUserStatsBean> getOntologyUserCount(Integer ontologyId);
 
-	
 	/**
 	 * Get a list of users who have created mappings for an ontology plus counts
 	 * for how many mappings they've created.
@@ -254,6 +268,7 @@ public interface MappingService {
 	 * @param targetOntology
 	 * @return
 	 */
-	public List<MappingUserStatsBean> getOntologyUserCount(Integer ontologyId, Integer targetOntology);
+	public List<MappingUserStatsBean> getOntologyUserCount(Integer ontologyId,
+			Integer targetOntology);
 
 }

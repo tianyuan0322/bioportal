@@ -60,6 +60,8 @@ public class MappingOntologyRestlet extends AbstractMappingRestlet {
 				.getParameter(RequestParamConstants.PARAM_IS_SOURCE);
 		String isTargetStr = (String) httpRequest
 				.getParameter(RequestParamConstants.PARAM_IS_TARGET);
+		String rankedStr = (String) httpRequest
+				.getParameter(RequestParamConstants.PARAM_RANKED);
 
 		// Post-process parameters
 		Integer ontologyId = RequestUtils.parseIntegerParam(ontologyIdStr);
@@ -71,6 +73,7 @@ public class MappingOntologyRestlet extends AbstractMappingRestlet {
 				.parseBooleanParam(unidirectionalStr);
 		Boolean isSource = RequestUtils.parseBooleanParam(isSourceStr);
 		Boolean isTarget = RequestUtils.parseBooleanParam(isTargetStr);
+		Boolean ranked = RequestUtils.parseBooleanParam(rankedStr);
 
 		// Default values
 		if (pageSize == null
@@ -104,8 +107,9 @@ public class MappingOntologyRestlet extends AbstractMappingRestlet {
 			}
 
 			if (ont == null && sourceOnt == null && targetOnt == null) {
-				throw new InvalidInputException(MessageUtils
-						.getMessage("msg.error.ontologyversionidinvalid"));
+				throw new InvalidInputException(
+						MessageUtils
+								.getMessage("msg.error.ontologyversionidinvalid"));
 			}
 
 			if (ont != null) {
@@ -120,20 +124,24 @@ public class MappingOntologyRestlet extends AbstractMappingRestlet {
 							pageSize, pageNum, parameters);
 				}
 			} else if (sourceOnt != null && targetOnt != null) {
-				mappings = mappingService.getMappingsBetweenOntologies(
-						sourceOnt, targetOnt, pageSize, pageNum,
-						unidirectional, parameters);
+				if (ranked) {
+					mappings = mappingService
+							.getRankedMappingsBetweenOntologies(sourceOnt,
+									targetOnt, pageSize, pageNum, parameters);
+				} else {
+					mappings = mappingService.getMappingsBetweenOntologies(
+							sourceOnt, targetOnt, pageSize, pageNum,
+							unidirectional, parameters);
+				}
 			} else {
 				throw new InvalidInputException(
 						OntologyNotFoundException.DEFAULT_MESSAGE);
 			}
 
 		} catch (OntologyNotFoundException onfe) {
-			response
-					.setStatus(Status.CLIENT_ERROR_NOT_FOUND, onfe.getMessage());
+			response.setStatus(Status.CLIENT_ERROR_NOT_FOUND, onfe.getMessage());
 		} catch (ConceptNotFoundException cnfe) {
-			response
-					.setStatus(Status.CLIENT_ERROR_NOT_FOUND, cnfe.getMessage());
+			response.setStatus(Status.CLIENT_ERROR_NOT_FOUND, cnfe.getMessage());
 		} catch (Exception e) {
 			response.setStatus(Status.SERVER_ERROR_INTERNAL, e.getMessage());
 			e.printStackTrace();
