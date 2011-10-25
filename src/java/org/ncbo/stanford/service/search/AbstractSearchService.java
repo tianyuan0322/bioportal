@@ -180,23 +180,31 @@ public abstract class AbstractSearchService {
 			Boolean includeDefinitions) throws Exception {
 		List<String> uniqueDocs = new ArrayList<String>(0);
 		long start = System.currentTimeMillis();
+		Document doc = null;
+		Integer ontologyVersionId = null;
+		int docId = 0;
+		OntologyBean ob = null;
+		OntologyRetrievalManager mgr = null;
+		boolean hasSubtreeRoot = !StringHelper.isNullOrNullString(subtreeRootConceptId);
 
 		if (hits.length > 0) {
-			int docId = hits[0].doc;
-			Document doc = searcher.doc(docId);
-			Integer ontologyVersionId = new Integer(doc
-					.get(SearchIndexBean.ONTOLOGY_VERSION_ID_FIELD_LABEL));
-			OntologyBean ob = ontologyMetadataManager
-					.findOntologyOrViewVersionById(ontologyVersionId);
-
-			if (ob == null) {
-				throw new OntologyNotFoundException(
-						OntologyNotFoundException.DEFAULT_MESSAGE
-								+ " (Version Id: " + ontologyVersionId + ")");
+			if (hasSubtreeRoot) {
+				docId = hits[0].doc;
+				doc = searcher.doc(docId);
+				ontologyVersionId = new Integer(doc
+						.get(SearchIndexBean.ONTOLOGY_VERSION_ID_FIELD_LABEL));
+				ob = ontologyMetadataManager
+						.findOntologyOrViewVersionById(ontologyVersionId);
+	
+				if (ob == null) {
+					throw new OntologyNotFoundException(
+							OntologyNotFoundException.DEFAULT_MESSAGE
+									+ " (Version Id: " + ontologyVersionId + ")");
+				}
+	
+				mgr = getRetrievalManager(ob);
 			}
-
-			OntologyRetrievalManager mgr = getRetrievalManager(ob);
-
+			
 			for (int i = 0; i < hits.length; i++) {
 				docId = hits[i].doc;
 				doc = searcher.doc(docId);
@@ -220,12 +228,9 @@ public abstract class AbstractSearchService {
 				String uniqueIdent = ontologyId + "_" + conceptId;
 
 				if (!uniqueDocs.contains(uniqueIdent)) {
-					if (StringHelper.isNullOrNullString(subtreeRootConceptId)
-							|| (!StringHelper
-									.isNullOrNullString(subtreeRootConceptId) && (subtreeRootConceptId
-									.equalsIgnoreCase(conceptId) || mgr
-									.hasParent(ob, conceptId,
-											subtreeRootConceptId)))) {
+					if (!hasSubtreeRoot
+							|| subtreeRootConceptId.equalsIgnoreCase(conceptId) 
+							|| mgr.hasParent(ob, conceptId, subtreeRootConceptId)) {
 						ontologyIds.remove(ontologyId);
 						SearchBean searchResult = new SearchBean(
 								ontologyVersionId,
