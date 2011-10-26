@@ -101,11 +101,12 @@ public class AuthorizationFilter extends AbstractAuthFilter {
 			for (Integer ontologyId : ontologyIds) {
 				// only the owner of ontology is allowed to
 				// executed non-GET requests
-				if (!request.getMethod().equals(Method.GET) && !user.isOwner(ontologyId)) {
+				if (!request.getMethod().equals(Method.GET)
+						&& !user.isOwner(ontologyId)) {
 					deniedOntologyId = ontologyId;
 					break;
 				}
-				
+
 				// check if ontology is restricted and if so,
 				// check that the user is in this ontology's ACL
 				if (ontologyService.isInAcl(ontologyId)
