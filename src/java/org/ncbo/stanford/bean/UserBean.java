@@ -55,6 +55,18 @@ public class UserBean {
 	}
 
 	/**
+	 * Checks whether the user is the owner of an ontology (the ontology is
+	 * present in his/her ACL and isOwner flag is set to true)
+	 * 
+	 * @param ontologyId
+	 * @return
+	 */
+	public boolean isOwner(Integer ontologyId) {
+		return isInAcl(ontologyId)
+				&& ontologyAcl.get(ontologyId).booleanValue();
+	}
+
+	/**
 	 * Adds an ontology Id to this user's access list (ACL)
 	 * 
 	 * @param ontologyId
