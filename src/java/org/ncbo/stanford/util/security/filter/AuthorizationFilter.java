@@ -22,6 +22,7 @@ import org.ncbo.stanford.view.util.constants.RequestParamConstants;
 import org.restlet.Context;
 import org.restlet.Request;
 import org.restlet.Response;
+import org.restlet.data.Method;
 import org.restlet.data.Status;
 import org.restlet.routing.Router;
 import org.restlet.routing.TemplateRoute;
@@ -98,6 +99,15 @@ public class AuthorizationFilter extends AbstractAuthFilter {
 			int deniedOntologyId = 0;
 
 			for (Integer ontologyId : ontologyIds) {
+				// only the owner of ontology is allowed to
+				// executed non-GET requests
+				if (!request.getMethod().equals(Method.GET) && !user.isOwner(ontologyId)) {
+					deniedOntologyId = ontologyId;
+					break;
+				}
+				
+				// check if ontology is restricted and if so,
+				// check that the user is in this ontology's ACL
 				if (ontologyService.isInAcl(ontologyId)
 						&& !user.isInAcl(ontologyId)) {
 					sb.append(mapTranslated.get(ontologyId) + ", ");
