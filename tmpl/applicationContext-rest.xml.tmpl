@@ -440,6 +440,17 @@
 
 	<!-- Misc -->
 
+	<bean id="analyticsMapRestlet"
+		class="org.ncbo.stanford.view.rest.restlet.util.AnalyticsRestlet"
+		parent="abstractBaseRestlet">
+		<property name="ncboUserDAO">
+			<ref bean="NcboUserDAO" />
+		</property>
+		<property name="ontologyService">
+			<ref bean="ontologyService" />
+		</property>
+	</bean>
+
 	<bean id="userEmailRestlet"
 		class="org.ncbo.stanford.view.rest.restlet.user.UserEmailRestlet"
 		parent="abstractBaseRestlet">
@@ -861,6 +872,10 @@
 						</entry>
 						<entry key="/subscriptions/ontologies/{ontologyid}">
 							<ref local="subscriptionsOntologyRestlet" />
+						</entry>
+						<!-- ========== Util Restlets ========= -->
+						<entry key="/util/analytics/{analyticsType}">
+							<ref local="analyticsMapRestlet" />
 						</entry>
 					</map>
 				</constructor-arg>
