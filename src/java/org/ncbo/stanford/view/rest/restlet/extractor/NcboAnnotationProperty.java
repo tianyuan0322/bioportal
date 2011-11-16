@@ -7,10 +7,10 @@ import org.semanticweb.owlapi.model.IRI;
 import org.semanticweb.owlapi.model.OWLAnnotationProperty;
 import org.semanticweb.owlapi.model.OWLAxiom;
 import org.semanticweb.owlapi.model.OWLDataFactory;
+import org.semanticweb.owlapi.model.OWLLiteral;
 import org.semanticweb.owlapi.model.OWLOntology;
 import org.semanticweb.owlapi.model.OWLOntologyChangeException;
 import org.semanticweb.owlapi.model.OWLOntologyManager;
-import org.semanticweb.owlapi.model.OWLStringLiteral;
 import org.semanticweb.owlapi.vocab.OWLRDFVocabulary;
 
 public class NcboAnnotationProperty {
@@ -33,11 +33,10 @@ public class NcboAnnotationProperty {
 		manager.addAxiom(ontology, decl);
 		OWLAxiom axiom = factory.getOWLAnnotationAssertionAxiom(
 				factory.getOWLAnnotationProperty(OWLRDFVocabulary.RDFS_LABEL
-						.getIRI()), id, factory.getOWLStringLiteral(label));
+						.getIRI()), id, factory.getOWLLiteral(label));
 		manager.addAxiom(ontology, axiom);
 	}
 
-	@SuppressWarnings("unchecked")
 	public void transferFromBioportal(NcboConcept c)
 			throws OWLOntologyChangeException {
 		OWLDataFactory factory = manager.getOWLDataFactory();
@@ -45,10 +44,10 @@ public class NcboAnnotationProperty {
 		if (!(annotationValues instanceof List)) {
 			return;
 		}
-		for (Object o2 : (List) annotationValues) {
+		for (Object o2 : (List<?>) annotationValues) {
 			if (o2 instanceof String) {
-				OWLStringLiteral annotationValue = factory
-						.getOWLStringLiteral((String) o2);
+				OWLLiteral annotationValue = factory
+						.getOWLLiteral((String) o2);
 				OWLAxiom axiom = factory.getOWLAnnotationAssertionAxiom(
 						annotationProperty, c.getOwlClass().getIRI(),
 						annotationValue);
@@ -56,8 +55,8 @@ public class NcboAnnotationProperty {
 			} else if (o2 instanceof ClassBean) {
 				String id = ((ClassBean) o2).getId();
 				String label = ((ClassBean) o2).getLabel();
-				OWLStringLiteral annotationValue = factory
-						.getOWLStringLiteral(label + " (Id: " + id + ")");
+				OWLLiteral annotationValue = factory
+						.getOWLLiteral(label + " (Id: " + id + ")");
 				OWLAxiom axiom = factory.getOWLAnnotationAssertionAxiom(
 						annotationProperty, c.getOwlClass().getIRI(),
 						annotationValue);
