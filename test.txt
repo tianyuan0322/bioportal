@@ -1,3 +1,0 @@
-
-Testing changes to the gforge svn-commit hooks.
-
