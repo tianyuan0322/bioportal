@@ -240,9 +240,7 @@ public class NotesServiceImpl implements NotesService {
 		for (Annotation annotation : annotations) {
 			if (annotation != null) {
 				if (threaded && !topLevelOnly) {
-					notes
-							.add(convertAnnotationToNoteBean(annotation, ont,
-									true));
+					notes.add(convertAnnotationToNoteBean(annotation, ont, true));
 				} else {
 					notes.add(convertAnnotationToNoteBean(annotation, ont));
 				}
@@ -338,8 +336,11 @@ public class NotesServiceImpl implements NotesService {
 			throws NoteNotFoundException {
 		while (note.getAppliesToList().get(0).getType()
 				.equalsIgnoreCase("Note")) {
-			note = getRootNote(ont, convertAnnotationToNoteBean(getNote(ont,
-					note.getAppliesToList().get(0).getId()), ont));
+			note = getRootNote(
+					ont,
+					convertAnnotationToNoteBean(
+							getNote(ont, note.getAppliesToList().get(0).getId()),
+							ont));
 		}
 		return note;
 	}
@@ -441,7 +442,7 @@ public class NotesServiceImpl implements NotesService {
 
 	/**
 	 * Method to convert Annotation to NoteBean.
-	 *
+	 * 
 	 * @param annotation
 	 *            The annotation to convert.
 	 * @return
@@ -454,7 +455,7 @@ public class NotesServiceImpl implements NotesService {
 	/**
 	 * Converts an Annotation object to a NoteBean. Includes options for
 	 * threading.
-	 *
+	 * 
 	 * @param annotation
 	 *            The annotation to convert.
 	 * @param threaded
@@ -529,7 +530,7 @@ public class NotesServiceImpl implements NotesService {
 
 	/**
 	 * Creates key/value pairs for non-common properties for the NoteBean.
-	 *
+	 * 
 	 * @param ont
 	 * @param annotation
 	 * @return
@@ -547,9 +548,7 @@ public class NotesServiceImpl implements NotesService {
 			ProposalNewTermBean newTerm = new ProposalNewTermBean();
 			newTerm.setDefinition(newTermAnnot.getDefinition().getLabel());
 			newTerm.setId(newTermAnnot.getEntityId());
-			newTerm
-					.setPreferredName(newTermAnnot.getPreferredName()
-							.getLabel());
+			newTerm.setPreferredName(newTermAnnot.getPreferredName().getLabel());
 			newTerm.setReasonForChange(newTermAnnot.getReasonForChange());
 			newTerm.setContactInfo(newTermAnnot.getContactInformation());
 
@@ -613,10 +612,10 @@ public class NotesServiceImpl implements NotesService {
 	/**
 	 * Get an id based on the ontology type. OBO ontologies return the short id,
 	 * everything else uses the fullId.
-	 *
+	 * 
 	 * This method exists in these classes: NotesServiceImpl.java
 	 * NotesRestlet.java
-	 *
+	 * 
 	 * @param concept
 	 * @param ont
 	 * @return
@@ -640,7 +639,7 @@ public class NotesServiceImpl implements NotesService {
 	 * This method compares the provided status with known statuses in order to
 	 * re-use existing statuses in ChAO but also provide ontology authors with
 	 * the ability to use arbitrary ones.
-	 *
+	 * 
 	 * @param status
 	 * @return
 	 * @throws NotesException
@@ -660,8 +659,8 @@ public class NotesServiceImpl implements NotesService {
 		String statusFormatted = URI.encode(WordUtils.uncapitalize(status));
 		String nameIRI = "http://bioportal.bioontology.org/ontologies/virtual/"
 				+ ont.getOntologyId() + "#" + statusFormatted;
-		return notesManager.createStatus(nameIRI, WordUtils
-				.capitalizeFully(status));
+		return notesManager.createStatus(nameIRI,
+				WordUtils.capitalizeFully(status));
 	}
 
 	/**
