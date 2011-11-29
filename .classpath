@@ -99,6 +99,8 @@
 	<classpathentry exported="true" kind="lib" path="WebRoot/WEB-INF/lib/protege/plugins/edu.stanford.smi.protegex.prompt/prompt.jar"/>
 	<classpathentry exported="true" kind="lib" path="WebRoot/WEB-INF/lib/protege/plugins/edu.stanford.smi.protegex.owl/axis.jar"/>
 	<classpathentry exported="true" kind="lib" path="WebRoot/WEB-INF/lib/protege/plugins/edu.stanford.smi.protegex.changes/change-model.jar"/>
+	<classpathentry exported="true" kind="lib" path="WebRoot/WEB-INF/lib/protege4/org.protege.owl.database.jar"/>
+	<classpathentry exported="true" kind="lib" path="WebRoot/WEB-INF/lib/protege4/protege-owlapi-extensions.jar"/>
 	<classpathentry exported="true" kind="lib" path="WebRoot/WEB-INF/lib/lexgrid/extLib/BlankAccessDB.jar"/>
 	<classpathentry exported="true" kind="lib" path="WebRoot/WEB-INF/lib/lexgrid/extLib/activation-1.1.jar"/>
 	<classpathentry exported="true" kind="lib" path="WebRoot/WEB-INF/lib/lexgrid/extLib/arq.jar"/>
