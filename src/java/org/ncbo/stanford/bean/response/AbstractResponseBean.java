@@ -3,6 +3,9 @@ package org.ncbo.stanford.bean.response;
 import java.util.Calendar;
 import java.util.Date;
 
+import org.restlet.data.MediaType;
+import org.restlet.data.Status;
+
 /**
  * Abstract class to define a generic RESTful Response
  * 
@@ -15,10 +18,17 @@ public abstract class AbstractResponseBean {
 	private Date accessDate = Calendar.getInstance().getTime();
 	private String shortMessage;
 	private String longMessage;
+	private MediaType mediaType = MediaType.APPLICATION_XML;
+	private Status status;
 
-	public abstract boolean isResponseError();
-	public abstract boolean isResponseSuccess();
+	protected AbstractResponseBean(Status status) {
+		setStatus(status);
+	}
 	
+	public abstract boolean isResponseError();
+
+	public abstract boolean isResponseSuccess();
+
 	/**
 	 * @return the accessedResource
 	 */
@@ -77,5 +87,45 @@ public abstract class AbstractResponseBean {
 	 */
 	public void setLongMessage(String longMessage) {
 		this.longMessage = longMessage;
+	}
+
+	/**
+	 * @return the mediaType
+	 */
+	public MediaType getMediaType() {
+		return mediaType;
+	}
+
+	/**
+	 * @param mediaType
+	 *            the mediaType to set
+	 */
+	public void setMediaType(MediaType mediaType) {
+		this.mediaType = mediaType;
+	}
+
+	/**
+	 * @return the status
+	 */
+	public Status getStatus() {
+		return status;
+	}
+
+	/**
+	 * @param status
+	 *            the status to set
+	 */
+	public void setStatus(Status status) {
+		this.status = status;
+	}
+	
+	public String toString() {		
+		return "{accessedResource: " + this.getAccessedResource()
+			+ ", accessedDate: " + this.getAccessDate()
+			+ ", shortMessage: " + this.getShortMessage() 
+			+ ", longMessage: " + this.getLongMessage() 
+			+ ", mediaType: " + this.getMediaType() 
+			+ ", status: " + this.getStatus() 
+			+ "}";
 	}
 }

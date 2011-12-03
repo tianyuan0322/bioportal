@@ -2,11 +2,7 @@ package org.ncbo.stanford.service.xml;
 
 import java.util.HashMap;
 
-import javax.xml.transform.TransformerException;
-
 import org.ncbo.stanford.bean.response.AbstractResponseBean;
-import org.ncbo.stanford.bean.response.SuccessBean;
-import org.ncbo.stanford.enumeration.ErrorTypeEnum;
 import org.restlet.Request;
 import org.restlet.Response;
 
@@ -19,42 +15,6 @@ import com.thoughtworks.xstream.XStream;
  * 
  */
 public interface XMLSerializationService {
-
-	/**
-	 * Generate an XML representation of a specific error
-	 * 
-	 * @param errorType
-	 * @param accessedResource
-	 * @return
-	 */
-	public String getErrorAsXML(ErrorTypeEnum errorType, String accessedResource);
-
-	/**
-	 * Generate an XML representation of a specific error.
-	 * 
-	 * @param request
-	 * @param response
-	 * @return
-	 */
-	public String getErrorAsXML(Request request, Response response);
-
-	public String getSuccessAsXML(SuccessBean successBean);
-
-	public SuccessBean getSuccessBean(Request request);
-
-	public SuccessBean getSuccessBean(Request request, Object data);
-
-	/**
-	 * Generate an XML representation of a successfully processed request with
-	 * XSL Transformation.
-	 * 
-	 * @param request
-	 * @param data
-	 * @param xsltFile
-	 * @throws TransformerException
-	 */
-	public String applyXSL(Request request, Object data, String xsltFile)
-			throws TransformerException;
 
 	public void generateXMLResponse(Request request, Response response,
 			Object data);
@@ -80,6 +40,6 @@ public interface XMLSerializationService {
 	public void aliasField(String alias, Class definedIn, String fieldName);
 
 	public Object fromXML(String xml);
-	
+
 	public XStream getXmlSerializer();
 }

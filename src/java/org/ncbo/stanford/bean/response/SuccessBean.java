@@ -3,6 +3,8 @@ package org.ncbo.stanford.bean.response;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.restlet.data.Status;
+
 /**
  * Success response container for RESTful responses
  * 
@@ -18,7 +20,7 @@ public class SuccessBean extends AbstractResponseBean {
 	 * Default constructor
 	 */
 	public SuccessBean() {
-		super();
+		super(Status.SUCCESS_OK);
 	}
 
 	@Override

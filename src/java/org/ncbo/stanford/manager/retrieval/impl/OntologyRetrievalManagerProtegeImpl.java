@@ -333,14 +333,11 @@ public class OntologyRetrievalManagerProtegeImpl extends
 
 	private InstanceBean createInstanceBean(Frame frame,
 			OntologyBean ontologyBean, Boolean includeRelations) {
-		InstanceBean instanceBean = new InstanceBean();
-		instanceBean.setId(getId(frame));
-		instanceBean.setFullId(getFullId(frame, ontologyBean));
-		instanceBean.setLabel(getBrowserText(frame, ontologyBean));
-
+		InstanceBean instanceBean = createBaseInstanceBean(frame, ontologyBean);
+		
 		if (frame instanceof Instance) {
 			Collection instanceTypes = ((Instance) frame).getDirectTypes();
-			ArrayList<ClassBean> classBeans = new ArrayList<ClassBean>();
+			List<ClassBean> classBeans = new ArrayList<ClassBean>();
 
 			for (Object obj : instanceTypes) {
 				DefaultCls defaultOWLNamedClass = (DefaultCls) obj;
@@ -873,6 +870,13 @@ public class OntologyRetrievalManagerProtegeImpl extends
 		return classBean;
 	}
 
+	private InstanceBean createBaseInstanceBean(Frame frame, OntologyBean ontologyBean) {
+		InstanceBean instanceBean = new InstanceBean();
+		populateBaseConceptBean(frame, ontologyBean, instanceBean);
+		
+		return instanceBean;
+	}
+	
 	private void populateBaseConceptBean(Frame frame,
 			OntologyBean ontologyBean, AbstractConceptBean conceptBean) {
 		conceptBean.setId(getId(frame));

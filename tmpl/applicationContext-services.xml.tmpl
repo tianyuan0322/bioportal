@@ -1228,14 +1228,7 @@
 	</bean>
 
 	<bean id="xmlSerializationService"
-		class="org.ncbo.stanford.service.xml.impl.XMLSerializationServiceImpl">
-		<property name="xmlSerializer">
-			<ref bean="xmlSerializer" />
-		</property>
-	</bean>
-
-	<bean id="xmlSerializer" class="com.thoughtworks.xstream.XStream">
-	</bean>
+		class="org.ncbo.stanford.service.xml.impl.XMLSerializationServiceImpl" />
 
 	<!-- Scheduled Jobs -->
 

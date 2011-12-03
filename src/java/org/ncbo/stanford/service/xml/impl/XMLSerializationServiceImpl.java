@@ -43,13 +43,11 @@ import org.ncbo.stanford.bean.notes.ProposalNewTermBean;
 import org.ncbo.stanford.bean.notes.ProposalPropertyValueChangeBean;
 import org.ncbo.stanford.bean.response.AbstractResponseBean;
 import org.ncbo.stanford.bean.response.ErrorBean;
-import org.ncbo.stanford.bean.response.ErrorStatusBean;
 import org.ncbo.stanford.bean.response.SuccessBean;
 import org.ncbo.stanford.bean.search.OntologyHitBean;
 import org.ncbo.stanford.bean.search.SearchBean;
 import org.ncbo.stanford.bean.user.OntologyLicense;
 import org.ncbo.stanford.enumeration.ConceptTypeEnum;
-import org.ncbo.stanford.enumeration.ErrorTypeEnum;
 import org.ncbo.stanford.enumeration.SearchRecordTypeEnum;
 import org.ncbo.stanford.enumeration.ViewingRestrictionEnum;
 import org.ncbo.stanford.service.session.RESTfulSession;
@@ -82,6 +80,7 @@ import org.w3c.dom.Text;
 
 import com.thoughtworks.xstream.XStream;
 import com.thoughtworks.xstream.converters.enums.EnumSingleValueConverter;
+import com.thoughtworks.xstream.io.json.JsonHierarchicalStreamDriver;
 import com.thoughtworks.xstream.io.xml.TraxSource;
 import com.thoughtworks.xstream.mapper.Mapper;
 
@@ -99,132 +98,11 @@ public class XMLSerializationServiceImpl implements XMLSerializationService {
 	private HashMap<String, Transformer> transformers = new HashMap<String, Transformer>(
 			0);
 	private XStream xmlSerializer = null;
+	private XStream jsonSerializer = null;
 
-	/**
-	 * Generate an XML representation of a specific error This is going to
-	 * retire when ErrorTypeEnum is replaced with Restlet.Status object - cyoun
-	 * 
-	 * @param errorType
-	 * @param accessedResource
-	 * @return
-	 */
-	public String getErrorAsXML(ErrorTypeEnum errorType, String accessedResource) {
-		omitField(ErrorBean.class, "errorType");
-		ErrorBean errorBean = new ErrorBean(errorType);
-
-		if (!GenericValidator.isBlankOrNull(accessedResource)) {
-			errorBean.setAccessedResource(accessedResource);
-		}
-
-		return getResponseAsXML(errorBean);
-	}
-
-	/**
-	 * Generate an XML representation of a specific error.
-	 * 
-	 * @param request
-	 * @param response
-	 * @return
-	 */
-	public String getErrorAsXML(Request request, Response response) {
-		String accessedResource = request.getResourceRef().getPath();
-		ErrorStatusBean errorStatusBean = new ErrorStatusBean(response
-				.getStatus());
-
-		if (!GenericValidator.isBlankOrNull(accessedResource)) {
-			errorStatusBean.setAccessedResource(accessedResource);
-		}
-
-		return getResponseAsXML(errorStatusBean);
-	}
-
-	/**
-	 * Generate an XML representation of a successfully processed request. This
-	 * should only be used when no other XML response is expected (i.e.
-	 * authentication).
-	 * 
-	 * @param errorStatusBean
-	 * @return String
-	 */
-	public String getErrorAsXML(ErrorStatusBean errorStatusBean) {
-		return getResponseAsXML(errorStatusBean);
-	}
-
-	/**
-	 * Generate an XML representation of a successfully processed request. This
-	 * should only be used when no other XML response is expected (i.e.
-	 * authentication).
-	 * 
-	 * @param successBean
-	 * @return String
-	 */
-	public String getSuccessAsXML(SuccessBean successBean) {
-		return getResponseAsXML(successBean);
-	}
-
-	/**
-	 * returns ErrorStatusBean
-	 */
-	public ErrorStatusBean getErrorBean(Request request, Response response) {
-		String accessedResource = request.getResourceRef().getPath();
-		ErrorStatusBean errorStatusBean = new ErrorStatusBean(response
-				.getStatus());
-
-		if (!GenericValidator.isBlankOrNull(accessedResource)) {
-			errorStatusBean.setAccessedResource(accessedResource);
-		}
-
-		return errorStatusBean;
-	}
-
-	/**
-	 * returns SuccessBean with apiKey, accessedResource populated
-	 */
-	public SuccessBean getSuccessBean(Request request) {
-		String accessedResource = request.getResourceRef().getPath();
-		SuccessBean successBean = new SuccessBean();
-
-		if (!GenericValidator.isBlankOrNull(accessedResource)) {
-			successBean.setAccessedResource(accessedResource);
-		}
-
-		return successBean;
-	}
-
-	/**
-	 * returns SuccessBean with apiKey, accessedResource and data populated
-	 */
-	public SuccessBean getSuccessBean(Request request, Object data) {
-		SuccessBean successBean = getSuccessBean(request);
-
-		if (data != null) {
-			successBean.getData().add(data);
-		}
-
-		return successBean;
-	}
-
-	/**
-	 * Generate an XML representation of a successfully processed request with
-	 * XSL Transformation.
-	 * 
-	 * @param request
-	 * @param data
-	 * @param xsltFile
-	 * @return String
-	 * @throws TransformerException
-	 */
-	public String applyXSL(Request request, Object data, String xsltFile)
-			throws TransformerException {
-		SuccessBean sb = getSuccessBean(request, data);
-		// create source
-		TraxSource traxSource = new TraxSource(sb, xmlSerializer);
-		// create buffer for XML output
-		Writer buffer = new StringWriter();
-		getTransformerInstance(xsltFile).transform(traxSource,
-				new StreamResult(buffer));
-
-		return buffer.toString();
+	public XMLSerializationServiceImpl() {
+		initXmlSerializer();
+		initJsonSerializer();
 	}
 
 	/**
@@ -235,15 +113,7 @@ public class XMLSerializationServiceImpl implements XMLSerializationService {
 	 * @param response
 	 */
 	public void generateStatusXMLResponse(Request request, Response response) {
-		if (!response.getStatus().isError()) {
-			RequestUtils.setHttpServletResponse(response, Status.SUCCESS_OK,
-					MediaType.TEXT_XML,
-					getSuccessAsXML(getSuccessBean(request)));
-		} else {
-			RequestUtils.setHttpServletResponse(response, response.getStatus(),
-					MediaType.TEXT_XML, getErrorAsXML(getErrorBean(request,
-							response)));
-		}
+		generateXMLResponse(request, response, null);
 	}
 
 	/**
@@ -254,18 +124,19 @@ public class XMLSerializationServiceImpl implements XMLSerializationService {
 	 * @param response
 	 * @param data
 	 */
-
 	public void generateXMLResponse(Request request, Response response,
 			Object data) {
-		// SUCCESS, include the bean info
-		if (!response.getStatus().isError()) {
-			RequestUtils.setHttpServletResponse(response, Status.SUCCESS_OK,
-					MediaType.TEXT_XML, getSuccessAsXML(getSuccessBean(request,
-							data)));
-			// if ERROR, just status, no bean info
+		AbstractResponseBean respBean = null;
+		Status status = response.getStatus();
+
+		if (status.isError()) {
+			respBean = getErrorBean(request, response);
 		} else {
-			generateStatusXMLResponse(request, response);
+			respBean = getSuccessBean(request, data);
 		}
+
+		RequestUtils.setHttpServletResponse(response, status, respBean
+				.getMediaType(), getResponseAsString(respBean));
 	}
 
 	/**
@@ -281,23 +152,27 @@ public class XMLSerializationServiceImpl implements XMLSerializationService {
 	 */
 	public void generateXMLResponse(Request request, Response response,
 			Object data, String xsltFile) {
-		// if SUCCESS, include the bean info
-		if (!response.getStatus().isError()) {
-			try {
-				RequestUtils.setHttpServletResponse(response,
-						Status.SUCCESS_OK, MediaType.TEXT_XML, applyXSL(
-								request, data, xsltFile));
-			} catch (TransformerException e) {
-				// XML parse ERROR
-				response
-						.setStatus(Status.SERVER_ERROR_INTERNAL, e.getMessage());
-				generateStatusXMLResponse(request, response);
-				e.printStackTrace();
-				log.error(e);
-			}
-			// if ERROR, just status, no bean info
-		} else {
+		if (response.getStatus().isError()) {
 			generateStatusXMLResponse(request, response);
+		} else {
+			MediaType prefMediaType = getPreferredMediaType(request);
+
+			if (prefMediaType.equals(MediaType.APPLICATION_JSON)) {
+				generateXMLResponse(request, response, data);
+			} else {
+				try {
+					RequestUtils.setHttpServletResponse(response,
+							Status.SUCCESS_OK, prefMediaType, applyXSL(request,
+									data, xsltFile));
+				} catch (TransformerException e) {
+					// XML parse ERROR
+					response.setStatus(Status.SERVER_ERROR_INTERNAL, e
+							.getMessage());
+					generateStatusXMLResponse(request, response);
+					e.printStackTrace();
+					log.error(e);
+				}
+			}
 		}
 	}
 
@@ -328,6 +203,84 @@ public class XMLSerializationServiceImpl implements XMLSerializationService {
 		return responseBean;
 	}
 
+	/**
+	 * Generate an XML representation of a successfully processed request with
+	 * XSL Transformation.
+	 * 
+	 * @param request
+	 * @param data
+	 * @param xsltFile
+	 * @return String
+	 * @throws TransformerException
+	 */
+	private String applyXSL(Request request, Object data, String xsltFile)
+			throws TransformerException {
+		SuccessBean sb = getSuccessBean(request, data);
+		// create source
+		TraxSource traxSource = new TraxSource(sb, xmlSerializer);
+		// create buffer for XML output
+		Writer buffer = new StringWriter();
+		getTransformerInstance(xsltFile).transform(traxSource,
+				new StreamResult(buffer));
+
+		return buffer.toString();
+	}
+
+	/**
+	 * returns ErrorStatusBean
+	 */
+	private ErrorBean getErrorBean(Request request, Response response) {
+		ErrorBean errorStatusBean = new ErrorBean(response.getStatus());
+		initResponseBean(request, errorStatusBean);
+
+		return errorStatusBean;
+	}
+
+	/**
+	 * returns SuccessBean with apiKey, accessedResource populated
+	 */
+	private SuccessBean getSuccessBean(Request request) {
+		SuccessBean successBean = new SuccessBean();
+		initResponseBean(request, successBean);
+
+		return successBean;
+	}
+
+	/**
+	 * returns SuccessBean with apiKey, accessedResource and data populated
+	 */
+	private SuccessBean getSuccessBean(Request request, Object data) {
+		SuccessBean successBean = getSuccessBean(request);
+
+		if (data != null) {
+			successBean.getData().add(data);
+		}
+
+		return successBean;
+	}
+
+	private void initResponseBean(Request request,
+			AbstractResponseBean responseBean) {
+		String accessedResource = request.getResourceRef().getPath();
+
+		if (!GenericValidator.isBlankOrNull(accessedResource)) {
+			responseBean.setAccessedResource(accessedResource);
+		}
+
+		responseBean.setMediaType(getPreferredMediaType(request));
+	}
+
+	private MediaType getPreferredMediaType(Request request) {
+		List<MediaType> prefMediaTypes = new ArrayList<MediaType>(2);
+		prefMediaTypes.add(MediaType.APPLICATION_XML);
+		prefMediaTypes.add(MediaType.APPLICATION_JSON);
+		MediaType prefMediaType = request.getClientInfo()
+				.getPreferredMediaType(prefMediaTypes);
+
+		return (prefMediaType == null) ? MediaType.APPLICATION_XML
+				: prefMediaType;
+	}
+
 	private void removeWhitespaceNodes(Element e) {
 		NodeList children = e.getChildNodes();
 
@@ -343,11 +296,10 @@ public class XMLSerializationServiceImpl implements XMLSerializationService {
 		}
 	}
 
-	private ErrorStatusBean populateErrorBean(Document doc, int responseCode)
+	private ErrorBean populateErrorBean(Document doc, int responseCode)
 			throws TransformerException {
 		String node = getNodeAsXML(doc);
-		ErrorStatusBean errorBean = (ErrorStatusBean) xmlSerializer
-				.fromXML(node);
+		ErrorBean errorBean = (ErrorBean) xmlSerializer.fromXML(node);
 		errorBean.setStatus(new Status(responseCode));
 
 		return errorBean;
@@ -424,28 +376,42 @@ public class XMLSerializationServiceImpl implements XMLSerializationService {
 	}
 
 	/**
-	 * Generate an XML representation of a request.
+	 * Generate a String representation of a request.
 	 * 
 	 * @param responseBean
 	 * @return String
 	 */
-	private String getResponseAsXML(AbstractResponseBean responseBean) {
-		StringBuffer sb = new StringBuffer(ApplicationConstants.XML_DECLARATION);
-		sb.append('\n');
-		sb.append(xmlSerializer.toXML(responseBean));
+	private String getResponseAsString(AbstractResponseBean responseBean) {
+		StringBuffer sb = new StringBuffer();
+		XStream serializer = null;
+
+		if (responseBean.getMediaType().equals(MediaType.APPLICATION_JSON)) {
+			serializer = jsonSerializer;
+		} else {
+			serializer = xmlSerializer;
+			sb.append(ApplicationConstants.XML_DECLARATION);
+			sb.append('\n');
+		}
+
+		sb.append(serializer.toXML(responseBean));
 
 		return sb.toString();
 	}
 
-	/**
-	 * @param xmlSerializer
-	 *            the xmlSerializer to set
-	 */
-	public void setXmlSerializer(XStream xmlSerializer) {
-		this.xmlSerializer = xmlSerializer;
-		this.xmlSerializer.setMode(XStream.NO_REFERENCES);
-		setAliases(this.xmlSerializer);
-		registerConverters(this.xmlSerializer);
+	private void initXmlSerializer() {
+		this.xmlSerializer = new XStream();
+		initSerializer(this.xmlSerializer);
+	}
+
+	private void initJsonSerializer() {
+		this.jsonSerializer = new XStream(new JsonHierarchicalStreamDriver());
+		initSerializer(this.jsonSerializer);
+	}
+
+	private void initSerializer(XStream serializer) {
+		serializer.setMode(XStream.NO_REFERENCES);
+		setAliases(serializer);
+		registerConverters(serializer);
 	}
 
 	/**
@@ -525,15 +491,13 @@ public class XMLSerializationServiceImpl implements XMLSerializationService {
 		xmlSerializer.alias(MessageUtils
 				.getMessage("entity.proposalforchangehierarchy"),
 				ProposalNewRelationshipBean.class);
-
 		xmlSerializer.alias(ApplicationConstants.RESPONSE_XML_TAG_NAME,
 				SuccessBean.class);
-		xmlSerializer.alias(ApplicationConstants.ERROR_XML_TAG_NAME,
-				ErrorBean.class);
 		xmlSerializer.alias(ApplicationConstants.ERROR_STATUS_XML_TAG_NAME,
-				ErrorStatusBean.class);
+				ErrorBean.class);
 		xmlSerializer.alias(ApplicationConstants.SUCCESS_XML_TAG_NAME,
 				SuccessBean.class);
+
 		String aclAlias = MessageUtils.getMessage("entity.acl");
 		xmlSerializer.alias(aclAlias, OntologyAcl.class);
 		xmlSerializer.alias(aclAlias, UserAcl.class);
@@ -544,7 +508,9 @@ public class XMLSerializationServiceImpl implements XMLSerializationService {
 
 		xmlSerializer.omitField(UserBean.class, "password");
 		xmlSerializer.omitField(UserBean.class, "apiKey");
-		xmlSerializer.omitField(ErrorStatusBean.class, "status");
+
+		xmlSerializer.omitField(AbstractResponseBean.class, "mediaType");
+		xmlSerializer.omitField(AbstractResponseBean.class, "status");
 
 		// Mapping aliases using annotations
 		xmlSerializer.processAnnotations(MappingBean.class);

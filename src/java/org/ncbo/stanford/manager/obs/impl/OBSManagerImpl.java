@@ -17,7 +17,7 @@ import org.ncbo.stanford.bean.obs.PathBean;
 import org.ncbo.stanford.bean.obs.RelationBean;
 import org.ncbo.stanford.bean.obs.SemanticTypeBean;
 import org.ncbo.stanford.bean.response.AbstractResponseBean;
-import org.ncbo.stanford.bean.response.ErrorStatusBean;
+import org.ncbo.stanford.bean.response.ErrorBean;
 import org.ncbo.stanford.bean.response.SuccessBean;
 import org.ncbo.stanford.manager.obs.OBSManager;
 import org.ncbo.stanford.service.xml.XMLSerializationService;
@@ -359,7 +359,7 @@ public class OBSManagerImpl implements OBSManager {
 	}
 
 	private void handleError(AbstractResponseBean response) throws Exception {
-		ErrorStatusBean error = (ErrorStatusBean) response;
+		ErrorBean error = (ErrorBean) response;
 		String message = error.getLongMessage();
 
 		if (StringHelper.isNullOrNullString(message)) {

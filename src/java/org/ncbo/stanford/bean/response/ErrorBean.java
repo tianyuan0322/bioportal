@@ -1,6 +1,6 @@
 package org.ncbo.stanford.bean.response;
 
-import org.ncbo.stanford.enumeration.ErrorTypeEnum;
+import org.restlet.data.Status;
 
 /**
  * Error container for RESTful error responses
@@ -10,40 +10,18 @@ import org.ncbo.stanford.enumeration.ErrorTypeEnum;
  */
 public class ErrorBean extends AbstractResponseBean {
 
-	private ErrorTypeEnum errorType;
-	private String errorCode;
+	private int errorCode;
 
 	/**
-	 * Default constructor
-	 */
-	public ErrorBean() {
-		super();
-	}
-
-	/**
-	 * Instantiate using an exception object
+	 * Instantiate using a Status object
 	 * 
-	 * @param e -
-	 *            exception object
+	 * @param status
 	 */
-	public ErrorBean(Exception e) {
-		super();
-		this.errorType = ErrorTypeEnum.RUNTIME_ERROR;
-		this.errorCode = this.errorType.getErrorCode();
-		setShortMessage(e.getLocalizedMessage());
-		setLongMessage(e.getMessage());
-	}
-
-	/**
-	 * Instantiate using an enum
-	 * 
-	 * @param errorType
-	 */
-	public ErrorBean(ErrorTypeEnum errorType) {
-		super();
-		this.errorType = errorType;
-		this.errorCode = errorType.getErrorCode();
-		setShortMessage(errorType.getErrorMessage());
+	public ErrorBean(Status status) {
+		super(status);
+		setErrorCode(status.getCode());
+		setShortMessage(status.getName());
+		setLongMessage(status.getDescription());
 	}
 
 	@Override
@@ -56,33 +34,15 @@ public class ErrorBean extends AbstractResponseBean {
 		return false;
 	}
 
-	/**
-	 * @return the errorType
-	 */
-	public ErrorTypeEnum getErrorType() {
-		return errorType;
-	}
-
-	/**
-	 * @param errorType
-	 *            the errorType to set
-	 */
-	public void setErrorType(ErrorTypeEnum errorType) {
-		this.errorType = errorType;
-	}
-
-	/**
-	 * @return the errorCode
-	 */
-	public String getErrorCode() {
+	public int getErrorCode() {
 		return errorCode;
 	}
 
-	/**
-	 * @param errorCode
-	 *            the errorCode to set
-	 */
-	public void setErrorCode(String errorCode) {
+	public void setErrorCode(int errorCode) {
 		this.errorCode = errorCode;
+	}
+
+	public String toString() {
+		return super.toString() + " {errorCode: " + this.getErrorCode() + "}";
 	}
 }
