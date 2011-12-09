@@ -21,6 +21,7 @@ import org.apache.commons.logging.LogFactory;
 import org.apache.commons.validator.GenericValidator;
 import org.ncbo.stanford.bean.CategoryBean;
 import org.ncbo.stanford.bean.GroupBean;
+import org.ncbo.stanford.bean.NamespaceBean;
 import org.ncbo.stanford.bean.OntologyBean;
 import org.ncbo.stanford.bean.OntologyMetricsBean;
 import org.ncbo.stanford.bean.SubscriptionsBean;
@@ -497,6 +498,8 @@ public class XMLSerializationServiceImpl implements XMLSerializationService {
 				ErrorBean.class);
 		xmlSerializer.alias(ApplicationConstants.SUCCESS_XML_TAG_NAME,
 				SuccessBean.class);
+
+		xmlSerializer.alias("namespace", NamespaceBean.class);
 
 		String aclAlias = MessageUtils.getMessage("entity.acl");
 		xmlSerializer.alias(aclAlias, OntologyAcl.class);

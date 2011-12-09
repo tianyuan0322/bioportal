@@ -43,6 +43,7 @@ import org.LexGrid.naming.SupportedProperty;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.ncbo.stanford.bean.NamespaceBean;
 import org.ncbo.stanford.bean.OntologyBean;
 import org.ncbo.stanford.bean.concept.ClassBean;
 import org.ncbo.stanford.bean.concept.ClassBeanResultListBean;
@@ -117,12 +118,21 @@ public class OntologyRetrievalManagerLexGridImpl extends
 			SupportedProperty prop = sp[i];
 
 			if (prop != null && StringUtils.isNotBlank(prop.getLocalId())) {
-				PropertyBean pb= createBasePropertyBean(ontologyBean, prop.getLocalId());
+				PropertyBean pb = createBasePropertyBean(ontologyBean, prop
+						.getLocalId());
 				list.add(pb);
 			}
 		}
-		
+
 		return list;
+	}
+
+	/**
+	 * There are no namespaces in non-OWL ontologies
+	 */
+	public List<NamespaceBean> findNamespaces(OntologyBean ontologyBean)
+			throws Exception {
+		return new ArrayList<NamespaceBean>(0);
 	}
 
 	/**
@@ -750,10 +760,11 @@ public class OntologyRetrievalManagerLexGridImpl extends
 						schemeName);
 		CodedNodeSet nodes = lbs.getNodeSet(schemeName, csvt, null)
 				.restrictToCodes(crefs);
-//		ResolvedConceptReferenceList matches = nodes.resolveToList(null, null,
-//				null, null, false, -1);
+		// ResolvedConceptReferenceList matches = nodes.resolveToList(null,
+		// null,
+		// null, null, false, -1);
 		ResolvedConceptReferenceList matches = nodes.resolveToList(null, null,
-				Constructors.createLocalNameList("CONCEPTSTATUS"), null,  -1);
+				Constructors.createLocalNameList("CONCEPTSTATUS"), null, -1);
 		ResolvedConceptReference rcr = null;
 
 		if (matches.getResolvedConceptReferenceCount() > 0) {
@@ -771,8 +782,8 @@ public class OntologyRetrievalManagerLexGridImpl extends
 	 * @throws Exception
 	 */
 
-	private ResolvedConceptReference getResolvedConceptReferenceWithoutRelations(OntologyBean ontologyBean,
-			AssociatedConcept ac) {
+	private ResolvedConceptReference getResolvedConceptReferenceWithoutRelations(
+			OntologyBean ontologyBean, AssociatedConcept ac) {
 		ResolvedConceptReference rcr = new ResolvedConceptReference();
 		rcr.setReferencedEntry(ac.getReferencedEntry());
 		rcr.setCode(ac.getCode());
@@ -1166,7 +1177,8 @@ public class OntologyRetrievalManagerLexGridImpl extends
 		return classBean;
 	}
 
-	private PropertyBean createBasePropertyBean(OntologyBean ontologyBean, String id) {
+	private PropertyBean createBasePropertyBean(OntologyBean ontologyBean,
+			String id) {
 		PropertyBean propBean = new PropertyBean();
 		propBean.setId(id);
 		String fullId = getFullId(ontologyBean, id);
@@ -1175,7 +1187,8 @@ public class OntologyRetrievalManagerLexGridImpl extends
 		propBean.setType(ConceptTypeEnum.CONCEPT_TYPE_PROPERTY);
 
 		return propBean;
-	}	
+	}
+
 	/**
 	 * 
 	 * @param list
@@ -1379,13 +1392,16 @@ public class OntologyRetrievalManagerLexGridImpl extends
 
 				ResolvedConceptReference rcr_without_relations;
 				try {
-				    rcr_without_relations = getLightResolvedConceptReference(ontologyBean, assocConcept.getCode());
-				    if (rcr_without_relations == null) {
-				    	rcr_without_relations = getResolvedConceptReferenceWithoutRelations(ontologyBean, assocConcept);
-				    }
+					rcr_without_relations = getLightResolvedConceptReference(
+							ontologyBean, assocConcept.getCode());
+					if (rcr_without_relations == null) {
+						rcr_without_relations = getResolvedConceptReferenceWithoutRelations(
+								ontologyBean, assocConcept);
+					}
 				} catch (Exception ex) {
 					ex.printStackTrace();
-					rcr_without_relations = getResolvedConceptReferenceWithoutRelations(ontologyBean, assocConcept);
+					rcr_without_relations = getResolvedConceptReferenceWithoutRelations(
+							ontologyBean, assocConcept);
 				}
 				ClassBean classBean = createClassBeanWithChildCount(
 						ontologyBean, rcr_without_relations, countMap,
@@ -1430,7 +1446,7 @@ public class OntologyRetrievalManagerLexGridImpl extends
 		if (!anonStrList.isEmpty()) {
 			current_classBean.addRelation(dirName, anonStrList);
 		}
-		
+
 		mergeClassBeansIntoClassBeanRelationsUsingRelationName(
 				current_classBean, classBeans, dirName);
 		mergeClassBeansIntoClassBeanRelationsUsingRelationName(
@@ -1570,7 +1586,7 @@ public class OntologyRetrievalManagerLexGridImpl extends
 	}
 
 	private void addInactiveStatus(OntologyBean ontologyBean, Concept entry,
-			ClassBean bean) {		
+			ClassBean bean) {
 		if (isObsolete(entry)) {
 			bean.setIsObsolete(ApplicationConstants.TRUE);
 		}

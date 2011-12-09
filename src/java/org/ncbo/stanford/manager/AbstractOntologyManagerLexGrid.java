@@ -333,6 +333,7 @@ public abstract class AbstractOntologyManagerLexGrid {
 		} catch (Exception ex) {
 			ex.printStackTrace();
 		}
+		
 		if (ontologyBean != null) {
 			if (ApplicationConstants.FORMAT_OBO.equalsIgnoreCase(ontologyBean
 					.getFormat())) {
@@ -341,7 +342,6 @@ public abstract class AbstractOntologyManagerLexGrid {
 				fullId = ApplicationConstants.BASE_CONCEPT_NAMESPACE
 						+ ontologyBean.getAbbreviation() + "/" + modCode;
 			}
-
 		}
 
 		return fullId;

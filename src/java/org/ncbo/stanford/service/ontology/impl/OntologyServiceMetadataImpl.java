@@ -11,6 +11,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.ncbo.stanford.bean.CategoryBean;
 import org.ncbo.stanford.bean.GroupBean;
+import org.ncbo.stanford.bean.NamespaceBean;
 import org.ncbo.stanford.bean.OntologyBean;
 import org.ncbo.stanford.bean.OntologyMetricsBean;
 import org.ncbo.stanford.bean.concept.PropertyBean;
@@ -360,6 +361,19 @@ public class OntologyServiceMetadataImpl extends AbstractOntologyService
 	 */
 	public List<PropertyBean> findProperties(OntologyBean ob) throws Exception {
 		return getRetrievalManager(ob).findProperties(ob);
+	}
+
+	/**
+	 * Retrieve all available namespaces with prefixes and uris for a given
+	 * ontology
+	 * 
+	 * @param ob
+	 * @return List<NamespaceBean>
+	 * 
+	 * @throws Exception
+	 */
+	public List<NamespaceBean> findNamespaces(OntologyBean ob) throws Exception {
+		return getRetrievalManager(ob).findNamespaces(ob);
 	}
 
 	/**

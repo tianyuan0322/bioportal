@@ -3,6 +3,7 @@ package org.ncbo.stanford.manager.retrieval;
 import java.util.Iterator;
 import java.util.List;
 
+import org.ncbo.stanford.bean.NamespaceBean;
 import org.ncbo.stanford.bean.OntologyBean;
 import org.ncbo.stanford.bean.concept.ClassBean;
 import org.ncbo.stanford.bean.concept.InstanceBean;
@@ -70,4 +71,15 @@ public interface OntologyRetrievalManager {
 	 * @throws Exception
 	 */
 	public List<PropertyBean> findProperties(OntologyBean ob) throws Exception;
+
+	/**
+	 * Retrieve all available namespaces with prefixes and uris for a given
+	 * ontology
+	 * 
+	 * @param ob
+	 * @return List<NamespaceBean>
+	 * 
+	 * @throws Exception
+	 */
+	public List<NamespaceBean> findNamespaces(OntologyBean ob) throws Exception;
 }

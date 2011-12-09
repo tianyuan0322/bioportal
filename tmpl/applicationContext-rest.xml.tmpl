@@ -254,7 +254,15 @@
 			<ref bean="ontologyService" />
 		</property>
 	</bean>
-
+	
+	<bean id="ontologyNamespacesRestlet"
+		class="org.ncbo.stanford.view.rest.restlet.ontology.OntologyNamespacesRestlet"
+		parent="abstractOntologyBaseRestlet">
+		<property name="ontologyService">
+			<ref bean="ontologyService" />
+		</property>
+	</bean>
+	
 	<bean id="notesRestlet"
 		class="org.ncbo.stanford.view.rest.restlet.notes.NotesRestlet"
 		parent="abstractOntologyBaseRestlet">
@@ -653,6 +661,9 @@
 						</entry>						
 						<entry key="/ontologies/properties/{ontologyversionid}">
 							<ref local="ontologyPropertiesRestlet" />
+						</entry>
+						<entry key="/ontologies/namespaces/{ontologyversionid}">
+							<ref local="ontologyNamespacesRestlet" />
 						</entry>
 						<entry key="/ontologies/download/{ontologyversionid}">
 							<ref local="ontologyDownloadRestlet" />

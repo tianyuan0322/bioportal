@@ -13,6 +13,7 @@ import java.util.Set;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.ncbo.stanford.bean.NamespaceBean;
 import org.ncbo.stanford.bean.OntologyBean;
 import org.ncbo.stanford.bean.concept.AbstractConceptBean;
 import org.ncbo.stanford.bean.concept.ClassBean;
@@ -42,6 +43,7 @@ import edu.stanford.smi.protege.model.ModelUtilities;
 import edu.stanford.smi.protege.model.SimpleInstance;
 import edu.stanford.smi.protege.model.Slot;
 import edu.stanford.smi.protege.model.ValueType;
+import edu.stanford.smi.protegex.owl.model.NamespaceManager;
 import edu.stanford.smi.protegex.owl.model.NamespaceUtil;
 import edu.stanford.smi.protegex.owl.model.OWLModel;
 import edu.stanford.smi.protegex.owl.model.OWLNamedClass;
@@ -467,7 +469,34 @@ public class OntologyRetrievalManagerProtegeImpl extends
 
 		return propList;
 	}
+	
+	/**
+	 * Retrieve all available namespaces with prefixes and uris for a given
+	 * ontology
+	 * 
+	 * @param ob
+	 * @return List<NamespaceBean>
+	 * 
+	 * @throws Exception
+	 */
+	public List<NamespaceBean> findNamespaces(OntologyBean ontologyBean) throws Exception {
+		KnowledgeBase kb = getKnowledgeBase(ontologyBean);
+		List<NamespaceBean> namespaces = new ArrayList<NamespaceBean>(0);
 
+		 // There are no namespaces in non-OWL ontologies
+		if (kb instanceof OWLModel) {
+			OWLModel owlModel = (OWLModel) kb;
+			NamespaceManager nsm = owlModel.getNamespaceManager();
+			Collection<String> prefixes = nsm.getPrefixes();
+			
+			for (String prefix : prefixes) {
+				namespaces.add(new NamespaceBean(prefix, nsm.getNamespaceForPrefix(prefix)));
+			}
+		}
+
+		return namespaces;		
+	}
+	
 	/**
 	 * Populates definitions, sub- and super- properties, range, and domain
 	 * recursively for a given property. This method is used for OWL only.

@@ -5,6 +5,7 @@ import java.util.List;
 
 import org.ncbo.stanford.bean.CategoryBean;
 import org.ncbo.stanford.bean.GroupBean;
+import org.ncbo.stanford.bean.NamespaceBean;
 import org.ncbo.stanford.bean.OntologyBean;
 import org.ncbo.stanford.bean.concept.PropertyBean;
 import org.ncbo.stanford.util.ontologyfile.pathhandler.FilePathHandler;
@@ -249,6 +250,17 @@ public interface OntologyService {
 	 * @throws Exception
 	 */
 	public List<PropertyBean> findProperties(OntologyBean ob) throws Exception;
+	
+	/**
+	 * Retrieve all available namespaces with prefixes and uris for a given
+	 * ontology
+	 * 
+	 * @param ob
+	 * @return List<NamespaceBean>
+	 * 
+	 * @throws Exception
+	 */
+	public List<NamespaceBean> findNamespaces(OntologyBean ob) throws Exception;
 	
 	// ******************** view specific methods ********************
 
