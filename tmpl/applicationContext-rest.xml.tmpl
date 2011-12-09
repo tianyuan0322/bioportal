@@ -647,9 +647,6 @@
 						<entry key="/views/versions/{ontologyid}">
 							<ref local="ontologyViewListRestlet" />
 						</entry>
-						<entry key="/ontologies/{ontologyversionid}">
-							<ref local="ontologyRestlet" />
-						</entry>
 						<entry key="/ontologies/versions/{ontologyid}">
 							<ref local="ontologyVersionsRestlet" />
 						</entry>
@@ -667,6 +664,9 @@
 						</entry>
 						<entry key="/ontologies/download/{ontologyversionid}">
 							<ref local="ontologyDownloadRestlet" />
+						</entry>
+						<entry key="/ontologies/{ontologyversionid}">
+							<ref local="ontologyRestlet" />
 						</entry>
 						<entry key="/diffs/download/{ontologyversionid1}/{ontologyversionid2}">
 							<ref local="diffDownloadRestlet" />
