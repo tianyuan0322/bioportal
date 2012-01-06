@@ -16,7 +16,7 @@ import org.ncbo.stanford.util.ontologyfile.compressedfilehandler.AbstractCompres
 
 /**
  * @author Michael Dorf
- *
+ * 
  */
 public class OWLCompressedFileHandlerImpl extends AbstractCompressedFileHandler {
 
@@ -26,17 +26,12 @@ public class OWLCompressedFileHandlerImpl extends AbstractCompressedFileHandler 
 	public List<String> handle(File outputFile, OntologyBean ontologyBean)
 			throws FileNotFoundException, IOException {
 		List<String> relevantFiles = super.handle(outputFile, ontologyBean);
-		boolean hasProjectFile = false;
 		String uploadedFile = relevantFiles.get(0);
 
 		for (String filename : uncompressedFilenames) {
 			if (filename.toLowerCase().endsWith(
 					ApplicationConstants.PROTEGE_EXTENSION)) {
-				relevantFiles = new ArrayList<String>(0);
-				relevantFiles.add(uploadedFile);
 				relevantFiles.add(filename);
-				hasProjectFile = true;
-				break;
 			}
 
 			if (filename.toLowerCase().endsWith(
@@ -45,7 +40,7 @@ public class OWLCompressedFileHandlerImpl extends AbstractCompressedFileHandler 
 			}
 		}
 
-		if (!hasProjectFile && relevantFiles.size() > 1) {
+		if (relevantFiles.size() > 1) {
 			String targetFile = StringUtils.stripEnd(uploadedFile,
 					ApplicationConstants.ZIP_EXTENSION);
 
@@ -53,6 +48,9 @@ public class OWLCompressedFileHandlerImpl extends AbstractCompressedFileHandler 
 			for (String filename : relevantFiles) {
 				String owlFileStripped = StringUtils.stripEnd(filename,
 						ApplicationConstants.OWL_EXTENSION);
+				// Also check for PPRJ extension
+				owlFileStripped = StringUtils.stripEnd(owlFileStripped,
+						ApplicationConstants.PROTEGE_EXTENSION);
 				if (owlFileStripped.equalsIgnoreCase(targetFile)) {
 					owlFile = filename;
 				}
