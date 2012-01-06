@@ -4,7 +4,6 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -26,7 +25,6 @@ import org.apache.lucene.search.SortField;
 import org.apache.lucene.search.TermQuery;
 import org.apache.lucene.search.TopDocs;
 import org.apache.lucene.search.TopFieldDocs;
-import org.apache.lucene.store.Directory;
 import org.apache.lucene.store.FSDirectory;
 import org.apache.lucene.util.Version;
 import org.ncbo.stanford.bean.OntologyBean;
@@ -79,8 +77,6 @@ public abstract class AbstractSearchService {
 
 	// non-injected properties
 	protected IndexSearcher searcher = null;
-	private Date openIndexDate;
-	private Object createSearcherLock = new Object();
 
 	/**
 	 * Executes a query against the Lucene index. Does not use caching
@@ -97,12 +93,10 @@ public abstract class AbstractSearchService {
 	public SearchResultListBean runQuery(Query query, Integer maxNumHits,
 			Collection<Integer> ontologyIds, String subtreeRootConceptId,
 			Boolean includeDefinitions) throws Exception {
-		// check whether the index has changed and if so, reloads the searcher
-		// reloading searcher must be synchronized to avoid null searchers
-		synchronized (createSearcherLock) {
-			if (searcher == null || hasNewerIndexFile()) {
-				reloadSearcher();
-			}
+		IndexReader reader = searcher.getIndexReader();
+
+		if (!reader.isCurrent()) {
+			reloadSearcher();
 		}
 
 		TopFieldDocs docs = null;
@@ -185,7 +179,8 @@ public abstract class AbstractSearchService {
 		int docId = 0;
 		OntologyBean ob = null;
 		OntologyRetrievalManager mgr = null;
-		boolean hasSubtreeRoot = !StringHelper.isNullOrNullString(subtreeRootConceptId);
+		boolean hasSubtreeRoot = !StringHelper
+				.isNullOrNullString(subtreeRootConceptId);
 
 		if (hits.length > 0) {
 			if (hasSubtreeRoot) {
@@ -195,16 +190,17 @@ public abstract class AbstractSearchService {
 						.get(SearchIndexBean.ONTOLOGY_VERSION_ID_FIELD_LABEL));
 				ob = ontologyMetadataManager
 						.findOntologyOrViewVersionById(ontologyVersionId);
-	
+
 				if (ob == null) {
 					throw new OntologyNotFoundException(
 							OntologyNotFoundException.DEFAULT_MESSAGE
-									+ " (Version Id: " + ontologyVersionId + ")");
+									+ " (Version Id: " + ontologyVersionId
+									+ ")");
 				}
-	
+
 				mgr = getRetrievalManager(ob);
 			}
-			
+
 			for (int i = 0; i < hits.length; i++) {
 				docId = hits[i].doc;
 				doc = searcher.doc(docId);
@@ -229,8 +225,9 @@ public abstract class AbstractSearchService {
 
 				if (!uniqueDocs.contains(uniqueIdent)) {
 					if (!hasSubtreeRoot
-							|| subtreeRootConceptId.equalsIgnoreCase(conceptId) 
-							|| mgr.hasParent(ob, conceptId, subtreeRootConceptId)) {
+							|| subtreeRootConceptId.equalsIgnoreCase(conceptId)
+							|| mgr.hasParent(ob, conceptId,
+									subtreeRootConceptId)) {
 						ontologyIds.remove(ontologyId);
 						SearchBean searchResult = new SearchBean(
 								ontologyVersionId,
@@ -505,7 +502,6 @@ public abstract class AbstractSearchService {
 	private void createSearcher() throws IOException {
 		FSDirectory dir = FSDirectory.open(new File(indexPath));
 		searcher = new IndexSearcher(dir, true);
-		openIndexDate = getCurrentIndexDate(dir);
 	}
 
 	/**
@@ -523,34 +519,6 @@ public abstract class AbstractSearchService {
 		}
 
 		createSearcher();
-	}
-
-	/**
-	 * Determines whether the index file has changed
-	 * 
-	 * @return
-	 */
-	private boolean hasNewerIndexFile() {
-		boolean hasNewer = false;
-		try {
-			FSDirectory dir = FSDirectory.open(new File(indexPath));
-
-			if (getCurrentIndexDate(dir).after(openIndexDate)) {
-				hasNewer = true;
-			}
-
-			dir.close();
-		} catch (Exception e) { // no index file found
-		}
-
-		return hasNewer;
-	}
-
-	/**
-	 * @return creation date of current used search index
-	 */
-	private Date getCurrentIndexDate(Directory dir) throws IOException {
-		return new Date(IndexReader.getCurrentVersion(dir));
 	}
 
 	private OntologyRetrievalManager getRetrievalManager(OntologyBean ontology) {
