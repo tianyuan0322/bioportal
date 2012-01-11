@@ -12,6 +12,7 @@ import org.apache.lucene.index.IndexWriter;
 import org.apache.lucene.index.Term;
 import org.apache.lucene.index.IndexWriter.MaxFieldLength;
 import org.apache.lucene.search.Query;
+import org.apache.lucene.store.Directory;
 import org.apache.lucene.store.FSDirectory;
 import org.ncbo.stanford.bean.search.SearchField;
 import org.ncbo.stanford.bean.search.SearchIndexBean;
@@ -22,33 +23,31 @@ public class LuceneIndexWriterWrapper {
 	public static final MaxFieldLength MAX_FIELD_LENGTH = IndexWriter.MaxFieldLength.LIMITED;
 	private static final String OLD_BACKUP_FILE_EXTENSION = "bak";
 	private IndexWriter writer;
-	private String indexPath;
+	private Directory indexDir;
 
 	/**
-	 * @param indexPath
+	 * @param indexDir
 	 * @param analyzer
 	 * @param create
 	 * @throws IOException
 	 */
-	public LuceneIndexWriterWrapper(String indexPath, Analyzer analyzer,
+	public LuceneIndexWriterWrapper(Directory indexDir, Analyzer analyzer,
 			boolean create) throws IOException {
 		super();
-		this.indexPath = indexPath;
-		FSDirectory dir = FSDirectory.open(new File(indexPath));
-		writer = new IndexWriter(dir, analyzer, create, MAX_FIELD_LENGTH);
+		this.indexDir = indexDir;
+		writer = new IndexWriter(indexDir, analyzer, create, MAX_FIELD_LENGTH);
 	}
 
 	/**
-	 * @param indexPath
+	 * @param indexDir
 	 * @param analyzer
 	 * @throws IOException
 	 */
-	public LuceneIndexWriterWrapper(String indexPath, Analyzer analyzer)
+	public LuceneIndexWriterWrapper(Directory indexDir, Analyzer analyzer)
 			throws IOException {
 		super();
-		this.indexPath = indexPath;
-		FSDirectory dir = FSDirectory.open(new File(indexPath));
-		writer = new IndexWriter(dir, analyzer, MAX_FIELD_LENGTH);
+		this.indexDir = indexDir;
+		writer = new IndexWriter(indexDir, analyzer, MAX_FIELD_LENGTH);
 	}
 
 	public void addDocument(SearchIndexBean indexBean) throws IOException {
@@ -94,7 +93,13 @@ public class LuceneIndexWriterWrapper {
 	}
 
 	public void backupIndexByFileCopy(String backupPath) throws IOException {
-		File indexFilePath = new File(indexPath);
+		// for the moment, can't backup index unless it's located on a
+		// filesystem
+		if (!(indexDir instanceof FSDirectory)) {
+			return;
+		}
+
+		File indexFilePath = ((FSDirectory) indexDir).getFile();
 		String[] children = indexFilePath.list();
 		File backupFilePath = new File(backupPath);
 
@@ -125,15 +130,15 @@ public class LuceneIndexWriterWrapper {
 			renameBackupIndex(backupFilePath);
 		}
 
-		FSDirectory dir = FSDirectory.open(new File(indexPath));
 		FSDirectory backupDir = FSDirectory.open(new File(backupPath));
-		IndexReader reader = IndexReader.open(dir, false);
+		IndexReader reader = IndexReader.open(indexDir, false);
 		IndexWriter backupWriter = new IndexWriter(backupDir, writer
 				.getAnalyzer(), true, MAX_FIELD_LENGTH);
 
 		backupWriter.addIndexes(new IndexReader[] { reader });
 		backupWriter.close();
 		reader.close();
+		backupDir.close();
 
 		removeOldBackup(backupFilePath);
 	}

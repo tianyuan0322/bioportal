@@ -62,7 +62,6 @@ public abstract class AbstractSearchService {
 	private static final String CACHE_KEY_SEPARATOR = "@@@@@";
 
 	protected Analyzer analyzer;
-	protected String indexPath;
 	protected int defMaxNumHits;
 	protected ExpirationSystem<String, SearchResultListBean> searchResultCache;
 	protected OntologyMetadataManager ontologyMetadataManager;
@@ -74,10 +73,12 @@ public abstract class AbstractSearchService {
 	protected Map<String, OntologySearchManager> ontologySearchHandlerMap = new HashMap<String, OntologySearchManager>(
 			0);
 	protected Version luceneVersion = Version.LUCENE_24; // default to 2.4
+	private String indexPath;
 
 	// non-injected properties
 	protected IndexSearcher searcher = null;
-
+	protected FSDirectory indexDir;
+	
 	/**
 	 * Executes a query against the Lucene index. Does not use caching
 	 * 
@@ -96,7 +97,10 @@ public abstract class AbstractSearchService {
 		IndexReader reader = searcher.getIndexReader();
 
 		if (!reader.isCurrent()) {
-			reloadSearcher();
+			if (log.isDebugEnabled()) {
+				log.debug("Index file has changed. Reloading searcher...");
+			}
+			createSearcher();
 		}
 
 		TopFieldDocs docs = null;
@@ -500,25 +504,15 @@ public abstract class AbstractSearchService {
 	 * @throws IOException
 	 */
 	private void createSearcher() throws IOException {
-		FSDirectory dir = FSDirectory.open(new File(indexPath));
-		searcher = new IndexSearcher(dir, true);
-	}
-
-	/**
-	 * Reloads the searcher, disposes of the old searcher
-	 * 
-	 * @throws IOException
-	 */
-	private void reloadSearcher() throws IOException {
-		if (log.isDebugEnabled()) {
-			log.debug("Index file has changed. Reloading searcher...");
+		if (indexDir != null) {
+			indexDir.close();
 		}
-
+		indexDir = FSDirectory.open(new File(indexPath));
+		
 		if (searcher != null) {
 			searcher.close();
 		}
-
-		createSearcher();
+		searcher = new IndexSearcher(indexDir, true);
 	}
 
 	private OntologyRetrievalManager getRetrievalManager(OntologyBean ontology) {

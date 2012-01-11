@@ -50,7 +50,7 @@ public class IndexSearchServiceImpl extends AbstractSearchService implements
 		}
 
 		LuceneIndexWriterWrapper writer = new LuceneIndexWriterWrapper(
-				indexPath, analyzer, true);
+				indexDir, analyzer, true);
 		writer.setMergeFactor(indexMergeFactor);
 		writer.setMaxMergeDocs(indexMaxMergeDocs);
 
@@ -106,7 +106,7 @@ public class IndexSearchServiceImpl extends AbstractSearchService implements
 	public void indexOntologies(List<Integer> ontologyIdList, boolean doBackup,
 			boolean doOptimize) throws Exception {
 		LuceneIndexWriterWrapper writer = new LuceneIndexWriterWrapper(
-				indexPath, analyzer);
+				indexDir, analyzer);
 		writer.setMergeFactor(indexMergeFactor);
 		writer.setMaxMergeDocs(indexMaxMergeDocs);
 
@@ -150,7 +150,7 @@ public class IndexSearchServiceImpl extends AbstractSearchService implements
 	public void removeOntologies(List<Integer> ontologyIds, boolean doBackup,
 			boolean doOptimize) throws Exception {
 		LuceneIndexWriterWrapper writer = new LuceneIndexWriterWrapper(
-				indexPath, analyzer);
+				indexDir, analyzer);
 		removeOntologies(writer, ontologyIds, doBackup, doOptimize);
 		closeWriter(writer);
 	}
@@ -162,7 +162,7 @@ public class IndexSearchServiceImpl extends AbstractSearchService implements
 	 */
 	public void backupIndex() throws Exception {
 		LuceneIndexWriterWrapper writer = new LuceneIndexWriterWrapper(
-				indexPath, analyzer);
+				indexDir, analyzer);
 		backupIndex(writer);
 		closeWriter(writer);
 	}
@@ -174,7 +174,7 @@ public class IndexSearchServiceImpl extends AbstractSearchService implements
 	 */
 	public void optimizeIndex() throws Exception {
 		LuceneIndexWriterWrapper writer = new LuceneIndexWriterWrapper(
-				indexPath, analyzer);
+				indexDir, analyzer);
 		optimizeIndex(writer);
 		closeWriter(writer);
 	}
@@ -370,7 +370,7 @@ public class IndexSearchServiceImpl extends AbstractSearchService implements
 	}
 
 	/**
-	 * Close the given writer and reload search results cache
+	 * Close the given writer
 	 * 
 	 * @param writer
 	 * @param reloadCache
