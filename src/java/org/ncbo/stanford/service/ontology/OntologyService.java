@@ -59,6 +59,13 @@ public interface OntologyService {
 	 * @return
 	 */
 	public boolean isInAcl(Integer ontologyId);
+	
+	/**
+	 * Returns the entire ontology ACL
+	 * 
+	 * @return
+	 */
+	public List<Integer> getOntologyAcl();
 
 	/**
 	 * This method is expected to be run by a scheduler process. Populates a

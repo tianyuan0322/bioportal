@@ -336,4 +336,11 @@ public abstract class AbstractOntologyService {
 	public void setPurlClientManager(PurlClientManager purlClientManager) {
 		this.purlClientManager = purlClientManager;
 	}
+
+	/**
+	 * @return the ontologyAcl
+	 */
+	public List<Integer> getOntologyAcl() {
+		return ontologyAcl;
+	}
 }
