@@ -69,6 +69,11 @@
 		parent="abstractOntologyBaseRestlet">
 	</bean>
 
+	<bean id="ontologyACLRestlet"
+		class="org.ncbo.stanford.view.rest.restlet.ontology.OntologyACLRestlet"
+		parent="abstractOntologyBaseRestlet">
+	</bean>
+
 	<bean id="virtualRestlet"
 		class="org.ncbo.stanford.view.rest.restlet.ontology.VirtualUriRestlet"
 		parent="abstractBaseRestlet">
@@ -615,14 +620,9 @@
 						<entry key="/auth">
 							<ref local="authenticationRestlet" />
 						</entry>
-						<!--
-						<entry key="/openIdAuth">
-							<ref local="openIdAuthenticationRestlet" />
-						</entry>
-						<entry key="/openIdAuthRes">
-							<ref local="openIdAuthenticationResponseRestlet" />
-						</entry>
-						 -->
+						<entry key="/ontologies/acl/">
+							<ref local="ontologyACLRestlet" />
+						</entry>						
 						<entry key="/ontologies/active/">
 							<ref local="ontologiesRestlet" />
 						</entry>
