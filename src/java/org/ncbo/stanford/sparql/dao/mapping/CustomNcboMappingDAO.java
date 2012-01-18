@@ -394,7 +394,7 @@ public class CustomNcboMappingDAO extends AbstractNcboMappingDAO {
 		Set<String> mappingIds = null;
 		for (String conceptId : sourceIds) {
 			if (!ApplicationConstants.GENERATE_UNION_SPARQL) {
-				filter += (filter.isEmpty()) ? "" : " && "; 
+				filter += (filter.isEmpty()) ? "" : " && ";
 				filter += generateConceptSparqlFilter(conceptId, null, true);
 				filter += " && "
 						+ generateOntologySparqlFilter(sourceOntology,
@@ -402,8 +402,8 @@ public class CustomNcboMappingDAO extends AbstractNcboMappingDAO {
 				mappingIds = getMappingIdsFromFilter(limit, offset, filter);
 			} else {
 				SPARQLUnionGenerator generator = new SPARQLUnionGenerator();
-				generator.setLimit(limit);
-				generator.setOffset(offset);
+				generator.setLimit(Integer.MAX_VALUE);
+				generator.setOffset(0);
 				generator.addBindValue(ApplicationConstants.SOURCE_ONTOLOGY_ID,
 						new LiteralImpl(Integer.toString(sourceOntology),
 								ApplicationConstants.XSD_INTEGER));
@@ -418,7 +418,7 @@ public class CustomNcboMappingDAO extends AbstractNcboMappingDAO {
 			String mappingIdFilter = generateMappingIdINFilter(mappingIds);
 
 			if (mappingIds.size() > 0) {
-				mappings.addAll(getMappings(limit, offset, mappingIdFilter,
+				mappings.addAll(getMappings(Integer.MAX_VALUE, 0, mappingIdFilter,
 						null));
 			}
 		}
