@@ -1,8 +1,6 @@
 package org.ncbo.stanford.manager.rdfstore;
 
-import org.ncbo.stanford.util.constants.ApplicationConstants;
 import org.openrdf.model.ValueFactory;
-import org.openrdf.model.impl.URIImpl;
 import org.openrdf.repository.Repository;
 import org.openrdf.repository.RepositoryConnection;
 import org.openrdf.repository.RepositoryException;
@@ -54,9 +52,6 @@ public abstract class AbstractRDFStoreManager implements RDFStoreManager {
 			e.printStackTrace();
 		}
 
-		objectConnection
-				.setAddContexts(new URIImpl(
-						ApplicationConstants.MAPPING_CONTEXT));
 		return objectConnection;
 	}
 
@@ -67,19 +62,19 @@ public abstract class AbstractRDFStoreManager implements RDFStoreManager {
 
 	public Boolean isAvailable() {
 		Boolean available = false;
-		
+
 		try {
 			available = (repository != null && repository.isWritable());
 		} catch (RepositoryException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		
+
 		return available;
 	}
-	
+
 	protected abstract void initializeRepository();
-	
+
 	public abstract void cleanup();
 
 }

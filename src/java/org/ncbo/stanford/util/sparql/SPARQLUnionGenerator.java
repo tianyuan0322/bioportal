@@ -175,28 +175,28 @@ public class SPARQLUnionGenerator {
         //Query string generation
         List<String> sUnionBlock = new ArrayList<String>();
         for (List<UnionPropertyValue> qb : queryBlocks) {
-            String qbs = "{" + StringUtils.join(qb,"\n") + "}";
+            String qbs = "{" + StringUtils.join(qb,"") + "}";
             sUnionBlock.add(qbs);
         }
-        String query = StringUtils.join(sUnionBlock,"\nUNION\n");
+        String query = StringUtils.join(sUnionBlock,"UNION");
         if (parameters != null && !parameters.isEmpty()) {
             Mapping mapping = new Mapping();
             List<String> triples = parameters.generateTriplePatterns(
             "mappingId", new Mapping());
-            query += "\n"+StringUtils.join(triples, " . "); 
-            query += "\n FILTER ( " + parameters.toFilter() + " )"; 
+            query += ""+StringUtils.join(triples, " . "); 
+            query += " FILTER ( " + parameters.toFilter() + " )"; 
         }
         if (!count) {
-            query = "SELECT DISTINCT ?mappingId {\n" + query + "}\n";
+            query = "SELECT DISTINCT ?mappingId {" + query + "}";
             if (offset!=null)
                 query += " OFFSET " + offset;
             if (limit!=null)
                 query += " LIMIT " + limit;
         }
         else
-            query = "SELECT DISTINCT (count(?mappingId) as ?c) {\n" + query + "}\n";
+            query = "SELECT DISTINCT (count(?mappingId) as ?c) {" + query + "}";
 
-        query = "PREFIX "+ApplicationConstants.NS_MAPPING_PREFIX+": <" + ApplicationConstants.NS_MAPPING_PREFIX_URI + ">\n" + query;
+        query = "PREFIX "+ApplicationConstants.NS_MAPPING_PREFIX+": <" + ApplicationConstants.NS_MAPPING_PREFIX_URI + ">" + query;
         return query;
     }
 

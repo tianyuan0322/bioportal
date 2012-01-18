@@ -132,9 +132,9 @@ public class AbstractNcboMappingDAO {
 			+ "  FILTER ( %FILTER% ) } LIMIT %LIMIT% OFFSET %OFFSET%";
 
 	/*******************************************************************
-	 *
+	 * 
 	 * Generic SPARQL methods
-	 *
+	 * 
 	 *******************************************************************/
 
 	protected List<Mapping> getMappings(Integer limit, Integer offset,
@@ -150,7 +150,7 @@ public class AbstractNcboMappingDAO {
 
 		try {
 			TupleQuery query = con.prepareTupleQuery(QueryLanguage.SPARQL,
-					queryString, ApplicationConstants.MAPPING_CONTEXT);
+					queryString);
 
 			TupleQueryResult result = query.evaluate();
 
@@ -179,20 +179,16 @@ public class AbstractNcboMappingDAO {
 							.getValue("targetOntologyId")));
 				}
 
-				mapping
-						.setCreatedInSourceOntologyVersion(convertValueToInteger(bs
-								.getValue("createdInSourceOntologyVersion")));
+				mapping.setCreatedInSourceOntologyVersion(convertValueToInteger(bs
+						.getValue("createdInSourceOntologyVersion")));
 
-				mapping
-						.setCreatedInTargetOntologyVersion(convertValueToInteger(bs
-								.getValue("createdInTargetOntologyVersion")));
+				mapping.setCreatedInTargetOntologyVersion(convertValueToInteger(bs
+						.getValue("createdInTargetOntologyVersion")));
 
 				mapping.setSubmittedBy(convertValueToInteger(bs
 						.getValue("submittedBy")));
 
-				mapping
-						.setMappingType(bs.getValue("mappingType")
-								.stringValue());
+				mapping.setMappingType(bs.getValue("mappingType").stringValue());
 
 				mapping.setDate(convertValueToDate(bs.getValue("date")));
 
@@ -240,11 +236,11 @@ public class AbstractNcboMappingDAO {
 				}
 
 				String queryString1 = sourcesAndTargetsForMappingIds
-						.replaceAll("%MAPPING_IDS%", StringUtils.join(
-								mappingIdsSparql, ", "));
+						.replaceAll("%MAPPING_IDS%",
+								StringUtils.join(mappingIdsSparql, ", "));
 
 				TupleQuery query1 = con.prepareTupleQuery(QueryLanguage.SPARQL,
-						queryString1, ApplicationConstants.MAPPING_CONTEXT);
+						queryString1);
 				TupleQueryResult result1 = query1.evaluate();
 
 				while (result1.hasNext()) {
@@ -296,8 +292,7 @@ public class AbstractNcboMappingDAO {
 			for (Mapping m : mappings) {
 				TupleQuery query = con.prepareTupleQuery(QueryLanguage.SPARQL,
 						queryString.replaceAll("%mappingId%", m.getId()
-								.toString()),
-						ApplicationConstants.MAPPING_CONTEXT);
+								.toString()));
 				TupleQueryResult result = query.evaluate();
 				if (result.hasNext()) {
 					BindingSet bs = result.next();
@@ -338,12 +333,12 @@ public class AbstractNcboMappingDAO {
 
 		// Combine filters
 		String filter = (parameters != null && !parameters.isEmpty()) ? parameters
-				.toFilter()
-				: "";
+				.toFilter() : "";
 
 		// Substitute tokens in the generic query string
-		String queryString = mappingQueryBetweenOntolgies.replaceAll(
-				"%FILTER%", filter).replaceAll("%LIMIT%", limit.toString())
+		String queryString = mappingQueryBetweenOntolgies
+				.replaceAll("%FILTER%", filter)
+				.replaceAll("%LIMIT%", limit.toString())
 				.replaceAll("%OFFSET%", offset.toString());
 
 		// Remove filter if it's not used
@@ -384,7 +379,7 @@ public class AbstractNcboMappingDAO {
 	/**
 	 * Generic getMappings call. Must provide a valid SPARQL filter (generated
 	 * via helper methods or elsewhere).
-	 *
+	 * 
 	 * @param limit
 	 * @param offset
 	 * @param filter
@@ -392,7 +387,7 @@ public class AbstractNcboMappingDAO {
 	 * @param sourceOntology
 	 * @param targetOntology
 	 * @param unidirectional
-	 *
+	 * 
 	 * @return
 	 * @throws InvalidInputException
 	 */
@@ -416,13 +411,13 @@ public class AbstractNcboMappingDAO {
 					: filter;
 		} else {
 			combinedFilters = (parameters != null && !parameters.isEmpty()) ? parameters
-					.toFilter()
-					: "";
+					.toFilter() : "";
 		}
 
 		// Substitute tokens in the generic query string
-		String queryString = mappingQuery.replaceAll("%FILTER%",
-				combinedFilters).replaceAll("%LIMIT%", limit.toString())
+		String queryString = mappingQuery
+				.replaceAll("%FILTER%", combinedFilters)
+				.replaceAll("%LIMIT%", limit.toString())
 				.replaceAll("%OFFSET%", offset.toString());
 
 		if (orderBy != null && !orderBy.isEmpty()) {
@@ -446,7 +441,7 @@ public class AbstractNcboMappingDAO {
 
 		try {
 			TupleQuery query = con.prepareTupleQuery(QueryLanguage.SPARQL,
-					queryString, ApplicationConstants.MAPPING_CONTEXT);
+					queryString);
 
 			TupleQueryResult result = query.evaluate();
 
@@ -476,7 +471,7 @@ public class AbstractNcboMappingDAO {
 
 		try {
 			TupleQuery query = con.prepareTupleQuery(QueryLanguage.SPARQL,
-					queryString, ApplicationConstants.MAPPING_CONTEXT);
+					queryString);
 
 			TupleQueryResult result = query.evaluate();
 
@@ -519,9 +514,10 @@ public class AbstractNcboMappingDAO {
 
 		String queryString;
 		if (limit != null && offset != null) {
-			queryString = mappingIdFromSourceOrTarget.replaceAll("%FILTER%",
-					filter).replaceAll("%LIMIT%", limit.toString()).replaceAll(
-					"%OFFSET%", offset.toString());
+			queryString = mappingIdFromSourceOrTarget
+					.replaceAll("%FILTER%", filter)
+					.replaceAll("%LIMIT%", limit.toString())
+					.replaceAll("%OFFSET%", offset.toString());
 		} else {
 			queryString = mappingIdFromSourceOrTarget.replaceAll("%FILTER%",
 					filter).replaceAll("LIMIT %LIMIT% OFFSET %OFFSET%", "");
@@ -533,7 +529,7 @@ public class AbstractNcboMappingDAO {
 	/**
 	 * Generic getCount call. Must provide a valid SPARQL filter (generated via
 	 * helper methods or elsewhere).
-	 *
+	 * 
 	 * @param sourceOntology
 	 * @param targetOntology
 	 * @param unidirectional
@@ -551,8 +547,7 @@ public class AbstractNcboMappingDAO {
 					: filter;
 		} else {
 			combinedFilters = (parameters != null && !parameters.isEmpty()) ? parameters
-					.toFilter()
-					: "";
+					.toFilter() : "";
 		}
 
 		String queryString = mappingCountQuery.replaceAll("%FILTER%",
@@ -574,7 +569,7 @@ public class AbstractNcboMappingDAO {
 		Integer count = null;
 		try {
 			TupleQuery query = con.prepareTupleQuery(QueryLanguage.SPARQL,
-					queryString, ApplicationConstants.MAPPING_CONTEXT);
+					queryString);
 			TupleQueryResult result = query.evaluate();
 			while (result.hasNext()) {
 				BindingSet bs = result.next();
@@ -595,7 +590,7 @@ public class AbstractNcboMappingDAO {
 
 	/**
 	 * Generates a SPARQL filter for the given ontology ids.
-	 *
+	 * 
 	 * @param sourceOntology
 	 * @param targetOntology
 	 * @param unidirectional
@@ -639,7 +634,7 @@ public class AbstractNcboMappingDAO {
 
 	/**
 	 * Generates a SPARQL filter for the given ontology ids.
-	 *
+	 * 
 	 * @param sourceConcept
 	 * @param targetConcept
 	 * @param unidirectional
@@ -721,7 +716,7 @@ public class AbstractNcboMappingDAO {
 
 	/**
 	 * Generates a SPARQL filter for the given ontology ids.
-	 *
+	 * 
 	 * @param sourceOntology
 	 * @param targetOntology
 	 * @param unidirectional
@@ -779,7 +774,7 @@ public class AbstractNcboMappingDAO {
 	/**
 	 * Given a list of mapping ids this generates a SPARQL filter using the IN
 	 * clause.
-	 *
+	 * 
 	 * @param mappingIds
 	 * @return
 	 */
@@ -806,7 +801,7 @@ public class AbstractNcboMappingDAO {
 
 	/**
 	 * Checks the repository for a mapping using provided id.
-	 *
+	 * 
 	 * @param id
 	 * @param con
 	 * @return
@@ -816,8 +811,7 @@ public class AbstractNcboMappingDAO {
 			Statement statement = new StatementImpl(id,
 					ApplicationConstants.RDF_TYPE_URI,
 					ApplicationConstants.MAPPING_ONE_TO_ONE_URI);
-			return con.hasStatement(statement, false,
-					ApplicationConstants.MAPPING_CONTEXT_URI);
+			return con.hasStatement(statement, false);
 		} catch (RepositoryException e) {
 			e.printStackTrace();
 		}
@@ -828,7 +822,7 @@ public class AbstractNcboMappingDAO {
 	/**
 	 * Get a manager for the RDF store based on the configured options in
 	 * build.properties.
-	 *
+	 * 
 	 * @return
 	 */
 	protected RDFStoreManager getRdfStoreManager() {
@@ -840,7 +834,7 @@ public class AbstractNcboMappingDAO {
 	 * This method does the actual delete action for removing mappings from the
 	 * triplestore. It removes all triples with a subject matching the mapping
 	 * id.
-	 *
+	 * 
 	 * @param con
 	 * @param id
 	 * @throws RepositoryException
@@ -848,15 +842,15 @@ public class AbstractNcboMappingDAO {
 	protected void deleteFromTripleStore(RepositoryConnection con, URI id)
 			throws RepositoryException {
 		RepositoryResult<Statement> results = con.getStatements(id, null, null,
-				false, ApplicationConstants.MAPPING_CONTEXT_URI);
+				false);
 		// Remove all those triples
-		con.remove(results, ApplicationConstants.MAPPING_CONTEXT_URI);
+		con.remove(results);
 	}
 
 	/**
 	 * Look for valid values and update the provided mapping bean with them. For
 	 * use in re-creating a mapping as part of an update.
-	 *
+	 * 
 	 * @param mapping
 	 * @param source
 	 * @param target
@@ -925,7 +919,7 @@ public class AbstractNcboMappingDAO {
 
 	/**
 	 * Cleanup repositories after use.
-	 *
+	 * 
 	 * @param con
 	 */
 	protected void cleanup(RepositoryConnection con) {
@@ -937,9 +931,9 @@ public class AbstractNcboMappingDAO {
 	}
 
 	/*******************************************************************
-	 *
+	 * 
 	 * Auto-generated methods
-	 *
+	 * 
 	 *******************************************************************/
 
 	/**

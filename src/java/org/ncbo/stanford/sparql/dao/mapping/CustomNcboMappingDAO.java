@@ -363,7 +363,7 @@ public class CustomNcboMappingDAO extends AbstractNcboMappingDAO {
 		TupleQueryResult result = null;
 		try {
 			TupleQuery query = con.prepareTupleQuery(QueryLanguage.SPARQL,
-					queryString, ApplicationConstants.MAPPING_CONTEXT);
+					queryString);
 
 			result = query.evaluate();
 

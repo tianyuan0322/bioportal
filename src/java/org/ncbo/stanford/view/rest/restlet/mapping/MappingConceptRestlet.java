@@ -315,11 +315,11 @@ public class MappingConceptRestlet extends AbstractMappingRestlet {
 			// Test to make sure required parameters exist
 			ArrayList<String> missingParams = new ArrayList<String>();
 
-			if (source == null)
+			if (source.isEmpty())
 				missingParams.add("source");
-			if (target == null)
+			if (target.isEmpty())
 				missingParams.add("target");
-			if (relation == null)
+			if (relation.toString().equals(""))
 				missingParams.add("relation");
 			if (mappingType == null)
 				missingParams.add("mappingtype");

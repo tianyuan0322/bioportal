@@ -11,7 +11,6 @@ import org.ncbo.stanford.bean.mapping.MappingOntologyStatsBean;
 import org.ncbo.stanford.bean.mapping.MappingUserStatsBean;
 import org.ncbo.stanford.exception.InvalidInputException;
 import org.ncbo.stanford.sparql.bean.Mapping;
-import org.ncbo.stanford.util.constants.ApplicationConstants;
 import org.openrdf.query.BindingSet;
 import org.openrdf.query.MalformedQueryException;
 import org.openrdf.query.QueryEvaluationException;
@@ -61,21 +60,21 @@ public class CustomNcboMappingStatsDAO extends AbstractNcboMappingDAO {
 			+ "UNION { ?mappingId <http://protege.stanford.edu/ontologies/mappings/mappings.rdfs#target_ontology_id> %ONT% . "
 			+ "?mappingId <http://protege.stanford.edu/ontologies/mappings/mappings.rdfs#submitted_by> ?userId . } "
 			+ "} ORDER BY DESC(?count)";
-	
+
 	private static final String userCountWithTarget = "SELECT ?userId count(?mappingId) as ?count "
-			+ "WHERE { " +
-			"{ ?mappingId <http://protege.stanford.edu/ontologies/mappings/mappings.rdfs#source_ontology_id> %ONT% . " +
-			" ?mappingId <http://protege.stanford.edu/ontologies/mappings/mappings.rdfs#target_ontology_id> %TARG% . "
+			+ "WHERE { "
+			+ "{ ?mappingId <http://protege.stanford.edu/ontologies/mappings/mappings.rdfs#source_ontology_id> %ONT% . "
+			+ " ?mappingId <http://protege.stanford.edu/ontologies/mappings/mappings.rdfs#target_ontology_id> %TARG% . "
 			+ "?mappingId <http://protege.stanford.edu/ontologies/mappings/mappings.rdfs#submitted_by> ?userId . } "
-			+ "UNION { " +
-			"?mappingId <http://protege.stanford.edu/ontologies/mappings/mappings.rdfs#target_ontology_id> %ONT% . " +
-			"?mappingId <http://protege.stanford.edu/ontologies/mappings/mappings.rdfs#target_ontology_id> %TARG% . "
+			+ "UNION { "
+			+ "?mappingId <http://protege.stanford.edu/ontologies/mappings/mappings.rdfs#target_ontology_id> %ONT% . "
+			+ "?mappingId <http://protege.stanford.edu/ontologies/mappings/mappings.rdfs#target_ontology_id> %TARG% . "
 			+ "?mappingId <http://protege.stanford.edu/ontologies/mappings/mappings.rdfs#submitted_by> ?userId . } "
 			+ "} ORDER BY DESC(?count)";
 
 	/**
 	 * Gets a list of recent mappings up to size of limit.
-	 *
+	 * 
 	 * @param limit
 	 * @return
 	 * @throws InvalidInputException
@@ -84,8 +83,8 @@ public class CustomNcboMappingStatsDAO extends AbstractNcboMappingDAO {
 			throws InvalidInputException {
 		String orderBy = "?date";
 
-		String queryString = mostRecentMappings.replaceAll("%LIMIT%", limit
-				.toString());
+		String queryString = mostRecentMappings.replaceAll("%LIMIT%",
+				limit.toString());
 
 		ArrayList<String> mappingIds = new ArrayList<String>();
 
@@ -94,8 +93,7 @@ public class CustomNcboMappingStatsDAO extends AbstractNcboMappingDAO {
 
 		TupleQuery query;
 		try {
-			query = con.prepareTupleQuery(QueryLanguage.SPARQL, queryString,
-					ApplicationConstants.MAPPING_CONTEXT);
+			query = con.prepareTupleQuery(QueryLanguage.SPARQL, queryString);
 			TupleQueryResult result = query.evaluate();
 			while (result.hasNext()) {
 				BindingSet bs = result.next();
@@ -129,7 +127,7 @@ public class CustomNcboMappingStatsDAO extends AbstractNcboMappingDAO {
 
 	/**
 	 * Returns the total number of mappings in the triplestore.
-	 *
+	 * 
 	 * @return
 	 */
 	public Integer getTotalMappingsCount() {
@@ -139,8 +137,7 @@ public class CustomNcboMappingStatsDAO extends AbstractNcboMappingDAO {
 		TupleQuery query;
 		Integer totalMappingsCount = 0;
 		try {
-			query = con.prepareTupleQuery(QueryLanguage.SPARQL, totalMappings,
-					ApplicationConstants.MAPPING_CONTEXT);
+			query = con.prepareTupleQuery(QueryLanguage.SPARQL, totalMappings);
 			TupleQueryResult result = query.evaluate();
 
 			while (result.hasNext()) {
@@ -167,7 +164,7 @@ public class CustomNcboMappingStatsDAO extends AbstractNcboMappingDAO {
 	/**
 	 * Returns an object with virtual ids and their source/target mapping
 	 * counts.
-	 *
+	 * 
 	 * @return
 	 */
 	public List<MappingOntologyStatsBean> getOntologiesMappingCount() {
@@ -179,9 +176,9 @@ public class CustomNcboMappingStatsDAO extends AbstractNcboMappingDAO {
 		List<MappingOntologyStatsBean> statsBean = null;
 		try {
 			sourceQuery = con.prepareTupleQuery(QueryLanguage.SPARQL,
-					ontologySourceCount, ApplicationConstants.MAPPING_CONTEXT);
+					ontologySourceCount);
 			targetQuery = con.prepareTupleQuery(QueryLanguage.SPARQL,
-					ontologyTargetCount, ApplicationConstants.MAPPING_CONTEXT);
+					ontologyTargetCount);
 
 			statsBean = getOntologyCountList(con, sourceQuery, targetQuery);
 		} catch (MalformedQueryException e) {
@@ -198,7 +195,7 @@ public class CustomNcboMappingStatsDAO extends AbstractNcboMappingDAO {
 	/**
 	 * Returns an object with virtual ids and their source/target mapping counts
 	 * that correspond to a particular ontology.
-	 *
+	 * 
 	 * @return
 	 */
 	public List<MappingOntologyStatsBean> getOntologyMappingCount(
@@ -217,9 +214,9 @@ public class CustomNcboMappingStatsDAO extends AbstractNcboMappingDAO {
 		try {
 			// Source processing
 			sourceQuery = con.prepareTupleQuery(QueryLanguage.SPARQL,
-					sourceMappingsQuery, ApplicationConstants.MAPPING_CONTEXT);
+					sourceMappingsQuery);
 			targetQuery = con.prepareTupleQuery(QueryLanguage.SPARQL,
-					targetMappingsQuery, ApplicationConstants.MAPPING_CONTEXT);
+					targetMappingsQuery);
 
 			statsBean = getOntologyCountList(con, sourceQuery, targetQuery);
 		} catch (MalformedQueryException e) {
@@ -247,7 +244,7 @@ public class CustomNcboMappingStatsDAO extends AbstractNcboMappingDAO {
 		try {
 			// Source processing
 			query = con.prepareTupleQuery(QueryLanguage.SPARQL,
-					sourceMappingsQuery, ApplicationConstants.MAPPING_CONTEXT);
+					sourceMappingsQuery);
 			TupleQueryResult result = query.evaluate();
 
 			while (result.hasNext()) {
@@ -276,17 +273,19 @@ public class CustomNcboMappingStatsDAO extends AbstractNcboMappingDAO {
 		return concepts;
 	}
 
-	public List<MappingUserStatsBean> getOntologyUserCount(Integer ontologyId,Integer targetOntology) {
+	public List<MappingUserStatsBean> getOntologyUserCount(Integer ontologyId,
+			Integer targetOntology) {
 		List<MappingUserStatsBean> users = new ArrayList<MappingUserStatsBean>();
 
-		String queryTemplate = targetOntology == null ? userCount : userCountWithTarget;
-		
-		String userCountQuery = queryTemplate.replaceAll("%ONT%", ontologyId
-				.toString());
+		String queryTemplate = targetOntology == null ? userCount
+				: userCountWithTarget;
+
+		String userCountQuery = queryTemplate.replaceAll("%ONT%",
+				ontologyId.toString());
 
 		if (targetOntology != null)
-			userCountQuery = userCountQuery.replaceAll("%TARG%", targetOntology
-					.toString());
+			userCountQuery = userCountQuery.replaceAll("%TARG%",
+					targetOntology.toString());
 
 		RepositoryConnection con = getRdfStoreManager()
 				.getRepositoryConnection();
@@ -294,8 +293,7 @@ public class CustomNcboMappingStatsDAO extends AbstractNcboMappingDAO {
 		TupleQuery query = null;
 		try {
 			// Source processing
-			query = con.prepareTupleQuery(QueryLanguage.SPARQL, userCountQuery,
-					ApplicationConstants.MAPPING_CONTEXT);
+			query = con.prepareTupleQuery(QueryLanguage.SPARQL, userCountQuery);
 			TupleQueryResult result = query.evaluate();
 			while (result.hasNext()) {
 				BindingSet bs = result.next();
