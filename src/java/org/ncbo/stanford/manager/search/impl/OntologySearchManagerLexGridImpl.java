@@ -1,7 +1,9 @@
 package org.ncbo.stanford.manager.search.impl;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.List;
 
 import org.LexGrid.LexBIG.DataModel.Collections.ResolvedConceptReferenceList;
 import org.LexGrid.LexBIG.DataModel.Core.CodingSchemeVersionOrTag;
@@ -131,6 +133,7 @@ public class OntologySearchManagerLexGridImpl extends
 			String preferredName, Concept concept, Byte isObsolete)
 			throws IOException {
 		SearchRecordTypeEnum recType = SearchRecordTypeEnum.RECORD_TYPE_PREFERRED_NAME;
+		List<SearchIndexBean> docs = new ArrayList<SearchIndexBean>(0);
 
 		for (Iterator<Presentation> itr = concept.iteratePresentation(); itr
 				.hasNext();) {
@@ -146,8 +149,9 @@ public class OntologySearchManagerLexGridImpl extends
 					new LexGridSearchProperty(ontologyVersionId, ontologyId,
 							ontologyDisplayLabel, recType, preferredName,
 							isObsolete, p));
-			writer.addDocument(doc);
+			docs.add(doc);
 		}
+		writer.addDocuments(docs);
 	}
 
 	/**
@@ -195,6 +199,8 @@ public class OntologySearchManagerLexGridImpl extends
 			Integer ontologyId, String ontologyDisplayLabel,
 			String preferredName, Concept concept, Byte isObsolete)
 			throws IOException {
+		List<SearchIndexBean> docs = new ArrayList<SearchIndexBean>(0);
+
 		for (Iterator<Property> itr = concept.iterateProperty(); itr.hasNext();) {
 			Property cp = itr.next();
 			populateIndexBean(doc, fullId, concept.getEntityCode(),
@@ -202,8 +208,9 @@ public class OntologySearchManagerLexGridImpl extends
 							ontologyDisplayLabel,
 							SearchRecordTypeEnum.RECORD_TYPE_PROPERTY,
 							preferredName, isObsolete, cp));
-			writer.addDocument(doc);
+			docs.add(doc);
 		}
+		writer.addDocuments(docs);
 	}
 
 	/**
@@ -226,6 +233,8 @@ public class OntologySearchManagerLexGridImpl extends
 			Integer ontologyId, String ontologyDisplayLabel,
 			String preferredName, Concept concept, Byte isObsolete)
 			throws IOException {
+		List<SearchIndexBean> docs = new ArrayList<SearchIndexBean>(0);
+
 		for (Iterator<Definition> itr = concept.iterateDefinition(); itr
 				.hasNext();) {
 			Definition d = itr.next();
@@ -234,8 +243,9 @@ public class OntologySearchManagerLexGridImpl extends
 							ontologyDisplayLabel,
 							SearchRecordTypeEnum.RECORD_TYPE_PROPERTY,
 							preferredName, isObsolete, d));
-			writer.addDocument(doc);
+			docs.add(doc);
 		}
+		writer.addDocuments(docs);
 	}
 
 	/**
@@ -257,6 +267,8 @@ public class OntologySearchManagerLexGridImpl extends
 			Integer ontologyId, String ontologyDisplayLabel,
 			String preferredName, Concept concept, Byte isObsolete)
 			throws IOException {
+		List<SearchIndexBean> docs = new ArrayList<SearchIndexBean>(0);
+
 		for (Iterator<Comment> itr = concept.iterateComment(); itr.hasNext();) {
 			Comment c = itr.next();
 			populateIndexBean(doc, fullId, concept.getEntityCode(),
@@ -264,8 +276,9 @@ public class OntologySearchManagerLexGridImpl extends
 							ontologyDisplayLabel,
 							SearchRecordTypeEnum.RECORD_TYPE_PROPERTY,
 							preferredName, isObsolete, c));
-			writer.addDocument(doc);
+			docs.add(doc);
 		}
+		writer.addDocuments(docs);
 	}
 
 	/**
@@ -288,6 +301,7 @@ public class OntologySearchManagerLexGridImpl extends
 			String preferredName, Concept concept, Byte isObsolete)
 			throws IOException {
 		String conceptId = concept.getEntityCode();
+		List<SearchIndexBean> docs = new ArrayList<SearchIndexBean>(0);
 
 		// add concept id to index only if concept id != preferredName to avoid
 		// duplication of data
@@ -302,8 +316,9 @@ public class OntologySearchManagerLexGridImpl extends
 							ontologyDisplayLabel,
 							SearchRecordTypeEnum.RECORD_TYPE_CONCEPT_ID,
 							preferredName, isObsolete, p));
-			writer.addDocument(doc);
+			docs.add(doc);
 		}
+		writer.addDocuments(docs);
 	}
 
 	/**

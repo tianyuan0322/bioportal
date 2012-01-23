@@ -19,6 +19,7 @@ import org.ncbo.stanford.service.loader.fixer.OntologyIntegrityFixerService;
 import org.ncbo.stanford.service.metrics.MetricsService;
 import org.ncbo.stanford.service.ontology.AbstractOntologyService;
 import org.ncbo.stanford.service.search.IndexSearchService;
+import org.ncbo.stanford.service.search.QuerySearchService;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.mysql.jdbc.StringUtils;
@@ -30,9 +31,9 @@ import edu.stanford.smi.protege.model.Slot;
 import edu.stanford.smi.protegex.owl.model.OWLModel;
 
 /**
- *
+ * 
  * @author Michael Dorf
- *
+ * 
  *         Class responsible for checking fixing the ontology integrity. Fixes
  *         dependent artifacts such as search index or metrics that may be out
  *         of sync with the latest ontology version
@@ -46,6 +47,7 @@ public class OntologyIntegrityFixerServiceImpl extends AbstractOntologyService
 
 	private OntologyMetadataManager ontologyMetadataManager;
 	private IndexSearchService indexSearchService;
+	private QuerySearchService querySearchService;
 	private MetricsService metricsService;
 	private OntologyLoadManagerProtegeImpl loadManagerProtege;
 
@@ -98,7 +100,7 @@ public class OntologyIntegrityFixerServiceImpl extends AbstractOntologyService
 	/**
 	 * Rebuilds index for "problem" ontologies - those that are either not in
 	 * the index or have a wrong version in the index
-	 *
+	 * 
 	 * @param ontologies
 	 * @param flaggedOntologies
 	 *            Ontologies that should have their index redone. Manually set.
@@ -111,7 +113,7 @@ public class OntologyIntegrityFixerServiceImpl extends AbstractOntologyService
 		for (OntologyBean ontology : ontologies) {
 			try {
 				Integer ontologyId = ontology.getOntologyId();
-				OntologyHitBean ontologyHit = indexSearchService
+				OntologyHitBean ontologyHit = querySearchService
 						.checkOntologyInIndex(ontologyId);
 				Integer ontologyVersionId = ontologyHit.getOntologyVersionId();
 
@@ -375,5 +377,13 @@ public class OntologyIntegrityFixerServiceImpl extends AbstractOntologyService
 	public void setLoadManagerProtege(
 			OntologyLoadManagerProtegeImpl loadManagerProtege) {
 		this.loadManagerProtege = loadManagerProtege;
+	}
+
+	/**
+	 * @param querySearchService
+	 *            the querySearchService to set
+	 */
+	public void setQuerySearchService(QuerySearchService querySearchService) {
+		this.querySearchService = querySearchService;
 	}
 }

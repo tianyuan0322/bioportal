@@ -1,17 +1,24 @@
 package org.ncbo.stanford.service.search.impl;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.annotation.PostConstruct;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.lucene.index.IndexWriter;
 import org.apache.lucene.index.Term;
+import org.apache.lucene.index.IndexWriter.MaxFieldLength;
 import org.apache.lucene.search.Query;
+import org.apache.lucene.store.FSDirectory;
 import org.ncbo.stanford.bean.OntologyBean;
 import org.ncbo.stanford.manager.search.OntologySearchManager;
 import org.ncbo.stanford.service.search.AbstractSearchService;
 import org.ncbo.stanford.service.search.IndexSearchService;
+import org.ncbo.stanford.util.ontologyfile.pathhandler.AbstractFilePathHandler;
 import org.ncbo.stanford.wrapper.LuceneIndexWriterWrapper;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -27,10 +34,27 @@ public class IndexSearchServiceImpl extends AbstractSearchService implements
 
 	private static final Log log = LogFactory
 			.getLog(IndexSearchServiceImpl.class);
+
+	public static final MaxFieldLength MAX_FIELD_LENGTH = IndexWriter.MaxFieldLength.LIMITED;
+	private static final String OLD_BACKUP_FILE_EXTENSION = "bak";
+
 	private String indexBackupPath;
 	private int indexMergeFactor;
 	private int indexMaxMergeDocs;
+	
+	// non-injected properties
+	private LuceneIndexWriterWrapper writer = null;
 
+	@PostConstruct
+	public void initWriter() {
+		try {
+			writer = new LuceneIndexWriterWrapper(indexDir, analyzer, false, indexMergeFactor, indexMaxMergeDocs);
+		} catch (IOException e) {
+			e.printStackTrace();
+			log.error("Could not initialize LuceneIndexWriterWrapper at startup: " + e);
+		}
+	}	
+	
 	/**
 	 * Recreate the index of all ontologies, overwriting the existing one
 	 * 
@@ -49,14 +73,12 @@ public class IndexSearchServiceImpl extends AbstractSearchService implements
 			backupIndex();
 		}
 
-		LuceneIndexWriterWrapper writer = new LuceneIndexWriterWrapper(
-				indexDir, analyzer, true);
-		writer.setMergeFactor(indexMergeFactor);
-		writer.setMaxMergeDocs(indexMaxMergeDocs);
+		LuceneIndexWriterWrapper writer = new LuceneIndexWriterWrapper(indexDir, analyzer, true, indexMergeFactor, indexMaxMergeDocs);
 
 		for (OntologyBean ontology : ontologies) {
 			try {
 				indexOntology(writer, ontology, false, false);
+				
 				// commit changes to writer so they are visible to the searcher
 				writer.commit();
 			} catch (Exception e) {
@@ -68,10 +90,10 @@ public class IndexSearchServiceImpl extends AbstractSearchService implements
 		}
 
 		if (doOptimize) {
-			optimizeIndex(writer);
+			writer.optimize();
 		}
 
-		closeWriter(writer);
+		writer.closeWriterIfInactive();
 
 		if (log.isInfoEnabled()) {
 			long stop = System.currentTimeMillis(); // stop timing
@@ -105,11 +127,6 @@ public class IndexSearchServiceImpl extends AbstractSearchService implements
 	 */
 	public void indexOntologies(List<Integer> ontologyIdList, boolean doBackup,
 			boolean doOptimize) throws Exception {
-		LuceneIndexWriterWrapper writer = new LuceneIndexWriterWrapper(
-				indexDir, analyzer);
-		writer.setMergeFactor(indexMergeFactor);
-		writer.setMaxMergeDocs(indexMaxMergeDocs);
-
 		List<OntologyBean> ontologies = ontologyMetadataManager
 				.findLatestActiveOntologyOrOntologyViewVersions(ontologyIdList);
 
@@ -118,8 +135,6 @@ public class IndexSearchServiceImpl extends AbstractSearchService implements
 		if (!ontologies.isEmpty()) {
 			indexOntologies(writer, ontologies, false, doOptimize);
 		}
-
-		closeWriter(writer);
 	}
 
 	/**
@@ -149,10 +164,41 @@ public class IndexSearchServiceImpl extends AbstractSearchService implements
 	 */
 	public void removeOntologies(List<Integer> ontologyIds, boolean doBackup,
 			boolean doOptimize) throws Exception {
-		LuceneIndexWriterWrapper writer = new LuceneIndexWriterWrapper(
-				indexDir, analyzer);
 		removeOntologies(writer, ontologyIds, doBackup, doOptimize);
-		closeWriter(writer);
+	}
+	
+	/**
+	 * Remove given ontologies from index with options to backup and optimize
+	 * index
+	 * 
+	 * @param ontologyIds
+	 * @param doBackup
+	 * @param doOptimize
+	 * @throws Exception
+	 */
+	public void removeOntologies(LuceneIndexWriterWrapper writer, List<Integer> ontologyIds, boolean doBackup,
+			boolean doOptimize) throws Exception {
+		if (doBackup) {
+			backupIndex();
+		}
+
+		if (ontologyIds.size() == 1) {
+			Term ontologyIdTerm = generateOntologyIdTerm(ontologyIds.get(0));
+			writer.deleteDocuments(ontologyIdTerm);
+		} else {
+			Query ontologyIdsQuery = generateOntologyIdsQuery(ontologyIds);
+			writer.deleteDocuments(ontologyIdsQuery);
+		}
+
+		emptySearchCache();
+
+		if (doOptimize) {
+			optimizeIndex();
+		}
+
+		if (log.isDebugEnabled()) {
+			log.debug("Removed ontologies from index: " + ontologyIds);
+		}
 	}
 
 	/**
@@ -161,22 +207,53 @@ public class IndexSearchServiceImpl extends AbstractSearchService implements
 	 * @throws Exception
 	 */
 	public void backupIndex() throws Exception {
-		LuceneIndexWriterWrapper writer = new LuceneIndexWriterWrapper(
-				indexDir, analyzer);
-		backupIndex(writer);
-		closeWriter(writer);
-	}
+		long start = 0;
+		long stop = 0;
 
+		if (log.isDebugEnabled()) {
+			log.debug("Backing up index...");
+			start = System.currentTimeMillis();
+		}
+
+		backupIndexByFileCopy(indexBackupPath);
+
+		if (log.isDebugEnabled()) {
+			stop = System.currentTimeMillis(); // stop timing
+			log.debug("Finished backing up index in " + (double) (stop - start)
+					/ 1000 + " seconds.");
+		}
+	}
+	
 	/**
 	 * Run an optimization command on the existing index
 	 * 
 	 * @throws Exception
 	 */
 	public void optimizeIndex() throws Exception {
-		LuceneIndexWriterWrapper writer = new LuceneIndexWriterWrapper(
-				indexDir, analyzer);
 		optimizeIndex(writer);
-		closeWriter(writer);
+	}	
+
+	/**
+	 * Run an optimization command on the existing index
+	 * 
+	 * @throws Exception
+	 */
+	private void optimizeIndex(LuceneIndexWriterWrapper writer) throws Exception {
+		long start = 0;
+		long stop = 0;
+
+		if (log.isDebugEnabled()) {
+			log.debug("Optimizing index...");
+			start = System.currentTimeMillis();
+		}
+
+		writer.optimize();
+
+		if (log.isDebugEnabled()) {
+			stop = System.currentTimeMillis(); // stop timing
+			log.debug("Finished optimizing index in " + (double) (stop - start)
+					/ 1000 / 60 + " minutes.");
+		}
 	}
 
 	/**
@@ -188,9 +265,8 @@ public class IndexSearchServiceImpl extends AbstractSearchService implements
 	 * @param doOptimize
 	 * @throws Exception
 	 */
-	private void indexOntology(LuceneIndexWriterWrapper writer,
-			OntologyBean ontology, boolean doBackup, boolean doOptimize)
-			throws Exception {
+	private void indexOntology(LuceneIndexWriterWrapper writer, OntologyBean ontology,
+			boolean doBackup, boolean doOptimize) throws Exception {
 		Integer ontologyVersionId = ontology.getId();
 		Integer ontologyId = ontology.getOntologyId();
 		String format = ontology.getFormat();
@@ -245,7 +321,7 @@ public class IndexSearchServiceImpl extends AbstractSearchService implements
 			throws Exception {
 		if (!ontologies.isEmpty()) {
 			if (doBackup) {
-				backupIndex(writer);
+				backupIndex();
 			}
 
 			for (OntologyBean ontology : ontologies) {
@@ -275,112 +351,81 @@ public class IndexSearchServiceImpl extends AbstractSearchService implements
 	 * @param doOptimize
 	 * @throws Exception
 	 */
-	private void removeOntology(LuceneIndexWriterWrapper writer,
-			Integer ontologyId, boolean doBackup, boolean doOptimize)
-			throws Exception {
+	private void removeOntology(LuceneIndexWriterWrapper writer, Integer ontologyId,
+			boolean doBackup, boolean doOptimize) throws Exception {
 		List<Integer> ontologyIds = new ArrayList<Integer>(1);
 		ontologyIds.add(ontologyId);
 		removeOntologies(writer, ontologyIds, doBackup, doOptimize);
 	}
 
-	/**
-	 * Remove given ontologies from index with options to backup and optimize
-	 * the index
-	 * 
-	 * @param writer
-	 * @param ontologyIds
-	 * @param doBackup
-	 * @param doOptimize
-	 * @throws Exception
-	 */
-	private void removeOntologies(LuceneIndexWriterWrapper writer,
-			List<Integer> ontologyIds, boolean doBackup, boolean doOptimize)
-			throws Exception {
-		if (doBackup) {
-			backupIndex(writer);
+	private void backupIndexByFileCopy(String backupPath) throws IOException {
+		// for the moment, can't backup index unless it's located on a
+		// filesystem
+		if (!(indexDir instanceof FSDirectory)) {
+			return;
 		}
 
-		if (ontologyIds.size() == 1) {
-			Term ontologyIdTerm = generateOntologyIdTerm(ontologyIds.get(0));
-			writer.deleteDocuments(ontologyIdTerm);
+		File indexFilePath = ((FSDirectory) indexDir).getFile();
+		String[] children = indexFilePath.list();
+		File backupFilePath = new File(backupPath);
+
+		if (!backupFilePath.exists()) {
+			backupFilePath.mkdirs();
 		} else {
-			Query ontologyIdsQuery = generateOntologyIdsQuery(ontologyIds);
-			writer.deleteDocuments(ontologyIdsQuery);
+			renameBackupIndex(backupFilePath);
 		}
 
-		emptySearchCache();
+		for (int i = 0; i < children.length; i++) {
+			File f = new File(indexFilePath, children[i]);
 
-		if (doOptimize) {
-			optimizeIndex(writer);
+			if (f.isFile()
+					&& !f.getName().equalsIgnoreCase(
+							IndexWriter.WRITE_LOCK_NAME)) {
+				AbstractFilePathHandler.copyFile(f, new File(backupFilePath
+						+ File.separator + f.getName()));
+			}
 		}
 
-		if (log.isDebugEnabled()) {
-			log.debug("Removed ontologies from index: " + ontologyIds);
+		removeOldBackup(backupFilePath);
+	}
+
+	private void renameBackupIndex(File backupFilePath) throws IOException {
+		if (backupFilePath.exists()) {
+			String[] children = backupFilePath.list();
+
+			for (int i = 0; i < children.length; i++) {
+				File f = new File(backupFilePath, children[i]);
+
+				if (f.isFile()) {
+					f.renameTo(new File(backupFilePath, f.getName() + "."
+							+ OLD_BACKUP_FILE_EXTENSION));
+				}
+			}
 		}
 	}
 
-	/**
-	 * Backup the index
-	 * 
-	 * @param writer
-	 * @throws Exception
-	 */
-	private void backupIndex(LuceneIndexWriterWrapper writer) throws Exception {
-		long start = 0;
-		long stop = 0;
+	private void removeOldBackup(File backupFilePath) {
+		if (backupFilePath.exists()) {
+			String[] children = backupFilePath.list();
 
-		if (log.isDebugEnabled()) {
-			log.debug("Backing up index...");
-			start = System.currentTimeMillis();
-		}
+			for (int i = 0; i < children.length; i++) {
+				File f = new File(backupFilePath, children[i]);
 
-		writer.backupIndexByFileCopy(indexBackupPath);
-		// writer.backupIndexByReading(indexBackupPath);
-
-		if (log.isDebugEnabled()) {
-			stop = System.currentTimeMillis(); // stop timing
-			log.debug("Finished backing up index in " + (double) (stop - start)
-					/ 1000 + " seconds.");
+				if (f.isFile() && isOldBackupFile(f.getName())) {
+					f.delete();
+				}
+			}
 		}
 	}
 
-	/**
-	 * Otimize the index
-	 * 
-	 * @param writer
-	 * @throws Exception
-	 */
-	private void optimizeIndex(LuceneIndexWriterWrapper writer)
-			throws Exception {
-		long start = 0;
-		long stop = 0;
-
-		if (log.isDebugEnabled()) {
-			log.debug("Optimizing index...");
-			start = System.currentTimeMillis();
-		}
-
-		writer.optimize();
-
-		if (log.isDebugEnabled()) {
-			stop = System.currentTimeMillis(); // stop timing
-			log.debug("Finished optimizing index in " + (double) (stop - start)
-					/ 1000 / 60 + " minutes.");
-		}
+	private boolean isOldBackupFile(String filename) {
+		return filename.toLowerCase().endsWith(OLD_BACKUP_FILE_EXTENSION);
 	}
 
-	/**
-	 * Close the given writer
-	 * 
-	 * @param writer
-	 * @param reloadCache
-	 * @throws IOException
-	 */
-	private void closeWriter(LuceneIndexWriterWrapper writer)
-			throws IOException {
-		writer.closeWriter();
-		writer = null;
-	}
+	
+	
+	
+	
 
 	/**
 	 * Returns the search manager for a given ontology format
@@ -417,4 +462,16 @@ public class IndexSearchServiceImpl extends AbstractSearchService implements
 	public void setIndexMaxMergeDocs(int indexMaxMergeDocs) {
 		this.indexMaxMergeDocs = indexMaxMergeDocs;
 	}
+
+	/**
+	 * Sets the index path and creates a new instance of writer
+	 * 
+	 * @param indexPath
+	 *            the indexPath to set
+	 */
+	@Override
+	public void setIndexPath(String indexPath) {
+		super.setIndexPath(indexPath);
+	}
+
 }

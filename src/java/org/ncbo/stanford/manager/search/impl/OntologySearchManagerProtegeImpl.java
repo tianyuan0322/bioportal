@@ -176,6 +176,7 @@ public class OntologySearchManagerProtegeImpl extends
 			ProtegeSearchFrame protegeFrame, Slot slot, boolean owlMode)
 			throws IOException {
 		Collection values = kb.getOwnSlotValues(protegeFrame.getFrame(), slot);
+		List<SearchIndexBean> docs = new ArrayList<SearchIndexBean>(0);
 
 		for (Object value : values) {
 			if (!(value instanceof String)) {
@@ -184,8 +185,9 @@ public class OntologySearchManagerProtegeImpl extends
 
 			populateIndexBean(doc, ontologyBean, protegeFrame, (String) value,
 					owlMode);
-			writer.addDocument(doc);
+			docs.add(doc);
 		}
+		writer.addDocuments(docs);
 	}
 
 	/**
@@ -208,6 +210,7 @@ public class OntologySearchManagerProtegeImpl extends
 			boolean owlMode) throws IOException {
 		String preferredName = null;
 		Collection<String> values = new ArrayList<String>();
+		List<SearchIndexBean> docs = new ArrayList<SearchIndexBean>(0);
 
 		// add a local name to the index -- critical in cases where the rdf:ID
 		// is the only name we have for a resource add a local name to the index
@@ -238,9 +241,10 @@ public class OntologySearchManagerProtegeImpl extends
 			protegeFrame.setPreferredName(preferredName);
 			populateIndexBean(doc, ontologyBean, protegeFrame, (String) value,
 					owlMode);
-			writer.addDocument(doc);
+			docs.add(doc);
 			break;
 		}
+		writer.addDocuments(docs);
 
 		return preferredName;
 	}
@@ -262,6 +266,7 @@ public class OntologySearchManagerProtegeImpl extends
 			ProtegeSearchFrame protegeFrame, String preferredName,
 			boolean owlMode) throws IOException {
 		Frame frame = protegeFrame.getFrame();
+		List<SearchIndexBean> docs = new ArrayList<SearchIndexBean>(0);
 
 		if (frame instanceof RDFResource) {
 			String name = ((RDFResource) frame).getLocalName();
@@ -271,8 +276,9 @@ public class OntologySearchManagerProtegeImpl extends
 			if (!name.equals(preferredName)) {
 				populateIndexBean(doc, ontologyBean, protegeFrame, name,
 						owlMode);
-				writer.addDocument(doc);
+				docs.add(doc);
 			}
+			writer.addDocuments(docs);
 		}
 	}
 
