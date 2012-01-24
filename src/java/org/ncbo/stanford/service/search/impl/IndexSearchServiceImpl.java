@@ -422,11 +422,6 @@ public class IndexSearchServiceImpl extends AbstractSearchService implements
 		return filename.toLowerCase().endsWith(OLD_BACKUP_FILE_EXTENSION);
 	}
 
-	
-	
-	
-	
-
 	/**
 	 * Returns the search manager for a given ontology format
 	 * 
@@ -473,5 +468,4 @@ public class IndexSearchServiceImpl extends AbstractSearchService implements
 	public void setIndexPath(String indexPath) {
 		super.setIndexPath(indexPath);
 	}
-
 }

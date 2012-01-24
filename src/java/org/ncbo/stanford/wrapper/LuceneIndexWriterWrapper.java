@@ -24,9 +24,7 @@ public class LuceneIndexWriterWrapper {
 	private Directory indexDir;
 	private Integer mergeFactor;
 	private Integer maxMergeDocs;
-
 	private AtomicInteger activeWrites = new AtomicInteger(0);
-	private Object createWriterLock = new Object();
 
 	/**
 	 * @param indexDir
@@ -35,13 +33,13 @@ public class LuceneIndexWriterWrapper {
 	 * @throws IOException
 	 */
 	public LuceneIndexWriterWrapper(Directory indexDir, Analyzer analyzer,
-			boolean create, Integer mergeFactor, Integer maxMergeDocs) throws IOException {
+			boolean create, Integer mergeFactor, Integer maxMergeDocs)
+			throws IOException {
 		super();
 		this.indexDir = indexDir;
 		this.analyzer = analyzer;
 		this.mergeFactor = mergeFactor;
 		this.maxMergeDocs = maxMergeDocs;
-		initWriter(create);
 	}
 
 	/**
@@ -55,21 +53,17 @@ public class LuceneIndexWriterWrapper {
 	}
 
 	public void commit() throws IOException {
-		initWriter();
-
 		try {
-			activeWrites.incrementAndGet();
+			initWriter();
 			writer.commit();
 		} finally {
 			closeWriterIfInactive();
 		}
 	}
-	
-	public void optimize() throws IOException {
-		initWriter();
 
+	public void optimize() throws IOException {
 		try {
-			activeWrites.incrementAndGet();
+			initWriter();
 			writer.optimize();
 		} finally {
 			closeWriterIfInactive();
@@ -77,10 +71,8 @@ public class LuceneIndexWriterWrapper {
 	}
 
 	public void deleteDocuments(Query query) throws IOException {
-		initWriter();
-
 		try {
-			activeWrites.incrementAndGet();
+			initWriter();
 			writer.deleteDocuments(query);
 		} finally {
 			closeWriterIfInactive();
@@ -88,10 +80,8 @@ public class LuceneIndexWriterWrapper {
 	}
 
 	public void deleteDocuments(Term term) throws IOException {
-		initWriter();
-
 		try {
-			activeWrites.incrementAndGet();
+			initWriter();
 			writer.deleteDocuments(term);
 		} finally {
 			closeWriterIfInactive();
@@ -100,10 +90,8 @@ public class LuceneIndexWriterWrapper {
 
 	public void addDocuments(List<SearchIndexBean> indexBeans)
 			throws IOException {
-		initWriter();
-
 		try {
-			activeWrites.incrementAndGet();
+			initWriter();
 
 			for (SearchIndexBean indexBean : indexBeans) {
 				Document doc = new Document();
@@ -115,15 +103,41 @@ public class LuceneIndexWriterWrapper {
 		}
 	}
 
-	public void closeWriterIfInactive() throws IOException {		
-		synchronized (this) {
-			int writers = activeWrites.decrementAndGet();
-			
-			if (writers == 0) {
-				writer.close();
-				writer = null;
+	/**
+	 * The methods closeWriterIfInactive and initWriter must be synchronized to
+	 * ensure the active write counters work correctly
+	 * 
+	 * @throws IOException
+	 */
+	public synchronized void closeWriterIfInactive() throws IOException {
+		int writers = activeWrites.decrementAndGet();
+
+		if (writers == 0) {
+			writer.close();
+			writer = null;
+		}
+	}
+
+	private synchronized void initWriter(boolean create) throws IOException {
+		if (writer == null) {
+			try {
+				writer = new IndexWriter(indexDir, analyzer, create,
+						MAX_FIELD_LENGTH);
+			} catch (FileNotFoundException e) {
+				e.printStackTrace();
+				writer = new IndexWriter(indexDir, analyzer, true,
+						MAX_FIELD_LENGTH);
+			}
+
+			if (mergeFactor != null) {
+				writer.setMergeFactor(mergeFactor);
+			}
+
+			if (maxMergeDocs != null) {
+				writer.setMaxMergeDocs(maxMergeDocs);
 			}
 		}
+		activeWrites.incrementAndGet();
 	}
 
 	private void addFields(Document doc, SearchIndexBean indexBean) {
@@ -148,29 +162,6 @@ public class LuceneIndexWriterWrapper {
 	private void addField(Document doc, SearchField field) {
 		doc.add(new Field(field.getLabel(), field.getContents(), field
 				.getStore(), field.getIndex()));
-	}
-
-	private void initWriter(boolean create) throws IOException {
-		synchronized (this) {
-			if (writer == null) {				
-				try {
-					writer = new IndexWriter(indexDir, analyzer, create,
-							MAX_FIELD_LENGTH);
-				} catch (FileNotFoundException e) {
-					e.printStackTrace();
-					writer = new IndexWriter(indexDir, analyzer, true,
-							MAX_FIELD_LENGTH);
-				}				
-
-				if (mergeFactor != null) {
-					writer.setMergeFactor(mergeFactor);
-				}
-				
-				if (maxMergeDocs != null) {
-					writer.setMaxMergeDocs(maxMergeDocs);
-				}
-			}
-		}
 	}
 
 	public void setMergeFactor(Integer mergeFactor) {
