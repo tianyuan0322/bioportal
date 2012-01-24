@@ -1,5 +1,6 @@
 package org.ncbo.stanford.wrapper;
 
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -114,10 +115,10 @@ public class LuceneIndexWriterWrapper {
 		}
 	}
 
-	public void closeWriterIfInactive() throws IOException {
-		synchronized (createWriterLock) {
+	public void closeWriterIfInactive() throws IOException {		
+		synchronized (this) {
 			int writers = activeWrites.decrementAndGet();
-
+			
 			if (writers == 0) {
 				writer.close();
 				writer = null;
@@ -150,10 +151,17 @@ public class LuceneIndexWriterWrapper {
 	}
 
 	private void initWriter(boolean create) throws IOException {
-		synchronized (createWriterLock) {
-			if (writer == null) {
-				writer = new IndexWriter(indexDir, analyzer, create,
-						MAX_FIELD_LENGTH);
+		synchronized (this) {
+			if (writer == null) {				
+				try {
+					writer = new IndexWriter(indexDir, analyzer, create,
+							MAX_FIELD_LENGTH);
+				} catch (FileNotFoundException e) {
+					e.printStackTrace();
+					writer = new IndexWriter(indexDir, analyzer, true,
+							MAX_FIELD_LENGTH);
+				}				
+
 				if (mergeFactor != null) {
 					writer.setMergeFactor(mergeFactor);
 				}
@@ -176,24 +184,4 @@ public class LuceneIndexWriterWrapper {
 	private void initWriter() throws IOException {
 		initWriter(false);
 	}
-
-	/*
-	 * public void deleteDocuments(Term term) throws IOException {
-	 * writer.deleteDocuments(term); }
-	 * 
-	 * public void deleteDocuments(Query query) throws IOException {
-	 * writer.deleteDocuments(query); }
-	 * 
-	 * 
-	 * public void optimize() throws IOException { writer.optimize(); }
-	 * 
-	 * public void commit() throws IOException { writer.commit(); }
-	 * 
-	 * public void expungeDeletes() throws IOException {
-	 * writer.expungeDeletes(); }
-	 * 
-	 * public void closeWriter() throws IOException { if (writer != null) {
-	 * writer.close(); writer = null; } }
-	 */
-
 }
