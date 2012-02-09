@@ -636,6 +636,7 @@ public class QuerySearchServiceImpl extends AbstractSearchService implements
 	private void addContentsClauseContains(String expr, BooleanQuery query)
 			throws IOException {
 		try {
+			reloadSearcher();
 			PrefixQuery q = new PrefixQuery(luceneVersion, searcher
 					.getIndexReader(), analyzer);
 			q.parsePrefixQuery(SearchIndexBean.CONTENTS_FIELD_LABEL, expr);
@@ -647,6 +648,8 @@ public class QuerySearchServiceImpl extends AbstractSearchService implements
 			IOException ioe = new IOException(e.getMessage());
 			ioe.initCause(e);
 			throw ioe;
+		} finally {
+			decrementSearches();
 		}
 	}
 
