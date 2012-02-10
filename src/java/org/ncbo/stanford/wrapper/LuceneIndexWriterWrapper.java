@@ -40,6 +40,10 @@ public class LuceneIndexWriterWrapper {
 		this.analyzer = analyzer;
 		this.mergeFactor = mergeFactor;
 		this.maxMergeDocs = maxMergeDocs;
+		
+		if (create) {
+			initWriter(create);
+		}
 	}
 
 	/**
