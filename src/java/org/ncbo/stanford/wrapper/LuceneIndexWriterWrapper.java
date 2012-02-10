@@ -40,7 +40,7 @@ public class LuceneIndexWriterWrapper {
 		this.analyzer = analyzer;
 		this.mergeFactor = mergeFactor;
 		this.maxMergeDocs = maxMergeDocs;
-		
+
 		if (create) {
 			initWriter(create);
 		}
@@ -104,6 +104,13 @@ public class LuceneIndexWriterWrapper {
 			}
 		} finally {
 			closeWriterIfInactive();
+		}
+	}
+
+	public void closeWriter() throws IOException {
+		if (writer != null) {
+			writer.close();
+			writer = null;
 		}
 	}
 

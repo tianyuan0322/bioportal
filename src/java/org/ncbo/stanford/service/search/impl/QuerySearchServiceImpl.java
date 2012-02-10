@@ -736,23 +736,4 @@ public class QuerySearchServiceImpl extends AbstractSearchService implements
 		}
 		activeSearches.incrementAndGet();
 	}	
-	
-	/**
-	 * Sets the index path and creates a new instance of searcher
-	 * 
-	 * @param indexPath
-	 *            the indexPath to set
-	 */
-	@Override
-	public void setIndexPath(String indexPath) {
-		super.setIndexPath(indexPath);
-		
-		try {
-			searcher = new IndexSearcher(indexDir, true);
-		} catch (IOException e) {
-			e.printStackTrace();
-			log.error("Could not initialize IndexSearcher at startup: "
-					+ e);
-		}
-	}
 }
