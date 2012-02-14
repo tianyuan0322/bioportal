@@ -36,6 +36,7 @@
 			<xsl:copy-of select="isFlat" />
 			<xsl:copy-of select="isFoundry" />
 			<xsl:copy-of select="isMetadataOnly" />
+			<xsl:copy-of select="naturalLanguage" />
 			<xsl:copy-of select="dateCreated" />
 		</ontologyBean>
 	</xsl:template>

@@ -151,7 +151,8 @@ public class OntologyMetadataUtils extends MetadataUtils {
 			+ "numberOfIndividuals";
 	public static final String PROPERTY_OMV_NUMBER_OF_PROPERTIES = PREFIX_OMV
 			+ "numberOfProperties";
-
+	public static final String PROPERTY_OMV_NATURAL_LANGUAGE = PREFIX_OMV
+			+ "naturalLanguage";
 	public static final String PROPERTY_METRICS_MAXIMUM_DEPTH = PREFIX_METRICS
 			+ "maximumDepth";
 	public static final String PROPERTY_METRICS_MAXIMUM_NUMBER_OF_SIBLINGS = PREFIX_METRICS
@@ -267,8 +268,8 @@ public class OntologyMetadataUtils extends MetadataUtils {
 		}
 
 		if (ob.getUserIds() == null) {
-			List<Integer> userIds = getPropertyValueIds(owlModel,
-					ontologyInd, PROPERTY_ADMINISTERED_BY);
+			List<Integer> userIds = getPropertyValueIds(owlModel, ontologyInd,
+					PROPERTY_ADMINISTERED_BY);
 			if (userIds != null) {
 				ob.setUserIds(userIds);
 			}
@@ -281,7 +282,8 @@ public class OntologyMetadataUtils extends MetadataUtils {
 
 	public static void fillInOntologyInstancePropertiesFromBean(
 			OWLIndividual ontologyInd, OntologyBean ob, OWLIndividual vOntInd,
-			Collection<OWLIndividual> userInd, Collection<OWLIndividual> domainIndividuals,
+			Collection<OWLIndividual> userInd,
+			Collection<OWLIndividual> domainIndividuals,
 			Collection<OWLIndividual> viewIndividuals,
 			Collection<OWLIndividual> viewOnOntologyIndividuals)
 			throws MetadataException {
@@ -339,7 +341,9 @@ public class OntologyMetadataUtils extends MetadataUtils {
 		}
 
 		setPropertyValue(owlModel, ontologyInd, PROPERTY_URL_HOMEPAGE, ob
-				.getHomepage());
+				.getHomepage());		
+		setPropertyValue(owlModel, ontologyInd, PROPERTY_OMV_NATURAL_LANGUAGE, ob
+				.getNaturalLanguage());
 		setPropertyValue(owlModel, ontologyInd, PROPERTY_ID, ob.getId());
 		setPropertyValue(owlModel, ontologyInd,
 				PROPERTY_INTERNAL_VERSION_NUMBER, ob.getInternalVersionNumber());
@@ -625,7 +629,9 @@ public class OntologyMetadataUtils extends MetadataUtils {
 				owlModel, ontologyInd, PROPERTY_OMV_HAS_ONTOLOGY_LANGUAGE,
 				RDFIndividual.class)));
 		ob.setHomepage(getPropertyValue(owlModel, ontologyInd,
-				PROPERTY_URL_HOMEPAGE, String.class));
+				PROPERTY_URL_HOMEPAGE, String.class));		
+		ob.setNaturalLanguage(getPropertyValue(owlModel, ontologyInd,
+				PROPERTY_OMV_NATURAL_LANGUAGE, String.class));		
 		ob.setId(getPropertyValue(owlModel, ontologyInd, PROPERTY_ID,
 				Integer.class));
 		ob.setInternalVersionNumber(getPropertyValue(owlModel, ontologyInd,
