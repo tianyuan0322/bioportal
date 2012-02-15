@@ -68,7 +68,8 @@ public class OntologyBean {
 	private String obsoleteProperty;
 	private ViewingRestrictionEnum viewingRestriction;
 	private String licenseInformation;
-	
+	private String naturalLanguage;
+
 	private boolean isView = false;
 
 	// category id(s)
@@ -1080,5 +1081,20 @@ public class OntologyBean {
 	 */
 	public void setLicenseInformation(String licenseInformation) {
 		this.licenseInformation = licenseInformation;
+	}
+
+	/**
+	 * @return the naturalLanguage
+	 */
+	public String getNaturalLanguage() {
+		return naturalLanguage;
+	}
+
+	/**
+	 * @param naturalLanguage
+	 *            the naturalLanguage to set
+	 */
+	public void setNaturalLanguage(String naturalLanguage) {
+		this.naturalLanguage = naturalLanguage;
 	}
 }

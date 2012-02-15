@@ -52,7 +52,6 @@ public class OntologySearchManagerProtegeImpl extends
 		KnowledgeBase kb = getKnowledgeBaseInstance(ontologyBean);
 		boolean owlMode = kb instanceof OWLModel;
 		Collection<Frame> frames = kb.getFrames();
-		SearchIndexBean doc = new SearchIndexBean();
 
 		if (owlMode) {
 			try {
@@ -67,11 +66,11 @@ public class OntologySearchManagerProtegeImpl extends
 		}
 
 		Slot deprecatedSlot = getDeprecatedSlot(kb);
-		List<Slot> preferredNameSlots = getPreferredNameSlots(kb,
-				ontologyBean.getPreferredNameSlot());
+		List<Slot> preferredNameSlots = getPreferredNameSlots(kb, ontologyBean
+				.getPreferredNameSlot());
 		Slot synonymSlot = getSynonymSlot(kb, ontologyBean.getSynonymSlot());
 		Set<Slot> propertySlots = getPropertySlots(kb);
-		
+
 		for (Frame frame : frames) {
 			// exclude anonymous and system frames from being indexed
 			if (frame.isSystem()
@@ -79,8 +78,9 @@ public class OntologySearchManagerProtegeImpl extends
 							.isAnonymous())) {
 				continue;
 			}
-			
-			Byte isObsolete = new Byte(isObsolete(deprecatedSlot, frame) ? (byte)1 : (byte)0);	
+
+			Byte isObsolete = new Byte(
+					isObsolete(deprecatedSlot, frame) ? (byte) 1 : (byte) 0);
 			String preferredName = null;
 			ProtegeSearchFrame protegeFrame = new ProtegeSearchFrame(
 					ontologyBean.getId(), ontologyBean.getOntologyId(),
@@ -91,8 +91,7 @@ public class OntologySearchManagerProtegeImpl extends
 			// add preferred name slot
 			for (Slot prefNameSlot : preferredNameSlots) {
 				preferredName = addPreferredNameSlotToIndex(writer,
-						ontologyBean, doc, kb, protegeFrame, prefNameSlot,
-						owlMode);
+						ontologyBean, kb, protegeFrame, prefNameSlot, owlMode);
 
 				if (!StringHelper.isNullOrNullString(preferredName)) {
 					break;
@@ -102,14 +101,14 @@ public class OntologySearchManagerProtegeImpl extends
 			// add name slot but only if the concept id != preferredName
 			protegeFrame
 					.setRecordType(SearchRecordTypeEnum.RECORD_TYPE_CONCEPT_ID);
-			addNameSlotToIndex(writer, ontologyBean, doc, kb, protegeFrame,
+			addNameSlotToIndex(writer, ontologyBean, kb, protegeFrame,
 					preferredName, owlMode);
 
 			// add synonym slot if exists
 			if (synonymSlot != null) {
 				protegeFrame
 						.setRecordType(SearchRecordTypeEnum.RECORD_TYPE_SYNONYM);
-				addSlotToIndex(writer, ontologyBean, doc, kb, protegeFrame,
+				addSlotToIndex(writer, ontologyBean, kb, protegeFrame,
 						synonymSlot, owlMode);
 			}
 
@@ -118,7 +117,7 @@ public class OntologySearchManagerProtegeImpl extends
 					.setRecordType(SearchRecordTypeEnum.RECORD_TYPE_PROPERTY);
 
 			for (Slot propertySlot : propertySlots) {
-				addSlotToIndex(writer, ontologyBean, doc, kb, protegeFrame,
+				addSlotToIndex(writer, ontologyBean, kb, protegeFrame,
 						propertySlot, owlMode);
 			}
 		}
@@ -162,7 +161,6 @@ public class OntologySearchManagerProtegeImpl extends
 	 * 
 	 * @param writer
 	 * @param ontologyBean
-	 * @param doc
 	 * @param kb
 	 * @param nfs
 	 * @param protegeFrame
@@ -172,7 +170,7 @@ public class OntologySearchManagerProtegeImpl extends
 	 */
 	@SuppressWarnings("unchecked")
 	private void addSlotToIndex(LuceneIndexWriterWrapper writer,
-			OntologyBean ontologyBean, SearchIndexBean doc, KnowledgeBase kb,
+			OntologyBean ontologyBean, KnowledgeBase kb,
 			ProtegeSearchFrame protegeFrame, Slot slot, boolean owlMode)
 			throws IOException {
 		Collection values = kb.getOwnSlotValues(protegeFrame.getFrame(), slot);
@@ -183,8 +181,8 @@ public class OntologySearchManagerProtegeImpl extends
 				continue;
 			}
 
-			populateIndexBean(doc, ontologyBean, protegeFrame, (String) value,
-					owlMode);
+			SearchIndexBean doc = populateIndexBean(ontologyBean, protegeFrame,
+					(String) value, owlMode);
 			docs.add(doc);
 		}
 		writer.addDocuments(docs);
@@ -194,7 +192,6 @@ public class OntologySearchManagerProtegeImpl extends
 	 * Adds the preferred name slot to index
 	 * 
 	 * @param writer
-	 * @param doc
 	 * @param kb
 	 * @param nfs
 	 * @param protegeFrame
@@ -205,7 +202,7 @@ public class OntologySearchManagerProtegeImpl extends
 	 */
 	@SuppressWarnings("unchecked")
 	private String addPreferredNameSlotToIndex(LuceneIndexWriterWrapper writer,
-			OntologyBean ontologyBean, SearchIndexBean doc, KnowledgeBase kb,
+			OntologyBean ontologyBean, KnowledgeBase kb,
 			ProtegeSearchFrame protegeFrame, Slot preferredNameSlot,
 			boolean owlMode) throws IOException {
 		String preferredName = null;
@@ -239,8 +236,8 @@ public class OntologySearchManagerProtegeImpl extends
 
 			preferredName = (String) value;
 			protegeFrame.setPreferredName(preferredName);
-			populateIndexBean(doc, ontologyBean, protegeFrame, (String) value,
-					owlMode);
+			SearchIndexBean doc = populateIndexBean(ontologyBean, protegeFrame,
+					(String) value, owlMode);
 			docs.add(doc);
 			break;
 		}
@@ -253,7 +250,6 @@ public class OntologySearchManagerProtegeImpl extends
 	 * Adds the Protege name slot to the index
 	 * 
 	 * @param writer
-	 * @param doc
 	 * @param kb
 	 * @param nfs
 	 * @param protegeFrame
@@ -262,7 +258,7 @@ public class OntologySearchManagerProtegeImpl extends
 	 * @throws IOException
 	 */
 	private void addNameSlotToIndex(LuceneIndexWriterWrapper writer,
-			OntologyBean ontologyBean, SearchIndexBean doc, KnowledgeBase kb,
+			OntologyBean ontologyBean, KnowledgeBase kb,
 			ProtegeSearchFrame protegeFrame, String preferredName,
 			boolean owlMode) throws IOException {
 		Frame frame = protegeFrame.getFrame();
@@ -274,8 +270,8 @@ public class OntologySearchManagerProtegeImpl extends
 			// add name slot only if the concept id != preferredName to
 			// avoid duplication of data
 			if (!name.equals(preferredName)) {
-				populateIndexBean(doc, ontologyBean, protegeFrame, name,
-						owlMode);
+				SearchIndexBean doc = populateIndexBean(ontologyBean,
+						protegeFrame, name, owlMode);
 				docs.add(doc);
 			}
 			writer.addDocuments(docs);
@@ -285,19 +281,17 @@ public class OntologySearchManagerProtegeImpl extends
 	/**
 	 * Populates the index bean with data for a single record
 	 * 
-	 * @param doc
 	 * @param ontologyBean
 	 * @param luceneProtegeFrame
 	 * @param value
 	 * @param owlMode
 	 */
-	private void populateIndexBean(SearchIndexBean doc,
-			OntologyBean ontologyBean, ProtegeSearchFrame luceneProtegeFrame,
-			String value, boolean owlMode) {
+	private SearchIndexBean populateIndexBean(OntologyBean ontologyBean,
+			ProtegeSearchFrame luceneProtegeFrame, String value, boolean owlMode) {
 		value = stripLanguageIdentifier(value, owlMode);
 		String preferredName = stripLanguageIdentifier(luceneProtegeFrame
 				.getPreferredName(), owlMode);
-
+		SearchIndexBean doc = new SearchIndexBean();
 		doc.populateInstance(luceneProtegeFrame.getOntologyVersionId(),
 				luceneProtegeFrame.getOntologyId(), luceneProtegeFrame
 						.getOntologyDisplayLabel(), luceneProtegeFrame
@@ -305,6 +299,8 @@ public class OntologySearchManagerProtegeImpl extends
 				getFullId(luceneProtegeFrame.getFrame(), ontologyBean),
 				getConceptIdShort(luceneProtegeFrame.getFrame()),
 				preferredName, value, null, luceneProtegeFrame.getIsObsolete());
+
+		return doc;
 	}
 
 	/**

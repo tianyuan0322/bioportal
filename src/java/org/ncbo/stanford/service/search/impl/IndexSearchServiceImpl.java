@@ -41,20 +41,23 @@ public class IndexSearchServiceImpl extends AbstractSearchService implements
 	private String indexBackupPath;
 	private int indexMergeFactor;
 	private int indexMaxMergeDocs;
-	
+
 	// non-injected properties
 	private LuceneIndexWriterWrapper writer = null;
 
 	@PostConstruct
 	public void initWriter() {
 		try {
-			writer = new LuceneIndexWriterWrapper(indexDir, analyzer, false, indexMergeFactor, indexMaxMergeDocs);
+			writer = new LuceneIndexWriterWrapper(indexDir, analyzer, false,
+					indexMergeFactor, indexMaxMergeDocs);
 		} catch (IOException e) {
 			e.printStackTrace();
-			log.error("Could not initialize LuceneIndexWriterWrapper at startup: " + e);
+			log
+					.error("Could not initialize LuceneIndexWriterWrapper at startup: "
+							+ e);
 		}
-	}	
-	
+	}
+
 	/**
 	 * Recreate the index of all ontologies, overwriting the existing one
 	 * 
@@ -66,21 +69,24 @@ public class IndexSearchServiceImpl extends AbstractSearchService implements
 			throws Exception {
 		long start = System.currentTimeMillis();
 
-		List<OntologyBean> ontologies = ontologyMetadataManager
-				.findLatestActiveOntologyOrOntologyViewVersions();
-
 		if (doBackup) {
 			backupIndex();
 		}
 
-		LuceneIndexWriterWrapper writer = new LuceneIndexWriterWrapper(indexDir, analyzer, true, indexMergeFactor, indexMaxMergeDocs);
+		// close writer on the existing index so it can be removed
+		writer.closeWriter();
+		LuceneIndexWriterWrapper writerAll = new LuceneIndexWriterWrapper(
+				indexDir, analyzer, true, indexMergeFactor, indexMaxMergeDocs);
+
+		List<OntologyBean> ontologies = ontologyMetadataManager
+				.findLatestActiveOntologyOrOntologyViewVersions();
 
 		for (OntologyBean ontology : ontologies) {
 			try {
-				indexOntology(writer, ontology, false, false);
-				
+				indexOntology(writerAll, ontology, false, false);
+
 				// commit changes to writer so they are visible to the searcher
-				writer.commit();
+				writerAll.commit();
 			} catch (Exception e) {
 				log.error("An error occurred while indexing ontology: "
 						+ ontology);
@@ -90,10 +96,10 @@ public class IndexSearchServiceImpl extends AbstractSearchService implements
 		}
 
 		if (doOptimize) {
-			writer.optimize();
+			writerAll.optimize();
 		}
 
-		writer.closeWriterIfInactive();
+		writerAll.closeWriter();
 
 		if (log.isInfoEnabled()) {
 			long stop = System.currentTimeMillis(); // stop timing
@@ -166,7 +172,7 @@ public class IndexSearchServiceImpl extends AbstractSearchService implements
 			boolean doOptimize) throws Exception {
 		removeOntologies(writer, ontologyIds, doBackup, doOptimize);
 	}
-	
+
 	/**
 	 * Remove given ontologies from index with options to backup and optimize
 	 * index
@@ -176,8 +182,9 @@ public class IndexSearchServiceImpl extends AbstractSearchService implements
 	 * @param doOptimize
 	 * @throws Exception
 	 */
-	public void removeOntologies(LuceneIndexWriterWrapper writer, List<Integer> ontologyIds, boolean doBackup,
-			boolean doOptimize) throws Exception {
+	public void removeOntologies(LuceneIndexWriterWrapper writer,
+			List<Integer> ontologyIds, boolean doBackup, boolean doOptimize)
+			throws Exception {
 		if (doBackup) {
 			backupIndex();
 		}
@@ -223,7 +230,7 @@ public class IndexSearchServiceImpl extends AbstractSearchService implements
 					/ 1000 + " seconds.");
 		}
 	}
-	
+
 	/**
 	 * Run an optimization command on the existing index
 	 * 
@@ -231,14 +238,15 @@ public class IndexSearchServiceImpl extends AbstractSearchService implements
 	 */
 	public void optimizeIndex() throws Exception {
 		optimizeIndex(writer);
-	}	
+	}
 
 	/**
 	 * Run an optimization command on the existing index
 	 * 
 	 * @throws Exception
 	 */
-	private void optimizeIndex(LuceneIndexWriterWrapper writer) throws Exception {
+	private void optimizeIndex(LuceneIndexWriterWrapper writer)
+			throws Exception {
 		long start = 0;
 		long stop = 0;
 
@@ -265,8 +273,9 @@ public class IndexSearchServiceImpl extends AbstractSearchService implements
 	 * @param doOptimize
 	 * @throws Exception
 	 */
-	private void indexOntology(LuceneIndexWriterWrapper writer, OntologyBean ontology,
-			boolean doBackup, boolean doOptimize) throws Exception {
+	private void indexOntology(LuceneIndexWriterWrapper writer,
+			OntologyBean ontology, boolean doBackup, boolean doOptimize)
+			throws Exception {
 		Integer ontologyVersionId = ontology.getId();
 		Integer ontologyId = ontology.getOntologyId();
 		String format = ontology.getFormat();
@@ -351,8 +360,9 @@ public class IndexSearchServiceImpl extends AbstractSearchService implements
 	 * @param doOptimize
 	 * @throws Exception
 	 */
-	private void removeOntology(LuceneIndexWriterWrapper writer, Integer ontologyId,
-			boolean doBackup, boolean doOptimize) throws Exception {
+	private void removeOntology(LuceneIndexWriterWrapper writer,
+			Integer ontologyId, boolean doBackup, boolean doOptimize)
+			throws Exception {
 		List<Integer> ontologyIds = new ArrayList<Integer>(1);
 		ontologyIds.add(ontologyId);
 		removeOntologies(writer, ontologyIds, doBackup, doOptimize);
@@ -456,16 +466,5 @@ public class IndexSearchServiceImpl extends AbstractSearchService implements
 	 */
 	public void setIndexMaxMergeDocs(int indexMaxMergeDocs) {
 		this.indexMaxMergeDocs = indexMaxMergeDocs;
-	}
-
-	/**
-	 * Sets the index path and creates a new instance of writer
-	 * 
-	 * @param indexPath
-	 *            the indexPath to set
-	 */
-	@Override
-	public void setIndexPath(String indexPath) {
-		super.setIndexPath(indexPath);
 	}
 }

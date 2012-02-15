@@ -65,8 +65,6 @@ public class OntologySearchManagerLexGridImpl extends
 			ResolvedConceptReferencesIterator matchIterator = codeSet.resolve(
 					null, null, null, null, true);
 
-			SearchIndexBean doc = new SearchIndexBean();
-
 			while (matchIterator.hasNext()) {
 				ResolvedConceptReferenceList lst = matchIterator
 						.next(MATCH_ITERATOR_BLOCK);
@@ -75,30 +73,27 @@ public class OntologySearchManagerLexGridImpl extends
 						.iterateResolvedConceptReference(); itr.hasNext();) {
 					ResolvedConceptReference ref = itr.next();
 					Concept concept = ref.getReferencedEntry();
-					String preferredName = getPreferredName(concept);
+					String preferredName = getPreferredName(concept);					
 					String fullId = getFullId(ontology, concept.getEntityCode());
 					Byte isObsolete = new Byte(isObsolete(concept) ? (byte) 1
 							: (byte) 0);
 
-					addConceptIds(writer, doc, fullId, ontologyVersionId,
+					addConceptIds(writer, fullId, ontologyVersionId,
 							ontologyId, ontologyDisplayLabel, preferredName,
 							concept, isObsolete);
-					addPresentationProperties(writer, doc, fullId,
+					addPresentationProperties(writer, fullId,
 							ontologyVersionId, ontologyId,
 							ontologyDisplayLabel, preferredName, concept,
 							isObsolete);
-					addGenericProperties(writer, doc, fullId,
-							ontologyVersionId, ontologyId,
-							ontologyDisplayLabel, preferredName, concept,
-							isObsolete);
-					addDefinitionProperties(writer, doc, fullId,
-							ontologyVersionId, ontologyId,
-							ontologyDisplayLabel, preferredName, concept,
-							isObsolete);
-					addCommentProperties(writer, doc, fullId,
-							ontologyVersionId, ontologyId,
-							ontologyDisplayLabel, preferredName, concept,
-							isObsolete);
+					addGenericProperties(writer, fullId, ontologyVersionId,
+							ontologyId, ontologyDisplayLabel, preferredName,
+							concept, isObsolete);
+					addDefinitionProperties(writer, fullId, ontologyVersionId,
+							ontologyId, ontologyDisplayLabel, preferredName,
+							concept, isObsolete);
+					addCommentProperties(writer, fullId, ontologyVersionId,
+							ontologyId, ontologyDisplayLabel, preferredName,
+							concept, isObsolete);
 				}
 			}
 
@@ -118,7 +113,6 @@ public class OntologySearchManagerLexGridImpl extends
 	 * LexGrid
 	 * 
 	 * @param writer
-	 * @param doc
 	 * @param fullId
 	 * @param ontologyVersionId
 	 * @param ontologyId
@@ -128,10 +122,9 @@ public class OntologySearchManagerLexGridImpl extends
 	 * @throws IOException
 	 */
 	private void addPresentationProperties(LuceneIndexWriterWrapper writer,
-			SearchIndexBean doc, String fullId, Integer ontologyVersionId,
-			Integer ontologyId, String ontologyDisplayLabel,
-			String preferredName, Concept concept, Byte isObsolete)
-			throws IOException {
+			String fullId, Integer ontologyVersionId, Integer ontologyId,
+			String ontologyDisplayLabel, String preferredName, Concept concept,
+			Byte isObsolete) throws IOException {
 		SearchRecordTypeEnum recType = SearchRecordTypeEnum.RECORD_TYPE_PREFERRED_NAME;
 		List<SearchIndexBean> docs = new ArrayList<SearchIndexBean>(0);
 
@@ -145,10 +138,10 @@ public class OntologySearchManagerLexGridImpl extends
 				recType = SearchRecordTypeEnum.RECORD_TYPE_SYNONYM;
 			}
 
-			populateIndexBean(doc, fullId, concept.getEntityCode(),
-					new LexGridSearchProperty(ontologyVersionId, ontologyId,
-							ontologyDisplayLabel, recType, preferredName,
-							isObsolete, p));
+			SearchIndexBean doc = populateIndexBean(fullId, concept
+					.getEntityCode(), new LexGridSearchProperty(
+					ontologyVersionId, ontologyId, ontologyDisplayLabel,
+					recType, preferredName, isObsolete, p));
 			docs.add(doc);
 		}
 		writer.addDocuments(docs);
@@ -184,7 +177,6 @@ public class OntologySearchManagerLexGridImpl extends
 	 * Adds documents to index that define "generic" type properties in LexGrid
 	 * 
 	 * @param writer
-	 * @param doc
 	 * @param fullId
 	 * @param ontologyVersionId
 	 * @param ontologyId
@@ -195,19 +187,18 @@ public class OntologySearchManagerLexGridImpl extends
 	 * @throws IOException
 	 */
 	private void addGenericProperties(LuceneIndexWriterWrapper writer,
-			SearchIndexBean doc, String fullId, Integer ontologyVersionId,
-			Integer ontologyId, String ontologyDisplayLabel,
-			String preferredName, Concept concept, Byte isObsolete)
-			throws IOException {
+			String fullId, Integer ontologyVersionId, Integer ontologyId,
+			String ontologyDisplayLabel, String preferredName, Concept concept,
+			Byte isObsolete) throws IOException {
 		List<SearchIndexBean> docs = new ArrayList<SearchIndexBean>(0);
 
 		for (Iterator<Property> itr = concept.iterateProperty(); itr.hasNext();) {
 			Property cp = itr.next();
-			populateIndexBean(doc, fullId, concept.getEntityCode(),
-					new LexGridSearchProperty(ontologyVersionId, ontologyId,
-							ontologyDisplayLabel,
-							SearchRecordTypeEnum.RECORD_TYPE_PROPERTY,
-							preferredName, isObsolete, cp));
+			SearchIndexBean doc = populateIndexBean(fullId, concept
+					.getEntityCode(), new LexGridSearchProperty(
+					ontologyVersionId, ontologyId, ontologyDisplayLabel,
+					SearchRecordTypeEnum.RECORD_TYPE_PROPERTY, preferredName,
+					isObsolete, cp));
 			docs.add(doc);
 		}
 		writer.addDocuments(docs);
@@ -218,7 +209,6 @@ public class OntologySearchManagerLexGridImpl extends
 	 * LexGrid
 	 * 
 	 * @param writer
-	 * @param doc
 	 * @param fullId
 	 * @param ontologyVersionId
 	 * @param ontologyId
@@ -229,20 +219,19 @@ public class OntologySearchManagerLexGridImpl extends
 	 * @throws IOException
 	 */
 	private void addDefinitionProperties(LuceneIndexWriterWrapper writer,
-			SearchIndexBean doc, String fullId, Integer ontologyVersionId,
-			Integer ontologyId, String ontologyDisplayLabel,
-			String preferredName, Concept concept, Byte isObsolete)
-			throws IOException {
+			String fullId, Integer ontologyVersionId, Integer ontologyId,
+			String ontologyDisplayLabel, String preferredName, Concept concept,
+			Byte isObsolete) throws IOException {
 		List<SearchIndexBean> docs = new ArrayList<SearchIndexBean>(0);
 
 		for (Iterator<Definition> itr = concept.iterateDefinition(); itr
 				.hasNext();) {
 			Definition d = itr.next();
-			populateIndexBean(doc, fullId, concept.getEntityCode(),
-					new LexGridSearchProperty(ontologyVersionId, ontologyId,
-							ontologyDisplayLabel,
-							SearchRecordTypeEnum.RECORD_TYPE_PROPERTY,
-							preferredName, isObsolete, d));
+			SearchIndexBean doc = populateIndexBean(fullId, concept
+					.getEntityCode(), new LexGridSearchProperty(
+					ontologyVersionId, ontologyId, ontologyDisplayLabel,
+					SearchRecordTypeEnum.RECORD_TYPE_PROPERTY, preferredName,
+					isObsolete, d));
 			docs.add(doc);
 		}
 		writer.addDocuments(docs);
@@ -252,7 +241,6 @@ public class OntologySearchManagerLexGridImpl extends
 	 * Adds documents to index that define "comment" type properties in LexGrid
 	 * 
 	 * @param writer
-	 * @param doc
 	 * @param fullId
 	 * @param ontologyVersionId
 	 * @param ontologyId
@@ -263,19 +251,18 @@ public class OntologySearchManagerLexGridImpl extends
 	 * @throws IOException
 	 */
 	private void addCommentProperties(LuceneIndexWriterWrapper writer,
-			SearchIndexBean doc, String fullId, Integer ontologyVersionId,
-			Integer ontologyId, String ontologyDisplayLabel,
-			String preferredName, Concept concept, Byte isObsolete)
-			throws IOException {
+			String fullId, Integer ontologyVersionId, Integer ontologyId,
+			String ontologyDisplayLabel, String preferredName, Concept concept,
+			Byte isObsolete) throws IOException {
 		List<SearchIndexBean> docs = new ArrayList<SearchIndexBean>(0);
 
 		for (Iterator<Comment> itr = concept.iterateComment(); itr.hasNext();) {
 			Comment c = itr.next();
-			populateIndexBean(doc, fullId, concept.getEntityCode(),
-					new LexGridSearchProperty(ontologyVersionId, ontologyId,
-							ontologyDisplayLabel,
-							SearchRecordTypeEnum.RECORD_TYPE_PROPERTY,
-							preferredName, isObsolete, c));
+			SearchIndexBean doc = populateIndexBean(fullId, concept
+					.getEntityCode(), new LexGridSearchProperty(
+					ontologyVersionId, ontologyId, ontologyDisplayLabel,
+					SearchRecordTypeEnum.RECORD_TYPE_PROPERTY, preferredName,
+					isObsolete, c));
 			docs.add(doc);
 		}
 		writer.addDocuments(docs);
@@ -285,7 +272,6 @@ public class OntologySearchManagerLexGridImpl extends
 	 * Adds concept ids to the index
 	 * 
 	 * @param writer
-	 * @param doc
 	 * @param fullId
 	 * @param ontologyVersionId
 	 * @param ontologyId
@@ -295,11 +281,10 @@ public class OntologySearchManagerLexGridImpl extends
 	 * @param isObsolete
 	 * @throws IOException
 	 */
-	private void addConceptIds(LuceneIndexWriterWrapper writer,
-			SearchIndexBean doc, String fullId, Integer ontologyVersionId,
-			Integer ontologyId, String ontologyDisplayLabel,
-			String preferredName, Concept concept, Byte isObsolete)
-			throws IOException {
+	private void addConceptIds(LuceneIndexWriterWrapper writer, String fullId,
+			Integer ontologyVersionId, Integer ontologyId,
+			String ontologyDisplayLabel, String preferredName, Concept concept,
+			Byte isObsolete) throws IOException {
 		String conceptId = concept.getEntityCode();
 		List<SearchIndexBean> docs = new ArrayList<SearchIndexBean>(0);
 
@@ -311,7 +296,7 @@ public class OntologySearchManagerLexGridImpl extends
 			t.setContent(conceptId);
 			p.setValue(t);
 
-			populateIndexBean(doc, fullId, conceptId,
+			SearchIndexBean doc = populateIndexBean(fullId, conceptId,
 					new LexGridSearchProperty(ontologyVersionId, ontologyId,
 							ontologyDisplayLabel,
 							SearchRecordTypeEnum.RECORD_TYPE_CONCEPT_ID,
@@ -324,17 +309,19 @@ public class OntologySearchManagerLexGridImpl extends
 	/**
 	 * Populate a single record in the index
 	 * 
-	 * @param doc
 	 * @param fullId
 	 * @param conceptId
 	 * @param prop
 	 */
-	private void populateIndexBean(SearchIndexBean doc, String fullId,
-			String conceptId, LexGridSearchProperty prop) {
+	private SearchIndexBean populateIndexBean(String fullId, String conceptId,
+			LexGridSearchProperty prop) {
+		SearchIndexBean doc = new SearchIndexBean();
 		doc.populateInstance(prop.getOntologyVersionId(), prop.getOntologyId(),
 				prop.getOntologyDisplayLabel(), prop.getRecordType(), prop
 						.getObjectType(), fullId, conceptId, prop
 						.getPreferredName(), prop.getPropertyContent(), null,
 				prop.getIsObsolete());
+
+		return doc;
 	}
 }

@@ -60,9 +60,7 @@ public class QuerySearchServiceImpl extends AbstractSearchService implements
 
 	// non-injected properties
 	private IndexSearcher searcher = null;
-	private AtomicInteger activeSearches = new AtomicInteger(0);
-	private Object createSearcherLock = new Object();
-	
+	private AtomicInteger activeSearches = new AtomicInteger(0);	
 	
 	
 //	public static void main(String[] args) {
@@ -360,19 +358,6 @@ public class QuerySearchServiceImpl extends AbstractSearchService implements
 
 		return query;
 	}
-
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
 	
 	/**
 	 * Executes a query against the Lucene index. Does not use caching
@@ -391,16 +376,14 @@ public class QuerySearchServiceImpl extends AbstractSearchService implements
 			Boolean includeDefinitions) throws Exception {
 		TopFieldDocs docs = null;
 		
-		reloadSearcher();
-		activeSearches.incrementAndGet();
-		
 		try {
+			reloadSearcher();
 			docs = searcher.search(query, null, getMaxNumHits(maxNumHits),
 					getSortFields());
 		} catch (OutOfMemoryError e) {
 			throw new Exception(e);
 		} finally {
-			activeSearches.decrementAndGet();			
+			decrementSearches();
 		}
 
 		ScoreDoc[] hits = docs.scoreDocs;
@@ -422,10 +405,6 @@ public class QuerySearchServiceImpl extends AbstractSearchService implements
 
 		return searchResults;
 	}
-
-	
-	
-	
 	
 	/**
 	 * Checks whether ontology is present in the index and returns basic info
@@ -443,10 +422,8 @@ public class QuerySearchServiceImpl extends AbstractSearchService implements
 		query.add(new TermQuery(generateOntologyIdTerm(ontologyId)),
 				BooleanClause.Occur.MUST);
 
-		reloadSearcher();
-		activeSearches.incrementAndGet();
-
 		try {
+			reloadSearcher();
 			TopDocs docs = searcher.search(query, null, 1);
 			ScoreDoc[] hits = docs.scoreDocs;
 
@@ -460,18 +437,12 @@ public class QuerySearchServiceImpl extends AbstractSearchService implements
 			}
 
 		} finally {
-			activeSearches.decrementAndGet();
+			decrementSearches();
 		}
 
 		return new OntologyHitBean(ontologyVersionId, ontologyId,
 				ontologyDisplayLabel, null);
 	}
-	
-	
-
-	
-	
-	
 	
 	private String composeCacheKey(Query query, Integer maxNumHits,
 			String subtreeRootConceptId, Boolean includeDefinitions) {
@@ -495,7 +466,6 @@ public class QuerySearchServiceImpl extends AbstractSearchService implements
 				: defMaxNumHits;
 	}
 	
-	
 	private void populateEmptyOntologyResults(
 			SearchResultListBean searchResults,
 			Collection<Integer> noHitsOntologyIds) throws Exception {
@@ -504,11 +474,6 @@ public class QuerySearchServiceImpl extends AbstractSearchService implements
 			searchResults.addEmptyOntologyHit(ontologyId, ontologyHit);
 		}
 	}
-
-	
-
-	
-	
 	
 	private void populateSearchResults(ScoreDoc[] hits,
 			SearchResultListBean searchResults,
@@ -658,15 +623,7 @@ public class QuerySearchServiceImpl extends AbstractSearchService implements
 				+ searchResult.getOntologyDisplayLabel() + ", Concept Id: "
 				+ searchResult.getConceptId() + ", Concept Id Short: "
 				+ searchResult.getConceptIdShort();
-	}
-
-	
-	
-	
-	
-	
-	
-	
+	}	
 	
 	/**
 	 * Constructs the contents field clause for "regular (non-exact) match"
@@ -679,6 +636,7 @@ public class QuerySearchServiceImpl extends AbstractSearchService implements
 	private void addContentsClauseContains(String expr, BooleanQuery query)
 			throws IOException {
 		try {
+			reloadSearcher();
 			PrefixQuery q = new PrefixQuery(luceneVersion, searcher
 					.getIndexReader(), analyzer);
 			q.parsePrefixQuery(SearchIndexBean.CONTENTS_FIELD_LABEL, expr);
@@ -690,6 +648,8 @@ public class QuerySearchServiceImpl extends AbstractSearchService implements
 			IOException ioe = new IOException(e.getMessage());
 			ioe.initCause(e);
 			throw ioe;
+		} finally {
+			decrementSearches();
 		}
 	}
 
@@ -755,47 +715,25 @@ public class QuerySearchServiceImpl extends AbstractSearchService implements
 		}
 	}
 
-	
-	
-	
+	private synchronized void decrementSearches() {
+		activeSearches.decrementAndGet();
+	}
+
 	/**
 	 * Reloads the searcher if index has changed
 	 * 
 	 * @throws IOException
 	 */
-	private void reloadSearcher() throws IOException {
-		synchronized (createSearcherLock) {
-			if (searcher != null && !searcher.getIndexReader().isCurrent()
-					&& activeSearches.get() == 0) {
-				searcher.close();
-				searcher = null;
-			}
+	private synchronized void reloadSearcher() throws IOException {
+		if (searcher != null && !searcher.getIndexReader().isCurrent()
+				&& activeSearches.get() == 0) {
+			searcher.close();
+			searcher = null;
+		}
 
-			if (searcher == null) {
-				searcher = new IndexSearcher(indexDir, true);
-			}
-		}
-	}
-	
-	
-	
-	/**
-	 * Sets the index path and creates a new instance of searcher
-	 * 
-	 * @param indexPath
-	 *            the indexPath to set
-	 */
-	@Override
-	public void setIndexPath(String indexPath) {
-		super.setIndexPath(indexPath);
-		
-		try {
+		if (searcher == null) {
 			searcher = new IndexSearcher(indexDir, true);
-		} catch (IOException e) {
-			e.printStackTrace();
-			log.error("Could not initialize IndexSearcher at startup: "
-					+ e);
 		}
-	}
-	
+		activeSearches.incrementAndGet();
+	}	
 }
