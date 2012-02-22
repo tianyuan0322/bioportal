@@ -48,16 +48,6 @@ public class PaginatorImpl<E> implements Paginator<E> {
 		this(originalList, DEFAULT_PAGESIZE);
 	}
 
-	public Page<E> getAll() {
-		Page<E> result = null;
-
-		if (originalList != null && totalSize > 0) {
-			result = new Page<E>(1, 1, totalSize, totalSize, originalList);
-		}
-
-		return result;
-	}
-
 	public Page<E> getFirstPage() {
 		Page<E> result = null;
 
@@ -65,8 +55,21 @@ public class PaginatorImpl<E> implements Paginator<E> {
 			result = new Page<E>(1, getNumPages(), pageSize, totalSize,
 					iterateFrom(0));
 		} else if (originalList != null) {
-			result = new Page<E>(1, 1, pageSize, totalSize,
-					originalList);		
+			result = new Page<E>(1, 1, pageSize, 0, originalList);
+		}
+
+		return result;
+	}
+
+	public Page<E> getAll() {
+		Page<E> result = null;
+
+		if (originalList != null) {
+			if (totalSize > 0) {
+				result = new Page<E>(1, 1, totalSize, totalSize, originalList);
+			} else {
+				result = getFirstPage();
+			}
 		}
 
 		return result;
@@ -75,11 +78,15 @@ public class PaginatorImpl<E> implements Paginator<E> {
 	public Page<E> getLastPage() {
 		Page<E> result = null;
 
-		if (originalList != null && totalSize > 0) {
-			final int totalPage = getNumPages();
-			final int startIndex = (totalPage - 1) * pageSize;
-			result = new Page<E>(totalPage, totalPage, pageSize, totalSize,
-					iterateFrom(startIndex));
+		if (originalList != null) {
+			if (totalSize > 0) {
+				final int totalPage = getNumPages();
+				final int startIndex = (totalPage - 1) * pageSize;
+				result = new Page<E>(totalPage, totalPage, pageSize, totalSize,
+						iterateFrom(startIndex));
+			} else {
+				result = getFirstPage();
+			}
 		}
 
 		return result;
@@ -90,9 +97,14 @@ public class PaginatorImpl<E> implements Paginator<E> {
 		Page<E> result = null;
 		Page<E> currentPage = new Page<E>(currentPageNum, numPages);
 
-		if (pageList != null && totalSize > 0) {
-			result = new Page<E>(currentPage.getPageNum(), numPages, pageSize,
-					totalSize, pageList);
+		if (pageList != null) {
+			if (totalSize > 0) {
+				result = new Page<E>(currentPage.getPageNum(), numPages,
+						pageSize, totalSize, pageList);
+			} else {
+				originalList = pageList;
+				result = getFirstPage();
+			}
 		}
 
 		return result;
@@ -105,10 +117,15 @@ public class PaginatorImpl<E> implements Paginator<E> {
 
 		if (currentPage.isLastPage()) {
 			result = getLastPage();
-		} else if (originalList != null && totalSize > 0) {
-			result = new Page<E>(currentPage.getPageNum() + 1, numPages,
-					pageSize, totalSize, iterateFrom(currentPage.getPageNum()
-							* pageSize));
+		} else if (originalList != null) {
+			if (totalSize > 0) {
+				result = new Page<E>(currentPage.getPageNum() + 1, numPages,
+						pageSize, totalSize, iterateFrom(currentPage
+								.getPageNum()
+								* pageSize));
+			} else {
+				result = getFirstPage();
+			}
 		}
 
 		return result;
@@ -121,18 +138,25 @@ public class PaginatorImpl<E> implements Paginator<E> {
 
 		if (currentPage.isFirstPage()) {
 			result = getFirstPage();
-		} else if (originalList != null && totalSize > 0) {
-			result = new Page<E>(currentPage.getPageNum() - 1, numPages,
-					pageSize, totalSize,
-					iterateFrom((currentPage.getPageNum() - 2) * pageSize));
+		} else if (originalList != null) {
+			if (totalSize > 0) {
+				result = new Page<E>(currentPage.getPageNum() - 1, numPages,
+						pageSize, totalSize, iterateFrom((currentPage
+								.getPageNum() - 2)
+								* pageSize));
+			} else {
+				result = getFirstPage();
+			}
 		}
 
 		return result;
 	}
 
 	public int getNumPages() {
-		if ((originalList == null && pageList == null) || totalSize <= 0) {
+		if (originalList == null && pageList == null) {
 			return 0;
+		} else if (totalSize <= 0) {
+			return 1;
 		}
 
 		return ((totalSize - 1) / pageSize) + 1;
