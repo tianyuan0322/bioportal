@@ -505,3 +505,4 @@ rdf.mysql.store.port.number=3306
 rdf.mysql.store.database.name=bioportal_rdf
 rdf.mysql.store.user=mysql_user
 rdf.mysql.store.password=mysql_password
+
