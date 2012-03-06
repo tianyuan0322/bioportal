@@ -33,9 +33,9 @@ import org.springframework.transaction.annotation.Transactional;
  * Implementation of the scheduler service that runs periodically, checking for
  * new ontologies that have been loaded into the system but not yet parsed by
  * the API.
- *
+ * 
  * @author Michael Dorf
- *
+ * 
  */
 @Transactional
 public class OntologyLoadSchedulerServiceImpl extends AbstractOntologyService
@@ -116,15 +116,16 @@ public class OntologyLoadSchedulerServiceImpl extends AbstractOntologyService
 		optimizeIndex();
 
 		for (Integer errorVersionId : errorVersionIdList) {
-			String error = addErrorOntology(errorOntologies, errorVersionId
-					.toString(), null, ONTOLOGY_VERSION_DOES_NOT_EXIST_ERROR);
+			String error = addErrorOntology(errorOntologies,
+					errorVersionId.toString(), null,
+					ONTOLOGY_VERSION_DOES_NOT_EXIST_ERROR);
 			log.error(error);
 		}
 	}
 
 	/**
 	 * Parse a single record from the ontology load queue
-	 *
+	 * 
 	 * @param loadQueue
 	 * @param formatHandler
 	 */
@@ -182,32 +183,30 @@ public class OntologyLoadSchedulerServiceImpl extends AbstractOntologyService
 				// load ontology
 				loadOntology(ontologyBean, formatHandler);
 
-				status = StatusEnum.STATUS_READY;
-				updateOntologyStatus(loadQueue, ontologyBean, formatHandler,
-						status, errorMessage);
-				
-				//add an entry into the purl server for new ontologies
-                createPurlEntry(ontologyBean);
-                
+				// add an entry into the purl server for new ontologies
+				createPurlEntry(ontologyBean);
+
 				// calculate ontology metrics
 				calculateMetrics(ontologyBean, formatHandler);
 
 				// create a diff of this version and the previous one
 				// Disabled until we figure out why the workflow is broken
 				// createDiff(ontologyBean);
-			}
 
-			// index ontology but only when the loader (formatHandler) is not
-			// explicitly overridden
-			if (isDefaultFormatHandler(ontologyBean, formatHandler)
-					&& status == StatusEnum.STATUS_READY) {
-				errorMessage = indexOntology(errorMessage, ontologyBean);
+				// index ontology
+				if (isDefaultFormatHandler(ontologyBean, formatHandler)) {
+					indexService.indexOntology(ontologyBean.getOntologyId(),
+							false, false);
+				}
+
+				// Set ontology status to "READY"
+				status = StatusEnum.STATUS_READY;
 				updateOntologyStatus(loadQueue, ontologyBean, formatHandler,
 						status, errorMessage);
 			}
 		} catch (Exception e) {
 			status = StatusEnum.STATUS_ERROR;
-			errorMessage = getLongErrorMessage(e);
+			errorMessage = appendError(errorMessage, e);
 			addErrorOntology(errorOntologies, ontologyVersionId.toString(),
 					ontologyBean, errorMessage);
 			e.printStackTrace();
@@ -225,21 +224,6 @@ public class OntologyLoadSchedulerServiceImpl extends AbstractOntologyService
 		}
 
 		return ontologyBean;
-	}
-
-	private String indexOntology(String errorMessage, OntologyBean ontologyBean) {
-		try {
-			indexService.indexOntology(ontologyBean.getOntologyId(), false,
-					false);
-		} catch (Exception e) {
-			errorMessage = appendError(errorMessage, e);
-			addErrorOntology(errorOntologies, ontologyBean.getId().toString(),
-					ontologyBean, errorMessage);
-			e.printStackTrace();
-			log.error(e);
-		}
-
-		return errorMessage;
 	}
 
 	private void updateOntologyStatus(NcboOntologyLoadQueue loadQueue,
@@ -267,7 +251,7 @@ public class OntologyLoadSchedulerServiceImpl extends AbstractOntologyService
 	 * requirement is that the ontology file/uri exists and is in the right
 	 * format. If the ontology id already exists, the invocation assumes
 	 * overwrite of the existing ontology.
-	 *
+	 * 
 	 * @param ontologyBean
 	 *            bean
 	 * @param formatHandler
@@ -304,7 +288,7 @@ public class OntologyLoadSchedulerServiceImpl extends AbstractOntologyService
 	/**
 	 * Return the appropriate ontology load manager based on either the passed
 	 * in formatHandler or a default handler for a given ontology format
-	 *
+	 * 
 	 * @param ontologyBean
 	 * @param formatHandler
 	 * @return
@@ -337,27 +321,32 @@ public class OntologyLoadSchedulerServiceImpl extends AbstractOntologyService
 				.equals(ontologyFormatHandlerMap.get(ontologyBean.getFormat())));
 	}
 
-/**
- * Create a purl entry for a new ontology. If the internalVersionNumber=1 and 
- * the ontology has a non blank abbreviation that isn't already in the purl server, we
- * create a new entry.
- */
+	/**
+	 * Create a purl entry for a new ontology. If the internalVersionNumber=1
+	 * and the ontology has a non blank abbreviation that isn't already in the
+	 * purl server, we create a new entry.
+	 */
 	private void createPurlEntry(OntologyBean ontologyBean) {
-		if (purlClientManager.isConfigured() && ontologyBean.getInternalVersionNumber()==1 && StringUtils.isNotBlank(ontologyBean.getAbbreviation())) {
-			String purl_path= "/ontology/"+ ontologyBean.getAbbreviation();
-			String targetPath= "/virtual/"+ ontologyBean.getOntologyId();
-			log.debug("Attempting to create purl entry: purl_path="+ purl_path+ " with targetPath="+ targetPath);
+		if (purlClientManager.isConfigured()
+				&& ontologyBean.getInternalVersionNumber() == 1
+				&& StringUtils.isNotBlank(ontologyBean.getAbbreviation())) {
+			String purl_path = "/ontology/" + ontologyBean.getAbbreviation();
+			String targetPath = "/virtual/" + ontologyBean.getOntologyId();
+			log.debug("Attempting to create purl entry: purl_path=" + purl_path
+					+ " with targetPath=" + targetPath);
 			if (!purlClientManager.doesPurlExist(purl_path)) {
-				purlClientManager.createAdvancedPartialPurl(purl_path, targetPath);
+				purlClientManager.createAdvancedPartialPurl(purl_path,
+						targetPath);
 			}
-			
+
 		}
 	}
+
 	/**
 	 * Calculate ontology metrics for the specified ontology. The minimum
 	 * requirement is that the ontology is parsed and exists in the Bioportal
 	 * repository.
-	 *
+	 * 
 	 * @param ontologyBean
 	 * @param formatHandler
 	 * @throws Exception
@@ -400,7 +389,7 @@ public class OntologyLoadSchedulerServiceImpl extends AbstractOntologyService
 	 * Creates a diff between the two latest versions of the specified ontology
 	 * This method is called after the ontology has been successfully parsed.
 	 * So, one version is the bean that is being passed in
-	 *
+	 * 
 	 * @param ontologyBean
 	 *            bean
 	 * @throws Exception
@@ -427,9 +416,7 @@ public class OntologyLoadSchedulerServiceImpl extends AbstractOntologyService
 				.get(formatHandler);
 
 		if (diffManager == null) {
-			log
-					.error("Cannot find diffHandler for "
-							+ ontologyBean.getFormat());
+			log.error("Cannot find diffHandler for " + ontologyBean.getFormat());
 			throw new InvalidOntologyFormatException(
 					"Cannot find formatHandler for " + ontologyBean.getFormat());
 		}
