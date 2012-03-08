@@ -124,17 +124,18 @@ public class OntologySearchManagerLexGridImpl extends
 	private void addPresentationProperties(LuceneIndexWriterWrapper writer,
 			String fullId, Integer ontologyVersionId, Integer ontologyId,
 			String ontologyDisplayLabel, String preferredName, Concept concept,
-			Byte isObsolete) throws IOException {
-		SearchRecordTypeEnum recType = SearchRecordTypeEnum.RECORD_TYPE_PREFERRED_NAME;
+			Byte isObsolete) throws IOException {		
+		SearchRecordTypeEnum recType = null;
 		List<SearchIndexBean> docs = new ArrayList<SearchIndexBean>(0);
 
 		for (Iterator<Presentation> itr = concept.iteratePresentation(); itr
 				.hasNext();) {
 			Presentation p = itr.next();
 
-			// if the value is not a preferred name, it is assumed to be
-			// asynonym
-			if (!p.getIsPreferred()) {
+			// if the value is not a preferred name, it is assumed to be a synonym
+			if (p.getIsPreferred()) {
+				recType = SearchRecordTypeEnum.RECORD_TYPE_PREFERRED_NAME;
+			} else {
 				recType = SearchRecordTypeEnum.RECORD_TYPE_SYNONYM;
 			}
 
