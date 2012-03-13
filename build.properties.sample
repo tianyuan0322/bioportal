@@ -174,10 +174,12 @@ bioportal.jdbc.c3p0.preferred_test_query=SELECT 1;
 # Encryption key for string encoding/decoding
 bioportal.encryption.key=yourencryptionkey
 
+# A path for generated files that need to be on the CLASSPATH
+bioportal.generated.path=${src.dir}/org/ncbo/stanford/resource/generated
+
 # Message bundle
 bioportal.messagebundle.name=message
 bioportal.messagebundle.package=org.ncbo.stanford.resource.generated.${bioportal.messagebundle.name}
-bioportal.messagebundle.path=${src.dir}/org/ncbo/stanford/resource/generated
 
 # Uploaded Files
 bioportal.ontology.filepath=${bioportal.resource.path}/uploads
@@ -505,4 +507,3 @@ rdf.mysql.store.port.number=3306
 rdf.mysql.store.database.name=bioportal_rdf
 rdf.mysql.store.user=mysql_user
 rdf.mysql.store.password=mysql_password
-

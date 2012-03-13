@@ -135,7 +135,7 @@
 
 		<copy file="${tmpl.dir}/log4j.dtd" tofile="${conf.dir.generated}/log4j.dtd" overwrite="true" />
 
-		<copy file="${tmpl.dir}/${bioportal.messagebundle.name}.properties.tmpl" tofile="${bioportal.messagebundle.path}/${bioportal.messagebundle.name}.properties" overwrite="true">
+		<copy file="${tmpl.dir}/${bioportal.messagebundle.name}.properties.tmpl" tofile="${bioportal.generated.path}/${bioportal.messagebundle.name}.properties" overwrite="true">
 			<filterset>
 				<filter token="bioportalxsltpath" value="${bioportal.xslt.path}" />
 				<filter token="bioportalontologyfilepath" value="${bioportal.ontology.filepath}" />
@@ -316,6 +316,36 @@
 				<filter token="bioportalresourcepath" value="${bioportal.resource.path}" />
 			</filterset>
 		</copy>
+		
+		
+		
+		
+<!--	
+		<echo>Generate build info class...</echo>
+		<taskdef resource="svntask.properties" />
+		<svn>
+			<status path="${bioportal.generated.path}/BuildInfo.java" revisionProperty="svn.revision" />
+		</svn>
+
+		<tstamp>
+			<format property="TODAY" pattern="EEE, d-MMMM-yyyy HH:mm:ss z" locale="ENGLISH"/>
+		</tstamp>
+		<echo>Virtual PVT Cell Revision: ${svn.revision}</echo>
+		<echo>Time stamp ${TODAY}</echo>
+		<echo>Write build info to file ${basedir}\BuildInfo.java</echo>
+		<echo file="${bioportal.generated.path}/BuildInfo.java">
+			package gui;
+			public class BuildInfo {
+				public static final String revisionNumber="${svn.revision}";
+				public static final String timeStamp="${TODAY}";
+			}
+		</echo>		
+-->		
+
+		
+		
+		
+		
 	</target>
 
 	<target name="build" depends="prepare" description="Compile main source tree java files">
