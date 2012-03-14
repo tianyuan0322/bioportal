@@ -881,7 +881,7 @@ public class OntologyRetrievalManagerProtegeImpl extends
 			browserText = frame.getBrowserText();
 		}
 
-		return StringHelper.unSingleQuote(browserText);
+		return StringHelper.unSingleQuote(browserText, frame);
 	}
 
 	private PropertyBean createBasePropertyBean(Slot frame,

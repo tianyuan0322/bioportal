@@ -14,6 +14,9 @@ import java.util.StringTokenizer;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import edu.stanford.smi.protege.model.Frame;
+import edu.stanford.smi.protegex.owl.model.RDFSClass;
+
 /**
  * This gives utility methods related to String object
  * 
@@ -27,8 +30,8 @@ public abstract class StringHelper {
 	private static final String UNDERSCORE_LETTER_PATTERN = "_+(\\w)";
 
 	/** Regex pattern for a UUID */
-	private static final Pattern uuidPattern =
-		Pattern.compile("^[0-9a-z]{8}-[0-9a-z]{4}-[0-9a-z]{4}-[0-9a-z]{4}-[0-9a-z]{12}$");
+	private static final Pattern uuidPattern = Pattern
+			.compile("^[0-9a-z]{8}-[0-9a-z]{4}-[0-9a-z]{4}-[0-9a-z]{4}-[0-9a-z]{12}$");
 
 	// public static void main(String[] args) {
 	// String k = "\"Hello World\"";
@@ -40,16 +43,18 @@ public abstract class StringHelper {
 	// System.out.println("Without Double Quotes: " + ud);
 	// }
 
-    /**
+	/**
 	 * Returns true if and only if uuid matches the pattern for valid UUIDs.
-	 *
-	 * @param uuid the <code>String</code> to check.
+	 * 
+	 * @param uuid
+	 *            the <code>String</code> to check.
 	 * @return <code>true</code> if and only if the specified.
-	 * <code>String</code> matches the pattern; <code>false</code> otherwise.
+	 *         <code>String</code> matches the pattern; <code>false</code>
+	 *         otherwise.
 	 */
 	public static boolean isValidUUID(String uuid) {
 		return uuidPattern.matcher(uuid).matches();
-    }
+	}
 
 	/**
 	 * Formats the number
@@ -341,10 +346,10 @@ public abstract class StringHelper {
 	 * 
 	 * @param str
 	 * @param delimiter
-	 * @param considerSpaceAsToken -
-	 *            StringTokenizer by default doesnot consider empty string as a
-	 *            token. pass considerSpaceAsToken = true for empty string to be
-	 *            considered as a token
+	 * @param considerSpaceAsToken
+	 *            - StringTokenizer by default doesnot consider empty string as
+	 *            a token. pass considerSpaceAsToken = true for empty string to
+	 *            be considered as a token
 	 * @return
 	 */
 	public static String[] split(String str, String delimiter,
@@ -488,6 +493,18 @@ public abstract class StringHelper {
 		} else {
 			return (string);
 		}
+	}
+
+	public static String unSingleQuote(String string, Frame frame) {
+		// Only process if we're working with a non-anonymous class
+		if (frame instanceof RDFSClass) {
+			RDFSClass cls = (RDFSClass) frame;
+			if (cls.isAnonymous()) {
+				return string;
+			}
+		}
+
+		return unSingleQuote(string);
 	}
 
 	/**
