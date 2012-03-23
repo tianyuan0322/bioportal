@@ -34,7 +34,7 @@ import org.ncbo.stanford.manager.retrieval.OntologyRetrievalManager;
 import org.ncbo.stanford.service.search.AbstractSearchService;
 import org.ncbo.stanford.service.search.QuerySearchService;
 import org.ncbo.stanford.util.helper.StringHelper;
-import org.ncbo.stanford.util.lucene.PrefixQuery;
+import org.ncbo.stanford.util.lucene.BooleanWildCardQuery;
 import org.ncbo.stanford.util.paginator.Paginator;
 import org.ncbo.stanford.util.paginator.impl.Page;
 import org.ncbo.stanford.util.paginator.impl.PaginatorImpl;
@@ -60,68 +60,77 @@ public class QuerySearchServiceImpl extends AbstractSearchService implements
 
 	// non-injected properties
 	private IndexSearcher searcher = null;
-	private AtomicInteger activeSearches = new AtomicInteger(0);	
+	private AtomicInteger activeSearches = new AtomicInteger(0);
 	
-	
-//	public static void main(String[] args) {
-//		try {
-//			String expr = "no";
-//			String expr = "blood";
-//			String expr = "Blue_Nevus-Like_Melanoma";
-//			String expr = "Interferon-Alfa_Lu-177-Monoclonal-Antibody-CC49_Pa";
-//			String expr = "Swiss_Albinos_City_of_Hope_Med_Ctr";
-//			String expr = "Can of vul and vag";
-//			String expr = "lun";
-//			String expr = "algorith";
-//			String expr = "posi";
-//			String expr = "predominately round";
-//			String expr = "monadic                    	Quality of an object*";
-//			String expr = "CHEBI:16069";
-//			String expr = "blood-vein";
-//			String expr = "Interferon-Alfa_Lu-177-Monoclonal-Antibody-CC49";
-//			String expr = "*Clarke's nu*";
-//			String expr = "multiply";
-//			Collection<Integer> ontologyIds = new ArrayList<Integer>(0);
+/*	public static void main(String[] args) {
+		try {
+			String expr;
+			expr = "no";
+			expr = "\\blood+ -clo";
+			expr = "blood nose";
+			expr = "(blood nose) dischar";
+			expr = "heart";
+			expr = "hear attac";
+			expr = "hear attac -Anxiety";
+			expr = "(hear attac) -caesar";
+			expr = "Blue_Nevus-Like_Melanoma";
+			expr = "Interferon-Alfa_Lu-177-Monoclonal-Antibody-CC49_Pa";
+			expr = "Swiss_Albinos_City_of_Hope_Med_Ctr";
+			expr = "Can of vul and vag";
+			expr = "lun";
+			expr = "algorith";
+			expr = "posi";
+			expr = "predominately round";
+			expr = "monadic                    	Quality of an object*";
+			expr = "CHEBI:16069";
+			expr = "blood-vein";
+			expr = "Interferon-Alfa_Lu-177-Monoclonal-Antibody-CC49";
+			expr = "*Clarke's nu*";
+			expr = "multiply";
+
+			Collection<Integer> ontologyIds = new ArrayList<Integer>(0);
 //			ontologyIds.add(1649);
 //			ontologyIds.add(1104);
 //			ontologyIds.add(1057);
 //			ontologyIds.add(1070);
 //			ontologyIds.add(1107);
 //			ontologyIds.add(1321); // Nemo
-//
-//			boolean includeProperties = false;
-//			boolean isExactMatch = false;
-//			Integer maxNumHits = 2250;
-//
-//			Collection<String> objectTypes = new ArrayList<String>(0);
-//			String indexPath = "/apps/bmir.apps/bioportal_resources/searchindex";
-//			QuerySearchServiceImpl ss = new QuerySearchServiceImpl();
-//
-//			Version ver = Version.LUCENE_24;
-//			ss.setLuceneVersion(ver);
-//			ss.setAnalyzer(new StandardAnalyzer(ver, Collections.emptySet()));
-//			ss.setIndexPath(indexPath);
-//
-//			Query q = ss.generateLuceneSearchQuery(ontologyIds, objectTypes,
-//					expr, includeProperties, isExactMatch);
-//			System.out.println("q: " + q);
-//
-//			long start = System.currentTimeMillis();
-//			SearchResultListBean results = ss.runQuery(q, maxNumHits,
-//					ontologyIds, null, false);
-//			long stop = System.currentTimeMillis();
-//			System.out.println("Excecution Time: " + (double) (stop - start)
-//					/ 1000 + " seconds.");
-//
-//			System.out.println("Num Hits: " + results.size());
-//			System.out.println(Jestr.str(results));
-//
-//		} catch (Exception e) {
-//			// TODO Auto-generated catch block
-//			e.printStackTrace();
-//		}
-//	}
 
+			boolean includeProperties = false;
+			boolean isExactMatch = false;
+			Integer maxNumHits = 2250;
+
+			Collection<String> objectTypes = new ArrayList<String>(0);
+			String indexPath = "/apps/bmir.apps/bioportal_resources/searchindex";
+			QuerySearchServiceImpl ss = new QuerySearchServiceImpl();
+
+			Version ver = Version.LUCENE_24;
+			ss.setLuceneVersion(ver);
+			Analyzer a = new StandardAnalyzer(ver, Collections.emptySet());
+			ss.setAnalyzer(a);
+			ss.setIndexPath(indexPath);
+
+			Query q = ss.generateLuceneSearchQuery(ontologyIds, objectTypes,
+					expr, includeProperties, isExactMatch);			
+			System.out.println("q: " + q);
+
+			long start = System.currentTimeMillis();
+			SearchResultListBean results = ss.runQuery(q, maxNumHits,
+					ontologyIds, null, false);
+			long stop = System.currentTimeMillis();
+			System.out.println("Excecution Time: " + (double) (stop - start)
+					/ 1000 + " seconds.");
+
+			System.out.println("Num Hits: " + results.size());
+			System.out.println(Jestr.str(results));
+
+			
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+*/
 	// public static void main(String[] args) {
 	// try {
 	// IndexSearcher searcher = new IndexSearcher(
@@ -637,9 +646,15 @@ public class QuerySearchServiceImpl extends AbstractSearchService implements
 			throws IOException {
 		try {
 			reloadSearcher();
-			PrefixQuery q = new PrefixQuery(luceneVersion, searcher
+			
+//			PrefixQuery q = new PrefixQuery(luceneVersion, searcher
+//					.getIndexReader(), analyzer);
+//			q.parsePrefixQuery(SearchIndexBean.CONTENTS_FIELD_LABEL, expr);
+			
+			BooleanWildCardQuery q = new BooleanWildCardQuery(luceneVersion, searcher
 					.getIndexReader(), analyzer);
-			q.parsePrefixQuery(SearchIndexBean.CONTENTS_FIELD_LABEL, expr);
+			q.parseBooleanWildCardQuery(SearchIndexBean.CONTENTS_FIELD_LABEL, expr);
+			
 			// q.parseStartsWithPrefixQuery((PrefixQuery.isMultiWord(expr)) ?
 			// SearchIndexBean.LITERAL_CONTENTS_FIELD_LABEL :
 			// SearchIndexBean.CONTENTS_FIELD_LABEL, expr);
