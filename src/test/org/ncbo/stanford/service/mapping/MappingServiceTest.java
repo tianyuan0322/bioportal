@@ -41,7 +41,7 @@ public class MappingServiceTest extends AbstractBioPortalTest {
 
 	@SuppressWarnings("unchecked")
 	@Test
-	public void testCreateMapping() {
+	public void testCreateMapping() throws Exception {
 		MappingBean mapping;
 		try {
 			mapping = mappingService
@@ -92,7 +92,7 @@ public class MappingServiceTest extends AbstractBioPortalTest {
 	}
 
 	@Test
-	public void testUpdateMapping() {
+	public void testUpdateMapping() throws Exception {
 		Integer sourceOntologyId = 1000;
 		Integer targetOntologyId = 1001;
 		Integer sourceOntologyVersion = 10000;
@@ -357,7 +357,7 @@ public class MappingServiceTest extends AbstractBioPortalTest {
 	}
 
 	@Test(expected = MappingMissingException.class)
-	public void deleteMapping() throws MappingMissingException {
+	public void deleteMapping() throws Exception {
 		mappingService.deleteMapping(mappingId);
 		mappingService.getMapping(mappingId);
 	}

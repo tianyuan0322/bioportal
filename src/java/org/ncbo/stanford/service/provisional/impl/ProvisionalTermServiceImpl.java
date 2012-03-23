@@ -36,7 +36,7 @@ public class ProvisionalTermServiceImpl implements ProvisionalTermService {
 			String label, List<String> synonyms, String definition,
 			URI provisionalSubclassOf, Date created, Date updated,
 			Integer submittedBy, String noteId, String status, URI permanentId)
-			throws ProvisionalTermExistsException {
+			throws Exception {
 
 		if (created == null)
 			created = new Date();
@@ -52,7 +52,7 @@ public class ProvisionalTermServiceImpl implements ProvisionalTermService {
 
 	@Override
 	public void deleteProvisionalTerm(String id)
-			throws ProvisionalTermMissingException {
+			throws Exception {
 		provisionalTermDAO.deleteProvisionalTerm(new URIImpl(id));
 	}
 
@@ -95,7 +95,7 @@ public class ProvisionalTermServiceImpl implements ProvisionalTermService {
 
 	@Override
 	public ClassBean updateProvisionalTerm(String id, ProvisionalTermBean term)
-			throws ProvisionalTermMissingException {
+			throws Exception {
 		URI URIid = new URIImpl(id);
 		ProvisionalTerm updatedTerm = provisionalTermDAO.updateProvisionalTerm(
 				URIid, term.getOntologyIds(), term.getLabel(), term
@@ -111,7 +111,7 @@ public class ProvisionalTermServiceImpl implements ProvisionalTermService {
 			List<Integer> ontologyIds, String label, List<String> synonyms,
 			String definition, URI provisionalSubclassOf, Date created,
 			Date updated, Integer submittedBy, String noteId, String status,
-			URI permanentId) throws ProvisionalTermMissingException {
+			URI permanentId) throws Exception {
 		URI URIid = new URIImpl(id);
 		ProvisionalTerm updatedTerm = provisionalTermDAO.updateProvisionalTerm(
 				URIid, ontologyIds, label, synonyms, definition,

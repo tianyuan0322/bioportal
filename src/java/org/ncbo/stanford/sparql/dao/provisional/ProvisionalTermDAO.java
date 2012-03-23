@@ -31,6 +31,7 @@ import org.openrdf.query.TupleQuery;
 import org.openrdf.query.TupleQueryResult;
 import org.openrdf.repository.RepositoryConnection;
 import org.openrdf.repository.RepositoryException;
+import org.openrdf.repository.RepositoryResult;
 
 public class ProvisionalTermDAO {
 
@@ -373,7 +374,7 @@ public class ProvisionalTermDAO {
 	}
 
 	public ProvisionalTerm createProvisionalTerm(ProvisionalTerm newTerm)
-			throws ProvisionalTermExistsException {
+			throws Exception {
 		RepositoryConnection con = getRdfStoreManager()
 				.getRepositoryConnection();
 
@@ -384,17 +385,11 @@ public class ProvisionalTermDAO {
 
 		ValueFactory vf = getRdfStoreManager().getValueFactory();
 
-		ArrayList<Statement> statements = newTerm.toStatements(vf);
+		List<Statement> statements = newTerm.toStatements(vf);
 
-		for (Statement statement : statements) {
-			try {
-				con.add(statement,
-						ApplicationConstants.PROVISIONAL_TERM_CONTEXT_URI);
-			} catch (RepositoryException e) {
-				e.printStackTrace();
-			}
-		}
-
+		getRdfStoreManager().addTriples(statements,
+				ApplicationConstants.PROVISIONAL_TERM_CONTEXT);
+		
 		// Add triples indicating we should look up additional items
 		if (newTerm.getSynonyms().size() > 1) {
 			URI predicate = new URIImpl(
@@ -403,8 +398,8 @@ public class ProvisionalTermDAO {
 			Statement statement = new StatementImpl(newTerm.getId(), predicate,
 					vf.createLiteral(true));
 			try {
-				con.add(statement,
-						ApplicationConstants.PROVISIONAL_TERM_CONTEXT_URI);
+				getRdfStoreManager().addTriple(statement,
+						ApplicationConstants.PROVISIONAL_TERM_CONTEXT);
 			} catch (RepositoryException e) {
 				e.printStackTrace();
 			}
@@ -417,8 +412,8 @@ public class ProvisionalTermDAO {
 			Statement statement = new StatementImpl(newTerm.getId(), predicate,
 					vf.createLiteral(true));
 			try {
-				con.add(statement,
-						ApplicationConstants.PROVISIONAL_TERM_CONTEXT_URI);
+				getRdfStoreManager().addTriple(statement,
+						ApplicationConstants.PROVISIONAL_TERM_CONTEXT);
 			} catch (RepositoryException e) {
 				e.printStackTrace();
 			}
@@ -438,7 +433,7 @@ public class ProvisionalTermDAO {
 			List<Integer> ontologyIds, String label, List<String> synonyms,
 			String definition, URI provisionalSubclassOf, Date created,
 			Date updated, Integer submittedBy, String noteId, String status,
-			URI permanentId) throws ProvisionalTermMissingException {
+			URI permanentId) throws Exception {
 		RepositoryConnection con = getRdfStoreManager()
 				.getRepositoryConnection();
 
@@ -459,7 +454,7 @@ public class ProvisionalTermDAO {
 	}
 
 	private ProvisionalTerm updateProvisionalTerm(URI id, ProvisionalTerm term)
-			throws ProvisionalTermMissingException {
+			throws Exception {
 		RepositoryConnection con = getRdfStoreManager()
 				.getRepositoryConnection();
 
@@ -484,7 +479,7 @@ public class ProvisionalTermDAO {
 	}
 
 	public void deleteProvisionalTerm(URI id)
-			throws ProvisionalTermMissingException {
+			throws Exception {
 		RepositoryConnection con = getRdfStoreManager()
 				.getRepositoryConnection();
 		try {
@@ -561,13 +556,16 @@ public class ProvisionalTermDAO {
 	 *
 	 * @param con
 	 * @param id
-	 * @throws RepositoryException
+	 * @throws Exception 
 	 */
 	protected void deleteFromTripleStore(RepositoryConnection con, URI id)
-			throws RepositoryException {
+			throws Exception {
 		// Remove all triples matching the given id
-		con.remove(id, null, null,
-				ApplicationConstants.PROVISIONAL_TERM_CONTEXT_URI);
+		RepositoryResult<Statement> results = con.getStatements(id, null, null,
+				false);
+		
+		// Remove all those triples
+		getRdfStoreManager().deleteTriples(results.asList());
 	}
 
 	/**

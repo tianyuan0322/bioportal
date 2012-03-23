@@ -196,7 +196,7 @@ public class SPARQLUnionGenerator {
         else
             query = "SELECT DISTINCT (count(?mappingId) as ?c) {" + query + "}";
 
-        query = "PREFIX "+ApplicationConstants.NS_MAPPING_PREFIX+": <" + ApplicationConstants.NS_MAPPING_PREFIX_URI + ">" + query;
+        query = "PREFIX "+ApplicationConstants.NS_MAPPING_PREFIX+": <" + ApplicationConstants.NS_MAPPING_PREFIX_URI + "> " + query;
         return query;
     }
 

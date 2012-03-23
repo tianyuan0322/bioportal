@@ -75,7 +75,7 @@ public class ProvisionalTermServiceTest extends AbstractBioPortalTest {
 	}
 
 	@Test
-	public void testUpdateTerm() throws ProvisionalTermMissingException {
+	public void testUpdateTerm() throws Exception {
 		ProvisionalTermBean termChanges = new ProvisionalTermBean();
 
 		termChanges.setLabel("New label");
@@ -93,7 +93,7 @@ public class ProvisionalTermServiceTest extends AbstractBioPortalTest {
 
 	@Test(expected = ProvisionalTermMissingException.class)
 	public void testDeleteProvisionalTerm()
-			throws ProvisionalTermMissingException {
+			throws Exception {
 		provisionalTermService.deleteProvisionalTerm(termId);
 		provisionalTermService.getProvisionalTerm(termId);
 	}

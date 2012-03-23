@@ -67,6 +67,8 @@ public class CustomNcboMappingDAOTest extends AbstractBioPortalTest {
 			e.printStackTrace();
 		} catch (MappingMissingException e) {
 			e.printStackTrace();
+		} catch (Exception e) {
+			e.printStackTrace();
 		}
 	}
 
@@ -152,11 +154,13 @@ public class CustomNcboMappingDAOTest extends AbstractBioPortalTest {
 			assertEquals(comment, mapping.getComment());
 		} catch (MappingMissingException e) {
 			e.printStackTrace();
+		} catch (Exception e) {
+			e.printStackTrace();
 		}
 	}
 
 //	@Test(expected = MappingMissingException.class)
-	public void deleteMapping() throws MappingMissingException {
+	public void deleteMapping() throws Exception {
 		mappingDAO.deleteMapping(mappingId);
 		mappingDAO.getMapping(mappingId);
 	}

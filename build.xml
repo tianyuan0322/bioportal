@@ -160,6 +160,8 @@
 				<filter token="rdfmysqlstoredatabasename" value="${rdf.mysql.store.database.name}" />
 				<filter token="rdfmysqlstoreuser" value="${rdf.mysql.store.user}" />
 				<filter token="rdfmysqlstorepassword" value="${rdf.mysql.store.password}" />
+				<filter token="rdf4storeendpointurl" value="${rdf.4store.endpoint.url}" />
+				
 			</filterset>
 		</copy>
 

@@ -214,6 +214,8 @@ public class NotesServiceImpl implements NotesService {
 			// This shouldn't happen, but if it does delete the note :)
 			deleteNote(ont, proposal.getId());
 			e.printStackTrace();
+		} catch (Exception e) {
+			e.printStackTrace();
 		}
 
 		return convertAnnotationToNoteBean(proposal, ont);

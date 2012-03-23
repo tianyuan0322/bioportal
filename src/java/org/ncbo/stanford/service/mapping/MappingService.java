@@ -33,6 +33,7 @@ public interface MappingService {
 	 * @param mappingSource
 	 * @param mappingType
 	 * @return
+	 * @throws Exception 
 	 */
 	public MappingBean createMapping(List<URI> source, List<URI> target,
 			URI relation, Integer sourceOntologyId, Integer targetOntologyId,
@@ -41,16 +42,17 @@ public interface MappingService {
 			MappingSourceEnum mappingSource, String mappingSourceName,
 			String mappingSourcecontactInfo, URI mappingSourceSite,
 			String mappingSourceAlgorithm, String mappingType)
-			throws MappingExistsException;
+			throws MappingExistsException, Exception;
 
 	/**
 	 * Create a mapping by passing a mapping bean.
 	 * 
 	 * @param mapping
 	 * @return
+	 * @throws Exception 
 	 */
 	public MappingBean createMapping(MappingBean mapping)
-			throws MappingExistsException;
+			throws MappingExistsException, Exception;
 
 	/**
 	 * Get a mapping with the given id.
@@ -66,16 +68,18 @@ public interface MappingService {
 	 * @param id
 	 * @param mapping
 	 * @return
+	 * @throws Exception 
 	 */
 	public MappingBean updateMapping(URI id, MappingBean mapping)
-			throws MappingMissingException;
+			throws MappingMissingException, Exception;
 
 	/**
 	 * Delete mapping with given id.
 	 * 
 	 * @param id
+	 * @throws Exception 
 	 */
-	public void deleteMapping(URI id) throws MappingMissingException;
+	public void deleteMapping(URI id) throws MappingMissingException, Exception;
 
 	/**
 	 * Get all mappings from a given ontology.

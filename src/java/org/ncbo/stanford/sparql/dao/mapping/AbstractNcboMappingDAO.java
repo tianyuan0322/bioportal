@@ -32,7 +32,6 @@ import org.openrdf.query.TupleQuery;
 import org.openrdf.query.TupleQueryResult;
 import org.openrdf.repository.RepositoryConnection;
 import org.openrdf.repository.RepositoryException;
-import org.openrdf.repository.RepositoryResult;
 
 public class AbstractNcboMappingDAO {
 
@@ -43,7 +42,8 @@ public class AbstractNcboMappingDAO {
 	// row). The %FILTER% token can be replaced with whatever filter is need to
 	// get specific results. %OFFSET% and %LIMIT% must be replaced as well.
 
-	protected final static String mappingQueryBetweenOntolgies = "SELECT DISTINCT "
+	protected final static String mappingQueryBetweenOntolgies = "PREFIX map: <http://protege.stanford.edu/ontologies/mappings/mappings.rdfs#> "
+			+ "SELECT DISTINCT "
 			+ "?mappingId "
 			+ "?relation "
 			+ "?createdInSourceOntologyVersion "
@@ -60,23 +60,24 @@ public class AbstractNcboMappingDAO {
 			+ "?mappingSourceAlgorithm "
 			+ "?isManyToMany {"
 			+ "  %ONTOLOGIES_MATCH_PATTERN% "
-			+ "  ?mappingId <http://protege.stanford.edu/ontologies/mappings/mappings.rdfs#relation> ?relation ."
-			+ "  ?mappingId <http://protege.stanford.edu/ontologies/mappings/mappings.rdfs#created_in_source_ontology_version> ?createdInSourceOntologyVersion ."
-			+ "  ?mappingId <http://protege.stanford.edu/ontologies/mappings/mappings.rdfs#created_in_target_ontology_version> ?createdInTargetOntologyVersion ."
-			+ "  ?mappingId <http://protege.stanford.edu/ontologies/mappings/mappings.rdfs#date> ?date ."
-			+ "  ?mappingId <http://protege.stanford.edu/ontologies/mappings/mappings.rdfs#submitted_by> ?submittedBy ."
-			+ "  ?mappingId <http://protege.stanford.edu/ontologies/mappings/mappings.rdfs#mapping_type> ?mappingType ."
-			+ "  OPTIONAL { ?mappingId <http://protege.stanford.edu/ontologies/mappings/mappings.rdfs#is_many_to_many> ?isManyToMany .}"
-			+ "  OPTIONAL { ?mappingId <http://protege.stanford.edu/ontologies/mappings/mappings.rdfs#comment> ?comment .}"
-			+ "  OPTIONAL { ?mappingId <http://protege.stanford.edu/ontologies/mappings/mappings.rdfs#dependency> ?dependency .}"
-			+ "  OPTIONAL { ?mappingId <http://protege.stanford.edu/ontologies/mappings/mappings.rdfs#mapping_source> ?mappingSource .}"
-			+ "  OPTIONAL { ?mappingId <http://protege.stanford.edu/ontologies/mappings/mappings.rdfs#mapping_source_name> ?mappingSourceName .}"
-			+ "  OPTIONAL { ?mappingId <http://protege.stanford.edu/ontologies/mappings/mappings.rdfs#mapping_source_contact_info> ?mappingSourceContactInfo .}"
-			+ "  OPTIONAL { ?mappingId <http://protege.stanford.edu/ontologies/mappings/mappings.rdfs#mapping_source_site> ?mappingSourceSite .}"
-			+ "  OPTIONAL { ?mappingId <http://protege.stanford.edu/ontologies/mappings/mappings.rdfs#mapping_source_algorithm> ?mappingSourceAlgorithm .}"
+			+ "  ?mappingId map:relation ?relation ."
+			+ "  ?mappingId map:created_in_source_ontology_version ?createdInSourceOntologyVersion ."
+			+ "  ?mappingId map:created_in_target_ontology_version ?createdInTargetOntologyVersion ."
+			+ "  ?mappingId map:date ?date ."
+			+ "  ?mappingId map:submitted_by ?submittedBy ."
+			+ "  ?mappingId map:mapping_type ?mappingType ."
+			+ "  OPTIONAL { ?mappingId map:is_many_to_many ?isManyToMany .}"
+			+ "  OPTIONAL { ?mappingId map:comment ?comment .}"
+			+ "  OPTIONAL { ?mappingId map:dependency ?dependency .}"
+			+ "  OPTIONAL { ?mappingId map:mapping_source ?mappingSource .}"
+			+ "  OPTIONAL { ?mappingId map:mapping_source_name ?mappingSourceName .}"
+			+ "  OPTIONAL { ?mappingId map:mapping_source_contact_info ?mappingSourceContactInfo .}"
+			+ "  OPTIONAL { ?mappingId map:mapping_source_site ?mappingSourceSite .}"
+			+ "  OPTIONAL { ?mappingId map:mapping_source_algorithm ?mappingSourceAlgorithm .}"
 			+ "  FILTER (%FILTER%) } LIMIT %LIMIT% OFFSET %OFFSET%";
 
-	protected final static String mappingQuery = "SELECT DISTINCT "
+	protected final static String mappingQuery = "PREFIX map: <http://protege.stanford.edu/ontologies/mappings/mappings.rdfs#> "
+			+ "SELECT DISTINCT "
 			+ "?mappingId "
 			+ "?relation "
 			+ "?sourceOntologyId "
@@ -95,40 +96,43 @@ public class AbstractNcboMappingDAO {
 			+ "?mappingSourceAlgorithm "
 			+ "?isManyToMany "
 			+ " {"
-			+ "  ?mappingId <http://protege.stanford.edu/ontologies/mappings/mappings.rdfs#relation> ?relation ."
-			+ "  ?mappingId <http://protege.stanford.edu/ontologies/mappings/mappings.rdfs#source_ontology_id> ?sourceOntologyId ."
-			+ "  ?mappingId <http://protege.stanford.edu/ontologies/mappings/mappings.rdfs#target_ontology_id> ?targetOntologyId ."
-			+ "  ?mappingId <http://protege.stanford.edu/ontologies/mappings/mappings.rdfs#created_in_source_ontology_version> ?createdInSourceOntologyVersion ."
-			+ "  ?mappingId <http://protege.stanford.edu/ontologies/mappings/mappings.rdfs#created_in_target_ontology_version> ?createdInTargetOntologyVersion ."
-			+ "  ?mappingId <http://protege.stanford.edu/ontologies/mappings/mappings.rdfs#date> ?date ."
-			+ "  ?mappingId <http://protege.stanford.edu/ontologies/mappings/mappings.rdfs#submitted_by> ?submittedBy ."
-			+ "  ?mappingId <http://protege.stanford.edu/ontologies/mappings/mappings.rdfs#mapping_type> ?mappingType ."
-			+ "  OPTIONAL { ?mappingId <http://protege.stanford.edu/ontologies/mappings/mappings.rdfs#is_many_to_many> ?isManyToMany .}"
-			+ "  OPTIONAL { ?mappingId <http://protege.stanford.edu/ontologies/mappings/mappings.rdfs#comment> ?comment .}"
-			+ "  OPTIONAL { ?mappingId <http://protege.stanford.edu/ontologies/mappings/mappings.rdfs#dependency> ?dependency .}"
-			+ "  OPTIONAL { ?mappingId <http://protege.stanford.edu/ontologies/mappings/mappings.rdfs#mapping_source> ?mappingSource .}"
-			+ "  OPTIONAL { ?mappingId <http://protege.stanford.edu/ontologies/mappings/mappings.rdfs#mapping_source_name> ?mappingSourceName .}"
-			+ "  OPTIONAL { ?mappingId <http://protege.stanford.edu/ontologies/mappings/mappings.rdfs#mapping_source_contact_info> ?mappingSourceContactInfo .}"
-			+ "  OPTIONAL { ?mappingId <http://protege.stanford.edu/ontologies/mappings/mappings.rdfs#mapping_source_site> ?mappingSourceSite .}"
-			+ "  OPTIONAL { ?mappingId <http://protege.stanford.edu/ontologies/mappings/mappings.rdfs#mapping_source_algorithm> ?mappingSourceAlgorithm .}"
+			+ "  ?mappingId map:relation ?relation ."
+			+ "  ?mappingId map:source_ontology_id ?sourceOntologyId ."
+			+ "  ?mappingId map:target_ontology_id ?targetOntologyId ."
+			+ "  ?mappingId map:created_in_source_ontology_version ?createdInSourceOntologyVersion ."
+			+ "  ?mappingId map:created_in_target_ontology_version ?createdInTargetOntologyVersion ."
+			+ "  ?mappingId map:date ?date ."
+			+ "  ?mappingId map:submitted_by ?submittedBy ."
+			+ "  ?mappingId map:mapping_type ?mappingType ."
+			+ "  OPTIONAL { ?mappingId map:is_many_to_many ?isManyToMany .}"
+			+ "  OPTIONAL { ?mappingId map:comment ?comment .}"
+			+ "  OPTIONAL { ?mappingId map:dependency ?dependency .}"
+			+ "  OPTIONAL { ?mappingId map:mapping_source ?mappingSource .}"
+			+ "  OPTIONAL { ?mappingId map:mapping_source_name ?mappingSourceName .}"
+			+ "  OPTIONAL { ?mappingId map:mapping_source_contact_info ?mappingSourceContactInfo .}"
+			+ "  OPTIONAL { ?mappingId map:mapping_source_site ?mappingSourceSite .}"
+			+ "  OPTIONAL { ?mappingId map:mapping_source_algorithm ?mappingSourceAlgorithm .}"
 			+ "  FILTER (%FILTER%) } %ORDERBY% LIMIT %LIMIT% OFFSET %OFFSET%";
 
-	protected final static String mappingCountQuery = "SELECT DISTINCT "
+	protected final static String mappingCountQuery = "PREFIX map: <http://protege.stanford.edu/ontologies/mappings/mappings.rdfs#> "
+			+ "SELECT DISTINCT "
 			+ "count(DISTINCT ?mappingId) as ?mappingCount WHERE {"
-			+ "  ?mappingId <http://protege.stanford.edu/ontologies/mappings/mappings.rdfs#source_ontology_id> ?sourceOntologyId ."
-			+ "  ?mappingId <http://protege.stanford.edu/ontologies/mappings/mappings.rdfs#target_ontology_id> ?targetOntologyId ."
-			+ " %TRIPLES_FOR_PARAMS% " + "  FILTER (%FILTER%) }";
+			+ "  ?mappingId map:source_ontology_id ?sourceOntologyId ."
+			+ "  ?mappingId map:target_ontology_id ?targetOntologyId ."
+			+ " %TRIPLES_FOR_PARAMS% FILTER (%FILTER%) }";
 
-	protected final static String sourcesAndTargetsForMappingIds = "SELECT DISTINCT ?mappingId ?source ?target {"
-			+ "  ?mappingId <http://protege.stanford.edu/ontologies/mappings/mappings.rdfs#source> ?source ."
-			+ "  ?mappingId <http://protege.stanford.edu/ontologies/mappings/mappings.rdfs#target> ?target ."
-			+ "  FILTER ( ?mappingId IN (%MAPPING_IDS%) ) }";
+	protected final static String sourcesAndTargetsForMappingIds = "PREFIX map: <http://protege.stanford.edu/ontologies/mappings/mappings.rdfs#> "
+			+ "SELECT DISTINCT ?mappingId ?source ?target {"
+			+ "  ?mappingId map:source ?source ."
+			+ "  ?mappingId map:target ?target ."
+			+ "  FILTER ( ?mappingId = %MAPPING_IDS% ) }";
 
-	protected final static String mappingIdFromSourceOrTarget = "SELECT DISTINCT ?mappingId {"
-			+ "  ?mappingId <http://protege.stanford.edu/ontologies/mappings/mappings.rdfs#source> ?source ."
-			+ "  ?mappingId <http://protege.stanford.edu/ontologies/mappings/mappings.rdfs#target> ?target ."
-			+ "  ?mappingId <http://protege.stanford.edu/ontologies/mappings/mappings.rdfs#source_ontology_id> ?sourceOntologyId ."
-			+ "  ?mappingId <http://protege.stanford.edu/ontologies/mappings/mappings.rdfs#target_ontology_id> ?targetOntologyId ."
+	protected final static String mappingIdFromSourceOrTarget = "PREFIX map: <http://protege.stanford.edu/ontologies/mappings/mappings.rdfs#> "
+			+ "SELECT DISTINCT ?mappingId {"
+			+ "  ?mappingId map:source ?source ."
+			+ "  ?mappingId map:target ?target ."
+			+ "  ?mappingId map:source_ontology_id ?sourceOntologyId ."
+			+ "  ?mappingId map:target_ontology_id ?targetOntologyId ."
 			+ "  FILTER ( %FILTER% ) } LIMIT %LIMIT% OFFSET %OFFSET%";
 
 	/*******************************************************************
@@ -144,7 +148,6 @@ public class AbstractNcboMappingDAO {
 	}
 
 	protected List<Mapping> getMappingsFromSPARQLQuery(String queryString) {
-
 		RepositoryConnection con = getRdfStoreManager()
 				.getRepositoryConnection();
 
@@ -236,8 +239,8 @@ public class AbstractNcboMappingDAO {
 				}
 
 				String queryString1 = sourcesAndTargetsForMappingIds
-						.replaceAll("%MAPPING_IDS%",
-								StringUtils.join(mappingIdsSparql, ", "));
+						.replaceAll("%MAPPING_IDS%", StringUtils.join(
+								mappingIdsSparql, " || ?mappingId = "));
 
 				TupleQuery query1 = con.prepareTupleQuery(QueryLanguage.SPARQL,
 						queryString1);
@@ -284,10 +287,10 @@ public class AbstractNcboMappingDAO {
 		RepositoryConnection con = getRdfStoreManager()
 				.getRepositoryConnection();
 		try {
-			HashMap<String, Mapping> mappingResults = new HashMap<String, Mapping>();
-			String queryString = "SELECT * WHERE { "
-					+ " ?mappingId <http://protege.stanford.edu/ontologies/mappings/mappings.rdfs#target_ontology_id> ?targetOntologyId . "
-					+ " ?mappingId <http://protege.stanford.edu/ontologies/mappings/mappings.rdfs#source_ontology_id> ?sourceOntologyId . "
+			String queryString = "PREFIX map: <http://protege.stanford.edu/ontologies/mappings/mappings.rdfs#> " 
+					+ "SELECT * WHERE { "
+					+ " ?mappingId map:target_ontology_id ?targetOntologyId . "
+					+ " ?mappingId map:source_ontology_id ?sourceOntologyId . "
 					+ " FILTER (?mappingId = <%mappingId%>) } LIMIT 1";
 			for (Mapping m : mappings) {
 				TupleQuery query = con.prepareTupleQuery(QueryLanguage.SPARQL,
@@ -346,13 +349,12 @@ public class AbstractNcboMappingDAO {
 			queryString = queryString.replaceAll("FILTER \\(\\) ", "");
 		}
 
-		String unionPattern = "{ ?mappingId <http://protege.stanford.edu/ontologies/mappings/mappings.rdfs#target_ontology_id> %ONTOLOGY_A% . "
-				+ "?mappingId <http://protege.stanford.edu/ontologies/mappings/mappings.rdfs#source_ontology_id> %ONTOLOGY_B% . "
-				+ "} ";
+		String unionPattern = "{ ?mappingId map:target_ontology_id %ONTOLOGY_A% . "
+				+ "?mappingId map:source_ontology_id %ONTOLOGY_B% . " + "} ";
 		if (!unidirectional) {
 			unionPattern += "UNION { "
-					+ "?mappingId <http://protege.stanford.edu/ontologies/mappings/mappings.rdfs#target_ontology_id> %ONTOLOGY_B% . "
-					+ "?mappingId <http://protege.stanford.edu/ontologies/mappings/mappings.rdfs#source_ontology_id> %ONTOLOGY_A% . "
+					+ "?mappingId map:target_ontology_id %ONTOLOGY_B% . "
+					+ "?mappingId map:source_ontology_id %ONTOLOGY_A% . "
 					+ "} ";
 		}
 
@@ -727,8 +729,8 @@ public class AbstractNcboMappingDAO {
 	protected String generateOntologySparqlClause(Integer sourceOntology,
 			Integer targetOntology, Boolean unidirectional)
 			throws InvalidInputException {
-		String src = " <http://protege.stanford.edu/ontologies/mappings/mappings.rdfs#source_ontology_id> ";
-		String tgt = " <http://protege.stanford.edu/ontologies/mappings/mappings.rdfs#target_ontology_id> ";
+		String src = " map:source_ontology_id ";
+		String tgt = " map:target_ontology_id ";
 		String id = "?mappingId";
 
 		// Determine the SPARQL filter to use based on directionality
@@ -778,11 +780,11 @@ public class AbstractNcboMappingDAO {
 	 * @param mappingIds
 	 * @return
 	 */
-	protected String generateMappingIdINFilter(Set<String> mappingIds) {
-		String mappingIdFilter = "?mappingId IN (%MAPPING_IDS%)";
+	protected String generateMappingIdFilter(Set<String> mappingIds) {
+		String mappingIdFilter = "?mappingId = %MAPPING_IDS%";
 
 		mappingIdFilter = mappingIdFilter.replaceAll("%MAPPING_IDS%",
-				StringUtils.join(mappingIds, ", "));
+				StringUtils.join(mappingIds, " || ?mappingId = "));
 
 		return mappingIdFilter;
 	}
@@ -803,10 +805,12 @@ public class AbstractNcboMappingDAO {
 	 * Checks the repository for a mapping using provided id.
 	 * 
 	 * @param id
-	 * @param con
 	 * @return
 	 */
-	protected Boolean hasMapping(URI id, RepositoryConnection con) {
+	protected Boolean hasMapping(URI id) {
+		RepositoryConnection con = getRdfStoreManager()
+				.getRepositoryConnection();
+
 		try {
 			Statement statement = new StatementImpl(id,
 					ApplicationConstants.RDF_TYPE_URI,
@@ -827,24 +831,7 @@ public class AbstractNcboMappingDAO {
 	 */
 	protected RDFStoreManager getRdfStoreManager() {
 		String storeType = MessageUtils.getMessage("rdf.store.type");
-		return rdfStoreManagerMap.get("virtuoso");
-	}
-
-	/**
-	 * This method does the actual delete action for removing mappings from the
-	 * triplestore. It removes all triples with a subject matching the mapping
-	 * id.
-	 * 
-	 * @param con
-	 * @param id
-	 * @throws RepositoryException
-	 */
-	protected void deleteFromTripleStore(RepositoryConnection con, URI id)
-			throws RepositoryException {
-		RepositoryResult<Statement> results = con.getStatements(id, null, null,
-				false);
-		// Remove all those triples
-		con.remove(results);
+		return rdfStoreManagerMap.get(storeType);
 	}
 
 	/**

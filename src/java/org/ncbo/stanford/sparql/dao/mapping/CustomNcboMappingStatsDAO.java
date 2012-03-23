@@ -24,53 +24,65 @@ import edu.emory.mathcs.backport.java.util.Collections;
 
 public class CustomNcboMappingStatsDAO extends AbstractNcboMappingDAO {
 
-	private static final String mostRecentMappings = "SELECT DISTINCT ?mappingId where { "
-			+ "?mappingId <http://protege.stanford.edu/ontologies/mappings/mappings.rdfs#date> ?date } ORDER BY DESC(?date) LIMIT %LIMIT%";
+	private static final String mostRecentMappings = "PREFIX map: <http://protege.stanford.edu/ontologies/mappings/mappings.rdfs#> " 
+			+ "SELECT DISTINCT ?mappingId where { "
+			+ "?mappingId map:date ?date } ORDER BY DESC(?date) LIMIT %LIMIT%";
 
-	private static final String totalMappings = "SELECT count(?mappingId) as ?mappings "
-			+ "WHERE { ?mappingId a <http://protege.stanford.edu/ontologies/mappings/mappings.rdfs#One_To_One_Mapping> . }";
+	private static final String totalMappings = "PREFIX map: <http://protege.stanford.edu/ontologies/mappings/mappings.rdfs#> " 
+			+ "SELECT (count(?mappingId) as ?mappings) "
+			+ "WHERE { ?mappingId a map:One_To_One_Mapping . }";
 
-	private static final String ontologySourceCount = "SELECT ?sourceOntologyId count(?sourceOntologyId) as ?count "
-			+ "WHERE { ?mappingId <http://protege.stanford.edu/ontologies/mappings/mappings.rdfs#source_ontology_id> ?sourceOntologyId . }";
-	private static final String ontologyTargetCount = "SELECT ?targetOntologyId count(?targetOntologyId) as ?count "
-			+ "WHERE { ?mappingId <http://protege.stanford.edu/ontologies/mappings/mappings.rdfs#target_ontology_id> ?targetOntologyId . }";
+	private static final String ontologySourceCount = "PREFIX map: <http://protege.stanford.edu/ontologies/mappings/mappings.rdfs#> " 
+			+ "SELECT ?sourceOntologyId (count(?sourceOntologyId) as ?count) "
+			+ "WHERE { ?mappingId map:source_ontology_id ?sourceOntologyId . }" +
+			" GROUP BY ?sourceOntologyId";
+	
+	private static final String ontologyTargetCount = "PREFIX map: <http://protege.stanford.edu/ontologies/mappings/mappings.rdfs#> " 
+			+ "SELECT ?targetOntologyId (count(?targetOntologyId) as ?count) "
+			+ "WHERE { ?mappingId map:target_ontology_id ?targetOntologyId . }" +
+			" GROUP BY ?targetOntologyId";
 
-	private static final String sourceMappings = "SELECT ?sourceOntologyId "
-			+ "count(?sourceOntologyId) as ?count "
-			+ "WHERE { ?mappingId <http://protege.stanford.edu/ontologies/mappings/mappings.rdfs#target_ontology_id> %ONT% . "
-			+ "?mappingId <http://protege.stanford.edu/ontologies/mappings/mappings.rdfs#source_ontology_id> ?sourceOntologyId . "
-			+ "} ORDER BY DESC(?count)";
+	private static final String sourceMappings = "PREFIX map: <http://protege.stanford.edu/ontologies/mappings/mappings.rdfs#> " 
+			+ "SELECT ?sourceOntologyId "
+			+ "(count(?sourceOntologyId) as ?count) "
+			+ "WHERE { ?mappingId map:target_ontology_id %ONT% . "
+			+ "?mappingId map:source_ontology_id ?sourceOntologyId . "
+			+ "} GROUP BY ?sourceOntologyId ORDER BY DESC(?count)";
 
-	private static final String targetMappings = "SELECT ?targetOntologyId "
-			+ "count(?targetOntologyId) as ?count "
-			+ "WHERE { ?mappingId <http://protege.stanford.edu/ontologies/mappings/mappings.rdfs#source_ontology_id> %ONT% . "
-			+ "?mappingId <http://protege.stanford.edu/ontologies/mappings/mappings.rdfs#target_ontology_id> ?targetOntologyId . "
-			+ "} ORDER BY DESC(?count)";
+	private static final String targetMappings = "PREFIX map: <http://protege.stanford.edu/ontologies/mappings/mappings.rdfs#> " 
+			+ "SELECT ?targetOntologyId "
+			+ "(count(?targetOntologyId) as ?count) "
+			+ "WHERE { ?mappingId map:source_ontology_id %ONT% . "
+			+ "?mappingId map:target_ontology_id ?targetOntologyId . "
+			+ "} GROUP BY ?targetOntologyId ORDER BY DESC(?count)";
 
-	private static final String conceptCount = "SELECT ?conceptId count(?conceptId) as ?count "
-			+ "WHERE { { ?mappingId <http://protege.stanford.edu/ontologies/mappings/mappings.rdfs#source_ontology_id> %ONT% . "
-			+ "?mappingId <http://protege.stanford.edu/ontologies/mappings/mappings.rdfs#source> ?conceptId . } "
-			+ "UNION { ?mappingId <http://protege.stanford.edu/ontologies/mappings/mappings.rdfs#target_ontology_id> %ONT% . "
-			+ "?mappingId <http://protege.stanford.edu/ontologies/mappings/mappings.rdfs#target> ?conceptId . } "
-			+ "} ORDER BY DESC(?count) LIMIT %LIMIT%";
+	private static final String conceptCount = "PREFIX map: <http://protege.stanford.edu/ontologies/mappings/mappings.rdfs#> " 
+			+ "SELECT ?conceptId (count(?conceptId) as ?count) "
+			+ "WHERE { { ?mappingId map:source_ontology_id %ONT% . "
+			+ "?mappingId map:source ?conceptId . } "
+			+ "UNION { ?mappingId map:target_ontology_id %ONT% . "
+			+ "?mappingId map:target ?conceptId . } "
+			+ "} GROUP BY ?conceptId ORDER BY DESC(?count) LIMIT %LIMIT%";
 
-	private static final String userCount = "SELECT ?userId count(?mappingId) as ?count "
-			+ "WHERE { { ?mappingId <http://protege.stanford.edu/ontologies/mappings/mappings.rdfs#source_ontology_id> %ONT% . "
-			+ "?mappingId <http://protege.stanford.edu/ontologies/mappings/mappings.rdfs#submitted_by> ?userId . } "
-			+ "UNION { ?mappingId <http://protege.stanford.edu/ontologies/mappings/mappings.rdfs#target_ontology_id> %ONT% . "
-			+ "?mappingId <http://protege.stanford.edu/ontologies/mappings/mappings.rdfs#submitted_by> ?userId . } "
-			+ "} ORDER BY DESC(?count)";
+	private static final String userCount = "PREFIX map: <http://protege.stanford.edu/ontologies/mappings/mappings.rdfs#> " 
+			+ "SELECT ?userId (count(?mappingId) as ?count) "
+			+ "WHERE { { ?mappingId map:source_ontology_id %ONT% . "
+			+ "?mappingId map:submitted_by ?userId . } "
+			+ "UNION { ?mappingId map:target_ontology_id %ONT% . "
+			+ "?mappingId map:submitted_by ?userId . } "
+			+ "} GROUP BY ?userId ORDER BY DESC(?count)";
 
-	private static final String userCountWithTarget = "SELECT ?userId count(?mappingId) as ?count "
+	private static final String userCountWithTarget = "PREFIX map: <http://protege.stanford.edu/ontologies/mappings/mappings.rdfs#> " 
+			+ "SELECT ?userId (count(?mappingId) as ?count) "
 			+ "WHERE { "
-			+ "{ ?mappingId <http://protege.stanford.edu/ontologies/mappings/mappings.rdfs#source_ontology_id> %ONT% . "
-			+ " ?mappingId <http://protege.stanford.edu/ontologies/mappings/mappings.rdfs#target_ontology_id> %TARG% . "
-			+ "?mappingId <http://protege.stanford.edu/ontologies/mappings/mappings.rdfs#submitted_by> ?userId . } "
+			+ "{ ?mappingId map:source_ontology_id %ONT% . "
+			+ " ?mappingId map:target_ontology_id %TARG% . "
+			+ "?mappingId map:submitted_by ?userId . } "
 			+ "UNION { "
-			+ "?mappingId <http://protege.stanford.edu/ontologies/mappings/mappings.rdfs#target_ontology_id> %ONT% . "
-			+ "?mappingId <http://protege.stanford.edu/ontologies/mappings/mappings.rdfs#target_ontology_id> %TARG% . "
-			+ "?mappingId <http://protege.stanford.edu/ontologies/mappings/mappings.rdfs#submitted_by> ?userId . } "
-			+ "} ORDER BY DESC(?count)";
+			+ "?mappingId map:target_ontology_id %ONT% . "
+			+ "?mappingId map:target_ontology_id %TARG% . "
+			+ "?mappingId map:submitted_by ?userId . } "
+			+ "} GROUP BY ?userId ORDER BY DESC(?count)";
 
 	/**
 	 * Gets a list of recent mappings up to size of limit.

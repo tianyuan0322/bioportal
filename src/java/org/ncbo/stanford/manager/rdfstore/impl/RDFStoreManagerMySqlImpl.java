@@ -34,7 +34,6 @@ public class RDFStoreManagerMySqlImpl extends AbstractRDFStoreManager implements
 				repository.initialize();
 			}
 		} catch (RepositoryException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}
@@ -49,10 +48,8 @@ public class RDFStoreManagerMySqlImpl extends AbstractRDFStoreManager implements
 				repository.shutDown();
 				repository = null;
 			} catch (SailException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			} catch (RepositoryException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 		}

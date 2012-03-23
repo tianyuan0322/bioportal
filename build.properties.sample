@@ -491,7 +491,7 @@ notification.mail.override=
 ## RDF Store Type options:
 #### virtuoso
 #### mysql
-#rdf.store.type=mysql
+#### 4store
 rdf.store.type=virtuoso
 
 ## Virtuoso Stores Only
@@ -500,10 +500,14 @@ rdf.virtuoso.connection.string=jdbc:virtuoso://localhost:1111/
 rdf.virtuoso.user=dba
 rdf.virtuoso.password=dba
 
-
 ## MySQL Stores Only
 rdf.mysql.store.server.name=localhost
 rdf.mysql.store.port.number=3306
 rdf.mysql.store.database.name=bioportal_rdf
 rdf.mysql.store.user=mysql_user
 rdf.mysql.store.password=mysql_password
+
+## 4store only (include trailing slash)
+## Example: rdf.4store.endpoint.url=http://fourstore.machine:8082/
+rdf.4store.endpoint.url=
+

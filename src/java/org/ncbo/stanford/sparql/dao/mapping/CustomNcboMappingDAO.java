@@ -2,6 +2,7 @@ package org.ncbo.stanford.sparql.dao.mapping;
 
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Set;
 
@@ -27,6 +28,7 @@ import org.openrdf.query.TupleQuery;
 import org.openrdf.query.TupleQueryResult;
 import org.openrdf.repository.RepositoryConnection;
 import org.openrdf.repository.RepositoryException;
+import org.openrdf.repository.RepositoryResult;
 
 public class CustomNcboMappingDAO extends AbstractNcboMappingDAO {
 
@@ -37,7 +39,7 @@ public class CustomNcboMappingDAO extends AbstractNcboMappingDAO {
 			String mappingSource, String mappingSourceName,
 			String mappingSourceContactInfo, URI mappingSourceSite,
 			String mappingSourceAlgorithm, String mappingType)
-			throws MappingExistsException {
+			throws Exception {
 
 		Mapping newMapping = new Mapping();
 
@@ -66,32 +68,18 @@ public class CustomNcboMappingDAO extends AbstractNcboMappingDAO {
 
 		createMapping(newMapping);
 
-		Mapping mapping = null;
-		try {
-			mapping = getMapping(newMapping.getId());
-		} catch (MappingMissingException e) {
-			e.printStackTrace();
-		}
+		Mapping mapping = getMapping(newMapping.getId());
 
 		return mapping;
 	}
 
 	public Mapping createMapping(Mapping newMapping)
-			throws MappingExistsException {
+			throws Exception {
 		ValueFactory vf = getRdfStoreManager().getValueFactory();
 
-		ArrayList<Statement> statements = newMapping.toStatements(vf);
+		List<Statement> statements = newMapping.toStatements(vf);
 
-		RepositoryConnection con = getRdfStoreManager()
-				.getRepositoryConnection();
-
-		for (Statement statement : statements) {
-			try {
-				con.add(statement, ApplicationConstants.MAPPING_CONTEXT_URI);
-			} catch (RepositoryException e) {
-				e.printStackTrace();
-			}
-		}
+		getRdfStoreManager().addTriples(statements, ApplicationConstants.MAPPING_CONTEXT);
 
 		// For mappings that are many-to-many, we add a triple to indicate this.
 		// It helps with the lookups while we are retrieving.
@@ -103,7 +91,7 @@ public class CustomNcboMappingDAO extends AbstractNcboMappingDAO {
 					predicate, vf.createLiteral(true));
 
 			try {
-				con.add(statement, ApplicationConstants.MAPPING_CONTEXT_URI);
+				getRdfStoreManager().addTriple(statement, ApplicationConstants.MAPPING_CONTEXT);
 			} catch (RepositoryException e) {
 				e.printStackTrace();
 			}
@@ -114,8 +102,6 @@ public class CustomNcboMappingDAO extends AbstractNcboMappingDAO {
 			mapping = getMapping(newMapping.getId());
 		} catch (MappingMissingException e) {
 			e.printStackTrace();
-		} finally {
-			cleanup(con);
 		}
 
 		return mapping;
@@ -128,7 +114,7 @@ public class CustomNcboMappingDAO extends AbstractNcboMappingDAO {
 		// Attempt mapping retrieval, return null if failure
 		Mapping mapping = null;
 		try {
-			if (hasMapping(id, con)) {
+			if (hasMapping(id)) {
 				List<Mapping> mappings = getMappings(null, 0, "?mappingId = <"
 						+ id + ">", null);
 				if (mappings != null && !mappings.isEmpty()) {
@@ -155,11 +141,11 @@ public class CustomNcboMappingDAO extends AbstractNcboMappingDAO {
 			String mappingSource, String mappingSourceName,
 			String mappingSourcecontactInfo, URI mappingSourceSite,
 			String mappingSourceAlgorithm, String mappingType)
-			throws MappingMissingException {
+			throws Exception {
 		RepositoryConnection con = getRdfStoreManager()
 				.getRepositoryConnection();
 
-		if (!hasMapping(id, con)) {
+		if (!hasMapping(id)) {
 			throw new MappingMissingException();
 		}
 
@@ -180,11 +166,11 @@ public class CustomNcboMappingDAO extends AbstractNcboMappingDAO {
 	}
 
 	public Mapping updateMapping(URI id, Mapping mapping)
-			throws MappingMissingException {
+			throws Exception {
 		RepositoryConnection con = getRdfStoreManager()
 				.getRepositoryConnection();
 
-		if (!hasMapping(id, con)) {
+		if (!hasMapping(id)) {
 			throw new MappingMissingException();
 		}
 
@@ -203,11 +189,11 @@ public class CustomNcboMappingDAO extends AbstractNcboMappingDAO {
 		return null;
 	}
 
-	public void deleteMapping(URI id) throws MappingMissingException {
+	public void deleteMapping(URI id) throws Exception {
 		RepositoryConnection con = getRdfStoreManager()
 				.getRepositoryConnection();
 		try {
-			if (!hasMapping(id, con)) {
+			if (!hasMapping(id)) {
 				throw new MappingMissingException();
 			}
 
@@ -223,23 +209,11 @@ public class CustomNcboMappingDAO extends AbstractNcboMappingDAO {
 				// database don't contain dependency information and inverse
 				// mappings should be removed when their counterpart is removed.
 				if (mapping.getDependency() == null) {
-					String filter = "?source = <" + mapping.getTarget() + ">";
-					filter += " && ?target = <" + mapping.getSource() + ">";
-					filter += " && ?sourceOntologyId = "
-							+ mapping.getTargetOntologyId();
-					filter += " && ?targetOntologyId = "
-							+ mapping.getSourceOntologyId();
-					filter += " && ?mappingSource = \""
-							+ mapping.getMappingSource() + "\"";
-					filter += " && ?submittedBy = " + mapping.getSubmittedBy();
-					filter += " && ?relation = <" + mapping.getRelation() + ">";
-
-					List<Mapping> inferredDependents = getMappings(null, null,
-							filter, null);
-
-					if (inferredDependents != null) {
-						for (Mapping dependent : inferredDependents) {
-							deleteFromTripleStore(con, dependent.getId());
+					List<String> inferredDependents = getInferredDependentIds(mapping);
+					
+					if (!inferredDependents.isEmpty()) {
+						for (String dependent : inferredDependents) {
+							deleteMapping(new URIImpl(dependent));
 						}
 					}
 				}
@@ -259,11 +233,11 @@ public class CustomNcboMappingDAO extends AbstractNcboMappingDAO {
 		}
 	}
 
-	public void deleteMappingForUpdate(URI id) throws MappingMissingException {
+	public void deleteMappingForUpdate(URI id) throws Exception {
 		RepositoryConnection con = getRdfStoreManager()
 				.getRepositoryConnection();
 
-		if (!hasMapping(id, con)) {
+		if (!hasMapping(id)) {
 			throw new MappingMissingException();
 		}
 
@@ -274,6 +248,67 @@ public class CustomNcboMappingDAO extends AbstractNcboMappingDAO {
 		} catch (RepositoryException e) {
 			e.printStackTrace();
 		}
+	}
+
+	/**
+	 * This method does the actual delete action for removing mappings from the
+	 * triplestore. It removes all triples with a subject matching the mapping
+	 * id.
+	 * 
+	 * @param con
+	 * @param id
+	 * @throws Exception 
+	 */
+	private void deleteFromTripleStore(RepositoryConnection con, URI id)
+			throws Exception {
+		RepositoryResult<Statement> results = con.getStatements(id, null, null,
+				false);
+		
+		// Remove all those triples
+		getRdfStoreManager().deleteTriples(results.asList());
+	}
+	
+	private List<String> getInferredDependentIds(Mapping mapping) {
+		String queryString = "select ?mappingId where { "
+				+ "  ?mappingId <http://protege.stanford.edu/ontologies/mappings/mappings.rdfs#source> <%source%> ."
+				+ "  ?mappingId <http://protege.stanford.edu/ontologies/mappings/mappings.rdfs#target> <%target%> ."
+				+ "  ?mappingId <http://protege.stanford.edu/ontologies/mappings/mappings.rdfs#source_ontology_id> %source_ont% ."
+				+ "  ?mappingId <http://protege.stanford.edu/ontologies/mappings/mappings.rdfs#target_ontology_id> %target_ont% ."
+				+ "  ?mappingId <http://protege.stanford.edu/ontologies/mappings/mappings.rdfs#submitted_by> %submitted_by% ."
+				+ "}";
+		queryString = queryString.replace("%source%", mapping.getTarget().get(0).toString())
+				.replace("%target%", mapping.getSource().get(0).toString())
+				.replace("%source_ont%", mapping.getTargetOntologyId().toString())
+				.replace("%target_ont%", mapping.getSourceOntologyId().toString())
+				.replace("%submitted_by%", mapping.getSubmittedBy().toString());
+
+		RepositoryConnection con = getRdfStoreManager()
+				.getRepositoryConnection();
+
+		List<String> mappingIds = new ArrayList<String>();
+		try {
+			TupleQuery query = con.prepareTupleQuery(QueryLanguage.SPARQL,
+					queryString);
+
+			TupleQueryResult result = query.evaluate();
+
+			while (result.hasNext()) {
+				BindingSet bs = result.next();
+				mappingIds.add(bs.getValue("mappingId").stringValue());
+			}
+
+			result.close();
+		} catch (RepositoryException e) {
+			e.printStackTrace();
+		} catch (QueryEvaluationException e) {
+			e.printStackTrace();
+		} catch (MalformedQueryException e) {
+			e.printStackTrace();
+		} finally {
+			cleanup(con);
+		}
+		
+		return mappingIds;
 	}
 
 	/*******************************************************************
@@ -322,12 +357,12 @@ public class CustomNcboMappingDAO extends AbstractNcboMappingDAO {
 			Integer sourceOntology, Integer targetOntology, Integer limit,
 			Integer offset, SPARQLFilterGenerator parameters)
 			throws InvalidInputException {
-		String queryString = "select ?source (count(?target) as ?count) where {                                                     "
+		String queryString = "select ?source (count(?target) as ?count) where {                                                    "
 				+ "  ?mappingId <http://protege.stanford.edu/ontologies/mappings/mappings.rdfs#source> ?source .                   "
 				+ "  ?mappingId <http://protege.stanford.edu/ontologies/mappings/mappings.rdfs#target> ?target .                   "
 				+ "  ?mappingId <http://protege.stanford.edu/ontologies/mappings/mappings.rdfs#source_ontology_id> %SOURCE_ONT% .  "
 				+ "  ?mappingId <http://protege.stanford.edu/ontologies/mappings/mappings.rdfs#target_ontology_id> %TARGET_ONT% .  "
-				+ "  %TRIPLES_FOR_PARAMS% FILTER (%FILTER%) } GROUP BY ?source ORDER BY DESC(?count) LIMIT %LIMIT% OFFSET %OFFSET%                      ";
+				+ "  %TRIPLES_FOR_PARAMS% FILTER (%FILTER%) } GROUP BY ?source ORDER BY DESC(?count) LIMIT %LIMIT% OFFSET %OFFSET% ";
 
 		// Replace triples placeholder with triples pattern generated from the
 		// user-provided parameters
@@ -415,7 +450,7 @@ public class CustomNcboMappingDAO extends AbstractNcboMappingDAO {
 				mappingIds = getMappingIdsFromUnion(generator);
 			}
 
-			String mappingIdFilter = generateMappingIdINFilter(mappingIds);
+			String mappingIdFilter = generateMappingIdFilter(mappingIds);
 
 			if (mappingIds.size() > 0) {
 				mappings.addAll(getMappings(Integer.MAX_VALUE, 0, mappingIdFilter,
@@ -467,7 +502,7 @@ public class CustomNcboMappingDAO extends AbstractNcboMappingDAO {
 					ApplicationConstants.TARGET_ONTOLOGY_ID);
 			mappingIds = getMappingIdsFromUnion(generator);
 		}
-		String mappingIdFilter = generateMappingIdINFilter(mappingIds);
+		String mappingIdFilter = generateMappingIdFilter(mappingIds);
 		List<Mapping> mappings = new ArrayList<Mapping>();
 		if (mappingIds.size() > 0) {
 			mappings = getMappings(limit, offset, mappingIdFilter, parameters);
@@ -497,7 +532,7 @@ public class CustomNcboMappingDAO extends AbstractNcboMappingDAO {
 					new URIImpl(conceptId));
 			mappingIds = getMappingIdsFromUnion(generator);
 		}
-		String mappingIdFilter = generateMappingIdINFilter(mappingIds);
+		String mappingIdFilter = generateMappingIdFilter(mappingIds);
 		List<Mapping> mappings = new ArrayList<Mapping>();
 		if (mappingIds.size() > 0) {
 			mappings = getMappings(limit, offset, mappingIdFilter, parameters);
@@ -527,7 +562,7 @@ public class CustomNcboMappingDAO extends AbstractNcboMappingDAO {
 					new URIImpl(conceptId));
 			mappingIds = getMappingIdsFromUnion(generator);
 		}
-		String mappingIdFilter = generateMappingIdINFilter(mappingIds);
+		String mappingIdFilter = generateMappingIdFilter(mappingIds);
 		List<Mapping> mappings = new ArrayList<Mapping>();
 		if (mappingIds.size() > 0) {
 			mappings = getMappings(limit, offset, mappingIdFilter, parameters);
@@ -574,7 +609,7 @@ public class CustomNcboMappingDAO extends AbstractNcboMappingDAO {
 			mappingIds = getMappingIdsFromUnion(generator);
 		}
 
-		String mappingIdFilter = generateMappingIdINFilter(mappingIds);
+		String mappingIdFilter = generateMappingIdFilter(mappingIds);
 		List<Mapping> mappings = new ArrayList<Mapping>();
 		if (mappingIds.size() > 0) {
 			mappings = getMappings(limit, offset, mappingIdFilter, parameters);

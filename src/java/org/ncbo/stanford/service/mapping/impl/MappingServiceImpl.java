@@ -38,7 +38,7 @@ public class MappingServiceImpl implements MappingService {
 			MappingSourceEnum mappingSource, String mappingSourceName,
 			String mappingSourcecontactInfo, URI mappingSourceSite,
 			String mappingSourceAlgorithm, String mappingType)
-			throws MappingExistsException {
+			throws Exception {
 		// Verify that there's a string provided to avoid null pointer exception
 		String mappingSourceStr = "";
 		if (mappingSource != null)
@@ -53,7 +53,7 @@ public class MappingServiceImpl implements MappingService {
 	}
 
 	public MappingBean createMapping(MappingBean mapping)
-			throws MappingExistsException {
+			throws Exception {
 		Mapping newMapping = mappingDAO
 				.createMapping(convertToMappingEntity(mapping));
 		return convertToMappingBean(newMapping);
@@ -348,13 +348,13 @@ public class MappingServiceImpl implements MappingService {
 	}
 
 	public MappingBean updateMapping(URI id, MappingBean mapping)
-			throws MappingMissingException {
+			throws Exception {
 		Mapping updatedMapping = mappingDAO.updateMapping(id,
 				convertToMappingEntity(mapping));
 		return convertToMappingBean(updatedMapping);
 	}
 
-	public void deleteMapping(URI id) throws MappingMissingException {
+	public void deleteMapping(URI id) throws Exception {
 		mappingDAO.deleteMapping(id);
 	}
 

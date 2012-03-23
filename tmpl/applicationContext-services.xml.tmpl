@@ -708,6 +708,13 @@
 			</key>
 			<ref local="rdfStoreManagerMySqlImpl" />
 		</entry>
+		<entry>
+			<key>
+				<util:constant
+					static-field="org.ncbo.stanford.util.constants.ApplicationConstants.FOURSTORE" />
+			</key>
+			<ref local="rdfStoreManager4storeImpl" />
+		</entry>
 	</util:map>
 
 	<bean id="rdfStoreManagerVirtuosoImpl"
@@ -716,6 +723,10 @@
 
 	<bean id="rdfStoreManagerMySqlImpl"
 	      class="org.ncbo.stanford.manager.rdfstore.impl.RDFStoreManagerMySqlImpl">
+	</bean>
+
+	<bean id="rdfStoreManager4storeImpl"
+	      class="org.ncbo.stanford.manager.rdfstore.impl.RDFStoreManager4StoreImpl">
 	</bean>
 
 	<bean id="mappingService"
@@ -1905,7 +1916,7 @@
 		</property>
 	</bean>
 
-	<bean id="notificationAdvice" class="org.ncbo.stanford.aop.notification.NotificationAdvice" factory-method="aspectOf">
+	<bean id="notificationAdvice" class="org.ncbo.stanford.aop.notification.NotificationAdvice" >
 		<property name="emailNotificationService">
 			<ref local="emailNotificationService" />
 		</property>

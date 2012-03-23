@@ -54,21 +54,23 @@ public interface ProvisionalTermService {
 	 * @param permanentId
 	 * @return
 	 * @throws ProvisionalTermExistsException
+	 * @throws Exception 
 	 */
 	public ClassBean createProvisionalTerm(List<Integer> ontologyIds,
 			String label, List<String> synonyms, String definition,
 			URI provisionalSubclassOf, Date created, Date updated,
 			Integer submittedBy, String noteId, String status, URI permanentId)
-			throws ProvisionalTermExistsException;
+			throws ProvisionalTermExistsException, Exception;
 
 	/**
 	 * Delete a provisional term by id.
 	 * 
 	 * @param id
 	 * @throws ProvisionalTermMissingException
+	 * @throws Exception 
 	 */
 	public void deleteProvisionalTerm(String id)
-			throws ProvisionalTermMissingException;
+			throws ProvisionalTermMissingException, Exception;
 
 	/**
 	 * Update a provisional term by id using a provisional term object with new
@@ -78,9 +80,10 @@ public interface ProvisionalTermService {
 	 * @param term
 	 * @return
 	 * @throws ProvisionalTermMissingException
+	 * @throws Exception 
 	 */
 	public ClassBean updateProvisionalTerm(String id, ProvisionalTermBean term)
-			throws ProvisionalTermMissingException;
+			throws ProvisionalTermMissingException, Exception;
 
 	/**
 	 * Update a provisional term by using parameters.
@@ -99,11 +102,12 @@ public interface ProvisionalTermService {
 	 * @param permanentId
 	 * @return
 	 * @throws ProvisionalTermMissingException
+	 * @throws Exception 
 	 */
 	public ClassBean updateProvisionalTerm(String id,
 			List<Integer> ontologyIds, String label, List<String> synonyms,
 			String definition, URI provisionalSubclassOf, Date created,
 			Date updated, Integer submittedBy, String noteId, String status,
-			URI permanentId) throws ProvisionalTermMissingException;
+			URI permanentId) throws ProvisionalTermMissingException, Exception;
 
 }

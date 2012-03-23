@@ -1,9 +1,9 @@
 package org.ncbo.stanford.sparql.bean;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertTrue;
 
-import java.util.ArrayList;
 import java.util.Hashtable;
+import java.util.List;
 import java.util.Map;
 
 import org.junit.Test;
@@ -60,7 +60,7 @@ public class SPARQLBeanTest extends AbstractBioPortalTest {
 	public void testToStatementsWithInheritance() {
 		TestBeanLevel3 l3 = new TestBeanLevel3();
 		
-		ArrayList<Statement> statements = l3.toStatements(rdfStore.getValueFactory());
+		List<Statement> statements = l3.toStatements(rdfStore.getValueFactory());
 		
 		System.out.println(statements);
 		
@@ -75,7 +75,7 @@ public class SPARQLBeanTest extends AbstractBioPortalTest {
 	public void testDifferentPrefix() {
 		TestBeanDifferentPrefix dp = new TestBeanDifferentPrefix();
 
-		ArrayList<Statement> statements = dp.toStatements(rdfStore.getValueFactory());
+		List<Statement> statements = dp.toStatements(rdfStore.getValueFactory());
 		
 		System.out.println(statements);
 		

@@ -209,6 +209,7 @@ public interface ApplicationConstants {
 	public static final URI DEFAULT_RDF_TYPE = new URIImpl("http://purl.bioontology.org/bioportal#SPARQL_Bean");
 	public static final String VIRTUOSO = "virtuoso";
 	public static final String MYSQL = "mysql";
+	public static final String FOURSTORE = "4store";
 	public static final String MAPPING_PREFIX = "http://protege.stanford.edu/ontologies/mappings/mappings.rdfs#";
 	public static final String MAPPING_ID_PREFIX = "http://purl.bioontology.org/mapping/";
 	public static final String PROVISIONAL_TERM_PREFIX = "http://purl.bioontology.org/ontology/provisional#";

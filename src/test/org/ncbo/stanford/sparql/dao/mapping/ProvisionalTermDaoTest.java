@@ -65,7 +65,7 @@ public class ProvisionalTermDaoTest extends AbstractBioPortalTest {
 	}
 
 	@Test
-	public void testUpdateTerm() throws ProvisionalTermMissingException {
+	public void testUpdateTerm() throws Exception {
 		ProvisionalTerm termChanges = new ProvisionalTerm();
 
 		termChanges.setLabel("New label");
@@ -85,7 +85,7 @@ public class ProvisionalTermDaoTest extends AbstractBioPortalTest {
 
 	@Test(expected = ProvisionalTermMissingException.class)
 	public void testDeleteProvisionalTerm()
-			throws ProvisionalTermMissingException {
+			throws Exception {
 		provisionalTermDAO.deleteProvisionalTerm(termId);
 		provisionalTermDAO.getProvisionalTerm(termId);
 	}

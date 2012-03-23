@@ -71,8 +71,8 @@ public abstract class AbstractSPARQLBean implements Serializable {
 		this.id = new URIImpl(this.prefix + UUID.randomUUID().toString());
 	}
 
-	public ArrayList<Statement> toStatements(ValueFactory vf) {
-		ArrayList<Statement> statements = toStatements(this, this.getClass(),
+	public List<Statement> toStatements(ValueFactory vf) {
+		List<Statement> statements = toStatements(this, this.getClass(),
 				this.id, vf);
 
 		// Adds the object's type
@@ -88,7 +88,7 @@ public abstract class AbstractSPARQLBean implements Serializable {
 	 *
 	 * @return
 	 */
-	private static ArrayList<Statement> toStatements(Object object,
+	private static List<Statement> toStatements(Object object,
 			Class<?> klass, URI objectId, ValueFactory vf) {
 		Field[] thisFields = klass.getDeclaredFields();
 

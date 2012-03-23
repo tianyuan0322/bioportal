@@ -1,6 +1,10 @@
 package org.ncbo.stanford.manager.rdfstore;
 
+import java.util.List;
+
+import org.openrdf.model.Statement;
 import org.openrdf.model.ValueFactory;
+import org.openrdf.model.impl.URIImpl;
 import org.openrdf.repository.Repository;
 import org.openrdf.repository.RepositoryConnection;
 import org.openrdf.repository.RepositoryException;
@@ -66,11 +70,58 @@ public abstract class AbstractRDFStoreManager implements RDFStoreManager {
 		try {
 			available = (repository != null && repository.isWritable());
 		} catch (RepositoryException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 
 		return available;
+	}
+
+	public void addTriple(Statement statement, String graph) throws RepositoryException,
+			Exception {
+		RepositoryConnection con = getRepositoryConnection();
+		try {
+			con.add(statement, new URIImpl(graph));
+		} catch (Exception e) {
+			throw new Exception(e);
+		} finally {
+			con.close();
+		}
+	}
+
+	public void addTriples(List<Statement> statements, String graph)
+			throws RepositoryException, Exception {
+		RepositoryConnection con = getRepositoryConnection();
+		try {
+			con.add(statements, new URIImpl(graph));
+		} catch (Exception e) {
+			throw new Exception(e);
+		} finally {
+			con.close();
+		}
+	}
+
+	public void deleteTriple(Statement statement) throws RepositoryException,
+			Exception {
+		RepositoryConnection con = getRepositoryConnection();
+		try {
+			con.remove(statement);
+		} catch (Exception e) {
+			throw new Exception(e);
+		} finally {
+			con.close();
+		}
+	}
+
+	public void deleteTriples(List<Statement> statements)
+			throws RepositoryException, Exception {
+		RepositoryConnection con = getRepositoryConnection();
+		try {
+			con.remove(statements);
+		} catch (Exception e) {
+			throw new Exception(e);
+		} finally {
+			con.close();
+		}
 	}
 
 	protected abstract void initializeRepository();
