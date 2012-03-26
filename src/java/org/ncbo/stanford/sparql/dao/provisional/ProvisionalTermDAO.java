@@ -86,7 +86,7 @@ public class ProvisionalTermDAO {
 	protected final static String provisionalTermCountQuery = ""
 			+ "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#> "
 			+ "SELECT DISTINCT "
-			+ "count(DISTINCT ?id) as ?provisionalTermCount WHERE {"
+			+ "(count(DISTINCT ?id) as ?provisionalTermCount) WHERE {"
 			+ "  ?id rdfs:label ?label ."
 			+ "  ?id <http://purl.bioontology.org/ontology/provisional#definition> ?definition ."
 			+ "  ?id <http://purl.bioontology.org/ontology/provisional#created> ?created ."
