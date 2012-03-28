@@ -396,7 +396,7 @@ public class QuerySearchServiceImpl extends AbstractSearchService implements
 		}
 
 		ScoreDoc[] hits = docs.scoreDocs;
-		SearchResultListBean searchResults = new SearchResultListBean(0);
+		SearchResultListBean searchResults = new SearchResultListBean(0, docs.totalHits);
 
 		if (ontologyIds == null) {
 			ontologyIds = new ArrayList<Integer>(0);
@@ -408,7 +408,7 @@ public class QuerySearchServiceImpl extends AbstractSearchService implements
 		populateEmptyOntologyResults(searchResults, ontologyIds);
 
 		if (log.isDebugEnabled()) {
-			log.debug("Total All Hits: " + hits.length);
+			log.debug("Total All Hits: " + docs.totalHits);
 			log.debug("Total Unique Hits: " + searchResults.size());
 		}
 

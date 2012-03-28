@@ -19,26 +19,22 @@ public class SearchResultListBean extends PaginatableList<SearchBean> {
 	 */
 	private static final long serialVersionUID = 1067248571020887697L;
 	private Map<Integer, OntologyHitBean> hitsPerOntology = new OntologyHitMap();
-
-	/**
-	 * 
-	 */
-	public SearchResultListBean() {
-		super();
-	}
+	private int numHitsTotal = 0;
 
 	/**
 	 * @param c
 	 */
-	public SearchResultListBean(Collection<SearchBean> c) {
+	public SearchResultListBean(Collection<SearchBean> c, final int numHitsTotal) {
 		super(c);
+		this.numHitsTotal = numHitsTotal;
 	}
 
 	/**
 	 * @param initialCapacity
 	 */
-	public SearchResultListBean(int initialCapacity) {
+	public SearchResultListBean(int initialCapacity, final int numHitsTotal) {
 		super(initialCapacity);
+		this.numHitsTotal = numHitsTotal;
 	}
 
 	public void addEmptyOntologyHit(Integer ontologyId,
@@ -68,18 +64,18 @@ public class SearchResultListBean extends PaginatableList<SearchBean> {
 
 	public Paginatable<SearchBean> sublist(int fromIndex, int toIndex) {
 		SearchResultListBean results;
-	
+
 		if (super.size() >= toIndex) {
-			results = new SearchResultListBean(super.subList(
-				fromIndex, toIndex));
+			results = new SearchResultListBean(super
+					.subList(fromIndex, toIndex), numHitsTotal);
 		} else {
-			results = new SearchResultListBean(0);
+			results = new SearchResultListBean(0, numHitsTotal);
 		}
 		results.setHitsPerOntology(hitsPerOntology);
 
 		return results;
 	}
-	
+
 	/**
 	 * @param hitsPerOntology
 	 *            the hitsPerOntology to set
