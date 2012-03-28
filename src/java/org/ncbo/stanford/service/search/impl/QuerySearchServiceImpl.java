@@ -586,10 +586,10 @@ public class QuerySearchServiceImpl extends AbstractSearchService implements
 
 						uniqueDocs.add(uniqueIdent);
 
-						if (log.isDebugEnabled()) {
-							log.debug(getHitAsString(hits[i].score,
-									searchResult));
-						}
+//						if (log.isDebugEnabled()) {
+//							log.debug(getHitAsString(hits[i].score,
+//									searchResult));
+//						}
 					}
 				}
 			}

@@ -21,6 +21,9 @@ public class SearchResultListBean extends PaginatableList<SearchBean> {
 	private Map<Integer, OntologyHitBean> hitsPerOntology = new OntologyHitMap();
 	private int numHitsTotal = 0;
 
+	public static final String NUM_HITS_TOTAL_FIELD_NAME = "numHitsTotal";
+	public static final String CLASS_ALIAS = "searchResultList";
+
 	/**
 	 * @param c
 	 */
@@ -90,5 +93,12 @@ public class SearchResultListBean extends PaginatableList<SearchBean> {
 	 */
 	public Map<Integer, OntologyHitBean> getHitsPerOntology() {
 		return hitsPerOntology;
+	}
+
+	/**
+	 * @return the numHitsTotal
+	 */
+	public int getNumHitsTotal() {
+		return numHitsTotal;
 	}
 }

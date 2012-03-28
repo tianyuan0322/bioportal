@@ -2,7 +2,6 @@ package org.ncbo.stanford.service.xml.converters;
 
 import org.ncbo.stanford.bean.search.SearchBean;
 import org.ncbo.stanford.bean.search.SearchResultListBean;
-import org.ncbo.stanford.util.MessageUtils;
 
 import com.thoughtworks.xstream.converters.MarshallingContext;
 import com.thoughtworks.xstream.converters.collections.CollectionConverter;
@@ -32,7 +31,7 @@ public class SearchResultListBeanConverter extends CollectionConverter {
 	public void marshal(Object source, HierarchicalStreamWriter writer,
 			MarshallingContext context) {
 		SearchResultListBean results = (SearchResultListBean) source;
-		writer.startNode(MessageUtils.getMessage("entity.searchresultlist"));
+		writer.startNode(SearchResultListBean.CLASS_ALIAS);
 
 		for (SearchBean searchBean : results) {
 			writeItem(searchBean, context, writer);
@@ -40,6 +39,10 @@ public class SearchResultListBeanConverter extends CollectionConverter {
 
 		writer.endNode();
 		writeOntologyHits(results.getHitsPerOntology(), context, writer);
+
+		writer.startNode(SearchResultListBean.NUM_HITS_TOTAL_FIELD_NAME);
+		writer.setValue(Integer.toString(results.getNumHitsTotal()));
+		writer.endNode();
 	}
 
 	protected void writeOntologyHits(Object item, MarshallingContext context,
