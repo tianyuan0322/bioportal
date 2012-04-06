@@ -15,16 +15,11 @@
   <swrl:Builtin rdf:ID="isNumeric"/>
   <swrl:Builtin rdf:ID="notNumeric"/>
   <swrl:Builtin rdf:ID="isIndividual"/>
-  <swrl:Builtin rdf:ID="isConstant"/>
+  <swrl:Builtin rdf:ID="isLiteral"/>
+  <swrl:Builtin rdf:ID="notLiteral"/>
   <swrl:Builtin rdf:ID="hasNumberOfPropertyValues"/>
   <swrl:Builtin rdf:ID="hasClass"/>
   <swrl:Builtin rdf:ID="hasIndividual">
-    <swrlb:args rdf:datatype="http://www.w3.org/2001/XMLSchema#int"
-    >1</swrlb:args>
-    <swrlb:minArgs rdf:datatype="http://www.w3.org/2001/XMLSchema#int"
-    >1</swrlb:minArgs>
-    <swrlb:maxArgs rdf:datatype="http://www.w3.org/2001/XMLSchema#int"
-    >1</swrlb:maxArgs>
   </swrl:Builtin>
 </rdf:RDF>
 
