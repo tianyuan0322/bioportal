@@ -37,14 +37,15 @@ public class BooleanWildCardQuery extends BooleanQuery {
 	private static final char WILDCARD_CHAR = '*';
 
 	private static final String LUCENE_ESCAPE_CHARS = "[\\\\+\\-\\!\\(\\)\\:\\^\\]\\{\\}\\~\\*\\?]";
-	private static final Pattern LUCENE_PATTERN = Pattern.compile(LUCENE_ESCAPE_CHARS);
+	private static final Pattern LUCENE_PATTERN = Pattern
+			.compile(LUCENE_ESCAPE_CHARS);
 	private static final String REPLACEMENT_STRING = "\\\\$0";
 	private static final int EXACT_MATCH_BOOST = 10;
-		
+
 	private Version luceneVersion;
 	private IndexReader reader;
 	private Analyzer analyzer;
-	
+
 	public BooleanWildCardQuery(Version luceneVersion, IndexReader reader,
 			Analyzer analyzer) {
 		BooleanQuery.setMaxClauseCount(Integer.MAX_VALUE);
@@ -70,10 +71,12 @@ public class BooleanWildCardQuery extends BooleanQuery {
 	 * searcher.getIndexReader(), analyzer);
 	 * q.parseBooleanWildCardQuery("contents", expr); } catch (Exception e) {
 	 * e.printStackTrace(); } }
-	 */	
-	public void parseBooleanWildCardQuery(String field, String expr) throws Exception {
+	 */
+
+	public void parseBooleanWildCardQuery(String field, String expr)
+			throws Exception {
 		expr = parseExpression(expr);
-		
+
 		if (expr.length() > 0) {
 			StringTokenizer st = new StringTokenizer(expr);
 
@@ -81,27 +84,29 @@ public class BooleanWildCardQuery extends BooleanQuery {
 				MultiPhraseQuery mpq = new MultiPhraseQuery();
 				String termSetStr = st.nextToken();
 				String[] termSet = termSetStr.split(IN_PAREN_DELIMITER);
-				List<Term> clauseTerms = new ArrayList<Term>(0);			
-				
+				List<Term> clauseTerms = new ArrayList<Term>(0);
+
 				if (termSet[0].matches("^[-+].+")) {
 					termSet[0] = termSet[0].substring(1);
 				}
-				
+
 				for (String term : termSet) {
-					if (termSetStr.charAt(0) != '-') {						
+					if (termSetStr.charAt(0) != '-') {
 						TermQuery tq = new TermQuery(new Term(field, term));
 						tq.setBoost(EXACT_MATCH_BOOST);
-						add(tq, BooleanClause.Occur.SHOULD);						
+						add(tq, BooleanClause.Occur.SHOULD);
 					}
-					
-					term = LUCENE_PATTERN.matcher(term).replaceAll(REPLACEMENT_STRING);
-					Term[] expandedTerms = expand(field, term);	
+
+					term = LUCENE_PATTERN.matcher(term).replaceAll(
+							REPLACEMENT_STRING);
+					Term[] expandedTerms = expand(field, term);
 					clauseTerms.addAll(Arrays.asList(expandedTerms));
 				}
-				
-				Term[] allTerms = clauseTerms.toArray(new Term[clauseTerms.size()]);				
+
+				Term[] allTerms = clauseTerms.toArray(new Term[clauseTerms
+						.size()]);
 				mpq.add(allTerms);
-				
+
 				switch (termSetStr.charAt(0)) {
 				case '-':
 					add(mpq, BooleanClause.Occur.MUST_NOT);
@@ -110,12 +115,13 @@ public class BooleanWildCardQuery extends BooleanQuery {
 					add(mpq, BooleanClause.Occur.MUST);
 				}
 			}
-		}		
+		}
 	}
 
 	private String parseExpression(String expr) {
 		expr = expr.replaceAll(SPACES_PATTERN, " ").toLowerCase();
 		expr = expr.replace("\"", "");
+		expr = expr.replace("_", " ");
 
 		// words in parens
 		Pattern inParens = Pattern.compile("\\([^\\(\\)]+\\)");
@@ -130,7 +136,7 @@ public class BooleanWildCardQuery extends BooleanQuery {
 
 		return expr;
 	}
-	
+
 	private Term[] expand(String field, String prefix) throws Exception {
 		QueryParser parser = new QueryParser(luceneVersion, field, analyzer);
 		Query queryExact = parser.parse(prefix + WILDCARD_CHAR);
@@ -147,5 +153,5 @@ public class BooleanWildCardQuery extends BooleanQuery {
 		queryRewritten.extractTerms(terms);
 
 		return terms.toArray(new Term[terms.size()]);
-	}	
+	}
 }
