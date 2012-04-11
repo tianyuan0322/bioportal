@@ -88,7 +88,7 @@ public class SearchServiceTest extends AbstractBioPortalTest {
 			Integer maxNumHits = 250;
 
 			Query q = queryService.generateLuceneSearchQuery(ontologyIds,
-					objectTypes, expr, includeProperties, isExactMatch);
+					objectTypes, null, expr, includeProperties, isExactMatch);
 			System.out.println("q: " + q);
 
 			long start = System.currentTimeMillis();
@@ -116,7 +116,7 @@ public class SearchServiceTest extends AbstractBioPortalTest {
 
 		try {
 			Integer maxNumHits = 50;
-			Query query = queryService.generateLuceneSearchQuery(null, null,
+			Query query = queryService.generateLuceneSearchQuery(null, null, null,
 					"cell", true, false);
 			Page<SearchBean> results = queryService.executeQuery(query,
 					maxNumHits, null, null, false);
@@ -139,7 +139,7 @@ public class SearchServiceTest extends AbstractBioPortalTest {
 
 		try {
 			Integer maxNumHits = 98;
-			Query query = queryService.generateLuceneSearchQuery(null, null,
+			Query query = queryService.generateLuceneSearchQuery(null, null, null,
 					"lead", true, false);
 			Page<SearchBean> results = queryService.executeQuery(query,
 					maxNumHits, null, null, false);
@@ -166,7 +166,7 @@ public class SearchServiceTest extends AbstractBioPortalTest {
 				.println("SearchServiceTest: searchAllOntologies().......................BEGIN");
 
 		Integer maxNumHits = 50;
-		Query query = queryService.generateLuceneSearchQuery(null, null,
+		Query query = queryService.generateLuceneSearchQuery(null, null, null,
 				"blood", true, false);
 		Page<SearchBean> results = queryService.executeQuery(query, 3, 6,
 				maxNumHits, null, null, false);
