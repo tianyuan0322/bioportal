@@ -11,6 +11,7 @@ import org.ncbo.stanford.exception.InvalidInputException;
 import org.ncbo.stanford.exception.MappingExistsException;
 import org.ncbo.stanford.exception.MappingMissingException;
 import org.ncbo.stanford.sparql.bean.Mapping;
+import org.ncbo.stanford.sparql.bean.ProcessInfo;
 import org.ncbo.stanford.util.constants.ApplicationConstants;
 import org.ncbo.stanford.util.sparql.SPARQLFilterGenerator;
 import org.ncbo.stanford.util.sparql.SPARQLUnionGenerator;
@@ -42,6 +43,8 @@ public class CustomNcboMappingDAO extends AbstractNcboMappingDAO {
 			throws Exception {
 
 		Mapping newMapping = new Mapping();
+		ProcessInfo processInfo = new ProcessInfo();
+		newMapping.setProcessInfo(processInfo);
 
 		// Set Mapping properties
 		newMapping.setSource(source);
@@ -54,17 +57,17 @@ public class CustomNcboMappingDAO extends AbstractNcboMappingDAO {
 
 		// Set metadata properties
 		newMapping.setDependency(dependency);
-		newMapping.setSubmittedBy(submittedBy);
-		newMapping.setDate(new Date());
-		newMapping.setComment(comment);
-		newMapping.setMappingType(mappingType);
+		processInfo.setSubmittedBy(submittedBy);
+		processInfo.setDate(new Date());
+		processInfo.setComment(comment);
+		processInfo.setMappingType(mappingType);
 
 		// Set mappingSource properties
-		newMapping.setMappingSource(mappingSource);
-		newMapping.setMappingSourceName(mappingSourceName);
-		newMapping.setMappingSourcecontactInfo(mappingSourceContactInfo);
-		newMapping.setMappingSourceSite(mappingSourceSite);
-		newMapping.setMappingSourceAlgorithm(mappingSourceAlgorithm);
+		processInfo.setMappingSource(mappingSource);
+		processInfo.setMappingSourceName(mappingSourceName);
+		processInfo.setMappingSourcecontactInfo(mappingSourceContactInfo);
+		processInfo.setMappingSourceSite(mappingSourceSite);
+		processInfo.setMappingSourceAlgorithm(mappingSourceAlgorithm);
 
 		createMapping(newMapping);
 
@@ -78,7 +81,8 @@ public class CustomNcboMappingDAO extends AbstractNcboMappingDAO {
 		ValueFactory vf = getRdfStoreManager().getValueFactory();
 
 		List<Statement> statements = newMapping.toStatements(vf);
-
+		statements.addAll(newMapping.getProcessInfo().toStatements(vf));
+		
 		getRdfStoreManager().addTriples(statements, ApplicationConstants.MAPPING_CONTEXT);
 
 		// For mappings that are many-to-many, we add a triple to indicate this.
@@ -274,13 +278,14 @@ public class CustomNcboMappingDAO extends AbstractNcboMappingDAO {
 				+ "  ?mappingId <http://protege.stanford.edu/ontologies/mappings/mappings.rdfs#target> <%target%> ."
 				+ "  ?mappingId <http://protege.stanford.edu/ontologies/mappings/mappings.rdfs#source_ontology_id> %source_ont% ."
 				+ "  ?mappingId <http://protege.stanford.edu/ontologies/mappings/mappings.rdfs#target_ontology_id> %target_ont% ."
-				+ "  ?mappingId <http://protege.stanford.edu/ontologies/mappings/mappings.rdfs#submitted_by> %submitted_by% ."
+				+ "  ?mappingId <http://protege.stanford.edu/ontologies/mappings/mappings.rdfs#has_process_info> ?procInf ."
+				+ "  ?procInf <http://protege.stanford.edu/ontologies/mappings/mappings.rdfs#submitted_by> %submitted_by% ."
 				+ "}";
 		queryString = queryString.replace("%source%", mapping.getTarget().get(0).toString())
 				.replace("%target%", mapping.getSource().get(0).toString())
 				.replace("%source_ont%", mapping.getTargetOntologyId().toString())
 				.replace("%target_ont%", mapping.getSourceOntologyId().toString())
-				.replace("%submitted_by%", mapping.getSubmittedBy().toString());
+				.replace("%submitted_by%", mapping.getProcessInfo().getSubmittedBy().toString());
 
 		RepositoryConnection con = getRdfStoreManager()
 				.getRepositoryConnection();

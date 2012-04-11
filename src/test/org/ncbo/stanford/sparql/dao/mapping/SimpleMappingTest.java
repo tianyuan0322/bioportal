@@ -2,12 +2,16 @@ package org.ncbo.stanford.sparql.dao.mapping;
 
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.ncbo.stanford.bean.mapping.MappingBean;
 import org.ncbo.stanford.bean.mapping.MappingUserStatsBean;
+import org.ncbo.stanford.enumeration.MappingSourceEnum;
 import org.ncbo.stanford.sparql.bean.Mapping;
+import org.ncbo.stanford.sparql.bean.ProcessInfo;
 import org.ncbo.stanford.util.sparql.SPARQLFilterGenerator;
 import org.ncbo.stanford.util.sparql.SPARQLUnionGenerator;
 import org.openrdf.model.URI;
@@ -39,14 +43,17 @@ public class SimpleMappingTest {
     //@SuppressWarnings("unchecked")
 	@Test
 	public void testAllOK() throws Exception {
+		//createMapping();
+		deleteMapping();
         //testUnionGenerator();
+		//getMappingTest();
         //getMappingsForConceptTest();
         //getMappingsBetweenConceptsTest();
         //getMappingsToConceptTest();
         //getMappingsFromConceptTest();
         //getMappingsForOntologyTest();
 		//int a = getMappingsBetweenOntologiesTest(1032);
-		getOntologyUserCountTest();
+		//getOntologyUserCountTest();
         //getMappingsToOntologyTest();
         //getCountMappingsBetweenConceptsTest();
         //getCountMappingsToConceptTest();
@@ -82,13 +89,70 @@ public class SimpleMappingTest {
 
     }
 
+    @SuppressWarnings("unchecked")
+	//@Test
+    public void deleteMapping() throws Exception {
+        try {
+            long ts = System.currentTimeMillis();
+            mappingDAO.deleteMapping(new URIImpl("http://purl.bioontology.org/mapping/2599c4d4-b3d1-4322-9c77-b15950aae9b8"));
+            
+            ts = System.currentTimeMillis() - ts;
+            System.out.printf("getMappingTest %.3f sec. elapsed time\n",ts/1000.0);
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw e;
+        }
+    }
+    
+    @SuppressWarnings("unchecked")
+	//@Test
+    public void createMapping() throws Exception {
+        try {
+            long ts = System.currentTimeMillis();
+            Mapping newMapping = new Mapping();
+
+    		ProcessInfo procInfo = new ProcessInfo();
+    		newMapping.setProcessInfo(procInfo);
+    		
+    		// Set all properties
+    		procInfo.setComment("test create new mapping");
+    		newMapping.setCreatedInSourceOntologyVersion(1003);
+    		newMapping.setCreatedInTargetOntologyVersion(1004);
+    		procInfo.setDate(new Date());
+    		procInfo.setMappingSource("test unit desc");
+    		procInfo.setMappingSourceName("test unit name");
+    		procInfo.setMappingSourceAlgorithm("just a random test");
+    		procInfo.setMappingSourcecontactInfo("manuelso");
+    		procInfo.setMappingSourceSite(new  URIImpl("http://purl.bioontology.org/mapping/site"));
+    		procInfo.setMappingType("test");
+    		newMapping.setRelation(new  URIImpl("http://purl.bioontology.org/mapping/rel/test"));
+    		List<URI> source = new ArrayList<URI>();
+    		source.add(new  URIImpl("http://purl.bioontology.org/mapping/source/term/test"));
+    		newMapping.setSource(source);
+    		newMapping.setSourceOntologyId(6789);
+    		procInfo.setSubmittedBy(39184);
+    		List<URI> target = new ArrayList<URI>();
+    		target.add(new  URIImpl("http://purl.bioontology.org/mapping/source/target/test"));
+    		newMapping.setTarget(target);
+    		newMapping.setTargetOntologyId(9876);
+
+            mappingDAO.createMapping(newMapping);
+            
+            System.out.println("Created "+newMapping.getId());
+            ts = System.currentTimeMillis() - ts;
+            System.out.printf("getMappingTest %.3f sec. elapsed time\n",ts/1000.0);
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw e;
+        }
+    }
     
     @SuppressWarnings("unchecked")
 	//@Test
     public void getMappingTest() throws Exception {
         try {
             long ts = System.currentTimeMillis();
-            String mappingId = "http://purl.bioontology.org/mapping/fb009110-004c-012e-74a1-005056bd0010";
+            String mappingId = "http://purl.bioontology.org/mapping/000015a0-ff2e-012d-748c-005056bd0010";
             // many to many     http://purl.bioontology.org/mapping/49e0ece0-0018-012e-7493-005056bd0010
             URI uriMappingId = new URIImpl(mappingId);
             Mapping m = this.mappingDAO.getMapping(uriMappingId);

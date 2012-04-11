@@ -26,7 +26,7 @@ public class CustomNcboMappingStatsDAO extends AbstractNcboMappingDAO {
 
 	private static final String mostRecentMappings = "PREFIX map: <http://protege.stanford.edu/ontologies/mappings/mappings.rdfs#> " 
 			+ "SELECT DISTINCT ?mappingId where { "
-			+ "?mappingId map:date ?date } ORDER BY DESC(?date) LIMIT %LIMIT%";
+			+ "?procInfo map:date ?date . ?mappingId map:has_process_info ?procInfo } ORDER BY DESC(?date) LIMIT %LIMIT%";
 
 	private static final String totalMappings = "PREFIX map: <http://protege.stanford.edu/ontologies/mappings/mappings.rdfs#> " 
 			+ "SELECT (count(?mappingId) as ?mappings) "
@@ -67,9 +67,9 @@ public class CustomNcboMappingStatsDAO extends AbstractNcboMappingDAO {
 	private static final String userCount = "PREFIX map: <http://protege.stanford.edu/ontologies/mappings/mappings.rdfs#> " 
 			+ "SELECT ?userId (count(?mappingId) as ?count) "
 			+ "WHERE { { ?mappingId map:source_ontology_id %ONT% . "
-			+ "?mappingId map:submitted_by ?userId . } "
+			+ "?mappingId map:has_process_info [ map:submitted_by ?userId ] . } "
 			+ "UNION { ?mappingId map:target_ontology_id %ONT% . "
-			+ "?mappingId map:submitted_by ?userId . } "
+			+ "?mappingId map:has_process_info [ map:submitted_by ?userId ] . } "
 			+ "} GROUP BY ?userId ORDER BY DESC(?count)";
 
 	private static final String userCountWithTarget = "PREFIX map: <http://protege.stanford.edu/ontologies/mappings/mappings.rdfs#> " 
@@ -77,11 +77,11 @@ public class CustomNcboMappingStatsDAO extends AbstractNcboMappingDAO {
 			+ "WHERE { "
 			+ "{ ?mappingId map:source_ontology_id %ONT% . "
 			+ " ?mappingId map:target_ontology_id %TARG% . "
-			+ "?mappingId map:submitted_by ?userId . } "
+			+ "?mappingId map:has_process_info [ map:submitted_by ?userId ] . } "
 			+ "UNION { "
 			+ "?mappingId map:target_ontology_id %ONT% . "
 			+ "?mappingId map:target_ontology_id %TARG% . "
-			+ "?mappingId map:submitted_by ?userId . } "
+			+ "?mappingId map:has_process_info [ map:submitted_by ?userId ] . } "
 			+ "} GROUP BY ?userId ORDER BY DESC(?count)";
 
 	/**
@@ -130,7 +130,7 @@ public class CustomNcboMappingStatsDAO extends AbstractNcboMappingDAO {
 
 		Collections.sort(mappings, new Comparator<Mapping>() {
 			public int compare(Mapping map1, Mapping map2) {
-				return map2.getDate().compareTo(map1.getDate());
+				return map2.getProcessInfo().getDate().compareTo(map1.getProcessInfo().getDate());
 			}
 		});
 

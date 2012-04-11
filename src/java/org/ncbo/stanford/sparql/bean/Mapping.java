@@ -31,28 +31,6 @@ public class Mapping extends AbstractSPARQLBean {
 			fieldMap.put(field.getName(), field);
 		}
 
-		ParameterMap submittedBy = new ParameterMap();
-		submittedBy.URI = fieldMap.get("submittedBy").getAnnotation(IRI.class)
-				.value();
-		submittedBy.variableName = "submittedBy";
-		parameterMapping.put("submittedBy", submittedBy);
-
-		ParameterMap mappingType = new ParameterMap();
-		mappingType.URI = fieldMap.get("mappingType").getAnnotation(IRI.class)
-				.value();
-		mappingType.variableName = "mappingType";
-		parameterMapping.put("mappingType", mappingType);
-
-		ParameterMap startDate = new ParameterMap();
-		startDate.URI = fieldMap.get("date").getAnnotation(IRI.class)
-				.value();
-		startDate.variableName = "date";
-		parameterMapping.put("startDate", startDate);
-
-		ParameterMap endDate = new ParameterMap();
-		endDate.URI = fieldMap.get("date").getAnnotation(IRI.class).value();
-		endDate.variableName = "date";
-		parameterMapping.put("endDate", endDate);
 
 		ParameterMap relationshipTypes = new ParameterMap();
 		relationshipTypes.URI = fieldMap.get("relation").getAnnotation(IRI.class)
@@ -60,11 +38,6 @@ public class Mapping extends AbstractSPARQLBean {
 		relationshipTypes.variableName = "relation";
 		parameterMapping.put("relationshipTypes", relationshipTypes);
 
-		ParameterMap mappingSources = new ParameterMap();
-		mappingSources.URI = fieldMap.get("mappingSource")
-				.getAnnotation(IRI.class).value();
-		mappingSources.variableName = "mappingSource";
-		parameterMapping.put("mappingSources", mappingSources);
 	};
 
 	@IRI(PREFIX + "id")
@@ -91,35 +64,14 @@ public class Mapping extends AbstractSPARQLBean {
 	@IRI(PREFIX + "created_in_target_ontology_version")
 	protected Integer createdInTargetOntologyVersion;
 
-	@IRI(PREFIX + "date")
-	protected Date date;
+	@IRI(PREFIX + "has_process_info")
+	protected ProcessInfo processInfo;
 
-	@IRI(PREFIX + "submitted_by")
-	protected Integer submittedBy;
 
-	@IRI(PREFIX + "mapping_type")
-	protected String mappingType;
 
 	@IRI(PREFIX + "dependency")
 	protected URI dependency;
 
-	@IRI(PREFIX + "comment")
-	protected String comment;
-
-	@IRI(PREFIX + "mapping_source")
-	protected String mappingSource;
-
-	@IRI(PREFIX + "mapping_source_name")
-	protected String mappingSourceName;
-
-	@IRI(PREFIX + "mapping_source_contact_info")
-	protected String mappingSourcecontactInfo;
-
-	@IRI(PREFIX + "mapping_source_site")
-	protected URI mappingSourceSite;
-
-	@IRI(PREFIX + "mapping_source_algorithm")
-	protected String mappingSourceAlgorithm;
 
 	/**
 	 * Default no-arg constructor.
@@ -143,140 +95,7 @@ public class Mapping extends AbstractSPARQLBean {
 		this.dependency = dependency;
 	}
 
-	/**
-	 * @return the comment
-	 */
-	public String getComment() {
-		return comment;
-	}
 
-	/**
-	 * @param comment
-	 *            the comment to set
-	 */
-	public void setComment(String comment) {
-		this.comment = comment;
-	}
-
-	/**
-	 * @return the date
-	 */
-	public Date getDate() {
-		return date;
-	}
-
-	/**
-	 * @param date
-	 *            the date to set
-	 */
-	public void setDate(Date date) {
-		this.date = date;
-	}
-
-	/**
-	 * @return the submittedBy
-	 */
-	public Integer getSubmittedBy() {
-		return submittedBy;
-	}
-
-	/**
-	 * @param submittedBy2
-	 *            the submittedBy to set
-	 */
-	public void setSubmittedBy(Integer submittedBy2) {
-		this.submittedBy = submittedBy2;
-	}
-
-	/**
-	 * @return the mappingSource
-	 */
-	public String getMappingSource() {
-		return mappingSource;
-	}
-
-	/**
-	 * @param mappingSource
-	 *            the mappingSource to set
-	 */
-	public void setMappingSource(String mappingSource) {
-		this.mappingSource = mappingSource;
-	}
-
-	/**
-	 * @return the mappingSourcecontactInfo
-	 */
-	public String getMappingSourcecontactInfo() {
-		return mappingSourcecontactInfo;
-	}
-
-	/**
-	 * @param mappingSourcecontactInfo
-	 *            the mappingSourcecontactInfo to set
-	 */
-	public void setMappingSourcecontactInfo(String mappingSourcecontactInfo) {
-		this.mappingSourcecontactInfo = mappingSourcecontactInfo;
-	}
-
-	/**
-	 * @return the mappingSourceSite
-	 */
-	public URI getMappingSourceSite() {
-		return mappingSourceSite;
-	}
-
-	/**
-	 * @param mappingSourceSite
-	 *            the mappingSourceSite to set
-	 */
-	public void setMappingSourceSite(URI mappingSourceSite) {
-		this.mappingSourceSite = mappingSourceSite;
-	}
-
-	/**
-	 * @return the mappingSourceAlgorithm
-	 */
-	public String getMappingSourceAlgorithm() {
-		return mappingSourceAlgorithm;
-	}
-
-	/**
-	 * @param mappingSourceAlgorithm
-	 *            the mappingSourceAlgorithm to set
-	 */
-	public void setMappingSourceAlgorithm(String mappingSourceAlgorithm) {
-		this.mappingSourceAlgorithm = mappingSourceAlgorithm;
-	}
-
-	/**
-	 * @return the mappingType
-	 */
-	public String getMappingType() {
-		return mappingType;
-	}
-
-	/**
-	 * @param mappingType
-	 *            the mappingType to set
-	 */
-	public void setMappingType(String mappingType) {
-		this.mappingType = mappingType;
-	}
-
-	/**
-	 * @return the mappingSourceName
-	 */
-	public String getMappingSourceName() {
-		return mappingSourceName;
-	}
-
-	/**
-	 * @param mappingSourceName
-	 *            the mappingSourceName to set
-	 */
-	public void setMappingSourceName(String mappingSourceName) {
-		this.mappingSourceName = mappingSourceName;
-	}
 
 	/**
 	 * @return the source
@@ -407,4 +226,11 @@ public class Mapping extends AbstractSPARQLBean {
         return Mapping.parameterMapping;
     }
 
+	public ProcessInfo getProcessInfo() {
+		return processInfo;
+	}
+
+	public void setProcessInfo(ProcessInfo processInfo) {
+		this.processInfo = processInfo;
+	}
 }
