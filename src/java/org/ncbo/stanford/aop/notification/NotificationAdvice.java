@@ -24,6 +24,7 @@ import org.ncbo.stanford.service.notification.EmailNotificationService;
 import org.ncbo.stanford.service.ontology.OntologyService;
 import org.ncbo.stanford.util.MessageUtils;
 import org.ncbo.stanford.util.constants.ApplicationConstants;
+import org.springframework.beans.factory.annotation.Autowired;
 
 /**
  * @author g.prakash
@@ -35,9 +36,16 @@ public class NotificationAdvice {
 
 	private static final Log log = LogFactory.getLog(NotificationAdvice.class);
 
+	@Autowired
 	private EmailNotificationService emailNotificationService;
+
+	@Autowired
 	private OntologyService ontologyService;
+
+	@Autowired
 	private NotesService notesService;
+
+	@Autowired
 	private NcboUserDAO ncboUserDAO;
 
 	/**
