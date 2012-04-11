@@ -93,6 +93,17 @@
 		</property>
 	</bean>
 
+	<bean id="conceptBatchRestlet"
+		class="org.ncbo.stanford.view.rest.restlet.concept.ConceptBatchRestlet"
+		parent="abstractBaseRestlet">
+		<property name="conceptService">
+			<ref bean="conceptService" />
+		</property>
+		<property name="ontologyService">
+			<ref bean="ontologyService" />
+		</property>
+	</bean>
+
 	<bean id="instanceRestlet"
 		class="org.ncbo.stanford.view.rest.restlet.instance.InstanceRestlet"
 		parent="abstractBaseRestlet">
@@ -688,6 +699,9 @@
 						</entry>
 						<entry key="/groups">
 							<ref local="groupsRestlet" />
+						</entry>
+						<entry key="/virtual/concepts/batch">
+							<ref local="conceptBatchRestlet" />
 						</entry>
 						<entry key="/concepts/{ontologyversionid}">
 							<ref local="conceptRestlet" />

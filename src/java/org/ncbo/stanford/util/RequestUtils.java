@@ -20,6 +20,8 @@ import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.commons.lang.StringUtils;
+import org.ncbo.stanford.bean.concept.ConceptOntologyPairBean;
 import org.ncbo.stanford.bean.http.HttpInputStreamWrapper;
 import org.ncbo.stanford.util.helper.DateHelper;
 import org.ncbo.stanford.util.helper.StringHelper;
@@ -303,6 +305,27 @@ public class RequestUtils {
 		return stringList;
 	}
 
+	public static List<ConceptOntologyPairBean> parseConceptOntologyPairs(
+			String stringList) throws Exception {
+		List<String> conceptPairs = parseStringListParam(stringList);
+		List<ConceptOntologyPairBean> parsedPairs = new ArrayList<ConceptOntologyPairBean>();
+
+		for (String conceptPair : conceptPairs) {
+			String[] pair = StringUtils.split(conceptPair, ";");
+			Integer ontologyId = parseIntegerParam(pair[0]);
+			String conceptId = pair[1];
+
+			// Check data
+			if (ontologyId == null) {
+				throw new Exception("Ontology id is not an integer");
+			}
+
+			parsedPairs.add(new ConceptOntologyPairBean(ontologyId, conceptId));
+		}
+
+		return parsedPairs;
+	}
+
 	public static List<URI> parseURIListParam(String URIListParam) {
 		List<String> URIs = parseStringListParam(URIListParam);
 
@@ -353,8 +376,8 @@ public class RequestUtils {
 
 		if (param != null) {
 			try {
-				param = URLDecoder.decode(param, MessageUtils
-						.getMessage("default.encoding"));
+				param = URLDecoder.decode(param,
+						MessageUtils.getMessage("default.encoding"));
 			} catch (UnsupportedEncodingException e) {
 				// this shouldn't happen
 				e.printStackTrace();
@@ -386,8 +409,8 @@ public class RequestUtils {
 
 		if (paramData != null) {
 			try {
-				paramData = URLDecoder.decode(paramData, MessageUtils
-						.getMessage("default.encoding"));
+				paramData = URLDecoder.decode(paramData,
+						MessageUtils.getMessage("default.encoding"));
 			} catch (UnsupportedEncodingException e) {
 				e.printStackTrace();
 			}
@@ -432,12 +455,12 @@ public class RequestUtils {
 						+ PARAM_SEPARATOR;
 			}
 
-			postData = (postData.length() > 0) ? postData.substring(0, postData
-					.length() - 1) : postData;
+			postData = (postData.length() > 0) ? postData.substring(0,
+					postData.length() - 1) : postData;
 
 			conn.setDoOutput(true);
-			OutputStreamWriter wr = new OutputStreamWriter(conn
-					.getOutputStream());
+			OutputStreamWriter wr = new OutputStreamWriter(
+					conn.getOutputStream());
 			wr.write(postData);
 			wr.flush();
 			wr.close();
@@ -451,7 +474,7 @@ public class RequestUtils {
 
 		// BufferedReader rd = new BufferedReader(new InputStreamReader(is));
 		// String line;
-		//		
+		//
 		// while ((line = rd.readLine()) != null) {
 		// System.out.println(line);
 		// }
@@ -492,8 +515,8 @@ public class RequestUtils {
 							.encode(val, encoding)) + "&";
 		}
 
-		paramsStr = (paramsStr.length() > 0) ? paramsStr.substring(0, paramsStr
-				.length() - 1) : paramsStr;
+		paramsStr = (paramsStr.length() > 0) ? paramsStr.substring(0,
+				paramsStr.length() - 1) : paramsStr;
 
 		int port = base.getPort();
 		baseUrl = base.getProtocol() + "://" + base.getHost()
@@ -514,7 +537,7 @@ public class RequestUtils {
 
 		// BufferedReader rd = new BufferedReader(new InputStreamReader(is));
 		// String line;
-		//				
+		//
 		// while ((line = rd.readLine()) != null) {
 		// System.out.println(line);
 		// }
