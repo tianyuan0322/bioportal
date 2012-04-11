@@ -37,6 +37,14 @@ public class ConceptBatchRestlet extends AbstractBaseRestlet {
 	}
 
 	/**
+	 * Handle POST calls here
+	 */
+	@Override
+	public void postRequest(Request request, Response response) {
+		findConcepts(request, response);
+	}
+
+	/**
 	 * Return to the response an individual ontology
 	 * 
 	 * @param request
