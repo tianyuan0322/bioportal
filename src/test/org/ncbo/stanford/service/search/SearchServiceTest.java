@@ -13,6 +13,7 @@ import org.ncbo.stanford.AbstractBioPortalTest;
 import org.ncbo.stanford.bean.search.SearchBean;
 import org.ncbo.stanford.bean.search.SearchResultListBean;
 import org.ncbo.stanford.enumeration.ConceptTypeEnum;
+import org.ncbo.stanford.enumeration.SearchRecordTypeEnum;
 import org.ncbo.stanford.util.constants.ApplicationConstants;
 import org.ncbo.stanford.util.paginator.impl.Page;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -83,12 +84,17 @@ public class SearchServiceTest extends AbstractBioPortalTest {
 			Collection<String> objectTypes = new ArrayList<String>(0);
 			objectTypes.add(ConceptTypeEnum.CONCEPT_TYPE_CLASS.getLabel());
 
+			Collection<String> recordTypes = new ArrayList<String>(0);
+			recordTypes.add(SearchRecordTypeEnum.RECORD_TYPE_PREFERRED_NAME
+					.getLabel());
+
 			boolean includeProperties = false;
 			boolean isExactMatch = false;
 			Integer maxNumHits = 250;
 
 			Query q = queryService.generateLuceneSearchQuery(ontologyIds,
-					objectTypes, null, expr, includeProperties, isExactMatch);
+					objectTypes, recordTypes, expr, includeProperties,
+					isExactMatch);
 			System.out.println("q: " + q);
 
 			long start = System.currentTimeMillis();
@@ -116,8 +122,8 @@ public class SearchServiceTest extends AbstractBioPortalTest {
 
 		try {
 			Integer maxNumHits = 50;
-			Query query = queryService.generateLuceneSearchQuery(null, null, null,
-					"cell", true, false);
+			Query query = queryService.generateLuceneSearchQuery(null, null,
+					null, "cell", true, false);
 			Page<SearchBean> results = queryService.executeQuery(query,
 					maxNumHits, null, null, false);
 
@@ -139,8 +145,8 @@ public class SearchServiceTest extends AbstractBioPortalTest {
 
 		try {
 			Integer maxNumHits = 98;
-			Query query = queryService.generateLuceneSearchQuery(null, null, null,
-					"lead", true, false);
+			Query query = queryService.generateLuceneSearchQuery(null, null,
+					null, "lead", true, false);
 			Page<SearchBean> results = queryService.executeQuery(query,
 					maxNumHits, null, null, false);
 
