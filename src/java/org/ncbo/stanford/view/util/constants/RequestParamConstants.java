@@ -74,6 +74,7 @@ public interface RequestParamConstants {
 	public static final String PARAM_INCLUDEVIEWS = "includeviews";
 	public static final String PARAM_SUBTREEROOTCONCEPTID = "subtreerootconceptid";
 	public static final String PARAM_OBJECT_TYPES = "objecttypes";
+	public static final String PARAM_RECORD_TYPES = "recordtypes";
 
 	/**
 	 * Search index parameters

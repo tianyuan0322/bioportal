@@ -175,7 +175,7 @@ public class QuerySearchServiceImpl extends AbstractSearchService implements
 			boolean includeProperties, boolean isExactMatch, Integer pageSize,
 			Integer pageNum, Integer maxNumHits, Boolean includeDefinitions)
 			throws Exception {
-		return executeQuery(expr, null, null, includeProperties, isExactMatch,
+		return executeQuery(expr, null, null, null, includeProperties, isExactMatch,
 				pageSize, pageNum, maxNumHits, null, includeDefinitions);
 	}
 
@@ -194,7 +194,7 @@ public class QuerySearchServiceImpl extends AbstractSearchService implements
 	public Page<SearchBean> executeQuery(String expr,
 			boolean includeProperties, boolean isExactMatch,
 			Integer maxNumHits, Boolean includeDefinitions) throws Exception {
-		return executeQuery(expr, null, null, includeProperties, isExactMatch,
+		return executeQuery(expr, null, null, null, includeProperties, isExactMatch,
 				maxNumHits, null, includeDefinitions);
 	}
 
@@ -207,6 +207,7 @@ public class QuerySearchServiceImpl extends AbstractSearchService implements
 	 * @param expr
 	 * @param ontologyIds
 	 * @param objectTypes
+	 * @param recordTypes
 	 * @param includeProperties
 	 * @param isExactMatch
 	 * @param pageSize
@@ -218,11 +219,11 @@ public class QuerySearchServiceImpl extends AbstractSearchService implements
 	 * @throws Exception
 	 */
 	public Page<SearchBean> executeQuery(String expr,
-			Collection<Integer> ontologyIds, Collection<String> objectTypes,
+			Collection<Integer> ontologyIds, Collection<String> objectTypes, Collection<String> recordTypes,
 			boolean includeProperties, boolean isExactMatch, Integer pageSize,
 			Integer pageNum, Integer maxNumHits, String subtreeRootConceptId,
 			Boolean includeDefinitions) throws Exception {
-		Query query = generateLuceneSearchQuery(ontologyIds, objectTypes, expr,
+		Query query = generateLuceneSearchQuery(ontologyIds, objectTypes, recordTypes, expr,
 				includeProperties, isExactMatch);
 
 		return executeQuery(query, pageSize, pageNum, maxNumHits, ontologyIds,
@@ -237,6 +238,7 @@ public class QuerySearchServiceImpl extends AbstractSearchService implements
 	 * @param expr
 	 * @param ontologyIds
 	 * @param objectTypes
+	 * @param recordTypes
 	 * @param includeProperties
 	 * @param isExactMatch
 	 * @param maxNumHits
@@ -246,11 +248,11 @@ public class QuerySearchServiceImpl extends AbstractSearchService implements
 	 * @throws Exception
 	 */
 	public Page<SearchBean> executeQuery(String expr,
-			Collection<Integer> ontologyIds, Collection<String> objectTypes,
+			Collection<Integer> ontologyIds, Collection<String> objectTypes, Collection<String> recordTypes,
 			boolean includeProperties, boolean isExactMatch,
 			Integer maxNumHits, String subtreeRootConceptId,
 			Boolean includeDefinitions) throws Exception {
-		Query query = generateLuceneSearchQuery(ontologyIds, objectTypes, expr,
+		Query query = generateLuceneSearchQuery(ontologyIds, objectTypes, recordTypes, expr,
 				includeProperties, isExactMatch);
 
 		return executeQuery(query, maxNumHits, ontologyIds,
@@ -343,6 +345,7 @@ public class QuerySearchServiceImpl extends AbstractSearchService implements
 	 * 
 	 * @param ontologyIds
 	 * @param objectTypes
+	 * @param recordTypes
 	 * @param expr
 	 * @param includeProperties
 	 * @param isExactMatch
@@ -350,7 +353,7 @@ public class QuerySearchServiceImpl extends AbstractSearchService implements
 	 * @throws IOException
 	 */
 	public Query generateLuceneSearchQuery(Collection<Integer> ontologyIds,
-			Collection<String> objectTypes, String expr,
+			Collection<String> objectTypes, Collection<String> recordTypes, String expr,
 			boolean includeProperties, boolean isExactMatch) throws IOException {
 		BooleanQuery query = new BooleanQuery();
 		BooleanQuery.setMaxClauseCount(Integer.MAX_VALUE);
@@ -363,6 +366,7 @@ public class QuerySearchServiceImpl extends AbstractSearchService implements
 
 		addOntologyIdsClause(ontologyIds, query);
 		addObjectTypesClause(objectTypes, query);
+		addRecordTypesClause(recordTypes, query);
 		addPropertiesClause(includeProperties, query);
 
 		return query;
@@ -726,6 +730,21 @@ public class QuerySearchServiceImpl extends AbstractSearchService implements
 			BooleanQuery query) {
 		if (objectTypes != null && !objectTypes.isEmpty()) {
 			query.add(generateObjectTypesQuery(objectTypes),
+					BooleanClause.Occur.MUST);
+		}
+	}
+	
+	/**
+	 * Adds the clause that limits the search to the given record types (i.e.
+	 * preferredname, conceptid, cynonym, property)
+	 * 
+	 * @param recordTypes
+	 * @param query
+	 */
+	private void addRecordTypesClause(Collection<String> recordTypes,
+			BooleanQuery query) {
+		if (recordTypes != null && !recordTypes.isEmpty()) {
+			query.add(generateRecordTypesQuery(recordTypes),
 					BooleanClause.Occur.MUST);
 		}
 	}

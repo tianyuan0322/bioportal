@@ -21,6 +21,7 @@ import org.apache.lucene.util.Version;
 import org.ncbo.stanford.bean.OntologyBean;
 import org.ncbo.stanford.bean.search.SearchIndexBean;
 import org.ncbo.stanford.bean.search.SearchResultListBean;
+import org.ncbo.stanford.enumeration.SearchRecordTypeEnum;
 import org.ncbo.stanford.manager.metadata.OntologyMetadataManager;
 import org.ncbo.stanford.manager.retrieval.OntologyRetrievalManager;
 import org.ncbo.stanford.manager.search.OntologySearchManager;
@@ -104,7 +105,28 @@ public abstract class AbstractSearchService {
 
 		return query;
 	}
+	
+	/**
+	 * Constructs the query that limits the search to the given record types
+	 * (i.e. preferredname, conceptid, cynonym, property)
+	 * 
+	 * @param recordTypes
+	 * @return
+	 */
+	protected Query generateRecordTypesQuery(Collection<String> recordTypes) {
+		BooleanQuery query = new BooleanQuery();
 
+		for (String recordType : recordTypes) {
+			Term recTypeTerm = generateRecordTypeTerm(recordType);
+
+			if (recTypeTerm != null) {
+				query.add(new TermQuery(recTypeTerm), BooleanClause.Occur.SHOULD);
+			}
+		}
+
+		return query;
+	}	
+	
 	/**
 	 * Constructs the term with the given ontology id
 	 * 
@@ -126,6 +148,40 @@ public abstract class AbstractSearchService {
 		return new Term(SearchIndexBean.OBJECT_TYPE_FIELD_LABEL, objectType);
 	}
 
+	
+	
+	
+	
+	
+	
+	
+	
+	/**
+	 * Constructs the term with the given record type
+	 * 
+	 * @param recordType
+	 * @return
+	 */
+	protected Term generateRecordTypeTerm(String recordType) {
+		Term recTypeTerm = null;
+		SearchRecordTypeEnum recType = SearchRecordTypeEnum.getFromLabel(recordType);
+
+		if (recType != null) {
+			recTypeTerm = new Term(SearchIndexBean.RECORD_TYPE_FIELD_LABEL, recType.getLabel());
+		}
+
+		return recTypeTerm;
+	}
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
 	/**
 	 * Provides a display format for a list of ontologies
 	 * 

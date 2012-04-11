@@ -52,7 +52,7 @@ public class ConceptPropertyServiceImpl implements ConceptPropertyService {
 			 * if (concept != null) { resultClassbeans.add(concept); } else {
 			 */
 			Page<SearchBean> searchQueryResults = queryService.executeQuery(
-					value, ontologyIds, null, true, true, null, null, false);
+					value, ontologyIds, null, null, true, true, null, null, false);
 			if (searchQueryResults != null) {
 				Iterator<SearchBean> searchResults = searchQueryResults
 						.getContents().iterator();

@@ -20,17 +20,17 @@ public enum SearchRecordTypeEnum {
 		SearchRecordTypeEnum recordType = null;
 
 		if (label != null) {
-			if (label
-					.equals(ApplicationConstants.SEARCH_RECORD_TYPE_PREFERRED_NAME)) {
+			if (ApplicationConstants.SEARCH_RECORD_TYPE_PREFERRED_NAME
+					.contains(label)) {
 				recordType = RECORD_TYPE_PREFERRED_NAME;
-			} else if (label
-					.equals(ApplicationConstants.SEARCH_RECORD_TYPE_CONCEPT_ID)) {
+			} else if (ApplicationConstants.SEARCH_RECORD_TYPE_CONCEPT_ID
+					.contains(label)) {
 				recordType = RECORD_TYPE_CONCEPT_ID;
-			} else if (label
-					.equals(ApplicationConstants.SEARCH_RECORD_TYPE_SYNONYM)) {
+			} else if (ApplicationConstants.SEARCH_RECORD_TYPE_SYNONYM
+					.contains(label)) {
 				recordType = RECORD_TYPE_SYNONYM;
-			} else if (label
-					.equals(ApplicationConstants.SEARCH_RECORD_TYPE_PROPERTY)) {
+			} else if (ApplicationConstants.SEARCH_RECORD_TYPE_PROPERTY
+					.contains(label)) {
 				recordType = RECORD_TYPE_PROPERTY;
 			}
 		}

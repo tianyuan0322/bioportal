@@ -60,6 +60,8 @@ public class QueryRestlet extends AbstractBaseRestlet {
 				.getParameter(RequestParamConstants.PARAM_ONTOLOGY_IDS);
 		String objectTypes = (String) httpRequest
 				.getParameter(RequestParamConstants.PARAM_OBJECT_TYPES);
+		String recordTypes = (String) httpRequest
+				.getParameter(RequestParamConstants.PARAM_RECORD_TYPES);
 		String includeProperties = (String) httpRequest
 				.getParameter(RequestParamConstants.PARAM_INCLUDEPROPERTIES);
 		String includeDefinitions = (String) httpRequest
@@ -82,6 +84,9 @@ public class QueryRestlet extends AbstractBaseRestlet {
 				.parseIntegerListParam(ontologyIds);
 		List<String> objectTypesStr = RequestUtils
 				.parseStringListParam(objectTypes);
+		List<String> recordTypesStr = RequestUtils
+				.parseStringListParam(recordTypes);
+
 		boolean includePropertiesBool = RequestUtils
 				.parseBooleanParam(includeProperties);
 		boolean includeDefinitionsBool = RequestUtils
@@ -105,8 +110,8 @@ public class QueryRestlet extends AbstractBaseRestlet {
 			}
 
 			searchResults = queryService.executeQuery(query, ontologyIdsInt,
-					objectTypesStr, includePropertiesBool, isExactMatchBool,
-					pageSizeInt, pageNumInt, maxNumHitsInt,
+					objectTypesStr, recordTypesStr, includePropertiesBool,
+					isExactMatchBool, pageSizeInt, pageNumInt, maxNumHitsInt,
 					subtreeRootConceptId, includeDefinitionsBool);
 		} catch (InvalidInputException e) {
 			response.setStatus(Status.CLIENT_ERROR_BAD_REQUEST, e.getMessage());

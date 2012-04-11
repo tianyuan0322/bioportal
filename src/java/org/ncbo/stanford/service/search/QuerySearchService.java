@@ -61,6 +61,7 @@ public interface QuerySearchService {
 	 * @param expr
 	 * @param ontologyIds
 	 * @param objectTypes
+	 * @param recordTypes
 	 * @param includeProperties
 	 * @param isExactMatch
 	 * @param pageSize
@@ -73,8 +74,9 @@ public interface QuerySearchService {
 	 */
 	public Page<SearchBean> executeQuery(String expr,
 			Collection<Integer> ontologyIds, Collection<String> objectTypes,
-			boolean includeProperties, boolean isExactMatch, Integer pageSize,
-			Integer pageNum, Integer maxNumHits, String subtreeRootConceptId,
+			Collection<String> recordTypes, boolean includeProperties,
+			boolean isExactMatch, Integer pageSize, Integer pageNum,
+			Integer maxNumHits, String subtreeRootConceptId,
 			Boolean includeDefinitions) throws Exception;
 
 	/**
@@ -86,6 +88,7 @@ public interface QuerySearchService {
 	 * @param expr
 	 * @param ontologyIds
 	 * @param objectTypes
+	 * @param recordTypes
 	 * @param includeProperties
 	 * @param isExactMatch
 	 * @param maxNumHits
@@ -96,9 +99,10 @@ public interface QuerySearchService {
 	 */
 	public Page<SearchBean> executeQuery(String expr,
 			Collection<Integer> ontologyIds, Collection<String> objectTypes,
-			boolean includeProperties, boolean isExactMatch,
-			Integer maxNumHits, String subtreeRootConceptId,
-			Boolean includeDefinitions) throws Exception;
+			Collection<String> recordTypes, boolean includeProperties,
+			boolean isExactMatch, Integer maxNumHits,
+			String subtreeRootConceptId, Boolean includeDefinitions)
+			throws Exception;
 
 	/**
 	 * Execute a search from an already constructed Query object. Return ALL
@@ -144,6 +148,7 @@ public interface QuerySearchService {
 	 * 
 	 * @param ontologyIds
 	 * @param objectTypes
+	 * @param recordTypes
 	 * @param expr
 	 * @param includeProperties
 	 * @param isExactMatch
@@ -151,8 +156,9 @@ public interface QuerySearchService {
 	 * @throws IOException
 	 */
 	public Query generateLuceneSearchQuery(Collection<Integer> ontologyIds,
-			Collection<String> objectTypes, String expr,
-			boolean includeProperties, boolean isExactMatch) throws IOException;
+			Collection<String> objectTypes, Collection<String> recordTypes,
+			String expr, boolean includeProperties, boolean isExactMatch)
+			throws IOException;
 
 	/**
 	 * Executes a query against the Lucene index. Does not use caching
