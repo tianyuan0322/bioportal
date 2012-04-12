@@ -14,6 +14,7 @@ import org.apache.commons.logging.LogFactory;
 import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.index.IndexReader;
 import org.apache.lucene.index.Term;
+import org.apache.lucene.queryParser.ParseException;
 import org.apache.lucene.queryParser.QueryParser;
 import org.apache.lucene.search.BooleanClause;
 import org.apache.lucene.search.BooleanQuery;
@@ -32,7 +33,6 @@ public class BooleanWildCardQuery extends BooleanQuery {
 			.getLog(BooleanWildCardQuery.class);
 	private static final long serialVersionUID = 6175210725964749088L;
 
-	private static final String SPACES_PATTERN = "\\s+";
 	private static final String IN_PAREN_DELIMITER = "#@#@#@#@#";
 	private static final char WILDCARD_CHAR = '*';
 
@@ -56,14 +56,15 @@ public class BooleanWildCardQuery extends BooleanQuery {
 
 /*	public static void main(String[] args) {
 		String expr;
-		expr = "cas (blo+od del phi) -clo -(cat mo) 		         (artery       vibe)   (nil) ser 	gul";
+		expr = "cas (blo+od del phi) -clo -(cat mo) 		         (artery       vibe)   (nil) ser_00 	gul";
 		expr = "(heart lung) vess";
 		expr = "(blood nose) -dis";
 		expr = "hear attac -Anxiety";
-		expr = "calcium(2+)";
+		expr = "-(calcium(2+) irium)";
 		expr = "calcium(";
 		expr = "-(heart lung) -calcium(2) blood-clot";
-		expr = "-(heart lung-dish) -calcium(2) blood-clot";
+		expr = "-(Lung-dish-soup heart) -(calcium(2)) blood_clot_heart bao_000";
+		expr = "calcium(2+)";
 
 		Version luceneVersion = Version.LUCENE_24;
 		Analyzer analyzer = new StandardAnalyzer(luceneVersion, Collections
@@ -76,6 +77,8 @@ public class BooleanWildCardQuery extends BooleanQuery {
 
 			BooleanWildCardQuery q = new BooleanWildCardQuery(luceneVersion,
 					searcher.getIndexReader(), analyzer);
+			q.parseBooleanWildCardQuery("contents", expr);
+			// q.parseExpression(expr, "contents");
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -84,10 +87,11 @@ public class BooleanWildCardQuery extends BooleanQuery {
 	@SuppressWarnings("unchecked")
 	public void parseBooleanWildCardQuery(String field, String expr)
 			throws Exception {
-		expr = parseExpression(expr);
+		expr = parseExpression(expr, field);
 
 		if (expr.length() > 0) {
-			StringTokenizer st = new StringTokenizer(expr);
+			StringTokenizer st = new StringTokenizer(expr, " ");
+			boolean inQuotes = false;
 
 			while (st.hasMoreTokens()) {
 				MultiPhraseQuery mpq = new MultiPhraseQuery();
@@ -109,8 +113,34 @@ public class BooleanWildCardQuery extends BooleanQuery {
 					term = LUCENE_PATTERN.matcher(term).replaceAll(
 							REPLACEMENT_STRING);
 
-					Term[] expandedTerms = expand(field, term);
-					clauseTerms.addAll(Arrays.asList(expandedTerms));
+					// In most cases, inQuotes = true would mean that the
+					// original term contained a dash (-) or underscore (_) and
+					// it was replaced by Lucene parser with a space and double
+					// quotes surrounding the affected terms. For example:
+					// <pre>
+					// blood-clot => "blood clot"
+					// Anal_Melanoma => "anal melanoma"
+					// </pre>
+					// in these cases, we assume that only the last quoted word
+					// would need to be wild-carded. The rest, will just be
+					// added as individual terms.
+					if (term.startsWith("\"")) {
+						inQuotes = true;
+						term = term.substring(1);
+					} else if (term.endsWith("\"")) {
+						inQuotes = false;
+						term = term.substring(0, term.length() - 1);
+					}
+
+					System.out.println("Term: " + term);
+					System.out.println("InQuotes: " + inQuotes);
+
+					if (inQuotes) {
+						clauseTerms.add(new Term(field, term));
+					} else {
+						Term[] expandedTerms = expand(field, term);
+						clauseTerms.addAll(Arrays.asList(expandedTerms));
+					}
 				}
 
 				Term[] allTerms = clauseTerms.toArray(new Term[clauseTerms
@@ -128,13 +158,11 @@ public class BooleanWildCardQuery extends BooleanQuery {
 		}
 	}
 
-	private String parseExpression(String expr) {
-		expr = expr.replaceAll(SPACES_PATTERN, " ").toLowerCase();
-		expr = expr.replace("\"", "");
-		expr = expr.replace("_", " ");
-		expr = expr.replace(":", " ");
-		// replace all non-boolean-logic dashes with spaces
-		expr = replaceInDashWithSpace(expr);
+	private String parseExpression(String expr, String field)
+			throws ParseException {
+		QueryParser parser = new QueryParser(luceneVersion, field, analyzer);
+		Query query = parser.parse(expr);
+		expr = query.toString().replace(field + ":", "");
 
 		// words in parens
 		Pattern inParens = Pattern.compile("\\([^\\(\\)]+\\)");
@@ -142,40 +170,9 @@ public class BooleanWildCardQuery extends BooleanQuery {
 
 		while (matcherParen.find()) {
 			String gr = matcherParen.group();
-			int start = expr.indexOf(gr);
-
-			try {
-				char prev = expr.charAt(start - 1);
-
-				// this means the parenthesis is part of the expression itself
-				// and not the boolean logic. Do not process it!
-				if (prev != '-' && prev != ' ') {
-					continue;
-				}
-			} catch (StringIndexOutOfBoundsException e) {
-				// this means the parenthesis is at the beginning
-				// process normally
-			}
-
 			String grRepl = gr.replaceAll(" ", IN_PAREN_DELIMITER).replaceAll(
 					"\\(", "").replaceAll("\\)", "");
 			expr = StringUtils.replace(expr, gr, grRepl);
-		}
-
-		// replace all non-boolean-logic parentheses with spaces
-		expr = expr.replace("(", " ").replace(")", " ");
-
-		return expr;
-	}
-
-	private String replaceInDashWithSpace(String expr) {
-		Pattern inDash = Pattern.compile("[^\\s](-)");
-		Matcher matcherDash = inDash.matcher(expr);
-
-		while (matcherDash.find()) {
-			int dashInd = matcherDash.start(1);
-			expr = expr.substring(0, dashInd) + " "
-					+ expr.substring(dashInd + 1);
 		}
 
 		return expr;
