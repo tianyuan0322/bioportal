@@ -54,25 +54,34 @@ public class BooleanWildCardQuery extends BooleanQuery {
 		this.analyzer = analyzer;
 	}
 
-	/*
-	 * public static void main(String[] args) { String expr; expr =
-	 * "cas (blo+od del phi) -clo -(cat mo) 		         (artery       vibe)   (nil) ser 	gul"
-	 * ; expr = "(heart lung) vess"; expr = "(blood nose) -dis"; expr =
-	 * "hear attac -Anxiety";
-	 * 
-	 * Version luceneVersion = Version.LUCENE_24; Analyzer analyzer = new
-	 * StandardAnalyzer(luceneVersion, Collections.emptySet()); String indexPath
-	 * = "/apps/bmir.apps/bioportal_resources/searchindex";
-	 * 
-	 * try { FSDirectory indexDir = NIOFSDirectory.open(new File(indexPath));
-	 * IndexSearcher searcher = new IndexSearcher(indexDir, true);
-	 * 
-	 * BooleanWildCardQuery q = new BooleanWildCardQuery(luceneVersion,
-	 * searcher.getIndexReader(), analyzer);
-	 * q.parseBooleanWildCardQuery("contents", expr); } catch (Exception e) {
-	 * e.printStackTrace(); } }
-	 */
+/*	public static void main(String[] args) {
+		String expr;
+		expr = "cas (blo+od del phi) -clo -(cat mo) 		         (artery       vibe)   (nil) ser 	gul";
+		expr = "(heart lung) vess";
+		expr = "(blood nose) -dis";
+		expr = "hear attac -Anxiety";
+		expr = "calcium(2+)";
+		expr = "calcium(";
+		expr = "-(heart lung) -calcium(2) blood-clot";
+		expr = "-(heart lung-dish) -calcium(2) blood-clot";
 
+		Version luceneVersion = Version.LUCENE_24;
+		Analyzer analyzer = new StandardAnalyzer(luceneVersion, Collections
+				.emptySet());
+		String indexPath = "/apps/bmir.apps/bioportal_resources/searchindex";
+
+		try {
+			FSDirectory indexDir = NIOFSDirectory.open(new File(indexPath));
+			IndexSearcher searcher = new IndexSearcher(indexDir, true);
+
+			BooleanWildCardQuery q = new BooleanWildCardQuery(luceneVersion,
+					searcher.getIndexReader(), analyzer);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+*/
+	@SuppressWarnings("unchecked")
 	public void parseBooleanWildCardQuery(String field, String expr)
 			throws Exception {
 		expr = parseExpression(expr);
@@ -99,6 +108,7 @@ public class BooleanWildCardQuery extends BooleanQuery {
 
 					term = LUCENE_PATTERN.matcher(term).replaceAll(
 							REPLACEMENT_STRING);
+
 					Term[] expandedTerms = expand(field, term);
 					clauseTerms.addAll(Arrays.asList(expandedTerms));
 				}
@@ -122,6 +132,9 @@ public class BooleanWildCardQuery extends BooleanQuery {
 		expr = expr.replaceAll(SPACES_PATTERN, " ").toLowerCase();
 		expr = expr.replace("\"", "");
 		expr = expr.replace("_", " ");
+		expr = expr.replace(":", " ");
+		// replace all non-boolean-logic dashes with spaces
+		expr = replaceInDashWithSpace(expr);
 
 		// words in parens
 		Pattern inParens = Pattern.compile("\\([^\\(\\)]+\\)");
@@ -129,9 +142,40 @@ public class BooleanWildCardQuery extends BooleanQuery {
 
 		while (matcherParen.find()) {
 			String gr = matcherParen.group();
+			int start = expr.indexOf(gr);
+
+			try {
+				char prev = expr.charAt(start - 1);
+
+				// this means the parenthesis is part of the expression itself
+				// and not the boolean logic. Do not process it!
+				if (prev != '-' && prev != ' ') {
+					continue;
+				}
+			} catch (StringIndexOutOfBoundsException e) {
+				// this means the parenthesis is at the beginning
+				// process normally
+			}
+
 			String grRepl = gr.replaceAll(" ", IN_PAREN_DELIMITER).replaceAll(
 					"\\(", "").replaceAll("\\)", "");
 			expr = StringUtils.replace(expr, gr, grRepl);
+		}
+
+		// replace all non-boolean-logic parentheses with spaces
+		expr = expr.replace("(", " ").replace(")", " ");
+
+		return expr;
+	}
+
+	private String replaceInDashWithSpace(String expr) {
+		Pattern inDash = Pattern.compile("[^\\s](-)");
+		Matcher matcherDash = inDash.matcher(expr);
+
+		while (matcherDash.find()) {
+			int dashInd = matcherDash.start(1);
+			expr = expr.substring(0, dashInd) + " "
+					+ expr.substring(dashInd + 1);
 		}
 
 		return expr;
