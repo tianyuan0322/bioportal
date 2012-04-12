@@ -508,6 +508,10 @@ public class OntologyRetrievalManagerLexGridImpl extends
 		conceptId = getCorrectedConceptId(ontologyBean, conceptId);
 		CodingSchemeVersionOrTag csvt = getLexGridCodingSchemeVersion(ontologyBean);
 		String hierarchyId = getDefaultHierarchyId(schemeName, csvt);
+		if (StringUtils.isBlank(hierarchyId)) {
+			log.warn("Can not process request when the hierarchyId is blank");
+			return null;
+		}
 		AssociationList pathToRoot = lbscm.getHierarchyPathToRoot(schemeName,
 				csvt, hierarchyId, conceptId, false,
 				LexBIGServiceConvenienceMethods.HierarchyPathResolveOption.ONE,
@@ -595,6 +599,10 @@ public class OntologyRetrievalManagerLexGridImpl extends
 		CodingSchemeVersionOrTag csvt = getLexGridCodingSchemeVersion(ontologyBean);
 
 		String hierarchyId = getDefaultHierarchyId(schemeName, csvt);
+		if (StringUtils.isBlank(hierarchyId)) {
+			log.warn("Can not process request when the hierarchyId is blank");
+			return null;
+		}
 		AssociationList associations = lbscm.getHierarchyPathToRoot(schemeName,
 				csvt, hierarchyId, conceptId, false,
 				LexBIGServiceConvenienceMethods.HierarchyPathResolveOption.ALL,
