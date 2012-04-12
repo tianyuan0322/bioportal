@@ -7,6 +7,7 @@ import java.util.List;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.ncbo.stanford.bean.concept.ConceptOntologyPairBean;
 import org.ncbo.stanford.bean.mapping.MappingBean;
 import org.ncbo.stanford.bean.mapping.MappingUserStatsBean;
 import org.ncbo.stanford.enumeration.MappingSourceEnum;
@@ -43,8 +44,9 @@ public class SimpleMappingTest {
     //@SuppressWarnings("unchecked")
 	@Test
 	public void testAllOK() throws Exception {
+		testPairConceptOnt();
 		//createMapping();
-		deleteMapping();
+		//deleteMapping();
         //testUnionGenerator();
 		//getMappingTest();
         //getMappingsForConceptTest();
@@ -65,6 +67,31 @@ public class SimpleMappingTest {
         //getCountMappingsFromOntologyTest();
 	}
 
+    @SuppressWarnings("unchecked")
+	//@Test
+    public void testPairConceptOnt() throws Exception {
+        try {
+            long ts = System.currentTimeMillis();
+            String [][] pairsString = {
+            		{ "http://purl.org/obo/owl/PO#PO_0007014", "1038" },
+            		{"http://purl.obolibrary.org/obo/CHEBI_28324", "3022" },
+            		{"http://bioontology.org/projects/ontologies/birnlex#birnlex_557", "1089" },
+            };
+    		List<ConceptOntologyPairBean> pairs = new ArrayList<ConceptOntologyPairBean>();
+    		for (String [] pairString : pairsString) {
+    			ConceptOntologyPairBean po = new ConceptOntologyPairBean();
+    			po.setConceptId(pairString[0]);
+    			po.setOntologyId(Integer.parseInt(pairString[1]));
+    			pairs.add(po);
+    		}
+    		mappingDAO.getMappingsByConceptOntologyPairs(pairs);
+            System.out.printf("testPairConceptOnt %.3f sec. elapsed time\n",ts/1000.0);
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw e;
+        }
+    }
+    
     public void testUnionGenerator() {
         SPARQLUnionGenerator g = new SPARQLUnionGenerator();
         g.setLimit(100);

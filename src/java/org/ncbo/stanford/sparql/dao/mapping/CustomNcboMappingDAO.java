@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Set;
 
 import org.apache.commons.lang.StringUtils;
+import org.ncbo.stanford.bean.concept.ConceptOntologyPairBean;
 import org.ncbo.stanford.exception.InvalidInputException;
 import org.ncbo.stanford.exception.MappingExistsException;
 import org.ncbo.stanford.exception.MappingMissingException;
@@ -111,6 +112,68 @@ public class CustomNcboMappingDAO extends AbstractNcboMappingDAO {
 		return mapping;
 	}
 
+	public List<Mapping> getMappingsByConceptOntologyPairs(List<ConceptOntologyPairBean> listConceptOntologyPairBean) throws MappingMissingException {
+		RepositoryConnection con = getRdfStoreManager()
+				.getRepositoryConnection();
+
+		String unionBlockTemplate = "{ ?id maps:source_ontology_id %SOURCE_ONT_ID% . " +
+	    	    "?id maps:source <%SOURCE_TERM%> ." +
+	    	    "?id maps:target_ontology_id %TARGET_ONT_ID% ." +
+	    	    "?id maps:target <%TARGET_TERM%> . }";
+		
+		List<Mapping> mappings = new ArrayList<Mapping>();
+		try {
+			List<String> unionBlocks = new ArrayList<String>();
+			for (ConceptOntologyPairBean opbA : listConceptOntologyPairBean) {
+				for (ConceptOntologyPairBean opbB : listConceptOntologyPairBean) {
+					if (opbA.getConceptId().equals(opbB.getConceptId()) &&
+							opbA.getOntologyId().equals(opbB.getOntologyId()))
+						continue;
+
+							String unionBlock = unionBlockTemplate.replace("%SOURCE_ONT_ID%",Integer.toString(opbA.getOntologyId()))
+				    				   .replace("%SOURCE_TERM%",opbA.getConceptId())
+				    				   .replace("%TARGET_ONT_ID%",Integer.toString(opbB.getOntologyId()))
+				    				   .replace("%TARGET_TERM%",opbB.getConceptId());
+							unionBlocks.add(unionBlock);
+				}
+			}
+			String queryString = StringUtils.join(unionBlocks.toArray() , "\nUNION\n");
+			queryString = "PREFIX maps: <http://protege.stanford.edu/ontologies/mappings/mappings.rdfs#> " +
+						  "SELECT ?id WHERE { " + queryString + "}";
+			TupleQuery query;
+			try {
+				query = con.prepareTupleQuery(QueryLanguage.SPARQL,
+						queryString);
+
+
+			TupleQueryResult result = query.evaluate();
+			
+
+			while (result.hasNext()) {
+				BindingSet bs = result.next();
+
+
+				String mappingId = bs.getValue("id").stringValue();
+				mappings.add( getMapping(new URIImpl(mappingId)));
+			
+			}
+			} catch (RepositoryException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (MalformedQueryException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (QueryEvaluationException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		} finally {
+			cleanup(con);
+		}
+
+		return mappings;
+	}
+	
 	public Mapping getMapping(URI id) throws MappingMissingException {
 		RepositoryConnection con = getRdfStoreManager()
 				.getRepositoryConnection();
