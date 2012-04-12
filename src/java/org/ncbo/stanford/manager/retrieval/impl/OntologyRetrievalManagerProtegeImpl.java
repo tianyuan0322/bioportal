@@ -49,6 +49,7 @@ import edu.stanford.smi.protegex.owl.model.OWLModel;
 import edu.stanford.smi.protegex.owl.model.OWLNamedClass;
 import edu.stanford.smi.protegex.owl.model.RDFProperty;
 import edu.stanford.smi.protegex.owl.model.RDFResource;
+import edu.stanford.smi.protegex.owl.model.RDFSClass;
 import edu.stanford.smi.protegex.owl.model.RDFSNamedClass;
 import edu.stanford.smi.protegex.owl.util.OWLBrowserSlotPattern;
 
@@ -831,7 +832,14 @@ public class OntologyRetrievalManagerProtegeImpl extends
 					Instance subclass = (Instance) next;
 					String browserText = subclass.getBrowserText();
 
-					if (subclass.isSystem() || browserText.startsWith("@")) {
+					// Check to see if class is actually anonymous
+					boolean isAnonymous = false;
+					if (subclass instanceof RDFSClass) {
+						RDFSClass cls = (RDFSClass) subclass;
+						isAnonymous = cls.isAnonymous();
+					}
+					
+					if (isAnonymous || subclass.isSystem() || browserText.startsWith("@")) {
 						it.remove();
 					}
 				} catch (Exception e) {

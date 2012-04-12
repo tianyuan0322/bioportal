@@ -31,7 +31,7 @@ public class MappingStatsOntologyRestlet extends AbstractMappingRestlet {
 	public void getRequest(Request request, Response response) {
 		listMappings(request, response);
 	}
-
+	
 	private void listMappings(Request request, Response response) {
 		// Default parameters
 		String ontologyIdStr = (String) request.getAttributes().get(

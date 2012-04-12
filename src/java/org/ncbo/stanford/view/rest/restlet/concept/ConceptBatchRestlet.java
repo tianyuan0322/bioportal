@@ -10,17 +10,14 @@ import org.apache.commons.logging.LogFactory;
 import org.ncbo.stanford.bean.OntologyBean;
 import org.ncbo.stanford.bean.concept.ClassBean;
 import org.ncbo.stanford.bean.concept.ConceptOntologyPairBean;
-import org.ncbo.stanford.exception.ConceptNotFoundException;
-import org.ncbo.stanford.exception.OntologyNotFoundException;
+import org.ncbo.stanford.bean.concept.ConceptOntologyPairResponseBean;
 import org.ncbo.stanford.service.concept.ConceptService;
 import org.ncbo.stanford.service.ontology.OntologyService;
-import org.ncbo.stanford.util.MessageUtils;
 import org.ncbo.stanford.util.RequestUtils;
 import org.ncbo.stanford.view.rest.restlet.AbstractBaseRestlet;
 import org.ncbo.stanford.view.util.constants.RequestParamConstants;
 import org.restlet.Request;
 import org.restlet.Response;
-import org.restlet.data.Status;
 
 public class ConceptBatchRestlet extends AbstractBaseRestlet {
 
@@ -77,41 +74,68 @@ public class ConceptBatchRestlet extends AbstractBaseRestlet {
 				.parseBooleanParam(withProperties);
 
 		List<ConceptOntologyPairBean> concepts = new ArrayList<ConceptOntologyPairBean>();
-
+		List<String> errorConceptOntologyPairs = new ArrayList<String>();
+		ConceptOntologyPairBean currentPair = new ConceptOntologyPairBean();
+		ConceptOntologyPairResponseBean responseBean = new ConceptOntologyPairResponseBean();
 		try {
 			List<ConceptOntologyPairBean> conceptOntologyPairList = RequestUtils
 					.parseConceptOntologyPairs(conceptOntologyPairs);
 
 			for (ConceptOntologyPairBean conceptOntologyPair : conceptOntologyPairList) {
-				OntologyBean ont = ontologyService
-						.findLatestActiveOntologyOrViewVersion(conceptOntologyPair
-								.getOntologyId());
+				try {
+					// Used for error tracking in case of unhandled exception
+					currentPair = conceptOntologyPair;
 
-				if (ont == null) {
-					throw new OntologyNotFoundException();
+					OntologyBean ont = ontologyService
+							.findLatestActiveOntologyOrViewVersion(conceptOntologyPair
+									.getOntologyId());
+
+					if (ont == null) {
+						errorConceptOntologyPairs.add(conceptOntologyPair
+								.getOntologyId()
+								+ ";"
+								+ conceptOntologyPair.getConceptId()
+								+ " - ERROR: ontology not found");
+						continue;
+					}
+
+					ClassBean concept = conceptService.findConcept(ont.getId(),
+							conceptOntologyPair.getConceptId(),
+							maxNumChildrenInt, lightBool, noRelationsBool,
+							withPropertiesBool);
+
+					if (concept == null) {
+						errorConceptOntologyPairs.add(conceptOntologyPair
+								.getOntologyId()
+								+ ";"
+								+ conceptOntologyPair.getConceptId()
+								+ " - ERROR: concept not found");
+						continue;
+					}
+
+					conceptOntologyPair.setConcept(concept);
+					conceptOntologyPair.setOntologyName(ont.getDisplayLabel());
+					concepts.add(conceptOntologyPair);
+				} catch (Exception e) {
+					errorConceptOntologyPairs.add(currentPair.getOntologyId()
+							+ ";" + currentPair.getConceptId() + " - ERROR: "
+							+ e.getMessage());
 				}
-
-				ClassBean concept = conceptService.findConcept(ont.getId(),
-						conceptOntologyPair.getConceptId(), maxNumChildrenInt,
-						lightBool, noRelationsBool, withPropertiesBool);
-
-				if (concept == null) {
-					throw new ConceptNotFoundException(
-							MessageUtils
-									.getMessage("msg.error.conceptNotFound"));
-				}
-				
-				conceptOntologyPair.setConcept(concept);
-				conceptOntologyPair.setOntologyName(ont.getDisplayLabel());
-				concepts.add(conceptOntologyPair);
 			}
 		} catch (Exception e) {
-			response.setStatus(Status.SERVER_ERROR_INTERNAL, e.getMessage());
-			e.printStackTrace();
+			errorConceptOntologyPairs.add(currentPair.getOntologyId() + ";"
+					+ currentPair.getConceptId() + " - ERROR: "
+					+ e.getMessage());
 			log.error(e);
 		} finally {
+			responseBean.setConcepts(concepts);
+
+			// Make sure to report error pairs
+			responseBean
+					.setConceptOntologyPairErrors(errorConceptOntologyPairs);
+
 			xmlSerializationService.generateXMLResponse(request, response,
-					concepts);
+					responseBean);
 		}
 	}
 
