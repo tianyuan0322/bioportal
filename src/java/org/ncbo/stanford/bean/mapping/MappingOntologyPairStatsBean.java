@@ -1,32 +1,35 @@
 package org.ncbo.stanford.bean.mapping;
 
+import com.thoughtworks.xstream.annotations.XStreamAlias;
+
+@XStreamAlias("ontologyPairMappingStatistics")
 public class MappingOntologyPairStatsBean {
 
-	private Integer ontology1;
-	private Integer ontology2;
-	private Integer totalMappings;
+	private Integer sourceOntologyId;
+	private Integer targetOntologyId;
+	private Integer mappingCount;
 
-	public Integer getOntology1() {
-		return ontology1;
+	public Integer getSourceOntologyId() {
+		return sourceOntologyId;
 	}
 
-	public void setOntology1(Integer ontology1) {
-		this.ontology1 = ontology1;
+	public void setSourceOntologyId(Integer sourceOntologyId) {
+		this.sourceOntologyId = sourceOntologyId;
 	}
 
-	public Integer getOntology2() {
-		return ontology2;
+	public Integer getTargetOntologyId() {
+		return targetOntologyId;
 	}
 
-	public void setOntology2(Integer ontology2) {
-		this.ontology2 = ontology2;
+	public void setTargetOntologyId(Integer targetOntologyId) {
+		this.targetOntologyId = targetOntologyId;
 	}
 
-	public Integer getTotalMappings() {
-		return totalMappings;
+	public Integer getMappingCount() {
+		return mappingCount;
 	}
 
-	public void setTotalMappings(Integer totalMappings) {
-		this.totalMappings = totalMappings;
+	public void setMappingCount(Integer totalMappings) {
+		this.mappingCount = totalMappings;
 	}
 }

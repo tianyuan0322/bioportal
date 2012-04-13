@@ -1,6 +1,8 @@
 package org.ncbo.stanford.view.rest.restlet.mapping;
 
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -40,13 +42,27 @@ public class MappingStatsOntologiesRestlet extends AbstractMappingRestlet {
 
 	private void listMappingsForOntologySet(Request request, Response response,
 			String ontologyIdsStr) {
-		List<Integer> ontologyIds = RequestUtils.parseIntegerListParam(ontologyIdsStr);
+		List<Integer> ontologyIds = RequestUtils
+				.parseIntegerListParam(ontologyIdsStr);
 		
-		List<MappingOntologyPairStatsBean> ontologyCounts = null;
+		Set<Integer> ontologyIdSet = new HashSet<Integer>(ontologyIds);
+
+		Set<MappingOntologyPairStatsBean> ontologyCounts = new HashSet<MappingOntologyPairStatsBean>();
 		try {
 			for (Integer ontologyId : ontologyIds) {
-				List<MappingOntologyStatsBean> stats = mappingService.getOntologyMappingCount(ontologyId);
-				
+				List<MappingOntologyStatsBean> stats = mappingService
+						.getOntologyMappingCount(ontologyId);
+
+				for (MappingOntologyStatsBean stat : stats) {
+					if (ontologyIdSet.contains(stat.getOntologyId())) {
+						MappingOntologyPairStatsBean pairStats = new MappingOntologyPairStatsBean();
+						pairStats.setSourceOntologyId(ontologyId);
+						pairStats.setTargetOntologyId(stat.getOntologyId());
+						pairStats.setMappingCount(stat.getSourceMappings());
+						ontologyCounts.add(pairStats);
+					}
+				}
+
 			}
 		} catch (Exception e) {
 			log.debug(e);
