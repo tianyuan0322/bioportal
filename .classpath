@@ -75,13 +75,10 @@
 	<classpathentry exported="true" kind="lib" path="WebRoot/WEB-INF/lib/protege/preprocess.jar"/>
 	<classpathentry exported="true" kind="lib" path="WebRoot/WEB-INF/lib/protege/plugins/edu.stanford.smi.protegex.changes/change-management.jar"/>
 	<classpathentry exported="true" kind="lib" path="WebRoot/WEB-INF/lib/protege/plugins/edu.stanford.smi.protegex.changes/icu4j.jar"/>
-	<classpathentry exported="true" kind="lib" path="WebRoot/WEB-INF/lib/protege/plugins/edu.stanford.smi.protegex.owl/antlr-2.7.5.jar"/>
 	<classpathentry exported="true" kind="lib" path="WebRoot/WEB-INF/lib/protege/plugins/edu.stanford.smi.protegex.owl/arq-extra.jar"/>
-	<classpathentry exported="true" kind="lib" path="WebRoot/WEB-INF/lib/protege/plugins/edu.stanford.smi.protegex.owl/arq.jar"/>
 	<classpathentry exported="true" kind="lib" path="WebRoot/WEB-INF/lib/protege/plugins/edu.stanford.smi.protegex.owl/edtftpj-1.5.2.jar"/>
 	<classpathentry exported="true" kind="lib" path="WebRoot/WEB-INF/lib/protege/plugins/edu.stanford.smi.protegex.owl/ekitspell.jar"/>
 	<classpathentry exported="true" kind="lib" path="WebRoot/WEB-INF/lib/protege/plugins/edu.stanford.smi.protegex.owl/icu4j_3_4.jar"/>
-	<classpathentry exported="true" kind="lib" path="WebRoot/WEB-INF/lib/protege/plugins/edu.stanford.smi.protegex.owl/iri.jar"/>
 	<classpathentry exported="true" kind="lib" path="WebRoot/WEB-INF/lib/protege/plugins/edu.stanford.smi.protegex.owl/jcalendar.jar"/>
 	<classpathentry exported="true" kind="lib" path="WebRoot/WEB-INF/lib/protege/plugins/edu.stanford.smi.protegex.owl/jdom.jar"/>
 	<classpathentry exported="true" kind="lib" path="WebRoot/WEB-INF/lib/protege/plugins/edu.stanford.smi.protegex.owl/jena.jar"/>
