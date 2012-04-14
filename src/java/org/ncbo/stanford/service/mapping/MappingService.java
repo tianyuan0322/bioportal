@@ -1,13 +1,15 @@
 package org.ncbo.stanford.service.mapping;
 
 import java.util.List;
+import java.util.Set;
 
 import org.ncbo.stanford.bean.OntologyBean;
 import org.ncbo.stanford.bean.concept.ClassBean;
+import org.ncbo.stanford.bean.concept.ConceptOntologyPairBean;
+import org.ncbo.stanford.bean.mapping.MappingBean;
 import org.ncbo.stanford.bean.mapping.MappingConceptStatsBean;
 import org.ncbo.stanford.bean.mapping.MappingOntologyStatsBean;
 import org.ncbo.stanford.bean.mapping.MappingUserStatsBean;
-import org.ncbo.stanford.bean.mapping.MappingBean;
 import org.ncbo.stanford.enumeration.MappingSourceEnum;
 import org.ncbo.stanford.exception.InvalidInputException;
 import org.ncbo.stanford.exception.MappingExistsException;
@@ -33,7 +35,7 @@ public interface MappingService {
 	 * @param mappingSource
 	 * @param mappingType
 	 * @return
-	 * @throws Exception 
+	 * @throws Exception
 	 */
 	public MappingBean createMapping(List<URI> source, List<URI> target,
 			URI relation, Integer sourceOntologyId, Integer targetOntologyId,
@@ -49,7 +51,7 @@ public interface MappingService {
 	 * 
 	 * @param mapping
 	 * @return
-	 * @throws Exception 
+	 * @throws Exception
 	 */
 	public MappingBean createMapping(MappingBean mapping)
 			throws MappingExistsException, Exception;
@@ -68,7 +70,7 @@ public interface MappingService {
 	 * @param id
 	 * @param mapping
 	 * @return
-	 * @throws Exception 
+	 * @throws Exception
 	 */
 	public MappingBean updateMapping(URI id, MappingBean mapping)
 			throws MappingMissingException, Exception;
@@ -77,7 +79,7 @@ public interface MappingService {
 	 * Delete mapping with given id.
 	 * 
 	 * @param id
-	 * @throws Exception 
+	 * @throws Exception
 	 */
 	public void deleteMapping(URI id) throws MappingMissingException, Exception;
 
@@ -169,6 +171,17 @@ public interface MappingService {
 	public Page<MappingBean> getMappingsForConcept(OntologyBean ont,
 			ClassBean concept, Integer pageSize, Integer pageNum,
 			SPARQLFilterGenerator parameters) throws InvalidInputException;
+
+	/**
+	 * Get mappings for an arbitrary set of ontology/concept pairs.
+	 * 
+	 * @param conceptOntologyPairs
+	 * @return
+	 * @throws MappingMissingException
+	 */
+	public List<MappingBean> getMappingsForConceptSet(
+			Set<ConceptOntologyPairBean> conceptOntologyPairs)
+			throws MappingMissingException;
 
 	/**
 	 * Get all mappings from a given concept to other concepts.

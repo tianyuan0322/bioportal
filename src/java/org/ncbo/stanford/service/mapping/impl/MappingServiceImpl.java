@@ -2,17 +2,18 @@ package org.ncbo.stanford.service.mapping.impl;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 import org.ncbo.stanford.bean.OntologyBean;
 import org.ncbo.stanford.bean.concept.ClassBean;
+import org.ncbo.stanford.bean.concept.ConceptOntologyPairBean;
+import org.ncbo.stanford.bean.mapping.MappingBean;
 import org.ncbo.stanford.bean.mapping.MappingConceptStatsBean;
 import org.ncbo.stanford.bean.mapping.MappingOntologyStatsBean;
 import org.ncbo.stanford.bean.mapping.MappingResultListBean;
 import org.ncbo.stanford.bean.mapping.MappingUserStatsBean;
-import org.ncbo.stanford.bean.mapping.MappingBean;
 import org.ncbo.stanford.enumeration.MappingSourceEnum;
 import org.ncbo.stanford.exception.InvalidInputException;
-import org.ncbo.stanford.exception.MappingExistsException;
 import org.ncbo.stanford.exception.MappingMissingException;
 import org.ncbo.stanford.service.mapping.MappingService;
 import org.ncbo.stanford.sparql.bean.Mapping;
@@ -38,8 +39,7 @@ public class MappingServiceImpl implements MappingService {
 			Integer submittedBy, URI dependency, String comment,
 			MappingSourceEnum mappingSource, String mappingSourceName,
 			String mappingSourcecontactInfo, URI mappingSourceSite,
-			String mappingSourceAlgorithm, String mappingType)
-			throws Exception {
+			String mappingSourceAlgorithm, String mappingType) throws Exception {
 		// Verify that there's a string provided to avoid null pointer exception
 		String mappingSourceStr = "";
 		if (mappingSource != null)
@@ -53,8 +53,7 @@ public class MappingServiceImpl implements MappingService {
 				mappingSourceAlgorithm, mappingType));
 	}
 
-	public MappingBean createMapping(MappingBean mapping)
-			throws Exception {
+	public MappingBean createMapping(MappingBean mapping) throws Exception {
 		Mapping newMapping = mappingDAO
 				.createMapping(convertToMappingEntity(mapping));
 		return convertToMappingBean(newMapping);
@@ -154,9 +153,9 @@ public class MappingServiceImpl implements MappingService {
 		// This is because we look up a pagesize worth of source terms and all
 		// of their mappings, so the actual number of returned results is:
 		// (N * number of total target terms for N) where N = pagesize
-		
+
 		// Disabling until someone complains
-		//		pageSize = mappings.size();
+		// pageSize = mappings.size();
 
 		Paginator<MappingBean> p = new PaginatorImpl<MappingBean>(pageMappings,
 				pageSize, totalResults);
@@ -210,6 +209,21 @@ public class MappingServiceImpl implements MappingService {
 		}
 
 		return p.getCurrentPage(pageNum);
+	}
+
+	public List<MappingBean> getMappingsForConceptSet(
+			Set<ConceptOntologyPairBean> conceptOntologyPairs)
+			throws MappingMissingException {
+		List<Mapping> mappings = mappingDAO
+				.getMappingsByConceptOntologyPairs(new ArrayList<ConceptOntologyPairBean>(
+						conceptOntologyPairs));
+		
+		List<MappingBean> mappingBeans = new ArrayList<MappingBean>();
+		for (Mapping mapping : mappings) {
+			mappingBeans.add(convertToMappingBean(mapping));
+		}
+		
+		return mappingBeans;
 	}
 
 	public Page<MappingBean> getMappingsForConcept(OntologyBean ont,
@@ -381,7 +395,8 @@ public class MappingServiceImpl implements MappingService {
 		}
 		mb.setMappingSourceName(processInfo.getMappingSourceName());
 		mb.setMappingSourceAlgorithm(processInfo.getMappingSourceAlgorithm());
-		mb.setMappingSourceContactInfo(processInfo.getMappingSourcecontactInfo());
+		mb.setMappingSourceContactInfo(processInfo
+				.getMappingSourcecontactInfo());
 		mb.setMappingSourceSite(processInfo.getMappingSourceSite());
 		mb.setMappingType(processInfo.getMappingType());
 		mb.setRelation(mapping.getRelation());
@@ -396,10 +411,10 @@ public class MappingServiceImpl implements MappingService {
 
 	private Mapping convertToMappingEntity(MappingBean mapping) {
 		Mapping otom = new Mapping();
-		
+
 		ProcessInfo procInfo = new ProcessInfo();
 		otom.setProcessInfo(procInfo);
-		
+
 		// Set all properties
 		procInfo.setComment(mapping.getComment());
 		otom.setCreatedInSourceOntologyVersion(mapping
@@ -415,7 +430,8 @@ public class MappingServiceImpl implements MappingService {
 		}
 		procInfo.setMappingSourceName(mapping.getMappingSourceName());
 		procInfo.setMappingSourceAlgorithm(mapping.getMappingSourceAlgorithm());
-		procInfo.setMappingSourcecontactInfo(mapping.getMappingSourceContactInfo());
+		procInfo.setMappingSourcecontactInfo(mapping
+				.getMappingSourceContactInfo());
 		procInfo.setMappingSourceSite(mapping.getMappingSourceSite());
 		procInfo.setMappingType(mapping.getMappingType());
 		otom.setRelation(mapping.getRelation());

@@ -38,6 +38,7 @@ import org.ncbo.stanford.bean.mapping.MappingBean;
 import org.ncbo.stanford.bean.mapping.MappingConceptStatsBean;
 import org.ncbo.stanford.bean.mapping.MappingOntologyPairStatsBean;
 import org.ncbo.stanford.bean.mapping.MappingOntologyStatsBean;
+import org.ncbo.stanford.bean.mapping.MappingResultConceptSetBean;
 import org.ncbo.stanford.bean.mapping.MappingUserStatsBean;
 import org.ncbo.stanford.bean.notes.AppliesToBean;
 import org.ncbo.stanford.bean.notes.NoteBean;
@@ -523,6 +524,7 @@ public class XMLSerializationServiceImpl implements XMLSerializationService {
 		xmlSerializer.processAnnotations(MappingConceptStatsBean.class);
 		xmlSerializer.processAnnotations(MappingUserStatsBean.class);
 		xmlSerializer.processAnnotations(MappingOntologyPairStatsBean.class);
+		xmlSerializer.processAnnotations(MappingResultConceptSetBean.class);
 		xmlSerializer.processAnnotations(ConceptOntologyPairBean.class);
 		xmlSerializer.addDefaultImplementation(URIImpl.class, URI.class);
 		xmlSerializer.addDefaultImplementation(ArrayList.class, List.class);

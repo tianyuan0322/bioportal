@@ -2,6 +2,7 @@ package org.ncbo.stanford.view.rest.restlet.mapping;
 
 import java.net.URLDecoder;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
@@ -9,9 +10,12 @@ import javax.servlet.http.HttpServletRequest;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.commons.validator.UrlValidator;
 import org.ncbo.stanford.bean.OntologyBean;
 import org.ncbo.stanford.bean.concept.ClassBean;
+import org.ncbo.stanford.bean.concept.ConceptOntologyPairBean;
 import org.ncbo.stanford.bean.mapping.MappingBean;
+import org.ncbo.stanford.bean.mapping.MappingResultConceptSetBean;
 import org.ncbo.stanford.enumeration.MappingSourceEnum;
 import org.ncbo.stanford.exception.ConceptNotFoundException;
 import org.ncbo.stanford.exception.InvalidInputException;
@@ -48,7 +52,16 @@ public class MappingConceptRestlet extends AbstractMappingRestlet {
 	 * @param response
 	 */
 	public void getRequest(Request request, Response response) {
-		listMapping(request, response);
+		HttpServletRequest httpRequest = RequestUtils
+				.getHttpServletRequest(request);
+		String conceptOntologyPairs = (String) httpRequest
+				.getParameter("concepts");
+
+		if (!StringUtils.isNotEmpty(conceptOntologyPairs)) {
+			listMapping(request, response);
+		} else {
+			listMappingConceptSet(request, response, conceptOntologyPairs);
+		}
 	}
 
 	/**
@@ -69,6 +82,74 @@ public class MappingConceptRestlet extends AbstractMappingRestlet {
 	 */
 	public void deleteRequest(Request request, Response response) {
 		deleteMapping(request, response);
+	}
+
+	private void listMappingConceptSet(Request request, Response response,
+			String conceptOntologyPairs) {
+		MappingResultConceptSetBean result = new MappingResultConceptSetBean();
+		List<ConceptOntologyPairBean> errorConcepts = new ArrayList<ConceptOntologyPairBean>();
+		try {
+			List<ConceptOntologyPairBean> conceptOntologyPairList = RequestUtils
+					.parseConceptOntologyPairs(conceptOntologyPairs);
+
+			UrlValidator validator = new UrlValidator();
+
+			// If a URI is passed, assume it's valid. This is so we don't have
+			// to hit the concept service. If something isn't a URI then we'll
+			// try to look it up in the concept service.
+			List<ConceptOntologyPairBean> goodURIs = new ArrayList<ConceptOntologyPairBean>();
+			for (ConceptOntologyPairBean conceptOntologyPair : conceptOntologyPairList) {
+				if (validator.isValid(conceptOntologyPair.getConceptId())) {
+					goodURIs.add(conceptOntologyPair);
+				} else {
+					errorConcepts.add(conceptOntologyPair);
+				}
+			}
+			conceptOntologyPairList = goodURIs;
+
+			// Try to convert non-uri concept ids
+			List<ConceptOntologyPairBean> definitelyBadConcepts = new ArrayList<ConceptOntologyPairBean>();
+			if (!errorConcepts.isEmpty()) {
+				for (ConceptOntologyPairBean pair : errorConcepts) {
+					try {
+						OntologyBean ont = ontologyService
+								.findLatestActiveOntologyOrViewVersion(pair
+										.getOntologyId());
+						if (ont == null) {
+							definitelyBadConcepts.add(pair);
+							continue;
+						}
+
+						ClassBean concept = conceptService.findConcept(
+								ont.getId(), pair.getConceptId(), 0, true,
+								true, false);
+						if (concept == null) {
+							definitelyBadConcepts.add(pair);
+							continue;
+						}
+
+						pair.setConceptId(concept.getFullId());
+						conceptOntologyPairList.add(pair);
+					} catch (Exception e) {
+						definitelyBadConcepts.add(pair);
+					}
+				}
+			}
+			errorConcepts = definitelyBadConcepts;
+
+			result.setErrorConcepts(errorConcepts);
+
+			result.setMappings(mappingService
+					.getMappingsForConceptSet(new HashSet<ConceptOntologyPairBean>(
+							conceptOntologyPairList)));
+		} catch (Exception e) {
+			response.setStatus(Status.SERVER_ERROR_INTERNAL, e.getMessage());
+			e.printStackTrace();
+			log.error(e);
+		} finally {
+			xmlSerializationService.generateXMLResponse(request, response,
+					result);
+		}
 	}
 
 	private void listMapping(Request request, Response response) {
@@ -145,8 +226,9 @@ public class MappingConceptRestlet extends AbstractMappingRestlet {
 
 			if ((ont == null && sourceOnt == null && targetOnt == null)
 					|| (ont == null && (sourceOnt == null || targetOnt == null))) {
-				throw new InvalidInputException(MessageUtils
-						.getMessage("msg.error.ontologyversionidinvalid"));
+				throw new InvalidInputException(
+						MessageUtils
+								.getMessage("msg.error.ontologyversionidinvalid"));
 			}
 
 			// Test for valid concept
@@ -163,8 +245,8 @@ public class MappingConceptRestlet extends AbstractMappingRestlet {
 
 			if ((concept == null && sourceConcept == null && targetConcept == null)
 					|| (concept == null && (sourceConcept == null || targetConcept == null))) {
-				throw new ConceptNotFoundException(MessageUtils
-						.getMessage("msg.error.conceptNotFound"));
+				throw new ConceptNotFoundException(
+						MessageUtils.getMessage("msg.error.conceptNotFound"));
 			}
 
 			// Process mappings
@@ -189,11 +271,9 @@ public class MappingConceptRestlet extends AbstractMappingRestlet {
 			}
 
 		} catch (OntologyNotFoundException onfe) {
-			response
-					.setStatus(Status.CLIENT_ERROR_NOT_FOUND, onfe.getMessage());
+			response.setStatus(Status.CLIENT_ERROR_NOT_FOUND, onfe.getMessage());
 		} catch (ConceptNotFoundException cnfe) {
-			response
-					.setStatus(Status.CLIENT_ERROR_NOT_FOUND, cnfe.getMessage());
+			response.setStatus(Status.CLIENT_ERROR_NOT_FOUND, cnfe.getMessage());
 		} catch (Exception e) {
 			response.setStatus(Status.SERVER_ERROR_INTERNAL, e.getMessage());
 			e.printStackTrace();
@@ -282,32 +362,33 @@ public class MappingConceptRestlet extends AbstractMappingRestlet {
 			}
 
 			if (sourceOnt == null || targetOnt == null) {
-				throw new InvalidInputException(MessageUtils
-						.getMessage("You must provide a valid ontology id"));
+				throw new InvalidInputException(
+						MessageUtils
+								.getMessage("You must provide a valid ontology id"));
 			}
 
 			// Test for valid concepts
 			if (source != null && target != null && !source.isEmpty()
 					&& !target.isEmpty()) {
 				for (URI sourceConceptId : source) {
-					sourceConcept.add(conceptService.findConcept(sourceOnt
-							.getId(), sourceConceptId.toString(), 0, true,
-							false, false));
+					sourceConcept.add(conceptService.findConcept(
+							sourceOnt.getId(), sourceConceptId.toString(), 0,
+							true, false, false));
 				}
 
 				for (URI targetConceptId : target) {
-					targetConcept.add(conceptService.findConcept(targetOnt
-							.getId(), targetConceptId.toString(), 0, true,
-							false, false));
+					targetConcept.add(conceptService.findConcept(
+							targetOnt.getId(), targetConceptId.toString(), 0,
+							true, false, false));
 				}
 			}
 
 			if (sourceConcept == null || targetConcept == null
 					|| sourceConcept.isEmpty() || targetConcept.isEmpty()) {
-				throw new ConceptNotFoundException(MessageUtils
-						.getMessage("msg.error.conceptNotFound"));
+				throw new ConceptNotFoundException(
+						MessageUtils.getMessage("msg.error.conceptNotFound"));
 			}
-			
+
 			// If the mapping is many-to-many then we force unidirectional
 			if (source.size() > 1 || target.size() > 1)
 				unidirectional = true;
