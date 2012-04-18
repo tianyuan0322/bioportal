@@ -60,7 +60,9 @@ public abstract class AbstractSPARQLBean implements Serializable {
 
 		if (type != null)
 			this.type = new URIImpl(type);
-
+		else
+			this.type = null;
+			
 		generateId();
 	}
 
@@ -76,8 +78,9 @@ public abstract class AbstractSPARQLBean implements Serializable {
 				this.id, vf);
 
 		// Adds the object's type
-		statements.add(new StatementImpl(this.id,
-				ApplicationConstants.RDF_TYPE_URI, this.type));
+		if (this.type != null)
+			statements.add(new StatementImpl(this.id,
+					ApplicationConstants.RDF_TYPE_URI, this.type));
 
 		return statements;
 	}
@@ -169,6 +172,8 @@ public abstract class AbstractSPARQLBean implements Serializable {
 			} catch (DatatypeConfigurationException e) {
 				e.printStackTrace();
 			}
+		} else if (value.getClass() == ProcessInfo.class) {
+			valueTyped = ((ProcessInfo)value).getId();
 		} else {
 			valueTyped = (Value) value;
 		}

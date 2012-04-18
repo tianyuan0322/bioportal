@@ -14,6 +14,7 @@ import org.apache.commons.lang.StringUtils;
 import org.ncbo.stanford.exception.InvalidInputException;
 import org.ncbo.stanford.manager.rdfstore.RDFStoreManager;
 import org.ncbo.stanford.sparql.bean.Mapping;
+import org.ncbo.stanford.sparql.bean.ProcessInfo;
 import org.ncbo.stanford.util.MessageUtils;
 import org.ncbo.stanford.util.constants.ApplicationConstants;
 import org.ncbo.stanford.util.sparql.SPARQLFilterGenerator;
@@ -63,17 +64,18 @@ public class AbstractNcboMappingDAO {
 			+ "  ?mappingId map:relation ?relation ."
 			+ "  ?mappingId map:created_in_source_ontology_version ?createdInSourceOntologyVersion ."
 			+ "  ?mappingId map:created_in_target_ontology_version ?createdInTargetOntologyVersion ."
-			+ "  ?mappingId map:date ?date ."
-			+ "  ?mappingId map:submitted_by ?submittedBy ."
-			+ "  ?mappingId map:mapping_type ?mappingType ."
+			+ "  ?mappingId map:has_process_info ?procInf ."
+			+ "  ?procInf map:date ?date ."
+			+ "  ?procInf map:mapping_type ?mappingType ."			
+			+ "  ?procInf map:submitted_by ?submittedBy ."
 			+ "  OPTIONAL { ?mappingId map:is_many_to_many ?isManyToMany .}"
-			+ "  OPTIONAL { ?mappingId map:comment ?comment .}"
+			+ "  OPTIONAL { ?procInf map:comment ?comment .}"
 			+ "  OPTIONAL { ?mappingId map:dependency ?dependency .}"
-			+ "  OPTIONAL { ?mappingId map:mapping_source ?mappingSource .}"
-			+ "  OPTIONAL { ?mappingId map:mapping_source_name ?mappingSourceName .}"
-			+ "  OPTIONAL { ?mappingId map:mapping_source_contact_info ?mappingSourceContactInfo .}"
-			+ "  OPTIONAL { ?mappingId map:mapping_source_site ?mappingSourceSite .}"
-			+ "  OPTIONAL { ?mappingId map:mapping_source_algorithm ?mappingSourceAlgorithm .}"
+			+ "  OPTIONAL { ?procInf map:mapping_source ?mappingSource .}"
+			+ "  OPTIONAL { ?procInf map:mapping_source_name ?mappingSourceName .}"
+			+ "  OPTIONAL { ?procInf map:mapping_source_contact_info ?mappingSourceContactInfo .}"
+			+ "  OPTIONAL { ?procInf map:mapping_source_site ?mappingSourceSite .}"
+			+ "  OPTIONAL { ?procInf map:mapping_source_algorithm ?mappingSourceAlgorithm .}"
 			+ "  FILTER (%FILTER%) } LIMIT %LIMIT% OFFSET %OFFSET%";
 
 	protected final static String mappingQuery = "PREFIX map: <http://protege.stanford.edu/ontologies/mappings/mappings.rdfs#> "
@@ -101,17 +103,18 @@ public class AbstractNcboMappingDAO {
 			+ "  ?mappingId map:target_ontology_id ?targetOntologyId ."
 			+ "  ?mappingId map:created_in_source_ontology_version ?createdInSourceOntologyVersion ."
 			+ "  ?mappingId map:created_in_target_ontology_version ?createdInTargetOntologyVersion ."
-			+ "  ?mappingId map:date ?date ."
-			+ "  ?mappingId map:submitted_by ?submittedBy ."
-			+ "  ?mappingId map:mapping_type ?mappingType ."
+			+ "  ?mappingId map:has_process_info ?procInf ."
+			+ "  ?procInf map:date ?date ."
+			+ "  ?procInf map:mapping_type ?mappingType ."			
+			+ "  ?procInf map:submitted_by ?submittedBy ."
 			+ "  OPTIONAL { ?mappingId map:is_many_to_many ?isManyToMany .}"
-			+ "  OPTIONAL { ?mappingId map:comment ?comment .}"
+			+ "  OPTIONAL { ?procInf map:comment ?comment .}"
 			+ "  OPTIONAL { ?mappingId map:dependency ?dependency .}"
-			+ "  OPTIONAL { ?mappingId map:mapping_source ?mappingSource .}"
-			+ "  OPTIONAL { ?mappingId map:mapping_source_name ?mappingSourceName .}"
-			+ "  OPTIONAL { ?mappingId map:mapping_source_contact_info ?mappingSourceContactInfo .}"
-			+ "  OPTIONAL { ?mappingId map:mapping_source_site ?mappingSourceSite .}"
-			+ "  OPTIONAL { ?mappingId map:mapping_source_algorithm ?mappingSourceAlgorithm .}"
+			+ "  OPTIONAL { ?procInf map:mapping_source ?mappingSource .}"
+			+ "  OPTIONAL { ?procInf map:mapping_source_name ?mappingSourceName .}"
+			+ "  OPTIONAL { ?procInf map:mapping_source_contact_info ?mappingSourceContactInfo .}"
+			+ "  OPTIONAL { ?procInf map:mapping_source_site ?mappingSourceSite .}"
+			+ "  OPTIONAL { ?procInf map:mapping_source_algorithm ?mappingSourceAlgorithm .}"
 			+ "  FILTER (%FILTER%) } %ORDERBY% LIMIT %LIMIT% OFFSET %OFFSET%";
 
 	protected final static String mappingCountQuery = "PREFIX map: <http://protege.stanford.edu/ontologies/mappings/mappings.rdfs#> "
@@ -188,12 +191,14 @@ public class AbstractNcboMappingDAO {
 				mapping.setCreatedInTargetOntologyVersion(convertValueToInteger(bs
 						.getValue("createdInTargetOntologyVersion")));
 
-				mapping.setSubmittedBy(convertValueToInteger(bs
+				ProcessInfo processInfo = new ProcessInfo();
+				mapping.setProcessInfo(processInfo);
+				processInfo.setSubmittedBy(convertValueToInteger(bs
 						.getValue("submittedBy")));
 
-				mapping.setMappingType(bs.getValue("mappingType").stringValue());
+				processInfo.setMappingType(bs.getValue("mappingType").stringValue());
 
-				mapping.setDate(convertValueToDate(bs.getValue("date")));
+				processInfo.setDate(convertValueToDate(bs.getValue("date")));
 
 				// Set mapping properties (optional)
 				if (isValidValue(bs.getValue("dependency")))
@@ -201,26 +206,26 @@ public class AbstractNcboMappingDAO {
 							.stringValue()));
 
 				if (isValidValue(bs.getValue("comment")))
-					mapping.setComment(bs.getValue("comment").stringValue());
+					processInfo.setComment(bs.getValue("comment").stringValue());
 
 				if (isValidValue(bs.getValue("mappingSource")))
-					mapping.setMappingSource(bs.getValue("mappingSource")
+					processInfo.setMappingSource(bs.getValue("mappingSource")
 							.stringValue());
 
 				if (isValidValue(bs.getValue("mappingSourceName")))
-					mapping.setMappingSourceName(bs.getValue(
+					processInfo.setMappingSourceName(bs.getValue(
 							"mappingSourceName").stringValue());
 
 				if (isValidValue(bs.getValue("mappingSourceContactInfo")))
-					mapping.setMappingSourcecontactInfo(bs.getValue(
+					processInfo.setMappingSourcecontactInfo(bs.getValue(
 							"mappingSourceContactInfo").stringValue());
 
 				if (isValidValue(bs.getValue("mappingSourceAlgorithm")))
-					mapping.setMappingSourceAlgorithm(bs.getValue(
+					processInfo.setMappingSourceAlgorithm(bs.getValue(
 							"mappingSourceAlgorithm").stringValue());
 
 				if (isValidValue(bs.getValue("mappingSourceSite")))
-					mapping.setMappingSourceSite(new URIImpl(bs.getValue(
+					processInfo.setMappingSourceSite(new URIImpl(bs.getValue(
 							"mappingSourceSite").stringValue()));
 
 				mappingResults.put(mapping.getId().toString(), mapping);
@@ -864,6 +869,11 @@ public class AbstractNcboMappingDAO {
 			String comment, String mappingSource, String mappingSourceName,
 			String mappingSourcecontactInfo, URI mappingSourceSite,
 			String mappingSourceAlgorithm, String mappingType) {
+		ProcessInfo processInfo = mapping.getProcessInfo();
+		if (processInfo != null) {
+			processInfo = new ProcessInfo();
+			mapping.setProcessInfo(processInfo);
+		}
 		if (source != null)
 			mapping.setSource(source);
 		if (target != null)
@@ -879,23 +889,23 @@ public class AbstractNcboMappingDAO {
 		if (targetOntologyVersion != null)
 			mapping.setCreatedInTargetOntologyVersion(targetOntologyVersion);
 		if (submittedBy != null)
-			mapping.setSubmittedBy(submittedBy);
+			processInfo.setSubmittedBy(submittedBy);
 		if (dependency != null)
 			mapping.setDependency(dependency);
 		if (comment != null)
-			mapping.setComment(comment);
+			processInfo.setComment(comment);
 		if (mappingSource != null)
-			mapping.setMappingSource(mappingSource);
+			processInfo.setMappingSource(mappingSource);
 		if (mappingSourceName != null)
-			mapping.setMappingSourceName(mappingSourceName);
+			processInfo.setMappingSourceName(mappingSourceName);
 		if (mappingSourcecontactInfo != null)
-			mapping.setMappingSourcecontactInfo(mappingSourcecontactInfo);
+			processInfo.setMappingSourcecontactInfo(mappingSourcecontactInfo);
 		if (mappingSourceSite != null)
-			mapping.setMappingSourceSite(mappingSourceSite);
+			processInfo.setMappingSourceSite(mappingSourceSite);
 		if (mappingSourceAlgorithm != null)
-			mapping.setMappingSourceAlgorithm(mappingSourceAlgorithm);
+			processInfo.setMappingSourceAlgorithm(mappingSourceAlgorithm);
 		if (mappingType != null)
-			mapping.setMappingType(mappingType);
+			processInfo.setMappingType(mappingType);
 
 		return mapping;
 	}

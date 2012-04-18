@@ -16,6 +16,7 @@ import org.ncbo.stanford.exception.MappingExistsException;
 import org.ncbo.stanford.exception.MappingMissingException;
 import org.ncbo.stanford.service.mapping.MappingService;
 import org.ncbo.stanford.sparql.bean.Mapping;
+import org.ncbo.stanford.sparql.bean.ProcessInfo;
 import org.ncbo.stanford.sparql.dao.mapping.CustomNcboMappingCountsDAO;
 import org.ncbo.stanford.sparql.dao.mapping.CustomNcboMappingDAO;
 import org.ncbo.stanford.sparql.dao.mapping.CustomNcboMappingStatsDAO;
@@ -363,29 +364,30 @@ public class MappingServiceImpl implements MappingService {
 	private MappingBean convertToMappingBean(Mapping mapping) {
 		MappingBean mb = new MappingBean();
 
+		ProcessInfo processInfo = mapping.getProcessInfo();
 		// Set all properties
-		mb.setComment(mapping.getComment());
+		mb.setComment(processInfo.getComment());
 		mb.setCreatedInSourceOntologyVersion(mapping
 				.getCreatedInSourceOntologyVersion());
 		mb.setCreatedInTargetOntologyVersion(mapping
 				.getCreatedInTargetOntologyVersion());
-		mb.setDate(mapping.getDate());
+		mb.setDate(processInfo.getDate());
 		mb.setDependency(mapping.getDependency());
 		mb.setId(mapping.getId());
-		if (mapping.getMappingSource() != null
-				&& mapping.getMappingSource().length() > 0) {
-			mb.setMappingSource(MappingSourceEnum.valueOf(mapping
+		if (processInfo.getMappingSource() != null
+				&& processInfo.getMappingSource().length() > 0) {
+			mb.setMappingSource(MappingSourceEnum.valueOf(processInfo
 					.getMappingSource().toUpperCase()));
 		}
-		mb.setMappingSourceName(mapping.getMappingSourceName());
-		mb.setMappingSourceAlgorithm(mapping.getMappingSourceAlgorithm());
-		mb.setMappingSourceContactInfo(mapping.getMappingSourcecontactInfo());
-		mb.setMappingSourceSite(mapping.getMappingSourceSite());
-		mb.setMappingType(mapping.getMappingType());
+		mb.setMappingSourceName(processInfo.getMappingSourceName());
+		mb.setMappingSourceAlgorithm(processInfo.getMappingSourceAlgorithm());
+		mb.setMappingSourceContactInfo(processInfo.getMappingSourcecontactInfo());
+		mb.setMappingSourceSite(processInfo.getMappingSourceSite());
+		mb.setMappingType(processInfo.getMappingType());
 		mb.setRelation(mapping.getRelation());
 		mb.setSource(mapping.getSource());
 		mb.setSourceOntologyId(mapping.getSourceOntologyId());
-		mb.setSubmittedBy(mapping.getSubmittedBy());
+		mb.setSubmittedBy(processInfo.getSubmittedBy());
 		mb.setTarget(mapping.getTarget());
 		mb.setTargetOntologyId(mapping.getTargetOntologyId());
 
@@ -394,29 +396,32 @@ public class MappingServiceImpl implements MappingService {
 
 	private Mapping convertToMappingEntity(MappingBean mapping) {
 		Mapping otom = new Mapping();
-
+		
+		ProcessInfo procInfo = new ProcessInfo();
+		otom.setProcessInfo(procInfo);
+		
 		// Set all properties
-		otom.setComment(mapping.getComment());
+		procInfo.setComment(mapping.getComment());
 		otom.setCreatedInSourceOntologyVersion(mapping
 				.getCreatedInSourceOntologyVersion());
 		otom.setCreatedInTargetOntologyVersion(mapping
 				.getCreatedInTargetOntologyVersion());
-		otom.setDate(mapping.getDate());
+		procInfo.setDate(mapping.getDate());
 		otom.setDependency(mapping.getDependency());
 		otom.setId(mapping.getId());
 		if (mapping.getMappingSource() != null
 				&& !mapping.getMappingSource().toString().isEmpty()) {
-			otom.setMappingSource(mapping.getMappingSource().toString());
+			procInfo.setMappingSource(mapping.getMappingSource().toString());
 		}
-		otom.setMappingSourceName(mapping.getMappingSourceName());
-		otom.setMappingSourceAlgorithm(mapping.getMappingSourceAlgorithm());
-		otom.setMappingSourcecontactInfo(mapping.getMappingSourceContactInfo());
-		otom.setMappingSourceSite(mapping.getMappingSourceSite());
-		otom.setMappingType(mapping.getMappingType());
+		procInfo.setMappingSourceName(mapping.getMappingSourceName());
+		procInfo.setMappingSourceAlgorithm(mapping.getMappingSourceAlgorithm());
+		procInfo.setMappingSourcecontactInfo(mapping.getMappingSourceContactInfo());
+		procInfo.setMappingSourceSite(mapping.getMappingSourceSite());
+		procInfo.setMappingType(mapping.getMappingType());
 		otom.setRelation(mapping.getRelation());
 		otom.setSource(mapping.getSource());
 		otom.setSourceOntologyId(mapping.getSourceOntologyId());
-		otom.setSubmittedBy(mapping.getSubmittedBy());
+		procInfo.setSubmittedBy(mapping.getSubmittedBy());
 		otom.setTarget(mapping.getTarget());
 		otom.setTargetOntologyId(mapping.getTargetOntologyId());
 

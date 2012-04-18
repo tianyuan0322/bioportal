@@ -151,7 +151,7 @@ public class CustomNcboMappingDAOTest extends AbstractBioPortalTest {
 					mapping.getCreatedInSourceOntologyVersion());
 			assertEquals(targetOntologyVersion,
 					mapping.getCreatedInTargetOntologyVersion());
-			assertEquals(comment, mapping.getComment());
+			assertEquals(comment, mapping.getProcessInfo().getComment());
 		} catch (MappingMissingException e) {
 			e.printStackTrace();
 		} catch (Exception e) {

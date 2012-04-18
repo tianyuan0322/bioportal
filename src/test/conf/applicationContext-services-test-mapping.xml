@@ -26,6 +26,10 @@
 		<constructor-arg ref="messageBundleName" index="0" />
 	</bean>
 
+	<bean id="rdfStoreManager4StoreImpl"
+	      class="org.ncbo.stanford.manager.rdfstore.impl.RDFStoreManager4StoreImpl">
+	</bean>
+	
 	<bean id="rdfStoreManagerVirtuosoImpl"
 	      class="org.ncbo.stanford.manager.rdfstore.impl.RDFStoreManagerVirtuosoImpl">
 	</bean>
@@ -48,6 +52,13 @@
 					static-field="org.ncbo.stanford.util.constants.ApplicationConstants.MYSQL" />
 			</key>
 			<ref local="rdfStoreManagerMySqlImpl" />
+		</entry>
+		<entry>
+			<key>
+				<util:constant
+					static-field="org.ncbo.stanford.util.constants.ApplicationConstants.FOURSTORE" />
+			</key>
+			<ref local="rdfStoreManager4StoreImpl" />
 		</entry>
 	</util:map>
 
