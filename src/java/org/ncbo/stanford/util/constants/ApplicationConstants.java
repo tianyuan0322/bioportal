@@ -216,7 +216,7 @@ public interface ApplicationConstants {
 	public static final String PROVISIONAL_TERM_ID_PREFIX = "http://purl.bioontology.org/ontology/provisional/";
 
 	// This is equivalent to a named graph in an RDF store.
-	public static final String MAPPING_CONTEXT = "http://protege.stanford.edu/ontologies/mappings/mappings.rdfs";
+	public static final String MAPPING_CONTEXT = "http://purl.bioontology.org/mapping/rest";
 	public static final URI MAPPING_CONTEXT_URI = new URIImpl(MAPPING_CONTEXT);
 	public static final String PROVISIONAL_TERM_CONTEXT = "http://purl.bioontology.org/ontology/provisional";
 	public static final URI PROVISIONAL_TERM_CONTEXT_URI = new URIImpl(PROVISIONAL_TERM_CONTEXT);
