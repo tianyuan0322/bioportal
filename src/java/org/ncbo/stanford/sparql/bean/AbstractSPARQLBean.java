@@ -157,7 +157,7 @@ public abstract class AbstractSPARQLBean implements Serializable {
 		Value valueTyped = null;
 
 		if (value.getClass() == Integer.class) {
-			valueTyped = vf.createLiteral((Integer) value);
+			valueTyped = vf.createLiteral(Integer.toString((Integer) value), ApplicationConstants.XSD_INTEGER);
 		} else if (value.getClass() == String.class) {
 			valueTyped = vf.createLiteral((String) value);
 		} else if (value.getClass() == Date.class) {
