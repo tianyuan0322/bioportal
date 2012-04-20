@@ -354,8 +354,13 @@ public class CustomNcboMappingDAO extends AbstractNcboMappingDAO {
 			Integer targetOntology, Boolean unidirectional, Integer limit,
 			Integer offset, SPARQLFilterGenerator parameters)
 			throws InvalidInputException {
-		return super.getMappingsBetweenOntologies(sourceOntology,
-				targetOntology, unidirectional, limit, offset, parameters);
+		List<Mapping> mappings = super.getMappingsBetweenOntologies(sourceOntology,
+				targetOntology, true, limit, offset, parameters);
+		if (!unidirectional) {
+			mappings.addAll( super.getMappingsBetweenOntologies(targetOntology,
+					sourceOntology, true, limit, offset, parameters));
+		}
+		return mappings;
 	}
 
 	public List<Mapping> getRankedMappingsBetweenOntologies(
