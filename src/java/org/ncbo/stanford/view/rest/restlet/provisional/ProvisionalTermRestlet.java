@@ -217,10 +217,6 @@ public class ProvisionalTermRestlet extends AbstractBaseRestlet {
 			}
 
 			// Check to make sure other required parameters are present
-			if (ontologyIds.size() == 0)
-				throw new InvalidInputException(
-						"A valid ontology id is required");
-
 			if (submittedBy != null
 					&& userService.findUser(submittedBy) == null)
 				throw new InvalidInputException("A valid user id is required");
