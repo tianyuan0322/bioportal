@@ -193,16 +193,16 @@ public class OntologyLoadSchedulerServiceImpl extends AbstractOntologyService
 				// Disabled until we figure out why the workflow is broken
 				// createDiff(ontologyBean);
 
+				// Set ontology status to "READY"
+				status = StatusEnum.STATUS_READY;
+				updateOntologyStatus(loadQueue, ontologyBean, formatHandler,
+						status, errorMessage);
+
 				// index ontology
 				if (isDefaultFormatHandler(ontologyBean, formatHandler)) {
 					indexService.indexOntology(ontologyBean.getOntologyId(),
 							false, false);
 				}
-
-				// Set ontology status to "READY"
-				status = StatusEnum.STATUS_READY;
-				updateOntologyStatus(loadQueue, ontologyBean, formatHandler,
-						status, errorMessage);
 			}
 		} catch (Exception e) {
 			status = StatusEnum.STATUS_ERROR;
