@@ -132,9 +132,6 @@ public class BooleanWildCardQuery extends BooleanQuery {
 						term = term.substring(0, term.length() - 1);
 					}
 
-					System.out.println("Term: " + term);
-					System.out.println("InQuotes: " + inQuotes);
-
 					if (inQuotes) {
 						clauseTerms.add(new Term(field, term));
 					} else {
