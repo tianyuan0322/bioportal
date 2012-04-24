@@ -286,24 +286,20 @@ public class OntologySearchManagerLexGridImpl extends
 			Integer ontologyVersionId, Integer ontologyId,
 			String ontologyDisplayLabel, String preferredName, Concept concept,
 			Byte isObsolete) throws IOException {
-		String conceptId = concept.getEntityCode();
 		List<SearchIndexBean> docs = new ArrayList<SearchIndexBean>(0);
+		String conceptId = concept.getEntityCode();
 
-		// add concept id to index only if concept id != preferredName to avoid
-		// duplication of data
-		if (!conceptId.equals(preferredName)) {
-			Property p = new Property();
-			Text t = new Text();
-			t.setContent(conceptId);
-			p.setValue(t);
+		Property p = new Property();
+		Text t = new Text();
+		t.setContent(conceptId);
+		p.setValue(t);
 
-			SearchIndexBean doc = populateIndexBean(fullId, conceptId,
-					new LexGridSearchProperty(ontologyVersionId, ontologyId,
-							ontologyDisplayLabel,
-							SearchRecordTypeEnum.RECORD_TYPE_CONCEPT_ID,
-							preferredName, isObsolete, p));
-			docs.add(doc);
-		}
+		SearchIndexBean doc = populateIndexBean(fullId, conceptId,
+				new LexGridSearchProperty(ontologyVersionId, ontologyId,
+						ontologyDisplayLabel,
+						SearchRecordTypeEnum.RECORD_TYPE_CONCEPT_ID,
+						preferredName, isObsolete, p));
+		docs.add(doc);
 		writer.addDocuments(docs);
 	}
 

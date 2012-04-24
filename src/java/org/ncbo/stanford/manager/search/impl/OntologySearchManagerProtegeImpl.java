@@ -98,7 +98,7 @@ public class OntologySearchManagerProtegeImpl extends
 				}
 			}
 
-			// add name slot but only if the concept id != preferredName
+			// add name slot (concept id)
 			protegeFrame
 					.setRecordType(SearchRecordTypeEnum.RECORD_TYPE_CONCEPT_ID);
 			addNameSlotToIndex(writer, ontologyBean, kb, protegeFrame,
@@ -266,14 +266,9 @@ public class OntologySearchManagerProtegeImpl extends
 
 		if (frame instanceof RDFResource) {
 			String name = ((RDFResource) frame).getLocalName();
-
-			// add name slot only if the concept id != preferredName to
-			// avoid duplication of data
-			if (!name.equals(preferredName)) {
-				SearchIndexBean doc = populateIndexBean(ontologyBean,
-						protegeFrame, name, owlMode);
-				docs.add(doc);
-			}
+			SearchIndexBean doc = populateIndexBean(ontologyBean,
+					protegeFrame, name, owlMode);
+			docs.add(doc);
 			writer.addDocuments(docs);
 		}
 	}
