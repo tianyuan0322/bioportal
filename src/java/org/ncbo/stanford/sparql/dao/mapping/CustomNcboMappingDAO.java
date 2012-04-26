@@ -13,7 +13,7 @@ import org.ncbo.stanford.exception.MappingMissingException;
 import org.ncbo.stanford.sparql.bean.Mapping;
 import org.ncbo.stanford.sparql.bean.ProcessInfo;
 import org.ncbo.stanford.util.constants.ApplicationConstants;
-import org.ncbo.stanford.util.sparql.SPARQLFilterGenerator;
+import org.ncbo.stanford.util.sparql.MappingFilterGenerator;
 import org.ncbo.stanford.util.sparql.SPARQLUnionGenerator;
 import org.openrdf.model.Statement;
 import org.openrdf.model.URI;
@@ -391,7 +391,7 @@ public class CustomNcboMappingDAO extends AbstractNcboMappingDAO {
 	 *******************************************************************/
 
 	public List<Mapping> getMappingsForParameters(Integer limit,
-			Integer offset, SPARQLFilterGenerator parameters)
+			Integer offset, MappingFilterGenerator parameters)
 			throws InvalidInputException {
 		return getMappings(limit, offset, null, parameters);
 	}
@@ -403,7 +403,7 @@ public class CustomNcboMappingDAO extends AbstractNcboMappingDAO {
 	 *******************************************************************/
 
 	public List<Mapping> getMappingsFromOntology(Integer ontologyId,
-			Integer limit, Integer offset, SPARQLFilterGenerator parameters)
+			Integer limit, Integer offset, MappingFilterGenerator parameters)
 			throws InvalidInputException {
 		String filter = generateOntologySparqlFilter(ontologyId, null, true);
 
@@ -411,7 +411,7 @@ public class CustomNcboMappingDAO extends AbstractNcboMappingDAO {
 	}
 
 	public List<Mapping> getMappingsToOntology(Integer ontologyId,
-			Integer limit, Integer offset, SPARQLFilterGenerator parameters)
+			Integer limit, Integer offset, MappingFilterGenerator parameters)
 			throws InvalidInputException {
 		String filter = generateOntologySparqlFilter(null, ontologyId, true);
 
@@ -420,7 +420,7 @@ public class CustomNcboMappingDAO extends AbstractNcboMappingDAO {
 
 	public List<Mapping> getMappingsBetweenOntologies(Integer sourceOntology,
 			Integer targetOntology, Boolean unidirectional, Integer limit,
-			Integer offset, SPARQLFilterGenerator parameters)
+			Integer offset, MappingFilterGenerator parameters)
 			throws InvalidInputException {
 		List<Mapping> mappings = super
 				.getMappingsBetweenOntologies(sourceOntology, targetOntology,
@@ -434,7 +434,7 @@ public class CustomNcboMappingDAO extends AbstractNcboMappingDAO {
 
 	public List<Mapping> getRankedMappingsBetweenOntologies(
 			Integer sourceOntology, Integer targetOntology, Integer limit,
-			Integer offset, SPARQLFilterGenerator parameters)
+			Integer offset, MappingFilterGenerator parameters)
 			throws InvalidInputException {
 		String queryString = "select ?source (count(?target) as ?count) where {                                                    "
 				+ "  ?mappingId <http://protege.stanford.edu/ontologies/mappings/mappings.rdfs#source> ?source .                   "
@@ -541,7 +541,7 @@ public class CustomNcboMappingDAO extends AbstractNcboMappingDAO {
 	}
 
 	public List<Mapping> getMappingsForOntology(Integer ontologyId,
-			Integer limit, Integer offset, SPARQLFilterGenerator parameters)
+			Integer limit, Integer offset, MappingFilterGenerator parameters)
 			throws InvalidInputException {
 		String filter = generateOntologySparqlFilter(ontologyId, null, false);
 
@@ -556,7 +556,7 @@ public class CustomNcboMappingDAO extends AbstractNcboMappingDAO {
 
 	public List<Mapping> getMappingsForConcept(Integer ontologyId,
 			String conceptId, Integer limit, Integer offset,
-			SPARQLFilterGenerator parameters) throws InvalidInputException {
+			MappingFilterGenerator parameters) throws InvalidInputException {
 		Set<String> mappingIds = null;
 		if (!ApplicationConstants.GENERATE_UNION_SPARQL) {
 			String filter = "("
@@ -592,7 +592,7 @@ public class CustomNcboMappingDAO extends AbstractNcboMappingDAO {
 
 	public List<Mapping> getMappingsFromConcept(Integer ontologyId,
 			String conceptId, Integer limit, Integer offset,
-			SPARQLFilterGenerator parameters) throws InvalidInputException {
+			MappingFilterGenerator parameters) throws InvalidInputException {
 
 		Set<String> mappingIds = null;
 		if (!ApplicationConstants.GENERATE_UNION_SPARQL) {
@@ -622,7 +622,7 @@ public class CustomNcboMappingDAO extends AbstractNcboMappingDAO {
 
 	public List<Mapping> getMappingsToConcept(Integer ontologyId,
 			String conceptId, Integer limit, Integer offset,
-			SPARQLFilterGenerator parameters) throws InvalidInputException {
+			MappingFilterGenerator parameters) throws InvalidInputException {
 
 		Set<String> mappingIds = null;
 		if (!ApplicationConstants.GENERATE_UNION_SPARQL) {
@@ -653,7 +653,7 @@ public class CustomNcboMappingDAO extends AbstractNcboMappingDAO {
 	public List<Mapping> getMappingsBetweenConcepts(Integer sourceOntologyId,
 			Integer targetOntologyId, String fromConceptId, String toConceptId,
 			Boolean unidirectional, Integer limit, Integer offset,
-			SPARQLFilterGenerator parameters) throws InvalidInputException {
+			MappingFilterGenerator parameters) throws InvalidInputException {
 
 		Set<String> mappingIds = null;
 		if (!ApplicationConstants.GENERATE_UNION_SPARQL) {

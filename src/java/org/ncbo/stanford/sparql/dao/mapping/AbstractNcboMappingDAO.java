@@ -17,7 +17,7 @@ import org.ncbo.stanford.sparql.bean.Mapping;
 import org.ncbo.stanford.sparql.bean.ProcessInfo;
 import org.ncbo.stanford.util.MessageUtils;
 import org.ncbo.stanford.util.constants.ApplicationConstants;
-import org.ncbo.stanford.util.sparql.SPARQLFilterGenerator;
+import org.ncbo.stanford.util.sparql.MappingFilterGenerator;
 import org.ncbo.stanford.util.sparql.SPARQLUnionGenerator;
 import org.openrdf.model.Statement;
 import org.openrdf.model.URI;
@@ -145,7 +145,7 @@ public class AbstractNcboMappingDAO {
 	 *******************************************************************/
 
 	protected List<Mapping> getMappings(Integer limit, Integer offset,
-			String filter, SPARQLFilterGenerator parameters)
+			String filter, MappingFilterGenerator parameters)
 			throws InvalidInputException {
 		return getMappings(limit, offset, filter, null, parameters);
 	}
@@ -330,7 +330,7 @@ public class AbstractNcboMappingDAO {
 	protected List<Mapping> getMappingsBetweenOntologies(
 			Integer sourceOntology, Integer targetOntology,
 			Boolean unidirectional, Integer limit, Integer offset,
-			SPARQLFilterGenerator parameters) throws InvalidInputException {
+			MappingFilterGenerator parameters) throws InvalidInputException {
 
 		// Safety check
 		if (limit == null || limit >= 50000) {
@@ -401,7 +401,7 @@ public class AbstractNcboMappingDAO {
 	 * @throws InvalidInputException
 	 */
 	protected List<Mapping> getMappings(Integer limit, Integer offset,
-			String filter, String orderBy, SPARQLFilterGenerator parameters)
+			String filter, String orderBy, MappingFilterGenerator parameters)
 			throws InvalidInputException {
 		// Safety check
 		if (limit == null || limit >= 50000) {
@@ -546,7 +546,7 @@ public class AbstractNcboMappingDAO {
 	 * @return
 	 * @throws InvalidInputException
 	 */
-	protected Integer getCount(String filter, SPARQLFilterGenerator parameters)
+	protected Integer getCount(String filter, MappingFilterGenerator parameters)
 			throws InvalidInputException {
 		// Combine filters
 		String combinedFilters = "";

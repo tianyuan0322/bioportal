@@ -19,7 +19,7 @@ import org.ncbo.stanford.exception.MappingMissingException;
 import org.ncbo.stanford.service.mapping.impl.MappingServiceImpl;
 import org.ncbo.stanford.service.ontology.OntologyService;
 import org.ncbo.stanford.util.paginator.impl.Page;
-import org.ncbo.stanford.util.sparql.SPARQLFilterGenerator;
+import org.ncbo.stanford.util.sparql.MappingFilterGenerator;
 import org.openrdf.model.URI;
 import org.openrdf.model.impl.URIImpl;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -287,7 +287,7 @@ public class MappingServiceTest extends AbstractBioPortalTest {
 		ArrayList<Integer> submittedBy = new ArrayList<Integer>();
 		submittedBy.add(11111);
 
-		SPARQLFilterGenerator parameters = new SPARQLFilterGenerator();
+		MappingFilterGenerator parameters = new MappingFilterGenerator();
 		parameters.setSubmittedBy(submittedBy);
 
 		Page<MappingBean> mappings = mappingService.getMappingsForParameters(
@@ -298,7 +298,7 @@ public class MappingServiceTest extends AbstractBioPortalTest {
 		// Check mapping type
 		String mappingType = "Automatic";
 
-		parameters = new SPARQLFilterGenerator();
+		parameters = new MappingFilterGenerator();
 		parameters.setMappingType(mappingType);
 
 		mappings = mappingService
@@ -310,7 +310,7 @@ public class MappingServiceTest extends AbstractBioPortalTest {
 		Date startDate = new Date(108, 4, 2, 15, 17, 38);
 		Date endDate = new Date(108, 4, 2, 16, 18, 38);
 
-		parameters = new SPARQLFilterGenerator();
+		parameters = new MappingFilterGenerator();
 		parameters.setStartDate(startDate);
 		parameters.setEndDate(endDate);
 
@@ -324,7 +324,7 @@ public class MappingServiceTest extends AbstractBioPortalTest {
 		relationshipTypes.add(new URIImpl(
 				"http://www.w3.org/1999/02/22-rdf-syntax-ns#closeMatch"));
 
-		parameters = new SPARQLFilterGenerator();
+		parameters = new MappingFilterGenerator();
 		parameters.setRelationshipTypes(relationshipTypes);
 
 		mappings = mappingService
@@ -336,8 +336,8 @@ public class MappingServiceTest extends AbstractBioPortalTest {
 		List<MappingSourceEnum> mappingSources = new ArrayList<MappingSourceEnum>();
 		mappingSources.add(MappingSourceEnum.APPLICATION);
 
-		parameters = new SPARQLFilterGenerator();
-		parameters.setMappingSource(mappingSources);
+		parameters = new MappingFilterGenerator();
+		parameters.setMappingSources(mappingSources);
 
 		mappings = mappingService
 				.getMappingsForParameters(50000, 1, parameters);
@@ -345,7 +345,7 @@ public class MappingServiceTest extends AbstractBioPortalTest {
 		assertTrue(mappings != null);
 
 		// Check multiple parameters
-		parameters = new SPARQLFilterGenerator();
+		parameters = new MappingFilterGenerator();
 		parameters.setSubmittedBy(submittedBy);
 		parameters.setStartDate(startDate);
 		parameters.setEndDate(endDate);

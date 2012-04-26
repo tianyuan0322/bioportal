@@ -28,7 +28,7 @@ import org.ncbo.stanford.util.MessageUtils;
 import org.ncbo.stanford.util.RequestUtils;
 import org.ncbo.stanford.util.constants.ApplicationConstants;
 import org.ncbo.stanford.util.paginator.impl.Page;
-import org.ncbo.stanford.util.sparql.SPARQLFilterGenerator;
+import org.ncbo.stanford.util.sparql.MappingFilterGenerator;
 import org.ncbo.stanford.view.util.constants.RequestParamConstants;
 import org.openrdf.model.URI;
 import org.openrdf.model.impl.URIImpl;
@@ -202,7 +202,7 @@ public class MappingConceptRestlet extends AbstractMappingRestlet {
 		}
 
 		// Process non-base parameters
-		SPARQLFilterGenerator parameters = getMappingParameters(request,
+		MappingFilterGenerator parameters = getMappingParameters(request,
 				response);
 
 		OntologyBean ont = null;

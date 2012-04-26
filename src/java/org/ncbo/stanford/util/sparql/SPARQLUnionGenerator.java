@@ -6,7 +6,6 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
-import org.ncbo.stanford.sparql.bean.Mapping;
 import org.ncbo.stanford.util.constants.ApplicationConstants;
 import org.openrdf.model.URI;
 import org.openrdf.model.Value;
@@ -29,7 +28,7 @@ public class SPARQLUnionGenerator {
     private Integer limit = null;
     private Integer offset = null;
     private boolean count = false;
-    private SPARQLFilterGenerator parameters = null; 
+    private MappingFilterGenerator parameters = null; 
 
     public SPARQLUnionGenerator() {
         qStruct = new Hashtable<URI,List<Value>>();
@@ -80,10 +79,10 @@ public class SPARQLUnionGenerator {
 
     /** setParameters is used to pass extra user parameters only for count based SPARQL queries.
      * 
-     * @param parameters a SPARQLFilterGenerator instance holds filters to be added to a count SPARQL query.
+     * @param parameters a MappingFilterGenerator instance holds filters to be added to a count SPARQL query.
      *
      */ 
-    public void setParameters(SPARQLFilterGenerator parameters) {
+    public void setParameters(MappingFilterGenerator parameters) {
         this.parameters = parameters;
     }
 

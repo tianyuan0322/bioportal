@@ -15,7 +15,7 @@ import org.ncbo.stanford.manager.rdfstore.RDFStoreManager;
 import org.ncbo.stanford.sparql.bean.ProvisionalTerm;
 import org.ncbo.stanford.util.MessageUtils;
 import org.ncbo.stanford.util.constants.ApplicationConstants;
-import org.ncbo.stanford.util.sparql.SPARQLFilterGenerator;
+import org.ncbo.stanford.util.sparql.ProvisionalTermFilterGenerator;
 import org.openrdf.model.Statement;
 import org.openrdf.model.URI;
 import org.openrdf.model.Value;
@@ -117,7 +117,7 @@ public class ProvisionalTermDAO {
 	 *******************************************************************/
 
 	public List<ProvisionalTerm> getProvisionalTerms(Integer limit,
-			Integer offset, String filter, SPARQLFilterGenerator parameters)
+			Integer offset, String filter, ProvisionalTermFilterGenerator parameters)
 			throws InvalidInputException {
 		return getProvisionalTerms(limit, offset, filter, null, parameters);
 	}
@@ -139,7 +139,7 @@ public class ProvisionalTermDAO {
 	 */
 	public List<ProvisionalTerm> getProvisionalTerms(Integer limit,
 			Integer offset, String filter, String orderBy,
-			SPARQLFilterGenerator parameters) throws InvalidInputException {
+			ProvisionalTermFilterGenerator parameters) throws InvalidInputException {
 		// Safety check
 		if (limit == null || limit >= 50000) {
 			limit = 50000;
@@ -302,7 +302,7 @@ public class ProvisionalTermDAO {
 	 * @return
 	 * @throws InvalidInputException
 	 */
-	public Integer getCount(String filter, SPARQLFilterGenerator parameters)
+	public Integer getCount(String filter, ProvisionalTermFilterGenerator parameters)
 			throws InvalidInputException {
 		RepositoryConnection con = getRdfStoreManager()
 				.getRepositoryConnection();
@@ -494,7 +494,7 @@ public class ProvisionalTermDAO {
 	}
 
 	public List<ProvisionalTerm> getProvisionalTermsForParameters(
-			Integer limit, Integer offset, SPARQLFilterGenerator parameters)
+			Integer limit, Integer offset, ProvisionalTermFilterGenerator parameters)
 			throws InvalidInputException {
 		return getProvisionalTerms(limit, offset, null, parameters);
 	}

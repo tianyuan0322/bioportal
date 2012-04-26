@@ -8,12 +8,10 @@ import java.util.List;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.ncbo.stanford.bean.concept.ConceptOntologyPairBean;
-import org.ncbo.stanford.bean.mapping.MappingBean;
 import org.ncbo.stanford.bean.mapping.MappingUserStatsBean;
-import org.ncbo.stanford.enumeration.MappingSourceEnum;
 import org.ncbo.stanford.sparql.bean.Mapping;
 import org.ncbo.stanford.sparql.bean.ProcessInfo;
-import org.ncbo.stanford.util.sparql.SPARQLFilterGenerator;
+import org.ncbo.stanford.util.sparql.MappingFilterGenerator;
 import org.ncbo.stanford.util.sparql.SPARQLUnionGenerator;
 import org.openrdf.model.URI;
 import org.openrdf.model.impl.LiteralImpl;
@@ -196,7 +194,7 @@ public class SimpleMappingTest {
     public void getMappingsToOntologyTest() throws Exception {
         try {
             long ts = System.currentTimeMillis();
-            SPARQLFilterGenerator filter = new SPARQLFilterGenerator();
+            MappingFilterGenerator filter = new MappingFilterGenerator();
             List<Mapping> mappings = this.mappingDAO.getMappingsToOntology(1032,100,0,filter);
             System.out.println("getMappingsToOntologyTest --> "+ mappings.size());
             ts = System.currentTimeMillis() - ts;
@@ -212,7 +210,7 @@ public class SimpleMappingTest {
     public int getMappingsBetweenOntologiesTest(int user) throws Exception {
         try {
             long ts = System.currentTimeMillis();
-            SPARQLFilterGenerator filter = new SPARQLFilterGenerator();
+            MappingFilterGenerator filter = new MappingFilterGenerator();
             List<Integer> users = new ArrayList<Integer>();
             users.add(user);
             filter.setSubmittedBy(users);
@@ -232,7 +230,7 @@ public class SimpleMappingTest {
     public void getMappingsForOntologyTest() throws Exception {
         try {
             long ts = System.currentTimeMillis();
-            SPARQLFilterGenerator filter = new SPARQLFilterGenerator();
+            MappingFilterGenerator filter = new MappingFilterGenerator();
             List<Mapping> mappings = this.mappingDAO.getMappingsForOntology(1032,20,0,filter);
             System.out.println("getMappingsForOntologyTest --> "+ mappings.size());
             ts = System.currentTimeMillis() - ts;
@@ -249,7 +247,7 @@ public class SimpleMappingTest {
     public void getMappingsToConceptTest() throws Exception {
         try {
             long ts = System.currentTimeMillis();
-            SPARQLFilterGenerator filter = new SPARQLFilterGenerator();
+            MappingFilterGenerator filter = new MappingFilterGenerator();
             String conceptId = "http://purl.org/obo/owl/DOID#DOID_0000000";
             List<Mapping> mappings = this.mappingDAO.getMappingsToConcept(1009,conceptId,20,0,filter);
             System.out.println("getMappingsToConceptTest --> "+ mappings.size());
@@ -266,7 +264,7 @@ public class SimpleMappingTest {
     public void getMappingsFromConceptTest() throws Exception {
         try {
             long ts = System.currentTimeMillis();
-            SPARQLFilterGenerator filter = new SPARQLFilterGenerator();
+            MappingFilterGenerator filter = new MappingFilterGenerator();
             String conceptId = "http://purl.org/obo/owl/DOID#DOID_0000000";
             List<Mapping> mappings = this.mappingDAO.getMappingsFromConcept(1009,conceptId,20,0,filter);
             System.out.println("getMappingsFromConceptTest --> "+ mappings.size());
@@ -286,7 +284,7 @@ public class SimpleMappingTest {
             long ts = System.currentTimeMillis();
             String conceptId = "http://purl.org/obo/owl/DOID#DOID_0000000";
             int ontologyId = 1009;
-            SPARQLFilterGenerator filter = new SPARQLFilterGenerator();
+            MappingFilterGenerator filter = new MappingFilterGenerator();
             List<Mapping> r = this.mappingDAO.getMappingsForConcept(ontologyId,conceptId,10,0,filter);
             System.out.println("result --> "+ r.size());
             ts = System.currentTimeMillis() - ts;
@@ -307,7 +305,7 @@ public class SimpleMappingTest {
             String targetConceptId = "http://ncicb.nci.nih.gov/xml/owl/EVS/Thesaurus.owl#Gallbladder_Disorder";
             int targetOntologyId = 1032;
 
-            SPARQLFilterGenerator filter = new SPARQLFilterGenerator();
+            MappingFilterGenerator filter = new MappingFilterGenerator();
             List<Mapping> r = this.mappingDAO.getMappingsBetweenConcepts(sourceOntologyId,targetOntologyId,
             sourceConceptId,targetConceptId, false,
             10,0,filter);
@@ -326,7 +324,7 @@ public class SimpleMappingTest {
             int ontologyId = 1009;
 
 
-            SPARQLFilterGenerator filter = new SPARQLFilterGenerator();
+            MappingFilterGenerator filter = new MappingFilterGenerator();
             List<Mapping> r = this.mappingDAO.getMappingsFromOntology(ontologyId,10,0,filter);
             System.out.println("result --> "+ r.size());
             ts = System.currentTimeMillis() - ts;
@@ -341,7 +339,7 @@ public class SimpleMappingTest {
         try {
             long ts = System.currentTimeMillis();
             Calendar cal = Calendar.getInstance(); 
-            SPARQLFilterGenerator filter = new SPARQLFilterGenerator();
+            MappingFilterGenerator filter = new MappingFilterGenerator();
             cal.clear();
             //2010-05-17T23:24:34Z
             cal.set(Calendar.YEAR,2010);
@@ -388,7 +386,7 @@ public class SimpleMappingTest {
             String targetConceptId = "http://ncicb.nci.nih.gov/xml/owl/EVS/Thesaurus.owl#Gallbladder_Disorder";
             int targetOntologyId = 1032;
 
-            SPARQLFilterGenerator filter = new SPARQLFilterGenerator();
+            MappingFilterGenerator filter = new MappingFilterGenerator();
             int x = this.mappingCountsDAO.getCountMappingsFromConcept(sourceOntologyId,sourceConceptId,filter);
             System.out.println("result --> "+x);
             ts = System.currentTimeMillis() - ts;
@@ -407,7 +405,7 @@ public class SimpleMappingTest {
             String targetConceptId = "http://ncicb.nci.nih.gov/xml/owl/EVS/Thesaurus.owl#Gallbladder_Disorder";
             int targetOntologyId = 1032;
 
-            SPARQLFilterGenerator filter = new SPARQLFilterGenerator();
+            MappingFilterGenerator filter = new MappingFilterGenerator();
             int x = this.mappingCountsDAO.getCountMappingsToConcept(sourceOntologyId,sourceConceptId,filter);
             System.out.println("result --> "+x);
             ts = System.currentTimeMillis() - ts;
@@ -427,7 +425,7 @@ public class SimpleMappingTest {
             String targetConceptId = "http://ncicb.nci.nih.gov/xml/owl/EVS/Thesaurus.owl#Gallbladder_Disorder";
             int targetOntologyId = 1032;
 
-            SPARQLFilterGenerator filter = new SPARQLFilterGenerator();
+            MappingFilterGenerator filter = new MappingFilterGenerator();
             int x = this.mappingCountsDAO.getCountMappingsBetweenConcepts(sourceOntologyId,targetOntologyId,
             sourceConceptId,targetConceptId, false,filter);
             System.out.println("result --> "+x);
@@ -442,7 +440,7 @@ public class SimpleMappingTest {
     public void getCountMappingsToOntologyTest() throws Exception {
         try {
             long ts = System.currentTimeMillis();
-            SPARQLFilterGenerator filter = new SPARQLFilterGenerator();
+            MappingFilterGenerator filter = new MappingFilterGenerator();
             Integer sourceOntologyId = 1009;
             Integer targetOntologyId = 1032;
             int x = this.mappingCountsDAO.getCountMappingsToOntology(sourceOntologyId,filter);
@@ -458,7 +456,7 @@ public class SimpleMappingTest {
     public void getCountMappingsFromOntologyTest() throws Exception {
         try {
             long ts = System.currentTimeMillis();
-            SPARQLFilterGenerator filter = new SPARQLFilterGenerator();
+            MappingFilterGenerator filter = new MappingFilterGenerator();
             //List<URI> rels = new ArrayList<URI>();
             //rels.add(new URIImpl("http://www.w3.org/2004/02/skos/core#closeMatch"));
             //filter.setRelationshipTypes(rels);
@@ -485,7 +483,7 @@ public class SimpleMappingTest {
     public void getCountMappingsBetweenOntologiesTest() throws Exception {
         try {
             long ts = System.currentTimeMillis();
-            SPARQLFilterGenerator filter = new SPARQLFilterGenerator();
+            MappingFilterGenerator filter = new MappingFilterGenerator();
             Integer sourceOntologyId = 1009;
             Integer targetOntologyId = 1032;
             int x = this.mappingCountsDAO.getCountMappingsBetweenOntologies(sourceOntologyId,targetOntologyId,false,filter);
@@ -501,7 +499,7 @@ public class SimpleMappingTest {
     public void getCountMappingsForOntologyTest() throws Exception {
         try {
             long ts = System.currentTimeMillis();
-            SPARQLFilterGenerator filter = new SPARQLFilterGenerator();
+            MappingFilterGenerator filter = new MappingFilterGenerator();
             Integer sourceOntologyId = 1009;
             int x = this.mappingCountsDAO.getCountMappingsForOntology(sourceOntologyId,filter);
             System.out.println("result --> "+ x);
@@ -516,7 +514,7 @@ public class SimpleMappingTest {
     public void getCountMappingsForConceptTest() throws Exception {
         try {
             long ts = System.currentTimeMillis();
-            SPARQLFilterGenerator filter = new SPARQLFilterGenerator();
+            MappingFilterGenerator filter = new MappingFilterGenerator();
             String conceptId = "http://purl.org/obo/owl/DOID#DOID_0000000";
             Integer sourceOntologyId = 1009;
             int x = this.mappingCountsDAO.getCountMappingsForConcept(sourceOntologyId,conceptId,filter);
@@ -533,7 +531,7 @@ public class SimpleMappingTest {
     public void getOntologyUserCountTest() throws Exception {
         try {
             long ts = System.currentTimeMillis();
-            SPARQLFilterGenerator filter = new SPARQLFilterGenerator();
+            MappingFilterGenerator filter = new MappingFilterGenerator();
             Integer sourceOntologyId = 1131;
             Integer targetOntologyId = 1136;
              List<MappingUserStatsBean> x = this.mappingStatsDAO.getOntologyUserCount(sourceOntologyId,targetOntologyId);

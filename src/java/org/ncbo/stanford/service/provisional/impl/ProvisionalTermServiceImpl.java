@@ -9,7 +9,6 @@ import org.ncbo.stanford.bean.ProvisionalTermBean;
 import org.ncbo.stanford.bean.concept.ClassBean;
 import org.ncbo.stanford.bean.concept.ClassBeanResultListBean;
 import org.ncbo.stanford.exception.InvalidInputException;
-import org.ncbo.stanford.exception.ProvisionalTermExistsException;
 import org.ncbo.stanford.exception.ProvisionalTermMissingException;
 import org.ncbo.stanford.service.concept.ConceptService;
 import org.ncbo.stanford.service.ontology.OntologyService;
@@ -19,7 +18,7 @@ import org.ncbo.stanford.sparql.dao.provisional.ProvisionalTermDAO;
 import org.ncbo.stanford.util.paginator.Paginator;
 import org.ncbo.stanford.util.paginator.impl.Page;
 import org.ncbo.stanford.util.paginator.impl.PaginatorImpl;
-import org.ncbo.stanford.util.sparql.SPARQLFilterGenerator;
+import org.ncbo.stanford.util.sparql.ProvisionalTermFilterGenerator;
 import org.openrdf.model.URI;
 import org.openrdf.model.impl.URIImpl;
 
@@ -65,7 +64,7 @@ public class ProvisionalTermServiceImpl implements ProvisionalTermService {
 
 	@Override
 	public Page<ClassBean> getAllProvisionalTerms(Integer pageSize,
-			Integer pageNum, SPARQLFilterGenerator parameters)
+			Integer pageNum, ProvisionalTermFilterGenerator parameters)
 			throws InvalidInputException {
 		if (pageNum == null || pageNum <= 0) {
 			pageNum = 1;

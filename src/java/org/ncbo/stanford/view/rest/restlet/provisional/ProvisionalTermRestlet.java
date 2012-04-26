@@ -20,7 +20,7 @@ import org.ncbo.stanford.service.user.UserService;
 import org.ncbo.stanford.util.MessageUtils;
 import org.ncbo.stanford.util.RequestUtils;
 import org.ncbo.stanford.util.paginator.impl.Page;
-import org.ncbo.stanford.util.sparql.SPARQLFilterGenerator;
+import org.ncbo.stanford.util.sparql.ProvisionalTermFilterGenerator;
 import org.ncbo.stanford.view.rest.restlet.AbstractBaseRestlet;
 import org.ncbo.stanford.view.util.constants.RequestParamConstants;
 import org.openrdf.model.URI;
@@ -105,7 +105,7 @@ public class ProvisionalTermRestlet extends AbstractBaseRestlet {
 		String pageNumStr = (String) httpRequest
 				.getParameter(RequestParamConstants.PARAM_PAGENUM);
 
-		SPARQLFilterGenerator parameters = getCommonParameters(request,
+		ProvisionalTermFilterGenerator parameters = getCommonParameters(request,
 				response);
 
 		// Post-process parameters
@@ -347,7 +347,7 @@ public class ProvisionalTermRestlet extends AbstractBaseRestlet {
 		}
 	}
 
-	private SPARQLFilterGenerator getCommonParameters(Request request,
+	private ProvisionalTermFilterGenerator getCommonParameters(Request request,
 			Response response) {
 		HttpServletRequest httpRequest = RequestUtils
 				.getHttpServletRequest(request);
@@ -399,7 +399,7 @@ public class ProvisionalTermRestlet extends AbstractBaseRestlet {
 		}
 
 		// Create parameters bean
-		SPARQLFilterGenerator parameters = new SPARQLFilterGenerator();
+		ProvisionalTermFilterGenerator parameters = new ProvisionalTermFilterGenerator();
 
 		if (submittedBy != null && !submittedBy.isEmpty())
 			parameters.setSubmittedBy(submittedBy);

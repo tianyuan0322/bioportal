@@ -9,7 +9,7 @@ import org.ncbo.stanford.exception.InvalidInputException;
 import org.ncbo.stanford.exception.ProvisionalTermExistsException;
 import org.ncbo.stanford.exception.ProvisionalTermMissingException;
 import org.ncbo.stanford.util.paginator.impl.Page;
-import org.ncbo.stanford.util.sparql.SPARQLFilterGenerator;
+import org.ncbo.stanford.util.sparql.ProvisionalTermFilterGenerator;
 import org.openrdf.model.URI;
 
 public interface ProvisionalTermService {
@@ -35,7 +35,7 @@ public interface ProvisionalTermService {
 	 * @throws InvalidInputException
 	 */
 	public Page<ClassBean> getAllProvisionalTerms(Integer pageSize,
-			Integer pageNum, SPARQLFilterGenerator parameters)
+			Integer pageNum, ProvisionalTermFilterGenerator parameters)
 			throws InvalidInputException;
 
 	/**

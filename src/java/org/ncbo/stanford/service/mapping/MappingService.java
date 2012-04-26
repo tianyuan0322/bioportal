@@ -15,7 +15,7 @@ import org.ncbo.stanford.exception.InvalidInputException;
 import org.ncbo.stanford.exception.MappingExistsException;
 import org.ncbo.stanford.exception.MappingMissingException;
 import org.ncbo.stanford.util.paginator.impl.Page;
-import org.ncbo.stanford.util.sparql.SPARQLFilterGenerator;
+import org.ncbo.stanford.util.sparql.MappingFilterGenerator;
 import org.openrdf.model.URI;
 
 public interface MappingService {
@@ -91,7 +91,7 @@ public interface MappingService {
 	 * @throws InvalidInputException
 	 */
 	public Page<MappingBean> getMappingsFromOntology(OntologyBean ont,
-			Integer pageSize, Integer pageNum, SPARQLFilterGenerator parameters)
+			Integer pageSize, Integer pageNum, MappingFilterGenerator parameters)
 			throws InvalidInputException;
 
 	/**
@@ -102,7 +102,7 @@ public interface MappingService {
 	 * @throws InvalidInputException
 	 */
 	public Page<MappingBean> getMappingsToOntology(OntologyBean ont,
-			Integer pageSize, Integer pageNum, SPARQLFilterGenerator parameters)
+			Integer pageSize, Integer pageNum, MappingFilterGenerator parameters)
 			throws InvalidInputException;
 
 	/**
@@ -118,7 +118,7 @@ public interface MappingService {
 	public Page<MappingBean> getMappingsBetweenOntologies(
 			OntologyBean sourceOnt, OntologyBean targetOnt, Integer pageSize,
 			Integer pageNum, Boolean unidirectional,
-			SPARQLFilterGenerator parameters) throws InvalidInputException;
+			MappingFilterGenerator parameters) throws InvalidInputException;
 
 	/**
 	 * Get ranked mappings between two ontologies. Ranked mappings look for
@@ -133,7 +133,7 @@ public interface MappingService {
 	 */
 	public Page<MappingBean> getRankedMappingsBetweenOntologies(
 			OntologyBean sourceOnt, OntologyBean targetOnt, Integer pageSize,
-			Integer pageNum, SPARQLFilterGenerator parameters)
+			Integer pageNum, MappingFilterGenerator parameters)
 			throws InvalidInputException;
 
 	/**
@@ -144,7 +144,7 @@ public interface MappingService {
 	 * @throws InvalidInputException
 	 */
 	public Page<MappingBean> getMappingsForOntology(OntologyBean ont,
-			Integer pageSize, Integer pageNum, SPARQLFilterGenerator parameters)
+			Integer pageSize, Integer pageNum, MappingFilterGenerator parameters)
 			throws InvalidInputException;
 
 	/**
@@ -158,7 +158,7 @@ public interface MappingService {
 	 * @throws InvalidInputException
 	 */
 	public Page<MappingBean> getMappingsForParameters(Integer pageSize,
-			Integer pageNum, SPARQLFilterGenerator parameters)
+			Integer pageNum, MappingFilterGenerator parameters)
 			throws InvalidInputException;
 
 	/**
@@ -170,7 +170,7 @@ public interface MappingService {
 	 */
 	public Page<MappingBean> getMappingsForConcept(OntologyBean ont,
 			ClassBean concept, Integer pageSize, Integer pageNum,
-			SPARQLFilterGenerator parameters) throws InvalidInputException;
+			MappingFilterGenerator parameters) throws InvalidInputException;
 
 	/**
 	 * Get mappings for an arbitrary set of ontology/concept pairs.
@@ -192,7 +192,7 @@ public interface MappingService {
 	 */
 	public Page<MappingBean> getMappingsFromConcept(OntologyBean ont,
 			ClassBean concept, Integer pageSize, Integer pageNum,
-			SPARQLFilterGenerator parameters) throws InvalidInputException;
+			MappingFilterGenerator parameters) throws InvalidInputException;
 
 	/**
 	 * Get all mappings from other concepts to a given concept.
@@ -203,7 +203,7 @@ public interface MappingService {
 	 */
 	public Page<MappingBean> getMappingsToConcept(OntologyBean ont,
 			ClassBean concept, Integer pageSize, Integer pageNum,
-			SPARQLFilterGenerator parameters) throws InvalidInputException;
+			MappingFilterGenerator parameters) throws InvalidInputException;
 
 	/**
 	 * Get all mappings between two given concepts.
@@ -216,7 +216,7 @@ public interface MappingService {
 	public Page<MappingBean> getMappingsBetweenConcepts(OntologyBean sourceOnt,
 			OntologyBean targetOnt, ClassBean sourceConcept,
 			ClassBean targetConcept, Boolean unidirectional, Integer pageSize,
-			Integer pageNum, SPARQLFilterGenerator parameters)
+			Integer pageNum, MappingFilterGenerator parameters)
 			throws InvalidInputException;
 
 	/*******************************************************************

@@ -24,7 +24,7 @@ import org.ncbo.stanford.sparql.dao.mapping.CustomNcboMappingStatsDAO;
 import org.ncbo.stanford.util.paginator.Paginator;
 import org.ncbo.stanford.util.paginator.impl.Page;
 import org.ncbo.stanford.util.paginator.impl.PaginatorImpl;
-import org.ncbo.stanford.util.sparql.SPARQLFilterGenerator;
+import org.ncbo.stanford.util.sparql.MappingFilterGenerator;
 import org.openrdf.model.URI;
 
 public class MappingServiceImpl implements MappingService {
@@ -65,7 +65,7 @@ public class MappingServiceImpl implements MappingService {
 	}
 
 	public Page<MappingBean> getMappingsFromOntology(OntologyBean ont,
-			Integer pageSize, Integer pageNum, SPARQLFilterGenerator parameters)
+			Integer pageSize, Integer pageNum, MappingFilterGenerator parameters)
 			throws InvalidInputException {
 		MappingResultListBean pageMappings = new MappingResultListBean(0);
 		Integer totalResults = mappingCountsDAO.getCountMappingsFromOntology(
@@ -87,7 +87,7 @@ public class MappingServiceImpl implements MappingService {
 	}
 
 	public Page<MappingBean> getMappingsToOntology(OntologyBean ont,
-			Integer pageSize, Integer pageNum, SPARQLFilterGenerator parameters)
+			Integer pageSize, Integer pageNum, MappingFilterGenerator parameters)
 			throws InvalidInputException {
 		MappingResultListBean pageMappings = new MappingResultListBean(0);
 		Integer totalResults = mappingCountsDAO.getCountMappingsToOntology(
@@ -111,7 +111,7 @@ public class MappingServiceImpl implements MappingService {
 	public Page<MappingBean> getMappingsBetweenOntologies(
 			OntologyBean sourceOnt, OntologyBean targetOnt, Integer pageSize,
 			Integer pageNum, Boolean unidirectional,
-			SPARQLFilterGenerator parameters) throws InvalidInputException {
+			MappingFilterGenerator parameters) throws InvalidInputException {
 		MappingResultListBean pageMappings = new MappingResultListBean(0);
 		Integer totalResults = mappingCountsDAO
 				.getCountMappingsBetweenOntologies(sourceOnt.getOntologyId(),
@@ -135,7 +135,7 @@ public class MappingServiceImpl implements MappingService {
 
 	public Page<MappingBean> getRankedMappingsBetweenOntologies(
 			OntologyBean sourceOnt, OntologyBean targetOnt, Integer pageSize,
-			Integer pageNum, SPARQLFilterGenerator parameters)
+			Integer pageNum, MappingFilterGenerator parameters)
 			throws InvalidInputException {
 		MappingResultListBean pageMappings = new MappingResultListBean(0);
 		Integer totalResults = mappingCountsDAO
@@ -168,7 +168,7 @@ public class MappingServiceImpl implements MappingService {
 	}
 
 	public Page<MappingBean> getMappingsForOntology(OntologyBean ont,
-			Integer pageSize, Integer pageNum, SPARQLFilterGenerator parameters)
+			Integer pageSize, Integer pageNum, MappingFilterGenerator parameters)
 			throws InvalidInputException {
 		MappingResultListBean pageMappings = new MappingResultListBean(0);
 		Integer totalResults = mappingCountsDAO.getCountMappingsForOntology(
@@ -190,7 +190,7 @@ public class MappingServiceImpl implements MappingService {
 	}
 
 	public Page<MappingBean> getMappingsForParameters(Integer pageSize,
-			Integer pageNum, SPARQLFilterGenerator parameters)
+			Integer pageNum, MappingFilterGenerator parameters)
 			throws InvalidInputException {
 		MappingResultListBean pageMappings = new MappingResultListBean(0);
 		Integer totalResults = mappingCountsDAO
@@ -228,7 +228,7 @@ public class MappingServiceImpl implements MappingService {
 
 	public Page<MappingBean> getMappingsForConcept(OntologyBean ont,
 			ClassBean concept, Integer pageSize, Integer pageNum,
-			SPARQLFilterGenerator parameters) throws InvalidInputException {
+			MappingFilterGenerator parameters) throws InvalidInputException {
 		MappingResultListBean pageMappings = new MappingResultListBean(0);
 
 		Integer totalResults = mappingCountsDAO.getCountMappingsForConcept(
@@ -252,7 +252,7 @@ public class MappingServiceImpl implements MappingService {
 
 	public Page<MappingBean> getMappingsFromConcept(OntologyBean ont,
 			ClassBean concept, Integer pageSize, Integer pageNum,
-			SPARQLFilterGenerator parameters) throws InvalidInputException {
+			MappingFilterGenerator parameters) throws InvalidInputException {
 		MappingResultListBean pageMappings = new MappingResultListBean(0);
 		Integer totalResults = mappingCountsDAO.getCountMappingsFromConcept(
 				ont.getOntologyId(), concept.getFullId(), parameters);
@@ -275,7 +275,7 @@ public class MappingServiceImpl implements MappingService {
 
 	public Page<MappingBean> getMappingsToConcept(OntologyBean ont,
 			ClassBean concept, Integer pageSize, Integer pageNum,
-			SPARQLFilterGenerator parameters) throws InvalidInputException {
+			MappingFilterGenerator parameters) throws InvalidInputException {
 		MappingResultListBean pageMappings = new MappingResultListBean(0);
 		Integer totalResults = mappingCountsDAO.getCountMappingsToConcept(
 				ont.getOntologyId(), concept.getFullId(), parameters);
@@ -299,7 +299,7 @@ public class MappingServiceImpl implements MappingService {
 	public Page<MappingBean> getMappingsBetweenConcepts(OntologyBean sourceOnt,
 			OntologyBean targetOnt, ClassBean sourceConcept,
 			ClassBean targetConcept, Boolean unidirectional, Integer pageSize,
-			Integer pageNum, SPARQLFilterGenerator parameters)
+			Integer pageNum, MappingFilterGenerator parameters)
 			throws InvalidInputException {
 		MappingResultListBean pageMappings = new MappingResultListBean(0);
 		Integer totalResults = mappingCountsDAO
