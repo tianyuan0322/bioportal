@@ -517,6 +517,7 @@ public class CustomNcboMappingDAO extends AbstractNcboMappingDAO {
 				SPARQLUnionGenerator generator = new SPARQLUnionGenerator();
 				generator.setLimit(Integer.MAX_VALUE);
 				generator.setOffset(0);
+				generator.setParameters(parameters);
 				generator.addBindValue(ApplicationConstants.SOURCE_ONTOLOGY_ID,
 						new LiteralImpl(Integer.toString(sourceOntology),
 								ApplicationConstants.XSD_INTEGER));
