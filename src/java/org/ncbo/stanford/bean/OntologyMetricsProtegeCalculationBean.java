@@ -18,6 +18,7 @@ import edu.stanford.smi.protegex.owl.model.RDFSNamedClass;
 public class OntologyMetricsProtegeCalculationBean {
 	// Used in calculations
 	private KnowledgeBase kb;
+	private OntologyBean ob;
 	private OntologyMetricsBean mb;
 	private int maxDepth, maxSiblings;
 	private HashMap<String, ArrayList<String>> conceptAuthors;
@@ -455,6 +456,14 @@ public class OntologyMetricsProtegeCalculationBean {
 			this.nextCls = nextCls;
 			this.newDepth = newDepth;
 		}
+	}
+
+	public OntologyBean getOb() {
+		return ob;
+	}
+
+	public void setOb(OntologyBean ob) {
+		this.ob = ob;
 	}
 
 }

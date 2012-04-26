@@ -59,6 +59,7 @@ public class OntologyMetricsManagerProtegeImpl extends
 				.setPreferredMaximumSubclassLimit((ontologyBean
 						.getPreferredMaximumSubclassLimit() == null ? GOOD_DESIGN_SUBCLASS_LIMIT
 						: ontologyBean.getPreferredMaximumSubclassLimit()));
+		calcBean.setOb(ontologyBean);
 
 		populateOntologyMetrics(calcBean);
 
@@ -89,6 +90,9 @@ public class OntologyMetricsManagerProtegeImpl extends
 	 * processing for OWL ontologies.
 	 */
 	private void owlBasicAnalysis(OntologyMetricsProtegeCalculationBean calcBean) {
+		// Avoid KB cache timeout
+		calcBean.setKb(getKnowledgeBase(calcBean.getOb()));
+
 		// do metrics calculations
 		ModelMetrics met = new ModelMetrics((OWLModel) calcBean.getKb());
 
@@ -118,9 +122,13 @@ public class OntologyMetricsManagerProtegeImpl extends
 				.getKb()).getOWLThingClass(), 1);
 		calcBean.getOwlQueue().addLast(owlItem);
 		while (!calcBean.getOwlQueue().isEmpty()) {
-			if (calcBean.getSeenClasses().size() % 1000 == 0)
+			// Avoid KB cache timeout
+			calcBean.setKb(getKnowledgeBase(calcBean.getOb()));
+			
+			if (calcBean.getSeenClasses().size() % 1000 == 0) {
 				log.debug("Processing class "
 						+ calcBean.getSeenClasses().size());
+			}
 			OwlQueueItem currCls = calcBean.getOwlQueue().remove();
 			owlClsIterate(calcBean, currCls.nextCls, currCls.newDepth,
 					documentation, author, annotation);
@@ -169,6 +177,9 @@ public class OntologyMetricsManagerProtegeImpl extends
 		calcBean.setQueue(new LinkedList<QueueItem>());
 		calcBean.getQueue().addLast(item);
 		while (!calcBean.getQueue().isEmpty()) {
+			// Avoid KB cache timeout
+			calcBean.setKb(getKnowledgeBase(calcBean.getOb()));
+
 			QueueItem currCls = calcBean.getQueue().remove();
 			clsIterate(calcBean, currCls.nextCls, currCls.newDepth,
 					currCls.docSlot, currCls.sibCounts);
@@ -230,6 +241,9 @@ public class OntologyMetricsManagerProtegeImpl extends
 
 		int count = 0;
 		while (it.hasNext()) {
+			// Avoid KB cache timeout
+			calcBean.setKb(getKnowledgeBase(calcBean.getOb()));
+
 			RDFSNamedClass nextCls = it.next();
 			if (!nextCls.isSystem() && !nextCls.isIncluded()) {
 				count++;
@@ -317,6 +331,9 @@ public class OntologyMetricsManagerProtegeImpl extends
 		Iterator<Cls> it = subclasses.iterator();
 		int count = 0;
 		while (it.hasNext()) {
+			// Avoid KB cache timeout
+			calcBean.setKb(getKnowledgeBase(calcBean.getOb()));
+
 			Cls nextCls = it.next();
 			String nextFullName = nextCls.getName();
 			if (!nextCls.isSystem() && !nextCls.isIncluded()) {
@@ -408,6 +425,9 @@ public class OntologyMetricsManagerProtegeImpl extends
 		Iterator<RDFProperty> it = properties.iterator();
 		// iterate through RDF properties
 		while (it.hasNext()) {
+			// Avoid KB cache timeout
+			calcBean.setKb(getKnowledgeBase(calcBean.getOb()));
+
 			RDFProperty prop = it.next();
 
 			// Matching the documentation tag
@@ -497,6 +517,9 @@ public class OntologyMetricsManagerProtegeImpl extends
 		Collection props = cls.getPropertyValues(prop, false);
 		Iterator it = props.iterator();
 		while (it.hasNext()) {
+			// Avoid KB cache timeout
+			calcBean.setKb(getKnowledgeBase(calcBean.getOb()));
+
 			String key = it.next().toString();
 			// If author already in map, add to his/her list of concepts
 			if (calcBean.getConceptAuthors().containsKey(key)) {

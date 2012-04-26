@@ -72,6 +72,9 @@ public class OntologySearchManagerProtegeImpl extends
 		Set<Slot> propertySlots = getPropertySlots(kb);
 
 		for (Frame frame : frames) {
+			// Avoid cache timeout for KB
+			kb = getKnowledgeBaseInstance(ontologyBean);
+			
 			// exclude anonymous and system frames from being indexed
 			if (frame.isSystem()
 					|| (frame instanceof RDFResource && ((RDFResource) frame)

@@ -76,7 +76,7 @@ public class OntologyLoadManagerProtegeImpl extends
 		String filePath = ontologyURI.getPath();
 		URI outputURI = null;
 
-		if (ontologyFile == null) {
+		if (!ontologyFile.exists()) {
 			log.error("Missing ontology file to load: " + filePath);
 			throw new FileNotFoundException("Missing ontology file to load: "
 					+ filePath);
