@@ -422,12 +422,43 @@ public class CustomNcboMappingDAO extends AbstractNcboMappingDAO {
 			Integer targetOntology, Boolean unidirectional, Integer limit,
 			Integer offset, MappingFilterGenerator parameters)
 			throws InvalidInputException {
-		List<Mapping> mappings = super
-				.getMappingsBetweenOntologies(sourceOntology, targetOntology,
-						true, limit, offset, parameters);
-		if (!unidirectional) {
-			mappings.addAll(super.getMappingsBetweenOntologies(targetOntology,
-					sourceOntology, true, limit, offset, parameters));
+		CustomNcboMappingCountsDAO mappingCountDAO = new CustomNcboMappingCountsDAO();
+		mappingCountDAO.setRdfStoreManagerMap(rdfStoreManagerMap);
+		Integer sourceTargetCount = mappingCountDAO.getCountMappingsBetweenOntologies(sourceOntology, targetOntology, true, parameters);
+		
+		List<Mapping> mappings = null;
+		// This is a mess. Because we use two different queries for essentially two separate sets of mappings, we can't just 
+		// query both of them with the same offset and limit because the paging gets all messed up (it returns 20 results
+		// even though you set the limit to 10. So instead, we're going to serialize them and retrieve all source-to-target
+		// mappings, then start retrieving all target-to-source mappings with some special handling if you end up on a 
+		// page and limit combo that would have a mix of the two.
+		if (sourceTargetCount > limit + offset) {
+			mappings = super
+					.getMappingsBetweenOntologies(sourceOntology, targetOntology,
+							true, limit, offset, parameters);
+		} else if (offset - sourceTargetCount < 0 && offset + limit - sourceTargetCount > 0) {
+			// Get any remaining mappings, this call will return both sourceTarget and targetSource (if bidirectional)
+			Integer sourceTargetLimit = (offset - sourceTargetCount) * -1;
+			Integer targetSourceLimit = limit - sourceTargetLimit;
+			Integer targetSourceOffset = 0;
+			mappings = super
+					.getMappingsBetweenOntologies(sourceOntology, targetOntology,
+							true, sourceTargetLimit, offset, parameters);
+			
+			// We'll return these when getting bidirectional
+			if (!unidirectional) {
+				mappings.addAll(super.getMappingsBetweenOntologies(targetOntology,
+						sourceOntology, true, targetSourceLimit, targetSourceOffset, parameters));
+			}
+		} else {
+			// This will only respond when all the other mappings are returned and the only ones left are targetSource
+			if (!unidirectional) {
+				// Since we only start returning these mappings after the sourceTarget ones are finished we have to mess with the offset
+				// What we want to do is figure out where we're actually at for this set of mappings, regardless of the total offset
+				Integer shiftedOffset = offset - sourceTargetCount;
+				mappings = super.getMappingsBetweenOntologies(targetOntology,
+						sourceOntology, true, limit, shiftedOffset, parameters);
+			}
 		}
 		return mappings;
 	}
