@@ -6,8 +6,8 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 @Target( { ElementType.TYPE, ElementType.FIELD, ElementType.METHOD,
-		ElementType.PARAMETER, ElementType.ANNOTATION_TYPE, ElementType.PACKAGE })
+	ElementType.PARAMETER, ElementType.ANNOTATION_TYPE, ElementType.PACKAGE })
 @Retention(RetentionPolicy.RUNTIME)
-public @interface IRI {
+public @interface SPARQLVariableName {
 	String value();
 }

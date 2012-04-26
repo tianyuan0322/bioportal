@@ -66,7 +66,7 @@ public class AbstractNcboMappingDAO {
 			+ "  ?mappingId map:created_in_target_ontology_version ?createdInTargetOntologyVersion ."
 			+ "  ?mappingId map:has_process_info ?procInf ."
 			+ "  ?procInf map:date ?date ."
-			+ "  ?procInf map:mapping_type ?mappingType ."			
+			+ "  ?procInf map:mapping_type ?mappingType ."
 			+ "  ?procInf map:submitted_by ?submittedBy ."
 			+ "  OPTIONAL { ?mappingId map:is_many_to_many ?isManyToMany .}"
 			+ "  OPTIONAL { ?procInf map:comment ?comment .}"
@@ -105,7 +105,7 @@ public class AbstractNcboMappingDAO {
 			+ "  ?mappingId map:created_in_target_ontology_version ?createdInTargetOntologyVersion ."
 			+ "  ?mappingId map:has_process_info ?procInf ."
 			+ "  ?procInf map:date ?date ."
-			+ "  ?procInf map:mapping_type ?mappingType ."			
+			+ "  ?procInf map:mapping_type ?mappingType ."
 			+ "  ?procInf map:submitted_by ?submittedBy ."
 			+ "  OPTIONAL { ?mappingId map:is_many_to_many ?isManyToMany .}"
 			+ "  OPTIONAL { ?procInf map:comment ?comment .}"
@@ -196,7 +196,8 @@ public class AbstractNcboMappingDAO {
 				processInfo.setSubmittedBy(convertValueToInteger(bs
 						.getValue("submittedBy")));
 
-				processInfo.setMappingType(bs.getValue("mappingType").stringValue());
+				processInfo.setMappingType(bs.getValue("mappingType")
+						.stringValue());
 
 				processInfo.setDate(convertValueToDate(bs.getValue("date")));
 
@@ -206,7 +207,8 @@ public class AbstractNcboMappingDAO {
 							.stringValue()));
 
 				if (isValidValue(bs.getValue("comment")))
-					processInfo.setComment(bs.getValue("comment").stringValue());
+					processInfo
+							.setComment(bs.getValue("comment").stringValue());
 
 				if (isValidValue(bs.getValue("mappingSource")))
 					processInfo.setMappingSource(bs.getValue("mappingSource")
@@ -292,7 +294,7 @@ public class AbstractNcboMappingDAO {
 		RepositoryConnection con = getRdfStoreManager()
 				.getRepositoryConnection();
 		try {
-			String queryString = "PREFIX map: <http://protege.stanford.edu/ontologies/mappings/mappings.rdfs#> " 
+			String queryString = "PREFIX map: <http://protege.stanford.edu/ontologies/mappings/mappings.rdfs#> "
 					+ "SELECT * WHERE { "
 					+ " ?mappingId map:target_ontology_id ?targetOntologyId . "
 					+ " ?mappingId map:source_ontology_id ?sourceOntologyId . "
@@ -563,8 +565,7 @@ public class AbstractNcboMappingDAO {
 		// Replace triples placeholder with triples pattern generated from the
 		// user-provided parameters
 		if (parameters != null && !parameters.isEmpty()) {
-			List<String> triples = parameters.generateTriplePatterns(
-					"mappingId", new Mapping());
+			List<String> triples = parameters.generateTriplePatterns();
 			queryString = queryString.replaceAll("%TRIPLES_FOR_PARAMS%",
 					StringUtils.join(triples, " . "));
 		} else {
@@ -856,7 +857,7 @@ public class AbstractNcboMappingDAO {
 	 * @param comment
 	 * @param mappingSource
 	 * @param mappingSourceName
-	 * @param mappingSourcecontactInfo
+	 * @param mappingSourceContactInfo
 	 * @param mappingSourceSite
 	 * @param mappingSourceAlgorithm
 	 * @param mappingType

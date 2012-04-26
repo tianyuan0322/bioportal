@@ -5,27 +5,104 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
+import org.ncbo.stanford.annotation.IRI;
+import org.ncbo.stanford.annotation.SPARQLSubject;
+import org.ncbo.stanford.annotation.SPARQLVariableName;
 import org.ncbo.stanford.enumeration.MappingSourceEnum;
-import org.ncbo.stanford.sparql.bean.AbstractSPARQLBean;
 import org.ncbo.stanford.util.constants.ApplicationConstants;
 import org.openrdf.model.URI;
 
 public class SPARQLFilterGenerator {
 
+	/**
+	 * DEFINING SPARQL FILTER FIELDS
+	 * 
+	 * Each field on a SPARQL parameter object is required to have the following annotation:
+	 * IRI (Predicate)
+	 * 
+	 * Optionally:
+	 * SPARQLSubject (Subject variable name)
+	 * SPARQLVariableName (Value/Object variable name)
+	 *
+	 * Example:
+	 * <code>
+		@IRI(PREFIX + "mapping_source")
+		@SPARQLSubject(SUBJECT)
+		@SPARQLVariableName("mappingSource")
+	 * </code>
+	 * protected String mappingSource;
+	 */
+	
+	// TODO: Split these parameters out into subclasses
+	
+	/*
+	 * Mapping Parameters
+	 */
+	
+	@IRI(ApplicationConstants.MAPPING_PREFIX + "submitted_by")
+	@SPARQLSubject("procInfo")
+	@SPARQLVariableName("submittedBy")
 	private List<Integer> submittedBy;
+	
+	@IRI(ApplicationConstants.MAPPING_PREFIX + "mapping_type")
+	@SPARQLSubject("mappingId")
+	@SPARQLVariableName("mappingType")
 	private String mappingType;
-	private Date startDate;
-	private Date endDate;
-	private Date createdStartDate;
-	private Date createdEndDate;
-	private Date updatedStartDate;
-	private Date updatedEndDate;
-	private List<Integer> ontologyIds;
-	private List<URI> relationshipTypes;
+	
+	@IRI(ApplicationConstants.MAPPING_PREFIX + "mapping_source")
+	@SPARQLSubject("procInfo")
+	@SPARQLVariableName("mappingSource")
 	private List<MappingSourceEnum> mappingSources;
+	
+	@IRI(ApplicationConstants.MAPPING_PREFIX + "relation")
+	@SPARQLSubject("mappingId")
+	@SPARQLVariableName("relation")
+	private List<URI> relationshipTypes;
+	
+	@IRI(ApplicationConstants.MAPPING_PREFIX + "date")
+	@SPARQLSubject("procInfo")
+	@SPARQLVariableName("date")
+	private Date startDate;
+	
+	@IRI(ApplicationConstants.MAPPING_PREFIX + "date")
+	@SPARQLSubject("procInfo")
+	@SPARQLVariableName("date")
+	private Date endDate;
+	
+	/*
+	 * Provisional Term Parameters
+	 */
+	
+	@IRI(ApplicationConstants.PROVISIONAL_TERM_PREFIX + "created")
+	@SPARQLSubject("id")
+	@SPARQLVariableName("created")
+	private Date createdStartDate;
+	
+	@IRI(ApplicationConstants.PROVISIONAL_TERM_PREFIX + "created")
+	@SPARQLSubject("id")
+	@SPARQLVariableName("created")
+	private Date createdEndDate;
+	
+	@IRI(ApplicationConstants.PROVISIONAL_TERM_PREFIX + "updated")
+	@SPARQLSubject("id")
+	@SPARQLVariableName("updated")
+	private Date updatedStartDate;
+	
+	@IRI(ApplicationConstants.PROVISIONAL_TERM_PREFIX + "updated")
+	@SPARQLSubject("id")
+	@SPARQLVariableName("updated")
+	private Date updatedEndDate;
+	
+	@IRI(ApplicationConstants.PROVISIONAL_TERM_PREFIX + "ontology_id")
+	@SPARQLSubject("id")
+	@SPARQLVariableName("ontologyId")
+	private List<Integer> ontologyIds;
+	
+	@IRI(ApplicationConstants.MAPPING_PREFIX + "permanent_id")
+	@SPARQLSubject("id")
+	@SPARQLVariableName("permanentId")
 	private Boolean permanentIdExists;
 
 	/**
@@ -144,29 +221,24 @@ public class SPARQLFilterGenerator {
 	 * generate triples for parameters that have been provided for a particular
 	 * call.
 	 *
-	 * @param idVariableName
-	 * @param SPARQLBean
+	 * @param SPARQLBeanClass
 	 * @return
 	 */
-	public List<String> generateTriplePatterns(String idVariableName,
-			AbstractSPARQLBean SPARQLBean) {
+	public List<String> generateTriplePatterns() {
 		Field[] fields = this.getClass().getDeclaredFields();
 
 		List<String> triples = new ArrayList<String>();
 
 		for (Field field : fields) {
-            Map<String, AbstractSPARQLBean.ParameterMap> parameterMapping = SPARQLBean.getParameterMapping();
-
 			try {
 				if (field.get(this) != null
 						&& field.get(this).toString().length() > 0) {
 
-					String type = parameterMapping.get(field
-							.getName()).URI;
-					String variableName = parameterMapping.get(field
-							.getName()).variableName;
+					String type = field.getAnnotation(IRI.class).value();
+					String variableName = field.getAnnotation(SPARQLVariableName.class).value();
+					String subjectName = field.getAnnotation(SPARQLSubject.class).value();
 
-					String triple = "?" + idVariableName + " <" + type + ">"
+					String triple = "?" + subjectName + " <" + type + ">"
 							+ " ?" + variableName;
 
 					triples.add(triple);

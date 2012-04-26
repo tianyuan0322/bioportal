@@ -2,9 +2,7 @@ package org.ncbo.stanford.sparql.bean;
 
 import static org.junit.Assert.assertTrue;
 
-import java.util.Hashtable;
 import java.util.List;
-import java.util.Map;
 
 import org.junit.Test;
 import org.ncbo.stanford.AbstractBioPortalTest;
@@ -26,9 +24,6 @@ public class SPARQLBeanTest extends AbstractBioPortalTest {
 		
 		TestBeanLevel2() {
 		}
-        public Map<String, ParameterMap> getParameterMapping() {
-            return new Hashtable<String, ParameterMap>();
-        }
 	}
 	
 	public class TestBeanLevel3 extends TestBeanLevel2 {
@@ -38,9 +33,6 @@ public class SPARQLBeanTest extends AbstractBioPortalTest {
 		
 		TestBeanLevel3() {
 		}
-        public Map<String, ParameterMap> getParameterMapping() {
-            return new Hashtable<String, ParameterMap>();
-        }
 	}
 	
 	public class TestBeanDifferentPrefix extends AbstractSPARQLBean {
@@ -51,9 +43,6 @@ public class SPARQLBeanTest extends AbstractBioPortalTest {
 		TestBeanDifferentPrefix() {
 			super(PREFIX, RDF_TYPE);
 		}
-        public Map<String, ParameterMap> getParameterMapping() {
-            return new Hashtable<String, ParameterMap>();
-        }
 	}
 	
 	@Test

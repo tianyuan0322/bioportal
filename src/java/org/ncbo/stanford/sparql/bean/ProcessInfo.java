@@ -1,9 +1,6 @@
 package org.ncbo.stanford.sparql.bean;
 
-import java.lang.reflect.Field;
 import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
 
 import org.ncbo.stanford.annotation.IRI;
 import org.ncbo.stanford.util.constants.ApplicationConstants;
@@ -11,56 +8,10 @@ import org.openrdf.model.URI;
 
 public class ProcessInfo extends AbstractSPARQLBean {
 
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = -4920943656148334898L;
 	private static final String PREFIX = ApplicationConstants.MAPPING_PREFIX;
 	private static final String ID_PREFIX = ApplicationConstants.MAPPING_ID_PREFIX;
 
-	
-	/**
-	 * This Map can be used to tie a parameter to a URI and variable name when generating triples.
-	 */
-	public static HashMap<String, ParameterMap> parameterMapping = new HashMap<String, ParameterMap>();
-	static {
-		Field[] fields = ProcessInfo.class.getDeclaredFields();
-
-		HashMap<String, Field> fieldMap = new HashMap<String, Field>();
-		for (Field field : fields) {
-			fieldMap.put(field.getName(), field);
-		}
-
-		ParameterMap submittedBy = new ParameterMap();
-		submittedBy.URI = fieldMap.get("submittedBy").getAnnotation(IRI.class)
-				.value();
-		submittedBy.variableName = "submittedBy";
-		parameterMapping.put("submittedBy", submittedBy);
-
-		ParameterMap mappingType = new ParameterMap();
-		mappingType.URI = fieldMap.get("mappingType").getAnnotation(IRI.class)
-				.value();
-		mappingType.variableName = "mappingType";
-		parameterMapping.put("mappingType", mappingType);
-
-		ParameterMap startDate = new ParameterMap();
-		startDate.URI = fieldMap.get("date").getAnnotation(IRI.class)
-				.value();
-		startDate.variableName = "date";
-		parameterMapping.put("startDate", startDate);
-
-		ParameterMap endDate = new ParameterMap();
-		endDate.URI = fieldMap.get("date").getAnnotation(IRI.class).value();
-		endDate.variableName = "date";
-		parameterMapping.put("endDate", endDate);
-
-		ParameterMap mappingSources = new ParameterMap();
-		mappingSources.URI = fieldMap.get("mappingSource")
-				.getAnnotation(IRI.class).value();
-		mappingSources.variableName = "mappingSource";
-		parameterMapping.put("mappingSources", mappingSources);
-	};
-	
 	/**
 	 * Default no-arg constructor.
 	 */
@@ -78,14 +29,14 @@ public class ProcessInfo extends AbstractSPARQLBean {
 	protected String mappingSourceName;
 
 	@IRI(PREFIX + "mapping_source_contact_info")
-	protected String mappingSourcecontactInfo;
+	protected String mappingSourceContactInfo;
 
 	@IRI(PREFIX + "mapping_source_site")
 	protected URI mappingSourceSite;
 
 	@IRI(PREFIX + "mapping_source_algorithm")
 	protected String mappingSourceAlgorithm;
-	
+
 	@IRI(PREFIX + "date")
 	protected Date date;
 
@@ -94,7 +45,7 @@ public class ProcessInfo extends AbstractSPARQLBean {
 
 	@IRI(PREFIX + "mapping_type")
 	protected String mappingType;
-	
+
 	/**
 	 * @return the comment
 	 */
@@ -156,18 +107,18 @@ public class ProcessInfo extends AbstractSPARQLBean {
 	}
 
 	/**
-	 * @return the mappingSourcecontactInfo
+	 * @return the mappingSourceContactInfo
 	 */
 	public String getMappingSourcecontactInfo() {
-		return mappingSourcecontactInfo;
+		return mappingSourceContactInfo;
 	}
 
 	/**
-	 * @param mappingSourcecontactInfo
-	 *            the mappingSourcecontactInfo to set
+	 * @param mappingSourceContactInfo
+	 *            the mappingSourceContactInfo to set
 	 */
 	public void setMappingSourcecontactInfo(String mappingSourcecontactInfo) {
-		this.mappingSourcecontactInfo = mappingSourcecontactInfo;
+		this.mappingSourceContactInfo = mappingSourcecontactInfo;
 	}
 
 	/**
@@ -228,11 +179,5 @@ public class ProcessInfo extends AbstractSPARQLBean {
 	 */
 	public void setMappingSourceName(String mappingSourceName) {
 		this.mappingSourceName = mappingSourceName;
-	}
-
-	@Override
-	public Map<String, ParameterMap> getParameterMapping() {
-		// TODO Auto-generated method stub
-		return parameterMapping;
 	}
 }

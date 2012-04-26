@@ -260,7 +260,7 @@ public class OntologyLoadSchedulerServiceImpl extends AbstractOntologyService
 	private void loadOntology(OntologyBean ontologyBean, String formatHandler)
 			throws Exception {
 		if (log.isDebugEnabled()) {
-			log.debug("loadOntology BEGIN..............");
+			log.debug("loadOntology " + ontologyBean.getOntologyId() + " BEGIN..............");
 		}
 
 		List<String> filenames = ontologyBean.getFilenames();
@@ -281,7 +281,7 @@ public class OntologyLoadSchedulerServiceImpl extends AbstractOntologyService
 		}
 
 		if (log.isDebugEnabled()) {
-			log.debug("..................loadOntology END");
+			log.debug("..................loadOntology " + ontologyBean.getOntologyId() + " END");
 		}
 	}
 
@@ -355,7 +355,7 @@ public class OntologyLoadSchedulerServiceImpl extends AbstractOntologyService
 			String formatHandler) throws Exception {
 
 		if (log.isDebugEnabled()) {
-			log.debug("calculateMetrics BEGIN..............");
+			log.debug("calculateMetrics " + ontologyBean.getOntologyId() + " BEGIN..............");
 		}
 
 		OntologyMetricsBean metricsBean = getMetricsManager(ontologyBean)
@@ -364,7 +364,7 @@ public class OntologyLoadSchedulerServiceImpl extends AbstractOntologyService
 		metricsService.updateOntologyMetrics(ontologyBean, metricsBean);
 
 		if (log.isDebugEnabled()) {
-			log.debug("..................calculateMetrics END");
+			log.debug("..................calculateMetrics " + ontologyBean.getOntologyId() + " END");
 		}
 	}
 
@@ -396,7 +396,7 @@ public class OntologyLoadSchedulerServiceImpl extends AbstractOntologyService
 	 */
 	private void createDiff(OntologyBean ontologyBean) throws Exception {
 		if (log.isDebugEnabled()) {
-			log.debug("createDiff BEGIN..............");
+			log.debug("createDiff " + ontologyBean.getOntologyId() + " BEGIN..............");
 		}
 
 		getDiffManager(ontologyBean)
@@ -404,7 +404,7 @@ public class OntologyLoadSchedulerServiceImpl extends AbstractOntologyService
 						ontologyBean.getOntologyId());
 
 		if (log.isDebugEnabled()) {
-			log.debug("..................createDiff END");
+			log.debug("..................createDiff " + ontologyBean.getOntologyId() + " END");
 		}
 	}
 

@@ -1,19 +1,15 @@
 package org.ncbo.stanford.util.sparql;
 
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
-import java.util.ArrayList;
-import java.util.Map;
 import java.util.Hashtable;
 import java.util.List;
-import java.util.Set;
-import org.ncbo.stanford.util.constants.ApplicationConstants;
+import java.util.Map;
+
 import org.apache.commons.lang.StringUtils;
-import org.openrdf.model.URI;
-import org.openrdf.model.Literal;
-import org.openrdf.model.Value;
 import org.ncbo.stanford.sparql.bean.Mapping;
+import org.ncbo.stanford.util.constants.ApplicationConstants;
+import org.openrdf.model.URI;
+import org.openrdf.model.Value;
 
 /** This is a helper class that generates SPARQL "UNION" queries for Bioportal mappings. 
  *
@@ -180,9 +176,7 @@ public class SPARQLUnionGenerator {
         }
         String query = StringUtils.join(sUnionBlock,"UNION");
         if (parameters != null && !parameters.isEmpty()) {
-            Mapping mapping = new Mapping();
-            List<String> triples = parameters.generateTriplePatterns(
-            "mappingId", new Mapping());
+            List<String> triples = parameters.generateTriplePatterns();
             query += ""+StringUtils.join(triples, " . "); 
             query += " FILTER ( " + parameters.toFilter() + " )"; 
         }

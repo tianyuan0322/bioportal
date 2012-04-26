@@ -5,9 +5,7 @@ import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.GregorianCalendar;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.UUID;
 
 import javax.xml.datatype.DatatypeConfigurationException;
@@ -32,15 +30,6 @@ public abstract class AbstractSPARQLBean implements Serializable {
 	protected URI id;
 
 	protected URI type = ApplicationConstants.DEFAULT_RDF_TYPE;
-
-	/**
-	 * Parameter mappings
-	 */
-	public static class ParameterMap {
-		public String variableName;
-		public String URI;
-		public ParameterMap() {};
-	}
 
 	/**
 	 * Default no-arg constructor.
@@ -196,5 +185,4 @@ public abstract class AbstractSPARQLBean implements Serializable {
 		this.id = id;
 	}
 
-    public abstract Map<String, ParameterMap> getParameterMapping();
 }

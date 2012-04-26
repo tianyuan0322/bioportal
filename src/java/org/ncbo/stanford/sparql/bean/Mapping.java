@@ -1,10 +1,6 @@
 package org.ncbo.stanford.sparql.bean;
 
-import java.lang.reflect.Field;
 import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.List;
 
 import org.ncbo.stanford.annotation.IRI;
@@ -13,6 +9,9 @@ import org.openrdf.model.URI;
 
 public class Mapping extends AbstractSPARQLBean {
 
+	// Name to use for the "subject" position in SPARQL queries for fields in this object
+	public static final String SPARQL_SUBJECT_NAME = "mappingId";
+
 	private static final long serialVersionUID = 5668752344409465584L;
 
 	private static final String PREFIX = ApplicationConstants.MAPPING_PREFIX;
@@ -20,26 +19,13 @@ public class Mapping extends AbstractSPARQLBean {
 	private static final String RDF_TYPE = PREFIX + "One_To_One_Mapping";
 
 	/**
-	 * This Map can be used to tie a parameter to a URI and variable name when generating triples.
+	 * Name to use for the "subject" position in SPARQL queries for fields in this object 
+	 * @return
 	 */
-	public static HashMap<String, ParameterMap> parameterMapping = new HashMap<String, ParameterMap>();
-	static {
-		Field[] fields = Mapping.class.getDeclaredFields();
-
-		HashMap<String, Field> fieldMap = new HashMap<String, Field>();
-		for (Field field : fields) {
-			fieldMap.put(field.getName(), field);
-		}
-
-
-		ParameterMap relationshipTypes = new ParameterMap();
-		relationshipTypes.URI = fieldMap.get("relation").getAnnotation(IRI.class)
-				.value();
-		relationshipTypes.variableName = "relation";
-		parameterMapping.put("relationshipTypes", relationshipTypes);
-
-	};
-
+	public static String getSPARQLSubjectName() {
+		return "mappingId";
+	}
+	
 	@IRI(PREFIX + "id")
 	protected URI id;
 
@@ -67,11 +53,8 @@ public class Mapping extends AbstractSPARQLBean {
 	@IRI(PREFIX + "has_process_info")
 	protected ProcessInfo processInfo;
 
-
-
 	@IRI(PREFIX + "dependency")
 	protected URI dependency;
-
 
 	/**
 	 * Default no-arg constructor.
@@ -221,10 +204,6 @@ public class Mapping extends AbstractSPARQLBean {
 			Integer createdInTargetOntologyVersion) {
 		this.createdInTargetOntologyVersion = createdInTargetOntologyVersion;
 	}
-
-    public Map<String, ParameterMap> getParameterMapping() {
-        return Mapping.parameterMapping;
-    }
 
 	public ProcessInfo getProcessInfo() {
 		return processInfo;
