@@ -2,8 +2,10 @@ package org.ncbo.stanford.view.rest.restlet.mapping;
 
 import java.net.URLDecoder;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -288,6 +290,13 @@ public class MappingConceptRestlet extends AbstractMappingRestlet {
 		HttpServletRequest httpRequest = RequestUtils
 				.getHttpServletRequest(request);
 
+		// Inverse relation properties
+		Map<String, String> inverseRelProps = new HashMap<String, String>();
+		inverseRelProps.put("http://www.w3.org/2004/02/skos/core#broadMatch",
+				"http://www.w3.org/2004/02/skos/core#narrowMatch");
+		inverseRelProps.put("http://www.w3.org/2004/02/skos/core#narrowMatch",
+				"http://www.w3.org/2004/02/skos/core#broadMatch");
+
 		// Process base parameters
 		String sourceOntStr = (String) httpRequest
 				.getParameter(RequestParamConstants.PARAM_SOURCE_ONT);
@@ -430,10 +439,18 @@ public class MappingConceptRestlet extends AbstractMappingRestlet {
 			mappings.add(mapping1);
 
 			if (!unidirectional) {
+				// Check to see if the mapping uses an inverse property for
+				// relation that we know about
+				String inverseRel = inverseRelProps.get(relation.toString());
+				if (inverseRel == null) {
+					inverseRel = relation.toString();
+				}
+				URI inverseRelURI = new URIImpl(inverseRel);
+
 				// This creates the inverse mapping when a mapping is
 				// bidirectional (which is the default)
 				mapping2 = mappingService.createMapping(target, source,
-						relation, targetOntId, sourceOntId, targetOntVersionId,
+						inverseRelURI, targetOntId, sourceOntId, targetOntVersionId,
 						sourceOntVersionId, submittedBy, mapping1.getId(),
 						comment, mappingSource, mappingSourceName,
 						mappingSourceContactInfo, mappingSourceSite,
