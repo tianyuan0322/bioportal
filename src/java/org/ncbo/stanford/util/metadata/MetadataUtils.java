@@ -157,7 +157,7 @@ public class MetadataUtils {
 
 			if (val instanceof RDFSLiteral) {
 				RDFSLiteral lit = (RDFSLiteral) val;
-
+				
 				if (lit.getPlainValue() != null) {
 					val = lit.getPlainValue();
 				} else {
@@ -176,7 +176,15 @@ public class MetadataUtils {
 					}
 				}
 			}
-
+			
+			// This makes the method a little less generic, but it saves us
+			// when we expect a string to be returned and get a weird literal
+			// instead, like a bool or double, which the ontology author is
+			// free to specify in cases like versionInfo
+			if (type == String.class && !(val instanceof String)) {
+				val = val.toString();
+			}
+			
 			return (T) val;
 		} else {
 			throw new MetadataException(
