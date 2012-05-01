@@ -63,11 +63,11 @@ public class OntologyLoadSchedulerServiceImpl extends AbstractOntologyService
 		for (NcboOntologyLoadQueue loadQueue : ontologiesToLoad) {
 			if (ncboOntologyLoadQueueDAO.needsParsing(loadQueue.getId())
 					.booleanValue()) {
-				log.debug("parsing ontology: ID = "
+				log.info("parsing ontology: ID = "
 						+ loadQueue.getOntologyVersionId());
 				processRecord(loadQueue, null, null);
 			} else {
-				log.debug("ontology ID = " + loadQueue.getOntologyVersionId()
+				log.info("ontology ID = " + loadQueue.getOntologyVersionId()
 						+ " does not require parsing");
 			}
 		}
@@ -260,7 +260,7 @@ public class OntologyLoadSchedulerServiceImpl extends AbstractOntologyService
 	private void loadOntology(OntologyBean ontologyBean, String formatHandler)
 			throws Exception {
 		if (log.isDebugEnabled()) {
-			log.debug("loadOntology " + ontologyBean.getId() + " BEGIN..............");
+			log.info("loadOntology " + ontologyBean.getId() + " BEGIN..............");
 		}
 
 		List<String> filenames = ontologyBean.getFilenames();
@@ -270,7 +270,7 @@ public class OntologyLoadSchedulerServiceImpl extends AbstractOntologyService
 			filename = filename.replace(ApplicationConstants.DIR, "");
 
 			if (!CompressionUtils.isCompressed(filename)) {
-				log.debug("......loading filename " + filename);
+				log.info("......loading filename " + filename);
 				String filePath = AbstractFilePathHandler.getOntologyFilePath(
 						ontologyBean, filename);
 				File file = new File(filePath);
@@ -281,7 +281,7 @@ public class OntologyLoadSchedulerServiceImpl extends AbstractOntologyService
 		}
 
 		if (log.isDebugEnabled()) {
-			log.debug("..................loadOntology " + ontologyBean.getId() + " END");
+			log.info("..................loadOntology " + ontologyBean.getId() + " END");
 		}
 	}
 
@@ -332,7 +332,7 @@ public class OntologyLoadSchedulerServiceImpl extends AbstractOntologyService
 				&& StringUtils.isNotBlank(ontologyBean.getAbbreviation())) {
 			String purl_path = "/ontology/" + ontologyBean.getAbbreviation();
 			String targetPath = "/virtual/" + ontologyBean.getOntologyId();
-			log.debug("Attempting to create purl entry: purl_path=" + purl_path
+			log.info("Attempting to create purl entry: purl_path=" + purl_path
 					+ " with targetPath=" + targetPath);
 			if (!purlClientManager.doesPurlExist(purl_path)) {
 				purlClientManager.createAdvancedPartialPurl(purl_path,
@@ -355,7 +355,7 @@ public class OntologyLoadSchedulerServiceImpl extends AbstractOntologyService
 			String formatHandler) throws Exception {
 
 		if (log.isDebugEnabled()) {
-			log.debug("calculateMetrics " + ontologyBean.getId() + " BEGIN..............");
+			log.info("calculateMetrics " + ontologyBean.getId() + " BEGIN..............");
 		}
 
 		OntologyMetricsBean metricsBean = getMetricsManager(ontologyBean)
@@ -364,7 +364,7 @@ public class OntologyLoadSchedulerServiceImpl extends AbstractOntologyService
 		metricsService.updateOntologyMetrics(ontologyBean, metricsBean);
 
 		if (log.isDebugEnabled()) {
-			log.debug("..................calculateMetrics " + ontologyBean.getId() + " END");
+			log.info("..................calculateMetrics " + ontologyBean.getId() + " END");
 		}
 	}
 
@@ -396,7 +396,7 @@ public class OntologyLoadSchedulerServiceImpl extends AbstractOntologyService
 	 */
 	private void createDiff(OntologyBean ontologyBean) throws Exception {
 		if (log.isDebugEnabled()) {
-			log.debug("createDiff " + ontologyBean.getId() + " BEGIN..............");
+			log.info("createDiff " + ontologyBean.getId() + " BEGIN..............");
 		}
 
 		getDiffManager(ontologyBean)
@@ -404,7 +404,7 @@ public class OntologyLoadSchedulerServiceImpl extends AbstractOntologyService
 						ontologyBean.getOntologyId());
 
 		if (log.isDebugEnabled()) {
-			log.debug("..................createDiff " + ontologyBean.getId() + " END");
+			log.info("..................createDiff " + ontologyBean.getId() + " END");
 		}
 	}
 
