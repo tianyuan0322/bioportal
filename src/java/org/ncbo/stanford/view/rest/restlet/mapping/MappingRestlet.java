@@ -49,8 +49,12 @@ public class MappingRestlet extends AbstractMappingRestlet {
 	private void listMapping(Request request, Response response,
 			String mappingId) {
 		MappingBean mapping = null;
+
 		try {
-			mapping = mappingService.getMapping(new URIImpl(mappingId));
+			mapping = mappingService.getMapping(new URIImpl(mappingId));			
+		} catch (IllegalArgumentException e) {			
+			response.setStatus(Status.CLIENT_ERROR_BAD_REQUEST, e.getMessage());
+			log.error(e);
 		} catch (MappingMissingException e) {
 			response.setStatus(Status.CLIENT_ERROR_NOT_FOUND, e.getMessage());
 			e.printStackTrace();
