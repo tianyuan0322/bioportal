@@ -209,8 +209,11 @@ public class OntologyLoadSchedulerServiceImpl extends AbstractOntologyService
 			errorMessage = appendError(errorMessage, e);
 			addErrorOntology(errorOntologies, ontologyVersionId.toString(),
 					ontologyBean, errorMessage);
-			e.printStackTrace();
-			log.error(e);
+
+			if (!(e instanceof OntologyNotFoundException)) {
+				e.printStackTrace();
+				log.error(e);
+			}
 
 			try {
 				updateOntologyStatus(loadQueue, ontologyBean, formatHandler,
