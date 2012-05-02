@@ -67,7 +67,7 @@ public class ProvisionalTermDAO {
 			+ "  ?id <http://purl.bioontology.org/ontology/provisional#definition> ?definition ."
 			+ "  ?id <http://purl.bioontology.org/ontology/provisional#created> ?created ."
 			+ "  ?id <http://purl.bioontology.org/ontology/provisional#submitted_by> ?submittedBy ."
-			+ "  { SELECT ?ontologyId { ?id <http://purl.bioontology.org/ontology/provisional#ontology_id> ?ontologyId } LIMIT 1 }"
+			+ "  { SELECT ?ontologyId { OPTIONAL { ?id <http://purl.bioontology.org/ontology/provisional#ontology_id> ?ontologyId }} LIMIT 1 }"
 			+ "  { SELECT ?synonym { OPTIONAL { ?id <http://purl.bioontology.org/ontology/provisional#synonym> ?synonym }} LIMIT 1 }"
 			+ "  OPTIONAL { ?id <http://purl.bioontology.org/ontology/provisional#provisional_subclass_of> ?provisionalSubclassOf }"
 			+ "  OPTIONAL { ?id <http://purl.bioontology.org/ontology/provisional#has_multiple_ontology_ids> ?"
@@ -209,10 +209,12 @@ public class ProvisionalTermDAO {
 				term.setSubmittedBy(convertValueToInteger(bs
 						.getValue("submittedBy")));
 
-				term.addOntologyIds(convertValueToInteger(bs
-						.getValue("ontologyId")));
-
 				// Optional values
+				if (isValidValue(bs.getValue("ontologyId"))) {
+					term.addOntologyIds(convertValueToInteger(bs
+							.getValue("ontologyId")));
+				}
+
 				if (isValidValue(bs.getValue("provisionalSubclassOf")))
 					term.setProvisionalSubclassOf(new URIImpl(bs.getValue(
 							"provisionalSubclassOf").stringValue()));
