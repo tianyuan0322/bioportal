@@ -55,7 +55,7 @@ public class ProvisionalTermDAO {
 			+ MULT_SYNONYMS
 			+ " "
 			+ "?definition"
-			+ "?superClass "
+			+ "?provisionalSubclassOf "
 			+ "?created "
 			+ "?updated "
 			+ "?submittedBy "
