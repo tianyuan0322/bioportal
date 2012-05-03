@@ -1916,21 +1916,6 @@
 		</property>
 	</bean>
 
-	<bean id="notificationAdvice" class="org.ncbo.stanford.aop.notification.NotificationAdvice" >
-		<property name="emailNotificationService">
-			<ref local="emailNotificationService" />
-		</property>
-		<property name="ontologyService">
-			<ref bean="ontologyService" />
-		</property>
-		<property name="notesService">
-			<ref bean="notesService" />
-		</property>
-		<property name="ncboUserDAO">
-			<ref bean="NcboUserDAO" />
-		</property>
-	</bean>
-
 	<!-- Reference implementation, disabled until we need it
 	<aop:config>
 		<aop:aspect ref="notificationAdvice">
@@ -1955,11 +1940,27 @@
 	</aop:config>
 
 	<context:load-time-weaver />
-    <context:annotation-config/>
+  <context:annotation-config/>
 
 	<!-- This declaration is required when using Spring Dependency Injection inside the aspect -->
 	<bean class="org.ncbo.stanford.aop.ontology.OntologyMetadataAdvice" factory-method="aspectOf" />
 
+	<bean id="notificationAdvice" class="org.ncbo.stanford.aop.notification.NotificationAdvice" factory-method="aspectOf" >
+		<property name="emailNotificationService">
+			<ref local="emailNotificationService" />
+		</property>
+		<property name="ontologyService">
+			<ref bean="ontologyService" />
+		</property>
+		<property name="notesService">
+			<ref bean="notesService" />
+		</property>
+		<property name="ncboUserDAO">
+			<ref bean="NcboUserDAO" />
+		</property>
+	</bean>
+
+	<!-- Mail service -->
 	<bean id="smtpAuthenticator"
 		class="org.ncbo.stanford.util.mail.authenticator.SmtpAuthenticator">
 		<constructor-arg value="email@optrasystems.com" />
