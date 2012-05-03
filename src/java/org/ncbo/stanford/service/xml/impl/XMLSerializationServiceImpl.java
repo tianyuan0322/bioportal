@@ -84,7 +84,7 @@ import org.w3c.dom.Text;
 
 import com.thoughtworks.xstream.XStream;
 import com.thoughtworks.xstream.converters.enums.EnumSingleValueConverter;
-import com.thoughtworks.xstream.io.json.JsonHierarchicalStreamDriver;
+import com.thoughtworks.xstream.io.json.JettisonMappedXmlDriver;
 import com.thoughtworks.xstream.io.xml.TraxSource;
 import com.thoughtworks.xstream.mapper.Mapper;
 
@@ -408,7 +408,7 @@ public class XMLSerializationServiceImpl implements XMLSerializationService {
 	}
 
 	private void initJsonSerializer() {
-		this.jsonSerializer = new XStream(new JsonHierarchicalStreamDriver());
+		this.jsonSerializer = new XStream(new JettisonMappedXmlDriver());
 		initSerializer(this.jsonSerializer);
 	}
 
