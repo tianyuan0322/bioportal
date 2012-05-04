@@ -6,14 +6,14 @@ import org.apache.commons.logging.Log;
 public class LoggingUtils {
 
 	/**
-	 * This method will log progress as you do process every class in an
+	 * This method will log progress as you process every class in an
 	 * ontology. This could be used, for example, to log progress calculating
 	 * metrics or indexing all classes in an ontology. The method will
 	 * automatically figure out how often to log to the console based on how
 	 * many classes you are processing.
 	 * 
 	 * @param classCount
-	 * @param origProgressCount
+	 * @param origProgressCount - Uses a MutableInt to avoid passing the int back and forth
 	 * @param ontologyVersionId
 	 * @param message
 	 * @param log
