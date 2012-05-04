@@ -32,7 +32,7 @@ public class LoggingUtils {
 		while (interval == 0) {
 			int testCalc = classCount / intervals[position];
 
-			// Second test avoids endless loop
+			// Last test avoids endless loop
 			if (testCalc > 0 && classCount / intervals[position] >= 5
 					|| position == intervals.length - 1) {
 				interval = intervals[position];
