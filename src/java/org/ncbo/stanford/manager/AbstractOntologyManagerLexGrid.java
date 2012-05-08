@@ -370,28 +370,11 @@ public abstract class AbstractOntologyManagerLexGrid {
 			// Category 1: Ontologies that have their own URI scheme
 			fullId = "http://www.cellcycleontology.org/ontology/owl/" + prefix
 					+ "#" + modCode;
-		} else if (newPurlOntologies.contains(ontologyId)) {
-			// Category 2: The ontologies have transitioned to the new scheme
-			// such
-			// as (CHEBI and PRO)
+		} else {
 			// The url will be in the form:
 			// http://purl.obolibrary.org/obo/prefix_xxxxx
 			fullId = "http://purl.obolibrary.org/obo/" + modCode;
-		} else if (legacyPurlOntologies.contains(ontologyId)) {
-			// Category 3: Some ontologies use the "legacy" purls of the form:
-			// http://purl.org/obo/owl/<prefix>#<prefix>_xxxxx
-			fullId = "http://purl.org/obo/owl/" + prefix + "#" + modCode;
-		} else {
-			// Category 4: The ontologies have no URIs. We create a default URI
-			// of
-			// the form: http://purl.bioontology.org/ontology/PREFIX/PREFIX_xxxx
-			if (StringUtils.isNotBlank(ontologyBean.getAbbreviation())) {
-				fullId = ApplicationConstants.BASE_CONCEPT_NAMESPACE
-						+ ontologyBean.getAbbreviation() + "/" + modCode;
-			} else {
-				fullId = ApplicationConstants.BASE_CONCEPT_NAMESPACE + prefix
-						+ "/" + modCode;
-			}
+		
 		}
 
 		return fullId;
