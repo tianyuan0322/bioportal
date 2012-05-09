@@ -207,7 +207,7 @@ public class AbstractNcboMappingDAO {
 							.stringValue()));
 
 				if (isValidValue(bs.getValue("comment")))
-					processInfo
+					mapping
 							.setComment(bs.getValue("comment").stringValue());
 
 				if (isValidValue(bs.getValue("mappingSource")))
@@ -894,7 +894,7 @@ public class AbstractNcboMappingDAO {
 		if (dependency != null)
 			mapping.setDependency(dependency);
 		if (comment != null)
-			processInfo.setComment(comment);
+			mapping.setComment(comment);
 		if (mappingSource != null)
 			processInfo.setMappingSource(mappingSource);
 		if (mappingSourceName != null)

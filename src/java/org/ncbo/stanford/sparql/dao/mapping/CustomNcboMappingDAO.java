@@ -58,7 +58,7 @@ public class CustomNcboMappingDAO extends AbstractNcboMappingDAO {
 		newMapping.setDependency(dependency);
 		processInfo.setSubmittedBy(submittedBy);
 		processInfo.setDate(new Date());
-		processInfo.setComment(comment);
+		newMapping.setComment(comment);
 		processInfo.setMappingType(mappingType);
 
 		// Set mappingSource properties

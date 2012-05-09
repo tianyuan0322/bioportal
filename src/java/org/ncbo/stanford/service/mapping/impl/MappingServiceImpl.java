@@ -380,7 +380,7 @@ public class MappingServiceImpl implements MappingService {
 
 		ProcessInfo processInfo = mapping.getProcessInfo();
 		// Set all properties
-		mb.setComment(processInfo.getComment());
+		mb.setComment(mapping.getComment());
 		mb.setCreatedInSourceOntologyVersion(mapping
 				.getCreatedInSourceOntologyVersion());
 		mb.setCreatedInTargetOntologyVersion(mapping
@@ -416,7 +416,7 @@ public class MappingServiceImpl implements MappingService {
 		otom.setProcessInfo(procInfo);
 
 		// Set all properties
-		procInfo.setComment(mapping.getComment());
+		mapping.setComment(mapping.getComment());
 		otom.setCreatedInSourceOntologyVersion(mapping
 				.getCreatedInSourceOntologyVersion());
 		otom.setCreatedInTargetOntologyVersion(mapping
