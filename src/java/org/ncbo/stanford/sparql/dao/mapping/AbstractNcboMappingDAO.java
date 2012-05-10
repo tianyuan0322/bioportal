@@ -117,6 +117,44 @@ public class AbstractNcboMappingDAO {
 			+ "  OPTIONAL { ?procInf map:mapping_source_algorithm ?mappingSourceAlgorithm .}"
 			+ "  FILTER (%FILTER%) } %ORDERBY% LIMIT %LIMIT% OFFSET %OFFSET%";
 
+	protected final static String mappingQueryUni = "PREFIX map: <http://protege.stanford.edu/ontologies/mappings/mappings.rdfs#> "
+			+ "SELECT DISTINCT "
+			+ "?mappingId "
+			+ "?relation "
+			+ " %MAPPING_ONT_VARS% "
+			+ "?createdInSourceOntologyVersion "
+			+ "?createdInTargetOntologyVersion "
+			+ "?comment "
+			+ "?date "
+			+ "?submittedBy "
+			+ "?dependency "
+			+ "?mappingType "
+			+ "?mappingSource "
+			+ "?mappingSourceName "
+			+ "?mappingSourceContactInfo "
+			+ "?mappingSourceSite "
+			+ "?mappingSourceAlgorithm "
+			+ "?isManyToMany "
+			+ " {"
+			+ "  %MAPPING_ONT_BIND% "			
+			+ "  ?mappingId map:relation ?relation ."
+			+ "  ?mappingId map:created_in_source_ontology_version ?createdInSourceOntologyVersion ."
+			+ "  ?mappingId map:created_in_target_ontology_version ?createdInTargetOntologyVersion ."
+			+ "  ?mappingId map:has_process_info ?procInf ."
+			+ "  ?procInf map:date ?date ."
+			+ "  ?procInf map:mapping_type ?mappingType ."
+			+ "  ?procInf map:submitted_by ?submittedBy ."
+			+ "  OPTIONAL { ?mappingId map:is_many_to_many ?isManyToMany .}"
+			+ "  OPTIONAL { ?mappingId map:comment ?comment .}"
+			+ "  OPTIONAL { ?mappingId map:dependency ?dependency .}"
+			+ "  OPTIONAL { ?procInf map:mapping_source ?mappingSource .}"
+			+ "  OPTIONAL { ?procInf map:mapping_source_name ?mappingSourceName .}"
+			+ "  OPTIONAL { ?procInf map:mapping_source_contact_info ?mappingSourceContactInfo .}"
+			+ "  OPTIONAL { ?procInf map:mapping_source_site ?mappingSourceSite .}"
+			+ "  OPTIONAL { ?procInf map:mapping_source_algorithm ?mappingSourceAlgorithm .}"
+			+ "  FILTER (%FILTER%) } %ORDERBY% LIMIT %LIMIT% OFFSET %OFFSET%";
+
+	
 	protected final static String mappingCountQuery = "PREFIX map: <http://protege.stanford.edu/ontologies/mappings/mappings.rdfs#> "
 			+ "SELECT DISTINCT "
 			+ "count(DISTINCT ?mappingId) as ?mappingCount WHERE {"
@@ -144,10 +182,17 @@ public class AbstractNcboMappingDAO {
 	 * 
 	 *******************************************************************/
 
+	/* forceUnidirectional=true run unidirectional queries and bidirectionality is handled at code level */ 
+	protected List<Mapping> getMappings(Integer limit, Integer offset,
+			String filter, MappingFilterGenerator parameters, Boolean forceUnidirectional)
+			throws InvalidInputException {
+		return getMappings(limit, offset, filter, null, parameters, forceUnidirectional);
+	}
+			
 	protected List<Mapping> getMappings(Integer limit, Integer offset,
 			String filter, MappingFilterGenerator parameters)
 			throws InvalidInputException {
-		return getMappings(limit, offset, filter, null, parameters);
+		return getMappings(limit, offset, filter, null, parameters, false);
 	}
 
 	protected List<Mapping> getMappingsFromSPARQLQuery(String queryString) {
@@ -385,6 +430,12 @@ public class AbstractNcboMappingDAO {
 		return mappings;
 	}
 
+	protected List<Mapping> getMappings(Integer limit, Integer offset,
+			String filter, String orderBy, MappingFilterGenerator parameters) throws InvalidInputException {
+		return getMappings(limit,offset,
+				filter,orderBy, parameters, false);
+	}
+	
 	/**
 	 * Generic getMappings call. Must provide a valid SPARQL filter (generated
 	 * via helper methods or elsewhere).
@@ -401,7 +452,7 @@ public class AbstractNcboMappingDAO {
 	 * @throws InvalidInputException
 	 */
 	protected List<Mapping> getMappings(Integer limit, Integer offset,
-			String filter, String orderBy, MappingFilterGenerator parameters)
+			String filter, String orderBy, MappingFilterGenerator parameters, Boolean forceUnidirectional)
 			throws InvalidInputException {
 		// Safety check
 		if (limit == null || limit >= 50000) {
@@ -424,23 +475,56 @@ public class AbstractNcboMappingDAO {
 		}
 
 		// Substitute tokens in the generic query string
-		String queryString = mappingQuery
-				.replaceAll("%FILTER%", combinedFilters)
-				.replaceAll("%LIMIT%", limit.toString())
-				.replaceAll("%OFFSET%", offset.toString());
-
-		if (orderBy != null && !orderBy.isEmpty()) {
-			queryString = queryString.replaceAll("%ORDERBY%", " ORDER BY DESC("
-					+ orderBy + ")");
+		String queryString = null;
+		if (!forceUnidirectional) {
+				queryString = mappingQuery
+					.replaceAll("%FILTER%", combinedFilters)
+					.replaceAll("%LIMIT%", limit.toString())
+					.replaceAll("%OFFSET%", offset.toString());
+	
+			if (orderBy != null && !orderBy.isEmpty()) {
+				queryString = queryString.replaceAll("%ORDERBY%", " ORDER BY DESC("
+						+ orderBy + ")");
+			} else {
+				queryString = queryString.replaceAll("%ORDERBY%", "");
+			}
+	
+			// Remove filter if it's not used
+			if (filter == null || filter.isEmpty()) {
+				queryString = queryString.replaceAll("FILTER \\(\\) ", "");
+			}
 		} else {
-			queryString = queryString.replaceAll("%ORDERBY%", "");
+			queryString = mappingQueryUni
+					.replaceAll("%FILTER%", combinedFilters)
+					.replaceAll("%LIMIT%", limit.toString())
+					.replaceAll("%OFFSET%", offset.toString());
+			if (parameters.getSourceOntologyId() != null) {
+				String bind = "  ?mappingId map:source_ontology_id "+parameters.getSourceOntologyId()+" ."
+						+ "  ?mappingId map:target_ontology_id ?targetOntologyId .";
+				queryString = queryString.replace("%MAPPING_ONT_BIND%", bind);
+				String vars = "?targetOntologyId ("+parameters.getSourceOntologyId()+" as ?sourceOntologyId)";
+				queryString = queryString.replace("%MAPPING_ONT_VARS%", vars);
+			} else if (parameters.getTargetOntologyId() != null) {
+				String bind = "  ?mappingId map:target_ontology_id "+parameters.getTargetOntologyId()+" ."
+						+ "  ?mappingId map:source_ontology_id ?sourceOntologyId .";
+				queryString = queryString.replaceAll("%MAPPING_ONT_BIND%", bind);
+				String vars = "?sourceOntologyId ("+parameters.getTargetOntologyId()+" as ?targetOntologyId)";
+				queryString = queryString.replaceAll("%MAPPING_ONT_VARS%", vars);
+			} else {
+				throw new InvalidInputException("source or target id must be set at this point.");
+			}
+			if (orderBy != null && !orderBy.isEmpty()) {
+				queryString = queryString.replaceAll("%ORDERBY%", " ORDER BY DESC("
+						+ orderBy + ")");
+			} else {
+				queryString = queryString.replaceAll("%ORDERBY%", "");
+			}
+	
+			// Remove filter if it's not used
+			if (filter == null || filter.isEmpty()) {
+				queryString = queryString.replaceAll("FILTER \\(\\) ", "");
+			}
 		}
-
-		// Remove filter if it's not used
-		if (filter == null || filter.isEmpty()) {
-			queryString = queryString.replaceAll("FILTER \\(\\) ", "");
-		}
-
 		return getMappingsFromSPARQLQuery(queryString);
 	}
 

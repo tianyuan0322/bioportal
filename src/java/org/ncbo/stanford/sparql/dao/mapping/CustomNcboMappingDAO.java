@@ -574,9 +574,35 @@ public class CustomNcboMappingDAO extends AbstractNcboMappingDAO {
 	public List<Mapping> getMappingsForOntology(Integer ontologyId,
 			Integer limit, Integer offset, MappingFilterGenerator parameters)
 			throws InvalidInputException {
-		String filter = generateOntologySparqlFilter(ontologyId, null, false);
+		
+		CustomNcboMappingCountsDAO mappingCountDAO = new CustomNcboMappingCountsDAO();
+		mappingCountDAO.setRdfStoreManagerMap(rdfStoreManagerMap);
+		Integer sourceTargetCount = mappingCountDAO.getCountMappingsFromOntology(ontologyId, parameters);
+		
+		if (sourceTargetCount > limit + offset) {
+		/* from block */
+			parameters.setSourceOntologyId(ontologyId);
+			List<Mapping> mappings =  getMappings(limit, offset, null, parameters, true); 
+			return mappings;
+		} else if (offset - sourceTargetCount < 0 && offset + limit - sourceTargetCount > 0) {
+			Integer sourceTargetLimit = (offset - sourceTargetCount) * -1;
+			Integer targetSourceLimit = limit - sourceTargetLimit;
+			Integer targetSourceOffset = 0;
+			parameters.setSourceOntologyId(ontologyId);
+			List<Mapping> mappings =  getMappings(sourceTargetLimit, offset, null, parameters, true);
 
-		return getMappings(limit, offset, filter, parameters);
+			parameters.setSourceOntologyId(null);
+			parameters.setTargetOntologyId(ontologyId);
+			List<Mapping> mappingsPageB =  getMappings(targetSourceLimit, targetSourceOffset, null, parameters, true);
+			mappings.addAll(mappingsPageB);
+			return mappings;
+		} else {
+			Integer shiftedOffset = offset - sourceTargetCount;
+			parameters.setTargetOntologyId(ontologyId);
+			List<Mapping> mappingsPageB =  getMappings(limit, shiftedOffset, null, parameters, true);
+			return mappingsPageB;
+		}
+
 	}
 
 	/*******************************************************************
