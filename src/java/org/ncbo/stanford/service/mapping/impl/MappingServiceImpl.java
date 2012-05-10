@@ -139,8 +139,8 @@ public class MappingServiceImpl implements MappingService {
 			throws InvalidInputException {
 		MappingResultListBean pageMappings = new MappingResultListBean(0);
 		Integer totalResults = mappingCountsDAO
-				.getCountMappingsBetweenOntologies(sourceOnt.getOntologyId(),
-						targetOnt.getOntologyId(), true, parameters);
+				.getCountRankedMappingsBetweenOntologies(sourceOnt.getOntologyId(),
+						targetOnt.getOntologyId(), parameters);
 
 		int offset = pageNum * pageSize - pageSize;
 
@@ -153,9 +153,7 @@ public class MappingServiceImpl implements MappingService {
 		// This is because we look up a pagesize worth of source terms and all
 		// of their mappings, so the actual number of returned results is:
 		// (N * number of total target terms for N) where N = pagesize
-
-		// Disabling until someone complains
-		// pageSize = mappings.size();
+		pageSize = mappings.size();
 
 		Paginator<MappingBean> p = new PaginatorImpl<MappingBean>(pageMappings,
 				pageSize, totalResults);
