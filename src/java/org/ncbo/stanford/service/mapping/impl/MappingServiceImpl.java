@@ -153,7 +153,7 @@ public class MappingServiceImpl implements MappingService {
 		// This is because we look up a pagesize worth of source terms and all
 		// of their mappings, so the actual number of returned results is:
 		// (N * number of total target terms for N) where N = pagesize
-		pageSize = mappings.size();
+		// pageSize = mappings.size();
 
 		Paginator<MappingBean> p = new PaginatorImpl<MappingBean>(pageMappings,
 				pageSize, totalResults);
