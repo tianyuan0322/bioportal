@@ -6,6 +6,7 @@ import java.util.Collections;
 import java.util.Iterator;
 import java.util.LinkedList;
 
+import org.apache.commons.lang.mutable.MutableInt;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.ncbo.stanford.bean.OntologyBean;
@@ -15,6 +16,7 @@ import org.ncbo.stanford.bean.OntologyMetricsProtegeCalculationBean.OwlQueueItem
 import org.ncbo.stanford.bean.OntologyMetricsProtegeCalculationBean.QueueItem;
 import org.ncbo.stanford.manager.AbstractOntologyManagerProtege;
 import org.ncbo.stanford.manager.metrics.OntologyMetricsManager;
+import org.ncbo.stanford.util.LoggingUtils;
 
 import edu.stanford.smi.protege.model.Cls;
 import edu.stanford.smi.protege.model.FrameCounts;
@@ -40,6 +42,11 @@ public class OntologyMetricsManagerProtegeImpl extends
 
 	private static final Log log = LogFactory
 			.getLog(OntologyMetricsManagerProtegeImpl.class);
+	
+	// Used for log output
+	private Integer currClassCount = 0;
+	private MutableInt currProgressCount = new MutableInt(1);
+	private final String PROGRESS_MESSAGE = "Metrics Calculation Progress";
 
 	/**
 	 * Interface method, dispatches the processing.
@@ -117,23 +124,6 @@ public class OntologyMetricsManagerProtegeImpl extends
 			author = om.getRDFProperty(OntologyBean.DEFAULT_AUTHOR_SLOT);
 		}
 
-		// Add first item to queue and trigger processing
-		OwlQueueItem owlItem = calcBean.new OwlQueueItem(((OWLModel) calcBean
-				.getKb()).getOWLThingClass(), 1);
-		calcBean.getOwlQueue().addLast(owlItem);
-		while (!calcBean.getOwlQueue().isEmpty()) {
-			// Avoid KB cache timeout
-			calcBean.setKb(getKnowledgeBase(calcBean.getOb()));
-			
-			if (calcBean.getSeenClasses().size() % 1000 == 0) {
-				log.debug("Processing class "
-						+ calcBean.getSeenClasses().size());
-			}
-			OwlQueueItem currCls = calcBean.getOwlQueue().remove();
-			owlClsIterate(calcBean, currCls.nextCls, currCls.newDepth,
-					documentation, author, annotation);
-		}
-
 		// count classes
 		int clsCount = met.getNamedClassCount();
 		calcBean.getMb().setNumberOfClasses(clsCount);
@@ -151,6 +141,23 @@ public class OntologyMetricsManagerProtegeImpl extends
 		// calculate max siblings
 		calcBean.setMaxSiblings(met.getMaxSiblings());
 		calcBean.getMb().setMaximumNumberOfSiblings(calcBean.getMaxSiblings());
+
+		// Set class count
+		currClassCount = clsCount;
+		currProgressCount = new MutableInt(1);
+		
+		// Add first item to queue and trigger processing
+		OwlQueueItem owlItem = calcBean.new OwlQueueItem(((OWLModel) calcBean
+				.getKb()).getOWLThingClass(), 1);
+		calcBean.getOwlQueue().addLast(owlItem);
+		while (!calcBean.getOwlQueue().isEmpty()) {
+			// Avoid KB cache timeout
+			calcBean.setKb(getKnowledgeBase(calcBean.getOb()));
+			
+			OwlQueueItem currCls = calcBean.getOwlQueue().remove();
+			owlClsIterate(calcBean, currCls.nextCls, currCls.newDepth,
+					documentation, author, annotation);
+		}
 
 		postProcessLists(calcBean);
 
@@ -176,14 +183,6 @@ public class OntologyMetricsManagerProtegeImpl extends
 				1, docSlot, sibCounts);
 		calcBean.setQueue(new LinkedList<QueueItem>());
 		calcBean.getQueue().addLast(item);
-		while (!calcBean.getQueue().isEmpty()) {
-			// Avoid KB cache timeout
-			calcBean.setKb(getKnowledgeBase(calcBean.getOb()));
-
-			QueueItem currCls = calcBean.getQueue().remove();
-			clsIterate(calcBean, currCls.nextCls, currCls.newDepth,
-					currCls.docSlot, currCls.sibCounts);
-		}
 
 		FrameCounts frameCounts = calcBean.getKb().getFrameCounts();
 		// count classes
@@ -197,6 +196,19 @@ public class OntologyMetricsManagerProtegeImpl extends
 		calcBean.getMb().setNumberOfProperties(propertyCount);
 		// calculate maximum depth
 		calcBean.getMb().setMaximumDepth(calcBean.getMaxDepth());
+
+		// Set class count
+		currClassCount = clsCount;
+		currProgressCount = new MutableInt(1);
+		
+		while (!calcBean.getQueue().isEmpty()) {
+			// Avoid KB cache timeout
+			calcBean.setKb(getKnowledgeBase(calcBean.getOb()));
+
+			QueueItem currCls = calcBean.getQueue().remove();
+			clsIterate(calcBean, currCls.nextCls, currCls.newDepth,
+					currCls.docSlot, currCls.sibCounts);
+		}
 
 		postProcessLists(calcBean);
 
@@ -241,6 +253,9 @@ public class OntologyMetricsManagerProtegeImpl extends
 
 		int count = 0;
 		while (it.hasNext()) {
+			// Output progress info
+			LoggingUtils.logProgress(currClassCount, currProgressCount, calcBean.getOb().getId(), PROGRESS_MESSAGE, log);
+
 			// Avoid KB cache timeout
 			calcBean.setKb(getKnowledgeBase(calcBean.getOb()));
 
@@ -331,6 +346,9 @@ public class OntologyMetricsManagerProtegeImpl extends
 		Iterator<Cls> it = subclasses.iterator();
 		int count = 0;
 		while (it.hasNext()) {
+			// Output progress info
+			LoggingUtils.logProgress(currClassCount, currProgressCount, calcBean.getOb().getId(), PROGRESS_MESSAGE, log);
+			
 			// Avoid KB cache timeout
 			calcBean.setKb(getKnowledgeBase(calcBean.getOb()));
 
@@ -425,9 +443,6 @@ public class OntologyMetricsManagerProtegeImpl extends
 		Iterator<RDFProperty> it = properties.iterator();
 		// iterate through RDF properties
 		while (it.hasNext()) {
-			// Avoid KB cache timeout
-			calcBean.setKb(getKnowledgeBase(calcBean.getOb()));
-
 			RDFProperty prop = it.next();
 
 			// Matching the documentation tag
@@ -583,5 +598,5 @@ public class OntologyMetricsManagerProtegeImpl extends
 		}
 
 	}
-
+	
 }

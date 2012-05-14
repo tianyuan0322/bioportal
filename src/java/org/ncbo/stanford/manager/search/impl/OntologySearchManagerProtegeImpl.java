@@ -7,6 +7,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import org.apache.commons.lang.mutable.MutableInt;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.ncbo.stanford.bean.OntologyBean;
@@ -15,6 +16,7 @@ import org.ncbo.stanford.bean.search.SearchIndexBean;
 import org.ncbo.stanford.enumeration.SearchRecordTypeEnum;
 import org.ncbo.stanford.manager.AbstractOntologyManagerProtege;
 import org.ncbo.stanford.manager.search.OntologySearchManager;
+import org.ncbo.stanford.util.LoggingUtils;
 import org.ncbo.stanford.util.helper.StringHelper;
 import org.ncbo.stanford.util.protege.RemoveOWLOntologiesUtil;
 import org.ncbo.stanford.wrapper.LuceneIndexWriterWrapper;
@@ -71,7 +73,14 @@ public class OntologySearchManagerProtegeImpl extends
 		Slot synonymSlot = getSynonymSlot(kb, ontologyBean.getSynonymSlot());
 		Set<Slot> propertySlots = getPropertySlots(kb);
 
+		// Progress logging
+		int classCount = frames.size();
+		MutableInt progressCount = new MutableInt(1);
+
 		for (Frame frame : frames) {
+			// Log progress
+			LoggingUtils.logProgress(classCount, progressCount, ontologyBean.getId(), "Search Indexing Progress", log);
+			
 			// Avoid cache timeout for KB
 			kb = getKnowledgeBaseInstance(ontologyBean);
 			

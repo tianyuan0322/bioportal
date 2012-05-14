@@ -288,7 +288,7 @@ public class IndexSearchServiceImpl extends AbstractSearchService implements
 			removeOntology(writer, ontologyId, doBackup, false);
 
 			if (log.isDebugEnabled()) {
-				log.debug("Adding ontology to index: "
+				log.info("Adding ontology to index: "
 						+ getOntologyDisplay(ontologyVersionId, ontologyId,
 								displayLabel, format));
 				start = System.currentTimeMillis();
@@ -298,7 +298,7 @@ public class IndexSearchServiceImpl extends AbstractSearchService implements
 
 			if (log.isDebugEnabled()) {
 				stop = System.currentTimeMillis(); // stop timing
-				log.debug("Finished indexing ontology: "
+				log.info("Finished indexing ontology: "
 						+ getOntologyDisplay(ontologyVersionId, ontologyId,
 								displayLabel, format) + " in "
 						+ (double) (stop - start) / 1000 / 60 + " minutes.\n");
