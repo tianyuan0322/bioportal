@@ -42,7 +42,7 @@ public class SimpleMappingTest {
     //@SuppressWarnings("unchecked")
 	@Test
 	public void testAllOK() throws Exception {
-		testPairConceptOnt();
+		//testPairConceptOnt();
 		//createMapping();
 		//deleteMapping();
         //testUnionGenerator();
@@ -62,7 +62,7 @@ public class SimpleMappingTest {
         //getCountMappingsForOntologyTest();
         //getCountMappingsBetweenOntologiesTest();
         //getCountMappingsToOntologyTest();
-        //getCountMappingsFromOntologyTest();
+        getCountMappingsFromOntologyTest();
 	}
 
     @SuppressWarnings("unchecked")
@@ -119,7 +119,7 @@ public class SimpleMappingTest {
     public void deleteMapping() throws Exception {
         try {
             long ts = System.currentTimeMillis();
-            mappingDAO.deleteMapping(new URIImpl("http://purl.bioontology.org/mapping/2599c4d4-b3d1-4322-9c77-b15950aae9b8"));
+            mappingDAO.deleteMapping(new URIImpl("http://purl.bioontology.org/mapping/6377ee39-afb5-4d40-8fa5-172c4ebb25ba"));
             
             ts = System.currentTimeMillis() - ts;
             System.out.printf("getMappingTest %.3f sec. elapsed time\n",ts/1000.0);
@@ -140,7 +140,7 @@ public class SimpleMappingTest {
     		newMapping.setProcessInfo(procInfo);
     		
     		// Set all properties
-    		procInfo.setComment("test create new mapping");
+    		newMapping.setComment("test create new mapping");
     		newMapping.setCreatedInSourceOntologyVersion(1003);
     		newMapping.setCreatedInTargetOntologyVersion(1004);
     		procInfo.setDate(new Date());
@@ -214,7 +214,7 @@ public class SimpleMappingTest {
             List<Integer> users = new ArrayList<Integer>();
             users.add(user);
             filter.setSubmittedBy(users);
-            List<Mapping> mappings = this.mappingDAO.getMappingsBetweenOntologies(1131,1136,true,1,0,filter);
+            List<Mapping> mappings = this.mappingDAO.getMappingsBetweenOntologies(1131,1136,false,1,0,filter);
             System.out.println("getMappingsBetweenOntologies --> "+ mappings.size());
             ts = System.currentTimeMillis() - ts;
             System.out.printf("getMappingsBetweenOntologies %.3f sec. elapsed time\n",ts/1000.0);
@@ -468,9 +468,9 @@ public class SimpleMappingTest {
             cal.set(Calendar.MINUTE,24);
             cal.set(Calendar.SECOND,34);
             filter.setStartDate(cal.getTime());
-            Integer sourceOntologyId = 1009;
+            Integer sourceOntologyId = 1057;
             Integer targetOntologyId = 1032;
-            int x = this.mappingCountsDAO.getCountMappingsToOntology(sourceOntologyId,filter);
+            int x = this.mappingCountsDAO.getCountMappingsFromOntology(sourceOntologyId,null);
             System.out.println("result --> "+ x);
             ts = System.currentTimeMillis() - ts;
             System.out.printf("getCountMappingsFromOntologyTest %.3f sec. elapsed time\n",ts/1000.0);

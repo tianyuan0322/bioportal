@@ -56,6 +56,9 @@ public class Mapping extends AbstractSPARQLBean {
 	@IRI(PREFIX + "dependency")
 	protected URI dependency;
 
+	@IRI(PREFIX + "comment")
+	protected String comment;
+	
 	/**
 	 * Default no-arg constructor.
 	 */
@@ -211,5 +214,20 @@ public class Mapping extends AbstractSPARQLBean {
 
 	public void setProcessInfo(ProcessInfo processInfo) {
 		this.processInfo = processInfo;
+	}
+	
+	/**
+	 * @return the comment
+	 */
+	public String getComment() {
+		return comment;
+	}
+
+	/**
+	 * @param comment
+	 *            the comment to set
+	 */
+	public void setComment(String comment) {
+		this.comment = comment;
 	}
 }

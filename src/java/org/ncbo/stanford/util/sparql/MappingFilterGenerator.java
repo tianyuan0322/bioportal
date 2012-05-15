@@ -51,6 +51,25 @@ public class MappingFilterGenerator extends AbstractSPARQLFilterGenerator {
 	@SPARQLVariableName("date")
 	protected Date endDate;
 
+	public Integer getSourceOntologyId() {
+		return sourceOntologyId;
+	}
+
+	public void setSourceOntologyId(Integer sourceOntologyId) {
+		this.sourceOntologyId = sourceOntologyId;
+	}
+
+	public Integer getTargetOntologyId() {
+		return targetOntologyId;
+	}
+
+	public void setTargetOntologyId(Integer targetOntologyId) {
+		this.targetOntologyId = targetOntologyId;
+	}
+
+	protected Integer sourceOntologyId = null;
+	protected Integer targetOntologyId = null;
+	
 	public List<String> generateTriplePatterns() {
 		Field[] fields = this.getClass().getDeclaredFields();
 

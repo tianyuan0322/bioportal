@@ -19,8 +19,7 @@ public class ProcessInfo extends AbstractSPARQLBean {
 		super(ID_PREFIX, null);
 	}
 	
-	@IRI(PREFIX + "comment")
-	protected String comment;
+
 
 	@IRI(PREFIX + "mapping_source")
 	protected String mappingSource;
@@ -46,20 +45,7 @@ public class ProcessInfo extends AbstractSPARQLBean {
 	@IRI(PREFIX + "mapping_type")
 	protected String mappingType;
 
-	/**
-	 * @return the comment
-	 */
-	public String getComment() {
-		return comment;
-	}
 
-	/**
-	 * @param comment
-	 *            the comment to set
-	 */
-	public void setComment(String comment) {
-		this.comment = comment;
-	}
 
 	/**
 	 * @return the date
