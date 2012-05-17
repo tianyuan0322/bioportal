@@ -350,6 +350,7 @@ public abstract class AbstractOntologyManagerLexGrid {
 	private String getOBOFullId(OntologyBean ontologyBean, String code) {
 		String prefix = "";
 		String fullId = "";
+		String localId="";
 		String modCode = code.replace(':', '_');
 		try {
 			modCode = URLEncoder.encode(modCode, "UTF-8");
@@ -361,20 +362,20 @@ public abstract class AbstractOntologyManagerLexGrid {
 
 		if (codeSplitArray.length >= 2) {
 			prefix = codeSplitArray[0];
+			localId= codeSplitArray[1];
 		}
 
-		// The OBO FullId is generated based on which four categories the
-		// ontology id falls under.
-
-		if (ownUriSchemeOntologies.contains(ontologyId)) {
-			// Category 1: Ontologies that have their own URI scheme
-			fullId = "http://www.cellcycleontology.org/ontology/owl/" + prefix
-					+ "#" + modCode;
-		} else {
-			// The url will be in the form:
-			// http://purl.obolibrary.org/obo/prefix_xxxxx
+		// The OBO FullId is generated based http://oboformat.googlecode.com/svn/trunk/doc/obo-syntax.html#5.9
+       
+		if (StringUtils.isNotBlank(prefix) && StringUtils.isNumeric(localId)) {
+			//Canonical
 			fullId = "http://purl.obolibrary.org/obo/" + modCode;
-		
+		} else if (StringUtils.isNotBlank(prefix)){
+			//Non-Canonical
+			fullId = "http://purl.obolibrary.org/obo/" + prefix+"#_"+localId;
+		} else {
+			//Unprefixed-ID
+			fullId = "http://purl.obolibrary.org/obo/#"+code;
 		}
 
 		return fullId;
