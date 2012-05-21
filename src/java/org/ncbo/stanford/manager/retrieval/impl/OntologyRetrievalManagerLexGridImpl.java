@@ -1843,11 +1843,16 @@ public class OntologyRetrievalManagerLexGridImpl extends
 				}
 
 				if (!foundCorrectedId) {
-					// Only if the code has a "_" do we need to check if the
-					// code needs to be converted to a newId with the "_"
-					// replaced by a ":"
-					if (modconceptId.contains("_")) {
-						modconceptId = modconceptId.replace('_', ':');
+					// Only if the code has a "#_" we repalce it with a ":" or if the code
+					// contains only a "_" we replace that also with a ":" and check if this code
+					// can be found
+					if (modconceptId.contains("#_")) {
+						modconceptId = modconceptId.replace("#_", ":");
+					} else if ((modconceptId.contains("_"))) {
+						modconceptId = modconceptId.replace("_", ":");
+					}
+					
+					if (!conceptId.equals(modconceptId)) {
 						rcr = getLightResolvedConceptReference(ontologyBean,
 								modconceptId);
 						if (rcr != null) {
@@ -1855,6 +1860,7 @@ public class OntologyRetrievalManagerLexGridImpl extends
 
 						}
 					}
+					
 				}
 			}
 		}
@@ -1869,9 +1875,9 @@ public class OntologyRetrievalManagerLexGridImpl extends
 			fullId = fullId.substring(fullId.lastIndexOf("/") + 1);
 		}
 
-		if (fullId != null && fullId.lastIndexOf("#") != -1) {
-			fullId = fullId.substring(fullId.lastIndexOf("#") + 1);
-		}
+//		if (fullId != null && fullId.lastIndexOf("#") != -1) {
+//			fullId = fullId.substring(fullId.lastIndexOf("#") + 1);
+//		}
 		return fullId;
 	}
 
