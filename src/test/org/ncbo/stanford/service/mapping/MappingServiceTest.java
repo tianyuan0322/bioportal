@@ -18,6 +18,7 @@ import org.ncbo.stanford.exception.MappingExistsException;
 import org.ncbo.stanford.exception.MappingMissingException;
 import org.ncbo.stanford.service.mapping.impl.MappingServiceImpl;
 import org.ncbo.stanford.service.ontology.OntologyService;
+import org.ncbo.stanford.sparql.bean.Mapping;
 import org.ncbo.stanford.util.paginator.impl.Page;
 import org.ncbo.stanford.util.sparql.MappingFilterGenerator;
 import org.openrdf.model.URI;
@@ -56,7 +57,10 @@ public class MappingServiceTest extends AbstractBioPortalTest {
 													"http://purl.org/obo/owl/UBERON#UBERON_0001062"))),
 							new URIImpl(
 									"http://protege.stanford.edu/ontologies/mappings/mappings.rdfs#owl:sameAs"),
-							1099, 1404, 44203, 44301, 99, null, "Test comment",
+									Mapping.ontologyURIFromOntologyID(1099), 
+									Mapping.ontologyURIFromOntologyID(1404),
+									Mapping.ontologyURIFromOntologyID(44203), 
+									Mapping.ontologyURIFromOntologyID(44301), 99, null, "Test comment",
 							MappingSourceEnum.APPLICATION, "Test Source Name",
 							"Paul Alexander (palexander@stanford.edu)",
 							new URIImpl("http://test.com"),

@@ -44,7 +44,7 @@ public class SimpleMappingTest {
 	public void testAllOK() throws Exception {
 		//testPairConceptOnt();
 		//createMapping();
-		//deleteMapping();
+		deleteMapping();
         //testUnionGenerator();
 		//getMappingTest();
         //getMappingsForConceptTest();
@@ -62,7 +62,7 @@ public class SimpleMappingTest {
         //getCountMappingsForOntologyTest();
         //getCountMappingsBetweenOntologiesTest();
         //getCountMappingsToOntologyTest();
-        getCountMappingsFromOntologyTest();
+        //getCountMappingsFromOntologyTest();
 	}
 
     @SuppressWarnings("unchecked")
@@ -119,10 +119,10 @@ public class SimpleMappingTest {
     public void deleteMapping() throws Exception {
         try {
             long ts = System.currentTimeMillis();
-            mappingDAO.deleteMapping(new URIImpl("http://purl.bioontology.org/mapping/6377ee39-afb5-4d40-8fa5-172c4ebb25ba"));
+            mappingDAO.deleteMapping(new URIImpl("http://purl.bioontology.org/mapping/3ea19428-9297-4474-9e46-55cd6ba7aa38"));
             
             ts = System.currentTimeMillis() - ts;
-            System.out.printf("getMappingTest %.3f sec. elapsed time\n",ts/1000.0);
+            System.out.printf("deleteMapping %.3f sec. elapsed time\n",ts/1000.0);
         } catch (Exception e) {
             e.printStackTrace();
             throw e;
@@ -141,8 +141,8 @@ public class SimpleMappingTest {
     		
     		// Set all properties
     		newMapping.setComment("test create new mapping");
-    		newMapping.setCreatedInSourceOntologyVersion(1003);
-    		newMapping.setCreatedInTargetOntologyVersion(1004);
+    		newMapping.setCreatedInSourceOntologyVersion(Mapping.ontologyURIFromOntologyID(1003));
+    		newMapping.setCreatedInTargetOntologyVersion(Mapping.ontologyURIFromOntologyID(1004));
     		procInfo.setDate(new Date());
     		procInfo.setMappingSource("test unit desc");
     		procInfo.setMappingSourceName("test unit name");
@@ -154,12 +154,12 @@ public class SimpleMappingTest {
     		List<URI> source = new ArrayList<URI>();
     		source.add(new  URIImpl("http://purl.bioontology.org/mapping/source/term/test"));
     		newMapping.setSource(source);
-    		newMapping.setSourceOntologyId(6789);
+    		newMapping.setSourceOntology(Mapping.ontologyURIFromOntologyID(6789));
     		procInfo.setSubmittedBy(39184);
     		List<URI> target = new ArrayList<URI>();
     		target.add(new  URIImpl("http://purl.bioontology.org/mapping/source/target/test"));
     		newMapping.setTarget(target);
-    		newMapping.setTargetOntologyId(9876);
+    		newMapping.setTargetOntology(Mapping.ontologyURIFromOntologyID(9876));
 
             mappingDAO.createMapping(newMapping);
             
@@ -195,7 +195,8 @@ public class SimpleMappingTest {
         try {
             long ts = System.currentTimeMillis();
             MappingFilterGenerator filter = new MappingFilterGenerator();
-            List<Mapping> mappings = this.mappingDAO.getMappingsToOntology(1032,100,0,filter);
+            List<Mapping> mappings = this.mappingDAO.getMappingsToOntology(
+            		Mapping.ontologyURIFromOntologyID(1032),100,0,filter);
             System.out.println("getMappingsToOntologyTest --> "+ mappings.size());
             ts = System.currentTimeMillis() - ts;
             System.out.printf("getMappingsToOntologyTest %.3f sec. elapsed time\n",ts/1000.0);
@@ -214,7 +215,9 @@ public class SimpleMappingTest {
             List<Integer> users = new ArrayList<Integer>();
             users.add(user);
             filter.setSubmittedBy(users);
-            List<Mapping> mappings = this.mappingDAO.getMappingsBetweenOntologies(1131,1136,false,1,0,filter);
+            List<Mapping> mappings = this.mappingDAO.getMappingsBetweenOntologies(
+            		Mapping.ontologyURIFromOntologyID(1131),
+            		Mapping.ontologyURIFromOntologyID(1136),false,1,0,filter);
             System.out.println("getMappingsBetweenOntologies --> "+ mappings.size());
             ts = System.currentTimeMillis() - ts;
             System.out.printf("getMappingsBetweenOntologies %.3f sec. elapsed time\n",ts/1000.0);
@@ -231,7 +234,8 @@ public class SimpleMappingTest {
         try {
             long ts = System.currentTimeMillis();
             MappingFilterGenerator filter = new MappingFilterGenerator();
-            List<Mapping> mappings = this.mappingDAO.getMappingsForOntology(1032,20,0,filter);
+            List<Mapping> mappings = this.mappingDAO.getMappingsForOntology(
+            		Mapping.ontologyURIFromOntologyID(1009),20,69665,filter);
             System.out.println("getMappingsForOntologyTest --> "+ mappings.size());
             ts = System.currentTimeMillis() - ts;
             System.out.printf("getMappingsForOntologyTest %.3f sec. elapsed time\n",ts/1000.0);
@@ -249,7 +253,8 @@ public class SimpleMappingTest {
             long ts = System.currentTimeMillis();
             MappingFilterGenerator filter = new MappingFilterGenerator();
             String conceptId = "http://purl.org/obo/owl/DOID#DOID_0000000";
-            List<Mapping> mappings = this.mappingDAO.getMappingsToConcept(1009,conceptId,20,0,filter);
+            List<Mapping> mappings = this.mappingDAO.getMappingsToConcept(
+            		Mapping.ontologyURIFromOntologyID(1009),conceptId,20,0,filter);
             System.out.println("getMappingsToConceptTest --> "+ mappings.size());
             ts = System.currentTimeMillis() - ts;
             System.out.printf("getMappingsToConceptTest %.3f sec. elapsed time\n",ts/1000.0);
@@ -266,7 +271,8 @@ public class SimpleMappingTest {
             long ts = System.currentTimeMillis();
             MappingFilterGenerator filter = new MappingFilterGenerator();
             String conceptId = "http://purl.org/obo/owl/DOID#DOID_0000000";
-            List<Mapping> mappings = this.mappingDAO.getMappingsFromConcept(1009,conceptId,20,0,filter);
+            List<Mapping> mappings = this.mappingDAO.getMappingsFromConcept(
+            		Mapping.ontologyURIFromOntologyID(1009),conceptId,20,0,filter);
             System.out.println("getMappingsFromConceptTest --> "+ mappings.size());
             ts = System.currentTimeMillis() - ts;
             System.out.printf("getMappingsFromConceptTest %.3f sec. elapsed time\n",ts/1000.0);
@@ -285,7 +291,8 @@ public class SimpleMappingTest {
             String conceptId = "http://purl.org/obo/owl/DOID#DOID_0000000";
             int ontologyId = 1009;
             MappingFilterGenerator filter = new MappingFilterGenerator();
-            List<Mapping> r = this.mappingDAO.getMappingsForConcept(ontologyId,conceptId,10,0,filter);
+            List<Mapping> r = this.mappingDAO.getMappingsForConcept(
+            		Mapping.ontologyURIFromOntologyID(ontologyId),conceptId,10,0,filter);
             System.out.println("result --> "+ r.size());
             ts = System.currentTimeMillis() - ts;
             System.out.printf("getMappingTest %.3f sec. elapsed time\n",ts/1000.0);
@@ -300,13 +307,15 @@ public class SimpleMappingTest {
     public void getMappingsBetweenConceptsTest() throws Exception {
         try {
             long ts = System.currentTimeMillis();
-            String sourceConceptId = "http://purl.org/obo/owl/DOID#DOID_0000000";
-            int sourceOntologyId = 1009;
-            String targetConceptId = "http://ncicb.nci.nih.gov/xml/owl/EVS/Thesaurus.owl#Gallbladder_Disorder";
-            int targetOntologyId = 1032;
+            String sourceConceptId = "http://bioonto.de/mesh.owl#D028162";
+            int sourceOntologyId = 3019;
+            String targetConceptId = "http://purl.obolibrary.org/obo/NCBITaxon_21621";
+            int targetOntologyId = 1132;
 
             MappingFilterGenerator filter = new MappingFilterGenerator();
-            List<Mapping> r = this.mappingDAO.getMappingsBetweenConcepts(sourceOntologyId,targetOntologyId,
+            List<Mapping> r = this.mappingDAO.getMappingsBetweenConcepts(
+            		Mapping.ontologyURIFromOntologyID(sourceOntologyId),
+            		Mapping.ontologyURIFromOntologyID(targetOntologyId),
             sourceConceptId,targetConceptId, false,
             10,0,filter);
             System.out.println("result --> "+ r.size());
@@ -325,7 +334,8 @@ public class SimpleMappingTest {
 
 
             MappingFilterGenerator filter = new MappingFilterGenerator();
-            List<Mapping> r = this.mappingDAO.getMappingsFromOntology(ontologyId,10,0,filter);
+            List<Mapping> r = this.mappingDAO.getMappingsFromOntology(
+            		Mapping.ontologyURIFromOntologyID(ontologyId),10,0,filter);
             System.out.println("result --> "+ r.size());
             ts = System.currentTimeMillis() - ts;
             System.out.printf("getMappingsFromOntologyTest %.3f sec. elapsed time\n",ts/1000.0);
@@ -387,7 +397,8 @@ public class SimpleMappingTest {
             int targetOntologyId = 1032;
 
             MappingFilterGenerator filter = new MappingFilterGenerator();
-            int x = this.mappingCountsDAO.getCountMappingsFromConcept(sourceOntologyId,sourceConceptId,filter);
+            int x = this.mappingCountsDAO.getCountMappingsFromConcept(
+            		Mapping.ontologyURIFromOntologyID(sourceOntologyId),sourceConceptId,filter);
             System.out.println("result --> "+x);
             ts = System.currentTimeMillis() - ts;
             System.out.printf("getCountMappingsFromConceptTest %.3f sec. elapsed time\n",ts/1000.0);
@@ -400,13 +411,14 @@ public class SimpleMappingTest {
    public void getCountMappingsToConceptTest() throws Exception {
         try {
             long ts = System.currentTimeMillis();
-            String sourceConceptId = "http://purl.org/obo/owl/DOID#DOID_0000000";
-            int sourceOntologyId = 1009;
+            String sourceConceptId = "http://bioonto.de/mesh.owl#D028162";
+            int sourceOntologyId = 3019;
             String targetConceptId = "http://ncicb.nci.nih.gov/xml/owl/EVS/Thesaurus.owl#Gallbladder_Disorder";
             int targetOntologyId = 1032;
 
             MappingFilterGenerator filter = new MappingFilterGenerator();
-            int x = this.mappingCountsDAO.getCountMappingsToConcept(sourceOntologyId,sourceConceptId,filter);
+            int x = this.mappingCountsDAO.getCountMappingsToConcept(
+            		Mapping.ontologyURIFromOntologyID(sourceOntologyId),sourceConceptId,filter);
             System.out.println("result --> "+x);
             ts = System.currentTimeMillis() - ts;
             System.out.printf("getCountMappingsToConceptTest %.3f sec. elapsed time\n",ts/1000.0);
@@ -426,7 +438,9 @@ public class SimpleMappingTest {
             int targetOntologyId = 1032;
 
             MappingFilterGenerator filter = new MappingFilterGenerator();
-            int x = this.mappingCountsDAO.getCountMappingsBetweenConcepts(sourceOntologyId,targetOntologyId,
+            int x = this.mappingCountsDAO.getCountMappingsBetweenConcepts(
+            		Mapping.ontologyURIFromOntologyID(sourceOntologyId),
+            		Mapping.ontologyURIFromOntologyID(targetOntologyId),
             sourceConceptId,targetConceptId, false,filter);
             System.out.println("result --> "+x);
             ts = System.currentTimeMillis() - ts;
@@ -443,7 +457,8 @@ public class SimpleMappingTest {
             MappingFilterGenerator filter = new MappingFilterGenerator();
             Integer sourceOntologyId = 1009;
             Integer targetOntologyId = 1032;
-            int x = this.mappingCountsDAO.getCountMappingsToOntology(sourceOntologyId,filter);
+            int x = this.mappingCountsDAO.getCountMappingsToOntology(
+            		Mapping.ontologyURIFromOntologyID(sourceOntologyId),filter);
             System.out.println("result --> "+ x);
             ts = System.currentTimeMillis() - ts;
             System.out.printf("getCountMappingsBetweenOntologies %.3f sec. elapsed time\n",ts/1000.0);
@@ -470,7 +485,8 @@ public class SimpleMappingTest {
             filter.setStartDate(cal.getTime());
             Integer sourceOntologyId = 1057;
             Integer targetOntologyId = 1032;
-            int x = this.mappingCountsDAO.getCountMappingsFromOntology(sourceOntologyId,null);
+            int x = this.mappingCountsDAO.getCountMappingsFromOntology(
+            		Mapping.ontologyURIFromOntologyID(sourceOntologyId),null);
             System.out.println("result --> "+ x);
             ts = System.currentTimeMillis() - ts;
             System.out.printf("getCountMappingsFromOntologyTest %.3f sec. elapsed time\n",ts/1000.0);
@@ -486,7 +502,9 @@ public class SimpleMappingTest {
             MappingFilterGenerator filter = new MappingFilterGenerator();
             Integer sourceOntologyId = 1009;
             Integer targetOntologyId = 1032;
-            int x = this.mappingCountsDAO.getCountMappingsBetweenOntologies(sourceOntologyId,targetOntologyId,false,filter);
+            int x = this.mappingCountsDAO.getCountMappingsBetweenOntologies(
+            		Mapping.ontologyURIFromOntologyID(sourceOntologyId),
+            		Mapping.ontologyURIFromOntologyID(targetOntologyId),false,filter);
             System.out.println("result --> "+ x);
             ts = System.currentTimeMillis() - ts;
             System.out.printf("getCountMappingsBetweenOntologies %.3f sec. elapsed time\n",ts/1000.0);
@@ -501,7 +519,8 @@ public class SimpleMappingTest {
             long ts = System.currentTimeMillis();
             MappingFilterGenerator filter = new MappingFilterGenerator();
             Integer sourceOntologyId = 1009;
-            int x = this.mappingCountsDAO.getCountMappingsForOntology(sourceOntologyId,filter);
+            int x = this.mappingCountsDAO.getCountMappingsForOntology(
+            		Mapping.ontologyURIFromOntologyID(sourceOntologyId),filter);
             System.out.println("result --> "+ x);
             ts = System.currentTimeMillis() - ts;
             System.out.printf("getCountMappingsForConceptTest %.3f sec. elapsed time\n",ts/1000.0);
@@ -517,7 +536,8 @@ public class SimpleMappingTest {
             MappingFilterGenerator filter = new MappingFilterGenerator();
             String conceptId = "http://purl.org/obo/owl/DOID#DOID_0000000";
             Integer sourceOntologyId = 1009;
-            int x = this.mappingCountsDAO.getCountMappingsForConcept(sourceOntologyId,conceptId,filter);
+            int x = this.mappingCountsDAO.getCountMappingsForConcept(
+            		Mapping.ontologyURIFromOntologyID(sourceOntologyId),conceptId,filter);
             System.out.println("result --> "+ x);
             ts = System.currentTimeMillis() - ts;
             System.out.printf("getCountMappingsForConceptTest %.3f sec. elapsed time\n",ts/1000.0);

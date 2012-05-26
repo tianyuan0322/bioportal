@@ -51,7 +51,11 @@ public class CustomNcboMappingDAOTest extends AbstractBioPortalTest {
 													"http://purl.org/obo/owl/UBERON#UBERON_0001062"))),
 							new URIImpl(
 									"http://protege.stanford.edu/ontologies/mappings/mappings.rdfs#owl:sameAs"),
-							1099, 1404, 44203, 44301, 99, null, "Test comment",
+							Mapping.ontologyURIFromOntologyID(1099),
+							Mapping.ontologyURIFromOntologyID(1404),
+							Mapping.ontologyURIFromOntologyID(44203),
+							Mapping.ontologyURIFromOntologyID(44301),
+							99, null, "Test comment",
 							MappingSourceEnum.APPLICATION.toString(),
 							"Test Source Name",
 							"Paul Alexander (palexander@stanford.edu)",
@@ -89,13 +93,13 @@ public class CustomNcboMappingDAOTest extends AbstractBioPortalTest {
 	public void testRetrieveMappingsForOntology() {
 		List<Mapping> mappings;
 		try {
-			mappings = mappingDAO.getMappingsForOntology(1032, 50000, 0, null);
+			mappings = mappingDAO.getMappingsForOntology(Mapping.ontologyURIFromOntologyID(1032), 50000, 0, null);
 			assertTrue(mappings != null && mappings.size() > 0);
 
-			mappings = mappingDAO.getMappingsFromOntology(1032, 50000, 0, null);
+			mappings = mappingDAO.getMappingsFromOntology(Mapping.ontologyURIFromOntologyID(1032), 50000, 0, null);
 			assertTrue(mappings != null && mappings.size() > 0);
 
-			mappings = mappingDAO.getMappingsToOntology(1032, 50000, 0, null);
+			mappings = mappingDAO.getMappingsToOntology(Mapping.ontologyURIFromOntologyID(1032), 50000, 0, null);
 			assertTrue(mappings != null && mappings.size() > 0);
 		} catch (InvalidInputException e) {
 			e.printStackTrace();
@@ -106,15 +110,15 @@ public class CustomNcboMappingDAOTest extends AbstractBioPortalTest {
 	public void testRetrieveMappingsCountForOntology()
 			throws InvalidInputException {
 		Integer count = mappingCountsDAO
-				.getCountMappingsForOntology(1032, null);
+				.getCountMappingsForOntology(Mapping.ontologyURIFromOntologyID(1032), null);
 		System.out.println("All mappings count for ontology 1032: " + count);
 		assertTrue(count instanceof Integer && count >= 0);
 
-		count = mappingCountsDAO.getCountMappingsFromOntology(1032, null);
+		count = mappingCountsDAO.getCountMappingsFromOntology(Mapping.ontologyURIFromOntologyID(1032), null);
 		System.out.println("Mappings from count for ontology 1032: " + count);
 		assertTrue(count instanceof Integer && count >= 0);
 
-		count = mappingCountsDAO.getCountMappingsToOntology(1032, null);
+		count = mappingCountsDAO.getCountMappingsToOntology(Mapping.ontologyURIFromOntologyID(1032), null);
 		System.out.println("Mappings to count for ontology 1032: " + count);
 		assertTrue(count instanceof Integer && count >= 0);
 	}
@@ -122,7 +126,7 @@ public class CustomNcboMappingDAOTest extends AbstractBioPortalTest {
 	@Test
 	public void testRetrieveRankedMapping() throws InvalidInputException {
 		List<Mapping> mappings = mappingDAO.getRankedMappingsBetweenOntologies(
-				1053, 1055, 100, 0, null);
+				Mapping.ontologyURIFromOntologyID(1053), Mapping.ontologyURIFromOntologyID(1055), 100, 0, null);
 		System.out.println("Ranked mappings count for ontology 1053 -> 1055: " + mappings.size());
 		
 		for (Mapping mapping : mappings) {
@@ -141,16 +145,21 @@ public class CustomNcboMappingDAOTest extends AbstractBioPortalTest {
 		Mapping mapping;
 		try {
 			mapping = mappingDAO.updateMapping(mappingId, null, null, null,
-					sourceOntologyId, targetOntologyId, sourceOntologyVersion,
-					targetOntologyVersion, null, null, comment, null, null,
+					Mapping.ontologyURIFromOntologyID(sourceOntologyId), 
+					Mapping.ontologyURIFromOntologyID(targetOntologyId), 
+					Mapping.ontologyURIFromOntologyID(sourceOntologyVersion),
+					Mapping.ontologyURIFromOntologyID(targetOntologyVersion),
+					null, null, comment, null, null,
 					null, null, null, null);
 
-			assertEquals(sourceOntologyId, mapping.getSourceOntologyId());
-			assertEquals(targetOntologyId, mapping.getTargetOntologyId());
-			assertEquals(sourceOntologyVersion,
-					mapping.getCreatedInSourceOntologyVersion());
-			assertEquals(targetOntologyVersion,
-					mapping.getCreatedInTargetOntologyVersion());
+			assertEquals(Mapping.ontologyURIFromOntologyID(sourceOntologyId).toString(), 
+					mapping.getSourceOntology().toString());
+			assertEquals(Mapping.ontologyURIFromOntologyID(targetOntologyId).toString(),
+					mapping.getTargetOntology().toString());
+			assertEquals(Mapping.ontologyURIFromOntologyID(sourceOntologyVersion).toString(),
+					mapping.getCreatedInSourceOntologyVersion().toString());
+			assertEquals(Mapping.ontologyURIFromOntologyID(targetOntologyVersion).toString(),
+					mapping.getCreatedInTargetOntologyVersion().toString());
 			assertEquals(comment, mapping.getComment());
 		} catch (MappingMissingException e) {
 			e.printStackTrace();
