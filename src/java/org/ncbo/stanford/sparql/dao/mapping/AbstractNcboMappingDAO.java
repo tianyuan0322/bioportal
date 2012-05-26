@@ -82,8 +82,8 @@ public class AbstractNcboMappingDAO {
 			+ "SELECT DISTINCT "
 			+ "?mappingId "
 			+ "?relation "
-			+ "?sourceOntologyId "
-			+ "?targetOntologyId "
+			+ "?sourceOntologyURI "
+			+ "?targetOntologyURI "
 			+ "?createdInSourceOntologyVersion "
 			+ "?createdInTargetOntologyVersion "
 			+ "?comment "
@@ -99,8 +99,8 @@ public class AbstractNcboMappingDAO {
 			+ "?isManyToMany "
 			+ " {"
 			+ "  ?mappingId map:relation ?relation ."
-			+ "  ?mappingId map:source_ontology_id ?sourceOntologyId ."
-			+ "  ?mappingId map:target_ontology_id ?targetOntologyId ."
+			+ "  ?mappingId map:source_ontology ?sourceOntologyURI ."
+			+ "  ?mappingId map:target_ontology ?targetOntologyURI ."
 			+ "  ?mappingId map:created_in_source_ontology_version ?createdInSourceOntologyVersion ."
 			+ "  ?mappingId map:created_in_target_ontology_version ?createdInTargetOntologyVersion ."
 			+ "  ?mappingId map:has_process_info ?procInf ."
@@ -158,8 +158,8 @@ public class AbstractNcboMappingDAO {
 	protected final static String mappingCountQuery = "PREFIX map: <http://protege.stanford.edu/ontologies/mappings/mappings.rdfs#> "
 			+ "SELECT DISTINCT "
 			+ "count(DISTINCT ?mappingId) as ?mappingCount WHERE {"
-			+ "  ?mappingId map:source_ontology_id ?sourceOntologyId ."
-			+ "  ?mappingId map:target_ontology_id ?targetOntologyId ."
+			+ "  ?mappingId map:source_ontology ?sourceOntologyURI ."
+			+ "  ?mappingId map:target_ontology ?targetOntologyURI ."
 			+ " %TRIPLES_FOR_PARAMS% FILTER (%FILTER%) }";
 
 	protected final static String sourcesAndTargetsForMappingIds = "PREFIX map: <http://protege.stanford.edu/ontologies/mappings/mappings.rdfs#> "
@@ -172,8 +172,8 @@ public class AbstractNcboMappingDAO {
 			+ "SELECT DISTINCT ?mappingId {"
 			+ "  ?mappingId map:source ?source ."
 			+ "  ?mappingId map:target ?target ."
-			+ "  ?mappingId map:source_ontology_id ?sourceOntologyId ."
-			+ "  ?mappingId map:target_ontology_id ?targetOntologyId ."
+			+ "  ?mappingId map:source_ontology ?sourceOntologyURI ."
+			+ "  ?mappingId map:target_ontology ?targetOntologyURI ."
 			+ "  FILTER ( %FILTER% ) } LIMIT %LIMIT% OFFSET %OFFSET%";
 
 	/*******************************************************************
@@ -221,20 +221,20 @@ public class AbstractNcboMappingDAO {
 				mapping.setRelation(new URIImpl(bs.getValue("relation")
 						.stringValue()));
 
-				if (bs.getValue("sourceOntologyId") != null) {
-					mapping.setSourceOntologyId(convertValueToInteger(bs
-							.getValue("sourceOntologyId")));
+				if (bs.getValue("sourceOntologyURI") != null) {
+					mapping.setSourceOntology((URI)bs
+							.getValue("sourceOntologyURI"));
 				}
-				if (bs.getValue("targetOntologyId") != null) {
-					mapping.setTargetOntologyId(convertValueToInteger(bs
-							.getValue("targetOntologyId")));
+				if (bs.getValue("targetOntologyURI") != null) {
+					mapping.setTargetOntology((URI)bs
+							.getValue("targetOntologyURI"));
 				}
 
-				mapping.setCreatedInSourceOntologyVersion(convertValueToInteger(bs
-						.getValue("createdInSourceOntologyVersion")));
+				mapping.setCreatedInSourceOntologyVersion((URI)bs
+						.getValue("createdInSourceOntologyVersion"));
 
-				mapping.setCreatedInTargetOntologyVersion(convertValueToInteger(bs
-						.getValue("createdInTargetOntologyVersion")));
+				mapping.setCreatedInTargetOntologyVersion((URI)bs
+						.getValue("createdInTargetOntologyVersion"));
 
 				ProcessInfo processInfo = new ProcessInfo();
 				mapping.setProcessInfo(processInfo);
@@ -335,14 +335,14 @@ public class AbstractNcboMappingDAO {
 		return null;
 	}
 
-	private void populateSourceAndTargetOntologyId(List<Mapping> mappings) {
+	private void populateSourceAndtargetOntologyURI(List<Mapping> mappings) {
 		RepositoryConnection con = getRdfStoreManager()
 				.getRepositoryConnection();
 		try {
 			String queryString = "PREFIX map: <http://protege.stanford.edu/ontologies/mappings/mappings.rdfs#> "
 					+ "SELECT * WHERE { "
-					+ " ?mappingId map:target_ontology_id ?targetOntologyId . "
-					+ " ?mappingId map:source_ontology_id ?sourceOntologyId . "
+					+ " ?mappingId map:target_ontology ?targetOntologyURI . "
+					+ " ?mappingId map:source_ontology ?sourceOntologyURI . "
 					+ " FILTER (?mappingId = <%mappingId%>) } LIMIT 1";
 			for (Mapping m : mappings) {
 				TupleQuery query = con.prepareTupleQuery(QueryLanguage.SPARQL,
@@ -351,10 +351,10 @@ public class AbstractNcboMappingDAO {
 				TupleQueryResult result = query.evaluate();
 				if (result.hasNext()) {
 					BindingSet bs = result.next();
-					m.setSourceOntologyId(convertValueToInteger(bs
-							.getValue("sourceOntologyId")));
-					m.setTargetOntologyId(convertValueToInteger(bs
-							.getValue("targetOntologyId")));
+					m.setSourceOntology((URI)bs
+							.getValue("sourceOntologyURI"));
+					m.setTargetOntology((URI)bs
+							.getValue("targetOntologyURI"));
 				}
 			}
 		} catch (RepositoryException e) {
@@ -373,7 +373,7 @@ public class AbstractNcboMappingDAO {
 	 * performs better than the generalised case
 	 */
 	protected List<Mapping> getMappingsBetweenOntologies(
-			Integer sourceOntology, Integer targetOntology,
+			URI sourceOntology, URI targetOntology,
 			Boolean unidirectional, Integer limit, Integer offset,
 			MappingFilterGenerator parameters) throws InvalidInputException {
 
@@ -401,29 +401,29 @@ public class AbstractNcboMappingDAO {
 			queryString = queryString.replaceAll("FILTER \\(\\) ", "");
 		}
 
-		String unionPattern = "{ ?mappingId map:target_ontology_id %ONTOLOGY_A% . "
-				+ "?mappingId map:source_ontology_id %ONTOLOGY_B% . " + "} ";
+		String unionPattern = "{ ?mappingId map:target_ontology <%ONTOLOGY_A%> . "
+				+ "?mappingId map:source_ontology <%ONTOLOGY_B%> . " + "} ";
 		if (!unidirectional) {
 			unionPattern += "UNION { "
-					+ "?mappingId map:target_ontology_id %ONTOLOGY_B% . "
-					+ "?mappingId map:source_ontology_id %ONTOLOGY_A% . "
+					+ "?mappingId map:target_ontology <%ONTOLOGY_B%> . "
+					+ "?mappingId map:source_ontology <%ONTOLOGY_A%> . "
 					+ "} ";
 		}
 
 		unionPattern = unionPattern.replaceAll("%ONTOLOGY_A%",
-				Integer.toString(targetOntology)).replaceAll("%ONTOLOGY_B%",
-				Integer.toString(sourceOntology));
+				targetOntology.toString()).replaceAll("%ONTOLOGY_B%",
+				sourceOntology.toString());
 		queryString = queryString.replaceAll("%ONTOLOGIES_MATCH_PATTERN%",
 				unionPattern);
 
 		List<Mapping> mappings = getMappingsFromSPARQLQuery(queryString);
 
 		if (!unidirectional) {
-			populateSourceAndTargetOntologyId(mappings);
+			populateSourceAndtargetOntologyURI(mappings);
 		} else {
 			for (Mapping m : mappings) {
-				m.setTargetOntologyId(targetOntology);
-				m.setSourceOntologyId(sourceOntology);
+				m.setTargetOntology(targetOntology);
+				m.setSourceOntology(sourceOntology);
 			}
 		}
 
@@ -498,17 +498,17 @@ public class AbstractNcboMappingDAO {
 					.replaceAll("%FILTER%", combinedFilters)
 					.replaceAll("%LIMIT%", limit.toString())
 					.replaceAll("%OFFSET%", offset.toString());
-			if (parameters.getSourceOntologyId() != null) {
-				String bind = "  ?mappingId map:source_ontology_id "+parameters.getSourceOntologyId()+" ."
-						+ "  ?mappingId map:target_ontology_id ?targetOntologyId .";
+			if (parameters.getSourceOntology() != null) {
+				String bind = "  ?mappingId map:source_ontology <"+parameters.getSourceOntology()+"> ."
+						+ "  ?mappingId map:target_ontology ?targetOntologyURI .";
 				queryString = queryString.replace("%MAPPING_ONT_BIND%", bind);
-				String vars = "?targetOntologyId ("+parameters.getSourceOntologyId()+" as ?sourceOntologyId)";
+				String vars = "?targetOntologyURI ("+parameters.getSourceOntology()+" as ?sourceOntologyURI)";
 				queryString = queryString.replace("%MAPPING_ONT_VARS%", vars);
-			} else if (parameters.getTargetOntologyId() != null) {
-				String bind = "  ?mappingId map:target_ontology_id "+parameters.getTargetOntologyId()+" ."
-						+ "  ?mappingId map:source_ontology_id ?sourceOntologyId .";
+			} else if (parameters.getTargetOntology() != null) {
+				String bind = "  ?mappingId map:target_ontology <"+parameters.getTargetOntology()+"> ."
+						+ "  ?mappingId map:source_ontology ?sourceOntologyURI .";
 				queryString = queryString.replaceAll("%MAPPING_ONT_BIND%", bind);
-				String vars = "?sourceOntologyId ("+parameters.getTargetOntologyId()+" as ?targetOntologyId)";
+				String vars = "?sourceOntologyURI ("+parameters.getTargetOntology()+" as ?targetOntologyURI)";
 				queryString = queryString.replaceAll("%MAPPING_ONT_VARS%", vars);
 			} else {
 				throw new InvalidInputException("source or target id must be set at this point.");
@@ -689,33 +689,33 @@ public class AbstractNcboMappingDAO {
 	 * @return
 	 * @throws InvalidInputException
 	 */
-	protected String generateOntologySparqlFilter(Integer sourceOntology,
-			Integer targetOntology, Boolean unidirectional)
+	protected String generateOntologySparqlFilter(URI sourceOntology,
+			URI targetOntology, Boolean unidirectional)
 			throws InvalidInputException {
 		// Determine the SPARQL filter to use based on directionality
 		// Default is bidirectional
-		String filter = "(?sourceOntologyId = " + sourceOntology
-				+ " && ?targetOntologyId = " + targetOntology
-				+ ") || (?sourceOntologyId = " + targetOntology
-				+ " && ?targetOntologyId = " + sourceOntology + ")";
+		String filter = "(?sourceOntologyURI = <" + sourceOntology.toString() + "> "
+				+ " && ?targetOntologyURI = <" + targetOntology + "> "
+				+ ") || (?sourceOntologyURI = <" +  targetOntology + "> "
+				+ " && ?targetOntologyURI = <" + sourceOntology + "> )";
 		if (sourceOntology != null && targetOntology != null) {
 			if (unidirectional != null && unidirectional == true) {
-				filter = "?sourceOntologyId = " + sourceOntology
-						+ " && ?targetOntologyId = " + targetOntology;
+				filter = "?sourceOntologyURI = <" + sourceOntology + "> "
+						+ " && ?targetOntologyURI = <" + targetOntology+ "> ";
 			}
 		} else if (sourceOntology != null && targetOntology == null) {
 			if (unidirectional != null && unidirectional == true) {
-				filter = "?sourceOntologyId = " + sourceOntology;
+				filter = "?sourceOntologyURI = <" + sourceOntology+ "> ";
 			} else {
-				filter = "?sourceOntologyId = " + sourceOntology
-						+ " || ?targetOntologyId = " + sourceOntology;
+				filter = "?sourceOntologyURI = <" + sourceOntology + "> "
+						+ " || ?targetOntologyURI = <" + sourceOntology + "> ";
 			}
 		} else if (sourceOntology == null && targetOntology != null) {
 			if (unidirectional != null && unidirectional == true) {
-				filter = "?targetOntologyId = " + targetOntology;
+				filter = "?targetOntologyURI = <" + targetOntology + "> ";
 			} else {
-				filter = "?sourceOntologyId = " + targetOntology
-						+ " || ?targetOntologyId = " + targetOntology;
+				filter = "?sourceOntologyURI = <" + targetOntology + "> "
+						+ " || ?targetOntologyURI = <" + targetOntology + "> ";
 			}
 		} else {
 			throw new InvalidInputException();
@@ -819,8 +819,8 @@ public class AbstractNcboMappingDAO {
 	protected String generateOntologySparqlClause(Integer sourceOntology,
 			Integer targetOntology, Boolean unidirectional)
 			throws InvalidInputException {
-		String src = " map:source_ontology_id ";
-		String tgt = " map:target_ontology_id ";
+		String src = " map:source_ontology ";
+		String tgt = " map:target_ontology ";
 		String id = "?mappingId";
 
 		// Determine the SPARQL filter to use based on directionality
@@ -932,8 +932,8 @@ public class AbstractNcboMappingDAO {
 	 * @param source
 	 * @param target
 	 * @param relation
-	 * @param sourceOntologyId
-	 * @param targetOntologyId
+	 * @param sourceOntologyURI
+	 * @param targetOntologyURI
 	 * @param sourceOntologyVersion
 	 * @param targetOntologyVersion
 	 * @param submittedBy
@@ -948,9 +948,9 @@ public class AbstractNcboMappingDAO {
 	 * @return
 	 */
 	protected Mapping updateMappingEntity(Mapping mapping, List<URI> source,
-			List<URI> target, URI relation, Integer sourceOntologyId,
-			Integer targetOntologyId, Integer sourceOntologyVersion,
-			Integer targetOntologyVersion, Integer submittedBy, URI dependency,
+			List<URI> target, URI relation, URI sourceOntologyURI,
+			URI targetOntologyURI, URI sourceOntologyVersion,
+			URI targetOntologyVersion, Integer submittedBy, URI dependency,
 			String comment, String mappingSource, String mappingSourceName,
 			String mappingSourcecontactInfo, URI mappingSourceSite,
 			String mappingSourceAlgorithm, String mappingType) {
@@ -965,10 +965,10 @@ public class AbstractNcboMappingDAO {
 			mapping.setTarget(target);
 		if (relation != null)
 			mapping.setRelation(relation);
-		if (sourceOntologyId != null)
-			mapping.setSourceOntologyId(sourceOntologyId);
-		if (targetOntologyId != null)
-			mapping.setTargetOntologyId(targetOntologyId);
+		if (sourceOntologyURI != null)
+			mapping.setSourceOntology(sourceOntologyURI);
+		if (targetOntologyURI != null)
+			mapping.setTargetOntology(targetOntologyURI);
 		if (sourceOntologyVersion != null)
 			mapping.setCreatedInSourceOntologyVersion(sourceOntologyVersion);
 		if (targetOntologyVersion != null)

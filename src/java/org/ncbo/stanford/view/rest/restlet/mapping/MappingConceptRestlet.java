@@ -26,6 +26,7 @@ import org.ncbo.stanford.exception.OntologyNotFoundException;
 import org.ncbo.stanford.service.concept.ConceptService;
 import org.ncbo.stanford.service.mapping.MappingService;
 import org.ncbo.stanford.service.ontology.OntologyService;
+import org.ncbo.stanford.sparql.bean.Mapping;
 import org.ncbo.stanford.util.MessageUtils;
 import org.ncbo.stanford.util.RequestUtils;
 import org.ncbo.stanford.util.constants.ApplicationConstants;
@@ -431,9 +432,14 @@ public class MappingConceptRestlet extends AbstractMappingRestlet {
 				targetOntVersionId = targetOnt.getId();
 			}
 
+			URI sourceOntURI =  Mapping.ontologyURIFromOntologyID(sourceOntId);
+			URI targetOntURI =  Mapping.ontologyURIFromOntologyID(targetOntId);
+			URI sourceOntVersionURI =  Mapping.ontologyURIFromOntologyID(sourceOntVersionId);
+			URI targetOntVersionURI =  Mapping.ontologyURIFromOntologyID(targetOntVersionId);
+			
 			mapping1 = mappingService.createMapping(source, target, relation,
-					sourceOntId, targetOntId, sourceOntVersionId,
-					targetOntVersionId, submittedBy, null, comment,
+					sourceOntURI, targetOntURI, sourceOntVersionURI,
+					targetOntVersionURI, submittedBy, null, comment,
 					mappingSource, mappingSourceName, mappingSourceContactInfo,
 					mappingSourceSite, mappingSourceAlgorithm, mappingType);
 			mappings.add(mapping1);
@@ -450,8 +456,8 @@ public class MappingConceptRestlet extends AbstractMappingRestlet {
 				// This creates the inverse mapping when a mapping is
 				// bidirectional (which is the default)
 				mapping2 = mappingService.createMapping(target, source,
-						inverseRelURI, targetOntId, sourceOntId, targetOntVersionId,
-						sourceOntVersionId, submittedBy, mapping1.getId(),
+						inverseRelURI, targetOntURI, sourceOntURI, targetOntVersionURI,
+						sourceOntVersionURI, submittedBy, mapping1.getId(),
 						comment, mappingSource, mappingSourceName,
 						mappingSourceContactInfo, mappingSourceSite,
 						mappingSourceAlgorithm, mappingType);

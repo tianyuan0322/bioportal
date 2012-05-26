@@ -37,7 +37,7 @@ public class SPARQLUnionGenerator {
 
     /** Method to add bind patterns to the SPARQL query.
      * Example:
-     *       generator.addBindValue(ApplicationConstants.SOURCE_ONTOLOGY_ID,
+     *       generator.addBindValue(ApplicationConstants.SOURCE_ONTOLOGY,
      *               new LiteralImpl(Integer.toString(ontologyId), ApplicationConstants.XSD_INTEGER));
      *       generator.addBindValue(ApplicationConstants.SOURCE_TERM,
      *               new URIImpl(conceptId));

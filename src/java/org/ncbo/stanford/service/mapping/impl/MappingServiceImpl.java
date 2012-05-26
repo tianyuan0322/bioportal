@@ -34,8 +34,8 @@ public class MappingServiceImpl implements MappingService {
 	private CustomNcboMappingStatsDAO mappingStatsDAO;
 
 	public MappingBean createMapping(List<URI> source, List<URI> target,
-			URI relation, Integer sourceOntologyId, Integer targetOntologyId,
-			Integer sourceOntologyVersion, Integer targetOntologyVersion,
+			URI relation, URI sourceOntology, URI targetOntology,
+			URI sourceOntologyVersion, URI targetOntologyVersion,
 			Integer submittedBy, URI dependency, String comment,
 			MappingSourceEnum mappingSource, String mappingSourceName,
 			String mappingSourcecontactInfo, URI mappingSourceSite,
@@ -46,7 +46,7 @@ public class MappingServiceImpl implements MappingService {
 			mappingSourceStr = mappingSource.toString();
 
 		return convertToMappingBean(mappingDAO.createMapping(source, target,
-				relation, sourceOntologyId, targetOntologyId,
+				relation, sourceOntology, targetOntology,
 				sourceOntologyVersion, targetOntologyVersion, submittedBy,
 				dependency, comment, mappingSourceStr, mappingSourceName,
 				mappingSourcecontactInfo, mappingSourceSite,
@@ -69,7 +69,7 @@ public class MappingServiceImpl implements MappingService {
 			throws InvalidInputException {
 		MappingResultListBean pageMappings = new MappingResultListBean(0);
 		Integer totalResults = mappingCountsDAO.getCountMappingsFromOntology(
-				ont.getOntologyId(), parameters);
+				ont.getOntologyURI(), parameters);
 
 		Paginator<MappingBean> p = new PaginatorImpl<MappingBean>(pageMappings,
 				pageSize, totalResults);
@@ -77,7 +77,7 @@ public class MappingServiceImpl implements MappingService {
 		int offset = pageNum * pageSize - pageSize;
 
 		List<Mapping> mappings = mappingDAO.getMappingsFromOntology(
-				ont.getOntologyId(), pageSize, offset, parameters);
+				ont.getOntologyURI(), pageSize, offset, parameters);
 
 		for (Mapping mapping : mappings) {
 			pageMappings.add(convertToMappingBean(mapping));
@@ -91,7 +91,7 @@ public class MappingServiceImpl implements MappingService {
 			throws InvalidInputException {
 		MappingResultListBean pageMappings = new MappingResultListBean(0);
 		Integer totalResults = mappingCountsDAO.getCountMappingsToOntology(
-				ont.getOntologyId(), parameters);
+				ont.getOntologyURI(), parameters);
 
 		Paginator<MappingBean> p = new PaginatorImpl<MappingBean>(pageMappings,
 				pageSize, totalResults);
@@ -99,7 +99,7 @@ public class MappingServiceImpl implements MappingService {
 		int offset = pageNum * pageSize - pageSize;
 
 		List<Mapping> mappings = mappingDAO.getMappingsToOntology(
-				ont.getOntologyId(), pageSize, offset, parameters);
+				ont.getOntologyURI(), pageSize, offset, parameters);
 
 		for (Mapping mapping : mappings) {
 			pageMappings.add(convertToMappingBean(mapping));
@@ -114,8 +114,8 @@ public class MappingServiceImpl implements MappingService {
 			MappingFilterGenerator parameters) throws InvalidInputException {
 		MappingResultListBean pageMappings = new MappingResultListBean(0);
 		Integer totalResults = mappingCountsDAO
-				.getCountMappingsBetweenOntologies(sourceOnt.getOntologyId(),
-						targetOnt.getOntologyId(), unidirectional, parameters);
+				.getCountMappingsBetweenOntologies(sourceOnt.getOntologyURI(),
+						targetOnt.getOntologyURI(), unidirectional, parameters);
 
 		Paginator<MappingBean> p = new PaginatorImpl<MappingBean>(pageMappings,
 				pageSize, totalResults);
@@ -123,7 +123,7 @@ public class MappingServiceImpl implements MappingService {
 		int offset = pageNum * pageSize - pageSize;
 
 		List<Mapping> mappings = mappingDAO.getMappingsBetweenOntologies(
-				sourceOnt.getOntologyId(), targetOnt.getOntologyId(),
+				sourceOnt.getOntologyURI(), targetOnt.getOntologyURI(),
 				unidirectional, pageSize, offset, parameters);
 
 		for (Mapping mapping : mappings) {
@@ -145,7 +145,7 @@ public class MappingServiceImpl implements MappingService {
 		int offset = pageNum * pageSize - pageSize;
 
 		List<Mapping> mappings = mappingDAO.getRankedMappingsBetweenOntologies(
-				sourceOnt.getOntologyId(), targetOnt.getOntologyId(), pageSize,
+				sourceOnt.getOntologyURI(), targetOnt.getOntologyURI(), pageSize,
 				offset, parameters);
 
 		// This is a little hackish, but not a way around it
@@ -170,7 +170,7 @@ public class MappingServiceImpl implements MappingService {
 			throws InvalidInputException {
 		MappingResultListBean pageMappings = new MappingResultListBean(0);
 		Integer totalResults = mappingCountsDAO.getCountMappingsForOntology(
-				ont.getOntologyId(), parameters);
+				ont.getOntologyURI(), parameters);
 
 		Paginator<MappingBean> p = new PaginatorImpl<MappingBean>(pageMappings,
 				pageSize, totalResults);
@@ -178,7 +178,7 @@ public class MappingServiceImpl implements MappingService {
 		int offset = pageNum * pageSize - pageSize;
 
 		List<Mapping> mappings = mappingDAO.getMappingsForOntology(
-				ont.getOntologyId(), pageSize, offset, parameters);
+				ont.getOntologyURI(), pageSize, offset, parameters);
 
 		for (Mapping mapping : mappings) {
 			pageMappings.add(convertToMappingBean(mapping));
@@ -230,7 +230,7 @@ public class MappingServiceImpl implements MappingService {
 		MappingResultListBean pageMappings = new MappingResultListBean(0);
 
 		Integer totalResults = mappingCountsDAO.getCountMappingsForConcept(
-				ont.getOntologyId(), concept.getFullId(), parameters);
+				ont.getOntologyURI(), concept.getFullId(), parameters);
 
 		Paginator<MappingBean> p = new PaginatorImpl<MappingBean>(pageMappings,
 				pageSize, totalResults);
@@ -238,7 +238,7 @@ public class MappingServiceImpl implements MappingService {
 		int offset = pageNum * pageSize - pageSize;
 
 		List<Mapping> mappings = mappingDAO.getMappingsForConcept(
-				ont.getOntologyId(), concept.getFullId(), pageSize, offset,
+				ont.getOntologyURI(), concept.getFullId(), pageSize, offset,
 				parameters);
 
 		for (Mapping mapping : mappings) {
@@ -253,7 +253,7 @@ public class MappingServiceImpl implements MappingService {
 			MappingFilterGenerator parameters) throws InvalidInputException {
 		MappingResultListBean pageMappings = new MappingResultListBean(0);
 		Integer totalResults = mappingCountsDAO.getCountMappingsFromConcept(
-				ont.getOntologyId(), concept.getFullId(), parameters);
+				ont.getOntologyURI(), concept.getFullId(), parameters);
 
 		Paginator<MappingBean> p = new PaginatorImpl<MappingBean>(pageMappings,
 				pageSize, totalResults);
@@ -261,7 +261,7 @@ public class MappingServiceImpl implements MappingService {
 		int offset = pageNum * pageSize - pageSize;
 
 		List<Mapping> mappings = mappingDAO.getMappingsFromConcept(
-				ont.getOntologyId(), concept.getFullId(), pageSize, offset,
+				ont.getOntologyURI(), concept.getFullId(), pageSize, offset,
 				parameters);
 
 		for (Mapping mapping : mappings) {
@@ -276,7 +276,7 @@ public class MappingServiceImpl implements MappingService {
 			MappingFilterGenerator parameters) throws InvalidInputException {
 		MappingResultListBean pageMappings = new MappingResultListBean(0);
 		Integer totalResults = mappingCountsDAO.getCountMappingsToConcept(
-				ont.getOntologyId(), concept.getFullId(), parameters);
+				ont.getOntologyURI(), concept.getFullId(), parameters);
 
 		Paginator<MappingBean> p = new PaginatorImpl<MappingBean>(pageMappings,
 				pageSize, totalResults);
@@ -284,7 +284,7 @@ public class MappingServiceImpl implements MappingService {
 		int offset = pageNum * pageSize - pageSize;
 
 		List<Mapping> mappings = mappingDAO.getMappingsToConcept(
-				ont.getOntologyId(), concept.getFullId(), pageSize, offset,
+				ont.getOntologyURI(), concept.getFullId(), pageSize, offset,
 				parameters);
 
 		for (Mapping mapping : mappings) {
@@ -301,8 +301,8 @@ public class MappingServiceImpl implements MappingService {
 			throws InvalidInputException {
 		MappingResultListBean pageMappings = new MappingResultListBean(0);
 		Integer totalResults = mappingCountsDAO
-				.getCountMappingsBetweenConcepts(sourceOnt.getOntologyId(),
-						targetOnt.getOntologyId(), sourceConcept.getFullId(),
+				.getCountMappingsBetweenConcepts(sourceOnt.getOntologyURI(),
+						targetOnt.getOntologyURI(), sourceConcept.getFullId(),
 						targetConcept.getFullId(), unidirectional, parameters);
 
 		Paginator<MappingBean> p = new PaginatorImpl<MappingBean>(pageMappings,
@@ -311,7 +311,7 @@ public class MappingServiceImpl implements MappingService {
 		int offset = pageNum * pageSize - pageSize;
 
 		List<Mapping> mappings = mappingDAO.getMappingsBetweenConcepts(
-				sourceOnt.getOntologyId(), targetOnt.getOntologyId(),
+				sourceOnt.getOntologyURI(), targetOnt.getOntologyURI(),
 				sourceConcept.getFullId(), targetConcept.getFullId(),
 				unidirectional, pageSize, offset, parameters);
 
@@ -380,9 +380,9 @@ public class MappingServiceImpl implements MappingService {
 		// Set all properties
 		mb.setComment(mapping.getComment());
 		mb.setCreatedInSourceOntologyVersion(mapping
-				.getCreatedInSourceOntologyVersion());
+				.getCreatedInSourceOntologyVersionAsID());
 		mb.setCreatedInTargetOntologyVersion(mapping
-				.getCreatedInTargetOntologyVersion());
+				.getCreatedInTargetOntologyVersionAsID());
 		mb.setDate(processInfo.getDate());
 		mb.setDependency(mapping.getDependency());
 		mb.setId(mapping.getId());
@@ -399,10 +399,10 @@ public class MappingServiceImpl implements MappingService {
 		mb.setMappingType(processInfo.getMappingType());
 		mb.setRelation(mapping.getRelation());
 		mb.setSource(mapping.getSource());
-		mb.setSourceOntologyId(mapping.getSourceOntologyId());
+		mb.setSourceOntologyId(mapping.getSourceOntologyAsID());
 		mb.setSubmittedBy(processInfo.getSubmittedBy());
 		mb.setTarget(mapping.getTarget());
-		mb.setTargetOntologyId(mapping.getTargetOntologyId());
+		mb.setTargetOntologyId(mapping.getTargetOntologyAsID());
 
 		return mb;
 	}
@@ -416,9 +416,9 @@ public class MappingServiceImpl implements MappingService {
 		// Set all properties
 		mapping.setComment(mapping.getComment());
 		otom.setCreatedInSourceOntologyVersion(mapping
-				.getCreatedInSourceOntologyVersion());
+				.getCreatedInTargetOntologyVersionURI());
 		otom.setCreatedInTargetOntologyVersion(mapping
-				.getCreatedInTargetOntologyVersion());
+				.getCreatedInTargetOntologyVersionURI());
 		procInfo.setDate(mapping.getDate());
 		otom.setDependency(mapping.getDependency());
 		otom.setId(mapping.getId());
@@ -434,10 +434,10 @@ public class MappingServiceImpl implements MappingService {
 		procInfo.setMappingType(mapping.getMappingType());
 		otom.setRelation(mapping.getRelation());
 		otom.setSource(mapping.getSource());
-		otom.setSourceOntologyId(mapping.getSourceOntologyId());
+		otom.setSourceOntology(mapping.getSourceOntologyURI());
 		procInfo.setSubmittedBy(mapping.getSubmittedBy());
 		otom.setTarget(mapping.getTarget());
-		otom.setTargetOntologyId(mapping.getTargetOntologyId());
+		otom.setTargetOntology(mapping.getTargetOntologyURI());
 
 		return otom;
 	}

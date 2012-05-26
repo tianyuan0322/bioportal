@@ -14,6 +14,8 @@ import org.ncbo.stanford.bean.mapping.upload.UploadedMappingBean;
 import org.ncbo.stanford.enumeration.MappingSourceEnum;
 import org.ncbo.stanford.manager.mapping.MappingManager;
 import org.ncbo.stanford.service.mapping.MappingService;
+import org.ncbo.stanford.sparql.bean.Mapping;
+import org.ncbo.stanford.util.constants.ApplicationConstants;
 import org.openrdf.model.URI;
 import org.openrdf.model.impl.URIImpl;
 
@@ -104,22 +106,20 @@ public class MappingManagerImpl implements MappingManager {
 		URI relationURI = new URIImpl(relation);
 		
 		// SourceOntologyId
-		Integer sourceOntologyId = Integer.parseInt(uploadedMappingBean
-				.getSourceOntologyId());
+		URI sourceOntologyId = Mapping.ontologyURIFromOntologyID(
+				Integer.parseInt(uploadedMappingBean.getSourceOntologyId()));
 
 		// TargetOntologyId
-		Integer targetOntologyId = Integer.parseInt(uploadedMappingBean
-				.getTargetOntologyId());
+		URI targetOntologyId = Mapping.ontologyURIFromOntologyID(
+				Integer.parseInt(uploadedMappingBean.getTargetOntologyId()));
 
 		// createdInSourceOntologyVersion
-		Integer createdInSourceOntologyVersion = Integer
-				.parseInt(uploadedMappingBean
-						.getSourceCreatedInOntologyVersion());
+		URI createdInSourceOntologyVersion = Mapping.ontologyURIFromOntologyID(
+				Integer.parseInt(uploadedMappingBean.getSourceCreatedInOntologyVersion()));
 
 		// createdInTargetOntologyVersion
-		Integer createdInTargetOntologyVersion = Integer
-				.parseInt(uploadedMappingBean
-						.getTargetCreatedInOntologyVersion());
+		URI createdInTargetOntologyVersion = Mapping.ontologyURIFromOntologyID(
+				Integer.parseInt(uploadedMappingBean.getTargetCreatedInOntologyVersion())); 
 
 		// submittedBy
 		Integer submittedBy = Integer.parseInt(uploadedMappingBean

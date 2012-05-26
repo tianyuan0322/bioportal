@@ -6,7 +6,9 @@ import java.util.List;
 import org.ncbo.stanford.enumeration.MappingSourceEnum;
 import org.ncbo.stanford.service.xml.converters.URIConverter;
 import org.ncbo.stanford.service.xml.converters.URIListConverter;
+import org.ncbo.stanford.util.constants.ApplicationConstants;
 import org.openrdf.model.URI;
+import org.openrdf.model.impl.URIImpl;
 
 import com.thoughtworks.xstream.annotations.XStreamAlias;
 import com.thoughtworks.xstream.annotations.XStreamConverter;
@@ -146,6 +148,10 @@ public class MappingBean {
 	public Integer getSourceOntologyId() {
 		return sourceOntologyId;
 	}
+	
+	public URI getSourceOntologyURI() {
+		return new URIImpl(ApplicationConstants.BIOPORTAL_ONTOLOGY_URI_PREFIX + this.sourceOntologyId);
+	}
 
 	/**
 	 * @param sourceOntologyId
@@ -162,6 +168,10 @@ public class MappingBean {
 		return targetOntologyId;
 	}
 
+	public URI getTargetOntologyURI() {
+		return new URIImpl(ApplicationConstants.BIOPORTAL_ONTOLOGY_URI_PREFIX + this.targetOntologyId);
+	}
+	
 	/**
 	 * @param targetOntologyId
 	 *            the targetOntologyId to set
@@ -176,7 +186,10 @@ public class MappingBean {
 	public Integer getCreatedInSourceOntologyVersion() {
 		return createdInSourceOntologyVersion;
 	}
-
+	
+	public URI getCreatedInSourceOntologyVersionURI() {
+		return new URIImpl(ApplicationConstants.BIOPORTAL_ONTOLOGY_URI_PREFIX + this.createdInSourceOntologyVersion);
+	}
 	/**
 	 * @param createdInSourceOntologyVersion
 	 *            the createdInSourceOntologyVersion to set
@@ -193,6 +206,10 @@ public class MappingBean {
 		return createdInTargetOntologyVersion;
 	}
 
+	public URI getCreatedInTargetOntologyVersionURI() {
+		return new URIImpl(ApplicationConstants.BIOPORTAL_ONTOLOGY_URI_PREFIX + this.createdInTargetOntologyVersion);
+	}
+	
 	/**
 	 * @param createdInTargetOntologyVersion
 	 *            the createdInTargetOntologyVersion to set

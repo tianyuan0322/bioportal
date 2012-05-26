@@ -34,8 +34,8 @@ import org.openrdf.repository.RepositoryResult;
 public class CustomNcboMappingDAO extends AbstractNcboMappingDAO {
 
 	public Mapping createMapping(List<URI> source, List<URI> target,
-			URI relation, Integer sourceOntologyId, Integer targetOntologyId,
-			Integer sourceOntologyVersion, Integer targetOntologyVersion,
+			URI relation, URI sourceOntology, URI targetOntology,
+			URI sourceOntologyVersion, URI targetOntologyVersion,
 			Integer submittedBy, URI dependency, String comment,
 			String mappingSource, String mappingSourceName,
 			String mappingSourceContactInfo, URI mappingSourceSite,
@@ -49,8 +49,8 @@ public class CustomNcboMappingDAO extends AbstractNcboMappingDAO {
 		newMapping.setSource(source);
 		newMapping.setTarget(target);
 		newMapping.setRelation(relation);
-		newMapping.setSourceOntologyId(sourceOntologyId);
-		newMapping.setTargetOntologyId(targetOntologyId);
+		newMapping.setSourceOntology(sourceOntology);
+		newMapping.setTargetOntology(targetOntology);
 		newMapping.setCreatedInSourceOntologyVersion(sourceOntologyVersion);
 		newMapping.setCreatedInTargetOntologyVersion(targetOntologyVersion);
 
@@ -117,9 +117,9 @@ public class CustomNcboMappingDAO extends AbstractNcboMappingDAO {
 		RepositoryConnection con = getRdfStoreManager()
 				.getRepositoryConnection();
 
-		String unionBlockTemplate = "{ ?id maps:source_ontology_id %SOURCE_ONT_ID% . "
+		String unionBlockTemplate = "{ ?id maps:source_ontology <%SOURCE_ONT%> . "
 				+ "?id maps:source <%SOURCE_TERM%> ."
-				+ "?id maps:target_ontology_id %TARGET_ONT_ID% ."
+				+ "?id maps:target_ontology <%TARGET_ONT%> ."
 				+ "?id maps:target <%TARGET_TERM%> . }";
 
 		List<Mapping> mappings = new ArrayList<Mapping>();
@@ -133,10 +133,10 @@ public class CustomNcboMappingDAO extends AbstractNcboMappingDAO {
 						continue;
 
 					String unionBlock = unionBlockTemplate
-							.replace("%SOURCE_ONT_ID%",
+							.replace("%SOURCE_ONT%",
 									Integer.toString(opbA.getOntologyId()))
 							.replace("%SOURCE_TERM%", opbA.getConceptId())
-							.replace("%TARGET_ONT_ID%",
+							.replace("%TARGET_ONT%",
 									Integer.toString(opbB.getOntologyId()))
 							.replace("%TARGET_TERM%", opbB.getConceptId());
 					unionBlocks.add(unionBlock);
@@ -205,8 +205,8 @@ public class CustomNcboMappingDAO extends AbstractNcboMappingDAO {
 	}
 
 	public Mapping updateMapping(URI id, List<URI> source, List<URI> target,
-			URI relation, Integer sourceOntologyId, Integer targetOntologyId,
-			Integer sourceOntologyVersion, Integer targetOntologyVersion,
+			URI relation, URI sourceOntology, URI targetOntology,
+			URI sourceOntologyVersion, URI targetOntologyVersion,
 			Integer submittedBy, URI dependency, String comment,
 			String mappingSource, String mappingSourceName,
 			String mappingSourcecontactInfo, URI mappingSourceSite,
@@ -221,7 +221,7 @@ public class CustomNcboMappingDAO extends AbstractNcboMappingDAO {
 		Mapping mapping = getMapping(id);
 
 		Mapping updatedMapping = updateMappingEntity(mapping, source, target,
-				relation, sourceOntologyId, targetOntologyId,
+				relation, sourceOntology, targetOntology,
 				sourceOntologyVersion, targetOntologyVersion, submittedBy,
 				dependency, comment, mappingSource, mappingSourceName,
 				mappingSourcecontactInfo, mappingSourceSite,
@@ -340,8 +340,8 @@ public class CustomNcboMappingDAO extends AbstractNcboMappingDAO {
 		String queryString = "select ?mappingId where { "
 				+ "  ?mappingId <http://protege.stanford.edu/ontologies/mappings/mappings.rdfs#source> <%source%> ."
 				+ "  ?mappingId <http://protege.stanford.edu/ontologies/mappings/mappings.rdfs#target> <%target%> ."
-				+ "  ?mappingId <http://protege.stanford.edu/ontologies/mappings/mappings.rdfs#source_ontology_id> %source_ont% ."
-				+ "  ?mappingId <http://protege.stanford.edu/ontologies/mappings/mappings.rdfs#target_ontology_id> %target_ont% ."
+				+ "  ?mappingId <http://protege.stanford.edu/ontologies/mappings/mappings.rdfs#source_ontology> <%source_ont%> ."
+				+ "  ?mappingId <http://protege.stanford.edu/ontologies/mappings/mappings.rdfs#target_ontology> <%target_ont%> ."
 				+ "  ?mappingId <http://protege.stanford.edu/ontologies/mappings/mappings.rdfs#has_process_info> ?procInf ."
 				+ "  ?procInf <http://protege.stanford.edu/ontologies/mappings/mappings.rdfs#submitted_by> %submitted_by% ."
 				+ "}";
@@ -349,9 +349,9 @@ public class CustomNcboMappingDAO extends AbstractNcboMappingDAO {
 				.replace("%source%", mapping.getTarget().get(0).toString())
 				.replace("%target%", mapping.getSource().get(0).toString())
 				.replace("%source_ont%",
-						mapping.getTargetOntologyId().toString())
+						mapping.getTargetOntology().toString())
 				.replace("%target_ont%",
-						mapping.getSourceOntologyId().toString())
+						mapping.getSourceOntology().toString())
 				.replace("%submitted_by%",
 						mapping.getProcessInfo().getSubmittedBy().toString());
 
@@ -402,24 +402,24 @@ public class CustomNcboMappingDAO extends AbstractNcboMappingDAO {
 	 * 
 	 *******************************************************************/
 
-	public List<Mapping> getMappingsFromOntology(Integer ontologyId,
+	public List<Mapping> getMappingsFromOntology(URI ontology,
 			Integer limit, Integer offset, MappingFilterGenerator parameters)
 			throws InvalidInputException {
-		String filter = generateOntologySparqlFilter(ontologyId, null, true);
+		String filter = generateOntologySparqlFilter(ontology, null, true);
 
 		return getMappings(limit, offset, filter, parameters);
 	}
 
-	public List<Mapping> getMappingsToOntology(Integer ontologyId,
+	public List<Mapping> getMappingsToOntology(URI ontology,
 			Integer limit, Integer offset, MappingFilterGenerator parameters)
 			throws InvalidInputException {
-		String filter = generateOntologySparqlFilter(null, ontologyId, true);
+		String filter = generateOntologySparqlFilter(null, ontology, true);
 
 		return getMappings(limit, offset, filter, parameters);
 	}
 
-	public List<Mapping> getMappingsBetweenOntologies(Integer sourceOntology,
-			Integer targetOntology, Boolean unidirectional, Integer limit,
+	public List<Mapping> getMappingsBetweenOntologies(URI sourceOntology,
+			URI targetOntology, Boolean unidirectional, Integer limit,
 			Integer offset, MappingFilterGenerator parameters)
 			throws InvalidInputException {
 		CustomNcboMappingCountsDAO mappingCountDAO = new CustomNcboMappingCountsDAO();
@@ -464,14 +464,14 @@ public class CustomNcboMappingDAO extends AbstractNcboMappingDAO {
 	}
 
 	public List<Mapping> getRankedMappingsBetweenOntologies(
-			Integer sourceOntology, Integer targetOntology, Integer limit,
+			URI sourceOntology, URI targetOntology, Integer limit,
 			Integer offset, MappingFilterGenerator parameters)
 			throws InvalidInputException {
 		String queryString = "select ?source (count(?target) as ?count) where {                                                    "
 				+ "  ?mappingId <http://protege.stanford.edu/ontologies/mappings/mappings.rdfs#source> ?source .                   "
 				+ "  ?mappingId <http://protege.stanford.edu/ontologies/mappings/mappings.rdfs#target> ?target .                   "
-				+ "  ?mappingId <http://protege.stanford.edu/ontologies/mappings/mappings.rdfs#source_ontology_id> %SOURCE_ONT% .  "
-				+ "  ?mappingId <http://protege.stanford.edu/ontologies/mappings/mappings.rdfs#target_ontology_id> %TARGET_ONT% .  "
+				+ "  ?mappingId <http://protege.stanford.edu/ontologies/mappings/mappings.rdfs#source_ontology> %SOURCE_ONT% .  "
+				+ "  ?mappingId <http://protege.stanford.edu/ontologies/mappings/mappings.rdfs#target_ontology> %TARGET_ONT% .  "
 				+ "  %TRIPLES_FOR_PARAMS% FILTER (%FILTER%) } GROUP BY ?source ORDER BY DESC(?count) LIMIT %LIMIT% OFFSET %OFFSET% ";
 
 		// Replace triples placeholder with triples pattern generated from the
@@ -549,12 +549,8 @@ public class CustomNcboMappingDAO extends AbstractNcboMappingDAO {
 				generator.setLimit(Integer.MAX_VALUE);
 				generator.setOffset(0);
 				generator.setParameters(parameters);
-				generator.addBindValue(ApplicationConstants.SOURCE_ONTOLOGY_ID,
-						new LiteralImpl(Integer.toString(sourceOntology),
-								ApplicationConstants.XSD_INTEGER));
-				generator.addBindValue(ApplicationConstants.TARGET_ONTOLOGY_ID,
-						new LiteralImpl(Integer.toString(targetOntology),
-								ApplicationConstants.XSD_INTEGER));
+				generator.addBindValue(ApplicationConstants.SOURCE_ONTOLOGY,sourceOntology);
+				generator.addBindValue(ApplicationConstants.TARGET_ONTOLOGY,targetOntology);
 				generator.addBindValue(ApplicationConstants.SOURCE_TERM,
 						new URIImpl(conceptId));
 				mappingIds = getMappingIdsFromUnion(generator);
@@ -571,34 +567,34 @@ public class CustomNcboMappingDAO extends AbstractNcboMappingDAO {
 		return mappings;
 	}
 
-	public List<Mapping> getMappingsForOntology(Integer ontologyId,
+	public List<Mapping> getMappingsForOntology(URI ontologyURI,
 			Integer limit, Integer offset, MappingFilterGenerator parameters)
 			throws InvalidInputException {
 		
 		CustomNcboMappingCountsDAO mappingCountDAO = new CustomNcboMappingCountsDAO();
 		mappingCountDAO.setRdfStoreManagerMap(rdfStoreManagerMap);
-		Integer sourceTargetCount = mappingCountDAO.getCountMappingsFromOntology(ontologyId, parameters);
+		Integer sourceTargetCount = mappingCountDAO.getCountMappingsFromOntology(ontologyURI, parameters);
 		
 		if (sourceTargetCount > limit + offset) {
 		/* from block */
-			parameters.setSourceOntologyId(ontologyId);
+			parameters.setSourceOntology(ontologyURI);
 			List<Mapping> mappings =  getMappings(limit, offset, null, parameters, true); 
 			return mappings;
 		} else if (offset - sourceTargetCount < 0 && offset + limit - sourceTargetCount > 0) {
 			Integer sourceTargetLimit = (offset - sourceTargetCount) * -1;
 			Integer targetSourceLimit = limit - sourceTargetLimit;
 			Integer targetSourceOffset = 0;
-			parameters.setSourceOntologyId(ontologyId);
+			parameters.setSourceOntology(ontologyURI);
 			List<Mapping> mappings =  getMappings(sourceTargetLimit, offset, null, parameters, true);
 
-			parameters.setSourceOntologyId(null);
-			parameters.setTargetOntologyId(ontologyId);
+			parameters.setSourceOntology(null);
+			parameters.setTargetOntology(ontologyURI);
 			List<Mapping> mappingsPageB =  getMappings(targetSourceLimit, targetSourceOffset, null, parameters, true);
 			mappings.addAll(mappingsPageB);
 			return mappings;
 		} else {
 			Integer shiftedOffset = offset - sourceTargetCount;
-			parameters.setTargetOntologyId(ontologyId);
+			parameters.setTargetOntology(ontologyURI);
 			List<Mapping> mappingsPageB =  getMappings(limit, shiftedOffset, null, parameters, true);
 			return mappingsPageB;
 		}
@@ -611,7 +607,7 @@ public class CustomNcboMappingDAO extends AbstractNcboMappingDAO {
 	 * 
 	 *******************************************************************/
 
-	public List<Mapping> getMappingsForConcept(Integer ontologyId,
+	public List<Mapping> getMappingsForConcept(URI ontologyId,
 			String conceptId, Integer limit, Integer offset,
 			MappingFilterGenerator parameters) throws InvalidInputException {
 		Set<String> mappingIds = null;
@@ -626,16 +622,14 @@ public class CustomNcboMappingDAO extends AbstractNcboMappingDAO {
 			SPARQLUnionGenerator generator = new SPARQLUnionGenerator();
 			generator.setLimit(limit);
 			generator.setOffset(offset);
-			generator.addBindValue(ApplicationConstants.SOURCE_ONTOLOGY_ID,
-					new LiteralImpl(Integer.toString(ontologyId),
-							ApplicationConstants.XSD_INTEGER));
+			generator.addBindValue(ApplicationConstants.SOURCE_ONTOLOGY,ontologyId);
 			generator.addBindValue(ApplicationConstants.SOURCE_TERM,
 					new URIImpl(conceptId));
 
 			generator.addBidirectional(ApplicationConstants.SOURCE_TERM,
 					ApplicationConstants.TARGET_TERM);
-			generator.addBidirectional(ApplicationConstants.SOURCE_ONTOLOGY_ID,
-					ApplicationConstants.TARGET_ONTOLOGY_ID);
+			generator.addBidirectional(ApplicationConstants.SOURCE_ONTOLOGY,
+					ApplicationConstants.TARGET_ONTOLOGY);
 			mappingIds = getMappingIdsFromUnion(generator);
 		}
 		String mappingIdFilter = generateMappingIdFilter(mappingIds);
@@ -647,7 +641,7 @@ public class CustomNcboMappingDAO extends AbstractNcboMappingDAO {
 		return mappings;
 	}
 
-	public List<Mapping> getMappingsFromConcept(Integer ontologyId,
+	public List<Mapping> getMappingsFromConcept(URI ontologyId,
 			String conceptId, Integer limit, Integer offset,
 			MappingFilterGenerator parameters) throws InvalidInputException {
 
@@ -661,9 +655,7 @@ public class CustomNcboMappingDAO extends AbstractNcboMappingDAO {
 			SPARQLUnionGenerator generator = new SPARQLUnionGenerator();
 			generator.setLimit(limit);
 			generator.setOffset(offset);
-			generator.addBindValue(ApplicationConstants.SOURCE_ONTOLOGY_ID,
-					new LiteralImpl(Integer.toString(ontologyId),
-							ApplicationConstants.XSD_INTEGER));
+			generator.addBindValue(ApplicationConstants.SOURCE_ONTOLOGY,ontologyId);
 			generator.addBindValue(ApplicationConstants.SOURCE_TERM,
 					new URIImpl(conceptId));
 			mappingIds = getMappingIdsFromUnion(generator);
@@ -677,7 +669,7 @@ public class CustomNcboMappingDAO extends AbstractNcboMappingDAO {
 		return mappings;
 	}
 
-	public List<Mapping> getMappingsToConcept(Integer ontologyId,
+	public List<Mapping> getMappingsToConcept(URI ontologyId,
 			String conceptId, Integer limit, Integer offset,
 			MappingFilterGenerator parameters) throws InvalidInputException {
 
@@ -691,9 +683,7 @@ public class CustomNcboMappingDAO extends AbstractNcboMappingDAO {
 			SPARQLUnionGenerator generator = new SPARQLUnionGenerator();
 			generator.setLimit(limit);
 			generator.setOffset(offset);
-			generator.addBindValue(ApplicationConstants.TARGET_ONTOLOGY_ID,
-					new LiteralImpl(Integer.toString(ontologyId),
-							ApplicationConstants.XSD_INTEGER));
+			generator.addBindValue(ApplicationConstants.TARGET_ONTOLOGY,ontologyId);
 			generator.addBindValue(ApplicationConstants.TARGET_TERM,
 					new URIImpl(conceptId));
 			mappingIds = getMappingIdsFromUnion(generator);
@@ -707,8 +697,8 @@ public class CustomNcboMappingDAO extends AbstractNcboMappingDAO {
 		return mappings;
 	}
 
-	public List<Mapping> getMappingsBetweenConcepts(Integer sourceOntologyId,
-			Integer targetOntologyId, String fromConceptId, String toConceptId,
+	public List<Mapping> getMappingsBetweenConcepts(URI sourceOntology,
+			URI targetOntology, String fromConceptId, String toConceptId,
 			Boolean unidirectional, Integer limit, Integer offset,
 			MappingFilterGenerator parameters) throws InvalidInputException {
 
@@ -717,20 +707,16 @@ public class CustomNcboMappingDAO extends AbstractNcboMappingDAO {
 			String filter = generateConceptSparqlFilter(fromConceptId,
 					toConceptId, unidirectional);
 			filter += " && "
-					+ generateOntologySparqlFilter(sourceOntologyId,
-							targetOntologyId, unidirectional);
+					+ generateOntologySparqlFilter(sourceOntology,
+							targetOntology, unidirectional);
 
 			mappingIds = getMappingIdsFromFilter(limit, offset, filter);
 		} else {
 			SPARQLUnionGenerator generator = new SPARQLUnionGenerator();
 			generator.setLimit(limit);
 			generator.setOffset(offset);
-			generator.addBindValue(ApplicationConstants.SOURCE_ONTOLOGY_ID,
-					new LiteralImpl(Integer.toString(sourceOntologyId),
-							ApplicationConstants.XSD_INTEGER));
-			generator.addBindValue(ApplicationConstants.TARGET_ONTOLOGY_ID,
-					new LiteralImpl(Integer.toString(targetOntologyId),
-							ApplicationConstants.XSD_INTEGER));
+			generator.addBindValue(ApplicationConstants.SOURCE_ONTOLOGY,sourceOntology);
+			generator.addBindValue(ApplicationConstants.TARGET_ONTOLOGY,targetOntology);
 			generator.addBindValue(ApplicationConstants.SOURCE_TERM,
 					new URIImpl(fromConceptId));
 			generator.addBindValue(ApplicationConstants.TARGET_TERM,
@@ -739,8 +725,8 @@ public class CustomNcboMappingDAO extends AbstractNcboMappingDAO {
 				generator.addBidirectional(ApplicationConstants.SOURCE_TERM,
 						ApplicationConstants.TARGET_TERM);
 				generator.addBidirectional(
-						ApplicationConstants.SOURCE_ONTOLOGY_ID,
-						ApplicationConstants.TARGET_ONTOLOGY_ID);
+						ApplicationConstants.SOURCE_ONTOLOGY,
+						ApplicationConstants.TARGET_ONTOLOGY);
 			}
 			mappingIds = getMappingIdsFromUnion(generator);
 		}

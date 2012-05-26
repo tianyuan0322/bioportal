@@ -38,8 +38,8 @@ public interface MappingService {
 	 * @throws Exception
 	 */
 	public MappingBean createMapping(List<URI> source, List<URI> target,
-			URI relation, Integer sourceOntologyId, Integer targetOntologyId,
-			Integer sourceOntologyVersion, Integer targetOntologyVersion,
+			URI relation, URI sourceOntology, URI targetOntology,
+			URI sourceOntologyVersion, URI targetOntologyVersion,
 			Integer submittedBy, URI dependency, String comment,
 			MappingSourceEnum mappingSource, String mappingSourceName,
 			String mappingSourcecontactInfo, URI mappingSourceSite,

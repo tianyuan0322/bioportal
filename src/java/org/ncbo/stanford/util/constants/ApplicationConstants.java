@@ -205,6 +205,7 @@ public interface ApplicationConstants {
 	/**
 	 * RDF and RDF store namespace constants.
 	 */
+	public static final String BIOPORTAL_ONTOLOGY_URI_PREFIX = "http://bioportal.bioontology.org/ontologies/";
 	public static final String DEFAULT_RDF_PREFIX = "http://purl.bioontology.org/bioportal#";
 	public static final URI DEFAULT_RDF_TYPE = new URIImpl("http://purl.bioontology.org/bioportal#SPARQL_Bean");
 	public static final String VIRTUOSO = "virtuoso";
@@ -243,8 +244,8 @@ public interface ApplicationConstants {
     public static final String NS_MAPPING_PREFIX_URI = "http://protege.stanford.edu/ontologies/mappings/mappings.rdfs#";
     public static final URI XSD_INTEGER = new URIImpl("http://www.w3.org/2001/XMLSchema#integer");
     public static final String NS_MAPPING_PREFIX = "map";
-    public static final URI SOURCE_ONTOLOGY_ID = new URIImpl(NS_MAPPING_PREFIX +":source_ontology_id");
-    public static final URI TARGET_ONTOLOGY_ID = new URIImpl(NS_MAPPING_PREFIX +":target_ontology_id");
+    public static final URI SOURCE_ONTOLOGY = new URIImpl(NS_MAPPING_PREFIX +":source_ontology");
+    public static final URI TARGET_ONTOLOGY = new URIImpl(NS_MAPPING_PREFIX +":target_ontology");
     public static final URI SOURCE_TERM = new URIImpl(NS_MAPPING_PREFIX +":source");
     public static final URI TARGET_TERM = new URIImpl(NS_MAPPING_PREFIX +":target");
 	

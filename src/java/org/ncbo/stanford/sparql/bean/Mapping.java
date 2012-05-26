@@ -6,6 +6,7 @@ import java.util.List;
 import org.ncbo.stanford.annotation.IRI;
 import org.ncbo.stanford.util.constants.ApplicationConstants;
 import org.openrdf.model.URI;
+import org.openrdf.model.impl.URIImpl;
 
 public class Mapping extends AbstractSPARQLBean {
 
@@ -38,17 +39,17 @@ public class Mapping extends AbstractSPARQLBean {
 	@IRI(PREFIX + "relation")
 	protected URI relation;
 
-	@IRI(PREFIX + "source_ontology_id")
-	protected Integer sourceOntologyId;
+	@IRI(PREFIX + "source_ontology")
+	protected URI sourceOntology;
 
-	@IRI(PREFIX + "target_ontology_id")
-	protected Integer targetOntologyId;
+	@IRI(PREFIX + "target_ontology")
+	protected URI targetOntology;
 
 	@IRI(PREFIX + "created_in_source_ontology_version")
-	protected Integer createdInSourceOntologyVersion;
+	protected URI createdInSourceOntologyVersion;
 
 	@IRI(PREFIX + "created_in_target_ontology_version")
-	protected Integer createdInTargetOntologyVersion;
+	protected URI createdInTargetOntologyVersion;
 
 	@IRI(PREFIX + "has_process_info")
 	protected ProcessInfo processInfo;
@@ -58,6 +59,15 @@ public class Mapping extends AbstractSPARQLBean {
 
 	@IRI(PREFIX + "comment")
 	protected String comment;
+	
+	private static Integer ontologyURI2Id(URI uri) {
+		String parts[] = uri.toString().split("/");
+		return Integer.parseInt(parts[parts.length-1]);
+	}
+	
+	public static URI ontologyURIFromOntologyID(Integer id) {
+		return new URIImpl(ApplicationConstants.BIOPORTAL_ONTOLOGY_URI_PREFIX + id);
+	}
 	
 	/**
 	 * Default no-arg constructor.
@@ -149,54 +159,66 @@ public class Mapping extends AbstractSPARQLBean {
 	/**
 	 * @return the sourceOntologyId
 	 */
-	public Integer getSourceOntologyId() {
-		return sourceOntologyId;
+	public URI getSourceOntology() {
+		return sourceOntology;
+	}
+	public Integer getSourceOntologyAsID() {
+		return ontologyURI2Id(this.sourceOntology);
 	}
 
 	/**
 	 * @param sourceOntologyId
 	 *            the sourceOntologyId to set
 	 */
-	public void setSourceOntologyId(Integer sourceOntologyId) {
-		this.sourceOntologyId = sourceOntologyId;
+	public void setSourceOntology(URI sourceOntology) {
+		this.sourceOntology = sourceOntology;
 	}
 
 	/**
 	 * @return the targetOntologyId
 	 */
-	public Integer getTargetOntologyId() {
-		return targetOntologyId;
+	public URI getTargetOntology() {
+		return targetOntology;
+	}
+	public Integer getTargetOntologyAsID() {
+		return ontologyURI2Id(this.targetOntology);
 	}
 
 	/**
 	 * @param targetOntologyId
 	 *            the targetOntologyId to set
 	 */
-	public void setTargetOntologyId(Integer targetOntologyId) {
-		this.targetOntologyId = targetOntologyId;
+	public void setTargetOntology(URI targetOntology) {
+		this.targetOntology = targetOntology;
 	}
 
 	/**
 	 * @return the createdInSourceOntologyVersion
 	 */
-	public Integer getCreatedInSourceOntologyVersion() {
+	public URI getCreatedInSourceOntologyVersion() {
 		return createdInSourceOntologyVersion;
 	}
-
+	public Integer getCreatedInSourceOntologyVersionAsID() {
+		return ontologyURI2Id(this.createdInSourceOntologyVersion);
+	}
+	
 	/**
 	 * @param createdInSourceOntologyVersion
 	 *            the createdInSourceOntologyVersion to set
 	 */
 	public void setCreatedInSourceOntologyVersion(
-			Integer createdInSourceOntologyVersion) {
+			URI createdInSourceOntologyVersion) {
 		this.createdInSourceOntologyVersion = createdInSourceOntologyVersion;
 	}
 
 	/**
 	 * @return the createdInTargetOntologyVersion
 	 */
-	public Integer getCreatedInTargetOntologyVersion() {
+	public URI getCreatedInTargetOntologyVersion() {
 		return createdInTargetOntologyVersion;
+	}
+	public Integer getCreatedInTargetOntologyVersionAsID() {
+		return ontologyURI2Id(this.createdInTargetOntologyVersion);
 	}
 
 	/**
@@ -204,7 +226,7 @@ public class Mapping extends AbstractSPARQLBean {
 	 *            the createdInTargetOntologyVersion to set
 	 */
 	public void setCreatedInTargetOntologyVersion(
-			Integer createdInTargetOntologyVersion) {
+			URI createdInTargetOntologyVersion) {
 		this.createdInTargetOntologyVersion = createdInTargetOntologyVersion;
 	}
 

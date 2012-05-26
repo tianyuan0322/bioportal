@@ -18,6 +18,8 @@ import org.ncbo.stanford.enumeration.StatusEnum;
 import org.ncbo.stanford.enumeration.ViewingRestrictionEnum;
 import org.ncbo.stanford.util.MessageUtils;
 import org.ncbo.stanford.util.constants.ApplicationConstants;
+import org.openrdf.model.URI;
+import org.openrdf.model.impl.URIImpl;
 
 public class OntologyBean {
 
@@ -255,6 +257,10 @@ public class OntologyBean {
 		return ontologyId;
 	}
 
+	public URI getOntologyURI() {
+		return new URIImpl(ApplicationConstants.BIOPORTAL_ONTOLOGY_URI_PREFIX + ontologyId);
+	}
+	
 	/**
 	 * @param ontologyId
 	 *            the ontologyId to set
@@ -300,6 +306,10 @@ public class OntologyBean {
 		return versionNumber;
 	}
 
+	public URI getVersionURI() {
+		return new URIImpl(ApplicationConstants.BIOPORTAL_ONTOLOGY_URI_PREFIX + versionNumber);
+	}
+	
 	/**
 	 * @param versionNumber
 	 *            the versionNumber to set
