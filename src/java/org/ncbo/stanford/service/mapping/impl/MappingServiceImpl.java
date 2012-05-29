@@ -342,22 +342,22 @@ public class MappingServiceImpl implements MappingService {
 	}
 
 	public List<MappingOntologyStatsBean> getOntologyMappingCount(
-			Integer ontologyId) {
-		return mappingStatsDAO.getOntologyMappingCount(ontologyId);
+			URI ontologyURI) {
+		return mappingStatsDAO.getOntologyMappingCount(ontologyURI);
 	}
 
 	public List<MappingConceptStatsBean> getOntologyConceptsCount(
-			Integer ontologyId, Integer limit) {
-		return mappingStatsDAO.getOntologyConceptsCount(ontologyId, limit);
+			URI ontologyURI, Integer limit) {
+		return mappingStatsDAO.getOntologyConceptsCount(ontologyURI, limit);
 	}
 
-	public List<MappingUserStatsBean> getOntologyUserCount(Integer ontologyId) {
-		return mappingStatsDAO.getOntologyUserCount(ontologyId, null);
+	public List<MappingUserStatsBean> getOntologyUserCount(URI ontologyURI) {
+		return mappingStatsDAO.getOntologyUserCount(ontologyURI, null);
 	}
 
-	public List<MappingUserStatsBean> getOntologyUserCount(Integer ontologyId,
-			Integer targetOntology) {
-		return mappingStatsDAO.getOntologyUserCount(ontologyId, targetOntology);
+	public List<MappingUserStatsBean> getOntologyUserCount(URI ontologyURI,
+			URI targetOntologyURI) {
+		return mappingStatsDAO.getOntologyUserCount(ontologyURI, targetOntologyURI);
 	}
 
 	public MappingBean updateMapping(URI id, MappingBean mapping)

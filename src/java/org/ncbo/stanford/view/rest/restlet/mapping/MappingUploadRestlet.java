@@ -29,6 +29,7 @@ import org.ncbo.stanford.manager.mapping.MappingManager;
 import org.ncbo.stanford.service.concept.ConceptService;
 import org.ncbo.stanford.service.mapping.MappingService;
 import org.ncbo.stanford.service.ontology.OntologyService;
+import org.ncbo.stanford.sparql.bean.Mapping;
 import org.ncbo.stanford.util.MessageUtils;
 import org.ncbo.stanford.util.RequestUtils;
 import org.ncbo.stanford.util.constants.ApplicationConstants;
@@ -185,9 +186,10 @@ public class MappingUploadRestlet extends AbstractBaseRestlet {
 						// Try to get the MappingStatusBean according to the
 						// TargetOntologyId from the CSV file
 						mappingStatusBean = mappingService
-								.getOntologyMappingCount(Integer
+								.getOntologyMappingCount(Mapping.ontologyURIFromOntologyID(
+										Integer
 										.parseInt(uploadedMappingBean
-												.getTargetOntologyId()));
+												.getTargetOntologyId())));
 
 						// Checking the condition for null values for
 						// MappingStatusBean

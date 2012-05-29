@@ -44,7 +44,7 @@ public class SimpleMappingTest {
 	public void testAllOK() throws Exception {
 		//testPairConceptOnt();
 		//createMapping();
-		deleteMapping();
+		//deleteMapping();
         //testUnionGenerator();
 		//getMappingTest();
         //getMappingsForConceptTest();
@@ -53,7 +53,7 @@ public class SimpleMappingTest {
         //getMappingsFromConceptTest();
         //getMappingsForOntologyTest();
 		//int a = getMappingsBetweenOntologiesTest(1032);
-		//getOntologyUserCountTest();
+		getOntologyUserCountTest();
         //getMappingsToOntologyTest();
         //getCountMappingsBetweenConceptsTest();
         //getCountMappingsToConceptTest();
@@ -554,7 +554,8 @@ public class SimpleMappingTest {
             MappingFilterGenerator filter = new MappingFilterGenerator();
             Integer sourceOntologyId = 1131;
             Integer targetOntologyId = 1136;
-             List<MappingUserStatsBean> x = this.mappingStatsDAO.getOntologyUserCount(sourceOntologyId,targetOntologyId);
+             List<MappingUserStatsBean> x = this.mappingStatsDAO.getOntologyUserCount(Mapping.ontologyURIFromOntologyID(sourceOntologyId),
+            		 Mapping.ontologyURIFromOntologyID(targetOntologyId));
             System.out.println("result --> "+ x.size());
             for (MappingUserStatsBean u : x)
                 System.out.println("\t " + u.getUserId() + " --> "+ u.getMappingCount());

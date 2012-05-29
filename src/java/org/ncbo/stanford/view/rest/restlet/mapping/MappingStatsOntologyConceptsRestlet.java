@@ -74,7 +74,7 @@ public class MappingStatsOntologyConceptsRestlet extends AbstractMappingRestlet 
 			}
 
 			ontologyCounts = mappingService.getOntologyConceptsCount(ont
-					.getOntologyId(), limit);
+					.getOntologyURI(), limit);
 		} catch (InvalidInputException e) {
 			log.debug(e);
 			e.printStackTrace();

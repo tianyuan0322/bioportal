@@ -11,6 +11,7 @@ import org.ncbo.stanford.bean.mapping.MappingOntologyStatsBean;
 import org.ncbo.stanford.bean.mapping.MappingUserStatsBean;
 import org.ncbo.stanford.exception.InvalidInputException;
 import org.ncbo.stanford.sparql.bean.Mapping;
+import org.openrdf.model.URI;
 import org.openrdf.query.BindingSet;
 import org.openrdf.query.MalformedQueryException;
 import org.openrdf.query.QueryEvaluationException;
@@ -34,53 +35,53 @@ public class CustomNcboMappingStatsDAO extends AbstractNcboMappingDAO {
 
 	private static final String ontologySourceCount = "PREFIX map: <http://protege.stanford.edu/ontologies/mappings/mappings.rdfs#> " 
 			+ "SELECT ?sourceOntologyId (count(?sourceOntologyId) as ?count) "
-			+ "WHERE { ?mappingId map:source_ontology_id ?sourceOntologyId . }" +
+			+ "WHERE { ?mappingId map:source_ontology ?sourceOntologyId . }" +
 			" GROUP BY ?sourceOntologyId";
 	
 	private static final String ontologyTargetCount = "PREFIX map: <http://protege.stanford.edu/ontologies/mappings/mappings.rdfs#> " 
 			+ "SELECT ?targetOntologyId (count(?targetOntologyId) as ?count) "
-			+ "WHERE { ?mappingId map:target_ontology_id ?targetOntologyId . }" +
+			+ "WHERE { ?mappingId map:target_ontology ?targetOntologyId . }" +
 			" GROUP BY ?targetOntologyId";
 
 	private static final String sourceMappings = "PREFIX map: <http://protege.stanford.edu/ontologies/mappings/mappings.rdfs#> " 
 			+ "SELECT ?sourceOntologyId "
 			+ "(count(?sourceOntologyId) as ?count) "
-			+ "WHERE { ?mappingId map:target_ontology_id %ONT% . "
-			+ "?mappingId map:source_ontology_id ?sourceOntologyId . "
+			+ "WHERE { ?mappingId map:target_ontology <%ONT%> . "
+			+ "?mappingId map:source_ontology ?sourceOntologyId . "
 			+ "} GROUP BY ?sourceOntologyId ORDER BY DESC(?count)";
 
 	private static final String targetMappings = "PREFIX map: <http://protege.stanford.edu/ontologies/mappings/mappings.rdfs#> " 
 			+ "SELECT ?targetOntologyId "
 			+ "(count(?targetOntologyId) as ?count) "
-			+ "WHERE { ?mappingId map:source_ontology_id %ONT% . "
-			+ "?mappingId map:target_ontology_id ?targetOntologyId . "
+			+ "WHERE { ?mappingId map:source_ontology <%ONT%> . "
+			+ "?mappingId map:target_ontology ?targetOntologyId . "
 			+ "} GROUP BY ?targetOntologyId ORDER BY DESC(?count)";
 
 	private static final String conceptCount = "PREFIX map: <http://protege.stanford.edu/ontologies/mappings/mappings.rdfs#> " 
 			+ "SELECT ?conceptId (count(?conceptId) as ?count) "
-			+ "WHERE { { ?mappingId map:source_ontology_id %ONT% . "
+			+ "WHERE { { ?mappingId map:source_ontology <%ONT%> . "
 			+ "?mappingId map:source ?conceptId . } "
-			+ "UNION { ?mappingId map:target_ontology_id %ONT% . "
+			+ "UNION { ?mappingId map:target_ontology <%ONT%> . "
 			+ "?mappingId map:target ?conceptId . } "
 			+ "} GROUP BY ?conceptId ORDER BY DESC(?count) LIMIT %LIMIT%";
 
 	private static final String userCount = "PREFIX map: <http://protege.stanford.edu/ontologies/mappings/mappings.rdfs#> " 
 			+ "SELECT ?userId (count(?mappingId) as ?count) "
-			+ "WHERE { { ?mappingId map:source_ontology_id %ONT% . "
+			+ "WHERE { { ?mappingId map:source_ontology <%ONT%> . "
 			+ "?mappingId map:has_process_info [ map:submitted_by ?userId ] . } "
-			+ "UNION { ?mappingId map:target_ontology_id %ONT% . "
+			+ "UNION { ?mappingId map:target_ontology <%ONT%> . "
 			+ "?mappingId map:has_process_info [ map:submitted_by ?userId ] . } "
 			+ "} GROUP BY ?userId ORDER BY DESC(?count)";
 
 	private static final String userCountWithTarget = "PREFIX map: <http://protege.stanford.edu/ontologies/mappings/mappings.rdfs#> " 
 			+ "SELECT ?userId (count(?mappingId) as ?count) "
 			+ "WHERE { "
-			+ "{ ?mappingId map:source_ontology_id %ONT% . "
-			+ " ?mappingId map:target_ontology_id %TARG% . "
+			+ "{ ?mappingId map:source_ontology <%ONT%> . "
+			+ " ?mappingId map:target_ontology <%TARG%> . "
 			+ "?mappingId map:has_process_info [ map:submitted_by ?userId ] . } "
 			+ "UNION { "
-			+ "?mappingId map:target_ontology_id %ONT% . "
-			+ "?mappingId map:target_ontology_id %TARG% . "
+			+ "?mappingId map:target_ontology <%ONT%> . "
+			+ "?mappingId map:source_ontology <%TARG%> . "
 			+ "?mappingId map:has_process_info [ map:submitted_by ?userId ] . } "
 			+ "} GROUP BY ?userId ORDER BY DESC(?count)";
 
@@ -211,11 +212,11 @@ public class CustomNcboMappingStatsDAO extends AbstractNcboMappingDAO {
 	 * @return
 	 */
 	public List<MappingOntologyStatsBean> getOntologyMappingCount(
-			Integer ontologyId) {
+			URI ontologyURI) {
 		String sourceMappingsQuery = sourceMappings.replaceAll("%ONT%",
-				ontologyId.toString());
+				ontologyURI.toString());
 		String targetMappingsQuery = targetMappings.replaceAll("%ONT%",
-				ontologyId.toString());
+				ontologyURI.toString());
 
 		RepositoryConnection con = getRdfStoreManager()
 				.getRepositoryConnection();
@@ -243,11 +244,11 @@ public class CustomNcboMappingStatsDAO extends AbstractNcboMappingDAO {
 	}
 
 	public List<MappingConceptStatsBean> getOntologyConceptsCount(
-			Integer ontologyId, Integer limit) {
+			URI ontologyURI, Integer limit) {
 		List<MappingConceptStatsBean> concepts = new ArrayList<MappingConceptStatsBean>();
 
 		String sourceMappingsQuery = conceptCount.replaceAll("%ONT%",
-				ontologyId.toString()).replaceAll("%LIMIT%", limit.toString());
+				ontologyURI.toString()).replaceAll("%LIMIT%", limit.toString());
 
 		RepositoryConnection con = getRdfStoreManager()
 				.getRepositoryConnection();
@@ -285,19 +286,19 @@ public class CustomNcboMappingStatsDAO extends AbstractNcboMappingDAO {
 		return concepts;
 	}
 
-	public List<MappingUserStatsBean> getOntologyUserCount(Integer ontologyId,
-			Integer targetOntology) {
+	public List<MappingUserStatsBean> getOntologyUserCount(URI ontologyURI,
+			URI targetOntologyURI) {
 		List<MappingUserStatsBean> users = new ArrayList<MappingUserStatsBean>();
 
-		String queryTemplate = targetOntology == null ? userCount
+		String queryTemplate = targetOntologyURI == null ? userCount
 				: userCountWithTarget;
 
 		String userCountQuery = queryTemplate.replaceAll("%ONT%",
-				ontologyId.toString());
+				ontologyURI.toString());
 
-		if (targetOntology != null)
+		if (targetOntologyURI != null)
 			userCountQuery = userCountQuery.replaceAll("%TARG%",
-					targetOntology.toString());
+					targetOntologyURI.toString());
 
 		RepositoryConnection con = getRdfStoreManager()
 				.getRepositoryConnection();

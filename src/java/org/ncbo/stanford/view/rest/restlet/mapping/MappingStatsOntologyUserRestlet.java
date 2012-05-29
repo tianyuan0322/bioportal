@@ -70,8 +70,8 @@ public class MappingStatsOntologyUserRestlet extends AbstractMappingRestlet {
 						.findLatestOntologyOrViewVersion(targetOntologyId);
 			}
 			userCounts = mappingService.getOntologyUserCount(ont
-					.getOntologyId(), ontTarget != null ? ontTarget
-					.getOntologyId() : null);
+					.getOntologyURI(), ontTarget != null ? ontTarget
+					.getOntologyURI() : null);
 
 		} catch (InvalidInputException e) {
 			log.debug(e);

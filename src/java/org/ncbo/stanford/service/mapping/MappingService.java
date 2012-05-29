@@ -256,7 +256,7 @@ public interface MappingService {
 	 * @return
 	 */
 	public List<MappingOntologyStatsBean> getOntologyMappingCount(
-			Integer ontologyId);
+			URI ontologyId);
 
 	/**
 	 * Get a list of concepts and their mapping counts for a given ontology.
@@ -266,7 +266,7 @@ public interface MappingService {
 	 * @return
 	 */
 	public List<MappingConceptStatsBean> getOntologyConceptsCount(
-			Integer ontologyId, Integer limit);
+			URI ontologyId, Integer limit);
 
 	/**
 	 * Get a list of users who have created mappings for an ontology plus counts
@@ -275,7 +275,7 @@ public interface MappingService {
 	 * @param ontologyId
 	 * @return
 	 */
-	public List<MappingUserStatsBean> getOntologyUserCount(Integer ontologyId);
+	public List<MappingUserStatsBean> getOntologyUserCount(URI ontologyId);
 
 	/**
 	 * Get a list of users who have created mappings for an ontology plus counts
@@ -285,7 +285,7 @@ public interface MappingService {
 	 * @param targetOntology
 	 * @return
 	 */
-	public List<MappingUserStatsBean> getOntologyUserCount(Integer ontologyId,
-			Integer targetOntology);
+	public List<MappingUserStatsBean> getOntologyUserCount(URI ontologyId,
+			URI targetOntology);
 
 }

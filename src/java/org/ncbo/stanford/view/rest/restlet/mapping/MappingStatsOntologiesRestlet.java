@@ -9,6 +9,7 @@ import org.apache.commons.logging.LogFactory;
 import org.ncbo.stanford.bean.mapping.MappingOntologyPairStatsBean;
 import org.ncbo.stanford.bean.mapping.MappingOntologyStatsBean;
 import org.ncbo.stanford.service.mapping.MappingService;
+import org.ncbo.stanford.sparql.bean.Mapping;
 import org.ncbo.stanford.util.RequestUtils;
 import org.restlet.Request;
 import org.restlet.Response;
@@ -51,7 +52,7 @@ public class MappingStatsOntologiesRestlet extends AbstractMappingRestlet {
 		try {
 			for (Integer ontologyId : ontologyIds) {
 				List<MappingOntologyStatsBean> stats = mappingService
-						.getOntologyMappingCount(ontologyId);
+						.getOntologyMappingCount(Mapping.ontologyURIFromOntologyID(ontologyId));
 
 				for (MappingOntologyStatsBean stat : stats) {
 					if (ontologyIdSet.contains(stat.getOntologyId())) {
