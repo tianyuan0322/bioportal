@@ -6,10 +6,12 @@ import java.util.List;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.ncbo.stanford.bean.OntologyBean;
+import org.ncbo.stanford.exception.NotDownloadableOntologyException;
 import org.ncbo.stanford.util.CompressionUtils;
 import org.ncbo.stanford.util.RequestUtils;
 import org.ncbo.stanford.util.helper.StringHelper;
 import org.ncbo.stanford.util.ontologyfile.pathhandler.AbstractFilePathHandler;
+import org.ncbo.stanford.util.security.OntologyDownloadAccessControl;
 import org.restlet.Request;
 import org.restlet.Response;
 import org.restlet.data.MediaType;
@@ -21,6 +23,13 @@ public class OntologyDownloadRestlet extends AbstractOntologyBaseRestlet {
 	private static final Log log = LogFactory
 			.getLog(OntologyDownloadRestlet.class);
 
+	protected OntologyDownloadAccessControl ontologyDownloadAccessControl;
+
+	public void setOntologyDownloadAccessControl(
+			OntologyDownloadAccessControl ontologyDownloadAccessControl) {
+		this.ontologyDownloadAccessControl = ontologyDownloadAccessControl;
+	}
+	
 	/**
 	 * Handle GET calls here
 	 * 
@@ -44,6 +53,11 @@ public class OntologyDownloadRestlet extends AbstractOntologyBaseRestlet {
 		// if "find" was successful, proceed to update
 		if (!response.getStatus().isError()) {
 			try {
+				
+				if (! ontologyDownloadAccessControl.isDownloadable(ontologyBean)) {
+					throw new NotDownloadableOntologyException();
+				}
+				
 				File file = ontologyService.getOntologyFile(ontologyBean);
 				String versionNumber = ontologyBean.getVersionNumber();
 				versionNumber = (StringHelper.isNullOrNullString(versionNumber) ? ""
@@ -77,6 +91,10 @@ public class OntologyDownloadRestlet extends AbstractOntologyBaseRestlet {
 						return;
 					}
 				}
+			} catch (NotDownloadableOntologyException e) {
+				response.setStatus(Status.CLIENT_ERROR_FORBIDDEN, e.getMessage());
+				xmlSerializationService
+						.generateStatusXMLResponse(request, response);
 			} catch (Exception e) {
 				response
 						.setStatus(Status.SERVER_ERROR_INTERNAL, e.getMessage());

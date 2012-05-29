@@ -296,13 +296,23 @@
 	<bean id="ontologyDownloadRestlet"
 		class="org.ncbo.stanford.view.rest.restlet.ontology.OntologyDownloadRestlet"
 		parent="abstractOntologyBaseRestlet">
+		
+		<property name="ontologyDownloadAccessControl">
+			<ref bean="ontologyDownloadAccessControl" />
+		</property>
+		
 	</bean>
 	<!-- Added For rdfDownload -->
 	<bean id="rdfDownloadRestlet"
 		class="org.ncbo.stanford.view.rest.restlet.rdf.RdfDownloadRestlet"
 		parent="abstractOntologyBaseRestlet">
-		<property name="ontologyService">
+		
+		<!-- <property name="ontologyService">
 			<ref bean="ontologyService" />
+		</property> -->
+		
+		<property name="ontologyDownloadAccessControl">
+			<ref bean="ontologyDownloadAccessControl" />
 		</property>
 	</bean>
 

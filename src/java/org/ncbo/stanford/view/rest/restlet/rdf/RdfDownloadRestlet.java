@@ -11,9 +11,13 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.ncbo.stanford.bean.OntologyBean;
 import org.ncbo.stanford.exception.InvalidInputException;
+import org.ncbo.stanford.exception.NotDownloadableOntologyException;
+import org.ncbo.stanford.service.ontology.OntologyService;
 import org.ncbo.stanford.util.MessageUtils;
 import org.ncbo.stanford.util.RequestUtils;
+import org.ncbo.stanford.util.constants.ApplicationConstants;
 import org.ncbo.stanford.util.helper.StringHelper;
+import org.ncbo.stanford.util.security.OntologyDownloadAccessControl;
 import org.ncbo.stanford.view.rest.restlet.ontology.AbstractOntologyBaseRestlet;
 import org.restlet.Request;
 import org.restlet.Response;
@@ -31,6 +35,13 @@ public class RdfDownloadRestlet extends AbstractOntologyBaseRestlet {
 
 	private static final Log log = LogFactory
 			.getLog(AbstractOntologyBaseRestlet.class);
+
+	protected OntologyDownloadAccessControl ontologyDownloadAccessControl;
+
+	public void setOntologyDownloadAccessControl(
+			OntologyDownloadAccessControl ontologyDownloadAccessControl) {
+		this.ontologyDownloadAccessControl = ontologyDownloadAccessControl;
+	}
 
 	/**
 	 * Handle GET calls here
@@ -73,6 +84,8 @@ public class RdfDownloadRestlet extends AbstractOntologyBaseRestlet {
 				isVirtual = true;
 			}
 
+
+			
 			if (isVirtual) {
 				Integer ontologyVirtualIdInt = RequestUtils
 						.parseIntegerParam(ontologyId);
@@ -95,6 +108,10 @@ public class RdfDownloadRestlet extends AbstractOntologyBaseRestlet {
 				}
 			}
 
+			if (! ontologyDownloadAccessControl.isDownloadable(ont)) {
+				throw new NotDownloadableOntologyException();
+			}
+			
 			// Finding the Rdf File
 			File file = ontologyService.findRdfFileForOntology(ont);
 
@@ -109,6 +126,10 @@ public class RdfDownloadRestlet extends AbstractOntologyBaseRestlet {
 			httpResp.setContentType("application/rdf+xml");
 			httpResp.setHeader("Content-Disposition", "attachment; filename=\""
 					+ filename + "\";");
+		} catch (NotDownloadableOntologyException e) {
+			response.setStatus(Status.CLIENT_ERROR_FORBIDDEN, e.getMessage());
+			xmlSerializationService
+					.generateStatusXMLResponse(request, response);
 		} catch (InvalidInputException e) {
 			response.setStatus(Status.CLIENT_ERROR_BAD_REQUEST, e.getMessage());
 			xmlSerializationService

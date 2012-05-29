@@ -1234,6 +1234,13 @@
 		</constructor-arg>
 	</bean>
 
+	<bean id="ontologyDownloadAccessControl" scope="prototype"
+		class="org.ncbo.stanford.util.security.OntologyDownloadAccessControl">
+		<constructor-arg index="0">
+			<value>@notdownloadableontids@</value>
+		</constructor-arg>
+	</bean>
+	
 	<bean id="textManager" scope="prototype"
 		class="org.ncbo.stanford.util.textmanager.service.impl.TextManagerImpl">
 		<property name="ncboAppTextDAO">
