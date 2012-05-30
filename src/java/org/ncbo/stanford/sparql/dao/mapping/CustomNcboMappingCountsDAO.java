@@ -5,6 +5,7 @@ import java.util.Set;
 
 import org.apache.commons.lang.StringUtils;
 import org.ncbo.stanford.exception.InvalidInputException;
+import org.ncbo.stanford.sparql.bean.Mapping;
 import org.ncbo.stanford.util.constants.ApplicationConstants;
 import org.ncbo.stanford.util.sparql.MappingFilterGenerator;
 import org.ncbo.stanford.util.sparql.SPARQLUnionGenerator;
@@ -85,8 +86,8 @@ public class CustomNcboMappingCountsDAO extends AbstractNcboMappingDAO {
 		String rankedSourceCount = "PREFIX map: <http://protege.stanford.edu/ontologies/mappings/mappings.rdfs#> "
 				+ "SELECT DISTINCT (count(?source) as ?c) {{ "
 				+ "  ?mappingId map:source ?source ."
-				+ "  ?mappingId map:target_ontology \"%TARGET_ONT%\"^^<http://www.w3.org/2001/XMLSchema#integer> ."
-				+ "  ?mappingId map:source_ontology \"%SOURCE_ONT%\"^^<http://www.w3.org/2001/XMLSchema#integer> ."
+				+ "  ?mappingId map:target_ontology <%TARGET_ONT%> ."
+				+ "  ?mappingId map:source_ontology <%SOURCE_ONT%> ."
 				+ "  %TRIPLES_FOR_PARAMS% FILTER (%FILTER%) "
 				+ "}} GROUP BY ?source";
 
@@ -107,9 +108,9 @@ public class CustomNcboMappingCountsDAO extends AbstractNcboMappingDAO {
 
 		// Substitute tokens in the generic query string
 		rankedSourceCount = rankedSourceCount.replaceAll("%FILTER%", filter)
-				.replaceAll("%SOURCE_ONT%", sourceOntology.toString())
-				.replaceAll("%TARGET_ONT%", targetOntology.toString());
-
+				.replaceAll("%SOURCE_ONT%", Mapping.ontologyURIFromOntologyID(sourceOntology).toString())
+				.replaceAll("%TARGET_ONT%", Mapping.ontologyURIFromOntologyID(targetOntology).toString());
+		
 		// Remove filter if it's not used
 		if (filter == null || filter.isEmpty()) {
 			rankedSourceCount = rankedSourceCount.replaceAll("FILTER \\(\\)", "");
