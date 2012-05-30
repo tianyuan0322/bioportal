@@ -6,6 +6,7 @@ import java.util.HashMap;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
+import org.ncbo.stanford.bean.mapping.MappingBean;
 import org.ncbo.stanford.bean.mapping.MappingConceptStatsBean;
 import org.ncbo.stanford.bean.mapping.MappingOntologyStatsBean;
 import org.ncbo.stanford.bean.mapping.MappingUserStatsBean;
@@ -348,14 +349,16 @@ public class CustomNcboMappingStatsDAO extends AbstractNcboMappingDAO {
 			while (result.hasNext()) {
 				BindingSet bs = result.next();
 
-				Integer sourceOntologyId = convertValueToInteger(bs
-						.getValue("sourceOntologyId"));
+				URI sourceOntologyURI = (URI)bs.getValue("sourceOntologyId");
 				Integer count = convertValueToInteger(bs.getValue("count"));
 
+				Integer sourceOntologyId = Mapping.ontologyURI2Id(sourceOntologyURI);
+				
 				if (!countsMap.containsKey(sourceOntologyId)) {
 					MappingOntologyStatsBean stats = new MappingOntologyStatsBean();
 					stats.setOntologyId(sourceOntologyId);
 					stats.setTargetMappings(count);
+					
 					countsMap.put(sourceOntologyId, stats);
 				} else {
 					MappingOntologyStatsBean stats = countsMap
@@ -373,10 +376,12 @@ public class CustomNcboMappingStatsDAO extends AbstractNcboMappingDAO {
 			while (result.hasNext()) {
 				BindingSet bs = result.next();
 
-				Integer targetOntologyId = convertValueToInteger(bs
-						.getValue("targetOntologyId"));
+				URI targetOntologyURI = (URI)bs
+						.getValue("targetOntologyId");
 				Integer count = convertValueToInteger(bs.getValue("count"));
 
+				Integer targetOntologyId = Mapping.ontologyURI2Id(targetOntologyURI);
+				
 				if (!countsMap.containsKey(targetOntologyId)) {
 					MappingOntologyStatsBean stats = new MappingOntologyStatsBean();
 					stats.setOntologyId(targetOntologyId);

@@ -60,7 +60,7 @@ public class Mapping extends AbstractSPARQLBean {
 	@IRI(PREFIX + "comment")
 	protected String comment;
 	
-	private static Integer ontologyURI2Id(URI uri) {
+	public static Integer ontologyURI2Id(URI uri) {
 		String parts[] = uri.toString().split("/");
 		return Integer.parseInt(parts[parts.length-1]);
 	}
