@@ -470,8 +470,8 @@ public class CustomNcboMappingDAO extends AbstractNcboMappingDAO {
 		String queryString = "select ?source (count(?target) as ?count) where {                                                    "
 				+ "  ?mappingId <http://protege.stanford.edu/ontologies/mappings/mappings.rdfs#source> ?source .                   "
 				+ "  ?mappingId <http://protege.stanford.edu/ontologies/mappings/mappings.rdfs#target> ?target .                   "
-				+ "  ?mappingId <http://protege.stanford.edu/ontologies/mappings/mappings.rdfs#source_ontology> %SOURCE_ONT% .  "
-				+ "  ?mappingId <http://protege.stanford.edu/ontologies/mappings/mappings.rdfs#target_ontology> %TARGET_ONT% .  "
+				+ "  ?mappingId <http://protege.stanford.edu/ontologies/mappings/mappings.rdfs#source_ontology> <%SOURCE_ONT%> .  "
+				+ "  ?mappingId <http://protege.stanford.edu/ontologies/mappings/mappings.rdfs#target_ontology> <%TARGET_ONT%> .  "
 				+ "  %TRIPLES_FOR_PARAMS% FILTER (%FILTER%) } GROUP BY ?source ORDER BY DESC(?count) LIMIT %LIMIT% OFFSET %OFFSET% ";
 
 		// Replace triples placeholder with triples pattern generated from the
