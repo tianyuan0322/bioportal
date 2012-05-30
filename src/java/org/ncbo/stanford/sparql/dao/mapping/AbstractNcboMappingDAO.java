@@ -502,13 +502,13 @@ public class AbstractNcboMappingDAO {
 				String bind = "  ?mappingId map:source_ontology <"+parameters.getSourceOntology()+"> ."
 						+ "  ?mappingId map:target_ontology ?targetOntologyURI .";
 				queryString = queryString.replace("%MAPPING_ONT_BIND%", bind);
-				String vars = "?targetOntologyURI ("+parameters.getSourceOntology()+" as ?sourceOntologyURI)";
+				String vars = "?targetOntologyURI (<"+parameters.getSourceOntology()+"> as ?sourceOntologyURI)";
 				queryString = queryString.replace("%MAPPING_ONT_VARS%", vars);
 			} else if (parameters.getTargetOntology() != null) {
 				String bind = "  ?mappingId map:target_ontology <"+parameters.getTargetOntology()+"> ."
 						+ "  ?mappingId map:source_ontology ?sourceOntologyURI .";
 				queryString = queryString.replaceAll("%MAPPING_ONT_BIND%", bind);
-				String vars = "?sourceOntologyURI ("+parameters.getTargetOntology()+" as ?targetOntologyURI)";
+				String vars = "?sourceOntologyURI (<"+parameters.getTargetOntology()+"> as ?targetOntologyURI)";
 				queryString = queryString.replaceAll("%MAPPING_ONT_VARS%", vars);
 			} else {
 				throw new InvalidInputException("source or target id must be set at this point.");
@@ -694,10 +694,14 @@ public class AbstractNcboMappingDAO {
 			throws InvalidInputException {
 		// Determine the SPARQL filter to use based on directionality
 		// Default is bidirectional
-		String filter = "(?sourceOntologyURI = <" + sourceOntology.toString() + "> "
+		/**
+		 	String filter = "(?sourceOntologyURI = <" + sourceOntology.toString() + "> "
+		 
 				+ " && ?targetOntologyURI = <" + targetOntology + "> "
 				+ ") || (?sourceOntologyURI = <" +  targetOntology + "> "
 				+ " && ?targetOntologyURI = <" + sourceOntology + "> )";
+				*/
+		String filter = null;
 		if (sourceOntology != null && targetOntology != null) {
 			if (unidirectional != null && unidirectional == true) {
 				filter = "?sourceOntologyURI = <" + sourceOntology + "> "
