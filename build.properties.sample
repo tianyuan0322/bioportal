@@ -511,3 +511,4 @@ rdf.mysql.store.password=mysql_password
 ## Example: rdf.4store.endpoint.url=http://fourstore.machine:8082/
 rdf.4store.endpoint.url=
 
+bioportal.not.downloadable.ontids = 1499, 1352, 1353, 1354, 1424, 1426, 1427, 1428, 1429, 1416, 1420, 1422, 1424, 1456
