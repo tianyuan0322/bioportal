@@ -199,6 +199,7 @@
 
 		<copy file="${tmpl.dir}/applicationContext-services.xml.tmpl" tofile="${conf.dir.generated}/applicationContext-services.xml" overwrite="true">
 			<filterset>
+				<filter token="notdownloadableontids" value="${bioportal.not.downloadable.ontids}" />
 				<filter token="encryptionkey" value="${bioportal.encryption.key}" />
 				<filter token="messagebundlepackage" value="${bioportal.messagebundle.package}" />
 				<filter token="bioportalsessionnumcontainers" value="${bioportal.session.numcontainers}" />
