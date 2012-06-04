@@ -263,23 +263,23 @@ public abstract class AbstractOntologyManagerProtege {
 					kb.getProject().dispose();
 					kb = other;
 				}
+
+				// Set the default language to English for all ontologies
+				// This can be set to other languages later if we start to support them
+				if (kb instanceof OWLModel) {
+					RDFProperty defaultLanguageProperty = ((OWLModel) kb)
+							.getRDFProperty(ProtegeNames.getDefaultLanguageSlotName());
+
+					if (defaultLanguageProperty == null) {
+						defaultLanguageProperty = ((OWLModel) kb)
+								.createRDFProperty(ProtegeNames
+										.getDefaultLanguageSlotName());
+					}
+
+					((OWLModel) kb).getDefaultOWLOntology().setPropertyValue(
+							defaultLanguageProperty, "en");
+				}
 			}
-		}
-
-		// Set the default language to English for all ontologies
-		// This can be set to other languages later if we start to support them
-		if (kb instanceof OWLModel) {
-			RDFProperty defaultLanguageProperty = ((OWLModel) kb)
-					.getRDFProperty(ProtegeNames.getDefaultLanguageSlotName());
-
-			if (defaultLanguageProperty == null) {
-				defaultLanguageProperty = ((OWLModel) kb)
-						.createRDFProperty(ProtegeNames
-								.getDefaultLanguageSlotName());
-			}
-
-			((OWLModel) kb).getDefaultOWLOntology().setPropertyValue(
-					defaultLanguageProperty, "en");
 		}
 
 		return kb;
