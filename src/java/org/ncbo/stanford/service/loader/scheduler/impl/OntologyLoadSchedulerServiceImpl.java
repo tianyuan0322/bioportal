@@ -180,11 +180,12 @@ public class OntologyLoadSchedulerServiceImpl extends AbstractOntologyService
 				updateOntologyStatus(loadQueue, ontologyBean, formatHandler,
 						status, errorMessage);
 
+				// add an entry into the purl server for new ontologies
+				createPurlEntry(ontologyBean);
+				
 				// load ontology
 				loadOntology(ontologyBean, formatHandler);
 
-				// add an entry into the purl server for new ontologies
-				createPurlEntry(ontologyBean);
 
 				// calculate ontology metrics
 				calculateMetrics(ontologyBean, formatHandler);
@@ -322,19 +323,20 @@ public class OntologyLoadSchedulerServiceImpl extends AbstractOntologyService
 	}
 
 	/**
-	 * Create a purl entry for a new ontology. If the internalVersionNumber=1
+	 * Create a purl entry for a new ontology. If the internalVersionNumber < 5
 	 * and the ontology has a non blank abbreviation that isn't already in the
 	 * purl server, we create a new entry.
 	 */
 	private void createPurlEntry(OntologyBean ontologyBean) {
 		if (purlClientManager.isConfigured()
-				&& ontologyBean.getInternalVersionNumber() == 1
+				&& ontologyBean.getInternalVersionNumber() < 5
 				&& StringUtils.isNotBlank(ontologyBean.getAbbreviation())) {
 			String purl_path = "/ontology/" + ontologyBean.getAbbreviation();
 			String targetPath = "/virtual/" + ontologyBean.getOntologyId();
-			log.info("Attempting to create purl entry: purl_path=" + purl_path
-					+ " with targetPath=" + targetPath);
+			
 			if (!purlClientManager.doesPurlExist(purl_path)) {
+				log.info("Attempting to create purl entry: purl_path=" + purl_path
+						+ " with targetPath=" + targetPath);
 				purlClientManager.createAdvancedPartialPurl(purl_path,
 						targetPath);
 			}
