@@ -37,9 +37,6 @@ public class ProvisionalTermDAO {
 
 	protected Map<String, RDFStoreManager> rdfStoreManagerMap;
 
-	private static String MULT_IDS = "hasMultipleOntologyIds";
-	private static String MULT_SYNONYMS = "hasMultipleSynonyms";
-
 	// This is a general SPARQL query that will produce rows of results that can
 	// be interpreted as provisional terms (IE it contains all provisional term
 	// fields in every row). The %FILTER% token can be replaced with whatever
@@ -47,15 +44,12 @@ public class ProvisionalTermDAO {
 	// replaced as well.
 	protected final static String provisionalTermQuery = ""
 			+ "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#> "
-			+ "SELECT DISTINCT " + "?id " + "?label " + "?ontologyId " + "?"
-			+ MULT_IDS
-			+ " "
-			+ "?synonym "
-			+ "?"
-			+ MULT_SYNONYMS
-			+ " "
+			+ "SELECT DISTINCT "
+			+ "?id "
+			+ "?label "
 			+ "?definition"
 			+ "?provisionalSubclassOf "
+			+ "?ontologyId "
 			+ "?created "
 			+ "?updated "
 			+ "?submittedBy "
@@ -67,15 +61,8 @@ public class ProvisionalTermDAO {
 			+ "  ?id <http://purl.bioontology.org/ontology/provisional#definition> ?definition ."
 			+ "  ?id <http://purl.bioontology.org/ontology/provisional#created> ?created ."
 			+ "  ?id <http://purl.bioontology.org/ontology/provisional#submitted_by> ?submittedBy ."
-			+ "  { SELECT ?ontologyId { OPTIONAL { ?id <http://purl.bioontology.org/ontology/provisional#ontology_id> ?ontologyId }} LIMIT 1 }"
-			+ "  { SELECT ?synonym { OPTIONAL { ?id <http://purl.bioontology.org/ontology/provisional#synonym> ?synonym }} LIMIT 1 }"
+			+ "  OPTIONAL { ?id <http://purl.bioontology.org/ontology/provisional#ontology_id> ?ontologyId }"
 			+ "  OPTIONAL { ?id <http://purl.bioontology.org/ontology/provisional#provisional_subclass_of> ?provisionalSubclassOf }"
-			+ "  OPTIONAL { ?id <http://purl.bioontology.org/ontology/provisional#has_multiple_ontology_ids> ?"
-			+ MULT_IDS
-			+ " }"
-			+ "  OPTIONAL { ?id <http://purl.bioontology.org/ontology/provisional#has_multiple_synonyms> ?"
-			+ MULT_SYNONYMS
-			+ " }"
 			+ "  OPTIONAL { ?id <http://purl.bioontology.org/ontology/provisional#updated> ?updated }"
 			+ "  OPTIONAL { ?id <http://purl.bioontology.org/ontology/provisional#note_id> ?noteId }"
 			+ "  OPTIONAL { ?id <http://purl.bioontology.org/ontology/provisional#status> ?status }"
@@ -91,8 +78,7 @@ public class ProvisionalTermDAO {
 			+ "  ?id <http://purl.bioontology.org/ontology/provisional#definition> ?definition ."
 			+ "  ?id <http://purl.bioontology.org/ontology/provisional#created> ?created ."
 			+ "  ?id <http://purl.bioontology.org/ontology/provisional#submitted_by> ?submittedBy ."
-			+ "  { SELECT ?ontologyId { ?id <http://purl.bioontology.org/ontology/provisional#ontology_id> ?ontologyId } LIMIT 1 }"
-			+ "  { SELECT ?synonym { OPTIONAL { ?id <http://purl.bioontology.org/ontology/provisional#synonym> ?synonym }} LIMIT 1 }"
+			+ "  OPTIONAL { ?id <http://purl.bioontology.org/ontology/provisional#ontology_id> ?ontologyId }"
 			+ "  OPTIONAL { ?id <http://purl.bioontology.org/ontology/provisional#provisional_subclass_of> ?provisionalSubclassOf }"
 			+ "  OPTIONAL { ?id <http://purl.bioontology.org/ontology/provisional#updated> ?updated }"
 			+ "  OPTIONAL { ?id <http://purl.bioontology.org/ontology/provisional#note_id> ?noteId }"
@@ -111,13 +97,14 @@ public class ProvisionalTermDAO {
 			+ "  FILTER ( ?id = <%TERM_ID%> ) }";
 
 	/*******************************************************************
-	 *
+	 * 
 	 * Generic SPARQL methods
-	 *
+	 * 
 	 *******************************************************************/
 
 	public List<ProvisionalTerm> getProvisionalTerms(Integer limit,
-			Integer offset, String filter, ProvisionalTermFilterGenerator parameters)
+			Integer offset, String filter,
+			ProvisionalTermFilterGenerator parameters)
 			throws InvalidInputException {
 		return getProvisionalTerms(limit, offset, filter, null, parameters);
 	}
@@ -125,7 +112,7 @@ public class ProvisionalTermDAO {
 	/**
 	 * Generic getProvisionalTerms call. Must provide a valid SPARQL filter
 	 * (generated via helper methods or elsewhere).
-	 *
+	 * 
 	 * @param limit
 	 * @param offset
 	 * @param filter
@@ -133,13 +120,14 @@ public class ProvisionalTermDAO {
 	 * @param sourceOntology
 	 * @param targetOntology
 	 * @param unidirectional
-	 *
+	 * 
 	 * @return
 	 * @throws InvalidInputException
 	 */
 	public List<ProvisionalTerm> getProvisionalTerms(Integer limit,
 			Integer offset, String filter, String orderBy,
-			ProvisionalTermFilterGenerator parameters) throws InvalidInputException {
+			ProvisionalTermFilterGenerator parameters)
+			throws InvalidInputException {
 		// Safety check
 		if (limit == null || limit >= 50000) {
 			limit = 50000;
@@ -160,13 +148,13 @@ public class ProvisionalTermDAO {
 					: filter;
 		} else {
 			combinedFilters = (parameters != null && !parameters.isEmpty()) ? parameters
-					.toFilter()
-					: "";
+					.toFilter() : "";
 		}
 
 		// Substitute tokens in the generic query string
-		String queryString = provisionalTermQuery.replaceAll("%FILTER%",
-				combinedFilters).replaceAll("%LIMIT%", limit.toString())
+		String queryString = provisionalTermQuery
+				.replaceAll("%FILTER%", combinedFilters)
+				.replaceAll("%LIMIT%", limit.toString())
 				.replaceAll("%OFFSET%", offset.toString());
 
 		if (orderBy != null && !orderBy.isEmpty()) {
@@ -210,11 +198,6 @@ public class ProvisionalTermDAO {
 						.getValue("submittedBy")));
 
 				// Optional values
-				if (isValidValue(bs.getValue("ontologyId"))) {
-					term.addOntologyIds(convertValueToInteger(bs
-							.getValue("ontologyId")));
-				}
-
 				if (isValidValue(bs.getValue("provisionalSubclassOf")))
 					term.setProvisionalSubclassOf(new URIImpl(bs.getValue(
 							"provisionalSubclassOf").stringValue()));
@@ -232,47 +215,40 @@ public class ProvisionalTermDAO {
 					term.setPermanentId(new URIImpl(bs.getValue("permanentId")
 							.stringValue()));
 
-				if (isValidValue(bs.getValue("permanentId")))
-					term.addSynonyms(bs.getValue("synonym").stringValue());
+				// Fill in synonym list
+				String getSynonyms = synonymsForTerm.replaceAll("%TERM_ID%",
+						termId);
 
-				// Fill in lists
-				if (isValidValue(bs.getValue(MULT_SYNONYMS))) {
-					String getSynonyms = synonymsForTerm.replaceAll(
-							"%TERM_ID%", termId);
+				TupleQuery getSynonymsQuery = con.prepareTupleQuery(
+						QueryLanguage.SPARQL, getSynonyms,
+						ApplicationConstants.PROVISIONAL_TERM_CONTEXT);
+				TupleQueryResult getSynonymsResult = getSynonymsQuery
+						.evaluate();
 
-					TupleQuery getSynonymsQuery = con.prepareTupleQuery(
-							QueryLanguage.SPARQL, getSynonyms,
-							ApplicationConstants.PROVISIONAL_TERM_CONTEXT);
-					TupleQueryResult getSynonymsResult = getSynonymsQuery
-							.evaluate();
-
-					while (getSynonymsResult.hasNext()) {
-						BindingSet bs1 = getSynonymsResult.next();
-						String synonym = bs1.getValue("synonym").stringValue();
-						if (!term.getSynonyms().contains(synonym)) {
-							term.addSynonyms(bs.getValue("synonym")
-									.stringValue());
-						}
+				while (getSynonymsResult.hasNext()) {
+					BindingSet bs1 = getSynonymsResult.next();
+					String synonym = bs1.getValue("synonym").stringValue();
+					if (!term.getSynonyms().contains(synonym)) {
+						term.addSynonyms(synonym);
 					}
 				}
 
-				if (isValidValue(bs.getValue(MULT_IDS))) {
-					String getOntologyIds = ontologyIdsForTerm.replaceAll(
-							"%TERM_ID%", termId);
+				// Fill in ontology id list
+				String getOntologyIds = ontologyIdsForTerm.replaceAll(
+						"%TERM_ID%", termId);
 
-					TupleQuery getOntologyIdsQuery = con.prepareTupleQuery(
-							QueryLanguage.SPARQL, getOntologyIds,
-							ApplicationConstants.PROVISIONAL_TERM_CONTEXT);
-					TupleQueryResult getOntologyIdsResult = getOntologyIdsQuery
-							.evaluate();
+				TupleQuery getOntologyIdsQuery = con.prepareTupleQuery(
+						QueryLanguage.SPARQL, getOntologyIds,
+						ApplicationConstants.PROVISIONAL_TERM_CONTEXT);
+				TupleQueryResult getOntologyIdsResult = getOntologyIdsQuery
+						.evaluate();
 
-					while (getOntologyIdsResult.hasNext()) {
-						BindingSet bs2 = getOntologyIdsResult.next();
-						Integer ontologyId = convertValueToInteger(bs2
-								.getValue("ontologyId"));
-						if (!term.getOntologyIds().contains(ontologyId)) {
-							term.addOntologyIds(ontologyId);
-						}
+				while (getOntologyIdsResult.hasNext()) {
+					BindingSet bs2 = getOntologyIdsResult.next();
+					Integer ontologyId = convertValueToInteger(bs2
+							.getValue("ontologyId"));
+					if (!term.getOntologyIds().contains(ontologyId)) {
+						term.addOntologyIds(ontologyId);
 					}
 				}
 
@@ -296,7 +272,7 @@ public class ProvisionalTermDAO {
 	/**
 	 * Generic getCount call. Must provide a valid SPARQL filter (generated via
 	 * helper methods or elsewhere).
-	 *
+	 * 
 	 * @param sourceOntology
 	 * @param targetOntology
 	 * @param unidirectional
@@ -304,7 +280,8 @@ public class ProvisionalTermDAO {
 	 * @return
 	 * @throws InvalidInputException
 	 */
-	public Integer getCount(String filter, ProvisionalTermFilterGenerator parameters)
+	public Integer getCount(String filter,
+			ProvisionalTermFilterGenerator parameters)
 			throws InvalidInputException {
 		RepositoryConnection con = getRdfStoreManager()
 				.getRepositoryConnection();
@@ -317,8 +294,7 @@ public class ProvisionalTermDAO {
 					: filter;
 		} else {
 			combinedFilters = (parameters != null && !parameters.isEmpty()) ? parameters
-					.toFilter()
-					: "";
+					.toFilter() : "";
 		}
 
 		String queryString = provisionalTermCountQuery.replaceAll("%FILTER%",
@@ -391,7 +367,7 @@ public class ProvisionalTermDAO {
 
 		getRdfStoreManager().addTriples(statements,
 				ApplicationConstants.PROVISIONAL_TERM_CONTEXT);
-		
+
 		// Add triples indicating we should look up additional items
 		if (newTerm.getSynonyms().size() > 1) {
 			URI predicate = new URIImpl(
@@ -480,8 +456,7 @@ public class ProvisionalTermDAO {
 		return null;
 	}
 
-	public void deleteProvisionalTerm(URI id)
-			throws Exception {
+	public void deleteProvisionalTerm(URI id) throws Exception {
 		RepositoryConnection con = getRdfStoreManager()
 				.getRepositoryConnection();
 		try {
@@ -496,15 +471,16 @@ public class ProvisionalTermDAO {
 	}
 
 	public List<ProvisionalTerm> getProvisionalTermsForParameters(
-			Integer limit, Integer offset, ProvisionalTermFilterGenerator parameters)
+			Integer limit, Integer offset,
+			ProvisionalTermFilterGenerator parameters)
 			throws InvalidInputException {
 		return getProvisionalTerms(limit, offset, null, parameters);
 	}
 
 	/*******************************************************************
-	 *
+	 * 
 	 * protected methods
-	 *
+	 * 
 	 *******************************************************************/
 
 	protected Integer convertValueToInteger(Value val) {
@@ -521,7 +497,7 @@ public class ProvisionalTermDAO {
 
 	/**
 	 * Checks the repository for a provisional term using provided id.
-	 *
+	 * 
 	 * @param id
 	 * @param con
 	 * @return
@@ -543,7 +519,7 @@ public class ProvisionalTermDAO {
 	/**
 	 * Get a manager for the RDF store based on the configured options in
 	 * build.properties.
-	 *
+	 * 
 	 * @return
 	 */
 	protected RDFStoreManager getRdfStoreManager() {
@@ -555,17 +531,17 @@ public class ProvisionalTermDAO {
 	 * This method does the actual delete action for removing provisional terms
 	 * from the triplestore. It removes all triples with a subject matching the
 	 * provisional term id.
-	 *
+	 * 
 	 * @param con
 	 * @param id
-	 * @throws Exception 
+	 * @throws Exception
 	 */
 	protected void deleteFromTripleStore(RepositoryConnection con, URI id)
 			throws Exception {
 		// Remove all triples matching the given id
 		RepositoryResult<Statement> results = con.getStatements(id, null, null,
 				false);
-		
+
 		// Remove all those triples
 		getRdfStoreManager().deleteTriples(results.asList());
 	}
@@ -573,7 +549,7 @@ public class ProvisionalTermDAO {
 	/**
 	 * Look for valid values and update the provided provisional term bean with
 	 * them. For use in re-creating a provisional term as part of an update.
-	 *
+	 * 
 	 * @param term
 	 * @param ontologyIds
 	 * @param label
@@ -625,9 +601,9 @@ public class ProvisionalTermDAO {
 	}
 
 	/*******************************************************************
-	 *
+	 * 
 	 * Auto-generated methods
-	 *
+	 * 
 	 *******************************************************************/
 
 	/**
