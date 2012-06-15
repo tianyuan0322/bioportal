@@ -60,6 +60,15 @@ public class ProvisionalTermFilterGenerator extends
 	public String toFilter() {
 		String filter = "";
 
+		if (submittedBy != null) {
+			filter += (filter.length() > 0) ? " && " : "";
+			for (Integer submitter : submittedBy) {
+				filter += "?submittedBy = " + submitter;
+				filter += (submittedBy.indexOf(submitter) == submittedBy.size() - 1) ? ""
+						: " || ";
+			}
+		}
+
 		if (ontologyIds != null) {
 			filter += (filter.length() > 0) ? " && " : "";
 			filter += "?ontologyId IN (" + StringUtils.join(ontologyIds, ", ")
