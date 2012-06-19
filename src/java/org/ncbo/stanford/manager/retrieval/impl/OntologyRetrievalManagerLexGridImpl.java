@@ -175,6 +175,7 @@ public class OntologyRetrievalManagerLexGridImpl extends
 		if (StringUtils.isBlank(schemeName)) {
 			log
 					.warn("Can not process request when the codingSchemeURI is blank");
+			return concept;
 		} else if (StringUtils.isBlank(conceptId)) {
 			log.warn("Can not process request when the conceptId is blank");
 		} else {
