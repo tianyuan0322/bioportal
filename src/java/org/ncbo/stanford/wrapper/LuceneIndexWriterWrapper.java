@@ -57,53 +57,27 @@ public class LuceneIndexWriterWrapper {
 	}
 
 	public void commit() throws IOException {
-		try {
-			initWriter();
-			writer.commit();
-		} finally {
-			closeWriterIfInactive();
-		}
+		writer.commit();
 	}
 
 	public void optimize() throws IOException {
-		try {
-			initWriter();
-			writer.optimize();
-		} finally {
-			closeWriterIfInactive();
-		}
+		writer.optimize();
 	}
 
 	public void deleteDocuments(Query query) throws IOException {
-		try {
-			initWriter();
-			writer.deleteDocuments(query);
-		} finally {
-			closeWriterIfInactive();
-		}
+		writer.deleteDocuments(query);
 	}
 
 	public void deleteDocuments(Term term) throws IOException {
-		try {
-			initWriter();
-			writer.deleteDocuments(term);
-		} finally {
-			closeWriterIfInactive();
-		}
+		writer.deleteDocuments(term);
 	}
 
 	public void addDocuments(List<SearchIndexBean> indexBeans)
 			throws IOException {
-		try {
-			initWriter();
-
-			for (SearchIndexBean indexBean : indexBeans) {
-				Document doc = new Document();
-				addFields(doc, indexBean);
-				writer.addDocument(doc);
-			}
-		} finally {
-			closeWriterIfInactive();
+		for (SearchIndexBean indexBean : indexBeans) {
+			Document doc = new Document();
+			addFields(doc, indexBean);
+			writer.addDocument(doc);
 		}
 	}
 
@@ -183,7 +157,7 @@ public class LuceneIndexWriterWrapper {
 		writer.setMaxMergeDocs(maxMergeDocs);
 	}
 
-	private void initWriter() throws IOException {
+	public void initWriter() throws IOException {
 		initWriter(false);
 	}
 }

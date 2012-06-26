@@ -136,11 +136,13 @@ public class IndexSearchServiceImpl extends AbstractSearchService implements
 		List<OntologyBean> ontologies = ontologyMetadataManager
 				.findLatestActiveOntologyOrOntologyViewVersions(ontologyIdList);
 
+		writer.initWriter();
 		removeOntologies(writer, ontologyIdList, doBackup, false);
 
 		if (!ontologies.isEmpty()) {
 			indexOntologies(writer, ontologies, false, doOptimize);
-		}
+		}		
+		writer.closeWriterIfInactive();
 	}
 
 	/**
@@ -170,7 +172,9 @@ public class IndexSearchServiceImpl extends AbstractSearchService implements
 	 */
 	public void removeOntologies(List<Integer> ontologyIds, boolean doBackup,
 			boolean doOptimize) throws Exception {
+		writer.initWriter();
 		removeOntologies(writer, ontologyIds, doBackup, doOptimize);
+		writer.closeWriterIfInactive();
 	}
 
 	/**
@@ -182,7 +186,7 @@ public class IndexSearchServiceImpl extends AbstractSearchService implements
 	 * @param doOptimize
 	 * @throws Exception
 	 */
-	public void removeOntologies(LuceneIndexWriterWrapper writer,
+	private void removeOntologies(LuceneIndexWriterWrapper writer,
 			List<Integer> ontologyIds, boolean doBackup, boolean doOptimize)
 			throws Exception {
 		if (doBackup) {
@@ -237,7 +241,9 @@ public class IndexSearchServiceImpl extends AbstractSearchService implements
 	 * @throws Exception
 	 */
 	public void optimizeIndex() throws Exception {
+		writer.initWriter();
 		optimizeIndex(writer);
+		writer.closeWriterIfInactive();
 	}
 
 	/**
