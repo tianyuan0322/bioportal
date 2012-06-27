@@ -1,5 +1,9 @@
 package org.ncbo.stanford.util.constants;
 
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Set;
+
 import org.openrdf.model.URI;
 import org.openrdf.model.impl.URIImpl;
 
@@ -256,4 +260,11 @@ public interface ApplicationConstants {
 	public static final String RDFFile = ".rdf";
 	public static final String FileType = ".owl";
 	public static final String RDFStoreType="rdfStoreType";
+	
+	/**
+	 * Classes to hide in REST service
+	 */
+	public static Set<String> hiddenClasses = new HashSet<String>(Arrays.asList("dc:", "http://www.w3.org/2004/02/skos/core"));
+	
+	
 }
