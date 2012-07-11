@@ -515,17 +515,13 @@ public class RequestUtils {
 							.encode(val, encoding)) + "&";
 		}
 
-		paramsStr = (paramsStr.length() > 0) ? paramsStr.substring(0,
-				paramsStr.length() - 1) : paramsStr;
+		paramsStr = (paramsStr.length() > 0) ? paramsStr.substring(0, paramsStr
+				.length() - 1) : paramsStr;
 
-		int port = base.getPort();
-		baseUrl = base.getProtocol() + "://" + base.getHost()
-				+ ((port > -1 && port != 80) ? ":" + port : "")
-				+ base.getPath();
+		java.net.URI uri = new java.net.URI(base.getProtocol(), null, base
+				.getHost(), base.getPort(), base.getPath(), paramsStr, null);
+		URL url = uri.toURL();
 
-		// Send data
-		URL url = new URL(baseUrl + ((paramsStr.length() > 0) ? "?" : "")
-				+ paramsStr);
 		HttpURLConnection conn = (HttpURLConnection) url.openConnection();
 		conn.setRequestProperty("User-Agent", BIOPORTAL_USER_AGENT);
 
