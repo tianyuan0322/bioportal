@@ -376,8 +376,8 @@ public class RequestUtils {
 
 		if (param != null) {
 			try {
-				param = URLDecoder.decode(param,
-						MessageUtils.getMessage("default.encoding"));
+				param = URLDecoder.decode(param, MessageUtils
+						.getMessage("default.encoding"));
 			} catch (UnsupportedEncodingException e) {
 				// this shouldn't happen
 				e.printStackTrace();
@@ -409,8 +409,8 @@ public class RequestUtils {
 
 		if (paramData != null) {
 			try {
-				paramData = URLDecoder.decode(paramData,
-						MessageUtils.getMessage("default.encoding"));
+				paramData = URLDecoder.decode(paramData, MessageUtils
+						.getMessage("default.encoding"));
 			} catch (UnsupportedEncodingException e) {
 				e.printStackTrace();
 			}
@@ -455,12 +455,12 @@ public class RequestUtils {
 						+ PARAM_SEPARATOR;
 			}
 
-			postData = (postData.length() > 0) ? postData.substring(0,
-					postData.length() - 1) : postData;
+			postData = (postData.length() > 0) ? postData.substring(0, postData
+					.length() - 1) : postData;
 
 			conn.setDoOutput(true);
-			OutputStreamWriter wr = new OutputStreamWriter(
-					conn.getOutputStream());
+			OutputStreamWriter wr = new OutputStreamWriter(conn
+					.getOutputStream());
 			wr.write(postData);
 			wr.flush();
 			wr.close();
@@ -515,17 +515,13 @@ public class RequestUtils {
 							.encode(val, encoding)) + "&";
 		}
 
-		paramsStr = (paramsStr.length() > 0) ? paramsStr.substring(0,
-				paramsStr.length() - 1) : paramsStr;
+		paramsStr = (paramsStr.length() > 0) ? paramsStr.substring(0, paramsStr
+				.length() - 1) : paramsStr;
 
-		int port = base.getPort();
-		baseUrl = base.getProtocol() + "://" + base.getHost()
-				+ ((port > -1 && port != 80) ? ":" + port : "")
-				+ base.getPath();
+		java.net.URI uri = new java.net.URI(base.getProtocol(), null, base
+				.getHost(), base.getPort(), base.getPath(), paramsStr, null);
+		URL url = uri.toURL();
 
-		// Send data
-		URL url = new URL(baseUrl + ((paramsStr.length() > 0) ? "?" : "")
-				+ paramsStr);
 		HttpURLConnection conn = (HttpURLConnection) url.openConnection();
 		conn.setRequestProperty("User-Agent", BIOPORTAL_USER_AGENT);
 
