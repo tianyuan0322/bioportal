@@ -223,6 +223,17 @@ public class NotesServiceImpl implements NotesService {
 
 	public void deleteNote(OntologyBean ont, String noteId) {
 		NotesManager notesManager = notesPool.getNotesManagerForOntology(ont);
+		
+		// Delete associated notes (recurse as necessary)
+		try {
+			Collection<Annotation> associated = getNote(ont, noteId).getAssociatedAnnotations();
+			for (Annotation annotation : associated) {
+				deleteNote(ont, annotation.getId());
+			}
+		} catch (NoteNotFoundException e) {
+			// Do nothing (ok if no annotations exist)
+		}
+
 		notesManager.deleteNote(noteId);
 	}
 
