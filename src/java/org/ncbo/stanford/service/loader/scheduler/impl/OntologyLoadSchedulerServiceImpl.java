@@ -182,10 +182,9 @@ public class OntologyLoadSchedulerServiceImpl extends AbstractOntologyService
 
 				// add an entry into the purl server for new ontologies
 				createPurlEntry(ontologyBean);
-				
+
 				// load ontology
 				loadOntology(ontologyBean, formatHandler);
-
 
 				// calculate ontology metrics
 				calculateMetrics(ontologyBean, formatHandler);
@@ -246,9 +245,12 @@ public class OntologyLoadSchedulerServiceImpl extends AbstractOntologyService
 			try {
 				ncboOntologyLoadQueueDAO.saveNcboOntologyLoadQueue(loadQueue);
 			} catch (Exception e1) {
-				// Retry and don't let exceptions to the load queue update ruin parsing
+				// Retry and don't let exceptions to the load queue fail parse
+				log.debug("Error updating LoadQueue for ontology "
+						+ ontologyBean.getId() + ", retrying");
 				try {
-					ncboOntologyLoadQueueDAO.saveNcboOntologyLoadQueue(loadQueue);
+					ncboOntologyLoadQueueDAO
+							.saveNcboOntologyLoadQueue(loadQueue);
 				} catch (Exception e2) {
 					// Do nothing
 				}
@@ -344,10 +346,10 @@ public class OntologyLoadSchedulerServiceImpl extends AbstractOntologyService
 				&& StringUtils.isNotBlank(ontologyBean.getAbbreviation())) {
 			String purl_path = "/ontology/" + ontologyBean.getAbbreviation();
 			String targetPath = "/virtual/" + ontologyBean.getOntologyId();
-			
+
 			if (!purlClientManager.doesPurlExist(purl_path)) {
-				log.info("Attempting to create purl entry: purl_path=" + purl_path
-						+ " with targetPath=" + targetPath);
+				log.info("Attempting to create purl entry: purl_path="
+						+ purl_path + " with targetPath=" + targetPath);
 				purlClientManager.createAdvancedPartialPurl(purl_path,
 						targetPath);
 			}
