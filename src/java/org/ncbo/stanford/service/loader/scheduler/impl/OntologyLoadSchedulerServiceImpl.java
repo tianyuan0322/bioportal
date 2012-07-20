@@ -248,6 +248,7 @@ public class OntologyLoadSchedulerServiceImpl extends AbstractOntologyService
 				// Retry and don't let exceptions to the load queue fail parse
 				log.debug("Error updating LoadQueue for ontology "
 						+ ontologyBean.getId() + ", retrying");
+				e1.printStackTrace();
 				try {
 					ncboOntologyLoadQueueDAO
 							.saveNcboOntologyLoadQueue(loadQueue);
