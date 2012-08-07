@@ -368,8 +368,9 @@ public abstract class AbstractOntologyManagerLexGrid {
 			localId= codeSplitArray[1];
 		}
 		
+		// hard code for ontology 47814
 		if (EDAMONTOLOGY_ID.equals(ontologyId)) {
-			fullId = EDAMONTOLOGY_URI + localId;
+			fullId = EDAMONTOLOGY_URI + prefix.split("_")[1] + "_"+ localId;
 			return fullId;
 		}
 
@@ -385,7 +386,7 @@ public abstract class AbstractOntologyManagerLexGrid {
 			//Unprefixed-ID
 			fullId = "http://purl.obolibrary.org/obo/#"+code;
 		}
-		fullId = EDAMONTOLOGY_URI + localId; // test
+//		fullId = EDAMONTOLOGY_URI + localId; // test
 		return fullId;
 	}
 
