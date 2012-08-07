@@ -348,6 +348,9 @@ public abstract class AbstractOntologyManagerLexGrid {
 	}
 
 	private String getOBOFullId(OntologyBean ontologyBean, String code) {
+		final Integer EDAMONTOLOGY_ID = 47814;
+		final String EDAMONTOLOGY_URI = "http://edamontology.org/";
+		
 		String prefix = "";
 		String fullId = "";
 		String localId="";
@@ -359,10 +362,15 @@ public abstract class AbstractOntologyManagerLexGrid {
 		}
 		String codeSplitArray[] = code.split(":");
 		Integer ontologyId = ontologyBean.getOntologyId();
-
+		
 		if (codeSplitArray.length >= 2) {
 			prefix = codeSplitArray[0];
 			localId= codeSplitArray[1];
+		}
+		
+		if (EDAMONTOLOGY_ID.equals(ontologyId)) {
+			fullId = EDAMONTOLOGY_URI + localId;
+			return fullId;
 		}
 
 		// The OBO FullId is generated based http://oboformat.googlecode.com/svn/trunk/doc/obo-syntax.html#5.9
