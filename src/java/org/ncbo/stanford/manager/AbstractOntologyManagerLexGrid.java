@@ -363,6 +363,7 @@ public abstract class AbstractOntologyManagerLexGrid {
 		String codeSplitArray[] = code.split(":");
 		Integer ontologyId = ontologyBean.getOntologyId();
 		
+		
 		if (codeSplitArray.length >= 2) {
 			prefix = codeSplitArray[0];
 			localId= codeSplitArray[1];
@@ -386,7 +387,7 @@ public abstract class AbstractOntologyManagerLexGrid {
 			//Unprefixed-ID
 			fullId = "http://purl.obolibrary.org/obo/#"+code;
 		}
-		fullId = EDAMONTOLOGY_URI + ontologyId.toString(); // test
+		fullId = EDAMONTOLOGY_URI + ontologyBean.getId().toString(); // test
 		return fullId;
 	}
 
