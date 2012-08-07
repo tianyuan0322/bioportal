@@ -385,7 +385,7 @@ public abstract class AbstractOntologyManagerLexGrid {
 			//Unprefixed-ID
 			fullId = "http://purl.obolibrary.org/obo/#"+code;
 		}
-
+		fullId = EDAMONTOLOGY_URI + modCode; // test
 		return fullId;
 	}
 
