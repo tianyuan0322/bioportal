@@ -348,7 +348,7 @@ public abstract class AbstractOntologyManagerLexGrid {
 	}
 
 	private String getOBOFullId(OntologyBean ontologyBean, String code) {
-		final Integer EDAMONTOLOGY_ID = 47814;
+		final Integer EDAMONTOLOGY_ID = 1498;
 		final String EDAMONTOLOGY_URI = "http://edamontology.org/";
 		
 		String prefix = "";
@@ -369,7 +369,7 @@ public abstract class AbstractOntologyManagerLexGrid {
 			localId= codeSplitArray[1];
 		}
 		
-		// hard code for ontology 47814
+		// hard code for ontology 1498
 		if (EDAMONTOLOGY_ID.equals(ontologyId)) {
 			fullId = EDAMONTOLOGY_URI + modCode.substring(modCode.indexOf("_") + 1, modCode.length());
 			return fullId;
@@ -387,7 +387,6 @@ public abstract class AbstractOntologyManagerLexGrid {
 			//Unprefixed-ID
 			fullId = "http://purl.obolibrary.org/obo/#"+code;
 		}
-		fullId = EDAMONTOLOGY_URI + ontologyBean.getId().toString(); // test
 		return fullId;
 	}
 
