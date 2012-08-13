@@ -1,5 +1,6 @@
 package org.ncbo.stanford.view.rest.restlet.notes;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
@@ -104,11 +105,13 @@ public class NotesRestlet extends AbstractBaseRestlet {
 
 		OntologyBean ont = null;
 		List<NoteBean> notesList = null;
+		Boolean useVersion = false;
 		try {
 			if (ontologyIdInt != null) {
 				ont = ontologyService
 						.findLatestOntologyOrViewVersion(ontologyIdInt);
 			} else if (ontologyVersionIdInt != null) {
+				useVersion = true;
 				ont = ontologyService.findOntologyOrView(ontologyVersionIdInt);
 			}
 
@@ -132,6 +135,18 @@ public class NotesRestlet extends AbstractBaseRestlet {
 			} else {
 				notesList = notesService.getAllNotesForOntology(ont, threaded,
 						topLevelOnly);
+			}
+			
+			// Filter for version id
+			if (useVersion) {
+				List<NoteBean> notesListFiltered = new ArrayList<NoteBean>();
+				for (NoteBean note : notesList) {
+					if (note.getCreatedInOntologyVersion().intValue() == ontologyVersionIdInt.intValue()) {
+						notesListFiltered.add(note);
+						System.out.println("");
+					}
+				}
+				notesList = notesListFiltered;
 			}
 
 		} catch (NoteNotFoundException nnfe) {
@@ -506,7 +521,7 @@ public class NotesRestlet extends AbstractBaseRestlet {
 			}
 
 			Annotation noteToDelete = notesService.getNote(ont, noteId);
-
+			
 			if (noteToDelete == null) {
 				throw new NoteNotFoundException();
 			} else {
