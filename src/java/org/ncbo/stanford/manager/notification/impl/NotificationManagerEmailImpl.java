@@ -29,7 +29,6 @@ public class NotificationManagerEmailImpl implements NotificationManager {
 	@Override
 	public void sendNotification(String subject, String message, String from,
 			String messageId, String inReplyTo, String email) {
-		log.info("Sending Notification to: " + email);
 		mailService.sendMail(from, email, subject, messageId,
 				inReplyTo, message);
 

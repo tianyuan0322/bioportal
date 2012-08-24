@@ -61,6 +61,7 @@ public class MailServiceImpl implements MailService {
 				message.setHeader("In-Reply-To", inReplyTo);
 			}
 
+			log.info("Sending notification to: " + email);
 			this.mailsender.send(message);
 		} catch (Exception ex) {
 			log.error("Sending mail failed", ex);
