@@ -36,7 +36,7 @@ public class BooleanWildCardQuery extends BooleanQuery {
 	private static final String IN_PAREN_DELIMITER = "#@#@#@#@#";
 	private static final char WILDCARD_CHAR = '*';
 
-	private static final String LUCENE_ESCAPE_CHARS = "[\\\\+\\-\\!\\(\\)\\:\\^\\]\\{\\}\\~\\*\\?]";
+	private static final String LUCENE_ESCAPE_CHARS = "[\\+\\-\\!\\(\\)\\^\\]\\{\\}\\~\\*\\?]";
 	private static final Pattern LUCENE_PATTERN = Pattern
 			.compile(LUCENE_ESCAPE_CHARS);
 	private static final String REPLACEMENT_STRING = "\\\\$0";
@@ -54,36 +54,27 @@ public class BooleanWildCardQuery extends BooleanQuery {
 		this.analyzer = analyzer;
 	}
 
-/*	public static void main(String[] args) {
-		String expr;
-		expr = "cas (blo+od del phi) -clo -(cat mo) 		         (artery       vibe)   (nil) ser_00 	gul";
-		expr = "(heart lung) vess";
-		expr = "(blood nose) -dis";
-		expr = "hear attac -Anxiety";
-		expr = "-(calcium(2+) irium)";
-		expr = "calcium(";
-		expr = "-(heart lung) -calcium(2) blood-clot";
-		expr = "-(Lung-dish-soup heart) -(calcium(2)) blood_clot_heart bao_000";
-		expr = "calcium(2+)";
-
-		Version luceneVersion = Version.LUCENE_24;
-		Analyzer analyzer = new StandardAnalyzer(luceneVersion, Collections
-				.emptySet());
-		String indexPath = "/apps/bmir.apps/bioportal_resources/searchindex";
-
-		try {
-			FSDirectory indexDir = NIOFSDirectory.open(new File(indexPath));
-			IndexSearcher searcher = new IndexSearcher(indexDir, true);
-
-			BooleanWildCardQuery q = new BooleanWildCardQuery(luceneVersion,
-					searcher.getIndexReader(), analyzer);
-			q.parseBooleanWildCardQuery("contents", expr);
-			// q.parseExpression(expr, "contents");
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-	}
-*/
+	/*
+	 * public static void main(String[] args) { String expr; expr =
+	 * "cas (blo+od del phi) -clo -(cat mo) 		         (artery       vibe)   (nil) ser_00 	gul"
+	 * ; expr = "(heart lung) vess"; expr = "(blood nose) -dis"; expr =
+	 * "hear attac -Anxiety"; expr = "-(calcium(2+) irium)"; expr = "calcium(";
+	 * expr = "-(heart lung) -calcium(2) blood-clot"; expr =
+	 * "-(Lung-dish-soup heart) -(calcium(2)) blood_clot_heart bao_000"; expr =
+	 * "calcium(2+)";
+	 * 
+	 * Version luceneVersion = Version.LUCENE_24; Analyzer analyzer = new
+	 * StandardAnalyzer(luceneVersion, Collections .emptySet()); String
+	 * indexPath = "/apps/bmir.apps/bioportal_resources/searchindex";
+	 * 
+	 * try { FSDirectory indexDir = NIOFSDirectory.open(new File(indexPath));
+	 * IndexSearcher searcher = new IndexSearcher(indexDir, true);
+	 * 
+	 * BooleanWildCardQuery q = new BooleanWildCardQuery(luceneVersion,
+	 * searcher.getIndexReader(), analyzer);
+	 * q.parseBooleanWildCardQuery("contents", expr); // q.parseExpression(expr,
+	 * "contents"); } catch (Exception e) { e.printStackTrace(); } }
+	 */
 	@SuppressWarnings("unchecked")
 	public void parseBooleanWildCardQuery(String field, String expr)
 			throws Exception {
@@ -157,6 +148,9 @@ public class BooleanWildCardQuery extends BooleanQuery {
 
 	private String parseExpression(String expr, String field)
 			throws ParseException {
+		// replace colon with a space so OBO IDs can be found. Ex: GO:0008150
+		expr = expr.replace(":", "\\:");
+
 		QueryParser parser = new QueryParser(luceneVersion, field, analyzer);
 		Query query = parser.parse(expr);
 		expr = query.toString().replace(field + ":", "");

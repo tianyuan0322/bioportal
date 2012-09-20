@@ -19,6 +19,7 @@ import org.LexGrid.concepts.Comment;
 import org.LexGrid.concepts.Concept;
 import org.LexGrid.concepts.Definition;
 import org.LexGrid.concepts.Presentation;
+import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.ncbo.stanford.bean.OntologyBean;
@@ -73,7 +74,7 @@ public class OntologySearchManagerLexGridImpl extends
 						.iterateResolvedConceptReference(); itr.hasNext();) {
 					ResolvedConceptReference ref = itr.next();
 					Concept concept = ref.getReferencedEntry();
-					String preferredName = getPreferredName(concept);					
+					String preferredName = getPreferredName(concept);
 					String fullId = getFullId(ontology, concept.getEntityCode());
 					Byte isObsolete = new Byte(isObsolete(concept) ? (byte) 1
 							: (byte) 0);
@@ -124,7 +125,7 @@ public class OntologySearchManagerLexGridImpl extends
 	private void addPresentationProperties(LuceneIndexWriterWrapper writer,
 			String fullId, Integer ontologyVersionId, Integer ontologyId,
 			String ontologyDisplayLabel, String preferredName, Concept concept,
-			Byte isObsolete) throws IOException {		
+			Byte isObsolete) throws IOException {
 		SearchRecordTypeEnum recType = null;
 		List<SearchIndexBean> docs = new ArrayList<SearchIndexBean>(0);
 
@@ -132,7 +133,8 @@ public class OntologySearchManagerLexGridImpl extends
 				.hasNext();) {
 			Presentation p = itr.next();
 
-			// if the value is not a preferred name, it is assumed to be a synonym
+			// if the value is not a preferred name, it is assumed to be a
+			// synonym
 			if (p.getIsPreferred()) {
 				recType = SearchRecordTypeEnum.RECORD_TYPE_PREFERRED_NAME;
 			} else {
@@ -300,6 +302,23 @@ public class OntologySearchManagerLexGridImpl extends
 						SearchRecordTypeEnum.RECORD_TYPE_CONCEPT_ID,
 						preferredName, isObsolete, p));
 		docs.add(doc);
+
+		// concept ids that have ':' in them need to be additionally indexed
+		// with an '_' instead of ':'. For example, 'GO:1234' also needs to
+		// be indexed as 'GO_1234'
+		if (StringUtils.contains(conceptId, ':')) {
+			p = new Property();
+			t = new Text();
+			t.setContent(StringUtils.replace(conceptId, ":", "_"));
+			p.setValue(t);
+
+			doc = populateIndexBean(fullId, conceptId,
+					new LexGridSearchProperty(ontologyVersionId, ontologyId,
+							ontologyDisplayLabel,
+							SearchRecordTypeEnum.RECORD_TYPE_CONCEPT_ID,
+							preferredName, isObsolete, p));
+			docs.add(doc);
+		}
 		writer.addDocuments(docs);
 	}
 

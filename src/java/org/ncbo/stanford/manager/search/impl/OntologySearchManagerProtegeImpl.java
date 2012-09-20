@@ -7,6 +7,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.mutable.MutableInt;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -79,11 +80,12 @@ public class OntologySearchManagerProtegeImpl extends
 
 		for (Frame frame : frames) {
 			// Log progress
-			LoggingUtils.logProgress(classCount, progressCount, ontologyBean.getId(), "Search Indexing Progress", log);
-			
+			LoggingUtils.logProgress(classCount, progressCount, ontologyBean
+					.getId(), "Search Indexing Progress", log);
+
 			// Avoid cache timeout for KB
 			kb = getKnowledgeBaseInstance(ontologyBean);
-			
+
 			// exclude anonymous and system frames from being indexed
 			if (frame.isSystem()
 					|| (frame instanceof RDFResource && ((RDFResource) frame)
@@ -278,9 +280,17 @@ public class OntologySearchManagerProtegeImpl extends
 
 		if (frame instanceof RDFResource) {
 			String name = ((RDFResource) frame).getLocalName();
-			SearchIndexBean doc = populateIndexBean(ontologyBean,
-					protegeFrame, name, owlMode);
+			SearchIndexBean doc = populateIndexBean(ontologyBean, protegeFrame,
+					name, owlMode);
 			docs.add(doc);
+			// concept ids that have ':' in them need to be additionally indexed
+			// with an '_' instead of ':'. For example, 'GO:1234' also needs to
+			// be indexed as 'GO_1234'
+			if (StringUtils.contains(name, ':')) {
+				doc = populateIndexBean(ontologyBean, protegeFrame, StringUtils
+						.replace(name, ":", "_"), owlMode);
+				docs.add(doc);
+			}
 			writer.addDocuments(docs);
 		}
 	}
