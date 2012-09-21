@@ -35,10 +35,7 @@ public class BooleanWildCardQuery extends BooleanQuery {
 
 	private static final String IN_PAREN_DELIMITER = "#@#@#@#@#";
 	private static final char WILDCARD_CHAR = '*';
-
-	private static final String LUCENE_ESCAPE_CHARS = "[\\+\\-\\!\\(\\)\\^\\]\\{\\}\\~\\*\\?]";
-	private static final Pattern LUCENE_PATTERN = Pattern
-			.compile(LUCENE_ESCAPE_CHARS);
+	private static final String LUCENE_ESCAPE_CHARS = "[\\:\\!\\(\\)\\^\\[\\]\\{\\}\\~\\*\\?]";
 	private static final String REPLACEMENT_STRING = "\\\\$0";
 	private static final int EXACT_MATCH_BOOST = 10;
 
@@ -101,9 +98,6 @@ public class BooleanWildCardQuery extends BooleanQuery {
 						add(tq, BooleanClause.Occur.SHOULD);
 					}
 
-					term = LUCENE_PATTERN.matcher(term).replaceAll(
-							REPLACEMENT_STRING);
-
 					// In most cases, inQuotes = true would mean that the
 					// original term contained a dash (-) or underscore (_) and
 					// it was replaced by Lucene parser with a space and double
@@ -148,9 +142,7 @@ public class BooleanWildCardQuery extends BooleanQuery {
 
 	private String parseExpression(String expr, String field)
 			throws ParseException {
-		// replace colon with a space so OBO IDs can be found. Ex: GO:0008150
-		expr = expr.replace(":", "\\:");
-
+		expr = expr.replaceAll(LUCENE_ESCAPE_CHARS, REPLACEMENT_STRING);
 		QueryParser parser = new QueryParser(luceneVersion, field, analyzer);
 		Query query = parser.parse(expr);
 		expr = query.toString().replace(field + ":", "");
