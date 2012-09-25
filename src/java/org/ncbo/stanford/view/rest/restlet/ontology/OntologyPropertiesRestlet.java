@@ -6,6 +6,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.ncbo.stanford.bean.OntologyBean;
 import org.ncbo.stanford.bean.concept.PropertyBean;
+import org.ncbo.stanford.exception.OntologyVersionNotFoundException;
 import org.restlet.Request;
 import org.restlet.Response;
 import org.restlet.data.Status;
@@ -28,6 +29,8 @@ public class OntologyPropertiesRestlet extends AbstractOntologyBaseRestlet {
 		if (!response.getStatus().isError()) {
 			try {
 				properties = ontologyService.findProperties(ontologyBean);
+			} catch (OntologyVersionNotFoundException ovnfe) {
+				response.setStatus(Status.CLIENT_ERROR_NOT_FOUND, ovnfe.getMessage());
 			} catch (Exception e) {
 				response
 						.setStatus(Status.SERVER_ERROR_INTERNAL, e.getMessage());

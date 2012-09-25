@@ -108,22 +108,28 @@ public class OntologyRetrievalManagerLexGridImpl extends
 	public List<PropertyBean> findProperties(OntologyBean ontologyBean)
 			throws Exception {
 		String urnAndVersion = ontologyBean.getCodingScheme();
-		String urnVersionArray[] = splitUrnAndVersion(urnAndVersion);
-		CodingScheme cs = getCodingScheme(lbs, urnVersionArray[0],
-				urnVersionArray[1]);
-		ArrayList<PropertyBean> list = new ArrayList<PropertyBean>();
-		SupportedProperty[] sp = cs.getMappings().getSupportedProperty();
+		List<PropertyBean> list = new ArrayList<PropertyBean>(0);
 
-		for (int i = 0; i < sp.length; i++) {
-			SupportedProperty prop = sp[i];
+		if (urnAndVersion != null) {
+			String urnVersionArray[] = splitUrnAndVersion(urnAndVersion);
+			CodingScheme cs = getCodingScheme(lbs, urnVersionArray[0],
+					urnVersionArray[1]);
+			SupportedProperty[] sp = cs.getMappings().getSupportedProperty();
 
-			if (prop != null && StringUtils.isNotBlank(prop.getLocalId())) {
-				PropertyBean pb = createBasePropertyBean(ontologyBean, prop
-						.getLocalId());
-				list.add(pb);
+			for (int i = 0; i < sp.length; i++) {
+				SupportedProperty prop = sp[i];
+
+				if (prop != null && StringUtils.isNotBlank(prop.getLocalId())) {
+					PropertyBean pb = createBasePropertyBean(ontologyBean, prop
+							.getLocalId());
+					list.add(pb);
+				}
 			}
+		} else {
+			throw new OntologyVersionNotFoundException(
+					"Ontology Version Not Found. ID: " + ontologyBean.getId()
+							+ ", Virtual ID: " + ontologyBean.getOntologyId());
 		}
-
 		return list;
 	}
 
@@ -1844,15 +1850,17 @@ public class OntologyRetrievalManagerLexGridImpl extends
 				}
 
 				if (!foundCorrectedId) {
-					// Only if the code has a "#_" we repalce it with a ":" or if the code
-					// contains only a "_" we replace that also with a ":" and check if this code
+					// Only if the code has a "#_" we repalce it with a ":" or
+					// if the code
+					// contains only a "_" we replace that also with a ":" and
+					// check if this code
 					// can be found
 					if (modconceptId.contains("#_")) {
 						modconceptId = modconceptId.replace("#_", ":");
 					} else if ((modconceptId.contains("_"))) {
 						modconceptId = modconceptId.replace("_", ":");
 					}
-					
+
 					if (!conceptId.equals(modconceptId)) {
 						rcr = getLightResolvedConceptReference(ontologyBean,
 								modconceptId);
@@ -1861,7 +1869,7 @@ public class OntologyRetrievalManagerLexGridImpl extends
 
 						}
 					}
-					
+
 				}
 			}
 		}
@@ -1876,9 +1884,9 @@ public class OntologyRetrievalManagerLexGridImpl extends
 			fullId = fullId.substring(fullId.lastIndexOf("/") + 1);
 		}
 
-//		if (fullId != null && fullId.lastIndexOf("#") != -1) {
-//			fullId = fullId.substring(fullId.lastIndexOf("#") + 1);
-//		}
+		// if (fullId != null && fullId.lastIndexOf("#") != -1) {
+		// fullId = fullId.substring(fullId.lastIndexOf("#") + 1);
+		// }
 		return fullId;
 	}
 
