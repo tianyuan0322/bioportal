@@ -130,8 +130,9 @@ public class OntologyServiceMetadataImpl extends AbstractOntologyService
 		}
 
 		for (Integer errorVersionId : errorVersionIdList) {
-			String error = addErrorOntology(errorOntologies, errorVersionId
-					.toString(), null, ONTOLOGY_VERSION_DOES_NOT_EXIST_ERROR);
+			String error = addErrorOntology(errorOntologies,
+					errorVersionId.toString(), null,
+					ONTOLOGY_VERSION_DOES_NOT_EXIST_ERROR);
 			log.error(error);
 		}
 	}
@@ -152,8 +153,9 @@ public class OntologyServiceMetadataImpl extends AbstractOntologyService
 		OntologyBean ontologyBean = findOntologyOrView(ontologyVersionId);
 
 		if (ontologyBean == null) {
-			String error = addErrorOntology(errorOntologies, ontologyVersionId
-					.toString(), null, ONTOLOGY_VERSION_DOES_NOT_EXIST_ERROR);
+			String error = addErrorOntology(errorOntologies,
+					ontologyVersionId.toString(), null,
+					ONTOLOGY_VERSION_DOES_NOT_EXIST_ERROR);
 			log.error(error);
 			return;
 		}
@@ -184,12 +186,10 @@ public class OntologyServiceMetadataImpl extends AbstractOntologyService
 			latestOntologyBean = findLatestActiveOntologyOrViewVersion(ontologyId);
 		}
 
-		log
-				.info("Deleting ontology: "
-						+ getOntologyDisplay(ontologyVersionId.toString(),
-								ontologyBean) + ", Remove Metadata: "
-						+ removeMetadata + ", Remove Files: "
-						+ removeOntologyFiles);
+		log.info("Deleting ontology: "
+				+ getOntologyDisplay(ontologyVersionId.toString(), ontologyBean)
+				+ ", Remove Metadata: " + removeMetadata + ", Remove Files: "
+				+ removeOntologyFiles);
 
 		// 1. Remove ontology from the backend
 		if (!ontologyBean.isMetadataOnly()) {
@@ -197,8 +197,8 @@ public class OntologyServiceMetadataImpl extends AbstractOntologyService
 				getLoadManager(ontologyBean).cleanup(ontologyBean);
 			} catch (LBParameterException e) {
 				String error = addErrorOntology(errorOntologies,
-						ontologyVersionId.toString(), ontologyBean, e
-								.getMessage());
+						ontologyVersionId.toString(), ontologyBean,
+						e.getMessage());
 				log.error(error);
 			}
 
@@ -249,6 +249,9 @@ public class OntologyServiceMetadataImpl extends AbstractOntologyService
 
 	public List<OntologyBean> findAllOntologyOrViewVersionsByVirtualId(
 			Integer ontologyId, boolean excludeDeprecated) throws Exception {
+		String logMsg = "findAllOntologyOrViewVersionsByVirtualId: ";
+		logMsg += "ontologyId = " + ontologyId.toString();
+		log.debug(logMsg);
 		return ontologyMetadataManager.findAllOntologyOrViewVersionsById(
 				ontologyId, excludeDeprecated);
 	}

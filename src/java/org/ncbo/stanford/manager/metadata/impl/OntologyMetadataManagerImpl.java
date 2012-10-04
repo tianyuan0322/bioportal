@@ -107,7 +107,8 @@ public class OntologyMetadataManagerImpl extends
 					CREATE_IF_MISSING);
 		}
 
-		Collection<OWLIndividual> userInd = getUserInstances(metadata, ob.getUserIds());
+		Collection<OWLIndividual> userInd = getUserInstances(metadata,
+				ob.getUserIds());
 		Collection<OWLIndividual> domainInd = getOntologyDomainInstances(
 				metadata, ob.getCategoryIds());
 		Collection<OWLIndividual> viewInd = getOntologyViewInstances(metadata,
@@ -115,8 +116,8 @@ public class OntologyMetadataManagerImpl extends
 		Collection<OWLIndividual> srcOntInd = null;
 
 		if (OntologyMetadataUtils.isOntologyViewIndividual(ontVerInd)) {
-			srcOntInd = getOntologyInstances(metadata, ob
-					.getViewOnOntologyVersionId());
+			srcOntInd = getOntologyInstances(metadata,
+					ob.getViewOnOntologyVersionId());
 		}
 
 		OntologyMetadataUtils
@@ -139,8 +140,8 @@ public class OntologyMetadataManagerImpl extends
 	public void deleteOntologyOrView(OntologyBean ob, boolean removeMetadata)
 			throws Exception {
 		OWLModel metadata = getMetadataOWLModel();
-		OWLIndividual ontVerInd = getOntologyOrViewInstance(metadata, ob
-				.getId());
+		OWLIndividual ontVerInd = getOntologyOrViewInstance(metadata,
+				ob.getId());
 
 		if (ontVerInd == null) {
 			throw new MetadataException(
@@ -279,6 +280,9 @@ public class OntologyMetadataManagerImpl extends
 	public List<OntologyBean> findAllOntologyOrViewVersionsById(
 			Integer ontologyOrViewId, boolean excludeDeprecated)
 			throws Exception {
+		String logMsg = "findAllOntologyOrViewVersionsById: ";
+		logMsg += "ontologyId = " + ontologyOrViewId.toString();
+		log.debug(logMsg);
 		OWLModel metadata = getMetadataOWLModel();
 		List<OntologyBean> res = new ArrayList<OntologyBean>();
 		OWLIndividual vOntInd = getVirtualOntologyOrViewInstance(metadata,
@@ -584,9 +588,8 @@ public class OntologyMetadataManagerImpl extends
 
 		if (vOntIndividuals != null && (!vOntIndividuals.isEmpty())) {
 			if (vOntIndividuals.size() > 1) {
-				log
-						.error("Multiple virtual ontology individuals attached to ontology version: "
-								+ oboFoundryId);
+				log.error("Multiple virtual ontology individuals attached to ontology version: "
+						+ oboFoundryId);
 			}
 
 			OWLIndividual vOntInd = vOntIndividuals.get(0);
@@ -666,9 +669,8 @@ public class OntologyMetadataManagerImpl extends
 			if (ontViewInd != null) {
 				res.add(ontViewInd);
 			} else {
-				log
-						.error("No metadata:OntologyView individual found for view ID: "
-								+ ontViewVerId);
+				log.error("No metadata:OntologyView individual found for view ID: "
+						+ ontViewVerId);
 			}
 		}
 
@@ -692,9 +694,8 @@ public class OntologyMetadataManagerImpl extends
 				if (ontInd != null) {
 					res.add(ontInd);
 				} else {
-					log
-							.error("No OMV:Ontology individual found for ontology version ID: "
-									+ ontVerId);
+					log.error("No OMV:Ontology individual found for ontology version ID: "
+							+ ontVerId);
 				}
 			}
 		}

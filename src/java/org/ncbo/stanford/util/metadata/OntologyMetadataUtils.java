@@ -179,6 +179,12 @@ public class OntologyMetadataUtils extends MetadataUtils {
 	public static final String PROPERTY_VIEW_GENERATION_ENGINE = PREFIX_METADATA
 			+ "viewGenerationEngine";
 
+	public static final String PROPERTY_VIRTUAL_ONTOLOGY = PREFIX_METADATA
+			+ "VirtualOntology";
+
+	public static final String PROPERTY_VIRTUAL_VIEW = PREFIX_METADATA
+			+ "VirtualView";
+
 	public static final String PROPERTY_VIRTUAL_VIEW_OF = PREFIX_METADATA
 			+ "virtualViewOf";
 
@@ -295,19 +301,19 @@ public class OntologyMetadataUtils extends MetadataUtils {
 
 		OWLModel owlModel = ontologyInd.getOWLModel();
 
-		setPropertyValue(owlModel, ontologyInd, PROPERTY_OMV_ACRONYM, ob
-				.getAbbreviation());
+		setPropertyValue(owlModel, ontologyInd, PROPERTY_OMV_ACRONYM,
+				ob.getAbbreviation());
 
 		// CategoryIds;
 		setPropertyValue(owlModel, ontologyInd, PROPERTY_OMV_HAS_DOMAIN,
 				domainIndividuals);
 
-		setPropertyValue(owlModel, ontologyInd, PROPERTY_CODING_SCHEME, ob
-				.getCodingScheme());
-		setPropertyValue(owlModel, ontologyInd, PROPERTY_HAS_CONTACT_EMAIL, ob
-				.getContactEmail());
-		setPropertyValue(owlModel, ontologyInd, PROPERTY_HAS_CONTACT_NAME, ob
-				.getContactName());
+		setPropertyValue(owlModel, ontologyInd, PROPERTY_CODING_SCHEME,
+				ob.getCodingScheme());
+		setPropertyValue(owlModel, ontologyInd, PROPERTY_HAS_CONTACT_EMAIL,
+				ob.getContactEmail());
+		setPropertyValue(owlModel, ontologyInd, PROPERTY_HAS_CONTACT_NAME,
+				ob.getContactName());
 		RDFSLiteral litDateCreated = createXsdDateTimePropertyValue(owlModel,
 				ob.getDateCreated());
 		setPropertyValue(owlModel, ontologyInd, PROPERTY_UPLOAD_DATE,
@@ -316,21 +322,21 @@ public class OntologyMetadataUtils extends MetadataUtils {
 				convertDateToDateTimeString(ob.getDateReleased()));// or maybe
 		// just
 		// convertDateToDateString(ob.getDateReleased())
-		setPropertyValue(owlModel, ontologyInd, PROPERTY_OMV_NAME, ob
-				.getDisplayLabel());
-		setPropertyValue(owlModel, ontologyInd, PROPERTY_OMV_DESCRIPTION, ob
-				.getDescription());
-		setPropertyValue(owlModel, ontologyInd, PROPERTY_OMV_DOCUMENTATION, ob
-				.getDocumentation());
+		setPropertyValue(owlModel, ontologyInd, PROPERTY_OMV_NAME,
+				ob.getDisplayLabel());
+		setPropertyValue(owlModel, ontologyInd, PROPERTY_OMV_DESCRIPTION,
+				ob.getDescription());
+		setPropertyValue(owlModel, ontologyInd, PROPERTY_OMV_DOCUMENTATION,
+				ob.getDocumentation());
 
-		setPropertyValue(owlModel, ontologyInd, PROPERTY_FILE_NAMES, ob
-				.getFilenames());
-		setPropertyValue(owlModel, ontologyInd, PROPERTY_FILE_PATH, ob
-				.getFilePath());
-		setPropertyValue(owlModel, ontologyInd, PROPERTY_DOWNLOAD_LOCATION, ob
-				.getDownloadLocation());
-		RDFIndividual ontLangInd = getOntologyLanguageInstance(owlModel, ob
-				.getFormat());
+		setPropertyValue(owlModel, ontologyInd, PROPERTY_FILE_NAMES,
+				ob.getFilenames());
+		setPropertyValue(owlModel, ontologyInd, PROPERTY_FILE_PATH,
+				ob.getFilePath());
+		setPropertyValue(owlModel, ontologyInd, PROPERTY_DOWNLOAD_LOCATION,
+				ob.getDownloadLocation());
+		RDFIndividual ontLangInd = getOntologyLanguageInstance(owlModel,
+				ob.getFormat());
 
 		if (ontLangInd != null) {
 			setPropertyValue(owlModel, ontologyInd,
@@ -340,10 +346,10 @@ public class OntologyMetadataUtils extends MetadataUtils {
 					+ ontologyInd + ": " + ob.getFormat());
 		}
 
-		setPropertyValue(owlModel, ontologyInd, PROPERTY_URL_HOMEPAGE, ob
-				.getHomepage());		
-		setPropertyValue(owlModel, ontologyInd, PROPERTY_OMV_NATURAL_LANGUAGE, ob
-				.getNaturalLanguage());
+		setPropertyValue(owlModel, ontologyInd, PROPERTY_URL_HOMEPAGE,
+				ob.getHomepage());
+		setPropertyValue(owlModel, ontologyInd, PROPERTY_OMV_NATURAL_LANGUAGE,
+				ob.getNaturalLanguage());
 		setPropertyValue(owlModel, ontologyInd, PROPERTY_ID, ob.getId());
 		setPropertyValue(owlModel, ontologyInd,
 				PROPERTY_INTERNAL_VERSION_NUMBER, ob.getInternalVersionNumber());
@@ -372,8 +378,8 @@ public class OntologyMetadataUtils extends MetadataUtils {
 				owlModel.getXSDboolean());
 		setPropertyValue(owlModel, ontologyInd, PROPERTY_IS_REMOTE, litIsRemote);
 
-		setPropertyValue(owlModel, vOntInd, PROPERTY_OBO_FOUNDRY_ID, ob
-				.getOboFoundryId());
+		setPropertyValue(owlModel, vOntInd, PROPERTY_OBO_FOUNDRY_ID,
+				ob.getOboFoundryId());
 
 		// OntologyId;
 		setPropertyValue(owlModel, ontologyInd,
@@ -388,12 +394,12 @@ public class OntologyMetadataUtils extends MetadataUtils {
 
 		setPropertyValue(owlModel, ontologyInd,
 				PROPERTY_PREFERRED_NAME_PROPERTY, ob.getPreferredNameSlot());
-		setPropertyValue(owlModel, ontologyInd, PROPERTY_URL_PUBLICATIONS, ob
-				.getPublication());
-		setPropertyValue(owlModel, ontologyInd, PROPERTY_STATUS_ID, ob
-				.getStatusId());
-		setPropertyValue(owlModel, ontologyInd, PROPERTY_SYNONYM_PROPERTY, ob
-				.getSynonymSlot());
+		setPropertyValue(owlModel, ontologyInd, PROPERTY_URL_PUBLICATIONS,
+				ob.getPublication());
+		setPropertyValue(owlModel, ontologyInd, PROPERTY_STATUS_ID,
+				ob.getStatusId());
+		setPropertyValue(owlModel, ontologyInd, PROPERTY_SYNONYM_PROPERTY,
+				ob.getSynonymSlot());
 		setPropertyValue(owlModel, ontologyInd, PROPERTY_TARGET_TERMINOLOGIES,
 				ob.getTargetTerminologies());
 		setPropertyValue(owlModel, ontologyInd, PROPERTY_OMV_URI, ob.getUrn());
@@ -402,36 +408,36 @@ public class OntologyMetadataUtils extends MetadataUtils {
 		setPropertyValue(owlModel, ontologyInd, PROPERTY_ADMINISTERED_BY,
 				userInd);
 
-		setPropertyValue(owlModel, ontologyInd, PROPERTY_OMV_VERSION, ob
-				.getVersionNumber());
-		setPropertyValue(owlModel, ontologyInd, PROPERTY_OMV_STATUS, ob
-				.getVersionStatus());
+		setPropertyValue(owlModel, ontologyInd, PROPERTY_OMV_VERSION,
+				ob.getVersionNumber());
+		setPropertyValue(owlModel, ontologyInd, PROPERTY_OMV_STATUS,
+				ob.getVersionStatus());
 
 		setPropertyValue(owlModel, ontologyInd,
 				PROPERTY_DOCUMENTATION_PROPERTY, ob.getDocumentationSlot());
-		setPropertyValue(owlModel, ontologyInd, PROPERTY_AUTHOR_PROPERTY, ob
-				.getAuthorSlot());
+		setPropertyValue(owlModel, ontologyInd, PROPERTY_AUTHOR_PROPERTY,
+				ob.getAuthorSlot());
 		setPropertyValue(owlModel, ontologyInd,
-				PROPERTY_PROPERTY_WITH_UNIQUE_VALUE, ob
-						.getSlotWithUniqueValue());
+				PROPERTY_PROPERTY_WITH_UNIQUE_VALUE,
+				ob.getSlotWithUniqueValue());
 		setPropertyValue(owlModel, ontologyInd,
-				PROPERTY_METRICS_PREFERRED_MAXIMUM_SUBCLASS_LIMIT, ob
-						.getPreferredMaximumSubclassLimit());
+				PROPERTY_METRICS_PREFERRED_MAXIMUM_SUBCLASS_LIMIT,
+				ob.getPreferredMaximumSubclassLimit());
 
 		setPropertyValue(owlModel, ontologyInd, PROPERTY_HAS_VIEW,
 				viewIndividuals);
 
-		setPropertyValue(owlModel, ontologyInd, PROPERTY_OBSOLETE_PARENT, ob
-				.getObsoleteParent());
-		setPropertyValue(owlModel, ontologyInd, PROPERTY_OBSOLETE_PROPERTY, ob
-				.getObsoleteProperty());
+		setPropertyValue(owlModel, ontologyInd, PROPERTY_OBSOLETE_PARENT,
+				ob.getObsoleteParent());
+		setPropertyValue(owlModel, ontologyInd, PROPERTY_OBSOLETE_PROPERTY,
+				ob.getObsoleteProperty());
 
-		setPropertyValue(owlModel, vOntInd, PROPERTY_VIEWING_RESTRICTION, (ob
-				.getViewingRestriction() != null) ? ob.getViewingRestriction()
-				.toString() : null);
+		setPropertyValue(owlModel, vOntInd, PROPERTY_VIEWING_RESTRICTION,
+				(ob.getViewingRestriction() != null) ? ob
+						.getViewingRestriction().toString() : null);
 
-		setPropertyValue(owlModel, vOntInd, PROPERTY_LICENSE_INFORMATION, ob
-				.getLicenseInformation());
+		setPropertyValue(owlModel, vOntInd, PROPERTY_LICENSE_INFORMATION,
+				ob.getLicenseInformation());
 
 		if (ob.isView()) {
 			if (!isOntologyViewIndividual(ontologyInd)) {
@@ -455,9 +461,8 @@ public class OntologyMetadataUtils extends MetadataUtils {
 				setPropertyValue(owlModel, ontologyInd,
 						PROPERTY_VIEW_DEFINITION_LANGUAGE, viewDefLangInd);
 			} else {
-				log
-						.error("No metadata:ViewDefinitionLanguage individual found for ontology view "
-								+ ontologyInd + ": " + viewDefinitionLanguage);
+				log.error("No metadata:ViewDefinitionLanguage individual found for ontology view "
+						+ ontologyInd + ": " + viewDefinitionLanguage);
 			}
 
 			String viewGenerationEngine = ob.getViewGenerationEngine();
@@ -468,9 +473,8 @@ public class OntologyMetadataUtils extends MetadataUtils {
 				setPropertyValue(owlModel, ontologyInd,
 						PROPERTY_VIEW_GENERATION_ENGINE, viewGenEngInd);
 			} else {
-				log
-						.error("No metadata:ViewGenerationEngine individual found for ontology view "
-								+ ontologyInd + ": " + viewGenerationEngine);
+				log.error("No metadata:ViewGenerationEngine individual found for ontology view "
+						+ ontologyInd + ": " + viewGenerationEngine);
 			}
 		}
 	}
@@ -560,20 +564,20 @@ public class OntologyMetadataUtils extends MetadataUtils {
 		setPropertyValue(owlModel, ontologyInd, PROPERTY_METRICS_MAXIMUM_DEPTH,
 				mb.getMaximumDepth());
 		setPropertyValue(owlModel, ontologyInd,
-				PROPERTY_METRICS_MAXIMUM_NUMBER_OF_SIBLINGS, mb
-						.getMaximumNumberOfSiblings());
+				PROPERTY_METRICS_MAXIMUM_NUMBER_OF_SIBLINGS,
+				mb.getMaximumNumberOfSiblings());
 		setPropertyValue(owlModel, ontologyInd,
-				PROPERTY_METRICS_AVERAGE_NUMBER_OF_SIBLINGS, mb
-						.getAverageNumberOfSiblings());
+				PROPERTY_METRICS_AVERAGE_NUMBER_OF_SIBLINGS,
+				mb.getAverageNumberOfSiblings());
 		setPropertyValue(owlModel, ontologyInd,
-				PROPERTY_METRICS_CLASSES_WITH_NO_DOCUMENTATION, mb
-						.getClassesWithNoDocumentation());
+				PROPERTY_METRICS_CLASSES_WITH_NO_DOCUMENTATION,
+				mb.getClassesWithNoDocumentation());
 		setPropertyValue(owlModel, ontologyInd,
-				PROPERTY_METRICS_CLASSES_WITH_NO_AUTHOR, mb
-						.getClassesWithNoAuthor());
+				PROPERTY_METRICS_CLASSES_WITH_NO_AUTHOR,
+				mb.getClassesWithNoAuthor());
 		setPropertyValue(owlModel, ontologyInd,
-				PROPERTY_METRICS_CLASSES_WITH_SINGLE_SUBCLASS, mb
-						.getClassesWithOneSubclass());
+				PROPERTY_METRICS_CLASSES_WITH_SINGLE_SUBCLASS,
+				mb.getClassesWithOneSubclass());
 
 		Map<String, Integer> classesWithMoreThanXSubclasses = mb
 				.getClassesWithMoreThanXSubclasses();
@@ -596,6 +600,13 @@ public class OntologyMetadataUtils extends MetadataUtils {
 		}
 
 		OWLModel owlModel = ontologyInd.getOWLModel();
+		// TODO see if we have to deal with virtualViewOf property or not
+		OWLIndividual vOntInd = getPropertyValue(owlModel, ontologyInd,
+				PROPERTY_IS_VERSION_OF_VIRTUAL_ONTOLOGY, OWLIndividual.class);
+		log.debug("fillInOntologyBeanFromInstance: ontologyInd = "
+				+ ontologyInd.toString());
+		log.debug("fillInOntologyBeanFromInstance: virtual ontology, vOntInd = "
+				+ vOntInd.toString());
 
 		ob.setAbbreviation(getPropertyValue(owlModel, ontologyInd,
 				PROPERTY_OMV_ACRONYM, String.class));
@@ -625,13 +636,14 @@ public class OntologyMetadataUtils extends MetadataUtils {
 				PROPERTY_FILE_PATH, String.class));
 		ob.setDownloadLocation(getPropertyValue(owlModel, ontologyInd,
 				PROPERTY_DOWNLOAD_LOCATION, String.class));
-		ob.setFormat(getOntologyFormatValue(owlModel, getPropertyValue(
-				owlModel, ontologyInd, PROPERTY_OMV_HAS_ONTOLOGY_LANGUAGE,
-				RDFIndividual.class)));
+		ob.setFormat(getOntologyFormatValue(
+				owlModel,
+				getPropertyValue(owlModel, ontologyInd,
+						PROPERTY_OMV_HAS_ONTOLOGY_LANGUAGE, RDFIndividual.class)));
+		ob.setHasViews(getPropertyValueIds(owlModel, ontologyInd,
+				PROPERTY_HAS_VIEW));
 		ob.setHomepage(getPropertyValue(owlModel, ontologyInd,
-				PROPERTY_URL_HOMEPAGE, String.class));		
-		ob.setNaturalLanguage(getPropertyValue(owlModel, ontologyInd,
-				PROPERTY_OMV_NATURAL_LANGUAGE, String.class));		
+				PROPERTY_URL_HOMEPAGE, String.class));
 		ob.setId(getPropertyValue(owlModel, ontologyInd, PROPERTY_ID,
 				Integer.class));
 		ob.setInternalVersionNumber(getPropertyValue(owlModel, ontologyInd,
@@ -642,22 +654,14 @@ public class OntologyMetadataUtils extends MetadataUtils {
 				ontologyInd, PROPERTY_IS_FOUNDRY, Boolean.class)));
 		ob.setIsMetadataOnly(convertBooleanToByte(getPropertyValue(owlModel,
 				ontologyInd, PROPERTY_IS_METADATAONLY, Boolean.class)));
-
-		OWLIndividual vOntInd = getPropertyValue(owlModel, ontologyInd,
-				PROPERTY_IS_VERSION_OF_VIRTUAL_ONTOLOGY, OWLIndividual.class);
-		ob.setIsManual(convertBooleanToByte(getPropertyValue(owlModel, vOntInd,
-				PROPERTY_IS_MANUAL, Boolean.class)));
-		ob.setGroupIds(getPropertyValueIds(owlModel, vOntInd,
-				PROPERTY_BELONGS_TO_GROUP));
-		ob.setOboFoundryId(getPropertyValue(owlModel, vOntInd,
-				PROPERTY_OBO_FOUNDRY_ID, String.class));
-		ob.setOntologyId(getPropertyValue(owlModel, vOntInd, PROPERTY_ID,
-				Integer.class));
-		ob.setVirtualViewIds(getPropertyValueIds(owlModel, vOntInd,
-				PROPERTY_HAS_VIRTUAL_VIEW));
-
 		ob.setIsRemote(convertBooleanToByte(getPropertyValue(owlModel,
 				ontologyInd, PROPERTY_IS_REMOTE, Boolean.class)));
+		ob.setNaturalLanguage(getPropertyValue(owlModel, ontologyInd,
+				PROPERTY_OMV_NATURAL_LANGUAGE, String.class));
+		ob.setObsoleteParent(getPropertyValue(owlModel, ontologyInd,
+				PROPERTY_OBSOLETE_PARENT, String.class));
+		ob.setObsoleteProperty(getPropertyValue(owlModel, ontologyInd,
+				PROPERTY_OBSOLETE_PROPERTY, String.class));
 		ob.setPreferredNameSlot(getPropertyValue(owlModel, ontologyInd,
 				PROPERTY_PREFERRED_NAME_PROPERTY, String.class));
 		ob.setPublication(getPropertyValue(owlModel, ontologyInd,
@@ -686,22 +690,24 @@ public class OntologyMetadataUtils extends MetadataUtils {
 				ontologyInd, PROPERTY_METRICS_PREFERRED_MAXIMUM_SUBCLASS_LIMIT,
 				Integer.class));
 
-		ob.setObsoleteParent(getPropertyValue(owlModel, ontologyInd,
-				PROPERTY_OBSOLETE_PARENT, String.class));
-		ob.setObsoleteProperty(getPropertyValue(owlModel, ontologyInd,
-				PROPERTY_OBSOLETE_PROPERTY, String.class));
-
+		// Virtual ontology properties
+		ob.setIsManual(convertBooleanToByte(getPropertyValue(owlModel, vOntInd,
+				PROPERTY_IS_MANUAL, Boolean.class)));
+		ob.setGroupIds(getPropertyValueIds(owlModel, vOntInd,
+				PROPERTY_BELONGS_TO_GROUP));
+		ob.setOboFoundryId(getPropertyValue(owlModel, vOntInd,
+				PROPERTY_OBO_FOUNDRY_ID, String.class));
+		ob.setOntologyId(getPropertyValue(owlModel, vOntInd, PROPERTY_ID,
+				Integer.class));
+		ob.setVirtualViewIds(getPropertyValueIds(owlModel, vOntInd,
+				PROPERTY_HAS_VIRTUAL_VIEW));
 		ob.setViewingRestriction(ViewingRestrictionEnum
 				.getFromLabel(getPropertyValue(owlModel, vOntInd,
 						PROPERTY_VIEWING_RESTRICTION, String.class)));
-
 		ob.setLicenseInformation(getPropertyValue(owlModel, vOntInd,
 				PROPERTY_LICENSE_INFORMATION, String.class));
 
-		ob.setHasViews(getPropertyValueIds(owlModel, ontologyInd,
-				PROPERTY_HAS_VIEW));
-
-		// set view specific properties
+		// View properties
 		if (isOntologyViewIndividual(ontologyInd)) {
 			ob.setView(true);
 			ob.setViewOnOntologyVersionId(getPropertyValueIds(owlModel,
@@ -709,30 +715,32 @@ public class OntologyMetadataUtils extends MetadataUtils {
 			ob.setViewDefinition(getPropertyValue(owlModel, ontologyInd,
 					PROPERTY_VIEW_DEFINITION, String.class));
 			ob.setViewDefinitionLanguage(getViewDefinitionLanguageValue(
-					owlModel, getPropertyValue(owlModel, ontologyInd,
+					owlModel,
+					getPropertyValue(owlModel, ontologyInd,
 							PROPERTY_VIEW_DEFINITION_LANGUAGE,
 							RDFIndividual.class)));
-			ob.setViewGenerationEngine(getViewGenerationEngineValue(owlModel,
+			ob.setViewGenerationEngine(getViewGenerationEngineValue(
+					owlModel,
 					getPropertyValue(owlModel, ontologyInd,
 							PROPERTY_VIEW_GENERATION_ENGINE,
 							RDFIndividual.class)));
 
 			List<OWLIndividual> vOntInds = getPropertyValues(owlModel, vOntInd,
 					PROPERTY_VIRTUAL_VIEW_OF, OWLIndividual.class);
-
-			// for simplicity, assume that a view can be attached to a single
-			// ontology
+			// for simplicity, assume that a view can be attached to a
+			// single ontology
 			if (!vOntInds.isEmpty()) {
-				// find viewing restriction for the parent ontology and attach
-				// it to the view
+				// find viewing restriction for the parent ontology and
+				// attach it to the view
 				ob.setViewingRestriction(ViewingRestrictionEnum
-						.getFromLabel(getPropertyValue(owlModel, vOntInds
-								.get(0), PROPERTY_VIEWING_RESTRICTION,
+						.getFromLabel(getPropertyValue(owlModel,
+								vOntInds.get(0), PROPERTY_VIEWING_RESTRICTION,
 								String.class)));
-				// find license info for the parent ontology and attach it to
-				// the view
-				ob.setLicenseInformation(getPropertyValue(owlModel, vOntInds
-						.get(0), PROPERTY_LICENSE_INFORMATION, String.class));
+				// find license info for the parent ontology and attach it
+				// to the view
+				ob.setLicenseInformation(getPropertyValue(owlModel,
+						vOntInds.get(0), PROPERTY_LICENSE_INFORMATION,
+						String.class));
 			}
 
 			// TODO see if we have to deal with virtualViewOf property or not
@@ -790,12 +798,11 @@ public class OntologyMetadataUtils extends MetadataUtils {
 				String.class));
 		mb.setClassesWithNoAuthor(getPropertyValues(owlModel, ontologyInd,
 				PROPERTY_METRICS_CLASSES_WITH_NO_AUTHOR, String.class));
-		mb
-				.setClassesWithMoreThanOnePropertyValue(getPropertyValues(
-						owlModel,
-						ontologyInd,
-						PROPERTY_METRICS_CLASSES_WITH_MORE_THAN_ONE_PROPERTY_VALUE_FOR_PROPERTY_WITH_UNIQUE_VALUE,
-						String.class));
+		mb.setClassesWithMoreThanOnePropertyValue(getPropertyValues(
+				owlModel,
+				ontologyInd,
+				PROPERTY_METRICS_CLASSES_WITH_MORE_THAN_ONE_PROPERTY_VALUE_FOR_PROPERTY_WITH_UNIQUE_VALUE,
+				String.class));
 
 	}
 
@@ -1140,8 +1147,8 @@ public class OntologyMetadataUtils extends MetadataUtils {
 		try {
 			Integer startId = Integer.valueOf(MessageUtils
 					.getMessage("config.db.ontology.virtualOntologyIdStart"));
-			Integer newId = getNextAvailableIdForClass(metadata
-					.getOWLNamedClass(CLASS_VIRTUAL_ONTOLOGY), startId);
+			Integer newId = getNextAvailableIdForClass(
+					metadata.getOWLNamedClass(CLASS_VIRTUAL_ONTOLOGY), startId);
 			while (getVirtualViewWithId(metadata, newId) != null) {
 				newId = ((newId + 1500) / 1000) * 1000;
 			}
@@ -1156,8 +1163,8 @@ public class OntologyMetadataUtils extends MetadataUtils {
 		try {
 			Integer startId = Integer.valueOf(MessageUtils
 					.getMessage("config.db.ontology.virtualOntologyIdStart"));
-			Integer newId = getNextAvailableIdForClass(metadata
-					.getOWLNamedClass(CLASS_VIRTUAL_VIEW), startId);
+			Integer newId = getNextAvailableIdForClass(
+					metadata.getOWLNamedClass(CLASS_VIRTUAL_VIEW), startId);
 			while (getVirtualOntologyWithId(metadata, newId) != null) {
 				newId = ((newId + 1500) / 1000) * 1000;
 			}
@@ -1172,8 +1179,8 @@ public class OntologyMetadataUtils extends MetadataUtils {
 		try {
 			Integer startId = Integer.valueOf(MessageUtils
 					.getMessage("config.db.ontology.ontologyVersionIdStart"));
-			Integer newId = getNextAvailableIdForClass(metadata
-					.getOWLNamedClass(CLASS_OMV_ONTOLOGY), startId);
+			Integer newId = getNextAvailableIdForClass(
+					metadata.getOWLNamedClass(CLASS_OMV_ONTOLOGY), startId);
 			while (getOntologyViewWithId(metadata, newId) != null) {
 				newId = ((newId + 1500) / 1000) * 1000;
 			}
@@ -1188,8 +1195,8 @@ public class OntologyMetadataUtils extends MetadataUtils {
 		try {
 			Integer startId = Integer.valueOf(MessageUtils
 					.getMessage("config.db.ontology.ontologyVersionIdStart"));
-			Integer newId = getNextAvailableIdForClass(metadata
-					.getOWLNamedClass(CLASS_ONTOLOGY_VIEW), startId);
+			Integer newId = getNextAvailableIdForClass(
+					metadata.getOWLNamedClass(CLASS_ONTOLOGY_VIEW), startId);
 			while (getOntologyWithId(metadata, newId) != null) {
 				newId = ((newId + 1500) / 1000) * 1000;
 			}
