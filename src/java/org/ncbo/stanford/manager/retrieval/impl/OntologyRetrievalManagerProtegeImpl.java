@@ -837,11 +837,14 @@ public class OntologyRetrievalManagerProtegeImpl extends
 						isAnonymous = cls.isAnonymous();
 					}
 
-					if (isAnonymous
-							|| subclass.isSystem()
-							|| browserText.startsWith("@")
-							|| ApplicationConstants.hiddenClasses
-									.contains(browserText)) {
+					// Check to see if the class is in the hidden list
+					boolean isHidden = false;
+					for (String id : ApplicationConstants.hiddenClasses) {
+						isHidden = browserText.startsWith(id);
+					}
+
+					if (isAnonymous || subclass.isSystem()
+							|| browserText.startsWith("@") || isHidden) {
 						it.remove();
 					}
 				} catch (Exception e) {
@@ -1108,11 +1111,16 @@ public class OntologyRetrievalManagerProtegeImpl extends
 				// should have the result of bad relations not being processed
 				try {
 					if (val instanceof OWLNamedClass) {
+						// Check to see if the class is in the hidden list
+						boolean isHidden = false;
+						String className = ((OWLNamedClass) val).getName();
+						for (String id : ApplicationConstants.hiddenClasses) {
+							isHidden = className.startsWith(id);
+						}
+
 						// Avoid unnamed classes
 						if (!((OWLNamedClass) val).getName().startsWith("@")
-								&& !ApplicationConstants.hiddenClasses
-										.contains(((OWLNamedClass) val)
-												.getName())) {
+								&& !isHidden) {
 							ClassBean bean = createBaseClassBean((Frame) val,
 									ontologyBean);
 							bpPropVals.add(bean);
