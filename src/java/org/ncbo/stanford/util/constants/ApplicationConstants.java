@@ -264,7 +264,7 @@ public interface ApplicationConstants {
 	/**
 	 * Classes to hide in REST service
 	 */
-	public static Set<String> hiddenClasses = new HashSet<String>(Arrays.asList("dc:", "http://www.w3.org/2004/02/skos/core"));
+	public static Set<String> hiddenClasses = new HashSet<String>(Arrays.asList("dc:", "http://www.w3.org/2004/02/skos/core", "rdfs:"));
 	
 	
 }
